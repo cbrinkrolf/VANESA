@@ -156,9 +156,9 @@ public class Elementdeclerations {
 
 	}
 
-	public List getAllCompartmentDeclaration() {
+	public List<String> getAllCompartmentDeclaration() {
 
-		List l = new ArrayList();
+		List<String> l = new ArrayList<String>();
 		l.add(membrane);
 		l.add(cytoplasma);
 		l.add(cellInside);
@@ -168,9 +168,9 @@ public class Elementdeclerations {
 		return l;
 	}
 
-	public List getAllNodeDeclarations() {
+	public List<String> getAllNodeDeclarations() {
 
-		List l = new ArrayList();
+		List<String> l = new ArrayList<String>();
 		l.add(others);
 		l.add(complex);
 		l.add(degraded);
@@ -214,9 +214,9 @@ public class Elementdeclerations {
 	}
 
 	
-	public List getNotPNNodeDeclarations() {
+	public List<String> getNotPNNodeDeclarations() {
 
-		List l = new ArrayList();
+		List<String> l = new ArrayList<String>();
 		l.add(others);
 		l.add(complex);
 		l.add(degraded);
@@ -254,8 +254,8 @@ public class Elementdeclerations {
 		return l;
 	}
 	
-	public List getPNEdgeDeclarations() {
-		List l = new ArrayList();
+	public List<String> getPNEdgeDeclarations() {
+		List<String> l = new ArrayList<String>();
 		l.add(pnDiscreteEdge);
 		l.add(pnContinuousEdge);
 		l.add(pnInhibitionEdge);
@@ -263,9 +263,9 @@ public class Elementdeclerations {
 		return l;
 	}
 	
-	public List getNotPNEdgeDeclarations() {
+	public List<String> getNotPNEdgeDeclarations() {
 
-		List l = new ArrayList();
+		List<String> l = new ArrayList<String>();
 		l.add(compoundEdge);
 		l.add(hiddenCompoundEdge);
 		l.add(activationEdge);
@@ -289,9 +289,9 @@ public class Elementdeclerations {
 	}
 	
 	
-	public List getAllEdgeDeclarations() {
+	public List<String> getAllEdgeDeclarations() {
 
-		List l = new ArrayList();
+		List<String> l = new ArrayList<String>();
 		l.add(compoundEdge);
 		l.add(hiddenCompoundEdge);
 		l.add(activationEdge);
