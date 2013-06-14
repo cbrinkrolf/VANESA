@@ -72,7 +72,7 @@ public abstract class BiomartQueryRetrieval {
 	
 	/**
 	 * Open the connection to the BioMart server and streams the request to the server
-	 * after finishing call a method to stor the results in a Map
+	 * after finishing call a method to store the results in a Map
 	 * 
 	 * @param request the BioMart XML query as a String
 	 * @throws IOException
