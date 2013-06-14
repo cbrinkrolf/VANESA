@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -58,7 +57,7 @@ public class RandomGraph {
 
 			myGraph.lockVertices();
 			myGraph.stopVisualizationModel();
-			HashSet set = new HashSet();
+			HashSet<Integer> set = new HashSet<Integer>();
 
 			int nodeNumberCounter = 0;
 
@@ -147,6 +146,7 @@ public class RandomGraph {
 			
 
 			MainWindow window = MainWindowSingelton.getInstance();
+			//TODO
 			//window.updateOptionPanel();
 			window.enable(true);
 			pw.getGraph().changeToGEMLayout();

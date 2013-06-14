@@ -6,12 +6,13 @@ import java.util.Vector;
 
 import miscalleanous.internet.FollowLink;
 import biologicalElements.Elementdeclerations;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 //import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import graph.GraphInstance;
 
-public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin {
+public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 
 	GraphInstance graphInstance = new GraphInstance();
 	
@@ -37,13 +38,13 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin {
 
 		} else {
 
-			Vector v = graphInstance.getPathway().getSelectedNodes();
+			Vector<BiologicalNodeAbstract> v = graphInstance.getPathway().getSelectedNodes();
 
-			Iterator it = v.iterator();
+			Iterator<BiologicalNodeAbstract> it = v.iterator();
 			while (it.hasNext()) {
-				BiologicalNodeAbstract vertex = (BiologicalNodeAbstract) it.next();
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
-						.getPathway().getNodeByVertexID(vertex.toString());
+				//BiologicalNodeAbstract vertex = (BiologicalNodeAbstract) it.next();
+				BiologicalNodeAbstract bna = it.next();//(BiologicalNodeAbstract) graphInstance
+//						.getPathway().getNodeByVertexID(vertex.toString());
 				if (bna.getBiologicalElement().equals(
 						Elementdeclerations.protein)
 						|| bna.getBiologicalElement().equals(

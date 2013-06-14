@@ -2,37 +2,29 @@ package graph.jung.classes;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JScrollBar;
-
-import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.visualization.BasicVisualizationServer;
-import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.VisualizationModel;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 /*import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.visualization.Layout;
 import edu.uci.ics.jung.visualization.Renderer;*/
-import edu.uci.ics.jung.visualization.VisualizationModel;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.renderers.Renderer;
-import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
-import edu.uci.ics.jung.visualization.util.Caching;
 
-public class MyVisualizationViewer extends VisualizationViewer {
+public class MyVisualizationViewer extends VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private Pathway pw;
 
-	public MyVisualizationViewer(VisualizationModel arg0, Dimension arg2, Pathway pw) {
+	public MyVisualizationViewer(VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> arg0, Dimension arg2, Pathway pw) {
 		super(arg0, arg2);
 		this.pw=pw;
 		// TODO Auto-generated constructor stub

@@ -3,23 +3,21 @@ package graph.layouts;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.Graph;
+import graph.jung.classes.MyGraph;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.visualization.Layout;
-import graph.jung.classes.MyGraph;
 
 public class GraphCenter {
 
-	private Collection vertices;
+	private Collection<BiologicalNodeAbstract> vertices;
 	private Point2D center;
 	private double width;
 	private double height;
-	private Layout layout;
+	private Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
 	private MyGraph g;
 	
 	private double x_min=0;
@@ -32,7 +30,7 @@ public class GraphCenter {
 	boolean firstValues = false;
 
 	
-	public GraphCenter(MyGraph g, Layout l){
+	public GraphCenter(MyGraph g, Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> l){
 		layout=l;
 		vertices=g.getAllvertices();
 		this.g = g;
@@ -40,10 +38,11 @@ public class GraphCenter {
 	}
 	
 	private void initBoundaries(){
-		Iterator it = vertices.iterator();
+		Iterator<BiologicalNodeAbstract> it = vertices.iterator();
+		BiologicalNodeAbstract v;
 		while (it.hasNext()){
 			
-			BiologicalNodeAbstract v= (BiologicalNodeAbstract)it.next();		
+			v = it.next();		
 			Point2D point = g.getVertexLocation(v);
 			
 			if(!firstValues){

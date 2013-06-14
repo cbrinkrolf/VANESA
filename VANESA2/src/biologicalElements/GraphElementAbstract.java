@@ -7,10 +7,6 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Random;
-
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;

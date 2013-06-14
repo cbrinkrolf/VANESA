@@ -670,7 +670,6 @@ public class Pathway {
 			return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	public BiologicalNodeAbstract getNodeByName(String name) {
 
 		Iterator it = biologicalElements.values().iterator();
@@ -688,7 +687,7 @@ public class Pathway {
 		return null;
 	}
 
-	public BiologicalNodeAbstract getNodeByVertexID(String vertexID) {
+	/*public BiologicalNodeAbstract getNodeByVertexID(String vertexID) {
 
 		Iterator it = biologicalElements.values().iterator();
 
@@ -703,7 +702,7 @@ public class Pathway {
 			}
 		}
 		return null;
-	}
+	}*/
 
 	public BiologicalNodeAbstract getNodeByLabel(String label) {
 
