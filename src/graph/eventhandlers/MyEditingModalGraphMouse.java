@@ -16,8 +16,6 @@ import java.awt.ItemSelectable;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.geom.Point2D;
-import java.util.HashMap;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -27,11 +25,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.EventListenerList;
 import javax.swing.plaf.basic.BasicIconFactory;
 
-import org.apache.commons.collections15.Transformer;
-
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-
-//import edu.uci.ics.jung.visualization.SettableVertexLocationFunction;
 import edu.uci.ics.jung.visualization.control.AnimatedPickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.GraphMousePlugin;
@@ -41,6 +34,7 @@ import edu.uci.ics.jung.visualization.control.RotatingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ScalingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ShearingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.TranslatingGraphMousePlugin;
+//import edu.uci.ics.jung.visualization.SettableVertexLocationFunction;
 
 /**
  * 

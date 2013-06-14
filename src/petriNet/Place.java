@@ -57,9 +57,9 @@ public class Place extends BiologicalNodeAbstract {
 		this.modellicaString = modellicaString;
 	}
 
-	private int r;
-	private int b;
-	private int g;
+//	private int r;
+//	private int b;
+//	private int g;
 
 	public Place(String label, String name, double token,
 			boolean discrete) {
@@ -161,11 +161,11 @@ public class Place extends BiologicalNodeAbstract {
 		this.token = token;
 	}
 
-	public void setRelativeColor(int r, int g, int b) {
+	/*public void setRelativeColor(int r, int g, int b) {
 		this.r = r;
 		this.g = g;
 		this.b = b;
-	}
+	}*/
 
 	public void setPlotColor(Color plotColor) {
 		this.plotColor = plotColor;

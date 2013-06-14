@@ -121,16 +121,16 @@ public class MyGraph {
 	private int VisualizationViewerHeigth = 1000;
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseGraph<BiologicalNodeAbstract, BiologicalEdgeAbstract>();
 	private final MyVisualizationViewer vv;
-	private final AbstractLayout layout;
+	private final AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
 	final MyEditingModalGraphMouse graphMouse = new MyEditingModalGraphMouse();
-	private final SatelliteVisualizationViewer vv2;
-	private final ShapePickSupport pickSupport;
+	private final SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv2;
+	private final ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport;
 	final ScalingControl scaler = new CrossoverScalingControl();
 	// private final HashMap<BiologicalNodeAbstract, Point2D> vertexLocations;
-	private final RenderContext satellitePr;
-	private final RenderContext pr;
+	private final RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> satellitePr;
+	private final RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> pr;
 	// private AbstractRenderer pr;
-	private final PluggableRenderContext pr_compare = null;
+	private final PluggableRenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> pr_compare = null;
 	private final MyVertexStringer vertexStringer;
 	private final MyEdgeStringer edgeStringer;
 	//private VertexShapeSize vssa;
@@ -143,11 +143,11 @@ public class MyGraph {
 	protected MyEdgeShapeFunction esf;
 	protected MyEdgeArrowFunction eaf;
 
-	protected PickedState stateV;
-	protected PickedState stateE;
+	protected PickedState<BiologicalNodeAbstract> stateV;
+	protected PickedState<BiologicalEdgeAbstract> stateE;
 	GraphInstance graphInstance = new GraphInstance();
-	private final VisualizationModel visualizationModel;
-	private final AggregateLayout clusteringLayout;
+	private final VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> visualizationModel;
+	private final AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout;
 	private final HashSet<BiologicalNodeAbstract> set = null;
 	private final HashMap<BiologicalNodeAbstract, Point2D> nodePositions = new HashMap<BiologicalNodeAbstract, Point2D>();
 	private MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
@@ -156,7 +156,7 @@ public class MyGraph {
 	
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
 
-	public AggregateLayout getClusteringLayout() {
+	public AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> getClusteringLayout() {
 		return clusteringLayout;
 	}
 
@@ -196,13 +196,13 @@ public class MyGraph {
 			}
 		};
 
-		layout = new StaticLayout(g);// , locationTransformer);
+		layout = new StaticLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g);// , locationTransformer);
 
 		layout.setSize(preferredSize);
 		// layout.initialize(preferredSize, nodePositions);
-		clusteringLayout = new AggregateLayout(layout);
+		clusteringLayout = new AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(layout);
 
-		visualizationModel = new DefaultVisualizationModel(clusteringLayout,
+		visualizationModel = new DefaultVisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract>(clusteringLayout,
 				preferredSize);
 		visualizationModel.getRelaxer().setSleepTime(10);
 		// visualizationModel.setRelaxerThreadSleepTime(10);
@@ -212,7 +212,7 @@ public class MyGraph {
 		vv.setSize(preferredSize);
 		vv.setMinimumSize(preferredSize);
 
-		vv2 = new SatelliteVisualizationViewer(vv, preferredSize2);
+		vv2 = new SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(vv, preferredSize2);
 		vv2.setSize(preferredSize2);
 		vv2.setMinimumSize(preferredSize2);
 		satellitePr = vv2.getRenderContext();
@@ -233,7 +233,7 @@ public class MyGraph {
 
 		// set the inner nodes to be painted after the actual graph
 		vv.addPostRenderPaintable(new InnerNodeRenderer(vv));
-		pickSupport = new ShapePickSupport(vv);
+		pickSupport = new ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract>(vv);
 		stateV = vv.getPickedVertexState();
 		stateE = vv.getPickedEdgeState();
 
@@ -252,7 +252,7 @@ public class MyGraph {
 
 		// graphMouse.setVertexLocations(nodePositions);
 		// 1. vertexFactor, 2. edgeFactory
-		graphMouse.add(new EditingPopupGraphMousePlugin(null, null));
+		graphMouse.add(new EditingPopupGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract>(null, null));
 
 		graphMouse.setMode(ModalGraphMouse.Mode.EDITING);
 
@@ -400,6 +400,11 @@ public class MyGraph {
 
 	public MyGraphZoomScrollPane getGraphVisualization() {
 		pane = new MyGraphZoomScrollPane(vv) {
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
 			// public void setVisible(boolean v){
 			// if(!v){
 			// vv.stop();
@@ -443,7 +448,7 @@ public class MyGraph {
 		return g.addVertex(new SparseVertex());
 	}*/
 
-	public SatelliteVisualizationViewer getSatelliteView() {
+	public SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> getSatelliteView() {
 		vv2.setDoubleBuffered(true);
 		return vv2;
 	}
@@ -746,12 +751,12 @@ public class MyGraph {
 		g.removeEdge(bea);
 	}
 
-	public Collection getAllvertices() {
+	public Collection<BiologicalNodeAbstract> getAllvertices() {
 		return g.getVertices();
 		// return g.getVertices();
 	}
 
-	public Collection getAllEdges() {
+	public Collection<BiologicalEdgeAbstract> getAllEdges() {
 		return g.getEdges();
 	}
 
@@ -972,7 +977,7 @@ public class MyGraph {
 		//System.out.println(lvc);
 		final double dx = (lvc.getX() - q.getX());
 		final double dy = (lvc.getY() - q.getY());
-		System.out.println(viewer.getClass()+" "+dx+" "+dy);
+//		System.out.println(viewer.getClass()+" "+dx+" "+dy);
 		viewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy);
 //		viewer.getLayoutTransformer().translate(dx, dy);
 		
@@ -989,7 +994,7 @@ public class MyGraph {
 
 		final double dx = (lvc.getX() - q.getX()) / 10;
 		final double dy = (lvc.getY() - q.getY()) / 10;
-		System.out.println(dx+" "+dy);
+//		System.out.println(dx+" "+dy);
 		
 //		System.out.println("nodes: "+g.getVertexCount());
 //		System.out.println(g.getEdgeCount());
