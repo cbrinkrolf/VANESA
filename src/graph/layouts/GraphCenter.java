@@ -43,7 +43,8 @@ public class GraphCenter {
 		while (it.hasNext()){
 			
 			v = it.next();		
-			Point2D point = g.getVertexLocation(v);
+			Point2D point = layout.transform(v);
+			//System.out.println(point);
 			
 			if(!firstValues){
 				

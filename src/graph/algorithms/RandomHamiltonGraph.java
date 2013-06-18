@@ -2,15 +2,17 @@ package graph.algorithms;
 
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingelton;
 
+import java.awt.Point;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.swing.JOptionPane;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Other;
 
 public class RandomHamiltonGraph {
@@ -50,7 +52,8 @@ public class RandomHamiltonGraph {
 
 			myGraph.lockVertices();
 			myGraph.stopVisualizationModel();
-			HashSet set = new HashSet();
+			HashSet<Integer> set = new HashSet<Integer>();
+			Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<Integer, BiologicalNodeAbstract>();
 
 			int nodeNumberCounter = 0;
 
@@ -58,22 +61,22 @@ public class RandomHamiltonGraph {
 
 				if (!set.contains(nodei[k])) {
 					set.add(nodei[k]);
-					Other node = new Other(nodei[k] + "", nodei[k] + "",
-							myGraph.createNewVertex());
+					Other node = new Other(nodei[k] + "", nodei[k] + "");
 					node.setReference(false);
-					pw.addElement(node);
-					myGraph.moveVertex(node.getVertex(), 150, 100);
+					pw.addVertex(node, new Point(150, 100));
+					// myGraph.moveVertex(node.getVertex(), 150, 100);
+					nodes.put(nodei[k], node);
 					nodeNumberCounter++;
 
 				}
 
 				if (!set.contains(nodej[k])) {
 					set.add(nodej[k]);
-					Other node = new Other(nodej[k] + "", nodej[k] + "",
-							myGraph.createNewVertex());
+					Other node = new Other(nodej[k] + "", nodej[k] + "");
 					node.setReference(false);
-					pw.addElement(node);
-					myGraph.moveVertex(node.getVertex(), 150, 100);
+					pw.addVertex(node, new Point(150, 100));
+					// myGraph.moveVertex(node.getVertex(), 150, 100);
+					nodes.put(nodej[k], node);
 					nodeNumberCounter++;
 				}
 
@@ -82,11 +85,11 @@ public class RandomHamiltonGraph {
 				if (nodeNumberCounter < n) {
 					if (!set.contains(k)) {
 						set.add(k);
-						Other node = new Other(k + "", k + "",
-								myGraph.createNewVertex());
+						Other node = new Other(k + "", k + "");
 						node.setReference(false);
-						pw.addElement(node);
-						myGraph.moveVertex(node.getVertex(), 150, 100);
+						pw.addVertex(node, new Point(150, 100));
+						// myGraph.moveVertex(node.getVertex(), 150, 100);
+						nodes.put(k, node);
 						nodeNumberCounter++;
 					}
 				}
@@ -94,10 +97,8 @@ public class RandomHamiltonGraph {
 			for (k = 1; k <= m; k++) {
 
 				if (directed) {
-					ReactionEdge r = new ReactionEdge(myGraph.createEdge(pw
-							.getNodeByName(nodei[k] + "").getVertex(), pw
-							.getNodeByName(nodej[k] + "").getVertex(), true),
-							"", "");
+					ReactionEdge r = new ReactionEdge("", "",
+							nodes.get(nodei[k]), nodes.get(nodej[k]));
 
 					r.setDirected(true);
 					r.setReference(false);
@@ -109,13 +110,11 @@ public class RandomHamiltonGraph {
 						r.setWeight(weight[k]);
 					}
 
-					pw.addElement(r);
+					pw.addEdge(r);
 
 				} else {
-					ReactionEdge r = new ReactionEdge(myGraph.createEdge(pw
-							.getNodeByName(nodei[k] + "").getVertex(), pw
-							.getNodeByName(nodej[k] + "").getVertex(), false),
-							"", "");
+					ReactionEdge r = new ReactionEdge("", "",
+							nodes.get(nodei[k]), nodes.get(nodej[k]));
 
 					r.setDirected(false);
 					r.setReference(false);
@@ -127,7 +126,7 @@ public class RandomHamiltonGraph {
 						r.setWeight(weight[k]);
 					}
 
-					pw.addElement(r);
+					pw.addEdge(r);
 				}
 			}
 
@@ -136,9 +135,10 @@ public class RandomHamiltonGraph {
 
 			myGraph.normalCentering();
 
-			MainWindow window = MainWindowSingelton.getInstance();
-			window.updateOptionPanel();
-			window.enable(true);
+			// MainWindow window = MainWindowSingelton.getInstance();
+			// TODOD update OptionPanel
+			// window.updateOptionPanel();
+			// window.enable(true);
 			pw.getGraph().changeToGEMLayout();
 		}
 	}

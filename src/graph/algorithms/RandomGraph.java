@@ -69,7 +69,7 @@ public class RandomGraph {
 					node.setReference(false);
 					pw.addVertex(node, new Point(150, 100));
 					nodes.put(nodei[k], node);
-//					myGraph.moveVertex(node, 150, 100);
+					// myGraph.moveVertex(node, 150, 100);
 					nodeNumberCounter++;
 
 				}
@@ -80,7 +80,7 @@ public class RandomGraph {
 					node.setReference(false);
 					pw.addVertex(node, new Point(150, 100));
 					nodes.put(nodej[k], node);
-//					myGraph.moveVertex(node.getVertex(), 150, 100);
+					// myGraph.moveVertex(node.getVertex(), 150, 100);
 					nodeNumberCounter++;
 				}
 
@@ -93,7 +93,7 @@ public class RandomGraph {
 						node.setReference(false);
 						pw.addVertex(node, new Point(150, 100));
 						nodes.put(k, node);
-//						myGraph.moveVertex(node.getVertex(), 150, 100);
+						// myGraph.moveVertex(node.getVertex(), 150, 100);
 						nodeNumberCounter++;
 					}
 				}
@@ -101,10 +101,11 @@ public class RandomGraph {
 			for (k = 1; k <= m; k++) {
 
 				if (directed) {
-					ReactionEdge r = new ReactionEdge("","",nodes.get(nodei[k]), nodes.get(nodej[k]));//myGraph.createEdge(pw
-//							.getNodeByName(nodei[k] + "").getVertex(), pw
-//							.getNodeByName(nodej[k] + "").getVertex(), true),
-//							"", "");
+					ReactionEdge r = new ReactionEdge("", "",
+							nodes.get(nodei[k]), nodes.get(nodej[k]));// myGraph.createEdge(pw
+					// .getNodeByName(nodei[k] + "").getVertex(), pw
+					// .getNodeByName(nodej[k] + "").getVertex(), true),
+					// "", "");
 
 					r.setDirected(true);
 					r.setReference(false);
@@ -119,11 +120,12 @@ public class RandomGraph {
 					pw.addEdge(r);
 
 				} else {
-					ReactionEdge r = new ReactionEdge("","",nodes.get(nodei[k]), nodes.get(nodej[k]));
-//					ReactionEdge r = new ReactionEdge(myGraph.createEdge(pw
-//							.getNodeByName(nodei[k] + "").getVertex(), pw
-//							.getNodeByName(nodej[k] + "").getVertex(), false),
-//							"", "");
+					ReactionEdge r = new ReactionEdge("", "",
+							nodes.get(nodei[k]), nodes.get(nodej[k]));
+					// ReactionEdge r = new ReactionEdge(myGraph.createEdge(pw
+					// .getNodeByName(nodei[k] + "").getVertex(), pw
+					// .getNodeByName(nodej[k] + "").getVertex(), false),
+					// "", "");
 
 					r.setDirected(false);
 					r.setReference(false);
@@ -140,17 +142,15 @@ public class RandomGraph {
 				}
 			}
 
-			//myGraph.unlockVertices();
-			//myGraph.restartVisualizationModel();
-
-			
+			// myGraph.unlockVertices();
+			// myGraph.restartVisualizationModel();
 
 			MainWindow window = MainWindowSingelton.getInstance();
-			//TODO
-			//window.updateOptionPanel();
+			// TODO
+			 window.updateOptionPanel();
 			window.enable(true);
 			pw.getGraph().changeToGEMLayout();
-			//myGraph.normalCentering();
+			// myGraph.normalCentering();
 		}
 	}
 }

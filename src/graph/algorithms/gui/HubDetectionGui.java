@@ -4,13 +4,13 @@ import edu.uci.ics.jung.algorithms.importance.AbstractRanker;
 import edu.uci.ics.jung.algorithms.scoring.DegreeScorer;
 import edu.uci.ics.jung.algorithms.scoring.PageRank;
 /*import edu.uci.ics.jung.algorithms.importance.DegreeDistributionRanker;
-import edu.uci.ics.jung.algorithms.importance.PageRank;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
-import edu.uci.ics.jung.graph.decorators.VertexAspectRatioFunction;
-import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
-import edu.uci.ics.jung.utils.MutableDouble;
-import edu.uci.ics.jung.utils.UserData;*/
+ import edu.uci.ics.jung.algorithms.importance.PageRank;
+ import edu.uci.ics.jung.graph.Vertex;
+ import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
+ import edu.uci.ics.jung.graph.decorators.VertexAspectRatioFunction;
+ import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
+ import edu.uci.ics.jung.utils.MutableDouble;
+ import edu.uci.ics.jung.utils.UserData;*/
 import graph.GraphInstance;
 import graph.algorithms.CastGraphs;
 import graph.algorithms.ResultGraph;
@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -62,7 +63,8 @@ public class HubDetectionGui implements ActionListener {
 	// private JButton calculate;
 
 	private String[] algorithmNames = { "DegreeRanker", "PageRank" };
-	private String[] keys = { DegreeScorer.class.getName(), PageRank.class.getName() };
+	private String[] keys = { DegreeScorer.class.getName(),
+			PageRank.class.getName() };
 	private int sliderDegree;
 
 	private AbstractRanker ranker;
@@ -136,15 +138,17 @@ public class HubDetectionGui implements ActionListener {
 				1.0f);
 		VertexShapes vs = new VertexShapes(sf, rf);
 
-		Set verticsSet = pw.getGraph().getAllvertices();
-		for (Iterator iterator = verticsSet.iterator(); iterator.hasNext();) {
-			Vertex v = (Vertex) iterator.next();
-			BiologicalNodeAbstract ba = (BiologicalNodeAbstract) pw
-					.getElement(v);
+		Collection<BiologicalNodeAbstract> verticsSet = pw.getGraph()
+				.getAllvertices();
+		Iterator<BiologicalNodeAbstract> iterator = verticsSet.iterator();
+		BiologicalNodeAbstract ba;
+		while (iterator.hasNext()) {
+			// Vertex v = (Vertex) iterator.next();
+			ba = iterator.next();
 			ba.rebuildShape(vs);
 		}
 		pw.getGraph().getVisualizationViewer().repaint();
-		//pw.getGraph().restartVisualizationModel();
+		// pw.getGraph().restartVisualizationModel();
 	}
 
 	private void calculateRanking() {
@@ -197,7 +201,7 @@ public class HubDetectionGui implements ActionListener {
 			updateWindow();
 			p.repaint();
 			p.revalidate();
-		 p.setVisible(true);
+			p.setVisible(true);
 
 		}
 	}
@@ -279,7 +283,7 @@ public class HubDetectionGui implements ActionListener {
 				@Override
 				public void run() {
 					// AnimatedPicking picking = new AnimatedPicking();
-					//pw.getGraph().restartVisualizationModel();
+					// pw.getGraph().restartVisualizationModel();
 					pw.getGraph().getVisualizationViewer().repaint();
 					for (int i = 0; i < list.size(); i++) {
 						Vertex v = (Vertex) list.get(i);
@@ -290,11 +294,10 @@ public class HubDetectionGui implements ActionListener {
 							tabel.remove(v);
 							// picking.animatePicking(v, true);
 							pw.getGraph().getVisualizationViewer().stop();
-							//pw.getGraph().getVisualizationViewer().restart();
+							// pw.getGraph().getVisualizationViewer().restart();
 							pw.getGraph().getVisualizationViewer().repaint();
 							try {
-								Thread.sleep(Integer
-										.valueOf(txtDelay.getText()));
+								Thread.sleep(Integer.valueOf(txtDelay.getText()));
 							} catch (InterruptedException er) {
 							}
 
@@ -313,16 +316,15 @@ public class HubDetectionGui implements ActionListener {
 											.get(v.toString() + temp.toString());
 									bea.setVisible(true);
 								} else if (tabel_edges.containsKey(temp
-										.toString()
-										+ v.toString())) {
+										.toString() + v.toString())) {
 									BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) tabel_edges
 											.get(temp.toString() + v.toString());
 									bea.setVisible(true);
 								}
 
 								pw.getGraph().getVisualizationViewer().stop();
-								//pw.getGraph().getVisualizationViewer()
-									//	.restart();
+								// pw.getGraph().getVisualizationViewer()
+								// .restart();
 								pw.getGraph().getVisualizationViewer()
 										.repaint();
 								try {

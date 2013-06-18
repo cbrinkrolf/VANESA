@@ -397,6 +397,7 @@ public class Pathway {
 
 //		System.out.println(bea.isAbstract());
 		BiologicalEdgeAbstract newEdge = null;
+		//System.out.println(bea.isAbstract());
 		if (bea.isAbstract()) {
 
 			if (bea.getBiologicalElement().equals(

@@ -215,6 +215,10 @@ public class MyGraph {
 		vv2 = new SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(vv, preferredSize2);
 		vv2.setSize(preferredSize2);
 		vv2.setMinimumSize(preferredSize2);
+		
+		 //ScalingControl vv2Scaler = new CrossoverScalingControl();
+		 //vv2.scaleToLayout(vv2Scaler);
+		 
 		satellitePr = vv2.getRenderContext();
 		// viewGrid = (Paintable) new ViewGrid(vv2, vv);
 		// set the Ranges-Layer to be painted before the actual graph
@@ -858,21 +862,58 @@ public class MyGraph {
 		//this.clusteringLayout.removeAllSubLayouts();
 		Dimension oldDim = clusteringLayout.getSize();//getCurrentSize();
 //		vv.setLayout(new BorderLayout());
-		vv.setGraphLayout(new CircleLayout(g));
-		vv2.setGraphLayout(new CircleLayout(g));
 		
+//		vv.setGraphLayout(layout);
+//		vv2.setGraphLayout(layout);
+
+		//vv.setModel(visualizationModel);
+		//vv2.setModel(visualizationModel);
+		visualizationModel.setGraphLayout(layout);
+		//normalCentering();
 		//this.clusteringLayout.setDelegate(layout);
 		//this.clusteringLayout.initialize();//initialize(oldDim);
 		
 		/*if (layout.isIncremental()) {
 			vv.restart();
 		}*/
-		//fitScaleOfViewer(vv2);
-		//fitScaleOfViewer(vv);
+		
 		//normalCentering(vv2);
-		normalCentering();
-		normalCentering();
-		//this.animatedCentering();
+		//normalCentering();
+		//normalCentering();
+		Runnable center = new Runnable() {
+
+			@Override
+			public void run() {
+					try {
+						Thread.sleep(100);
+						//fitScaleOfViewer(vv2);
+						//fitScaleOfViewer(vv);
+						
+						fitScaleOfViewer(vv);
+						fitScaleOfViewer(vv2);
+						normalCentering(vv);
+						normalCentering(vv2);
+						//normalCentering();
+						//fitScaleOfSatellitView();
+						//normalCentering();
+						//System.out.println("test");
+					} catch (InterruptedException ex) {
+				}
+					
+			}
+		};
+		Thread thread = new Thread(center);
+		thread.start();
+		//this.normalCentering(vv);
+		
+		Iterator<BiologicalNodeAbstract> it = g.getVertices().iterator();
+		while(it.hasNext()){
+			BiologicalNodeAbstract bna = it.next();
+			//System.out.println("1: "+getVertexLocation(bna));
+			//System.out.println("2: "+layout.transform(bna));
+		}
+
+		
 	}
 
 	public void fitScaleOfSatellitView() {
@@ -916,15 +957,20 @@ public class MyGraph {
 	public void fitScaleOfViewer(VisualizationViewer viewer) {
 
 		Dimension viewSize = viewer.getSize();
-		GraphCenter graphCenter = new GraphCenter(this, viewer.getGraphLayout());
 		
+//		System.out.println(viewSize);
+		GraphCenter graphCenter = new GraphCenter(this, viewer.getGraphLayout());
+//		System.out.println("w: "+viewer.getWidth());
+		//System.out.println(": "+this.visualizationModel.getGraphLayout().getSize());
 //		GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout()
 //				.getGraph(), viewer.getGraphLayout());
 
+//		System.out.println("w: "+ new Point((int)graphCenter.getWidth(), (int)graphCenter.getHeight()));
+		//System.out.println("h: "+graphCenter.getHeight());
 		float scalex = (float) viewSize.width
-				/ ((float) graphCenter.getWidth() + 250);
+				/ ((float) graphCenter.getWidth()+100);
 		float scaley = (float) viewSize.height
-				/ ((float) graphCenter.getHeight() + 250);
+				/ ((float) graphCenter.getHeight()+100);
 		float scale = 1;
 
 		if (scalex < scaley) {
@@ -932,8 +978,19 @@ public class MyGraph {
 		} else {
 			scale = scaley;
 		}
+//		System.out.println(scale);
+		//System.out.println("scale: "+scale);
 		//viewer.getViewTransformer().setScale(scale, scale, new Point2D.Float());
 		new LayoutScalingControl().scale(viewer, scale, new Point2D.Float());
+		GraphCenter graphCenter2 = new GraphCenter(this, viewer.getGraphLayout());
+//		System.out.println("w: "+ new Point((int)graphCenter2.getWidth(), (int)graphCenter2.getHeight()));
+//		System.out.println("w: "+viewer.getWidth());
+		//System.out.println(": "+this.visualizationModel.getGraphLayout().getSize());
+//		GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout()
+//				.getGraph(), viewer.getGraphLayout());
+
+//		System.out.println("w: "+graphCenter2.getWidth());
+//		System.out.println("h: "+graphCenter2.getHeight());
 
 	}
 
@@ -971,13 +1028,16 @@ public class MyGraph {
 		//System.out.println("drin");
 		Layout layout = viewer.getGraphLayout();
 		Point2D q =  graphCenter.getCenter();
+		//Point2D q = viewer.getCenter();
+		//System.out.println("r: "+r);
+		//System.out.println("q: "+q);
 		Point2D lvc = 
 			    viewer.getRenderContext().getMultiLayerTransformer().inverseTransform(viewer.getCenter());
 		//System.out.println("q: "+viewer.getCenter());
 		//System.out.println(lvc);
 		final double dx = (lvc.getX() - q.getX());
 		final double dy = (lvc.getY() - q.getY());
-//		System.out.println(viewer.getClass()+" "+dx+" "+dy);
+		//System.out.println(viewer.getClass()+" "+dx+" "+dy);
 		viewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy);
 //		viewer.getLayoutTransformer().translate(dx, dy);
 		
@@ -998,7 +1058,7 @@ public class MyGraph {
 		
 //		System.out.println("nodes: "+g.getVertexCount());
 //		System.out.println(g.getEdgeCount());
-
+//		System.out.println(dx+" "+dy);
 		Runnable animator = new Runnable() {
 
 			@Override
@@ -1017,8 +1077,8 @@ public class MyGraph {
 		Thread thread = new Thread(animator);
 		thread.start();
 
-		//fitScaleOfViewer(this.vv2);
-		//normalCentering(this.vv2);
+		fitScaleOfViewer(this.vv2);
+		normalCentering(this.vv2);
 
 	}
 
