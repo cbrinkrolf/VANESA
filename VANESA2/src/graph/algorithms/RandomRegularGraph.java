@@ -2,13 +2,15 @@ package graph.algorithms;
 
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingelton;
 
+import java.awt.Point;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Other;
 
 public class RandomRegularGraph {
@@ -31,7 +33,8 @@ public class RandomRegularGraph {
 
 		Pathway pw = new CreatePathway("Random Regular Graph").getPathway();
 		MyGraph myGraph = pw.getGraph();
-		HashSet set = new HashSet();
+		HashSet<Integer> set = new HashSet<Integer>();
+		Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<Integer, BiologicalNodeAbstract>();
 
 		myGraph.lockVertices();
 		myGraph.stopVisualizationModel();
@@ -42,32 +45,30 @@ public class RandomRegularGraph {
 			for (k = 1; k <= edges; k++) {
 				if (!set.contains(nodei[k])) {
 					set.add(nodei[k]);
-					Other node = new Other(nodei[k] + "", nodei[k] + "",
-							myGraph.createNewVertex());
+					Other node = new Other(nodei[k] + "", nodei[k] + "");
 					node.setReference(false);
-					pw.addElement(node);
-					myGraph.moveVertex(node.getVertex(), 150, 100);
+					pw.addVertex(node, new Point(150, 100));
+					nodes.put(nodei[k], node);
+					// myGraph.moveVertex(node.getVertex(), 150, 100);
 				}
 
 				if (!set.contains(nodej[k])) {
 					set.add(nodej[k]);
-					Other node = new Other(nodej[k] + "", nodej[k] + "",
-							myGraph.createNewVertex());
+					Other node = new Other(nodej[k] + "", nodej[k] + "");
 					node.setReference(false);
-					pw.addElement(node);
-					myGraph.moveVertex(node.getVertex(), 150, 100);
+					pw.addVertex(node, new Point(150, 100));
+					nodes.put(nodej[k], node);
+					// myGraph.moveVertex(node.getVertex(), 150, 100);
 				}
 
-				ReactionEdge r = new ReactionEdge(myGraph.createEdge(pw
-						.getNodeByName(nodei[k] + "").getVertex(), pw
-						.getNodeByName(nodej[k] + "").getVertex(), false), "",
-						"");
+				ReactionEdge r = new ReactionEdge("", "", nodes.get(nodei[k]),
+						nodes.get(nodej[k]));
 
 				r.setDirected(false);
 				r.setReference(false);
 				r.setHidden(false);
 				r.setVisible(true);
-				pw.addElement(r);
+				pw.addEdge(r);
 
 			}
 		}
@@ -76,9 +77,10 @@ public class RandomRegularGraph {
 
 		myGraph.normalCentering();
 
-		MainWindow window = MainWindowSingelton.getInstance();
-		window.updateOptionPanel();
-		window.enable(true);
+		// MainWindow window = MainWindowSingelton.getInstance();
+		// TODO update OptionPanel
+		// window.updateOptionPanel();
+		// window.enable(true);
 		pw.getGraph().changeToGEMLayout();
 	}
 }
