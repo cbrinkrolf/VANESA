@@ -138,7 +138,7 @@ public class SBMLValidator {
 		StAXOMBuilder axiomBuilder = new StAXOMBuilder(reader);
 		OMElement xmlResult = axiomBuilder.getDocumentElement();
 		String content = xmlResult.toString();
-		System.out.println(content);
+		//System.out.println(content);
 		// clean up
 		try {
 			bufferedReader.close();
