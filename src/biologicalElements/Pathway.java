@@ -828,30 +828,30 @@ public class Pathway {
 	@SuppressWarnings("unchecked")
 	public HashSet<BiologicalEdgeAbstract> getAllEdges() {
 
-		Iterator it = biologicalElements.values().iterator();
-		HashSet set = new HashSet();
+		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
+		HashSet<BiologicalEdgeAbstract> set = new HashSet<BiologicalEdgeAbstract>();
 
+		GraphElementAbstract gea;
 		while (it.hasNext()) {
-			Object obj = it.next();
-			GraphElementAbstract gea = (GraphElementAbstract) obj;
-			if (gea.isEdge()) {
-				set.add(obj);
+			gea = it.next();
+			if (gea instanceof BiologicalEdgeAbstract) {
+				set.add((BiologicalEdgeAbstract)gea);
 			}
 		}
 		return set;
 	}
 
 	@SuppressWarnings("unchecked")
-	public HashSet getAllNodes() {
+	public HashSet<BiologicalNodeAbstract> getAllNodes() {
 
-		Iterator it = biologicalElements.values().iterator();
-		HashSet set = new HashSet();
+		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
+		HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
 
 		while (it.hasNext()) {
 			Object obj = it.next();
 			GraphElementAbstract gea = (GraphElementAbstract) obj;
 			if (gea.isVertex()) {
-				set.add(obj);
+				set.add((BiologicalNodeAbstract)obj);
 			}
 		}
 

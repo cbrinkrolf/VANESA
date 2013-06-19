@@ -50,6 +50,7 @@ public class BiologicalNodeAbstract extends GraphElementAbstract {
 	}
 
 	public SBMLNode getSbml() {
+		sbml.setVertex(this.getID()+"");
 		return sbml;
 	}
 

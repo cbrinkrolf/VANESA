@@ -229,7 +229,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			// get pathway and nodes
 
-			HashSet<GraphElementAbstract> hs = pw.getAllNodes();
+			HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
 
 			if (first) {
 				rowsSize = pw.getPetriNet().getNumberOfPlaces();
@@ -237,13 +237,14 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				// System.out.println("rows: "+rowsSize);
 				// System.out.println("rowsDim: "+rowsDim);
 				// get Data from all Places
-				Iterator<GraphElementAbstract> it = hs.iterator();
+				Iterator<BiologicalNodeAbstract> it = hs.iterator();
 				rows = new Object[rowsSize][rowsDim + 1];
 				int i = 0;
 				Vector<Double> MAData;
+				BiologicalNodeAbstract bna;
 				while (it.hasNext()) {
-					Object elem = it.next();
-					BiologicalNodeAbstract bna = (BiologicalNodeAbstract) elem;
+					//Object elem = it.next();
+					bna = it.next();
 					if (bna instanceof Place
 							&& pw.getPetriNet().getPnResult()
 									.containsKey("P"+((Place) bna).getID())) {

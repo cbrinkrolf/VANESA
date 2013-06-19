@@ -54,6 +54,9 @@ public class BiologicalEdgeAbstract extends GraphElementAbstract {
 	private SBMLEdge sbml = new SBMLEdge();
 	
 	public SBMLEdge getSbml() {
+		sbml.setFrom(this.getFrom().getID()+"");
+		sbml.setTo(this.getTo().getID()+"");
+		sbml.setEdge(this.getID()+"");
 		return sbml;
 	}
 

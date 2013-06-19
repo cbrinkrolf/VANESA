@@ -147,7 +147,7 @@ public class SBMLoutputNoWS {
 				XMLConstraints.LIST_OF_REACTIONS.getXMLTag()), this.model);
 
 		// read all nodes from graph
-		Iterator it = this.pathway.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = this.pathway.getAllNodes().iterator();
 		
 		while (it.hasNext()) {
 			BiologicalNodeAbstract oneNode = (BiologicalNodeAbstract) it.next();
@@ -161,10 +161,11 @@ public class SBMLoutputNoWS {
 		}
 		
 		// reactions to sbml
-		Iterator edgeIterator = this.pathway.getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> edgeIterator = this.pathway.getAllEdges().iterator();
 		
+		BiologicalEdgeAbstract oneEdge;
 		while(edgeIterator.hasNext()){
-			BiologicalEdgeAbstract oneEdge = (BiologicalEdgeAbstract)edgeIterator.next();
+			oneEdge = edgeIterator.next();
 			this.createListOfReactions(oneEdge);
 		}
         
@@ -479,7 +480,7 @@ public class SBMLoutputNoWS {
 	private void createListOfSpecies(BiologicalNodeAbstract oneNode) {
 		if (oneNode != null) {
 			String vertexID = oneNode.getSbml().getVertex();
-
+			//String vertexID = oneNode.getID()+"";
 			if (vertexID != null) {
 				String compartment = this.availableCompartments.get(vertexID);
 				String speciesType = this.availableSpeciesTypes.get(oneNode
@@ -528,10 +529,11 @@ public class SBMLoutputNoWS {
 			String vertexID = oneNode.getSbml().getVertex();
 
 			if (vertexID != null) {
-				Point2D point = this.pathway.getGraph().getClusteringLayout()
-						.getLocation(oneNode.getVertex());
-
+				Point2D point = this.pathway.getGraph().getClusteringLayout().transform(oneNode);
+//						.getLocation(oneNode);
+				//Point2D point = this.pathway.getGraph().getJungGraph().get
 				// parameter data
+				//System.out.println(point);
 				String name = vertexID;
 				String xCoord = "" + point.getX();
 				String yCoord = "" + point.getY();
@@ -593,12 +595,12 @@ public class SBMLoutputNoWS {
 	 *            Adds a OMElement. The OMElement contains one attribute: "id".
 	 */
 	private void createListOfReactions(BiologicalEdgeAbstract oneEdge) {
-
+		
 		if (oneEdge != null) {
 			String from = oneEdge.getSbml().getFrom();
 			String to = oneEdge.getSbml().getTo();
 			String name = oneEdge.getSbml().getEdge();
-
+//			System.out.println(name);
 			if (from != null && to != null && name != null
 					&& (!this.availableReactions.contains(name))) {
 				String id = XMLConstraints.REACTION_NAME.getXMLTag()

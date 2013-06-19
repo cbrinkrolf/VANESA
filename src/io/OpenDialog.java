@@ -226,8 +226,8 @@ public class OpenDialog extends SwingWorker {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 
-					GraphInstance.getMyGraph().getVisualizationViewer()
-							.restart();
+					//GraphInstance.getMyGraph().getVisualizationViewer()
+					//		.restart();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();
 					MainWindowSingelton.getInstance().updateAllGuiElements();
