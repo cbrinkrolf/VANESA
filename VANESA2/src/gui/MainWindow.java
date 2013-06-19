@@ -489,10 +489,11 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 
 	public void updateOptionPanel() {
+		//TODO
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
-		optionPanel.updatePanel("theory");
+		//optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
 		optionPanel.updatePanel("pcp");
 		optionPanel.updatePanel("pathwayTree");
@@ -503,7 +504,8 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
-		optionPanel.updatePanel("theory");
+		//TODO
+		//optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
 		optionPanel.updatePanel("pcp");
 		optionPanel.updatePanel("project");

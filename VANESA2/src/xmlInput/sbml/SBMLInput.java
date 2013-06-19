@@ -1,5 +1,7 @@
 package xmlInput.sbml;
 
+import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +11,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+
+import javax.vecmath.Point2d;
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -25,13 +29,14 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 
-import edu.uci.ics.jung.exceptions.ConstraintViolationException;
-import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.exceptions.ConstraintViolationException;
+//import edu.uci.ics.jung.graph.Edge;
+//import edu.uci.ics.jung.graph.Vertex;
 import xmlInput.util.XMLConstraints;
 import xmlOutput.sbml.SBMLValidator;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.CollectorNode;
@@ -95,7 +100,7 @@ public class SBMLInput {
 
 	private Hashtable<String, String> availableCompartments = null;
 
-	private Hashtable<String, Vertex> availableReactions = null;
+	private Hashtable<String, BiologicalNodeAbstract> availableReactions = null;
 
 	private Hashtable<String, String> xCoordinates = null;
 
@@ -127,7 +132,7 @@ public class SBMLInput {
 		this.availableCompartmentTypes = new Hashtable<String, String>();
 		this.availableSpeciesTypes = new Hashtable<String, String>();
 		this.availableCompartments = new Hashtable<String, String>();
-		this.availableReactions = new Hashtable<String, Vertex>();
+		this.availableReactions = new Hashtable<String, BiologicalNodeAbstract>();
 		this.xCoordinates = new Hashtable<String, String>();
 		this.yCoordinates = new Hashtable<String, String>();
 
@@ -158,12 +163,12 @@ public class SBMLInput {
 		String xml = sb.toString();
 		int errors = -1;
 		String msg = "";
-		System.out.println(xml);
+		//System.out.println(xml);
 		SBMLValidator validator = new SBMLValidator();
 		try {
 			errors = validator.validateSBML(xml, file.getName(), new HashMap());
-
-			System.out.println(errors);
+			
+			System.out.println("SBML Errors: "+errors);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
@@ -290,7 +295,7 @@ public class SBMLInput {
 			MainWindowSingelton.getInstance().updateProjectProperties();
 			MainWindowSingelton.getInstance().updateOptionPanel();
 
-		} catch (ConstraintViolationException ex) {
+		} catch (Exception ex) {
 			System.err.println(" Exception in class SBMLInput.loadSBML() "
 					+ "Jung.Graph.ConstraintVialation: " + ex.getMessage());
 		}
@@ -533,14 +538,15 @@ public class SBMLInput {
 			if (node != null) {
 				double xCoord = 0;
 				double yCoord = 0;
-				this.pathway.addElement(node);
+				
 
 				// put node on right possition
-				Vertex ver = node.getVertex();
+//				Vertex ver = node.getVertex();
 				xCoord = Double.parseDouble(this.xCoordinates.get(id));
 				yCoord = Double.parseDouble(this.yCoordinates.get(id));
-				this.pathway.getGraph().moveVertex(node.getVertex(), xCoord,
-						yCoord);
+				this.pathway.addVertex(node, new Point2D.Double(xCoord, yCoord));
+//				this.pathway.getGraph().moveVertex(node.getVertex(), xCoord,
+//						yCoord);
 			}
 		}
 	}
@@ -585,14 +591,14 @@ public class SBMLInput {
 			from = omFrom.getAttributeValue(speciesQName);
 			to = omTo.getAttributeValue(speciesQName);
 
-			Vertex ver1 = this.availableReactions.get(from);
-			Vertex ver2 = this.availableReactions.get(to);
+			BiologicalNodeAbstract ver1 = this.availableReactions.get(from);
+			BiologicalNodeAbstract ver2 = this.availableReactions.get(to);
 
-			Edge edge = this.pathway.getGraph().createEdge(
-					this.availableReactions.get(from),
-					this.availableReactions.get(to), false);
-			ReactionEdge graphElement = new ReactionEdge(edge, "", "");
-			this.pathway.addElement(graphElement);
+			
+			ReactionEdge edge =new ReactionEdge( "", "", this.availableReactions.get(from),
+					this.availableReactions.get(to));
+//			ReactionEdge graphElement = new ReactionEdge(edge,);
+			this.pathway.addEdge(edge);
 		}
 	}
 
@@ -615,163 +621,133 @@ public class SBMLInput {
 		Object biologicalNode = null;
 
 		if (biologicalElement.equals(Elementdeclerations.enzyme)) {
-			Enzyme e = new Enzyme(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Enzyme e = new Enzyme(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.others)) {
-			Other e = new Other(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Other e = new Other(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.complex)) {
-			Complex e = new Complex(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Complex e = new Complex(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.degraded)) {
-			Degraded e = new Degraded(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Degraded e = new Degraded(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.dna)) {
-			DNA e = new DNA(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			DNA e = new DNA(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement
 				.equals(Elementdeclerations.homodimerFormation)) {
-			HomodimerFormation e = new HomodimerFormation(label, "",
-					this.pathway.getGraph().createNewVertex());
+			HomodimerFormation e = new HomodimerFormation(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.ligandBinding)) {
-			LigandBinding e = new LigandBinding(label, "", this.pathway
-					.getGraph().createNewVertex());
+			LigandBinding e = new LigandBinding(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement
 				.equals(Elementdeclerations.membraneChannel)) {
-			MembraneChannel e = new MembraneChannel(label, "", this.pathway
-					.getGraph().createNewVertex());
+			MembraneChannel e = new MembraneChannel(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement
 				.equals(Elementdeclerations.membraneReceptor)) {
-			Receptor e = new Receptor(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Receptor e = new Receptor(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.mRNA)) {
-			MRNA e = new MRNA(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			MRNA e = new MRNA(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.orthologGroup)) {
-			OrthologGroup e = new OrthologGroup(label, "", this.pathway
-					.getGraph().createNewVertex());
+			OrthologGroup e = new OrthologGroup(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.pathwayMap)) {
-			PathwayMap e = new PathwayMap(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			PathwayMap e = new PathwayMap(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.protein)) {
-			Protein e = new Protein(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Protein e = new Protein(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.receptor)) {
-			Receptor e = new Receptor(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Receptor e = new Receptor(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.sRNA)) {
-			SRNA e = new SRNA(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			SRNA e = new SRNA(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.smallMolecule)) {
-			SmallMolecule e = new SmallMolecule(label, "", this.pathway
-					.getGraph().createNewVertex());
+			SmallMolecule e = new SmallMolecule(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement
 				.equals(Elementdeclerations.solubleReceptor)) {
-			SolubleReceptor e = new SolubleReceptor(label, "", this.pathway
-					.getGraph().createNewVertex());
+			SolubleReceptor e = new SolubleReceptor(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement
 				.equals(Elementdeclerations.transcriptionFactor)) {
-			TranscriptionFactor e = new TranscriptionFactor(label, "",
-					this.pathway.getGraph().createNewVertex());
+			TranscriptionFactor e = new TranscriptionFactor(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.glycan)) {
-			Glycan e = new Glycan(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Glycan e = new Glycan(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.collector)) {
-			CollectorNode e = new CollectorNode(label, "", this.pathway
-					.getGraph().createNewVertex());
+			CollectorNode e = new CollectorNode(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.compound)) {
-			CompoundNode e = new CompoundNode(label, "", this.pathway
-					.getGraph().createNewVertex());
+			CompoundNode e = new CompoundNode(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.disease)) {
-			Disease e = new Disease(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Disease e = new Disease(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.drug)) {
-			Drug e = new Drug(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Drug e = new Drug(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.gene)) {
-			Gene e = new Gene(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Gene e = new Gene(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.go)) {
-			GeneOntology e = new GeneOntology(label, "", this.pathway
-					.getGraph().createNewVertex());
+			GeneOntology e = new GeneOntology(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.reaction)) {
-			Reaction e = new Reaction(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Reaction e = new Reaction(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.matrix)) {
-			Matrix e = new Matrix(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Matrix e = new Matrix(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.factor)) {
-			Factor e = new Factor(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Factor e = new Factor(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.fragment)) {
-			Fragment e = new Fragment(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Fragment e = new Fragment(label, "");
 			biologicalNode = e;
 
 		} else if (biologicalElement.equals(Elementdeclerations.site)) {
-			Site e = new Site(label, "", this.pathway.getGraph()
-					.createNewVertex());
+			Site e = new Site(label, "");
 			biologicalNode = e;
 		}
 
 		BiologicalNodeAbstract bna = (BiologicalNodeAbstract) biologicalNode;
-		this.availableReactions.put(id, bna.getVertex());
+		this.availableReactions.put(id, bna);
 		return bna;
 	}
 }
