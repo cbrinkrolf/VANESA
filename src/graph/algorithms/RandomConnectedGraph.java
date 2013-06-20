@@ -2,6 +2,8 @@ package graph.algorithms;
 
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.MainWindowSingelton;
 
 import java.awt.Point;
 import java.util.HashMap;
@@ -119,9 +121,8 @@ public class RandomConnectedGraph {
 
 			myGraph.normalCentering();
 
-			// MainWindow window = MainWindowSingelton.getInstance();
-			// TODO update OptionPanel
-			// window.updateOptionPanel();
+			 MainWindow window = MainWindowSingelton.getInstance();
+			 window.updateOptionPanel();
 			// window.enable(true);
 			pw.getGraph().changeToGEMLayout();
 		}

@@ -146,11 +146,9 @@ public class RandomGraph {
 			// myGraph.restartVisualizationModel();
 
 			MainWindow window = MainWindowSingelton.getInstance();
-			// TODO
-			 window.updateOptionPanel();
-			window.enable(true);
+			window.updateOptionPanel();
+			//window.enable(true);
 			pw.getGraph().changeToGEMLayout();
-			// myGraph.normalCentering();
 		}
 	}
 }
