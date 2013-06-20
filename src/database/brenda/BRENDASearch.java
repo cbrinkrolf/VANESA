@@ -336,7 +336,7 @@ public class BRENDASearch extends SwingWorker {
 			if (results.size() != 0) {
 				final Iterator it = results.iterator();
 				while (it.hasNext()) {
-
+					//System.out.println("drin");
 					BrendaConnector bc = new BrendaConnector(bar, (String[]) it
 							.next(), mergePW);
 					bc.setDisregarded(bsrw.getDisregarded());

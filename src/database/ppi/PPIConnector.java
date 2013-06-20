@@ -1,6 +1,6 @@
 package database.ppi;
 
-import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.graph.Vertex;
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
@@ -8,6 +8,7 @@ import gui.MainWindowSingelton;
 import gui.ProgressBar;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,17 +86,16 @@ public class PPIConnector extends SwingWorker {
 			String id = i.next().toString();
 			String[] infos = entries2infos.get(id);
 
-			Protein protein = new Protein(infos[0], infos[1],
-					myGraph.createNewVertex());
+			Protein protein = new Protein(infos[0], infos[1]);
 			protein.setAaSequence(infos[2]);
 			if (id.equals(root_id)) {
 				protein.setColor(Color.RED);
 			}
 
 			name2Vertex.put(id, protein);
-			pw.addElement(protein);
+			pw.addVertex(protein, new Point(x*100, y*100));
 
-			myGraph.moveVertex(protein.getVertex(), x * 100, y * 100);
+			//myGraph.moveVertex(protein.getVertex(), x * 100, y * 100);
 
 			if (x > Math.sqrt(entries2infos.size())) {
 				x = 1;
@@ -113,14 +113,13 @@ public class PPIConnector extends SwingWorker {
 		while (it.hasNext()) {
 
 			String[] entry = (String[]) it.next();
-			Vertex first = (name2Vertex.get(entry[0])).getVertex();
-			Vertex second = (name2Vertex.get(entry[1])).getVertex();
+			BiologicalNodeAbstract first = (name2Vertex.get(entry[0]));
+			BiologicalNodeAbstract second = (name2Vertex.get(entry[1]));
 
 			// System.out.println(entry[0] + " " + first+ "   ---   " + entry[1]
 			// + " " +second);
 			if (!adjazenzList.doesEdgeExist(first, second) && (first != second)) {
-				buildEdge(name2Vertex.get(entry[0]), name2Vertex.get(entry[1]),
-						false);
+				buildEdge(first, second, false);
 			}
 		}
 	}
@@ -128,15 +127,14 @@ public class PPIConnector extends SwingWorker {
 	private void buildEdge(BiologicalNodeAbstract one,
 			BiologicalNodeAbstract two, boolean directed) {
 
-		PhysicalInteraction r = new PhysicalInteraction(myGraph.createEdge(
-				one.getVertex(), two.getVertex(), directed), "", "");
+		PhysicalInteraction r = new PhysicalInteraction( "", "", one, two);
 
 		r.setDirected(directed);
 		r.setReference(false);
 		r.setHidden(false);
 		r.setVisible(true);
 
-		pw.addElement(r);
+		pw.addEdge(r);
 	}
 
 	public int getSearchDepth() {

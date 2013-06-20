@@ -37,15 +37,15 @@ public class GraphElementAbstract {
 
 	public GraphElementAbstract(){
 		//find current highest id in the pathway
-		int highest_id=1000;
+		//int highest_id=1000;
 		//System.out.println("current: "+ID);
-		for (Iterator it=new GraphInstance().getPathway().getAllNodes().iterator(); it.hasNext();){
+		/*for (Iterator it=new GraphInstance().getPathway().getAllNodes().iterator(); it.hasNext();){
 			int current=((GraphElementAbstract)it.next()).getID();
 			
 			if (current>highest_id){
 				highest_id=current;		
 			}
-		}
+		}*/
 			//set id to highest current id+1;
 		
 		setID(counter++);

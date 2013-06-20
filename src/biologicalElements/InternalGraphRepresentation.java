@@ -206,7 +206,7 @@ public class InternalGraphRepresentation {
 		return 1;
 	}
 
-	public boolean doesEdgeExist(Vertex from, Vertex to) {
+	public boolean doesEdgeExist(BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 
 		String vertexLabelFrom = from.toString();
 		String vertexLabelTo = to.toString();

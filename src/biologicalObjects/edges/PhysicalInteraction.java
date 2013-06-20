@@ -1,14 +1,15 @@
 package biologicalObjects.edges;
 
 import biologicalElements.Elementdeclerations;
-import edu.uci.ics.jung.graph.Edge;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+//import edu.uci.ics.jung.graph.Edge;
 
 public class PhysicalInteraction extends BiologicalEdgeAbstract{
 
-	public PhysicalInteraction(Edge edge, String label, String name) {
-		super(edge, label, name);
+	public PhysicalInteraction(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
+		super(label, name, from, to);
 		this.setBiologicalElement(Elementdeclerations.physicalInteraction);
-		setAbstract(false);
+		setAbstract(true);
 	}
 
 }
