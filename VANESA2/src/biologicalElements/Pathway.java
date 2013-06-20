@@ -38,6 +38,7 @@ import biologicalObjects.edges.IndirectEffect;
 import biologicalObjects.edges.Inhibition;
 import biologicalObjects.edges.Methylation;
 import biologicalObjects.edges.Phosphorylation;
+import biologicalObjects.edges.PhysicalInteraction;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.edges.ReactionPair;
 import biologicalObjects.edges.Repression;
@@ -398,6 +399,7 @@ public class Pathway {
 //		System.out.println(bea.isAbstract());
 		BiologicalEdgeAbstract newEdge = null;
 		//System.out.println(bea.isAbstract());
+		//System.out.println(bea.getBiologicalElement());
 		if (bea.isAbstract()) {
 
 			if (bea.getBiologicalElement().equals(
@@ -504,6 +506,12 @@ public class Pathway {
 						bea.getFrom(), bea.getTo());
 
 			} else if (bea.getBiologicalElement().equals(
+					Elementdeclerations.physicalInteraction)) {
+
+				newEdge = new PhysicalInteraction(bea.getLabel(), bea.getName(),
+						bea.getFrom(), bea.getTo());
+
+			}else if (bea.getBiologicalElement().equals(
 					Elementdeclerations.pnDiscreteEdge)) {
 				String tokens = "1";
 				boolean wasUndirected = false;

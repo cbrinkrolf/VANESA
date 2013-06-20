@@ -33,6 +33,7 @@ import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.AggregateLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 //import edu.uci.ics.jung.graph.Edge;
@@ -809,7 +810,7 @@ public class MyGraph {
 	}
 
 	public void changeToKKLayout() {// vv.stop();
-		changeToLayout(new KKLayout(g));
+		changeToLayout(new KKLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 	}
 
 	public void changeToFRLayout() {
@@ -825,12 +826,12 @@ public class MyGraph {
 	}
 
 	public void changeToCircleLayout() {
-		if (stateV.getPickedVertices() == null
-				|| stateV.getPickedVertices().size() == 0) {
-			changeToLayout(new CircleLayout(g));
+		if (stateV.getPicked().isEmpty() || stateV.getPicked().size() == 0) {
+			changeToLayout(new CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
+			//System.out.println("v: "+g.getVertexCount());
 		} else {
-			this.clusteringLayout.addSubLayout(new CircularSubLayout(stateV
-					.getPickedVertices(), clusteringLayout));
+			//this.clusteringLayout.addSubLayout(new CircularSubLayout(stateV
+			//		.getPicked(), clusteringLayout));
 		}
 	}
 

@@ -2,6 +2,8 @@ package graph.algorithms;
 
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.MainWindowSingelton;
 
 import java.awt.Point;
 import java.util.HashMap;
@@ -79,9 +81,8 @@ public class RandomBipartiteGraph {
 		myGraph.restartVisualizationModel();
 		pw.getGraph().normalCentering();
 
-		// MainWindow window = MainWindowSingelton.getInstance();
-		// TODO update Panel
-		// window.updateOptionPanel();
+		 MainWindow window = MainWindowSingelton.getInstance();
+		 window.updateOptionPanel();
 		// window.enable(true);
 		pw.getGraph().changeToGEMLayout();
 
