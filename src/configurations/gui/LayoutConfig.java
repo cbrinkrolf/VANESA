@@ -25,9 +25,15 @@ import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
 
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
+import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 
 /*import edu.uci.ics.jung.visualization.FRLayout;
 import edu.uci.ics.jung.visualization.ISOMLayout;
@@ -45,13 +51,17 @@ import gui.RangeSelector;
  */
 public class LayoutConfig extends JPanel implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Variables declaration
 	JButton cancel = new JButton("cancel");
 	JButton defaultButton = new JButton("reset");
 	JButton applyButton = new JButton("apply");
 	JButton[] buttons = { applyButton, defaultButton, cancel };
 	JTabbedPane tabbedPane = new JTabbedPane();
-	private Map<String, ConfigPanel> tabs = new HashMap();
+	private Map<String, ConfigPanel> tabs = new HashMap<String, ConfigPanel>();
 	private JProgressBar progressBar;
 	private static LayoutConfig INSTANCE;
 
@@ -90,7 +100,6 @@ public class LayoutConfig extends JPanel implements ActionListener {
 				+ " settings");
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initComponents() {
 		for (JButton b : this.buttons) {
 			b.addActionListener(this);

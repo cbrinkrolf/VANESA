@@ -13,7 +13,6 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Hashtable;
@@ -39,9 +38,9 @@ import biologicalObjects.edges.ReactionPairEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DAWISNode;
 import biologicalObjects.nodes.KEGGNode;
+import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
-import biologicalObjects.nodes.PathwayMap;
 
 /**
  * @author sebastian and olga
@@ -54,10 +53,8 @@ public class VAMLoutput {
 	private File file = null;
 	private Pathway pw = null;
 	private XMLStreamWriter writer;
-	@SuppressWarnings("unchecked")
-	Hashtable speciesTypeID = new Hashtable();
-	@SuppressWarnings("unchecked")
-	Hashtable compartments = new Hashtable();
+	Hashtable<String, String> speciesTypeID = new Hashtable<String, String>();
+	Hashtable<BiologicalNodeAbstract, String> compartments = new Hashtable<BiologicalNodeAbstract, String>();
 
 	public VAMLoutput(File file, Pathway pathway) throws IOException {
 
@@ -73,15 +70,15 @@ public class VAMLoutput {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void getCompartment() throws XMLStreamException {
 
-		Iterator it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 		writer.writeStartElement("listOfCompartments");
 		int i = 1;
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			bna = it.next();
 			writer.writeStartElement("compartment");
 
 			writer.writeAttribute("id", "com_" + i);
@@ -89,7 +86,7 @@ public class VAMLoutput {
 			writer.writeAttribute("size", "190");
 
 			writer.writeEndElement();
-			compartments.put(bna.getVertex().toString(), "com_" + i);
+			compartments.put(bna, "com_" + i);
 			i++;
 		}
 		writer.writeEndElement();
@@ -109,18 +106,18 @@ public class VAMLoutput {
 
 	private void getAnnotation() throws XMLStreamException {
 
-		Iterator it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 		writer.writeStartElement("annotations");
 		writer.writeStartElement("ListOfSpeciesProperties");
+		BiologicalNodeAbstract bna;
 
 		while (it.hasNext()) {
 
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			bna = it.next();
 
 			writer.writeStartElement("speciesProperties");
-			writer.writeAttribute("id", "speciesProperties_"
-					+ bna.getVertex().toString());
-			writer.writeAttribute("species", bna.getVertex().toString());
+			writer.writeAttribute("id", "speciesProperties_" + bna.getID());
+			writer.writeAttribute("species", bna.getID() + "");
 
 			writer.writeEndElement();
 
@@ -133,9 +130,9 @@ public class VAMLoutput {
 		writer.writeStartElement("project");
 
 		writer.writeStartElement("isPetriNet");
-		writer.writeCData(((Boolean)pw.isPetriNet()).toString());
+		writer.writeCData(((Boolean) pw.isPetriNet()).toString());
 		writer.writeEndElement();
-		
+
 		writer.writeStartElement("title");
 		writer.writeCData(pw.getTitle());
 		writer.writeEndElement();
@@ -180,7 +177,6 @@ public class VAMLoutput {
 		writer.writeEndElement();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void writeKEGGProperties(KEGGNode node) throws XMLStreamException {
 
 		writer.writeStartElement("entryID");
@@ -456,86 +452,88 @@ public class VAMLoutput {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void writeEdges() throws XMLStreamException {
 
-		Iterator it = pw.getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
+
+		BiologicalEdgeAbstract bea;
 
 		while (it.hasNext()) {
-			BiologicalEdgeAbstract bna = (BiologicalEdgeAbstract) it.next();
+			bea = it.next();
+			//System.out.println("Eo: "+bea.getID());
+//			System.out.println(bea.getBiologicalElement());
 			// System.out.println("edge zum speichern " + bna);
 
 			writer.writeStartElement("edge");
 
 			writer.writeStartElement("elementSpecification");
-			writer.writeCData(bna.getBiologicalElement());
+			writer.writeCData(bea.getBiologicalElement());
 			// System.out.println("elementSpecification "
 			// + bna.getBiologicalElement());
 			writer.writeEndElement();
 
-			// System.out.println("getEdge " + bna.getEdge());
+			writer.writeStartElement("id");
+			writer.writeCData(bea.getID() + "");
+			writer.writeEndElement();
+			
 			writer.writeStartElement("from");
-			writer.writeCData(bna.getEdge().getEndpoints().getFirst()
-					.toString());
-			// System.out.println("from "
-			// + bna.getEdge().getEndpoints().getFirst().toString());
+			writer.writeCData(bea.getFrom().getID() + "");
 			writer.writeEndElement();
 
 			writer.writeStartElement("to");
-			writer.writeCData(bna.getEdge().getEndpoints().getSecond()
-					.toString());
+			writer.writeCData(bea.getTo().getID() + "");
 			// System.out.println("to "
 			// + bna.getEdge().getEndpoints().getSecond().toString());
 			writer.writeEndElement();
 
 			writer.writeStartElement("label");
-			writer.writeCData(bna.getLabel());
+			writer.writeCData(bea.getLabel());
 			// System.out.println("label " + bna.getLabel());
 			writer.writeEndElement();
 
 			writer.writeStartElement("name");
-			writer.writeCData(bna.getName());
+			writer.writeCData(bea.getName());
 			// System.out.println("name " + bna.getName());
 			writer.writeEndElement();
 
 			writer.writeStartElement("reference");
-			writer.writeCData(bna.isReference() + "");
+			writer.writeCData(bea.isReference() + "");
 			// System.out.println("reference " + bna.isReference() + "");
 			writer.writeEndElement();
 
 			writer.writeStartElement("comment");
-			writer.writeCData(bna.getComments());
+			writer.writeCData(bea.getComments());
 			// System.out.println("comments " + bna.getComments());
 			writer.writeEndElement();
 
 			writer.writeStartElement("colour");
-			writer.writeAttribute("r", bna.getColor().getRed() + "");
-			writer.writeAttribute("g", bna.getColor().getGreen() + "");
-			writer.writeAttribute("b", bna.getColor().getBlue() + "");
+			writer.writeAttribute("r", bea.getColor().getRed() + "");
+			writer.writeAttribute("g", bea.getColor().getGreen() + "");
+			writer.writeAttribute("b", bea.getColor().getBlue() + "");
 			// System.out.println("color: " + bna.getColor().getRed() + ", "
 			// + bna.getColor().getBlue() + ", "
 			// + bna.getColor().getGreen());
 			writer.writeEndElement();
 
 			writer.writeStartElement("isDirected");
-			writer.writeCData(bna.isDirected() + "");
+			writer.writeCData(bea.isDirected() + "");
 			// System.out.println("isDirected " + bna.isDirected());
 			writer.writeEndElement();
 
-			if (bna instanceof PNEdge) {
-				PNEdge e = (PNEdge) bna;
+			if (bea instanceof PNEdge) {
+				PNEdge e = (PNEdge) bea;
 				writer.writeStartElement("function");
 				writer.writeCData(e.getFunction());
 				writer.writeEndElement();
-				
+
 				writer.writeStartElement("activationProbability");
-				writer.writeCData(e.getActivationProbability()+"");
+				writer.writeCData(e.getActivationProbability() + "");
 				writer.writeEndElement();
 			}
 
-			if (bna.hasKEGGEdge()) {
+			if (bea.hasKEGGEdge()) {
 				writer.writeStartElement("KeggEdge");
-				KEGGEdge edge = bna.getKeggEdge();
+				KEGGEdge edge = bea.getKeggEdge();
 
 				writer.writeStartElement("entry1");
 				writer.writeCData(edge.getEntry1());
@@ -618,9 +616,9 @@ public class VAMLoutput {
 				writer.writeEndElement();
 			}
 
-			if (bna.hasReactionPairEdge()) {
+			if (bea.hasReactionPairEdge()) {
 				writer.writeStartElement("ReactionPairEdge");
-				ReactionPairEdge edge = bna.getReactionPairEdge();
+				ReactionPairEdge edge = bea.getReactionPairEdge();
 
 				writer.writeStartElement("name");
 				writer.writeCData(edge.getName());
@@ -640,10 +638,9 @@ public class VAMLoutput {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void writeAnnotation() throws XMLStreamException {
 
-		Iterator it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 		writer.writeStartElement("annotation");
 		writer.writeStartElement("NetworkEditorSettings");
 
@@ -652,12 +649,13 @@ public class VAMLoutput {
 		// DefaultSettableVertexLocationFunction loc =
 		// pw.getGraph().getVertexLocations();
 
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			bna = it.next();
 
 			writer.writeStartElement("element");
-			writer.writeAttribute("id", bna.getVertex().toString());
+			writer.writeAttribute("id", bna.getID() + "");
 			writer.writeAttribute("ElementID", Integer.toString(bna.getID()));
 			// writer.writeAttribute("class", bna.getClass().getName());
 			// System.out.println(bna.getClass().getName().);
@@ -684,27 +682,29 @@ public class VAMLoutput {
 			}
 			if (bna instanceof RNA) {
 				RNA rna = (RNA) bna;
-				writer.writeAttribute("NtSequence",rna.getNtSequence());
+				writer.writeAttribute("NtSequence", rna.getNtSequence());
 			}
-			if (bna instanceof PathwayMap){
-				PathwayMap map=(PathwayMap) bna;
-				if (map.getPathwayLink()!=null){
-				try {
-					new File("Temp").delete();
-					new VAMLoutput(new File("Temp"), map.getPathwayLink());
-					String s=fileToString("Temp");
-					writer.writeStartElement("pathway");
-					writer.writeCData(s);
-					writer.writeEndElement();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			if (bna instanceof PathwayMap) {
+				PathwayMap map = (PathwayMap) bna;
+				if (map.getPathwayLink() != null) {
+					try {
+						new File("Temp").delete();
+						new VAMLoutput(new File("Temp"), map.getPathwayLink());
+						String s = fileToString("Temp");
+						writer.writeStartElement("pathway");
+						writer.writeCData(s);
+						writer.writeEndElement();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
-			
+
 			writer.writeStartElement("coordinates");
-			Point2D p = pw.getGraph().getClusteringLayout().getLocation(
-					bna.getVertex());
+			Point2D p = pw.getGraph().getVertexLocation(bna);
+			// .getLocation(bna);
+			//System.out.println(pw.getGraph().getVertexLocation(bna));
+			//System.out.println(bna.getID()+" "+p);
 			writer.writeAttribute("x", p.getX() + "");
 			writer.writeAttribute("y", p.getY() + "");
 			writer.writeEndElement();
@@ -748,7 +748,6 @@ public class VAMLoutput {
 				writer.writeEndElement();
 			}
 
-
 			// if (bna.hasKEGGNode()) {
 			// writer.writeStartElement("keggProperties");
 			// writeKEGGProperties(bna.getKEGGnode());
@@ -772,7 +771,6 @@ public class VAMLoutput {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void writeDAWISProperties(DAWISNode node) throws XMLStreamException {
 
 		// System.out.println("dawis node " + node.getObject());
@@ -983,18 +981,19 @@ public class VAMLoutput {
 		writer.writeCData(node.getComplexName());
 		writer.writeEndElement();
 
-		Iterator it;
+		Iterator<String[]> its;
+		String[] elements;
 
 		writer.writeStartElement("allCollectorElements");
-		it = node.getElementsAsVector().iterator();
-		while (it.hasNext()) {
-			String[] element = (String[]) it.next();
+		its = node.getElementsAsVector().iterator();
+		while (its.hasNext()) {
+			elements = its.next();
 			writer.writeStartElement("collectorElementID");
-			writer.writeCData(element[0]);
+			writer.writeCData(elements[0]);
 			writer.writeEndElement();
-			if (element.length > 1) {
+			if (elements.length > 1) {
 				writer.writeStartElement("collectorElementName");
-				writer.writeCData(element[1]);
+				writer.writeCData(elements[1]);
 				writer.writeEndElement();
 			}
 
@@ -1002,9 +1001,10 @@ public class VAMLoutput {
 		writer.writeEndElement();
 
 		writer.writeStartElement("allSynonyms");
-		it = node.getSynonymsAsVector().iterator();
+		Iterator<String> it = node.getSynonymsAsVector().iterator();
+		String element;
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("synonym");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1015,7 +1015,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allDomains");
 		it = node.getDomainsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("domain");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1026,7 +1026,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allFeatures");
 		it = node.getFeaturesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("feature");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1037,7 +1037,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allLocations");
 		it = node.getLocationsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("location");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1048,7 +1048,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allGeneNames");
 		it = node.getGeneNamesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("geneName");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1059,7 +1059,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allPDBs");
 		it = node.getPDBsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("pDB");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1070,7 +1070,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allAccessionnumbers");
 		it = node.getAccessionnumbersAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("accessionnumber");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1081,7 +1081,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allClassifications");
 		it = node.getClassificationAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("classification");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1092,7 +1092,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allSubstrates");
 		it = node.getSubstratesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("substrate");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1103,7 +1103,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allSubstrateNames");
 		it = node.getSubstrateNamesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("substrateName");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1114,7 +1114,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allProducts");
 		it = node.getProductsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("product");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1125,7 +1125,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allProductNames");
 		it = node.getProductNamesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("productName");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1136,7 +1136,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allCofactors");
 		it = node.getCofactorsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("cofactor");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1147,7 +1147,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allCofactorNames");
 		it = node.getCofactorNamesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("cofactorsName");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1158,7 +1158,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allInhibitors");
 		it = node.getInhibitorsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("inhibitor");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1169,7 +1169,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allInhibitorNames");
 		it = node.getInhibitorNamesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("inhibitorName");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1180,7 +1180,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allEffectors");
 		it = node.getEffectorsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("effector");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1191,7 +1191,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allEffectorNames");
 		it = node.getEffectorNamesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("effectorName");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1202,7 +1202,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allOrthologys");
 		it = node.getOrthologyAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("orthology");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1213,7 +1213,7 @@ public class VAMLoutput {
 		writer.writeStartElement("allDBLinks");
 		it = node.getDBLinksAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("dbLink");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1224,7 +1224,7 @@ public class VAMLoutput {
 		writer.writeStartElement("catalysts");
 		it = node.getCatalystsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("catalyst");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1235,7 +1235,7 @@ public class VAMLoutput {
 		writer.writeStartElement("catalystNames");
 		it = node.getCatalystNamesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("catalystName");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1246,7 +1246,7 @@ public class VAMLoutput {
 		writer.writeStartElement("superfamilies");
 		it = node.getSuperfamiliesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("superfamily");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1257,7 +1257,7 @@ public class VAMLoutput {
 		writer.writeStartElement("subfamilies");
 		it = node.getSubfamiliesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("subfamily");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1268,7 +1268,7 @@ public class VAMLoutput {
 		writer.writeStartElement("expressions");
 		it = node.getExpressionsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("expression");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1279,7 +1279,7 @@ public class VAMLoutput {
 		writer.writeStartElement("prozesses");
 		it = node.getProzessesAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("prozess");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1290,7 +1290,7 @@ public class VAMLoutput {
 		writer.writeStartElement("functions");
 		it = node.getFunctionsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("function");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1301,7 +1301,7 @@ public class VAMLoutput {
 		writer.writeStartElement("references");
 		it = node.getReferenceAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("reference");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1312,7 +1312,7 @@ public class VAMLoutput {
 		writer.writeStartElement("motifs");
 		it = node.getMotifsAsVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("motif");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1323,7 +1323,7 @@ public class VAMLoutput {
 		writer.writeStartElement("methods");
 		it = node.getMethodsAsSVector().iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			element = it.next();
 			writer.writeStartElement("method");
 			writer.writeCData(element);
 			writer.writeEndElement();
@@ -1335,8 +1335,9 @@ public class VAMLoutput {
 		Hashtable<String, String> ht = node.getAllIDDBRelationsAsHashtable();
 		Set<String> keys = ht.keySet();
 		it = keys.iterator();
+		String id;
 		while (it.hasNext()) {
-			String id = it.next().toString();
+			id = it.next();
 
 			writer.writeStartElement("key");
 			writer.writeCData(id);
@@ -1354,7 +1355,7 @@ public class VAMLoutput {
 		keys = ht.keySet();
 		it = keys.iterator();
 		while (it.hasNext()) {
-			String id = it.next().toString();
+			id = it.next();
 
 			writer.writeStartElement("key");
 			writer.writeCData(id);
@@ -1384,16 +1385,15 @@ public class VAMLoutput {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void getSpeciesType() throws XMLStreamException {
 
-		Iterator it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 		writer.writeStartElement("listOfSpeciesTypes");
 		int i = 1;
-
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			bna = it.next();
 
 			if (!speciesTypeID.containsKey(bna.getBiologicalElement())) {
 
@@ -1418,25 +1418,22 @@ public class VAMLoutput {
 		writer.writeEndElement();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void getSpecies() throws XMLStreamException {
 
-		Iterator it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 		writer.writeStartElement("listOfSpecies");
 
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
-
+			bna = it.next();
+			//System.out.println("Vo: "+bna.getID());
 			writer.writeStartElement("species");
 
-			writer.writeAttribute("compartment", compartments.get(bna
-					.getVertex().toString())
-					+ "");
-			writer.writeAttribute("id", bna.getVertex().toString());
-			writer.writeAttribute("speciesType", speciesTypeID.get(bna
-					.getBiologicalElement())
-					+ "");
+			writer.writeAttribute("compartment", compartments.get(bna) + "");
+			writer.writeAttribute("id", bna.getID() + "");
+			writer.writeAttribute("speciesType",
+					speciesTypeID.get(bna.getBiologicalElement()) + "");
 			writer.writeAttribute("initialAmount", "1.0");
 			writer.writeAttribute("name", bna.getName());
 			writer.writeEndElement();
@@ -1473,25 +1470,25 @@ public class VAMLoutput {
 		writer.close();
 		out.close();
 	}
-	
-    public static String fileToString(String file) {
-        String result = null;
-        DataInputStream in = null;
-        try {
-            File f = new File(file);
-            byte[] buffer = new byte[(int) f.length()];
-            in = new DataInputStream(new FileInputStream(f));
-            in.readFully(buffer);
-            result = new String(buffer);
-        } catch (IOException e) {
-            throw new RuntimeException("IO problem in fileToString", e);
-        } finally {
-            try {
-                in.close();
-            } catch (IOException e) { 
-            }
-        }
-        return result;
-    }
-	
+
+	public static String fileToString(String file) {
+		String result = null;
+		DataInputStream in = null;
+		try {
+			File f = new File(file);
+			byte[] buffer = new byte[(int) f.length()];
+			in = new DataInputStream(new FileInputStream(f));
+			in.readFully(buffer);
+			result = new String(buffer);
+		} catch (IOException e) {
+			throw new RuntimeException("IO problem in fileToString", e);
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+			}
+		}
+		return result;
+	}
+
 }

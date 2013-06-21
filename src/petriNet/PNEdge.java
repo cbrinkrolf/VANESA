@@ -1,25 +1,19 @@
 package petriNet;
 
+import graph.GraphInstance;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
 
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.woden.wsdl20.ElementDeclaration;
-
-import biologicalElements.Elementdeclerations;
-import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 //import edu.uci.ics.jung.graph.Edge;
 //import edu.uci.ics.jung.graph.decorators.EdgeShape;
-import graph.GraphInstance;
 
 public class PNEdge extends BiologicalEdgeAbstract {
 
@@ -53,6 +47,7 @@ public class PNEdge extends BiologicalEdgeAbstract {
 	public PNEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to, String label, String name, String type,
 			String edgeFunction) {
 		super(edgeFunction, name, from, to);
+		super.setDirected(true);
 		this.type = type;
 		if (type.equals(biologicalElements.Elementdeclerations.inhibitionEdge)
 				|| type.equals(biologicalElements.Elementdeclerations.inhibitor))
@@ -137,11 +132,10 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean validateFunction() {
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		HashSet<GraphElementAbstract> hs = pw.getAllNodes();
+		HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		// System.out.println("nodes: " + hs.size());
 		Iterator it = hs.iterator();
 		ArrayList<String> names = new ArrayList<String>();
@@ -223,7 +217,7 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		StringBuilder mFunction = new StringBuilder(this.function);
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		HashSet<GraphElementAbstract> hs = pw.getAllNodes();
+		HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		Iterator it = hs.iterator();
 		ArrayList<String> names = new ArrayList<String>();
 		HashMap<String, String> mNames = new HashMap<String, String>();
