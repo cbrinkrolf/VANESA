@@ -1,30 +1,20 @@
 package graph.jung.classes;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.Vector;
-
-import javax.swing.event.ChangeEvent;
-import javax.vecmath.Point2d;
 
 import org.apache.commons.collections15.Transformer;
 
-import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -33,62 +23,32 @@ import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.AggregateLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
-//import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
-//import edu.uci.ics.jung.graph.SparseGraph;
-import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.graph.util.Pair;
-import edu.uci.ics.jung.samples.PluggableRendererDemo;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.graph.decorators.EdgeShape;
-//import edu.uci.ics.jung.graph.event.GraphEventType;
-//import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
-//import edu.uci.ics.jung.graph.impl.SparseGraph;
-//import edu.uci.ics.jung.graph.impl.SparseVertex;
-//import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
-//import edu.uci.ics.jung.visualization.AbstractLayout;
-//import edu.uci.ics.jung.visualization.DefaultSettableVertexLocationFunction;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
-//import edu.uci.ics.jung.visualization.FRLayout;
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.PluggableRenderContext;
 import edu.uci.ics.jung.visualization.RenderContext;
-import edu.uci.ics.jung.visualization.VisualizationServer;
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
-//import edu.uci.ics.jung.visualization.ISOMLayout;
-//import edu.uci.ics.jung.visualization.Layout;
-//import edu.uci.ics.jung.visualization.PickSupport;
-//import edu.uci.ics.jung.visualization.PickedState;
-//import edu.uci.ics.jung.visualization.PluggableRenderer;
-//import edu.uci.ics.jung.visualization.ShapePickSupport;
-//import edu.uci.ics.jung.visualization.SpringLayout;
-//import edu.uci.ics.jung.visualization.StaticLayout;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-//import edu.uci.ics.jung.visualization.VisualizationViewer.Paintable;
-//import edu.uci.ics.jung.visualization.contrib.CircleLayout;
-//import edu.uci.ics.jung.visualization.contrib.KKLayout;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.EditingPopupGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.LayoutScalingControl;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
-import edu.uci.ics.jung.visualization.PluggableRenderContext;
-//import edu.uci.ics.jung.visualization.subLayout.SubLayoutDecorator;
 import graph.GraphInstance;
 import graph.algorithms.alignment.AlignmentEdge;
-import graph.eventhandlers.GraphListener;
 import graph.eventhandlers.MyEditingModalGraphMouse;
-import graph.eventhandlers.PickListener;
 import graph.gui.GraphPopUp;
 import graph.jung.graphDrawing.MyEdgeArrowFunction;
 import graph.jung.graphDrawing.MyEdgeDrawPaintFunction;
@@ -102,19 +62,37 @@ import graph.jung.graphDrawing.MyVertexFillPaintFunction;
 import graph.jung.graphDrawing.MyVertexLabelRenderer;
 import graph.jung.graphDrawing.MyVertexStringer;
 import graph.jung.graphDrawing.MyVertexStrokeHighlighting;
-//import graph.jung.graphDrawing.ToolTips;
-//import graph.jung.graphDrawing.VertexShapeSize;
-import graph.jung.graphDrawing.ViewGrid;
-import graph.layouts.CircularSubLayout;
-import graph.layouts.ClusterLayout;
 import graph.layouts.GraphCenter;
 import graph.layouts.gemLayout.GEMLayout;
-import graph.layouts.modularLayout.MDForceLayout;
-import graph.layouts.modularLayout.MDRenderer;
 import gui.HeatgraphLayer;
-import gui.MainWindowSingelton;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
+//import edu.uci.ics.jung.graph.Edge;
+//import edu.uci.ics.jung.graph.SparseGraph;
+//import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.graph.decorators.EdgeShape;
+//import edu.uci.ics.jung.graph.event.GraphEventType;
+//import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
+//import edu.uci.ics.jung.graph.impl.SparseGraph;
+//import edu.uci.ics.jung.graph.impl.SparseVertex;
+//import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
+//import edu.uci.ics.jung.visualization.AbstractLayout;
+//import edu.uci.ics.jung.visualization.DefaultSettableVertexLocationFunction;
+//import edu.uci.ics.jung.visualization.FRLayout;
+//import edu.uci.ics.jung.visualization.ISOMLayout;
+//import edu.uci.ics.jung.visualization.Layout;
+//import edu.uci.ics.jung.visualization.PickSupport;
+//import edu.uci.ics.jung.visualization.PickedState;
+//import edu.uci.ics.jung.visualization.PluggableRenderer;
+//import edu.uci.ics.jung.visualization.ShapePickSupport;
+//import edu.uci.ics.jung.visualization.SpringLayout;
+//import edu.uci.ics.jung.visualization.StaticLayout;
+//import edu.uci.ics.jung.visualization.VisualizationViewer.Paintable;
+//import edu.uci.ics.jung.visualization.contrib.CircleLayout;
+//import edu.uci.ics.jung.visualization.contrib.KKLayout;
+//import edu.uci.ics.jung.visualization.subLayout.SubLayoutDecorator;
+//import graph.jung.graphDrawing.ToolTips;
+//import graph.jung.graphDrawing.VertexShapeSize;
 
 public class MyGraph {
 
@@ -122,7 +100,7 @@ public class MyGraph {
 	private int VisualizationViewerHeigth = 1000;
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseGraph<BiologicalNodeAbstract, BiologicalEdgeAbstract>();
 	private final MyVisualizationViewer vv;
-	private final AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
+	private AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
 	final MyEditingModalGraphMouse graphMouse = new MyEditingModalGraphMouse();
 	private final SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv2;
 	private final ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport;
@@ -352,9 +330,9 @@ public class MyGraph {
 
 	}
 
-	public HashSet<Vertex> getLoadedElements() {
+	/*public HashSet<Vertex> getLoadedElements() {
 		return set;
-	}
+	}*/
 
 	public Dimension getVisibleRect() {
 		return new Dimension(pane.getVisibleRect().getSize());
@@ -364,11 +342,16 @@ public class MyGraph {
 		return vv.getCenter();
 	}
 
-	public void changeGraphLayout(int type) {
+	/*public void changeGraphLayout(int type) {
 		vv.stop();
 		new ClusterLayout(stateV, type, clusteringLayout);
 		vv.restart();
-	}
+	}*/
+	
+	//TODO
+	//public AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> getLayout(){
+		//visualizationModel.getGraphLayout();
+	//}
 
 	public void restartVisualizationModel() {
 		
@@ -388,13 +371,13 @@ public class MyGraph {
 		layout.lock(false);
 	}
 
-	public void markNewVertices() {
+	/*public void markNewVertices() {
 		HashSet<BiologicalNodeAbstract> set = pathway.getNewLoadedNodes();
 		for (Iterator<BiologicalNodeAbstract> it = set.iterator(); it.hasNext();) {
 			Vertex v = it.next().getVertex();
 			vpf.getNewLoadedDrawPaint(v);
 		}
-	}
+	}*/
 
 	public void moveVertex(BiologicalNodeAbstract vertex, double xPos, double yPos) {
 		Point2D p = new Point.Double(xPos, yPos);
@@ -459,41 +442,42 @@ public class MyGraph {
 	}
 
 	// TEST ******************
-	public boolean isVertexPicked(Vertex v) {
+	/*public boolean isVertexPicked(Vertex v) {
 		return stateV.isPicked(v);
 	}
 
 	public boolean isEdgePicked(Edge e) {
 		return stateV.isPicked(e);
-	}
+	}*/
 
 	public Point2D getVertexLocation(BiologicalNodeAbstract vertex) {
-		return layout.transform(vertex);
+		return visualizationModel.getGraphLayout().transform(vertex);
+		//return layout.transform(vertex);
 		// return (Point2D) nodePositions.get(vertex);
 	}
 
 	// TEST ENDE *************
 
-	public void pickVertex(Vertex v) {
-		stateV.pick(v, true);
-	}
+//	public void pickVertex(Vertex v) {
+//		stateV.pick(v, true);
+//	}
+//
+//	public void pickEdge(Edge e) {
+//		stateV.pick(e, true);
+//	}
 
-	public void pickEdge(Edge e) {
-		stateV.pick(e, true);
-	}
-
-	public Edge createEdge(Vertex vertex1, Vertex vertex2, boolean directed) {
-		if (vertex1 != null && vertex2 != null) {
-			Edge newEdge = null;
-			if (directed) {
-				newEdge = new DirectedSparseEdge(vertex1, vertex2);
-			} else {
-				newEdge = new UndirectedSparseEdge(vertex1, vertex2);
-			}
-			return newEdge;
-		}
-		return null;
-	}
+//	public Edge createEdge(Vertex vertex1, Vertex vertex2, boolean directed) {
+//		if (vertex1 != null && vertex2 != null) {
+//			Edge newEdge = null;
+//			if (directed) {
+//				newEdge = new DirectedSparseEdge(vertex1, vertex2);
+//			} else {
+//				newEdge = new UndirectedSparseEdge(vertex1, vertex2);
+//			}
+//			return newEdge;
+//		}
+//		return null;
+//	}
 
 	public void addEdge(BiologicalEdgeAbstract bea) {
 		// Graph gs=vv.getGraphLayout().getGraph();
@@ -649,49 +633,49 @@ public class MyGraph {
 	}
 
 	/** picks all elements in the graph */
-	public void pickAllElements() {
-		for (Vertex v : (Set<Vertex>) this.g.getVertices()) {
-			if (!vv.getPickedState().isPicked(v))
-				vv.getPickedState().pick(v, true);
-		}
-		for (Edge e : (Set<Edge>) this.g.getEdges()) {
-			if (!vv.getPickedState().isPicked(e))
-				vv.getPickedState().pick(e, true);
-		}
-	}
-
-	public void clearPickedElements() {
-		vv.getPickedState().clearPickedEdges();
-		vv.getPickedState().clearPickedVertices();
-		updateGraph();
-	}
-
-	public void clearPickedEdges() {
-		stateV.clearPickedEdges();
-	}
-
-	public Vector<Object> copySelection() {
-
-		Vector<Object> ve = new Vector<Object>();
-		for (Vertex v : (Set<Vertex>) vv.getPickedState().getPickedVertices()) {
-			try {
-				ve.add(v.clone());
-			} catch (CloneNotSupportedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		for (Edge e : (Set<Edge>) vv.getPickedState().getPickedEdges()) {
-			try {
-				ve.add(e.clone());
-			} catch (CloneNotSupportedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		return ve;
-	}
+//	public void pickAllElements() {
+//		for (Vertex v : (Set<Vertex>) this.g.getVertices()) {
+//			if (!vv.getPickedState().isPicked(v))
+//				vv.getPickedState().pick(v, true);
+//		}
+//		for (Edge e : (Set<Edge>) this.g.getEdges()) {
+//			if (!vv.getPickedState().isPicked(e))
+//				vv.getPickedState().pick(e, true);
+//		}
+//	}
+//
+//	public void clearPickedElements() {
+//		vv.getPickedState().clearPickedEdges();
+//		vv.getPickedState().clearPickedVertices();
+//		updateGraph();
+//	}
+//
+//	public void clearPickedEdges() {
+//		stateV.clearPickedEdges();
+//	}
+//
+//	public Vector<Object> copySelection() {
+//
+//		Vector<Object> ve = new Vector<Object>();
+//		for (Vertex v : (Set<Vertex>) vv.getPickedState().getPickedVertices()) {
+//			try {
+//				ve.add(v.clone());
+//			} catch (CloneNotSupportedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//
+//		for (Edge e : (Set<Edge>) vv.getPickedState().getPickedEdges()) {
+//			try {
+//				ve.add(e.clone());
+//			} catch (CloneNotSupportedException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+//		}
+//		return ve;
+//	}
 
 	public void removeSelection() {
 		removeSelectedEdges();
@@ -765,67 +749,68 @@ public class MyGraph {
 		return g.getEdges();
 	}
 
-	public void fillNodePositions() {
-		Iterator it = getAllvertices().iterator();
-		nodePositions.clear();
-		while (it.hasNext()) {
-			Vertex v = (Vertex) it.next();
-			Point2D pos = clusteringLayout.getLocation(v);
-			nodePositions.put(v, pos);
-		}
-	}
-
-	public void changeToLastPositions() {
-		Iterator it = getAllvertices().iterator();
-		while (it.hasNext()) {
-			Vertex v = (Vertex) it.next();
-			moveVertex(v, nodePositions.get(v).getX(), nodePositions.get(v)
-					.getY());
-		}
-	}
-
-	public VisualizationViewer getVisualizationPaneCopy(Dimension size) {
-
-		SubLayoutDecorator clusteringLayout2 = new SubLayoutDecorator(
-				vv.getGraphLayout());
-
-		VisualizationModel copyModel = new DefaultVisualizationModel(
-				clusteringLayout2, size);
-		VisualizationViewer copyVV = new VisualizationViewer(copyModel, size);
-		pr_compare = copyVV.getRenderContext();
-		pr_compare.setVertexStrokeFunction(vsh);
-		pr_compare.setEdgeShapeFunction(new EdgeShape.QuadCurve());
-		pr_compare.setVertexStringer(vertexStringer);
-		pr_compare.setVertexShapeFunction(vssa);
-		pr_compare.setEdgeStringer(edgeStringer);
-		pr_compare.setVertexPaintFunction(vpf);
-		pr_compare.setEdgeStrokeFunction(esh);
-		pr_compare.setEdgePaintFunction(epf);
-
-		copyVV.setGraphMouse(graphMouse);
-		PickSupport copyPick = new ShapePickSupport();
-		copyVV.setPickSupport(copyPick);
-
-		return copyVV;
-	}
+//	public void fillNodePositions() {
+//		Iterator it = getAllvertices().iterator();
+//		nodePositions.clear();
+//		while (it.hasNext()) {
+//			Vertex v = (Vertex) it.next();
+//			Point2D pos = clusteringLayout.getLocation(v);
+//			nodePositions.put(v, pos);
+//		}
+//	}
+//
+//	public void changeToLastPositions() {
+//		Iterator it = getAllvertices().iterator();
+//		while (it.hasNext()) {
+//			Vertex v = (Vertex) it.next();
+//			moveVertex(v, nodePositions.get(v).getX(), nodePositions.get(v)
+//					.getY());
+//		}
+//	}
+//
+//	public VisualizationViewer getVisualizationPaneCopy(Dimension size) {
+//
+//		SubLayoutDecorator clusteringLayout2 = new SubLayoutDecorator(
+//				vv.getGraphLayout());
+//
+//		VisualizationModel copyModel = new DefaultVisualizationModel(
+//				clusteringLayout2, size);
+//		VisualizationViewer copyVV = new VisualizationViewer(copyModel, size);
+//		pr_compare = copyVV.getRenderContext();
+//		pr_compare.setVertexStrokeFunction(vsh);
+//		pr_compare.setEdgeShapeFunction(new EdgeShape.QuadCurve());
+//		pr_compare.setVertexStringer(vertexStringer);
+//		pr_compare.setVertexShapeFunction(vssa);
+//		pr_compare.setEdgeStringer(edgeStringer);
+//		pr_compare.setVertexPaintFunction(vpf);
+//		pr_compare.setEdgeStrokeFunction(esh);
+//		pr_compare.setEdgePaintFunction(epf);
+//
+//		copyVV.setGraphMouse(graphMouse);
+//		PickSupport copyPick = new ShapePickSupport();
+//		copyVV.setPickSupport(copyPick);
+//
+//		return copyVV;
+//	}
 
 	public void changeToKKLayout() {// vv.stop();
 		changeToLayout(new KKLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 	}
 
 	public void changeToFRLayout() {
-		changeToLayout(new FRLayout(g));
+		changeToLayout(new FRLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 	}
 
 	public void changeToISOMLayout() {
-		changeToLayout(new ISOMLayout(g));
+		changeToLayout(new ISOMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 	}
 
 	public void changeToSpringLayout() {
-		changeToLayout(new SpringLayout(g));
+		changeToLayout(new SpringLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 	}
 
 	public void changeToCircleLayout() {
+		
 		if (stateV.getPicked().isEmpty() || stateV.getPicked().size() == 0) {
 			changeToLayout(new CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 			//System.out.println("v: "+g.getVertexCount());
@@ -836,7 +821,7 @@ public class MyGraph {
 	}
 
 	public void changeToStaticLayout() {
-		changeToLayout(new StaticLayout(g));
+		changeToLayout(new StaticLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 	}
 
 	public void changeToGEMLayout() {
@@ -844,22 +829,23 @@ public class MyGraph {
 
 	}
 
-	public void changeToMDForceLayout() {
-		if (stateV.getPickedVertices() == null
-				|| stateV.getPickedVertices().size() == 0) {
-			MDRenderer.render(g, pathway);
-			changeToLayout(new MDForceLayout(g, this.pathway,
-					pr.getVertexFontFunction(), vv.getGraphics()));
-		} else {
-			MDForceLayout sub = new MDForceLayout(g,
-					stateV.getPickedVertices(), this.clusteringLayout,
-					this.pathway, pr.getVertexFontFunction(), vv.getGraphics());
-			this.clusteringLayout.addSubLayout(sub);
-		}
-	}
+//	public void changeToMDForceLayout() {
+//		if (stateV.getPickedVertices() == null
+//				|| stateV.getPickedVertices().size() == 0) {
+//			MDRenderer.render(g, pathway);
+//			changeToLayout(new MDForceLayout(g, this.pathway,
+//					pr.getVertexFontFunction(), vv.getGraphics()));
+//		} else {
+//			MDForceLayout sub = new MDForceLayout(g,
+//					stateV.getPickedVertices(), this.clusteringLayout,
+//					this.pathway, pr.getVertexFontFunction(), vv.getGraphics());
+//			this.clusteringLayout.addSubLayout(sub);
+//		}
+//	}
 
-	private void changeToLayout(Layout layout) {
-
+	private void changeToLayout(AbstractLayout<BiologicalNodeAbstract,BiologicalEdgeAbstract> layout) {
+		
+		this.layout = layout;
 		//this.clusteringLayout.removeAllSubLayouts();
 		Dimension oldDim = clusteringLayout.getSize();//getCurrentSize();
 //		vv.setLayout(new BorderLayout());
@@ -922,38 +908,38 @@ public class MyGraph {
 		normalCentering(vv2);
 	}
 
-	public Point2D findNearestFreeVertexPosition(
-			double startSearchCoordinatesX, double startSearchCoordinatesY,
-			double minDistance) {
-		double radiusIncrease = 5;
-		double degreeIncrease = 5;
-
-		double radius = 0;
-		while (true) {
-			for (int i = 0; i < 365; i += degreeIncrease) {
-				Point2D coords = new Point();
-				coords.setLocation(
-						startSearchCoordinatesX + radius
-								* Math.sin(Math.toRadians(i)),
-						startSearchCoordinatesY + radius
-								* Math.cos(Math.toRadians(i)));
-				boolean positionOK = true;
-
-				for (Iterator it = graphInstance.getPathway().getAllNodes()
-						.iterator(); it.hasNext();) {
-					BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it
-							.next();
-					Point2D p = getVertexLocation(bna.getVertex());
-					if (coords.distance(p) < minDistance)
-						positionOK = false;
-				}
-				if (positionOK)
-					return coords;
-			}
-			radius += radiusIncrease;
-		}
-
-	}
+//	public Point2D findNearestFreeVertexPosition(
+//			double startSearchCoordinatesX, double startSearchCoordinatesY,
+//			double minDistance) {
+//		double radiusIncrease = 5;
+//		double degreeIncrease = 5;
+//
+//		double radius = 0;
+//		while (true) {
+//			for (int i = 0; i < 365; i += degreeIncrease) {
+//				Point2D coords = new Point();
+//				coords.setLocation(
+//						startSearchCoordinatesX + radius
+//								* Math.sin(Math.toRadians(i)),
+//						startSearchCoordinatesY + radius
+//								* Math.cos(Math.toRadians(i)));
+//				boolean positionOK = true;
+//
+//				for (Iterator it = graphInstance.getPathway().getAllNodes()
+//						.iterator(); it.hasNext();) {
+//					BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it
+//							.next();
+//					Point2D p = getVertexLocation(bna.getVertex());
+//					if (coords.distance(p) < minDistance)
+//						positionOK = false;
+//				}
+//				if (positionOK)
+//					return coords;
+//			}
+//			radius += radiusIncrease;
+//		}
+//
+//	}
 
 	public void fitScaleOfViewer(VisualizationViewer viewer) {
 
@@ -1083,19 +1069,19 @@ public class MyGraph {
 
 	}
 
-	public void updateElementLabel(Object element) {
-
-		GraphElementAbstract geb = (GraphElementAbstract) graphInstance
-				.getPathwayElement(element);
-		if (geb.isVertex()) {
-			vertexStringer.renameVertex(graphInstance
-					.getPathwayElement(element));
-		} else if (geb.isEdge()) {
-			// getEdgeStringer().renameEdge(
-			// graphInstance.getPathwayElement(element));
-		}
-		MainWindowSingelton.getInstance().updateElementTree();
-	}
+//	public void updateElementLabel(Object element) {
+//
+//		GraphElementAbstract geb = (GraphElementAbstract) graphInstance
+//				.getPathwayElement(element);
+//		if (geb.isVertex()) {
+//			vertexStringer.renameVertex(graphInstance
+//					.getPathwayElement(element));
+//		} else if (geb.isEdge()) {
+//			// getEdgeStringer().renameEdge(
+//			// graphInstance.getPathwayElement(element));
+//		}
+//		MainWindowSingelton.getInstance().updateElementTree();
+//	}
 
 	/*
 	 * public void updateAllNodeLabels() {
@@ -1113,24 +1099,24 @@ public class MyGraph {
 	 * }
 	 */
 
-	public boolean areGraphElementsSelected() {
-		if (vv.getPickedState().getSelectedObjects() != null) {
-			return true;
-		}
-		return false;
-	}
-
-	public void enableGraphTheory() {
-
-		stateV.clearPickedEdges();
-		stateV.clearPickedVertices();
-		vdpf.setGraphTheory(true);
-		vfpf.setGraphTheory(true);
-		vsh.setGraphTheory(true);
-		esh.setGraphTheory(true);
-		edpf.setGraphTheory(true);
-		efpf.setGraphTheory(true);
-	}
+//	public boolean areGraphElementsSelected() {
+//		if (vv.getPickedState().getSelectedObjects() != null) {
+//			return true;
+//		}
+//		return false;
+//	}
+//
+//	public void enableGraphTheory() {
+//
+//		stateV.clearPickedEdges();
+//		stateV.clearPickedVertices();
+//		vdpf.setGraphTheory(true);
+//		vfpf.setGraphTheory(true);
+//		vsh.setGraphTheory(true);
+//		esh.setGraphTheory(true);
+//		edpf.setGraphTheory(true);
+//		efpf.setGraphTheory(true);
+//	}
 
 	public void disableGraphTheory() {
 
@@ -1160,27 +1146,27 @@ public class MyGraph {
 		vv.repaint();
 	}
 
-	public void setVertexShapeSize(VertexShapeSize vss) {
-
-		this.vssa = vss;
-
-	}
-
-	/** sucht eine Verbindungskante zwischen zwei Elementen */
-	public Object getEdgeBetween(Vertex start, Vertex end) {
-		for (Object obj : g.getEdges()) {
-			Edge e = (Edge) obj;
-
-			if (((e.getEndpoints().getFirst().equals(start)) && (e
-					.getEndpoints().getSecond().equals(end))) || // oder
-																	// andersrum
-					((e.getEndpoints().getFirst().equals(end)) && (e
-							.getEndpoints().getSecond().equals(start)))) {
-				return e;
-			}
-		}
-		return null;
-	}
+//	public void setVertexShapeSize(VertexShapeSize vss) {
+//
+//		this.vssa = vss;
+//
+//	}
+//
+//	/** sucht eine Verbindungskante zwischen zwei Elementen */
+//	public Object getEdgeBetween(Vertex start, Vertex end) {
+//		for (Object obj : g.getEdges()) {
+//			Edge e = (Edge) obj;
+//
+//			if (((e.getEndpoints().getFirst().equals(start)) && (e
+//					.getEndpoints().getSecond().equals(end))) || // oder
+//																	// andersrum
+//					((e.getEndpoints().getFirst().equals(end)) && (e
+//							.getEndpoints().getSecond().equals(start)))) {
+//				return e;
+//			}
+//		}
+//		return null;
+//	}
 
 	public MyEdgeStringer getEdgeStringer() {
 		return edgeStringer;

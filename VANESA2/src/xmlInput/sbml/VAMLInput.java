@@ -1,6 +1,7 @@
 package xmlInput.sbml;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,6 +43,7 @@ import biologicalObjects.edges.Inhibition;
 import biologicalObjects.edges.KEGGEdge;
 import biologicalObjects.edges.Methylation;
 import biologicalObjects.edges.Phosphorylation;
+import biologicalObjects.edges.PhysicalInteraction;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.edges.ReactionPair;
 import biologicalObjects.edges.ReactionPairEdge;
@@ -81,7 +83,7 @@ import biologicalObjects.nodes.Site;
 import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
-import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.graph.Vertex;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
@@ -95,7 +97,7 @@ import gui.RangeSelector;
 public class VAMLInput {
 
 	private File file = null;
-	private final Hashtable<String, Vertex> mapping = new Hashtable<String, Vertex>();
+	private final Hashtable<Integer, BiologicalNodeAbstract> mapping = new Hashtable<Integer, BiologicalNodeAbstract>();
 	GraphContainer con = ContainerSingelton.getInstance();
 
 	public VAMLInput(File file) throws IOException, XMLStreamException {
@@ -113,7 +115,6 @@ public class VAMLInput {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void addProjectDetails(Pathway pw, OMElement projectEL) {
 
 		Iterator<OMElement> it = projectEL.getChildren();
@@ -158,7 +159,6 @@ public class VAMLInput {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void addRange(Pathway pw, OMElement rangeElement) {
 		Map<String, String> attrs = new HashMap<String, String>();
 		for (Iterator it = rangeElement.getAllAttributes(); it.hasNext();) {
@@ -168,27 +168,27 @@ public class VAMLInput {
 		RangeSelector.getInstance().addRangesInMyGraph(pw.getGraph(), attrs);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void addEdge(Pathway pw, OMElement edgeElement) {
-
+		
+		
 		Iterator<OMElement> it = edgeElement.getChildren();
 
 		String elementSpecification = "";
+		Integer id =0;
 		String name = "";
 		String label = "";
-		String from = "";
-		String to = "";
+		Integer from = 0;
+		Integer to = 0;
 		String reference = "";
 		String directed = "";
 		String comment = "";
 		Color color = null;
-		Object graphElement = null;
+		BiologicalEdgeAbstract bea;
 		KEGGEdge keggEdge = null;
 		ReactionPairEdge rpEdge = null;
 		Double passingTokens = 0.0;
 		String function = "";
 		Double activationProb = 0.0;
-		
 
 		// String sequence = "";
 
@@ -198,10 +198,12 @@ public class VAMLInput {
 
 			if (element.getLocalName().equals("elementSpecification")) {
 				elementSpecification = element.getText();
-			} else if (element.getLocalName().equals("from")) {
-				from = element.getText();
+			} else if (element.getLocalName().equals("id")) {
+				id = Integer.parseInt(element.getText());
+			}else if (element.getLocalName().equals("from")) {
+				from = Integer.parseInt(element.getText());
 			} else if (element.getLocalName().equals("to")) {
-				to = element.getText();
+				to = Integer.parseInt(element.getText());
 			} else if (element.getLocalName().equals("comment")) {
 				comment = element.getText();
 			} else if (element.getLocalName().equals("label")) {
@@ -297,188 +299,169 @@ public class VAMLInput {
 				activationProb = Double.valueOf(element.getText());
 		}
 
-		boolean isDirected = false;
-		if (directed.equals("true")) {
-			isDirected = true;
-		}
-
 		if (mapping.containsKey(from) && mapping.containsKey(to)) {
+			
+			boolean isDirected = false;
+			if (directed.equals("true")) {
+				isDirected = true;
+			}
 
 			if (elementSpecification.equals(Elementdeclerations.compoundEdge)) {
 
-				graphElement = new Compound(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Compound(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
+					.equals(Elementdeclerations.physicalInteraction)) {
+
+				bea = new PhysicalInteraction(label, name, mapping.get(from),
+						mapping.get(to));
+			}else if (elementSpecification
 					.equals(Elementdeclerations.hiddenCompoundEdge)) {
 
-				graphElement = new HiddenCompound(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new HiddenCompound(label, name, mapping.get(from),
+						mapping.get(to));
 			} else if (elementSpecification
 					.equals(Elementdeclerations.reactionEdge)) {
 
 				// System.out.println("reaction edge");
-				graphElement = new ReactionEdge(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new ReactionEdge(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.reactionPair)) {
 
 				// System.out.println("reaction pair");
-				graphElement = new ReactionPair(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new ReactionPair(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.activationEdge)) {
 
-				graphElement = new Activation(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Activation(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.inhibitionEdge)) {
 
-				graphElement = new Inhibition(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Inhibition(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.expressionEdge)) {
 
-				graphElement = new Expression(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Expression(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.repressionEdge)) {
 
-				graphElement = new Repression(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Repression(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.indirectEffectEdge)) {
 
-				graphElement = new IndirectEffect(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new IndirectEffect(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.stateChangeEdge)) {
 
-				graphElement = new StateChange(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new StateChange(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.bindingEdge)) {
 
-				graphElement = new BindingAssociation(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new BindingAssociation(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.dissociationEdge)) {
 
-				graphElement = new Dissociation(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Dissociation(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.phosphorylationEdge)) {
 
-				graphElement = new Phosphorylation(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Phosphorylation(label, name, mapping.get(from),
+						mapping.get(to));
 			} else if (elementSpecification
 					.equals(Elementdeclerations.dephosphorylationEdge)) {
 
-				graphElement = new Dephosphorylation(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Dephosphorylation(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.glycosylationEdge)) {
 
-				graphElement = new Glycosylation(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Glycosylation(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.ubiquitinationEdge)) {
 
-				graphElement = new Ubiquitination(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Ubiquitination(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.methylationEdge)) {
 
-				graphElement = new Methylation(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
-						name);
+				bea = new Methylation(label, name, mapping.get(from),
+						mapping.get(to));
 
 			} else if (elementSpecification
 					.equals(Elementdeclerations.pnDiscreteEdge)) {
-				graphElement = new PNEdge(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
+				bea = new PNEdge(mapping.get(from), mapping.get(to), label,
 						name, "PN Discrete Edge", function);
-				((PNEdge) graphElement)
-						.setActivationProbability(activationProb);
+				((PNEdge) bea).setActivationProbability(activationProb);
 			} else if (elementSpecification
 					.equals(Elementdeclerations.pnContinuousEdge)) {
-				graphElement = new PNEdge(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
+				bea = new PNEdge(mapping.get(from), mapping.get(to), label,
 						name, "PN Continues Edge", function);
-				((PNEdge) graphElement)
-						.setActivationProbability(activationProb);
+				((PNEdge) bea).setActivationProbability(activationProb);
 			} else if (elementSpecification
 					.equals(Elementdeclerations.pnInhibitionEdge)) {
-				graphElement = new PNEdge(pw.getGraph().createEdge(
-						mapping.get(from), mapping.get(to), isDirected), label,
+				bea = new PNEdge(mapping.get(from), mapping.get(to), label,
 						name, "PN Inhibition Edge", function);
-				((PNEdge) graphElement)
-						.setActivationProbability(activationProb);
+				((PNEdge) bea).setActivationProbability(activationProb);
 			}
 
 			else {
 
-				graphElement = new BiologicalEdgeAbstract(pw.getGraph()
-						.createEdge(mapping.get(from), mapping.get(to),
-								isDirected), label, name);
+				bea = new BiologicalEdgeAbstract(label, name,
+						mapping.get(from), mapping.get(to));
 
 			}
-
-			((BiologicalEdgeAbstract) graphElement).setDirected(isDirected);
-			((BiologicalEdgeAbstract) graphElement).setColor(color);
-			((BiologicalEdgeAbstract) graphElement).setComments(comment);
+			bea.setID(id);
+			bea.setDirected(isDirected);
+			bea.setColor(color);
+			bea.setComments(comment);
 
 			if (reference.equals("true")) {
-				((BiologicalEdgeAbstract) graphElement).setReference(true);
+				bea.setReference(true);
 			} else {
-				((BiologicalEdgeAbstract) graphElement).setReference(false);
+				bea.setReference(false);
 			}
 
 			if (keggEdge != null) {
-				((BiologicalEdgeAbstract) graphElement).setKeggEdge(keggEdge);
-				((BiologicalEdgeAbstract) graphElement).hasKEGGEdge(true);
+				bea.setKeggEdge(keggEdge);
+				bea.hasKEGGEdge(true);
 			}
 			if (rpEdge != null) {
-				((BiologicalEdgeAbstract) graphElement)
-						.setReactionPairEdge(rpEdge);
-				((BiologicalEdgeAbstract) graphElement)
-						.hasReactionPairEdge(true);
+				bea.setReactionPairEdge(rpEdge);
+				bea.hasReactionPairEdge(true);
 			}
-			pw.addElement(graphElement);
+			
+			//System.out.println("vor: "+bea.getID());
+			//System.out.println(elementSpecification);
+			pw.addEdge(bea);
 		}
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private KEGGNode addKeggNode(OMElement keggElement) {
 
 		KEGGNode node = new KEGGNode();
@@ -639,12 +622,11 @@ public class VAMLInput {
 		return node;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void addNetworkNode(Pathway pw, OMElement node) {
 
 		Iterator<OMElement> it = node.getChildren();
 
-		String vertexID = node.getAttributeValue(new QName("id"));
+		Integer vertexID = Integer.parseInt(node.getAttributeValue(new QName("id")));
 
 		String biologicalElement = "";
 		String label = "";
@@ -657,17 +639,19 @@ public class VAMLInput {
 		Double y_coord = 0.0;
 
 		Boolean isReference = false;
-		Object obj = null;
+		BiologicalNodeAbstract bna = null;
 		KEGGNode keggNode = null;
 		DAWISNode dawisNode = null;
 
 		String aaSequence = "";
 		String pathway = null;
 
+		OMElement element;
+
 		while (it.hasNext()) {
 
-			OMElement element = it.next();
-			
+			element = it.next();
+
 			if (element.getLocalName().equals("pathway"))
 				pathway = element.getText();
 			else if (element.getLocalName().equals("coordinates")) {
@@ -706,216 +690,149 @@ public class VAMLInput {
 		}
 
 		if (biologicalElement.equals(Elementdeclerations.enzyme)) {
-			Enzyme e = new Enzyme(label, name, pw.getGraph().createNewVertex());
-			obj = e;
-
+			bna = new Enzyme(label, name);
 		} else if (biologicalElement.equals(Elementdeclerations.others)) {
-			Other e = new Other(label, name, pw.getGraph().createNewVertex());
-			obj = e;
+			bna = new Other(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.complex)) {
-			Complex e = new Complex(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new Complex(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.degraded)) {
-			Degraded e = new Degraded(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new Degraded(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.dna)) {
-			DNA e = new DNA(label, name, pw.getGraph().createNewVertex());
-			obj = e;
+			bna = new DNA(label, name);
 
 		} else if (biologicalElement
 				.equals(Elementdeclerations.homodimerFormation)) {
-			HomodimerFormation e = new HomodimerFormation(label, name, pw
-					.getGraph().createNewVertex());
-			obj = e;
+			bna = new HomodimerFormation(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.ligandBinding)) {
-			LigandBinding e = new LigandBinding(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new LigandBinding(label, name);
 
 		} else if (biologicalElement
 				.equals(Elementdeclerations.membraneChannel)) {
-			MembraneChannel e = new MembraneChannel(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new MembraneChannel(label, name);
 
 		} else if (biologicalElement
 				.equals(Elementdeclerations.membraneReceptor)) {
-			Receptor e = new Receptor(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new Receptor(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.mRNA)) {
-			MRNA e = new MRNA(label, name, pw.getGraph().createNewVertex());
-			e.setNtSequence(node.getAttributeValue(new QName("NtSequence")));
-			obj = e;
+			bna = new MRNA(label, name);
+			((MRNA) bna).setNtSequence(node.getAttributeValue(new QName(
+					"NtSequence")));
 
 		} else if (biologicalElement.equals(Elementdeclerations.orthologGroup)) {
-			OrthologGroup e = new OrthologGroup(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new OrthologGroup(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.pathwayMap)) {
-			PathwayMap e = new PathwayMap(label, name, pw.getGraph()
-					.createNewVertex());
+			bna = new PathwayMap(label, name);
 			if (pathway != null) {
 				try {
 					new File("Temp").delete();
-					FileWriter w = new FileWriter(new File("Temp"),false);
+					FileWriter w = new FileWriter(new File("Temp"), false);
 					w.write(pathway);
 					w.close();
 					File file = new File("Temp");
 					Pathway newPW = new Pathway(label);
 					new VAMLInput(file, newPW);
-					e.setPathwayLink(newPW);
+					((PathwayMap) bna).setPathwayLink(newPW);
 					newPW.setParent(pw);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
 
-			obj = e;
-
 		} else if (biologicalElement.equals(Elementdeclerations.inhibitor)) {
-			Inhibitor e = new Inhibitor(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new Inhibitor(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.protein)) {
-			Protein e = new Protein(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new Protein(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.receptor)) {
-			Receptor e = new Receptor(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new Receptor(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.sRNA)) {
-			SRNA e = new SRNA(label, name, pw.getGraph().createNewVertex());
-			e.setNtSequence(node.getAttributeValue(new QName("NtSequence")));
-			obj = e;
+			bna = new SRNA(label, name);
+			((SRNA) bna).setNtSequence(node.getAttributeValue(new QName(
+					"NtSequence")));
 
 		} else if (biologicalElement.equals(Elementdeclerations.smallMolecule)) {
-			SmallMolecule e = new SmallMolecule(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new SmallMolecule(label, name);
 
 		} else if (biologicalElement
 				.equals(Elementdeclerations.solubleReceptor)) {
-			SolubleReceptor e = new SolubleReceptor(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new SolubleReceptor(label, name);
 
 		} else if (biologicalElement
 				.equals(Elementdeclerations.transcriptionFactor)) {
-			TranscriptionFactor e = new TranscriptionFactor(label, name, pw
-					.getGraph().createNewVertex());
-			obj = e;
-
+			bna = new TranscriptionFactor(label, name);
 		} else if (biologicalElement.equals(Elementdeclerations.glycan)) {
-			Glycan e = new Glycan(label, name, pw.getGraph().createNewVertex());
-			obj = e;
-
+			bna = new Glycan(label, name);
 		} else if (biologicalElement.equals(Elementdeclerations.collector)) {
-			CollectorNode e = new CollectorNode(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
-
+			bna = new CollectorNode(label, name);
 		} else if (biologicalElement.equals(Elementdeclerations.compound)) {
-			CompoundNode e = new CompoundNode(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
-
+			bna = new CompoundNode(label, name);
 		} else if (biologicalElement.equals(Elementdeclerations.disease)) {
-			Disease e = new Disease(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new Disease(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.drug)) {
-			Drug e = new Drug(label, name, pw.getGraph().createNewVertex());
-			obj = e;
+			bna = new Drug(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.gene)) {
-			Gene e = new Gene(label, name, pw.getGraph().createNewVertex());
-			obj = e;
+			bna = new Gene(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.go)) {
-			GeneOntology e = new GeneOntology(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new GeneOntology(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.reaction)) {
-			Reaction e = new Reaction(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new Reaction(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.matrix)) {
-			Matrix e = new Matrix(label, name, pw.getGraph().createNewVertex());
-			obj = e;
+			bna = new Matrix(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.factor)) {
-			Factor e = new Factor(label, name, pw.getGraph().createNewVertex());
-			obj = e;
+			bna = new Factor(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.fragment)) {
-			Fragment e = new Fragment(label, name, pw.getGraph()
-					.createNewVertex());
-			obj = e;
+			bna = new Fragment(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.site)) {
-			Site e = new Site(label, name, pw.getGraph().createNewVertex());
-			obj = e;
+			bna = new Site(label, name);
 
 		} else if (biologicalElement.equals("Discrete Place")) {
-			Place p = new Place(label, name, pw.getGraph().createNewVertex(),
-					1.0, true);
+			bna = new Place(label, name, 1.0, true);
 			String token = node.getAttributeValue(new QName("token"));
 			String tokenMin = node.getAttributeValue(new QName("tokenMin"));
 			String tokenMax = node.getAttributeValue(new QName("tokenMax"));
 			String tokenStart = node.getAttributeValue(new QName("tokenStart"));
-			p.setToken(Double.parseDouble(token));
-			p.setTokenMin(Double.parseDouble(tokenMin));
-			p.setTokenMax(Double.parseDouble(tokenMax));
-			p.setTokenStart(Double.parseDouble(tokenStart));
-			p.setDiscrete(true);
-			obj = p;
+			((Place)bna).setToken(Double.parseDouble(token));
+			((Place)bna).setTokenMin(Double.parseDouble(tokenMin));
+			((Place)bna).setTokenMax(Double.parseDouble(tokenMax));
+			((Place)bna).setTokenStart(Double.parseDouble(tokenStart));
+			((Place)bna).setDiscrete(true);
 		} else if (biologicalElement.equals("Continuous Place")) {
-			Place p = new Place(label, name, pw.getGraph().createNewVertex(),
-					1.0, false);
+			bna = new Place(label, name, 1.0, false);
 			String token = node.getAttributeValue(new QName("token"));
 			String tokenMin = node.getAttributeValue(new QName("tokenMin"));
 			String tokenMax = node.getAttributeValue(new QName("tokenMax"));
 			String tokenStart = node.getAttributeValue(new QName("tokenStart"));
-			p.setToken(Double.parseDouble(token));
-			p.setTokenMin(Double.parseDouble(tokenMin));
-			p.setTokenMax(Double.parseDouble(tokenMax));
-			p.setTokenStart(Double.parseDouble(tokenStart));
-			p.setDiscrete(false);
-			obj = p;
+			((Place)bna).setToken(Double.parseDouble(token));
+			((Place)bna).setTokenMin(Double.parseDouble(tokenMin));
+			((Place)bna).setTokenMax(Double.parseDouble(tokenMax));
+			((Place)bna).setTokenStart(Double.parseDouble(tokenStart));
+			((Place)bna).setDiscrete(false);
 		} else if (biologicalElement.equals("Discrete Transition")) {
-			DiscreteTransition t = new DiscreteTransition(label, name, pw
-					.getGraph().createNewVertex());
+			bna = new DiscreteTransition(label, name);
 			String delay = node.getAttributeValue(new QName("delay"));
-			t.setDelay(Double.parseDouble(delay));
-			obj = t;
+			((DiscreteTransition)bna).setDelay(Double.parseDouble(delay));
 		} else if (biologicalElement.equals("Continuous Transition")) {
-			ContinuousTransition t = new ContinuousTransition(label, name, pw
-					.getGraph().createNewVertex());
-			obj = t;
+			bna = new ContinuousTransition(label, name);
 		} else if (biologicalElement.equals("Stochastic Transition")) {
-			StochasticTransition t = new StochasticTransition(label, name, pw
-					.getGraph().createNewVertex());
-			t.setDistribution(node.getAttributeValue(new QName("distribution")));
-			obj = t;
+			bna = new StochasticTransition(label, name);
+			((StochasticTransition)bna).setDistribution(node.getAttributeValue(new QName("distribution")));
 		}
-
-		BiologicalNodeAbstract bna = (BiologicalNodeAbstract) obj;
 
 		bna.setCompartment(location);
 		bna.setComments(comment);
@@ -938,20 +855,24 @@ public class VAMLInput {
 			bna.setDAWISNode(dawisNode);
 			bna.setDB(dawisNode.getDB());
 		}
-		pw.addElement(obj);
-
-		pw.getGraph().moveVertex(bna.getVertex(), x_coord, y_coord);
-		mapping.put(vertexID, bna.getVertex());
+		
+		mapping.put(vertexID, bna);
 
 		if (bna instanceof Protein) {
 			Protein protein = (Protein) bna;
 			protein.setAaSequence(aaSequence);
 		}
+		bna.setID(vertexID);
+		Point2D.Double p = new Point2D.Double(x_coord, y_coord);
+		//System.out.println(" "+bna.getID()+" "+p);
+		pw.addVertex(bna, p);
+
+//		pw.getGraph().moveVertex(bna.getVertex(), x_coord, y_coord);
+		
 	}
 
 	@SuppressWarnings("unchecked")
 	private DAWISNode addDawisNode(OMElement dawisElement) {
-
 		DAWISNode node = new DAWISNode(null);
 		String elementID = "";
 		Iterator<OMElement> it = dawisElement.getChildren();
@@ -1301,7 +1222,6 @@ public class VAMLInput {
 		return node;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void getData(Pathway pw) throws FileNotFoundException,
 			XMLStreamException {
 
@@ -1369,10 +1289,21 @@ public class VAMLInput {
 			}
 		}
 
+		Iterator it = pw.getGraph().getAllEdges().iterator();
+		while(it.hasNext()){
+			BiologicalEdgeAbstract b = (BiologicalEdgeAbstract) it.next();
+			//System.out.println("E: "+b.getID());
+		}
+		
+		Iterator it2 = pw.getGraph().getAllvertices().iterator();
+		while(it2.hasNext()){
+			BiologicalNodeAbstract b = (BiologicalNodeAbstract) it2.next();
+			//System.out.println("V "+b.getID());
+		}
 		pw.getGraph().unlockVertices();
 		pw.getGraph().restartVisualizationModel();
 		MainWindowSingelton.getInstance().updateProjectProperties();
-		//MainWindowSingelton.getInstance().updateOptionPanel();
+		// MainWindowSingelton.getInstance().updateOptionPanel();
 
 	}
 }
