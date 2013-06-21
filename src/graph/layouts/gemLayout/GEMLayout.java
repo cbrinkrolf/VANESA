@@ -18,11 +18,11 @@ import cern.colt.list.IntArrayList;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
 /*import edu.uci.ics.jung.graph.DirectedEdge;
-import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.utils.Pair;
-import edu.uci.ics.jung.visualization.AbstractLayout;*/
+ import edu.uci.ics.jung.graph.Edge;
+ import edu.uci.ics.jung.graph.Graph;
+ import edu.uci.ics.jung.graph.Vertex;
+ import edu.uci.ics.jung.utils.Pair;
+ import edu.uci.ics.jung.visualization.AbstractLayout;*/
 import graph.layouts.gemLayout.GEMLayoutConfig.GemP;
 
 /**
@@ -37,7 +37,8 @@ import graph.layouts.gemLayout.GEMLayoutConfig.GemP;
  * @author Hacked by Eytan Adar for Guess
  * @author Hacked by taubertj for OVTK2
  */
-public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
+public class GEMLayout extends
+		AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 
 	// JUNG wrapped ONDEX graph
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph;
@@ -56,11 +57,11 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 	 * @param jung
 	 *            ONDEXSparseGraph
 	 */
-	public GEMLayout(Graph g) {
+	public GEMLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		super(g);
 	}
 
-	public void setGraph(Graph g) {
+	public void setGraph(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		this.graph = g;
 	}
 
@@ -167,7 +168,7 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 
 			if (u < 0) {
 				System.err.println("THERE IS AN ERROR!! u = " + u);
-				//return 0;
+				// return 0;
 			}
 
 			p = GEMLayoutConfig.gemProp[u];
@@ -294,8 +295,8 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 			}
 			GEMLayoutConfig.gemProp[v].in = 1;
 
-			nodeSet2 = IntIterators.asIntIterator(GEMLayoutConfig.adjacent.get(
-					v).toList().iterator());
+			nodeSet2 = IntIterators.asIntIterator(GEMLayoutConfig.adjacent
+					.get(v).toList().iterator());
 			int u;
 			while (nodeSet2.hasNext()) {
 				u = nodeSet2.nextInt();
@@ -520,7 +521,7 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 		edgeSet = edges.iterator();
 		while (edgeSet.hasNext()) {
 			e = edgeSet.next();
-			//Pair ends = e.getEndpoints();
+			// Pair ends = e.getEndpoints();
 			u = GEMLayoutConfig.nodeNumbers.getInt(e.getFrom());
 			w = GEMLayoutConfig.nodeNumbers.getInt(e.getTo());
 			if (u != v && w != v) {
@@ -602,31 +603,31 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 
 		startTime = System.currentTimeMillis();
 
-		//GEMLayoutConfig.clustered = GEMLayoutConfig.boxCluster.isSelected();
+		// GEMLayoutConfig.clustered = GEMLayoutConfig.boxCluster.isSelected();
 
-		//if (GEMLayoutConfig.clustered) {
-		//	runClustered(clusterGraph(getGraph()));
-		//} else {
-			graph = getGraph();
+		// if (GEMLayoutConfig.clustered) {
+		// runClustered(clusterGraph(getGraph()));
+		// } else {
+		graph = getGraph();
 
-			runNormal();
+		runNormal();
 
-			// set location of nodes in graph
-			for (int i = 0; i < GEMLayoutConfig.nodeCount; i++) {
-				GemP p = GEMLayoutConfig.gemProp[i];
-				BiologicalNodeAbstract n = GEMLayoutConfig.invmap[i];
+		// set location of nodes in graph
+		for (int i = 0; i < GEMLayoutConfig.nodeCount; i++) {
+			GemP p = GEMLayoutConfig.gemProp[i];
+			BiologicalNodeAbstract n = GEMLayoutConfig.invmap[i];
 
-				Point2D coord = transform(n);// getCoordinates(n);
-				coord.setLocation(p.x, p.y);
-			}
-		//}
+			Point2D coord = transform(n);// getCoordinates(n);
+			coord.setLocation(p.x, p.y);
+		}
+		// }
 		endTime = System.currentTimeMillis();
 
-//		System.out.println("Took: " + (endTime - startTime) + "msec");
+		// System.out.println("Took: " + (endTime - startTime) + "msec");
 	}
 
-
-	private Collection<BiologicalNodeAbstract> getNeighbours(BiologicalNodeAbstract n) {
+	private Collection<BiologicalNodeAbstract> getNeighbours(
+			BiologicalNodeAbstract n) {
 		Collection<BiologicalNodeAbstract> neighbours = new ArrayList<BiologicalNodeAbstract>();
 		for (BiologicalEdgeAbstract o : getGraph().getEdges()) {
 			BiologicalNodeAbstract first = o.getFrom();
@@ -640,10 +641,6 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 		}
 		return neighbours;
 	}
-
-
-
-
 
 	/**
 	 * Normal bubble like GEM layout.
@@ -667,12 +664,12 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 			BiologicalNodeAbstract n = nodeSet.next();
 			Collection<BiologicalEdgeAbstract> edges = new ArrayList<BiologicalEdgeAbstract>();
 			for (BiologicalEdgeAbstract o : graph.getEdges()) {
-				//if (o instanceof DirectedEdge) {
-					//DirectedEdge e = (DirectedEdge) o;
-					if (o.getFrom().equals(n)) {
-						edges.add(o);
-					}
-				//}
+				// if (o instanceof DirectedEdge) {
+				// DirectedEdge e = (DirectedEdge) o;
+				if (o.getFrom().equals(n)) {
+					edges.add(o);
+				}
+				// }
 			}
 
 			// graph.getOutEdges(n)
@@ -707,22 +704,6 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 	 */
 	public void reset() {
 		initialize();
-	}
-
-	@Override
-	protected void initializeLocations() {
-		super.initializeLocations();
-		initialize();
-	}
-
-	@Override
-	public void advancePositions() {
-
-	}
-
-	@Override
-	protected void initialize_local_vertex(Vertex arg0) {
-
 	}
 
 	public boolean incrementsAreDone() {

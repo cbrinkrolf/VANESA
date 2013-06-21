@@ -43,6 +43,7 @@ public class ConfigPanel extends JPanel {
             Method m = MyGraph.class.getMethod("changeTo" + getLayoutName());
             m.invoke(getMyGraph());
         } catch (Exception ex) {
+        	ex.printStackTrace();
             Logger.getLogger(ConfigPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
 
