@@ -674,7 +674,7 @@ public class BrendaConnector extends SwingWorker {
 
 	@Override
 	protected Object doInBackground() throws Exception {
-
+		
 		Runnable run = new Runnable() {
 			public void run() {
 				bar = new ProgressBar();
@@ -684,17 +684,30 @@ public class BrendaConnector extends SwingWorker {
 			}
 		};
 		SwingUtilities.invokeLater(run);
-
+		
 		getPathway();
+		
 		box.getDisregardedValues();
 
 		title = enzymeToSearch[0];
 
 		bar.setProgressBarString("Getting Enzymes");
+		System.out.println("123");
 		// System.out.println("do");
+		
+		try{
+			GraphInstance i = new GraphInstance();
+			
+			//System.out.println("p: "+i.getPathway());
+		
 		getEnzymeDetails(enzymeToSearch);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		System.out.println("ende");
 		// System.out.println("enz: "+enzymeToSearch);
 		String enzymeList = enzymesInPathway();
+		
 		// System.out.println(enzymeList);
 		if (CoFactors) {
 			bar.setProgressBarString("Getting Cofactors");
@@ -707,13 +720,12 @@ public class BrendaConnector extends SwingWorker {
 		}
 
 		bar.setProgressBarString("Drawing network");
-
+		
 		return null;
 	}
 
 	@Override
 	public void done() {
-
 		int answer = JOptionPane.YES_OPTION;
 		if (mergePW != null)
 			answer = JOptionPane
@@ -755,7 +767,6 @@ public class BrendaConnector extends SwingWorker {
 		}
 		MainWindowSingelton.getInstance().updateAllGuiElements();
 		MainWindowSingelton.getInstance().enable(true);
-
 	}
 
 }

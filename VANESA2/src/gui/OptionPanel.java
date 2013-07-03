@@ -247,7 +247,7 @@ public class OptionPanel {
 				PCPWindow.revalidateView();
 			} else if (element.equals("element")) {
 				elementWindow.revalidateView();
-				PCPWindow.revalidateView();
+				System.out.println("bla");
 			} else if (element.equals("Filter")) {
 				graphProperties.revalidateView();
 			} else if (element.equals("project")) {

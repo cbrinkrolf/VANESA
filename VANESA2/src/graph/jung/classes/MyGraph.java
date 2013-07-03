@@ -908,38 +908,38 @@ public class MyGraph {
 		normalCentering(vv2);
 	}
 
-//	public Point2D findNearestFreeVertexPosition(
-//			double startSearchCoordinatesX, double startSearchCoordinatesY,
-//			double minDistance) {
-//		double radiusIncrease = 5;
-//		double degreeIncrease = 5;
-//
-//		double radius = 0;
-//		while (true) {
-//			for (int i = 0; i < 365; i += degreeIncrease) {
-//				Point2D coords = new Point();
-//				coords.setLocation(
-//						startSearchCoordinatesX + radius
-//								* Math.sin(Math.toRadians(i)),
-//						startSearchCoordinatesY + radius
-//								* Math.cos(Math.toRadians(i)));
-//				boolean positionOK = true;
-//
-//				for (Iterator it = graphInstance.getPathway().getAllNodes()
-//						.iterator(); it.hasNext();) {
-//					BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it
-//							.next();
-//					Point2D p = getVertexLocation(bna.getVertex());
-//					if (coords.distance(p) < minDistance)
-//						positionOK = false;
-//				}
-//				if (positionOK)
-//					return coords;
-//			}
-//			radius += radiusIncrease;
-//		}
-//
-//	}
+	public Point2D findNearestFreeVertexPosition(
+			double startSearchCoordinatesX, double startSearchCoordinatesY,
+			double minDistance) {
+		double radiusIncrease = 5;
+		double degreeIncrease = 5;
+
+		double radius = 0;
+		while (true) {
+			for (int i = 0; i < 365; i += degreeIncrease) {
+				Point2D coords = new Point();
+				coords.setLocation(
+						startSearchCoordinatesX + radius
+								* Math.sin(Math.toRadians(i)),
+						startSearchCoordinatesY + radius
+								* Math.cos(Math.toRadians(i)));
+				boolean positionOK = true;
+
+				for (Iterator it = graphInstance.getPathway().getAllNodes()
+						.iterator(); it.hasNext();) {
+					BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it
+							.next();
+					Point2D p = getVertexLocation(bna);
+					if (coords.distance(p) < minDistance)
+						positionOK = false;
+				}
+				if (positionOK)
+					return coords;
+			}
+			radius += radiusIncrease;
+		}
+
+	}
 
 	public void fitScaleOfViewer(VisualizationViewer viewer) {
 
