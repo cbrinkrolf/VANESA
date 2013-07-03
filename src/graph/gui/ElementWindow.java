@@ -70,7 +70,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private Object element;
 
 	public ElementWindow() {
-
+System.out.println("gebaut");
 	}
 
 	private void updateWindow(Object element) {

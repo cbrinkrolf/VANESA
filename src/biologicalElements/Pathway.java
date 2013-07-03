@@ -72,6 +72,7 @@ import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
 import database.dawis.DAWISTree;
+import edu.uci.ics.jung.graph.util.Pair;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.utils.Pair;
 
@@ -130,6 +131,8 @@ public class Pathway {
 	// private HashSet <Vertex> set = new HashSet <Vertex> ();
 
 	private HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
+	
+	private HashMap<Pair<BiologicalNodeAbstract>, BiologicalEdgeAbstract> edges = new HashMap<Pair<BiologicalNodeAbstract>, BiologicalEdgeAbstract>();
 
 	private MyGraph graph;
 
@@ -599,6 +602,7 @@ public class Pathway {
 			System.out.println("edge null");
 		}*/
 		biologicalElements.put(bea.getID() + "", bea);
+		edges.put(new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()), bea);
 		// System.out.println(biologicalElements.size());
 		// Pair p = bea.getEdge().getEndpoints();
 		graphRepresentation.addEdge(bea);
@@ -632,8 +636,12 @@ public class Pathway {
 			} else {
 				BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) element;
 				// Pair p = bea.getEdge().getEndpoints();
+				System.out.println(edges.size());
+				edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(),bea.getTo()));
 				graphRepresentation.removeEdge(bea);
+				System.out.println(edges.size());
 			}
+			
 			biologicalElements.remove(element);
 		}
 	}
@@ -645,12 +653,16 @@ public class Pathway {
 		} else
 			return null;
 	}
+	
+	public boolean existEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
+		
+		return edges.containsKey(new Pair<BiologicalNodeAbstract>(from, to));
+	}
 
 	public boolean containsElement(Object graphElement) {
 		return biologicalElements.containsValue(graphElement);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Set<String> getAllNodeDescriptions() {
 
 		return nodeDescription.keySet();
@@ -773,7 +785,6 @@ public class Pathway {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Object getNodeByKEGGEntryID(String id) {
 
 		Iterator it = biologicalElements.values().iterator();
@@ -791,7 +802,6 @@ public class Pathway {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public HashSet getAllKEGGEdges() {
 
 		Iterator it = biologicalElements.values().iterator();
@@ -822,7 +832,7 @@ public class Pathway {
 		return set;
 	}
 
-	public boolean existEdge(Vertex vertex1, Vertex vertex2) {
+	/*public boolean existEdge(Vertex vertex1, Vertex vertex2) {
 		for (Iterator i = getAllEdges().iterator(); i.hasNext();) {
 			BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) i.next();
 			if (bea.getEdge().getEndpoints().getFirst().equals(vertex1)
@@ -830,9 +840,8 @@ public class Pathway {
 				return true;
 		}
 		return false;
-	}
+	}*/
 
-	@SuppressWarnings("unchecked")
 	public HashSet<BiologicalEdgeAbstract> getAllEdges() {
 
 		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
@@ -848,7 +857,6 @@ public class Pathway {
 		return set;
 	}
 
-	@SuppressWarnings("unchecked")
 	public HashSet<BiologicalNodeAbstract> getAllNodes() {
 
 		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
@@ -865,7 +873,6 @@ public class Pathway {
 		return set;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Vector getAllNodesAsVector() {
 
 		Iterator it = biologicalElements.values().iterator();
@@ -898,7 +905,6 @@ public class Pathway {
 		return set;
 	}
 
-	@SuppressWarnings("unchecked")
 	public HashMap getBiologicalElements() {
 		return biologicalElements;
 	}

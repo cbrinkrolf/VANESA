@@ -34,8 +34,8 @@ public class GraphElementAbstract {
 
 	// should only be used when loading a file with a network
 	public void setID(int id) {
-		//TODO muss Pathway handeln
-		System.out.println("size: "+ids.size());
+		// TODO muss Pathway handeln
+		//System.out.println("size: " + ids.size());
 		if (ids.contains(id)) {
 			System.err.println("Error: Id " + id + " is already existing!");
 			ID = counter++;
@@ -46,27 +46,25 @@ public class GraphElementAbstract {
 				counter = id;
 				this.ID = counter++;
 			}
-			
+
 		}
-		System.out.println("added: "+ID);
+		//System.out.println("added: " + ID);
 		ids.add(ID);
 	}
 
 	public GraphElementAbstract() {
 		// find current highest id in the pathway
-		// int highest_id=1000;
-		// System.out.println("current: "+ID);
-		/*
-		 * for (Iterator it=new
-		 * GraphInstance().getPathway().getAllNodes().iterator();
-		 * it.hasNext();){ int
-		 * current=((GraphElementAbstract)it.next()).getID();
-		 * 
-		 * if (current>highest_id){ highest_id=current; } }
-		 */
+		int highest_id=1000;
+		for (Iterator it=new GraphInstance().getPathway().getAllNodes().iterator(); it.hasNext();){
+			int current=((GraphElementAbstract)it.next()).getID();
+			if (current>highest_id) highest_id=current;		
+		}
+			//set id to highest current id+1;
+		setID(highest_id+1);
+
 		// set id to highest current id+1;
 		//ids.add(counter);
-		setID(counter++);
+		//setID(counter++);
 	}
 
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
