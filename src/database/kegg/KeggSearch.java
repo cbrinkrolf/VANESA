@@ -9,6 +9,7 @@ import gui.MainWindow;
 import gui.ProgressBar;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -338,12 +339,13 @@ public class KeggSearch extends SwingWorker implements PropertyChangeListener {
 		return null;
 	}
 
-	private final int SEPARATE_TABS=JOptionPane.YES_OPTION;
-	private final int OVERVIEW_PW=JOptionPane.NO_OPTION;
-	private final int MERGE=JOptionPane.CANCEL_OPTION;
+	private final int SEPARATE_TABS = JOptionPane.YES_OPTION;
+	private final int OVERVIEW_PW = JOptionPane.NO_OPTION;
+	private final int MERGE = JOptionPane.CANCEL_OPTION;
 	private Iterator it;
 	private int answer = SEPARATE_TABS;
 	private KEGGConnector kc;
+
 	@Override
 	public void done() {
 
@@ -360,48 +362,51 @@ public class KeggSearch extends SwingWorker implements PropertyChangeListener {
 
 		if (continueProgress) {
 			Vector<String[]> results = dsrw.getAnswer();
-			if (results==null) return;
+			if (results == null)
+				return;
 			w.setEnable(true);
 			if (results.size() != 0) {
-				if (results.size() > 1 || mergePW!=null)
-					answer= JOptionPane
+				if (results.size() > 1 || mergePW != null)
+					answer = JOptionPane
 							.showOptionDialog(
 									w,
 									"Shall the selected Pathways be loaded each into a separate tab, be combined into an overview Pathway or merged?",
-									"Several Pathways selected...",JOptionPane.YES_NO_CANCEL_OPTION,
+									"Several Pathways selected...",
+									JOptionPane.YES_NO_CANCEL_OPTION,
 									JOptionPane.QUESTION_MESSAGE, null,
 									new String[] { "Separate Tabs",
-											"Overview Pathway", "Merge Pathways"}, SEPARATE_TABS);				
-				it = results.iterator();	
-					if (answer==OVERVIEW_PW){
-					Pathway newPW = new CreatePathway("Overview Pathway").getPathway();
+											"Overview Pathway",
+											"Merge Pathways" }, SEPARATE_TABS);
+				it = results.iterator();
+				if (answer == OVERVIEW_PW) {
+					Pathway newPW = new CreatePathway("Overview Pathway")
+							.getPathway();
 					newPW.getGraph().lockVertices();
 					newPW.getGraph().stopVisualizationModel();
-					ArrayList<BiologicalNodeAbstract> bnas=new ArrayList<BiologicalNodeAbstract>();
-					if (!(enzyme==null || enzyme.equals("")))
-						bnas.add( new Enzyme(enzyme, enzyme, newPW.getGraph().createNewVertex()));
-					if (!(gene==null || gene.equals("")))
-						bnas.add( new Gene(gene, gene, newPW.getGraph().createNewVertex()));					
-					if (!(compound==null || compound.equals("")))
-						bnas.add( new SmallMolecule(compound, compound, newPW.getGraph().createNewVertex()));
-					for (String[] s : results){
-						PathwayMap map=new PathwayMap(s[1],s[0], newPW.getGraph().createNewVertex());
+					ArrayList<BiologicalNodeAbstract> bnas = new ArrayList<BiologicalNodeAbstract>();
+					if (!(enzyme == null || enzyme.equals("")))
+						bnas.add(new Enzyme(enzyme, enzyme));
+					if (!(gene == null || gene.equals("")))
+						bnas.add(new Gene(gene, gene));
+					if (!(compound == null || compound.equals("")))
+						bnas.add(new SmallMolecule(compound, compound));
+					for (String[] s : results) {
+						PathwayMap map = new PathwayMap(s[1], s[0]);
 						map.setReference(false);
 						map.setAbstract(false);
-						map=(PathwayMap) newPW.addElement(map);
-						newPW.getGraph().moveVertex(map.getVertex(), 0, 0);
-						for (BiologicalNodeAbstract bna : bnas){
-						bna=(BiologicalNodeAbstract) newPW.addElement(bna);
-						bna.setReference(false);
-						bna.setAbstract(false);
-						bna.setColor(Color.red);
-						newPW.getGraph().moveVertex(bna.getVertex(), 0, 0);
-						Compound c = new Compound(newPW.getGraph().createEdge(
-								bna.getVertex(),map.getVertex() , true), "", "");
-						c.setDirected(true);
-						c.setReference(false);
-						c.setAbstract(false);
-						c=(Compound) newPW.addElement(c);
+						map = (PathwayMap) newPW.addVertex(map, new Point(0,0));
+						//newPW.getGraph().moveVertex(map.getVertex(), 0, 0);
+						for (BiologicalNodeAbstract bna : bnas) {
+							bna = (BiologicalNodeAbstract) newPW.addVertex(bna, new Point(0,0));
+							bna.setReference(false);
+							bna.setAbstract(false);
+							bna.setColor(Color.red);
+							//newPW.getGraph().moveVertex(bna.getVertex(), 0, 0);
+							Compound c = new Compound("", "",bna,map);
+							c.setDirected(true);
+							c.setReference(false);
+							c.setAbstract(false);
+							c = (Compound) newPW.addEdge(c);
 
 						}
 					}
@@ -410,21 +415,18 @@ public class KeggSearch extends SwingWorker implements PropertyChangeListener {
 					w.updateAllGuiElements();
 					newPW.getGraph().changeToGEMLayout();
 					newPW.getGraph().normalCentering();
-				}
-				else {
-					kc = new KEGGConnector(bar,
-							(String[]) it.next(), !(mergePW==null));
+				} else {
+					kc = new KEGGConnector(bar, (String[]) it.next(),
+							!(mergePW == null));
 					kc.addPropertyChangeListener(this);
 					kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
-					kc.execute();	
+					kc.execute();
 				}
 			}
 		}
 
 	}
-	
-	
-	
+
 	private void endSearch(final MainWindow w, final ProgressBar bar) {
 		Runnable run = new Runnable() {
 			public void run() {
@@ -438,30 +440,32 @@ public class KeggSearch extends SwingWorker implements PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getNewValue().equals("finished")){
-		if (answer==MERGE) 
-			if (mergePW==null) 
-				mergePW=kc.getPw();
-			else {
-				w.removeTab(false);
-				mergePW=new MergeGraphs(mergePW,kc.getPw(), false).getPw_new();	
+		if (evt.getNewValue().equals("finished")) {
+			if (answer == MERGE)
+				if (mergePW == null)
+					mergePW = kc.getPw();
+				else {
+					w.removeTab(false);
+					mergePW = new MergeGraphs(mergePW, kc.getPw(), false)
+							.getPw_new();
+				}
+			if (it != null && it.hasNext()) {
+				kc = new KEGGConnector(bar, (String[]) it.next(),
+						!(answer == SEPARATE_TABS));
+				kc.addPropertyChangeListener(this);
+				kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
+				kc.execute();
+			} else {
+				mergePW = new GraphInstance().getContainer().getPathway(
+						w.getCurrentPathway());
+				w.setEnable(true);
+				w.setLockedPane(false);
+				w.updateAllGuiElements();
+				mergePW.getGraph().getVisualizationViewer().repaint();
+				mergePW.getGraph().disableGraphTheory();
+				mergePW.getGraph().normalCentering();
+
 			}
-		if (it!=null && it.hasNext()){
-			kc = new KEGGConnector(bar,
-					(String[]) it.next(), !(answer==SEPARATE_TABS));
-			kc.addPropertyChangeListener(this);
-			kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
-			kc.execute();	
-		} else{
-			mergePW = new GraphInstance().getContainer().getPathway(w.getCurrentPathway());
-			w.setEnable(true);
-			w.setLockedPane(false);
-			w.updateAllGuiElements();
-			mergePW.getGraph().getVisualizationViewer().repaint();
-			mergePW.getGraph().disableGraphTheory();			
-			mergePW.getGraph().normalCentering();
-			
-		}
 		}
 	}
 

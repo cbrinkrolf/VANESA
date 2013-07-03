@@ -1,5 +1,6 @@
 package database.eventhandlers;
 
+import graph.GraphInstance;
 import gui.MainWindowSingelton;
 import gui.ProgressBar;
 

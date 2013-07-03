@@ -1,9 +1,9 @@
 package database.kegg;
 
 import database.mirna.miRNAqueries;
-import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.utils.Pair;
+//import edu.uci.ics.jung.graph.Edge;
+//import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.utils.Pair;
 import graph.Box;
 import graph.CreatePathway;
 import graph.algorithms.MergeGraphs;
@@ -164,7 +164,6 @@ public class KEGGConnector extends SwingWorker {
 
 		bar.setProgressBarString("Getting Pathway Elements");
 
-
 		allOrgElements = KEGGQueries.getPathwayElements(pathwayOrg
 				+ pathwayNumber);
 		allEcElements = KEGGQueries.getPathwayElements("ec" + pathwayNumber);
@@ -177,7 +176,7 @@ public class KEGGConnector extends SwingWorker {
 		allEcRelations = KEGGQueries.getRelations("ec" + pathwayNumber);
 		allRnRelations = KEGGQueries.getRelations("rn" + pathwayNumber);
 		allKoRelations = KEGGQueries.getRelations("ko" + pathwayNumber);
-		
+
 		allOrgReactions = KEGGQueries.getAllReactions(pathwayOrg
 				+ pathwayNumber);
 		allEcReactions = KEGGQueries.getAllReactions("ec" + pathwayNumber);
@@ -261,7 +260,6 @@ public class KEGGConnector extends SwingWorker {
 
 	}
 
-
 	private void processKeggElements(String[] set) {
 
 		BiologicalNodeAbstract bna = null;
@@ -278,14 +276,14 @@ public class KEGGConnector extends SwingWorker {
 		node.setNodeLabel(set[3]);
 		double xPos;
 		double yPos;
-		try{
-		xPos = Double.parseDouble(set[8]);
-		yPos = Double.parseDouble(set[9]);
-		} catch (NumberFormatException e){
-		xPos= 0;
-		yPos= 0;
+		try {
+			xPos = Double.parseDouble(set[8]);
+			yPos = Double.parseDouble(set[9]);
+		} catch (NumberFormatException e) {
+			xPos = 0;
+			yPos = 0;
 		}
-		
+
 		node.setXPos(xPos);
 		node.setYPos(yPos);
 
@@ -298,14 +296,13 @@ public class KEGGConnector extends SwingWorker {
 			if (label != null)
 				node.setNodeLabel(label);
 			validElement = true;
-			bna = new DNA(node.getNodeLabel(), node.getKEGGentryName(),
-					myGraph.createNewVertex());
+			bna = new DNA(node.getNodeLabel(), node.getKEGGentryName());
 
 		} else if (set[2].equals("compound")) {
 			node.setNodeLabel(set[10]);
 			validElement = true;
 			SmallMolecule sm = new SmallMolecule(node.getNodeLabel(),
-					node.getKEGGentryName(), myGraph.createNewVertex());
+					node.getKEGGentryName());
 
 			bna = sm;
 
@@ -313,42 +310,40 @@ public class KEGGConnector extends SwingWorker {
 
 			validElement = true;
 			OrthologGroup g = new OrthologGroup(node.getNodeLabel(),
-					node.getKEGGentryName(), myGraph.createNewVertex());
+					node.getKEGGentryName());
 			bna = g;
 
 		} else if (set[2].equals("map")) {
 			node.setNodeLabel(set[11]);
 			validElement = true;
 			PathwayMap map = new PathwayMap(node.getNodeLabel(),
-					node.getKEGGentryName(), myGraph.createNewVertex());
+					node.getKEGGentryName());
 			bna = map;
 		} else if (set[2].equals("undefiened")) {
 
 			validElement = true;
 			Other other = new Other(node.getNodeLabel(),
-					node.getKEGGentryName(), myGraph.createNewVertex());
+					node.getKEGGentryName());
 
 			bna = other;
 
 		} else if (set[2].equals("enzyme")) {
 			validElement = true;
-			Enzyme e = new Enzyme(node.getNodeLabel(), node.getKEGGentryName(),
-					myGraph.createNewVertex());
+			Enzyme e = new Enzyme(node.getNodeLabel(), node.getKEGGentryName());
 			bna = e;
 
 		} else if (set[2].equals("other")) {
 
 			validElement = true;
 			Other other = new Other(node.getNodeLabel(),
-					node.getKEGGentryName(), myGraph.createNewVertex());
+					node.getKEGGentryName());
 
 			bna = other;
 
 		} else if (set[2].equals("group")) {
 
 			validElement = true;
-			Complex c = new Complex("Complex",
-					"", myGraph.createNewVertex());
+			Complex c = new Complex("Complex", "");
 
 			bna = c;
 
@@ -366,7 +361,7 @@ public class KEGGConnector extends SwingWorker {
 				if (oldKeggNode.getXPos() == node.getXPos()
 						&& oldKeggNode.getYPos() == node.getYPos()) {
 					if (keggVisualizationPriority(bna) > keggVisualizationPriority(old_bna)) {
-						pw.removeElement(old_bna.getVertex());
+						pw.removeElement(old_bna);
 						nodeLowToHighPriorityMap.put(
 								new KeggNodeDescribtion(oldKeggNode
 										.getKEGGPathway(), oldKeggNode
@@ -379,8 +374,7 @@ public class KEGGConnector extends SwingWorker {
 									deleteKey = entry.getKey();
 							}
 							nodeLowToHighPriorityMap.remove(deleteKey);
-							nodeLowToHighPriorityMap.put(
-									deleteKey, bna);
+							nodeLowToHighPriorityMap.put(deleteKey, bna);
 						}
 					} else {
 						addBNA = false;
@@ -393,13 +387,14 @@ public class KEGGConnector extends SwingWorker {
 				}
 			}
 
-			
-			 bna= (BiologicalNodeAbstract) pw.addElement(bna);
-			myGraph.moveVertex(bna.getVertex(), bna.getKEGGnode().getXPos(),
-					bna.getKEGGnode().getYPos());
-			if (!addBNA) pw.removeElement(bna.getVertex());
-			 
-			
+			bna = (BiologicalNodeAbstract) pw.addVertex(bna,
+					new Point2D.Double(bna.getKEGGnode().getXPos(), bna
+							.getKEGGnode().getYPos()));
+			// myGraph.moveVertex(bna.getVertex(), bna.getKEGGnode().getXPos(),
+			// bna.getKEGGnode().getYPos());
+			if (!addBNA)
+				pw.removeElement(bna);
+
 		}
 	}
 
@@ -437,7 +432,6 @@ public class KEGGConnector extends SwingWorker {
 		return false;
 	}
 
-
 	private void drawNodes(ArrayList<DBColumn> allElements) {
 		for (DBColumn column : allElements) {
 			String[] resultDetails = column.getColumn();
@@ -463,8 +457,7 @@ public class KEGGConnector extends SwingWorker {
 						Point2D p = myGraph.findNearestFreeVertexPosition(bna
 								.getKEGGnode().getXPos(), bna.getKEGGnode()
 								.getYPos(), 100);
-						srna = new SRNA(column[0], column[0],
-								myGraph.createNewVertex());
+						srna = new SRNA(column[0], column[0]);
 						srna.setTarbase_accession(column[3]);
 						srna.setTarbase_DS(column[6]);
 						srna.setTarbase_ensemble(column[4]);
@@ -475,14 +468,13 @@ public class KEGGConnector extends SwingWorker {
 							srna.setColor(Color.blue);
 						else
 							srna.setColor(Color.orange);
-						srna = (SRNA) pw.addElement(srna);
+						pw.addVertex(srna, p);
 						srna.setAbstract(false);
 						srna.setReference(false);
-						myGraph.moveVertex(srna.getVertex(), p.getX(), p.getY());
+						//myGraph.moveVertex(srna.getVertex(), p.getX(), p.getY());
 						connectedToPathway++;
 					}
-					Compound c = new Compound(myGraph.createEdge(
-							srna.getVertex(), bna.getVertex(), true), "", "");
+					Compound c = new Compound("", "", srna, bna);
 					c.setDirected(true);
 					c.setReference(false);
 					c.setAbstract(false);
@@ -494,7 +486,7 @@ public class KEGGConnector extends SwingWorker {
 						c.setColor(Color.green);
 					}
 
-					pw.addElement(c);
+					pw.addEdge(c);
 				}
 			}
 
@@ -532,7 +524,7 @@ public class KEGGConnector extends SwingWorker {
 								.equals(keggPathway))
 					subtype = bna;
 			}
-			
+
 			if (!pw.containsElement(bna1))
 				bna1 = nodeLowToHighPriorityMap.get(new KeggNodeDescribtion(
 						keggPathway, entry1));
@@ -543,30 +535,28 @@ public class KEGGConnector extends SwingWorker {
 				subtype = nodeLowToHighPriorityMap.get(new KeggNodeDescribtion(
 						keggPathway, subtypeValue));
 
-			if (bna1 != null && bna2 != null) {	
-				Vertex vertex1 = bna1.getVertex();
-				Vertex vertex2 = bna2.getVertex();
+			if (bna1 != null && bna2 != null) {
+				//Vertex vertex1 = bna1.getVertex();
+				//Vertex vertex2 = bna2.getVertex();
 
 				if (subtype != null) {
-					Vertex subVertex = subtype.getVertex();
-					if (!pw.existEdge(vertex1, subVertex)
-							&& (!pw.existEdge(subVertex, vertex1))) {
-						Compound c = new Compound(myGraph.createEdge(vertex1,
-								subVertex, true), "", "");
+					//Vertex subVertex = subtype.getVertex();
+					if (!pw.existEdge(bna1, subtype)
+							&& (!pw.existEdge(subtype, bna1))) {
+						Compound c = new Compound("", "", bna1, subtype);
 						c.setDirected(true);
 						if (specific)
 							bna1.setColor(Color.GREEN);
-						pw.addElement(c);
+						pw.addEdge(c);
 					}
 
-					if (!pw.existEdge(subVertex, vertex2)
-							&& (!pw.existEdge(vertex2, subVertex))) {
-						Compound c2 = new Compound(myGraph.createEdge(
-								subVertex, vertex2, true), "", "");
+					if (!pw.existEdge(subtype, bna2)
+							&& (!pw.existEdge(bna2, subtype))) {
+						Compound c2 = new Compound("", "",subtype, bna2);
 						c2.setDirected(true);
 						if (specific)
 							bna2.setColor(Color.GREEN);
-						pw.addElement(c2);
+						pw.addEdge(c2);
 					}
 
 				} else
@@ -575,10 +565,9 @@ public class KEGGConnector extends SwingWorker {
 				// && bna2.getBiologicalElement().equals(
 				// biologicalElements.Elementdeclerations.dna))
 				{
-					if (!pw.existEdge(vertex1, vertex2)
-							&& (!pw.existEdge(vertex2, vertex1))) {
-						Compound c = new Compound(myGraph.createEdge(vertex1,
-								vertex2, true), "", "");
+					if (!pw.existEdge(bna1, bna2)
+							&& (!pw.existEdge(bna2, bna1))) {
+						Compound c = new Compound("", "", bna1, bna2);
 						c.setDirected(true);
 						c.setBiologicalElement(edgeType);
 						if (edgeType
@@ -601,7 +590,7 @@ public class KEGGConnector extends SwingWorker {
 							c.setLabel("e");
 						if (specific)
 							bna1.setColor(Color.GREEN);
-						pw.addElement(c);
+						pw.addEdge(c);
 					}
 				}
 			}
@@ -621,53 +610,52 @@ public class KEGGConnector extends SwingWorker {
 			BiologicalNodeAbstract product = null;
 			for (Iterator it = pw.getAllNodes().iterator(); it.hasNext();) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
-				if (bna.getKEGGnode().getKEGGPathway()
-								.equals(keggPathway)){
-				if (bna.getKEGGnode() != null
-						&& bna.getKEGGnode().getKEGGentryID()
-								.equals(substrateId))
-					substrate = bna;
-				if (bna.getKEGGnode() != null
-						&& bna.getKEGGnode().getKEGGentryID().equals(productId))
-					product = bna;
-				if (bna.getKEGGnode() != null
-						&& bna.getKEGGnode().getKEGGentryID().equals(enzymeId))
-					enzyme = bna;
+				if (bna.getKEGGnode().getKEGGPathway().equals(keggPathway)) {
+					if (bna.getKEGGnode() != null
+							&& bna.getKEGGnode().getKEGGentryID()
+									.equals(substrateId))
+						substrate = bna;
+					if (bna.getKEGGnode() != null
+							&& bna.getKEGGnode().getKEGGentryID()
+									.equals(productId))
+						product = bna;
+					if (bna.getKEGGnode() != null
+							&& bna.getKEGGnode().getKEGGentryID()
+									.equals(enzymeId))
+						enzyme = bna;
+				}
 			}
-		}
 			if (!pw.containsElement(substrate))
-				substrate = nodeLowToHighPriorityMap.get(new KeggNodeDescribtion(
-						keggPathway,substrateId));
+				substrate = nodeLowToHighPriorityMap
+						.get(new KeggNodeDescribtion(keggPathway, substrateId));
 			if (!pw.containsElement(product))
 				product = nodeLowToHighPriorityMap.get(new KeggNodeDescribtion(
-						keggPathway,productId));
+						keggPathway, productId));
 			if (!pw.containsElement(enzyme))
 				enzyme = nodeLowToHighPriorityMap.get(new KeggNodeDescribtion(
-						keggPathway,enzymeId));
-			
+						keggPathway, enzymeId));
+
 			if (substrate != null && product != null && enzyme != null) {
-				Vertex substrateVertex = substrate.getVertex();
-				Vertex productVertex = product.getVertex();
-				Vertex enzymeVertex = enzyme.getVertex();
-				if (!pw.existEdge(substrateVertex, enzymeVertex)
-						&& !pw.existEdge(enzymeVertex, substrateVertex)) {
+				// Vertex substrateVertex = substrate.getVertex();
+				// Vertex productVertex = product.getVertex();
+				// Vertex enzymeVertex = enzyme.getVertex();
+				if (!pw.existEdge(substrate, enzyme)
+						&& !pw.existEdge(enzyme, substrate)) {
 					Compound c = null;
-					if (reversible)
-						c = new Compound(myGraph.createEdge(enzymeVertex,
-								substrateVertex, true), "", "");
-					else
-						c = new Compound(myGraph.createEdge(substrateVertex,
-								enzymeVertex, true), "", "");
-					c = (Compound) pw.addElement(c);
+					if (reversible) {
+						c = new Compound("", "", enzyme, substrate);
+					} else {
+						c = new Compound("", "", substrate, enzyme);
+					}
+					pw.addEdge(c);
 					c.setDirected(true);
 				}
 				if (specific)
 					enzyme.setColor(Color.GREEN);
-				if (!pw.existEdge(enzymeVertex, productVertex)
-						&& !pw.existEdge(productVertex, enzymeVertex)) {
-					Compound c2 = new Compound(myGraph.createEdge(enzymeVertex,
-							productVertex, true), "", "");
-					c2 = (Compound) pw.addElement(c2);
+				if (!pw.existEdge(enzyme, product)
+						&& !pw.existEdge(product, enzyme)) {
+					Compound c2 = new Compound("", "",enzyme, product);
+					pw.addEdge(c2);
 					c2.setDirected(true);
 				}
 
