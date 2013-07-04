@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 
 
@@ -15,7 +16,7 @@ public class GraphContainer {
 	
 	
 	private HashMap map = new HashMap();
-	private Object selectedObject;
+	private GraphElementAbstract selectedObject;
 	private String mouseFunction = "edit";
 	private boolean isPetriView = false; 
 	
@@ -41,11 +42,11 @@ public class GraphContainer {
 	
 	}
 	
-	public Object getSelectedObject() {
+	public GraphElementAbstract getSelectedObject() {
 		return selectedObject;
 	}
 
-	public void setSelectedObject(Object selectedObject) {
+	public void setSelectedObject(GraphElementAbstract selectedObject) {
 		this.selectedObject = selectedObject;
 	}
 	

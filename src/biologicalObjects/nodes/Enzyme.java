@@ -120,7 +120,7 @@ public class Enzyme extends Protein {
 
 	@Override
 	public void rebuildShape(VertexShapes vs){
-		setShape(vs.getRegularPolygon(3));
+		//setShape(vs.getRegularPolygon(3));
 	}
 	
 	@Override

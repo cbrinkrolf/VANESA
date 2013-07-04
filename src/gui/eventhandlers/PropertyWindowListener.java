@@ -1,19 +1,14 @@
 package gui.eventhandlers;
 
-import edu.uci.ics.jung.graph.ArchetypeVertex;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.visualization.Layout;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import graph.ContainerSingelton;
-import graph.GraphContainer;
+//import edu.uci.ics.jung.graph.ArchetypeVertex;
+//import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.visualization.Layout;
 import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
 import graph.jung.graphDrawing.VertexShapes;
-import gui.MainWindow;
 import gui.MainWindowSingelton;
 
-import java.awt.AWTEvent;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -42,15 +37,17 @@ import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
 
-public class PropertyWindowListener implements FocusListener, KeyListener, ActionListener {
+public class PropertyWindowListener implements FocusListener, KeyListener,
+		ActionListener {
 
 	GraphElementAbstract geb;
 	GraphInstance graphInstance = new GraphInstance();
-	Object element;
 
-	public PropertyWindowListener(Object element) {
-		geb = (GraphElementAbstract) graphInstance.getPathwayElement(element);
-		this.element = element;
+	// Object element;
+
+	public PropertyWindowListener(GraphElementAbstract element) {
+		geb = element;// graphInstance.getPathwayElement(element);
+		// this.element = element;
 	}
 
 	@Override
@@ -152,15 +149,18 @@ public class PropertyWindowListener implements FocusListener, KeyListener, Actio
 				}
 			}
 		} else if (source.equals("transList")) {
+			// System.out.println("translist");
 			Transition t = (Transition) geb;
 			Transition newT = null;
-			for (Iterator k = t.getVertex().getNeighbors().iterator(); k
-					.hasNext();) {
-				ArchetypeVertex neighbour = (ArchetypeVertex) k.next();
+			Iterator<BiologicalNodeAbstract> k = pw.getGraph().getJungGraph()
+					.getNeighbors(t).iterator();
+			BiologicalNodeAbstract neighbour;
+			while (k.hasNext()) {
+				neighbour = k.next();
 				for (Iterator j = pw.getAllNodes().iterator(); j.hasNext();) {
 					BiologicalNodeAbstract node = (BiologicalNodeAbstract) j
 							.next();
-					if (node.getVertex().equals(neighbour)
+					if (node.equals(neighbour)
 							&& (((JComboBox) event.getSource())
 									.getSelectedItem().equals(
 											ContinuousTransition.class
@@ -181,53 +181,50 @@ public class PropertyWindowListener implements FocusListener, KeyListener, Actio
 
 			if (((JComboBox) event.getSource()).getSelectedItem().equals(
 					DiscreteTransition.class.getName()))
-				newT = new DiscreteTransition(t.getLabel(), t.getName(),
-						t.getVertex());
+				newT = new DiscreteTransition(t.getLabel(), t.getName());
 			else if (((JComboBox) event.getSource()).getSelectedItem().equals(
 					ContinuousTransition.class.getName()))
-				newT = new ContinuousTransition(t.getLabel(), t.getName(),
-						t.getVertex());
+				newT = new ContinuousTransition(t.getLabel(), t.getName());
 			else if (((JComboBox) event.getSource()).getSelectedItem().equals(
 					StochasticTransition.class.getName()))
-				newT = new StochasticTransition(t.getLabel(), t.getName(),
-						t.getVertex());
+				newT = new StochasticTransition(t.getLabel(), t.getName());
 			if (newT != null) {
 				newT.rebuildShape(new VertexShapes());
 				newT.setCompartment(t.getCompartment());
-				graphInstance.getPathway().addElement(newT);
+				graphInstance.getPathway().addVertex(newT, new Point());
 			}
 		} else if (source.equals("placeList")) {
 			Place p = (Place) geb;
+			Iterator<BiologicalNodeAbstract> k = pw.getGraph().getJungGraph()
+					.getNeighbors(p).iterator();
+			BiologicalNodeAbstract neighbour;
 			
-			for (Iterator k = p.getVertex().getNeighbors().iterator(); k
-			.hasNext();) {
-		ArchetypeVertex neighbour = (ArchetypeVertex) k.next();
-		for (Iterator j = pw.getAllNodes().iterator(); j.hasNext();) {
-			BiologicalNodeAbstract node = (BiologicalNodeAbstract) j
-					.next();
-			if (node.getVertex().equals(neighbour)
-					&& (((JComboBox) event.getSource())
-							.getSelectedItem().equals(
-									"discrete") && node
-							.getBiologicalElement().equals(
-									Elementdeclerations.contoniousTransition))) {
+			while(k.hasNext()) {
+				neighbour = k.next();
+				for (Iterator j = pw.getAllNodes().iterator(); j.hasNext();) {
+					BiologicalNodeAbstract node = (BiologicalNodeAbstract) j
+							.next();
+					if (node.equals(neighbour)
+							&& (((JComboBox) event.getSource())
+									.getSelectedItem().equals("discrete") && node
+									.getBiologicalElement()
+									.equals(Elementdeclerations.contoniousTransition))) {
 
-				JOptionPane
-						.showMessageDialog(
-								MainWindowSingelton.getInstance(),
-								"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
-								"Unallowed Operation...",
-								JOptionPane.ERROR_MESSAGE);
-				return;
+						JOptionPane
+								.showMessageDialog(
+										MainWindowSingelton.getInstance(),
+										"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
+										"Unallowed Operation...",
+										JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
 			}
-		}
-	}
-			
-			
-			Place newP = new Place(p.getLabel(), p.getName(), p.getVertex(), 0,
+
+			Place newP = new Place(p.getLabel(), p.getName(), 0,
 					((JComboBox) event.getSource()).getSelectedItem().equals(
 							"discrete"));
-			graphInstance.getPathway().addElement(newP);
+			graphInstance.getPathway().addVertex(newP, new Point());
 			newP.setToken(p.getToken());
 			newP.setTokenMax(p.getTokenMax());
 			newP.setTokenMin(p.getTokenMin());
@@ -276,29 +273,28 @@ public class PropertyWindowListener implements FocusListener, KeyListener, Actio
 		}
 		// ContainerSingelton.getInstance().changeMouseFunction("edit");
 		event.getComponent().setBackground(Color.WHITE);
-		GraphInstance.getMyGraph().updateElementLabel(element);
+		//GraphInstance.getMyGraph().updateElementLabel(element);
 		GraphInstance.getMyGraph().updateGraph();
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-			
+
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		
-		
+
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		focusLost(new FocusEvent(((JTextField)e.getSource()),e.getID()));	
-		
+		focusLost(new FocusEvent(((JTextField) e.getSource()), e.getID()));
+
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		focusLost(new FocusEvent(((JComboBox)e.getSource()),e.getID()));	
+		focusLost(new FocusEvent(((JComboBox) e.getSource()), e.getID()));
 	}
 }

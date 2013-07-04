@@ -9,7 +9,6 @@ import java.util.Vector;
 
 public class CSVInputReader {
 
-	@SuppressWarnings("unchecked")
 	public HashMap<String, Vector<Double>> readResult(String file,
 			ArrayList<String> columns) throws IOException {
 		BufferedReader in = new BufferedReader(new FileReader(file));
@@ -19,6 +18,7 @@ public class CSVInputReader {
 		while ((line = in.readLine()) != null) {
 			text.add(line);
 		}
+		in.close();
 		String head = text.get(0);
 		String[] headNames = head.split("[,;]");
 

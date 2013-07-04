@@ -68,7 +68,7 @@ public class BiologicalNodeAbstract extends GraphElementAbstract {
 		
 		// values.put(1, 0);
 		shapes = new VertexShapes();
-		//setShape(shapes.getEllipse(null));
+		//setShape(shapes.getEllipse());
 
 		// initialize microarray data vector
 		petriNetSimulationData = new Vector<Double>();

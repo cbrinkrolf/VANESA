@@ -1,8 +1,8 @@
 package petriNet;
 
-import edu.uci.ics.jung.graph.ArchetypeVertex;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.event.GraphEventType.AllSingleEvents;
+//import edu.uci.ics.jung.graph.ArchetypeVertex;
+//import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.graph.event.GraphEventType.AllSingleEvents;
 import graph.ContainerSingelton;
 import graph.GraphInstance;
 import graph.animations.RegulationTabelModel;

@@ -1,8 +1,8 @@
 package graph.gui;
 
 /*import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.utils.Pair;*/
+ import edu.uci.ics.jung.graph.Vertex;
+ import edu.uci.ics.jung.utils.Pair;*/
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
@@ -67,18 +67,17 @@ public class ElementWindow implements ActionListener, ItemListener {
 	boolean vertexElement = false;
 	JTabbedPane pane = new JTabbedPane();
 
-	private Object element;
+	//private Object element;
 
 	public ElementWindow() {
-System.out.println("gebaut");
 	}
 
-	private void updateWindow(Object element) {
+	private void updateWindow(GraphElementAbstract element) {
 
-		this.element = element;
-		this.ab = (GraphElementAbstract) graphInstance
-				.getPathwayElement(element);
-
+		//this.element = element;
+		//this.ab = (GraphElementAbstract) graphInstance
+		//		.getPathwayElement(element);
+		ab = element;
 		PropertyWindowListener pwl = new PropertyWindowListener(element);
 
 		reference = new JCheckBox();
@@ -135,8 +134,9 @@ System.out.println("gebaut");
 			addCompartmentItems(compartment);
 			AutoCompleteDecorator.decorate(compartment);
 			// compartment.setMaximumSize(new Dimension(250,300));
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
-					.getPathwayElement(element);
+//			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
+//					.getPathwayElement(element);
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
 			compartment.setSelectedItem(bna.getCompartment());
 			compartment.addItemListener(this);
 
@@ -468,8 +468,9 @@ System.out.println("gebaut");
 							"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
 							"Delete the Sub-Pathway...",
 							JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION && ab instanceof PathwayMap) {
-				((PathwayMap)ab).setPathwayLink(null);
+							JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION
+					&& ab instanceof PathwayMap) {
+				((PathwayMap) ab).setPathwayLink(null);
 				w.updateElementTree();
 				w.updatePathwayTree();
 				ab.setColor(Color.white);

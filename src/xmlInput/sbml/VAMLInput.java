@@ -126,6 +126,7 @@ public class VAMLInput {
 			// pw.setTitle(file.getName());
 			// }
 			if (element.getLocalName().equals("isPetriNet")) {
+				//System.out.println(element.getText());
 				pw.setPetriNet(Boolean.parseBoolean(element.getText()));
 			} else if (element.getLocalName().equals("organism")) {
 				pw.setOrganism(element.getText());
@@ -183,7 +184,7 @@ public class VAMLInput {
 		String directed = "";
 		String comment = "";
 		Color color = null;
-		BiologicalEdgeAbstract bea;
+		BiologicalEdgeAbstract bea = null;
 		KEGGEdge keggEdge = null;
 		ReactionPairEdge rpEdge = null;
 		Double passingTokens = 0.0;
@@ -199,7 +200,9 @@ public class VAMLInput {
 			if (element.getLocalName().equals("elementSpecification")) {
 				elementSpecification = element.getText();
 			} else if (element.getLocalName().equals("id")) {
+//				System.out.println("ID gefunden_____"+element.getText());
 				id = Integer.parseInt(element.getText());
+//				System.out.println("idddd "+id);
 			}else if (element.getLocalName().equals("from")) {
 				from = Integer.parseInt(element.getText());
 			} else if (element.getLocalName().equals("to")) {
@@ -457,6 +460,7 @@ public class VAMLInput {
 			
 			//System.out.println("vor: "+bea.getID());
 			//System.out.println(elementSpecification);
+//			System.out.println("edge_id: "+bea.getID());
 			pw.addEdge(bea);
 		}
 
@@ -862,16 +866,14 @@ public class VAMLInput {
 			Protein protein = (Protein) bna;
 			protein.setAaSequence(aaSequence);
 		}
-		bna.setID(vertexID);
+		//bna.setID(vertexID);
 		Point2D.Double p = new Point2D.Double(x_coord, y_coord);
-		//System.out.println(" "+bna.getID()+" "+p);
+		//System.out.println("node_id "+bna.getID());
 		pw.addVertex(bna, p);
 
 //		pw.getGraph().moveVertex(bna.getVertex(), x_coord, y_coord);
-		
 	}
 
-	@SuppressWarnings("unchecked")
 	private DAWISNode addDawisNode(OMElement dawisElement) {
 		DAWISNode node = new DAWISNode(null);
 		String elementID = "";

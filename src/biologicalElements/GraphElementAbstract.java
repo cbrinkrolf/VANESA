@@ -6,9 +6,7 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.SortedSet;
 
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
@@ -24,9 +22,8 @@ public class GraphElementAbstract {
 	private String name = "not mentioned";
 	private String label = "???";
 	private String networklabel = "";
-	private static int counter = 1000;
-	private static Set<Integer> ids = new HashSet<Integer>();
-	private int ID;
+	private int ID = 0;
+	private SortedSet<Integer> set;
 
 	public int getID() {
 		return ID;
@@ -34,37 +31,81 @@ public class GraphElementAbstract {
 
 	// should only be used when loading a file with a network
 	public void setID(int id) {
-		// TODO muss Pathway handeln
-		//System.out.println("size: " + ids.size());
-		if (ids.contains(id)) {
-			System.err.println("Error: Id " + id + " is already existing!");
-			ID = counter++;
-		} else {
-			if (id < counter) {
-				ID = id;
-			} else {
-				counter = id;
-				this.ID = counter++;
-			}
 
+		if (this.ID == id) {
+			return;
+		} else {
+			set = new GraphInstance().getPathway().getIdSet();
+			//System.out.println("size: " + set.size());
+			if (set.contains(id)) {
+				System.err.println("Error: Id " + id + " is already existing!");
+			} else {
+				if (this.ID > 0) {
+					set.remove(ID);
+//					System.out.println("removed: " + ID);
+				}
+//				System.out.println("id added: " + id);
+				set.add(id);
+				this.ID = id;
+				// System.out.println("added: " + id);
+				// System.out.println("id: "+id);
+			}
+			// System.out.println("size: " + set.size());
 		}
-		//System.out.println("added: " + ID);
-		ids.add(ID);
+
+		/*
+		 * System.out.println("id: "+id); // //System.out.println("size: " +
+		 * ids.size()); if (ids.contains(id)) { System.err.println("Error: Id "
+		 * + id + " is already existing!"); ID = counter++; } else { if (id <
+		 * counter) { ID = id; } else { counter = id; this.ID = counter++; }
+		 * 
+		 * } //System.out.println("added: " + ID); ids.add(ID);
+		 */
+	}
+
+	public void setID() {
+		set = new GraphInstance().getPathway().getIdSet();
+		// System.out.println(new GraphInstance().getPathway().getName());
+		// set id to highest current id+1;
+		if (ID <= 0) {
+//			System.out.println("neue ID");
+			if (set.size() > 0) {
+				//System.out.println("last: " + set.last());
+				setID(set.last() + 1);
+				// System.out.println("size: " + set.size());
+				// System.out.println("groesster: " + set.last());
+				// System.out.println("kleinster: " + set.first());
+			} else {
+				setID(100);
+			}
+		}
 	}
 
 	public GraphElementAbstract() {
 		// find current highest id in the pathway
-		int highest_id=1000;
-		for (Iterator it=new GraphInstance().getPathway().getAllNodes().iterator(); it.hasNext();){
-			int current=((GraphElementAbstract)it.next()).getID();
-			if (current>highest_id) highest_id=current;		
+		// int highest_id=1000;
+		// for (Iterator it=new
+		// GraphInstance().getPathway().getAllNodes().iterator();
+		// it.hasNext();){
+		// int current=((GraphElementAbstract)it.next()).getID();
+		// if (current>highest_id) highest_id=current;
+		// }
+		set = new GraphInstance().getPathway().getIdSet();
+		// System.out.println(new GraphInstance().getPathway().getName());
+		// set id to highest current id+1;
+		if (set.size() > 0) {
+			//System.out.println("last: " + set.last());
+			// ID = set.last() + 1;
+			// System.out.println("size: " + set.size());
+			// System.out.println("groesster: " + set.last());
+			// System.out.println("kleinster: " + set.first());
+		} else {
+			// ID = 100;
 		}
-			//set id to highest current id+1;
-		setID(highest_id+1);
 
 		// set id to highest current id+1;
-		//ids.add(counter);
-		//setID(counter++);
+		// ids.add(counter);
+		// setID(counter++);
 	}
 
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
@@ -291,6 +332,7 @@ public class GraphElementAbstract {
 	}
 
 	public void setShape(Shape shape) {
+		// System.out.println(shape);
 		this.shape = shape;
 	}
 

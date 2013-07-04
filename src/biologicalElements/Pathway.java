@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import petriNet.ContinuousTransition;
@@ -151,6 +153,8 @@ public class Pathway {
 	private boolean isDAWISProject = false;
 
 	private Pathway parent;
+	
+	private SortedSet<Integer> ids = new TreeSet<Integer>();
 
 	public void changeBackground(String color) {
 		if (color.equals("black")) {
@@ -281,12 +285,14 @@ public class Pathway {
 
 	public BiologicalNodeAbstract addVertex(BiologicalNodeAbstract bna,
 			Point2D p) {
+		//System.out.println("add");
+		//System.out.println(bna.getClass().getName());
 		// Object graphElement = element;
 		// GraphElementAbstract gea = (GraphElementAbstract) element;
 		bna.setLabel(bna.getLabel().trim());
 		bna.setName(bna.getName().trim());
 
-		/*if (bna.isAbstract()) {
+		if (bna.isAbstract()) {
 			if (bna.getBiologicalElement().equals(Elementdeclerations.protein))
 				bna = new Protein(bna.getLabel(), bna.getName());
 			else if (bna.getBiologicalElement().equals(
@@ -380,11 +386,12 @@ public class Pathway {
 				bna = new ContinuousTransition(bna.getLabel(), bna.getName());
 
 		}
-		(bna).setCompartment(bna.getCompartment());*/
+		(bna).setCompartment(bna.getCompartment());
 		biologicalElements.put(bna.getID() + "", bna);
 		// System.out.println(biologicalElements.size());
 		graphRepresentation.addVertex(bna);
 		graph.addVertex(bna, p);
+//		System.out.println("node eingefuegt");
 
 		if (!nodeDescription.containsKey(bna.getBiologicalElement())) {
 			nodeDescription.put(bna.getBiologicalElement(), 1);
@@ -393,17 +400,18 @@ public class Pathway {
 			nodeDescription.remove(bna.getBiologicalElement());
 			nodeDescription.put(bna.getBiologicalElement(), temp);
 		}
+		bna.setID();
 		return bna;
 	}
 
 	public BiologicalEdgeAbstract addEdge(BiologicalEdgeAbstract bea) {
-
+//		System.out.println("pw edge adden "+bea.getID());
 //		System.out.println(bea.isAbstract());
 		//BiologicalEdgeAbstract bea = null;
 		//System.out.println(bea.isAbstract());
 		//System.out.println(bea.getBiologicalElement());
-		/*if (bea.isAbstract()) {
-
+		if (bea.isAbstract()) {
+			
 			if (bea.getBiologicalElement().equals(
 					Elementdeclerations.compoundEdge)) {
 
@@ -600,25 +608,28 @@ public class Pathway {
 
 		if(bea == null){
 			System.out.println("edge null");
-		}*/
+		}
+//		System.out.println("id in pw: "+bea.getID());
+//		System.out.println("edge hinzugefuegt");
 		biologicalElements.put(bea.getID() + "", bea);
 		edges.put(new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()), bea);
 		// System.out.println(biologicalElements.size());
 		// Pair p = bea.getEdge().getEndpoints();
 		graphRepresentation.addEdge(bea);
 		graph.addEdge(bea);
-
+		bea.setID();
 		return bea;
 	}
 
 	public void removeElement(GraphElementAbstract element) {
 		if (element != null) {
 			if (element.isVertex()) {
-
+				//System.out.println(biologicalElements.size());
+				//System.out.println("drin");
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
 				graphRepresentation.removeVertex(bna);
-				// graph.removeVertex(bna);
-
+				graph.removeVertex(bna);
+				System.out.println("durch");
 				if (!nodeDescription.containsKey(bna.getBiologicalElement())) {
 				} else {
 					Integer temp = nodeDescription.get(bna
@@ -632,27 +643,29 @@ public class Pathway {
 								temp - 1);
 					}
 				}
-
+				
 			} else {
 				BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) element;
 				// Pair p = bea.getEdge().getEndpoints();
-				System.out.println(edges.size());
+				//System.out.println(edges.size());
 				edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(),bea.getTo()));
 				graphRepresentation.removeEdge(bea);
-				System.out.println(edges.size());
+				//System.out.println(edges.size());
 			}
-			
-			biologicalElements.remove(element);
+			ids.remove(element.getID());
+			//System.out.println(biologicalElements.size());
+			biologicalElements.remove(element.getID()+"");
+			//System.out.println(biologicalElements.size());
 		}
 	}
 
-	public Object getElement(Object graphElement) {
+	/*public Object getElement(Object graphElement) {
 
 		if (biologicalElements.get(graphElement) != null) {
 			return biologicalElements.get(graphElement);
 		} else
 			return null;
-	}
+	}*/
 	
 	public boolean existEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
 		
@@ -1037,6 +1050,10 @@ public class Pathway {
 				result.add(((PathwayMap) bna).getPathwayLink());
 		}
 		return result;
+	}
+	
+	public SortedSet<Integer> getIdSet(){
+		return this.ids;
 	}
 
 }
