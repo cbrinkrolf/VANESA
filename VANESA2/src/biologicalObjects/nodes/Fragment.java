@@ -16,7 +16,7 @@ public class Fragment extends BiologicalNodeAbstract{
 	
 	@Override
 	public void rebuildShape(VertexShapes vs){
-		setShape(vs.getEllipse());
+		//setShape(vs.getEllipse());
 	}
 	
 //	@SuppressWarnings("unchecked")

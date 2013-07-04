@@ -13,9 +13,9 @@ import graph.jung.graphDrawing.VertexShapes;
 
 public class Transition extends BiologicalNodeAbstract {
 
-	private Vector TransitionIn = new Vector<Transition>();
+	private Vector<Transition> TransitionIn = new Vector<Transition>();
 
-	public Vector getTransitionIn() {
+	public Vector<Transition> getTransitionIn() {
 		return TransitionIn;
 	}
 
@@ -39,17 +39,17 @@ public class Transition extends BiologicalNodeAbstract {
 		this.fireTransition = fireTransition;
 	}
 
-	public void setTransitionIn(Vector transitionIn) {
+	public void setTransitionIn(Vector<Transition> transitionIn) {
 		TransitionIn = transitionIn;
 	}
 
-	private Vector TransitionOut = new Vector<Transition>();
+	private Vector<Transition> TransitionOut = new Vector<Transition>();
 
-	public Vector getTransitionOut() {
+	public Vector<Transition> getTransitionOut() {
 		return TransitionOut;
 	}
 
-	public void setTransitionOut(Vector transitionOut) {
+	public void setTransitionOut(Vector<Transition> transitionOut) {
 		TransitionOut = transitionOut;
 	}
 
@@ -68,7 +68,7 @@ public class Transition extends BiologicalNodeAbstract {
 		if (label.equals("")) setLabel(name);
 		if (name.equals("")) setName(label);
 		shapes = new VertexShapes();
-//		setShape(shapes.getRectangle(getVertex()));
+		setShape(shapes.getRectangle());
 		Rectangle bounds = getShape().getBounds();
 		// System.out.println("hoehe: "+bounds.getHeight());
 		// System.out.println("weite: "+bounds.getWidth());
@@ -78,6 +78,17 @@ public class Transition extends BiologicalNodeAbstract {
 		setShape(transform.createTransformedShape(getShape()));
 		this.setColor(new Color(255, 255, 255));
 		// this.set
+		
+		Shape s = shapes.getRectangle();
+		// s.
+		// Rectangle bounds = s.getBounds();
+		AffineTransform transform2 = new AffineTransform();
+		
+		transform2.translate(1, 1);
+		transform2.scale(1, 2);
+		setShape(transform2.createTransformedShape(s));
+		
+		
 		setAbstract(false);
 		setReference(false);
 		setBiologicalElement(Elementdeclerations.transition);
@@ -85,13 +96,13 @@ public class Transition extends BiologicalNodeAbstract {
 
 	@Override
 	public void rebuildShape(VertexShapes vs) {
-		Shape s = null; //vs.getRectangle(getVertex());
+		/*Shape s = vs.getRectangle();
 		// s.
 		// Rectangle bounds = s.getBounds();
 		AffineTransform transform = new AffineTransform();
 		transform.translate(1, 1);
 		transform.scale(1, 2);
-		setShape(transform.createTransformedShape(s));
+		setShape(transform.createTransformedShape(s));*/
 		// setShape(s);
 	}
 

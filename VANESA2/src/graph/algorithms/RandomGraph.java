@@ -61,11 +61,13 @@ public class RandomGraph {
 
 			int nodeNumberCounter = 0;
 
+			Other node;
+			
 			for (k = 1; k <= m; k++) {
 
 				if (!set.contains(nodei[k])) {
 					set.add(nodei[k]);
-					Other node = new Other(nodei[k] + "", nodei[k] + "");
+					node = new Other(nodei[k] + "", nodei[k] + "");
 					node.setReference(false);
 					pw.addVertex(node, new Point(150, 100));
 					nodes.put(nodei[k], node);
@@ -76,7 +78,7 @@ public class RandomGraph {
 
 				if (!set.contains(nodej[k])) {
 					set.add(nodej[k]);
-					Other node = new Other(nodej[k] + "", nodej[k] + "");
+					node = new Other(nodej[k] + "", nodej[k] + "");
 					node.setReference(false);
 					pw.addVertex(node, new Point(150, 100));
 					nodes.put(nodej[k], node);
@@ -89,7 +91,7 @@ public class RandomGraph {
 				if (nodeNumberCounter < n) {
 					if (!set.contains(k)) {
 						set.add(k);
-						Other node = new Other(k + "", k + "");
+						node = new Other(k + "", k + "");
 						node.setReference(false);
 						pw.addVertex(node, new Point(150, 100));
 						nodes.put(k, node);
@@ -120,6 +122,7 @@ public class RandomGraph {
 					pw.addEdge(r);
 
 				} else {
+					//System.out.println("test");
 					ReactionEdge r = new ReactionEdge("", "",
 							nodes.get(nodei[k]), nodes.get(nodej[k]));
 					// ReactionEdge r = new ReactionEdge(myGraph.createEdge(pw

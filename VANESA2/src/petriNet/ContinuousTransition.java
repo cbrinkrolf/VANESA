@@ -1,13 +1,13 @@
 package petriNet;
 
+import graph.jung.graphDrawing.VertexShapes;
+
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
 import biologicalElements.Elementdeclerations;
 //import edu.uci.ics.jung.graph.Vertex;
-import graph.jung.graphDrawing.VertexShapes;
 
 public class ContinuousTransition extends Transition {
 
@@ -19,7 +19,7 @@ public class ContinuousTransition extends Transition {
 		setModellicaString("PNlib.TC");
 		setColor(Color.WHITE);
 		shapes = new VertexShapes();
-//		setShape(shapes.getDoubleRectangle(getVertex()));
+		setShape(shapes.getDoubleRectangle());
 		Rectangle bounds = getShape().getBounds();
 		// System.out.println("hoehe: "+bounds.getHeight());
 		// System.out.println("weite: "+bounds.getWidth());
@@ -27,6 +27,13 @@ public class ContinuousTransition extends Transition {
 		// transform.translate(x2, y2 - bounds.getHeight() / 2);
 		transform.scale(bounds.getWidth() * 3, bounds.getHeight());
 		setShape(transform.createTransformedShape(getShape()));
+
+		AffineTransform transform2 = new AffineTransform();
+
+		transform2.translate(1, 1);
+		transform2.scale(1, 2);
+		setShape(transform2.createTransformedShape(shapes.getDoubleRectangle()));
+
 	}
 
 	public double getDelay() {
@@ -34,14 +41,15 @@ public class ContinuousTransition extends Transition {
 	}
 
 	public void rebuildShape(VertexShapes vs) {
-		Shape s = null; //vs.getDoubleRectangle(getVertex());
+		/*System.out.println("rebuild");
+		Shape s = null; // vs.getDoubleRectangle(getVertex());
 		// s.
 		// Rectangle bounds = s.getBounds();
 		AffineTransform transform = new AffineTransform();
 		transform.translate(1, 1);
 		transform.scale(1, 2);
-		setShape(transform.createTransformedShape(s));
+		setShape(transform.createTransformedShape(s));*/
 		// setShape(s);
 	}
-	
+
 }

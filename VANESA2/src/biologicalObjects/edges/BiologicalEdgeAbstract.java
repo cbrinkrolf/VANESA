@@ -67,9 +67,9 @@ public class BiologicalEdgeAbstract extends GraphElementAbstract {
 	public BiologicalEdgeAbstract(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to){
 		
 //		this.edge=edge; 
-		super.setName(name);
-		super.setLabel(label);
-		super.setIsEdge(true);
+		setName(name);
+		setLabel(label);
+		setIsEdge(true);
 		this.from = from;
 		this.to = to;
 	
