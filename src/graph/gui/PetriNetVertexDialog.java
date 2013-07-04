@@ -10,8 +10,10 @@ import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.List;
 
@@ -150,7 +152,7 @@ public class PetriNetVertexDialog implements ActionListener {
 		}
 	}
 
-	public boolean getAnswer(BiologicalNodeAbstract v) {
+	public boolean getAnswer(Point2D point) {
 
 		String title = "";
 		if (petriElement.equals("discretePlace")) {
@@ -168,54 +170,52 @@ public class PetriNetVertexDialog implements ActionListener {
 		JDialog dialog = pane.createDialog(null, title);
 		dialog.show();
 		Integer value = (Integer) pane.getValue();
-
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
 				// Vertex v = pw.getGraph().createNewVertex();
 
 				if (petriElement.equals("discretePlace")) {
-					Place p = new Place(label.getText(), name.getText(), v,
-							1.0, true);
+					//System.out.println("anfang");
+					Place p = new Place(label.getText(), name.getText(), 1.0, true);
 					p.setToken(Double.parseDouble(token.getText()));
 					p.setTokenStart(Double.parseDouble(tokenStart.getText()));
 					p.setTokenMin(Double.parseDouble(tokenMin.getText()));
 					p.setTokenMax(Double.parseDouble(tokenMax.getText()));
-					pw.addElement(p);
+					pw.addVertex(p, point);
 				} else if (petriElement.equals("continuousPlace")) {
-					Place p = new Place(label.getText(), name.getText(), v,
-							1.0, false);
+					Place p = new Place(label.getText(), name.getText(), 1.0, false);
 					p.setToken(Double.parseDouble(token.getText()));
 					p.setTokenStart(Double.parseDouble(tokenStart.getText()));
 					p.setTokenMin(Double.parseDouble(tokenMin.getText()));
 					p.setTokenMax(Double.parseDouble(tokenMax.getText()));
-					pw.addElement(p);
+					pw.addVertex(p, point);
 				} else if (petriElement.equals("discreteTransition")) {
 					DiscreteTransition t = new DiscreteTransition(
-							label.getText(), name.getText(), v);
+							label.getText(), name.getText());
 					t.setDelay(Double.parseDouble(delay.getText()));
 
 					t.setFireTransition(transitionfire.isSelected());
 					t.setFireTransitionStatemanet(transitionStatement.getText());
 
-					pw.addElement(t);
+					pw.addVertex(t, point);
 				} else if (petriElement.equals("continiousTransition")) {
 					ContinuousTransition t = new ContinuousTransition(
-							label.getText(), name.getText(), v);
+							label.getText(), name.getText());
 
 					t.setFireTransition(transitionfire.isSelected());
 					t.setFireTransitionStatemanet(transitionStatement.getText());
 
-					pw.addElement(t);
+					pw.addVertex(t, point);
 				} else if (petriElement.equals("stochasticTransition")) {
 					StochasticTransition t = new StochasticTransition(
-							label.getText(), name.getText(), v);
+							label.getText(), name.getText());
 					t.setDistribution(distributionList.getSelectedItem()
 							.toString());
 
 					t.setFireTransition(transitionfire.isSelected());
 					t.setFireTransitionStatemanet(transitionStatement.getText());
 
-					pw.addElement(t);
+					pw.addVertex(t, point);
 				}
 				GraphContainer con = ContainerSingelton.getInstance();
 				MainWindow w = MainWindowSingelton.getInstance();

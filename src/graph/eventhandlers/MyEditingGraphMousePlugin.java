@@ -185,7 +185,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 
 					PetriNetVertexDialog dialog = new PetriNetVertexDialog(
 							con.getPetriNetEditingMode());
-					boolean answer = dialog.getAnswer(newVertex);
+					boolean answer = dialog.getAnswer(p);
 					// System.out.println();
 					if (answer) {
 
@@ -209,7 +209,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 								.hasNext();) {
 							BiologicalNodeAbstract bna = (BiologicalNodeAbstract) iterator
 									.next();
-							bna.rebuildShape(new VertexShapes());
+							//bna.rebuildShape(new VertexShapes());
 						}
 
 						for (Iterator<BiologicalNodeAbstract> iterator = graph.getVertices().iterator(); iterator
@@ -235,6 +235,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						if (graph.getVertices().size() > 1) {
 							// System.exit(0);
 						}
+						
 						// pw.getGraph().setVertexLocation(newVertex, p);
 						// layout.setLocation(newVertex, p);
 						// vv.getModel().restart();
@@ -249,6 +250,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						}
 
 					}
+					
 				}
 			}
 			vv.repaint();

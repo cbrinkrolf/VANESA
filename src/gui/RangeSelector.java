@@ -307,12 +307,10 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 			Pathway pw = graphInstance.getPathway();
 
-			GraphElementAbstract gea = (GraphElementAbstract) graphInstance
-					.getPathwayElement(graphInstance.getSelectedObject());
+			GraphElementAbstract gea = graphInstance.getSelectedObject();
 			if (gea.isVertex()) {
 
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
-						.getPathwayElement(graphInstance.getSelectedObject());
+				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
 				if (bna instanceof CollectorNode) {
 
 					CollectorNode n = (CollectorNode) bna;

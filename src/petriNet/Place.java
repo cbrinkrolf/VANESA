@@ -20,9 +20,7 @@ public class Place extends BiologicalNodeAbstract {
 	private boolean discrete = true;
 
 	private Color plotColor;
-	
-	
-	
+
 	public boolean isDiscrete() {
 		return discrete;
 	}
@@ -44,7 +42,8 @@ public class Place extends BiologicalNodeAbstract {
 
 	public void setTokenStart(double tokenStart) {
 		this.tokenStart = tokenStart;
-		if (!new GraphInstance().getPathway().isPetriNetSimulation()) token=tokenStart;
+		if (!new GraphInstance().getPathway().isPetriNetSimulation())
+			token = tokenStart;
 	}
 
 	private String modellicaString;
@@ -57,25 +56,24 @@ public class Place extends BiologicalNodeAbstract {
 		this.modellicaString = modellicaString;
 	}
 
-//	private int r;
-//	private int b;
-//	private int g;
+	// private int r;
+	// private int b;
+	// private int g;
 
-	public Place(String label, String name, double token,
-			boolean discrete) {
+	public Place(String label, String name, double token, boolean discrete) {
 		super(label, name);
-		if (label.equals("")) setLabel(name);
-		if (name.equals("")) setName(label);
+		if (label.equals(""))
+			setLabel(name);
+		if (name.equals(""))
+			setName(label);
 		shapes = new VertexShapes();
-		
+		//System.out.println("new place");
 		this.discrete = discrete;
 
-	
-		if (discrete){
-			//setShape(shapes.getEllipse(getVertex()));
-		}
-		else{
-			//setShape(shapes.getDoubleEllipse(getVertex()));
+		if (discrete) {
+			setShape(shapes.getEllipse());
+		} else {
+			setShape(shapes.getDoubleEllipse());
 		}
 
 		if (discrete) {
@@ -84,11 +82,11 @@ public class Place extends BiologicalNodeAbstract {
 			setBiologicalElement(Elementdeclerations.s_place);
 		}
 		if (discrete) {
-			//super.setColor(new Color(255,255,255));
-			//System.out.println("weiss");
+			// super.setColor(new Color(255,255,255));
+			// System.out.println("weiss");
 		} else {
-			//super.setColor(new Color(125,125,125));
-			//System.out.println("grau");
+			// super.setColor(new Color(125,125,125));
+			// System.out.println("grau");
 		}
 
 		// Rectangle bounds = getShape().getBounds();
@@ -115,11 +113,11 @@ public class Place extends BiologicalNodeAbstract {
 
 	@Override
 	public void rebuildShape(VertexShapes vs) {
+		/*
 		// this.setColor(new Color(255-token,255-token,255-token));
 		Shape s = null;
-		//if (!discrete)s = vs.getDoubleEllipse(getVertex());
-		//else s=vs.getEllipse(getVertex());
-		
+		// if (!discrete)s = vs.getDoubleEllipse(getVertex());
+		// else s=vs.getEllipse(getVertex());
 
 		// Rectangle bounds = s.getBounds();
 		// AffineTransform transform = new AffineTransform();
@@ -128,9 +126,9 @@ public class Place extends BiologicalNodeAbstract {
 		// this.setColor(new Color(token,0,0));
 
 		AffineTransform transform = new AffineTransform();
-		transform.scale(2,2);
+		transform.scale(2, 2);
 		setShape(transform.createTransformedShape(s));
-		// setShape(s);
+		// setShape(s);*/
 	}
 
 	public void consume(int i) {
@@ -161,11 +159,10 @@ public class Place extends BiologicalNodeAbstract {
 		this.token = token;
 	}
 
-	/*public void setRelativeColor(int r, int g, int b) {
-		this.r = r;
-		this.g = g;
-		this.b = b;
-	}*/
+	/*
+	 * public void setRelativeColor(int r, int g, int b) { this.r = r; this.g =
+	 * g; this.b = b; }
+	 */
 
 	public void setPlotColor(Color plotColor) {
 		this.plotColor = plotColor;
@@ -174,6 +171,5 @@ public class Place extends BiologicalNodeAbstract {
 	public Color getPlotColor() {
 		return plotColor;
 	}
-	
 
 }

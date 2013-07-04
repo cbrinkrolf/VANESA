@@ -65,6 +65,8 @@ import graph.jung.graphDrawing.MyVertexStrokeHighlighting;
 import graph.layouts.GraphCenter;
 import graph.layouts.gemLayout.GEMLayout;
 import gui.HeatgraphLayer;
+import gui.MainWindow;
+import gui.MainWindowSingelton;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
 //import edu.uci.ics.jung.graph.Edge;
@@ -269,6 +271,8 @@ public class MyGraph {
 		Transformer<BiologicalNodeAbstract, Shape> vertexPaint = new Transformer<BiologicalNodeAbstract, Shape>() {
 			@Override
 			public Shape transform(BiologicalNodeAbstract bna) {
+				//System.out.println(bna.getClass().getName());
+				//System.out.println(bna.getShape());
 				return bna.getShape();
 			}
 		};
@@ -277,21 +281,17 @@ public class MyGraph {
 		pr.setVertexLabelTransformer(vertexStringer);
 
 		pr.setVertexShapeTransformer(vertexPaint);
-		// pr.setVertexShapeFunction(vssa);
 
 		pr.setEdgeLabelTransformer(this.edgeStringer);
-		// pr.setEdgeStringer(getEdgeStringer());
 
 		pr.setVertexDrawPaintTransformer(vdpf);
 		pr.setVertexFillPaintTransformer(vfpf);
-		// pr.setVertexPaintFunction(vpf);
 
 		pr.setEdgeStrokeTransformer(esh);
 
 		pr.setEdgeDrawPaintTransformer(edpf);
 		pr.setEdgeFillPaintTransformer(efpf);
 
-		// pr.setEdgeShapeFunction(esf);
 		pr.setEdgeShapeTransformer(esf);
 
 		pr.setVertexLabelRenderer(vlr);
@@ -316,13 +316,37 @@ public class MyGraph {
 
 		vv2.scaleToLayout(new CrossoverScalingControl());
 
-		// g.addListener(new GraphListener(), GraphEventType.ALL_SINGLE_EVENTS);
-		// stateV.addListener(new PickListener());
+		//g.addListener(new GraphListener(), GraphEventType.ALL_SINGLE_EVENTS);
+		//stateV.addListener(new PickListener());
+		//vv.getPickedEdgeState().addItemListener(new EdgePickListener());
 		stateV.addItemListener(new ItemListener() {
 
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				// TODO Auto-generated method stub
+				//System.out.println("changed");
+				if(stateV.getSelectedObjects().length == 1){
+				graphInstance.setSelectedObject((BiologicalNodeAbstract)stateV.getSelectedObjects()[0]);
+				}
+				MainWindow w = MainWindowSingelton.getInstance();
+				w.updateElementProperties();
+
+
+			}
+		});
+		
+		stateE.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+				//System.out.println("changed");
+				if(stateE.getSelectedObjects().length == 1){
+				graphInstance.setSelectedObject((BiologicalEdgeAbstract)stateE.getSelectedObjects()[0]);
+				}
+				MainWindow w = MainWindowSingelton.getInstance();
+				w.updateElementProperties();
+
 
 			}
 		});
@@ -722,15 +746,14 @@ public class MyGraph {
 				while (out.hasNext()) {
 					this.removeEdge(out.next());
 				}
-
-				this.removeVertex(bna);
+				graphInstance.getPathway().removeElement(bna);
+				//this.removeVertex(bna);
 
 			}
 		}
 	}
 
 	public void removeVertex(BiologicalNodeAbstract v) {
-		graphInstance.getPathway().removeElement(v);
 		nodePositions.remove(v);
 		g.removeVertex(v);
 	}
