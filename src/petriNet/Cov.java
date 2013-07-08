@@ -1,11 +1,12 @@
 package petriNet;
 
-import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
-import edu.uci.ics.jung.utils.Pair;
+//import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
+//import edu.uci.ics.jung.utils.Pair;
 import graph.CreatePathway;
 import graph.GraphInstance;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,8 +22,8 @@ public class Cov {
 	private Pathway pw;
 	private GraphInstance graphInstance = new GraphInstance();
 	// private MyGraph g;
-	private HashMap<String, Integer> hmplaces = new HashMap<String, Integer>();
-	private HashMap<String, Integer> hmtransitions = new HashMap<String, Integer>();
+	private HashMap<BiologicalNodeAbstract, Integer> hmplaces = new HashMap<BiologicalNodeAbstract, Integer>();
+	private HashMap<BiologicalNodeAbstract, Integer> hmtransitions = new HashMap<BiologicalNodeAbstract, Integer>();
 	private SimpleMatrixDouble bMatrix;
 	private SimpleMatrixDouble fMatrix;
 	private SimpleMatrixDouble cMatrix;
@@ -61,8 +62,7 @@ public class Cov {
 		this.newName = pw.getName();
 		pw.getGraph().lockVertices();
 		pw.getGraph().stopVisualizationModel();
-		root = new CovNode("label", "name", pw.getGraph().createNewVertex(),
-				this.numberPlaces);
+		root = new CovNode("label", "name", this.numberPlaces);
 		CovList list = new CovList(numberPlaces);
 		// node.setVisible(false);
 		double[] tmp = new double[start.size()];
@@ -73,11 +73,11 @@ public class Cov {
 		list.setElements(tmp);
 		root.setTokenList(list);
 		// System.out.println(node.getTokenList());
-		pw.addElement(root);
+		pw.addVertex(root, new Point(10,30));
 		root.setColor(new Color(255, 0, 0));
 
-		pw.getGraph().moveVertex(root.getVertex(), 10, 30);
-		this.covnodes.put(root.getVertex().toString(), root);
+		//pw.getGraph().moveVertex(root.getVertex(), 10, 30);
+		//this.covnodes.put(root.getVertex().toString(), root);
 		// System.out.println(this.covnodes);
 		parents = new ArrayList<CovNode>();
 		this.computeNode(root);
@@ -133,11 +133,10 @@ public class Cov {
 		return root;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void computeNode(CovNode parent) {
 		CovList cl = parent.getTokenList();
 		CovList tmp;
-		Set<CovNode> nodes;
+		Set<BiologicalNodeAbstract> nodes;
 		ArrayList<Integer> indexe;
 		// boolean found;
 		// System.out.println("Root: " + cl);
@@ -167,11 +166,9 @@ public class Cov {
 								&& !cn.getTokenList().equals(
 										parent.getTokenList())) {
 
-							CovEdge e = new CovEdge(pw.getGraph().createEdge(
-									parent.getVertex(), cn.getVertex(), true),
-									this.idToNameTransition.get(i), "name");
+							CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i), parent, cn);
 							e.setDirected(true);
-							pw.addElement(e);
+							pw.addEdge(e);
 							// e.setVisible(false);
 							//System.out.println("Kante1 von: "
 							//		+ parent.getTokenList() + "->"
@@ -227,12 +224,9 @@ public class Cov {
 									// System.out.println();
 									// Wenn neue Markierung schon vorhanden ist
 									if (cond1 && !cond2) {
-										CovEdge e = new CovEdge(pw.getGraph()
-												.createEdge(parent.getVertex(),
-														cn.getVertex(), true),
-														this.idToNameTransition.get(i), "name");
+										CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i), parent, cn);
 										e.setDirected(true);
-										pw.addElement(e);
+										pw.addEdge(e);
 										// e.setVisible(false);
 										//System.out.println("Kante2 von: "
 										//		+ parent.getTokenList() + "->"
@@ -248,22 +242,19 @@ public class Cov {
 
 								if (!found) {
 									CovNode n = new CovNode("label2", "name2",
-											pw.getGraph().createNewVertex(),
 											this.numberPlaces);
 									n.setTokenList(tmp.clone());
 
-									pw.addElement(n);
+									pw.addVertex(n, new Point(i * 10, i * i * 30));
 									// n.setVisible(false);
-									CovEdge e = new CovEdge(pw.getGraph()
-											.createEdge(parent.getVertex(),
-													n.getVertex(), true), this.idToNameTransition.get(i), "name");
+									CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i), parent, n);
 									e.setDirected(true);
 
-									pw.getGraph().moveVertex(n.getVertex(),
-											i * 10, i * i * 30);
-									this.covnodes.put(n.getVertex().toString(),
-											n);
-									pw.addElement(e);
+									//pw.getGraph().moveVertex(n.getVertex(),
+									//		i * 10, i * i * 30);
+									//this.covnodes.put(n.getVertex().toString(),
+									//		n);
+									pw.addEdge(e);
 									// e.setVisible(false);
 
 									System.out
@@ -278,8 +269,7 @@ public class Cov {
 
 						// wenn Markierung noch nicht im Graph
 						if (!found) {
-							CovNode n = new CovNode("label2", "name2", pw
-									.getGraph().createNewVertex(),
+							CovNode n = new CovNode("label2", "name2",
 									this.numberPlaces);
 							n.setTokenList(tmp);
 
@@ -287,20 +277,18 @@ public class Cov {
 							// parent.getTokenList());
 							// System.out.println("2: " + tmp.toString());
 							if (!parent.getTokenList().equals(tmp.toString())) {
-								pw.addElement(n);
+								pw.addVertex(n, new Point(i * 10,i * i * 30));
 								// n.setVisible(false);
-								CovEdge e = new CovEdge(pw.getGraph()
-										.createEdge(parent.getVertex(),
-												n.getVertex(), true), this.idToNameTransition.get(i), "name");
+								CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i), parent, n);
 								e.setDirected(true);
-								this.covnodes.put(n.getVertex().toString(), n);
-								pw.addElement(e);
+								//this.covnodes.put(n.getVertex().toString(), n);
+								pw.addEdge(e);
 								// e.setVisible(false);
 							//	System.out.println("Kante3 von: "
 							//			+ parent.getTokenList() + "->"
 							//			+ n.getTokenList());
-								pw.getGraph().moveVertex(n.getVertex(), i * 10,
-										i * i * 30);
+								//pw.getGraph().moveVertex(n.getVertex(), i * 10,
+								//		i * i * 30);
 							//	System.out.println("neuer node, nicht gef. "
 							//			+ n.getTokenList());
 								found = false;
@@ -313,7 +301,6 @@ public class Cov {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void createMatrices() {
 
 		Set<BiologicalNodeAbstract> hsVertex = new HashSet<BiologicalNodeAbstract>();
@@ -338,7 +325,7 @@ public class Cov {
 			// System.out.println(bna.getClass());
 			if (bna instanceof Transition) {
 				t = (Transition) bna;
-				this.hmtransitions.put(bna.getVertex().toString(), new Integer(
+				this.hmtransitions.put(bna, new Integer(
 						this.numberTransitions));
 				this.idToNameTransition.put(this.numberTransitions, t.getName());
 				//System.out.println("name: "+t.getName());
@@ -352,7 +339,7 @@ public class Cov {
 				//		+ p.getTokenMax());
 				//System.out.println("id: " + this.numberPlaces + " name: "
 				//		+ p.getName());
-				this.hmplaces.put(bna.getVertex().toString(), new Integer(
+				this.hmplaces.put(bna, new Integer(
 						this.numberPlaces));
 				this.start.add(new Double(p.getTokenStart()));
 				this.numberPlaces++;
@@ -370,20 +357,20 @@ public class Cov {
 		// einkommende Kanten (backward matrix)
 		Iterator edgeit = hsEdge.iterator();
 		PNEdge edge;
-		Pair pair;
+		//Pair pair;
 		while (edgeit.hasNext()) {
 			edge = (PNEdge) edgeit.next();
 			// System.out.println("first: "+edge.getLabel());
 			// System.out.println("first: "+edge.getEdge().getEndpoints().getFirst());
 			// System.out.println("simid: "+edge.getInternalSimulationID());
 			// System.out.println("second: "+edge.getEdge().getEndpoints().getSecond());
-			pair = edge.getEdge().getEndpoints();
+			//pair = edge.getEdge().getEndpoints();
 			// System.out.println(pair.toString());
 
 			// T->P
-			if (this.hmplaces.containsKey(pair.getSecond().toString())) {
-				int i = hmplaces.get(pair.getSecond().toString());
-				int j = hmtransitions.get(pair.getFirst().toString());
+			if (this.hmplaces.containsKey(edge.getTo())) {
+				int i = hmplaces.get(edge.getTo());
+				int j = hmtransitions.get(edge.getFrom());
 				// double eintrag = b[i][j];
 				// eintrag+=
 				// System.out.println(edge.getPassingTokens());
@@ -392,8 +379,8 @@ public class Cov {
 			// P->T
 			else {
 				// System.out.println(pair.getFirst().toString());
-				int i = hmplaces.get(pair.getFirst().toString());
-				int j = hmtransitions.get(pair.getSecond().toString());
+				int i = hmplaces.get(edge.getFrom());
+				int j = hmtransitions.get(edge.getTo());
 				// double eintrag = f[i][j];
 				// eintrag
 				f[i][j] -= edge.getPassingTokens();
@@ -438,23 +425,22 @@ public class Cov {
 		return array;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void getParents(CovNode node) {
 
 		if (!this.containsParent(node)) {
 			this.parents.add(node);
 		}
 		// System.out.println("Vertex: " + node.getVertex().toString());
-		Set<BiologicalEdgeAbstract> set = node.getVertex().getInEdges();
-
-		Iterator it = set.iterator();
-		DirectedSparseEdge e;
+		
+		Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getJungGraph().getInEdges(node).iterator();
+		CovEdge e;
 		CovNode n;
 		// System.out.println("setsize: " + set.size());
 		while (it.hasNext()) {
-			e = (DirectedSparseEdge) it.next();
+			e = (CovEdge) it.next();
 
-			n = this.covnodes.get(e.getEndpoints().getFirst().toString());
+//			n = this.covnodes.get(e.getEndpoints().getFirst().toString());
+			n = (CovNode) e.getFrom();
 			// System.out.println("parent: "
 			// + e.getEndpoints().getFirst().toString() + " "
 			// + n.getLabel());
@@ -479,14 +465,13 @@ public class Cov {
 		CovNode tmp;
 		for (int i = 0; i < this.parents.size(); i++) {
 			tmp = this.parents.get(i);
-			if (tmp.getVertex().toString().equals(n.getVertex().toString()))
+			if (tmp.equals(n))
 				return true;
 		}
 
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void paintCoveredNodes() {
 
 		HashSet nodes = pw.getAllNodes();

@@ -19,7 +19,7 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
+//import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
 
 /**
  * @author Rafael, cbrinkro
@@ -32,9 +32,7 @@ public class MOoutput {
 	private String modelName = null;
 	private Pathway pw = null;
 	private FileWriter fwriter;
-	@SuppressWarnings("unchecked")
 	Hashtable speciesTypeID = new Hashtable();
-	@SuppressWarnings("unchecked")
 	Hashtable compartments = new Hashtable();
 
 	private String places = "";
@@ -55,7 +53,7 @@ public class MOoutput {
 	private final Hashtable<String, String> bioName = new Hashtable<String, String>();
 	private final Hashtable<String, Object> bioObject = new Hashtable<String, Object>();
 	// private HashMap<String, Double> edgeToWeight = new HashMap<String,
-	private final HashMap <String, String> vertex2name = new HashMap<String, String>();
+	private final HashMap <BiologicalNodeAbstract, String> vertex2name = new HashMap<BiologicalNodeAbstract, String>();
 	// Double>();
 	private HashMap<String, String> inWeights = new HashMap<String, String>();
 	private HashMap<String, String> outWeights = new HashMap<String, String>();
@@ -108,20 +106,19 @@ public class MOoutput {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void prepare() {
-		Iterator it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
-			Point2D p = pw.getGraph().getClusteringLayout().getLocation(
-					bna.getVertex());
+			bna = it.next();
+			Point2D p = pw.getGraph().getVertexLocation(bna);
 			String biologicalElement = bna.getBiologicalElement();
 			String name ="";
 			if (biologicalElement.equals(biologicalElements.Elementdeclerations.place) || biologicalElement.equals(biologicalElements.Elementdeclerations.s_place))
 			name = "P"+bna.getID();
 			else name="T"+ bna.getID();
 				
-			this.vertex2name.put(bna.getVertex().toString(),name);
+			this.vertex2name.put(bna, name);
 			nodePositions.put(name, p);
 			nodeType.put(name, biologicalElement);
 			bioName.put(name, bna.getLabel());
@@ -162,20 +159,18 @@ public class MOoutput {
 		return weightedEdges;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void buildNodes() {
 		for (int i=1; i<=inhibitCount; i++) places+="PNlib.IA inhibitorArc"+i+";\r\n";		
 		Iterator it = pw.getAllNodes().iterator();
 		while (it.hasNext()) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
-			Point2D p = pw.getGraph().getClusteringLayout().getLocation(
-					bna.getVertex());
+			Point2D p = pw.getGraph().getVertexLocation(bna);
 			String biologicalElement = bna.getBiologicalElement();
 			double km = Double.NaN, kcat = Double.NaN;
 			String ec = "";
 
-			int in = bna.getVertex().getInEdges().size();
-			int out = bna.getVertex().getOutEdges().size();
+			int in = pw.getGraph().getJungGraph().getInEdges(bna).size();
+			int out = pw.getGraph().getJungGraph().getOutEdges(bna).size();
 			if (biologicalElement.equals("Enzyme"))
 				if (in == 1 && out == 1) // falls ein ein- und aus-gang: MM
 					transitions = transitions.concat(getMmString("T"+bna.getID(), p, km, kcat, ec));
@@ -236,18 +231,16 @@ public class MOoutput {
 
 	private int inhibitCount=0;
 	
-	@SuppressWarnings("unchecked")
 	private void buildConnections() {
 
-		Iterator it = pw.getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
 
+		BiologicalEdgeAbstract bna;
 		while (it.hasNext()) {
 
-			BiologicalEdgeAbstract bna = (BiologicalEdgeAbstract) it.next();
-			String fromString = vertex2name.get(bna.getEdge().getEndpoints().getFirst()
-					.toString());
-			String toString = vertex2name.get(bna.getEdge().getEndpoints().getSecond()
-					.toString());
+			bna = it.next();
+			String fromString = vertex2name.get(bna.getFrom());
+			String toString = vertex2name.get(bna.getTo());
 			String fromType = nodeType.get(fromString);
 			String toType = nodeType.get(toString);
 

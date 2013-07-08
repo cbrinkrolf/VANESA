@@ -13,6 +13,7 @@ import gui.algorithms.ScreenSize;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class PNTableDialog extends JDialog implements ActionListener {
@@ -53,8 +55,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 	private BiologicalNodeAbstract[] bnas;
 	private JXTable table2 = new JXTable();
 	private PNEdge[] edges;
-	
-	
+
 	public PNTableDialog() {
 		super(MainWindowSingelton.getInstance(), true);
 
@@ -96,33 +97,48 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		}
 		i = 0;
 		Object[][] rows2 = new Object[pw.getAllEdges().toArray().length][9];
-		edges = new PNEdge[pw.getAllEdges().toArray().length];	
-		for (Iterator it = pw.getAllEdges().iterator(); it.hasNext();) {
-			PNEdge edge = (PNEdge) it.next();			
-				edges[i] = edge;
-				rows2[i][0] = edge.getName();
-				rows2[i][1] = edge.getLabel();
-				
-				for (Iterator it2 = pw.getAllNodes().iterator(); it2.hasNext();) {
-					BiologicalNodeAbstract bna=(BiologicalNodeAbstract) it2.next();
-				if( edge.getEdge().getEndpoints().getFirst().equals(bna.getVertex())) 
-					if (bna instanceof Transition) rows2[i][2] = bna.getLabel();
-					else if (bna instanceof Place)rows2[i][2] ="P"+bna.getID()+":"+ bna.getLabel();
-				}				
-				for (Iterator it2 = pw.getAllNodes().iterator(); it2.hasNext();) {
-					BiologicalNodeAbstract bna=(BiologicalNodeAbstract) it2.next();
-				if( edge.getEdge().getEndpoints().getSecond().equals(bna.getVertex())) 
-					if (bna instanceof Transition) rows2[i][3] = bna.getLabel();
-					else if (bna instanceof Place)rows2[i][3] = "P"+bna.getID()+":"+bna.getLabel();
+		edges = new PNEdge[pw.getAllEdges().toArray().length];
+		PNEdge edge;
+		BiologicalNodeAbstract bna;
+		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
+		Iterator<BiologicalNodeAbstract> it2;
+		while (it.hasNext()) {
+			edge = (PNEdge) it.next();
+			edges[i] = edge;
+			rows2[i][0] = edge.getName();
+			rows2[i][1] = edge.getLabel();
+
+			it2 = pw.getAllNodes().iterator();
+			while (it2.hasNext()) {
+				bna = it2.next();
+				if (edge.getFrom().equals(bna)) {
+					if (bna instanceof Transition) {
+						rows2[i][2] = bna.getLabel();
+					} else if (bna instanceof Place) {
+						rows2[i][2] = "P" + bna.getID() + ":" + bna.getLabel();
+					}
+				} else {
+					if (edge.getTo().equals(bna)) {
+						if (bna instanceof Transition) {
+							rows2[i][3] = bna.getLabel();
+						} else {
+							if (bna instanceof Place) {
+								rows2[i][3] = "P" + bna.getID() + ":"
+										+ bna.getLabel();
+							}
+						}
+					}
 				}
-				rows2[i][4] = edge.getFunction();
-				rows2[i][5] = edge.getLowerBoundary();
-				rows2[i][6] =edge.getUpperBoundary();
-				rows2[i][7] =edge.getActivationProbability();
-				i++;
-			
+			}
+
+			rows2[i][4] = edge.getFunction();
+			rows2[i][5] = edge.getLowerBoundary();
+			rows2[i][6] = edge.getUpperBoundary();
+			rows2[i][7] = edge.getActivationProbability();
+			i++;
+
 		}
-		
+
 		DefaultTableModel model = new DefaultTableModel(rows, new String[] {
 				"Name", "Label", "Token", "TokenMax", "TokenMin", "TokenStart",
 				"Type", "Delay", "Distribution" }) {
@@ -154,7 +170,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 							.equals(Elementdeclerations.place)) && !(bnas[rowIndex] instanceof Place))
 							|| ((s.equals(Elementdeclerations.discreteTransition)
 									|| s.equals(Elementdeclerations.contoniousTransition) || s
-									.equals(Elementdeclerations.stochasticTransition)) && !(bnas[rowIndex] instanceof Transition)))
+										.equals(Elementdeclerations.stochasticTransition)) && !(bnas[rowIndex] instanceof Transition)))
 						return;
 				}
 				super.setValueAt(aValue, rowIndex, columnIndex);
@@ -190,17 +206,21 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		JScrollPane sp = new JScrollPane(table);
 		sp.setPreferredSize(new Dimension(740, 400));
 		DefaultTableModel model2 = new DefaultTableModel(rows2, new String[] {
-				"Name", "Label", "Start", "End", "Function","Lower Boundary","UpperBoundary","Activation Probability"}) {
+				"Name", "Label", "Start", "End", "Function", "Lower Boundary",
+				"UpperBoundary", "Activation Probability" }) {
 			public Class getColumnClass(int columnIndex) {
-				if (columnIndex == 0 || columnIndex == 1 || columnIndex == 2 || columnIndex == 3 || columnIndex == 4)
+				if (columnIndex == 0 || columnIndex == 1 || columnIndex == 2
+						|| columnIndex == 3 || columnIndex == 4)
 					return String.class;
 				else
 					return Double.class;
 			}
 
 			public boolean isCellEditable(int rowIndex, int columnIndex) {
-				if (columnIndex == 2 || columnIndex==3) return false;
-				else return true;
+				if (columnIndex == 2 || columnIndex == 3)
+					return false;
+				else
+					return true;
 			}
 
 		};
@@ -215,45 +235,45 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		table2.getTableHeader().setReorderingAllowed(true);
 		table2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane sp2 = new JScrollPane(table2);
-		sp2.setPreferredSize(new Dimension(740,400));
-		table2.setPreferredSize(new Dimension(720,400));
-		
+		sp2.setPreferredSize(new Dimension(740, 400));
+		table2.setPreferredSize(new Dimension(720, 400));
+
 		JPanel dialogPanel = new JPanel(new MigLayout());
 
-		JPanel p1= new JPanel();
+		JPanel p1 = new JPanel();
 		p1.setLayout(new MigLayout());
 		p1.add(new JLabel("Nodes:"));
 		p1.add(new JSeparator(), "span, growx, gaptop 10");
 		p1.add(sp);
-		
-		JPanel p2= new JPanel();
+
+		JPanel p2 = new JPanel();
 		p2.setLayout(new MigLayout());
 		p2.add(new JLabel("Edges:"));
 		p2.add(new JSeparator(), "span, growx, gaptop 10");
 		p2.add(sp2);
-		
-//		dialogPanel.add(new JLabel("Nodes:"));
-//		dialogPanel.add(new JSeparator());
-//		dialogPanel.add(new JLabel("Edges:"));
-//		dialogPanel.add(new JSeparator(), "span, growx, gaptop 10");
-//		dialogPanel.add(sp, "span 4, growx");	
-//		dialogPanel.add(sp2, "span 4, growx");
-		
+
+		// dialogPanel.add(new JLabel("Nodes:"));
+		// dialogPanel.add(new JSeparator());
+		// dialogPanel.add(new JLabel("Edges:"));
+		// dialogPanel.add(new JSeparator(), "span, growx, gaptop 10");
+		// dialogPanel.add(sp, "span 4, growx");
+		// dialogPanel.add(sp2, "span 4, growx");
+
 		dialogPanel.add(p1);
 		dialogPanel.add(p2);
 		JPanel selectPanel = new JPanel();
-		JTabbedPane tp=new JTabbedPane();
+		JTabbedPane tp = new JTabbedPane();
 		tp.addTab("Nodes", p1);
 		tp.addTab("Edges", p2);
-//		dialogPanel.add(selectPanel, "span,gaptop 1,align right,wrap");
-//		dialogPanel.add(new JSeparator(), "span, growx, gaptop 10");
+		// dialogPanel.add(selectPanel, "span,gaptop 1,align right,wrap");
+		// dialogPanel.add(new JSeparator(), "span, growx, gaptop 10");
 		dialogPanel.add(tp);
 		dialogPanel.add(new JSeparator(), "span, growx, gaptop 10");
 		JButton submit = new JButton("Apply Changes");
 		submit.addActionListener(this);
 		submit.setActionCommand("submit");
 		dialogPanel.add(submit);
-		
+
 		setContentPane(dialogPanel);
 		setTitle("Edit PN-Elements...");
 		setResizable(false);
@@ -272,7 +292,9 @@ public class PNTableDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Pathway pw = ContainerSingelton.getInstance().getPathway(
 				MainWindowSingelton.getInstance().getCurrentPathway());
-
+		Place p;
+		BiologicalNodeAbstract neighbour;
+		BiologicalNodeAbstract node;
 		if (e.getActionCommand().equals("submit")) {
 			boolean changedAllStates = true;
 			for (int i = 0; i < pw.getAllNodes().toArray().length; i++) {
@@ -283,7 +305,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 						table.convertRowIndexToView(i),
 						table.convertColumnIndexToView(1)));
 				if (bnas[i] instanceof Place) {
-					Place p = (Place) bnas[i];
+					p = (Place) bnas[i];
 					p.setToken((Double) table.getValueAt(
 							table.convertRowIndexToView(i),
 							table.convertColumnIndexToView(2)));
@@ -298,14 +320,17 @@ public class PNTableDialog extends JDialog implements ActionListener {
 							table.convertColumnIndexToView(5)));
 
 					boolean stateChanged = true;
-					for (Iterator k = bnas[table.convertRowIndexToView(i)]
-							.getVertex().getNeighbors().iterator(); k.hasNext();) {
-						ArchetypeVertex neighbour = (ArchetypeVertex) k.next();
-						for (Iterator j = pw.getAllNodes().iterator(); j
-								.hasNext();) {
-							BiologicalNodeAbstract node = (BiologicalNodeAbstract) j
-									.next();
-							if (node.getVertex().equals(neighbour)
+					Iterator<BiologicalNodeAbstract> k = pw.getGraph()
+							.getJungGraph()
+							.getNeighbors(bnas[table.convertRowIndexToView(i)])
+							.iterator();
+					while (k.hasNext()) {
+						neighbour = k.next();
+						Iterator<BiologicalNodeAbstract> j = pw.getAllNodes()
+								.iterator();
+						while (j.hasNext()) {
+							node = j.next();
+							if (node.equals(neighbour)
 									&& (((String) table.getValueAt(
 											table.convertRowIndexToView(i),
 											table.convertColumnIndexToView(6)))
@@ -325,15 +350,17 @@ public class PNTableDialog extends JDialog implements ActionListener {
 				} else if (bnas[i] instanceof Transition) {
 
 					Transition t = (Transition) bnas[i];
+
+					Iterator<BiologicalNodeAbstract> k = pw.getGraph()
+							.getJungGraph().getNeighbors(t).iterator();
+					Iterator<BiologicalNodeAbstract> j;
 					boolean stateChanged = true;
-					for (Iterator k = t.getVertex().getNeighbors().iterator(); k
-							.hasNext();) {
-						ArchetypeVertex neighbour = (ArchetypeVertex) k.next();
-						for (Iterator j = pw.getAllNodes().iterator(); j
-								.hasNext();) {
-							BiologicalNodeAbstract node = (BiologicalNodeAbstract) j
-									.next();
-							if (node.getVertex().equals(neighbour)
+					while (k.hasNext()) {
+						neighbour = k.next();
+						j = pw.getAllNodes().iterator();
+						while (j.hasNext()) {
+							node = j.next();
+							if (node.equals(neighbour)
 									&& (((String) table.getValueAt(
 											table.convertRowIndexToView(i),
 											table.convertColumnIndexToView(6)))
@@ -352,25 +379,25 @@ public class PNTableDialog extends JDialog implements ActionListener {
 							.equals(Elementdeclerations.discreteTransition)
 							|| (!stateChanged && t instanceof DiscreteTransition))
 						newT = new DiscreteTransition(t.getLabel(),
-								t.getName(), t.getVertex());
+								t.getName());
 					else if (((String) table.getValueAt(
 							table.convertRowIndexToView(i),
 							table.convertColumnIndexToView(6)))
 							.equals(Elementdeclerations.stochasticTransition)
 							|| (!stateChanged && t instanceof StochasticTransition))
 						newT = new StochasticTransition(t.getLabel(),
-								t.getName(), t.getVertex());
+								t.getName());
 					else if (((String) table.getValueAt(
 							table.convertRowIndexToView(i),
 							table.convertColumnIndexToView(6)))
 							.equals(Elementdeclerations.contoniousTransition)
 							|| (!stateChanged && t instanceof ContinuousTransition))
 						newT = new ContinuousTransition(t.getLabel(),
-								t.getName(), t.getVertex());
+								t.getName());
 					if (newT != null) {
 						newT.rebuildShape(new VertexShapes());
 						newT.setCompartment(t.getCompartment());
-						pw.addElement(newT);
+						pw.addVertex(newT, new Point(0,0));
 						t = newT;
 					}
 					if (!stateChanged)
@@ -391,8 +418,8 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 				bnas[i].rebuildShape(new VertexShapes());
 			}
-			
-			if (e.getActionCommand().equals("submit")) 			
+
+			if (e.getActionCommand().equals("submit"))
 				for (int i = 0; i < pw.getAllEdges().toArray().length; i++) {
 					edges[i].setName((String) table2.getValueAt(
 							table2.convertRowIndexToView(i),
@@ -404,17 +431,17 @@ public class PNTableDialog extends JDialog implements ActionListener {
 							table2.convertRowIndexToView(i),
 							table2.convertColumnIndexToView(4)));
 					edges[i].setLowerBoundary(((Double) table2.getValueAt(
-							table2.convertRowIndexToView(i),		
+							table2.convertRowIndexToView(i),
 							table2.convertColumnIndexToView(5))));
 					edges[i].setUpperBoundary(((Double) table2.getValueAt(
 							table2.convertRowIndexToView(i),
 							table2.convertColumnIndexToView(6))));
-					edges[i].setActivationProbability(((Double) table2.getValueAt(
-							table2.convertRowIndexToView(i),
-							table2.convertColumnIndexToView(7))));
-					
+					edges[i].setActivationProbability(((Double) table2
+							.getValueAt(table2.convertRowIndexToView(i),
+									table2.convertColumnIndexToView(7))));
+
 				}
-			
+
 			setVisible(false);
 			if (!changedAllStates)
 				JOptionPane
@@ -426,5 +453,4 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		}
 
 	}
-
 }

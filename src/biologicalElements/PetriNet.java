@@ -25,16 +25,16 @@ public class PetriNet {
 	private PNResultInputReader pnrir = new PNResultInputReader();
 	private CSVInputReader cvsReader = new CSVInputReader();
 	private HashMap<String, Vector<Double>> pnResult = null;
-	private int places=0;
-	private int resultDimension=0;
+	private int places = 0;
+	private int resultDimension = 0;
 	private int currentTimeStep = 0;
 	private String covGraph;
 
 	public String getCovGraph() {
 		return this.covGraph;
 	}
-	
-	public void setCovGraph(String covGraph){
+
+	public void setCovGraph(String covGraph) {
 		this.covGraph = covGraph;
 	}
 
@@ -63,22 +63,22 @@ public class PetriNet {
 	}
 
 	public void initializePetriNet() {
-				
+
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
-		HashSet<GraphElementAbstract> hs = pw.getAllNodes();
+		HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		pnResult = pw.getPetriNet().getPnResult();
 		ArrayList<String> placeNames = new ArrayList<String>();
 		// rowsSize = 0;
 		Object elem;
 		BiologicalNodeAbstract bna;
 		if (hs != null) {
-			Iterator<GraphElementAbstract> it = hs.iterator();
+			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			while (it.hasNext()) {
-				elem = it.next();
-				bna = (BiologicalNodeAbstract) elem;
+
+				bna = it.next();
 				if (bna instanceof Place) {
-					placeNames.add("P"+bna.getID());
+					placeNames.add("P" + bna.getID());
 					// System.out.println(bna.getName());
 				}
 			}
@@ -98,11 +98,11 @@ public class PetriNet {
 			if (ext.equals("csv")) {
 				this.pnResult = this.cvsReader.readResult(
 						this.petriNetSimulationFile, placeNames);
-				
-				//Iterator it = this.pnResult.
-				
+
+				// Iterator it = this.pnResult.
+
 				this.setDataToNodes();
-				
+
 			} else if (ext.equals("plt")) {
 				this.pnResult = this.pnrir
 						.readResult(getPetriNetSimulationFile());
@@ -124,8 +124,8 @@ public class PetriNet {
 	}
 
 	private void setDataToNodes() throws Exception {
-		places=0;
-		ArrayList<Color> colors=new ArrayList<Color>();
+		places = 0;
+		ArrayList<Color> colors = new ArrayList<Color>();
 		colors.add(new Color(0, 0, 0));
 		colors.add(new Color(255, 0, 0));
 		colors.add(new Color(128, 0, 0));
@@ -143,50 +143,49 @@ public class PetriNet {
 		colors.add(new Color(000, 255, 127));
 		colors.add(new Color(255, 127, 000));
 		colors.add(new Color(000, 100, 000));
-		Random r=new Random();
-		
+		Random r = new Random();
+
 		graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		HashSet<GraphElementAbstract> hs = pw.getAllNodes();
+		HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		// pnResult = pw.getPetriNet().getPnResult();
 		ArrayList<Integer> count = new ArrayList<Integer>();
 		// rowsSize = 0;
-		//System.out.println("size: "+ pnResult.size());
+		// System.out.println("size: "+ pnResult.size());
 		if (hs != null) {
-			Iterator<GraphElementAbstract> it = hs.iterator();
+			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			BiologicalNodeAbstract bna;
 			while (it.hasNext()) {
-				Object elem = it.next();
-				bna = (BiologicalNodeAbstract) elem;
+				bna = it.next();
 				if (bna instanceof Place) {
-					((Place)bna).setPlotColor(colors.get(r.nextInt(colors.size())));
+					((Place) bna).setPlotColor(colors.get(r.nextInt(colors
+							.size())));
 					int intSimID = bna.getID();
 					// if (bna.getPetriNetSimulationData().size() == 0) {
 					// System.out.println(intSimID);
 					// System.out.println("result: "+pnResult);
-					//System.out.println(pnResult.keySet().toString());
-					//System.out.println("Hallo erster Test zum abfragen");
-					//System.out.println("P"+bna.getID());
-					if(pnResult.containsKey("P"+bna.getID())) {
-						//System.out.println("drin");
+					// System.out.println(pnResult.keySet().toString());
+					// System.out.println("Hallo erster Test zum abfragen");
+					// System.out.println("P"+bna.getID());
+					if (pnResult.containsKey("P" + bna.getID())) {
+						// System.out.println("drin");
+					} else {
+						// System.out.println("n�");
 					}
-					else {
-						//System.out.println("n�");
-					}
-					
+
 					System.out.println();
-					
-					
-					Vector<Double> v = pnResult.get("P"+bna.getID());
+
+					Vector<Double> v = pnResult.get("P" + bna.getID());
 					// System.out.println(bna.getName());
 					// System.out.println("size: "+v.size());
 					// System.out.println("test2");
-				if (v.get(0).doubleValue()!=((Place)bna).getTokenStart())
-						throw new Exception("A startToken value in the petri net does not fit the result!"); 
+					if (v.get(0).doubleValue() != ((Place) bna).getTokenStart())
+						throw new Exception(
+								"A startToken value in the petri net does not fit the result!");
 					bna.setPetriNetSimulationData(v);
-					//System.out.println(bna.getName());
-					//System.out.println(v.size());
-					
+					// System.out.println(bna.getName());
+					// System.out.println(v.size());
+
 					count.add(new Integer(v.size()));
 					// System.out.println("ende");
 					this.places++;
@@ -223,12 +222,11 @@ public class PetriNet {
 	private void deleteDateFromNodes() {
 		graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		HashSet<GraphElementAbstract> hs = pw.getAllNodes();
+		HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		if (hs != null) {
-			Iterator<GraphElementAbstract> it = hs.iterator();
+			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			while (it.hasNext()) {
-				Object elem = it.next();
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) elem;
+				BiologicalNodeAbstract bna = it.next();
 				if (bna instanceof Place) {
 					Place p = (Place) bna;
 					// if (p.getPetriNetSimulationData() != null) {
@@ -239,7 +237,7 @@ public class PetriNet {
 
 			}
 		}
-		//pw.setPetriNet(false);
+		// pw.setPetriNet(false);
 		this.setPetriNetSimulationFile(null);
 	}
 
