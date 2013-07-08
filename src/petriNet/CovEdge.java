@@ -1,11 +1,13 @@
 package petriNet;
 
-import edu.uci.ics.jung.graph.Edge;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 
-public class CovEdge extends biologicalObjects.edges.BiologicalEdgeAbstract {
+//import edu.uci.ics.jung.graph.Edge;
 
-	public CovEdge(Edge edge, String label, String name) {
-		super(edge, label, name);
+public class CovEdge extends BiologicalEdgeAbstract {
+
+	public CovEdge(String label, String name, CovNode from, CovNode to) {
+		super(label, name, from, to);
 		
 	}
 }

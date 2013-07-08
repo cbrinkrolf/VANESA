@@ -6,20 +6,11 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
-/*import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.utils.Pair;
-import edu.uci.ics.jung.visualization.FRLayout;
-import edu.uci.ics.jung.visualization.ISOMLayout;
-import edu.uci.ics.jung.visualization.SpringLayout;
-import edu.uci.ics.jung.visualization.contrib.CircleLayout;
-import edu.uci.ics.jung.visualization.contrib.KKLayout;*/
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.KCoreAnalysis;
-import graph.algorithms.ShortestPath;
 import graph.algorithms.gui.RandomBipartiteGraphGui;
 import graph.algorithms.gui.RandomConnectedGraphGui;
 import graph.algorithms.gui.RandomGraphGui;
@@ -46,7 +37,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -57,7 +47,6 @@ import javax.swing.JPanel;
 import miscalleanous.tables.MyTable;
 import petriNet.ConvertToPetriNet;
 import petriNet.Cov;
-import petriNet.CovEdge;
 import petriNet.CovNode;
 import petriNet.OpenModellicaResult;
 import petriNet.PNEdge;
@@ -78,6 +67,14 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import configurations.ProgramFileLock;
 import configurations.gui.LayoutConfig;
 import configurations.gui.Settings;
+/*import edu.uci.ics.jung.graph.Edge;
+import edu.uci.ics.jung.graph.Vertex;
+import edu.uci.ics.jung.utils.Pair;
+import edu.uci.ics.jung.visualization.FRLayout;
+import edu.uci.ics.jung.visualization.ISOMLayout;
+import edu.uci.ics.jung.visualization.SpringLayout;
+import edu.uci.ics.jung.visualization.contrib.CircleLayout;
+import edu.uci.ics.jung.visualization.contrib.KKLayout;*/
 
 public class MenuListener implements ActionListener {
 
@@ -911,20 +908,20 @@ public class MenuListener implements ActionListener {
 		Iterator<BiologicalNodeAbstract> hsit = hsVertex.iterator();
 		BiologicalNodeAbstract bna;
 		Place p;
-		HashMap<String, Integer> hmplaces = new HashMap<String, Integer>();
-		HashMap<String, Integer> hmtransitions = new HashMap<String, Integer>();
+		HashMap<BiologicalNodeAbstract, Integer> hmplaces = new HashMap<BiologicalNodeAbstract, Integer>();
+		HashMap<BiologicalNodeAbstract, Integer> hmtransitions = new HashMap<BiologicalNodeAbstract, Integer>();
 		int numberPlaces = 0;
 		int numberTransitions = 0;
 		ArrayList<String> names = new ArrayList<String>();
 		while (hsit.hasNext()) {
 			bna = (BiologicalNodeAbstract) hsit.next();
 			if (bna instanceof Transition) {
-				hmtransitions.put(bna.getVertex().toString(), new Integer(
+				hmtransitions.put(bna, new Integer(
 						numberTransitions));
 				numberTransitions++;
 			} else if (bna instanceof Place) {
 				p = (Place) bna;
-				hmplaces.put(bna.getVertex().toString(), new Integer(
+				hmplaces.put(bna, new Integer(
 						numberPlaces));
 				names.add(p.getName());
 				// System.out.println("name: " + p.getName());
@@ -937,23 +934,22 @@ public class MenuListener implements ActionListener {
 		// einkommende Kanten (backward matrix)
 		Iterator<BiologicalEdgeAbstract> edgeit = hsEdge.iterator();
 		PNEdge edge;
-		Pair pair;
 		Object o;
 		while (edgeit.hasNext()) {
 			o = edgeit.next();
 			if (o instanceof PNEdge) {
 				edge = (PNEdge) o;
-				pair = edge.getEdge().getEndpoints();
+				//pair = edge.getEdge().getEndpoints();
 				// T->P
-				if (hmplaces.containsKey(pair.getSecond().toString())) {
-					int i = hmplaces.get(pair.getSecond().toString());
-					int j = hmtransitions.get(pair.getFirst().toString());
+				if (hmplaces.containsKey(edge.getTo())) {
+					int i = hmplaces.get(edge.getTo());
+					int j = hmtransitions.get(edge.getFrom());
 					b[i][j] += edge.getPassingTokens();
 				}
 				// P->T
 				else {
-					int i = hmplaces.get(pair.getFirst().toString());
-					int j = hmtransitions.get(pair.getSecond().toString());
+					int i = hmplaces.get(edge.getFrom());
+					int j = hmtransitions.get(edge.getTo());
 					f[i][j] -= edge.getPassingTokens();
 				}
 			}
