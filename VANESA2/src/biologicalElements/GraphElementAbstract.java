@@ -267,6 +267,7 @@ public class GraphElementAbstract {
 	public void setLabel(String label) {
 		this.label = label;
 		this.networklabel = label;
+		System.out.println("gestezt");
 	}
 
 	public String getDescription() {

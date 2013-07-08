@@ -25,7 +25,8 @@ import gui.MainWindowSingelton;
 
 public class MyPluggableRenderer extends PluggableRenderContext{
 
-    public void paintVertex(Graphics g, Vertex v, int x, int y){
+
+	public void paintVertex(Graphics g, Vertex v, int x, int y){
         if (!vertexIncludePredicate.evaluate(v))
             return;
         boolean vertexHit = true;

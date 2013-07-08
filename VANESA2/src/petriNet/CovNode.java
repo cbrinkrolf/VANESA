@@ -3,17 +3,17 @@ package petriNet;
 import java.awt.Color;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
 
 public class CovNode extends BiologicalNodeAbstract {
 
 	private CovList tokenList;
 	
-	public CovNode(String label, String name, Vertex vertex, int numberPlaces) {
-		super(label, name, vertex);
+	public CovNode(String label, String name,int numberPlaces) {
+		super(label, name);
 		shapes = new VertexShapes();
-		setShape(shapes.getEllipse(vertex));
+		setShape(shapes.getEllipse());
 		setColor(Color.WHITE);
 		setAbstract(false);
 		setReference(false);
@@ -21,7 +21,7 @@ public class CovNode extends BiologicalNodeAbstract {
 		//super.setLabel(this.tokenList.toString());
 	}
 	public void rebuildShape(VertexShapes vs) {
-		setShape(vs.getEllipse(getVertex()));
+		setShape(vs.getEllipse());
 		//super.setLabel(this.tokenList.toString());
 	}
 	public CovList getTokenList() {
