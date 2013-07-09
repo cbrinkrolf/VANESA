@@ -1297,7 +1297,7 @@ public class VAMLInput {
 			//System.out.println("E: "+b.getID());
 		}
 		
-		Iterator it2 = pw.getGraph().getAllvertices().iterator();
+		Iterator it2 = pw.getGraph().getAllVertices().iterator();
 		while(it2.hasNext()){
 			BiologicalNodeAbstract b = (BiologicalNodeAbstract) it2.next();
 			//System.out.println("V "+b.getID());

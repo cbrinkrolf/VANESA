@@ -9,6 +9,7 @@ import gui.algorithms.ScreenSize;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
@@ -170,7 +171,7 @@ public class GetDBinformation extends JFrame implements ActionListener {
 		@Override
 		public Void doInBackground() {
 
-			HashSet set = pw.getAllNodes();
+			Collection<BiologicalNodeAbstract> set = pw.getAllNodes();
 
 			bar.setMaximum(set.size());
 			bar.setValue(30);
@@ -184,7 +185,7 @@ public class GetDBinformation extends JFrame implements ActionListener {
 
 			GetKEGGNode getKeggNode = new GetKEGGNode();
 
-			Iterator it = set.iterator();
+			Iterator<BiologicalNodeAbstract> it = set.iterator();
 			while (it.hasNext()) {
 
 				String[] elementUpdates = new String[4];
@@ -193,7 +194,7 @@ public class GetDBinformation extends JFrame implements ActionListener {
 				progressBarCounter++;
 				bar.setValue(progressBarCounter);
 
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+				BiologicalNodeAbstract bna = it.next();
 				elementUpdates[0] = bna.getLabel();
 				elementUpdates[1] = "-";
 				elementUpdates[2] = "-";

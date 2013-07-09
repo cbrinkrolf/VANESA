@@ -1,38 +1,21 @@
 package petriNet;
 
-import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.visualization.DefaultSettableVertexLocationFunction;
+//import edu.uci.ics.jung.graph.Edge;
+//import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.visualization.DefaultSettableVertexLocationFunction;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphInstance;
-import graph.animations.RegulationTabelModel;
 import gui.MainWindowSingelton;
-import gui.algorithms.ScreenSize;
 
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Set;
 
-import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.WindowConstants;
-
-import miscalleanous.tables.MyTable;
-import net.miginfocom.swing.MigLayout;
-
-import org.jdesktop.swingx.decorator.ColorHighlighter;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
@@ -60,7 +43,6 @@ private final double initialTokens = 10;
 		return instance;
 	}
 
-	@SuppressWarnings("unchecked")
 	public ConvertToPetriNet() {
 		int answer=JOptionPane.YES_NO_OPTION;
 		if (!graphInstance.getPathway().getAllNodes().isEmpty()) 
@@ -80,41 +62,43 @@ private final double initialTokens = 10;
 		prop = new petriNetProperties();
 		// System.out.println("alle knoten: "+GraphInstance.getMyGraph().getAllvertices());
 
-		Set<BiologicalNodeAbstract> hsVertex = new HashSet<BiologicalNodeAbstract>();
-		hsVertex = graphInstance.getPathway().getAllNodes();// GraphInstance.getMyGraph().getAllvertices();
-		DefaultSettableVertexLocationFunction locations = graphInstance
-				.getPathway().getGraph().getVertexLocations();
-		Set<BiologicalEdgeAbstract> hsEdge = new HashSet<BiologicalEdgeAbstract>();
-		hsEdge = graphInstance.getPathway().getAllEdges();
-
+		HashMap<BiologicalNodeAbstract, Place> node2place = new HashMap<BiologicalNodeAbstract, Place>();
+		
+		//Set<BiologicalNodeAbstract> hsVertex = new HashSet<BiologicalNodeAbstract>();
+//		HashMap locations = graphInstance
+//				.getPathway().getGraph().getVertexLocations();
+		
+		Pathway pwOld = graphInstance.getPathway();
+		
 		pw = new CreatePathway().getPathway();
 		pw.getGraph().lockVertices();
 		pw.getGraph().stopVisualizationModel();
 		pw.setPetriNet(true);
-		Iterator<BiologicalNodeAbstract> it = hsVertex.iterator();
+		Iterator<BiologicalNodeAbstract> it = pwOld.getGraph().getAllVertices().iterator();
 		BiologicalNodeAbstract bna;
 		Place p;
-
 		while (it.hasNext()) {
-			bna = (BiologicalNodeAbstract) it.next();
+			
+			bna = it.next();
 			// bna =
 			// System.out.println("Name: "+bna.getName());
 			// System.out.println("Label: "+bna.getLabel());
 			// System.out.println("V-name: "+bna.getVertex().toString());
-			p = new Place(bna.getLabel(), bna.getVertex().toString(), pw
-					.getGraph().createNewVertex(), this.initialTokens,
+			p = new Place(bna.getLabel(), bna.getName(), this.initialTokens,
 					answer == JOptionPane.YES_OPTION);
 			p.setTokenStart(this.initialTokens);
 			p.setTokenMax(1000);
-			p = (Place) pw.addElement(p);
+			
 			p.setColor(bna.getColor());
 			// System.out.println("Vertex: "+p.getName());
 			// System.out.println("x: "+locations.getLocation(bna.getVertex()).getX());
-			double x = locations.getLocation(bna.getVertex()).getX();
-			double y = locations.getLocation(bna.getVertex()).getY();
+			double x = pwOld.getGraph().getVertexLocation(bna).getX();//locations.getLocation(bna.getVertex()).getX();
+			double y = pwOld.getGraph().getVertexLocation(bna).getY();//locations.getLocation(bna.getVertex()).getY();
 			// System.out.println("x: "+x+" y: "+y);
-			pw.getGraph().moveVertex(p.getVertex(), scaleFactor* x,scaleFactor* y);
+			//pw.getGraph().moveVertex(p.getVertex(), scaleFactor* x,scaleFactor* y);
+			pw.addVertex(p, new Point2D.Double(scaleFactor* x,scaleFactor* y));
 			// this.graphRepresentation.getAllVertices();
+			node2place.put(bna, p);
 
 		}
 
@@ -126,21 +110,20 @@ private final double initialTokens = 10;
 
 		Place p1;
 		Place p2;
-		Vertex v1;
-		Vertex v2;
+//		Vertex v1;
+//		Vertex v2;
 
-		DefaultSettableVertexLocationFunction locationsNew = pw.getGraph()
-				.getVertexLocations();
-		Iterator itEdge1 = hsEdge.iterator();
+//		DefaultSettableVertexLocationFunction locationsNew = pw.getGraph()
+//				.getVertexLocations();
+		//Iterator itEdge1 = hsEdge.iterator();
 		// System.out.println("test");
 
 		int countTrainsition = 0;
-		Iterator itEdge = hsEdge.iterator();
+		Iterator<BiologicalEdgeAbstract> itEdge = pwOld.getAllEdges().iterator();
 
 		boolean isUnDirEdge = false;
-
 		while (itEdge.hasNext()) {
-			bea = (BiologicalEdgeAbstract) itEdge.next();
+			bea = itEdge.next();
 
 			/*
 			 * if (bea instanceof ReactionEdge) {
@@ -151,28 +134,30 @@ private final double initialTokens = 10;
 			// System.out.println("first_1: "+bea.getEdge().getEndpoints().getFirst());
 			// System.out.println("second: "+bea.getEdge().getEndpoints().getSecond());
 			// v1 = (Vertex) bea.getEdge().getEndpoints().getFirst();
-			p1 = (Place) pw.getNodeByName(bea.getEdge().getEndpoints()
-					.getFirst().toString());
-			v1 = p1.getVertex();
-			p2 = (Place) pw.getNodeByName(bea.getEdge().getEndpoints()
-					.getSecond().toString());
-			v2 = p2.getVertex();
+			p1 = node2place.get(bea.getFrom());
+//			v1 = p1.getVertex();
+			p2 = node2place.get(bea.getTo());
+//			v2 = p2.getVertex();
 			Transition t;
 			if (answer == JOptionPane.YES_OPTION)
 				t = new DiscreteTransition(p1.getName() + "_" + p2.getName(),
-						"t" + countTrainsition, pw.getGraph().createNewVertex());
+						"t" + countTrainsition);
 			else
 				t = new ContinuousTransition(p1.getName() + "_" + p2.getName(),
-						"t" + countTrainsition, pw.getGraph().createNewVertex());
+						"t" + countTrainsition);
 
-			t = (Transition) pw.addElement(t);
-			PNEdge edge1 = new PNEdge(pw.getGraph().createEdge(v1,
-					t.getVertex(), true), "label", "name", "discrete", "1");
+			x1 = pw.getGraph().getVertexLocation(p1).getX();//locationsNew.getLocation(p1.getVertex()).getX();
+			y1 = pw.getGraph().getVertexLocation(p1).getY();//locationsNew.getLocation(p1.getVertex()).getY();
+			x2 = pw.getGraph().getVertexLocation(p2).getX();//locationsNew.getLocation(p2.getVertex()).getX();
+			y2 = pw.getGraph().getVertexLocation(p2).getY();//locationsNew.getLocation(p2.getVertex()).getY();
+			
+			pw.addVertex(t, new Point2D.Double((x2 + x1) / 2, (y2 + y1) / 2));
+			
+			PNEdge edge1 = new PNEdge(p1, t, "label", "name", "discrete", "1");
 			edge1.setDirected(true);
 			// System.out.println(edge1.isDirected());
 			// System.out.println(edge1.getEdge().getClass());
-			PNEdge edge2 = new PNEdge(pw.getGraph().createEdge(t.getVertex(),
-					v2, true), "label2", "name2", bea.getBiologicalElement(),
+			PNEdge edge2 = new PNEdge(t,p2, "label2", "name2", bea.getBiologicalElement(),
 					"1");
 
 			if (!bea.isDirected()) {
@@ -181,22 +166,16 @@ private final double initialTokens = 10;
 				edge2.wasUndirected(true);
 			}
 
-			pw.addElement(edge1);
+			pw.addEdge(edge1);
 
 			edge2.setDirected(true);
-			pw.addElement(edge2);
+			pw.addEdge(edge2);
 
 			// p1orginal = (Place)
 			// graphInstance.getPathway().getNodeByName(p1.getName());
 			// System.out.println("Placename: "+p1orginal.getName());
 			// v1orginal = p1orginal.getVertex();
-			x1 = locationsNew.getLocation(p1.getVertex()).getX();
-			y1 = locationsNew.getLocation(p1.getVertex()).getY();
-			x2 = locationsNew.getLocation(p2.getVertex()).getX();
-			y2 = locationsNew.getLocation(p2.getVertex()).getY();
 			// System.out.println("x1: "+x1 +" x2: "+x2+" y1: "+y1+" y2");
-			pw.getGraph().moveVertex(t.getVertex(), (x2 + x1) / 2,
-					(y2 + y1) / 2);
 			this.transitions.add(t);
 			countTrainsition++;
 
@@ -204,12 +183,11 @@ private final double initialTokens = 10;
 
 		// this.simulateSteps(10);
 
-		HashSet allNodes = pw.getAllNodes();
 		HashSet<Place> allPlaces = new HashSet<Place>();
-		Iterator iter = allNodes.iterator();
+		Iterator<BiologicalNodeAbstract> iter = pw.getAllNodes().iterator();
 		// BiologicalNodeAbstract bna;
 		while (iter.hasNext()) {
-			bna = (BiologicalNodeAbstract) iter.next();
+			bna = iter.next();
 			// System.out.println(bna.getClass().getName());
 			if (bna.getClass().getName().equals("petriNet.Place")) {
 
@@ -262,8 +240,7 @@ private final double initialTokens = 10;
 		this.prop = prop;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void simulateStep() {
+	/*private void simulateStep() {
 		Transition t;
 		Set<Edge> inEdges = new HashSet<Edge>();
 		Set<Edge> outEdges = new HashSet<Edge>();
@@ -318,9 +295,9 @@ private final double initialTokens = 10;
 		for (int i = 0; i < steps; i++) {
 			this.simulateStep();
 		}
-	}
+	}*/
 
-	private int getMaxToken(HashSet<Place> places) {
+	/*private int getMaxToken(HashSet<Place> places) {
 		Iterator<Place> it = places.iterator();
 		Place p;
 		int max = 0;
@@ -329,5 +306,5 @@ private final double initialTokens = 10;
 			max = Math.max(max, (int) p.getToken());
 		}
 		return max;
-	}
+	}*/
 }

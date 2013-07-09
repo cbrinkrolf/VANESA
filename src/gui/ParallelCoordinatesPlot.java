@@ -229,15 +229,13 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			// get pathway and nodes
 
-			HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
-
 			if (first) {
 				rowsSize = pw.getPetriNet().getNumberOfPlaces();
 				rowsDim = pw.getPetriNet().getResultDimension();
 				// System.out.println("rows: "+rowsSize);
 				// System.out.println("rowsDim: "+rowsDim);
 				// get Data from all Places
-				Iterator<BiologicalNodeAbstract> it = hs.iterator();
+				Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 				rows = new Object[rowsSize][rowsDim + 1];
 				int i = 0;
 				Vector<Double> MAData;
@@ -537,8 +535,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		GraphInstance graphInstance = new GraphInstance();
 
-		HashSet nodes = graphInstance.getPathway().getAllNodes();
-		Iterator it = nodes.iterator();
+		Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
 
 		// get Selected Places and their index+label
 		Place place;
@@ -546,7 +543,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		String idx = "";
 		places = new ArrayList<Place>();
 		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			BiologicalNodeAbstract bna = it.next();
 			if (bna instanceof Place) {
 				place = (Place) bna;
 				actualLabel = place.getLabel();
@@ -863,7 +860,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 				// get pathway and iterate over its JUNG vertices
 				Pathway pw = graphInstance.getPathway();
-				Set<Vertex> ns = pw.getGraph().getAllvertices();
+				Set<Vertex> ns = pw.getGraph().getAllVertices();
 				if (ns != null) {
 					Iterator<Vertex> it = ns.iterator();
 					while (it.hasNext()) {

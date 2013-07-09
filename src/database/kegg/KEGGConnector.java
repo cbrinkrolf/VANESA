@@ -1,12 +1,7 @@
 package database.kegg;
 
-import database.mirna.miRNAqueries;
-//import edu.uci.ics.jung.graph.Edge;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.utils.Pair;
 import graph.Box;
 import graph.CreatePathway;
-import graph.algorithms.MergeGraphs;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
@@ -21,21 +16,14 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Vector;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import org.jaxen.function.ext.LowerFunction;
-
 import miscalleanous.linkedList.LinkedList;
-import miscalleanous.linkedList.Node;
 import pojos.DBColumn;
-import biologicalElements.Elementdeclerations;
 import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.Compound;
-import biologicalObjects.edges.KEGGEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Complex;
 import biologicalObjects.nodes.DNA;
@@ -44,10 +32,12 @@ import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.OrthologGroup;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.PathwayMap;
-import biologicalObjects.nodes.RNA;
 import biologicalObjects.nodes.SRNA;
 import biologicalObjects.nodes.SmallMolecule;
-import configurations.Wrapper;
+import database.mirna.miRNAqueries;
+//import edu.uci.ics.jung.graph.Edge;
+//import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.utils.Pair;
 
 public class KEGGConnector extends SwingWorker {
 
@@ -354,8 +344,10 @@ public class KEGGConnector extends SwingWorker {
 			bna.hasKEGGNode(true);
 			bna.setAbstract(false);
 			boolean addBNA = true;
-			for (Iterator it = pw.getAllNodes().iterator(); it.hasNext();) {
-				BiologicalNodeAbstract old_bna = (BiologicalNodeAbstract) it
+			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+			BiologicalNodeAbstract old_bna;
+			while(it.hasNext()) {
+				old_bna = it
 						.next();
 				KEGGNode oldKeggNode = old_bna.getKEGGnode();
 				if (oldKeggNode.getXPos() == node.getXPos()
@@ -448,9 +440,9 @@ public class KEGGConnector extends SwingWorker {
 			String geneName = column[1];
 			SRNA srna = null;
 			int connectedToPathway = 0;
-			Iterator it = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 			while (it.hasNext()) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+				BiologicalNodeAbstract bna = it.next();
 				if (bna.getName().equals(geneName)
 						|| bna.getLabel().equals(geneName)) {
 					if (connectedToPathway == 0) {

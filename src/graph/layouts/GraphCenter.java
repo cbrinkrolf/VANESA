@@ -32,7 +32,7 @@ public class GraphCenter {
 	
 	public GraphCenter(MyGraph g, Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> l){
 		layout=l;
-		vertices=g.getAllvertices();
+		vertices=g.getAllVertices();
 		this.g = g;
 		initBoundaries();
 	}

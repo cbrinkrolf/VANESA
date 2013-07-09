@@ -37,7 +37,7 @@ public class ShortestPath {
 
 	private void initNames() {
 
-		Iterator i = GraphInstance.getMyGraph().getAllvertices().iterator();
+		Iterator i = GraphInstance.getMyGraph().getAllVertices().iterator();
 		while (i.hasNext()) {
 			Vertex v = (Vertex) i.next();
 			vertexNames.put(v.toString(), v);
