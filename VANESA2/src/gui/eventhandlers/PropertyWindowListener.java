@@ -155,11 +155,12 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 			Iterator<BiologicalNodeAbstract> k = pw.getGraph().getJungGraph()
 					.getNeighbors(t).iterator();
 			BiologicalNodeAbstract neighbour;
+			BiologicalNodeAbstract node;
 			while (k.hasNext()) {
 				neighbour = k.next();
-				for (Iterator j = pw.getAllNodes().iterator(); j.hasNext();) {
-					BiologicalNodeAbstract node = (BiologicalNodeAbstract) j
-							.next();
+				Iterator<BiologicalNodeAbstract> j = pw.getAllNodes().iterator();
+				while(j.hasNext()){
+					node = j.next();
 					if (node.equals(neighbour)
 							&& (((JComboBox) event.getSource())
 									.getSelectedItem().equals(

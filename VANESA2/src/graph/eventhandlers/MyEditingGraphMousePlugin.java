@@ -127,7 +127,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 			// System.out.println("regul: "+e.getPoint());
 
 			Iterator<BiologicalNodeAbstract> it = pw.getGraph()
-					.getAllvertices().iterator();
+					.getAllVertices().iterator();
 			// while(it.hasNext()){
 			// System.out.println(pw.getGraph().getVertexLocation(it.next()));
 			// }
@@ -205,17 +205,14 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// .updateTheoryProperties();
 
 						// Pathway pw = graphInstance.getPathway();
-						for (Iterator<BiologicalNodeAbstract> iterator = pw.getAllNodes().iterator(); iterator
-								.hasNext();) {
-							BiologicalNodeAbstract bna = (BiologicalNodeAbstract) iterator
-									.next();
+						Iterator<BiologicalNodeAbstract> iterator = pw.getAllNodes().iterator();
+						BiologicalNodeAbstract bna;
+						while(iterator.hasNext()) {
+							bna = iterator.next();
+							layout.lock(bna, false);
 							//bna.rebuildShape(new VertexShapes());
 						}
 
-						for (Iterator<BiologicalNodeAbstract> iterator = graph.getVertices().iterator(); iterator
-								.hasNext();) {
-							layout.lock(iterator.next(), false);
-						}
 					}
 
 				} else {

@@ -1,54 +1,38 @@
 package petriNet;
 
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
 import gui.MainWindowSingelton;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
-import org.jfree.chart.title.Title;
-import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import save.graphPicture.EPSFilter;
 import save.graphPicture.JpegFilter;
-
-import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
@@ -64,7 +48,7 @@ public class PlotsPanel extends JPanel implements ActionListener {
 
 	public PlotsPanel() {
 		if (pw.isPetriNet() && pw.isPetriNetSimulation()) {
-			HashSet<GraphElementAbstract> hs = pw.getAllNodes();
+			Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
 			BiologicalNodeAbstract[] bnas = (BiologicalNodeAbstract[]) hs
 					.toArray(new BiologicalNodeAbstract[0]);
 

@@ -34,9 +34,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -67,14 +65,15 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import configurations.ProgramFileLock;
 import configurations.gui.LayoutConfig;
 import configurations.gui.Settings;
+
 /*import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.utils.Pair;
-import edu.uci.ics.jung.visualization.FRLayout;
-import edu.uci.ics.jung.visualization.ISOMLayout;
-import edu.uci.ics.jung.visualization.SpringLayout;
-import edu.uci.ics.jung.visualization.contrib.CircleLayout;
-import edu.uci.ics.jung.visualization.contrib.KKLayout;*/
+ import edu.uci.ics.jung.graph.Vertex;
+ import edu.uci.ics.jung.utils.Pair;
+ import edu.uci.ics.jung.visualization.FRLayout;
+ import edu.uci.ics.jung.visualization.ISOMLayout;
+ import edu.uci.ics.jung.visualization.SpringLayout;
+ import edu.uci.ics.jung.visualization.contrib.CircleLayout;
+ import edu.uci.ics.jung.visualization.contrib.KKLayout;*/
 
 public class MenuListener implements ActionListener {
 
@@ -110,11 +109,18 @@ public class MenuListener implements ActionListener {
 
 		if ("new Network".equals(event)) {
 
-			int option= JOptionPane.showOptionDialog(MainWindowSingelton.getInstance(), "Which type of modeling do you prefer?", "Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[]{"Biological Graph","Petri Net"}, JOptionPane.CANCEL_OPTION);
-			if (option!=-1){
-			new CreatePathway();
-			graphInstance.getPathway().setPetriNet(option==JOptionPane.NO_OPTION);
-			w.getBar().paintToolbar(option==JOptionPane.NO_OPTION);
+			int option = JOptionPane.showOptionDialog(
+					MainWindowSingelton.getInstance(),
+					"Which type of modeling do you prefer?",
+					"Choose Network Type...", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, new String[] {
+							"Biological Graph", "Petri Net" },
+					JOptionPane.CANCEL_OPTION);
+			if (option != -1) {
+				new CreatePathway();
+				graphInstance.getPathway().setPetriNet(
+						option == JOptionPane.NO_OPTION);
+				w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
 			}
 		} else if ("open Network".equals(event)) {
 
@@ -416,11 +422,10 @@ public class MenuListener implements ActionListener {
 			// "Sorry, no internet connection available. Please check your internet connection.");
 			// }
 		} else if ("openTestP".equals(event)) {
-			//System.out.println("testP");
+			// System.out.println("testP");
 			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
-			HashSet<BiologicalNodeAbstract> nodes = pw.getAllNodes();
-			Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 			BiologicalNodeAbstract bna;
 
 			places = 0;
@@ -438,7 +443,7 @@ public class MenuListener implements ActionListener {
 
 			int i = 0;
 
-			Iterator<BiologicalNodeAbstract> it2 = nodes.iterator();
+			Iterator<BiologicalNodeAbstract> it2 = pw.getAllNodes().iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Place) {
@@ -462,7 +467,7 @@ public class MenuListener implements ActionListener {
 			} else {
 				testP.setEnabled(true);
 			}
-			//System.out.println("trans: " + transitions);
+			// System.out.println("trans: " + transitions);
 
 			// d = new JDialog();
 			// pane = new JPanel();
@@ -480,8 +485,7 @@ public class MenuListener implements ActionListener {
 
 			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
-			HashSet<BiologicalNodeAbstract> nodes = pw.getAllNodes();
-			Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 			BiologicalNodeAbstract bna;
 
 			transitions = 0;
@@ -500,7 +504,7 @@ public class MenuListener implements ActionListener {
 
 			int i = 0;
 
-			Iterator<BiologicalNodeAbstract> it2 = nodes.iterator();
+			Iterator<BiologicalNodeAbstract> it2 = pw.getAllNodes().iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Transition) {
@@ -535,7 +539,7 @@ public class MenuListener implements ActionListener {
 			d.pack();
 			d.setVisible(true);
 
-			//System.out.println("testT");
+			// System.out.println("testT");
 		} else if ("testP".equals(event)) {
 
 			if (c == null) {
@@ -548,8 +552,8 @@ public class MenuListener implements ActionListener {
 			// System.out.println(names.size());
 			for (int i = 0; i < places; i++) {
 
-				values.put(rP[i][0].toString(), Double.parseDouble(rP[i][1]
-						.toString()));
+				values.put(rP[i][0].toString(),
+						Double.parseDouble(rP[i][1].toString()));
 				vd[i] = Double.parseDouble(rP[i][1].toString());
 			}
 
@@ -562,12 +566,12 @@ public class MenuListener implements ActionListener {
 			x.getNonZeros(l, null);
 			// System.out.println(l.size());
 			if (l.size() == 0) {
-				//System.out.println("ist Invariante");
+				// System.out.println("ist Invariante");
 				this.invariant.setText("This vector is a valid invariant");
 				d.pack();
 				d.setVisible(true);
 			} else {
-				//System.out.println("ist keine Invariante");
+				// System.out.println("ist keine Invariante");
 				this.invariant.setText("This vector is not a valid invariant");
 				d.pack();
 				d.setVisible(true);
@@ -582,27 +586,28 @@ public class MenuListener implements ActionListener {
 			// System.out.println(names.size());
 			for (int i = 0; i < transitions; i++) {
 
-				values.put(rT[i][0].toString(), Double.parseDouble(rT[i][1]
-						.toString()));
+				values.put(rT[i][0].toString(),
+						Double.parseDouble(rT[i][1].toString()));
 				vd[i] = Double.parseDouble(rT[i][1].toString());
 			}
 			DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
 			DenseDoubleMatrix1D x = new DenseDoubleMatrix1D(c.rows());
-			/*System.out.println(v.size());
-			System.out.println(x.size());
-			System.out.println(c.size());*/
+			/*
+			 * System.out.println(v.size()); System.out.println(x.size());
+			 * System.out.println(c.size());
+			 */
 			c.zMult(v, x, 1, 0, false);
 			// System.out.println(x);
 			IntArrayList l = new IntArrayList();
 			x.getNonZeros(l, null);
 			// System.out.println(l.size());
 			if (l.size() == 0) {
-				//System.out.println("ist Invariante");
+				// System.out.println("ist Invariante");
 				this.invariant.setText("This vector is a valid invariant");
 				d.pack();
 				d.setVisible(true);
 			} else {
-				//System.out.println("ist keine Invariante");
+				// System.out.println("ist keine Invariante");
 				this.invariant.setText("This vector is not a valid invariant");
 				d.pack();
 				d.setVisible(true);
@@ -611,8 +616,7 @@ public class MenuListener implements ActionListener {
 		} else if ("openCov".equals(event)) {
 			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
-			HashSet<BiologicalNodeAbstract> nodes = pw.getAllNodes();
-			Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 			BiologicalNodeAbstract bna;
 
 			places = 0;
@@ -626,23 +630,23 @@ public class MenuListener implements ActionListener {
 				}
 			}
 
-			rP = new Object[places+1][2];
-			rI = new Object[places+1][2];
-			
+			rP = new Object[places + 1][2];
+			rI = new Object[places + 1][2];
+
 			int i = 0;
 			rP[0][0] = "Places";
 			rP[0][1] = "Marking";
 			rI[0][0] = "Places";
 			rI[0][1] = "P-Invariants";
-			    
-			Iterator<BiologicalNodeAbstract> it2 = nodes.iterator();
+
+			Iterator<BiologicalNodeAbstract> it2 = pw.getAllNodes().iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Place) {
-					rP[i+1][0] = bna.getName();
-					rP[i+1][1] = 0;
-					rI[i+1][0] = bna.getName();
-					rI[i+1][1] = 0;
+					rP[i + 1][0] = bna.getName();
+					rP[i + 1][1] = 0;
+					rI[i + 1][0] = bna.getName();
+					rI[i + 1][1] = 0;
 					i++;
 				}
 			}
@@ -652,7 +656,6 @@ public class MenuListener implements ActionListener {
 
 			tP = new MyTable(rP, cNames);
 			tI = new MyTable(rI, cNames);
-			
 
 			d.setAlwaysOnTop(true);
 			d.setContentPane(pane);
@@ -673,29 +676,30 @@ public class MenuListener implements ActionListener {
 			// Pathway pw = graphInstance.getContainer().getPathway(name);
 			// System.out.println(pw.getAllNodes().size());
 		} else if ("cov".equals(event)) {
-			
-			//Teste ob Invariante:
+
+			// Teste ob Invariante:
 			if (c == null) {
 				this.createCMatrix();
 			}
 
 			double[] vd = new double[this.places];
-			//HashMap<String, Double> values = new HashMap<String, Double>();
+			// HashMap<String, Double> values = new HashMap<String, Double>();
 
 			// System.out.println(names.size());
 			for (int i = 0; i < places; i++) {
 
-				//values.put(rI[i+1][0].toString(), Double.parseDouble(rI[i+1][1]
-					//	.toString()));
-				vd[i] = Double.parseDouble(rI[i+1][1].toString());
+				// values.put(rI[i+1][0].toString(),
+				// Double.parseDouble(rI[i+1][1]
+				// .toString()));
+				vd[i] = Double.parseDouble(rI[i + 1][1].toString());
 			}
-			//System.out.println(vd);
+			// System.out.println(vd);
 			DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
 			DenseDoubleMatrix1D x = new DenseDoubleMatrix1D(c.columns());
 			// System.out.println(v.size());
-		//	System.out.println("groesse: "+v);
-		//	System.out.println("groesse: "+x);
-		//	System.out.println("groesse: "+c);
+			// System.out.println("groesse: "+v);
+			// System.out.println("groesse: "+x);
+			// System.out.println("groesse: "+c);
 			c.zMult(v, x, 1, 0, true);
 			// System.out.println(x);
 			IntArrayList l = new IntArrayList();
@@ -704,48 +708,49 @@ public class MenuListener implements ActionListener {
 			boolean validInvariant = false;
 			boolean reachable = false;
 			if (l.size() == 0) {
-			//	System.out.println("ist Invariante");
-				//this.reachable.setText("This vector is a valid Invariante");
+				// System.out.println("ist Invariante");
+				// this.reachable.setText("This vector is a valid Invariante");
 				validInvariant = true;
 				d.pack();
 				d.setVisible(true);
 			} else {
-			//	System.out.println("ist keine Invariante");
+				// System.out.println("ist keine Invariante");
 				this.reachable.setText("no valid p-invariant");
 				d.pack();
 				d.setVisible(true);
 			}
-			
-			if(validInvariant){
+
+			if (validInvariant) {
 				double[] s = new double[start.size()];
-			//	System.out.println("Start:");
+				// System.out.println("Start:");
 				for (int i = 0; i < start.size(); i++) {
 					s[i] = this.start.get(i);
-					//System.out.print(this.start.get(i));
+					// System.out.print(this.start.get(i));
 				}
-				
+
 				double[] target = new double[this.places];
 				for (int i = 0; i < places; i++) {
 
-				//	values.put(rP[i+1][0].toString(), Double.parseDouble(rP[i+1][1]
-					//		.toString()));
-					target[i] = Double.parseDouble(rP[i+1][1].toString());
+					// values.put(rP[i+1][0].toString(),
+					// Double.parseDouble(rP[i+1][1]
+					// .toString()));
+					target[i] = Double.parseDouble(rP[i + 1][1].toString());
 				}
-				
-				//start-marking
+
+				// start-marking
 				DenseDoubleMatrix1D sv = new DenseDoubleMatrix1D(s);
 				// target marking
 				DenseDoubleMatrix1D tv = new DenseDoubleMatrix1D(target);
-				double erg1 = v.zDotProduct(sv,0,v.size());
-				double erg2 = v.zDotProduct(tv,0,v.size());
-				if(erg1 != erg2){
-				//	System.out.println("nicht erreichbar, Test durch Invariante");
+				double erg1 = v.zDotProduct(sv, 0, v.size());
+				double erg2 = v.zDotProduct(tv, 0, v.size());
+				if (erg1 != erg2) {
+					// System.out.println("nicht erreichbar, Test durch Invariante");
 					this.reachable.setText("not reachable");
-				}else{
+				} else {
 					if (this.cov == null) {
 						cov = new Cov();
 					}
-					CovNode root = cov.getRoot();
+					//CovNode root = cov.getRoot();
 					String pwName = cov.getNewName();
 					HashMap<String, Integer> name2id = cov.getName2id();
 					double[] markierung = new double[name2id.size()];
@@ -759,15 +764,15 @@ public class MenuListener implements ActionListener {
 						markierung[index] = Double.parseDouble(value);
 					}
 					for (int j = 0; j < markierung.length; j++) {
-				//		System.out.println(markierung[j]);
+						// System.out.println(markierung[j]);
 					}
 					// System.out.println(name2id);
-					Pathway pw = graphInstance.getContainer().getPathway(pwName);
-					HashSet nodes = pw.getAllNodes();
-					Iterator iter = nodes.iterator();
+					Pathway pw = graphInstance.getContainer()
+							.getPathway(pwName);
+					Iterator<BiologicalNodeAbstract> iter = pw.getAllNodes()
+							.iterator();
 					CovNode n = null;
 					Object o;
-					
 
 					while (iter.hasNext() && !reachable) {
 						o = iter.next();
@@ -775,8 +780,8 @@ public class MenuListener implements ActionListener {
 							n = (CovNode) o;
 							if (n.getTokenList().isGreaterEqual(markierung)) {
 								if (n.getTokenList().isEqual(markierung)) {
-								//	System.out.println("wird erreicht durch: "
-								//			+ n.getTokenList());
+									// System.out.println("wird erreicht durch: "
+									// + n.getTokenList());
 									this.reachable.setText("it is reached by "
 											+ n.getTokenList());
 									reachable = true;
@@ -786,14 +791,15 @@ public class MenuListener implements ActionListener {
 						}
 					}
 
-					Iterator iter2 = nodes.iterator();
+					Iterator<BiologicalNodeAbstract> iter2 = pw.getAllNodes()
+							.iterator();
 					while (iter2.hasNext() && !reachable) {
 						o = iter2.next();
 						if (o instanceof CovNode) {
 							n = (CovNode) o;
 							if (n.getTokenList().isGreater(markierung)) {
-							//	System.out.println("wird ueberdeckt von "
-							//			+ n.getTokenList());
+								// System.out.println("wird ueberdeckt von "
+								// + n.getTokenList());
 								this.reachable.setText("it is covered by "
 										+ n.getTokenList());
 								reachable = true;
@@ -803,13 +809,11 @@ public class MenuListener implements ActionListener {
 					}
 
 					if (!reachable) {
-					//	System.out.println("nicht erreichbar");
+						// System.out.println("nicht erreichbar");
 						this.reachable.setText("not reachable");
 					}
 				}
 			}
-			
-			
 
 			/*
 			 * if (nodeList.size() == 0) { this.reachable.setText(
@@ -856,37 +860,46 @@ public class MenuListener implements ActionListener {
 			// graphInstance.getContainer().getPathway(cov.getOldName()).getTab().getTitelTab().repaint();
 
 			// System.out.println("klick");
-		}
-		else if ("createCov".equals(event)) {
+		} else if ("createCov".equals(event)) {
 			// System.out.println("cov erstellen");
 			// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			// Cov cov = new Cov();
-			if (JOptionPane.showConfirmDialog(
-					MainWindowSingelton.getInstance(),
-				    "The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
-				    "Please Conform your action...",
-				    JOptionPane.YES_NO_OPTION)== JOptionPane.YES_OPTION) new ReachController();
+			if (JOptionPane
+					.showConfirmDialog(
+							MainWindowSingelton.getInstance(),
+							"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
+							"Please Conform your action...",
+							JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+				new ReachController();
 			graphInstance.getMyGraph().changeToGEMLayout();
-		}
-		else if ("editElements".equals(event)) new PNTableDialog().setVisible(true);
-		else if ("loadModResult".equals(event)) new OpenModellicaResult().execute();
-		else if ("simulate".equals(event)) new PetriNetSimulation();
-		else if ("convertIntoPetriNet".equals(event) && (con.getPathwayNumbers() > 0) ) {	
+		} else if ("editElements".equals(event))
+			new PNTableDialog().setVisible(true);
+		else if ("loadModResult".equals(event))
+			new OpenModellicaResult().execute();
+		else if ("simulate".equals(event))
+			new PetriNetSimulation();
+		else if ("convertIntoPetriNet".equals(event)
+				&& (con.getPathwayNumbers() > 0)) {
 			MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			g.disableGraphTheory();
 			// new CompareGraphsGUI();
 			new ConvertToPetriNet();
-		
-		Component[] c = MainWindowSingelton.getInstance().getContentPane()
-		.getComponents();
-		for (int i = 0; i < c.length; i++) {
-			if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-				MainWindowSingelton.getInstance().getBar().paintToolbar(
-						con.getPathway(w.getCurrentPathway()).isPetriNet());
-				break;
+
+			Component[] c = MainWindowSingelton.getInstance().getContentPane()
+					.getComponents();
+			for (int i = 0; i < c.length; i++) {
+				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
+					MainWindowSingelton
+							.getInstance()
+							.getBar()
+							.paintToolbar(
+									con.getPathway(w.getCurrentPathway())
+											.isPetriNet());
+					break;
+				}
 			}
-		}			
-	} else if ("dataMapping".equals(event)) DataMappingMVC.createDataMapping();
+		} else if ("dataMapping".equals(event))
+			DataMappingMVC.createDataMapping();
 	}
 
 	private double[][] initArray(int m, int n) {
@@ -901,11 +914,8 @@ public class MenuListener implements ActionListener {
 
 	private void createCMatrix() {
 		GraphInstance graphInstance = new GraphInstance();
-		Set<BiologicalNodeAbstract> hsVertex = graphInstance.getPathway()
-				.getAllNodes();// GraphInstance.getMyGraph().getAllvertices();
-		Set<BiologicalEdgeAbstract> hsEdge = graphInstance.getPathway()
-				.getAllEdges();
-		Iterator<BiologicalNodeAbstract> hsit = hsVertex.iterator();
+		Iterator<BiologicalNodeAbstract> hsit = graphInstance.getPathway()
+				.getAllNodes().iterator();
 		BiologicalNodeAbstract bna;
 		Place p;
 		HashMap<BiologicalNodeAbstract, Integer> hmplaces = new HashMap<BiologicalNodeAbstract, Integer>();
@@ -916,13 +926,11 @@ public class MenuListener implements ActionListener {
 		while (hsit.hasNext()) {
 			bna = (BiologicalNodeAbstract) hsit.next();
 			if (bna instanceof Transition) {
-				hmtransitions.put(bna, new Integer(
-						numberTransitions));
+				hmtransitions.put(bna, new Integer(numberTransitions));
 				numberTransitions++;
 			} else if (bna instanceof Place) {
 				p = (Place) bna;
-				hmplaces.put(bna, new Integer(
-						numberPlaces));
+				hmplaces.put(bna, new Integer(numberPlaces));
 				names.add(p.getName());
 				// System.out.println("name: " + p.getName());
 				this.start.add(new Double(p.getTokenStart()));
@@ -932,14 +940,15 @@ public class MenuListener implements ActionListener {
 		double[][] f = this.initArray(numberPlaces, numberTransitions);
 		double[][] b = this.initArray(numberPlaces, numberTransitions);
 		// einkommende Kanten (backward matrix)
-		Iterator<BiologicalEdgeAbstract> edgeit = hsEdge.iterator();
+		Iterator<BiologicalEdgeAbstract> edgeit = graphInstance.getPathway()
+				.getAllEdges().iterator();
 		PNEdge edge;
 		Object o;
 		while (edgeit.hasNext()) {
 			o = edgeit.next();
 			if (o instanceof PNEdge) {
 				edge = (PNEdge) o;
-				//pair = edge.getEdge().getEndpoints();
+				// pair = edge.getEdge().getEndpoints();
 				// T->P
 				if (hmplaces.containsKey(edge.getTo())) {
 					int i = hmplaces.get(edge.getTo());

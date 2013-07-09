@@ -158,7 +158,7 @@ public class MyGraph {
 
 		// vertexLocations = new HashMap();
 
-		Transformer<BiologicalNodeAbstract, Point2D> locationTransformer = new Transformer<BiologicalNodeAbstract, Point2D>() {
+		/*Transformer<BiologicalNodeAbstract, Point2D> locationTransformer = new Transformer<BiologicalNodeAbstract, Point2D>() {
 
 			@Override
 			public Point2D transform(BiologicalNodeAbstract vertex) {
@@ -175,7 +175,7 @@ public class MyGraph {
 				// int value = (vertex.intValue() * 40) + 20;
 
 			}
-		};
+		};*/
 
 		layout = new StaticLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g);// , locationTransformer);
 
@@ -763,7 +763,7 @@ public class MyGraph {
 		g.removeEdge(bea);
 	}
 
-	public Collection<BiologicalNodeAbstract> getAllvertices() {
+	public Collection<BiologicalNodeAbstract> getAllVertices() {
 		return g.getVertices();
 		// return g.getVertices();
 	}
@@ -948,9 +948,10 @@ public class MyGraph {
 								* Math.cos(Math.toRadians(i)));
 				boolean positionOK = true;
 
-				for (Iterator it = graphInstance.getPathway().getAllNodes()
-						.iterator(); it.hasNext();) {
-					BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it
+				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes()
+						.iterator();
+				while(it.hasNext()){
+					BiologicalNodeAbstract bna = it
 							.next();
 					Point2D p = getVertexLocation(bna);
 					if (coords.distance(p) < minDistance)

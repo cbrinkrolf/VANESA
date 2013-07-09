@@ -120,17 +120,14 @@ public class ElementTree implements TreeSelectionListener {
 		tree.addHighlighter(new ColorHighlighter());
 		tree.expandAll();
 
-		HashSet set = pw.getAllNodes();
-		Iterator it = set.iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 
 		Vector v = new Vector();
 		Hashtable currenTable = new Hashtable();
-
+		BiologicalNodeAbstract bna;
 		int i = 0;
 		while (it.hasNext()) {
-
-			Object ob = it.next();
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ob;
+			bna = it.next();
 
 			v.add(bna.getLabel() + i);
 			currenTable.put(bna.getLabel() + i, bna);
@@ -144,7 +141,7 @@ public class ElementTree implements TreeSelectionListener {
 		while (it2.hasNext()) {
 
 			String object = it2.next().toString();
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) currenTable
+			bna = (BiologicalNodeAbstract) currenTable
 					.get(object);
 
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
@@ -171,8 +168,7 @@ public class ElementTree implements TreeSelectionListener {
 		node = new DefaultMutableTreeNode("Nodes");
 		root.add(node);
 
-		HashSet set = pw.getAllNodes();
-		Iterator it = set.iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 
 		Vector v = new Vector();
 		Hashtable currenTable = new Hashtable();
