@@ -5,8 +5,8 @@ import gui.MainWindowSingelton;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Vector;
@@ -66,11 +66,11 @@ public class PetriNet {
 
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
-		HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
+		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		pnResult = pw.getPetriNet().getPnResult();
 		ArrayList<String> placeNames = new ArrayList<String>();
 		// rowsSize = 0;
-		Object elem;
+		//Object elem;
 		BiologicalNodeAbstract bna;
 		if (hs != null) {
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
@@ -147,7 +147,7 @@ public class PetriNet {
 
 		graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
+		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		// pnResult = pw.getPetriNet().getPnResult();
 		ArrayList<Integer> count = new ArrayList<Integer>();
 		// rowsSize = 0;
@@ -160,7 +160,7 @@ public class PetriNet {
 				if (bna instanceof Place) {
 					((Place) bna).setPlotColor(colors.get(r.nextInt(colors
 							.size())));
-					int intSimID = bna.getID();
+					//int intSimID = bna.getID();
 					// if (bna.getPetriNetSimulationData().size() == 0) {
 					// System.out.println(intSimID);
 					// System.out.println("result: "+pnResult);
@@ -193,18 +193,18 @@ public class PetriNet {
 			}
 
 			it = hs.iterator();
-			Place p;
+			//Place p;
 			Object o;
 			while (it.hasNext()) {
 				o = it.next();
 				if (o instanceof Place) {
-					p = (Place) o;
+					//p = (Place) o;
 					// System.out.println(p.getName());
 					// System.out.println(p.getPetriNetSimulationData());
 				}
 			}
 
-			Iterator it2 = count.iterator();
+			Iterator<Integer> it2 = count.iterator();
 			int tmp = (Integer) it2.next();
 			while (it2.hasNext()) {
 				if ((Integer) it2.next() != tmp) {
@@ -222,7 +222,7 @@ public class PetriNet {
 	private void deleteDateFromNodes() {
 		graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
+		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		if (hs != null) {
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			while (it.hasNext()) {

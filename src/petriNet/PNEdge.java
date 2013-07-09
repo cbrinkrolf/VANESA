@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import biologicalElements.Pathway;
@@ -136,9 +135,8 @@ public class PNEdge extends BiologicalEdgeAbstract {
 	private boolean validateFunction() {
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		// System.out.println("nodes: " + hs.size());
-		Iterator it = hs.iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 		ArrayList<String> names = new ArrayList<String>();
 
 		// HashMap<String, Double> name2token = new HashMap<String, Double>();
@@ -149,7 +147,7 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		BiologicalNodeAbstract bna;
 		Place p;
 		while (it.hasNext()) {
-			bna = (BiologicalNodeAbstract) it.next();
+			bna = it.next();
 			if (bna instanceof Place) {
 				p = (Place) bna;
 				names.add(p.getName());
@@ -218,14 +216,13 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		StringBuilder mFunction = new StringBuilder(this.function);
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		HashSet<BiologicalNodeAbstract> hs = pw.getAllNodes();
-		Iterator it = hs.iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 		ArrayList<String> names = new ArrayList<String>();
 		HashMap<String, String> mNames = new HashMap<String, String>();
 		BiologicalNodeAbstract bna;
 		Place p;
 		while (it.hasNext()) {
-			bna = (BiologicalNodeAbstract) it.next();
+			bna = it.next();
 			if (bna instanceof Place) {
 				p = (Place) bna;
 				names.add("P"+p.getID());

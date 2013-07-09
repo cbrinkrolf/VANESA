@@ -195,7 +195,7 @@ public class CompareGraphs {
 		int i1 = 0;
 		for (Pathway one : pathways) {
 			i1++;
-			for (GraphElementAbstract node : (Collection<GraphElementAbstract>) newPathway
+			for (GraphElementAbstract node : (Collection<BiologicalNodeAbstract>) newPathway
 					.getBiologicalElements().values()) {
 				GraphElementAbstract node_p = (GraphElementAbstract) one
 						.getEqualElement(node, newPathway);

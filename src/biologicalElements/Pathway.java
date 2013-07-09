@@ -133,7 +133,7 @@ public class Pathway {
 	// private HashSet <Vertex> set = new HashSet <Vertex> ();
 
 	private HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
-	
+
 	private HashMap<Pair<BiologicalNodeAbstract>, BiologicalEdgeAbstract> edges = new HashMap<Pair<BiologicalNodeAbstract>, BiologicalEdgeAbstract>();
 
 	private MyGraph graph;
@@ -153,7 +153,7 @@ public class Pathway {
 	private boolean isDAWISProject = false;
 
 	private Pathway parent;
-	
+
 	private SortedSet<Integer> ids = new TreeSet<Integer>();
 
 	public void changeBackground(String color) {
@@ -285,8 +285,8 @@ public class Pathway {
 
 	public BiologicalNodeAbstract addVertex(BiologicalNodeAbstract bna,
 			Point2D p) {
-		//System.out.println("add");
-		//System.out.println(bna.getClass().getName());
+		// System.out.println("add");
+		// System.out.println(bna.getClass().getName());
 		// Object graphElement = element;
 		// GraphElementAbstract gea = (GraphElementAbstract) element;
 		bna.setLabel(bna.getLabel().trim());
@@ -391,7 +391,7 @@ public class Pathway {
 		// System.out.println(biologicalElements.size());
 		graphRepresentation.addVertex(bna);
 		graph.addVertex(bna, p);
-//		System.out.println("node eingefuegt");
+		// System.out.println("node eingefuegt");
 
 		if (!nodeDescription.containsKey(bna.getBiologicalElement())) {
 			nodeDescription.put(bna.getBiologicalElement(), 1);
@@ -405,13 +405,13 @@ public class Pathway {
 	}
 
 	public BiologicalEdgeAbstract addEdge(BiologicalEdgeAbstract bea) {
-//		System.out.println("pw edge adden "+bea.getID());
-//		System.out.println(bea.isAbstract());
-		//BiologicalEdgeAbstract bea = null;
-		//System.out.println(bea.isAbstract());
-		//System.out.println(bea.getBiologicalElement());
+		// System.out.println("pw edge adden "+bea.getID());
+		// System.out.println(bea.isAbstract());
+		// BiologicalEdgeAbstract bea = null;
+		// System.out.println(bea.isAbstract());
+		// System.out.println(bea.getBiologicalElement());
 		if (bea.isAbstract()) {
-			
+
 			if (bea.getBiologicalElement().equals(
 					Elementdeclerations.compoundEdge)) {
 
@@ -426,10 +426,9 @@ public class Pathway {
 
 			} else if (bea.getBiologicalElement().equals(
 					Elementdeclerations.reactionEdge)) {
-//				System.out.println("drin");
+				// System.out.println("drin");
 				bea = new ReactionEdge(bea.getLabel(), bea.getName(),
 						bea.getFrom(), bea.getTo());
-				
 
 			} else if (bea.getBiologicalElement().equals(
 					Elementdeclerations.activationEdge)) {
@@ -521,7 +520,7 @@ public class Pathway {
 				bea = new PhysicalInteraction(bea.getLabel(), bea.getName(),
 						bea.getFrom(), bea.getTo());
 
-			}else if (bea.getBiologicalElement().equals(
+			} else if (bea.getBiologicalElement().equals(
 					Elementdeclerations.pnDiscreteEdge)) {
 				String tokens = "1";
 				boolean wasUndirected = false;
@@ -536,8 +535,8 @@ public class Pathway {
 					LowerBoundary = e.getLowerBoundary();
 					ActivationProbability = e.getActivationProbability();
 				}
-				bea = new PNEdge(bea.getFrom(), bea.getTo(),
-						bea.getLabel(), bea.getName(), "discrete", tokens);
+				bea = new PNEdge(bea.getFrom(), bea.getTo(), bea.getLabel(),
+						bea.getName(), "discrete", tokens);
 				((PNEdge) bea).wasUndirected(wasUndirected);
 				((PNEdge) bea).setLowerBoundary(LowerBoundary);
 				((PNEdge) bea).setUpperBoundary(UpperBoundary);
@@ -560,9 +559,9 @@ public class Pathway {
 					LowerBoundary = e.getLowerBoundary();
 					ActivationProbability = e.getActivationProbability();
 				}
-				bea = new PNEdge(bea.getFrom(), bea.getTo(),
-						bea.getLabel(), bea.getName(),
-						Elementdeclerations.pnContinuousEdge, tokens);
+				bea = new PNEdge(bea.getFrom(), bea.getTo(), bea.getLabel(),
+						bea.getName(), Elementdeclerations.pnContinuousEdge,
+						tokens);
 				((PNEdge) bea).wasUndirected(wasUndirected);
 				((PNEdge) bea).setLowerBoundary(LowerBoundary);
 				((PNEdge) bea).setUpperBoundary(UpperBoundary);
@@ -585,9 +584,9 @@ public class Pathway {
 					LowerBoundary = e.getLowerBoundary();
 					ActivationProbability = e.getActivationProbability();
 				}
-				bea = new PNEdge(bea.getFrom(), bea.getTo(),
-						bea.getLabel(), bea.getName(),
-						Elementdeclerations.pnInhibitionEdge, tokens);
+				bea = new PNEdge(bea.getFrom(), bea.getTo(), bea.getLabel(),
+						bea.getName(), Elementdeclerations.pnInhibitionEdge,
+						tokens);
 				((PNEdge) bea).wasUndirected(wasUndirected);
 				((PNEdge) bea).setLowerBoundary(LowerBoundary);
 				((PNEdge) bea).setUpperBoundary(UpperBoundary);
@@ -606,13 +605,11 @@ public class Pathway {
 			bea.setDirected(bea.isDirected());
 		}
 
-		if(bea == null){
-			System.out.println("edge null");
-		}
-//		System.out.println("id in pw: "+bea.getID());
-//		System.out.println("edge hinzugefuegt");
+		// System.out.println("id in pw: "+bea.getID());
+		// System.out.println("edge hinzugefuegt");
 		biologicalElements.put(bea.getID() + "", bea);
-		edges.put(new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()), bea);
+		edges.put(new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
+				bea);
 		// System.out.println(biologicalElements.size());
 		// Pair p = bea.getEdge().getEndpoints();
 		graphRepresentation.addEdge(bea);
@@ -624,8 +621,8 @@ public class Pathway {
 	public void removeElement(GraphElementAbstract element) {
 		if (element != null) {
 			if (element.isVertex()) {
-				//System.out.println(biologicalElements.size());
-				//System.out.println("drin");
+				// System.out.println(biologicalElements.size());
+				// System.out.println("drin");
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
 				graphRepresentation.removeVertex(bna);
 				graph.removeVertex(bna);
@@ -643,32 +640,33 @@ public class Pathway {
 								temp - 1);
 					}
 				}
-				
+
 			} else {
 				BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) element;
 				// Pair p = bea.getEdge().getEndpoints();
-				//System.out.println(edges.size());
-				edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(),bea.getTo()));
+				// System.out.println(edges.size());
+				edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(),
+						bea.getTo()));
 				graphRepresentation.removeEdge(bea);
-				//System.out.println(edges.size());
+				// System.out.println(edges.size());
 			}
 			ids.remove(element.getID());
-			//System.out.println(biologicalElements.size());
-			biologicalElements.remove(element.getID()+"");
-			//System.out.println(biologicalElements.size());
+			// System.out.println(biologicalElements.size());
+			biologicalElements.remove(element.getID() + "");
+			// System.out.println(biologicalElements.size());
 		}
 	}
 
-	/*public Object getElement(Object graphElement) {
+	/*
+	 * public Object getElement(Object graphElement) {
+	 * 
+	 * if (biologicalElements.get(graphElement) != null) { return
+	 * biologicalElements.get(graphElement); } else return null; }
+	 */
 
-		if (biologicalElements.get(graphElement) != null) {
-			return biologicalElements.get(graphElement);
-		} else
-			return null;
-	}*/
-	
-	public boolean existEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
-		
+	public boolean existEdge(BiologicalNodeAbstract from,
+			BiologicalNodeAbstract to) {
+
 		return edges.containsKey(new Pair<BiologicalNodeAbstract>(from, to));
 	}
 
@@ -681,17 +679,13 @@ public class Pathway {
 		return nodeDescription.keySet();
 	}
 
-	public HashSet getAllNodeLabels() {
+	public HashSet<String> getAllNodeLabels() {
 
-		HashSet set = new HashSet();
-		Iterator it = biologicalElements.values().iterator();
+		HashSet<String> set = new HashSet<String>();
+		Iterator<BiologicalNodeAbstract> it = this.getAllNodes().iterator();// biologicalElements.values().iterator();
 
 		while (it.hasNext()) {
-
-			GraphElementAbstract gea = (GraphElementAbstract) it.next();
-			if (gea.isVertex()) {
-				set.add(gea.getLabel());
-			}
+			set.add(it.next().getLabel());
 		}
 		return set;
 	}
@@ -720,22 +714,17 @@ public class Pathway {
 		return null;
 	}
 
-	/*public BiologicalNodeAbstract getNodeByVertexID(String vertexID) {
-
-		Iterator it = biologicalElements.values().iterator();
-
-		while (it.hasNext()) {
-			Object obj = it.next();
-			GraphElementAbstract gea = (GraphElementAbstract) obj;
-			if (gea.isVertex()) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) obj;
-				if (bna.getVertex().toString().equals(vertexID)) {
-					return bna;
-				}
-			}
-		}
-		return null;
-	}*/
+	/*
+	 * public BiologicalNodeAbstract getNodeByVertexID(String vertexID) {
+	 * 
+	 * Iterator it = biologicalElements.values().iterator();
+	 * 
+	 * while (it.hasNext()) { Object obj = it.next(); GraphElementAbstract gea =
+	 * (GraphElementAbstract) obj; if (gea.isVertex()) { BiologicalNodeAbstract
+	 * bna = (BiologicalNodeAbstract) obj; if
+	 * (bna.getVertex().toString().equals(vertexID)) { return bna; } } } return
+	 * null; }
+	 */
 
 	public BiologicalNodeAbstract getNodeByLabel(String label) {
 
@@ -845,45 +834,45 @@ public class Pathway {
 		return set;
 	}
 
-	/*public boolean existEdge(Vertex vertex1, Vertex vertex2) {
-		for (Iterator i = getAllEdges().iterator(); i.hasNext();) {
-			BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) i.next();
-			if (bea.getEdge().getEndpoints().getFirst().equals(vertex1)
-					&& bea.getEdge().getEndpoints().getSecond().equals(vertex2))
-				return true;
-		}
-		return false;
-	}*/
+	/*
+	 * public boolean existEdge(Vertex vertex1, Vertex vertex2) { for (Iterator
+	 * i = getAllEdges().iterator(); i.hasNext();) { BiologicalEdgeAbstract bea
+	 * = (BiologicalEdgeAbstract) i.next(); if
+	 * (bea.getEdge().getEndpoints().getFirst().equals(vertex1) &&
+	 * bea.getEdge().getEndpoints().getSecond().equals(vertex2)) return true; }
+	 * return false; }
+	 */
 
-	public HashSet<BiologicalEdgeAbstract> getAllEdges() {
+	public Collection<BiologicalEdgeAbstract> getAllEdges() {
 
-		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
-		HashSet<BiologicalEdgeAbstract> set = new HashSet<BiologicalEdgeAbstract>();
-
-		GraphElementAbstract gea;
-		while (it.hasNext()) {
-			gea = it.next();
-			if (gea instanceof BiologicalEdgeAbstract) {
-				set.add((BiologicalEdgeAbstract)gea);
-			}
-		}
-		return set;
+		/*
+		 * Iterator<GraphElementAbstract> it =
+		 * biologicalElements.values().iterator();
+		 * HashSet<BiologicalEdgeAbstract> set = new
+		 * HashSet<BiologicalEdgeAbstract>();
+		 * 
+		 * GraphElementAbstract gea; while (it.hasNext()) { gea = it.next(); if
+		 * (gea instanceof BiologicalEdgeAbstract) {
+		 * set.add((BiologicalEdgeAbstract)gea); } } return set;
+		 */
+		return this.graph.getAllEdges();
 	}
 
-	public HashSet<BiologicalNodeAbstract> getAllNodes() {
+	public Collection<BiologicalNodeAbstract> getAllNodes() {
 
-		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
-		HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
-
-		while (it.hasNext()) {
-			Object obj = it.next();
-			GraphElementAbstract gea = (GraphElementAbstract) obj;
-			if (gea.isVertex()) {
-				set.add((BiologicalNodeAbstract)obj);
-			}
-		}
-
-		return set;
+		/*
+		 * Iterator<GraphElementAbstract> it =
+		 * biologicalElements.values().iterator();
+		 * HashSet<BiologicalNodeAbstract> set = new
+		 * HashSet<BiologicalNodeAbstract>();
+		 * 
+		 * while (it.hasNext()) { Object obj = it.next(); GraphElementAbstract
+		 * gea = (GraphElementAbstract) obj; if (gea.isVertex()) {
+		 * set.add((BiologicalNodeAbstract)obj); } }
+		 * 
+		 * return set;
+		 */
+		return this.graph.getAllVertices();
 	}
 
 	public Vector getAllNodesAsVector() {
@@ -1000,10 +989,10 @@ public class Pathway {
 
 	public Vector<BiologicalNodeAbstract> getSelectedNodes() {
 		Vector<BiologicalNodeAbstract> ve = new Vector();
-		Iterator it = graph.getVisualizationViewer().getPickedVertexState()
-				.getPicked().iterator();
+		Iterator<BiologicalNodeAbstract> it = graph.getVisualizationViewer()
+				.getPickedVertexState().getPicked().iterator();
 		while (it.hasNext()) {
-			BiologicalNodeAbstract v = (BiologicalNodeAbstract) it.next();
+			BiologicalNodeAbstract v = it.next();
 			ve.add(v);
 		}
 		return ve;
@@ -1042,17 +1031,17 @@ public class Pathway {
 
 	public ArrayList<Pathway> getChilds() {
 		ArrayList<Pathway> result = new ArrayList<Pathway>();
-		for (Iterator<BiologicalNodeAbstract> it = getAllNodes().iterator(); it
-				.hasNext();) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+		Iterator<BiologicalNodeAbstract> it = getAllNodes().iterator();
+		while (it.hasNext()) {
+			BiologicalNodeAbstract bna = it.next();
 			if (bna instanceof PathwayMap
 					&& ((PathwayMap) bna).getPathwayLink() != null)
 				result.add(((PathwayMap) bna).getPathwayLink());
 		}
 		return result;
 	}
-	
-	public SortedSet<Integer> getIdSet(){
+
+	public SortedSet<Integer> getIdSet() {
 		return this.ids;
 	}
 

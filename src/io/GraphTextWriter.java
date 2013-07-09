@@ -24,10 +24,10 @@ public class GraphTextWriter {
 
 			StringBuffer buff = new StringBuffer();
 			buff.append("#Nodes \n");
-			Iterator it = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 
 			while (it.hasNext()) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+				BiologicalNodeAbstract bna = it.next();
 				if (!nodes.contains(bna.getLabel() + " # " + bna.getName())) {
 					buff.append(bna.getLabel() + " # " + bna.getName() + " \n");
 					nodes.add(bna.getLabel() + " # " + bna.getName());

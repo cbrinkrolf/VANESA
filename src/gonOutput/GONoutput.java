@@ -74,11 +74,11 @@ public class GONoutput {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void prepare() {
-		Iterator it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			bna = it.next();
 			Point2D p = pw.getGraph().getClusteringLayout().getLocation(
 					bna.getVertex());
 			String biologicalElement = bna.getBiologicalElement();

@@ -24,10 +24,11 @@ public class PhosphoTextWriter {
 
 			StringBuffer buff = new StringBuffer();
 			buff.append("#Nodes \n");
-			Iterator it = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 
+			BiologicalNodeAbstract bna;
 			while (it.hasNext()) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+				bna = it.next();
 				if (!nodes.contains(bna.getLabel())) {
 					buff.append(bna.getLabel() + " \n");
 					nodes.add(bna.getLabel());

@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -78,22 +79,22 @@ public class Regulation implements ActionListener, ChangeListener{
 		// get pathway and nodes
 		graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		HashSet<GraphElementAbstract> hs = pw.getAllNodes();
+		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		
 		// construct random data set
 		// TODO: remove this when "true" data will be stored in the biological nodes
 		int rowDim = 5;
 		Vector<Double> newmicroArrayData;
 		int rowSize = 0;
+		BiologicalNodeAbstract bna;
 		if(hs != null) {
-			Iterator<GraphElementAbstract> it = hs.iterator();
+			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			while(it.hasNext()) {
 				newmicroArrayData = new Vector<Double>();
 				for(int i = 0; i < rowDim; i++) {
 					newmicroArrayData.add(i, Math.random());
 				}
-				Object elem = it.next();
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract)elem;
+				bna = it.next();
 				bna.setPetriNetSimulationData(newmicroArrayData);
 				rowSize++;
 			}
@@ -103,13 +104,12 @@ public class Regulation implements ActionListener, ChangeListener{
 		
 		// get microarray data out of nodes. iterates over BiologicalNodeAbstracts,
 		// not JUNG vertices. Each expression value is stored in rows[][].
-		Iterator<GraphElementAbstract> it = hs.iterator();
+		Iterator<BiologicalNodeAbstract> it = hs.iterator();
 		Object[][] rows = new Object[rowSize][rowDim+1];
 		int i = 0;
 		Vector<Double> MAData;
 		while(it.hasNext()) {
-			Object elem = it.next();
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract)elem;
+			bna = it.next();
 			MAData = bna.getPetriNetSimulationData();
 			rows[i][0] = bna.getName();
 			for(int j = 1; j <= MAData.size(); j++) {
@@ -299,7 +299,7 @@ public class Regulation implements ActionListener, ChangeListener{
 		
 		// get pathway and iterate over its JUNG vertices
 		Pathway pw = graphInstance.getPathway();
-		Set<Vertex> ns = pw.getGraph().getAllvertices();
+		Set<Vertex> ns = pw.getGraph().getAllVertices();
 		if(ns != null) {
 			Iterator<Vertex> it = ns.iterator();
 			while(it.hasNext()) {

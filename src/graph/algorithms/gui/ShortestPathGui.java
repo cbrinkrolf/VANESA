@@ -38,7 +38,7 @@ public class ShortestPathGui implements ActionListener {
 	JComboBox fromBox = new JComboBox();
 	JComboBox ToBox = new JComboBox();
 	JCheckBox mindMaps = new JCheckBox("avoid pathway maps");
-	Hashtable table = new Hashtable();
+	Hashtable<String, BiologicalNodeAbstract> table = new Hashtable<String, BiologicalNodeAbstract>();
 	private TitledTab tab;
 
 	private JButton calculate;
@@ -51,12 +51,11 @@ public class ShortestPathGui implements ActionListener {
 		mindMaps.setSelected(true);
 		graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		HashSet set = pw.getAllNodes();
-		Iterator it = set.iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 
-		Vector w = new Vector();
+		Vector<String> w = new Vector<String>();
 
-		int i = 0;
+		//int i = 0;
 		while (it.hasNext()) {
 
 			Object ob = it.next();
@@ -64,7 +63,7 @@ public class ShortestPathGui implements ActionListener {
 			w.add(bna.getLabel() + " (Node:" + bna.getID() + ")");
 			table.put(bna.getLabel() + " (Node:" + bna.getID()
 					+ ")", bna);
-			i++;
+			//i++;
 		}
 
 		Collections.sort(w);

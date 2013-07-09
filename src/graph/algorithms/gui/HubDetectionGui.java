@@ -139,7 +139,7 @@ public class HubDetectionGui implements ActionListener {
 		VertexShapes vs = new VertexShapes(sf, rf);
 
 		Collection<BiologicalNodeAbstract> verticsSet = pw.getGraph()
-				.getAllvertices();
+				.getAllVertices();
 		Iterator<BiologicalNodeAbstract> iterator = verticsSet.iterator();
 		BiologicalNodeAbstract ba;
 		while (iterator.hasNext()) {
@@ -245,7 +245,7 @@ public class HubDetectionGui implements ActionListener {
 			ResultGraph result = CastGraphs.toDirected(pw);
 			DirectedSparseGraph directedGraph = (DirectedSparseGraph) result.graph;
 
-			Set verticsSet = pw.getGraph().getAllvertices();
+			Set verticsSet = pw.getGraph().getAllVertices();
 			for (Iterator iterator = verticsSet.iterator(); iterator.hasNext();) {
 				Vertex v = (Vertex) iterator.next();
 				BiologicalNodeAbstract ba = (BiologicalNodeAbstract) pw

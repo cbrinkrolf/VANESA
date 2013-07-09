@@ -79,7 +79,7 @@ public class AnimationThread extends Thread {
 		Vertex v;
 
 		Pathway pw = graphInstance.getPathway();
-		Set<Vertex> ns = pw.getGraph().getAllvertices();
+		Set<Vertex> ns = pw.getGraph().getAllVertices();
 
 		if (animationStartPosition == 1) {
 			animationStartPosition = 2;

@@ -172,9 +172,9 @@ public class SimpleAlignmentGraph {
 		xMin1 = yMin1 = xMin2 = yMin2 = Double.MAX_VALUE;
 		xMax1 = yMax1 = xMax2 = yMax2 = 0;
 
-		Iterator it = pw_one.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw_one.getAllNodes().iterator();
 		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			BiologicalNodeAbstract bna = it.next();
 			// BiologicalNodeAbstract newBNA = bna.deepCopy();
 			addNode(bna, pw_one, false);
 		}
@@ -191,9 +191,9 @@ public class SimpleAlignmentGraph {
 		this.backgroundAttributes1.put("minY", yMin1 - 50 + "");
 		this.backgroundAttributes1.put("maxY", yMax1 + 50 + "");
 
-		it = pw_one.getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> it2 = pw_one.getAllEdges().iterator();
 		while (it.hasNext()) {
-			BiologicalEdgeAbstract bna = (BiologicalEdgeAbstract) it.next();
+			BiologicalEdgeAbstract bna = it2.next();
 			addEdge(bna, true);
 		}
 

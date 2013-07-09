@@ -106,7 +106,6 @@ public class DataMappingModel {
 	 * iterates over the nodes in the pathway and colors the matching nodes according to there values
 	 * @param mergeMap - the merged map from the BioMart query and the data input
 	 */
-	@SuppressWarnings("unchecked")
 	private void coloringPathway() {
 		Iterator<BiologicalNodeAbstract> allNodes = pw.getAllNodes().iterator();
 		while (allNodes.hasNext()) {

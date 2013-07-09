@@ -138,10 +138,10 @@ public class SBMLoutput {
 				XMLConstraints.LIST_OF_REACTIONS.getXMLTag()), this.model);
 
 		// read all nodes from graph
-		Iterator it = this.pathway.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = this.pathway.getAllNodes().iterator();
 		
 		while (it.hasNext()) {
-			BiologicalNodeAbstract oneNode = (BiologicalNodeAbstract) it.next();
+			BiologicalNodeAbstract oneNode = it.next();
 			
 			// creates all data for the service
 			this.createListOfCompartmentTypes(oneNode);
@@ -152,10 +152,10 @@ public class SBMLoutput {
 		}
 		
 		// reactions to sbml
-		Iterator edgeIterator = this.pathway.getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> edgeIterator = this.pathway.getAllEdges().iterator();
 		
 		while(edgeIterator.hasNext()){
-			BiologicalEdgeAbstract oneEdge = (BiologicalEdgeAbstract)edgeIterator.next();
+			BiologicalEdgeAbstract oneEdge = edgeIterator.next();
 			this.createListOfReactions(oneEdge);
 		}
         
@@ -471,8 +471,7 @@ public class SBMLoutput {
 			String vertexID = oneNode.getSbml().getVertex();
 			
 			if(vertexID != null){
-				Point2D point = this.pathway.getGraph().getClusteringLayout().getLocation(
-						oneNode.getVertex());
+				Point2D point = this.pathway.getGraph().getVertexLocation(oneNode);
 			
 			// parameter data 
 			String name = vertexID;

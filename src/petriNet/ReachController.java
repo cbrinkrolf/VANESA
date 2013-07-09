@@ -14,8 +14,8 @@ public class ReachController {
 	
 	public ReachController(){
 	
-		this.pw = graphInstance.getPathway();
-		this.nodes = this.pw.getAllNodes();
+		//this.pw = graphInstance.getPathway();
+		//this.nodes = this.pw.getAllNodes();
 		
 		
 		

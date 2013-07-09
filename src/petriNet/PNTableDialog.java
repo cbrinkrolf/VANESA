@@ -4,20 +4,15 @@ package petriNet;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.graph.event.GraphEventType.AllSingleEvents;
 import graph.ContainerSingelton;
-import graph.GraphInstance;
-import graph.animations.RegulationTabelModel;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindowSingelton;
 import gui.algorithms.ScreenSize;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.swing.DefaultCellEditor;
@@ -34,10 +29,8 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import miscalleanous.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXTable;
@@ -65,8 +58,10 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 		Object[][] rows = new Object[pw.getAllNodes().toArray().length][9];
 		bnas = new BiologicalNodeAbstract[pw.getAllNodes().toArray().length];
-		for (Iterator it = pw.getAllNodes().iterator(); it.hasNext();) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		BiologicalNodeAbstract bna;
+		while(it.hasNext()) {
+			bna = it.next();
 			if (bna instanceof Place || bna instanceof Transition) {
 				bnas[i] = bna;
 				rows[i][0] = bna.getName();
@@ -99,11 +94,10 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		Object[][] rows2 = new Object[pw.getAllEdges().toArray().length][9];
 		edges = new PNEdge[pw.getAllEdges().toArray().length];
 		PNEdge edge;
-		BiologicalNodeAbstract bna;
-		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> itEdge = pw.getAllEdges().iterator();
 		Iterator<BiologicalNodeAbstract> it2;
 		while (it.hasNext()) {
-			edge = (PNEdge) it.next();
+			edge = (PNEdge) itEdge.next();
 			edges[i] = edge;
 			rows2[i][0] = edge.getName();
 			rows2[i][1] = edge.getLabel();

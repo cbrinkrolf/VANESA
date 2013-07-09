@@ -9,9 +9,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -45,7 +43,7 @@ public class Cov {
 	private HashMap<Integer, String> idToNameTransition = new HashMap<Integer, String>();
 	private HashMap<Integer, Double> idToMax = new HashMap<Integer, Double>();
 
-	private HashMap<String, CovNode> covnodes = new HashMap<String, CovNode>();
+	//private HashMap<String, CovNode> covnodes = new HashMap<String, CovNode>();
 
 	private HashMap<String, Integer> name2id = new HashMap<String, Integer>();
 
@@ -113,7 +111,7 @@ public class Cov {
 
 		//System.out.println("newname: " + pw.getName());
 		//System.out.println("oldname: " + this.oldName);
-		Pathway p = this.graphInstance.getContainer().getPathway(this.oldName);
+		//Pathway p = this.graphInstance.getContainer().getPathway(this.oldName);
 
 		//System.out.println(p.getAllNodeLabels());
 		this.paintCoveredNodes();
@@ -136,7 +134,6 @@ public class Cov {
 	private void computeNode(CovNode parent) {
 		CovList cl = parent.getTokenList();
 		CovList tmp;
-		Set<BiologicalNodeAbstract> nodes;
 		ArrayList<Integer> indexe;
 		// boolean found;
 		// System.out.println("Root: " + cl);
@@ -150,11 +147,10 @@ public class Cov {
 			// Wenn Markierung groesser gleich Transition ist
 			if (cl.isGreaterEqualCol(col)) {
 				tmp = parent.getTokenList().clone();
-				nodes = graphInstance.getPathway().getAllNodes();
 				tmp.addTokens(this.cMatrix.getColumn(i));
 				// System.out.println("new: " + tmp);
 				boolean found = false;
-				Iterator it = nodes.iterator();
+				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
 				CovNode cn;
 
 				if (this.isBoundaryHold(tmp)) {
@@ -203,7 +199,7 @@ public class Cov {
 								}
 
 								// fuer alle Knoten
-								Iterator it2 = nodes.iterator();
+								Iterator<BiologicalNodeAbstract> it2 = graphInstance.getPathway().getAllNodes().iterator();
 								boolean cond1;
 								boolean cond2;
 								while (it2.hasNext()) {
@@ -257,9 +253,9 @@ public class Cov {
 									pw.addEdge(e);
 									// e.setVisible(false);
 
-									System.out
-											.println("neuer ueberdeckter node: "
-													+ n.getTokenList());
+//									System.out
+//											.println("neuer ueberdeckter node: "
+//													+ n.getTokenList());
 									this.computeNode(n);
 									found = true;
 									break;
@@ -303,15 +299,11 @@ public class Cov {
 
 	private void createMatrices() {
 
-		Set<BiologicalNodeAbstract> hsVertex = new HashSet<BiologicalNodeAbstract>();
-		hsVertex = graphInstance.getPathway().getAllNodes();// GraphInstance.getMyGraph().getAllvertices();
 		// DefaultSettableVertexLocationFunction locations = graphInstance
 		// .getPathway().getGraph().getVertexLocations();
-		Set<BiologicalEdgeAbstract> hsEdge = new HashSet<BiologicalEdgeAbstract>();
-		hsEdge = graphInstance.getPathway().getAllEdges();
 		this.oldName = this.graphInstance.getPathway().getName();
 		// Hashmaps fuer places und transitions
-		Iterator hsit = hsVertex.iterator();
+		Iterator<BiologicalNodeAbstract> hsit = graphInstance.getPathway().getAllNodes().iterator();
 		BiologicalNodeAbstract bna;
 		// Place p;
 		// System.out.println("vertices:");
@@ -320,7 +312,7 @@ public class Cov {
 		Place p;
 		Transition t;
 		while (hsit.hasNext()) {
-			bna = (BiologicalNodeAbstract) hsit.next();
+			bna = hsit.next();
 			// System.out.println(bna.getVertex());
 			// System.out.println(bna.getClass());
 			if (bna instanceof Transition) {
@@ -355,7 +347,7 @@ public class Cov {
 		// double[][] c = this.initArray(numberPlace, numberTransition);
 
 		// einkommende Kanten (backward matrix)
-		Iterator edgeit = hsEdge.iterator();
+		Iterator<BiologicalEdgeAbstract> edgeit = graphInstance.getPathway().getAllEdges().iterator();
 		PNEdge edge;
 		//Pair pair;
 		while (edgeit.hasNext()) {
@@ -474,14 +466,12 @@ public class Cov {
 
 	private void paintCoveredNodes() {
 
-		HashSet nodes = pw.getAllNodes();
 		Pathway pwold = this.graphInstance.getContainer().getPathway(
 				this.oldName);
 	//	System.out.println("oldname: " + pwold.getName());
 		pwold.getGraph().lockVertices();
 		pwold.getGraph().stopVisualizationModel();
-		HashSet oldNodes = pwold.getAllNodes();
-		Iterator it = nodes.iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 		// this.graphInstance.getContainer().
 		double[] tokens = null;
 		BiologicalNodeAbstract bna = null;
@@ -492,7 +482,7 @@ public class Cov {
 		 * bna.setColor(new Color(255,0,0));
 		 * System.out.println("old label: "+bna.getLabel()); }
 		 */
-		Iterator it2;
+		Iterator<BiologicalNodeAbstract> it2;
 		while (it.hasNext()) {
 			CovNode n = (CovNode) it.next();
 			// n.setColor(new Color(255,0,0));
@@ -501,9 +491,9 @@ public class Cov {
 
 			for (int i = 0; i < tokens.length; i++) {
 				if (tokens[i] == -1.0) {
-					it2 = oldNodes.iterator();
+					it2 = pwold.getAllNodes().iterator();
 					while (it2.hasNext()) {
-						bna = (BiologicalNodeAbstract) it2.next();
+						bna = it2.next();
 						if (bna.getName().equals(this.idToName.get(i))) {
 							bna.setColor(new Color(255, 0, 0));
 

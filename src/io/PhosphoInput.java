@@ -32,10 +32,11 @@ public class PhosphoInput {
 
 		Hashtable phosphoTabel = new Hashtable<String, Vector>();
 		StringBuffer buff = new StringBuffer();
-		Iterator it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			bna = it.next();
 			// System.out.println(bna.getLabel());
 			String labelIdentifier = "";
 			ArrayList<DBColumn> results = new ArrayList<DBColumn>();
