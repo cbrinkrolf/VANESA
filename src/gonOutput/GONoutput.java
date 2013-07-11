@@ -13,7 +13,6 @@ import petriNet.DiscreteTransition;
 import petriNet.Place;
 import petriNet.StochasticTransition;
 import petriNet.Transition;
-
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -36,13 +35,15 @@ public class GONoutput {
 	private int connector = 0;
 	private double xmin = 1000, xmax = -1000, ymin = 1000, ymax = -1000;
 	private double scale = 1;
-	private HashMap<String, String> edgesString = new HashMap<String, String>();
-	private Hashtable<String, Point2D> placePositions = new Hashtable<String, Point2D>();
-	private Hashtable<String, Point2D> transitionPositions = new Hashtable<String, Point2D>();
-	private Hashtable<String, String> nodeType = new Hashtable<String, String>();
-	private Hashtable<String, String> nameTable = new Hashtable<String, String>();
-	private HashMap<String, Object> objectTable = new HashMap<String, Object>();
-	private HashMap<String, String> vertex2name = new HashMap<String, String>();
+	private HashMap<BiologicalNodeAbstract, String> edgesString = new HashMap<BiologicalNodeAbstract, String>();
+	private Hashtable<BiologicalNodeAbstract, Point2D> placePositions = new Hashtable<BiologicalNodeAbstract, Point2D>();
+	private Hashtable<BiologicalNodeAbstract, Point2D> transitionPositions = new Hashtable<BiologicalNodeAbstract, Point2D>();
+	//private Hashtable<String, String> nodeType = new Hashtable<String, String>();
+	//private Hashtable<String, String> nameTable = new Hashtable<String, String>();
+	//private HashMap<String, Object> objectTable = new HashMap<String, Object>();
+	//private HashMap<String, String> vertex2name = new HashMap<String, String>();
+	//HashSet<BiologicalNodeAbstract> placesHS = new HashSet<BiologicalNodeAbstract>();
+	//HashSet<BiologicalNodeAbstract> transitionsHS = new HashSet<BiologicalNodeAbstract>();
 
 	public GONoutput(File file, Pathway pathway) {
 		this.file = file;
@@ -79,20 +80,19 @@ public class GONoutput {
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
-			Point2D p = pw.getGraph().getClusteringLayout().getLocation(
-					bna.getVertex());
-			String biologicalElement = bna.getBiologicalElement();
+			Point2D p = pw.getGraph().getVertexLocation(bna);
+			//String biologicalElement = bna.getBiologicalElement();
 
 			if(bna instanceof Transition){
-				transitionPositions.put(bna.getName(), p);
+				transitionPositions.put(bna, p);
 			}else{
-				placePositions.put(bna.getName(), p);
+				placePositions.put(bna, p);
 			}
-			objectTable.put(bna.getName(), bna);
+			//objectTable.put(bna.getName(), bna);
 			
-			nodeType.put(bna.getName(), biologicalElement);
-			nameTable.put(bna.getName(), bna.getLabel());
-			this.vertex2name.put(bna.getVertex().toString(), bna.getName());
+			//nodeType.put(bna.getName(), biologicalElement);
+			//nameTable.put(bna.getName(), bna.getLabel());
+			//this.vertex2name.put(bna.getVertex().toString(), bna.getName());
 			if (xmin > p.getX())
 				xmin = p.getX();
 			if (xmax < p.getX())
@@ -106,44 +106,51 @@ public class GONoutput {
 		ymin -= 20;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void buildConnections() {
 
-		Iterator it = pw.getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
 
+		BiologicalEdgeAbstract bea;
+		BiologicalNodeAbstract from;
+		BiologicalNodeAbstract to;
 		while (it.hasNext()) {
-			BiologicalEdgeAbstract bna = (BiologicalEdgeAbstract) it.next();
+			bea = it.next();
 
 			// get name and position and type
-			String fromString = this.vertex2name.get(bna.getEdge().getEndpoints().getFirst()
-					.toString());
-			String toString = this.vertex2name.get(bna.getEdge().getEndpoints().getSecond()
-					.toString());
-			String first = this.nodeType.get(fromString);
+//			String fromString = this.vertex2name.get(bna.getEdge().getEndpoints().getFirst()
+//					.toString());
+//			String toString = this.vertex2name.get(bna.getEdge().getEndpoints().getSecond()
+//					.toString());
+			from = bea.getFrom();
+			to = bea.getTo();
+			
+			String first = from.getBiologicalElement();//this.nodeType.get(fromString);
 			String type = "";
-			String transition = "";
-			String place = "";
+			//String transition = "";
+			//String place = "";
 			if (first.contains("Place")) {
 				type = "InputProcessBiological";
-				transition = toString;
-				place = fromString;
+				//transition = toString;
+				//place = fromString;
+				edge(to, from, type, bea);
 			} else if (first.contains("Transition")) {
 				type = "OutputProcessBiological";
-				transition = fromString;
-				place = toString;
+				//transition = fromString;
+				//place = toString;
+				edge(from, to, type, bea);
 			}
 			//System.out.println("T: " + transition + " p: " + place + " type: "
 				//	+ type);
-			edge(transition, place, type);
+			//edge(transition, place, type);
 			// edge(fromString, "A"+addedNodes, type);
 
 		}
 	}
 
-	private void edge(String transition, String place, String type) {
+	private void edge(BiologicalNodeAbstract transition, BiologicalNodeAbstract place, String type, BiologicalEdgeAbstract edge) {
 		Point2D fromPoint = transitionPositions.get(transition);
 		Point2D toPoint = placePositions.get(place);
-		String connection = getConnectionString(place, type, fromPoint, toPoint);
+		String connection = getConnectionString(place, type, fromPoint, toPoint, edge);
 		if (!edgesString.containsKey(transition)) {
 			edgesString.put(transition, connection);
 		} else {
@@ -152,29 +159,30 @@ public class GONoutput {
 	}
 
 	private void buildNodes() {
-		Iterator<String> it = placePositions.keySet().iterator();
+		Iterator<BiologicalNodeAbstract> it = placePositions.keySet().iterator();
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
-			String nodeName = it.next();
+			bna = it.next();
 			//String type = nodeType.get(nodeName);
-			places = places.concat(getPlaceString(nodeName));
+			places = places.concat(getPlaceString(bna));
 		}
 		
-		Iterator<String> it2 = transitionPositions.keySet().iterator();
-		while(it2.hasNext()){
-			String nodeName = it2.next();
-			transitions = transitions.concat(getTransitionString(nodeName));
+		it = transitionPositions.keySet().iterator();
+		while(it.hasNext()){
+			bna = it.next();
+			transitions = transitions.concat(getTransitionString(bna));
 		}
 	}
 
-	private String getPlaceString(String name) {
-		Point2D p = placePositions.get(name);
+	private String getPlaceString(BiologicalNodeAbstract bna) {
+		Point2D p = placePositions.get(bna);
 		String type = "";
-		Place place = (Place) objectTable.get(name);
+		Place place = (Place) bna;
 		
 		//System.out.println(this.nodeType.get(name));
-		if(this.nodeType.get(name).equals(Elementdeclerations.place)){
+		if(bna.getBiologicalElement().equals(Elementdeclerations.place)){
 			type = "Integer";
-		}else if(this.nodeType.get(name).equals(Elementdeclerations.s_place)){
+		}else if(bna.getBiologicalElement().equals(Elementdeclerations.s_place)){
 			type = "Double";
 		}
 		String start = place.getTokenStart()+"";
@@ -188,16 +196,16 @@ public class GONoutput {
 		
 		
 		return "  <csml:entity id=\""
-				+ name
+				+ bna.getID()
 				+ "\" name=\""
-				+ name
+				+ bna.getName()
 				+ "\" type=\"cso:-\">\r\n"
 				+
 
 				"<csml:entitySimulationProperty>\r\n"
 				+
 				" <csml:variable type = \"csml-variable:"+type+"\" variableID=\""
-				+ name
+				+ bna.getLabel()
 				+ "\">\r\n"
 				+
 				"  <csml:parameter key=\"csml-variable:parameter:initialValue\" value=\""+start+"\">\r\n"
@@ -233,48 +241,49 @@ public class GONoutput {
 				"  </csml:entity>\r\n";
 	}
 
-	private String getTransitionString(String name) {
-		return getTransitionHeader(name)
-				+ (edgesString.get(name) == null ? "" : edgesString.get(name))
+	private String getTransitionString(BiologicalNodeAbstract bna) {
+		return getTransitionHeader(bna)
+				+ (edgesString.get(bna) == null ? "" : edgesString.get(bna))
 				// +(outEdgesString.get(name)==null?"":outEdgesString.get(name))
-				+ getTransitionTail(transitionPositions.get(name));
+				+ getTransitionTail(transitionPositions.get(bna));
 	}
 
-	private String getTransitionHeader(String name) {
+	private String getTransitionHeader(BiologicalNodeAbstract bna) {
 		String type = "";
-		Object o = objectTable.get(name);
-		if(o instanceof DiscreteTransition){
+		//Object o = objectTable.get(bna);
+		if(bna instanceof DiscreteTransition){
 			type = "Discrete";
-		}else if (o instanceof ContinuousTransition){
+		}else if (bna instanceof ContinuousTransition){
 			type = "Continuous";
-		}else if (o instanceof StochasticTransition){
+		}else if (bna instanceof StochasticTransition){
 			type = "Stochastic";
 		}
 		
-		return "  <csml:process id=\"" + name + "\" name=\""
-				+ (nameTable.get(name) == null ? " " : nameTable.get(name))
+		return "  <csml:process id=\"" + bna.getID() + "\" name=\""
+				+ (bna.getLabel() == "" ? " " : bna.getLabel())
 				//TODO Transitiontype Discrete vs Continuous
 				+ "\" type=\""+type+"\">\r\n";
 	}
 
-	private String getConnectionString(String place, String type,
-			Point2D fromPoint, Point2D toPoint) {
+	private String getConnectionString(BiologicalNodeAbstract place, String type,
+			Point2D fromPoint, Point2D toPoint, BiologicalEdgeAbstract edge) {
+		//TODO no kinetic information 
 		return "<csml:connector id=\"c"
 				+ (++connector)
 				+ "\" name=\"c"
 				+ connector
 				+ "\" refID=\""
-				+ place
+				+ place.getID()
 				+ "\" type=\""
 				+ type
 				+ "\">\r\n"
 				+ "<csml:connectorSimulationProperty>\r\n"
-				+ " <csml:connectorFiring connectorFiringStyle=\"csml-connectorFiringStyle:threshold\" value=\"0\">\r\n"
+				+ " <csml:connectorFiring connectorFiringStyle=\"csml-connectorFiringStyle:threshold\" value=\"5\">\r\n"
 				+ " </csml:connectorFiring>\r\n"
 				+ " <csml:connectorKinetic>\r\n"
-				+ "  <csml:parameter key=\"stoichiometry\" value=\"1.0\">\r\n"
+				+ "  <csml:parameter key=\"stoichiometry\" value=\"3.0\">\r\n"
 				+ "  </csml:parameter>\r\n"
-				+ "  <csml:parameter key=\"custom\" value=\"1.0\">\r\n"
+				+ "  <csml:parameter key=\"custom\" value=\"2.0\">\r\n"
 				+ "  </csml:parameter>\r\n"
 				+ " </csml:connectorKinetic>\r\n"
 				+ "</csml:connectorSimulationProperty>\r\n"

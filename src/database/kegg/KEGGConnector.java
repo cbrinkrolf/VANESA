@@ -245,7 +245,7 @@ public class KEGGConnector extends SwingWorker {
 			pathwayImage = resultDetails[4];
 			pathwayNumber = resultDetails[3];
 			pathwayOrg = resultDetails[2];
-			System.out.println("inside");
+			//System.out.println("inside");
 		}
 
 	}

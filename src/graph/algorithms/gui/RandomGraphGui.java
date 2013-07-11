@@ -55,7 +55,7 @@ public class RandomGraphGui extends JFrame implements ActionListener {
 				"span 2, wrap 15 ");
 		mainPanel.add(new JSeparator(), "gap 10, wrap 15, growx, span 2");
 
-		SpinnerNumberModel model1 = new SpinnerNumberModel(10, 1, 1000, 1);
+		SpinnerNumberModel model1 = new SpinnerNumberModel(10, 1, 10000, 1);
 		nodes = new JSpinner(model1);
 
 		mainPanel.add(new JLabel("Number of nodes"), "span 1, gaptop 2 ");

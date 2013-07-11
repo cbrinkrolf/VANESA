@@ -120,6 +120,7 @@ public class HeatmapGraphs {
 		
 		//pick all element to show the heatmap fully
 		pw_new.getGraph().pickAllElements();
+		
 		pw_new.getGraph().normalCentering();
 	}
 

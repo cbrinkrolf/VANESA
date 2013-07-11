@@ -257,7 +257,7 @@ public class MyGraph {
 		vv.setComponentPopupMenu(new GraphPopUp().returnPopUp());
 		// vv.setComponentPopupMenu(null);
 		// vv.setToolTipFunction(new ToolTips());
-
+		
 		vlr.setRotateEdgeLabels(false);
 		vlr.setForeground(Color.WHITE);
 
@@ -452,7 +452,9 @@ public class MyGraph {
 		// System.out.println("V added: "+bna);
 		this.layout.setLocation(bna, p);
 		// this.layout.lock(bna, true);
+		
 		return g.addVertex(bna);
+		
 
 	}
 
@@ -579,6 +581,16 @@ public class MyGraph {
 
 	public void updateGraph() {
 		vv.repaint();
+	}
+	
+	public void pickAllElements(){
+		Iterator<BiologicalNodeAbstract> it = this.getAllVertices().iterator();
+		BiologicalNodeAbstract bna;
+		while(it.hasNext()){
+			bna = it.next();
+			
+			vv.getPickedVertexState().pick(bna, true);
+		}
 	}
 
 	public void setMouseModePick() {
@@ -900,9 +912,9 @@ public class MyGraph {
 						//fitScaleOfViewer(vv);
 						
 						fitScaleOfViewer(vv);
-						fitScaleOfViewer(vv2);
+						//fitScaleOfViewer(vv2);
 						normalCentering(vv);
-						normalCentering(vv2);
+						//normalCentering(vv2);
 						//normalCentering();
 						//fitScaleOfSatellitView();
 						//normalCentering();
@@ -927,8 +939,8 @@ public class MyGraph {
 	}
 
 	public void fitScaleOfSatellitView() {
-		fitScaleOfViewer(vv2);
-		normalCentering(vv2);
+		//fitScaleOfViewer(vv2);
+		//normalCentering(vv2);
 	}
 
 	public Point2D findNearestFreeVertexPosition(
@@ -965,7 +977,7 @@ public class MyGraph {
 
 	}
 
-	public void fitScaleOfViewer(VisualizationViewer viewer) {
+	public void fitScaleOfViewer(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> viewer) {
 
 		Dimension viewSize = viewer.getSize();
 		
@@ -976,13 +988,17 @@ public class MyGraph {
 //		GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout()
 //				.getGraph(), viewer.getGraphLayout());
 
-//		System.out.println("w: "+ new Point((int)graphCenter.getWidth(), (int)graphCenter.getHeight()));
+		//System.out.println("w: "+ new Point((int)graphCenter.getWidth(), (int)graphCenter.getHeight()));
 		//System.out.println("h: "+graphCenter.getHeight());
+		//System.out.println("w: "+viewSize.width);
+		//System.out.println("h: "+viewSize.height);
 		float scalex = (float) viewSize.width
 				/ ((float) graphCenter.getWidth()+100);
 		float scaley = (float) viewSize.height
 				/ ((float) graphCenter.getHeight()+100);
 		float scale = 1;
+		//System.out.println("x: "+scalex);
+		//System.out.println("y: "+scaley);
 
 		if (scalex < scaley) {
 			scale = scalex;
@@ -1014,8 +1030,8 @@ public class MyGraph {
 
 		vv.repaint();
 		//vv.restart();
-
-		vv2.repaint();
+		
+//		vv2.repaint();
 		//vv2.restart();
 
 	}
@@ -1088,8 +1104,8 @@ public class MyGraph {
 		Thread thread = new Thread(animator);
 		thread.start();
 
-		fitScaleOfViewer(this.vv2);
-		normalCentering(this.vv2);
+		//fitScaleOfViewer(this.vv2);
+		//normalCentering(this.vv2);
 
 	}
 
@@ -1123,24 +1139,26 @@ public class MyGraph {
 	 * }
 	 */
 
-//	public boolean areGraphElementsSelected() {
-//		if (vv.getPickedState().getSelectedObjects() != null) {
-//			return true;
-//		}
-//		return false;
-//	}
-//
-//	public void enableGraphTheory() {
-//
+	public boolean areGraphElementsSelected() {
+		if (vv.getPickedState().getSelectedObjects() != null) {
+			return true;
+		}
+		return false;
+	}
+
+	public void enableGraphTheory() {
+
 //		stateV.clearPickedEdges();
 //		stateV.clearPickedVertices();
-//		vdpf.setGraphTheory(true);
-//		vfpf.setGraphTheory(true);
-//		vsh.setGraphTheory(true);
-//		esh.setGraphTheory(true);
-//		edpf.setGraphTheory(true);
-//		efpf.setGraphTheory(true);
-//	}
+		stateV.clear();
+		stateE.clear();
+		vdpf.setGraphTheory(true);
+		vfpf.setGraphTheory(true);
+		vsh.setGraphTheory(true);
+		esh.setGraphTheory(true);
+		edpf.setGraphTheory(true);
+		efpf.setGraphTheory(true);
+	}
 
 	public void disableGraphTheory() {
 

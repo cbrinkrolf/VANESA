@@ -507,7 +507,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	}
 
 	private Point2D inverseTransform(VisualizationViewer vv, Point p) {
-		return vv.inverseTransform(p);
+		return vv.getRenderContext().getMultiLayerTransformer().transform(p);// inverseTransform(p);
 	}
 
 	private Point2D inverseTransform(MouseEvent e) {

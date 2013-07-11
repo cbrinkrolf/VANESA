@@ -1,4 +1,4 @@
-package graph.eventhandlers;
+/*package graph.eventhandlers;
 
 import edu.uci.ics.jung.graph.ArchetypeEdge;
 import edu.uci.ics.jung.graph.ArchetypeVertex;
@@ -41,4 +41,4 @@ public class PickListener implements PickEventListener {
 		MainWindow w = MainWindowSingelton.getInstance();
 	}
 
-}
+}*/

@@ -3,6 +3,7 @@ package graph.algorithms.gui;
 import edu.uci.ics.jung.algorithms.importance.AbstractRanker;
 import edu.uci.ics.jung.algorithms.scoring.DegreeScorer;
 import edu.uci.ics.jung.algorithms.scoring.PageRank;
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
 /*import edu.uci.ics.jung.algorithms.importance.DegreeDistributionRanker;
  import edu.uci.ics.jung.algorithms.importance.PageRank;
  import edu.uci.ics.jung.graph.Vertex;
@@ -134,9 +135,10 @@ public class HubDetectionGui implements ActionListener {
 		NodeRankingVertexSizeFunction sf = new NodeRankingVertexSizeFunction(
 				keys[chooseAlgorithm.getSelectedIndex()], sliderDegree);
 
-		VertexAspectRatioFunction rf = new ConstantVertexAspectRatioFunction(
-				1.0f);
-		VertexShapes vs = new VertexShapes(sf, rf);
+		//VertexAspectRatioFunction rf = new ConstantVertexAspectRatioFunction(
+		//		1.0f);
+		// TODO groesse aendern
+		VertexShapes vs = new VertexShapes(20, 1.0f);
 
 		Collection<BiologicalNodeAbstract> verticsSet = pw.getGraph()
 				.getAllVertices();

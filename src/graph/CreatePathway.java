@@ -46,9 +46,9 @@ public class CreatePathway {
 		w.returnFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
-	public void addVertex(Object node) {
+	/*public void addVertex(Object node) {
 		pw.getGraph().addVertexLabel(node);
-	}
+	}*/
 
 	public Pathway getPathway() {
 		return pw;

@@ -1,4 +1,4 @@
-package graph.eventhandlers;
+/*package graph.eventhandlers;
 
 import edu.uci.ics.jung.graph.event.GraphEvent;
 import edu.uci.ics.jung.graph.event.GraphEventListener;
@@ -17,4 +17,4 @@ public class GraphListener implements GraphEventListener{
 	public void vertexRemoved(GraphEvent arg0) {
 	}
 
-}
+}*/

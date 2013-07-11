@@ -121,6 +121,7 @@ public class MenuListener implements ActionListener {
 				graphInstance.getPathway().setPetriNet(
 						option == JOptionPane.NO_OPTION);
 				w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
+				w.updateAllGuiElements();
 			}
 		} else if ("open Network".equals(event)) {
 

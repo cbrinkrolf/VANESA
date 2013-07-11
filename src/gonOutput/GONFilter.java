@@ -10,14 +10,14 @@ public class GONFilter extends SuffixAwareFilter{
 	public boolean accept(File f) {
 		String suffix = getSuffix(f);
 		
-		if(suffix!=null) return super.accept(f) || suffix.equals("gon");
+		if(suffix!=null) return super.accept(f) || suffix.equals("csml");
 		return false;
 	}
 
 	@Override
 	public String getDescription() {
 	
-		return "Cell Illustrator (*.gon)";
+		return "Cell Illustrator (*.csml)";
 	}
 
 }
