@@ -56,6 +56,7 @@ public class ToolBarListener implements ActionListener {
 				new CreatePathway();
 				graphInstance.getPathway().setPetriNet(option==JOptionPane.NO_OPTION);
 				w.getBar().paintToolbar(option==JOptionPane.NO_OPTION);
+				w.updateAllGuiElements();
 			}
 			
 		} else if ("move".equals(event)) {

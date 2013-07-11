@@ -5,6 +5,7 @@ import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
 import edu.uci.ics.jung.utils.Pair;
 import edu.uci.ics.jung.utils.UserData;
 import edu.uci.ics.jung.visualization.PickedState;*/
+import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
 import graph.animations.RegulationTabelModel;
 import graph.jung.graphDrawing.NodeRankingVertexSizeFunction;
@@ -18,6 +19,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -547,7 +549,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			if (bna instanceof Place) {
 				place = (Place) bna;
 				actualLabel = place.getLabel();
-				if (GraphInstance.getMyGraph().isVertexPicked(bna.getVertex())) {
+				if (GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().isPicked(bna)){//.isVertexPicked(bna.getVertex())) {
 					for (int j = 0; j < rowsSize; j++) {
 						idx = rows[j][0].toString();
 						if (idx.equals(actualLabel)) {
@@ -660,9 +662,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				//	System.out.println("Entity seriesindex: "
 				//			+ entity.getSeriesIndex());
 					PickedState ps = GraphInstance.getMyGraph()
-							.getVisualizationViewer().getPickedState();
-					ps.clearPickedVertices();
-					ps.pick(places.get(entity.getSeriesIndex()).getVertex(),
+							.getVisualizationViewer().getPickedVertexState();
+//					ps.clearPickedVertices();
+					ps.clear();
+					ps.pick(places.get(entity.getSeriesIndex()),
 							true);
 
 				}
@@ -856,21 +859,19 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				Double val;
 				Double ref;
 				int take = 0;
-				Vertex v;
+				//Vertex v;
 
 				// get pathway and iterate over its JUNG vertices
 				Pathway pw = graphInstance.getPathway();
-				Set<Vertex> ns = pw.getGraph().getAllVertices();
+				Collection<BiologicalNodeAbstract> ns = pw.getGraph().getAllVertices();
 				if (ns != null) {
-					Iterator<Vertex> it = ns.iterator();
+					Iterator<BiologicalNodeAbstract> it = ns.iterator();
+					BiologicalNodeAbstract bna;
 					while (it.hasNext()) {
-						v = it.next();
-
 						// cast to biological node type and retrieve microarray
 						// value
 						// for current time step
-						BiologicalNodeAbstract bna = (BiologicalNodeAbstract) pw
-								.getElement(v);
+						bna = it.next();
 						if (bna.getPetriNetSimulationData().size() > 0
 								&& slider.getValue() >= 2) {
 							val = bna.getMicroArrayValue(slider.getValue() - 2);
@@ -890,19 +891,19 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							// ref -= val;
 							ref = Math.abs(ref);
 							
-							Double ref2=Math.sqrt(Math.sqrt(ref));
+							float ref2= (float) Math.sqrt(Math.sqrt(ref));
 							
-							if (ref2>3.0) ref2 = 3.0;
+							if (ref2>3.0) ref2 = 3.0f;
 							
 							// System.out.println(ref);
 							// prepare size modification
-							v.setUserDatum("madata", 0.4, UserData.SHARED);
+							//v.setUserDatum("madata", 0.4, UserData.SHARED);
 							if (bna instanceof Place)
 								((Place) bna).setToken(ref);
 							NodeRankingVertexSizeFunction sf = new NodeRankingVertexSizeFunction(
 									"madata", ref2);
-							VertexShapes vs = new VertexShapes(sf,
-									new ConstantVertexAspectRatioFunction(1.0f));
+							
+							VertexShapes vs = new VertexShapes(ref2,1.0f);
 
 							// apply change in color and size only if current
 							// node is

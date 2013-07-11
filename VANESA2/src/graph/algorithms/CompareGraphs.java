@@ -1,6 +1,6 @@
 package graph.algorithms;
 
-import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.graph.Vertex;
 import graph.CreatePathway;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
@@ -35,20 +35,20 @@ public class CompareGraphs {
 	static GraphInstance graphInstance = new GraphInstance();
 	static InternalGraphRepresentation graphRepresentation;
 
-	private static void createEdges(Pathway pw, Vertex one, Vertex two) {
+	private static void createEdges(Pathway pw, BiologicalNodeAbstract one,
+			BiologicalNodeAbstract two) {
 
-		Iterator neighbours = one.getNeighbors().iterator();
+		Iterator<BiologicalNodeAbstract> neighbours = pw.getGraph()
+				.getJungGraph().getNeighbors(one).iterator();// one.getNeighbors().iterator();
+		BiologicalNodeAbstract bna;
 		while (neighbours.hasNext()) {
-			Vertex v_neigh = (Vertex) neighbours.next();
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) pw
-					.getNodeByVertexID(v_neigh.toString());
-			boolean connected = false;
+			bna = neighbours.next();
+			//boolean connected = false;
 
-			if (!graphRepresentation.doesEdgeExist(two, v_neigh)
-					&& !graphRepresentation.doesEdgeExist(v_neigh, two)) {
-				ReactionEdge e = new ReactionEdge(pw.getGraph().createEdge(two,
-						v_neigh, false), "", "");
-				pw.addElement(e);
+			if (!graphRepresentation.doesEdgeExist(two, bna)
+					&& !graphRepresentation.doesEdgeExist(bna, two)) {
+				ReactionEdge e = new ReactionEdge("", "", two, bna);
+				pw.addEdge(e);
 
 			}
 		}
@@ -80,9 +80,10 @@ public class CompareGraphs {
 				if ((bna2 != bna) && !checked.contains(bna2)) {
 
 					if (areNodesEqualLabeled(bna, bna2)) {
-						createEdges(pathway, bna.getVertex(), bna2.getVertex());
-						createEdges(pathway, bna2.getVertex(), bna.getVertex());
-						graph1.pickVertex(bna2.getVertex());
+						createEdges(pathway, bna, bna2);
+						createEdges(pathway, bna2, bna);
+						graph1.getVisualizationViewer().getPickedVertexState()
+								.pick(bna2, true);
 
 					}
 				}
@@ -125,8 +126,10 @@ public class CompareGraphs {
 				BiologicalNodeAbstract bna2 = (BiologicalNodeAbstract) it2
 						.next();
 				if (areNodesEqualLabeled(bna, bna2)) {
-					graph1.pickVertex(bna.getVertex());
-					graph2.pickVertex(bna2.getVertex());
+					graph1.getVisualizationViewer().getPickedVertexState()
+							.pick(bna, true);
+					graph2.getVisualizationViewer().getPickedVertexState()
+							.pick(bna2, true);
 				}
 			}
 		}

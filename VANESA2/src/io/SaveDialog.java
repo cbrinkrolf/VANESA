@@ -42,8 +42,8 @@ public class SaveDialog {
 	private String moDescription = "Modelica Model (*.mo)";
 	private String mo = "mo";
 
-	private String gonDescription = "Cell Illustrator (*.gon)";
-	private String gon = "gon";
+	private String csmlDescription = "Cell Illustrator (*.csml)";
+	private String csml = "csml";
 
 	private String txtDescription = "Graph Text File (*.txt)";
 	private String txt = "txt";
@@ -100,8 +100,8 @@ public class SaveDialog {
 
 		if (gonBool)
 			chooser
-					.addChoosableFileFilter(new MyFileFilter(gon,
-							gonDescription));
+					.addChoosableFileFilter(new MyFileFilter(csml,
+							csmlDescription));
 
 		if (vaBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(vaml,
@@ -183,11 +183,11 @@ public class SaveDialog {
 			JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
 					txtDescription + " File saved");
 
-		} else if (fileFormat.equals(gonDescription)) {
-			getCorrectFile(gon);
+		} else if (fileFormat.equals(csmlDescription)) {
+			getCorrectFile(csml);
 			new GONoutput(file, new GraphInstance().getPathway());
 			JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
-					gonDescription + " File saved");
+					csmlDescription + " File saved");
 
 		} else if (fileFormat.equals(vamlDescription)) {
 			getCorrectFile(vaml);
