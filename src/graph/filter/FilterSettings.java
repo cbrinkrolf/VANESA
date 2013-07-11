@@ -99,28 +99,32 @@ public class FilterSettings {
 			}
 		}
 
-		HashSet set_edges = pw.getAllEdges();
-		Iterator it2 = set_edges.iterator();
+//		HashSet set_edges = pw.getAllEdges();
+		Iterator<BiologicalEdgeAbstract> it2 = pw.getAllEdges().iterator();
 
+		BiologicalEdgeAbstract bea;
+		BiologicalNodeAbstract from;
+		BiologicalNodeAbstract to;
 		while (it2.hasNext()) {
-			BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) it2.next();
+			bea = it2.next();
 
-			Vertex one = (Vertex) bea.getEdge().getEndpoints().getFirst();
+			/*Vertex one = (Vertex) bea.getEdge().getEndpoints().getFirst();
 			Vertex two = (Vertex) bea.getEdge().getEndpoints().getSecond();
 
 			BiologicalNodeAbstract bna_one = (BiologicalNodeAbstract) pw
 					.getNodeByVertexID(one.toString());
 			BiologicalNodeAbstract bna_two = (BiologicalNodeAbstract) pw
-					.getNodeByVertexID(two.toString());
-
-			if (!bna_one.isVisible() || !bna_two.isVisible()) {
+					.getNodeByVertexID(two.toString());*/
+			from = bea.getFrom();
+			to = bea.getTo();
+			if (!from.isVisible() || !to.isVisible()) {
 				bea.setVisible(false);
 			} else {
 				bea.setVisible(true);
 			}
 
 		}
-
+		// TODO visibility not set or considered while rendering
 		pw.getGraph().updateGraph();
 	}
 }

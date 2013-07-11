@@ -510,7 +510,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		optionPanel.updatePanel("pcp");
 		optionPanel.updatePanel("project");
 		optionPanel.updatePanel("Database");
-		optionPanel.updatePanel("pcp");
 		optionPanel.updatePanel("pathwayTree");
 	}
 

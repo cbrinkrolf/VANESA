@@ -60,7 +60,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		bnas = new BiologicalNodeAbstract[pw.getAllNodes().toArray().length];
 		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 		BiologicalNodeAbstract bna;
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			bna = it.next();
 			if (bna instanceof Place || bna instanceof Transition) {
 				bnas[i] = bna;
@@ -291,7 +291,9 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		BiologicalNodeAbstract node;
 		if (e.getActionCommand().equals("submit")) {
 			boolean changedAllStates = true;
+			// System.out.println("nodes: "+pw.getAllNodes().toArray().length);
 			for (int i = 0; i < pw.getAllNodes().toArray().length; i++) {
+				//System.out.println("i: " + i);
 				bnas[i].setName((String) table.getValueAt(
 						table.convertRowIndexToView(i),
 						table.convertColumnIndexToView(0)));
@@ -367,31 +369,37 @@ public class PNTableDialog extends JDialog implements ActionListener {
 					changedAllStates &= stateChanged;
 
 					Transition newT = null;
+					System.out.println(table.getValueAt(
+							table.convertRowIndexToView(i),
+							table.convertColumnIndexToView(6)));
 					if (((String) table.getValueAt(
 							table.convertRowIndexToView(i),
 							table.convertColumnIndexToView(6)))
 							.equals(Elementdeclerations.discreteTransition)
-							|| (!stateChanged && t instanceof DiscreteTransition))
-						newT = new DiscreteTransition(t.getLabel(),
-								t.getName());
-					else if (((String) table.getValueAt(
+							&& !(t instanceof DiscreteTransition)) {
+						newT = new DiscreteTransition(t.getLabel(), t.getName());
+						System.out.println("neu dt");
+					} else if (((String) table.getValueAt(
 							table.convertRowIndexToView(i),
 							table.convertColumnIndexToView(6)))
 							.equals(Elementdeclerations.stochasticTransition)
-							|| (!stateChanged && t instanceof StochasticTransition))
+							&& !(t instanceof StochasticTransition)) {
 						newT = new StochasticTransition(t.getLabel(),
 								t.getName());
-					else if (((String) table.getValueAt(
+						System.out.println("neu st");
+					} else if (((String) table.getValueAt(
 							table.convertRowIndexToView(i),
 							table.convertColumnIndexToView(6)))
 							.equals(Elementdeclerations.contoniousTransition)
-							|| (!stateChanged && t instanceof ContinuousTransition))
+							&& !(t instanceof ContinuousTransition)) {
 						newT = new ContinuousTransition(t.getLabel(),
 								t.getName());
+						System.out.println("neu ct");
+					}
 					if (newT != null) {
 						newT.rebuildShape(new VertexShapes());
 						newT.setCompartment(t.getCompartment());
-						pw.addVertex(newT, new Point(0,0));
+						pw.addVertex(newT, new Point(0, 0));
 						t = newT;
 					}
 					if (!stateChanged)
@@ -411,30 +419,32 @@ public class PNTableDialog extends JDialog implements ActionListener {
 				}
 
 				bnas[i].rebuildShape(new VertexShapes());
+				// System.out.println("i ende: "+i);
 			}
 
-			if (e.getActionCommand().equals("submit"))
-				for (int i = 0; i < pw.getAllEdges().toArray().length; i++) {
-					edges[i].setName((String) table2.getValueAt(
-							table2.convertRowIndexToView(i),
-							table2.convertColumnIndexToView(0)));
-					edges[i].setLabel((String) table2.getValueAt(
-							table2.convertRowIndexToView(i),
-							table2.convertColumnIndexToView(1)));
-					edges[i].setFunction((String) table2.getValueAt(
-							table2.convertRowIndexToView(i),
-							table2.convertColumnIndexToView(4)));
-					edges[i].setLowerBoundary(((Double) table2.getValueAt(
-							table2.convertRowIndexToView(i),
-							table2.convertColumnIndexToView(5))));
-					edges[i].setUpperBoundary(((Double) table2.getValueAt(
-							table2.convertRowIndexToView(i),
-							table2.convertColumnIndexToView(6))));
-					edges[i].setActivationProbability(((Double) table2
-							.getValueAt(table2.convertRowIndexToView(i),
-									table2.convertColumnIndexToView(7))));
-
-				}
+			/*
+			 * if (e.getActionCommand().equals("submit")) for (int i = 0; i <
+			 * pw.getAllEdges().toArray().length; i++) {
+			 * edges[i].setName((String) table2.getValueAt(
+			 * table2.convertRowIndexToView(i),
+			 * table2.convertColumnIndexToView(0))); edges[i].setLabel((String)
+			 * table2.getValueAt( table2.convertRowIndexToView(i),
+			 * table2.convertColumnIndexToView(1)));
+			 * edges[i].setFunction((String) table2.getValueAt(
+			 * table2.convertRowIndexToView(i),
+			 * table2.convertColumnIndexToView(4)));
+			 * edges[i].setLowerBoundary(((Double) table2.getValueAt(
+			 * table2.convertRowIndexToView(i),
+			 * table2.convertColumnIndexToView(5))));
+			 * edges[i].setUpperBoundary(((Double) table2.getValueAt(
+			 * table2.convertRowIndexToView(i),
+			 * table2.convertColumnIndexToView(6))));
+			 * edges[i].setActivationProbability(((Double) table2
+			 * .getValueAt(table2.convertRowIndexToView(i),
+			 * table2.convertColumnIndexToView(7))));
+			 * 
+			 * }
+			 */
 
 			setVisible(false);
 			if (!changedAllStates)

@@ -626,7 +626,7 @@ public class Pathway {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
 				graphRepresentation.removeVertex(bna);
 				graph.removeVertex(bna);
-				System.out.println("durch");
+				//System.out.println("durch");
 				if (!nodeDescription.containsKey(bna.getBiologicalElement())) {
 				} else {
 					Integer temp = nodeDescription.get(bna
