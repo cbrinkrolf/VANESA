@@ -97,6 +97,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	public MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
+		
 		// try {
 		//
 		// //SubstanceBusinessBlueSteelLookAndFeel lf = new
@@ -492,8 +493,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
-		//TODO update optionPanel
-		//optionPanel.updatePanel("theory");
+		optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
 		optionPanel.updatePanel("pcp");
 		optionPanel.updatePanel("pathwayTree");
@@ -504,8 +504,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
-		//TODO update optionPanel
-		//optionPanel.updatePanel("theory");
+		optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
 		optionPanel.updatePanel("pcp");
 		optionPanel.updatePanel("project");
