@@ -286,6 +286,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 			Pathway p = (Pathway) it.next();
 			MyGraph graph = p.getGraph();
 			graph.disableGraphTheory();
+			
 			graph.clearPickedElements();
 
 		}

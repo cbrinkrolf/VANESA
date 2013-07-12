@@ -14,6 +14,7 @@ import gui.images.ImagePath;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -182,8 +183,15 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	}
 
 	private Color getColor(Color oldColor) {
-		Color newColor = JColorChooser.showDialog(null, "select a new color.",
+		System.out.println("color: "+oldColor);
+		Color newColor = oldColor;
+		try{
+		newColor = JColorChooser.showDialog(null, "select a new color.",
 				oldColor);
+		}catch(Exception e){
+			
+		}
+		
 		return newColor;
 	}
 
@@ -239,7 +247,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 	private String getInputText() {
 		String text = JOptionPane
-				.showInputDialog("Geben Sie bitte eine Beschreibung ein.");
+				.showInputDialog("Please enter a description!");
 		return text;
 	}
 
@@ -276,6 +284,8 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 				}
 			}
 		}
+		graphInstance = new GraphInstance();
+		graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 	}
 
 	@Override
@@ -347,6 +357,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 			}
 		}
 		this.justCreated = null;
+		graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 	}
 
 	private RectangularShape createShape(Point2D p1) {
@@ -515,7 +526,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		//System.out.println(e.getPoint());
 		//System.out.println(vv.getLocation(e.getPoint()));
 		//System.out.println(vv.getLocationOnScreen());
-		
+		//return vv.getRenderContext().getMultiLayerTransformer().transform(e.getPoint());
 		//System.out.println("ende");
 		return e.getPoint();
 //		return vv.inverseTransform(e.getPoint());
