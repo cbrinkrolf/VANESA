@@ -30,7 +30,8 @@ public class GraphAlgorithmsWindow {
 		tabbedPanel.getProperties().setTabDropDownListVisiblePolicy(
 				TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE);
 		tabbedPanel.addTab(shortestPath.getTitledTab());
-		tabbedPanel.addTab(hub.getTitledTab());
+		//TODO hub detection wieder rein
+		//tabbedPanel.addTab(hub.getTitledTab());
 
 	}
 
@@ -42,7 +43,8 @@ public class GraphAlgorithmsWindow {
 		}
 		//System.out.println("bin im revalidatview drin");
 		shortestPath.revalidateView();
-		hub.revalidateView();
+		//TODO hub detection wieder rein
+		//hub.revalidateView();
 
 		p.setVisible(true);
 		p.repaint();

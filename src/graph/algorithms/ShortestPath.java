@@ -1,63 +1,57 @@
 package graph.algorithms;
 
-import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
 
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.InternalGraphRepresentation;
+import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ShortestPath {
 
 	GraphInstance graphInstance = new GraphInstance();
 	InternalGraphRepresentation graphRepresentation;
-	HashMap<String, Pair> vertices = new HashMap<String, Pair>();
+	HashMap<BiologicalNodeAbstract, Pair> vertices = new HashMap<BiologicalNodeAbstract, Pair>();
 	Vector<Pair> priorityQueue = new Vector<Pair>();
-	HashMap vertexNames = new HashMap();
+	//HashMap vertexNames = new HashMap();
 	private boolean mindMaps = true;
+	Pathway pw;
 
-	String startNode = "";
-	String endNode = "";
+	BiologicalNodeAbstract startNode;
+	BiologicalNodeAbstract endNode;
 
-	public ShortestPath(String start, String end, Boolean mindMaps) {
+	public ShortestPath(BiologicalNodeAbstract start, BiologicalNodeAbstract end, Boolean mindMaps) {
 
 		graphRepresentation = graphInstance.getPathway()
 				.getGraphRepresentation();
+		pw = graphInstance.getPathway();
 		startNode = start;
 		endNode = end;
 		this.mindMaps = mindMaps;
 
 	}
 
-	private void initNames() {
+	private Vector<BiologicalNodeAbstract> reconstructShortestPath() {
+		Vector<BiologicalNodeAbstract> v = new Vector<BiologicalNodeAbstract>();
+		BiologicalNodeAbstract backVertexString = endNode;
 
-		Iterator i = GraphInstance.getMyGraph().getAllVertices().iterator();
-		while (i.hasNext()) {
-			Vertex v = (Vertex) i.next();
-			vertexNames.put(v.toString(), v);
-		}
-	}
-
-	private Vector reconstructShortestPath() {
-		Vector<Vertex> v = new Vector<Vertex>();
-		String backVertexString = endNode;
-
-		while (!backVertexString.equals("-")) {
+		while (backVertexString != null) {
+			//System.out.println("back: "+backVertexString);
 			Pair p = vertices.get(backVertexString);
-			v.add((Vertex) vertexNames.get(p.getName()));
+			v.add(p.getName());
 			backVertexString = p.getPreviousVertex();
 		}
 
 		return v;
 	}
 
-	private void relax(String fromVertex, String toVertex, int weigth) {
+	private void relax(BiologicalNodeAbstract fromVertex, BiologicalNodeAbstract toVertex, int weigth) {
 
 		Pair toVertexPair = vertices.get(toVertex);
 		Pair fromVertexPair = vertices.get(fromVertex);
@@ -69,21 +63,24 @@ public class ShortestPath {
 
 	}
 
-	private void printTableValues() {
+	/*private void printTableValues() {
 		Iterator it = vertices.values().iterator();
 		while (it.hasNext()) {
 			Pair p = (Pair) it.next();
 
 		}
-	}
+	}*/
 
 	private void initStart() {
 
-		Enumeration<String> e = graphRepresentation.getAllVertices();
-		while (e.hasMoreElements()) {
-			String vertexStr = e.nextElement().toString();
+		//Enumeration<String> e = graphRepresentation.getAllVertices();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		BiologicalNodeAbstract bna;
+		while (it.hasNext()) {
+			bna = it.next();
+			//String vertexStr = e.nextElement().toString();
 
-			Pair p = new Pair(vertexStr, 99999);
+			Pair p = new Pair(bna, 99999);
 			vertices.put(p.getName(), p);
 			priorityQueue.add(p);
 		}
@@ -91,11 +88,10 @@ public class ShortestPath {
 		vertices.get(startNode).setAmount(0);
 	}
 
-	public Vector calculateShortestPath() {
+	public Vector<BiologicalNodeAbstract> calculateShortestPath() {
 
 		initStart();
-		initNames();
-
+		
 		while (!priorityQueue.isEmpty()) {
 
 			Collections.sort(priorityQueue);
@@ -106,16 +102,17 @@ public class ShortestPath {
 				return reconstructShortestPath();
 			} else {
 
-				Iterator it = graphRepresentation.getVertexNeighbours(
-						p.getName()).iterator();
+				Iterator<BiologicalNodeAbstract> it = pw.getGraph().getJungGraph().getNeighbors(p.getName()).iterator();//graphRepresentation.getVertexNeighbours(
+						//p.getName()).iterator();
+				BiologicalNodeAbstract node;
 				while (it.hasNext()) {
-					String node = it.next().toString();
+					node = it.next();
 					// System.out.println("------" + p.getName());
 					if (mindMaps) {
-						BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
-								.getPathwayElement(vertexNames.get(p.getName()));
+						//BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
+						//		.getPathwayElement(vertexNames.get(p.getName()));
 						// System.out.println(bna.getLabel());
-						if (bna.getBiologicalElement().equals(
+						if (node.getBiologicalElement().equals(
 								Elementdeclerations.pathwayMap)) {
 							relax(p.getName(), node, 10);
 						} else {
@@ -127,21 +124,21 @@ public class ShortestPath {
 				}
 			}
 		}
-		printTableValues();
+		//printTableValues();
 		return null;
 	}
 }
 
-class Pair implements Comparable {
+class Pair implements Comparable<Object> {
 
-	private String name;
-	private String previousVertex;
+	private BiologicalNodeAbstract name;
+	private BiologicalNodeAbstract previousVertex;
 	private int amount;
 
-	public Pair(String name, int amount) {
+	public Pair(BiologicalNodeAbstract name, int amount) {
 		this.name = name;
 		this.amount = amount;
-		previousVertex = "-";
+		previousVertex = null;
 	}
 
 	public int compareTo(Object anotherPair) {
@@ -151,11 +148,11 @@ class Pair implements Comparable {
 		return this.amount - anotherPairAmount;
 	}
 
-	public String getName() {
+	public BiologicalNodeAbstract getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(BiologicalNodeAbstract name) {
 		this.name = name;
 	}
 
@@ -167,11 +164,11 @@ class Pair implements Comparable {
 		this.amount = amount;
 	}
 
-	public String getPreviousVertex() {
+	public BiologicalNodeAbstract getPreviousVertex() {
 		return previousVertex;
 	}
 
-	public void setPreviousVertex(String previousVertex) {
+	public void setPreviousVertex(BiologicalNodeAbstract previousVertex) {
 		this.previousVertex = previousVertex;
 	}
 }

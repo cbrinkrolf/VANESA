@@ -55,11 +55,11 @@ public class ShortestPathGui implements ActionListener {
 
 		Vector<String> w = new Vector<String>();
 
-		//int i = 0;
+
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 
-			Object ob = it.next();
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ob;
+			bna = it.next();
 			w.add(bna.getLabel() + " (Node:" + bna.getID() + ")");
 			table.put(bna.getLabel() + " (Node:" + bna.getID()
 					+ ")", bna);
@@ -144,22 +144,24 @@ public class ShortestPathGui implements ActionListener {
 		Pathway pw = graphInstance.getPathway();
 		pw.getGraph().setMouseModeTransform();
 
+		BiologicalNodeAbstract bna1;
+		BiologicalNodeAbstract bna2;
 		if ("path".equals(event)) {
 
 			pw.getGraph().enableGraphTheory();
 
-			Vertex v1 = (Vertex) table
+			bna1 = table
 					.get(fromBox.getSelectedItem().toString());
-			Vertex v2 = (Vertex) table.get(ToBox.getSelectedItem().toString());
+			bna2 = table.get(ToBox.getSelectedItem().toString());
 
-			ShortestPath sp = new ShortestPath(v1.toString(), v2.toString(),
+			ShortestPath sp = new ShortestPath(bna1, bna2,
 					mindMaps.isSelected());
-			Vector v = sp.calculateShortestPath();
+			Vector<BiologicalNodeAbstract> v = sp.calculateShortestPath();
 
-			Iterator i = v.iterator();
+			Iterator<BiologicalNodeAbstract> i = v.iterator();
 			while (i.hasNext()) {
 
-				pw.getGraph().pickVertex((Vertex) i.next());
+				pw.getGraph().getVisualizationViewer().getPickedVertexState().pick(i.next(), true);
 			}
 		}
 	}

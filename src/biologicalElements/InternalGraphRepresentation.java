@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -99,9 +100,9 @@ public class InternalGraphRepresentation {
 		}
 	}
 
-	public Enumeration getAllVertices() {
+	public Set<String> getAllVertices() {
 
-		return vertices.keys();
+		return vertices.keySet();
 	}
 
 	public int getVerticesAmount() {

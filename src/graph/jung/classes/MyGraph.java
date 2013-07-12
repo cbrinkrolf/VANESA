@@ -111,7 +111,7 @@ public class MyGraph {
 	private final RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> satellitePr;
 	private final RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> pr;
 	// private AbstractRenderer pr;
-	private final PluggableRenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> pr_compare = null;
+	private RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> pr_compare;
 	private final MyVertexStringer vertexStringer;
 	private final MyEdgeStringer edgeStringer;
 	//private VertexShapeSize vssa;
@@ -582,16 +582,6 @@ public class MyGraph {
 	public void updateGraph() {
 		vv.repaint();
 	}
-	
-	public void pickAllElements(){
-		Iterator<BiologicalNodeAbstract> it = this.getAllVertices().iterator();
-		BiologicalNodeAbstract bna;
-		while(it.hasNext()){
-			bna = it.next();
-			
-			vv.getPickedVertexState().pick(bna, true);
-		}
-	}
 
 	public void setMouseModePick() {
 		vv.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -669,27 +659,37 @@ public class MyGraph {
 	}
 
 	/** picks all elements in the graph */
-//	public void pickAllElements() {
-//		for (Vertex v : (Set<Vertex>) this.g.getVertices()) {
-//			if (!vv.getPickedState().isPicked(v))
-//				vv.getPickedState().pick(v, true);
-//		}
-//		for (Edge e : (Set<Edge>) this.g.getEdges()) {
-//			if (!vv.getPickedState().isPicked(e))
-//				vv.getPickedState().pick(e, true);
-//		}
-//	}
-//
-//	public void clearPickedElements() {
-//		vv.getPickedState().clearPickedEdges();
-//		vv.getPickedState().clearPickedVertices();
-//		updateGraph();
-//	}
-//
-//	public void clearPickedEdges() {
+	public void pickAllElements() {
+		Iterator<BiologicalNodeAbstract> it = this.getAllVertices().iterator();
+		BiologicalNodeAbstract bna;
+		while(it.hasNext()){
+			bna = it.next();
+			
+//			vv.getPickedVertexState().pick(bna, true);
+			stateV.pick(bna, true);
+		}
+		
+		Iterator<BiologicalEdgeAbstract> it2 = this.getAllEdges().iterator();
+		BiologicalEdgeAbstract bea;
+		while(it2.hasNext()){
+			bea = it2.next();
+			stateE.pick(bea, true);
+		}
+	}
+
+	public void clearPickedElements() {
+		//vv.getPickedState().clearPickedEdges();
+		//vv.getPickedState().clearPickedVertices();
+		stateV.clear();
+		stateE.clear();
+		updateGraph();
+	}
+
+	public void clearPickedEdges() {
 //		stateV.clearPickedEdges();
-//	}
-//
+		stateE.clear();
+	}
+
 //	public Vector<Object> copySelection() {
 //
 //		Vector<Object> ve = new Vector<Object>();
@@ -802,31 +802,45 @@ public class MyGraph {
 //					.getY());
 //		}
 //	}
-//
-//	public VisualizationViewer getVisualizationPaneCopy(Dimension size) {
-//
-//		SubLayoutDecorator clusteringLayout2 = new SubLayoutDecorator(
-//				vv.getGraphLayout());
-//
-//		VisualizationModel copyModel = new DefaultVisualizationModel(
-//				clusteringLayout2, size);
-//		VisualizationViewer copyVV = new VisualizationViewer(copyModel, size);
-//		pr_compare = copyVV.getRenderContext();
-//		pr_compare.setVertexStrokeFunction(vsh);
-//		pr_compare.setEdgeShapeFunction(new EdgeShape.QuadCurve());
-//		pr_compare.setVertexStringer(vertexStringer);
-//		pr_compare.setVertexShapeFunction(vssa);
-//		pr_compare.setEdgeStringer(edgeStringer);
-//		pr_compare.setVertexPaintFunction(vpf);
-//		pr_compare.setEdgeStrokeFunction(esh);
-//		pr_compare.setEdgePaintFunction(epf);
-//
-//		copyVV.setGraphMouse(graphMouse);
-//		PickSupport copyPick = new ShapePickSupport();
-//		copyVV.setPickSupport(copyPick);
-//
-//		return copyVV;
-//	}
+
+	public VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> getVisualizationPaneCopy(Dimension size) {
+
+		AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout2 = new AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+				vv.getGraphLayout());
+
+		VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> copyModel = new DefaultVisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+				clusteringLayout2, size);
+		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> copyVV = new VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(copyModel, size);
+		pr_compare = copyVV.getRenderContext();
+		Transformer<BiologicalNodeAbstract, Shape> vertexPaint = new Transformer<BiologicalNodeAbstract, Shape>() {
+			@Override
+			public Shape transform(BiologicalNodeAbstract bna) {
+				//System.out.println(bna.getClass().getName());
+				//System.out.println(bna.getShape());
+				return bna.getShape();
+			}
+		};
+
+		pr_compare.setVertexStrokeTransformer(vsh);
+		pr_compare.setVertexLabelTransformer(vertexStringer);
+		pr_compare.setVertexShapeTransformer(vertexPaint);
+		pr_compare.setEdgeLabelTransformer(this.edgeStringer);
+		pr_compare.setVertexDrawPaintTransformer(vdpf);
+		pr_compare.setVertexFillPaintTransformer(vfpf);
+		pr_compare.setEdgeStrokeTransformer(esh);
+		pr_compare.setEdgeDrawPaintTransformer(edpf);
+		pr_compare.setEdgeFillPaintTransformer(efpf);
+		pr_compare.setEdgeShapeTransformer(esf);
+		pr_compare.setVertexLabelRenderer(vlr);
+		pr_compare.setEdgeLabelRenderer(elr);
+		pr_compare.setEdgeArrowTransformer(eaf);
+		copyVV.setGraphMouse(graphMouse);
+		//PickSupport copyPick = new ShapePickSupport();
+		
+		copyVV.setPickSupport(vv.getPickSupport());
+
+		return copyVV;
+	}
 
 	public void changeToKKLayout() {// vv.stop();
 		changeToLayout(new KKLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
@@ -1139,12 +1153,12 @@ public class MyGraph {
 	 * }
 	 */
 
-	public boolean areGraphElementsSelected() {
-		if (vv.getPickedState().getSelectedObjects() != null) {
-			return true;
-		}
-		return false;
-	}
+//	public boolean areGraphElementsSelected() {
+//		if (vv.getPickedState().getSelectedObjects() != null) {
+//			return true;
+//		}
+//		return false;
+//	}
 
 	public void enableGraphTheory() {
 
@@ -1175,13 +1189,13 @@ public class MyGraph {
 		return g;
 	}
 
-	public void setJungGraph(Graph graph) {
-		g = graph;
-	}
-
-	public HashMap getVertexLocations() {
-		return this.nodePositions;
-	}
+//	public void setJungGraph(Graph graph) {
+//		g = graph;
+////	}
+//
+//	public HashMap getVertexLocations() {
+//		return this.nodePositions;
+//	}
 
 	public void restartVis() {
 		vv.revalidate();
