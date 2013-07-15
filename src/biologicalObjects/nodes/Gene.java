@@ -25,7 +25,6 @@ public class Gene extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.gene);
 		shapes = new VertexShapes();
 		setShape(shapes.getEllipse());
-		setAbstract(false);
 	}
 	
 	public void lookUpAtAllDatabases()

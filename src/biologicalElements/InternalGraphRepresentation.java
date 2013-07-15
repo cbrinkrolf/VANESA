@@ -93,12 +93,12 @@ public class InternalGraphRepresentation {
 		}
 	}
 
-	public void removeAllEdges() {
+	/*public void removeAllEdges() {
 
 		for (Enumeration e = vertices.elements(); e.hasMoreElements();) {
 			((Vector) e.nextElement()).clear();
 		}
-	}
+	}*/
 
 	public Set<String> getAllVertices() {
 
@@ -109,7 +109,7 @@ public class InternalGraphRepresentation {
 		return vertices.size();
 	}
 
-	public Vector getVertexNeighbours(String vertex) {
+	/*public Vector getVertexNeighbours(String vertex) {
 
 		Vector v = new Vector();
 
@@ -132,9 +132,9 @@ public class InternalGraphRepresentation {
 		}
 
 		return v;
-	}
+	}*/
 
-	public boolean are2NodesConnectedThroughOneElement(Vertex one, Vertex two) {
+	/*public boolean are2NodesConnectedThroughOneElement(Vertex one, Vertex two) {
 
 		String vertexLabelFrom = one.toString();
 		String vertexLabelTo = two.toString();
@@ -195,12 +195,12 @@ public class InternalGraphRepresentation {
 		}
 
 		return false;
-	}
+	}*/
 
-	public int getNodeDegree(Vertex v) {
+	/*public int getNodeDegree(Vertex v) {
 
 		return v.inDegree() + v.outDegree();
-	}
+	}*/
 
 	public int getHeighestNodeDegree() {
 

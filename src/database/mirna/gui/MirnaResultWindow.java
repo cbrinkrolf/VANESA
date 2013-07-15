@@ -123,7 +123,6 @@ public class MirnaResultWindow extends JFrame {
 		}
 
 		private void initTable(Object[][] rows, String[] columNames) {
-
 			NodePropertyTableModel model = new NodePropertyTableModel(rows,
 					columNames);
 			
@@ -135,7 +134,7 @@ public class MirnaResultWindow extends JFrame {
 			table.setHorizontalScrollEnabled(true);
 			table.getTableHeader().setReorderingAllowed(false);
 			table.getTableHeader().setResizingAllowed(false);
-
+			table.setRowSelectionInterval(0, 0);
 
 		}
 }

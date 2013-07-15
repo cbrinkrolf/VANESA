@@ -12,10 +12,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import org.jvnet.substance.colorscheme.TintColorScheme;
 import org.simplericity.macify.eawt.Application;
-
-import biologicalElements.Pathway;
 
 public class MenuBarClass {
 

@@ -11,7 +11,6 @@ public class Other extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.others);
 		shapes = new VertexShapes();	
 		setShape(shapes.getEllipse());
-		setAbstract(false);
 	}
 	
 	@Override

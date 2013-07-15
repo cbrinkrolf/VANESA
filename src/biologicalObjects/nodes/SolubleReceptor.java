@@ -9,7 +9,6 @@ public class SolubleReceptor extends Receptor {
 	public SolubleReceptor(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.solubleReceptor);
-		setAbstract(false);
 	}
 
 	

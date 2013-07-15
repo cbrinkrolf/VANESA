@@ -10,7 +10,6 @@ public class Factor extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.factor);
 		shapes = new VertexShapes();	
 		setShape(shapes.getEllipse());
-		setAbstract(false);
 		setReference(false);
 	}
 	

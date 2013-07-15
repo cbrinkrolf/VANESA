@@ -31,7 +31,6 @@ public class SmallMolecule extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.smallMolecule);
 		shapes = new VertexShapes();	
 		setShape(shapes.getRegularPolygon(8));
-		setAbstract(false);
 	}
 	
 	@Override

@@ -6,7 +6,7 @@ import biologicalElements.GraphElementAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 //import edu.uci.ics.jung.graph.Edge;
 
-public class BiologicalEdgeAbstract extends GraphElementAbstract {
+public abstract class BiologicalEdgeAbstract extends GraphElementAbstract {
 	
 //	private Edge edge;
 	private KEGGEdge keggEdge;

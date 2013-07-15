@@ -3,6 +3,7 @@
  */
 package database.brenda.gui;
 
+import gui.MainWindowSingelton;
 import gui.algorithms.ScreenSize;
 
 import java.awt.Color;
@@ -185,6 +186,7 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 		table.setHorizontalScrollEnabled(true);
 		table.getTableHeader().setReorderingAllowed(false);
 		table.getTableHeader().setResizingAllowed(true);
+		table.setRowSelectionInterval(0, 0);
 
 	}
 
@@ -231,6 +233,7 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 				new BrendaPatternListWindow();
 			}
 		}
+		
 
 	}
 

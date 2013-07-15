@@ -15,7 +15,7 @@ public class ContinuousTransition extends Transition {
 
 	public ContinuousTransition(String label, String name) {
 		super(label, name);
-		setBiologicalElement(Elementdeclerations.contoniousTransition);
+		setBiologicalElement(Elementdeclerations.continuousTransition);
 		setModellicaString("PNlib.TC");
 		setColor(Color.WHITE);
 		shapes = new VertexShapes();

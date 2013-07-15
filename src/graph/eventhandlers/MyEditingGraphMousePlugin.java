@@ -114,7 +114,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 	public void mousePressed(MouseEvent e) {
 		pw = graphInstance.getPathway();
 		if (checkModifiers(e)) {
-			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
+			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
+					.getSource();
 			// final Point2D p = vv.inverseViewTransform(e.getPoint());
 			// System.out.println("Points: "+e.getPoint().getX()+", "+e.getPoint().getY());
 			final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
@@ -122,7 +123,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 			// System.out.println(e.getPoint()+ " "+p);
 			// System.out.println("Points: "+p.getX()+", "+p.getY());
 			// final Point2D p = e.getPoint();
-			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv.getPickSupport();
+			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv
+					.getPickSupport();
 			// System.out.println("Click: "+p);
 			// System.out.println("regul: "+e.getPoint());
 
@@ -154,12 +156,14 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 					vv.addPostRenderPaintable(arrowPaintable);
 				}
 			} else { // make a new vertex
-				Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph = vv.getGraphLayout().getGraph();
-				BiologicalNodeAbstract newVertex = new BiologicalNodeAbstract(
-						"label", "name");
+				Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph = vv
+						.getGraphLayout().getGraph();
+//				BiologicalNodeAbstract newVertex = new BiologicalNodeAbstract(
+//						"label", "name");
 				// vertexLocations.put(newVertex, p);
 
-				Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout = vv.getGraphLayout();
+				Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout = vv
+						.getGraphLayout();
 
 				// System.out.println("size V: "+layout.getGraph().getVertices().size());
 				// System.out.println("size E: "+layout.getGraph().getEdges().size());
@@ -173,9 +177,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 				 * newVertex.setUserDatum(key, datum, new CopyAction.Clone());
 				 */
 
-				
-				for (Iterator<BiologicalNodeAbstract> iterator = graph.getVertices().iterator(); iterator
-						.hasNext();) {
+				for (Iterator<BiologicalNodeAbstract> iterator = graph
+						.getVertices().iterator(); iterator.hasNext();) {
 					layout.lock(iterator.next(), true);
 
 				}
@@ -205,12 +208,13 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// .updateTheoryProperties();
 
 						// Pathway pw = graphInstance.getPathway();
-						Iterator<BiologicalNodeAbstract> iterator = pw.getAllNodes().iterator();
+						Iterator<BiologicalNodeAbstract> iterator = pw
+								.getAllNodes().iterator();
 						BiologicalNodeAbstract bna;
-						while(iterator.hasNext()) {
+						while (iterator.hasNext()) {
 							bna = iterator.next();
 							layout.lock(bna, false);
-							//bna.rebuildShape(new VertexShapes());
+							// bna.rebuildShape(new VertexShapes());
 						}
 
 					}
@@ -224,15 +228,20 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// BiologicalNodeAbstract ba = new
 						// BiologicalNodeAbstract(
 						// answers[0], "");
-						newVertex.setBiologicalElement(answers[1]);
-						newVertex.setCompartment(answers[2]);
+						String name = answers[0];
+						String label = answers[0];
+						String element = answers[1];
+						String compartment = answers[2];
+//						newVertex.setBiologicalElement(answers[1]);
+//						newVertex.setCompartment(answers[2]);
 						// graphInstance.getPathway().addElement(newVertex);
 						// graph.addVertex(newVertex);
-						pw.addVertex(newVertex, p);
+						pw.addVertex(name, label, element, compartment, p);
+						//pw.addVertex(newVertex, p);
 						if (graph.getVertices().size() > 1) {
 							// System.exit(0);
 						}
-						
+
 						// pw.getGraph().setVertexLocation(newVertex, p);
 						// layout.setLocation(newVertex, p);
 						// vv.getModel().restart();
@@ -241,13 +250,13 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// MainWindowSingelton.getInstance()
 						// .updateTheoryProperties();
 
-						for (Iterator<BiologicalNodeAbstract> iterator = graph.getVertices().iterator(); iterator
-								.hasNext();) {
+						for (Iterator<BiologicalNodeAbstract> iterator = graph
+								.getVertices().iterator(); iterator.hasNext();) {
 							layout.lock(iterator.next(), false);
 						}
 
 					}
-					
+
 				}
 			}
 			vv.repaint();
@@ -263,12 +272,14 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 	public void mouseReleased(MouseEvent e) {
 		pw = graphInstance.getPathway();
 		if (checkModifiers(e)) {
-			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer) e.getSource();
+			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer) e
+					.getSource();
 			final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
 					.inverseTransform(e.getPoint());
 			int v = vv.getPickedVertexState().getPicked().size();
 			int edge = vv.getPickedEdgeState().getPicked().size();
-			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv.getPickSupport();
+			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv
+					.getPickSupport();
 			// if (v > 0) {
 			// System.out.println("release");
 			final BiologicalNodeAbstract vertex = (BiologicalNodeAbstract) pickSupport
@@ -324,28 +335,32 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 											JOptionPane.ERROR_MESSAGE);
 						else {
 							BiologicalEdgeAbstract bea;
-
+							String name = answers[0];
+							String label = answers[0];
+							String element = answers[2];
+							boolean directed = false;
 							if (answers[1].equals("directed_edge")) {
 
 								// Edge newEdge = new DirectedSparseEdge(
 								// startVertex, vertex);
-								bea = new BiologicalEdgeAbstract(answers[0],
-										"", startVertex, vertex);
-								bea.setDirected(true);
+//								bea = new BiologicalEdgeAbstract(answers[0],
+//										"", startVertex, vertex);
+//								bea.setDirected(true);
+								directed = true;
 
 							} else {
 
 								// Edge newEdge = new UndirectedSparseEdge(
 								// startVertex, vertex);
-								bea = new BiologicalEdgeAbstract(answers[0],
-										"", startVertex, vertex);
-								bea.setDirected(false);
+//								bea = new BiologicalEdgeAbstract(answers[0],
+//										"", startVertex, vertex);
+//								bea.setDirected(false);
 							}
 
-							bea.setBiologicalElement(answers[2]);
+//							bea.setBiologicalElement(answers[2]);
 							// System.out.println("vor add");
 
-							pw.addEdge(bea);
+							pw.addEdge(label, name, startVertex, vertex, element, directed);
 
 							// MainWindowSingelton.getInstance().updateElementTree();
 						}

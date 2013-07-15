@@ -11,7 +11,6 @@ public class CompoundNode extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.compound);
 		shapes = new VertexShapes();
 		setShape(shapes.getEllipse());
-		setAbstract(false);
 		setReference(false);
 	}
 

@@ -101,7 +101,6 @@ public class Place extends BiologicalNodeAbstract {
 		// this.setLabel(token+" "+label);
 		// this.setComments("commetnr");
 		// this.set
-		setAbstract(false);
 		setReference(false);
 		setColor(Color.WHITE);
 		if (discrete) {
