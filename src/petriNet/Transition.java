@@ -89,7 +89,6 @@ public class Transition extends BiologicalNodeAbstract {
 		setShape(transform2.createTransformedShape(s));
 		
 		
-		setAbstract(false);
 		setReference(false);
 		setBiologicalElement(Elementdeclerations.transition);
 	}

@@ -14,7 +14,6 @@ public class AlignmentEdge extends BiologicalEdgeAbstract{
 	public AlignmentEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
 		//this.edge = e;
 		super("", "", from, to);
-		this.setAbstract(false);
 		this.setColor(Color.RED);
 		this.setIsEdge(true);
 	}

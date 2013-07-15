@@ -24,7 +24,6 @@ public class Feature extends BiologicalEdgeAbstract {
 	public Feature(Edge edge, String label, String name) {
 		super(edge, label, name);
 		setBiologicalElement(Elementdeclerations.feature);
-		setAbstract(false);
 	}
 
 }

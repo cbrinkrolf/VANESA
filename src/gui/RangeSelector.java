@@ -288,6 +288,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 	}
 
+	//TODO koordinaten passen noch nicht so ganz
 	@Override
 	public void mousePressed(MouseEvent e) {
 		this.checkContextMenu(e);
@@ -355,9 +356,11 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 					}
 				}
 			}
+			graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 		}
+		
 		this.justCreated = null;
-		graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
+		
 	}
 
 	private RectangularShape createShape(Point2D p1) {
@@ -386,6 +389,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	private int inset = 5;
 
 	public void paint(Graphics g) {
+		
 		Graphics2D g2d = (Graphics2D) g;
 		Color old = g2d.getColor();
 		// Font oldFont = g2d.getFont();

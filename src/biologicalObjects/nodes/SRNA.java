@@ -15,7 +15,6 @@ public class SRNA extends RNA{
 	public SRNA(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.sRNA);
-		setAbstract(false);
 	}
 
 	public void setTarbase_DS(String tarbase_DS) {

@@ -209,7 +209,7 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 							&& (((JComboBox) event.getSource())
 									.getSelectedItem().equals("discrete") && node
 									.getBiologicalElement()
-									.equals(Elementdeclerations.contoniousTransition))) {
+									.equals(Elementdeclerations.continuousTransition))) {
 
 						JOptionPane
 								.showMessageDialog(

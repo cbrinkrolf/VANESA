@@ -16,7 +16,6 @@ public class Complex extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.complex);
 		shapes = new VertexShapes();	
 		setShape(shapes.getRegularStar(6));
-		setAbstract(false);
 	}
 	
 	public void addElement(Object element){

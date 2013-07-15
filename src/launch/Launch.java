@@ -96,6 +96,7 @@ public class Launch {
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("fail");
 		}
 

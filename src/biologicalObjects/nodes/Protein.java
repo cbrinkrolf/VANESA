@@ -22,7 +22,6 @@ public class Protein extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.protein);
 		shapes = new VertexShapes();
 		setShape(shapes.getEllipse());
-		setAbstract(false);
 		setReference(false);
 	}
 

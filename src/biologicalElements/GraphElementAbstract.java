@@ -11,11 +11,10 @@ import java.util.SortedSet;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 
-public class GraphElementAbstract {
+public abstract class GraphElementAbstract {
 
 	private boolean isEdge = false;
 	private boolean isVertex = false;
-	private boolean isAbstract = true;
 	private boolean isReference = true;
 	private boolean isVisible = true;
 
@@ -335,14 +334,6 @@ public class GraphElementAbstract {
 	public void setShape(Shape shape) {
 		// System.out.println(shape);
 		this.shape = shape;
-	}
-
-	public boolean isAbstract() {
-		return isAbstract;
-	}
-
-	public void setAbstract(boolean isAbstract) {
-		this.isAbstract = isAbstract;
 	}
 
 	public boolean isReference() {

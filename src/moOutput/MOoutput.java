@@ -225,7 +225,7 @@ public class MOoutput {
 						out, p));
 
 			} else if (biologicalElement
-					.equals(Elementdeclerations.contoniousTransition)) {
+					.equals(Elementdeclerations.continuousTransition)) {
 
 				ContinuousTransition t = (ContinuousTransition) bna;
 				String atr = "maximumSpeed=1.0";

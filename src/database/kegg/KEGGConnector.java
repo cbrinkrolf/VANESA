@@ -342,7 +342,6 @@ public class KEGGConnector extends SwingWorker {
 		if (validElement) {
 			bna.setKEGGnode(node);
 			bna.hasKEGGNode(true);
-			bna.setAbstract(false);
 			boolean addBNA = true;
 			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 			BiologicalNodeAbstract old_bna;
@@ -461,7 +460,6 @@ public class KEGGConnector extends SwingWorker {
 						else
 							srna.setColor(Color.orange);
 						pw.addVertex(srna, p);
-						srna.setAbstract(false);
 						srna.setReference(false);
 						//myGraph.moveVertex(srna.getVertex(), p.getX(), p.getY());
 						connectedToPathway++;
@@ -469,7 +467,6 @@ public class KEGGConnector extends SwingWorker {
 					Compound c = new Compound("", "", srna, bna);
 					c.setDirected(true);
 					c.setReference(false);
-					c.setAbstract(false);
 					if (specialGenes != null
 							&& (specialGenes.contains(bna.getName()) || specialGenes
 									.contains(bna.getLabel()))) {

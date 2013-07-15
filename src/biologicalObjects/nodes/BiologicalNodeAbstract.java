@@ -10,7 +10,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 
-public class BiologicalNodeAbstract extends GraphElementAbstract {
+public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 
 	//private Vertex vertex;
 	private KEGGNode KEGGnode;

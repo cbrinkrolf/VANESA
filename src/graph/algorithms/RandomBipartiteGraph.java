@@ -72,7 +72,6 @@ public class RandomBipartiteGraph {
 			r.setReference(false);
 			r.setHidden(false);
 			r.setVisible(true);
-			r.setAbstract(true);
 			pw.addEdge(r);
 
 		}

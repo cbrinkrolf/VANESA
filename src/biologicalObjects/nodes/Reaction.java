@@ -10,7 +10,6 @@ public class Reaction extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.reaction);
 		shapes = new VertexShapes();	
 		setShape(shapes.getEllipse());
-		setAbstract(false);
 		setReference(false);
 	}
 	

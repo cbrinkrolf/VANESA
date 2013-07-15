@@ -60,7 +60,6 @@ public class PNEdge extends BiologicalEdgeAbstract {
 			setBiologicalElement(biologicalElements.Elementdeclerations.pnDiscreteEdge);
 
 		this.function = edgeFunction;
-		this.setAbstract(false);
 	}
 
 	public String getFunction() {

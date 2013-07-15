@@ -11,7 +11,6 @@ public class OrthologGroup extends Complex{
 		setBiologicalElement(Elementdeclerations.orthologGroup);
 		shapes = new VertexShapes();	
 		setShape(shapes.getRegularStar(10));
-		setAbstract(false);
 	}
 	
 	@Override

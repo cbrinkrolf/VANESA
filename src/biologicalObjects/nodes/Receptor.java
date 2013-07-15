@@ -9,7 +9,6 @@ public class Receptor extends Protein{
 	public Receptor(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.receptor);
-		setAbstract(false);
 	}
 
 	

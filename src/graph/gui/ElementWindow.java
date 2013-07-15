@@ -438,6 +438,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 		if ("colour".equals(event)) {
 
+			// TODO fail due to old substance API / Bug in API
 			Color newColor = JColorChooser.showDialog(w,
 					"Choose Element Colour", getElementColor());
 			JButton b = ((JButton) e.getSource());
@@ -478,31 +479,35 @@ public class ElementWindow implements ActionListener, ItemListener {
 			w.updateElementProperties();
 		} else if (("hideNeighbours".equals(event) || ("showNeighbours"
 				.equals(event))) && ab instanceof BiologicalNodeAbstract) {
+			// TODO visible wird noch nicht gehandelt in transformators
 			Pathway pw = graphInstance.getPathway();
 			boolean hide = "hideNeighbours".equals(event);
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
-			for (BiologicalEdgeAbstract edge : pw.getAllEdges())
-				for (Object edge2 : bna.getVertex().getIncidentEdges())
-					if (((Edge) edge2).equals(edge.getEdge()))
-						edge.setVisible(!hide);
-
-			for (Iterator i = bna.getVertex().getNeighbors().iterator(); i
-					.hasNext();) {
-				Vertex v = (Vertex) i.next();
-				for (Iterator j = pw.getAllNodes().iterator(); j.hasNext();) {
-					BiologicalNodeAbstract t = (BiologicalNodeAbstract) j
-							.next();
-					if (t.getVertex().equals(v))
-						t.setVisible(!hide);
-				}
+			
+			Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getJungGraph().getIncidentEdges(bna).iterator();
+			BiologicalEdgeAbstract bea;
+			
+			while(it.hasNext()){
+				//System.out.println(!hide);
+				bea = it.next();
+				bea.setVisible(!hide);
+				//bea.setLabel(!hide+"");
 			}
+			
+			Iterator<BiologicalNodeAbstract> it2 = pw.getGraph().getJungGraph().getNeighbors(bna).iterator();
+			
+			BiologicalNodeAbstract node;
+			while(it2.hasNext()){
+				//System.out.println("drin");
+				node = it2.next();
+				node.setVisible(!hide);
+			}
+			
 		} else if ("dirChanger".equals(event) && ab.isEdge()) {
 			Pathway pw = graphInstance.getPathway();
 			PNEdge edge = (PNEdge) ab;
 
-			PNEdge newEdge = new PNEdge(pw.getGraph().createEdge(
-					(Vertex) edge.getEdge().getEndpoints().getSecond(),
-					(Vertex) edge.getEdge().getEndpoints().getFirst(), true),
+			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(),
 					edge.getLabel(), edge.getName(),
 					edge.getBiologicalElement(), edge.getFunction());
 			newEdge.setUpperBoundary(edge.getUpperBoundary());
@@ -511,11 +516,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 			newEdge.setDirected(true);
 			pw = graphInstance.getPathway();
 			MyGraph g = pw.getGraph();
-			g.getJungGraph().removeEdge(edge.getEdge());
-			g.getEdgeStringer().removeEdge(edge.getEdge());
-			pw.removeElement(edge.getEdge());
-			newEdge = (PNEdge) pw.addElement(newEdge);
-			g.getVisualizationViewer().getPickedState().clearPickedEdges();
+			g.getJungGraph().removeEdge(edge);
+			//g.getEdgeStringer().removeEdge(edge.getEdge());
+			pw.removeElement(edge);
+			pw.addEdge(newEdge);
+			//g.getVisualizationViewer().getPickedState().clearPickedEdges();
 			graphInstance.setSelectedObject(newEdge);
 
 			ab = newEdge;

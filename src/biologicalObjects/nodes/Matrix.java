@@ -10,7 +10,6 @@ public class Matrix extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.matrix);
 		shapes = new VertexShapes();	
 		setShape(shapes.getEllipse());
-		setAbstract(false);
 		setReference(false);
 	}
 	

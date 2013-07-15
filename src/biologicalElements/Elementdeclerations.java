@@ -142,7 +142,7 @@ public class Elementdeclerations {
 
 	public static String discreteTransition = "Discrete Transition";
 
-	public static String contoniousTransition = "Continuous Transition";
+	public static String continuousTransition = "Continuous Transition";
 
 	// public static String edge = "Petri Net Edge";
 
@@ -206,7 +206,7 @@ public class Elementdeclerations {
 		l.add(s_place);
 		l.add(stochasticTransition);
 		l.add(discreteTransition);
-		l.add(contoniousTransition);
+		l.add(continuousTransition);
 		l.add(inhibitor);
 		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
 

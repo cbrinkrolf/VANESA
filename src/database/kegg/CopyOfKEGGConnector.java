@@ -1063,7 +1063,6 @@ public class CopyOfKEGGConnector extends SwingWorker {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) obj;
 			bna.setKEGGnode(node);
 			bna.hasKEGGNode(true);
-			bna.setAbstract(false);
 			processElement(obj, check);
 		}
 

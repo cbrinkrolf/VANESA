@@ -9,7 +9,6 @@ public class HomodimerFormation extends BiologicalNodeAbstract{
 	public HomodimerFormation(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.homodimerFormation);
-		setAbstract(false);
 	}
 
 }

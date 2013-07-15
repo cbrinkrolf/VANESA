@@ -327,7 +327,6 @@ public class ElementLoader {
 				pathways.put(id, id);
 
 				PathwayMap p = new PathwayMap(id, name, null);
-				p.setAbstract(false);
 				p.setReference(false);
 				p.setElementsVector(pathwayElements);
 
@@ -366,7 +365,6 @@ public class ElementLoader {
 				diseaseTable.put(id, id);
 
 				Disease d = new Disease(id, name, null);
-				d.setAbstract(false);
 				d.setReference(false);
 				d.setElementsVector(diseaseElements);
 
@@ -404,7 +402,6 @@ public class ElementLoader {
 				geneTable.put(id, id);
 
 				Gene g = new Gene(id, name, null);
-				g.setAbstract(false);
 				g.setReference(false);
 				g.setElementsVector(geneElements);
 
@@ -445,7 +442,6 @@ public class ElementLoader {
 			if (!allElements.containsKey(id)) {
 
 				Factor g = new Factor(id, name, null);
-				g.setAbstract(false);
 				g.setReference(false);
 
 				if (loadedElementsVector.contains(id)) {
@@ -476,7 +472,6 @@ public class ElementLoader {
 			if (!allElements.containsKey(id)) {
 
 				Fragment g = new Fragment(id, name, null);
-				g.setAbstract(false);
 				g.setReference(false);
 
 				if (loadedElementsVector.contains(id)) {
@@ -505,7 +500,6 @@ public class ElementLoader {
 			if (!allElements.containsKey(id)) {
 
 				Site g = new Site(id, name, null);
-				g.setAbstract(false);
 				g.setReference(false);
 
 				if (loadedElementsVector.contains(id)) {
@@ -536,7 +530,6 @@ public class ElementLoader {
 				proteine.put(id, id);
 
 				Protein p = new Protein(id, name, null);
-				p.setAbstract(false);
 				p.setReference(false);
 				p.setElementsVector(proteinElements);
 				if (parent != null) {
@@ -578,7 +571,6 @@ public class ElementLoader {
 				proteine.put(id, id);
 
 				Protein p = new Protein(id, name, null);
-				p.setAbstract(false);
 				p.setReference(false);
 				p.setElementsVector(proteinElements);
 
@@ -616,7 +608,6 @@ public class ElementLoader {
 				enzyme.put(id, id);
 
 				Enzyme e = new Enzyme(id, name, null);
-				e.setAbstract(false);
 				e.setReference(false);
 				e.setElementsVector(enzymeElements);
 
@@ -653,7 +644,6 @@ public class ElementLoader {
 				compound.put(id, id);
 
 				CompoundNode c = new CompoundNode(id, name, null);
-				c.setAbstract(false);
 				c.setReference(false);
 				c.setElementsVector(compoundElements);
 
@@ -692,7 +682,6 @@ public class ElementLoader {
 				glycan.put(id, id);
 
 				Glycan gl = new Glycan(id, name, null);
-				gl.setAbstract(false);
 				gl.setReference(false);
 				gl.setElementsVector(glycanElements);
 
@@ -729,7 +718,6 @@ public class ElementLoader {
 				drug.put(id, id);
 
 				Drug dr = new Drug(id, name, null);
-				dr.setAbstract(false);
 				dr.setReference(false);
 				dr.setElementsVector(drugElements);
 
@@ -766,7 +754,6 @@ public class ElementLoader {
 				geneOntology.put(id, id);
 
 				GeneOntology go = new GeneOntology(id, name, null);
-				go.setAbstract(false);
 				go.setReference(false);
 				go.setElementsVector(geneOntologyElements);
 
@@ -835,7 +822,6 @@ public class ElementLoader {
 				geneTable.put(res[0], res[0]);
 
 				Gene emblGene=new Gene(res[0], "", null);
-				emblGene.setAbstract(false);
 				emblGene.setReference(false);
 
 				if (loadedElementsVector.contains(res[0]))
@@ -930,7 +916,6 @@ public class ElementLoader {
 										proteine.put(interactors[0].trim(), interactors[0].trim());
 
 										Protein interactor=new Protein(interactors[0].trim(), interactors[1], null);
-										interactor.setAbstract(false);
 										interactor.setReference(false);
 										interactor.setDB(db);
 
@@ -959,7 +944,6 @@ public class ElementLoader {
 									{
 										proteine.put(interactors[2].trim(), interactors[2].trim());
 										Protein interactor=new Protein(interactors[2].trim(), interactors[3], null);
-										interactor.setAbstract(false);
 										interactor.setReference(false);
 										interactor.setDB(db);
 
@@ -1012,7 +996,6 @@ public class ElementLoader {
 								{
 									proteine.put(interactors[0], interactors[0]);
 									Protein interactor=new Protein(interactors[0], interactors[1], null);
-									interactor.setAbstract(false);
 									interactor.setReference(false);
 									interactor.setDB(db);
 
@@ -2869,7 +2852,6 @@ public class ElementLoader {
 				if (!oneExists)
 				{
 					one=new CompoundNode(det[0], "", null);
-					one.setAbstract(false);
 					one.setReference(false);
 					one.setElementsVector(compoundElements);
 
@@ -2904,7 +2886,6 @@ public class ElementLoader {
 				else
 				{
 					two=new CompoundNode(det[0], "", null);
-					two.setAbstract(false);
 					two.setReference(false);
 					two.setElementsVector(compoundElements);
 
@@ -3909,7 +3890,6 @@ public class ElementLoader {
 					reactant=new CompoundNode(id, "", null);
 					reactant.setElementsVector(compoundElements);
 					reactant.setDB("Transpath");
-					reactant.setAbstract(false);
 					reactant.setReference(false);
 
 					if (loadedElementsVector.contains(reactionLabel))
@@ -3934,7 +3914,6 @@ public class ElementLoader {
 				{
 					BiologicalNodeAbstract bna=(BiologicalNodeAbstract)allElements.get(id);
 					reactant=(CompoundNode)bna;
-					reactant.setAbstract(false);
 					reactant.setReference(false);
 
 					reactionElements.add(reactant);
@@ -3948,7 +3927,6 @@ public class ElementLoader {
 					reactant=new Gene(id, "", null);
 					reactant.setElementsVector(geneElements);
 					reactant.setDB("Transpath");
-					reactant.setAbstract(false);
 					reactant.setReference(false);
 
 					if (loadedElementsVector.contains(reactionLabel))
@@ -3978,7 +3956,6 @@ public class ElementLoader {
 					String id2=geneTable.get(id);
 					BiologicalNodeAbstract bna=(BiologicalNodeAbstract)allElements.get(id2);
 					reactant=(Gene)bna;
-					reactant.setAbstract(false);
 					reactant.setReference(false);
 
 					reactionElements.add(reactant);
@@ -4008,7 +3985,6 @@ public class ElementLoader {
 				enzyme.put(enz[0], enz[0]);
 
 				en=new Enzyme(enz[0], enz[1], null);
-				en.setAbstract(false);
 				en.setReference(false);
 				en.setElementsVector(enzymeElements);
 				en.setDB("Transpath");
@@ -4118,7 +4094,6 @@ public class ElementLoader {
 					reactant=new CompoundNode(id, "", null);
 					reactant.setElementsVector(compoundElements);
 					reactant.setDB("KEGG");
-					reactant.setAbstract(false);
 					reactant.setReference(false);
 
 					if (loadedElementsVector.contains(reactionLabel))
@@ -4153,7 +4128,6 @@ public class ElementLoader {
 					reactant=new Glycan(id, "", null);
 					reactant.setElementsVector(glycanElements);
 					reactant.setDB("KEGG");
-					reactant.setAbstract(false);
 					reactant.setReference(false);
 					createDAWISNode(reactant);
 
@@ -4179,7 +4153,6 @@ public class ElementLoader {
 				}
 
 			}
-			reactant.setAbstract(false);
 			reactant.setReference(false);
 
 			reactionElements.add(reactant);
@@ -4284,7 +4257,6 @@ public class ElementLoader {
 				enzyme.put(ID, ID);
 
 				en=new Enzyme(res[0], name, null);
-				en.setAbstract(false);
 				en.setReference(false);
 				en.setElementsVector(enzymeElements);
 				en.setDB("KEGG");
@@ -5743,7 +5715,6 @@ public class ElementLoader {
 				if (!allElements.contains(res[0]))
 				{
 					factor=new Factor(res[0], res[1], null);
-					factor.setAbstract(false);
 					factor.setReference(false);
 					factor.setDB("Transfac");
 
@@ -5873,7 +5844,6 @@ public class ElementLoader {
 				if (!allElements.contains(fragm[0]))
 				{
 					fragment=new Fragment(fragm[0], "", null);
-					fragment.setAbstract(false);
 					fragment.setReference(false);
 					fragment.setDB("Transfac");
 					createDAWISNode(fragment);
@@ -5993,7 +5963,6 @@ public class ElementLoader {
 				if (!allElements.contains(res[0]))
 				{
 					site=new Site(res[0], "", null);
-					site.setAbstract(false);
 					site.setReference(false);
 					site.setDB("Transfac");
 					createDAWISNode(site);
@@ -6112,7 +6081,6 @@ public class ElementLoader {
 				if (!allElements.contains(res[0]))
 				{
 					site=new Site(res[0], "", null);
-					site.setAbstract(false);
 					site.setReference(false);
 					site.setDB("Transfac");
 

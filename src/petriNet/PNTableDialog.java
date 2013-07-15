@@ -163,7 +163,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 					if (((s.equals(Elementdeclerations.s_place) || s
 							.equals(Elementdeclerations.place)) && !(bnas[rowIndex] instanceof Place))
 							|| ((s.equals(Elementdeclerations.discreteTransition)
-									|| s.equals(Elementdeclerations.contoniousTransition) || s
+									|| s.equals(Elementdeclerations.continuousTransition) || s
 										.equals(Elementdeclerations.stochasticTransition)) && !(bnas[rowIndex] instanceof Transition)))
 						return;
 				}
@@ -178,7 +178,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		comboEditor.addItem(Elementdeclerations.place);
 		comboEditor.addItem(Elementdeclerations.s_place);
 		comboEditor.addItem(Elementdeclerations.discreteTransition);
-		comboEditor.addItem(Elementdeclerations.contoniousTransition);
+		comboEditor.addItem(Elementdeclerations.continuousTransition);
 		comboEditor.addItem(Elementdeclerations.stochasticTransition);
 		myColumn.setCellEditor(new DefaultCellEditor(comboEditor));
 		JComboBox comboEditor2 = new JComboBox();
@@ -360,7 +360,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 									&& (((String) table.getValueAt(
 											table.convertRowIndexToView(i),
 											table.convertColumnIndexToView(6)))
-											.equals(Elementdeclerations.contoniousTransition) && node
+											.equals(Elementdeclerations.continuousTransition) && node
 											.getBiologicalElement().equals(
 													Elementdeclerations.place)))
 								stateChanged = false;
@@ -390,7 +390,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 					} else if (((String) table.getValueAt(
 							table.convertRowIndexToView(i),
 							table.convertColumnIndexToView(6)))
-							.equals(Elementdeclerations.contoniousTransition)
+							.equals(Elementdeclerations.continuousTransition)
 							&& !(t instanceof ContinuousTransition)) {
 						newT = new ContinuousTransition(t.getLabel(),
 								t.getName());

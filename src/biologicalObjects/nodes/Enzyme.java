@@ -26,7 +26,6 @@ public class Enzyme extends Protein {
 		setBiologicalElement(Elementdeclerations.enzyme);
 		shapes = new VertexShapes();	
 		setShape(shapes.getRegularPolygon(3));
-		setAbstract(false);
 	}
 
 	public String getCofactor() {

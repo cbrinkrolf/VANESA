@@ -14,7 +14,6 @@ public class DNA extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.dna);
 		shapes = new VertexShapes();	
 		setShape(shapes.getRoundRectangle());
-		setAbstract(false);
 	}
 	
 	@Override

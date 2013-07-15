@@ -12,7 +12,6 @@ public class ReactionPair extends BiologicalEdgeAbstract {
 	public ReactionPair(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 		super(label, name, from, to);
 		setBiologicalElement(Elementdeclerations.reactionPairEdge);
-		setAbstract(false);
 	}
 	
 	@Override

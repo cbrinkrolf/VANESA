@@ -433,9 +433,10 @@ public class VAMLInput {
 			}
 
 			else {
-
-				bea = new BiologicalEdgeAbstract(label, name,
-						mapping.get(from), mapping.get(to));
+				System.err.println("Try to instantiate an abstract Edge!!!");
+				
+				//bea = new BiologicalEdgeAbstract(label, name,
+					//	mapping.get(from), mapping.get(to));
 
 			}
 			bea.setID(id);
@@ -842,7 +843,6 @@ public class VAMLInput {
 		bna.setComments(comment);
 		bna.setColor(color);
 		bna.setIsVertex(true);
-		bna.setAbstract(false);
 		bna.setReference(isReference);
 		try {
 			int id = Integer.parseInt(node.getAttributeValue(new QName(

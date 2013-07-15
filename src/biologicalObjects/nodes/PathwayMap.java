@@ -22,7 +22,6 @@ public class PathwayMap extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.pathwayMap);
 		shapes = new VertexShapes();	
 		setShape(shapes.getRectangle());
-		setAbstract(false);
 	}
 	
 	@Override
