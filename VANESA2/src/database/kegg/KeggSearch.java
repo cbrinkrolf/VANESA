@@ -393,20 +393,17 @@ public class KeggSearch extends SwingWorker implements PropertyChangeListener {
 					for (String[] s : results) {
 						PathwayMap map = new PathwayMap(s[1], s[0]);
 						map.setReference(false);
-						map.setAbstract(false);
 						map = (PathwayMap) newPW.addVertex(map, new Point(0,0));
 						//newPW.getGraph().moveVertex(map.getVertex(), 0, 0);
 						for (BiologicalNodeAbstract bna : bnas) {
 							bna = (BiologicalNodeAbstract) newPW.addVertex(bna, new Point(0,0));
 							bna.setReference(false);
-							bna.setAbstract(false);
 							bna.setColor(Color.red);
 							//newPW.getGraph().moveVertex(bna.getVertex(), 0, 0);
 							Compound c = new Compound("", "",bna,map);
 							c.setDirected(true);
 							c.setReference(false);
-							c.setAbstract(false);
-							c = (Compound) newPW.addEdge(c);
+							newPW.addEdge(c);
 
 						}
 					}

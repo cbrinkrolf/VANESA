@@ -76,7 +76,6 @@ public class MOInput {
 		BiologicalNodeAbstract bna = (BiologicalNodeAbstract) obj;
 
 		bna.setIsVertex(true);
-		bna.setAbstract(false);
 		// for appearing as original
 		if (!type.equals("Enzyme"))
 			bna.setReference(false);

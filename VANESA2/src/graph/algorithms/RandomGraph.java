@@ -134,7 +134,6 @@ public class RandomGraph {
 					r.setReference(false);
 					r.setHidden(false);
 					r.setVisible(true);
-					r.setAbstract(true);
 
 					if (weightedGraph) {
 						r.setWeighted(true);

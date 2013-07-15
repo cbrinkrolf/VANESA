@@ -133,7 +133,7 @@ public class MirnaResultKeggWindow extends JFrame {
 			table.setHorizontalScrollEnabled(true);
 			table.getTableHeader().setReorderingAllowed(false);
 			table.getTableHeader().setResizingAllowed(false);
-
+			table.setRowSelectionInterval(0, 0);
 
 		}
 }

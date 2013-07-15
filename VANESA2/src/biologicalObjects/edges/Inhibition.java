@@ -9,7 +9,6 @@ public class Inhibition extends BiologicalEdgeAbstract{
 	public Inhibition(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 		super(label, name, from, to);
 		setBiologicalElement(Elementdeclerations.inhibitionEdge);
-		setAbstract(false);
 	}
 
 	

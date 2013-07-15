@@ -215,9 +215,9 @@ public class SimpleAlignmentGraph {
 		this.backgroundAttributes2.put("minY", yMin2 - 50 + "");
 		this.backgroundAttributes2.put("maxY", yMax2 + 50 + "");
 
-		it = pw_two.getAllEdges().iterator();
-		while (it.hasNext()) {
-			BiologicalEdgeAbstract bna = (BiologicalEdgeAbstract) it.next();
+		it2 = pw_two.getAllEdges().iterator();
+		while (it2.hasNext()) {
+			BiologicalEdgeAbstract bna = (BiologicalEdgeAbstract) it2.next();
 			addEdge(bna, false);
 		}
 
@@ -413,7 +413,6 @@ public class SimpleAlignmentGraph {
 		bna_new.setComments(comment);
 		bna_new.setColor(color);
 		bna_new.setIsVertex(true);
-		bna_new.setAbstract(false);
 		bna_new.setReference(isReference);
 
 		if (keggNode != null) {

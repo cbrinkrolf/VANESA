@@ -40,7 +40,7 @@ import configurations.Wrapper;
 import database.dawis.DAWISQueries;
 import database.dawis.EdgeController;
 import database.dawis.ReactionAnalyser;
-import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.graph.Vertex;
 
 /**
  * 
@@ -211,7 +211,6 @@ public class DAWISWebstartCombiner
 				if (!oneExists)
 				{
 					one=new CompoundNode(det[0], "", null);
-					one.setAbstract(false);
 					one.setReference(false);
 					allElements.put(det[0], one);
 
@@ -226,7 +225,6 @@ public class DAWISWebstartCombiner
 				else
 				{
 					two=new CompoundNode(det[0], "", null);
-					two.setAbstract(false);
 					two.setReference(false);
 					allElements.put(det[0], two);
 
@@ -494,7 +492,6 @@ public class DAWISWebstartCombiner
 					newLoadedElements.add(new DBColumn(enzDet));
 
 					enz=new Enzyme(e[0], "", null);
-					enz.setAbstract(false);
 					enz.setReference(false);
 					enz.setDB(db);
 					allElements.put(e[0], enz);
@@ -541,7 +538,6 @@ public class DAWISWebstartCombiner
 									checkObjects("Compound");
 
 									sub=new CompoundNode(s[0], "", null);
-									sub.setAbstract(false);
 									sub.setReference(false);
 									sub.setDB(db);
 									allElements.put(s[0], sub);
@@ -580,7 +576,6 @@ public class DAWISWebstartCombiner
 									checkObjects("Glycan");
 
 									sub=new Glycan(s[0], "", null);
-									sub.setAbstract(false);
 									sub.setReference(false);
 									sub.setDB(db);
 									allElements.put(s[0], sub);
@@ -621,7 +616,6 @@ public class DAWISWebstartCombiner
 									checkObjects("Compound");
 
 									sub=new CompoundNode(s[0], "", null);
-									sub.setAbstract(false);
 									sub.setReference(false);
 									sub.setDB(db);
 									allElements.put(s[0], sub);
@@ -661,7 +655,6 @@ public class DAWISWebstartCombiner
 									checkObjects("Gene");
 
 									sub=new Gene(s[0], "", null);
-									sub.setAbstract(false);
 									sub.setReference(false);
 									sub.setDB(db);
 									allElements.put(s[0], sub);
@@ -720,7 +713,6 @@ public class DAWISWebstartCombiner
 									checkObjects("Compound");
 
 									prod=new CompoundNode(p[0], "", null);
-									prod.setAbstract(false);
 									prod.setReference(false);
 									prod.setDB(db);
 									allElements.put(p[0], prod);
@@ -759,7 +751,6 @@ public class DAWISWebstartCombiner
 									checkObjects("Glycan");
 
 									prod=new Glycan(p[0], "", null);
-									prod.setAbstract(false);
 									prod.setReference(false);
 									prod.setDB(db);
 									allElements.put(p[0], prod);
@@ -800,7 +791,6 @@ public class DAWISWebstartCombiner
 									checkObjects("Compound");
 
 									prod=new CompoundNode(p[0], "", null);
-									prod.setAbstract(false);
 									prod.setReference(false);
 									prod.setDB(db);
 									allElements.put(p[0], prod);
@@ -838,7 +828,6 @@ public class DAWISWebstartCombiner
 									checkObjects("Gene");
 
 									prod=new Gene(p[0], "", null);
-									prod.setAbstract(false);
 									prod.setReference(false);
 									prod.setDB(db);
 									allElements.put(p[0], prod);
@@ -877,7 +866,6 @@ public class DAWISWebstartCombiner
 						ht.put(singleReaction, singleReaction);
 
 						Reaction r=new Reaction(singleReaction, "", null);
-						r.setAbstract(false);
 						r.setReference(false);
 						r.setDB(db);
 						allElements.put(singleReaction, r);
@@ -921,7 +909,6 @@ public class DAWISWebstartCombiner
 								checkObjects("Compound");
 
 								sub=new CompoundNode(s[0], "", null);
-								sub.setAbstract(false);
 								sub.setReference(false);
 								sub.setDB(db);
 								allElements.put(s[0], sub);
@@ -959,7 +946,6 @@ public class DAWISWebstartCombiner
 								checkObjects("Glycan");
 
 								sub=new Glycan(s[0], "", null);
-								sub.setAbstract(false);
 								sub.setReference(false);
 								sub.setDB(db);
 								allElements.put(s[0], sub);
@@ -1008,7 +994,6 @@ public class DAWISWebstartCombiner
 										checkObjects("Compound");
 
 										prod=new CompoundNode(p[0], "", null);
-										prod.setAbstract(false);
 										prod.setReference(false);
 										prod.setDB(db);
 										allElements.put(p[0], prod);
@@ -1045,7 +1030,6 @@ public class DAWISWebstartCombiner
 										checkObjects("Glycan");
 
 										prod=new Glycan(p[0], "", null);
-										prod.setAbstract(false);
 										prod.setReference(false);
 										prod.setDB(db);
 										allElements.put(p[0], prod);
@@ -1100,7 +1084,6 @@ public class DAWISWebstartCombiner
 								checkObjects("Compound");
 
 								sub=new CompoundNode(s[0], "", null);
-								sub.setAbstract(false);
 								sub.setReference(false);
 								sub.setDB(db);
 								allElements.put(s[0], sub);
@@ -1137,7 +1120,6 @@ public class DAWISWebstartCombiner
 								checkObjects("Gene");
 
 								sub=new Gene(s[0], "", null);
-								sub.setAbstract(false);
 								sub.setReference(false);
 								sub.setDB(db);
 								allElements.put(s[0], sub);
@@ -1182,7 +1164,6 @@ public class DAWISWebstartCombiner
 										checkObjects("Compound");
 
 										prod=new CompoundNode(p[0], "", null);
-										prod.setAbstract(false);
 										prod.setReference(false);
 										prod.setDB(db);
 										allElements.put(p[0], prod);
@@ -1220,7 +1201,6 @@ public class DAWISWebstartCombiner
 										checkObjects("Gene");
 
 										prod=new Gene(p[0], "", null);
-										prod.setAbstract(false);
 										prod.setReference(false);
 										prod.setDB(db);
 										allElements.put(p[0], prod);
@@ -2321,7 +2301,6 @@ public class DAWISWebstartCombiner
 				ht.put(id, id);
 
 				PathwayMap p=new PathwayMap(id, "", null);
-				p.setAbstract(false);
 				p.setReference(false);
 				p.setDB(db);
 				allElements.put(id, p);
@@ -2345,7 +2324,6 @@ public class DAWISWebstartCombiner
 			{
 				ht.put(id, id);
 				Disease d=new Disease(id, "", null);
-				d.setAbstract(false);
 				d.setReference(false);
 				d.setDB(db);
 
@@ -2364,7 +2342,6 @@ public class DAWISWebstartCombiner
 			{
 				ht.put(id, id);
 				Gene g=new Gene(id, "", null);
-				g.setAbstract(false);
 				g.setReference(false);
 				g.setDB(db);
 				allElements.put(id, g);
@@ -2383,7 +2360,6 @@ public class DAWISWebstartCombiner
 				ht.put(id, id);
 
 				Protein p=new Protein(id, "", null);
-				p.setAbstract(false);
 				p.setReference(false);
 				p.setDB(db);
 				allElements.put(id, p);
@@ -2401,7 +2377,6 @@ public class DAWISWebstartCombiner
 			{
 				ht.put(id, id);
 				Enzyme e=new Enzyme(id, "", null);
-				e.setAbstract(false);
 				e.setReference(false);
 				e.setDB(db);
 				allElements.put(id, e);
@@ -2420,7 +2395,6 @@ public class DAWISWebstartCombiner
 				ht.put(id, id);
 
 				CompoundNode c=new CompoundNode(id, "", null);
-				c.setAbstract(false);
 				c.setReference(false);
 				c.setDB(db);
 				allElements.put(id, c);
@@ -2439,7 +2413,6 @@ public class DAWISWebstartCombiner
 				ht.put(id, id);
 
 				Glycan gl=new Glycan(id, "", null);
-				gl.setAbstract(false);
 				gl.setReference(false);
 				gl.setDB(db);
 				allElements.put(id, gl);
@@ -2457,7 +2430,6 @@ public class DAWISWebstartCombiner
 				ht.put(id, id);
 
 				Drug dr=new Drug(id, "", null);
-				dr.setAbstract(false);
 				dr.setReference(false);
 				dr.setDB(db);
 				allElements.put(id, dr);
@@ -2475,7 +2447,6 @@ public class DAWISWebstartCombiner
 				ht.put(id, id);
 
 				GeneOntology go=new GeneOntology(id, "", null);
-				go.setAbstract(false);
 				go.setReference(false);
 				go.setDB(db);
 				allElements.put(id, go);
@@ -2492,7 +2463,6 @@ public class DAWISWebstartCombiner
 				ht.put(id, id);
 
 				Factor d=new Factor(id, "", null);
-				d.setAbstract(false);
 				d.setReference(false);
 				d.setDB(db);
 				allElements.put(id, d);
@@ -2511,7 +2481,6 @@ public class DAWISWebstartCombiner
 				ht.put(id, id);
 
 				Site d=new Site(id, "", null);
-				d.setAbstract(false);
 				d.setReference(false);
 				d.setDB(db);
 				allElements.put(id, d);
@@ -2530,7 +2499,6 @@ public class DAWISWebstartCombiner
 				ht.put(id, id);
 
 				Matrix d=new Matrix(id, "", null);
-				d.setAbstract(false);
 				d.setReference(false);
 				d.setDB(db);
 				allElements.put(id, d);
@@ -2548,7 +2516,6 @@ public class DAWISWebstartCombiner
 			{
 				ht.put(id, id);
 				Fragment d=new Fragment(id, "", null);
-				d.setAbstract(false);
 				d.setReference(false);
 				d.setDB(db);
 				allElements.put(id, d);

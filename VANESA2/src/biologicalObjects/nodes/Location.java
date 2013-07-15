@@ -10,7 +10,6 @@ public class Location extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.location);
 		shapes = new VertexShapes();	
 		setShape(shapes.getRectangle(vertex));
-		setAbstract(false);
 	}
 	
 	@Override

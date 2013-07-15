@@ -9,9 +9,5 @@ public class Expression extends BiologicalEdgeAbstract{
 	public Expression(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 		super(label, name, from, to);
 		setBiologicalElement(Elementdeclerations.expressionEdge);
-		setAbstract(false);
 	}
-
-	
-
 }

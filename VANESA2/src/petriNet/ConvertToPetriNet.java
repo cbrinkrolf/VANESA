@@ -17,6 +17,8 @@ import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 
+import org.apache.woden.wsdl20.ElementDeclaration;
+
 import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;

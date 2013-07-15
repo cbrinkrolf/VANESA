@@ -35,7 +35,6 @@ public class Domain extends BiologicalNodeAbstract {
 		shapes = new VertexShapes();
 
 		setShape(shapes.getRegularStar(vertex, 6));
-		setAbstract(false);
 	}
 
 	/**

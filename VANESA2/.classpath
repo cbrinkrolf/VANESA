@@ -49,8 +49,6 @@
 	<classpathentry kind="lib" path="packages/jibx-run-1.1.5.jar"/>
 	<classpathentry kind="lib" path="packages/junit.jar"/>
 	<classpathentry kind="lib" path="packages/jxlayer.jar"/>
-	<classpathentry kind="lib" path="packages/laf-plugin-50.jar"/>
-	<classpathentry kind="lib" path="packages/laf-widget.jar"/>
 	<classpathentry kind="lib" path="packages/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="packages/macify-1.3.jar"/>
 	<classpathentry kind="lib" path="packages/mail-1.4.jar"/>
@@ -68,9 +66,6 @@
 	<classpathentry kind="lib" path="packages/serializer.jar"/>
 	<classpathentry kind="lib" path="packages/soapmonitor-1.4.jar"/>
 	<classpathentry kind="lib" path="packages/stylebook-1.0-b2.jar"/>
-	<classpathentry kind="lib" path="packages/substance-swingx.jar"/>
-	<classpathentry kind="lib" path="packages/substance.jar"/>
-	<classpathentry kind="lib" path="packages/swingx.jar"/>
 	<classpathentry kind="lib" path="packages/TimingFramework-1.0.jar"/>
 	<classpathentry kind="lib" path="packages/vecmath-1.3.1.jar"/>
 	<classpathentry kind="lib" path="packages/vecmath.jar"/>
@@ -104,5 +99,10 @@
 	<classpathentry kind="lib" path="packages/jung/stax-api-1.0.1.jar"/>
 	<classpathentry kind="lib" path="packages/jung/vecmath-1.3.1.jar"/>
 	<classpathentry kind="lib" path="packages/jung/wstx-asl-3.2.6.jar"/>
+	<classpathentry kind="lib" path="packages/swingx.jar"/>
+	<classpathentry kind="lib" path="packages/laf-plugin-50.jar"/>
+	<classpathentry kind="lib" path="packages/laf-widget.jar"/>
+	<classpathentry kind="lib" path="packages/substance-swingx.jar"/>
+	<classpathentry kind="lib" path="packages/substance.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
