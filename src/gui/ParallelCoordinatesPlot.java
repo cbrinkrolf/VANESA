@@ -522,8 +522,11 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			JButton button=new JButton("Save Results");
 			button.addActionListener(pp);
 			dialogPanel.add(button,"wrap");
-		} else
+			
+		} else{
 			removeAllElements();
+		}
+		
 	}
 
 	private ArrayList<Place> places;
@@ -544,13 +547,18 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		String actualLabel = "";
 		String idx = "";
 		places = new ArrayList<Place>();
+		BiologicalNodeAbstract bna;
+		//System.out.println(GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
+		int picked = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size();
 		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = it.next();
+			bna = it.next();
 			if (bna instanceof Place) {
 				place = (Place) bna;
 				actualLabel = place.getLabel();
-				if (GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().isPicked(bna)){//.isVertexPicked(bna.getVertex())) {
-					for (int j = 0; j < rowsSize; j++) {
+				//System.out.println(bna.getID());
+				if (picked == 0 || GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().isPicked(bna)){//.isVertexPicked(bna.getVertex())) {
+						//System.out.println(bna.getID() + " is picked.");
+						for (int j = 0; j < rowsSize; j++) {
 						idx = rows[j][0].toString();
 						if (idx.equals(actualLabel)) {
 							indices.add(j);
