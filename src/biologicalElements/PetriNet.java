@@ -173,10 +173,11 @@ public class PetriNet {
 						// System.out.println("n�");
 					}
 
-					System.out.println();
+					//System.out.println();
 
 					Vector<Double> v = pnResult.get("P" + bna.getID());
-					// System.out.println(bna.getName());
+					 //System.out.println(bna.getName());
+					 //System.out.println(v.lastElement());
 					// System.out.println("size: "+v.size());
 					// System.out.println("test2");
 					if (v.get(0).doubleValue() != ((Place) bna).getTokenStart())

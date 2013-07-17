@@ -238,12 +238,13 @@ public class OptionPanel {
 	}
 
 	public void updatePanel(String element) {
+		//System.out.println(element);
 		if (updatePanels) {
 			if (element.equals("GraphTree")) {
 				 tree.revalidateTree();
 			} else if (element.equals("Satellite")) {
 				satelliteWindow.revalidateSatelliteView();
-				// } else if (element.equals("pcp")) {
+			} else if (element.equals("pcp")) {
 				PCPWindow.revalidateView();
 			} else if (element.equals("element")) {
 				elementWindow.revalidateView();
