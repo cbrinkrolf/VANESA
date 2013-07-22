@@ -1,8 +1,8 @@
 package petriNet;
 
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
-import edu.uci.ics.jung.utils.UserData;
+//import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
+//import edu.uci.ics.jung.utils.UserData;
 import graph.GraphInstance;
 import graph.jung.graphDrawing.NodeRankingVertexSizeFunction;
 import graph.jung.graphDrawing.VertexShapes;
@@ -10,6 +10,7 @@ import gui.MainWindow;
 import gui.MainWindowSingelton;
 
 import java.awt.Color;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
@@ -76,10 +77,10 @@ public class AnimationThread extends Thread {
 
 		Double ref;
 		int take = 0;
-		Vertex v;
+		//Vertex v;
 
 		Pathway pw = graphInstance.getPathway();
-		Set<Vertex> ns = pw.getGraph().getAllVertices();
+		Collection<BiologicalNodeAbstract> ns = pw.getGraph().getAllVertices();
 
 		if (animationStartPosition == 1) {
 			animationStartPosition = 2;
