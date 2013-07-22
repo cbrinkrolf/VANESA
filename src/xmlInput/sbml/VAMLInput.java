@@ -434,11 +434,13 @@ public class VAMLInput {
 
 			else {
 				System.err.println("Try to instantiate an abstract Edge!!!");
+				bea = new ReactionEdge(label, name, mapping.get(from), mapping.get(to));
 				
 				//bea = new BiologicalEdgeAbstract(label, name,
 					//	mapping.get(from), mapping.get(to));
 
 			}
+			//System.out.println("spech: "+elementSpecification);
 			bea.setID(id);
 			bea.setDirected(isDirected);
 			bea.setColor(color);
