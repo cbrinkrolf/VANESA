@@ -927,13 +927,13 @@ public class Pathway {
 
 	public BiologicalNodeAbstract getNodeByName(String name) {
 
-		Iterator it = biologicalElements.values().iterator();
-
+		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
+		GraphElementAbstract gea;
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
-			Object obj = it.next();
-			GraphElementAbstract gea = (GraphElementAbstract) obj;
+			gea = it.next();
 			if (gea.isVertex()) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) obj;
+				bna = (BiologicalNodeAbstract) gea;
 				if (bna.getName().equals(name)) {
 					return bna;
 				}
@@ -956,13 +956,14 @@ public class Pathway {
 
 	public BiologicalNodeAbstract getNodeByLabel(String label) {
 
-		Iterator it = biologicalElements.values().iterator();
+		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
 
+		GraphElementAbstract gea;
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
-			Object obj = it.next();
-			GraphElementAbstract gea = (GraphElementAbstract) obj;
+			gea = it.next();
 			if (gea.isVertex()) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) obj;
+				bna = (BiologicalNodeAbstract) gea;
 				if (bna.getLabel().equals(label)) {
 					return bna;
 				}
@@ -1135,7 +1136,7 @@ public class Pathway {
 		return set;
 	}
 
-	public HashMap getBiologicalElements() {
+	public HashMap<String, GraphElementAbstract> getBiologicalElements() {
 		return biologicalElements;
 	}
 
@@ -1216,7 +1217,7 @@ public class Pathway {
 	}
 
 	public Vector<BiologicalNodeAbstract> getSelectedNodes() {
-		Vector<BiologicalNodeAbstract> ve = new Vector();
+		Vector<BiologicalNodeAbstract> ve = new Vector<BiologicalNodeAbstract>();
 		Iterator<BiologicalNodeAbstract> it = graph.getVisualizationViewer()
 				.getPickedVertexState().getPicked().iterator();
 		while (it.hasNext()) {
