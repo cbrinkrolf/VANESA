@@ -78,7 +78,8 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	private int alpha = 150;
 	private List<Action> selectShapeActions = new ArrayList();
 	private List<Action> selectColorActions = new ArrayList();
-	private int xOffset = 20, yOffset = 20;
+	private int xOffset = 0;
+	private int yOffset = 0;
 	private boolean showOutline;
 	private RangeShapeEditor rangeShapeEditor;
 	private JMenuItem dropRange;
@@ -305,6 +306,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 						.getVisualizationViewer()
 						.setCursor(
 								Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+				
 			}
 		}
 	}
@@ -366,6 +368,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	private RectangularShape createShape(Point2D p1) {
 		switch (currentRangeType) {
 		case RECTANGLE:
+			System.out.println("drin");
 			return new Rectangle2D.Double(p1.getX(), p1.getY(), 1, 1);
 		case ELLIPSE:
 			return new Ellipse2D.Double(p1.getX(), p1.getY(), 1, 1);
@@ -389,7 +392,30 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	private int inset = 5;
 
 	public void paint(Graphics g) {
-		
+		if(justCreated != null){
+		Color oldColor = g.getColor();
+        g.setColor(fillColor);
+        ((Graphics2D)g).draw(justCreated.shape);
+        g.setColor(oldColor);
+        
+		}
+		/*List<RangeInfo> shapes = this.getShapes();
+		for (RangeInfo info : shapes) {
+			if (info != null) {
+				Color oldColor = g.getColor();
+		        g.setColor(info.fillColor);
+		        ((Graphics2D)g).draw(info.shape);
+		        g.setColor(oldColor);
+			}
+		}*/
+		/*if(justCreated != null){
+		Color oldColor = g.getColor();
+        g.setColor(fillColor);
+        ((Graphics2D)g).draw(justCreated.shape);
+        g.setColor(oldColor);
+		}*/
+		/*
+		//System.out.println("paint");
 		Graphics2D g2d = (Graphics2D) g;
 		Color old = g2d.getColor();
 		// Font oldFont = g2d.getFont();
@@ -458,11 +484,11 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		}
 		g2d.setColor(old);
 		// g2d.setFont(oldFont);
-		g2d.setTransform(oldXform);
+		g2d.setTransform(oldXform);*/
 	}
 
 	public boolean useTransform() {
-		return true;
+		return 	false;
 	}
 
 	public boolean isEnabled() {
@@ -532,7 +558,9 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		//System.out.println(vv.getLocationOnScreen());
 		//return vv.getRenderContext().getMultiLayerTransformer().transform(e.getPoint());
 		//System.out.println("ende");
-		return e.getPoint();
+		return vv.getRenderContext().getMultiLayerTransformer()
+				.inverseTransform(e.getPoint());
+		//return e.getPoint();
 //		return vv.inverseTransform(e.getPoint());
 	}
 
