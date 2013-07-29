@@ -274,10 +274,10 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 		if (checkModifiers(e)) {
 			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer) e
 					.getSource();
-			final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
-					.inverseTransform(e.getPoint());
-			int v = vv.getPickedVertexState().getPicked().size();
-			int edge = vv.getPickedEdgeState().getPicked().size();
+			//final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
+			//		.inverseTransform(e.getPoint());
+			//int v = vv.getPickedVertexState().getPicked().size();
+			//int edge = vv.getPickedEdgeState().getPicked().size();
 			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv
 					.getPickSupport();
 			// if (v > 0) {

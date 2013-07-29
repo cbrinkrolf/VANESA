@@ -188,7 +188,7 @@ public class MyGraph {
 		// visualizationModel.setRelaxerThreadSleepTime(10);
 		vv = new MyVisualizationViewer(visualizationModel, preferredSize,
 				pathway);
-
+	
 		vv.setSize(preferredSize);
 		vv.setMinimumSize(preferredSize);
 
@@ -421,6 +421,7 @@ public class MyGraph {
 
 	public MyGraphZoomScrollPane getGraphVisualization() {
 		pane = new MyGraphZoomScrollPane(vv) {
+			
 
 			/**
 			 * 
