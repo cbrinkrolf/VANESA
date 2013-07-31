@@ -67,6 +67,7 @@ import graph.layouts.gemLayout.GEMLayout;
 import gui.HeatgraphLayer;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
+import gui.MyAnnotationManager;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
 //import edu.uci.ics.jung.graph.Edge;
@@ -133,6 +134,8 @@ public class MyGraph {
 	private final HashMap<BiologicalNodeAbstract, Point2D> nodePositions = new HashMap<BiologicalNodeAbstract, Point2D>();
 	private MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
 	private MyEdgeLabelRenderer elr = new MyEdgeLabelRenderer(Color.blue);
+	
+	private MyAnnotationManager annotationManager;
 
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
 
@@ -265,7 +268,7 @@ public class MyGraph {
 		vlr.setForeground(Color.WHITE);
 
 		pr = vv.getRenderContext();
-
+		annotationManager = new MyAnnotationManager(pr);
 		// vv.getRenderer().getVertexRenderer().
 		// TODO
 
@@ -1249,6 +1252,10 @@ public class MyGraph {
 
 	public MyEdgeStringer getEdgeStringer() {
 		return edgeStringer;
+	}
+	
+	public MyAnnotationManager getAnnotationManager(){
+		return this.annotationManager;
 	}
 
 }

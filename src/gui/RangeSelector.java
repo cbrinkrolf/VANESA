@@ -8,6 +8,8 @@ import database.dawis.AllElementLoader;
 import database.dawis.ForwardConnector;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
+import edu.uci.ics.jung.visualization.annotations.Annotation;
+import edu.uci.ics.jung.visualization.annotations.AnnotationManager;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.images.ImagePath;
@@ -28,10 +30,12 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractAction;
@@ -89,6 +93,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	private RangeSettings settings = new RangeSettings();
 	private GraphInstance graphInstance;
 	private ImagePath imagePath = ImagePath.getInstance();
+	private MyAnnotationManager am;
 
 	public static RangeSelector getInstance() {
 		if (instance == null) {
@@ -159,27 +164,81 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	private List<RangeInfo> getShapes() {
 		return getShapes(GraphInstance.getMyGraph());
 	}
+	
+	public void addRangeInfo(RangeInfo r){
+		this.getShapes().add(r);
+	}
 
 	private List<RangeInfo> getShapes(MyGraph mg) {
-		return this.ranges.get(mg);
+		//return this.ranges.get(mg);
+		
+		MyAnnotationManager am = mg.getAnnotationManager();
+		List<RangeInfo> list = new ArrayList<RangeInfo>();
+		Iterator<MyAnnotation> it = am.getAnnotations().iterator();
+		MyAnnotation an;
+		Annotation a;
+		RangeInfo r;
+		while(it.hasNext()){
+			
+			an = it.next();
+			a = an.getAnnotation();
+			//Annotation a = ((MyAnnotationManager) this.annotationManager).getCurrentAnnotation();
+			//a.setPaint(new Color(255, 255, 255));
+			//System.out.println(an.getShape());
+			r =new RangeInfo(
+					an.getShape(), "bla", (Color)a.getPaint(),
+					(Color)a.getPaint(), (Color)a.getPaint());
+			//RangeSelector.getInstance().addRangeInfo(r);
+			list.add(r);
+		}
+		//System.out.println("g: "+list.size());
+		return list;
+		
 	}
 
 	public void addRangesInMyGraph(MyGraph graph, Map<String, String> attributes) {
 		try {
-			this.getShapes(graph).add(new RangeInfo(attributes, this));
+			RangeInfo r = new RangeInfo(attributes, this);
+			this.getShapes(graph).add(r);
+//			System.out.println(r.shape.getWidth());
+//			System.out.println(r.shape.getHeight());
+//			System.out.println(r.fillColor);
+//			System.out.println(r.shape.getX());
+//			System.out.println(r.shape.getY());
+			graphInstance = new GraphInstance();
+			am = graphInstance.getMyGraph().getAnnotationManager();
+			//am = GraphInstance.getMyGraph().getAnnotationManager();
+			
+			if(r.shape instanceof Ellipse2D){
+//				System.out.println("elli");
+			}else{
+//				System.out.println("rect");
+			}
+			Annotation a2 = new Annotation(r.shape, Annotation.Layer.LOWER, r.fillColor,true, new Point2D.Double(0,0));
+			//Annotation a3 = new Annotation(new Rectangle(60,60), Annotation.Layer.UPPER, new Color(0,255,0), true, new Point2D.Double(0,0));
+			
+			//MyAnnotationManager m = new MyAnnotationManager(GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext());
+			am.add( Annotation.Layer.LOWER, a2);
+//			System.out.println("drin");
+//			System.out.println("am: "+am);
+			graphInstance.getMyGraph().getVisualizationViewer().addPreRenderPaintable(am.getLowerAnnotationPaintable());
+			graphInstance.getMyGraph().getVisualizationViewer().addPostRenderPaintable(am.getUpperAnnotationPaintable());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public List<Map<String, String>> getRangesInMyGraph(MyGraph graph) {
+		
 		List<Map<String, String>> allRanges = new ArrayList();
 		for (RangeInfo info : getShapes(graph)) {
 			try {
 				allRanges.add(info.getProperties());
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
+//		System.out.println("annos: "+allRanges.size());
 		return allRanges;
 	}
 
@@ -271,7 +330,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		}
 	}
 
-	@Override
+	/*@Override
 	public void mouseDragged(MouseEvent e) {
 		super.mouseDragged(e);
 		if (this.enabled) {
@@ -287,10 +346,10 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		}
 		graphInstance = new GraphInstance();
 		graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
-	}
+	}*/
 
 	//TODO koordinaten passen noch nicht so ganz
-	@Override
+	/*@Override
 	public void mousePressed(MouseEvent e) {
 		this.checkContextMenu(e);
 		if (this.enabled) {
@@ -309,9 +368,9 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 				
 			}
 		}
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void mouseReleased(MouseEvent e) {
 
 		if (e.getClickCount() == 2) {
@@ -363,7 +422,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		
 		this.justCreated = null;
 		
-	}
+	}*/
 
 	private RectangularShape createShape(Point2D p1) {
 		switch (currentRangeType) {

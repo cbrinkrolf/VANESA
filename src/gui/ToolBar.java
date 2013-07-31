@@ -174,12 +174,12 @@ public class ToolBar {
 		merge.setActionCommand("merge");
 		merge.addActionListener(toolBarListener);
 
-		ButtonChooser chooser = new ButtonChooser(RangeSelector.getInstance()
+		ButtonChooser chooser = new ButtonChooser(AnnotationPainter.getInstance()
 				.getSelectShapeActions());
 
 		chooser.setToolTipText("Draw compartments");
 
-		ButtonChooser colorChooser = new ButtonChooser(RangeSelector
+		ButtonChooser colorChooser = new ButtonChooser(AnnotationPainter
 				.getInstance().getSelectColorActions());
 
 		colorChooser.setToolTipText("Set compartment colours");
