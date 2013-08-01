@@ -45,7 +45,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 public class AnnotationPainter{
 
 	private static AnnotationPainter instance;
-	public static final int RECTANGLE = 0, ELLIPSE = 1, POLYGON = 3;
+	public static final int RECTANGLE = 0, ELLIPSE = 1, POLYGON = 3, TEXT = 4;
 	private int currentRangeType = RECTANGLE;
 	private boolean enabled;
 	private List<Action> selectShapeActions = new ArrayList();
@@ -91,6 +91,15 @@ public class AnnotationPainter{
 		this.initAction(a, "ellipse.png", "ellipse");
 		this.selectShapeActions.add(a);
 		
+		a = new AbstractAction() {
+
+			public void actionPerformed(ActionEvent e) {
+				setCurrentRangeType(TEXT);
+			}
+		};
+		this.initAction(a, "text.png", "text");
+		this.selectShapeActions.add(a);
+		
 	}
 	
 	private void initColorActions() {
@@ -134,13 +143,13 @@ public class AnnotationPainter{
         	new MyAnnotatingGraphMousePlugin<BiologicalNodeAbstract,BiologicalEdgeAbstract>(rc);
         annotatingPlugin.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         annotatingPlugin.setFill(true);
+        annotatingPlugin.setCurrentType(currentRangeType);
         
-        
-        if(currentRangeType == RECTANGLE){
-        	annotatingPlugin.setRectangularShape(new Rectangle());
-        }else if(currentRangeType == ELLIPSE){
-        	annotatingPlugin.setRectangularShape(new Ellipse2D.Double());
-        }
+//        if(currentRangeType == RECTANGLE){
+//        	annotatingPlugin.setRectangularShape(new Rectangle());
+//        }else if(currentRangeType == ELLIPSE){
+//        	annotatingPlugin.setRectangularShape(new Ellipse2D.Double());
+//        }
         
         // create a GraphMouse for the main view
         // 
@@ -183,6 +192,7 @@ public class AnnotationPainter{
 	private void initAction(Action a, String image, String desc) {
 		
 		// a.putValue(Action.SMALL_ICON, createIcon(imagePath));
+		//System.out.println(imagePath.getPath(image));
 		a.putValue(Action.SMALL_ICON, new ImageIcon(imagePath.getPath(image)));
 		a.putValue(Action.SHORT_DESCRIPTION, desc);
 		
