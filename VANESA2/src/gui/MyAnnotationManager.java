@@ -1,7 +1,12 @@
 package gui;
 
+import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.Collection;
 import java.util.HashMap;
+
+import javax.vecmath.Point2d;
 
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
@@ -34,6 +39,7 @@ public class MyAnnotationManager extends AnnotationManager {
 	
 	public void add(Annotation.Layer layer, Annotation<?> annotation) {
 		super.add(layer, annotation);
+		
 		this.currentAnnotation = annotation;
 	}
 
@@ -49,7 +55,7 @@ public class MyAnnotationManager extends AnnotationManager {
 		annotations.put(annotation.getAnnotation(), annotation);
 		//System.out.println("shape: "+annotation.getShape());
 		this.currentAnnotation = null;
-		//System.out.println("anzahl: " + this.mapping.size());
+		System.out.println("anzahl: " + this.annotations.size());
 		
 	}
 
