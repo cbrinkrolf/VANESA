@@ -10,10 +10,12 @@ public class MyAnnotation{
 
 	private RectangularShape shape;
 	private Annotation a;
+	private String text;
 	
-	public MyAnnotation(Annotation annotation, RectangularShape shape){
+	public MyAnnotation(Annotation annotation, RectangularShape shape, String text){
 		this.a = annotation;
 		this.shape = shape;
+		this.text = text;
 	}
 	
 	public RectangularShape getShape(){
@@ -23,6 +25,10 @@ public class MyAnnotation{
 	
 	public Annotation getAnnotation(){
 		return this.a;
+	}
+	
+	public String getText(){
+		return this.text;
 	}
 
 }
