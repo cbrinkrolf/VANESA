@@ -31,8 +31,6 @@ public class InfoWindow {
 				+ writeLine("Minimum/Maximum Degree:", connectnes.getMinDegree()+ "/"+connectnes.getMaxDegree())
 				+ writeLine("Average Node Degree:", connectnes.getAvgNodeDegree()+ "")
 				+ writeLine("Global Matching Index:", connectnes.getGlobalMatchingIndex()+ "")
-				//+ writeLine("Number of All Cliques:", connectnes.numberofCliques() + "")
-				//+ writeLine("Graph is Planar:", connectnes.isGraphPlanar()+ "")
 				+ tableEnd
 				+ "</html>";
 

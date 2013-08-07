@@ -3,7 +3,6 @@ package graph.algorithms;
 import graph.GraphContainer;
 import graph.ContainerSingelton;
 import graph.GraphInstance;
-import graph.algorithms.gui.GraphColorizer;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
@@ -30,7 +29,7 @@ public class Connectness extends Object {
 	Pathway pw;
 	MyGraph mg;
 	
-	int from, to;
+	BiologicalNodeAbstract from, to;
 
 	int nodes = 0;
 	int edges = 0;
@@ -46,8 +45,8 @@ public class Connectness extends Object {
 	// lists
 	LinkedList<Integer> nodedegrees = new LinkedList<Integer>();
 	LinkedList<Integer> nodedegreessingle = new LinkedList<Integer>();
-	Hashtable<Integer, Integer> nodeassings = new Hashtable<Integer, Integer>();
-	Hashtable<Integer, Integer> nodeassignsback = new Hashtable<Integer,Integer>();
+	Hashtable<BiologicalNodeAbstract, Integer> nodeassings = new Hashtable<BiologicalNodeAbstract, Integer>();
+	Hashtable<Integer, BiologicalNodeAbstract> nodeassignsback = new Hashtable<Integer,BiologicalNodeAbstract>();
 	Hashtable<Integer, Integer> nodedegreetable = new Hashtable<Integer, Integer>();	
 	
 	private int nodeincrement = 0;
@@ -56,8 +55,8 @@ public class Connectness extends Object {
 		pw = con.getPathway(w.getCurrentPathway());
 		mg = pw.getGraph();
 		
-		nodes = mg.getAllVertices().size();//pw.countNodes();
-		edges = mg.getAllEdges().size();//pw.countEdges();
+		nodes = mg.getAllVertices().size();
+		edges = mg.getAllEdges().size();
 
 		nodei = new int[edges + 1];
 		nodej = new int[edges + 1];
@@ -68,11 +67,11 @@ public class Connectness extends Object {
 		Iterator<BiologicalNodeAbstract> it = mg.getAllVertices().iterator();
 		while(it.hasNext()){
 			BiologicalNodeAbstract bna = it.next();	
-			reassignNode(bna.getID());			
+			reassignNodeBNA(bna);			
 		}
 	
 		fillAdjacencyData();
-		//countNodeDegrees();
+		countNodeDegrees();
 	}
 
 	
@@ -111,32 +110,34 @@ public class Connectness extends Object {
 		return pw;
 	}
 
-	private void reassignNode(int nodeBNAid) {
-		if (!nodeassings.containsKey(nodeBNAid)) {
-			nodeassings.put(nodeBNAid, nodeincrement);
-			nodeassignsback.put(nodeincrement,nodeBNAid);
-			System.out.println(nodeBNAid+" assigned to "+nodeincrement);
+	private void reassignNodeBNA(BiologicalNodeAbstract nodeBNA) {
+		if (!nodeassings.containsKey(nodeBNA)) {
+			nodeassings.put(nodeBNA, nodeincrement);
+			nodeassignsback.put(nodeincrement,nodeBNA);
+			System.out.println(nodeBNA.getID()+" assigned to "+nodeincrement);
 			nodeincrement++;
 		}
 	}
 
+
 	private void fillAdjacencyData() {
 		
 
+		int fromid, toid;
 		Iterator<BiologicalEdgeAbstract> it = mg.getAllEdges().iterator();
 		while (it.hasNext()) {
 			
 			//get Connected Nodes
 			BiologicalEdgeAbstract bne = (BiologicalEdgeAbstract) it.next();
-			from = ((BiologicalNodeAbstract) bne.getFrom()).getID();
-			to = ((BiologicalNodeAbstract) bne.getTo()).getID();
+			from = ((BiologicalNodeAbstract) bne.getFrom());
+			to = ((BiologicalNodeAbstract) bne.getTo());
 			
-			from = nodeassings.get(from);
-			to = nodeassings.get(to);
+			fromid = nodeassings.get(from);
+			toid = nodeassings.get(to);
 				
 			//TODO: EDGES undirected (so far)
-			adjacency[from][to] = 1;
-			adjacency[to][from] = 1;
+			adjacency[fromid][toid] = 1;
+			adjacency[toid][fromid] = 1;
 		}
 
 		//adjacency arrays
@@ -168,16 +169,7 @@ public class Connectness extends Object {
 			return false;
 
 	}
-	
-	@Deprecated
-	public Integer numberofCliques() {
-
-		int clique[][] = new int[nodes][nodes + 1];
-		GraphTheoryAlgorithms.allCliques(nodes, edges, nodei, nodej, clique);
-
-		return clique[0][0];
-	}
-
+		
 	public boolean isGraphPlanar() {
 
 		return GraphTheoryAlgorithms.planarityTesting(nodes, edges, nodei,
@@ -255,35 +247,35 @@ public class Connectness extends Object {
 		return avgneighdegree /= (nodes * 1.0f);
 	}
 	
-	public Hashtable<Integer,Double> averageNeighbourDegreeTable() {
-		Hashtable<Integer,Double> ht = new Hashtable<Integer,Double>(nodes);
-				
-		double oneavgdegree = 0.0f;
-		int verticedegrees[] = new int[nodes], degree = 0;
-		// Count Vertice Degrees and store them in an Array
-		for (int i = 0; i < nodes; i++) {
-			for (int j = 0; j < nodes; j++) {
-				if (adjacency[i][j] == 1)
-					degree++;
-			}
-			verticedegrees[i] = degree;
-			degree = 0;
-		}
-		// Add Neighbour Degrees and divide
-		for (int i = 0; i < nodes; i++) {
-			for (int j = 0; j < nodes; j++) {
-				if (adjacency[i][j] == 1)
-					oneavgdegree += verticedegrees[j];
-			}
-			if (verticedegrees[i] != 0)// if current node not connected
-				oneavgdegree += (oneavgdegree / verticedegrees[i]);
-			
-			ht.put(nodeassignsback.get(i), oneavgdegree);
-			oneavgdegree = 0f;
-		}
-		
-		return ht;
-	}
+//	public Hashtable<Integer,Double> averageNeighbourDegreeTable() {
+//		Hashtable<Integer,Double> ht = new Hashtable<Integer,Double>(nodes);
+//				
+//		double oneavgdegree = 0.0f;
+//		int verticedegrees[] = new int[nodes], degree = 0;
+//		// Count Vertice Degrees and store them in an Array
+//		for (int i = 0; i < nodes; i++) {
+//			for (int j = 0; j < nodes; j++) {
+//				if (adjacency[i][j] == 1)
+//					degree++;
+//			}
+//			verticedegrees[i] = degree;
+//			degree = 0;
+//		}
+//		// Add Neighbour Degrees and divide
+//		for (int i = 0; i < nodes; i++) {
+//			for (int j = 0; j < nodes; j++) {
+//				if (adjacency[i][j] == 1)
+//					oneavgdegree += verticedegrees[j];
+//			}
+//			if (verticedegrees[i] != 0)// if current node not connected
+//				oneavgdegree += (oneavgdegree / verticedegrees[i]);
+//			
+//			ht.put(nodeassignsback.get(i), oneavgdegree);
+//			oneavgdegree = 0f;
+//		}
+//		
+//		return ht;
+//	}
 
 	public int maxPathLength() {
 		// With Deep first search on all nodes
