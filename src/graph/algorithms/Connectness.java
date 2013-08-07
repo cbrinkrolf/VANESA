@@ -3,9 +3,12 @@ package graph.algorithms;
 import graph.GraphContainer;
 import graph.ContainerSingelton;
 import graph.GraphInstance;
+import graph.algorithms.gui.GraphColorizer;
+import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
 
+import java.awt.Color;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -17,13 +20,17 @@ import java.util.Set;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Connectness extends Object {
 
 	MainWindow w = MainWindowSingelton.getInstance();
 	GraphContainer con = ContainerSingelton.getInstance();
 	GraphInstance graphInstance = new GraphInstance();
-	Pathway p;
+	Pathway pw;
+	MyGraph mg;
+	
+	int from, to;
 
 	int nodes = 0;
 	int edges = 0;
@@ -39,99 +46,100 @@ public class Connectness extends Object {
 	// lists
 	LinkedList<Integer> nodedegrees = new LinkedList<Integer>();
 	LinkedList<Integer> nodedegreessingle = new LinkedList<Integer>();
-	Hashtable<Integer, Integer> nodedegreetable = new Hashtable<Integer, Integer>();;
 	Hashtable<Integer, Integer> nodeassings = new Hashtable<Integer, Integer>();
+	Hashtable<Integer, Integer> nodeassignsback = new Hashtable<Integer,Integer>();
+	Hashtable<Integer, Integer> nodedegreetable = new Hashtable<Integer, Integer>();	
+	
 	private int nodeincrement = 0;
 
 	public Connectness() {
-		p = con.getPathway(w.getCurrentPathway());
-
-		nodes = p.countNodes();
-		edges = p.countEdges();
-
-		nodei = new int[edges + 1];
-		nodej = new int[edges + 1];
-
-		adjacency = new int[nodes][nodes];
-
-		Iterator it = p.getAllEdges().iterator();
-		while (it.hasNext()) {
-			BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) it.next();
-
-			String from = (bea.getFrom().toString())
-					.substring(1);
-
-			String to = (bea.getTo().toString())
-					.substring(1);
-			//System.out.println(from + "->" + to);
-			int node_from = bea.getFrom().getID(); //Integer.valueOf(from).intValue() + 1;
-			int node_to = bea.getTo().getID(); //Integer.valueOf(to).intValue() + 1;
-
-			reassignNode(node_from);
-			reassignNode(node_to);
-
-		}
-		fillAdjacencyData();
-		countNodeDegrees();
-	}
-
-	public Connectness(String pathwayname) {
-		p = con.getPathway(pathwayname);
-
-		nodes = p.countNodes();
-		edges = p.countEdges();
+		pw = con.getPathway(w.getCurrentPathway());
+		mg = pw.getGraph();
+		
+		nodes = mg.getAllVertices().size();//pw.countNodes();
+		edges = mg.getAllEdges().size();//pw.countEdges();
 
 		nodei = new int[edges + 1];
 		nodej = new int[edges + 1];
 
 		adjacency = new int[nodes][nodes];
-
-		Iterator it = p.getAllEdges().iterator();
-		while (it.hasNext()) {
-			BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) it.next();
-
-			String from = (bea.getFrom().toString())
-					.substring(1);
-
-			String to = (bea.getTo().toString())
-					.substring(1);
-			// System.out.println(from+"->"+to);
-			int node_from = bea.getFrom().getID();//Integer.valueOf(from).intValue() + 1;
-			int node_to = bea.getTo().getID();//Integer.valueOf(to).intValue() + 1;
-
-			reassignNode(node_from);
-			reassignNode(node_to);
-
+		
+		//Induce mapping to local adjacency matrix and data structures (BNA.ID)
+		Iterator<BiologicalNodeAbstract> it = mg.getAllVertices().iterator();
+		while(it.hasNext()){
+			BiologicalNodeAbstract bna = it.next();	
+			reassignNode(bna.getID());			
 		}
+	
 		fillAdjacencyData();
-		countNodeDegrees();
+		//countNodeDegrees();
 	}
 
-	private void reassignNode(int node) {
-		if (!nodeassings.containsKey(node)) {
-			nodeassings.put(node, nodeincrement);
+	
+// TODO: CALL WITH PATHWAY NAME
+//	public Connectness(String pathwayname) {
+//		pw = con.getPathway(pathwayname);
+//
+//		nodes = pw.countNodes();
+//		edges = pw.countEdges();
+//
+//		nodei = new int[edges + 1];
+//		nodej = new int[edges + 1];
+//
+//		adjacency = new int[nodes][nodes];
+//		
+//		//Induce mapping to local adjacency matrix and data structures (BNA.ID)
+//		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+//		while(it.hasNext()){
+//			BiologicalNodeAbstract bna = it.next();			
+//			reassignNode(bna.getID());			
+//		}
+//
+//		fillAdjacencyData();
+//		countNodeDegrees();
+//	}
+	
+	public int getNodeDegree(int nodeID){
+		return nodedegreetable.get(nodeID);
+	}
+	
+	public int getNodeAssignment(int bnaID){
+		return nodeassings.get(bnaID);
+	}
+	
+	public Pathway getPathway(){
+		return pw;
+	}
+
+	private void reassignNode(int nodeBNAid) {
+		if (!nodeassings.containsKey(nodeBNAid)) {
+			nodeassings.put(nodeBNAid, nodeincrement);
+			nodeassignsback.put(nodeincrement,nodeBNAid);
+			System.out.println(nodeBNAid+" assigned to "+nodeincrement);
 			nodeincrement++;
 		}
 	}
 
 	private void fillAdjacencyData() {
+		
 
-		Iterator it = p.getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> it = mg.getAllEdges().iterator();
 		while (it.hasNext()) {
-			BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) it.next();
-			String from = (bea.getFrom().toString())
-					.substring(1);
-
-			String to = (bea.getTo().toString())
-					.substring(1);
-			int node_from = nodeassings.get(bea.getFrom().getID());//Integer.valueOf(from).intValue() + 1);
-			int node_to = nodeassings.get(bea.getTo().getID());//Integer.valueOf(to).intValue() + 1);
-
-			adjacency[node_from][node_to] = 1;
-			adjacency[node_to][node_from] = 1;
-			// System.out.println("assigned 1 to ("+node_from+","+node_to+")" );
+			
+			//get Connected Nodes
+			BiologicalEdgeAbstract bne = (BiologicalEdgeAbstract) it.next();
+			from = ((BiologicalNodeAbstract) bne.getFrom()).getID();
+			to = ((BiologicalNodeAbstract) bne.getTo()).getID();
+			
+			from = nodeassings.get(from);
+			to = nodeassings.get(to);
+				
+			//TODO: EDGES undirected (so far)
+			adjacency[from][to] = 1;
+			adjacency[to][from] = 1;
 		}
 
+		//adjacency arrays
 		int nodecounter = 1;
 		for (int i = 0; i < nodes; i++) {
 			for (int j = i; j < nodes; j++) {
@@ -153,16 +161,15 @@ public class Connectness extends Object {
 	}
 
 	public boolean isGraphConnected() {
-		if(nodes == 0){
-			return true;
-		}
+
 		if (GraphTheoryAlgorithms.connected(nodes, edges, nodei, nodej))
 			return true;
 		else
 			return false;
 
 	}
-
+	
+	@Deprecated
 	public Integer numberofCliques() {
 
 		int clique[][] = new int[nodes][nodes + 1];
@@ -247,6 +254,36 @@ public class Connectness extends Object {
 		// Divide by N (Number of Nodes)
 		return avgneighdegree /= (nodes * 1.0f);
 	}
+	
+	public Hashtable<Integer,Double> averageNeighbourDegreeTable() {
+		Hashtable<Integer,Double> ht = new Hashtable<Integer,Double>(nodes);
+				
+		double oneavgdegree = 0.0f;
+		int verticedegrees[] = new int[nodes], degree = 0;
+		// Count Vertice Degrees and store them in an Array
+		for (int i = 0; i < nodes; i++) {
+			for (int j = 0; j < nodes; j++) {
+				if (adjacency[i][j] == 1)
+					degree++;
+			}
+			verticedegrees[i] = degree;
+			degree = 0;
+		}
+		// Add Neighbour Degrees and divide
+		for (int i = 0; i < nodes; i++) {
+			for (int j = 0; j < nodes; j++) {
+				if (adjacency[i][j] == 1)
+					oneavgdegree += verticedegrees[j];
+			}
+			if (verticedegrees[i] != 0)// if current node not connected
+				oneavgdegree += (oneavgdegree / verticedegrees[i]);
+			
+			ht.put(nodeassignsback.get(i), oneavgdegree);
+			oneavgdegree = 0f;
+		}
+		
+		return ht;
+	}
 
 	public int maxPathLength() {
 		// With Deep first search on all nodes
@@ -276,26 +313,17 @@ public class Connectness extends Object {
 	public double getCentralization() {
 		// Centralization
 		// n/n-2 * ( max(k)/n-1 - density )
-		if(nodes == 0){
-			return 0.0;
-		}
 		return ((nodes / (nodes - 2) * 1.0f))
 				* (((Collections.max(nodedegrees)) / ((nodes - 1) * 1.0f)) - getDensity());
 	}
 
 	public int getMinDegree() {
 		// Minimum Node degree
-		if(nodes == 0){
-			return 0;
-		}
 		return Collections.min(nodedegrees);
 	}
 
 	public int getMaxDegree() {
 		// Maximum Node degree
-		if(nodes == 0){
-			return 0;
-		}
 		return Collections.max(nodedegrees);
 	}
 
@@ -330,8 +358,8 @@ public class Connectness extends Object {
 						nodeset2.add(k);
 				}
 				// count similars
-				for (Iterator ns1 = nodeset1.iterator(); ns1.hasNext();) {
-					int s = (Integer) ns1.next();
+				for (Iterator<Integer> ns1 = nodeset1.iterator(); ns1.hasNext();) {
+					int s = ns1.next();
 					if (nodeset2.contains(s))
 						similarnodes++;
 				}
@@ -376,5 +404,17 @@ public class Connectness extends Object {
 				deepfirst(nodei[i], depth + 1);
 			}
 		}
+	}
+
+
+	public int getNodeCount() {
+		
+		return nodes;
+	}
+
+
+	public int getEdgeCount() {
+
+		return edges;
 	}
 }
