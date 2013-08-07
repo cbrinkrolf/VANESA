@@ -1,12 +1,8 @@
 package gui;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
 import graph.algorithms.Connectness;
 
 import javax.swing.JOptionPane;
-
-import biologicalElements.Pathway;
 
 public class InfoWindow {
 
@@ -15,19 +11,16 @@ public class InfoWindow {
 	public InfoWindow() {
 
 		MainWindow w = MainWindowSingelton.getInstance();
-		GraphContainer con = ContainerSingelton.getInstance();
-		//GraphInstance graphInstance = new GraphInstance();
-		Pathway p = con.getPathway(w.getCurrentPathway());
 
 		String tableStart = "<table  rules=\"rows\" style=\"border-collapse:separate; border-spacing:0; width:100%; border-top:1px solid #eaeaea;\">";
 		String tableEnd = "</table>";
 
 		Connectness connectnes = new Connectness();
-	
+		
         String instructions = "<html>"
 				+ tableStart
-				+ writeLine("Number of Nodes:", p.countNodes() + "")
-				+ writeLine("Number of Edges:", p.countEdges() + "")
+				+ writeLine("Number of Nodes:", connectnes.getNodeCount() + "")
+				+ writeLine("Number of Edges:", connectnes.getEdgeCount() + "")
 				+ writeLine("Is input Graph Connected:", connectnes.isGraphConnected() + "")
 				+ writeLine("Average of shortest paths:", connectnes.averageShortestPathLength()+ "")
 				+ writeLine("Number of Node degrees:", connectnes.countNodeDegrees()+ "")
