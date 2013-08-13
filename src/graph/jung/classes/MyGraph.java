@@ -60,6 +60,7 @@ import graph.jung.graphDrawing.MyEdgeStrokeHighlighting;
 import graph.jung.graphDrawing.MyVertexDrawPaintFunction;
 import graph.jung.graphDrawing.MyVertexFillPaintFunction;
 import graph.jung.graphDrawing.MyVertexLabelRenderer;
+import graph.jung.graphDrawing.MyVertexShapeTransformer;
 import graph.jung.graphDrawing.MyVertexStringer;
 import graph.jung.graphDrawing.MyVertexStrokeHighlighting;
 import graph.layouts.GraphCenter;
@@ -115,6 +116,7 @@ public class MyGraph {
 	private RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> pr_compare;
 	private final MyVertexStringer vertexStringer;
 	private final MyEdgeStringer edgeStringer;
+	private final MyVertexShapeTransformer vertexShapeTransformer;
 	// private VertexShapeSize vssa;
 	protected MyVertexStrokeHighlighting vsh;
 	protected MyVertexDrawPaintFunction vdpf;
@@ -234,6 +236,7 @@ public class MyGraph {
 		edpf = new MyEdgeDrawPaintFunction(stateV, stateE);
 		efpf = new MyEdgeFillPaintFunction(stateV, stateE);
 		vertexStringer = new MyVertexStringer();
+		vertexShapeTransformer = new MyVertexShapeTransformer();
 		edgeStringer = new MyEdgeStringer(pathway);
 		esf = new MyEdgeShapeFunction();
 
@@ -274,19 +277,10 @@ public class MyGraph {
 
 		// pr.setVertexStringer(vertexStringer);
 
-		Transformer<BiologicalNodeAbstract, Shape> vertexPaint = new Transformer<BiologicalNodeAbstract, Shape>() {
-			@Override
-			public Shape transform(BiologicalNodeAbstract bna) {
-				// System.out.println(bna.getClass().getName());
-				// System.out.println(bna.getShape());
-				return bna.getShape();
-			}
-		};
-
 		pr.setVertexStrokeTransformer(vsh);
 		pr.setVertexLabelTransformer(vertexStringer);
 
-		pr.setVertexShapeTransformer(vertexPaint);
+		pr.setVertexShapeTransformer(vertexShapeTransformer);
 
 		pr.setEdgeLabelTransformer(this.edgeStringer);
 
@@ -308,7 +302,7 @@ public class MyGraph {
 		satellitePr.setVertexStrokeTransformer(vsh);
 		satellitePr.setVertexLabelTransformer(vertexStringer);
 
-		satellitePr.setVertexShapeTransformer(vertexPaint);
+		satellitePr.setVertexShapeTransformer(vertexShapeTransformer);
 		satellitePr.setEdgeLabelTransformer(this.edgeStringer);
 		satellitePr.setVertexDrawPaintTransformer(vdpf);
 		satellitePr.setVertexFillPaintTransformer(vfpf);
