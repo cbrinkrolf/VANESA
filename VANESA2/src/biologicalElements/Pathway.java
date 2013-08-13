@@ -478,6 +478,8 @@ public class Pathway {
 			nodeDescription.put(bna.getBiologicalElement(), temp);
 		}
 		bna.setID();
+		//System.out.println(this.graph.getAllVertices().size());
+		//bna.setNodesize(this.graph.getAllVertices().size());
 		return bna;
 	}
 
