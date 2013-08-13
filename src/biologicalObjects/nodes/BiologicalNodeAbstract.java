@@ -17,7 +17,7 @@ public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 	private DAWISNode dawisNode;
 	private String compartment = Elementdeclerations.cytoplasma;
 	//private HashMap<Integer, Integer> values = new HashMap<Integer, Integer>();
-	private int Nodesize = 20;
+	private int nodesize = 20;
 	private Vector<CollectorNode> collectorNodes = new Vector<CollectorNode>();
 	private BiologicalNodeAbstract parentNode;
 	// contains information on microarray data for this element
@@ -219,11 +219,11 @@ public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 	}
 
 	public int getNodesize() {
-		return Nodesize;
+		return nodesize;
 	}
 
 	public void setNodesize(int nodesize) {
-		Nodesize = nodesize;
+		this.nodesize = nodesize;
 	}
 
 	public void setOrganism(String org) {
