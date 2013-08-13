@@ -10,14 +10,14 @@ import java.util.Iterator;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import edu.uci.ics.jung.graph.Edge;
+//import edu.uci.ics.jung.graph.Edge;
 
 public class GraphTextWriter {
 
 	public GraphTextWriter(File file, Pathway pw) {
 
-		HashSet nodes = new HashSet();
-		int counter = 0;
+		HashSet<String> nodes = new HashSet<String>();
+		//int counter = 0;
 
 		try {
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
@@ -25,29 +25,26 @@ public class GraphTextWriter {
 			StringBuffer buff = new StringBuffer();
 			buff.append("#Nodes \n");
 			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
-
+			BiologicalNodeAbstract bna;
 			while (it.hasNext()) {
-				BiologicalNodeAbstract bna = it.next();
+				bna = it.next();
 				if (!nodes.contains(bna.getLabel() + " # " + bna.getName())) {
 					buff.append(bna.getLabel() + " # " + bna.getName() + " \n");
 					nodes.add(bna.getLabel() + " # " + bna.getName());
-					counter++;
+					//counter++;
 				}
 			}
 			
 			buff.append("#Edges \n");
-			
-			Iterator it2 = pw.getAllEdges().iterator();
+			BiologicalEdgeAbstract bioEdge;
+			Iterator<BiologicalEdgeAbstract> it2 = pw.getAllEdges().iterator();
 			while (it2.hasNext()) {
-				BiologicalEdgeAbstract bioEdge = (BiologicalEdgeAbstract) it2.next();
-				Edge edge = bioEdge.getEdge();
+				bioEdge = it2.next();
+				//Edge edge = bioEdge.getEdge();
 				boolean isdirected = bioEdge.isDirected();
-				String from = ((BiologicalNodeAbstract) pw
-						.getNodeByVertexID(edge.getEndpoints().getFirst()
-								.toString())).getLabel();
+				String from = bioEdge.getFrom().getLabel();
 
-				String to = ((BiologicalNodeAbstract) pw.getNodeByVertexID(edge
-						.getEndpoints().getSecond().toString())).getLabel();
+				String to = bioEdge.getTo().getLabel();
 				if (isdirected) {
 					buff.append(from + ";" + to + ";" + "true" + " \n");
 				}
