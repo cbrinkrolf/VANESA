@@ -11,7 +11,7 @@ public class MyVertexShapeTransformer implements Transformer<BiologicalNodeAbstr
 
 	@Override
 	public Shape transform(BiologicalNodeAbstract bna) {
-		return AffineTransform.getScaleInstance(bna.getNodesize()/20, bna.getNodesize()/20).createTransformedShape(bna.getShape());
+		return AffineTransform.getScaleInstance(bna.getNodesize(), bna.getNodesize()).createTransformedShape(bna.getShape());
 		//return bna.getShape();
 	}
 
