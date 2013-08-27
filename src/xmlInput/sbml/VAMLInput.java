@@ -126,7 +126,7 @@ public class VAMLInput {
 			// pw.setTitle(file.getName());
 			// }
 			if (element.getLocalName().equals("isPetriNet")) {
-				//System.out.println(element.getText());
+				// System.out.println(element.getText());
 				pw.setPetriNet(Boolean.parseBoolean(element.getText()));
 			} else if (element.getLocalName().equals("organism")) {
 				pw.setOrganism(element.getText());
@@ -170,12 +170,11 @@ public class VAMLInput {
 	}
 
 	private void addEdge(Pathway pw, OMElement edgeElement) {
-		
-		
+
 		Iterator<OMElement> it = edgeElement.getChildren();
 
 		String elementSpecification = "";
-		Integer id =0;
+		Integer id = 0;
 		String name = "";
 		String label = "";
 		Integer from = 0;
@@ -193,6 +192,9 @@ public class VAMLInput {
 
 		// String sequence = "";
 
+		
+		
+		
 		while (it.hasNext()) {
 
 			OMElement element = it.next();
@@ -200,13 +202,31 @@ public class VAMLInput {
 			if (element.getLocalName().equals("elementSpecification")) {
 				elementSpecification = element.getText();
 			} else if (element.getLocalName().equals("id")) {
-//				System.out.println("ID gefunden_____"+element.getText());
-				id = Integer.parseInt(element.getText());
-//				System.out.println("idddd "+id);
-			}else if (element.getLocalName().equals("from")) {
-				from = Integer.parseInt(element.getText());
+				// System.out.println("ID gefunden_____"+element.getText());
+				
+				
+				try {
+					id = Integer.parseInt(element.getText());
+				} catch (NumberFormatException e) {
+					id = Integer.parseInt(element.getText().substring(1));
+				}
+				
+				// System.out.println("idddd "+id);
+			} else if (element.getLocalName().equals("from")) {
+				
+				try {
+					from = Integer.parseInt(element.getText());
+				} catch (NumberFormatException e) {
+					from = Integer.parseInt(element.getText().substring(1));
+				}
 			} else if (element.getLocalName().equals("to")) {
-				to = Integer.parseInt(element.getText());
+				//to = Integer.parseInt(element.getText());
+				
+				try {
+					to = Integer.parseInt(element.getText());
+				} catch (NumberFormatException e) {
+					to = Integer.parseInt(element.getText().substring(1));
+				}
 			} else if (element.getLocalName().equals("comment")) {
 				comment = element.getText();
 			} else if (element.getLocalName().equals("label")) {
@@ -303,7 +323,7 @@ public class VAMLInput {
 		}
 
 		if (mapping.containsKey(from) && mapping.containsKey(to)) {
-			
+
 			boolean isDirected = false;
 			if (directed.equals("true")) {
 				isDirected = true;
@@ -319,7 +339,7 @@ public class VAMLInput {
 
 				bea = new PhysicalInteraction(label, name, mapping.get(from),
 						mapping.get(to));
-			}else if (elementSpecification
+			} else if (elementSpecification
 					.equals(Elementdeclerations.hiddenCompoundEdge)) {
 
 				bea = new HiddenCompound(label, name, mapping.get(from),
@@ -434,13 +454,14 @@ public class VAMLInput {
 
 			else {
 				System.err.println("Try to instantiate an abstract Edge!!!");
-				bea = new ReactionEdge(label, name, mapping.get(from), mapping.get(to));
-				
-				//bea = new BiologicalEdgeAbstract(label, name,
-					//	mapping.get(from), mapping.get(to));
+				bea = new ReactionEdge(label, name, mapping.get(from),
+						mapping.get(to));
+
+				// bea = new BiologicalEdgeAbstract(label, name,
+				// mapping.get(from), mapping.get(to));
 
 			}
-			//System.out.println("spech: "+elementSpecification);
+			// System.out.println("spech: "+elementSpecification);
 			bea.setID(id);
 			bea.setDirected(isDirected);
 			bea.setColor(color);
@@ -460,10 +481,10 @@ public class VAMLInput {
 				bea.setReactionPairEdge(rpEdge);
 				bea.hasReactionPairEdge(true);
 			}
-			
-			//System.out.println("vor: "+bea.getID());
-			//System.out.println(elementSpecification);
-//			System.out.println("edge_id: "+bea.getID());
+
+			// System.out.println("vor: "+bea.getID());
+			// System.out.println(elementSpecification);
+			// System.out.println("edge_id: "+bea.getID());
 			pw.addEdge(bea);
 		}
 
@@ -632,8 +653,14 @@ public class VAMLInput {
 	private void addNetworkNode(Pathway pw, OMElement node) {
 
 		Iterator<OMElement> it = node.getChildren();
-
-		Integer vertexID = Integer.parseInt(node.getAttributeValue(new QName("id")));
+		Integer vertexID = 0;
+		try {
+			vertexID = Integer
+					.parseInt(node.getAttributeValue(new QName("id")));
+		} catch (NumberFormatException e) {
+			vertexID = Integer.parseInt(node.getAttributeValue(new QName("id"))
+					.substring(1));
+		}
 
 		String biologicalElement = "";
 		String label = "";
@@ -814,31 +841,32 @@ public class VAMLInput {
 			String tokenMin = node.getAttributeValue(new QName("tokenMin"));
 			String tokenMax = node.getAttributeValue(new QName("tokenMax"));
 			String tokenStart = node.getAttributeValue(new QName("tokenStart"));
-			((Place)bna).setToken(Double.parseDouble(token));
-			((Place)bna).setTokenMin(Double.parseDouble(tokenMin));
-			((Place)bna).setTokenMax(Double.parseDouble(tokenMax));
-			((Place)bna).setTokenStart(Double.parseDouble(tokenStart));
-			((Place)bna).setDiscrete(true);
+			((Place) bna).setToken(Double.parseDouble(token));
+			((Place) bna).setTokenMin(Double.parseDouble(tokenMin));
+			((Place) bna).setTokenMax(Double.parseDouble(tokenMax));
+			((Place) bna).setTokenStart(Double.parseDouble(tokenStart));
+			((Place) bna).setDiscrete(true);
 		} else if (biologicalElement.equals("Continuous Place")) {
 			bna = new Place(label, name, 1.0, false);
 			String token = node.getAttributeValue(new QName("token"));
 			String tokenMin = node.getAttributeValue(new QName("tokenMin"));
 			String tokenMax = node.getAttributeValue(new QName("tokenMax"));
 			String tokenStart = node.getAttributeValue(new QName("tokenStart"));
-			((Place)bna).setToken(Double.parseDouble(token));
-			((Place)bna).setTokenMin(Double.parseDouble(tokenMin));
-			((Place)bna).setTokenMax(Double.parseDouble(tokenMax));
-			((Place)bna).setTokenStart(Double.parseDouble(tokenStart));
-			((Place)bna).setDiscrete(false);
+			((Place) bna).setToken(Double.parseDouble(token));
+			((Place) bna).setTokenMin(Double.parseDouble(tokenMin));
+			((Place) bna).setTokenMax(Double.parseDouble(tokenMax));
+			((Place) bna).setTokenStart(Double.parseDouble(tokenStart));
+			((Place) bna).setDiscrete(false);
 		} else if (biologicalElement.equals("Discrete Transition")) {
 			bna = new DiscreteTransition(label, name);
 			String delay = node.getAttributeValue(new QName("delay"));
-			((DiscreteTransition)bna).setDelay(Double.parseDouble(delay));
+			((DiscreteTransition) bna).setDelay(Double.parseDouble(delay));
 		} else if (biologicalElement.equals("Continuous Transition")) {
 			bna = new ContinuousTransition(label, name);
 		} else if (biologicalElement.equals("Stochastic Transition")) {
 			bna = new StochasticTransition(label, name);
-			((StochasticTransition)bna).setDistribution(node.getAttributeValue(new QName("distribution")));
+			((StochasticTransition) bna).setDistribution(node
+					.getAttributeValue(new QName("distribution")));
 		}
 
 		bna.setCompartment(location);
@@ -861,19 +889,19 @@ public class VAMLInput {
 			bna.setDAWISNode(dawisNode);
 			bna.setDB(dawisNode.getDB());
 		}
-		
+
 		mapping.put(vertexID, bna);
 
 		if (bna instanceof Protein) {
 			Protein protein = (Protein) bna;
 			protein.setAaSequence(aaSequence);
 		}
-		//bna.setID(vertexID);
+		// bna.setID(vertexID);
 		Point2D.Double p = new Point2D.Double(x_coord, y_coord);
-		//System.out.println("node_id "+bna.getID());
+		// System.out.println("node_id "+bna.getID());
 		pw.addVertex(bna, p);
 
-//		pw.getGraph().moveVertex(bna.getVertex(), x_coord, y_coord);
+		// pw.getGraph().moveVertex(bna.getVertex(), x_coord, y_coord);
 	}
 
 	private DAWISNode addDawisNode(OMElement dawisElement) {
@@ -1294,15 +1322,15 @@ public class VAMLInput {
 		}
 
 		Iterator it = pw.getGraph().getAllEdges().iterator();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			BiologicalEdgeAbstract b = (BiologicalEdgeAbstract) it.next();
-			//System.out.println("E: "+b.getID());
+			// System.out.println("E: "+b.getID());
 		}
-		
+
 		Iterator it2 = pw.getGraph().getAllVertices().iterator();
-		while(it2.hasNext()){
+		while (it2.hasNext()) {
 			BiologicalNodeAbstract b = (BiologicalNodeAbstract) it2.next();
-			//System.out.println("V "+b.getID());
+			// System.out.println("V "+b.getID());
 		}
 		pw.getGraph().unlockVertices();
 		pw.getGraph().restartVisualizationModel();
