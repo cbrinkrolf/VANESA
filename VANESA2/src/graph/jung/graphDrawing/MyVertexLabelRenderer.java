@@ -51,6 +51,7 @@ public class MyVertexLabelRenderer extends JLabel implements VertexLabelRenderer
 		this.rotateEdgeLabels = rotateEdgeLabels;
 		setOpaque(true);
 		setBorder(noFocusBorder);
+		
 	}
 
 	/**

@@ -54,7 +54,7 @@ public class MyPluggableRenderer extends PluggableRenderContext{
         AffineTransform xform = AffineTransform.getTranslateInstance(x,y);
         // transform the vertex shape with xtransform
         s = xform.createTransformedShape(s);
-        
+       
         vertexHit = viewTransformer.transform(s).intersects(deviceRectangle);
 
         if (vertexHit) {

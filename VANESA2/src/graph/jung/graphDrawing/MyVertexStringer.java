@@ -2,6 +2,8 @@ package graph.jung.graphDrawing;
 
 import org.apache.commons.collections15.Transformer;
 
+import petriNet.Place;
+
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 /**
@@ -17,6 +19,11 @@ public class MyVertexStringer implements
 
 	@Override
 	public String transform(BiologicalNodeAbstract bna) {
+		
+		if(bna instanceof Place){
+			return ((Place)bna).getToken() + " | " +bna.getNetworklabel();
+		}
+		
 		return bna.getNetworklabel();
 	}
 }
