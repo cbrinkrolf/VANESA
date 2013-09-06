@@ -209,7 +209,7 @@ public class MyGraph {
 		// viewGrid = (Paintable) new ViewGrid(vv2, vv);
 		// set the Ranges-Layer to be painted before the actual graph
 		vv.addPreRenderPaintable(RangeSelector.getInstance());
-
+		
 		// set the heatmap-layer to be painted before the actual graph
 		vv.addPreRenderPaintable(HeatgraphLayer.getInstance());
 
@@ -223,6 +223,7 @@ public class MyGraph {
 
 		// set the inner nodes to be painted after the actual graph
 		vv.addPostRenderPaintable(new InnerNodeRenderer(vv));
+		vv.addPostRenderPaintable(new TokenRenderer(vv));
 		pickSupport = new ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				vv);
 		stateV = vv.getPickedVertexState();
@@ -274,9 +275,9 @@ public class MyGraph {
 		annotationManager = new MyAnnotationManager(pr);
 		// vv.getRenderer().getVertexRenderer().
 		// TODO
-
+//System.out.println(pr.getClass().getName());
 		// pr.setVertexStringer(vertexStringer);
-
+		
 		pr.setVertexStrokeTransformer(vsh);
 		pr.setVertexLabelTransformer(vertexStringer);
 

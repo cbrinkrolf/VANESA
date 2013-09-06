@@ -9,11 +9,11 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.VisualizationModel;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 /*import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.visualization.Layout;
 import edu.uci.ics.jung.visualization.Renderer;*/
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 public class MyVisualizationViewer extends VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 
