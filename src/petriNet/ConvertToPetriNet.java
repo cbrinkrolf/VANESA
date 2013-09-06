@@ -142,11 +142,14 @@ private final double initialTokens = 10;
 //			v2 = p2.getVertex();
 			Transition t;
 			if (answer == JOptionPane.YES_OPTION)
-				t = new DiscreteTransition(p1.getName() + "_" + p2.getName(),
-						"t" + countTrainsition);
+				/*t = new DiscreteTransition(p1.getName() + "_" + p2.getName(),
+						"t" + countTrainsition);*/
+			t = new DiscreteTransition("t" + countTrainsition,"t" + countTrainsition);
 			else
-				t = new ContinuousTransition(p1.getName() + "_" + p2.getName(),
-						"t" + countTrainsition);
+				/*t = new ContinuousTransition(p1.getName() + "_" + p2.getName(),
+						"t" + countTrainsition);*/
+			t = new ContinuousTransition("t" + countTrainsition,
+					"t" + countTrainsition);
 
 			x1 = pw.getGraph().getVertexLocation(p1).getX();//locationsNew.getLocation(p1.getVertex()).getX();
 			y1 = pw.getGraph().getVertexLocation(p1).getY();//locationsNew.getLocation(p1.getVertex()).getY();
