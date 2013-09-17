@@ -168,7 +168,9 @@ public abstract class GraphElementAbstract {
 		} else {
 
 			if (type == 1) {
-
+				if(getLabel().equals("1")){
+					return "";
+				}
 				if (getLabel().length() == 0 || getLabel().equals(" ")) {
 					return getName();
 				} else {
