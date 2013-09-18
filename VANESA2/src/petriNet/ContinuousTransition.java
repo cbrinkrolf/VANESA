@@ -7,11 +7,15 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 import biologicalElements.Elementdeclerations;
+
 //import edu.uci.ics.jung.graph.Vertex;
 
 public class ContinuousTransition extends Transition {
 
-	private final double delay = 1;
+	//private final double delay = 1;
+
+	// scalar or scalar function for maximum speed
+	private String maximumSpeed = "1";
 
 	public ContinuousTransition(String label, String name) {
 		super(label, name);
@@ -36,19 +40,26 @@ public class ContinuousTransition extends Transition {
 
 	}
 
-	public double getDelay() {
-		return delay;
+	//public double getDelay() {
+		//return delay;
+	//}
+
+	public String getMaximumSpeed() {
+		return maximumSpeed;
+	}
+
+	public void setMaximumSpeed(String maximumSpeed) {
+		this.maximumSpeed = maximumSpeed;
 	}
 
 	public void rebuildShape(VertexShapes vs) {
-		/*System.out.println("rebuild");
-		Shape s = null; // vs.getDoubleRectangle(getVertex());
-		// s.
-		// Rectangle bounds = s.getBounds();
-		AffineTransform transform = new AffineTransform();
-		transform.translate(1, 1);
-		transform.scale(1, 2);
-		setShape(transform.createTransformedShape(s));*/
+		/*
+		 * System.out.println("rebuild"); Shape s = null; //
+		 * vs.getDoubleRectangle(getVertex()); // s. // Rectangle bounds =
+		 * s.getBounds(); AffineTransform transform = new AffineTransform();
+		 * transform.translate(1, 1); transform.scale(1, 2);
+		 * setShape(transform.createTransformedShape(s));
+		 */
 		// setShape(s);
 	}
 

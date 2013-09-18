@@ -143,11 +143,16 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 							.getSource()).getText());
 					p.setDelay(delay);
 				}
-			} else if (geb instanceof ContinuousTransition) {
-				if (((JTextField) event.getSource()).getText() != "") {
-					ContinuousTransition t = (ContinuousTransition) geb;
+			}
+
+		} else if (source.equals("maximumSpeed")) {
+			if (((JTextField) event.getSource()).getText() != "") {
+				if (geb instanceof ContinuousTransition) {
+						ContinuousTransition t = (ContinuousTransition) geb;
+						t.setMaximumSpeed(((JTextField) event.getSource()).getText());
 				}
 			}
+
 		} else if (source.equals("transList")) {
 			// System.out.println("translist");
 			Transition t = (Transition) geb;
@@ -158,8 +163,9 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 			BiologicalNodeAbstract node;
 			while (k.hasNext()) {
 				neighbour = k.next();
-				Iterator<BiologicalNodeAbstract> j = pw.getAllNodes().iterator();
-				while(j.hasNext()){
+				Iterator<BiologicalNodeAbstract> j = pw.getAllNodes()
+						.iterator();
+				while (j.hasNext()) {
 					node = j.next();
 					if (node.equals(neighbour)
 							&& (((JComboBox) event.getSource())
@@ -199,8 +205,8 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 			Iterator<BiologicalNodeAbstract> k = pw.getGraph().getJungGraph()
 					.getNeighbors(p).iterator();
 			BiologicalNodeAbstract neighbour;
-			
-			while(k.hasNext()) {
+
+			while (k.hasNext()) {
 				neighbour = k.next();
 				for (Iterator j = pw.getAllNodes().iterator(); j.hasNext();) {
 					BiologicalNodeAbstract node = (BiologicalNodeAbstract) j
@@ -274,7 +280,7 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 		}
 		// ContainerSingelton.getInstance().changeMouseFunction("edit");
 		event.getComponent().setBackground(Color.WHITE);
-		//GraphInstance.getMyGraph().updateElementLabel(element);
+		// GraphInstance.getMyGraph().updateElementLabel(element);
 		GraphInstance.getMyGraph().updateGraph();
 	}
 
