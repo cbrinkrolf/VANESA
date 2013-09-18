@@ -125,9 +125,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 		p.add(new JLabel("Name"), "gap 5 ");
 		p.add(name, "wrap ,span 3");
 
-		JCheckBox transitionfire = new JCheckBox("Should tranistion fire:",
-				true);
-		JTextField transitionStatement = new JTextField("time>9.8");
+//		JCheckBox transitionfire = new JCheckBox("Should transition fire:",
+//				true);
+//		JTextField transitionStatement = new JTextField("true");
 
 		if (ab.isVertex()) {
 			JComboBox compartment = new JComboBox();
@@ -252,6 +252,16 @@ public class ElementWindow implements ActionListener, ItemListener {
 				transList.addActionListener(pwl);
 				p.add(lswitchTrans, "gap 5");
 				p.add(transList, "wrap");
+				
+				JTextField firingCondition = new JTextField(4);
+				JLabel lblFiringCondition = new JLabel("Firing Condition");
+				firingCondition.setText(((Transition) ab).getFiringCondition());
+				firingCondition.setName("firingCondition");
+				firingCondition.addKeyListener(pwl);
+
+				p.add(lblFiringCondition, "gap 5");
+				p.add(firingCondition, "wrap");
+				
 				if (ab instanceof DiscreteTransition) {
 					DiscreteTransition trans = (DiscreteTransition) ab;
 					JTextField delay = new JTextField(4);
@@ -279,6 +289,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				else if (ab instanceof ContinuousTransition) {
 					ContinuousTransition trans = (ContinuousTransition) ab;
+					JTextField maxSpeed = new JTextField(4);
+					JLabel lblMaxSpeed = new JLabel("Maximum Speed");
+					maxSpeed.setText(trans.getMaximumSpeed());
+					maxSpeed.setName("maximumSpeed");
+					maxSpeed.addKeyListener(pwl);
+
+					p.add(lblMaxSpeed, "gap 5");
+					p.add(maxSpeed, "wrap");
 				}
 			}
 		} else if (ab.isEdge()) {
