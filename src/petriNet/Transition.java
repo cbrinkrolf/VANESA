@@ -19,25 +19,25 @@ public class Transition extends BiologicalNodeAbstract {
 		return TransitionIn;
 	}
 
-	private boolean fireTransition = true;
+	//private boolean fireTransition = true;
 
-	private String fireTransitionStatemanet = "time>9.8";
+	private String firingCondition = "true";//"time>9.8";
 
-	public String getFireTransitionStatemanet() {
-		return fireTransitionStatemanet;
+	public String getFiringCondition() {
+		return firingCondition;
 	}
 
-	public void setFireTransitionStatemanet(String fireTransitionStatemanet) {
-		this.fireTransitionStatemanet = fireTransitionStatemanet;
+	public void setFiringCondition(String firingCondition) {
+		this.firingCondition = firingCondition;
 	}
 
-	public boolean isFireTransition() {
-		return fireTransition;
-	}
-
-	public void setFireTransition(boolean fireTransition) {
-		this.fireTransition = fireTransition;
-	}
+//	public boolean isFireTransition() {
+//		return fireTransition;
+//	}
+//
+//	public void setFireTransition(boolean fireTransition) {
+//		this.fireTransition = fireTransition;
+//	}
 
 	public void setTransitionIn(Vector<Transition> transitionIn) {
 		TransitionIn = transitionIn;

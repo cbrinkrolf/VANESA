@@ -67,8 +67,12 @@ public class PetriNetVertexDialog implements ActionListener {
 	JTextField delay = new JTextField("1");
 	String[] disStrings = { "norm", "exp" };
 	JComboBox distributionList = new JComboBox(disStrings);
-	JCheckBox transitionfire = new JCheckBox("Should tranistion fire:", true);
-	JTextField transitionStatement = new JTextField("time>9.8");
+	//JCheckBox transitionfire = new JCheckBox("Should transition fire:", true);
+	JTextField firingCondition = new JTextField("true");
+	JLabel lblFiringCondition = new JLabel("Firing Condition");
+	
+	JLabel lblMaxSpeed = new JLabel("Maximum Speed");
+	JTextField maxSpeed = new JTextField("1");
 
 	String petriElement;
 
@@ -111,19 +115,22 @@ public class PetriNetVertexDialog implements ActionListener {
 			panel.add(new JLabel("TokenMax"), "span 2, gaptop 2 ");
 			panel.add(tokenMax, "span,wrap,growx ,gap 10, gaptop 2");
 		} else if (this.petriElement.equals("discreteTransition")) {
-			panel.add(transitionfire, "span 2, gaptop 2 ");
-			panel.add(transitionStatement, "span,wrap,growx ,gap 10, gaptop 2");
+			panel.add(lblFiringCondition, "span 2, gaptop 2 ");
+			panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 
 			panel.add(new JLabel("Delay"), "span 2, gaptop 2 ");
 			panel.add(delay, "span,wrap,growx ,gap 10, gaptop 2");
 
 		} else if (this.petriElement.equals("continiousTransition")) {
-			panel.add(transitionfire, "span 2, gaptop 2 ");
-			panel.add(transitionStatement, "span,wrap,growx ,gap 10, gaptop 2");
+			
+			panel.add(lblMaxSpeed, "span 2, gaptop 2 ");
+			panel.add(maxSpeed, "span,wrap,growx ,gap 10, gaptop 2");
+			panel.add(lblFiringCondition, "span 2, gaptop 2 ");
+			panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 
 		} else if (this.petriElement.equals("stochasticTransition")) {
-			panel.add(transitionfire, "span 2, gaptop 2 ");
-			panel.add(transitionStatement, "span,wrap,growx ,gap 10, gaptop 2");
+			panel.add(lblFiringCondition, "span 2, gaptop 2 ");
+			panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 
 			panel.add(new JLabel("Distribution"), "span 2, gaptop 2");
 			panel.add(distributionList, "span,wrap,growx ,gap 10, gaptop 2");
@@ -194,16 +201,17 @@ public class PetriNetVertexDialog implements ActionListener {
 							label.getText(), name.getText());
 					t.setDelay(Double.parseDouble(delay.getText()));
 
-					t.setFireTransition(transitionfire.isSelected());
-					t.setFireTransitionStatemanet(transitionStatement.getText());
+					//t.setFireTransition(transitionfire.isSelected());
+					t.setFiringCondition(firingCondition.getText());
 
 					pw.addVertex(t, point);
 				} else if (petriElement.equals("continiousTransition")) {
 					ContinuousTransition t = new ContinuousTransition(
 							label.getText(), name.getText());
 
-					t.setFireTransition(transitionfire.isSelected());
-					t.setFireTransitionStatemanet(transitionStatement.getText());
+					//t.setFireTransition(transitionfire.isSelected());
+					t.setFiringCondition(firingCondition.getText());
+					t.setMaximumSpeed(maxSpeed.getText());
 
 					pw.addVertex(t, point);
 				} else if (petriElement.equals("stochasticTransition")) {
@@ -212,8 +220,8 @@ public class PetriNetVertexDialog implements ActionListener {
 					t.setDistribution(distributionList.getSelectedItem()
 							.toString());
 
-					t.setFireTransition(transitionfire.isSelected());
-					t.setFireTransitionStatemanet(transitionStatement.getText());
+					//t.setFireTransition(transitionfire.isSelected());
+					t.setFiringCondition(firingCondition.getText());
 
 					pw.addVertex(t, point);
 				}

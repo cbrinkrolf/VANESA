@@ -675,6 +675,7 @@ public class VAMLoutput {
 					writer.writeAttribute("delay", t.getDelay() + "");
 				} else if (bna instanceof ContinuousTransition) {
 					ContinuousTransition t = (ContinuousTransition) bna;
+					writer.writeAttribute("maximumSpeed", t.getMaximumSpeed());
 				} else if (bna instanceof StochasticTransition) {
 					StochasticTransition t = (StochasticTransition) bna;
 					writer.writeAttribute("distribution", t.getDistribution());
