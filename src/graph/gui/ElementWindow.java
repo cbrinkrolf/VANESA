@@ -353,7 +353,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 		p.add(new JLabel("Reference"), "gap 5 ");
 		p.add(reference, "wrap ,span 3");
 		if (ab.isVertex()) {
-
 			hideNeighbours
 					.setToolTipText("Sets all Neighbors of the selected Node to Reference");
 			hideNeighbours.setActionCommand("hideNeighbours");
@@ -470,7 +469,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			updateReferences(false);
 
 		} else if ("reference".equals(event)) {
-
+			//TODO calculate References properly
 			ab.setReference(reference.isSelected());
 			if (reference.isSelected()) {
 				ab.setHidden(true);

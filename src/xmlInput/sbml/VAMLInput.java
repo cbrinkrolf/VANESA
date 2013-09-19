@@ -865,6 +865,11 @@ public class VAMLInput {
 			bna = new ContinuousTransition(label, name);
 			String maximumSpeed = node.getAttributeValue(new QName("maximumSpeed"));
 			((ContinuousTransition) bna).setMaximumSpeed(maximumSpeed);
+			//System.out.println("s:"+maximumSpeed+"end");
+			if(maximumSpeed == "" || maximumSpeed == null){
+				System.out.println("speed");
+				((ContinuousTransition) bna).setMaximumSpeed("1");
+			}
 		} else if (biologicalElement.equals("Stochastic Transition")) {
 			bna = new StochasticTransition(label, name);
 			((StochasticTransition) bna).setDistribution(node
