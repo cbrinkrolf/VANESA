@@ -55,7 +55,7 @@ public class MyAnnotationManager extends AnnotationManager {
 		annotations.put(annotation.getAnnotation(), annotation);
 		//System.out.println("shape: "+annotation.getShape());
 		this.currentAnnotation = null;
-		System.out.println("anzahl: " + this.annotations.size());
+		//System.out.println("anzahl: " + this.annotations.size());
 		
 	}
 

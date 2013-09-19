@@ -51,7 +51,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 				Point2D p = vv.getRenderContext().getMultiLayerTransformer()
 						.inverseTransform(down);
 				Annotation<String> annotation = new Annotation<String>(
-						annotationString, layer, new Color(0, 0, 0), false, p);
+						annotationString, layer, annotationColor, false, p);
 				annotationManager.add(layer, annotation);
 			}
 		} else if (e.getModifiers() == modifiers) {
@@ -59,6 +59,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 				Point2D out = e.getPoint();
 				RectangularShape arect = (RectangularShape) rectangularShape
 						.clone();
+				System.out.println(super.getAnnotationColor());
 				arect.setFrameFromDiagonal(down, out);
 				Shape s = vv.getRenderContext().getMultiLayerTransformer()
 						.inverseTransform(arect);
