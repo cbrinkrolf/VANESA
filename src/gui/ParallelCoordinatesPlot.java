@@ -103,7 +103,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	MainWindow w;
 
 	// create GUI components
-	private JButton showTable = new JButton("show detailed animation results");
+	private JButton showTable = new JButton("show detailed simulation results");
 	private JButton drawPlots = new JButton("show all animation result plots");
 	
 	private JButton drawPCP = new JButton("Draw Timeseries");
@@ -309,7 +309,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			animationColour.setSelected(false);
 
 			mainPanel = new JPanel(layout);
-			showTable = new JButton("show detailed animation results");
+			showTable = new JButton("show detailed simulation results");
 			showTable.addActionListener(this);
 			showTable.setActionCommand("show");
 			slider.setMinimum(1);

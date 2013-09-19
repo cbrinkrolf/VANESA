@@ -85,7 +85,7 @@ public class PetriNetSimulation {
 					+ "\");\r\n");
 			out.write("import PNlib_ver1_4.mo;\r\n");
 			out.write("import simulation.mo;\r\n");
-			out.write("simulateModel(\"simulation\", stopTime=30, method=\"dassl\", resultFile=\"simulate\");\r\n");
+			out.write("simulateModel(\"simulation\", stopTime=1, numberOfIntervals=1, method=\"euler\", resultFile=\"simulate\");\r\n");
 			out.write("fileName=\"simulate.mat\";\r\n");
 			out.write("CSVfile=\"simulate.csv\";\r\n");
 			out.write("n=readTrajectorySize(fileName);\r\n");
