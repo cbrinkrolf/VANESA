@@ -228,7 +228,7 @@ public class MOoutput {
 					.equals(Elementdeclerations.continuousTransition)) {
 
 				ContinuousTransition t = (ContinuousTransition) bna;
-				String atr = "maximumSpeed=1.0";
+				String atr = "maximumSpeed="+t.getMaximumSpeed();
 				places = places.concat(getTransitionString(bna,
 						t.getModellicaString(), "T" + bna.getID(), atr, in,
 						out, p));
