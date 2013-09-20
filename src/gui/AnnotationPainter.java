@@ -225,8 +225,11 @@ public class AnnotationPainter {
 		} catch (Exception e) {
 
 		}
-		// System.out.println("new color: "+newColor);
-		return newColor;
+		if(newColor != null){
+			return newColor;
+		}else{
+			return oldColor;
+		}
 	}
 
 	public void setTextColor(Color textColor) {
