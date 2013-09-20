@@ -59,7 +59,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 				Point2D out = e.getPoint();
 				RectangularShape arect = (RectangularShape) rectangularShape
 						.clone();
-				System.out.println(super.getAnnotationColor());
+				//System.out.println(super.getAnnotationColor());
 				arect.setFrameFromDiagonal(down, out);
 				Shape s = vv.getRenderContext().getMultiLayerTransformer()
 						.inverseTransform(arect);
