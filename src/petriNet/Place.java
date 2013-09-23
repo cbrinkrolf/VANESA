@@ -88,7 +88,7 @@ public class Place extends BiologicalNodeAbstract {
 			// super.setColor(new Color(125,125,125));
 			// System.out.println("grau");
 		}
-
+		this.setNodesize(2);
 		// Rectangle bounds = getShape().getBounds();
 		// System.out.println("hoehe: "+bounds.getHeight());
 		// System.out.println("weite: "+bounds.getWidth());
