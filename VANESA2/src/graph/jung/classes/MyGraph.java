@@ -1,20 +1,28 @@
 package graph.jung.classes;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 import org.apache.commons.collections15.Transformer;
 
+import petriNet.Place;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -50,6 +58,7 @@ import graph.GraphInstance;
 import graph.algorithms.alignment.AlignmentEdge;
 import graph.eventhandlers.MyEditingModalGraphMouse;
 import graph.gui.GraphPopUp;
+import graph.jung.graphDrawing.DynamicIcon;
 import graph.jung.graphDrawing.MyEdgeArrowFunction;
 import graph.jung.graphDrawing.MyEdgeDrawPaintFunction;
 import graph.jung.graphDrawing.MyEdgeFillPaintFunction;
@@ -136,7 +145,7 @@ public class MyGraph {
 	private final HashMap<BiologicalNodeAbstract, Point2D> nodePositions = new HashMap<BiologicalNodeAbstract, Point2D>();
 	private MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
 	private MyEdgeLabelRenderer elr = new MyEdgeLabelRenderer(Color.blue);
-	
+
 	private MyAnnotationManager annotationManager;
 
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
@@ -193,10 +202,10 @@ public class MyGraph {
 		// visualizationModel.setRelaxerThreadSleepTime(10);
 		vv = new MyVisualizationViewer(visualizationModel, preferredSize,
 				pathway);
-	
+
 		vv.setSize(preferredSize);
 		vv.setMinimumSize(preferredSize);
-
+		vv.getRenderer().setVertexRenderer(new MultiVertexRenderer());
 		vv2 = new SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				vv, preferredSize2);
 		vv2.setSize(preferredSize2);
@@ -209,7 +218,7 @@ public class MyGraph {
 		// viewGrid = (Paintable) new ViewGrid(vv2, vv);
 		// set the Ranges-Layer to be painted before the actual graph
 		vv.addPreRenderPaintable(RangeSelector.getInstance());
-		
+
 		// set the heatmap-layer to be painted before the actual graph
 		vv.addPreRenderPaintable(HeatgraphLayer.getInstance());
 
@@ -275,9 +284,9 @@ public class MyGraph {
 		annotationManager = new MyAnnotationManager(pr);
 		// vv.getRenderer().getVertexRenderer().
 		// TODO
-//System.out.println(pr.getClass().getName());
+		// System.out.println(pr.getClass().getName());
 		// pr.setVertexStringer(vertexStringer);
-		
+
 		pr.setVertexStrokeTransformer(vsh);
 		pr.setVertexLabelTransformer(vertexStringer);
 
@@ -287,6 +296,24 @@ public class MyGraph {
 
 		pr.setVertexDrawPaintTransformer(vdpf);
 		pr.setVertexFillPaintTransformer(vfpf);
+
+	
+        
+        
+		Transformer<BiologicalNodeAbstract, Icon> vertexIconTransformer = new Transformer<BiologicalNodeAbstract, Icon>() {
+
+			public Icon transform(BiologicalNodeAbstract bna) {
+				if(bna instanceof Place){
+					Icon icon = new DynamicIcon((Place)bna);
+				
+				return icon;
+				}else{
+					return null;
+				}
+			}
+		};
+
+		pr.setVertexIconTransformer(vertexIconTransformer);
 
 		pr.setEdgeStrokeTransformer(esh);
 
@@ -333,8 +360,8 @@ public class MyGraph {
 				}
 				MainWindow w = MainWindowSingelton.getInstance();
 				w.updateElementProperties();
-				if(graphInstance.getPathway().isPetriNetSimulation()){
-					//System.out.println("sim");
+				if (graphInstance.getPathway().isPetriNetSimulation()) {
+					// System.out.println("sim");
 					w.updatePCPView();
 				}
 
@@ -419,7 +446,6 @@ public class MyGraph {
 
 	public MyGraphZoomScrollPane getGraphVisualization() {
 		pane = new MyGraphZoomScrollPane(vv) {
-			
 
 			/**
 			 * 
@@ -1248,8 +1274,8 @@ public class MyGraph {
 	public MyEdgeStringer getEdgeStringer() {
 		return edgeStringer;
 	}
-	
-	public MyAnnotationManager getAnnotationManager(){
+
+	public MyAnnotationManager getAnnotationManager() {
 		return this.annotationManager;
 	}
 
