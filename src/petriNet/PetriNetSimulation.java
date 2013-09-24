@@ -1,9 +1,5 @@
 package petriNet;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -11,13 +7,15 @@ import gui.MainWindow;
 import gui.MainWindowSingelton;
 import gui.ProgressBar;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
-import biologicalElements.PetriNet;
 
 import moOutput.MOoutput;
+import biologicalElements.PetriNet;
 
 public class PetriNetSimulation {
 	private static String path = null;
@@ -85,7 +83,7 @@ public class PetriNetSimulation {
 					+ "\");\r\n");
 			out.write("import PNlib_ver1_4.mo;\r\n");
 			out.write("import simulation.mo;\r\n");
-			out.write("simulateModel(\"simulation\", stopTime=1, numberOfIntervals=1, method=\"euler\", resultFile=\"simulate\");\r\n");
+			out.write("simulateModel(\"simulation\", stopTime=100, numberOfIntervals=500, method=\"dassl\", resultFile=\"simulate\");\r\n");
 			out.write("fileName=\"simulate.mat\";\r\n");
 			out.write("CSVfile=\"simulate.csv\";\r\n");
 			out.write("n=readTrajectorySize(fileName);\r\n");

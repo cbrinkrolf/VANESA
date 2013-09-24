@@ -4,20 +4,18 @@
 package graph.gui;
 
 //import edu.uci.ics.jung.graph.Vertex;
-import graph.GraphContainer;
 import graph.ContainerSingelton;
+import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
 
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -36,7 +34,6 @@ import petriNet.Place;
 import petriNet.StochasticTransition;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 /**
  * @author Sebastian
@@ -51,7 +48,7 @@ public class PetriNetVertexDialog implements ActionListener {
 	JTextField name = new JTextField();
 	JTextField label = new JTextField();
 
-	JComboBox compartment = new JComboBox();
+	JComboBox<String> compartment = new JComboBox<String>();
 	GraphInstance graphInstance = new GraphInstance();
 	Pathway pw = graphInstance.getPathway();
 	// JComboBox box = new JComboBox();
@@ -66,7 +63,7 @@ public class PetriNetVertexDialog implements ActionListener {
 	// for Transitions
 	JTextField delay = new JTextField("1");
 	String[] disStrings = { "norm", "exp" };
-	JComboBox distributionList = new JComboBox(disStrings);
+	JComboBox<String> distributionList = new JComboBox<String>(disStrings);
 	//JCheckBox transitionfire = new JCheckBox("Should transition fire:", true);
 	JTextField firingCondition = new JTextField("true");
 	JLabel lblFiringCondition = new JLabel("Firing Condition");
@@ -84,7 +81,7 @@ public class PetriNetVertexDialog implements ActionListener {
 	public PetriNetVertexDialog(String petriElement) {
 		this.petriElement = petriElement;
 		MigLayout layout = new MigLayout("", "[left]");
-
+		
 		panel = new JPanel(layout);
 		panel.add(new JLabel("Label"), "span 2, gaptop 2 ");
 		panel.add(label, "span,wrap,growx ,gap 10, gaptop 2");
@@ -95,7 +92,7 @@ public class PetriNetVertexDialog implements ActionListener {
 		compartment.setSelectedItem("Cytoplasma");
 		panel.add(compartment, "span,wrap 5,growx ,gaptop 2");
 		panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
-
+		
 		if (this.petriElement.equals("discretePlace")) {
 			panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
 			panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
@@ -141,7 +138,6 @@ public class PetriNetVertexDialog implements ActionListener {
 
 		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
 				JOptionPane.OK_CANCEL_OPTION);
-
 	}
 
 	private void addNodeItems() {
@@ -149,18 +145,19 @@ public class PetriNetVertexDialog implements ActionListener {
 		// box.addItem("Discrete Place");
 		// box.addItem("Continues Place");
 
-		List compartmentList = new Elementdeclerations()
+		List<String> compartmentList = new Elementdeclerations()
 				.getAllCompartmentDeclaration();
-		Iterator it2 = compartmentList.iterator();
+		Iterator<String> it2 = compartmentList.iterator();
 
+		String element;
 		while (it2.hasNext()) {
-			String element = it2.next().toString();
+			element = it2.next();
 			compartment.addItem(element);
 		}
 	}
 
 	public boolean getAnswer(Point2D point) {
-
+		
 		String title = "";
 		if (petriElement.equals("discretePlace")) {
 			title = "Create a discrete Place";
@@ -175,7 +172,10 @@ public class PetriNetVertexDialog implements ActionListener {
 		}
 
 		JDialog dialog = pane.createDialog(null, title);
-		dialog.show();
+		
+		//dialog.show();
+		dialog.setVisible(true);
+		
 		Integer value = (Integer) pane.getValue();
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {

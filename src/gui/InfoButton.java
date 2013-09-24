@@ -21,6 +21,11 @@ import javax.swing.plaf.basic.BasicButtonUI;
 
 public class InfoButton extends JButton implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public InfoButton() {
 
 		int size = 20;

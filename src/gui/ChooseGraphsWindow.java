@@ -1,7 +1,6 @@
 package gui;
 
 import graph.ContainerSingelton;
-import graph.algorithms.HeatmapGraphs;
 import gui.algorithms.ScreenSize;
 
 import java.awt.GridLayout;
@@ -49,7 +48,7 @@ public abstract class ChooseGraphsWindow extends JFrame implements ActionListene
 			panel.setLayout(new GridLayout(0,1));
 			panel.add(new JLabel("Please choose graphs!")
 					);
-			Collection pathways = ContainerSingelton.getInstance().getAllPathways();
+			Collection<Pathway> pathways = ContainerSingelton.getInstance().getAllPathways();
 			//Collections.reverse(new ArrayList(pathways));
 			for (Object o : pathways) {
 				Pathway p = (Pathway) o;
@@ -87,7 +86,7 @@ public abstract class ChooseGraphsWindow extends JFrame implements ActionListene
 			}
 			
 			ArrayList<Pathway> chosen_pathways = new ArrayList<Pathway>();
-			Collection pathways = ContainerSingelton.getInstance().getAllPathways();
+			Collection<Pathway> pathways = ContainerSingelton.getInstance().getAllPathways();
 			for (Object o : pathways) {
 				Pathway p = (Pathway) o;
 				if (names.contains(p.getName())) {

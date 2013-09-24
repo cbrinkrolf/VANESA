@@ -1,12 +1,7 @@
 package gui;
 
-import java.awt.Color;
-import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.Collection;
 import java.util.HashMap;
-
-import javax.vecmath.Point2d;
 
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.annotations.Annotation;

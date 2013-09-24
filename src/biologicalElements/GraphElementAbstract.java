@@ -20,7 +20,7 @@ public abstract class GraphElementAbstract {
 
 	private String name = "not mentioned";
 	private String label = "???";
-	private String networklabel = "";
+	//private String networklabel = "";
 	private int ID = 0;
 	private SortedSet<Integer> set;
 
@@ -111,9 +111,9 @@ public abstract class GraphElementAbstract {
 
 	private Collection<Integer> originalGraphs;
 
-	private boolean stringsEqualAndAreNotEmpty(String s1, String s2) {
-		return s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2);
-	}
+//	private boolean stringsEqualAndAreNotEmpty(String s1, String s2) {
+//		return s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2);
+//	}
 
 	/**
 	 * checks if the given BiologicalNodeAbstract is equal to this one nodes are
@@ -267,7 +267,7 @@ public abstract class GraphElementAbstract {
 
 	public void setLabel(String label) {
 		this.label = label;
-		this.networklabel = label;
+		//this.networklabel = label;
 		//System.out.println("gestezt");
 	}
 

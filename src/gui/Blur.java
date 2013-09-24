@@ -20,6 +20,10 @@ import org.jdesktop.swingx.graphics.GraphicsUtilities;
 import org.jdesktop.swingx.image.ColorTintFilter;
 
 public class Blur extends JPanel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private BlurPane detailPanel;
 	private BufferedImage blurBuffer;
 	private BufferedImage backBuffer;

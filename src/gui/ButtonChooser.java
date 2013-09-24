@@ -4,8 +4,6 @@
  */
 package gui;
 
-import graph.GraphInstance;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -38,19 +36,23 @@ import javax.swing.event.AncestorListener;
 public class ButtonChooser extends JButton implements ActionListener,
 		MouseListener, FocusListener, AncestorListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int selectedIndex;
 	private List<JButton> buttons;
 	private JWindow chooserPopupWindow;
-	private boolean popupInited;
+	//private boolean popupInited;
 	private Action action;
-	private List<JButton> visibleButtons;
+	//private List<JButton> visibleButtons;
 	private JPanel popupPanel;
 
 	public ButtonChooser(List<Action> actions) {
 		this.setAction(actions.get(0));
 		selectedIndex = 0;
-		buttons = new Vector(actions.size());
-		this.visibleButtons = buttons;
+		buttons = new Vector<JButton>(actions.size());
+		//this.visibleButtons = buttons;
 		JButton button;
 		for (int i = 0; i < actions.size(); i++) {
 			button = new JButton(actions.get(i));
@@ -117,7 +119,7 @@ public class ButtonChooser extends JButton implements ActionListener,
 
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == this) {
-			GraphInstance g = new GraphInstance();
+			//GraphInstance g = new GraphInstance();
 			try {
 				this.buttons.get(this.selectedIndex).getAction()
 						.actionPerformed(null);

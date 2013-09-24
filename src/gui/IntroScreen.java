@@ -18,6 +18,7 @@ import javax.swing.SwingConstants;
 
 public class IntroScreen extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	Toolkit toolkit = Toolkit.getDefaultToolkit();
 	JWindow window = new JWindow();
 	JLabel label;

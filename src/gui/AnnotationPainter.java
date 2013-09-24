@@ -19,8 +19,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
 
-import org.jfree.data.RangeType;
-
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
@@ -28,10 +26,10 @@ public class AnnotationPainter {
 
 	private static AnnotationPainter instance;
 	public static final int RECTANGLE = 0, ELLIPSE = 1, POLYGON = 3, TEXT = 4;
-	private int currentRangeType = RECTANGLE;
-	private boolean enabled;
-	private List<Action> selectShapeActions = new ArrayList();
-	private List<Action> selectColorActions = new ArrayList();
+	//private int currentRangeType = RECTANGLE;
+	//private boolean enabled;
+	private List<Action> selectShapeActions = new ArrayList<Action>();
+	private List<Action> selectColorActions = new ArrayList<Action>();
 	private ImagePath imagePath = ImagePath.getInstance();
 	private JMenuItem dropRange;
 	private Color fillColor = Color.cyan;
@@ -56,6 +54,8 @@ public class AnnotationPainter {
 	private void initShapeActions() {
 		Action a = new AbstractAction() {
 
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				setCurrentRangeType(RECTANGLE);
 				// System.out.println("set rect");
@@ -64,6 +64,8 @@ public class AnnotationPainter {
 		this.initAction(a, "rectangle.png", "rectangle");
 		this.selectShapeActions.add(a);
 		a = new AbstractAction() {
+
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				setCurrentRangeType(ELLIPSE);
@@ -74,6 +76,8 @@ public class AnnotationPainter {
 		this.selectShapeActions.add(a);
 
 		a = new AbstractAction() {
+
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				setCurrentRangeType(TEXT);
@@ -87,6 +91,8 @@ public class AnnotationPainter {
 	private void initColorActions() {
 		Action a = new AbstractAction() {
 
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				// AnnotationPainter.this.setFillColor(getColor(fillColor));
 				fillColor = getColor(fillColor);
@@ -99,6 +105,8 @@ public class AnnotationPainter {
 		this.initAction(a, "comparison.png", "select range color");
 		this.selectColorActions.add(a);
 		a = new AbstractAction() {
+
+			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				//System.out.println("drin");
@@ -121,7 +129,7 @@ public class AnnotationPainter {
 	}
 
 	public void setCurrentRangeType(int currentRangeType) {
-		this.currentRangeType = currentRangeType;
+		//this.currentRangeType = currentRangeType;
 		setEnabled(true);
 
 		// GraphInstance.getMyGraph().setMouseModeSelectRange();
@@ -184,7 +192,7 @@ public class AnnotationPainter {
 	}
 
 	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+		//this.enabled = enabled;
 		// this.rangeShapeEditor.enabled = enabled;
 		try {
 			GraphInstance.getMyGraph().getVisualizationViewer()

@@ -42,7 +42,7 @@ public class MenuBarClass {
 	private JMenuItem openNetwork;
 	private JMenuItem interaction;
 	private JMenuItem mathLaw;
-	private JMenuItem phosphoImport;
+	//private JMenuItem phosphoImport;
 
 	private JMenuItem kcore;
 	private JMenuItem hamiltonGraph;

@@ -32,11 +32,11 @@ public class ToolBar {
 		String ModellingViewString = "<html>" + "<b>Change View</b> <br>"
 				+ "to Modelling" + "</html>";
 
-		String PetriViewString = "<html>" + "<b>Change View</b><br>"
-				+ "to PetriNet" + "</html>";
+		/*String PetriViewString = "<html>" + "<b>Change View</b><br>"
+				+ "to PetriNet" + "</html>";*/
 
 		JButton modelling = null;
-		JButton petriNet = null;
+		//JButton petriNet = null;
 		JButton covGraph = null;
 		JButton heatmap = null;
 		JButton edit = null;

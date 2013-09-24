@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 
 public class CoverPanel extends JPanel {
 
+	private static final long serialVersionUID = 1L;
 	private Color color;
 
 	public CoverPanel(Color color) {

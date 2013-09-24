@@ -1,14 +1,13 @@
 package petriNet;
 
-import java.awt.Color;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-
-import biologicalElements.Elementdeclerations;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
 import graph.jung.graphDrawing.VertexShapes;
+
+import java.awt.Color;
+
+import biologicalElements.Elementdeclerations;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Place extends BiologicalNodeAbstract {
 
