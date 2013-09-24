@@ -21,7 +21,7 @@ public class GraphProperties implements ActionListener {
 	private JPanel p = new JPanel();
 	private GraphInstance graphInstance;
 	private Pathway pw;
-	private HashSet nodeFilter = new HashSet();
+	private HashSet<JRadioButton> nodeFilter = new HashSet<JRadioButton>();
 	private FilterSettings filterSettings;
 	boolean emptyPane = true;
 
@@ -90,12 +90,15 @@ public class GraphProperties implements ActionListener {
 				.getFilterValue(reference.getName()));
 		reference.setAlignmentX(Component.LEFT_ALIGNMENT);
 		panel.add(reference);
-		Iterator it = set.iterator();
+		Iterator<String> it = set.iterator();
 
+		String element;
+		JRadioButton b;
+		
 		while (it.hasNext()) {
 
-			String element = it.next().toString();
-			JRadioButton b = new JRadioButton(element + "s");
+			element = it.next();
+			b = new JRadioButton(element + "s");
 			b.addActionListener(this);
 			b.setName(element);
 			b.setSelected(filterSettings.getFilterValue(element));

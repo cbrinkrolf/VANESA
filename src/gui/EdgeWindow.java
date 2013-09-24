@@ -1,4 +1,4 @@
-package gui;
+/*package gui;
 
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.utils.Pair;
@@ -85,4 +85,4 @@ public class EdgeWindow {
 	public TitledTab getTab(){
 		return tab;
 	}
-}
+}*/

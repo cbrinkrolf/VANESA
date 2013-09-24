@@ -1,4 +1,4 @@
-package graph.gui;
+/*package graph.gui;
 
 import graph.GraphInstance;
 import gui.eventhandlers.PropertyWindowListener;
@@ -129,4 +129,4 @@ public class VertexWindow implements ItemListener{
 		ab.setCompartment(item);
 		
 	}
-}
+}*/

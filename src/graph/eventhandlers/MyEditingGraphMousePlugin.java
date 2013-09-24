@@ -114,6 +114,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 	public void mousePressed(MouseEvent e) {
 		pw = graphInstance.getPathway();
 		if (checkModifiers(e)) {
+			
 			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
 					.getSource();
 			// final Point2D p = vv.inverseViewTransform(e.getPoint());
@@ -334,7 +335,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 											"Unallowed Operation...",
 											JOptionPane.ERROR_MESSAGE);
 						else {
-							BiologicalEdgeAbstract bea;
+							//BiologicalEdgeAbstract bea;
 							String name = answers[0];
 							String label = answers[0];
 							String element = answers[2];

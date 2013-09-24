@@ -3,6 +3,7 @@ package gui;
 
 public class MainWindowSingelton extends MainWindow {
 
+	private static final long serialVersionUID = 1L;
 	private static MainWindow instance = null;
 	
 	/** synchronized needed for thread-safety */
