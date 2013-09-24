@@ -10,7 +10,7 @@ package graph.layouts;
  * Created on Aug 23, 2005
  */
 
-import java.awt.geom.Point2D;
+/*import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -47,29 +47,29 @@ public class KKSubLayout implements SubLayout {
 	private Coordinates[] xydata;
 	
 	private SubLayoutCenter center=null;
-	private int numVertices=0;
+	private int numVertices=0;*/
     
     /**
      * Retrieves graph distances between vertices of the visible graph
      */
-    protected Distance distance;
+    //protected Distance distance;
 
     /**
      * The diameter of the visible graph. In other words, the maximum over all pairs
      * of vertices of the length of the shortest path between a and bf the visible graph.
      */
-	protected double diameter;
+	//protected double diameter;
 
     /**
      * A multiplicative factor which partly specifies the "preferred" length of an edge (L).
      */
-    private double length_factor = 0.9;
+    //private double length_factor = 0.9;
 
     /**
      * A multiplicative factor which specifies the fraction of the graph's diameter to be 
      * used as the inter-vertex distance between disconnected vertices.
      */
-    private double disconnected_multiplier = 0.5;
+    //private double disconnected_multiplier = 0.5;
 	
 	
     /**
@@ -78,11 +78,11 @@ public class KKSubLayout implements SubLayout {
      * @param radius the radius of the circle
      * @param center the center of the circle
      */
-	public KKSubLayout(Collection vertices, SubLayoutDecorator layout) {
+	/*public KKSubLayout(Collection vertices, SubLayoutDecorator layout) {
         this.layout=layout;
         initializeLocations(vertices);
 		
-	}
+	}*/
 
 	/**
 	 * Map the Vertices in the passed collection to their
@@ -91,7 +91,7 @@ public class KKSubLayout implements SubLayout {
 	 * 
 	 * @param vertices
 	 */
-	private void initializeLocations(Collection verticesCollection) {
+	/*private void initializeLocations(Collection verticesCollection) {
 		Vertex[] vertexArray =
 		    (Vertex[]) verticesCollection.toArray(new Vertex[verticesCollection.size()]);
 		
@@ -227,12 +227,12 @@ public class KKSubLayout implements SubLayout {
 					}
 				}
 			}
-		}
+		}*/
 
 	 	/**
 		 * Calculates the energy function E.
 		 */
-		private double calcEnergy() {
+		/*private double calcEnergy() {
 			double energy = 0;
 			for (int i = 0; i < vertices.length - 1; i++) {
 				for (int j = i + 1; j < vertices.length; j++) {
@@ -248,13 +248,13 @@ public class KKSubLayout implements SubLayout {
 				}
 			}
 			return energy;
-		}
+		}*/
 	
 		/**
 		 * Calculates the energy function E as if positions of the
 		 * specified vertices are exchanged.
 		 */
-		private double calcEnergyIfExchanged(int p, int q) {
+		/*private double calcEnergyIfExchanged(int p, int q) {
 			if (p >= q)
 				throw new RuntimeException("p should be < q");
 			double energy = 0;		// < 0
@@ -277,12 +277,12 @@ public class KKSubLayout implements SubLayout {
 				}
 			}
 			return energy;
-		}
+		}*/
 		
 		/**
 		 * Calculates the gradient of energy function at the vertex m.
 		 */
-		private double calcDeltaM(int m) {
+		/*private double calcDeltaM(int m) {
 			double dEdxm = 0;
 			double dEdym = 0;
 			for (int i = 0; i < vertices.length; i++) {
@@ -301,12 +301,12 @@ public class KKSubLayout implements SubLayout {
 				}
 			}
 			return Math.sqrt(dEdxm * dEdxm + dEdym * dEdym);
-		}
+		}*/
 		
 		/**
 		 * Determines a step to new position of the vertex m.
 		 */
-		private double[] calcDeltaXY(int m) {
+		/*private double[] calcDeltaXY(int m) {
 			double dE_dxm = 0;
 			double dE_dym = 0;
 			double d2E_d2xm = 0;
@@ -339,13 +339,13 @@ public class KKSubLayout implements SubLayout {
 			double deltaX = (d2E_dxmdym * dE_dym - d2E_d2ym * dE_dxm) / denomi;
 			double deltaY = (d2E_dymdxm * dE_dxm - d2E_d2xm * dE_dym) / denomi;
 			return new double[]{deltaX, deltaY};
-		}	
+		}*/	
 		
 		/**
 		 * Shift all vertices so that the center of gravity is located at
 		 * the center of the screen.
 		 */
-		public void adjustForGravity() {
+		/*public void adjustForGravity() {
 			
 			double height = center.getHeight();
 			double width = center.getWidth();
@@ -362,37 +362,37 @@ public class KKSubLayout implements SubLayout {
 			for (int i = 0; i < xydata.length; i++) {
 				xydata[i].add(diffx, diffy);
 			}
-		}
+		}*/
 
 		/**
 		 * Enable or disable gravity point adjusting.
 		 */
-		public void setAdjustForGravity(boolean on) {
-			adjustForGravity = on;
-		}
+//		public void setAdjustForGravity(boolean on) {
+//			adjustForGravity = on;
+//		}
 
 		/**
 		 * Returns true if gravity point adjusting is enabled.
 		 */
-		public boolean getAdjustForGravity() {
-			return adjustForGravity;
-		}
+//		public boolean getAdjustForGravity() {
+//			return adjustForGravity;
+//		}
 
 		/**
 		 * Enable or disable the local minimum escape technique by
 		 * exchanging vertices.
 		 */
-		public void setExchangeVertices(boolean on) {
-			exchangeVertices = on;
-		}
+//		public void setExchangeVertices(boolean on) {
+//			exchangeVertices = on;
+//		}
 
 		/**
 		 * Returns true if the local minimum escape technique by
 		 * exchanging vertices is enabled.
 		 */
-		public boolean getExchangeVertices() {
-			return exchangeVertices;
-		}
+//		public boolean getExchangeVertices() {
+//			return exchangeVertices;
+//		}
 		
 		  /**
 	     * Returns the diameter of <code>g</code> using the metric 
@@ -406,7 +406,7 @@ public class KKSubLayout implements SubLayout {
 	     * will be the the maximum shortest path length over all pairs of <b>connected</b> 
 	     * vertices; otherwise it will be <code>Double.POSITIVE_INFINITY</code>.
 	     */
-	    private double diameter(Collection verticesCollection, Distance d, boolean use_max)
+	    /*private double diameter(Collection verticesCollection, Distance d, boolean use_max)
 	    {
 	        double diameter = 0;
 	        
@@ -437,4 +437,4 @@ public class KKSubLayout implements SubLayout {
     public Point2D getLocation(ArchetypeVertex v) {
         return (Point2D)map.get(v);
     }
-}
+}*/

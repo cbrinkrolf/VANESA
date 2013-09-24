@@ -13,7 +13,7 @@ package graph.layouts;
  * http://jung.sourceforge.net/license.txt for a description.
  */
 
-import java.awt.Dimension;
+/*import java.awt.Dimension;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
@@ -23,7 +23,7 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.statistics.GraphStatistics;
 import edu.uci.ics.jung.visualization.AbstractLayout;
-import edu.uci.ics.jung.visualization.Coordinates;
+import edu.uci.ics.jung.visualization.Coordinates;*/
 
 /**
  * Implements the Kamada-Kawai algorithm for node layout.
@@ -34,7 +34,7 @@ import edu.uci.ics.jung.visualization.Coordinates;
  *
  * @author Masanori Harada
  */
-public class MyKKLayout extends AbstractLayout {
+/*public class MyKKLayout extends AbstractLayout {
 
 	private double EPSILON = 0.1d;
 
@@ -50,29 +50,29 @@ public class MyKKLayout extends AbstractLayout {
 	private boolean exchangeVertices = true;
 
 	private Vertex[] vertices;
-	private Coordinates[] xydata;
+	private Coordinates[] xydata;*/
 
     /**
      * Retrieves graph distances between vertices of the visible graph
      */
-    protected Distance distance;
+//    protected Distance distance;
 
     /**
      * The diameter of the visible graph. In other words, the maximum over all pairs
      * of vertices of the length of the shortest path between a and bf the visible graph.
      */
-	protected double diameter;
+//	protected double diameter;
 
     /**
      * A multiplicative factor which partly specifies the "preferred" length of an edge (L).
      */
-    private double length_factor = 0.9;
+//    private double length_factor = 0.9;
 
     /**
      * A multiplicative factor which specifies the fraction of the graph's diameter to be 
      * used as the inter-vertex distance between disconnected vertices.
      */
-    private double disconnected_multiplier = 0.5;
+    /*private double disconnected_multiplier = 0.5;
     
 	public MyKKLayout(Graph g) 
     {
@@ -83,22 +83,22 @@ public class MyKKLayout extends AbstractLayout {
     {
         super(g);
         this.distance = distance;
-    }
+    }*/
 
     /**
      * Sets a multiplicative factor which 
      * partly specifies the "preferred" length of an edge (L).
      */
-    public void setLengthFactor(double length_factor)
-    {
-        this.length_factor = length_factor;
-    }
+//    public void setLengthFactor(double length_factor)
+//    {
+//        this.length_factor = length_factor;
+//    }
     
     /**
      * Sets a multiplicative factor that specifies the fraction of the graph's diameter to be 
      * used as the inter-vertex distance between disconnected vertices.
      */
-    public void setDisconnectedDistanceMultiplier(double disconnected_multiplier)
+    /*public void setDisconnectedDistanceMultiplier(double disconnected_multiplier)
     {
         this.disconnected_multiplier = disconnected_multiplier;
     }
@@ -110,19 +110,19 @@ public class MyKKLayout extends AbstractLayout {
 
     public void setMaxIterations(int maxIterations) {
         this.maxIterations = maxIterations;
-    }
+    }*/
 
 	/**
 	 * This one is an incremental visualization.
 	 */
-	public boolean isIncremental() {
-		return true;
-	}
+//	public boolean isIncremental() {
+//		return true;
+//	}
 
 	/**
 	 * Returns true once the current iteration has passed the maximum count.
 	 */
-	public boolean incrementsAreDone() {
+	/*public boolean incrementsAreDone() {
 		if (currentIteration > maxIterations) {
 			return true;
 		}
@@ -254,13 +254,13 @@ public class MyKKLayout extends AbstractLayout {
 				}
 			}
 		}
-	}
+	}*/
 
 	/**
 	 * Shift all vertices so that the center of gravity is located at
 	 * the center of the screen.
 	 */
-	public void adjustForGravity() {
+	/*public void adjustForGravity() {
 		Dimension d = getCurrentSize();
 		double height = d.getHeight();
 		double width = d.getWidth();
@@ -277,42 +277,42 @@ public class MyKKLayout extends AbstractLayout {
 		for (int i = 0; i < xydata.length; i++) {
 			xydata[i].add(diffx, diffy);
 		}
-	}
+	}*/
 
 	/**
 	 * Enable or disable gravity point adjusting.
 	 */
-	public void setAdjustForGravity(boolean on) {
-		adjustForGravity = on;
-	}
+//	public void setAdjustForGravity(boolean on) {
+//		adjustForGravity = on;
+//	}
 
 	/**
 	 * Returns true if gravity point adjusting is enabled.
 	 */
-	public boolean getAdjustForGravity() {
-		return adjustForGravity;
-	}
+//	public boolean getAdjustForGravity() {
+//		return adjustForGravity;
+//	}
 
 	/**
 	 * Enable or disable the local minimum escape technique by
 	 * exchanging vertices.
 	 */
-	public void setExchangeVertices(boolean on) {
-		exchangeVertices = on;
-	}
+//	public void setExchangeVertices(boolean on) {
+//		exchangeVertices = on;
+//	}
 
 	/**
 	 * Returns true if the local minimum escape technique by
 	 * exchanging vertices is enabled.
 	 */
-	public boolean getExchangeVertices() {
-		return exchangeVertices;
-	}
+//	public boolean getExchangeVertices() {
+//		return exchangeVertices;
+//	}
 
 	/**
 	 * Determines a step to new position of the vertex m.
 	 */
-	private double[] calcDeltaXY(int m) {
+	/*private double[] calcDeltaXY(int m) {
 		double dE_dxm = 0;
 		double dE_dym = 0;
 		double d2E_d2xm = 0;
@@ -345,12 +345,12 @@ public class MyKKLayout extends AbstractLayout {
 		double deltaX = (d2E_dxmdym * dE_dym - d2E_d2ym * dE_dxm) / denomi;
 		double deltaY = (d2E_dymdxm * dE_dxm - d2E_d2xm * dE_dym) / denomi;
 		return new double[]{deltaX, deltaY};
-	}
+	}*/
 
 	/**
 	 * Calculates the gradient of energy function at the vertex m.
 	 */
-	private double calcDeltaM(int m) {
+	/*private double calcDeltaM(int m) {
 		double dEdxm = 0;
 		double dEdym = 0;
 		for (int i = 0; i < vertices.length; i++) {
@@ -369,12 +369,12 @@ public class MyKKLayout extends AbstractLayout {
 			}
 		}
 		return Math.sqrt(dEdxm * dEdxm + dEdym * dEdym);
-	}
+	}*/
 
 	/**
 	 * Calculates the energy function E.
 	 */
-	private double calcEnergy() {
+	/*private double calcEnergy() {
 		double energy = 0;
 		for (int i = 0; i < vertices.length - 1; i++) {
 			for (int j = i + 1; j < vertices.length; j++) {
@@ -391,13 +391,13 @@ public class MyKKLayout extends AbstractLayout {
 			}
 		}
 		return energy;
-	}
+	}*/
 
 	/**
 	 * Calculates the energy function E as if positions of the
 	 * specified vertices are exchanged.
 	 */
-	private double calcEnergyIfExchanged(int p, int q) {
+	/*private double calcEnergyIfExchanged(int p, int q) {
 		if (p >= q)
 			throw new RuntimeException("p should be < q");
 		double energy = 0;		// < 0
@@ -421,4 +421,4 @@ public class MyKKLayout extends AbstractLayout {
 		}
 		return energy;
 	}
-}
+}*/
