@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import biologicalElements.GraphElementAbstract;
@@ -15,7 +16,7 @@ import biologicalElements.Pathway;
 public class GraphContainer {
 	
 	
-	private HashMap map = new HashMap();
+	private HashMap<String, Pathway> map = new HashMap<String, Pathway>();
 	private GraphElementAbstract selectedObject;
 	private String mouseFunction = "edit";
 	private boolean isPetriView = false; 
@@ -91,7 +92,7 @@ public class GraphContainer {
 		return map.size();
 	}
 	
-	public Collection getAllPathways(){
+	public Collection<Pathway> getAllPathways(){
 		return map.values();
 	}
 	
@@ -103,7 +104,7 @@ public class GraphContainer {
 		map.remove(name);
 	}
 	
-	public Set getContainerEntries(){
+	public Set<Entry<String, Pathway>> getContainerEntries(){
 		return map.entrySet();
 	}
 	
@@ -118,10 +119,11 @@ public class GraphContainer {
 	public void changeMouseFunction(String function){
 		
 		mouseFunction = function;
-		Iterator it = map.entrySet().iterator();
+		Iterator<Map.Entry<String, Pathway>> it = map.entrySet().iterator();
+		Map.Entry<String, Pathway> entry;
 		while(it.hasNext()){
 
-			Map.Entry entry = (Map.Entry)it.next();
+			entry = it.next();
 			Pathway p = (Pathway)entry.getValue();
 			MyGraph g = p.getGraph();
 			

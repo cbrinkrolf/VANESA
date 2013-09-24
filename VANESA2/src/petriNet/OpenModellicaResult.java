@@ -1,28 +1,20 @@
 package petriNet;
 
-import io.MyFileFilter;
-import io.PhosphoInput;
-import io.TxtInput;
-
-import java.io.File;
-import java.io.IOException;
-
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindowSingelton;
 import gui.ProgressBar;
+import io.MyFileFilter;
+
+import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.xml.stream.XMLStreamException;
 
-import moInput.MOInput;
-import xmlInput.sbml.SBMLInput;
-import xmlInput.sbml.VAMLInput;
 import biologicalElements.PetriNet;
 import configurations.ConnectionSettings;
 

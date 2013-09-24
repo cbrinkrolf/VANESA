@@ -81,7 +81,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	private JSplitPane split_pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 	private TabbedPanel tabbedPanel;
-	private TabbedPanel tabbedPanelProperties;
+	//private TabbedPanel tabbedPanelProperties;
 	private final GraphContainer con = ContainerSingelton.getInstance();
 	private int addedtabs = 0;
 	private final MenuBarClass myMenu;
@@ -91,7 +91,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 	private final OptionPanel optionPanel;
 
-	private boolean fullScreen = false;
+	//private boolean fullScreen = false;
 
 	private Application macOsxHandler;
 

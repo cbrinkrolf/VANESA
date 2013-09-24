@@ -9,9 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.xml.namespace.QName;
@@ -24,19 +22,17 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import pojos.DBColumn;
-
 import configurations.Wrapper;
 import database.brenda.BRENDAQueries;
-
 import database.brenda.Files.BrendaDataPath;
 
 
 public class ElementNames {
 
-	private HashSet molecules = new HashSet();
-	private HashSet enzymes = new HashSet();
-	private HashSet genes = new HashSet();
-	private Vector enzymeVector = new Vector();
+	//private HashSet molecules = new HashSet();
+	private HashSet<String> enzymes = new HashSet<String>();
+	//private HashSet genes = new HashSet();
+	private Vector<String> enzymeVector = new Vector<String>();
 	private XMLStreamWriter writer;
 	
 	
@@ -185,21 +181,22 @@ public class ElementNames {
 			
 	}
 
-	public Vector getEnzymes() {
+	public Vector<String> getEnzymes() {
 		return enzymeVector;
 	}
 
-	public Vector getMoleculeValue(String pattern) {
-		Vector v = new Vector();
+	/*public Vector<String> getMoleculeValue(String pattern) {
+		Vector<String> v = new Vector<String>();
 		Iterator e = molecules.iterator();
+		String name;
 		while (e.hasNext()) {
-			String name = e.next().toString();
+			name = e.next().toString();
 			if (name.contains(pattern)) {
 				v.add(name);
 			}
 		}
 		Collections.sort(v);
 		return v;
-	}
+	}*/
 
 }

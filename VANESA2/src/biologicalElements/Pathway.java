@@ -567,15 +567,15 @@ public class Pathway {
 			double UpperBoundary = 0.0;
 			double LowerBoundary = 0.0;
 			double ActivationProbability = 1.0;
-			if (bea instanceof PNEdge) {
+			/*if (bea instanceof PNEdge) {
 				PNEdge e = (PNEdge) bea;
 				tokens = e.getFunction();
 				wasUndirected = e.wasUndirected();
 				UpperBoundary = e.getUpperBoundary();
 				LowerBoundary = e.getLowerBoundary();
 				ActivationProbability = e.getActivationProbability();
-			}
-			bea = new PNEdge(from, to, label, name, "discrete", tokens);
+			}*/
+			bea = new PNEdge(from, to, label, name, "discrete", label);
 			((PNEdge) bea).wasUndirected(wasUndirected);
 			((PNEdge) bea).setLowerBoundary(LowerBoundary);
 			((PNEdge) bea).setUpperBoundary(UpperBoundary);
@@ -589,16 +589,16 @@ public class Pathway {
 			double UpperBoundary = 0.0;
 			double LowerBoundary = 0.0;
 			double ActivationProbability = 1.0;
-			if (bea instanceof PNEdge) {
+			/*if (bea instanceof PNEdge) {
 				PNEdge e = (PNEdge) bea;
 				tokens = e.getFunction();
 				wasUndirected = e.wasUndirected();
 				UpperBoundary = e.getUpperBoundary();
 				LowerBoundary = e.getLowerBoundary();
 				ActivationProbability = e.getActivationProbability();
-			}
+			}*/
 			bea = new PNEdge(from, to, label, name,
-					Elementdeclerations.pnContinuousEdge, tokens);
+					Elementdeclerations.pnContinuousEdge, label);
 			((PNEdge) bea).wasUndirected(wasUndirected);
 			((PNEdge) bea).setLowerBoundary(LowerBoundary);
 			((PNEdge) bea).setUpperBoundary(UpperBoundary);
@@ -612,16 +612,16 @@ public class Pathway {
 			double UpperBoundary = 0.0;
 			double LowerBoundary = 0.0;
 			double ActivationProbability = 1.0;
-			if (bea instanceof PNEdge) {
+			/*if (bea instanceof PNEdge) {
 				PNEdge e = (PNEdge) bea;
 				tokens = e.getFunction();
 				wasUndirected = e.wasUndirected();
 				UpperBoundary = e.getUpperBoundary();
 				LowerBoundary = e.getLowerBoundary();
 				ActivationProbability = e.getActivationProbability();
-			}
+			}*/
 			bea = new PNEdge(from, to, label, name,
-					Elementdeclerations.pnInhibitionEdge, tokens);
+					Elementdeclerations.pnInhibitionEdge, label);
 			((PNEdge) bea).wasUndirected(wasUndirected);
 			((PNEdge) bea).setLowerBoundary(LowerBoundary);
 			((PNEdge) bea).setUpperBoundary(UpperBoundary);

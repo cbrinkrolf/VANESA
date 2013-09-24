@@ -22,6 +22,7 @@ public class PNResultInputReader {
 		while ((line = in.readLine()) != null) {
 			text.add(line);
 		}
+		in.close();
 
 		HashMap<String, Vector<Double>> result = new HashMap<String, Vector<Double>>();
 		String tmp = null;

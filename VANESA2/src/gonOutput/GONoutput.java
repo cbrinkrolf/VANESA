@@ -25,7 +25,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
  */
 public class GONoutput {
 
-	private static final boolean debug = false;
+	//private static final boolean debug = false;
 
 	private File file = null;
 	private Pathway pw = null;

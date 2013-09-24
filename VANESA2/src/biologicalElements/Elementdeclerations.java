@@ -257,7 +257,8 @@ public class Elementdeclerations {
 	public List<String> getPNEdgeDeclarations() {
 		List<String> l = new ArrayList<String>();
 		l.add(pnDiscreteEdge);
-		l.add(pnContinuousEdge);
+		//TODO disabled cont. PN Edge
+		//l.add(pnContinuousEdge);
 		l.add(pnInhibitionEdge);
 		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
 		return l;

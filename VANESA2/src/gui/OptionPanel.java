@@ -39,7 +39,7 @@ public class OptionPanel {
 
 	private JXTaskPane satellite;
 
-	private PetriNetProperties petriNetProperties;
+	//private PetriNetProperties petriNetProperties;
 
 
 	// Taskpane for the microarray data visualization component
@@ -62,7 +62,7 @@ public class OptionPanel {
 
 	private JXTaskPane theory;
 
-	private JXTaskPane petriNet;
+	//private JXTaskPane petriNet;
 
 	private JXTaskPane pathways;
 	
@@ -308,7 +308,7 @@ public class OptionPanel {
 
 	//	System.out.println("update option panel -alignment");
 
-		String title = MainWindowSingelton.getInstance().getCurrentPathway();
+		//String title = MainWindowSingelton.getInstance().getCurrentPathway();
 		// if (alignmentTabs.containsKey(title)) {
 		// alignmentOptions = alignmentTabs.get(title);
 		// alignment.removeAll();

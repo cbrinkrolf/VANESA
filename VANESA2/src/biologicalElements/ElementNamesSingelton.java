@@ -31,8 +31,8 @@ public class ElementNamesSingelton extends ElementNames {
 	 * 
 	 * @param dbsolas
 	 */
-	public static void setInstance(ElementNames settings) {
-		settings = settings;
-	}
+//	public static void setInstance(ElementNames settings) {
+//		settings = settings;
+//	}
 }
 

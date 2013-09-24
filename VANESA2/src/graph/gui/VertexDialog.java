@@ -36,11 +36,11 @@ public class VertexDialog{
 	String[] details = new String[3];
 	JOptionPane pane;
 	JTextField name;
-	JComboBox elementNames = new javax.swing.JComboBox();
-	JComboBox compartment = new JComboBox();
+	JComboBox<String> elementNames = new javax.swing.JComboBox<String>();
+	JComboBox<String> compartment = new JComboBox<String>();
 	GraphInstance graphInstance = new GraphInstance();
 	Pathway pw = graphInstance.getPathway();
-	JComboBox box = new JComboBox();
+	JComboBox<String> box = new JComboBox<String>();
 	
 	boolean addedNewValues = false;
 	/**
@@ -50,7 +50,7 @@ public class VertexDialog{
 		
 		MigLayout layout = new MigLayout("", "[left]");
 		
-		DefaultComboBoxModel dcbm = new DefaultComboBoxModel(ElementNamesSingelton.getInstance().getEnzymes());
+		DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<String>(ElementNamesSingelton.getInstance().getEnzymes());
 		elementNames.setEditable(true);
 		elementNames.setModel(dcbm);
 		
@@ -88,19 +88,20 @@ public class VertexDialog{
 	
 	private void addNodeItems(){
 
-		List nodeItems = new Elementdeclerations().getNotPNNodeDeclarations();
-		Iterator it = nodeItems.iterator();
+		List<String> nodeItems = new Elementdeclerations().getNotPNNodeDeclarations();
+		Iterator<String> it = nodeItems.iterator();
 		
+		String element;
 		while(it.hasNext()){
-			String element = it.next().toString();
+			element = it.next();
 			box.addItem(element);
 		}	
 		
-		List compartmentList = new Elementdeclerations().getAllCompartmentDeclaration();
-		Iterator it2 = compartmentList.iterator();
+		List<String> compartmentList = new Elementdeclerations().getAllCompartmentDeclaration();
+		Iterator<String> it2 = compartmentList.iterator();
 		
 		while(it2.hasNext()){
-			String element = it2.next().toString();
+			element = it2.next();
 			compartment.addItem(element);
 		}	
 	}
