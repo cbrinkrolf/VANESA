@@ -7,14 +7,11 @@ import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
 
-import java.awt.Color;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Set;
 
 import biologicalElements.Pathway;
@@ -74,36 +71,35 @@ public class Connectness extends Object {
 		countNodeDegrees();
 	}
 
+	public Connectness(String pathwayname) {
+		pw =  con.getPathway(pathwayname);
+		mg = pw.getGraph();
+		
+		nodes = mg.getAllVertices().size();
+		edges = mg.getAllEdges().size();
+
+		nodei = new int[edges + 1];
+		nodej = new int[edges + 1];
+
+		adjacency = new int[nodes][nodes];
+		
+		//Induce mapping to local adjacency matrix and data structures (BNA.ID)
+		Iterator<BiologicalNodeAbstract> it = mg.getAllVertices().iterator();
+		while(it.hasNext()){
+			BiologicalNodeAbstract bna = it.next();	
+			reassignNodeBNA(bna);			
+		}
 	
-// TODO: CALL WITH PATHWAY NAME
-//	public Connectness(String pathwayname) {
-//		pw = con.getPathway(pathwayname);
-//
-//		nodes = pw.countNodes();
-//		edges = pw.countEdges();
-//
-//		nodei = new int[edges + 1];
-//		nodej = new int[edges + 1];
-//
-//		adjacency = new int[nodes][nodes];
-//		
-//		//Induce mapping to local adjacency matrix and data structures (BNA.ID)
-//		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
-//		while(it.hasNext()){
-//			BiologicalNodeAbstract bna = it.next();			
-//			reassignNode(bna.getID());			
-//		}
-//
-//		fillAdjacencyData();
-//		countNodeDegrees();
-//	}
+		fillAdjacencyData();
+		countNodeDegrees();
+	}
 	
 	public int getNodeDegree(int nodeID){
 		return nodedegreetable.get(nodeID);
 	}
 	
-	public int getNodeAssignment(int bnaID){
-		return nodeassings.get(bnaID);
+	public int getNodeAssignment(BiologicalNodeAbstract bna){
+		return nodeassings.get(bna);
 	}
 	
 	public Pathway getPathway(){
@@ -114,7 +110,7 @@ public class Connectness extends Object {
 		if (!nodeassings.containsKey(nodeBNA)) {
 			nodeassings.put(nodeBNA, nodeincrement);
 			nodeassignsback.put(nodeincrement,nodeBNA);
-			System.out.println(nodeBNA.getID()+" assigned to "+nodeincrement);
+//			System.out.println(nodeBNA.getID()+" assigned to "+nodeincrement);
 			nodeincrement++;
 		}
 	}
@@ -247,35 +243,66 @@ public class Connectness extends Object {
 		return avgneighdegree /= (nodes * 1.0f);
 	}
 	
-//	public Hashtable<Integer,Double> averageNeighbourDegreeTable() {
-//		Hashtable<Integer,Double> ht = new Hashtable<Integer,Double>(nodes);
-//				
-//		double oneavgdegree = 0.0f;
-//		int verticedegrees[] = new int[nodes], degree = 0;
-//		// Count Vertice Degrees and store them in an Array
-//		for (int i = 0; i < nodes; i++) {
-//			for (int j = 0; j < nodes; j++) {
-//				if (adjacency[i][j] == 1)
-//					degree++;
-//			}
-//			verticedegrees[i] = degree;
-//			degree = 0;
-//		}
-//		// Add Neighbour Degrees and divide
-//		for (int i = 0; i < nodes; i++) {
-//			for (int j = 0; j < nodes; j++) {
-//				if (adjacency[i][j] == 1)
-//					oneavgdegree += verticedegrees[j];
-//			}
-//			if (verticedegrees[i] != 0)// if current node not connected
-//				oneavgdegree += (oneavgdegree / verticedegrees[i]);
-//			
-//			ht.put(nodeassignsback.get(i), oneavgdegree);
-//			oneavgdegree = 0f;
-//		}
-//		
-//		return ht;
-//	}
+	public Hashtable<BiologicalNodeAbstract,Double> averageNeighbourDegreeTable() {
+		Hashtable<BiologicalNodeAbstract,Double> ht = new Hashtable<BiologicalNodeAbstract,Double>(nodes);
+				
+		double oneavgdegree = 0.0f;
+		int verticedegrees[] = new int[nodes], degree = 0;
+		// Count Vertice Degrees and store them in an Array
+		for (int i = 0; i < nodes; i++) {
+			for (int j = 0; j < nodes; j++) {
+				if (adjacency[i][j] == 1)
+					degree++;
+			}
+			verticedegrees[i] = degree;
+			degree = 0;
+		}
+		// Add Neighbour Degrees and divide
+		for (int i = 0; i < nodes; i++) {
+			for (int j = 0; j < nodes; j++) {
+				if (adjacency[i][j] == 1)
+					oneavgdegree += verticedegrees[j];
+			}
+			if (verticedegrees[i] != 0)// if current node not connected
+				oneavgdegree += (oneavgdegree / verticedegrees[i]);
+			
+			ht.put(nodeassignsback.get(i), oneavgdegree);
+			oneavgdegree = 0f;
+		}
+		
+		return ht;
+	}
+	
+	//Version for Filtering
+	public Hashtable<BiologicalNodeAbstract,Double> averageNeighbourDegreeTable(double min, double max) {
+		Hashtable<BiologicalNodeAbstract,Double> ht = new Hashtable<BiologicalNodeAbstract,Double>(nodes);
+				
+		double oneavgdegree = 0.0f;
+		int verticedegrees[] = new int[nodes], degree = 0;
+		// Count Vertice Degrees and store them in an Array
+		for (int i = 0; i < nodes; i++) {
+			for (int j = 0; j < nodes; j++) {
+				if (adjacency[i][j] == 1)
+					degree++;
+			}
+			verticedegrees[i] = degree;
+			degree = 0;
+		}
+		// Add Neighbour Degrees and divide
+		for (int i = 0; i < nodes; i++) {
+			for (int j = 0; j < nodes; j++) {
+				if (adjacency[i][j] == 1)
+					oneavgdegree += verticedegrees[j];
+			}
+			if (verticedegrees[i] != 0)// if current node not connected
+				oneavgdegree += (oneavgdegree / verticedegrees[i]);
+			if(oneavgdegree >= min &&  oneavgdegree <= max)
+				ht.put(nodeassignsback.get(i), oneavgdegree);
+			oneavgdegree = 0f;
+		}
+		
+		return ht;
+	}
 
 	public int maxPathLength() {
 		// With Deep first search on all nodes

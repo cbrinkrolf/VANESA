@@ -1,5 +1,6 @@
 package gui;
 
+import graph.algorithms.gui.GraphColoringGUI;
 import graph.algorithms.gui.HubDetectionGui;
 import graph.algorithms.gui.ShortestPathGui;
 
@@ -18,7 +19,9 @@ public class GraphAlgorithmsWindow {
 	boolean emptyPane = true;
 
 	private ShortestPathGui shortestPath = new ShortestPathGui();
-	private HubDetectionGui hub = new HubDetectionGui();
+//	private HubDetectionGui hub = new HubDetectionGui();
+	//Martin
+	private GraphColoringGUI coloredgraph = new GraphColoringGUI();
 
 	public GraphAlgorithmsWindow() {
 
@@ -29,9 +32,12 @@ public class GraphAlgorithmsWindow {
 		tabbedPanel.getProperties().setTabReorderEnabled(false);
 		tabbedPanel.getProperties().setTabDropDownListVisiblePolicy(
 				TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE);
+		
+		//Martin
+		tabbedPanel.addTab(coloredgraph.getTitledTab());
 		tabbedPanel.addTab(shortestPath.getTitledTab());
-		//TODO hub detection wieder rein
-		//tabbedPanel.addTab(hub.getTitledTab());
+//		tabbedPanel.addTab(hub.getTitledTab());
+
 
 	}
 
@@ -41,10 +47,10 @@ public class GraphAlgorithmsWindow {
 			p.add(tabbedPanel, BorderLayout.CENTER);
 			emptyPane = false;
 		}
-		//System.out.println("bin im revalidatview drin");
 		shortestPath.revalidateView();
-		//TODO hub detection wieder rein
-		//hub.revalidateView();
+//		hub.revalidateView();
+		//Martin
+		coloredgraph.revalidateView();
 
 		p.setVisible(true);
 		p.repaint();
