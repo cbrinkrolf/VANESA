@@ -6,8 +6,6 @@ import javax.swing.JOptionPane;
 
 public class InfoWindow {
 
-	public static String matrix = "";
-
 	public InfoWindow() {
 
 		MainWindow w = MainWindowSingelton.getInstance();
@@ -33,11 +31,12 @@ public class InfoWindow {
 				+ writeLine("Global Matching Index:", connectnes.getGlobalMatchingIndex()+ "")
 				+ tableEnd
 				+ "</html>";
-
-
-		JOptionPane.showMessageDialog(w.returnFrame(), instructions,
+               
+        JOptionPane.showMessageDialog(w.returnFrame(), instructions,
 				"Network Statistics", 1);
+		
 	}
+	
 
 	private String writeLine(String description, String Attribute) {
 
