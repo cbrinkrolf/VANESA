@@ -1,6 +1,8 @@
 package gui;
 
 import graph.algorithms.gui.GraphColoringGUI;
+import graph.algorithms.gui.GraphNodeRemovalGUI;
+import graph.algorithms.gui.GraphNodeDimensionGUI;
 import graph.algorithms.gui.HubDetectionGui;
 import graph.algorithms.gui.ShortestPathGui;
 
@@ -19,9 +21,9 @@ public class GraphAlgorithmsWindow {
 	boolean emptyPane = true;
 
 	private ShortestPathGui shortestPath = new ShortestPathGui();
-//	private HubDetectionGui hub = new HubDetectionGui();
-	//Martin
 	private GraphColoringGUI coloredgraph = new GraphColoringGUI();
+	private GraphNodeRemovalGUI noderemoval = new GraphNodeRemovalGUI();
+	private GraphNodeDimensionGUI nodeweight = new GraphNodeDimensionGUI();
 
 	public GraphAlgorithmsWindow() {
 
@@ -35,9 +37,9 @@ public class GraphAlgorithmsWindow {
 		
 		//Martin
 		tabbedPanel.addTab(coloredgraph.getTitledTab());
+		tabbedPanel.addTab(nodeweight.getTitledTab());
+		tabbedPanel.addTab(noderemoval.getTitledTab());
 		tabbedPanel.addTab(shortestPath.getTitledTab());
-//		tabbedPanel.addTab(hub.getTitledTab());
-
 
 	}
 
@@ -48,8 +50,8 @@ public class GraphAlgorithmsWindow {
 			emptyPane = false;
 		}
 		shortestPath.revalidateView();
-//		hub.revalidateView();
-		//Martin
+		nodeweight.revalidateView();
+		noderemoval.revalidateView();
 		coloredgraph.revalidateView();
 
 		p.setVisible(true);
