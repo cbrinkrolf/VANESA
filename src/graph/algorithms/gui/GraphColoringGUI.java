@@ -33,8 +33,6 @@ public class GraphColoringGUI implements ActionListener {
 	private JComboBox<String> chooseAlgorithm;
 	private JButton colorizebutton;
 
-	// private JButton calculate;
-
 	private String[] algorithmNames = { "Node Degree", "Neighbor Degree", "Clique" };
 	private int currentalgorithmindex = 0;
 	private String[] colorrangenames = {"bluesea","skyline","darkmiddle","darkleftmiddle","rainbow"};
@@ -44,6 +42,7 @@ public class GraphColoringGUI implements ActionListener {
 	private JRadioButton[] colorrangeradio = new JRadioButton[colorrangenames.length];
 	private GraphColorizer gc;
 	private JCheckBox logview;
+	private ButtonGroup bg;
 	
 	//coloring variables
 	private Connectness c;	
@@ -59,7 +58,7 @@ public class GraphColoringGUI implements ActionListener {
 
 	private void updateWindow() {
 
-		ButtonGroup bg = new ButtonGroup();
+		bg = new ButtonGroup();
 
 		chooseAlgorithm = new JComboBox<String>(algorithmNames);
 		chooseAlgorithm.setActionCommand("algorithm");
