@@ -20,7 +20,9 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
+import javax.swing.SpinnerNumberModel;
 
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
@@ -39,7 +41,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 	private String[] algorithmNames = { "Choose Algorithm","Node Degree", "Neighbor Degree", "Clique" };
 	private int currentalgorithmindex = 0;
 	private JPanel valuesfromto, valuesminmax;
-	private JTextArea fromtextarea, totextarea;
+	private JSpinner fromspinner, tospinner;
 	private JLabel minvaluelabel, maxvaluelabel;
 	private double minvalue, maxvalue, removefrom, removeto, currentvalue;
 	
@@ -55,6 +57,8 @@ public class GraphNodeRemovalGUI implements ActionListener {
 	private Hashtable<BiologicalNodeAbstract,Double> nodevalues;
 	private HashSet<BiologicalNodeAbstract> removals;
 	private BiologicalNodeAbstract bna;
+	private SpinnerNumberModel modelremovenodesfrom;
+	private SpinnerNumberModel modelremovenodesto;
 	
 	private TitledTab tab;
 	
@@ -69,15 +73,20 @@ public class GraphNodeRemovalGUI implements ActionListener {
 		chooseAlgorithm.addActionListener(this);
 
 		valuesfromto = new JPanel(new MigLayout("","[][][]",""));
-		fromtextarea = new JTextArea();
-		totextarea = new JTextArea();
-		fromtextarea.setMinimumSize(new Dimension(70, 12));
-		totextarea.setMinimumSize(new Dimension(70, 12));
-		fromtextarea.setEnabled(false);
-		totextarea.setEnabled(false);
-		valuesfromto.add(fromtextarea);
+		
+		modelremovenodesfrom  = new SpinnerNumberModel(0.0d, 0.0d, 1.0d, 1.0d);		
+		modelremovenodesto  = new SpinnerNumberModel(0.0d, 0.0d, 1.0d, 1.0d);
+		
+		fromspinner = new JSpinner(modelremovenodesfrom);
+		tospinner = new JSpinner(modelremovenodesto);
+		fromspinner.setEnabled(false);
+		tospinner.setEnabled(false);
+		
+		valuesfromto.add(fromspinner);
 		valuesfromto.add(new JLabel(" to "));
-		valuesfromto.add(totextarea);
+		valuesfromto.add(tospinner);
+		
+		
 
 		
 		removebutton = new JButton("remove");
@@ -141,8 +150,8 @@ public class GraphNodeRemovalGUI implements ActionListener {
 	}
 	
 	private void resetRemovalInterface() {
-		fromtextarea.setEnabled(false);
-		totextarea.setEnabled(false);
+		fromspinner.setEnabled(false);
+		tospinner.setEnabled(false);
 		valuesminmax.setVisible(false);
 		removebutton.setEnabled(false);
 		chooseAlgorithm.setSelectedIndex(0);
@@ -180,11 +189,16 @@ public class GraphNodeRemovalGUI implements ActionListener {
 				getNodeDegreeRatings();
 				
 				//Post min/max  values:
+				modelremovenodesfrom = new SpinnerNumberModel(minvalue, minvalue, maxvalue, 1.0d);
+				modelremovenodesto = new SpinnerNumberModel(maxvalue, minvalue, maxvalue, 1.0d);				
+				
+				fromspinner.setModel(modelremovenodesfrom);
+				tospinner.setModel(modelremovenodesto);
+				
 				minvaluelabel.setText(""+minvalue);
-				fromtextarea.setText(""+minvalue);
 				
 				maxvaluelabel.setText(""+maxvalue);
-				totextarea.setText(""+maxvalue);
+				tospinner.setValue(maxvalue);
 				
 				break;
 			case 2:
@@ -201,16 +215,16 @@ public class GraphNodeRemovalGUI implements ActionListener {
 			}
 			
 			//Enable further Gui elements
-			fromtextarea.setEnabled(true);
-			totextarea.setEnabled(true);
+			fromspinner.setEnabled(true);
+			tospinner.setEnabled(true);
 			removebutton.setEnabled(true);
 			valuesminmax.setVisible(true);
 		}
 		else if(command.equals("remove")){
 			//get Values from Text fields
 			try{
-				removefrom = Double.parseDouble(fromtextarea.getText());
-				removeto = Double.parseDouble(totextarea.getText());
+				removefrom = (double) fromspinner.getValue();
+				removeto = (double) tospinner.getValue();
 		
 				//remove specified Nodes 
 				removals = new HashSet<BiologicalNodeAbstract>();

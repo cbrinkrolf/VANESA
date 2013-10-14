@@ -3,6 +3,8 @@ package graph.algorithms.gui;
 import graph.GraphInstance;
 import graph.algorithms.Connectness;
 
+import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Hashtable;
@@ -14,6 +16,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
@@ -31,6 +35,9 @@ public class GraphNodeDimensionGUI implements ActionListener {
 	//private JButton weight;
 	private String[] algorithmNames = { "None","Node Degree", "Neighbor Degree", "Clique" };
 	private int currentalgorithmindex = 0;
+	private JSpinner nodesizefromspinner, nodesizetospinner;
+	private SpinnerNumberModel frommodel, tomodel;
+	private JPanel valuesfromto;	
 	
 	MigLayout layout;
 
@@ -38,11 +45,12 @@ public class GraphNodeDimensionGUI implements ActionListener {
 	private Connectness c;	
 	private Iterator<BiologicalNodeAbstract> itn;
 	private BiologicalNodeAbstract bna;
+	private Hashtable<BiologicalNodeAbstract, Double> ratings;
 	private Hashtable<BiologicalNodeAbstract, Double> weightings;
-	private Map.Entry<BiologicalNodeAbstract,Double> weightingsentry;
+	private Map.Entry<BiologicalNodeAbstract,Double> ratingsentry;
 	private Iterator<Map.Entry<BiologicalNodeAbstract,Double>> it;
 	private double minvalue, maxvalue, currentvalue;
-	
+	private JButton resizebutton;
 
 	private TitledTab tab;
 	
@@ -55,11 +63,34 @@ public class GraphNodeDimensionGUI implements ActionListener {
 		chooseAlgorithm = new JComboBox<String>(algorithmNames);
 		chooseAlgorithm.setActionCommand("algorithm");
 		chooseAlgorithm.addActionListener(this);
+		
+		
+		frommodel = new SpinnerNumberModel(1.0d, 1.0d, 8.0d, 1.0d);
+		tomodel = new SpinnerNumberModel(4.0d, 1.0d, 8.0d, 1.0d);
+		
+		nodesizefromspinner = new JSpinner(frommodel);
+		nodesizetospinner = new JSpinner(tomodel);
+		nodesizefromspinner.setEnabled(false);
+		nodesizetospinner.setEnabled(false);
+	
+		valuesfromto = new JPanel();
+		valuesfromto.add(nodesizefromspinner);
+		valuesfromto.add(new JLabel(" to "));
+		valuesfromto.add(nodesizetospinner);
+		
+		resizebutton = new JButton("resize");
+		resizebutton.addActionListener(this);
+		resizebutton.setActionCommand("resize");
+		resizebutton.setEnabled(false);
+		
+		
 
 		layout = new MigLayout("", "[][grow]", "");
 		p.setLayout(layout);	
 		p.add(new JLabel("Algorithm"), "wrap");
 		p.add(chooseAlgorithm, "wrap");
+		p.add(valuesfromto);
+		p.add(resizebutton);
 		
 		
 	}
@@ -103,7 +134,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 	private void getNodeDegreeRatings() {
 		c = new Connectness();
 		itn = c.getPathway().getAllNodes().iterator();
-		weightings = new Hashtable<BiologicalNodeAbstract,Double>();
+		ratings = new Hashtable<BiologicalNodeAbstract,Double>();
 		minvalue = Double.MAX_VALUE;
 		maxvalue = Double.MIN_NORMAL;
 		double degree;
@@ -114,18 +145,18 @@ public class GraphNodeDimensionGUI implements ActionListener {
 				maxvalue = degree;
 			if (degree < minvalue)
 				minvalue = degree;
-			weightings.put(bna, degree);
+			ratings.put(bna, degree);
 		}
 	}
 	
 	private void transformRatingToWeighting(double minweight , double maxweight) {
 
-		it = weightings.entrySet().iterator();
-		
+		it = ratings.entrySet().iterator();
+		weightings = new Hashtable<BiologicalNodeAbstract, Double>();
 		while (it.hasNext()) {
-			weightingsentry = it.next();
-			bna = weightingsentry.getKey();
-			currentvalue = weightingsentry.getValue();
+			ratingsentry = it.next();
+			bna = ratingsentry.getKey();
+			currentvalue = ratingsentry.getValue();
 			
 			//apply formula
 			currentvalue = ((maxweight-minweight)/(maxvalue-minvalue))*currentvalue;
@@ -145,6 +176,9 @@ public class GraphNodeDimensionGUI implements ActionListener {
 		String command = e.getActionCommand();
 		currentalgorithmindex = chooseAlgorithm.getSelectedIndex();
 		if(command.equals("algorithm")){
+			resizebutton.setEnabled(true);
+			nodesizefromspinner.setEnabled(true);
+			nodesizetospinner.setEnabled(true);
 			c = new Connectness();
 			//do calculations
 			switch (currentalgorithmindex) {
@@ -156,6 +190,8 @@ public class GraphNodeDimensionGUI implements ActionListener {
 					bna = itn.next();
 					bna.setNodesize(1.0d);
 				}
+				nodesizefromspinner.setEnabled(false);
+				nodesizetospinner.setEnabled(false);
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 				
 				break;
@@ -165,14 +201,21 @@ public class GraphNodeDimensionGUI implements ActionListener {
 				getNodeDegreeRatings();
 				
 				//calclulate Weighting
-				transformRatingToWeighting(1.0d,4.0d);		
+				transformRatingToWeighting((double)nodesizefromspinner.getValue(),(double)nodesizetospinner.getValue());		
 				
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 				
 				break;
 			case 2:
 				System.out.println("Node Weighting 2: Neighbor Degree");
-				//TODO: Neighbor Degree rating
+				//TODO Neighbor degree rating
+//				ratings = c.averageNeighbourDegreeTable();
+//
+//				//calclulate Weighting
+//				transformRatingToWeighting((double)nodesizefromspinner.getValue(),(double)nodesizetospinner.getValue());		
+//				
+//				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+
 				break;
 			case 3:
 				System.out.println("Node Weighting 3: Clique");
@@ -182,7 +225,14 @@ public class GraphNodeDimensionGUI implements ActionListener {
 			default:
 				break;
 			}
-		}		
+		}	
+		else if(command.equals("resize")){
+			
+			transformRatingToWeighting((double)nodesizefromspinner.getValue(),(double)nodesizetospinner.getValue());		
+			
+			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+			
+		}
 	}
 
 
