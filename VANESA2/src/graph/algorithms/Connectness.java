@@ -7,6 +7,7 @@ import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
 
+import java.awt.Color;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -38,6 +39,8 @@ public class Connectness extends Object {
 	int nodedepths[];
 	int maxpath;
 	boolean nodemarked[];
+	int cutnodes[];
+	int cliques[][];
 
 	// lists
 	LinkedList<Integer> nodedegrees = new LinkedList<Integer>();
@@ -163,7 +166,6 @@ public class Connectness extends Object {
 			return true;
 		else
 			return false;
-
 	}
 		
 	public boolean isGraphPlanar() {
@@ -248,7 +250,7 @@ public class Connectness extends Object {
 				
 		double oneavgdegree = 0.0f;
 		int verticedegrees[] = new int[nodes], degree = 0;
-		// Count Vertice Degrees and store them in an Array
+		// Count Vertex Degrees and store them in an Array
 		for (int i = 0; i < nodes; i++) {
 			for (int j = 0; j < nodes; j++) {
 				if (adjacency[i][j] == 1)
@@ -257,17 +259,25 @@ public class Connectness extends Object {
 			verticedegrees[i] = degree;
 			degree = 0;
 		}
-		// Add Neighbour Degrees and divide
+		// Add Neighbor Degrees and divide
 		for (int i = 0; i < nodes; i++) {
 			for (int j = 0; j < nodes; j++) {
 				if (adjacency[i][j] == 1)
 					oneavgdegree += verticedegrees[j];
 			}
-			if (verticedegrees[i] != 0)// if current node not connected
-				oneavgdegree += (oneavgdegree / verticedegrees[i]);
+			if (verticedegrees[i] != 0)// if current node is connected
+				oneavgdegree = (oneavgdegree / verticedegrees[i]);
 			
 			ht.put(nodeassignsback.get(i), oneavgdegree);
 			oneavgdegree = 0f;
+		}
+		
+		//debug
+		Iterator<Double> iit = ht.values().iterator();
+		while (iit.hasNext()) {
+			double d = iit.next();
+			System.out.println(d);
+			
 		}
 		
 		return ht;
@@ -436,4 +446,54 @@ public class Connectness extends Object {
 
 		return edges;
 	}
+	
+	//return all nodes that would disconnect the Network, works only with connected networks
+	public int[] getCutNodes(){
+		
+		if(isGraphConnected()){
+			cutnodes = new int[nodes+1];
+			GraphTheoryAlgorithms.cutNodes(nodes, edges, nodei, nodej, cutnodes);
+			
+			for (int i = 1; i < cutnodes.length; i++) {
+
+				if(cutnodes[i]>0){
+					BiologicalNodeAbstract tmpnode = nodeassignsback.get(cutnodes[i]-1);
+					tmpnode.setColor(Color.yellow);
+					tmpnode.setNodesize(2.0);
+				}
+				
+			}
+			
+			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+						
+			return cutnodes;
+		}else{
+			//return error value if not possible
+			int[] ret = {-1};
+			return ret;
+		}				
+	}
+	
+//	public int getNumberOfCliques(){
+//		
+//		if(isGraphConnected()){
+//			cliques = new int[nodes+1][nodes+1];
+//			GraphTheoryAlgorithms.allCliques(nodes, edges, nodei, nodej, cliques);
+//			
+//			for (int i = 1; i < cliques.length; i++) {
+//				for (int j = 1; j < cliques[0].length; j++) {
+//					if(cliques[i][j]>0){
+//						BiologicalNodeAbstract tmpnode = nodeassignsback.get(cliques[i][j]-1);
+//						System.out.print(tmpnode.getLabel()+" ");
+//					}
+//					
+//				}
+//				System.out.println();
+//			}
+//			
+//			return cliques[0][0];
+//		}else		
+//			return -1;
+//		
+//	}
 }
