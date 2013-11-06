@@ -32,6 +32,7 @@ public class JNLPGenerator extends Task
 	private String jnlpName = new String("vanesa.jnlp");
 	private String target = null;
 	private String lib = null;
+	private String mainJar = null;
 	private String main = null;
 	
 	
@@ -46,6 +47,8 @@ public class JNLPGenerator extends Task
 	{
 		if (lib == null)
 			throw new BuildException("No library path defined");
+		else if (mainJar==null)
+			throw new BuildException("No main JAR defined");
 		else if (target==null)
 			throw new BuildException("No target defined");
 		else if (main==null)
@@ -165,6 +168,15 @@ public class JNLPGenerator extends Task
 	{
 		this.lib=lib;
 	}
+	
+	
+	public String getMainJar() {
+		return mainJar;
+	}
+
+	public void setMainJar(String mainJar) {
+		this.mainJar = mainJar;
+	}
 
 	public String getMain()
 	{
@@ -261,6 +273,7 @@ public class JNLPGenerator extends Task
 				bf.write(JAR_Tag(l)+"\n");
 		}
 		
+		bf.write(JAR_Tag(mainJar)+"\n");
 		
 		bf.write("</resources>"+"\n");
 		bf.write(Application_Tag()+"\n");
