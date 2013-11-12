@@ -1,4 +1,4 @@
-package mathLaws;
+/*package mathLaws;
 
 import java.util.Hashtable;
 
@@ -140,4 +140,4 @@ public class pathway {
 		}		
 		
 	}
-}
+}*/

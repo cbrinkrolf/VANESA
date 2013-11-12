@@ -1,4 +1,4 @@
-package graph.layouts;
+/*package graph.layouts;
 
 /*
  * Copyright (c) 2005, the JUNG Project and the Regents of the University of
@@ -11,7 +11,7 @@ package graph.layouts;
  */
 
 
-import java.awt.geom.Point2D;
+/*import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,7 +34,7 @@ public class CircularSubLayout implements SubLayout {
      * @param radius the radius of the circle
      * @param center the center of the circle
      */
-	public CircularSubLayout(Collection vertices, SubLayoutDecorator layout) {
+	/*public CircularSubLayout(Collection vertices, SubLayoutDecorator layout) {
         this.layout=layout;
         initializeLocations(vertices);
 		
@@ -47,7 +47,7 @@ public class CircularSubLayout implements SubLayout {
 	 * 
 	 * @param vertices
 	 */
-	private void initializeLocations(Collection vertices) {
+	/*private void initializeLocations(Collection vertices) {
 		Vertex[] vertexArray =
 		    (Vertex[]) vertices.toArray(new Vertex[vertices.size()]);
 		
@@ -71,4 +71,4 @@ public class CircularSubLayout implements SubLayout {
     public Point2D getLocation(ArchetypeVertex v) {
         return (Point2D)map.get(v);
     }
-}
+}*/

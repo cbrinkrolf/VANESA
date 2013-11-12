@@ -38,6 +38,8 @@ public class PetriNetSimulation {
 									+ "Simulation can take some time...",
 							"Dymola installation folder required...",
 							JOptionPane.QUESTION_MESSAGE);
+			String stopTime = JOptionPane.showInputDialog("Stop Time","500");
+			String intervals = JOptionPane.showInputDialog("Intervals","500");
 			JFileChooser chooser = new JFileChooser(path);
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			chooser.setAcceptAllFileFilterUsed(false);
@@ -83,7 +85,7 @@ public class PetriNetSimulation {
 					+ "\");\r\n");
 			out.write("import PNlib_ver1_4.mo;\r\n");
 			out.write("import simulation.mo;\r\n");
-			out.write("simulateModel(\"simulation\", stopTime=100, numberOfIntervals=500, method=\"dassl\", resultFile=\"simulate\");\r\n");
+			out.write("simulateModel(\"simulation\", stopTime="+stopTime+", numberOfIntervals="+intervals+", method=\"dassl\", resultFile=\"simulate\");\r\n");
 			out.write("fileName=\"simulate.mat\";\r\n");
 			out.write("CSVfile=\"simulate.csv\";\r\n");
 			out.write("n=readTrajectorySize(fileName);\r\n");

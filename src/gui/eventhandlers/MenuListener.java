@@ -19,6 +19,7 @@ import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.jung.classes.MyGraph;
 import graph.layouts.gemLayout.GEMLayout;
 import graph.layouts.modularLayout.MDForceLayout;
+//import graph.layouts.modularLayout.MDForceLayout;
 import gui.AboutWindow;
 import gui.GetDBinformation;
 import gui.InfoWindow;
@@ -166,6 +167,8 @@ public class MenuListener implements ActionListener {
 			new RandomHamiltonGraphGui();
 
 		} else if ("export Network".equals(event)) {
+			System.out.println("Nodes: "+graphInstance.getMyGraph().getAllVertices().size());
+			System.out.println("Edges: "+graphInstance.getMyGraph().getAllEdges().size());
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog( // GRAPHML+MO+GON=14

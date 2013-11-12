@@ -27,8 +27,8 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import graph.GraphInstance;
 //import edu.uci.ics.jung.visualization.subLayout.SubLayoutDecorator;
-import graph.layouts.modularLayout.MDLayout;
-import graph.layouts.modularLayout.MDNode;
+//import graph.layouts.modularLayout.MDLayout;
+//import graph.layouts.modularLayout.MDNode;
 
 /**
  *

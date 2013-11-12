@@ -1,4 +1,4 @@
-package graph.jung.classes;
+/*package graph.jung.classes;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -120,4 +120,4 @@ public class MyPluggableRenderer extends PluggableRenderContext{
     	}
     }
 	
-}
+}*/

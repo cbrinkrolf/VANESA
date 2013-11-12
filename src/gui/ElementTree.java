@@ -208,7 +208,7 @@ public class ElementTree implements TreeSelectionListener {
 		tree.expandAll();
 	}
 
-	public void valueChanged(TreeSelectionEvent e) {
+	/*public void valueChanged(TreeSelectionEvent e) {
 
 		DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree
 				.getLastSelectedPathComponent();
@@ -227,6 +227,6 @@ public class ElementTree implements TreeSelectionListener {
 			return;
 		}
 
-	}
+	}*/
 
 }
