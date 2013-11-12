@@ -231,7 +231,7 @@ public class MyGraph {
 				.getRangeShapeEditor());
 
 		// set the inner nodes to be painted after the actual graph
-		vv.addPostRenderPaintable(new InnerNodeRenderer(vv));
+		//vv.addPostRenderPaintable(new InnerNodeRenderer(vv));
 		vv.addPostRenderPaintable(new TokenRenderer(vv));
 		pickSupport = new ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				vv);

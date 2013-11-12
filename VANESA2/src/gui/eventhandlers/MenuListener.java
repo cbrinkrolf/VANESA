@@ -18,7 +18,6 @@ import graph.algorithms.gui.RandomHamiltonGraphGui;
 import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.jung.classes.MyGraph;
 import graph.layouts.gemLayout.GEMLayout;
-import graph.layouts.modularLayout.MDForceLayout;
 //import graph.layouts.modularLayout.MDForceLayout;
 import gui.AboutWindow;
 import gui.GetDBinformation;
@@ -350,7 +349,7 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeGraphLayout(5);
-					LayoutConfig.changeToLayout(MDForceLayout.class);
+					//LayoutConfig.changeToLayout(MDForceLayout.class);
 				} else {
 					JOptionPane.showMessageDialog(w,
 							"Please create a network before.");
