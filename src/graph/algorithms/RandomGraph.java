@@ -51,7 +51,6 @@ public class RandomGraph {
 							"Error during initialising random graph. Parameters are wrong!",
 							"Error Message", 1);
 		else {
-
 			Pathway pw = new CreatePathway("Random Graph").getPathway();
 			MyGraph myGraph = pw.getGraph();
 
@@ -144,13 +143,20 @@ public class RandomGraph {
 				}
 			}
 
-			// myGraph.unlockVertices();
-			// myGraph.restartVisualizationModel();
+			 myGraph.unlockVertices();
+			 myGraph.restartVisualizationModel();
 
-			MainWindow window = MainWindowSingelton.getInstance();
-			window.updateOptionPanel();
+			//MainWindow window = MainWindowSingelton.getInstance();
+			//window.updateOptionPanel();
 			//window.enable(true);
+			 
 			pw.getGraph().changeToGEMLayout();
+			//System.out.println("drin");
+			pw.getGraph().normalCentering();
+			
+			MainWindowSingelton.getInstance().updateAllGuiElements();
+			MainWindowSingelton.getInstance().enable(true);
+			//myGraph.getVisualizationViewer().repaint();
 		}
 	}
 }
