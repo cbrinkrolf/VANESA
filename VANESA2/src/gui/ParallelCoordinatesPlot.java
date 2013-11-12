@@ -908,8 +908,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							//v.setUserDatum("madata", 0.4, UserData.SHARED);
 							if (bna instanceof Place)
 								((Place) bna).setToken(ref);
-							NodeRankingVertexSizeFunction sf = new NodeRankingVertexSizeFunction(
-									"madata", ref2);
+							//NodeRankingVertexSizeFunction sf = new NodeRankingVertexSizeFunction(
+							//		"madata", ref2);
 							
 							VertexShapes vs = new VertexShapes(ref2,1.0f);
 

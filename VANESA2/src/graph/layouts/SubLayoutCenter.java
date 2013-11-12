@@ -1,4 +1,4 @@
-package graph.layouts;
+/*package graph.layouts;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
@@ -133,4 +133,4 @@ public class SubLayoutCenter {
 	public double getWidth(){
 		return width;
 	}
-}
+}*/

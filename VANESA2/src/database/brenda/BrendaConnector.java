@@ -687,7 +687,7 @@ public class BrendaConnector extends SwingWorker {
 		title = enzymeToSearch[0];
 
 		bar.setProgressBarString("Getting Enzymes");
-		System.out.println("123");
+		//System.out.println("123");
 		// System.out.println("do");
 		
 		try{
@@ -699,7 +699,7 @@ public class BrendaConnector extends SwingWorker {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		System.out.println("ende");
+		//System.out.println("ende");
 		// System.out.println("enz: "+enzymeToSearch);
 		String enzymeList = enzymesInPathway();
 		

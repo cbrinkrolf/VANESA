@@ -44,6 +44,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class PNTableDialog extends JDialog implements ActionListener {
 
+	private static final long serialVersionUID = 1L;
 	private JXTable table = new JXTable();
 	private BiologicalNodeAbstract[] bnas;
 	private JXTable table2 = new JXTable();
