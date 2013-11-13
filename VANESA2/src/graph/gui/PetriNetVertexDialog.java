@@ -41,39 +41,36 @@ import biologicalElements.Pathway;
  */
 public class PetriNetVertexDialog implements ActionListener {
 
-	JPanel panel;
-	String[] details = new String[5];
-	JOptionPane pane;
+	private JPanel panel;
+	private JOptionPane pane;
 
-	JTextField name = new JTextField();
-	JTextField label = new JTextField();
+	private JTextField name = new JTextField();
+	private JTextField label = new JTextField();
 
-	JComboBox<String> compartment = new JComboBox<String>();
-	GraphInstance graphInstance = new GraphInstance();
-	Pathway pw = graphInstance.getPathway();
+	private JComboBox<String> compartment = new JComboBox<String>();
+	private GraphInstance graphInstance = new GraphInstance();
+	private Pathway pw = graphInstance.getPathway();
 	// JComboBox box = new JComboBox();
 	// JSpinner petriValue = new JSpinner();
 
 	// for places
-	JTextField token = new JTextField("0");
-	JTextField tokenStart = new JTextField("0");
-	JTextField tokenMin = new JTextField("0");
-	JTextField tokenMax = new JTextField("1000000000");
+	private JTextField token = new JTextField("0");
+	private JTextField tokenStart = new JTextField("0");
+	private JTextField tokenMin = new JTextField("0");
+	private JTextField tokenMax = new JTextField("1000000000");
 
 	// for Transitions
-	JTextField delay = new JTextField("1");
-	String[] disStrings = { "norm", "exp" };
-	JComboBox<String> distributionList = new JComboBox<String>(disStrings);
+	private JTextField delay = new JTextField("1");
+	private String[] disStrings = { "norm", "exp" };
+	private JComboBox<String> distributionList = new JComboBox<String>(disStrings);
 	//JCheckBox transitionfire = new JCheckBox("Should transition fire:", true);
-	JTextField firingCondition = new JTextField("true");
-	JLabel lblFiringCondition = new JLabel("Firing Condition");
+	private JTextField firingCondition = new JTextField("true");
+	private JLabel lblFiringCondition = new JLabel("Firing Condition");
 	
-	JLabel lblMaxSpeed = new JLabel("Maximum Speed");
-	JTextField maxSpeed = new JTextField("1");
+	private JLabel lblMaxSpeed = new JLabel("Maximum Speed");
+	private JTextField maxSpeed = new JTextField("1");
 
-	String petriElement;
-
-	boolean addedNewValues = false;
+	private String petriElement;
 
 	/**
 	 * 

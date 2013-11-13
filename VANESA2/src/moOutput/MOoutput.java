@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Vector;
 
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
@@ -32,18 +31,13 @@ public class MOoutput {
 	private String modelName = null;
 	private Pathway pw = null;
 	private FileWriter fwriter;
-	Hashtable speciesTypeID = new Hashtable();
-	Hashtable compartments = new Hashtable();
 
 	private String places = "";
 	private String transitions = "";
-	private String properties = "";
 	private String edgesString = "";
 	private double xshift = 0, yshift = 0;
 	private double xmin = 1000, xmax = -1000, ymin = 1000, ymax = -1000;
 	private final double scale = 2;
-	private final int pinabstand = 4;
-	private final int addedNodes = 0;
 	private final Hashtable<String, Integer> numInEdges = new Hashtable<String, Integer>();
 	private final Hashtable<String, Integer> numOutEdges = new Hashtable<String, Integer>();
 	private final Hashtable<String, Integer> actualInEdges = new Hashtable<String, Integer>();
@@ -57,8 +51,6 @@ public class MOoutput {
 	// Double>();
 	private HashMap<String, String> inWeights = new HashMap<String, String>();
 	private HashMap<String, String> outWeights = new HashMap<String, String>();
-
-	private final Vector<Edge> edges = new Vector<Edge>();
 
 	public MOoutput(File file, Pathway pathway) {
 
@@ -82,7 +74,7 @@ public class MOoutput {
 		}
 	}
 
-	public void write() throws IOException {
+	private void write() throws IOException {
 
 		fwriter = new FileWriter(file);
 
@@ -139,7 +131,7 @@ public class MOoutput {
 		}
 	}
 
-	private void buildProperties() {
+	/*private void buildProperties() {
 		xshift = -(xmin + xmax) / 2;
 		yshift = -(ymin + ymax) / 2;
 
@@ -154,14 +146,14 @@ public class MOoutput {
 						+ (int) Math.floor(scale * (xmax + xshift + 20)) + ","
 						+ (int) Math.floor(scale * (ymax + yshift + 20)) + "}"
 						+ "})));\r\n");
-	}
+	}*/
 
-	private String getWeightedEdges() {
+	/*private String getWeightedEdges() {
 
 		String weightedEdges = "";
 
 		return weightedEdges;
-	}
+	}*/
 
 	private void buildNodes() {
 		for (int i = 1; i <= inhibitCount; i++)
@@ -249,7 +241,7 @@ public class MOoutput {
 			String fromString = vertex2name.get(bna.getFrom());
 			String toString = vertex2name.get(bna.getTo());
 			String fromType = nodeType.get(fromString);
-			String toType = nodeType.get(toString);
+			//String toType = nodeType.get(toString);
 
 			// TODO funktionen werden zulassen
 			if (bna instanceof PNEdge) {

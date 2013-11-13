@@ -1,12 +1,7 @@
 package graph.algorithms;
 
-import java.util.Vector;
-
-import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
-
-import edu.uci.ics.jung.graph.Vertex;
-
+//import edu.uci.ics.jung.graph.Vertex;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class BiologicalISOMNode {

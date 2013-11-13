@@ -4,7 +4,6 @@ import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
-import graph.algorithms.gui.CompareGraphs3D;
 import graph.algorithms.gui.CompareGraphsGUI;
 import graph.jung.classes.MyGraph;
 import gui.HeatmapChooseGraphsWindow;
@@ -130,7 +129,7 @@ public class ToolBarListener implements ActionListener {
 					Pathway[] pathways = new Pathway[1];
 					pathways[0] = p;
 					// CompareGraphs3D view3d =
-					new CompareGraphs3D(pathways);
+					//new CompareGraphs3D(pathways);
 
 				} else {
 					this.showCreateBeforeMessage();
