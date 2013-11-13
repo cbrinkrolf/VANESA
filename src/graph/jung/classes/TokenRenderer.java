@@ -7,7 +7,7 @@ package graph.jung.classes;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,16 +15,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import petriNet.Place;
-
-import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.gui.MDLayoutConfig;
-import edu.uci.ics.jung.algorithms.layout.AggregateLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 //import edu.uci.ics.jung.graph.decorators.VertexShapeFunction;
 //import edu.uci.ics.jung.visualization.PluggableRenderer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.renderers.Renderer;
 import graph.GraphInstance;
 //import edu.uci.ics.jung.visualization.subLayout.SubLayoutDecorator;
 //import graph.layouts.modularLayout.MDLayout;
@@ -67,6 +61,24 @@ public class TokenRenderer implements VisualizationViewer.Paintable {
     			//arg0.drawString(p.getToken()+"", (int)point.getX(), (int)point.getY());
     			i+=100;
     			j+=100;
+    			//System.out.println("pint: "+point);
+    			int x1 = (int) (p.getShape().getBounds2D().getMaxX()-p.getShape().getBounds2D().getMinX());
+    		    int y1 = (int) (p.getShape().getBounds2D().getMaxY()-p.getShape().getBounds2D().getMinY());
+    		        
+    		       Point2D p1 = viewer.getRenderContext().getMultiLayerTransformer()
+					.inverseTransform(point);
+    		       //System.out.println(p1);
+    		       Point2D center = viewer.getRenderContext().getMultiLayerTransformer()
+   						.inverseTransform(viewer.getCenter());
+    		       //System.out.println("Center: "+center);
+    		        //double x1 = c.getBounds().getMaxX()-c.getBounds().getMinX();
+    		        //double y1 = c.getBounds().getMaxY()-c.getBounds().getMinY();
+    		       viewer.getCenter().getX();
+    		       int x = (int)p1.getX() ;//- (int) center.getX();// -(int) center.getX(); //+  (int) viewer.getLocation().getX();//viewer.getComponentAt(new Point((int)point.getX(), (int) point.getY())).getX();
+    		       int y = (int) p1.getY();// - (int) center.getY();
+    		       //System.out.println("x: "+x+"y: "+y);
+    		      //  arg0.drawString(p.getToken()+"", x, y);
+    		        
     			//viewer.getRenderContext().getScreenDevice();
     		}
     		//System.out.println(bna.getID());

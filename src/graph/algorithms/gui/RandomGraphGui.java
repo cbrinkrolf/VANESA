@@ -22,28 +22,30 @@ import net.miginfocom.swing.MigLayout;
 
 public class RandomGraphGui extends JFrame implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Variables declaration
-	JButton cancel = new JButton("cancel");
-	JButton applyButton = new JButton("generate Random Graph");
-	JButton[] buttons = { applyButton, cancel };
+	private JButton cancel = new JButton("cancel");
+	private JButton applyButton = new JButton("generate Random Graph");
+	private JButton[] buttons = { applyButton, cancel };
 
-	JPanel panel;
-	JOptionPane pane;
 
-	JSpinner nodes;
-	JSpinner edges;
+	private JSpinner nodes;
+	private JSpinner edges;
 
-	JOptionPane optionPane;
-	JDialog dialog;
+	private JOptionPane optionPane;
+	private JDialog dialog;
 
-	JCheckBox simple = new JCheckBox();
-	JCheckBox directed = new JCheckBox();
+	private JCheckBox simple = new JCheckBox();
+	private JCheckBox directed = new JCheckBox();
 
-	JCheckBox acyclic = new JCheckBox();
-	JCheckBox weighted = new JCheckBox();
+	private JCheckBox acyclic = new JCheckBox();
+	private JCheckBox weighted = new JCheckBox();
 
-	JSpinner minWeight;
-	JSpinner maxWeight;
+	private JSpinner minWeight;
+	private JSpinner maxWeight;
 
 	public RandomGraphGui() {
 

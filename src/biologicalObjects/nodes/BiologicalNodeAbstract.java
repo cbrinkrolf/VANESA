@@ -28,16 +28,9 @@ public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 	private DefaultMutableTreeNode treeNode;
 	private Vector<String> elementsVector;
 	private SBMLNode sbml = new SBMLNode();
-	public final int GRAPH_ONE = 1;
-	public final int GRAPH_TWO = 2;
-	public final int GRAPH_BOTH = 3;
 	//private int original_graph;
 	private MicroArrayAttributes microarrayAttributes = null;
-	private boolean hasMicroArrayAttributes = false;
 	
-	public boolean hasMicroArrayAttributes() {
-		return hasMicroArrayAttributes;
-	}
 
 	public MicroArrayAttributes getMicroarrayAttributes() {
 		return microarrayAttributes;
@@ -46,7 +39,6 @@ public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 	public void setMicroarrayAttributes(
 			MicroArrayAttributes microarrayAttributes) {
 		this.microarrayAttributes = microarrayAttributes;
-		hasMicroArrayAttributes = true;
 	}
 
 	public SBMLNode getSbml() {

@@ -5,7 +5,6 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
-import gui.ProgressBar;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,8 +18,8 @@ import biologicalElements.PetriNet;
 
 public class PetriNetSimulation {
 	private static String path = null;
-	final ProgressBar bar = new ProgressBar();
-	boolean stopped = false;
+	//final ProgressBar bar = new ProgressBar();
+	private boolean stopped = false;
 
 	public PetriNetSimulation() {
 		GraphInstance graphInstance = new GraphInstance();

@@ -129,10 +129,6 @@ public class Place extends BiologicalNodeAbstract {
 		// setShape(s);*/
 	}
 
-	public void consume(int i) {
-		this.token -= i;
-	}
-
 	public double getToken() {
 		return this.token;
 	}
