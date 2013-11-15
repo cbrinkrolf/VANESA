@@ -309,7 +309,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 			int n = JOptionPane.showConfirmDialog(null,
 					"Would you like to save your network-model?",
-					"Save Question", JOptionPane.YES_NO_OPTION);
+					"Save Question", JOptionPane.YES_NO_CANCEL_OPTION);
 			if (n == 0) {
 				if (pw.getFilename() != null) {
 					try {
@@ -322,10 +322,11 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					new SaveDialog(16);
 				}
 			}
-		}
-
-		con.removePathway(removed.getText());
-		tabbedPanel.removeTab(removed);
+			if (n == 0 || n ==1) {
+				con.removePathway(removed.getText());
+				tabbedPanel.removeTab(removed);
+			}
+		}			
 	}
 
 	public void setSelectedTab(TitledTab tab) {
@@ -369,11 +370,12 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					new SaveDialog(16);
 				}
 			}
-			if (n == 0 || n ==1) {
-				con.removePathway(removed.getText());
-				tabbedPanel.removeTab(removed);
+			if (n == -1 || n == 2) {
+				return;
 			}
 		}
+		con.removePathway(removed.getText());
+		tabbedPanel.removeTab(removed);
 
 	}
 
@@ -391,7 +393,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 				int n = JOptionPane.showConfirmDialog(null,
 						"Would you like to save your network-model?",
-						"Save Question", JOptionPane.YES_NO_OPTION);
+						"Save Question", JOptionPane.YES_NO_CANCEL_OPTION);
+				
+				
 				if (n == 0) {
 					if (pw.getFilename() != null) {
 						try {
@@ -404,9 +408,13 @@ public class MainWindow extends JFrame implements ApplicationListener {
 						new SaveDialog(16);
 					}
 				}
+				if (n == 0 || n ==1) {
+					tabbedPanel.removeTab(tabbedPanel.getTabAt(0));
+				}
+				
 			}
 
-			tabbedPanel.removeTab(tabbedPanel.getTabAt(0));
+			
 		}
 		myMenu.disableCloseAndSaveFunctions();
 		con.removeAllPathways();
