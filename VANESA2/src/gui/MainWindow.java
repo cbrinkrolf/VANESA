@@ -81,23 +81,24 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	private JSplitPane split_pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 	private TabbedPanel tabbedPanel;
-	//private TabbedPanel tabbedPanelProperties;
+	// private TabbedPanel tabbedPanelProperties;
 	private final GraphContainer con = ContainerSingelton.getInstance();
 	private int addedtabs = 0;
 	private final MenuBarClass myMenu;
 
-	public MenuBarClass getmyMenu(){
+	public MenuBarClass getmyMenu() {
 		return myMenu;
 	}
+
 	private final OptionPanel optionPanel;
 
-	//private boolean fullScreen = false;
+	// private boolean fullScreen = false;
 
 	private Application macOsxHandler;
 
 	public MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		
+
 		// try {
 		//
 		// //SubstanceBusinessBlueSteelLookAndFeel lf = new
@@ -134,8 +135,8 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// load dock icon on mac osx
 		ImagePath imagePath = ImagePath.getInstance();
 		ImageIcon ii = new ImageIcon(imagePath.getPath("graph2.png"));
-		BufferedImage b = new BufferedImage(ii.getIconWidth(), ii
-				.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage b = new BufferedImage(ii.getIconWidth(),
+				ii.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 		ii.paintIcon(this, b.createGraphics(), 0, 0);
 		application.setApplicationIconImage(b);
 
@@ -351,9 +352,11 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 		if (pw.hasGotAtLeastOneElement()) {
 
+			// 0: yes, 1: no, 2: cancel, -1: x
 			int n = JOptionPane.showConfirmDialog(null,
 					"Would you like to save your network-model?",
-					"Save Question", JOptionPane.YES_NO_OPTION);
+					"Save Question", JOptionPane.YES_NO_CANCEL_OPTION);
+			//System.out.println(n);
 			if (n == 0) {
 				if (pw.getFilename() != null) {
 					try {
@@ -366,10 +369,12 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					new SaveDialog(16);
 				}
 			}
+			if (n == 0 || n ==1) {
+				con.removePathway(removed.getText());
+				tabbedPanel.removeTab(removed);
+			}
 		}
 
-		con.removePathway(removed.getText());
-		tabbedPanel.removeTab(removed);
 	}
 
 	public void removeAllTabs() {
@@ -477,10 +482,10 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		optionPanel.updatePanel("element");
 	}
 
-	public void updatePathwayTree(){
+	public void updatePathwayTree() {
 		optionPanel.updatePanel("pathwayTree");
 	}
-	
+
 	public void updateProjectProperties() {
 		optionPanel.updatePanel("project");
 	}
@@ -500,7 +505,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 
 	public void updateAllGuiElements() {
-	//	System.out.println("update all");
+		// System.out.println("update all");
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
