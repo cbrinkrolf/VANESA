@@ -205,7 +205,7 @@ public class MyGraph {
 
 		vv.setSize(preferredSize);
 		vv.setMinimumSize(preferredSize);
-		vv.getRenderer().setVertexRenderer(new MultiVertexRenderer());
+		vv.getRenderer().setVertexRenderer(new MultiVertexRenderer<BiologicalNodeAbstract, BiologicalEdgeAbstract>());
 		vv2 = new SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				vv, preferredSize2);
 		vv2.setSize(preferredSize2);

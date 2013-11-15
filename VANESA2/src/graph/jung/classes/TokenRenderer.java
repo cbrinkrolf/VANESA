@@ -74,10 +74,10 @@ public class TokenRenderer implements VisualizationViewer.Paintable {
     		        //double x1 = c.getBounds().getMaxX()-c.getBounds().getMinX();
     		        //double y1 = c.getBounds().getMaxY()-c.getBounds().getMinY();
     		       viewer.getCenter().getX();
-    		       int x = (int)p1.getX() ;//- (int) center.getX();// -(int) center.getX(); //+  (int) viewer.getLocation().getX();//viewer.getComponentAt(new Point((int)point.getX(), (int) point.getY())).getX();
+    		       int x = (int)p1.getX() ;//+ (int) center.getX();// -(int) center.getX(); //+  (int) viewer.getLocation().getX();//viewer.getComponentAt(new Point((int)point.getX(), (int) point.getY())).getX();
     		       int y = (int) p1.getY();// - (int) center.getY();
-    		       //System.out.println("x: "+x+"y: "+y);
-    		      //  arg0.drawString(p.getToken()+"", x, y);
+    		      //System.out.println("x: "+x+"y: "+y);
+    		       //arg0.drawString(p.getToken()+"", x, y);
     		        
     			//viewer.getRenderContext().getScreenDevice();
     		}
