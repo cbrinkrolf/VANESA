@@ -33,7 +33,6 @@ public class PPIConnector extends SwingWorker {
 	private HashSet<String> newNodes = new HashSet<String>();
 	private HashMap<String, BiologicalNodeAbstract> name2Vertex = new HashMap<String, BiologicalNodeAbstract>();
 
-	private InternalGraphRepresentation adjazenzList;
 	private Pathway pw;
 	private MyGraph myGraph;
 
@@ -64,9 +63,6 @@ public class PPIConnector extends SwingWorker {
 
 	}
 
-	private void updateGraph() {
-		myGraph.updateGraph();
-	}
 
 	private void stopVisualizationModel() {
 		myGraph.lockVertices();
@@ -80,13 +76,17 @@ public class PPIConnector extends SwingWorker {
 
 	private void drawNodes() {
 
-		Iterator i = entries2infos.keySet().iterator();
+		Iterator<String> i = entries2infos.keySet().iterator();
+		String id;
+		String[] infos;
+		Protein protein ;
+		
 		while (i.hasNext()) {
 
-			String id = i.next().toString();
-			String[] infos = entries2infos.get(id);
+			id = i.next();
+			infos = entries2infos.get(id);
 
-			Protein protein = new Protein(infos[0], infos[1]);
+			protein = new Protein(infos[0], infos[1]);
 			protein.setAaSequence(infos[2]);
 			if (id.equals(root_id)) {
 				protein.setColor(Color.RED);
@@ -109,16 +109,19 @@ public class PPIConnector extends SwingWorker {
 
 	private void drawEdges() {
 
-		Iterator it = connections.iterator();
+		Iterator<String[]> it = connections.iterator();
+		String[] entry;
+		BiologicalNodeAbstract first;
+		BiologicalNodeAbstract second;
 		while (it.hasNext()) {
-
-			String[] entry = (String[]) it.next();
-			BiologicalNodeAbstract first = (name2Vertex.get(entry[0]));
-			BiologicalNodeAbstract second = (name2Vertex.get(entry[1]));
+			entry = it.next();
+			first = (name2Vertex.get(entry[0]));
+			second = (name2Vertex.get(entry[1]));
 
 			// System.out.println(entry[0] + " " + first+ "   ---   " + entry[1]
 			// + " " +second);
-			if (!adjazenzList.doesEdgeExist(first, second) && (first != second)) {
+			if(myGraph.getJungGraph().findEdge(first, second) == null && (first != second)){
+			//if (!adjazenzList.doesEdgeExist(first, second) && (first != second)) {
 				buildEdge(first, second, false);
 			}
 		}
@@ -203,6 +206,7 @@ public class PPIConnector extends SwingWorker {
 
 			HashSet<String> currentNodeSet = (HashSet<String>) newNodes.clone();
 			newNodes = new HashSet<String>();
+			
 			for (String node : currentNodeSet) {
 
 				String[] param2 = { node };
@@ -394,16 +398,15 @@ public class PPIConnector extends SwingWorker {
 		// pw.setImagePath(pathwayImage);
 		// pw.setNumber(pathwayNumber);
 		myGraph = pw.getGraph();
-		adjazenzList = pw.getGraphRepresentation();
 
 		stopVisualizationModel();
 		drawNodes();
 		drawEdges();
 		startVisualizationModel();
 
-		pw.getGraph().changeToGEMLayout();
-		pw.getGraph().fitScaleOfViewer(pw.getGraph().getSatelliteView());
-		pw.getGraph().normalCentering();
+		myGraph.changeToGEMLayout();
+		myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
+		myGraph.normalCentering();
 		bar.closeWindow();
 
 		MainWindow window = MainWindowSingelton.getInstance();
