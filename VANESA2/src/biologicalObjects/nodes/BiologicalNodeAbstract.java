@@ -30,6 +30,7 @@ public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 	private SBMLNode sbml = new SBMLNode();
 	//private int original_graph;
 	private MicroArrayAttributes microarrayAttributes = null;
+	private BiologicalNodeAbstract ref = null;
 	
 
 	public MicroArrayAttributes getMicroarrayAttributes() {
@@ -264,6 +265,25 @@ public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 
 	public String getDB() {
 		return this.db;
+	}
+	
+	public boolean hasRef(){
+		if(this.ref != null){
+			return true;
+		}
+		return false;
+	}
+	
+	public void setRef(BiologicalNodeAbstract ref){
+		this.ref = ref;
+	}
+	
+	public BiologicalNodeAbstract getRef(){
+		return this.ref;
+	}
+	
+	public void deleteRef(){
+		this.ref = null;
 	}
 
 

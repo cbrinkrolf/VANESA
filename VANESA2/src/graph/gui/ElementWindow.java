@@ -10,7 +10,10 @@ import gui.MainWindowSingelton;
 import gui.eventhandlers.PropertyWindowListener;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FocusTraversalPolicy;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -28,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -61,22 +65,26 @@ public class ElementWindow implements ActionListener, ItemListener {
 	boolean referenceChanged = false;
 
 	private JCheckBox reference;
+	private JLabel lblRef;
+	private JButton chooseRef;
+	private JButton deleteRef;
 	private JButton colorButton;
 	private JButton hideNeighbours;
 	private JButton showNeighbours;
 	boolean vertexElement = false;
 	JTabbedPane pane = new JTabbedPane();
 
-	//private Object element;
+	// private Object element;
 
 	public ElementWindow() {
+
 	}
 
 	private void updateWindow(GraphElementAbstract element) {
 
-		//this.element = element;
-		//this.ab = (GraphElementAbstract) graphInstance
-		//		.getPathwayElement(element);
+		// this.element = element;
+		// this.ab = (GraphElementAbstract) graphInstance
+		// .getPathwayElement(element);
 		ab = element;
 		PropertyWindowListener pwl = new PropertyWindowListener(element);
 
@@ -125,18 +133,42 @@ public class ElementWindow implements ActionListener, ItemListener {
 		p.add(new JLabel("Name"), "gap 5 ");
 		p.add(name, "wrap ,span 3");
 
-//		JCheckBox transitionfire = new JCheckBox("Should transition fire:",
-//				true);
-//		JTextField transitionStatement = new JTextField("true");
+		// JCheckBox transitionfire = new JCheckBox("Should transition fire:",
+		// true);
+		// JTextField transitionStatement = new JTextField("true");
 
 		if (ab.isVertex()) {
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
+			String lbl = "";
+			if (bna.hasRef()) {
+				lbl = bna.getID() + "_" + bna.getRef().getLabel();
+			}
+			p.add(new JLabel("Reference:"), "gap 5 ");
+			p.add(new JLabel(lbl), "wrap ,span 3");
+
+			if (bna.hasRef()) {
+				this.deleteRef = new JButton("Delete Reference");
+				deleteRef.setToolTipText("Delete Reference");
+				deleteRef.setActionCommand("deleteRef");
+				deleteRef.addActionListener(this);
+				p.add(deleteRef, "wrap ,span 3");
+
+			} else {
+				this.chooseRef = new JButton("Choose Reference");
+				chooseRef.setToolTipText("Choose Reference");
+				chooseRef.setActionCommand("chooseRef");
+				chooseRef.addActionListener(this);
+				p.add(chooseRef, "wrap ,span 3");
+			}
+
 			JComboBox compartment = new JComboBox();
 			addCompartmentItems(compartment);
 			AutoCompleteDecorator.decorate(compartment);
 			// compartment.setMaximumSize(new Dimension(250,300));
-//			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
-//					.getPathwayElement(element);
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
+			// BiologicalNodeAbstract bna = (BiologicalNodeAbstract)
+			// graphInstance
+			// .getPathwayElement(element);
+			// BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
 			compartment.setSelectedItem(bna.getCompartment());
 			compartment.addItemListener(this);
 
@@ -252,7 +284,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				transList.addActionListener(pwl);
 				p.add(lswitchTrans, "gap 5");
 				p.add(transList, "wrap");
-				
+
 				JTextField firingCondition = new JTextField(4);
 				JLabel lblFiringCondition = new JLabel("Firing Condition");
 				firingCondition.setText(((Transition) ab).getFiringCondition());
@@ -261,7 +293,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				p.add(lblFiringCondition, "gap 5");
 				p.add(firingCondition, "wrap");
-				
+
 				if (ab instanceof DiscreteTransition) {
 					DiscreteTransition trans = (DiscreteTransition) ab;
 					JTextField delay = new JTextField(4);
@@ -380,7 +412,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 	}
 
 	public void revalidateView() {
-
+		// System.out.println("revalidate");
 		graphInstance = new GraphInstance();
 
 		if (emptyPane) {
@@ -390,11 +422,28 @@ public class ElementWindow implements ActionListener, ItemListener {
 			p.revalidate();
 			emptyPane = false;
 		} else {
-			p.removeAll();
-			updateWindow(graphInstance.getSelectedObject());
-			p.setVisible(true);
-			p.repaint();
-			p.revalidate();
+			// try{
+
+			Thread worker = new Thread() {
+				public void run() {
+					// dirty hack
+					try {
+						p.removeAll();
+					} catch (Exception e) {
+						revalidateView();
+					}
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							updateWindow(graphInstance.getSelectedObject());
+							p.setVisible(true);
+							p.repaint();
+							p.revalidate();
+						}
+					});
+				}
+			};
+			worker.start();
+
 		}
 	}
 
@@ -465,11 +514,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 			ab.setReference(false);
 			ab.setHidden(false);
 			ab.setVisible(true);
-			reference.setSelected(false);
-			updateReferences(false);
+			// reference.setSelected(false);
+			// updateReferences(false);
 
 		} else if ("reference".equals(event)) {
-			//TODO calculate References properly
+			// TODO calculate References properly
 			ab.setReference(reference.isSelected());
 			if (reference.isSelected()) {
 				ab.setHidden(true);
@@ -500,27 +549,29 @@ public class ElementWindow implements ActionListener, ItemListener {
 			Pathway pw = graphInstance.getPathway();
 			boolean hide = "hideNeighbours".equals(event);
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
-			
-			Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getJungGraph().getIncidentEdges(bna).iterator();
+
+			Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getJungGraph()
+					.getIncidentEdges(bna).iterator();
 			BiologicalEdgeAbstract bea;
-			
-			while(it.hasNext()){
-				//System.out.println(!hide);
+
+			while (it.hasNext()) {
+				// System.out.println(!hide);
 				bea = it.next();
 				bea.setVisible(!hide);
-				//bea.setLabel(!hide+"");
+				// bea.setLabel(!hide+"");
 			}
-			
-			Iterator<BiologicalNodeAbstract> it2 = pw.getGraph().getJungGraph().getNeighbors(bna).iterator();
-			
+
+			Iterator<BiologicalNodeAbstract> it2 = pw.getGraph().getJungGraph()
+					.getNeighbors(bna).iterator();
+
 			BiologicalNodeAbstract node;
-			while(it2.hasNext()){
-				//System.out.println("drin");
+			while (it2.hasNext()) {
+				// System.out.println("drin");
 				node = it2.next();
 				node.setVisible(!hide);
 				node.setHidden(hide);
 			}
-			
+
 		} else if ("dirChanger".equals(event) && ab.isEdge()) {
 			Pathway pw = graphInstance.getPathway();
 			PNEdge edge = (PNEdge) ab;
@@ -535,13 +586,28 @@ public class ElementWindow implements ActionListener, ItemListener {
 			pw = graphInstance.getPathway();
 			MyGraph g = pw.getGraph();
 			g.getJungGraph().removeEdge(edge);
-			//g.getEdgeStringer().removeEdge(edge.getEdge());
+			// g.getEdgeStringer().removeEdge(edge.getEdge());
 			pw.removeElement(edge);
 			pw.addEdge(newEdge);
-			//g.getVisualizationViewer().getPickedState().clearPickedEdges();
+			// g.getVisualizationViewer().getPickedState().clearPickedEdges();
 			graphInstance.setSelectedObject(newEdge);
 
 			ab = newEdge;
+		} else if ("chooseRef".equals(event)) {
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
+			ReferenceDialog dialog = new ReferenceDialog();
+			BiologicalNodeAbstract node = dialog.getAnswer();
+			if (node != null) {
+				bna.setRef(node);
+				this.revalidateView();
+				// System.out.println("node: "+node.getID());
+			}
+		} else if ("deleteRef".equals(event)) {
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
+			bna.deleteRef();
+
+			this.revalidateView();
+
 		}
 		GraphInstance.getMyGraph().updateGraph();
 	}
