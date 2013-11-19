@@ -200,8 +200,7 @@ public class BrendaConnector extends SwingWorker {
 							edges.add(entry);
 						}
 
-						newNode = new DefaultMutableTreeNode(
-								e.getLabel());
+						newNode = new DefaultMutableTreeNode(e.getLabel());
 
 						tree.addNode(parentNode, newNode);
 
@@ -240,7 +239,7 @@ public class BrendaConnector extends SwingWorker {
 			first = enzymes.get(entry[0]);
 			second = enzymes.get(entry[1]);
 
-			if (!adjazenzList.doesEdgeExist(first, second)) {
+			if (myGraph.getJungGraph().findEdge(first, second) == null) {
 				if (entry[2].equals("True")) {
 					buildEdge(enzymes.get(entry[0]), enzymes.get(entry[1]),
 							true);
@@ -284,8 +283,7 @@ public class BrendaConnector extends SwingWorker {
 				// buildEdge(substrate.getVertex(), enzyme.getVertex(), true);
 				// !!!!!
 
-				newNode = new DefaultMutableTreeNode(
-						substrate.getLabel());
+				newNode = new DefaultMutableTreeNode(substrate.getLabel());
 
 				tree.addNode(parentNode, newNode);
 				searchPossibleEnzyms(substrate, newNode);
@@ -319,8 +317,7 @@ public class BrendaConnector extends SwingWorker {
 					entry[2] = "True";
 					edges.add(entry);
 
-					newNode = new DefaultMutableTreeNode(
-							product.getLabel());
+					newNode = new DefaultMutableTreeNode(product.getLabel());
 
 					tree.addNode(parentNode, newNode);
 					searchPossibleEnzyms(product, newNode);
@@ -367,11 +364,10 @@ public class BrendaConnector extends SwingWorker {
 					e.setReference(false);
 					e.setColor(Color.RED);
 
-					//String[] gesplittet = resultDetails[3].split("=");
+					// String[] gesplittet = resultDetails[3].split("=");
 					e.hasBrendaNode(true);
 
-					newNode = new DefaultMutableTreeNode(
-							e.getLabel());
+					newNode = new DefaultMutableTreeNode(e.getLabel());
 
 					tree.addNode(node, newNode);
 					enzymes.put(e.getLabel(), e);
@@ -390,7 +386,7 @@ public class BrendaConnector extends SwingWorker {
 
 		String key;
 		BiologicalNodeAbstract node;
-		
+
 		Iterator<String> i = enzymes.keySet().iterator();
 		while (i.hasNext()) {
 
@@ -420,7 +416,7 @@ public class BrendaConnector extends SwingWorker {
 		StringTokenizer tok = new StringTokenizer(organism);
 		Vector<String> v = new Vector<String>();
 		String temp;
-		
+
 		int count = 0;
 		boolean breakLoop = false;
 
@@ -493,7 +489,7 @@ public class BrendaConnector extends SwingWorker {
 			if (enzymes.containsKey(resultDetails[1])) {
 
 				bna = enzymes.get(resultDetails[0]);
-				bna2 =enzymes.get(resultDetails[1]);
+				bna2 = enzymes.get(resultDetails[1]);
 
 				bna2.setColor(Color.cyan);
 
@@ -669,7 +665,7 @@ public class BrendaConnector extends SwingWorker {
 
 	@Override
 	protected Object doInBackground() throws Exception {
-		
+
 		Runnable run = new Runnable() {
 			public void run() {
 				bar = new ProgressBar();
@@ -679,30 +675,30 @@ public class BrendaConnector extends SwingWorker {
 			}
 		};
 		SwingUtilities.invokeLater(run);
-		
+
 		getPathway();
-		
+
 		box.getDisregardedValues();
 
 		title = enzymeToSearch[0];
 
 		bar.setProgressBarString("Getting Enzymes");
-		//System.out.println("123");
+		// System.out.println("123");
 		// System.out.println("do");
-		
-		try{
+
+		try {
 			GraphInstance i = new GraphInstance();
-			
-			//System.out.println("p: "+i.getPathway());
-		
-		getEnzymeDetails(enzymeToSearch);
-		}catch(Exception e){
+
+			// System.out.println("p: "+i.getPathway());
+
+			getEnzymeDetails(enzymeToSearch);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//System.out.println("ende");
+		// System.out.println("ende");
 		// System.out.println("enz: "+enzymeToSearch);
 		String enzymeList = enzymesInPathway();
-		
+
 		// System.out.println(enzymeList);
 		if (CoFactors) {
 			bar.setProgressBarString("Getting Cofactors");
@@ -715,7 +711,7 @@ public class BrendaConnector extends SwingWorker {
 		}
 
 		bar.setProgressBarString("Drawing network");
-		
+
 		return null;
 	}
 
@@ -752,9 +748,9 @@ public class BrendaConnector extends SwingWorker {
 			drawEdges();
 
 			startVisualizationModel();
-			pw.getGraph().changeToCircleLayout();
+			myGraph.changeToCircleLayout();
 			// GraphInstance.getMyGraph().getVisualizationViewer().restart();
-			pw.getGraph().normalCentering();
+			myGraph.normalCentering();
 
 			if (answer == JOptionPane.NO_OPTION)
 				new MergeGraphs(pw, mergePW, true);

@@ -33,7 +33,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 public class CompareGraphs {
 
 	static GraphInstance graphInstance = new GraphInstance();
-	static InternalGraphRepresentation graphRepresentation;
 
 	private static void createEdges(Pathway pw, BiologicalNodeAbstract one,
 			BiologicalNodeAbstract two) {
@@ -43,10 +42,9 @@ public class CompareGraphs {
 		BiologicalNodeAbstract bna;
 		while (neighbours.hasNext()) {
 			bna = neighbours.next();
-			//boolean connected = false;
 
-			if (!graphRepresentation.doesEdgeExist(two, bna)
-					&& !graphRepresentation.doesEdgeExist(bna, two)) {
+			if (pw.getGraph().getJungGraph().findEdge(bna, two) == null
+					&& pw.getGraph().getJungGraph().findEdge(two, one) == null) {
 				ReactionEdge e = new ReactionEdge("", "", two, bna);
 				pw.addEdge(e);
 
@@ -55,9 +53,6 @@ public class CompareGraphs {
 	}
 
 	public static void mergeGraph(Pathway pathway) {
-
-		graphRepresentation = graphInstance.getPathway()
-				.getGraphRepresentation();
 
 		Vector pathwayOneNodes = pathway.getAllNodesAsVector();
 		MyGraph graph1 = pathway.getGraph();
