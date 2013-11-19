@@ -32,15 +32,15 @@ import biologicalElements.Pathway;
  */
 public class VertexDialog{
 
-	JPanel panel;
-	String[] details = new String[3];
-	JOptionPane pane;
-	JTextField name;
-	JComboBox<String> elementNames = new javax.swing.JComboBox<String>();
-	JComboBox<String> compartment = new JComboBox<String>();
-	GraphInstance graphInstance = new GraphInstance();
-	Pathway pw = graphInstance.getPathway();
-	JComboBox<String> box = new JComboBox<String>();
+	private JPanel panel;
+	private String[] details = new String[3];
+	private JOptionPane pane;
+	private JTextField name;
+	private JComboBox<String> elementNames = new javax.swing.JComboBox<String>();
+	private JComboBox<String> compartment = new JComboBox<String>();
+	private GraphInstance graphInstance = new GraphInstance();
+	private Pathway pw = graphInstance.getPathway();
+	private JComboBox<String> box = new JComboBox<String>();
 	
 	boolean addedNewValues = false;
 	/**
