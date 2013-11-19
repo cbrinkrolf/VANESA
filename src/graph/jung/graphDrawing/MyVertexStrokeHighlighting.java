@@ -158,16 +158,21 @@ public class MyVertexStrokeHighlighting implements
 
 	@Override
 	public Stroke transform(BiologicalNodeAbstract bna) {
-		/*float dash1[] = {3.0f};
-		 
-		return new BasicStroke(1.0f,
-                BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER,
-                10.0f, dash1, 0.0f);*/
-		if (!graphTheory) {
-			return withoutGraphTheory(bna);
+
+		if (bna.hasRef()) {
+
+			float dash1[] = { 3.0f };
+
+			return new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
+					BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+
 		} else {
-			return withGraphTheory(bna);
+
+			if (!graphTheory) {
+				return withoutGraphTheory(bna);
+			} else {
+				return withGraphTheory(bna);
+			}
 		}
 	}
 }
