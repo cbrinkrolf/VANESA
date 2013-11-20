@@ -68,6 +68,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private JLabel lblRef;
 	private JButton chooseRef;
 	private JButton deleteRef;
+	private JButton pickRef;
 	private JButton colorButton;
 	private JButton hideNeighbours;
 	private JButton showNeighbours;
@@ -151,7 +152,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 				deleteRef.setToolTipText("Delete Reference");
 				deleteRef.setActionCommand("deleteRef");
 				deleteRef.addActionListener(this);
-				p.add(deleteRef, "wrap ,span 3");
+				p.add(deleteRef);
+				this.pickRef = new JButton("Highlight Reference");
+				pickRef.setToolTipText("Highlight Reference");
+				pickRef.setActionCommand("pickRef");
+				pickRef.addActionListener(this);
+				p.add(pickRef, "wrap ,span 3");
 
 			} else {
 				this.chooseRef = new JButton("Choose Reference");
@@ -583,7 +589,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			newEdge.setLowerBoundary(edge.getLowerBoundary());
 			newEdge.setActivationProbability(edge.getActivationProbability());
 			newEdge.setDirected(true);
-			pw = graphInstance.getPathway();
+			//pw = graphInstance.getPathway();
 			MyGraph g = pw.getGraph();
 			g.getJungGraph().removeEdge(edge);
 			// g.getEdgeStringer().removeEdge(edge.getEdge());
@@ -605,6 +611,16 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("deleteRef".equals(event)) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
 			bna.deleteRef();
+
+			this.revalidateView();
+
+		}else if ("pickRef".equals(event)) {
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
+			
+			Pathway pw = graphInstance.getPathway();
+			pw = graphInstance.getPathway();
+			MyGraph g = pw.getGraph();
+			g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
 
 			this.revalidateView();
 
