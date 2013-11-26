@@ -1,17 +1,19 @@
 package Copy;
 
-import java.util.Vector;
+import java.util.HashSet;
 
-import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Vertex;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+//import edu.uci.ics.jung.graph.Edge;
+//import edu.uci.ics.jung.graph.Vertex;
 
 
 public class CopySelectionSingelton extends CopySelection {
 
 
 
-	public CopySelectionSingelton(Vector<Vertex> vertices) {
-		super(vertices);
+	public CopySelectionSingelton(HashSet<BiologicalNodeAbstract> vertices, HashSet<BiologicalEdgeAbstract> edges) {
+		super(vertices, edges);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -19,7 +21,7 @@ public class CopySelectionSingelton extends CopySelection {
 
 	public static CopySelection getInstance(){
 		if(instance ==null){
-			instance =new CopySelectionSingelton(new Vector<Vertex>());
+			instance =new CopySelectionSingelton(new HashSet<BiologicalNodeAbstract>(), new HashSet<BiologicalEdgeAbstract>());
 		}
 		return instance;
 	}
