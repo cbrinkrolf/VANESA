@@ -10,7 +10,6 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 //import edu.uci.ics.jung.visualization.VisualizationViewer.Paintable;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
-import graph.jung.graphDrawing.NodeRankingVertexSizeFunction;
 import graph.jung.graphDrawing.VertexShapes;
 import heatmap.AdoptedHeatmap;
 

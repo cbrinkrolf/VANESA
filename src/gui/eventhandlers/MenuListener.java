@@ -414,6 +414,8 @@ public class MenuListener implements ActionListener {
 		 * //new Regulation(); }
 		 */
 		else if ("dbInfo".equals(event)) {
+			//System.out.println("drin");
+			
 			new GetDBinformation();
 			// if (ConnectionSettingsSingelton.getInstance()
 			// .isInternetConnection()) {

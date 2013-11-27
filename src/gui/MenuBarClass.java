@@ -399,7 +399,7 @@ public class MenuBarClass {
 		petriNets.add(cov);
 		petriNets.add(covreach);
 		bar.add(file);
-		//bar.add(graph);
+		bar.add(graph);
 		bar.add(math);
 		bar.add(petriNets);
 		// bar.add(experiments);

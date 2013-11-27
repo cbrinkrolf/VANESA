@@ -271,10 +271,10 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 					con.getPathway(firstBox.getSelectedItem().toString()),
 					con.getPathway(secondBox.getSelectedItem().toString()));
 
-		} else if ("compare3d".equals(event)) {
-			this.dispose();
-			new Compare3dChooseGraphsWindow();
-		}
+		} //else if ("compare3d".equals(event)) {
+			//this.dispose();
+			//new Compare3dChooseGraphsWindow();
+		//}
 	}
 
 	private void resetPanels() {

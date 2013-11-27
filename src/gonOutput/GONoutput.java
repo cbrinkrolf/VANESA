@@ -55,7 +55,7 @@ public class GONoutput {
 		}
 	}
 
-	public void write() throws IOException {
+	private void write() throws IOException {
 
 		fwriter = new FileWriter(file);
 
