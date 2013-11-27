@@ -974,50 +974,6 @@ public class Pathway {
 		return null;
 	}
 
-	/**
-	 * search a node in the pathway, which is equal (same name or label) to the
-	 * given
-	 * 
-	 * @param node
-	 * @param newPathway
-	 * @return the equal node object
-	 */
-	public GraphElementAbstract getEqualElement(GraphElementAbstract node,
-			Pathway pathway) {
-		for (GraphElementAbstract node2 : (Collection<GraphElementAbstract>) this
-				.getBiologicalElements().values()) {
-			// two edges are equal, if they connect equal elements
-			if ((node instanceof BiologicalEdgeAbstract)
-					&& (node2 instanceof BiologicalEdgeAbstract)) {
-				BiologicalEdgeAbstract e1 = (BiologicalEdgeAbstract) node;
-				BiologicalEdgeAbstract e2 = (BiologicalEdgeAbstract) node2;
-				BiologicalNodeAbstract start_node1 = (BiologicalNodeAbstract) pathway
-						.getNodeByVertexID(e1.getEdge().getEndpoints()
-								.getFirst().toString());
-				BiologicalNodeAbstract start_node2 = (BiologicalNodeAbstract) this
-						.getNodeByVertexID(e2.getEdge().getEndpoints()
-								.getFirst().toString());
-				BiologicalNodeAbstract end_node1 = (BiologicalNodeAbstract) pathway
-						.getNodeByVertexID(e1.getEdge().getEndpoints()
-								.getSecond().toString());
-				BiologicalNodeAbstract end_node2 = (BiologicalNodeAbstract) this
-						.getNodeByVertexID(e2.getEdge().getEndpoints()
-								.getSecond().toString());
-				// System.out.println(e1.getEdge()+" ? "+e2.getEdge());
-				if (start_node1.equals(start_node2)
-						&& end_node1.equals(end_node2)) {
-					return node2;
-				}
-			}
-
-			if (node.equals(node2)) {
-				return node2;
-			}
-		}
-		// if nothing found, return null
-		return null;
-	}
-
 	public Object getNodeByKEGGEntryID(String id) {
 
 		Iterator it = biologicalElements.values().iterator();
