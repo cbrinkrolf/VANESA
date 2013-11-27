@@ -3,13 +3,7 @@ package graph.algorithms;
 import graph.CreatePathway;
 import gui.MainWindowSingelton;
 
-import java.io.File;
-import java.io.IOException;
 import javax.swing.JOptionPane;
-import javax.xml.stream.XMLStreamException;
-
-import xmlInput.sbml.VAMLInput;
-import xmlOutput.sbml.VAMLoutput;
 
 import biologicalElements.Pathway;
 
@@ -31,15 +25,13 @@ public class MergeGraphs {
 		pw_new.getGraph().lockVertices();
 		pw_new.getGraph().stopVisualizationModel();
 
-		File file1 = new File("test");
+		/*File file1 = new File("test");
 		try {
 			new VAMLoutput(file1, one);
 			new VAMLInput(file1, pw_new);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -48,12 +40,10 @@ public class MergeGraphs {
 			new VAMLoutput(file2, two);
 			new VAMLInput(file2, pw_new);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
 		MainWindowSingelton.getInstance().enableOptionPanelUpdate(false);
 		CompareGraphs.mergeGraph(pw_new);
