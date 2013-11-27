@@ -8,7 +8,6 @@ import edu.uci.ics.jung.visualization.PickedState;*/
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
 import graph.animations.RegulationTabelModel;
-import graph.jung.graphDrawing.NodeRankingVertexSizeFunction;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.algorithms.ScreenSize;
 

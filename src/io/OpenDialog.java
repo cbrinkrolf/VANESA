@@ -16,10 +16,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.xml.stream.XMLStreamException;
 
-import moInput.MOInput;
 import xmlInput.sbml.SBMLInput;
 import xmlInput.sbml.VAMLInput;
-import biologicalElements.PetriNet;
 import configurations.ConnectionSettings;
 
 public class OpenDialog extends SwingWorker {
@@ -103,50 +101,7 @@ public class OpenDialog extends SwingWorker {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			} else if (fileFormat.equals(modellicaResultDescription)) {
-				if (con.containsPathway()) {
-					if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-
-						graphInstance.getPathway().setPetriNet(true);
-						PetriNet petrinet = graphInstance.getPathway()
-								.getPetriNet();
-						petrinet.setPetriNetSimulationFile(file
-								.getAbsolutePath());
-						petrinet.initializePetriNet();
-
-					} else {
-						JOptionPane.showMessageDialog(MainWindowSingelton
-								.getInstance(),
-								"Please load or create a network first!");
-					}
-				} else {
-					JOptionPane.showMessageDialog(MainWindowSingelton
-							.getInstance(),
-							"Please load or create a network first!");
-				}
-
-			} else if (fileFormat.equals(modellicaResultDescriptionNew)) {
-				if (con.containsPathway()) {
-					if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-
-						graphInstance.getPathway().setPetriNet(true);
-						PetriNet petrinet = graphInstance.getPathway()
-								.getPetriNet();
-						petrinet.setPetriNetSimulationFile(file
-								.getAbsolutePath());
-						petrinet.initializePetriNet();
-
-					} else {
-						JOptionPane.showMessageDialog(MainWindowSingelton
-								.getInstance(),
-								"Please load or create a network first!");
-					}
-				} else {
-					JOptionPane.showMessageDialog(MainWindowSingelton
-							.getInstance(),
-							"Please load or create a network first!");
-				}
-			} else if (fileFormat.equals(sbmlDescription)) {
+			}  else if (fileFormat.equals(sbmlDescription)) {
 				try {
 					try {
 						SBMLInput sbmlInput = new SBMLInput();
@@ -182,15 +137,6 @@ public class OpenDialog extends SwingWorker {
 				}
 				// System.out.println(file.getAbsolutePath());
 
-			} else if (fileFormat.equals(moDescription)) {
-				try {
-					new MOInput(file);
-				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, "Something went wrong "
-							+ "while loading Modelica file.", "Mo read error",
-							JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				}
 			}
 		}
 	}

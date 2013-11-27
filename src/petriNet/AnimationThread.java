@@ -4,7 +4,6 @@ package petriNet;
 //import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
 //import edu.uci.ics.jung.utils.UserData;
 import graph.GraphInstance;
-import graph.jung.graphDrawing.NodeRankingVertexSizeFunction;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
