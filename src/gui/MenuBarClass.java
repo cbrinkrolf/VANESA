@@ -67,6 +67,8 @@ public class MenuBarClass {
 	private JMenuItem editPNelements;
 	private JMenuItem simulate;
 	private JMenuItem convertPetriNet;
+	
+	private JMenuItem resolveReferences;
 
 	public MenuBarClass(Application application) {
 		int MENUSHORTCUT = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -88,6 +90,8 @@ public class MenuBarClass {
 		
 		// a menu part to collect some tools
 		JMenu tools = new JMenu("Tools");
+		
+		JMenu transformation = new JMenu("Transformation");
 		
 		// items for the dataMapping
 		JMenuItem dataMapping = new JMenuItem("Data Mapping");
@@ -282,6 +286,10 @@ public class MenuBarClass {
 		dbInformation = new JMenuItem("Fill Graph with Database information");
 		dbInformation.addActionListener(new MenuListener());
 		dbInformation.setActionCommand("dbInfo");
+		
+		resolveReferences = new JMenuItem("Resolve Reverences");
+		resolveReferences.addActionListener(new MenuListener());
+		resolveReferences.setActionCommand("resolveReferences");
 
 		help.add(interaction);
 
@@ -398,10 +406,14 @@ public class MenuBarClass {
 		petriNets.add(testTInvariant);
 		petriNets.add(cov);
 		petriNets.add(covreach);
+		
+		transformation.add(resolveReferences);
+		
 		bar.add(file);
 		bar.add(graph);
 		bar.add(math);
 		bar.add(petriNets);
+		bar.add(transformation);
 		// bar.add(experiments);
 		bar.add(layout);
 		bar.add(tools);

@@ -804,7 +804,7 @@ public class MyGraph {
 	}
 
 	public void removeEdge(BiologicalEdgeAbstract bea) {
-		graphInstance.getPathway().removeElement(bea);
+		//graphInstance.getPathway().removeElement(bea);
 		g.removeEdge(bea);
 	}
 
