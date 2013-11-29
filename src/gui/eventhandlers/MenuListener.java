@@ -11,6 +11,7 @@ import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.KCoreAnalysis;
+import graph.algorithms.Transformation;
 import graph.algorithms.gui.RandomBipartiteGraphGui;
 import graph.algorithms.gui.RandomConnectedGraphGui;
 import graph.algorithms.gui.RandomGraphGui;
@@ -31,7 +32,9 @@ import io.SaveDialog;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,6 +44,8 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 import miscalleanous.tables.MyTable;
 import petriNet.ConvertToPetriNet;
@@ -903,8 +908,41 @@ public class MenuListener implements ActionListener {
 					break;
 				}
 			}
-		} else if ("dataMapping".equals(event))
+		} else if ("dataMapping".equals(event)){
 			DataMappingMVC.createDataMapping();
+		} else if("resolveReferences".equals(event)){
+			
+			//System.out.println("resolve");
+			Pathway old = con.getPathway(w.getCurrentPathway());
+			//
+			//Pathway new =
+			
+			
+			//ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			//Serialize it
+			
+			Pathway pw = new CreatePathway(old.getName()).getPathway();
+			
+			Iterator<BiologicalNodeAbstract> it = old.getAllNodes().iterator();
+			BiologicalNodeAbstract bna;
+			while(it.hasNext()){
+				bna = it.next();
+				pw.addVertex(bna, old.getGraph().getVertexLocation(bna));
+			}
+			
+			Iterator<BiologicalEdgeAbstract> it2 = old.getAllEdges().iterator();
+			BiologicalEdgeAbstract bea;
+			while(it2.hasNext()){
+				bea = it2.next();
+				pw.addEdge(bea);
+			}
+			Transformation t = new Transformation();
+			t.resolveReferences(pw);
+			//MainWindow.
+			//Tansformation.resolveReferences(pw);
+			//pw = old;
+			
+		}
 	}
 
 	private double[][] initArray(int m, int n) {
