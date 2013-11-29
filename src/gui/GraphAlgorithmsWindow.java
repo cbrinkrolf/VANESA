@@ -3,7 +3,6 @@ package gui;
 import graph.algorithms.gui.GraphColoringGUI;
 import graph.algorithms.gui.GraphNodeRemovalGUI;
 import graph.algorithms.gui.GraphNodeDimensionGUI;
-import graph.algorithms.gui.HubDetectionGui;
 import graph.algorithms.gui.ShortestPathGui;
 
 import java.awt.BorderLayout;
