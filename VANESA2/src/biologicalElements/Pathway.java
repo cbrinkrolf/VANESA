@@ -878,6 +878,7 @@ public class Pathway {
 				edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(),
 						bea.getTo()));
 				graphRepresentation.removeEdge(bea);
+				graph.removeEdge(bea);
 				// System.out.println(edges.size());
 			}
 			ids.remove(element.getID());
