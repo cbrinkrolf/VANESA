@@ -10,7 +10,6 @@ import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
-import graph.algorithms.KCoreAnalysis;
 import graph.algorithms.Transformation;
 import graph.algorithms.gui.RandomBipartiteGraphGui;
 import graph.algorithms.gui.RandomConnectedGraphGui;
@@ -409,10 +408,6 @@ public class MenuListener implements ActionListener {
 		} else if ("graphSettings".equals(event)) {
 
 			new Settings(3);
-
-		} else if ("kcore".equals(event)) {
-
-			new KCoreAnalysis();
 
 		} /*
 		 * else if ("animation".equals(event)) { if (con.containsPathway()) { }
