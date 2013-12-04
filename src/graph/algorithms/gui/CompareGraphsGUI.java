@@ -7,7 +7,6 @@ import graph.algorithms.CompareGraphs;
 import graph.algorithms.HeatmapGraphs;
 import graph.algorithms.MergeGraphs;
 import graph.jung.classes.MyGraph;
-import gui.Compare3dChooseGraphsWindow;
 import gui.MainWindowSingelton;
 import gui.algorithms.ScreenSize;
 
