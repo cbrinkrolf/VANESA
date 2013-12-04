@@ -455,7 +455,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	private void updateReferences(boolean reference) {
 
-		if (ab.isVertex()) {
+		// CHRIS reimplement of updateReferences
+		
+		/*if (ab.isVertex()) {
 
 			Pathway pw = graphInstance.getPathway();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) pw
@@ -482,7 +484,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			}
 		} else {
 			ab.setReference(reference);
-		}
+		}*/
 	}
 
 	private void addCompartmentItems(JComboBox compartment) {
@@ -631,12 +633,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 	@Override
 	public void itemStateChanged(ItemEvent event) {
 
-		int state = event.getStateChange();
+		// CHRIS probably never executed
+		
+		/*int state = event.getStateChange();
 		String item = (String) event.getItem();
 		if (ab.isVertex()) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
 					.getPathwayElement(element);
 			bna.setCompartment(item);
-		}
+		}*/
 	}
 }

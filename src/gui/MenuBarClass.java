@@ -44,19 +44,18 @@ public class MenuBarClass {
 	private JMenuItem mathLaw;
 	//private JMenuItem phosphoImport;
 
-	private JMenuItem kcore;
+	//private JMenuItem kcore;
 	private JMenuItem hamiltonGraph;
 	// JMenuItem animations;
 	private JMenuItem about;
 	private JMenuItem mdLayout;
-	private JMenuItem dbInformation;
+	//private JMenuItem dbInformation;
 	private JMenuItem export;
 
 	/*
 	 * JMenuItem exportGraphMl; JMenuItem exportMo; JMenuItem exportGon;
 	 */
 	private JMenuBar bar;
-	private JMenuItem sessionID;
 	private JMenuItem regularGraph;
 
 	private JMenuItem testPInvariant;
@@ -112,10 +111,6 @@ public class MenuBarClass {
 				MENUSHORTCUT));
 		newNetwork.addActionListener(new MenuListener());
 		newNetwork.setActionCommand("new Network");
-
-		sessionID = new JMenuItem("Load Network by DAWIS Session-ID");
-		sessionID.addActionListener(new MenuListener());
-		sessionID.setActionCommand("sessionID");
 
 		openNetwork = new JMenuItem("Open File", KeyEvent.VK_O);
 		openNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
@@ -263,10 +258,6 @@ public class MenuBarClass {
 		biGraph.addActionListener(new MenuListener());
 		biGraph.setActionCommand("biGraph");
 
-		kcore = new JMenuItem("Perform K-core Analysis");
-		kcore.addActionListener(new MenuListener());
-		kcore.setActionCommand("kcore");
-
 		regularGraph = new JMenuItem("Generate Regular Graph");
 		regularGraph.addActionListener(new MenuListener());
 		regularGraph.setActionCommand("regularGraph");
@@ -283,10 +274,6 @@ public class MenuBarClass {
 		graphSettings.addActionListener(new MenuListener());
 		graphSettings.setActionCommand("graphSettings");
 
-		dbInformation = new JMenuItem("Fill Graph with Database information");
-		dbInformation.addActionListener(new MenuListener());
-		dbInformation.setActionCommand("dbInfo");
-		
 		resolveReferences = new JMenuItem("Resolve Reverences");
 		resolveReferences.addActionListener(new MenuListener());
 		resolveReferences.setActionCommand("resolveReferences");
@@ -350,7 +337,6 @@ public class MenuBarClass {
 		math.add(generateGraph);
 		math.add(visualAnalysis);
 
-		visualAnalysis.add(kcore);
 		generateGraph.add(mathLaw);
 		generateGraph.add(biGraph);
 		generateGraph.add(regularGraph);
@@ -369,7 +355,6 @@ public class MenuBarClass {
 		// graph.add(snapshot);
 		// graph.add(animations);
 		graph.add(centerGraph);
-		graph.add(dbInformation);
 		graph.add(phosphoImport);
 
 		// experiments.add(fabricio);
@@ -447,7 +432,6 @@ public class MenuBarClass {
 		gemLayout.setEnabled(true);
 		centerGraph.setEnabled(true);
 		// animations.setEnabled(true);
-		dbInformation.setEnabled(true);
 		export.setEnabled(true);
 		/*
 		 * exportGraphMl.setEnabled(true); exportMo.setEnabled(true);
@@ -493,7 +477,6 @@ public class MenuBarClass {
 		gemLayout.setEnabled(false);
 		centerGraph.setEnabled(false);
 		// animations.setEnabled(false);
-		dbInformation.setEnabled(false);
 		// openNetwork.setEnabled(false);
 		export.setEnabled(false);
 		/*
