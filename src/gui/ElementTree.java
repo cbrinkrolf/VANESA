@@ -2,7 +2,6 @@ package gui;
 
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
-import graph.animations.AnimatedPicking;
 
 import java.awt.Dimension;
 import java.util.Collections;
@@ -36,7 +35,6 @@ public class ElementTree implements TreeSelectionListener {
 	JXTree tree = null;
 	Hashtable table = new Hashtable();
 	DefaultMutableTreeNode node;
-	AnimatedPicking picking;
 	JScrollPane scrollTree;
 	boolean emptyScrollPane = true;
 	private DefaultTreeModel model;
@@ -48,14 +46,6 @@ public class ElementTree implements TreeSelectionListener {
 	public ElementTree() {
 		scrollTree = new JScrollPane();
 		scrollTree.setPreferredSize(new Dimension(350, 200));
-	}
-
-	public void recalculateTree() {
-
-		GraphInstance graphInstance = new GraphInstance();
-		graphInstance.getPathway().getAllNodeDescriptions();
-		revalidateTree();
-
 	}
 
 	public void revalidateTree() {
@@ -101,7 +91,6 @@ public class ElementTree implements TreeSelectionListener {
 
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		picking = new AnimatedPicking();
 
 		tree = new JXTree();
 		root = new DefaultMutableTreeNode("Pathway Elements");
@@ -206,6 +195,12 @@ public class ElementTree implements TreeSelectionListener {
 		model.nodeStructureChanged(root);
 		model.reload();
 		tree.expandAll();
+	}
+
+	@Override
+	public void valueChanged(TreeSelectionEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/*public void valueChanged(TreeSelectionEvent e) {
