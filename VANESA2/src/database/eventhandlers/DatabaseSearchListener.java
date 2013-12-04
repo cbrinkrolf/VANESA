@@ -11,8 +11,6 @@ import javax.swing.JOptionPane;
 
 import database.brenda.BRENDASearch;
 import database.brenda.gui.BrendaInfoWindow;
-import database.dawis.DAWISSearch;
-import database.dawis.gui.DAWISInfoWindow;
 import database.gui.DatabaseWindow;
 import database.kegg.KeggSearch;
 import database.kegg.gui.KEGGInfoWindow;
@@ -45,12 +43,7 @@ public class DatabaseSearchListener implements ActionListener {
 	/**
 	 * Requests a database to get some content.
 	 */
-	private void requestDawisContent() {
-		DAWISSearch dawisSearch = new DAWISSearch(dw.getInput(), dw.getMode(),
-				dw.getSpecification(), MainWindowSingelton.getInstance(),
-				new ProgressBar());
-		dawisSearch.execute();
-	}
+
 
 	private void requestPPIcontent() {
 		PPISearch ppiSearch = new PPISearch(dw.getInput(),
@@ -77,9 +70,7 @@ public class DatabaseSearchListener implements ActionListener {
 			new KEGGInfoWindow();
 		} else if ("BRENDAinfo".equals(event)) {
 			new BrendaInfoWindow();
-		} else if ("DAWISinfo".equals(event)) {
-			new DAWISInfoWindow();
-		}else if ("MIRNAinfo".equals(event)) {
+		} else if ("MIRNAinfo".equals(event)) {
 			new MIRNAInfoWindow();
 		} else {
 
@@ -90,8 +81,6 @@ public class DatabaseSearchListener implements ActionListener {
 						this.requestKEGGcontent();
 					} else if (dw.selectedDatabase().equals("BRENDA")) {
 						this.requestBrendaContent();
-					} else if (dw.selectedDatabase().equals("DAWIS-M.D.")) {
-						this.requestDawisContent();
 					} else if (dw.selectedDatabase().equals("PPI")) {
 						this.requestPPIcontent();
 					}else if (dw.selectedDatabase().equals("miRNA")) {

@@ -73,7 +73,6 @@ import biologicalObjects.nodes.SRNA;
 import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
-import database.dawis.DAWISTree;
 import edu.uci.ics.jung.graph.util.Pair;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.utils.Pair;
@@ -147,8 +146,6 @@ public class Pathway implements Cloneable{
 	private final FilterSettings filterSettings;
 
 	private final InternalGraphRepresentation graphRepresentation = new InternalGraphRepresentation();
-
-	private DAWISTree dawisTree = null;
 
 	private boolean isDAWISProject = false;
 
@@ -273,14 +270,6 @@ public class Pathway implements Cloneable{
 
 	public GraphTab getTab() {
 		return tab;
-	}
-
-	public void setTree(DAWISTree tree) {
-		this.dawisTree = tree;
-	}
-
-	public DAWISTree getTree() {
-		return this.dawisTree;
 	}
 
 	public BiologicalNodeAbstract addVertex(String name, String label,

@@ -6,7 +6,6 @@ import java.util.Vector;
 import pojos.DBColumn;
 import biologicalElements.Elementdeclerations;
 import configurations.Wrapper;
-import database.dawis.DAWISQueries;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
 
@@ -25,91 +24,6 @@ public class Gene extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.gene);
 		shapes = new VertexShapes();
 		setShape(shapes.getEllipse());
-	}
-	
-	public void lookUpAtAllDatabases()
-	{
-		DAWISNode node=getDAWISNode();
-		String db=getDB();
-		String[] det={getLabel()};
-		ArrayList<DBColumn> results=new ArrayList<DBColumn>();
-		
-		if (db.equalsIgnoreCase("KEGG"))
-		{
-			results=new Wrapper().requestDbContent(3, DAWISQueries.getTPGeneFromKEGGGene, det);
-			
-			for (DBColumn column : results)
-			{
-				String[] res=column.getColumn();
-				String id=res[0];
-				
-				node.addID(id, getLabel());
-				node.addIDDBRelation("Transpath", id);
-			}
-
-			results=new Wrapper().requestDbContent(3, DAWISQueries.getTFGeneFromKEGGGene, det);
-			
-			for (DBColumn column : results)
-			{
-				String[] res=column.getColumn();
-				String id=res[0];
-				node.addID(id, getLabel());
-				node.addIDDBRelation("Transfac", id);
-			}
-		}
-		else if (db.equalsIgnoreCase("Transpath"))
-		{
-
-			results=new Wrapper().requestDbContent(3, DAWISQueries.getKEGGGeneFromTPGene, det);
-			
-			for (DBColumn column : results)
-			{
-				String[] res=column.getColumn();
-				String id=res[0];
-				
-				node.addID(id, getLabel());
-				node.addIDDBRelation("KEGG", id);
-			}
-
-			results=new Wrapper().requestDbContent(3, DAWISQueries.getTFGeneFromTPGene, det);
-			
-			for (DBColumn column : results)
-			{
-				String[] res2=column.getColumn();
-				String id2=res2[0];
-				
-				node.addID(id2, getLabel());
-				node.addIDDBRelation("Transfac", id2);
-			}
-
-		}
-		else if (db.equalsIgnoreCase("Transfac"))
-		{
-			results=new Wrapper().requestDbContent(3, DAWISQueries.getKEGGGeneFromTFGene, det);
-			
-			for (DBColumn column : results)
-			{
-				String[] res=column.getColumn();
-				String id=res[0];
-				
-				node.addID(id, getLabel());
-				node.addIDDBRelation("KEGG", id);
-
-				if (!id.equals(""))
-				{
-					String[] det2={id};
-					results=new Wrapper().requestDbContent(3, DAWISQueries.getTPGeneFromKEGGGene, det2);
-					
-					for (DBColumn column2 : results)
-					{
-						String[] res2=column2.getColumn();
-						String id2=res2[0];
-						node.addID(id2, getLabel());
-						node.addIDDBRelation("Transpath", id2);
-					}
-				}
-			}
-		}
 	}
 	
 //	@SuppressWarnings("unchecked")
