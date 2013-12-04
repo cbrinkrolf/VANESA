@@ -31,7 +31,6 @@ import configurations.ProgramFileLock;
 import configurations.ResourceLibrary;
 import database.Connection.DBconnection;
 import database.brenda.MostWantedMolecules;
-import database.dawis.webstart.DAWISWebstartConnector;
 
 public class Launch {
 
@@ -192,8 +191,8 @@ public class Launch {
 				String database_ppi = ResourceLibrary
 						.getSettingsResource("settings.default.database.PPI");
 				String database_mirna = ResourceLibrary
-				.getSettingsResource("settings.default.database.mirna");
-				
+						.getSettingsResource("settings.default.database.mirna");
+
 				String server = ResourceLibrary
 						.getSettingsResource("settings.default.server");
 				String webservice = ResourceLibrary
@@ -203,8 +202,9 @@ public class Launch {
 						password, database, server));
 				ConnectionSettings.getDBConnection().setDawisDBName(database);
 				ConnectionSettings.getDBConnection().setPpiDBName(database_ppi);
-				ConnectionSettings.getDBConnection().setmirnaDBName(database_mirna);
-				
+				ConnectionSettings.getDBConnection().setmirnaDBName(
+						database_mirna);
+
 				ConnectionSettings.setWebServiceUrl(webservice);
 
 				ConnectionSettings.setFileDirectory(System
@@ -218,13 +218,15 @@ public class Launch {
 					;
 					// fill data from the remote control (only if database is
 					// reachable)
-					if (dawis_sessionid != null) {
-
+					//TODO uncomment if DAWIS DB integrated
+					
+					/*if (dawis_sessionid != null) {
+						System.out.println("start");
 						DAWISWebstartConnector dws = new DAWISWebstartConnector(
 								dawis_sessionid);
 						dws.execute();
 
-					}
+					}*/
 
 				}
 				// else {
