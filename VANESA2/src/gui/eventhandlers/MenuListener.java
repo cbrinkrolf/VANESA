@@ -44,8 +44,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.apache.commons.lang3.SerializationUtils;
-
 import miscalleanous.tables.MyTable;
 import petriNet.ConvertToPetriNet;
 import petriNet.Cov;
@@ -917,12 +915,12 @@ public class MenuListener implements ActionListener {
 			//Serialize it
 			
 			Pathway pw = new CreatePathway(old.getName()).getPathway();
-			
+			//pw = old.clone()
 			Iterator<BiologicalNodeAbstract> it = old.getAllNodes().iterator();
 			BiologicalNodeAbstract bna;
 			while(it.hasNext()){
-				bna = it.next();
-				pw.addVertex(bna, old.getGraph().getVertexLocation(bna));
+				bna =  it.next();
+				pw.addVertex((BiologicalNodeAbstract)bna.clone(), old.getGraph().getVertexLocation(bna));
 			}
 			
 			Iterator<BiologicalEdgeAbstract> it2 = old.getAllEdges().iterator();
@@ -932,7 +930,7 @@ public class MenuListener implements ActionListener {
 				pw.addEdge(bea);
 			}
 			Transformation t = new Transformation();
-			t.resolveReferences(pw);
+			//t.resolveReferences(old.clone());
 			//MainWindow.
 			//Tansformation.resolveReferences(pw);
 			//pw = old;
