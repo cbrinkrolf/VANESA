@@ -1,31 +1,15 @@
 package io;
 
-import graph.GraphInstance;
-import gui.MainWindowSingelton;
-
-import java.awt.Color;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import pojos.DBColumn;
-import biologicalElements.Pathway;
-import biologicalObjects.edges.ReactionEdge;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Other;
-import configurations.Wrapper;
 
 public class PhosphoInput {
 
 	public PhosphoInput(File file) throws IOException {
+		
+		// CHRIS reimplement if necessary
 
-		GraphInstance instance = new GraphInstance();
+		/*GraphInstance instance = new GraphInstance();
 		Pathway pw = instance.getPathway();
 		pw.getGraph().lockVertices();
 		pw.getGraph().stopVisualizationModel();
@@ -97,12 +81,9 @@ public class PhosphoInput {
 		pw.getGraph().normalCentering();
 		MainWindowSingelton.getInstance().updateProjectProperties();
 		MainWindowSingelton.getInstance().updateOptionPanel();
-
+		*/
 	}
 
-	public void readFileInformation(File file) {
-
-	}
 
 }
 

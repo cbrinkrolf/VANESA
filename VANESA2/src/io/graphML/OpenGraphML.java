@@ -1,21 +1,8 @@
 package io.graphML;
 
-import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.io.GraphMLFile;
-import edu.uci.ics.jung.utils.Pair;
-import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
 
 import java.io.File;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Set;
-
-import biologicalElements.Pathway;
-import biologicalObjects.edges.ReactionEdge;
-import biologicalObjects.nodes.Other;
 
 public class OpenGraphML {
 
@@ -23,7 +10,9 @@ public class OpenGraphML {
 	
 	public OpenGraphML(File file) {
 
-		GraphMLFile reader = new GraphMLFile();
+		// CHRIS reimplement if necessary
+		
+		/*GraphMLFile reader = new GraphMLFile();
 		Graph g = reader.load(file.getAbsolutePath());	
 		Pathway p = new CreatePathway().getPathway();
 		myGraph = p.getGraph();
@@ -62,6 +51,7 @@ public class OpenGraphML {
 		updateGraph();
 		myGraph.changeToFRLayout();
 		startVisualizationModel();
+		*/
 	}
 	
 	private void updateGraph() {
