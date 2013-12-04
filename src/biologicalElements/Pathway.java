@@ -78,7 +78,7 @@ import edu.uci.ics.jung.graph.util.Pair;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.utils.Pair;
 
-public class Pathway {
+public class Pathway implements Cloneable{
 
 	private File filename = null;
 
@@ -1232,5 +1232,18 @@ public class Pathway {
 	public SortedSet<Integer> getIdSet() {
 		return this.ids;
 	}
+	
+	@Override
+	  public Pathway clone()
+	  {
+	    try
+	    {
+	      return (Pathway) super.clone();
+	    }
+	    catch ( CloneNotSupportedException e ) {
+	      // Kann eigentlich nicht passieren, da Cloneable
+	      throw new InternalError();
+	    }
+	  }
 
 }
