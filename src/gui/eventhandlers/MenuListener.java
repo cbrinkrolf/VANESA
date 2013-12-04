@@ -23,7 +23,6 @@ import gui.AboutWindow;
 import gui.InfoWindow;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
-import gui.SessionIDLoadGui;
 import io.OpenDialog;
 import io.SaveDialog;
 

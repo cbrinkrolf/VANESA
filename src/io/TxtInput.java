@@ -1,20 +1,15 @@
 package io;
 
 import graph.CreatePathway;
-import gui.MainWindowSingelton;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import biologicalElements.Pathway;
-import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.MicroArrayAttributes;
 import biologicalObjects.nodes.Protein;
 
 public class TxtInput {
@@ -26,8 +21,9 @@ public class TxtInput {
 	Hashtable<String, BiologicalNodeAbstract> mapping = new Hashtable<String, BiologicalNodeAbstract>();
 	Pathway pw = new CreatePathway().getPathway();
 
-
+	// CHRIS reimplement if necessary
 	public TxtInput(File file) throws IOException {
+		/*
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		
 		pw.setFilename(file);
@@ -66,6 +62,7 @@ public class TxtInput {
 		pw.getGraph().restartVisualizationModel();
 		pw.getGraph().normalCentering();
 		MainWindowSingelton.getInstance().updateProjectProperties();
+		*/
 	}
 	
 	/**
@@ -97,6 +94,7 @@ public class TxtInput {
 	 * manage the input from the "#Nodes" lines
 	 */
 	private void manageNode() {
+		/*
 		if (line.trim().indexOf(';') > 0 || line.trim().indexOf('#') > 0) { //label and name or label and FC or label, name and FC
 			if (line.trim().indexOf(';') > 0) { // line with FC
 				StringTokenizer st = new StringTokenizer(line
@@ -184,7 +182,7 @@ public class TxtInput {
 			pw.addElement(p);
 			pw.getGraph().moveVertex(p.getVertex(), 10, 10);
 			mapping.put(p.getLabel(), p);
-		}
+		}*/
 
 	}
 	
@@ -192,6 +190,7 @@ public class TxtInput {
 	 * manage the input from the "#Edges" lines
 	 */
 	private void manageEdge() {
+		/*
 		if (line.trim().indexOf(";") > 0) {
 			StringTokenizer st = new StringTokenizer(line.trim(), ";");
 			boolean isDir = false;
@@ -218,7 +217,7 @@ public class TxtInput {
 					pw.addElement(reactionedge);
 				}
 			}
-		}
+		}*/
 	}
 	
 	/**
