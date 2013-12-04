@@ -6,7 +6,7 @@ import biologicalElements.GraphElementAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 //import edu.uci.ics.jung.graph.Edge;
 
-public abstract class BiologicalEdgeAbstract extends GraphElementAbstract {
+public abstract class BiologicalEdgeAbstract extends GraphElementAbstract implements Cloneable{
 	
 //	private Edge edge;
 	private KEGGEdge keggEdge;
@@ -121,5 +121,10 @@ public abstract class BiologicalEdgeAbstract extends GraphElementAbstract {
 
 	public ReactionPairEdge getReactionPairEdge() {
 		return reactionPairEdge;
+	}
+	
+	@Override
+	public BiologicalEdgeAbstract clone(){
+		return (BiologicalEdgeAbstract) super.clone();
 	}
 }

@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.SortedSet;
 
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 
-public abstract class GraphElementAbstract {
+public abstract class GraphElementAbstract implements Cloneable {
 
 	private boolean isEdge = false;
 	private boolean isVertex = false;
@@ -20,7 +21,7 @@ public abstract class GraphElementAbstract {
 
 	private String name = "not mentioned";
 	private String label = "???";
-	//private String networklabel = "";
+	// private String networklabel = "";
 	private int ID = 0;
 	private SortedSet<Integer> set;
 
@@ -35,15 +36,15 @@ public abstract class GraphElementAbstract {
 			return;
 		} else {
 			set = new GraphInstance().getPathway().getIdSet();
-			//System.out.println("size: " + set.size());
+			// System.out.println("size: " + set.size());
 			if (set.contains(id)) {
 				System.err.println("Error: Id " + id + " is already existing!");
 			} else {
 				if (this.ID > 0) {
 					set.remove(ID);
-//					System.out.println("removed: " + ID);
+					// System.out.println("removed: " + ID);
 				}
-//				System.out.println("id added: " + id);
+				// System.out.println("id added: " + id);
 				set.add(id);
 				this.ID = id;
 				// System.out.println("added: " + id);
@@ -67,9 +68,9 @@ public abstract class GraphElementAbstract {
 		// System.out.println(new GraphInstance().getPathway().getName());
 		// set id to highest current id+1;
 		if (ID <= 0) {
-//			System.out.println("neue ID");
+			// System.out.println("neue ID");
 			if (set.size() > 0) {
-				//System.out.println("last: " + set.last());
+				// System.out.println("last: " + set.last());
 				setID(set.last() + 1);
 				// System.out.println("size: " + set.size());
 				// System.out.println("groesster: " + set.last());
@@ -93,7 +94,7 @@ public abstract class GraphElementAbstract {
 		// System.out.println(new GraphInstance().getPathway().getName());
 		// set id to highest current id+1;
 		if (set.size() > 0) {
-			//System.out.println("last: " + set.last());
+			// System.out.println("last: " + set.last());
 			// ID = set.last() + 1;
 			// System.out.println("size: " + set.size());
 			// System.out.println("groesster: " + set.last());
@@ -111,9 +112,9 @@ public abstract class GraphElementAbstract {
 
 	private Collection<Integer> originalGraphs;
 
-//	private boolean stringsEqualAndAreNotEmpty(String s1, String s2) {
-//		return s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2);
-//	}
+	// private boolean stringsEqualAndAreNotEmpty(String s1, String s2) {
+	// return s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2);
+	// }
 
 	/**
 	 * checks if the given BiologicalNodeAbstract is equal to this one nodes are
@@ -168,7 +169,7 @@ public abstract class GraphElementAbstract {
 		} else {
 
 			if (type == 1) {
-				if(getLabel().equals("1")){
+				if (getLabel().equals("1")) {
 					return "";
 				}
 				if (getLabel().length() == 0 || getLabel().equals(" ")) {
@@ -267,8 +268,8 @@ public abstract class GraphElementAbstract {
 
 	public void setLabel(String label) {
 		this.label = label;
-		//this.networklabel = label;
-		//System.out.println("gestezt");
+		// this.networklabel = label;
+		// System.out.println("gestezt");
 	}
 
 	public String getDescription() {
@@ -377,6 +378,17 @@ public abstract class GraphElementAbstract {
 
 	public void hasDAWISNode(boolean node) {
 		hasDAWISNode = node;
+	}
+
+	@Override
+	public GraphElementAbstract clone() {
+		// TODO Auto-generated method stub
+		try {
+			return (GraphElementAbstract) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Kann eigentlich nicht passieren, da Cloneable
+			throw new InternalError();
+		}
 	}
 
 }
