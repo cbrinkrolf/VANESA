@@ -3,7 +3,6 @@ package biologicalObjects.nodes;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import biologicalElements.Elementdeclerations;
-import database.dawis.ElementLoader;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
 
@@ -12,7 +11,6 @@ public class CollectorNode extends BiologicalNodeAbstract{
 	BiologicalNodeAbstract parent;
 	DefaultMutableTreeNode parentTreeNode;
 	String elementObject;
-	private ElementLoader loader;
 	
 	public CollectorNode(String label, String count) {
 		super(label, count+" Elemente");
@@ -46,16 +44,4 @@ public class CollectorNode extends BiologicalNodeAbstract{
 		return elementObject;
 	}
 
-	public void setLoader(ElementLoader elementLoader) {
-		this.loader = elementLoader;		
-	}
-	
-	public ElementLoader getLoader(){
-		return this.loader;
-	}
-
-	public void updateName() {
-		setName(getDAWISNode().getListAsVector().size()+" Elemente");	
-	}
-	
 }

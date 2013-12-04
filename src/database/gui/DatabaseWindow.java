@@ -5,7 +5,6 @@ import net.infonode.tabbedpanel.TabbedPanel;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.infonode.util.Direction;
 import database.brenda.gui.BRENDAqueryMask;
-import database.dawis.gui.DAWISQueryMask;
 import database.kegg.gui.KEGGqueryMask;
 import database.mirna.gui.MirnaQueryClass;
 import database.ppi.PPIqueryMask;
@@ -15,7 +14,6 @@ public class DatabaseWindow {
 	private TabbedPanel tabbedPanel;
 	private KEGGqueryMask kegg;
 	private BRENDAqueryMask brenda;
-	private DAWISQueryMask dawis;
 	private QueryInfoWindow info;
 	private PPIqueryMask ppi;
 	private MirnaQueryClass mirna; 
@@ -32,7 +30,6 @@ public class DatabaseWindow {
 
 		kegg = new KEGGqueryMask(this);
 		brenda = new BRENDAqueryMask(this);
-		dawis = new DAWISQueryMask(this);
 		info = new QueryInfoWindow();
 		ppi = new PPIqueryMask(this);
 		mirna = new MirnaQueryClass(this);
@@ -60,8 +57,7 @@ public class DatabaseWindow {
 			return kegg.doSearchCriteriaExist();
 		} else if (selectedDatabase().equals("BRENDA")) {
 			return brenda.doSearchCriteriaExist();
-		} else if (selectedDatabase().equals("DAWIS-M.D.")) {
-			return dawis.doSearchCriteriaExist();
+		
 		} else if (selectedDatabase().equals("PPI")) {
 			return ppi.doSearchCriteriaExist();
 		}else if (selectedDatabase().equals("miRNA")) {
@@ -80,9 +76,7 @@ public class DatabaseWindow {
 			return kegg.getKeyword();
 		} else if (t.getText().equals("BRENDA")) {
 			return brenda.getKeyword();
-		} else if (t.getText().equals("DAWIS-M.D.")) {
-			return dawis.getKeyword();
-		} else if (t.getText().equals("PPI")) {
+		}  else if (t.getText().equals("PPI")) {
 			return ppi.getKeyword();
 		}else if (t.getText().equals("miRNA")) {
 			return mirna.getKeyword();
@@ -97,21 +91,13 @@ public class DatabaseWindow {
 			kegg.reset();
 		} else if (t.getText().equals("BRENDA")) {
 			brenda.reset();
-		} else if (t.getText().equals("DAWIS-M.D.")) {
-			dawis.reset();
-		} else if (t.getText().equals("PPI")) {
+		}  else if (t.getText().equals("PPI")) {
 			ppi.reset();
 		} else if (t.getText().equals("miRNA")) {
 			mirna.reset();
 		}
 	}
 
-	public String getMode() {
-		return dawis.getMode();
-	}
-
-	public boolean getSpecification() {
-		return dawis.getOrganismSpecification();
-	}
+	
 
 }

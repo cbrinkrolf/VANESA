@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import pojos.DBColumn;
 import biologicalElements.Elementdeclerations;
 import configurations.Wrapper;
-import database.dawis.DAWISQueries;
 
 public class Enzyme extends Protein {
 	
@@ -122,42 +121,6 @@ public class Enzyme extends Protein {
 		//setShape(vs.getRegularPolygon(3));
 	}
 	
-	@Override
-	public void lookUpAtAllDatabases()
-	{
-		DAWISNode node=getDAWISNode();
-		String db=getDB();
-
-		String[] det={getLabel()};
-		ArrayList<DBColumn> results=new ArrayList<DBColumn>();
-
-		if (db.equalsIgnoreCase("KEGG"))
-		{
-			results=new Wrapper().requestDbContent(3, DAWISQueries.getTPEnzymeFromKEGGEnzyme, det);
-			
-			for (DBColumn column : results)
-			{
-				String[] res=column.getColumn();
-				String id=res[0];
-				
-				node.addID(id, getLabel());
-				node.addIDDBRelation("Transpath", id);
-			}
-		}
-		else if (db.equalsIgnoreCase("Transpath"))
-		{
-			results=new Wrapper().requestDbContent(3, DAWISQueries.getKEGGEnzymeFromTPEnzyme, det);
-			
-			for (DBColumn column : results)
-			{
-				String[] res=column.getColumn();
-				String id=res[0];
-				
-				node.addID(id, getLabel());
-				node.addIDDBRelation("KEGG", id);
-			}
-		}
-	}
 	
 //	@Override
 //	public void lookUpAtAllDatabases() {
