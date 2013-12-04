@@ -1,22 +1,16 @@
 package io;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
 
 import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import edu.uci.ics.jung.graph.Edge;
 
 public class PhosphoTextWriter {
 
 	public PhosphoTextWriter(File file, Pathway pw) {
 
-		HashSet nodes = new HashSet();
+		// CHRIS reimplement if necessary
+		
+		/*HashSet nodes = new HashSet();
 		int counter = 0;
 
 		try {
@@ -67,6 +61,6 @@ public class PhosphoTextWriter {
 
 			out.close();
 		} catch (IOException e) {
-		}
+		}*/
 	}
 }

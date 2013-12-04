@@ -3,22 +3,10 @@ package petriNet;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
 //import edu.uci.ics.jung.utils.UserData;
-import graph.GraphInstance;
-import graph.jung.graphDrawing.VertexShapes;
-import gui.MainWindow;
-import gui.MainWindowSingelton;
-
-import java.awt.Color;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JSlider;
-
-import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class AnimationThread extends Thread {
 	// This method is called when the thread runs
@@ -64,8 +52,10 @@ public class AnimationThread extends Thread {
 	}
 
 	public void run() {
+		
+		//CHRIS reimplement if necessary
 
-		GraphInstance graphInstance = new GraphInstance();
+		/*GraphInstance graphInstance = new GraphInstance();
 		MainWindow w = MainWindowSingelton.getInstance();
 
 		// initialize loop variables
@@ -165,6 +155,6 @@ public class AnimationThread extends Thread {
 		}
 		animationButton.setEnabled(true);
 		slider.setEnabled(true);
-		threadStep = -1;
+		threadStep = -1;*/
 	}
 }
