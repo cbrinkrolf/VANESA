@@ -20,7 +20,6 @@ import graph.jung.classes.MyGraph;
 import graph.layouts.gemLayout.GEMLayout;
 //import graph.layouts.modularLayout.MDForceLayout;
 import gui.AboutWindow;
-import gui.GetDBinformation;
 import gui.InfoWindow;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
@@ -31,9 +30,7 @@ import io.SaveDialog;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -137,10 +134,6 @@ public class MenuListener implements ActionListener {
 		} else if ("close All Networks".equals(event)) {
 
 			w.removeAllTabs();
-
-		} else if ("sessionID".equals(event)) {
-
-			new SessionIDLoadGui().showSettings();
 
 		} else if ("mathGraph".equals(event)) {
 
@@ -411,20 +404,7 @@ public class MenuListener implements ActionListener {
 		 * else if ("animation".equals(event)) { if (con.containsPathway()) { }
 		 * //new Regulation(); }
 		 */
-		else if ("dbInfo".equals(event)) {
-			//System.out.println("drin");
-			
-			new GetDBinformation();
-			// if (ConnectionSettingsSingelton.getInstance()
-			// .isInternetConnection()) {
-			// new GetDBinformation();
-			// } else {
-			// JOptionPane
-			// .showMessageDialog(
-			// w,
-			// "Sorry, no internet connection available. Please check your internet connection.");
-			// }
-		} else if ("openTestP".equals(event)) {
+		else if ("openTestP".equals(event)) {
 			// System.out.println("testP");
 			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
