@@ -56,6 +56,10 @@ public class Transformation {
 			 System.out.println(bna.getLabel());
 			 pw.removeElement(bna);
 		 }
+		 
+		 //System.out.println("nodes: "+pw.getAllNodes().size());
+		 //System.out.println("nodes: "+pw.getGraph().getJungGraph().getVertexCount());
+		 //System.out.println("edges: "+pw.getGraph().getJungGraph().getEdgeCount());
 		
 		return pw;
 	}
