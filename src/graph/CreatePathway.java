@@ -4,8 +4,12 @@ import gui.MainWindow;
 import gui.MainWindowSingelton;
 
 import java.awt.Cursor;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class CreatePathway {
 
@@ -30,14 +34,55 @@ public class CreatePathway {
 		pathwayName = "Untitled";
 		buildPathway();
 	}
+	
+	public CreatePathway(Pathway pathway){
+		this.pathwayName = pathway.getName();
+		this.buildPathway();
+		
+		HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> nodes = new HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract>();
+		
+		Iterator<BiologicalNodeAbstract> it = pathway.getAllNodes().iterator();
+		BiologicalNodeAbstract bna;
+		BiologicalNodeAbstract clone;
+		while(it.hasNext()){
+			bna = it.next();
+			clone =(BiologicalNodeAbstract) bna.clone();
+			nodes.put(bna, clone);
+			pw.addVertex(clone, pathway.getGraph().getVertexLocation(bna));
+		}
+		
+		it = pw.getAllNodes().iterator();
+		while(it.hasNext()){
+			bna = it.next();
+			if(bna.hasRef()){
+				bna.setRef(nodes.get(bna.getRef()));
+			}
+			//pw.addVertex(clone, pathway.getGraph().getVertexLocation(bna));
+		}
+		
+		
+		Iterator<BiologicalEdgeAbstract> it2 = pathway.getAllEdges().iterator();
+		
+		BiologicalEdgeAbstract bea;
+		BiologicalEdgeAbstract beaClone;
+		while(it2.hasNext()){
+			bea = it2.next();
+			beaClone = bea.clone();
+			beaClone.setFrom(nodes.get(bea.getFrom()));
+			beaClone.setTo(nodes.get(bea.getTo()));
+			pw.addEdge(beaClone);
+		}
+		
+		
+	}
 
 	private void buildPathway() {
 		w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		Pathway newPW = null;
+		//Pathway newPW = null;
 		if (parent == null) {
-			newPW = new Pathway(pathwayName);
+			new Pathway(pathwayName);
 		} else {
-			newPW = new Pathway(pathwayName, parent);
+			new Pathway(pathwayName, parent);
 		}
 		String newPathwayName = con.addPathway(pathwayName, new Pathway(
 				pathwayName));
@@ -53,4 +98,6 @@ public class CreatePathway {
 	public Pathway getPathway() {
 		return pw;
 	}
+	
+	
 }
