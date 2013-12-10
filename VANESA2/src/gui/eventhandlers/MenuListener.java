@@ -893,23 +893,11 @@ public class MenuListener implements ActionListener {
 			//ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			//Serialize it
 			
-			Pathway pw = new CreatePathway(old.getName()).getPathway();
+			Pathway pw = new CreatePathway(old).getPathway();
 			//pw = old.clone()
-			Iterator<BiologicalNodeAbstract> it = old.getAllNodes().iterator();
-			BiologicalNodeAbstract bna;
-			while(it.hasNext()){
-				bna =  it.next();
-				pw.addVertex((BiologicalNodeAbstract)bna.clone(), old.getGraph().getVertexLocation(bna));
-			}
 			
-			Iterator<BiologicalEdgeAbstract> it2 = old.getAllEdges().iterator();
-			BiologicalEdgeAbstract bea;
-			while(it2.hasNext()){
-				bea = it2.next();
-				pw.addEdge(bea);
-			}
 			Transformation t = new Transformation();
-			//t.resolveReferences(old.clone());
+			t.resolveReferences(pw);
 			//MainWindow.
 			//Tansformation.resolveReferences(pw);
 			//pw = old;
