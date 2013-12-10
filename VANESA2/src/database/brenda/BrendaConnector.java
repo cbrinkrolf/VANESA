@@ -1,7 +1,6 @@
 package database.brenda;
 
 import graph.CreatePathway;
-import graph.GraphInstance;
 import graph.algorithms.MergeGraphs;
 import graph.jung.classes.MyGraph;
 import gui.MainWindowSingelton;
@@ -9,7 +8,6 @@ import gui.ProgressBar;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -22,7 +20,6 @@ import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import pojos.DBColumn;
-import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -70,8 +67,6 @@ public class BrendaConnector extends SwingWorker {
 
 	private MoleculeBox box = MoleculeBoxSingelton.getInstance();
 
-	private InternalGraphRepresentation adjazenzList;
-
 	private ProgressBar bar;
 
 	private String[] enzymeToSearch;
@@ -88,10 +83,6 @@ public class BrendaConnector extends SwingWorker {
 		enzymeToSearch = details;
 		this.mergePW = mergePW;
 
-	}
-
-	private void updateGraph() {
-		myGraph.updateGraph();
 	}
 
 	private void stopVisualizationModel() {
@@ -116,7 +107,7 @@ public class BrendaConnector extends SwingWorker {
 	}
 
 	private BiologicalNodeAbstract addReactionNodes(String node)
-			throws SQLException {
+			 {
 		if (!enzymes.containsKey(node)) {
 			SmallMolecule sm = new SmallMolecule(node, "");
 			sm.setReference(false);
@@ -131,7 +122,7 @@ public class BrendaConnector extends SwingWorker {
 	}
 
 	private void searchPossibleEnzyms(BiologicalNodeAbstract node,
-			DefaultMutableTreeNode parentNode) throws SQLException {
+			DefaultMutableTreeNode parentNode){
 
 		if (parentNode.getLevel() == 0
 				|| (parentNode.getLevel() / 2) < searchDepth + 1) {
@@ -253,7 +244,7 @@ public class BrendaConnector extends SwingWorker {
 
 	private void separateReaction(String reaction,
 			BiologicalNodeAbstract enzyme, DefaultMutableTreeNode parentNode)
-			throws SQLException {
+			 {
 
 		int i = 0;
 		StringTokenizer tok = new StringTokenizer(reaction, "=");
@@ -335,7 +326,7 @@ public class BrendaConnector extends SwingWorker {
 	}
 
 	private void processBrendaElement(String enzyme, DefaultMutableTreeNode node)
-			throws SQLException {
+			 {
 		// System.out.println("l "+ node.getLevel());
 		// System.out.println("depth: "+searchDepth);
 		if (node.getLevel() == 0 || (node.getLevel() / 2) < searchDepth) {
@@ -580,7 +571,7 @@ public class BrendaConnector extends SwingWorker {
 		}
 	}
 
-	private void getEnzymeDetails(String[] details) throws SQLException {
+	private void getEnzymeDetails(String[] details) {
 
 		// System.out.println("len: "+details.length);
 		String enzyme = details[0];
@@ -685,33 +676,9 @@ public class BrendaConnector extends SwingWorker {
 		bar.setProgressBarString("Getting Enzymes");
 		// System.out.println("123");
 		// System.out.println("do");
+		// pw = new CreatePathway("EC: " + title).getPathway();
 
-		try {
-			GraphInstance i = new GraphInstance();
-
-			// System.out.println("p: "+i.getPathway());
-
-			getEnzymeDetails(enzymeToSearch);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		// System.out.println("ende");
-		// System.out.println("enz: "+enzymeToSearch);
-		String enzymeList = enzymesInPathway();
-
-		// System.out.println(enzymeList);
-		if (CoFactors) {
-			bar.setProgressBarString("Getting Cofactors");
-			getCofactors(enzymeList);
-		}
-
-		if (Inhibitors) {
-			bar.setProgressBarString("Getting Inhibitors");
-			getInhibitors(enzymeList);
-		}
-
-		bar.setProgressBarString("Drawing network");
-
+		// System.out.println("do in background");
 		return null;
 	}
 
@@ -729,19 +696,45 @@ public class BrendaConnector extends SwingWorker {
 									"Merge Pathways" },
 							JOptionPane.CANCEL_OPTION);
 		if (answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION) {
-			if (answer == JOptionPane.NO_OPTION)
+			if (answer == JOptionPane.NO_OPTION) {
+				// System.out.println("drin");
 				pw = new Pathway(title);
-			else if (title != null)
+			} else if (title != null) {
+				// System.out.println("drin1");
 				pw = new CreatePathway("EC: " + title).getPathway();
-			else
+			} else {
+				// System.out.println("drin2");
 				pw = new CreatePathway("BRENDA").getPathway();
-
+			}
 			pw.setOrganism(organism);
 			pw.setLink(pathwayLink);
 			pw.setImagePath(pathwayImage);
 			pw.setNumber(pathwayNumber);
+
+			// GraphInstance i = new GraphInstance();
+			// Pathway pw = new CreatePathway().getPathway();
+			// System.out.println("p: "+i.getPathway());
+
+			getEnzymeDetails(enzymeToSearch);
+
+			// System.out.println("ende");
+			// System.out.println("enz: "+enzymeToSearch);
+			String enzymeList = enzymesInPathway();
+
+			// System.out.println(enzymeList);
+			if (CoFactors) {
+				bar.setProgressBarString("Getting Cofactors");
+				getCofactors(enzymeList);
+			}
+
+			if (Inhibitors) {
+				bar.setProgressBarString("Getting Inhibitors");
+				getInhibitors(enzymeList);
+			}
+
+			bar.setProgressBarString("Drawing network");
+
 			myGraph = pw.getGraph();
-			adjazenzList = pw.getGraphRepresentation();
 
 			stopVisualizationModel();
 			drawNodes();
