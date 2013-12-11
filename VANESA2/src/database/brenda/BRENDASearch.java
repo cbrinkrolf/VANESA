@@ -265,7 +265,7 @@ public class BRENDASearch extends SwingWorker {
 		return b;
 	}
 
-	private boolean containsReactionElement(String reaction) {
+	/*private boolean containsReactionElement(String reaction) {
 
 		if (reaction.equals("") || reaction == null)
 			return false;
@@ -290,7 +290,7 @@ public class BRENDASearch extends SwingWorker {
 			return true;
 
 		return false;
-	}
+	}*/
 
 	public String[][] getResults() throws SQLException {
 

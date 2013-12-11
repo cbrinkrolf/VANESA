@@ -12,6 +12,7 @@ import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
 import cern.colt.matrix.DoubleMatrix2D;
 
+//MARTIN class could be deleted?
 public class NodeSetComparison {
 
 	private HashMap<String, BiologicalNodeSet> type2NodeSet_graphA, type2NodeSet_graphB;

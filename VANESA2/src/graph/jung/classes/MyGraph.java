@@ -1066,8 +1066,8 @@ public class MyGraph {
 		// viewer.getViewTransformer().setScale(scale, scale, new
 		// Point2D.Float());
 		new LayoutScalingControl().scale(viewer, scale, new Point2D.Float());
-		GraphCenter graphCenter2 = new GraphCenter(this,
-				viewer.getGraphLayout());
+		//GraphCenter graphCenter2 = new GraphCenter(this,
+			//	viewer.getGraphLayout());
 		// System.out.println("w: "+ new Point((int)graphCenter2.getWidth(),
 		// (int)graphCenter2.getHeight()));
 		// System.out.println("w: "+viewer.getWidth());
@@ -1112,7 +1112,7 @@ public class MyGraph {
 												// der Elemente
 		);
 		// System.out.println("drin");
-		Layout layout = viewer.getGraphLayout();
+		//Layout layout = viewer.getGraphLayout();
 		Point2D q = graphCenter.getCenter();
 		// Point2D q = viewer.getCenter();
 		// System.out.println("r: "+r);

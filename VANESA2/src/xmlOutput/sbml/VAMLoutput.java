@@ -460,8 +460,8 @@ public class VAMLoutput {
 
 		while (it.hasNext()) {
 			bea = it.next();
-			//System.out.println("Eo: "+bea.getID());
-//			System.out.println(bea.getBiologicalElement());
+			// System.out.println("Eo: "+bea.getID());
+			// System.out.println(bea.getBiologicalElement());
 			// System.out.println("edge zum speichern " + bna);
 
 			writer.writeStartElement("edge");
@@ -475,7 +475,7 @@ public class VAMLoutput {
 			writer.writeStartElement("id");
 			writer.writeCData(bea.getID() + "");
 			writer.writeEndElement();
-			
+
 			writer.writeStartElement("from");
 			writer.writeCData(bea.getFrom().getID() + "");
 			writer.writeEndElement();
@@ -704,8 +704,8 @@ public class VAMLoutput {
 			writer.writeStartElement("coordinates");
 			Point2D p = pw.getGraph().getVertexLocation(bna);
 			// .getLocation(bna);
-			//System.out.println(pw.getGraph().getVertexLocation(bna));
-			//System.out.println(bna.getID()+" "+p);
+			// System.out.println(pw.getGraph().getVertexLocation(bna));
+			// System.out.println(bna.getID()+" "+p);
 			writer.writeAttribute("x", p.getX() + "");
 			writer.writeAttribute("y", p.getY() + "");
 			writer.writeEndElement();
@@ -1428,7 +1428,7 @@ public class VAMLoutput {
 		while (it.hasNext()) {
 
 			bna = it.next();
-			//System.out.println("Vo: "+bna.getID());
+			// System.out.println("Vo: "+bna.getID());
 			writer.writeStartElement("species");
 
 			writer.writeAttribute("compartment", compartments.get(bna) + "");
@@ -1485,7 +1485,9 @@ public class VAMLoutput {
 			throw new RuntimeException("IO problem in fileToString", e);
 		} finally {
 			try {
-				in.close();
+				if (in != null) {
+					in.close();
+				}
 			} catch (IOException e) {
 			}
 		}

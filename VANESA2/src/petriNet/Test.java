@@ -1,15 +1,7 @@
 package petriNet;
 
-import java.util.ArrayList;
-
 import cern.colt.list.IntArrayList;
-import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
-import cern.colt.matrix.impl.DenseDoubleMatrix2D;
-import cern.colt.matrix.linalg.Algebra;
-import cern.colt.matrix.linalg.LUDecomposition;
-import cern.colt.matrix.linalg.QRDecomposition;
-import cern.colt.matrix.linalg.SingularValueDecomposition;
 
 public class Test {
 
@@ -126,15 +118,15 @@ public class Test {
 		
 		
 		
-		DenseDoubleMatrix2D m1 = new DenseDoubleMatrix2D(m1d);
-		DenseDoubleMatrix2D m2 = new DenseDoubleMatrix2D(m2d);
+		//DenseDoubleMatrix2D m1 = new DenseDoubleMatrix2D(m1d);
+		//DenseDoubleMatrix2D m2 = new DenseDoubleMatrix2D(m2d);
 		
-		DenseDoubleMatrix2D f = new DenseDoubleMatrix2D(fd);
-		DenseDoubleMatrix2D b = new DenseDoubleMatrix2D(bd);
-		DenseDoubleMatrix2D c = new DenseDoubleMatrix2D(cd);
+		//DenseDoubleMatrix2D f = new DenseDoubleMatrix2D(fd);
+		//DenseDoubleMatrix2D b = new DenseDoubleMatrix2D(bd);
+		//DenseDoubleMatrix2D c = new DenseDoubleMatrix2D(cd);
 		
 		
-		Algebra a = new Algebra();
+		//Algebra a = new Algebra();
 		//DoubleMatrix2D m3 = a.solve(usv, m2);
 		//System.out.println(m3);
 		double[] vd = new double[5];
@@ -144,9 +136,9 @@ public class Test {
 		vd[3] = 2;
 		vd[4] = 2;
 		
-		DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
+		//DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
 		DenseDoubleMatrix1D x = new DenseDoubleMatrix1D(5);
-		c.zMult(v, x, 1,0, false);
+		//c.zMult(v, x, 1,0, false);
 		//System.out.println(x);
 		IntArrayList l = new IntArrayList();
 		x.getNonZeros(l, null);

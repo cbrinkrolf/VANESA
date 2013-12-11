@@ -76,8 +76,8 @@ public class StartRserve {
 							      });
 	//		System.out.println("waiting for Rserve to start ... ("+p+")");
 			// we need to fetch the output - some platforms will die if you don't ...
-			StreamHog errorHog = new StreamHog(p.getErrorStream(), false);
-			StreamHog outputHog = new StreamHog(p.getInputStream(), false);
+			new StreamHog(p.getErrorStream(), false);
+			new StreamHog(p.getInputStream(), false);
 			if (!isWindows) /* on Windows the process will never return, so we cannot wait */
 				p.waitFor();
 	//		System.out.println("call terminated, let us try to connect ...");
@@ -157,6 +157,8 @@ public class StartRserve {
 		try {
 			RConnection c=new RConnection();
 			c.shutdown();
-		} catch (Exception x) {};
+		} catch (Exception x) {
+			x.printStackTrace();
+		};
 	}
 }
