@@ -42,7 +42,6 @@ import graph.GraphInstance;
 import graph.gui.EdgeDialog;
 import graph.gui.PetriNetVertexDialog;
 import graph.gui.VertexDialog;
-import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindowSingelton;
 
 /**
@@ -56,20 +55,20 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 		implements MouseListener, MouseMotionListener {
 
 	// HashMap vertexLocations;
-	BiologicalNodeAbstract startVertex;
-	Point2D down;
+	private BiologicalNodeAbstract startVertex;
+	//private Point2D down;
 
-	CubicCurve2D rawEdge = new CubicCurve2D.Float();
-	Shape edgeShape;
-	Shape rawArrowShape;
-	Shape arrowShape;
-	Paintable edgePaintable;
-	Paintable arrowPaintable;
-	boolean edgeIsDirected;
-	GraphContainer con = ContainerSingelton.getInstance();
+	private CubicCurve2D rawEdge = new CubicCurve2D.Float();
+	private Shape edgeShape;
+	private Shape rawArrowShape;
+	private Shape arrowShape;
+	private Paintable edgePaintable;
+	private Paintable arrowPaintable;
+	private boolean edgeIsDirected;
+	private GraphContainer con = ContainerSingelton.getInstance();
 
 	private GraphInstance graphInstance = new GraphInstance();
-	Pathway pw;
+	private Pathway pw;
 
 	public MyEditingGraphMousePlugin() {
 		this(InputEvent.BUTTON1_MASK);
@@ -148,7 +147,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 			if (vertex != null) { // get ready to make an edge
 				// System.out.println(vertex);
 				startVertex = vertex;
-				down = e.getPoint();
+				super.down = e.getPoint();
 				transformEdgeShape(down, down);
 				vv.addPostRenderPaintable(edgePaintable);
 				if ((e.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
