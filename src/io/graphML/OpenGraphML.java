@@ -54,7 +54,7 @@ public class OpenGraphML {
 		*/
 	}
 	
-	private void updateGraph() {
+	/*private void updateGraph() {
 		myGraph.updateGraph();
 	}
 
@@ -66,5 +66,5 @@ public class OpenGraphML {
 	private void startVisualizationModel() {
 		myGraph.restartVisualizationModel();
 		myGraph.unlockVertices();
-	}
+	}*/
 }

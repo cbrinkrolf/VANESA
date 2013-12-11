@@ -144,7 +144,7 @@ public class DataMappingModelController extends Observable {
 		} else if(detectPathwayOrigin().equals("IntAct")) {
 			//query = new IntActQueryRetrieval(detectPathwaySpeciesHeuristic());
 			query = new IntActQueryRetrieval(detectPathwaySpeciesAll());
-		} else if(detectPathwayOrigin().equals(null)) {
+		} else if(detectPathwayOrigin() == null) {
 			// TODO: throw Exception
 			System.out.println("Cannot determine the origin source of the pathway");
 		}

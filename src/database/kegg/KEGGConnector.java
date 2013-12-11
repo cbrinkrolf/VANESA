@@ -1,6 +1,5 @@
 package database.kegg;
 
-import graph.Box;
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
@@ -11,7 +10,6 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Vector;
@@ -19,9 +17,7 @@ import java.util.Vector;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import miscalleanous.linkedList.LinkedList;
 import pojos.DBColumn;
-import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Compound;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -59,13 +55,13 @@ public class KEGGConnector extends SwingWorker {
 		this.mirnaName = mirnaName;
 	}
 
-	private Vector mirnas;
+	private Vector<String> mirnas;
 
-	public Vector getMirnas() {
+	public Vector<String> getMirnas() {
 		return mirnas;
 	}
 
-	public void setMirnas(Vector mirnas) {
+	public void setMirnas(Vector<String> mirnas) {
 		this.mirnas = mirnas;
 	}
 
@@ -94,11 +90,6 @@ public class KEGGConnector extends SwingWorker {
 
 	private ArrayList<DBColumn> allSpecificMicroRNAs = new ArrayList<DBColumn>();
 
-	private Box relationBox = new Box();
-	private LinkedList ll = new LinkedList();
-	private HashSet relationIDs = new HashSet();
-	private HashMap relationSetNodes = new HashMap();
-	private InternalGraphRepresentation internalgraphRepresentation;
 
 	private boolean dontCreatePathway = false;
 	private String pathwayOrg;
@@ -117,6 +108,9 @@ public class KEGGConnector extends SwingWorker {
 		}
 
 		public boolean equals(Object o) {
+			if(o == null){
+				return false;
+			}
 			KeggNodeDescribtion knd = (KeggNodeDescribtion) o;
 			return knd.keggEntryId.equals(keggEntryId)
 					&& knd.keggPathwayName.equals(keggPathwayName);
@@ -132,7 +126,7 @@ public class KEGGConnector extends SwingWorker {
 		this.dontCreatePathway = dontCreatePathway;
 	}
 
-	public KEGGConnector(ProgressBar bar, String[] details) {
+	private KEGGConnector(ProgressBar bar, String[] details) {
 		pathwayID = details[0];
 		organism = details[2];
 		this.bar = bar;
@@ -194,7 +188,6 @@ public class KEGGConnector extends SwingWorker {
 		pw.setNumber(pathwayNumber);
 
 		myGraph = pw.getGraph();
-		internalgraphRepresentation = pw.getGraphRepresentation();
 
 		myGraph.lockVertices();
 		myGraph.stopVisualizationModel();
@@ -235,7 +228,6 @@ public class KEGGConnector extends SwingWorker {
 	}
 
 	private void getPathway(String name) {
-		String[] param = { name };
 		ArrayList<DBColumn> result = KEGGQueries.getPathway(pathwayID);
 
 		for (DBColumn column : result) {
@@ -408,21 +400,6 @@ public class KEGGConnector extends SwingWorker {
 			return 0;
 	}
 
-	private boolean getSpecificRelations(ArrayList<DBColumn> entries,
-			String firstElement, String secondElement) {
-		for (DBColumn column : entries) {
-			String[] resultDetails = column.getColumn();
-
-			if ((resultDetails[3].equals(firstElement) && resultDetails[4]
-					.equals(secondElement))
-					|| (resultDetails[4].equals(firstElement) && resultDetails[3]
-							.equals(secondElement)))
-				return true;
-		}
-
-		return false;
-	}
-
 	private void drawNodes(ArrayList<DBColumn> allElements) {
 		for (DBColumn column : allElements) {
 			String[] resultDetails = column.getColumn();
@@ -432,7 +409,7 @@ public class KEGGConnector extends SwingWorker {
 
 	}
 
-	private void drawMicroRNAs(ArrayList<DBColumn> miRNAs, Vector specialGenes,
+	private void drawMicroRNAs(ArrayList<DBColumn> miRNAs, Vector<String> specialGenes,
 			String specialMicroRNA) {
 		for (Iterator<DBColumn> i = miRNAs.iterator(); i.hasNext();) {
 			String[] column = i.next().getColumn();
@@ -440,12 +417,15 @@ public class KEGGConnector extends SwingWorker {
 			SRNA srna = null;
 			int connectedToPathway = 0;
 			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+			BiologicalNodeAbstract bna;
+			Point2D p;
+			Compound c;
 			while (it.hasNext()) {
-				BiologicalNodeAbstract bna = it.next();
+				bna = it.next();
 				if (bna.getName().equals(geneName)
 						|| bna.getLabel().equals(geneName)) {
 					if (connectedToPathway == 0) {
-						Point2D p = myGraph.findNearestFreeVertexPosition(bna
+						p = myGraph.findNearestFreeVertexPosition(bna
 								.getKEGGnode().getXPos(), bna.getKEGGnode()
 								.getYPos(), 100);
 						srna = new SRNA(column[0], column[0]);
@@ -464,7 +444,7 @@ public class KEGGConnector extends SwingWorker {
 						//myGraph.moveVertex(srna.getVertex(), p.getX(), p.getY());
 						connectedToPathway++;
 					}
-					Compound c = new Compound("", "", srna, bna);
+					c = new Compound("", "", srna, bna);
 					c.setDirected(true);
 					c.setReference(false);
 					if (specialGenes != null
@@ -488,14 +468,15 @@ public class KEGGConnector extends SwingWorker {
 			String entry1 = column.getColumn()[3];
 			String entry2 = column.getColumn()[4];
 			String subtypeValue = column.getColumn()[2];
-			String relationType = column.getColumn()[5];
+			//String relationType = column.getColumn()[5];
 			String edgeType = column.getColumn()[1];
 			String keggPathway = column.getColumn()[0];
 			BiologicalNodeAbstract bna1 = null;
 			BiologicalNodeAbstract subtype = null;
 			BiologicalNodeAbstract bna2 = null;
-			for (Iterator it = pw.getAllNodes().iterator(); it.hasNext();) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			BiologicalNodeAbstract bna;
+			for (Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator(); it.hasNext();) {
+				bna = it.next();
 				if (bna.getKEGGnode() != null
 						&& bna.getKEGGnode().getKEGGentryID().equals(entry1)
 						&& bna.getKEGGnode().getKEGGPathway()
@@ -597,8 +578,9 @@ public class KEGGConnector extends SwingWorker {
 			BiologicalNodeAbstract substrate = null;
 			BiologicalNodeAbstract enzyme = null;
 			BiologicalNodeAbstract product = null;
-			for (Iterator it = pw.getAllNodes().iterator(); it.hasNext();) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			BiologicalNodeAbstract bna;
+			for (Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator(); it.hasNext();) {
+				bna = it.next();
 				if (bna.getKEGGnode().getKEGGPathway().equals(keggPathway)) {
 					if (bna.getKEGGnode() != null
 							&& bna.getKEGGnode().getKEGGentryID()

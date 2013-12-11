@@ -175,14 +175,14 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 		table.setModel(model);
 		TableColumn myColumn = table.getColumnModel().getColumn(6);
-		JComboBox comboEditor = new JComboBox();
+		JComboBox<String> comboEditor = new JComboBox<String>();
 		comboEditor.addItem(Elementdeclerations.place);
 		comboEditor.addItem(Elementdeclerations.s_place);
 		comboEditor.addItem(Elementdeclerations.discreteTransition);
 		comboEditor.addItem(Elementdeclerations.continuousTransition);
 		comboEditor.addItem(Elementdeclerations.stochasticTransition);
 		myColumn.setCellEditor(new DefaultCellEditor(comboEditor));
-		JComboBox comboEditor2 = new JComboBox();
+		JComboBox<String> comboEditor2 = new JComboBox<String>();
 		comboEditor2.addItem("norm");
 		comboEditor2.addItem("exp");
 		table.getColumnModel().getColumn(8)
@@ -256,7 +256,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 		dialogPanel.add(p1);
 		dialogPanel.add(p2);
-		JPanel selectPanel = new JPanel();
+		//JPanel selectPanel = new JPanel();
 		JTabbedPane tp = new JTabbedPane();
 		tp.addTab("Nodes", p1);
 		tp.addTab("Edges", p2);

@@ -40,8 +40,8 @@ import biologicalObjects.nodes.RNA;
 public class PropertyWindowListener implements FocusListener, KeyListener,
 		ActionListener {
 
-	GraphElementAbstract geb;
-	GraphInstance graphInstance = new GraphInstance();
+	private GraphElementAbstract geb;
+	private GraphInstance graphInstance = new GraphInstance();
 
 	// Object element;
 
@@ -65,43 +65,43 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 		String source = event.getComponent().getName();
 
 		if (source.equals("label")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 
 				geb.setLabel(((JTextField) event.getSource()).getText());
 			}
 		} else if (source.equals("name")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 				geb.setName(((JTextField) event.getSource()).getText());
 			}
 		} else if (source.equals("comment")) {
-			if (((JTextArea) event.getSource()).getText() != "") {
+			if (!((JTextArea) event.getSource()).getText().equals("")) {
 				geb.setComments(((JTextArea) event.getSource()).getText());
 			}
 		} else if (source.equals("protein")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 				Protein protein = (Protein) geb;
 				protein.setAaSequence(((JTextField) event.getSource())
 						.getText());
 			}
 		} else if (source.equals("dna")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 				DNA dna = (DNA) geb;
 				dna.setNtSequence(((JTextField) event.getSource()).getText());
 			}
 		} else if (source.equals("gene")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 				Gene gene = (Gene) geb;
 				gene.setNtSequence(((JTextField) event.getSource()).getText());
 			}
 		} else if (source.equals("rna")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 				RNA rna = (RNA) geb;
 				rna.setNtSequence(((JTextField) event.getSource()).getText());
 			}
 		}
 		// for Places
 		else if (source.equals("token")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 				Place p = (Place) geb;
 				double tokens = Double.parseDouble(((JTextField) event
 						.getSource()).getText());
@@ -109,7 +109,7 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 			}
 
 		} else if (source.equals("tokenMin")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 
 				Place p = (Place) geb;
 				double tokenMin = Double.parseDouble(((JTextField) event
@@ -117,7 +117,7 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 				p.setTokenMin(tokenMin);
 			}
 		} else if (source.equals("tokenStart")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 
 				Place p = (Place) geb;
 				double tokenStart = Double.parseDouble(((JTextField) event
@@ -125,7 +125,7 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 				p.setTokenStart(tokenStart);
 			}
 		} else if (source.equals("tokenMax")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 
 				Place p = (Place) geb;
 				double tokenMax = Double.parseDouble(((JTextField) event
@@ -135,7 +135,7 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 		}
 		// for Transitions
 		else if (source.equals("delay")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 
 				if (geb instanceof DiscreteTransition) {
 					DiscreteTransition p = (DiscreteTransition) geb;
@@ -146,7 +146,7 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 			}
 
 		} else if (source.equals("maximumSpeed")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 				if (geb instanceof ContinuousTransition) {
 						ContinuousTransition t = (ContinuousTransition) geb;
 						t.setMaximumSpeed(((JTextField) event.getSource()).getText());
@@ -206,11 +206,11 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 					.getNeighbors(p).iterator();
 			BiologicalNodeAbstract neighbour;
 
+			BiologicalNodeAbstract node;
 			while (k.hasNext()) {
 				neighbour = k.next();
-				for (Iterator j = pw.getAllNodes().iterator(); j.hasNext();) {
-					BiologicalNodeAbstract node = (BiologicalNodeAbstract) j
-							.next();
+				for (Iterator<BiologicalNodeAbstract> j = pw.getAllNodes().iterator(); j.hasNext();) {
+					node = j.next();
 					if (node.equals(neighbour)
 							&& (((JComboBox) event.getSource())
 									.getSelectedItem().equals("discrete") && node
@@ -247,7 +247,7 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 
 		// for PetriNet Edges
 		else if (source.equals("activationProb")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 
 				PNEdge e = (PNEdge) geb;
 				double prob = Double.parseDouble(((JTextField) event
@@ -255,14 +255,14 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 				e.setActivationProbability(prob);
 			}
 		} else if (source.equals("function")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 
 				PNEdge e = (PNEdge) geb;
 				String function = ((JTextField) event.getSource()).getText();
 				e.setFunction(function);
 			}
 		} else if (source.equals("lowBoundary")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 
 				PNEdge e = (PNEdge) geb;
 				double lowBoundary = Double.parseDouble(((JTextField) event
@@ -270,7 +270,7 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 				e.setLowerBoundary(lowBoundary);
 			}
 		} else if (source.equals("upBoundary")) {
-			if (((JTextField) event.getSource()).getText() != "") {
+			if (!((JTextField) event.getSource()).getText().equals("")) {
 
 				PNEdge e = (PNEdge) geb;
 				double upperBoundary = Double.parseDouble(((JTextField) event

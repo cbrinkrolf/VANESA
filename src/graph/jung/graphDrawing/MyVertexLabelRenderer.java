@@ -219,7 +219,7 @@ public class MyVertexLabelRenderer extends JLabel implements VertexLabelRenderer
 	protected void firePropertyChange(String propertyName, Object oldValue,
 			Object newValue) {
 		// Strings get interned...
-		if (propertyName == "text") {
+		if (propertyName.equals("")) {
 			super.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}

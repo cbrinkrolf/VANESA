@@ -25,14 +25,5 @@ public class MoleculeBoxSingelton extends MoleculeBox {
 		}
 		return settings;
 	}
-
-	/**
-	 * This function replaces the existing instance by a new one.
-	 * 
-	 * @param dbsolas
-	 */
-	public static void setInstance(MoleculeBox settings) {
-		settings = settings;
-	}
 }
 

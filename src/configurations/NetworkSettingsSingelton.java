@@ -31,8 +31,5 @@ public class NetworkSettingsSingelton extends NetworkSettings {
 	 * 
 	 * @param dbsolas
 	 */
-	public static void setInstance(NetworkSettings settings) {
-		settings = settings;
-	}
 }
 

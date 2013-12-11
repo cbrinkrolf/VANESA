@@ -121,14 +121,15 @@ public class SBMLoutputNoWS {
 	 * @return boolean true if a document has been written to the specified
 	 *         diretory.
 	 */
-	public String generateSBMLDocument(){
-		
+	public String generateSBMLDocument() {
+
 		// initiates the settings for the service data.
 		this.setUpPayload();
-		
-        // further data will be added to the payload here
+
+		// further data will be added to the payload here
 		this.listOfCompartmentTypes = this.factory.createOMElement(new QName(
-				XMLConstraints.LIST_OF_COMPARTMENT_TYPES.getXMLTag()), this.model);
+				XMLConstraints.LIST_OF_COMPARTMENT_TYPES.getXMLTag()),
+				this.model);
 		this.listOfSpeciesType = this.factory.createOMElement(new QName(
 				XMLConstraints.LIST_OF_SPECIES_TYPES.getXMLTag()), this.model);
 		this.listOfCompartments = this.factory.createOMElement(new QName(
@@ -141,11 +142,12 @@ public class SBMLoutputNoWS {
 				XMLConstraints.LIST_OF_REACTIONS.getXMLTag()), this.model);
 
 		// read all nodes from graph
-		Iterator<BiologicalNodeAbstract> it = this.pathway.getAllNodes().iterator();
-		
+		Iterator<BiologicalNodeAbstract> it = this.pathway.getAllNodes()
+				.iterator();
+
 		while (it.hasNext()) {
 			BiologicalNodeAbstract oneNode = it.next();
-			
+
 			// creates all data for the service
 			this.createListOfCompartmentTypes(oneNode);
 			this.createListOfCompartments(oneNode);
@@ -153,73 +155,63 @@ public class SBMLoutputNoWS {
 			this.createListOfParameter(oneNode);
 			this.createListOfSpecies(oneNode);
 		}
-		
+
 		// reactions to sbml
-		Iterator<BiologicalEdgeAbstract> edgeIterator = this.pathway.getAllEdges().iterator();
-		
+		Iterator<BiologicalEdgeAbstract> edgeIterator = this.pathway
+				.getAllEdges().iterator();
+
 		BiologicalEdgeAbstract oneEdge;
-		while(edgeIterator.hasNext()){
+		while (edgeIterator.hasNext()) {
 			oneEdge = edgeIterator.next();
 			this.createListOfReactions(oneEdge);
 		}
-        
-        // send the data to the service
-		OMElement result = this.payload;//this.sendPayLoad();	
+
+		// send the data to the service
+		OMElement result = this.payload;// this.sendPayLoad();
 		// write a sbml file
-		
-		/*SBMLReader sbmlreader = new SBMLReader();
-		SBMLDocument sbmlDoc = null;
+
+		/*
+		 * SBMLReader sbmlreader = new SBMLReader(); SBMLDocument sbmlDoc =
+		 * null; try { sbmlDoc =
+		 * sbmlreader.readSBMLFromString(result.toString()); sbmlDoc. } catch
+		 * (XMLStreamException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
+
+		// SBMLValidator valid = new SBMLValidator();
+		// Map m = new HashMap();
 		try {
-			sbmlDoc = sbmlreader.readSBMLFromString(result.toString());
-			sbmlDoc.
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		
-		
-		//SBMLValidator valid = new SBMLValidator();
-		//Map m = new HashMap();
-		try {
-			String test = result.toString()+"abc";
-			//InputStream sbml = new ByteArrayInputStream(test.getBytes());
+			String test = result.toString() + "abc";
+			// InputStream sbml = new ByteArrayInputStream(test.getBytes());
 			SBMLValidator validator = new SBMLValidator();
-			int errors = validator.validateSBML(test, this.file.getName(), new HashMap());
-			
-			if (errors > 0){
-				return " File contains "+ errors+" Error(s).\n "+this.writeSBMLDocument(result);
-			}else{
-				return " File is valid.\n "+this.writeSBMLDocument(result);
+			int errors = validator.validateSBML(test, this.file.getName(),
+					new HashMap());
+
+			if (errors > 0) {
+				return " File contains " + errors + " Error(s).\n "
+						+ this.writeSBMLDocument(result);
+			} else {
+				return " File is valid.\n " + this.writeSBMLDocument(result);
 			}
-			
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			return " File not validated.\n "+this.writeSBMLDocument(result);
+			return " File not validated.\n " + this.writeSBMLDocument(result);
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		/*System.out.println("result: "+result.toString());
-		SBMLErrorLog log = SBMLValidator.checkConsistency(result.toString());
-		
-		System.out.println("num: "+log.getNumErrors());
-		java.util.List<SBMLError> l = log.getValidationErrors();
-		SBMLError err = null;
-		for(int i = 0; i< l.size(); i++){
-			err = l.get(i);
-			System.out.println(i+": "+ err.toString());
-			System.out.println(err.isError());
-			
-		}
-		System.out.println("durch");*/
-		
-		
+
+		/*
+		 * System.out.println("result: "+result.toString()); SBMLErrorLog log =
+		 * SBMLValidator.checkConsistency(result.toString());
+		 * 
+		 * System.out.println("num: "+log.getNumErrors());
+		 * java.util.List<SBMLError> l = log.getValidationErrors(); SBMLError
+		 * err = null; for(int i = 0; i< l.size(); i++){ err = l.get(i);
+		 * System.out.println(i+": "+ err.toString());
+		 * System.out.println(err.isError());
+		 * 
+		 * } System.out.println("durch");
+		 */
+
 	}
 
 	/**
@@ -329,13 +321,13 @@ public class SBMLoutputNoWS {
 			try {
 				content = XMLConstraints.XML_TAG.getXMLTag()
 						+ sbmlDoc.toStringWithConsume();
+				writer.write(content);
+				writer.flush();
+				writer.close();
+				System.err.println("Content written: " + content);
 			} catch (XMLStreamException e) {
 				e.printStackTrace();
 			}
-			writer.write(content);
-			writer.flush();
-			writer.close();
-			System.err.println("Content written: " + content);
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -474,7 +466,7 @@ public class SBMLoutputNoWS {
 	private void createListOfSpecies(BiologicalNodeAbstract oneNode) {
 		if (oneNode != null) {
 			String vertexID = oneNode.getSbml().getVertex();
-			//String vertexID = oneNode.getID()+"";
+			// String vertexID = oneNode.getID()+"";
 			if (vertexID != null) {
 				String compartment = this.availableCompartments.get(vertexID);
 				String speciesType = this.availableSpeciesTypes.get(oneNode
@@ -523,11 +515,12 @@ public class SBMLoutputNoWS {
 			String vertexID = oneNode.getSbml().getVertex();
 
 			if (vertexID != null) {
-				Point2D point = this.pathway.getGraph().getClusteringLayout().transform(oneNode);
-//						.getLocation(oneNode);
-				//Point2D point = this.pathway.getGraph().getJungGraph().get
+				Point2D point = this.pathway.getGraph().getClusteringLayout()
+						.transform(oneNode);
+				// .getLocation(oneNode);
+				// Point2D point = this.pathway.getGraph().getJungGraph().get
 				// parameter data
-				//System.out.println(point);
+				// System.out.println(point);
 				String name = vertexID;
 				String xCoord = "" + point.getX();
 				String yCoord = "" + point.getY();
@@ -589,12 +582,12 @@ public class SBMLoutputNoWS {
 	 *            Adds a OMElement. The OMElement contains one attribute: "id".
 	 */
 	private void createListOfReactions(BiologicalEdgeAbstract oneEdge) {
-		
+
 		if (oneEdge != null) {
 			String from = oneEdge.getSbml().getFrom();
 			String to = oneEdge.getSbml().getTo();
 			String name = oneEdge.getSbml().getEdge();
-//			System.out.println(name);
+			// System.out.println(name);
 			if (from != null && to != null && name != null
 					&& (!this.availableReactions.contains(name))) {
 				String id = XMLConstraints.REACTION_NAME.getXMLTag()

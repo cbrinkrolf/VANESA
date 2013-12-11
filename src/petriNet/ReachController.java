@@ -1,21 +1,23 @@
 package petriNet;
 
-import java.util.HashSet;
+import graph.GraphInstance;
+
+import java.util.Collection;
 import java.util.Iterator;
 
-import graph.GraphInstance;
 import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ReachController {
 
 	private Pathway pw;
 	private GraphInstance graphInstance = new GraphInstance();
-	private HashSet nodes;
+	private Collection<BiologicalNodeAbstract> nodes;
 	
 	public ReachController(){
 	
-		//this.pw = graphInstance.getPathway();
-		//this.nodes = this.pw.getAllNodes();
+		this.pw = graphInstance.getPathway();
+		this.nodes = this.pw.getAllNodes();
 		
 		
 		
@@ -28,19 +30,19 @@ public class ReachController {
 			
 		}
 		
-		Cov c = new Cov();
+		new Cov();
 	}
 	
 	private boolean isBounded(){
 		//boolean bounded = false;
 		
-		Iterator it = this.nodes.iterator();
-		Object o;
+		Iterator<BiologicalNodeAbstract> it = this.nodes.iterator();
 		Place p;
+		BiologicalNodeAbstract bna;
 		while(it.hasNext()){
-			o = it.next();
-			if(o instanceof Place){
-				p = (Place) o;
+			bna = it.next();
+			if(bna instanceof Place){
+				p = (Place) bna;
 				//System.out.println(p.getName());
 				if(p.getTokenMax() <= 0.0){
 					return false;

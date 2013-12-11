@@ -23,8 +23,8 @@ public class GraphPopUp {
 		titlePanel.add(title); // adds to center of panel's default
 								// BorderLayout.
 
-		JMenu graph = new JMenu("Graph");
-		JMenu layout = new JMenu("Graph Layouts");
+		//JMenu graph = new JMenu("Graph");
+		//JMenu layout = new JMenu("Graph Layouts");
 
 		JMenuItem copySelection = new JMenuItem("copy");
 		JMenuItem cutSelection = new JMenuItem("cut");

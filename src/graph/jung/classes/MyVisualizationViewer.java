@@ -44,13 +44,13 @@ public class MyVisualizationViewer extends VisualizationViewer<BiologicalNodeAbs
 	 * a collection of user-implementable functions to render under
 	 * the topology (before the graph is rendered)
 	 */
-	protected List<Paintable> preRenderers = new ArrayList<Paintable>();
+	//protected List<Paintable> preRenderers = new ArrayList<Paintable>();
 
 	/**
 	 * a collection of user-implementable functions to render over the
 	 * topology (after the graph is rendered)
 	 */
-	protected List<Paintable> postRenderers = new ArrayList<Paintable>();
+	//protected List<Paintable> postRenderers = new ArrayList<Paintable>();
 
 	protected void renderGraph(Graphics2D g2d){
 		

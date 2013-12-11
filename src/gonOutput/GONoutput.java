@@ -260,7 +260,7 @@ public class GONoutput {
 		}
 		
 		return "  <csml:process id=\"" + bna.getID() + "\" name=\""
-				+ (bna.getLabel() == "" ? " " : bna.getLabel())
+				+ (bna.getLabel().equals("") ? " " : bna.getLabel())
 				//TODO Transitiontype Discrete vs Continuous
 				+ "\" type=\""+type+"\">\r\n";
 	}

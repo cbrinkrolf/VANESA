@@ -272,7 +272,7 @@ public class Cov {
 							// System.out.println("1: " +
 							// parent.getTokenList());
 							// System.out.println("2: " + tmp.toString());
-							if (!parent.getTokenList().equals(tmp.toString())) {
+							if (!parent.getTokenList().toString().equals(tmp.toString())) {
 								pw.addVertex(n, new Point(i * 10,i * i * 30));
 								// n.setVisible(false);
 								CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i), parent, n);

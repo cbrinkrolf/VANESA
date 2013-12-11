@@ -271,13 +271,14 @@ public class SBMLoutput {
             try {
             	content = XMLConstraints.XML_TAG.getXMLTag() + 
             	sbmlDoc.toStringWithConsume();
+            	writer.write(content);
+                writer.flush();
+                writer.close();
+                System.err.println("Content written: " + content);
 			} catch (XMLStreamException e) {
 				e.printStackTrace();
 			}
-			writer.write(content);
-            writer.flush();
-            writer.close();
-            System.err.println("Content written: " + content);
+			
             
         } catch (IOException ex) {
         	ex.printStackTrace();

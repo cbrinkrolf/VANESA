@@ -541,8 +541,8 @@ public class DataMappingView extends JDialog implements Observer{
 		});
 		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			file = chooser.getSelectedFile().getAbsoluteFile();
+			dataFile.setText(file.getPath());
 		}
-		dataFile.setText(file.getPath());
 		return file;
 	}
 

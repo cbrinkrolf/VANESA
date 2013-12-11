@@ -163,12 +163,12 @@ public class SBMLInput {
 		String xml = sb.toString();
 		int errors = -1;
 		String msg = "";
-		//System.out.println(xml);
+		// System.out.println(xml);
 		SBMLValidator validator = new SBMLValidator();
 		try {
 			errors = validator.validateSBML(xml, file.getName(), new HashMap());
-			
-			System.out.println("SBML Errors: "+errors);
+
+			System.out.println("SBML Errors: " + errors);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
@@ -282,7 +282,7 @@ public class SBMLInput {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				msg+=" File could not be loaded.";
+				msg += " File could not be loaded.";
 			}
 		} else {
 			msg += "File contains " + errors + " error(s)!";
@@ -315,37 +315,33 @@ public class SBMLInput {
 
 		// create a buffered reader
 		BufferedReader bufferedReader = null;
-		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(file)));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
 
 		// create a xml reader
 		XMLStreamReader reader = null;
+		OMElement sbmlOMElement = null;
 		try {
+			bufferedReader = new BufferedReader(new InputStreamReader(
+					new FileInputStream(file)));
 			reader = XMLInputFactory.newInstance().createXMLStreamReader(
 					bufferedReader);
+			
+			// create a OMElement from SBML file
+			StAXOMBuilder axiomBuilder = new StAXOMBuilder(reader);
+			sbmlOMElement = axiomBuilder.getDocumentElement();
+			//String content = sbmlOMElement.toString();
+			
+			// clean up
+			bufferedReader.close();
+			reader.close();
+			return sbmlOMElement;
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 		} catch (FactoryConfigurationError e) {
 			e.printStackTrace();
-		}
-
-		// create a OMElement from SBML file
-		StAXOMBuilder axiomBuilder = new StAXOMBuilder(reader);
-		OMElement sbmlOMElement = axiomBuilder.getDocumentElement();
-		String content = sbmlOMElement.toString();
-		// clean up
-		try {
-			bufferedReader.close();
-			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (XMLStreamException exception) {
-			exception.printStackTrace();
 		}
+
 		return sbmlOMElement;
 	}
 
@@ -538,15 +534,15 @@ public class SBMLInput {
 			if (node != null) {
 				double xCoord = 0;
 				double yCoord = 0;
-				
 
 				// put node on right possition
-//				Vertex ver = node.getVertex();
+				// Vertex ver = node.getVertex();
 				xCoord = Double.parseDouble(this.xCoordinates.get(id));
 				yCoord = Double.parseDouble(this.yCoordinates.get(id));
-				this.pathway.addVertex(node, new Point2D.Double(xCoord, yCoord));
-//				this.pathway.getGraph().moveVertex(node.getVertex(), xCoord,
-//						yCoord);
+				this.pathway
+						.addVertex(node, new Point2D.Double(xCoord, yCoord));
+				// this.pathway.getGraph().moveVertex(node.getVertex(), xCoord,
+				// yCoord);
 			}
 		}
 	}
@@ -594,10 +590,10 @@ public class SBMLInput {
 			BiologicalNodeAbstract ver1 = this.availableReactions.get(from);
 			BiologicalNodeAbstract ver2 = this.availableReactions.get(to);
 
-			
-			ReactionEdge edge =new ReactionEdge( "", "", this.availableReactions.get(from),
+			ReactionEdge edge = new ReactionEdge("", "",
+					this.availableReactions.get(from),
 					this.availableReactions.get(to));
-//			ReactionEdge graphElement = new ReactionEdge(edge,);
+			// ReactionEdge graphElement = new ReactionEdge(edge,);
 			this.pathway.addEdge(edge);
 		}
 	}
@@ -618,7 +614,7 @@ public class SBMLInput {
 	 */
 	private BiologicalNodeAbstract createVertex(String biologicalElement,
 			String label, String id) {
-		Object biologicalNode = null;
+		BiologicalNodeAbstract biologicalNode = null;
 
 		if (biologicalElement.equals(Elementdeclerations.enzyme)) {
 			Enzyme e = new Enzyme(label, "");
@@ -746,8 +742,11 @@ public class SBMLInput {
 			biologicalNode = e;
 		}
 
-		BiologicalNodeAbstract bna = (BiologicalNodeAbstract) biologicalNode;
-		this.availableReactions.put(id, bna);
-		return bna;
+		if (biologicalNode != null) {
+			//BiologicalNodeAbstract bna = (BiologicalNodeAbstract) biologicalNode;
+			this.availableReactions.put(id, biologicalNode);
+			//return bna;
+		}
+		return biologicalNode;
 	}
 }

@@ -102,7 +102,6 @@ public class DatabaseQueryValidator {
 	private String prepareToken(String attribute, String temp) {
 
 		String query = "";
-		StringBuffer buffer = new StringBuffer();
 		boolean not = false;
 
 		if (temp.startsWith("!")) {

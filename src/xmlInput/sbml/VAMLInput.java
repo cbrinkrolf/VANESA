@@ -192,9 +192,6 @@ public class VAMLInput {
 
 		// String sequence = "";
 
-		
-		
-		
 		while (it.hasNext()) {
 
 			OMElement element = it.next();
@@ -203,25 +200,24 @@ public class VAMLInput {
 				elementSpecification = element.getText();
 			} else if (element.getLocalName().equals("id")) {
 				// System.out.println("ID gefunden_____"+element.getText());
-				
-				
+
 				try {
 					id = Integer.parseInt(element.getText());
 				} catch (NumberFormatException e) {
 					id = Integer.parseInt(element.getText().substring(1));
 				}
-				
+
 				// System.out.println("idddd "+id);
 			} else if (element.getLocalName().equals("from")) {
-				
+
 				try {
 					from = Integer.parseInt(element.getText());
 				} catch (NumberFormatException e) {
 					from = Integer.parseInt(element.getText().substring(1));
 				}
 			} else if (element.getLocalName().equals("to")) {
-				//to = Integer.parseInt(element.getText());
-				
+				// to = Integer.parseInt(element.getText());
+
 				try {
 					to = Integer.parseInt(element.getText());
 				} catch (NumberFormatException e) {
@@ -863,10 +859,11 @@ public class VAMLInput {
 			((DiscreteTransition) bna).setDelay(Double.parseDouble(delay));
 		} else if (biologicalElement.equals("Continuous Transition")) {
 			bna = new ContinuousTransition(label, name);
-			String maximumSpeed = node.getAttributeValue(new QName("maximumSpeed"));
+			String maximumSpeed = node.getAttributeValue(new QName(
+					"maximumSpeed"));
 			((ContinuousTransition) bna).setMaximumSpeed(maximumSpeed);
-			//System.out.println("s:"+maximumSpeed+"end");
-			if(maximumSpeed == "" || maximumSpeed == null){
+			// System.out.println("s:"+maximumSpeed+"end");
+			if (maximumSpeed == null || maximumSpeed.equals("")) {
 				System.out.println("speed");
 				((ContinuousTransition) bna).setMaximumSpeed("1");
 			}
@@ -876,37 +873,39 @@ public class VAMLInput {
 					.getAttributeValue(new QName("distribution")));
 		}
 
-		bna.setCompartment(location);
-		bna.setComments(comment);
-		bna.setColor(color);
-		bna.setIsVertex(true);
-		bna.setReference(isReference);
-		try {
-			int id = Integer.parseInt(node.getAttributeValue(new QName(
-					"ElementID")));
-			bna.setID(id);
-		} catch (Exception e) {
-		}
+		if (bna != null) {
+			bna.setCompartment(location);
+			bna.setComments(comment);
+			bna.setColor(color);
+			bna.setIsVertex(true);
+			bna.setReference(isReference);
+			try {
+				int id = Integer.parseInt(node.getAttributeValue(new QName(
+						"ElementID")));
+				bna.setID(id);
+			} catch (Exception e) {
+			}
 
-		if (keggNode != null) {
-			bna.setKEGGnode(keggNode);
-		}
+			if (keggNode != null) {
+				bna.setKEGGnode(keggNode);
+			}
 
-		if (dawisNode != null) {
-			bna.setDAWISNode(dawisNode);
-			bna.setDB(dawisNode.getDB());
-		}
+			if (dawisNode != null) {
+				bna.setDAWISNode(dawisNode);
+				bna.setDB(dawisNode.getDB());
+			}
 
-		mapping.put(vertexID, bna);
+			mapping.put(vertexID, bna);
 
-		if (bna instanceof Protein) {
-			Protein protein = (Protein) bna;
-			protein.setAaSequence(aaSequence);
+			if (bna instanceof Protein) {
+				Protein protein = (Protein) bna;
+				protein.setAaSequence(aaSequence);
+			}
+			// bna.setID(vertexID);
+			Point2D.Double p = new Point2D.Double(x_coord, y_coord);
+			// System.out.println("node_id "+bna.getID());
+			pw.addVertex(bna, p);
 		}
-		// bna.setID(vertexID);
-		Point2D.Double p = new Point2D.Double(x_coord, y_coord);
-		// System.out.println("node_id "+bna.getID());
-		pw.addVertex(bna, p);
 
 		// pw.getGraph().moveVertex(bna.getVertex(), x_coord, y_coord);
 	}
