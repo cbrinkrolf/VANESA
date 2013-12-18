@@ -12,8 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import com.sun.tools.xjc.reader.gbind.Sequence;
-
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
 
