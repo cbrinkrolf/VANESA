@@ -10,7 +10,7 @@ import java.util.Vector;
 public class CSVInputReader {
 
 	public HashMap<String, Vector<Double>> readResult(String file,
-			ArrayList<String> columns) throws IOException {
+			ArrayList<String> columns, boolean omc) throws IOException {
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		ArrayList<String> text = new ArrayList<String>();
 		HashMap<String, Integer> columnName = new HashMap<String, Integer>();
@@ -43,16 +43,19 @@ public class CSVInputReader {
 		Vector<Double> v = new Vector<Double>();
 		String k = "";
 		for (int i = 0; i < columns.size(); i++) {
-			k = columns.get(i) + ".t";
+			if (omc) {
+				k = "\""+columns.get(i) + ".t\"";
+			} else {
+				k = columns.get(i) + ".t";
+			}
 			if (columnName.containsKey(k)) {
 				// System.out.println(k+" enthalten");
 				v.clear();
 				for (int j = 1; j < lines; j++) {
-					v.add(new Double(content[j][columnName.get(columns.get(i)
-							+ ".t")]));
+					v.add(new Double(content[j][columnName.get(k)]));
 				}
 				result.put(columns.get(i), (Vector<Double>) v.clone());
-				//System.out.println(columns.get(i) + " " +v.size());
+				// System.out.println(columns.get(i) + " " +v.size());
 			}
 			// System.out.println(k+" nicht enthalten");
 		}
