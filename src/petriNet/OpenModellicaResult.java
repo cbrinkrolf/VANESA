@@ -69,7 +69,7 @@ public class OpenModellicaResult extends SwingWorker{
 						PetriNet petrinet = graphInstance.getPathway()
 								.getPetriNet();
 						petrinet.setPetriNetSimulationFile(file
-								.getAbsolutePath());
+								.getAbsolutePath(), false);
 						petrinet.initializePetriNet();
 
 					} else {
@@ -91,7 +91,7 @@ public class OpenModellicaResult extends SwingWorker{
 						PetriNet petrinet = graphInstance.getPathway()
 								.getPetriNet();
 						petrinet.setPetriNetSimulationFile(file
-								.getAbsolutePath());
+								.getAbsolutePath(), false);
 						petrinet.initializePetriNet();
 
 					} else {

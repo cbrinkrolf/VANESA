@@ -29,6 +29,7 @@ public class PetriNet {
 	private int resultDimension = 0;
 	private int currentTimeStep = 0;
 	private String covGraph;
+	private boolean omc = false;
 
 	public String getCovGraph() {
 		return this.covGraph;
@@ -54,8 +55,9 @@ public class PetriNet {
 		return petriNetSimulationFile;
 	}
 
-	public void setPetriNetSimulationFile(String petriNetSimulationFile) {
+	public void setPetriNetSimulationFile(String petriNetSimulationFile, boolean omc) {
 		this.petriNetSimulationFile = petriNetSimulationFile;
+		this.omc = omc;
 	}
 
 	public HashMap<String, Vector<Double>> getPnResult() {
@@ -97,7 +99,7 @@ public class PetriNet {
 			// System.out.println("endung: "+ext);
 			if (ext.equals("csv")) {
 				this.pnResult = this.cvsReader.readResult(
-						this.petriNetSimulationFile, placeNames);
+						this.petriNetSimulationFile, placeNames, omc);
 
 				// Iterator it = this.pnResult.
 
@@ -180,9 +182,9 @@ public class PetriNet {
 					 //System.out.println(v.lastElement());
 					// System.out.println("size: "+v.size());
 					// System.out.println("test2");
-					if (v.get(0).doubleValue() != ((Place) bna).getTokenStart())
-						throw new Exception(
-								"A startToken value in the petri net does not fit the result!");
+					//if (v.get(0).doubleValue() != ((Place) bna).getTokenStart())
+						//throw new Exception(
+							//	"A startToken value in the petri net does not fit the result!");
 					bna.setPetriNetSimulationData(v);
 					// System.out.println(bna.getName());
 					// System.out.println(v.size());
@@ -239,7 +241,7 @@ public class PetriNet {
 			}
 		}
 		// pw.setPetriNet(false);
-		this.setPetriNetSimulationFile(null);
+		this.setPetriNetSimulationFile(null, false);
 	}
 
 	public int getNumberOfPlaces() {
