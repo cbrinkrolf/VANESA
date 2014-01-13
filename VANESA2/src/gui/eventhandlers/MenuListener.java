@@ -1,6 +1,7 @@
 package gui.eventhandlers;
 
 import dataMapping.DataMappingMVC;
+import database.eventhandlers.DatabaseSearchListener;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
@@ -23,13 +24,16 @@ import gui.AboutWindow;
 import gui.InfoWindow;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
+import gui.MenuBarClass;
 import io.OpenDialog;
 import io.SaveDialog;
 
 import java.awt.Component;
+import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,6 +64,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import cern.colt.list.IntArrayList;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
+import configurations.ConnectionSettings;
 import configurations.ProgramFileLock;
 import configurations.gui.LayoutConfig;
 import configurations.gui.Settings;
@@ -902,7 +907,29 @@ public class MenuListener implements ActionListener {
 			//Tansformation.resolveReferences(pw);
 			//pw = old;
 			
+		} 
+		//MARTIN db switcher
+		else if ("switch db version".equals(event)){
+			//DO switching stuff
+			MainWindow m = MainWindowSingelton.getInstance();
+			
+			MainWindow.useOldDB = !MainWindow.useOldDB;
+			String switchertext = m.getmyMenu().dbSwitcher.getText();
+			
+			if(MainWindow.useOldDB){
+				System.out.println("using old DB: dawis_md");
+				ConnectionSettings.getDBConnection().setDawisDBName("dawis_md");
+				ConnectionSettings.getDBConnection().setDatabase("dawis_md");
+				m.getmyMenu().dbSwitcher.setText(switchertext.replaceAll("new", "old"));
+			} else {
+				System.out.println("using new DB: dawismd");
+				ConnectionSettings.getDBConnection().setDawisDBName("dawismd");
+				ConnectionSettings.getDBConnection().setDatabase("dawismd");
+				m.getmyMenu().dbSwitcher.setText(switchertext.replaceAll("old", "new"));
+			}
+			
 		}
+		
 	}
 
 	private double[][] initArray(int m, int n) {
