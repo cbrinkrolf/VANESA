@@ -42,6 +42,8 @@ public class PPISearch extends SwingWorker{
 	private ArrayList<DBColumn> requestDbContent()
 	{
 
+		//MARTIN Abfrage für neue und alte DB (switch)
+		
 		if (database.equals("HPRD"))
 		{
 
@@ -49,29 +51,38 @@ public class PPISearch extends SwingWorker{
 			{
 
 				String[] parameters={acNumber};
-				return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForACnumber, parameters);
-
+				if(MainWindow.useOldDB)
+					return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForACnumber, parameters);
+				else
+					return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForACnumber_new, parameters);
 			}
 			else if (alias.length()>0)
 			{
 
 				String[] parameters={"%"+alias+"%"};
-				return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForAlias, parameters);
-
+				if(MainWindow.useOldDB)
+					return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForAlias, parameters);
+				else				
+					return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForAlias_new, parameters);
 			}
 			else if (fullName.length()>0)
 			{
 
 				String[] parameters={"%"+fullName+"%"};
-				return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForName, parameters);
+				if(MainWindow.useOldDB)
+					return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForName, parameters);
+				else
+					return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForName_new, parameters);
 
 			}
 
 		}
+		
+		//MARTIN Neue DB hat Mint und Intact in ppi_db, nicht in dawis_md
 		else if (database.equals("MINT"))
 		{
-
-			if (acNumber.length()>0)
+		
+		if (acNumber.length()>0)
 			{
 
 				String[] parameters={acNumber};
@@ -96,6 +107,7 @@ public class PPISearch extends SwingWorker{
 		}
 		else if (database.equals("IntAct"))
 		{
+
 
 			if (acNumber.length()>0)
 			{

@@ -68,7 +68,7 @@ public class DBconnection
 			// TODO logging
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param server
