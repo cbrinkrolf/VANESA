@@ -56,6 +56,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	private final View[] views = new View[1];
 	private final ViewMap viewMap = new ViewMap();
 	private ToolBar bar = new ToolBar(false);
+	
+	//MARTIN static Datenbank switcher
+	public static boolean useOldDB = false;
 
 	public ToolBar getBar() {
 		return bar;

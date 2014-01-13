@@ -1,5 +1,7 @@
 package configurations;
 
+import gui.MainWindow;
+
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -10,6 +12,7 @@ import configurations.asyncWebservice.AsynchroneWebServiceWrapper;
 import configurations.asyncWebservice.WebServiceEvent;
 import configurations.asyncWebservice.WebServiceListener;
 import database.Connection.DBconnection;
+import database.ppi.PPIqueries;
 
 public class Wrapper implements WebServiceListener {
 
@@ -68,12 +71,37 @@ public class Wrapper implements WebServiceListener {
 			return getDBResult(query, attributes);
 		} else {
 			// -- build a query string with attributes --
+			//MARTIN save old query for check
+			String oldquery = query;
 			query = buildQueryWithAttributes(query, attributes);
 
 			// -- use webservice --
-			if (dbtype_PPI == database)
-				getWebserviceResult(ConnectionSettings.getDBConnection()
-						.getPpiDBName(), query);
+			
+			//MARTIN HPRD in neuer Dawis, Mint und IntAct nicht
+			if (dbtype_PPI == database){
+				if(MainWindow.useOldDB)
+					getWebserviceResult(ConnectionSettings.getDBConnection().getPpiDBName(), query);
+				else{
+					
+					//MARTIN Mint+Intact abfangen und über PPI_DB abfragen
+					
+					if (oldquery.equals(PPIqueries.intact_resultForACnumber) || 
+							oldquery.equals(PPIqueries.intact_resultForAlias) ||
+							oldquery.equals(PPIqueries.intact_resultForName) ||
+							oldquery.equals(PPIqueries.intact_interactionsForID) ||
+							oldquery.equals(PPIqueries.mint_resultForACnumber) || 
+							oldquery.equals(PPIqueries.mint_resultForAlias) ||
+							oldquery.equals(PPIqueries.mint_resultForName) ||
+							oldquery.equals(PPIqueries.mint_interactionsForID)){
+						
+						getWebserviceResult(ConnectionSettings.getDBConnection().getPpiDBName(), query);	
+						
+						
+					}else					
+						getWebserviceResult(ConnectionSettings.getDBConnection().getDawisDBName(), query);
+				}
+			}
+
 			else if (dbtype_MiRNA == database) {
 				getWebserviceResult(ConnectionSettings.getDBConnection()
 						.getmirnaDBName(), query);

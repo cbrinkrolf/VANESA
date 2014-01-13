@@ -106,9 +106,36 @@ public class PPIqueries {
 		"INNER JOIN hprd_hprd_id_mapping h2 ON ppr.interactor_2_hprd_id=h2.HPRD_ID " +
 		"INNER JOIN hprd_protein_sequences ps2 ON ps2.HPRD_ID=h2.HPRD_ID " +
 		"WHERE h1.HPRD_ID=? OR h2.HPRD_ID=?;";
-
 	
-	
+	//MARTIN neue DB queries, suffix: _new (solange die alte noch aktiv bleibt)
+		//////////////////////
+		// HPRD queries
+		
+	public static String hprd_resultForACnumber_new = 
+		"SELECT main_name, gene_symbol, protein_accession, hprd_id " +
+		"FROM hprd_id_mappings h " +
+		"WHERE h.protein_accession=?";	
+	//done,tested?
+		
+	public static final String hprd_resultForName_new =
+		"SELECT main_name, gene_symbol, protein_accession, hprd_id " +
+		"FROM hprd_id_mappings h " +
+		"WHERE h.main_name LIKE ?;";
+		
+	public static String hprd_resultForAlias_new = 
+		"SELECT main_name, gene_symbol, protein_accession, hprd_id " +
+		"FROM hprd_id_mappings h " +
+		"WHERE h.gene_symbol LIKE ?";
+		
+	public static String hprd_interactionsForID_new =
+		"SELECT DISTINCT h1.hprd_id, h1.gene_symbol, h1.main_name, ps1.protein_seq , " +
+		"h2.hprd_id , h2.gene_symbol, h2.main_name, ps2.protein_seq " +
+		"FROM hprd_id_mappings h1 " +
+		"INNER JOIN hprd_protein_seq ps1 ON h1.hprd_id=ps1.hprd_id " +
+		"LEFT OUTER JOIN hprd_protein_protein_interactions ppi ON ppi.interactor_1_hprd_id=h1.hprd_id " +
+		"INNER JOIN hprd_id_mappings h2 ON ppi.interactor_2_hprd_id=h2.hprd_id " +
+		"INNER JOIN hprd_protein_seq ps2 ON ps2.hprd_id=h2.hprd_id " +
+		"WHERE h1.hprd_id=? OR h2.hprd_id=?;";	
 	
 //	///////////////////////////////////
 //	//TEMP

@@ -59,7 +59,7 @@ public class PPISearchResultWindow extends JFrame implements ActionListener {
 	boolean ok = false;
 	JOptionPane optionPane;
 	JDialog dialog;
-	// JCheckBox disregard = new JCheckBox();
+	//JCheckBox disregard = new JCheckBox();
 
 	private MyTable table;
 
