@@ -129,7 +129,8 @@ public class BrendaConnector extends SwingWorker {
 
 			if (!disregarded || !box.getElementValue(node.getLabel())) {
 
-				String queryString = node.getLabel().replaceAll("'", "''");
+				String queryString = node.getLabel().replaceAll("'", "''").replaceAll("\"", "''");
+				
 				ArrayList<DBColumn> results = new ArrayList<DBColumn>();
 
 				if (organism_specific) {
