@@ -241,18 +241,20 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				int i = 0;
 				Vector<Double> MAData;
 				BiologicalNodeAbstract bna;
+				//System.out.println("while");
 				while (it.hasNext()) {
 					//Object elem = it.next();
 					bna = it.next();
 					if (bna instanceof Place
 							&& pw.getPetriNet().getPnResult()
-									.containsKey("P"+((Place) bna).getID())) {
+									.containsKey("P"+((Place) bna).getID()+".t")) {
 						MAData = bna.getPetriNetSimulationData();
-						// System.out.println("size:");
-						// System.out.println(MAData.size());
+						 //System.out.println("size:");
+						 //System.out.println(MAData.size());
 						rows[i][0] = bna.getLabel();
 						for (int j = 1; j <= MAData.size(); j++) {
 							rows[i][j] = MAData.get(j - 1);
+							//System.out.println(i+" "+j +" "+ MAData.get(j - 1));
 						}
 						i++;
 					}
@@ -264,8 +266,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			String columNames[] = new String[rowsDim + 1];
 			String selectorValues[] = new String[rowsSize];
 			columNames[0] = "Label";
-			for (int i = 1; i <= rowsDim; i++) {
-				columNames[i] = "t=" + i;
+			for (int i = 0; i < rowsDim; i++) {
+				columNames[i+1] = "t=" + pw.getPetriNet().getPnResult().get("time").get(i);
 
 			}
 
@@ -548,16 +550,19 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		places = new ArrayList<Place>();
 		BiologicalNodeAbstract bna;
 		//System.out.println(GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
+		
 		int picked = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size();
 		while (it.hasNext()) {
 			bna = it.next();
 			if (bna instanceof Place) {
 				place = (Place) bna;
 				actualLabel = place.getLabel();
+				//System.out.println(rowsSize);
 				//System.out.println(bna.getID());
 				if (picked == 0 || GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().isPicked(bna)){//.isVertexPicked(bna.getVertex())) {
 						//System.out.println(bna.getID() + " is picked.");
 						for (int j = 0; j < rowsSize; j++) {
+							//System.out.println("String: "+ rows[j][0]);
 						idx = rows[j][0].toString();
 						if (idx.equals(actualLabel)) {
 							indices.add(j);
@@ -582,10 +587,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		if (indices.size() != 0) {
 			for (int j = 0; j < indices.size(); j++) {
 				series.add(new XYSeries(j));
-				for (int i = 1; i < rowsDim; i++) {
-					value = Double.parseDouble(rows[indices.get(j)][i]
+				for (int i = 0; i < rowsDim; i++) {
+					value = Double.parseDouble(rows[indices.get(j)][i+1]
 							.toString());
-					series.get(j).add(i, value);
+					series.get(j).add(pw.getPetriNet().getPnResult().get("time").get(i), value);
 				}
 				dataset.addSeries(series.get(j));
 				labels.add(rows[indices.get(j)][0].toString());

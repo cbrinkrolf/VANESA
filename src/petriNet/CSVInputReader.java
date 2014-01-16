@@ -44,9 +44,9 @@ public class CSVInputReader {
 		String k = "";
 		for (int i = 0; i < columns.size(); i++) {
 			if (omc) {
-				k = "\""+columns.get(i) + ".t\"";
+				k = "\""+columns.get(i) + "\"";
 			} else {
-				k = columns.get(i) + ".t";
+				k = columns.get(i);
 			}
 			if (columnName.containsKey(k)) {
 				// System.out.println(k+" enthalten");

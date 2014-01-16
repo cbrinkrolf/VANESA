@@ -80,11 +80,12 @@ public class PetriNet {
 
 				bna = it.next();
 				if (bna instanceof Place) {
-					placeNames.add("P" + bna.getID());
+					placeNames.add("P" + bna.getID()+".t");
 					// System.out.println(bna.getName());
 				}
 			}
 		}
+		placeNames.add("time");
 		// System.out.println(placeNames);
 		// placeNames.add("t1.activation.minTokens[1]");
 		try {
@@ -169,15 +170,15 @@ public class PetriNet {
 					// System.out.println(pnResult.keySet().toString());
 					// System.out.println("Hallo erster Test zum abfragen");
 					// System.out.println("P"+bna.getID());
-					if (pnResult.containsKey("P" + bna.getID())) {
-						// System.out.println("drin");
+					if (pnResult.containsKey("P" + bna.getID()+".t")) {
+						 //System.out.println("drin");
 					} else {
 						// System.out.println("n�");
 					}
 
 					//System.out.println();
 
-					Vector<Double> v = pnResult.get("P" + bna.getID());
+					Vector<Double> v = pnResult.get("P" + bna.getID()+".t");
 					 //System.out.println(bna.getName());
 					 //System.out.println(v.lastElement());
 					// System.out.println("size: "+v.size());

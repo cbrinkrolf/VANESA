@@ -15,13 +15,16 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import moOutput.MOoutput;
 import biologicalElements.PetriNet;
 
 public class PetriNetSimulation {
-	private static String path = null;
+	private static String pathCompiler = null;
 	// final ProgressBar bar = new ProgressBar();
+	private static String pathWorkingDirectory = null;
+	private static String pathSim = null;
 	private boolean stopped = false;
 
 	public PetriNetSimulation() {
@@ -42,9 +45,15 @@ public class PetriNetSimulation {
 		w.setLockedPane(true);
 		Map<String, String> env = System.getenv();
 
+		if (SystemUtils.IS_OS_WINDOWS) {
+			pathWorkingDirectory = env.get("APPDATA");
+		} else {
+			pathWorkingDirectory = env.get("HOME");
+		}
+
 		if (env.containsKey("OPENMODELICAHOME")
 				&& new File(env.get("OPENMODELICAHOME")).isDirectory()) {
-			path = env.get("OPENMODELICAHOME");
+			pathCompiler = env.get("OPENMODELICAHOME");
 
 			try {
 
@@ -53,13 +62,36 @@ public class PetriNetSimulation {
 				String intervals = JOptionPane.showInputDialog("Intervals",
 						"20");
 				// this.path = "C:\\OpenModelica1.9.1Nightly\\";
-				if (path.charAt(path.length() - 1) != '\\')
-					path += "\\";
+
+				if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
+					pathCompiler += File.separator;
+				}
+				if (pathWorkingDirectory
+						.charAt(pathWorkingDirectory.length() - 1) != File.separatorChar) {
+					pathWorkingDirectory += File.separator;
+				}
+
+				pathWorkingDirectory += "vanesa" + File.separator;
+
+				File dir = new File(pathWorkingDirectory);
+
+				if (!dir.isDirectory()) {
+					dir.mkdir();
+				}
+
+				pathSim = pathWorkingDirectory + "simulation" + File.separator;
+				File dirSim = new File(pathSim);
+				if (dirSim.isDirectory()) {
+					FileUtils.cleanDirectory(dirSim);
+				} else {
+					new File(pathSim).mkdir();
+				}
+
 				boolean abort = false;
 				String missing = "";
-				if (!new File(path + "PNlib_ver1_4.mo").exists()) {
+				if (!new File(pathWorkingDirectory + "PNlib.mo").exists()) {
 					abort = true;
-					missing += "PNlib_ver1_4.mo\n";
+					missing += "PNlib.mo\n in " + pathWorkingDirectory;
 				}
 				/*
 				 * if (!new File(path + "dsmodel.c").exists()) { abort = true;
@@ -77,27 +109,22 @@ public class PetriNetSimulation {
 					w.setLockedPane(false);
 					return;
 				}
-				File dir = new File(path + "vanesa");
-				if (dir.isDirectory()) {
-					FileUtils.cleanDirectory(dir);
-				} else {
 
-					new File(path + "vanesa").mkdir();
-				}
-				new MOoutput(new File(path + "vanesa//simulation.mo"),
+				new MOoutput(new File(pathSim + "simulation.mo"),
 						graphInstance.getPathway());
 
 				//
-				FileWriter fstream = new FileWriter(path
-						+ "vanesa//simulation.mos");
+				FileWriter fstream = new FileWriter(pathSim + "simulation.mos");
 				BufferedWriter out = new BufferedWriter(fstream);
-				String path2 = path.replace('\\', '/');
-				out.write("cd(\"" + path2 + "vanesa\");\r\n");
-				out.write("loadFile(\"../PNlib_ver1_4.mo\");\r\n");
+				String path2 = pathSim.replace('\\', '/');
+				out.write("cd(\"" + path2 + "\");\r\n");
+				out.write("loadFile(\"../PNlib.mo\");\r\n");
 				out.write("loadFile(\"simulation.mo\");\r\n");
-				out.write("simulate(simulation, stopTime=" + stopTime
-						+ ", numberOfIntervals=" + intervals
-						+ ", outputFormat=\"csv\");\r\n");
+				out.write("simulate(simulation, stopTime="
+						+ stopTime
+						+ ", method=\"euler\", numberOfIntervals="
+						+ intervals
+						+ ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
 				// out.write("fileName=\"simulate.mat\";\r\n");
 				// out.write("CSVfile=\"simulate.csv\";\r\n");
 				// out.write("n=readTrajectorySize(fileName);\r\n");
@@ -113,8 +140,17 @@ public class PetriNetSimulation {
 
 				zstVorher = System.currentTimeMillis();
 
-				final Process p = new ProcessBuilder(path + "bin\\omc.exe",
-						path + "vanesa/simulation.mos").start();
+				String bin = null;
+				
+				if(SystemUtils.IS_OS_WINDOWS){
+					bin = pathCompiler
+							+ "bin"+File.separator+"omc.exe";
+				}else{
+					bin = pathCompiler
+							+ "bin"+File.separator+"omc";
+				}
+				final Process p = new ProcessBuilder(bin, pathSim
+						+ "simulation.mos").start();
 
 				Thread t = new Thread() {
 					public void run() {
@@ -136,9 +172,9 @@ public class PetriNetSimulation {
 				} catch (Exception e) {
 				}
 				zstNachher = System.currentTimeMillis();
-				System.out.println("Zeit benötigt: "
+				System.out.println("Zeit benoetigt: "
 						+ ((zstNachher - zstVorher) / 1000) + " sec");
-				System.out.println("Zeit benötigt: "
+				System.out.println("Zeit benoetigt: "
 						+ ((zstNachher - zstVorher)) + " millisec");
 				if (con.containsPathway()
 						&& graphInstance.getPathway().hasGotAtLeastOneElement()
@@ -146,8 +182,8 @@ public class PetriNetSimulation {
 					graphInstance.getPathway().setPetriNet(true);
 					PetriNet petrinet = graphInstance.getPathway()
 							.getPetriNet();
-					petrinet.setPetriNetSimulationFile(path
-							+ "vanesa/simulation_res.csv", true);
+					petrinet.setPetriNetSimulationFile(pathSim
+							+ "simulation_res.csv", true);
 					petrinet.initializePetriNet();
 				} else
 					throw new Exception();
@@ -194,28 +230,28 @@ public class PetriNetSimulation {
 							JOptionPane.QUESTION_MESSAGE);
 			String stopTime = JOptionPane.showInputDialog("Stop Time", "500");
 			String intervals = JOptionPane.showInputDialog("Intervals", "500");
-			JFileChooser chooser = new JFileChooser(path);
+			JFileChooser chooser = new JFileChooser(pathCompiler);
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			chooser.setAcceptAllFileFilterUsed(false);
 			if (chooser.showOpenDialog(w) == JFileChooser.APPROVE_OPTION) {
-				path = chooser.getSelectedFile().getAbsolutePath();
+				pathCompiler = chooser.getSelectedFile().getAbsolutePath();
 			} else {
 				w.setLockedPane(false);
 				return;
 			}
-			if (path.charAt(path.length() - 1) != '\\')
-				path += "\\";
+			if (pathCompiler.charAt(pathCompiler.length() - 1) != '\\')
+				pathCompiler += "\\";
 			boolean abort = false;
 			String missing = "";
-			if (!new File(path + "PNlib_ver1_4.mo").exists()) {
+			if (!new File(pathCompiler + "PNlib_ver1_4.mo").exists()) {
 				abort = true;
 				missing += "PNlib_ver1_4.mo\n";
 			}
-			if (!new File(path + "dsmodel.c").exists()) {
+			if (!new File(pathCompiler + "dsmodel.c").exists()) {
 				abort = true;
 				missing += "dsmodel.c\n";
 			}
-			if (!new File(path + "myrandom.c").exists()) {
+			if (!new File(pathCompiler + "myrandom.c").exists()) {
 				abort = true;
 				missing += "myrandom.c\n";
 			}
@@ -230,16 +266,16 @@ public class PetriNetSimulation {
 				return;
 			}
 
-			new File(path + "simulate.mo").delete();
-			new File(path + "simulate.mat").delete();
-			new File(path + "simulate.csv").delete();
-			new File(path + "simulation.mos").delete();
-			new MOoutput(new File(path + "simulation.mo"),
+			new File(pathCompiler + "simulate.mo").delete();
+			new File(pathCompiler + "simulate.mat").delete();
+			new File(pathCompiler + "simulate.csv").delete();
+			new File(pathCompiler + "simulation.mos").delete();
+			new MOoutput(new File(pathCompiler + "simulation.mo"),
 					graphInstance.getPathway());
 
-			FileWriter fstream = new FileWriter(path + "simulation.mos");
+			FileWriter fstream = new FileWriter(pathCompiler + "simulation.mos");
 			BufferedWriter out = new BufferedWriter(fstream);
-			String path2 = path.replace('\\', '/');
+			String path2 = pathCompiler.replace('\\', '/');
 			out.write("cd(\"" + path2.substring(0, path2.length() - 1)
 					+ "\");\r\n");
 			out.write("import PNlib_ver1_4.mo;\r\n");
@@ -263,8 +299,9 @@ public class PetriNetSimulation {
 
 			zstVorher = System.currentTimeMillis();
 
-			final Process p = new ProcessBuilder(path + "bin\\Dymola.exe",
-					"/nowindow", path + "simulation.mos").start();
+			final Process p = new ProcessBuilder(pathCompiler
+					+ "bin\\Dymola.exe", "/nowindow", pathCompiler
+					+ "simulation.mos").start();
 			Thread t = new Thread() {
 				public void run() {
 					long totalTime = 120000;
@@ -285,16 +322,17 @@ public class PetriNetSimulation {
 			} catch (Exception e) {
 			}
 			zstNachher = System.currentTimeMillis();
-			System.out.println("Zeit benötigt: "
+			System.out.println("Zeit benï¿½tigt: "
 					+ ((zstNachher - zstVorher) / 1000) + " sec");
-			System.out.println("Zeit benötigt: " + ((zstNachher - zstVorher))
+			System.out.println("Zeit benï¿½tigt: " + ((zstNachher - zstVorher))
 					+ " millisec");
 			if (con.containsPathway()
 					&& graphInstance.getPathway().hasGotAtLeastOneElement()
 					&& !stopped) {
 				graphInstance.getPathway().setPetriNet(true);
 				PetriNet petrinet = graphInstance.getPathway().getPetriNet();
-				petrinet.setPetriNetSimulationFile(path + "simulate.csv", false);
+				petrinet.setPetriNetSimulationFile(pathCompiler
+						+ "simulate.csv", false);
 				petrinet.initializePetriNet();
 			} else
 				throw new Exception();
