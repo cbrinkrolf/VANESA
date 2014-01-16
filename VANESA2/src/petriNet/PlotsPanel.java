@@ -68,7 +68,7 @@ public class PlotsPanel extends JPanel implements ActionListener {
 				BiologicalNodeAbstract bna = bnas[k];
 				if (bna instanceof Place
 						&& pw.getPetriNet().getPnResult()
-								.containsKey("P" + ((Place) bna).getID())) {
+								.containsKey("P" + ((Place) bna).getID()+".t")) {
 					MAData = bna.getPetriNetSimulationData();
 					rows[i][0] = bna.getLabel();
 					for (int j = 1; j <= MAData.size(); j++) {
@@ -83,9 +83,9 @@ public class PlotsPanel extends JPanel implements ActionListener {
 		for (int j = 0; j < rowsSize; j++) {
 			final XYSeriesCollection dataset = new XYSeriesCollection();
 			XYSeries series = new XYSeries(1);
-			for (int i = 1; i < rowsDim; i++) {
-				Double value = Double.parseDouble(rows[j][i].toString());
-				series.add(i, value);
+			for (int i = 0; i < rowsDim; i++) {
+				Double value = Double.parseDouble(rows[j][i+1].toString());
+				series.add(pw.getPetriNet().getPnResult().get("time").get(i), value);
 			}
 			dataset.addSeries(series);
 			JFreeChart chart = ChartFactory.createXYLineChart(
