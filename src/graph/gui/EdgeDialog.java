@@ -75,6 +75,7 @@ public class EdgeDialog extends JFrame {
 		panel.add(box, "span,wrap,growx,gap 10");
 		if (graphInstance.getPathway().isPetriNet()) {
 			panel.add(new JLabel("Edge weight / function"), "");
+			name.setText("1");
 		}else{
 			panel.add(new JLabel("Label"), "");
 		}
