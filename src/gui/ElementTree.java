@@ -1,6 +1,7 @@
 package gui;
 
 //import edu.uci.ics.jung.graph.Vertex;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
 
 import java.awt.Dimension;
@@ -27,6 +28,7 @@ import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 
@@ -112,7 +114,7 @@ public class ElementTree implements TreeSelectionListener {
 		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 
 		Vector v = new Vector();
-		Hashtable currenTable = new Hashtable();
+		Hashtable<String, BiologicalNodeAbstract> currenTable = new Hashtable<String, BiologicalNodeAbstract>();
 		BiologicalNodeAbstract bna;
 		int i = 0;
 		while (it.hasNext()) {
@@ -199,12 +201,6 @@ public class ElementTree implements TreeSelectionListener {
 
 	@Override
 	public void valueChanged(TreeSelectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/*public void valueChanged(TreeSelectionEvent e) {
-
 		DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree
 				.getLastSelectedPathComponent();
 
@@ -215,13 +211,18 @@ public class ElementTree implements TreeSelectionListener {
 		Object nodeInfo = currentNode.getUserObject();
 		if (currentNode.isLeaf() && !nodeInfo.toString().equals("Nodes")) {
 
-			Vertex v = ((BiologicalNodeAbstract) table.get(node
-					.getIndex(currentNode))).getVertex();
-			picking.animatePicking(v, box.isSelected());
+			BiologicalNodeAbstract bna = ((BiologicalNodeAbstract) table.get(node
+					.getIndex(currentNode)));
+			System.out.println(bna.getLabel());
+			GraphInstance g = new GraphInstance();
+			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = g.getMyGraph().getVisualizationViewer();
+			vv.getPickedVertexState().clear();
+			vv.getPickedVertexState().pick(bna, true);
+			//picking.animatePicking(v, box.isSelected());
 		} else {
 			return;
 		}
 
-	}*/
-
+		
+	}
 }
