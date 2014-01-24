@@ -152,25 +152,26 @@ public class WriteGraphPicture implements Printable {
 		FileOutputStream finalImage = null;
 		try {
 			finalImage = new FileOutputStream(file);
+			EpsGraphics2D g = null;
+			try {
+				g = new EpsGraphics2D("Biological Network", finalImage, 0, 0,
+						width, height);
+				g.setBackground(Color.WHITE);
+				vv.paint(g);
+				g.flush();
+				g.close();
+				g.dispose();
+				finalImage.close();
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		EpsGraphics2D g = null;
-		try {
-			g = new EpsGraphics2D("Biological Network", finalImage, 0, 0,
-					width, height);
-			g.setBackground(Color.WHITE);
-			vv.paint(g);
-			g.flush();
-			g.close();
-			g.dispose();
-			finalImage.close();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 
 		vv.setDoubleBuffered(true);
 

@@ -31,7 +31,7 @@ public class AnnotationPainter {
 	private List<Action> selectShapeActions = new ArrayList<Action>();
 	private List<Action> selectColorActions = new ArrayList<Action>();
 	private ImagePath imagePath = ImagePath.getInstance();
-	private JMenuItem dropRange;
+	//private JMenuItem dropRange;
 	private Color fillColor = Color.cyan;
 	private Color textColor = Color.black;
 	private int alpha = 150;
@@ -195,9 +195,10 @@ public class AnnotationPainter {
 		//this.enabled = enabled;
 		// this.rangeShapeEditor.enabled = enabled;
 		try {
-			GraphInstance.getMyGraph().getVisualizationViewer()
-					.getComponentPopupMenu().remove(dropRange);
+			//GraphInstance.getMyGraph().getVisualizationViewer()
+					//.getComponentPopupMenu().remove(dropRange);
 		} catch (Exception e) {
+			//System.out.println("Exception");
 		}
 	}
 
