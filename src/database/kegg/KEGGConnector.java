@@ -464,7 +464,23 @@ public class KEGGConnector extends SwingWorker {
 
 	private void drawRelations(ArrayList<DBColumn> allGeneralRelations,
 			boolean specific) {
+		
+		
+		boolean first = true;
+		//System.out.println("drin"+allGeneralRelations.size());
+			
+	
+			
+			
 		for (DBColumn column : allGeneralRelations) {
+			if(first){
+				for(int i = 0; i< column.getLenght(); i++){
+					//System.out.println(column.getColumn()[i]);
+				}
+				
+				first = false;
+			}
+			
 			String entry1 = column.getColumn()[3];
 			String entry2 = column.getColumn()[4];
 			String subtypeValue = column.getColumn()[2];
@@ -561,6 +577,7 @@ public class KEGGConnector extends SwingWorker {
 						if (specific)
 							bna1.setColor(Color.GREEN);
 						pw.addEdge(c);
+						System.out.println("type: "+edgeType);
 					}
 				}
 			}
@@ -569,7 +586,19 @@ public class KEGGConnector extends SwingWorker {
 
 	private void drawReactions(ArrayList<DBColumn> allReactions,
 			boolean specific) {
+		boolean first = true;
+		//System.out.println("drin"+allReactions.size());
 		for (DBColumn column : allReactions) {
+			
+			if(first){
+				for(int i = 0; i< column.getLenght(); i++){
+					//System.out.println(column.getColumn()[i]);
+				}
+				
+				first = false;
+			}
+			
+			
 			String substrateId = column.getColumn()[0];
 			String enzymeId = column.getColumn()[1];
 			String productId = column.getColumn()[2];
