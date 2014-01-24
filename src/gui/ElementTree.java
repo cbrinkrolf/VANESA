@@ -6,7 +6,6 @@ import graph.GraphInstance;
 
 import java.awt.Dimension;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
@@ -34,11 +33,11 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ElementTree implements TreeSelectionListener {
 
-	JXTree tree = null;
-	Hashtable table = new Hashtable();
-	DefaultMutableTreeNode node;
-	JScrollPane scrollTree;
-	boolean emptyScrollPane = true;
+	private JXTree tree = null;
+	private Hashtable<Integer, BiologicalNodeAbstract> table = new Hashtable<Integer, BiologicalNodeAbstract>();
+	private DefaultMutableTreeNode node;
+	private JScrollPane scrollTree;
+	private boolean emptyScrollPane = true;
 	private DefaultTreeModel model;
 	private DefaultMutableTreeNode root;
 	private JPanel p;
@@ -89,7 +88,7 @@ public class ElementTree implements TreeSelectionListener {
 		return p;
 	}
 
-	public void initTree() {
+	private void initTree() {
 
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
@@ -113,7 +112,7 @@ public class ElementTree implements TreeSelectionListener {
 
 		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 
-		Vector v = new Vector();
+		Vector<String> v = new Vector<String>();
 		Hashtable<String, BiologicalNodeAbstract> currenTable = new Hashtable<String, BiologicalNodeAbstract>();
 		BiologicalNodeAbstract bna;
 		int i = 0;
@@ -126,14 +125,14 @@ public class ElementTree implements TreeSelectionListener {
 		}
 
 		Collections.sort(v);
-		Iterator it2 = v.iterator();
+		Iterator<String> it2 = v.iterator();
 		i = 0;
 
 		while (it2.hasNext()) {
 
-			String object = it2.next().toString();
+			//String object = it2.next().toString();
 			bna = (BiologicalNodeAbstract) currenTable
-					.get(object);
+					.get(it2.next());
 
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
 				node.add(new DefaultMutableTreeNode(bna.getLabel() + " *"));
@@ -161,28 +160,25 @@ public class ElementTree implements TreeSelectionListener {
 
 		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 
-		Vector v = new Vector();
-		Hashtable currenTable = new Hashtable();
+		Vector<String> v = new Vector<String>();
+		Hashtable<String, BiologicalNodeAbstract> currenTable = new Hashtable<String, BiologicalNodeAbstract>();
 
 		int i = 0;
+		BiologicalNodeAbstract bna;
+		
 		while (it.hasNext()) {
-
-			Object ob = it.next();
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ob;
+			bna = it.next();
 			v.add(bna.getLabel() + i);
 			currenTable.put(bna.getLabel() + i, bna);
 			i++;
 		}
 
 		Collections.sort(v);
-		Iterator it2 = v.iterator();
+		Iterator<String> it2 = v.iterator();
 		i = 0;
 
 		while (it2.hasNext()) {
-
-			String object = it2.next().toString();
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) currenTable
-					.get(object);
+			bna = currenTable.get(it2.next());
 
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
 				node.add(new DefaultMutableTreeNode(bna.getLabel() + " *"));
@@ -211,11 +207,11 @@ public class ElementTree implements TreeSelectionListener {
 		Object nodeInfo = currentNode.getUserObject();
 		if (currentNode.isLeaf() && !nodeInfo.toString().equals("Nodes")) {
 
-			BiologicalNodeAbstract bna = ((BiologicalNodeAbstract) table.get(node
-					.getIndex(currentNode)));
-			System.out.println(bna.getLabel());
+			BiologicalNodeAbstract bna = table.get(node
+					.getIndex(currentNode));
+			//System.out.println(bna.getLabel());
 			GraphInstance g = new GraphInstance();
-			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = g.getMyGraph().getVisualizationViewer();
+			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = g.getPathway().getGraph().getVisualizationViewer();
 			vv.getPickedVertexState().clear();
 			vv.getPickedVertexState().pick(bna, true);
 			//picking.animatePicking(v, box.isSelected());

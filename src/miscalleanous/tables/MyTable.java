@@ -35,11 +35,11 @@ public class MyTable extends JXTable {
 		editors = null;
 	}
 
-	public MyTable(final Object[][] rowData, final Object[] colNames)     {
-	   super(rowData, colNames);
-	   editors = null;
+	public MyTable(final Object[][] rowData, final Object[] colNames) {
+		super(rowData, colNames);
+		editors = null;
 	}
-	
+
 	public void setCellEditors(CellEditors e) {
 		editors = e;
 	}
@@ -50,7 +50,7 @@ public class MyTable extends JXTable {
 
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
-		
+
 		TableCellEditor tmpEditor = null;
 		if (editors != null)
 			tmpEditor = editors.getEditor(row, col);
@@ -59,25 +59,24 @@ public class MyTable extends JXTable {
 		return super.getCellEditor(row, col);
 
 	}
-	
-    @Override
-	public Component prepareRenderer(TableCellRenderer renderer,int row, int col) {
-      Component comp = super.prepareRenderer(renderer, row, col);
-      JComponent jcomp = (JComponent)comp;
-      if (comp == jcomp) {
 
-    	  if(getValueAt(row, col) instanceof Integer ){
-    		    
-    	  }else if(getValueAt(row, col) instanceof Boolean ){
-    		    
-    	  } 
-    	  else if(getValueAt(row, col) instanceof Double ){
-    		    
-    	  } 
-    	  else{
-    		 jcomp.setToolTipText(getValueAt(row, col).toString());
-    	  }
-      }
-      return comp;
-    }
+	@Override
+	public Component prepareRenderer(TableCellRenderer renderer, int row,
+			int col) {
+		Component comp = super.prepareRenderer(renderer, row, col);
+		JComponent jcomp = (JComponent) comp;
+		// if (comp == jcomp) {
+
+		if (getValueAt(row, col) instanceof Integer) {
+
+		} else if (getValueAt(row, col) instanceof Boolean) {
+
+		} else if (getValueAt(row, col) instanceof Double) {
+
+		} else {
+			jcomp.setToolTipText(getValueAt(row, col).toString());
+		}
+		// }
+		return comp;
+	}
 }
