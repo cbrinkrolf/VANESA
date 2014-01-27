@@ -1,6 +1,7 @@
 package biologicalElements;
 
 import graph.GraphInstance;
+import graph.gui.Parameter;
 
 import java.awt.Color;
 import java.awt.Shape;
@@ -25,6 +26,8 @@ public abstract class GraphElementAbstract implements Cloneable {
 	private int ID = 0;
 	private SortedSet<Integer> set;
 
+	private ArrayList<Parameter> parameters = new ArrayList<Parameter>(); 
+	
 	public int getID() {
 		return ID;
 	}
@@ -378,6 +381,14 @@ public abstract class GraphElementAbstract implements Cloneable {
 
 	public void hasDAWISNode(boolean node) {
 		hasDAWISNode = node;
+	}
+	
+	public ArrayList<Parameter> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(ArrayList<Parameter> parameters) {
+		this.parameters = parameters;
 	}
 
 	@Override
