@@ -1,8 +1,10 @@
 package biologicalObjects.nodes;
 
+import graph.gui.Parameter;
 import graph.jung.graphDrawing.VertexShapes;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -32,7 +34,6 @@ public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 	private MicroArrayAttributes microarrayAttributes = null;
 	private BiologicalNodeAbstract ref = null;
 	
-
 	public MicroArrayAttributes getMicroarrayAttributes() {
 		return microarrayAttributes;
 	}
@@ -285,7 +286,6 @@ public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 	public void deleteRef(){
 		this.ref = null;
 	}
-
 
 
 	// public int getOriginal_graph() {
