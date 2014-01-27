@@ -72,6 +72,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private JButton colorButton;
 	private JButton hideNeighbours;
 	private JButton showNeighbours;
+	private JButton parametersButton;
 	boolean vertexElement = false;
 	JTabbedPane pane = new JTabbedPane();
 
@@ -93,6 +94,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		colorButton = new JButton("Colour");
 		hideNeighbours = new JButton("Hide all Neighbours");
 		showNeighbours = new JButton("Show all Neighbours");
+		parametersButton = new JButton("Parameters");
 
 		colorButton.setBackground(ab.getColor());
 		colorButton.setToolTipText("Colour");
@@ -404,6 +406,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 			p.add(showNeighbours);
 			p.add(hideNeighbours);
 		}
+		parametersButton.setToolTipText("Show all Parameters");
+		parametersButton.setActionCommand("showParameters");
+		parametersButton.addActionListener(this);
+		p.add(parametersButton);
+		
 		p.add(colorButton, "gap 5");
 
 	}
@@ -626,6 +633,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			this.revalidateView();
 
+		}else if("showParameters".equals(event)){
+			//System.out.println("show parameters");
+			ParameterWindow parameterWindow = new ParameterWindow(ab);
 		}
 		GraphInstance.getMyGraph().updateGraph();
 	}
