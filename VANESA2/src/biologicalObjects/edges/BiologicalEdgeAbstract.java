@@ -4,16 +4,19 @@ import java.awt.Color;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+
 //import edu.uci.ics.jung.graph.Edge;
 
-public abstract class BiologicalEdgeAbstract extends GraphElementAbstract implements Cloneable{
-	
-//	private Edge edge;
+public abstract class BiologicalEdgeAbstract extends GraphElementAbstract
+		implements Cloneable {
+
+	// private Edge edge;
 	private KEGGEdge keggEdge;
 	ReactionPairEdge reactionPairEdge;
 	private boolean isDirected;
-	
-	private boolean isWeighted=false;
+
+	private boolean isWeighted = false;
+
 	public BiologicalNodeAbstract getFrom() {
 		return from;
 	}
@@ -32,7 +35,7 @@ public abstract class BiologicalEdgeAbstract extends GraphElementAbstract implem
 
 	private BiologicalNodeAbstract from;
 	private BiologicalNodeAbstract to;
-	
+
 	public boolean isWeighted() {
 		return isWeighted;
 	}
@@ -49,14 +52,14 @@ public abstract class BiologicalEdgeAbstract extends GraphElementAbstract implem
 		this.weight = weight;
 	}
 
-	private int weight=0;
-	
+	private int weight = 0;
+
 	private SBMLEdge sbml = new SBMLEdge();
-	
+
 	public SBMLEdge getSbml() {
-		sbml.setFrom(this.getFrom().getID()+"");
-		sbml.setTo(this.getTo().getID()+"");
-		sbml.setEdge(this.getID()+"");
+		sbml.setFrom(this.getFrom().getID() + "");
+		sbml.setTo(this.getTo().getID() + "");
+		sbml.setEdge(this.getID() + "");
 		return sbml;
 	}
 
@@ -64,35 +67,37 @@ public abstract class BiologicalEdgeAbstract extends GraphElementAbstract implem
 		this.sbml = sbml;
 	}
 
-	public BiologicalEdgeAbstract(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to){
-		
-//		this.edge=edge; 
-		setName(name);
-		setLabel(label);
+	public BiologicalEdgeAbstract(String label, String name,
+			BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
+
+		// this.edge=edge;
+		super(label, name);
+		// setName(name.toLowerCase());
+		// setLabel(label.toLowerCase());
 		setIsEdge(true);
 		this.from = from;
 		this.to = to;
-	
-		sbml.setName(name);
-		//sbml.setEdge(edge.toString());
-		sbml.setLabel(label);
-		sbml.setIsAbstract("false");
-		sbml.setIsDirected("false");
-		sbml.setFrom(from.getName());
-		sbml.setTo(to.getName());
 
-			
+		/*
+		 * sbml.setName(name.toLowerCase()); //sbml.setEdge(edge.toString());
+		 * sbml.setLabel(label.toLowerCase()); sbml.setIsAbstract("false");
+		 * sbml.setIsDirected("false");
+		 * sbml.setFrom(from.getName().toLowerCase());
+		 * sbml.setTo(to.getName().toLowerCase());
+		 */
+
 	}
-	
-//	public Edge getEdge() {
-//		return edge;
-//	}
-//	public void setEdge(Edge edge) {
-//		this.edge = edge;
-//	}
+
+	// public Edge getEdge() {
+	// return edge;
+	// }
+	// public void setEdge(Edge edge) {
+	// this.edge = edge;
+	// }
 	public boolean isDirected() {
 		return isDirected;
 	}
+
 	public void setDirected(boolean isDirected) {
 		this.isDirected = isDirected;
 	}
@@ -104,17 +109,17 @@ public abstract class BiologicalEdgeAbstract extends GraphElementAbstract implem
 	public void setKeggEdge(KEGGEdge keggEdge) {
 		this.keggEdge = keggEdge;
 	}
-	
+
 	@Override
 	public Color getColor() {
-		
-		if(super.isReference()){
-				return Color.LIGHT_GRAY;
-			}else{
-				return super.getColor();
-			}
+
+		if (super.isReference()) {
+			return Color.LIGHT_GRAY;
+		} else {
+			return super.getColor();
+		}
 	}
-	
+
 	public void setReactionPairEdge(ReactionPairEdge reactPEdge) {
 		this.reactionPairEdge = reactPEdge;
 	}
@@ -122,9 +127,9 @@ public abstract class BiologicalEdgeAbstract extends GraphElementAbstract implem
 	public ReactionPairEdge getReactionPairEdge() {
 		return reactionPairEdge;
 	}
-	
+
 	@Override
-	public BiologicalEdgeAbstract clone(){
+	public BiologicalEdgeAbstract clone() {
 		return (BiologicalEdgeAbstract) super.clone();
 	}
 }
