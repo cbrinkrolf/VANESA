@@ -5,6 +5,7 @@ import graph.GraphInstance;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,6 +47,8 @@ public class ParameterWindow implements ActionListener{
 	private GraphElementAbstract gea;
 	
 	boolean addedNewValues = false;
+	private JDialog dialog;
+	//private HashMap<JButton, Parameter> parameters = new HashMap<JButton, Parameter>();
 
 	
 	public ParameterWindow(GraphElementAbstract gea) {
@@ -63,8 +66,97 @@ public class ParameterWindow implements ActionListener{
 		//AutoCompleteDecorator.decorate(elementNames);
 		
 		panel = new JPanel(layout);
+		add = new JButton("Add");
+		add.setActionCommand("add");
+		add.addActionListener(this);
 		
-		panel.add(new JLabel("Label"), "span 2, gaptop 2 ");
+		
+		//panel.add(value, "span,wrap 5,growx ,gaptop 2");
+		
+		//panel.add(new JLabel("Label"), "span 2, gaptop 2 ");
+		//panel.add(elementNames, "span,wrap,growx ,gap 10, gaptop 2");
+		//panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
+
+		
+	
+		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
+				JOptionPane.OK_CANCEL_OPTION);
+		
+		dialog = pane.createDialog(null, "Parameters");
+		this.repaint();
+		dialog.pack();
+		//dialog.show();
+		dialog.setVisible(true);
+		
+		
+
+	}
+	
+	private void listParameters(){
+		Parameter p;
+		panel.add(new JLabel("Name"), "span 2, gaptop 2");
+		panel.add(new JLabel("Value"), "span 4, gapright 4");
+		panel.add(new JLabel("Unit"), "span 4, gapright 4, wrap");
+		
+		for(int i = 0; i< gea.getParameters().size(); i++){
+			p = gea.getParameters().get(i);
+			panel.add(new JLabel(p.getName()), "span 2, gaptop 2");
+			
+			panel.add(new JLabel(p.getValue()+""), "span 4, gapright 4");
+			
+			panel.add(new JLabel(p.getUnit()), "span 4, gapright 4");
+			
+			JButton del = new JButton("Delete");
+			del.setActionCommand("del"+i);
+			
+			del.addActionListener(this);
+			
+			//parameters.put(del, p);
+			
+			
+			panel.add(del, "span 4, gapright 4, wrap");
+		}
+	}
+	
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		System.out.println(e.getActionCommand());
+		if("add".equals(e.getActionCommand())){
+			Parameter p;
+			for(int i = 0; i< gea.getParameters().size(); i++){
+				p = gea.getParameters().get(i);
+				if(p.getName().equals(name.getText())){
+					System.out.println("schon vorhanden");
+					return;
+				}
+			}
+			
+			gea.getParameters().add(new Parameter(name.getText(), Double.valueOf(value.getText()), unit.getText()));
+			panel.add(new JLabel(name.getText()), "span 2, gaptop 2 ");
+			panel.add(new JLabel(value.getText()),"span 4, gapright 4");
+			panel.add(new JLabel(unit.getText()), "span 4, gapright 4, wrap");
+			
+			this.repaint();
+			
+		}else if(e.getActionCommand().startsWith("del")){
+			System.out.println("drin");
+			System.out.println(e.getActionCommand().substring(3));
+			
+			int idx = Integer.parseInt(e.getActionCommand().substring(3));
+			this.gea.getParameters().remove(idx);
+			this.repaint();
+		}
+		
+		
+		
+	}
+	
+	private void repaint(){
+		panel.removeAll();
+		//parameters.clear();
+		
+		panel.add(new JLabel("Name"), "span 2, gaptop 2 ");
 		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
 		
 		panel.add(new JLabel("Value"), "span 4, gapright 4");
@@ -73,48 +165,15 @@ public class ParameterWindow implements ActionListener{
 		panel.add(new JLabel("Unit"), "span 4, gapright 4");
 		panel.add(unit, "span,wrap,growx ,gap 10, gaptop 2");
 		
-		add = new JButton("Add");
-		add.setActionCommand("add");
-		add.addActionListener(this);
-		panel.add(add);
 		
-		//panel.add(value, "span,wrap 5,growx ,gaptop 2");
-		
-		//panel.add(new JLabel("Label"), "span 2, gaptop 2 ");
-		//panel.add(elementNames, "span,wrap,growx ,gap 10, gaptop 2");
-		//panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
-
-	
+		panel.add(add, "wrap");
 		this.listParameters();
-		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
-				JOptionPane.OK_CANCEL_OPTION);
+		panel.repaint();
+		//pane.repaint();
+		//dialog.repaint();
+		dialog.pack();
 		
-		JDialog dialog = pane.createDialog(null, "Parameters");
-		//dialog.show();
-		dialog.setVisible(true);
 		
-
-	}
-	
-	private void listParameters(){
-		Parameter p;
-		for(int i = 0; i< gea.getParameters().size(); i++){
-			p = gea.getParameters().get(i);
-			panel.add(new JLabel(p.getName()), "span 2, gaptop 2 ");
-			
-			panel.add(new JLabel(p.getValue()+""), "span 4, gapright 4");
-			
-			panel.add(new JLabel(p.getUnit()), "span 4, gapright 4, wrap");
-		}
-	}
-	
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		
-		if("add".equals(e.getActionCommand())){
-			gea.getParameters().add(new Parameter(name.getText(), Double.valueOf(value.getText()), unit.getText()));
-		}
 		
 	}
 	

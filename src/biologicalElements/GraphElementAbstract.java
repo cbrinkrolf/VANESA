@@ -110,6 +110,11 @@ public abstract class GraphElementAbstract implements Cloneable {
 		// ids.add(counter);
 		// setID(counter++);
 	}
+	
+	public GraphElementAbstract(String label, String name){
+		this.label = label;
+		this.name = name;
+	}
 
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
 

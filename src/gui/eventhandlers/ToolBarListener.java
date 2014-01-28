@@ -19,6 +19,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
+import org.apache.tools.ant.taskdefs.condition.IsSet;
+
 import petriNet.ConvertToPetriNet;
 import petriNet.OpenModellicaResult;
 import petriNet.PNTableDialog;
@@ -260,12 +262,25 @@ public class ToolBarListener implements ActionListener {
 			graphInstance.getMyGraph().changeToGEMLayout();
 		
 		}
-		else if ("editElements".equals(event)) new PNTableDialog().setVisible(true);
+		else if ("editElements".equals(event)) {
+			new PNTableDialog().setVisible(true);
+		}
 		else if ("parallelview".equals(event)) {
 			//create a graph choosing popup and calculate network properties
 			new ParallelChooseGraphsWindow();
 		}
-		else if ("loadModResult".equals(event)) new OpenModellicaResult().execute();
-		else if ("simulate".equals(event)) new PetriNetSimulation();
+		else if ("loadModResult".equals(event)){
+			new OpenModellicaResult().execute();
+		}
+		else if ("simulate".equals(event)){
+			new PetriNetSimulation();
+		}else if("mergeSelectedNodes".equals(event)){
+			if(graphInstance.getMyGraph() != null){
+			//System.out.println("merge");
+			graphInstance.getPathway().mergeNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+			}else{
+				System.out.println("No Graph exists!");
+			}
+		}
 	}
 }

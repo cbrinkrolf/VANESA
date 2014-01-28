@@ -1157,11 +1157,13 @@ public class Pathway implements Cloneable {
 	}
 
 	public int countNodes() {
-		return getAllNodesAsVector().size();
+		return this.graph.getAllVertices().size();
+		//return getAllNodesAsVector().size();
 	}
 
 	public int countEdges() {
-		return getAllEdgesAsVector().size();
+		return this.graph.getAllEdges().size();
+		//return getAllEdgesAsVector().size();
 	}
 
 	public void setPetriNetSimulation(boolean isPetriNetSimulation) {
@@ -1201,6 +1203,11 @@ public class Pathway implements Cloneable {
 
 	public SortedSet<Integer> getIdSet() {
 		return this.ids;
+	}
+	
+	public void mergeNodes(Set<BiologicalNodeAbstract> nodes){
+		//CHRIS go on, fill code :D
+		System.out.println(nodes.size());
 	}
 
 	@Override

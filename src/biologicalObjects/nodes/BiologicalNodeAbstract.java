@@ -53,8 +53,9 @@ public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 	}
 
 	public BiologicalNodeAbstract(String label, String name) {
-		setLabel(label);
-		setName(name);
+		super(label, name);
+		//setLabel(label.toLowerCase());
+		//setName(name.toLowerCase());
 		//setVertex(vertex);
 		setIsVertex(true);
 		
@@ -67,8 +68,8 @@ public abstract class BiologicalNodeAbstract extends GraphElementAbstract {
 		// initialize microarray data vector
 		petriNetSimulationData = new Vector<Double>();
 
-		sbml.setName(name);
-		sbml.setLabel(label);
+		sbml.setName(name.toLowerCase());
+		sbml.setLabel(label.toLowerCase());
 //		if (vertex != null) {
 //			sbml.setVertex(vertex.toString());
 //		}
