@@ -149,6 +149,11 @@ public class ToolBar {
 		info.setToolTipText("Info");
 		info.setActionCommand("info");
 		info.addActionListener(toolBarListener);
+		
+		JButton mergeSelectedNodes = new JButton("Merge Nodes");
+		mergeSelectedNodes.setToolTipText("Merge Selected Nodes");
+		mergeSelectedNodes.setActionCommand("mergeSelectedNodes");
+		mergeSelectedNodes.addActionListener(toolBarListener);
 
 		JButton dimView = new JButton(new ImageIcon(
 				imagePath.getPath("view.png")));
@@ -311,6 +316,7 @@ public class ToolBar {
 				bar.add(new JSeparator());
 				bar.add(viewPortControls);
 				bar.add(new JSeparator());
+				bar.add(mergeSelectedNodes);
 				bar.add(info);
 			} else {
 //				bar.add(toolBarControlControls);
@@ -323,6 +329,7 @@ public class ToolBar {
 				bar.add(new JSeparator());
 				bar.add(viewPortControls);
 				bar.add(new JSeparator());
+				bar.add(mergeSelectedNodes);
 				bar.add(info);
 			}
 		} else {
@@ -335,6 +342,7 @@ public class ToolBar {
 			bar.add(new JSeparator());
 			bar.add(viewPortControls);
 			bar.add(new JSeparator());
+			bar.add(mergeSelectedNodes);
 			bar.add(info);
 
 		}
