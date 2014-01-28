@@ -1,6 +1,8 @@
 package graph.jung.classes;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,9 @@ public class MyVisualizationViewer extends VisualizationViewer<BiologicalNodeAbs
 	protected void renderGraph(Graphics2D g2d){
 		
 		 super.renderGraph(g2d);
+		 g2d.setFont(new Font("default", Font.BOLD, 12));
+		 g2d.setColor(Color.red);
+		 g2d.drawString("Nodes: "+pw.getGraph().getAllVertices().size()+" Edges: "+pw.getGraph().getAllEdges().size(), 1, 11);
 	}
 	
 	/*@Override
