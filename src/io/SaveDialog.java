@@ -12,6 +12,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import moOutput.MOoutput;
+import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.SBMLoutput;
 import xmlOutput.sbml.SBMLoutputNoWS;
 import xmlOutput.sbml.VAMLoutput;
@@ -150,12 +151,17 @@ public class SaveDialog {
 		if (fileFormat.equals(sbmlDescription)) {
 			getCorrectFile(sbml);
 			// create a sbmlOutput object
-			SBMLoutputNoWS sbmlOutput = new SBMLoutputNoWS(file, new GraphInstance()
-					.getPathway());
-			//if (sbmlOutput.generateSBMLDocument())
-				JOptionPane.showMessageDialog(
-						MainWindowSingelton.getInstance(), sbmlDescription
-								+ sbmlOutput.generateSBMLDocument());
+//			SBMLoutputNoWS sbmlOutput = new SBMLoutputNoWS(file, new GraphInstance()
+//					.getPathway());
+//			//if (sbmlOutput.generateSBMLDocument())
+//				JOptionPane.showMessageDialog(
+//						MainWindowSingelton.getInstance(), sbmlDescription
+//								+ sbmlOutput.generateSBMLDocument());
+			JSBMLoutput jsbmlOutput = new JSBMLoutput(file, new GraphInstance().getPathway());
+			JOptionPane.showMessageDialog(
+					MainWindowSingelton.getInstance(), sbmlDescription
+							+ jsbmlOutput.generateSBMLDocument());
+				
 			//else
 			//	JOptionPane.showMessageDialog(
 			//			MainWindowSingelton.getInstance(), sbmlDescription
