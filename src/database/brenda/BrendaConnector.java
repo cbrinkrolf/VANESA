@@ -132,6 +132,9 @@ public class BrendaConnector extends SwingWorker {
 
 				String queryString = node.getLabel().replaceAll("'", "''")
 						.replaceAll("\"", "''");
+				if (queryString.contains("?")) {
+					queryString = queryString.replaceAll("\\?","''");
+				}
 
 				ArrayList<DBColumn> results = new ArrayList<DBColumn>();
 
