@@ -2,32 +2,20 @@ package graph.gui;
 
 import graph.GraphInstance;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
-
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
-
-import biologicalElements.ElementNamesSingelton;
-import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ParameterWindow implements ActionListener{
 
