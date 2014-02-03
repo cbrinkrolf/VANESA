@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.SortedSet;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -26,11 +27,72 @@ public abstract class GraphElementAbstract implements Cloneable {
 	private int ID = 0;
 	private SortedSet<Integer> set;
 
+	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	
+	private String description = "";
+	private String comments = "";
+	private Color color = Color.LIGHT_GRAY;
+	private String BiologicalElement = "";
+	private Shape shape;
+	private boolean hidden = false;
+
+	private boolean hasKEGGNode = false;
+	private boolean hasKEGGEdge = false;
+	private boolean hasFeatureEdge = false;
+	private boolean hasDAWISNode = false;
+	private boolean hasReactionPairEdge = false;
+
+	private boolean hasBrendaNode = false;
+	
+	private HashSet<String> labelSet = new HashSet<String>();
+	
+
+	private Collection<Integer> originalGraphs;
+	
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>(); 
+	
+	
+	public GraphElementAbstract() {
+		// find current highest id in the pathway
+		// int highest_id=1000;
+		// for (Iterator it=new
+		// GraphInstance().getPathway().getAllNodes().iterator();
+		// it.hasNext();){
+		// int current=((GraphElementAbstract)it.next()).getID();
+		// if (current>highest_id) highest_id=current;
+		// }
+		
+		set = new GraphInstance().getPathway().getIdSet();
+		// System.out.println(new GraphInstance().getPathway().getName());
+		// set id to highest current id+1;
+		if (set.size() > 0) {
+			// System.out.println("last: " + set.last());
+			// ID = set.last() + 1;
+			// System.out.println("size: " + set.size());
+			// System.out.println("groesster: " + set.last());
+			// System.out.println("kleinster: " + set.first());
+		} else {
+			// ID = 100;
+		}
+
+		// set id to highest current id+1;
+		// ids.add(counter);
+		// setID(counter++);
+	}
+	
+	public GraphElementAbstract(String label, String name){
+		this.label = label;
+		this.name = name;
+		this.labelSet.add(label);
+	}
+
+	
+	
 	
 	public int getID() {
 		return ID;
 	}
+	
 
 	// should only be used when loading a file with a network
 	public void setID(int id) {
@@ -84,41 +146,8 @@ public abstract class GraphElementAbstract implements Cloneable {
 		}
 	}
 
-	public GraphElementAbstract() {
-		// find current highest id in the pathway
-		// int highest_id=1000;
-		// for (Iterator it=new
-		// GraphInstance().getPathway().getAllNodes().iterator();
-		// it.hasNext();){
-		// int current=((GraphElementAbstract)it.next()).getID();
-		// if (current>highest_id) highest_id=current;
-		// }
-		set = new GraphInstance().getPathway().getIdSet();
-		// System.out.println(new GraphInstance().getPathway().getName());
-		// set id to highest current id+1;
-		if (set.size() > 0) {
-			// System.out.println("last: " + set.last());
-			// ID = set.last() + 1;
-			// System.out.println("size: " + set.size());
-			// System.out.println("groesster: " + set.last());
-			// System.out.println("kleinster: " + set.first());
-		} else {
-			// ID = 100;
-		}
-
-		// set id to highest current id+1;
-		// ids.add(counter);
-		// setID(counter++);
-	}
 	
-	public GraphElementAbstract(String label, String name){
-		this.label = label;
-		this.name = name;
-	}
-
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
-
-	private Collection<Integer> originalGraphs;
+	
 
 	// private boolean stringsEqualAndAreNotEmpty(String s1, String s2) {
 	// return s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2);
@@ -215,20 +244,7 @@ public abstract class GraphElementAbstract implements Cloneable {
 		}
 	}
 
-	private String description = "";
-	private String comments = "";
-	private Color color = Color.LIGHT_GRAY;
-	private String BiologicalElement = "";
-	private Shape shape;
-	private boolean hidden = false;
-
-	private boolean hasKEGGNode = false;
-	private boolean hasKEGGEdge = false;
-	private boolean hasFeatureEdge = false;
-	private boolean hasDAWISNode = false;
-	private boolean hasReactionPairEdge = false;
-
-	private boolean hasBrendaNode = false;
+	
 
 	public boolean hasFeatureEdge() {
 		return hasFeatureEdge;
@@ -275,7 +291,9 @@ public abstract class GraphElementAbstract implements Cloneable {
 	}
 
 	public void setLabel(String label) {
+		labelSet.remove(this.label);
 		this.label = label;
+		labelSet.add(label);
 		// this.networklabel = label;
 		// System.out.println("gestezt");
 	}
@@ -406,5 +424,26 @@ public abstract class GraphElementAbstract implements Cloneable {
 			throw new InternalError();
 		}
 	}
+	
+	public HashSet<String> getLabelSet() {
+		return labelSet;
+	}
+
+	public void setLabelSet(HashSet<String> labelSet) {
+		this.labelSet = labelSet;
+	}
+	
+	public void addLabel(String label){
+		this.labelSet.add(label);
+	}
+	
+	public void addLabel(HashSet<String> labels){
+		this.labelSet.addAll(labels);
+	}
+	
+	public void removeLabel(String label){
+		this.labelSet.remove(label);
+	}
+
 
 }
