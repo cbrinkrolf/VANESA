@@ -1207,6 +1207,43 @@ public class Pathway implements Cloneable {
 	
 	public void mergeNodes(Set<BiologicalNodeAbstract> nodes){
 		//CHRIS go on, fill code :D
+		
+		
+		if(nodes.size() > 1){
+		//	BiologicalNodeAbstract[] array = nodes.toArray(BiologicalNodeAbstract);
+			BiologicalNodeAbstract first = nodes.iterator().next();
+			
+			Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+			BiologicalNodeAbstract bna;
+			while(it.hasNext()){
+				bna = it.next();
+				if(bna != first){
+					Iterator<BiologicalEdgeAbstract> it2 = graph.getJungGraph().getInEdges(bna).iterator();
+					BiologicalEdgeAbstract bea;
+					while(it2.hasNext()){
+						bea = it2.next();
+						this.removeElement(bea);
+						bea.setTo(first);
+						this.addEdge(bea);
+					}
+					it2 = graph.getJungGraph().getOutEdges(bna).iterator();
+					while(it2.hasNext()){
+						bea = it2.next();
+						this.removeElement(bea);
+						bea.setFrom(first);
+						this.addEdge(bea);
+					}
+					first.addLabel(bna.getLabelSet());
+					this.removeElement(bna);
+					System.out.println("merged:");
+					Iterator<String> itString = first.getLabelSet().iterator();
+					while(itString.hasNext()){
+						System.out.println(itString.next());
+					}
+				}
+			}
+			
+		}
 		System.out.println(nodes.size());
 	}
 
