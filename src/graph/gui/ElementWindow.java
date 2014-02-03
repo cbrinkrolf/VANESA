@@ -73,6 +73,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private JButton hideNeighbours;
 	private JButton showNeighbours;
 	private JButton parametersButton;
+	private JButton showLabels;
 	boolean vertexElement = false;
 	JTabbedPane pane = new JTabbedPane();
 
@@ -95,6 +96,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		hideNeighbours = new JButton("Hide all Neighbours");
 		showNeighbours = new JButton("Show all Neighbours");
 		parametersButton = new JButton("Parameters");
+		showLabels = new JButton("Show Labels");
 
 		colorButton.setBackground(ab.getColor());
 		colorButton.setToolTipText("Colour");
@@ -159,15 +161,20 @@ public class ElementWindow implements ActionListener, ItemListener {
 				pickRef.setToolTipText("Highlight Reference");
 				pickRef.setActionCommand("pickRef");
 				pickRef.addActionListener(this);
-				p.add(pickRef, "wrap ,span 3");
+				p.add(pickRef);
 
 			} else {
 				this.chooseRef = new JButton("Choose Reference");
 				chooseRef.setToolTipText("Choose Reference");
 				chooseRef.setActionCommand("chooseRef");
 				chooseRef.addActionListener(this);
-				p.add(chooseRef, "wrap ,span 3");
+				p.add(chooseRef);
 			}
+			
+			showLabels.setToolTipText("Show all Labels");
+			showLabels.setActionCommand("showLabels");
+			showLabels.addActionListener(this);
+			p.add(showLabels, "wrap");
 
 			JComboBox compartment = new JComboBox();
 			addCompartmentItems(compartment);
@@ -636,7 +643,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}else if("showParameters".equals(event)){
 			//System.out.println("show parameters");
 			ParameterWindow parameterWindow = new ParameterWindow(ab);
+		}else if("showLabels".equals(event)){
+			System.out.println("click");
+			new LabelsWindow(ab);
 		}
+		
 		GraphInstance.getMyGraph().updateGraph();
 	}
 
