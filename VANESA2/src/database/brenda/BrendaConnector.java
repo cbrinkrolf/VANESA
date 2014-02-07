@@ -8,6 +8,7 @@ import gui.ProgressBar;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -107,7 +108,7 @@ public class BrendaConnector extends SwingWorker {
 	}
 
 	private BiologicalNodeAbstract addReactionNodes(String node) {
-		//node = node.toLowerCase();
+		// node = node.toLowerCase();
 		String clean = this.cleanString(node);
 		if (!enzymes.containsKey(clean)) {
 			SmallMolecule sm = new SmallMolecule(node, "");
@@ -133,7 +134,7 @@ public class BrendaConnector extends SwingWorker {
 				String queryString = node.getLabel().replaceAll("'", "''")
 						.replaceAll("\"", "''");
 				if (queryString.contains("?")) {
-					queryString = queryString.replaceAll("\\?","''");
+					queryString = queryString.replaceAll("\\?", "''");
 				}
 
 				ArrayList<DBColumn> results = new ArrayList<DBColumn>();
@@ -163,6 +164,9 @@ public class BrendaConnector extends SwingWorker {
 							+ resultDetails[0]);
 					clean = this.cleanString(resultDetails[0]);
 					if (!enzymes.containsKey(clean)) {
+
+						resultDetails[3] = resultDetails[3].replace("\uFFFD",
+								"'");
 
 						String[] gesplittet = resultDetails[3].split("=");
 						if (gesplittet.length == 2) {
@@ -238,10 +242,10 @@ public class BrendaConnector extends SwingWorker {
 			first = enzymes.get(this.cleanString(entry[0]));
 			second = enzymes.get(this.cleanString(entry[1]));
 
-			if(first == null){
+			if (first == null) {
 				System.out.println("first is null");
 			}
-			if(second == null){
+			if (second == null) {
 				System.out.println("second is null");
 			}
 			if (myGraph.getJungGraph().findEdge(first, second) == null) {
@@ -377,6 +381,11 @@ public class BrendaConnector extends SwingWorker {
 
 					if (resultDetails[3] != null
 							&& resultDetails[3].length() > 0) {
+						// System.out.println("3: "+resultDetails[3]);
+						
+						resultDetails[3] = resultDetails[3].replace("\uFFFD",
+								"'");
+						
 						separateReaction(resultDetails[3], e, newNode);
 					}
 
@@ -387,7 +396,7 @@ public class BrendaConnector extends SwingWorker {
 
 	private void drawNodes() {
 
-		//String key;
+		// String key;
 		BiologicalNodeAbstract node;
 		Iterator<BiologicalNodeAbstract> i = enzymes.values().iterator();
 		while (i.hasNext()) {
@@ -395,7 +404,7 @@ public class BrendaConnector extends SwingWorker {
 			node = i.next();
 			// BiologicalNodeAbstract temp_node =
 
-			//node = enzymes.get(key);
+			// node = enzymes.get(key);
 			// node.setVertex(myGraph.createNewVertex());
 			pw.addVertex(node, new Point(column * 150, row * 100));
 			setPosition();
@@ -492,7 +501,7 @@ public class BrendaConnector extends SwingWorker {
 			resultDetails = column.getColumn();
 			result0 = this.cleanString(resultDetails[0]);
 			result1 = this.cleanString(resultDetails[1]);
-			
+
 			if (enzymes.containsKey(result1)) {
 
 				bna = enzymes.get(result0);
@@ -593,15 +602,15 @@ public class BrendaConnector extends SwingWorker {
 	private void getEnzymeDetails(String[] details) {
 
 		// System.out.println("len: "+details.length);
-		String enzyme = details[0];
+		
 		// System.out.println("zyme: "+details[1]);
 		enzymes.clear();
 		enzyme_organism = adoptOrganism(details[1]);
 		// System.out.println(enzyme);
 		// System.out.println(tree.getRoot());
 		// System.out.println("vor");
-
-		processBrendaElement(enzyme, tree.getRoot());
+		//System.out.println("e: " + enzyme);
+		processBrendaElement(details[0], tree.getRoot());
 		// System.out.println("ende");
 
 	}
@@ -733,7 +742,7 @@ public class BrendaConnector extends SwingWorker {
 			// GraphInstance i = new GraphInstance();
 			// Pathway pw = new CreatePathway().getPathway();
 			// System.out.println("p: "+i.getPathway());
-
+			// System.out.println(enzymeToSearch[0]);
 			getEnzymeDetails(enzymeToSearch);
 
 			// System.out.println("ende");
@@ -771,9 +780,24 @@ public class BrendaConnector extends SwingWorker {
 		MainWindowSingelton.getInstance().updateAllGuiElements();
 		MainWindowSingelton.getInstance().enable(true);
 	}
-	
-	private String cleanString(String s){
+
+	private String cleanString(String s) {
 		return s.toLowerCase();
+	}
+
+	static public String byteToHex(byte b) {
+		// Returns hex String representation of byte b
+		char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+				'a', 'b', 'c', 'd', 'e', 'f' };
+		char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
+		return new String(array);
+	}
+
+	static public String charToHex(char c) {
+		// Returns hex String representation of char c
+		byte hi = (byte) (c >>> 8);
+		byte lo = (byte) (c & 0xff);
+		return byteToHex(hi) + byteToHex(lo);
 	}
 
 }
