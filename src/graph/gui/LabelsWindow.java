@@ -71,7 +71,7 @@ public class LabelsWindow implements ActionListener{
 	}
 	
 	private void listParameters(){
-		panel.add(new JLabel("Labels"), "span 2, gaptop 2");
+		panel.add(new JLabel("Labels:"), "span 2, wrap, gaptop 2");
 		Iterator<String> it = gea.getLabelSet().iterator();
 		while(it.hasNext()){
 			panel.add(new JLabel(it.next()), "wrap");

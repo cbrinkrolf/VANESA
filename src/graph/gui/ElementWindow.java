@@ -644,7 +644,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			//System.out.println("show parameters");
 			ParameterWindow parameterWindow = new ParameterWindow(ab);
 		}else if("showLabels".equals(event)){
-			System.out.println("click");
+			//System.out.println("click");
 			new LabelsWindow(ab);
 		}
 		
