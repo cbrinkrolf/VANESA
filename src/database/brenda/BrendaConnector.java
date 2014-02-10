@@ -125,7 +125,7 @@ public class BrendaConnector extends SwingWorker {
 
 	private void searchPossibleEnzyms(BiologicalNodeAbstract node,
 			DefaultMutableTreeNode parentNode) {
-
+		System.out.println("methode");
 		if (parentNode.getLevel() == 0
 				|| (parentNode.getLevel() / 2) < searchDepth + 1) {
 
@@ -206,7 +206,7 @@ public class BrendaConnector extends SwingWorker {
 						newNode = new DefaultMutableTreeNode(e.getLabel());
 
 						tree.addNode(parentNode, newNode);
-
+						System.out.println("search");
 						if (resultDetails[3] != null) {
 							separateReaction(resultDetails[3], e, newNode);
 						}
@@ -260,6 +260,7 @@ public class BrendaConnector extends SwingWorker {
 
 	private void separateReaction(String reaction,
 			BiologicalNodeAbstract enzyme, DefaultMutableTreeNode parentNode) {
+		System.out.println("seperate");
 
 		int i = 0;
 		StringTokenizer tok = new StringTokenizer(reaction, "=");
@@ -269,7 +270,7 @@ public class BrendaConnector extends SwingWorker {
 		while (tok.hasMoreTokens()) {
 			result[i++] = tok.nextToken();
 		}
-
+		//System.out.println("sep");
 		String[] gesplittet = result[0].split("\\s\\+\\s");
 		BiologicalNodeAbstract substrate;
 		DefaultMutableTreeNode newNode;
@@ -341,6 +342,7 @@ public class BrendaConnector extends SwingWorker {
 	}
 
 	private void processBrendaElement(String enzyme, DefaultMutableTreeNode node) {
+		
 		// System.out.println("l "+ node.getLevel());
 		// System.out.println("depth: "+searchDepth);
 		if (node.getLevel() == 0 || (node.getLevel() / 2) < searchDepth) {
@@ -351,13 +353,13 @@ public class BrendaConnector extends SwingWorker {
 
 			ArrayList<DBColumn> results = new Wrapper().requestDbContent(1,
 					BRENDAQueries.getBRENDAenzymeDetails, param);
-
+			
 			Enzyme e;
 			DefaultMutableTreeNode newNode;
 			String[] resultDetails;
 			String clean;
 			for (DBColumn column : results) {
-
+				
 				resultDetails = column.getColumn();
 				clean = this.cleanString(resultDetails[0]);
 				// System.out.println(resultDetails[0]);
@@ -385,7 +387,6 @@ public class BrendaConnector extends SwingWorker {
 						
 						resultDetails[3] = resultDetails[3].replace("\uFFFD",
 								"'");
-						
 						separateReaction(resultDetails[3], e, newNode);
 					}
 
