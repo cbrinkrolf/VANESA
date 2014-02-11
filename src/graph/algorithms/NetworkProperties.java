@@ -8,6 +8,10 @@ import gui.MainWindow;
 import gui.MainWindowSingelton;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -18,8 +22,9 @@ import java.util.Set;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.Protein;
 
-public class Connectness extends Object {
+public class NetworkProperties extends Object {
 
 	MainWindow w = MainWindowSingelton.getInstance();
 	GraphContainer con = ContainerSingelton.getInstance();
@@ -51,7 +56,7 @@ public class Connectness extends Object {
 	
 	private int nodeincrement = 0;
 
-	public Connectness() {
+	public NetworkProperties() {
 		pw = con.getPathway(w.getCurrentPathway());
 		mg = pw.getGraph();
 		
@@ -74,7 +79,7 @@ public class Connectness extends Object {
 		countNodeDegrees();
 	}
 
-	public Connectness(String pathwayname) {
+	public NetworkProperties(String pathwayname) {
 		pw =  con.getPathway(pathwayname);
 		mg = pw.getGraph();
 		
@@ -97,6 +102,10 @@ public class Connectness extends Object {
 		countNodeDegrees();
 	}
 	
+	public int[][] getAdjacencyMatrix(){
+		return adjacency;
+	}
+	
 	public int getNodeDegree(int nodeID){
 		return nodedegreetable.get(nodeID);
 	}
@@ -104,6 +113,11 @@ public class Connectness extends Object {
 	public int getNodeAssignment(BiologicalNodeAbstract bna){
 		return nodeassings.get(bna);
 	}
+	
+	public BiologicalNodeAbstract getNodeAssignmentbackwards(int nodeid){
+		return nodeassignsback.get(nodeid);
+	}
+	
 	
 	public Pathway getPathway(){
 		return pw;
@@ -134,7 +148,7 @@ public class Connectness extends Object {
 			fromid = nodeassings.get(from);
 			toid = nodeassings.get(to);
 				
-			//TODO: EDGES undirected (so far)
+			//EDGES for analysis undirected 
 			adjacency[fromid][toid] = 1;
 			adjacency[toid][fromid] = 1;
 		}
@@ -273,12 +287,12 @@ public class Connectness extends Object {
 		}
 		
 		//debug
-		Iterator<Double> iit = ht.values().iterator();
-		while (iit.hasNext()) {
-			double d = iit.next();
-			System.out.println(d);
-			
-		}
+//		Iterator<Double> iit = ht.values().iterator();
+//		while (iit.hasNext()) {
+//			double d = iit.next();
+//			System.out.println(d);
+//			
+//		}
 		
 		return ht;
 	}
@@ -336,7 +350,7 @@ public class Connectness extends Object {
 
 	public double getDensity() {
 		// Graph Density
-		return (2 * edges) / (1.0f * nodes * (nodes - 1));
+		return (2 * edges) / (1.0d * nodes * (nodes - 1));
 	}
 
 	public double getCentralization() {
@@ -453,18 +467,18 @@ public class Connectness extends Object {
 		if(isGraphConnected()){
 			cutnodes = new int[nodes+1];
 			GraphTheoryAlgorithms.cutNodes(nodes, edges, nodei, nodej, cutnodes);
-			
-			for (int i = 1; i < cutnodes.length; i++) {
-
-				if(cutnodes[i]>0){
-					BiologicalNodeAbstract tmpnode = nodeassignsback.get(cutnodes[i]-1);
-					tmpnode.setColor(Color.yellow);
-					tmpnode.setNodesize(2.0);
-				}
-				
-			}
-			
-			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+	
+			//Visualization
+//			for (int i = 1; i < cutnodes.length; i++) {
+//
+//				if(cutnodes[i]>0){
+//					BiologicalNodeAbstract tmpnode = nodeassignsback.get(cutnodes[i]-1);
+//					tmpnode.setColor(Color.yellow);
+//					tmpnode.setNodesize(2.0);
+//				}
+//				
+//			}
+//			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 						
 			return cutnodes;
 		}else{
@@ -472,6 +486,249 @@ public class Connectness extends Object {
 			int[] ret = {-1};
 			return ret;
 		}				
+	}
+	
+	
+	//directed only
+	public int[] getStronglyConnectedComponents(){
+		int[] scc = new int[nodes+1];
+		
+		GraphTheoryAlgorithms.stronglyConnectedComponents(nodes, edges, nodei, nodej, scc);
+		
+		//System.out.println("strongly connected components: "+scc[0]);
+		
+		return scc;
+		
+	}
+	
+	//directed only
+	public void getMinimalEqGraph(){
+		boolean links[] = new boolean[edges+1];
+		
+		GraphTheoryAlgorithms.minimalEquivalentGraph(nodes, edges, nodei, nodej, links);
+		
+		
+		
+	}
+	
+	//return the number of edges that would disconnect the Network, works only with connected networks
+	public int getEdgeConnectivity(){
+		int econ;
+		
+		econ = GraphTheoryAlgorithms.edgeConnectivity(nodes, edges, nodei, nodej);
+		
+		return econ;
+	}
+	
+	
+	public int getFundamentalCycles(){
+		//k is the expected number of independent cycles, here automatically calculated (could be set by user)
+		int k = (int) Math.min((double)edges-2, ((double)(nodes-1) * (nodes-2))/2.0d);
+		int fundcyc[][] = new int[k+1][nodes+1];		
+		
+		GraphTheoryAlgorithms.fundamentalCycles(nodes, edges, nodei, nodej, fundcyc);		
+		
+		return fundcyc[0][0];	
+	}
+	
+	
+	
+	public void saveAdjMatrix(String filename){
+		//adj matrix
+		try {
+			FileWriter fw = new FileWriter(filename);
+			BufferedWriter out = new BufferedWriter(fw);
+			
+			String line = "";
+			for (int i = 0; i < nodes; i++) {
+				for (int j = 0; j < nodes; j++) {
+					line+=adjacency[i][j];
+				}
+				out.write(line+"\n");
+				line = "";
+			}
+			
+			out.close();
+			fw.close();			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+		
+		//attributes
+		try {
+			FileWriter fw = new FileWriter(filename+".atr");
+			BufferedWriter out = new BufferedWriter(fw);
+			
+			BiologicalNodeAbstract bnb;
+			
+			String line = "";
+			for (int i = 0; i < nodes; i++) {
+				line = i+"\t"+nodedegreetable.get(i)+"\t"+((int)(Math.random()*5));	
+				
+				bnb = nodeassignsback.get(i);
+				if(bnb instanceof Protein){
+					Protein p = (Protein) bnb;
+					line+="\t"+p.getAaSequence().length();
+				}
+				
+				line+="\t"+	((int)(Math.random()*10))+
+						"\t"+	((int)(Math.random()*20));
+				out.write(line+"\n");
+				line="";
+			}			
+			
+			out.close();
+			fw.close();			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+		
+
+	public void saveGraphCoordinates(String filename){
+		//Graph coordinates
+		try {
+			FileWriter fw = new FileWriter(filename);
+			BufferedWriter out = new BufferedWriter(fw);
+			
+			String line = "";
+			
+			Iterator<BiologicalNodeAbstract> itbna = mg.getAllVertices().iterator();
+			line+=nodes;
+			out.write(line+"\n");
+			line ="";
+			while (itbna.hasNext()) {
+				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) itbna.next();
+				Point2D pt = mg.nodePositions.get(bna);
+				
+				line=pt.getX()+" "+pt.getY();
+				
+				out.write(line+"\n");
+				line = "";
+								
+			}
+			
+			
+			out.close();
+			fw.close();			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	public void savePackedAdjList(String filename){
+		//array of size(nodes): narray
+		//array of size(edges - 2*edges): earray
+		int narray[] = new int[nodes],
+				earray[] = new int[2*edges];
+		int arraypointer = 0;
+		
+		
+		//narray: each position of the array points to a position in earray
+		//(begin of the adjacency list of this node)
+		for (int i = 0; i < nodes; i++) {
+			narray[i] = arraypointer;
+			for (int j = 0; j < nodes; j++) {
+				if (adjacency[i][j] == 1) {
+					earray[arraypointer] = j;
+					arraypointer++;
+				}
+			}
+		}
+
+		//write to File
+		try {
+			FileWriter fw = new FileWriter(filename);
+			BufferedWriter out = new BufferedWriter(fw);
+
+			for (int i = 0; i < narray.length; i++) {//write node array
+				if (i == narray.length - 1)
+					out.write(narray[i]+"");
+				else
+					out.write(narray[i] + "\t");
+			}
+			out.write("\n");
+			for (int i = 0; i < arraypointer; i++) {//write edge array
+				if (i == arraypointer - 1)
+					out.write(earray[i]+"");
+				else
+					out.write(earray[i] + "\t");
+			}
+
+			out.close();
+			fw.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void AllPairShortestPaths(boolean writeToFile) {
+
+		
+		//FloydWarshall
+		//initialize adjacency matrix
+		int i, j;
+		for (i = 0; i < nodes; i++) {
+			for (j = 0; j < nodes; j++) {
+				if(i==j)
+					continue;
+				else{
+					adjacency[i][j] = (adjacency[i][j]==1 ? 1 : Integer.MAX_VALUE);
+				}
+			}
+		}
+		
+		
+		// write to File
+		if(writeToFile)
+			try {
+				FileWriter fw = new FileWriter("distance");
+				BufferedWriter out = new BufferedWriter(fw);
+	
+				for (i = 0; i < nodes; i++) {
+					for (j = 0; j < nodes; j++) {
+						if(j == nodes-1)
+							out.write(adjacency[i][j]+"");
+						else
+							out.write(adjacency[i][j] + "\t");
+					}
+					out.write("\n");
+				}
+	
+				out.close();
+				fw.close();
+	
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	}
+
+	public void removeGreyNodes() {
+		
+		HashSet<BiologicalNodeAbstract> removals = new HashSet<BiologicalNodeAbstract>();
+		Iterator<BiologicalNodeAbstract> itn = mg.getAllVertices().iterator();
+		while(itn.hasNext()){
+			BiologicalNodeAbstract tmp = itn.next();
+			if(tmp.getColor().getRGB() == -4144960)
+				removals.add(tmp);
+		}
+		
+		
+		
+		mg.lockVertices();
+		itn = removals.iterator();
+		while (itn.hasNext()) {
+			mg.removeVertex(itn.next());				
+		}			
+		w.updateElementTree();
+		w.updateFilterView();
+		w.updatePathwayTree();
+		mg.unlockVertices();	
+				
 	}
 	
 //	public int getNumberOfCliques(){

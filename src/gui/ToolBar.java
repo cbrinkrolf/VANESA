@@ -150,6 +150,12 @@ public class ToolBar {
 		info.setActionCommand("info");
 		info.addActionListener(toolBarListener);
 		
+		
+		JButton infoextended = new JButton("MoreInfo");
+		infoextended.setToolTipText("More Info");
+		infoextended.setActionCommand("infoextended");
+		infoextended.addActionListener(toolBarListener);
+		
 		JButton mergeSelectedNodes = new JButton("Merge Nodes");
 		mergeSelectedNodes.setToolTipText("Merge Selected Nodes");
 		mergeSelectedNodes.setActionCommand("mergeSelectedNodes");
@@ -318,6 +324,7 @@ public class ToolBar {
 				bar.add(new JSeparator());
 				bar.add(mergeSelectedNodes);
 				bar.add(info);
+				bar.add(infoextended);
 			} else {
 //				bar.add(toolBarControlControls);
 //				bar.add(new JSeparator());
@@ -331,6 +338,7 @@ public class ToolBar {
 				bar.add(new JSeparator());
 				bar.add(mergeSelectedNodes);
 				bar.add(info);
+				bar.add(infoextended);
 			}
 		} else {
 
@@ -344,6 +352,7 @@ public class ToolBar {
 			bar.add(new JSeparator());
 			bar.add(mergeSelectedNodes);
 			bar.add(info);
+			bar.add(infoextended);
 
 		}
 		bar.setVisible(true);

@@ -1,73 +1,103 @@
 package gui;
 
-import graph.algorithms.Connectness;
+import graph.algorithms.NetworkProperties;
 
 import javax.swing.JOptionPane;
 
 public class InfoWindow {
-	
-	int nodes, edges, nodedegrees, maxpath, mindegree, maxdegree, cutnodes, cliques;
-	float avgsp, avgneighbordegree; 
+
+	int nodes, edges, nodedegrees, maxpath, mindegree, maxdegree, cutnodes,
+			cliques;
+	float avgsp, avgneighbordegree;
 	double density, centralization, avgnodedegree, matchingindex;
 	boolean connected;
-	
+	long time;
 
-	public InfoWindow() {
+	public InfoWindow(boolean extended) {
 
 		MainWindow w = MainWindowSingelton.getInstance();
 
 		String tableStart = "<table  rules=\"rows\" style=\"border-collapse:separate; border-spacing:0; width:100%; border-top:1px solid #eaeaea;\">";
 		String tableEnd = "</table>";
 
-		Connectness connectnes = new Connectness();
+		NetworkProperties cs = new NetworkProperties();
+
+		nodes = cs.getNodeCount();
+		edges = cs.getEdgeCount();
+		density = cs.getDensity();
+		connected = cs.isGraphConnected();
+		mindegree = cs.getMinDegree();
+		maxdegree = cs.getMaxDegree();
 		
-		nodes = connectnes.getNodeCount();
-		edges = connectnes.getEdgeCount();
-		connected = connectnes.isGraphConnected();
-		avgsp = connectnes.averageShortestPathLength();
-		nodedegrees = connectnes.countNodeDegrees();
-		avgneighbordegree = connectnes.averageNeighbourDegree();
-		maxpath = connectnes.maxPathLength();
-		density = connectnes.getDensity();
-		centralization =  connectnes.getCentralization();
-		mindegree = connectnes.getMinDegree();
-		maxdegree = connectnes.getMaxDegree();
-		avgnodedegree = connectnes.getAvgNodeDegree();
-		matchingindex = connectnes.getGlobalMatchingIndex();
-		cutnodes = connectnes.getCutNodes()[0];
-//		cliques = connectnes.getNumberOfCliques();
-		
-		
-        String instructions = "<html>"
+		if(extended){
+		avgsp = cs.averageShortestPathLength();
+		nodedegrees = cs.countNodeDegrees();
+		avgneighbordegree = cs.averageNeighbourDegree();
+		maxpath = cs.maxPathLength();
+		centralization = cs.getCentralization();
+		avgnodedegree = cs.getAvgNodeDegree();
+		matchingindex = cs.getGlobalMatchingIndex();
+		cutnodes = cs.getCutNodes()[0];
+		}
+
+		String instructions = "<html>"
 				+ tableStart
 				+ writeLine("Number of Nodes:", nodes + "")
 				+ writeLine("Number of Edges:", edges + "")
-				+ writeLine("Is input Graph Connected:", connected + "")
-				+ writeLine("Average of shortest paths:",avgsp + "")
-				+ writeLine("Number of Node degrees:", nodedegrees + "")
-				+ writeLine("Average Neighbour Degree:", avgneighbordegree + "")
-				+ writeLine("Maximum Path Length:", maxpath + "")
 				+ writeLine("Graph Density:", density + "")
-				+ writeLine("Centralization:", centralization + "")
-				+ writeLine("Minimum/Maximum Degree:", mindegree + "/" + maxdegree)
-				+ writeLine("Average Node Degree:", avgnodedegree + "")
-				+ writeLine("Global Matching Index:", matchingindex + "")
-//				+ writeLine("Number of Cliques:", cliques + "")
-				;
+				+ writeLine("Is input Graph Connected:", connected + "")
+				+ writeLine("Minimum/Maximum Degree:", mindegree + "/"
+						+ maxdegree);
 		
-        if(connected)
-        	instructions+=writeLine("Number of Cut Nodes:", cutnodes + "");        
-        
-        instructions+=
-        		tableEnd
-				+ "</html>";
+		if(extended){
+			instructions += writeLine("Average of shortest paths:", avgsp + "")
+					+ writeLine("Number of Node degrees:", nodedegrees + "")
+					+ writeLine("Average Neighbour Degree:", avgneighbordegree + "")
+					+ writeLine("Maximum Path Length:", maxpath + "")
+					+ writeLine("Centralization:", centralization + "")
+					+ writeLine("Average Node Degree:", avgnodedegree + "")
+					+ writeLine("Global Matching Index:", matchingindex + "")
+					+ writeLine("Global Matching Index:", matchingindex + "")
+					+ writeLine("Number of fundamental cycles:",
+							cs.getFundamentalCycles() + "");
+			if (connected) {
+				instructions += writeLine("Number of Cut Nodes:", cutnodes + "");
+				instructions += writeLine("Edge Connectivity:",
+						cs.getEdgeConnectivity() + "");
+			}
+		}					
 
-				
-        JOptionPane.showMessageDialog(w.returnFrame(), instructions,
-				"Network Statistics", 1);
-		
+		instructions += tableEnd + "</html>";
+		//
+
+		JOptionPane.showMessageDialog(w.returnFrame(), instructions,
+				"Network Properties", 1);
+		//
+		// System.out.println("done.");
+		// cs.saveAdjMatrix("haskell.N"+nodes+"E"+edges+"adj");
+		// System.out.println("export done.");
+
+		// cs.saveGraphCoordinates("clustering_coords.dat");
+		// cs.savePackedAdjList("padjlist");
+
+		// startTime();
+		// cs.runFloydWarshall(false);
+		// endTime("FloydWarshall");
+
+		// // startTime();
+		// //Socket Client testing
+
+		// startTime();
+		// SocketClient cliques = new SocketClient("nero", 11337,
+		// cs.getAdjacencyMatrix(), cs);
+		// endTime("Cluster cycles");
+
+		// cs.removeGreyNodes();
+		// startTime();
+		// GPUSocketClient l = new GPUSocketClient();
+		// endTime("GPU APSP");
+
 	}
-	
 
 	private String writeLine(String description, String Attribute) {
 
@@ -76,6 +106,49 @@ public class InfoWindow {
 				+ description + "</th>"
 				+ "<td style=\"padding:10px;color:#888;\">" + Attribute
 				+ "</td></tr>";
+	}
+
+	private void startTime() {
+		time = System.currentTimeMillis();
+	}
+
+	private void endTime(String message) {
+		time = System.currentTimeMillis() - time;
+		System.out.println(message + " took \t\t" + formatMillis(time));
+	}
+
+	static public String formatMillis(long val) {
+		StringBuilder buf = new StringBuilder(20);
+		String sgn = "";
+
+		if (val < 0) {
+			sgn = "-";
+			val = Math.abs(val);
+		}
+
+		append(buf, sgn, 0, (val / 3600000));
+		append(buf, ":", 2, ((val % 3600000) / 60000));
+		append(buf, ":", 2, ((val % 60000) / 1000));
+		append(buf, ".", 3, (val % 1000));
+		return buf.toString();
+	}
+
+	/**
+	 * Append a right-aligned and zero-padded numeric value to a
+	 * `StringBuilder`.
+	 */
+	static private void append(StringBuilder tgt, String pfx, int dgt, long val) {
+		tgt.append(pfx);
+		if (dgt > 1) {
+			int pad = (dgt - 1);
+			for (long xa = val; xa > 9 && pad > 0; xa /= 10) {
+				pad--;
+			}
+			for (int xa = 0; xa < pad; xa++) {
+				tgt.append('0');
+			}
+		}
+		tgt.append(val);
 	}
 
 }
