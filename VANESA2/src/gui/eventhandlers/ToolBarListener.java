@@ -123,7 +123,9 @@ public class ToolBarListener implements ActionListener {
 				//g.restartVisualizationModel();
 			}
 		} else if ("info".equals(event)) {
-			new InfoWindow();
+			new InfoWindow(false);
+		} else if ("infoextended".equals(event)) {
+			new InfoWindow(true);
 		} else if ("3DView".equals(event)) {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {

@@ -142,7 +142,7 @@ public class MyGraph {
 	private final VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> visualizationModel;
 	private final AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout;
 	private final HashSet<BiologicalNodeAbstract> set = null;
-	private final HashMap<BiologicalNodeAbstract, Point2D> nodePositions = new HashMap<BiologicalNodeAbstract, Point2D>();
+	public final HashMap<BiologicalNodeAbstract, Point2D> nodePositions = new HashMap<BiologicalNodeAbstract, Point2D>();
 	private MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
 	private MyEdgeLabelRenderer elr = new MyEdgeLabelRenderer(Color.blue);
 

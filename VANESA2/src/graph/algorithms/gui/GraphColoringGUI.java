@@ -2,7 +2,7 @@ package graph.algorithms.gui;
 
 
 import graph.GraphInstance;
-import graph.algorithms.Connectness;
+import graph.algorithms.NetworkProperties;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,7 +45,7 @@ public class GraphColoringGUI implements ActionListener {
 	private ButtonGroup bg;
 	
 	//coloring variables
-	private Connectness c;	
+	private NetworkProperties c;	
 	private Iterator<BiologicalNodeAbstract> itn;
 	private Hashtable<BiologicalNodeAbstract,Double> coloring;
 	private BiologicalNodeAbstract bna;
@@ -99,7 +99,7 @@ public class GraphColoringGUI implements ActionListener {
 
 	public void recolorGraph() {
 
-		c = new Connectness();	
+		c = new NetworkProperties();	
 		itn = c.getPathway().getAllNodes().iterator();
 		coloring = new Hashtable<BiologicalNodeAbstract,Double>();
 		

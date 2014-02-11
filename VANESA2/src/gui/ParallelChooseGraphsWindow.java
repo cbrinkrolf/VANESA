@@ -2,7 +2,7 @@ package gui;
 
 import graph.ContainerSingelton;
 import graph.GraphContainer;
-import graph.algorithms.Connectness;
+import graph.algorithms.NetworkProperties;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -45,11 +45,11 @@ public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 		"Name string\n";
 		
 		Pathway p; 
-		Connectness c;
+		NetworkProperties c;
 		String name;
 		for (int i = 0; i < pathways.size(); i++) {
 			p = pathways.get(i);
-			c = new Connectness(p.getName());
+			c = new NetworkProperties(p.getName());
 			name = p.getName();
 			//format Name, no spaces, no brackets
 			name = name.replace('(', ' ');
