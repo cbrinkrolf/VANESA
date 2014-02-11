@@ -1,7 +1,7 @@
 package graph.algorithms.gui;
 
 import graph.GraphInstance;
-import graph.algorithms.Connectness;
+import graph.algorithms.NetworkProperties;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
@@ -48,7 +48,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 	MigLayout layout;
 
 	//Removal variables
-	private Connectness c;	
+	private NetworkProperties c;	
 	private MainWindow mw;
 	private MyGraph mg;
 	private Iterator<BiologicalNodeAbstract> itn;
@@ -158,7 +158,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 	}
 
 	private void getNodeDegreeRatings() {
-		c = new Connectness();
+		c = new NetworkProperties();
 		itn = c.getPathway().getAllNodes().iterator();
 		nodevalues = new Hashtable<BiologicalNodeAbstract,Double>();
 		minvalue = Double.MAX_VALUE;

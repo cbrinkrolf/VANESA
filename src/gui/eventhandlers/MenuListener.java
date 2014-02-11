@@ -394,7 +394,7 @@ public class MenuListener implements ActionListener {
 
 		} else if ("interaction".equals(event)) {
 
-			new InfoWindow();
+			new InfoWindow(false);
 
 		} else if ("about".equals(event)) {
 

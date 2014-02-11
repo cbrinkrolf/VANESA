@@ -51,14 +51,14 @@ public class RandomConnectedGraphGui extends JFrame implements ActionListener {
 				"span 2, wrap 15 ");
 		mainPanel.add(new JSeparator(), "gap 10, wrap 15, growx, span 2");
 
-		SpinnerNumberModel model1 = new SpinnerNumberModel(10, 1, 1000, 1);
+		SpinnerNumberModel model1 = new SpinnerNumberModel(10, 1, 10000, 1);
 		nodes = new JSpinner(model1);
 
 		mainPanel.add(new JLabel("Number of nodes"), "span 1, gaptop 2 ");
 		mainPanel.add(nodes, "span 1,wrap,gaptop 2");
 
 		SpinnerNumberModel model2 = new SpinnerNumberModel(10, 1,
-				(1000 * (1000 - 1)) / 2, 1);
+				(10000 * (10000 - 1)) / 2, 1);
 		edges = new JSpinner(model2);
 
 		mainPanel.add(new JLabel("Number of edges"), "span 1, gaptop 2 ");

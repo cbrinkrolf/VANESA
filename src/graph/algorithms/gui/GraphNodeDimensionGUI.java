@@ -1,7 +1,7 @@
 package graph.algorithms.gui;
 
 import graph.GraphInstance;
-import graph.algorithms.Connectness;
+import graph.algorithms.NetworkProperties;
 
 import java.awt.Dimension;
 import java.awt.Event;
@@ -42,7 +42,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 	MigLayout layout;
 
 	//Wighting variables
-	private Connectness c;	
+	private NetworkProperties c;	
 	private Iterator<BiologicalNodeAbstract> itn;
 	private BiologicalNodeAbstract bna;
 	private Hashtable<BiologicalNodeAbstract, Double> ratings;
@@ -132,7 +132,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 	
 	
 	private void getNodeDegreeRatings() {
-		c = new Connectness();
+		c = new NetworkProperties();
 		itn = c.getPathway().getAllNodes().iterator();
 		ratings = new Hashtable<BiologicalNodeAbstract,Double>();
 		minvalue = Double.MAX_VALUE;
@@ -179,7 +179,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 			resizebutton.setEnabled(true);
 			nodesizefromspinner.setEnabled(true);
 			nodesizetospinner.setEnabled(true);
-			c = new Connectness();
+			c = new NetworkProperties();
 			//do calculations
 			switch (currentalgorithmindex) {
 			case 0:
@@ -192,6 +192,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 				}
 				nodesizefromspinner.setEnabled(false);
 				nodesizetospinner.setEnabled(false);
+				resizebutton.setEnabled(false);
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 				
 				break;
@@ -209,12 +210,12 @@ public class GraphNodeDimensionGUI implements ActionListener {
 			case 2:
 				System.out.println("Node Weighting 2: Neighbor Degree");
 				//TODO Neighbor degree rating
-//				ratings = c.averageNeighbourDegreeTable();
-//
-//				//calclulate Weighting
-//				transformRatingToWeighting((double)nodesizefromspinner.getValue(),(double)nodesizetospinner.getValue());		
-//				
-//				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+				ratings = c.averageNeighbourDegreeTable();
+
+				//calclulate Weighting
+				transformRatingToWeighting((double)nodesizefromspinner.getValue(),(double)nodesizetospinner.getValue());		
+				
+				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 
 				break;
 			case 3:
