@@ -682,6 +682,12 @@ public class NetworkProperties extends Object {
 			}
 		}
 		
+		//run the floyd warshall
+		for (i = 0; i < nodes; i++) {
+			for (j = 0; j < nodes; j++) {
+				
+			}
+		}
 		
 		// write to File
 		if(writeToFile)

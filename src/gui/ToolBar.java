@@ -151,7 +151,8 @@ public class ToolBar {
 		info.addActionListener(toolBarListener);
 		
 		
-		JButton infoextended = new JButton("MoreInfo");
+		JButton infoextended = new JButton(new ImageIcon(
+				imagePath.getPath("InfoToolBarButtonextended.png")));
 		infoextended.setToolTipText("More Info");
 		infoextended.setActionCommand("infoextended");
 		infoextended.addActionListener(toolBarListener);
