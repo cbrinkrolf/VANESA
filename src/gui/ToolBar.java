@@ -157,7 +157,7 @@ public class ToolBar {
 		infoextended.setActionCommand("infoextended");
 		infoextended.addActionListener(toolBarListener);
 		
-		JButton mergeSelectedNodes = new JButton("Merge Nodes");
+		JButton mergeSelectedNodes = new JButton(new ImageIcon(imagePath.getPath("MergeNodesButton.png")));
 		mergeSelectedNodes.setToolTipText("Merge Selected Nodes");
 		mergeSelectedNodes.setActionCommand("mergeSelectedNodes");
 		mergeSelectedNodes.addActionListener(toolBarListener);

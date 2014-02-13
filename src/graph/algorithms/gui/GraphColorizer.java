@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -38,11 +39,33 @@ public class GraphColorizer {
 	private BufferedImage rangesource;
 	public static String rangeimage;
 	
-	public GraphColorizer(Hashtable<BiologicalNodeAbstract,Double> nodevalues, String rangeimagepath, boolean logarithmic){
+	public GraphColorizer(Hashtable<BiologicalNodeAbstract,Double> nodevalues, int rangeimage, boolean logarithmic){
 		this.nodevalues = nodevalues;
 		
-		try {//Get image and assign the rangewidth
-			rangesource = ImageIO.read(new File(rangeimagepath));
+		//Get image and assign the rangewidth
+		try{
+			switch (rangeimage) {
+			case 0:
+				rangesource = ImageIO.read(new File("src/gui/images/colorrange_bluesea.png"));
+				break;
+			case 1:		
+				rangesource = ImageIO.read(new File("src/gui/images/colorrange_skyline.png"));
+				break;
+			case 2:				
+				rangesource = ImageIO.read(new File("src/gui/images/colorrange_darkmiddle.png"));
+				break;
+			case 3:		
+				rangesource = ImageIO.read(new File("src/gui/images/colorrange_dark.png"));
+				break;
+			case 4:		
+				rangesource = ImageIO.read(new File("src/gui/images/colorrange_rainbow.png"));
+				break;
+			default:
+				break;
+			}
+		}catch (IOException e){
+			System.out.println("Error in GraphColorizer.java while reading image :"+rangeimage);
+		}
 			
 //			rangesource = ImageIO.read(new File("pictures/colorrange_bluesea.png"));
 //			rangesource = ImageIO.read(new File("pictures/colorrange_skyline.png"));
@@ -50,11 +73,7 @@ public class GraphColorizer {
 //			rangesource = ImageIO.read(new File("pictures/colorrange_dark.png"));
 						
 			imagewidth = rangesource.getWidth();			
-			
-			
-		} catch (IOException e) {
-			System.out.println("Error in "+getClass()+" \nreading File.");
-		}
+
 
 		//do magic
 		if(logarithmic)
