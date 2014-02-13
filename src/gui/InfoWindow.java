@@ -57,7 +57,6 @@ public class InfoWindow {
 					+ writeLine("Centralization:", centralization + "")
 					+ writeLine("Average Node Degree:", avgnodedegree + "")
 					+ writeLine("Global Matching Index:", matchingindex + "")
-					+ writeLine("Global Matching Index:", matchingindex + "")
 					+ writeLine("Number of fundamental cycles:",
 							cs.getFundamentalCycles() + "");
 			if (connected) {
