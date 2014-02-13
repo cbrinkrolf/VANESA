@@ -3,6 +3,7 @@ package graph.algorithms.gui;
 
 import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
+import gui.images.ImagePath;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,9 +37,12 @@ public class GraphColoringGUI implements ActionListener {
 	private String[] algorithmNames = { "Node Degree", "Neighbor Degree", "Clique" };
 	private int currentalgorithmindex = 0;
 	private String[] colorrangenames = {"bluesea","skyline","darkmiddle","darkleftmiddle","rainbow"};
-	private String[] iconpaths = {"pictures/icon_colorrange_bluesea.png","pictures/icon_colorrange_skyline.png",
-			"pictures/icon_colorrange_darkmiddle.png","pictures/icon_colorrange_dark.png","pictures/icon_colorrange_rainbow.png"};
-	private String currentimagepath = iconpaths[0];
+//	private String[] iconpaths = {"pictures/icon_colorrange_bluesea.png","pictures/icon_colorrange_skyline.png",
+//			"pictures/icon_colorrange_darkmiddle.png","pictures/icon_colorrange_dark.png","pictures/icon_colorrange_rainbow.png"};
+	private ImageIcon[] icons;
+	
+	private ImageIcon currentimage;
+	private int currentimageid;
 	private JRadioButton[] colorrangeradio = new JRadioButton[colorrangenames.length];
 	private GraphColorizer gc;
 	private JCheckBox logview;
@@ -53,6 +57,16 @@ public class GraphColoringGUI implements ActionListener {
 	private TitledTab tab;
 	
 	public GraphColoringGUI() {
+		//set icon paths
+		ImagePath imagepath = ImagePath.getInstance();
+		ImageIcon[] tmpset =  {new ImageIcon(imagepath.getPath("icon_colorrange_bluesea.png")),
+				new ImageIcon(imagepath.getPath("icon_colorrange_skyline.png")),
+				new ImageIcon(imagepath.getPath("icon_colorrange_darkmiddle.png")),
+				new ImageIcon(imagepath.getPath("icon_colorrange_dark.png")),
+				new ImageIcon(imagepath.getPath("icon_colorrange_rainbow.png"))};
+		icons = tmpset;
+		currentimage = icons[0];
+		currentimageid = 0;
 
 	}
 
@@ -66,7 +80,7 @@ public class GraphColoringGUI implements ActionListener {
 	
 		for (int i = 0; i < colorrangenames.length; i++) {
 			colorrangeradio[i] = new JRadioButton(colorrangenames[i]);
-			colorrangeradio[i].setActionCommand(iconpaths[i]);
+			colorrangeradio[i].setActionCommand(""+i);
 			colorrangeradio[i].addActionListener(this);
 			bg.add(colorrangeradio[i]);
 			
@@ -83,7 +97,7 @@ public class GraphColoringGUI implements ActionListener {
 		p.add(new JLabel("Color Range"),"wrap");
 		for (int i = 0; i < colorrangenames.length; i++) {
 			p.add(colorrangeradio[i]);
-			p.add(new JLabel(new ImageIcon(iconpaths[i])),"wrap");
+			p.add(new JLabel(icons[i]),"wrap");
 		}
 		
 		logview = new JCheckBox("Data in log(10)");
@@ -118,7 +132,7 @@ public class GraphColoringGUI implements ActionListener {
 		}		
 		
 		
-		gc = new GraphColorizer(coloring, currentimagepath, logview.isSelected());	
+		gc = new GraphColorizer(coloring, currentimageid, logview.isSelected());	
 		//recolor button enable after first Coloring, logview enabled
 		colorizebutton.setEnabled(true);
 		logview.setEnabled(true);
@@ -186,8 +200,9 @@ public class GraphColoringGUI implements ActionListener {
 		}
 		//get proper icon path
 		for (int i = 0; i < colorrangenames.length; i++) {
-			if (iconpaths[i].equals(command)){
-				currentimagepath=iconpaths[i];
+			if ((i+"").equals(command)){
+				currentimage=icons[i];
+				currentimageid = i;
 				recolorGraph();
 				//repaint, damit Farben auch angezeigt werden
 					GraphInstance.getMyGraph().getVisualizationViewer().repaint();			
