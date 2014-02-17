@@ -144,6 +144,10 @@ public class ToolBar {
 		trash.setActionCommand("del");
 		trash.addActionListener(toolBarListener);
 
+		
+		JPanel infopanel = new JPanel();
+		infopanel.setLayout(new GridLayout(2, 2));
+		
 		JButton info = new JButton(new ImageIcon(
 				imagePath.getPath("InfoToolBarButton.png")));
 		info.setToolTipText("Info");
@@ -161,6 +165,10 @@ public class ToolBar {
 		mergeSelectedNodes.setToolTipText("Merge Selected Nodes");
 		mergeSelectedNodes.setActionCommand("mergeSelectedNodes");
 		mergeSelectedNodes.addActionListener(toolBarListener);
+		
+		infopanel.add(info);
+		infopanel.add(infoextended);
+		infopanel.add(mergeSelectedNodes);
 
 		JButton dimView = new JButton(new ImageIcon(
 				imagePath.getPath("view.png")));
@@ -323,9 +331,7 @@ public class ToolBar {
 				bar.add(new JSeparator());
 				bar.add(viewPortControls);
 				bar.add(new JSeparator());
-				bar.add(mergeSelectedNodes);
-				bar.add(info);
-				bar.add(infoextended);
+				bar.add(infopanel);
 			} else {
 //				bar.add(toolBarControlControls);
 //				bar.add(new JSeparator());
@@ -337,9 +343,7 @@ public class ToolBar {
 				bar.add(new JSeparator());
 				bar.add(viewPortControls);
 				bar.add(new JSeparator());
-				bar.add(mergeSelectedNodes);
-				bar.add(info);
-				bar.add(infoextended);
+				bar.add(infopanel);
 			}
 		} else {
 
@@ -351,9 +355,7 @@ public class ToolBar {
 			bar.add(new JSeparator());
 			bar.add(viewPortControls);
 			bar.add(new JSeparator());
-			bar.add(mergeSelectedNodes);
-			bar.add(info);
-			bar.add(infoextended);
+			bar.add(infopanel);
 
 		}
 		bar.setVisible(true);
