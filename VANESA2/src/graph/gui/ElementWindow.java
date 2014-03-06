@@ -10,10 +10,7 @@ import gui.MainWindowSingelton;
 import gui.eventhandlers.PropertyWindowListener;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FocusTraversalPolicy;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -50,9 +47,9 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Gene;
+import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
-import biologicalObjects.nodes.PathwayMap;
 
 public class ElementWindow implements ActionListener, ItemListener {
 
@@ -76,6 +73,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private JButton showLabels;
 	boolean vertexElement = false;
 	JTabbedPane pane = new JTabbedPane();
+
+	BiologicalNodeAbstract ref = null;
 
 	// private Object element;
 
@@ -106,8 +105,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 		JTextField label = new JTextField(20);
 		JTextField name = new JTextField(20);
 
-		label.setText(ab.getLabel());
-		name.setText(ab.getName());
+		if (ref != null) {
+			label.setText(ref.getLabel());
+			name.setText(ref.getName());
+		} else {
+			label.setText(ab.getLabel());
+			name.setText(ab.getName());
+		}
 
 		// System.out.println("label: "+ab.getLabel());
 		// System.out.println("name: "+ab.getName());
@@ -170,7 +174,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				chooseRef.addActionListener(this);
 				p.add(chooseRef);
 			}
-			
+
 			showLabels.setToolTipText("Show all Labels");
 			showLabels.setActionCommand("showLabels");
 			showLabels.addActionListener(this);
@@ -417,7 +421,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		parametersButton.setActionCommand("showParameters");
 		parametersButton.addActionListener(this);
 		p.add(parametersButton);
-		
+
 		p.add(colorButton, "gap 5");
 
 	}
@@ -434,6 +438,15 @@ public class ElementWindow implements ActionListener, ItemListener {
 	public void revalidateView() {
 		// System.out.println("revalidate");
 		graphInstance = new GraphInstance();
+
+		if (graphInstance.getSelectedObject() instanceof BiologicalNodeAbstract
+				&& ((BiologicalNodeAbstract) graphInstance.getSelectedObject())
+						.hasRef()) {
+			this.ref = ((BiologicalNodeAbstract) graphInstance
+					.getSelectedObject()).getRef();
+		} else {
+			this.ref = null;
+		}
 
 		if (emptyPane) {
 			updateWindow(graphInstance.getSelectedObject());
@@ -470,35 +483,27 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private void updateReferences(boolean reference) {
 
 		// CHRIS reimplement of updateReferences
-		
-		/*if (ab.isVertex()) {
 
-			Pathway pw = graphInstance.getPathway();
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) pw
-					.getElement(element);
-			Iterator it = bna.getVertex().getIncidentEdges().iterator();
-
-			while (it.hasNext()) {
-				Edge e = (Edge) it.next();
-				Pair p = e.getEndpoints();
-
-				BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) pw
-						.getElement(e);
-				BiologicalNodeAbstract first = (BiologicalNodeAbstract) pw
-						.getElement(p.getFirst());
-				BiologicalNodeAbstract second = (BiologicalNodeAbstract) pw
-						.getElement(p.getSecond());
-
-				if (first.isReference() == false
-						&& second.isReference() == false) {
-					bea.setReference(false);
-				} else {
-					bea.setReference(true);
-				}
-			}
-		} else {
-			ab.setReference(reference);
-		}*/
+		/*
+		 * if (ab.isVertex()) {
+		 * 
+		 * Pathway pw = graphInstance.getPathway(); BiologicalNodeAbstract bna =
+		 * (BiologicalNodeAbstract) pw .getElement(element); Iterator it =
+		 * bna.getVertex().getIncidentEdges().iterator();
+		 * 
+		 * while (it.hasNext()) { Edge e = (Edge) it.next(); Pair p =
+		 * e.getEndpoints();
+		 * 
+		 * BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) pw
+		 * .getElement(e); BiologicalNodeAbstract first =
+		 * (BiologicalNodeAbstract) pw .getElement(p.getFirst());
+		 * BiologicalNodeAbstract second = (BiologicalNodeAbstract) pw
+		 * .getElement(p.getSecond());
+		 * 
+		 * if (first.isReference() == false && second.isReference() == false) {
+		 * bea.setReference(false); } else { bea.setReference(true); } } } else
+		 * { ab.setReference(reference); }
+		 */
 	}
 
 	private void addCompartmentItems(JComboBox compartment) {
@@ -605,7 +610,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			newEdge.setLowerBoundary(edge.getLowerBoundary());
 			newEdge.setActivationProbability(edge.getActivationProbability());
 			newEdge.setDirected(true);
-			//pw = graphInstance.getPathway();
+			// pw = graphInstance.getPathway();
 			MyGraph g = pw.getGraph();
 			g.getJungGraph().removeEdge(edge);
 			// g.getEdgeStringer().removeEdge(edge.getEdge());
@@ -617,7 +622,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			ab = newEdge;
 		} else if ("chooseRef".equals(event)) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
-			ReferenceDialog dialog = new ReferenceDialog();
+			ReferenceDialog dialog = new ReferenceDialog(bna);
 			BiologicalNodeAbstract node = dialog.getAnswer();
 			if (node != null) {
 				bna.setRef(node);
@@ -630,38 +635,38 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			this.revalidateView();
 
-		}else if ("pickRef".equals(event)) {
+		} else if ("pickRef".equals(event)) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
-			
+
 			Pathway pw = graphInstance.getPathway();
 			pw = graphInstance.getPathway();
 			MyGraph g = pw.getGraph();
-			g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
+			g.getVisualizationViewer().getPickedVertexState()
+					.pick(bna.getRef(), true);
 
 			this.revalidateView();
 
-		}else if("showParameters".equals(event)){
-			//System.out.println("show parameters");
+		} else if ("showParameters".equals(event)) {
+			// System.out.println("show parameters");
 			ParameterWindow parameterWindow = new ParameterWindow(ab);
-		}else if("showLabels".equals(event)){
-			//System.out.println("click");
+		} else if ("showLabels".equals(event)) {
+			// System.out.println("click");
 			new LabelsWindow(ab);
 		}
-		
+
 		GraphInstance.getMyGraph().updateGraph();
 	}
 
 	@Override
 	public void itemStateChanged(ItemEvent event) {
-
+		System.out.println("item changed");
 		// CHRIS probably never executed
-		
-		/*int state = event.getStateChange();
-		String item = (String) event.getItem();
-		if (ab.isVertex()) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
-					.getPathwayElement(element);
-			bna.setCompartment(item);
-		}*/
+
+		/*
+		 * int state = event.getStateChange(); String item = (String)
+		 * event.getItem(); if (ab.isVertex()) { BiologicalNodeAbstract bna =
+		 * (BiologicalNodeAbstract) graphInstance .getPathwayElement(element);
+		 * bna.setCompartment(item); }
+		 */
 	}
 }
