@@ -46,8 +46,14 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 	// Object element;
 
 	public PropertyWindowListener(GraphElementAbstract element) {
-		geb = element;// graphInstance.getPathwayElement(element);
-		// this.element = element;
+		if (element instanceof BiologicalNodeAbstract
+				&& ((BiologicalNodeAbstract) element).hasRef()) {
+			geb = ((BiologicalNodeAbstract) graphInstance.getSelectedObject())
+					.getRef();
+		} else {
+			geb = element;// graphInstance.getPathwayElement(element);
+			// this.element = element;
+		}
 	}
 
 	@Override
@@ -148,8 +154,9 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 		} else if (source.equals("maximumSpeed")) {
 			if (!((JTextField) event.getSource()).getText().equals("")) {
 				if (geb instanceof ContinuousTransition) {
-						ContinuousTransition t = (ContinuousTransition) geb;
-						t.setMaximumSpeed(((JTextField) event.getSource()).getText());
+					ContinuousTransition t = (ContinuousTransition) geb;
+					t.setMaximumSpeed(((JTextField) event.getSource())
+							.getText());
 				}
 			}
 
@@ -209,7 +216,8 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 			BiologicalNodeAbstract node;
 			while (k.hasNext()) {
 				neighbour = k.next();
-				for (Iterator<BiologicalNodeAbstract> j = pw.getAllNodes().iterator(); j.hasNext();) {
+				for (Iterator<BiologicalNodeAbstract> j = pw.getAllNodes()
+						.iterator(); j.hasNext();) {
 					node = j.next();
 					if (node.equals(neighbour)
 							&& (((JComboBox) event.getSource())
