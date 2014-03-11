@@ -147,6 +147,8 @@ public class MyGraph {
 	private MyEdgeLabelRenderer elr = new MyEdgeLabelRenderer(Color.blue);
 
 	private MyAnnotationManager annotationManager;
+	
+	private boolean animatedPicking = false;
 
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
 
@@ -617,6 +619,7 @@ public class MyGraph {
 	}
 
 	public void setMouseModePick() {
+		graphMouse.setAnimated(animatedPicking);
 		vv.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
 		vv.setGraphMouse(graphMouse);
@@ -1277,6 +1280,15 @@ public class MyGraph {
 
 	public MyAnnotationManager getAnnotationManager() {
 		return this.annotationManager;
+	}
+
+	public boolean isAnimatedPicking() {
+		return animatedPicking;
+	}
+
+	public void setAnimatedPicking(boolean animatedPicking) {
+		this.animatedPicking = animatedPicking;
+		this.setMouseModePick();
 	}
 
 }

@@ -180,7 +180,7 @@ public class PPIConnector extends SwingWorker {
 
 	private void buildInterations(boolean binary) {
 
-		//MARTIN Abfrage für neue und alte DB (switch)
+		//MARTIN Abfrage fï¿½r neue und alte DB (switch)
 		
 		if (database.equals("HPRD")) {
 			if(MainWindow.useOldDB)

@@ -25,7 +25,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.EventListenerList;
 import javax.swing.plaf.basic.BasicIconFactory;
 
-import edu.uci.ics.jung.visualization.control.AnimatedPickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.GraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
@@ -34,6 +33,7 @@ import edu.uci.ics.jung.visualization.control.RotatingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ScalingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ShearingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.TranslatingGraphMousePlugin;
+
 //import edu.uci.ics.jung.visualization.SettableVertexLocationFunction;
 
 /**
@@ -80,6 +80,8 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	protected GraphMousePlugin shearingPlugin;
 	protected GraphMousePlugin editingPlugin;
 
+	private boolean animated = false;
+
 	/**
 	 * create an instance with default values
 	 * 
@@ -108,7 +110,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	 */
 	protected void loadPlugins() {
 		pickingPlugin = new MyPickingGraphMousePlugin();
-		animatedPickingPlugin = new AnimatedPickingGraphMousePlugin();
+		animatedPickingPlugin = new MyAnimatedPickingGraphMousePlugin();
 		translatingPlugin = new TranslatingGraphMousePlugin(
 				InputEvent.BUTTON1_MASK);
 		scalingPlugin = new ScalingGraphMousePlugin(
@@ -121,17 +123,17 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 		setMode(Mode.EDITING);
 	}
 
-	//public void setVertexLocations(
-	//		HashMap<BiologicalNodeAbstract, Point2D> vertexLocations) {
-	//	((MyEditingGraphMousePlugin) editingPlugin)
-		//		.setVertexLocations(vertexLocations);
-//	}
+	// public void setVertexLocations(
+	// HashMap<BiologicalNodeAbstract, Point2D> vertexLocations) {
+	// ((MyEditingGraphMousePlugin) editingPlugin)
+	// .setVertexLocations(vertexLocations);
+	// }
 
 	/**
 	 * setter for the Mode.
 	 */
 	public void setMode(Mode mode) {
-		if (this.mode != mode) {
+		//if (this.mode != mode) {
 			fireItemStateChanged(new ItemEvent(this,
 					ItemEvent.ITEM_STATE_CHANGED, this.mode,
 					ItemEvent.DESELECTED));
@@ -139,7 +141,11 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 			if (mode == Mode.TRANSFORMING) {
 				setTransformingMode();
 			} else if (mode == Mode.PICKING) {
-				setPickingMode();
+				if (animated) {
+					setAnimatedPickingMode();
+				} else {
+					setPickingMode();
+				}
 			} else if (mode == Mode.EDITING) {
 				setEditingMode();
 			}
@@ -148,7 +154,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 			}
 			fireItemStateChanged(new ItemEvent(this,
 					ItemEvent.ITEM_STATE_CHANGED, mode, ItemEvent.SELECTED));
-		}
+		//}
 	}
 
 	/*
@@ -159,11 +165,19 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	 */
 
 	protected void setPickingMode() {
+		remove(animatedPickingPlugin);
 		remove(translatingPlugin);
 		remove(rotatingPlugin);
 		remove(shearingPlugin);
 		remove(editingPlugin);
 		add(pickingPlugin);
+	}
+
+	protected void setAnimatedPickingMode() {
+		remove(translatingPlugin);
+		remove(rotatingPlugin);
+		remove(shearingPlugin);
+		remove(editingPlugin);
 		add(animatedPickingPlugin);
 	}
 
@@ -374,4 +388,13 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 			}
 		}
 	}
+
+	public boolean isAnimated() {
+		return animated;
+	}
+
+	public void setAnimated(boolean animated) {
+		this.animated = animated;
+	}
+
 }

@@ -201,9 +201,12 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// graph.addVertex(newVertex);
 
 						// vv.getModel().restart();
+						//System.out.println("update");
 						MainWindowSingelton.getInstance().updateElementTree();
 						MainWindowSingelton.getInstance().updateFilterView();
 						MainWindowSingelton.getInstance().updatePathwayTree();
+						//MainWindowSingelton.getInstance().updateAllGuiElements();
+						//MainWindowSingelton.getInstance().updateOptionPanel();
 						// MainWindowSingelton.getInstance()
 						// .updateTheoryProperties();
 

@@ -1,6 +1,7 @@
 package graph.eventhandlers;
 
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -8,16 +9,23 @@ import miscalleanous.internet.FollowLink;
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.AnimatedPickingGraphMousePlugin;
 //import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import graph.GraphInstance;
 
 public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 
-	GraphInstance graphInstance = new GraphInstance();
+	private GraphInstance graphInstance = new GraphInstance();
 	
-	public void mouseReleased(MouseEvent arg0){
-		super.mouseReleased(arg0);
+	public void mouseReleased(MouseEvent e){
+		super.mouseReleased(e);
+	    }
+		
+		
 		//Iterator it = graphInstance.getMyGraph().getAllvertices().iterator();
 //		Iterator it = graphInstance.getMyGraph().getAllEdges().iterator();
 //		while(it.hasNext()){
@@ -26,7 +34,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 //		System.out.println("rel E: "+graphInstance.getMyGraph().getVisualizationViewer().getPickedEdgeState().getSelectedObjects().length);
 //		System.out.println("rel V: "+graphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getSelectedObjects().length);
 			
-	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
@@ -35,6 +42,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		//System.out.println("Picked V: "+graphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
 		if (arg0.getClickCount() == 1) {
 			super.mouseClicked(arg0);
+			//System.out.println("v: "+vertex);
 
 		} else {
 

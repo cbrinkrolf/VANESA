@@ -119,6 +119,7 @@ public class OptionPanel {
 		satellite.setTitle("Satellite View");
 		satelliteWindow = new SatelliteWindow();
 		satellite.add(satelliteWindow.getSatellitePane());
+		satellite.setCollapsed(true);
 		//
 		// // init task pane and viz-component
 		pcpview = new JXTaskPane();
