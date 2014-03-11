@@ -72,12 +72,13 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 
 		if (source.equals("label")) {
 			if (!((JTextField) event.getSource()).getText().equals("")) {
-
 				geb.setLabel(((JTextField) event.getSource()).getText());
+				MainWindowSingelton.getInstance().updateElementTree();
 			}
 		} else if (source.equals("name")) {
 			if (!((JTextField) event.getSource()).getText().equals("")) {
 				geb.setName(((JTextField) event.getSource()).getText());
+				MainWindowSingelton.getInstance().updateElementTree();
 			}
 		} else if (source.equals("comment")) {
 			if (!((JTextArea) event.getSource()).getText().equals("")) {

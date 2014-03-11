@@ -5,6 +5,8 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -31,7 +33,7 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 
-public class ElementTree implements TreeSelectionListener {
+public class ElementTree implements TreeSelectionListener, ActionListener {
 
 	private JXTree tree = null;
 	private Hashtable<Integer, BiologicalNodeAbstract> table = new Hashtable<Integer, BiologicalNodeAbstract>();
@@ -43,7 +45,7 @@ public class ElementTree implements TreeSelectionListener {
 	private JPanel p;
 	private JCheckBox box = new JCheckBox(
 			"Center picked element in the viewport");
-
+	
 	public ElementTree() {
 		scrollTree = new JScrollPane();
 		scrollTree.setPreferredSize(new Dimension(350, 200));
@@ -79,6 +81,8 @@ public class ElementTree implements TreeSelectionListener {
 		p.setLayout(layout);
 		p.add(scrollTree, "wrap 10, align center");
 		scrollTree.setPreferredSize(new Dimension(300, 200));
+		box.setActionCommand("animated");
+		box.addActionListener(this);
 		p.add(box, "align left, wrap 8");
 		p.add(new JSeparator(), "wrap 5, growx, span,");
 		JLabel info = new JLabel(
@@ -115,29 +119,46 @@ public class ElementTree implements TreeSelectionListener {
 		Vector<String> v = new Vector<String>();
 		Hashtable<String, BiologicalNodeAbstract> currenTable = new Hashtable<String, BiologicalNodeAbstract>();
 		BiologicalNodeAbstract bna;
+		
+		String lbl = "";
+		
+		//sorting
 		int i = 0;
 		while (it.hasNext()) {
+			
+			
+			
 			bna = it.next();
 
-			v.add(bna.getLabel() + i);
-			currenTable.put(bna.getLabel() + i, bna);
+			if(bna.getLabel().length() == 0){
+				lbl = "id_"+bna.getID();
+			}else{
+				lbl = bna.getLabel();
+			}
+			
+			v.add(lbl + i);
+			currenTable.put(lbl + i, bna);
 			i++;
 		}
 
 		Collections.sort(v);
 		Iterator<String> it2 = v.iterator();
 		i = 0;
-
+		
 		while (it2.hasNext()) {
 
 			//String object = it2.next().toString();
-			bna = (BiologicalNodeAbstract) currenTable
-					.get(it2.next());
+			bna = currenTable.get(it2.next());
 
+			if(bna.getLabel().length() == 0){
+				lbl = "id_"+bna.getID();
+			}else{
+				lbl = bna.getLabel();
+			}
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
-				node.add(new DefaultMutableTreeNode(bna.getLabel() + " *"));
+				node.add(new DefaultMutableTreeNode(lbl + " *"));
 			} else {
-				node.add(new DefaultMutableTreeNode(bna.getLabel()));
+				node.add(new DefaultMutableTreeNode(lbl));
 			}
 
 			table.put(i, bna);
@@ -148,7 +169,7 @@ public class ElementTree implements TreeSelectionListener {
 		model.reload();
 	}
 
-	public void updateTree() {
+	private void updateTree() {
 
 		table.clear();
 		model.removeNodeFromParent(node);
@@ -163,13 +184,20 @@ public class ElementTree implements TreeSelectionListener {
 		Vector<String> v = new Vector<String>();
 		Hashtable<String, BiologicalNodeAbstract> currenTable = new Hashtable<String, BiologicalNodeAbstract>();
 
+		String lbl = "";
 		int i = 0;
 		BiologicalNodeAbstract bna;
 		
 		while (it.hasNext()) {
 			bna = it.next();
-			v.add(bna.getLabel() + i);
-			currenTable.put(bna.getLabel() + i, bna);
+			if(bna.getLabel().length() == 0){
+				lbl = "id_"+bna.getID();
+			}else{
+				lbl = bna.getLabel();
+			}
+			
+			v.add(lbl + i);
+			currenTable.put(lbl + i, bna);
 			i++;
 		}
 
@@ -180,10 +208,15 @@ public class ElementTree implements TreeSelectionListener {
 		while (it2.hasNext()) {
 			bna = currenTable.get(it2.next());
 
+			if(bna.getLabel().length() == 0){
+				lbl = "id_"+bna.getID();
+			}else{
+				lbl = bna.getLabel();
+			}
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
-				node.add(new DefaultMutableTreeNode(bna.getLabel() + " *"));
+				node.add(new DefaultMutableTreeNode(lbl + " *"));
 			} else {
-				node.add(new DefaultMutableTreeNode(bna.getLabel()));
+				node.add(new DefaultMutableTreeNode(lbl));
 			}
 
 			table.put(i, bna);
@@ -219,6 +252,18 @@ public class ElementTree implements TreeSelectionListener {
 			return;
 		}
 
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(e.getActionCommand().equals("animated")){
+			//System.out.println("klick");
+			//System.out.println(box.isSelected());
+			GraphInstance g = new GraphInstance();
+			g.getPathway().getGraph().setAnimatedPicking(box.isSelected());
+		}
+			
 		
 	}
 }
