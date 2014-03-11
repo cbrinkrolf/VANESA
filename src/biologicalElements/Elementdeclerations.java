@@ -76,7 +76,7 @@ public class Elementdeclerations {
 
 	public static final String phosphorylationEdge = "phosphorylation";
 
-	public static final String dephosphorylationEdge = "Dephosphorylation";
+	public static final String dephosphorylationEdge = "dephosphorylation";
 
 	public static final String glycosylationEdge = "glycosylation";
 
