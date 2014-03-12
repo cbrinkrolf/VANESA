@@ -511,6 +511,9 @@ public class MyGraph {
 	 */
 
 	public Point2D getVertexLocation(BiologicalNodeAbstract vertex) {
+		//System.out.println("1: "+this.getVertexLocation(vertex));
+		//System.out.println("2: "+visualizationModel.getGraphLayout().transform(vertex));
+		
 		return visualizationModel.getGraphLayout().transform(vertex);
 		// return layout.transform(vertex);
 		// return (Point2D) nodePositions.get(vertex);

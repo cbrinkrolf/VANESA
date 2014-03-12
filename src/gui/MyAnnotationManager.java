@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Color;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -33,9 +34,10 @@ public class MyAnnotationManager extends AnnotationManager {
 	}
 	
 	public void add(Annotation.Layer layer, Annotation<?> annotation) {
+		//System.out.println("2");
 		super.add(layer, annotation);
-		
 		this.currentAnnotation = annotation;
+		//annotation.setPaint(Color.red);
 	}
 
 	public void add(Annotation.Layer layer, MyAnnotation annotation) {

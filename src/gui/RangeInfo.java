@@ -1,7 +1,10 @@
 package gui;
 
+import graph.GraphInstance;
+
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.util.HashMap;
@@ -54,6 +57,8 @@ public class RangeInfo {
 
     public Map<String, String> getProperties() {
         Map<String, String> properties = new HashMap();
+        //this.text+="blaaaaa";
+        //System.out.println("drin");
         properties.put("title", this.text);
         properties.put("titlePos", this.titlePos + "");
         properties.put("fillColor", fillColor.getRGB() + "");
@@ -63,10 +68,17 @@ public class RangeInfo {
         properties.put("outlineType", outlineType + "");
         boolean ellipse = this.shape instanceof Ellipse2D;
         properties.put("isEllipse", ellipse + "");
+        GraphInstance i = new GraphInstance();
+       
         double minX = this.shape.getMinX();
+        //System.out.println("minx"+shape.getMinX());
         double minY = shape.getMinY();
         double maxX = shape.getMaxX();
         double maxY = shape.getMaxY();
+        //System.out.println("old: "+new Point2D.Double(minX,minY));
+        //System.out.println("new :"+i.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().transform(new Point2D.Double(minX,minY)));
+      
+       
         properties.put("minX", minX + "");
         properties.put("minY", minY + "");
         properties.put("maxX", maxX + "");
