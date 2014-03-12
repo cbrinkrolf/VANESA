@@ -167,6 +167,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 			// this.annotationManager).getCurrentAnnotation();
 			// a.setPaint(new Color(255, 255, 255));
 			// System.out.println(an.getShape());
+			//System.out.println("miiiin: "+an.getShape().getMinX());
 			r = new RangeInfo(an.getShape(), an.getText(),
 					(Color) a.getPaint(), (Color) a.getPaint(),
 					(Color) a.getPaint());
