@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
+import java.awt.geom.Point2D.Double;
 
 import javax.swing.JOptionPane;
 
@@ -41,6 +42,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 		}
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 
 		VisualizationViewer<V, E> vv = (VisualizationViewer) e.getSource();
@@ -49,6 +51,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 			if (annotationString != null && annotationString.length() > 0) {
 				Point2D p = vv.getRenderContext().getMultiLayerTransformer()
 						.inverseTransform(down);
+				
 				Annotation<String> annotation = new Annotation<String>(
 						annotationString, layer, annotationColor, false, p);
 				annotationManager.add(layer, annotation);
@@ -56,10 +59,15 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 		} else if (e.getModifiers() == modifiers) {
 			if (down != null) {
 				Point2D out = e.getPoint();
+				//System.out.println();
 				RectangularShape arect = (RectangularShape) rectangularShape
 						.clone();
+				Point2D p = vv.getRenderContext().getMultiLayerTransformer()
+						.inverseTransform(down);
+				//System.out.println(down);
 				//System.out.println(super.getAnnotationColor());
-				arect.setFrameFromDiagonal(down, out);
+				//arect.setFrameFromDiagonal(down, out);
+				arect.setFrameFromDiagonal(down.getX(), down.getY(), out.getX(), out.getY());
 				Shape s = vv.getRenderContext().getMultiLayerTransformer()
 						.inverseTransform(arect);
 				Annotation<Shape> annotation = new Annotation<Shape>(s, layer,
@@ -82,12 +90,26 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 				this.annotationManager.remove(a);
 			} else {
 				MyAnnotation ma;
+				Point2D.Double p1 = new Point2D.Double(s.getMinX(), s.getMinY());
+				Point2D.Double p2 = new Point2D.Double(s.getMaxX(), s.getMaxY());
+				
+				Point2D p1inv = vv.getRenderContext().getMultiLayerTransformer()
+						.inverseTransform(p1);
+				Point2D p2inv = vv.getRenderContext().getMultiLayerTransformer()
+						.inverseTransform(p2);
+				//System.out.println("inv: "+vv.getRenderContext().getMultiLayerTransformer()
+				//		.inverseTransform(p1));
+				//System.out.println("t: "+vv.getRenderContext().getMultiLayerTransformer()
+				//		.transform(p1));
+				s.setFrameFromDiagonal(p1inv, p2inv);
+				//System.out.println("neu: "+s.getMinX());
 				if (currentType == AnnotationPainter.TEXT) {
 					ma = new MyAnnotation(a, s,
 							this.annotationString);
 				} else {
 					ma = new MyAnnotation(a, s, "");
 				}
+				//System.out.println("neu: "+ma.getShape().getMinX());
 				// System.out.println(this.getRectangularShape().getWidth());
 				// a.setPaint(new Color(255, 255, 255));
 				/*
@@ -103,6 +125,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 				// a.setShape(this.getRectangularShape());
 				// System.out.println(a);
 				// System.out.println("addGM");
+				//System.out.println("miiiin: "+ma.getShape().getMinX());
 				((MyAnnotationManager) this.annotationManager).add(layer, ma);
 			}
 		}
