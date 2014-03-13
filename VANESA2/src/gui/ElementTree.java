@@ -255,6 +255,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		    //vv.getPickedVertexState().getPicked().size() ; 
 			//if (vv.getPickedVertexState().getPicked().size()  == 1) {
 		    	  //System.out.println("drin2");
+			if(g.getPathway().getGraph().isAnimatedPicking()){
 		        Layout<BiologicalNodeAbstract,BiologicalEdgeAbstract> layout = vv.getGraphLayout();
 		        Point2D q = layout.transform(vv.getPickedVertexState().getPicked().iterator().next());
 		        Point2D lvc = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(vv.getCenter());
@@ -277,7 +278,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		        thread.start();
 		    //  }
 		  //  }
-		
+			}
 			//picking.animatePicking(v, box.isSelected());
 		} else {
 			return;
