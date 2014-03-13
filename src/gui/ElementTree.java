@@ -1,12 +1,15 @@
 package gui;
 
 //import edu.uci.ics.jung.graph.Vertex;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -244,9 +247,37 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 					.getIndex(currentNode));
 			//System.out.println(bna.getLabel());
 			GraphInstance g = new GraphInstance();
-			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = g.getPathway().getGraph().getVisualizationViewer();
+			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = g.getPathway().getGraph().getVisualizationViewer();
 			vv.getPickedVertexState().clear();
 			vv.getPickedVertexState().pick(bna, true);
+
+			//final VisualizationViewer<BiologicalNodeAbstract,BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract >) e.getSource();
+		    //vv.getPickedVertexState().getPicked().size() ; 
+			//if (vv.getPickedVertexState().getPicked().size()  == 1) {
+		    	  //System.out.println("drin2");
+		        Layout<BiologicalNodeAbstract,BiologicalEdgeAbstract> layout = vv.getGraphLayout();
+		        Point2D q = layout.transform(vv.getPickedVertexState().getPicked().iterator().next());
+		        Point2D lvc = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(vv.getCenter());
+		        final double dx = (lvc.getX() - q.getX()) / 10;
+		        final double dy = (lvc.getY() - q.getY()) / 10;
+
+		        Runnable animator = new Runnable() {
+
+		          public void run() {
+		            for (int i = 0; i < 10; i++) {
+		              vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy);
+		              try {
+		                Thread.sleep(100);
+		              } catch (InterruptedException ex) {
+		              }
+		            }
+		          }
+		        };
+		        Thread thread = new Thread(animator);
+		        thread.start();
+		    //  }
+		  //  }
+		
 			//picking.animatePicking(v, box.isSelected());
 		} else {
 			return;
