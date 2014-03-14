@@ -234,18 +234,6 @@ public class MenuListener implements ActionListener {
 				JOptionPane.showMessageDialog(w,
 						"Please create a network before.");
 			}
-		} else if ("centerGraph".equals(event)) {
-			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					graphInstance.getPathway().getGraph().animatedCentering();
-				} else {
-					JOptionPane.showMessageDialog(w,
-							"Please create a network before.");
-				}
-			} else {
-				JOptionPane.showMessageDialog(w,
-						"Please create a network before.");
-			}
 		} else if ("printPicture".equals(event)) {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {

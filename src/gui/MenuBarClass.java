@@ -28,7 +28,7 @@ public class MenuBarClass {
 	private JMenuItem circleLayout;
 	private JMenuItem isomLayout;
 	private JMenuItem gemLayout;
-	private JMenuItem centerGraph;
+	//private JMenuItem centerGraph;
 	private JMenuItem databaseItem;
 	
 	//MARTIN db Switcher
@@ -80,9 +80,9 @@ public class MenuBarClass {
 		JMenu math = new JMenu("Graph");
 
 		JMenu generateGraph = new JMenu("Generate Graph");
-		JMenu visualAnalysis = new JMenu("Visual Analysis");
+		//JMenu visualAnalysis = new JMenu("Visual Analysis");
 
-		JMenu graph = new JMenu("Graph");
+		//JMenu graph = new JMenu("Graph");
 		// JMenu snapshot = new JMenu("Snapshot");
 		JMenu layout = new JMenu("Layout");
 		JMenu help = new JMenu("Help");
@@ -217,10 +217,6 @@ public class MenuBarClass {
 		gemLayout.addActionListener(new MenuListener());
 		gemLayout.setActionCommand("gemLayout");
 
-		centerGraph = new JMenuItem("Center Graph");
-		centerGraph.addActionListener(new MenuListener());
-		centerGraph.setActionCommand("centerGraph");
-
 		databaseItem = new JMenuItem("Database Connection");
 		databaseItem.addActionListener(new MenuListener());
 		databaseItem.setActionCommand("database settings");
@@ -297,7 +293,7 @@ public class MenuBarClass {
 		}
 
 		file.setMnemonic(KeyEvent.VK_F);
-		graph.setMnemonic(KeyEvent.VK_G);
+		math.setMnemonic(KeyEvent.VK_G);
 		layout.setMnemonic(KeyEvent.VK_L);
 		settings.setMnemonic(KeyEvent.VK_S);
 		tools.setMnemonic(KeyEvent.VK_T);
@@ -344,7 +340,8 @@ public class MenuBarClass {
 		// snapshot.add(printPicture);
 
 		math.add(generateGraph);
-		math.add(visualAnalysis);
+		math.add(phosphoImport);
+		//math.add(visualAnalysis);
 
 		generateGraph.add(mathLaw);
 		generateGraph.add(biGraph);
@@ -363,8 +360,8 @@ public class MenuBarClass {
 		// graph.add(layout);
 		// graph.add(snapshot);
 		// graph.add(animations);
-		graph.add(centerGraph);
-		graph.add(phosphoImport);
+		//graph.add(centerGraph);
+		//graph.add(phosphoImport);
 
 		// experiments.add(fabricio);
 		// TODO
@@ -404,7 +401,7 @@ public class MenuBarClass {
 		transformation.add(resolveReferences);
 		
 		bar.add(file);
-		bar.add(graph);
+		//bar.add(graph);
 		bar.add(math);
 		bar.add(petriNets);
 		bar.add(transformation);
@@ -439,7 +436,6 @@ public class MenuBarClass {
 		kkLayout.setEnabled(true);
 		springLayout.setEnabled(true);
 		gemLayout.setEnabled(true);
-		centerGraph.setEnabled(true);
 		// animations.setEnabled(true);
 		export.setEnabled(true);
 		/*
@@ -484,7 +480,6 @@ public class MenuBarClass {
 		kkLayout.setEnabled(false);
 		springLayout.setEnabled(false);
 		gemLayout.setEnabled(false);
-		centerGraph.setEnabled(false);
 		// animations.setEnabled(false);
 		// openNetwork.setEnabled(false);
 		export.setEnabled(false);
