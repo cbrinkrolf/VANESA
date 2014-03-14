@@ -9,8 +9,12 @@ import java.awt.Point;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D.Double;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +30,7 @@ import petriNet.Place;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.Protein;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
@@ -147,7 +152,7 @@ public class MyGraph {
 	private MyEdgeLabelRenderer elr = new MyEdgeLabelRenderer(Color.blue);
 
 	private MyAnnotationManager annotationManager;
-	
+
 	private boolean animatedPicking = false;
 
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
@@ -207,7 +212,40 @@ public class MyGraph {
 
 		vv.setSize(preferredSize);
 		vv.setMinimumSize(preferredSize);
-		vv.getRenderer().setVertexRenderer(new MultiVertexRenderer<BiologicalNodeAbstract, BiologicalEdgeAbstract>());
+
+		// vv.addKeyListener(new EventListener());
+		vv.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// nothing to do
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// del-key
+				if (e.getKeyCode() == 127) {
+					if (vv.getPickedVertexState().getPicked().size() > 0) {
+						Iterator<BiologicalNodeAbstract> it = vv
+								.getPickedVertexState().getPicked().iterator();
+						while (it.hasNext()) {
+							pathway.removeElement(it.next());
+						}
+						vv.getPickedVertexState().clear();
+						vv.repaint();
+					}
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// nothing to do
+			}
+		});
+
+		vv.getRenderer()
+				.setVertexRenderer(
+						new MultiVertexRenderer<BiologicalNodeAbstract, BiologicalEdgeAbstract>());
 		vv2 = new SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				vv, preferredSize2);
 		vv2.setSize(preferredSize2);
@@ -233,7 +271,7 @@ public class MyGraph {
 				.getRangeShapeEditor());
 
 		// set the inner nodes to be painted after the actual graph
-		//vv.addPostRenderPaintable(new InnerNodeRenderer(vv));
+		// vv.addPostRenderPaintable(new InnerNodeRenderer(vv));
 		vv.addPostRenderPaintable(new TokenRenderer(vv));
 		pickSupport = new ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				vv);
@@ -273,7 +311,6 @@ public class MyGraph {
 		} else {
 			vv.setBackground(Color.WHITE);
 		}
-
 		vv.setGraphMouse(graphMouse);
 		vv.setComponentPopupMenu(new GraphPopUp().returnPopUp());
 		// vv.setComponentPopupMenu(null);
@@ -299,17 +336,14 @@ public class MyGraph {
 		pr.setVertexDrawPaintTransformer(vdpf);
 		pr.setVertexFillPaintTransformer(vfpf);
 
-	
-        
-        
 		Transformer<BiologicalNodeAbstract, Icon> vertexIconTransformer = new Transformer<BiologicalNodeAbstract, Icon>() {
 
 			public Icon transform(BiologicalNodeAbstract bna) {
-				if(bna instanceof Place){
-					Icon icon = new DynamicIcon((Place)bna);
-				
-				return icon;
-				}else{
+				if (bna instanceof Place) {
+					Icon icon = new DynamicIcon((Place) bna);
+
+					return icon;
+				} else {
 					return null;
 				}
 			}
@@ -511,9 +545,9 @@ public class MyGraph {
 	 */
 
 	public Point2D getVertexLocation(BiologicalNodeAbstract vertex) {
-		//System.out.println("1: "+this.getVertexLocation(vertex));
-		//System.out.println("2: "+visualizationModel.getGraphLayout().transform(vertex));
-		
+		// System.out.println("1: "+this.getVertexLocation(vertex));
+		// System.out.println("2: "+visualizationModel.getGraphLayout().transform(vertex));
+
 		return visualizationModel.getGraphLayout().transform(vertex);
 		// return layout.transform(vertex);
 		// return (Point2D) nodePositions.get(vertex);
@@ -626,6 +660,10 @@ public class MyGraph {
 		vv.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
 		vv.setGraphMouse(graphMouse);
+		//vv.setFocusable(true);
+		
+		//Event e = new MouseEvent(vv, arg1, arg2, arg3, arg4, arg5, arg6,
+		// arg7, arg8, arg9, arg10)
 	}
 
 	public void setMouseModeTransform() {
@@ -810,7 +848,7 @@ public class MyGraph {
 	}
 
 	public void removeEdge(BiologicalEdgeAbstract bea) {
-		//graphInstance.getPathway().removeElement(bea);
+		// graphInstance.getPathway().removeElement(bea);
 		g.removeEdge(bea);
 	}
 
@@ -1072,8 +1110,8 @@ public class MyGraph {
 		// viewer.getViewTransformer().setScale(scale, scale, new
 		// Point2D.Float());
 		new LayoutScalingControl().scale(viewer, scale, new Point2D.Float());
-		//GraphCenter graphCenter2 = new GraphCenter(this,
-			//	viewer.getGraphLayout());
+		// GraphCenter graphCenter2 = new GraphCenter(this,
+		// viewer.getGraphLayout());
 		// System.out.println("w: "+ new Point((int)graphCenter2.getWidth(),
 		// (int)graphCenter2.getHeight()));
 		// System.out.println("w: "+viewer.getWidth());
@@ -1118,7 +1156,7 @@ public class MyGraph {
 												// der Elemente
 		);
 		// System.out.println("drin");
-		//Layout layout = viewer.getGraphLayout();
+		// Layout layout = viewer.getGraphLayout();
 		Point2D q = graphCenter.getCenter();
 		// Point2D q = viewer.getCenter();
 		// System.out.println("r: "+r);
