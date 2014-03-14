@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
@@ -106,7 +107,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("event");
+		//System.out.println("event");
 		if (rangeShapeEditor.selected != null) {
 			Object src = e.getSource();
 			if (src == this.editRange) {
@@ -722,6 +723,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 	@Override
 	public void paint(Graphics g) {
+		//System.out.println("oaint");
 		// TODO Auto-generated method stub
 		
 	}
@@ -730,5 +732,14 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	public boolean useTransform() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e){
+		super.mouseReleased(e);
+		graphInstance = new GraphInstance();
+		graphInstance.getPathway().getGraph().getVisualizationViewer().requestFocus();
+		//System.out.println("released");
+		
 	}
 }
