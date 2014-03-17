@@ -136,7 +136,7 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 
-	public Vector getAnswer() {
+	public Vector<String[]> getAnswer() {
 		ScreenSize screen = new ScreenSize();
 		int screenHeight = (int) screen.getheight();
 		int screenWidth = (int) screen.getwidth();
@@ -146,7 +146,7 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 				(screenHeight / 2) - dialog.getSize().height / 2);
 		dialog.setVisible(true);
 
-		Vector v = new Vector();
+		Vector<String[]> v = new Vector<String[]>();
 		if (ok) {
 
 			String tempEnzyme = "";
