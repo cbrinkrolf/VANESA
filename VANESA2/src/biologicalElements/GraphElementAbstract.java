@@ -206,7 +206,7 @@ public abstract class GraphElementAbstract implements Cloneable {
 		} else {
 
 			if (type == 1) {
-				if (getLabel().equals("1")) {
+				if (getLabel().equals("1") && this instanceof BiologicalEdgeAbstract) {
 					return "";
 				}
 				if (getLabel().length() == 0 || getLabel().equals(" ")) {
