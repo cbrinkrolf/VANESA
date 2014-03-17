@@ -333,16 +333,17 @@ public class BRENDASearch extends SwingWorker {
 		}
 
 		if (continueProgress) {
-			Vector results = bsrw.getAnswer();
+			Vector<String[]> results = bsrw.getAnswer();
 			if (results.size() != 0) {
-				final Iterator it = results.iterator();
+				final Iterator<String[]> it = results.iterator();
+				String[] res;
 				while (it.hasNext()) {
-					
+					res = it.next();
 					//System.out.println("drin");
-					/*BrendaPathway bc = new BrendaPathway(bar, (String[]) it
-							.next(), mergePW);*/
-					BrendaConnector bc = new BrendaConnector(bar, (String[]) it
-							.next(), mergePW);
+					BrendaConnector bc = new BrendaPathway(bar, res, mergePW);
+					//BrendaConnector bc = new BrendaConnector(bar, res, mergePW);
+					//System.out.println("newwwwww");
+					//BrendaConnectorNew bc = new BrendaConnectorNew(bar, res, mergePW);
 					bc.setDisregarded(bsrw.getDisregarded());
 					bc.setOrganism_specific(bsrw.getOrganismSpecificDecision());
 					bc.setSearchDepth(bsrw.getSerchDeapth());

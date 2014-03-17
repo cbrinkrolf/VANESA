@@ -8,10 +8,11 @@ import gui.ProgressBar;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -22,6 +23,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import pojos.DBColumn;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Enzyme;
@@ -32,7 +34,7 @@ import configurations.Wrapper;
 
 //import edu.uci.ics.jung.graph.Vertex;
 
-public class BrendaConnector extends SwingWorker {
+public class BrendaConnector extends SwingWorker<Object, Object> {
 
 	private MyGraph myGraph;
 
@@ -58,9 +60,9 @@ public class BrendaConnector extends SwingWorker {
 
 	private int searchDepth = 4;
 
-	private BrendaTree tree = new BrendaTree();
+	protected BrendaTree tree = new BrendaTree();
 
-	private String enzyme_organism = "";
+	protected String enzyme_organism = "";
 
 	private boolean organism_specific = false;
 
@@ -72,11 +74,15 @@ public class BrendaConnector extends SwingWorker {
 
 	private String[] enzymeToSearch;
 
-	private Hashtable<String, BiologicalNodeAbstract> enzymes = new Hashtable<String, BiologicalNodeAbstract>();
+	protected Hashtable<String, BiologicalNodeAbstract> enzymes = new Hashtable<String, BiologicalNodeAbstract>();
 
-	private Vector<String[]> edges = new Vector<String[]>();
+	// private Vector<String[]> edges = new Vector<String[]>();
+
+	private Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
 
 	private Pathway mergePW = null;
+
+	//private int i = 0;
 
 	public BrendaConnector(ProgressBar bar, String[] details, Pathway mergePW) {
 
@@ -111,7 +117,7 @@ public class BrendaConnector extends SwingWorker {
 		// node = node.toLowerCase();
 		String clean = this.cleanString(node);
 		if (!enzymes.containsKey(clean)) {
-			SmallMolecule sm = new SmallMolecule(node, "");
+			SmallMolecule sm = new SmallMolecule(clean, "");
 			sm.setReference(false);
 			sm.setColor(Color.yellow);
 			enzymes.put(clean, sm);
@@ -125,7 +131,7 @@ public class BrendaConnector extends SwingWorker {
 
 	private void searchPossibleEnzyms(BiologicalNodeAbstract node,
 			DefaultMutableTreeNode parentNode) {
-		System.out.println("methode");
+		// System.out.println("methode");
 		if (parentNode.getLevel() == 0
 				|| (parentNode.getLevel() / 2) < searchDepth + 1) {
 
@@ -173,7 +179,7 @@ public class BrendaConnector extends SwingWorker {
 						} else {
 						}
 
-						e = new Enzyme(resultDetails[0], resultDetails[1]);
+						e = new Enzyme(clean, resultDetails[1]);
 						e.setReference(false);
 						e.setColor(Color.GREEN);
 
@@ -194,19 +200,19 @@ public class BrendaConnector extends SwingWorker {
 							entry[0] = node.getLabel();
 							entry[1] = e.getLabel();
 							entry[2] = "True";
-							edges.add(entry);
+							this.buildEdge(node, e, true);
 						} else {
 							String[] entry = new String[3];
 							entry[0] = e.getLabel();
 							entry[1] = node.getLabel();
 							entry[2] = "True";
-							edges.add(entry);
+							this.buildEdge(e, node, true);
 						}
 
 						newNode = new DefaultMutableTreeNode(e.getLabel());
 
 						tree.addNode(parentNode, newNode);
-						System.out.println("search");
+						// System.out.println("search");
 						if (resultDetails[3] != null) {
 							separateReaction(resultDetails[3], e, newNode);
 						}
@@ -216,51 +222,84 @@ public class BrendaConnector extends SwingWorker {
 		}
 	}
 
-	private void buildEdge(BiologicalNodeAbstract one,
-			BiologicalNodeAbstract two, boolean directed) {
+	private void buildEdge(BiologicalNodeAbstract first,
+			BiologicalNodeAbstract second, boolean directed) {
+		// System.out.println("e:"+ ++i);
+		// System.out.println("edge");
+		// String[] entry;
+		// BiologicalNodeAbstract first;
+		// BiologicalNodeAbstract second;
+		// while (it.hasNext()) {
 
-		ReactionEdge r = new ReactionEdge("", "", one, two);
+		// entry = it.next();
+		// first = enzymes.get(this.cleanString(entry[0]));
+		// second = enzymes.get(this.cleanString(entry[1]));
 
-		r.setDirected(directed);
-		r.setReference(false);
-		r.setHidden(false);
-		r.setVisible(true);
+		if (first == null) {
+			System.out.println("first is null");
+		}
+		if (second == null) {
+			System.out.println("second is null");
+		}
+		// if (myGraph.getJungGraph().findEdge(first, second) == null) {
+		if (first != null && second != null) {
+			ReactionEdge r = new ReactionEdge("", "", first, second);
 
-		pw.addEdge(r);
+			r.setDirected(directed);
+			r.setReference(false);
+			r.setHidden(false);
+			r.setVisible(true);
+			this.edges.add(r);
+		}
+		// }
+		// }
+
+		// pw.addEdge(r);
 	}
 
 	private void drawEdges() {
 
-		Iterator<String[]> it = edges.iterator();
+		Iterator<BiologicalEdgeAbstract> it = edges.iterator();
 
-		String[] entry;
-		BiologicalNodeAbstract first;
-		BiologicalNodeAbstract second;
+		BiologicalEdgeAbstract bea;
+		// System.out.println("edges size:"+edges.size());
+		//int i = 0;
+		//int vorhanden = 0;
 		while (it.hasNext()) {
+			// System.out.println("added");
+			bea = it.next();
+			if (myGraph.getJungGraph().findEdge(bea.getFrom(), bea.getTo()) == null) {
 
-			entry = it.next();
-			first = enzymes.get(this.cleanString(entry[0]));
-			second = enzymes.get(this.cleanString(entry[1]));
-
-			if (first == null) {
-				System.out.println("first is null");
-			}
-			if (second == null) {
-				System.out.println("second is null");
-			}
-			if (myGraph.getJungGraph().findEdge(first, second) == null) {
-				if (entry[2].equals("True")) {
-					buildEdge(first, second, true);
-				} else {
-					buildEdge(first, second, false);
-				}
+				pw.addEdge(bea);
+				//i++;
+			} else {
+				// System.out.println("v: "+bea.getFrom().getLabel()+" n: "+bea.getTo().getLabel());
+				// System.out.println("v2: "+bea.getFrom().getName()+" n: "+bea.getTo().getName());
+				//vorhanden++;
 			}
 		}
+		// System.out.println("added: "+i);
+		// System.out.println("vorhanden: "+vorhanden);
+		// System.out.println("edges added: "+pw.countEdges());
+
+		/*
+		 * String[] entry; BiologicalNodeAbstract first; BiologicalNodeAbstract
+		 * second; while (it.hasNext()) {
+		 * 
+		 * entry = it.next(); first = enzymes.get(this.cleanString(entry[0]));
+		 * second = enzymes.get(this.cleanString(entry[1]));
+		 * 
+		 * if (first == null) { System.out.println("first is null"); } if
+		 * (second == null) { System.out.println("second is null"); } if
+		 * (myGraph.getJungGraph().findEdge(first, second) == null) { if
+		 * (entry[2].equals("True")) { buildEdge(first, second, true); } else {
+		 * buildEdge(first, second, false); } } }
+		 */
 	}
 
 	private void separateReaction(String reaction,
 			BiologicalNodeAbstract enzyme, DefaultMutableTreeNode parentNode) {
-		System.out.println("seperate");
+		// System.out.println("seperate");
 
 		int i = 0;
 		StringTokenizer tok = new StringTokenizer(reaction, "=");
@@ -270,7 +309,7 @@ public class BrendaConnector extends SwingWorker {
 		while (tok.hasMoreTokens()) {
 			result[i++] = tok.nextToken();
 		}
-		//System.out.println("sep");
+		// System.out.println("sep");
 		String[] gesplittet = result[0].split("\\s\\+\\s");
 		BiologicalNodeAbstract substrate;
 		DefaultMutableTreeNode newNode;
@@ -281,11 +320,7 @@ public class BrendaConnector extends SwingWorker {
 
 				substrate = addReactionNodes(temp);
 
-				String[] entry = new String[3];
-				entry[0] = substrate.getLabel();
-				entry[1] = enzyme.getLabel();
-				entry[2] = "True";
-				edges.add(entry);
+				this.buildEdge(substrate, enzyme, true);
 
 				// buildEdge(substrate.getVertex(), enzyme.getVertex(), true);
 				// !!!!!
@@ -299,11 +334,8 @@ public class BrendaConnector extends SwingWorker {
 
 				substrate = addReactionNodes(temp);
 
-				String[] entry = new String[3];
-				entry[0] = substrate.getLabel();
-				entry[1] = parentNode.toString();
-				entry[2] = "True";
-				edges.add(entry);
+				this.buildEdge(substrate,
+						this.enzymes.get(parentNode.toString()), true);
 
 			}
 		}
@@ -318,11 +350,7 @@ public class BrendaConnector extends SwingWorker {
 					product = addReactionNodes(temp);
 					// buildEdge(enzyme.getVertex(), product.getVertex(), true);
 
-					String[] entry = new String[3];
-					entry[1] = product.getLabel();
-					entry[0] = enzyme.getLabel();
-					entry[2] = "True";
-					edges.add(entry);
+					this.buildEdge(product, enzyme, true);
 
 					newNode = new DefaultMutableTreeNode(product.getLabel());
 
@@ -331,18 +359,18 @@ public class BrendaConnector extends SwingWorker {
 
 				} else {
 
-					String[] entry = new String[3];
-					entry[1] = parentNode.getParent().toString();
-					entry[0] = parentNode.toString();
-					entry[2] = "True";
-					edges.add(entry);
+					// System.out.println("P:"+parentNode.getParent().toString());
+					this.buildEdge(
+							this.enzymes.get(parentNode.getParent().toString()),
+							this.enzymes.get(parentNode.toString()), true);
 				}
 			}
 		}
 	}
 
-	private void processBrendaElement(String enzyme, DefaultMutableTreeNode node) {
-		
+	protected void processBrendaElement(String enzyme,
+			DefaultMutableTreeNode node) {
+
 		// System.out.println("l "+ node.getLevel());
 		// System.out.println("depth: "+searchDepth);
 		if (node.getLevel() == 0 || (node.getLevel() / 2) < searchDepth) {
@@ -353,13 +381,13 @@ public class BrendaConnector extends SwingWorker {
 
 			ArrayList<DBColumn> results = new Wrapper().requestDbContent(1,
 					BRENDAQueries.getBRENDAenzymeDetails, param);
-			
+
 			Enzyme e;
 			DefaultMutableTreeNode newNode;
 			String[] resultDetails;
 			String clean;
 			for (DBColumn column : results) {
-				
+
 				resultDetails = column.getColumn();
 				clean = this.cleanString(resultDetails[0]);
 				// System.out.println(resultDetails[0]);
@@ -367,7 +395,7 @@ public class BrendaConnector extends SwingWorker {
 					// System.out.println(resultDetails[1]);
 					// System.out.println(resultDetails[2]);
 					// System.out.println("durch");
-					e = new Enzyme(resultDetails[0], resultDetails[1]);
+					e = new Enzyme(clean, resultDetails[1]);
 
 					// System.out.println("dort");
 					e.setReference(false);
@@ -384,7 +412,7 @@ public class BrendaConnector extends SwingWorker {
 					if (resultDetails[3] != null
 							&& resultDetails[3].length() > 0) {
 						// System.out.println("3: "+resultDetails[3]);
-						
+
 						resultDetails[3] = resultDetails[3].replace("\uFFFD",
 								"'");
 						separateReaction(resultDetails[3], e, newNode);
@@ -423,7 +451,7 @@ public class BrendaConnector extends SwingWorker {
 		}
 	}
 
-	private String adoptOrganism(String organism) {
+	protected String adoptOrganism(String organism) {
 
 		StringTokenizer tok = new StringTokenizer(organism);
 		Vector<String> v = new Vector<String>();
@@ -492,7 +520,6 @@ public class BrendaConnector extends SwingWorker {
 
 		BiologicalNodeAbstract bna;
 		BiologicalNodeAbstract bna2;
-		String[] entry;
 		Factor f;
 		Enzyme e;
 		String[] resultDetails;
@@ -509,16 +536,11 @@ public class BrendaConnector extends SwingWorker {
 				bna2 = enzymes.get(result1);
 
 				bna2.setColor(Color.cyan);
-
-				entry = new String[3];
-				entry[0] = bna2.getLabel();
-				entry[1] = bna.getLabel();
-				entry[2] = "True";
-				edges.add(entry);
+				this.buildEdge(bna2, bna, true);
 
 			} else {
 
-				f = new Factor(resultDetails[1], resultDetails[1]);
+				f = new Factor(result1, result1);
 
 				f.setReference(false);
 				f.setColor(Color.cyan);
@@ -527,11 +549,7 @@ public class BrendaConnector extends SwingWorker {
 
 				e = ((Enzyme) enzymes.get(result0));
 
-				entry = new String[3];
-				entry[0] = f.getLabel();
-				entry[1] = e.getLabel();
-				entry[2] = "True";
-				edges.add(entry);
+				this.buildEdge(f, e, true);
 
 			}
 		}
@@ -557,7 +575,6 @@ public class BrendaConnector extends SwingWorker {
 		String[] resultDetails;
 		BiologicalNodeAbstract bna;
 		BiologicalNodeAbstract bna2;
-		String[] entry;
 		Inhibitor f;
 		Enzyme e;
 		String result0;
@@ -573,15 +590,11 @@ public class BrendaConnector extends SwingWorker {
 
 				bna2.setColor(Color.pink);
 
-				entry = new String[3];
-				entry[0] = bna2.getLabel();
-				entry[1] = bna.getLabel();
-				entry[2] = "True";
-				edges.add(entry);
+				this.buildEdge(bna2, bna, true);
 
 			} else {
 
-				f = new Inhibitor(resultDetails[1], resultDetails[1]);
+				f = new Inhibitor(result1, result1);
 
 				f.setReference(false);
 				f.setColor(Color.pink);
@@ -590,27 +603,23 @@ public class BrendaConnector extends SwingWorker {
 
 				e = ((Enzyme) enzymes.get(result0));
 
-				entry = new String[3];
-				entry[0] = f.getLabel();
-				entry[1] = e.getLabel();
-				entry[2] = "True";
-				edges.add(entry);
+				this.buildEdge(f, e, true);
 
 			}
 		}
 	}
 
-	private void getEnzymeDetails(String[] details) {
+	protected void getEnzymeDetails(String[] details) {
 
 		// System.out.println("len: "+details.length);
-		
+
 		// System.out.println("zyme: "+details[1]);
 		enzymes.clear();
 		enzyme_organism = adoptOrganism(details[1]);
 		// System.out.println(enzyme);
 		// System.out.println(tree.getRoot());
 		// System.out.println("vor");
-		//System.out.println("e: " + enzyme);
+		// System.out.println("e: " + enzyme);
 		processBrendaElement(details[0], tree.getRoot());
 		// System.out.println("ende");
 
@@ -779,7 +788,7 @@ public class BrendaConnector extends SwingWorker {
 			bar.closeWindow();
 		}
 		MainWindowSingelton.getInstance().updateAllGuiElements();
-		MainWindowSingelton.getInstance().enable(true);
+		MainWindowSingelton.getInstance().setEnable(true);
 	}
 
 	private String cleanString(String s) {
