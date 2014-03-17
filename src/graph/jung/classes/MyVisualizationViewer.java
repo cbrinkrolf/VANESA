@@ -59,7 +59,12 @@ public class MyVisualizationViewer extends VisualizationViewer<BiologicalNodeAbs
 		 super.renderGraph(g2d);
 		 g2d.setFont(new Font("default", Font.BOLD, 12));
 		 g2d.setColor(Color.red);
+		 String picked = "";
+		 if(this.getPickedVertexState().getPicked().size() > 0){
+			 //picked = " picked nodes:"+this.getPickedVertexState().getPicked().size();
+		 }
 		 g2d.drawString("Nodes: "+pw.getGraph().getAllVertices().size()+" Edges: "+pw.getGraph().getAllEdges().size(), 1, 11);
+		 g2d.drawString("Picked nodes: "+this.getPickedVertexState().getPicked().size(), 1, 23);
 	}
 	
 	/*@Override
