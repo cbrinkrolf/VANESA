@@ -90,7 +90,6 @@ public class KEGGConnector extends SwingWorker {
 
 	private ArrayList<DBColumn> allSpecificMicroRNAs = new ArrayList<DBColumn>();
 
-
 	private boolean dontCreatePathway = false;
 	private String pathwayOrg;
 
@@ -108,7 +107,7 @@ public class KEGGConnector extends SwingWorker {
 		}
 
 		public boolean equals(Object o) {
-			if(o == null){
+			if (o == null) {
 				return false;
 			}
 			KeggNodeDescribtion knd = (KeggNodeDescribtion) o;
@@ -221,7 +220,7 @@ public class KEGGConnector extends SwingWorker {
 
 		MainWindow window = MainWindowSingelton.getInstance();
 		window.updateOptionPanel();
-		window.enable(true);
+		window.setEnable(true);
 
 		bar.closeWindow();
 		firePropertyChange("finished", null, "finished");
@@ -237,7 +236,7 @@ public class KEGGConnector extends SwingWorker {
 			pathwayImage = resultDetails[4];
 			pathwayNumber = resultDetails[3];
 			pathwayOrg = resultDetails[2];
-			//System.out.println("inside");
+			// System.out.println("inside");
 		}
 
 	}
@@ -337,9 +336,8 @@ public class KEGGConnector extends SwingWorker {
 			boolean addBNA = true;
 			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 			BiologicalNodeAbstract old_bna;
-			while(it.hasNext()) {
-				old_bna = it
-						.next();
+			while (it.hasNext()) {
+				old_bna = it.next();
 				KEGGNode oldKeggNode = old_bna.getKEGGnode();
 				if (oldKeggNode.getXPos() == node.getXPos()
 						&& oldKeggNode.getYPos() == node.getYPos()) {
@@ -370,13 +368,15 @@ public class KEGGConnector extends SwingWorker {
 				}
 			}
 
-			bna = (BiologicalNodeAbstract) pw.addVertex(bna,
-					new Point2D.Double(bna.getKEGGnode().getXPos(), bna
-							.getKEGGnode().getYPos()));
+			if (addBNA) {
+				bna = (BiologicalNodeAbstract) pw.addVertex(bna,
+						new Point2D.Double(bna.getKEGGnode().getXPos(), bna
+								.getKEGGnode().getYPos()));
+			}
 			// myGraph.moveVertex(bna.getVertex(), bna.getKEGGnode().getXPos(),
 			// bna.getKEGGnode().getYPos());
-			if (!addBNA)
-				pw.removeElement(bna);
+			// if (!addBNA)
+			// pw.removeElement(bna);
 
 		}
 	}
@@ -409,8 +409,8 @@ public class KEGGConnector extends SwingWorker {
 
 	}
 
-	private void drawMicroRNAs(ArrayList<DBColumn> miRNAs, Vector<String> specialGenes,
-			String specialMicroRNA) {
+	private void drawMicroRNAs(ArrayList<DBColumn> miRNAs,
+			Vector<String> specialGenes, String specialMicroRNA) {
 		for (Iterator<DBColumn> i = miRNAs.iterator(); i.hasNext();) {
 			String[] column = i.next().getColumn();
 			String geneName = column[1];
@@ -441,7 +441,8 @@ public class KEGGConnector extends SwingWorker {
 							srna.setColor(Color.orange);
 						pw.addVertex(srna, p);
 						srna.setReference(false);
-						//myGraph.moveVertex(srna.getVertex(), p.getX(), p.getY());
+						// myGraph.moveVertex(srna.getVertex(), p.getX(),
+						// p.getY());
 						connectedToPathway++;
 					}
 					c = new Compound("", "", srna, bna);
@@ -464,34 +465,31 @@ public class KEGGConnector extends SwingWorker {
 
 	private void drawRelations(ArrayList<DBColumn> allGeneralRelations,
 			boolean specific) {
-		
-		
+
 		boolean first = true;
-		//System.out.println("drin"+allGeneralRelations.size());
-			
-	
-			
-			
+		// System.out.println("drin"+allGeneralRelations.size());
+
 		for (DBColumn column : allGeneralRelations) {
-			if(first){
-				for(int i = 0; i< column.getLenght(); i++){
-					//System.out.println(column.getColumn()[i]);
+			if (first) {
+				for (int i = 0; i < column.getLenght(); i++) {
+					// System.out.println(column.getColumn()[i]);
 				}
-				
+
 				first = false;
 			}
-			
+
 			String entry1 = column.getColumn()[3];
 			String entry2 = column.getColumn()[4];
 			String subtypeValue = column.getColumn()[2];
-			//String relationType = column.getColumn()[5];
+			// String relationType = column.getColumn()[5];
 			String edgeType = column.getColumn()[1];
 			String keggPathway = column.getColumn()[0];
 			BiologicalNodeAbstract bna1 = null;
 			BiologicalNodeAbstract subtype = null;
 			BiologicalNodeAbstract bna2 = null;
 			BiologicalNodeAbstract bna;
-			for (Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator(); it.hasNext();) {
+			for (Iterator<BiologicalNodeAbstract> it = pw.getAllNodes()
+					.iterator(); it.hasNext();) {
 				bna = it.next();
 				if (bna.getKEGGnode() != null
 						&& bna.getKEGGnode().getKEGGentryID().equals(entry1)
@@ -522,11 +520,11 @@ public class KEGGConnector extends SwingWorker {
 						keggPathway, subtypeValue));
 
 			if (bna1 != null && bna2 != null) {
-				//Vertex vertex1 = bna1.getVertex();
-				//Vertex vertex2 = bna2.getVertex();
+				// Vertex vertex1 = bna1.getVertex();
+				// Vertex vertex2 = bna2.getVertex();
 
 				if (subtype != null) {
-					//Vertex subVertex = subtype.getVertex();
+					// Vertex subVertex = subtype.getVertex();
 					if (!pw.existEdge(bna1, subtype)
 							&& (!pw.existEdge(subtype, bna1))) {
 						Compound c = new Compound("", "", bna1, subtype);
@@ -538,7 +536,7 @@ public class KEGGConnector extends SwingWorker {
 
 					if (!pw.existEdge(subtype, bna2)
 							&& (!pw.existEdge(bna2, subtype))) {
-						Compound c2 = new Compound("", "",subtype, bna2);
+						Compound c2 = new Compound("", "", subtype, bna2);
 						c2.setDirected(true);
 						if (specific)
 							bna2.setColor(Color.GREEN);
@@ -577,7 +575,7 @@ public class KEGGConnector extends SwingWorker {
 						if (specific)
 							bna1.setColor(Color.GREEN);
 						pw.addEdge(c);
-						System.out.println("type: "+edgeType);
+						// System.out.println("type: "+edgeType);
 					}
 				}
 			}
@@ -587,18 +585,17 @@ public class KEGGConnector extends SwingWorker {
 	private void drawReactions(ArrayList<DBColumn> allReactions,
 			boolean specific) {
 		boolean first = true;
-		//System.out.println("drin"+allReactions.size());
+		// System.out.println("drin"+allReactions.size());
 		for (DBColumn column : allReactions) {
-			
-			if(first){
-				for(int i = 0; i< column.getLenght(); i++){
-					//System.out.println(column.getColumn()[i]);
+
+			if (first) {
+				for (int i = 0; i < column.getLenght(); i++) {
+					// System.out.println(column.getColumn()[i]);
 				}
-				
+
 				first = false;
 			}
-			
-			
+
 			String substrateId = column.getColumn()[0];
 			String enzymeId = column.getColumn()[1];
 			String productId = column.getColumn()[2];
@@ -608,7 +605,8 @@ public class KEGGConnector extends SwingWorker {
 			BiologicalNodeAbstract enzyme = null;
 			BiologicalNodeAbstract product = null;
 			BiologicalNodeAbstract bna;
-			for (Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator(); it.hasNext();) {
+			for (Iterator<BiologicalNodeAbstract> it = pw.getAllNodes()
+					.iterator(); it.hasNext();) {
 				bna = it.next();
 				if (bna.getKEGGnode().getKEGGPathway().equals(keggPathway)) {
 					if (bna.getKEGGnode() != null
@@ -654,7 +652,7 @@ public class KEGGConnector extends SwingWorker {
 					enzyme.setColor(Color.GREEN);
 				if (!pw.existEdge(enzyme, product)
 						&& !pw.existEdge(product, enzyme)) {
-					Compound c2 = new Compound("", "",enzyme, product);
+					Compound c2 = new Compound("", "", enzyme, product);
 					pw.addEdge(c2);
 					c2.setDirected(true);
 				}

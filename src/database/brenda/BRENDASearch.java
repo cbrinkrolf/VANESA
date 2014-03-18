@@ -340,8 +340,8 @@ public class BRENDASearch extends SwingWorker {
 				while (it.hasNext()) {
 					res = it.next();
 					//System.out.println("drin");
-					BrendaConnector bc = new BrendaPathway(bar, res, mergePW);
-					//BrendaConnector bc = new BrendaConnector(bar, res, mergePW);
+					//BrendaConnector bc = new BrendaPathway(bar, res, mergePW);
+					BrendaConnector bc = new BrendaConnector(bar, res, mergePW);
 					//System.out.println("newwwwww");
 					//BrendaConnectorNew bc = new BrendaConnectorNew(bar, res, mergePW);
 					bc.setDisregarded(bsrw.getDisregarded());
