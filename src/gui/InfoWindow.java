@@ -68,15 +68,15 @@ public class InfoWindow {
 
 		instructions += tableEnd + "</html>";
 		//
-
 		JOptionPane.showMessageDialog(w.returnFrame(), instructions,
 				"Network Properties", 1);
+		
 		//
 		// System.out.println("done.");
-		// cs.saveAdjMatrix("haskell.N"+nodes+"E"+edges+"adj");
-		// System.out.println("export done.");
+//		cs.saveAdjMatrix("Jan.N"+nodes+"E"+edges+".adj");
+//		System.out.println("export done.");
 
-		// cs.saveGraphCoordinates("clustering_coords.dat");
+ //cs.saveGraphCoordinates("clustering_coords.dat");
 		// cs.savePackedAdjList("padjlist");
 
 		// startTime();
