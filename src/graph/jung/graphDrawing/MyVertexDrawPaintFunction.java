@@ -93,11 +93,13 @@ public class MyVertexDrawPaintFunction implements
 					return Color.WHITE;
 				else
 					// return Color.BLACK;
-					return Color.DARK_GRAY;
+					// return Color.DARK_GRAY;
+					return Color.BLUE;
 
 			else {
 				BiologicalNodeAbstract w;
-				Iterator<BiologicalNodeAbstract> iter = pw.getGraph().getJungGraph().getNeighbors(v).iterator();
+				Iterator<BiologicalNodeAbstract> iter = pw.getGraph()
+						.getJungGraph().getNeighbors(v).iterator();
 				while (iter.hasNext()) {
 					w = iter.next();
 					if (psV.isPicked(w))
@@ -106,7 +108,8 @@ public class MyVertexDrawPaintFunction implements
 
 				Set<BiologicalEdgeAbstract> set = psE.getPicked();
 				BiologicalEdgeAbstract bea;
-				for (Iterator<BiologicalEdgeAbstract> it = set.iterator(); it.hasNext();) {
+				for (Iterator<BiologicalEdgeAbstract> it = set.iterator(); it
+						.hasNext();) {
 
 					bea = it.next();
 
