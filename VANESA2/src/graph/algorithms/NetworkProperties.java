@@ -127,7 +127,8 @@ public class NetworkProperties extends Object {
 		if (!nodeassings.containsKey(nodeBNA)) {
 			nodeassings.put(nodeBNA, nodeincrement);
 			nodeassignsback.put(nodeincrement,nodeBNA);
-//			System.out.println(nodeBNA.getID()+" assigned to "+nodeincrement);
+			//debug
+//			System.out.println(nodeBNA.getID()+" "+nodeBNA.getLabel()+" assigned to "+nodeincrement);
 			nodeincrement++;
 		}
 	}
@@ -624,8 +625,7 @@ public class NetworkProperties extends Object {
 		//array of size(edges - 2*edges): earray
 		int narray[] = new int[nodes],
 				earray[] = new int[2*edges];
-		int arraypointer = 0;
-		
+		int arraypointer = 0;		
 		
 		//narray: each position of the array points to a position in earray
 		//(begin of the adjacency list of this node)
