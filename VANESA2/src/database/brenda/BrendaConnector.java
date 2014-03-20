@@ -162,6 +162,15 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 				DefaultMutableTreeNode newNode;
 				String[] resultDetails;
 				String clean;
+				String[] gesplittet;
+				String left[] = null;
+				String right[] = null;
+				
+				String tmp;
+				String[] split;
+				String weight = "1";
+				
+				
 				for (DBColumn column : results) {
 					resultDetails = (String[]) column.getColumn();
 
@@ -169,13 +178,16 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 							+ resultDetails[0]);
 					clean = this.cleanString(resultDetails[0]);
 					if (!enzymes.containsKey(clean)) {
-
+						//System.out.println("details: "+resultDetails[3]);
 						resultDetails[3] = resultDetails[3].replace("\uFFFD",
 								"'");
 						//System.out.println(resultDetails[3]);
-						String[] gesplittet = resultDetails[3].split("=");
+						gesplittet = resultDetails[3].split("=");
 						if (gesplittet.length == 2) {
+							left = gesplittet[0].split("\\s\\+\\s");
+							right = gesplittet[1].split("\\s\\+\\s");
 						} else {
+							//System.out.println("No valid reaction: "+resultDetails[3]);
 						}
 
 						e = new Enzyme(clean, resultDetails[1]);
@@ -183,35 +195,40 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 						e.setColor(Color.GREEN);
 
 						enzymes.put(clean, e);
-
-						StringTokenizer tok = new StringTokenizer(
-								resultDetails[3], "=");
-						int tokenCount = tok.countTokens();
-						String[] result = new String[tokenCount];
-						int i = 0;
-						while (tok.hasMoreTokens()) {
-							result[i++] = tok.nextToken();
+						
+						//System.out.println("size: "+left.length);
+						for(int i = 0; i< left.length; i++){
+							tmp = this.cleanString(left[i].trim());
+							split = tmp.split("\\s", 2);
+							if (split[0].matches("\\d+")) {
+								weight = split[0];
+								tmp = split[1];
+							}
+							
+							if(node.getLabel().equals(tmp)){
+								this.buildEdge(node, e, true, weight);
+								break;
+							}
+							
 						}
-
-						if (result[0].contains(node.getLabel())) {
-							// buildEdge(node.getVertex(), e.getVertex(), true);
-							String[] entry = new String[3];
-							entry[0] = node.getLabel();
-							entry[1] = e.getLabel();
-							entry[2] = "True";
-							this.buildEdge(node, e, true, "1");
-						} else {
-							String[] entry = new String[3];
-							entry[0] = e.getLabel();
-							entry[1] = node.getLabel();
-							entry[2] = "True";
-							this.buildEdge(e, node, true, "1");
+						weight = "1";
+						for(int i = 0; i< right.length; i++){
+							tmp = this.cleanString(right[i].trim());
+							split = tmp.split("\\s", 2);
+							if (split[0].matches("\\d+")) {
+								weight = split[0];
+								tmp = split[1];
+							}
+							
+							if(node.getLabel().equals(tmp)){
+								this.buildEdge(e, node, true, weight);
+								break;
+							}
 						}
-
+						
 						newNode = new DefaultMutableTreeNode(e.getLabel());
 
 						tree.addNode(parentNode, newNode);
-						// System.out.println("search");
 						if (resultDetails[3] != null) {
 							separateReaction(resultDetails[3], e, newNode);
 						}
@@ -549,9 +566,9 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 			resultDetails = column.getColumn();
 			result0 = this.cleanString(resultDetails[0]);
 			result1 = this.cleanString(resultDetails[1]);
-
+			System.out.println("found Cofactor");
 			if (enzymes.containsKey(result1)) {
-
+				
 				bna = enzymes.get(result0);
 				bna2 = enzymes.get(result1);
 
@@ -559,7 +576,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 				this.buildEdge(bna2, bna, true, "1");
 
 			} else {
-
 				f = new Factor(result1, result1);
 
 				f.setReference(false);
@@ -603,8 +619,9 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 			resultDetails = column.getColumn();
 			result0 = this.cleanString(resultDetails[0]);
 			result1 = this.cleanString(resultDetails[1]);
+			System.out.println("found Inhibitor");
 			if (enzymes.containsKey(result1)) {
-
+				System.out.println("drin2");
 				bna = enzymes.get(result0);
 				bna2 = enzymes.get(result1);
 
