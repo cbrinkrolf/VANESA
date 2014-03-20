@@ -184,11 +184,11 @@ public class OptionPanel {
 		if (DeveloperClass.isDeveloperStatus) {
 			taskPaneContainer.add(databaseSearch);
 			taskPaneContainer.add(pcpview);
+			taskPaneContainer.add(theory);
 			taskPaneContainer.add(satellite);
 			taskPaneContainer.add(elements);
 			taskPaneContainer.add(pathways);
 			taskPaneContainer.add(filter);
-			taskPaneContainer.add(theory);
 			// taskPaneContainer.add(dbProperties);
 			taskPaneContainer.add(generalProperties);
 			taskPaneContainer.add(heatgraphProperties);
