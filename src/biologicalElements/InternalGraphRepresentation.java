@@ -83,4 +83,9 @@ public class InternalGraphRepresentation {
 		}
 		return vertices.get(from).get(to);
 	}
+	
+	//MARTIN: return adjacency list
+	public HashMap<BiologicalNodeAbstract, HashMap<BiologicalNodeAbstract, BiologicalEdgeAbstract>> getAdjacencyList(){
+		return vertices;
+	}
 }
