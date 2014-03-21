@@ -183,7 +183,8 @@ public class GraphNodeDimensionGUI implements ActionListener {
 			//do calculations
 			switch (currentalgorithmindex) {
 			case 0:
-				System.out.println("Node Weighting 0: None");
+				//DEBUG
+				//System.out.println("Node Weighting 0: None");
 				//Standard Nodesize to 1
 				itn = c.getPathway().getAllNodes().iterator();
 				while(itn.hasNext()){
@@ -197,7 +198,8 @@ public class GraphNodeDimensionGUI implements ActionListener {
 				
 				break;
 			case 1:
-				System.out.println("Node Weighting 1: Node Degree");
+				//DEBUG
+				//System.out.println("Node Weighting 1: Node Degree");
 				//Node Degree rating				
 				getNodeDegreeRatings();
 				
@@ -208,8 +210,8 @@ public class GraphNodeDimensionGUI implements ActionListener {
 				
 				break;
 			case 2:
-				System.out.println("Node Weighting 2: Neighbor Degree");
-				//TODO Neighbor degree rating
+				//DEBUG
+				//System.out.println("Node Weighting 2: Neighbor Degree");
 				ratings = c.averageNeighbourDegreeTable();
 
 				//calclulate Weighting
@@ -219,8 +221,9 @@ public class GraphNodeDimensionGUI implements ActionListener {
 
 				break;
 			case 3:
-				System.out.println("Node Weighting 3: Clique");
-				//TODO: Clique rating
+				//DEBUG
+				//System.out.println("Node Weighting 3: Clique");
+				//MARTIN: Clique dimension rating
 				break;
 				
 			default:
