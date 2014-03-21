@@ -1,5 +1,6 @@
 package gui;
 
+import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
 import graph.algorithms.gui.GraphColoringGUI;
 import graph.algorithms.gui.GraphNodeRemovalGUI;
 import graph.algorithms.gui.GraphNodeDimensionGUI;
@@ -23,6 +24,7 @@ public class GraphAlgorithmsWindow {
 	private GraphColoringGUI coloredgraph = new GraphColoringGUI();
 	private GraphNodeRemovalGUI noderemoval = new GraphNodeRemovalGUI();
 	private GraphNodeDimensionGUI nodeweight = new GraphNodeDimensionGUI();
+	private DenselyConnectedBiclusteringGUI denselyConnected = new DenselyConnectedBiclusteringGUI();
 
 	public GraphAlgorithmsWindow() {
 
@@ -39,6 +41,7 @@ public class GraphAlgorithmsWindow {
 		tabbedPanel.addTab(nodeweight.getTitledTab());
 		tabbedPanel.addTab(noderemoval.getTitledTab());
 		tabbedPanel.addTab(shortestPath.getTitledTab());
+		tabbedPanel.addTab(denselyConnected.getTitledTab());
 
 	}
 
@@ -48,10 +51,11 @@ public class GraphAlgorithmsWindow {
 			p.add(tabbedPanel, BorderLayout.CENTER);
 			emptyPane = false;
 		}
-		shortestPath.revalidateView();
+		coloredgraph.revalidateView();
 		nodeweight.revalidateView();
 		noderemoval.revalidateView();
-		coloredgraph.revalidateView();
+		shortestPath.revalidateView();
+		denselyConnected.revalidateView();
 
 		p.setVisible(true);
 		p.repaint();
