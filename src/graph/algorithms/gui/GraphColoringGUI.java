@@ -201,7 +201,7 @@ public class GraphColoringGUI implements ActionListener {
 						key = entry.getKey();
 						value = entry.getValue();
 						// debug
-						System.out.println(key + " " + value);
+						//System.out.println(key + " " + value);
 						coloring.put(np.getNodeAssignmentbackwards(key), value);
 					}
 				}
