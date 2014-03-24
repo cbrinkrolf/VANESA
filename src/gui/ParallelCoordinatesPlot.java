@@ -1,10 +1,10 @@
 package gui;
 
 /*import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
-import edu.uci.ics.jung.utils.Pair;
-import edu.uci.ics.jung.utils.UserData;
-import edu.uci.ics.jung.visualization.PickedState;*/
+ import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
+ import edu.uci.ics.jung.utils.Pair;
+ import edu.uci.ics.jung.utils.UserData;
+ import edu.uci.ics.jung.visualization.PickedState;*/
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
 import graph.animations.RegulationTabelModel;
@@ -104,7 +104,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	// create GUI components
 	private JButton showTable = new JButton("show detailed simulation results");
 	private JButton drawPlots = new JButton("show all animation result plots");
-	
+
 	private JButton drawPCP = new JButton("Draw Timeseries");
 	private JLabel stepLabel = new JLabel("Step 0");
 	private JSlider slider = new JSlider();
@@ -122,8 +122,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private boolean first = true;
 	private JButton petriNetAnimationButton = new JButton("Start Animation");
 	private JButton petriNetStopAnimationButton = new JButton("Stop");
-	private JButton resetPetriNet = new JButton ("Reset");
-	
+	private JButton resetPetriNet = new JButton("Reset");
+
 	private int animationThreadStep = -1;
 	private JSpinner animationStart;
 	private JSpinner animationStop;
@@ -168,10 +168,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		petriNetStopAnimationButton.addActionListener(this);
 		petriNetStopAnimationButton.setActionCommand("animatePetriNetStop");
-		
+
 		resetPetriNet.addActionListener(this);
 		resetPetriNet.setActionCommand("reset");
-		
+
 		drawPCP.addActionListener(this);
 		drawPCP.setActionCommand("drawplot");
 
@@ -236,25 +236,29 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				// System.out.println("rows: "+rowsSize);
 				// System.out.println("rowsDim: "+rowsDim);
 				// get Data from all Places
-				Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+				Iterator<BiologicalNodeAbstract> it = pw.getAllNodes()
+						.iterator();
 				rows = new Object[rowsSize][rowsDim + 1];
 				int i = 0;
 				Vector<Double> MAData;
 				BiologicalNodeAbstract bna;
-				//System.out.println("while");
+				// System.out.println("while");
 				while (it.hasNext()) {
-					//Object elem = it.next();
+					// Object elem = it.next();
 					bna = it.next();
 					if (bna instanceof Place
-							&& pw.getPetriNet().getPnResult()
-									.containsKey("P"+((Place) bna).getID()+".t")) {
+							&& pw.getPetriNet()
+									.getPnResult()
+									.containsKey(
+											"P" + ((Place) bna).getID() + ".t")) {
 						MAData = bna.getPetriNetSimulationData();
-						 //System.out.println("size:");
-						 //System.out.println(MAData.size());
+						// System.out.println("size:");
+						// System.out.println(MAData.size());
 						rows[i][0] = bna.getLabel();
 						for (int j = 1; j <= MAData.size(); j++) {
 							rows[i][j] = MAData.get(j - 1);
-							//System.out.println(i+" "+j +" "+ MAData.get(j - 1));
+							// System.out.println(i+" "+j +" "+ MAData.get(j -
+							// 1));
 						}
 						i++;
 					}
@@ -267,7 +271,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			String selectorValues[] = new String[rowsSize];
 			columNames[0] = "Label";
 			for (int i = 0; i < rowsDim; i++) {
-				columNames[i+1] = "t=" + pw.getPetriNet().getPnResult().get("time").get(i);
+				columNames[i + 1] = "t="
+						+ pw.getPetriNet().getPnResult().get("time").get(i);
 
 			}
 
@@ -290,7 +295,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			animationStart.addChangeListener(this);
 
 			SpinnerModel modelEnd = new SpinnerNumberModel(rowsDim, // initial
-																				// value
+																	// value
 					1, // min
 					rowsDim, // max
 					1); // step
@@ -298,8 +303,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			animationStop = new JSpinner(modelEnd);
 			animationStop.addChangeListener(this);
 
-			SpinnerModel modelSpeed = new SpinnerNumberModel(animationSpeedInit, // initial
-																				// value
+			SpinnerModel modelSpeed = new SpinnerNumberModel(
+					animationSpeedInit, // initial
+										// value
 					1, // min
 					20, // max
 					1); // step
@@ -317,7 +323,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			slider.setMaximum(rowsDim);
 			slider.setMajorTickSpacing(1);
 			slider.addChangeListener(this);
-			slider.setToolTipText("Step: 0");
+			slider.setToolTipText("Time: 0");
 
 			MigLayout migLayout2 = new MigLayout();
 			controlPanel = new JPanel(migLayout2);
@@ -329,7 +335,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			petriNetStopAnimationButton.setBackground(Color.RED);
 			resetPetriNet.setBackground(Color.white);
 			petriNetStopAnimationButton.setEnabled(false);
-			
+
 			controlPanel.add(new JSeparator(), "span, wrap 10, growx");
 
 			controlPanel.add(new JLabel("Animation Start:"), "align left");
@@ -350,7 +356,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			controlPanel2.add(petriNetAnimationButton, "align left");
 			controlPanel2.add(petriNetStopAnimationButton, "align left");
 			controlPanel2.add(resetPetriNet, "align left");
-			
+
 			controlPanel.add(controlPanel2, "span, wrap,growx");
 			controlPanel.add(new JSeparator(), "span, wrap 10, growx");
 			controlPanel.add(slider, "align left");
@@ -362,7 +368,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							"span, wrap 10, growx, align center");
 			mainPanel.add(p, "span");
 			mainPanel.add(controlPanel, "gap 10, wrap 15, growx");
-			
+
 			// // /INVARIANTEN TEST TODO
 			// //P-Invariante
 			// rP = new Object[this.rowsSize][2];
@@ -510,24 +516,23 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			dialogPanel
 					.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
-			
-			
+
 			JPanel selectPanel = new JPanel();
 
 			dialogPanel.add(selectPanel, "span,gaptop 1,align right,wrap");
 
 			// draw a new plot according to the current time step selection
 			drawPlot();
-			PlotsPanel pp=new PlotsPanel();
-			dialogPanel.add(pp,"wrap");
-			JButton button=new JButton("Save Results");
+			PlotsPanel pp = new PlotsPanel();
+			dialogPanel.add(pp, "wrap");
+			JButton button = new JButton("Save Results");
 			button.addActionListener(pp);
-			dialogPanel.add(button,"wrap");
-			
-		} else{
+			dialogPanel.add(button, "wrap");
+
+		} else {
 			removeAllElements();
 		}
-		
+
 	}
 
 	private ArrayList<Place> places;
@@ -541,7 +546,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		GraphInstance graphInstance = new GraphInstance();
 
-		Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway()
+				.getAllNodes().iterator();
 
 		// get Selected Places and their index+label
 		Place place;
@@ -549,20 +555,24 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		String idx = "";
 		places = new ArrayList<Place>();
 		BiologicalNodeAbstract bna;
-		//System.out.println(GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
-		
-		int picked = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size();
+		// System.out.println(GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
+
+		int picked = GraphInstance.getMyGraph().getVisualizationViewer()
+				.getPickedVertexState().getPicked().size();
 		while (it.hasNext()) {
 			bna = it.next();
 			if (bna instanceof Place) {
 				place = (Place) bna;
 				actualLabel = place.getLabel();
-				//System.out.println(rowsSize);
-				//System.out.println(bna.getID());
-				if (picked == 0 || GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().isPicked(bna)){//.isVertexPicked(bna.getVertex())) {
-						//System.out.println(bna.getID() + " is picked.");
-						for (int j = 0; j < rowsSize; j++) {
-							//System.out.println("String: "+ rows[j][0]);
+				// System.out.println(rowsSize);
+				// System.out.println(bna.getID());
+				if (picked == 0
+						|| GraphInstance.getMyGraph().getVisualizationViewer()
+								.getPickedVertexState().isPicked(bna)) {// .isVertexPicked(bna.getVertex()))
+																		// {
+					// System.out.println(bna.getID() + " is picked.");
+					for (int j = 0; j < rowsSize; j++) {
+						// System.out.println("String: "+ rows[j][0]);
 						idx = rows[j][0].toString();
 						if (idx.equals(actualLabel)) {
 							indices.add(j);
@@ -588,9 +598,11 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			for (int j = 0; j < indices.size(); j++) {
 				series.add(new XYSeries(j));
 				for (int i = 0; i < rowsDim; i++) {
-					value = Double.parseDouble(rows[indices.get(j)][i+1]
+					value = Double.parseDouble(rows[indices.get(j)][i + 1]
 							.toString());
-					series.get(j).add(pw.getPetriNet().getPnResult().get("time").get(i), value);
+					series.get(j).add(
+							pw.getPetriNet().getPnResult().get("time").get(i),
+							value);
 				}
 				dataset.addSeries(series.get(j));
 				labels.add(rows[indices.get(j)][0].toString());
@@ -613,8 +625,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		// create a chart...
 		chart = ChartFactory.createXYLineChart("", "Timestep", "Token",
 				dataset, PlotOrientation.VERTICAL, true, true, false);
-		
-		
+
 		// set rendering options: all lines in black, domain steps as integers
 		final XYPlot plot = chart.getXYPlot();
 
@@ -627,11 +638,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				return labels.get(arg1);
 			}
 		});
-	
 
 		renderer.setBaseItemLabelsVisible(true);
 		renderer.setLegendItemLabelGenerator(new XYSeriesLabelGenerator() {
-			
+
 			@Override
 			public String generateLabel(XYDataset arg0, int arg1) {
 				return labels.get(arg1);
@@ -671,14 +681,13 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				if (event.getEntity() != null
 						&& event.getEntity() instanceof XYItemEntity) {
 					XYItemEntity entity = (XYItemEntity) event.getEntity();
-				//	System.out.println("Entity seriesindex: "
-				//			+ entity.getSeriesIndex());
+					// System.out.println("Entity seriesindex: "
+					// + entity.getSeriesIndex());
 					PickedState ps = GraphInstance.getMyGraph()
 							.getVisualizationViewer().getPickedVertexState();
-//					ps.clearPickedVertices();
+					// ps.clearPickedVertices();
 					ps.clear();
-					ps.pick(places.get(entity.getSeriesIndex()),
-							true);
+					ps.pick(places.get(entity.getSeriesIndex()), true);
 
 				}
 
@@ -696,34 +705,35 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		main.revalidate();
 	}
+
 	/** Event handler function. Handles Button Clicks **/
 	public void actionPerformed(ActionEvent e) {
 
 		String event = e.getActionCommand();
-		if ("reset".equals(event)){
-			for (Iterator i=pw.getAllNodes().iterator(); i.hasNext(); ){
-				BiologicalNodeAbstract bna=(BiologicalNodeAbstract) i.next();
-				if (bna instanceof Place){
+		if ("reset".equals(event)) {
+			for (Iterator i = pw.getAllNodes().iterator(); i.hasNext();) {
+				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) i.next();
+				if (bna instanceof Place) {
 					bna.rebuildShape(new VertexShapes());
 					bna.setColor(Color.WHITE);
 				}
 			}
-		}
-		else if ("show".equals(event)) {
+		} else if ("show".equals(event)) {
 			// show table containing all data
-			dialog = new JDialog(w,true);	
+			dialog = new JDialog(w, true);
 			dialog.setTitle("Simulation Results");
 			dialog.setResizable(true);
 			dialog.setContentPane(dialogPanel);
 			dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			
+
 			ScreenSize screen = new ScreenSize();
 			int screenHeight = (int) screen.getheight();
 			int screenWidth = (int) screen.getwidth();
 
 			dialog.pack();
-//			dialog.setLocation((screenWidth / 2) - dialog.getSize().width / 2,
-//					(screenHeight / 2) - dialog.getSize().height / 2);
+			// dialog.setLocation((screenWidth / 2) - dialog.getSize().width /
+			// 2,
+			// (screenHeight / 2) - dialog.getSize().height / 2);
 			dialog.setVisible(true);
 		} else if (event.equals("animatePetriNet")) {
 			// redraw plot and set new colors/sizes
@@ -854,9 +864,13 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			else if (e.getSource().equals(animationSpeed))
 				animationSpeedInit = (Integer) animationSpeed.getValue();
 			else {
-				pw.getPetriNet().setCurrentTimeStep(this.slider.getValue());
-				slider.setToolTipText("Step: " + this.slider.getValue());
-				stepLabel.setText("Step: " + this.slider.getValue());
+
+				// System.out.println(pw.getPetriNet().getPnResult().get("time").size());
+				pw.getPetriNet().setCurrentTimeStep(this.slider.getValue() - 1);
+				slider.setToolTipText("Time: " + this.slider.getValue());
+				stepLabel.setText("Time: "
+						+ (double)Math.round((pw.getPetriNet().getPnResult().get("time")
+								.get(this.slider.getValue() - 1)*100))/100);
 				// create node color set
 				// 0 -> blue -> lower expression
 				// 1 -> red -> higher expression
@@ -871,11 +885,12 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				Double val;
 				Double ref;
 				int take = 0;
-				//Vertex v;
+				// Vertex v;
 
 				// get pathway and iterate over its JUNG vertices
 				Pathway pw = graphInstance.getPathway();
-				Collection<BiologicalNodeAbstract> ns = pw.getGraph().getAllVertices();
+				Collection<BiologicalNodeAbstract> ns = pw.getGraph()
+						.getAllVertices();
 				if (ns != null) {
 					Iterator<BiologicalNodeAbstract> it = ns.iterator();
 					BiologicalNodeAbstract bna;
@@ -885,46 +900,57 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 						// for current time step
 						bna = it.next();
 						if (bna.getPetriNetSimulationData().size() > 0
-								&& slider.getValue() >= 2) {
-							val = bna.getMicroArrayValue(slider.getValue() - 2);
-
-							// get microarray value for reference time step and
-							// compare
-							// it
-							// with the current value
+								&& slider.getValue() >= 1) {
 							ref = bna.getMicroArrayValue(slider.getValue() - 1);
-							if (val > ref)
-								take = 1;
-							else if (val < ref)
-								take = 0;
-							else
-								take = 2;
-
-							// ref -= val;
 							ref = Math.abs(ref);
-							
-							float ref2= (float) Math.sqrt(Math.sqrt(ref));
-							
-							if (ref2>3.0) ref2 = 3.0f;
-							
-							// System.out.println(ref);
-							// prepare size modification
-							//v.setUserDatum("madata", 0.4, UserData.SHARED);
-							if (bna instanceof Place)
+							if (bna instanceof Place) {
 								((Place) bna).setToken(ref);
-							//NodeRankingVertexSizeFunction sf = new NodeRankingVertexSizeFunction(
-							//		"madata", ref2);
-							
-							VertexShapes vs = new VertexShapes(ref2,1.0f);
+							}
+							if (slider.getValue() >= 2) {
+								val = bna
+										.getMicroArrayValue(slider.getValue() - 2);
 
-							// apply change in color and size only if current
-							// node is
-							// not a
-							// reference
-							if (!bna.isReference()) {
-								bna.rebuildShape(vs);
-								if (animationColour.isSelected()) {
-									bna.setColor(new Color(colors.get(take)));
+								// get microarray value for reference time step
+								// and
+								// compare
+								// it
+								// with the current value
+
+								if (val > ref)
+									take = 1;
+								else if (val < ref)
+									take = 0;
+								else
+									take = 2;
+
+								// ref -= val;
+
+								float ref2 = (float) Math.sqrt(Math.sqrt(ref));
+
+								if (ref2 > 3.0)
+									ref2 = 3.0f;
+
+								// System.out.println(ref);
+								// prepare size modification
+								// v.setUserDatum("madata", 0.4,
+								// UserData.SHARED);
+
+								// NodeRankingVertexSizeFunction sf = new
+								// NodeRankingVertexSizeFunction(
+								// "madata", ref2);
+
+								VertexShapes vs = new VertexShapes(ref2, 1.0f);
+
+								// apply change in color and size only if
+								// current
+								// node is
+								// not a
+								// reference
+								if (!bna.isReference()) {
+									bna.rebuildShape(vs);
+									if (animationColour.isSelected()) {
+										bna.setColor(new Color(colors.get(take)));
+									}
 								}
 							}
 						}
