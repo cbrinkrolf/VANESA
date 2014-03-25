@@ -44,6 +44,9 @@ public class Launch {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		// avoid strange awt/swing exceptions:
+		// Exception in thread "AWT-EventQueue-0" java.lang.IllegalArgumentException: Comparison method violates its general contract!
+		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
 		// set app name for mac osx
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name",
