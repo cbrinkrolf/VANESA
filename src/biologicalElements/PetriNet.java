@@ -158,11 +158,15 @@ public class PetriNet {
 		if (hs != null) {
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			BiologicalNodeAbstract bna;
+			
 			while (it.hasNext()) {
 				bna = it.next();
 				if (bna instanceof Place) {
-					((Place) bna).setPlotColor(colors.get(r.nextInt(colors
-							.size())));
+					
+					//float f = 1.0f/hs.size()+count.size()*1.0f/hs.size();
+					//Color c = Color.getHSBColor(f, 1, 1);
+					
+					
 					//int intSimID = bna.getID();
 					// if (bna.getPetriNetSimulationData().size() == 0) {
 					// System.out.println(intSimID);
@@ -198,10 +202,13 @@ public class PetriNet {
 
 			it = hs.iterator();
 			//Place p;
-			Object o;
+			int i = 0;
 			while (it.hasNext()) {
-				o = it.next();
-				if (o instanceof Place) {
+				bna = it.next();
+				if (bna instanceof Place) {
+					//System.out.println(i*1.0f/(this.places-1));
+					((Place) bna).setPlotColor(Color.getHSBColor(1.0f/(this.places-1)+i*1.0f/(this.places-1), 1, 1));
+					i++;
 					//p = (Place) o;
 					// System.out.println(p.getName());
 					// System.out.println(p.getPetriNetSimulationData());
