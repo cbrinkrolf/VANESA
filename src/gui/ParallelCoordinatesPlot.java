@@ -176,7 +176,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		drawPCP.setActionCommand("drawplot");
 
 		// some defined colors
-		colors.add(new Color(0, 0, 0));
+		/*colors.add(new Color(0, 0, 0));
 		colors.add(new Color(255, 0, 0));
 		colors.add(new Color(128, 0, 0));
 		colors.add(new Color(0, 255, 0));
@@ -192,7 +192,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		colors.add(new Color(160, 032, 240));
 		colors.add(new Color(000, 255, 127));
 		colors.add(new Color(255, 127, 000));
-		colors.add(new Color(000, 100, 000));
+		colors.add(new Color(000, 100, 000));*/
 	}
 
 	/**
@@ -658,8 +658,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		}
 
 		for (int i = 0; i < counter && i < places.size(); i++) {
-			int colIdx = r.nextInt(colors.size());
-			// renderer.setSeriesPaint(i, colors.get(colIdx));
+			
+			///int colIdx = r.nextInt(colors.size());
+			//renderer.setSeriesPaint(i, c);
 			renderer.setSeriesPaint(i, places.get(i).getPlotColor());
 			renderer.setSeriesItemLabelsVisible(i, true);
 			renderer.setSeriesShapesVisible(i, false);
