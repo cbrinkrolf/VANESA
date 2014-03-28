@@ -1,5 +1,6 @@
 package io;
 
+import xmlInput.sbml.JSBMLinput;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -102,24 +103,12 @@ public class OpenDialog extends SwingWorker {
 					e.printStackTrace();
 				}
 			}  else if (fileFormat.equals(sbmlDescription)) {
-				try {
-					try {
-						SBMLInput sbmlInput = new SBMLInput();
-						String result = sbmlInput.loadSBMLFile(file);
-						if(result.length() > 0){
-							JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
-									result);
-						}
-					} catch (XMLStreamException e) {
-						JOptionPane.showMessageDialog(null,
-								"An error occured during the loading. "
-										+ "The SBML file is not valid.",
-								"SBML read error", JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
+					JSBMLinput jsbmlInput = new JSBMLinput();
+					String result = jsbmlInput.loadSBMLFile(file);
+					if(result.length() > 0){
+						JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+								result);
 					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 			} else if (fileFormat.equals(txtDescription)) {
 				try {
 					new TxtInput(file);
