@@ -46,6 +46,7 @@
 	<classpathentry kind="lib" path="packages/commons-lang3-3.2.1.jar"/>
 	<classpathentry kind="lib" path="packages/jsbml-0.8-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="packages/idw-gpl1.6.1.jar"/>
+	<classpathentry kind="lib" path="packages/jdom-2.0.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

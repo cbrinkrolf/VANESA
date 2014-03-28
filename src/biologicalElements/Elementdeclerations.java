@@ -108,49 +108,49 @@ public class Elementdeclerations {
 
 	public static final String gene = "Gene";
 
-	public static String symptomEdge = "Symptom";
+	public static final String symptomEdge = "Symptom";
 
-	public static String domain = "Domain";
+	public static final String domain = "Domain";
 
-	public static String location = "Location";
+	public static final String location = "Location";
 
-	public static String go = "Gene Ontology";
+	public static final String go = "Gene Ontology";
 
-	public static String collector = "Collector";
+	public static final String collector = "Collector";
 
-	public static String rna = "RNA";
+	public static final String rna = "RNA";
 
-	public static String factor = "Factor";
+	public static final String factor = "Factor";
 
-	public static String site = "Site";
+	public static final String site = "Site";
 
-	public static String exon = "Exon";
+	public static final String exon = "Exon";
 
-	public static String fragment = "Fragment";
+	public static final String fragment = "Fragment";
 
-	public static String physicalInteraction = "Physical interaction";
+	public static final String physicalInteraction = "Physical interaction";
 
-	public static String matrix = "Matrix";
+	public static final String matrix = "Matrix";
 
-	public static String place = "Discrete Place";
+	public static final String place = "Discrete Place";
 
-	public static String s_place = "Continuous Place";
+	public static final String s_place = "Continuous Place";
 
-	public static String transition = "Transition";
+	public static final String transition = "Transition";
 
-	public static String stochasticTransition = "Stochastic Transition";
+	public static final String stochasticTransition = "Stochastic Transition";
 
-	public static String discreteTransition = "Discrete Transition";
+	public static final String discreteTransition = "Discrete Transition";
 
-	public static String continuousTransition = "Continuous Transition";
+	public static final String continuousTransition = "Continuous Transition";
 
 	// public static String edge = "Petri Net Edge";
 
-	public static String pnDiscreteEdge = "PN Discrete Edge";
+	public static final String pnDiscreteEdge = "PN Discrete Edge";
 
-	public static String pnContinuousEdge = "PN Continuous Edge";
+	public static final String pnContinuousEdge = "PN Continuous Edge";
 
-	public static String pnInhibitionEdge = "PN Inhibition Edge";
+	public static final String pnInhibitionEdge = "PN Inhibition Edge";
 
 	public Elementdeclerations() {
 
@@ -213,7 +213,6 @@ public class Elementdeclerations {
 		return l;
 	}
 
-	
 	public List<String> getNotPNNodeDeclarations() {
 
 		List<String> l = new ArrayList<String>();
@@ -253,17 +252,17 @@ public class Elementdeclerations {
 
 		return l;
 	}
-	
+
 	public List<String> getPNEdgeDeclarations() {
 		List<String> l = new ArrayList<String>();
 		l.add(pnDiscreteEdge);
-		//TODO disabled cont. PN Edge
-		//l.add(pnContinuousEdge);
+		// TODO disabled cont. PN Edge
+		// l.add(pnContinuousEdge);
 		l.add(pnInhibitionEdge);
 		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
 		return l;
 	}
-	
+
 	public List<String> getNotPNEdgeDeclarations() {
 
 		List<String> l = new ArrayList<String>();
@@ -288,8 +287,7 @@ public class Elementdeclerations {
 
 		return l;
 	}
-	
-	
+
 	public List<String> getAllEdgeDeclarations() {
 
 		List<String> l = new ArrayList<String>();

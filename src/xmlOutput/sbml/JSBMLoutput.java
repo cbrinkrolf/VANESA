@@ -1,9 +1,14 @@
 package xmlOutput.sbml;
 
+import gui.RangeSelector;
+
 import java.awt.Color;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -20,10 +25,24 @@ import org.sbml.jsbml.xml.XMLAttributes;
 import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.jsbml.xml.XMLTriple;
 
+import petriNet.ContinuousTransition;
+import petriNet.DiscreteTransition;
+import petriNet.PNEdge;
+import petriNet.StochasticTransition;
+import petriNet.Transition;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.DAWISNode;
+import biologicalObjects.nodes.MicroArrayAttributes;
 
+/**
+ * This class represents a writer from graph data to a SBML file. The actual
+ * version supports SBML Level 3 Version 1 only by jSBML.
+ * 
+ * @author Annika and Sandra
+ * 
+ */
 public class JSBMLoutput {
 
 	/*
@@ -52,9 +71,14 @@ public class JSBMLoutput {
 	 * Generates a SBML document via jSBML.
 	 */
 	public String generateSBMLDocument() {
+		String message = "";
 		// Create a new SBMLDocument object, using SBML Level 3 Version 1.
 		SBMLDocument doc = new SBMLDocument(3, 1);
 		Model model = doc.createModel("VANESA");
+
+		// create additional annotation and add it to the model
+		Annotation a = createAnnotation();
+		model.setAnnotation(a);
 
 		Compartment compartment;
 		// read all nodes from graph
@@ -62,98 +86,128 @@ public class JSBMLoutput {
 				.getAllNodes().iterator();
 
 		BiologicalNodeAbstract oneNode;
-		// try {
-		while (nodeIterator.hasNext()) {
-			oneNode = nodeIterator.next();
-			// test to what compartment the node belongs
-			String nodeCompartment = COMP + oneNode.getCompartment();
-			// test if compartment already exists
-			Compartment testCompartment = model.getCompartment(nodeCompartment);
-			if (testCompartment != null) {
-				compartment = testCompartment;
-			} else {
-				// if there is no compartment it will be created here
-				compartment = model.createCompartment();
-				compartment.setId(nodeCompartment);
-				compartment.setConstant(false);
-			}
-			// The ID of a species has to be a string and could not begin
-			// with a number
-			String str_id = SPEC + String.valueOf(oneNode.getID());
-			// create species from current node
-			Species spec = model.createSpecies(str_id, compartment);
-			spec.setName(oneNode.getName());
-			spec.setConstant(false);
-			spec.setHasOnlySubstanceUnits(false);
-			spec.setBoundaryCondition(false);
-			spec.setInitialAmount(INITIALVALUE);
-			spec.setInitialConcentration(INITIALVALUE);
+		try {
+			while (nodeIterator.hasNext()) {
+				oneNode = nodeIterator.next();
+				// test to what compartment the node belongs
+				String nodeCompartment = COMP + oneNode.getCompartment();
+				// test if compartment already exists
+				Compartment testCompartment = model
+						.getCompartment(nodeCompartment);
+				if (testCompartment != null) {
+					compartment = testCompartment;
+				} else {
+					// if there is no compartment it will be created here
+					compartment = model.createCompartment();
+					compartment.setId(nodeCompartment);
+					compartment.setConstant(false);
+				}
+				// The ID of a species has to be a string and could not begin
+				// with a number
+				String str_id = SPEC + String.valueOf(oneNode.getID());
+				// create species from current node
+				Species spec = model.createSpecies(str_id, compartment);
+				spec.setName(oneNode.getName());
+				spec.setConstant(false);
+				spec.setHasOnlySubstanceUnits(false);
+				spec.setBoundaryCondition(false);
+				spec.setInitialAmount(INITIALVALUE);
+				spec.setInitialConcentration(INITIALVALUE);
 
-			// create additional annotation and add it to the species
-			Annotation a = createAnnotation(oneNode);
-			spec.setAnnotation(a);
+				// create additional annotation and add it to the species
+				a = createAnnotation(oneNode);
+				spec.setAnnotation(a);
+			}
+		} catch (Exception e) {
+			// if something went wrong, the user get's a notification
+			message = "\nCreating SBML was not successful.";
 		}
-		// } catch (Exception e) {
-		// // if something went wrong, the user get's a notification
-		// return "\nCreating SBML was not successful.";
-		// }
 
 		// reactions to sbml
 		Iterator<BiologicalEdgeAbstract> edgeIterator = this.pathway
 				.getAllEdges().iterator();
 
 		BiologicalEdgeAbstract oneEdge;
-		// try {
-		while (edgeIterator.hasNext()) {
-			// go through all edges to get their data
-			oneEdge = edgeIterator.next();
-			// The ID of a reaction has to be a string and could not begin with
-			// a number
-			String str_id = REAC + String.valueOf(oneEdge.getID());
-			// create reaction from the current node
-			Reaction reac = model.createReaction(str_id);
-			reac.setFast(false);
-			reac.setReversible(false);
-			reac.setName(oneEdge.getName());
+		try {
+			while (edgeIterator.hasNext()) {
+				// go through all edges to get their data
+				oneEdge = edgeIterator.next();
+				// The ID of a reaction has to be a string and could not begin
+				// with
+				// a number
+				String str_id = REAC + String.valueOf(oneEdge.getID());
+				// create reaction from the current node
+				Reaction reac = model.createReaction(str_id);
+				reac.setFast(false);
+				reac.setReversible(false);
+				reac.setName(oneEdge.getName());
 
-			// create additional annotation and add to the reaction
-			Annotation a = createAnnotation(oneEdge);
-			reac.setAnnotation(a);
+				// create additional annotation and add to the reaction
+				a = createAnnotation(oneEdge);
+				reac.setAnnotation(a);
 
-			// search and assign products and reactants
-			BiologicalNodeAbstract from = oneEdge.getFrom();
-			BiologicalNodeAbstract to = oneEdge.getTo();
-			// treat "to-nodes" (products)
-			Species spec = doc.getModel().getSpecies(SPEC + to.getID());
-			SpeciesReference subs = reac.createProduct(spec);
-			subs.setConstant(false);
-			// treat "from-nodes" (reactants)
-			spec = doc.getModel().getSpecies(SPEC + from.getID());
-			subs = reac.createReactant(spec);
-			subs.setConstant(false);
-			String nodeCompartment = spec.getCompartment();
-			// choose compartment of the "from-nodes" and add the reactant
-			reac.setCompartment(model.getCompartment(nodeCompartment));
+				// search and assign products and reactants
+				BiologicalNodeAbstract from = oneEdge.getFrom();
+				BiologicalNodeAbstract to = oneEdge.getTo();
+				// treat "to-nodes" (products)
+				Species spec = doc.getModel().getSpecies(SPEC + to.getID());
+				SpeciesReference subs = reac.createProduct(spec);
+				subs.setConstant(false);
+				// treat "from-nodes" (reactants)
+				spec = doc.getModel().getSpecies(SPEC + from.getID());
+				subs = reac.createReactant(spec);
+				subs.setConstant(false);
+				String nodeCompartment = spec.getCompartment();
+				// choose compartment of the "from-nodes" and add the reactant
+				reac.setCompartment(model.getCompartment(nodeCompartment));
+			}
+		} catch (Exception e) {
+			// if something went wrong, the user get's a notification
+			message = "\nCreating SBML was not successful.";
 		}
-		// } catch (Exception e) {
-		// // if something went wrong, the user get's a notification
-		// return "\nCreating SBML was not successful.";
-		// }
 
 		// Write the SBML document to a file.
 		try {
 			SBMLWriter.write(doc, file, "VANESA", VERSION);
-			return "\nExport was successful.";
+			message = "\nExport was successful.";
 		} catch (SBMLException e) {
 			e.printStackTrace();
-			return "\nWriting SBML file was not successful.";
+			message = "\nWriting SBML file was not successful.";
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
-			return "\nWriting SBML file was not successful.";
+			message = "\nWriting SBML file was not successful.";
 		} catch (IOException e) {
 			e.printStackTrace();
-			return "\nWriting SBML file was not successful.";
+			message = "\nWriting SBML file was not successful.";
 		}
+		return message;
+	}
+
+	private Annotation createAnnotation() {
+		Annotation a = new Annotation();
+		// Save Shape
+		List<Map<String, String>> rangeInfos = RangeSelector.getInstance()
+				.getRangesInMyGraph(pathway.getGraph());
+		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("model", "", ""),
+				new XMLAttributes()));
+		if (rangeInfos != null) {
+			XMLNode elSub = new XMLNode(new XMLNode(new XMLTriple(
+					"listOfRanges", "", ""), new XMLAttributes()));
+			for (Map<String, String> range : rangeInfos) {
+				XMLNode elSubSub = new XMLNode(new XMLNode(new XMLTriple(
+						"Range", "", ""), new XMLAttributes()));
+				for (String key : range.keySet()) {
+					String value = range.get(key);
+					elSubSub.addChild(createElSub(value, key));
+				}
+				elSub.addChild(elSubSub);
+			}
+			el.addChild(elSub);
+		}
+		String attr = String.valueOf(pathway.isPetriNet());
+		el.addChild(createElSub(attr, "isPetriNet"));
+		a.appendNoRDFAnnotation(el.toXMLString());
+		return a;
 	}
 
 	// save additional data of the nodes
@@ -174,26 +228,20 @@ public class JSBMLoutput {
 		attr = oneNode.getBiologicalElement();
 		el.addChild(createElSub(attr, "BiologicalElement"));
 
+		Point2D p = pathway.getGraph().getVertexLocation(oneNode);
+		elSub = new XMLNode(new XMLNode(new XMLTriple("Coordinates", "", ""),
+				new XMLAttributes()));
+		attr = String.valueOf(p.getX());
+		elSub.addChild(createElSub(attr, "x_Coordinate"));
+		attr = String.valueOf(p.getY());
+		elSub.addChild(createElSub(attr, "y_Coordinate"));
+		el.addChild(elSub);
+
 		attr = oneNode.getComments();
 		el.addChild(createElSub(attr, "Comments"));
 
 		attr = String.valueOf(oneNode.getElementsVector());
-		if (attr.equals("[]")) {
-			attr = null;
-		}
 		el.addChild(createElSub(attr, "ElementsVector"));
-
-		attr = String.valueOf(oneNode.getMicroarrayAttributes());
-		if (attr.equals("[]")) {
-			attr = null;
-		}
-		el.addChild(createElSub(attr, "MicroarrayAttributes"));
-
-		attr = String.valueOf(oneNode.getSbml());
-		el.addChild(createElSub(attr, "Sbml"));
-
-		attr = String.valueOf(oneNode.getShape());
-		el.addChild(createElSub(attr, "Shape"));
 
 		attr = oneNode.getDescription();
 		el.addChild(createElSub(attr, "Description"));
@@ -206,21 +254,6 @@ public class JSBMLoutput {
 
 		attr = oneNode.getOrganism();
 		el.addChild(createElSub(attr, "Organism"));
-
-		attr = String.valueOf(oneNode.getParentNode());
-		el.addChild(createElSub(attr, "ParentNode"));
-
-		attr = String.valueOf(oneNode.getPetriNetSimulationData());
-		if (attr.equals("[]")) {
-			attr = null;
-		}
-		el.addChild(createElSub(attr, "PetriNetSimulationData"));
-
-		attr = String.valueOf(oneNode.getCollectorNodes());
-		if (attr.equals("[]")) {
-			attr = null;
-		}
-		el.addChild(createElSub(attr, "CollectorNodes"));
 
 		boolean attrb = oneNode.hasKEGGNode();
 		attr = String.valueOf(attrb);
@@ -296,14 +329,11 @@ public class JSBMLoutput {
 					.toString();
 			attrs[62] = oneNode.getKEGGnode().getAllStructuresAsVector()
 					.toString();
-			for (int i = 58; i <= 62; i++) {
-				if (attrs[i].equals("[]")) {
-					attrs[i] = null;
-				}
-			}
+
 			boolean kegg = false;
-			for (int i = 0; i < 63; i++) {
-				if (attrs[i] != "" && attrs[i] != null) {
+			for (int i = 0; i < attrs.length; i++) {
+				if (attrs[i] != "" && attrs[i] != null
+						&& !attrs[i].equals("[]")) {
 					kegg = true;
 					break;
 				}
@@ -385,141 +415,66 @@ public class JSBMLoutput {
 		el.addChild(createElSub(attr, "HasDAWISNode"));
 		// only if hasDAWISNode = true the following data should be saved.
 		if (attrb) {
-			String[] attrs = new String[15];
-			attrs[0] = oneNode.getDAWISNode().getAccessionnumber();
-			attrs[1] = oneNode.getDAWISNode().getActivity();
-			attrs[2] = oneNode.getDAWISNode().getAminoAcidSeq();
-			attrs[3] = oneNode.getDAWISNode().getAminoAcidSeqLength();
-			attrs[4] = oneNode.getDAWISNode().getAtoms();
-			attrs[5] = oneNode.getDAWISNode().getAtomsNr();
-			attrs[6] = oneNode.getDAWISNode().getBonds();
-			attrs[7] = oneNode.getDAWISNode().getBondsNumber();
-			attrs[8] = oneNode.getDAWISNode().getBracket();
-			attrs[9] = oneNode.getDAWISNode().getCatalystsNames();
-			attrs[10] = oneNode.getDAWISNode().getClassification();
-			attrs[11] = oneNode.getDAWISNode().getCodonUsage();
-			attrs[12] = oneNode.getDAWISNode().getCofactors();
-			attrs[13] = oneNode.getDAWISNode().getCofactorsName();
-			attrs[14] = oneNode.getDAWISNode().getComment();
-			attrs[15] = oneNode.getDAWISNode().getComplexName();
-			attrs[16] = oneNode.getDAWISNode().getComponent();
-			attrs[17] = oneNode.getDAWISNode().getComposition();
-			attrs[18] = oneNode.getDAWISNode().getDataLoadedAsString();
-			attrs[19] = oneNode.getDAWISNode().getDataLoadedString();
-			attrs[20] = oneNode.getDAWISNode().getDB();
-			attrs[21] = oneNode.getDAWISNode().getDefinition();
-			attrs[22] = oneNode.getDAWISNode().getDiagnosisType();
-			attrs[23] = oneNode.getDAWISNode().getDisorder();
-			attrs[24] = oneNode.getDAWISNode().getDomain();
-			attrs[25] = oneNode.getDAWISNode().getEdge();
-			attrs[26] = oneNode.getDAWISNode().getEffect();
-			attrs[27] = oneNode.getDAWISNode().getEffectors();
-			attrs[28] = oneNode.getDAWISNode().getEffectorsName();
-			attrs[29] = oneNode.getDAWISNode().getElement();
-			attrs[30] = oneNode.getDAWISNode().getEncodingGene();
-			attrs[31] = oneNode.getDAWISNode().getEndPoint();
-			attrs[32] = oneNode.getDAWISNode().getEquation();
-			attrs[33] = oneNode.getDAWISNode().getFactorClass();
-			attrs[34] = oneNode.getDAWISNode().getFeatures();
-			attrs[35] = oneNode.getDAWISNode().getFormula();
-			attrs[36] = oneNode.getDAWISNode().getGeneName();
-			attrs[37] = oneNode.getDAWISNode().getID();
-			attrs[38] = oneNode.getDAWISNode().getInformation();
-			attrs[39] = oneNode.getDAWISNode().getInhibitors();
-			attrs[40] = oneNode.getDAWISNode().getInhibitorsName();
-			attrs[41] = oneNode.getDAWISNode().getIsoelectricPoint();
-			attrs[42] = oneNode.getDAWISNode().getIsoformenNumber();
-			attrs[43] = oneNode.getDAWISNode().getLocations();
-			attrs[44] = oneNode.getDAWISNode().getMethods();
-			attrs[45] = oneNode.getDAWISNode().getModule();
-			attrs[46] = oneNode.getDAWISNode().getMotifs();
-			attrs[47] = oneNode.getDAWISNode().getName();
-			attrs[48] = oneNode.getDAWISNode().getNode();
-			attrs[49] = oneNode.getDAWISNode().getNucleotidSequence();
-			attrs[50] = oneNode.getDAWISNode().getNucleotidSequenceLength();
-			attrs[51] = oneNode.getDAWISNode().getObject();
-			attrs[52] = oneNode.getDAWISNode().getOntology();
-			attrs[53] = oneNode.getDAWISNode().getOrganelle();
-			attrs[54] = oneNode.getDAWISNode().getOrganism();
-			attrs[55] = oneNode.getDAWISNode().getOriginal();
-			attrs[56] = oneNode.getDAWISNode().getOrthology();
-			attrs[57] = oneNode.getDAWISNode().getPathwayMap();
-			attrs[58] = oneNode.getDAWISNode().getPDBs();
-			attrs[59] = oneNode.getDAWISNode().getPosition();
-			attrs[60] = oneNode.getDAWISNode().getProducts();
-			attrs[61] = oneNode.getDAWISNode().getProductsName();
-			attrs[62] = oneNode.getDAWISNode().getRDM();
-			attrs[63] = oneNode.getDAWISNode().getReference();
-			attrs[64] = oneNode.getDAWISNode().getRemarks();
-			attrs[65] = oneNode.getDAWISNode().getRepeat();
-			attrs[66] = oneNode.getDAWISNode().getSequenceSource();
-			attrs[67] = oneNode.getDAWISNode().getSpecificityNeg();
-			attrs[68] = oneNode.getDAWISNode().getSpecificityPos();
-			attrs[69] = oneNode.getDAWISNode().getStartPoint();
-			attrs[70] = oneNode.getDAWISNode().getSubfamilies();
-			attrs[71] = oneNode.getDAWISNode().getSubstrates();
-			attrs[72] = oneNode.getDAWISNode().getSubstratesName();
-			attrs[73] = oneNode.getDAWISNode().getSuperfamilies();
-			attrs[74] = oneNode.getDAWISNode().getSynonyms();
-			attrs[75] = oneNode.getDAWISNode().getTarget();
-			attrs[76] = oneNode.getDAWISNode().getTransfacGene();
-			attrs[77] = oneNode.getDAWISNode().getType();
-			attrs[78] = oneNode.getDAWISNode().getWeigth();
-			attrs[79] = oneNode.getDAWISNode().getAccessionnumbersAsVector()
-					.toString();
-			attrs[80] = oneNode.getDAWISNode().getCatalystNamesAsVector()
-					.toString();
-			attrs[81] = oneNode.getDAWISNode().getClassificationAsVector()
-					.toString();
-			attrs[83] = oneNode.getDAWISNode().getCofactorsAsVector()
-					.toString();
-			attrs[82] = oneNode.getDAWISNode().getCofactorNamesAsVector()
-					.toString();
-			attrs[84] = oneNode.getDAWISNode().getDBLinksAsVector().toString();
-			attrs[85] = oneNode.getDAWISNode().getDomainsAsVector().toString();
-			attrs[86] = oneNode.getDAWISNode().getEffectorNamesAsVector()
-					.toString();
-			attrs[87] = oneNode.getDAWISNode().getEffectorsAsVector()
-					.toString();
-			attrs[88] = oneNode.getDAWISNode().getElementsAsVector().toString();
-			attrs[89] = oneNode.getDAWISNode().getFeaturesAsVector().toString();
-			attrs[90] = oneNode.getDAWISNode().getFunctionsAsVector()
-					.toString();
-			attrs[91] = oneNode.getDAWISNode().getGeneNamesAsVector()
-					.toString();
-			attrs[92] = oneNode.getDAWISNode().getInhibitorNamesAsVector()
-					.toString();
-			attrs[93] = oneNode.getDAWISNode().getListAsVector().toString();
-			attrs[94] = oneNode.getDAWISNode().getLocationsAsVector()
-					.toString();
-			attrs[95] = oneNode.getDAWISNode().getMethodsAsSVector().toString();
-			attrs[96] = oneNode.getDAWISNode().getMotifsAsVector().toString();
-			attrs[97] = oneNode.getDAWISNode().getOrthologyAsVector()
-					.toString();
-			attrs[98] = oneNode.getDAWISNode().getPDBsAsVector().toString();
-			attrs[90] = oneNode.getDAWISNode().getProductNamesAsVector()
-					.toString();
-			attrs[100] = oneNode.getDAWISNode().getProductsAsVector()
-					.toString();
-			attrs[101] = oneNode.getDAWISNode().getProzessesAsVector()
-					.toString();
-			attrs[102] = oneNode.getDAWISNode().getReferenceAsVector()
-					.toString();
-			attrs[103] = oneNode.getDAWISNode().getSubfamiliesAsVector()
-					.toString();
-			attrs[104] = oneNode.getDAWISNode().getSubstrateNamesAsVector()
-					.toString();
-			attrs[105] = oneNode.getDAWISNode().getSubstratesAsVector()
-					.toString();
+			DAWISNode dawisN = oneNode.getDAWISNode();
+			String[] attrs = { dawisN.getActivity(), dawisN.getAminoAcidSeq(),
+					dawisN.getAminoAcidSeqLength(), dawisN.getAtoms(),
+					dawisN.getAtomsNr(), dawisN.getBonds(),
+					dawisN.getBondsNumber(), dawisN.getBracket(),
+					dawisN.getCodonUsage(), dawisN.getComment(),
+					dawisN.getComplexName(), dawisN.getComponent(),
+					dawisN.getComposition(), dawisN.getDataLoadedAsString(),
+					dawisN.getDB(), dawisN.getDefinition(),
+					dawisN.getDiagnosisType(), dawisN.getDisorder(),
+					dawisN.getEdge(), dawisN.getEffect(), dawisN.getElement(),
+					dawisN.getEncodingGene(), dawisN.getEndPoint(),
+					dawisN.getEquation(), dawisN.getFactorClass(),
+					dawisN.getFormula(), dawisN.getID(),
+					dawisN.getInformation(), dawisN.getIsoelectricPoint(),
+					dawisN.getIsoformenNumber(), dawisN.getModule(),
+					dawisN.getName(), dawisN.getNode(),
+					dawisN.getNucleotidSequence(),
+					dawisN.getNucleotidSequenceLength(), dawisN.getObject(),
+					dawisN.getOntology(), dawisN.getOrganelle(),
+					dawisN.getOrganism(), dawisN.getOriginal(),
+					dawisN.getPathwayMap(), dawisN.getPosition(),
+					dawisN.getRDM(), dawisN.getRemarks(), dawisN.getRepeat(),
+					dawisN.getSequenceSource(), dawisN.getSpecificityNeg(),
+					dawisN.getSpecificityPos(), dawisN.getStartPoint(),
+					dawisN.getTarget(), dawisN.getTransfacGene(),
+					dawisN.getType(), dawisN.getWeigth(),
+					dawisN.getAccessionnumbersAsVector().toString(),
+					dawisN.getCatalystsAsVector().toString(),
+					dawisN.getCatalystNamesAsVector().toString(),
+					dawisN.getClassificationAsVector().toString(),
+					dawisN.getCofactorsAsVector().toString(),
+					dawisN.getCofactorNamesAsVector().toString(),
+					dawisN.getDBLinksAsVector().toString(),
+					dawisN.getDomainsAsVector().toString(),
+					dawisN.getEffectorNamesAsVector().toString(),
+					dawisN.getEffectorsAsVector().toString(),
+					dawisN.getElementsAsVector().toString(),
+					dawisN.getFeaturesAsVector().toString(),
+					dawisN.getFunctionsAsVector().toString(),
+					dawisN.getGeneNamesAsVector().toString(),
+					dawisN.getInhibitorsAsVector().toString(),
+					dawisN.getInhibitorNamesAsVector().toString(),
+					dawisN.getLocationsAsVector().toString(),
+					dawisN.getMethodsAsSVector().toString(),
+					dawisN.getMotifsAsVector().toString(),
+					dawisN.getOrthologyAsVector().toString(),
+					dawisN.getPDBsAsVector().toString(),
+					dawisN.getProductNamesAsVector().toString(),
+					dawisN.getProductsAsVector().toString(),
+					dawisN.getProzessesAsVector().toString(),
+					dawisN.getReferenceAsVector().toString(),
+					dawisN.getSubfamiliesAsVector().toString(),
+					dawisN.getSubstrateNamesAsVector().toString(),
+					dawisN.getSubstratesAsVector().toString() };
 
-			for (int i = 79; i <= 105; i++) {
-				if (attrs[i].equals("[]")) {
-					attrs[i] = null;
-				}
-			}
 			boolean dawis = false;
-			for (int i = 0; i < 79; i++) {
-				if (attrs[i] != "" && attrs[i] != null) {
+			for (int i = 0; i < attrs.length; i++) {
+				if (attrs[i] != "" && attrs[i] != null
+						&& !attrs[i].equals("[]")) {
 					dawis = true;
 					break;
 				}
@@ -527,114 +482,33 @@ public class JSBMLoutput {
 			if (dawis) {
 				elSub = new XMLNode(new XMLNode(new XMLTriple("DAWISNode", "",
 						""), new XMLAttributes()));
+				String[] names = { "Activity", "AminoAcidSeq",
+						"AminoAcidSeqLength", "Atoms", "AtomsNumber", "Bonds",
+						"BondsNumber", "Bracket", "CodonUsage", "Comment",
+						"ComplexName", "Component", "Composition",
+						"DataLoaded", "DB", "Definition", "DiagnosisType",
+						"Disorder", "Edge", "Effect", "Element",
+						"EncodingGene", "EndPoint", "Equation", "FactorClass",
+						"Formula", "ID", "Information", "IsoelectricPoint",
+						"IsoformenNumber", "Module", "Name", "Node",
+						"NucleotidSequence", "NucleotidSequenceLength",
+						"Object", "Ontology", "Organelle", "Organism",
+						"Original", "PathwayMap", "Position", "RDM", "Remarks",
+						"Repeat", "SequenceSource", "SpecificityNeg",
+						"SpecificityPos", "StartPoint", "Target",
+						"TransfacGene", "Type", "Weigth", "Accessionnumbers",
+						"Catalysts", "CatalystNames", "Classifications",
+						"Cofactors", "CofactorNames", "DBLinks", "Domains",
+						"EffectorNames", "Effectors", "CollectorElements",
+						"Features", "Functions", "GeneNames", "Inhibitors",
+						"InhibitorNames", "Locations", "Methods", "Motifs",
+						"Orthologies", "PDBs", "ProductNames", "Products",
+						"Processes", "References", "Subfamilies",
+						"SubstrateNames", "Substrates" };
 				// test which data are set to save them
-				elSub.addChild(createElSub(attrs[0], "Accessionnumber"));
-				elSub.addChild(createElSub(attrs[1], "Activity"));
-				elSub.addChild(createElSub(attrs[2], "AminoAcidSeq"));
-				elSub.addChild(createElSub(attrs[3], "AminoAcidSeqLength"));
-				elSub.addChild(createElSub(attrs[4], "Atoms"));
-				elSub.addChild(createElSub(attrs[5], "AtomsNr"));
-				elSub.addChild(createElSub(attrs[6], "Bonds"));
-				elSub.addChild(createElSub(attrs[7], "BondsNumber"));
-				elSub.addChild(createElSub(attrs[8], "Bracket"));
-				elSub.addChild(createElSub(attrs[9], "CatalystsNames"));
-				elSub.addChild(createElSub(attrs[10], "Classification"));
-				elSub.addChild(createElSub(attrs[11], "CodonUsage"));
-				elSub.addChild(createElSub(attrs[12], "Cofactors"));
-				elSub.addChild(createElSub(attrs[13], "CofactorsName"));
-				elSub.addChild(createElSub(attrs[14], "Comment"));
-				elSub.addChild(createElSub(attrs[15], "ComplexName"));
-				elSub.addChild(createElSub(attrs[16], "Component"));
-				elSub.addChild(createElSub(attrs[17], "Composition"));
-				elSub.addChild(createElSub(attrs[18], "DataLoadedAsString"));
-				elSub.addChild(createElSub(attrs[19], "DataLoadedString"));
-				elSub.addChild(createElSub(attrs[20], "DB"));
-				elSub.addChild(createElSub(attrs[21], "Definition"));
-				elSub.addChild(createElSub(attrs[22], "DiagnosisType"));
-				elSub.addChild(createElSub(attrs[23], "Disorder"));
-				elSub.addChild(createElSub(attrs[25], "Domain"));
-				elSub.addChild(createElSub(attrs[26], "Edge"));
-				elSub.addChild(createElSub(attrs[27], "Effect"));
-				elSub.addChild(createElSub(attrs[28], "Effectors"));
-				elSub.addChild(createElSub(attrs[29], "EffectorsName"));
-				elSub.addChild(createElSub(attrs[30], "Element"));
-				elSub.addChild(createElSub(attrs[31], "EncodingGene"));
-				elSub.addChild(createElSub(attrs[32], "EndPoint"));
-				elSub.addChild(createElSub(attrs[33], "Equation"));
-				elSub.addChild(createElSub(attrs[34], "FactorClass"));
-				elSub.addChild(createElSub(attrs[35], "Features"));
-				elSub.addChild(createElSub(attrs[36], "GeneName"));
-				elSub.addChild(createElSub(attrs[37], "ID"));
-				elSub.addChild(createElSub(attrs[38], "Information"));
-				elSub.addChild(createElSub(attrs[39], "Inhibitors"));
-				elSub.addChild(createElSub(attrs[40], "InhibitorsName"));
-				elSub.addChild(createElSub(attrs[41], "IsoelectricPoint"));
-				elSub.addChild(createElSub(attrs[42], "IsoformenNumber"));
-				elSub.addChild(createElSub(attrs[43], "Location"));
-				elSub.addChild(createElSub(attrs[44], "Methods"));
-				elSub.addChild(createElSub(attrs[45], "Module"));
-				elSub.addChild(createElSub(attrs[46], "Motifs"));
-				elSub.addChild(createElSub(attrs[47], "Name"));
-				elSub.addChild(createElSub(attrs[48], "Node"));
-				elSub.addChild(createElSub(attrs[49], "Locations"));
-				elSub.addChild(createElSub(attrs[50], "NucleotidSequence"));
-				elSub.addChild(createElSub(attrs[51], "NucleotidSequenceLenght"));
-				elSub.addChild(createElSub(attrs[52], "Object"));
-				elSub.addChild(createElSub(attrs[53], "OntologyOrgnelle"));
-				elSub.addChild(createElSub(attrs[54], "Organism"));
-				elSub.addChild(createElSub(attrs[55], "Original"));
-				elSub.addChild(createElSub(attrs[56], "Orthology"));
-				elSub.addChild(createElSub(attrs[57], "PathwayMap"));
-				elSub.addChild(createElSub(attrs[58], "PDBs"));
-				elSub.addChild(createElSub(attrs[59], "Position"));
-				elSub.addChild(createElSub(attrs[60], "Products"));
-				elSub.addChild(createElSub(attrs[61], "ProductsName"));
-				elSub.addChild(createElSub(attrs[62], "RDM"));
-				elSub.addChild(createElSub(attrs[63], "Reference"));
-				elSub.addChild(createElSub(attrs[64], "Remarks"));
-				elSub.addChild(createElSub(attrs[65], "Repeat"));
-				elSub.addChild(createElSub(attrs[66], "SequenceSource"));
-				elSub.addChild(createElSub(attrs[67], "SpecificityNeg"));
-				elSub.addChild(createElSub(attrs[68], "SpecificityPos"));
-				elSub.addChild(createElSub(attrs[69], "StartPoint"));
-				elSub.addChild(createElSub(attrs[70], "Subfamilies"));
-				elSub.addChild(createElSub(attrs[71], "Substrates"));
-				elSub.addChild(createElSub(attrs[72], "SubstratesName"));
-				elSub.addChild(createElSub(attrs[73], "Superfamilies"));
-				elSub.addChild(createElSub(attrs[74], "Synonyms"));
-				elSub.addChild(createElSub(attrs[75], "Target"));
-				elSub.addChild(createElSub(attrs[76], "TransfacGene"));
-				elSub.addChild(createElSub(attrs[77], "Type"));
-				elSub.addChild(createElSub(attrs[78], "Weight"));
-				elSub.addChild(createElSub(attrs[79],
-						"AccessionnumbersAsVector"));
-				elSub.addChild(createElSub(attrs[80], "CatalystNamesAsVector"));
-				elSub.addChild(createElSub(attrs[81], "ClassificationAsVector"));
-				elSub.addChild(createElSub(attrs[82], "CofactorNamesAsVector"));
-				elSub.addChild(createElSub(attrs[83], "CofactorsAsVector"));
-				elSub.addChild(createElSub(attrs[84], "DBLinksAsVector"));
-				elSub.addChild(createElSub(attrs[85], "DomainsAsVector"));
-				elSub.addChild(createElSub(attrs[86], "EffectorNamesAsVector"));
-				elSub.addChild(createElSub(attrs[87], "EffectorsAsVector"));
-				elSub.addChild(createElSub(attrs[88], "ElementsAsVector"));
-				elSub.addChild(createElSub(attrs[89], "FeaturesAsVector"));
-				elSub.addChild(createElSub(attrs[90], "FunctionsAsVector"));
-				elSub.addChild(createElSub(attrs[91], "GeneNamesAsVector"));
-				elSub.addChild(createElSub(attrs[92], "InhibitorNamesAsVector"));
-				elSub.addChild(createElSub(attrs[93], "ListAsVector"));
-				elSub.addChild(createElSub(attrs[94], "LocationAsVector"));
-				elSub.addChild(createElSub(attrs[95], "MethodsAsVector"));
-				elSub.addChild(createElSub(attrs[96], "MotifsAsVector"));
-				elSub.addChild(createElSub(attrs[97], "OrthologyAsVector"));
-				elSub.addChild(createElSub(attrs[98], "PBDAsVector"));
-				elSub.addChild(createElSub(attrs[99], "ProductNamesAsVector"));
-				elSub.addChild(createElSub(attrs[100], "ProductsAsVector"));
-				elSub.addChild(createElSub(attrs[101], "ProcessesAsVector"));
-				elSub.addChild(createElSub(attrs[102], "ReferencesAsVector"));
-				elSub.addChild(createElSub(attrs[103], "SubfamiliesAsVector"));
-				elSub.addChild(createElSub(attrs[104], "SubstrateNameAsVector"));
-				elSub.addChild(createElSub(attrs[105], "SubstratesAsVector"));
-
+				for (int i = 0; i < names.length; i++) {
+					elSub.addChild(createElSub(attrs[i], names[i]));
+				}
 				el.addChild(elSub);
 			}
 		}
@@ -643,49 +517,22 @@ public class JSBMLoutput {
 		if (col != null) {
 			elSub = new XMLNode(new XMLNode(new XMLTriple("Color", "", ""),
 					new XMLAttributes()));
-			XMLNode elSubSub = new XMLNode(new XMLNode(new XMLTriple("RGB", "",
-					""), new XMLAttributes()));
-			elSubSub.addAttr("RGB", "" + col.getRGB());
-			elSub.addChild(elSubSub);
-			elSubSub = new XMLNode(new XMLNode(new XMLTriple("Blue", "", ""),
-					new XMLAttributes()));
-			elSubSub.addAttr("Blue", "" + col.getBlue());
-			elSub.addChild(elSubSub);
-			elSubSub = new XMLNode(new XMLNode(new XMLTriple("Green", "", ""),
-					new XMLAttributes()));
-			elSubSub.addAttr("Green", "" + col.getGreen());
-			elSub.addChild(elSubSub);
-			elSubSub = new XMLNode(new XMLNode(new XMLTriple("Red", "", ""),
-					new XMLAttributes()));
-			elSubSub.addAttr("Red", "" + col.getRed());
-			elSub.addChild(elSubSub);
+			attr = String.valueOf(col.getRGB());
+			elSub.addChild(createElSub(attr, "RGB"));
+			attr = String.valueOf(col.getBlue());
+			elSub.addChild(createElSub(attr, "Blue"));
+			attr = String.valueOf(col.getGreen());
+			elSub.addChild(createElSub(attr, "Green"));
+			attr = String.valueOf(col.getRed());
+			elSub.addChild(createElSub(attr, "Red"));
 			el.addChild(elSub);
 		}
 
 		// test which type the node is to save additional data
 		if (oneNode instanceof biologicalObjects.nodes.CollectorNode) {
-			if (((biologicalObjects.nodes.CollectorNode) oneNode).getParent() != null) {
-				attr = ((biologicalObjects.nodes.CollectorNode) oneNode)
-						.getParent().toString();
-				el.addChild(createElSub(attr, "Parent"));
-			}
-			if (((biologicalObjects.nodes.CollectorNode) oneNode)
-					.getParentTreeNode() != null) {
-				attr = ((biologicalObjects.nodes.CollectorNode) oneNode)
-						.getParentTreeNode().toString();
-				el.addChild(createElSub(attr, "ParentTreeNode"));
-			}
 			attr = ((biologicalObjects.nodes.CollectorNode) oneNode)
 					.getObject();
 			el.addChild(createElSub(attr, "ElementObject"));
-
-		} else if (oneNode instanceof biologicalObjects.nodes.Complex) {
-			attr = ((biologicalObjects.nodes.Complex) oneNode).getAllElements()
-					.toString();
-			if (attr.equals("[]")) {
-				attr = null;
-			}
-			el.addChild(createElSub(attr, "AllElements"));
 
 		} else if (oneNode instanceof biologicalObjects.nodes.DNA) {
 			attr = ((biologicalObjects.nodes.DNA) oneNode).getNtSequence();
@@ -718,17 +565,10 @@ public class JSBMLoutput {
 
 			attr = ((biologicalObjects.nodes.Gene) oneNode).getProteins()
 					.toString();
-			if (attr.equals("[]")) {
-				attr = null;
-			}
 			el.addChild(createElSub(attr, "Proteins"));
 			attr = ((biologicalObjects.nodes.Gene) oneNode).getEnzymes()
 					.toString();
-			if (attr.equals("[]")) {
-				attr = null;
-			}
 			el.addChild(createElSub(attr, "Enzymes"));
-
 		} else if (oneNode instanceof biologicalObjects.nodes.PathwayMap) {
 			attr = String
 					.valueOf(((biologicalObjects.nodes.PathwayMap) oneNode)
@@ -765,6 +605,33 @@ public class JSBMLoutput {
 			el.addChild(createElSub(attr, "Tarbase_ensemble"));
 			attr = ((biologicalObjects.nodes.SRNA) oneNode).getTarbase_IS();
 			el.addChild(createElSub(attr, "Tarbase_IS"));
+		}
+		// if Net is a petri Net
+		if (pathway.isPetriNet()) {
+			if (oneNode instanceof petriNet.Place) {
+				attr = String.valueOf(((petriNet.Place) oneNode).getToken());
+				el.addChild(createElSub(attr, "token"));
+				attr = String.valueOf(((petriNet.Place) oneNode).getTokenMin());
+				el.addChild(createElSub(attr, "tokenMin"));
+				attr = String.valueOf(((petriNet.Place) oneNode).getTokenMax());
+				el.addChild(createElSub(attr, "tokenMax"));
+				attr = String.valueOf(((petriNet.Place) oneNode)
+						.getTokenStart());
+				el.addChild(createElSub(attr, "tokenStart"));
+			} else if (oneNode instanceof Transition) {
+				if (oneNode instanceof DiscreteTransition) {
+					attr = String.valueOf(((DiscreteTransition) oneNode)
+							.getDelay());
+					el.addChild(createElSub(attr, "delay"));
+				} else if (oneNode instanceof ContinuousTransition) {
+					attr = String.valueOf(((ContinuousTransition) oneNode)
+							.getMaximumSpeed());
+					el.addChild(createElSub(attr, "maximumSpeed"));
+				} else if (oneNode instanceof StochasticTransition) {
+					attr = ((StochasticTransition) oneNode).getDistribution();
+					el.addChild(createElSub(attr, "distribution"));
+				}
+			}
 		}
 
 		a.appendNoRDFAnnotation(el.toXMLString());
@@ -845,18 +712,12 @@ public class JSBMLoutput {
 			attrs[22] = oneEdge.getKeggEdge().getInhibitorNamesAsVector()
 					.toString();
 
-			// If the vector is empty it should not be saved
-			for (int i = 16; i < 23; i++) {
-				if (attrs[i].equals("[]")) {
-					attrs[i] = null;
-				}
-			}
-
 			// Test if min. 1 attribute is set
 			// only if the XML-Node has to be created
 			boolean kegg = false;
 			for (int i = 0; i < 23; i++) {
-				if (attrs[i] != "" && attrs[i] != null) {
+				if (attrs[i] != "" && attrs[i] != null
+						&& !attrs[i].equals("[]")) {
 					kegg = true;
 					break;
 				}
@@ -872,7 +733,7 @@ public class JSBMLoutput {
 						"Rpair", "Effect", "ReactionType", "InvolvedEnzyme",
 						"AllProducts", "AllEnzymes", "AllSubstrates",
 						"Catalysts", "CatalystNames", "Inhibitors",
-						"InhibitorNames", };
+						"InhibitorNames" };
 				for (int i = 0; i < 23; i++) {
 					elSub.addChild(createElSub(attrs[i], names[i]));
 				}
@@ -885,9 +746,7 @@ public class JSBMLoutput {
 			attrb = ((biologicalObjects.edges.ReactionPair) oneEdge)
 					.hasRPairEdge();
 			attr = String.valueOf(attrb);
-			if (attr != "" && attr != null) {
-				el.addChild(createElSub(attr, "HasRPairEdge"));
-			}
+			el.addChild(createElSub(attr, "HasReactionPairEdge"));
 			// Test if hasRPairEdge = true
 			// only if the following data has to be saved
 			if (attrb) {
@@ -919,13 +778,21 @@ public class JSBMLoutput {
 					el.addChild(elSub);
 				}
 			}
+		} else if (oneEdge instanceof petriNet.PNEdge) {
+			attr = ((petriNet.PNEdge) oneEdge).getFunction();
+			el.addChild(createElSub(attr, "Function"));
+			attr = String.valueOf(((petriNet.PNEdge) oneEdge)
+					.getActivationProbability());
+			el.addChild(createElSub(attr, "ActivationProbability"));
+			// TODO !!!
 		}
 		a.appendNoRDFAnnotation(el.toXMLString());
 		return a;
 	}
 
 	private XMLNode createElSub(String attr, String name) {
-		if (attr != "" && attr != null && !attr.equals("null")) {
+		if (attr != "" && attr != null && !attr.equals("null")
+				&& !attr.equals("[]")) {
 			XMLNode elSub = new XMLNode(new XMLNode(
 					new XMLTriple(name, "", ""), new XMLAttributes()));
 			elSub.addAttr(name, attr);
