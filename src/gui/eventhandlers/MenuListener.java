@@ -165,8 +165,8 @@ public class MenuListener implements ActionListener {
 			new RandomHamiltonGraphGui();
 
 		} else if ("export Network".equals(event)) {
-			System.out.println("Nodes: "+graphInstance.getMyGraph().getAllVertices().size());
-			System.out.println("Edges: "+graphInstance.getMyGraph().getAllEdges().size());
+			//System.out.println("Nodes: "+graphInstance.getMyGraph().getAllVertices().size());
+			//System.out.println("Edges: "+graphInstance.getMyGraph().getAllEdges().size());
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog( // GRAPHML+MO+GON=14
