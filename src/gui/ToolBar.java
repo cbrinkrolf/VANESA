@@ -166,9 +166,21 @@ public class ToolBar {
 		mergeSelectedNodes.setActionCommand("mergeSelectedNodes");
 		mergeSelectedNodes.addActionListener(toolBarListener);
 		
+		JButton coarseSelectedNodes = new JButton("Coarse");
+		coarseSelectedNodes.setToolTipText("Coarse the selected Nodes");
+		coarseSelectedNodes.setActionCommand("coarseSelectedNodes");
+		coarseSelectedNodes.addActionListener(toolBarListener);
+	
+		JButton flatSelectedNodes = new JButton("Flat");
+		flatSelectedNodes.setToolTipText("Flat the selected Node");
+		flatSelectedNodes.setActionCommand("flatSelectedNodes");
+		flatSelectedNodes.addActionListener(toolBarListener);
+		
 		infopanel.add(info);
 		infopanel.add(infoextended);
 		infopanel.add(mergeSelectedNodes);
+		infopanel.add(coarseSelectedNodes);
+		infopanel.add(flatSelectedNodes);
 
 		JButton dimView = new JButton(new ImageIcon(
 				imagePath.getPath("view.png")));
