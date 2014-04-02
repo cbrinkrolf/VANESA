@@ -877,7 +877,6 @@ public class VAMLInput {
 			bna.setCompartment(location);
 			bna.setComments(comment);
 			bna.setColor(color);
-			bna.setIsVertex(true);
 			bna.setReference(isReference);
 			try {
 				int id = Integer.parseInt(node.getAttributeValue(new QName(
