@@ -276,7 +276,24 @@ public class ToolBarListener implements ActionListener {
 		}
 		else if ("simulate".equals(event)){
 			new PetriNetSimulation();
-		}else if("mergeSelectedNodes".equals(event)){
+		}
+		else if ("coarseSelectedNodes".equals(event)){
+			if(graphInstance.getMyGraph() != null){
+				System.out.println("coarse");
+				//graphInstance.getPathway().coarseNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+			}else{
+				System.out.println("No Graph exists!");
+			}
+		}
+		else if ("flatSelectedNodes".equals(event)){
+			if(graphInstance.getMyGraph() != null){
+				System.out.println("flat");
+				//graphInstance.getPathway().flatNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+			}else{
+				System.out.println("No Graph exists!");
+				}
+		}
+		else if("mergeSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
 			System.out.println("merge");
 			graphInstance.getPathway().mergeNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
