@@ -20,32 +20,212 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Cloneable {
 
+	
+	// ---Fields---
+	
+	
+	
 	// private Edge edge;
+	
 	private KEGGEdge keggEdge;
+	
 	ReactionPairEdge reactionPairEdge;
+	
 	private boolean isDirected;
+	
+	private boolean isReference = true;
+	
+	private boolean isVisible = true;
+
+	private String name = "not mentioned";
+	
+	private String label = "???";
+	
+	// private String networklabel = "";
+	
+	private int ID = 0;
+	
+	private SortedSet<Integer> set;
+
+	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	
+	private String description = "";
+	
+	private String comments = "";
+	
+	private Color color = Color.LIGHT_GRAY;
+	
+	private String BiologicalElement = "";
+	
+	private Shape shape;
+	
+	private boolean hidden = false;
+
+	private boolean hasKEGGNode = false;
+	
+	private boolean hasKEGGEdge = false;
+	
+	private boolean hasFeatureEdge = false;
+	
+	private boolean hasDAWISNode = false;
+	
+	private boolean hasReactionPairEdge = false;
+
+	private boolean hasBrendaNode = false;
+	
+	private HashSet<String> labelSet = new HashSet<String>();
+	
+	private Collection<Integer> originalGraphs;
+	
+	private ArrayList<Parameter> parameters = new ArrayList<Parameter>(); 
 
 	private boolean isWeighted = false;
+	
+	private int weight = 0;
 
-	public BiologicalNodeAbstract getFrom() {
-		return from;
-	}
-
-	public void setFrom(BiologicalNodeAbstract from) {
-		this.from = from;
-	}
-
-	public BiologicalNodeAbstract getTo() {
-		return to;
-	}
-
-	public void setTo(BiologicalNodeAbstract to) {
-		this.to = to;
-	}
-
+	private SBMLEdge sbml = new SBMLEdge();
+	
 	private BiologicalNodeAbstract from;
+	
 	private BiologicalNodeAbstract to;
+	
+	/** Not to be changed after initialisation*/
+	private final BiologicalNodeAbstract originalFrom;
+	
+	/** Not to be changed after initialisation*/
+	private final BiologicalNodeAbstract originalTo;
+	
+	
+	
+	// ---Functional Methods---
+	
+	
 
+	public BiologicalEdgeAbstract(String label, String name,
+			BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
+
+		// this.edge=edge;
+		this.label = label;
+		this.name = name;
+		this.labelSet.add(label);
+		// setName(name.toLowerCase());
+		// setLabel(label.toLowerCase());
+		this.from = from;
+		this.to = to;
+		this.originalFrom = from;
+		this.originalTo = to;
+
+		/*
+		 * sbml.setName(name.toLowerCase()); //sbml.setEdge(edge.toString());
+		 * sbml.setLabel(label.toLowerCase()); sbml.setIsAbstract("false");
+		 * sbml.setIsDirected("false");
+		 * sbml.setFrom(from.getName().toLowerCase());
+		 * sbml.setTo(to.getName().toLowerCase());
+		 */
+
+	}
+
+	@Override
+	public Color getColor() {
+
+		if (isReference()) {
+			return Color.LIGHT_GRAY;
+		} else {
+			return color;
+		}
+	}
+
+	@Override
+	public BiologicalEdgeAbstract clone() {
+		try{
+		return (BiologicalEdgeAbstract) super.clone();
+		}catch(CloneNotSupportedException e){
+			// Kann eigentlich nicht passieren, da Cloneable
+			throw new InternalError();
+		}
+	}
+		
+	/* private boolean stringsEqualAndAreNotEmpty(String s1, String s2) {
+	* return s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2);
+	* }
+	*/
+	
+	/**
+	 * checks if the given BiologicalNodeAbstract is equal to this one nodes are
+	 * equal if name OR label match (also when name matches the label of the
+	 * other node)
+	 */
+	/*
+	 * public boolean equals(Object o) {
+	 * 
+	 * if (!(o instanceof BiologicalNodeAbstract)) { return super.equals(o); }
+	 * 
+	 * BiologicalNodeAbstract bna = (BiologicalNodeAbstract) o;
+	 * 
+	 * String name = this.getName(); String label = this.getLabel();
+	 * 
+	 * String name2 = bna.getName(); String label2 = bna.getLabel();
+	 * 
+	 * return stringsEqualAndAreNotEmpty(name,name2) //||
+	 * stringsEqualAndAreNotEmpty(name,label2) //||
+	 * stringsEqualAndAreNotEmpty(label,name2) ||
+	 * stringsEqualAndAreNotEmpty(label,label2); }
+	 */
+
+	public void addOriginalGraph(int g) {
+		this.getOriginalGraphs().add(g);
+	}
+
+	public boolean containedInAllOriginalGraphs(Pathway[] pathways) {
+		boolean contained = true;
+		for (int i = 1; i < pathways.length; i++)
+			contained = contained && this.getOriginalGraphs().contains(i);
+		return contained;
+	}
+	
+	private String getCorrectLabel(Integer type) {
+
+		if ((getLabel().length() == 0 || getLabel().equals(" "))
+				&& (getName().length() == 0 || getName().equals(" "))) {
+			return "";
+		} else {
+
+			if (type == 1) {
+				if (getLabel().equals("1") && this instanceof BiologicalEdgeAbstract) {
+					return "";
+				}
+				if (getLabel().length() == 0 || getLabel().equals(" ")) {
+					return getName();
+				} else {
+					return getLabel();
+				}
+			} else if (type == 2) {
+				if (getName().length() == 0 || getName().equals(" ")) {
+					return getLabel();
+				} else {
+					return getName();
+				}
+			} else if (type == 3) {
+				if (getName().length() == 0 || getName().equals(" ")) {
+					return getLabel();
+				} else if (getLabel().length() == 0 || getLabel().equals(" ")) {
+					return getName();
+				} else {
+					return getLabel() + "  -|-  " + getName();
+				}
+			} else if (type == 4) {
+				return "";
+			}
+		}
+		return "";
+	}
+	
+	
+	
+	// ---Getter/Setter---
+	
+	
+	
 	public boolean isWeighted() {
 		return isWeighted;
 	}
@@ -61,11 +241,23 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void setWeight(int weight) {
 		this.weight = weight;
 	}
+	
+	public BiologicalNodeAbstract getFrom() {
+		return from;
+	}
 
-	private int weight = 0;
+	public void setFrom(BiologicalNodeAbstract from) {
+		this.from = from;
+	}
 
-	private SBMLEdge sbml = new SBMLEdge();
+	public BiologicalNodeAbstract getTo() {
+		return to;
+	}
 
+	public void setTo(BiologicalNodeAbstract to) {
+		this.to = to;
+	}
+	
 	public SBMLEdge getSbml() {
 		sbml.setFrom(this.getFrom().getID() + "");
 		sbml.setTo(this.getTo().getID() + "");
@@ -76,35 +268,17 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void setSbml(SBMLEdge sbml) {
 		this.sbml = sbml;
 	}
-
-	public BiologicalEdgeAbstract(String label, String name,
-			BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-
-		// this.edge=edge;
-		this.label = label;
-		this.name = name;
-		this.labelSet.add(label);
-		// setName(name.toLowerCase());
-		// setLabel(label.toLowerCase());
-		this.from = from;
-		this.to = to;
-
-		/*
-		 * sbml.setName(name.toLowerCase()); //sbml.setEdge(edge.toString());
-		 * sbml.setLabel(label.toLowerCase()); sbml.setIsAbstract("false");
-		 * sbml.setIsDirected("false");
-		 * sbml.setFrom(from.getName().toLowerCase());
-		 * sbml.setTo(to.getName().toLowerCase());
-		 */
-
-	}
-
-	// public Edge getEdge() {
-	// return edge;
-	// }
-	// public void setEdge(Edge edge) {
-	// this.edge = edge;
-	// }
+	
+	/* public Edge getEdge() {
+	* return edge;
+	* }
+	*/
+	
+	/* public void setEdge(Edge edge) {
+	* this.edge = edge;
+	* }
+	*/
+	
 	public boolean isDirected() {
 		return isDirected;
 	}
@@ -121,16 +295,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 		this.keggEdge = keggEdge;
 	}
 
-	@Override
-	public Color getColor() {
-
-		if (isReference()) {
-			return Color.LIGHT_GRAY;
-		} else {
-			return color;
-		}
-	}
-
+	
 	public void setReactionPairEdge(ReactionPairEdge reactPEdge) {
 		this.reactionPairEdge = reactPEdge;
 	}
@@ -138,57 +303,11 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public ReactionPairEdge getReactionPairEdge() {
 		return reactionPairEdge;
 	}
-
-	@Override
-	public BiologicalEdgeAbstract clone() {
-		try{
-		return (BiologicalEdgeAbstract) super.clone();
-		}catch(CloneNotSupportedException e){
-			// Kann eigentlich nicht passieren, da Cloneable
-			throw new InternalError();
-		}
-	}
-	
-	
-	// ##################### Graph Element Abstract implementation
-	private boolean isReference = true;
-	private boolean isVisible = true;
-
-	private String name = "not mentioned";
-	private String label = "???";
-	// private String networklabel = "";
-	private int ID = 0;
-	private SortedSet<Integer> set;
-
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
-	
-	private String description = "";
-	private String comments = "";
-	private Color color = Color.LIGHT_GRAY;
-	private String BiologicalElement = "";
-	private Shape shape;
-	private boolean hidden = false;
-
-	private boolean hasKEGGNode = false;
-	private boolean hasKEGGEdge = false;
-	private boolean hasFeatureEdge = false;
-	private boolean hasDAWISNode = false;
-	private boolean hasReactionPairEdge = false;
-
-	private boolean hasBrendaNode = false;
-	
-	private HashSet<String> labelSet = new HashSet<String>();
-	
-
-	private Collection<Integer> originalGraphs;
-	
-	private ArrayList<Parameter> parameters = new ArrayList<Parameter>(); 
 	
 	public int getID() {
 		return ID;
 	}
 	
-
 	// should only be used when loading a file with a network
 	public void setID(int id) {
 
@@ -240,36 +359,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 			}
 		}
 	}
-
 	
-	
-
-	// private boolean stringsEqualAndAreNotEmpty(String s1, String s2) {
-	// return s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2);
-	// }
-
-	/**
-	 * checks if the given BiologicalNodeAbstract is equal to this one nodes are
-	 * equal if name OR label match (also when name matches the label of the
-	 * other node)
-	 */
-	/*
-	 * public boolean equals(Object o) {
-	 * 
-	 * if (!(o instanceof BiologicalNodeAbstract)) { return super.equals(o); }
-	 * 
-	 * BiologicalNodeAbstract bna = (BiologicalNodeAbstract) o;
-	 * 
-	 * String name = this.getName(); String label = this.getLabel();
-	 * 
-	 * String name2 = bna.getName(); String label2 = bna.getLabel();
-	 * 
-	 * return stringsEqualAndAreNotEmpty(name,name2) //||
-	 * stringsEqualAndAreNotEmpty(name,label2) //||
-	 * stringsEqualAndAreNotEmpty(label,name2) ||
-	 * stringsEqualAndAreNotEmpty(label,label2); }
-	 */
-
 	public Collection<Integer> getOriginalGraphs() {
 		if (this.originalGraphs == null) {
 			this.setOriginalGraphs(new ArrayList<Integer>());
@@ -279,58 +369,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 
 	public void setOriginalGraphs(Collection<Integer> graphs) {
 		this.originalGraphs = graphs;
-	}
-
-	public void addOriginalGraph(int g) {
-
-		this.getOriginalGraphs().add(g);
-	}
-
-	public boolean containedInAllOriginalGraphs(Pathway[] pathways) {
-		boolean contained = true;
-		for (int i = 1; i < pathways.length; i++)
-			contained = contained && this.getOriginalGraphs().contains(i);
-		return contained;
-	}
-	
-	//TODO: Was soll dieser ganze Label- und NetworkSettings-Schwachsinn? 
-	//Diese Network-Settings sehen SEHR überflüssig und schlecht gecoded aus!
-
-	private String getCorrectLabel(Integer type) {
-
-		if ((getLabel().length() == 0 || getLabel().equals(" "))
-				&& (getName().length() == 0 || getName().equals(" "))) {
-			return "";
-		} else {
-
-			if (type == 1) {
-				if (getLabel().equals("1") && this instanceof BiologicalEdgeAbstract) {
-					return "";
-				}
-				if (getLabel().length() == 0 || getLabel().equals(" ")) {
-					return getName();
-				} else {
-					return getLabel();
-				}
-			} else if (type == 2) {
-				if (getName().length() == 0 || getName().equals(" ")) {
-					return getLabel();
-				} else {
-					return getName();
-				}
-			} else if (type == 3) {
-				if (getName().length() == 0 || getName().equals(" ")) {
-					return getLabel();
-				} else if (getLabel().length() == 0 || getLabel().equals(" ")) {
-					return getName();
-				} else {
-					return getLabel() + "  -|-  " + getName();
-				}
-			} else if (type == 4) {
-				return "";
-			}
-		}
-		return "";
 	}
 
 	public String getNetworklabel() {
@@ -502,4 +540,14 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void removeLabel(String label){
 		this.labelSet.remove(label);
 	}
+
+	public BiologicalNodeAbstract getOriginalTo(){
+		return originalTo;
+	}
+	
+	public BiologicalNodeAbstract getOriginalFrom(){
+		return originalFrom;
+	}
+
+
 }
