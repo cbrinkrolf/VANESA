@@ -25,9 +25,11 @@ import petriNet.ConvertToPetriNet;
 import petriNet.OpenModellicaResult;
 import petriNet.PNTableDialog;
 import petriNet.PetriNetSimulation;
+import petriNet.Place;
 import petriNet.ReachController;
 import save.graphPicture.WriteGraphPicture;
 import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ToolBarListener implements ActionListener {
 
@@ -280,7 +282,9 @@ public class ToolBarListener implements ActionListener {
 		else if ("coarseSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
 				System.out.println("coarse");
-				//graphInstance.getPathway().coarseNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+				Pathway pw = new Pathway("name");
+				BiologicalNodeAbstract newNode = graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator().next().clone();
+				newNode.coarse(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
 			}else{
 				System.out.println("No Graph exists!");
 			}

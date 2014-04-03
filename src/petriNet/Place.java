@@ -5,6 +5,8 @@ import graph.GraphInstance;
 import graph.jung.graphDrawing.VertexShapes;
 
 import java.awt.Color;
+import java.util.HashSet;
+import java.util.Set;
 
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -58,9 +60,8 @@ public class Place extends BiologicalNodeAbstract {
 	// private int r;
 	// private int b;
 	// private int g;
-
-	public Place(String label, String name, double token, boolean discrete) {
-		super(label, name);
+	public Place(String label, String name, double token, boolean discrete){
+		super(label,name);
 		if (label.equals(""))
 			setLabel(name);
 		if (name.equals(""))
