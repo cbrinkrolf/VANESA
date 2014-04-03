@@ -292,7 +292,9 @@ public class ToolBarListener implements ActionListener {
 		else if ("flatSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
 				System.out.println("flat");
-				//graphInstance.getPathway().flatNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+				for(BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked()){
+					//node.flat();
+				}
 			}else{
 				System.out.println("No Graph exists!");
 				}
