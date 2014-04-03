@@ -140,7 +140,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		//setLabel(label.toLowerCase());
 		//setName(name.toLowerCase());
 		//setVertex(vertex);		
-		
+		myGraph = new GraphInstance().getPathway().getGraph();
 		
 		// values.put(1, 0);
 		shapes = new VertexShapes();
@@ -240,42 +240,43 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 * @param vertices Nodes to coarse.
 		 */
 		public void coarse(Set<BiologicalNodeAbstract> vertices){
-			myGraph = new GraphInstance().getPathway().getGraph();
-			for(BiologicalNodeAbstract childNode : vertices){
-				childNode.setParent(this);
-				this.addVertex(childNode, myGraph.getVertexLocation(childNode));
-			}
-			border = computeBorder(vertices);
-			environment.clear();
-			set.clear();
-			if (border.size()<=0){
-				return;
-			}
-			environment = computeEnvironment(vertices, border);
-			Point2D newVertexPosition = myGraph.getVertexLocation(border.iterator().next());
+			
 			for(BiologicalNodeAbstract node : vertices){
-				//myGraph.removeVertex(node);
+				node.setParent(this);
+				this.addVertex(node, myGraph.getVertexLocation(node));
 			}
-			//myGraph.addVertex(this, newVertexPosition);
+			
+			border = computeBorder(vertices);
+			
+			environment = computeEnvironment(vertices, border);
+			
+			// Update current MyGraph
+			updateMyGraph();
 		}
 		
 		private Set<BiologicalNodeAbstract> computeBorder(Set<BiologicalNodeAbstract> vertices){
+			
 			Set<BiologicalNodeAbstract> newBorder = new HashSet<BiologicalNodeAbstract>();
-			System.out.println(vertices.size());
+			
 			if(vertices==null | vertices.size()==0){
 				return newBorder;
 			}
+			
 			for(BiologicalNodeAbstract node : vertices){
+				
 				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getInEdges(node)){
+					
 					if(!vertices.contains(edge.getFrom())){
 						newBorder.add(edge.getOriginalTo());
-						edge.getOriginalTo().setColor(Color.RED);
+						//edge.getOriginalTo().setColor(Color.RED);
 					}
 				}
+				
 				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getOutEdges(node)){
+					
 					if(!vertices.contains(edge.getTo())){
 						newBorder.add(edge.getOriginalFrom());
-						edge.getOriginalFrom().setColor(Color.RED);
+						//edge.getOriginalFrom().setColor(Color.RED);
 					}
 				}
 			}
@@ -284,22 +285,57 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 		private Set<BiologicalNodeAbstract> computeEnvironment(Set<BiologicalNodeAbstract> vertices, 
 				Set<BiologicalNodeAbstract> border){
+			
 			Set<BiologicalNodeAbstract> newEnvironment = new HashSet<BiologicalNodeAbstract>();
+			
 			for(BiologicalNodeAbstract borderNode : border){
-				for(BiologicalEdgeAbstract borderEdge : myGraph.getJungGraph().getInEdges(borderNode)){
+				
+				for(BiologicalEdgeAbstract borderEdge : myGraph.getJungGraph().getInEdges(borderNode.getCurrentShownParentNode())){
+					
 					if(!vertices.contains(borderEdge.getFrom())){
 						newEnvironment.add(borderEdge.getOriginalFrom());
-						borderEdge.getOriginalFrom().setColor(Color.GREEN);
+					//	borderEdge.getOriginalFrom().setColor(Color.GREEN);
 					}
 				}
-				for(BiologicalEdgeAbstract borderEdge : myGraph.getJungGraph().getOutEdges(borderNode)){
+				
+				for(BiologicalEdgeAbstract borderEdge : myGraph.getJungGraph().getOutEdges(borderNode.getCurrentShownParentNode())){
+					
 					if(!vertices.contains(borderEdge.getTo())){
 						newEnvironment.add(borderEdge.getOriginalTo());
-						borderEdge.getOriginalTo().setColor(Color.GREEN);
+					//	borderEdge.getOriginalTo().setColor(Color.GREEN);
 					}
 				}
 			}
 			return newEnvironment;
+		}
+
+		private void updateMyGraph(){
+			
+			myGraph.addVertex(this, myGraph.getVertexLocation(border.iterator().next()));
+			
+			for(BiologicalNodeAbstract node : border){
+				
+				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getInEdges(node)){
+					
+					if(environment.contains(edge.getOriginalFrom())){
+						myGraph.removeEdge(edge);
+						edge.setTo(this);
+						myGraph.addEdge(edge);
+					} 
+				}
+				
+				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getOutEdges(node)){
+					
+					if(environment.contains(edge.getOriginalTo())){
+						myGraph.removeEdge(edge);
+						edge.setFrom(this);
+						myGraph.addEdge(edge);
+					} 
+				}
+			}
+			for(BiologicalNodeAbstract node : getAllNodes()){
+				myGraph.removeVertex(node);
+			}
 		}
 		
 		@Override
@@ -514,6 +550,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			return parentNode;
 		}
 
+		public BiologicalNodeAbstract getCurrentShownParentNode() {
+			System.out.println("currentParentNode: " + getID());
+			if(myGraph.getAllVertices().contains(this)){
+				return this;
+			}
+			return getParentNode().getCurrentShownParentNode();
+		}
+		
 		public void setDB(String database) {
 			this.db = database;
 		}
