@@ -204,10 +204,12 @@ public class PetriNet {
 			//Place p;
 			int i = 0;
 			while (it.hasNext()) {
+				//System.out.println("drin");
 				bna = it.next();
 				if (bna instanceof Place) {
 					//System.out.println(i*1.0f/(this.places-1));
-					((Place) bna).setPlotColor(Color.getHSBColor(1.0f/(this.places-1)+i*1.0f/(this.places-1), 1, 1));
+					((Place) bna).setPlotColor(Color.getHSBColor(i*1.0f/(this.places), 1, 1));
+					System.out.println(i);
 					i++;
 					//p = (Place) o;
 					// System.out.println(p.getName());

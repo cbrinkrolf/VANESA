@@ -1,6 +1,7 @@
 package xmlInput.sbml;
 
 import graph.CreatePathway;
+import graph.gui.Parameter;
 import gui.MainWindowSingelton;
 import gui.RangeSelector;
 
@@ -8,6 +9,7 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -395,7 +397,6 @@ public class JSBMLinput {
 			}
 			elSub = specAnnotation.getChild("Label", null);
 			String label = elSub.getAttributeValue("Label");
-
 			String attr;
 			switch (biologicalElement) {
 			case Elementdeclerations.enzyme:
@@ -521,6 +522,7 @@ public class JSBMLinput {
 				bna = new biologicalObjects.nodes.Site(label, name);
 				break;
 			case Elementdeclerations.place:
+				System.out.println("plce");
 				bna = new petriNet.Place(label, name, 1.0, true);
 				elSub = specAnnotation.getChild("token", null);
 				attr = String.valueOf(elSub.getAttributeValue("token"));
@@ -537,9 +539,11 @@ public class JSBMLinput {
 				((petriNet.Place) bna).setDiscrete(true);
 				break;
 			case Elementdeclerations.s_place:
+				System.out.println("cont");
 				bna = new petriNet.Place(label, name, 1.0, false);
 				elSub = specAnnotation.getChild("token", null);
 				attr = String.valueOf(elSub.getAttributeValue("token"));
+				System.out.println(attr);
 				((petriNet.Place) bna).setToken(Double.parseDouble(attr));
 				elSub = specAnnotation.getChild("tokenMin", null);
 				attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
@@ -603,6 +607,26 @@ public class JSBMLinput {
 				Double yCoord = new Double(
 						elSubSub.getAttributeValue("y_Coordinate"));
 				Point2D.Double p = new Point2D.Double(xCoord, yCoord);
+				
+				elSub = specAnnotation.getChild("Parameters", null);
+				
+				//elSubSub = elSub.getChild("x_Coordinate", null);
+				
+				ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+				Parameter param;
+				String pname = "";
+				Double value = 0.0;
+				String unit = "";
+				for(int j = 0; j<elSub.getChildren().size(); j++){
+					elSubSub = 	elSub.getChildren().get(j);
+					//System.out.println(elSubSub.getChild("Name", null).getAttributeValue("Name"));
+					pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
+					value = Double.valueOf(elSubSub.getChild("Value", null).getAttributeValue("Value"));
+					unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
+					param = new Parameter(pname, value, unit);
+					parameters.add(param);
+				}
+				bna.setParameters(parameters);
 				// add bna to the graph
 				this.pathway.addVertex(bna, p);
 				// add bna to hashtable
