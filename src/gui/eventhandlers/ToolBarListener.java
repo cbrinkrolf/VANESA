@@ -16,6 +16,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -281,9 +282,14 @@ public class ToolBarListener implements ActionListener {
 		}
 		else if ("coarseSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
-				System.out.println("coarse");
-				Pathway pw = new Pathway("name");
-				BiologicalNodeAbstract newNode = graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator().next().clone();
+				//System.out.println("coarse");
+				BiologicalNodeAbstract borderNode = graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator().next().computeCoarseType(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+				if (borderNode == null){
+					JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), "No coarsing possible with the given set of nodes.", "Coarsing Error!", JOptionPane.ERROR_MESSAGE);
+					//System.out.println("No coarsing possible with the given set of nodes.");
+					return;
+				}
+				BiologicalNodeAbstract newNode = borderNode.clone();
 				newNode.coarse(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
 			}else{
 				System.out.println("No Graph exists!");

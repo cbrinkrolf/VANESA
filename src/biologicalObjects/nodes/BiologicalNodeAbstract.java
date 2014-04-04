@@ -141,6 +141,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		//setName(name.toLowerCase());
 		//setVertex(vertex);		
 		myGraph = new GraphInstance().getPathway().getGraph();
+		setPetriNet(new GraphInstance().getPathway().isPetriNet());
 		
 		// values.put(1, 0);
 		shapes = new VertexShapes();
@@ -232,6 +233,30 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				}
 			}
 			return "";
+		}
+		
+		/**
+		 * Returns a node that can be cloned to create a coarse node of the given set of nodes.
+		 * @param vertices Nodes selected for coarsing operation
+		 * @return Node that is instance of the correct type of node.
+		 * Returns null if coarsing operation is not possible on this set of nodes (e.g. different 
+		 * node types in Petri-Net border).
+		 * @author tloka
+		 */
+		public BiologicalNodeAbstract computeCoarseType(Set<BiologicalNodeAbstract> vertices){
+			Set<BiologicalNodeAbstract> testBorder = computeBorder(vertices);
+			if(testBorder.size()<=0)
+				return vertices.iterator().next();
+			if(this.isPetriNet()){
+				boolean isPlace = testBorder.iterator().next() instanceof Place;
+				for (BiologicalNodeAbstract node : testBorder){
+					if(node instanceof Place != isPlace){
+						return null;
+					} 
+				}
+			}
+			//TOBI: Check for continuous nodes in vertices(!) to clone this object.
+			return testBorder.iterator().next();
 		}
 		
 		/**
@@ -331,7 +356,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 */
 		private void updateMyGraph(){
 			
-			myGraph.addVertex(this, myGraph.getVertexLocation(border.iterator().next()));
+			myGraph.addVertex(this, myGraph.getVertexLocation(getAllNodes().iterator().next()));
 			
 			for(BiologicalNodeAbstract node : border){
 				if (node.getCurrentShownParentNode() == null){
