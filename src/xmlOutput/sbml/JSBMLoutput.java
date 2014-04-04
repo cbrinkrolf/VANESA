@@ -1,5 +1,6 @@
 package xmlOutput.sbml;
 
+import graph.gui.Parameter;
 import gui.RangeSelector;
 
 import java.awt.Color;
@@ -235,6 +236,28 @@ public class JSBMLoutput {
 		elSub.addChild(createElSub(attr, "x_Coordinate"));
 		attr = String.valueOf(p.getY());
 		elSub.addChild(createElSub(attr, "y_Coordinate"));
+		el.addChild(elSub);
+		
+		XMLNode elSubSub;
+		elSub = new XMLNode(new XMLNode(new XMLTriple("Parameters","",""), new XMLAttributes()));
+		
+		Parameter param;
+		Iterator<Parameter> it = oneNode.getParameters().iterator();
+		while(it.hasNext()){
+			param = it.next();
+			elSubSub = new XMLNode(new XMLNode(new XMLTriple("Parameter","",""), new XMLAttributes()));
+			elSubSub.addChild(createElSub(param.getName(), "Name"));
+			elSubSub.addChild(createElSub(param.getValue()+"", "Value"));
+			elSubSub.addChild(createElSub(param.getUnit(), "Unit"));
+			elSub.addChild(elSubSub);
+		}
+		
+		
+		
+		//attr = "bla";
+		//elSub.addChild(createElSub(attr, "parameter"));
+		
+		//elSub.addChild(elSub);
 		el.addChild(elSub);
 
 		attr = oneNode.getComments();
