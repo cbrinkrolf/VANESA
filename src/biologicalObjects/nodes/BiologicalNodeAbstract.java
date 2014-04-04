@@ -238,11 +238,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 * Method to coarse a Set of nodes to a single hierarchical node.
 		 * Can also be used for updating after change of nodes or edges.
 		 * @param vertices Nodes to coarse.
+		 * @author tloka
 		 */
 		public void coarse(Set<BiologicalNodeAbstract> vertices){
 			
 			for(BiologicalNodeAbstract node : vertices){
-				node.setParent(this);
+				node.setParentNode(this);
 				this.addVertex(node, myGraph.getVertexLocation(node));
 			}
 			
@@ -254,6 +255,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			updateMyGraph();
 		}
 		
+		/**
+		 * Computes the border for a given set of nodes using the actual shown graph.
+		 * @param vertices Set of nodes that were selected for coarse operation.
+		 * @return The border (only nodes of the most detailed hierarchical layer are returned).
+		 * @author tloka
+		 */
 		private Set<BiologicalNodeAbstract> computeBorder(Set<BiologicalNodeAbstract> vertices){
 			
 			Set<BiologicalNodeAbstract> newBorder = new HashSet<BiologicalNodeAbstract>();
@@ -283,6 +290,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			return newBorder;
 		}
 
+		/**
+		 * Computes the environment of a (hierarchical) node using a given set of nodes that were selected
+		 * for coarsing operation and the already computed border.
+		 * @param vertices Set of coarsed nodes.
+		 * @param border Subset of coarsed nodes representing the border.
+		 * @return The environment (only nodes of the most detailed hierarchical layer are returned).
+		 * @author tloka
+		 */
 		private Set<BiologicalNodeAbstract> computeEnvironment(Set<BiologicalNodeAbstract> vertices, 
 				Set<BiologicalNodeAbstract> border){
 			
@@ -308,14 +323,21 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			}
 			return newEnvironment;
 		}
-
+		
+		/**
+		 * Updates the current Graph after coarsing of nodes. The node that calls the method is added,
+		 * all nodes contained in this node are removed. Edges are updated respectively (changed from/to 
+		 * for border-environment edges, removed automatically for all 'inner' edges)
+		 */
 		private void updateMyGraph(){
 			
 			myGraph.addVertex(this, myGraph.getVertexLocation(border.iterator().next()));
 			
 			for(BiologicalNodeAbstract node : border){
-				
-				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getInEdges(node)){
+				if (node.getCurrentShownParentNode() == null){
+					continue;
+				}
+				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getInEdges(node.getCurrentShownParentNode())){
 					
 					if(environment.contains(edge.getOriginalFrom())){
 						myGraph.removeEdge(edge);
@@ -324,7 +346,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 					} 
 				}
 				
-				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getOutEdges(node)){
+				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getOutEdges(node.getCurrentShownParentNode())){
 					
 					if(environment.contains(edge.getOriginalTo())){
 						myGraph.removeEdge(edge);
@@ -550,12 +572,22 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			return parentNode;
 		}
 
+		/**
+		 * Returns the ParentNode (or the node itself respectively), that is currently shown in the graph.
+		 * @author tloka
+		 * @return ParentNode currently existing in the graph. Returns null, if no parent node currently exists
+		 * in the graph (e.g. if a (parent-)node was deleted or a child is currently represented in the graph.
+		 */
 		public BiologicalNodeAbstract getCurrentShownParentNode() {
-			System.out.println("currentParentNode: " + getID());
 			if(myGraph.getAllVertices().contains(this)){
 				return this;
 			}
-			return getParentNode().getCurrentShownParentNode();
+			// Can result in null, if node was deleted from the graph.
+			try{
+				return getParentNode().getCurrentShownParentNode();
+			} catch (NullPointerException e){
+				return null;
+			}
 		}
 		
 		public void setDB(String database) {
