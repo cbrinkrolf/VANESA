@@ -476,6 +476,10 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void updateSatelliteView() {
 		optionPanel.updatePanel("Satellite");
 	}
+	
+	public void updateHierarchyView() {
+		optionPanel.updatePanel("Hierarchy");
+	}
 
 	public void updatePCPView() {
 		optionPanel.updatePanel("pcp");
@@ -508,6 +512,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void updateOptionPanel() {
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
+		optionPanel.updatePanel("Hierarchy");
 		optionPanel.updatePanel("Filter");
 		optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
@@ -519,6 +524,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// System.out.println("update all");
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
+		optionPanel.updatePanel("Hierarchy");
 		optionPanel.updatePanel("Filter");
 		optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
