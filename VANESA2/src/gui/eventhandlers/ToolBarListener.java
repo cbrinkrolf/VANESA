@@ -289,7 +289,10 @@ public class ToolBarListener implements ActionListener {
 					//System.out.println("No coarsing possible with the given set of nodes.");
 					return;
 				}
-				BiologicalNodeAbstract newNode = borderNode.clone();
+				BiologicalNodeAbstract newNode = (BiologicalNodeAbstract) borderNode.clone();
+				//newNode.setID(-1);
+				newNode.setID();
+				System.out.println(newNode.getID());
 				newNode.coarse(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
 			}else{
 				System.out.println("No Graph exists!");
@@ -297,9 +300,8 @@ public class ToolBarListener implements ActionListener {
 		}
 		else if ("flatSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
-				System.out.println("flat");
 				for(BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked()){
-					//node.flat();
+					node.flat();
 				}
 			}else{
 				System.out.println("No Graph exists!");
