@@ -112,6 +112,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 		// setLabel(label.toLowerCase());
 		this.from = from;
 		this.to = to;
+		
 		this.originalFrom = from;
 		this.originalTo = to;
 
