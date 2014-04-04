@@ -290,10 +290,10 @@ public class ToolBarListener implements ActionListener {
 					return;
 				}
 				BiologicalNodeAbstract newNode = (BiologicalNodeAbstract) borderNode.clone();
-				//newNode.setID(-1);
 				newNode.setID();
-				System.out.println(newNode.getID());
+				newNode.setGraph(new MyGraph(new Pathway(newNode.getID() + "")));
 				newNode.coarse(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{
 				System.out.println("No Graph exists!");
 			}
@@ -303,6 +303,7 @@ public class ToolBarListener implements ActionListener {
 				for(BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked()){
 					node.flat();
 				}
+				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{
 				System.out.println("No Graph exists!");
 				}

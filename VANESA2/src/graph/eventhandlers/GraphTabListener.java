@@ -51,6 +51,7 @@ public class GraphTabListener implements TabListener {
 		if(window.getTabCount() > 0){
 			window.updateElementTree();
 			window.updateSatelliteView();
+			window.updateHierarchyView();
 			window.updateFilterView();
 			window.updatePathwayTree();
 			window.updateProjectProperties();

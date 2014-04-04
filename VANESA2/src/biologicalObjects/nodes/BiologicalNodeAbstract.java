@@ -405,9 +405,18 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			if(getAllNodes().size()<=0)
 				return;
 			myGraph.removeVertex(this);
-			for(BiologicalNodeAbstract node : getAllNodes()){
+			for(Object n : getAllNodes()){
+				BiologicalNodeAbstract node;
+				try{
+					node = (BiologicalNodeAbstract) n;
+					} catch (Exception ex){
+						continue;
+					}
 				node.setParentNode(null);
 				myGraph.addVertex(node, myGraph.getVertexLocation(node));
+				System.out.println(node.getAllNodes().size());
+				System.out.println("Subnode:" + node);
+				System.out.println("CoarseNode:" + this);
 			}
 			for(Object e : getAllEdgesAsVector()){
 				BiologicalEdgeAbstract edge;
@@ -416,13 +425,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				} catch (Exception ex){
 					continue;
 				}
+				myGraph.removeEdge(edge);
 				if(edge.getOriginalFrom().getCurrentShownParentNode()!=null)
 					edge.setFrom(edge.getOriginalFrom().getCurrentShownParentNode());
 				if(edge.getOriginalTo().getCurrentShownParentNode()!=null)
 					edge.setTo(edge.getOriginalTo().getCurrentShownParentNode());
 				myGraph.addEdge(edge);
 			}
-			//this.clearElements();
+			
 		}
 		
 		@Override
