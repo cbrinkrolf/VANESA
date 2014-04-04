@@ -729,6 +729,30 @@ public class Pathway implements Cloneable {
 			}
 		return null;
 	}
+	
+	/**
+	 * Saves an edge without adding it to the graph.
+	 * Essential for hierarchical data structure.
+	 * @param bea Edge to add.
+	 * @return Edge if successful, null elsewise.
+	 */
+	public BiologicalEdgeAbstract addEdgeWithoutGraph(BiologicalEdgeAbstract bea){
+
+		if (bea != null) {
+			bea.setDirected(bea.isDirected());
+			biologicalElements.put(bea.getID() + "", bea);
+			edges.put(new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
+					bea);
+			return bea;
+			
+		} else
+			try {
+				throw new NullPointerException();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		return null;
+	}
 
 	
 	public void removeElement(GraphElementAbstract element) {
@@ -1021,7 +1045,7 @@ public class Pathway implements Cloneable {
 		//return getAllEdgesAsVector().size();
 	}
 
-
+	
 	public void mergeNodes(Set<BiologicalNodeAbstract> nodes){
 		if(nodes.size() > 1){
 		//	BiologicalNodeAbstract[] array = nodes.toArray(BiologicalNodeAbstract);
@@ -1061,6 +1085,16 @@ public class Pathway implements Cloneable {
 		System.out.println("labels: "+nodes.size());
 	}
 
+	/**
+	 * Reset Element lists.
+	 */
+	public void clearElements(){
+		biologicalElements.clear();
+		set.clear();
+		edges.clear();
+	}
+	
+	
 	@Override
 	public Pathway clone() {
 		try {
@@ -1072,9 +1106,6 @@ public class Pathway implements Cloneable {
 	}
 	
 	
-	
-	
-	// ---Getter/Setter---
 	
 	// ---Getter/Setter---
 	
