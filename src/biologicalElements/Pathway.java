@@ -736,30 +736,6 @@ public class Pathway implements Cloneable {
 	 * @param bea Edge to add.
 	 * @return Edge if successful, null elsewise.
 	 */
-	public BiologicalEdgeAbstract addEdgeWithoutGraph(BiologicalEdgeAbstract bea){
-
-		if (bea != null) {
-			bea.setDirected(bea.isDirected());
-			biologicalElements.put(bea.getID() + "", bea);
-			edges.put(new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
-					bea);
-			return bea;
-			
-		} else
-			try {
-				throw new NullPointerException();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		return null;
-	}
-	
-	/**
-	 * Saves an edge without adding it to the graph.
-	 * Essential for hierarchical data structure.
-	 * @param bea Edge to add.
-	 * @return Edge if successful, null elsewise.
-	 */
 	public BiologicalNodeAbstract addVertexWithoutGraph(BiologicalNodeAbstract bna){
 
 		if (bna != null) {
