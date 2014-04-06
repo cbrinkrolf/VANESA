@@ -283,15 +283,21 @@ public class ToolBarListener implements ActionListener {
 		else if ("coarseSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
 				//System.out.println("coarse");
-				BiologicalNodeAbstract borderNode = graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator().next().computeCoarseType(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+				BiologicalNodeAbstract borderNode = graphInstance.getPathway().
+						getGraph().getVisualizationViewer().getPickedVertexState().
+						getPicked().iterator().next().computeCoarseType(graphInstance.
+								getPathway().getGraph().getVisualizationViewer().
+								getPickedVertexState().getPicked());
 				if (borderNode == null){
-					JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), "No coarsing possible with the given set of nodes.", "Coarsing Error!", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), 
+							"No coarsing possible with the given set of nodes.", 
+							"Coarsing Error!", JOptionPane.ERROR_MESSAGE);
 					//System.out.println("No coarsing possible with the given set of nodes.");
 					return;
 				}
 				BiologicalNodeAbstract newNode = (BiologicalNodeAbstract) borderNode.clone();
 				newNode.setID();
-				newNode.setGraph(new MyGraph(new Pathway(newNode.getID() + "")));
+				newNode.setGraph(new MyGraph(newNode));
 				newNode.coarse(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
 				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{
@@ -300,7 +306,8 @@ public class ToolBarListener implements ActionListener {
 		}
 		else if ("flatSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
-				for(BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked()){
+				for(BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().
+						getVisualizationViewer().getPickedVertexState().getPicked()){
 					node.flat();
 				}
 				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();

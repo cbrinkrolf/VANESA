@@ -126,6 +126,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	
 	private Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
 	
+	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<BiologicalEdgeAbstract>();
+	
 	
 	
 	// ---Functional Methods---
@@ -267,16 +269,20 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 */
 		public void coarse(Set<BiologicalNodeAbstract> vertices){
 			
+			// Modify input nodes and add them to the Pathway and graph of this coarse node.
 			for(BiologicalNodeAbstract node : vertices){
 				node.setParentNode(this);
 				this.addVertex(node, myGraph.getVertexLocation(node));
 			}
-			
-			saveSubnetEdges(vertices);
-			
+					
+			// Compute the border of the given set of nodes.
 			border = computeBorder(vertices);
 			
+			// Compute thhe environment of the given set of nodes.
 			environment = computeEnvironment(vertices, border);
+			
+			// Save the edges containing the nodes inside the coarse node.
+			saveSubnetEdges(vertices);
 			
 			// Update current MyGraph
 			updateMyGraph();
@@ -302,7 +308,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 					
 					if(!vertices.contains(edge.getFrom())){
 						newBorder.add(edge.getOriginalTo());
-						//edge.getOriginalTo().setColor(Color.RED);
 					}
 				}
 				
@@ -310,7 +315,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 					
 					if(!vertices.contains(edge.getTo())){
 						newBorder.add(edge.getOriginalFrom());
-						//edge.getOriginalFrom().setColor(Color.RED);
 					}
 				}
 			}
@@ -336,7 +340,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 					
 					if(!vertices.contains(borderEdge.getFrom())){
 						newEnvironment.add(borderEdge.getOriginalFrom());
-					//	borderEdge.getOriginalFrom().setColor(Color.GREEN);
 					}
 				}
 				
@@ -344,7 +347,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 					
 					if(!vertices.contains(borderEdge.getTo())){
 						newEnvironment.add(borderEdge.getOriginalTo());
-					//	borderEdge.getOriginalTo().setColor(Color.GREEN);
 					}
 				}
 			}
@@ -355,6 +357,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 * Updates the current Graph after coarsing of nodes. The node that calls the method is added,
 		 * all nodes contained in this node are removed. Edges are updated respectively (changed from/to 
 		 * for border-environment edges, removed automatically for all 'inner' edges)
+		 * @author tloka
 		 */
 		private void updateMyGraph(){
 			
@@ -388,51 +391,77 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 		/**
 		 * Saves all edges going in or out one of the input nodes.
+		 * Internal edges (between two nodes inside the coarse node) are added to the 
+		 * pathway graph, connecting edges (between a border node and an environment node) 
+		 * are only added to a Set of edges without any influence on the pathway graph.
 		 * @param vertices Set of (coarse) nodes.
+		 * @author tloka
 		 */
 		private void saveSubnetEdges(Set<BiologicalNodeAbstract> vertices){
+			
 			for(BiologicalNodeAbstract node : vertices){
-				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getInEdges(node.getCurrentShownParentNode())){
-					addEdgeWithoutGraph(edge);
+
+				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getInEdges(node)){
+					
+					if(vertices.contains(edge.getFrom()) && vertices.contains(edge.getTo())){
+						
+						// Add to Pathway sets and graph.
+						addEdge(edge);
+						
+					} else {
+						
+						// Add only to a set of edges.
+						connectingEdges.add(edge);
+					}
 				}
-				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getOutEdges(node.getCurrentShownParentNode())){
-					addEdgeWithoutGraph(edge);
+				
+				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getOutEdges(node)){
+					
+					if(vertices.contains(edge.getTo()) && vertices.contains(edge.getFrom())){
+						
+						// Add to Pathway sets and graph.
+						addEdge(edge);
+						
+					} else {
+						
+						// Add only to a set of edges.
+						connectingEdges.add(edge);
+					}
 				}
 			}
 		}
 		
+		/**
+		 * Method to flat the coarse node back into the original subpathway.
+		 * @author tloka
+		 */
 		public void flat(){
+			
+			// Stop if node is not a coarse node.
 			if(getAllNodes().size()<=0)
 				return;
+			
+			// remove this node
 			myGraph.removeVertex(this);
-			for(Object n : getAllNodes()){
-				BiologicalNodeAbstract node;
-				try{
-					node = (BiologicalNodeAbstract) n;
-					} catch (Exception ex){
-						continue;
-					}
+			
+			// Add nodes of the subpathway
+			for(BiologicalNodeAbstract node : getAllNodes()){
 				node.setParentNode(null);
 				myGraph.addVertex(node, myGraph.getVertexLocation(node));
-				System.out.println(node.getAllNodes().size());
-				System.out.println("Subnode:" + node);
-				System.out.println("CoarseNode:" + this);
 			}
-			for(Object e : getAllEdgesAsVector()){
-				BiologicalEdgeAbstract edge;
-				try{
-				edge = (BiologicalEdgeAbstract) e;
-				} catch (Exception ex){
-					continue;
-				}
+			
+			Set<BiologicalEdgeAbstract> allEdges = connectingEdges;
+			allEdges.addAll(getAllEdges());
+			
+			// Add edges of the subpathway and connecting edges
+			for(BiologicalEdgeAbstract edge : allEdges){
 				myGraph.removeEdge(edge);
 				if(edge.getOriginalFrom().getCurrentShownParentNode()!=null)
 					edge.setFrom(edge.getOriginalFrom().getCurrentShownParentNode());
 				if(edge.getOriginalTo().getCurrentShownParentNode()!=null)
 					edge.setTo(edge.getOriginalTo().getCurrentShownParentNode());
 				myGraph.addEdge(edge);
-			}
-			
+			}	
 		}
 		
 		@Override
