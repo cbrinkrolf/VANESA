@@ -315,6 +315,13 @@ public class ToolBarListener implements ActionListener {
 				System.out.println("No Graph exists!");
 				}
 		}
+		else if ("enterNode".equals(event)){
+			if(graphInstance.getMyGraph() != null){
+					w.updateHierarchyView();
+			}else{
+				System.out.println("No Graph exists!");
+				}
+		}
 		else if("mergeSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
 			System.out.println("merge");
