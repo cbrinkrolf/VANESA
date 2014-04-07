@@ -953,5 +953,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		public void removeLabel(String label){
 			this.labelSet.remove(label);
 		}
+		
+		public Set<BiologicalNodeAbstract> getBorder(){
+			return border;
+		}
 
 }

@@ -176,11 +176,17 @@ public class ToolBar {
 		flatSelectedNodes.setActionCommand("flatSelectedNodes");
 		flatSelectedNodes.addActionListener(toolBarListener);
 		
+		JButton enterSelectedNode = new JButton("Enter Node");
+		enterSelectedNode.setToolTipText("Enter selected coarse node in Hierarchy view.");
+		enterSelectedNode.setActionCommand("enterNode");
+		enterSelectedNode.addActionListener(toolBarListener);
+		
 		infopanel.add(info);
 		infopanel.add(infoextended);
 		infopanel.add(mergeSelectedNodes);
 		infopanel.add(coarseSelectedNodes);
 		infopanel.add(flatSelectedNodes);
+		infopanel.add(enterSelectedNode);
 
 		JButton dimView = new JButton(new ImageIcon(
 				imagePath.getPath("view.png")));
