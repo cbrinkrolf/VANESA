@@ -13,7 +13,7 @@ import java.util.Properties;
 
 /**
  * @author Benjamin Kormeier
- * @version 1.0 06.08.2008
+ * @version 2.0 09.04.2014
  */
 public class XMLResourceBundle
 {
@@ -28,7 +28,7 @@ public class XMLResourceBundle
 	 */
 	public XMLResourceBundle()
 	{
-		loader=ClassLoader.getSystemClassLoader();
+		loader=this.getClass().getClassLoader();
 		props = new Properties();
 	}
 	
@@ -62,7 +62,7 @@ public class XMLResourceBundle
 		this.locale=locale;
 		
 		if(loader==null)
-			loader=ClassLoader.getSystemClassLoader();
+			loader=this.getClass().getClassLoader();
 		else
 			loader=classloader;
 		
