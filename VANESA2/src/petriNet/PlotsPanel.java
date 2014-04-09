@@ -68,7 +68,7 @@ public class PlotsPanel extends JPanel implements ActionListener {
 				BiologicalNodeAbstract bna = bnas[k];
 				if (bna instanceof Place
 						&& pw.getPetriNet().getPnResult()
-								.containsKey("P" + ((Place) bna).getID()+".t")) {
+								.containsKey(bna.getName()+".t")) {
 					MAData = bna.getPetriNetSimulationData();
 					rows[i][0] = bna.getLabel();
 					for (int j = 1; j <= MAData.size(); j++) {
