@@ -5,6 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMElement;
@@ -25,7 +26,7 @@ import configurations.ConnectionSettings;
  * This is a singleton and a observable class to get informed in the case
  * of available data.
  * 
- * @author mwesterm
+ * @author mwesterm, Benjamin Kormeier
  */
 public class AsynchroneWebServiceWrapper extends AbstractWebServiceObservable {
 
@@ -35,9 +36,8 @@ public class AsynchroneWebServiceWrapper extends AbstractWebServiceObservable {
 
     private ServiceClient serviceClient = null;
    
-    //private boolean withAddressing = true;
-
     private boolean withAddressing = false;
+    
 	/**
 	 * private Constructor
 	 */
@@ -48,15 +48,14 @@ public class AsynchroneWebServiceWrapper extends AbstractWebServiceObservable {
 		try
 		{
 			this.serviceClient=new ServiceClient();
-
-			// -- engage WS-Adressing --
-			this.serviceClient.disengageModule("addressing");
-			this.serviceClient.engageModule("addressing");
 		}
 		catch (AxisFault ex)
 		{
 			Logger.getLogger(AsynchroneWebServiceWrapper.class.getName()).log(Level.SEVERE, null, ex);
 		}
+		
+		// -- engage WS-Adressing --
+		engageAddressing();
 	}
 
 	/**
@@ -66,11 +65,11 @@ public class AsynchroneWebServiceWrapper extends AbstractWebServiceObservable {
 	 */
 	public synchronized static AsynchroneWebServiceWrapper getInstance()
 	{
-
 		if (singletonServiceWrapper==null)
 		{
 			singletonServiceWrapper=new AsynchroneWebServiceWrapper();
 		}
+		
 		return singletonServiceWrapper;
 	}
 
@@ -185,6 +184,29 @@ public class AsynchroneWebServiceWrapper extends AbstractWebServiceObservable {
 		return options;
 	}
 
+	private void engageAddressing() 
+	{
+		if(withAddressing)
+		{
+			try
+			{
+				this.serviceClient.disengageModule("addressing");
+				this.serviceClient.engageModule("addressing");
+			}
+			catch (AxisFault ex)
+			{
+				Logger.getLogger(AsynchroneWebServiceWrapper.class.getName()).log(Level.SEVERE, null, ex);
+				
+				this.serviceClient.disengageModule("addressing");
+				this.withAddressing=false;
+				
+				JOptionPane.showMessageDialog(null, "Engaging addressing module failed!\nContinue without addressing.","Addressing", JOptionPane.ERROR_MESSAGE); 
+			}
+		}
+		else
+			this.serviceClient.disengageModule("addressing");
+	}
+	
 	@Override
 	public void fireEvent(WebServiceEvent event)
 	{
@@ -197,11 +219,16 @@ public class AsynchroneWebServiceWrapper extends AbstractWebServiceObservable {
 		}
 	}
 	
-	public boolean isWithAddressing() {
+	public boolean isWithAddressing()
+	{
 		return this.withAddressing;
 	}
-	
-	public void setAddressing(boolean withAddressing) {
-		this.withAddressing = withAddressing;
+
+	public void setAddressing(boolean withAddressing)
+	{
+		this.withAddressing=withAddressing;
+		
+		// -- engage WS-Adressing -
+		engageAddressing();
 	}
 }
