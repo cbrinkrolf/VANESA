@@ -225,7 +225,8 @@ public class PNEdge extends BiologicalEdgeAbstract {
 			if (bna instanceof Place) {
 				p = (Place) bna;
 				names.add("P"+p.getID());
-				mNames.put("P"+p.getID(), "P"+p.getID() + ".t");
+				names.add(p.getName());
+				//mNames.put("P"+p.getID(), "P"+p.getID() + ".t");
 			}
 		}
 
@@ -238,8 +239,9 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		for (int i = 0; i < names.size(); i++) {
 			index = 0;
 			name = names.get(i);
-			// System.out.println("name: "+name );
-			// System.out.println("fkt: "+mFunction);
+			
+			System.out.println("name: "+name );
+			System.out.println("fkt: "+mFunction);
 
 			while (mFunction.indexOf(name, index) >= 0) {
 				idxNew = mFunction.indexOf(name, index);
