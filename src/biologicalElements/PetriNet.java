@@ -80,7 +80,7 @@ public class PetriNet {
 
 				bna = it.next();
 				if (bna instanceof Place) {
-					placeNames.add("P" + bna.getID()+".t");
+					placeNames.add(bna.getName()+".t");
 					// System.out.println(bna.getName());
 				}
 			}
@@ -182,7 +182,7 @@ public class PetriNet {
 
 					//System.out.println();
 
-					Vector<Double> v = pnResult.get("P" + bna.getID()+".t");
+					Vector<Double> v = pnResult.get(bna.getName()+".t");
 					 //System.out.println(bna.getName());
 					 //System.out.println(v.lastElement());
 					// System.out.println("size: "+v.size());
@@ -209,7 +209,7 @@ public class PetriNet {
 				if (bna instanceof Place) {
 					//System.out.println(i*1.0f/(this.places-1));
 					((Place) bna).setPlotColor(Color.getHSBColor(i*1.0f/(this.places), 1, 1));
-					System.out.println(i);
+					//System.out.println(i);
 					i++;
 					//p = (Place) o;
 					// System.out.println(p.getName());

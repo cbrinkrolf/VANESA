@@ -539,7 +539,6 @@ public class JSBMLinput {
 				((petriNet.Place) bna).setDiscrete(true);
 				break;
 			case Elementdeclerations.s_place:
-				System.out.println("cont");
 				bna = new petriNet.Place(label, name, 1.0, false);
 				elSub = specAnnotation.getChild("token", null);
 				attr = String.valueOf(elSub.getAttributeValue("token"));

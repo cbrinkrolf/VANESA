@@ -250,7 +250,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							&& pw.getPetriNet()
 									.getPnResult()
 									.containsKey(
-											"P" + ((Place) bna).getID() + ".t")) {
+											bna.getName() + ".t")) {
 						MAData = bna.getPetriNetSimulationData();
 						// System.out.println("size:");
 						// System.out.println(MAData.size());
