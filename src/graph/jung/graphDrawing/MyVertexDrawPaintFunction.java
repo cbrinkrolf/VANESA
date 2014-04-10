@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.collections15.Transformer;
 
+import petriNet.Transition;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -48,6 +49,12 @@ public class MyVertexDrawPaintFunction implements
 
 	private Paint withoutGraphTheory(BiologicalNodeAbstract v) {
 		boolean medium_check = false;
+
+		if (v instanceof Transition) {
+			if (((Transition) v).isSimulationActive()) {
+				return Color.red;
+			}
+		}
 
 		if (psV.getPicked().isEmpty()) {
 			if (psE.getPicked().isEmpty()) {

@@ -176,23 +176,18 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		drawPCP.setActionCommand("drawplot");
 
 		// some defined colors
-		/*colors.add(new Color(0, 0, 0));
-		colors.add(new Color(255, 0, 0));
-		colors.add(new Color(128, 0, 0));
-		colors.add(new Color(0, 255, 0));
-		colors.add(new Color(0, 128, 0));
-		colors.add(new Color(0, 0, 255));
-		colors.add(new Color(0, 0, 128));
-		colors.add(new Color(255, 255, 0));
-		colors.add(new Color(255, 0, 255));
-		colors.add(new Color(0, 255, 255));
-		colors.add(new Color(065, 105, 225));
-		colors.add(new Color(124, 252, 000));
-		colors.add(new Color(178, 034, 034));
-		colors.add(new Color(160, 032, 240));
-		colors.add(new Color(000, 255, 127));
-		colors.add(new Color(255, 127, 000));
-		colors.add(new Color(000, 100, 000));*/
+		/*
+		 * colors.add(new Color(0, 0, 0)); colors.add(new Color(255, 0, 0));
+		 * colors.add(new Color(128, 0, 0)); colors.add(new Color(0, 255, 0));
+		 * colors.add(new Color(0, 128, 0)); colors.add(new Color(0, 0, 255));
+		 * colors.add(new Color(0, 0, 128)); colors.add(new Color(255, 255, 0));
+		 * colors.add(new Color(255, 0, 255)); colors.add(new Color(0, 255,
+		 * 255)); colors.add(new Color(065, 105, 225)); colors.add(new
+		 * Color(124, 252, 000)); colors.add(new Color(178, 034, 034));
+		 * colors.add(new Color(160, 032, 240)); colors.add(new Color(000, 255,
+		 * 127)); colors.add(new Color(255, 127, 000)); colors.add(new
+		 * Color(000, 100, 000));
+		 */
 	}
 
 	/**
@@ -247,10 +242,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// Object elem = it.next();
 					bna = it.next();
 					if (bna instanceof Place
-							&& pw.getPetriNet()
-									.getPnResult()
-									.containsKey(
-											bna.getName() + ".t")) {
+							&& pw.getPetriNet().getPnResult()
+									.containsKey(bna.getName() + ".t")) {
 						MAData = bna.getPetriNetSimulationData();
 						// System.out.println("size:");
 						// System.out.println(MAData.size());
@@ -658,9 +651,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		}
 
 		for (int i = 0; i < counter && i < places.size(); i++) {
-			
-			///int colIdx = r.nextInt(colors.size());
-			//renderer.setSeriesPaint(i, c);
+
+			// /int colIdx = r.nextInt(colors.size());
+			// renderer.setSeriesPaint(i, c);
 			renderer.setSeriesPaint(i, places.get(i).getPlotColor());
 			renderer.setSeriesItemLabelsVisible(i, true);
 			renderer.setSeriesShapesVisible(i, false);
@@ -869,9 +862,12 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				// System.out.println(pw.getPetriNet().getPnResult().get("time").size());
 				pw.getPetriNet().setCurrentTimeStep(this.slider.getValue() - 1);
 				slider.setToolTipText("Time: " + this.slider.getValue());
-				stepLabel.setText("Time: "
-						+ (double)Math.round((pw.getPetriNet().getPnResult().get("time")
-								.get(this.slider.getValue() - 1)*100))/100);
+				stepLabel
+						.setText("Time: "
+								+ (double) Math.round((pw.getPetriNet()
+										.getPnResult().get("time")
+										.get(this.slider.getValue() - 1) * 100))
+								/ 100);
 				// create node color set
 				// 0 -> blue -> lower expression
 				// 1 -> red -> higher expression
@@ -896,17 +892,30 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					Iterator<BiologicalNodeAbstract> it = ns.iterator();
 					BiologicalNodeAbstract bna;
 					while (it.hasNext()) {
+						
 						// cast to biological node type and retrieve microarray
 						// value
 						// for current time step
 						bna = it.next();
+						//System.out.println(bna.getName());
 						if (bna.getPetriNetSimulationData().size() > 0
 								&& slider.getValue() >= 1) {
 							ref = bna.getMicroArrayValue(slider.getValue() - 1);
 							ref = Math.abs(ref);
 							if (bna instanceof Place) {
 								((Place) bna).setToken(ref);
+							} else if (bna instanceof Transition) {
+								if (ref == 1) {
+									((Transition) bna)
+											.setSimulationActive(true);
+									//System.out.println("aktiv");
+								} else {
+									((Transition) bna)
+											.setSimulationActive(false);
+									//System.out.println("inaktiv");
+								}
 							}
+
 							if (slider.getValue() >= 2) {
 								val = bna
 										.getMicroArrayValue(slider.getValue() - 2);
@@ -959,7 +968,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					}
 				}
 				// refresh GUI
-				w.repaint();
+				pw.getGraph().getVisualizationViewer().repaint();
 			}
 		}
 	}

@@ -13,11 +13,7 @@ import graph.jung.graphDrawing.VertexShapes;
 
 public class Transition extends BiologicalNodeAbstract {
 
-	private Vector<Transition> TransitionIn = new Vector<Transition>();
-
-	public Vector<Transition> getTransitionIn() {
-		return TransitionIn;
-	}
+	private boolean simulationActive;
 
 	//private boolean fireTransition = true;
 
@@ -39,9 +35,7 @@ public class Transition extends BiologicalNodeAbstract {
 //		this.fireTransition = fireTransition;
 //	}
 
-	public void setTransitionIn(Vector<Transition> transitionIn) {
-		TransitionIn = transitionIn;
-	}
+	
 
 	private Vector<Transition> TransitionOut = new Vector<Transition>();
 
@@ -103,6 +97,14 @@ public class Transition extends BiologicalNodeAbstract {
 		transform.scale(1, 2);
 		setShape(transform.createTransformedShape(s));*/
 		// setShape(s);
+	}
+
+	public boolean isSimulationActive() {
+		return simulationActive;
+	}
+
+	public void setSimulationActive(boolean simulationActive) {
+		this.simulationActive = simulationActive;
 	}
 
 }

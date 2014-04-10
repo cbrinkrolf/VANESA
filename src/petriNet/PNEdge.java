@@ -240,8 +240,8 @@ public class PNEdge extends BiologicalEdgeAbstract {
 			index = 0;
 			name = names.get(i);
 			
-			System.out.println("name: "+name );
-			System.out.println("fkt: "+mFunction);
+			//System.out.println("name: "+name );
+			//System.out.println("fkt: "+mFunction);
 
 			while (mFunction.indexOf(name, index) >= 0) {
 				idxNew = mFunction.indexOf(name, index);
