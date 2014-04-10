@@ -124,7 +124,11 @@ public class PetriNetSimulation {
 						+ stopTime
 						+ ", method=\"euler\", numberOfIntervals="
 						+ intervals
-						+ ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
+						// only places
+						//+ ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
+				+ ", outputFormat=\"csv\");\r\n");
+				//variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
+				
 				// out.write("fileName=\"simulate.mat\";\r\n");
 				// out.write("CSVfile=\"simulate.csv\";\r\n");
 				// out.write("n=readTrajectorySize(fileName);\r\n");
