@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import petriNet.CSVInputReader;
 import petriNet.PNResultInputReader;
 import petriNet.Place;
+import petriNet.Transition;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class PetriNet {
@@ -82,6 +83,8 @@ public class PetriNet {
 				if (bna instanceof Place) {
 					placeNames.add(bna.getName()+".t");
 					// System.out.println(bna.getName());
+				}else if(bna instanceof Transition){
+					placeNames.add(bna.getName()+".fire");
 				}
 			}
 		}
@@ -128,25 +131,6 @@ public class PetriNet {
 
 	private void setDataToNodes() throws Exception {
 		places = 0;
-		ArrayList<Color> colors = new ArrayList<Color>();
-		colors.add(new Color(0, 0, 0));
-		colors.add(new Color(255, 0, 0));
-		colors.add(new Color(128, 0, 0));
-		colors.add(new Color(0, 255, 0));
-		colors.add(new Color(0, 128, 0));
-		colors.add(new Color(0, 0, 255));
-		colors.add(new Color(0, 0, 128));
-		colors.add(new Color(255, 255, 0));
-		colors.add(new Color(255, 0, 255));
-		colors.add(new Color(0, 255, 255));
-		colors.add(new Color(065, 105, 225));
-		colors.add(new Color(124, 252, 000));
-		colors.add(new Color(178, 034, 034));
-		colors.add(new Color(160, 032, 240));
-		colors.add(new Color(000, 255, 127));
-		colors.add(new Color(255, 127, 000));
-		colors.add(new Color(000, 100, 000));
-		Random r = new Random();
 
 		graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
@@ -197,6 +181,11 @@ public class PetriNet {
 					count.add(new Integer(v.size()));
 					// System.out.println("ende");
 					this.places++;
+				}else if(bna instanceof Transition){
+					//System.out.println("gesetzt");
+					Vector<Double> v = pnResult.get(bna.getName()+".fire");
+					//System.out.println("size: "+v.size());
+					bna.setPetriNetSimulationData(v);
 				}
 			}
 
