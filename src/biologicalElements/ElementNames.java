@@ -2,12 +2,11 @@ package biologicalElements;
 
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Vector;
@@ -24,7 +23,6 @@ import javax.xml.stream.events.XMLEvent;
 import pojos.DBColumn;
 import configurations.Wrapper;
 import database.brenda.BRENDAQueries;
-import database.brenda.Files.BrendaDataPath;
 
 
 public class ElementNames {
@@ -117,10 +115,12 @@ public class ElementNames {
 		
 			File file;
 			try {
-				file = new File(new BrendaDataPath().getPath("EnzymeNames.xml")
-					.toURI());
+//				file = new File(new BrendaDataPath().getPath("EnzymeNames.xml").toURI());
+//				file=new File(this.getClass().getClassLoader().getResource("resource/EnzymeNames.xml").toURI());
+//				System.out.println("DEBUG enzyme name file: "+file);
 				
-				InputStream in = new FileInputStream(file);
+//				InputStream in = new FileInputStream(file);
+				InputStream in = this.getClass().getClassLoader().getResource("resource/EnzymeNames.xml").openStream();
 				XMLInputFactory factory = XMLInputFactory.newInstance();
 				factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.TRUE);
 				factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
@@ -168,14 +168,15 @@ public class ElementNames {
 					}
 				}	
 				
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
+			}  catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (XMLStreamException e) {
 				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 			

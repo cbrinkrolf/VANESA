@@ -7,11 +7,10 @@
 package xmlInput.sbml;
 
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Vector;
 
 import javax.xml.namespace.QName;
@@ -37,25 +36,29 @@ import database.brenda.MoleculesPair;
 
 public class MoleculesInput {
 
-	private File file = null;
+//	private File file = null;
 	
-	public MoleculesInput(File file) throws IOException{
-		
-		this.file=file;
-		try {
-			getData();
-		} catch (XMLStreamException e) {
+	
+	public MoleculesInput(URL url) throws IOException
+	{
+		try
+		{
+			getData(url.openStream());
+		}
+		catch (XMLStreamException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	
-	private void getData() throws FileNotFoundException, XMLStreamException{
+	private void getData(InputStream stream) throws FileNotFoundException, XMLStreamException{
 		
 		Vector v = new Vector();
 		
-		InputStream in = new FileInputStream(file);
+//		InputStream in = new FileInputStream(file);
+		InputStream in = stream;
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.TRUE);
 		factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
