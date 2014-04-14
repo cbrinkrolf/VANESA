@@ -74,13 +74,13 @@ import cern.colt.list.IntArrayList;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.linalg.Algebra;
-
 import petriNet.AnimationThread;
 import petriNet.PNEdge;
 import petriNet.Place;
 import petriNet.PlotsPanel;
 import petriNet.SimpleMatrixDouble;
 import petriNet.Transition;
+import sun.invoke.util.BytecodeName;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -550,58 +550,147 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		BiologicalNodeAbstract bna;
 		// System.out.println(GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
 
-		int picked = GraphInstance.getMyGraph().getVisualizationViewer()
-				.getPickedVertexState().getPicked().size();
-		while (it.hasNext()) {
-			bna = it.next();
-			if (bna instanceof Place) {
-				place = (Place) bna;
-				actualLabel = place.getLabel();
-				// System.out.println(rowsSize);
-				// System.out.println(bna.getID());
-				if (picked == 0
-						|| GraphInstance.getMyGraph().getVisualizationViewer()
-								.getPickedVertexState().isPicked(bna)) {// .isVertexPicked(bna.getVertex()))
-																		// {
-					// System.out.println(bna.getID() + " is picked.");
-					for (int j = 0; j < rowsSize; j++) {
-						// System.out.println("String: "+ rows[j][0]);
-						idx = rows[j][0].toString();
-						if (idx.equals(actualLabel)) {
-							indices.add(j);
-							places.add(place);
-							break;
-						}
-					}
-				}
-			}
-		}
+		/*
+		 * int picked = GraphInstance.getMyGraph().getVisualizationViewer()
+		 * .getPickedVertexState().getPicked().size(); while (it.hasNext()) {
+		 * bna = it.next(); if (bna instanceof Place) { place = (Place) bna;
+		 * actualLabel = place.getLabel(); // System.out.println(rowsSize); //
+		 * System.out.println(bna.getID()); if (picked == 0 ||
+		 * GraphInstance.getMyGraph().getVisualizationViewer()
+		 * .getPickedVertexState().isPicked(bna)) {//
+		 * .isVertexPicked(bna.getVertex())) // { //
+		 * System.out.println(bna.getID() + " is picked."); for (int j = 0; j <
+		 * rowsSize; j++) { // System.out.println("String: "+ rows[j][0]); idx =
+		 * rows[j][0].toString(); if (idx.equals(actualLabel)) { indices.add(j);
+		 * places.add(place); break; } } } } }
+		 */
 		// clear GUI
-		p.removeAll();
+		// p.removeAll();
 
 		// create plot dataset
 		final XYSeriesCollection dataset = new XYSeriesCollection();
 
+		final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+
+		renderer.setToolTipGenerator(new XYToolTipGenerator() {
+
+			@Override
+			public String generateToolTip(XYDataset arg0, int arg1, int arg2) {
+				return labels.get(arg1);
+			}
+		});
+
+		renderer.setBaseItemLabelsVisible(true);
+		renderer.setLegendItemLabelGenerator(new XYSeriesLabelGenerator() {
+
+			@Override
+			public String generateLabel(XYDataset arg0, int arg1) {
+				return labels.get(arg1);
+			}
+		});
+
 		// fill series with time series of values
 		Vector<XYSeries> series = new Vector<XYSeries>();
 		Double value;
-
-		// if one or some Places are selected
-		if (indices.size() != 0) {
-			for (int j = 0; j < indices.size(); j++) {
-				series.add(new XYSeries(j));
+		int pickedV = GraphInstance.getMyGraph().getVisualizationViewer()
+				.getPickedVertexState().getPicked().size();
+		int pickedE = GraphInstance.getMyGraph().getVisualizationViewer()
+				.getPickedEdgeState().getPicked().size();
+		//System.out.println(pickedE+" "+pickedV);
+		Double tmp = 0.0;
+		Double diff;
+		if (pickedV == 0 && pickedE == 1) {
+			BiologicalEdgeAbstract bea = GraphInstance.getMyGraph()
+					.getVisualizationViewer().getPickedEdgeState().getPicked()
+					.iterator().next();
+			if (bea instanceof PNEdge) {
+				PNEdge edge = (PNEdge) bea;
+				series.add(new XYSeries(0));
+				series.add(new XYSeries(1));
 				for (int i = 0; i < rowsDim; i++) {
-					value = Double.parseDouble(rows[indices.get(j)][i + 1]
-							.toString());
-					series.get(j).add(
+					value = edge.getSim_tokensSum().get(i);// )Double.parseDouble(rows[indices.get(j)][i
+																	// +
+														// 1]
+					// .toString());
+					diff = value-tmp;
+					series.get(0).add(
 							pw.getPetriNet().getPnResult().get("time").get(i),
 							value);
+					series.get(1).add(
+							pw.getPetriNet().getPnResult().get("time").get(i),
+							diff);
+					tmp = value;
 				}
-				dataset.addSeries(series.get(j));
-				labels.add(rows[indices.get(j)][0].toString());
-			}
+				dataset.addSeries(series.get(0));
+				labels.add(edge.getName());
 
+				renderer.setSeriesPaint(0, Color.black);
+
+				renderer.setSeriesItemLabelsVisible(0, true);
+				renderer.setSeriesShapesVisible(0, false);
+				
+				
+				dataset.addSeries(series.get(1));
+				labels.add(edge.getName());
+
+				renderer.setSeriesPaint(1, Color.red);
+
+				renderer.setSeriesItemLabelsVisible(1, true);
+				renderer.setSeriesShapesVisible(1, false);
+			}
+		} else {
+
+			Iterator<BiologicalNodeAbstract> iterator = null;
+			if (pickedV > 0) {
+				iterator = GraphInstance.getMyGraph().getVisualizationViewer()
+						.getPickedVertexState().getPicked().iterator();
+			} else {
+				iterator = GraphInstance.getMyGraph().getAllVertices()
+						.iterator();
+			}
+			// System.out.println(rowsDim);
+			// Place place;
+			int j = 0;
+			while (iterator.hasNext()) {
+				// System.out.println(j);
+				bna = iterator.next();
+				if (bna instanceof Place) {
+					place = (Place) bna;
+
+					series.add(new XYSeries(j));
+					for (int i = 0; i < rowsDim; i++) {
+						value = place.getPetriNetSimulationData().get(i);// )Double.parseDouble(rows[indices.get(j)][i
+																			// +
+																			// 1]
+						// .toString());
+						series.get(j).add(
+								pw.getPetriNet().getPnResult().get("time")
+										.get(i), value);
+					}
+					dataset.addSeries(series.get(j));
+					labels.add(place.getName());// rows[indices.get(j)][0].toString());
+
+					renderer.setSeriesPaint(j, place.getPlotColor());
+
+					renderer.setSeriesItemLabelsVisible(j, true);
+					renderer.setSeriesShapesVisible(j, false);
+					j++;
+				}
+
+			}
 		}
+		// if one or some Places are selected
+		/*
+		 * if (indices.size() != 0) { for (int j = 0; j < indices.size(); j++) {
+		 * series.add(new XYSeries(j)); for (int i = 0; i < rowsDim; i++) {
+		 * value = Double.parseDouble(rows[indices.get(j)][i + 1] .toString());
+		 * series.get(j).add( pw.getPetriNet().getPnResult().get("time").get(i),
+		 * value); } dataset.addSeries(series.get(j));
+		 * labels.add(rows[indices.get(j)][0].toString()); }
+		 * 
+		 * }
+		 */
+
 		// if no Place is selected (after starting)
 		// else {
 		// for (int j = 0; j < rowsSize; j++) {
@@ -622,24 +711,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		// set rendering options: all lines in black, domain steps as integers
 		final XYPlot plot = chart.getXYPlot();
 
-		final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-
-		renderer.setToolTipGenerator(new XYToolTipGenerator() {
-
-			@Override
-			public String generateToolTip(XYDataset arg0, int arg1, int arg2) {
-				return labels.get(arg1);
-			}
-		});
-
-		renderer.setBaseItemLabelsVisible(true);
-		renderer.setLegendItemLabelGenerator(new XYSeriesLabelGenerator() {
-
-			@Override
-			public String generateLabel(XYDataset arg0, int arg1) {
-				return labels.get(arg1);
-			}
-		});
 		// draw plot for Places with random colors
 		Random r = new Random();
 		// if places are selected
@@ -654,9 +725,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			// /int colIdx = r.nextInt(colors.size());
 			// renderer.setSeriesPaint(i, c);
-			renderer.setSeriesPaint(i, places.get(i).getPlotColor());
-			renderer.setSeriesItemLabelsVisible(i, true);
-			renderer.setSeriesShapesVisible(i, false);
 
 		}
 
@@ -892,12 +960,12 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					Iterator<BiologicalNodeAbstract> it = ns.iterator();
 					BiologicalNodeAbstract bna;
 					while (it.hasNext()) {
-						
+
 						// cast to biological node type and retrieve microarray
 						// value
 						// for current time step
 						bna = it.next();
-						//System.out.println(bna.getName());
+						// System.out.println(bna.getName());
 						if (bna.getPetriNetSimulationData().size() > 0
 								&& slider.getValue() >= 1) {
 							ref = bna.getMicroArrayValue(slider.getValue() - 1);
@@ -908,11 +976,11 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 								if (ref == 1) {
 									((Transition) bna)
 											.setSimulationActive(true);
-									//System.out.println("aktiv");
+									// System.out.println("aktiv");
 								} else {
 									((Transition) bna)
 											.setSimulationActive(false);
-									//System.out.println("inaktiv");
+									// System.out.println("inaktiv");
 								}
 							}
 

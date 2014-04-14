@@ -51,6 +51,8 @@ public class MOoutput {
 	// Double>();
 	private HashMap<String, String> inWeights = new HashMap<String, String>();
 	private HashMap<String, String> outWeights = new HashMap<String, String>();
+	
+	private HashMap<BiologicalEdgeAbstract, String> bea2resultkey = new HashMap<BiologicalEdgeAbstract , String>();
 
 	public MOoutput(File file, Pathway pathway) {
 
@@ -233,19 +235,19 @@ public class MOoutput {
 
 		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
 
-		BiologicalEdgeAbstract bna;
+		BiologicalEdgeAbstract bea;
 		PNEdge e;
 		while (it.hasNext()) {
 
-			bna = it.next();
-			String fromString = vertex2name.get(bna.getFrom());
-			String toString = vertex2name.get(bna.getTo());
+			bea = it.next();
+			String fromString = vertex2name.get(bea.getFrom());
+			String toString = vertex2name.get(bea.getTo());
 			String fromType = nodeType.get(fromString);
 			//String toType = nodeType.get(toString);
 
 			// TODO funktionen werden zulassen
-			if (bna instanceof PNEdge) {
-				e = (PNEdge) bna;
+			if (bea instanceof PNEdge) {
+				e = (PNEdge) bea;
 				if (this.inWeights.containsKey(toString)) {
 					this.inWeights.put(toString, this.inWeights.get(toString)
 							.concat("," + e.getModellicaFunction()));
@@ -276,8 +278,8 @@ public class MOoutput {
 				numOutEdges.put(fromString, 1);
 				actualOutEdges.put(fromString, 0);
 			}
-			if (bna instanceof PNEdge
-					&& bna.getBiologicalElement()
+			if (bea instanceof PNEdge
+					&& bea.getBiologicalElement()
 							.equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
 				inhibitCount++;
 				if (fromType.equals(Elementdeclerations.s_place)
@@ -299,13 +301,13 @@ public class MOoutput {
 
 			} else if (fromType.equals(Elementdeclerations.s_place)) {
 				edgesString = edgesString.concat(getConnectionStringPT(
-						fromString, toString));
+						bea));
 			} else if (fromType.equals(Elementdeclerations.place)) {
 				edgesString = edgesString.concat(getConnectionStringPT(
-						fromString, toString));
+						bea));
 			} else {
 				edgesString = edgesString.concat(getConnectionStringTP(
-						fromString, toString));
+						bea));
 			}
 
 			// BiologicalEdgeAbstract bna = (BiologicalEdgeAbstract) it.next();
@@ -616,7 +618,9 @@ public class MOoutput {
 				+ ";\r\n";
 	}
 
-	private String getConnectionStringTP(String from, String to) {
+	private String getConnectionStringTP(BiologicalEdgeAbstract bea) {
+		String from = bea.getFrom().getName();
+		String to = bea.getTo().getName();
 		String result = "  connect(" + from + ".outPlaces["
 				+ (actualOutEdges.get(from) + 1) + "]," + to + ".inTransition["
 				+ (actualInEdges.get(to) + 1) + "]);"
@@ -627,12 +631,16 @@ public class MOoutput {
 				// +Math.floor(scale*(-(toPoint.
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
 				+ "\r\n";
+		//System.out.println(to+".tSumIn_["+(actualInEdges.get(to) + 1)+"]");
+		this.bea2resultkey.put(bea, to+".tSumIn_["+(actualInEdges.get(to) + 1)+"]");
 		actualInEdges.put(to, actualInEdges.get(to) + 1);
 		actualOutEdges.put(from, actualOutEdges.get(from) + 1);
 		return result;
 	}
 
-	private String getConnectionStringPT(String from, String to) {
+	private String getConnectionStringPT(BiologicalEdgeAbstract bea) {
+		String from = bea.getFrom().getName();
+		String to = bea.getTo().getName();
 		String result = "  connect(" + from + ".outTransition["
 				+ (actualOutEdges.get(from) + 1) + "]," + to + ".inPlaces["
 				+ (actualInEdges.get(to) + 1) + "]);"
@@ -643,8 +651,14 @@ public class MOoutput {
 				// +Math.floor(scale*(-(toPoint.
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
 				+ "\r\n";
+		//System.out.println(from+".tSumOut_["+(actualOutEdges.get(from) + 1)+"]");
+		this.bea2resultkey.put(bea, from+".tSumOut_["+(actualOutEdges.get(from) + 1)+"]");
 		actualInEdges.put(to, actualInEdges.get(to) + 1);
 		actualOutEdges.put(from, actualOutEdges.get(from) + 1);
 		return result;
+	}
+
+	public HashMap<BiologicalEdgeAbstract, String> getBea2resultkey() {
+		return bea2resultkey;
 	}
 }

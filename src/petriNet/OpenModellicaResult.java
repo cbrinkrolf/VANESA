@@ -9,6 +9,7 @@ import gui.ProgressBar;
 import io.MyFileFilter;
 
 import java.io.File;
+import java.util.HashMap;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -16,6 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import biologicalElements.PetriNet;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import configurations.ConnectionSettings;
 
 public class OpenModellicaResult extends SwingWorker{
@@ -70,7 +72,7 @@ public class OpenModellicaResult extends SwingWorker{
 								.getPetriNet();
 						petrinet.setPetriNetSimulationFile(file
 								.getAbsolutePath(), false);
-						petrinet.initializePetriNet();
+						petrinet.initializePetriNet(new HashMap<BiologicalEdgeAbstract, String>());
 
 					} else {
 						JOptionPane.showMessageDialog(MainWindowSingelton
@@ -92,7 +94,7 @@ public class OpenModellicaResult extends SwingWorker{
 								.getPetriNet();
 						petrinet.setPetriNetSimulationFile(file
 								.getAbsolutePath(), false);
-						petrinet.initializePetriNet();
+						petrinet.initializePetriNet(new HashMap<BiologicalEdgeAbstract, String>());
 
 					} else {
 						JOptionPane.showMessageDialog(MainWindowSingelton

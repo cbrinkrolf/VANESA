@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Vector;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -32,6 +33,9 @@ public class PNEdge extends BiologicalEdgeAbstract {
 	private String function;
 
 	private boolean wasUndirected = false;
+	
+	private Vector<Double> sim_tokens;
+	private Vector<Double> sim_tokensSum;
 
 	public boolean wasUndirected() {
 		return wasUndirected;
@@ -277,6 +281,22 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		// System.out.println("druch");
 		// System.out.println("mFkt: " + mFunction);
 		return mFunction.toString();
+	}
+
+	public Vector<Double> getSim_tokens() {
+		return sim_tokens;
+	}
+
+	public void setSim_tokens(Vector<Double> sim_tokens) {
+		this.sim_tokens = sim_tokens;
+	}
+
+	public Vector<Double> getSim_tokensSum() {
+		return sim_tokensSum;
+	}
+
+	public void setSim_tokensSum(Vector<Double> sim_tokensSum) {
+		this.sim_tokensSum = sim_tokensSum;
 	}
 }
 
