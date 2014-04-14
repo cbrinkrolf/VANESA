@@ -1,14 +1,18 @@
 package graph.jung.graphDrawing;
 
 import java.awt.Shape;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 
 import org.apache.commons.collections15.Transformer;
 
+import petriNet.PNEdge;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape.QuadCurve;
 import graph.algorithms.alignment.AlignmentEdge;
 
 public class MyEdgeShapeFunction implements Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> {
@@ -23,8 +27,10 @@ public class MyEdgeShapeFunction implements Transformer<Context<Graph<Biological
 		
 		if(context.element instanceof AlignmentEdge){
 			return (new EdgeShape.Wedge<BiologicalNodeAbstract, BiologicalEdgeAbstract>(6)).transform(context);
-		}else{
-			
+		}else if(context.element instanceof PNEdge){
+			return (new EdgeShape.Line<BiologicalNodeAbstract, BiologicalEdgeAbstract>()).transform(context);
+		}
+		else{
 			return (new EdgeShape.QuadCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>()).transform(context);
 		}
 	}

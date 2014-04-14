@@ -417,7 +417,10 @@ public class MyGraph {
 				}
 				MainWindow w = MainWindowSingelton.getInstance();
 				w.updateElementProperties();
-
+				if (graphInstance.getPathway().isPetriNetSimulation()) {
+					// System.out.println("sim");
+					w.updatePCPView();
+				}
 			}
 		});
 		setMouseModePick();
