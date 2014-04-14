@@ -8,15 +8,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
 import petriNet.CSVInputReader;
+import petriNet.PNEdge;
 import petriNet.PNResultInputReader;
 import petriNet.Place;
 import petriNet.Transition;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class PetriNet {
@@ -65,15 +66,16 @@ public class PetriNet {
 		return this.pnResult;
 	}
 
-	public void initializePetriNet() {
+	public void initializePetriNet(HashMap<BiologicalEdgeAbstract, String> bea2key) {
 
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
 		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
 		pnResult = pw.getPetriNet().getPnResult();
-		ArrayList<String> placeNames = new ArrayList<String>();
+		ArrayList<String> columns = new ArrayList<String>();
 		// rowsSize = 0;
 		//Object elem;
+		columns.addAll(bea2key.values());
 		BiologicalNodeAbstract bna;
 		if (hs != null) {
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
@@ -81,14 +83,14 @@ public class PetriNet {
 
 				bna = it.next();
 				if (bna instanceof Place) {
-					placeNames.add(bna.getName()+".t");
+					columns.add(bna.getName()+".t");
 					// System.out.println(bna.getName());
 				}else if(bna instanceof Transition){
-					placeNames.add(bna.getName()+".fire");
+					columns.add(bna.getName()+".fire");
 				}
 			}
 		}
-		placeNames.add("time");
+		columns.add("time");
 		// System.out.println(placeNames);
 		// placeNames.add("t1.activation.minTokens[1]");
 		try {
@@ -103,16 +105,16 @@ public class PetriNet {
 			// System.out.println("endung: "+ext);
 			if (ext.equals("csv")) {
 				this.pnResult = this.cvsReader.readResult(
-						this.petriNetSimulationFile, placeNames, omc);
+						this.petriNetSimulationFile, columns, omc);
 
 				// Iterator it = this.pnResult.
 
-				this.setDataToNodes();
+				this.setDataToNodes(bea2key);
 
 			} else if (ext.equals("plt")) {
 				this.pnResult = this.pnrir
 						.readResult(getPetriNetSimulationFile());
-				this.setDataToNodes();
+				this.setDataToNodes(bea2key);
 			} else if (ext.length() == 0) {
 				System.out.println("Dateiname fehlerhaft");
 			}
@@ -129,7 +131,8 @@ public class PetriNet {
 
 	}
 
-	private void setDataToNodes() throws Exception {
+	private void setDataToNodes(HashMap<BiologicalEdgeAbstract, String> bea2key) throws Exception {
+		//System.out.println(pnResult.keySet().size());
 		places = 0;
 
 		graphInstance = new GraphInstance();
@@ -139,6 +142,22 @@ public class PetriNet {
 		ArrayList<Integer> count = new ArrayList<Integer>();
 		// rowsSize = 0;
 		// System.out.println("size: "+ pnResult.size());
+		Iterator<BiologicalEdgeAbstract> itBea = pw.getAllEdges().iterator();
+		
+		BiologicalEdgeAbstract bea;
+		PNEdge e;
+		Vector<Double> v;
+		while(itBea.hasNext()){
+			bea = itBea.next();
+			if(bea instanceof PNEdge){
+				e = (PNEdge) bea;
+				
+				v = pnResult.get(bea2key.get(bea));
+				
+				e.setSim_tokensSum(v);
+			}
+		}
+		
 		if (hs != null) {
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			BiologicalNodeAbstract bna;
@@ -166,7 +185,7 @@ public class PetriNet {
 
 					//System.out.println();
 
-					Vector<Double> v = pnResult.get(bna.getName()+".t");
+					v = pnResult.get(bna.getName()+".t");
 					 //System.out.println(bna.getName());
 					 //System.out.println(v.lastElement());
 					// System.out.println("size: "+v.size());
@@ -183,7 +202,7 @@ public class PetriNet {
 					this.places++;
 				}else if(bna instanceof Transition){
 					//System.out.println("gesetzt");
-					Vector<Double> v = pnResult.get(bna.getName()+".fire");
+					v = pnResult.get(bna.getName()+".fire");
 					//System.out.println("size: "+v.size());
 					bna.setPetriNetSimulationData(v);
 				}

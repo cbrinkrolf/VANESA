@@ -9,6 +9,7 @@ import gui.MainWindowSingelton;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JFileChooser;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.SystemUtils;
 
 import moOutput.MOoutput;
 import biologicalElements.PetriNet;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 
 public class PetriNetSimulation {
 	private static String pathCompiler = null;
@@ -110,9 +112,9 @@ public class PetriNetSimulation {
 					return;
 				}
 
-				new MOoutput(new File(pathSim + "simulation.mo"),
+				MOoutput mo = new MOoutput(new File(pathSim + "simulation.mo"),
 						graphInstance.getPathway());
-
+				HashMap<BiologicalEdgeAbstract, String> bea2key = mo.getBea2resultkey();
 				//
 				FileWriter fstream = new FileWriter(pathSim + "simulation.mos");
 				BufferedWriter out = new BufferedWriter(fstream);
@@ -188,7 +190,7 @@ public class PetriNetSimulation {
 							.getPetriNet();
 					petrinet.setPetriNetSimulationFile(pathSim
 							+ "simulation_res.csv", true);
-					petrinet.initializePetriNet();
+					petrinet.initializePetriNet(bea2key);
 				} else
 					throw new Exception();
 			} catch (Exception e) {
@@ -326,9 +328,9 @@ public class PetriNetSimulation {
 			} catch (Exception e) {
 			}
 			zstNachher = System.currentTimeMillis();
-			System.out.println("Zeit ben�tigt: "
+			System.out.println("Zeit benoetigt: "
 					+ ((zstNachher - zstVorher) / 1000) + " sec");
-			System.out.println("Zeit ben�tigt: " + ((zstNachher - zstVorher))
+			System.out.println("Zeit benoetigt: " + ((zstNachher - zstVorher))
 					+ " millisec");
 			if (con.containsPathway()
 					&& graphInstance.getPathway().hasGotAtLeastOneElement()
@@ -337,7 +339,7 @@ public class PetriNetSimulation {
 				PetriNet petrinet = graphInstance.getPathway().getPetriNet();
 				petrinet.setPetriNetSimulationFile(pathCompiler
 						+ "simulate.csv", false);
-				petrinet.initializePetriNet();
+				petrinet.initializePetriNet(new HashMap<BiologicalEdgeAbstract, String>());
 			} else
 				throw new Exception();
 		} catch (Exception e) {
