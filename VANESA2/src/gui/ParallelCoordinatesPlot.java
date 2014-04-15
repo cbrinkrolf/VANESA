@@ -56,15 +56,20 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.labels.StandardXYItemLabelGenerator;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.labels.XYSeriesLabelGenerator;
 import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
@@ -141,7 +146,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private int rowsDim;
 
 	// Indices of selected Places
-	private ArrayList<Integer> indices = new ArrayList<Integer>();
+	//private ArrayList<Integer> indices = new ArrayList<Integer>();
 	// Labels of selected Places
 	private ArrayList<String> labels = new ArrayList<String>();
 	// Colors for Plot
@@ -160,6 +165,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private int animationStopInit = 1;
 
 	private int animationSpeedInit = 20;
+	
+	private ArrayList<Place> plotEntities = new ArrayList<Place>();
+	
+	private ArrayList<Place> places;
 
 	public ParallelCoordinatesPlot() {
 
@@ -528,24 +537,17 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 	}
 
-	private ArrayList<Place> places;
+	
 
 	/**
 	 * This method redraws the time series plot in the left sidebar.
 	 */
 	private void drawPlot() {
-		indices.clear();
 		labels.clear();
-
-		GraphInstance graphInstance = new GraphInstance();
-
-		Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway()
-				.getAllNodes().iterator();
+		plotEntities.clear();
 
 		// get Selected Places and their index+label
 		Place place;
-		String actualLabel = "";
-		String idx = "";
 		places = new ArrayList<Place>();
 		BiologicalNodeAbstract bna;
 		// System.out.println(GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
@@ -569,8 +571,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		// create plot dataset
 		final XYSeriesCollection dataset = new XYSeriesCollection();
+		final XYSeriesCollection dataset2 = new XYSeriesCollection();
 
 		final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+		final XYLineAndShapeRenderer renderer2 = new XYLineAndShapeRenderer();
 
 		renderer.setToolTipGenerator(new XYToolTipGenerator() {
 
@@ -588,6 +592,14 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				return labels.get(arg1);
 			}
 		});
+		
+		renderer2.setLegendItemLabelGenerator(new XYSeriesLabelGenerator() {
+
+			@Override
+			public String generateLabel(XYDataset arg0, int arg1) {
+				return "Tokens";
+			}
+		});
 
 		// fill series with time series of values
 		Vector<XYSeries> series = new Vector<XYSeries>();
@@ -596,23 +608,27 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				.getPickedVertexState().getPicked().size();
 		int pickedE = GraphInstance.getMyGraph().getVisualizationViewer()
 				.getPickedEdgeState().getPicked().size();
-		//System.out.println(pickedE+" "+pickedV);
+		// System.out.println(pickedE+" "+pickedV);
 		Double tmp = 0.0;
 		Double diff;
+		
+		boolean secondAxis = false;
 		if (pickedV == 0 && pickedE == 1) {
 			BiologicalEdgeAbstract bea = GraphInstance.getMyGraph()
 					.getVisualizationViewer().getPickedEdgeState().getPicked()
 					.iterator().next();
 			if (bea instanceof PNEdge) {
+				secondAxis = true;
 				PNEdge edge = (PNEdge) bea;
 				series.add(new XYSeries(0));
 				series.add(new XYSeries(1));
 				for (int i = 0; i < rowsDim; i++) {
 					value = edge.getSim_tokensSum().get(i);// )Double.parseDouble(rows[indices.get(j)][i
-																	// +
-														// 1]
+															// +
+					// 1]
 					// .toString());
-					diff = value-tmp;
+					diff = value - tmp;
+					//System.out.println(diff);
 					series.get(0).add(
 							pw.getPetriNet().getPnResult().get("time").get(i),
 							value);
@@ -622,21 +638,17 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					tmp = value;
 				}
 				dataset.addSeries(series.get(0));
-				labels.add(edge.getName());
+				labels.add("Sum of tokens");
+
+				
+
+				dataset2.addSeries(series.get(1));
+				//labels.add("Tokens");
 
 				renderer.setSeriesPaint(0, Color.black);
 
-				renderer.setSeriesItemLabelsVisible(0, true);
-				renderer.setSeriesShapesVisible(0, false);
-				
-				
-				dataset.addSeries(series.get(1));
-				labels.add(edge.getName());
 
-				renderer.setSeriesPaint(1, Color.red);
-
-				renderer.setSeriesItemLabelsVisible(1, true);
-				renderer.setSeriesShapesVisible(1, false);
+				
 			}
 		} else {
 
@@ -652,11 +664,13 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			// Place place;
 			int j = 0;
 			while (iterator.hasNext()) {
+				//System.out.println(j);
 				// System.out.println(j);
 				bna = iterator.next();
 				if (bna instanceof Place) {
 					place = (Place) bna;
-
+					places.add(place);
+					//System.out.println("size: "+places.size());
 					series.add(new XYSeries(j));
 					for (int i = 0; i < rowsDim; i++) {
 						value = place.getPetriNetSimulationData().get(i);// )Double.parseDouble(rows[indices.get(j)][i
@@ -710,27 +724,44 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		// set rendering options: all lines in black, domain steps as integers
 		final XYPlot plot = chart.getXYPlot();
+		
+		
 
 		// draw plot for Places with random colors
-		Random r = new Random();
-		// if places are selected
-		int counter = 0;
-		if (indices.size() != 0) {
-			counter = indices.size();
-		} else {
-			counter = rowsSize;
+		if(secondAxis){
+			renderer.setSeriesItemLabelsVisible(0, true);
+			renderer.setSeriesShapesVisible(0, false);
+			
+			//renderer.setSeriesPaint(1, Color.red);
+
+			renderer2.setSeriesItemLabelsVisible(0, true);
+			renderer2.setSeriesShapesVisible(0, false);
+			renderer2.setSeriesPaint(0, Color.red);
+			
+		    //XYDataset dataset1 = getDataset1();
+		    plot.setDataset(0,dataset);
+		    plot.setRenderer(0,renderer);
+		    NumberAxis domainAxis = new NumberAxis("Timestep");
+		    plot.setDomainAxis(domainAxis);
+		    plot.setRangeAxis(new NumberAxis("Sum of tokens"));
+
+		    //XYDataset dataset2 = getDataset2();
+		    plot.setDataset(1, dataset2);
+		    plot.setRenderer(1, renderer2);
+		    NumberAxis axis = new NumberAxis("Tokens");
+		    
+		   // 
+		    plot.setRangeAxis(1, axis);
+
+		    plot.mapDatasetToRangeAxis(0, 0);//1st dataset to 1st y-axis
+		    plot.mapDatasetToRangeAxis(1, 1); //2nd dataset to 2nd y-axis
+		    axis.setRange(0, 1.3*axis.getRange().getUpperBound());
+		}else{
+			plot.setRenderer(renderer);
+			NumberAxis rangeAxis = (NumberAxis) plot.getDomainAxis();
+			rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		}
-
-		for (int i = 0; i < counter && i < places.size(); i++) {
-
-			// /int colIdx = r.nextInt(colors.size());
-			// renderer.setSeriesPaint(i, c);
-
-		}
-
-		plot.setRenderer(renderer);
-		NumberAxis rangeAxis = (NumberAxis) plot.getDomainAxis();
-		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+		
 
 		// add chart to pane and refresh GUI
 
@@ -745,11 +776,15 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					XYItemEntity entity = (XYItemEntity) event.getEntity();
 					// System.out.println("Entity seriesindex: "
 					// + entity.getSeriesIndex());
-					PickedState ps = GraphInstance.getMyGraph()
+					Place p = places.get(entity.getSeriesIndex());
+					PickedState<BiologicalNodeAbstract> ps = GraphInstance.getMyGraph()
 							.getVisualizationViewer().getPickedVertexState();
 					// ps.clearPickedVertices();
 					ps.clear();
-					ps.pick(places.get(entity.getSeriesIndex()), true);
+					//System.out.println(entity.getSeriesIndex());
+					//System.out.println("sizeunten: "+places.size());
+					//System.out.println(p.getName());
+					ps.pick(p, true);
 
 				}
 
