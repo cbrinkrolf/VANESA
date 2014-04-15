@@ -522,7 +522,7 @@ public class JSBMLinput {
 				bna = new biologicalObjects.nodes.Site(label, name);
 				break;
 			case Elementdeclerations.place:
-				System.out.println("plce");
+				//System.out.println("plce");
 				bna = new petriNet.Place(label, name, 1.0, true);
 				elSub = specAnnotation.getChild("token", null);
 				attr = String.valueOf(elSub.getAttributeValue("token"));
@@ -542,7 +542,7 @@ public class JSBMLinput {
 				bna = new petriNet.Place(label, name, 1.0, false);
 				elSub = specAnnotation.getChild("token", null);
 				attr = String.valueOf(elSub.getAttributeValue("token"));
-				System.out.println(attr);
+				//System.out.println(attr);
 				((petriNet.Place) bna).setToken(Double.parseDouble(attr));
 				elSub = specAnnotation.getChild("tokenMin", null);
 				attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
@@ -552,7 +552,7 @@ public class JSBMLinput {
 				((petriNet.Place) bna).setToken(Double.parseDouble(attr));
 				elSub = specAnnotation.getChild("tokenStart", null);
 				attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
-				((petriNet.Place) bna).setToken(Double.parseDouble(attr));
+				((petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
 				((petriNet.Place) bna).setDiscrete(false);
 				break;
 			case Elementdeclerations.discreteTransition:
