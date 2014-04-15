@@ -34,6 +34,7 @@ import petriNet.Place;
 import petriNet.StochasticTransition;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 /**
  * @author Sebastian
@@ -91,6 +92,8 @@ public class PetriNetVertexDialog implements ActionListener {
 		panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
 		
 		if (this.petriElement.equals("discretePlace")) {
+			label.setText("p"+(pw.getPetriNet().getPlaces()+1));
+			name.setText("p"+(pw.getPetriNet().getPlaces()+1));
 			panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
 			panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(new JLabel("Token Start"), "span 2, gaptop 2 ");
@@ -100,6 +103,8 @@ public class PetriNetVertexDialog implements ActionListener {
 			panel.add(new JLabel("TokenMax"), "span 2, gaptop 2 ");
 			panel.add(tokenMax, "span,wrap,growx ,gap 10, gaptop 2");
 		} else if (this.petriElement.equals("continuousPlace")) {
+			label.setText("p"+(pw.getPetriNet().getPlaces()+1));
+			name.setText("p"+(pw.getPetriNet().getPlaces()+1));
 			panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
 			panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(new JLabel("Token Start"), "span 2, gaptop 2 ");
@@ -109,6 +114,8 @@ public class PetriNetVertexDialog implements ActionListener {
 			panel.add(new JLabel("TokenMax"), "span 2, gaptop 2 ");
 			panel.add(tokenMax, "span,wrap,growx ,gap 10, gaptop 2");
 		} else if (this.petriElement.equals("discreteTransition")) {
+			label.setText("t"+(pw.getPetriNet().getTransitions()+1));
+			name.setText("t"+(pw.getPetriNet().getTransitions()+1));
 			panel.add(lblFiringCondition, "span 2, gaptop 2 ");
 			panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 
@@ -116,13 +123,16 @@ public class PetriNetVertexDialog implements ActionListener {
 			panel.add(delay, "span,wrap,growx ,gap 10, gaptop 2");
 
 		} else if (this.petriElement.equals("continiousTransition")) {
-			
+			label.setText("t"+(pw.getPetriNet().getTransitions()+1));
+			name.setText("t"+(pw.getPetriNet().getTransitions()+1));
 			panel.add(lblMaxSpeed, "span 2, gaptop 2 ");
 			panel.add(maxSpeed, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(lblFiringCondition, "span 2, gaptop 2 ");
 			panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 
 		} else if (this.petriElement.equals("stochasticTransition")) {
+			label.setText("t"+(pw.getPetriNet().getTransitions()+1));
+			name.setText("t"+(pw.getPetriNet().getTransitions()+1));
 			panel.add(lblFiringCondition, "span 2, gaptop 2 ");
 			panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 
@@ -176,6 +186,22 @@ public class PetriNetVertexDialog implements ActionListener {
 		Integer value = (Integer) pane.getValue();
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
+				
+				if(name.getText().length() <1 || name.getText().charAt(0) == '_'){
+					return false;
+				}
+				
+				Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+				BiologicalNodeAbstract bna;
+				
+				while(it.hasNext()){
+					bna = it.next();
+					if(bna.getName().equals(name.getText())){
+						return false;
+					}
+				}
+				
+				
 				// Vertex v = pw.getGraph().createNewVertex();
 
 				if (petriElement.equals("discretePlace")) {

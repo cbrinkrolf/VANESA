@@ -211,14 +211,6 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// .updateTheoryProperties();
 
 						// Pathway pw = graphInstance.getPathway();
-						Iterator<BiologicalNodeAbstract> iterator = pw
-								.getAllNodes().iterator();
-						BiologicalNodeAbstract bna;
-						while (iterator.hasNext()) {
-							bna = iterator.next();
-							layout.lock(bna, false);
-							// bna.rebuildShape(new VertexShapes());
-						}
 
 					}
 

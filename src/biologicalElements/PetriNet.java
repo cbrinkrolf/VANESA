@@ -28,6 +28,7 @@ public class PetriNet {
 	private CSVInputReader cvsReader = new CSVInputReader();
 	private HashMap<String, Vector<Double>> pnResult = null;
 	private int places = 0;
+	private int transitions = 0;
 	private int resultDimension = 0;
 	private int currentTimeStep = 0;
 	private String covGraph;
@@ -268,6 +269,22 @@ public class PetriNet {
 
 	public int getResultDimension() {
 		return this.resultDimension;
+	}
+
+	public int getPlaces() {
+		return places;
+	}
+
+	public void setPlaces(int places) {
+		this.places = places;
+	}
+
+	public int getTransitions() {
+		return transitions;
+	}
+
+	public void setTransitions(int transitions) {
+		this.transitions = transitions;
 	}
 
 }
