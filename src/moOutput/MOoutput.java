@@ -93,7 +93,7 @@ public class MOoutput {
 		// fwriter.write(properties);
 		fwriter.write(places);
 		// fwriter.write(transitions);
-		fwriter.write("\r\tequation\r\n");
+		fwriter.write("equation\r\n");
 		fwriter.write(edgesString);
 		fwriter.write("end " + modelName + ";");
 		fwriter.close();
@@ -182,7 +182,7 @@ public class MOoutput {
 						+ ",minTokens=" + (int) place.getTokenMin()
 						+ ",maxTokens=" + (int) place.getTokenMax();
 				places = places.concat(getPlaceString(
-						place.getModellicaString(), bna.getName(), atr, in,
+						place.getModellicaString(), bna, atr, in,
 						out, p));
 
 			} else if (biologicalElement.equals(Elementdeclerations.s_place)) {
@@ -192,7 +192,7 @@ public class MOoutput {
 						+ ",minMarks=" + place.getTokenMin() + ",maxMarks="
 						+ place.getTokenMax();
 				places = places.concat(getPlaceString(
-						place.getModellicaString(), bna.getName(), atr, in,
+						place.getModellicaString(), bna, atr, in,
 						out, p));
 
 			} else if (biologicalElement
@@ -527,9 +527,15 @@ public class MOoutput {
 		}
 	}
 
-	private String getPlaceString(String element, String name, String atr,
+	private String getPlaceString(String element, BiologicalNodeAbstract bna, String atr,
 			int inEdges, int outEdges, Point2D p) {
-		return "\tmodel _"+name+"\r\n"
+			
+		String params = "";
+		for(int i = 0; i<bna.getParameters().size(); i++){
+			params+="\t\tparameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
+		}
+		
+		return "\tmodel _"+bna.getName()+"\r\n"
 
 				// falls die anzahlen nicht stimmen
 				// +numInEdges.get(bna.getVertex().toString())
@@ -541,12 +547,17 @@ public class MOoutput {
 				// +" annotation(Placement(transformation(x = "+Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84), "
 				// +"iconTransformation(x = "
 				// +Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84)))"
-				+ ";\r\n \tend _"+name+";\r\n";
+				+ ";\r\n"+params+"\tend _"+bna.getName()+";\r\n";
 	}
 
 	private String getTransitionString(BiologicalNodeAbstract bna,
 			String element, String name, String atr, int inEdges, int outEdges,
 			Point2D p) {
+		String params = "";
+		for(int i = 0; i<bna.getParameters().size(); i++){
+			params+="\t\tparameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
+		}
+		
 		// String inNumbers = "";
 		String inNumbers = "";
 		String outNumbers = "";
@@ -574,10 +585,10 @@ public class MOoutput {
 		// System.out.println("outPropper: " + out);
 
 		return "\tmodel _"+name+"\r\n "
-				+ "\t\textends" + element + "(nIn=" + inEdges + ",nOut="
+				+ "\t\textends " + element + "(nIn=" + inEdges + ",nOut="
 				+ outEdges + "," + atr + ",arcWeightIn=" + in
 				+ ",arcWeightOut=" + out + ")" + ";"
-						+ "\r\n \tend _"+name+";\r\n";
+						+ "\r\n "+params+"\tend _"+name+";\r\n";
 	}
 
 	private String getTransitionStringOld(String name, int inEdges,
