@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -33,7 +34,6 @@ public class MOoutput {
 	private FileWriter fwriter;
 
 	private String places = "";
-	private String transitions = "";
 	private String edgesString = "";
 	private double xshift = 0, yshift = 0;
 	private double xmin = 1000, xmax = -1000, ymin = 1000, ymax = -1000;
@@ -93,7 +93,7 @@ public class MOoutput {
 		// fwriter.write(properties);
 		fwriter.write(places);
 		// fwriter.write(transitions);
-		fwriter.write("\requation\r\n");
+		fwriter.write("\r\tequation\r\n");
 		fwriter.write(edgesString);
 		fwriter.write("end " + modelName + ";");
 		fwriter.close();
@@ -160,6 +160,8 @@ public class MOoutput {
 	private void buildNodes() {
 		for (int i = 1; i <= inhibitCount; i++)
 			places += "PNlib.IA inhibitorArc" + i + ";\r\n";
+		
+		ArrayList<String> names = new ArrayList<String>();
 		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 		while (it.hasNext()) {
 			BiologicalNodeAbstract bna = it.next();
@@ -170,14 +172,9 @@ public class MOoutput {
 
 			int in = pw.getGraph().getJungGraph().getInEdges(bna).size();
 			int out = pw.getGraph().getJungGraph().getOutEdges(bna).size();
-			if (biologicalElement.equals("Enzyme"))
-				if (in == 1 && out == 1) // falls ein ein- und aus-gang: MM
-					transitions = transitions.concat(getMmString(
-							bna.getName(), p, km, kcat, ec));
-				else
-					// sonst normale transition
-					transitions = transitions.concat(getTransitionStringOld(bna.getName(), in, out, p));
-			else if (biologicalElement.equals(Elementdeclerations.place)) {
+			
+			names.add(bna.getName());
+			if (biologicalElement.equals(Elementdeclerations.place)) {
 
 				Place place = (Place) bna;
 
@@ -226,6 +223,12 @@ public class MOoutput {
 						t.getModellicaString(), bna.getName(), atr, in,
 						out, p));
 			}
+		}
+		
+		places = places.concat("\r\n\r\n");
+		for(int i = 0; i< names.size(); i++){
+			System.out.println("drin");
+			places = places.concat("\t_"+names.get(i)+" "+names.get(i)+";\r\n");
 		}
 	}
 
@@ -284,12 +287,12 @@ public class MOoutput {
 				inhibitCount++;
 				if (fromType.equals(Elementdeclerations.s_place)
 						|| fromType.equals(Elementdeclerations.place)) {
-					edgesString = edgesString + "  connect(" + fromString
+					edgesString = edgesString + "\t\tconnect(" + fromString
 							+ ".outTransition["
 							+ (actualOutEdges.get(fromString) + 1) + "],"
 							+ "inhibitorArc" + inhibitCount + ".inPlace);"
 							+ "\r\n";
-					edgesString = edgesString + "  connect(" + "inhibitorArc"
+					edgesString = edgesString + "\t\tconnect(" + "inhibitorArc"
 							+ inhibitCount + ".outTransition," + toString
 							+ ".inPlaces[" + (actualInEdges.get(toString) + 1)
 							+ "]);" + "\r\n";
@@ -526,19 +529,19 @@ public class MOoutput {
 
 	private String getPlaceString(String element, String name, String atr,
 			int inEdges, int outEdges, Point2D p) {
-		return ""
+		return "\tmodel _"+name+"\r\n"
 
 				// falls die anzahlen nicht stimmen
 				// +numInEdges.get(bna.getVertex().toString())
 				// +numOutEdges.get(bna.getVertex().toString())
 				//
-				+ element + " " + name + "(nIn=" + inEdges + ",nOut="
+				+ "\t\textends "+element + "(nIn=" + inEdges + ",nOut="
 				+ outEdges + "," + atr + ")"
 				// +(bioName.containsKey(name)?"(biologicalName = \""+bioName.get(name)+"\")":"")
 				// +" annotation(Placement(transformation(x = "+Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84), "
 				// +"iconTransformation(x = "
 				// +Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84)))"
-				+ ";\r\n";
+				+ ";\r\n \tend _"+name+";\r\n";
 	}
 
 	private String getTransitionString(BiologicalNodeAbstract bna,
@@ -570,9 +573,11 @@ public class MOoutput {
 		// System.out.println("inPropper: " + in);
 		// System.out.println("outPropper: " + out);
 
-		return "" + element + " " + name + "(nIn=" + inEdges + ",nOut="
+		return "\tmodel _"+name+"\r\n "
+				+ "\t\textends" + element + "(nIn=" + inEdges + ",nOut="
 				+ outEdges + "," + atr + ",arcWeightIn=" + in
-				+ ",arcWeightOut=" + out + ")" + ";\r\n";
+				+ ",arcWeightOut=" + out + ")" + ";"
+						+ "\r\n \tend _"+name+";\r\n";
 	}
 
 	private String getTransitionStringOld(String name, int inEdges,
@@ -621,7 +626,7 @@ public class MOoutput {
 	private String getConnectionStringTP(BiologicalEdgeAbstract bea) {
 		String from = bea.getFrom().getName();
 		String to = bea.getTo().getName();
-		String result = "  connect(" + from + ".outPlaces["
+		String result = "\tconnect(" + from + ".outPlaces["
 				+ (actualOutEdges.get(from) + 1) + "]," + to + ".inTransition["
 				+ (actualInEdges.get(to) + 1) + "]);"
 				// +" annotation(Line(points = {{"
@@ -641,7 +646,7 @@ public class MOoutput {
 	private String getConnectionStringPT(BiologicalEdgeAbstract bea) {
 		String from = bea.getFrom().getName();
 		String to = bea.getTo().getName();
-		String result = "  connect(" + from + ".outTransition["
+		String result = "\tconnect(" + from + ".outTransition["
 				+ (actualOutEdges.get(from) + 1) + "]," + to + ".inPlaces["
 				+ (actualInEdges.get(to) + 1) + "]);"
 				// +" annotation(Line(points = {{"
