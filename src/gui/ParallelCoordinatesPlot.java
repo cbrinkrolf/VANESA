@@ -609,8 +609,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		int pickedE = GraphInstance.getMyGraph().getVisualizationViewer()
 				.getPickedEdgeState().getPicked().size();
 		// System.out.println(pickedE+" "+pickedV);
-		Double tmp = 0.0;
-		Double diff;
+		//Double tmp = 0.0;
+		//Double diff;
 		
 		boolean secondAxis = false;
 		if (pickedV == 0 && pickedE == 1) {
@@ -627,15 +627,15 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 															// +
 					// 1]
 					// .toString());
-					diff = value - tmp;
+					//diff = value - tmp;
 					//System.out.println(diff);
 					series.get(0).add(
 							pw.getPetriNet().getPnResult().get("time").get(i),
 							value);
 					series.get(1).add(
 							pw.getPetriNet().getPnResult().get("time").get(i),
-							diff);
-					tmp = value;
+							edge.getSim_tokens().get(i));
+					//tmp = value;
 				}
 				dataset.addSeries(series.get(0));
 				labels.add("Sum of tokens");

@@ -58,7 +58,8 @@ public class PetriNet {
 		return petriNetSimulationFile;
 	}
 
-	public void setPetriNetSimulationFile(String petriNetSimulationFile, boolean omc) {
+	public void setPetriNetSimulationFile(String petriNetSimulationFile,
+			boolean omc) {
 		this.petriNetSimulationFile = petriNetSimulationFile;
 		this.omc = omc;
 	}
@@ -67,7 +68,8 @@ public class PetriNet {
 		return this.pnResult;
 	}
 
-	public void initializePetriNet(HashMap<BiologicalEdgeAbstract, String> bea2key) {
+	public void initializePetriNet(
+			HashMap<BiologicalEdgeAbstract, String> bea2key) {
 
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
@@ -75,8 +77,17 @@ public class PetriNet {
 		pnResult = pw.getPetriNet().getPnResult();
 		ArrayList<String> columns = new ArrayList<String>();
 		// rowsSize = 0;
-		//Object elem;
-		columns.addAll(bea2key.values());
+		// Object elem;
+		// columns.addAll(bea2key.values());
+
+		Iterator<String> cols = bea2key.values().iterator();
+		String col;
+		while (cols.hasNext()) {
+			col = cols.next();
+			columns.add(col);
+			columns.add("der(" + col + ")");
+		}
+
 		BiologicalNodeAbstract bna;
 		if (hs != null) {
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
@@ -84,10 +95,10 @@ public class PetriNet {
 
 				bna = it.next();
 				if (bna instanceof Place) {
-					columns.add(bna.getName()+".t");
+					columns.add(bna.getName() + ".t");
 					// System.out.println(bna.getName());
-				}else if(bna instanceof Transition){
-					columns.add(bna.getName()+".fire");
+				} else if (bna instanceof Transition) {
+					columns.add(bna.getName() + ".fire");
 				}
 			}
 		}
@@ -132,8 +143,9 @@ public class PetriNet {
 
 	}
 
-	private void setDataToNodes(HashMap<BiologicalEdgeAbstract, String> bea2key) throws Exception {
-		//System.out.println(pnResult.keySet().size());
+	private void setDataToNodes(HashMap<BiologicalEdgeAbstract, String> bea2key)
+			throws Exception {
+		// System.out.println(pnResult.keySet().size());
 		places = 0;
 
 		graphInstance = new GraphInstance();
@@ -144,56 +156,58 @@ public class PetriNet {
 		// rowsSize = 0;
 		// System.out.println("size: "+ pnResult.size());
 		Iterator<BiologicalEdgeAbstract> itBea = pw.getAllEdges().iterator();
-		
+
 		BiologicalEdgeAbstract bea;
 		PNEdge e;
 		Vector<Double> v;
-		while(itBea.hasNext()){
+		Vector<Double> v2;
+		while (itBea.hasNext()) {
 			bea = itBea.next();
-			if(bea instanceof PNEdge){
+			if (bea instanceof PNEdge) {
 				e = (PNEdge) bea;
-				
+
 				v = pnResult.get(bea2key.get(bea));
-				
+				v2 = pnResult.get("der("+bea2key.get(bea)+")");
 				e.setSim_tokensSum(v);
+				e.setSim_tokens(v2);
 			}
 		}
-		
+
 		if (hs != null) {
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			BiologicalNodeAbstract bna;
-			
+
 			while (it.hasNext()) {
 				bna = it.next();
 				if (bna instanceof Place) {
-					
-					//float f = 1.0f/hs.size()+count.size()*1.0f/hs.size();
-					//Color c = Color.getHSBColor(f, 1, 1);
-					
-					
-					//int intSimID = bna.getID();
+
+					// float f = 1.0f/hs.size()+count.size()*1.0f/hs.size();
+					// Color c = Color.getHSBColor(f, 1, 1);
+
+					// int intSimID = bna.getID();
 					// if (bna.getPetriNetSimulationData().size() == 0) {
 					// System.out.println(intSimID);
 					// System.out.println("result: "+pnResult);
 					// System.out.println(pnResult.keySet().toString());
 					// System.out.println("Hallo erster Test zum abfragen");
 					// System.out.println("P"+bna.getID());
-					if (pnResult.containsKey("P" + bna.getID()+".t")) {
-						 //System.out.println("drin");
+					if (pnResult.containsKey("P" + bna.getID() + ".t")) {
+						// System.out.println("drin");
 					} else {
 						// System.out.println("n�");
 					}
 
-					//System.out.println();
+					// System.out.println();
 
-					v = pnResult.get(bna.getName()+".t");
-					 //System.out.println(bna.getName());
-					 //System.out.println(v.lastElement());
+					v = pnResult.get(bna.getName() + ".t");
+					// System.out.println(bna.getName());
+					// System.out.println(v.lastElement());
 					// System.out.println("size: "+v.size());
 					// System.out.println("test2");
-					//if (v.get(0).doubleValue() != ((Place) bna).getTokenStart())
-						//throw new Exception(
-							//	"A startToken value in the petri net does not fit the result!");
+					// if (v.get(0).doubleValue() != ((Place)
+					// bna).getTokenStart())
+					// throw new Exception(
+					// "A startToken value in the petri net does not fit the result!");
 					bna.setPetriNetSimulationData(v);
 					// System.out.println(bna.getName());
 					// System.out.println(v.size());
@@ -201,26 +215,27 @@ public class PetriNet {
 					count.add(new Integer(v.size()));
 					// System.out.println("ende");
 					this.places++;
-				}else if(bna instanceof Transition){
-					//System.out.println("gesetzt");
-					v = pnResult.get(bna.getName()+".fire");
-					//System.out.println("size: "+v.size());
+				} else if (bna instanceof Transition) {
+					// System.out.println("gesetzt");
+					v = pnResult.get(bna.getName() + ".fire");
+					// System.out.println("size: "+v.size());
 					bna.setPetriNetSimulationData(v);
 				}
 			}
 
 			it = hs.iterator();
-			//Place p;
+			// Place p;
 			int i = 0;
 			while (it.hasNext()) {
-				//System.out.println("drin");
+				// System.out.println("drin");
 				bna = it.next();
 				if (bna instanceof Place) {
-					//System.out.println(i*1.0f/(this.places-1));
-					((Place) bna).setPlotColor(Color.getHSBColor(i*1.0f/(this.places), 1, 1));
-					//System.out.println(i);
+					// System.out.println(i*1.0f/(this.places-1));
+					((Place) bna).setPlotColor(Color.getHSBColor(i * 1.0f
+							/ (this.places), 1, 1));
+					// System.out.println(i);
 					i++;
-					//p = (Place) o;
+					// p = (Place) o;
 					// System.out.println(p.getName());
 					// System.out.println(p.getPetriNetSimulationData());
 				}
