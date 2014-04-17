@@ -227,7 +227,6 @@ public class MOoutput {
 		
 		places = places.concat("\r\n\r\n");
 		for(int i = 0; i< names.size(); i++){
-			System.out.println("drin");
 			places = places.concat("\t_"+names.get(i)+" "+names.get(i)+";\r\n");
 		}
 	}
@@ -649,6 +648,7 @@ public class MOoutput {
 				+ "\r\n";
 		//System.out.println(to+".tSumIn_["+(actualInEdges.get(to) + 1)+"]");
 		this.bea2resultkey.put(bea, to+".tSumIn_["+(actualInEdges.get(to) + 1)+"]");
+		
 		actualInEdges.put(to, actualInEdges.get(to) + 1);
 		actualOutEdges.put(from, actualOutEdges.get(from) + 1);
 		return result;
@@ -669,6 +669,7 @@ public class MOoutput {
 				+ "\r\n";
 		//System.out.println(from+".tSumOut_["+(actualOutEdges.get(from) + 1)+"]");
 		this.bea2resultkey.put(bea, from+".tSumOut_["+(actualOutEdges.get(from) + 1)+"]");
+		
 		actualInEdges.put(to, actualInEdges.get(to) + 1);
 		actualOutEdges.put(from, actualOutEdges.get(from) + 1);
 		return result;
