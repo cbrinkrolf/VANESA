@@ -548,6 +548,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		// get Selected Places and their index+label
 		Place place;
+		Transition transition;
 		places = new ArrayList<Place>();
 		BiologicalNodeAbstract bna;
 		// System.out.println(GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
@@ -685,6 +686,28 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					labels.add(place.getName());// rows[indices.get(j)][0].toString());
 
 					renderer.setSeriesPaint(j, place.getPlotColor());
+
+					renderer.setSeriesItemLabelsVisible(j, true);
+					renderer.setSeriesShapesVisible(j, false);
+					j++;
+				}
+				else if(bna instanceof Transition){
+					transition = (Transition) bna;
+					
+					series.add(new XYSeries(j));
+					for (int i = 0; i < rowsDim; i++) {
+						value = transition.getPetriNetSimulationData().get(i);// )Double.parseDouble(rows[indices.get(j)][i
+																			// +
+																			// 1]
+						// .toString());
+						series.get(j).add(
+								pw.getPetriNet().getPnResult().get("time")
+										.get(i), value);
+					}
+					dataset.addSeries(series.get(j));
+					labels.add(transition.getName());// rows[indices.get(j)][0].toString());
+
+					renderer.setSeriesPaint(j, Color.blue);
 
 					renderer.setSeriesItemLabelsVisible(j, true);
 					renderer.setSeriesShapesVisible(j, false);

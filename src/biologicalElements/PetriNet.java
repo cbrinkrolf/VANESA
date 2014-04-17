@@ -99,6 +99,7 @@ public class PetriNet {
 					// System.out.println(bna.getName());
 				} else if (bna instanceof Transition) {
 					columns.add(bna.getName() + ".fire");
+					columns.add(bna.getName()+".actualSpeed");
 				}
 			}
 		}
@@ -176,7 +177,7 @@ public class PetriNet {
 		if (hs != null) {
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			BiologicalNodeAbstract bna;
-
+			
 			while (it.hasNext()) {
 				bna = it.next();
 				if (bna instanceof Place) {
@@ -220,6 +221,7 @@ public class PetriNet {
 					v = pnResult.get(bna.getName() + ".fire");
 					// System.out.println("size: "+v.size());
 					bna.setPetriNetSimulationData(v);
+					((Transition)bna).setSimActualSpeed(pnResult.get(bna.getName()+".actualSpeed"));
 				}
 			}
 
