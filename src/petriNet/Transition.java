@@ -18,6 +18,8 @@ public class Transition extends BiologicalNodeAbstract {
 	//private boolean fireTransition = true;
 
 	private String firingCondition = "true";//"time>9.8";
+	
+	private Vector<Double> simActualSpeed;
 
 	public String getFiringCondition() {
 		return firingCondition;
@@ -105,6 +107,14 @@ public class Transition extends BiologicalNodeAbstract {
 
 	public void setSimulationActive(boolean simulationActive) {
 		this.simulationActive = simulationActive;
+	}
+
+	public Vector<Double> getSimActualSpeed() {
+		return simActualSpeed;
+	}
+
+	public void setSimActualSpeed(Vector<Double> simActualSpeed) {
+		this.simActualSpeed = simActualSpeed;
 	}
 
 }
