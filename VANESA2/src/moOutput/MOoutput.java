@@ -1,10 +1,15 @@
 package moOutput;
 
+import graph.GraphInstance;
+import graph.gui.Parameter;
+
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -160,11 +165,26 @@ public class MOoutput {
 	private void buildNodes() {
 		for (int i = 1; i <= inhibitCount; i++)
 			places += "PNlib.IA inhibitorArc" + i + ";\r\n";
-		
+		BiologicalNodeAbstract bna;
 		ArrayList<String> names = new ArrayList<String>();
 		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		while(it.hasNext()){
+			//System.out.println("knoten");
+			bna = it.next();
+			
+			for(int i = 0; i<bna.getParameters().size(); i++){
+				//params+="\t\tparameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
+				places = places.concat("\tparameter Real _"+bna.getName()+"_"+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n");
+				//System.out.println("drin");
+			}
+			
+			
+		}
+		
+		
+		it = pw.getAllNodes().iterator();
 		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = it.next();
+			bna = it.next();
 			Point2D p = pw.getGraph().getVertexLocation(bna);
 			String biologicalElement = bna.getBiologicalElement();
 			double km = Double.NaN, kcat = Double.NaN;
@@ -218,17 +238,15 @@ public class MOoutput {
 					.equals(Elementdeclerations.continuousTransition)) {
 
 				ContinuousTransition t = (ContinuousTransition) bna;
-				String atr = "maximumSpeed="+t.getMaximumSpeed();
+				//String atr = "maximumSpeed="+t.getMaximumSpeed();
+				String atr = "maximumSpeed="+this.replace(t.getMaximumSpeed(), t.getParameters(), t);
+				System.out.println("atr");
 				places = places.concat(getTransitionString(bna,
 						t.getModellicaString(), bna.getName(), atr, in,
 						out, p));
 			}
 		}
 		
-		places = places.concat("\r\n\r\n");
-		for(int i = 0; i< names.size(); i++){
-			places = places.concat("\t_"+names.get(i)+" "+names.get(i)+";\r\n");
-		}
 	}
 
 	private int inhibitCount = 0;
@@ -529,32 +547,30 @@ public class MOoutput {
 	private String getPlaceString(String element, BiologicalNodeAbstract bna, String atr,
 			int inEdges, int outEdges, Point2D p) {
 			
-		String params = "";
 		for(int i = 0; i<bna.getParameters().size(); i++){
-			params+="\t\tparameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
+			//params+="\t\tparameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
 		}
 		
-		return "\tmodel _"+bna.getName()+"\r\n"
+		return "\t"+element+" "+
 
 				// falls die anzahlen nicht stimmen
 				// +numInEdges.get(bna.getVertex().toString())
 				// +numOutEdges.get(bna.getVertex().toString())
 				//
-				+ "\t\textends "+element + "(nIn=" + inEdges + ",nOut="
+				bna.getName() + "(nIn=" + inEdges + ",nOut="
 				+ outEdges + "," + atr + ")"
 				// +(bioName.containsKey(name)?"(biologicalName = \""+bioName.get(name)+"\")":"")
 				// +" annotation(Placement(transformation(x = "+Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84), "
 				// +"iconTransformation(x = "
 				// +Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84)))"
-				+ ";\r\n"+params+"\tend _"+bna.getName()+";\r\n";
+				+ ";\r\n";
 	}
 
 	private String getTransitionString(BiologicalNodeAbstract bna,
 			String element, String name, String atr, int inEdges, int outEdges,
 			Point2D p) {
-		String params = "";
 		for(int i = 0; i<bna.getParameters().size(); i++){
-			params+="\t\tparameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
+			//params+="\t\tparameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
 		}
 		
 		// String inNumbers = "";
@@ -583,11 +599,10 @@ public class MOoutput {
 		// System.out.println("inPropper: " + in);
 		// System.out.println("outPropper: " + out);
 
-		return "\tmodel _"+name+"\r\n "
-				+ "\t\textends " + element + "(nIn=" + inEdges + ",nOut="
+		return "\t"+element+" "
+		+ bna.getName() + "(nIn=" + inEdges + ",nOut="
 				+ outEdges + "," + atr + ",arcWeightIn=" + in
-				+ ",arcWeightOut=" + out + ")" + ";"
-						+ "\r\n "+params+"\tend _"+name+";\r\n";
+				+ ",arcWeightOut=" + out + ")" + ";\r\n";
 	}
 
 	private String getTransitionStringOld(String name, int inEdges,
@@ -677,5 +692,140 @@ public class MOoutput {
 
 	public HashMap<BiologicalEdgeAbstract, String> getBea2resultkey() {
 		return bea2resultkey;
+	}
+	
+	public String replace(String function, ArrayList<Parameter> params, BiologicalNodeAbstract node) {		
+		StringBuilder mFunction = new StringBuilder(function);
+		
+		// replace parameters
+		ArrayList<String> paramNames = new ArrayList<String>();
+		
+		for(int i = 0; i<params.size(); i++){
+			paramNames.add(params.get(i).getName());
+		}
+		
+		Collections.sort(paramNames, new StringLengthComparator());
+		
+		
+		String name = "";
+		// System.out.println("drin");
+		Character c;
+		int index = 0;
+		int idxNew = 0;
+		for (int i = 0; i < paramNames.size(); i++) {
+			index = 0;
+			name = paramNames.get(i);
+			
+			//System.out.println("name: "+name );
+			//System.out.println("fkt: "+mFunction);
+
+			while (mFunction.indexOf(name, index) >= 0) {
+				idxNew = mFunction.indexOf(name, index);
+				// System.out.println("index: "+index);
+				// System.out.println("idxNew: "+idxNew);
+				if (mFunction.length() >= idxNew + name.length()) {
+					// System.out.println("groesser gleich");
+					if (mFunction.length() > idxNew + name.length()) {
+						// System.out.println("groesser");
+						c = mFunction.charAt(idxNew + name.length());
+					} else {
+						// System.out.println("else");
+						c = 'a';
+					}
+					// System.out.println("c: "+c);
+					if (!Character.isDigit(c) && !Character.isAlphabetic(c)) {
+						// mFunction = mFunction.replaceFirst(name, mNames
+						// .get(name));
+						mFunction.insert(idxNew, "_"+node.getName()+"_");
+						index = idxNew + name.length() + 2+node.getName().length();
+						// System.out.println(name+" ersetzt durch: "+mNames.get(name));
+					} else {
+						index = idxNew + name.length();
+						// System.out.println("Error");
+						// break;
+					}
+				} else {
+					// /System.out.println("break");
+					break;
+				}
+			}
+		}
+		
+		
+		
+		
+		
+		// replace places 
+		GraphInstance graphInstance = new GraphInstance();
+		Pathway pw = graphInstance.getPathway();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		ArrayList<String> names = new ArrayList<String>();
+		BiologicalNodeAbstract bna;
+		Place p;
+		while (it.hasNext()) {
+			bna = it.next();
+			if (bna instanceof Place) {
+				p = (Place) bna;
+				//names.add("P"+p.getID());
+				names.add(p.getName());
+				//mNames.put("P"+p.getID(), "P"+p.getID() + ".t");
+			}
+		}
+
+		Collections.sort(names, new StringLengthComparator());
+		//Character c;
+		// System.out.println("drin");
+		index = 0;
+		idxNew = 0;
+		for (int i = 0; i < names.size(); i++) {
+			index = 0;
+			name = names.get(i);
+			
+			//System.out.println("name: "+name );
+			//System.out.println("fkt: "+mFunction);
+
+			while (mFunction.indexOf(name, index) >= 0) {
+				idxNew = mFunction.indexOf(name, index);
+				// System.out.println("index: "+index);
+				// System.out.println("idxNew: "+idxNew);
+				if (mFunction.length() >= idxNew + name.length()) {
+					// System.out.println("groesser gleich");
+					if (mFunction.length() > idxNew + name.length()) {
+						// System.out.println("groesser");
+						c = mFunction.charAt(idxNew + name.length());
+					} else {
+						// System.out.println("else");
+						c = 'a';
+					}
+					// System.out.println("c: "+c);
+					if (!Character.isDigit(c) && c != '.') {
+						// mFunction = mFunction.replaceFirst(name, mNames
+						// .get(name));
+						mFunction.insert(idxNew + name.length(), ".t");
+						index = idxNew + name.length() + 2;
+						// System.out.println(name+" ersetzt durch: "+mNames.get(name));
+					} else {
+						index = idxNew + name.length();
+						// System.out.println("Error");
+						// break;
+					}
+				} else {
+					// /System.out.println("break");
+					break;
+				}
+			}
+		}
+		// System.out.println("druch");
+		// System.out.println("mFkt: " + mFunction);
+		return mFunction.toString();
+	}
+	
+	class StringLengthComparator implements Comparator<String> {
+
+		// compares descending
+		public int compare(String s1, String s2) {
+			int i = s2.length() - s1.length();
+			return i;
+		}
 	}
 }
