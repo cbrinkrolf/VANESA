@@ -148,6 +148,7 @@ public class PetriNet {
 			throws Exception {
 		// System.out.println(pnResult.keySet().size());
 		places = 0;
+		transitions = 0;
 
 		graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
@@ -222,12 +223,14 @@ public class PetriNet {
 					// System.out.println("size: "+v.size());
 					bna.setPetriNetSimulationData(v);
 					((Transition)bna).setSimActualSpeed(pnResult.get(bna.getName()+".actualSpeed"));
+					this.transitions++;
 				}
 			}
 
 			it = hs.iterator();
 			// Place p;
 			int i = 0;
+			int j = 0;
 			while (it.hasNext()) {
 				// System.out.println("drin");
 				bna = it.next();
@@ -240,6 +243,11 @@ public class PetriNet {
 					// p = (Place) o;
 					// System.out.println(p.getName());
 					// System.out.println(p.getPetriNetSimulationData());
+				}else if(bna instanceof Transition){
+					((Transition) bna).setPlotColor(Color.getHSBColor(j * 1.0f
+							/ (this.transitions), 1, 1));
+					// System.out.println(i);
+					j++;
 				}
 			}
 

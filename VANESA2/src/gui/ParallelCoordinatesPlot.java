@@ -652,6 +652,21 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				
 			}
 		} else {
+			
+			boolean onlyT = true;
+			if( GraphInstance.getMyGraph().getVisualizationViewer()
+					.getPickedVertexState().getPicked().size() > 0){
+				Iterator<BiologicalNodeAbstract> it =  GraphInstance.getMyGraph().getVisualizationViewer()
+						.getPickedVertexState().getPicked().iterator();
+				while(onlyT && it.hasNext()){
+					if(it.next() instanceof Place){
+						onlyT = false;
+					}
+				}
+			}else{
+				onlyT = false;
+			}
+		
 
 			Iterator<BiologicalNodeAbstract> iterator = null;
 			if (pickedV > 0) {
@@ -691,7 +706,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					renderer.setSeriesShapesVisible(j, false);
 					j++;
 				}
-				else if(bna instanceof Transition){
+				else if(bna instanceof Transition && onlyT){
 					transition = (Transition) bna;
 					
 					series.add(new XYSeries(j));
@@ -707,7 +722,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					dataset.addSeries(series.get(j));
 					labels.add(transition.getName());// rows[indices.get(j)][0].toString());
 
-					renderer.setSeriesPaint(j, Color.blue);
+					renderer.setSeriesPaint(j, transition.getPlotColor());
 
 					renderer.setSeriesItemLabelsVisible(j, true);
 					renderer.setSeriesShapesVisible(j, false);
@@ -742,7 +757,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		// }
 
 		// create a chart...
-		chart = ChartFactory.createXYLineChart("", "Timestep", "Token",
+		chart = ChartFactory.createXYLineChart("", "Time", "Token",
 				dataset, PlotOrientation.VERTICAL, true, true, false);
 
 		// set rendering options: all lines in black, domain steps as integers
@@ -764,7 +779,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		    //XYDataset dataset1 = getDataset1();
 		    plot.setDataset(0,dataset);
 		    plot.setRenderer(0,renderer);
-		    NumberAxis domainAxis = new NumberAxis("Timestep");
+		    NumberAxis domainAxis = new NumberAxis("Time");
 		    plot.setDomainAxis(domainAxis);
 		    plot.setRangeAxis(new NumberAxis("Sum of tokens"));
 

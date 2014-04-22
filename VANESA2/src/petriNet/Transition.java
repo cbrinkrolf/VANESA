@@ -20,7 +20,8 @@ public class Transition extends BiologicalNodeAbstract {
 	private String firingCondition = "true";//"time>9.8";
 	
 	private Vector<Double> simActualSpeed;
-
+	private Color plotColor;
+	
 	public String getFiringCondition() {
 		return firingCondition;
 	}
@@ -115,6 +116,14 @@ public class Transition extends BiologicalNodeAbstract {
 
 	public void setSimActualSpeed(Vector<Double> simActualSpeed) {
 		this.simActualSpeed = simActualSpeed;
+	}
+	
+	public void setPlotColor(Color plotColor) {
+		this.plotColor = plotColor;
+	}
+
+	public Color getPlotColor() {
+		return plotColor;
 	}
 
 }
