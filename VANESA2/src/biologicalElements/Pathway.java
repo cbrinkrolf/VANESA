@@ -129,7 +129,7 @@ public class Pathway implements Cloneable {
 
 	private MyGraph graph;
 
-	private final GraphTab tab;
+	private GraphTab tab;
 
 	private final FilterSettings filterSettings;
 
@@ -151,25 +151,27 @@ public class Pathway implements Cloneable {
 	}
 
 	public Pathway(String name, Pathway parent) {
-		this(name);
+		//this(name);
+		this.title = name;
+		filterSettings = new FilterSettings();
 		this.parent = parent;
 	}
 
 	public void changeBackground(String color) {
 		if (color.equals("black")) {
-			graph.getVisualizationViewer().setBackground(Color.BLACK);
-			graph.getVisualizationViewer().repaint();
+			getGraph().getVisualizationViewer().setBackground(Color.BLACK);
+			getGraph().getVisualizationViewer().repaint();
 
-			graph.getSatelliteView().setBackground(Color.WHITE);
-			graph.getSatelliteView().repaint();
+			getGraph().getSatelliteView().setBackground(Color.WHITE);
+			getGraph().getSatelliteView().repaint();
 
 		} else if (color.equals("white")) {
-			graph.getVisualizationViewer().setBackground(Color.WHITE);
-			graph.getSatelliteView().setBackground(Color.WHITE);
+			getGraph().getVisualizationViewer().setBackground(Color.WHITE);
+			getGraph().getSatelliteView().setBackground(Color.WHITE);
 
-			graph.getVisualizationViewer().repaint();
+			getGraph().getVisualizationViewer().repaint();
 
-			graph.getSatelliteView().repaint();
+			getGraph().getSatelliteView().repaint();
 		}
 	}
 
@@ -350,7 +352,7 @@ public class Pathway implements Cloneable {
 		biologicalElements.put(bna.getID() + "", bna);
 		// System.out.println(biologicalElements.size());
 		graphRepresentation.addVertex(bna);
-		graph.addVertex(bna, p);
+		getGraph().addVertex(bna, p);
 		if (bna instanceof Place) {
 			this.petriNet.setPlaces(this.petriNet.getPlaces() + 1);
 		}
@@ -712,7 +714,7 @@ public class Pathway implements Cloneable {
 			// System.out.println(biologicalElements.size());
 			// Pair p = bea.getEdge().getEndpoints();
 			graphRepresentation.addEdge(bea);
-			graph.addEdge(bea);
+			getGraph().addEdge(bea);
 			bea.setID();
 			return bea;
 		} else
@@ -756,7 +758,7 @@ public class Pathway implements Cloneable {
 				// System.out.println("drin");
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
 				graphRepresentation.removeVertex(bna);
-				graph.removeVertex(bna);
+				getGraph().removeVertex(bna);
 				// System.out.println("durch");
 				if (!nodeDescription.containsKey(bna.getBiologicalElement())) {
 				} else {
@@ -785,7 +787,7 @@ public class Pathway implements Cloneable {
 				edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(),
 						bea.getTo()));
 				graphRepresentation.removeEdge(bea);
-				graph.removeEdge(bea);
+				getGraph().removeEdge(bea);
 				// System.out.println(edges.size());
 			}
 			ids.remove(element.getID());
@@ -952,7 +954,7 @@ public class Pathway implements Cloneable {
 		 * (gea instanceof BiologicalEdgeAbstract) {
 		 * set.add((BiologicalEdgeAbstract)gea); } } return set;
 		 */
-		return this.graph.getAllEdges();
+		return getGraph().getAllEdges();
 	}
 
 	public Collection<BiologicalNodeAbstract> getAllNodes() {
@@ -969,7 +971,7 @@ public class Pathway implements Cloneable {
 		 * 
 		 * return set;
 		 */
-		return this.graph.getAllVertices();
+		return getGraph().getAllVertices();
 	}
 
 	public Vector getAllNodesAsVector() {
@@ -1006,7 +1008,7 @@ public class Pathway implements Cloneable {
 
 	public Vector<BiologicalNodeAbstract> getSelectedNodes() {
 		Vector<BiologicalNodeAbstract> ve = new Vector<BiologicalNodeAbstract>();
-		Iterator<BiologicalNodeAbstract> it = graph.getVisualizationViewer()
+		Iterator<BiologicalNodeAbstract> it = getGraph().getVisualizationViewer()
 				.getPickedVertexState().getPicked().iterator();
 		while (it.hasNext()) {
 			BiologicalNodeAbstract v = it.next();
@@ -1016,12 +1018,12 @@ public class Pathway implements Cloneable {
 	}
 
 	public int countNodes() {
-		return this.graph.getAllVertices().size();
+		return getGraph().getAllVertices().size();
 		// return getAllNodesAsVector().size();
 	}
 
 	public int countEdges() {
-		return this.graph.getAllEdges().size();
+		return getGraph().getAllEdges().size();
 		// return getAllEdgesAsVector().size();
 	}
 
@@ -1036,7 +1038,7 @@ public class Pathway implements Cloneable {
 			while (it.hasNext()) {
 				bna = it.next();
 				if (bna != first) {
-					Iterator<BiologicalEdgeAbstract> it2 = graph.getJungGraph()
+					Iterator<BiologicalEdgeAbstract> it2 = getGraph().getJungGraph()
 							.getInEdges(bna).iterator();
 					BiologicalEdgeAbstract bea;
 					while (it2.hasNext()) {
@@ -1045,7 +1047,7 @@ public class Pathway implements Cloneable {
 						bea.setTo(first);
 						this.addEdge(bea);
 					}
-					it2 = graph.getJungGraph().getOutEdges(bna).iterator();
+					it2 = getGraph().getJungGraph().getOutEdges(bna).iterator();
 					while (it2.hasNext()) {
 						bea = it2.next();
 						this.removeElement(bea);
@@ -1142,7 +1144,6 @@ public class Pathway implements Cloneable {
 
 	public void setName(String name) {
 		this.name = name;
-		tab.setTitle(name);
 	}
 
 	public String getOrganism() {
@@ -1186,6 +1187,11 @@ public class Pathway implements Cloneable {
 	}
 
 	public MyGraph getGraph() {
+		if(graph==null){
+			graph = new MyGraph(this);
+			tab = new GraphTab(name, graph.getGraphVisualization());
+			tab.setTitle(name);
+		}
 		return graph;
 	}
 
