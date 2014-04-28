@@ -316,19 +316,21 @@ public class ToolBarListener implements ActionListener {
 				}
 		}
 		else if ("enterNode".equals(event)){
-			if(graphInstance.getMyGraph() != null){
-					w.updateHierarchyView();
-			}else{
-				System.out.println("No Graph exists!");
-				}
+//			if(graphInstance.getMyGraph() != null){
+//					w.updateHierarchyView();
+//			}else{
+//				System.out.println("No Graph exists!");
+//				}
+			MainWindowSingelton.getInstance().addView();
 		}
 		else if("mergeSelectedNodes".equals(event)){
-			if(graphInstance.getMyGraph() != null){
-			System.out.println("merge");
-			graphInstance.getPathway().mergeNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
-			}else{
-				System.out.println("No Graph exists!");
-			}
+//			if(graphInstance.getMyGraph() != null){
+//			System.out.println("merge");
+//			graphInstance.getPathway().mergeNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+//			}else{
+//				System.out.println("No Graph exists!");
+//			}
+			System.out.println(MainWindowSingelton.getInstance().getShowingTabbedPanelID());
 		}
 	}
 }
