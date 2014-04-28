@@ -319,7 +319,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 				return key;
 			}
 		}
-		return -1;
+		return 0;
 	}
 
 	public void addTab(TitledTab tab) {
