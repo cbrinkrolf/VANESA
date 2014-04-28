@@ -17,6 +17,9 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -53,8 +56,9 @@ import configurations.gui.Settings;
 public class MainWindow extends JFrame implements ApplicationListener {
 	private static final long serialVersionUID = -8328247684408223577L;
 
-	private final View[] views = new View[1];
-	private final ViewMap viewMap = new ViewMap();
+	private HashMap<Integer, View> views = new HashMap<Integer, View>();
+	private ViewMap viewMap = new ViewMap();
+	private RootWindow rootWindow;
 	private ToolBar bar = new ToolBar(false);
 	
 	//MARTIN static Datenbank switcher
@@ -83,7 +87,8 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			new BlurFilter()));
 	private JSplitPane split_pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-	private TabbedPanel tabbedPanel;
+	//private TabbedPanel tabbedPanel;
+	private HashMap<Integer, TabbedPanel> tabbedPanels = new HashMap<Integer, TabbedPanel>();
 	// private TabbedPanel tabbedPanelProperties;
 	private final GraphContainer con = ContainerSingelton.getInstance();
 	private int addedtabs = 0;
@@ -93,7 +98,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		return myMenu;
 	}
 
-	private final OptionPanel optionPanel;
+	private OptionPanel optionPanel;
 
 	// private boolean fullScreen = false;
 
@@ -196,7 +201,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// root.add(optionPanel.getPanel(), BorderLayout.WEST);
 
 		split_pane.add(optionPanel.getPanel());
-		split_pane.add(getRootWindow());
+		addView();
 		split_pane.setOneTouchExpandable(true);
 		split_pane.addPropertyChangeListener(new PropertyChangeListener() {
 			private final int SP_DIVIDER_MAX_LOCATION = split_pane
@@ -233,11 +238,11 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	private void setWindowProperties() {
 
-		views[0].getWindowProperties().setCloseEnabled(false);
-		views[0].getWindowProperties().setUndockEnabled(false);
-		views[0].getWindowProperties().setDragEnabled(false);
-		views[0].getWindowProperties().setMaximizeEnabled(false);
-		views[0].getWindowProperties().setMinimizeEnabled(false);
+//		views[0].getWindowProperties().setCloseEnabled(false);
+//		views[0].getWindowProperties().setUndockEnabled(false);
+//		views[0].getWindowProperties().setDragEnabled(false);
+//		views[0].getWindowProperties().setMaximizeEnabled(false);
+//		views[0].getWindowProperties().setMinimizeEnabled(false);
 	}
 
 	private RootWindow getRootWindow() {
@@ -256,23 +261,24 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// views[1] = new View("Properties", null, optionPanel.getPanel());
 		// viewMap.addView(1, views[1]);
 		// viewMap.addView(1, views[1]);
-		tabbedPanel = new TabbedPanel();
-		tabbedPanel.getProperties().setTabAreaOrientation(Direction.DOWN);
-		tabbedPanel.getProperties().setEnsureSelectedTabVisible(true);
-		tabbedPanel.getProperties().setHighlightPressedTab(true);
-		tabbedPanel.addTabListener(new GraphTabListener(this));
-		tabbedPanel.getProperties().setTabReorderEnabled(true);
-		tabbedPanel.getProperties().setTabDropDownListVisiblePolicy(
+		TabbedPanel tp = new TabbedPanel();
+		tp.getProperties().setTabAreaOrientation(Direction.DOWN);
+		tp.getProperties().setEnsureSelectedTabVisible(true);
+		tp.getProperties().setHighlightPressedTab(true);
+		tp.addTabListener(new GraphTabListener(this));
+		tp.getProperties().setTabReorderEnabled(true);
+		tp.getProperties().setTabDropDownListVisiblePolicy(
 				TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
-		tabbedPanel.setBackground(Color.BLACK);
-		views[0] = new View("Network Modelling", null, tabbedPanel);
-		views[0].addListener(new GraphWindowListener());
+		tp.setBackground(Color.BLACK);
+		View view = new View("Network Modelling", null, tp);
+		view.addListener(new GraphWindowListener());
+		views.put(viewMap.getViewCount(), view);
 
-		viewMap.addView(0, views[0]);
+		viewMap.addView(0, view);
 
-		setWindowProperties();
+		//setWindowProperties();
 
-		RootWindow rootWindow = DockingUtil.createRootWindow(viewMap, true);
+		rootWindow = DockingUtil.createRootWindow(viewMap, true);
 		rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
 		// views[0].getViewProperties().getViewTitleBarProperties().getNormalProperties().getMaximizeButtonProperties().setAction(new
 		// MaximizingGraphWindow());
@@ -284,10 +290,41 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		return rootWindow;
 
 	}
+	
+	public void addView(){
+		if(rootWindow!=null){
+			split_pane.remove(rootWindow);
+		}
+		TabbedPanel tp = new TabbedPanel();
+		tp.getProperties().setTabAreaOrientation(Direction.DOWN);
+		tp.getProperties().setEnsureSelectedTabVisible(true);
+		tp.getProperties().setHighlightPressedTab(true);
+		tp.addTabListener(new GraphTabListener(this));
+		tp.getProperties().setTabReorderEnabled(true);
+		tp.getProperties().setTabDropDownListVisiblePolicy(
+				TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
+		tp.setBackground(Color.BLACK);
+		tabbedPanels.put(viewMap.getViewCount(), tp);
+		View view = new View("Network Modelling", null, tp);
+		view.addListener(new GraphWindowListener());
+		views.put(viewMap.getViewCount(), view);
+		viewMap.addView(viewMap.getViewCount(), view);
+		rootWindow = DockingUtil.createRootWindow(viewMap, true);
+		split_pane.add(rootWindow);
+	}
+	
+	public int getShowingTabbedPanelID(){
+		for(int key : tabbedPanels.keySet()){
+			if(tabbedPanels.get(key).isShowing()){
+				return key;
+			}
+		}
+		return -1;
+	}
 
 	public void addTab(TitledTab tab) {
 		addedtabs++;
-		tabbedPanel.addTab(tab);
+		tabbedPanels.get(getShowingTabbedPanelID()).addTab(tab);
 		setSelectedTab(tab);
 		myMenu.enableCloseAndSaveFunctions();
 	}
@@ -298,13 +335,13 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	public void removeTab(boolean ask) {
 
-		if (tabbedPanel.getTabCount() == 1) {
+		if (tabbedPanels.get(getShowingTabbedPanelID()).getTabCount() == 1) {
 			addedtabs = 0;
 			myMenu.disableCloseAndSaveFunctions();
 			optionPanel.removeAllElements();
 		}
 
-		TitledTab removed = (TitledTab) tabbedPanel.getSelectedTab();
+		TitledTab removed = (TitledTab) tabbedPanels.get(getShowingTabbedPanelID()).getSelectedTab();
 
 		Pathway pw = con.getPathway(removed.getText());
 
@@ -327,31 +364,31 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			}
 			if (n == 0 || n ==1) {
 				con.removePathway(removed.getText());
-				tabbedPanel.removeTab(removed);
+				tabbedPanels.get(getShowingTabbedPanelID()).removeTab(removed);
 			}
 		}			
 	}
 
 	public void setSelectedTab(TitledTab tab) {
-		tabbedPanel.setSelectedTab(tab);
+		tabbedPanels.get(getShowingTabbedPanelID()).setSelectedTab(tab);
 	}
 
 	public Tab getSelectedTab() {
-		return tabbedPanel.getSelectedTab();
+		return tabbedPanels.get(getShowingTabbedPanelID()).getSelectedTab();
 	}
 
 	public void renameSelectedTab(String name) {
-		tabbedPanel.getSelectedTab().setName(name);
+		tabbedPanels.get(getShowingTabbedPanelID()).getSelectedTab().setName(name);
 	}
 
 	public void removeTab(int index) {
 
-		if (tabbedPanel.getTabCount() == 1) {
+		if (tabbedPanels.get(getShowingTabbedPanelID()).getTabCount() == 1) {
 			addedtabs = 0;
 			myMenu.disableCloseAndSaveFunctions();
 			optionPanel.removeAllElements();
 		}
-		TitledTab removed = (TitledTab) tabbedPanel.getTabAt(index);
+		TitledTab removed = (TitledTab) tabbedPanels.get(getShowingTabbedPanelID()).getTabAt(index);
 		Pathway pw = con.getPathway(removed.getText());
 
 		if (pw.hasGotAtLeastOneElement()) {
@@ -378,18 +415,18 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			}
 		}
 		con.removePathway(removed.getText());
-		tabbedPanel.removeTab(removed);
+		tabbedPanels.get(getShowingTabbedPanelID()).removeTab(removed);
 
 	}
 
 	public void removeAllTabs() {
 
-		int tabCount = tabbedPanel.getTabCount();
+		int tabCount = tabbedPanels.get(getShowingTabbedPanelID()).getTabCount();
 		int i;
 		addedtabs = 0;
 		for (i = 0; i < tabCount; i++) {
 
-			TitledTab removed = (TitledTab) tabbedPanel.getTabAt(0);
+			TitledTab removed = (TitledTab) tabbedPanels.get(getShowingTabbedPanelID()).getTabAt(0);
 			Pathway pw = con.getPathway(removed.getText());
 
 			if (pw.hasGotAtLeastOneElement()) {
@@ -412,7 +449,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					}
 				}
 				if (n == 0 || n ==1) {
-					tabbedPanel.removeTab(tabbedPanel.getTabAt(0));
+					tabbedPanels.get(getShowingTabbedPanelID()).removeTab(tabbedPanels.get(getShowingTabbedPanelID()).getTabAt(0));
 				}
 				
 			}
@@ -429,7 +466,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 
 	public String getCurrentPathway() {
-		TitledTab t = (TitledTab) tabbedPanel.getSelectedTab();
+		TitledTab t = (TitledTab) tabbedPanels.get(getShowingTabbedPanelID()).getSelectedTab();
 		return t.getText();
 	}
 
