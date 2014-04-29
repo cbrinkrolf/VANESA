@@ -65,6 +65,20 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	private RootWindow rootWindow;
 	private ToolBar bar = new ToolBar(false);
 	private int maxPanelID = -1;
+	private int selectedView = 0;
+	
+	public void setSelectedView(View v){
+		for(int key : views.keySet()){
+			if(views.get(key).equals(v)){
+				selectedView = key;
+				System.out.println(selectedView);
+			}
+		}
+	}
+	
+	public int getSelectedView(){
+		return selectedView;
+	}
 	
 	//MARTIN static Datenbank switcher
 	public static boolean useOldDB = false;
@@ -315,6 +329,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		
 		viewMap.addView(id, view);
 		rootWindow = DockingUtil.createRootWindow(viewMap, true);
+		rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
 		
 		split_pane.add(rootWindow);
 	}
@@ -349,19 +364,10 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		
 		split_pane.add(rootWindow);
 	}
-	
-	public int getShowingTabbedPanelID(){
-		for(int key : tabbedPanels.keySet()){
-			if(tabbedPanels.get(key).isShowing()){
-				return key;
-			}
-		}
-		return 0;
-	}
 
 	public void addTab(TitledTab tab) {
 		addedtabs++;
-		tabbedPanels.get(getShowingTabbedPanelID()).addTab(tab);
+		tabbedPanels.get(getSelectedView()).addTab(tab);
 		setSelectedTab(tab);
 		myMenu.enableCloseAndSaveFunctions();
 	}
@@ -372,13 +378,13 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	public void removeTab(boolean ask) {
 
-		if (tabbedPanels.get(getShowingTabbedPanelID()).getTabCount() == 1) {
+		if (tabbedPanels.get(getSelectedView()).getTabCount() == 1) {
 			addedtabs = 0;
 			myMenu.disableCloseAndSaveFunctions();
 			optionPanel.removeAllElements();
 		}
 
-		TitledTab removed = (TitledTab) tabbedPanels.get(getShowingTabbedPanelID()).getSelectedTab();
+		TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();
 
 		Pathway pw = con.getPathway(removed.getText());
 
@@ -401,31 +407,31 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			}
 			if (n == 0 || n ==1) {
 				con.removePathway(removed.getText());
-				tabbedPanels.get(getShowingTabbedPanelID()).removeTab(removed);
+				tabbedPanels.get(getSelectedView()).removeTab(removed);
 			}
 		}			
 	}
 
 	public void setSelectedTab(TitledTab tab) {
-		tabbedPanels.get(getShowingTabbedPanelID()).setSelectedTab(tab);
+		tabbedPanels.get(getSelectedView()).setSelectedTab(tab);
 	}
 
 	public Tab getSelectedTab() {
-		return tabbedPanels.get(getShowingTabbedPanelID()).getSelectedTab();
+		return tabbedPanels.get(getSelectedView()).getSelectedTab();
 	}
 
 	public void renameSelectedTab(String name) {
-		tabbedPanels.get(getShowingTabbedPanelID()).getSelectedTab().setName(name);
+		tabbedPanels.get(getSelectedView()).getSelectedTab().setName(name);
 	}
 
 	public void removeTab(int index) {
 
-		if (tabbedPanels.get(getShowingTabbedPanelID()).getTabCount() == 1) {
+		if (tabbedPanels.get(getSelectedView()).getTabCount() == 1) {
 			addedtabs = 0;
 			myMenu.disableCloseAndSaveFunctions();
 			optionPanel.removeAllElements();
 		}
-		TitledTab removed = (TitledTab) tabbedPanels.get(getShowingTabbedPanelID()).getTabAt(index);
+		TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getTabAt(index);
 		Pathway pw = con.getPathway(removed.getText());
 
 		if (pw.hasGotAtLeastOneElement()) {
@@ -452,18 +458,18 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			}
 		}
 		con.removePathway(removed.getText());
-		tabbedPanels.get(getShowingTabbedPanelID()).removeTab(removed);
+		tabbedPanels.get(getSelectedView()).removeTab(removed);
 
 	}
 
 	public void removeAllTabs() {
 
-		int tabCount = tabbedPanels.get(getShowingTabbedPanelID()).getTabCount();
+		int tabCount = tabbedPanels.get(getSelectedView()).getTabCount();
 		int i;
 		addedtabs = 0;
 		for (i = 0; i < tabCount; i++) {
 
-			TitledTab removed = (TitledTab) tabbedPanels.get(getShowingTabbedPanelID()).getTabAt(0);
+			TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getTabAt(0);
 			Pathway pw = con.getPathway(removed.getText());
 
 			if (pw.hasGotAtLeastOneElement()) {
@@ -486,7 +492,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					}
 				}
 				if (n == 0 || n ==1) {
-					tabbedPanels.get(getShowingTabbedPanelID()).removeTab(tabbedPanels.get(getShowingTabbedPanelID()).getTabAt(0));
+					tabbedPanels.get(getSelectedView()).removeTab(tabbedPanels.get(getSelectedView()).getTabAt(0));
 				}
 				
 			}
@@ -503,7 +509,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 
 	public String getCurrentPathway() {
-		TitledTab t = (TitledTab) tabbedPanels.get(getShowingTabbedPanelID()).getSelectedTab();
+		TitledTab t = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();
 		return t.getText();
 	}
 
