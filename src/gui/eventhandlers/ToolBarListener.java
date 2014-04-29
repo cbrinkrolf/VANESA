@@ -324,13 +324,12 @@ public class ToolBarListener implements ActionListener {
 			MainWindowSingelton.getInstance().addView();
 		}
 		else if("mergeSelectedNodes".equals(event)){
-//			if(graphInstance.getMyGraph() != null){
-//			System.out.println("merge");
-//			graphInstance.getPathway().mergeNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
-//			}else{
-//				System.out.println("No Graph exists!");
-//			}
-			System.out.println(MainWindowSingelton.getInstance().getShowingTabbedPanelID());
+			if(graphInstance.getMyGraph() != null){
+			System.out.println("merge");
+			graphInstance.getPathway().mergeNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+			}else{
+				System.out.println("No Graph exists!");
+			}
 		}
 	}
 }
