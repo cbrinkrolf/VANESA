@@ -6,6 +6,7 @@ import graph.eventhandlers.GraphTabListener;
 import graph.eventhandlers.GraphWindowListener;
 import gui.algorithms.CenterWindow;
 import gui.algorithms.ScreenSize;
+import gui.eventhandlers.PanelListener;
 import gui.images.ImagePath;
 import io.SaveDialog;
 
@@ -28,6 +29,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
+import net.infonode.docking.DockingWindow;
+import net.infonode.docking.DockingWindowListener;
+import net.infonode.docking.OperationAbortedException;
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.View;
 import net.infonode.docking.util.DockingUtil;
@@ -60,6 +64,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	private ViewMap viewMap = new ViewMap();
 	private RootWindow rootWindow;
 	private ToolBar bar = new ToolBar(false);
+	private int maxPanelID = -1;
 	
 	//MARTIN static Datenbank switcher
 	public static boolean useOldDB = false;
@@ -236,65 +241,57 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	 * SplitWindow(true, views[1], views[0]); return myLayout; }
 	 */
 
-	private void setWindowProperties() {
+	private void setWindowProperties(int viewID) {
 
-//		views[0].getWindowProperties().setCloseEnabled(false);
-//		views[0].getWindowProperties().setUndockEnabled(false);
-//		views[0].getWindowProperties().setDragEnabled(false);
-//		views[0].getWindowProperties().setMaximizeEnabled(false);
-//		views[0].getWindowProperties().setMinimizeEnabled(false);
+		views.get(viewID).getWindowProperties().setCloseEnabled(true);
+		views.get(viewID).getWindowProperties().setUndockEnabled(true);
+		views.get(viewID).getWindowProperties().setDragEnabled(true);
+		views.get(viewID).getWindowProperties().setMaximizeEnabled(false);
+		views.get(viewID).getWindowProperties().setMinimizeEnabled(false);
+		
+		PanelListener lis = new PanelListener();
+		views.get(viewID).addListener(lis);
 	}
 
-	private RootWindow getRootWindow() {
-
-		/*
-		 * views[0] = new View("Data Sources", null, optionPanel .getPanel());
-		 * viewMap.addView(0, views[0]);
-		 * 
-		 * tabbedPanelProperties= new TabbedPanel();
-		 * tabbedPanelProperties.getProperties
-		 * ().setTabAreaOrientation(Direction.DOWN);
-		 * tabbedPanelProperties.getProperties
-		 * ().setEnsureSelectedTabVisible(true);
-		 * tabbedPanelProperties.getProperties().setHighlightPressedTab(true);
-		 */
-		// views[1] = new View("Properties", null, optionPanel.getPanel());
-		// viewMap.addView(1, views[1]);
-		// viewMap.addView(1, views[1]);
-		TabbedPanel tp = new TabbedPanel();
-		tp.getProperties().setTabAreaOrientation(Direction.DOWN);
-		tp.getProperties().setEnsureSelectedTabVisible(true);
-		tp.getProperties().setHighlightPressedTab(true);
-		tp.addTabListener(new GraphTabListener(this));
-		tp.getProperties().setTabReorderEnabled(true);
-		tp.getProperties().setTabDropDownListVisiblePolicy(
-				TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
-		tp.setBackground(Color.BLACK);
-		View view = new View("Network Modelling", null, tp);
-		view.addListener(new GraphWindowListener());
-		views.put(viewMap.getViewCount(), view);
-
-		viewMap.addView(0, view);
-
-		//setWindowProperties();
-
-		rootWindow = DockingUtil.createRootWindow(viewMap, true);
-		rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
-		// views[0].getViewProperties().getViewTitleBarProperties().getNormalProperties().getMaximizeButtonProperties().setAction(new
-		// MaximizingGraphWindow());
-		// views[0].getViewProperties().getViewTitleBarProperties().getNormalProperties().getMaximizeButtonProperties().
-
-		// DockingWindowAction dwa
-		// =views[0].getViewProperties().getViewTitleBarProperties().getNormalProperties().getMaximizeButtonProperties().getAction();
-		//
-		return rootWindow;
-
-	}
+//	private RootWindow getRootWindow() {
+//
+//		TabbedPanel tp = new TabbedPanel();
+//		tp.getProperties().setTabAreaOrientation(Direction.DOWN);
+//		tp.getProperties().setEnsureSelectedTabVisible(true);
+//		tp.getProperties().setHighlightPressedTab(true);
+//		tp.addTabListener(new GraphTabListener(this));
+//		tp.getProperties().setTabReorderEnabled(true);
+//		tp.getProperties().setTabDropDownListVisiblePolicy(
+//				TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
+//		tp.setBackground(Color.BLACK);
+//		View view = new View("Network Modelling", null, tp);
+//		view.addListener(new GraphWindowListener());
+//		views.put(viewMap.getViewCount(), view);
+//
+//		viewMap.addView(0, view);
+//
+//		setWindowProperties(0);
+//
+//		rootWindow = DockingUtil.createRootWindow(viewMap, true);
+//		rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
+//
+//		return rootWindow;
+//
+//	}
 	
+	
+	/**
+	 * Adds a view (panel) to the existing window.
+	 * @author tloka
+	 */
 	public void addView(){
+		
+		//remove rootWindow if exists
 		if(rootWindow!=null){
 			split_pane.remove(rootWindow);
 		}
+		
+		//create new tabbedPanel
 		TabbedPanel tp = new TabbedPanel();
 		tp.getProperties().setTabAreaOrientation(Direction.DOWN);
 		tp.getProperties().setEnsureSelectedTabVisible(true);
@@ -304,12 +301,52 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		tp.getProperties().setTabDropDownListVisiblePolicy(
 				TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
 		tp.setBackground(Color.BLACK);
-		tabbedPanels.put(viewMap.getViewCount(), tp);
+		
+		maxPanelID += 1;
+		int id = maxPanelID;
+		tabbedPanels.put(id, tp);
+		
 		View view = new View("Network Modelling", null, tp);
 		view.addListener(new GraphWindowListener());
-		views.put(viewMap.getViewCount(), view);
-		viewMap.addView(viewMap.getViewCount(), view);
+		views.put(id, view);
+		
+		// set the window properties (close, undock, ...)
+		setWindowProperties(id);
+		
+		viewMap.addView(id, view);
 		rootWindow = DockingUtil.createRootWindow(viewMap, true);
+		
+		split_pane.add(rootWindow);
+	}
+	
+	/**
+	 * Removes a view (panel) from the existing window.
+	 * @author tloka
+	 */
+	public void removeView(DockingWindow dw){
+		
+		//remove rootWindow if exists
+		if(rootWindow!=null){
+			split_pane.remove(rootWindow);
+		}
+		
+		if(dw instanceof View){
+			View view = (View) dw;
+			int id = -1;
+			int pos = -1;
+			for(int key : views.keySet()){
+				if(views.get(key).equals(view)){
+					id = key;
+					break;
+				}
+			}
+			views.remove(id);
+			tabbedPanels.remove(id);
+			viewMap.removeView(id);
+		}
+
+		rootWindow = DockingUtil.createRootWindow(viewMap, true);
+		
 		split_pane.add(rootWindow);
 	}
 	
