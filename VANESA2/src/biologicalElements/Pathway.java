@@ -1144,6 +1144,9 @@ public class Pathway implements Cloneable {
 
 	public void setName(String name) {
 		this.name = name;
+		if(tab!=null){
+			tab.setTitle(name);
+		}
 	}
 
 	public String getOrganism() {
