@@ -76,6 +76,15 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		}
 	}
 	
+	public void setSelectedView(TabbedPanel t){
+		for(int key : tabbedPanels.keySet()){
+			if(tabbedPanels.get(key).equals(t)){
+				selectedView = key;
+				System.out.println(selectedView);
+			}
+		}
+	}
+	
 	public int getSelectedView(){
 		return selectedView;
 	}
@@ -328,6 +337,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		setWindowProperties(id);
 		
 		viewMap.addView(id, view);
+		
 		rootWindow = DockingUtil.createRootWindow(viewMap, true);
 		rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
 		
@@ -341,14 +351,13 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void removeView(DockingWindow dw){
 		
 		//remove rootWindow if exists
-		if(rootWindow!=null){
-			split_pane.remove(rootWindow);
-		}
+//		if(rootWindow!=null){
+//			split_pane.remove(rootWindow);
+//		}
 		
 		if(dw instanceof View){
 			View view = (View) dw;
 			int id = -1;
-			int pos = -1;
 			for(int key : views.keySet()){
 				if(views.get(key).equals(view)){
 					id = key;
@@ -358,11 +367,13 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			views.remove(id);
 			tabbedPanels.remove(id);
 			viewMap.removeView(id);
+			setSelectedView(views.get(views.keySet().iterator().next()));
 		}
-
-		rootWindow = DockingUtil.createRootWindow(viewMap, true);
 		
-		split_pane.add(rootWindow);
+
+//		rootWindow = DockingUtil.createRootWindow(viewMap, true);
+//		
+//		split_pane.add(rootWindow);
 	}
 
 	public void addTab(TitledTab tab) {

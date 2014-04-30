@@ -10,7 +10,8 @@ public class PanelListener implements DockingWindowListener{
 
 	@Override
 	public void viewFocusChanged(View arg0, View arg1) {
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -21,7 +22,7 @@ public class PanelListener implements DockingWindowListener{
 
 	@Override
 	public void windowClosed(DockingWindow arg0) {
-		MainWindowSingelton.getInstance().removeView(arg0);		
+		MainWindowSingelton.getInstance().removeView(arg0);	
 	}
 
 	@Override
