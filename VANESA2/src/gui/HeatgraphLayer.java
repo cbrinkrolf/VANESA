@@ -102,6 +102,9 @@ public class HeatgraphLayer extends MouseAdapter implements Paintable {
 	}
 	
 	public void paint(Graphics g) {
+		if(GraphInstance.getMyGraph() == null){
+			return;
+		}
 		Graphics2D g2d = (Graphics2D) g;
 		//Color old = g2d.getColor();
 		// Font oldFont = g2d.getFont();
@@ -111,6 +114,7 @@ public class HeatgraphLayer extends MouseAdapter implements Paintable {
 		//set the coordinates transford due to scrolling
 		VisualizationViewer vv = GraphInstance.getMyGraph()
 				.getVisualizationViewer();
+		
 		AffineTransform oldXform = g2d.getTransform();
 		AffineTransform newXform = new AffineTransform(oldXform);
 		//newXform.concatenate(vv.getLayoutTransformer().getTransform());
@@ -157,7 +161,7 @@ public class HeatgraphLayer extends MouseAdapter implements Paintable {
 					//	System.out.println("set shape to normal");
 					}
 					
-			//		System.out.println("fŸge hinzu: "+p+" id="+id);
+			//		System.out.println("fï¿½ge hinzu: "+p+" id="+id);
 					
 					//getGraphVisualization().getLocation((Point) );
 					//(int) bna.getShape().getBounds().getCenterX()

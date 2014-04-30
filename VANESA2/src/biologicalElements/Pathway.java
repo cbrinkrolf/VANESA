@@ -1192,13 +1192,17 @@ public class Pathway implements Cloneable {
 	public MyGraph getGraph() {
 		if(graph==null){
 			graph = new MyGraph(this);
-			tab = new GraphTab(name, graph.getGraphVisualization());
-			tab.setTitle(name);
+//			tab = new GraphTab(name, graph.getGraphVisualization());
+//			tab.setTitle(name);
 		}
 		return graph;
 	}
 
 	public GraphTab getTab() {
+		if(tab==null){
+			tab = new GraphTab(name, getGraph().getGraphVisualization());
+			tab.setTitle(name);
+		}
 		return tab;
 	}
 
