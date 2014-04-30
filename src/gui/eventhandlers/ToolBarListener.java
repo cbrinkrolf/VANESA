@@ -13,6 +13,7 @@ import gui.MainWindowSingelton;
 import gui.ParallelChooseGraphsWindow;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -318,10 +319,16 @@ public class ToolBarListener implements ActionListener {
 		else if ("enterNode".equals(event)){
 			if(graphInstance.getMyGraph() != null){
 					w.updateHierarchyView();
-//					for(BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().
-//							getVisualizationViewer().getPickedVertexState().getPicked()){
-//						node.getGraph().changeToGEMLayout();
-//					}
+					for(BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().
+							getVisualizationViewer().getPickedVertexState().getPicked()){
+						w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+						//Pathway newPW = null;
+						String newPathwayName = con.addPathway(node.getName(), node);
+						Pathway pw = con.getPathway(newPathwayName);
+						w.addTab(pw.getTab().getTitelTab());
+						w.returnFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+					}
+					
 					
 			}else{
 				System.out.println("No Graph exists!");
