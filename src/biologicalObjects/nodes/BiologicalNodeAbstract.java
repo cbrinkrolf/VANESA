@@ -361,7 +361,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 */
 		private void updateMyGraph(){
 			
-			myGraph.addVertex(this, myGraph.getVertexLocation(getAllNodes().iterator().next()));
+			myGraph.addVertex(this, myGraph.getVertexLocation(getBorder().iterator().next()));
 			
 			for(BiologicalNodeAbstract node : border){
 				if (node.getCurrentShownParentNode() == null){
@@ -385,7 +385,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				}
 			}
 			for(BiologicalNodeAbstract node : getAllNodes()){
-				myGraph.removeVertex(node);
+				if(!environment.contains(node)){
+					myGraph.removeVertex(node);
+				}
 			}
 		}
 
@@ -403,30 +405,32 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getInEdges(node)){
 					
-					if(vertices.contains(edge.getFrom()) && vertices.contains(edge.getTo())){
-						
-						// Add to Pathway sets and graph.
-						addEdge(edge);
-						
-					} else {
-						
-						// Add only to a set of edges.
-						connectingEdges.add(edge);
-					}
+//					if(vertices.contains(edge.getFrom()) && vertices.contains(edge.getTo())){
+//						
+//						// Add to Pathway sets and graph.
+//						addEdge(edge);
+//						
+//					} else {
+//						
+//						// Add only to a set of edges.
+//						connectingEdges.add(edge);
+//					}
+					addEdge(edge);
 				}
 				
 				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getOutEdges(node)){
 					
-					if(vertices.contains(edge.getTo()) && vertices.contains(edge.getFrom())){
-						
-						// Add to Pathway sets and graph.
-						addEdge(edge);
-						
-					} else {
-						
-						// Add only to a set of edges.
-						connectingEdges.add(edge);
-					}
+//					if(vertices.contains(edge.getTo()) && vertices.contains(edge.getFrom())){
+//						
+//						// Add to Pathway sets and graph.
+//						addEdge(edge);
+//						
+//					} else {
+//						
+//						// Add only to a set of edges.
+//						connectingEdges.add(edge);
+//					}
+					addEdge(edge);
 				}
 			}
 		}
@@ -673,7 +677,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 
 		public BiologicalNodeAbstract getParentNode() {
-			return parentNode;
+			if(parentNode!=null){
+				return parentNode;
+			}
+			return this;
 		}
 
 		/**
@@ -956,6 +963,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		
 		public Set<BiologicalNodeAbstract> getBorder(){
 			return border;
+		}
+		
+		public Set<BiologicalNodeAbstract> getEnvironment(){
+			return environment;
 		}
 
 }

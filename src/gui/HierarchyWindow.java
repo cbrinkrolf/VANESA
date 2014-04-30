@@ -31,11 +31,11 @@ public class HierarchyWindow {
 		try{
 		BiologicalNodeAbstract node = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator().next();
 		vv = node.getGraph().getVisualizationViewer();
-		for(BiologicalNodeAbstract n : node.getGraph().getAllVertices()){
-			if(node.getBorder().contains(n)){
-				n.setColor(Color.RED);
-			}
-		}
+//		for(BiologicalNodeAbstract n : node.getGraph().getAllVertices()){
+//			if(node.getBorder().contains(n)){
+//				n.setColor(Color.RED);
+//			}
+//		}
 		vv.setSize(200, 200);
 		vv.setMaximumSize(new Dimension(200, 200));
 		} catch(Exception ex){
