@@ -1,6 +1,8 @@
 package graph.jung.graphDrawing;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.util.Iterator;
 
@@ -64,6 +66,14 @@ public class MyVertexStrokeHighlighting implements
 
 		boolean petriNet = new GraphInstance().getPathway().isPetriNet();
 		boolean isContPlace = false;
+		
+		// mark Environment nodes in hierarchical Nodes.
+		if(pw instanceof BiologicalNodeAbstract){
+			BiologicalNodeAbstract b = (BiologicalNodeAbstract) pw;
+			if(b.getParentNode().getEnvironment().contains(bna)){
+				return light;
+			}
+		}
 
 		if (((bna instanceof Place && !((Place) bna).isDiscrete()) || bna instanceof ContinuousTransition)) {
 			isContPlace = true;
