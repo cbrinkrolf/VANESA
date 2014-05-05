@@ -71,7 +71,16 @@ public class MyVertexStrokeHighlighting implements
 		if(pw instanceof BiologicalNodeAbstract){
 			BiologicalNodeAbstract b = (BiologicalNodeAbstract) pw;
 			if(b.getParentNode().getEnvironment().contains(bna)){
-				return light;
+				float dashPhase = 0f;
+                float dash[] = {5.0f,5.0f};
+				return new BasicStroke(
+                        1f,
+                        BasicStroke.CAP_ROUND,
+                        BasicStroke.JOIN_MITER,
+                        1.5f, //miter limit
+                        dash,
+                        dashPhase
+                        );
 			}
 		}
 
