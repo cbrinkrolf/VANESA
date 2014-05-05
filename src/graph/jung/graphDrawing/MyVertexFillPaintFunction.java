@@ -37,7 +37,7 @@ public class MyVertexFillPaintFunction implements
 		if(pw instanceof BiologicalNodeAbstract){
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) pw;
 			if(bna.getParentNode().getEnvironment().contains(v)){
-				return Color.getHSBColor(0.1f, 0f, 0.95f);
+				return v.getColor().brighter();
 			}
 		}
 		
