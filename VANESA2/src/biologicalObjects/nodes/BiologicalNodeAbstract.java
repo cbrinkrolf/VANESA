@@ -274,15 +274,23 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				node.setParentNode(this);
 				this.addVertex(node, myGraph.getVertexLocation(node));
 			}
-					
 			// Compute the border of the given set of nodes.
 			border = computeBorder(vertices);
+			System.out.println("Border:");
+			for(BiologicalNodeAbstract node : border)
+				System.out.println(node.getName() + ": " + node.getID());
 			
 			// Compute thhe environment of the given set of nodes.
 			environment = computeEnvironment(vertices, border);
-			
+			System.out.println("Environment:");
+			for(BiologicalNodeAbstract node : environment)
+				System.out.println(node.getName() + ": " + node.getID());
+
 			// Save the edges containing the nodes inside the coarse node.
 			saveSubnetEdges(vertices);
+			System.out.println("Nodes:");
+			for(BiologicalNodeAbstract node : getAllNodes())
+				System.out.println(node.getName() + ": " + node.getID());
 			
 			// Update current MyGraph
 			updateMyGraph();
@@ -404,33 +412,31 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			for(BiologicalNodeAbstract node : vertices){
 
 				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getInEdges(node)){
-					
-//					if(vertices.contains(edge.getFrom()) && vertices.contains(edge.getTo())){
-//						
-//						// Add to Pathway sets and graph.
-//						addEdge(edge);
-//						
-//					} else {
-//						
-//						// Add only to a set of edges.
-//						connectingEdges.add(edge);
-//					}
-					addEdge(edge);
+					BiologicalEdgeAbstract e = edge.clone();
+//					System.out.println("Node data:");
+//					System.out.println(node.getID() + ", " + e.getTo().getID() + ", " + e.getOriginalFrom().getID());
+
+					if(environment.contains(edge.getOriginalTo())){
+						e.setTo(edge.getOriginalTo());
+					}
+					if(environment.contains(edge.getOriginalFrom())){
+						e.setFrom(edge.getOriginalFrom());
+					}
+					addEdge(e);
 				}
 				
 				for(BiologicalEdgeAbstract edge : myGraph.getJungGraph().getOutEdges(node)){
-					
-//					if(vertices.contains(edge.getTo()) && vertices.contains(edge.getFrom())){
-//						
-//						// Add to Pathway sets and graph.
-//						addEdge(edge);
-//						
-//					} else {
-//						
-//						// Add only to a set of edges.
-//						connectingEdges.add(edge);
-//					}
-					addEdge(edge);
+					BiologicalEdgeAbstract e = edge.clone();
+//					System.out.println("Node Data:");
+//					System.out.println(node.getID() + ", " + e.getFrom().getID() + ", " + e.getOriginalTo().getID());
+
+					if(environment.contains(edge.getOriginalTo())){
+						e.setTo(edge.getOriginalTo());
+					}
+					if(environment.contains(edge.getOriginalFrom())){
+						e.setFrom(edge.getOriginalFrom());
+					}
+					addEdge(e);
 				}
 			}
 		}
@@ -450,8 +456,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			
 			// Add nodes of the subpathway
 			for(BiologicalNodeAbstract node : getAllNodes()){
-				node.setParentNode(null);
-				myGraph.addVertex(node, myGraph.getVertexLocation(node));
+				if(!environment.contains(node)){
+					node.setParentNode(null);
+					myGraph.addVertex(node, myGraph.getVertexLocation(node));
+				}
 			}
 			
 			Set<BiologicalEdgeAbstract> allEdges = connectingEdges;
