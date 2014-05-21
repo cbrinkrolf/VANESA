@@ -232,8 +232,17 @@ public class MyGraph {
 							pathway.removeElement(it.next());
 						}
 						vv.getPickedVertexState().clear();
-						vv.repaint();
 					}
+					if (vv.getPickedEdgeState().getPicked().size() > 0) {
+						Iterator<BiologicalEdgeAbstract> it = vv
+								.getPickedEdgeState().getPicked().iterator();
+						while (it.hasNext()) {
+							pathway.removeElement(it.next());
+						}
+						vv.getPickedVertexState().clear();
+
+					}
+					vv.repaint();
 				}
 			}
 
@@ -663,9 +672,9 @@ public class MyGraph {
 		vv.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
 		vv.setGraphMouse(graphMouse);
-		//vv.setFocusable(true);
-		
-		//Event e = new MouseEvent(vv, arg1, arg2, arg3, arg4, arg5, arg6,
+		// vv.setFocusable(true);
+
+		// Event e = new MouseEvent(vv, arg1, arg2, arg3, arg4, arg5, arg6,
 		// arg7, arg8, arg9, arg10)
 	}
 
