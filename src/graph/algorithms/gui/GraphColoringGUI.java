@@ -5,17 +5,22 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
 import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 import gui.MainWindowSingelton;
+import gui.ProgressBar;
 import gui.images.ImagePath;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.management.remote.rmi.RMIIIOPServerImpl;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,7 +31,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import cluster.ClusterComputeClient;
+import cluster.ClientHelper;
+import cluster.ClusterComputeThread;
+import cluster.JobTypes;
 
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
@@ -46,12 +53,13 @@ public class GraphColoringGUI implements ActionListener {
 	private JButton resetcolorbutton;
 
 	private String[] algorithmNames = { "Node Degree", "Neighbor Degree",
-			"Cycles (cluster)", "Cliques (cluster)", "Paths (cluster)" };
+			"Cycles (cluster)", "Cliques (cluster)", "Paths (cluster)",
+			"Clustering (cluster)" };
 	private int currentalgorithmindex = 0;
 	private String[] colorrangenames = { "bluesea", "skyline", "darkmiddle",
 			"darkleftmiddle", "rainbow" };
 	private final int NODE_DEGREE = 0, NEIGHBOR_DEGREE = 1, CYCLES = 2,
-			CLIQUES = 3, PATHRATING = 4;
+			CLIQUES = 3, PATHRATING = 4, SPECTRAL = 5;
 
 	private ImageIcon[] icons;
 
@@ -71,6 +79,12 @@ public class GraphColoringGUI implements ActionListener {
 	private TitledTab tab;
 
 	private final Color greynodecolor = new Color(-4144960);
+
+	public static ProgressBar progressbar;
+
+	private MainWindow mw;
+
+	private ClientHelper helper;
 
 	public GraphColoringGUI() {
 		// set icon paths
@@ -135,7 +149,7 @@ public class GraphColoringGUI implements ActionListener {
 
 	}
 
-	public void recolorGraph() {
+	public synchronized void recolorGraph() {
 
 		np = new NetworkProperties();
 		itn = np.getPathway().getAllNodes().iterator();
@@ -153,68 +167,78 @@ public class GraphColoringGUI implements ActionListener {
 			coloring = np.averageNeighbourDegreeTable();
 			break;
 		case CYCLES:
+			// Lock UI and initiate Progress Bar
+			mw = MainWindowSingelton.getInstance();
+			mw.setEnable(false);
+			mw.setLockedPane(true);
+			progressbar = new ProgressBar();
+			progressbar.init(100, "Computing", true);
+			progressbar.setProgressBarString("Getting cluster results");
+
 			// compute values over RMI
-			ClusterComputeClient rmicycles = new ClusterComputeClient(
-					ClusterComputeClient.CYCLE_JOB_OCCURRENCE);
-			rmicycles.setAdjMatrix(np.getAdjacencyMatrix());
-			if (rmicycles.start()) {
-				Hashtable<Integer, Double> cycledata = rmicycles
-						.getResultTable();
-
-				if (!cycledata.isEmpty()) {
-					// Map ids to BNAs
-					Iterator<Entry<Integer, Double>> it = cycledata.entrySet()
-							.iterator();
-					int key;
-					double value;
-
-					while (it.hasNext()) {
-						Entry<Integer, Double> entry = it.next();
-						key = entry.getKey();
-						value = entry.getValue();
-						// debug
-						// System.out.println(key + " " + value);
-						coloring.put(np.getNodeAssignmentbackwards(key), value);
-					}
-				}
+			try {
+				helper = new ClientHelper(this);
+				ClusterComputeThread rmicycles = new ClusterComputeThread(
+						JobTypes.CYCLE_JOB_OCCURRENCE, helper);
+				rmicycles.setAdjMatrix(np.getAdjacencyMatrix());
+				rmicycles.start();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 			break;
 		case CLIQUES:
+			// Lock UI and initiate Progress Bar
+			mw = MainWindowSingelton.getInstance();
+			mw.setEnable(false);
+			mw.setLockedPane(true);
+			progressbar = new ProgressBar();
+			progressbar.init(100, "Computing", true);
+			progressbar.setProgressBarString("Getting cluster results");
+
 			// compute values over RMI
-			ClusterComputeClient rmicliques = new ClusterComputeClient(
-					ClusterComputeClient.CLIQUE_JOB_OCCURRENCE);
-			rmicliques.setAdjMatrix(np.getAdjacencyMatrix());
-			if (rmicliques.start()) {
-				Hashtable<Integer, Double> cliquedata = rmicliques
-						.getResultTable();
-
-				if (!cliquedata.isEmpty()) {
-					// Map ids to BNAs
-					Iterator<Entry<Integer, Double>> it = cliquedata.entrySet()
-							.iterator();
-					int key;
-					double value;
-
-					while (it.hasNext()) {
-						Entry<Integer, Double> entry = it.next();
-						key = entry.getKey();
-						value = entry.getValue();
-						// debug
-						//System.out.println(key + " " + value);
-						coloring.put(np.getNodeAssignmentbackwards(key), value);
-					}
-				}
+			try {
+				helper = new ClientHelper(this);
+				ClusterComputeThread rmicliques = new ClusterComputeThread(
+						JobTypes.CLIQUE_JOB_OCCURRENCE, helper);
+				rmicliques.setAdjMatrix(np.getAdjacencyMatrix());
+				rmicliques.start();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 			break;
 		case PATHRATING:
-			ClusterComputeClient rmiapsp = new ClusterComputeClient(
-					ClusterComputeClient.APSP_JOB);
-			rmiapsp.start();
+			// ClusterComputeThread rmiapsp = new ClusterComputeThread(
+			// ClusterComputeThread.APSP_JOB, this);
+			// rmiapsp.start();
+			break;
+		case SPECTRAL:
+			// Lock UI and initiate Progress Bar
+			mw = MainWindowSingelton.getInstance();
+			mw.setEnable(false);
+			mw.setLockedPane(true);
+			progressbar = new ProgressBar();
+			progressbar.init(100, "Computing", true);
+			progressbar.setProgressBarString("Getting cluster results");
+
+			// compute values over RMI
+			try {
+				helper = new ClientHelper(this);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ClusterComputeThread rmispectral = new ClusterComputeThread(
+					JobTypes.SPECTRAL_CLUSTERING_JOB, helper);
+			rmispectral.setAdjMatrix(np.getAdjacencyMatrix());
+			rmispectral.start();
 			break;
 
 		default:
+			System.err.println("ERROR! JobType not found.");
 			break;
 		}
 
@@ -223,6 +247,14 @@ public class GraphColoringGUI implements ActionListener {
 		colorizebutton.setEnabled(true);
 		logview.setEnabled(true);
 		resetcolorbutton.setEnabled(true);
+	}
+
+	public void reactiveateUI() {
+		// close Progress bar and reactivate UI
+		GraphColoringGUI.progressbar.closeWindow();
+		mw = MainWindowSingelton.getInstance();
+		mw.setEnable(true);
+		mw.setLockedPane(false);
 	}
 
 	public void revalidateView() {
@@ -258,6 +290,104 @@ public class GraphColoringGUI implements ActionListener {
 		tab = new TitledTab("Coloring", null, p, null);
 
 		return tab;
+	}
+
+	public void returnComputeData(HashSet<HashSet<Integer>> sets, int jobtype) {
+		switch (jobtype) {
+		case JobTypes.SPECTRAL_CLUSTERING_JOB:
+			HashSet<HashSet<Integer>> clusterdata = sets;
+			if (!clusterdata.isEmpty()) {
+				// Map ids to BNAs
+				double value;
+				Color clustercolor;
+				BiologicalNodeAbstract bna;
+				for (HashSet<Integer> cluster : clusterdata) {
+					if (cluster.size() < 5)
+						continue;
+					clustercolor = new Color((int) (Math.random() * 0x1000000));
+					for (int nodeid : cluster) {
+						bna = np.getNodeAssignmentbackwards(nodeid - 1);
+						bna.setColor(clustercolor);
+					}
+				}
+			}
+
+			break;
+		default:
+			System.out.println("Wrong Job Type: returnComputeData - "
+					+ toString());
+			break;
+		}
+
+		// Set COLORS
+		gc = new GraphColorizer(coloring, currentimageid, logview.isSelected());
+		// recolor button enable after first Coloring, logview enabled
+		colorizebutton.setEnabled(true);
+		logview.setEnabled(true);
+		resetcolorbutton.setEnabled(true);
+	}
+
+	public void returnComputeData(Hashtable<Integer, Double> table, int jobtype) {
+
+		// Determine jobtype and behaviour
+		switch (jobtype) {
+		case JobTypes.CYCLE_JOB_OCCURRENCE:
+			Hashtable<Integer, Double> cycledata = table;
+
+			if (!cycledata.isEmpty()) {
+				// Map ids to BNAs
+				Iterator<Entry<Integer, Double>> it = cycledata.entrySet()
+						.iterator();
+				int key;
+				double value;
+
+				while (it.hasNext()) {
+					Entry<Integer, Double> entry = it.next();
+					key = entry.getKey();
+					value = entry.getValue();
+					// debug
+					// System.out.println(key + " " + value);
+					coloring.put(np.getNodeAssignmentbackwards(key), value);
+				}
+
+			}
+
+			break;
+
+		case JobTypes.CLIQUE_JOB_OCCURRENCE:
+			Hashtable<Integer, Double> cliquedata = table;
+
+			if (!cliquedata.isEmpty()) {
+				// Map ids to BNAs
+				Iterator<Entry<Integer, Double>> it = cliquedata.entrySet()
+						.iterator();
+				int key;
+				double value;
+
+				while (it.hasNext()) {
+					Entry<Integer, Double> entry = it.next();
+					key = entry.getKey();
+					value = entry.getValue();
+					// debug
+					// System.out.println(key + " " + value);
+					coloring.put(np.getNodeAssignmentbackwards(key), value);
+				}
+			}
+
+			break;
+
+		default:
+			System.out.println("Wrong Job Type: returnComputeData - "
+					+ toString());
+			break;
+		}
+
+		// Set COLORS
+		gc = new GraphColorizer(coloring, currentimageid, logview.isSelected());
+		// recolor button enable after first Coloring, logview enabled
+		colorizebutton.setEnabled(true);
+		logview.setEnabled(true);
+		resetcolorbutton.setEnabled(true);
 	}
 
 	public void actionPerformed(ActionEvent e) {
