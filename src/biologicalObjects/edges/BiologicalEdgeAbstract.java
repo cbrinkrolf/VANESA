@@ -8,6 +8,7 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.SortedSet;
 
 import configurations.NetworkSettings;
@@ -311,7 +312,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	
 	// should only be used when loading a file with a network
 	public void setID(int id) {
-
 		if (this.ID == id) {
 			return;
 		} else {

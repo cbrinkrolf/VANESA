@@ -754,12 +754,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 		// should only be used when loading a file with a network
 		public void setID(int id) {
-
 			if (this.ID == id) {
+				System.out.println("return");
 				return;
 			} else {
 				set = new GraphInstance().getPathway().getIdSet();
 				// System.out.println("size: " + set.size());
+				
 				if (set.contains(id)) {
 					System.err.println("Error: Id " + id + " is already existing!");
 				} else {
@@ -790,7 +791,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			set = new GraphInstance().getPathway().getIdSet();
 			// System.out.println(new GraphInstance().getPathway().getName());
 			// set id to highest current id+1;
-			//if (ID <= 0) {
+			if (ID <= 0) {
 				// System.out.println("neue ID");
 				if (set.size() > 0) {
 					// System.out.println("last: " + set.last());
@@ -801,7 +802,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				} else {
 					setID(100);
 				}
-			//}
+			}
 		}
 		
 		public Collection<Integer> getOriginalGraphs() {
