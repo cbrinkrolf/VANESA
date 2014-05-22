@@ -151,7 +151,7 @@ public class Pathway implements Cloneable {
 	}
 
 	public Pathway(String name, Pathway parent) {
-		//this(name);
+		// this(name);
 		this.title = name;
 		filterSettings = new FilterSettings();
 		this.parent = parent;
@@ -349,7 +349,7 @@ public class Pathway implements Cloneable {
 		 * }
 		 */
 		(bna).setCompartment(bna.getCompartment());
-		biologicalElements.put(bna.getID() + "", bna);
+
 		// System.out.println(biologicalElements.size());
 		graphRepresentation.addVertex(bna);
 		getGraph().addVertex(bna, p);
@@ -368,7 +368,10 @@ public class Pathway implements Cloneable {
 			nodeDescription.remove(bna.getBiologicalElement());
 			nodeDescription.put(bna.getBiologicalElement(), temp);
 		}
+		// System.out.println("new id: "+bna.getID());
 		bna.setID();
+		biologicalElements.put(bna.getID() + "", bna);
+		//
 		// System.out.println(this.graph.getAllVertices().size());
 		// bna.setNodesize(this.graph.getAllVertices().size());
 		return bna;
@@ -707,7 +710,7 @@ public class Pathway implements Cloneable {
 		// System.out.println("edge hinzugefuegt");
 
 		if (bea != null) {
-			biologicalElements.put(bea.getID() + "", bea);
+
 			edges.put(
 					new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
 					bea);
@@ -716,6 +719,7 @@ public class Pathway implements Cloneable {
 			graphRepresentation.addEdge(bea);
 			getGraph().addEdge(bea);
 			bea.setID();
+			biologicalElements.put(bea.getID() + "", bea);
 			return bea;
 		} else
 			try {
@@ -1008,8 +1012,9 @@ public class Pathway implements Cloneable {
 
 	public Vector<BiologicalNodeAbstract> getSelectedNodes() {
 		Vector<BiologicalNodeAbstract> ve = new Vector<BiologicalNodeAbstract>();
-		Iterator<BiologicalNodeAbstract> it = getGraph().getVisualizationViewer()
-				.getPickedVertexState().getPicked().iterator();
+		Iterator<BiologicalNodeAbstract> it = getGraph()
+				.getVisualizationViewer().getPickedVertexState().getPicked()
+				.iterator();
 		while (it.hasNext()) {
 			BiologicalNodeAbstract v = it.next();
 			ve.add(v);
@@ -1038,8 +1043,8 @@ public class Pathway implements Cloneable {
 			while (it.hasNext()) {
 				bna = it.next();
 				if (bna != first) {
-					Iterator<BiologicalEdgeAbstract> it2 = getGraph().getJungGraph()
-							.getInEdges(bna).iterator();
+					Iterator<BiologicalEdgeAbstract> it2 = getGraph()
+							.getJungGraph().getInEdges(bna).iterator();
 					BiologicalEdgeAbstract bea;
 					while (it2.hasNext()) {
 						bea = it2.next();
@@ -1144,7 +1149,7 @@ public class Pathway implements Cloneable {
 
 	public void setName(String name) {
 		this.name = name;
-		if(tab!=null){
+		if (tab != null) {
 			tab.setTitle(name);
 		}
 	}
@@ -1190,16 +1195,16 @@ public class Pathway implements Cloneable {
 	}
 
 	public MyGraph getGraph() {
-		if(graph==null){
+		if (graph == null) {
 			graph = new MyGraph(this);
-//			tab = new GraphTab(name, graph.getGraphVisualization());
-//			tab.setTitle(name);
+			// tab = new GraphTab(name, graph.getGraphVisualization());
+			// tab.setTitle(name);
 		}
 		return graph;
 	}
 
 	public GraphTab getTab() {
-		if(tab==null){
+		if (tab == null) {
 			tab = new GraphTab(name, getGraph().getGraphVisualization());
 			tab.setTitle(name);
 		}
