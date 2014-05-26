@@ -54,8 +54,12 @@ public class PPIConnector extends SwingWorker {
 	private boolean binary;
 	private boolean complex;
 
+//	private long starttime;
+	
 	public PPIConnector(ProgressBar bar, String[] details, String db) {
 
+//		System.out.println("Starting measurement");
+//		starttime = System.currentTimeMillis();
 		this.bar = bar;
 		this.root_details = details;
 		this.root_id = details[3];
@@ -386,6 +390,7 @@ public class PPIConnector extends SwingWorker {
 	@Override
 	public void done() {
 
+//		System.out.println("querytime :"+(System.currentTimeMillis()-starttime)+"ms");
 		bar.setProgressBarString("Drawing network");
 
 		String rootName = "";
