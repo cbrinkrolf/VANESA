@@ -51,7 +51,7 @@ public class PPIqueryMask {
 		p = new JPanel(layout);
 		
 		choosePPIdatabase = new JComboBox(dbNames);
-		choosePPIdatabase.setSelectedItem(dbNames[1]);
+		choosePPIdatabase.setSelectedItem(dbNames[0]);
 		choosePPIdatabase.addItemListener( new ItemListener() {
 	          public void itemStateChanged( ItemEvent e ) {
 //	            JComboBox selectedChoice = (JComboBox)e.getSource();
@@ -63,8 +63,8 @@ public class PPIqueryMask {
 		acNumber = new JTextField(20);
 		
 		fullName.setText("");
-		alias.setText("");
-		acNumber.setText("P22803");
+		alias.setText("HMG");
+		acNumber.setText("");
 		
 		fullName.addFocusListener(new TextfeldColorChanger());
 		alias.addFocusListener(new TextfeldColorChanger());
