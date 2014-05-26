@@ -252,13 +252,14 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					bna = it.next();
 					if (bna instanceof Place
 							&& pw.getPetriNet().getPnResult()
-									.containsKey(bna.getName() + ".t")) {
+									.containsKey("'"+bna.getName() + "'.t")) {
 						MAData = bna.getPetriNetSimulationData();
 						// System.out.println("size:");
 						// System.out.println(MAData.size());
 						rows[i][0] = bna.getLabel();
 						for (int j = 1; j <= MAData.size(); j++) {
 							rows[i][j] = MAData.get(j - 1);
+							//System.out.println(i+" "+j+": "+rows[i][j]);
 							// System.out.println(i+" "+j +" "+ MAData.get(j -
 							// 1));
 						}
@@ -490,8 +491,13 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			// create dialog and fill table with values and labels
 			model = new RegulationTabelModel(rows, columNames, nodeTabel);
-
+			
+			//System.out.println(columNames.length);
+			
+			
 			table = new MyTable();
+			//System.out.println(model.getColumnCount());
+			//System.out.println(model.getRowCount());
 			table.setModel(model);
 			table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			table.setColumnControlVisible(false);
@@ -504,7 +510,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			table.getTableHeader().setResizingAllowed(true);
 			table.getColumn("Label").setPreferredWidth(100);
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
+			
 			JScrollPane sp = new JScrollPane(table);
 			sp.setPreferredSize(new Dimension(600, 200));
 

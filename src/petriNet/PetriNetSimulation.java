@@ -120,8 +120,11 @@ public class PetriNetSimulation {
 				BufferedWriter out = new BufferedWriter(fstream);
 				String path2 = pathSim.replace('\\', '/');
 				out.write("cd(\"" + path2 + "\");\r\n");
+				out.write("getErrorString();\r\n");
 				out.write("loadFile(\"../PNlib.mo\");\r\n");
+				out.write("getErrorString();\r\n");
 				out.write("loadFile(\"simulation.mo\");\r\n");
+				out.write("getErrorString();\r\n");
 				out.write("simulate(simulation, stopTime="
 						+ stopTime
 						+ ", method=\"euler\", numberOfIntervals="
@@ -129,6 +132,7 @@ public class PetriNetSimulation {
 						// only places
 						//+ ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
 				+ ", outputFormat=\"csv\");\r\n");
+				out.write("getErrorString();\r\n");
 				//variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
 				
 				// out.write("fileName=\"simulate.mat\";\r\n");
