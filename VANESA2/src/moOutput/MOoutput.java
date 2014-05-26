@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Set;
 
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
@@ -174,8 +176,8 @@ public class MOoutput {
 
 			for (int i = 0; i < bna.getParameters().size(); i++) {
 				// params+="\t\tparameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
-				places = places.concat("\tparameter Real _" + bna.getName()
-						+ "_" + bna.getParameters().get(i).getName() + " = "
+				places = places.concat("\tparameter Real '_" + bna.getName()
+						+ "_" + bna.getParameters().get(i).getName() + "' = "
 						+ bna.getParameters().get(i).getValue() + ";\r\n");
 				// System.out.println("drin");
 			}
@@ -552,14 +554,14 @@ public class MOoutput {
 		}
 		return "\t"
 				+ element
-				+ " "
+				+ " '"
 				+
 
 				// falls die anzahlen nicht stimmen
 				// +numInEdges.get(bna.getVertex().toString())
 				// +numOutEdges.get(bna.getVertex().toString())
 				//
-				bna.getName() + "(nIn=" + inEdges + ",nOut=" + outEdges + ","
+				bna.getName() + "'(nIn=" + inEdges + ",nOut=" + outEdges + ","
 				+ atr + ")"
 				// +(bioName.containsKey(name)?"(biologicalName = \""+bioName.get(name)+"\")":"")
 				// +" annotation(Placement(transformation(x = "+Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84), "
@@ -601,7 +603,7 @@ public class MOoutput {
 		// System.out.println("inPropper: " + in);
 		// System.out.println("outPropper: " + out);
 
-		return "\t" + element + " " + bna.getName() + "(nIn=" + inEdges
+		return "\t" + element + " '" + bna.getName() + "'(nIn=" + inEdges
 				+ ",nOut=" + outEdges + "," + atr + ",arcWeightIn=" + in
 				+ ",arcWeightOut=" + out + ")" + ";\r\n";
 	}
@@ -652,8 +654,8 @@ public class MOoutput {
 	private String getConnectionStringTP(BiologicalEdgeAbstract bea) {
 		String from = bea.getFrom().getName();
 		String to = bea.getTo().getName();
-		String result = "\tconnect(" + from + ".outPlaces["
-				+ (actualOutEdges.get(from) + 1) + "]," + to + ".inTransition["
+		String result = "\tconnect('" + from + "'.outPlaces["
+				+ (actualOutEdges.get(from) + 1) + "],'" + to + "'.inTransition["
 				+ (actualInEdges.get(to) + 1) + "]);"
 				// +" annotation(Line(points = {{"
 				// +Math.floor(scale*(fromPoint.getX()+xshift)+10)+","
@@ -663,7 +665,7 @@ public class MOoutput {
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
 				+ "\r\n";
 		// System.out.println(to+".tSumIn_["+(actualInEdges.get(to) + 1)+"]");
-		this.bea2resultkey.put(bea, to + ".tSumIn_["
+		this.bea2resultkey.put(bea, "'" + to + "'.tSumIn_["
 				+ (actualInEdges.get(to) + 1) + "]");
 
 		actualInEdges.put(to, actualInEdges.get(to) + 1);
@@ -674,8 +676,8 @@ public class MOoutput {
 	private String getConnectionStringPT(BiologicalEdgeAbstract bea) {
 		String from = bea.getFrom().getName();
 		String to = bea.getTo().getName();
-		String result = "\tconnect(" + from + ".outTransition["
-				+ (actualOutEdges.get(from) + 1) + "]," + to + ".inPlaces["
+		String result = "\tconnect('" + from + "'.outTransition["
+				+ (actualOutEdges.get(from) + 1) + "],'" + to + "'.inPlaces["
 				+ (actualInEdges.get(to) + 1) + "]);"
 				// +" annotation(Line(points = {{"
 				// +Math.floor(scale*(fromPoint.getX()+xshift)+19)+","
@@ -687,7 +689,7 @@ public class MOoutput {
 		// System.out.println(from+".tSumOut_["+(actualOutEdges.get(from) +
 		// 1)+"]");
 		this.bea2resultkey.put(bea,
-				from + ".tSumOut_[" + (actualOutEdges.get(from) + 1) + "]");
+				"'"+from + "'.tSumOut_[" + (actualOutEdges.get(from) + 1) + "]");
 
 		actualInEdges.put(to, actualInEdges.get(to) + 1);
 		actualOutEdges.put(from, actualOutEdges.get(from) + 1);
@@ -701,6 +703,15 @@ public class MOoutput {
 	public String replace(String function, ArrayList<Parameter> params,
 			BiologicalNodeAbstract node) {
 		StringBuilder mFunction = new StringBuilder(function);
+		Set<Character> chars = new HashSet<Character>();
+		chars.add('*');
+		chars.add('+');
+		chars.add('/');
+		chars.add('-');
+		chars.add('^');
+		chars.add('(');
+		chars.add(')');
+		chars.add(' ');
 
 		// replace parameters
 		ArrayList<String> paramNames = new ArrayList<String>();
@@ -737,12 +748,16 @@ public class MOoutput {
 						c = 'a';
 					}
 					// System.out.println("c: "+c);
-					if (!Character.isDigit(c) && !Character.isAlphabetic(c)) {
+					//if (!Character.isDigit(c) && !Character.isAlphabetic(c)) {
+					if(chars.contains(c)){	
 						// mFunction = mFunction.replaceFirst(name, mNames
 						// .get(name));
-						mFunction.insert(idxNew, "_" + node.getName() + "_");
-						index = idxNew + name.length() + 2
-								+ node.getName().length();
+						String insert = "'_"+node.getName()+"_"+name+"'";
+						mFunction.replace(idxNew, idxNew+name.length(), insert);
+						//mFunction.insert(idxNew, "_" + node.getName() + "_");
+						//index = idxNew + name.length() + 2
+						//		+ node.getName().length();
+						index = idxNew+insert.length();
 						// System.out.println(name+" ersetzt durch: "+mNames.get(name));
 					} else {
 						index = idxNew + name.length();
@@ -755,7 +770,7 @@ public class MOoutput {
 				}
 			}
 		}
-
+		System.out.println(mFunction);
 		// replace places
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
@@ -780,7 +795,7 @@ public class MOoutput {
 		idxNew = 0;
 		boolean check;
 		for (int i = 0; i < names.size(); i++) {
-			check = false;
+			//check = false;
 			index = 0;
 			name = names.get(i);
 
@@ -788,6 +803,7 @@ public class MOoutput {
 			// System.out.println("fkt: "+mFunction);
 			// System.out.println("n: "+name);
 			while (mFunction.indexOf(name, index) >= 0) {
+				check = false;
 				idxNew = mFunction.indexOf(name, index);
 				// System.out.println("index: "+index);
 				// System.out.println("idxNew: "+idxNew);
@@ -803,18 +819,21 @@ public class MOoutput {
 					// System.out.println("c: "+c);
 					// System.out.println(mFunction.charAt(idxNew));
 					if (idxNew > 0) {
-						if (mFunction.charAt(idxNew - 1) != '_') {
+						if (chars.contains(mFunction.charAt(idxNew - 1))) {
 							check = true;
 						}
 					} else {
 						check = true;
 					}
 
-					if (!Character.isDigit(c) && c != '.' && check) {
+					if (chars.contains(c) && check) {
 						// mFunction = mFunction.replaceFirst(name, mNames
 						// .get(name));
-						mFunction.insert(idxNew + name.length(), ".t");
-						index = idxNew + name.length() + 2;
+						String insert = "'"+name+"'.t";
+						mFunction.replace(idxNew, idxNew+name.length(), insert);
+						
+						//mFunction.insert(idxNew + name.length(), ".t");
+						index = idxNew + insert.length();
 						// System.out.println(name+" ersetzt durch: "+mNames.get(name));
 					} else {
 						index = idxNew + name.length();
