@@ -95,11 +95,11 @@ public class PetriNet {
 
 				bna = it.next();
 				if (bna instanceof Place) {
-					columns.add(bna.getName() + ".t");
+					columns.add("'"+bna.getName() + "'.t");
 					// System.out.println(bna.getName());
 				} else if (bna instanceof Transition) {
-					columns.add(bna.getName() + ".fire");
-					columns.add(bna.getName()+".actualSpeed");
+					columns.add("'"+ bna.getName() + "'.fire");
+					columns.add("'"+bna.getName()+"'.actualSpeed");
 				}
 			}
 		}
@@ -201,7 +201,7 @@ public class PetriNet {
 
 					// System.out.println();
 
-					v = pnResult.get(bna.getName() + ".t");
+					v = pnResult.get("'"+bna.getName() + "'.t");
 					// System.out.println(bna.getName());
 					// System.out.println(v.lastElement());
 					// System.out.println("size: "+v.size());
@@ -219,10 +219,10 @@ public class PetriNet {
 					this.places++;
 				} else if (bna instanceof Transition) {
 					// System.out.println("gesetzt");
-					v = pnResult.get(bna.getName() + ".fire");
+					v = pnResult.get("'"+bna.getName() + "'.fire");
 					// System.out.println("size: "+v.size());
 					bna.setPetriNetSimulationData(v);
-					((Transition)bna).setSimActualSpeed(pnResult.get(bna.getName()+".actualSpeed"));
+					((Transition)bna).setSimActualSpeed(pnResult.get("'"+bna.getName()+"'.actualSpeed"));
 					this.transitions++;
 				}
 			}

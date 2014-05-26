@@ -41,13 +41,17 @@ public class PlotsPanel extends JPanel implements ActionListener {
 	Pathway pw = new GraphInstance().getPathway();
 	int rowsSize = pw.getPetriNet().getNumberOfPlaces();
 	int rowsDim = pw.getPetriNet().getResultDimension();
-	Object[][] rows = new Object[rowsSize][rowsDim + 1];
+	Object[][] rows;
 	ArrayList<String> labels = new ArrayList<String>();
 	private BufferedImage bi = null;
 	private JPanel p = new JPanel();
 
 	public PlotsPanel() {
+		
 		if (pw.isPetriNet() && pw.isPetriNetSimulation()) {
+			rows = new Object[rowsSize][rowsDim + 1];
+			//System.out.println("rowsSize: "+rowsSize);
+			//System.out.println("rowsDim: "+rowsDim);
 			Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
 			BiologicalNodeAbstract[] bnas = (BiologicalNodeAbstract[]) hs
 					.toArray(new BiologicalNodeAbstract[0]);
@@ -68,7 +72,7 @@ public class PlotsPanel extends JPanel implements ActionListener {
 				BiologicalNodeAbstract bna = bnas[k];
 				if (bna instanceof Place
 						&& pw.getPetriNet().getPnResult()
-								.containsKey(bna.getName()+".t")) {
+								.containsKey("'"+bna.getName()+"'.t")) {
 					MAData = bna.getPetriNetSimulationData();
 					rows[i][0] = bna.getLabel();
 					for (int j = 1; j <= MAData.size(); j++) {
@@ -84,6 +88,7 @@ public class PlotsPanel extends JPanel implements ActionListener {
 			final XYSeriesCollection dataset = new XYSeriesCollection();
 			XYSeries series = new XYSeries(1);
 			for (int i = 0; i < rowsDim; i++) {
+				//System.out.println("test: "+rows[j][i+1]);
 				Double value = Double.parseDouble(rows[j][i+1].toString());
 				series.add(pw.getPetriNet().getPnResult().get("time").get(i), value);
 			}
