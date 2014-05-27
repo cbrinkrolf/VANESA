@@ -239,10 +239,12 @@ public class MyGraph {
 						while (it.hasNext()) {
 							pathway.removeElement(it.next());
 						}
-						vv.getPickedVertexState().clear();
+						vv.getPickedEdgeState().clear();
 
 					}
-					vv.repaint();
+					MainWindow mw = MainWindowSingelton.getInstance();
+					mw.updateAllGuiElements();
+					//vv.repaint();
 				}
 			}
 
