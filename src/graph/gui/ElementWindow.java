@@ -65,7 +65,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private JLabel lblRef;
 	private JButton chooseRef;
 	private JButton deleteRef;
-	private JButton pickRef;
+	private JButton pickOrigin;
+	private JButton pickRefs;
 	private JButton colorButton;
 	private JButton hideNeighbours;
 	private JButton showNeighbours;
@@ -161,11 +162,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 				deleteRef.setActionCommand("deleteRef");
 				deleteRef.addActionListener(this);
 				p.add(deleteRef);
-				this.pickRef = new JButton("Highlight Reference");
-				pickRef.setToolTipText("Highlight Reference");
-				pickRef.setActionCommand("pickRef");
-				pickRef.addActionListener(this);
-				p.add(pickRef);
+				this.pickOrigin = new JButton("Highlight Origin");
+				pickOrigin.setToolTipText("Highlight Origin");
+				pickOrigin.setActionCommand("pickOrigin");
+				pickOrigin.addActionListener(this);
+				p.add(pickOrigin);
 
 			} else {
 				this.chooseRef = new JButton("Choose Reference");
@@ -173,6 +174,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 				chooseRef.setActionCommand("chooseRef");
 				chooseRef.addActionListener(this);
 				p.add(chooseRef);
+				if (bna.getRefs().size() > 0) {
+					this.pickRefs = new JButton("Highlight References");
+					pickRefs.setToolTipText("Highlight References");
+					pickRefs.setActionCommand("pickRefs");
+					pickRefs.addActionListener(this);
+					p.add(pickRefs);
+				}
 			}
 
 			showLabels.setToolTipText("Show all Labels");
@@ -627,6 +635,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			if (node != null) {
 				bna.setRef(node);
 				this.revalidateView();
+				w.updateElementTree();
 				// System.out.println("node: "+node.getID());
 			}
 		} else if ("deleteRef".equals(event)) {
@@ -634,8 +643,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 			bna.deleteRef();
 
 			this.revalidateView();
+			w.updateElementTree();
 
-		} else if ("pickRef".equals(event)) {
+		} else if ("pickOrigin".equals(event)) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
 
 			Pathway pw = graphInstance.getPathway();
@@ -646,7 +656,29 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			this.revalidateView();
 
-		} else if ("showParameters".equals(event)) {
+		} else if ("pickRefs".equals(event)) {
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
+			
+			Pathway pw = graphInstance.getPathway();
+			pw = graphInstance.getPathway();
+			MyGraph g = pw.getGraph();
+			//System.out.println("c: "+g.getJungGraph().getVertexCount());
+			BiologicalNodeAbstract pick;
+			Iterator<BiologicalNodeAbstract> it = bna.getRefs().iterator();
+			//System.out.println("size: "+bna.getRefs().size());
+			while (it.hasNext()) {
+				pick = it.next();
+				//System.out.println(pick.getLabel());
+				//System.out.println(pick);
+				g.getVisualizationViewer().getPickedVertexState()
+						.pick(pick, true);
+
+			}
+			//System.out.println(g.getVisualizationViewer().getPickedVertexState().getPicked().size());
+			this.revalidateView();
+		}
+
+		else if ("showParameters".equals(event)) {
 			// System.out.println("show parameters");
 			ParameterWindow parameterWindow = new ParameterWindow(ab);
 		} else if ("showLabels".equals(event)) {

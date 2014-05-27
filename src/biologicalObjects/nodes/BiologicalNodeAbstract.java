@@ -76,6 +76,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	
 	private BiologicalNodeAbstract ref = null;
 	
+	private Set<BiologicalNodeAbstract> refs = new HashSet<BiologicalNodeAbstract>();
+	
 	private boolean isReference = true;
 	
 	private boolean isVisible = true;
@@ -478,7 +480,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		
 		@Override
 		public BiologicalNodeAbstract clone() {
-				return (BiologicalNodeAbstract) super.clone();
+			return (BiologicalNodeAbstract) super.clone();
 		}
 		
 
@@ -726,6 +728,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		
 		public void setRef(BiologicalNodeAbstract ref){
 			this.ref = ref;
+			ref.getRefs().add(this);
 		}
 		
 		public BiologicalNodeAbstract getRef(){
@@ -733,6 +736,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 		
 		public void deleteRef(){
+			ref.getRefs().remove(this);
 			this.ref = null;
 		}
 		
@@ -976,6 +980,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		
 		public Set<BiologicalNodeAbstract> getEnvironment(){
 			return environment;
+		}
+		
+		public Set<BiologicalNodeAbstract> getRefs() {
+			return refs;
+		}
+
+		public void setRefs(Set<BiologicalNodeAbstract> refs) {
+			this.refs = refs;
 		}
 
 }
