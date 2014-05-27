@@ -35,7 +35,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
-
 public class ElementTree implements TreeSelectionListener, ActionListener {
 
 	private JXTree tree = null;
@@ -48,7 +47,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 	private JPanel p;
 	private JCheckBox box = new JCheckBox(
 			"Center picked element in the viewport");
-	
+
 	public ElementTree() {
 		scrollTree = new JScrollPane();
 		scrollTree.setPreferredSize(new Dimension(350, 200));
@@ -122,40 +121,39 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		Vector<String> v = new Vector<String>();
 		Hashtable<String, BiologicalNodeAbstract> currenTable = new Hashtable<String, BiologicalNodeAbstract>();
 		BiologicalNodeAbstract bna;
-		
+
 		String lbl = "";
-		
-		//sorting
+
+		// sorting
 		int i = 0;
 		while (it.hasNext()) {
-			
-			
-			
-			bna = it.next();
 
-			if(bna.getLabel().length() == 0){
-				lbl = "id_"+bna.getID();
-			}else{
-				lbl = bna.getLabel();
+			bna = it.next();
+			if (!bna.hasRef()) {
+				if (bna.getLabel().length() == 0) {
+					lbl = "id_" + bna.getID();
+				} else {
+					lbl = bna.getLabel();
+				}
+
+				v.add(lbl + i);
+				currenTable.put(lbl + i, bna);
+				i++;
 			}
-			
-			v.add(lbl + i);
-			currenTable.put(lbl + i, bna);
-			i++;
 		}
 
 		Collections.sort(v);
 		Iterator<String> it2 = v.iterator();
 		i = 0;
-		
+
 		while (it2.hasNext()) {
 
-			//String object = it2.next().toString();
+			// String object = it2.next().toString();
 			bna = currenTable.get(it2.next());
 
-			if(bna.getLabel().length() == 0){
-				lbl = "id_"+bna.getID();
-			}else{
+			if (bna.getLabel().length() == 0) {
+				lbl = "id_" + bna.getID();
+			} else {
 				lbl = bna.getLabel();
 			}
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
@@ -190,18 +188,20 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		String lbl = "";
 		int i = 0;
 		BiologicalNodeAbstract bna;
-		
+
 		while (it.hasNext()) {
 			bna = it.next();
-			if(bna.getLabel().length() == 0){
-				lbl = "id_"+bna.getID();
-			}else{
-				lbl = bna.getLabel();
+			if (!bna.hasRef()) {
+				if (bna.getLabel().length() == 0) {
+					lbl = "id_" + bna.getID();
+				} else {
+					lbl = bna.getLabel();
+				}
+
+				v.add(lbl + i);
+				currenTable.put(lbl + i, bna);
+				i++;
 			}
-			
-			v.add(lbl + i);
-			currenTable.put(lbl + i, bna);
-			i++;
 		}
 
 		Collections.sort(v);
@@ -211,9 +211,9 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		while (it2.hasNext()) {
 			bna = currenTable.get(it2.next());
 
-			if(bna.getLabel().length() == 0){
-				lbl = "id_"+bna.getID();
-			}else{
+			if (bna.getLabel().length() == 0) {
+				lbl = "id_" + bna.getID();
+			} else {
 				lbl = bna.getLabel();
 			}
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
@@ -243,59 +243,65 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		Object nodeInfo = currentNode.getUserObject();
 		if (currentNode.isLeaf() && !nodeInfo.toString().equals("Nodes")) {
 
-			BiologicalNodeAbstract bna = table.get(node
-					.getIndex(currentNode));
-			//System.out.println(bna.getLabel());
+			BiologicalNodeAbstract bna = table.get(node.getIndex(currentNode));
+			// System.out.println(bna.getLabel());
 			GraphInstance g = new GraphInstance();
-			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = g.getPathway().getGraph().getVisualizationViewer();
+			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = g
+					.getPathway().getGraph().getVisualizationViewer();
 			vv.getPickedVertexState().clear();
 			vv.getPickedVertexState().pick(bna, true);
 
-			//final VisualizationViewer<BiologicalNodeAbstract,BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract >) e.getSource();
-		    //vv.getPickedVertexState().getPicked().size() ; 
-			//if (vv.getPickedVertexState().getPicked().size()  == 1) {
-		    	  //System.out.println("drin2");
-			if(g.getPathway().getGraph().isAnimatedPicking()){
-		        Layout<BiologicalNodeAbstract,BiologicalEdgeAbstract> layout = vv.getGraphLayout();
-		        Point2D q = layout.transform(vv.getPickedVertexState().getPicked().iterator().next());
-		        Point2D lvc = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(vv.getCenter());
-		        final double dx = (lvc.getX() - q.getX()) / 10;
-		        final double dy = (lvc.getY() - q.getY()) / 10;
+			// final
+			// VisualizationViewer<BiologicalNodeAbstract,BiologicalEdgeAbstract>
+			// vv = (VisualizationViewer<BiologicalNodeAbstract,
+			// BiologicalEdgeAbstract >) e.getSource();
+			// vv.getPickedVertexState().getPicked().size() ;
+			// if (vv.getPickedVertexState().getPicked().size() == 1) {
+			// System.out.println("drin2");
+			if (g.getPathway().getGraph().isAnimatedPicking()) {
+				Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout = vv
+						.getGraphLayout();
+				Point2D q = layout.transform(vv.getPickedVertexState()
+						.getPicked().iterator().next());
+				Point2D lvc = vv.getRenderContext().getMultiLayerTransformer()
+						.inverseTransform(vv.getCenter());
+				final double dx = (lvc.getX() - q.getX()) / 10;
+				final double dy = (lvc.getY() - q.getY()) / 10;
 
-		        Runnable animator = new Runnable() {
+				Runnable animator = new Runnable() {
 
-		          public void run() {
-		            for (int i = 0; i < 10; i++) {
-		              vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy);
-		              try {
-		                Thread.sleep(100);
-		              } catch (InterruptedException ex) {
-		              }
-		            }
-		          }
-		        };
-		        Thread thread = new Thread(animator);
-		        thread.start();
-		    //  }
-		  //  }
+					public void run() {
+						for (int i = 0; i < 10; i++) {
+							vv.getRenderContext().getMultiLayerTransformer()
+									.getTransformer(Layer.LAYOUT)
+									.translate(dx, dy);
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException ex) {
+							}
+						}
+					}
+				};
+				Thread thread = new Thread(animator);
+				thread.start();
+				// }
+				// }
 			}
-			//picking.animatePicking(v, box.isSelected());
+			// picking.animatePicking(v, box.isSelected());
 		} else {
 			return;
 		}
 
-		
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getActionCommand().equals("animated")){
-			//System.out.println("klick");
-			//System.out.println(box.isSelected());
+		if (e.getActionCommand().equals("animated")) {
+			// System.out.println("klick");
+			// System.out.println(box.isSelected());
 			GraphInstance g = new GraphInstance();
 			g.getPathway().getGraph().setAnimatedPicking(box.isSelected());
 		}
-			
-		
+
 	}
 }

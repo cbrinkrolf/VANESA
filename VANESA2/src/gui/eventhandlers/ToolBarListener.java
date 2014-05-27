@@ -335,13 +335,18 @@ public class ToolBarListener implements ActionListener {
 				}
 		}
 		else if("mergeSelectedNodes".equals(event)){
-//			if(graphInstance.getMyGraph() != null){
-//			System.out.println("merge");
-//			graphInstance.getPathway().mergeNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
-//			}else{
-//				System.out.println("No Graph exists!");
-//			}
-			MainWindowSingelton.getInstance().addView();
+			if(graphInstance.getMyGraph() != null){
+			//System.out.println("merge");
+			graphInstance.getPathway().mergeNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+			}else{
+				System.out.println("No Graph exists!");
+			}
+			//MainWindowSingelton.getInstance().addView();
+		}
+		else if("splitNode".equals(event)){
+			if(graphInstance.getMyGraph() != null){
+				graphInstance.getPathway().splitNode(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+			}
 		}
 	}
 }

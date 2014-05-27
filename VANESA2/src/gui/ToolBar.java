@@ -166,6 +166,11 @@ public class ToolBar {
 		mergeSelectedNodes.setActionCommand("mergeSelectedNodes");
 		mergeSelectedNodes.addActionListener(toolBarListener);
 		
+		JButton splitNode = new JButton("Split node");
+		splitNode.setToolTipText("Split node (inverse operation of \"merge nodes\"");
+		splitNode.setActionCommand("splitNode");
+		splitNode.addActionListener(toolBarListener);
+		
 		JButton coarseSelectedNodes = new JButton("Coarse");
 		coarseSelectedNodes.setToolTipText("Coarse the selected Nodes");
 		coarseSelectedNodes.setActionCommand("coarseSelectedNodes");
@@ -184,6 +189,7 @@ public class ToolBar {
 		infopanel.add(info);
 		infopanel.add(infoextended);
 		infopanel.add(mergeSelectedNodes);
+		infopanel.add(splitNode);
 		infopanel.add(coarseSelectedNodes);
 		infopanel.add(flatSelectedNodes);
 		infopanel.add(enterSelectedNode);

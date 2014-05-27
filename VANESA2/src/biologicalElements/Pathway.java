@@ -10,6 +10,7 @@ import gui.MainWindowSingelton;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -1034,44 +1035,172 @@ public class Pathway implements Cloneable {
 
 	public void mergeNodes(Set<BiologicalNodeAbstract> nodes) {
 		if (nodes.size() > 1) {
+			boolean merged = false;
+
 			// BiologicalNodeAbstract[] array =
 			// nodes.toArray(BiologicalNodeAbstract);
+			// System.out.println(getGraph().getAllVertices().size());
+			// System.out.println(getGraph().getAllEdges().size());
 			BiologicalNodeAbstract first = nodes.iterator().next();
 
 			Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+
+			HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>> node2Refs = new HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>>();
+			Set<BiologicalNodeAbstract> newNodes = new HashSet<BiologicalNodeAbstract>();
 			BiologicalNodeAbstract bna;
+
 			while (it.hasNext()) {
 				bna = it.next();
-				if (bna != first) {
-					Iterator<BiologicalEdgeAbstract> it2 = getGraph()
-							.getJungGraph().getInEdges(bna).iterator();
-					BiologicalEdgeAbstract bea;
-					while (it2.hasNext()) {
-						bea = it2.next();
-						this.removeElement(bea);
-						bea.setTo(first);
-						this.addEdge(bea);
+				if (bna.hasRef()) {
+					if (nodes.contains(bna.getRef())) {
+						if (!node2Refs.containsKey(bna.getRef())) {
+							node2Refs.put(bna.getRef(),
+									new HashSet<BiologicalNodeAbstract>());
+						}
+						node2Refs.get(bna.getRef()).add(bna);
 					}
-					it2 = getGraph().getJungGraph().getOutEdges(bna).iterator();
-					while (it2.hasNext()) {
-						bea = it2.next();
-						this.removeElement(bea);
-						bea.setFrom(first);
-						this.addEdge(bea);
-					}
-					first.addLabel(bna.getLabelSet());
-					this.removeElement(bna);
-					// System.out.println("merged:");
-					// Iterator<String> itString =
-					// first.getLabelSet().iterator();
-					// while(itString.hasNext()){
-					// System.out.println(itString.next());
-					// }
+				} else {
+					newNodes.add(bna);
+				}
+			}
+			Iterator<BiologicalNodeAbstract> refs = node2Refs.keySet()
+					.iterator();
+
+			while (refs.hasNext()) {
+				bna = refs.next();
+				this.mergeNodes(bna, node2Refs.get(bna));
+				merged = true;
+			}
+
+			Set<BiologicalNodeAbstract> n = new HashSet<BiologicalNodeAbstract>();
+			it = newNodes.iterator();
+			while (it.hasNext()) {
+				bna = it.next();
+				if (bna.getRefs().size() == 0) {
+					n.add(bna);
+				} else {
+					System.err
+							.print("Node with id: "
+									+ bna.getID()
+									+ " and name: "
+									+ bna.getName()
+									+ " cannot be merged due to unresolved references!");
 				}
 			}
 
+			if (n.size() > 1) {
+				this.mergeNodes(n.iterator().next(), n);
+				merged = true;
+
+			}
+			if (merged) {
+				MainWindow mw = MainWindowSingelton.getInstance();
+				mw.updateElementTree();
+				mw.updateElementProperties();
+
+				this.graph.getVisualizationViewer().repaint();
+			}
+
 		}
-		System.out.println("labels: " + nodes.size());
+
+	}
+
+	private void mergeNodes(BiologicalNodeAbstract first,
+			Set<BiologicalNodeAbstract> nodes) {
+		Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+		BiologicalNodeAbstract bna;
+		while (it.hasNext()) {
+			bna = it.next();
+			if (bna != first) {
+				Iterator<BiologicalEdgeAbstract> it2 = getGraph()
+						.getJungGraph().getInEdges(bna).iterator();
+				BiologicalEdgeAbstract bea;
+				while (it2.hasNext()) {
+					bea = it2.next();
+					this.removeElement(bea);
+					bea.setTo(first);
+					this.addEdge(bea);
+				}
+				it2 = getGraph().getJungGraph().getOutEdges(bna).iterator();
+				while (it2.hasNext()) {
+					bea = it2.next();
+					this.removeElement(bea);
+					bea.setFrom(first);
+					this.addEdge(bea);
+				}
+				first.addLabel(bna.getLabelSet());
+				if (bna.hasRef() && bna.getRef() == first) {
+					first.getRefs().remove(bna);
+				}
+				this.removeElement(bna);
+				// System.out.println("merged:");
+				// Iterator<String> itString =
+				// first.getLabelSet().iterator();
+				// while(itString.hasNext()){
+				// System.out.println(itString.next());
+			}
+		}
+		this.graph.getVisualizationViewer().getPickedVertexState().clear();
+		this.graph.getVisualizationViewer().getPickedEdgeState().clear();
+		this.graph.getVisualizationViewer().getPickedVertexState()
+				.pick(first, true);
+		// System.out.println("labels: " + first.getLabelSet().size());
+	}
+
+	public void splitNode(Set<BiologicalNodeAbstract> nodes) {
+		BiologicalNodeAbstract bna;
+		Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+		BiologicalEdgeAbstract bea;
+		Iterator<BiologicalEdgeAbstract> itEdges;
+		BiologicalNodeAbstract newBNA;
+		Point2D p;
+
+		while (it.hasNext()) {
+			bna = it.next();
+
+			if (this.graph.getJungGraph().getNeighborCount(bna) > 1) {
+
+				// edges = this.graph.getJungGraph().getInEdges(bna);
+				itEdges = this.graph.getJungGraph().getInEdges(bna).iterator();
+				while (itEdges.hasNext()
+						&& this.graph.getJungGraph().getNeighborCount(bna) > 1) {
+					bea = itEdges.next();
+					this.removeElement(bea);
+					newBNA = bna.clone();
+					newBNA.setID();
+					newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
+					newBNA.setRef(bna);
+					p = this.getGraph().getVertexLocation(bea.getFrom());
+					this.addVertex(newBNA,
+							new Point2D.Double(p.getX() + 20, p.getY() + 20));
+					bea.setTo(newBNA);
+					this.addEdge(bea);
+
+				}
+
+				itEdges = this.graph.getJungGraph().getOutEdges(bna).iterator();
+				while (itEdges.hasNext()
+						&& this.graph.getJungGraph().getNeighborCount(bna) > 1) {
+					bea = itEdges.next();
+					this.removeElement(bea);
+					newBNA = bna.clone();
+					newBNA.setID();
+					newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
+					newBNA.setRef(bna);
+					p = this.getGraph().getVertexLocation(bea.getTo());
+					this.addVertex(newBNA,
+							new Point2D.Double(p.getX() + 20, p.getY() + 20));
+					bea.setFrom(newBNA);
+					this.addEdge(bea);
+
+				}
+			}
+		}
+		MainWindow mw = MainWindowSingelton.getInstance();
+		mw.updateElementTree();
+		mw.updateElementProperties();
+
+		this.graph.getVisualizationViewer().repaint();
 	}
 
 	/**
