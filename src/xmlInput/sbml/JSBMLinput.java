@@ -73,6 +73,8 @@ public class JSBMLinput {
 	 */
 	private BiologicalEdgeAbstract bea = null;
 	private final Hashtable<Integer, BiologicalNodeAbstract> nodes = new Hashtable<Integer, BiologicalNodeAbstract>();
+	
+	private Hashtable<BiologicalNodeAbstract, Integer> bna2Ref = new Hashtable<BiologicalNodeAbstract, Integer>();
 
 	public JSBMLinput() {
 
@@ -112,7 +114,7 @@ public class JSBMLinput {
 
 		Element speciesNode = modelNode.getChild("listOfSpecies", null);
 		createSpecies(speciesNode);
-
+		handleReferences();
 		Element reactionNode = modelNode.getChild("listOfReactions", null);
 		createReaction(reactionNode);
 		// refresh view
@@ -746,6 +748,13 @@ public class JSBMLinput {
 			Element elSub = child.getChild("RGB", null);
 			int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
 			bna.setColor(new Color(rgb));
+			break;
+		case "NodeReference":
+			elSub = child.getChild("hasRef", null);
+			if(elSub.getAttributeValue("hasRef").equals("true")){
+				elSub = child.getChild("RefID", null);
+				this.bna2Ref.put(bna, Integer.parseInt(elSub.getAttributeValue("RefID")));
+			}
 			break;
 		// special cases
 		case "ElementObject":
@@ -1496,5 +1505,14 @@ public class JSBMLinput {
 		}
 		RangeSelector.getInstance().addRangesInMyGraph(pathway.getGraph(),
 				attrs);
+	}
+	
+	private void handleReferences(){
+		Iterator<BiologicalNodeAbstract> it = bna2Ref.keySet().iterator();
+		BiologicalNodeAbstract bna;
+		while(it.hasNext()){
+			bna = it.next();
+			bna.setRef(this.nodes.get(bna2Ref.get(bna)));
+		}
 	}
 }

@@ -237,27 +237,27 @@ public class JSBMLoutput {
 		attr = String.valueOf(p.getY());
 		elSub.addChild(createElSub(attr, "y_Coordinate"));
 		el.addChild(elSub);
-		
+
 		XMLNode elSubSub;
-		elSub = new XMLNode(new XMLNode(new XMLTriple("Parameters","",""), new XMLAttributes()));
-		
+		elSub = new XMLNode(new XMLNode(new XMLTriple("Parameters", "", ""),
+				new XMLAttributes()));
+
 		Parameter param;
 		Iterator<Parameter> it = oneNode.getParameters().iterator();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			param = it.next();
-			elSubSub = new XMLNode(new XMLNode(new XMLTriple("Parameter","",""), new XMLAttributes()));
+			elSubSub = new XMLNode(new XMLNode(new XMLTriple("Parameter", "",
+					""), new XMLAttributes()));
 			elSubSub.addChild(createElSub(param.getName(), "Name"));
-			elSubSub.addChild(createElSub(param.getValue()+"", "Value"));
+			elSubSub.addChild(createElSub(param.getValue() + "", "Value"));
 			elSubSub.addChild(createElSub(param.getUnit(), "Unit"));
 			elSub.addChild(elSubSub);
 		}
-		
-		
-		
-		//attr = "bla";
-		//elSub.addChild(createElSub(attr, "parameter"));
-		
-		//elSub.addChild(elSub);
+
+		// attr = "bla";
+		// elSub.addChild(createElSub(attr, "parameter"));
+
+		// elSub.addChild(elSub);
 		el.addChild(elSub);
 
 		attr = oneNode.getComments();
@@ -551,6 +551,20 @@ public class JSBMLoutput {
 			el.addChild(elSub);
 		}
 
+		elSub = new XMLNode(new XMLNode(new XMLTriple("NodeReference", "", ""),
+				new XMLAttributes()));
+		if (oneNode.hasRef()) {
+			attr = "true";
+		} else {
+			attr = "false";
+		}
+		elSub.addChild(createElSub(attr, "hasRef"));
+		if(oneNode.hasRef()){
+			attr = oneNode.getRef().getID()+"";
+			elSub.addChild(createElSub(attr, "RefID"));
+		}
+
+		el.addChild(elSub);
 		// test which type the node is to save additional data
 		if (oneNode instanceof biologicalObjects.nodes.CollectorNode) {
 			attr = ((biologicalObjects.nodes.CollectorNode) oneNode)

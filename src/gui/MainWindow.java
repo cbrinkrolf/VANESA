@@ -156,7 +156,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// });
 		// SwingUtilities.updateComponentTreeUI(this);
 
-		setTitle("VANESA 2.0 - Visualization and Analysis of Networks in System Biology Applications");
+		setTitle("VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications");
 		setVisible(false);
 
 		// MacOSX-Look and Feel with http://simplericity.org/macify/
