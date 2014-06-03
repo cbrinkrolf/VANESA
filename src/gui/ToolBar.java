@@ -186,6 +186,11 @@ public class ToolBar {
 		enterSelectedNode.setActionCommand("enterNode");
 		enterSelectedNode.addActionListener(toolBarListener);
 		
+		JButton newWindow = new JButton("New Window");
+		newWindow.setToolTipText("Open an empty new Main Tab.");
+		newWindow.setActionCommand("newWindow");
+		newWindow.addActionListener(toolBarListener);
+		
 		infopanel.add(info);
 		infopanel.add(infoextended);
 		infopanel.add(mergeSelectedNodes);
@@ -193,6 +198,7 @@ public class ToolBar {
 		infopanel.add(coarseSelectedNodes);
 		infopanel.add(flatSelectedNodes);
 		infopanel.add(enterSelectedNode);
+		infopanel.add(newWindow);
 
 		JButton dimView = new JButton(new ImageIcon(
 				imagePath.getPath("view.png")));

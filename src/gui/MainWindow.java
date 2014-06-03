@@ -367,7 +367,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			views.remove(id);
 			tabbedPanels.remove(id);
 			viewMap.removeView(id);
-			setSelectedView(views.get(views.keySet().iterator().next()));
+			if(views.keySet().iterator().hasNext()){
+				setSelectedView(views.get(views.keySet().iterator().next()));
+			}
 		}
 		
 

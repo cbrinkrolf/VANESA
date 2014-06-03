@@ -284,7 +284,7 @@ public class ToolBarListener implements ActionListener {
 		else if ("coarseSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
 				//System.out.println("coarse");
-				BiologicalNodeAbstract borderNode = graphInstance.getPathway().
+				BiologicalNodeAbstract borderNode = con.getPathway((w.getCurrentPathway())).
 						getGraph().getVisualizationViewer().getPickedVertexState().
 						getPicked().iterator().next().computeCoarseType(graphInstance.
 								getPathway().getGraph().getVisualizationViewer().
@@ -307,7 +307,7 @@ public class ToolBarListener implements ActionListener {
 		}
 		else if ("flatSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
-				for(BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().
+				for(BiologicalNodeAbstract node : con.getPathway((w.getCurrentPathway())).getGraph().
 						getVisualizationViewer().getPickedVertexState().getPicked()){
 					node.flat();
 				}
@@ -334,6 +334,9 @@ public class ToolBarListener implements ActionListener {
 				System.out.println("No Graph exists!");
 				}
 		}
+		else if("newWindow".equals(event)){
+			MainWindowSingelton.getInstance().addView();
+		}
 		else if("mergeSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
 			//System.out.println("merge");
@@ -341,7 +344,6 @@ public class ToolBarListener implements ActionListener {
 			}else{
 				System.out.println("No Graph exists!");
 			}
-			//MainWindowSingelton.getInstance().addView();
 		}
 		else if("splitNode".equals(event)){
 			if(graphInstance.getMyGraph() != null){
