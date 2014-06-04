@@ -180,7 +180,13 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		}
 		for(BiologicalNodeAbstract child : vertex.getAllNodes()){
 			if(!vertex.getEnvironment().contains(child)){
-				DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child.getLabel());
+				String lbl;
+				if (child.getLabel().length() == 0) {
+					lbl = "id_" + child.getID();
+				} else {
+					lbl = child.getLabel();
+				}
+				DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(lbl);
 				addChildNodes(child, childNode);
 				n.add(childNode);
 			}
