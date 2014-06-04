@@ -764,6 +764,7 @@ public class Pathway implements Cloneable {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
 				graphRepresentation.removeVertex(bna);
 				getGraph().removeVertex(bna);
+				
 				// System.out.println("durch");
 				if (!nodeDescription.containsKey(bna.getBiologicalElement())) {
 				} else {

@@ -31,6 +31,8 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
+
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -156,18 +158,33 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 			} else {
 				lbl = bna.getLabel();
 			}
+			DefaultMutableTreeNode vertexNode;
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
-				node.add(new DefaultMutableTreeNode(lbl + " *"));
+				vertexNode = new DefaultMutableTreeNode(lbl + " *");
 			} else {
-				node.add(new DefaultMutableTreeNode(lbl));
+				vertexNode = new DefaultMutableTreeNode(lbl);
 			}
-
+			addChildNodes(bna, vertexNode);
+			node.add(vertexNode);
 			table.put(i, bna);
 			i++;
 		}
 
 		model.nodeStructureChanged(root);
 		model.reload();
+	}
+	
+	private void addChildNodes(BiologicalNodeAbstract vertex, DefaultMutableTreeNode n){
+		if(vertex.getAllNodes().isEmpty()){
+			return;
+		}
+		for(BiologicalNodeAbstract child : vertex.getAllNodes()){
+			if(!vertex.getEnvironment().contains(child)){
+				DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child.getLabel());
+				addChildNodes(child, childNode);
+				n.add(childNode);
+			}
+		}
 	}
 
 	private void updateTree() {
@@ -216,11 +233,14 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 			} else {
 				lbl = bna.getLabel();
 			}
+			DefaultMutableTreeNode vertexNode;
 			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
-				node.add(new DefaultMutableTreeNode(lbl + " *"));
+				vertexNode = new DefaultMutableTreeNode(lbl + " *");
 			} else {
-				node.add(new DefaultMutableTreeNode(lbl));
+				vertexNode = new DefaultMutableTreeNode(lbl);
 			}
+			addChildNodes(bna, vertexNode);
+			node.add(vertexNode);
 
 			table.put(i, bna);
 			i++;
@@ -236,12 +256,20 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree
 				.getLastSelectedPathComponent();
 
-		if (currentNode == null)
+		if (currentNode == null || currentNode.getParent()==null)
 			// Nothing is selected.
 			return;
+		
+		while(!currentNode.getParent().equals(node)){
+			currentNode = (DefaultMutableTreeNode) currentNode.getParent();
+			if (currentNode == null || currentNode.getParent()==null)
+				// Nothing is selected.
+				return;
+		}
 
 		Object nodeInfo = currentNode.getUserObject();
-		if (currentNode.isLeaf() && !nodeInfo.toString().equals("Nodes")) {
+//		if (currentNode.isLeaf() && !nodeInfo.toString().equals("Nodes")) {
+		if (!currentNode.isRoot() && !nodeInfo.toString().equals("Nodes")) {
 
 			BiologicalNodeAbstract bna = table.get(node.getIndex(currentNode));
 			// System.out.println(bna.getLabel());
