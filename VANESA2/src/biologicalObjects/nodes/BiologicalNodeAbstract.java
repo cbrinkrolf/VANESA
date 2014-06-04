@@ -302,7 +302,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			}
 
 			for(BiologicalNodeAbstract node : vertices){
-				System.out.println("VertexID: " + node.getID());
+
 				for(BiologicalEdgeAbstract edge : activeGraph.getJungGraph().getInEdges(node)){
 					
 					if(!vertices.contains(edge.getFrom())){
@@ -444,11 +444,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 */
 		public void flat(){
 
-			MyGraph activeGraph = getActiveGraph();
-
 			// Stop if node is not a coarse node.
 			if(getAllNodes().size()<=0)
 				return;
+			
+			MyGraph activeGraph = getActiveGraph();
 			
 			// remove this node
 			activeGraph.removeVertex(this);
@@ -704,7 +704,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			}
 			// Can result in null, if node was deleted from the graph.
 			try{
-				return getParentNode().getCurrentShownParentNode();
+				if(getParentNode()!=this){
+					return getParentNode().getCurrentShownParentNode();
+				}
+				return null;
 			} catch (NullPointerException e){
 				return null;
 			}
