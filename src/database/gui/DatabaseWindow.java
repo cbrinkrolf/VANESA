@@ -8,6 +8,7 @@ import database.brenda.gui.BRENDAqueryMask;
 import database.kegg.gui.KEGGqueryMask;
 import database.mirna.gui.MirnaQueryClass;
 import database.ppi.PPIqueryMask;
+import database.unid.UNIDQueryMask;
 
 public class DatabaseWindow {
 
@@ -16,7 +17,9 @@ public class DatabaseWindow {
 	private BRENDAqueryMask brenda;
 	private QueryInfoWindow info;
 	private PPIqueryMask ppi;
-	private MirnaQueryClass mirna; 
+	private MirnaQueryClass mirna;
+	//MARTIN new DB Search, UNID
+	private UNIDQueryMask unid;
 
 	public DatabaseWindow() {
 
@@ -33,12 +36,15 @@ public class DatabaseWindow {
 		info = new QueryInfoWindow();
 		ppi = new PPIqueryMask(this);
 		mirna = new MirnaQueryClass(this);
+		unid = new UNIDQueryMask(this);
+		
 		
 		tabbedPanel.addTab(kegg.getTitelTab());
 	//	tabbedPanel.addTab(dawis.getTitelTab());
 		tabbedPanel.addTab(ppi.getTitelTab());
 		tabbedPanel.addTab(brenda.getTitelTab());
 		tabbedPanel.addTab(mirna.getTitelTab());
+		tabbedPanel.addTab(unid.getTitelTab());
 		
 
 		// tabbedPanel.addTab(info.getTab());
@@ -52,7 +58,7 @@ public class DatabaseWindow {
 	}
 
 	public boolean somethingTypedIn() {
-
+	
 		if (selectedDatabase().equals("KEGG")) {
 			return kegg.doSearchCriteriaExist();
 		} else if (selectedDatabase().equals("BRENDA")) {
@@ -62,6 +68,8 @@ public class DatabaseWindow {
 			return ppi.doSearchCriteriaExist();
 		}else if (selectedDatabase().equals("miRNA")) {
 			return mirna.doSearchCriteriaExist();
+		}else if (selectedDatabase().equals("UNID")){
+			return unid.doSearchCriteriaExist();
 		}
 		return false;
 	}
@@ -80,6 +88,8 @@ public class DatabaseWindow {
 			return ppi.getKeyword();
 		}else if (t.getText().equals("miRNA")) {
 			return mirna.getKeyword();
+		}else if (t.getText().equals("UNID")) {
+			return unid.getKeyword();
 		}
 		return null;
 	}
