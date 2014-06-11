@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -960,6 +961,9 @@ public class Pathway implements Cloneable {
 		 * (gea instanceof BiologicalEdgeAbstract) {
 		 * set.add((BiologicalEdgeAbstract)gea); } } return set;
 		 */
+		if(getGraph(false)==null){
+			return Collections.emptyList();
+		}
 		return getGraph().getAllEdges();
 	}
 
@@ -977,6 +981,9 @@ public class Pathway implements Cloneable {
 		 * 
 		 * return set;
 		 */
+		if(getGraph(false)==null){
+			return Collections.emptyList();
+		}
 		return getGraph().getAllVertices();
 	}
 
@@ -1323,9 +1330,13 @@ public class Pathway implements Cloneable {
 	public String getDescription() {
 		return description;
 	}
+	
+	public MyGraph getGraph(){
+		return getGraph(true);
+	}
 
-	public MyGraph getGraph() {
-		if (graph == null) {
+	public MyGraph getGraph(boolean createIfNull) {
+		if (graph == null && createIfNull) {
 			graph = new MyGraph(this);
 			// tab = new GraphTab(name, graph.getGraphVisualization());
 			// tab.setTitle(name);
