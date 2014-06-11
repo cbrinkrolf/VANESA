@@ -5,16 +5,16 @@ import graph.algorithms.gui.GraphColoringGUI;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Hashtable;
 import java.util.HashSet;
+import java.util.Hashtable;
 
-public class ClientHelper extends UnicastRemoteObject implements Serializable, IClientHelper {
+public class ComputeCallback extends UnicastRemoteObject implements Serializable, IComputeCallback {
 
 	private static final long serialVersionUID = -5452379957017610971L;
 
 	private GraphColoringGUI gui;
 
-	public ClientHelper(GraphColoringGUI gui) throws RemoteException {
+	public ComputeCallback(GraphColoringGUI gui) throws RemoteException {
 		super();
 		this.gui = gui;
 	}
@@ -44,5 +44,4 @@ public class ClientHelper extends UnicastRemoteObject implements Serializable, I
 	public void setResultMatrix(int[][] matrix) throws RemoteException {
 
 	}
-
 }
