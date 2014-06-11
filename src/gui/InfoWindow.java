@@ -69,8 +69,7 @@ public class InfoWindow {
 		instructions += tableEnd + "</html>";
 		//
 		JOptionPane.showMessageDialog(w.returnFrame(), instructions,
-				"Network Properties", 1);
-		
+				"Network Properties", JOptionPane.DEFAULT_OPTION);		
 		//
 		// System.out.println("done.");
 //		cs.saveAdjMatrix("Jan.N"+nodes+"E"+edges+".adj");

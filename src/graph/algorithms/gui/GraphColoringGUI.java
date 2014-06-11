@@ -31,7 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import cluster.ClientHelper;
+import cluster.ComputeCallback;
 import cluster.ClusterComputeThread;
 import cluster.JobTypes;
 
@@ -51,6 +51,7 @@ public class GraphColoringGUI implements ActionListener {
 	private JComboBox<String> chooseAlgorithm;
 	private JButton colorizebutton;
 	private JButton resetcolorbutton;
+	private JButton degreedistributionbutton;
 
 	private String[] algorithmNames = { "Node Degree", "Neighbor Degree",
 			"Cycles (cluster)", "Cliques (cluster)", "Paths (cluster)",
@@ -84,7 +85,7 @@ public class GraphColoringGUI implements ActionListener {
 
 	private MainWindow mw;
 
-	private ClientHelper helper;
+	private ComputeCallback helper;
 
 	public GraphColoringGUI() {
 		// set icon paths
@@ -126,7 +127,7 @@ public class GraphColoringGUI implements ActionListener {
 		resetcolorbutton.setActionCommand("resetcolors");
 		resetcolorbutton.addActionListener(this);
 		resetcolorbutton.setEnabled(false);
-
+	
 		MigLayout layout = new MigLayout("", "[][grow]", "");
 		p.setLayout(layout);
 		p.add(new JLabel("Algorithm"), "wrap");
@@ -143,9 +144,14 @@ public class GraphColoringGUI implements ActionListener {
 		logview.addActionListener(this);
 		logview.setEnabled(false);
 
+		degreedistributionbutton = new JButton("Degree distribution");
+		degreedistributionbutton.setActionCommand("degreedistribution");
+		degreedistributionbutton.addActionListener(this);
+		
 		p.add(logview, "align left");
 		p.add(colorizebutton, "align right, wrap");
 		p.add(resetcolorbutton, "align left, wrap");
+		p.add(degreedistributionbutton,"span 2, align right, wrap");
 
 	}
 
@@ -177,7 +183,7 @@ public class GraphColoringGUI implements ActionListener {
 
 			// compute values over RMI
 			try {
-				helper = new ClientHelper(this);
+				helper = new ComputeCallback(this);
 				ClusterComputeThread rmicycles = new ClusterComputeThread(
 						JobTypes.CYCLE_JOB_OCCURRENCE, helper);
 				rmicycles.setAdjMatrix(np.getAdjacencyMatrix());
@@ -199,7 +205,7 @@ public class GraphColoringGUI implements ActionListener {
 
 			// compute values over RMI
 			try {
-				helper = new ClientHelper(this);
+				helper = new ComputeCallback(this);
 				ClusterComputeThread rmicliques = new ClusterComputeThread(
 						JobTypes.CLIQUE_JOB_OCCURRENCE, helper);
 				rmicliques.setAdjMatrix(np.getAdjacencyMatrix());
@@ -226,7 +232,7 @@ public class GraphColoringGUI implements ActionListener {
 
 			// compute values over RMI
 			try {
-				helper = new ClientHelper(this);
+				helper = new ComputeCallback(this);
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -424,7 +430,11 @@ public class GraphColoringGUI implements ActionListener {
 		} else if ("logview".equals(command)) {
 			recolorGraph();
 			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+		} else if ("degreedistribution".equals(command)) {
+			NetworkProperties np = new NetworkProperties();
+			np.showDegreeDistrbutionFrame(np.getPathway().getName());			
 		}
+		
 		// get proper icon path
 		for (int i = 0; i < colorrangenames.length; i++) {
 			if ((i + "").equals(command)) {
