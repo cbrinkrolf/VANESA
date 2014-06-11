@@ -1,8 +1,8 @@
 package cluster;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 
 public interface IJobServer extends Remote {
 
@@ -14,9 +14,19 @@ public interface IJobServer extends Remote {
          * @return true if job could be queued, false if queue is full.
          * @throws RemoteException
          */
-        public boolean submitJob(int jobType, int[][] adjmatrix, IClientHelper helper) throws RemoteException;
+        public boolean submitJob(int jobType, int[][] adjmatrix, IComputeCallback helper) throws RemoteException;
 
         /**
          * submit job method for adjacency lists
          */
+        
+        /**
+         * Submit method for the graph database, returns labels of elements in an adjacency list. 
+         * @param startname
+         * @param depth
+         * @param helper
+         * @return
+         * @throws RemoteException
+         */
+        public HashMap<String, HashSet<String>> submitSearch(String startname, int depth, ISearchCallback helper) throws RemoteException;
 }

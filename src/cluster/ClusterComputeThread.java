@@ -35,10 +35,10 @@ public class ClusterComputeThread extends Thread {
 	private int[] edgearray, nodearray;
 	private int job;
 	private IJobServer server;
-	private ClientHelper helper;
+	private ComputeCallback helper;
 	private MainWindow mw;
 
-	public ClusterComputeThread(int job, ClientHelper helper) {
+	public ClusterComputeThread(int job, ComputeCallback helper) {
 		this.job = job;
 		this.helper = helper;
 		// setupArrays();
@@ -47,9 +47,9 @@ public class ClusterComputeThread extends Thread {
 	@Override
 	public void run() {
 		// compute job on server
-		if (!computeInBackground()) {
+		computeInBackground();
 			// RMI Error
-		}// Else is done by ClientHelper
+		// Else is done by ClientHelper
 	}
 
 	public boolean computeInBackground() {
@@ -71,13 +71,10 @@ public class ClusterComputeThread extends Thread {
 
 			if (!server.submitJob(job, adjmatrix, helper)) {
 				JOptionPane.showMessageDialog(
-						MainWindowSingelton.getInstance(), "MESSAGE!");
+						MainWindowSingelton.getInstance(), "Queue is at maximum capacity!");
 			}
 
-		}
-
-		// MARTIN link rmi exceptions in UI, not just in print stream
-		catch (NotBoundException e) {
+		}catch (NotBoundException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					JOptionPane.showMessageDialog(MainWindowSingelton

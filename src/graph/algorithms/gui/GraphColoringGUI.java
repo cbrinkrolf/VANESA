@@ -362,7 +362,7 @@ public class GraphColoringGUI implements ActionListener {
 
 		case JobTypes.CLIQUE_JOB_OCCURRENCE:
 			Hashtable<Integer, Double> cliquedata = table;
-
+			
 			if (!cliquedata.isEmpty()) {
 				// Map ids to BNAs
 				Iterator<Entry<Integer, Double>> it = cliquedata.entrySet()
