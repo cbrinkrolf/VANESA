@@ -364,6 +364,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			
 			MyGraph activeGraph = getActiveGraph();
 
+			//TOBI: prüfen, was zu tun ist, wenn der Border leer ist (tritt auf, wenn keine Kante nach außen
+			//existiert, beispielsweise beim coarsen des gesamten Graphen).
 			activeGraph.addVertex(this, activeGraph.getVertexLocation(getBorder().iterator().next()));
 			
 			for(BiologicalNodeAbstract node : border){
