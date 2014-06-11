@@ -1,6 +1,7 @@
 package database.eventhandlers;
 
 import graph.GraphInstance;
+import gui.MainWindow;
 import gui.MainWindowSingelton;
 import gui.ProgressBar;
 
@@ -18,6 +19,7 @@ import database.mirna.GetPublications;
 import database.mirna.mirnaSearch;
 import database.mirna.gui.MIRNAInfoWindow;
 import database.ppi.PPISearch;
+import database.unid.UNIDSearch;
 
 public class DatabaseSearchListener implements ActionListener {
 	private DatabaseWindow dw;
@@ -59,6 +61,17 @@ public class DatabaseSearchListener implements ActionListener {
 		
 		mirnaS.execute();   
 	}
+	
+	private void requestUNIDContent(){
+		UNIDSearch unidS = new UNIDSearch(dw.getInput());
+		UNIDSearch.progressBar = new ProgressBar();
+		UNIDSearch.progressBar.init(100, "UNID", true);
+		UNIDSearch.progressBar.setProgressBarString("Getting search results");
+		MainWindow mw = MainWindowSingelton.getInstance();
+		mw.setEnable(false);
+		unidS.execute();
+		
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -85,6 +98,8 @@ public class DatabaseSearchListener implements ActionListener {
 						this.requestPPIcontent();
 					}else if (dw.selectedDatabase().equals("miRNA")) {
 						this.requestMIRNAcontent();
+					}else if (dw.selectedDatabase().equals("UNID")) {
+						this.requestUNIDContent();
 					}
 				} else {
 					JOptionPane.showConfirmDialog(null,
