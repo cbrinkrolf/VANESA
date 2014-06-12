@@ -39,6 +39,7 @@ public abstract class BiomartQueryRetrieval {
 	final static String UNIPROT = "UniProt";
 	final static String AGILENT = "Agilent";
 	final static String AFFYMETRIX = "Affymetrix";
+	final static String ILLUMINA = "Illumina";
 	
 	private Map<String, String> resultMap;
 	
