@@ -15,7 +15,7 @@ public class TestRunBioMart {
 	public static void main(String[] args) throws Exception {
 		
 		// all (in this program) up to date available marts of BioMart
-		String[] databases = {"EMBL", "Agilent", "Affymetrix", "UniProt"};
+		String[] databases = {"EMBL", "Agilent", "Affymetrix", "UniProt", "Illumina"};
 		
 		// some test values for the query, the values are labels of a VANESA PPI network
 		List<String> testValues = new ArrayList<String>();
