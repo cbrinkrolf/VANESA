@@ -36,6 +36,8 @@ public class IntActQueryRetrieval extends BiomartQueryRetrieval{
 			return new AgilentQuery(BiomartQueryRetrieval.DATASET, FILTERNAME, fValues);
 		} else if (database.equals(BiomartQueryRetrieval.AFFYMETRIX)) {
 			return new AffymetrixQuery(BiomartQueryRetrieval.DATASET, FILTERNAME, fValues);
-		} else return null;
+		} else if (database.equals(BiomartQueryRetrieval.ILLUMINA)) {
+			return new IlluminaQuery(BiomartQueryRetrieval.DATASET, FILTERNAME, fValues);
+		}else return null;
 	}
 }

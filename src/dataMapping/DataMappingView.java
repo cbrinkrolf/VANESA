@@ -91,7 +91,7 @@ public class DataMappingView extends JDialog implements Observer{
 	private JTextField headerTF;
 
 	// these are the up to date possible identifiers for the BioMart queries
-	private String[] identifier = {"none", "Agilent [e.g. A_23_P30024] ","Affymetrix [e.g. 209239_at]", "EMBL [e.g. M58603]", "UniProt [e.g. P19838]"};
+	private String[] identifier = {"none", "Agilent [e.g. A_23_P30024] ","Affymetrix [e.g. 209239_at]", "EMBL [e.g. M58603]", "UniProt [e.g. P19838]", "Illumina [e.g. ILMN_1674519]"};
 	private JTextField identifierTF;
 	private JComboBox<String> identifierCB;
 	
