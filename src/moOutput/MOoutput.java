@@ -745,9 +745,10 @@ public class MOoutput {
 						c = mFunction.charAt(idxNew + name.length());
 					} else {
 						// System.out.println("else");
-						c = 'a';
+						//Parameter is last term of function
+						c = '*';
 					}
-					// System.out.println("c: "+c);
+					//System.out.println("c: "+c);
 					//if (!Character.isDigit(c) && !Character.isAlphabetic(c)) {
 					if(chars.contains(c)){	
 						// mFunction = mFunction.replaceFirst(name, mNames
@@ -770,7 +771,7 @@ public class MOoutput {
 				}
 			}
 		}
-		System.out.println(mFunction);
+		//System.out.println(mFunction);
 		// replace places
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
