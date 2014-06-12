@@ -224,12 +224,17 @@ public class MyGraph {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// del-key
+				BiologicalNodeAbstract bna;
 				if (e.getKeyCode() == 127) {
 					if (vv.getPickedVertexState().getPicked().size() > 0) {
 						Iterator<BiologicalNodeAbstract> it = vv
 								.getPickedVertexState().getPicked().iterator();
 						while (it.hasNext()) {
-							pathway.removeElement(it.next());
+							bna = it.next();
+							if(bna.hasRef()){
+								bna.getRef().getRefs().remove(bna);
+							}
+							pathway.removeElement(bna);
 						}
 						vv.getPickedVertexState().clear();
 					}
