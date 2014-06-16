@@ -1,29 +1,31 @@
 package io;
 
 import graph.CreatePathway;
+import gui.MainWindowSingelton;
 
+import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import biologicalElements.Pathway;
+import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Protein;
 
 public class TxtInput {
 	
-	String line = null;
-	boolean firstNode = true;
-	boolean isedge = false;
-	boolean withSeq = false;
-	Hashtable<String, BiologicalNodeAbstract> mapping = new Hashtable<String, BiologicalNodeAbstract>();
-	Pathway pw = new CreatePathway().getPathway();
+	private String line = null;
+	private boolean firstNode = true;
+	private boolean isedge = false;
+	private boolean withSeq = false;
+	private Hashtable<String, BiologicalNodeAbstract> mapping = new Hashtable<String, BiologicalNodeAbstract>();
+	private Pathway pw = new CreatePathway().getPathway();
 
-	// CHRIS reimplement if necessary
 	public TxtInput(File file) throws IOException {
-		/*
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		
 		pw.setFilename(file);
@@ -62,7 +64,7 @@ public class TxtInput {
 		pw.getGraph().restartVisualizationModel();
 		pw.getGraph().normalCentering();
 		MainWindowSingelton.getInstance().updateProjectProperties();
-		*/
+		
 	}
 	
 	/**
@@ -94,21 +96,21 @@ public class TxtInput {
 	 * manage the input from the "#Nodes" lines
 	 */
 	private void manageNode() {
-		/*
+		
 		if (line.trim().indexOf(';') > 0 || line.trim().indexOf('#') > 0) { //label and name or label and FC or label, name and FC
 			if (line.trim().indexOf(';') > 0) { // line with FC
 				StringTokenizer st = new StringTokenizer(line
 						.trim(), ";");
 				while (st.hasMoreTokens()) {
 					String first = st.nextToken().trim();
-					String next = st.nextToken().trim();
+					//String next = st.nextToken().trim();
 
-					int nodeRanking = 0;
+					/*int nodeRanking = 0;
 					
 					if (st.countTokens() == 3) {
 						nodeRanking = Integer.valueOf(st
 								.nextToken().trim());
-					}
+					}*/
 
 					String label = null;
 					String name = null;
@@ -122,10 +124,9 @@ public class TxtInput {
 						name = first;
 					}
 
-					Protein p = new Protein(label, name, pw
-							.getGraph().createNewVertex());
+					Protein p = new Protein(label, name);
 
-					MicroArrayAttributes microArray = new MicroArrayAttributes();
+					/*MicroArrayAttributes microArray = new MicroArrayAttributes();
 					Double foldchange = Double.valueOf(next);
 					microArray.setFoldschange(foldchange);
 					microArray.setRanking(nodeRanking);
@@ -153,11 +154,11 @@ public class TxtInput {
 					}
 
 					Color colour = new Color(red, green, blue);
-					p.setColor(colour);
+					p.setColor(colour);*/
 					p.setReference(false);
 
-					pw.addElement(p);
-					pw.getGraph().moveVertex(p.getVertex(), 10, 10);
+					pw.addVertex(p, new Point2D.Double(10,10));
+					//pw.getGraph().moveVertex(p.getVertex(), 10, 10);
 					mapping.put(p.getLabel(), p);
 
 				}
@@ -167,22 +168,20 @@ public class TxtInput {
 				String label = getLabelName(line)[0];
 				String name = getLabelName(line)[1];
 
-				Protein p = new Protein(label, name, pw
-						.getGraph().createNewVertex());
+				Protein p = new Protein(label, name);
 
-				pw.addElement(p);
-				pw.getGraph().moveVertex(p.getVertex(), 10, 10);
+				pw.addVertex(p, new Point2D.Double(10,10));
+				//pw.getGraph().moveVertex(p.getVertex(), 10, 10);
 				mapping.put(p.getLabel(), p);
 			}
 		}
 		else {
-			Protein p = new Protein(line.trim(), line.trim(),
-					pw.getGraph().createNewVertex());
+			Protein p = new Protein(line.trim(), line.trim());
 
-			pw.addElement(p);
-			pw.getGraph().moveVertex(p.getVertex(), 10, 10);
+			pw.addVertex(p, new Point2D.Double(10,10));
+			//pw.getGraph().moveVertex(p.getVertex(), 10, 10);
 			mapping.put(p.getLabel(), p);
-		}*/
+		}
 
 	}
 	
@@ -190,7 +189,7 @@ public class TxtInput {
 	 * manage the input from the "#Edges" lines
 	 */
 	private void manageEdge() {
-		/*
+		
 		if (line.trim().indexOf(";") > 0) {
 			StringTokenizer st = new StringTokenizer(line.trim(), ";");
 			boolean isDir = false;
@@ -203,21 +202,14 @@ public class TxtInput {
 				}
 				if (mapping.containsKey(first)
 						&& mapping.containsKey(next)) {
-					ReactionEdge reactionedge = new ReactionEdge(
-							pw.getGraph()
-							.createEdge(
-									mapping.get(first)
-									.getVertex(),
-									mapping.get(next)
-									.getVertex(), isDir),
-									"", "");
+					ReactionEdge reactionedge = new ReactionEdge("", "", mapping.get(first),mapping.get(next));
 					if(isDir) {
 						reactionedge.setDirected(true); //otherwise you will not get a directed edge in the vaml file
 					}
-					pw.addElement(reactionedge);
+					pw.addEdge(reactionedge);
 				}
 			}
-		}*/
+		}
 	}
 	
 	/**
