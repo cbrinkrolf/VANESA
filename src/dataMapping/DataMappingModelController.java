@@ -1,5 +1,7 @@
 package dataMapping;
 
+import graph.GraphInstance;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,8 +16,8 @@ import java.util.Vector;
 
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
-import biologicalElements.Pathway;
 
+import biologicalElements.Pathway;
 import dataMapping.biomartRetrieval.BiomartQueryRetrieval;
 import dataMapping.biomartRetrieval.HPRDQueryRetrieval;
 import dataMapping.biomartRetrieval.IntActQueryRetrieval;
@@ -159,7 +161,8 @@ public class DataMappingModelController extends Observable {
 		dataMappingModel.setColoringParameters();
 		dataMappingModel.mergeAndColor();
 		setChanged();
-		notifyObservers(dataMappingModel);		
+		notifyObservers(dataMappingModel);
+		GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 	}
 
 	/**
