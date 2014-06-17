@@ -13,7 +13,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
@@ -46,6 +48,9 @@ public class UNIDQueryMask {
 			"Saccharomyces cerevisiae",
 			"Mus musculus"
 	};
+
+	private JSpinner depthspinner;
+	private SpinnerNumberModel modeldepthspinner;
 	
 	public UNIDQueryMask(DatabaseWindow dw){
 			
@@ -67,6 +72,9 @@ public class UNIDQueryMask {
 	          }
 	        });
 		
+		modeldepthspinner = new SpinnerNumberModel(1.0d, 1.0d, 6.0d, 1.0d);;
+		depthspinner = new JSpinner(modeldepthspinner);		
+	
 		fullName = new JTextField(20);
 		alias = new JTextField(20);
 		graphID = new JTextField(20);
@@ -91,7 +99,7 @@ public class UNIDQueryMask {
 		p.add(new JLabel("UNID Search Window"),"span 4");
 		p.add(new JSeparator(),"span, growx, wrap 15, gaptop 10, gap 5");
 		
-		p.add(new JLabel(new ImageIcon(imagePath.getPath("dataServer.png"))),"span 2 5");
+		p.add(new JLabel(new ImageIcon(imagePath.getPath("dataServer.png"))),"span 2 6");
 		
 		
 		p.add(new JLabel("Database"), "span 2, gap 5 ");
@@ -104,6 +112,8 @@ public class UNIDQueryMask {
 	    p.add(alias,"span,wrap,growx ,gap 10");
 		p.add(new JLabel("ID"),"span 2, gap 5 ");
 		p.add(graphID,"span, wrap, growx, gap 10");
+		p.add(new JLabel("Depth"),"span 2, gap 5");
+		p.add(depthspinner,"span, wrap, growx, gap 10");
 		
 		p.add(new JSeparator(), "span, growx, wrap 10 ");
 		p.add(new JLabel(),"gap 20, span 5");
@@ -131,6 +141,7 @@ public class UNIDQueryMask {
 		fullName.setText("");
 		alias.setText("");
 		graphID.setText("");
+		depthspinner.setValue(1.0d);
 	}
 	
 	
@@ -140,11 +151,12 @@ public class UNIDQueryMask {
 	
 	public String[] getKeyword(){
 		
-		String[] input = new String[4];
+		String[] input = new String[5];
 		input[0] = (String) choosedatabase.getSelectedItem();
 		input[1]=fullName.getText();
 		input[2]=alias.getText();
 		input[3]=graphID.getText();
+		input[4]=depthspinner.getValue()+"";
 		return input;
 	}
 	

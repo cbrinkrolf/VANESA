@@ -19,6 +19,7 @@ import database.mirna.GetPublications;
 import database.mirna.mirnaSearch;
 import database.mirna.gui.MIRNAInfoWindow;
 import database.ppi.PPISearch;
+import database.unid.UNIDInfoWindow;
 import database.unid.UNIDSearch;
 
 public class DatabaseSearchListener implements ActionListener {
@@ -85,7 +86,10 @@ public class DatabaseSearchListener implements ActionListener {
 			new BrendaInfoWindow();
 		} else if ("MIRNAinfo".equals(event)) {
 			new MIRNAInfoWindow();
-		} else {
+		} else if ("UNIDinfo".equals(event)) {
+			new UNIDInfoWindow();
+
+			
 
 			if ("searchDatabase".equals(event)) {
 				if (dw.somethingTypedIn()) {

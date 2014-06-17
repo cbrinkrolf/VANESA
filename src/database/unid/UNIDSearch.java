@@ -47,9 +47,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		this.fullName = input[1];
 		this.alias = input[2];
 		this.graphid = input[3];
-
-		// MARTIN set search depth by user
-		this.depth = 2;
+		this.depth = (int) Double.parseDouble(input[4]);
 		try{
 			this.helper = new SearchCallback(this);
 		}catch(RemoteException re){
@@ -78,11 +76,12 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		mw.setLockedPane(false);
 	}
 
+	/**
+	 * Creates a new Network tab with the 
+	 */
 	public void createNetworkFromSearch() {
-
-		// MARTIN create network panel from adjacency list
 		
-		Pathway pw = new CreatePathway("GRAPHDBSEARCH").getPathway();
+		Pathway pw = new CreatePathway(fullName+" depth="+depth+"(UNID)").getPathway();
 		MyGraph myGraph = pw.getGraph();
 
 		myGraph.lockVertices();

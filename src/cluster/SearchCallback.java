@@ -23,22 +23,17 @@ public class SearchCallback extends UnicastRemoteObject implements ISearchCallba
 	}
 
 	@Override
-	public void setResultAdjacencyList(
-			HashMap<String, HashSet<String>> adjacencylist)
+	public void setResultAdjacencyList(HashMap<String, HashSet<String>> adjacencylist)
 			throws RemoteException {
 		// Preset adjacency list in Search object
 		usearch.setAdjacencyList(adjacencylist);
-		// MARTIN Creating a new network on the GraphDB result (String hashmap,
-		// for starters)
+		UNIDSearch.progressBar.setProgressBarString("Applying Layout..");
 		HashSet<String> allnodes = new HashSet<String>();
-		int interactions = 0;
 		for (Entry<String, HashSet<String>> e : adjacencylist.entrySet()) {
 			allnodes.add(e.getKey());
 			allnodes.addAll(e.getValue());
-			interactions += e.getValue().size();
 		}
-		System.out.println("Found " + allnodes.size() + " Nodes with "
-				+ interactions + " interactions.");
+		System.out.println("Found " + allnodes.size()+" Nodes.");
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
