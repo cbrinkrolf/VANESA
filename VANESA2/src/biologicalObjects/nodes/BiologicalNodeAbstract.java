@@ -462,12 +462,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 					activeGraph.addVertex(node, activeGraph.getVertexLocation(node));
 				}
 			}
-			
-			Set<BiologicalEdgeAbstract> allEdges = connectingEdges;
-			allEdges.addAll(getAllEdges());
-			
+						
 			// Add edges of the subpathway and connecting edges
-			for(BiologicalEdgeAbstract edge : allEdges){
+			for(BiologicalEdgeAbstract edge : connectingEdges){
 				activeGraph.removeEdge(edge);
 				if(edge.getOriginalFrom().getCurrentShownParentNode()!=null)
 					edge.setFrom(edge.getOriginalFrom().getCurrentShownParentNode());
@@ -475,6 +472,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 					edge.setTo(edge.getOriginalTo().getCurrentShownParentNode());
 				activeGraph.addEdge(edge);
 			}	
+			for(BiologicalEdgeAbstract edge : getAllEdges()){
+				activeGraph.addEdge(edge);
+			}
+			
 		}
 		
 		@Override
