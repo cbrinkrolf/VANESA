@@ -136,6 +136,8 @@ public class ClusterComputeThread extends Thread {
 
 	}
 
+	//Not used yet,
+	//maybe done on server in future
 	private void setupArrays() {
 
 		// get Graph hashmap
