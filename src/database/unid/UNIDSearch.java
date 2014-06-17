@@ -1,19 +1,17 @@
 package database.unid;
 
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.rmi.Naming;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import graph.CreatePathway;
-import graph.algorithms.gui.GraphColoringGUI;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
 import gui.ProgressBar;
 
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import biologicalElements.Pathway;
@@ -24,7 +22,12 @@ import biologicalObjects.nodes.Other;
 import cluster.IJobServer;
 import cluster.SearchCallback;
 
-public class UNIDSearch extends SwingWorker {
+/**
+ * 
+ * @author mlewinsk
+ * June 2014
+ */
+public class UNIDSearch extends SwingWorker<Object, Object> {
 
 	public static ProgressBar progressBar;
 	private MainWindow mw;
@@ -36,6 +39,8 @@ public class UNIDSearch extends SwingWorker {
 	private String alias;
 	private String organism;
 	private int depth;
+	
+	private HashMap<String, HashSet<String>> adjacencylist;
 
 	public UNIDSearch(String[] input) {
 		this.organism = input[0];
@@ -45,49 +50,24 @@ public class UNIDSearch extends SwingWorker {
 
 		// MARTIN set search depth by user
 		this.depth = 2;
-		this.helper = new SearchCallback(this);
+		try{
+			this.helper = new SearchCallback(this);
+		}catch(RemoteException re){
+			re.printStackTrace();
+		}
 	}
 
 	protected Object doInBackground() throws Exception {
 
-		// String url = "rmi://cassiopeidae/ClusterJobs";
-		// server = (IJobServer) Naming.lookup(url);
-		// server.submitSearch(fullName,depth,helper);
-		
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			  public void run() {
-				  HashMap<String, HashSet<String>> adjacencylist = new HashMap<>();
-
-					HashSet<String> set = new HashSet<>();
-
-					set.add("A");
-					set.add("B");
-
-					adjacencylist.put("C", set);
-
-					createNetworkFromSearch(adjacencylist);
-			  }
-			});
-		
+		try{
+		 String url = "rmi://cassiopeidae/ClusterJobs";
+		 server = (IJobServer) Naming.lookup(url);
+		 server.submitSearch(fullName,depth,helper);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 
 		return null;
-	}
-
-	public void done() {
-		// DONE method useless, helper handles Callback already
-
-		// Debug
-//		HashMap<String, HashSet<String>> adjacencylist = new HashMap<>();
-//
-//		HashSet<String> set = new HashSet<>();
-//
-//		set.add("A");
-//		set.add("B");
-//
-//		adjacencylist.put("C", set);
-//
-//		createNetworkFromSearch(adjacencylist);
 	}
 
 	public void reactiveateUI() {
@@ -98,11 +78,10 @@ public class UNIDSearch extends SwingWorker {
 		mw.setLockedPane(false);
 	}
 
-	public void createNetworkFromSearch(
-			HashMap<String, HashSet<String>> adjacencylist) {
+	public void createNetworkFromSearch() {
 
 		// MARTIN create network panel from adjacency list
-
+		
 		Pathway pw = new CreatePathway("GRAPHDBSEARCH").getPathway();
 		MyGraph myGraph = pw.getGraph();
 
@@ -165,5 +144,14 @@ public class UNIDSearch extends SwingWorker {
 
 		reactiveateUI();
 
+	}
+	
+	/**
+	 * Set adjacency list, usually called by SearchCallback
+	 * @param adjacencylist
+	 */
+	public void setAdjacencyList(HashMap<String, HashSet<String>> adjacencylist){
+		this.adjacencylist = adjacencylist;
+		
 	}
 }
