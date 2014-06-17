@@ -18,7 +18,6 @@ public class DatabaseWindow {
 	private QueryInfoWindow info;
 	private PPIqueryMask ppi;
 	private MirnaQueryClass mirna;
-	//MARTIN new DB Search, UNID
 	private UNIDQueryMask unid;
 
 	public DatabaseWindow() {
@@ -105,6 +104,8 @@ public class DatabaseWindow {
 			ppi.reset();
 		} else if (t.getText().equals("miRNA")) {
 			mirna.reset();
+		} else if (t.getText().equals("UNID")){
+			unid.reset();
 		}
 	}
 
