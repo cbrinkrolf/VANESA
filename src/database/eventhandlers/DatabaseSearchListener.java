@@ -88,27 +88,22 @@ public class DatabaseSearchListener implements ActionListener {
 			new MIRNAInfoWindow();
 		} else if ("UNIDinfo".equals(event)) {
 			new UNIDInfoWindow();
-
-			
-
-			if ("searchDatabase".equals(event)) {
-				if (dw.somethingTypedIn()) {
-
-					if (dw.selectedDatabase().equals("KEGG")) {
-						this.requestKEGGcontent();
-					} else if (dw.selectedDatabase().equals("BRENDA")) {
-						this.requestBrendaContent();
-					} else if (dw.selectedDatabase().equals("PPI")) {
-						this.requestPPIcontent();
-					}else if (dw.selectedDatabase().equals("miRNA")) {
-						this.requestMIRNAcontent();
-					}else if (dw.selectedDatabase().equals("UNID")) {
-						this.requestUNIDContent();
-					}
-				} else {
-					JOptionPane.showConfirmDialog(null,
-							"Please type something into the search form.");
+		}else if ("searchDatabase".equals(event)) {
+			if (dw.somethingTypedIn()) {
+				if (dw.selectedDatabase().equals("KEGG")) {
+					this.requestKEGGcontent();
+				} else if (dw.selectedDatabase().equals("BRENDA")) {
+					this.requestBrendaContent();
+				} else if (dw.selectedDatabase().equals("PPI")) {
+					this.requestPPIcontent();
+				}else if (dw.selectedDatabase().equals("miRNA")) {
+					this.requestMIRNAcontent();
+				}else if (dw.selectedDatabase().equals("UNID")) {
+					this.requestUNIDContent();
 				}
+			} else {
+				JOptionPane.showConfirmDialog(null,
+						"Please type something into the search form.");
 			}
 		}
 	}
