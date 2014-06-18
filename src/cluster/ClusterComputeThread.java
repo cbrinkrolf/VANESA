@@ -87,7 +87,6 @@ public class ClusterComputeThread extends Thread {
 			mw = MainWindowSingelton.getInstance();
 			mw.setEnable(true);
 			mw.setLockedPane(false);
-			//System.out.println("RMI Interface could not be established.");
 			return false;
 
 		} catch (RemoteException e) {
@@ -103,7 +102,6 @@ public class ClusterComputeThread extends Thread {
 			mw = MainWindowSingelton.getInstance();
 			mw.setEnable(true);
 			mw.setLockedPane(false);
-			//System.out.println("Cluster not reachable.");
 			return false;
 
 		} catch (MalformedURLException e) {
@@ -119,7 +117,6 @@ public class ClusterComputeThread extends Thread {
 			mw = MainWindowSingelton.getInstance();
 			mw.setEnable(true);
 			mw.setLockedPane(false);
-			//System.out.println("Clusteradress could not be resolved.");
 			return false;
 		}
 
