@@ -7,11 +7,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import graph.CreatePathway;
+import graph.algorithms.gui.GraphColoringGUI;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
 import gui.ProgressBar;
 
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import biologicalElements.Pathway;
@@ -62,13 +65,21 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		 server = (IJobServer) Naming.lookup(url);
 		 server.submitSearch(fullName,depth,helper);
 		}catch(Exception e){
-			e.printStackTrace();
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					JOptionPane.showMessageDialog(MainWindowSingelton
+							.getInstance().returnFrame(),
+							"Cluster not reachable.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			});
+			reactivateUI();
 		}
 
 		return null;
 	}
 
-	public void reactiveateUI() {
+	public void reactivateUI() {
 		// close Progress bar and reactivate UI
 		UNIDSearch.progressBar.closeWindow();
 		mw = MainWindowSingelton.getInstance();
@@ -141,7 +152,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		window.setEnabled(true);
 		pw.getGraph().changeToGEMLayout();
 
-		reactiveateUI();
+		reactivateUI();
 
 	}
 	
