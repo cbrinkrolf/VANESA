@@ -724,17 +724,22 @@ public class MOoutput {
 
 		String name = "";
 		// System.out.println("drin");
-		Character c;
+		//Character c;
+		
+		//Character l;
+		Character r;
+		boolean check;
 		int index = 0;
 		int idxNew = 0;
 		for (int i = 0; i < paramNames.size(); i++) {
 			index = 0;
 			name = paramNames.get(i);
 
-			// System.out.println("name: "+name );
-			// System.out.println("fkt: "+mFunction);
+			 //System.out.println("name: "+name );
+			 //System.out.println("fkt: "+mFunction);
 
 			while (mFunction.indexOf(name, index) >= 0) {
+				check = false;
 				idxNew = mFunction.indexOf(name, index);
 				// System.out.println("index: "+index);
 				// System.out.println("idxNew: "+idxNew);
@@ -742,15 +747,20 @@ public class MOoutput {
 					// System.out.println("groesser gleich");
 					if (mFunction.length() > idxNew + name.length()) {
 						// System.out.println("groesser");
-						c = mFunction.charAt(idxNew + name.length());
+						r = mFunction.charAt(idxNew + name.length());
 					} else {
 						// System.out.println("else");
 						//Parameter is last term of function
-						c = '*';
+						r = ' ';
 					}
-					//System.out.println("c: "+c);
+					if(idxNew == 0){
+						check = true;
+					}else{
+						check = chars.contains(mFunction.charAt(idxNew-1));
+					}
+					//System.out.println("l: "+r+" r: "+r);
 					//if (!Character.isDigit(c) && !Character.isAlphabetic(c)) {
-					if(chars.contains(c)){	
+					if(check && chars.contains(r)){	
 						// mFunction = mFunction.replaceFirst(name, mNames
 						// .get(name));
 						String insert = "'_"+node.getName()+"_"+name+"'";
@@ -771,7 +781,7 @@ public class MOoutput {
 				}
 			}
 		}
-		//System.out.println(mFunction);
+		//System.out.println("2: "+mFunction);
 		// replace places
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
@@ -794,7 +804,7 @@ public class MOoutput {
 		// System.out.println("drin");
 		index = 0;
 		idxNew = 0;
-		boolean check;
+		
 		for (int i = 0; i < names.size(); i++) {
 			//check = false;
 			index = 0;
@@ -812,10 +822,10 @@ public class MOoutput {
 					// System.out.println("groesser gleich");
 					if (mFunction.length() > idxNew + name.length()) {
 						// System.out.println("groesser");
-						c = mFunction.charAt(idxNew + name.length());
+						r = mFunction.charAt(idxNew + name.length());
 					} else {
 						// System.out.println("else");
-						c = 'a';
+						r = 'a';
 					}
 					// System.out.println("c: "+c);
 					// System.out.println(mFunction.charAt(idxNew));
@@ -827,7 +837,7 @@ public class MOoutput {
 						check = true;
 					}
 
-					if (chars.contains(c) && check) {
+					if (chars.contains(r) && check) {
 						// mFunction = mFunction.replaceFirst(name, mNames
 						// .get(name));
 						String insert = "'"+name+"'.t";

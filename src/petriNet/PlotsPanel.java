@@ -14,6 +14,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 import javax.imageio.ImageIO;
@@ -38,91 +41,126 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class PlotsPanel extends JPanel implements ActionListener {
 
-	Pathway pw = new GraphInstance().getPathway();
-	int rowsSize = pw.getPetriNet().getNumberOfPlaces();
-	int rowsDim = pw.getPetriNet().getResultDimension();
-	Object[][] rows;
-	ArrayList<String> labels = new ArrayList<String>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Pathway pw = new GraphInstance().getPathway();
+	private int rows = pw.getPetriNet().getNumberOfPlaces();
+	private int cols = pw.getPetriNet().getResultDimension();
+	private Object[][] table;
+	private ArrayList<String> labels = new ArrayList<String>();
 	private BufferedImage bi = null;
 	private JPanel p = new JPanel();
 
 	public PlotsPanel() {
-		
+		BiologicalNodeAbstract bna;
+		HashMap<String, Place> places = new HashMap<String, Place>();
+		Place place;
+
 		if (pw.isPetriNet() && pw.isPetriNetSimulation()) {
-			rows = new Object[rowsSize][rowsDim + 1];
-			//System.out.println("rowsSize: "+rowsSize);
-			//System.out.println("rowsDim: "+rowsDim);
+			//table = new Object[rows][cols + 1];
+			// System.out.println("rowsSize: " + rowsSize);
+			// System.out.println("rowsDim: " + rowsDim);
 			Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
-			BiologicalNodeAbstract[] bnas = (BiologicalNodeAbstract[]) hs
-					.toArray(new BiologicalNodeAbstract[0]);
+			//BiologicalNodeAbstract[] bnas = (BiologicalNodeAbstract[]) hs
+			//		.toArray(new BiologicalNodeAbstract[0]);
 
-			for (int i = 0; i < bnas.length - 1; i++) {
-				int smallest = i;
-				for (int j = i + 1; j < bnas.length; j++)
-					if (bnas[smallest].getLabel().compareTo(bnas[j].getLabel()) > 0)
-						smallest = j;
-				BiologicalNodeAbstract help = bnas[smallest];
-				bnas[smallest] = bnas[i];
-				bnas[i] = help;
+			Iterator<BiologicalNodeAbstract> it = hs.iterator();
+
+			ArrayList<String> labels = new ArrayList<String>();
+
+			while (it.hasNext()) {
+				bna = it.next();
+				if (bna instanceof Place) {
+					place = (Place) bna;
+					labels.add(place.getName());
+					places.put(place.getName(), place);
+				}
 			}
 
-			Vector<Double> MAData;
-			int k = 0;
-			for (int i = 0; i < rowsDim && k < bnas.length; k++) {
-				BiologicalNodeAbstract bna = bnas[k];
-				if (bna instanceof Place
-						&& pw.getPetriNet().getPnResult()
-								.containsKey("'"+bna.getName()+"'.t")) {
-					MAData = bna.getPetriNetSimulationData();
-					rows[i][0] = bna.getLabel();
-					for (int j = 1; j <= MAData.size(); j++) {
-						rows[i][j] = MAData.get(j - 1);
+			Collections.sort(labels, String.CASE_INSENSITIVE_ORDER);
+
+			/*
+			 * for (int i = 0; i < bnas.length - 1; i++) { int smallest = i; for
+			 * (int j = i + 1; j < bnas.length; j++) if
+			 * (bnas[smallest].getLabel().compareTo(bnas[j].getLabel()) > 0)
+			 * smallest = j; BiologicalNodeAbstract help = bnas[smallest];
+			 * bnas[smallest] = bnas[i]; bnas[i] = help; }
+			 */
+
+			//Vector<Double> MAData;
+			/*int k = 0;
+			for (int i = 0; i < rows && k < bnas.length; k++) {
+
+				bna = places.get(labels.get(k));// bnas[k];
+				if (bna instanceof Place) {
+					if (pw.getPetriNet().getPnResult()
+							.containsKey("'" + bna.getName() + "'.t")) {
+						// System.out.println("drin "+i);
+						MAData = bna.getPetriNetSimulationData();
+						table[i][0] = bna.getLabel();
+						for (int j = 1; j <= MAData.size(); j++) {
+							table[i][j] = MAData.get(j - 1);
+						}
+						i++;
+					} else {
+						// System.out.println("name: "+bna.getName());
+						table[i][0] = bna.getLabel();
+						for (int j = 1; j < cols + 1; j++) {
+							table[i][j] = -1;
+						}
 					}
-					i++;
 				}
-			}
-		}
-		p.setLayout(new GridLayout(0, 3));
+			}*/
 
-		for (int j = 0; j < rowsSize; j++) {
-			final XYSeriesCollection dataset = new XYSeriesCollection();
-			XYSeries series = new XYSeries(1);
-			for (int i = 0; i < rowsDim; i++) {
-				//System.out.println("test: "+rows[j][i+1]);
-				Double value = Double.parseDouble(rows[j][i+1].toString());
-				series.add(pw.getPetriNet().getPnResult().get("time").get(i), value);
-			}
-			dataset.addSeries(series);
-			JFreeChart chart = ChartFactory.createXYLineChart(
-					(String) rows[j][0], "Timestep", "Token", dataset,
-					PlotOrientation.VERTICAL, false, true, false);
+			p.setLayout(new GridLayout(0, 3));
 
-			final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-			chart.addSubtitle(new TextTitle("StartToken="
-					+ rows[j][1].toString()));
-			ChartPanel pane = new ChartPanel(chart);
-			pane.setPreferredSize(new java.awt.Dimension(320, 200));
-			renderer.setSeriesPaint(j, Color.BLACK);
-			p.add(pane);
-		}
-		for (int j = rowsSize; j % 3 != 0; j++) {
-			final XYSeriesCollection dataset = new XYSeriesCollection();
-
-			JPanel pane = new JPanel() {
-				public void paintComponent(Graphics g) {
-					g.setColor(new Color(255, 255, 255));
-					g.fillRect(0, 0, 322, 200);
+			Double value;
+			for (int j = 0; j < rows; j++) {
+				place = places.get(labels.get(j));
+				final XYSeriesCollection dataset = new XYSeriesCollection();
+				XYSeries series = new XYSeries(1);
+				for (int i = 0; i < cols; i++) {
+					// System.out.println(j + " " + i);
+					// System.out.println("test: " + table[j][i + 1]);
+					value = place.getPetriNetSimulationData().get(i);
+					// value = Double.parseDouble(table[j][i + 1].toString());
+					series.add(pw.getPetriNet().getPnResult().get("time")
+							.get(i), value);
 				}
-			};
-			p.add(pane);
-		}
+				dataset.addSeries(series);
+				JFreeChart chart = ChartFactory.createXYLineChart(labels.get(j), "Timestep", "Token", dataset,
+						PlotOrientation.VERTICAL, false, true, false);
 
-		JScrollPane sp = new JScrollPane(p);
-		sp.setPreferredSize(new java.awt.Dimension(980, 400));
-		setLayout(new BorderLayout());
-		add(new JLabel("Simulation Plot of each Place:"),
-				BorderLayout.PAGE_START);
-		add(sp, BorderLayout.CENTER);
+				final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+				chart.addSubtitle(new TextTitle("StartToken="
+						+ place.getPetriNetSimulationData().get(0).toString()));
+				ChartPanel pane = new ChartPanel(chart);
+				pane.setPreferredSize(new java.awt.Dimension(320, 200));
+				renderer.setSeriesPaint(j, Color.BLACK);
+				p.add(pane);
+			}
+			for (int j = rows; j % 3 != 0; j++) {
+				final XYSeriesCollection dataset = new XYSeriesCollection();
+
+				JPanel pane = new JPanel() {
+					public void paintComponent(Graphics g) {
+						g.setColor(new Color(255, 255, 255));
+						g.fillRect(0, 0, 322, 200);
+					}
+				};
+				p.add(pane);
+			}
+
+			JScrollPane sp = new JScrollPane(p);
+			sp.setPreferredSize(new java.awt.Dimension(980, 400));
+			setLayout(new BorderLayout());
+			add(new JLabel("Simulation Plot of each Place:"),
+					BorderLayout.PAGE_START);
+			add(sp, BorderLayout.CENTER);
+		}
 	}
 
 	@Override
@@ -136,13 +174,14 @@ public class PlotsPanel extends JPanel implements ActionListener {
 
 		JFileChooser chooser = new JFileChooser();
 		chooser.setAcceptAllFileFilterUsed(false);
-		JpegFilter filter =new JpegFilter();
+		JpegFilter filter = new JpegFilter();
 		chooser.addChoosableFileFilter(filter);
 		chooser.setFileFilter(filter);
 		int option = chooser.showSaveDialog(MainWindowSingelton.getInstance());
 		if (option == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
-			if (!file.getAbsolutePath().endsWith(".jpeg")) file=new File(file.getAbsolutePath()+".jpeg");
+			if (!file.getAbsolutePath().endsWith(".jpeg"))
+				file = new File(file.getAbsolutePath() + ".jpeg");
 			boolean overwrite = true;
 			if (file.exists()) {
 				int response = JOptionPane.showConfirmDialog(null,
