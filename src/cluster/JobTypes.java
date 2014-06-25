@@ -2,7 +2,7 @@ package cluster;
 
 public class JobTypes {
 	/**
-	 * Decorator for Job types
+	 * Decorator for Cluster job types
 	 */
 
 	public static final int CYCLE_JOB_OCCURRENCE = 10;
@@ -13,4 +13,16 @@ public class JobTypes {
 	public static final int CLIQUE_JOB_CONNECTIVITY = 23;
 	public static final int APSP_JOB = 30;
 	public static final int SPECTRAL_CLUSTERING_JOB = 40;
+	
+	/**
+	 * Graphdb only jobs
+	 */
+	public static final int HPRD_MAPPING = 110,
+			BRENDA_MAPPING = 111,
+			INTACT_MAPPING = 112,
+			KEGG_MAPPING = 113,
+			MINT_MAPPING = 114,
+			UNIPROT_MAPPING = 115,
+			
+			DEPTH_SEARCH = 100;
 }

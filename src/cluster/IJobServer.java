@@ -4,10 +4,16 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * 
+ * @author mlewinsk
+ * June 2014
+ */
 public interface IJobServer extends Remote {
 
         /**
-         * Generic submitting method to enqueue a custom job on the cluster. 
+         * Submit method for the compute cluster, returns true if job could be queued.
+         * Available "job-types" can be drawn from JobTypes.java
          * @param jobType - Type of the submitted job, according to JobTypes.
          * @param adjmatrix - the adjacency matrix of the network.
          * @param helper - Callback object to the client. Handles progress and results of the compute job.
@@ -21,12 +27,27 @@ public interface IJobServer extends Remote {
          */
         
         /**
-         * Submit method for the graph database, returns labels of elements in an adjacency list. 
+         * Submit method for the graph database, returns true if job could be queued.
+         * This method invokes Depth searches on the graph db. 
          * @param startname
          * @param depth
          * @param helper
          * @return
          * @throws RemoteException
          */
-        public HashMap<String, HashSet<String>> submitSearch(String startname, int depth, ISearchCallback helper) throws RemoteException;
+        public boolean submitSearch(String startname, int depth, ISearchCallback helper) throws RemoteException;
+        
+        /**
+         * Submit method for the graph database, returns true if job could be queued.
+         * This method invokes a experimental data-mapping on the graph db.
+         * @param jobType
+         * @param experiment
+         * @param mapping
+         * @param helper
+         * @return
+         * @throws RemoteException
+         */
+        public boolean submitMapping(int jobType, String experiment, HashMap<String, Double> mapping, IMappingCallback helper) throws RemoteException;
+        
 }
+

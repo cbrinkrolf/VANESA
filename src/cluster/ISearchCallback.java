@@ -6,6 +6,8 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import cluster.graphdb.GraphDBTransportNode;
+
 public interface ISearchCallback extends Remote{
 
 	/**
@@ -20,5 +22,5 @@ public interface ISearchCallback extends Remote{
 	 * @param adjacencylist
 	 * @throws RemoteException
 	 */
-	public void setResultAdjacencyList(HashMap<String, HashSet<String>> adjacencylist) throws RemoteException;
+	public void setResultAdjacencyList(HashMap<GraphDBTransportNode, HashSet<GraphDBTransportNode>> adjacencylist) throws RemoteException;
 }
