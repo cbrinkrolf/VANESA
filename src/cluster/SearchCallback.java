@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 
 import javax.swing.SwingUtilities;
 
+import cluster.graphdb.GraphDBTransportNode;
+
 import database.unid.UNIDSearch;
 
 public class SearchCallback extends UnicastRemoteObject implements ISearchCallback, Serializable {
@@ -23,7 +25,7 @@ public class SearchCallback extends UnicastRemoteObject implements ISearchCallba
 	}
 
 	@Override
-	public void setResultAdjacencyList(HashMap<String, HashSet<String>> adjacencylist)
+	public void setResultAdjacencyList(HashMap<GraphDBTransportNode, HashSet<GraphDBTransportNode>> adjacencylist)
 			throws RemoteException {
 		// Preset adjacency list in Search object
 		usearch.setAdjacencyList(adjacencylist);

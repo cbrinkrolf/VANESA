@@ -24,6 +24,7 @@ import biologicalObjects.nodes.Other;
 
 import cluster.IJobServer;
 import cluster.SearchCallback;
+import cluster.graphdb.GraphDBTransportNode;
 
 /**
  * 
@@ -43,7 +44,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	private String organism;
 	private int depth;
 	
-	private HashMap<String, HashSet<String>> adjacencylist;
+	private HashMap<GraphDBTransportNode, HashSet<GraphDBTransportNode>> adjacencylist;
 
 	public UNIDSearch(String[] input) {
 		this.organism = input[0];
@@ -100,23 +101,23 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 
 		// DO ADDING
 		Other bna;
-		HashSet<String> nodeset = new HashSet<String>();
-		HashMap<String, BiologicalNodeAbstract> nodes = new HashMap<>();
+		HashSet<GraphDBTransportNode> nodeset = new HashSet<>();
+		HashMap<GraphDBTransportNode, BiologicalNodeAbstract> nodes = new HashMap<>();
 
 		//Nodes first
-		for (String node : adjacencylist.keySet()) {
+		for (GraphDBTransportNode node : adjacencylist.keySet()) {
 			if (!nodeset.contains(node)) {
 				nodeset.add(node);
-				bna = new Other(node, node);
+				bna = new Other(node.commonName, node.commonName);
 				bna.setReference(false);
 				pw.addVertex(bna, new Point(150, 100));
 				nodes.put(node, bna);
 			}
-			HashSet<String> companions = adjacencylist.get(node);
-			for (String companion : companions) {
+			HashSet<GraphDBTransportNode> companions = adjacencylist.get(node);
+			for (GraphDBTransportNode companion : companions) {
 				if (!nodeset.contains(companion)) {
 					nodeset.add(companion);
-					bna = new Other(companion, companion);
+					bna = new Other(companion.commonName, companion.commonName);
 					bna.setReference(false);
 					pw.addVertex(bna, new Point(150, 100));
 					nodes.put(companion, bna);
@@ -126,9 +127,9 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		
 		//then edges
 		ReactionEdge r;
-		for (String node : adjacencylist.keySet()) {
-			HashSet<String> companions = adjacencylist.get(node);
-			for (String companion : companions) {
+		for (GraphDBTransportNode node : adjacencylist.keySet()) {
+			HashSet<GraphDBTransportNode> companions = adjacencylist.get(node);
+			for (GraphDBTransportNode companion : companions) {
 				r = new ReactionEdge("", "", nodes.get(node),
 						nodes.get(companion));
 
@@ -150,7 +151,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		MainWindow window = MainWindowSingelton.getInstance();
 		window.updateOptionPanel();
 		window.setEnabled(true);
-		pw.getGraph().changeToGEMLayout();
+		pw.getGraph().changeToCircleLayout();
 
 		reactivateUI();
 
@@ -160,7 +161,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	 * Set adjacency list, usually called by SearchCallback
 	 * @param adjacencylist
 	 */
-	public void setAdjacencyList(HashMap<String, HashSet<String>> adjacencylist){
+	public void setAdjacencyList(HashMap<GraphDBTransportNode, HashSet<GraphDBTransportNode>> adjacencylist){
 		this.adjacencylist = adjacencylist;
 		
 	}
