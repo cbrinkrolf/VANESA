@@ -722,6 +722,12 @@ public class Pathway implements Cloneable {
 			getGraph().addEdge(bea);
 			bea.setID();
 			biologicalElements.put(bea.getID() + "", bea);
+			if(bea.getFrom().getGraph(false)==null){
+				bea.getFrom().getConnectingEdges().add(bea);
+			}
+			if(bea.getTo().getGraph(false)==null){
+				bea.getTo().getConnectingEdges().add(bea);
+			}
 			return bea;
 		} else
 			try {
@@ -1470,4 +1476,67 @@ public class Pathway implements Cloneable {
 	public SortedSet<Integer> getIdSet() {
 		return this.ids;
 	}
+	
+	/**
+	 * Updates the current Graph after coarsing of nodes. The node that calls the method is added,
+	 * all nodes contained in this node are removed. Edges are updated respectively (changed from/to 
+	 * for border-environment edges, removed automatically for all 'inner' edges)
+	 * @author tloka
+	 */
+	public void updateMyGraph(){
+		Set<BiologicalNodeAbstract> nodeSet = new HashSet<BiologicalNodeAbstract>();
+		nodeSet.addAll(getGraph().getAllVertices());
+		Iterator<BiologicalNodeAbstract> it = nodeSet.iterator();
+		while(it.hasNext()){
+			BiologicalNodeAbstract node = it.next();
+			if(node.getStateChanged()==0){
+				// node is unchanged: do nothing
+			} else if(node.getStateChanged() == 2){
+				// node was flatted.
+				this.removeElement(node);
+				for(BiologicalNodeAbstract innerNode : node.getAllNodes()){
+					if(!node.getEnvironment().contains(innerNode)){
+						this.addVertex(innerNode, node.getGraph().getVertexLocation(innerNode));
+					}
+				}
+				for(BiologicalEdgeAbstract innerEdge : node.getAllEdges()){
+					if(!node.getEnvironment().contains(innerEdge.getTo()) && !node.getEnvironment().contains(innerEdge.getFrom())){
+						this.addEdge(innerEdge);
+					} 
+				}
+				for(BiologicalEdgeAbstract connectingEdge : node.getConnectingEdges()){
+					if(getAllNodes().contains(connectingEdge.getTo().getCurrentShownParentNode(getGraph())) |
+							getAllNodes().contains(connectingEdge.getFrom().getCurrentShownParentNode(getGraph()))){
+						if(this instanceof BiologicalNodeAbstract){
+							BiologicalNodeAbstract n = (BiologicalNodeAbstract) this;
+							n.getConnectingEdges().add(connectingEdge);
+						}
+						BiologicalEdgeAbstract newEdge = connectingEdge.clone();
+						newEdge.setTo(newEdge.getTo().getCurrentShownParentNode(getGraph()));
+						newEdge.setFrom(newEdge.getFrom().getCurrentShownParentNode(getGraph()));
+						if(newEdge.getFrom()!=newEdge.getTo() && newEdge.getTo()!=null && newEdge.getFrom()!=null){
+							addEdge(newEdge);
+						}
+					}
+				}
+			} else if (node.getStateChanged()==1) {
+				// node was coarsed.
+				System.out.println(node.getLabel() + " Coarsed" + "->" + node.getParentNode().getLabel());
+				addVertex(node.getParentNode(), this.getGraph().getVertexLocation(node));
+				removeElement(node);
+				Set<BiologicalEdgeAbstract> edgeSet = new HashSet<BiologicalEdgeAbstract>();
+				edgeSet.addAll(node.getParentNode().getConnectingEdges());
+				for(BiologicalEdgeAbstract connectingEdge : edgeSet){
+					BiologicalEdgeAbstract newEdge = connectingEdge.clone();
+					newEdge.setTo(newEdge.getTo().getCurrentShownParentNode(getGraph()));
+					newEdge.setFrom(newEdge.getFrom().getCurrentShownParentNode(getGraph()));
+					if(newEdge.getFrom()!=newEdge.getTo() && newEdge.getTo()!=null && newEdge.getFrom()!=null){
+						addEdge(newEdge);
+					}
+				}
+			}
+			node.updateMyGraph();
+		}
+	
+}
 }

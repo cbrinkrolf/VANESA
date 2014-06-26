@@ -70,7 +70,7 @@ public class MyVertexStrokeHighlighting implements
 		// mark Environment nodes in hierarchical Nodes.
 		if(pw instanceof BiologicalNodeAbstract){
 			BiologicalNodeAbstract b = (BiologicalNodeAbstract) pw;
-			if(b.getParentNode().getEnvironment().contains(bna)){
+			if(b.getEnvironment().contains(bna)){
 				float dashPhase = 0f;
                 float dash[] = {5.0f,5.0f};
 				return new BasicStroke(

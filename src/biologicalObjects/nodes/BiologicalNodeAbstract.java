@@ -126,19 +126,30 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	
 	private Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
 	
-	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<BiologicalEdgeAbstract>();
+	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<BiologicalEdgeAbstract>();	
 	
+	private Pathway rootNode;
+	
+	private int stateChanged = 0;
+	
+	public void setStateChanged(int state){
+		stateChanged = state;
+	}
+	
+	public int getStateChanged(){
+		return stateChanged;
+	}
 	
 	
 	// ---Functional Methods---
-
-	
 	
 	public BiologicalNodeAbstract(String label, String name) {
 		super(name, new GraphInstance().getPathway());
 		super.setName(name);
 		this.label = label;
 		this.labelSet.add(label);
+		rootNode = new GraphInstance().getPathway().getRootPathway();
+//		
 		//setLabel(label.toLowerCase());
 		//setName(name.toLowerCase());
 		//setVertex(vertex);		
@@ -271,8 +282,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			// Modify input nodes and add them to the Pathway and graph of this coarse node.
 			for(BiologicalNodeAbstract node : vertices){
 				node.setParentNode(this);
-				this.addVertex(node, activeGraph.getVertexLocation(node));
+				addVertex(node, activeGraph.getVertexLocation(node));
 			}
+			
 			// Compute the border of the given set of nodes.
 			border = computeBorder(vertices);
 			
@@ -282,8 +294,20 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			// Save the edges containing the nodes inside the coarse node.
 			saveSubnetEdges(vertices);
 			
+			for(BiologicalNodeAbstract node : getAllNodes()){
+				if(!environment.contains(node)){
+					node.setStateChanged(1);
+				}
+			}
+			
 			// Update current MyGraph
-			updateMyGraph();
+			rootNode.updateMyGraph();
+			
+			for(BiologicalNodeAbstract node : getAllNodes()){
+				if(!environment.contains(node)){
+					node.setStateChanged(0);
+				}
+			}
 		}
 		
 		/**
@@ -335,67 +359,21 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 			Set<BiologicalNodeAbstract> newEnvironment = new HashSet<BiologicalNodeAbstract>();
 			
-			for(BiologicalNodeAbstract borderNode : border){
+			for(BiologicalEdgeAbstract edge : activeGraph.getAllEdges()){
 				
-				for(BiologicalEdgeAbstract borderEdge : activeGraph.getJungGraph().getInEdges(borderNode.getCurrentShownParentNode())){
-					
-					if(!vertices.contains(borderEdge.getFrom())){
-						newEnvironment.add(borderEdge.getOriginalFrom());
-					}
+				if(border.contains(edge.getTo()) && !vertices.contains(edge.getFrom())){
+					newEnvironment.add(edge.getFrom());
+				} else if(border.contains(edge.getFrom()) && !vertices.contains(edge.getTo())){
+					newEnvironment.add(edge.getTo());
 				}
 				
-				for(BiologicalEdgeAbstract borderEdge : activeGraph.getJungGraph().getOutEdges(borderNode.getCurrentShownParentNode())){
-					
-					if(!vertices.contains(borderEdge.getTo())){
-						newEnvironment.add(borderEdge.getOriginalTo());
-					}
-				}
+			}
+			for(BiologicalNodeAbstract envNode : newEnvironment){
+				addVertex(envNode, activeGraph.getVertexLocation(envNode));
 			}
 			return newEnvironment;
 		}
 		
-		/**
-		 * Updates the current Graph after coarsing of nodes. The node that calls the method is added,
-		 * all nodes contained in this node are removed. Edges are updated respectively (changed from/to 
-		 * for border-environment edges, removed automatically for all 'inner' edges)
-		 * @author tloka
-		 */
-		private void updateMyGraph(){
-			
-			MyGraph activeGraph = getActiveGraph();
-
-			//TOBI: prüfen, was zu tun ist, wenn der Border leer ist (tritt auf, wenn keine Kante nach außen
-			//existiert, beispielsweise beim coarsen des gesamten Graphen).
-			activeGraph.addVertex(this, activeGraph.getVertexLocation(getBorder().iterator().next()));
-			
-			for(BiologicalNodeAbstract node : border){
-				if (node.getCurrentShownParentNode() == null){
-					continue;
-				}
-				for(BiologicalEdgeAbstract edge : activeGraph.getJungGraph().getInEdges(node.getCurrentShownParentNode())){
-					if(environment.contains(edge.getOriginalFrom())){
-						activeGraph.removeEdge(edge);
-						edge.setTo(this);
-						activeGraph.addEdge(edge);
-					} 
-				}
-				
-				for(BiologicalEdgeAbstract edge : activeGraph.getJungGraph().getOutEdges(node.getCurrentShownParentNode())){
-					
-					if(environment.contains(edge.getOriginalTo())){
-						activeGraph.removeEdge(edge);
-						edge.setFrom(this);
-						activeGraph.addEdge(edge);
-					} 
-				}
-			}
-			for(BiologicalNodeAbstract node : getAllNodes()){
-				if(!environment.contains(node)){
-					activeGraph.removeVertex(node);
-				}
-			}
-		}
-
 		/**
 		 * Saves all edges going in or out one of the input nodes.
 		 * Internal edges (between two nodes inside the coarse node) are added to the 
@@ -406,35 +384,22 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 */
 		private void saveSubnetEdges(Set<BiologicalNodeAbstract> vertices){
 			
-			MyGraph activeGraph = getActiveGraph();
-
-			for(BiologicalNodeAbstract node : vertices){
-
-				for(BiologicalEdgeAbstract edge : activeGraph.getJungGraph().getInEdges(node)){
-					BiologicalEdgeAbstract e = edge.clone();
-//					System.out.println("Node data:");
-//					System.out.println(node.getID() + ", " + e.getTo().getID() + ", " + e.getOriginalFrom().getID());
-
-					if(environment.contains(edge.getOriginalTo())){
-						e.setTo(edge.getOriginalTo());
+			for(BiologicalNodeAbstract envNode : environment){
+				Set<BiologicalEdgeAbstract> conEdges = envNode.getConnectingEdges();
+				if(!conEdges.isEmpty()){
+					for(BiologicalEdgeAbstract edge : conEdges){
+						if(border.contains(edge.getTo().getCurrentShownParentNode(this.getGraph())) |
+								border.contains(edge.getFrom().getCurrentShownParentNode(this.getGraph()))){
+							connectingEdges.add(edge);					
+						}
 					}
-					if(environment.contains(edge.getOriginalFrom())){
-						e.setFrom(edge.getOriginalFrom());
-					}
-					addEdge(e);
 				}
-				
-				for(BiologicalEdgeAbstract edge : activeGraph.getJungGraph().getOutEdges(node)){
-					BiologicalEdgeAbstract e = edge.clone();
-//					System.out.println("Node Data:");
-//					System.out.println(node.getID() + ", " + e.getFrom().getID() + ", " + e.getOriginalTo().getID());
-
-					if(environment.contains(edge.getOriginalTo())){
-						e.setTo(edge.getOriginalTo());
-					}
-					if(environment.contains(edge.getOriginalFrom())){
-						e.setFrom(edge.getOriginalFrom());
-					}
+			}
+			for(BiologicalEdgeAbstract edge : getActiveGraph().getAllEdges()){
+				BiologicalEdgeAbstract e = edge.clone();
+				if(getAllNodes().contains(edge.getTo()) && !getEnvironment().contains(edge.getTo())){
+					addEdge(e);
+				} else if(getAllNodes().contains(edge.getFrom()) && !getEnvironment().contains(edge.getFrom())){
 					addEdge(e);
 				}
 			}
@@ -450,31 +415,38 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			if(getAllNodes().size()<=0)
 				return;
 			
-			MyGraph activeGraph = getActiveGraph();
+			this.setParentNode(this);
+			this.setStateChanged(2);
 			
-			// remove this node
-			activeGraph.removeVertex(this);
+			rootNode.updateMyGraph();
 			
-			// Add nodes of the subpathway
-			for(BiologicalNodeAbstract node : getAllNodes()){
-				if(!environment.contains(node)){
-					node.setParentNode(null);
-					activeGraph.addVertex(node, activeGraph.getVertexLocation(node));
-				}
-			}
-						
-			// Add edges of the subpathway and connecting edges
-			for(BiologicalEdgeAbstract edge : connectingEdges){
-				activeGraph.removeEdge(edge);
-				if(edge.getOriginalFrom().getCurrentShownParentNode()!=null)
-					edge.setFrom(edge.getOriginalFrom().getCurrentShownParentNode());
-				if(edge.getOriginalTo().getCurrentShownParentNode()!=null)
-					edge.setTo(edge.getOriginalTo().getCurrentShownParentNode());
-				activeGraph.addEdge(edge);
-			}	
-			for(BiologicalEdgeAbstract edge : getAllEdges()){
-				activeGraph.addEdge(edge);
-			}
+			this.setStateChanged(0);
+			
+//			MyGraph activeGraph = getActiveGraph();
+//			
+//			// remove this node
+//			activeGraph.removeVertex(this);
+//			
+//			// Add nodes of the subpathway
+//			for(BiologicalNodeAbstract node : getAllNodes()){
+//				if(!environment.contains(node)){
+//					node.setParentNode(null);
+//					activeGraph.addVertex(node, activeGraph.getVertexLocation(node));
+//				}
+//			}
+//						
+//			// Add edges of the subpathway and connecting edges
+//			for(BiologicalEdgeAbstract edge : connectingEdges){
+//				activeGraph.removeEdge(edge);
+//				if(edge.getOriginalFrom().getCurrentShownParentNode(activeGraph)!=null)
+//					edge.setFrom(edge.getOriginalFrom().getCurrentShownParentNode(activeGraph));
+//				if(edge.getOriginalTo().getCurrentShownParentNode(activeGraph)!=null)
+//					edge.setTo(edge.getOriginalTo().getCurrentShownParentNode(activeGraph));
+//				activeGraph.addEdge(edge);
+//			}	
+//			for(BiologicalEdgeAbstract edge : getAllEdges()){
+//				activeGraph.addEdge(edge);
+//			}
 			
 		}
 		
@@ -687,10 +659,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 
 		public BiologicalNodeAbstract getParentNode() {
-			if(parentNode!=null){
-				return parentNode;
-			}
-			return this;
+			return parentNode;
 		}
 
 		/**
@@ -699,16 +668,18 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 * @return ParentNode currently existing in the graph. Returns null, if no parent node currently exists
 		 * in the graph (e.g. if a (parent-)node was deleted or a child is currently represented in the graph.
 		 */
-		public BiologicalNodeAbstract getCurrentShownParentNode() {
-			MyGraph activeGraph = getActiveGraph();
-
-			if(activeGraph.getAllVertices().contains(this)){
+		public BiologicalNodeAbstract getCurrentShownParentNode(MyGraph graph) {
+			if(graph==null){
+				graph = getActiveGraph();
+			}
+			
+			if(graph.getAllVertices().contains(this)){
 				return this;
 			}
 			// Can result in null, if node was deleted from the graph.
 			try{
 				if(getParentNode()!=this){
-					return getParentNode().getCurrentShownParentNode();
+					return getParentNode().getCurrentShownParentNode(graph);
 				}
 				return null;
 			} catch (NullPointerException e){
@@ -997,6 +968,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 		public void setRefs(Set<BiologicalNodeAbstract> refs) {
 			this.refs = refs;
+		}
+		
+		public Set<BiologicalEdgeAbstract> getConnectingEdges(){
+			return connectingEdges;
 		}
 
 }
