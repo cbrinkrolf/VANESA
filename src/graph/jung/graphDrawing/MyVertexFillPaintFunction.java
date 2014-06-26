@@ -36,7 +36,7 @@ public class MyVertexFillPaintFunction implements
 		// mark Environment nodes in hierarchical Nodes.
 		if(pw instanceof BiologicalNodeAbstract){
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) pw;
-			if(bna.getParentNode().getEnvironment().contains(v)){
+			if(bna.getEnvironment().contains(v)){
 				return v.getColor().brighter();
 			}
 		}

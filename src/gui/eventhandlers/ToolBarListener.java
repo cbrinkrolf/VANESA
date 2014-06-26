@@ -298,7 +298,9 @@ public class ToolBarListener implements ActionListener {
 				}
 				BiologicalNodeAbstract newNode = (BiologicalNodeAbstract) borderNode.clone();
 				newNode.setID();
+				newNode.setLabel("coarse" + newNode.getLabel());
 				newNode.setGraph(new MyGraph(newNode));
+				newNode.setStateChanged(0);
 				newNode.coarse(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
 				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{
