@@ -825,7 +825,7 @@ public class MOoutput {
 						r = mFunction.charAt(idxNew + name.length());
 					} else {
 						// System.out.println("else");
-						r = 'a';
+						r = ' ';
 					}
 					// System.out.println("c: "+c);
 					// System.out.println(mFunction.charAt(idxNew));
@@ -837,7 +837,7 @@ public class MOoutput {
 						check = true;
 					}
 
-					if (chars.contains(r) && check) {
+					if (check && chars.contains(r)) {
 						// mFunction = mFunction.replaceFirst(name, mNames
 						// .get(name));
 						String insert = "'"+name+"'.t";
