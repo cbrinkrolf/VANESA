@@ -138,7 +138,7 @@ public class mirnaSearch extends SwingWorker {
 						keggGenesVector.add(resultDetails[0]);
 					}
 					targetString = targetString + "'x')";
-
+//System.out.println(targetString);
 					if (targets) {
 						
 						String[] geneDetails = { targetString };

@@ -33,6 +33,7 @@ public class miRNAqueries {
 	"kegg_genes_name.name;";
 	
 	public static ArrayList<DBColumn> getMiRNAsOfPathway(String pathway){
+		
 		String query="select distinct mirbase.name, tarbase.gene, mirbase.sequence, tarbase.Accession, tarbase.Ensemble, tarbase.IS, tarbase.DS"
 		+ " from dawismd.kegg_kgml_pathway pathway" 
 		+ " inner join dawismd.kegg_genes_pathway genes_pathway on genes_pathway.number=pathway.number"
@@ -42,6 +43,7 @@ public class miRNAqueries {
 		+ " inner join db_mirna.mirbase_has_tarbase  on tarbase_ID=tarbase.ID"
 		+ " inner join db_mirna.mirbase on mirbase.ID=mirBase_ID"
 		+ " where pathway.name='"+pathway+"';";
+		//System.out.println("pw: "+pathway + " "+query);
 		return new Wrapper().requestDbContent(2, query);		
 	}
 	
