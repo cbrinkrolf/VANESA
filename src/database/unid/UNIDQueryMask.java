@@ -38,7 +38,7 @@ public class UNIDQueryMask {
 			"UNID"
 	};
 	
-	private JTextField fullName, alias, graphID;
+	private JTextField fullName, commonName, graphID;
 	
 	private JComboBox<String> chooseOrganism;
 	private String[] orgNames =
@@ -76,15 +76,15 @@ public class UNIDQueryMask {
 		depthspinner = new JSpinner(modeldepthspinner);		
 	
 		fullName = new JTextField(20);
-		alias = new JTextField(20);
+		commonName = new JTextField(20);
 		graphID = new JTextField(20);
 		
-		fullName.setText("HMGCR");
-		alias.setText("");
+		fullName.setText("");
+		commonName.setText("HMGCR");
 		graphID.setText("");
 		
 		fullName.addFocusListener(new TextfeldColorChanger());
-		alias.addFocusListener(new TextfeldColorChanger());
+		commonName.addFocusListener(new TextfeldColorChanger());
 		graphID.addFocusListener(new TextfeldColorChanger());
 		
 		JButton search = new JButton("search");
@@ -106,11 +106,11 @@ public class UNIDQueryMask {
 	    p.add(choosedatabase,"span,wrap,growx ,gap 10");
 		p.add(new JLabel("Organism"), "span 2, gap 5 ");
 	    p.add(chooseOrganism,"span,wrap,growx ,gap 10");	    
-		p.add(new JLabel("Name"), "span 2, gap 5 ");
+		p.add(new JLabel("Full Name"), "span 2, gap 5 ");
 	    p.add(fullName,"span,wrap,growx ,gap 10");
-	    p.add(new JLabel("Alias"), "span 2, gap 5 ");
-	    p.add(alias,"span,wrap,growx ,gap 10");
-		p.add(new JLabel("ID"),"span 2, gap 5 ");
+	    p.add(new JLabel("Common Name"), "span 2, gap 5 ");
+	    p.add(commonName,"span,wrap,growx ,gap 10");
+		p.add(new JLabel("GraphID"),"span 2, gap 5 ");
 		p.add(graphID,"span, wrap, growx, gap 10");
 		p.add(new JLabel("Depth"),"span 2, gap 5");
 		p.add(depthspinner,"span, wrap, growx, gap 10");
@@ -139,7 +139,7 @@ public class UNIDQueryMask {
 	public void reset(){
 		
 		fullName.setText("");
-		alias.setText("");
+		commonName.setText("");
 		graphID.setText("");
 		depthspinner.setValue(1.0d);
 	}
@@ -154,7 +154,7 @@ public class UNIDQueryMask {
 		String[] input = new String[5];
 		input[0] = (String) choosedatabase.getSelectedItem();
 		input[1]=fullName.getText();
-		input[2]=alias.getText();
+		input[2]=commonName.getText();
 		input[3]=graphID.getText();
 		input[4]=depthspinner.getValue()+"";
 		return input;
@@ -162,7 +162,7 @@ public class UNIDQueryMask {
 	
 	public boolean doSearchCriteriaExist(){
 		
-		if(fullName.getText().length()>0 || alias.getText().length()>0 || graphID.getText().length()>0){
+		if(fullName.getText().length()>0 || commonName.getText().length()>0 || graphID.getText().length()>0){
 			return true;
 		}else{
 			return false;
