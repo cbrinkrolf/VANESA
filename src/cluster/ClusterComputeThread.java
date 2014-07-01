@@ -5,21 +5,16 @@ import graph.GraphContainer;
 import graph.algorithms.gui.GraphColoringGUI;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
-import gui.ProgressBar;
 
-import java.awt.event.ActionEvent;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;

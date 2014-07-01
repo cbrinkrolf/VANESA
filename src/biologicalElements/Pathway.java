@@ -250,6 +250,9 @@ public class Pathway implements Cloneable {
 		else if (elementDecleration
 				.equals(Elementdeclerations.continuousTransition))
 			bna = new ContinuousTransition(label, name);
+		else if (elementDecleration
+				.equals(Elementdeclerations.graphdbnode))
+			bna = new Protein(label+"FAILSAFE", name+"FAILSAFE");
 		if (bna != null) {
 			bna.setCompartment(compartment);
 			return addVertex(bna, p);

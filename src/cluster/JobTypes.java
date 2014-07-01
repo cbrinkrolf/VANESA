@@ -24,5 +24,6 @@ public class JobTypes {
 			MINT_MAPPING = 114,
 			UNIPROT_MAPPING = 115,
 			
-			DEPTH_SEARCH = 100;
+			DEPTH_SEARCH = 100,
+			MINIMAL_NETWORK_SEARCH = 101;
 }

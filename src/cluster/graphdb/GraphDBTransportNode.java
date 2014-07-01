@@ -17,44 +17,6 @@ public class GraphDBTransportNode implements Serializable{
 	public String[] biodata;
 	public double[] biodataEntries;
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((commonName == null) ? 0 : commonName.hashCode());
-		result = prime * result
-				+ ((fullName == null) ? 0 : fullName.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		GraphDBTransportNode other = (GraphDBTransportNode) obj;
-		if (commonName == null) {
-			if (other.commonName != null)
-				return false;
-		} else if (!commonName.equals(other.commonName))
-			return false;
-		if (fullName == null) {
-			if (other.fullName != null)
-				return false;
-		} else if (!fullName.equals(other.fullName))
-			return false;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
-		return true;
-	}
 
 	public String molecularFunction[];
 	public String biologicalProcess[];
@@ -101,5 +63,45 @@ public class GraphDBTransportNode implements Serializable{
 		}
 		
 		return result;
+	}
+	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((commonName == null) ? 0 : commonName.hashCode());
+		result = prime * result
+				+ ((fullName == null) ? 0 : fullName.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GraphDBTransportNode other = (GraphDBTransportNode) obj;
+		if (commonName == null) {
+			if (other.commonName != null)
+				return false;
+		} else if (!commonName.equals(other.commonName))
+			return false;
+		if (fullName == null) {
+			if (other.fullName != null)
+				return false;
+		} else if (!fullName.equals(other.fullName))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		return true;
 	}
 }
