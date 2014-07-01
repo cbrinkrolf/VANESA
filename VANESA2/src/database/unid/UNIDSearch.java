@@ -3,11 +3,11 @@ package database.unid;
 import java.awt.Point;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import graph.CreatePathway;
-import graph.algorithms.gui.GraphColoringGUI;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
@@ -20,7 +20,7 @@ import javax.swing.SwingWorker;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Other;
+import biologicalObjects.nodes.GraphNode;
 
 import cluster.IJobServer;
 import cluster.SearchCallback;
@@ -40,7 +40,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 
 	private String graphid;
 	private String fullName;
-	private String alias;
+	private String commonName;
 	private String organism;
 	private int depth;
 	
@@ -49,7 +49,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	public UNIDSearch(String[] input) {
 		this.organism = input[0];
 		this.fullName = input[1];
-		this.alias = input[2];
+		this.commonName = input[2];
 		this.graphid = input[3];
 		this.depth = (int) Double.parseDouble(input[4]);
 		try{
@@ -60,11 +60,25 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	}
 
 	protected Object doInBackground() throws Exception {
+		
+		boolean multi_id_search = false;
+		HashSet<String> commonNames = new HashSet<String>();
+		if(commonName.contains(",")){
+			multi_id_search = true;
+			String name[] = commonName.split(",");
+			for (int i = 0; i < name.length; i++) {
+				commonNames.add(name[i]);
+			}			
+		}		
 
 		try{
 		 String url = "rmi://cassiopeidae/ClusterJobs";
 		 server = (IJobServer) Naming.lookup(url);
-		 server.submitSearch(fullName,depth,helper);
+		 if(multi_id_search){
+			 server.submitSearch(commonNames, depth, "any", helper);
+		 }else{
+			 server.submitSearch(commonName,depth,helper);
+		 }
 		}catch(Exception e){
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -100,7 +114,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		myGraph.stopVisualizationModel();
 
 		// DO ADDING
-		Other bna;
+		GraphNode bna;
 		HashSet<GraphDBTransportNode> nodeset = new HashSet<>();
 		HashMap<GraphDBTransportNode, BiologicalNodeAbstract> nodes = new HashMap<>();
 
@@ -108,7 +122,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		for (GraphDBTransportNode node : adjacencylist.keySet()) {
 			if (!nodeset.contains(node)) {
 				nodeset.add(node);
-				bna = new Other(node.commonName, node.commonName);
+				bna = new GraphNode(node);
 				bna.setReference(false);
 				pw.addVertex(bna, new Point(150, 100));
 				nodes.put(node, bna);
@@ -117,7 +131,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 			for (GraphDBTransportNode companion : companions) {
 				if (!nodeset.contains(companion)) {
 					nodeset.add(companion);
-					bna = new Other(companion.commonName, companion.commonName);
+					bna = new GraphNode(companion);
 					bna.setReference(false);
 					pw.addVertex(bna, new Point(150, 100));
 					nodes.put(companion, bna);

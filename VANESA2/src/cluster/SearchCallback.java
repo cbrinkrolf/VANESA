@@ -5,12 +5,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map.Entry;
 
 import javax.swing.SwingUtilities;
 
 import cluster.graphdb.GraphDBTransportNode;
-
 import database.unid.UNIDSearch;
 
 public class SearchCallback extends UnicastRemoteObject implements ISearchCallback, Serializable {

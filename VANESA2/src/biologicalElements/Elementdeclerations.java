@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class Elementdeclerations {
+	
+	public static final String graphdbnode = "GraphDatabase Node";
 
 	public static final String disease = "Disease";
 

@@ -27,12 +27,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+
+import cluster.graphdb.DatabaseEntry;
 
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
@@ -47,6 +50,7 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Gene;
+import biologicalObjects.nodes.GraphNode;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
@@ -356,7 +360,77 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 					p.add(lblMaxSpeed, "gap 5");
 					p.add(maxSpeed, "wrap");
+				}				
+			}
+			else if (ab instanceof GraphNode) {	
+				GraphNode gnode = (GraphNode) ab;
+				
+				//Show Database IDs
+				JTextArea dbids = new JTextArea();
+				String dbidstring = new String();
+				for (DatabaseEntry dbid : gnode.getSuperNode().dbIds) {
+					dbidstring+=dbid.getDatabase()+":\t"+dbid.getId()+"\n";
 				}
+				dbids.setText(dbidstring);
+				p.add(new JLabel("IDs:"), "gap 5");
+				p.add(dbids,"wrap, span 3");
+				
+				//Show Experiment names and values
+				JTextArea experiments = new JTextArea();
+				String experimentstring = new String();
+				for (int i = 0; i < gnode.getSuperNode().biodata.length; i++) {
+					experimentstring+=gnode.getSuperNode().biodata[i]+":\t"+gnode.getSuperNode().biodataEntries[i]+"\n";
+				}
+				experiments.setText(experimentstring);
+				p.add(new JLabel("Exp."),"gap 5");
+				p.add(experiments,"wrap, span 3");
+				
+				//Show GO annotations
+				JTextArea goannoations = new JTextArea();
+				String annotationstring = new String();
+				
+				//check if there are any entries:
+				int goentries = 0;
+				goentries = gnode.getSuperNode().biologicalProcess.length
+						+gnode.getSuperNode().molecularFunction.length
+						+gnode.getSuperNode().cellularComponent.length;
+
+				if (goentries > 0) {
+					// biological process
+					annotationstring += "Biological process:\n";
+					for (int i = 0; i < gnode.getSuperNode().biologicalProcess.length; i++) {
+						annotationstring += "-"
+								+ gnode.getSuperNode().biologicalProcess[0]
+								+ "\n";
+					}
+					// molecular function
+					annotationstring += "Molecular function:\n";
+					for (int i = 0; i < gnode.getSuperNode().molecularFunction.length; i++) {
+						annotationstring += "-"
+								+ gnode.getSuperNode().molecularFunction[0]
+								+ "\n";
+					}
+					// cellular compartment
+					annotationstring += "Cellular compartment:\n";
+					for (int i = 0; i < gnode.getSuperNode().cellularComponent.length; i++) {
+						annotationstring += "-"
+								+ gnode.getSuperNode().cellularComponent[0]
+								+ "\n";
+					}
+				}
+				
+				goannoations.setText(annotationstring);
+				
+				p.add(new JLabel("GO:"),"gap 5");
+				p.add(goannoations,"wrap, span 3");
+				
+				
+	//				JTextField aaSequence = new JTextField(20);
+	//				aaSequence.setText(protein.getAaSequence());
+	//				aaSequence.setName("protein");
+	//				aaSequence.addKeyListener(pwl);
+	//				p.add(new JLabel("AA-Sequence"), "gap 5 ");
+	//				p.add(aaSequence, "wrap, span 3");
 			}
 		} else if (ab.isEdge()) {
 			// System.out.println("edge");
