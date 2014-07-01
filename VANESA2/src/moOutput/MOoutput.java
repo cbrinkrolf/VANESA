@@ -309,14 +309,14 @@ public class MOoutput {
 				inhibitCount++;
 				if (fromType.equals(Elementdeclerations.s_place)
 						|| fromType.equals(Elementdeclerations.place)) {
-					edgesString = edgesString + "\t\tconnect(" + fromString
-							+ ".outTransition["
+					edgesString = edgesString + "\tconnect('" + fromString
+							+ "'.outTransition["
 							+ (actualOutEdges.get(fromString) + 1) + "],"
 							+ "inhibitorArc" + inhibitCount + ".inPlace);"
 							+ "\r\n";
-					edgesString = edgesString + "\t\tconnect(" + "inhibitorArc"
-							+ inhibitCount + ".outTransition," + toString
-							+ ".inPlaces[" + (actualInEdges.get(toString) + 1)
+					edgesString = edgesString + "\tconnect(" + "inhibitorArc"
+							+ inhibitCount + ".outTransition,'" + toString
+							+ "'.inPlaces[" + (actualInEdges.get(toString) + 1)
 							+ "]);" + "\r\n";
 					actualOutEdges.put(fromString,
 							actualOutEdges.get(fromString) + 1);
@@ -731,6 +731,7 @@ public class MOoutput {
 		boolean check;
 		int index = 0;
 		int idxNew = 0;
+		String insert;
 		for (int i = 0; i < paramNames.size(); i++) {
 			index = 0;
 			name = paramNames.get(i);
@@ -763,7 +764,7 @@ public class MOoutput {
 					if(check && chars.contains(r)){	
 						// mFunction = mFunction.replaceFirst(name, mNames
 						// .get(name));
-						String insert = "'_"+node.getName()+"_"+name+"'";
+						insert = "'_"+node.getName()+"_"+name+"'";
 						mFunction.replace(idxNew, idxNew+name.length(), insert);
 						//mFunction.insert(idxNew, "_" + node.getName() + "_");
 						//index = idxNew + name.length() + 2
@@ -810,14 +811,14 @@ public class MOoutput {
 			index = 0;
 			name = names.get(i);
 
-			// System.out.println("name: "+name );
-			// System.out.println("fkt: "+mFunction);
+			//System.out.println("name: "+name );
+			//System.out.println("fkt: "+mFunction);
 			// System.out.println("n: "+name);
 			while (mFunction.indexOf(name, index) >= 0) {
 				check = false;
 				idxNew = mFunction.indexOf(name, index);
-				// System.out.println("index: "+index);
-				// System.out.println("idxNew: "+idxNew);
+				//System.out.println("index: "+index);
+				 //System.out.println("idxNew: "+idxNew);
 				if (mFunction.length() >= idxNew + name.length()) {
 					// System.out.println("groesser gleich");
 					if (mFunction.length() > idxNew + name.length()) {
@@ -829,18 +830,25 @@ public class MOoutput {
 					}
 					// System.out.println("c: "+c);
 					// System.out.println(mFunction.charAt(idxNew));
-					if (idxNew > 0) {
+					
+					if(idxNew == 0){
+						check = true;
+					}else{
+						check = chars.contains(mFunction.charAt(idxNew-1));
+					}
+					
+					/*if (idxNew > 0) {
 						if (chars.contains(mFunction.charAt(idxNew - 1))) {
 							check = true;
 						}
 					} else {
 						check = true;
-					}
-
+					}*/
+					//System.out.println("r: "+r);
 					if (check && chars.contains(r)) {
 						// mFunction = mFunction.replaceFirst(name, mNames
 						// .get(name));
-						String insert = "'"+name+"'.t";
+						insert = "'"+name+"'.t";
 						mFunction.replace(idxNew, idxNew+name.length(), insert);
 						
 						//mFunction.insert(idxNew + name.length(), ".t");
