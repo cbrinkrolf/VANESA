@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import biologicalElements.Pathway;
@@ -224,6 +226,17 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		HashMap<String, String> mNames = new HashMap<String, String>();
 		BiologicalNodeAbstract bna;
 		Place p;
+		
+		Set<Character> chars = new HashSet<Character>();
+		chars.add('*');
+		chars.add('+');
+		chars.add('/');
+		chars.add('-');
+		chars.add('^');
+		chars.add('(');
+		chars.add(')');
+		chars.add(' ');
+		
 		while (it.hasNext()) {
 			bna = it.next();
 			if (bna instanceof Place) {
@@ -237,6 +250,8 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		Collections.sort(names, new StringLengthComparator());
 		Character c;
 		String name = "";
+		boolean check;
+		String insert;
 		// System.out.println("drin");
 		int index = 0;
 		int idxNew = 0;
@@ -248,6 +263,7 @@ public class PNEdge extends BiologicalEdgeAbstract {
 			//System.out.println("fkt: "+mFunction);
 
 			while (mFunction.indexOf(name, index) >= 0) {
+				check = false;
 				idxNew = mFunction.indexOf(name, index);
 				// System.out.println("index: "+index);
 				// System.out.println("idxNew: "+idxNew);
@@ -258,14 +274,29 @@ public class PNEdge extends BiologicalEdgeAbstract {
 						c = mFunction.charAt(idxNew + name.length());
 					} else {
 						// System.out.println("else");
-						c = 'a';
+						c = ' ';
 					}
-					// System.out.println("c: "+c);
-					if (!Character.isDigit(c) && c != '.') {
+					
+					
+					if(idxNew == 0){
+						check = true;
+					}else{
+						check = chars.contains(mFunction.charAt(idxNew-1));
+					}
+					//System.out.println("l: "+r+" r: "+r);
+					//if (!Character.isDigit(c) && !Character.isAlphabetic(c)) {
+					if(check && chars.contains(c)){	
 						// mFunction = mFunction.replaceFirst(name, mNames
 						// .get(name));
-						mFunction.insert(idxNew + name.length(), ".t");
-						index = idxNew + name.length() + 2;
+						insert = "'"+name+"'.t";
+						mFunction.replace(idxNew, idxNew+name.length(), insert);
+						//mFunction.insert(idxNew, "_" + node.getName() + "_");
+						//index = idxNew + name.length() + 2
+						//		+ node.getName().length();
+						index = idxNew+insert.length();
+						
+						//mFunction.insert(idxNew + name.length(), ".t");
+						//index = idxNew + name.length() + 2;
 						// System.out.println(name+" ersetzt durch: "+mNames.get(name));
 					} else {
 						index = idxNew + name.length();
@@ -276,6 +307,7 @@ public class PNEdge extends BiologicalEdgeAbstract {
 					// /System.out.println("break");
 					break;
 				}
+					
 			}
 		}
 		// System.out.println("druch");
