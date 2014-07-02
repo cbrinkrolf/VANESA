@@ -30,11 +30,12 @@ import database.ppi.PPISearch;
 /**
  * This class manage the actions from the GUI and sends data to the DataMappingModelController
  * @author dborck
+ * @author bniemann
  *
  */
-public class DataMappingGUIController implements ActionListener, MouseListener, WindowFocusListener{
+public class DataMapping2GUIController implements ActionListener, MouseListener{
 
-	private DataMappingView dataMappingView;
+	private DataMapping2View dataMappingView;
 	private DataMappingModelController dataMappingModelController;
 
 	private boolean isSetHeader = false;
@@ -55,7 +56,7 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 	 * adds the view (GUI) to this DataMappingGUIController
 	 * @param dataMappingView - the GUI
 	 */
-	public void addDataMappingView(DataMappingView dataMappingView) {
+	public void addDataMappingView(DataMapping2View dataMappingView) {
 		this.dataMappingView = dataMappingView;
 		valueColumnIndices = new HashSet<Integer>();
 	}
@@ -72,9 +73,15 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("browse")) {
 			doBrowse();
-		} else if(e.getActionCommand().equals("doMapping")) {
+		} else if(e.getActionCommand().equals("doMapping")) {		
 			doMapping();
 			dataMappingView.disableOKbutton();
+		} else if(e.getActionCommand().equals("species")){
+			if(!dataMappingView.getSpecies().equals("none")) {
+				dataMappingModelController.setSpecies(dataMappingView.getSpecies());
+			} else {
+				dataMappingModelController.disableCheck(DataMappingModelController.SPECIES);
+			}
 		} else if(e.getActionCommand().equals("identifier")){
 			if(!dataMappingView.getIdentifierType().equals("none")) {
 				dataMappingModelController.setIdentifierType(dataMappingView.getIdentifierType());
@@ -108,13 +115,18 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 		} else if(e.getActionCommand().equals("changeData")) {
 			JTable dmt = dataMappingView.getDataMappingTable();
 			dataMappingModelController.setNewMergeMap(dmt);
-
 		} else if(e.getActionCommand().equals("changeDataAndClose")) {
 			JTable dmt = dataMappingView.getDataMappingTable();
 			dataMappingModelController.setNewMergeMap(dmt);
+			DataMappingView.w.setEnable(true);
 			dataMappingView.dispose();
 			
+		} else if(e.getActionCommand().equals("cancelChange")) {
+			DataMappingView.w.setEnable(true);
+			dataMappingView.dispose();
 		}
+		
+		
 	}
 
 	/**
@@ -122,15 +134,21 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 	 */
 	private void doMapping() {
 		dataMappingView.setProgressBarBiomart();
-		dataMappingModelController.setPathway(dataMappingView.getSelectedPathway());
+
 		
 		//System.out.println("species:"+dataMappingView.getSelectedPathway().getOrganism()); // does only function with KEGG pathways
 
 		SwingWorker<Void, Void> swingworker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
+				//TODO
+				long start = System.currentTimeMillis();
+
 				dataMappingModelController.setMultiValues(valueColumnIndices);
 				dataMappingModelController.startMapping();
+				
+				long end = System.currentTimeMillis();
+				System.out.println("Zeit fuer Query: " + (end-start));
 				
 				return null;
 			}
@@ -144,12 +162,12 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 	 */
 	private void reset() {
 		isSetHeader = false;
-		doColumnColoring(null);
 
+			
+		doColumnColoring(null);
 		
 		dataMappingModelController.setChecks();
 		dataMappingModelController.resetModel();
-
 		dataMappingView.doReset();
 	}
 
@@ -259,9 +277,8 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 				identifierColumnIndex = pick;
 				dataMappingView.setIdentifierTF(pick, newColor);
 				dataMappingModelController.setIdentifiers(identifierColumnIndex);
-			} else if (isSetIdentifier) {
+			}else if (isSetIdentifier) {
 				// one column (for the identifiers) has been selected
-
 				if(pick == identifierColumnIndex){
 					JOptionPane.showMessageDialog(
 							null,
@@ -271,13 +288,7 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 							"Value has not been set.",
 									JOptionPane.INFORMATION_MESSAGE);
 					newColor = identifiereColor;
-					return;	
-				}else if(valueColumnIndices.isEmpty()){
-					newColor = valueColor;
-					valueColumnIndices.add(pick);
-					dataMappingView.setValueTF(pick, valueColor);
-					dataMappingModelController.doValueCheck();
-					isSetValue = true;									
+					return;
 				}else if(valueColumnIndices.contains(pick)) {
 					valueColumnIndices.remove(pick);
 					if(valueColumnIndices.isEmpty()){
@@ -285,15 +296,14 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 						dataMappingModelController.disableCheck(DataMappingModelController.VALUES);
 					}
 					newColor = old;	
-					dataMappingView.setValueTF(-2, valueColor);
-				}else{ // valueColumnIndices not empty, dose not contain pick and is unequal to identifierColumnIndex
-					JOptionPane.showMessageDialog(
-							null,
-							"You could not choose a second value,\n"
-									+ "please deselect the value column if you want to choose a different value\n"
-									+ "or reset if you want a different identifier.",
-							"No second value could be set.",
-									JOptionPane.INFORMATION_MESSAGE);
+					dataMappingView.setMultiValueTF(valueColumnIndices, valueColor);
+				} else {
+					newColor = valueColor;
+					valueColumnIndices.add(pick);
+					dataMappingView.setMultiValueTF(valueColumnIndices, valueColor);
+					dataMappingModelController.doValueCheck();
+					
+					isSetValue = true;
 				}
 			} 
 			// change the color of selected column
@@ -301,39 +311,6 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 			dataMappingView.getTable().addColumnSelectionInterval (pick, pick);
 			dataMappingView.getTable().getColumnModel().getColumn(pick).setCellRenderer(new ColorColumnRenderer(newColor));
 		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// pops up an menu and sets the search string for the PPISearch
-		if (e.getComponent() instanceof JTable && SwingUtilities.isRightMouseButton(e)) {
-			int row = ((JTable) e.getComponent()).rowAtPoint(e.getPoint());
-			int col = ((JTable) e.getComponent()).columnAtPoint(e.getPoint());
-			searchString =(String) ((JTable) e.getComponent()).getModel().getValueAt(row, col);
-			if (searchString.contains("_")) {
-				searchString = searchString.split("_")[0];
-			}
-			dataMappingView.maybeShowPopup(e);
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		if (e.getComponent() instanceof JTable && SwingUtilities.isRightMouseButton(e)) {
-			dataMappingView.maybeShowPopup(e);
-		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**
@@ -388,15 +365,40 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+	 */
 	@Override
-	public void windowGainedFocus(WindowEvent e) {
-		dataMappingView.updatePathwayCB();	
-
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+	 */
 	@Override
-	public void windowLostFocus(WindowEvent e) {
-		dataMappingView.setSelectedPathwayString(dataMappingView.getSelectedPathwayString());
-
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 */
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

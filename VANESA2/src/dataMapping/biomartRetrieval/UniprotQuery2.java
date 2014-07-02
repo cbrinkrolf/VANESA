@@ -8,7 +8,7 @@ import java.util.List;
  * @author dborck
  *
  */
-public class UniprotQuery extends Query {
+public class UniprotQuery2 extends Query {
 	
 	// the attribute which is used in the BioMart query
 	final String ATTRIBUTE = "uniprot_swissprot_accession";
@@ -20,7 +20,7 @@ public class UniprotQuery extends Query {
 	 * @param filterName according to the UNIPROT accessions (e.g. "P19838")
 	 * @param fValues the request values as a list for the BioMart query  
 	 */
-	public UniprotQuery(String dataset, String filterName, List<String> fValues) {
+	public UniprotQuery2(String dataset, String filterName, List<String> fValues) {
 		setDataset(dataset);
 		setFilterName(filterName);
 		setAttributeName(ATTRIBUTE);
@@ -29,13 +29,14 @@ public class UniprotQuery extends Query {
 	
 	/**
 	 * add together the filtername and the attributename to the attributes which are
-	 * responded from the BioMart query
+	 * responded from the BioMart query (filtername first than attributename!)
 	 * @return list of attributes
 	 */
 	public List<String> getAttributes() {
 		List<String> attributes = new ArrayList<String>();
-		attributes.addAll(getAttributeName());
 		attributes.add(getFilterName());
+		attributes.addAll(getAttributeName());
+
 		
 		
 		return attributes;

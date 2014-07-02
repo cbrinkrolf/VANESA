@@ -8,16 +8,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
 
 import biologicalElements.Pathway;
+import dataMapping.biomartRetrieval.AgilentQueryRetrieval;
+
 import dataMapping.biomartRetrieval.BiomartQueryRetrieval;
 import dataMapping.biomartRetrieval.HPRDQueryRetrieval;
 import dataMapping.biomartRetrieval.IntActQueryRetrieval;
@@ -36,26 +46,31 @@ public class DataMappingModelController extends Observable {
 	private ImportExcelxData importData;
 
 	private String identifierType;
+	private String species;
 	private List<String> labels;
 	private List<String> identifiers;
-	private List<String> values;
+	private ArrayList<ArrayList<String>> multiValues;
 
 	public static final int NETWORK = 0;
 	public static final int IDENTIFIER_TYPE = 1;
 	public static final int IDENTIFIER = 2;
 	public static final int VALUES = 3;
+	public static final int SPECIES = 4;
 
-	private boolean[] checks = {false, false, false, false};
+	private boolean[] checks = {false, false, false, false, false};
 
 	private BiomartQueryRetrieval query;
 	private Map<String, String> resultMap;
+	private boolean withPathway;
+	private int headerIndex;
 
 	/**
 	 * constructs the DataMappingModelController and instantiates a new DataMappingModel
 	 */
-	public DataMappingModelController() {
+	public DataMappingModelController(boolean withPathway) {
 		super();
 		this.dataMappingModel = new DataMappingModel();
+		this.withPathway = withPathway;
 	}
 
 	/**
@@ -77,7 +92,13 @@ public class DataMappingModelController extends Observable {
 		this.identifierType = identifier.split(" ")[0];
 		doCheck(IDENTIFIER_TYPE);
 	}
-
+	
+	public void setSpecies(String species) {
+		this.species = species.split(" ")[0];
+		doCheck(SPECIES);
+	}
+	
+	
 	/**
 	 * sets the checks[index] to true and does check if all parameters for
 	 * the dataMapping were set, or if called with "-1" only checks,
@@ -99,10 +120,15 @@ public class DataMappingModelController extends Observable {
 		case VALUES:
 			checks[VALUES] = true;
 			break;
+		case SPECIES:
+			checks[SPECIES] = true;
+			break;
 		default:
 			break;		
 		}
-		if(checks[NETWORK] && checks[IDENTIFIER_TYPE] && checks[IDENTIFIER] && checks[VALUES]) {
+		//network is only need for colaration/ species is only needed for mapping into db
+		if(withPathway && checks[NETWORK] && checks[IDENTIFIER_TYPE] && checks[IDENTIFIER] && checks[VALUES]
+			|| !withPathway && checks[IDENTIFIER_TYPE] && checks[IDENTIFIER] && checks[VALUES] && checks[SPECIES]) {
 			isReady = true;
 		}
 		setChanged();
@@ -134,48 +160,213 @@ public class DataMappingModelController extends Observable {
 		}
 		doCheck(NETWORK);
 	}
+	
+	
 
 	/**
 	 * starts the BioMart query, sets the query results in the datamappingModel
 	 * and starts the main work of the dataMappingModel
 	 */
 	public void startMapping() {
-		createIdentifiervalueMap();
-		if(detectPathwayOrigin().equals("HPRD")) {
-			query = new HPRDQueryRetrieval("homo sapiens");
-		} else if(detectPathwayOrigin().equals("IntAct")) {
-			//query = new IntActQueryRetrieval(detectPathwaySpeciesHeuristic());
-			query = new IntActQueryRetrieval(detectPathwaySpeciesAll());
-		} else if(detectPathwayOrigin() == null) {
-			// TODO: throw Exception
-			System.out.println("Cannot determine the origin source of the pathway");
+		createIdentifierMultiValueMap();
+		
+		int numOfThreads = 2;
+		System.out.println("Anzahl Threads: " + numOfThreads);
+	
+		if(withPathway){ // = color the shown network
+//			createIdentifierMultiValueMap();
+			List<Future<Map<String, String>>> resultMapPart = new LinkedList<>();
+			ExecutorService executeQuerys = Executors.newFixedThreadPool(numOfThreads);
+			HashSet<QueryParallel> tasksQuery = new HashSet<>();
+		
+			
+			int labelsCounter = 0;
+			int labelsPartLength = labels.size()/numOfThreads;
+			int labelsPartMod = labels.size()%numOfThreads;
+		
+			
+			if(detectPathwayOrigin().equals("HPRD")) {
+//				query = new HPRDQueryRetrieval("homo sapiens");
+				
+				for(int i = 0; i < numOfThreads; i++){
+					if(i < labelsPartMod){
+						tasksQuery.add(new QueryParallel(new HPRDQueryRetrieval("homo sapiens"), labels.subList(labelsCounter, (labelsCounter+labelsPartLength+1)), identifierType));
+						labelsCounter = labelsCounter+labelsPartLength+1;
+
+					}else{ //letzter Block
+						tasksQuery.add(new QueryParallel(new HPRDQueryRetrieval("homo sapiens"), labels.subList(labelsCounter, (labelsCounter+labelsPartLength)), identifierType));
+						labelsCounter = labelsCounter+labelsPartLength;
+					}	
+				}
+				
+			} else if(detectPathwayOrigin().equals("IntAct")) {
+				//query = new IntActQueryRetrieval(detectPathwaySpeciesHeuristic());
+//				query = new IntActQueryRetrieval(detectPathwaySpeciesAll());
+				
+				for(int i = 0; i < numOfThreads; i++){
+					if(i < labelsPartMod){
+						tasksQuery.add(new QueryParallel(new IntActQueryRetrieval(detectPathwaySpeciesAll()), labels.subList(labelsCounter, (labelsCounter+labelsPartLength+1)), identifierType));
+						labelsCounter = labelsCounter+labelsPartLength+1;
+
+					}else{ //letzter Block
+						tasksQuery.add(new QueryParallel(new IntActQueryRetrieval(detectPathwaySpeciesAll()), labels.subList(labelsCounter, (labelsCounter+labelsPartLength)), identifierType));
+						labelsCounter = labelsCounter+labelsPartLength;
+					}	
+				}
+			} else if(detectPathwayOrigin() == null) {
+				// TODO: throw Exception
+				System.out.println("Cannot determine the origin source of the pathway");
+			}
+			
+			
+//			try {
+//				query.retrieveQueryResults(identifierType, labels);
+//			} catch (IOException e) {
+//				// TODO: manage exceptions if for example the BioMart server is down
+//				e.printStackTrace();
+//			}
+//			
+			try {
+				resultMapPart = executeQuerys.invokeAll(tasksQuery);
+			} catch (InterruptedException e1) {
+				JOptionPane.showMessageDialog(
+						null,
+						"Could not execute query.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+
+				e1.printStackTrace();
+			}
+				
+			executeQuerys.shutdown();
+			resultMap = new HashMap<String, String>();
+			
+			for(Future<Map<String, String>> res : resultMapPart){
+				try {
+					resultMap.putAll(res.get());
+
+				} catch (InterruptedException | ExecutionException e) {
+					JOptionPane.showMessageDialog(
+							null,
+							"Query dosen't work (no results).",
+							"Error", JOptionPane.ERROR_MESSAGE);
+
+					e.printStackTrace();
+				}
+			}
+			
+//			resultMap = query.getResultMap();
+			dataMappingModel.setQueryResultMap(resultMap);
+			dataMappingModel.setColoringParameters();
+			dataMappingModel.merge();
+			dataMappingModel.coloringPathway();
+		}else{ // = store data in db
+//			createIdentifierMultiValueMap();
+			List<Future<Map<String, String>>> resultMapPart = new LinkedList<>();
+			ExecutorService executeQuerys = Executors.newFixedThreadPool(numOfThreads);
+			HashSet<QueryParallel> tasksQuery = new HashSet<>();
+		
+			
+			ArrayList<String> ids = new ArrayList<String>();
+			ids.addAll(dataMappingModel.getIdentifiersMultiValuesMap().keySet());
+			String speciesString = "";
+			
+			int idsCounter = 0;
+			int idsPartLength = ids.size()/numOfThreads;
+			int idsPartMod = ids.size()%numOfThreads;
+		
+
+			
+			if(identifierType.equals("Agilent")){
+				if(species.equals("Homo")){
+					speciesString = "homo sapiens";
+//					query = new AgilentQueryRetrieval("homo sapiens");
+				}else if(species.equals("Mus")){
+					speciesString = "mus musculus";
+//					query = new AgilentQueryRetrieval("mus musculus");
+				}else if(species.equals("Saccharomyces")){
+					speciesString = "yeast";
+//					query = new AgilentQueryRetrieval("yeast");
+				}
+			}
+			
+
+			
+			for(int i = 0; i < numOfThreads; i++){
+				if(i < idsPartMod){
+					tasksQuery.add(new QueryParallel(new AgilentQueryRetrieval(speciesString), ids.subList(idsCounter, (idsCounter+idsPartLength+1)), "UniProtWithoutPW"));
+					idsCounter = idsCounter+idsPartLength+1;
+
+				}else{ //letzter Block
+					tasksQuery.add(new QueryParallel(new AgilentQueryRetrieval(speciesString), ids.subList(idsCounter, (idsCounter+idsPartLength)), "UniProtWithoutPW"));
+					idsCounter = idsCounter+idsPartLength;
+				}	
+			}
+			
+			try {
+				resultMapPart = executeQuerys.invokeAll(tasksQuery);
+			} catch (InterruptedException e1) {
+				JOptionPane.showMessageDialog(
+						null,
+						"Could not execute query.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+
+				e1.printStackTrace();
+			}
+				
+			executeQuerys.shutdown();
+			resultMap = new HashMap<String, String>();
+			
+			for(Future<Map<String, String>> res : resultMapPart){
+				try {
+					resultMap.putAll(res.get());
+
+				} catch (InterruptedException | ExecutionException e) {
+					JOptionPane.showMessageDialog(
+							null,
+							"Query dosen't work (no results).",
+							"Error", JOptionPane.ERROR_MESSAGE);
+
+					e.printStackTrace();
+				}
+			}
+						
+			
+			
+//			resultMap = query.getResultMap();
+			dataMappingModel.setQueryResultMap(resultMap);
+			dataMappingModel.merge();
+			
 		}
-		try {
-			query.retrieveQueryResults(identifierType, labels);
-		} catch (IOException e) {
-			// TODO: manage exceptions if for example the BioMart server is down
-			e.printStackTrace();
-		}
-		resultMap = query.getResultMap();
-		dataMappingModel.setQueryResultMap(resultMap);
-		dataMappingModel.setColoringParameters();
-		dataMappingModel.mergeAndColor();
+		
 		setChanged();
 		notifyObservers(dataMappingModel);
 		GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 	}
-
+	
+	
 	/**
 	 * creates the HashMap of the data of the input file
 	 */
-	private void createIdentifiervalueMap() {
-		Map<String, String> map = new HashMap<String, String>();
+	private void createIdentifierMultiValueMap() {
+		Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+//		ArrayList<String> header = new ArrayList<String>();
+//		for(ArrayList<String> multiValue : multiValues){
+//			header.add(multiValue.get(headerIndex));
+//		}
+//		
+//		dataMappingModel.setHeader(header);
 		for (String id : identifiers) {
 			int index = identifiers.indexOf(id);
-			map.put(id, values.get(index));
+			ArrayList<String> valueRow = new ArrayList<String>();
+			for(ArrayList<String> multiValue : multiValues){
+				valueRow.add(multiValue.get(index));
+			}
+			map.put(id, valueRow);
+			
 		}
-		dataMappingModel.setIdentifiersValuesMap(map);
+		dataMappingModel.setIdentifiersMultiValuesMap(map);
 	}
+	
 
 	/**
 	 * detects of which origin is the selected pathway,
@@ -297,23 +488,44 @@ public class DataMappingModelController extends Observable {
 		Vector<Vector<String>> allData = importData.getDataVector();
 		identifiers = new ArrayList<String>();
 		for(int i = 0; i<allData.size(); i++) {
-			Vector<String> rowData = allData.get(i);
-			identifiers.add(rowData.get(identifierColumnIndex));
+			//TODO Testen!!!
+			if(i != headerIndex){
+				Vector<String> rowData = allData.get(i);
+				identifiers.add(rowData.get(identifierColumnIndex));
+			}
 		}
 		doCheck(IDENTIFIER);
-	}
-
+	}	
+	
 	/**
-	 * extracts the values (stored in one column) out of the imported Data (stored row wise)
-	 * @param valueColumnIndex
+	 * extracts the values (stored in some columns) out of the imported Data (stored row wise)
+	 * @param columnIndices
 	 */
-	public void setValues(int valueColumnIndex) {
+	public void setMultiValues(HashSet<Integer> columnIndices) {
+		multiValues = new ArrayList<ArrayList<String>>();
 		Vector<Vector<String>> allData = importData.getDataVector();
-		values = new ArrayList<String>();
-		for(int i = 0; i<allData.size(); i++) {
-			Vector<String> rowData = allData.get(i);
-			values.add(rowData.get(valueColumnIndex));
+		
+		ArrayList<String> header = new ArrayList<String>();
+
+		
+		for(int columnIndex : columnIndices){
+			ArrayList<String> valueList = new ArrayList<String>();
+			for(int i = 0; i<allData.size(); i++) {
+				Vector<String> rowData = allData.get(i);
+				if(i != headerIndex){
+					valueList.add(rowData.get(columnIndex));
+				}else{
+					header.add(rowData.get(columnIndex));
+				}
+			}
+			multiValues.add(valueList);
 		}
+		
+		dataMappingModel.setHeader(header);
+		
+	}
+	
+	public void doValueCheck(){
 		doCheck(VALUES);
 	}
 
@@ -357,28 +569,58 @@ public class DataMappingModelController extends Observable {
 	}
 
 	/**
-	 * extracts the new data for the coloring from the JTable, invokes the coloring and notifies the View
+	 * extracts the new data for the coloring/storing from the JTable, invokes the coloring and notifies the View
 	 * @param dmt
 	 */
 	public void setNewMergeMap(JTable dmt) {
 		Map<String, List<String>> newMergeMap = new HashMap<String, List<String>>();
 		Map<String, List<String>> newDupMap = new HashMap<String, List<String>>();
-		for(int i = 0; i<dmt.getRowCount(); i++) {
-			JRadioButton jButton = (JRadioButton) dmt.getValueAt(i, 3);
-			if(jButton.isSelected()) {
-				List<String> changedValue = new ArrayList<String>();
-				changedValue.add((String) dmt.getValueAt(i, 1));
-				changedValue.add((String) dmt.getValueAt(i, 2));
-				newMergeMap.put((String) dmt.getValueAt(i, 0), changedValue);
-			} else if(!jButton.isSelected()) {
-				List<String> changedValue = new ArrayList<String>();
-				changedValue.add((String) dmt.getValueAt(i, 1));
-				changedValue.add((String) dmt.getValueAt(i, 2));
-				newDupMap.put((String) dmt.getValueAt(i, 0), changedValue);
+		if(withPathway){
+			for(int i = 0; i<dmt.getRowCount(); i++) {
+				JRadioButton jButton = (JRadioButton) dmt.getValueAt(i, 3);
+				if(jButton.isSelected()) {
+					List<String> changedValue = new ArrayList<String>();
+					changedValue.add((String) dmt.getValueAt(i, 1));
+					changedValue.add((String) dmt.getValueAt(i, 2));
+					newMergeMap.put((String) dmt.getValueAt(i, 0), changedValue);
+				} else if(!jButton.isSelected()) {
+					List<String> changedValue = new ArrayList<String>();
+					changedValue.add((String) dmt.getValueAt(i, 1));
+					changedValue.add((String) dmt.getValueAt(i, 2));
+					newDupMap.put((String) dmt.getValueAt(i, 0), changedValue);
+				}
 			}
+			dataMappingModel.updateColor(newMergeMap, newDupMap);
+		}else{ //store data into db is diffrent because the ordering of columns is different
+			for(int i = 0; i<dmt.getRowCount(); i++) {
+				JRadioButton jButton = (JRadioButton) dmt.getValueAt(i, 2);
+				if(jButton.isSelected()) {
+					List<String> changedValue = new ArrayList<String>();
+					changedValue.add((String) dmt.getValueAt(i, 1));
+					for(int j = 3; j < dmt.getColumnCount(); j++){
+						changedValue.add((String) dmt.getValueAt(i, j));
+					}				
+					newMergeMap.put((String) dmt.getValueAt(i, 0), changedValue);
+				} else if(!jButton.isSelected()) {
+					List<String> changedValue = new ArrayList<String>();
+					changedValue.add((String) dmt.getValueAt(i, 1));
+					for(int j = 3; j < dmt.getColumnCount(); j++){
+						changedValue.add((String) dmt.getValueAt(i, j));
+					}
+					newDupMap.put((String) dmt.getValueAt(i, 0), changedValue);
+				}
+			}
+			//TODO Methode für Daten Export
+//			System.out.println(newMergeMap);
 		}
-		dataMappingModel.updateColor(newMergeMap, newDupMap);
+
+		
 		setChanged();
 		notifyObservers(dataMappingModel);			
 	}
+	
+	public void setHeaderIndex(int headerIndex) {
+		this.headerIndex = headerIndex;
+	}
+	
 }
