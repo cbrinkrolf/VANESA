@@ -1,5 +1,11 @@
 package graph.algorithms;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,6 +13,14 @@ import java.util.LinkedHashSet;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import javax.swing.JOptionPane;
+
 import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -25,40 +39,68 @@ public class DenselyConnectedBiclustering {
 	InternalGraphRepresentation graphRepresentation = con.getPathway(w.getCurrentPathway()).getGraphRepresentation(); 
 	Pathway pw = con.getPathway(w.getCurrentPathway());
 	MyGraph mg = pw.getGraph();
+	
 
-	//Atttributes of vertices.
-	HashMap<Integer, Double[]> attr  = new HashMap<>();
+	//Minimale Größe des Graphen für die parallele Verarbeitung
+	private final int MIN_PARALLEL_SIZE = 0;
 	
-	//Adjacencie-List: Key: vertex-ID Values: list of connected vertex-IDs
-	Hashtable<Integer, HashSet<Integer>> adjacencies = new Hashtable<Integer, HashSet<Integer>>();
+	private int numOfThreads;
 	
-	//List of IDs and corresponding vertices
-	HashMap<Integer, BiologicalNodeAbstract> idBna = new HashMap<Integer, BiologicalNodeAbstract>();
+	//Atttribute der Knoten.
+//	private HashMap<Integer, Double[]> attributes  = new HashMap<>();
+	private HashMap<Integer, ArrayList<Double>> attributes;
 	
-	LinkedList<DCBresultSet> results;
+	private ArrayList<Integer> attrTyps;
+	private ArrayList<Integer> attrNames;
 	
-	public LinkedList<DCBresultSet> getResults() {
-		return results;
-	}
+	
+	
+	//Adjazenliste: Key: Knoten-ID Values: Liste der verbundenen Knoten
+	private HashMap<Integer, HashSet<Integer>> adjacencies = new HashMap<>();
+	
+	//Liste von IDs und den zugehörigen Knoten-Objekten
+	private HashMap<Integer, BiologicalNodeAbstract> idBna = new HashMap<>();
+	
+	
 
-	double[] ranges;
-	int numDim;
+	
+	private DCBTests test;
+
+
+	/*
+	 * Eingabedaten des Benutzers:
+	 */
+	//Max. Distanz der Attribute
+	final ArrayList<Double> ranges;
+	//# der Attributs-Dimensionen dei Übereinstimmen müssen
+	int attrdim;
+	//Min. Dichte der Cluster
 	double density;
 	//Test2:
 //	double range = 0.0;
 //	int numDim = 3;
 //	double density = 0.7;
 	//Test1:
-//	double range = 0.5;
+//	double[] ranges = {0.5, 0.5, 0.5};
 //	int numDim = 2;
 //	double density = 0.8;
 	
-	// throws IllegalArgumentException, IOException
-	public DenselyConnectedBiclustering(double density, double[] ranges, double attrdim){
+//	double[] ranges = {0.5, 0.5, 0.5};
+//	int numDim = 2;
+//	double density = 0.8;
+	
+	//TODO entfernen (nur zum testen)
+	long preprocessingTime;
+
+	// Constructor: Benutzereingaben werden gesetzt. Aufruf der dcb-Methode
+	public DenselyConnectedBiclustering(double density, ArrayList<Double> ranges2, ArrayList<Integer> attrTyps, ArrayList<Integer> attrNames, double attrdim){
 		this.density = density;
-		this.ranges = ranges;
-		this.numDim = (int) attrdim;
-		
+		this.ranges = ranges2;
+		this.attrTyps = attrTyps;
+		this.attrNames = attrNames;
+		this.attrdim = (int) attrdim;
+		this.numOfThreads = 2;
+
 //		FileReader fr = new FileReader(attributes);
 //		BufferedReader br = new BufferedReader(fr);
 //
@@ -84,15 +126,16 @@ public class DenselyConnectedBiclustering {
 //			br.close();
 //		}
 
-		dcb();
+
 
 	}
 	
 
 	/*
-	 * Generates Attribute-Matrix and call methods preprocessingGraph and expansion.
+	 * Erstellung der Attribut-Matrix und Adjazenliste sowie Aufruf des Algorithmus
+	 * Übersteigt der Graph eine bestimmte Größe wird der parallele Algorithmus verwendet
 	 */
-	public void dcb(){
+	public LinkedList<DCBresultSet> start(){
 		
 		//Test 2:
 //		attr.put(100, new Double[] {2.0, -2.0, 1.0, 0.0, 2.0, 1.0, 2.0});
@@ -107,18 +150,17 @@ public class DenselyConnectedBiclustering {
 //		attr.put(109, new Double[] {2.0, 2.0, -1.0, -1.0, -1.0, -1.0, 0.0});
 //		attr.put(110, new Double[] {2.0, 0.0, 1.0, 1.0, 1.0, -2.0, -1.0});
 		
-		//Test 1:
+//		//Test 1:
 //		attr.put(100, new Double[] {0.5, 0.0, -1.0});
 //		attr.put(101, new Double[] {1.0, 1.0, -1.0});
-//		attr.put(105, new Double[] {1.0, 0.5, -1.0});
-//		attr.put(104, new Double[] {1.0, 1.0, -0.5});
-//		attr.put(106, new Double[] {0.5, 0.0, 0.0});
-//		attr.put(107, new Double[] {-1.0, 0.0, 2.0});
+//		attr.put(102, new Double[] {1.0, 0.5, -1.0});
+//		attr.put(103, new Double[] {1.0, 1.0, -0.5});
+//		attr.put(104, new Double[] {0.5, 0.0, 0.0});
+//		attr.put(105, new Double[] {-1.0, 0.0, 2.0});
 		
 		for(BiologicalNodeAbstract vertex1 : mg.getAllVertices()){
 			HashSet<Integer> neigbours = new HashSet<Integer>();
 			idBna.put(vertex1.getID(), vertex1);
-			
 			for(BiologicalNodeAbstract vertex2 : mg.getAllVertices()){
 				
 				
@@ -129,26 +171,137 @@ public class DenselyConnectedBiclustering {
 					
 				}
 			}
-			this.adjacencies.put(vertex1.getID(), neigbours);
+			adjacencies.put(vertex1.getID(), neigbours);
 
 		}
 		
-		setAttributes();
-	    
-		preprocessingGraph();
+//		HashMap<Integer, HashSet<Integer>> adjacenciesTest = deepCopy(adjacencies);
+//		System.out.println(adjacenciesTest.equals(adjacencies));
+//		
+		// TODO
+		setAttributes2();
 		
-		expansion();
-
+		HashSet<HashSet<Integer>> extended = null;
+		
+	    //Liste von Ergebnis-Objekten = Cluster mit ihren Eigenschaften
+		
+		
+		if(adjacencies.size() >= MIN_PARALLEL_SIZE){
+			HashSet<HashSet<Integer>> seeds = preprocessingParallel();
+			if(!seeds.isEmpty()){
+				extended = expansionParallel(seeds);
+			}
+		}else{
+			HashMap<HashSet<Integer>, HashSet<Integer>> seeds = preprocessingGraph();
+			if(!seeds.isEmpty()){
+				extended = expansion(seeds);
+			}
+		}
+		LinkedList<DCBresultSet> results = null;
+		if(extended != null){
+			results = doResultsList(extended);
+		}
+		
+		
+		return results;
 	}
 	
 	
+	private LinkedList<DCBresultSet> doResultsList(
+			HashSet<HashSet<Integer>> extended) {
+
+		LinkedList<DCBresultSet> results = new LinkedList<>();
+		
+		//Objekt das die benötigten Scores (densiti und homogenity) liefert
+		test = new DCBTests(adjacencies, density, ranges, attrdim, attributes);
+		
+
+		//Erstellung der Ergebnis-Objekte zur Ausgabe
+		for(HashSet<Integer> cluster : extended){
+			int numOfVertices = cluster.size();
+			double densityScore  = test.densityScore(cluster);
+			int numOfhomogenAttributes = test.homogenityScore(cluster);
+			HashSet<BiologicalNodeAbstract> vertices = new HashSet<BiologicalNodeAbstract>();
+			String labels = new String();
+			
+			for(Integer id : cluster){
+				BiologicalNodeAbstract bna = idBna.get(id);
+				labels += bna.getLabel() + " ";
+				vertices.add(bna);
+			}
+			results.add(new DCBresultSet(numOfVertices, densityScore, numOfhomogenAttributes, 
+					labels, vertices));
+		}
+		
+		Collections.sort( results, new DCBresultSet() );
+		
+		return results;
+	}
 	
+	private void setAttributes2() {
+
+		//TODO attribut-liste erstellen
+		attributes = new HashMap<Integer, ArrayList<Double>>();
+//		NetworkProperties nwProperties = new NetworkProperties();
+		
+		ArrayList<Double> values;
+		for(int id : adjacencies.keySet()){
+			values = new ArrayList<Double>();
+			for(int i = 0; i < attrTyps.size(); i++){
+				int itemTypIndex = attrTyps.get(i);
+				int itemIndex = attrNames.get(i);
+		        switch(itemTypIndex){
+		        case 0: //"Graph characteristic"
+			        switch(itemIndex){
+			        case 0: //"Node degree"		    		
+			    		values.add((double) adjacencies.get(id).size());
+
+			            break;
+			        case 1://"Neighbour degree"
+			    		
+
+			        	
+			            break;
+			        default:
+			        	break;
+			        }
+		            break;
+		        case 1://"Experimental Data
+		        	//TODO aus Graph laden
+		        	
+		            break;
+		        case 2://"Biological Characteristic"
+			        switch(itemIndex){
+			        case 0: //"Protein length"
+						BiologicalNodeAbstract vertex = idBna.get(id);
+
+		                if(vertex instanceof Protein){
+		                    Protein p = (Protein) vertex;
+		                    values.add((double) p.getAaSequence().length());  
+		                }else{
+		                	values.add(0.0);
+		                }
+			            break;
+			        default:
+			        	break;
+			        }
+		        	break;
+		        default:
+		        	break;
+		        }
+			}
+			attributes.put(id, values);
+		}
+		
+	}
+
+	//Random-Generierung der Attribute; wird später durch echte Werte ersetzt
 	private void setAttributes() {
-		int numOfAttributes = ranges.length;
+		int numOfAttributes = ranges.size();
 		for(int id : adjacencies.keySet()){
 			
-			Double[] values = new Double[numOfAttributes];
-			values[0] = (double) adjacencies.get(id).size();
+			ArrayList<Double> values = new ArrayList<Double>();
+			values.add((double) adjacencies.get(id).size());
 			
 			Double[] factor = {1.0, 10.0, 200.0, 30.0, 50.0, 0.5};
 			
@@ -157,28 +310,32 @@ public class DenselyConnectedBiclustering {
 
                 if(vertex instanceof Protein){
                     Protein p = (Protein) vertex;
-                    values[1] = (double) p.getAaSequence().length();  
+                    values.add((double) p.getAaSequence().length());  
                 }else{
-                	values[1] = 0.0;
+                	values.add(0.0);
                 }
                 
                 for(int i = 2; i < numOfAttributes; i++){
-                	values[i] = Math.random()*factor[i%6];
+                	values.add(Math.random()*factor[i%6]);
                 }
 			}
 			
-			attr.put(id, values);
+			attributes.put(id, values);
 		}
 		
 	}
 
 
 	/*
-	 * Test if each vertex has at least one edge which satisfies homogeneity. 
-	 * If not: remove form adjacencies.
+	 * Überprüft ob jeder Knoten mindestens einen Nachbarn hat mit dem Homogenität erfüllt ist
+	 * Wenn nicht wird der Knoten aus der Adjazenzliste entfernt
 	 */
-	public void preprocessingGraph(){
-		HashSet<Integer> removalAdjacencies = new HashSet<Integer>();
+	public HashMap<HashSet<Integer>, HashSet<Integer>> preprocessingGraph(){
+		HashSet<Integer> removalAdjacencies = new HashSet<>();
+		
+		//Objekt das die benötigten Tests (densiti und homogenity) durchführt
+		test = new DCBTests(adjacencies, density, ranges, attrdim, attributes);
+		
 		for(int vertex1 : adjacencies.keySet()){
 
 			boolean isHomogen = false;
@@ -189,7 +346,7 @@ public class DenselyConnectedBiclustering {
 				
 					testVertices.add(vertex1);
 					testVertices.add(vertex2);
-					if(testHomogenity(testVertices)){
+					if(test.testHomogenity(testVertices)){
 						isHomogen = true;
 					}
 					
@@ -203,37 +360,19 @@ public class DenselyConnectedBiclustering {
 		}
 		
 		removeFormAdjacencies(removalAdjacencies);
-
-	}
-	
-	/*
-	 * Removes each vertex of removalAdjacencies form neighbour-list of adjacencies
-	 * and in the end the vertex itself.
-	 */
-	private void removeFormAdjacencies(HashSet<Integer> removalAdjacencies) {
-		for(int vertex : removalAdjacencies){
-			for(int neigbour : adjacencies.get(vertex)){
-				adjacencies.get(neigbour).remove(vertex);
-			}
-			
-			adjacencies.remove(vertex);
-			
-		}
 		
-	}
-
-	/*
-	 * Finds the maximal graph which satisfies density and homogenity.
-	 */
-	private void expansion() {
 		
 		/*
-		 * generate seeds: First HashSet = connected subgraph (with tow elements); 
-		 * second HashSet = neighbour vertices of this subgraph
-		 * neighbours are only added if the id of vertex is bigger than the tow of the 
-		 * connected subgraph.
+		 * Generierung der Seeds: Erstes HashSet = verbundener Subgraph (mit zwei Elementen)
+		 * Zweites HashSet = Nachbarn-knoten dieses Subgraphen
+		 * Nachbarn werden nur hinzugefügt wenn ihrere IDs größer sind
+		 * als die beiden des Subgraphen
 		 */
-		Hashtable<HashSet<Integer>, HashSet<Integer>> seeds = new Hashtable<HashSet<Integer>, HashSet<Integer>>();
+		HashMap<HashSet<Integer>, HashSet<Integer>> seeds = new HashMap<>();
+		//Objekt das die benötigten Tests (densiti und homogenity) durchführt
+		test = new DCBTests(adjacencies, density, ranges, attrdim, attributes);
+				
+		
 		
 		for(int vertex : adjacencies.keySet()){
 			for(int neighbour : adjacencies.get(vertex)){
@@ -241,7 +380,7 @@ public class DenselyConnectedBiclustering {
 					HashSet<Integer> testSet = new HashSet<Integer>();
 					testSet.add(vertex);
 					testSet.add(neighbour);
-					if(testDensity(testSet) && testHomogenity(testSet)){
+					if(test.testDensity(testSet) && test.testHomogenity(testSet)){
 						HashSet<Integer> tempSeed = new HashSet<Integer>();
 						tempSeed.add(vertex);
 						tempSeed.add(neighbour);
@@ -269,11 +408,362 @@ public class DenselyConnectedBiclustering {
 		
 		}
 		
+		return seeds;
+
+	}
+	
+	private HashSet<HashSet<Integer>> preprocessingParallel(){
+		
+		long starttime;
+		long endtime;
+		
+
+		//Benötigte Objekte zur Parallelisierung des Preprocessing:
+		ExecutorService executorPreprocessing = Executors.newFixedThreadPool(numOfThreads);
+		HashSet<DCBpreprocessing> tasks = new HashSet<DCBpreprocessing>();
+		List<Future<HashSet<Integer>>> futRes = new LinkedList<>();
+		
+		//Modifizierte Adjazenzliste (Jeder Knoten kommt nur einfach vor):
+		HashMap<Integer, HashSet<Integer>> adjacenciesSingle = adjacenciesSingle();
+
+		starttime = System.currentTimeMillis();
+		
+		//Preprocessing: Jedes Knoten-Paar aus adjacenciesSingle wird in einem Task verarbeitet
+		//(d.h. bildet eine eigenes Callable-Objekt).
+		for(Integer vertex1 : adjacenciesSingle.keySet()){
+			for(Integer vertex2 : adjacenciesSingle.get(vertex1)){
+				tasks.add(new DCBpreprocessing(vertex1, vertex2, adjacencies, density, ranges, attrdim, attributes));
+			}
+		}
+		
+		try {
+			futRes = executorPreprocessing.invokeAll(tasks);
+			
+		} catch (InterruptedException e1) {
+			JOptionPane.showMessageDialog(
+					null,
+					"Preprocessing dosen't work.",
+					"Error", JOptionPane.ERROR_MESSAGE);
+
+			e1.printStackTrace();
+		}
+		
+		executorPreprocessing.shutdown();
+		
+
+		HashSet<HashSet<Integer>> seeds = new HashSet<>();
+		
+		//Liste der Seeds die nach dem Preprocessing NICHT entfernt werden
+//		HashSet<Integer> verticesWhitelist = new HashSet<>();
+		
+		HashMap<Integer, HashSet<Integer>> adjacencies_temp = new HashMap<>();
+		
 		
 		/*
-		 * Iterates over the seeds-List and adds a connected vertex to the seed if density and homogenity
-		 * are satisfied. If the test is not satisfied the last satisfying seed is added to the results
-		 * (extended).
+		 * Erstellen eine neue Adjazenzliste. Und 1. Teil der Seedgeneration: 
+		 * Adjacencies der Seeds werden später hinzugefügt
+		 */
+		for(Future<HashSet<Integer>> res : futRes){
+			try {
+				HashSet<Integer> seed = res.get();
+				if(!seed.isEmpty()){
+					seeds.add(seed);
+					
+					//TODO Aufbau Adjazenzliste:
+					Iterator<Integer> seedelements = seed.iterator();
+					int vertex1 = seedelements.next();
+					int vertex2 = seedelements.next();
+					if(adjacencies_temp.containsKey(vertex1)){
+						adjacencies_temp.get(vertex1).add(vertex2);
+						
+					}else{
+						HashSet<Integer> neighbour = new HashSet<>();
+						neighbour.add(vertex2);
+						adjacencies_temp.put(vertex1, neighbour);
+					}
+					if(adjacencies_temp.containsKey(vertex2)){
+						adjacencies_temp.get(vertex2).add(vertex1);
+						
+					}else{
+						HashSet<Integer> neighbour = new HashSet<>();
+						neighbour.add(vertex1);
+						adjacencies_temp.put(vertex2, neighbour);
+					}
+					
+					
+//					verticesWhitelist.addAll(seed);
+				}
+			} catch (InterruptedException | ExecutionException e) {
+				JOptionPane.showMessageDialog(
+						null,
+						"Seedgeneration dosen't work.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+
+				e.printStackTrace();
+			}
+		}
+
+		endtime = System.currentTimeMillis();
+		
+		preprocessingTime = endtime-starttime;
+		
+		int adjacenciesSizeVorher = adjacencies.size();
+		adjacencies = adjacencies_temp;
+		
+		//Knoten die nach Preprocessing entfernt werden
+//		HashSet<Integer> removalAdjacencies = new HashSet<>();
+//		removalAdjacencies.addAll(adjacencies.keySet());
+//		removalAdjacencies.removeAll(verticesWhitelist);
+		
+		/*
+		 * Entfernt die Knoten die durch das Preprocessing rausgefiltert wurden
+		 */
+//		removeFormAdjacencies(removalAdjacencies);
+		
+
+		System.out.println("remove: ");
+		System.out.println((adjacenciesSizeVorher-adjacencies.size()) + " von " + 
+				adjacenciesSizeVorher + " Knoten");
+		
+//		System.out.println(removalAdjacencies.size() + " von " + (verticesWhitelist.size()+removalAdjacencies.size()) + " Knoten");
+//		for(Integer removeVertex : removalAdjacencies){
+//			System.out.print(removeVertex + " ");
+//		}
+//		System.out.println();
+//		System.out.println();
+		System.out.println("Anzahl Threads: " + numOfThreads);
+		System.out.println();
+		
+		return seeds;
+
+	}
+	
+	/*
+	 * Paralleles Preprocessing
+	 * Jede Kante wird einzeln gerpüft (im Callable DCBpreprocessing)
+	 */
+	public HashSet<HashSet<Integer>> expansionParallel(HashSet<HashSet<Integer>> seeds){
+
+		long starttime2;
+		long endtime2;
+		
+		//Benötigte Objekte zur Parallelisierung der Expansion:
+		List<Future<LinkedHashSet<HashSet<Integer>>>> futureExpanded = new LinkedList<>();
+		ExecutorService executeExpansion = Executors.newFixedThreadPool(numOfThreads);
+		HashSet<DCBexpansion> tasksExpansion = new HashSet<>();
+		
+		starttime2 = System.currentTimeMillis();
+		/*
+		 * intitialisierung der Callables für die Expansion; Zunächst sind noch keine Seeds enthalten
+		 * Es werden so viele Callables erzeugt wie es Threads gibt
+		 */
+		for(int i = 0; i < numOfThreads; i++){
+			tasksExpansion.add(new DCBexpansion(adjacencies, density, ranges, attrdim, attributes));
+		}
+		
+		//vergleicht die DCBexpansion-Objekte anhand ihrer Nachbarn-Menge
+		DCBexpansionComparator expansionComparator = new DCBexpansionComparator();
+		/*
+		 * Seedgeneration 2. Teil: hinzufügen der Seed-Adjacencies und füllen der Callables mit den
+		 * Seeds: Seed wird immer dem Callable hinzugefügt das bisher die wenigsten Nachbarn (summe
+		 * über alle seeds des Objekts) enthält
+		 */
+		for(HashSet<Integer> seed : seeds){
+			HashSet<Integer> neighbours = new HashSet<>();
+			int maxID = Collections.max(seed);
+			for(Integer vertex: seed){
+				for(Integer neighbour: adjacencies.get(vertex)){
+					if(neighbour > maxID){
+						neighbours.add(neighbour);
+					}
+				}
+			}
+			DCBexpansion minSeed = Collections.min(tasksExpansion, expansionComparator); // ein comparator-objekt reicht
+			minSeed.putSeed(seed, neighbours);
+		}
+		
+		endtime2 = System.currentTimeMillis();
+		
+
+		
+
+		long starttime3;
+		long endtime3;
+		
+		starttime3 = System.currentTimeMillis();
+		try {
+			futureExpanded = executeExpansion.invokeAll(tasksExpansion);
+		} catch (InterruptedException e1) {
+			JOptionPane.showMessageDialog(
+					null,
+					"Expansion dosen't work.",
+					"Error", JOptionPane.ERROR_MESSAGE);
+
+			e1.printStackTrace();
+		}
+		
+		executeExpansion.shutdown();
+		
+		endtime3 = System.currentTimeMillis();
+		
+
+		
+		
+		HashSet<HashSet<Integer>> extended = new LinkedHashSet<>();
+		
+		int doppelCluster = 0;
+		for(Future<LinkedHashSet<HashSet<Integer>>> res : futureExpanded){
+			try {
+				doppelCluster += res.get().size();
+				extended.addAll(res.get());
+			} catch (InterruptedException | ExecutionException e) {
+				JOptionPane.showMessageDialog(
+						null,
+						"Expansion dosen't work (no results).",
+						"Error", JOptionPane.ERROR_MESSAGE);
+
+				e.printStackTrace();
+			}
+		}
+		
+		
+		/*
+		 * Entfernung doppelter Cluster: (geprüft wird auch ob ein Cluster ein anderes enthält)
+		 */
+		LinkedHashSet<HashSet<Integer>> removeSubsets = new LinkedHashSet<HashSet<Integer>>();
+		
+		for(HashSet<Integer> cluster : extended){
+			boolean subset = false;
+			for(HashSet<Integer> clusterHelp : extended){
+				if(clusterHelp.size() > cluster.size() && clusterHelp.containsAll(cluster)){
+					subset = true;
+				}
+			}
+			if(subset){
+				removeSubsets.add(cluster);
+			}
+		}
+		
+		extended.removeAll(removeSubsets);
+		
+		
+		// TODO syso raus
+		int counter = 1;
+		for(DCBexpansion expansion : tasksExpansion){
+			System.out.print("Thread " + counter + "; # Seeds " + expansion.numSeeds
+					+ "; # Nachbarn " + expansion.getNumOfNeighbours() + "; # Cluster " 
+					+ expansion.extendedSize + "; " + " davon doppelt/überlappend: " + expansion.doppelExtended);
+			
+//			System.out.print( "; Seeds: ");
+//			for(HashSet<Integer> seed : expansion.getSeeds().keySet()){
+//				System.out.print("(");
+//				for(Integer vertex : seed){
+//					System.out.print(vertex + " ");
+//				}
+//				System.out.print("), ");
+//				
+//			}
+			System.out.println();
+			counter++;
+		}
+		System.out.println("# Cluster (mit doppelten/überlappenden): " 
+				+ doppelCluster);
+		System.out.println("# Cluster (ohne doppelte/überlappende): " + extended.size());
+		System.out.println();
+		
+		System.out.println("Zeit für \"Preprocessing\": " + (preprocessingTime));
+		System.out.println("Zeit für \"Expansion Teil 1\": " + (endtime2-starttime2));
+		System.out.println("Zeit für \"Expansion Teil 2\": " + (endtime3-starttime3));
+		System.out.println("Zeit gesamt: " + ((preprocessingTime)+(endtime2-starttime2)+(endtime3-starttime3)));
+		System.out.println("----");
+		System.out.println();
+		
+		return extended;
+		
+	}
+	
+//	@SuppressWarnings("unchecked")
+//	public static <Type> Type deepCopy(Type object){
+//	  ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//	  Object objectCopy = null;
+//	  try {
+//		new ObjectOutputStream(baos).writeObject(object);
+//	  } catch (IOException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	  }
+//
+//	  ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+//	  try {
+//		objectCopy = new ObjectInputStream(bais).readObject();
+//	  } catch (ClassNotFoundException | IOException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	  }
+//
+//	  return (Type) objectCopy;
+//	}
+	
+	
+	private HashMap<Integer, HashSet<Integer>> adjacenciesSingle(){
+			HashMap<Integer, HashSet<Integer>> adjacenciesSingle = new HashMap<Integer, HashSet<Integer>>();
+					
+			for(Integer key: adjacencies.keySet()){
+				for(Integer neighbour: adjacencies.get(key)){
+					if(!adjacenciesSingle.containsKey(neighbour)){
+						if(adjacenciesSingle.containsKey(key)){
+							adjacenciesSingle.get(key).add(neighbour);
+						}else{
+							HashSet<Integer> firstNeighbour = new HashSet<>();
+							firstNeighbour.add(neighbour);
+							adjacenciesSingle.put(key, firstNeighbour);
+						}
+					}
+				}
+			}
+			
+//			System.out.println("SingleAdjacencies:");
+//			for(Integer vertex : adjacenciesSingle.keySet()){
+//				System.out.print(vertex + ": ");
+//				for(Integer neighbour : adjacenciesSingle.get(vertex)){
+//					System.out.print(neighbour + " ");
+//				}
+//				System.out.println();
+//			}
+//			System.out.println();
+			
+			return adjacenciesSingle;
+	
+	}
+	
+
+	
+	
+	/*
+	 * Removes each vertex of removalAdjacencies form neighbour-list of adjacencies
+	 * and in the end the vertex itself.
+	 */
+	private void removeFormAdjacencies(HashSet<Integer> removalAdjacencies) {
+		for(int vertex : removalAdjacencies){
+			for(int neigbour : adjacencies.get(vertex)){
+				adjacencies.get(neigbour).remove(vertex);
+			}
+			
+			adjacencies.remove(vertex);
+			
+		}
+		
+	}
+
+	/*
+	 * Findet alle Subgraphen die dicht und homogen genug sind
+	 */
+	private LinkedHashSet<HashSet<Integer>> expansion(HashMap<HashSet<Integer>, HashSet<Integer>> seeds) {
+
+		/*
+		 * Durchläuft die Seeds-Liste und fügt einen verbunden Knoten zum Seed hinzu
+		 * wenn dichte und homogenität erfüllt sind. Sind die Kriterien ncht erfüllt so wird der
+		 * Seed dem Ergebnisset (extended) zugeordnent.
 		 */
 		LinkedHashSet<HashSet<Integer>> extended = new LinkedHashSet<HashSet<Integer>>();
 		while(!seeds.isEmpty()){
@@ -287,7 +777,7 @@ public class DenselyConnectedBiclustering {
 					testSet.addAll(nodeSet);
 					testSet.add(connectedNode);
 
-					if(testDensity(testSet) && testHomogenity(testSet)){
+					if(test.testDensity(testSet) && test.testHomogenity(testSet)){
 						HashSet<Integer> tempNodeSet = new HashSet<Integer>();
 						tempNodeSet.addAll(seedsHelp.get(nodeSet));
 						for(int tempConnected : adjacencies.get(connectedNode)){
@@ -308,7 +798,7 @@ public class DenselyConnectedBiclustering {
 		}
 		
 		/*
-		 * Remove duplicate clusters
+		 * Entfernt doppelte Cluster
 		 */
 		LinkedHashSet<HashSet<Integer>> removeSubsets = new LinkedHashSet<HashSet<Integer>>();
 		
@@ -326,130 +816,7 @@ public class DenselyConnectedBiclustering {
 		
 		extended.removeAll(removeSubsets);
 		
-		
-		results = new LinkedList<DCBresultSet>();
-
-		for(HashSet<Integer> cluster : extended){
-			int numOfVertices = cluster.size();
-			double densityScore  = densityScore(cluster);
-			int numOfhomogenAttributes = homogenityScore(cluster);
-			HashSet<BiologicalNodeAbstract> vertices = new HashSet<BiologicalNodeAbstract>();
-			String labels = new String();
-			
-			for(Integer id : cluster){
-				BiologicalNodeAbstract bna = idBna.get(id);
-				labels += bna.getLabel() + " ";
-				vertices.add(bna);
-			}
-			results.add(new DCBresultSet(numOfVertices, densityScore, numOfhomogenAttributes, 
-					labels, vertices));
-		}
-		
-
-		Collections.sort( results, new DCBresultSet() );
-
-//		Collections.reverse(results);
+		return extended;
 	}
 
-	/*
-	 * Iterates about List of attributes, finds the biggest and smallest Value for each 
-	 * vertex of vertices and computes the distance. If distance is smaller or equal  
-	 * to range score increase by one. 
-	 */
-	private int homogenityScore(HashSet<Integer> vertices) {
-		Iterator<Integer> it = vertices.iterator();
-		int firstvertexID = it.next();
-		int numAttr = ranges.length;
-		int numOfSameDim = 0;
-
-		for(int i = 0; i < numAttr; i++){
-			double min = attr.get(firstvertexID)[i];
-			double max = attr.get(firstvertexID)[i];
-			
-			for(int vertex : vertices){
-				if(attr.get(vertex)[i] < min){
-					min = attr.get(vertex)[i];
-				}
-				if(attr.get(vertex)[i] > max){
-					max = attr.get(vertex)[i];
-				}
-			}
-			if(max-min <= ranges[i]){
-				numOfSameDim++;
-			}
-		}
-		return numOfSameDim;
-	}
-
-	/*
-	 * Density = # existing edges/ # max. possible edges
-	 */
-	private double densityScore(HashSet<Integer> testVertices) {
-		double edgecounter = 0;
-		double maxedges = testVertices.size()*(testVertices.size()-1);
-		for(int vertex1 : testVertices){
-			for(int vertex2 : testVertices){
-				if(adjacencies.get(vertex1).contains(vertex2)){
-					edgecounter++;
-				}
-			}
-		}
-		
-		
-		return (edgecounter/maxedges);
-	}
-	
-	/*
-	 * Iterates about List of attributes, finds the biggest and smallest Value for each 
-	 * vertex of vertices and computes the distance. If distance is smaller or equal  
-	 * to range for at least numDim dimensions the vertices are homogene. 
-	 */
-	public boolean testHomogenity(HashSet<Integer> vertices){
-		Iterator<Integer> it = vertices.iterator();
-		int firstvertexID = it.next();
-		int numAttr = ranges.length;
-		int numOfSameDim = 0;
-
-		for(int i = 0; i < numAttr; i++){
-			double min = attr.get(firstvertexID)[i];
-			double max = attr.get(firstvertexID)[i];
-			
-			for(int vertex : vertices){
-				if(attr.get(vertex)[i] < min){
-					min = attr.get(vertex)[i];
-				}
-				if(attr.get(vertex)[i] > max){
-					max = attr.get(vertex)[i];
-				}
-			}
-			if(max-min <= ranges[i]){
-				numOfSameDim++;
-				if(numOfSameDim == numDim){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/*
-	 * Density = # existing edges/ # max. possible edges
-	 * true if density of subgraph is bigger or equal to threshold (density)
-	 * Each edge is counted twiche! (forward and backward)
-	 */
-	private boolean testDensity(HashSet<Integer> testVertices) {
-		double edgecounter = 0;
-		double maxedges = testVertices.size()*(testVertices.size()-1);
-		for(int vertex1 : testVertices){
-			for(int vertex2 : testVertices){
-				if(adjacencies.get(vertex1).contains(vertex2)){
-					edgecounter++;
-					if((edgecounter/maxedges)>=density){
-						return true;
-					}
-				}
-			}
-		}
-		return false;
-	}
 }

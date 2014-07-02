@@ -1,5 +1,6 @@
 package dataMapping.biomartRetrieval;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,5 +25,13 @@ public class IlluminaQuery extends Query {
 		setFilterName(filterName);
 		setAttributeName(ATTRIBUTE);
 		setFilterValues(fValues);
+	}
+
+	@Override
+	public List<String> getAttributes() {
+		List<String> attributes = new ArrayList<String>();
+		attributes.addAll(getAttributeName());
+		attributes.add(getFilterName());
+		return attributes;
 	}
 }

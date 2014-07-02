@@ -6,10 +6,13 @@ import gui.MainWindow;
 import gui.MainWindowSingelton;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -28,6 +31,7 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -54,6 +58,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import dataMapping.dataImport.ExcelException;
@@ -66,7 +71,7 @@ import biologicalElements.Pathway;
  * @author dborck
  *
  */
-public class DataMappingView extends JDialog implements Observer{
+public class DataMapping2View extends JDialog implements Observer{
 
 	private static final long serialVersionUID = 1L;
 	public static MainWindow w = MainWindowSingelton.getInstance();
@@ -89,9 +94,11 @@ public class DataMappingView extends JDialog implements Observer{
 	private JTextField headerTF;
 
 	// these are the up to date possible identifiers for the BioMart queries
-	private String[] identifier = {"none", "Agilent [e.g. A_23_P30024] ","Affymetrix [e.g. 209239_at]", "EMBL [e.g. M58603]", "UniProt [e.g. P19838]", "Illumina [e.g. ILMN_1674519]"};
+	private String[] identifier = {"none", "Agilent [e.g. A_23_P30024] ","Affymetrix [e.g. 209239_at]", "EMBL [e.g. M58603]", "UniProt [e.g. P19838]"};
+	private String[] species = {"none", "Homo sapiens (human)","Mus musculus (mouse)", "Saccharomyces cerevisiae (yeast)"};
 	private JTextField identifierTF;
 	private JComboBox<String> identifierCB;
+	private JComboBox<String> speciesCB;
 	
 	private JTextField valueTF;
 
@@ -115,11 +122,11 @@ public class DataMappingView extends JDialog implements Observer{
 
 	private JPanel dataAdjust;
 	private JPanel buttonPanel;
-	private JSlider slider;
 	private JTable dataMappingTable;
 	private JScrollPane dataMappingScroll;
 	private JButton changeData;
 	private JButton changeDataAndClose;
+	private JButton cancel;
 
 	private JPanel helpPanel;
 	private Object storedPathway;
@@ -129,7 +136,7 @@ public class DataMappingView extends JDialog implements Observer{
 	/**
 	 * constructs a new view as a JDialogPanel 
 	 */
-	public DataMappingView() {
+	public DataMapping2View() {
 		super(w,"Data Mapping");
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
@@ -152,13 +159,7 @@ public class DataMappingView extends JDialog implements Observer{
 		progressBar = new JProgressBar();
 		progressBar.setVisible(false);
 		panelSource.add(progressBar, "skip 1, wrap, growx");
-		
-		panelSource.add(new JLabel("Second Step - Select or create (by right click on the table) a network."), "wrap, span, growx");
-		panelSource.add(new JLabel("Network:"));
 
-		// fill in all Pathways of the MainWindow
-		initPathwayComboBox();
-		panelSource.add(pathwayCB, "growx, wrap 15");
 		panelSep = new JPanel(new MigLayout("fillx", "[left]"));
 		panelSep.setMinimumSize(new Dimension(675, 30));
 		panelSep.add(new JLabel("Data Preview"));
@@ -176,9 +177,15 @@ public class DataMappingView extends JDialog implements Observer{
 		scroll.setHorizontalScrollBarPolicy( JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scroll.setVerticalScrollBarPolicy( JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		panelData.add(scroll, "west, gapright 10");
-		panelData.add(new JLabel("<html>Third Step - <br></br>Select the row with your header labels</html>"), "span, wrap");
+		panelData.add(new JLabel("<html>Second Step - <br></br>Select the row with your header labels</html>"), "span, wrap");
 		panelData.add(headerTF = new JTextField("Click in one cell with a header label"), "span, growx, wrap 15");
 		headerTF.setEditable(false);
+		panelData.add(new JLabel("<html>Third Step - <br></br>Select the species-DB which you want to browse</html>"), "span, wrap");
+		panelData.add(new JLabel("Species:"), "wrap");
+		speciesCB = new JComboBox<String>(species);
+		speciesCB.setActionCommand("species");
+		panelData.add(speciesCB, "span, growx, wrap 15");
+		
 		panelData.add(new JLabel("<html>Fourth Step - <br></br>Select the type of your identifiers</html>"), "span, wrap");
 		panelData.add(new JLabel("Type of identifier:"), "wrap");
 		identifierCB = new JComboBox<String>(identifier);
@@ -230,13 +237,16 @@ public class DataMappingView extends JDialog implements Observer{
 		mainPanel.add(panelData);
 
 		// panel for display mapping data
-		dataAdjust = new JPanel(new MigLayout("", "[center][right]", "[b]"));
+
+		dataAdjust = new JPanel(new MigLayout("", "[grow]", ""));
 		buttonPanel = new JPanel(new MigLayout("", "[]", ""));
 		changeData = new JButton("Change");
 		changeData.setActionCommand("changeData");
 		changeDataAndClose = new JButton("OK");
 		changeDataAndClose.setActionCommand("changeDataAndClose");
-		
+		cancel = new JButton("Cancel");
+		cancel.setActionCommand("cancelChange");
+
 		// panel for the screenshots tutorial
 		helpPanel = new JPanel();
 
@@ -353,8 +363,8 @@ public class DataMappingView extends JDialog implements Observer{
 		}
 		if (arg.getClass().equals(String.class) && arg.equals("reset")) {
 			okButton.setEnabled(false);
-			pathwayCB.setSelectedIndex(0);
 			identifierCB.setSelectedIndex(0);
+			speciesCB.setSelectedIndex(0);
 		}
 		if (arg.getClass().equals(DataMappingModel.class)) {
 			final DataMappingModel dmm = (DataMappingModel) arg;
@@ -362,7 +372,6 @@ public class DataMappingView extends JDialog implements Observer{
 				@Override
 				public void run() {
 					closeProgressbarBiomart();
-					setGradientSlider(dmm);
 					setDataMappingTableModel(dmm);
 					addAdjustmentComponents();
 				}
@@ -383,42 +392,58 @@ public class DataMappingView extends JDialog implements Observer{
 		Vector<Object> allData = new Vector<Object>();
 		Vector<String> columnNames = new Vector<String>();
 
-		columnNames.add("Network Label");
+		columnNames.add("UniProt accession");
 		columnNames.add("Identifier");
-		columnNames.add("Data Value");
 		columnNames.add("Unique/Duplicate");
+		for(String headerString : dmm.getHeader()){
+			columnNames.add(headerString);
+		}
 		
 		// loop to list all used and unused data for the network
 		for(Entry<String, List<String>> entry : mergeMap.entrySet()) {
 			Vector<Object> rowDataV = new Vector<Object>();
 			rowDataV.add(entry.getKey());
 			rowDataV.add(entry.getValue().get(0));
-			rowDataV.add(entry.getValue().get(1));
-			if(!dups.containsKey(entry.getKey())) { // a unique entry
-				JRadioButton unique = new JRadioButton("unique", true);
-				rowDataV.add(unique);
-				allData.add(rowDataV);
-			} else { // this one is used for coloring but there is another one with the same label
+			if(dups.containsKey(entry.getKey())) { // this one is used for upload but there is another one with the same label
 				JRadioButton dUsed = new JRadioButton("duplicated", true);
 				ButtonGroup group = new ButtonGroup();
-				group.add(dUsed);
+				group.add(dUsed);				
 				rowDataV.add(dUsed);
-				allData.add(rowDataV);
 				// loop to extract the data of the duplicated
 				int numOfDups = (dups.get(entry.getKey()).size())/entry.getValue().size();
 				int valueLength = entry.getValue().size();
+				
+				for(int i = 1; i < entry.getValue().size(); i++){
+					rowDataV.add(entry.getValue().get(i));
+					
+				}
+				allData.add(rowDataV);
 				for(int i = 0; i<numOfDups; i++) {
 					Vector<Object> rowDataD = new Vector<Object>();
 					rowDataD.add(entry.getKey());
 					rowDataD.add(dups.get(entry.getKey()).get(i*valueLength));
-					rowDataD.add(dups.get(entry.getKey()).get(i*valueLength+1));
 					JRadioButton dunused = new JRadioButton("duplicated", false);
 					group.add(dunused);
 					rowDataD.add(dunused);
-
+					
+					for(int j = 1; j < valueLength; j++){
+						rowDataD.add(dups.get(entry.getKey()).get(i*valueLength+j));
+					}
 					allData.add(rowDataD);
 				}
 			}
+			
+			else { // a unique entry
+				JRadioButton unique = new JRadioButton("unique", true);
+				rowDataV.add(unique);
+
+				for(int i = 1; i < entry.getValue().size(); i++){
+					rowDataV.add(entry.getValue().get(i));
+					
+				}
+				allData.add(rowDataV);
+			}
+			
 			
 
 		}
@@ -460,18 +485,17 @@ public class DataMappingView extends JDialog implements Observer{
 		
 		dataMappingScroll = new JScrollPane(dataMappingTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		dataMappingScroll.getDebugGraphicsOptions();
 		dataMappingTable.getColumn("Unique/Duplicate").setCellRenderer(new RadioButtonRenderer());
 		dataMappingTable.getColumn("Unique/Duplicate").setCellEditor(new RadioButtonEditor(new JCheckBox()));
 		dataMappingTable.setAutoCreateRowSorter(true);
 		
-		dataAdjust.add(slider, "north, gaptop 15");
-		dataAdjust.add(dataMappingScroll, "gaptop 15, span, wrap 5");
-		
+		dataAdjust.add(dataMappingScroll, "align center, gaptop 15, span, wrap 5");
+
 		buttonPanel.add(changeDataAndClose, "");
 		buttonPanel.add(changeData, "");
-
-		dataAdjust.add(buttonPanel, "skip 1");
+		buttonPanel.add(cancel, "");
+		
+		dataAdjust.add(buttonPanel, "align right, skip 1");
 		
 		tabbedPane.setSelectedComponent(dataAdjust);
 
@@ -482,11 +506,10 @@ public class DataMappingView extends JDialog implements Observer{
 	 * 
 	 * @param controller - of the MVC which controls flow between view and model
 	 */
-	public void addController(DataMappingGUIController controller){
-		this.addWindowFocusListener(controller);
+	public void addController(DataMapping2GUIController controller){
 		header.addMouseListener(controller);
-		pathwayCB.addActionListener(controller);
 		identifierCB.addActionListener(controller);
+		speciesCB.addActionListener(controller);
 		browse.addActionListener(controller);
 		okButton.addActionListener(controller);
 		cancelButton.addActionListener(controller);
@@ -497,6 +520,7 @@ public class DataMappingView extends JDialog implements Observer{
 		table.addMouseListener(controller);
 		changeData.addActionListener(controller);
 		changeDataAndClose.addActionListener(controller);
+		cancel.addActionListener(controller);
 	} 
 
 	/**
@@ -609,6 +633,13 @@ public class DataMappingView extends JDialog implements Observer{
 	public String getIdentifierType() {
 		return (String) identifierCB.getSelectedItem();
 	}
+	
+	/**
+	 * @return the chosen identifier type
+	 */
+	public String getSpecies() {
+		return (String) speciesCB.getSelectedItem();
+	}
 
 	/**
 	 * @return the JTable for the data preview
@@ -635,32 +666,20 @@ public class DataMappingView extends JDialog implements Observer{
 		String textField = (String) header.getColumnModel().getColumn(pick).getHeaderValue();
 		identifierTF.setText("[Col:" + (pick+1) + "] " + textField);
 	}
-
+	
 	/**
 	 * is called after the coloring of the value column has been set
 	 * 
-	 * @param pick - the columns index
+	 * @param picks - the columns indieces
 	 * @param col - the new color for highlighting
 	 */
-	public void setValueTF(int pick, Color col) {
-		if(pick >= 0){
-			valueTF.setForeground(col);
-			String textField = (String) header.getColumnModel().getColumn(pick).getHeaderValue();
-			valueTF.setText("[Col:" + (pick+1) + "] " + textField);
-		}else{
-			valueTF.setText("");
+	public void setMultiValueTF(Set<Integer> picks, Color col) {
+		valueTF.setForeground(col);
+		String text = "";
+		for(int pick: picks){
+			text += "[Col:" + (pick+1) + "]; ";
 		}
-	}
-
-	/**
-	 * if the MouseEvent is triggered the database search popup menu shows up
-	 * @param e - MouseEvent
-	 */
-	public void maybeShowPopup(MouseEvent e) {
-		if (e.isPopupTrigger()) {
-			popUp.show(e.getComponent(),
-					e.getX(), e.getY());
-		}
+		valueTF.setText(text);
 	}
 
 	/**
@@ -716,41 +735,6 @@ public class DataMappingView extends JDialog implements Observer{
 	}
 
 	/**
-	 * displays the gradient of the color code together with minimal, maximal, and average values
-	 * of the data in a slider
-	 * @param dmm - the DataMappngModel
-	 */
-	private void setGradientSlider(DataMappingModel dmm) {
-		int aver = (int) dmm.getAverage();
-		double[] minMax = dmm.getColoringMinMax();
-		int min = (int) (Math.floor(minMax[0]));
-		int max = (int) (Math.ceil(minMax[1]));
-
-		DecimalFormat f = new DecimalFormat("##0.00");
-		String lowerB = f.format(dmm.getLowerBound());
-		String upperB = f.format(dmm.getUpperBound());
-		String minS = f.format(dmm.getColoringMinMax()[0]);
-		String maxS = f.format(dmm.getColoringMinMax()[1]);
-		Hashtable<Integer, JLabel> labels =	new Hashtable<Integer, JLabel>();
-		labels.put(min, new JLabel("<html><b><FONT COLOR=#FFFFFF>" + "light GREEN at " + minS + "</FONT></b></html>"));
-		String averS = "<html><b><FONT COLOR=#D3D3D3>" + "<br></br>Black from " + lowerB + " to " + upperB + "</FONT></b></html>";
-		labels.put(aver, new JLabel(averS));
-		labels.put(max, new JLabel("<html><b><FONT COLOR=#FFFFFF>" + "light RED at " + maxS + "</FONT></b></html>"));
-		if (slider == null) {
-			slider = new MySlider(min, max, aver);
-		} else {
-			slider.setMinimum(min);
-			slider.setMaximum(max);
-			slider.setValue(aver);
-		}
-		slider.setEnabled(false);
-		slider.setPaintLabels(true);
-		slider.setLabelTable(labels);
-		slider.setBorder(BorderFactory.createTitledBorder("Color Coding"));
-		slider.setPreferredSize(new Dimension(675, 100));
-	}
-
-	/**
 	 * enables the "OK" button 
 	 */
 	public void disableOKbutton() {
@@ -783,50 +767,3 @@ public class DataMappingView extends JDialog implements Observer{
 		inToolSearch = b;	
 	}
 }
-
-/**
- * This class creates a customize slider with a color gradient in the background.
- * This color gradient is based on the values of the data input and the settings
- * are calculated from the sliders min, max and aver values
- * @author dborck
- *
- */
-class MySlider extends JSlider {
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * constructs the slider, important is to set Opaque(false) because you want
-	 * to take care of the color printing
-	 * @param min
-	 * @param max
-	 * @param aver
-	 */
-	public MySlider(int min, int max, int aver) {
-		super(min, max, aver);
-		setOpaque(false);
-	}
-
-	@Override
-	protected void paintComponent(Graphics gra) {
-		int min = getMinimum();
-		int aver = getValue();
-		int max = getMaximum();
-		Graphics2D g = (Graphics2D) gra;
-		super.paintComponent(g);
-		int w = this.getWidth();
-		int h = this.getHeight();
-		Point2D start = new Point2D.Float(0, 0);
-		Point2D end = new Point2D.Float(w, h);
-		// calculates the position of the average values
-		float averF = (float) (aver-min)/(max-min);
-		float[] dist = {0.0f, averF, 1.0f};
-		// color coding from green over black to red
-		Color[] colors = {Color.GREEN, Color.BLACK, Color.RED};
-		LinearGradientPaint p = new LinearGradientPaint(start, end, dist, colors);
-		g.setPaint(p);
-		g.fillRect(0+8, 0+20, w-18, h-30);
-		getUI().paint(g, this);
-	}
-}
-
-

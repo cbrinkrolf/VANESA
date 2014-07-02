@@ -5,19 +5,19 @@ package dataMapping;
  * @author dborck
  *
  */
-public class DataMappingMVC {
+public class DataMappingColorMVC {
 	
 	/**
 	 * Constructor, does nothing
 	 */
-	public DataMappingMVC() {}
+	public DataMappingColorMVC() {}
 	
 	/**
 	 * instantiates and manages the building of the MVC
 	 * @return - the GUI controller (DataMappingGUIController)
 	 */
 	public static DataMappingGUIController createDataMapping() {
-		DataMappingModelController dataMappingM = new DataMappingModelController();
+		DataMappingModelController dataMappingM = new DataMappingModelController(true);
 		DataMappingView dataMappingV = new DataMappingView();
 	
 		dataMappingM.addObserver(dataMappingV);
@@ -35,7 +35,7 @@ public class DataMappingMVC {
 	// only for testing
 	public static void main(String[] args) {
 		
-		DataMappingMVC.createDataMapping();
+		DataMappingColorMVC.createDataMapping();
 	}
 	
 }

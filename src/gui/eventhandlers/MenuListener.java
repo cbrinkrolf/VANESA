@@ -1,6 +1,7 @@
 package gui.eventhandlers;
 
-import dataMapping.DataMappingMVC;
+import dataMapping.DataMapping2MVC;
+import dataMapping.DataMappingColorMVC;
 import database.eventhandlers.DatabaseSearchListener;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
@@ -873,8 +874,10 @@ public class MenuListener implements ActionListener {
 					break;
 				}
 			}
-		} else if ("dataMapping".equals(event)){
-			DataMappingMVC.createDataMapping();
+		} else if ("dataMappingColor".equals(event)){
+			DataMappingColorMVC.createDataMapping();
+		} else if ("dataMappingDB".equals(event)){
+			DataMapping2MVC.createDataMapping();
 		} else if("resolveReferences".equals(event)){
 			
 			//System.out.println("resolve");

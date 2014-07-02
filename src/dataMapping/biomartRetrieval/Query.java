@@ -3,6 +3,8 @@ package dataMapping.biomartRetrieval;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.html.HTML.Attribute;
+
 /**
  * This abstract class manages the building of the xml query for the BioMart information retrieval
  * @author dborck
@@ -73,7 +75,7 @@ public abstract class Query {
 			values = values.concat(getFilterValues().get(i));		
 		}
 		String attribs = "";
-		for (String att : this.getAttributes()) {
+		for (String att : getAttributes()) {
 			attribs = attribs.concat("<Attribute name = \"" + att + "\" />");		
 		}
 		String query = "";
@@ -156,15 +158,13 @@ public abstract class Query {
 	public void setAttributeName(String attributeName) {
 		this.attributeName.add(attributeName);
 	}
-
+	
 	/**
+	 * musst be abstract because for UniprotQuery2 a different order of attributes is needed
+	 * 
 	 * add together the filtername and the attributename to the attributes which are
 	 * responded from the BioMart query
-	 * @return list of attributes
+	 * @return list of attributes 
 	 */
-	public List<String> getAttributes() {
-		List<String> attributes = getAttributeName();
-		attributes.add(getFilterName());
-		return attributes;
-	}
+	public abstract List<String> getAttributes();
 }
