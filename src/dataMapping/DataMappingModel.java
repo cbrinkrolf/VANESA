@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
@@ -17,7 +18,10 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
  */
 public class DataMappingModel {
 
-	private Map<String, String> identifiersValuesMap;
+//	private Map<String, String> identifiersValuesMap;
+	private Map<String, ArrayList<String>> identifiersMultiValuesMap;
+
+
 	private Map<String, String> queryResultMap;
 	private Pathway pw;
 
@@ -34,6 +38,7 @@ public class DataMappingModel {
 	private static final double STEPS = 20; 
 	private double lowerBound = 0;
 	private double upperBound = 0;
+	private ArrayList<String> header;
 
 	/**
 	 * creates a new DataMappingModel and instantiates the mergeMap and the duplicatedMap for the duplicated
@@ -48,31 +53,37 @@ public class DataMappingModel {
 	 * stores the mergeMap and duplicated entries in a Map
 	 * invokes the coloring of the pathway
 	 */
-	public void mergeAndColor() {
+	public void merge() {
 		Map<String, List<String>> mergeMapL = new HashMap<String, List<String>>();
 		Map<String, List<String>> duplicatedL = new HashMap<String, List<String>>();
 		for (Entry<String, String> entry : queryResultMap.entrySet()) {
 			String id = entry.getKey();
-			if(identifiersValuesMap.containsKey(id)) {
+			if(identifiersMultiValuesMap.containsKey(id)) {
 				// a new list for the input data
 				List<String> mergeIdVal = new ArrayList<String>();
-				// add the identifier
+				// add the identifier and the values
 				mergeIdVal.add(id);
-				// add the value
-				mergeIdVal.add(identifiersValuesMap.get(id));
+				mergeIdVal.addAll(identifiersMultiValuesMap.get(id));
+				
 				List<String> duplicatedtmp = mergeMapL.put(entry.getValue(), mergeIdVal);
 				// if duplicatedtmp is not null, there has already been inserted an object with the id
 				if(duplicatedtmp != null) {
 					if(duplicatedL.containsKey(entry.getValue())) {
 						List<String> tmp = duplicatedL.get(entry.getValue());
-						tmp.add(duplicatedtmp.get(0));
-						tmp.add(duplicatedtmp.get(1));
+						for(String duplic : duplicatedtmp){
+							tmp.add(duplic);
+						}
+//						tmp.add(duplicatedtmp.get(0));
+//						tmp.add(duplicatedtmp.get(1));
 						duplicatedL.remove(entry.getValue());
 						duplicatedL.put(entry.getValue(), tmp);
 					} else {
 						List<String> tmp = new ArrayList<String>();
-						tmp.add(duplicatedtmp.get(0));
-						tmp.add(duplicatedtmp.get(1));
+						for(String duplic : duplicatedtmp){
+							tmp.add(duplic);
+						}
+//						tmp.add(duplicatedtmp.get(0));
+//						tmp.add(duplicatedtmp.get(1));
 						duplicatedL.put(entry.getValue(), tmp);
 					}
 				}
@@ -80,7 +91,6 @@ public class DataMappingModel {
 		}
 		setMergeMap(mergeMapL);
 		setDupMap(duplicatedL);
-		coloringPathway();
 	}
 	
 	/**
@@ -106,7 +116,7 @@ public class DataMappingModel {
 	 * iterates over the nodes in the pathway and colors the matching nodes according to there values
 	 * @param mergeMap - the merged map from the BioMart query and the data input
 	 */
-	private void coloringPathway() {
+	public void coloringPathway() {
 		Iterator<BiologicalNodeAbstract> allNodes = pw.getAllNodes().iterator();
 		while (allNodes.hasNext()) {
 			BiologicalNodeAbstract bna = allNodes.next();
@@ -164,8 +174,8 @@ public class DataMappingModel {
 	 * sets the map for the data input identifiers and values (e.g. accessions and foldchanges)
 	 * @param map - the map of the data input
 	 */
-	public void setIdentifiersValuesMap(Map<String, String> map) {
-		this.identifiersValuesMap = map;
+	public void setIdentifiersMultiValuesMap(Map<String, ArrayList<String>> map) {
+		this.identifiersMultiValuesMap = map;
 	}
 
 	/**
@@ -192,11 +202,11 @@ public class DataMappingModel {
 	public void setColoringParameters() {
 		double minValue = Double.MAX_VALUE;
 		double maxValue = Double.MIN_VALUE;
-		for (Entry<String, String> entry : identifiersValuesMap.entrySet()) {
+		for (Entry<String, ArrayList<String>> entry : identifiersMultiValuesMap.entrySet()) {
 			if(entry.getValue() != null) {
 				double tmpValue = 0;
 				try {
-					tmpValue = Double.parseDouble(entry.getValue());
+					tmpValue = Double.parseDouble(entry.getValue().get(0));
 				} catch (NumberFormatException e) {
 					// do nothing if the entry is not a number
 					continue;
@@ -301,6 +311,18 @@ public class DataMappingModel {
 	 */
 	private void setMergeMap(Map<String, List<String>> mergeMap) {
 		this.mergeMap = mergeMap;
+	}
+	
+	public Map<String, ArrayList<String>>  getIdentifiersMultiValuesMap() {
+		return identifiersMultiValuesMap;
+	}
+
+	public void setHeader(ArrayList<String> header) {
+		this.header = header;	
+	}
+
+	public ArrayList<String> getHeader() {
+		return header;
 	}
 	
 }

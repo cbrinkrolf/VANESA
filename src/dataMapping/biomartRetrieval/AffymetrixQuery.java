@@ -1,5 +1,6 @@
 package dataMapping.biomartRetrieval;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,5 +36,19 @@ public class AffymetrixQuery extends Query {
 			setAttributeName(ATTRIBUTE_YEAST);
 		}
 		setFilterValues(fValues);
+	}
+	
+	/**
+	 * add together the filtername and the attributename to the attributes which are
+	 * responded from the BioMart query
+	 * @return list of attributes
+	 */
+	public List<String> getAttributes() {
+		List<String> attributes = new ArrayList<String>();
+		attributes.addAll(getAttributeName());
+		attributes.add(getFilterName());
+		
+		
+		return attributes;
 	}
 }

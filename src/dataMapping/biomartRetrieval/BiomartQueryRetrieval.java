@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This abstract class manages the BioMart information retrieval and stores the results in a map
@@ -39,6 +40,7 @@ public abstract class BiomartQueryRetrieval {
 	final static String UNIPROT = "UniProt";
 	final static String AGILENT = "Agilent";
 	final static String AFFYMETRIX = "Affymetrix";
+	final static String UNIPROT_WITHOUT_PW = "UniProtWithoutPW";
 	final static String ILLUMINA = "Illumina";
 	
 	private Map<String, String> resultMap;
@@ -89,7 +91,8 @@ public abstract class BiomartQueryRetrieval {
 		OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
 		out.write(data);
 		out.close();
-		//displayResults(conn);//instead of mapResults(), only for testing!
+		//TODO
+//		displayResults(conn);//instead of mapResults(), only for testing!
 		mapResults(conn);
 	}
 
