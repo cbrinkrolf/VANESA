@@ -53,7 +53,7 @@ public interface IJobServer extends Remote {
          * Submit method for the graph database, returns true if job could be queued.
          * This method invokes a experimental data-mapping on the graph db.
          * @param jobType
-         * @param experiment
+         * @param experimentl
          * @param mapping
          * @param helper
          * @return
