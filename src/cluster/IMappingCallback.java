@@ -1,8 +1,9 @@
 package cluster;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface IMappingCallback {
+public interface IMappingCallback extends Remote {
 	/**
 	 * Notify via message string.
 	 * 
