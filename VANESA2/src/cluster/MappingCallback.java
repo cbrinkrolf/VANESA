@@ -15,14 +15,14 @@ public class MappingCallback extends UnicastRemoteObject implements
 
 	@Override
 	public void progressNotify(String message) throws RemoteException {
-		// TODO Auto-generated method stub
+System.out.println(message);
 
 	}
 
 	@Override
 	public void setMappingProgress(int mappedNodes, String experiment)
 			throws RemoteException {
-		// TODO Auto-generated method stub
+System.out.println(mappedNodes +" "+experiment);
 
 	}
 }
