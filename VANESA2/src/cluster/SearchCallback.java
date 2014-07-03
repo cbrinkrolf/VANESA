@@ -52,5 +52,4 @@ public class SearchCallback extends UnicastRemoteObject implements ISearchCallba
 			UNIDSearch.progressBar.setProgressBarString(message);
 		}
 	}
-
 }
