@@ -104,6 +104,10 @@ public class MenuBarClass {
 		JMenuItem phosphoImport = new JMenuItem("PhosphoSite input");
 		phosphoImport.addActionListener(new MenuListener());
 		phosphoImport.setActionCommand("phospho");
+		
+		JMenuItem mirnaTest = new JMenuItem("MirnaTest");
+		mirnaTest.addActionListener(new MenuListener());
+		mirnaTest.setActionCommand("mirnaTest");
 
 		JMenuItem fabricio = new JMenuItem("Patricios Data");
 		fabricio.addActionListener(new MenuListener());
@@ -341,6 +345,7 @@ public class MenuBarClass {
 
 		math.add(generateGraph);
 		math.add(phosphoImport);
+		math.add(mirnaTest);
 		//math.add(visualAnalysis);
 
 		generateGraph.add(mathLaw);
