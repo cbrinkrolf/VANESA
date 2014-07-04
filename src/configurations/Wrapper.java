@@ -54,6 +54,7 @@ public class Wrapper implements WebServiceListener {
 	 */
 	public ArrayList<DBColumn> requestDbContent(int database, String query,
 			String[] attributes) {
+		System.out.println(database);
 		if (!ConnectionSettings.useInternetConnection()) {
 			// -- use database --
 			if (dbtype_PPI == database)
@@ -83,7 +84,7 @@ public class Wrapper implements WebServiceListener {
 					getWebserviceResult(ConnectionSettings.getDBConnection().getPpiDBName(), query);
 				else{
 					
-					//MARTIN Mint+Intact abfangen und über PPI_DB abfragen
+					//MARTIN Mint+Intact abfangen und ï¿½ber PPI_DB abfragen
 					
 					if (oldquery.equals(PPIqueries.intact_resultForACnumber) || 
 							oldquery.equals(PPIqueries.intact_resultForAlias) ||
@@ -118,10 +119,12 @@ public class Wrapper implements WebServiceListener {
 	public ArrayList<DBColumn> requestDbContent(int database, String query) {
 		if (!ConnectionSettings.useInternetConnection()) {
 			// -- use database --
+			
 			if (dbtype_PPI == database)
 				ConnectionSettings.getDBConnection().useDatabase(
 						ConnectionSettings.getDBConnection().getPpiDBName());
 			else if (dbtype_MiRNA == database) {
+				
 				ConnectionSettings.getDBConnection().useDatabase(
 						ConnectionSettings.getDBConnection().getmirnaDBName());
 			}
@@ -132,13 +135,19 @@ public class Wrapper implements WebServiceListener {
 			return getDBResult(query, null);
 		} else {
 			// -- use webservice --
-			if (dbtype_PPI == database)
+			if (dbtype_PPI == database){
 				getWebserviceResult(ConnectionSettings.getDBConnection()
 						.getPpiDBName(), query);
-			else
+			}
+			
+			else if(dbtype_MiRNA == database){
 				getWebserviceResult(ConnectionSettings.getDBConnection()
+						.getmirnaDBName(), query);
+				
+			}
+				else{ getWebserviceResult(ConnectionSettings.getDBConnection()
 						.getDawisDBName(), query);
-
+			}
 			return dbResults;
 		}
 	}

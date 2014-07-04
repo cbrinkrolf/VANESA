@@ -3,6 +3,8 @@ package gui.eventhandlers;
 import dataMapping.DataMapping2MVC;
 import dataMapping.DataMappingColorMVC;
 import database.eventhandlers.DatabaseSearchListener;
+import database.mirna.miRNAqueries;
+import database.mirna.gui.MirnaResultKeggWindow;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
@@ -38,6 +40,7 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -57,6 +60,7 @@ import petriNet.Place;
 import petriNet.ReachController;
 import petriNet.SimpleMatrixDouble;
 import petriNet.Transition;
+import pojos.DBColumn;
 import save.graphPicture.WriteGraphPicture;
 import xmlOutput.sbml.VAMLoutput;
 import biologicalElements.Pathway;
@@ -67,6 +71,7 @@ import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import configurations.ConnectionSettings;
 import configurations.ProgramFileLock;
+import configurations.Wrapper;
 import configurations.gui.LayoutConfig;
 import configurations.gui.Settings;
 
@@ -166,8 +171,8 @@ public class MenuListener implements ActionListener {
 			new RandomHamiltonGraphGui();
 
 		} else if ("export Network".equals(event)) {
-			//System.out.println("Nodes: "+graphInstance.getMyGraph().getAllVertices().size());
-			//System.out.println("Edges: "+graphInstance.getMyGraph().getAllEdges().size());
+			// System.out.println("Nodes: "+graphInstance.getMyGraph().getAllVertices().size());
+			// System.out.println("Edges: "+graphInstance.getMyGraph().getAllEdges().size());
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog( // GRAPHML+MO+GON=14
@@ -337,7 +342,7 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeGraphLayout(5);
-					//LayoutConfig.changeToLayout(MDForceLayout.class);
+					// LayoutConfig.changeToLayout(MDForceLayout.class);
 				} else {
 					JOptionPane.showMessageDialog(w,
 							"Please create a network before.");
@@ -726,7 +731,7 @@ public class MenuListener implements ActionListener {
 					if (this.cov == null) {
 						cov = new Cov();
 					}
-					//CovNode root = cov.getRoot();
+					// CovNode root = cov.getRoot();
 					String pwName = cov.getNewName();
 					HashMap<String, Integer> name2id = cov.getName2id();
 					double[] markierung = new double[name2id.size()];
@@ -874,53 +879,115 @@ public class MenuListener implements ActionListener {
 					break;
 				}
 			}
-		} else if ("dataMappingColor".equals(event)){
+		} else if ("dataMappingColor".equals(event)) {
 			DataMappingColorMVC.createDataMapping();
-		} else if ("dataMappingDB".equals(event)){
+		} else if ("dataMappingDB".equals(event)) {
 			DataMapping2MVC.createDataMapping();
-		} else if("resolveReferences".equals(event)){
-			
-			//System.out.println("resolve");
+		} else if ("resolveReferences".equals(event)) {
+
+			// System.out.println("resolve");
 			Pathway old = con.getPathway(w.getCurrentPathway());
 			//
-			//Pathway new =
-			
-			
-			//ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			//Serialize it
-			
+			// Pathway new =
+
+			// ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			// Serialize it
+
 			Pathway pw = new CreatePathway(old).getPathway();
-			//pw = old.clone()
-			
+			// pw = old.clone()
+
 			Transformation t = new Transformation();
 			t.resolveReferences(pw);
-			//MainWindow.
-			//Tansformation.resolveReferences(pw);
-			//pw = old;
-			
-		} 
-		//MARTIN db switcher
-		else if ("switch db version".equals(event)){
-			//DO switching stuff
+			// MainWindow.
+			// Tansformation.resolveReferences(pw);
+			// pw = old;
+
+		}
+		// MARTIN db switcher
+		else if ("switch db version".equals(event)) {
+			// DO switching stuff
 			MainWindow m = MainWindowSingelton.getInstance();
-			
+
 			MainWindow.useOldDB = !MainWindow.useOldDB;
 			String switchertext = m.getmyMenu().dbSwitcher.getText();
-			
-			if(MainWindow.useOldDB){
+
+			if (MainWindow.useOldDB) {
 				System.out.println("using old DB: dawis_md");
 				ConnectionSettings.getDBConnection().setDawisDBName("dawis_md");
 				ConnectionSettings.getDBConnection().setDatabase("dawis_md");
-				m.getmyMenu().dbSwitcher.setText(switchertext.replaceAll("new", "old"));
+				m.getmyMenu().dbSwitcher.setText(switchertext.replaceAll("new",
+						"old"));
 			} else {
 				System.out.println("using new DB: dawismd");
 				ConnectionSettings.getDBConnection().setDawisDBName("dawismd");
 				ConnectionSettings.getDBConnection().setDatabase("dawismd");
-				m.getmyMenu().dbSwitcher.setText(switchertext.replaceAll("old", "new"));
+				m.getmyMenu().dbSwitcher.setText(switchertext.replaceAll("old",
+						"new"));
+			}
+
+		} else if ("mirnaTest".equals(event)) {
+			System.out.println("mirnatest");
+			final String QUESTION_MARK = new String("\\?");
+			String finalQueryString = "SELECT Gene FROM mirbase_has_tarbase inner join tarbase on tarbase_ID=id;";
+			ArrayList<DBColumn> list = new ArrayList<DBColumn>();
+			list = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA,
+					finalQueryString);
+			HashMap<String, Integer> map = new HashMap<String, Integer>();
+
+			System.out.println(list.size());
+			String gene;
+			String number;
+			ArrayList<DBColumn> list2 = new ArrayList<DBColumn>();
+			for (int i = 0; i < list.size(); i++) {
+				if(i % 10 == 0){
+					System.out.println(i);
+				}
+				gene = list.get(i).getColumn()[0];
+				String q2 = "SELECT kegg_genes_pathway.name,kegg_genes_pathway.name,"
+						+ "kegg_genes_pathway.number,kegg_genes_pathway.org, kegg_genes_name.name FROM "
+						+ "dawismd.kegg_genes_pathway inner join "
+						+ "dawismd.kegg_genes_name on kegg_genes_pathway.id=kegg_genes_name.id "
+						+ "where kegg_genes_name.name = '"
+						+ gene
+						+ "' and kegg_genes_pathway.org='hsa' order by kegg_genes_pathway.name,"
+						+ "kegg_genes_name.name;";
+				// q2.replaceFirst(QUESTION_MARK, gene);
+				//System.out.println(q2);
+				list2 = new Wrapper().requestDbContent(2, q2);
+				//System.out.println(list2.size());
+				for (int j = 0; j < list2.size(); j++) {
+					number = list2.get(j).getColumn()[2];
+					if(map.containsKey(number)){
+						map.put(number, map.get(number)+1);
+					}else{
+						map.put(number, 1);
+					}
+				}
 			}
 			
+			Iterator<String> it = map.keySet().iterator();
+			String key;
+			while(it.hasNext()){
+				key = it.next();
+				System.out.println(key + "\t"+map.get(key));
+			}
+			
+			/*
+			 * if (allKEGGPathways.size() > 0) { MirnaResultKeggWindow
+			 * mirnaResultKeggWindow = new MirnaResultKeggWindow(
+			 * allKEGGPathways); Vector keggPAthwayResults =
+			 * mirnaResultKeggWindow .getAnswer(); if (keggPAthwayResults.size()
+			 * != 0) { String keggPathwayNumber = ""; String keggPathwayName =
+			 * ""; final Iterator it3 = keggPAthwayResults .iterator(); while
+			 * (it3.hasNext()) {
+			 * 
+			 * String[] pathwayResutls = (String[]) it3 .next();
+			 * keggPathwayNumber= "hsa"+pathwayResutls[1]; keggPathwayName =
+			 * pathwayResutls[0]; } } }
+			 */
+
 		}
-		
+
 	}
 
 	private double[][] initArray(int m, int n) {
