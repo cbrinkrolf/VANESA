@@ -330,14 +330,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				for(BiologicalEdgeAbstract edge : activeGraph.getJungGraph().getInEdges(node)){
 					
 					if(!vertices.contains(edge.getFrom())){
-						newBorder.add(edge.getOriginalTo());
+						newBorder.add(edge.getTo());
 					}
 				}
 				
 				for(BiologicalEdgeAbstract edge : activeGraph.getJungGraph().getOutEdges(node)){
 					
 					if(!vertices.contains(edge.getTo())){
-						newBorder.add(edge.getOriginalFrom());
+						newBorder.add(edge.getFrom());
 					}
 				}
 			}
@@ -660,6 +660,19 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 		public BiologicalNodeAbstract getParentNode() {
 			return parentNode;
+		}
+		
+		public Set<BiologicalNodeAbstract> getAllParentNodes(){
+			BiologicalNodeAbstract node = this;
+			HashSet<BiologicalNodeAbstract> ret = new HashSet<BiologicalNodeAbstract>();
+			if(node.getParentNode()==null){
+				return ret;
+			}
+			while(node.getParentNode()!=node && node.getParentNode()!=null){
+				node = node.getParentNode();
+				ret.add(node);
+			}
+			return ret;
 		}
 
 		/**
