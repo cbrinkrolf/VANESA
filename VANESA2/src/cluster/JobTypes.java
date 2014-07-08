@@ -13,6 +13,8 @@ public class JobTypes {
 	public static final int CLIQUE_JOB_CONNECTIVITY = 23;
 	public static final int APSP_JOB = 30;
 	public static final int SPECTRAL_CLUSTERING_JOB = 40;
+	public static final int LAYOUT_FR_JOB = 50;
+	
 	
 	/**
 	 * Graphdb only jobs

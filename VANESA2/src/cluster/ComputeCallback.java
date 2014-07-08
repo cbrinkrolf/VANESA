@@ -5,6 +5,7 @@ import graph.algorithms.gui.GraphColoringGUI;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 
@@ -43,5 +44,12 @@ public class ComputeCallback extends UnicastRemoteObject implements Serializable
 	@Override
 	public void setResultMatrix(int[][] matrix) throws RemoteException {
 
+	}
+
+	@Override
+	public void setResultCoordinates(HashMap<Integer, LayoutPoint2D> coords)
+			throws RemoteException {
+		// MARTIN Auto-generated method stub
+		
 	}
 }
