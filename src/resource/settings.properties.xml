@@ -15,9 +15,10 @@
 <!-- dawismd ist die neue Datenbank, die SearchQueries sind allerdings noch nicht angepasst, deswegen geht nur dawis_md -->	
 	<entry key="settings.default.database.DAWIS">dawismd</entry>
 	<entry key="settings.default.database.PPI">ppi_db</entry>
-	<entry key="settings.default.database.mirna">db_mirna</entry>
-
-	<entry key="settings.default.webservice.url">http://agbi.techfak.uni-bielefeld.de/axis2/services/DBService</entry>
+	<entry key="settings.default.database.mirna">db_mirna2</entry>
+	
+<!-- alternativ: http://tunicata.techfak... -->
+	<entry key="settings.default.webservice.url">http://agbi.techfak.uni-bielefeld.de/webservice/db</entry>
 	<entry key="settings.default.proxy.host"></entry>
 	<entry key="settings.default.proxy.port"></entry>
 </properties>
