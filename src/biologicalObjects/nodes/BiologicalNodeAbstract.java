@@ -27,6 +27,7 @@ import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
+import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 
@@ -130,14 +131,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	
 	private Pathway rootNode;
 	
-	private int stateChanged = 0;
+	private NodeStateChanged state = NodeStateChanged.UNCHANGED;
 	
-	public void setStateChanged(int state){
-		stateChanged = state;
+	public void setStateChanged(NodeStateChanged state){
+		this.state = state;
 	}
 	
-	public int getStateChanged(){
-		return stateChanged;
+	public NodeStateChanged getStateChanged(){
+		return state;
 	}
 	
 	
@@ -279,7 +280,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 */
 		public void coarse(Set<BiologicalNodeAbstract> vertices){
 			MyGraph activeGraph = getActiveGraph();
-			// Modify input nodes and add them to the Pathway and graph of this coarse node.
+			
+			// Set ParentNode of all input nodes to this node and add them to the Pathway.
 			for(BiologicalNodeAbstract node : vertices){
 				node.setParentNode(this);
 				addVertex(node, activeGraph.getVertexLocation(node));
@@ -294,18 +296,20 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			// Save the edges containing the nodes inside the coarse node.
 			saveSubnetEdges(vertices);
 			
+			// Set state changed of all non-environment nodes to COARSED.
 			for(BiologicalNodeAbstract node : getAllNodes()){
 				if(!environment.contains(node)){
-					node.setStateChanged(1);
+					node.setStateChanged(NodeStateChanged.COARSED);
 				}
 			}
 			
 			// Update current MyGraph
 			rootNode.updateMyGraph();
 			
+			// Reset state changed of all non-environment nodes
 			for(BiologicalNodeAbstract node : getAllNodes()){
 				if(!environment.contains(node)){
-					node.setStateChanged(0);
+					node.setStateChanged(NodeStateChanged.UNCHANGED);
 				}
 			}
 		}
@@ -313,7 +317,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		/**
 		 * Computes the border for a given set of nodes using the actual shown graph.
 		 * @param vertices Set of nodes that were selected for coarse operation.
-		 * @return The border (only nodes of the most detailed hierarchical layer are returned).
+		 * @return The border of the input nodes for the actually shown graph.
 		 * @author tloka
 		 */
 		private Set<BiologicalNodeAbstract> computeBorder(Set<BiologicalNodeAbstract> vertices){
@@ -321,6 +325,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			MyGraph activeGraph = getActiveGraph();
 			Set<BiologicalNodeAbstract> newBorder = new HashSet<BiologicalNodeAbstract>();
 			
+			// If input list is empty, return empty list.
 			if(vertices==null | vertices.size()==0){
 				return newBorder;
 			}
@@ -349,7 +354,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 * for coarsing operation and the already computed border.
 		 * @param vertices Set of coarsed nodes.
 		 * @param border Subset of coarsed nodes representing the border.
-		 * @return The environment (only nodes of the most detailed hierarchical layer are returned).
+		 * @return The environment of the input nodes for the actually shown graph.
 		 * @author tloka
 		 */
 		private Set<BiologicalNodeAbstract> computeEnvironment(Set<BiologicalNodeAbstract> vertices, 
@@ -375,7 +380,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 		
 		/**
-		 * Saves all edges going in or out one of the input nodes.
 		 * Internal edges (between two nodes inside the coarse node) are added to the 
 		 * pathway graph, connecting edges (between a border node and an environment node) 
 		 * are only added to a Set of edges without any influence on the pathway graph.
@@ -384,6 +388,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		 */
 		private void saveSubnetEdges(Set<BiologicalNodeAbstract> vertices){
 			
+			// Copy the connecting edges concerning the border of the subpathway from the environment nodes.
 			for(BiologicalNodeAbstract envNode : environment){
 				Set<BiologicalEdgeAbstract> conEdges = envNode.getConnectingEdges();
 				if(!conEdges.isEmpty()){
@@ -395,6 +400,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 					}
 				}
 			}
+			
+			// Draw the "inner" edges of the subpathway.
 			for(BiologicalEdgeAbstract edge : getActiveGraph().getAllEdges()){
 				BiologicalEdgeAbstract e = edge.clone();
 				if(getAllNodes().contains(edge.getTo()) && !getEnvironment().contains(edge.getTo())){
@@ -415,39 +422,17 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			if(getAllNodes().size()<=0)
 				return;
 			
+			// Delete Parent node.
 			this.setParentNode(this);
-			this.setStateChanged(2);
 			
+			// Set state changed of all non-environment nodes to FLATTED.
+			this.setStateChanged(NodeStateChanged.FLATTED);
+			
+			// Update current MyGraph
 			rootNode.updateMyGraph();
 			
-			this.setStateChanged(0);
-			
-//			MyGraph activeGraph = getActiveGraph();
-//			
-//			// remove this node
-//			activeGraph.removeVertex(this);
-//			
-//			// Add nodes of the subpathway
-//			for(BiologicalNodeAbstract node : getAllNodes()){
-//				if(!environment.contains(node)){
-//					node.setParentNode(null);
-//					activeGraph.addVertex(node, activeGraph.getVertexLocation(node));
-//				}
-//			}
-//						
-//			// Add edges of the subpathway and connecting edges
-//			for(BiologicalEdgeAbstract edge : connectingEdges){
-//				activeGraph.removeEdge(edge);
-//				if(edge.getOriginalFrom().getCurrentShownParentNode(activeGraph)!=null)
-//					edge.setFrom(edge.getOriginalFrom().getCurrentShownParentNode(activeGraph));
-//				if(edge.getOriginalTo().getCurrentShownParentNode(activeGraph)!=null)
-//					edge.setTo(edge.getOriginalTo().getCurrentShownParentNode(activeGraph));
-//				activeGraph.addEdge(edge);
-//			}	
-//			for(BiologicalEdgeAbstract edge : getAllEdges()){
-//				activeGraph.addEdge(edge);
-//			}
-			
+			// Reset state changed of all non-environment nodes
+			this.setStateChanged(NodeStateChanged.UNCHANGED);			
 		}
 		
 		@Override
