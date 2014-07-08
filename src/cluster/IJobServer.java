@@ -27,6 +27,17 @@ public interface IJobServer extends Remote {
          */
         
         /**
+         * Submit method for the compute cluster, returns true if job could be queued.
+         * Available "job-types" can be drawn from JobTypes.java
+         * @param jobType - Type of the submitted job, according to JobTypes.
+         * @param adjarray - the adjacency array of the network.
+         * @param helper - Callback object to the client. Handles progress and results of the compute job.
+         * @return true if job could be queued, false if queue is full.
+         * @throws RemoteException
+         */
+        public boolean submitJob(int jobType, int[] adjarray, IComputeCallback helper) throws RemoteException;
+        
+        /**
          * Submit method for the graph database, returns true if job could be queued.
          * This method invokes Depth searches on the graph db. 
          * @param startname
@@ -59,7 +70,7 @@ public interface IJobServer extends Remote {
          * @return
          * @throws RemoteException
          */
-        public boolean submitMapping(int jobType, String experiment, HashMap<String, Double> mapping, IMappingCallback helper) throws RemoteException;
+        public boolean submitMapping(int jobType, String[] experiment, HashMap<String, Double>[] mapping, IMappingCallback helper) throws RemoteException;
         
 }
 
