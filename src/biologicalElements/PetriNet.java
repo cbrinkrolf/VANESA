@@ -202,7 +202,7 @@ public class PetriNet {
 					// System.out.println();
 
 					v = pnResult.get("'"+bna.getName() + "'.t");
-					// System.out.println(bna.getName());
+					//System.out.println(bna.getName());
 					// System.out.println(v.lastElement());
 					// System.out.println("size: "+v.size());
 					// System.out.println("test2");

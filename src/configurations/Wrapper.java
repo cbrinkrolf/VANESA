@@ -54,7 +54,7 @@ public class Wrapper implements WebServiceListener {
 	 */
 	public ArrayList<DBColumn> requestDbContent(int database, String query,
 			String[] attributes) {
-		System.out.println(database);
+		//System.out.println(database);
 		if (!ConnectionSettings.useInternetConnection()) {
 			// -- use database --
 			if (dbtype_PPI == database)
@@ -141,6 +141,8 @@ public class Wrapper implements WebServiceListener {
 			}
 			
 			else if(dbtype_MiRNA == database){
+				System.out.println(ConnectionSettings.getDBConnection()
+						.getmirnaDBName());
 				getWebserviceResult(ConnectionSettings.getDBConnection()
 						.getmirnaDBName(), query);
 				

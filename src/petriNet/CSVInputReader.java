@@ -20,14 +20,22 @@ public class CSVInputReader {
 		}
 		in.close();
 		String head = text.get(0);
-		String[] headNames = head.split("[,;]");
+		
+		// "\" added, because names / labels may contain ","
+		String[] headNames = head.split("\"[,;]\"");
 
 		int lines = text.size();
 		int cols = headNames.length;
-
+		String name;
 		for (int i = 0; i < cols; i++) {
-			columnName.put(headNames[i], i);
-			// System.out.println(headNames[i]);
+			name = headNames[i];
+			if(name.charAt(0) != '"'){
+				name = "\""+name;
+			}
+			if(name.charAt(name.length()-1) != '"'){
+				name = name+"\"";
+			}
+			columnName.put(name, i);
 		}
 		// System.out.println("cols:");
 		// System.out.println(columnName);
@@ -39,12 +47,13 @@ public class CSVInputReader {
 		}
 
 		HashMap<String, Vector<Double>> result = new HashMap<String, Vector<Double>>();
-
+		//System.out.println(lines);
 		Vector<Double> v = new Vector<Double>();
 		String k = "";
 		for (int i = 0; i < columns.size(); i++) {
 			if (omc) {
 				k = "\""+columns.get(i) + "\"";
+				//System.out.println(k);
 			} else {
 				k = columns.get(i);
 			}
