@@ -60,12 +60,12 @@ public class PlotsPanel extends JPanel implements ActionListener {
 		Place place;
 
 		if (pw.isPetriNet() && pw.isPetriNetSimulation()) {
-			//table = new Object[rows][cols + 1];
+			// table = new Object[rows][cols + 1];
 			// System.out.println("rowsSize: " + rowsSize);
 			// System.out.println("rowsDim: " + rowsDim);
 			Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
-			//BiologicalNodeAbstract[] bnas = (BiologicalNodeAbstract[]) hs
-			//		.toArray(new BiologicalNodeAbstract[0]);
+			// BiologicalNodeAbstract[] bnas = (BiologicalNodeAbstract[]) hs
+			// .toArray(new BiologicalNodeAbstract[0]);
 
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 
@@ -90,57 +90,59 @@ public class PlotsPanel extends JPanel implements ActionListener {
 			 * bnas[smallest] = bnas[i]; bnas[i] = help; }
 			 */
 
-			//Vector<Double> MAData;
-			/*int k = 0;
-			for (int i = 0; i < rows && k < bnas.length; k++) {
-
-				bna = places.get(labels.get(k));// bnas[k];
-				if (bna instanceof Place) {
-					if (pw.getPetriNet().getPnResult()
-							.containsKey("'" + bna.getName() + "'.t")) {
-						// System.out.println("drin "+i);
-						MAData = bna.getPetriNetSimulationData();
-						table[i][0] = bna.getLabel();
-						for (int j = 1; j <= MAData.size(); j++) {
-							table[i][j] = MAData.get(j - 1);
-						}
-						i++;
-					} else {
-						// System.out.println("name: "+bna.getName());
-						table[i][0] = bna.getLabel();
-						for (int j = 1; j < cols + 1; j++) {
-							table[i][j] = -1;
-						}
-					}
-				}
-			}*/
+			// Vector<Double> MAData;
+			/*
+			 * int k = 0; for (int i = 0; i < rows && k < bnas.length; k++) {
+			 * 
+			 * bna = places.get(labels.get(k));// bnas[k]; if (bna instanceof
+			 * Place) { if (pw.getPetriNet().getPnResult() .containsKey("'" +
+			 * bna.getName() + "'.t")) { // System.out.println("drin "+i);
+			 * MAData = bna.getPetriNetSimulationData(); table[i][0] =
+			 * bna.getLabel(); for (int j = 1; j <= MAData.size(); j++) {
+			 * table[i][j] = MAData.get(j - 1); } i++; } else { //
+			 * System.out.println("name: "+bna.getName()); table[i][0] =
+			 * bna.getLabel(); for (int j = 1; j < cols + 1; j++) { table[i][j]
+			 * = -1; } } } }
+			 */
 
 			p.setLayout(new GridLayout(0, 3));
 
 			Double value;
 			for (int j = 0; j < rows; j++) {
 				place = places.get(labels.get(j));
-				final XYSeriesCollection dataset = new XYSeriesCollection();
-				XYSeries series = new XYSeries(1);
-				for (int i = 0; i < cols; i++) {
-					// System.out.println(j + " " + i);
-					// System.out.println("test: " + table[j][i + 1]);
-					value = place.getPetriNetSimulationData().get(i);
-					// value = Double.parseDouble(table[j][i + 1].toString());
-					series.add(pw.getPetriNet().getPnResult().get("time")
-							.get(i), value);
-				}
-				dataset.addSeries(series);
-				JFreeChart chart = ChartFactory.createXYLineChart(labels.get(j), "Timestep", "Token", dataset,
-						PlotOrientation.VERTICAL, false, true, false);
+				if (place.getPetriNetSimulationData().size() > 0) {
+					final XYSeriesCollection dataset = new XYSeriesCollection();
+					XYSeries series = new XYSeries(1);
+					for (int i = 0; i < cols; i++) {
+						// System.out.println(j + " " + i);
+						// System.out.println("test: " + table[j][i + 1]);
+						// value = place.getPetriNetSimulationData().get(i);
 
-				final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-				chart.addSubtitle(new TextTitle("StartToken="
-						+ place.getPetriNetSimulationData().get(0).toString()));
-				ChartPanel pane = new ChartPanel(chart);
-				pane.setPreferredSize(new java.awt.Dimension(320, 200));
-				renderer.setSeriesPaint(j, Color.BLACK);
-				p.add(pane);
+						if (place.getPetriNetSimulationData().size() > i) {
+							value = place.getPetriNetSimulationData().get(i);
+						} else {
+							value = 0.0;
+						}
+
+						// value = Double.parseDouble(table[j][i +
+						// 1].toString());
+						series.add(pw.getPetriNet().getPnResult().get("time")
+								.get(i), value);
+					}
+					dataset.addSeries(series);
+					JFreeChart chart = ChartFactory.createXYLineChart(
+							labels.get(j), "Timestep", "Token", dataset,
+							PlotOrientation.VERTICAL, false, true, false);
+
+					final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+					chart.addSubtitle(new TextTitle("StartToken="
+							+ place.getPetriNetSimulationData().get(0)
+									.toString()));
+					ChartPanel pane = new ChartPanel(chart);
+					pane.setPreferredSize(new java.awt.Dimension(320, 200));
+					renderer.setSeriesPaint(j, Color.BLACK);
+					p.add(pane);
+				}
 			}
 			for (int j = rows; j % 3 != 0; j++) {
 				final XYSeriesCollection dataset = new XYSeriesCollection();
