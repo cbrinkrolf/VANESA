@@ -2,6 +2,7 @@ package cluster;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 
@@ -36,4 +37,11 @@ public interface IComputeCallback extends Remote{
 	 * @throws RemoteException
 	 */
 	public void setResultMatrix(int[][] matrix) throws RemoteException;
+	
+	/**
+	 * Set a point cloud.
+	 * @param matrix
+	 * @throws RemoteException
+	 */
+	public void setResultCoordinates(HashMap<Integer,LayoutPoint2D> coords) throws RemoteException;
 }
