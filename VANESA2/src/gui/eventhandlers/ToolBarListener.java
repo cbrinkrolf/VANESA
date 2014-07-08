@@ -30,6 +30,7 @@ import petriNet.PetriNetSimulation;
 import petriNet.Place;
 import petriNet.ReachController;
 import save.graphPicture.WriteGraphPicture;
+import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
@@ -300,7 +301,7 @@ public class ToolBarListener implements ActionListener {
 				newNode.setID();
 				newNode.setLabel("coarse" + newNode.getLabel());
 				newNode.setGraph(new MyGraph(newNode));
-				newNode.setStateChanged(0);
+				newNode.setStateChanged(NodeStateChanged.UNCHANGED);
 				newNode.coarse(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
 				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{
