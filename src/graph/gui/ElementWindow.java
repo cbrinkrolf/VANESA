@@ -402,21 +402,21 @@ public class ElementWindow implements ActionListener, ItemListener {
 					annotationstring += "Biological process:\n";
 					for (int i = 0; i < gnode.getSuperNode().biologicalProcess.length; i++) {
 						annotationstring += "-"
-								+ gnode.getSuperNode().biologicalProcess[0]
+								+ gnode.getSuperNode().biologicalProcess[i]
 								+ "\n";
 					}
 					// molecular function
 					annotationstring += "Molecular function:\n";
 					for (int i = 0; i < gnode.getSuperNode().molecularFunction.length; i++) {
 						annotationstring += "-"
-								+ gnode.getSuperNode().molecularFunction[0]
+								+ gnode.getSuperNode().molecularFunction[i]
 								+ "\n";
 					}
 					// cellular compartment
-					annotationstring += "Cellular compartment:\n";
+					annotationstring += "Cellular component:\n";
 					for (int i = 0; i < gnode.getSuperNode().cellularComponent.length; i++) {
 						annotationstring += "-"
-								+ gnode.getSuperNode().cellularComponent[0]
+								+ gnode.getSuperNode().cellularComponent[i]
 								+ "\n";
 					}
 				}
