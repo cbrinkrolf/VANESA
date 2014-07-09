@@ -116,6 +116,11 @@ public class MenuBarClass {
 		mirnaTest.addActionListener(new MenuListener());
 		mirnaTest.setActionCommand("mirnaTest");
 		
+		JMenuItem shake = new JMenuItem("Shake Enzymes!");
+		shake.addActionListener(new MenuListener());
+		shake.setActionCommand("shake");
+		
+		
 		JMenuItem fabricio = new JMenuItem("Patricios Data");
 		fabricio.addActionListener(new MenuListener());
 		fabricio.setActionCommand("fabricio");
@@ -353,6 +358,7 @@ public class MenuBarClass {
 		math.add(generateGraph);
 		math.add(phosphoImport);
 		math.add(mirnaTest);
+		math.add(shake);
 		//math.add(visualAnalysis);
 
 		generateGraph.add(mathLaw);

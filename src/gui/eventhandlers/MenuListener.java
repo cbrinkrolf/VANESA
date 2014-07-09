@@ -10,6 +10,8 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
@@ -35,6 +37,7 @@ import java.awt.Component;
 import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -69,6 +72,7 @@ import xmlOutput.sbml.VAMLoutput;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.Enzyme;
 import cern.colt.list.IntArrayList;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
@@ -113,7 +117,6 @@ public class MenuListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-
 		w = MainWindowSingelton.getInstance();
 		String event = e.getActionCommand();
 		GraphInstance graphInstance = new GraphInstance();
@@ -931,77 +934,56 @@ public class MenuListener implements ActionListener {
 		} else if ("mirnaTest".equals(event)) {
 			System.out.println("mirnatest");
 			// code for testing number of mirnas matching a pathway
-			
-			/*
-			final String QUESTION_MARK = new String("\\?");
-			String finalQueryString = "SELECT COUNT(DISTINCT targetgene) FROM mirtarbase;";//"SELECT * FROM pid;";//"SELECT targetgene FROM mirtarbase;";
-			ArrayList<DBColumn> list = new ArrayList<DBColumn>();
-			list = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA,
-					finalQueryString);
-			HashMap<String, Integer> map = new HashMap<String, Integer>();
-			//System.out.println("res: "+list.get(0).getColumn()[0]);
-			//System.out.println(list.size());
-			HashMap<String, Integer> gCount = new HashMap<String, Integer>();
-			BufferedReader in;
-			try {
-				in = new BufferedReader(new FileReader("genes.csv"));
-				String line;
-				while ((line = in.readLine()) != null) {
-					if(gCount.containsKey(line)){
-						gCount.put(line, gCount.get(line)+1);
-					}else{
-						gCount.put(line, 1);
-					}
-				}
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			System.out.println("keys: "+gCount.keySet().size());
-			
 
-			String gene;
-			String number;
-			Iterator<String> it = gCount.keySet().iterator();
-			ArrayList<DBColumn> list2 = new ArrayList<DBColumn>();
-			int i = 0;
-			while(it.hasNext() ){//&& i<10) {
-				if(i % 10 == 0){
-					//System.out.println(i*100.0/gCount.keySet().size()+"%");
-				}
-				gene = it.next();//list.get(i).getColumn()[0];
-				System.out.println(gCount.get(gene));
-				
-				String q2 = "SELECT kegg_genes_pathway.name,kegg_genes_pathway.name,"
-						+ "kegg_genes_pathway.number,kegg_genes_pathway.org, kegg_genes_name.name FROM "
-						+ "dawismd.kegg_genes_pathway inner join "
-						+ "dawismd.kegg_genes_name on kegg_genes_pathway.id=kegg_genes_name.id "
-						+ "where kegg_genes_name.name = '"
-						+ gene
-						+ "' and kegg_genes_pathway.org='hsa' order by kegg_genes_pathway.name,"
-						+ "kegg_genes_name.name;";
-				// q2.replaceFirst(QUESTION_MARK, gene);
-				//System.out.println(q2);
-				list2 = new Wrapper().requestDbContent(2, q2);
-				//System.out.println(list2.size());
-				for (int j = 0; j < list2.size(); j++) {
-					number = list2.get(j).getColumn()[2];
-					if(map.containsKey(number)){
-						map.put(number, map.get(number)+gCount.get(gene));
-					}else{
-						map.put(number, gCount.get(gene));
-					}
-				}
-				i++;
-			}
-			
-			it = map.keySet().iterator();
-			String key;
-			while(it.hasNext()){
-				key = it.next();
-				System.out.println(key + "\t"+map.get(key));
-			}*/
-			
+			/*
+			 * final String QUESTION_MARK = new String("\\?"); String
+			 * finalQueryString =
+			 * "SELECT COUNT(DISTINCT targetgene) FROM mirtarbase;"
+			 * ;//"SELECT * FROM pid;";//"SELECT targetgene FROM mirtarbase;";
+			 * ArrayList<DBColumn> list = new ArrayList<DBColumn>(); list = new
+			 * Wrapper().requestDbContent(Wrapper.dbtype_MiRNA,
+			 * finalQueryString); HashMap<String, Integer> map = new
+			 * HashMap<String, Integer>();
+			 * //System.out.println("res: "+list.get(0).getColumn()[0]);
+			 * //System.out.println(list.size()); HashMap<String, Integer>
+			 * gCount = new HashMap<String, Integer>(); BufferedReader in; try {
+			 * in = new BufferedReader(new FileReader("genes.csv")); String
+			 * line; while ((line = in.readLine()) != null) {
+			 * if(gCount.containsKey(line)){ gCount.put(line,
+			 * gCount.get(line)+1); }else{ gCount.put(line, 1); } } } catch
+			 * (IOException e1) { // TODO Auto-generated catch block
+			 * e1.printStackTrace(); }
+			 * System.out.println("keys: "+gCount.keySet().size());
+			 * 
+			 * 
+			 * String gene; String number; Iterator<String> it =
+			 * gCount.keySet().iterator(); ArrayList<DBColumn> list2 = new
+			 * ArrayList<DBColumn>(); int i = 0; while(it.hasNext() ){//&& i<10)
+			 * { if(i % 10 == 0){
+			 * //System.out.println(i*100.0/gCount.keySet().size()+"%"); } gene
+			 * = it.next();//list.get(i).getColumn()[0];
+			 * System.out.println(gCount.get(gene));
+			 * 
+			 * String q2 =
+			 * "SELECT kegg_genes_pathway.name,kegg_genes_pathway.name," +
+			 * "kegg_genes_pathway.number,kegg_genes_pathway.org, kegg_genes_name.name FROM "
+			 * + "dawismd.kegg_genes_pathway inner join " +
+			 * "dawismd.kegg_genes_name on kegg_genes_pathway.id=kegg_genes_name.id "
+			 * + "where kegg_genes_name.name = '" + gene +
+			 * "' and kegg_genes_pathway.org='hsa' order by kegg_genes_pathway.name,"
+			 * + "kegg_genes_name.name;"; // q2.replaceFirst(QUESTION_MARK,
+			 * gene); //System.out.println(q2); list2 = new
+			 * Wrapper().requestDbContent(2, q2);
+			 * //System.out.println(list2.size()); for (int j = 0; j <
+			 * list2.size(); j++) { number = list2.get(j).getColumn()[2];
+			 * if(map.containsKey(number)){ map.put(number,
+			 * map.get(number)+gCount.get(gene)); }else{ map.put(number,
+			 * gCount.get(gene)); } } i++; }
+			 * 
+			 * it = map.keySet().iterator(); String key; while(it.hasNext()){
+			 * key = it.next(); System.out.println(key + "\t"+map.get(key)); }
+			 */
+
 			/*
 			 * if (allKEGGPathways.size() > 0) { MirnaResultKeggWindow
 			 * mirnaResultKeggWindow = new MirnaResultKeggWindow(
@@ -1015,6 +997,74 @@ public class MenuListener implements ActionListener {
 			 * keggPathwayNumber= "hsa"+pathwayResutls[1]; keggPathwayName =
 			 * pathwayResutls[0]; } } }
 			 */
+
+		} else if ("shake".equals(event)) {
+			// System.out.println("shake it");
+
+			Runnable animator = new Runnable() {
+
+				@Override
+				public void run() {
+					BiologicalNodeAbstract bna;
+					Point2D p;
+					Point2D inv;
+					GraphInstance graphInstance = new GraphInstance();
+					for (int i = 0; i < 10; i++) { //
+						// vv.getLayoutTransformer().translate(dx, dy);
+						double offset = 5;
+						if (i % 2 == 0) {
+							offset *= -1;
+						}
+						VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance
+								.getPathway().getGraph()
+								.getVisualizationViewer();
+						double scaleV = vv.getRenderContext()
+								.getMultiLayerTransformer()
+								.getTransformer(Layer.VIEW).getScale();
+						double scaleL = vv.getRenderContext()
+								.getMultiLayerTransformer()
+								.getTransformer(Layer.LAYOUT).getScale();
+						double scale;
+						if (scaleV < 1) {
+							scale = scaleV;
+						} else {
+							scale = scaleL;
+						}
+						offset /= scale;
+
+						Iterator<BiologicalNodeAbstract> it = graphInstance
+								.getPathway().getAllNodes().iterator();
+						while (it.hasNext()) {
+							bna = it.next();
+
+							if (bna instanceof Enzyme) {
+								p = graphInstance.getPathway().getGraph()
+										.getVertexLocation(bna);
+								// inv =
+								// graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(p);
+								// inv.setLocation(inv.getX() + offset,
+								// inv.getY());
+
+								// p =
+								// graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().transform(inv);
+								vv.getModel()
+										.getGraphLayout()
+										.setLocation(
+												bna,
+												new Point2D.Double(p.getX()
+														+ offset, p.getY()));
+							}
+						}
+
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException ex) {
+						}
+					}
+				}
+			};
+			Thread thread = new Thread(animator);
+			thread.start();
 
 		}
 
