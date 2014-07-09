@@ -1,5 +1,7 @@
 package biologicalObjects.nodes;
 
+import java.awt.Color;
+
 import biologicalElements.Elementdeclerations;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
@@ -30,7 +32,8 @@ public class SmallMolecule extends BiologicalNodeAbstract{
 		super(label,name);
 		setBiologicalElement(Elementdeclerations.smallMolecule);
 		shapes = new VertexShapes();	
-		setShape(shapes.getRegularPolygon(8));
+		setDefaultShape(shapes.getRegularPolygon(8));
+		setDefaultColor(Color.yellow);
 	}
 	
 	@Override

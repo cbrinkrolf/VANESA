@@ -1,5 +1,7 @@
 package biologicalObjects.nodes;
 
+import java.awt.Color;
+
 import biologicalElements.Elementdeclerations;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
@@ -9,7 +11,8 @@ public class Inhibitor extends BiologicalNodeAbstract {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.inhibitor);
 		shapes = new VertexShapes();
-		setShape(shapes.getEllipse());
+		setDefaultShape(shapes.getEllipse());
+		setDefaultColor(Color.pink);
 		setReference(false);
 	}
 

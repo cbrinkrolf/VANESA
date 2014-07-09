@@ -10,7 +10,7 @@ public class CompoundNode extends BiologicalNodeAbstract {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.compound);
 		shapes = new VertexShapes();
-		setShape(shapes.getEllipse());
+		setDefaultShape(shapes.getEllipse());
 		setReference(false);
 	}
 

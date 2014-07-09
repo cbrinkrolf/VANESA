@@ -648,8 +648,9 @@ public class KEGGConnector extends SwingWorker {
 					pw.addEdge(c);
 					c.setDirected(true);
 				}
-				if (specific)
-					enzyme.setColor(Color.GREEN);
+				if (specific){
+					//enzyme.setColor(Color.GREEN);
+				}
 				if (!pw.existEdge(enzyme, product)
 						&& !pw.existEdge(product, enzyme)) {
 					Compound c2 = new Compound("", "", enzyme, product);
