@@ -94,7 +94,8 @@ public class DataMapping2View extends JDialog implements Observer{
 	private JTextField headerTF;
 
 	// these are the up to date possible identifiers for the BioMart queries
-	private String[] identifier = {"none", "Agilent [e.g. A_23_P30024] ","Affymetrix [e.g. 209239_at]", "EMBL [e.g. M58603]", "UniProt [e.g. P19838]"};
+//	private String[] identifier = {"none", "Agilent [e.g. A_23_P30024] ","Affymetrix [e.g. 209239_at]", "EMBL [e.g. M58603]", "UniProt [e.g. P19838]"};
+	private String[] identifier = {"none", "Agilent [e.g. A_23_P30024] "};
 	private String[] species = {"none", "Homo sapiens (human)","Mus musculus (mouse)", "Saccharomyces cerevisiae (yeast)"};
 	private JTextField identifierTF;
 	private JComboBox<String> identifierCB;
@@ -124,7 +125,7 @@ public class DataMapping2View extends JDialog implements Observer{
 	private JPanel buttonPanel;
 	private JTable dataMappingTable;
 	private JScrollPane dataMappingScroll;
-	private JButton changeData;
+//	private JButton changeData;
 	private JButton changeDataAndClose;
 	private JButton cancel;
 
@@ -240,8 +241,8 @@ public class DataMapping2View extends JDialog implements Observer{
 
 		dataAdjust = new JPanel(new MigLayout("", "[grow]", ""));
 		buttonPanel = new JPanel(new MigLayout("", "[]", ""));
-		changeData = new JButton("Change");
-		changeData.setActionCommand("changeData");
+//		changeData = new JButton("Change");
+//		changeData.setActionCommand("changeData");
 		changeDataAndClose = new JButton("OK");
 		changeDataAndClose.setActionCommand("changeDataAndClose");
 		cancel = new JButton("Cancel");
@@ -253,7 +254,7 @@ public class DataMapping2View extends JDialog implements Observer{
 		// combine panels in tabbedPane 
 		tabbedPane.addTab("Data Input", mainPanel);
 		tabbedPane.addTab("Data adjustment", dataAdjust);
-		tabbedPane.addTab("Help", helpPanel);
+//		tabbedPane.addTab("Help", helpPanel);
 
 		this.add(tabbedPane);
 		this.setMinimumSize(new Dimension(700, 700));
@@ -374,8 +375,16 @@ public class DataMapping2View extends JDialog implements Observer{
 					closeProgressbarBiomart();
 					setDataMappingTableModel(dmm);
 					addAdjustmentComponents();
+					w.repaint();
 				}
 			});
+		}if(arg.getClass().getSuperclass().equals(Exception.class)){
+			
+			//Error --> close this dialog
+			this.dispose();
+			
+			
+
 		}
 	}
 
@@ -451,8 +460,6 @@ public class DataMapping2View extends JDialog implements Observer{
 			Vector<Object> rowDataV = new Vector<Object>();
 			if(!mergeMap.containsKey(dupEntry.getKey())) {
 				rowDataV.add(dupEntry.getKey());
-//				rowDataV.add(dupEntry.getValue().get(0));
-//				rowDataV.add(dupEntry.getValue().get(1));
 				for(int i = 1; i < dupEntry.getValue().size(); i++){
 					rowDataV.add(dupEntry.getValue().get(i));
 				}
@@ -492,7 +499,7 @@ public class DataMapping2View extends JDialog implements Observer{
 		dataAdjust.add(dataMappingScroll, "align center, gaptop 15, span, wrap 5");
 
 		buttonPanel.add(changeDataAndClose, "");
-		buttonPanel.add(changeData, "");
+//		buttonPanel.add(changeData, "");
 		buttonPanel.add(cancel, "");
 		
 		dataAdjust.add(buttonPanel, "align right, skip 1");
@@ -518,7 +525,7 @@ public class DataMapping2View extends JDialog implements Observer{
 		mint.addActionListener(controller);
 		intact.addActionListener(controller);
 		table.addMouseListener(controller);
-		changeData.addActionListener(controller);
+//		changeData.addActionListener(controller);
 		changeDataAndClose.addActionListener(controller);
 		cancel.addActionListener(controller);
 	} 

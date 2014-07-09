@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -83,6 +84,9 @@ public abstract class BiomartQueryRetrieval {
 	private void proceedRequest(String request) throws IOException {
 		// URL to the BioMart service
 		URL url = new URL("http://www.biomart.org/biomart/martservice");
+		//alternative url to access biomart
+//		URL url = new URL("http://www.ensembl.org/biomart/martservice");	
+			
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setDoOutput(true);
 		

@@ -365,6 +365,7 @@ public class DataMappingView extends JDialog implements Observer{
 					setGradientSlider(dmm);
 					setDataMappingTableModel(dmm);
 					addAdjustmentComponents();
+					w.repaint();
 				}
 			});
 		}
@@ -426,9 +427,7 @@ public class DataMappingView extends JDialog implements Observer{
 			Vector<Object> rowDataV = new Vector<Object>();
 			if(!mergeMap.containsKey(dupEntry.getKey())) {
 				rowDataV.add(dupEntry.getKey());
-//				rowDataV.add(dupEntry.getValue().get(0));
-//				rowDataV.add(dupEntry.getValue().get(1));
-				for(int i = 1; i < dupEntry.getValue().size(); i++){
+				for(int i = 0; i < dupEntry.getValue().size(); i++){
 					rowDataV.add(dupEntry.getValue().get(i));
 				}
 				JRadioButton unique = new JRadioButton("unique", false);

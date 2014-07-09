@@ -4,6 +4,7 @@
 package dataMapping;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -39,12 +40,8 @@ public class QueryParallel implements Callable<Map<String,String>>{
 	public Map<String, String> call() throws Exception {
 		
 		
-		try {
-			query.retrieveQueryResults(identifierType, ids);
-		} catch (IOException e) {
-			// TODO: manage exceptions if for example the BioMart server is down
-			e.printStackTrace();
-		}
+
+		query.retrieveQueryResults(identifierType, ids);
 		
 		Map<String, String> resultMap = query.getResultMap();
 		

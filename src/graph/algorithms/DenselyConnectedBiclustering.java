@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,12 +22,17 @@ import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.DNA;
+import biologicalObjects.nodes.GraphNode;
 import biologicalObjects.nodes.Protein;
+import biologicalObjects.nodes.RNA;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
+import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
@@ -50,8 +56,8 @@ public class DenselyConnectedBiclustering {
 //	private HashMap<Integer, Double[]> attributes  = new HashMap<>();
 	private HashMap<Integer, ArrayList<Double>> attributes;
 	
-	private ArrayList<Integer> attrTyps;
-	private ArrayList<Integer> attrNames;
+	private ArrayList<String> attrTyps;
+	private ArrayList<String> attrNames;
 	
 	
 	
@@ -61,7 +67,7 @@ public class DenselyConnectedBiclustering {
 	//Liste von IDs und den zugehörigen Knoten-Objekten
 	private HashMap<Integer, BiologicalNodeAbstract> idBna = new HashMap<>();
 	
-	
+	private int nodeType;
 
 	
 	private DCBTests test;
@@ -93,13 +99,14 @@ public class DenselyConnectedBiclustering {
 	long preprocessingTime;
 
 	// Constructor: Benutzereingaben werden gesetzt. Aufruf der dcb-Methode
-	public DenselyConnectedBiclustering(double density, ArrayList<Double> ranges2, ArrayList<Integer> attrTyps, ArrayList<Integer> attrNames, double attrdim){
+	public DenselyConnectedBiclustering(double density, ArrayList<Double> ranges2, int nodeType, ArrayList<String> attrTyps, ArrayList<String> attrNames, double attrdim){
 		this.density = density;
 		this.ranges = ranges2;
 		this.attrTyps = attrTyps;
 		this.attrNames = attrNames;
 		this.attrdim = (int) attrdim;
 		this.numOfThreads = 2;
+		this.nodeType = nodeType;
 
 //		FileReader fr = new FileReader(attributes);
 //		BufferedReader br = new BufferedReader(fr);
@@ -158,10 +165,46 @@ public class DenselyConnectedBiclustering {
 //		attr.put(104, new Double[] {0.5, 0.0, 0.0});
 //		attr.put(105, new Double[] {-1.0, 0.0, 2.0});
 		
-		for(BiologicalNodeAbstract vertex1 : mg.getAllVertices()){
+		//delet vertices which have not the needed attributes
+		HashSet<BiologicalNodeAbstract> allVertices = new HashSet<BiologicalNodeAbstract>();
+		
+		if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_BNA_NR){
+			allVertices.addAll(mg.getAllVertices());
+		}else{
+			for(BiologicalNodeAbstract vertex : mg.getAllVertices()){
+				switch(nodeType){
+				case DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE_NR:
+					if(vertex instanceof GraphNode){
+						allVertices.add(vertex);
+					}
+					break;
+				case DenselyConnectedBiclusteringGUI.TYPE_DNA_NR:
+					if(vertex instanceof DNA){
+						allVertices.add(vertex);
+					}
+					
+					break;
+				case DenselyConnectedBiclusteringGUI.TYPE_RNA_NR:
+					if(vertex instanceof RNA){
+						allVertices.add(vertex);
+					}
+					
+					break;
+				case DenselyConnectedBiclusteringGUI.TYPE_PROTEIN_NR:
+					if(vertex instanceof Protein){
+						allVertices.add(vertex);
+					}
+					
+					break;
+				}
+			}
+		}
+		
+		
+		for(BiologicalNodeAbstract vertex1 : allVertices){
 			HashSet<Integer> neigbours = new HashSet<Integer>();
 			idBna.put(vertex1.getID(), vertex1);
-			for(BiologicalNodeAbstract vertex2 : mg.getAllVertices()){
+			for(BiologicalNodeAbstract vertex2 : allVertices){
 				
 				
 					
@@ -244,48 +287,86 @@ public class DenselyConnectedBiclustering {
 		attributes = new HashMap<Integer, ArrayList<Double>>();
 //		NetworkProperties nwProperties = new NetworkProperties();
 		
+		Hashtable<BiologicalNodeAbstract, Double> averageNeighbourDegreeTable = null;
+		ArrayList<String> experimentNames = null;
+		
 		ArrayList<Double> values;
+		
 		for(int id : adjacencies.keySet()){
 			values = new ArrayList<Double>();
+			BiologicalNodeAbstract vertex = idBna.get(id);
 			for(int i = 0; i < attrTyps.size(); i++){
-				int itemTypIndex = attrTyps.get(i);
-				int itemIndex = attrNames.get(i);
-		        switch(itemTypIndex){
-		        case 0: //"Graph characteristic"
-			        switch(itemIndex){
-			        case 0: //"Node degree"		    		
+				String itemTyp = attrTyps.get(i);
+				String item = attrNames.get(i);
+		        switch(itemTyp){
+		        case "Graph characteristic":
+			        switch(item){
+			        case "Node degree":	    		
 			    		values.add((double) adjacencies.get(id).size());
 
 			            break;
-			        case 1://"Neighbour degree"
-			    		
-
+			        case "Neighbour degree":
+			        	if(averageNeighbourDegreeTable == null){
+			        		NetworkProperties np = new NetworkProperties();
+			        		
+			        		averageNeighbourDegreeTable = np.averageNeighbourDegreeTable();
+			        	}
+			        	values.add(averageNeighbourDegreeTable.get(vertex));
+			            break;
+			        default:
+			        	break;
+			        }
+		            break;
+		        case DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE:
+		        	//TODO aus Graph laden
+		        	GraphNode graphNode = (GraphNode) vertex;
+		        	if(experimentNames == null){
+		        		experimentNames = (ArrayList<String>) Arrays.asList(graphNode.getSuperNode().biodata);
+		        	}
+					
+		        	values.add(graphNode.getSuperNode().biodataEntries[experimentNames.indexOf(item)]);
+		        	
+		        	
+		            break;
+		        case DenselyConnectedBiclusteringGUI.TYPE_DNA:
+			        switch(item){
+			        case "Sequence length": 
+			        	
+			    		DNA d = (DNA) vertex;
+			    		values.add((double) d.getNtSequence().length());
 			        	
 			            break;
 			        default:
 			        	break;
 			        }
-		            break;
-		        case 1://"Experimental Data
-		        	//TODO aus Graph laden
-		        	
-		            break;
-		        case 2://"Biological Characteristic"
-			        switch(itemIndex){
-			        case 0: //"Protein length"
-						BiologicalNodeAbstract vertex = idBna.get(id);
-
-		                if(vertex instanceof Protein){
-		                    Protein p = (Protein) vertex;
-		                    values.add((double) p.getAaSequence().length());  
-		                }else{
-		                	values.add(0.0);
-		                }
+		        	break;
+		        case DenselyConnectedBiclusteringGUI.TYPE_RNA:
+			        switch(item){
+			        case "Sequence length":  
+			        	
+			    		RNA r = (RNA) vertex;
+			    		values.add((double) r.getNtSequence().length());
+			    		
 			            break;
 			        default:
 			        	break;
 			        }
 		        	break;
+		        case DenselyConnectedBiclusteringGUI.TYPE_PROTEIN:
+			        switch(item){
+			        case "Sequence length":
+//		                if(vertex instanceof Protein){
+	                    Protein p = (Protein) vertex;
+	                    values.add((double) p.getAaSequence().length());  
+//		                }else{
+//		                	values.add(0.0);
+//		                }
+			            break;
+			        default:
+			        	break;
+			        }
+		        	break;
+		        	
 		        default:
 		        	break;
 		        }
