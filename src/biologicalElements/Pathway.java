@@ -727,10 +727,8 @@ public class Pathway implements Cloneable {
 			getGraph().addEdge(bea);
 			bea.setID();
 			biologicalElements.put(bea.getID() + "", bea);
-			if(bea.getFrom().getGraph(false)==null){
+			if(bea.getFrom().getGraph(false)==null && bea.getTo().getGraph(false)==null && bea.getFrom().getParentNode()==null && bea.getTo().getParentNode()==null){
 				bea.getFrom().getConnectingEdges().add(bea);
-			}
-			if(bea.getTo().getGraph(false)==null){
 				bea.getTo().getConnectingEdges().add(bea);
 			}
 			return bea;
@@ -1514,8 +1512,12 @@ public class Pathway implements Cloneable {
 				
 			case FLATTED:
 				this.removeElement(node);
+				System.out.println("ConEdges before flatting of node " + node.getLabel());
+				for(BiologicalEdgeAbstract ed : node.getConnectingEdges()){
+					System.out.println(ed.getFrom().getLabel() + "->" + ed.getTo().getLabel());
+				}
 				
-				// root Pathway and non-environment nodes.
+				// root Pathway and non-environment nodes add complete sub-pathway.
 				if(thisNode==null || !thisNode.getEnvironment().contains(node)){
 					for(BiologicalNodeAbstract n : node.getAllNodes()){
 						if(!node.getEnvironment().contains(n)){
@@ -1527,7 +1529,7 @@ public class Pathway implements Cloneable {
 					}
 				} 
 				
-				// coarse nodes
+				// environment nodes add only correct Subnodes and connecting edges.
 				else {
 					HashSet<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
 					conEdges.addAll(node.getConnectingEdges());
@@ -1607,4 +1609,5 @@ public class Pathway implements Cloneable {
 			}
 		}
 	}
+	
 }

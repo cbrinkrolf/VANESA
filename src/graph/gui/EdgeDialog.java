@@ -5,6 +5,7 @@ package graph.gui;
 
 import graph.GraphInstance;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,13 +19,16 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 /**
  * @author Sebastian
@@ -45,11 +49,17 @@ public class EdgeDialog extends JFrame {
 	GraphInstance graphInstance = new GraphInstance();
 	Pathway pw = graphInstance.getPathway();
 	JComboBox<String> box = new JComboBox<String>();
+	JComboBox<String> fromBox = new JComboBox<String>();
+	HashMap<Integer,BiologicalNodeAbstract> fromMap = new HashMap<Integer, BiologicalNodeAbstract>();
+	JComboBox<String> toBox = new JComboBox<String>();
+	HashMap<Integer,BiologicalNodeAbstract> toMap = new HashMap<Integer, BiologicalNodeAbstract>();
+
+
 
 	/**
 	 * 
 	 */
-	public EdgeDialog() {
+	public EdgeDialog(BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 
 		//Container contentPane = getContentPane();
 		MigLayout layout = new MigLayout("", "[left]");
@@ -64,6 +74,25 @@ public class EdgeDialog extends JFrame {
 
 		name = new JTextField(20);
 		panel = new JPanel(layout);
+		
+		if(!from.getAllNodes().isEmpty()){
+			panel.add(new JLabel("Select Start Node"), "");
+			addAllChildNodes(from, fromBox, fromMap);
+			AutoCompleteDecorator.decorate(fromBox);
+			panel.add(fromBox, "span,wrap,growx,gap 10");
+		} else {
+			fromBox.addItem(from.getLabel());
+			fromMap.put(fromBox.getItemCount()-1, from);
+		}
+		if(!to.getAllNodes().isEmpty()){
+			panel.add(new JLabel("Select End Node"), "");
+			addAllChildNodes(to, toBox, toMap);
+			AutoCompleteDecorator.decorate(toBox);
+			panel.add(toBox, "span,wrap,growx,gap 10");
+		} else {
+			toBox.addItem(to.getLabel());
+			toMap.put(toBox.getItemCount()-1, to);
+		}
 
 		panel.add(new JLabel("Type of connection"), "");
 		// panel.add(new JSeparator(),
@@ -93,6 +122,19 @@ public class EdgeDialog extends JFrame {
 		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
 				JOptionPane.OK_CANCEL_OPTION);
 	}
+	
+	private void addAllChildNodes(BiologicalNodeAbstract vertex, JComboBox<String> nodeBox, HashMap<Integer, BiologicalNodeAbstract> map){
+		for(BiologicalNodeAbstract child : vertex.getAllNodes()){
+			if(!vertex.getEnvironment().contains(child)){
+				if(child.getAllNodes().isEmpty()){
+					nodeBox.addItem(child.getLabel());
+					map.put(nodeBox.getItemCount()-1, child);
+				} else {
+					addAllChildNodes(child, nodeBox, map);
+				}
+			}
+		}
+	}
 
 	private void addEdgeItems(JPanel panel) {
 		List<String> edgeItems = new Elementdeclerations().getAllEdgeDeclarations();
@@ -110,26 +152,30 @@ public class EdgeDialog extends JFrame {
 		}
 	}
 
-	public String[] getAnswer() {
+	public Pair<String[], BiologicalNodeAbstract[]> getAnswer() {
 
 		JDialog dialog = pane.createDialog(EdgeDialog.this, "Create an edge");
 		//dialog.show();
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
+		BiologicalNodeAbstract[] bnas = new BiologicalNodeAbstract[2];
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
 				details[0] = name.getText();
 				details[2] = box.getSelectedItem().toString();
+				bnas[0] = fromMap.get(fromBox.getSelectedIndex());
+				bnas[1] = toMap.get(toBox.getSelectedIndex());
 				if (directed.isSelected()) {
 					details[1] = "directed_edge";
 				} else if (undirected.isSelected())
 					details[1] = "undirected_edge";
 			} else {
-				return null;
+				return Pair.of(null,null);
 			}
 		} else {
-			return null;
+			return Pair.of(null,null);
 		}
-		return details;
+		Pair<String[], BiologicalNodeAbstract[]> ret = Pair.of(details,bnas);
+		return ret;
 	}
 }

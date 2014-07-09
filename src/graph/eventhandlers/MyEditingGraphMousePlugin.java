@@ -19,9 +19,13 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import petriNet.ContinuousTransition;
 import petriNet.Place;
@@ -313,8 +317,10 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 									JOptionPane.ERROR_MESSAGE);
 				else {
 					// Graph graph = vv.getGraphLayout().getGraph();
-					EdgeDialog dialog = new EdgeDialog();
-					String[] answers = dialog.getAnswer();
+					EdgeDialog dialog = new EdgeDialog(startVertex, vertex);
+					Pair<String[], BiologicalNodeAbstract[]> answer = dialog.getAnswer();
+					String[] answers = answer.getLeft();
+					BiologicalNodeAbstract[] nodes = answer.getRight();
 
 					if (answers != null) {
 
@@ -330,6 +336,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 											JOptionPane.ERROR_MESSAGE);
 						else {
 							//BiologicalEdgeAbstract bea;
+							//System.out.println(nodes[0].getLabel() + " -> " + nodes[1].getLabel());
 							String name = answers[0];
 							String label = answers[0];
 							String element = answers[2];
@@ -354,8 +361,49 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 
 //							bea.setBiologicalElement(answers[2]);
 							// System.out.println("vor add");
-
+//							BiologicalEdgeAbstract bea = pw.addEdge(label, name, startVertex, vertex, element, directed).clone();
+//							bea.setFrom(nodes[0]);
+//							bea.setTo(nodes[1]);
+							BiologicalEdgeAbstract bea = new Pathway("").addEdge(label, name, nodes[0], nodes[1], element, directed);
 							pw.addEdge(label, name, startVertex, vertex, element, directed);
+							Set<BiologicalNodeAbstract> parentBNAs = new HashSet<BiologicalNodeAbstract>();
+							parentBNAs.addAll(nodes[0].getAllParentNodes());
+							parentBNAs.addAll(nodes[1].getAllParentNodes());
+							for(BiologicalNodeAbstract bna : parentBNAs){
+//								System.out.println(bna.getLabel());
+//								System.out.println(bea + ": " + bea.getFrom().getLabel() + "->" + bea.getTo().getLabel());
+								BiologicalNodeAbstract from = nodes[0].getCurrentShownParentNode(bna.getGraph());
+								BiologicalNodeAbstract to = nodes[1].getCurrentShownParentNode(bna.getGraph());
+//								System.out.println("CON before:");
+//								for(BiologicalEdgeAbstract ed : bna.getConnectingEdges()){
+//									System.out.println(ed + ": " + ed.getFrom().getLabel() + "->" + ed.getTo().getLabel());
+//								}
+								if(from!=null && to!=null && from!=to){
+									bna.addEdge(label, name, from, to, element, directed);
+									if(bna.getEnvironment().contains(from) | bna.getEnvironment().contains(to)){
+										bna.getConnectingEdges().add(bea);
+									}
+								} else if(from==null && to!=null){
+									BiologicalNodeAbstract newEnvNode = startVertex.getCurrentShownParentNode(pw.getGraph());
+									bna.getEnvironment().add(newEnvNode);
+									bna.getBorder().add(to);
+									bna.addVertex(newEnvNode, pw.getGraph().getVertexLocation(newEnvNode));
+									bna.addEdge(label, name, newEnvNode, to, element, directed);
+									bna.getConnectingEdges().add(bea);
+								} else if(from!=null && to==null){
+									BiologicalNodeAbstract newEnvNode = vertex.getCurrentShownParentNode(pw.getGraph());
+									bna.getEnvironment().add(newEnvNode);
+									bna.getBorder().add(from);
+									bna.addVertex(newEnvNode, pw.getGraph().getVertexLocation(newEnvNode));
+									bna.addEdge(label, name, from, newEnvNode, element, directed);
+									bna.getConnectingEdges().add(bea);
+								}
+//								System.out.println("CON after:");
+//								for(BiologicalEdgeAbstract ed : bna.getConnectingEdges()){
+//									System.out.println(ed + ": " + ed.getFrom().getLabel() + "->" + ed.getTo().getLabel());
+//								}
+							}
+							//pw.getRootPathway().updateMyGraph();
 
 							// MainWindowSingelton.getInstance().updateElementTree();
 						}
