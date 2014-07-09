@@ -28,6 +28,11 @@ public class MyEdgeShapeFunction implements Transformer<Context<Graph<Biological
 		if(context.element instanceof AlignmentEdge){
 			return (new EdgeShape.Wedge<BiologicalNodeAbstract, BiologicalEdgeAbstract>(6)).transform(context);
 		}else if(context.element instanceof PNEdge){
+			
+			PNEdge e = (PNEdge) context.element;
+			if(context.graph.findEdge(e.getTo(), e.getFrom()) != null){
+				return (new EdgeShape.QuadCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>()).transform(context);
+			}
 			return (new EdgeShape.Line<BiologicalNodeAbstract, BiologicalEdgeAbstract>()).transform(context);
 		}
 		else{
