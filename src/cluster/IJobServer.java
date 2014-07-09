@@ -62,6 +62,18 @@ public interface IJobServer extends Remote {
         
         /**
          * Submit method for the graph database, returns true if job could be queued.
+         * This method invokes minimal network searches on the graph db. 
+         * @param startnodes
+         * @param depth
+         * @param database - mint, intact, hprd, ... , any
+         * @param helper
+         * @return
+         * @throws RemoteException
+         */
+        public boolean submitSearch(HashSet<String> datasets, int depth, ISearchCallback helper) throws RemoteException;
+        
+        /**
+         * Submit method for the graph database, returns true if job could be queued.
          * This method invokes a experimental data-mapping on the graph db.
          * @param jobType
          * @param experimentl

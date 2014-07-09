@@ -19,13 +19,14 @@ public class JobTypes {
 	/**
 	 * Graphdb only jobs
 	 */
-	public static final int HPRD_MAPPING = 110,
-			BRENDA_MAPPING = 111,
-			INTACT_MAPPING = 112,
-			KEGG_MAPPING = 113,
-			MINT_MAPPING = 114,
-			UNIPROT_MAPPING = 115,
-			
-			DEPTH_SEARCH = 100,
-			MINIMAL_NETWORK_SEARCH = 101;
+	public static final int MAPPING_HPRD = 110;
+	public static final int MAPPING_BRENDA = 111;
+	public static final int MAPPING_INTACT = 112;
+	public static final int MAPPING_KEGG = 113;
+	public static final int MAPPING_MINT = 114;
+	public static final int MAPPING_UNIPROT = 115;
+
+	public static final int SEARCH_DEPTH = 100;
+	public static final int SEARCH_MINIMAL_NETWORK = 101;
+	public static final int SEARCH_DATASET = 102;
 }
