@@ -10,7 +10,7 @@ public class Other extends BiologicalNodeAbstract {
 		super(label,name);
 		setBiologicalElement(Elementdeclerations.others);
 		shapes = new VertexShapes();	
-		setShape(shapes.getEllipse());
+		setDefaultShape(shapes.getEllipse());
 	}
 	
 	@Override

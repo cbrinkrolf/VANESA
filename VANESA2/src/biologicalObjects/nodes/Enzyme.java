@@ -2,6 +2,7 @@ package biologicalObjects.nodes;
 
 import graph.jung.graphDrawing.VertexShapes;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import pojos.DBColumn;
@@ -24,7 +25,8 @@ public class Enzyme extends Protein {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.enzyme);
 		shapes = new VertexShapes();	
-		setShape(shapes.getRegularPolygon(3));
+		setDefaultShape(shapes.getRegularPolygon(3));
+		setDefaultColor(Color.green);
 	}
 
 	public String getCofactor() {

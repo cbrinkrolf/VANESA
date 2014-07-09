@@ -16,7 +16,7 @@ public class CollectorNode extends BiologicalNodeAbstract{
 		super(label, count+" Elemente");
 		setBiologicalElement(Elementdeclerations.collector);
 		shapes = new VertexShapes();	
-		setShape(shapes.getEllipse());
+		setDefaultShape(shapes.getEllipse());
 		setReference(false);
 	}
 	

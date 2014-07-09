@@ -119,9 +119,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		if (!enzymes.containsKey(clean)) {
 			SmallMolecule sm = new SmallMolecule(clean, "");
 			sm.setReference(false);
-			sm.setColor(Color.yellow);
 			enzymes.put(clean, sm);
-
 			return sm;
 
 		} else {
@@ -192,7 +190,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 						e = new Enzyme(clean, resultDetails[1]);
 						e.setReference(false);
-						e.setColor(Color.GREEN);
 
 						enzymes.put(clean, e);
 						
@@ -572,7 +569,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 				bna = enzymes.get(result0);
 				bna2 = enzymes.get(result1);
 
-				bna2.setColor(Color.cyan);
 				this.buildEdge(bna2, bna, true, "1");
 
 			} else {
@@ -634,8 +630,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 				f = new Inhibitor(result1, result1);
 
 				f.setReference(false);
-				f.setColor(Color.pink);
-
 				enzymes.put(result1, f);
 
 				e = ((Enzyme) enzymes.get(result0));

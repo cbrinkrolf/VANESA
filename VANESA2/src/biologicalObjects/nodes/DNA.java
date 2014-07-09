@@ -13,7 +13,7 @@ public class DNA extends BiologicalNodeAbstract {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.dna);
 		shapes = new VertexShapes();	
-		setShape(shapes.getRoundRectangle());
+		setDefaultShape(shapes.getRoundRectangle());
 	}
 	
 	@Override
