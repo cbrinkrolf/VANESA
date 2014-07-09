@@ -77,7 +77,12 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		 if(multi_id_search){
 			 server.submitSearch(commonNames, depth, "any", helper);
 		 }else{
+			 //DEBUG dataset search
 			 server.submitSearch(commonName,depth,helper);
+			 
+//			 HashSet<String> datasets = new HashSet<String>();
+//			 datasets.add("my_random");
+//			 server.submitSearch(datasets, 1, helper);
 		 }
 		}catch(Exception e){
 			SwingUtilities.invokeLater(new Runnable() {
