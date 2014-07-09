@@ -1,9 +1,14 @@
 package dataMapping;
 
 import graph.GraphInstance;
+import gui.MainWindow;
+import gui.MainWindowSingelton;
+import gui.ProgressBar;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
+import java.rmi.Naming;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,14 +29,18 @@ import java.util.concurrent.Future;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 
+import cluster.IJobServer;
+import cluster.JobTypes;
+import cluster.MappingCallback;
 import biologicalElements.Pathway;
 import dataMapping.biomartRetrieval.AgilentQueryRetrieval;
-
 import dataMapping.biomartRetrieval.BiomartQueryRetrieval;
 import dataMapping.biomartRetrieval.HPRDQueryRetrieval;
 import dataMapping.biomartRetrieval.IntActQueryRetrieval;
 import dataMapping.dataImport.ImportExcelxData;
+import database.unid.UNIDSearch;
 
 
 /**
@@ -63,6 +72,7 @@ public class DataMappingModelController extends Observable {
 	private Map<String, String> resultMap;
 	private boolean withPathway;
 	private int headerIndex;
+	public static ProgressBar progressBarExport;
 
 	/**
 	 * constructs the DataMappingModelController and instantiates a new DataMappingModel
@@ -167,7 +177,7 @@ public class DataMappingModelController extends Observable {
 	 * starts the BioMart query, sets the query results in the datamappingModel
 	 * and starts the main work of the dataMappingModel
 	 */
-	public void startMapping() {
+	public void startMapping(){
 		createIdentifierMultiValueMap();
 		
 		int numOfThreads = 2;
@@ -235,6 +245,7 @@ public class DataMappingModelController extends Observable {
 						"Error", JOptionPane.ERROR_MESSAGE);
 
 				e1.printStackTrace();
+
 			}
 				
 			executeQuerys.shutdown();
@@ -304,11 +315,11 @@ public class DataMappingModelController extends Observable {
 			
 			try {
 				resultMapPart = executeQuerys.invokeAll(tasksQuery);
-			} catch (InterruptedException e1) {
-				JOptionPane.showMessageDialog(
-						null,
-						"Could not execute query.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+			}catch (InterruptedException e1) {
+//				JOptionPane.showMessageDialog(
+//						null,
+//						"Could not execute query.",
+//						"Error", JOptionPane.ERROR_MESSAGE);
 
 				e1.printStackTrace();
 			}
@@ -316,18 +327,24 @@ public class DataMappingModelController extends Observable {
 			executeQuerys.shutdown();
 			resultMap = new HashMap<String, String>();
 			
-			for(Future<Map<String, String>> res : resultMapPart){
-				try {
-					resultMap.putAll(res.get());
-
-				} catch (InterruptedException | ExecutionException e) {
-					JOptionPane.showMessageDialog(
-							null,
+			try{
+				for(Future<Map<String, String>> res : resultMapPart){
+						resultMap.putAll(res.get());
+				}
+				
+			} catch (ExecutionException | InterruptedException e) {
+				SwingUtilities.invokeLater(new Runnable() {
+				     public void run() {
+							JOptionPane.showMessageDialog(
+									MainWindowSingelton.getInstance(),
 							"Query dosen't work (no results).",
 							"Error", JOptionPane.ERROR_MESSAGE);
-
-					e.printStackTrace();
-				}
+				     }
+				   });
+				e.printStackTrace();
+				
+				setChanged();
+				notifyObservers(e);
 			}
 						
 			
@@ -488,7 +505,6 @@ public class DataMappingModelController extends Observable {
 		Vector<Vector<String>> allData = importData.getDataVector();
 		identifiers = new ArrayList<String>();
 		for(int i = 0; i<allData.size(); i++) {
-			//TODO Testen!!!
 			if(i != headerIndex){
 				Vector<String> rowData = allData.get(i);
 				identifiers.add(rowData.get(identifierColumnIndex));
@@ -591,6 +607,9 @@ public class DataMappingModelController extends Observable {
 				}
 			}
 			dataMappingModel.updateColor(newMergeMap, newDupMap);
+			
+			setChanged();
+			notifyObservers(dataMappingModel);
 		}else{ //store data into db is diffrent because the ordering of columns is different
 			for(int i = 0; i<dmt.getRowCount(); i++) {
 				JRadioButton jButton = (JRadioButton) dmt.getValueAt(i, 2);
@@ -612,12 +631,55 @@ public class DataMappingModelController extends Observable {
 			}
 			//TODO Methode für Daten Export
 //			System.out.println(newMergeMap);
+			
+			export(newMergeMap);
+			
+			
+			
 		}
 
 		
-		setChanged();
-		notifyObservers(dataMappingModel);			
+			
 	}
+	
+	
+	/**
+	 * @param newMergeMap
+	 */
+	private void export(Map<String, List<String>> newMergeMap) {
+		// TODO Auto-generated method stub
+		//ExportThread erzeugen newM übergeben
+		
+		
+		progressBarExport = new ProgressBar();
+		progressBarExport.init(100, "DATAMAPPING", true);
+//		progressBarExport.setProgressBarString("Export data...");
+		
+		
+		ArrayList<String> header = dataMappingModel.getHeader();
+		
+		
+		ExportThread dataExport = new ExportThread(newMergeMap, header);
+		try{
+		dataExport.execute();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+//		reactivateUI();
+		
+		
+		
+	}
+	
+	public static void reactivateUI() {
+		// close Progress bar and reactivate UI
+		progressBarExport.closeWindow();
+		MainWindow mw = MainWindowSingelton.getInstance();
+		mw.setEnable(true);
+		mw.setLockedPane(false);
+	}
+
+
 	
 	public void setHeaderIndex(int headerIndex) {
 		this.headerIndex = headerIndex;
