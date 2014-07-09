@@ -96,19 +96,26 @@ public class MenuBarClass {
 		JMenu transformation = new JMenu("Transformation");
 		
 		// items for the dataMapping
-		JMenuItem dataMapping = new JMenuItem("Data Mapping");
+		JMenuItem dataMapping = new JMenuItem("Data Mapping (color)");
 		dataMapping.addActionListener(new MenuListener());
-		dataMapping.setActionCommand("dataMapping");
+		dataMapping.setActionCommand("dataMappingColor");
 		tools.add(dataMapping);
+		
+		
+		// items for the dataMapping
+		JMenuItem dataMappingDb = new JMenuItem("Data Mapping (DB)");
+		dataMappingDb.addActionListener(new MenuListener());
+		dataMappingDb.setActionCommand("dataMappingDB");
+		tools.add(dataMappingDb);
 
 		JMenuItem phosphoImport = new JMenuItem("PhosphoSite input");
 		phosphoImport.addActionListener(new MenuListener());
 		phosphoImport.setActionCommand("phospho");
-		
+
 		JMenuItem mirnaTest = new JMenuItem("MirnaTest");
 		mirnaTest.addActionListener(new MenuListener());
 		mirnaTest.setActionCommand("mirnaTest");
-
+		
 		JMenuItem fabricio = new JMenuItem("Patricios Data");
 		fabricio.addActionListener(new MenuListener());
 		fabricio.setActionCommand("fabricio");
