@@ -404,16 +404,17 @@ public class GraphColoringGUI implements ActionListener {
 			recolorGraph();
 			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 		} else if ("resetcolors".equals(command)) {
-			GraphContainer con = ContainerSingelton.getInstance();
+			/*GraphContainer con = ContainerSingelton.getInstance();
 			Iterator<BiologicalNodeAbstract> it = (Iterator<BiologicalNodeAbstract>) con
 					.getPathway(
 							MainWindowSingelton.getInstance()
 									.getCurrentPathway()).getGraph()
-					.getAllVertices().iterator();
-
+					.getAllVertices().iterator();*/
+			Iterator<BiologicalNodeAbstract> it = GraphInstance.getMyGraph().getAllVertices().iterator();
 			while (it.hasNext()) {
 				bna = it.next();
-				bna.setColor(greynodecolor);
+				//bna.setColor(greynodecolor);
+				bna.resetAppearance();
 			}
 
 			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
