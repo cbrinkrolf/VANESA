@@ -88,6 +88,8 @@ public class MyVisualizationViewer extends
 		}
 		scale = ((double)((int)(scale *100))/100);
 		g2d.drawString("Zoom: " + scale+"x", this.getWidth()-75, 11);
+		
+		//g2d.drawString("x", 580, 533);
 		//System.out.println(this.getWidth());
 		// ContainerSingelton.getInstance().setPetriView(true);
 	}
