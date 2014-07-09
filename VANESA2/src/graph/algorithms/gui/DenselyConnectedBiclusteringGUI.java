@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import javax.swing.DefaultComboBoxModel;
@@ -53,6 +54,10 @@ import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.DNA;
+import biologicalObjects.nodes.GraphNode;
+import biologicalObjects.nodes.Protein;
+import biologicalObjects.nodes.RNA;
 
 public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSelectionListener {
 
@@ -98,6 +103,17 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	private double ATTRDIM_DEFAULT = 2d;
 	private double RANGE_DEFAULT = 5d;
 	
+	public static final String TYPE_GRAPHNODE = "Experimental data";
+	public static final String TYPE_PROTEIN = "Protein";
+	public static final String TYPE_DNA = "DNA";
+	public static final String TYPE_RNA = "RNA";
+	
+	public static final int TYPE_GRAPHNODE_NR = 0;
+	public static final int TYPE_PROTEIN_NR = 1;
+	public static final int TYPE_DNA_NR = 2;
+	public static final int TYPE_RNA_NR = 3;
+	public static final int TYPE_BNA_NR = 4;
+	
 	DefaultListModel<DCBClusterLabel> listModel;
 	
 	private LinkedList<HashSet<BiologicalNodeAbstract>> selectedClusters;
@@ -111,6 +127,9 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	private HashMap<BiologicalNodeAbstract, Color> pickedVertices = new HashMap<BiologicalNodeAbstract, Color>();
 	private HashMap<BiologicalEdgeAbstract, Color> pickedEdges = new HashMap<BiologicalEdgeAbstract, Color>();
 
+	
+	private ArrayList<String> attrTypes;
+	private ArrayList<String> experiments;
 	public DenselyConnectedBiclusteringGUI() {
 
 	}
@@ -333,9 +352,16 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			int num = ((Double) attrnumspinner.getValue()).intValue();
 
 			rangeField = new ArrayList<JFormattedTextField>();
-
-			String[] attrTypString = { "Graph characteristic",
-					"Experimental Data", "Biological Characteristic" };
+			
+			setAttrTypes();
+			
+//			String[] attrTypString = { "Graph characteristic",
+//					"Experimental Data", "Biological Characteristic" };
+			
+			String[] attrTypString = new String[attrTypes.size()];
+					
+			attrTypes.toArray(attrTypString);
+			
 
 			// Create the combo box, select item at index 4.
 			// Indices start at 0, so 4 specifies the pig.
@@ -401,20 +427,24 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			ArrayList<String> attr = new ArrayList<String>();
 			int boxIndex = attrTypList.indexOf(e.getSource());
 			if (boxIndex != -1) {
-				int itemIndex = attrTypList.get(boxIndex).getSelectedIndex();
-				switch (itemIndex) {
-				case 0: // "Graph characteristic"
+				String itemName = (String) attrTypList.get(boxIndex).getSelectedItem();
+				switch (itemName) {
+				case "Graph characteristic": // "Graph characteristic"
 					attr.add("Node degree");
 					attr.add("Neighbour degree");
 					break;
-				case 1:// "Experimental Data
+				case TYPE_GRAPHNODE:// "Experimental Data
 						// TODO aus Graph laden
-					attr.add("Experiment 1");
-					attr.add("Experiment 2");
-					attr.add("Experiment 3");
+					attr.addAll(experiments);
 					break;
-				case 2:// "Biological Characteristic"
-					attr.add("Protein length");
+				case TYPE_DNA:
+					attr.add("Sequence length");
+					break;
+				case TYPE_RNA:
+					attr.add("Sequence length");
+					break;
+				case TYPE_PROTEIN:
+					attr.add("Sequence length");
 					break;
 				default:
 					break;
@@ -436,8 +466,9 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 
 		}
 		if ("calculate".equals(event)) {
-
+		
 			boolean noMinMax = false;
+			boolean toManyTypes = false;
 
 			double density = ((Number) desityField.getValue()).doubleValue();
 			if (density < DENSITY_MIN || density > DENSITY_MAX) {
@@ -445,21 +476,66 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			}
 
 			ArrayList<Double> ranges = new ArrayList<Double>();
-			ArrayList<Integer> attrTyps = new ArrayList<Integer>();
-			ArrayList<Integer> attrNames = new ArrayList<Integer>();
+			ArrayList<String> attrTyps = new ArrayList<String>();
+			ArrayList<String> attrNames = new ArrayList<String>();
+			
+//			LinkedHashMap<String, ArrayList<String>> attrNames2 = new LinkedHashMap <String, ArrayList<String>>();
 
+			int nodeType = 4;
+			int typeCounter = 0;
+			
 			for (int i = 0; i < rangeField.size(); i++) {
 				ranges.add(((Number) rangeField.get(i).getValue())
 						.doubleValue());
 				// ranges.add(((Number)rangeField.get(i).getValue()).doubleValue());
 				if (ranges.get(i) < ATTR_MIN || ranges.get(i) > ATTR_MAX) {
 					noMinMax = true;
-				} else {
-					attrTyps.add(attrTypList.get(i).getSelectedIndex());
-					attrNames.add(attrList.get(i).getSelectedIndex());
+					break;
+				}else if(typeCounter > 1){
+					toManyTypes = true;
+					break;
+				}else {
+					String type = (String) attrTypList.get(i).getSelectedItem();
+					attrTyps.add(type);
+					attrNames.add((String) attrList.get(i).getSelectedItem());
+					
+					switch(type){
+					case TYPE_GRAPHNODE: 
+						typeCounter++;
+						nodeType = TYPE_GRAPHNODE_NR;
+						break;
+					case TYPE_PROTEIN: 
+						typeCounter++;
+						nodeType = TYPE_PROTEIN_NR;
+						break;
+					case TYPE_DNA:
+						typeCounter++;
+						nodeType = TYPE_DNA_NR;
+						break;
+					case TYPE_RNA: 
+						typeCounter++;
+						nodeType = TYPE_RNA_NR;
+						break;
+					default:
+						break;
+					}
+					
+//					if(attrNames2.containsKey(attrTypList.get(i).getSelectedItem())){
+//						attrNames2.get(attrTypList.get(i).getSelectedItem()).add((String) attrList.get(i).getSelectedItem());
+//					}else{
+//						ArrayList<String> tmp = new ArrayList<String>();
+//						tmp.add((String) attrList.get(i).getSelectedItem());
+//						attrNames2.put((String) attrTypList.get(i).getSelectedItem(), tmp);
+//					}
+					
+//						attrNames2.put(attrTypList.get(i), attrList.get(i));
 				}
 
 			}
+			if(typeCounter == 0){
+				nodeType = TYPE_BNA_NR;
+			}
+			
 
 			double attrdim = (double) attrdimspinner.getValue();
 
@@ -474,10 +550,16 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 								null,
 								"Number of similar attributes must not be greater than number of attributes.",
 								"Error", JOptionPane.ERROR_MESSAGE);
+			} else if (toManyTypes) {
+				JOptionPane
+						.showMessageDialog(
+								null,
+								"These types of attributes could not be combined.",
+								"Error", JOptionPane.ERROR_MESSAGE);
 
 			} else {
 				DenselyConnectedBiclustering dcb = new DenselyConnectedBiclustering(
-						density, ranges, attrTyps, attrNames, attrdim);
+						density, ranges, nodeType, attrTyps, attrNames, attrdim);
 
 				results = dcb.start();
 				// assert results != null : "No result";
@@ -727,6 +809,49 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			tab.repaint();
 			tab.revalidate();
 		}
+	}
+
+
+	
+	/**
+	 * 
+	 */
+	private void setAttrTypes() {
+		attrTypes = new ArrayList<String>();
+		experiments = new ArrayList<String>();
+
+		
+		attrTypes.add("Graph characteristic");
+		GraphNode graphNode;
+		String expermientName;
+		
+		for(BiologicalNodeAbstract node : graphInstance.getPathway().getAllNodes()){
+			if(node instanceof GraphNode){
+				if(!attrTypes.contains(TYPE_GRAPHNODE)){
+					attrTypes.add(TYPE_GRAPHNODE);
+				}
+				graphNode = (GraphNode) node;
+				
+				for (int i = 0; i < graphNode.getSuperNode().biodata.length; i++) {
+					expermientName = graphNode.getSuperNode().biodata[i];
+					if(!experiments.contains(expermientName)){
+						experiments.add(expermientName);
+					}
+				}
+
+			}else if((node instanceof DNA) && !attrTypes.contains(TYPE_DNA)){
+				attrTypes.add(TYPE_DNA);
+
+			}else if((node instanceof Protein) && !attrTypes.contains(TYPE_PROTEIN)){
+				attrTypes.add(TYPE_PROTEIN);
+
+			}else if((node instanceof RNA) && !attrTypes.contains(TYPE_RNA)){
+				attrTypes.add(TYPE_RNA);
+
+			}
+			
+		}
+		
 	}
 
 	private void openResultDialog(JTable table) {
