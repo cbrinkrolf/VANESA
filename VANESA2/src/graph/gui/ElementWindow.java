@@ -379,7 +379,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 				JTextArea experiments = new JTextArea();
 				String experimentstring = new String();
 				for (int i = 0; i < gnode.getSuperNode().biodata.length; i++) {
-					experimentstring+=gnode.getSuperNode().biodata[i]+":\t"+gnode.getSuperNode().biodataEntries[i]+"\n";
+					experimentstring+=gnode.getSuperNode().biodata[i]+":\t"+
+				(gnode.getSuperNode().biodataEntries[i]+"").substring(0, 4)
+				+"\n";
 				}
 				experiments.setText(experimentstring);
 				p.add(new JLabel("Exp."),"gap 5");
