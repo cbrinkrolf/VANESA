@@ -326,10 +326,13 @@ public class ToolBarListener implements ActionListener {
 							getVisualizationViewer().getPickedVertexState().getPicked()){
 						w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 						//Pathway newPW = null;
-						String newPathwayName = con.addPathway(node.getName(), node);
+						String newPathwayName = con.addPathway(node.getLabel(), node);
 						Pathway pw = con.getPathway(newPathwayName);
 						w.addTab(pw.getTab().getTitelTab());
 						w.returnFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+						graphInstance.getPathway().setPetriNet(node.isPetriNet());
+						w.getBar().paintToolbar(node.isPetriNet());
+						w.updateAllGuiElements();
 					}
 					
 					
