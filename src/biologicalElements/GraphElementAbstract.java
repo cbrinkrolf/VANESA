@@ -108,6 +108,7 @@ public interface GraphElementAbstract{
 	public void addLabel(HashSet<String> labels);
 	
 	public void removeLabel(String label);
-
+	
+	public void resetAppearance();
 
 }

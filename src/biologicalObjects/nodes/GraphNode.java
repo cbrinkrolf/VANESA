@@ -27,7 +27,7 @@ public class GraphNode extends BiologicalNodeAbstract {
 		this.supernode = supernode;
 		setBiologicalElement(Elementdeclerations.graphdbnode);
 		shapes = new VertexShapes();	
-		setShape(shapes.getEllipse());
+		setDefaultShape(shapes.getEllipse());
 	}
 	
 	

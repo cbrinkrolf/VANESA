@@ -549,6 +549,10 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public BiologicalNodeAbstract getOriginalFrom(){
 		return originalFrom;
 	}
+	
+	public void resetAppearance(){
+		
+	}
 
 
 }

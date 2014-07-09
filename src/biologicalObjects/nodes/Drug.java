@@ -9,7 +9,7 @@ public class Drug extends BiologicalNodeAbstract{
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.drug);
 		VertexShapes shapes = new VertexShapes();	
-		setShape(shapes.getEllipse());
+		setDefaultShape(shapes.getEllipse());
 		setReference(false);
 	}
 	
