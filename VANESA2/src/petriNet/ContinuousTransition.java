@@ -4,6 +4,7 @@ import graph.jung.graphDrawing.VertexShapes;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
 import biologicalElements.Elementdeclerations;
@@ -23,20 +24,20 @@ public class ContinuousTransition extends Transition {
 		setModellicaString("PNlib.TC");
 		setColor(Color.WHITE);
 		shapes = new VertexShapes();
-		setShape(shapes.getDoubleRectangle());
-		Rectangle bounds = getShape().getBounds();
+		/*Shape s = shapes.getDoubleRectangle();
+		Rectangle bounds = s.getBounds();
 		// System.out.println("hoehe: "+bounds.getHeight());
 		// System.out.println("weite: "+bounds.getWidth());
 		AffineTransform transform = new AffineTransform();
 		// transform.translate(x2, y2 - bounds.getHeight() / 2);
 		transform.scale(bounds.getWidth() * 3, bounds.getHeight());
-		setShape(transform.createTransformedShape(getShape()));
-
+		s = transform.createTransformedShape(s);
+		*/
 		AffineTransform transform2 = new AffineTransform();
-
+		
 		transform2.translate(1, 1);
 		transform2.scale(1, 2);
-		setShape(transform2.createTransformedShape(shapes.getDoubleRectangle()));
+		setDefaultShape(transform2.createTransformedShape(shapes.getDoubleRectangle()));
 
 	}
 

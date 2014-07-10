@@ -65,7 +65,7 @@ public class Transition extends BiologicalNodeAbstract {
 		if (label.equals("")) setLabel(name);
 		if (name.equals("")) setName(label);
 		shapes = new VertexShapes();
-		setShape(shapes.getRectangle());
+		/*setShape(shapes.getRectangle());
 		Rectangle bounds = getShape().getBounds();
 		// System.out.println("hoehe: "+bounds.getHeight());
 		// System.out.println("weite: "+bounds.getWidth());
@@ -76,15 +76,15 @@ public class Transition extends BiologicalNodeAbstract {
 		this.setColor(new Color(255, 255, 255));
 		// this.set
 		
-		Shape s = shapes.getRectangle();
+		Shape s = shapes.getRectangle();*/
 		// s.
 		// Rectangle bounds = s.getBounds();
 		AffineTransform transform2 = new AffineTransform();
 		
 		transform2.translate(1, 1);
 		transform2.scale(1, 2);
-		setShape(transform2.createTransformedShape(s));
-		
+		setDefaultShape(transform2.createTransformedShape(shapes.getRectangle()));
+		setDefaultColor(Color.white);
 		
 		setReference(false);
 		setBiologicalElement(Elementdeclerations.transition);

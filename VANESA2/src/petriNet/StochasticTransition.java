@@ -14,7 +14,7 @@ public class StochasticTransition extends Transition{
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.stochasticTransition);
 		setModellicaString("PNlib.TS"); 
-		 this.setColor(Color.DARK_GRAY);
+		 this.setDefaultColor(Color.DARK_GRAY);
 	}
 
 	public String getDistribution() {
