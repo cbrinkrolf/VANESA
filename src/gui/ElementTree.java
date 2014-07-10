@@ -5,6 +5,7 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
+import graph.jung.classes.MyVisualizationViewer;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -173,20 +174,22 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		model.nodeStructureChanged(root);
 		model.reload();
 	}
-	
-	private void addChildNodes(BiologicalNodeAbstract vertex, DefaultMutableTreeNode n){
-		if(vertex.getAllNodes().isEmpty()){
+
+	private void addChildNodes(BiologicalNodeAbstract vertex,
+			DefaultMutableTreeNode n) {
+		if (vertex.getAllNodes().isEmpty()) {
 			return;
 		}
-		for(BiologicalNodeAbstract child : vertex.getAllNodes()){
-			if(!vertex.getEnvironment().contains(child)){
+		for (BiologicalNodeAbstract child : vertex.getAllNodes()) {
+			if (!vertex.getEnvironment().contains(child)) {
 				String lbl;
 				if (child.getLabel().length() == 0) {
 					lbl = "id_" + child.getID();
 				} else {
 					lbl = child.getLabel();
 				}
-				DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(lbl);
+				DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(
+						lbl);
 				addChildNodes(child, childNode);
 				n.add(childNode);
 			}
@@ -262,28 +265,27 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree
 				.getLastSelectedPathComponent();
 
-		if (currentNode == null || currentNode.getParent()==null)
+		if (currentNode == null || currentNode.getParent() == null)
 			// Nothing is selected.
 			return;
-		
-		while(!currentNode.getParent().equals(node)){
+
+		while (!currentNode.getParent().equals(node)) {
 			currentNode = (DefaultMutableTreeNode) currentNode.getParent();
-			if (currentNode == null || currentNode.getParent()==null)
+			if (currentNode == null || currentNode.getParent() == null)
 				// Nothing is selected.
 				return;
 		}
 
 		Object nodeInfo = currentNode.getUserObject();
-//		if (currentNode.isLeaf() && !nodeInfo.toString().equals("Nodes")) {
+		// if (currentNode.isLeaf() && !nodeInfo.toString().equals("Nodes")) {
 		if (!currentNode.isRoot() && !nodeInfo.toString().equals("Nodes")) {
 
 			BiologicalNodeAbstract bna = table.get(node.getIndex(currentNode));
 			// System.out.println(bna.getLabel());
 			GraphInstance g = new GraphInstance();
-			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = g
-					.getPathway().getGraph().getVisualizationViewer();
-			vv.getPickedVertexState().clear();
-			vv.getPickedVertexState().pick(bna, true);
+			final MyVisualizationViewer vv = g.getPathway().getGraph()
+					.getVisualizationViewer();
+			
 
 			// final
 			// VisualizationViewer<BiologicalNodeAbstract,BiologicalEdgeAbstract>
@@ -293,6 +295,8 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 			// if (vv.getPickedVertexState().getPicked().size() == 1) {
 			// System.out.println("drin2");
 			if (g.getPathway().getGraph().isAnimatedPicking()) {
+				vv.getPickedVertexState().clear();
+				vv.getPickedVertexState().pick(bna, true);
 				Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout = vv
 						.getGraphLayout();
 				Point2D q = layout.transform(vv.getPickedVertexState()
@@ -320,6 +324,39 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 				thread.start();
 				// }
 				// }
+			} else {
+				Runnable animator = new Runnable() {
+
+					public void run() {
+						double nodesize = bna.getNodesize();
+						for (int i = 0; i < 10; i++) {
+							bna.setNodesize(bna.getNodesize()
+									+ (0.1 / vv.getScale()));
+							vv.repaint();
+							try {
+								Thread.sleep(50);
+							} catch (InterruptedException ex) {
+							}
+						}
+						for (int i = 0; i < 10; i++) {
+							bna.setNodesize(bna.getNodesize()
+									- (0.1 / vv.getScale()));
+							vv.repaint();
+							try {
+								Thread.sleep(50);
+							} catch (InterruptedException ex) {
+							}
+						}
+						//if zoom level changes during animation: reset nodesize
+						bna.setNodesize(nodesize);
+						vv.repaint();
+					}
+				};
+				Thread thread = new Thread(animator);
+				thread.start();
+				vv.getPickedVertexState().clear();
+				
+				vv.getPickedVertexState().pick(bna, true);
 			}
 			// picking.animatePicking(v, box.isSelected());
 		} else {
