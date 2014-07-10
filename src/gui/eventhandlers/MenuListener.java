@@ -39,9 +39,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -935,69 +939,113 @@ public class MenuListener implements ActionListener {
 			System.out.println("mirnatest");
 			// code for testing number of mirnas matching a pathway
 
-			/*
-			 * final String QUESTION_MARK = new String("\\?"); String
-			 * finalQueryString =
-			 * "SELECT COUNT(DISTINCT targetgene) FROM mirtarbase;"
-			 * ;//"SELECT * FROM pid;";//"SELECT targetgene FROM mirtarbase;";
-			 * ArrayList<DBColumn> list = new ArrayList<DBColumn>(); list = new
-			 * Wrapper().requestDbContent(Wrapper.dbtype_MiRNA,
-			 * finalQueryString); HashMap<String, Integer> map = new
-			 * HashMap<String, Integer>();
-			 * //System.out.println("res: "+list.get(0).getColumn()[0]);
-			 * //System.out.println(list.size()); HashMap<String, Integer>
-			 * gCount = new HashMap<String, Integer>(); BufferedReader in; try {
-			 * in = new BufferedReader(new FileReader("genes.csv")); String
-			 * line; while ((line = in.readLine()) != null) {
-			 * if(gCount.containsKey(line)){ gCount.put(line,
-			 * gCount.get(line)+1); }else{ gCount.put(line, 1); } } } catch
-			 * (IOException e1) { // TODO Auto-generated catch block
-			 * e1.printStackTrace(); }
-			 * System.out.println("keys: "+gCount.keySet().size());
-			 * 
-			 * 
-			 * String gene; String number; Iterator<String> it =
-			 * gCount.keySet().iterator(); ArrayList<DBColumn> list2 = new
-			 * ArrayList<DBColumn>(); int i = 0; while(it.hasNext() ){//&& i<10)
-			 * { if(i % 10 == 0){
-			 * //System.out.println(i*100.0/gCount.keySet().size()+"%"); } gene
-			 * = it.next();//list.get(i).getColumn()[0];
-			 * System.out.println(gCount.get(gene));
-			 * 
-			 * String q2 =
-			 * "SELECT kegg_genes_pathway.name,kegg_genes_pathway.name," +
-			 * "kegg_genes_pathway.number,kegg_genes_pathway.org, kegg_genes_name.name FROM "
-			 * + "dawismd.kegg_genes_pathway inner join " +
-			 * "dawismd.kegg_genes_name on kegg_genes_pathway.id=kegg_genes_name.id "
-			 * + "where kegg_genes_name.name = '" + gene +
-			 * "' and kegg_genes_pathway.org='hsa' order by kegg_genes_pathway.name,"
-			 * + "kegg_genes_name.name;"; // q2.replaceFirst(QUESTION_MARK,
-			 * gene); //System.out.println(q2); list2 = new
-			 * Wrapper().requestDbContent(2, q2);
-			 * //System.out.println(list2.size()); for (int j = 0; j <
-			 * list2.size(); j++) { number = list2.get(j).getColumn()[2];
-			 * if(map.containsKey(number)){ map.put(number,
-			 * map.get(number)+gCount.get(gene)); }else{ map.put(number,
-			 * gCount.get(gene)); } } i++; }
-			 * 
-			 * it = map.keySet().iterator(); String key; while(it.hasNext()){
-			 * key = it.next(); System.out.println(key + "\t"+map.get(key)); }
-			 */
+			/*final String QUESTION_MARK = new String("\\?");
+			String finalQueryString = "SELECT COUNT(DISTINCT targetgene) FROM mirtarbase;";// "SELECT * FROM pid;";//"SELECT targetgene FROM mirtarbase;";
+			ArrayList<DBColumn> list = new ArrayList<DBColumn>();
+			list = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA,
+					finalQueryString);
+			HashMap<String, Integer> map = new HashMap<String, Integer>();
+			// System.out.println("res: "+list.get(0).getColumn()[0]);
+			// System.out.println(list.size());
+			HashMap<String, Integer> gCount = new HashMap<String, Integer>();
+			BufferedReader in;
+			try {
+				in = new BufferedReader(new FileReader("genes.csv"));
+				String line;
+				while ((line = in.readLine()) != null) {
+					if (gCount.containsKey(line)) {
+						gCount.put(line, gCount.get(line) + 1);
+					} else {
+						gCount.put(line, 1);
+					}
+				}
+			} catch (IOException e1) { // TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			System.out.println("keys: " + gCount.keySet().size());
 
-			/*
-			 * if (allKEGGPathways.size() > 0) { MirnaResultKeggWindow
-			 * mirnaResultKeggWindow = new MirnaResultKeggWindow(
-			 * allKEGGPathways); Vector keggPAthwayResults =
-			 * mirnaResultKeggWindow .getAnswer(); if (keggPAthwayResults.size()
-			 * != 0) { String keggPathwayNumber = ""; String keggPathwayName =
-			 * ""; final Iterator it3 = keggPAthwayResults .iterator(); while
-			 * (it3.hasNext()) {
-			 * 
-			 * String[] pathwayResutls = (String[]) it3 .next();
-			 * keggPathwayNumber= "hsa"+pathwayResutls[1]; keggPathwayName =
-			 * pathwayResutls[0]; } } }
-			 */
+			String gene;
+			String number;
+			Iterator<String> it = gCount.keySet().iterator();
+			ArrayList<DBColumn> list2 = new ArrayList<DBColumn>();
+			
+			 Writer writer = null;
+			try {
+			    writer = new BufferedWriter(new OutputStreamWriter(
+			          new FileOutputStream("genes2miRNA.txt"), "utf-8"));
+			    writer.write("gene,miRNAs");
+			    while(it.hasNext()){
+					gene = it.next();
+					 writer.write(gene+","+gCount.get(gene)+"\n");
+				//System.out.println(gene+" "+gCount.get(gene));;
+				}
+			    
+			} catch (IOException ex) {
+			  // report
+			} finally {
+			   try {writer.close();} catch (Exception ex) {}
+			}*/
+			
+			
+			
+			int i = 0;
+			/*while (it.hasNext()) {// && i<10)
+				{
+					if (i % 10 == 0) {
+						// System.out.println(i*100.0/gCount.keySet().size()+"%");
+						// }
+						gene = it.next();// list.get(i).getColumn()[0];
+						System.out.println(gCount.get(gene));
 
+						String q2 = "SELECT kegg_genes_pathway.name,kegg_genes_pathway.name,"
+								+ "kegg_genes_pathway.number,kegg_genes_pathway.org, kegg_genes_name.name FROM "
+								+ "dawismd.kegg_genes_pathway inner join "
+								+ "dawismd.kegg_genes_name on kegg_genes_pathway.id=kegg_genes_name.id "
+								+ "where kegg_genes_name.name = '"
+								+ gene
+								+ "' and kegg_genes_pathway.org='hsa' order by kegg_genes_pathway.name,"
+								+ "kegg_genes_name.name;"; // q2.replaceFirst(QUESTION_MARK,gene);
+						// System.out.println(q2); list2 = new
+						// Wrapper().requestDbContent(2, q2);
+						// System.out.println(list2.size());
+						for (int j = 0; j < list2.size(); j++) {
+							number = list2.get(j).getColumn()[2];
+
+							if (map.containsKey(number)) {
+								map.put(number,
+
+								map.get(number) + gCount.get(gene));
+							} else {
+								map.put(number, gCount.get(gene));
+							}
+						}
+						i++;
+					}
+
+					it = map.keySet().iterator();
+					String key;
+					while (it.hasNext()) {
+						key = it.next();
+						System.out.println(key + "\t" + map.get(key));
+					}*/
+
+					/*
+					 * if (allKEGGPathways.size() > 0) { MirnaResultKeggWindow
+					 * mirnaResultKeggWindow = new MirnaResultKeggWindow(
+					 * allKEGGPathways); Vector keggPAthwayResults =
+					 * mirnaResultKeggWindow .getAnswer(); if
+					 * (keggPAthwayResults.size() != 0) { String
+					 * keggPathwayNumber = ""; String keggPathwayName = "";
+					 * final Iterator it3 = keggPAthwayResults .iterator();
+					 * while (it3.hasNext()) {
+					 * 
+					 * String[] pathwayResutls = (String[]) it3 .next();
+					 * keggPathwayNumber= "hsa"+pathwayResutls[1];
+					 * keggPathwayName = pathwayResutls[0]; } } }
+					 */
+				//}
+			//}
+	
 		} else if ("shake".equals(event)) {
 			// System.out.println("shake it");
 

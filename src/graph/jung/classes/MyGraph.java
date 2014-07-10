@@ -291,6 +291,7 @@ public class MyGraph {
 		vv.addPostRenderPaintable(new TokenRenderer(vv));
 		pickSupport = new ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				vv);
+		
 		stateV = vv.getPickedVertexState();
 		stateE = vv.getPickedEdgeState();
 

@@ -71,9 +71,9 @@ public class Place extends BiologicalNodeAbstract {
 		this.discrete = discrete;
 
 		if (discrete) {
-			setShape(shapes.getEllipse());
+			setDefaultShape(shapes.getEllipse());
 		} else {
-			setShape(shapes.getDoubleEllipse());
+			setDefaultShape(shapes.getDoubleEllipse());
 		}
 
 		if (discrete) {
@@ -88,7 +88,7 @@ public class Place extends BiologicalNodeAbstract {
 			// super.setColor(new Color(125,125,125));
 			// System.out.println("grau");
 		}
-		this.setNodesize(2);
+		this.setDefaultNodesize(2);
 		// Rectangle bounds = getShape().getBounds();
 		// System.out.println("hoehe: "+bounds.getHeight());
 		// System.out.println("weite: "+bounds.getWidth());
@@ -102,7 +102,7 @@ public class Place extends BiologicalNodeAbstract {
 		// this.setComments("commetnr");
 		// this.set
 		setReference(false);
-		setColor(Color.WHITE);
+		setDefaultColor(Color.WHITE);
 		if (discrete) {
 			setModellicaString("PNlib.PD");
 		} else {

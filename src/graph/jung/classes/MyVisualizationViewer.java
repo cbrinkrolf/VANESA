@@ -242,5 +242,20 @@ public class MyVisualizationViewer extends
 	public Pathway getPw() {
 		return pw;
 	}
+	
+	public double getScale(){
+		double scaleV = this.getRenderContext().getMultiLayerTransformer()
+				.getTransformer(Layer.VIEW).getScale();
+		double scaleL = this.getRenderContext().getMultiLayerTransformer()
+				.getTransformer(Layer.LAYOUT).getScale();
+		double scale;
+		if(scaleV < 1){
+			scale = scaleV;
+		}else{
+			scale = scaleL;
+		}
+		return scale;
+	}
+	
 
 }
