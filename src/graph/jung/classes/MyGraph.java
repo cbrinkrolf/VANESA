@@ -1022,6 +1022,7 @@ public class MyGraph {
 		// normalCentering(vv2);
 		//normalCentering(vv);
 		// normalCentering();
+		visualizationModel.setGraphLayout(layout);
 		
 		Runnable center = new Runnable() {
 
@@ -1029,7 +1030,7 @@ public class MyGraph {
 			public void run() {
 				try {
 					Thread.sleep(500);
-					visualizationModel.setGraphLayout(layout);
+					
 					// fitScaleOfViewer(vv2);
 					// fitScaleOfViewer(vv);
 
