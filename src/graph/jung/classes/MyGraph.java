@@ -839,6 +839,7 @@ public class MyGraph {
 		// System.out.println(vv.getPickedVertexState().getPicked().size());
 
 		if (g.getVertexCount() > 0) {
+			Pathway pw = vv.getPw();
 			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState()
 					.getPicked().iterator();
 			BiologicalNodeAbstract bna;
@@ -848,15 +849,15 @@ public class MyGraph {
 				Iterator<BiologicalEdgeAbstract> in = g.getInEdges(bna)
 						.iterator();
 				while (in.hasNext()) {
-					this.removeEdge(in.next());
+					pw.removeElement(in.next());
 				}
 
 				Iterator<BiologicalEdgeAbstract> out = g.getOutEdges(bna)
 						.iterator();
 				while (out.hasNext()) {
-					this.removeEdge(out.next());
+					pw.removeElement(out.next());
 				}
-				graphInstance.getPathway().removeElement(bna);
+				pw.removeElement(bna);
 				// this.removeVertex(bna);
 
 			}

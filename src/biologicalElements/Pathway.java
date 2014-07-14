@@ -2,6 +2,7 @@ package biologicalElements;
 
 import graph.GraphInstance;
 import graph.filter.FilterSettings;
+import graph.gui.EdgeDeleteDialog;
 import graph.jung.classes.MyGraph;
 import gui.GraphTab;
 import gui.MainWindow;
@@ -780,9 +781,8 @@ public class Pathway implements Cloneable {
 				// Pair p = bea.getEdge().getEndpoints();
 				// System.out.println(edges.size());
 				if(!bea.getTo().getAllNodes().isEmpty() | !bea.getFrom().getAllNodes().isEmpty()){
-					JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), 
-							"Can't delete Edges connecting hirarchical Nodes for the moment.", 
-							"Deletion Error!", JOptionPane.ERROR_MESSAGE);
+					EdgeDeleteDialog dialog = new EdgeDeleteDialog(bea);
+					BiologicalEdgeAbstract delBea = dialog.getAnswer();
 					return;
 				}
 				edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(),
