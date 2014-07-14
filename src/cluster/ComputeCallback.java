@@ -49,7 +49,7 @@ public class ComputeCallback extends UnicastRemoteObject implements Serializable
 	@Override
 	public void setResultCoordinates(HashMap<Integer, LayoutPoint2D> coords)
 			throws RemoteException {
-		// MARTIN Auto-generated method stub
-		
+		gui.realignNetwork(coords);
+		gui.reactiveateUI();
 	}
 }

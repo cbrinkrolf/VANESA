@@ -81,7 +81,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 			 server.submitSearch(commonName,depth,helper);
 			 
 //			 HashSet<String> datasets = new HashSet<String>();
-//			 datasets.add("my_random");
+//			 datasets.add("FC_68_S01_GE2_107_Sep09_1_1");
 //			 server.submitSearch(datasets, 1, helper);
 		 }
 		}catch(Exception e){

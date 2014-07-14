@@ -35,7 +35,7 @@ public interface IJobServer extends Remote {
          * @return true if job could be queued, false if queue is full.
          * @throws RemoteException
          */
-        public boolean submitJob(int jobType, int[] adjarray, IComputeCallback helper) throws RemoteException;
+        public boolean submitJob(int jobType, int[] adjarray, int nodes, IComputeCallback helper) throws RemoteException;
         
         /**
          * Submit method for the graph database, returns true if job could be queued.
