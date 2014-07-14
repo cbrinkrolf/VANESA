@@ -372,7 +372,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					dbidstring+=dbid.getDatabase()+":\t"+dbid.getId()+"\n";
 				}
 				dbids.setText(dbidstring);
-				p.add(new JLabel("IDs:"), "gap 5");
+				p.add(new JLabel("IDs known:"), "gap 5");
 				p.add(dbids,"wrap, span 3");
 				
 				//Show Experiment names and values
@@ -384,12 +384,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 				+"\n";
 				}
 				experiments.setText(experimentstring);
-				p.add(new JLabel("Exp."),"gap 5");
+				p.add(new JLabel("Data set:"),"gap 5");
 				p.add(experiments,"wrap, span 3");
 				
 				//Show GO annotations
 				JTextArea goannoations = new JTextArea();
 				String annotationstring = new String();
+				goannoations.setEditable(false);
+				goannoations.setForeground(Color.BLUE);
 				
 				//check if there are any entries:
 				int goentries = 0;
@@ -401,21 +403,21 @@ public class ElementWindow implements ActionListener, ItemListener {
 					// biological process
 					annotationstring += "Biological process:\n";
 					for (int i = 0; i < gnode.getSuperNode().biologicalProcess.length; i++) {
-						annotationstring += "-"
+						annotationstring += "   -"
 								+ gnode.getSuperNode().biologicalProcess[i]
 								+ "\n";
 					}
 					// molecular function
 					annotationstring += "Molecular function:\n";
 					for (int i = 0; i < gnode.getSuperNode().molecularFunction.length; i++) {
-						annotationstring += "-"
+						annotationstring += "   -"
 								+ gnode.getSuperNode().molecularFunction[i]
 								+ "\n";
 					}
 					// cellular compartment
 					annotationstring += "Cellular component:\n";
 					for (int i = 0; i < gnode.getSuperNode().cellularComponent.length; i++) {
-						annotationstring += "-"
+						annotationstring += "  -"
 								+ gnode.getSuperNode().cellularComponent[i]
 								+ "\n";
 					}
@@ -423,7 +425,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				
 				goannoations.setText(annotationstring);
 				
-				p.add(new JLabel("GO:"),"gap 5");
+				p.add(new JLabel("Gene Ontology:"),"gap 5");
 				p.add(goannoations,"wrap, span 3");
 				
 				
