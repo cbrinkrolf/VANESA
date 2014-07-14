@@ -825,11 +825,12 @@ public class MyGraph {
 
 		if (g.getEdgeCount() > 0) {
 			// System.out.println("e: "+vv.getPickedEdgeState().getSelectedObjects().length);
+			Pathway pw = vv.getPw();
 			Iterator<BiologicalEdgeAbstract> it = vv.getPickedEdgeState()
 					.getPicked().iterator();
 			// Iterator it = vv.getPickedState().getPickedEdges().iterator();
 			while (it.hasNext()) {
-				this.removeEdge(it.next());
+				pw.removeElement(it.next());
 			}
 		}
 	}

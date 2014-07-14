@@ -302,6 +302,7 @@ public class ToolBarListener implements ActionListener {
 				newNode.setLabel("coarse" + newNode.getLabel());
 				newNode.setGraph(new MyGraph(newNode));
 				newNode.setStateChanged(NodeStateChanged.UNCHANGED);
+				newNode.getConnectingEdges().clear();
 				newNode.coarse(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
 				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{
