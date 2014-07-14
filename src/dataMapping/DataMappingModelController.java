@@ -653,9 +653,8 @@ public class DataMappingModelController extends Observable {
 		
 		progressBarExport = new ProgressBar();
 		progressBarExport.init(100, "DATAMAPPING", true);
-//		progressBarExport.setProgressBarString("Export data...");
 		
-		
+
 		ArrayList<String> header = dataMappingModel.getHeader();
 		
 		

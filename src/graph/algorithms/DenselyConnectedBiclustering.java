@@ -165,8 +165,12 @@ public class DenselyConnectedBiclustering {
 //		attr.put(104, new Double[] {0.5, 0.0, 0.0});
 //		attr.put(105, new Double[] {-1.0, 0.0, 2.0});
 		
-		//delet vertices which have not the needed attributes
+		//do not take vertices which have not the needed attributes
 		HashSet<BiologicalNodeAbstract> allVertices = new HashSet<BiologicalNodeAbstract>();
+		
+		boolean experimentsIsSet = false;
+		HashSet<String> experiments = null;
+		GraphNode graphNode;
 		
 		if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_BNA_NR){
 			allVertices.addAll(mg.getAllVertices());
@@ -175,7 +179,19 @@ public class DenselyConnectedBiclustering {
 				switch(nodeType){
 				case DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE_NR:
 					if(vertex instanceof GraphNode){
-						allVertices.add(vertex);
+						//TODO nur wenn alle ausgewählten experminte tatsächlich im Knoten enthalten!
+						//TESTEN!!!
+						if(!experimentsIsSet){
+							experiments = setExperiments();
+							experimentsIsSet = true;
+						}
+						graphNode = (GraphNode) vertex;
+						
+						@SuppressWarnings("unchecked")
+						List<String> biodata = Arrays.asList(graphNode.getSuperNode().biodata);
+						if(biodata.containsAll(experiments)){
+							allVertices.add(vertex);
+						}
 					}
 					break;
 				case DenselyConnectedBiclusteringGUI.TYPE_DNA_NR:
@@ -250,6 +266,20 @@ public class DenselyConnectedBiclustering {
 	}
 	
 	
+	/**
+	 * 
+	 */
+	private HashSet<String> setExperiments() {
+		HashSet<String> experiments = new HashSet<String>();
+		for(String type : attrTyps){
+			if(type.equals(DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE)){
+				experiments.add(attrNames.get(attrTyps.indexOf(type)));
+			}
+		}
+		return experiments;
+	}
+
+
 	private LinkedList<DCBresultSet> doResultsList(
 			HashSet<HashSet<Integer>> extended) {
 
@@ -321,7 +351,10 @@ public class DenselyConnectedBiclustering {
 		        	//TODO aus Graph laden
 		        	GraphNode graphNode = (GraphNode) vertex;
 		        	if(experimentNames == null){
-		        		experimentNames = (ArrayList<String>) Arrays.asList(graphNode.getSuperNode().biodata);
+		        		experimentNames = new ArrayList<String>();
+		        		for(int j = 0; j < graphNode.getSuperNode().biodata.length; j++){
+		        			experimentNames.add(graphNode.getSuperNode().biodata[j]);
+		        		}
 		        	}
 					
 		        	values.add(graphNode.getSuperNode().biodataEntries[experimentNames.indexOf(item)]);
