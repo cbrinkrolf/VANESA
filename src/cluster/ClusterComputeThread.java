@@ -28,6 +28,7 @@ public class ClusterComputeThread extends Thread {
 	private HashSet<HashSet<Integer>> resultset;
 	private int[][] shortestdistances, adjmatrix;
 	private int[] edgearray, nodearray;
+	private int nodes;
 	private int job;
 	private IJobServer server;
 	private ComputeCallback helper;
@@ -43,6 +44,7 @@ public class ClusterComputeThread extends Thread {
 	public void run() {
 		// compute job on server
 		computeInBackground();
+//		new TestClusterMapping();
 			// RMI Error
 		// Else is done by ClientHelper
 	}
@@ -50,10 +52,10 @@ public class ClusterComputeThread extends Thread {
 	public boolean computeInBackground() {
 
 		// Catch if any input Data is given
-		if (adjmatrix == null) {
-			System.out.println("Please set adjacency data.");
-			return false;
-		}
+//		if (adjmatrix == null) {
+//			System.out.println("Please set adjacency data.");
+//			return false;
+//		}
 
 		// MARTIN: set server by job type
 		String url = "rmi://cassiopeidae/ClusterJobs";
@@ -64,10 +66,32 @@ public class ClusterComputeThread extends Thread {
 		try {
 			server = (IJobServer) Naming.lookup(url);
 
-			if (!server.submitJob(job, adjmatrix, helper)) {
-				JOptionPane.showMessageDialog(
-						MainWindowSingelton.getInstance(), "Queue is at maximum capacity!");
+			switch (job) {
+			case JobTypes.LAYOUT_FR_JOB:
+				if (!server.submitJob(job, edgearray, nodes,helper)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							JOptionPane.showMessageDialog(
+									MainWindowSingelton.getInstance(), "Queue is at maximum capacity!");
+						}
+					});
+					
+				}
+				break;
+
+			default:
+				if (!server.submitJob(job, adjmatrix, helper)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							JOptionPane.showMessageDialog(
+									MainWindowSingelton.getInstance(), "Queue is at maximum capacity!");
+						}
+					});
+				}	
+				break;
 			}
+			
+			
 
 		}catch (NotBoundException e) {
 			SwingUtilities.invokeLater(new Runnable() {
@@ -117,6 +141,10 @@ public class ClusterComputeThread extends Thread {
 
 		return true;
 	}
+	
+	public void setNodes(int nodes){
+		this.nodes = nodes;
+	}
 
 	public void setAdjMatrix(int adjmatrix[][]) {
 		this.adjmatrix = adjmatrix;
@@ -126,6 +154,10 @@ public class ClusterComputeThread extends Thread {
 		this.nodearray = nodearray;
 		this.edgearray = edgearray;
 
+	}
+	
+	public void setEdgeArray(int[] edgearray){
+		this.edgearray = edgearray;
 	}
 
 	//Not used yet,

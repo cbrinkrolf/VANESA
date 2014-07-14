@@ -11,9 +11,16 @@ import gui.ProgressBar;
 import gui.images.ImagePath;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -34,11 +41,12 @@ import javax.swing.JRadioButton;
 import cluster.ComputeCallback;
 import cluster.ClusterComputeThread;
 import cluster.JobTypes;
-
+import cluster.LayoutPoint2D;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class GraphColoringGUI implements ActionListener {
@@ -54,13 +62,13 @@ public class GraphColoringGUI implements ActionListener {
 	private JButton degreedistributionbutton;
 
 	private String[] algorithmNames = { "Node Degree", "Neighbor Degree",
-			"Cycles (cluster)", "Cliques (cluster)", "Paths (cluster)",
-			"Clustering (cluster)" };
+			"Cycles (remote)", "Cliques (remote)", "FRlayout (remote)",
+			"Spectral apsp (remote)" };
 	private int currentalgorithmindex = 0;
 	private String[] colorrangenames = { "bluesea", "skyline", "darkmiddle",
 			"darkleftmiddle", "rainbow" };
 	private final int NODE_DEGREE = 0, NEIGHBOR_DEGREE = 1, CYCLES = 2,
-			CLIQUES = 3, PATHRATING = 4, SPECTRAL = 5;
+			CLIQUES = 3, FRLAYOUT = 4, SPECTRAL = 5;
 
 	private ImageIcon[] icons;
 
@@ -86,6 +94,9 @@ public class GraphColoringGUI implements ActionListener {
 	private MainWindow mw;
 
 	private ComputeCallback helper;
+	
+	private HashMap<BiologicalNodeAbstract, Integer> nodeassignment;
+	private HashMap<Integer, BiologicalNodeAbstract> nodeassignmentbackward;
 
 	public GraphColoringGUI() {
 		// set icon paths
@@ -216,10 +227,92 @@ public class GraphColoringGUI implements ActionListener {
 			}
 
 			break;
-		case PATHRATING:
-			// ClusterComputeThread rmiapsp = new ClusterComputeThread(
-			// ClusterComputeThread.APSP_JOB, this);
-			// rmiapsp.start();
+		case FRLAYOUT:
+			// Lock UI and initiate Progress Bar
+			mw = MainWindowSingelton.getInstance();
+			mw.setEnable(false);
+			mw.setLockedPane(true);
+			progressbar = new ProgressBar();
+			progressbar.init(100, "Computing", true);
+			progressbar.setProgressBarString("Setting up data.");
+
+			//get network structure
+			MainWindow w = MainWindowSingelton.getInstance();
+			GraphContainer con = ContainerSingelton.getInstance();
+			Pathway pw = con.getPathway(w.getCurrentPathway());
+			MyGraph mg = pw.getGraph();
+
+			//setup assignment maps
+			nodeassignment = new HashMap<BiologicalNodeAbstract, Integer>();
+			nodeassignmentbackward = new HashMap<Integer, BiologicalNodeAbstract>();
+						
+			int nodeindex = 0;
+			
+			//assign nodes
+			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
+				nodeassignment.put(bna, nodeindex);
+				nodeassignmentbackward.put(nodeindex,bna);
+				nodeindex++;
+			}
+
+			//determine right edge amount
+			int edgeindex = 0;
+			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+				if(bea.isDirected()){
+					edgeindex++;
+				}else{
+					edgeindex+=2;
+				}
+			}			
+			System.out.println("number of real edges: "+edgeindex+"\n size: "+mg.getAllEdges().size());
+						
+			int[] edgearray = new int[edgeindex*2];
+			edgeindex = 0;
+			//build edgearray
+			BiologicalNodeAbstract from, to;
+			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+				from = bea.getFrom();
+				to = bea.getTo();
+				
+				edgearray[edgeindex] = nodeassignment.get(from);
+				edgeindex++;
+				edgearray[edgeindex] = nodeassignment.get(to);
+				edgeindex++;
+				
+				//if undirected, set second edge, too
+				if(!bea.isDirected()){
+					edgearray[edgeindex] = nodeassignment.get(to);
+					edgeindex++;
+					edgearray[edgeindex] = nodeassignment.get(from);
+					edgeindex++;					
+				}
+			}			
+// DEBUG			
+//			for (int i = 0; i < edgearray.length; i++) {
+//				System.out.print(nodeassignmentbackward.get(edgearray[i]).getLabel()+",");
+//				if((i+1) %2 == 0)
+//					System.out.println();
+//			}
+
+//			printEdgeArray(mg.getAllVertices().size(), edgearray);
+			
+			
+			// compute values over RMI
+			try {
+				helper = new ComputeCallback(this);
+				ClusterComputeThread rmifrlayout = new ClusterComputeThread(
+						JobTypes.LAYOUT_FR_JOB, helper);
+				rmifrlayout.setEdgeArray(edgearray);
+				rmifrlayout.setNodes(nodeassignment.size());
+				rmifrlayout.start();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			//reactiveateUI();
+			
+			
 			break;
 		case SPECTRAL:
 			// Lock UI and initiate Progress Bar
@@ -253,6 +346,29 @@ public class GraphColoringGUI implements ActionListener {
 		colorizebutton.setEnabled(true);
 		logview.setEnabled(true);
 		resetcolorbutton.setEnabled(true);
+	}
+
+	private void printEdgeArray(int nodes, int[] edgearray) {
+		try {
+			FileWriter fw = new FileWriter("edjearray"+mw.getCurrentPathway());
+			BufferedWriter out = new BufferedWriter(fw);
+			
+			out.write(nodes+"\n");
+			out.write((edgearray.length/2)+"\n");
+			for (int i = 0; i < edgearray.length; i++) {
+				out.write(edgearray[i]+"\t");
+			}
+			
+			out.close();
+			fw.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		// TODO Auto-generated method stub
+		
 	}
 
 	public void reactiveateUI() {
@@ -447,5 +563,21 @@ public class GraphColoringGUI implements ActionListener {
 				break;
 			}
 		}
+	}
+
+	public void realignNetwork(HashMap<Integer, LayoutPoint2D> coords) {
+		//get network structure
+		MainWindow w = MainWindowSingelton.getInstance();
+		GraphContainer con = ContainerSingelton.getInstance();
+		Pathway pw = con.getPathway(w.getCurrentPathway());
+		MyGraph mg = pw.getGraph();
+		
+		for (Entry<Integer, LayoutPoint2D> entry : coords.entrySet()) {
+			//get bna from assignment
+			//tmppoint= new 
+			mg.getVisualizationViewer().getModel().getGraphLayout()
+			.setLocation(nodeassignmentbackward.get(entry.getKey()),
+					new Point((int)entry.getValue().getX(), (int)entry.getValue().getY()));
+		}		
 	}
 }
