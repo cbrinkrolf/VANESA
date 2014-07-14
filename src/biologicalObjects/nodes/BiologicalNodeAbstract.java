@@ -302,7 +302,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 		// Compute the environment of the given set of nodes.
 		environment = computeEnvironment(vertices, border);
-
+		
 		// Save the edges containing the nodes inside the coarse node.
 		saveSubnetEdges(vertices);
 
@@ -312,7 +312,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				node.setStateChanged(NodeStateChanged.COARSED);
 			}
 		}
-
+		
 		// Update current MyGraph
 		rootNode.updateMyGraph();
 

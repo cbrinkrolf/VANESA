@@ -25,6 +25,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
+
 import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 import petriNet.ContinuousTransition;
@@ -743,31 +745,6 @@ public class Pathway implements Cloneable {
 		return null;
 	}
 
-	/**
-	 * Saves an edge without adding it to the graph. Essential for hierarchical
-	 * data structure.
-	 * 
-	 * @param bea
-	 *            Edge to add.
-	 * @return Edge if successful, null elsewise.
-	 */
-	public BiologicalNodeAbstract addVertexWithoutGraph(
-			BiologicalNodeAbstract bna) {
-
-		if (bna != null) {
-			(bna).setCompartment(bna.getCompartment());
-			biologicalElements.put(bna.getID() + "", bna);
-			return bna;
-
-		} else
-			try {
-				throw new NullPointerException();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		return null;
-	}
-
 	public void removeElement(GraphElementAbstract element) {
 		if (element != null) {
 			if (element.isVertex()) {
@@ -802,6 +779,12 @@ public class Pathway implements Cloneable {
 				BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) element;
 				// Pair p = bea.getEdge().getEndpoints();
 				// System.out.println(edges.size());
+				if(!bea.getTo().getAllNodes().isEmpty() | !bea.getFrom().getAllNodes().isEmpty()){
+					JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), 
+							"Can't delete Edges connecting hirarchical Nodes for the moment.", 
+							"Deletion Error!", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(),
 						bea.getTo()));
 				graphRepresentation.removeEdge(bea);
@@ -1546,8 +1529,8 @@ public class Pathway implements Cloneable {
 									.getVertexLocation(n));
 						}
 					}
-					for (BiologicalEdgeAbstract innerEdge : node.getAllEdges()) {
-						this.addEdge(innerEdge);
+					for (BiologicalEdgeAbstract edge : node.getAllEdges()) {
+						this.addEdge(edge);
 					}
 				}
 
