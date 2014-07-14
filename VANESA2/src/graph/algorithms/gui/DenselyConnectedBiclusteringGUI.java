@@ -594,6 +594,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			DCBClusterLabel[] clusterArray = new DCBClusterLabel[clusterLabels.size()];
 			clusterArray = clusterLabels.toArray(clusterArray);
 
+			JLabel clusterText = new JLabel("Use ctrl or shift to select multiple clusters.");
 			
 			clusterList = new JList<DCBClusterLabel>();
 //			String[] clusterLabels = {"bla", "bli", "blub"};
@@ -631,6 +632,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			
 			
 			clusterpanel.add(back, "align right, wrap");
+			clusterpanel.add(clusterText);
 			clusterpanel.add(clusterPane, "align left, grow, wrap");
 			clusterpanel.add(clear, "align center");
 
@@ -859,6 +861,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		if (table != null) {
 			JScrollPane sp = new JScrollPane(table);
 			JButton choose = new JButton("ok");
+			JLabel clusterText = new JLabel("Use ctrl or shift to select multiple clusters.");
 			choose.setToolTipText("Choose Clusters");
 			choose.setActionCommand("dialog_choose");
 			choose.addActionListener(this);
@@ -872,6 +875,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 
 			JPanel dialogPane = new JPanel(new MigLayout("", "[]", ""));
 
+			dialogPane.add(clusterText, "wrap, grow");
 			dialogPane.add(sp, "wrap");
 
 			JPanel buttonPane = new JPanel(new MigLayout("", "[][][]", ""));

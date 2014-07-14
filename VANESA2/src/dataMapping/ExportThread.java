@@ -100,9 +100,13 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 					JOptionPane.showMessageDialog(
 							MainWindowSingelton.getInstance(), "Data export could not be executed.", "Error",
 							JOptionPane.ERROR_MESSAGE);
+					DataMappingModelController.reactivateUI();
 				}
 				
 			});
+			
+			
+			
 			e.printStackTrace();
 		}
 		

@@ -24,17 +24,13 @@ public class MappingCallback extends UnicastRemoteObject implements
 
 	@Override
 	public void progressNotify(String message) throws RemoteException {
-System.out.println(message);
-//		System.out.println(message);
 		DataMappingModelController.progressBarExport.setProgressBarString(message);
 
 	}
 
 	@Override
 	public void setMappingProgress(int mappedNodes, String experiment)
-			throws RemoteException {
-System.out.println(mappedNodes +" "+experiment);
-		
+			throws RemoteException {	
 		final String message = mappedNodes + " successfull mapped.";
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -46,9 +42,5 @@ System.out.println(mappedNodes +" "+experiment);
 			}
 		});
 		
-		
-//		System.out.println(experiment + ": " + mappedNodes);
-		
-
 	}
 }
