@@ -141,8 +141,6 @@ public class Wrapper implements WebServiceListener {
 			}
 			
 			else if(dbtype_MiRNA == database){
-				System.out.println(ConnectionSettings.getDBConnection()
-						.getmirnaDBName());
 				getWebserviceResult(ConnectionSettings.getDBConnection()
 						.getmirnaDBName(), query);
 				

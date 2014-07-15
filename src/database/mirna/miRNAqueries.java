@@ -9,7 +9,9 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class miRNAqueries {
 
-	public static final String miRNA_onlyName = "select * from mirbase where name like ?";
+	public static final String miRNA_onlyName = "select distinct mirnaname, species from mirtarbase where mirnaname like ? LIMIT 100";
+	
+	public static final String miRNA_onlyGene = "select distinct targetgene, species from mirtarbase where targetgene like ? LIMIT 100";
 	
 	public static final String miRNA_onlyAccession = "select * from mirbase where accession like ?";
 	
@@ -23,7 +25,7 @@ public class miRNAqueries {
 	
 	public static final String miRNA_sequence_name = "select * from mirbase where sequence like ? and name like ?";
 	
-	public static final String miRNA_get_Genes = "SELECT Gene FROM mirbase_has_tarbase inner join tarbase on tarbase_ID=id where mirbase_ID like ?;";
+	public static final String miRNA_get_Genes = "SELECT distinct targetgene FROM mirtarbase where mirnaname like ?;";
 
 	public static final String miRNA_get_Pathways = "SELECT kegg_genes_pathway.name,kegg_genes_pathway.name," +
 	"kegg_genes_pathway.number,kegg_genes_pathway.org, kegg_genes_name.name FROM " +
@@ -44,7 +46,7 @@ public class miRNAqueries {
 		+ " inner join db_mirna.mirbase on mirbase.ID=mirBase_ID"
 		+ " where pathway.name='"+pathway+"';";
 		//System.out.println("pw: "+pathway + " "+query);
-		return new Wrapper().requestDbContent(2, query);		
+		return new Wrapper().requestDbContent(Wrapper.dbtype_KEGG, query);		
 	}
 	
 }
