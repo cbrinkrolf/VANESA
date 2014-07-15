@@ -41,10 +41,8 @@ public class mirnaSearch extends SwingWorker {
 
 	private MainWindow w;
 	private ProgressBar bar;
-	private ArrayList<DBColumn> results;
+	private ArrayList<DBColumn> resultsDBSearch;
 	private MirnaResultWindow mirnaResultWindow;
-	private ArrayList<DBColumn> allSpecificElements = new ArrayList<DBColumn>();
-	private ArrayList<DBColumn> allKEGGPathways = new ArrayList<DBColumn>();
 
 	public mirnaSearch(String[] input, MainWindow w, ProgressBar bar) {
 
@@ -90,15 +88,15 @@ public class mirnaSearch extends SwingWorker {
 			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA,
 					miRNAqueries.miRNA_onlyAccession, parameters);
 
-		} else if (gene.length() > 0) {
-			String[] parameters = { "%" + gene + "%" };
-			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA,
-					miRNAqueries.miRNA_onlyGene, parameters);
-
 		} else if (name.length() > 0) {
 			String[] parameters = { "%" + name + "%" };
 			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA,
 					miRNAqueries.miRNA_onlyName, parameters);
+
+		} else if (gene.length() > 0) {
+			String[] parameters = { "%" + gene + "%" };
+			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA,
+					miRNAqueries.miRNA_onlyGene, parameters);
 
 		}
 
@@ -106,9 +104,9 @@ public class mirnaSearch extends SwingWorker {
 	}
 
 	protected Object doInBackground() throws Exception {
-		//w.setLockedPane(true);
-		results = requestDbContent();
-		//w.setLockedPane(false);
+		// w.setLockedPane(true);
+		resultsDBSearch = requestDbContent();
+		// w.setLockedPane(false);
 		return null;
 	}
 
@@ -116,9 +114,9 @@ public class mirnaSearch extends SwingWorker {
 		Boolean continueProgress = false;
 		endSearch(w, bar);
 
-		if (results.size() > 0) {
+		if (resultsDBSearch.size() > 0) {
 			continueProgress = true;
-			mirnaResultWindow = new MirnaResultWindow(results);
+			mirnaResultWindow = new MirnaResultWindow(resultsDBSearch);
 		} else {
 			endSearch(w, bar);
 			JOptionPane.showMessageDialog(w,
@@ -127,64 +125,122 @@ public class mirnaSearch extends SwingWorker {
 
 		if (continueProgress) {
 			Vector<String[]> results = mirnaResultWindow.getAnswer();
-			//System.out.println(results.get(0)[0] + " " + results.get(0)[1]);
+			// System.out.println(results.get(0)[0] + " " + results.get(0)[1]);
 			if (results.size() != 0) {
 				final Iterator<String[]> it = results.iterator();
 				while (it.hasNext()) {
 					String[] details = it.next();
 					String name = details[0];
-
 					final String QUESTION_MARK = new String("\\?");
-					String finalQueryString = miRNAqueries.miRNA_get_Genes
-							.replaceFirst(QUESTION_MARK, "'%" + name + "%'");
-					allKEGGPathways = new Wrapper().requestDbContent(
-							Wrapper.dbtype_MiRNA, finalQueryString);
-					//System.out.println(finalQueryString);
-					if (allKEGGPathways.size() > 0) {
-						
-						Pathway pw = new CreatePathway(database + " network for " + name).getPathway();
 
-						// pw.setOrganism(organism);
-						// pw.setLink(pathwayLink);
-						// pw.setImagePath(pathwayImage);
-						// pw.setNumber(pathwayNumber);
-						MyGraph myGraph = pw.getGraph();
+					if (this.name.length() > 0) {
+						String finalQueryString = miRNAqueries.miRNA_get_Genes
+								.replaceFirst(QUESTION_MARK, "'%" + name + "%'");
+						resultsDBSearch = new Wrapper().requestDbContent(
+								Wrapper.dbtype_MiRNA, finalQueryString);
+						// System.out.println(finalQueryString);
+						if (resultsDBSearch.size() > 0) {
 
-						//stopVisualizationModel();
-						
-						SRNA root = new SRNA(name, name);
-						
-						pw.addVertex(root, new Point2D.Double(0,0));
-						
-						Iterator<DBColumn> cols = allKEGGPathways.iterator();
-						DNA dna;
-						String[] dbcol;
-						while(cols.hasNext()){
-							dbcol = cols.next().getColumn();
-							
-							dna = new DNA(dbcol[0], dbcol[0]);
-							pw.addVertex(dna, new Point2D.Double(0,0));
-							pw.addEdge(new Expression("","",root, dna));
-							
+							Pathway pw = new CreatePathway(database
+									+ " network for " + name).getPathway();
+
+							// pw.setOrganism(organism);
+							// pw.setLink(pathwayLink);
+							// pw.setImagePath(pathwayImage);
+							// pw.setNumber(pathwayNumber);
+							MyGraph myGraph = pw.getGraph();
+
+							// stopVisualizationModel();
+
+							SRNA root = new SRNA(name, name);
+
+							pw.addVertex(root, new Point2D.Double(0, 0));
+
+							Iterator<DBColumn> cols = resultsDBSearch
+									.iterator();
+							DNA dna;
+							String[] dbcol;
+							Expression e;
+							while (cols.hasNext()) {
+								dbcol = cols.next().getColumn();
+								dna = new DNA(dbcol[0], dbcol[0]);
+								pw.addVertex(dna, new Point2D.Double(0, 0));
+								e = new Expression("", "", root, dna);
+								e.setDirected(true);
+								pw.addEdge(e);
+
+							}
+							// startVisualizationModel();
+
+							myGraph.changeToGEMLayout();
+							myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
+							myGraph.normalCentering();
+							bar.closeWindow();
+
+							MainWindow window = MainWindowSingelton
+									.getInstance();
+							window.updateOptionPanel();
+							window.setVisible(true);
+
 						}
-						//startVisualizationModel();
+					}else if(gene.length() > 0){
+						String finalQueryString = miRNAqueries.miRNA_get_Mirnas
+								.replaceFirst(QUESTION_MARK, "'%" + gene + "%'");
+						resultsDBSearch = new Wrapper().requestDbContent(
+								Wrapper.dbtype_MiRNA, finalQueryString);
+						// System.out.println(finalQueryString);
+						if (resultsDBSearch.size() > 0) {
 
-						myGraph.changeToGEMLayout();
-						myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
-						myGraph.normalCentering();
-						bar.closeWindow();
+							Pathway pw = new CreatePathway(database
+									+ " network for " + gene).getPathway();
 
-						MainWindow window = MainWindowSingelton.getInstance();
-						window.updateOptionPanel();
-						window.setVisible(true);
-						
+							// pw.setOrganism(organism);
+							// pw.setLink(pathwayLink);
+							// pw.setImagePath(pathwayImage);
+							// pw.setNumber(pathwayNumber);
+							MyGraph myGraph = pw.getGraph();
+
+							// stopVisualizationModel();
+
+							DNA root = new DNA(gene, gene);
+
+							pw.addVertex(root, new Point2D.Double(0, 0));
+
+							Iterator<DBColumn> cols = resultsDBSearch
+									.iterator();
+							SRNA srna;
+							String[] dbcol;
+							Expression e;
+							while (cols.hasNext()) {
+								dbcol = cols.next().getColumn();
+
+								srna = new SRNA(dbcol[0], dbcol[0]);
+								pw.addVertex(srna, new Point2D.Double(0, 0));
+								e = new Expression("", "", srna, root);
+								e.setDirected(true);
+								pw.addEdge(e);
+
+							}
+							// startVisualizationModel();
+
+							myGraph.changeToGEMLayout();
+							myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
+							myGraph.normalCentering();
+							bar.closeWindow();
+
+							MainWindow window = MainWindowSingelton
+									.getInstance();
+							window.updateOptionPanel();
+							window.setVisible(true);
+
+						}
 						
 					}
 
 				}
 			}
 		}
-		//endSearch(w, bar);
+		// endSearch(w, bar);
 	}
 
 	private void endSearch(final MainWindow w, final ProgressBar bar) {
