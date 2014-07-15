@@ -45,7 +45,7 @@ public class KEGGResultWindow extends JFrame {
 	private JCheckBox checkBox;
 
 	public JCheckBox getCheckBox() {
-		checkBox.setSelected(false);
+		//checkBox.setSelected(false);
 		return checkBox;
 	}
 
@@ -109,7 +109,7 @@ public class KEGGResultWindow extends JFrame {
 		mainPanel.add(new JSeparator(), "gap 10, wrap, growx");
 		mainPanel.add(sp, "span 2, growx");
 		mainPanel.add(new JSeparator(), "gap 10, wrap, growx");
-		//mainPanel.add(checkBox);
+		mainPanel.add(checkBox);
 
 		pane = new JOptionPane(mainPanel, JOptionPane.QUESTION_MESSAGE,
 				JOptionPane.OK_CANCEL_OPTION);

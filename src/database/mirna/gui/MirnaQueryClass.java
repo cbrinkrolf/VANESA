@@ -21,8 +21,8 @@ import net.miginfocom.swing.MigLayout;
 public class MirnaQueryClass {
 	
 	private TitledTab tab;
-	JPanel p;
-	JTextField name, acc, sequences;
+	private JPanel p;
+	private JTextField name, acc, sequences, gene;
 	
 	
 	public MirnaQueryClass(DatabaseWindow dw) {
@@ -32,14 +32,18 @@ public class MirnaQueryClass {
 		p = new JPanel(layout);
 		
 		name = new JTextField(20);
+		gene = new JTextField(20);
 		acc = new JTextField(20);
 		sequences = new JTextField(20);
 		
-		name.setText("hsa-miR-18a-3p");
-		acc.setText("MIMAT0002891");
-		sequences.setText("ACUGCCCUAAGUGCUCCUUCUGG");
+		
+		name.setText("hsa-miR-15a");
+		gene.setText("");
+		acc.setText("");
+		sequences.setText("");
 		
 		name.addFocusListener(new TextfeldColorChanger());
+		gene.addFocusListener(new TextfeldColorChanger());
 		acc.addFocusListener(new TextfeldColorChanger());
 		sequences.addFocusListener(new TextfeldColorChanger());
 		
@@ -63,8 +67,10 @@ public class MirnaQueryClass {
 		
 		p.add(new JLabel(new ImageIcon(imagePath.getPath("dataServer.png"))),"span 2 5");
 		
-		p.add(new JLabel("Name"), "span 2, gap 5 ");
+		p.add(new JLabel("miRNA name"), "span 2, gap 5 ");
 	    p.add(name,"span,wrap,growx ,gap 10");
+	    p.add(new JLabel("Gene name"), "span 2, gap 5 ");
+	    p.add(gene,"span,wrap,growx ,gap 10");
 	    p.add(new JLabel("Accession"),"span 2, gap 5 ");
 		p.add(acc,"span, wrap, growx, gap 10");
 		p.add(new JLabel("Sequence"),"span 2, gap 5 ");
@@ -86,8 +92,8 @@ public class MirnaQueryClass {
 	}
 
     public void reset(){
-		
     	name.setText("");
+    	gene.setText("");
 		acc.setText("");
 		sequences.setText(""); 	
 	}
@@ -103,12 +109,13 @@ public class MirnaQueryClass {
 		input[0]=name.getText();
 		input[1]=acc.getText();
 		input[2]=sequences.getText();
+		input[3] = gene.getText();
 		return input;
 	}
 	
 	public boolean doSearchCriteriaExist(){
 		
-		if(name.getText().length()>0 || acc.getText().length()>0 || sequences.getText().length()>0){
+		if(name.getText().length()>0 || acc.getText().length()>0 || sequences.getText().length()>0 || gene.getText().length()>0){
 			return true;
 		}else{
 			return false;
