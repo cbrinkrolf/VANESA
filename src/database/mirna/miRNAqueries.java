@@ -26,6 +26,8 @@ public class miRNAqueries {
 	public static final String miRNA_sequence_name = "select * from mirbase where sequence like ? and name like ?";
 	
 	public static final String miRNA_get_Genes = "SELECT distinct targetgene FROM mirtarbase where mirnaname like ?;";
+	
+	public static final String miRNA_get_Mirnas = "SELECT distinct mirnaname FROM mirtarbase where targetgene like ?;";
 
 	public static final String miRNA_get_Pathways = "SELECT kegg_genes_pathway.name,kegg_genes_pathway.name," +
 	"kegg_genes_pathway.number,kegg_genes_pathway.org, kegg_genes_name.name FROM " +
