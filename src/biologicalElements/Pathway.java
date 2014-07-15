@@ -783,18 +783,112 @@ public class Pathway implements Cloneable {
 				if(!bea.getTo().getAllNodes().isEmpty() | !bea.getFrom().getAllNodes().isEmpty()){
 					EdgeDeleteDialog dialog = new EdgeDeleteDialog(bea);
 					BiologicalEdgeAbstract delBea = dialog.getAnswer();
-					return;
+					//aborted
+					if(delBea==null){
+						return;
+					//delete all sub-Edges
+					} else if(delBea==bea){
+						
+					//delete selected sub-Edge
+					} else {
+						getRootPathway().deleteSubEdge(delBea);
+						return;
+					}
 				}
-				edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(),
-						bea.getTo()));
-				graphRepresentation.removeEdge(bea);
-				getGraph().removeEdge(bea);
-				// System.out.println(edges.size());
+				removeEdge(bea, false);
 			}
 			ids.remove(element.getID());
 			// System.out.println(biologicalElements.size());
 			biologicalElements.remove(element.getID() + "");
 			// System.out.println(biologicalElements.size());
+		}
+	}
+	
+	private void removeEdge(BiologicalEdgeAbstract bea, boolean removeID){
+		edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(),
+				bea.getTo()));
+		graphRepresentation.removeEdge(bea);
+		getGraph().removeEdge(bea);
+		if(removeID){
+			ids.remove(bea.getID());
+			// System.out.println(biologicalElements.size());
+			biologicalElements.remove(bea.getID() + "");
+			// System.out.println(biologicalElements.size());
+		}
+	}
+	
+	public void deleteSubEdge(BiologicalEdgeAbstract edge){
+		BiologicalNodeAbstract thisNode = null;
+		if(getGraph(false)==null){
+			if(this instanceof BiologicalNodeAbstract){
+				thisNode = (BiologicalNodeAbstract) this;
+				Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
+				conEdges.addAll(thisNode.getConnectingEdges());
+				for(BiologicalEdgeAbstract conEdge : conEdges){
+					if(conEdge.getTo()==edge.getTo() && conEdge.getFrom()==edge.getFrom()){
+						thisNode.getConnectingEdges().remove(conEdge);
+					}
+				}
+			}
+			return;
+		}
+		BiologicalNodeAbstract currentFrom = edge.getFrom().getCurrentShownParentNode(getGraph());
+		BiologicalNodeAbstract currentTo = edge.getTo().getCurrentShownParentNode(getGraph());
+		if(currentFrom==null | currentTo==null){
+			return;
+		} else if(currentFrom==currentTo){
+			currentFrom.deleteSubEdge(edge);
+			return;
+		} else if(existEdge(currentFrom, currentTo)){
+			if(this instanceof BiologicalNodeAbstract){
+				thisNode = (BiologicalNodeAbstract) this;
+			} else {
+				currentFrom.deleteSubEdge(edge);
+				currentTo.deleteSubEdge(edge);
+				updateMyGraph();
+				return;
+			}
+			Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
+			conEdges.addAll(thisNode.getConnectingEdges());
+			for(BiologicalEdgeAbstract conEdge : conEdges){
+				if(conEdge.getFrom()==edge.getFrom() && conEdge.getTo()==edge.getTo() && conEdge.isDirected() == edge.isDirected()){
+					thisNode.getConnectingEdges().remove(conEdge);
+				}
+			}
+			Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
+			environment.addAll(thisNode.getEnvironment());
+			for(BiologicalNodeAbstract envNode : environment){
+				if(thisNode.getGraph().getJungGraph().getNeighborCount(envNode)==0){
+					thisNode.getEnvironment().remove(envNode);
+				}
+			}
+			Set<BiologicalNodeAbstract> border = new HashSet<BiologicalNodeAbstract>();
+			border.addAll(thisNode.getBorder());
+			for(BiologicalNodeAbstract borderNode : border){
+				Set<BiologicalNodeAbstract> neighbors = new HashSet<BiologicalNodeAbstract>();
+				if(thisNode.getGraph().getJungGraph().getNeighbors(thisNode)!=null){
+					neighbors.addAll(thisNode.getGraph().getJungGraph().getNeighbors(thisNode));
+				}
+				boolean isBorder = false;
+				if(!neighbors.isEmpty()){
+					for(BiologicalNodeAbstract neighbor : neighbors){
+						if(thisNode.getEnvironment().contains(neighbor)){
+							isBorder = true;
+						}
+					}
+				}
+				if(!isBorder){
+					thisNode.getBorder().remove(borderNode);
+				}
+			}
+			currentFrom.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
+			currentTo.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
+			if(!thisNode.getEnvironment().contains(currentFrom)){
+				currentFrom.deleteSubEdge(edge);
+			}
+			if(!thisNode.getEnvironment().contains(currentTo)){
+				currentTo.deleteSubEdge(edge);
+			}
 		}
 	}
 
@@ -1494,7 +1588,7 @@ public class Pathway implements Cloneable {
 			thisNode = (BiologicalNodeAbstract) this;
 		}
 
-		// needed for edge update in coarse operation
+		// needed for edge update
 		Set<BiologicalEdgeAbstract> edgeSet = new HashSet<BiologicalEdgeAbstract>();
 
 		// go through all nodes in the current Pathway
@@ -1512,12 +1606,12 @@ public class Pathway implements Cloneable {
 
 			case FLATTED:
 				this.removeElement(node);
-				System.out.println("ConEdges before flatting of node "
-						+ node.getLabel());
-				for (BiologicalEdgeAbstract ed : node.getConnectingEdges()) {
-					System.out.println(ed.getFrom().getLabel() + "->"
-							+ ed.getTo().getLabel());
-				}
+//				System.out.println("ConEdges before flatting of node "
+//						+ node.getLabel());
+//				for (BiologicalEdgeAbstract ed : node.getConnectingEdges()) {
+//					System.out.println(ed.getFrom().getLabel() + "->"
+//							+ ed.getTo().getLabel());
+//				}
 
 				// root Pathway and non-environment nodes add complete
 				// sub-pathway.
@@ -1583,7 +1677,7 @@ public class Pathway implements Cloneable {
 				break;
 
 			case COARSED:
-				// root Pathway
+				// coarse nodes
 				if (thisNode != null) {
 					if (!thisNode.getAllParentNodes().contains(
 							node.getParentNode())) {
@@ -1599,7 +1693,7 @@ public class Pathway implements Cloneable {
 					}
 				}
 
-				// coarse nodes
+				// root pathway
 				else {
 					addVertex(node.getParentNode(), this.getGraph()
 							.getVertexLocation(node));
@@ -1609,6 +1703,18 @@ public class Pathway implements Cloneable {
 				edgeSet.addAll(node.getParentNode().getConnectingEdges());
 				break;
 
+			case CONNECTIONMODIFIED:
+				Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
+				edges.addAll(getGraph().getJungGraph().getInEdges(node));
+				edges.addAll(getGraph().getJungGraph().getOutEdges(node));
+				for(BiologicalEdgeAbstract e : edges){
+					removeEdge(e, true);
+				}
+				for(BiologicalEdgeAbstract conEdge : node.getConnectingEdges()){
+					edgeSet.add(conEdge);
+				}
+				break;
+				
 			default:
 				break;
 			}

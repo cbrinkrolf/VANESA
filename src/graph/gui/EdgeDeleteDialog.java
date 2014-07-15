@@ -79,7 +79,8 @@ public class EdgeDeleteDialog extends JFrame {
 	
 	private void addAllConnectingEdges(BiologicalEdgeAbstract edge, JComboBox<String> edgeBox, HashMap<Integer, BiologicalEdgeAbstract> map){
 		for(BiologicalEdgeAbstract childEdge : edge.getTo().getConnectingEdges()){
-			if(childEdge.getFrom().getCurrentShownParentNode(graphInstance.getPathway().getGraph())==edge.getFrom()){
+			if(childEdge.getFrom().getCurrentShownParentNode(graphInstance.getPathway().getGraph())==edge.getFrom() | 
+					childEdge.getTo().getCurrentShownParentNode(graphInstance.getPathway().getGraph())==edge.getFrom()){
 				if(childEdge.isDirected()){
 					edgeBox.addItem(childEdge.getFrom().getLabel() + " |-> " + childEdge.getTo().getLabel());
 				} else {
