@@ -121,6 +121,7 @@ public class KEGGConnector extends SwingWorker {
 
 	public KEGGConnector(ProgressBar bar, String[] details,
 			boolean dontCreatePathway) {
+		
 		this(bar, details);
 		this.dontCreatePathway = dontCreatePathway;
 	}
