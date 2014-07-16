@@ -9,12 +9,14 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
+
 import edu.emory.mathcs.backport.java.util.Arrays;
 import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
@@ -110,6 +112,7 @@ public class DenselyConnectedBiclustering {
 		this.nodeType = nodeType;
 		this.cyclesMap = cyclesMap;
 		this.cliquesMap = cliquesMap;
+		
 
 //		FileReader fr = new FileReader(attributes);
 //		BufferedReader br = new BufferedReader(fr);
@@ -176,7 +179,32 @@ public class DenselyConnectedBiclustering {
 		GraphNode graphNode;
 		
 		if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_BNA_NR){
-			allVertices.addAll(mg.getAllVertices());
+			
+			//TODO: Knoten entfernen die nicht in Cycles/Cliquen vorkommen (wenn Cycles/Cliquen ausgewählt)
+			
+			
+			if(attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CYCLES)&&attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CLIQUES)){
+				Set<BiologicalNodeAbstract> verticesIntersection = cyclesMap.keySet();
+				verticesIntersection.retainAll(cliquesMap.keySet());
+				
+				allVertices.addAll(verticesIntersection);
+				
+
+			}else if(attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CYCLES)){
+					
+				allVertices.addAll(cyclesMap.keySet());
+			}else if(attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CLIQUES)){
+				
+//				allVertices.addAll(cliquesMap.keySet());
+				for(BiologicalNodeAbstract vertex: cliquesMap.keySet()){
+					System.out.println(vertex.getLabel() + ": " + cliquesMap.get(vertex));
+					if(cliquesMap.get(vertex) != 0.0){
+						allVertices.add(vertex);
+					}
+				}
+			}else{
+				allVertices.addAll(mg.getAllVertices());
+			}
 		}else{
 			for(BiologicalNodeAbstract vertex : mg.getAllVertices()){
 				switch(nodeType){
@@ -341,7 +369,12 @@ public class DenselyConnectedBiclustering {
 			            break;
 
 			        case DenselyConnectedBiclusteringGUI.GC_CYCLES:
-			        	values.add(cyclesMap.get(vertex));
+			        	if(cyclesMap.containsKey(vertex)){
+			        		values.add(cyclesMap.get(vertex));
+			        	}else{
+			        		values.add(0.0);
+			        	}
+			        	
 			        	break;
 			        
 			        case DenselyConnectedBiclusteringGUI.GC_CLIQUES:
@@ -531,6 +564,7 @@ public class DenselyConnectedBiclustering {
 	}
 	
 	private HashSet<HashSet<Integer>> preprocessingParallel(){
+		DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Preprocessing");
 		
 		HashSet<HashSet<Integer>> seeds = new HashSet<>();
 		
@@ -582,7 +616,7 @@ public class DenselyConnectedBiclustering {
 		
 		HashMap<Integer, HashSet<Integer>> adjacencies_temp = new HashMap<>();
 		
-		
+		DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Seedgeneration part 1");
 		/*
 		 * Erstellen eine neue Adjazenzliste. Und 1. Teil der Seedgeneration: 
 		 * Adjacencies der Seeds werden später hinzugefügt
@@ -669,7 +703,9 @@ public class DenselyConnectedBiclustering {
 	 * Jede Kante wird einzeln gerpüft (im Callable DCBpreprocessing)
 	 */
 	public HashSet<HashSet<Integer>> expansionParallel(HashSet<HashSet<Integer>> seeds){
+		DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Seedgeneration part 2");
 
+		
 		long starttime2;
 		long endtime2;
 		
@@ -717,6 +753,10 @@ public class DenselyConnectedBiclustering {
 		long endtime3;
 		
 		starttime3 = System.currentTimeMillis();
+		
+		DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Expansion");
+		
+		
 		try {
 			futureExpanded = executeExpansion.invokeAll(tasksExpansion);
 		} catch (InterruptedException e1) {

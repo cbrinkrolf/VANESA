@@ -47,7 +47,6 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 		for(int i = 0; i < header.size(); i++){
 			experimentArray[i] = header.get(i);
 			
-			System.out.println(experimentArray[i]);
 			mappings[i] = new HashMap<String, Double>();
 			for(String id : newMergeMap.keySet()){
 			
@@ -78,10 +77,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 		try {
 			
 			server = (IJobServer) Naming.lookup(url);
-			
-			System.out.println(server);
-			
-			
+
 			
 			helper = new MappingCallback();
 			if (!server.submitMapping(JobTypes.MAPPING_UNIPROT, experimentArray, mappings, helper)) {
