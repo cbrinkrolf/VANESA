@@ -3,8 +3,11 @@ package graph.algorithms.gui;
 import graph.GraphInstance;
 import graph.algorithms.DCBresultSet;
 import graph.algorithms.DenselyConnectedBiclustering;
+import graph.algorithms.NetworkProperties;
 import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 import gui.MainWindowSingelton;
+import gui.ProgressBar;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,14 +18,17 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -47,6 +53,9 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import cluster.ClusterComputeThread2;
+import cluster.ComputeCallback2;
+import cluster.JobTypes;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
@@ -80,6 +89,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	private ArrayList<JComboBox> attrList;
 	private JScrollPane clusterPane;
 	private JList<DCBClusterLabel> clusterList;
+	public static ProgressBar progressBar;
 
 	private JFormattedTextField desityField;
 	private JDialog dialog;
@@ -89,7 +99,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	MigLayout layout;
 	boolean applyNumDone = false;
 	boolean chooserDone = false;
-	private String[] presentationString = { "size", "color 1" , "color 2"};
+	private String[] presentationString = { "size", "color"};
 	private double DENSITY_MIN = 0d;
 	private double DENSITY_MAX = 1d;
 	private double DENSITY_DEFAULT = 0.5;
@@ -107,6 +117,13 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	public static final String TYPE_PROTEIN = "Protein";
 	public static final String TYPE_DNA = "DNA";
 	public static final String TYPE_RNA = "RNA";
+	public static final String TYPE_BNA = "Graph characteristic";
+	
+	public static final String GC_DEGREE = "Node degree";
+	public static final String GC_NEIGHBOUR = "Neighbour degree";
+	public static final String GC_CYCLES = "Cycles";
+	public static final String GC_CLIQUES = "Cliques";
+	
 	
 	public static final int TYPE_GRAPHNODE_NR = 0;
 	public static final int TYPE_PROTEIN_NR = 1;
@@ -123,6 +140,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	
 	private Pathway pw;
 	private MyGraph mg;
+	private NetworkProperties np;
 	
 	private HashMap<BiologicalNodeAbstract, Color> pickedVertices = new HashMap<BiologicalNodeAbstract, Color>();
 	private HashMap<BiologicalEdgeAbstract, Color> pickedEdges = new HashMap<BiologicalEdgeAbstract, Color>();
@@ -130,6 +148,20 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	
 	private ArrayList<String> attrTypes;
 	private ArrayList<String> experiments;
+	
+	private int numOfServerJobs = 0;
+	
+	private ArrayList<Double> ranges;
+	private ArrayList<String> attrTyps;
+	private ArrayList<String> attrNames;
+	private int nodeType = 4;
+	private double density;
+	private double attrdim;
+	
+	private HashMap<BiologicalNodeAbstract, Double> cyclesMap;
+	private HashMap<BiologicalNodeAbstract, Double> cliquesMap;
+	private boolean successComputData= true;
+	
 	public DenselyConnectedBiclusteringGUI() {
 
 	}
@@ -367,7 +399,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			// Indices start at 0, so 4 specifies the pig.
 			attrTypList = new ArrayList<JComboBox>();
 
-			String[] defaultAttrString = { "Node degree", "Neighbour degree" };
+			String[] defaultAttrString = { GC_DEGREE, GC_NEIGHBOUR, GC_CYCLES, GC_CLIQUES };
 			comboBoxModel = new ArrayList<DefaultComboBoxModel>();
 			attrList = new ArrayList<JComboBox>();
 
@@ -429,9 +461,11 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			if (boxIndex != -1) {
 				String itemName = (String) attrTypList.get(boxIndex).getSelectedItem();
 				switch (itemName) {
-				case "Graph characteristic": // "Graph characteristic"
-					attr.add("Node degree");
-					attr.add("Neighbour degree");
+				case TYPE_BNA: // "Graph characteristic"
+					attr.add(GC_DEGREE);
+					attr.add(GC_NEIGHBOUR);
+					attr.add(GC_CYCLES);
+					attr.add(GC_CLIQUES);
 					break;
 				case TYPE_GRAPHNODE:// "Experimental Data
 						// TODO aus Graph laden
@@ -466,22 +500,26 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 
 		}
 		if ("calculate".equals(event)) {
+			
+			progressBar = new ProgressBar();
+			progressBar.init(100, "DCB", true);
+			
 		
 			boolean noMinMax = false;
 			boolean toManyTypes = false;
 
-			double density = ((Number) desityField.getValue()).doubleValue();
+			density = ((Number) desityField.getValue()).doubleValue();
 			if (density < DENSITY_MIN || density > DENSITY_MAX) {
 				noMinMax = true;
 			}
 
-			ArrayList<Double> ranges = new ArrayList<Double>();
-			ArrayList<String> attrTyps = new ArrayList<String>();
-			ArrayList<String> attrNames = new ArrayList<String>();
+			ranges = new ArrayList<Double>();
+			attrTyps = new ArrayList<String>();
+			attrNames = new ArrayList<String>();
 			
 //			LinkedHashMap<String, ArrayList<String>> attrNames2 = new LinkedHashMap <String, ArrayList<String>>();
 
-			int nodeType = 4;
+			
 			int typeCounter = 0;
 			
 			for (int i = 0; i < rangeField.size(); i++) {
@@ -537,39 +575,75 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			}
 			
 
-			double attrdim = (double) attrdimspinner.getValue();
+			attrdim = (double) attrdimspinner.getValue();
 
 			if (noMinMax) {
+				reactivateUI();
 				JOptionPane.showMessageDialog(null,
 						"Please consider minimum and maximum Values.", "Error",
 						JOptionPane.ERROR_MESSAGE);
+				
 
 			} else if (attrdim > ranges.size()) {
+				reactivateUI();
 				JOptionPane
 						.showMessageDialog(
 								null,
 								"Number of similar attributes must not be greater than number of attributes.",
 								"Error", JOptionPane.ERROR_MESSAGE);
+				
 			} else if (toManyTypes) {
+				reactivateUI();
 				JOptionPane
 						.showMessageDialog(
 								null,
 								"These types of attributes could not be combined.",
 								"Error", JOptionPane.ERROR_MESSAGE);
+				
 
 			} else {
-				DenselyConnectedBiclustering dcb = new DenselyConnectedBiclustering(
-						density, ranges, nodeType, attrTyps, attrNames, attrdim);
+				if(!(attrNames.contains(GC_CYCLES)||attrNames.contains(GC_CLIQUES))){
+					cyclesMap = null;
+					cliquesMap = null;
+					startDcb();
+				
+				}else{
+					np = new NetworkProperties();
+					
+					
+					if(attrNames.contains(GC_CYCLES)){
+						numOfServerJobs++;
+		        		ComputeCallback2 helper;
+							try {
+								helper = new ComputeCallback2(this);
 
-				results = dcb.start();
-				// assert results != null : "No result";
-				if (results != null) {
-					table = initTable(results);
-				} else {
-					table = null;
+								ClusterComputeThread2 rmicycles = new ClusterComputeThread2(
+										JobTypes.CYCLE_JOB_OCCURRENCE, helper);
+								rmicycles.setAdjMatrix(np.getAdjacencyMatrix());
+								rmicycles.start();
+							} catch (RemoteException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+					}
+					
+					if(attrNames.contains(GC_CLIQUES)){
+						numOfServerJobs++;
+		        		ComputeCallback2 helper;
+							try {
+								helper = new ComputeCallback2(this);
+
+								ClusterComputeThread2 rmicycles = new ClusterComputeThread2(
+										JobTypes.CLIQUE_JOB_OCCURRENCE, helper);
+								rmicycles.setAdjMatrix(np.getAdjacencyMatrix());
+								rmicycles.start();
+							} catch (RemoteException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+					}
+					
 				}
-
-				openResultDialog(table);
 
 			}
 
@@ -632,7 +706,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			
 			
 			clusterpanel.add(back, "align right, wrap");
-			clusterpanel.add(clusterText);
+			clusterpanel.add(clusterText, "wrap");
 			clusterpanel.add(clusterPane, "align left, grow, wrap");
 			clusterpanel.add(clear, "align center");
 
@@ -690,31 +764,31 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 				new GraphColorizer(coloring, 0, false);
 				
 				break;	
-			case 2:// "color2"
-				// neu
-				InternalGraphRepresentation graphRepresentation = pw
-						.getGraphRepresentation();
-
-				for (HashSet<BiologicalNodeAbstract> cluster : selectedClusters) {
-					for (BiologicalNodeAbstract vertex1 : cluster) {
-						vertex1.setReference(false);
-						vertex1.setColor(Color.blue);
-						for (BiologicalNodeAbstract vertex2 : cluster) {
-							if (graphRepresentation.doesEdgeExist(vertex1, vertex2)) {
-								vertex2.setReference(false);
-								BiologicalEdgeAbstract edge = graphRepresentation
-										.getEdge(vertex1, vertex2);
-								System.out.println(edge.getColor().toString());
-								edge.setReference(false);
-								edge.setColor(Color.green);
-
-								System.out.println(edge.getColor().toString());
-								System.out.println();
-							}
-						}
-					}
-				}
-				break;
+//			case 2:// "color2"
+//				// neu
+//				InternalGraphRepresentation graphRepresentation = pw
+//						.getGraphRepresentation();
+//
+//				for (HashSet<BiologicalNodeAbstract> cluster : selectedClusters) {
+//					for (BiologicalNodeAbstract vertex1 : cluster) {
+//						vertex1.setReference(false);
+//						vertex1.setColor(Color.blue);
+//						for (BiologicalNodeAbstract vertex2 : cluster) {
+//							if (graphRepresentation.doesEdgeExist(vertex1, vertex2)) {
+//								vertex2.setReference(false);
+//								BiologicalEdgeAbstract edge = graphRepresentation
+//										.getEdge(vertex1, vertex2);
+//								System.out.println(edge.getColor().toString());
+//								edge.setReference(false);
+//								edge.setColor(Color.green);
+//
+//								System.out.println(edge.getColor().toString());
+//								System.out.println();
+//							}
+//						}
+//					}
+//				}
+//				break;
 			default:
 				break;
 			}
@@ -813,6 +887,23 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		}
 	}
 
+	public void startDcb() {
+		DenselyConnectedBiclustering dcb = new DenselyConnectedBiclustering(
+				density, ranges, nodeType, attrTyps, attrNames, attrdim, cyclesMap, cliquesMap);
+
+		results = dcb.start();
+		// assert results != null : "No result";
+		if (results != null) {
+			table = initTable(results);
+		} else {
+			table = null;
+		}
+		
+		reactivateUI();
+
+		openResultDialog(table);
+	}
+
 
 	
 	/**
@@ -875,7 +966,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 
 			JPanel dialogPane = new JPanel(new MigLayout("", "[]", ""));
 
-			dialogPane.add(clusterText, "wrap, grow");
+			dialogPane.add(clusterText, "wrap");
 			dialogPane.add(sp, "wrap");
 
 			JPanel buttonPane = new JPanel(new MigLayout("", "[][][]", ""));
@@ -962,25 +1053,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		Color result = new Color(color1.getRGB()+color2.getRGB());
 		return result;
 		
-//		System.out.println("color1: " + color1.getRGB());
-//		System.out.println("color2: " + color2.getRGB());
-//		float[] hsb1 = Color.RGBtoHSB(color1.getRed(), color1.getGreen(), color1.getBlue(), null);
-//		
-//		float[] hsb2 = Color.RGBtoHSB(color2.getRed(), color2.getGreen(), color2.getBlue(), null);
-//		
-//		System.out.println("hsv1: h: " + hsb1[0] + " s: " + hsb1[1] + " v: " + hsb1[2]);
-//		
-//		System.out.println("hsv2: h: " + hsb2[0] + " s: " + hsb2[1] + " v: " + hsb2[2]);
-//		hsb2[0] = hsb1[0] + hsb2[0];
-//		System.out.println("hsv2 geaendert: h: " + hsb2[0] + " s: " + hsb2[1] + " v: " + hsb2[2]);
-//
-//		int colorInt = Color.HSBtoRGB(hsb2[0], hsb2[1], hsb2[2]);
-//
-//		Color result = new Color(colorInt);
-//		
-//		System.out.println("result: " + result.getRGB());
-//		
-//		return result;
 	}
 
 	/* (non-Javadoc)
@@ -1017,15 +1089,19 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		        		bna.setColor(pickedVertices.get(bna));
 		        	}
 		        	
+		        	pickedVertices.clear();
+		        	
 		        	for(BiologicalEdgeAbstract edge : pickedEdges.keySet()){
 		        		edge.setColor(pickedEdges.get(edge));
 		        	}
+		        	
+		        	pickedEdges.clear();
 	
 		        } else {
 		        	
 //		        	Color[] colors = {Color.RED, Color.GREEN, Color.BLUE, Color.CYAN, Color.PINK, Color.YELLOW};
 		        	
-		        	Color[] colors = {new Color(0.5f, 0f, 0f), new Color(0f, 0.5f, 0f), new Color(0f, 0f, 0.5f), new Color(0.5f, 0.3f, 0f), new Color(0f, 0.5f, 0f), new Color(0f, 0.3f, 0.5f)};
+		        	Color[] colors = {new Color(0.5f, 0f, 0f), new Color(0f, 0.5f, 0f), new Color(0f, 0f, 0.5f), new Color(0.5f, 0.3f, 0f), new Color(0f, 0.5f, 0.3f), new Color(0f, 0.3f, 0.5f)};
 		        	
 	//				GraphInstance g = new GraphInstance();
 	//				final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = g.getPathway().getGraph().getVisualizationViewer();
@@ -1038,7 +1114,8 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		        	for(BiologicalEdgeAbstract edge : pickedEdges.keySet()){
 		        		edge.setColor(pickedEdges.get(edge));
 		        	}
-		        	Color color;
+		        	Color nodeColor;
+		        	Color edgeColor;
 		        	for(int clusterIndex : clusterList.getSelectedIndices()){
 		        		int colorIndex = clusterIndex%(colors.length);
 		        		
@@ -1055,16 +1132,17 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			            		bna1.setReference(false);
 			            	}
 			            	
-			            	if(!bna1.getColor().equals(Color.WHITE)){
+			            	if(!bna1.getColor().equals(pickedVertices.get(bna1))){
 //				            	color = new Color(bna1.getColor().getRGB()+colors[colorIndex].getRGB());
-			            		color = sumColors(bna1.getColor(), colors[colorIndex]);
+			            		nodeColor = sumColors(bna1.getColor(), colors[colorIndex]);
 			            	}else{
-			            		color = colors[colorIndex];
+			            		nodeColor = colors[colorIndex];
 			            	}
 			            	
 			            	
-			            	bna1.setColor(color);
+			            	bna1.setColor(nodeColor);
 		
+			            	//TODO edge color!
 				            for(BiologicalNodeAbstract bna2 : selectedClusters.get(clusterIndex)){
 								BiologicalEdgeAbstract edge = graphRepresentation
 										.getEdge(bna1, bna2);
@@ -1073,7 +1151,14 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 										pickedEdges.put(edge, edge.getColor());
 										edge.setReference(false);
 									}
-									edge.setColor(color);
+									
+					            	if(!edge.getColor().equals(pickedEdges.get(edge))){
+//						            	color = new Color(bna1.getColor().getRGB()+colors[colorIndex].getRGB());
+					            		edgeColor = sumColors(edge.getColor(), colors[colorIndex]);
+					            	}else{
+					            		edgeColor = colors[colorIndex];
+					            	}
+									edge.setColor(edgeColor);
 								}
 				            }
 			            }
@@ -1094,4 +1179,106 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	}
 
 
+
+	/**
+	 * @param table
+	 * @param jobtype
+	 */
+	public void returnComputeData(Hashtable<Integer, Double> table, int jobtype) {
+		
+		// Determine jobtype and behaviour
+		switch (jobtype) {
+		case JobTypes.CYCLE_JOB_OCCURRENCE:
+			cyclesMap = new HashMap<BiologicalNodeAbstract, Double>();
+			
+			Hashtable<Integer, Double> cycledata = table;
+			numOfServerJobs--;
+
+			if (!cycledata.isEmpty()) {
+				// Map ids to BNAs
+				Iterator<Entry<Integer, Double>> it = cycledata.entrySet()
+						.iterator();
+				int key;
+				double value;
+
+				while (it.hasNext()) {
+					Entry<Integer, Double> entry = it.next();
+					key = entry.getKey();
+					value = entry.getValue();
+					// debug
+					// System.out.println(key + " " + value);
+					
+					cyclesMap.put(np.getNodeAssignmentbackwards(key), value);
+
+				}
+				
+			}else{
+				successComputData = false;
+				reactivateUI();
+				JOptionPane.showMessageDialog(null,
+						"No cycles found, please use different attributes.", "No cycles",
+						JOptionPane.INFORMATION_MESSAGE);
+				
+			}
+
+			break;
+
+		case JobTypes.CLIQUE_JOB_OCCURRENCE:
+			cliquesMap = new HashMap<BiologicalNodeAbstract, Double>();
+			
+			Hashtable<Integer, Double> cliquesdata = table;
+			numOfServerJobs--;
+
+			if (!cliquesdata.isEmpty()) {
+				// Map ids to BNAs
+				Iterator<Entry<Integer, Double>> it = cliquesdata.entrySet()
+						.iterator();
+				int key;
+				double value;
+
+				while (it.hasNext()) {
+					Entry<Integer, Double> entry = it.next();
+					key = entry.getKey();
+					value = entry.getValue();
+					// debug
+					// System.out.println(key + " " + value);
+					
+					cliquesMap.put(np.getNodeAssignmentbackwards(key), value);
+
+				}
+				
+			}else{
+				successComputData = false;
+				reactivateUI();
+				JOptionPane.showMessageDialog(null,
+						"No cliques found, please use different attributes.", "No cliques",
+						JOptionPane.INFORMATION_MESSAGE);
+				
+			}
+			
+			break;
+
+		default:
+			System.out.println("Wrong Job Type: returnComputeData - "
+					+ toString());
+			break;
+		}
+		
+		if(successComputData&&(numOfServerJobs == 0)){
+			startDcb();
+		}
+
+		
+	}
+	
+	
+	public static void reactivateUI() {
+		// close Progress bar and reactivate UI
+		progressBar.closeWindow();
+		MainWindow mw = MainWindowSingelton.getInstance();
+		mw.setEnable(true);
+		mw.setLockedPane(false);
+	}
+	
+	
 }
