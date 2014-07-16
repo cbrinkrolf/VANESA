@@ -100,7 +100,7 @@ public class KEGGResultWindow extends JFrame {
 		MigLayout layout = new MigLayout();
 		JPanel mainPanel = new JPanel(layout);
 		checkBox = new JCheckBox(
-				"Search MirBase/TarBase for possibly connected microRNAs", true);
+				"Search MirBase/TarBase for possibly connected microRNAs", false);
 
 		mainPanel
 				.add(new JLabel(

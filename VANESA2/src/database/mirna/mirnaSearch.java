@@ -125,20 +125,21 @@ public class mirnaSearch extends SwingWorker {
 
 		if (continueProgress) {
 			Vector<String[]> results = mirnaResultWindow.getAnswer();
-			// System.out.println(results.get(0)[0] + " " + results.get(0)[1]);
+			//System.out.println(results.get(0)[0] + " " + results.get(0)[1]);
 			if (results.size() != 0) {
 				final Iterator<String[]> it = results.iterator();
 				while (it.hasNext()) {
 					String[] details = it.next();
 					String name = details[0];
+					//System.out.println(name);
 					final String QUESTION_MARK = new String("\\?");
 
 					if (this.name.length() > 0) {
 						String finalQueryString = miRNAqueries.miRNA_get_Genes
-								.replaceFirst(QUESTION_MARK, "'%" + name + "%'");
+								.replaceFirst(QUESTION_MARK, "'" + name + "'");
 						resultsDBSearch = new Wrapper().requestDbContent(
 								Wrapper.dbtype_MiRNA, finalQueryString);
-						// System.out.println(finalQueryString);
+						//System.out.println(finalQueryString);
 						if (resultsDBSearch.size() > 0) {
 
 							Pathway pw = new CreatePathway(database
@@ -185,14 +186,14 @@ public class mirnaSearch extends SwingWorker {
 						}
 					}else if(gene.length() > 0){
 						String finalQueryString = miRNAqueries.miRNA_get_Mirnas
-								.replaceFirst(QUESTION_MARK, "'%" + gene + "%'");
+								.replaceFirst(QUESTION_MARK, "'" + name + "'");
 						resultsDBSearch = new Wrapper().requestDbContent(
 								Wrapper.dbtype_MiRNA, finalQueryString);
-						// System.out.println(finalQueryString);
+						//System.out.println(finalQueryString);
 						if (resultsDBSearch.size() > 0) {
 
 							Pathway pw = new CreatePathway(database
-									+ " network for " + gene).getPathway();
+									+ " network for " + name).getPathway();
 
 							// pw.setOrganism(organism);
 							// pw.setLink(pathwayLink);
@@ -202,7 +203,7 @@ public class mirnaSearch extends SwingWorker {
 
 							// stopVisualizationModel();
 
-							DNA root = new DNA(gene, gene);
+							DNA root = new DNA(name, name);
 
 							pw.addVertex(root, new Point2D.Double(0, 0));
 
