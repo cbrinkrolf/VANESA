@@ -1,5 +1,7 @@
 package biologicalObjects.nodes;
 
+import java.awt.Color;
+
 import biologicalElements.Elementdeclerations;
 //import edu.uci.ics.jung.graph.Vertex;
 
@@ -15,6 +17,7 @@ public class SRNA extends RNA{
 	public SRNA(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.sRNA);
+		setDefaultColor(Color.ORANGE);
 	}
 
 	public void setTarbase_DS(String tarbase_DS) {

@@ -17,9 +17,11 @@ import java.util.Vector;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import configurations.Wrapper;
 import pojos.DBColumn;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Compound;
+import biologicalObjects.edges.Expression;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Complex;
 import biologicalObjects.nodes.DNA;
@@ -88,8 +90,8 @@ public class KEGGConnector extends SwingWorker {
 	private ArrayList<DBColumn> allRnReactions = new ArrayList<DBColumn>();
 	private ArrayList<DBColumn> allKoReactions = new ArrayList<DBColumn>();
 
-	private ArrayList<DBColumn> allSpecificMicroRNAs = new ArrayList<DBColumn>();
-
+	private HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>> allSpecificMicroRNAs = new HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>>();
+	private HashMap<String, SRNA>srnas = new HashMap<String, SRNA>();
 	private boolean dontCreatePathway = false;
 	private String pathwayOrg;
 
@@ -121,7 +123,7 @@ public class KEGGConnector extends SwingWorker {
 
 	public KEGGConnector(ProgressBar bar, String[] details,
 			boolean dontCreatePathway) {
-		
+
 		this(bar, details);
 		this.dontCreatePathway = dontCreatePathway;
 	}
@@ -167,8 +169,11 @@ public class KEGGConnector extends SwingWorker {
 		allRnReactions = KEGGQueries.getAllReactions("rn" + pathwayNumber);
 		allKoReactions = KEGGQueries.getAllReactions("ko" + pathwayNumber);
 
-		if (isSearchMicroRNAs())
-			allSpecificMicroRNAs = miRNAqueries.getMiRNAsOfPathway(pathwayID);
+		if (isSearchMicroRNAs()) {
+			// allSpecificMicroRNAs =
+			// miRNAqueries.getMiRNAsOfPathway(pathwayID);
+		}
+
 		return null;
 	}
 
@@ -210,8 +215,34 @@ public class KEGGConnector extends SwingWorker {
 		// if (colorMirnas) {
 		// colorMirnas(this.mirnas, this.mirnaName);
 		// }
-		if (isSearchMicroRNAs())
-			drawMicroRNAs(allSpecificMicroRNAs, mirnas, mirnaName);
+		if (isSearchMicroRNAs()) {
+
+			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+			BiologicalNodeAbstract bna;
+			ArrayList<DBColumn> dbcol;
+			String finalQueryString;
+			final String QUESTION_MARK = new String("\\?");
+			while (it.hasNext()) {
+				bna = it.next();
+
+				if (bna instanceof DNA) {
+
+					finalQueryString = miRNAqueries.miRNA_get_Mirnas
+							.replaceFirst(QUESTION_MARK, "'" + bna.getLabel()
+									+ "'");
+
+					dbcol = new Wrapper().requestDbContent(
+							Wrapper.dbtype_MiRNA, finalQueryString);
+					//System.out.println(finalQueryString);
+					//System.out.println(dbcol.size());
+					if (dbcol.size() > 0) {
+						this.allSpecificMicroRNAs.put(bna, dbcol);
+					}
+				}
+			}
+			drawMicroRNAs();
+
+		}
 
 		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
@@ -410,58 +441,44 @@ public class KEGGConnector extends SwingWorker {
 
 	}
 
-	private void drawMicroRNAs(ArrayList<DBColumn> miRNAs,
-			Vector<String> specialGenes, String specialMicroRNA) {
-		for (Iterator<DBColumn> i = miRNAs.iterator(); i.hasNext();) {
-			String[] column = i.next().getColumn();
-			String geneName = column[1];
-			SRNA srna = null;
-			int connectedToPathway = 0;
-			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
-			BiologicalNodeAbstract bna;
-			Point2D p;
-			Compound c;
-			while (it.hasNext()) {
-				bna = it.next();
-				if (bna.getName().equals(geneName)
-						|| bna.getLabel().equals(geneName)) {
-					if (connectedToPathway == 0) {
-						p = myGraph.findNearestFreeVertexPosition(bna
-								.getKEGGnode().getXPos(), bna.getKEGGnode()
-								.getYPos(), 100);
-						srna = new SRNA(column[0], column[0]);
-						srna.setTarbase_accession(column[3]);
-						srna.setTarbase_DS(column[6]);
-						srna.setTarbase_ensemble(column[4]);
-						srna.setTarbase_IS(column[5]);
-						srna.setNtSequence(column[2]);
-						if (srna.getName().equals(specialMicroRNA)
-								|| srna.getLabel().equals(specialMicroRNA))
-							srna.setColor(Color.blue);
-						else
-							srna.setColor(Color.orange);
-						pw.addVertex(srna, p);
-						srna.setReference(false);
-						// myGraph.moveVertex(srna.getVertex(), p.getX(),
-						// p.getY());
-						connectedToPathway++;
-					}
-					c = new Compound("", "", srna, bna);
-					c.setDirected(true);
-					c.setReference(false);
-					if (specialGenes != null
-							&& (specialGenes.contains(bna.getName()) || specialGenes
-									.contains(bna.getLabel()))) {
-						bna.setColor(Color.RED);
-						bna.setReference(false);
-						c.setColor(Color.green);
-					}
+	private void drawMicroRNAs() {
+		Iterator<BiologicalNodeAbstract> it = this.allSpecificMicroRNAs
+				.keySet().iterator();
 
-					pw.addEdge(c);
+		BiologicalNodeAbstract bna;
+
+		Iterator<DBColumn> itCol;
+		String[] column;
+		SRNA srna;
+		Point2D p;
+		Expression e;
+		while (it.hasNext()) {
+			bna = it.next();
+
+			itCol = this.allSpecificMicroRNAs.get(bna).iterator();
+
+			while (itCol.hasNext()) {
+				column = itCol.next().getColumn();
+				
+				if(srnas.containsKey(column[0])){
+					srna = srnas.get(column[0]);
+				}else{
+				srna = new SRNA(column[0], column[0]);
+				p = new Point2D.Double(0, 0);//.findNearestFreeVertexPosition(bna.getKEGGnode()
+						//.getXPos(), bna.getKEGGnode().getYPos(), 100);
+				
+				pw.addVertex(srna, p);
+				srnas.put(column[0], srna);
 				}
+				srna.setReference(false);
+				e = new Expression("", "", srna, bna);
+				e.setDirected(true);
+				pw.addEdge(e);
+
 			}
 
 		}
+
 	}
 
 	private void drawRelations(ArrayList<DBColumn> allGeneralRelations,
@@ -649,8 +666,8 @@ public class KEGGConnector extends SwingWorker {
 					pw.addEdge(c);
 					c.setDirected(true);
 				}
-				if (specific){
-					//enzyme.setColor(Color.GREEN);
+				if (specific) {
+					// enzyme.setColor(Color.GREEN);
 				}
 				if (!pw.existEdge(enzyme, product)
 						&& !pw.existEdge(product, enzyme)) {
