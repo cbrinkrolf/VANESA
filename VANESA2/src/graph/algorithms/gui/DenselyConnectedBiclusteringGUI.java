@@ -1228,6 +1228,8 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			
 			Hashtable<Integer, Double> cliquesdata = table;
 			numOfServerJobs--;
+			
+
 
 			if (!cliquesdata.isEmpty()) {
 				// Map ids to BNAs
@@ -1241,7 +1243,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 					key = entry.getKey();
 					value = entry.getValue();
 					// debug
-					// System.out.println(key + " " + value);
+//					System.out.println(key + " " + value);
 					
 					cliquesMap.put(np.getNodeAssignmentbackwards(key), value);
 

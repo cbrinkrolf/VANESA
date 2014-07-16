@@ -54,6 +54,7 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 		while(!seeds.isEmpty()){
 			Hashtable<HashSet<Integer>, HashSet<Integer>>  seedsHelp = new Hashtable<HashSet<Integer>, HashSet<Integer>>();
 			seedsHelp.putAll(seeds);
+			System.out.println(seeds.size());
 			seeds.clear();
 			for(HashSet<Integer> nodeSet : seedsHelp.keySet()){
 				boolean finish = true;
@@ -99,9 +100,6 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 			}
 		}
 		
-		
-		
-		//TODO syso
 		
 		extendedSize = extended.size();
 		doppelExtended = removeSubsets.size();
