@@ -664,7 +664,6 @@ public class DataMappingModelController extends Observable {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-//		reactivateUI();
 		
 		
 		

@@ -1,12 +1,6 @@
 package graph.algorithms;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,7 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
-
 import edu.emory.mathcs.backport.java.util.Arrays;
 import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
@@ -36,16 +29,19 @@ import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
+import gui.ProgressBar;
 
 public class DenselyConnectedBiclustering {
 	
 	
-	MainWindow w = MainWindowSingelton.getInstance();
-	GraphContainer con = ContainerSingelton.getInstance();
-	InternalGraphRepresentation graphRepresentation = con.getPathway(w.getCurrentPathway()).getGraphRepresentation(); 
-	Pathway pw = con.getPathway(w.getCurrentPathway());
-	MyGraph mg = pw.getGraph();
+	private MainWindow w = MainWindowSingelton.getInstance();
+	private GraphContainer con = ContainerSingelton.getInstance();
+	private InternalGraphRepresentation graphRepresentation = con.getPathway(w.getCurrentPathway()).getGraphRepresentation(); 
+	private Pathway pw = con.getPathway(w.getCurrentPathway());
+	private MyGraph mg = pw.getGraph();
+	private NetworkProperties np;
 	
+	public static ProgressBar progressBar;
 
 	//Minimale Größe des Graphen für die parallele Verarbeitung
 	private final int MIN_PARALLEL_SIZE = 0;
@@ -58,6 +54,9 @@ public class DenselyConnectedBiclustering {
 	
 	private ArrayList<String> attrTyps;
 	private ArrayList<String> attrNames;
+	
+	private HashMap<BiologicalNodeAbstract, Double> cyclesMap;
+	private HashMap<BiologicalNodeAbstract, Double> cliquesMap;
 	
 	
 	
@@ -99,7 +98,9 @@ public class DenselyConnectedBiclustering {
 	long preprocessingTime;
 
 	// Constructor: Benutzereingaben werden gesetzt. Aufruf der dcb-Methode
-	public DenselyConnectedBiclustering(double density, ArrayList<Double> ranges2, int nodeType, ArrayList<String> attrTyps, ArrayList<String> attrNames, double attrdim){
+	public DenselyConnectedBiclustering(double density, ArrayList<Double> ranges2, int nodeType, 
+			ArrayList<String> attrTyps, ArrayList<String> attrNames, double attrdim, 
+			HashMap<BiologicalNodeAbstract, Double> cyclesMap, HashMap<BiologicalNodeAbstract, Double> cliquesMap){
 		this.density = density;
 		this.ranges = ranges2;
 		this.attrTyps = attrTyps;
@@ -107,6 +108,8 @@ public class DenselyConnectedBiclustering {
 		this.attrdim = (int) attrdim;
 		this.numOfThreads = 2;
 		this.nodeType = nodeType;
+		this.cyclesMap = cyclesMap;
+		this.cliquesMap = cliquesMap;
 
 //		FileReader fr = new FileReader(attributes);
 //		BufferedReader br = new BufferedReader(fr);
@@ -179,8 +182,6 @@ public class DenselyConnectedBiclustering {
 				switch(nodeType){
 				case DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE_NR:
 					if(vertex instanceof GraphNode){
-						//TODO nur wenn alle ausgewählten experminte tatsächlich im Knoten enthalten!
-						//TESTEN!!!
 						if(!experimentsIsSet){
 							experiments = setExperiments();
 							experimentsIsSet = true;
@@ -234,10 +235,6 @@ public class DenselyConnectedBiclustering {
 
 		}
 		
-//		HashMap<Integer, HashSet<Integer>> adjacenciesTest = deepCopy(adjacencies);
-//		System.out.println(adjacenciesTest.equals(adjacencies));
-//		
-		// TODO
 		setAttributes2();
 		
 		HashSet<HashSet<Integer>> extended = null;
@@ -245,17 +242,16 @@ public class DenselyConnectedBiclustering {
 	    //Liste von Ergebnis-Objekten = Cluster mit ihren Eigenschaften
 		
 		
-		if(adjacencies.size() >= MIN_PARALLEL_SIZE){
-			HashSet<HashSet<Integer>> seeds = preprocessingParallel();
-			if(!seeds.isEmpty()){
-				extended = expansionParallel(seeds);
-			}
-		}else{
-			HashMap<HashSet<Integer>, HashSet<Integer>> seeds = preprocessingGraph();
-			if(!seeds.isEmpty()){
-				extended = expansion(seeds);
-			}
+		if(adjacencies.size() < MIN_PARALLEL_SIZE){
+			numOfThreads = 1;
 		}
+		
+		HashSet<HashSet<Integer>> seeds = preprocessingParallel();
+		if(!seeds.isEmpty()){
+			extended = expansionParallel(seeds);
+		}
+		
+		
 		LinkedList<DCBresultSet> results = null;
 		if(extended != null){
 			results = doResultsList(extended);
@@ -313,12 +309,12 @@ public class DenselyConnectedBiclustering {
 	
 	private void setAttributes2() {
 
-		//TODO attribut-liste erstellen
 		attributes = new HashMap<Integer, ArrayList<Double>>();
-//		NetworkProperties nwProperties = new NetworkProperties();
-		
+
 		Hashtable<BiologicalNodeAbstract, Double> averageNeighbourDegreeTable = null;
 		ArrayList<String> experimentNames = null;
+		
+		np = new NetworkProperties();
 		
 		ArrayList<Double> values;
 		
@@ -329,26 +325,34 @@ public class DenselyConnectedBiclustering {
 				String itemTyp = attrTyps.get(i);
 				String item = attrNames.get(i);
 		        switch(itemTyp){
-		        case "Graph characteristic":
+		        case DenselyConnectedBiclusteringGUI.TYPE_BNA:
 			        switch(item){
-			        case "Node degree":	    		
+			        case DenselyConnectedBiclusteringGUI.GC_DEGREE:	    		
 			    		values.add((double) adjacencies.get(id).size());
-
 			            break;
-			        case "Neighbour degree":
+			            
+			        case DenselyConnectedBiclusteringGUI.GC_NEIGHBOUR:
 			        	if(averageNeighbourDegreeTable == null){
-			        		NetworkProperties np = new NetworkProperties();
+			        		
 			        		
 			        		averageNeighbourDegreeTable = np.averageNeighbourDegreeTable();
 			        	}
 			        	values.add(averageNeighbourDegreeTable.get(vertex));
 			            break;
+
+			        case DenselyConnectedBiclusteringGUI.GC_CYCLES:
+			        	values.add(cyclesMap.get(vertex));
+			        	break;
+			        
+			        case DenselyConnectedBiclusteringGUI.GC_CLIQUES:
+			        	values.add(cliquesMap.get(vertex));
+			        	break;
+			        	
 			        default:
 			        	break;
 			        }
 		            break;
 		        case DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE:
-		        	//TODO aus Graph laden
 		        	GraphNode graphNode = (GraphNode) vertex;
 		        	if(experimentNames == null){
 		        		experimentNames = new ArrayList<String>();
@@ -409,35 +413,35 @@ public class DenselyConnectedBiclustering {
 		
 	}
 
-	//Random-Generierung der Attribute; wird später durch echte Werte ersetzt
-	private void setAttributes() {
-		int numOfAttributes = ranges.size();
-		for(int id : adjacencies.keySet()){
-			
-			ArrayList<Double> values = new ArrayList<Double>();
-			values.add((double) adjacencies.get(id).size());
-			
-			Double[] factor = {1.0, 10.0, 200.0, 30.0, 50.0, 0.5};
-			
-			if(numOfAttributes  > 1){
-				BiologicalNodeAbstract vertex = idBna.get(id);
-
-                if(vertex instanceof Protein){
-                    Protein p = (Protein) vertex;
-                    values.add((double) p.getAaSequence().length());  
-                }else{
-                	values.add(0.0);
-                }
-                
-                for(int i = 2; i < numOfAttributes; i++){
-                	values.add(Math.random()*factor[i%6]);
-                }
-			}
-			
-			attributes.put(id, values);
-		}
-		
-	}
+//	//Random-Generierung der Attribute; wird später durch echte Werte ersetzt
+//	private void setAttributes() {
+//		int numOfAttributes = ranges.size();
+//		for(int id : adjacencies.keySet()){
+//			
+//			ArrayList<Double> values = new ArrayList<Double>();
+//			values.add((double) adjacencies.get(id).size());
+//			
+//			Double[] factor = {1.0, 10.0, 200.0, 30.0, 50.0, 0.5};
+//			
+//			if(numOfAttributes  > 1){
+//				BiologicalNodeAbstract vertex = idBna.get(id);
+//
+//                if(vertex instanceof Protein){
+//                    Protein p = (Protein) vertex;
+//                    values.add((double) p.getAaSequence().length());  
+//                }else{
+//                	values.add(0.0);
+//                }
+//                
+//                for(int i = 2; i < numOfAttributes; i++){
+//                	values.add(Math.random()*factor[i%6]);
+//                }
+//			}
+//			
+//			attributes.put(id, values);
+//		}
+//		
+//	}
 
 
 	/*
@@ -528,6 +532,8 @@ public class DenselyConnectedBiclustering {
 	
 	private HashSet<HashSet<Integer>> preprocessingParallel(){
 		
+		HashSet<HashSet<Integer>> seeds = new HashSet<>();
+		
 		long starttime;
 		long endtime;
 		
@@ -554,18 +560,22 @@ public class DenselyConnectedBiclustering {
 			futRes = executorPreprocessing.invokeAll(tasks);
 			
 		} catch (InterruptedException e1) {
+			DenselyConnectedBiclusteringGUI.reactivateUI();
+			
 			JOptionPane.showMessageDialog(
 					null,
 					"Preprocessing dosen't work.",
 					"Error", JOptionPane.ERROR_MESSAGE);
 
 			e1.printStackTrace();
+			
+			return seeds;
 		}
 		
 		executorPreprocessing.shutdown();
 		
 
-		HashSet<HashSet<Integer>> seeds = new HashSet<>();
+
 		
 		//Liste der Seeds die nach dem Preprocessing NICHT entfernt werden
 //		HashSet<Integer> verticesWhitelist = new HashSet<>();
@@ -577,13 +587,14 @@ public class DenselyConnectedBiclustering {
 		 * Erstellen eine neue Adjazenzliste. Und 1. Teil der Seedgeneration: 
 		 * Adjacencies der Seeds werden später hinzugefügt
 		 */
-		for(Future<HashSet<Integer>> res : futRes){
-			try {
+		try {
+			for(Future<HashSet<Integer>> res : futRes){
+			
 				HashSet<Integer> seed = res.get();
 				if(!seed.isEmpty()){
 					seeds.add(seed);
 					
-					//TODO Aufbau Adjazenzliste:
+					//Aufbau Adjazenzliste:
 					Iterator<Integer> seedelements = seed.iterator();
 					int vertex1 = seedelements.next();
 					int vertex2 = seedelements.next();
@@ -604,19 +615,20 @@ public class DenselyConnectedBiclustering {
 						adjacencies_temp.put(vertex2, neighbour);
 					}
 					
-					
-//					verticesWhitelist.addAll(seed);
 				}
-			} catch (InterruptedException | ExecutionException e) {
-				JOptionPane.showMessageDialog(
-						null,
-						"Seedgeneration dosen't work.",
-						"Error", JOptionPane.ERROR_MESSAGE);
 
-				e.printStackTrace();
 			}
-		}
+		} catch (InterruptedException | ExecutionException e) {
+			DenselyConnectedBiclusteringGUI.reactivateUI();
+			JOptionPane.showMessageDialog(
+					null,
+					"Seedgeneration dosen't work.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 
+			e.printStackTrace();
+			return seeds;
+			
+		}
 		endtime = System.currentTimeMillis();
 		
 		preprocessingTime = endtime-starttime;
@@ -708,12 +720,15 @@ public class DenselyConnectedBiclustering {
 		try {
 			futureExpanded = executeExpansion.invokeAll(tasksExpansion);
 		} catch (InterruptedException e1) {
+			DenselyConnectedBiclusteringGUI.reactivateUI();
 			JOptionPane.showMessageDialog(
 					null,
 					"Expansion dosen't work.",
 					"Error", JOptionPane.ERROR_MESSAGE);
 
 			e1.printStackTrace();
+			return null;
+			
 		}
 		
 		executeExpansion.shutdown();
@@ -731,12 +746,15 @@ public class DenselyConnectedBiclustering {
 				doppelCluster += res.get().size();
 				extended.addAll(res.get());
 			} catch (InterruptedException | ExecutionException e) {
+				DenselyConnectedBiclusteringGUI.reactivateUI();
 				JOptionPane.showMessageDialog(
 						null,
 						"Expansion dosen't work (no results).",
 						"Error", JOptionPane.ERROR_MESSAGE);
 
 				e.printStackTrace();
+				return null;
+				
 			}
 		}
 		
@@ -796,27 +814,6 @@ public class DenselyConnectedBiclustering {
 		
 	}
 	
-//	@SuppressWarnings("unchecked")
-//	public static <Type> Type deepCopy(Type object){
-//	  ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//	  Object objectCopy = null;
-//	  try {
-//		new ObjectOutputStream(baos).writeObject(object);
-//	  } catch (IOException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	  }
-//
-//	  ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-//	  try {
-//		objectCopy = new ObjectInputStream(bais).readObject();
-//	  } catch (ClassNotFoundException | IOException e) {
-//		// TODO Auto-generated catch block
-//		e.printStackTrace();
-//	  }
-//
-//	  return (Type) objectCopy;
-//	}
 	
 	
 	private HashMap<Integer, HashSet<Integer>> adjacenciesSingle(){
