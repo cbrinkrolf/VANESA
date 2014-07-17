@@ -32,6 +32,7 @@ import petriNet.ReachController;
 import save.graphPicture.WriteGraphPicture;
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ToolBarListener implements ActionListener {
@@ -302,7 +303,7 @@ public class ToolBarListener implements ActionListener {
 				newNode.setLabel("coarse" + newNode.getLabel());
 				newNode.setGraph(new MyGraph(newNode));
 				newNode.setStateChanged(NodeStateChanged.UNCHANGED);
-				newNode.getConnectingEdges().clear();
+				newNode.clearConnectingEdges();
 				newNode.coarse(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
 				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{
