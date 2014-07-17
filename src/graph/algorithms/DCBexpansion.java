@@ -19,7 +19,7 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 	//#Seeds zu beginn
 	public int numSeeds;
 	
-	private ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies;
+	private HashMap<Integer, HashSet<Integer>> adjacencies;
 	private DCBTests test;
 	private HashMap<HashSet<Integer>, HashSet<Integer>> seeds;
 
@@ -30,11 +30,11 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 
 	
 	
-	public DCBexpansion(ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies2,
-			double density, CopyOnWriteArrayList<Double> ranges, int attrdim,
-			ConcurrentHashMap<Integer, ArrayList<Double>> attributes) {
-		this.adjacencies = adjacencies2;
-		this.test = new DCBTests(adjacencies2, density, ranges, attrdim, attributes);	
+	public DCBexpansion(HashMap<Integer, HashSet<Integer>> adjacenciesArray,
+			double density, ArrayList<Double> ranges, int attrdim,
+			HashMap<Integer, ArrayList<Double>> attributesArray) {
+		this.adjacencies = adjacenciesArray;
+		this.test = new DCBTests(adjacenciesArray, density, ranges, attrdim, attributesArray);	
 		seeds = new HashMap<>();
 		numOfNeighbours = 0;
 		
@@ -57,7 +57,7 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 		while(!seeds.isEmpty()){
 			Hashtable<HashSet<Integer>, HashSet<Integer>>  seedsHelp = new Hashtable<HashSet<Integer>, HashSet<Integer>>();
 			seedsHelp.putAll(seeds);
-			System.out.println(seeds.size() + ": " + seeds);
+			System.out.println(seeds.size());// + ": " + seeds);
 			seeds.clear();
 			for(HashSet<Integer> nodeSet : seedsHelp.keySet()){
 				boolean finish = true;

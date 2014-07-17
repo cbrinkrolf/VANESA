@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -152,7 +151,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	
 	private int numOfServerJobs = 0;
 	
-	private CopyOnWriteArrayList<Double> ranges;
+	private ArrayList<Double> ranges;
 	private ArrayList<String> attrTyps;
 	private ArrayList<String> attrNames;
 	private int nodeType = -1;
@@ -514,7 +513,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 				noMinMax = true;
 			}
 
-			ranges = new CopyOnWriteArrayList<Double>();
+			ranges = new ArrayList<Double>();
 			attrTyps = new ArrayList<String>();
 			attrNames = new ArrayList<String>();
 			
