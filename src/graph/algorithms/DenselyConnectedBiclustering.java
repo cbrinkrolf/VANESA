@@ -178,75 +178,74 @@ public class DenselyConnectedBiclustering {
 		HashSet<String> experiments = null;
 		GraphNode graphNode;
 		
-		if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_BNA_NR){
-			
-			//TODO: Knoten entfernen die nicht in Cycles/Cliquen vorkommen (wenn Cycles/Cliquen ausgewählt)
-			
-			
-			if(attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CYCLES)&&attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CLIQUES)){
-				Set<BiologicalNodeAbstract> verticesIntersection = cyclesMap.keySet();
-				verticesIntersection.retainAll(cliquesMap.keySet());
-				
-				allVertices.addAll(verticesIntersection);
-				
+		
 
-			}else if(attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CYCLES)){
+		if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE_NR){
+			for(BiologicalNodeAbstract vertex : mg.getAllVertices()){
+				if(vertex instanceof GraphNode){
+					if(!experimentsIsSet){
+						experiments = setExperiments();
+						experimentsIsSet = true;
+					}
+					graphNode = (GraphNode) vertex;
 					
-				allVertices.addAll(cyclesMap.keySet());
-			}else if(attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CLIQUES)){
-				
-//				allVertices.addAll(cliquesMap.keySet());
-				for(BiologicalNodeAbstract vertex: cliquesMap.keySet()){
-					System.out.println(vertex.getLabel() + ": " + cliquesMap.get(vertex));
-					if(cliquesMap.get(vertex) != 0.0){
+					@SuppressWarnings("unchecked")
+					List<String> biodata = Arrays.asList(graphNode.getSuperNode().biodata);
+					if(biodata.containsAll(experiments)){
 						allVertices.add(vertex);
 					}
 				}
-			}else{
-				allVertices.addAll(mg.getAllVertices());
+			}
+		}else if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_DNA_NR){
+			for(BiologicalNodeAbstract vertex : mg.getAllVertices()){
+				if(vertex instanceof DNA){
+					allVertices.add(vertex);
+				}
+			}
+		}else if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_RNA_NR){
+			for(BiologicalNodeAbstract vertex : mg.getAllVertices()){
+				if(vertex instanceof RNA){
+					allVertices.add(vertex);
+				}
+			}
+		}else if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_PROTEIN_NR){
+			for(BiologicalNodeAbstract vertex : mg.getAllVertices()){
+				if(vertex instanceof Protein){
+					allVertices.add(vertex);
+				}
 			}
 		}else{
-			for(BiologicalNodeAbstract vertex : mg.getAllVertices()){
-				switch(nodeType){
-				case DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE_NR:
-					if(vertex instanceof GraphNode){
-						if(!experimentsIsSet){
-							experiments = setExperiments();
-							experimentsIsSet = true;
-						}
-						graphNode = (GraphNode) vertex;
-						
-						@SuppressWarnings("unchecked")
-						List<String> biodata = Arrays.asList(graphNode.getSuperNode().biodata);
-						if(biodata.containsAll(experiments)){
-							allVertices.add(vertex);
-						}
-					}
-					break;
-				case DenselyConnectedBiclusteringGUI.TYPE_DNA_NR:
-					if(vertex instanceof DNA){
-						allVertices.add(vertex);
-					}
-					
-					break;
-				case DenselyConnectedBiclusteringGUI.TYPE_RNA_NR:
-					if(vertex instanceof RNA){
-						allVertices.add(vertex);
-					}
-					
-					break;
-				case DenselyConnectedBiclusteringGUI.TYPE_PROTEIN_NR:
-					if(vertex instanceof Protein){
-						allVertices.add(vertex);
-					}
-					
-					break;
+			allVertices.addAll(mg.getAllVertices());
+		}
+		
+		
+		
+		if(attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CYCLES)){
+			
+			allVertices.retainAll(cyclesMap.keySet());
+			
+			for(BiologicalNodeAbstract vertex: cyclesMap.keySet()){
+				if(cyclesMap.get(vertex) == 0.0){
+					allVertices.remove(vertex);
 				}
 			}
 		}
 		
 		
+		if(attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CLIQUES)){
+			
+			allVertices.retainAll(cliquesMap.keySet());
+			for(BiologicalNodeAbstract vertex: cliquesMap.keySet()){
+				if(cliquesMap.get(vertex) == 0.0){
+					allVertices.remove(vertex);
+				}
+			}
+		}
+
+		
+		
 		for(BiologicalNodeAbstract vertex1 : allVertices){
+			System.out.println(vertex1.getLabel());
 			HashSet<Integer> neigbours = new HashSet<Integer>();
 			idBna.put(vertex1.getID(), vertex1);
 			for(BiologicalNodeAbstract vertex2 : allVertices){

@@ -154,7 +154,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	private ArrayList<Double> ranges;
 	private ArrayList<String> attrTyps;
 	private ArrayList<String> attrNames;
-	private int nodeType = 4;
+	private int nodeType = -1;
 	private double density;
 	private double attrdim;
 	
@@ -520,7 +520,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 //			LinkedHashMap<String, ArrayList<String>> attrNames2 = new LinkedHashMap <String, ArrayList<String>>();
 
 			
-			int typeCounter = 0;
+//			int typeCounter = 0;
 			
 			for (int i = 0; i < rangeField.size(); i++) {
 				ranges.add(((Number) rangeField.get(i).getValue())
@@ -529,9 +529,9 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 				if (ranges.get(i) < ATTR_MIN || ranges.get(i) > ATTR_MAX) {
 					noMinMax = true;
 					break;
-				}else if(typeCounter > 1){
-					toManyTypes = true;
-					break;
+//				}else if(typeCounter > 1){
+//					toManyTypes = true;
+//					break;
 				}else {
 					String type = (String) attrTypList.get(i).getSelectedItem();
 					attrTyps.add(type);
@@ -539,20 +539,40 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 					
 					switch(type){
 					case TYPE_GRAPHNODE: 
-						typeCounter++;
-						nodeType = TYPE_GRAPHNODE_NR;
+//						typeCounter++;
+						if((nodeType != -1)&&(nodeType != TYPE_GRAPHNODE_NR)){
+							toManyTypes = true;
+							break;
+						}else{
+							nodeType = TYPE_GRAPHNODE_NR;
+						}
 						break;
 					case TYPE_PROTEIN: 
-						typeCounter++;
-						nodeType = TYPE_PROTEIN_NR;
+//						typeCounter++;
+						if((nodeType != -1)&&(nodeType != TYPE_PROTEIN_NR)){
+							toManyTypes = true;
+							break;
+						}else{
+							nodeType = TYPE_PROTEIN_NR;
+						}
 						break;
 					case TYPE_DNA:
-						typeCounter++;
-						nodeType = TYPE_DNA_NR;
+//						typeCounter++;
+						if((nodeType != -1)&&(nodeType != TYPE_DNA_NR)){
+							toManyTypes = true;
+							break;
+						}else{
+							nodeType = TYPE_DNA_NR;
+						}
 						break;
 					case TYPE_RNA: 
-						typeCounter++;
-						nodeType = TYPE_RNA_NR;
+//						typeCounter++;
+						if((nodeType != -1)&&(nodeType != TYPE_RNA_NR)){
+							toManyTypes = true;
+							break;
+						}else{
+							nodeType = TYPE_RNA_NR;
+						}
 						break;
 					default:
 						break;
@@ -570,7 +590,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 				}
 
 			}
-			if(typeCounter == 0){
+			if(nodeType == -1){
 				nodeType = TYPE_BNA_NR;
 			}
 			
