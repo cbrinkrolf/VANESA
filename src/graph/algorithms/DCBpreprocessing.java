@@ -19,10 +19,10 @@ public class DCBpreprocessing implements Callable<HashSet<Integer>>{
 	private int vertex2;
 	private DCBTests test;
 	
-	public DCBpreprocessing(int vertex1, int vertex2, ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies, double density, CopyOnWriteArrayList<Double> ranges, int attrdim, ConcurrentHashMap<Integer, ArrayList<Double>> attributes) {
+	public DCBpreprocessing(int vertex1, int vertex2, HashMap<Integer, HashSet<Integer>> adjacenciesArray, double density, ArrayList<Double> ranges, int attrdim, HashMap<Integer, ArrayList<Double>> attributesArray) {
 		this.vertex1 = vertex1;
 		this.vertex2 = vertex2;
-		this.test = new DCBTests(adjacencies, density, ranges, attrdim, attributes);
+		this.test = new DCBTests(adjacenciesArray, density, ranges, attrdim, attributesArray);
 		
 	}
 

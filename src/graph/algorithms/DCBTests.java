@@ -12,20 +12,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class DCBTests {
 
-	ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies;
-	CopyOnWriteArrayList<Double> ranges;
+	HashMap<Integer, HashSet<Integer>> adjacencies;
+	ArrayList<Double> ranges;
 	int numDim;
 	double density;
-	ConcurrentHashMap<Integer, ArrayList<Double>> attributes;
+	HashMap<Integer, ArrayList<Double>> attributes;
 	
 	
 	
-	public DCBTests(final ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies2, double density, CopyOnWriteArrayList<Double> ranges2, int attrdim, final ConcurrentHashMap<Integer, ArrayList<Double>> attributes2) {
-		this.adjacencies = adjacencies2;
+	public DCBTests(final HashMap<Integer, HashSet<Integer>> adjacenciesArray, double density, ArrayList<Double> ranges2, int attrdim, final HashMap<Integer, ArrayList<Double>> attributesArray) {
+		this.adjacencies = adjacenciesArray;
 		this.density = density;
 		this.ranges = ranges2;
 		this.numDim = attrdim;
-		this.attributes = attributes2;
+		this.attributes = attributesArray;
 	}
 	
 

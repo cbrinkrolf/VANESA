@@ -54,7 +54,7 @@ public class DenselyConnectedBiclustering {
 	
 	//Atttribute der Knoten.
 //	private HashMap<Integer, Double[]> attributes  = new HashMap<>();
-	private ConcurrentHashMap<Integer, ArrayList<Double>> attributes;
+//	private ConcurrentHashMap<Integer, ArrayList<Double>> attributes;
 	
 	private ArrayList<String> attrTyps;
 	private ArrayList<String> attrNames;
@@ -65,7 +65,10 @@ public class DenselyConnectedBiclustering {
 	
 	
 	//Adjazenliste: Key: Knoten-ID Values: Liste der verbundenen Knoten
-	private ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies = new ConcurrentHashMap<>();
+	private HashMap<Integer, HashSet<Integer>>[] adjacenciesArray;
+	
+	private HashMap<Integer, ArrayList<Double>>[] attributesArray;
+	
 	
 	//Liste von IDs und den zugehörigen Knoten-Objekten
 	private HashMap<Integer, BiologicalNodeAbstract> idBna = new HashMap<>();
@@ -80,7 +83,7 @@ public class DenselyConnectedBiclustering {
 	 * Eingabedaten des Benutzers:
 	 */
 	//Max. Distanz der Attribute
-	final CopyOnWriteArrayList<Double> ranges;
+	final ArrayList<Double>[] rangesArray;
 	//# der Attributs-Dimensionen dei Übereinstimmen müssen
 	int attrdim;
 	//Min. Dichte der Cluster
@@ -102,11 +105,11 @@ public class DenselyConnectedBiclustering {
 	long preprocessingTime;
 
 	// Constructor: Benutzereingaben werden gesetzt. Aufruf der dcb-Methode
-	public DenselyConnectedBiclustering(double density, CopyOnWriteArrayList<Double> ranges2, int nodeType, 
+	public DenselyConnectedBiclustering(double density, ArrayList<Double> ranges2, int nodeType, 
 			ArrayList<String> attrTyps, ArrayList<String> attrNames, double attrdim, 
 			HashMap<BiologicalNodeAbstract, Double> cyclesMap, HashMap<BiologicalNodeAbstract, Double> cliquesMap){
 		this.density = density;
-		this.ranges = ranges2;
+//		this.ranges = ranges2;
 		this.attrTyps = attrTyps;
 		this.attrNames = attrNames;
 		this.attrdim = (int) attrdim;
@@ -115,6 +118,17 @@ public class DenselyConnectedBiclustering {
 		this.nodeType = nodeType;
 		this.cyclesMap = cyclesMap;
 		this.cliquesMap = cliquesMap;
+		attributesArray = new HashMap[numOfThreads];
+		adjacenciesArray = new HashMap[numOfThreads];
+		adjacenciesArray[0] = new HashMap<Integer, HashSet<Integer>>();
+		
+		rangesArray = new ArrayList[numOfThreads];
+		for(int i = 0; i < rangesArray.length; i++){
+			rangesArray[i] = new ArrayList<Double>();
+			for(Double value : ranges2){
+				rangesArray[i].add(value);
+			}
+		}
 		
 
 //		FileReader fr = new FileReader(attributes);
@@ -248,7 +262,6 @@ public class DenselyConnectedBiclustering {
 		
 		
 		for(BiologicalNodeAbstract vertex1 : allVertices){
-			System.out.println(vertex1.getLabel());
 			HashSet<Integer> neigbours = new HashSet<Integer>();
 			idBna.put(vertex1.getID(), vertex1);
 			for(BiologicalNodeAbstract vertex2 : allVertices){
@@ -261,7 +274,7 @@ public class DenselyConnectedBiclustering {
 					
 				}
 			}
-			adjacencies.put(vertex1.getID(), neigbours);
+			adjacenciesArray[0].put(vertex1.getID(), neigbours);
 
 		}
 		
@@ -272,7 +285,7 @@ public class DenselyConnectedBiclustering {
 	    //Liste von Ergebnis-Objekten = Cluster mit ihren Eigenschaften
 		
 		
-		if(adjacencies.size() < MIN_PARALLEL_SIZE){
+		if(adjacenciesArray[0].size() < MIN_PARALLEL_SIZE){
 			numOfThreads = 1;
 		}
 		
@@ -312,7 +325,7 @@ public class DenselyConnectedBiclustering {
 		LinkedList<DCBresultSet> results = new LinkedList<>();
 		
 		//Objekt das die benötigten Scores (densiti und homogenity) liefert
-		test = new DCBTests(adjacencies, density, ranges, attrdim, attributes);
+		test = new DCBTests(adjacenciesArray[0], density, rangesArray[0], attrdim, attributesArray[0]);
 		
 
 		//Erstellung der Ergebnis-Objekte zur Ausgabe
@@ -339,7 +352,7 @@ public class DenselyConnectedBiclustering {
 	
 	private void setAttributes2() {
 
-		attributes = new ConcurrentHashMap<Integer, ArrayList<Double>>();
+//		attributes = new ConcurrentHashMap<Integer, ArrayList<Double>>();
 
 		Hashtable<BiologicalNodeAbstract, Double> averageNeighbourDegreeTable = null;
 		ArrayList<String> experimentNames = null;
@@ -348,102 +361,105 @@ public class DenselyConnectedBiclustering {
 		
 		ArrayList<Double> values;
 		
-		for(int id : adjacencies.keySet()){
-			values = new ArrayList<Double>();
-			BiologicalNodeAbstract vertex = idBna.get(id);
-			for(int i = 0; i < attrTyps.size(); i++){
-				String itemTyp = attrTyps.get(i);
-				String item = attrNames.get(i);
-		        switch(itemTyp){
-		        case DenselyConnectedBiclusteringGUI.TYPE_BNA:
-			        switch(item){
-			        case DenselyConnectedBiclusteringGUI.GC_DEGREE:	    		
-			    		values.add((double) adjacencies.get(id).size());
+		for(int z = 0; z < attributesArray.length; z++){
+			attributesArray[z] = new HashMap<Integer, ArrayList<Double>>();
+			for(int id : adjacenciesArray[0].keySet()){
+				values = new ArrayList<Double>();
+				BiologicalNodeAbstract vertex = idBna.get(id);
+				for(int i = 0; i < attrTyps.size(); i++){
+					String itemTyp = attrTyps.get(i);
+					String item = attrNames.get(i);
+			        switch(itemTyp){
+			        case DenselyConnectedBiclusteringGUI.TYPE_BNA:
+				        switch(item){
+				        case DenselyConnectedBiclusteringGUI.GC_DEGREE:	    		
+				    		values.add((double) adjacenciesArray[0].get(id).size());
+				            break;
+				            
+				        case DenselyConnectedBiclusteringGUI.GC_NEIGHBOUR:
+				        	if(averageNeighbourDegreeTable == null){
+				        		
+				        		
+				        		averageNeighbourDegreeTable = np.averageNeighbourDegreeTable();
+				        	}
+				        	values.add(averageNeighbourDegreeTable.get(vertex));
+				            break;
+	
+				        case DenselyConnectedBiclusteringGUI.GC_CYCLES:
+				        	if(cyclesMap.containsKey(vertex)){
+				        		values.add(cyclesMap.get(vertex));
+				        	}else{
+				        		values.add(0.0);
+				        	}
+				        	
+				        	break;
+				        
+				        case DenselyConnectedBiclusteringGUI.GC_CLIQUES:
+				        	values.add(cliquesMap.get(vertex));
+				        	break;
+				        	
+				        default:
+				        	break;
+				        }
 			            break;
-			            
-			        case DenselyConnectedBiclusteringGUI.GC_NEIGHBOUR:
-			        	if(averageNeighbourDegreeTable == null){
-			        		
-			        		
-			        		averageNeighbourDegreeTable = np.averageNeighbourDegreeTable();
+			        case DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE:
+			        	GraphNode graphNode = (GraphNode) vertex;
+			        	if(experimentNames == null){
+			        		experimentNames = new ArrayList<String>();
+			        		for(int j = 0; j < graphNode.getSuperNode().biodata.length; j++){
+			        			experimentNames.add(graphNode.getSuperNode().biodata[j]);
+			        		}
 			        	}
-			        	values.add(averageNeighbourDegreeTable.get(vertex));
-			            break;
-
-			        case DenselyConnectedBiclusteringGUI.GC_CYCLES:
-			        	if(cyclesMap.containsKey(vertex)){
-			        		values.add(cyclesMap.get(vertex));
-			        	}else{
-			        		values.add(0.0);
-			        	}
+						
+			        	values.add(graphNode.getSuperNode().biodataEntries[experimentNames.indexOf(item)]);
 			        	
+			        	
+			            break;
+			        case DenselyConnectedBiclusteringGUI.TYPE_DNA:
+				        switch(item){
+				        case "Sequence length": 
+				        	
+				    		DNA d = (DNA) vertex;
+				    		values.add((double) d.getNtSequence().length());
+				        	
+				            break;
+				        default:
+				        	break;
+				        }
 			        	break;
-			        
-			        case DenselyConnectedBiclusteringGUI.GC_CLIQUES:
-			        	values.add(cliquesMap.get(vertex));
+			        case DenselyConnectedBiclusteringGUI.TYPE_RNA:
+				        switch(item){
+				        case "Sequence length":  
+				        	
+				    		RNA r = (RNA) vertex;
+				    		values.add((double) r.getNtSequence().length());
+				    		
+				            break;
+				        default:
+				        	break;
+				        }
+			        	break;
+			        case DenselyConnectedBiclusteringGUI.TYPE_PROTEIN:
+				        switch(item){
+				        case "Sequence length":
+	//		                if(vertex instanceof Protein){
+		                    Protein p = (Protein) vertex;
+		                    values.add((double) p.getAaSequence().length());  
+	//		                }else{
+	//		                	values.add(0.0);
+	//		                }
+				            break;
+				        default:
+				        	break;
+				        }
 			        	break;
 			        	
 			        default:
 			        	break;
 			        }
-		            break;
-		        case DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE:
-		        	GraphNode graphNode = (GraphNode) vertex;
-		        	if(experimentNames == null){
-		        		experimentNames = new ArrayList<String>();
-		        		for(int j = 0; j < graphNode.getSuperNode().biodata.length; j++){
-		        			experimentNames.add(graphNode.getSuperNode().biodata[j]);
-		        		}
-		        	}
-					
-		        	values.add(graphNode.getSuperNode().biodataEntries[experimentNames.indexOf(item)]);
-		        	
-		        	
-		            break;
-		        case DenselyConnectedBiclusteringGUI.TYPE_DNA:
-			        switch(item){
-			        case "Sequence length": 
-			        	
-			    		DNA d = (DNA) vertex;
-			    		values.add((double) d.getNtSequence().length());
-			        	
-			            break;
-			        default:
-			        	break;
-			        }
-		        	break;
-		        case DenselyConnectedBiclusteringGUI.TYPE_RNA:
-			        switch(item){
-			        case "Sequence length":  
-			        	
-			    		RNA r = (RNA) vertex;
-			    		values.add((double) r.getNtSequence().length());
-			    		
-			            break;
-			        default:
-			        	break;
-			        }
-		        	break;
-		        case DenselyConnectedBiclusteringGUI.TYPE_PROTEIN:
-			        switch(item){
-			        case "Sequence length":
-//		                if(vertex instanceof Protein){
-	                    Protein p = (Protein) vertex;
-	                    values.add((double) p.getAaSequence().length());  
-//		                }else{
-//		                	values.add(0.0);
-//		                }
-			            break;
-			        default:
-			        	break;
-			        }
-		        	break;
-		        	
-		        default:
-		        	break;
-		        }
+				}
+				attributesArray[z].put(id, values);
 			}
-			attributes.put(id, values);
 		}
 		
 	}
@@ -487,13 +503,13 @@ public class DenselyConnectedBiclustering {
 		HashSet<Integer> removalAdjacencies = new HashSet<>();
 		
 		//Objekt das die benötigten Tests (densiti und homogenity) durchführt
-		test = new DCBTests(adjacencies, density, ranges, attrdim, attributes);
+		test = new DCBTests(adjacenciesArray[0], density, rangesArray[0], attrdim, attributesArray[0]);
 		
-		for(int vertex1 : adjacencies.keySet()){
+		for(int vertex1 : adjacenciesArray[0].keySet()){
 
 			boolean isHomogen = false;
 
-			for(int vertex2 : adjacencies.get(vertex1)){
+			for(int vertex2 : adjacenciesArray[0].get(vertex1)){
 					
 					HashSet<Integer> testVertices = new HashSet<Integer>();
 				
@@ -523,12 +539,12 @@ public class DenselyConnectedBiclustering {
 		 */
 		HashMap<HashSet<Integer>, HashSet<Integer>> seeds = new HashMap<>();
 		//Objekt das die benötigten Tests (densiti und homogenity) durchführt
-		test = new DCBTests(adjacencies, density, ranges, attrdim, attributes);
+		test = new DCBTests(adjacenciesArray[0], density, rangesArray[0], attrdim, attributesArray[0]);
 				
 		
 		
-		for(int vertex : adjacencies.keySet()){
-			for(int neighbour : adjacencies.get(vertex)){
+		for(int vertex : adjacenciesArray[0].keySet()){
+			for(int neighbour : adjacenciesArray[0].get(vertex)){
 				if(vertex < neighbour){
 					HashSet<Integer> testSet = new HashSet<Integer>();
 					testSet.add(vertex);
@@ -540,12 +556,12 @@ public class DenselyConnectedBiclustering {
 						HashSet<Integer> tempNeighbours = new HashSet<Integer>();
 						double maxID = Math.max(vertex, neighbour);
 		
-						for(int connectedNode : adjacencies.get(vertex)){
+						for(int connectedNode : adjacenciesArray[0].get(vertex)){
 							if(connectedNode > maxID){
 								tempNeighbours.add(connectedNode);
 							}
 						}
-						for(int connectedNode : adjacencies.get(neighbour)){
+						for(int connectedNode : adjacenciesArray[0].get(neighbour)){
 							if(connectedNode > maxID){
 								tempNeighbours.add(connectedNode);
 		
@@ -588,7 +604,7 @@ public class DenselyConnectedBiclustering {
 		//(d.h. bildet eine eigenes Callable-Objekt).
 		for(Integer vertex1 : adjacenciesSingle.keySet()){
 			for(Integer vertex2 : adjacenciesSingle.get(vertex1)){
-				tasks.add(new DCBpreprocessing(vertex1, vertex2, adjacencies, density, ranges, attrdim, attributes));
+				tasks.add(new DCBpreprocessing(vertex1, vertex2, adjacenciesArray[0], density, rangesArray[0], attrdim, attributesArray[0]));
 			}
 		}
 		
@@ -616,9 +632,17 @@ public class DenselyConnectedBiclustering {
 		//Liste der Seeds die nach dem Preprocessing NICHT entfernt werden
 //		HashSet<Integer> verticesWhitelist = new HashSet<>();
 		
-		ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies_temp = new ConcurrentHashMap<>();
+//		HashMap<Integer, HashSet<Integer>> adjacencies_temp = new HashMap<>();
 		
 		DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Seedgeneration part 1");
+		
+		int adjacenciesSizeVorher = adjacenciesArray[0].size();
+		
+		for(int i = 0; i <adjacenciesArray.length; i++){
+			adjacenciesArray[i] = new HashMap<Integer, HashSet<Integer>>();
+		}
+		
+		
 		/*
 		 * Erstellen eine neue Adjazenzliste. Und 1. Teil der Seedgeneration: 
 		 * Adjacencies der Seeds werden später hinzugefügt
@@ -634,21 +658,31 @@ public class DenselyConnectedBiclustering {
 					Iterator<Integer> seedelements = seed.iterator();
 					int vertex1 = seedelements.next();
 					int vertex2 = seedelements.next();
-					if(adjacencies_temp.containsKey(vertex1)){
-						adjacencies_temp.get(vertex1).add(vertex2);
+					if(adjacenciesArray[0].containsKey(vertex1)){
+						
+						for(int i = 0; i <adjacenciesArray.length; i++){
+							adjacenciesArray[i].get(vertex1).add(vertex2);
+						}
+						
 						
 					}else{
-						HashSet<Integer> neighbour = new HashSet<>();
-						neighbour.add(vertex2);
-						adjacencies_temp.put(vertex1, neighbour);
+						for(int i = 0; i <adjacenciesArray.length; i++){
+							HashSet<Integer> neighbour = new HashSet<>();
+							neighbour.add(vertex2);
+							adjacenciesArray[i].put(vertex1, neighbour);
+						}
 					}
-					if(adjacencies_temp.containsKey(vertex2)){
-						adjacencies_temp.get(vertex2).add(vertex1);
+					if(adjacenciesArray[0].containsKey(vertex2)){
+						for(int i = 0; i <adjacenciesArray.length; i++){
+							adjacenciesArray[i].get(vertex2).add(vertex1);
+						}
 						
 					}else{
-						HashSet<Integer> neighbour = new HashSet<>();
-						neighbour.add(vertex1);
-						adjacencies_temp.put(vertex2, neighbour);
+						for(int i = 0; i <adjacenciesArray.length; i++){
+							HashSet<Integer> neighbour = new HashSet<>();
+							neighbour.add(vertex1);
+							adjacenciesArray[i].put(vertex2, neighbour);
+						}
 					}
 					
 				}
@@ -669,8 +703,8 @@ public class DenselyConnectedBiclustering {
 		
 		preprocessingTime = endtime-starttime;
 		
-		int adjacenciesSizeVorher = adjacencies.size();
-		adjacencies = adjacencies_temp;
+		
+//		adjacencies = adjacencies_temp;
 		
 		//Knoten die nach Preprocessing entfernt werden
 //		HashSet<Integer> removalAdjacencies = new HashSet<>();
@@ -684,7 +718,7 @@ public class DenselyConnectedBiclustering {
 		
 
 		System.out.println("remove: ");
-		System.out.println((adjacenciesSizeVorher-adjacencies.size()) + " von " + 
+		System.out.println((adjacenciesSizeVorher-adjacenciesArray[0].size()) + " von " + 
 				adjacenciesSizeVorher + " Knoten");
 		
 //		System.out.println(removalAdjacencies.size() + " von " + (verticesWhitelist.size()+removalAdjacencies.size()) + " Knoten");
@@ -722,7 +756,7 @@ public class DenselyConnectedBiclustering {
 		 * Es werden so viele Callables erzeugt wie es Threads gibt
 		 */
 		for(int i = 0; i < numOfThreads; i++){
-			tasksExpansion.add(new DCBexpansion(adjacencies, density, ranges, attrdim, attributes));
+			tasksExpansion.add(new DCBexpansion(adjacenciesArray[i], density, rangesArray[i], attrdim, attributesArray[i]));
 		}
 		
 		//vergleicht die DCBexpansion-Objekte anhand ihrer Nachbarn-Menge
@@ -736,7 +770,7 @@ public class DenselyConnectedBiclustering {
 			HashSet<Integer> neighbours = new HashSet<>();
 			int maxID = Collections.max(seed);
 			for(Integer vertex: seed){
-				for(Integer neighbour: adjacencies.get(vertex)){
+				for(Integer neighbour: adjacenciesArray[0].get(vertex)){
 					if(neighbour > maxID){
 						neighbours.add(neighbour);
 					}
@@ -861,8 +895,8 @@ public class DenselyConnectedBiclustering {
 	private HashMap<Integer, HashSet<Integer>> adjacenciesSingle(){
 			HashMap<Integer, HashSet<Integer>> adjacenciesSingle = new HashMap<Integer, HashSet<Integer>>();
 					
-			for(Integer key: adjacencies.keySet()){
-				for(Integer neighbour: adjacencies.get(key)){
+			for(Integer key: adjacenciesArray[0].keySet()){
+				for(Integer neighbour: adjacenciesArray[0].get(key)){
 					if(!adjacenciesSingle.containsKey(neighbour)){
 						if(adjacenciesSingle.containsKey(key)){
 							adjacenciesSingle.get(key).add(neighbour);
@@ -898,11 +932,11 @@ public class DenselyConnectedBiclustering {
 	 */
 	private void removeFormAdjacencies(HashSet<Integer> removalAdjacencies) {
 		for(int vertex : removalAdjacencies){
-			for(int neigbour : adjacencies.get(vertex)){
-				adjacencies.get(neigbour).remove(vertex);
+			for(int neigbour : adjacenciesArray[0].get(vertex)){
+				adjacenciesArray[0].get(neigbour).remove(vertex);
 			}
 			
-			adjacencies.remove(vertex);
+			adjacenciesArray[0].remove(vertex);
 			
 		}
 		
@@ -933,7 +967,7 @@ public class DenselyConnectedBiclustering {
 					if(test.testDensity(testSet) && test.testHomogenity(testSet)){
 						HashSet<Integer> tempNodeSet = new HashSet<Integer>();
 						tempNodeSet.addAll(seedsHelp.get(nodeSet));
-						for(int tempConnected : adjacencies.get(connectedNode)){
+						for(int tempConnected : adjacenciesArray[0].get(connectedNode)){
 							tempNodeSet.add(tempConnected);
 						}
 						tempNodeSet.removeAll(testSet);
