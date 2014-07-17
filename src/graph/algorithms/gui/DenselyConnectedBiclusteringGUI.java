@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -151,7 +152,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	
 	private int numOfServerJobs = 0;
 	
-	private ArrayList<Double> ranges;
+	private CopyOnWriteArrayList<Double> ranges;
 	private ArrayList<String> attrTyps;
 	private ArrayList<String> attrNames;
 	private int nodeType = -1;
@@ -513,7 +514,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 				noMinMax = true;
 			}
 
-			ranges = new ArrayList<Double>();
+			ranges = new CopyOnWriteArrayList<Double>();
 			attrTyps = new ArrayList<String>();
 			attrNames = new ArrayList<String>();
 			
