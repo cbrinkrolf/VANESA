@@ -179,7 +179,7 @@ public class DataMappingModelController extends Observable {
 	 */
 	public void startMapping(){
 		createIdentifierMultiValueMap();
-		
+		//TODO numOfThreads
 		int numOfThreads = 2;
 		System.out.println("Anzahl Threads: " + numOfThreads);
 	
