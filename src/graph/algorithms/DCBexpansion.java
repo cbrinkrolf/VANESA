@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 	
@@ -17,7 +19,7 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 	//#Seeds zu beginn
 	public int numSeeds;
 	
-	private HashMap<Integer, HashSet<Integer>> adjacencies;
+	private ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies;
 	private DCBTests test;
 	private HashMap<HashSet<Integer>, HashSet<Integer>> seeds;
 
@@ -28,11 +30,11 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 
 	
 	
-	public DCBexpansion(HashMap<Integer, HashSet<Integer>> adjacencies,
-			double density, ArrayList<Double> ranges, int attrdim,
-			HashMap<Integer, ArrayList<Double>> attributes) {
-		this.adjacencies = adjacencies;
-		this.test = new DCBTests(adjacencies, density, ranges, attrdim, attributes);	
+	public DCBexpansion(ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies2,
+			double density, CopyOnWriteArrayList<Double> ranges, int attrdim,
+			ConcurrentHashMap<Integer, ArrayList<Double>> attributes) {
+		this.adjacencies = adjacencies2;
+		this.test = new DCBTests(adjacencies2, density, ranges, attrdim, attributes);	
 		seeds = new HashMap<>();
 		numOfNeighbours = 0;
 		
@@ -50,11 +52,12 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 		
 		numSeeds = seeds.size();
 		
+		System.out.println("num of seeds:");
 		LinkedHashSet<HashSet<Integer>> extended = new LinkedHashSet<HashSet<Integer>>();
 		while(!seeds.isEmpty()){
 			Hashtable<HashSet<Integer>, HashSet<Integer>>  seedsHelp = new Hashtable<HashSet<Integer>, HashSet<Integer>>();
 			seedsHelp.putAll(seeds);
-			System.out.println(seeds.size());
+			System.out.println(seeds.size() + ": " + seeds);
 			seeds.clear();
 			for(HashSet<Integer> nodeSet : seedsHelp.keySet()){
 				boolean finish = true;
@@ -66,7 +69,9 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 						HashSet<Integer> tempNodeSet = new HashSet<Integer>();
 						tempNodeSet.addAll(seedsHelp.get(nodeSet));
 						for(int tempConnected : adjacencies.get(connectedNode)){
+//							if(tempConnected > connectedNode){
 							tempNodeSet.add(tempConnected);
+//							}
 						}
 						tempNodeSet.removeAll(testSet);
 						seeds.put(testSet, tempNodeSet);

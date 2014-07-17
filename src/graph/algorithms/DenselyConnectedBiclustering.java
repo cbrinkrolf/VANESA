@@ -10,6 +10,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,7 +54,7 @@ public class DenselyConnectedBiclustering {
 	
 	//Atttribute der Knoten.
 //	private HashMap<Integer, Double[]> attributes  = new HashMap<>();
-	private HashMap<Integer, ArrayList<Double>> attributes;
+	private ConcurrentHashMap<Integer, ArrayList<Double>> attributes;
 	
 	private ArrayList<String> attrTyps;
 	private ArrayList<String> attrNames;
@@ -63,7 +65,7 @@ public class DenselyConnectedBiclustering {
 	
 	
 	//Adjazenliste: Key: Knoten-ID Values: Liste der verbundenen Knoten
-	private HashMap<Integer, HashSet<Integer>> adjacencies = new HashMap<>();
+	private ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies = new ConcurrentHashMap<>();
 	
 	//Liste von IDs und den zugehörigen Knoten-Objekten
 	private HashMap<Integer, BiologicalNodeAbstract> idBna = new HashMap<>();
@@ -78,7 +80,7 @@ public class DenselyConnectedBiclustering {
 	 * Eingabedaten des Benutzers:
 	 */
 	//Max. Distanz der Attribute
-	final ArrayList<Double> ranges;
+	final CopyOnWriteArrayList<Double> ranges;
 	//# der Attributs-Dimensionen dei Übereinstimmen müssen
 	int attrdim;
 	//Min. Dichte der Cluster
@@ -100,7 +102,7 @@ public class DenselyConnectedBiclustering {
 	long preprocessingTime;
 
 	// Constructor: Benutzereingaben werden gesetzt. Aufruf der dcb-Methode
-	public DenselyConnectedBiclustering(double density, ArrayList<Double> ranges2, int nodeType, 
+	public DenselyConnectedBiclustering(double density, CopyOnWriteArrayList<Double> ranges2, int nodeType, 
 			ArrayList<String> attrTyps, ArrayList<String> attrNames, double attrdim, 
 			HashMap<BiologicalNodeAbstract, Double> cyclesMap, HashMap<BiologicalNodeAbstract, Double> cliquesMap){
 		this.density = density;
@@ -108,6 +110,7 @@ public class DenselyConnectedBiclustering {
 		this.attrTyps = attrTyps;
 		this.attrNames = attrNames;
 		this.attrdim = (int) attrdim;
+		//TODO numOfThreads
 		this.numOfThreads = 2;
 		this.nodeType = nodeType;
 		this.cyclesMap = cyclesMap;
@@ -336,7 +339,7 @@ public class DenselyConnectedBiclustering {
 	
 	private void setAttributes2() {
 
-		attributes = new HashMap<Integer, ArrayList<Double>>();
+		attributes = new ConcurrentHashMap<Integer, ArrayList<Double>>();
 
 		Hashtable<BiologicalNodeAbstract, Double> averageNeighbourDegreeTable = null;
 		ArrayList<String> experimentNames = null;
@@ -613,7 +616,7 @@ public class DenselyConnectedBiclustering {
 		//Liste der Seeds die nach dem Preprocessing NICHT entfernt werden
 //		HashSet<Integer> verticesWhitelist = new HashSet<>();
 		
-		HashMap<Integer, HashSet<Integer>> adjacencies_temp = new HashMap<>();
+		ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies_temp = new ConcurrentHashMap<>();
 		
 		DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Seedgeneration part 1");
 		/*

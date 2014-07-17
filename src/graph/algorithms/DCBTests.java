@@ -4,26 +4,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /*
  * Durchführung von Tests auf homogenity und density
  */
 public class DCBTests {
 
-	HashMap<Integer, HashSet<Integer>> adjacencies;
-	ArrayList<Double> ranges;
+	ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies;
+	CopyOnWriteArrayList<Double> ranges;
 	int numDim;
 	double density;
-	HashMap<Integer, ArrayList<Double>> attributes;
+	ConcurrentHashMap<Integer, ArrayList<Double>> attributes;
 	
 	
 	
-	public DCBTests(final HashMap<Integer, HashSet<Integer>> adjacencies2, double density, ArrayList<Double> ranges2, int attrdim, final HashMap<Integer, ArrayList<Double>> attributes) {
+	public DCBTests(final ConcurrentHashMap<Integer, HashSet<Integer>> adjacencies2, double density, CopyOnWriteArrayList<Double> ranges2, int attrdim, final ConcurrentHashMap<Integer, ArrayList<Double>> attributes2) {
 		this.adjacencies = adjacencies2;
 		this.density = density;
 		this.ranges = ranges2;
 		this.numDim = attrdim;
-		this.attributes = attributes;
+		this.attributes = attributes2;
 	}
 	
 
