@@ -1,8 +1,12 @@
 package dataMapping;
 
+import graph.algorithms.gui.GraphColoringGUI;
 import gui.MainWindowSingelton;
 
+import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +87,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 			if (!server.submitMapping(JobTypes.MAPPING_UNIPROT, experimentArray, mappings, helper)) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
+						DataMappingModelController.reactivateUI();
 						JOptionPane.showMessageDialog(
 								MainWindowSingelton.getInstance(), "Queue is at maximum capacity!");
 					}
@@ -90,19 +95,54 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 				});
 			}
 
+			
+			
+		}catch (NotBoundException e) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					DataMappingModelController.reactivateUI();
+					JOptionPane.showMessageDialog(MainWindowSingelton
+							.getInstance().returnFrame(),
+							"RMI Interface could not be established.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			});
+			e.printStackTrace();
+
+		} catch (RemoteException e) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					DataMappingModelController.reactivateUI();
+					JOptionPane.showMessageDialog(MainWindowSingelton
+							.getInstance().returnFrame(),
+							"Cluster not reachable.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			});
+			e.printStackTrace();
+
+		} catch (MalformedURLException e) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					DataMappingModelController.reactivateUI();
+					JOptionPane.showMessageDialog(MainWindowSingelton
+							.getInstance().returnFrame(),
+							"Clusteradress could not be resolved.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			});
+			e.printStackTrace();
+			
 		}catch(Exception e){
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
+					DataMappingModelController.reactivateUI();
 					JOptionPane.showMessageDialog(
 							MainWindowSingelton.getInstance(), "Data export could not be executed.", "Error",
 							JOptionPane.ERROR_MESSAGE);
-					DataMappingModelController.reactivateUI();
 				}
 				
 			});
-			
-			
-			
 			e.printStackTrace();
 		}
 		
