@@ -417,7 +417,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		// Copy the connecting edges concerning the border of the subpathway
 		// from the environment nodes.
 		for (BiologicalNodeAbstract envNode : environment) {
-			Set<BiologicalEdgeAbstract> conEdges = envNode.getConnectingEdges();
+			Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
+			conEdges.addAll(envNode.getConnectingEdges());
 			if (!conEdges.isEmpty()) {
 				for (BiologicalEdgeAbstract edge : conEdges) {
 					if (border.contains(edge.getTo().getCurrentShownParentNode(
@@ -429,7 +430,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				}
 			}
 		}
-
+		
 		// Draw the "inner" edges of the subpathway.
 		for (BiologicalEdgeAbstract edge : getActiveGraph().getAllEdges()) {
 			BiologicalEdgeAbstract e = edge.clone();
@@ -1028,6 +1029,56 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		this.shape = defaultShape;
 		this.color = defaultColor;
 		this.nodesize = defaultNodesize;
+	}
+	
+	/** Removes a connecting edge with same from, to and directed properties as the input node.*/
+	public void removeConnectingEdge(BiologicalEdgeAbstract edge){
+		Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
+		conEdges.addAll(getConnectingEdges());
+		for(BiologicalEdgeAbstract conEdge : conEdges){
+			if(conEdge.getTo()==edge.getTo() && conEdge.getFrom()==edge.getFrom() && conEdge.isDirected() == edge.isDirected()){
+				getConnectingEdges().remove(conEdge);
+			}
+		}
+	}
+	
+	/** Removes Environment Nodes that are not connected with the border any more.*/
+	public void removeUnconnectedEnvironmentNodes(){
+		Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
+		environment.addAll(getEnvironment());
+		for(BiologicalNodeAbstract envNode : environment){
+			if(getGraph().getJungGraph().getNeighborCount(envNode)==0){
+				getEnvironment().remove(envNode);
+				removeElement(envNode);
+			}
+		}
+	}
+	
+	/** Removes all border nodes that have no outside connection any more.*/
+	public void cleanUpBorder(){
+		Set<BiologicalNodeAbstract> border = new HashSet<BiologicalNodeAbstract>();
+		border.addAll(getBorder());
+		for(BiologicalNodeAbstract borderNode : border){
+			Set<BiologicalNodeAbstract> neighbors = new HashSet<BiologicalNodeAbstract>();
+			if(getGraph().getJungGraph().getNeighbors(this)!=null){
+				neighbors.addAll(getGraph().getJungGraph().getNeighbors(this));
+			}
+			boolean isBorder = false;
+			if(!neighbors.isEmpty()){
+				for(BiologicalNodeAbstract neighbor : neighbors){
+					if(getEnvironment().contains(neighbor)){
+						isBorder = true;
+					}
+				}
+			}
+			if(!isBorder){
+				getBorder().remove(borderNode);
+			}
+		}
+	}
+	
+	public void clearConnectingEdges(){
+		connectingEdges = new HashSet<BiologicalEdgeAbstract>();
 	}
 
 }
