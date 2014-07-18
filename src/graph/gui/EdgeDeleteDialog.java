@@ -6,6 +6,9 @@ package graph.gui;
 import graph.GraphInstance;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -15,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
+
 import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
@@ -46,7 +50,6 @@ public class EdgeDeleteDialog extends JFrame {
 	 */
 	public EdgeDeleteDialog(BiologicalEdgeAbstract edge) {
 
-		edgeMap.put(-1, edge);
 		//Container contentPane = getContentPane();
 		MigLayout layout = new MigLayout("", "[left]");
 
@@ -96,18 +99,24 @@ public class EdgeDeleteDialog extends JFrame {
 	 * @return The original, hierarchical edge to delete all sub-Edges. One single sub-Edge to be deleted.
 	 * Null if nothing selected or aborted.
 	 */
-	public BiologicalEdgeAbstract getAnswer() {
+	public Set<BiologicalEdgeAbstract> getAnswer() {
 
 		JDialog dialog = pane.createDialog(EdgeDeleteDialog.this, "Delete a hierarchical edge");
 		//dialog.show();
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
+		Set<BiologicalEdgeAbstract> ret = new HashSet<BiologicalEdgeAbstract>();
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
 				if (selectedEdge.isSelected()) {
-					return edgeMap.get(edges.getSelectedIndex());
-				} else if (allEdges.isSelected())
-					return edgeMap.get(-1);
+					ret.add(edgeMap.get(edges.getSelectedIndex()));
+					return ret;
+				} else if (allEdges.isSelected()){
+					for(int key : edgeMap.keySet()){
+						ret.add(edgeMap.get(key));
+					}
+					return ret;
+				}
 			} else {
 				return null;
 			}

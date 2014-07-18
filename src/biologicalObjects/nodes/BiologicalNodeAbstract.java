@@ -1042,6 +1042,24 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		}
 	}
 	
+	/** Updates Environment connections with the connectingEdges Set.*/
+	public void updateEnvironmentConnections(){
+		Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
+		conEdges.addAll(getConnectingEdges());
+		for(BiologicalEdgeAbstract conEdge : conEdges){
+			BiologicalEdgeAbstract edge = conEdge.clone();
+			edge.setFrom(edge.getFrom().getCurrentShownParentNode(getGraph()));
+			edge.setTo(edge.getTo().getCurrentShownParentNode(getGraph()));
+			if(!environment.contains(edge.getTo()) && !environment.contains(edge.getFrom())){
+				getConnectingEdges().remove(conEdge);
+			} else if(environment.contains(edge.getTo()) && border.contains(edge.getFrom())){
+				getGraph().addEdge(edge);
+			} else if(environment.contains(edge.getFrom()) && border.contains(edge.getTo())){
+				getGraph().addEdge(edge);
+			}
+		}
+	}
+	
 	/** Removes Environment Nodes that are not connected with the border any more.*/
 	public void removeUnconnectedEnvironmentNodes(){
 		Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();

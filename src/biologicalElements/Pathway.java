@@ -782,16 +782,14 @@ public class Pathway implements Cloneable {
 				// System.out.println(edges.size());
 				if(!bea.getTo().getAllNodes().isEmpty() | !bea.getFrom().getAllNodes().isEmpty()){
 					EdgeDeleteDialog dialog = new EdgeDeleteDialog(bea);
-					BiologicalEdgeAbstract delBea = dialog.getAnswer();
+					Set<BiologicalEdgeAbstract> delBeas = dialog.getAnswer();
 					//aborted
-					if(delBea==null){
+					if(delBeas==null){
 						return;
-					//delete all sub-Edges
-					} else if(delBea==bea){
-						
-					//delete selected sub-Edge
 					} else {
-						getRootPathway().deleteSubEdge(delBea);
+						for(BiologicalEdgeAbstract delBea : delBeas){
+							getRootPathway().deleteSubEdge(delBea);
+						}
 						return;
 					}
 				}
@@ -840,6 +838,9 @@ public class Pathway implements Cloneable {
 		} else if(currentFrom==currentTo){
 			// Edge is inner Edge of currentFrom/currentTo.
 			currentFrom.deleteSubEdge(edge);
+			if(getRootPathway()==this){
+				updateMyGraph();
+			}
 			return;
 		} else if(existEdge(currentFrom, currentTo)){
 			Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
@@ -857,11 +858,14 @@ public class Pathway implements Cloneable {
 				// This is the root Pathway
 				currentFrom.deleteSubEdge(edge);
 				currentTo.deleteSubEdge(edge);
+				currentFrom.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
+				currentTo.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
 				updateMyGraph();
 				return;
 			}
 			
 			thisNode.removeConnectingEdge(edge);
+			thisNode.updateEnvironmentConnections();
 			thisNode.removeUnconnectedEnvironmentNodes();
 			thisNode.cleanUpBorder();
 			
@@ -1678,7 +1682,6 @@ public class Pathway implements Cloneable {
 				node.updateMyGraph();
 			}
 		}
-
 		// draw connecting edges
 		addEdgesToPathway(edgeSet);
 	}
