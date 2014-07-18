@@ -360,11 +360,13 @@ public class DenselyConnectedBiclustering {
 		np = new NetworkProperties();
 		
 		ArrayList<Double> values;
+		ArrayList<Double>[] valuesArray = new ArrayList[numOfThreads];
 		
 		for(int z = 0; z < attributesArray.length; z++){
 			attributesArray[z] = new HashMap<Integer, ArrayList<Double>>();
 			for(int id : adjacenciesArray[0].keySet()){
-				values = new ArrayList<Double>();
+				valuesArray[z] = new ArrayList<Double>();
+//				values = new ArrayList<Double>();
 				BiologicalNodeAbstract vertex = idBna.get(id);
 				for(int i = 0; i < attrTyps.size(); i++){
 					String itemTyp = attrTyps.get(i);
@@ -373,7 +375,7 @@ public class DenselyConnectedBiclustering {
 			        case DenselyConnectedBiclusteringGUI.TYPE_BNA:
 				        switch(item){
 				        case DenselyConnectedBiclusteringGUI.GC_DEGREE:	    		
-				    		values.add((double) adjacenciesArray[0].get(id).size());
+				        	valuesArray[z].add((double) adjacenciesArray[0].get(id).size());
 				            break;
 				            
 				        case DenselyConnectedBiclusteringGUI.GC_NEIGHBOUR:
@@ -382,20 +384,20 @@ public class DenselyConnectedBiclustering {
 				        		
 				        		averageNeighbourDegreeTable = np.averageNeighbourDegreeTable();
 				        	}
-				        	values.add(averageNeighbourDegreeTable.get(vertex));
+				        	valuesArray[z].add(averageNeighbourDegreeTable.get(vertex));
 				            break;
 	
 				        case DenselyConnectedBiclusteringGUI.GC_CYCLES:
 				        	if(cyclesMap.containsKey(vertex)){
-				        		values.add(cyclesMap.get(vertex));
+				        		valuesArray[z].add(cyclesMap.get(vertex));
 				        	}else{
-				        		values.add(0.0);
+				        		valuesArray[z].add(0.0);
 				        	}
 				        	
 				        	break;
 				        
 				        case DenselyConnectedBiclusteringGUI.GC_CLIQUES:
-				        	values.add(cliquesMap.get(vertex));
+				        	valuesArray[z].add(cliquesMap.get(vertex));
 				        	break;
 				        	
 				        default:
@@ -411,7 +413,7 @@ public class DenselyConnectedBiclustering {
 			        		}
 			        	}
 						
-			        	values.add(graphNode.getSuperNode().biodataEntries[experimentNames.indexOf(item)]);
+			        	valuesArray[z].add(graphNode.getSuperNode().biodataEntries[experimentNames.indexOf(item)]);
 			        	
 			        	
 			            break;
@@ -420,7 +422,7 @@ public class DenselyConnectedBiclustering {
 				        case "Sequence length": 
 				        	
 				    		DNA d = (DNA) vertex;
-				    		values.add((double) d.getNtSequence().length());
+				    		valuesArray[z].add((double) d.getNtSequence().length());
 				        	
 				            break;
 				        default:
@@ -432,7 +434,7 @@ public class DenselyConnectedBiclustering {
 				        case "Sequence length":  
 				        	
 				    		RNA r = (RNA) vertex;
-				    		values.add((double) r.getNtSequence().length());
+				    		valuesArray[z].add((double) r.getNtSequence().length());
 				    		
 				            break;
 				        default:
@@ -444,7 +446,7 @@ public class DenselyConnectedBiclustering {
 				        case "Sequence length":
 	//		                if(vertex instanceof Protein){
 		                    Protein p = (Protein) vertex;
-		                    values.add((double) p.getAaSequence().length());  
+		                    valuesArray[z].add((double) p.getAaSequence().length());  
 	//		                }else{
 	//		                	values.add(0.0);
 	//		                }
@@ -458,7 +460,7 @@ public class DenselyConnectedBiclustering {
 			        	break;
 			        }
 				}
-				attributesArray[z].put(id, values);
+				attributesArray[z].put(id, valuesArray[z]);
 			}
 		}
 		
