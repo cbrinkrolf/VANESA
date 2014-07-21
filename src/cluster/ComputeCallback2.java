@@ -1,5 +1,6 @@
 package cluster;
 
+import graph.algorithms.DCBprepareCalc;
 import graph.algorithms.DenselyConnectedBiclustering;
 import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
 import graph.algorithms.gui.GraphColoringGUI;
@@ -19,11 +20,11 @@ public class ComputeCallback2 extends UnicastRemoteObject implements Serializabl
 
 	private static final long serialVersionUID = -5452379957017610971L;
 
-	private DenselyConnectedBiclusteringGUI gui;
+	private DCBprepareCalc dcbPrepareCalc;
 	
-	public ComputeCallback2(DenselyConnectedBiclusteringGUI gui) throws RemoteException {
+	public ComputeCallback2(DCBprepareCalc dcBprepareCalc) throws RemoteException {
 		super();
-		this.gui = gui;
+		this.dcbPrepareCalc = dcBprepareCalc;
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class ComputeCallback2 extends UnicastRemoteObject implements Serializabl
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 		
-				gui.returnComputeData(table, jobtype);
+				dcbPrepareCalc.returnComputeData(table, jobtype);
 			}
 		});
 	}

@@ -1,9 +1,8 @@
 package graph.algorithms.gui;
 
 import graph.GraphInstance;
+import graph.algorithms.DCBprepareCalc;
 import graph.algorithms.DCBresultSet;
-import graph.algorithms.DenselyConnectedBiclustering;
-import graph.algorithms.NetworkProperties;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
@@ -18,18 +17,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map.Entry;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -53,9 +47,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import cluster.ClusterComputeThread2;
-import cluster.ComputeCallback2;
-import cluster.JobTypes;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
@@ -68,7 +59,7 @@ import biologicalObjects.nodes.GraphNode;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
 
-public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSelectionListener {
+public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSelectionListener{
 
 	JPanel p = new JPanel();
 	GraphElementAbstract ab;
@@ -90,6 +81,10 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	private JScrollPane clusterPane;
 	private JList<DCBClusterLabel> clusterList;
 	public static ProgressBar progressBar;
+	private static MainWindow mw;
+	
+//	public static DCBProgressRunnable progressbarRunnable;
+//	public static Thread dcbProgressThread;
 
 	private JFormattedTextField desityField;
 	private JDialog dialog;
@@ -100,11 +95,11 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	boolean applyNumDone = false;
 	boolean chooserDone = false;
 	private String[] presentationString = { "size", "color"};
-	private double DENSITY_MIN = 0d;
-	private double DENSITY_MAX = 1d;
+	public static double DENSITY_MIN = 0d;
+	public static double DENSITY_MAX = 1d;
 	private double DENSITY_DEFAULT = 0.5;
-	private double ATTR_MIN = 0d;
-	private double ATTR_MAX = 1000d;
+	public static double ATTR_MIN = 0d;
+	public static double ATTR_MAX = 1000d;
 	private double ATTRNUM_MIN = 1d;
 	private double ATTRNUM_MAX = 20d;
 	private double ATTRNUM_DEFAULT = 2d;
@@ -129,7 +124,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	public static final int TYPE_PROTEIN_NR = 1;
 	public static final int TYPE_DNA_NR = 2;
 	public static final int TYPE_RNA_NR = 3;
-	public static final int TYPE_BNA_NR = 4;
+	public static final int TYPE_BNA_NR = -1;
 	
 	DefaultListModel<DCBClusterLabel> listModel;
 	
@@ -140,7 +135,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	
 	private Pathway pw;
 	private MyGraph mg;
-	private NetworkProperties np;
+
 	
 	private HashMap<BiologicalNodeAbstract, Color> pickedVertices = new HashMap<BiologicalNodeAbstract, Color>();
 	private HashMap<BiologicalEdgeAbstract, Color> pickedEdges = new HashMap<BiologicalEdgeAbstract, Color>();
@@ -149,18 +144,15 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	private ArrayList<String> attrTypes;
 	private ArrayList<String> experiments;
 	
-	private int numOfServerJobs = 0;
+
 	
-	private ArrayList<Double> ranges;
-	private ArrayList<String> attrTyps;
-	private ArrayList<String> attrNames;
-	private int nodeType = -1;
+//	private ArrayList<Double> ranges;
+//	private ArrayList<String> attrTyps;
+//	private ArrayList<String> attrNames;
 	private double density;
 	private double attrdim;
 	
-	private HashMap<BiologicalNodeAbstract, Double> cyclesMap;
-	private HashMap<BiologicalNodeAbstract, Double> cliquesMap;
-	private boolean successComputData= true;
+
 	
 	public DenselyConnectedBiclusteringGUI() {
 
@@ -501,170 +493,26 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		}
 		if ("calculate".equals(event)) {
 			
+			
+			mw = MainWindowSingelton.getInstance();
+			mw.setEnable(false);
+			mw.setLockedPane(true);
+			
 			progressBar = new ProgressBar();
 			progressBar.init(100, "DCB", true);
-			
-		
-			boolean noMinMax = false;
-			boolean toManyTypes = false;
+			progressBar.setProgressBarString("started");
 
+			
 			density = ((Number) desityField.getValue()).doubleValue();
-			if (density < DENSITY_MIN || density > DENSITY_MAX) {
-				noMinMax = true;
-			}
-
-			ranges = new ArrayList<Double>();
-			attrTyps = new ArrayList<String>();
-			attrNames = new ArrayList<String>();
-			
-//			LinkedHashMap<String, ArrayList<String>> attrNames2 = new LinkedHashMap <String, ArrayList<String>>();
-
-			
-//			int typeCounter = 0;
-			
-			for (int i = 0; i < rangeField.size(); i++) {
-				ranges.add(((Number) rangeField.get(i).getValue())
-						.doubleValue());
-				// ranges.add(((Number)rangeField.get(i).getValue()).doubleValue());
-				if (ranges.get(i) < ATTR_MIN || ranges.get(i) > ATTR_MAX) {
-					noMinMax = true;
-					break;
-//				}else if(typeCounter > 1){
-//					toManyTypes = true;
-//					break;
-				}else {
-					String type = (String) attrTypList.get(i).getSelectedItem();
-					attrTyps.add(type);
-					attrNames.add((String) attrList.get(i).getSelectedItem());
-					
-					switch(type){
-					case TYPE_GRAPHNODE: 
-//						typeCounter++;
-						if((nodeType != -1)&&(nodeType != TYPE_GRAPHNODE_NR)){
-							toManyTypes = true;
-							break;
-						}else{
-							nodeType = TYPE_GRAPHNODE_NR;
-						}
-						break;
-					case TYPE_PROTEIN: 
-//						typeCounter++;
-						if((nodeType != -1)&&(nodeType != TYPE_PROTEIN_NR)){
-							toManyTypes = true;
-							break;
-						}else{
-							nodeType = TYPE_PROTEIN_NR;
-						}
-						break;
-					case TYPE_DNA:
-//						typeCounter++;
-						if((nodeType != -1)&&(nodeType != TYPE_DNA_NR)){
-							toManyTypes = true;
-							break;
-						}else{
-							nodeType = TYPE_DNA_NR;
-						}
-						break;
-					case TYPE_RNA: 
-//						typeCounter++;
-						if((nodeType != -1)&&(nodeType != TYPE_RNA_NR)){
-							toManyTypes = true;
-							break;
-						}else{
-							nodeType = TYPE_RNA_NR;
-						}
-						break;
-					default:
-						break;
-					}
-					
-//					if(attrNames2.containsKey(attrTypList.get(i).getSelectedItem())){
-//						attrNames2.get(attrTypList.get(i).getSelectedItem()).add((String) attrList.get(i).getSelectedItem());
-//					}else{
-//						ArrayList<String> tmp = new ArrayList<String>();
-//						tmp.add((String) attrList.get(i).getSelectedItem());
-//						attrNames2.put((String) attrTypList.get(i).getSelectedItem(), tmp);
-//					}
-					
-//						attrNames2.put(attrTypList.get(i), attrList.get(i));
-				}
-
-			}
-			if(nodeType == -1){
-				nodeType = TYPE_BNA_NR;
-			}
-			
-
 			attrdim = (double) attrdimspinner.getValue();
-
-			if (noMinMax) {
-				reactivateUI();
-				JOptionPane.showMessageDialog(null,
-						"Please consider minimum and maximum Values.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				
-
-			} else if (attrdim > ranges.size()) {
-				reactivateUI();
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"Number of similar attributes must not be greater than number of attributes.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-				
-			} else if (toManyTypes) {
-				reactivateUI();
-				JOptionPane
-						.showMessageDialog(
-								null,
-								"These types of attributes could not be combined.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-				
-
-			} else {
-				if(!(attrNames.contains(GC_CYCLES)||attrNames.contains(GC_CLIQUES))){
-					cyclesMap = null;
-					cliquesMap = null;
-					startDcb();
-				
-				}else{
-					np = new NetworkProperties();
-					
-					
-					if(attrNames.contains(GC_CYCLES)){
-						numOfServerJobs++;
-		        		ComputeCallback2 helper;
-							try {
-								helper = new ComputeCallback2(this);
-
-								ClusterComputeThread2 rmicycles = new ClusterComputeThread2(
-										JobTypes.CYCLE_JOB_OCCURRENCE, helper);
-								rmicycles.setAdjMatrix(np.getAdjacencyMatrix());
-								rmicycles.start();
-							} catch (RemoteException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-					}
-					
-					if(attrNames.contains(GC_CLIQUES)){
-						numOfServerJobs++;
-		        		ComputeCallback2 helper;
-							try {
-								helper = new ComputeCallback2(this);
-
-								ClusterComputeThread2 rmicycles = new ClusterComputeThread2(
-										JobTypes.CLIQUE_JOB_OCCURRENCE, helper);
-								rmicycles.setAdjMatrix(np.getAdjacencyMatrix());
-								rmicycles.start();
-							} catch (RemoteException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-					}
-					
-				}
-
+		
+			DCBprepareCalc calc = new DCBprepareCalc(this, density, rangeField, attrdim,
+					attrTypList, attrList);
+			
+			try{
+			calc.execute();
+			}catch(Exception e2){
+				e2.printStackTrace();
 			}
 
 		}
@@ -907,22 +755,24 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		}
 	}
 
-	public void startDcb() {
-		DenselyConnectedBiclustering dcb = new DenselyConnectedBiclustering(
-				density, ranges, nodeType, attrTyps, attrNames, attrdim, cyclesMap, cliquesMap);
 
-		results = dcb.start();
-		// assert results != null : "No result";
-		if (results != null) {
-			table = initTable(results);
-		} else {
-			table = null;
-		}
-		
-		reactivateUI();
 
-		openResultDialog(table);
-	}
+//	public void startDcb() {
+//		DenselyConnectedBiclustering dcb = new DenselyConnectedBiclustering(
+//				density, ranges, nodeType, attrTyps, attrNames, attrdim, cyclesMap, cliquesMap);
+//
+//		results = dcb.start();
+//		// assert results != null : "No result";
+//		if (results != null) {
+//			table = initTable(results);
+//		} else {
+//			table = null;
+//		}
+//		
+//		reactivateUI();
+//
+//		openResultDialog(table);
+//	}
 
 
 	
@@ -967,9 +817,10 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		
 	}
 
-	private void openResultDialog(JTable table) {
+	public void openResultDialog(JTable table) {
 
 		if (table != null) {
+			this.table = table;
 			JScrollPane sp = new JScrollPane(table);
 			JButton choose = new JButton("ok");
 			JLabel clusterText = new JLabel("Use ctrl or shift to select multiple clusters.");
@@ -1013,7 +864,8 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 
 	}
 
-	private JTable initTable(LinkedList<DCBresultSet> results) {
+	public JTable initTable(LinkedList<DCBresultSet> results) {
+		this.results = results;
 		String[] columNames = { "Size", "Density",
 				"Number of homogen attributes", "Graph", "Check" };
 		Object[][] rows = new Object[results.size()][5];
@@ -1200,107 +1052,18 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 
 
 
-	/**
-	 * @param table
-	 * @param jobtype
-	 */
-	public void returnComputeData(Hashtable<Integer, Double> table, int jobtype) {
-		
-		// Determine jobtype and behaviour
-		switch (jobtype) {
-		case JobTypes.CYCLE_JOB_OCCURRENCE:
-			cyclesMap = new HashMap<BiologicalNodeAbstract, Double>();
-			
-			Hashtable<Integer, Double> cycledata = table;
-			numOfServerJobs--;
 
-			if (!cycledata.isEmpty()) {
-				// Map ids to BNAs
-				Iterator<Entry<Integer, Double>> it = cycledata.entrySet()
-						.iterator();
-				int key;
-				double value;
-
-				while (it.hasNext()) {
-					Entry<Integer, Double> entry = it.next();
-					key = entry.getKey();
-					value = entry.getValue();
-					// debug
-					// System.out.println(key + " " + value);
-					
-					cyclesMap.put(np.getNodeAssignmentbackwards(key), value);
-
-				}
-				
-			}else{
-				successComputData = false;
-				reactivateUI();
-				JOptionPane.showMessageDialog(null,
-						"No cycles found, please use different attributes.", "No cycles",
-						JOptionPane.INFORMATION_MESSAGE);
-				
-			}
-
-			break;
-
-		case JobTypes.CLIQUE_JOB_OCCURRENCE:
-			cliquesMap = new HashMap<BiologicalNodeAbstract, Double>();
-			
-			Hashtable<Integer, Double> cliquesdata = table;
-			numOfServerJobs--;
-			
-
-
-			if (!cliquesdata.isEmpty()) {
-				// Map ids to BNAs
-				Iterator<Entry<Integer, Double>> it = cliquesdata.entrySet()
-						.iterator();
-				int key;
-				double value;
-
-				while (it.hasNext()) {
-					Entry<Integer, Double> entry = it.next();
-					key = entry.getKey();
-					value = entry.getValue();
-					// debug
-//					System.out.println(key + " " + value);
-					
-					cliquesMap.put(np.getNodeAssignmentbackwards(key), value);
-
-				}
-				
-			}else{
-				successComputData = false;
-				reactivateUI();
-				JOptionPane.showMessageDialog(null,
-						"No cliques found, please use different attributes.", "No cliques",
-						JOptionPane.INFORMATION_MESSAGE);
-				
-			}
-			
-			break;
-
-		default:
-			System.out.println("Wrong Job Type: returnComputeData - "
-					+ toString());
-			break;
-		}
-		
-		if(successComputData&&(numOfServerJobs == 0)){
-			startDcb();
-		}
-
-		
-	}
 	
 	
 	public static void reactivateUI() {
-		// close Progress bar and reactivate UI
+
 		progressBar.closeWindow();
-		MainWindow mw = MainWindowSingelton.getInstance();
+
 		mw.setEnable(true);
 		mw.setLockedPane(false);
 	}
+
+
 	
 	
 }
