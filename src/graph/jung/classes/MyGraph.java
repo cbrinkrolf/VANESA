@@ -20,13 +20,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 import org.apache.commons.collections15.Transformer;
 
 import petriNet.Place;
+import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -62,6 +65,7 @@ import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import graph.GraphInstance;
 import graph.algorithms.alignment.AlignmentEdge;
 import graph.eventhandlers.MyEditingModalGraphMouse;
+import graph.gui.CoarseNodeDeleteDialog;
 import graph.gui.GraphPopUp;
 import graph.jung.graphDrawing.DynamicIcon;
 import graph.jung.graphDrawing.MyEdgeArrowFunction;
@@ -837,29 +841,53 @@ public class MyGraph {
 
 	private void removeSelectedVertices() {
 		// System.out.println(vv.getPickedVertexState().getPicked().size());
-
 		if (g.getVertexCount() > 0) {
 			Pathway pw = vv.getPw();
 			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState()
 					.getPicked().iterator();
 			BiologicalNodeAbstract bna;
+			Integer savedAnswer = -1;
 			while (it.hasNext()) {
 				bna = it.next();
-
-				Iterator<BiologicalEdgeAbstract> in = g.getInEdges(bna)
-						.iterator();
-				while (in.hasNext()) {
-					pw.removeElement(in.next());
+				if(!bna.getAllNodes().isEmpty() && savedAnswer == JOptionPane.NO_OPTION){
+					continue;
 				}
-
-				Iterator<BiologicalEdgeAbstract> out = g.getOutEdges(bna)
-						.iterator();
-				while (out.hasNext()) {
-					pw.removeElement(out.next());
+				if(!bna.getAllNodes().isEmpty() && savedAnswer != JOptionPane.YES_OPTION){
+					CoarseNodeDeleteDialog dialog = new CoarseNodeDeleteDialog(bna);
+					Integer[] del = dialog.getAnswer();
+					if(del[0]==JOptionPane.NO_OPTION){
+						if(del[1]==1){
+							savedAnswer = JOptionPane.NO_OPTION;
+						}
+						continue;
+					} else if(del[0]==JOptionPane.YES_OPTION){
+						if(del[1]==1){
+							savedAnswer = JOptionPane.YES_OPTION;
+						}
+					}
 				}
-				pw.removeElement(bna);
-				// this.removeVertex(bna);
+				
+				Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
+				conEdges.addAll(bna.getConnectingEdges());
+				for(BiologicalEdgeAbstract edge : conEdges){
+					pw.getRootPathway().deleteSubEdge(edge);
+				}
+				setVertexStateDeleted(bna);
+				pw.getRootPathway().updateMyGraph();
 
+			}
+		}
+	}
+	
+	private void setVertexStateDeleted(BiologicalNodeAbstract vertex){
+		vertex.setStateChanged(NodeStateChanged.DELETED);
+		for(BiologicalNodeAbstract child : vertex.getAllNodes()){
+			if(!vertex.getEnvironment().contains(child)){
+				if(child.getAllNodes().isEmpty()){
+					child.setStateChanged(NodeStateChanged.DELETED);
+				} else {
+					setVertexStateDeleted(child);
+				}
 			}
 		}
 	}
