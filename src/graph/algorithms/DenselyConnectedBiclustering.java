@@ -116,7 +116,7 @@ public class DenselyConnectedBiclustering {
 		this.attrNames = attrNames;
 		this.attrdim = (int) attrdim;
 		//TODO numOfThreads
-		this.numOfThreads = 2;
+		this.numOfThreads = 1;
 		this.nodeType = nodeType;
 		this.cyclesMap = cyclesMap;
 		this.cliquesMap = cliquesMap;
@@ -855,32 +855,30 @@ public class DenselyConnectedBiclustering {
 		}
 		
 		
-		/*
-		 * Entfernung doppelter Cluster: (geprüft wird auch ob ein Cluster ein anderes enthält)
-		 */
-		LinkedHashSet<HashSet<Integer>> removeSubsets = new LinkedHashSet<HashSet<Integer>>();
-		
-		for(HashSet<Integer> cluster : extended){
-			boolean subset = false;
-			for(HashSet<Integer> clusterHelp : extended){
-				if(clusterHelp.size() > cluster.size() && clusterHelp.containsAll(cluster)){
-					subset = true;
+		if(numOfThreads > 1){
+			/*
+			 * Entfernung doppelter Cluster: (geprüft wird auch ob ein Cluster ein anderes enthält)
+			 */
+			LinkedHashSet<HashSet<Integer>> removeSubsets = new LinkedHashSet<HashSet<Integer>>();
+			
+			for(HashSet<Integer> cluster : extended){
+				for(HashSet<Integer> clusterHelp : extended){
+					if(clusterHelp.size() > cluster.size() && clusterHelp.containsAll(cluster)){
+						removeSubsets.add(cluster);
+						break;
+					}
 				}
 			}
-			if(subset){
-				removeSubsets.add(cluster);
-			}
+			
+			extended.removeAll(removeSubsets);
+		
 		}
-		
-		extended.removeAll(removeSubsets);
-		
-		
 		// TODO syso raus
 		int counter = 1;
 		for(DCBexpansion expansion : tasksExpansion){
 			System.out.print("Thread " + counter + "; # Seeds " + expansion.numSeeds
 					+ "; # Nachbarn " + expansion.getNumOfNeighbours() + "; # Cluster " 
-					+ expansion.extendedSize + "; " + " davon doppelt/überlappend: " + expansion.doppelExtended);
+					+ expansion.extendedSize + "; " + " davon doppelt/ueberlappend: " + expansion.doppelExtended);
 			
 //			System.out.print( "; Seeds: ");
 //			for(HashSet<Integer> seed : expansion.getSeeds().keySet()){
