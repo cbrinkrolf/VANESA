@@ -94,14 +94,11 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 		LinkedHashSet<HashSet<Integer>> removeSubsets = new LinkedHashSet<HashSet<Integer>>();
 		
 		for(HashSet<Integer> cluster : extended){
-			boolean subset = false;
 			for(HashSet<Integer> clusterHelp : extended){
 				if(clusterHelp.size() > cluster.size() && clusterHelp.containsAll(cluster)){
-					subset = true;
+					removeSubsets.add(cluster);
+					break;
 				}
-			}
-			if(subset){
-				removeSubsets.add(cluster);
 			}
 		}
 		
