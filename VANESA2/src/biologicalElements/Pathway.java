@@ -784,14 +784,12 @@ public class Pathway implements Cloneable {
 					EdgeDeleteDialog dialog = new EdgeDeleteDialog(bea);
 					Set<BiologicalEdgeAbstract> delBeas = dialog.getAnswer();
 					//aborted
-					if(delBeas==null){
-						return;
-					} else {
+					if(delBeas!=null){
 						for(BiologicalEdgeAbstract delBea : delBeas){
 							getRootPathway().deleteSubEdge(delBea);
 						}
-						return;
 					}
+					return;
 				}
 				removeEdge(bea, false);
 			}
@@ -1668,6 +1666,19 @@ public class Pathway implements Cloneable {
 			case CONNECTIONMODIFIED:
 				for(BiologicalEdgeAbstract conEdge : node.getConnectingEdges()){
 					edgeSet.add(conEdge);
+				}
+				break;
+				
+			case DELETED:
+				removeElement(node);
+				if(thisNode == null){
+					break;
+				}
+				if(thisNode.getEnvironment().contains(node)){
+					thisNode.getEnvironment().remove(node);
+				}
+				if(thisNode.getBorder().contains(node)){
+					thisNode.getBorder().remove(node);
 				}
 				break;
 				
