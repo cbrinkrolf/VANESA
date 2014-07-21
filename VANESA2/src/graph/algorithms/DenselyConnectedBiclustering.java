@@ -18,6 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import biologicalElements.InternalGraphRepresentation;
@@ -45,7 +46,7 @@ public class DenselyConnectedBiclustering {
 	private MyGraph mg = pw.getGraph();
 	private NetworkProperties np;
 	
-	public static ProgressBar progressBar;
+//	public static ProgressBar progressBar;
 
 	//Minimale Größe des Graphen für die parallele Verarbeitung
 	private final int MIN_PARALLEL_SIZE = 0;
@@ -103,6 +104,7 @@ public class DenselyConnectedBiclustering {
 	
 	//TODO entfernen (nur zum testen)
 	long preprocessingTime;
+	long seedGeneration1Time;
 
 	// Constructor: Benutzereingaben werden gesetzt. Aufruf der dcb-Methode
 	public DenselyConnectedBiclustering(double density, ArrayList<Double> ranges2, int nodeType, 
@@ -211,6 +213,7 @@ public class DenselyConnectedBiclustering {
 					if(biodata.containsAll(experiments)){
 						allVertices.add(vertex);
 					}
+					
 				}
 			}
 		}else if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_DNA_NR){
@@ -412,7 +415,7 @@ public class DenselyConnectedBiclustering {
 			        			experimentNames.add(graphNode.getSuperNode().biodata[j]);
 			        		}
 			        	}
-						
+
 			        	valuesArray[z].add(graphNode.getSuperNode().biodataEntries[experimentNames.indexOf(item)]);
 			        	
 			        	
@@ -584,7 +587,11 @@ public class DenselyConnectedBiclustering {
 	}
 	
 	private HashSet<HashSet<Integer>> preprocessingParallel(){
-		DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Preprocessing");
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Preprocessing");
+			}
+		});
 		
 		HashSet<HashSet<Integer>> seeds = new HashSet<>();
 		
@@ -628,7 +635,9 @@ public class DenselyConnectedBiclustering {
 		
 		executorPreprocessing.shutdown();
 		
-
+		endtime = System.currentTimeMillis();
+		
+		preprocessingTime = endtime-starttime;
 
 		
 		//Liste der Seeds die nach dem Preprocessing NICHT entfernt werden
@@ -636,14 +645,19 @@ public class DenselyConnectedBiclustering {
 		
 //		HashMap<Integer, HashSet<Integer>> adjacencies_temp = new HashMap<>();
 		
-		DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Seedgeneration part 1");
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Seedgeneration part 1");
+			}
+		});
+		
+		long seedgeneration1start = System.currentTimeMillis();
 		
 		int adjacenciesSizeVorher = adjacenciesArray[0].size();
 		
 		for(int i = 0; i <adjacenciesArray.length; i++){
 			adjacenciesArray[i] = new HashMap<Integer, HashSet<Integer>>();
 		}
-		
 		
 		/*
 		 * Erstellen eine neue Adjazenzliste. Und 1. Teil der Seedgeneration: 
@@ -701,10 +715,8 @@ public class DenselyConnectedBiclustering {
 			return seeds;
 			
 		}
-		endtime = System.currentTimeMillis();
-		
-		preprocessingTime = endtime-starttime;
-		
+
+		seedGeneration1Time = System.currentTimeMillis() - seedgeneration1start;
 		
 //		adjacencies = adjacencies_temp;
 		
@@ -741,8 +753,11 @@ public class DenselyConnectedBiclustering {
 	 * Jede Kante wird einzeln gerpüft (im Callable DCBpreprocessing)
 	 */
 	public HashSet<HashSet<Integer>> expansionParallel(HashSet<HashSet<Integer>> seeds){
-		DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Seedgeneration part 2");
-
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Seedgeneration part 2");
+			}
+		});
 		
 		long starttime2;
 		long endtime2;
@@ -792,8 +807,11 @@ public class DenselyConnectedBiclustering {
 		
 		starttime3 = System.currentTimeMillis();
 		
-		DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Expansion");
-		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				DenselyConnectedBiclusteringGUI.progressBar.setProgressBarString("Expansion");
+			}
+		});
 		
 		try {
 			futureExpanded = executeExpansion.invokeAll(tasksExpansion);
@@ -876,15 +894,25 @@ public class DenselyConnectedBiclustering {
 			System.out.println();
 			counter++;
 		}
-		System.out.println("# Cluster (mit doppelten/überlappenden): " 
+		System.out.println("# Cluster (mit doppelten/ueberlappenden): " 
 				+ doppelCluster);
-		System.out.println("# Cluster (ohne doppelte/überlappende): " + extended.size());
+		System.out.println("# Cluster (ohne doppelte/ueberlappende): " + extended.size());
 		System.out.println();
 		
-		System.out.println("Zeit für \"Preprocessing\": " + (preprocessingTime));
-		System.out.println("Zeit für \"Expansion Teil 1\": " + (endtime2-starttime2));
-		System.out.println("Zeit für \"Expansion Teil 2\": " + (endtime3-starttime3));
-		System.out.println("Zeit gesamt: " + ((preprocessingTime)+(endtime2-starttime2)+(endtime3-starttime3)));
+		System.out.println("Zeit fuer \"Preprocessing\": " + (preprocessingTime));
+		System.out.println("Zeit fuer \"Seedgeneration Teil 1\": " + seedGeneration1Time);
+		System.out.println("Zeit fuer \"Seedgeneration Teil 2\": " + (endtime2-starttime2));
+		System.out.println("Zeit fuer \"Expansion Teil 2\": " + (endtime3-starttime3));
+		System.out.println("Zeit gesamt: " + (preprocessingTime+seedGeneration1Time+(endtime2-starttime2)+(endtime3-starttime3)));
+		System.out.println();
+		System.out.println("Parameter:");
+		System.out.println("Attribute: ");
+		for(int i = 0; i < attrNames.size(); i++){
+			System.out.println(attrNames.get(i) + ": " + rangesArray[0].get(i));
+		}
+		System.out.println("Density: " + density);
+		System.out.println("Homogen Attribut (min.): " + attrdim);
+		
 		System.out.println("----");
 		System.out.println();
 		
@@ -1008,4 +1036,20 @@ public class DenselyConnectedBiclustering {
 		return extended;
 	}
 
+	
+//	public void reactivateUI() {
+//		// close Progress bar and reactivate UI
+//		
+////		SwingUtilities.invokeLater(new Runnable() {
+////			public void run() {
+//				DenselyConnectedBiclusteringGUI.progressBar.closeWindow();
+////			}
+////		});
+////		mw = MainWindowSingelton.getInstance();
+////		mw.setEnable(true);
+////		mw.setLockedPane(false);
+//	}
+	
+	
+	
 }
