@@ -71,7 +71,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		for(int key : views.keySet()){
 			if(views.get(key).equals(v)){
 				selectedView = key;
-				System.out.println(selectedView);
 			}
 		}
 	}
@@ -80,7 +79,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		for(int key : tabbedPanels.keySet()){
 			if(tabbedPanels.get(key).equals(t)){
 				selectedView = key;
-				System.out.println(selectedView);
 			}
 		}
 	}
@@ -605,7 +603,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void updateOptionPanel() {
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
-		optionPanel.updatePanel("Hierarchy");
+		//optionPanel.updatePanel("Hierarchy");
 		optionPanel.updatePanel("Filter");
 		optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
@@ -617,7 +615,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// System.out.println("update all");
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
-		optionPanel.updatePanel("Hierarchy");
+		//optionPanel.updatePanel("Hierarchy");
 		optionPanel.updatePanel("Filter");
 		optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");

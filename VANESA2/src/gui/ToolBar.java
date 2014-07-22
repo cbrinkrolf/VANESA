@@ -166,28 +166,28 @@ public class ToolBar {
 		mergeSelectedNodes.setActionCommand("mergeSelectedNodes");
 		mergeSelectedNodes.addActionListener(toolBarListener);
 		
-		JButton splitNode = new JButton("Split node");
+		JButton splitNode = new JButton(new ImageIcon(imagePath.getPath("SplitNodesButton.png")));
 		splitNode.setToolTipText("Split node (inverse operation of \"merge nodes\"");
 		splitNode.setActionCommand("splitNode");
 		splitNode.addActionListener(toolBarListener);
 		
-		JButton coarseSelectedNodes = new JButton("Coarse");
-		coarseSelectedNodes.setToolTipText("Coarse the selected Nodes");
+		JButton coarseSelectedNodes = new JButton(new ImageIcon(imagePath.getPath("CoarseNodesButton.png")));
+		coarseSelectedNodes.setToolTipText("Coarse selected nodes");
 		coarseSelectedNodes.setActionCommand("coarseSelectedNodes");
 		coarseSelectedNodes.addActionListener(toolBarListener);
 	
-		JButton flatSelectedNodes = new JButton("Flat");
-		flatSelectedNodes.setToolTipText("Flat the selected Node");
+		JButton flatSelectedNodes = new JButton(new ImageIcon(imagePath.getPath("FlatNodesButton.png")));
+		flatSelectedNodes.setToolTipText("Flat selected coarse node(s)");
 		flatSelectedNodes.setActionCommand("flatSelectedNodes");
 		flatSelectedNodes.addActionListener(toolBarListener);
 		
-		JButton enterSelectedNode = new JButton("Enter Node");
-		enterSelectedNode.setToolTipText("Enter selected coarse node in Hierarchy view.");
+		JButton enterSelectedNode = new JButton(new ImageIcon(imagePath.getPath("enterNode.png")));
+		enterSelectedNode.setToolTipText("Enter selected coarse node(s)");
 		enterSelectedNode.setActionCommand("enterNode");
 		enterSelectedNode.addActionListener(toolBarListener);
 		
-		JButton newWindow = new JButton("New Window");
-		newWindow.setToolTipText("Open an empty new Main Tab.");
+		JButton newWindow = new JButton(new ImageIcon(imagePath.getPath("newWindow.png")));
+		newWindow.setToolTipText("Open new window.");
 		newWindow.setActionCommand("newWindow");
 		newWindow.addActionListener(toolBarListener);
 		
@@ -198,7 +198,6 @@ public class ToolBar {
 		infopanel.add(coarseSelectedNodes);
 		infopanel.add(flatSelectedNodes);
 		infopanel.add(enterSelectedNode);
-		infopanel.add(newWindow);
 
 		JButton dimView = new JButton(new ImageIcon(
 				imagePath.getPath("view.png")));
@@ -302,7 +301,7 @@ public class ToolBar {
 		printControls.setLayout(new GridLayout(2, 2));
 
 		printControls.add(newDoc);
-		printControls.add(new JLabel());
+		printControls.add(newWindow);
 		printControls.add(printer);
 		printControls.add(picture);
 
