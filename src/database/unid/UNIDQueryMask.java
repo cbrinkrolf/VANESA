@@ -72,7 +72,7 @@ public class UNIDQueryMask {
 	          }
 	        });
 		
-		modeldepthspinner = new SpinnerNumberModel(1.0d, 1.0d, 6.0d, 1.0d);;
+		modeldepthspinner = new SpinnerNumberModel(1.0d, 0.0d, 6.0d, 1.0d);;
 		depthspinner = new JSpinner(modeldepthspinner);		
 	
 		fullName = new JTextField(20);
