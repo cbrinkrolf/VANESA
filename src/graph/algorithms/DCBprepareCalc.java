@@ -152,10 +152,14 @@ public class DCBprepareCalc extends SwingWorker<Void, Void>{
 		
 
 		if (noMinMax) {
-			DenselyConnectedBiclusteringGUI.reactivateUI();
-			JOptionPane.showMessageDialog(null,
-					"Please consider minimum and maximum Values.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					DenselyConnectedBiclusteringGUI.reactivateUI();
+					JOptionPane.showMessageDialog(null,
+							"Please consider minimum and maximum Values.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			});
 			
 
 		} else if (attrdim > ranges.size()) {

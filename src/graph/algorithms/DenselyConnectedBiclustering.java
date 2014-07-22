@@ -621,14 +621,21 @@ public class DenselyConnectedBiclustering {
 			futRes = executorPreprocessing.invokeAll(tasks);
 			
 		} catch (InterruptedException e1) {
-			DenselyConnectedBiclusteringGUI.reactivateUI();
 			
-			JOptionPane.showMessageDialog(
-					null,
-					"Preprocessing dosen't work.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-
-			e1.printStackTrace();
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					DenselyConnectedBiclusteringGUI.reactivateUI();
+					
+					JOptionPane.showMessageDialog(
+							null,
+							"Preprocessing dosen't work.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+		
+					e1.printStackTrace();
+			
+			
+				}
+			});
 			
 			return seeds;
 		}
@@ -705,13 +712,17 @@ public class DenselyConnectedBiclustering {
 
 			}
 		} catch (InterruptedException | ExecutionException e) {
-			DenselyConnectedBiclusteringGUI.reactivateUI();
-			JOptionPane.showMessageDialog(
-					null,
-					"Seedgeneration dosen't work.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-
-			e.printStackTrace();
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					DenselyConnectedBiclusteringGUI.reactivateUI();
+					JOptionPane.showMessageDialog(
+							null,
+							"Seedgeneration dosen't work.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+		
+					e.printStackTrace();
+				}
+			});
 			return seeds;
 			
 		}
@@ -816,13 +827,17 @@ public class DenselyConnectedBiclustering {
 		try {
 			futureExpanded = executeExpansion.invokeAll(tasksExpansion);
 		} catch (InterruptedException e1) {
-			DenselyConnectedBiclusteringGUI.reactivateUI();
-			JOptionPane.showMessageDialog(
-					null,
-					"Expansion dosen't work.",
-					"Error", JOptionPane.ERROR_MESSAGE);
-
-			e1.printStackTrace();
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					DenselyConnectedBiclusteringGUI.reactivateUI();
+					JOptionPane.showMessageDialog(
+							null,
+							"Expansion dosen't work.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+		
+					e1.printStackTrace();
+				}
+			});
 			return null;
 			
 		}
@@ -842,18 +857,23 @@ public class DenselyConnectedBiclustering {
 				doppelCluster += res.get().size();
 				extended.addAll(res.get());
 			} catch (InterruptedException | ExecutionException e) {
-				DenselyConnectedBiclusteringGUI.reactivateUI();
-				JOptionPane.showMessageDialog(
-						null,
-						"Expansion dosen't work (no results).",
-						"Error", JOptionPane.ERROR_MESSAGE);
-
-				e.printStackTrace();
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						DenselyConnectedBiclusteringGUI.reactivateUI();
+						JOptionPane.showMessageDialog(
+								null,
+								"Expansion dosen't work (no results).",
+								"Error", JOptionPane.ERROR_MESSAGE);
+		
+						e.printStackTrace();
+					}
+				});
 				return null;
 				
 			}
 		}
 		
+		long removetimestart = System.currentTimeMillis();
 		
 		if(numOfThreads > 1){
 			/*
@@ -873,6 +893,8 @@ public class DenselyConnectedBiclustering {
 			extended.removeAll(removeSubsets);
 		
 		}
+		
+		long removetime = System.currentTimeMillis() - removetimestart;
 		// TODO syso raus
 		int counter = 1;
 		for(DCBexpansion expansion : tasksExpansion){
@@ -900,8 +922,9 @@ public class DenselyConnectedBiclustering {
 		System.out.println("Zeit fuer \"Preprocessing\": " + (preprocessingTime));
 		System.out.println("Zeit fuer \"Seedgeneration Teil 1\": " + seedGeneration1Time);
 		System.out.println("Zeit fuer \"Seedgeneration Teil 2\": " + (endtime2-starttime2));
-		System.out.println("Zeit fuer \"Expansion Teil 2\": " + (endtime3-starttime3));
-		System.out.println("Zeit gesamt: " + (preprocessingTime+seedGeneration1Time+(endtime2-starttime2)+(endtime3-starttime3)));
+		System.out.println("Zeit fuer \"Expansion\": " + (endtime3-starttime3));
+		System.out.println("Zeit fuer Entfernung doppelter: " + removetime);
+		System.out.println("Zeit gesamt: " + (preprocessingTime+seedGeneration1Time+(endtime2-starttime2)+(endtime3-starttime3)+removetime));
 		System.out.println();
 		System.out.println("Parameter:");
 		System.out.println("Attribute: ");
