@@ -849,6 +849,14 @@ public class MyGraph {
 			Integer savedAnswer = -1;
 			while (it.hasNext()) {
 				bna = it.next();
+				if(pw instanceof BiologicalNodeAbstract){
+					BiologicalNodeAbstract pwNode = (BiologicalNodeAbstract) pw;
+					if (pwNode.getEnvironment().contains(bna)){
+						JOptionPane.showMessageDialog(null, "Can't delete environment nodes.", "Deletion Error",
+								JOptionPane.ERROR_MESSAGE);
+						continue;
+					}
+				}
 				if(!bna.getAllNodes().isEmpty() && savedAnswer == JOptionPane.NO_OPTION){
 					continue;
 				}

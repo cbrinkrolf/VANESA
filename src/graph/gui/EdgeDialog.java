@@ -26,6 +26,8 @@ import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
+import petriNet.Place;
+import petriNet.Transition;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -125,6 +127,12 @@ public class EdgeDialog extends JFrame {
 	
 	private void addAllChildNodes(BiologicalNodeAbstract vertex, JComboBox<String> nodeBox, HashMap<Integer, BiologicalNodeAbstract> map){
 		for(BiologicalNodeAbstract child : vertex.getAllNodes()){
+			if(vertex.isPetriNet()){
+				if((vertex instanceof Place && child instanceof Transition) |
+						(vertex instanceof Transition && child instanceof Place)){
+					continue;
+				}
+			}
 			if(!vertex.getEnvironment().contains(child)){
 				if(child.getAllNodes().isEmpty()){
 					nodeBox.addItem(child.getLabel());

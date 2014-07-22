@@ -295,12 +295,17 @@ public class ToolBarListener implements ActionListener {
 					JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), 
 							"No coarsing possible with the given set of nodes.", 
 							"Coarsing Error!", JOptionPane.ERROR_MESSAGE);
-					//System.out.println("No coarsing possible with the given set of nodes.");
 					return;
 				}
 				BiologicalNodeAbstract newNode = (BiologicalNodeAbstract) borderNode.clone();
+				String lbl = JOptionPane.showInputDialog(null, null, "Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
+				if(lbl==null){
+					lbl = "Coarse node";
+				}
 				newNode.setID();
-				newNode.setLabel("coarse" + newNode.getLabel());
+				newNode.setLabel(lbl);
+				newNode.setName(lbl);
+				newNode.setTitle(lbl);
 				newNode.setGraph(new MyGraph(newNode));
 				newNode.setStateChanged(NodeStateChanged.UNCHANGED);
 				newNode.clearConnectingEdges();
