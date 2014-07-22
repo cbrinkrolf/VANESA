@@ -112,7 +112,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	 */
 	public void createNetworkFromSearch() {
 		
-		Pathway pw = new CreatePathway(fullName+" depth="+depth+"(UNID)").getPathway();
+		Pathway pw = new CreatePathway(fullName+commonName+graphid+" depth="+depth+"(UNID)").getPathway();
 		MyGraph myGraph = pw.getGraph();
 
 		myGraph.lockVertices();
@@ -123,6 +123,8 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		HashSet<GraphDBTransportNode> nodeset = new HashSet<>();
 		HashMap<GraphDBTransportNode, BiologicalNodeAbstract> nodes = new HashMap<>();
 
+		
+		
 		//Nodes first
 		for (GraphDBTransportNode node : adjacencylist.keySet()) {
 			if (!nodeset.contains(node)) {
