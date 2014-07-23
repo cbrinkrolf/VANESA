@@ -567,10 +567,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void updateSatelliteView() {
 		optionPanel.updatePanel("Satellite");
 	}
-	
-	public void updateHierarchyView() {
-		optionPanel.updatePanel("Hierarchy");
-	}
 
 	public void updatePCPView() {
 		optionPanel.updatePanel("pcp");
