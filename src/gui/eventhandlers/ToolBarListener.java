@@ -320,6 +320,7 @@ public class ToolBarListener implements ActionListener {
 				for(BiologicalNodeAbstract node : con.getPathway((w.getCurrentPathway())).getGraph().
 						getVisualizationViewer().getPickedVertexState().getPicked()){
 					node.flat();
+					MainWindowSingelton.getInstance().removeTab(false, node.getTab().getTitelTab(), node);
 				}
 				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{

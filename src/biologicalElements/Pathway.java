@@ -780,7 +780,7 @@ public class Pathway implements Cloneable {
 				BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) element;
 				// Pair p = bea.getEdge().getEndpoints();
 				// System.out.println(edges.size());
-				if(!bea.getTo().getAllNodes().isEmpty() | !bea.getFrom().getAllNodes().isEmpty()){
+				if(bea.getTo().isCoarseNode() | bea.getFrom().isCoarseNode()){
 					EdgeDeleteDialog dialog = new EdgeDeleteDialog(bea);
 					Set<BiologicalEdgeAbstract> delBeas = dialog.getAnswer();
 					//aborted
@@ -791,7 +791,8 @@ public class Pathway implements Cloneable {
 					}
 					return;
 				}
-				removeEdge(bea, false);
+				getRootPathway().deleteSubEdge(bea);
+				return;
 			}
 			ids.remove(element.getID());
 			// System.out.println(biologicalElements.size());
@@ -1590,7 +1591,7 @@ public class Pathway implements Cloneable {
 				this.removeElement(node);
 				// root Pathway and non-environment nodes add complete
 				// sub-pathway.
-				if (!isBNA() || thisNode.getInnerNodes().contains(node)) {
+				if (!isBNA() || !thisNode.getEnvironment().contains(node)) {
 					for (BiologicalNodeAbstract n : node.getInnerNodes()) {
 						this.addVertex(n, node.getGraph().getVertexLocation(n));
 					}
@@ -1703,21 +1704,21 @@ public class Pathway implements Cloneable {
 		}
 	}
 	
-	private boolean isRootPathway(){
+	public boolean isRootPathway(){
 		if(getRootPathway()==this){
 			return true;
 		}
 		return false;
 	}
 	
-	private boolean isBNA(){
+	public boolean isBNA(){
 		if(this instanceof BiologicalNodeAbstract){
 			return true;
 		}
 		return false;
 	}
 	
-	private boolean hasGraph(){
+	public boolean hasGraph(){
 		if(getGraph(false)==null){
 			return false;
 		}
