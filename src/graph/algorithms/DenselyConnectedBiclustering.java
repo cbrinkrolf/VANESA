@@ -292,12 +292,17 @@ public class DenselyConnectedBiclustering {
 			numOfThreads = 1;
 		}
 		
+		long start = System.currentTimeMillis();
+		
 		HashSet<HashSet<Integer>> seeds = preprocessingParallel();
 		if(!seeds.isEmpty()){
 			extended = expansionParallel(seeds);
 		}
+		System.out.println("Zeit gesamt (+ Aufruf): "+(System.currentTimeMillis()- start));
 		
-		
+		System.out.println("----");
+		System.out.println();
+	
 		LinkedList<DCBresultSet> results = null;
 		if(extended != null){
 			results = doResultsList(extended);
@@ -844,7 +849,7 @@ public class DenselyConnectedBiclustering {
 		
 		executeExpansion.shutdown();
 		
-		endtime3 = System.currentTimeMillis();
+		
 		
 
 		
@@ -873,9 +878,11 @@ public class DenselyConnectedBiclustering {
 			}
 		}
 		
+		endtime3 = System.currentTimeMillis();
+		
 		long removetimestart = System.currentTimeMillis();
 		
-		if(numOfThreads > 1){
+//		if(numOfThreads > 1){
 			/*
 			 * Entfernung doppelter Cluster: (geprüft wird auch ob ein Cluster ein anderes enthält)
 			 */
@@ -892,7 +899,7 @@ public class DenselyConnectedBiclustering {
 			
 			extended.removeAll(removeSubsets);
 		
-		}
+//		}
 		
 		long removetime = System.currentTimeMillis() - removetimestart;
 		// TODO syso raus
@@ -900,7 +907,7 @@ public class DenselyConnectedBiclustering {
 		for(DCBexpansion expansion : tasksExpansion){
 			System.out.print("Thread " + counter + "; # Seeds " + expansion.numSeeds
 					+ "; # Nachbarn " + expansion.getNumOfNeighbours() + "; # Cluster " 
-					+ expansion.extendedSize + "; " + " davon doppelt/ueberlappend: " + expansion.doppelExtended);
+					+ expansion.extendedSize); //+ "; " + " davon doppelt/ueberlappend: " + expansion.doppelExtended);
 			
 //			System.out.print( "; Seeds: ");
 //			for(HashSet<Integer> seed : expansion.getSeeds().keySet()){
@@ -934,8 +941,6 @@ public class DenselyConnectedBiclustering {
 		System.out.println("Density: " + density);
 		System.out.println("Homogen Attribut (min.): " + attrdim);
 		
-		System.out.println("----");
-		System.out.println();
 		
 		return extended;
 		
