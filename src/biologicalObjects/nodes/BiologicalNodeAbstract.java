@@ -313,6 +313,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			}
 		}
 		
+		Shape coarseShape = shapes.makeCoarse(shape);
+		setDefaultShape(coarseShape);
+		setShape(coarseShape);
+		
 		// Update current MyGraph
 		rootNode.updateMyGraph();
 
