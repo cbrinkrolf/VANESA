@@ -328,7 +328,6 @@ public class ToolBarListener implements ActionListener {
 		}
 		else if ("enterNode".equals(event)){
 			if(graphInstance.getMyGraph() != null){
-					w.updateHierarchyView();
 					for(BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().
 							getVisualizationViewer().getPickedVertexState().getPicked()){
 						w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
