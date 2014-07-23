@@ -15,7 +15,7 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 	//extended Clusters:
 	public int extendedSize;
 	//doppelte Cluster:
-	public int doppelExtended;
+//	public int doppelExtended;
 	//#Seeds zu beginn
 	public int numSeeds;
 	
@@ -69,9 +69,9 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 						HashSet<Integer> tempNodeSet = new HashSet<Integer>();
 						tempNodeSet.addAll(seedsHelp.get(nodeSet));
 						for(int tempConnected : adjacencies.get(connectedNode)){
-//							if(tempConnected > connectedNode){
-							tempNodeSet.add(tempConnected);
-//							}
+							if(tempConnected > connectedNode){
+								tempNodeSet.add(tempConnected);
+							}
 						}
 						tempNodeSet.removeAll(testSet);
 						seeds.put(testSet, tempNodeSet);
@@ -91,22 +91,22 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 		/*
 		 * Entfernung doppelter Cluster: (geprüft wird auch ob ein Cluster ein anderes enthält)
 		 */
-		LinkedHashSet<HashSet<Integer>> removeSubsets = new LinkedHashSet<HashSet<Integer>>();
-		
-		for(HashSet<Integer> cluster : extended){
-			for(HashSet<Integer> clusterHelp : extended){
-				if(clusterHelp.size() > cluster.size() && clusterHelp.containsAll(cluster)){
-					removeSubsets.add(cluster);
-					break;
-				}
-			}
-		}
+//		LinkedHashSet<HashSet<Integer>> removeSubsets = new LinkedHashSet<HashSet<Integer>>();
+//		
+//		for(HashSet<Integer> cluster : extended){
+//			for(HashSet<Integer> clusterHelp : extended){
+//				if(clusterHelp.size() > cluster.size() && clusterHelp.containsAll(cluster)){
+//					removeSubsets.add(cluster);
+//					break;
+//				}
+//			}
+//		}
 		
 		
 		extendedSize = extended.size();
-		doppelExtended = removeSubsets.size();
+//		doppelExtended = removeSubsets.size();
 		
-		extended.removeAll(removeSubsets);
+//		extended.removeAll(removeSubsets);
 		return extended;
 	}
 	
