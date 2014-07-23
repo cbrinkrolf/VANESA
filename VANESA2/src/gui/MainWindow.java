@@ -52,6 +52,7 @@ import org.simplericity.macify.eawt.DefaultApplication;
 
 import xmlOutput.sbml.VAMLoutput;
 import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 import com.jhlabs.image.BlurFilter;
 
@@ -388,64 +389,52 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 
 	public void removeTab(boolean ask) {
-
-		if (tabbedPanels.get(getSelectedView()).getTabCount() == 1) {
-			addedtabs = 0;
-			myMenu.disableCloseAndSaveFunctions();
-			optionPanel.removeAllElements();
-		}
-
+		boolean reallyAsk = ask;
 		TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();
-
 		Pathway pw = con.getPathway(removed.getText());
-
-		if (pw.hasGotAtLeastOneElement() && ask) {
-
-			int n = JOptionPane.showConfirmDialog(null,
-					"Would you like to save your network-model?",
-					"Save Question", JOptionPane.YES_NO_CANCEL_OPTION);
-			if (n == 0) {
-				if (pw.getFilename() != null) {
-					try {
-						new VAMLoutput(pw.getFilename(), pw);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				} else {
-					new SaveDialog(16);
-				}
+		if(pw.isBNA()){
+			if(((BiologicalNodeAbstract) pw).isCoarseNode()){
+				reallyAsk = false;
 			}
-			if (n == 0 || n ==1) {
-				con.removePathway(removed.getText());
-				tabbedPanels.get(getSelectedView()).removeTab(removed);
-			}
-		}			
+		}
+		removeTab(reallyAsk, removed, pw);
 	}
-
-	public void setSelectedTab(TitledTab tab) {
-		tabbedPanels.get(getSelectedView()).setSelectedTab(tab);
-	}
-
-	public Tab getSelectedTab() {
-		return tabbedPanels.get(getSelectedView()).getSelectedTab();
-	}
-
-	public void renameSelectedTab(String name) {
-		tabbedPanels.get(getSelectedView()).getSelectedTab().setName(name);
-	}
-
+	
 	public void removeTab(int index) {
 
+		boolean ask = true;
+		TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getTabAt(index);
+		Pathway pw = con.getPathway(removed.getText());
+		if(pw.isBNA()){
+			if(((BiologicalNodeAbstract) pw).isCoarseNode()){
+				ask = false;
+			}
+		}
+		removeTab(ask, removed, pw);
+
+	}
+
+	public void removeAllTabs() {
+
+		int tabCount = tabbedPanels.get(getSelectedView()).getTabCount();
+		int i;
+		addedtabs = 0;
+		for (i = 0; i < tabCount; i++) {
+			removeTab(0);
+		}
+		myMenu.disableCloseAndSaveFunctions();
+		con.removeAllPathways();
+		optionPanel.removeAllElements();
+	}
+	
+	public void removeTab(boolean ask, TitledTab remove, Pathway pw){
 		if (tabbedPanels.get(getSelectedView()).getTabCount() == 1) {
 			addedtabs = 0;
 			myMenu.disableCloseAndSaveFunctions();
 			optionPanel.removeAllElements();
 		}
-		TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getTabAt(index);
-		Pathway pw = con.getPathway(removed.getText());
 
-		if (pw.hasGotAtLeastOneElement()) {
+		if (pw.hasGotAtLeastOneElement() && ask) {
 
 			// 0: yes, 1: no, 2: cancel, -1: x
 			int n = JOptionPane.showConfirmDialog(null,
@@ -468,51 +457,20 @@ public class MainWindow extends JFrame implements ApplicationListener {
 				return;
 			}
 		}
-		con.removePathway(removed.getText());
-		tabbedPanels.get(getSelectedView()).removeTab(removed);
-
+		con.removePathway(remove.getText());
+		tabbedPanels.get(getSelectedView()).removeTab(remove);
 	}
 
-	public void removeAllTabs() {
+	public void setSelectedTab(TitledTab tab) {
+		tabbedPanels.get(getSelectedView()).setSelectedTab(tab);
+	}
 
-		int tabCount = tabbedPanels.get(getSelectedView()).getTabCount();
-		int i;
-		addedtabs = 0;
-		for (i = 0; i < tabCount; i++) {
+	public Tab getSelectedTab() {
+		return tabbedPanels.get(getSelectedView()).getSelectedTab();
+	}
 
-			TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getTabAt(0);
-			Pathway pw = con.getPathway(removed.getText());
-
-			if (pw.hasGotAtLeastOneElement()) {
-
-				int n = JOptionPane.showConfirmDialog(null,
-						"Would you like to save your network-model?",
-						"Save Question", JOptionPane.YES_NO_CANCEL_OPTION);
-				
-				
-				if (n == 0) {
-					if (pw.getFilename() != null) {
-						try {
-							new VAMLoutput(pw.getFilename(), pw);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					} else {
-						new SaveDialog(16);
-					}
-				}
-				if (n == 0 || n ==1) {
-					tabbedPanels.get(getSelectedView()).removeTab(tabbedPanels.get(getSelectedView()).getTabAt(0));
-				}
-				
-			}
-
-			
-		}
-		myMenu.disableCloseAndSaveFunctions();
-		con.removeAllPathways();
-		optionPanel.removeAllElements();
+	public void renameSelectedTab(String name) {
+		tabbedPanels.get(getSelectedView()).getSelectedTab().setName(name);
 	}
 
 	public void setLockedPane(boolean lock) {

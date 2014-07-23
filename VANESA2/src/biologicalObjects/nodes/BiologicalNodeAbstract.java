@@ -456,7 +456,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			return;
 
 		// Delete Parent node.
-		this.setParentNode(this);
+		for(BiologicalNodeAbstract node : getInnerNodes()){
+			node.setParentNode(getParentNode());
+		}
 
 		// Set state changed of all non-environment nodes to FLATTED.
 		this.setStateChanged(NodeStateChanged.FLATTED);
@@ -471,7 +473,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 //		}
 
 		// Update current MyGraph
-		rootNode.updateMyGraph();
+		getRootPathway().updateMyGraph();
 
 		// Reset state changed of all non-environment nodes
 //		this.setStateChanged(NodeStateChanged.UNCHANGED);
