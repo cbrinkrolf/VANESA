@@ -102,6 +102,19 @@ public class VertexShapes
     	return ellipse;
     }
     
+    public Shape makeCoarse(Shape shape)
+    {
+    	Rectangle2D frame = shape.getBounds2D();
+    	GeneralPath gp = new GeneralPath(shape);
+    	float width = (float) frame.getWidth();
+        float height = (float) frame.getHeight();
+        	gp.moveTo(0, -height/2+1);
+        	gp.lineTo(0, height/2);
+        	gp.moveTo(-width/2+1, 0);
+            gp.lineTo(width/2, 0);
+    	return gp;
+    }
+    
      public Shape getDoubleEllipse()
     {
     	         
