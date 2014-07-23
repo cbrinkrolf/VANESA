@@ -317,11 +317,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		rootNode.updateMyGraph();
 
 		// Reset state changed of all non-environment nodes
-		for (BiologicalNodeAbstract node : getAllNodes()) {
-			if (!environment.contains(node)) {
-				node.setStateChanged(NodeStateChanged.UNCHANGED);
-			}
-		}
+//		for (BiologicalNodeAbstract node : getAllNodes()) {
+//			if (!environment.contains(node)) {
+//				node.setStateChanged(NodeStateChanged.UNCHANGED);
+//			}
+//		}
 	}
 
 	/**
@@ -460,12 +460,21 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 		// Set state changed of all non-environment nodes to FLATTED.
 		this.setStateChanged(NodeStateChanged.FLATTED);
+		
+//		System.out.println("ConEdges in " + getLabel());
+//		for(BiologicalEdgeAbstract edge : getConnectingEdges()){
+//			System.out.println(edge.getFrom().getLabel() + " -> " + edge.getTo().getLabel());
+//		}
+//		System.out.println("Environment of " + getLabel());
+//		for(BiologicalNodeAbstract edge : getEnvironment()){
+//			System.out.println(edge.getLabel());
+//		}
 
 		// Update current MyGraph
 		rootNode.updateMyGraph();
 
 		// Reset state changed of all non-environment nodes
-		this.setStateChanged(NodeStateChanged.UNCHANGED);
+//		this.setStateChanged(NodeStateChanged.UNCHANGED);
 	}
 
 	@Override
@@ -1074,29 +1083,42 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	/** Removes all border nodes that have no outside connection any more.*/
 	public void cleanUpBorder(){
-		Set<BiologicalNodeAbstract> border = new HashSet<BiologicalNodeAbstract>();
-		border.addAll(getBorder());
-		for(BiologicalNodeAbstract borderNode : border){
-			Set<BiologicalNodeAbstract> neighbors = new HashSet<BiologicalNodeAbstract>();
-			if(getGraph().getJungGraph().getNeighbors(this)!=null){
-				neighbors.addAll(getGraph().getJungGraph().getNeighbors(this));
+		border.clear();
+		for(BiologicalEdgeAbstract edge : getAllEdges()){
+			if(environment.contains(edge.getFrom()) && getInnerNodes().contains(edge.getTo())){
+				border.add(edge.getTo());
 			}
-			boolean isBorder = false;
-			if(!neighbors.isEmpty()){
-				for(BiologicalNodeAbstract neighbor : neighbors){
-					if(getEnvironment().contains(neighbor)){
-						isBorder = true;
-					}
-				}
-			}
-			if(!isBorder){
-				getBorder().remove(borderNode);
+			if(environment.contains(edge.getTo()) && getInnerNodes().contains(edge.getFrom())){
+				border.add(edge.getFrom());
 			}
 		}
 	}
 	
 	public void clearConnectingEdges(){
 		connectingEdges = new HashSet<BiologicalEdgeAbstract>();
+	}
+	
+	public Collection<BiologicalNodeAbstract> getInnerNodes(){
+		Collection<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
+		if(getAllNodes().isEmpty()){
+			return innerNodes;
+		}
+		for(BiologicalNodeAbstract node : getAllNodes()){
+			if(!environment.contains(node)){
+				innerNodes.add(node);
+			}
+		}
+		return innerNodes;
+	}
+	
+	public boolean isCoarseNode(){
+		if(getAllNodes().isEmpty()){
+			return false;
+		}
+		if(getGraph(false)==null){
+			return false;
+		}
+		return true;
 	}
 
 }
