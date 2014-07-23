@@ -553,6 +553,14 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void resetAppearance(){
 		
 	}
+	
+	public boolean isValid(boolean allowFromEqualsTo){
+		if(to==null || from==null)
+			return false;
+		if(from==to && !allowFromEqualsTo)
+			return false;
+		return true;
+	}
 
 
 }
