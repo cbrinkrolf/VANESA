@@ -27,8 +27,6 @@ public class OptionPanel {
 
 	private SatelliteWindow satelliteWindow;
 	
-	private HierarchyWindow hierarchyWindow;
-
 	private GraphProperties graphProperties;
 
 	// private ElementInformationWindow information;
@@ -41,8 +39,6 @@ public class OptionPanel {
 
 	private JXTaskPane satellite;
 	
-	private JXTaskPane hierarchy;
-
 	//private PetriNetProperties petriNetProperties;
 
 
@@ -125,12 +121,6 @@ public class OptionPanel {
 		satellite.add(satelliteWindow.getSatellitePane());
 		satellite.setCollapsed(true);
 		
-		hierarchy = new JXTaskPane();
-		hierarchy.setTitle("Hierarchy View");
-		hierarchyWindow = new HierarchyWindow();
-		hierarchy.add(hierarchyWindow.getHierarchyPane());
-		hierarchy.setCollapsed(true);
-		
 		//
 		// // init task pane and viz-component
 		pcpview = new JXTaskPane();
@@ -197,7 +187,6 @@ public class OptionPanel {
 			taskPaneContainer.add(pcpview);
 			taskPaneContainer.add(theory);
 			taskPaneContainer.add(satellite);
-			taskPaneContainer.add(hierarchy);
 			taskPaneContainer.add(elements);
 			taskPaneContainer.add(pathways);
 			taskPaneContainer.add(filter);
@@ -237,7 +226,6 @@ public class OptionPanel {
 		tree.removeTree();
 		pathwayTree.removeTree();
 		satelliteWindow.removeAllElements();
-		hierarchyWindow.removeAllElements();
 		PCPWindow.removeAllElements();
 		graphProperties.removeAllElements();
 		elementWindow.removeAllElements();
@@ -258,8 +246,6 @@ public class OptionPanel {
 				 tree.revalidateTree();
 			} else if (element.equals("Satellite")) {
 				satelliteWindow.revalidateSatelliteView();
-			}else if (element.equals("Hierarchy")){
-				hierarchyWindow.revalidateHierarchyView();
 			} else if (element.equals("pcp")) {
 				PCPWindow.revalidateView();
 			} else if (element.equals("element")) {
