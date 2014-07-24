@@ -58,10 +58,7 @@ public class SearchCallback extends UnicastRemoteObject implements ISearchCallba
 					usearch.reactivateUI();
 				}
 			});			
-		}
-		
-		
-		
+		}		
 
 	}
 
