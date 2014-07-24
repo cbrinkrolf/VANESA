@@ -2,14 +2,22 @@ package graph.algorithms;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NavigableMap;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
@@ -941,6 +949,7 @@ public class DenselyConnectedBiclustering {
 		System.out.println("Density: " + density);
 		System.out.println("Homogen Attribut (min.): " + attrdim);
 		
+		findeIntresstingClusters(extended);
 		
 		return extended;
 		
@@ -948,6 +957,97 @@ public class DenselyConnectedBiclustering {
 	
 	
 	
+	/**
+	 * @param extended
+	 */
+	private void findeIntresstingClusters(HashSet<HashSet<Integer>> extended) {
+		
+		
+		TreeMap<Double, HashSet<HashSet<Integer>>> clusterValue = new TreeMap<Double, HashSet<HashSet<Integer>>>();
+		
+		ArrayList<Integer> attrIndices = new ArrayList<Integer>();
+		
+		for(String typ : attrTyps){
+			if(typ.equals(DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE)){
+				attrIndices.add(attrTyps.indexOf(typ));
+			}
+		}
+		
+		
+		for(HashSet<Integer> cluster: extended){
+			double summ = 0;
+			int counter = 0;
+			
+			double value = 0;
+			for(int vertex : cluster){
+				for(int index: attrIndices){
+					summ = summ + attributesArray[0].get(vertex).get(index);
+					counter++;
+				}
+				
+				value = summ/counter;
+			}
+			
+			if(clusterValue.containsKey(value)){
+				clusterValue.get(value).add(cluster);
+			}else{
+				HashSet<HashSet<Integer>> tmp = new HashSet<HashSet<Integer>>();
+				tmp.add(cluster);
+				clusterValue.put(value, tmp);
+			}
+			
+		}
+		
+		ArrayList<Double> sortedValues = new ArrayList<Double>();
+		sortedValues.addAll(clusterValue.keySet());
+		Collections.sort(sortedValues);
+		
+		System.out.println("low expression");
+		for(int i = 0; i < 5; i++){
+		
+			for(HashSet<Integer> cluster : clusterValue.get(sortedValues.get(i))){
+				for(int index : cluster){
+					System.out.print(idBna.get(index).getLabel() + " ");
+				}
+				System.out.print(": " + sortedValues.get(i));
+			}
+			System.out.println();
+		}
+		
+		System.out.println();
+		
+		System.out.println("high expression");
+		for(int i = (sortedValues.size()-1); i >(sortedValues.size()-6); i--){
+		
+			for(HashSet<Integer> cluster : clusterValue.get(sortedValues.get(i))){
+				for(int index : cluster){
+					System.out.print(idBna.get(index).getLabel() + " ");
+				}
+				System.out.print(": " + sortedValues.get(i));
+			}
+			System.out.println();
+		}
+		
+		System.out.println();
+
+		
+	}
+	
+	
+	static <K,V extends Comparable<? super V>>
+	SortedSet<Map.Entry<K,V>> entriesSortedByValues(Map<K,V> map) {
+	    SortedSet<Map.Entry<K,V>> sortedEntries = new TreeSet<Map.Entry<K,V>>(
+	        new Comparator<Map.Entry<K,V>>() {
+	            @Override public int compare(Map.Entry<K,V> e1, Map.Entry<K,V> e2) {
+	                return e1.getValue().compareTo(e2.getValue());
+	            }
+	        }
+	    );
+	    sortedEntries.addAll(map.entrySet());
+	    return sortedEntries;
+	}
+
+
 	private HashMap<Integer, HashSet<Integer>> adjacenciesSingle(){
 			HashMap<Integer, HashSet<Integer>> adjacenciesSingle = new HashMap<Integer, HashSet<Integer>>();
 					
