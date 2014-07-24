@@ -975,25 +975,29 @@ public class DenselyConnectedBiclustering {
 		
 		
 		for(HashSet<Integer> cluster: extended){
-			double summ = 0;
-			int counter = 0;
+			if(cluster.size() >= 4){
 			
-			double value = 0;
-			for(int vertex : cluster){
-				for(int index: attrIndices){
-					summ = summ + attributesArray[0].get(vertex).get(index);
-					counter++;
+				double summ = 0;
+				int counter = 0;
+				
+				double value = 0;
+				for(int vertex : cluster){
+					for(int index: attrIndices){
+						summ = summ + attributesArray[0].get(vertex).get(index);
+						counter++;
+					}
+					
+					value = summ/counter;
 				}
 				
-				value = summ/counter;
-			}
+				if(clusterValue.containsKey(value)){
+					clusterValue.get(value).add(cluster);
+				}else{
+					HashSet<HashSet<Integer>> tmp = new HashSet<HashSet<Integer>>();
+					tmp.add(cluster);
+					clusterValue.put(value, tmp);
+				}
 			
-			if(clusterValue.containsKey(value)){
-				clusterValue.get(value).add(cluster);
-			}else{
-				HashSet<HashSet<Integer>> tmp = new HashSet<HashSet<Integer>>();
-				tmp.add(cluster);
-				clusterValue.put(value, tmp);
 			}
 			
 		}
