@@ -79,6 +79,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	protected GraphMousePlugin rotatingPlugin;
 	protected GraphMousePlugin shearingPlugin;
 	protected GraphMousePlugin editingPlugin;
+	protected GraphMousePlugin hierarchyPlugin;
 
 	private boolean animated = false;
 
@@ -118,6 +119,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 		rotatingPlugin = new RotatingGraphMousePlugin();
 		shearingPlugin = new ShearingGraphMousePlugin();
 		editingPlugin = new MyEditingGraphMousePlugin();
+		hierarchyPlugin = new MyZoomThroughHierarchyGraphMousePlugin();
 
 		add(scalingPlugin);
 		setMode(Mode.EDITING);
@@ -148,6 +150,8 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 				}
 			} else if (mode == Mode.EDITING) {
 				setEditingMode();
+			} else if (mode == Mode.ANNOTATING) {
+				setHierarchyMode();
 			}
 			if (modeBox != null) {
 				modeBox.setSelectedItem(mode);
@@ -163,8 +167,19 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	 * @see
 	 * edu.uci.ics.jung.visualization.control.ModalGraphMouse#setPickingMode()
 	 */
+	
+	protected void setHierarchyMode() {
+		remove(animatedPickingPlugin);
+		remove(translatingPlugin);
+		remove(rotatingPlugin);
+		remove(shearingPlugin);
+		remove(editingPlugin);
+		remove(pickingPlugin);
+		add(hierarchyPlugin);
+	}
 
 	protected void setPickingMode() {
+		remove(hierarchyPlugin);
 		remove(animatedPickingPlugin);
 		remove(translatingPlugin);
 		remove(rotatingPlugin);
@@ -174,6 +189,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	}
 
 	protected void setAnimatedPickingMode() {
+		remove(hierarchyPlugin);
 		remove(translatingPlugin);
 		remove(rotatingPlugin);
 		remove(shearingPlugin);
@@ -189,6 +205,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	 * ()
 	 */
 	protected void setTransformingMode() {
+		remove(hierarchyPlugin);
 		remove(pickingPlugin);
 		remove(animatedPickingPlugin);
 		remove(editingPlugin);
@@ -198,6 +215,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	}
 
 	protected void setEditingMode() {
+		remove(hierarchyPlugin);
 		remove(pickingPlugin);
 		remove(animatedPickingPlugin);
 		remove(translatingPlugin);
@@ -207,6 +225,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	}
 
 	public void disableAll() {
+		remove(hierarchyPlugin);
 		remove(pickingPlugin);
 		remove(animatedPickingPlugin);
 		remove(translatingPlugin);

@@ -1,6 +1,5 @@
 package biologicalElements;
 
-import graph.GraphInstance;
 import graph.filter.FilterSettings;
 import graph.gui.EdgeDeleteDialog;
 import graph.jung.classes.MyGraph;
@@ -9,11 +8,8 @@ import gui.MainWindow;
 import gui.MainWindowSingelton;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,10 +21,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
-
-import javax.swing.JOptionPane;
-
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
@@ -1579,11 +1571,13 @@ public class Pathway implements Cloneable {
 		if (this.hasGraph()) {
 			nodeSet.addAll(getGraph().getAllVertices());
 		}
+		
 		Iterator<BiologicalNodeAbstract> it = nodeSet.iterator();
 		while (it.hasNext()) {
 			BiologicalNodeAbstract node = it.next();
 
 			switch (node.getStateChanged()) {
+			
 			case UNCHANGED:
 				break;
 

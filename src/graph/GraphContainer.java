@@ -135,6 +135,8 @@ public class GraphContainer {
 				g.setMouseModeEditing();
 			}else if (function.equals("add")){
 
+			}else if(function.equals("hierarchy")){
+				g.setMouseModeHierarchy();
 			}
 		}
 	}
