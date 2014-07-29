@@ -1,21 +1,15 @@
 package graph.jung.classes;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D.Double;
-import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +17,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.collections15.Transformer;
@@ -33,7 +26,6 @@ import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Protein;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
@@ -42,7 +34,6 @@ import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -50,13 +41,11 @@ import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.PluggableRenderContext;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.EditingPopupGraphMousePlugin;
-import edu.uci.ics.jung.visualization.control.LayoutScalingControl;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
@@ -150,7 +139,6 @@ public class MyGraph {
 	GraphInstance graphInstance = new GraphInstance();
 	private final VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> visualizationModel;
 	private final AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout;
-	private final HashSet<BiologicalNodeAbstract> set = null;
 	public final HashMap<BiologicalNodeAbstract, Point2D> nodePositions = new HashMap<BiologicalNodeAbstract, Point2D>();
 	private MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
 	private MyEdgeLabelRenderer elr = new MyEdgeLabelRenderer(Color.blue);
@@ -707,7 +695,7 @@ public class MyGraph {
 		graphMouse.setMode(ModalGraphMouse.Mode.EDITING);
 		vv.setGraphMouse(graphMouse);
 	}
-
+	
 	public void setMouseModeSelectRange() {
 		stateV.clear();
 		// stateV.clearPickedEdges();
@@ -1436,6 +1424,16 @@ public class MyGraph {
 	public void setAnimatedPicking(boolean animatedPicking) {
 		this.animatedPicking = animatedPicking;
 		this.setMouseModePick();
+	}
+
+	public void setMouseModeHierarchy() {
+		stateV.clear();
+		// stateV.clearPickedEdges();
+		// stateV.clearPickedVertices();
+		vv.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+		graphMouse.setMode(ModalGraphMouse.Mode.ANNOTATING);
+		vv.setGraphMouse(graphMouse);
+		
 	}
 
 }
