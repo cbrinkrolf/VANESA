@@ -349,6 +349,13 @@ public class ToolBarListener implements ActionListener {
 		}
 		else if("newWindow".equals(event)){
 			MainWindowSingelton.getInstance().addView();
+		} 
+		else if("hierarchy".equals(event)){
+			if (con.containsPathway()) {
+				con.changeMouseFunction("hierarchy");
+				MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
+				g.disableGraphTheory();
+			}
 		}
 		else if("mergeSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){

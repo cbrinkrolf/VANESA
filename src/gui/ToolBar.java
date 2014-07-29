@@ -62,6 +62,11 @@ public class ToolBar {
 		pick.setToolTipText("Pick element");
 		pick.setActionCommand("pick");
 		pick.addActionListener(toolBarListener);
+		
+		JButton hierarchy = new JButton("Hierarchy");
+		hierarchy.setToolTipText("Zoom through hierarchy");
+		hierarchy.setActionCommand("hierarchy");
+		hierarchy.addActionListener(toolBarListener);
 
 		JButton discretePlace = new JButton(new ImageIcon(
 				imagePath.getPath("discretePlace.png")));
@@ -296,6 +301,7 @@ public class ToolBar {
 		editControls.add(pick);
 		editControls.add(move);
 		editControls.add(trash);
+		editControls.add(hierarchy);
 
 		JPanel printControls = new JPanel();
 		printControls.setLayout(new GridLayout(2, 2));

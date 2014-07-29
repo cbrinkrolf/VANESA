@@ -1,6 +1,5 @@
 package biologicalObjects.nodes;
 
-import edu.uci.ics.jung.graph.util.Pair;
 import graph.GraphInstance;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
@@ -8,13 +7,9 @@ import graph.jung.graphDrawing.VertexShapes;
 
 import java.awt.Color;
 import java.awt.Shape;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Vector;
@@ -22,7 +17,6 @@ import java.util.Vector;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import petriNet.Place;
-import sun.security.action.GetLongAction;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import biologicalElements.Elementdeclerations;
@@ -134,7 +128,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<BiologicalEdgeAbstract>();
 
 	private Pathway rootNode;
-
+	
 	private NodeStateChanged state = NodeStateChanged.UNCHANGED;
 
 	public void setStateChanged(NodeStateChanged state) {
@@ -275,7 +269,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				}
 			}
 		}
-		// TOBI: Check for continuous nodes in vertices(!) to clone this object.
 		return testBorder.iterator().next();
 	}
 
@@ -312,8 +305,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				node.setStateChanged(NodeStateChanged.COARSED);
 			}
 		}
-		
-		Shape coarseShape = shapes.makeCoarse(shape);
+		Shape coarseShape = shape;
+		if(!isPetriNet()){
+			coarseShape = shapes.getEllipse();
+		}
+		coarseShape = shapes.makeCoarse(coarseShape);
 		setDefaultShape(coarseShape);
 		setShape(coarseShape);
 		
@@ -1125,6 +1121,56 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			return false;
 		}
 		return true;
+	}
+	
+	public void showSubPathway(){
+		if(!isCoarseNode()){
+			return;
+		}
+		Pathway currentGraph = new GraphInstance().getPathway();
+		currentGraph.removeElement(this);
+		for(BiologicalNodeAbstract node : getInnerNodes()){
+			currentGraph.addVertex(node, this.getGraph().getVertexLocation(node));
+			node.setHidden(true);
+		}
+		for(BiologicalEdgeAbstract edge : getConnectingEdges()){
+			BiologicalEdgeAbstract e = edge.clone();
+			e.setTo(e.getTo().getCurrentShownParentNode(currentGraph.getGraph()));
+			e.setFrom(e.getFrom().getCurrentShownParentNode(currentGraph.getGraph()));
+			if(e.isValid(false)){
+				currentGraph.addEdge(e);
+			}
+		}
+		for(BiologicalEdgeAbstract edge : getAllEdges()){
+			if(!environment.contains(edge.getTo()) && !environment.contains(edge.getFrom())){
+				currentGraph.addEdge(edge);
+			}
+		}
+	}
+	
+	public void hideSubPathway(){
+		Pathway currentGraph = new GraphInstance().getPathway();
+		if(!isCoarseNode() | currentGraph == this){
+			return;
+		}
+		if(!getBorder().isEmpty()){
+			currentGraph.addVertex(this, currentGraph.getGraph().getVertexLocation(getBorder().iterator().next()));
+		} else {
+			currentGraph.addVertex(this, currentGraph.getGraph().getVertexLocation(getInnerNodes().iterator().next()));
+		}
+		for(BiologicalNodeAbstract node : getInnerNodes()){
+			node.hideSubPathway();
+			node.setHidden(false);
+			currentGraph.removeElement(node);
+		}
+		for(BiologicalEdgeAbstract edge : getConnectingEdges()){
+			BiologicalEdgeAbstract e = edge.clone();
+			e.setTo(e.getTo().getCurrentShownParentNode(currentGraph.getGraph()));
+			e.setFrom(e.getFrom().getCurrentShownParentNode(currentGraph.getGraph()));
+			if(e.isValid(false)){
+				currentGraph.addEdge(e);
+			}
+		}
 	}
 
 }
