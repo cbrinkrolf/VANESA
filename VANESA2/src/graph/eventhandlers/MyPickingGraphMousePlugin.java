@@ -3,10 +3,13 @@ package graph.eventhandlers;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
+
+import javax.swing.JOptionPane;
 
 import miscalleanous.internet.FollowLink;
 import biologicalElements.Elementdeclerations;
@@ -22,6 +25,7 @@ import edu.uci.ics.jung.visualization.control.AnimatedPickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
+import gui.MainWindowSingelton;
 
 public class MyPickingGraphMousePlugin extends
 		PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
@@ -41,6 +45,15 @@ public class MyPickingGraphMousePlugin extends
 				.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e
 						.getPoint().getY());
 		if(vertex!=null && vertex.isCoarseNode() && !selectedNodes.contains(vertex)){
+			if(graphInstance.getPathway().isBNA()){
+				if(((BiologicalNodeAbstract)graphInstance.getPathway()).getEnvironment().contains(vertex)){
+					JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), 
+							"Not possible to add nodes to environment nodes.", 
+							"Coarse node integration Error!", JOptionPane.ERROR_MESSAGE);
+					super.mouseReleased(e);
+					return;
+				}
+			}
 			coarseNodeFusion(vertex);
 		}
 		super.mouseReleased(e);
