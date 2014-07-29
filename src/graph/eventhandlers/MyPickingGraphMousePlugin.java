@@ -2,13 +2,18 @@ package graph.eventhandlers;
 
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Vector;
 
 import miscalleanous.internet.FollowLink;
 import biologicalElements.Elementdeclerations;
+import biologicalElements.NodeStateChanged;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -16,6 +21,7 @@ import edu.uci.ics.jung.visualization.control.AnimatedPickingGraphMousePlugin;
 //import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import graph.GraphInstance;
+import graph.jung.classes.MyGraph;
 
 public class MyPickingGraphMousePlugin extends
 		PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
@@ -23,9 +29,35 @@ public class MyPickingGraphMousePlugin extends
 	private GraphInstance graphInstance = new GraphInstance();
 
 	public void mouseReleased(MouseEvent e) {
+		final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
+				.getSource();
+		final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
+				.inverseTransform(e.getPoint());
+		GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv
+				.getPickSupport();
+		BiologicalNodeAbstract vertex = null;
+		Collection<BiologicalNodeAbstract> selectedNodes = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked();
+		vertex = (BiologicalNodeAbstract) pickSupport
+				.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e
+						.getPoint().getY());
+		if(vertex!=null && vertex.isCoarseNode() && !selectedNodes.contains(vertex)){
+			coarseNodeFusion(vertex);
+		}
 		super.mouseReleased(e);
+
 	}
 
+	public void coarseNodeFusion(BiologicalNodeAbstract vertex){
+		Set<BiologicalNodeAbstract> selection = new HashSet<BiologicalNodeAbstract>();
+		selection.addAll(GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+		Set<BiologicalNodeAbstract> coarseNodes = new HashSet<BiologicalNodeAbstract>();
+		coarseNodes.addAll(selection);
+		coarseNodes.addAll(vertex.getInnerNodes());
+		vertex.flat();
+		if(vertex.computeCoarseType(coarseNodes)!=null){
+			vertex.coarse(coarseNodes);
+		}
+	}
 	// Iterator it = graphInstance.getMyGraph().getAllvertices().iterator();
 	// Iterator it = graphInstance.getMyGraph().getAllEdges().iterator();
 	// while(it.hasNext()){
