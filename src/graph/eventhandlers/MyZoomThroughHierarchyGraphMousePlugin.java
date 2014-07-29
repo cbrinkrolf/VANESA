@@ -107,17 +107,24 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 					vertex.getParentNode().hideSubPathway();
 				}
 			} else {
-				Set<BiologicalNodeAbstract> parentNodes = new HashSet<BiologicalNodeAbstract>();
-				for(BiologicalNodeAbstract node : pw.getAllNodes()){
-					if(node.getParentNode()!=null){
-						parentNodes.add(node.getParentNode());
-					}
-				}
-				for(BiologicalNodeAbstract node : parentNodes){
-					node.hideSubPathway();
-				}
+				hideAllSubpathways();
 			}
 			vv.repaint();
+		}
+	}
+	
+	public void hideAllSubpathways(){
+		if(pw==null){
+			return;
+		}
+		Set<BiologicalNodeAbstract> parentNodes = new HashSet<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract node : pw.getAllNodes()){
+			if(node.getParentNode()!=null){
+				parentNodes.add(node.getParentNode());
+			}
+		}
+		for(BiologicalNodeAbstract node : parentNodes){
+			node.hideSubPathway();
 		}
 	}
 

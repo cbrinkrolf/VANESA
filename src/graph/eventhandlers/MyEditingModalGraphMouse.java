@@ -179,6 +179,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	}
 
 	protected void setPickingMode() {
+		((MyZoomThroughHierarchyGraphMousePlugin) hierarchyPlugin).hideAllSubpathways();
 		remove(hierarchyPlugin);
 		remove(animatedPickingPlugin);
 		remove(translatingPlugin);

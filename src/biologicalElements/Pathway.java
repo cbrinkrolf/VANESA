@@ -1682,6 +1682,7 @@ public class Pathway implements Cloneable {
 		addEdgesToPathway(edgeSet);
 		if(isRootPathway()){
 			markPathwayUnchanged();
+			MainWindowSingelton.getInstance().updateElementTree();
 		}
 	}
 	
