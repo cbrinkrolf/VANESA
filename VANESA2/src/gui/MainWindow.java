@@ -18,7 +18,10 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -424,7 +427,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 	
 	public void removeTab(boolean ask, TitledTab remove, Pathway pw){
-		if (tabbedPanels.get(getSelectedView()).getTabCount() == 1) {
+		if (tabbedPanels.get(getSelectedView()).getTabCount() == 1 && con.getAllPathways().contains(pw)) {
 			addedtabs = 0;
 			myMenu.disableCloseAndSaveFunctions();
 			optionPanel.removeAllElements();
@@ -455,6 +458,13 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		}
 		con.removePathway(remove.getText());
 		tabbedPanels.get(getSelectedView()).removeTab(remove);
+		Set<Pathway> subPathways = new HashSet<Pathway>(); 
+		subPathways.addAll(con.getAllPathways());
+		for(Pathway subPathway : subPathways){
+			if(subPathway.getRootPathway()==pw){
+				removeTab(false, subPathway.getTab().getTitelTab(), subPathway);
+			}
+		}
 	}
 
 	public void setSelectedTab(TitledTab tab) {
@@ -553,7 +563,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void updateOptionPanel() {
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
-		//optionPanel.updatePanel("Hierarchy");
 		optionPanel.updatePanel("Filter");
 		optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
@@ -565,7 +574,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// System.out.println("update all");
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
-		//optionPanel.updatePanel("Hierarchy");
 		optionPanel.updatePanel("Filter");
 		optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
