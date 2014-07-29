@@ -4,6 +4,7 @@ import gui.MainWindow;
 
 import java.awt.Cursor;
 
+import net.infonode.tabbedpanel.Tab;
 import net.infonode.tabbedpanel.TabDragEvent;
 import net.infonode.tabbedpanel.TabEvent;
 import net.infonode.tabbedpanel.TabListener;
@@ -61,7 +62,7 @@ public class GraphTabListener implements TabListener {
 	}
 
 	public void tabDeselected(TabStateChangedEvent event) {
-
+		
 	}
 
 	public void tabHighlighted(TabStateChangedEvent event) {
