@@ -489,6 +489,8 @@ public class MyGraph {
 		Point2D p = new Point.Double(xPos, yPos);
 		// nodePositions.setLocation(vertex, vv.getRenderContext()
 		// .getMultiLayerTransformer().inverseTransform(p));
+//		this.nodePositions.remove(vertex);
+//		this.nodePositions.put(vertex, p);
 		layout.setLocation(vertex, p);
 	}
 
