@@ -29,7 +29,10 @@ import javax.swing.JScrollPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYSeries;
@@ -105,9 +108,42 @@ public class PlotsPanel extends JPanel implements ActionListener {
 			 * = -1; } } } }
 			 */
 
+			Double value;
+
+			double min = Double.MAX_VALUE;
+			double max = Double.MIN_VALUE;
+
+			for (int j = 0; j < rows; j++) {
+				place = places.get(labels.get(j));
+				if (place.getPetriNetSimulationData().size() > 0) {
+					// final XYSeriesCollection dataset = new
+					// XYSeriesCollection();
+					// XYSeries series = new XYSeries(1);
+					for (int i = 0; i < cols; i++) {
+						// System.out.println(j + " " + i);
+						// System.out.println("test: " + table[j][i + 1]);
+						// value = place.getPetriNetSimulationData().get(i);
+
+						if (place.getPetriNetSimulationData().size() > i) {
+							value = place.getPetriNetSimulationData().get(i);
+						} else {
+							value = 0.0;
+						}
+
+						// value = Double.parseDouble(table[j][i +
+						// 1].toString());
+						if (value < min) {
+							min = value;
+						}
+						if (value > max) {
+							max = value;
+						}
+					}
+				}
+			}
+
 			p.setLayout(new GridLayout(0, 3));
 
-			Double value;
 			for (int j = 0; j < rows; j++) {
 				place = places.get(labels.get(j));
 				if (place.getPetriNetSimulationData().size() > 0) {
@@ -138,6 +174,13 @@ public class PlotsPanel extends JPanel implements ActionListener {
 					chart.addSubtitle(new TextTitle("StartToken="
 							+ place.getPetriNetSimulationData().get(0)
 									.toString()));
+					// NumberAxis yAxis = new NumberAxis();
+					// xAxis.setTickUnit(new NumberTickUnit(2));
+					// xAxis.setRange(0, 50);
+					// Assign it to the chart
+					NumberAxis range = (NumberAxis) chart.getXYPlot()
+							.getRangeAxis();
+					range.setRange(min, max);
 					ChartPanel pane = new ChartPanel(chart);
 					pane.setPreferredSize(new java.awt.Dimension(320, 200));
 					renderer.setSeriesPaint(j, Color.BLACK);
