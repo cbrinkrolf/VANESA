@@ -9,6 +9,7 @@ import gui.MainWindowSingelton;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,7 @@ public class PetriNetSimulation {
 
 		if (omc) {
 			this.runOMC();
+			//this.runOMCIA();
 		} else {
 			this.runDymola();
 		}
@@ -114,7 +116,8 @@ public class PetriNetSimulation {
 
 				MOoutput mo = new MOoutput(new File(pathSim + "simulation.mo"),
 						graphInstance.getPathway());
-				HashMap<BiologicalEdgeAbstract, String> bea2key = mo.getBea2resultkey();
+				HashMap<BiologicalEdgeAbstract, String> bea2key = mo
+						.getBea2resultkey();
 				//
 				FileWriter fstream = new FileWriter(pathSim + "simulation.mos");
 				BufferedWriter out = new BufferedWriter(fstream);
@@ -125,16 +128,15 @@ public class PetriNetSimulation {
 				out.write("getErrorString();\r\n");
 				out.write("loadFile(\"simulation.mo\");\r\n");
 				out.write("getErrorString();\r\n");
-				out.write("simulate(simulation, stopTime="
-						+ stopTime
-						+ ", method=\"euler\", numberOfIntervals="
-						+ intervals
+				out.write("simulate(simulation, stopTime=" + stopTime
+						+ ", method=\"euler\", numberOfIntervals=" + intervals
 						// only places
-						//+ ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
-				+ ", outputFormat=\"csv\");\r\n");
+						// +
+						// ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
+						+ ", outputFormat=\"csv\");\r\n");
 				out.write("getErrorString();\r\n");
-				//variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
-				
+				// variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
+
 				// out.write("fileName=\"simulate.mat\";\r\n");
 				// out.write("CSVfile=\"simulate.csv\";\r\n");
 				// out.write("n=readTrajectorySize(fileName);\r\n");
@@ -151,13 +153,11 @@ public class PetriNetSimulation {
 				zstVorher = System.currentTimeMillis();
 
 				String bin = null;
-				
-				if(SystemUtils.IS_OS_WINDOWS){
-					bin = pathCompiler
-							+ "bin"+File.separator+"omc.exe";
-				}else{
-					bin = pathCompiler
-							+ "bin"+File.separator+"omc";
+
+				if (SystemUtils.IS_OS_WINDOWS) {
+					bin = pathCompiler + "bin" + File.separator + "omc.exe";
+				} else {
+					bin = pathCompiler + "bin" + File.separator + "omc";
 				}
 				final Process p = new ProcessBuilder(bin, pathSim
 						+ "simulation.mos").start();
@@ -195,6 +195,238 @@ public class PetriNetSimulation {
 					petrinet.setPetriNetSimulationFile(pathSim
 							+ "simulation_res.csv", true);
 					petrinet.initializePetriNet(bea2key);
+				} else
+					throw new Exception();
+			} catch (Exception e) {
+				e.printStackTrace();
+				JOptionPane
+						.showMessageDialog(
+								MainWindowSingelton.getInstance(),
+								"Something went wrong. The model couldn't be simulated!",
+								"Error occured...", JOptionPane.ERROR_MESSAGE);
+				w.setLockedPane(false);
+				return;
+			}
+			w.setLockedPane(false);
+			JOptionPane
+					.showMessageDialog(
+							w,
+							"Simulation is completed. Select one or more places and click on Petri Net Simulation in the left toolbar to visualize and animate the results!",
+							"Simulation done...",
+							JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(w,
+					"Environment variable OPENMODELICAHOME not found.",
+					"OPENMODELICA not found...", JOptionPane.QUESTION_MESSAGE);
+			w.setLockedPane(false);
+		}
+	}
+
+	private void runOMCIA() {
+		GraphInstance graphInstance = new GraphInstance();
+		GraphContainer con = ContainerSingelton.getInstance();
+		MainWindow w = MainWindowSingelton.getInstance();
+		w.setLockedPane(true);
+		Map<String, String> env = System.getenv();
+
+		if (SystemUtils.IS_OS_WINDOWS) {
+			pathWorkingDirectory = env.get("APPDATA");
+		} else {
+			pathWorkingDirectory = env.get("HOME");
+		}
+
+		if (env.containsKey("OPENMODELICAHOME")
+				&& new File(env.get("OPENMODELICAHOME")).isDirectory()) {
+			pathCompiler = env.get("OPENMODELICAHOME");
+
+			try {
+
+				String stopTime = JOptionPane
+						.showInputDialog("Stop Time", "20");
+				String intervals = JOptionPane.showInputDialog("Intervals",
+						"20");
+				// this.path = "C:\\OpenModelica1.9.1Nightly\\";
+
+				if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
+					pathCompiler += File.separator;
+				}
+				if (pathWorkingDirectory
+						.charAt(pathWorkingDirectory.length() - 1) != File.separatorChar) {
+					pathWorkingDirectory += File.separator;
+				}
+
+				pathWorkingDirectory += "vanesa" + File.separator;
+
+				File dir = new File(pathWorkingDirectory);
+
+				if (!dir.isDirectory()) {
+					dir.mkdir();
+				}
+
+				pathSim = pathWorkingDirectory + "simulation" + File.separator;
+				File dirSim = new File(pathSim);
+				if (dirSim.isDirectory()) {
+					FileUtils.cleanDirectory(dirSim);
+				} else {
+					new File(pathSim).mkdir();
+				}
+
+				boolean abort = false;
+				String missing = "";
+				if (!new File(pathWorkingDirectory + "PNlib.mo").exists()) {
+					abort = true;
+					missing += "PNlib.mo\n in " + pathWorkingDirectory;
+				}
+				/*
+				 * if (!new File(path + "dsmodel.c").exists()) { abort = true;
+				 * missing += "dsmodel.c\n"; } if (!new File(path +
+				 * "myrandom.c").exists()) { abort = true; missing +=
+				 * "myrandom.c\n"; }
+				 */
+				if (abort) {
+					JOptionPane
+							.showMessageDialog(
+									w,
+									"Following files which are required for simulation are missing in the dymola folder:\n"
+											+ missing, "Simulation aborted...",
+									JOptionPane.ERROR_MESSAGE);
+					w.setLockedPane(false);
+					return;
+				}
+
+				MOoutput mo = new MOoutput(new File(pathSim + "simulation.mo"),
+						graphInstance.getPathway());
+				HashMap<BiologicalEdgeAbstract, String> bea2key = mo
+						.getBea2resultkey();
+				//
+				FileWriter fstream = new FileWriter(pathSim + "simulation.mos");
+				BufferedWriter out = new BufferedWriter(fstream);
+				String path2 = pathSim.replace('\\', '/');
+				out.write("cd(\"" + path2 + "\");\r\n");
+				out.write("getErrorString();\r\n");
+				out.write("loadFile(\"../PNlib.mo\");\r\n");
+				out.write("getErrorString();\r\n");
+				out.write("loadFile(\"simulation.mo\");\r\n");
+				out.write("getErrorString();\r\n");
+				out.write("buildModel(simulation, stopTime=" + stopTime
+						+ ", method=\"euler\", numberOfIntervals=" + intervals
+						// only places
+						// +
+						// ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
+						+ ", outputFormat=\"csv\");\r\n");
+				out.write("getErrorString();\r\n");
+				// variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
+
+				// out.write("fileName=\"simulate.mat\";\r\n");
+				// out.write("CSVfile=\"simulate.csv\";\r\n");
+				// out.write("n=readTrajectorySize(fileName);\r\n");
+				// out.write("names = readTrajectoryNames(fileName);\r\n");
+				// out.write("traj=readTrajectory(fileName,names,n);\r\n");
+				// out.write("traj_transposed=transpose(traj);\r\n");
+				// out.write("DataFiles.writeCSVmatrix(CSVfile, names, traj_transposed);\r\n");
+				// out.write("exit();\r\n");
+				out.close();
+				stopped = false;
+				long zstVorher;
+				long zstNachher;
+
+				// simT.run();
+
+				zstVorher = System.currentTimeMillis();
+
+				String bin = null;
+
+				if (SystemUtils.IS_OS_WINDOWS) {
+					bin = pathCompiler + "bin" + File.separator + "omc.exe";
+				} else {
+					bin = pathCompiler + "bin" + File.separator + "omc";
+				}
+				final Process p = new ProcessBuilder(bin, pathSim
+						+ "simulation.mos").start();
+
+				// simulation.exe -override=outputFormat=ia -port=11111
+				// -lv=LOG_STATS
+
+				fstream = new FileWriter(pathSim + "simulation.bat");
+				out = new BufferedWriter(fstream);
+				path2 = pathSim.replace('\\', '/');
+				out.write("c:\r\n");
+				out.write("cd " + pathSim + "\r\n");
+				out.write("simulation.exe -override=outputFormat=ia -port=11111 -lv=LOG_STATS\r\n");
+				out.write("exit\r\n");
+				// out.write("loadFile(\"../PNlib.mo\");\r\n");
+				// out.write("getErrorString();\r\n");
+				// out.write("loadFile(\"simulation.mo\");\r\n");
+				// out.write("getErrorString();\r\n");
+				// out.write("buildModel(simulation, stopTime=" + stopTime
+				// + ", method=\"euler\", numberOfIntervals=" + intervals
+				// only places
+				// +
+				// ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
+				// + ", outputFormat=\"csv\");\r\n");
+				// out.write("getErrorString();\r\n");
+				// variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
+
+				// out.write("fileName=\"simulate.mat\";\r\n");
+				// out.write("CSVfile=\"simulate.csv\";\r\n");
+				// out.write("n=readTrajectorySize(fileName);\r\n");
+				// out.write("names = readTrajectoryNames(fileName);\r\n");
+				// out.write("traj=readTrajectory(fileName,names,n);\r\n");
+				// out.write("traj_transposed=transpose(traj);\r\n");
+				// out.write("DataFiles.writeCSVmatrix(CSVfile, names, traj_transposed);\r\n");
+				// out.write("exit();\r\n");
+				out.close();
+
+				Server s = new Server();
+
+				s.test();
+
+				// System.out.println(s);
+
+				Thread t = new Thread() {
+					public void run() {
+						long totalTime = 120000;
+						try {
+							for (long t = 0; t < totalTime; t += 1000) {
+								sleep(1000);
+							}
+							p.destroy();
+							stopped = true;
+						} catch (Exception e) {
+						}
+					}
+				};
+				t.start();
+				p.waitFor();
+				try {
+					t.stop();
+				} catch (Exception e) {
+				}
+				System.out.println("building ended");
+				System.out.println("ps:" + pathSim);
+				// final Process pSim = new
+				// ProcessBuilder("cmd.exe","/c",pathSim+"simulation.bat").start();
+				// final Process pSim = new
+				// ProcessBuilder(pathSim+"simulation.exe","-override=outputFormat=ia","-port=11111","-lv=LOG_STATS").start();
+
+				Runtime.getRuntime().exec(
+						"cmd /q/c start " + pathSim + "simulation.bat");
+				System.out.println("drin");
+
+				zstNachher = System.currentTimeMillis();
+				System.out.println("Zeit benoetigt: "
+						+ ((zstNachher - zstVorher) / 1000) + " sec");
+				System.out.println("Zeit benoetigt: "
+						+ ((zstNachher - zstVorher)) + " millisec");
+				if (con.containsPathway()
+						&& graphInstance.getPathway().hasGotAtLeastOneElement()
+						&& !stopped) {
+					graphInstance.getPathway().setPetriNet(true);
+					PetriNet petrinet = graphInstance.getPathway()
+							.getPetriNet();
+					// petrinet.setPetriNetSimulationFile(pathSim
+					// + "simulation_res.csv", true);
+					// petrinet.initializePetriNet(bea2key);
 				} else
 					throw new Exception();
 			} catch (Exception e) {
