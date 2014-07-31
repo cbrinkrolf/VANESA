@@ -139,6 +139,8 @@ public class Pathway implements Cloneable {
 	private Pathway parent;
 
 	private SortedSet<Integer> ids = new TreeSet<Integer>();
+	
+	private Set<BiologicalNodeAbstract> openedSubPathways = new HashSet<BiologicalNodeAbstract>();
 
 	// ---Functional Methods---
 
@@ -1569,6 +1571,7 @@ public class Pathway implements Cloneable {
 		// go through all nodes in the current Pathway
 		Set<BiologicalNodeAbstract> nodeSet = new HashSet<BiologicalNodeAbstract>();
 		if (this.hasGraph()) {
+			nodeSet.addAll(openedSubPathways);
 			nodeSet.addAll(getGraph().getAllVertices());
 		}
 		
@@ -1731,6 +1734,18 @@ public class Pathway implements Cloneable {
 				node.markPathwayUnchanged();
 			}
 		}
+	}
+	
+	public void addToOpenedSubPathways(BiologicalNodeAbstract subpathway){
+		openedSubPathways.add(subpathway);
+	}
+	
+	public void removeFromOpenedSubPathways(BiologicalNodeAbstract subpathway){
+		openedSubPathways.remove(subpathway);
+	}
+	
+	public Set<BiologicalNodeAbstract> getOpenedSubPathways(){
+		return openedSubPathways;
 	}
 
 }

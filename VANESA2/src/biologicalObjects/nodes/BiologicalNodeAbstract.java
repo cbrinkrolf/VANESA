@@ -10,6 +10,7 @@ import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Vector;
@@ -269,6 +270,20 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				}
 			}
 		}
+		Iterator<BiologicalNodeAbstract> it = vertices.iterator();
+		BiologicalNodeAbstract currentPathwayNode = null;
+		if(new GraphInstance().getPathway().isBNA()){
+			currentPathwayNode = (BiologicalNodeAbstract) new GraphInstance().getPathway();
+		}
+		while(it.hasNext()){
+			BiologicalNodeAbstract nd1 = it.next();
+			if(nd1.getParentNode()!=null && nd1.getParentNode().getGraph()!=getActiveGraph()){
+				return null;
+			}
+			if(currentPathwayNode!=null && currentPathwayNode.getEnvironment().contains(nd1)){
+				return null;
+			}
+		}
 		return testBorder.iterator().next();
 	}
 
@@ -454,6 +469,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		// Stop if node is not a coarse node.
 		if (getAllNodes().size() <= 0)
 			return;
+		
+		if(this.getParentNode()!=null && this.getParentNode().getGraph()!=getActiveGraph()){
+			return;
+		}
+
 
 		// Delete Parent node.
 		for(BiologicalNodeAbstract node : getInnerNodes()){
@@ -1146,6 +1166,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				currentGraph.addEdge(edge);
 			}
 		}
+		if(getParentNode()!=null){
+			getParentNode().addToOpenedSubPathways(this);
+		} else {
+			getRootPathway().addToOpenedSubPathways(this);
+		}
 	}
 	
 	public void hideSubPathway(){
@@ -1170,6 +1195,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			if(e.isValid(false)){
 				currentGraph.addEdge(e);
 			}
+		}
+		if(getParentNode()!=null){
+			getParentNode().removeFromOpenedSubPathways(this);
+		} else {
+			getRootPathway().removeFromOpenedSubPathways(this);
 		}
 	}
 

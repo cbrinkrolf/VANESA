@@ -99,7 +99,9 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 			vertex = (BiologicalNodeAbstract) pickSupport
 					.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e
 							.getPoint().getY());
-
+			if(pw.isBNA() && ((BiologicalNodeAbstract) pw).getEnvironment().contains(vertex)){
+				return;
+			}
 			if (vertex != null) {
 				if(vertex.isCoarseNode()){
 					vertex.showSubPathway();
@@ -114,16 +116,25 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	}
 	
 	public void hideAllSubpathways(){
-		if(pw==null){
+		if(pw==null || pw!=new GraphInstance().getPathway()){
 			return;
 		}
 		Set<BiologicalNodeAbstract> parentNodes = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : pw.getAllNodes()){
+		Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
+		if(pw.isBNA()){
+			innerNodes.addAll(((BiologicalNodeAbstract) pw).getInnerNodes());
+		} else {
+			innerNodes.addAll(pw.getAllNodes());
+		}
+		for(BiologicalNodeAbstract node : innerNodes){
 			if(node.getParentNode()!=null){
 				parentNodes.add(node.getParentNode());
 			}
 		}
 		for(BiologicalNodeAbstract node : parentNodes){
+			if(node.getParentNode()!=null && node.getParentNode().getCurrentShownParentNode(pw.getGraph())!=null){
+				continue;
+			}
 			node.hideSubPathway();
 		}
 	}
