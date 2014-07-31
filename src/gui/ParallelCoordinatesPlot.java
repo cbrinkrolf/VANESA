@@ -15,6 +15,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -26,6 +28,9 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
+
+import javafx.geometry.Rectangle2D;
+import javafx.scene.shape.Rectangle;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -65,6 +70,7 @@ import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.labels.XYSeriesLabelGenerator;
 import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
@@ -74,6 +80,9 @@ import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+
+import com.sun.javafx.geom.Line2D;
+import com.sun.javafx.geom.Point2D;
 
 import cern.colt.list.IntArrayList;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
@@ -119,6 +128,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private JPanel main = new JPanel();
 	private JPanel controlPanel;
 	private JFreeChart chart;
+	private ValueMarker marker;
 	private JDialog dialog;
 	private GraphInstance graphInstance = null;
 	private Pathway pw = null;
@@ -639,7 +649,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				secondAxis = true;
 				PNEdge edge = (PNEdge) bea;
 
-				if (edge.getSim_tokensSum() != null && edge.getSim_tokensSum().size() > 0) {
+				if (edge.getSim_tokensSum() != null
+						&& edge.getSim_tokensSum().size() > 0) {
 					series.add(new XYSeries(0));
 					series.add(new XYSeries(1));
 					for (int i = 0; i < rowsDim; i++) {
@@ -805,13 +816,17 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			plot.setRenderer(0, renderer);
 			NumberAxis domainAxis = new NumberAxis("Time");
 			plot.setDomainAxis(domainAxis);
-			plot.setRangeAxis(new NumberAxis("Sum of tokens"));
+			NumberAxis na = new NumberAxis("Sum of tokens");
+
+			plot.setRangeAxis(na);
 
 			// XYDataset dataset2 = getDataset2();
 			plot.setDataset(1, dataset2);
 			plot.setRenderer(1, renderer2);
 			NumberAxis axis = new NumberAxis("Tokens");
-
+			axis.setAxisLinePaint(Color.RED);
+			axis.setLabelPaint(Color.RED);
+			axis.setTickLabelPaint(Color.RED);
 			//
 			plot.setRangeAxis(1, axis);
 
@@ -1024,16 +1039,29 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			else if (e.getSource().equals(animationSpeed))
 				animationSpeedInit = (Integer) animationSpeed.getValue();
 			else {
+				// System.out.println("");
 
+				// chart.draw(Graphics2D().drawLine(0,0, 20, 20), new
+				// Rectangle2D(0, 0, 50, 50));
 				// System.out.println(pw.getPetriNet().getPnResult().get("time").size());
 				pw.getPetriNet().setCurrentTimeStep(this.slider.getValue() - 1);
 				slider.setToolTipText("Time: " + this.slider.getValue());
-				stepLabel
-						.setText("Time: "
-								+ (double) Math.round((pw.getPetriNet()
-										.getPnResult().get("time")
-										.get(this.slider.getValue() - 1) * 100))
-								/ 100);
+				double step = pw.getPetriNet().getPnResult().get("time")
+						.get(this.slider.getValue() - 1);
+				stepLabel.setText("Time: " + (double) Math.round((step * 100))
+						/ 100);
+
+				XYPlot plot = (XYPlot) chart.getPlot();
+				plot.removeDomainMarker(marker);
+
+				marker = new ValueMarker(step); // position is the value on the
+												// axis
+				marker.setPaint(Color.black);
+				// marker.setLabel("here"); // see JavaDoc for labels, colors,
+				// strokes
+
+				plot.addDomainMarker(marker);
+
 				// create node color set
 				// 0 -> blue -> lower expression
 				// 1 -> red -> higher expression
