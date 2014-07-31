@@ -31,7 +31,7 @@ public class MyPickingGraphMousePlugin extends
 
 	
 	public void mouseReleased(MouseEvent e) {
-		
+
 		// If mouse was released to change the selection, save vertex positions and return.
 		if(!oldVertexPositions.keySet().containsAll(graphInstance.getPathway().getSelectedNodes()) ||
 				oldVertexPositions.keySet().size()!=graphInstance.getPathway().getSelectedNodes().size()){
@@ -97,7 +97,6 @@ public class MyPickingGraphMousePlugin extends
 		if(vertex.computeCoarseType(coarseNodes)!=null){
 			vertex.coarse(coarseNodes);
 			for(BiologicalNodeAbstract node : selection){
-				System.out.println(oldVertexPositions.size());
 				vertex.getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), oldVertexPositions.get(node).getY());
 			}
 		}
