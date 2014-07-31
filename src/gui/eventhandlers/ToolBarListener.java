@@ -322,7 +322,7 @@ public class ToolBarListener implements ActionListener {
 					node.flat();
 					MainWindowSingelton.getInstance().removeTab(false, node.getTab().getTitelTab(), node);
 				}
-				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
+				new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{
 				System.out.println("No Graph exists!");
 				}
