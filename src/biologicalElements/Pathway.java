@@ -22,6 +22,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import org.junit.internal.matchers.IsCollectionContaining;
+
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.PNEdge;
@@ -839,7 +841,9 @@ public class Pathway implements Cloneable {
 			edges.addAll(getAllEdges());
 			for(BiologicalEdgeAbstract e : edges){
 				if(e.getFrom()==currentFrom && e.getTo()==currentTo){
-					removeEdge(e, true);
+					if(edgeGrade(e)<2){
+						removeEdge(e, true);
+					} 
 				}
 			}
 			if(isBNA()){
@@ -854,9 +858,8 @@ public class Pathway implements Cloneable {
 			}
 			
 			thisNode.removeConnectingEdge(edge);
-			thisNode.updateEnvironmentConnections();
-			thisNode.removeUnconnectedEnvironmentNodes();
-			thisNode.cleanUpBorder();
+			thisNode.updateBorder();
+			thisNode.updateEnvironment();
 			
 			currentFrom.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
 			currentTo.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
@@ -868,6 +871,17 @@ public class Pathway implements Cloneable {
 				currentTo.deleteSubEdge(edge);
 			}
 		}
+	}
+	
+	public int edgeGrade(BiologicalEdgeAbstract edge){
+		int grade = 0;
+		Set<BiologicalEdgeAbstract> conEdges = edge.getTo().getConnectingEdges();
+		for(BiologicalEdgeAbstract conEdge : conEdges){
+			if(conEdge.getFrom().getCurrentShownParentNode(getGraph())==edge.getFrom()){
+				grade += 1;
+			}
+		}
+		return grade;
 	}
 
 	/*
@@ -1625,6 +1639,10 @@ public class Pathway implements Cloneable {
 				break;
 
 			case COARSED:
+				// if already added in correct graph, break.
+				if(node.getParentNode()==this){
+					break;
+				}
 				// coarse nodes
 				if (this.isBNA()) {
 					if (!thisNode.getAllParentNodes().contains(
@@ -1632,12 +1650,12 @@ public class Pathway implements Cloneable {
 						addVertex(node.getParentNode(), this.getGraph()
 								.getVertexLocation(node));
 						removeElement(node);
-						if (thisNode.getParentNode() != node.getParentNode()) {
-							if (thisNode.getEnvironment().remove(node)) {
-								thisNode.getEnvironment().add(
-										node.getParentNode());
-							}
-						}
+//						if (thisNode.getParentNode() != node.getParentNode()) {
+//							if (thisNode.getEnvironment().remove(node)) {
+//								thisNode.getEnvironment().add(
+//										node.getParentNode());
+//							}
+//						}
 					}
 				}
 
@@ -1652,9 +1670,7 @@ public class Pathway implements Cloneable {
 				break;
 
 			case CONNECTIONMODIFIED:
-				for(BiologicalEdgeAbstract conEdge : node.getConnectingEdges()){
-					edgeSet.add(conEdge);
-				}
+
 				break;
 				
 			case DELETED:
@@ -1683,6 +1699,11 @@ public class Pathway implements Cloneable {
 		}
 		// draw connecting edges
 		addEdgesToPathway(edgeSet);
+		if(isBNA() && thisNode.isCoarseNode()){
+			thisNode.updateBorder();
+			thisNode.updateEnvironment();
+			thisNode.updateConnectingEdges();
+		}
 		if(isRootPathway()){
 			markPathwayUnchanged();
 			MainWindowSingelton.getInstance().updateElementTree();
