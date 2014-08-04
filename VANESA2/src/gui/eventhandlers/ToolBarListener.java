@@ -17,6 +17,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -286,30 +287,9 @@ public class ToolBarListener implements ActionListener {
 		else if ("coarseSelectedNodes".equals(event)){
 			if(graphInstance.getMyGraph() != null){
 				//System.out.println("coarse");
-				BiologicalNodeAbstract borderNode = con.getPathway((w.getCurrentPathway())).
-						getGraph().getVisualizationViewer().getPickedVertexState().
-						getPicked().iterator().next().computeCoarseType(graphInstance.
-								getPathway().getGraph().getVisualizationViewer().
-								getPickedVertexState().getPicked());
-				if (borderNode == null){
-					JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), 
-							"No coarsing possible with the given set of nodes.", 
-							"Coarsing Error!", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				BiologicalNodeAbstract newNode = (BiologicalNodeAbstract) borderNode.clone();
-				String lbl = JOptionPane.showInputDialog(null, null, "Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
-				if(lbl==null){
-					lbl = "Coarse node";
-				}
-				newNode.setID();
-				newNode.setLabel(lbl);
-				newNode.setName(lbl);
-				newNode.setTitle(lbl);
-				newNode.setGraph(new MyGraph(newNode));
-				newNode.setStateChanged(NodeStateChanged.UNCHANGED);
-				newNode.clearConnectingEdges();
-				newNode.coarse(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
+				Set<BiologicalNodeAbstract> selectedNodes = new HashSet<BiologicalNodeAbstract>();
+				selectedNodes.addAll(graphInstance.getPathway().getSelectedNodes());
+				BiologicalNodeAbstract.coarse(selectedNodes);
 				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{
 				System.out.println("No Graph exists!");
