@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.JFileChooser;
@@ -22,6 +23,7 @@ import org.apache.commons.lang3.SystemUtils;
 import moOutput.MOoutput;
 import biologicalElements.PetriNet;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class PetriNetSimulation {
 	private static String pathCompiler = null;
@@ -220,6 +222,34 @@ public class PetriNetSimulation {
 					"OPENMODELICA not found...", JOptionPane.QUESTION_MESSAGE);
 			w.setLockedPane(false);
 		}
+		
+		/*Thread t2 = new Thread() {
+			public void run() {
+				long totalTime = 60000;
+				try {
+					sleep(2000);
+					for (long t = 0; t < totalTime; t += 1000) {
+						sleep(500);
+						Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
+						BiologicalNodeAbstract bna;
+						Place p;
+						while(it.hasNext()){
+							bna = it.next();
+							if(bna instanceof Place){
+								p = (Place) bna;
+								p.getPetriNetSimulationData().add(Math.random());
+								System.out.println(Math.random());
+							}
+						}
+						w.updatePCPView();
+					}
+					stopped = true;
+				} catch (Exception e) {
+				}
+			}
+		};
+		t2.start();*/
+		
 	}
 
 	private void runOMCIA() {
@@ -229,6 +259,7 @@ public class PetriNetSimulation {
 		w.setLockedPane(true);
 		Map<String, String> env = System.getenv();
 
+		
 		if (SystemUtils.IS_OS_WINDOWS) {
 			pathWorkingDirectory = env.get("APPDATA");
 		} else {

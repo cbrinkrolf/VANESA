@@ -991,6 +991,7 @@ public class MenuListener implements ActionListener {
 			Iterator<String> its = pws.iterator();
 
 			double count = 0;
+			String output="";
 			while (its.hasNext()) {
 
 				// if(count%10 == 0){
@@ -998,21 +999,26 @@ public class MenuListener implements ActionListener {
 				// }
 				pw = its.next();
 
-				finalQueryString = "SELECT distinct kegg_genes_name.name FROM dawismd.kegg_genes_pathway join dawismd.kegg_genes_name on kegg_genes_pathway.id = kegg_genes_name.id where kegg_genes_pathway.number = '"
-						+ pw + "' AND kegg_genes_pathway.org = 'hsa';";
+				//finalQueryString = "SELECT distinct kegg_genes_name.name FROM dawismd.kegg_genes_pathway join dawismd.kegg_genes_name on kegg_genes_pathway.id = kegg_genes_name.id where kegg_genes_pathway.number = '"
+				//		+ pw + "' AND kegg_genes_pathway.org = 'hsa';";
 
+				finalQueryString = "SELECT count(distinct kegg_genes_pathway.id) FROM dawismd.kegg_genes_pathway inner join dawismd.kegg_genes_name on kegg_genes_pathway.id = kegg_genes_name.id where kegg_genes_pathway.number='"+ pw +"' and kegg_genes_pathway.org = 'hsa';";
+				
+				
+				
 				list = new Wrapper().requestDbContent(Wrapper.dbtype_KEGG,
 						finalQueryString);
-				if (list.size() > 0) {
+				/*if (list.size() > 0) {
 					pw2genes.put(pw, new HashSet<String>());
 				}
 
 				for (int i = 0; i < list.size(); i++) {
 					pw2genes.get(pw).add(list.get(i).getColumn()[0]);
-				}
+				}*/
+				output+=pw+"\t"+list.get(0).getColumn()[0]+"\r\n";
 				count++;
 			}
-
+			System.out.println(output);
 			HashSet<String> genes = new HashSet<String>();
 
 			System.out.println("pws: " + pw2genes.keySet().size());

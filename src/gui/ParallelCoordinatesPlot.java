@@ -176,9 +176,11 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 	private int animationSpeedInit = 20;
 
-	private ArrayList<Place> plotEntities = new ArrayList<Place>();
+	//private ArrayList<Place> plotEntities = new ArrayList<Place>();
 
 	private ArrayList<Place> places;
+	
+	private ArrayList<XYSeries> seriesList = new ArrayList<XYSeries>();
 
 	public ParallelCoordinatesPlot() {
 
@@ -518,46 +520,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			// System.out.println(columNames.length);
 
-			table = new MyTable();
-			// System.out.println(model.getColumnCount());
-			// System.out.println(model.getRowCount());
-			table.setModel(model);
-			table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			table.setColumnControlVisible(false);
-			table.setHighlighters(HighlighterFactory.createSimpleStriping());
-			table.setFillsViewportHeight(true);
-			table.addHighlighter(new ColorHighlighter(new Color(192, 215, 227),
-					Color.BLACK));
-			table.setHorizontalScrollEnabled(true);
-			table.getTableHeader().setReorderingAllowed(true);
-			table.getTableHeader().setResizingAllowed(true);
-			table.getColumn("Label").setPreferredWidth(100);
-			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-			JScrollPane sp = new JScrollPane(table);
-			sp.setPreferredSize(new Dimension(600, 200));
-
-			MigLayout layout2 = new MigLayout();
-			dialogPanel = new JPanel(layout2);
-			dialogPanel.add(new JLabel(
-					"Results for each Timestep t and for all Places V:"),
-					"span 2");
-			dialogPanel.add(new JSeparator(), "gap 10, wrap 15, growx");
-			dialogPanel.add(sp, "span 4, growx");
-
-			dialogPanel
-					.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
-
-			JPanel selectPanel = new JPanel();
-
-			dialogPanel.add(selectPanel, "span,gaptop 1,align right,wrap");
-
-			// draw a new plot according to the current time step selection
 			drawPlot();
-			PlotsPanel pp = new PlotsPanel();
-			dialogPanel.add(pp, "wrap");
-			JButton button = new JButton("Save Results");
-			button.addActionListener(pp);
 			// dialogPanel.add(button, "wrap");
 
 		} else {
@@ -571,8 +534,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	 */
 	private void drawPlot() {
 		labels.clear();
-		plotEntities.clear();
-
+		//plotEntities.clear();
+		seriesList.clear();
 		// get Selected Places and their index+label
 		Place place;
 		Transition transition;
@@ -630,7 +593,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		});
 
 		// fill series with time series of values
-		Vector<XYSeries> series = new Vector<XYSeries>();
+		//Vector<XYSeries> series = new Vector<XYSeries>();
 		Double value;
 		int pickedV = GraphInstance.getMyGraph().getVisualizationViewer()
 				.getPickedVertexState().getPicked().size();
@@ -651,27 +614,13 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 				if (edge.getSim_tokensSum() != null
 						&& edge.getSim_tokensSum().size() > 0) {
-					series.add(new XYSeries(0));
-					series.add(new XYSeries(1));
-					for (int i = 0; i < rowsDim; i++) {
-						value = edge.getSim_tokensSum().get(i);// )Double.parseDouble(rows[indices.get(j)][i
-																// +
-						// 1]
-						// .toString());
-						// diff = value - tmp;
-						// System.out.println(diff);
-						series.get(0).add(
-								pw.getPetriNet().getPnResult().get("time")
-										.get(i), value);
-						series.get(1).add(
-								pw.getPetriNet().getPnResult().get("time")
-										.get(i), edge.getSim_tokens().get(i));
-						// tmp = value;
-					}
-					dataset.addSeries(series.get(0));
+					seriesList.add(new XYSeries(0));
+					seriesList.add(new XYSeries(1));
+					
+					dataset.addSeries(seriesList.get(0));
 					labels.add("Sum of tokens");
 
-					dataset2.addSeries(series.get(1));
+					dataset2.addSeries(seriesList.get(1));
 					// labels.add("Tokens");
 
 					renderer.setSeriesPaint(0, Color.black);
@@ -714,25 +663,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					if (place.getPetriNetSimulationData().size() > 0) {
 						places.add(place);
 						// System.out.println("size: "+places.size());
-						series.add(new XYSeries(j));
-						for (int i = 0; i < rowsDim; i++) {
-
-							if (place.getPetriNetSimulationData().size() > i) {
-								value = place.getPetriNetSimulationData()
-										.get(i);
-							} else {
-								value = 0.0;
-							}
-
-							// )Double.parseDouble(rows[indices.get(j)][i
-							// +
-							// 1]
-							// .toString());
-							series.get(j).add(
-									pw.getPetriNet().getPnResult().get("time")
-											.get(i), value);
-						}
-						dataset.addSeries(series.get(j));
+						seriesList.add(new XYSeries(j));
+						
+						dataset.addSeries(seriesList.get(j));
 						labels.add(place.getName());// rows[indices.get(j)][0].toString());
 
 						renderer.setSeriesPaint(j, place.getPlotColor());
@@ -744,18 +677,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
 					if (transition.getPetriNetSimulationData().size() > 0) {
-						series.add(new XYSeries(j));
-						for (int i = 0; i < rowsDim; i++) {
-							value = transition.getPetriNetSimulationData().get(
-									i);// )Double.parseDouble(rows[indices.get(j)][i
-										// +
-										// 1]
-							// .toString());
-							series.get(j).add(
-									pw.getPetriNet().getPnResult().get("time")
-											.get(i), value);
-						}
-						dataset.addSeries(series.get(j));
+						seriesList.add(new XYSeries(j));
+						
+						dataset.addSeries(seriesList.get(j));
 						labels.add(transition.getName());// rows[indices.get(j)][0].toString());
 
 						renderer.setSeriesPaint(j, transition.getPlotColor());
@@ -768,6 +692,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			}
 		}
+		
+		updateData();
 		// if one or some Places are selected
 		/*
 		 * if (indices.size() != 0) { for (int j = 0; j < indices.size(); j++) {
@@ -879,6 +805,123 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		main.revalidate();
 	}
+	
+	public void updateData(){
+		Double value;
+		
+		int pickedV = GraphInstance.getMyGraph().getVisualizationViewer()
+				.getPickedVertexState().getPicked().size();
+		int pickedE = GraphInstance.getMyGraph().getVisualizationViewer()
+				.getPickedEdgeState().getPicked().size();
+		// System.out.println(pickedE+" "+pickedV);
+		// Double tmp = 0.0;
+		// Double diff;
+
+		if (pickedV == 0 && pickedE == 1) {
+			BiologicalEdgeAbstract bea = GraphInstance.getMyGraph()
+					.getVisualizationViewer().getPickedEdgeState().getPicked()
+					.iterator().next();
+			if (bea instanceof PNEdge) {
+				PNEdge edge = (PNEdge) bea;
+
+				if (edge.getSim_tokensSum() != null
+						&& edge.getSim_tokensSum().size() > 0) {
+					for (int i = 0; i < rowsDim; i++) {
+						value = edge.getSim_tokensSum().get(i);// )Double.parseDouble(rows[indices.get(j)][i
+																// +
+						// 1]
+						// .toString());
+						// diff = value - tmp;
+						// System.out.println(diff);
+						seriesList.get(0).add(
+								pw.getPetriNet().getPnResult().get("time")
+										.get(i), value);
+						seriesList.get(1).add(
+								pw.getPetriNet().getPnResult().get("time")
+										.get(i), edge.getSim_tokens().get(i));
+						// tmp = value;
+					}
+				}
+			}
+		} else {
+
+			boolean onlyT = true;
+			if (GraphInstance.getMyGraph().getVisualizationViewer()
+					.getPickedVertexState().getPicked().size() > 0) {
+				Iterator<BiologicalNodeAbstract> it = GraphInstance
+						.getMyGraph().getVisualizationViewer()
+						.getPickedVertexState().getPicked().iterator();
+				while (onlyT && it.hasNext()) {
+					if (it.next() instanceof Place) {
+						onlyT = false;
+					}
+				}
+			} else {
+				onlyT = false;
+			}
+
+			Iterator<BiologicalNodeAbstract> iterator = null;
+			if (pickedV > 0) {
+				iterator = GraphInstance.getMyGraph().getVisualizationViewer()
+						.getPickedVertexState().getPicked().iterator();
+			} else {
+				iterator = GraphInstance.getMyGraph().getAllVertices()
+						.iterator();
+			}
+			// System.out.println(rowsDim);
+			// Place place;
+			int j = 0;
+			BiologicalNodeAbstract bna;
+			Place place;
+			Transition transition;
+			while (iterator.hasNext()) {
+				// System.out.println(j);
+				// System.out.println(j);
+				bna = iterator.next();
+				if (bna instanceof Place) {
+					place = (Place) bna;
+					if (place.getPetriNetSimulationData().size() > 0) {
+						// System.out.println("size: "+places.size());
+						for (int i = 0; i < rowsDim; i++) {
+
+							if (place.getPetriNetSimulationData().size() > i) {
+								value = place.getPetriNetSimulationData()
+										.get(i);
+							} else {
+								value = 0.0;
+							}
+
+							// )Double.parseDouble(rows[indices.get(j)][i
+							// +
+							// 1]
+							// .toString());
+							seriesList.get(j).add(
+									pw.getPetriNet().getPnResult().get("time")
+											.get(i), value);
+						}
+						j++;
+					}
+				} else if (bna instanceof Transition && onlyT) {
+					transition = (Transition) bna;
+					if (transition.getPetriNetSimulationData().size() > 0) {
+						for (int i = 0; i < rowsDim; i++) {
+							value = transition.getPetriNetSimulationData().get(
+									i);// )Double.parseDouble(rows[indices.get(j)][i
+										// +
+										// 1]
+							// .toString());
+							seriesList.get(j).add(
+									pw.getPetriNet().getPnResult().get("time")
+											.get(i), value);
+						}
+					}
+				}
+
+			}
+		}
+		
+		
+	}
 
 	/** Event handler function. Handles Button Clicks **/
 	public void actionPerformed(ActionEvent e) {
@@ -893,6 +936,52 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				}
 			}
 		} else if ("show".equals(event)) {
+			table = new MyTable();
+			// System.out.println(model.getColumnCount());
+			// System.out.println(model.getRowCount());
+			table.setModel(model);
+			table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			table.setColumnControlVisible(false);
+			table.setHighlighters(HighlighterFactory.createSimpleStriping());
+			table.setFillsViewportHeight(true);
+			table.addHighlighter(new ColorHighlighter(new Color(192, 215, 227),
+					Color.BLACK));
+			table.setHorizontalScrollEnabled(true);
+			table.getTableHeader().setReorderingAllowed(true);
+			table.getTableHeader().setResizingAllowed(true);
+			table.getColumn("Label").setPreferredWidth(100);
+			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+			JScrollPane sp = new JScrollPane(table);
+			sp.setPreferredSize(new Dimension(600, 200));
+
+			MigLayout layout2 = new MigLayout();
+			dialogPanel = new JPanel(layout2);
+			dialogPanel.add(new JLabel(
+					"Results for each Timestep t and for all Places V:"),
+					"span 2");
+			dialogPanel.add(new JSeparator(), "gap 10, wrap 15, growx");
+			dialogPanel.add(sp, "span 4, growx");
+
+			dialogPanel
+					.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
+
+			JPanel selectPanel = new JPanel();
+
+			dialogPanel.add(selectPanel, "span,gaptop 1,align right,wrap");
+
+			// draw a new plot according to the current time step selection
+			
+			
+			
+			PlotsPanel pp = new PlotsPanel();
+			dialogPanel.add(pp, "wrap");
+			JButton button = new JButton("Save Results");
+			button.addActionListener(pp);
+			
+			dialogPanel.add(button);
+			
+			
 			// System.out.println("show");
 			// show table containing all data
 			dialog = new JDialog(w, true);
