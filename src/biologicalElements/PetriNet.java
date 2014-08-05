@@ -29,10 +29,11 @@ public class PetriNet {
 	private HashMap<String, Vector<Double>> pnResult = null;
 	private int places = 0;
 	private int transitions = 0;
-	private int resultDimension = 0;
 	private int currentTimeStep = 0;
 	private String covGraph;
 	private boolean omc = false;
+	
+	private Vector<Double> time = new Vector<Double>();
 
 	public String getCovGraph() {
 		return this.covGraph;
@@ -64,17 +65,13 @@ public class PetriNet {
 		this.omc = omc;
 	}
 
-	public HashMap<String, Vector<Double>> getPnResult() {
-		return this.pnResult;
-	}
-
 	public void initializePetriNet(
 			HashMap<BiologicalEdgeAbstract, String> bea2key) {
 
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
 		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
-		pnResult = pw.getPetriNet().getPnResult();
+		//pnResult = pw.getPetriNet().getPnResult();
 		ArrayList<String> columns = new ArrayList<String>();
 		// rowsSize = 0;
 		// Object elem;
@@ -226,7 +223,7 @@ public class PetriNet {
 					this.transitions++;
 				}
 			}
-
+			this.time = pnResult.get("time");
 			it = hs.iterator();
 			// Place p;
 			int i = 0;
@@ -258,7 +255,7 @@ public class PetriNet {
 					// System.out.println("zu wenig");
 					throw new Exception();
 				} else {
-					this.resultDimension = tmp;
+					//this.resultDimension = tmp;
 				}
 			}
 			pw.setPetriNetSimulation(true);
@@ -293,7 +290,7 @@ public class PetriNet {
 	}
 
 	public int getResultDimension() {
-		return this.resultDimension;
+		return this.time.size();
 	}
 
 	public int getPlaces() {
@@ -310,6 +307,14 @@ public class PetriNet {
 
 	public void setTransitions(int transitions) {
 		this.transitions = transitions;
+	}
+	
+	public Vector<Double> getTime(){
+		return this.time;
+	}
+	
+	public void addTime(Double t){
+		this.time.add(t);
 	}
 
 }

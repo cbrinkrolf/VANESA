@@ -332,4 +332,8 @@ public class OptionPanel {
 		// }
 
 	}
+	
+	public void redrawGraphs(){
+		PCPWindow.updateData();
+	}
 }
