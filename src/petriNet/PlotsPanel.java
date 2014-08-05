@@ -262,7 +262,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 					// value = Double.parseDouble(table[j][i +
 					// 1].toString());
-					series.add(pw.getPetriNet().getPnResult().get("time")
+					series.add(pw.getPetriNet().getTime()
 							.get(i), value);
 				}
 			}

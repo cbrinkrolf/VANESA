@@ -607,6 +607,10 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void checkForAlignmentOptionTab(String oldName, String newName) {
 		optionPanel.tryUpdateAlignmentOptionTab(oldName, newName);
 	}
+	
+	public void redrawGraphs(){
+		optionPanel.redrawGraphs();
+	}
 
 	// =============mac osx stuff========================
 	@Override

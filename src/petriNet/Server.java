@@ -13,6 +13,9 @@ import java.util.StringTokenizer;
 
 public class Server {
 
+	private Thread serverThread;
+	private java.net.ServerSocket serverSocket;
+	
 	void test() throws IOException {
 
 		Runnable serverTask = new Runnable() {
@@ -20,15 +23,14 @@ public class Server {
 			public void run() {
 				try {
 					int port = 11111;
-					java.net.ServerSocket serverSocket = new java.net.ServerSocket(
+					serverSocket = new java.net.ServerSocket(
 							port);
-					
 
 					while (true) {
 						java.net.Socket client = warteAufAnmeldung(serverSocket);
-						String nachricht = leseNachricht(client);
-						System.out.println("server: " + nachricht);
-						schreibeNachricht(client, nachricht);
+						leseNachricht(client);
+						//System.out.println("server: " + nachricht);
+						//schreibeNachricht(client, nachricht);
 						
 					}
 				} catch (IOException e) {
@@ -37,9 +39,10 @@ public class Server {
 				}
 			}
 		};
-		Thread serverThread = new Thread(serverTask);
+		serverThread = new Thread(serverTask);
 		serverThread.start();
 
+		
 	}
 
 	java.net.Socket warteAufAnmeldung(java.net.ServerSocket serverSocket)
@@ -50,7 +53,7 @@ public class Server {
 		return socket;
 	}
 
-	String leseNachricht(java.net.Socket socket) throws IOException {
+	private void leseNachricht(java.net.Socket socket) throws IOException {
 
 		int lengthMax = 2048;
 		// char[] buffer = new char[200];
@@ -172,9 +175,11 @@ public class Server {
 		// StringTokenizer st = new StringTokenizer(names., "");
 		// st.
 		// System.out.println(new String(buffer, 16, buffer.length - 17));
-
-		String nachricht = new String(buffer, 0, anzahlZeichen);
-		return nachricht;
+		this.serverSocket.close();
+		serverThread.stop();
+		serverThread.destroy();
+		//String nachricht = new String(buffer, 0, anzahlZeichen);
+		//return nachricht;
 	}
 
 	void schreibeNachricht(java.net.Socket socket, String nachricht)
