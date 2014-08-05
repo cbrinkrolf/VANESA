@@ -95,6 +95,7 @@ import petriNet.PlotsPanel;
 import petriNet.SimpleMatrixDouble;
 import petriNet.Transition;
 import sun.invoke.util.BytecodeName;
+import test.pane;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -145,6 +146,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private JSpinner animationSpeed;
 	private JCheckBox animationColour = new JCheckBox();
 	private Thread thread;
+	private ChartPanel pane;
 
 	private JPanel invariants = new JPanel();
 
@@ -233,6 +235,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	 * abstracts. On first call, the GUI is created using these values.
 	 */
 	public void revalidateView() {
+		//System.out.println("revalditate");
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
 
@@ -277,13 +280,12 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// Object elem = it.next();
 					bna = it.next();
 					if (bna instanceof Place
-							&& pw.getPetriNet().getPnResult()
-									.containsKey("'" + bna.getName() + "'.t")) {
+							&& bna.getPetriNetSimulationData().size()>0) {
 						MAData = bna.getPetriNetSimulationData();
 						// System.out.println("size:");
 						// System.out.println(MAData.size());
 						rows[i][0] = bna.getLabel();
-						for (int j = 1; j <= MAData.size(); j++) {
+						for (int j = 1; j <= rowsDim; j++) {
 							rows[i][j] = MAData.get(j - 1);
 							// System.out.println(i+" "+j+": "+rows[i][j]);
 							// System.out.println(i+" "+j +" "+ MAData.get(j -
@@ -294,14 +296,14 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				}
 			}
 			first = false;
-
+			
 			// create column labels for table view
 			String columNames[] = new String[rowsDim + 1];
 			String selectorValues[] = new String[rowsSize];
 			columNames[0] = "Label";
 			for (int i = 0; i < rowsDim; i++) {
 				columNames[i + 1] = "t="
-						+ pw.getPetriNet().getPnResult().get("time").get(i);
+						+ pw.getPetriNet().getTime().get(i);
 
 			}
 
@@ -519,7 +521,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			model = new RegulationTabelModel(rows, columNames, nodeTabel);
 
 			// System.out.println(columNames.length);
-
 			drawPlot();
 			// dialogPanel.add(button, "wrap");
 
@@ -591,7 +592,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				return "Tokens";
 			}
 		});
-
+		
 		// fill series with time series of values
 		//Vector<XYSeries> series = new Vector<XYSeries>();
 		Double value;
@@ -693,7 +694,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			}
 		}
 		
-		updateData();
+		
 		// if one or some Places are selected
 		/*
 		 * if (indices.size() != 0) { for (int j = 0; j < indices.size(); j++) {
@@ -725,7 +726,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		// set rendering options: all lines in black, domain steps as integers
 		final XYPlot plot = chart.getXYPlot();
-
+		
 		// draw plot for Places with random colors
 		if (secondAxis) {
 			renderer.setSeriesItemLabelsVisible(0, true);
@@ -767,7 +768,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		// add chart to pane and refresh GUI
 
-		ChartPanel pane = new ChartPanel(chart);
+		pane = new ChartPanel(chart);
 		pane.setPreferredSize(new java.awt.Dimension(320, 200));
 
 		pane.addChartMouseListener(new ChartMouseListener() {
@@ -799,11 +800,12 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			}
 		});
-
+		
+		updateData();
 		p.add(pane, BorderLayout.CENTER);
 		p.setVisible(true);
 
-		main.revalidate();
+		//main.revalidate();
 	}
 	
 	public void updateData(){
@@ -823,21 +825,20 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					.iterator().next();
 			if (bea instanceof PNEdge) {
 				PNEdge edge = (PNEdge) bea;
-
 				if (edge.getSim_tokensSum() != null
 						&& edge.getSim_tokensSum().size() > 0) {
 					for (int i = 0; i < rowsDim; i++) {
 						value = edge.getSim_tokensSum().get(i);// )Double.parseDouble(rows[indices.get(j)][i
-																// +
+						// +
 						// 1]
 						// .toString());
 						// diff = value - tmp;
 						// System.out.println(diff);
 						seriesList.get(0).add(
-								pw.getPetriNet().getPnResult().get("time")
+								pw.getPetriNet().getTime()
 										.get(i), value);
 						seriesList.get(1).add(
-								pw.getPetriNet().getPnResult().get("time")
+								pw.getPetriNet().getTime()
 										.get(i), edge.getSim_tokens().get(i));
 						// tmp = value;
 					}
@@ -881,8 +882,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				if (bna instanceof Place) {
 					place = (Place) bna;
 					if (place.getPetriNetSimulationData().size() > 0) {
-						// System.out.println("size: "+places.size());
-						for (int i = 0; i < rowsDim; i++) {
+						//System.out.println(seriesList.get(j).getItemCount());
+						for (int i = seriesList.get(j).getItemCount(); i < pw.getPetriNet().getTime().size(); i++) {
 
 							if (place.getPetriNetSimulationData().size() > i) {
 								value = place.getPetriNetSimulationData()
@@ -896,7 +897,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							// 1]
 							// .toString());
 							seriesList.get(j).add(
-									pw.getPetriNet().getPnResult().get("time")
+									pw.getPetriNet().getTime()
 											.get(i), value);
 						}
 						j++;
@@ -904,14 +905,14 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
 					if (transition.getPetriNetSimulationData().size() > 0) {
-						for (int i = 0; i < rowsDim; i++) {
+						for (int i = 0; i < pw.getPetriNet().getTime().size(); i++) {
 							value = transition.getPetriNetSimulationData().get(
 									i);// )Double.parseDouble(rows[indices.get(j)][i
 										// +
 										// 1]
 							// .toString());
 							seriesList.get(j).add(
-									pw.getPetriNet().getPnResult().get("time")
+									pw.getPetriNet().getTime()
 											.get(i), value);
 						}
 					}
@@ -919,8 +920,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			}
 		}
-		
-		
+		//pane.revalidate();
+		//pane.validate();
+		//main.revalidate();
+		//System.out.println("update");
 	}
 
 	/** Event handler function. Handles Button Clicks **/
@@ -1135,7 +1138,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				// System.out.println(pw.getPetriNet().getPnResult().get("time").size());
 				pw.getPetriNet().setCurrentTimeStep(this.slider.getValue() - 1);
 				slider.setToolTipText("Time: " + this.slider.getValue());
-				double step = pw.getPetriNet().getPnResult().get("time")
+				double step = pw.getPetriNet().getTime()
 						.get(this.slider.getValue() - 1);
 				stepLabel.setText("Time: " + (double) Math.round((step * 100))
 						/ 100);
