@@ -37,8 +37,8 @@ public class PetriNetSimulation {
 		boolean omc = true;
 
 		if (omc) {
-			this.runOMC();
-			//this.runOMCIA();
+			//this.runOMC();
+			this.runOMCIA();
 		} else {
 			this.runDymola();
 		}
@@ -395,7 +395,7 @@ public class PetriNetSimulation {
 				
 				out.close();
 
-				Server s = new Server();
+				Server s = new Server(bea2key);
 
 				s.test();
 
@@ -409,7 +409,7 @@ public class PetriNetSimulation {
 								sleep(1000);
 							}
 							p.destroy();
-							stopped = true;
+							//stopped = true;
 						} catch (Exception e) {
 						}
 					}
@@ -421,6 +421,10 @@ public class PetriNetSimulation {
 				} catch (Exception e) {
 				}
 				System.out.println("building ended");
+				graphInstance.getPathway().setPetriNetSimulation(true);
+				w.updatePCPView();
+				//System.out.println("before sim");
+				//w.updatePCPView();
 				//System.out.println("ps:" + pathSim);
 				// final Process pSim = new
 				// ProcessBuilder("cmd.exe","/c",pathSim+"simulation.bat").start();
@@ -437,15 +441,70 @@ public class PetriNetSimulation {
 				System.out.println("Zeit benoetigt: "
 						+ ((zstNachher - zstVorher)) + " millisec");
 				
+				
+				
+				Thread t2 = new Thread() {
+					public void run() {
+						while(!stopped){
+							w.redrawGraphs();
+							try {
+								sleep(1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						System.out.println("end of simulation");
+						w.redrawGraphs();
+						//w.updatePCPView();
+					}
+				};
+				t2.start();
+				
+				
+				/*Thread t3 = new Thread() {
+					public void run() {
+						long totalTime = 60000;
+						try {
+							sleep(2000);
+							for (long t = 0; t < totalTime; t += 200) {
+								
+								sleep(200);
+								Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
+								BiologicalNodeAbstract bna;
+								Place p;
+								graphInstance.getPathway().getPetriNet().addTime(new Double(graphInstance.getPathway().getPetriNet().getTime().size()+1));
+								while(it.hasNext()){
+									bna = it.next();
+									if(bna instanceof Place){
+										p = (Place) bna;
+										p.getPetriNetSimulationData().add(Math.random());
+										//System.out.println(Math.random());
+									}
+								}
+								
+							}
+							System.out.println("endeeeeee");
+							stopped = true;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				};
+				t3.start();*/
+				
+				
+				
+				
 				if (con.containsPathway()
 						&& graphInstance.getPathway().hasGotAtLeastOneElement()
 						&& !stopped) {
-					graphInstance.getPathway().setPetriNet(true);
-					PetriNet petrinet = graphInstance.getPathway()
-							.getPetriNet();
-					 petrinet.setPetriNetSimulationFile(pathSim
-					 + "simulation_res.csv", true);
-					petrinet.initializePetriNet(bea2key);
+					//graphInstance.getPathway().setPetriNet(true);
+					//PetriNet petrinet = graphInstance.getPathway()
+					//		.getPetriNet();
+					// petrinet.setPetriNetSimulationFile(pathSim
+					// + "simulation_res.csv", true);
+					//petrinet.initializePetriNet(bea2key);
 				} else
 					throw new Exception();
 			} catch (Exception e) {
