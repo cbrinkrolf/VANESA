@@ -36,8 +36,8 @@ public class PNEdge extends BiologicalEdgeAbstract {
 
 	private boolean wasUndirected = false;
 	
-	private Vector<Double> sim_tokens;
-	private Vector<Double> sim_tokensSum;
+	private Vector<Double> sim_tokens = new Vector<Double>();
+	private Vector<Double> sim_tokensSum = new Vector<Double>();
 
 	public boolean wasUndirected() {
 		return wasUndirected;
