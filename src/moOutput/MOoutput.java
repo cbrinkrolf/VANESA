@@ -358,11 +358,11 @@ public class MOoutput {
 				}
 
 			} else if (fromType.equals(Elementdeclerations.s_place)) {
-				edgesString = edgesString.concat(getConnectionStringPT(bea));
+				edgesString = edgesString.concat(getConnectionStringPT(fromString, toString, bea));
 			} else if (fromType.equals(Elementdeclerations.place)) {
-				edgesString = edgesString.concat(getConnectionStringPT(bea));
+				edgesString = edgesString.concat(getConnectionStringPT(fromString, toString, bea));
 			} else {
-				edgesString = edgesString.concat(getConnectionStringTP(bea));
+				edgesString = edgesString.concat(getConnectionStringTP(fromString, toString, bea));
 			}
 
 			// BiologicalEdgeAbstract bna = (BiologicalEdgeAbstract) it.next();
@@ -684,9 +684,9 @@ public class MOoutput {
 				+ ";\r\n";
 	}
 
-	private String getConnectionStringTP(BiologicalEdgeAbstract bea) {
-		String from = bea.getFrom().getName();
-		String to = bea.getTo().getName();
+	private String getConnectionStringTP(String from, String to, BiologicalEdgeAbstract bea) {
+		//String from = bea.getFrom().getName();
+		//String to = bea.getTo().getName();
 		String result = "\tconnect('" + from + "'.outPlaces["
 				+ (actualOutEdges.get(from) + 1) + "],'" + to
 				+ "'.inTransition[" + (actualInEdges.get(to) + 1) + "]);"
@@ -706,9 +706,9 @@ public class MOoutput {
 		return result;
 	}
 
-	private String getConnectionStringPT(BiologicalEdgeAbstract bea) {
-		String from = bea.getFrom().getName();
-		String to = bea.getTo().getName();
+	private String getConnectionStringPT(String from, String to, BiologicalEdgeAbstract bea) {
+		//String from = bea.getFrom().getName();
+		//String to = bea.getTo().getName();
 		String result = "\tconnect('" + from + "'.outTransition["
 				+ (actualOutEdges.get(from) + 1) + "],'" + to + "'.inPlaces["
 				+ (actualInEdges.get(to) + 1) + "]);"

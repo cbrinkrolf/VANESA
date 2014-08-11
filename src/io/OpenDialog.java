@@ -66,9 +66,10 @@ public class OpenDialog extends SwingWorker {
 		}
 
 		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.addChoosableFileFilter(new MyFileFilter(sbml, sbmlDescription));
 		chooser.addChoosableFileFilter(new MyFileFilter(vaml, vamlDescription));
 		// chooser.addChoosableFileFilter(new MyFileFilter(mo, moDescription));
-		chooser.addChoosableFileFilter(new MyFileFilter(sbml, sbmlDescription));
+		
 //		chooser.addChoosableFileFilter(new MyFileFilter(modellicaSimulation,
 //				modellicaResultDescription));
 //		chooser.addChoosableFileFilter(new MyFileFilter(modellicaSimulationNew,

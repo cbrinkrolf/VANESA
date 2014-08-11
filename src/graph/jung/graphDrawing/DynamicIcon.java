@@ -42,7 +42,11 @@ public class DynamicIcon implements Icon{
         
         //double x1 = c.getBounds().getMaxX()-c.getBounds().getMinX();
         //double y1 = c.getBounds().getMaxY()-c.getBounds().getMinY();
-        g.drawString(p.getToken()+"", x-x1+10, y+7);
+       double tokens = p.getToken();
+       if(p.hasRef() && p.getRef() instanceof Place){
+    	   tokens = ((Place)p.getRef()).getToken();
+       }
+        g.drawString(tokens+"", x-x1+10, y+7);
         
     	//}
     }

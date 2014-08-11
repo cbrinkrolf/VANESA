@@ -16,6 +16,8 @@ import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
+import petriNet.Place;
+import petriNet.Transition;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
@@ -73,8 +75,21 @@ public class ReferenceDialog {
 		while (it.hasNext()) {
 			element = it.next();
 			if (element != self && !element.hasRef()) {
-				list.add(element);
-				box.addItem(element.getNetworklabel());
+				if(self instanceof Place){
+					if(element instanceof Place){
+						list.add(element);
+						box.addItem(element.getNetworklabel());
+					}
+				}else if(self instanceof Transition){
+					if(element instanceof Transition){
+						list.add(element);
+						box.addItem(element.getNetworklabel());
+					}
+				}else{
+					list.add(element);
+					box.addItem(element.getNetworklabel());
+				}
+				
 			}
 		}
 

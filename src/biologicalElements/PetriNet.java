@@ -32,7 +32,7 @@ public class PetriNet {
 	private int currentTimeStep = 0;
 	private String covGraph;
 	private boolean omc = false;
-	
+
 	private Vector<Double> time = new Vector<Double>();
 
 	public String getCovGraph() {
@@ -71,7 +71,7 @@ public class PetriNet {
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
 		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
-		//pnResult = pw.getPetriNet().getPnResult();
+		// pnResult = pw.getPetriNet().getPnResult();
 		ArrayList<String> columns = new ArrayList<String>();
 		// rowsSize = 0;
 		// Object elem;
@@ -92,11 +92,11 @@ public class PetriNet {
 
 				bna = it.next();
 				if (bna instanceof Place) {
-					columns.add("'"+bna.getName() + "'.t");
+					columns.add("'" + bna.getName() + "'.t");
 					// System.out.println(bna.getName());
 				} else if (bna instanceof Transition) {
-					columns.add("'"+ bna.getName() + "'.fire");
-					columns.add("'"+bna.getName()+"'.actualSpeed");
+					columns.add("'" + bna.getName() + "'.fire");
+					columns.add("'" + bna.getName() + "'.actualSpeed");
 				}
 			}
 		}
@@ -166,7 +166,7 @@ public class PetriNet {
 				e = (PNEdge) bea;
 
 				v = pnResult.get(bea2key.get(bea));
-				v2 = pnResult.get("der("+bea2key.get(bea)+")");
+				v2 = pnResult.get("der(" + bea2key.get(bea) + ")");
 				e.setSim_tokensSum(v);
 				e.setSim_tokens(v2);
 			}
@@ -175,7 +175,7 @@ public class PetriNet {
 		if (hs != null) {
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			BiologicalNodeAbstract bna;
-			
+
 			while (it.hasNext()) {
 				bna = it.next();
 				if (bna instanceof Place) {
@@ -198,8 +198,12 @@ public class PetriNet {
 
 					// System.out.println();
 
-					v = pnResult.get("'"+bna.getName() + "'.t");
-					//System.out.println(bna.getName());
+					if (bna.hasRef()) {
+						v = pnResult.get("'" + bna.getRef().getName() + "'.t");
+					} else {
+						v = pnResult.get("'" + bna.getName() + "'.t");
+					}
+					// System.out.println(bna.getName());
 					// System.out.println(v.lastElement());
 					// System.out.println("size: "+v.size());
 					// System.out.println("test2");
@@ -216,10 +220,11 @@ public class PetriNet {
 					this.places++;
 				} else if (bna instanceof Transition) {
 					// System.out.println("gesetzt");
-					v = pnResult.get("'"+bna.getName() + "'.fire");
+					v = pnResult.get("'" + bna.getName() + "'.fire");
 					// System.out.println("size: "+v.size());
 					bna.setPetriNetSimulationData(v);
-					((Transition)bna).setSimActualSpeed(pnResult.get("'"+bna.getName()+"'.actualSpeed"));
+					((Transition) bna).setSimActualSpeed(pnResult.get("'"
+							+ bna.getName() + "'.actualSpeed"));
 					this.transitions++;
 				}
 			}
@@ -240,7 +245,7 @@ public class PetriNet {
 					// p = (Place) o;
 					// System.out.println(p.getName());
 					// System.out.println(p.getPetriNetSimulationData());
-				}else if(bna instanceof Transition){
+				} else if (bna instanceof Transition) {
 					((Transition) bna).setPlotColor(Color.getHSBColor(j * 1.0f
 							/ (this.transitions), 1, 1));
 					// System.out.println(i);
@@ -255,7 +260,7 @@ public class PetriNet {
 					// System.out.println("zu wenig");
 					throw new Exception();
 				} else {
-					//this.resultDimension = tmp;
+					// this.resultDimension = tmp;
 				}
 			}
 			pw.setPetriNetSimulation(true);
@@ -308,12 +313,12 @@ public class PetriNet {
 	public void setTransitions(int transitions) {
 		this.transitions = transitions;
 	}
-	
-	public Vector<Double> getTime(){
+
+	public Vector<Double> getTime() {
 		return this.time;
 	}
-	
-	public void addTime(Double t){
+
+	public void addTime(Double t) {
 		this.time.add(t);
 	}
 

@@ -335,7 +335,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			showTable.addActionListener(this);
 			showTable.setActionCommand("show");
 			slider.setMinimum(0);
-			slider.setMaximum(rowsDim);
+			slider.setMaximum(rowsDim-1);
 			slider.setMajorTickSpacing(1);
 			slider.addChangeListener(this);
 			slider.setToolTipText("Time: 0");
