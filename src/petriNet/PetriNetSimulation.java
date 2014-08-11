@@ -37,8 +37,8 @@ public class PetriNetSimulation {
 		boolean omc = true;
 
 		if (omc) {
-			//this.runOMC();
-			this.runOMCIA();
+			this.runOMC();
+			//this.runOMCIA();
 		} else {
 			this.runDymola();
 		}
