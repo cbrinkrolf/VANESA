@@ -74,6 +74,7 @@ import petriNet.SimpleMatrixDouble;
 import petriNet.Transition;
 import pojos.DBColumn;
 import save.graphPicture.WriteGraphPicture;
+import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.VAMLoutput;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -191,7 +192,7 @@ public class MenuListener implements ActionListener {
 					new SaveDialog( // GRAPHML+MO+GON=14
 							SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO
 									+ SaveDialog.FORMAT_GON
-									+ SaveDialog.FORMAT_SBML
+									//+ SaveDialog.FORMAT_SBML
 									+ SaveDialog.FORMAT_ITXT
 									+ SaveDialog.FORMAT_TXT);
 					// +SaveDialog.FORMAT_SBML);
@@ -206,7 +207,7 @@ public class MenuListener implements ActionListener {
 		} else if ("save as".equals(event)) {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog(16);
+					new SaveDialog(SaveDialog.FORMAT_SBML);
 				} else {
 					JOptionPane.showMessageDialog(w,
 							"Please create a network before.");
@@ -219,15 +220,10 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					if (graphInstance.getPathway().getFilename() != null) {
-						try {
-							new VAMLoutput(graphInstance.getPathway()
-									.getFilename(), graphInstance.getPathway());
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+						new JSBMLoutput(graphInstance.getPathway()
+								.getFilename(), graphInstance.getPathway());
 					} else {
-						new SaveDialog(16);
+						new SaveDialog(SaveDialog.FORMAT_SBML);
 					}
 				} else {
 					JOptionPane.showMessageDialog(w,

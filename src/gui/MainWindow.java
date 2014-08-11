@@ -49,6 +49,7 @@ import org.simplericity.macify.eawt.ApplicationEvent;
 import org.simplericity.macify.eawt.ApplicationListener;
 import org.simplericity.macify.eawt.DefaultApplication;
 
+import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.VAMLoutput;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -442,14 +443,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			//System.out.println(n);
 			if (n == 0) {
 				if (pw.getFilename() != null) {
-					try {
-						new VAMLoutput(pw.getFilename(), pw);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					new JSBMLoutput(pw.getFilename(), pw);
 				} else {
-					new SaveDialog(16);
+					new SaveDialog(SaveDialog.FORMAT_SBML);
 				}
 			}
 			if (n == -1 || n == 2) {
