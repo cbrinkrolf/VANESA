@@ -3,6 +3,7 @@ package graph.algorithms;
 import graph.CreatePathway;
 import gui.HeatgraphLayer;
 import gui.MainWindowSingelton;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Vector;
 import javax.xml.stream.XMLStreamException;
 
 import xmlInput.sbml.VAMLInput;
+import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.VAMLoutput;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -40,16 +42,8 @@ public class HeatmapGraphs {
 	 */
 	private void copyElements(Pathway from, Pathway to) {
 		File file1 = new File("test");
-		try {
-			new VAMLoutput(file1, from);
-			new VAMLInput(file1, to);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		new JSBMLoutput(file1, from);
+		new JSBMLoutput(file1, to);
 	}
 	
 	/** build the merged graph and the heatgraph-layer for it */
