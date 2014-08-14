@@ -607,6 +607,10 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void redrawGraphs(){
 		optionPanel.redrawGraphs();
 	}
+	
+	public void initPCPGraphs(){
+		optionPanel.initPCPGraphs();
+	}
 
 	// =============mac osx stuff========================
 	@Override
