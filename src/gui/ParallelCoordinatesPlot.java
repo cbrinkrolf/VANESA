@@ -213,7 +213,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	 * abstracts. On first call, the GUI is created using these values.
 	 */
 	public void revalidateView() {
-		// System.out.println("revalditate");
+		//System.out.println("revalditate");
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
 
@@ -649,7 +649,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// if (place.getPetriNetSimulationData().size() > 0) {
 					places.add(place);
 					XYSeries s = new XYSeries(j);
-					// System.out.println("size: "+places.size());
+					//System.out.println("size: "+places.size());
 					series2Node.put(place, s);
 					// seriesList.add(new XYSeries(j));
 
@@ -750,7 +750,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		} else {
 			plot.setRenderer(renderer);
 			NumberAxis rangeAxis = (NumberAxis) plot.getDomainAxis();
-			rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+			//rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		}
 
 		// add chart to pane and refresh GUI
@@ -861,17 +861,29 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			BiologicalNodeAbstract bna;
 			Place place;
 			Transition transition;
+			int step;
+			
 			while (iterator.hasNext()) {
+				
 				// System.out.println(j);
 				// System.out.println(j);
 				bna = iterator.next();
 				if (series2Node.containsKey(bna)) {
 					if (bna instanceof Place) {
 						place = (Place) bna;
+						
+						//System.out.println(place.getName());
+						//System.out.println(pw.getPetriNet().getTime().size());
 						if (place.getPetriNetSimulationData().size() > 0) {
 							// System.out.println(seriesList.get(j).getItemCount());
-							for (int i = series2Node.get(place).getItemCount(); i < pw
-									.getPetriNet().getTime().size(); i++) {
+							if(pw.getPetriNet().getTime().size() != place.getPetriNetSimulationData().size()){
+								System.out.println("time: "+pw.getPetriNet().getTime().size());
+								System.out.println("data: "+place.getPetriNetSimulationData().size());
+							}
+							step = Math.min(pw
+									.getPetriNet().getTime().size(), place.getPetriNetSimulationData().size());
+							System.out.println("vor");
+							for (int i = series2Node.get(place).getItemCount(); i < step; i++) {
 
 								if (place.getPetriNetSimulationData().size() > i) {
 									value = place.getPetriNetSimulationData()
@@ -888,6 +900,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 										pw.getPetriNet().getTime().get(i),
 										value);
 							}
+							System.out.println("nach");
 							j++;
 						}
 					} else if (bna instanceof Transition && onlyT) {
@@ -907,6 +920,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 						}
 					}
 				}
+				
 			}
 		}
 		// pane.revalidate();

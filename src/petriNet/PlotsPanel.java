@@ -70,6 +70,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	// ArrayList<String> labels = new ArrayList<String>();
 
 	public PlotsPanel() {
+		//System.out.println("cols: "+cols);
 		BiologicalNodeAbstract bna;
 
 		Place place;
