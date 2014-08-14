@@ -63,14 +63,14 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	private double max = Double.MIN_VALUE;
 	private JCheckBox checkbox;
 	private ArrayList<XYSeries> seriesList = new ArrayList<XYSeries>();
-	private JFreeChart chart;
+	private ArrayList<JFreeChart> charts = new ArrayList<JFreeChart>();
 
 	HashMap<String, Place> places = new HashMap<String, Place>();
 
 	// ArrayList<String> labels = new ArrayList<String>();
 
 	public PlotsPanel() {
-		//System.out.println("cols: "+cols);
+		// System.out.println("cols: "+cols);
 		BiologicalNodeAbstract bna;
 
 		Place place;
@@ -155,62 +155,62 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 			checkbox = new JCheckBox(
 					"User same scaling for each simulation plot of each place.");
-			//this.drawPlots();
+			// this.drawPlots();
 
 			p.removeAll();
 			p.setLayout(new GridLayout(0, 3));
-			//Place place;
-			//Double value;
+			// Place place;
+			// Double value;
 			for (int j = 0; j < rows; j++) {
 				place = places.get(labels.get(j));
 				if (place.getPetriNetSimulationData().size() > 0) {
 					final XYSeriesCollection dataset = new XYSeriesCollection();
-					
-					seriesList.add(new XYSeries(1));
+
+					seriesList.add(new XYSeries(j));
 					XYSeries series = seriesList.get(j);
-					/*for (int i = 0; i < cols; i++) {
-						// System.out.println(j + " " + i);
-						// System.out.println("test: " + table[j][i + 1]);
-						// value = place.getPetriNetSimulationData().get(i);
+					/*
+					 * for (int i = 0; i < cols; i++) { // System.out.println(j
+					 * + " " + i); // System.out.println("test: " + table[j][i +
+					 * 1]); // value = place.getPetriNetSimulationData().get(i);
+					 * 
+					 * if (place.getPetriNetSimulationData().size() > i) { value
+					 * = place.getPetriNetSimulationData().get(i); } else {
+					 * value = 0.0; }
+					 * 
+					 * // value = Double.parseDouble(table[j][i + //
+					 * 1].toString());
+					 * series.add(pw.getPetriNet().getPnResult().get("time")
+					 * .get(i), value); }
+					 */
 
-						if (place.getPetriNetSimulationData().size() > i) {
-							value = place.getPetriNetSimulationData().get(i);
-						} else {
-							value = 0.0;
-						}
-
-						// value = Double.parseDouble(table[j][i +
-						// 1].toString());
-						series.add(pw.getPetriNet().getPnResult().get("time")
-								.get(i), value);
-					}*/
-					
 					dataset.addSeries(series);
-					chart = ChartFactory.createXYLineChart(
+					JFreeChart chart = ChartFactory.createXYLineChart(
 							labels.get(j), "Timestep", "Token", dataset,
 							PlotOrientation.VERTICAL, false, true, false);
 
 					final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 					chart.addSubtitle(new TextTitle("StartToken="
-							+ place.getPetriNetSimulationData().get(0).toString()));
+							+ place.getPetriNetSimulationData().get(0)
+									.toString()));
 					// NumberAxis yAxis = new NumberAxis();
 					// xAxis.setTickUnit(new NumberTickUnit(2));
 					// xAxis.setRange(0, 50);
 					// Assign it to the chart
 					if (checkbox.isSelected()) {
-						//System.out.println("checked");
+						// System.out.println("checked");
 						NumberAxis range = (NumberAxis) chart.getXYPlot()
 								.getRangeAxis();
-						range.setRange(min, max*1.05);
+						range.setRange(min, max * 1.05);
 					}
 					ChartPanel pane = new ChartPanel(chart);
 					pane.setPreferredSize(new java.awt.Dimension(320, 200));
 					renderer.setSeriesPaint(j, Color.BLACK);
 					p.add(pane);
+					charts.add(chart);
 				}
 			}
 			this.updateData();
-			
+
 			for (int j = rows; j % 3 != 0; j++) {
 				final XYSeriesCollection dataset = new XYSeriesCollection();
 
@@ -222,12 +222,12 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 				};
 				p.add(pane);
 			}
-			//p.setVisible(true);
+			// p.setVisible(true);
 			p.repaint();
-			//this.repaint();
+			// this.repaint();
 			this.revalidate();
-			//this.setVisible(true);
-			
+			// this.setVisible(true);
+
 			JScrollPane sp = new JScrollPane(p);
 			sp.setPreferredSize(new java.awt.Dimension(980, 400));
 			setLayout(new BorderLayout());
@@ -241,16 +241,17 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	}
 
 	private void updateData() {
+		//System.out.println("update");
 		Place place;
 		Double value;
 		for (int j = 0; j < rows; j++) {
 			place = places.get(labels.get(j));
 			if (place.getPetriNetSimulationData().size() > 0) {
-				//final XYSeriesCollection dataset = new XYSeriesCollection();
-				
-				//seriesList.add(new XYSeries(1));
+				// final XYSeriesCollection dataset = new XYSeriesCollection();
+
+				// seriesList.add(new XYSeries(1));
 				XYSeries series = seriesList.get(j);
-				for (int i = 0; i < cols; i++) {
+				for (int i = series.getItemCount(); i < cols; i++) {
 					// System.out.println(j + " " + i);
 					// System.out.println("test: " + table[j][i + 1]);
 					// value = place.getPetriNetSimulationData().get(i);
@@ -261,10 +262,16 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 						value = 0.0;
 					}
 
+					if (value < min) {
+						min = value;
+					}
+					if (value > max) {
+						max = value;
+					}
+
 					// value = Double.parseDouble(table[j][i +
 					// 1].toString());
-					series.add(pw.getPetriNet().getTime()
-							.get(i), value);
+					series.add(pw.getPetriNet().getTime().get(i), value);
 				}
 			}
 		}
@@ -315,21 +322,23 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 
-		//System.out.println(e.getSource());
+		// System.out.println(e.getSource());
 		this.updateData();
-		
-		if (checkbox.isSelected()) {
-			//System.out.println("checked");
-			NumberAxis range = (NumberAxis) chart.getXYPlot()
-					.getRangeAxis();
-			range.setRange(min, max*1.05);
-		}else{
-			NumberAxis range = (NumberAxis) chart.getXYPlot()
-					.getRangeAxis();
-			range.setAutoRange(true);
-		}
-		
-		// TODO Auto-generated method stub
 
+		//System.out.println("checked");
+		//System.out.println(min);
+		//System.out.println(max);
+		//System.out.println(charts.get(0).getXYPlot().getDataset().getItemCount(0));
+		JFreeChart chart;
+		for (int i = 0; i < charts.size(); i++) {
+			//System.out.println(i);
+			chart = charts.get(i);
+			NumberAxis range = (NumberAxis) chart.getXYPlot().getRangeAxis();
+			if (checkbox.isSelected()) {
+				range.setRange(min, max * 1.05);
+			} else {
+				range.setAutoRange(true);
+			}
+		}
 	}
 }
