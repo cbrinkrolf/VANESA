@@ -422,7 +422,7 @@ public class PetriNetSimulation {
 				}
 				System.out.println("building ended");
 				graphInstance.getPathway().setPetriNetSimulation(true);
-				w.updatePCPView();
+				w.initPCPGraphs();
 				
 				
 				Thread t2 = new Thread() {
