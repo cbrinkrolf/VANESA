@@ -105,9 +105,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private JDialog dialog;
 	private GraphInstance graphInstance = null;
 	private Pathway pw = null;
-	private RegulationTabelModel model;
+	// private RegulationTabelModel model;
 	private MyTable table;
-	private boolean first = true;
+	// private boolean first = true;
 	private JButton petriNetAnimationButton = new JButton("Start Animation");
 	private JButton petriNetStopAnimationButton = new JButton("Stop");
 	private JButton resetPetriNet = new JButton("Reset");
@@ -159,6 +159,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private ArrayList<XYSeries> seriesList = new ArrayList<XYSeries>();
 
 	private HashMap<BiologicalNodeAbstract, XYSeries> series2Node = new HashMap<BiologicalNodeAbstract, XYSeries>();
+	
+	private HashMap<BiologicalNodeAbstract, XYSeriesCollection> datasetNodes = new HashMap<BiologicalNodeAbstract, XYSeriesCollection>();
+	private HashMap<BiologicalEdgeAbstract, XYSeriesCollection> datasetEdges = new HashMap<BiologicalEdgeAbstract, XYSeriesCollection>();
 
 	// private HashMap<XYSeries, BiologicalNodeAbstract> series2Edge = new
 	// HashMap<XYSeries, BiologicalNodeAbstract>();
@@ -213,85 +216,20 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	 * abstracts. On first call, the GUI is created using these values.
 	 */
 	public void revalidateView() {
-		
-		//System.out.println("revalditate");
+
+		// System.out.println("revalditate");
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
 
 		if (pw.isPetriNet() && pw.isPetriNetSimulation()) {
 
 			main.removeAll();
-			first = true;
+			// first = true;
 
 			// get main window instance
 			w = MainWindowSingelton.getInstance();
 
 			// get pathway and nodes
-
-			if (first) {
-				BiologicalNodeAbstract bna;
-				Place p;
-				Iterator<BiologicalNodeAbstract> it = pw.getAllNodes()
-						.iterator();
-				rowsSize = 0;
-				while (it.hasNext()) {
-					bna = it.next();
-					if (bna instanceof Place) {
-						p = (Place) bna;
-						// if (p.getPetriNetSimulationData().size() > 0) {
-						rowsSize++;
-						// }
-					}
-				}
-				// System.out.println(rowsSize);
-				// rowsSize = pw.getPetriNet().getNumberOfPlaces();
-				rowsDim = pw.getPetriNet().getResultDimension();
-				// System.out.println("rows: "+rowsSize);
-				// System.out.println("rowsDim: "+rowsDim);
-				// get Data from all Places
-				it = pw.getAllNodes().iterator();
-				rows = new Object[rowsSize][rowsDim + 1];
-				int i = 0;
-				// Vector<Double> MAData;
-
-				// System.out.println("while");
-				while (it.hasNext()) {
-					// Object elem = it.next();
-					bna = it.next();
-					if (bna instanceof Place) {
-						// MAData = bna.getPetriNetSimulationData();
-						// System.out.println("size:");
-						// System.out.println(MAData.size());
-						rows[i][0] = bna.getLabel();
-						for (int j = 1; j <= rowsDim; j++) {
-							if(bna.getPetriNetSimulationData().size() > j-1){
-							rows[i][j] = bna.getPetriNetSimulationData().get(
-									j - 1);
-							}else{
-								rows[i][j] = 0;
-							}
-							// System.out.println(i+" "+j+": "+rows[i][j]);
-							// System.out.println(i+" "+j +" "+ MAData.get(j -
-							// 1));
-						}
-						i++;
-					}
-				}
-			}
-			first = false;
-
-			// create column labels for table view
-			String columNames[] = new String[rowsDim + 1];
-			String selectorValues[] = new String[rowsSize];
-			columNames[0] = "Label";
-			for (int i = 0; i < rowsDim; i++) {
-				columNames[i + 1] = "t=" + pw.getPetriNet().getTime().get(i);
-
-			}
-
-			for (int i = 0; i < rowsSize; i++) {
-				selectorValues[i] = "Place: " + rows[i][0];
-			}
 
 			// build GUI
 			p = new JPanel();
@@ -336,7 +274,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			showTable.addActionListener(this);
 			showTable.setActionCommand("show");
 			slider.setMinimum(0);
-			slider.setMaximum(rowsDim-1);
+			slider.setMaximum(rowsDim - 1);
 			slider.setMajorTickSpacing(1);
 			slider.addChangeListener(this);
 			slider.setToolTipText("Time: 0");
@@ -385,125 +323,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			mainPanel.add(p, "span");
 			mainPanel.add(controlPanel, "gap 10, wrap 15, growx");
 
-			// // /INVARIANTEN TEST TODO
-			// //P-Invariante
-			// rP = new Object[this.rowsSize][2];
-			//
-			// Iterator<GraphElementAbstract> it = hs.iterator();
-			// int i = 0;
-			//
-			// while (it.hasNext()) {
-			// Object elem = it.next();
-			// BiologicalNodeAbstract bna = (BiologicalNodeAbstract) elem;
-			// if (bna instanceof Place) {
-			// // MAData = bna.getPetriNetSimulationData();
-			// // System.out.println("size:");
-			// // System.out.println(MAData.size());
-			// rP[i][0] = bna.getName();
-			// rP[i][1] = i;
-			// i++;
-			// }
-			// }
-			// String[] cNames = new String[2];
-			// cNames[0] = "Vertex";
-			// cNames[1] = "Value";
-			// RegulationTabelModel m = new RegulationTabelModel(rP, cNames,
-			// nodeTabel);
-			//
-			// tP = new MyTable(rP, cNames);
-			// //tP.setModel(m);
-			// //tP.set
-			// /*tP.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			// tP.setColumnControlVisible(false);
-			// tP.setHighlighters(HighlighterFactory.createSimpleStriping());
-			// tP.setFillsViewportHeight(true);
-			// tP.addHighlighter(new ColorHighlighter(new Color(192, 215, 227),
-			// Color.BLACK));
-			// tP.setHorizontalScrollEnabled(true);
-			// tP.getTableHeader().setReorderingAllowed(true);
-			// tP.getTableHeader().setResizingAllowed(true);
-			// tP.getColumn(cNames[0]).setPreferredWidth(100);
-			// tP.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);*/
-			//
-			//
-			//
-			// invariants.add(new JSeparator(), "gap 10, wrap 15, growx");
-			// invariants.add(tP);
-			//
-			// //mainPanel.add(t);
-			// JButton testP = new JButton("Test P Invariante");
-			// testP.setActionCommand("testP");
-			// testP.addActionListener(this);
-			//
-			// //mainPanel.add(testP);
-			// invariants.add(testP);
-			//
-			//
-			// // T-Invariante
-			//
-			// rT = new Object[hs.size()-this.rowsSize][2];
-			//
-			// Iterator<GraphElementAbstract> it2 = hs.iterator();
-			// int j = 0;
-			//
-			// Object elem;
-			// BiologicalNodeAbstract bna;
-			// while (it2.hasNext()) {
-			// elem = it2.next();
-			// bna = (BiologicalNodeAbstract) elem;
-			// if (bna instanceof Transition) {
-			// // MAData = bna.getPetriNetSimulationData();
-			// // System.out.println("size:");
-			// // System.out.println(MAData.size());
-			// rT[j][0] = bna.getName();
-			// rT[j][1] = j+5;
-			// System.out.println(j+5+" "+bna.getName());
-			// j++;
-			// }
-			// }
-			// String[] cNamesT = new String[2];
-			// cNamesT[0] = "Transition";
-			// cNamesT[1] = "Value";
-			// RegulationTabelModel mT = new RegulationTabelModel(rT, cNamesT,
-			// nodeTabel);
-			//
-			// tT = new MyTable();
-			// tT.setModel(mT);
-			// tT.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			// tT.setColumnControlVisible(false);
-			// tT.setHighlighters(HighlighterFactory.createSimpleStriping());
-			// tT.setFillsViewportHeight(true);
-			// tT.addHighlighter(new ColorHighlighter(new Color(192, 215, 227),
-			// Color.BLACK));
-			// tT.setHorizontalScrollEnabled(true);
-			// tT.getTableHeader().setReorderingAllowed(true);
-			// tT.getTableHeader().setResizingAllowed(true);
-			// //tT.getColumn(cNamesT[0]).setPreferredWidth(100);
-			// tT.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			//
-			//
-			// invariants.add(new JSeparator(), "gap 10, wrap 15, growx");
-			// invariants.add(tT);
-			//
-			// //mainPanel.add(t);
-			// JButton testT = new JButton("Test T Invariante");
-			// testT.setActionCommand("testT");
-			// testT.addActionListener(this);
-			//
-			// //mainPanel.add(testP);
-			// invariants.add(testT);
-			//
-			//
-			// main.add(invariants);
-			// // TEST ENDE TODO
-			//
-			//
-
 			main.add(mainPanel);
 			main.setVisible(true);
 
 			// create dialog and fill table with values and labels
-			model = new RegulationTabelModel(rows, columNames, nodeTabel);
 
 			// System.out.println(columNames.length);
 			drawPlot();
@@ -606,7 +429,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 					dataset.addSeries(seriesList.get(0));
 					labels.add("Sum of tokens");
-
+					// dataset.gets
 					dataset2.addSeries(seriesList.get(1));
 					// labels.add("Tokens");
 
@@ -650,7 +473,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// if (place.getPetriNetSimulationData().size() > 0) {
 					places.add(place);
 					XYSeries s = new XYSeries(j);
-					//System.out.println("size: "+places.size());
+					// System.out.println("size: "+places.size());
 					series2Node.put(place, s);
 					// seriesList.add(new XYSeries(j));
 
@@ -751,7 +574,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		} else {
 			plot.setRenderer(renderer);
 			NumberAxis rangeAxis = (NumberAxis) plot.getDomainAxis();
-			//rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+			// rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		}
 
 		// add chart to pane and refresh GUI
@@ -864,26 +687,30 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			Place place;
 			Transition transition;
 			int step;
-			
+
 			while (iterator.hasNext()) {
-				
+
 				// System.out.println(j);
 				// System.out.println(j);
 				bna = iterator.next();
 				if (series2Node.containsKey(bna)) {
 					if (bna instanceof Place) {
 						place = (Place) bna;
-						
-						//System.out.println(place.getName());
+
+						// System.out.println(place.getName());
 						System.out.println(pw.getPetriNet().getTime().size());
 						if (place.getPetriNetSimulationData().size() > 0) {
 							// System.out.println(seriesList.get(j).getItemCount());
-							if(pw.getPetriNet().getTime().size() != place.getPetriNetSimulationData().size()){
-								System.out.println("time: "+pw.getPetriNet().getTime().size());
-								System.out.println("data: "+place.getPetriNetSimulationData().size());
+							if (pw.getPetriNet().getTime().size() != place
+									.getPetriNetSimulationData().size()) {
+								System.out.println("time: "
+										+ pw.getPetriNet().getTime().size());
+								System.out.println("data: "
+										+ place.getPetriNetSimulationData()
+												.size());
 							}
-							step = Math.min(pw
-									.getPetriNet().getTime().size(), place.getPetriNetSimulationData().size());
+							step = Math.min(pw.getPetriNet().getTime().size(),
+									place.getPetriNetSimulationData().size());
 							System.out.println("vor");
 							for (int i = series2Node.get(place).getItemCount(); i < step; i++) {
 
@@ -922,7 +749,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 						}
 					}
 				}
-				
+
 			}
 		}
 		// pane.revalidate();
@@ -947,7 +774,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			table = new MyTable();
 			// System.out.println(model.getColumnCount());
 			// System.out.println(model.getRowCount());
-			table.setModel(model);
+			table.setModel(this.getTableModel());
 			table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			table.setColumnControlVisible(false);
 			table.setHighlighters(HighlighterFactory.createSimpleStriping());
@@ -1270,18 +1097,78 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			}
 		}
 	}
-	
-	public void initGraphs(){
+
+	public void initGraphs() {
+
+		int count = 0;
+		BiologicalNodeAbstract bna;
+		BiologicalEdgeAbstract bea;
+		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllNodes().iterator();
+		while(itNodes.hasNext()){
+			bna = itNodes.next();
+			
+			
+			count++;
+		}
+		
+		
+		
+		Iterator<BiologicalEdgeAbstract> itEdges = pw.getAllEdges().iterator();
+		while(itEdges.hasNext()){
+			bea = itEdges.next();
+			
+			
+			count++;
+		}
 		
 	}
 
-	private double[][] initArray(int m, int n) {
-		double[][] array = new double[m][n];
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				array[i][j] = 0;
+	private RegulationTabelModel getTableModel() {
+
+		BiologicalNodeAbstract bna;
+
+		rowsSize = pw.getPetriNet().getPlaces();
+
+		// System.out.println(rowsSize);
+		// rowsSize = pw.getPetriNet().getNumberOfPlaces();
+		rowsDim = pw.getPetriNet().getResultDimension();
+		// System.out.println("rows: "+rowsSize);
+		// System.out.println("rowsDim: "+rowsDim);
+		// get Data from all Places
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		rows = new Object[rowsSize][rowsDim + 1];
+		int i = 0;
+		// Vector<Double> MAData;
+
+		// System.out.println("while");
+		while (it.hasNext()) {
+			// Object elem = it.next();
+			bna = it.next();
+			if (bna instanceof Place) {
+				// MAData = bna.getPetriNetSimulationData();
+				// System.out.println("size:");
+				// System.out.println(MAData.size());
+				rows[i][0] = bna.getLabel();
+				for (int j = 1; j <= rowsDim; j++) {
+					if (bna.getPetriNetSimulationData().size() > j - 1) {
+						rows[i][j] = bna.getPetriNetSimulationData().get(j - 1);
+					} else {
+						rows[i][j] = 0;
+					}
+					// System.out.println(i+" "+j+": "+rows[i][j]);
+					// System.out.println(i+" "+j +" "+ MAData.get(j -
+					// 1));
+				}
+				i++;
 			}
 		}
-		return array;
+		// create column labels for table view
+		String columNames[] = new String[rowsDim + 1];
+		// String selectorValues[] = new String[rowsSize];
+		columNames[0] = "Label";
+		for (i = 0; i < rowsDim; i++) {
+			columNames[i + 1] = "t=" + pw.getPetriNet().getTime().get(i);
+		}
+		return new RegulationTabelModel(rows, columNames, nodeTabel);
 	}
 }
