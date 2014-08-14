@@ -29,7 +29,7 @@ public class Server {
 	private java.net.ServerSocket serverSocket;
 	private HashMap<BiologicalEdgeAbstract, String> bea2key;
 	private ArrayList<String> names;
-	private boolean running = false;
+	private boolean running = true;
 
 	public Server(HashMap<BiologicalEdgeAbstract, String> bea2key) {
 		this.bea2key = bea2key;
@@ -47,10 +47,12 @@ public class Server {
 
 					while (true) {
 						java.net.Socket client = warteAufAnmeldung(serverSocket);
-						//leseNachricht(client);
-						
-						 //InputStream is = new BufferedInputStream(client.getInputStream());
-						DataInputStream is = new DataInputStream(client.getInputStream()); 
+						// leseNachricht(client);
+
+						// InputStream is = new
+						// BufferedInputStream(client.getInputStream());
+						DataInputStream is = new DataInputStream(
+								client.getInputStream());
 						leseNachricht(is);
 						// System.out.println("server: " + nachricht);
 						// schreibeNachricht(client, nachricht);
@@ -77,7 +79,6 @@ public class Server {
 
 	private void leseNachricht(DataInputStream socket) throws IOException {
 
-		
 		int lengthMax = 2048;
 		// char[] buffer = new char[200];
 		byte[] buffer = new byte[lengthMax];
@@ -99,8 +100,8 @@ public class Server {
 			lengthMax = length;
 			buffer = new byte[length];
 		}
-		System.out.println("av: "+socket.available());
-	
+		System.out.println("av: " + socket.available());
+
 		socket.readFully(buffer, 0, length);
 		bb = ByteBuffer.wrap(buffer, 0, 4);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -122,46 +123,48 @@ public class Server {
 		int strings = bb.getInt();
 		System.out.println("string: " + strings);
 
-		System.out.println("bufferlenght: "+buffer.length);
+		System.out.println("bufferlenght: " + buffer.length);
 		String n = new String(buffer, 16, buffer.length - 17);
-		System.out.println("stringsize: "+n.length());
-		//System.out.println(n);
-		System.out.println("av: "+socket.available());
-		
+		System.out.println("stringsize: " + n.length());
+		// System.out.println(n);
+		System.out.println("av: " + socket.available());
+
 		String[] test = n.split("\u0000");
-		System.out.println("testsize: "+test.length);
-		System.out.println("av: "+socket.available());
-		System.out.println("av: "+socket.available());
+		System.out.println("testsize: " + test.length);
+		// System.out.println("av: "+socket.available());
+		// System.out.println("av: "+socket.available());
 		int counter = 0;
-		for(int i = 22300; i<23500; i++){
-			//System.out.println(i+": "+n.charAt(i));
+		for (int i = 22300; i < 23500; i++) {
+			// System.out.println(i+": "+n.charAt(i));
 		}
-		System.out.println("testcounter: "+counter);
-		System.out.println("av: "+socket.available());
+		System.out.println("testcounter: " + counter);
+		// System.out.println("av: "+socket.available());
 		names = new ArrayList<String>(Arrays.asList(n.split("\u0000")));
 
-		running = true;
+		// running = true;
 		int j = 0;
 		int expected = 8 * reals + 4 * ints + bools;
 
-		System.out.println("Headers: "+names.size());
+		System.out.println("Headers: " + names.size());
 		counter = 0;
 		for (int i = 0; i < names.size(); i++) {
-			//System.out.print(names.get(i) + "\t");
-			counter+=names.get(i).length();
+			// System.out.print(names.get(i) + "\t");
+			counter += names.get(i).length();
 		}
-		System.out.println("sum: "+counter);
+		System.out.println("sum: " + counter);
 		byte btmp;
 		ArrayList<Object> values;
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		
+
 		while (running) {
 			try {
-				if(pw.getPetriNet().getTime().size() > 0 && pw.getPetriNet().getTime().get(pw.getPetriNet().getTime().size()-1) > 0.01){
-				Thread.sleep(100);
-				}else{
-					Thread.sleep(10);
+				if (pw.getPetriNet().getTime().size() > 0
+						&& pw.getPetriNet().getTime()
+								.get(pw.getPetriNet().getTime().size() - 1) > 0.01) {
+					Thread.sleep(1);
+				} else {
+					Thread.sleep(1);
 				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -207,7 +210,7 @@ public class Server {
 						// bb.order(ByteOrder.LITTLE_ENDIAN);
 						btmp = buffer[reals * 8 + ints * 4 + b];
 						values.add(new Double(btmp));
-						//values.add(buffer[reals * 8 + ints * 4 + b]);
+						// values.add(buffer[reals * 8 + ints * 4 + b]);
 						// System.out.print(buffer[reals * 8 + ints * 4 + b]
 						// + "\t");
 					}
@@ -307,7 +310,7 @@ public class Server {
 
 	private void setData(ArrayList<Object> values) {
 
-		//System.out.println("set Data");
+		// System.out.println("set Data");
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
 		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
@@ -349,8 +352,9 @@ public class Server {
 								+ "'.t"))));
 			} else if (bna instanceof Transition) {
 
-				//System.out.println(bna.getName()+".fire" + names.indexOf("'" + bna.getName()
-					//			+ "'.fire"));
+				// System.out.println(bna.getName()+".fire" + names.indexOf("'"
+				// + bna.getName()
+				// + "'.fire"));
 				bna.getPetriNetSimulationData().add(
 						(Double) values.get(names.indexOf("'" + bna.getName()
 								+ "'.fire")));
