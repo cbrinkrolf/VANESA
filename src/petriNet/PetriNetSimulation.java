@@ -37,8 +37,8 @@ public class PetriNetSimulation {
 		boolean omc = true;
 
 		if (omc) {
-			this.runOMC();
-			//this.runOMCIA();
+			//this.runOMC();
+			this.runOMCIA();
 		} else {
 			this.runDymola();
 		}
@@ -423,6 +423,28 @@ public class PetriNetSimulation {
 				System.out.println("building ended");
 				graphInstance.getPathway().setPetriNetSimulation(true);
 				w.updatePCPView();
+				
+				
+				Thread t2 = new Thread() {
+					public void run() {
+						w.redrawGraphs();
+						while(s.isRunning()){
+							w.redrawGraphs();
+							try {
+								sleep(100);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						System.out.println("end of simulation");
+						w.redrawGraphs();
+						//w.updatePCPView();
+					}
+				};
+				t2.start();
+				
+				
 				//System.out.println("before sim");
 				//w.updatePCPView();
 				//System.out.println("ps:" + pathSim);
@@ -443,23 +465,7 @@ public class PetriNetSimulation {
 				
 				
 				
-				Thread t2 = new Thread() {
-					public void run() {
-						while(!stopped){
-							w.redrawGraphs();
-							try {
-								sleep(1000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-						System.out.println("end of simulation");
-						w.redrawGraphs();
-						//w.updatePCPView();
-					}
-				};
-				t2.start();
+				
 				
 				
 				/*Thread t3 = new Thread() {

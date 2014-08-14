@@ -213,6 +213,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	 * abstracts. On first call, the GUI is created using these values.
 	 */
 	public void revalidateView() {
+		
 		//System.out.println("revalditate");
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
@@ -796,6 +797,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	}
 
 	public void updateData() {
+		System.out.println("update");
 		Double value;
 
 		int pickedV = GraphInstance.getMyGraph().getVisualizationViewer()
@@ -873,7 +875,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 						place = (Place) bna;
 						
 						//System.out.println(place.getName());
-						//System.out.println(pw.getPetriNet().getTime().size());
+						System.out.println(pw.getPetriNet().getTime().size());
 						if (place.getPetriNetSimulationData().size() > 0) {
 							// System.out.println(seriesList.get(j).getItemCount());
 							if(pw.getPetriNet().getTime().size() != place.getPetriNetSimulationData().size()){
@@ -1267,6 +1269,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				}
 			}
 		}
+	}
+	
+	public void initGraphs(){
+		
 	}
 
 	private double[][] initArray(int m, int n) {

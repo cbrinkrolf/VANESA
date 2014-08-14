@@ -130,6 +130,7 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 				double tokenStart = Double.parseDouble(((JTextField) event
 						.getSource()).getText());
 				p.setTokenStart(tokenStart);
+				p.setToken(p.getTokenStart());
 			}
 		} else if (source.equals("tokenMax")) {
 			if (!((JTextField) event.getSource()).getText().equals("")) {
