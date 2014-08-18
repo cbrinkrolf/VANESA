@@ -249,31 +249,54 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 	
 	/**
-	 * Method to coarse a set of nodes to a hierarchical node.
-	 * 
+	 * Method to coarse a set of nodes to a hierarchical node with automatic generated id.
 	 * @param vertices Nodes to coarse.
+	 * @return The created coarseNode. Null, if coarsing was not successful.
+	 */
+	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes){
+		return BiologicalNodeAbstract.coarse(nodes, null, null);
+	}
+	
+	/**
+	 * Method to coarse a set of nodes to a hierarchical node with a given id. 
+	 * ONLY TO BE USED DURING IMPORTING PROCESS, OTHERWISE USE METHOD WITHOUT ID PARAMETER!
+	 * 
+	 * @param nodes Nodes to coarse.
+	 * @param id Id for the new generated coarse node.			
 	 * @return The created coarseNode. Null, if coarsing was not successful.
 	 * @author tloka
 	 */
-	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes){
+	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label){
 		
 		if(nodes == null  || nodes.size()<1){
 			return null;
 		}
 		BiologicalNodeAbstract coarseNode = computeCoarseType(nodes);
 		
-		if(coarseNode == null || !isCoarsingAllowed(nodes)){
+//		if(coarseNode == null || !isCoarsingAllowed(nodes)){
+		if(coarseNode == null){
 			showCoarsingErrorMessage();
 			return null;
 		}
 			
 		coarseNode = coarseNode.clone();
 		coarseNode.cleanUpHierarchyElements();
-		coarseNode.setID();
-		String lbl = JOptionPane.showInputDialog(null, null, 
-				"Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
-		if(lbl==null){
-			lbl = "CN_id " + coarseNode.getID();
+		
+		if(id==null){
+			coarseNode.setID(true);
+		} else {
+			coarseNode.setID(id);
+		}
+		
+		String lbl;
+		if(label==null){
+			lbl = JOptionPane.showInputDialog(null, null, 
+					"Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
+			if(lbl==null){
+				lbl = "CN_id " + coarseNode.getID();
+			}
+		} else {
+			lbl=label;
 		}
 		coarseNode.setLabel(lbl);
 		coarseNode.setName(lbl);
@@ -294,7 +317,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			coarseNode.makeCoarseShape();
 			coarseNode.getRootPathway().updateMyGraph();
 			
-//			coarseNode.printAllHierarchicalAttributes();
+			//coarseNode.printAllHierarchicalAttributes();
 
 		} else {
 			for (BiologicalNodeAbstract node : nodes) {
@@ -353,7 +376,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 	
 	/**
-	 * Updates the connecting edges based on the internal Graph.
+	 * Updates the connecting edges based on border and environment.
+	 * Border and Environment must be updated before calling this method.
 	 * @return The new set of connecting edges.
 	 * @author tloka
 	 */
@@ -413,7 +437,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 	
 	/**
-	 * Computes the set of environment nodes based on the set of connecting edges.
+	 * Computes the set of environment nodes based on the internal graph.
 	 * @return The new environment.
 	 * @author tloka
 	 */
@@ -584,6 +608,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		if (!isCoarseNode())
 			return;
 		
+//		printAllHierarchicalAttributes();
 		if(this.getParentNode()!=null && this.getParentNode().getGraph()!=getActiveGraph()){
 			return;
 		}
@@ -595,6 +620,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		this.setStateChanged(NodeStateChanged.FLATTED);
 		
 		getRootPathway().updateMyGraph();
+		
+//		printAllHierarchicalAttributes();
 	}
 	
 	/** 
@@ -1045,12 +1072,16 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		 * } //System.out.println("added: " + ID); ids.add(ID);
 		 */
 	}
+	
+	public void setID(){
+		setID(false);
+	}
 
-	public void setID() {
+	public void setID(boolean overwriteOldID) {
 		set = new GraphInstance().getPathway().getIdSet();
 		// System.out.println(new GraphInstance().getPathway().getName());
 		// set id to highest current id+1;
-		if (ID <= 0) {
+		if (overwriteOldID || ID <= 0) {
 			// System.out.println("neue ID");
 			if (set.size() > 0) {
 				// System.out.println("last: " + set.last());
@@ -1280,5 +1311,17 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		this.shape = defaultShape;
 		this.color = defaultColor;
 		this.nodesize = defaultNodesize;
+	}
+
+	public Set<BiologicalNodeAbstract> getAllRootNodes() {
+		Set<BiologicalNodeAbstract> rootNodes = new HashSet<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract node : getInnerNodes()){
+			if(!node.isCoarseNode()){
+				rootNodes.add(node);
+			} else {
+				rootNodes.addAll(node.getAllRootNodes());
+			}
+		}
+		return rootNodes;
 	}
 }

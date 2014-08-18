@@ -103,12 +103,12 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 				return;
 			}
 			if (vertex != null) {
-				if(vertex.isCoarseNode()){
+				if(vertex.isCoarseNode() && javax.swing.SwingUtilities.isLeftMouseButton(e)){
 					vertex.showSubPathway();
-				} else if(vertex.getParentNode()!=null){
+				} else if(vertex.getParentNode()!=null && javax.swing.SwingUtilities.isLeftMouseButton(e)){
 					vertex.getParentNode().hideSubPathway();
 				}
-			} else {
+			} else if(javax.swing.SwingUtilities.isLeftMouseButton(e)){
 				hideAllSubpathways();
 			}
 			vv.repaint();
