@@ -12,10 +12,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.jdom2.Document;
@@ -117,6 +119,8 @@ public class JSBMLinput {
 		handleReferences();
 		Element reactionNode = modelNode.getChild("listOfReactions", null);
 		createReaction(reactionNode);
+		
+		buildUpHierarchy(annotationNode);
 		// refresh view
 		try {
 			this.pathway.getGraph().unlockVertices();
@@ -635,6 +639,49 @@ public class JSBMLinput {
 			}
 			// reset because bna is global defined
 			bna = null;
+		}
+	}
+	
+	/**
+	 * Coarses the nodes as described in the loaded sbml file.
+	 * @param annotationNode Annotation Area of the imported model.
+	 * @author tloka
+	 */
+	private void buildUpHierarchy(Element annotationNode){
+		Element modelNode = annotationNode.getChild("model", null);
+		// get the information if the imported net is a Petri net
+		Element hierarchyList = modelNode.getChild("listOfHierarchies", null);
+		Map<Integer, Set<Integer>> hierarchyMap = new HashMap<Integer, Set<Integer>>();
+		Map<Integer, String> coarseNodeLabels = new HashMap<Integer, String>();
+		for(Element hierarchyElement : hierarchyList.getChildren("coarseNode", null)){
+			Set<Integer> childrenSet = new HashSet<Integer>();
+			for(Element childElement : hierarchyElement.getChildren("child", null)){
+				Integer childNode = Integer.parseInt(childElement.getAttributeValue("id").split("_")[1]);
+				childrenSet.add(childNode);
+			}
+			Integer id = Integer.parseInt(hierarchyElement.getAttributeValue("id").split("_")[1]);
+			hierarchyMap.put(id, childrenSet);
+			coarseNodeLabels.put(id, hierarchyElement.getAttributeValue("label"));
+		}
+		int coarsedNodes = 0;
+		while(coarsedNodes<hierarchyMap.size()){
+			for(Integer parent : hierarchyMap.keySet()){
+				boolean toBeCoarsed = true;
+				Set<BiologicalNodeAbstract> coarseNodes = new HashSet<BiologicalNodeAbstract>();
+				for(Integer child : hierarchyMap.get(parent)){
+					if(!nodes.containsKey(child) || nodes.containsKey(parent)){
+						toBeCoarsed = false;
+						break;
+					}
+					coarseNodes.add(nodes.get(child));
+				}
+				if(toBeCoarsed){
+					BiologicalNodeAbstract coarseNode = BiologicalNodeAbstract.coarse(coarseNodes, 
+							parent, coarseNodeLabels.get(parent));
+					nodes.put(parent, coarseNode);
+					coarsedNodes+=1;
+				}
+			}
 		}
 	}
 

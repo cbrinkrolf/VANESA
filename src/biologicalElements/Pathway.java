@@ -725,10 +725,9 @@ public class Pathway implements Cloneable {
 			getGraph().addEdge(bea);
 			bea.setID();
 			biologicalElements.put(bea.getID() + "", bea);
-			if (bea.getFrom().getGraph(false) == null
-					&& bea.getTo().getGraph(false) == null
-					&& bea.getFrom().getParentNode() == null
-					&& bea.getTo().getParentNode() == null) {
+			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode() && 
+					bea.getFrom().getParentNode() == null && bea.getTo().getParentNode() == null
+					&& !bea.isClone()) {
 				bea.getFrom().getConnectingEdges().add(bea);
 				bea.getTo().getConnectingEdges().add(bea);
 			}

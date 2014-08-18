@@ -36,6 +36,8 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	private boolean isReference = true;
 	
 	private boolean isVisible = true;
+	
+	private boolean isClone = false;
 
 	private String name = "not mentioned";
 	
@@ -139,11 +141,21 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	@Override
 	public BiologicalEdgeAbstract clone() {
 		try{
-		return (BiologicalEdgeAbstract) super.clone();
+			BiologicalEdgeAbstract cloneEdge = (BiologicalEdgeAbstract) super.clone();
+			cloneEdge.setClone(true);
+		return cloneEdge;
 		}catch(CloneNotSupportedException e){
 			// Kann eigentlich nicht passieren, da Cloneable
 			throw new InternalError();
 		}
+	}
+	
+	private void setClone(boolean c){
+		isClone = c;
+	}
+	
+	public boolean isClone(){
+		return isClone;
 	}
 		
 	/* private boolean stringsEqualAndAreNotEmpty(String s1, String s2) {

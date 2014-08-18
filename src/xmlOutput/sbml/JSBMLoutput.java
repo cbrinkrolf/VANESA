@@ -7,9 +7,12 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -83,13 +86,25 @@ public class JSBMLoutput {
 
 		Compartment compartment;
 		// read all nodes from graph
-		Iterator<BiologicalNodeAbstract> nodeIterator = this.pathway
-				.getAllNodes().iterator();
+		Set<BiologicalNodeAbstract> flattedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract node : this.pathway.getAllNodes()){
+			if(node.isCoarseNode()){
+				flattedPathwayNodes.addAll(node.getAllRootNodes());
+			} else {
+				flattedPathwayNodes.add(node);
+			}
+		}
+		
+		Set<BiologicalEdgeAbstract> flattedPathwayEdges = new HashSet<BiologicalEdgeAbstract>();
+		Iterator<BiologicalNodeAbstract> nodeIterator = flattedPathwayNodes.iterator();
 
 		BiologicalNodeAbstract oneNode;
 		try {
 			while (nodeIterator.hasNext()) {
 				oneNode = nodeIterator.next();
+				for(BiologicalEdgeAbstract conEdge : oneNode.getConnectingEdges()){
+					flattedPathwayEdges.add(conEdge);
+				}
 				// test to what compartment the node belongs
 				String nodeCompartment = COMP + oneNode.getCompartment();
 				// test if compartment already exists
@@ -125,8 +140,7 @@ public class JSBMLoutput {
 		}
 
 		// reactions to sbml
-		Iterator<BiologicalEdgeAbstract> edgeIterator = this.pathway
-				.getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> edgeIterator = flattedPathwayEdges.iterator();
 
 		BiologicalEdgeAbstract oneEdge;
 		try {
@@ -205,10 +219,37 @@ public class JSBMLoutput {
 			}
 			el.addChild(elSub);
 		}
+		XMLNode hierarchy = new XMLNode(new XMLNode(new XMLTriple(
+				"listOfHierarchies", "", ""), new XMLAttributes()));
+		Set<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
+		hierarchyNodes.addAll(pathway.getAllNodes());
+		for(BiologicalNodeAbstract node : hierarchyNodes){
+			if(node.isCoarseNode()){
+					addHierarchyXMLNode(hierarchy, node);
+			}
+		}
+		el.addChild(hierarchy);
 		String attr = String.valueOf(pathway.isPetriNet());
 		el.addChild(createElSub(attr, "isPetriNet"));
 		a.appendNoRDFAnnotation(el.toXMLString());
 		return a;
+	}
+	
+	private void addHierarchyXMLNode(XMLNode hierarchy, BiologicalNodeAbstract node){
+		XMLNode hierarchyXMLNode = new XMLNode(new XMLNode(new XMLTriple(
+				"coarseNode", "", ""), new XMLAttributes()));
+		hierarchyXMLNode.addAttr("id", "spec_" + node.getID());
+		hierarchyXMLNode.addAttr("label", node.getLabel());
+		for(BiologicalNodeAbstract childNode : node.getInnerNodes()){
+			XMLNode childXMLNode = new XMLNode(new XMLNode(new XMLTriple(
+					"child", "", ""), new XMLAttributes()));
+			childXMLNode.addAttr("id", "spec_" + childNode.getID());
+			hierarchyXMLNode.addChild(childXMLNode);
+			if(childNode.isCoarseNode()){
+				addHierarchyXMLNode(hierarchy, childNode);
+			}
+		}
+		hierarchy.addChild(hierarchyXMLNode);
 	}
 
 	// save additional data of the nodes
