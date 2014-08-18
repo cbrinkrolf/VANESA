@@ -18,10 +18,39 @@ public enum XMLConstraints {
 	SBML_LEVEL_VALUE("2"),
 	SBML_ID_VERSION("version"),
 	SBML_VERSION_VALUE("3"),
+	SMBL_ID_COMP("xmlns:comp"),
+	SMBL_COMP_VALUE("http://www.sbml.org/sbml/level3/version1/comp/version1"),
+	SMBL_COMP_REQUIRED("comp:required"),
 	
 	MODEL("model"),
 	MODEL_ID("id"),
 	MODEL_ID_VALUE("VanesaModel"),
+	
+	LIST_OF_SUBMODELS("comp:listOfSubmodels"),
+	SUBMODEL("comp:submodel"),
+	COMP_ID("comp:id"),
+	COMP_ID_REF("comp_idRef"),
+	MODEL_REF("comp:modelRef"),
+	
+	LIST_OF_MODEL_DEFINITIONS("comp:listOfModelDefinitions"),
+	MODEL_DEFINITION("comp:modelDefinition"),
+	
+	LIST_OF_EXTERNAL_MODEL_DEFINITIONS("comp:listOfExternalModelDefinitions"),
+	EXTERNAL_MODEL_DEFINITION("comp:externalModelDefinition"),
+	
+	LIST_OF_REPLACED_ELEMENTS("comp:listOfReplacedElements"),
+	REPLACED_ELEMENT("comp:replacedElement"),
+	REPLACED_BY("comp:replacedBy"),
+	
+	LIST_OF_DELETIONS("comp:listOfDeletions"),
+	DELETION("comp:deletion"),
+	
+	LIST_OF_PORTS("comp:listOfPorts"),
+	PORT("comp:port"),
+
+	
+	PORT_REF("comp:portRef"),
+	SUBMODEL_REF("comp:submodelRef"),	
 	
 	LIST_OF_FUNCION_DEFINITIONS("listOfFunctionDefinitions"),
 	FUNCTION_DEFINITION("functionDefinition"),
