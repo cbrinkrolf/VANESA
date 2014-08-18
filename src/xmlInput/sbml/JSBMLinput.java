@@ -648,9 +648,15 @@ public class JSBMLinput {
 	 * @author tloka
 	 */
 	private void buildUpHierarchy(Element annotationNode){
+		if(annotationNode == null){
+			return;
+		}
 		Element modelNode = annotationNode.getChild("model", null);
 		// get the information if the imported net is a Petri net
 		Element hierarchyList = modelNode.getChild("listOfHierarchies", null);
+		if(hierarchyList == null){
+			return;
+		}
 		Map<Integer, Set<Integer>> hierarchyMap = new HashMap<Integer, Set<Integer>>();
 		Map<Integer, String> coarseNodeLabels = new HashMap<Integer, String>();
 		for(Element hierarchyElement : hierarchyList.getChildren("coarseNode", null)){
