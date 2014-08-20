@@ -191,7 +191,7 @@ public class Server {
 			switch (id) {
 			case 4:
 				if (length > 0) {
-					socket.read(buffer, 0, length);
+					socket.readFully(buffer, 0, length);
 
 					for (int r = 0; r < reals; r++) {
 						bb = ByteBuffer.wrap(buffer, r * 8, 8);
