@@ -121,7 +121,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private Thread thread;
 	private ChartPanel pane;
 
-	private JPanel invariants = new JPanel();
+	// private JPanel invariants = new JPanel();
 
 	private Set<BiologicalNodeAbstract> nodesOfPlot = new HashSet<BiologicalNodeAbstract>();
 
@@ -137,15 +137,15 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	// Labels of selected Places
 	private ArrayList<String> labels = new ArrayList<String>();
 	// Colors for Plot
-	private ArrayList<Color> colors = new ArrayList<Color>();
+	// private ArrayList<Color> colors = new ArrayList<Color>();
 
 	// for P-Invariants
-	private Object[][] rP;
-	private MyTable tP;
+	// private Object[][] rP;
+	// private MyTable tP;
 
 	// for T-Invariants
-	private Object[][] rT;
-	private MyTable tT;
+	// private Object[][] rT;
+	// private MyTable tT;
 
 	private int animationStartInit = 0;
 
@@ -155,15 +155,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 	// private ArrayList<Place> plotEntities = new ArrayList<Place>();
 
-	private ArrayList<Place> places;
+	private ArrayList<BiologicalNodeAbstract> places;
 
 	private ArrayList<XYSeries> seriesListR1 = new ArrayList<XYSeries>();
 	private ArrayList<XYSeries> seriesListR2 = new ArrayList<XYSeries>();
-
-	private HashMap<BiologicalNodeAbstract, XYSeries> series2Node = new HashMap<BiologicalNodeAbstract, XYSeries>();
-
-	private HashMap<BiologicalNodeAbstract, XYSeriesCollection> datasetNodes = new HashMap<BiologicalNodeAbstract, XYSeriesCollection>();
-	private HashMap<BiologicalEdgeAbstract, XYSeriesCollection> datasetEdges = new HashMap<BiologicalEdgeAbstract, XYSeriesCollection>();
 
 	private HashMap<Integer, Integer> vector2idx = new HashMap<Integer, Integer>();
 
@@ -233,7 +228,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			// build GUI
 
-			rowsDim = pw.getPetriNet().getPlaces();
+			rowsDim = pw.getPetriNet().getTime().size();//getPlaces();
 			MigLayout layout = new MigLayout();
 			// System.out.println("an: "+animationStartInit);
 			// System.out.println("rows: "+rowsDim);
@@ -342,15 +337,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	 * This method redraws the time series plot in the left sidebar.
 	 */
 	private void drawPlot() {
-		// System.out.println("size: " + this.vector2series.size());
-		// labels.clear();
-		// plotEntities.clear();
-		// seriesList.clear();
-		series2Node.clear();
-		// get Selected Places and their index+label
 		Place place;
 		Transition transition;
-		places = new ArrayList<Place>();
+		// places = new ArrayList<Place>();
 		BiologicalNodeAbstract bna;
 		// System.out.println(GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
 
@@ -361,7 +350,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		// fill series with time series of values
 		// Vector<XYSeries> series = new Vector<XYSeries>();
-		Double value;
 		int pickedV = GraphInstance.getMyGraph().getVisualizationViewer()
 				.getPickedVertexState().getPicked().size();
 		int pickedE = GraphInstance.getMyGraph().getVisualizationViewer()
@@ -397,16 +385,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							.identityHashCode(edge.getSim_tokens())), true);
 					renderer2.setSeriesVisible((int) vector2idx.get(System
 							.identityHashCode(edge.getSim_tokensSum())), true);
-					System.out.println("idx: "
-							+ vector2idx.get(System.identityHashCode(edge
-									.getSim_tokens())));
-					System.out.println("idx: "
-							+ vector2idx.get(System.identityHashCode(edge
-									.getSim_tokensSum())));
-					for (int i = 0; i < seriesListR1.size(); i++) {
-						// renderer.setSeriesVisible(i, false);
-						// renderer2.setSeriesVisible(i, true);
-					}
+					
 				}
 			}
 		} else {
@@ -546,36 +525,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		// pane = new ChartPanel(chart);
 		// pane.setPreferredSize(new java.awt.Dimension(320, 200));
 
-		pane.addChartMouseListener(new ChartMouseListener() {
-			@Override
-			public void chartMouseClicked(ChartMouseEvent event) {
-				if (event.getEntity() != null
-						&& event.getEntity() instanceof XYItemEntity) {
-					XYItemEntity entity = (XYItemEntity) event.getEntity();
-					// System.out.println("Entity seriesindex: "
-					// + entity.getSeriesIndex());
-					Place p = places.get(entity.getSeriesIndex());
-					PickedState<BiologicalNodeAbstract> ps = GraphInstance
-							.getMyGraph().getVisualizationViewer()
-							.getPickedVertexState();
-					// ps.clearPickedVertices();
-					ps.clear();
-					// System.out.println(entity.getSeriesIndex());
-					// System.out.println("sizeunten: "+places.size());
-					// System.out.println(p.getName());
-					ps.pick(p, true);
-
-				}
-
-			}
-
-			@Override
-			public void chartMouseMoved(ChartMouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
 		updateData();
 		// p.add(pane, BorderLayout.CENTER);
 		// p.setVisible(true);
@@ -584,121 +533,110 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	}
 
 	public void updateData() {
-		boolean updateAll = true;
+		BiologicalNodeAbstract bna;
+		BiologicalEdgeAbstract bea;
+		XYSeries series;
+		Place place;
+		Double value;
+		Transition transition;
+		int step;
+		Iterator<BiologicalNodeAbstract> itBna = pw.getAllNodes().iterator();
+		while (itBna.hasNext()) {
+			bna = itBna.next();
+			if (vector2idx.containsKey(System.identityHashCode(bna
+					.getPetriNetSimulationData()))) {
+				// System.out.println("transition");
+				series = this.seriesListR1.get(vector2idx.get(System
+						.identityHashCode(bna.getPetriNetSimulationData())));
+				// System.out.println(series.getItemCount());
+				if (bna instanceof Place) {
+					place = (Place) bna;
 
-			BiologicalNodeAbstract bna;
-			BiologicalEdgeAbstract bea;
-			XYSeries series;
-			Place place;
-			Double value;
-			Transition transition;
-			int step;
-			Iterator<BiologicalNodeAbstract> itBna = pw.getAllNodes()
-					.iterator();
-			while (itBna.hasNext()) {
-				bna = itBna.next();
-				if (vector2idx.containsKey(System.identityHashCode(bna
-						.getPetriNetSimulationData()))) {
-					// System.out.println("transition");
-					series = this.seriesListR1
-							.get(vector2idx.get(System.identityHashCode(bna
-									.getPetriNetSimulationData())));
-					// System.out.println(series.getItemCount());
-					if (bna instanceof Place) {
-						place = (Place) bna;
-
-						// System.out.println(place.getName());
-						// System.out.println(pw.getPetriNet().getTime().size());
-						if (place.getPetriNetSimulationData().size() > 0) {
-							// System.out.println(seriesList.get(j).getItemCount());
-							if (pw.getPetriNet().getTime().size() != place
-									.getPetriNetSimulationData().size()) {
-								// System.out.println("time: "
-								// / + pw.getPetriNet().getTime().size());
-								// System.out.println("data: "
-								// / + place.getPetriNetSimulationData()
-								// .size());
-							}
-							step = Math.min(pw.getPetriNet().getTime().size(),
-									place.getPetriNetSimulationData().size());
-							// System.out.println("vor");
-							for (int i = series.getItemCount(); i < step; i++) {
-
-								if (place.getPetriNetSimulationData().size() > i) {
-									value = place.getPetriNetSimulationData()
-											.get(i);
-								} else {
-									value = 0.0;
-								}
-
-								// )Double.parseDouble(rows[indices.get(j)][i
-								// +
-								// 1]
-								// .toString());
-								series.add(pw.getPetriNet().getTime().get(i),
-										value);
-							}
-							// System.out.println("nach");
+					// System.out.println(place.getName());
+					// System.out.println(pw.getPetriNet().getTime().size());
+					if (place.getPetriNetSimulationData().size() > 0) {
+						// System.out.println(seriesList.get(j).getItemCount());
+						if (pw.getPetriNet().getTime().size() != place
+								.getPetriNetSimulationData().size()) {
+							// System.out.println("time: "
+							// / + pw.getPetriNet().getTime().size());
+							// System.out.println("data: "
+							// / + place.getPetriNetSimulationData()
+							// .size());
 						}
-					} else if (bna instanceof Transition) {
+						step = Math.min(pw.getPetriNet().getTime().size(),
+								place.getPetriNetSimulationData().size());
+						// System.out.println("vor");
+						for (int i = series.getItemCount(); i < step; i++) {
 
-						transition = (Transition) bna;
-						// System.out.println("only t");
-						if (transition.getPetriNetSimulationData().size() > 0) {
-							for (int i = series.getItemCount(); i < pw
-									.getPetriNet().getTime().size(); i++) {
-								value = transition.getPetriNetSimulationData()
-										.get(i);// )Double.parseDouble(rows[indices.get(j)][i
-												// +
-												// 1]
-								// .toString());
-								// System.out.println(value);
-								series.add(pw.getPetriNet().getTime().get(i),
-										value);
+							if (place.getPetriNetSimulationData().size() > i) {
+								value = place.getPetriNetSimulationData()
+										.get(i);
+							} else {
+								value = 0.0;
 							}
-						}
-					}
-				}
-			}
 
-			Iterator<BiologicalEdgeAbstract> itBea = pw.getAllEdges()
-					.iterator();
-			while (itBea.hasNext()) {
-				bea = itBea.next();
-
-				if (bea instanceof PNEdge) {
-					PNEdge edge = (PNEdge) bea;
-					// System.out.println("edge");
-					// System.out.println(vector2idx.values());
-					XYSeries series1 = this.seriesListR1
-							.get(vector2idx.get(System.identityHashCode(edge
-									.getSim_tokens())));
-					XYSeries series2 = this.seriesListR2.get(vector2idx
-							.get(System.identityHashCode(edge
-									.getSim_tokensSum())));
-					if (edge.getSim_tokensSum() != null
-							&& edge.getSim_tokensSum().size() > 0) {
-						// System.out.println(series2.getItemCount());
-						for (int i = series1.getItemCount(); i < edge
-								.getSim_tokens().size(); i++) {
-							value = edge.getSim_tokens().get(i);// )Double.parseDouble(rows[indices.get(j)][i
+							// )Double.parseDouble(rows[indices.get(j)][i
 							// +
 							// 1]
-
 							// .toString());
-							// diff = value - tmp;
-							// System.out.println(diff);
-							series1.add(pw.getPetriNet().getTime().get(i),
-									value);
-							series2.add(pw.getPetriNet().getTime().get(i), edge
-									.getSim_tokensSum().get(i));
-							// tmp = value;
+							series.add(pw.getPetriNet().getTime().get(i), value);
+						}
+						// System.out.println("nach");
+					}
+				} else if (bna instanceof Transition) {
+
+					transition = (Transition) bna;
+					// System.out.println("only t");
+					if (transition.getPetriNetSimulationData().size() > 0) {
+						for (int i = series.getItemCount(); i < pw
+								.getPetriNet().getTime().size(); i++) {
+							value = transition.getPetriNetSimulationData().get(
+									i);// )Double.parseDouble(rows[indices.get(j)][i
+										// +
+										// 1]
+							// .toString());
+							// System.out.println(value);
+							series.add(pw.getPetriNet().getTime().get(i), value);
 						}
 					}
 				}
 			}
+		}
 
-		
+		Iterator<BiologicalEdgeAbstract> itBea = pw.getAllEdges().iterator();
+		while (itBea.hasNext()) {
+			bea = itBea.next();
+
+			if (bea instanceof PNEdge) {
+				PNEdge edge = (PNEdge) bea;
+				// System.out.println("edge");
+				// System.out.println(vector2idx.values());
+				XYSeries series1 = this.seriesListR1.get(vector2idx.get(System
+						.identityHashCode(edge.getSim_tokens())));
+				XYSeries series2 = this.seriesListR2.get(vector2idx.get(System
+						.identityHashCode(edge.getSim_tokensSum())));
+				if (edge.getSim_tokensSum() != null
+						&& edge.getSim_tokensSum().size() > 0) {
+					// System.out.println(series2.getItemCount());
+					for (int i = series1.getItemCount(); i < edge
+							.getSim_tokens().size(); i++) {
+						value = edge.getSim_tokens().get(i);// )Double.parseDouble(rows[indices.get(j)][i
+						// +
+						// 1]
+
+						// .toString());
+						// diff = value - tmp;
+						// System.out.println(diff);
+						series1.add(pw.getPetriNet().getTime().get(i), value);
+						series2.add(pw.getPetriNet().getTime().get(i), edge
+								.getSim_tokensSum().get(i));
+						// tmp = value;
+					}
+				}
+			}
+		}
+
 		// pane.revalidate();
 		// pane.validate();
 		// main.revalidate();
@@ -917,7 +855,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				slider.setToolTipText("Time: " + this.slider.getValue());
 				if (pw.getPetriNet().getTime().size() > 0) {
 					double step = pw.getPetriNet().getTime()
-							.get(this.slider.getValue() - 1);
+							.get(this.slider.getValue());
 					stepLabel.setText("Time: "
 							+ (double) Math.round((step * 100)) / 100);
 
@@ -1057,13 +995,12 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		// plotEntities.clear();
 		seriesListR1.clear();
 		seriesListR2.clear();
-		series2Node.clear();
 		// series2id.clear();
 		vector2idx.clear();
 		// get Selected Places and their index+label
 		Place place;
 		Transition transition;
-		places = new ArrayList<Place>();
+		places = new ArrayList<BiologicalNodeAbstract>();
 
 		int count = 0;
 		BiologicalNodeAbstract bna;
@@ -1077,12 +1014,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				// if (place.getPetriNetSimulationData().size() > 0) {
 				places.add(place);
 				s = new XYSeries(count);
-				// System.out.println("size: "+places.size());
-				series2Node.put(place, s);
-				// series2id.put(s, count);
-				// System.out.println("series2id add: "+s+ " -> "+count);
-
-				// seriesList.add(new XYSeries(j));
 				vector2idx.put(System.identityHashCode(place
 						.getPetriNetSimulationData()), count);
 				seriesListR1.add(s);
@@ -1108,7 +1039,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 						+ System.identityHashCode(transition
 								.getPetriNetSimulationData()) + " -> " + s);
 				// seriesList.add(new XYSeries(j));
-				series2Node.put(transition, s);
 				// series2id.put(s, count);
 				seriesListR1.add(s);
 				System.out.println(count + ": " + transition.getName());
@@ -1221,19 +1151,32 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			public void chartMouseClicked(ChartMouseEvent event) {
 				if (event.getEntity() != null
 						&& event.getEntity() instanceof XYItemEntity) {
-					XYItemEntity entity = (XYItemEntity) event.getEntity();
-					// System.out.println("Entity seriesindex: "
-					// + entity.getSeriesIndex());
-					Place p = places.get(entity.getSeriesIndex());
-					PickedState<BiologicalNodeAbstract> ps = GraphInstance
-							.getMyGraph().getVisualizationViewer()
-							.getPickedVertexState();
-					// ps.clearPickedVertices();
-					ps.clear();
-					// System.out.println(entity.getSeriesIndex());
-					// System.out.println("sizeunten: "+places.size());
-					// System.out.println(p.getName());
-					ps.pick(p, true);
+
+					int pickedV = GraphInstance.getMyGraph()
+							.getVisualizationViewer().getPickedVertexState()
+							.getPicked().size();
+					int pickedE = GraphInstance.getMyGraph()
+							.getVisualizationViewer().getPickedEdgeState()
+							.getPicked().size();
+					System.out.println(pickedV);
+					if (pickedE == 0 && pickedV == 0) {
+
+						XYItemEntity entity = (XYItemEntity) event.getEntity();
+						//System.out.println("drin");
+						// System.out.println("Entity seriesindex: "
+						// + entity.getSeriesIndex());
+						BiologicalNodeAbstract p = places.get(entity
+								.getSeriesIndex());
+						PickedState<BiologicalNodeAbstract> ps = GraphInstance
+								.getMyGraph().getVisualizationViewer()
+								.getPickedVertexState();
+						// ps.clearPickedVertices();
+						ps.clear();
+						// System.out.println(entity.getSeriesIndex());
+						// System.out.println("sizeunten: "+places.size());
+						// System.out.println(p.getName());
+						ps.pick(p, true);
+					}
 
 				}
 
