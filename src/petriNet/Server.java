@@ -231,8 +231,10 @@ public class Server {
 				break;
 
 			case 6:
-				MainWindow w = MainWindowSingelton.getInstance();
 				running = false;
+				System.out.println("server shut down");
+				MainWindow w = MainWindowSingelton.getInstance();
+				//w.redrawGraphs();
 				break;
 			}
 			j++;
