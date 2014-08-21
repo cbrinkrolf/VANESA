@@ -130,7 +130,9 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 					// final XYSeriesCollection dataset = new
 					// XYSeriesCollection();
 					// XYSeries series = new XYSeries(1);
+					System.out.println(place.getName());
 					for (int i = 0; i < cols; i++) {
+						System.out.println(place.getName());
 						// System.out.println(j + " " + i);
 						// System.out.println("test: " + table[j][i + 1]);
 						// value = place.getPetriNetSimulationData().get(i);

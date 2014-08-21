@@ -428,7 +428,9 @@ public class PetriNetSimulation {
 				Thread t2 = new Thread() {
 					public void run() {
 						w.redrawGraphs();
+						//System.out.println("running");
 						while(s.isRunning()){
+							System.out.println("im thread");
 							w.redrawGraphs();
 							try {
 								sleep(100);
@@ -442,7 +444,9 @@ public class PetriNetSimulation {
 						//w.updatePCPView();
 					}
 				};
+				
 				t2.start();
+				
 				
 				
 				//System.out.println("before sim");
