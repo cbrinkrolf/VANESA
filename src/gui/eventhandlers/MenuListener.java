@@ -193,6 +193,7 @@ public class MenuListener implements ActionListener {
 							SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO
 									+ SaveDialog.FORMAT_GON
 									//+ SaveDialog.FORMAT_SBML
+									+ SaveDialog.FORMAT_PNML
 									+ SaveDialog.FORMAT_ITXT
 									+ SaveDialog.FORMAT_TXT);
 					// +SaveDialog.FORMAT_SBML);

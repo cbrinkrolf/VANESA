@@ -199,7 +199,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	 */
 	public void revalidateView() {
 
-		System.out.println("revalditate");
+		//System.out.println("revalditate");
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
 
@@ -500,7 +500,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 						steps = stop-Math.min(series.getItemCount(),
 								series.getItemCount());
 						long begin2 = System.currentTimeMillis();
-						
+						if(stop - series.getItemCount() > 0){
+							System.out.println(bna.getName() + " "+(stop-series.getItemCount()));
+						}
 						for (int i = series.getItemCount(); i < stop; i++) {
 
 							if (place.getID() == 196) {
