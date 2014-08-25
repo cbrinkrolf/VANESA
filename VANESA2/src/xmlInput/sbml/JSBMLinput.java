@@ -538,10 +538,10 @@ public class JSBMLinput {
 				((petriNet.Place) bna).setTokenMin(Double.parseDouble(attr));
 				elSub = specAnnotation.getChild("tokenMax", null);
 				attr = String.valueOf(elSub.getAttributeValue("tokenMax"));
-				((petriNet.Place) bna).setToken(Double.parseDouble(attr));
+				((petriNet.Place) bna).setTokenMax(Double.parseDouble(attr));
 				elSub = specAnnotation.getChild("tokenStart", null);
 				attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
-				((petriNet.Place) bna).setToken(Double.parseDouble(attr));
+				((petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
 				((petriNet.Place) bna).setDiscrete(true);
 				break;
 			case Elementdeclerations.s_place:
@@ -555,7 +555,7 @@ public class JSBMLinput {
 				((petriNet.Place) bna).setTokenMin(Double.parseDouble(attr));
 				elSub = specAnnotation.getChild("tokenMax", null);
 				attr = String.valueOf(elSub.getAttributeValue("tokenMax"));
-				((petriNet.Place) bna).setToken(Double.parseDouble(attr));
+				((petriNet.Place) bna).setTokenMax(Double.parseDouble(attr));
 				elSub = specAnnotation.getChild("tokenStart", null);
 				attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
 				((petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
