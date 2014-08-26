@@ -452,13 +452,17 @@ public class PetriNetSimulation {
 				//System.out.println("before sim");
 				//w.updatePCPView();
 				//System.out.println("ps:" + pathSim);
-				// final Process pSim = new
-				// ProcessBuilder("cmd.exe","/c",pathSim+"simulation.bat").start();
-				// final Process pSim = new
-				// ProcessBuilder(pathSim+"simulation.exe","-override=outputFormat=ia","-port=11111","-lv=LOG_STATS").start();
+				final Process pSim = new
+				ProcessBuilder("cmd.exe","/c",pathSim+"simulation.bat").start();
+				// ProcessBuilder pb = new
+				//ProcessBuilder(pathSim+"simulation.exe","-override=outputFormat=ia","-port=11111","-lv=LOG_STATS");
 
-				Runtime.getRuntime().exec(
-						"cmd /q/c start " + pathSim + "simulation.bat");
+				//Process process = pb.start();
+				//System.out.println(pb.command());
+				
+				 //Runtime.getRuntime().exec(new String[]{pathSim+"simulation.exe","-override=outputFormat=ia","-port=11111","-lv=LOG_STATS"});
+				/*Runtime.getRuntime().exec(
+						"cmd /q/c start " + pathSim + "simulation.bat");*/
 				System.out.println("drin");
 
 				zstNachher = System.currentTimeMillis();

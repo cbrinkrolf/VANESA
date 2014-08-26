@@ -44,7 +44,7 @@ public class MOoutput {
 	private String places = "";
 	private String edgesString = "";
 	private double xshift = 0, yshift = 0;
-	private double xmin = 1000, xmax = -1000, ymin = 1000, ymax = -1000;
+	private double xmin = Double.MAX_VALUE, xmax = Double.MIN_VALUE, ymin = Double.MAX_VALUE, ymax = Double.MIN_VALUE;
 	private final double scale = 2;
 	private final Hashtable<String, Integer> numInEdges = new Hashtable<String, Integer>();
 	private final Hashtable<String, Integer> numOutEdges = new Hashtable<String, Integer>();
@@ -733,7 +733,7 @@ public class MOoutput {
 		return bea2resultkey;
 	}
 
-	public String replace(String function, ArrayList<Parameter> params,
+	private String replace(String function, ArrayList<Parameter> params,
 			BiologicalNodeAbstract node) {
 		StringBuilder mFunction = new StringBuilder(function);
 		Set<Character> chars = new HashSet<Character>();
@@ -825,12 +825,19 @@ public class MOoutput {
 		ArrayList<String> names = new ArrayList<String>();
 		BiologicalNodeAbstract bna;
 		Place p;
+		HashMap<String, String> referenceMapping = new HashMap<String, String>();
+		
 		while (it.hasNext()) {
 			bna = it.next();
 			if (bna instanceof Place) {
 				p = (Place) bna;
 				// names.add("P"+p.getID());
 				names.add(p.getName());
+				if(p.hasRef()){
+					referenceMapping.put(p.getName(), p.getRef().getName());
+				}else{
+					referenceMapping.put(p.getName(), p.getName());
+				}
 				// mNames.put("P"+p.getID(), "P"+p.getID() + ".t");
 			}
 		}
@@ -881,7 +888,7 @@ public class MOoutput {
 					if (check && chars.contains(r)) {
 						// mFunction = mFunction.replaceFirst(name, mNames
 						// .get(name));
-						insert = "'" + name + "'.t";
+						insert = "'" + referenceMapping.get(name) + "'.t";
 						mFunction.replace(idxNew, idxNew + name.length(),
 								insert);
 
