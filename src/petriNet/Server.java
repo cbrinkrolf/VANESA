@@ -234,7 +234,7 @@ public class Server {
 				running = false;
 				System.out.println("server shut down");
 				MainWindow w = MainWindowSingelton.getInstance();
-				//w.redrawGraphs();
+				// w.redrawGraphs();
 				break;
 			}
 			j++;
@@ -312,7 +312,7 @@ public class Server {
 
 	private void setData(ArrayList<Object> values) {
 
-		// System.out.println("set Data");
+		//System.out.println("set Data");
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
 		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
@@ -338,6 +338,7 @@ public class Server {
 								+ bea2key.get(bea) + ")")));
 				e.getSim_tokensSum().add(
 						(Double) values.get(names.indexOf(bea2key.get(bea))));
+				//System.out.println(values.get(names.indexOf(bea2key.get(bea))));
 
 			}
 		}
@@ -347,23 +348,27 @@ public class Server {
 
 		while (it.hasNext()) {
 			bna = it.next();
-			if (bna instanceof Place) {
+			//System.out.println(bna.getName());
+			if (!bna.hasRef()) {
+				if (bna instanceof Place) {
 
-				bna.getPetriNetSimulationData().add(
-						(Double) (values.get(names.indexOf("'" + bna.getName()
-								+ "'.t"))));
-			} else if (bna instanceof Transition) {
+					bna.getPetriNetSimulationData().add(
+							(Double) (values.get(names.indexOf("'"
+									+ bna.getName() + "'.t"))));
+				} else if (bna instanceof Transition) {
 
-				// System.out.println(bna.getName()+".fire" + names.indexOf("'"
-				// + bna.getName()
-				// + "'.fire"));
-				bna.getPetriNetSimulationData().add(
-						(Double) values.get(names.indexOf("'" + bna.getName()
-								+ "'.fire")));
-				((Transition) bna).getSimActualSpeed().add(
-						(Double) values.get(names.indexOf("'" + bna.getName()
-								+ "'.actualSpeed")));
+					// System.out.println(bna.getName()+".fire" +
+					// names.indexOf("'"
+					// + bna.getName()
+					// + "'.fire"));
+					bna.getPetriNetSimulationData().add(
+							(Double) values.get(names.indexOf("'"
+									+ bna.getName() + "'.fire")));
+					((Transition) bna).getSimActualSpeed().add(
+							(Double) values.get(names.indexOf("'"
+									+ bna.getName() + "'.actualSpeed")));
 
+				}
 			}
 		}
 		System.out.println(values.get(names.indexOf("time")));
