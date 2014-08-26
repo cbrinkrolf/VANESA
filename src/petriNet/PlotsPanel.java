@@ -53,7 +53,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	private static final long serialVersionUID = 1L;
 
 	private Pathway pw = new GraphInstance().getPathway();
-	private int rows = pw.getPetriNet().getNumberOfPlaces();
+	private int rows = 0; //pw.getPetriNet().getNumberOfPlaces();
 	private int cols = pw.getPetriNet().getResultDimension();
 	private Object[][] table;
 	private ArrayList<String> labels = new ArrayList<String>();
@@ -87,10 +87,11 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 			while (it.hasNext()) {
 				bna = it.next();
-				if (bna instanceof Place) {
+				if (bna instanceof Place && !bna.hasRef()) {
 					place = (Place) bna;
 					labels.add(place.getName());
 					places.put(place.getName(), place);
+					rows++;
 				}
 			}
 
@@ -130,9 +131,9 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 					// final XYSeriesCollection dataset = new
 					// XYSeriesCollection();
 					// XYSeries series = new XYSeries(1);
-					System.out.println(place.getName());
+					//System.out.println(place.getName());
 					for (int i = 0; i < cols; i++) {
-						System.out.println(place.getName());
+						//System.out.println(place.getName());
 						// System.out.println(j + " " + i);
 						// System.out.println("test: " + table[j][i + 1]);
 						// value = place.getPetriNetSimulationData().get(i);
