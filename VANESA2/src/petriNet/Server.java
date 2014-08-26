@@ -292,6 +292,7 @@ public class Server {
 			} else if (bna instanceof Transition) {
 				((Transition) bna).setPlotColor(Color.getHSBColor(j * 1.0f
 						/ (transitions), 1, 1));
+				((Transition)bna).getSimActualSpeed().clear();
 				j++;
 			}
 		}
@@ -367,7 +368,9 @@ public class Server {
 					((Transition) bna).getSimActualSpeed().add(
 							(Double) values.get(names.indexOf("'"
 									+ bna.getName() + "'.actualSpeed")));
-
+					//System.out.println(bna.getName()+" "+(Double) values.get(names.indexOf("'"
+						//			+ bna.getName() + "'.actualSpeed")));
+					//System.out.println("speed: "+((Transition)bna).getSimActualSpeed());
 				}
 			}
 		}
