@@ -386,27 +386,28 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			int j = 0;
 			while (iterator.hasNext()) {
 				bna = iterator.next();
-				
-					if (bna instanceof Place) {
-						place = (Place) bna;
-						if(place.hasRef() && place.getRef() instanceof Place){
-							place = (Place)place.getRef();
-						}
-						// if (place.getPetriNetSimulationData().size() > 0) {
-						renderer.setSeriesVisible((int) vector2idx.get(System
-								.identityHashCode(place
-										.getPetriNetSimulationData())), true);
-					} else if (bna instanceof Transition && onlyT) {
-						transition = (Transition) bna;
-						if(transition.hasRef() && transition.getRef() instanceof Transition) {
-							renderer.setSeriesVisible((int) vector2idx
-									.get(System.identityHashCode(transition
-											.getPetriNetSimulationData())),
-									true);
-						}
+
+				if (bna instanceof Place) {
+					place = (Place) bna;
+					if (place.hasRef() && place.getRef() instanceof Place) {
+						place = (Place) place.getRef();
+					}
+					// if (place.getPetriNetSimulationData().size() > 0) {
+					renderer.setSeriesVisible(
+							(int) vector2idx.get(System.identityHashCode(place
+									.getPetriNetSimulationData())), true);
+				} else if (bna instanceof Transition && onlyT) {
+					transition = (Transition) bna;
+					if (transition.hasRef()
+							&& transition.getRef() instanceof Transition) {
+						transition = (Transition) transition.getRef();
 					}
 
-				
+					renderer.setSeriesVisible((int) vector2idx.get(System
+							.identityHashCode(transition.getSimActualSpeed())),
+							true);
+				}
+
 			}
 		}
 
@@ -486,65 +487,68 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		while (itBna.hasNext()) {
 			bna = itBna.next();
 			long diff = 0;
-			if (vector2idx.containsKey(System.identityHashCode(bna
-					.getPetriNetSimulationData()))) {
-				// System.out.println("transition");
-				series = this.seriesListR1.get(vector2idx.get(System
-						.identityHashCode(bna.getPetriNetSimulationData())));
-				// System.out.println(series.getItemCount());
-				if (bna instanceof Place) {
-					place = (Place) bna;
-					// System.out.println("size: "+place.getPetriNetSimulationData().size());
-					if (place.getPetriNetSimulationData().size() > 0) {
-						// System.out.println(seriesList.get(j).getItemCount());
-						if (pw.getPetriNet().getTime().size() != place
-								.getPetriNetSimulationData().size()) {
-						}
-						stop = Math.min(pw.getPetriNet().getTime().size(),
-								place.getPetriNetSimulationData().size());
-						// System.out.println("vor");
-						// System.out.println(place.getName());
-						steps = stop
-								- Math.min(series.getItemCount(),
-										series.getItemCount());
-						long begin2 = System.currentTimeMillis();
-						if (stop - series.getItemCount() > 0) {
-							System.out.println(bna.getName() + " "
-									+ (stop - series.getItemCount()));
-						}
-						for (int i = series.getItemCount(); i < stop; i++) {
 
-							if (place.getID() == 196) {
-								// System.out.println("node: "+i);
-							}
-							if (place.getPetriNetSimulationData().size() > i) {
-								value = place.getPetriNetSimulationData()
-										.get(i);
-							} else {
-								value = 0.0;
-							}
-							// System.out.println(step);
-							series.add(pw.getPetriNet().getTime().get(i), value);
-						}
-						diff = System.currentTimeMillis() - begin2;
-						if (stop > 0) {
-							// System.out.println("node: "+bna.getID()+" time: "
-							// + diff / (double)steps + " steps: "+steps);
-						}
+			// System.out.println("transition");
+
+			// System.out.println(series.getItemCount());
+			if (bna instanceof Place) {
+				place = (Place) bna;
+				// System.out.println("size: "+place.getPetriNetSimulationData().size());
+				if (place.getPetriNetSimulationData().size() > 0) {
+					series = this.seriesListR1
+							.get(vector2idx.get(System.identityHashCode(bna
+									.getPetriNetSimulationData())));
+					// System.out.println(seriesList.get(j).getItemCount());
+					if (pw.getPetriNet().getTime().size() != place
+							.getPetriNetSimulationData().size()) {
 					}
-				} else if (bna instanceof Transition) {
+					stop = Math.min(pw.getPetriNet().getTime().size(), place
+							.getPetriNetSimulationData().size());
+					// System.out.println("vor");
+					// System.out.println(place.getName());
+					steps = stop
+							- Math.min(series.getItemCount(),
+									series.getItemCount());
+					long begin2 = System.currentTimeMillis();
+					if (stop - series.getItemCount() > 0) {
+						// System.out.println(bna.getName() + " "
+						// + (stop - series.getItemCount()));
+					}
+					for (int i = series.getItemCount(); i < stop; i++) {
 
-					transition = (Transition) bna;
-					// System.out.println("only t");
-					if (transition.getPetriNetSimulationData().size() > 0) {
-						// System.out.println(transition.getName());
-						stop = Math.min(transition.getPetriNetSimulationData()
-								.size(), time.size());
-						for (int i = series.getItemCount(); i < stop; i++) {
-							value = transition.getPetriNetSimulationData().get(
-									i);
-							series.add(pw.getPetriNet().getTime().get(i), value);
+						if (place.getID() == 196) {
+							// System.out.println("node: "+i);
 						}
+						if (place.getPetriNetSimulationData().size() > i) {
+							value = place.getPetriNetSimulationData().get(i);
+						} else {
+							value = 0.0;
+						}
+						// System.out.println(step);
+						series.add(pw.getPetriNet().getTime().get(i), value);
+					}
+					diff = System.currentTimeMillis() - begin2;
+					if (stop > 0) {
+						// System.out.println("node: "+bna.getID()+" time: "
+						// + diff / (double)steps + " steps: "+steps);
+					}
+				}
+			} else if (bna instanceof Transition) {
+
+				transition = (Transition) bna;
+				// System.out.println("only t");
+				// System.out.println(transition.getSimActualSpeed().size());
+				if (transition.getSimActualSpeed().size() > 0) {
+					series = this.seriesListR1.get(vector2idx.get(System
+							.identityHashCode(transition.getSimActualSpeed())));
+					// System.out.println(transition.getName());
+					stop = Math.min(transition.getSimActualSpeed().size(),
+							time.size());
+					// System.out.println(stop);
+					for (int i = series.getItemCount(); i < stop; i++) {
+
+						value = transition.getSimActualSpeed().get(i);
+						series.add(pw.getPetriNet().getTime().get(i), value);
 					}
 				}
 			}
@@ -1001,7 +1005,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// if (transition.getPetriNetSimulationData().size() > 0) {
 					s = new XYSeries(count);
 					vector2idx.put(System.identityHashCode(transition
-							.getPetriNetSimulationData()), count);
+							.getSimActualSpeed()), count);
 					// seriesList.add(new XYSeries(j));
 					// series2id.put(s, count);
 					seriesListR1.add(s);
