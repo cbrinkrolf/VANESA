@@ -28,6 +28,7 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -103,7 +104,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private JPanel controlPanel;
 	private JFreeChart chart;
 	private ValueMarker marker;
-	private JDialog dialog;
+	private JFrame dialog;
 	private GraphInstance graphInstance = null;
 	private Pathway pw = null;
 	// private RegulationTabelModel model;
@@ -678,7 +679,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			// System.out.println("show");
 			// show table containing all data
-			dialog = new JDialog(w, true);
+			dialog = new JFrame("Simulation results");
 			dialog.setTitle("Simulation Results");
 			dialog.setResizable(true);
 			dialog.setContentPane(dialogPanel);
@@ -687,7 +688,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			ScreenSize screen = new ScreenSize();
 			int screenHeight = (int) screen.getheight();
 			int screenWidth = (int) screen.getwidth();
-
+			//dialog.setAlwaysOnTop(false);
 			dialog.pack();
 			// dialog.setLocation((screenWidth / 2) - dialog.getSize().width /
 			// 2,
