@@ -270,6 +270,7 @@ public class PNMLOutput {
 		ModelRepository mr = ModelRepository.getInstance();
 		mr.setPrettyPrintStatus(true);
 		PnmlExport pex = new PnmlExport();
+		//pex.
 		try {
 			pex.exportObject(doc, file.getAbsolutePath());
 		} catch (UnhandledNetType e) {

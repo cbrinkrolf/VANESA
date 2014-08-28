@@ -19,7 +19,7 @@ import java.util.Iterator;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.slf4j.LoggerFactory;
+//import org.slf4j.LoggerFactory;
 
 import petriNet.ConvertToPetriNet;
 import petriNet.PNEdge;
@@ -27,7 +27,7 @@ import petriNet.Place;
 import petriNet.Transition;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import ch.qos.logback.classic.LoggerContext;
+//import ch.qos.logback.classic.LoggerContext;
 import moOutput.MOoutput;
 import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.PNMLOutput;
@@ -272,8 +272,8 @@ public class SaveDialog {
 									+ pnmlOutput.generatePNMLDocument() + "File saved. File validated and saved.");
 					
 					if(pnmlOutput.getFinished()){
-						LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-						loggerContext.stop();
+						//LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+						//loggerContext.stop();
 					}
 					
 				} catch (HeadlessException e) {
