@@ -247,6 +247,7 @@ public class OptionPanel {
 			} else if (element.equals("Satellite")) {
 				satelliteWindow.revalidateSatelliteView();
 			} else if (element.equals("pcp")) {
+				//PCPWindow.initGraphs();
 				PCPWindow.revalidateView();
 			} else if (element.equals("element")) {
 				elementWindow.revalidateView();
@@ -268,6 +269,8 @@ public class OptionPanel {
 				// }
 			else if (element.equals("pathwayTree")){
 				pathwayTree.revalidateView();
+			}else if (element.equals("initPCP")){
+				PCPWindow.initGraphs();
 			}
 		}
 	}

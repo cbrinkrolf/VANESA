@@ -557,6 +557,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 
 	public void updateOptionPanel() {
+		//System.out.println(" udate option");
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
@@ -567,7 +568,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 
 	public void updateAllGuiElements() {
-		// System.out.println("update all");
+		//System.out.println("update all");
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
@@ -577,6 +578,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		optionPanel.updatePanel("project");
 		optionPanel.updatePanel("Database");
 		optionPanel.updatePanel("pathwayTree");
+		optionPanel.updatePanel("initPCP");
 	}
 
 	public void updateDAWISVertexWindow() {

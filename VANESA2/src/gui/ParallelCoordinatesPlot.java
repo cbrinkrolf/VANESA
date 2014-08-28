@@ -470,7 +470,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 		chart.setNotify(true);
 
-		System.out.println("update data");
 		BiologicalNodeAbstract bna;
 		BiologicalEdgeAbstract bea;
 		PNEdge edge;
@@ -956,6 +955,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	}
 
 	public void initGraphs() {
+		graphInstance = new GraphInstance();
+		pw = graphInstance.getPathway();
+		
+		//System.out.println("inti Graphs");
 		p.removeAll();
 		final XYSeriesCollection dataset = new XYSeriesCollection();
 		final XYSeriesCollection dataset2 = new XYSeriesCollection();
@@ -977,6 +980,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		int count = 0;
 		BiologicalNodeAbstract bna;
 		BiologicalEdgeAbstract bea;
+		if(pw == null){
+			return;
+		}
 		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllNodes().iterator();
 		XYSeries s;
 		while (itNodes.hasNext()) {
@@ -1119,7 +1125,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					int pickedE = GraphInstance.getMyGraph()
 							.getVisualizationViewer().getPickedEdgeState()
 							.getPicked().size();
-					System.out.println(pickedV);
+					//System.out.println(pickedV);
 					if (pickedE == 0 && pickedV == 0) {
 
 						XYItemEntity entity = (XYItemEntity) event.getEntity();
