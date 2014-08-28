@@ -6,11 +6,13 @@ UNCHANGED,
 /** Node was included in coarsing operation.*/
 COARSED,
 /** Node was flatted.*/
-FLATTED,
+FLATTENED,
 /** Node was deleted.*/
 DELETED,
-/** Node was creates.*/
+/** Node was created.*/
 CREATED,
 /** The connection to the whole graph (connecting edges, border and/or environment) has been modified.*/
 CONNECTIONMODIFIED,
+/** Node was added to coarse node. */
+ADDED
 }
