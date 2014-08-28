@@ -1597,7 +1597,7 @@ public class Pathway implements Cloneable {
 			case UNCHANGED:
 				break;
 
-			case FLATTED:
+			case FLATTENED:
 				this.removeElement(node);
 				// root Pathway and non-environment nodes add complete
 				// sub-pathway.
@@ -1649,12 +1649,6 @@ public class Pathway implements Cloneable {
 						addVertex(node.getParentNode(), this.getGraph()
 								.getVertexLocation(node));
 						removeElement(node);
-//						if (thisNode.getParentNode() != node.getParentNode()) {
-//							if (thisNode.getEnvironment().remove(node)) {
-//								thisNode.getEnvironment().add(
-//										node.getParentNode());
-//							}
-//						}
 					}
 				}
 

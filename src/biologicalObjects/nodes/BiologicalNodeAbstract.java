@@ -129,8 +129,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
 
 	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<BiologicalEdgeAbstract>();
-
-	private Pathway rootNode;
 	
 	private NodeStateChanged state = NodeStateChanged.UNCHANGED;
 
@@ -149,7 +147,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		super.setName(name);
 		this.label = label;
 		this.labelSet.add(label);
-		rootNode = new GraphInstance().getPathway().getRootPathway();
 		//
 		// setLabel(label.toLowerCase());
 		// setName(name.toLowerCase());
@@ -357,7 +354,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @return A node, that would be contained in the border if vertices were coarsed.
 	 * @author tloka
 	 */
-	public static BiologicalNodeAbstract computeCoarseType(
+	private static BiologicalNodeAbstract computeCoarseType(
 			Set<BiologicalNodeAbstract> vertices) {
 		if(vertices==null || vertices.size()==0){
 			return null;
@@ -421,7 +418,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * 			True, if border candidate set is valid, false otherwise.
 	 * @author tloka
 	 */
-	public static boolean isValidBorder(boolean isPetriNet, Set<BiologicalNodeAbstract> borderNodes){
+	private static boolean isValidBorder(boolean isPetriNet, Set<BiologicalNodeAbstract> borderNodes){
 		if(isPetriNet && borderNodes.size()>=2){
 			Iterator<BiologicalNodeAbstract> iterator = borderNodes.iterator();
 			BiologicalNodeAbstract node1 = iterator.next();
@@ -556,6 +553,32 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private boolean addToCoarseNode(Set<BiologicalNodeAbstract> vertices){
 		
 		for(BiologicalNodeAbstract vertex : vertices){
+			if(vertex.getEnvironment().contains(this)){
+				for(BiologicalEdgeAbstract conEdge : vertex.getConnectingEdges()){
+					BiologicalEdgeAbstract newEdge = conEdge.clone();
+					BiologicalNodeAbstract newNode = null;
+					if(conEdge.getTo().getCurrentShownParentNode(vertex.getGraph())==this){
+						newNode = conEdge.getTo().getCurrentShownParentNode(getGraph());
+						newEdge.setFrom(conEdge.getFrom().getCurrentShownParentNode(vertex.getGraph()));
+						newEdge.setTo(newNode);
+					}
+					else if(conEdge.getFrom().getCurrentShownParentNode(vertex.getGraph())==this){
+						newNode = conEdge.getFrom().getCurrentShownParentNode(getGraph());
+						newEdge.setTo(conEdge.getTo().getCurrentShownParentNode(vertex.getGraph()));
+						newEdge.setFrom(newNode);
+					}
+					if(newNode!=null && newEdge.isValid(false)){
+						vertex.addVertex(newNode, getGraph().getVertexLocation(newNode));
+						vertex.addEdge(newEdge);
+						System.out.println("added " + newNode.getLabel());
+						System.out.println("added " + newEdge.getTo().getLabel() + "->" + newEdge.getFrom().getLabel());
+					}
+				}
+				vertex.removeElement(this);
+				vertex.updateBorder();
+				vertex.updateEnvironment();
+				vertex.updateConnectingEdges();
+			}
 			vertex.setStateChanged(NodeStateChanged.COARSED);
 			vertex.setParentNode(this);
 		}
@@ -571,7 +594,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	/**
 	 * Development tool: method to print all relevant hierarchy sets.
 	 */
-	private void printAllHierarchicalAttributes(){
+	public void printAllHierarchicalAttributes(){
 		System.out.println("All Nodes:");
 		for(BiologicalNodeAbstract node : getAllNodes()){
 			System.out.println(node.getLabel());
@@ -617,7 +640,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			node.setParentNode(getParentNode());
 		}
 
-		this.setStateChanged(NodeStateChanged.FLATTED);
+		this.setStateChanged(NodeStateChanged.FLATTENED);
 		
 		getRootPathway().updateMyGraph();
 		

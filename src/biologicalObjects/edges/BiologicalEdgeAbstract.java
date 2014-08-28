@@ -91,13 +91,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	
 	private BiologicalNodeAbstract to;
 	
-	/** Not to be changed after initialisation*/
-	private final BiologicalNodeAbstract originalFrom;
-	
-	/** Not to be changed after initialisation*/
-	private final BiologicalNodeAbstract originalTo;
-	
-	
 	
 	// ---Functional Methods---
 	
@@ -114,9 +107,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 		// setLabel(label.toLowerCase());
 		this.from = from;
 		this.to = to;
-		
-		this.originalFrom = from;
-		this.originalTo = to;
 
 		/*
 		 * sbml.setName(name.toLowerCase()); //sbml.setEdge(edge.toString());
@@ -551,14 +541,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	
 	public void removeLabel(String label){
 		this.labelSet.remove(label);
-	}
-
-	public BiologicalNodeAbstract getOriginalTo(){
-		return originalTo;
-	}
-	
-	public BiologicalNodeAbstract getOriginalFrom(){
-		return originalFrom;
 	}
 	
 	public void resetAppearance(){

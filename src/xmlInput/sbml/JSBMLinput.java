@@ -648,28 +648,38 @@ public class JSBMLinput {
 	 * @author tloka
 	 */
 	private void buildUpHierarchy(Element annotationNode){
-		if(annotationNode == null){
+		
+		if(annotationNode == null)
 			return;
-		}
+		
 		Element modelNode = annotationNode.getChild("model", null);
-		// get the information if the imported net is a Petri net
-		Element hierarchyList = modelNode.getChild("listOfHierarchies", null);
-		if(hierarchyList == null){
+		if(modelNode == null)
 			return;
-		}
+		
+		Element hierarchyList = modelNode.getChild("listOfHierarchies", null);
+		if(hierarchyList == null)
+			return;
+		
 		Map<Integer, Set<Integer>> hierarchyMap = new HashMap<Integer, Set<Integer>>();
 		Map<Integer, String> coarseNodeLabels = new HashMap<Integer, String>();
-		for(Element hierarchyElement : hierarchyList.getChildren("coarseNode", null)){
+		
+		for(Element coarseNode : hierarchyList.getChildren("coarseNode", null)){
+			if(coarseNode.getChildren("child", null)==null)
+				continue;
+			
 			Set<Integer> childrenSet = new HashSet<Integer>();
-			for(Element childElement : hierarchyElement.getChildren("child", null)){
+			for(Element childElement : coarseNode.getChildren("child", null)){
 				Integer childNode = Integer.parseInt(childElement.getAttributeValue("id").split("_")[1]);
 				childrenSet.add(childNode);
 			}
-			Integer id = Integer.parseInt(hierarchyElement.getAttributeValue("id").split("_")[1]);
+			
+			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id").split("_")[1]);
 			hierarchyMap.put(id, childrenSet);
-			coarseNodeLabels.put(id, hierarchyElement.getAttributeValue("label"));
+			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
 		}
+		
 		int coarsedNodes = 0;
+		
 		while(coarsedNodes<hierarchyMap.size()){
 			for(Integer parent : hierarchyMap.keySet()){
 				boolean toBeCoarsed = true;
