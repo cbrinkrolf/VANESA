@@ -50,27 +50,11 @@
 	<classpathentry kind="lib" path="packages/jung/collections-generic-4.01.jar"/>
 	<classpathentry kind="lib" path="packages/jung/jung-visualization-2.0.1.jar"/>
 	<classpathentry kind="lib" path="packages/jfreechart-1.0.19.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.3rdpartimports_2.2.0.v20140122-142128.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.coremodel_2.2.4.v20140205-142522.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.coremodel.source_2.2.4.v20140205-142522.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.hlpn_2.2.4.v20140205-142522.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.hlpn.source_2.2.4.v20140205-142522.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.pthlpng_2.2.4.v20140205-142522.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.pthlpng.source_2.2.4.v20140205-142522.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.ptnet_2.2.4.v20140205-142522.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.ptnet.source_2.2.4.v20140205-142522.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.symmetricnet_2.2.4.v20140205-142522.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.symmetricnet.source_2.2.4.v20140205-142522.jar"/>
 	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.utils_2.2.4.v20140205-142522.jar"/>
-	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.utils.source_2.2.4.v20140205-142522.jar"/>
 	<classpathentry kind="lib" path="packages/org.eclipse.emf.ecore_2.9.1.v20130827-0309.jar"/>
 	<classpathentry kind="lib" path="packages/org.eclipse.emf.common_2.9.1.v20130827-0309.jar"/>
-	<classpathentry kind="lib" path="packages/org.eclipse.emf.ecore.change_2.9.0.v20130827-0309.jar"/>
-	<classpathentry kind="lib" path="packages/org.eclipse.emf.ecore.xmi_2.9.1.v20130827-0309.jar"/>
-	<classpathentry kind="lib" path="packages/org.eclipse.ocl_3.3.0.v20130909-1552.jar"/>
-	<classpathentry kind="lib" path="packages/org.eclipse.ocl.common_1.1.0.v20130531-0544.jar"/>
-	<classpathentry kind="lib" path="packages/org.eclipse.ocl.ecore_3.3.0.v20130520-1222.jar"/>
-	<classpathentry kind="lib" path="packages/org.eclipse.ocl.uml_4.0.100.v20130909-1552.jar"/>
+	<classpathentry kind="lib" path="packages/fr.lip6.move.pnml.framework.ptnet_2.2.4.v20140205-142522.jar"/>
+	<classpathentry kind="lib" path="packages/jing.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
