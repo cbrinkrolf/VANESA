@@ -60,7 +60,7 @@ public class GraphTabListener implements TabListener {
 			window.updateProjectProperties();
 //			window.updateTheoryProperties();
 			window.updateAlignmentTab();
-			window.updatePCPView();
+			window.initPCPGraphs();
 		}
 	}
 
