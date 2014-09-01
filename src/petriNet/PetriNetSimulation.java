@@ -9,6 +9,8 @@ import gui.SimMenue;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -18,6 +20,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -37,20 +40,11 @@ public class PetriNetSimulation implements ActionListener {
 	private static String pathSim = null;
 	private boolean stopped = false;
 	private SimMenue menue;
-	
-	private Reader outputReader;
+
+	private BufferedReader outputReader;
 
 	public PetriNetSimulation() {
 		menue = new SimMenue(this);
-
-		boolean omc = true;
-
-		if (omc) {
-			// this.runOMC();
-			this.runOMCIA();
-		} else {
-			this.runDymola();
-		}
 	}
 
 	private void runOMC() {
@@ -406,39 +400,55 @@ public class PetriNetSimulation implements ActionListener {
 				graphInstance.getPathway().setPetriNetSimulation(true);
 				w.initPCPGraphs();
 
-				
-				
-				Thread t1 = new Thread(){
-					public void run(){
-					
-					try {
-						ProcessBuilder pb = new ProcessBuilder();
-						pb.command(pathSim + "simulation.exe",
-								"-override=outputFormat=ia", "-port=11111",
-								"-noEventEmit", "-lv=LOG_STATS");
-						pb.redirectOutput();
-						pb.directory(new File(pathSim));
-						Process process = pb.start();
-						setReader(new InputStreamReader(
-								process.getInputStream()));
+				Thread t1 = new Thread() {
+					public void run() {
 
+						try {
+							ProcessBuilder pb = new ProcessBuilder();
+							boolean noEmmit = true;
 
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+							if (noEmmit) {
+								pb.command(pathSim + "simulation.exe",
+										"-override=outputFormat=ia",
+										"-port=11111", "-noEventEmit",
+										"-lv=LOG_STATS");
+							} else {
+								pb.command(pathSim + "simulation.exe",
+										"-override=outputFormat=ia",
+										"-port=11111", "-lv=LOG_STATS");
+							}
+							pb.redirectOutput();
+							pb.directory(new File(pathSim));
+							Process process = pb.start();
+							setReader(new InputStreamReader(
+									process.getInputStream()));
+
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 				};
-				
-				
 
 				Thread t2 = new Thread() {
 					public void run() {
 						w.redrawGraphs();
+						Vector<Double> v = graphInstance.getPathway()
+								.getPetriNet().getTime();
 						// System.out.println("running");
 						while (s.isRunning()) {
-							System.out.println("im thread");
+							// System.out.println("im thread");
 							w.redrawGraphs();
+							// GraphInstance graphInstance = new
+							// GraphInstance();
+							// GraphContainer con =
+							// ContainerSingelton.getInstance();
+							// MainWindow w = MainWindowSingelton.getInstance();
+
+							// double time =
+							if (v.size() > 0) {
+								menue.setTime(v.get(v.size() - 1));
+							}
 							try {
 								sleep(100);
 							} catch (InterruptedException e) {
@@ -446,34 +456,63 @@ public class PetriNetSimulation implements ActionListener {
 								e.printStackTrace();
 							}
 						}
-
+						menue.stopped();
 						System.out.println("end of simulation");
 						w.redrawGraphs();
-						int ch;
-						if (outputReader != null) {
-							try {
-								while ((ch = outputReader.read()) != -1) {
-									 System.out.print((char) ch);
+						if (v.size() > 0) {
+							menue.setTime(v.get(v.size() - 1));
+						}
+						// w.updatePCPView();
+					}
+				};
+
+				Thread t3 = new Thread() {
+					public void run() {
+						// System.out.println("running");
+						String line;
+						while (s.isRunning()) {
+							// System.out.println("im thread");
+							if (outputReader != null) {
+								try {
+									line = outputReader.readLine();
+									menue.addText(line + "\r\n");
+									System.out.println(line);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
 								}
-								outputReader.close();
-							} catch (IOException e) {
+							}
+							try {
+								sleep(100);
+							} catch (InterruptedException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
+						}
+						try {
+							line = outputReader.readLine();
+							while (line.length() > 0) {
+								menue.addText(line + "\r\n");
+								System.out.println(line);
+								line = outputReader.readLine();
+
+							}
+							outputReader.close();
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
 						// w.updatePCPView();
 					}
 				};
 
 				t2.start();
-				
+				t3.start();
+
 				t1.start();
 
 				// System.out.println("before sim");
 				// w.updatePCPView();
 				// System.out.println("ps:" + pathSim);
-
-				
 
 				// final Process pSim = new
 				// ProcessBuilder("cmd.exe","/c",pathSim+"simulation.bat").start();
@@ -699,13 +738,23 @@ public class PetriNetSimulation implements ActionListener {
 		// TODO Auto-generated method stub
 		if (event.getActionCommand().equals("start")) {
 			this.menue.started();
-			System.out.println("start");
+			boolean omc = true;
+
+			if (omc) {
+				// this.runOMC();
+				this.runOMCIA();
+			} else {
+				this.runDymola();
+			}
+			// System.out.println("start");
+		} else if (event.getActionCommand().equals("stop")) {
+
 		}
 
 	}
-	
-	private void setReader(Reader reader){
-		this.outputReader = reader;
+
+	private void setReader(InputStreamReader reader) {
+		this.outputReader = new BufferedReader(reader);
 	}
 
 }
