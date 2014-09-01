@@ -30,6 +30,7 @@ import gui.InfoWindow;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
 import gui.MenuBarClass;
+import gui.SimMenue;
 import io.OpenDialog;
 import io.SaveDialog;
 
@@ -40,6 +41,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -867,8 +869,9 @@ public class MenuListener implements ActionListener {
 			new PNTableDialog().setVisible(true);
 		else if ("loadModResult".equals(event))
 			new OpenModellicaResult().execute();
-		else if ("simulate".equals(event))
+		else if ("simulate".equals(event)){
 			new PetriNetSimulation();
+		}
 		else if ("convertIntoPetriNet".equals(event)
 				&& (con.getPathwayNumbers() > 0)) {
 			MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
