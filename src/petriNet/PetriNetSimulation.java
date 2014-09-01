@@ -5,11 +5,16 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MainWindowSingelton;
+import gui.SimMenue;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,19 +30,23 @@ import biologicalElements.PetriNet;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
-public class PetriNetSimulation {
+public class PetriNetSimulation implements ActionListener {
 	private static String pathCompiler = null;
 	// final ProgressBar bar = new ProgressBar();
 	private static String pathWorkingDirectory = null;
 	private static String pathSim = null;
 	private boolean stopped = false;
+	private SimMenue menue;
+	
+	private Reader outputReader;
 
 	public PetriNetSimulation() {
+		menue = new SimMenue(this);
 
 		boolean omc = true;
 
 		if (omc) {
-			//this.runOMC();
+			// this.runOMC();
 			this.runOMCIA();
 		} else {
 			this.runDymola();
@@ -223,40 +232,24 @@ public class PetriNetSimulation {
 					"OPENMODELICA not found...", JOptionPane.QUESTION_MESSAGE);
 			w.setLockedPane(false);
 		}
-		
-		/*Thread t2 = new Thread() {
-			public void run() {
-				long totalTime = 60000;
-				try {
-					sleep(2000);
-					for (long t = 0; t < totalTime; t += 10) {
-						if(t%1000 == 0){
-							w.redrawGraphs();
-						}
-						sleep(10);
-						Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
-						BiologicalNodeAbstract bna;
-						Place p;
-						graphInstance.getPathway().getPetriNet().addTime(new Double(graphInstance.getPathway().getPetriNet().getTime().size()+1));
-						while(it.hasNext()){
-							bna = it.next();
-							if(bna instanceof Place){
-								p = (Place) bna;
-								p.getPetriNetSimulationData().add(Math.random());
-								//System.out.println(Math.random());
-							}
-						}
-						
-					}
-					System.out.println("endeeeeee");
-					stopped = true;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		t2.start();*/
-		
+
+		/*
+		 * Thread t2 = new Thread() { public void run() { long totalTime =
+		 * 60000; try { sleep(2000); for (long t = 0; t < totalTime; t += 10) {
+		 * if(t%1000 == 0){ w.redrawGraphs(); } sleep(10);
+		 * Iterator<BiologicalNodeAbstract> it =
+		 * graphInstance.getPathway().getAllNodes().iterator();
+		 * BiologicalNodeAbstract bna; Place p;
+		 * graphInstance.getPathway().getPetriNet().addTime(new
+		 * Double(graphInstance.getPathway().getPetriNet().getTime().size()+1));
+		 * while(it.hasNext()){ bna = it.next(); if(bna instanceof Place){ p =
+		 * (Place) bna; p.getPetriNetSimulationData().add(Math.random());
+		 * //System.out.println(Math.random()); } }
+		 * 
+		 * } System.out.println("endeeeeee"); stopped = true; } catch (Exception
+		 * e) { e.printStackTrace(); } } }; t2.start();
+		 */
+
 	}
 
 	private void runOMCIA() {
@@ -266,7 +259,6 @@ public class PetriNetSimulation {
 		w.setLockedPane(true);
 		Map<String, String> env = System.getenv();
 
-		
 		if (SystemUtils.IS_OS_WINDOWS) {
 			pathWorkingDirectory = env.get("APPDATA");
 		} else {
@@ -339,8 +331,8 @@ public class PetriNetSimulation {
 				//
 				FileWriter fstream = new FileWriter(pathSim + "simulation.mos");
 				BufferedWriter out = new BufferedWriter(fstream);
-				String path2 = pathSim.replace('\\', '/');
-				out.write("cd(\"" + path2 + "\");\r\n");
+				pathSim = pathSim.replace('\\', '/');
+				out.write("cd(\"" + pathSim + "\");\r\n");
 				out.write("getErrorString();\r\n");
 				out.write("loadFile(\"../PNlib.mo\");\r\n");
 				out.write("getErrorString();\r\n");
@@ -385,16 +377,6 @@ public class PetriNetSimulation {
 				// simulation.exe -override=outputFormat=ia -port=11111
 				// -lv=LOG_STATS
 
-				fstream = new FileWriter(pathSim + "simulation.bat");
-				out = new BufferedWriter(fstream);
-				path2 = pathSim.replace('\\', '/');
-				out.write("c:\r\n");
-				out.write("cd " + pathSim + "\r\n");
-				out.write("simulation.exe -override=outputFormat=ia -port=11111 -lv=LOG_STATS\r\n");
-				out.write("exit\r\n");
-				
-				out.close();
-
 				Server s = new Server(bea2key);
 
 				s.test();
@@ -409,7 +391,7 @@ public class PetriNetSimulation {
 								sleep(1000);
 							}
 							p.destroy();
-							//stopped = true;
+							// stopped = true;
 						} catch (Exception e) {
 						}
 					}
@@ -423,13 +405,38 @@ public class PetriNetSimulation {
 				System.out.println("building ended");
 				graphInstance.getPathway().setPetriNetSimulation(true);
 				w.initPCPGraphs();
+
 				
 				
+				Thread t1 = new Thread(){
+					public void run(){
+					
+					try {
+						ProcessBuilder pb = new ProcessBuilder();
+						pb.command(pathSim + "simulation.exe",
+								"-override=outputFormat=ia", "-port=11111",
+								"-lv=LOG_STATS");
+						pb.redirectOutput();
+						pb.directory(new File(pathSim));
+						Process process = pb.start();
+						setReader(new InputStreamReader(
+								process.getInputStream()));
+
+
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					}
+				};
+				
+				
+
 				Thread t2 = new Thread() {
 					public void run() {
 						w.redrawGraphs();
-						//System.out.println("running");
-						while(s.isRunning()){
+						// System.out.println("running");
+						while (s.isRunning()) {
 							System.out.println("im thread");
 							w.redrawGraphs();
 							try {
@@ -439,30 +446,49 @@ public class PetriNetSimulation {
 								e.printStackTrace();
 							}
 						}
+
 						System.out.println("end of simulation");
 						w.redrawGraphs();
-						//w.updatePCPView();
+						int ch;
+						if (outputReader != null) {
+							try {
+								while ((ch = outputReader.read()) != -1) {
+									 System.out.print((char) ch);
+								}
+								outputReader.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						// w.updatePCPView();
 					}
 				};
-				
+
 				t2.start();
 				
-				
-				
-				//System.out.println("before sim");
-				//w.updatePCPView();
-				//System.out.println("ps:" + pathSim);
-				final Process pSim = new
-				ProcessBuilder("cmd.exe","/c",pathSim+"simulation.bat").start();
-				// ProcessBuilder pb = new
-				//ProcessBuilder(pathSim+"simulation.exe","-override=outputFormat=ia","-port=11111","-lv=LOG_STATS");
+				t1.start();
 
-				//Process process = pb.start();
-				//System.out.println(pb.command());
+				// System.out.println("before sim");
+				// w.updatePCPView();
+				// System.out.println("ps:" + pathSim);
+
 				
-				 //Runtime.getRuntime().exec(new String[]{pathSim+"simulation.exe","-override=outputFormat=ia","-port=11111","-lv=LOG_STATS"});
-				/*Runtime.getRuntime().exec(
-						"cmd /q/c start " + pathSim + "simulation.bat");*/
+
+				// final Process pSim = new
+				// ProcessBuilder("cmd.exe","/c",pathSim+"simulation.bat").start();
+				// ProcessBuilder pb = new
+				// ProcessBuilder(pathSim+"simulation.exe","-override=outputFormat=ia","-port=11111","-lv=LOG_STATS");
+
+				// Process process = pb.start();
+				// System.out.println(pb.command());
+
+				// Runtime.getRuntime().exec(new
+				// String[]{pathSim+"simulation.exe","-override=outputFormat=ia","-port=11111","-lv=LOG_STATS"});
+				/*
+				 * Runtime.getRuntime().exec( "cmd /q/c start " + pathSim +
+				 * "simulation.bat");
+				 */
 				System.out.println("drin");
 
 				zstNachher = System.currentTimeMillis();
@@ -470,55 +496,36 @@ public class PetriNetSimulation {
 						+ ((zstNachher - zstVorher) / 1000) + " sec");
 				System.out.println("Zeit benoetigt: "
 						+ ((zstNachher - zstVorher)) + " millisec");
-				
-				
-				
-				
-				
-				
-				/*Thread t3 = new Thread() {
-					public void run() {
-						long totalTime = 60000;
-						try {
-							sleep(2000);
-							for (long t = 0; t < totalTime; t += 200) {
-								
-								sleep(200);
-								Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
-								BiologicalNodeAbstract bna;
-								Place p;
-								graphInstance.getPathway().getPetriNet().addTime(new Double(graphInstance.getPathway().getPetriNet().getTime().size()+1));
-								while(it.hasNext()){
-									bna = it.next();
-									if(bna instanceof Place){
-										p = (Place) bna;
-										p.getPetriNetSimulationData().add(Math.random());
-										//System.out.println(Math.random());
-									}
-								}
-								
-							}
-							System.out.println("endeeeeee");
-							stopped = true;
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				};
-				t3.start();*/
-				
-				
-				
-				
+
+				/*
+				 * Thread t3 = new Thread() { public void run() { long totalTime
+				 * = 60000; try { sleep(2000); for (long t = 0; t < totalTime; t
+				 * += 200) {
+				 * 
+				 * sleep(200); Iterator<BiologicalNodeAbstract> it =
+				 * graphInstance.getPathway().getAllNodes().iterator();
+				 * BiologicalNodeAbstract bna; Place p;
+				 * graphInstance.getPathway().getPetriNet().addTime(new
+				 * Double(graphInstance
+				 * .getPathway().getPetriNet().getTime().size()+1));
+				 * while(it.hasNext()){ bna = it.next(); if(bna instanceof
+				 * Place){ p = (Place) bna;
+				 * p.getPetriNetSimulationData().add(Math.random());
+				 * //System.out.println(Math.random()); } }
+				 * 
+				 * } System.out.println("endeeeeee"); stopped = true; } catch
+				 * (Exception e) { e.printStackTrace(); } } }; t3.start();
+				 */
+
 				if (con.containsPathway()
 						&& graphInstance.getPathway().hasGotAtLeastOneElement()
 						&& !stopped) {
-					//graphInstance.getPathway().setPetriNet(true);
-					//PetriNet petrinet = graphInstance.getPathway()
-					//		.getPetriNet();
+					// graphInstance.getPathway().setPetriNet(true);
+					// PetriNet petrinet = graphInstance.getPathway()
+					// .getPetriNet();
 					// petrinet.setPetriNetSimulationFile(pathSim
 					// + "simulation_res.csv", true);
-					//petrinet.initializePetriNet(bea2key);
+					// petrinet.initializePetriNet(bea2key);
 				} else
 					throw new Exception();
 			} catch (Exception e) {
@@ -686,4 +693,19 @@ public class PetriNetSimulation {
 						"Simulation done...", JOptionPane.INFORMATION_MESSAGE);
 
 	}
+
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		// TODO Auto-generated method stub
+		if (event.getActionCommand().equals("start")) {
+			this.menue.started();
+			System.out.println("start");
+		}
+
+	}
+	
+	private void setReader(Reader reader){
+		this.outputReader = reader;
+	}
+
 }

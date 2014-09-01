@@ -19,22 +19,18 @@ import java.util.Iterator;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-//import org.slf4j.LoggerFactory;
-
-import petriNet.ConvertToPetriNet;
+//import ch.qos.logback.classic.LoggerContext;
+import moOutput.MOoutput;
 import petriNet.PNEdge;
 import petriNet.Place;
 import petriNet.Transition;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-//import ch.qos.logback.classic.LoggerContext;
-import moOutput.MOoutput;
 import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.PNMLOutput;
-import xmlOutput.sbml.SBMLoutput;
-import xmlOutput.sbml.SBMLoutputNoWS;
 import xmlOutput.sbml.VAMLoutput;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.ConnectionSettings;
+//import org.slf4j.LoggerFactory;
 
 public class SaveDialog {
 

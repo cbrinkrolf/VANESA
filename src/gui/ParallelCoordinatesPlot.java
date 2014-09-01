@@ -390,6 +390,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 				if (bna instanceof Place) {
 					place = (Place) bna;
+					//System.out.println(place.getPetriNetSimulationData().size());
 					if (place.hasRef() && place.getRef() instanceof Place) {
 						place = (Place) place.getRef();
 					}
