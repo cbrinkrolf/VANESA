@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import petriNet.Place;
+import petriNet.Transition;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import biologicalElements.Elementdeclerations;
@@ -166,7 +167,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		// sbml.setVertex(vertex.toString());
 		// }
 		sbml.setBiologicalNodeDescription(Elementdeclerations.transcriptionFactor);
-
 	}
 
 	/*
@@ -279,21 +279,22 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		coarseNode = coarseNode.clone();
 		coarseNode.cleanUpHierarchyElements();
 		
-		if(id==null){
-			coarseNode.setID(true);
-		} else {
-			coarseNode.setID(id);
-		}
-		
 		String lbl;
 		if(label==null){
 			lbl = JOptionPane.showInputDialog(null, null, 
 					"Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
 			if(lbl==null){
-				lbl = "CN_id " + coarseNode.getID();
+				return null;
+			} else if(lbl.isEmpty()){
+				lbl = "id_" + coarseNode.getID();
 			}
 		} else {
 			lbl=label;
+		}
+		if(id==null){
+			coarseNode.setID(true);
+		} else {
+			coarseNode.setID(id);
 		}
 		coarseNode.setLabel(lbl);
 		coarseNode.setName(lbl);
@@ -570,8 +571,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 					if(newNode!=null && newEdge.isValid(false)){
 						vertex.addVertex(newNode, getGraph().getVertexLocation(newNode));
 						vertex.addEdge(newEdge);
-						System.out.println("added " + newNode.getLabel());
-						System.out.println("added " + newEdge.getTo().getLabel() + "->" + newEdge.getFrom().getLabel());
 					}
 				}
 				vertex.removeElement(this);
@@ -588,7 +587,27 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		updateConnectingEdges();
 //		printAllHierarchicalAttributes();
 		getRootPathway().updateMyGraph();
+		updateNodeType();
 		return true;
+	}
+	
+	/** If coarse node type is not identical in Petri Net, node is flattened and re-coarsed with the
+	 *  correct node type.
+	 *  @author tloka
+	 */
+	public void updateNodeType(){
+		if(border.isEmpty()){
+			return;
+		}
+		if(border.iterator().next() instanceof Place != this instanceof Place){
+			Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
+			innerNodes.addAll(getInnerNodes());
+			this.flat();
+			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
+			bna.setGraph(getGraph());
+			new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
+			bna.printAllHierarchicalAttributes();
+		}
 	}
 	
 	/**
