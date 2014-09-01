@@ -271,6 +271,9 @@ public class Pathway implements Cloneable {
 		// System.out.println(bna.getClass().getName());
 		// Object graphElement = element;
 		// GraphElementAbstract gea = (GraphElementAbstract) element;
+		if(getAllNodes().contains(bna)){
+			return bna;
+		}
 		bna.setLabel(bna.getLabel().trim());
 		bna.setName(bna.getName().trim());
 
