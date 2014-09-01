@@ -415,7 +415,7 @@ public class PetriNetSimulation implements ActionListener {
 						ProcessBuilder pb = new ProcessBuilder();
 						pb.command(pathSim + "simulation.exe",
 								"-override=outputFormat=ia", "-port=11111",
-								"-lv=LOG_STATS");
+								"-noEventEmit", "-lv=LOG_STATS");
 						pb.redirectOutput();
 						pb.directory(new File(pathSim));
 						Process process = pb.start();
