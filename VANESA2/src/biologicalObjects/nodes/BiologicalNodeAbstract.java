@@ -603,8 +603,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
 			innerNodes.addAll(getInnerNodes());
 			this.flat();
+			MainWindowSingelton.getInstance().removeTab(false, getTab().getTitelTab(), this);
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
-			bna.setGraph(getGraph());
+			setGraph(bna.getGraph());
 			new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
 			bna.printAllHierarchicalAttributes();
 		}
