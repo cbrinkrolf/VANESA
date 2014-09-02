@@ -1,18 +1,20 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.ScrollPane;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
+import javax.swing.text.NumberFormatter;
 
 import petriNet.PetriNetSimulation;
 
@@ -28,9 +30,16 @@ public class SimMenue extends JFrame {
 	private JLabel status = new JLabel("");
 	private JLabel time = new JLabel("Time: ");
 	private JTextArea textArea = new JTextArea(20,80);
-	private PetriNetSimulation sim;
 	private JPanel north = new JPanel();
+	private JPanel northUp = new JPanel();
+	private JPanel northDown = new JPanel();
 	private JScrollPane scrollPane = new JScrollPane(textArea);
+	private JLabel startLbl = new JLabel("Start:");
+	private JLabel stopLbl = new JLabel("Stop:");
+	private JLabel intervalsLbl = new JLabel("Intervals:");
+	private JFormattedTextField startTxt;
+	private JFormattedTextField stopTxt;
+	private JFormattedTextField intervalsTxt;
 
 	private ActionListener listener;
 	
@@ -41,21 +50,58 @@ public class SimMenue extends JFrame {
 		start.addActionListener(listener);
 		stop.setActionCommand("stop");
 		stop.addActionListener(listener);
+
 		
-		north.setLayout(new GridLayout(1,10));
+		DecimalFormat df = new DecimalFormat();
+		
+		DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+		dfs.setDecimalSeparator('.');
+		
+		df.setDecimalFormatSymbols(dfs);
+		new JFormattedTextField(df);
+		startTxt = new JFormattedTextField(df);
+		startTxt.setText("0.0");
+		startTxt.setColumns(5);
+		startTxt.setEnabled(false);
+		
+		stopTxt = new JFormattedTextField(df);
+		stopTxt.setText("1.0");
+		stopTxt.setColumns(5);
+
+		intervalsTxt = new JFormattedTextField(new NumberFormatter());
+		intervalsTxt.setText("100");
+		intervalsTxt.setColumns(5);
+		
+		textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+		
+		//northUp.setLayout(new GridLayout(1,5));
+		//northDown.setLayout();
+		
 		
 		this.setLayout(new BorderLayout());
 		this.stop.setEnabled(false);
-		north.add(start);
-		north.add(stop);
-		north.add(time);
-		north.add(status);
+		northUp.add(start);
+		northUp.add(stop);
+		northUp.add(time);
+		northUp.add(status);
+		northDown.add(startLbl);
+		northDown.add(startTxt);
+		northDown.add(stopLbl);
+		northDown.add(stopTxt);
+		northDown.add(intervalsLbl);
+		northDown.add(intervalsTxt);
+		
 		this.add(north, BorderLayout.NORTH);
+		north.setLayout(new GridLayout(2,1));
+		north.add(northUp);
+		north.add(northDown);
+		
 		//textArea.setAutoscrolls(true);
 		this.add(scrollPane, BorderLayout.SOUTH);
 		// this.add(textArea, BorderLayout.SOUTH);
 		
 		this.pack();
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		
 	}
@@ -82,6 +128,18 @@ public class SimMenue extends JFrame {
 	public void addText(String text){
 		this.textArea.setText(textArea.getText()+text);
 		this.pack();
+	}
+	
+	public double getStartValue(){
+		return Double.parseDouble(startTxt.getText());
+	}
+	
+	public double getStopValue(){
+		return Double.parseDouble(stopTxt.getText());
+	}
+	
+	public int getIntervals(){
+		return Integer.parseInt(intervalsTxt.getText());
 	}
 	
 }

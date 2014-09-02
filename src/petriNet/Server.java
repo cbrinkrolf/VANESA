@@ -9,6 +9,7 @@ import gui.MainWindowSingelton;
 import java.awt.Color;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -157,87 +158,96 @@ public class Server {
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
 
-		while (running) {
-			try {
-				if (pw.getPetriNet().getTime().size() > 0
-						&& pw.getPetriNet().getTime()
-								.get(pw.getPetriNet().getTime().size() - 1) > 0.01) {
-					Thread.sleep(1);
-				} else {
-					Thread.sleep(1);
+		try {
+			while (running) {
+				try {
+					if (pw.getPetriNet().getTime().size() > 0
+							&& pw.getPetriNet().getTime()
+									.get(pw.getPetriNet().getTime().size() - 1) > 0.01) {
+						Thread.sleep(1);
+					} else {
+						Thread.sleep(1);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			values = new ArrayList<Object>();
+				values = new ArrayList<Object>();
 
-			socket.readFully(buffer, 0, 5); // blockiert
-			// bis
-			// Nachricht
-			// empfangen
-			id = (int) buffer[0];
-			// System.out.println("id: " + (int) buffer[0]);
-			// socket.getInputStream().read(buffer, 0, 4);
-			// System.out.println("length: "+buffer[0]+
-			// " "+buffer[1]+" "+buffer[2]+" "+buffer[3] );
+				socket.readFully(buffer, 0, 5); // blockiert
+				// bis
+				// Nachricht
+				// empfangen
+				id = (int) buffer[0];
+				// System.out.println("id: " + (int) buffer[0]);
+				// socket.getInputStream().read(buffer, 0, 4);
+				// System.out.println("length: "+buffer[0]+
+				// " "+buffer[1]+" "+buffer[2]+" "+buffer[3] );
 
-			bb = ByteBuffer.wrap(Arrays.copyOfRange(buffer, 1,
-					buffer.length - 2));
-			bb.order(ByteOrder.LITTLE_ENDIAN);
-			length = bb.getInt();
-			// System.out.println("length: " + length);
+				bb = ByteBuffer.wrap(Arrays.copyOfRange(buffer, 1,
+						buffer.length - 2));
+				bb.order(ByteOrder.LITTLE_ENDIAN);
+				length = bb.getInt();
+				// System.out.println("length: " + length);
 
-			switch (id) {
-			case 4:
-				if (length > 0) {
-					socket.readFully(buffer, 0, length);
+				switch (id) {
+				case 4:
+					if (length > 0) {
+						socket.readFully(buffer, 0, length);
 
-					for (int r = 0; r < reals; r++) {
-						bb = ByteBuffer.wrap(buffer, r * 8, 8);
+						for (int r = 0; r < reals; r++) {
+							bb = ByteBuffer.wrap(buffer, r * 8, 8);
+							bb.order(ByteOrder.LITTLE_ENDIAN);
+							values.add(bb.getDouble());
+							// System.out.print(bb.getDouble() + "\t");
+						}
+						for (int i = 0; i < ints; i++) {
+							bb = ByteBuffer.wrap(buffer, reals * 8 + i * 4, 4);
+							bb.order(ByteOrder.LITTLE_ENDIAN);
+							values.add(bb.getInt());
+							// System.out.print(bb.getInt() + "\t");
+						}
+						for (int b = 0; b < bools; b++) {
+							// bb = ByteBuffer.wrap(buffer, b, 1);
+							// bb.order(ByteOrder.LITTLE_ENDIAN);
+							btmp = buffer[reals * 8 + ints * 4 + b];
+							values.add(new Double(btmp));
+							// values.add(buffer[reals * 8 + ints * 4 + b]);
+							// System.out.print(buffer[reals * 8 + ints * 4 + b]
+							// + "\t");
+						}
+						bb = ByteBuffer.wrap(buffer, expected, length
+								- expected);
 						bb.order(ByteOrder.LITTLE_ENDIAN);
-						values.add(bb.getDouble());
-						// System.out.print(bb.getDouble() + "\t");
-					}
-					for (int i = 0; i < ints; i++) {
-						bb = ByteBuffer.wrap(buffer, reals * 8 + i * 4, 4);
-						bb.order(ByteOrder.LITTLE_ENDIAN);
-						values.add(bb.getInt());
-						// System.out.print(bb.getInt() + "\t");
-					}
-					for (int b = 0; b < bools; b++) {
-						// bb = ByteBuffer.wrap(buffer, b, 1);
-						// bb.order(ByteOrder.LITTLE_ENDIAN);
-						btmp = buffer[reals * 8 + ints * 4 + b];
-						values.add(new Double(btmp));
-						// values.add(buffer[reals * 8 + ints * 4 + b]);
-						// System.out.print(buffer[reals * 8 + ints * 4 + b]
-						// + "\t");
-					}
-					bb = ByteBuffer.wrap(buffer, expected, length - expected);
-					bb.order(ByteOrder.LITTLE_ENDIAN);
 
-					String[] sValues = (new String(buffer, expected, length
-							- expected)).split("\u0000");
+						String[] sValues = (new String(buffer, expected, length
+								- expected)).split("\u0000");
 
-					for (int i = 0; i < sValues.length; i++) {
-						values.add(sValues[i]);
-						// System.out.print(sValues[i] + "\t");
+						for (int i = 0; i < sValues.length; i++) {
+							values.add(sValues[i]);
+							// System.out.print(sValues[i] + "\t");
+						}
+						this.setData(values);
+						// System.out.println("nach dem set");
+
 					}
-					this.setData(values);
-					// System.out.println("nach dem set");
+					break;
 
+				case 6:
+					running = false;
+					System.out.println("server shut down");
+					MainWindow w = MainWindowSingelton.getInstance();
+					// w.redrawGraphs();
+					break;
 				}
-				break;
-
-			case 6:
-				running = false;
-				System.out.println("server shut down");
-				MainWindow w = MainWindowSingelton.getInstance();
-				// w.redrawGraphs();
-				break;
+				j++;
 			}
-			j++;
+		} catch (SocketException e) {
+			System.out.println("server destroyed");
+			serverSocket.close();
+			running = false;
+			serverThread.stop();
+			serverThread.destroy();
 		}
 		// System.out.println(n[1]);
 		// System.out.println(n[2]);
@@ -292,7 +302,7 @@ public class Server {
 			} else if (bna instanceof Transition) {
 				((Transition) bna).setPlotColor(Color.getHSBColor(j * 1.0f
 						/ (transitions), 1, 1));
-				((Transition)bna).getSimActualSpeed().clear();
+				((Transition) bna).getSimActualSpeed().clear();
 				j++;
 			}
 		}
@@ -313,7 +323,7 @@ public class Server {
 
 	private void setData(ArrayList<Object> values) {
 
-		//System.out.println("set Data");
+		// System.out.println("set Data");
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
 		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
@@ -339,7 +349,7 @@ public class Server {
 								+ bea2key.get(bea) + ")")));
 				e.getSim_tokensSum().add(
 						(Double) values.get(names.indexOf(bea2key.get(bea))));
-				//System.out.println(values.get(names.indexOf(bea2key.get(bea))));
+				// System.out.println(values.get(names.indexOf(bea2key.get(bea))));
 
 			}
 		}
@@ -349,7 +359,7 @@ public class Server {
 
 		while (it.hasNext()) {
 			bna = it.next();
-			//System.out.println(bna.getName());
+			// System.out.println(bna.getName());
 			if (!bna.hasRef()) {
 				if (bna instanceof Place) {
 
@@ -368,9 +378,10 @@ public class Server {
 					((Transition) bna).getSimActualSpeed().add(
 							(Double) values.get(names.indexOf("'"
 									+ bna.getName() + "'.actualSpeed")));
-					//System.out.println(bna.getName()+" "+(Double) values.get(names.indexOf("'"
-						//			+ bna.getName() + "'.actualSpeed")));
-					//System.out.println("speed: "+((Transition)bna).getSimActualSpeed());
+					// System.out.println(bna.getName()+" "+(Double)
+					// values.get(names.indexOf("'"
+					// + bna.getName() + "'.actualSpeed")));
+					// System.out.println("speed: "+((Transition)bna).getSimActualSpeed());
 				}
 			}
 		}
