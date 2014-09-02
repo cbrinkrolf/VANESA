@@ -826,8 +826,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				pw.getPetriNet().setCurrentTimeStep(this.slider.getValue());
 				slider.setToolTipText("Time: " + this.slider.getValue());
 				if (pw.getPetriNet().getTime().size() > 0) {
+					
 					double step = pw.getPetriNet().getTime()
 							.get(this.slider.getValue());
+					//System.out.println(slider.getValue() +" "+step);
 					stepLabel.setText("Time: "
 							+ (double) Math.round((step * 100)) / 100);
 
@@ -876,9 +878,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							bna = it.next();
 							// System.out.println(bna.getName());
 							if (bna.getPetriNetSimulationData().size() > 0
-									&& slider.getValue() >= 1) {
+									&& slider.getValue() >= 0) {
 								ref = bna.getMicroArrayValue(slider.getValue());
-								ref = Math.abs(ref);
+								//ref = Math.abs(ref);
 								if (bna instanceof Place) {
 									((Place) bna).setToken(ref);
 								} else if (bna instanceof Transition) {
