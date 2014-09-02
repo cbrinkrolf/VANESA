@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -86,8 +87,8 @@ public class JSBMLoutput {
 
 		Compartment compartment;
 		// read all nodes from graph
-		Set<BiologicalNodeAbstract> flattedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : this.pathway.getAllNodes()){
+		List<BiologicalNodeAbstract> flattedPathwayNodes = new ArrayList<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract node : this.pathway.getAllNodesSorted()){
 			if(node.isCoarseNode()){
 				flattedPathwayNodes.addAll(node.getAllRootNodes());
 			} else {
@@ -222,7 +223,7 @@ public class JSBMLoutput {
 		XMLNode hierarchy = new XMLNode(new XMLNode(new XMLTriple(
 				"listOfHierarchies", "", ""), new XMLAttributes()));
 		Set<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
-		hierarchyNodes.addAll(pathway.getAllNodes());
+		hierarchyNodes.addAll(pathway.getAllNodesSorted());
 		for(BiologicalNodeAbstract node : hierarchyNodes){
 			if(node.isCoarseNode()){
 					addHierarchyXMLNode(hierarchy, node);

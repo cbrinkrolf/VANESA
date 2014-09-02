@@ -311,7 +311,7 @@ public class PetriNetSimulation implements ActionListener {
 					JOptionPane
 							.showMessageDialog(
 									w,
-									"Following files which are required for simulation are missing in the dymola folder:\n"
+									"Following files which are required for simulation are missing in the simulation folder:\n"
 											+ missing, "Simulation aborted...",
 									JOptionPane.ERROR_MESSAGE);
 					w.setLockedPane(false);
