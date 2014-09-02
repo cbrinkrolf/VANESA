@@ -40,6 +40,7 @@ public class PetriNetSimulation implements ActionListener {
 	private static String pathSim = null;
 	private boolean stopped = false;
 	private SimMenue menue;
+	private Process process;
 
 	private BufferedReader outputReader;
 
@@ -265,10 +266,13 @@ public class PetriNetSimulation implements ActionListener {
 
 			try {
 
-				String stopTime = JOptionPane
-						.showInputDialog("Stop Time", "20");
-				String intervals = JOptionPane.showInputDialog("Intervals",
-						"20");
+				//String stopTime = JOptionPane
+				//		.showInputDialog("Stop Time", "20");
+				//String intervals = JOptionPane.showInputDialog("Intervals",
+				//		"20");
+				
+				Double stopTime = menue.getStopValue();
+				int intervals = menue.getIntervals();
 				// this.path = "C:\\OpenModelica1.9.1Nightly\\";
 
 				if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
@@ -419,7 +423,7 @@ public class PetriNetSimulation implements ActionListener {
 							}
 							pb.redirectOutput();
 							pb.directory(new File(pathSim));
-							Process process = pb.start();
+							process = pb.start();
 							setReader(new InputStreamReader(
 									process.getInputStream()));
 
@@ -475,8 +479,10 @@ public class PetriNetSimulation implements ActionListener {
 							if (outputReader != null) {
 								try {
 									line = outputReader.readLine();
-									menue.addText(line + "\r\n");
-									System.out.println(line);
+									if (line != null && line.length() > 0) {
+										menue.addText(line + "\r\n");
+										System.out.println(line);
+									}
 								} catch (IOException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -490,14 +496,16 @@ public class PetriNetSimulation implements ActionListener {
 							}
 						}
 						try {
+							System.out.println("outputReader server stopped");
 							line = outputReader.readLine();
-							while (line.length() > 0) {
+							while (line != null && line.length() > 0) {
 								menue.addText(line + "\r\n");
 								System.out.println(line);
 								line = outputReader.readLine();
 
 							}
 							outputReader.close();
+							outputReader = null;
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -748,7 +756,8 @@ public class PetriNetSimulation implements ActionListener {
 			}
 			// System.out.println("start");
 		} else if (event.getActionCommand().equals("stop")) {
-
+			System.out.println("stop");
+			this.process.destroy();
 		}
 
 	}
