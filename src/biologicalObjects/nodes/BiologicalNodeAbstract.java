@@ -568,8 +568,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 						newEdge.setTo(conEdge.getTo().getCurrentShownParentNode(vertex.getGraph()));
 						newEdge.setFrom(newNode);
 					}
-					if(newNode!=null && newEdge.isValid(false)){
+					if(newNode!=null){
 						vertex.addVertex(newNode, getGraph().getVertexLocation(newNode));
+					}
+					if(newEdge.isValid(false)){
 						vertex.addEdge(newEdge);
 					}
 				}
