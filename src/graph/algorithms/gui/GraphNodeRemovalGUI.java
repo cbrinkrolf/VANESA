@@ -257,7 +257,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 				mw.updatePathwayTree();
 				mg.unlockVertices();
 
-				GraphInstance.getMyGraph().changeToGEMLayout();
+				//GraphInstance.getMyGraph().changeToGEMLayout();
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 
 				resetRemovalInterface();
@@ -312,7 +312,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 					mw.updatePathwayTree();
 					mg.unlockVertices();
 
-					GraphInstance.getMyGraph().changeToGEMLayout();
+//					GraphInstance.getMyGraph().changeToGEMLayout();
 					GraphInstance.getMyGraph().getVisualizationViewer()
 							.repaint();
 

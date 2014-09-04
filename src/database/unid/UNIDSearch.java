@@ -1,5 +1,6 @@
 package database.unid;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -21,7 +22,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.GraphNode;
-
 import cluster.IJobServer;
 import cluster.SearchCallback;
 import cluster.graphdb.GraphDBTransportNode;
@@ -43,6 +43,8 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	private String commonName;
 	private String organism;
 	private int depth;
+	private HashSet<String> searchNames;
+	
 	
 	private HashMap<GraphDBTransportNode, HashSet<GraphDBTransportNode>> adjacencylist;
 
@@ -52,6 +54,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		this.commonName = input[2];
 		this.graphid = input[3];
 		this.depth = (int) Double.parseDouble(input[4]);
+		this.searchNames = new HashSet<>();
 		try{
 			this.helper = new SearchCallback(this);
 		}catch(RemoteException re){
@@ -61,15 +64,19 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 
 	protected Object doInBackground() throws Exception {
 		
+		//check for multi name input
 		boolean multi_id_search = false;
 		HashSet<String> commonNames = new HashSet<String>();
 		if(commonName.contains(",")){
 			multi_id_search = true;
 			String name[] = commonName.split(",");
 			for (int i = 0; i < name.length; i++) {
+				searchNames.add(name[i]);
 				commonNames.add(name[i]);
 			}			
-		}		
+		}else{
+			searchNames.add(commonName);
+		}
 
 		try{
 		 String url = "rmi://cassiopeidae/ClusterJobs";
@@ -77,9 +84,9 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		 if(multi_id_search){
 			 server.submitSearch(commonNames, depth, "any", helper);
 		 }else{
-			 //DEBUG dataset search
-			 server.submitSearch(commonName,depth,helper);
 			 
+			 server.submitSearch(commonName,depth,helper);
+//DEBUG Dataset Search			 
 //			 HashSet<String> datasets = new HashSet<String>();
 //			 datasets.add("FC_68_S01_GE2_107_Sep09_1_1");
 //			 server.submitSearch(datasets, 1, helper);
@@ -131,6 +138,9 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 				nodeset.add(node);
 				bna = new GraphNode(node);
 				bna.setReference(false);
+				if(searchNames.contains(node.commonName)){
+					bna.setColor(Color.RED);
+				}
 				pw.addVertex(bna, new Point(150, 100));
 				nodes.put(node, bna);
 			}
@@ -140,6 +150,9 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 					nodeset.add(companion);
 					bna = new GraphNode(companion);
 					bna.setReference(false);
+					if(searchNames.contains(companion.commonName)){
+						bna.setColor(Color.RED);				
+					}
 					pw.addVertex(bna, new Point(150, 100));
 					nodes.put(companion, bna);
 				}
