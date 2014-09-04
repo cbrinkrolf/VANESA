@@ -337,11 +337,11 @@ public class PetriNetSimulation implements ActionListener {
 				out.write("loadFile(\"simulation.mo\");\r\n");
 				out.write("getErrorString();\r\n");
 				out.write("buildModel(simulation, stopTime=" + stopTime
-						+ ", method=\"euler\", numberOfIntervals=" + intervals
+						+ ", numberOfIntervals=" + intervals
 						// only places
 						// +
 						// ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
-						+ ", outputFormat=\"csv\");\r\n");
+						+ ", tolerance=0.0001);\r\n");
 				out.write("getErrorString();\r\n");
 				// variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
 
