@@ -132,6 +132,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<BiologicalEdgeAbstract>();
 	
 	private NodeStateChanged state = NodeStateChanged.UNCHANGED;
+	
+	private HashSet<NodeAttribute> nodeAttributes = new HashSet<>();
 
 	public void setStateChanged(NodeStateChanged state) {
 		this.state = state;
@@ -1369,4 +1371,183 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		}
 		return rootNodes;
 	}
+	
+	/**
+	 * double value Attribute
+	 * 
+	 * @param nodeAttributeType
+	 * @param name
+	 * @param doublevalue
+	 */
+	public void addAttribute(int nodeAttributeType, String name, double doublevalue){
+		nodeAttributes.add(new NodeAttribute(nodeAttributeType, name, doublevalue));
+	}
+	
+	/**
+	 * string value attribute
+	 * 
+	 * @param nodeAttributeType
+	 * @param name
+	 * @param stringvalue
+	 */
+	public void addAttribute(int nodeAttributeType, String name, String stringvalue){
+		nodeAttributes.add(new NodeAttribute(nodeAttributeType, name, stringvalue));
+	}
+	
+	public HashSet<NodeAttribute> getNodeAttributes(){
+		return nodeAttributes;
+	}
+	
+	/**
+	 * 
+	 * @param name
+	 * @return Attribute of the node with given name
+	 * if not found, returns null!
+	 */
+	public NodeAttribute getNodeAttributeByName(String name){
+		for(NodeAttribute na : nodeAttributes){
+			if(na.getName().equals(name))
+				return na;
+		}
+		return null;
+	}
+	
+	public boolean hasAttributeByName(String name){
+		for(NodeAttribute na : nodeAttributes){
+			if(na.getName().equals(name))
+				return true;
+		}
+		return false;
+	}
+
+	
+	/**
+	 * 
+	 * @author mlewinsk
+	 *
+	 * Node Attributes are used to save node specific properties which can be used for coloring, analysis or other purposes.
+	 * 
+	 */
+	class NodeAttribute{
+		private int type; //FROM NodeAttributeTypes
+		private String name;
+		private double doublevalue;
+		private String stringvalue;
+		
+		/**
+		 * @param nodeAttributeType
+		 * @param doublevalue
+		 *  Constructor for double attributes
+		 */
+		public NodeAttribute(int nodeAttributeType, String name, double doublevalue){
+			this.type = nodeAttributeType;
+			this.name = name;
+			this.doublevalue = doublevalue;
+			this.stringvalue = "";
+		}
+		
+		/**
+		 * @param nodeAttributeType
+		 * @param stringvalue
+		 *  Constructor for string attributes
+		 */
+		public NodeAttribute(int nodeAttributeType, String name, String stringvalue){
+			this.type = nodeAttributeType;
+			this.name = name;
+			this.doublevalue = -1d;
+			this.stringvalue = stringvalue;
+		}		
+		
+		public int getType() {
+			return type;
+		}
+		
+		public void setType(int type) {
+			this.type = type;
+		}
+				
+		public String getName() {
+			return name;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public double getDoublevalue() {
+			return doublevalue;
+		}
+
+		public void setDoublevalue(double doublevalue) {
+			this.doublevalue = doublevalue;
+		}
+
+		public String getStringvalue() {
+			return stringvalue;
+		}
+
+		public void setStringvalue(String stringvalue) {
+			this.stringvalue = stringvalue;
+		}
+
+		private BiologicalNodeAbstract getOuterType() {
+			return BiologicalNodeAbstract.this;
+		}
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			long temp;
+			temp = Double.doubleToLongBits(doublevalue);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result
+					+ ((stringvalue == null) ? 0 : stringvalue.hashCode());
+			result = prime * result + type;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			NodeAttribute other = (NodeAttribute) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (Double.doubleToLongBits(doublevalue) != Double
+					.doubleToLongBits(other.doublevalue))
+				return false;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
+			if (stringvalue == null) {
+				if (other.stringvalue != null)
+					return false;
+			} else if (!stringvalue.equals(other.stringvalue))
+				return false;
+			if (type != other.type)
+				return false;
+			return true;
+		}
+	}
+	/**
+	 * 
+	 * @author mlewinsk
+	 *
+	 * Attribute Types define the general category of the attribute
+	 */
+	class NodeAttributeTypes{
+		public static final int EXPERIMENT =1;
+		public static final int GRAPH_PROPERTY =2;
+		public static final int COLOR =3;
+	}
+	
 }
