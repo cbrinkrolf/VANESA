@@ -95,6 +95,9 @@ public class UNIDQueryMask {
 		reset.setActionCommand("reset");
 		reset.addActionListener(new DatabaseSearchListener(dw));
 		
+		JButton pickCommons = new JButton("pick commons");
+		pickCommons.setActionCommand("pickcommons");
+		pickCommons.addActionListener(new DatabaseSearchListener(dw));
 		
 		p.add(new JLabel("UNID Search Window"),"span 4");
 		p.add(new JSeparator(),"span, growx, wrap 15, gaptop 10, gap 5");
@@ -120,6 +123,7 @@ public class UNIDQueryMask {
 		
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(reset);
+		buttonPanel.add(pickCommons);
 		buttonPanel.add(search);
 		
 		p.add(buttonPanel,"span");
