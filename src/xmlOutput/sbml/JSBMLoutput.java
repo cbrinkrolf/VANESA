@@ -8,6 +8,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,6 +36,7 @@ import petriNet.DiscreteTransition;
 import petriNet.PNEdge;
 import petriNet.StochasticTransition;
 import petriNet.Transition;
+import util.MyIntComparable;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -141,7 +143,23 @@ public class JSBMLoutput {
 		}
 
 		// reactions to sbml
-		Iterator<BiologicalEdgeAbstract> edgeIterator = flattedPathwayEdges.iterator();
+		
+		HashMap<Integer, BiologicalEdgeAbstract> map = new HashMap<Integer, BiologicalEdgeAbstract>();
+
+		for (BiologicalEdgeAbstract bea : flattedPathwayEdges) {
+			map.put(bea.getID(), bea);
+		}
+
+		ArrayList<Integer> ids = new ArrayList<Integer>(map.keySet());
+		Collections.sort(ids, new MyIntComparable());
+
+		List<BiologicalEdgeAbstract> sortedEdges = new ArrayList<BiologicalEdgeAbstract>();
+		for (int i = 0; i < ids.size(); i++) {
+			sortedEdges.add(map.get(ids.get(i)));
+		}
+		
+		
+		Iterator<BiologicalEdgeAbstract> edgeIterator = sortedEdges.iterator();
 
 		BiologicalEdgeAbstract oneEdge;
 		try {

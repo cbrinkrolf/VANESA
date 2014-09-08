@@ -1057,6 +1057,25 @@ public class Pathway implements Cloneable {
 		}
 		return getGraph().getAllEdges();
 	}
+	
+	public List<BiologicalEdgeAbstract> getAllEdgesSorted(){
+		HashMap<Integer, BiologicalEdgeAbstract> map = new HashMap<Integer, BiologicalEdgeAbstract>();
+
+		for (BiologicalEdgeAbstract bea : this.getAllEdges()) {
+			map.put(bea.getID(), bea);
+		}
+
+		ArrayList<Integer> ids = new ArrayList<Integer>(map.keySet());
+		Collections.sort(ids, new MyIntComparable());
+
+		List<BiologicalEdgeAbstract> sortedList = new ArrayList<BiologicalEdgeAbstract>();
+		for (int i = 0; i < ids.size(); i++) {
+			sortedList.add(map.get(ids.get(i)));
+		}
+
+		return sortedList;
+		
+	}
 
 	public Collection<BiologicalNodeAbstract> getAllNodes() {
 
