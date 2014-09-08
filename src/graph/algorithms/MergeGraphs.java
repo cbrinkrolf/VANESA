@@ -1,10 +1,16 @@
 package graph.algorithms;
 
+import java.io.File;
+import java.io.IOException;
+
 import graph.CreatePathway;
 import gui.MainWindowSingelton;
 
 import javax.swing.JOptionPane;
+import javax.xml.stream.XMLStreamException;
 
+import xmlInput.sbml.VAMLInput;
+import xmlOutput.sbml.VAMLoutput;
 import biologicalElements.Pathway;
 
 public class MergeGraphs {
@@ -25,7 +31,8 @@ public class MergeGraphs {
 		pw_new.getGraph().lockVertices();
 		pw_new.getGraph().stopVisualizationModel();
 
-		/*File file1 = new File("test");
+		//CHRIS better deep copy of pathway
+		File file1 = new File("test");
 		try {
 			new VAMLoutput(file1, one);
 			new VAMLInput(file1, pw_new);
@@ -43,7 +50,7 @@ public class MergeGraphs {
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
-		}*/
+		}
 		
 		MainWindowSingelton.getInstance().enableOptionPanelUpdate(false);
 		CompareGraphs.mergeGraph(pw_new);
