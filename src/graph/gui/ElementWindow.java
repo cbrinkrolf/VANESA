@@ -197,7 +197,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			showLabels.addActionListener(this);
 			p.add(showLabels, "wrap");
 
-			JComboBox compartment = new JComboBox();
+			JComboBox<String> compartment = new JComboBox<String>();
 			addCompartmentItems(compartment);
 			AutoCompleteDecorator.decorate(compartment);
 			// compartment.setMaximumSize(new Dimension(250,300));
@@ -265,7 +265,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				Place place = (Place) ab;
 
 				JLabel lswitchPlace = new JLabel("Place Type");
-				JComboBox placeList = new JComboBox(new String[] { "discrete",
+				JComboBox<String> placeList = new JComboBox<String>(new String[] { "discrete",
 						"continuous" });
 				if (place.isDiscrete())
 					placeList.setSelectedItem("discrete");
@@ -311,7 +311,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(tokenMax, "wrap");
 			} else if (ab instanceof Transition) {
 				JLabel lswitchTrans = new JLabel("Transition Type");
-				JComboBox transList = new JComboBox(new String[] {
+				JComboBox<String> transList = new JComboBox<String>(new String[] {
 						DiscreteTransition.class.getName(),
 						ContinuousTransition.class.getName(),
 						StochasticTransition.class.getName() });
@@ -347,7 +347,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					String[] disStrings = { "norm", "exp" };
 					// Create the combo box, select item at index 4.
 					// Indices start at 0, so 4 specifies the pig.
-					JComboBox distributionList = new JComboBox(disStrings);
+					JComboBox<String> distributionList = new JComboBox<String>(disStrings);
 					distributionList.setSelectedItem(trans.getDistribution());
 					distributionList.setName("disList");
 					distributionList.addActionListener(pwl);
