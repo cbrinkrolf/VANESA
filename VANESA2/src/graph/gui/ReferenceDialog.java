@@ -4,6 +4,9 @@ import graph.GraphInstance;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.JComboBox;
@@ -31,8 +34,6 @@ public class ReferenceDialog {
 	private JComboBox<String> box = new JComboBox<String>();
 	private ArrayList<BiologicalNodeAbstract> list;
 	private BiologicalNodeAbstract self;
-
-	boolean addedNewValues = false;
 
 	/**
 	 * 
@@ -70,28 +71,41 @@ public class ReferenceDialog {
 
 		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 
-		// String element;
-		BiologicalNodeAbstract element;
+		// sort entries by network label
+		HashMap<String, BiologicalNodeAbstract> map = new HashMap<String, BiologicalNodeAbstract>();
+		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
-			element = it.next();
-			if (element != self && !element.hasRef()) {
-				if(self instanceof Place){
-					if(element instanceof Place){
-						list.add(element);
-						box.addItem(element.getNetworklabel());
+			bna = it.next();
+			if (bna != self && !bna.hasRef()) {
+				if (self instanceof Place) {
+					if (bna instanceof Place) {
+						map.put(bna.getNetworklabel(), bna);
 					}
-				}else if(self instanceof Transition){
-					if(element instanceof Transition){
-						list.add(element);
-						box.addItem(element.getNetworklabel());
+				} else if (self instanceof Transition) {
+					if (bna instanceof Transition) {
+						map.put(bna.getNetworklabel(), bna);
 					}
-				}else{
-					list.add(element);
-					box.addItem(element.getNetworklabel());
+				} else {
+					map.put(bna.getNetworklabel(), bna);
 				}
-				
+
 			}
 		}
+		
+		ArrayList<String> ids = new ArrayList<String>(map.keySet());
+		Collections.sort(ids, new Comparator<String>() {
+			public int compare(String f1, String f2) {
+				return f1.toString().compareTo(f2.toString());
+			}
+		});
+
+		for (int i = 0; i < ids.size(); i++) {
+			list.add(map.get(ids.get(i)));
+			box.addItem(map.get(ids.get(i)).getNetworklabel());
+		}
+
+		// String element;
+		
 
 	}
 
@@ -106,7 +120,7 @@ public class ReferenceDialog {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
 				// details[0] = elementNames.getSelectedItem().toString();
 				// details[1] = box.getSelectedItem().toString();
-				//System.out.println("idx: " + box.getSelectedIndex());
+				// System.out.println("idx: " + box.getSelectedIndex());
 				return list.get(box.getSelectedIndex());
 			} else {
 				return null;
