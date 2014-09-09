@@ -757,6 +757,7 @@ public class PetriNetSimulation implements ActionListener {
 			// System.out.println("start");
 		} else if (event.getActionCommand().equals("stop")) {
 			System.out.println("stop");
+			this.menue.stopped();
 			this.process.destroy();
 		}
 
