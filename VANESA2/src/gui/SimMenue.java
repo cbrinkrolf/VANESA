@@ -4,10 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.text.ParseException;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -16,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
+import util.MyNumberFormat;
 
 
 public class SimMenue extends JFrame {
@@ -51,24 +49,17 @@ public class SimMenue extends JFrame {
 		stop.addActionListener(listener);
 
 		
-		DecimalFormat df = new DecimalFormat();
-		
-		DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-		dfs.setDecimalSeparator('.');
-		
-		df.setDecimalFormatSymbols(dfs);
-		new JFormattedTextField(df);
-		startTxt = new JFormattedTextField(df);
+		startTxt = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
 		startTxt.setText("0.0");
 		startTxt.setColumns(5);
 		startTxt.setEnabled(false);
 		
-		stopTxt = new JFormattedTextField(df);
+		stopTxt = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
 		stopTxt.setText("1.0");
 		stopTxt.setColumns(5);
 
 		
-		intervalsTxt = new JFormattedTextField(NumberFormat.getInstance());
+		intervalsTxt = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
 		intervalsTxt.setText("100");
 		intervalsTxt.setColumns(5);
 		//intervalsTxt.get
@@ -140,14 +131,6 @@ public class SimMenue extends JFrame {
 	}
 	
 	public int getIntervals(){
-		
-		try {
-			return NumberFormat.getInstance().parse(intervalsTxt.getText()).intValue();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 100;
+		return Integer.parseInt(intervalsTxt.getText());
 	}
-	
 }
