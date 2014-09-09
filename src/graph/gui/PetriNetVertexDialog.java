@@ -18,6 +18,7 @@ import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,6 +33,7 @@ import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.Place;
 import petriNet.StochasticTransition;
+import util.MyNumberFormat;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -55,10 +57,10 @@ public class PetriNetVertexDialog implements ActionListener {
 	// JSpinner petriValue = new JSpinner();
 
 	// for places
-	private JTextField token = new JTextField("0");
-	private JTextField tokenStart = new JTextField("0");
-	private JTextField tokenMin = new JTextField("0");
-	private JTextField tokenMax = new JTextField("1000000000");
+	private JFormattedTextField token;
+	private JFormattedTextField tokenStart;
+	private JFormattedTextField tokenMin;
+	private JFormattedTextField tokenMax;
 
 	// for Transitions
 	private JTextField delay = new JTextField("1");
@@ -95,23 +97,39 @@ public class PetriNetVertexDialog implements ActionListener {
 			label.setText("p"+(pw.getPetriNet().getPlaces()+1));
 			name.setText("p"+(pw.getPetriNet().getPlaces()+1));
 			panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
+			token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+			token.setText("0");
 			panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(new JLabel("Token Start"), "span 2, gaptop 2 ");
+			tokenStart = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+			tokenStart.setText("0");
 			panel.add(tokenStart, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(new JLabel("TokenMin"), "span 2, gaptop 2 ");
+			tokenMin = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+			tokenMin.setText("0");
 			panel.add(tokenMin, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(new JLabel("TokenMax"), "span 2, gaptop 2 ");
+			tokenMax = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+			tokenMax.setText(Integer.MAX_VALUE+"");
 			panel.add(tokenMax, "span,wrap,growx ,gap 10, gaptop 2");
 		} else if (this.petriElement.equals("continuousPlace")) {
 			label.setText("p"+(pw.getPetriNet().getPlaces()+1));
 			name.setText("p"+(pw.getPetriNet().getPlaces()+1));
 			panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
+			token = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+			token.setText("0.0");
 			panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(new JLabel("Token Start"), "span 2, gaptop 2 ");
+			tokenStart = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+			tokenStart.setText("0.0");
 			panel.add(tokenStart, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(new JLabel("TokenMin"), "span 2, gaptop 2 ");
+			tokenMin = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+			tokenMin.setText("0.0");
 			panel.add(tokenMin, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(new JLabel("TokenMax"), "span 2, gaptop 2 ");
+			tokenMax = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+			tokenMax.setText(Double.MAX_VALUE+"");
 			panel.add(tokenMax, "span,wrap,growx ,gap 10, gaptop 2");
 		} else if (this.petriElement.equals("discreteTransition")) {
 			label.setText("t"+(pw.getPetriNet().getTransitions()+1));
