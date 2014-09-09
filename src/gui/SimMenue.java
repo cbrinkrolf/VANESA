@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -14,9 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.text.NumberFormatter;
-
-import petriNet.PetriNetSimulation;
 
 
 public class SimMenue extends JFrame {
@@ -41,11 +40,11 @@ public class SimMenue extends JFrame {
 	private JFormattedTextField stopTxt;
 	private JFormattedTextField intervalsTxt;
 
-	private ActionListener listener;
+	//private ActionListener listener;
 	
 	
 	public SimMenue(ActionListener listener){
-		this.listener = listener;
+		//this.listener = listener;
 		start.setActionCommand("start");
 		start.addActionListener(listener);
 		stop.setActionCommand("stop");
@@ -68,10 +67,12 @@ public class SimMenue extends JFrame {
 		stopTxt.setText("1.0");
 		stopTxt.setColumns(5);
 
-		intervalsTxt = new JFormattedTextField(new NumberFormatter());
+		
+		intervalsTxt = new JFormattedTextField(NumberFormat.getInstance());
 		intervalsTxt.setText("100");
 		intervalsTxt.setColumns(5);
-		
+		//intervalsTxt.get
+		//nf.parse(source)
 		textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 		
 		//northUp.setLayout(new GridLayout(1,5));
@@ -139,7 +140,14 @@ public class SimMenue extends JFrame {
 	}
 	
 	public int getIntervals(){
-		return Integer.parseInt(intervalsTxt.getText());
+		
+		try {
+			return NumberFormat.getInstance().parse(intervalsTxt.getText()).intValue();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 100;
 	}
 	
 }
