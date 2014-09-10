@@ -583,6 +583,8 @@ public class PetriNetSimulation implements ActionListener {
 								"Something went wrong. The model couldn't be simulated!",
 								"Error occured...", JOptionPane.ERROR_MESSAGE);
 				w.setLockedPane(false);
+				this.menue.stopped();
+				this.process.destroy();
 				return;
 			}
 			w.setLockedPane(false);
