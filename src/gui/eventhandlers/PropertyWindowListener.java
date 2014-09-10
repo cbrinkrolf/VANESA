@@ -15,9 +15,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.ParseException;
 import java.util.Iterator;
 
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -37,8 +39,7 @@ import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
 
-public class PropertyWindowListener implements FocusListener, KeyListener,
-		ActionListener {
+public class PropertyWindowListener implements FocusListener {
 
 	private GraphElementAbstract geb;
 	private GraphInstance graphInstance = new GraphInstance();
@@ -108,37 +109,47 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 		}
 		// for Places
 		else if (source.equals("token")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
+			if (!((JFormattedTextField) event.getSource()).getText().equals("")) {
 				Place p = (Place) geb;
-				double tokens = Double.parseDouble(((JTextField) event
-						.getSource()).getText());
+				Number v = (Number)((JFormattedTextField) event
+						.getSource()).getValue();
+				if(v != null){
+				double tokens =v.doubleValue();
 				p.setToken(tokens);
+				}
 			}
 
 		} else if (source.equals("tokenMin")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-
+			if (!((JFormattedTextField) event.getSource()).getText().equals("")) {
 				Place p = (Place) geb;
-				double tokenMin = Double.parseDouble(((JTextField) event
-						.getSource()).getText());
+				Number v = (Number)((JFormattedTextField) event
+						.getSource()).getValue();
+				if(v != null){
+				double tokenMin =v.doubleValue();
 				p.setTokenMin(tokenMin);
+				}
 			}
 		} else if (source.equals("tokenStart")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-
+			if (!((JFormattedTextField) event.getSource()).getText().equals("")) {
 				Place p = (Place) geb;
-				double tokenStart = Double.parseDouble(((JTextField) event
-						.getSource()).getText());
+				Number v = (Number)((JFormattedTextField) event
+						.getSource()).getValue();
+				if(v != null){
+				double tokenStart =v.doubleValue();// Double.parseDouble(((JFormattedTextField) event
+						//.getSource()).getValue()+"");
 				p.setTokenStart(tokenStart);
 				p.setToken(p.getTokenStart());
+				}
 			}
 		} else if (source.equals("tokenMax")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-
+			if (!((JFormattedTextField) event.getSource()).getText().equals("")) {
 				Place p = (Place) geb;
-				double tokenMax = Double.parseDouble(((JTextField) event
-						.getSource()).getText());
+				Number v = (Number)((JFormattedTextField) event
+						.getSource()).getValue();
+				if(v != null){
+				double tokenMax =v.doubleValue();
 				p.setTokenMax(tokenMax);
+				}
 			}
 		}
 		// for Transitions
@@ -294,24 +305,4 @@ public class PropertyWindowListener implements FocusListener, KeyListener,
 		GraphInstance.getMyGraph().updateGraph();
 	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		focusLost(new FocusEvent(((JTextField) e.getSource()), e.getID()));
-
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		focusLost(new FocusEvent(((JComboBox) e.getSource()), e.getID()));
-	}
 }

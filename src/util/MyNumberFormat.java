@@ -6,12 +6,14 @@ import java.text.NumberFormat;
 
 public class MyNumberFormat {
 
-	public static NumberFormat getIntegerFormat() {
-		NumberFormat nf = NumberFormat.getInstance();
+	public static DecimalFormat getIntegerFormat() {
+		DecimalFormat df = new DecimalFormat();
 
-		nf.setGroupingUsed(false);
-		nf.setMaximumFractionDigits(0);
-		return nf;
+		DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+		dfs.setGroupingSeparator('\'');
+		df.setMaximumFractionDigits(0);
+		df.setDecimalFormatSymbols(dfs);
+		return df;
 	}
 
 	public static DecimalFormat getDecimalFormat() {
@@ -19,9 +21,9 @@ public class MyNumberFormat {
 
 		DecimalFormatSymbols dfs = new DecimalFormatSymbols();
 		dfs.setDecimalSeparator('.');
-
+		dfs.setGroupingSeparator('\'');
+		df.setMaximumFractionDigits(20);
 		df.setDecimalFormatSymbols(dfs);
-		df.setGroupingUsed(false);
 		return df;
 
 	}

@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -36,13 +37,13 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import cluster.graphdb.DatabaseEntry;
-
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.PNEdge;
 import petriNet.Place;
 import petriNet.StochasticTransition;
 import petriNet.Transition;
+import util.MyNumberFormat;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
@@ -128,8 +129,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 		label.setName("label");
 		name.setName("name");
 
-		label.addKeyListener(pwl);
-		name.addKeyListener(pwl);
+		label.addFocusListener(pwl);
+		name.addFocusListener(pwl);
 
 		reference.setSelected(ab.isReference());
 		reference.setToolTipText("Set this element to a reference");
@@ -225,7 +226,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				JTextField aaSequence = new JTextField(20);
 				aaSequence.setText(protein.getAaSequence());
 				aaSequence.setName("protein");
-				aaSequence.addKeyListener(pwl);
+				aaSequence.addFocusListener(pwl);
 				p.add(new JLabel("AA-Sequence"), "gap 5 ");
 				p.add(aaSequence, "wrap, span 3");
 			}
@@ -235,7 +236,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				JTextField ntSequence = new JTextField(20);
 				ntSequence.setText(dna.getNtSequence());
 				ntSequence.setName("dna");
-				ntSequence.addKeyListener(pwl);
+				ntSequence.addFocusListener(pwl);
 				p.add(new JLabel("NT-Sequence"), "gap 5 ");
 				p.add(ntSequence, "wrap, span 3");
 			} else if (ab instanceof Gene) {
@@ -243,7 +244,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				JTextField ntSequence = new JTextField(20);
 				ntSequence.setText(dna.getNtSequence());
 				ntSequence.setName("gene");
-				ntSequence.addKeyListener(pwl);
+				ntSequence.addFocusListener(pwl);
 				p.add(new JLabel("NT-Sequence"), "gap 5 ");
 				p.add(ntSequence, "wrap, span 3");
 			}
@@ -253,7 +254,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				JTextField ntSequence = new JTextField(20);
 				ntSequence.setText(rna.getNtSequence());
 				ntSequence.setName("rna");
-				ntSequence.addKeyListener(pwl);
+				ntSequence.addFocusListener(pwl);
 				p.add(new JLabel("NT-Sequence"), "gap 5 ");
 				p.add(ntSequence, "wrap, span 3");
 			} else if (ab instanceof Place) {
@@ -272,32 +273,51 @@ public class ElementWindow implements ActionListener, ItemListener {
 				else
 					placeList.setSelectedItem("continuous");
 				placeList.setName("placeList");
-				placeList.addActionListener(pwl);
+				placeList.addFocusListener(pwl);
 				p.add(lswitchPlace, "gap 5 ");
 				p.add(placeList, "wrap");
 
-				JTextField token = new JTextField(4);
+				JFormattedTextField token;
+				JFormattedTextField tokenStart;
+				JFormattedTextField tokenMin;
+				JFormattedTextField tokenMax;
+				
+				JLabel lblTokenStart = new JLabel("Token Start");
+				if(place.isDiscrete()){
+					token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+					tokenStart = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+					tokenMin = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+					tokenMax = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+					token.setText((int)place.getToken()+"");
+					tokenStart.setText((int)place.getTokenStart() + "");
+					tokenMin.setText((int)place.getTokenMin() + "");
+					tokenMax.setText((int)place.getTokenMax() + "");
+				}else{
+					token = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+					tokenStart = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+					tokenMin = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+					tokenMax = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+					token.setText(place.getToken() + "");
+					tokenStart.setText(place.getTokenStart() + "");
+					tokenMin.setText(place.getTokenMin() + "");
+					tokenMax.setText(place.getTokenMax() + "");
+				}
 				JLabel lblToken = new JLabel("Token");
-				token.setText(place.getToken() + "");
+				
 				token.setName("token");
-				// token.addKeyListener(pwl);
+				// token.addFocusListener(pwl);
 				token.setEditable(false);
 
-				JTextField tokenStart = new JTextField(4);
-				JLabel lblTokenStart = new JLabel("Token Start");
-				tokenStart.setText(place.getTokenStart() + "");
 				tokenStart.setName("tokenStart");
-				tokenStart.addKeyListener(pwl);
+				tokenStart.addFocusListener(pwl);
 
-				JTextField tokenMin = new JTextField(4);
-				tokenMin.setText(place.getTokenMin() + "");
 				tokenMin.setName("tokenMin");
-				tokenMin.addKeyListener(pwl);
+				tokenMin.addFocusListener(pwl);
 				JLabel lblTokenMin = new JLabel("min Tokens");
-				JTextField tokenMax = new JTextField(4);
-				tokenMax.setText(place.getTokenMax() + "");
+
+				
 				tokenMax.setName("tokenMax");
-				tokenMax.addKeyListener(pwl);
+				tokenMax.addFocusListener(pwl);
 				JLabel lblTokenMax = new JLabel("max Tokens");
 				p.add(lblToken, "gap 5 ");
 				p.add(token, "wrap");
@@ -317,7 +337,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 						StochasticTransition.class.getName() });
 				transList.setSelectedItem(ab.getClass().getCanonicalName());
 				transList.setName("transList");
-				transList.addActionListener(pwl);
+				transList.addFocusListener(pwl);
 				p.add(lswitchTrans, "gap 5");
 				p.add(transList, "wrap");
 
@@ -325,7 +345,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				JLabel lblFiringCondition = new JLabel("Firing Condition");
 				firingCondition.setText(((Transition) ab).getFiringCondition());
 				firingCondition.setName("firingCondition");
-				firingCondition.addKeyListener(pwl);
+				firingCondition.addFocusListener(pwl);
 
 				p.add(lblFiringCondition, "gap 5");
 				p.add(firingCondition, "wrap");
@@ -336,7 +356,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					JLabel lbldelay = new JLabel("Delay");
 					delay.setText(trans.getDelay() + "");
 					delay.setName("delay");
-					delay.addKeyListener(pwl);
+					delay.addFocusListener(pwl);
 
 					p.add(lbldelay, "gap 5");
 					p.add(delay, "wrap");
@@ -350,7 +370,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					JComboBox<String> distributionList = new JComboBox<String>(disStrings);
 					distributionList.setSelectedItem(trans.getDistribution());
 					distributionList.setName("disList");
-					distributionList.addActionListener(pwl);
+					distributionList.addFocusListener(pwl);
 					p.add(new JLabel("Distribution"), "gap 5");
 					p.add(distributionList, "wrap");
 				}
@@ -361,7 +381,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					JLabel lblMaxSpeed = new JLabel("Maximum Speed");
 					maxSpeed.setText(trans.getMaximumSpeed());
 					maxSpeed.setName("maximumSpeed");
-					maxSpeed.addKeyListener(pwl);
+					maxSpeed.addFocusListener(pwl);
 
 					p.add(lblMaxSpeed, "gap 5");
 					p.add(maxSpeed, "wrap");
@@ -440,7 +460,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				// JTextField aaSequence = new JTextField(20);
 				// aaSequence.setText(protein.getAaSequence());
 				// aaSequence.setName("protein");
-				// aaSequence.addKeyListener(pwl);
+				// aaSequence.addFocusListener(pwl);
 				// p.add(new JLabel("AA-Sequence"), "gap 5 ");
 				// p.add(aaSequence, "wrap, span 3");
 			}
@@ -452,22 +472,22 @@ public class ElementWindow implements ActionListener, ItemListener {
 				JTextField prob = new JTextField(4);
 				prob.setText(e.getActivationProbability() + "");
 				prob.setName("activationProb");
-				prob.addKeyListener(pwl);
+				prob.addFocusListener(pwl);
 				JLabel lblProb = new JLabel("activation Probability");
 				JTextField function = new JTextField(5);
 				function.setText(e.getFunction());
 				function.setName("function");
-				function.addKeyListener(pwl);
+				function.addFocusListener(pwl);
 				JLabel lblpassingTokens = new JLabel("Edge Function");
 				JTextField lowBoundary = new JTextField(5);
 				lowBoundary.setText(e.getLowerBoundary() + "");
 				lowBoundary.setName("lowBoundary");
-				lowBoundary.addKeyListener(pwl);
+				lowBoundary.addFocusListener(pwl);
 				JLabel lblLow = new JLabel("lower Boundary");
 				JTextField upBoundary = new JTextField(5);
 				upBoundary.setText(e.getUpperBoundary() + "");
 				upBoundary.setName("upBoundary");
-				upBoundary.addKeyListener(pwl);
+				upBoundary.addFocusListener(pwl);
 				JLabel lblUp = new JLabel("upper Boundary");
 
 				// String[] types = { "discrete", "continuous", "inhibition" };
