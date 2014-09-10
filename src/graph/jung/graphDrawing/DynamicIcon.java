@@ -52,19 +52,30 @@ public class DynamicIcon implements Icon {
 		// double x1 = c.getBounds().getMaxX()-c.getBounds().getMinX();
 		// double y1 = c.getBounds().getMaxY()-c.getBounds().getMinY();
 
+		boolean discrete = false;
 		String tokens = p.getToken() + "";
 		if (p.isDiscrete()) {
 			tokens = (int) p.getToken() + "";
+			discrete = true;
 		}
 
 		if (p.hasRef() && p.getRef() instanceof Place) {
 			tokens = ((Place) p.getRef()).getToken() + "";
 			if (((Place) p.getRef()).isDiscrete()) {
 				tokens = (int) ((Place) p.getRef()).getToken() + "";
+				discrete = true;
 			}
 		}
-		int xpos = new Double(x - x1 + 22 - 5 * ((double) tokens.length() / 2))
+		
+		int xpos;
+		
+		if(discrete){
+		xpos = new Double(x - x1 + 19 - 5 * ((double) tokens.length() / 2))
 				.intValue();
+		}else{
+			xpos = new Double(x - x1 + 21 - 5 * ((double) tokens.length() / 2))
+			.intValue();
+		}
 		g.drawString(tokens, xpos, y + 7);
 
 		// }
