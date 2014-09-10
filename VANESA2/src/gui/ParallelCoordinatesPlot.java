@@ -390,24 +390,30 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 				if (bna instanceof Place) {
 					place = (Place) bna;
-					//System.out.println(place.getPetriNetSimulationData().size());
+					// System.out.println(place.getPetriNetSimulationData().size());
 					if (place.hasRef() && place.getRef() instanceof Place) {
 						place = (Place) place.getRef();
 					}
 					// if (place.getPetriNetSimulationData().size() > 0) {
-					renderer.setSeriesVisible(
-							(int) vector2idx.get(System.identityHashCode(place
-									.getPetriNetSimulationData())), true);
+					if (vector2idx.get(System.identityHashCode(place
+							.getPetriNetSimulationData())) != null) {
+						renderer.setSeriesVisible((int) vector2idx.get(System
+								.identityHashCode(place
+										.getPetriNetSimulationData())), true);
+
+					}
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
 					if (transition.hasRef()
 							&& transition.getRef() instanceof Transition) {
 						transition = (Transition) transition.getRef();
 					}
-
+					if (vector2idx.get(System.identityHashCode(transition
+							.getSimActualSpeed())) != null) {
 					renderer.setSeriesVisible((int) vector2idx.get(System
 							.identityHashCode(transition.getSimActualSpeed())),
 							true);
+					}
 				}
 
 			}
@@ -688,7 +694,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			ScreenSize screen = new ScreenSize();
 			int screenHeight = (int) screen.getheight();
 			int screenWidth = (int) screen.getwidth();
-			//dialog.setAlwaysOnTop(false);
+			// dialog.setAlwaysOnTop(false);
 			dialog.pack();
 			// dialog.setLocation((screenWidth / 2) - dialog.getSize().width /
 			// 2,
@@ -826,10 +832,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				pw.getPetriNet().setCurrentTimeStep(this.slider.getValue());
 				slider.setToolTipText("Time: " + this.slider.getValue());
 				if (pw.getPetriNet().getTime().size() > 0) {
-					
+
 					double step = pw.getPetriNet().getTime()
 							.get(this.slider.getValue());
-					//System.out.println(slider.getValue() +" "+step);
+					// System.out.println(slider.getValue() +" "+step);
 					stepLabel.setText("Time: "
 							+ (double) Math.round((step * 100)) / 100);
 
@@ -880,7 +886,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							if (bna.getPetriNetSimulationData().size() > 0
 									&& slider.getValue() >= 0) {
 								ref = bna.getMicroArrayValue(slider.getValue());
-								//ref = Math.abs(ref);
+								// ref = Math.abs(ref);
 								if (bna instanceof Place) {
 									((Place) bna).setToken(ref);
 								} else if (bna instanceof Transition) {
@@ -960,8 +966,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	public void initGraphs() {
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
-		
-		//System.out.println("inti Graphs");
+
+		// System.out.println("inti Graphs");
 		p.removeAll();
 		final XYSeriesCollection dataset = new XYSeriesCollection();
 		final XYSeriesCollection dataset2 = new XYSeriesCollection();
@@ -983,7 +989,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		int count = 0;
 		BiologicalNodeAbstract bna;
 		BiologicalEdgeAbstract bea;
-		if(pw == null){
+		if (pw == null) {
 			return;
 		}
 		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllNodes().iterator();
@@ -1128,7 +1134,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					int pickedE = GraphInstance.getMyGraph()
 							.getVisualizationViewer().getPickedEdgeState()
 							.getPicked().size();
-					//System.out.println(pickedV);
+					// System.out.println(pickedV);
 					if (pickedE == 0 && pickedV == 0) {
 
 						XYItemEntity entity = (XYItemEntity) event.getEntity();
