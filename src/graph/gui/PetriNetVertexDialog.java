@@ -200,7 +200,7 @@ public class PetriNetVertexDialog implements ActionListener {
 		
 		//dialog.show();
 		dialog.setVisible(true);
-		
+		Number number;
 		Integer value = (Integer) pane.getValue();
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
@@ -224,18 +224,43 @@ public class PetriNetVertexDialog implements ActionListener {
 
 				if (petriElement.equals("discretePlace")) {
 					//System.out.println("anfang");
+					
 					Place p = new Place(label.getText(), name.getText(), 1.0, true);
-					p.setToken(Double.parseDouble(token.getText()));
-					p.setTokenStart(Double.parseDouble(tokenStart.getText()));
-					p.setTokenMin(Double.parseDouble(tokenMin.getText()));
-					p.setTokenMax(Double.parseDouble(tokenMax.getText()));
+					number = (Number)token.getValue();
+					if(number != null){
+						p.setToken(number.doubleValue());
+					}
+					number = (Number)tokenStart.getValue();
+					if(number != null){
+						p.setTokenStart(number.doubleValue());
+					}
+					number = (Number)tokenMin.getValue();
+					if(number != null){
+						p.setTokenMin(number.doubleValue());
+					}
+					number = (Number)tokenMin.getValue();
+					if(number != null){
+						p.setTokenMax(number.doubleValue());
+					}
 					pw.addVertex(p, point);
 				} else if (petriElement.equals("continuousPlace")) {
 					Place p = new Place(label.getText(), name.getText(), 1.0, false);
-					p.setToken(Double.parseDouble(token.getText()));
-					p.setTokenStart(Double.parseDouble(tokenStart.getText()));
-					p.setTokenMin(Double.parseDouble(tokenMin.getText()));
-					p.setTokenMax(Double.parseDouble(tokenMax.getText()));
+					number = (Number)token.getValue();
+					if(number != null){
+						p.setToken(number.doubleValue());
+					}
+					number = (Number)tokenStart.getValue();
+					if(number != null){
+						p.setTokenStart(number.doubleValue());
+					}
+					number = (Number)tokenMin.getValue();
+					if(number != null){
+						p.setTokenMin(number.doubleValue());
+					}
+					number = (Number)tokenMin.getValue();
+					if(number != null){
+						p.setTokenMax(number.doubleValue());
+					}
 					pw.addVertex(p, point);
 				} else if (petriElement.equals("discreteTransition")) {
 					DiscreteTransition t = new DiscreteTransition(

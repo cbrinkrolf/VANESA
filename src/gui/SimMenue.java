@@ -123,14 +123,26 @@ public class SimMenue extends JFrame {
 	}
 	
 	public double getStartValue(){
-		return Double.parseDouble(startTxt.getText());
+		Number number = (Number)startTxt.getValue();
+		if(number != null){
+			return number.doubleValue();
+		}
+		return 0.0;
 	}
 	
 	public double getStopValue(){
-		return Double.parseDouble(stopTxt.getText());
+		Number number = (Number)stopTxt.getValue();
+		if(number != null){
+			return number.doubleValue();
+		}
+		return 1.0;
 	}
 	
 	public int getIntervals(){
-		return Integer.parseInt(intervalsTxt.getText());
+		Number number = (Number)intervalsTxt.getValue();
+		if(number != null){
+			return number.intValue();
+		}
+		return 100;
 	}
 }
