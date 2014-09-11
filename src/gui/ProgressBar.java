@@ -37,12 +37,12 @@ public class ProgressBar{
 			bar = new JProgressBar();
 			this.thread = thread;
 			threading=true;
-			w =MainWindowSingelton.getInstance();		
+			w =MainWindowSingleton.getInstance();		
 		}
 		
 		public ProgressBar() {
 			bar = new JProgressBar();
-			w = MainWindowSingelton.getInstance();
+			w = MainWindowSingleton.getInstance();
 		}
 		
 		public void init(int max, String info, boolean indeterminate){	

@@ -13,7 +13,7 @@ package Copy;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.geom.Point2D;
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class CopySelection {
 		if (petriNet ^ pw.isPetriNet()) {
 			JOptionPane
 					.showMessageDialog(
-							MainWindowSingelton.getInstance(),
+							MainWindowSingleton.getInstance(),
 							"Copy-Paste is not possible from biological graph to petri net and vice versa!",
 							"Operation not possible...",
 							JOptionPane.ERROR_MESSAGE);
@@ -103,8 +103,8 @@ public class CopySelection {
 			//bea.setEdge(oldEdge);
 		}
 
-		MainWindowSingelton.getInstance().updateElementTree();
-		MainWindowSingelton.getInstance().updateFilterView();
+		MainWindowSingleton.getInstance().updateElementTree();
+		MainWindowSingleton.getInstance().updateFilterView();
 		
 		
 		/*pw = new GraphInstance().getPathway();

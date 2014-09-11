@@ -4,7 +4,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 import io.MyFileFilter;
 
@@ -75,12 +75,12 @@ public class OpenModellicaResult extends SwingWorker{
 						petrinet.initializePetriNet(new HashMap<BiologicalEdgeAbstract, String>());
 
 					} else {
-						JOptionPane.showMessageDialog(MainWindowSingelton
+						JOptionPane.showMessageDialog(MainWindowSingleton
 								.getInstance(),
 								"Please load or create a network first!");
 					}
 				} else {
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance(),
 							"Please load or create a network first!");
 				}
@@ -97,12 +97,12 @@ public class OpenModellicaResult extends SwingWorker{
 						petrinet.initializePetriNet(new HashMap<BiologicalEdgeAbstract, String>());
 
 					} else {
-						JOptionPane.showMessageDialog(MainWindowSingelton
+						JOptionPane.showMessageDialog(MainWindowSingleton
 								.getInstance(),
 								"Please load or create a network first!");
 					}
 				} else {
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance(),
 							"Please load or create a network first!");
 				}
@@ -145,7 +145,7 @@ public class OpenModellicaResult extends SwingWorker{
 						//	.restart();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();
-					MainWindowSingelton.getInstance().updateAllGuiElements();
+					MainWindowSingleton.getInstance().updateAllGuiElements();
 
 				}
 			}

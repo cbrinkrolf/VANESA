@@ -4,7 +4,7 @@ import graph.GraphInstance;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
 import graph.jung.graphDrawing.VertexShapes;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.awt.Shape;
@@ -476,7 +476,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @author tloka
 	 */
 	private static void showCoarsingErrorMessage(){
-		JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), 
+		JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), 
 				"No coarsing possible with the given set of nodes.", 
 				"Coarsing Error!", JOptionPane.ERROR_MESSAGE);
 	}
@@ -607,7 +607,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
 			innerNodes.addAll(getInnerNodes());
 			this.flat();
-			MainWindowSingelton.getInstance().removeTab(false, getTab().getTitelTab(), this);
+			MainWindowSingleton.getInstance().removeTab(false, getTab().getTitelTab(), this);
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
 			setGraph(bna.getGraph());
 			new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();

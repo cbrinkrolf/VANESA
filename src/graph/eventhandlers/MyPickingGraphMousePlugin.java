@@ -21,7 +21,7 @@ import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import graph.GraphInstance;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 public class MyPickingGraphMousePlugin extends
 		PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
@@ -73,7 +73,7 @@ public class MyPickingGraphMousePlugin extends
 			// Disallow to add selection to environment coarse nodes.
 			if(graphInstance.getPathway().isBNA()){
 				if(((BiologicalNodeAbstract)graphInstance.getPathway()).getEnvironment().contains(vertices)){
-					JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), 
+					JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), 
 							"Not possible to add nodes to environment nodes.", 
 							"Coarse node integration Error!", JOptionPane.ERROR_MESSAGE);
 					oldVertexPositions.clear();

@@ -6,7 +6,7 @@ import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 import gui.images.ImagePath;
 
@@ -185,7 +185,7 @@ public class GraphColoringGUI implements ActionListener {
 			break;
 		case CYCLES:
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingelton.getInstance();
+			mw = MainWindowSingleton.getInstance();
 			mw.setEnable(false);
 			mw.setLockedPane(true);
 			progressbar = new ProgressBar();
@@ -207,7 +207,7 @@ public class GraphColoringGUI implements ActionListener {
 			break;
 		case CLIQUES:
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingelton.getInstance();
+			mw = MainWindowSingleton.getInstance();
 			mw.setEnable(false);
 			mw.setLockedPane(true);
 			progressbar = new ProgressBar();
@@ -229,7 +229,7 @@ public class GraphColoringGUI implements ActionListener {
 			break;
 		case FRLAYOUT:
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingelton.getInstance();
+			mw = MainWindowSingleton.getInstance();
 			mw.setEnable(false);
 			mw.setLockedPane(true);
 			progressbar = new ProgressBar();
@@ -237,7 +237,7 @@ public class GraphColoringGUI implements ActionListener {
 			progressbar.setProgressBarString("Setting up data.");
 
 			//get network structure
-			MainWindow w = MainWindowSingelton.getInstance();
+			MainWindow w = MainWindowSingleton.getInstance();
 			GraphContainer con = ContainerSingelton.getInstance();
 			Pathway pw = con.getPathway(w.getCurrentPathway());
 			MyGraph mg = pw.getGraph();
@@ -316,7 +316,7 @@ public class GraphColoringGUI implements ActionListener {
 			break;
 		case SPECTRAL:
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingelton.getInstance();
+			mw = MainWindowSingleton.getInstance();
 			mw.setEnable(false);
 			mw.setLockedPane(true);
 			progressbar = new ProgressBar();
@@ -374,7 +374,7 @@ public class GraphColoringGUI implements ActionListener {
 	public void reactiveateUI() {
 		// close Progress bar and reactivate UI
 		GraphColoringGUI.progressbar.closeWindow();
-		mw = MainWindowSingelton.getInstance();
+		mw = MainWindowSingleton.getInstance();
 		mw.setEnable(true);
 		mw.setLockedPane(false);
 	}
@@ -567,7 +567,7 @@ public class GraphColoringGUI implements ActionListener {
 
 	public void realignNetwork(HashMap<Integer, LayoutPoint2D> coords) {
 		//get network structure
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
 		MyGraph mg = pw.getGraph();

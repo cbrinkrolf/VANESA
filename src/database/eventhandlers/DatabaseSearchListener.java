@@ -5,7 +5,7 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.awt.event.ActionEvent;
@@ -41,13 +41,13 @@ public class DatabaseSearchListener implements ActionListener {
 		//new GetPublications("C:\\Users\\Vallani\\Desktop\\result.txt");
 	
 		KeggSearch keggSearch = new KeggSearch(dw.getInput(),
-				MainWindowSingelton.getInstance(), new ProgressBar(),null);
+				MainWindowSingleton.getInstance(), new ProgressBar(),null);
 		keggSearch.execute();
 	}
 
 	private void requestBrendaContent() {
 		BRENDASearch brendaSearch = new BRENDASearch(dw.getInput(),
-				MainWindowSingelton.getInstance(), new ProgressBar(), null);
+				MainWindowSingleton.getInstance(), new ProgressBar(), null);
 		brendaSearch.execute();
 	}
 
@@ -58,7 +58,7 @@ public class DatabaseSearchListener implements ActionListener {
 
 	private void requestPPIcontent() {
 		PPISearch ppiSearch = new PPISearch(dw.getInput(),
-				MainWindowSingelton.getInstance(), new ProgressBar());
+				MainWindowSingleton.getInstance(), new ProgressBar());
 		ppiSearch.execute();
 
 	}
@@ -66,7 +66,7 @@ public class DatabaseSearchListener implements ActionListener {
 	private void requestMIRNAcontent() {
 		
 		mirnaSearch mirnaS = new mirnaSearch(dw.getInput(),
-						MainWindowSingelton.getInstance(), new ProgressBar());
+						MainWindowSingleton.getInstance(), new ProgressBar());
 		
 		mirnaS.execute();   
 	}
@@ -76,7 +76,7 @@ public class DatabaseSearchListener implements ActionListener {
 		UNIDSearch.progressBar = new ProgressBar();
 		UNIDSearch.progressBar.init(100, "UNID", true);
 		UNIDSearch.progressBar.setProgressBarString("Getting search results");
-		MainWindow mw = MainWindowSingelton.getInstance();
+		MainWindow mw = MainWindowSingleton.getInstance();
 		mw.setEnable(false);
 		unidS.execute();
 		
@@ -84,7 +84,7 @@ public class DatabaseSearchListener implements ActionListener {
 	
 	private void pickCommons(){
 		String commonNames[] = dw.getInput()[2].split(",");
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
 		MyGraph mg = pw.getGraph();

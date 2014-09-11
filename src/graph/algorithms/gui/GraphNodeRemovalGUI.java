@@ -4,7 +4,7 @@ import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -246,7 +246,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 				}
 
 				mg = c.getPathway().getGraph();
-				mw = MainWindowSingelton.getInstance();
+				mw = MainWindowSingleton.getInstance();
 				mg.lockVertices();
 				itn = removals.iterator();
 				while (itn.hasNext()) {
@@ -265,7 +265,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 				// System.out.println(" Node Removal: "+removals.size()+" Nodes Removed.");
 
 				if (removals.size() > 0) {
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"Nodes removed from network: " + removals.size(),
 							"Remove Success", JOptionPane.INFORMATION_MESSAGE);
@@ -301,7 +301,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 					}
 
 					mg = c.getPathway().getGraph();
-					mw = MainWindowSingelton.getInstance();
+					mw = MainWindowSingleton.getInstance();
 					mg.lockVertices();
 					itn = removals.iterator();
 					while (itn.hasNext()) {

@@ -1,7 +1,7 @@
 package petriNet;
 
 import graph.GraphInstance;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -294,7 +294,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 		JpegFilter filter = new JpegFilter();
 		chooser.addChoosableFileFilter(filter);
 		chooser.setFileFilter(filter);
-		int option = chooser.showSaveDialog(MainWindowSingelton.getInstance());
+		int option = chooser.showSaveDialog(MainWindowSingleton.getInstance());
 		if (option == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
 			if (!file.getAbsolutePath().endsWith(".jpeg"))

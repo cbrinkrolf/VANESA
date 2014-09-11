@@ -93,7 +93,7 @@ public class PathwayTree extends JPanel implements TreeSelectionListener{
 
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		GraphContainer con =ContainerSingelton.getInstance();
 		DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree
 		.getLastSelectedPathComponent();

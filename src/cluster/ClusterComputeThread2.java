@@ -5,7 +5,7 @@ import graph.GraphContainer;
 import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
 import graph.algorithms.gui.GraphColoringGUI;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -60,7 +60,7 @@ public class ClusterComputeThread2 extends Thread {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 					JOptionPane.showMessageDialog(
-							MainWindowSingelton.getInstance(), "Queue is at maximum capacity!");
+							MainWindowSingleton.getInstance(), "Queue is at maximum capacity!");
 						}
 				});
 			}
@@ -68,7 +68,7 @@ public class ClusterComputeThread2 extends Thread {
 		}catch (NotBoundException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"RMI Interface could not be established.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -79,7 +79,7 @@ public class ClusterComputeThread2 extends Thread {
 		} catch (RemoteException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"Cluster not reachable.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -89,7 +89,7 @@ public class ClusterComputeThread2 extends Thread {
 		} catch (MalformedURLException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"Clusteradress could not be resolved.", "Error",
 							JOptionPane.ERROR_MESSAGE);

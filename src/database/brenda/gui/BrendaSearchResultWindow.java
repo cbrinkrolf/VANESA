@@ -3,7 +3,7 @@
  */
 package database.brenda.gui;
 
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.algorithms.ScreenSize;
 
 import java.awt.Color;

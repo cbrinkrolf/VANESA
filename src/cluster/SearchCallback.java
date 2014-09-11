@@ -1,6 +1,6 @@
 package cluster;
 
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -34,7 +34,7 @@ public class SearchCallback extends UnicastRemoteObject implements ISearchCallba
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					JOptionPane.showMessageDialog(
-							MainWindowSingelton.getInstance(), "No elements could be found");
+							MainWindowSingleton.getInstance(), "No elements could be found");
 					usearch.reactivateUI();
 				}
 			});
