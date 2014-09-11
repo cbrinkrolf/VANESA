@@ -4,7 +4,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.algorithms.gui.GraphColoringGUI;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -72,7 +72,7 @@ public class ClusterComputeThread extends Thread {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							JOptionPane.showMessageDialog(
-									MainWindowSingelton.getInstance(), "Queue is at maximum capacity!");
+									MainWindowSingleton.getInstance(), "Queue is at maximum capacity!");
 						}
 					});
 					
@@ -84,7 +84,7 @@ public class ClusterComputeThread extends Thread {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							JOptionPane.showMessageDialog(
-									MainWindowSingelton.getInstance(), "Queue is at maximum capacity!");
+									MainWindowSingleton.getInstance(), "Queue is at maximum capacity!");
 						}
 					});
 				}	
@@ -96,14 +96,14 @@ public class ClusterComputeThread extends Thread {
 		}catch (NotBoundException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"RMI Interface could not be established.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			});
 			GraphColoringGUI.progressbar.closeWindow();
-			mw = MainWindowSingelton.getInstance();
+			mw = MainWindowSingleton.getInstance();
 			mw.setEnable(true);
 			mw.setLockedPane(false);
 			return false;
@@ -111,14 +111,14 @@ public class ClusterComputeThread extends Thread {
 		} catch (RemoteException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"Cluster not reachable.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			});
 			GraphColoringGUI.progressbar.closeWindow();
-			mw = MainWindowSingelton.getInstance();
+			mw = MainWindowSingleton.getInstance();
 			mw.setEnable(true);
 			mw.setLockedPane(false);
 			return false;
@@ -126,14 +126,14 @@ public class ClusterComputeThread extends Thread {
 		} catch (MalformedURLException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"Clusteradress could not be resolved.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			});
 			GraphColoringGUI.progressbar.closeWindow();
-			mw = MainWindowSingelton.getInstance();
+			mw = MainWindowSingleton.getInstance();
 			mw.setEnable(true);
 			mw.setLockedPane(false);
 			return false;
@@ -165,7 +165,7 @@ public class ClusterComputeThread extends Thread {
 	private void setupArrays() {
 
 		// get Graph hashmap
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		Iterator<BiologicalNodeAbstract> it = con
 				.getPathway(w.getCurrentPathway()).getAllNodes().iterator();

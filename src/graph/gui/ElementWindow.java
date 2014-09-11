@@ -6,7 +6,7 @@ package graph.gui;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.eventhandlers.PropertyWindowListener;
 
 import java.awt.Color;
@@ -640,7 +640,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		String event = e.getActionCommand();
 
 		if ("colour".equals(event)) {

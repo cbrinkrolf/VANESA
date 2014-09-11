@@ -3,7 +3,7 @@ package database.mirna;
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.awt.Color;
@@ -178,7 +178,7 @@ public class mirnaSearch extends SwingWorker {
 							myGraph.normalCentering();
 							bar.closeWindow();
 
-							MainWindow window = MainWindowSingelton
+							MainWindow window = MainWindowSingleton
 									.getInstance();
 							window.updateOptionPanel();
 							window.setVisible(true);
@@ -229,7 +229,7 @@ public class mirnaSearch extends SwingWorker {
 							myGraph.normalCentering();
 							bar.closeWindow();
 
-							MainWindow window = MainWindowSingelton
+							MainWindow window = MainWindowSingleton
 									.getInstance();
 							window.updateOptionPanel();
 							window.setVisible(true);

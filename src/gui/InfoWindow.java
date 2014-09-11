@@ -15,7 +15,7 @@ public class InfoWindow {
 
 	public InfoWindow(boolean extended) {
 
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 
 		String tableStart = "<table  rules=\"rows\" style=\"border-collapse:separate; border-spacing:0; width:100%; border-top:1px solid #eaeaea;\">";
 		String tableEnd = "</table>";

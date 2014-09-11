@@ -5,7 +5,7 @@ import graph.algorithms.DCBprepareCalc;
 import graph.algorithms.DCBresultSet;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.awt.Color;
@@ -494,7 +494,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		if ("calculate".equals(event)) {
 			
 			
-			mw = MainWindowSingelton.getInstance();
+			mw = MainWindowSingleton.getInstance();
 			mw.setEnable(false);
 			mw.setLockedPane(true);
 			
@@ -852,7 +852,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 					JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
 					null, new Object[] {}, null);
 
-			dialog = optionPane.createDialog(MainWindowSingelton.getInstance(),
+			dialog = optionPane.createDialog(MainWindowSingleton.getInstance(),
 					"Choose Cluster");
 			dialog.setVisible(true);
 

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import graph.CreatePathway;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
@@ -52,12 +52,12 @@ public class MergeGraphs {
 			e.printStackTrace();
 		}
 		
-		MainWindowSingelton.getInstance().enableOptionPanelUpdate(false);
+		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
 		CompareGraphs.mergeGraph(pw_new);
-		MainWindowSingelton.getInstance().enableOptionPanelUpdate(true);
+		MainWindowSingleton.getInstance().enableOptionPanelUpdate(true);
 		
-		MainWindowSingelton.getInstance().updateProjectProperties();
-		MainWindowSingelton.getInstance().updateOptionPanel();
+		MainWindowSingleton.getInstance().updateProjectProperties();
+		MainWindowSingleton.getInstance().updateOptionPanel();
 
 		if (showMessage) JOptionPane.showMessageDialog(null,
 				"The graphs have been merged and are visualized in a new tab.");

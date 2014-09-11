@@ -87,7 +87,7 @@ import biologicalObjects.nodes.TranscriptionFactor;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.RangeSelector;
 
 /**
@@ -1339,7 +1339,7 @@ public class VAMLInput {
 		}
 		pw.getGraph().unlockVertices();
 		pw.getGraph().restartVisualizationModel();
-		MainWindowSingelton.getInstance().updateProjectProperties();
+		MainWindowSingleton.getInstance().updateProjectProperties();
 		// MainWindowSingelton.getInstance().updateOptionPanel();
 
 	}

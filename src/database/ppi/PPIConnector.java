@@ -4,7 +4,7 @@ package database.ppi;
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.awt.Color;
@@ -420,7 +420,7 @@ public class PPIConnector extends SwingWorker {
 		myGraph.normalCentering();
 		bar.closeWindow();
 
-		MainWindow window = MainWindowSingelton.getInstance();
+		MainWindow window = MainWindowSingleton.getInstance();
 		window.updateOptionPanel();
 		window.setVisible(true);
 

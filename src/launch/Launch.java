@@ -4,7 +4,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import gui.IntroScreen;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.io.IOException;
 
@@ -159,7 +159,7 @@ public class Launch {
 					public void run() {
 						// TODO Auto-generated method stub
 						intro.setLoadingText("Graphical User Interface");
-						MainWindow w = MainWindowSingelton.getInstance();
+						MainWindow w = MainWindowSingleton.getInstance();
 						intro.closeWindow();
 						w.setEnable(true);
 						SwingUtilities.updateComponentTreeUI(w);
@@ -237,7 +237,7 @@ public class Launch {
 					if (dawis_sessionid != null) {
 						JOptionPane
 								.showMessageDialog(
-										MainWindowSingelton.getInstance(),
+										MainWindowSingleton.getInstance(),
 										"No internet connection available, can not load data from the remote control!"
 												+ " Please check the connection settings and restart the program!");
 					}

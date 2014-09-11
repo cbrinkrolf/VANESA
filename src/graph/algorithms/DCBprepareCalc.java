@@ -4,7 +4,7 @@
 package graph.algorithms;
 
 import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -214,7 +214,7 @@ public class DCBprepareCalc extends SwingWorker<Void, Void>{
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
 									DataMappingModelController.reactivateUI();
-									JOptionPane.showMessageDialog(MainWindowSingelton
+									JOptionPane.showMessageDialog(MainWindowSingleton
 											.getInstance().returnFrame(),
 											"Cluster not reachable.", "Error",
 											JOptionPane.ERROR_MESSAGE);
@@ -238,7 +238,7 @@ public class DCBprepareCalc extends SwingWorker<Void, Void>{
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
 									DataMappingModelController.reactivateUI();
-									JOptionPane.showMessageDialog(MainWindowSingelton
+									JOptionPane.showMessageDialog(MainWindowSingleton
 											.getInstance().returnFrame(),
 											"Cluster not reachable.", "Error",
 											JOptionPane.ERROR_MESSAGE);

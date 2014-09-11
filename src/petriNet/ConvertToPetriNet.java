@@ -6,7 +6,7 @@ package petriNet;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphInstance;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -47,7 +47,7 @@ private final double initialTokens = 10;
 		int answer=JOptionPane.YES_NO_OPTION;
 		if (!graphInstance.getPathway().getAllNodes().isEmpty()) 
 		answer = JOptionPane.showOptionDialog(
-				MainWindowSingelton.getInstance(),
+				MainWindowSingleton.getInstance(),
 				"What type of Petri Net do you want?", "Choose PN type...?",
 				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 				new String[] { "Discrete PN", "Continuous PN" },
@@ -211,14 +211,14 @@ private final double initialTokens = 10;
 //		}
 		pw.getGraph().unlockVertices();
 		pw.getGraph().restartVisualizationModel();
-		MainWindowSingelton.getInstance().updateProjectProperties();
-		MainWindowSingelton.getInstance().updateOptionPanel();
+		MainWindowSingleton.getInstance().updateProjectProperties();
+		MainWindowSingleton.getInstance().updateOptionPanel();
 
 
 		if (isUnDirEdge)
 			JOptionPane
 					.showMessageDialog(
-							MainWindowSingelton.getInstance(),
+							MainWindowSingleton.getInstance(),
 							"There were some undirected Edges in your graph. For creating the PN the program had interpretated those randomly and marked them red. So you can change their direction if you want.",
 							"Undirected Edges found...",
 							JOptionPane.WARNING_MESSAGE);

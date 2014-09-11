@@ -4,7 +4,7 @@ package graph.algorithms;
 import graph.CreatePathway;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,7 +101,7 @@ public class CompareGraphs {
 
 	public static void compareGraphs(Pathway one, Pathway two) {
 
-		MainWindowSingelton.getInstance().enableOptionPanelUpdate(false);
+		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
 
 		Vector pathwayOneNodes = one.getAllNodesAsVector();
 		MyGraph graph1 = one.getGraph();
@@ -131,6 +131,6 @@ public class CompareGraphs {
 
 		graph1.updateGraph();
 		graph2.updateGraph();
-		MainWindowSingelton.getInstance().enableOptionPanelUpdate(true);
+		MainWindowSingleton.getInstance().enableOptionPanelUpdate(true);
 	}
 }

@@ -1,7 +1,7 @@
 package dataMapping;
 
 import graph.algorithms.gui.GraphColoringGUI;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -89,7 +89,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 					public void run() {
 						DataMappingModelController.reactivateUI();
 						JOptionPane.showMessageDialog(
-								MainWindowSingelton.getInstance(), "Queue is at maximum capacity!");
+								MainWindowSingleton.getInstance(), "Queue is at maximum capacity!");
 					}
 					
 				});
@@ -101,7 +101,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					DataMappingModelController.reactivateUI();
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"RMI Interface could not be established.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -113,7 +113,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					DataMappingModelController.reactivateUI();
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"Cluster not reachable.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -125,7 +125,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					DataMappingModelController.reactivateUI();
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"Clusteradress could not be resolved.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -138,7 +138,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 				public void run() {
 					DataMappingModelController.reactivateUI();
 					JOptionPane.showMessageDialog(
-							MainWindowSingelton.getInstance(), "Data export could not be executed.", "Error",
+							MainWindowSingleton.getInstance(), "Data export could not be executed.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 				

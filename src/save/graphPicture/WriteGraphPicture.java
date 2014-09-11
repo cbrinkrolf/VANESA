@@ -23,7 +23,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 public class WriteGraphPicture implements Printable {
 
@@ -34,7 +34,7 @@ public class WriteGraphPicture implements Printable {
 
 	public WriteGraphPicture() {
 
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 		vv = g.getVisualizationViewer();

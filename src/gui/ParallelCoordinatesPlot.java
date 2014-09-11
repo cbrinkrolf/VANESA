@@ -207,7 +207,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		if (pw.isPetriNet() && pw.isPetriNetSimulation()) {
 
 			main.removeAll();
-			w = MainWindowSingelton.getInstance();
+			w = MainWindowSingleton.getInstance();
 
 			// get pathway and nodes
 

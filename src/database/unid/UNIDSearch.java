@@ -11,7 +11,7 @@ import java.util.HashSet;
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import javax.swing.JOptionPane;
@@ -94,7 +94,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		}catch(Exception e){
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingelton
+					JOptionPane.showMessageDialog(MainWindowSingleton
 							.getInstance().returnFrame(),
 							"Cluster not reachable.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -109,7 +109,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	public void reactivateUI() {
 		// close Progress bar and reactivate UI
 		UNIDSearch.progressBar.closeWindow();
-		mw = MainWindowSingelton.getInstance();
+		mw = MainWindowSingleton.getInstance();
 		mw.setEnable(true);
 		mw.setLockedPane(false);
 	}
@@ -182,7 +182,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 
 		myGraph.normalCentering();
 
-		MainWindow window = MainWindowSingelton.getInstance();
+		MainWindow window = MainWindowSingleton.getInstance();
 		window.updateOptionPanel();
 		window.setEnabled(true);
 		pw.getGraph().changeToCircleLayout();

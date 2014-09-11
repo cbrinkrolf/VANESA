@@ -41,13 +41,13 @@ import graph.GraphContainer;
 import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 public class DenselyConnectedBiclustering {
 	
 	
-	private MainWindow w = MainWindowSingelton.getInstance();
+	private MainWindow w = MainWindowSingleton.getInstance();
 	private GraphContainer con = ContainerSingelton.getInstance();
 	private InternalGraphRepresentation graphRepresentation = con.getPathway(w.getCurrentPathway()).getGraphRepresentation(); 
 	private Pathway pw = con.getPathway(w.getCurrentPathway());
@@ -56,7 +56,7 @@ public class DenselyConnectedBiclustering {
 	
 //	public static ProgressBar progressBar;
 
-	//Minimale Größe des Graphen für die parallele Verarbeitung
+	//Minimale Grï¿½ï¿½e des Graphen fï¿½r die parallele Verarbeitung
 	private final int MIN_PARALLEL_SIZE = 0;
 	
 	private int numOfThreads;
@@ -79,7 +79,7 @@ public class DenselyConnectedBiclustering {
 	private HashMap<Integer, ArrayList<Double>>[] attributesArray;
 	
 	
-	//Liste von IDs und den zugehörigen Knoten-Objekten
+	//Liste von IDs und den zugehï¿½rigen Knoten-Objekten
 	private HashMap<Integer, BiologicalNodeAbstract> idBna = new HashMap<>();
 	
 	private int nodeType;
@@ -93,7 +93,7 @@ public class DenselyConnectedBiclustering {
 	 */
 	//Max. Distanz der Attribute
 	final ArrayList<Double>[] rangesArray;
-	//# der Attributs-Dimensionen dei Übereinstimmen müssen
+	//# der Attributs-Dimensionen dei ï¿½bereinstimmen mï¿½ssen
 	int attrdim;
 	//Min. Dichte der Cluster
 	double density;
@@ -173,7 +173,7 @@ public class DenselyConnectedBiclustering {
 
 	/*
 	 * Erstellung der Attribut-Matrix und Adjazenliste sowie Aufruf des Algorithmus
-	 * Übersteigt der Graph eine bestimmte Größe wird der parallele Algorithmus verwendet
+	 * ï¿½bersteigt der Graph eine bestimmte Grï¿½ï¿½e wird der parallele Algorithmus verwendet
 	 */
 	public LinkedList<DCBresultSet> start(){
 		
@@ -340,7 +340,7 @@ public class DenselyConnectedBiclustering {
 
 		LinkedList<DCBresultSet> results = new LinkedList<>();
 		
-		//Objekt das die benötigten Scores (densiti und homogenity) liefert
+		//Objekt das die benï¿½tigten Scores (densiti und homogenity) liefert
 		test = new DCBTests(adjacenciesArray[0], density, rangesArray[0], attrdim, attributesArray[0]);
 		
 
@@ -482,7 +482,7 @@ public class DenselyConnectedBiclustering {
 		
 	}
 
-//	//Random-Generierung der Attribute; wird später durch echte Werte ersetzt
+//	//Random-Generierung der Attribute; wird spï¿½ter durch echte Werte ersetzt
 //	private void setAttributes() {
 //		int numOfAttributes = ranges.size();
 //		for(int id : adjacencies.keySet()){
@@ -514,13 +514,13 @@ public class DenselyConnectedBiclustering {
 
 
 	/*
-	 * Überprüft ob jeder Knoten mindestens einen Nachbarn hat mit dem Homogenität erfüllt ist
+	 * ï¿½berprï¿½ft ob jeder Knoten mindestens einen Nachbarn hat mit dem Homogenitï¿½t erfï¿½llt ist
 	 * Wenn nicht wird der Knoten aus der Adjazenzliste entfernt
 	 */
 	public HashMap<HashSet<Integer>, HashSet<Integer>> preprocessingGraph(){
 		HashSet<Integer> removalAdjacencies = new HashSet<>();
 		
-		//Objekt das die benötigten Tests (densiti und homogenity) durchführt
+		//Objekt das die benï¿½tigten Tests (densiti und homogenity) durchfï¿½hrt
 		test = new DCBTests(adjacenciesArray[0], density, rangesArray[0], attrdim, attributesArray[0]);
 		
 		for(int vertex1 : adjacenciesArray[0].keySet()){
@@ -552,11 +552,11 @@ public class DenselyConnectedBiclustering {
 		/*
 		 * Generierung der Seeds: Erstes HashSet = verbundener Subgraph (mit zwei Elementen)
 		 * Zweites HashSet = Nachbarn-knoten dieses Subgraphen
-		 * Nachbarn werden nur hinzugefügt wenn ihrere IDs größer sind
+		 * Nachbarn werden nur hinzugefï¿½gt wenn ihrere IDs grï¿½ï¿½er sind
 		 * als die beiden des Subgraphen
 		 */
 		HashMap<HashSet<Integer>, HashSet<Integer>> seeds = new HashMap<>();
-		//Objekt das die benötigten Tests (densiti und homogenity) durchführt
+		//Objekt das die benï¿½tigten Tests (densiti und homogenity) durchfï¿½hrt
 		test = new DCBTests(adjacenciesArray[0], density, rangesArray[0], attrdim, attributesArray[0]);
 				
 		
@@ -612,7 +612,7 @@ public class DenselyConnectedBiclustering {
 		long endtime;
 		
 
-		//Benötigte Objekte zur Parallelisierung des Preprocessing:
+		//Benï¿½tigte Objekte zur Parallelisierung des Preprocessing:
 		ExecutorService executorPreprocessing = Executors.newFixedThreadPool(numOfThreads);
 		HashSet<DCBpreprocessing> tasks = new HashSet<DCBpreprocessing>();
 		List<Future<HashSet<Integer>>> futRes = new LinkedList<>();
@@ -681,7 +681,7 @@ public class DenselyConnectedBiclustering {
 		
 		/*
 		 * Erstellen eine neue Adjazenzliste. Und 1. Teil der Seedgeneration: 
-		 * Adjacencies der Seeds werden später hinzugefügt
+		 * Adjacencies der Seeds werden spï¿½ter hinzugefï¿½gt
 		 */
 		try {
 			for(Future<HashSet<Integer>> res : futRes){
@@ -774,7 +774,7 @@ public class DenselyConnectedBiclustering {
 	
 	/*
 	 * Paralleles Preprocessing
-	 * Jede Kante wird einzeln gerpüft (im Callable DCBpreprocessing)
+	 * Jede Kante wird einzeln gerpï¿½ft (im Callable DCBpreprocessing)
 	 */
 	public HashSet<HashSet<Integer>> expansionParallel(HashSet<HashSet<Integer>> seeds){
 		SwingUtilities.invokeLater(new Runnable() {
@@ -786,14 +786,14 @@ public class DenselyConnectedBiclustering {
 		long starttime2;
 		long endtime2;
 		
-		//Benötigte Objekte zur Parallelisierung der Expansion:
+		//Benï¿½tigte Objekte zur Parallelisierung der Expansion:
 		List<Future<LinkedHashSet<HashSet<Integer>>>> futureExpanded = new LinkedList<>();
 		ExecutorService executeExpansion = Executors.newFixedThreadPool(numOfThreads);
 		HashSet<DCBexpansion> tasksExpansion = new HashSet<>();
 		
 		starttime2 = System.currentTimeMillis();
 		/*
-		 * intitialisierung der Callables für die Expansion; Zunächst sind noch keine Seeds enthalten
+		 * intitialisierung der Callables fï¿½r die Expansion; Zunï¿½chst sind noch keine Seeds enthalten
 		 * Es werden so viele Callables erzeugt wie es Threads gibt
 		 */
 		for(int i = 0; i < numOfThreads; i++){
@@ -803,9 +803,9 @@ public class DenselyConnectedBiclustering {
 		//vergleicht die DCBexpansion-Objekte anhand ihrer Nachbarn-Menge
 		DCBexpansionComparator expansionComparator = new DCBexpansionComparator();
 		/*
-		 * Seedgeneration 2. Teil: hinzufügen der Seed-Adjacencies und füllen der Callables mit den
-		 * Seeds: Seed wird immer dem Callable hinzugefügt das bisher die wenigsten Nachbarn (summe
-		 * über alle seeds des Objekts) enthält
+		 * Seedgeneration 2. Teil: hinzufï¿½gen der Seed-Adjacencies und fï¿½llen der Callables mit den
+		 * Seeds: Seed wird immer dem Callable hinzugefï¿½gt das bisher die wenigsten Nachbarn (summe
+		 * ï¿½ber alle seeds des Objekts) enthï¿½lt
 		 */
 		for(HashSet<Integer> seed : seeds){
 			HashSet<Integer> neighbours = new HashSet<>();
@@ -892,7 +892,7 @@ public class DenselyConnectedBiclustering {
 		
 //		if(numOfThreads > 1){
 			/*
-			 * Entfernung doppelter Cluster: (geprüft wird auch ob ein Cluster ein anderes enthält)
+			 * Entfernung doppelter Cluster: (geprï¿½ft wird auch ob ein Cluster ein anderes enthï¿½lt)
 			 */
 			LinkedHashSet<HashSet<Integer>> removeSubsets = new LinkedHashSet<HashSet<Integer>>();
 			
@@ -1108,8 +1108,8 @@ public class DenselyConnectedBiclustering {
 	private LinkedHashSet<HashSet<Integer>> expansion(HashMap<HashSet<Integer>, HashSet<Integer>> seeds) {
 
 		/*
-		 * Durchläuft die Seeds-Liste und fügt einen verbunden Knoten zum Seed hinzu
-		 * wenn dichte und homogenität erfüllt sind. Sind die Kriterien ncht erfüllt so wird der
+		 * Durchlï¿½uft die Seeds-Liste und fï¿½gt einen verbunden Knoten zum Seed hinzu
+		 * wenn dichte und homogenitï¿½t erfï¿½llt sind. Sind die Kriterien ncht erfï¿½llt so wird der
 		 * Seed dem Ergebnisset (extended) zugeordnent.
 		 */
 		LinkedHashSet<HashSet<Integer>> extended = new LinkedHashSet<HashSet<Integer>>();

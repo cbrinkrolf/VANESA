@@ -3,7 +3,7 @@ package database.brenda;
 import graph.CreatePathway;
 import graph.algorithms.MergeGraphs;
 import graph.jung.classes.MyGraph;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.awt.Color;
@@ -757,7 +757,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		if (mergePW != null)
 			answer = JOptionPane
 					.showOptionDialog(
-							MainWindowSingelton.getInstance(),
+							MainWindowSingleton.getInstance(),
 							"A new tab will be created with the pathway you selected. Shall this tab be a merge between the current pathway and the selected or contain only the selected pathway?",
 							"", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null,
@@ -818,8 +818,8 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 				new MergeGraphs(pw, mergePW, true);
 			bar.closeWindow();
 		}
-		MainWindowSingelton.getInstance().updateAllGuiElements();
-		MainWindowSingelton.getInstance().setEnable(true);
+		MainWindowSingleton.getInstance().updateAllGuiElements();
+		MainWindowSingleton.getInstance().setEnable(true);
 	}
 
 	private String cleanString(String s) {

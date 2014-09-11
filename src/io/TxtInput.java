@@ -1,7 +1,7 @@
 package io;
 
 import graph.CreatePathway;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
@@ -63,7 +63,7 @@ public class TxtInput {
 		pw.getGraph().changeToCircleLayout();
 		pw.getGraph().restartVisualizationModel();
 		pw.getGraph().normalCentering();
-		MainWindowSingelton.getInstance().updateProjectProperties();
+		MainWindowSingleton.getInstance().updateProjectProperties();
 		
 	}
 	

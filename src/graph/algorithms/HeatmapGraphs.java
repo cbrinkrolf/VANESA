@@ -2,7 +2,7 @@ package graph.algorithms;
 
 import graph.CreatePathway;
 import gui.HeatgraphLayer;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,8 +64,8 @@ public class HeatmapGraphs {
 			this.copyElements(pw, pw_new);
 		}
 
-		MainWindowSingelton.getInstance().updateProjectProperties();
-		MainWindowSingelton.getInstance().updateOptionPanel();
+		MainWindowSingleton.getInstance().updateProjectProperties();
+		MainWindowSingleton.getInstance().updateOptionPanel();
 		
 		//count all nodes by id
 		//elements that are in both graphs will be double in the new graph
@@ -92,9 +92,9 @@ public class HeatmapGraphs {
 		/*for(String s : countById.keySet()) {
 			System.out.println(s+" = "+countById.get(s));
 		}*/
-		MainWindowSingelton.getInstance().enableOptionPanelUpdate(false);
+		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
 		CompareGraphs.mergeGraph(pw_new);
-		MainWindowSingelton.getInstance().enableOptionPanelUpdate(true);
+		MainWindowSingleton.getInstance().enableOptionPanelUpdate(true);
 		
 		//pw_new.getGraph().changeToGEMLayout();
 		pw_new.getGraph().unlockVertices();

@@ -3,7 +3,7 @@ package graph.algorithms;
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Point;
 import java.util.HashMap;
@@ -154,8 +154,8 @@ public class RandomGraph {
 			//System.out.println("drin");
 			pw.getGraph().normalCentering();
 			
-			MainWindowSingelton.getInstance().updateAllGuiElements();
-			MainWindowSingelton.getInstance().enable(true);
+			MainWindowSingleton.getInstance().updateAllGuiElements();
+			MainWindowSingleton.getInstance().enable(true);
 			//myGraph.getVisualizationViewer().repaint();
 		}
 	}

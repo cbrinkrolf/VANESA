@@ -3,7 +3,7 @@ package dataMapping;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -74,7 +74,7 @@ import biologicalElements.Pathway;
 public class DataMapping2View extends JDialog implements Observer{
 
 	private static final long serialVersionUID = 1L;
-	public static MainWindow w = MainWindowSingelton.getInstance();
+	public static MainWindow w = MainWindowSingleton.getInstance();
 	private GraphContainer con = ContainerSingelton.getInstance();
 
 	private JTabbedPane tabbedPane = new JTabbedPane();

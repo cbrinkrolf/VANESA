@@ -5,7 +5,7 @@ import graph.ContainerSingelton;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,7 +37,7 @@ import biologicalObjects.nodes.Protein;
 
 public class NetworkProperties extends Object {
 
-	MainWindow w = MainWindowSingelton.getInstance();
+	MainWindow w = MainWindowSingleton.getInstance();
 	GraphContainer con = ContainerSingelton.getInstance();
 	GraphInstance graphInstance = new GraphInstance();
 	Pathway pw;

@@ -5,7 +5,7 @@ package gui.eventhandlers;
 //import edu.uci.ics.jung.visualization.Layout;
 import graph.GraphInstance;
 import graph.jung.graphDrawing.VertexShapes;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -74,12 +74,12 @@ public class PropertyWindowListener implements FocusListener {
 		if (source.equals("label")) {
 			if (!((JTextField) event.getSource()).getText().equals("")) {
 				geb.setLabel(((JTextField) event.getSource()).getText());
-				MainWindowSingelton.getInstance().updateElementTree();
+				MainWindowSingleton.getInstance().updateElementTree();
 			}
 		} else if (source.equals("name")) {
 			if (!((JTextField) event.getSource()).getText().equals("")) {
 				geb.setName(((JTextField) event.getSource()).getText());
-				MainWindowSingelton.getInstance().updateElementTree();
+				MainWindowSingleton.getInstance().updateElementTree();
 			}
 		} else if (source.equals("comment")) {
 			if (!((JTextArea) event.getSource()).getText().equals("")) {
@@ -197,7 +197,7 @@ public class PropertyWindowListener implements FocusListener {
 
 						JOptionPane
 								.showMessageDialog(
-										MainWindowSingelton.getInstance(),
+										MainWindowSingleton.getInstance(),
 										"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
 										"Unallowed Operation...",
 										JOptionPane.ERROR_MESSAGE);
@@ -240,7 +240,7 @@ public class PropertyWindowListener implements FocusListener {
 
 						JOptionPane
 								.showMessageDialog(
-										MainWindowSingelton.getInstance(),
+										MainWindowSingleton.getInstance(),
 										"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
 										"Unallowed Operation...",
 										JOptionPane.ERROR_MESSAGE);

@@ -4,7 +4,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.SimMenue;
 
 import java.awt.event.ActionEvent;
@@ -51,7 +51,7 @@ public class PetriNetSimulation implements ActionListener {
 	private void runOMC() {
 		GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		w.setLockedPane(true);
 		Map<String, String> env = System.getenv();
 
@@ -208,7 +208,7 @@ public class PetriNetSimulation implements ActionListener {
 				e.printStackTrace();
 				JOptionPane
 						.showMessageDialog(
-								MainWindowSingelton.getInstance(),
+								MainWindowSingleton.getInstance(),
 								"Something went wrong. The model couldn't be simulated!",
 								"Error occured...", JOptionPane.ERROR_MESSAGE);
 				w.setLockedPane(false);
@@ -250,7 +250,7 @@ public class PetriNetSimulation implements ActionListener {
 	private void runOMCIA() {
 		GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		w.setLockedPane(true);
 		Map<String, String> env = System.getenv();
 
@@ -579,7 +579,7 @@ public class PetriNetSimulation implements ActionListener {
 				e.printStackTrace();
 				JOptionPane
 						.showMessageDialog(
-								MainWindowSingelton.getInstance(),
+								MainWindowSingleton.getInstance(),
 								"Something went wrong. The model couldn't be simulated!",
 								"Error occured...", JOptionPane.ERROR_MESSAGE);
 				w.setLockedPane(false);
@@ -605,7 +605,7 @@ public class PetriNetSimulation implements ActionListener {
 	private void runDymola() {
 		GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		w.setLockedPane(true);
 		try {
 			JOptionPane
@@ -728,7 +728,7 @@ public class PetriNetSimulation implements ActionListener {
 				throw new Exception();
 		} catch (Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					"Something went wrong. The model couldn't be simulated!",
 					"Error occured...", JOptionPane.ERROR_MESSAGE);
 			w.setLockedPane(false);

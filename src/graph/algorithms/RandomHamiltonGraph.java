@@ -3,7 +3,7 @@ package graph.algorithms;
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Point;
 import java.util.HashMap;
@@ -137,7 +137,7 @@ public class RandomHamiltonGraph {
 
 			myGraph.normalCentering();
 
-			MainWindow window = MainWindowSingelton.getInstance();
+			MainWindow window = MainWindowSingleton.getInstance();
 			window.updateOptionPanel();
 			// window.enable(true);
 			pw.getGraph().changeToGEMLayout();

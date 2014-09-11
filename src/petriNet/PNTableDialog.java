@@ -5,7 +5,7 @@ package petriNet;
 //import edu.uci.ics.jung.graph.event.GraphEventType.AllSingleEvents;
 import graph.ContainerSingelton;
 import graph.jung.graphDrawing.VertexShapes;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.algorithms.ScreenSize;
 
 import java.awt.Color;
@@ -51,11 +51,11 @@ public class PNTableDialog extends JDialog implements ActionListener {
 	private PNEdge[] edges;
 
 	public PNTableDialog() {
-		super(MainWindowSingelton.getInstance(), true);
+		super(MainWindowSingleton.getInstance(), true);
 
 		int i = 0;
 		final Pathway pw = ContainerSingelton.getInstance().getPathway(
-				MainWindowSingelton.getInstance().getCurrentPathway());
+				MainWindowSingleton.getInstance().getCurrentPathway());
 
 		Object[][] rows = new Object[pw.getAllNodes().toArray().length][9];
 		bnas = new BiologicalNodeAbstract[pw.getAllNodes().toArray().length];
@@ -286,7 +286,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Pathway pw = ContainerSingelton.getInstance().getPathway(
-				MainWindowSingelton.getInstance().getCurrentPathway());
+				MainWindowSingleton.getInstance().getCurrentPathway());
 		Place p;
 		BiologicalNodeAbstract neighbour;
 		BiologicalNodeAbstract node;
@@ -451,7 +451,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			if (!changedAllStates)
 				JOptionPane
 						.showMessageDialog(
-								MainWindowSingelton.getInstance(),
+								MainWindowSingleton.getInstance(),
 								"You tried to change the type of your transitions or places in a way, such that there were a relation between a continious transition and a discrete place! The objects which type was not changed are marked red.",
 								"Action could not be fully performed...",
 								JOptionPane.ERROR_MESSAGE);

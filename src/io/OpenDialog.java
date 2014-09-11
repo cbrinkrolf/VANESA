@@ -5,7 +5,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.io.File;
@@ -107,7 +107,7 @@ public class OpenDialog extends SwingWorker {
 					JSBMLinput jsbmlInput = new JSBMLinput();
 					String result = jsbmlInput.loadSBMLFile(file);
 					if(result.length() > 0){
-						JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+						JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 								result);
 					}
 			} else if (fileFormat.equals(txtDescription)) {
@@ -167,7 +167,7 @@ public class OpenDialog extends SwingWorker {
 					//		.restart();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();
-					MainWindowSingelton.getInstance().updateAllGuiElements();
+					MainWindowSingleton.getInstance().updateAllGuiElements();
 
 				}
 			}

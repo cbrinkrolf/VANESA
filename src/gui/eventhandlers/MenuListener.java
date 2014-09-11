@@ -28,7 +28,7 @@ import graph.layouts.gemLayout.GEMLayout;
 import gui.AboutWindow;
 import gui.InfoWindow;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.MenuBarClass;
 import gui.SimMenue;
 import io.OpenDialog;
@@ -127,7 +127,7 @@ public class MenuListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		w = MainWindowSingelton.getInstance();
+		w = MainWindowSingleton.getInstance();
 		String event = e.getActionCommand();
 		GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
@@ -135,7 +135,7 @@ public class MenuListener implements ActionListener {
 		if ("new Network".equals(event)) {
 
 			int option = JOptionPane.showOptionDialog(
-					MainWindowSingelton.getInstance(),
+					MainWindowSingleton.getInstance(),
 					"Which type of modeling do you prefer?",
 					"Choose Network Type...", JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, new String[] {
@@ -859,7 +859,7 @@ public class MenuListener implements ActionListener {
 			// Cov cov = new Cov();
 			if (JOptionPane
 					.showConfirmDialog(
-							MainWindowSingelton.getInstance(),
+							MainWindowSingleton.getInstance(),
 							"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
 							"Please Conform your action...",
 							JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
@@ -879,11 +879,11 @@ public class MenuListener implements ActionListener {
 			// new CompareGraphsGUI();
 			new ConvertToPetriNet();
 
-			Component[] c = MainWindowSingelton.getInstance().getContentPane()
+			Component[] c = MainWindowSingleton.getInstance().getContentPane()
 					.getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindowSingelton
+					MainWindowSingleton
 							.getInstance()
 							.getBar()
 							.paintToolbar(
@@ -919,7 +919,7 @@ public class MenuListener implements ActionListener {
 		// MARTIN db switcher
 		else if ("switch db version".equals(event)) {
 			// DO switching stuff
-			MainWindow m = MainWindowSingelton.getInstance();
+			MainWindow m = MainWindowSingleton.getInstance();
 
 			MainWindow.useOldDB = !MainWindow.useOldDB;
 			String switchertext = m.getmyMenu().dbSwitcher.getText();

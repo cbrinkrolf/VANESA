@@ -37,7 +37,7 @@ import fr.lip6.move.pnml.ptnet.hlapi.PlaceHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.PositionHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.TransitionHLAPI;
 import graph.GraphInstance;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
