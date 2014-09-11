@@ -91,9 +91,11 @@ public class SimMenue extends JFrame {
 		//textArea.setAutoscrolls(true);
 		this.add(scrollPane, BorderLayout.SOUTH);
 		// this.add(textArea, BorderLayout.SOUTH);
-		
+		MainWindow w = MainWindowSingelton.getInstance();
 		this.pack();
-		this.setLocationRelativeTo(null);
+		//this.setLocation(w.getLocation());
+		this.setLocationRelativeTo(w);
+		//this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		
 	}
