@@ -70,7 +70,7 @@ import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
 import graph.CreatePathway;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 /**
  * To read a SBML file and put the reasults on the graph. A SBML which has been
@@ -292,8 +292,8 @@ public class SBMLInput {
 		try {
 			this.pathway.getGraph().unlockVertices();
 			this.pathway.getGraph().restartVisualizationModel();
-			MainWindowSingelton.getInstance().updateProjectProperties();
-			MainWindowSingelton.getInstance().updateOptionPanel();
+			MainWindowSingleton.getInstance().updateProjectProperties();
+			MainWindowSingleton.getInstance().updateOptionPanel();
 
 		} catch (Exception ex) {
 			System.err.println(" Exception in class SBMLInput.loadSBML() "

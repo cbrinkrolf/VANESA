@@ -74,7 +74,7 @@ import graph.layouts.GraphCenter;
 import graph.layouts.gemLayout.GEMLayout;
 import gui.HeatgraphLayer;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.MyAnnotationManager;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
@@ -239,7 +239,7 @@ public class MyGraph {
 						vv.getPickedEdgeState().clear();
 
 					}
-					MainWindow mw = MainWindowSingelton.getInstance();
+					MainWindow mw = MainWindowSingleton.getInstance();
 					mw.updateAllGuiElements();
 					// vv.repaint();
 				}
@@ -403,7 +403,7 @@ public class MyGraph {
 							.setSelectedObject((BiologicalNodeAbstract) stateV
 									.getSelectedObjects()[0]);
 				}
-				MainWindow w = MainWindowSingelton.getInstance();
+				MainWindow w = MainWindowSingleton.getInstance();
 				w.updateElementProperties();
 				if (graphInstance.getPathway().isPetriNetSimulation()) {
 					// System.out.println("sim");
@@ -424,7 +424,7 @@ public class MyGraph {
 							.setSelectedObject((BiologicalEdgeAbstract) stateE
 									.getSelectedObjects()[0]);
 				}
-				MainWindow w = MainWindowSingelton.getInstance();
+				MainWindow w = MainWindowSingleton.getInstance();
 				w.updateElementProperties();
 				if (graphInstance.getPathway().isPetriNetSimulation()) {
 					// System.out.println("sim");

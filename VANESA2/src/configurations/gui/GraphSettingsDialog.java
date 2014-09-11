@@ -7,7 +7,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Container;
 
@@ -49,7 +49,7 @@ public class GraphSettingsDialog extends JFrame {
 	JRadioButton black = new JRadioButton("", true);
 	JRadioButton white = new JRadioButton("", true);
 
-	MainWindow w = MainWindowSingelton.getInstance();
+	MainWindow w = MainWindowSingleton.getInstance();
 	GraphInstance graphInstance = new GraphInstance();
 	GraphContainer con = ContainerSingelton.getInstance();;
 

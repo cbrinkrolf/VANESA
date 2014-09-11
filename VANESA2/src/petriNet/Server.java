@@ -4,7 +4,7 @@ package petriNet;
 // import java.net.Socket;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.io.*;
@@ -236,7 +236,7 @@ public class Server {
 				case 6:
 					running = false;
 					System.out.println("server shut down");
-					MainWindow w = MainWindowSingelton.getInstance();
+					MainWindow w = MainWindowSingleton.getInstance();
 					// w.redrawGraphs();
 					break;
 				}

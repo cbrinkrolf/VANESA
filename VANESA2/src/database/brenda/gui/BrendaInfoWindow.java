@@ -1,7 +1,7 @@
 package database.brenda.gui;
 
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import javax.swing.JOptionPane;
 
@@ -47,7 +47,7 @@ public class BrendaInfoWindow {
 	        "<ul>"+        
 	        "</html>";
 		
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		JOptionPane.showMessageDialog(w.returnFrame(), instructions,"BRENDA Informations",1);
 		
 	}

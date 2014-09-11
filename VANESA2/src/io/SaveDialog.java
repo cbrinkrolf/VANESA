@@ -7,7 +7,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import io.graphML.SaveGraphML;
 
 import java.awt.HeadlessException;
@@ -181,7 +181,7 @@ public class SaveDialog {
 //								+ sbmlOutput.generateSBMLDocument());
 			JSBMLoutput jsbmlOutput = new JSBMLoutput(file, new GraphInstance().getPathway());
 			JOptionPane.showMessageDialog(
-					MainWindowSingelton.getInstance(), sbmlDescription
+					MainWindowSingleton.getInstance(), sbmlDescription
 							+ jsbmlOutput.generateSBMLDocument());
 				
 			//else
@@ -191,29 +191,29 @@ public class SaveDialog {
 		} else if (fileFormat.equals(graphMlDescription)) {
 			getCorrectFile(graphMl);
 			new SaveGraphML(file);
-			JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					graphMlDescription + " File saved");
 		} else if (fileFormat.equals(irinaDescription)) {
 			getCorrectFile(irinaTxt);
 			new IrinaGraphTextWriter(file, new GraphInstance().getPathway());
-			JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					irinaDescription + " File saved");
 
 		} else if (fileFormat.equals(moDescription)) {
 			getCorrectFile(mo);
 			new MOoutput(file, new GraphInstance().getPathway());
-			JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					moDescription + " File saved");
 
 		} else if (fileFormat.equals(txtDescription)) {
 			getCorrectFile(txt);
 			new GraphTextWriter(file, new GraphInstance().getPathway());
-			JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					txtDescription + " File saved");
 
 		} else if (fileFormat.equals(pnmlDescription)) {
 			GraphContainer con = ContainerSingelton.getInstance();
-			MainWindow w = MainWindowSingelton.getInstance();
+			MainWindow w = MainWindowSingleton.getInstance();
 			if (!con.isPetriView()){
 				/*ConvertToPetriNet convertToPetriNet = new ConvertToPetriNet();
 				getCorrectFile(pnml);
@@ -264,7 +264,7 @@ public class SaveDialog {
 				
 				try {
 					JOptionPane.showMessageDialog(
-							MainWindowSingelton.getInstance(),pnmlDescription
+							MainWindowSingleton.getInstance(),pnmlDescription
 									+ pnmlOutput.generatePNMLDocument() + "File saved. File validated and saved.");
 					
 					if(pnmlOutput.getFinished()){
@@ -287,7 +287,7 @@ public class SaveDialog {
 		}else if (fileFormat.equals(csmlDescription)) {
 			getCorrectFile(csml);
 			new GONoutput(file, new GraphInstance().getPathway());
-			JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					csmlDescription + " File saved");
 
 		} else if (fileFormat.equals(vamlDescription)) {
@@ -295,7 +295,7 @@ public class SaveDialog {
 			try {
 				new VAMLoutput(file, new GraphInstance().getPathway());
 				JOptionPane.showMessageDialog(
-						MainWindowSingelton.getInstance(), vamlDescription
+						MainWindowSingleton.getInstance(), vamlDescription
 								+ " File saved");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

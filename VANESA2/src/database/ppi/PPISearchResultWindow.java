@@ -4,7 +4,7 @@
 package database.ppi;
 
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.algorithms.ScreenSize;
 
 import java.awt.Color;

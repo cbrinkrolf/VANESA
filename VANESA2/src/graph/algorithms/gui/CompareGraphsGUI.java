@@ -7,7 +7,7 @@ import graph.algorithms.CompareGraphs;
 import graph.algorithms.HeatmapGraphs;
 import graph.algorithms.MergeGraphs;
 import graph.jung.classes.MyGraph;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.algorithms.ScreenSize;
 
 import java.awt.Dimension;
@@ -266,7 +266,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		} else if ("align".equals(event)) {
 
 			closeDialog();
-			MainWindowSingelton.getInstance().openAlignmentGUI(
+			MainWindowSingleton.getInstance().openAlignmentGUI(
 					con.getPathway(firstBox.getSelectedItem().toString()),
 					con.getPathway(secondBox.getSelectedItem().toString()));
 
@@ -279,7 +279,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 	private void resetPanels() {
 
 		Iterator it = con.getAllPathways().iterator();
-		MainWindowSingelton.getInstance().enableOptionPanelUpdate(false);
+		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
 		while (it.hasNext()) {
 
 			Pathway p = (Pathway) it.next();
@@ -292,7 +292,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 
 		firstGraph.updateUI();
 		secondGraph.updateUI();
-		MainWindowSingelton.getInstance().enableOptionPanelUpdate(true);
+		MainWindowSingleton.getInstance().enableOptionPanelUpdate(true);
 	}
 
 	public void itemStateChanged(ItemEvent e) {

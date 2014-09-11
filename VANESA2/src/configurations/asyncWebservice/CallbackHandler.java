@@ -6,7 +6,7 @@
 package configurations.asyncWebservice;
 
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.util.UUID;
 
@@ -31,7 +31,7 @@ public class CallbackHandler implements AxisCallback {
 
 	private Logger logger = Logger.getRootLogger();
 
-	private MainWindow window = MainWindowSingelton.getInstance();
+	private MainWindow window = MainWindowSingleton.getInstance();
 
 	public CallbackHandler(UUID webServiceIdent) {
 		this.webServiceIdent = webServiceIdent;

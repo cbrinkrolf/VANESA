@@ -12,7 +12,7 @@ import graph.GraphContainer;
 import graph.ContainerSingelton;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 /*public class ToolTips extends DefaultToolTipFunction {
 

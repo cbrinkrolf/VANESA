@@ -5,7 +5,7 @@ import graph.gui.EdgeDeleteDialog;
 import graph.jung.classes.MyGraph;
 import gui.GraphTab;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -1231,7 +1231,7 @@ public class Pathway implements Cloneable {
 
 			}
 			if (merged) {
-				MainWindow mw = MainWindowSingelton.getInstance();
+				MainWindow mw = MainWindowSingleton.getInstance();
 				mw.updateElementTree();
 				mw.updateElementProperties();
 
@@ -1347,7 +1347,7 @@ public class Pathway implements Cloneable {
 				}
 			}
 		}
-		MainWindow mw = MainWindowSingelton.getInstance();
+		MainWindow mw = MainWindowSingleton.getInstance();
 		mw.updateElementTree();
 		mw.updateElementProperties();
 
@@ -1761,7 +1761,7 @@ public class Pathway implements Cloneable {
 		}
 		if (isRootPathway()) {
 			markPathwayUnchanged();
-			MainWindowSingelton.getInstance().updateElementTree();
+			MainWindowSingleton.getInstance().updateElementTree();
 		}
 	}
 

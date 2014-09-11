@@ -2,7 +2,7 @@ package dataMapping;
 
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.io.File;
@@ -336,7 +336,7 @@ public class DataMappingModelController extends Observable {
 				SwingUtilities.invokeLater(new Runnable() {
 				     public void run() {
 							JOptionPane.showMessageDialog(
-									MainWindowSingelton.getInstance(),
+									MainWindowSingleton.getInstance(),
 							"Query dosen't work (no results).",
 							"Error", JOptionPane.ERROR_MESSAGE);
 				     }
@@ -629,7 +629,7 @@ public class DataMappingModelController extends Observable {
 					newDupMap.put((String) dmt.getValueAt(i, 0), changedValue);
 				}
 			}
-			//TODO Methode für Daten Export
+			//TODO Methode fï¿½r Daten Export
 //			System.out.println(newMergeMap);
 			
 			export(newMergeMap);
@@ -648,7 +648,7 @@ public class DataMappingModelController extends Observable {
 	 */
 	private void export(Map<String, List<String>> newMergeMap) {
 		// TODO Auto-generated method stub
-		//ExportThread erzeugen newM übergeben
+		//ExportThread erzeugen newM ï¿½bergeben
 		
 		
 		progressBarExport = new ProgressBar();
@@ -672,7 +672,7 @@ public class DataMappingModelController extends Observable {
 	public static void reactivateUI() {
 		// close Progress bar and reactivate UI
 		progressBarExport.closeWindow();
-		MainWindow mw = MainWindowSingelton.getInstance();
+		MainWindow mw = MainWindowSingleton.getInstance();
 		mw.setEnable(true);
 		mw.setLockedPane(false);
 	}

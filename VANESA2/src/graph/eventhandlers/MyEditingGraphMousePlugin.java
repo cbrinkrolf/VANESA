@@ -46,7 +46,7 @@ import graph.GraphInstance;
 import graph.gui.EdgeDialog;
 import graph.gui.PetriNetVertexDialog;
 import graph.gui.VertexDialog;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 /**
  * A plugin that can create vertices, undirected edges, and directed edges using
@@ -206,9 +206,9 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 
 						// vv.getModel().restart();
 						//System.out.println("update");
-						MainWindowSingelton.getInstance().updateElementTree();
-						MainWindowSingelton.getInstance().updateFilterView();
-						MainWindowSingelton.getInstance().updatePathwayTree();
+						MainWindowSingleton.getInstance().updateElementTree();
+						MainWindowSingleton.getInstance().updateFilterView();
+						MainWindowSingleton.getInstance().updatePathwayTree();
 						//MainWindowSingelton.getInstance().updateAllGuiElements();
 						//MainWindowSingelton.getInstance().updateOptionPanel();
 						// MainWindowSingelton.getInstance()
@@ -244,8 +244,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// pw.getGraph().setVertexLocation(newVertex, p);
 						// layout.setLocation(newVertex, p);
 						// vv.getModel().restart();
-						MainWindowSingelton.getInstance().updateElementTree();
-						MainWindowSingelton.getInstance().updateFilterView();
+						MainWindowSingleton.getInstance().updateElementTree();
+						MainWindowSingleton.getInstance().updateFilterView();
 						// MainWindowSingelton.getInstance()
 						// .updateTheoryProperties();
 
@@ -299,7 +299,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						&& !((start instanceof Place && end instanceof Transition) || (start instanceof Transition && end instanceof Place)))
 					JOptionPane
 							.showMessageDialog(
-									MainWindowSingelton.getInstance(),
+									MainWindowSingleton.getInstance(),
 									"In a petri net only Transition->Place and Place->Transition Relations are allowed!",
 									"Unallowed Operation...",
 									JOptionPane.ERROR_MESSAGE);
@@ -311,7 +311,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 									.isDiscrete()))
 					JOptionPane
 							.showMessageDialog(
-									MainWindowSingelton.getInstance(),
+									MainWindowSingleton.getInstance(),
 									"Relations between discrete Places and Continoues Transitions are not possible!",
 									"Unallowed Operation...",
 									JOptionPane.ERROR_MESSAGE);
@@ -330,7 +330,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 								&& !(startVertex instanceof Place && vertex instanceof Transition))
 							JOptionPane
 									.showMessageDialog(
-											MainWindowSingelton.getInstance(),
+											MainWindowSingleton.getInstance(),
 											"Inhibitory Edges are only possible from Place to Transition!",
 											"Unallowed Operation...",
 											JOptionPane.ERROR_MESSAGE);

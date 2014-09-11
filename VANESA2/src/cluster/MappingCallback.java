@@ -1,7 +1,7 @@
 package cluster;
 
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -35,7 +35,7 @@ public class MappingCallback extends UnicastRemoteObject implements
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JOptionPane.showMessageDialog(
-						MainWindowSingelton.getInstance(),
+						MainWindowSingleton.getInstance(),
 						message,
 						"Mapping done", JOptionPane.INFORMATION_MESSAGE);
 				DataMappingModelController.reactivateUI();

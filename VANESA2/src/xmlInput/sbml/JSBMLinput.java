@@ -2,7 +2,7 @@ package xmlInput.sbml;
 
 import graph.CreatePathway;
 import graph.gui.Parameter;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.RangeSelector;
 
 import java.awt.Color;
@@ -125,8 +125,8 @@ public class JSBMLinput {
 		try {
 			this.pathway.getGraph().unlockVertices();
 			this.pathway.getGraph().restartVisualizationModel();
-			MainWindowSingelton.getInstance().updateProjectProperties();
-			MainWindowSingelton.getInstance().updateOptionPanel();
+			MainWindowSingleton.getInstance().updateProjectProperties();
+			MainWindowSingleton.getInstance().updateOptionPanel();
 
 		} catch (Exception ex) {
 			message = "An error occured during the loading.";

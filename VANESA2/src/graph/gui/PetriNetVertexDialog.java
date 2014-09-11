@@ -8,7 +8,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -292,7 +292,7 @@ public class PetriNetVertexDialog implements ActionListener {
 					pw.addVertex(t, point);
 				}
 				GraphContainer con = ContainerSingelton.getInstance();
-				MainWindow w = MainWindowSingelton.getInstance();
+				MainWindow w = MainWindowSingleton.getInstance();
 				con.getPathway(w.getCurrentPathway());
 
 				// Graph graph = vv.getGraphLayout().getGraph();

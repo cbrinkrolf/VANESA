@@ -3,7 +3,7 @@ package graph.algorithms.gui;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

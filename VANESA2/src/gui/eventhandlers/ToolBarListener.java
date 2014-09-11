@@ -9,7 +9,7 @@ import graph.jung.classes.MyGraph;
 import gui.HeatmapChooseGraphsWindow;
 import gui.InfoWindow;
 import gui.MainWindow;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 import gui.ParallelChooseGraphsWindow;
 
 import java.awt.Component;
@@ -39,12 +39,12 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 public class ToolBarListener implements ActionListener {
 
 	public void showCreateBeforeMessage() {
-		JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+		JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 				"Please create a network first!");
 	}
 
 	public void showCreate2NetworksMessage() {
-		JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+		JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 				"Please create two networks first!");
 	}
 
@@ -52,14 +52,14 @@ public class ToolBarListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		String event = e.getActionCommand();
-		MainWindow w = MainWindowSingelton.getInstance();
+		MainWindow w = MainWindowSingleton.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		GraphInstance graphInstance = new GraphInstance();
 
 		if ("new Network".equals(event)) {
 			
 			
-			int option= JOptionPane.showOptionDialog(MainWindowSingelton.getInstance(), "Which type of modeling do you prefer?", "Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[]{"Biological Graph","Petri Net"}, JOptionPane.CANCEL_OPTION);
+			int option= JOptionPane.showOptionDialog(MainWindowSingleton.getInstance(), "Which type of modeling do you prefer?", "Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[]{"Biological Graph","Petri Net"}, JOptionPane.CANCEL_OPTION);
 			if (option!=-1){
 				new CreatePathway();
 				graphInstance.getPathway().setPetriNet(option==JOptionPane.NO_OPTION);
@@ -178,11 +178,11 @@ public class ToolBarListener implements ActionListener {
 
 			con.setPetriView(false);
 
-			Component[] c = MainWindowSingelton.getInstance().getContentPane()
+			Component[] c = MainWindowSingleton.getInstance().getContentPane()
 					.getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindowSingelton.getInstance().getBar().paintToolbar(
+					MainWindowSingleton.getInstance().getBar().paintToolbar(
 							false);
 					break;
 				}
@@ -199,11 +199,11 @@ public class ToolBarListener implements ActionListener {
 				// new CompareGraphsGUI();
 				new ConvertToPetriNet();
 			
-			Component[] c = MainWindowSingelton.getInstance().getContentPane()
+			Component[] c = MainWindowSingleton.getInstance().getContentPane()
 			.getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindowSingelton.getInstance().getBar().paintToolbar(
+					MainWindowSingleton.getInstance().getBar().paintToolbar(
 							con.getPathway(w.getCurrentPathway()).isPetriNet());
 					break;
 				}
@@ -235,11 +235,11 @@ public class ToolBarListener implements ActionListener {
 		} else if ("createPetriNet".equals(event)) {
 			con.setPetriView(true);
 
-			Component[] c = MainWindowSingelton.getInstance().getContentPane()
+			Component[] c = MainWindowSingleton.getInstance().getContentPane()
 					.getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindowSingelton.getInstance().getBar().paintToolbar(
+					MainWindowSingleton.getInstance().getBar().paintToolbar(
 							true);
 					break;
 				}
@@ -264,7 +264,7 @@ public class ToolBarListener implements ActionListener {
 			// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			// Cov cov = new Cov();
 			if (JOptionPane.showConfirmDialog(
-					MainWindowSingelton.getInstance(),
+					MainWindowSingleton.getInstance(),
 				    "The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
 				    "Please Conform your action...",
 				    JOptionPane.YES_NO_OPTION)== JOptionPane.YES_OPTION) new ReachController();
@@ -300,7 +300,7 @@ public class ToolBarListener implements ActionListener {
 				for(BiologicalNodeAbstract node : con.getPathway((w.getCurrentPathway())).getGraph().
 						getVisualizationViewer().getPickedVertexState().getPicked()){
 					node.flat();
-					MainWindowSingelton.getInstance().removeTab(false, node.getTab().getTitelTab(), node);
+					MainWindowSingleton.getInstance().removeTab(false, node.getTab().getTitelTab(), node);
 				}
 				new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
 			}else{
@@ -328,7 +328,7 @@ public class ToolBarListener implements ActionListener {
 				}
 		}
 		else if("newWindow".equals(event)){
-			MainWindowSingelton.getInstance().addView();
+			MainWindowSingleton.getInstance().addView();
 		} 
 		else if("hierarchy".equals(event)){
 			if (con.containsPathway()) {

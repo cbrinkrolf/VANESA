@@ -1,7 +1,7 @@
 package biologicalElements;
 
 import graph.GraphInstance;
-import gui.MainWindowSingelton;
+import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -134,7 +134,7 @@ public class PetriNet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			this.deleteDateFromNodes();
-			JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					"Result file does not fit on Graph!");
 
 		}
