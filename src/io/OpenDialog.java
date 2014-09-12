@@ -17,7 +17,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.xml.stream.XMLStreamException;
 
-import xmlInput.sbml.SBMLInput;
 import xmlInput.sbml.VAMLInput;
 import configurations.ConnectionSettings;
 
