@@ -17,8 +17,8 @@ public class AboutWindow {
 	        "or get in touch with the Bioinformatics Department.<p><p>"
 	        +"Contact Details<p><p>"
 	        
-	        +"Sebastian Janowski mailto:sjanowsk@techfak.uni-bielefeld.de<p>"
-	        +"Thoralf Toepel mailto:thoralf.toepel@uni-bielefeld.de<p><p>"
+	        +"Christoph Brinkrolf mailto:christoph.brinkrolfk@uni-bielefeld.de<p>"
+	        +"Benjamin Kormeier mailto:bkormeie@techfak.uni-bielefeld.de<p><p>"
 	        
 	        +"Bielefeld University<p>"
 	        +"Faculty of Technology<p>"

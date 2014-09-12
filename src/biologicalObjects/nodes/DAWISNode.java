@@ -206,34 +206,34 @@ public class DAWISNode {
 	 */
 	public String getDAWISLink(BiologicalNodeAbstract element) {
 		if (element instanceof Disease) {
-			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/disease_detail.jsp?param0="
+			return "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/disease_result.jsp?Disease_Id="
 					+ id;
 		} else if (element instanceof PathwayMap) {
-			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/pathway_detail.jsp?param0="
+			return "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/pathway_result.jsp?Pathway_Id="
 					+ id;
 		} else if (element instanceof Enzyme) {
-			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/enzyme_detail.jsp?param0="
+			return "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/enzyme_result.jsp?Enzyme_Id="
 					+ id;
 		} else if (element instanceof Protein) {
-			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/protein_detail.jsp?param0="
+			return "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/protein_result.jsp?Protein_Id="
 					+ id;
 		} else if (element instanceof Gene) {
-			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/gene_detail.jsp?param0="
+			return "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/gene_result.jsp?Gene_Id="
 					+ id;
 		} else if (element instanceof GeneOntology) {
-			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/go_detail.jsp?param0="
+			return "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/go_result.jsp?Gene_Ontology_Accession="
 					+ id;
 		} else if (element instanceof Glycan) {
-			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/glycan_detail.jsp?param0="
+			return "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/glycan_result.jsp?Glycan_Id="
 					+ id;
 		} else if (element instanceof Drug) {
-			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/drug_detail.jsp?param0="
+			return "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/drug_result.jsp?Drug_Id="
 					+ id;
 		} else if (element instanceof CompoundNode) {
-			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/compound_detail.jsp?param0="
+			return "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/compound/compound_detail.jsp?param0="
 					+ id;
 		} else if (element instanceof Reaction) {
-			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/reaction_detail.jsp?param0="
+			return "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/reaction_result.jsp?Reaction_Id="
 					+ id;
 		} else if (element instanceof Factor) {
 			return "http://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/detail/reaction_detail.jsp?param0="
