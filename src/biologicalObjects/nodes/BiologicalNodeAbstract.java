@@ -272,8 +272,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		}
 		BiologicalNodeAbstract coarseNode = computeCoarseType(nodes);
 		
-//		if(coarseNode == null || !isCoarsingAllowed(nodes)){
-		if(coarseNode == null){
+		if(coarseNode == null || !isCoarsingAllowed(nodes)){
+//		if(coarseNode == null){
 			showCoarsingErrorMessage();
 			return null;
 		}
@@ -337,11 +337,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @return true is coarsing is allowed for the given set of nodes, false otherwise
 	 */
 	private static boolean isCoarsingAllowed(Set<BiologicalNodeAbstract> vertices){
+		BiologicalNodeAbstract parentNode = null;
+		if(vertices.iterator().hasNext()){
+			parentNode = vertices.iterator().next().getParentNode();
+		}
 		for(BiologicalNodeAbstract vertex : vertices){
-			if(vertex.getParentNode()!=null && vertex.getParentNode()!=new GraphInstance().getPathway()){
-				return false;
-			}
-			if(vertex.getParentNode()==null && new GraphInstance().getPathway()!=vertex.getRootPathway()){
+			if(vertex.getParentNode()!=parentNode){
 				return false;
 			}
 		}
