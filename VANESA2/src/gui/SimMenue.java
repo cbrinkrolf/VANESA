@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import util.MyJFormattedTextField;
 import util.MyNumberFormat;
 
 
@@ -34,9 +35,9 @@ public class SimMenue extends JFrame {
 	private JLabel startLbl = new JLabel("Start:");
 	private JLabel stopLbl = new JLabel("Stop:");
 	private JLabel intervalsLbl = new JLabel("Intervals:");
-	private JFormattedTextField startTxt;
-	private JFormattedTextField stopTxt;
-	private JFormattedTextField intervalsTxt;
+	private MyJFormattedTextField startTxt;
+	private MyJFormattedTextField stopTxt;
+	private MyJFormattedTextField intervalsTxt;
 
 	//private ActionListener listener;
 	
@@ -49,19 +50,22 @@ public class SimMenue extends JFrame {
 		stop.addActionListener(listener);
 
 		
-		startTxt = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+		startTxt = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 		startTxt.setText("0.0");
 		startTxt.setColumns(5);
+		startTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		startTxt.setEnabled(false);
 		
-		stopTxt = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+		stopTxt = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 		stopTxt.setText("1.0");
 		stopTxt.setColumns(5);
+		stopTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 
 		
-		intervalsTxt = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+		intervalsTxt = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 		intervalsTxt.setText("100");
 		intervalsTxt.setColumns(5);
+		intervalsTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		//intervalsTxt.get
 		//nf.parse(source)
 		textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
