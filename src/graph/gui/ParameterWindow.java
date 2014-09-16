@@ -1,5 +1,6 @@
 package graph.gui;
 
+import graph.ChangedFlags;
 import graph.GraphInstance;
 
 import java.awt.event.ActionEvent;
@@ -109,18 +110,19 @@ public class ParameterWindow implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		System.out.println(e.getActionCommand());
+		//System.out.println(e.getActionCommand());
 		if("add".equals(e.getActionCommand())){
 			Parameter p;
 			for(int i = 0; i< gea.getParameters().size(); i++){
 				p = gea.getParameters().get(i);
 				if(p.getName().equals(name.getText())){
-					System.out.println("schon vorhanden");
+					//System.out.println("schon vorhanden");
 					return;
 				}
 			}
 			
 			gea.getParameters().add(new Parameter(name.getText(), Double.valueOf(value.getText()), unit.getText()));
+			pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
 			panel.add(new JLabel(name.getText()), "span 2, gaptop 2 ");
 			panel.add(new JLabel(value.getText()),"span 4, gapright 4");
 			panel.add(new JLabel(unit.getText()), "span 4, gapright 4, wrap");
@@ -128,9 +130,8 @@ public class ParameterWindow implements ActionListener{
 			this.repaint();
 			
 		}else if(e.getActionCommand().startsWith("del")){
-			System.out.println("drin");
-			System.out.println(e.getActionCommand().substring(3));
-			
+			//System.out.println(e.getActionCommand().substring(3));
+			pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
 			int idx = Integer.parseInt(e.getActionCommand().substring(3));
 			this.gea.getParameters().remove(idx);
 			this.repaint();

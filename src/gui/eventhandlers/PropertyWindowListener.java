@@ -3,6 +3,7 @@ package gui.eventhandlers;
 //import edu.uci.ics.jung.graph.ArchetypeVertex;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.visualization.Layout;
+import graph.ChangedFlags;
 import graph.GraphInstance;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindowSingleton;
@@ -70,106 +71,121 @@ public class PropertyWindowListener implements FocusListener {
 	public void focusLost(FocusEvent event) {
 		Pathway pw = new GraphInstance().getPathway();
 		String source = event.getComponent().getName();
-
+		String text;
 		if (source.equals("label")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-				geb.setLabel(((JTextField) event.getSource()).getText());
+			text = ((JTextField) event.getSource()).getText().trim();
+			if (!text.equals("") && !text.equals(geb.getLabel())) {
+				geb.setLabel(text);
 				MainWindowSingleton.getInstance().updateElementTree();
+				if (geb instanceof BiologicalNodeAbstract) {
+					pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
+				} else {
+					pw.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
+				}
 			}
 		} else if (source.equals("name")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-				geb.setName(((JTextField) event.getSource()).getText());
+			text = ((JTextField) event.getSource()).getText().trim();
+			if (!text.equals("") && !text.equals(geb.getName())) {
+				geb.setName(text);
 				MainWindowSingleton.getInstance().updateElementTree();
+				if (geb instanceof BiologicalNodeAbstract) {
+					pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
+				} else {
+					pw.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
+				}
 			}
 		} else if (source.equals("comment")) {
-			if (!((JTextArea) event.getSource()).getText().equals("")) {
-				geb.setComments(((JTextArea) event.getSource()).getText());
+			text = ((JTextField) event.getSource()).getText().trim();
+			if (!text.equals("") && !text.equals(geb.getComments())) {
+				geb.setComments(text);
 			}
 		} else if (source.equals("protein")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-				Protein protein = (Protein) geb;
-				protein.setAaSequence(((JTextField) event.getSource())
-						.getText());
+			text = ((JTextField) event.getSource()).getText().trim();
+			Protein protein = (Protein) geb;
+			if (!text.equals("") && !text.equals(protein.getAaSequence())) {
+				protein.setAaSequence(text);
 			}
 		} else if (source.equals("dna")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-				DNA dna = (DNA) geb;
-				dna.setNtSequence(((JTextField) event.getSource()).getText());
+			text = ((JTextField) event.getSource()).getText().trim();
+			DNA dna = (DNA) geb;
+			if (!text.equals("") && !text.equals(dna.getNtSequence())) {
+				dna.setNtSequence(text);
 			}
 		} else if (source.equals("gene")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-				Gene gene = (Gene) geb;
-				gene.setNtSequence(((JTextField) event.getSource()).getText());
+			text = ((JTextField) event.getSource()).getText().trim();
+			Gene gene = (Gene) geb;
+			if (!text.equals("") && !text.equals(gene.getNtSequence())) {
+				gene.setNtSequence(text);
 			}
 		} else if (source.equals("rna")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-				RNA rna = (RNA) geb;
-				rna.setNtSequence(((JTextField) event.getSource()).getText());
+			text = ((JTextField) event.getSource()).getText().trim();
+			RNA rna = (RNA) geb;
+			if (!text.equals("") && !text.equals(rna.getNtSequence())) {
+				rna.setNtSequence(text);
 			}
 		}
 		// for Places
 		else if (source.equals("token")) {
-			if (!((JFormattedTextField) event.getSource()).getText().equals("")) {
-				Place p = (Place) geb;
-				Number v = (Number)((JFormattedTextField) event
-						.getSource()).getValue();
-				if(v != null){
-				double tokens =v.doubleValue();
+			Number n = (Number) ((JFormattedTextField) event.getSource())
+					.getValue();
+			Place p = (Place) geb;
+			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
+				double tokens = n.doubleValue();
 				p.setToken(tokens);
-				}
 			}
 
 		} else if (source.equals("tokenMin")) {
-			if (!((JFormattedTextField) event.getSource()).getText().equals("")) {
-				Place p = (Place) geb;
-				Number v = (Number)((JFormattedTextField) event
-						.getSource()).getValue();
-				if(v != null){
-				double tokenMin =v.doubleValue();
+			Number n = (Number) ((JFormattedTextField) event.getSource())
+					.getValue();
+			Place p = (Place) geb;
+			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
+				double tokenMin = n.doubleValue();
 				p.setTokenMin(tokenMin);
-				}
+				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+
 			}
 		} else if (source.equals("tokenStart")) {
-			if (!((JFormattedTextField) event.getSource()).getText().equals("")) {
-				Place p = (Place) geb;
-				Number v = (Number)((JFormattedTextField) event
-						.getSource()).getValue();
-				if(v != null){
-				double tokenStart =v.doubleValue();// Double.parseDouble(((JFormattedTextField) event
-						//.getSource()).getValue()+"");
+			Number n = (Number) ((JFormattedTextField) event.getSource())
+					.getValue();
+			Place p = (Place) geb;
+			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
+
+				double tokenStart = n.doubleValue();// Double.parseDouble(((JFormattedTextField)
+				// .getSource()).getValue()+"");
 				p.setTokenStart(tokenStart);
 				p.setToken(p.getTokenStart());
-				}
+				pw.handleChangeFlags(ChangedFlags.INITIALVALUE_CHANGED);
 			}
 		} else if (source.equals("tokenMax")) {
-			if (!((JFormattedTextField) event.getSource()).getText().equals("")) {
-				Place p = (Place) geb;
-				Number v = (Number)((JFormattedTextField) event
-						.getSource()).getValue();
-				if(v != null){
-				double tokenMax =v.doubleValue();
+			Number n = (Number) ((JFormattedTextField) event.getSource())
+					.getValue();
+			Place p = (Place) geb;
+			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
+				double tokenMax = n.doubleValue();
 				p.setTokenMax(tokenMax);
-				}
+				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 			}
 		}
 		// for Transitions
 		else if (source.equals("delay")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
 
-				if (geb instanceof DiscreteTransition) {
-					DiscreteTransition p = (DiscreteTransition) geb;
-					double delay = Double.parseDouble(((JTextField) event
-							.getSource()).getText());
+			if (geb instanceof DiscreteTransition) {
+				DiscreteTransition p = (DiscreteTransition) geb;
+				text = ((JTextField) event.getSource()).getText().trim();
+				if (!text.equals("") && !text.equals(p.getDelay())) {
+					double delay = Double.parseDouble(text);
 					p.setDelay(delay);
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			}
 
 		} else if (source.equals("maximumSpeed")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-				if (geb instanceof ContinuousTransition) {
-					ContinuousTransition t = (ContinuousTransition) geb;
-					t.setMaximumSpeed(((JTextField) event.getSource())
-							.getText());
+			if (geb instanceof ContinuousTransition) {
+				ContinuousTransition t = (ContinuousTransition) geb;
+			text = ((JTextField) event.getSource()).getText().trim();
+			if (!text.equals("") && !text.equals(t.getMaximumSpeed())) {
+					t.setMaximumSpeed(text);
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			}
 
@@ -268,35 +284,35 @@ public class PropertyWindowListener implements FocusListener {
 
 		// for PetriNet Edges
 		else if (source.equals("activationProb")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-
-				PNEdge e = (PNEdge) geb;
-				double prob = Double.parseDouble(((JTextField) event
-						.getSource()).getText());
+			text = ((JTextField) event.getSource()).getText().trim();
+			PNEdge e = (PNEdge) geb;
+			if (!text.equals("") && !text.equals(e.getActivationProbability())) {
+				double prob = Double.parseDouble(text);
 				e.setActivationProbability(prob);
+				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 			}
 		} else if (source.equals("function")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-
-				PNEdge e = (PNEdge) geb;
-				String function = ((JTextField) event.getSource()).getText();
-				e.setFunction(function);
+			text = ((JTextField) event.getSource()).getText().trim();
+			PNEdge e = (PNEdge) geb;
+			if (!text.equals("") && !text.equals(e.getFunction())) {
+				e.setFunction(text);
+				pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
 			}
 		} else if (source.equals("lowBoundary")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-
-				PNEdge e = (PNEdge) geb;
-				double lowBoundary = Double.parseDouble(((JTextField) event
-						.getSource()).getText());
+			text = ((JTextField) event.getSource()).getText().trim();
+			PNEdge e = (PNEdge) geb;
+			if (!text.equals("") && !text.equals(e.getLowerBoundary())) {
+				double lowBoundary = Double.parseDouble(text);
 				e.setLowerBoundary(lowBoundary);
+				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 			}
 		} else if (source.equals("upBoundary")) {
-			if (!((JTextField) event.getSource()).getText().equals("")) {
-
-				PNEdge e = (PNEdge) geb;
-				double upperBoundary = Double.parseDouble(((JTextField) event
-						.getSource()).getText());
+			text = ((JTextField) event.getSource()).getText().trim();
+			PNEdge e = (PNEdge) geb;
+			if (!text.equals("") && !text.equals(e.getUpperBoundary())) {
+				double upperBoundary = Double.parseDouble(text);
 				e.setUpperBoundary(upperBoundary);
+				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 			}
 		}
 		// ContainerSingelton.getInstance().changeMouseFunction("edit");
@@ -304,5 +320,4 @@ public class PropertyWindowListener implements FocusListener {
 		// GraphInstance.getMyGraph().updateElementLabel(element);
 		GraphInstance.getMyGraph().updateGraph();
 	}
-
 }
