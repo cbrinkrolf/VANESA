@@ -43,6 +43,7 @@ import petriNet.PNEdge;
 import petriNet.Place;
 import petriNet.StochasticTransition;
 import petriNet.Transition;
+import util.MyJFormattedTextField;
 import util.MyNumberFormat;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
@@ -277,26 +278,26 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(lswitchPlace, "gap 5 ");
 				p.add(placeList, "wrap");
 
-				JFormattedTextField token;
-				JFormattedTextField tokenStart;
-				JFormattedTextField tokenMin;
-				JFormattedTextField tokenMax;
+				MyJFormattedTextField token;
+				MyJFormattedTextField tokenStart;
+				MyJFormattedTextField tokenMin;
+				MyJFormattedTextField tokenMax;
 				
 				JLabel lblTokenStart = new JLabel("Token Start");
 				if(place.isDiscrete()){
-					token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
-					tokenStart = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
-					tokenMin = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
-					tokenMax = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+					token = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+					tokenStart = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+					tokenMin = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+					tokenMax = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 					token.setText((int)place.getToken()+"");
 					tokenStart.setText((int)place.getTokenStart() + "");
 					tokenMin.setText((int)place.getTokenMin() + "");
 					tokenMax.setText((int)place.getTokenMax() + "");
 				}else{
-					token = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
-					tokenStart = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
-					tokenMin = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
-					tokenMax = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+					token = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					tokenStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					tokenMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					tokenMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					token.setText(place.getToken() + "");
 					tokenStart.setText(place.getTokenStart() + "");
 					tokenMin.setText(place.getTokenMin() + "");
@@ -307,16 +308,20 @@ public class ElementWindow implements ActionListener, ItemListener {
 				token.setName("token");
 				// token.addFocusListener(pwl);
 				token.setEditable(false);
+				token.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 
 				tokenStart.setName("tokenStart");
+				tokenStart.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				tokenStart.addFocusListener(pwl);
 
 				tokenMin.setName("tokenMin");
+				tokenMin.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 				tokenMin.addFocusListener(pwl);
 				JLabel lblTokenMin = new JLabel("min Tokens");
 
 				
 				tokenMax.setName("tokenMax");
+				tokenMax.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 				tokenMax.addFocusListener(pwl);
 				JLabel lblTokenMax = new JLabel("max Tokens");
 				p.add(lblToken, "gap 5 ");
