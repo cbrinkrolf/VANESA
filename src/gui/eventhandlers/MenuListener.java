@@ -124,6 +124,8 @@ public class MenuListener implements ActionListener {
 	private MainWindow w;
 
 	private Cov cov;
+	
+	private PetriNetSimulation simulation = null;
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -870,7 +872,10 @@ public class MenuListener implements ActionListener {
 		else if ("loadModResult".equals(event))
 			new OpenModellicaResult().execute();
 		else if ("simulate".equals(event)){
-			new PetriNetSimulation();
+			if (simulation == null){
+				simulation = new PetriNetSimulation();
+			}
+			simulation.showMenue();
 		}
 		else if ("convertIntoPetriNet".equals(event)
 				&& (con.getPathwayNumbers() > 0)) {

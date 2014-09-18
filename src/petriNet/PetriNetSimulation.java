@@ -1,5 +1,6 @@
 package petriNet;
 
+import graph.ChangedFlags;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -43,8 +44,17 @@ public class PetriNetSimulation implements ActionListener {
 	private Process process;
 
 	private BufferedReader outputReader;
+	private HashMap<BiologicalEdgeAbstract, String> bea2key;
+	
+	private ChangedFlags flags;
+	private Server s;
 
 	public PetriNetSimulation() {
+		//menue = new SimMenue(this);
+		//flags = new ChangedFlags();
+	}
+	
+	public void showMenue(){
 		menue = new SimMenue(this);
 	}
 
@@ -253,6 +263,7 @@ public class PetriNetSimulation implements ActionListener {
 		MainWindow w = MainWindowSingleton.getInstance();
 		w.setLockedPane(true);
 		Map<String, String> env = System.getenv();
+		flags = graphInstance.getPathway().getChangedFlags("petriNetSim");
 
 		if (SystemUtils.IS_OS_WINDOWS) {
 			pathWorkingDirectory = env.get("APPDATA");
@@ -270,11 +281,15 @@ public class PetriNetSimulation implements ActionListener {
 				//		.showInputDialog("Stop Time", "20");
 				//String intervals = JOptionPane.showInputDialog("Intervals",
 				//		"20");
-				
+				long zstVorher;
+				long zstNachher;
 				Double stopTime = menue.getStopValue();
 				int intervals = menue.getIntervals();
 				// this.path = "C:\\OpenModelica1.9.1Nightly\\";
-
+				zstVorher = System.currentTimeMillis();
+				
+				if(flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged() || flags.isPnPropertiesChanged()){
+					System.out.println("really builded");
 				if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
 					pathCompiler += File.separator;
 				}
@@ -324,7 +339,7 @@ public class PetriNetSimulation implements ActionListener {
 
 				MOoutput mo = new MOoutput(new File(pathSim + "simulation.mo"),
 						graphInstance.getPathway());
-				HashMap<BiologicalEdgeAbstract, String> bea2key = mo
+				bea2key = mo
 						.getBea2resultkey();
 				//
 				FileWriter fstream = new FileWriter(pathSim + "simulation.mos");
@@ -336,12 +351,7 @@ public class PetriNetSimulation implements ActionListener {
 				out.write("getErrorString();\r\n");
 				out.write("loadFile(\"simulation.mo\");\r\n");
 				out.write("getErrorString();\r\n");
-				out.write("buildModel(simulation, stopTime=" + stopTime
-						+ ", numberOfIntervals=" + intervals
-						// only places
-						// +
-						// ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
-						+ ", tolerance=0.0001);\r\n");
+				out.write("buildModel(simulation);\r\n");
 				out.write("getErrorString();\r\n");
 				// variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
 
@@ -355,12 +365,11 @@ public class PetriNetSimulation implements ActionListener {
 				// out.write("exit();\r\n");
 				out.close();
 				stopped = false;
-				long zstVorher;
-				long zstNachher;
+				
 
 				// simT.run();
 
-				zstVorher = System.currentTimeMillis();
+				
 
 				String bin = null;
 
@@ -375,12 +384,11 @@ public class PetriNetSimulation implements ActionListener {
 				// simulation.exe -override=outputFormat=ia -port=11111
 				// -lv=LOG_STATS
 
-				Server s = new Server(bea2key);
-
-				s.test();
+				
 
 				// System.out.println(s);
-
+				boolean buildSuccess = true;
+				
 				Thread t = new Thread() {
 					public void run() {
 						long totalTime = 120000;
@@ -399,11 +407,23 @@ public class PetriNetSimulation implements ActionListener {
 				try {
 					t.stop();
 				} catch (Exception e) {
+					buildSuccess = false;
 				}
+				
+				if(buildSuccess){
+					this.flags.reset();
+				}
+				
+				
+			}
+				s = new Server(bea2key);
+
+				s.test();
 				System.out.println("building ended");
 				graphInstance.getPathway().setPetriNetSimulation(true);
 				w.initPCPGraphs();
 
+				System.out.println("stop: "+stopTime);
 				Thread t1 = new Thread() {
 					public void run() {
 
@@ -413,12 +433,22 @@ public class PetriNetSimulation implements ActionListener {
 
 							if (noEmmit) {
 								pb.command(pathSim + "simulation.exe",
-										"-override=outputFormat=ia",
+										"\"-override=outputFormat=ia,stopTime=" + stopTime
+						+ ",stepSize=" + stopTime/intervals
+						// only places
+						// +
+						// ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
+						+ ",tolerance=0.0001\"",
 										"-port=11111", "-noEventEmit",
 										"-lv=LOG_STATS");
 							} else {
 								pb.command(pathSim + "simulation.exe",
-										"-override=outputFormat=ia",
+										"-override=\"outputFormat=ia,stopTime=" + stopTime
+						+ ",numberOfIntervals=" + intervals
+						// only places
+						// +
+						// ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
+						+ ",tolerance=0.0001\"",
 										"-port=11111", "-lv=LOG_STATS");
 							}
 							pb.redirectOutput();
@@ -436,6 +466,7 @@ public class PetriNetSimulation implements ActionListener {
 
 				Thread t2 = new Thread() {
 					public void run() {
+						graphInstance.getPathway().getGraph().getVisualizationViewer().requestFocus();
 						w.redrawGraphs();
 						Vector<Double> v = graphInstance.getPathway()
 								.getPetriNet().getTime();
@@ -463,6 +494,7 @@ public class PetriNetSimulation implements ActionListener {
 						menue.stopped();
 						System.out.println("end of simulation");
 						w.redrawGraphs();
+						w.repaint();
 						if (v.size() > 0) {
 							menue.setTime(v.get(v.size() - 1));
 						}
@@ -588,12 +620,12 @@ public class PetriNetSimulation implements ActionListener {
 				return;
 			}
 			w.setLockedPane(false);
-			JOptionPane
+			/*JOptionPane
 					.showMessageDialog(
 							w,
 							"Simulation is completed. Select one or more places and click on Petri Net Simulation in the left toolbar to visualize and animate the results!",
 							"Simulation done...",
-							JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.INFORMATION_MESSAGE);*/
 		} else {
 			JOptionPane.showMessageDialog(w,
 					"Environment variable OPENMODELICAHOME not found.",

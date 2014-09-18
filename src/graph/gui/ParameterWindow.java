@@ -120,8 +120,9 @@ public class ParameterWindow implements ActionListener{
 					return;
 				}
 			}
-			
-			gea.getParameters().add(new Parameter(name.getText(), Double.valueOf(value.getText()), unit.getText()));
+			p = new Parameter(name.getText(), Double.valueOf(value.getText()), unit.getText());
+			gea.getParameters().add(p);
+			pw.getChangedParameters().put(gea, p);
 			pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
 			panel.add(new JLabel(name.getText()), "span 2, gaptop 2 ");
 			panel.add(new JLabel(value.getText()),"span 4, gapright 4");
