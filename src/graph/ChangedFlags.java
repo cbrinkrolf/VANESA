@@ -16,7 +16,7 @@ public class ChangedFlags {
 	private boolean parameterChanged;
 	private boolean initialValueChanged;
 	private boolean edgeWeightChanged;
-	// boundaries, distribution, speed function, activation probability, dealy
+	// boundaries, distribution, speed function, activation probability, delay
 	private boolean pnPropertiesChanged;
 
 	public ChangedFlags() {
