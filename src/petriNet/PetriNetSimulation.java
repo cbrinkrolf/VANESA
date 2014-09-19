@@ -4,6 +4,7 @@ import graph.ChangedFlags;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
+import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.SimMenue;
@@ -30,6 +31,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import moOutput.MOoutput;
+import biologicalElements.GraphElementAbstract;
 import biologicalElements.PetriNet;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -45,16 +47,16 @@ public class PetriNetSimulation implements ActionListener {
 
 	private BufferedReader outputReader;
 	private HashMap<BiologicalEdgeAbstract, String> bea2key;
-	
+
 	private ChangedFlags flags;
 	private Server s;
 
 	public PetriNetSimulation() {
-		//menue = new SimMenue(this);
-		//flags = new ChangedFlags();
+		// menue = new SimMenue(this);
+		// flags = new ChangedFlags();
 	}
-	
-	public void showMenue(){
+
+	public void showMenue() {
 		menue = new SimMenue(this);
 	}
 
@@ -277,145 +279,145 @@ public class PetriNetSimulation implements ActionListener {
 
 			try {
 
-				//String stopTime = JOptionPane
-				//		.showInputDialog("Stop Time", "20");
-				//String intervals = JOptionPane.showInputDialog("Intervals",
-				//		"20");
+				// String stopTime = JOptionPane
+				// .showInputDialog("Stop Time", "20");
+				// String intervals = JOptionPane.showInputDialog("Intervals",
+				// "20");
 				long zstVorher;
 				long zstNachher;
 				Double stopTime = menue.getStopValue();
 				int intervals = menue.getIntervals();
 				// this.path = "C:\\OpenModelica1.9.1Nightly\\";
 				zstVorher = System.currentTimeMillis();
-				
-				if(flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged() || flags.isPnPropertiesChanged()){
-					System.out.println("really builded");
-				if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
-					pathCompiler += File.separator;
-				}
-				if (pathWorkingDirectory
-						.charAt(pathWorkingDirectory.length() - 1) != File.separatorChar) {
-					pathWorkingDirectory += File.separator;
-				}
 
-				pathWorkingDirectory += "vanesa" + File.separator;
-
-				File dir = new File(pathWorkingDirectory);
-
-				if (!dir.isDirectory()) {
-					dir.mkdir();
-				}
-
-				pathSim = pathWorkingDirectory + "simulation" + File.separator;
-				File dirSim = new File(pathSim);
-				if (dirSim.isDirectory()) {
-					FileUtils.cleanDirectory(dirSim);
-				} else {
-					new File(pathSim).mkdir();
-				}
-
-				boolean abort = false;
-				String missing = "";
-				if (!new File(pathWorkingDirectory + "PNlib.mo").exists()) {
-					abort = true;
-					missing += "PNlib.mo\n in " + pathWorkingDirectory;
-				}
-				/*
-				 * if (!new File(path + "dsmodel.c").exists()) { abort = true;
-				 * missing += "dsmodel.c\n"; } if (!new File(path +
-				 * "myrandom.c").exists()) { abort = true; missing +=
-				 * "myrandom.c\n"; }
-				 */
-				if (abort) {
-					JOptionPane
-							.showMessageDialog(
-									w,
-									"Following files which are required for simulation are missing in the simulation folder:\n"
-											+ missing, "Simulation aborted...",
-									JOptionPane.ERROR_MESSAGE);
-					w.setLockedPane(false);
-					return;
-				}
-
-				MOoutput mo = new MOoutput(new File(pathSim + "simulation.mo"),
-						graphInstance.getPathway());
-				bea2key = mo
-						.getBea2resultkey();
-				//
-				FileWriter fstream = new FileWriter(pathSim + "simulation.mos");
-				BufferedWriter out = new BufferedWriter(fstream);
-				pathSim = pathSim.replace('\\', '/');
-				out.write("cd(\"" + pathSim + "\");\r\n");
-				out.write("getErrorString();\r\n");
-				out.write("loadFile(\"../PNlib.mo\");\r\n");
-				out.write("getErrorString();\r\n");
-				out.write("loadFile(\"simulation.mo\");\r\n");
-				out.write("getErrorString();\r\n");
-				out.write("buildModel(simulation);\r\n");
-				out.write("getErrorString();\r\n");
-				// variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
-
-				// out.write("fileName=\"simulate.mat\";\r\n");
-				// out.write("CSVfile=\"simulate.csv\";\r\n");
-				// out.write("n=readTrajectorySize(fileName);\r\n");
-				// out.write("names = readTrajectoryNames(fileName);\r\n");
-				// out.write("traj=readTrajectory(fileName,names,n);\r\n");
-				// out.write("traj_transposed=transpose(traj);\r\n");
-				// out.write("DataFiles.writeCSVmatrix(CSVfile, names, traj_transposed);\r\n");
-				// out.write("exit();\r\n");
-				out.close();
-				stopped = false;
-				
-
-				// simT.run();
-
-				
-
-				String bin = null;
-
-				if (SystemUtils.IS_OS_WINDOWS) {
-					bin = pathCompiler + "bin" + File.separator + "omc.exe";
-				} else {
-					bin = pathCompiler + "bin" + File.separator + "omc";
-				}
-				final Process p = new ProcessBuilder(bin, pathSim
-						+ "simulation.mos").start();
-
-				// simulation.exe -override=outputFormat=ia -port=11111
-				// -lv=LOG_STATS
-
-				
-
-				// System.out.println(s);
-				boolean buildSuccess = true;
-				
-				Thread t = new Thread() {
-					public void run() {
-						long totalTime = 120000;
-						try {
-							for (long t = 0; t < totalTime; t += 1000) {
-								sleep(1000);
-							}
-							p.destroy();
-							// stopped = true;
-						} catch (Exception e) {
-						}
+				if (flags.isEdgeChanged() || flags.isNodeChanged()
+						|| flags.isEdgeWeightChanged()
+						|| flags.isPnPropertiesChanged()) {
+					System.out.println("Building new executable");
+					if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
+						pathCompiler += File.separator;
 					}
-				};
-				t.start();
-				p.waitFor();
-				try {
-					t.stop();
-				} catch (Exception e) {
-					buildSuccess = false;
+					if (pathWorkingDirectory.charAt(pathWorkingDirectory
+							.length() - 1) != File.separatorChar) {
+						pathWorkingDirectory += File.separator;
+					}
+
+					pathWorkingDirectory += "vanesa" + File.separator;
+
+					File dir = new File(pathWorkingDirectory);
+
+					if (!dir.isDirectory()) {
+						dir.mkdir();
+					}
+
+					pathSim = pathWorkingDirectory + "simulation"
+							+ File.separator;
+					File dirSim = new File(pathSim);
+					if (dirSim.isDirectory()) {
+						FileUtils.cleanDirectory(dirSim);
+					} else {
+						new File(pathSim).mkdir();
+					}
+
+					boolean abort = false;
+					String missing = "";
+					if (!new File(pathWorkingDirectory + "PNlib.mo").exists()) {
+						abort = true;
+						missing += "PNlib.mo\n in " + pathWorkingDirectory;
+					}
+					/*
+					 * if (!new File(path + "dsmodel.c").exists()) { abort =
+					 * true; missing += "dsmodel.c\n"; } if (!new File(path +
+					 * "myrandom.c").exists()) { abort = true; missing +=
+					 * "myrandom.c\n"; }
+					 */
+					if (abort) {
+						JOptionPane
+								.showMessageDialog(
+										w,
+										"Following files which are required for simulation are missing in the simulation folder:\n"
+												+ missing,
+										"Simulation aborted...",
+										JOptionPane.ERROR_MESSAGE);
+						w.setLockedPane(false);
+						return;
+					}
+
+					MOoutput mo = new MOoutput(new File(pathSim
+							+ "simulation.mo"), graphInstance.getPathway());
+					bea2key = mo.getBea2resultkey();
+					//
+					FileWriter fstream = new FileWriter(pathSim
+							+ "simulation.mos");
+					BufferedWriter out = new BufferedWriter(fstream);
+					pathSim = pathSim.replace('\\', '/');
+					out.write("cd(\"" + pathSim + "\");\r\n");
+					out.write("getErrorString();\r\n");
+					out.write("loadFile(\"../PNlib.mo\");\r\n");
+					out.write("getErrorString();\r\n");
+					out.write("loadFile(\"simulation.mo\");\r\n");
+					out.write("getErrorString();\r\n");
+					out.write("buildModel(simulation);\r\n");
+					out.write("getErrorString();\r\n");
+					// variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
+
+					// out.write("fileName=\"simulate.mat\";\r\n");
+					// out.write("CSVfile=\"simulate.csv\";\r\n");
+					// out.write("n=readTrajectorySize(fileName);\r\n");
+					// out.write("names = readTrajectoryNames(fileName);\r\n");
+					// out.write("traj=readTrajectory(fileName,names,n);\r\n");
+					// out.write("traj_transposed=transpose(traj);\r\n");
+					// out.write("DataFiles.writeCSVmatrix(CSVfile, names, traj_transposed);\r\n");
+					// out.write("exit();\r\n");
+					out.close();
+					stopped = false;
+
+					// simT.run();
+
+					String bin = null;
+
+					if (SystemUtils.IS_OS_WINDOWS) {
+						bin = pathCompiler + "bin" + File.separator + "omc.exe";
+					} else {
+						bin = pathCompiler + "bin" + File.separator + "omc";
+					}
+					final Process p = new ProcessBuilder(bin, pathSim
+							+ "simulation.mos").start();
+
+					// simulation.exe -override=outputFormat=ia -port=11111
+					// -lv=LOG_STATS
+
+					// System.out.println(s);
+					boolean buildSuccess = true;
+
+					Thread t = new Thread() {
+						public void run() {
+							long totalTime = 120000;
+							try {
+								for (long t = 0; t < totalTime; t += 1000) {
+									sleep(1000);
+								}
+								p.destroy();
+								// stopped = true;
+							} catch (Exception e) {
+							}
+						}
+					};
+					t.start();
+					p.waitFor();
+					try {
+						t.stop();
+					} catch (Exception e) {
+						buildSuccess = false;
+					}
+
+					if (buildSuccess) {
+						this.flags.reset();
+						graphInstance.getPathway().getChangedInitialValues().clear();
+						graphInstance.getPathway().getChangedParameters().clear();
+					}
+
 				}
-				
-				if(buildSuccess){
-					this.flags.reset();
-				}
-				
-				
-			}
 				s = new Server(bea2key);
 
 				s.test();
@@ -423,7 +425,7 @@ public class PetriNetSimulation implements ActionListener {
 				graphInstance.getPathway().setPetriNetSimulation(true);
 				w.initPCPGraphs();
 
-				System.out.println("stop: "+stopTime);
+				System.out.println("stop: " + stopTime);
 				Thread t1 = new Thread() {
 					public void run() {
 
@@ -431,25 +433,55 @@ public class PetriNetSimulation implements ActionListener {
 							ProcessBuilder pb = new ProcessBuilder();
 							boolean noEmmit = true;
 
+							String override = "\"-override=outputFormat=ia,stopTime="
+									+ stopTime
+									+ ",stepSize="
+									+ stopTime
+									/ intervals + ",tolerance=0.0001";
+							if (flags.isParameterChanged()) {
+
+								Iterator<Parameter> it = graphInstance
+										.getPathway().getChangedParameters()
+										.keySet().iterator();
+								GraphElementAbstract gea;
+								Parameter param;
+
+								while (it.hasNext()) {
+									param = it.next();
+									gea = graphInstance.getPathway()
+											.getChangedParameters().get(param);
+									BiologicalNodeAbstract bna;
+									if (gea instanceof BiologicalNodeAbstract) {
+										bna = (BiologicalNodeAbstract) gea;
+										override += ",'_" + bna.getName() + "_"
+												+ param.getName() + "'="
+												+ param.getValue();
+									}
+								}
+
+							}
+							
+							if(flags.isInitialValueChanged()){
+								Iterator<Place> it = graphInstance.getPathway().getChangedInitialValues().keySet().iterator();
+								Place p;
+								Double d;
+								while(it.hasNext()){
+									p = it.next();
+									d = graphInstance.getPathway().getChangedInitialValues().get(p);
+									override+=",'"+p.getName()+"'.startMarks="+d;
+								}
+							}
+
+							override += "\"";
+							System.out.println("override: " + override);
 							if (noEmmit) {
 								pb.command(pathSim + "simulation.exe",
-										"\"-override=outputFormat=ia,stopTime=" + stopTime
-						+ ",stepSize=" + stopTime/intervals
-						// only places
-						// +
-						// ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
-						+ ",tolerance=0.0001\"",
-										"-port=11111", "-noEventEmit",
-										"-lv=LOG_STATS");
+										override, "-port=11111",
+										"-noEventEmit", "-lv=LOG_STATS");
 							} else {
 								pb.command(pathSim + "simulation.exe",
-										"-override=\"outputFormat=ia,stopTime=" + stopTime
-						+ ",numberOfIntervals=" + intervals
-						// only places
-						// +
-						// ", outputFormat=\"csv\", variableFilter=\"^[a-zA-Z_0-9]*.t\");\r\n");
-						+ ",tolerance=0.0001\"",
-										"-port=11111", "-lv=LOG_STATS");
+										override, "-port=11111",
+										"-lv=LOG_STATS");
 							}
 							pb.redirectOutput();
 							pb.directory(new File(pathSim));
@@ -466,7 +498,8 @@ public class PetriNetSimulation implements ActionListener {
 
 				Thread t2 = new Thread() {
 					public void run() {
-						graphInstance.getPathway().getGraph().getVisualizationViewer().requestFocus();
+						graphInstance.getPathway().getGraph()
+								.getVisualizationViewer().requestFocus();
 						w.redrawGraphs();
 						Vector<Double> v = graphInstance.getPathway()
 								.getPetriNet().getTime();
@@ -620,12 +653,11 @@ public class PetriNetSimulation implements ActionListener {
 				return;
 			}
 			w.setLockedPane(false);
-			/*JOptionPane
-					.showMessageDialog(
-							w,
-							"Simulation is completed. Select one or more places and click on Petri Net Simulation in the left toolbar to visualize and animate the results!",
-							"Simulation done...",
-							JOptionPane.INFORMATION_MESSAGE);*/
+			/*
+			 * JOptionPane .showMessageDialog( w,
+			 * "Simulation is completed. Select one or more places and click on Petri Net Simulation in the left toolbar to visualize and animate the results!"
+			 * , "Simulation done...", JOptionPane.INFORMATION_MESSAGE);
+			 */
 		} else {
 			JOptionPane.showMessageDialog(w,
 					"Environment variable OPENMODELICAHOME not found.",
@@ -792,6 +824,7 @@ public class PetriNetSimulation implements ActionListener {
 		} else if (event.getActionCommand().equals("stop")) {
 			System.out.println("stop");
 			this.menue.stopped();
+			s.stop();
 			this.process.destroy();
 		}
 

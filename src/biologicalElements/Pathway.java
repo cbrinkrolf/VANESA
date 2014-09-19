@@ -149,8 +149,10 @@ public class Pathway implements Cloneable {
 	private Set<BiologicalNodeAbstract> openedSubPathways = new HashSet<BiologicalNodeAbstract>();
 
 	private HashMap<String, ChangedFlags> changedFlags = new HashMap<String, ChangedFlags>();
+
+	private HashMap<Parameter, GraphElementAbstract> changedParameters = new HashMap<Parameter, GraphElementAbstract>();
 	
-	private HashMap<GraphElementAbstract, Parameter> changedParameters = new HashMap<GraphElementAbstract, Parameter>();
+	private HashMap<Place, Double> changedInitialValues = new HashMap<Place, Double>();
 
 	// ---Functional Methods---
 
@@ -530,6 +532,7 @@ public class Pathway implements Cloneable {
 					this.petriNet
 							.setTransitions(this.petriNet.getTransitions() - 1);
 				}
+				this.handleChangeFlags(ChangedFlags.NODE_CHANGED);
 			} else {
 				BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) element;
 				// Pair p = bea.getEdge().getEndpoints();
@@ -551,6 +554,7 @@ public class Pathway implements Cloneable {
 			ids.remove(element.getID());
 			// System.out.println(biologicalElements.size());
 			biologicalElements.remove(element.getID() + "");
+			this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
 			// System.out.println(biologicalElements.size());
 		}
 	}
@@ -566,6 +570,7 @@ public class Pathway implements Cloneable {
 			biologicalElements.remove(bea.getID() + "");
 			// System.out.println(biologicalElements.size());
 		}
+		this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
 	}
 
 	/**
@@ -1584,7 +1589,7 @@ public class Pathway implements Cloneable {
 	public void handleChangeFlags(int flag) {
 		Iterator<ChangedFlags> it = this.changedFlags.values().iterator();
 		ChangedFlags cf;
-		
+
 		while (it.hasNext()) {
 			cf = it.next();
 			switch (flag) {
@@ -1607,24 +1612,32 @@ public class Pathway implements Cloneable {
 				cf.setPnPropertiesChanged(true);
 				break;
 			}
-			
+
 		}
 	}
-	
-	public ChangedFlags getChangedFlags(String key){
-		if(!this.changedFlags.containsKey(key)){
+
+	public ChangedFlags getChangedFlags(String key) {
+		if (!this.changedFlags.containsKey(key)) {
 			this.changedFlags.put(key, new ChangedFlags());
 		}
 		return changedFlags.get(key);
 	}
 
-	public HashMap<GraphElementAbstract, Parameter> getChangedParameters() {
+	public HashMap<Parameter, GraphElementAbstract> getChangedParameters() {
 		return changedParameters;
 	}
 
 	public void setChangedParameters(
-			HashMap<GraphElementAbstract, Parameter> changedParameters) {
+			HashMap<Parameter, GraphElementAbstract> changedParameters) {
 		this.changedParameters = changedParameters;
+	}
+
+	public HashMap<Place, Double> getChangedInitialValues() {
+		return changedInitialValues;
+	}
+
+	public void setChangedInitialValues(HashMap<Place, Double> changedInitialValues) {
+		this.changedInitialValues = changedInitialValues;
 	}
 
 }

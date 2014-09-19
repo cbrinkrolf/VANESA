@@ -394,5 +394,18 @@ public class Server {
 	public boolean isRunning() {
 		return this.running;
 	}
+	
+	public void stop(){
+		System.out.println("server destroyed");
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		running = false;
+		serverThread.stop();
+		serverThread.destroy();
+	}
 
 }

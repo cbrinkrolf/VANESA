@@ -14,8 +14,8 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 public class Place extends BiologicalNodeAbstract {
 
 	private double token = 0;
-	private double tokenMin = -1;
-	private double tokenMax = 100;
+	private double tokenMin = 0.0;
+	private double tokenMax = Double.MAX_VALUE;
 	private double tokenStart = 0;
 
 	private boolean discrete = true;

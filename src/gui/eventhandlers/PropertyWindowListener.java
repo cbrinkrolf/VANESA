@@ -155,6 +155,7 @@ public class PropertyWindowListener implements FocusListener {
 				p.setTokenStart(tokenStart);
 				p.setToken(p.getTokenStart());
 				pw.handleChangeFlags(ChangedFlags.INITIALVALUE_CHANGED);
+				pw.getChangedInitialValues().put(p, tokenStart);
 			}
 		} else if (source.equals("tokenMax")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource())
