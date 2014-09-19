@@ -225,8 +225,9 @@ public class PetriNetVertexDialog implements ActionListener {
 				if (petriElement.equals("discretePlace")) {
 					//System.out.println("anfang");
 					
-					Place p = new Place(label.getText(), name.getText(), 1.0, true);
 					number = (Number)token.getValue();
+					Place p = new Place(label.getText(), name.getText(), number.doubleValue(), true);
+					
 					if(number != null){
 						p.setToken(number.doubleValue());
 					}
@@ -244,7 +245,8 @@ public class PetriNetVertexDialog implements ActionListener {
 					}
 					pw.addVertex(p, point);
 				} else if (petriElement.equals("continuousPlace")) {
-					Place p = new Place(label.getText(), name.getText(), 1.0, false);
+					
+					Place p = new Place(label.getText(), name.getText(), 0.0, false);
 					number = (Number)token.getValue();
 					if(number != null){
 						p.setToken(number.doubleValue());
@@ -252,6 +254,7 @@ public class PetriNetVertexDialog implements ActionListener {
 					number = (Number)tokenStart.getValue();
 					if(number != null){
 						p.setTokenStart(number.doubleValue());
+						p.setToken(number.doubleValue());
 					}
 					number = (Number)tokenMin.getValue();
 					if(number != null){
