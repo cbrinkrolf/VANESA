@@ -2,6 +2,7 @@ package biologicalElements;
 
 import graph.ChangedFlags;
 import graph.filter.FilterSettings;
+import graph.gui.Boundary;
 import graph.gui.EdgeDeleteDialog;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
@@ -153,8 +154,11 @@ public class Pathway implements Cloneable {
 	private HashMap<Parameter, GraphElementAbstract> changedParameters = new HashMap<Parameter, GraphElementAbstract>();
 	
 	private HashMap<Place, Double> changedInitialValues = new HashMap<Place, Double>();
+	
+	private HashMap<Place, Boundary> changedBoundaries = new HashMap<Place, Boundary>();
 
 	// ---Functional Methods---
+
 
 	public Pathway(String name) {
 		this.title = name;
@@ -1611,6 +1615,9 @@ public class Pathway implements Cloneable {
 			case ChangedFlags.PNPROPERTIES_CHANGED:
 				cf.setPnPropertiesChanged(true);
 				break;
+			case ChangedFlags.BOUNDARIES_CHANGED:
+				cf.setBoundariesChanged(true);
+				break;
 			}
 
 		}
@@ -1638,6 +1645,14 @@ public class Pathway implements Cloneable {
 
 	public void setChangedInitialValues(HashMap<Place, Double> changedInitialValues) {
 		this.changedInitialValues = changedInitialValues;
+	}
+	
+	public HashMap<Place, Boundary> getChangedBoundaries() {
+		return changedBoundaries;
+	}
+
+	public void setChangedBoundaries(HashMap<Place, Boundary> changedBoundaries) {
+		this.changedBoundaries = changedBoundaries;
 	}
 
 }
