@@ -5,6 +5,7 @@ package gui.eventhandlers;
 //import edu.uci.ics.jung.visualization.Layout;
 import graph.ChangedFlags;
 import graph.GraphInstance;
+import graph.gui.Boundary;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindowSingleton;
 
@@ -141,7 +142,15 @@ public class PropertyWindowListener implements FocusListener {
 			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
 				double tokenMin = n.doubleValue();
 				p.setTokenMin(tokenMin);
-				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
+				Boundary b;
+				if(pw.getChangedBoundaries().containsKey(p)){
+					b = pw.getChangedBoundaries().get(p);
+				}else{
+					b = new Boundary();
+					pw.getChangedBoundaries().put(p, b);
+				}
+				b.setLowerBoundary(tokenMin);
 
 			}
 		} else if (source.equals("tokenStart")) {
@@ -164,7 +173,15 @@ public class PropertyWindowListener implements FocusListener {
 			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
 				double tokenMax = n.doubleValue();
 				p.setTokenMax(tokenMax);
-				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
+				Boundary b;
+				if(pw.getChangedBoundaries().containsKey(p)){
+					b = pw.getChangedBoundaries().get(p);
+				}else{
+					b = new Boundary();
+					pw.getChangedBoundaries().put(p, b);
+				}
+				b.setUpperBoundary(tokenMax);
 			}
 		}
 		// for Transitions

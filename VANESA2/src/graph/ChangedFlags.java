@@ -8,6 +8,7 @@ public class ChangedFlags {
 	public static final int INITIALVALUE_CHANGED = 3;
 	public static final int EDGEWEIGHT_CHANGED = 4;
 	public static final int PNPROPERTIES_CHANGED = 5;
+	public static final int BOUNDARIES_CHANGED = 6;
 
 	// added, deleted, renamed
 	private boolean nodeChanged;
@@ -16,8 +17,9 @@ public class ChangedFlags {
 	private boolean parameterChanged;
 	private boolean initialValueChanged;
 	private boolean edgeWeightChanged;
-	// boundaries, distribution, speed function, activation probability, delay
+	// distribution, speed function, activation probability, delay
 	private boolean pnPropertiesChanged;
+	private boolean boundariesChanged;
 
 	public ChangedFlags() {
 		this.nodeChanged = true;
@@ -25,6 +27,7 @@ public class ChangedFlags {
 		this.parameterChanged = true;
 		this.initialValueChanged = true;
 		this.edgeWeightChanged = true;
+		this.boundariesChanged = true;
 	}
 
 	public void reset() {
@@ -33,6 +36,7 @@ public class ChangedFlags {
 		this.parameterChanged = false;
 		this.initialValueChanged = false;
 		this.edgeWeightChanged = false;
+		this.boundariesChanged = false;
 	}
 
 	public boolean isNodeChanged() {
@@ -81,5 +85,13 @@ public class ChangedFlags {
 
 	public void setPnPropertiesChanged(boolean pnPropertiesChanged) {
 		this.pnPropertiesChanged = pnPropertiesChanged;
+	}
+
+	public boolean isBoundariesChanged() {
+		return boundariesChanged;
+	}
+
+	public void setBoundariesChanged(boolean boundariesChanged) {
+		this.boundariesChanged = boundariesChanged;
 	}
 }
