@@ -39,7 +39,8 @@ public class MyJFormattedTextField extends JFormattedTextField {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 		}
-		return super.getValue();
+		//this.setValue(((Number) super.getValue()).doubleValue());
+		return Math.abs(((Number)super.getValue()).doubleValue());
 	}
 
 }

@@ -4,6 +4,7 @@ import graph.ChangedFlags;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
+import graph.gui.Boundary;
 import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
@@ -415,6 +416,7 @@ public class PetriNetSimulation implements ActionListener {
 						this.flags.reset();
 						graphInstance.getPathway().getChangedInitialValues().clear();
 						graphInstance.getPathway().getChangedParameters().clear();
+						graphInstance.getPathway().getChangedBoundaries().clear();
 					}
 
 				}
@@ -470,6 +472,25 @@ public class PetriNetSimulation implements ActionListener {
 									d = graphInstance.getPathway().getChangedInitialValues().get(p);
 									override+=",'"+p.getName()+"'.startMarks="+d;
 								}
+							}
+							
+							if(flags.isBoundariesChanged()){
+								System.out.println("chaaaaanged");
+								Iterator<Place> it = graphInstance.getPathway().getChangedBoundaries().keySet().iterator();
+								Place p;
+								Boundary b;
+								while(it.hasNext()){
+									p = it.next();
+									b = graphInstance.getPathway().getChangedBoundaries().get(p);
+									if(b.isLowerBoundarySet()){
+										override+=",'"+p.getName()+"'.minMarks="+b.getLowerBoundary();
+									}
+									if(b.isUpperBoundarySet()){
+										override+=",'"+p.getName()+"'.maxMarks="+b.getUpperBoundary();
+									}
+									
+								}
+								
 							}
 
 							override += "\"";
