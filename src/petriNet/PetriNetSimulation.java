@@ -294,6 +294,15 @@ public class PetriNetSimulation implements ActionListener {
 				if (flags.isEdgeChanged() || flags.isNodeChanged()
 						|| flags.isEdgeWeightChanged()
 						|| flags.isPnPropertiesChanged()) {
+					System.out.println("edges changed: "
+							+ flags.isEdgeChanged());
+					System.out.println("nodes changed: "
+							+ flags.isNodeChanged());
+					System.out.println("edge weight changed: "
+							+ flags.isEdgeWeightChanged());
+					System.out.println("pn prop changed "
+							+ flags.isPnPropertiesChanged());
+
 					System.out.println("Building new executable");
 					if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
 						pathCompiler += File.separator;
@@ -414,9 +423,12 @@ public class PetriNetSimulation implements ActionListener {
 
 					if (buildSuccess) {
 						this.flags.reset();
-						graphInstance.getPathway().getChangedInitialValues().clear();
-						graphInstance.getPathway().getChangedParameters().clear();
-						graphInstance.getPathway().getChangedBoundaries().clear();
+						graphInstance.getPathway().getChangedInitialValues()
+								.clear();
+						graphInstance.getPathway().getChangedParameters()
+								.clear();
+						graphInstance.getPathway().getChangedBoundaries()
+								.clear();
 					}
 
 				}
@@ -462,35 +474,46 @@ public class PetriNetSimulation implements ActionListener {
 								}
 
 							}
-							
-							if(flags.isInitialValueChanged()){
-								Iterator<Place> it = graphInstance.getPathway().getChangedInitialValues().keySet().iterator();
+
+							if (flags.isInitialValueChanged()) {
+								Iterator<Place> it = graphInstance.getPathway()
+										.getChangedInitialValues().keySet()
+										.iterator();
 								Place p;
 								Double d;
-								while(it.hasNext()){
+								while (it.hasNext()) {
 									p = it.next();
-									d = graphInstance.getPathway().getChangedInitialValues().get(p);
-									override+=",'"+p.getName()+"'.startMarks="+d;
+									d = graphInstance.getPathway()
+											.getChangedInitialValues().get(p);
+									override += ",'" + p.getName()
+											+ "'.startMarks=" + d;
 								}
 							}
-							
-							if(flags.isBoundariesChanged()){
+
+							if (flags.isBoundariesChanged()) {
 								System.out.println("chaaaaanged");
-								Iterator<Place> it = graphInstance.getPathway().getChangedBoundaries().keySet().iterator();
+								Iterator<Place> it = graphInstance.getPathway()
+										.getChangedBoundaries().keySet()
+										.iterator();
 								Place p;
 								Boundary b;
-								while(it.hasNext()){
+								while (it.hasNext()) {
 									p = it.next();
-									b = graphInstance.getPathway().getChangedBoundaries().get(p);
-									if(b.isLowerBoundarySet()){
-										override+=",'"+p.getName()+"'.minMarks="+b.getLowerBoundary();
+									b = graphInstance.getPathway()
+											.getChangedBoundaries().get(p);
+									if (b.isLowerBoundarySet()) {
+										override += ",'" + p.getName()
+												+ "'.minMarks="
+												+ b.getLowerBoundary();
 									}
-									if(b.isUpperBoundarySet()){
-										override+=",'"+p.getName()+"'.maxMarks="+b.getUpperBoundary();
+									if (b.isUpperBoundarySet()) {
+										override += ",'" + p.getName()
+												+ "'.maxMarks="
+												+ b.getUpperBoundary();
 									}
-									
+
 								}
-								
+
 							}
 
 							override += "\"";
@@ -845,8 +868,12 @@ public class PetriNetSimulation implements ActionListener {
 		} else if (event.getActionCommand().equals("stop")) {
 			System.out.println("stop");
 			this.menue.stopped();
-			s.stop();
-			this.process.destroy();
+			if (s != null && s.isRunning()) {
+				s.stop();
+			}
+			if (process != null) {
+				this.process.destroy();
+			}
 		}
 
 	}
