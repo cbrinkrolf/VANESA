@@ -36,6 +36,7 @@ public class ChangedFlags {
 		this.parameterChanged = false;
 		this.initialValueChanged = false;
 		this.edgeWeightChanged = false;
+		this.pnPropertiesChanged = false;
 		this.boundariesChanged = false;
 	}
 
