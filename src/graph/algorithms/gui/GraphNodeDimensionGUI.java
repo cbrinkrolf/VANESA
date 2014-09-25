@@ -2,6 +2,7 @@ package graph.algorithms.gui;
 
 import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
+import graph.algorithms.NodeAttributeNames;
 
 import java.awt.Dimension;
 import java.awt.Event;
@@ -10,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+
 
 
 import javax.swing.JButton;
@@ -33,7 +35,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 
 	private JComboBox<String> chooseAlgorithm;
 	//private JButton weight;
-	private String[] algorithmNames = { "None","Node Degree", "Neighbor Degree", "Clique" };
+	private String[] algorithmNames = { "None","Node Degree", "Neighbor Degree", "Clique", "Assessment*" };
 	private int currentalgorithmindex = 0;
 	private JSpinner nodesizefromspinner, nodesizetospinner;
 	private SpinnerNumberModel frommodel, tomodel;
@@ -224,6 +226,90 @@ public class GraphNodeDimensionGUI implements ActionListener {
 				//DEBUG
 				//System.out.println("Node Weighting 3: Clique");
 				//MARTIN: Clique dimension rating
+				break;
+			case 4:
+				
+				//MARTIN Combination of topological values:
+				//Node degree, Neighbor degree, Cycles and Cliques
+				ratings = new Hashtable<>();
+				
+				c = new NetworkProperties();
+				itn = c.getPathway().getAllNodes().iterator();
+				
+
+				
+
+				double assessment = 0d,
+						nodedegree[]= {0d,Double.MAX_VALUE,Double.MIN_VALUE},
+						neighbordegree[] = {0d,Double.MAX_VALUE,Double.MIN_VALUE},
+						cycles[] = {0d,Double.MAX_VALUE,Double.MIN_VALUE},
+						cliques[] = {0d,Double.MAX_VALUE,Double.MIN_VALUE};
+				
+				//get min and max values
+				while(itn.hasNext()){				
+					bna = itn.next();
+					neighbordegree[0] = bna.getNodeAttributeByName(NodeAttributeNames.NEIGHBOR_DEGREE).getDoublevalue(); 
+					nodedegree[0] = bna.getNodeAttributeByName(NodeAttributeNames.NODE_DEGREE).getDoublevalue();
+					if(bna.getNodeAttributeByName(NodeAttributeNames.CYCLES)!=null)
+						cycles[0] = bna.getNodeAttributeByName(NodeAttributeNames.CYCLES).getDoublevalue();
+					if(bna.getNodeAttributeByName(NodeAttributeNames.CLIQUES)!=null)
+						cliques[0] = bna.getNodeAttributeByName(NodeAttributeNames.CLIQUES).getDoublevalue();
+					
+					if(neighbordegree[0]<neighbordegree[1])
+						neighbordegree[1]=neighbordegree[0];
+					if(neighbordegree[0]>neighbordegree[2])
+						neighbordegree[2]=neighbordegree[0];
+					
+					if(nodedegree[0]<nodedegree[1])
+						nodedegree[1]=nodedegree[0];
+					if(nodedegree[0]>nodedegree[2])
+						nodedegree[2]=nodedegree[0];
+					
+					if(cycles[0]<cycles[1])
+						cycles[1]=cycles[0];
+					if(cycles[0]>cycles[2])
+						cycles[2]=cycles[0];
+					
+					if(cliques[0]<cliques[1])
+						cliques[1]=cliques[0];
+					if(cliques[0]>cliques[2])
+						cliques[2]=cliques[0];
+					
+				}
+				
+				
+				
+				
+				
+				itn = c.getPathway().getAllNodes().iterator();
+				while(itn.hasNext()){
+					assessment = 1d;
+					
+					bna = itn.next();
+					neighbordegree[0] = bna.getNodeAttributeByName(NodeAttributeNames.NEIGHBOR_DEGREE).getDoublevalue(); 
+					nodedegree[0] = bna.getNodeAttributeByName(NodeAttributeNames.NODE_DEGREE).getDoublevalue();
+					if(bna.getNodeAttributeByName(NodeAttributeNames.CYCLES)!=null)
+						cycles[0] = bna.getNodeAttributeByName(NodeAttributeNames.CYCLES).getDoublevalue();
+					if(bna.getNodeAttributeByName(NodeAttributeNames.CLIQUES)!=null)
+						cliques[0] = bna.getNodeAttributeByName(NodeAttributeNames.CLIQUES).getDoublevalue();
+					
+					//Linear normalization:
+					// x-min / max-min
+					assessment += 10d*(neighbordegree[0]-neighbordegree[1])/ (neighbordegree[2]-neighbordegree[1]);
+					assessment += 10d*(nodedegree[0]-nodedegree[1])/ (nodedegree[2]-nodedegree[1]);
+					assessment += 40d*(cycles[0]-cycles[1])/ (cycles[2]-cycles[1]);
+					assessment += 40d*(cliques[0]-cliques[1])/ (cliques[2]-cliques[1]);
+					
+					System.out.println(assessment);
+					ratings.put(bna, assessment);					
+				}
+				
+				//calclulate Weighting
+				transformRatingToWeighting((double)nodesizefromspinner.getValue(),(double)nodesizetospinner.getValue());		
+				
+				GraphInstance.getMyGraph().getVisualizationViewer().repaint();				
+				
+				
 				break;
 				
 			default:
