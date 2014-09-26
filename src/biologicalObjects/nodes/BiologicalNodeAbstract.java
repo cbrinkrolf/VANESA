@@ -1392,11 +1392,15 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @param stringvalue
 	 */
 	public void addAttribute(int nodeAttributeType, String name, String stringvalue){
-		nodeAttributes.add(new NodeAttribute(nodeAttributeType, name, stringvalue));
+		this.nodeAttributes.add(new NodeAttribute(nodeAttributeType, name, stringvalue));
 	}
 	
 	public HashSet<NodeAttribute> getNodeAttributes(){
-		return nodeAttributes;
+		return this.nodeAttributes;
+	}
+	
+	public void resetNodeAttributes(){
+		this.nodeAttributes = new HashSet<BiologicalNodeAbstract.NodeAttribute>();
 	}
 	
 	/**
@@ -1429,7 +1433,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * Node Attributes are used to save node specific properties which can be used for coloring, analysis or other purposes.
 	 * 
 	 */
-	class NodeAttribute{
+	public class NodeAttribute{
 		private int type; //FROM NodeAttributeTypes
 		private String name;
 		private double doublevalue;
@@ -1544,11 +1548,5 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @author mlewinsk
 	 *
 	 * Attribute Types define the general category of the attribute
-	 */
-	class NodeAttributeTypes{
-		public static final int EXPERIMENT =1;
-		public static final int GRAPH_PROPERTY =2;
-		public static final int COLOR =3;
-	}
-	
+	 */	
 }
