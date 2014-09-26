@@ -1,9 +1,12 @@
 package graph.algorithms.gui;
 
+import graph.ChangedFlags;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
+import graph.algorithms.NodeAttributeNames;
+import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
@@ -172,59 +175,173 @@ public class GraphColoringGUI implements ActionListener {
 		itn = np.getPathway().getAllNodes().iterator();
 		coloring = new Hashtable<BiologicalNodeAbstract, Double>();
 
+		int nodes = np.getPathway().countNodes(),
+		nodewithAttribute = 0;
+		
 		switch (currentalgorithmindex) {
 		case NODE_DEGREE:
-			while (itn.hasNext()) {
-				bna = itn.next();
-				coloring.put(bna,
-						(double) np.getNodeDegree(np.getNodeAssignment(bna)));
+//			//CHANGE 			
+//			Pathway pwxxx =  np.getPathway();
+//			
+//			
+//			ChangedFlags cf = pwxxx.getChangedFlags("graphanalysis");
+//			System.out.println(cf.isNodeChanged());
+//			cf.reset();
+//			System.out.println(cf.isNodeChanged());
+			
+			//check for existance
+			nodes = np.getPathway().countNodes();
+			nodewithAttribute = 0;
+			for(BiologicalNodeAbstract bn: np.getPathway().getAllNodes()){
+				if(bn.getNodeAttributeByName(NodeAttributeNames.NODE_DEGREE)!= null){
+					nodewithAttribute++;
+				}
 			}
+			
+			//not existant
+			if(nodewithAttribute!=nodes){
+				//get current node degree values
+				while (itn.hasNext()) {
+					bna = itn.next();
+					coloring.put(bna, (double) np.getNodeDegree(np
+							.getNodeAssignment(bna)));
+					// saving
+					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
+							NodeAttributeNames.NODE_DEGREE,
+							np.getNodeDegree(np.getNodeAssignment(bna)));
+				}
+				
+			//already exists
+			}else{
+				while (itn.hasNext()) {
+					bna = itn.next();
+					coloring.put(bna, bna.getNodeAttributeByName(NodeAttributeNames.NODE_DEGREE).getDoublevalue());
+				}
+			}
+			
 			break;
+			
 		case NEIGHBOR_DEGREE:
-			coloring = np.averageNeighbourDegreeTable();
+			//check for existance
+			nodes = np.getPathway().countNodes();
+			nodewithAttribute = 0;
+			for(BiologicalNodeAbstract bn: np.getPathway().getAllNodes()){
+				if(bn.getNodeAttributeByName(NodeAttributeNames.NEIGHBOR_DEGREE)!= null){
+					nodewithAttribute++;
+				}
+			}
+			
+			//not existant
+			if(nodewithAttribute!=nodes){
+				coloring = np.averageNeighbourDegreeTable();
+				
+				//saving
+				while (itn.hasNext()) {
+					bna = itn.next();
+					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
+							NodeAttributeNames.NEIGHBOR_DEGREE,
+							coloring.get(bna));
+				}
+				
+				
+			//already exists	
+			}else{
+				while (itn.hasNext()) {
+					bna = itn.next();
+					coloring.put(bna, bna.getNodeAttributeByName(NodeAttributeNames.NEIGHBOR_DEGREE).getDoublevalue());
+				}
+			}
+			
+			
 			break;
 		case CYCLES:
-			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
-			mw.setEnable(false);
-			mw.setLockedPane(true);
-			progressbar = new ProgressBar();
-			progressbar.init(100, "Computing", true);
-			progressbar.setProgressBarString("Getting cluster results");
-
-			// compute values over RMI
-			try {
-				helper = new ComputeCallback(this);
-				ClusterComputeThread rmicycles = new ClusterComputeThread(
-						JobTypes.CYCLE_JOB_OCCURRENCE, helper);
-				rmicycles.setAdjMatrix(np.getAdjacencyMatrix());
-				rmicycles.start();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			
+			//check for existance
+			nodewithAttribute = 0;
+			for(BiologicalNodeAbstract bn: np.getPathway().getAllNodes()){
+				if(bn.getNodeAttributeByName(NodeAttributeNames.CYCLES)!= null){
+					nodewithAttribute++;
+				}
 			}
+			
+			//not existant
+			if(nodewithAttribute == 0){
+				// Lock UI and initiate Progress Bar
+				mw = MainWindowSingleton.getInstance();
+				mw.setEnable(false);
+				mw.setLockedPane(true);
+				progressbar = new ProgressBar();
+				progressbar.init(100, "Computing", true);
+				progressbar.setProgressBarString("Getting cluster results");
+
+				// compute values over RMI
+				try {
+					helper = new ComputeCallback(this);
+					ClusterComputeThread rmicycles = new ClusterComputeThread(
+							JobTypes.CYCLE_JOB_OCCURRENCE, helper);
+					rmicycles.setAdjMatrix(np.getAdjacencyMatrix());
+					rmicycles.start();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//Saving in different thread
+				
+			//already exists
+			}else{
+				while (itn.hasNext()) {
+					bna = itn.next();
+					if(bna.hasAttributeByName(NodeAttributeNames.CYCLES)){
+						coloring.put(bna, bna.getNodeAttributeByName(NodeAttributeNames.CYCLES).getDoublevalue());
+					}
+				}				
+			}
+			
+			
+			
 
 			break;
 		case CLIQUES:
-			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
-			mw.setEnable(false);
-			mw.setLockedPane(true);
-			progressbar = new ProgressBar();
-			progressbar.init(100, "Computing", true);
-			progressbar.setProgressBarString("Getting cluster results");
-
-			// compute values over RMI
-			try {
-				helper = new ComputeCallback(this);
-				ClusterComputeThread rmicliques = new ClusterComputeThread(
-						JobTypes.CLIQUE_JOB_OCCURRENCE, helper);
-				rmicliques.setAdjMatrix(np.getAdjacencyMatrix());
-				rmicliques.start();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			
+			//check for existance
+			nodewithAttribute = 0;
+			for(BiologicalNodeAbstract bn: np.getPathway().getAllNodes()){
+				if(bn.getNodeAttributeByName(NodeAttributeNames.CLIQUES)!= null){
+					nodewithAttribute++;
+				}
 			}
+			
+			//not existant
+			if(nodewithAttribute == 0){
+				// Lock UI and initiate Progress Bar
+				mw = MainWindowSingleton.getInstance();
+				mw.setEnable(false);
+				mw.setLockedPane(true);
+				progressbar = new ProgressBar();
+				progressbar.init(100, "Computing", true);
+				progressbar.setProgressBarString("Getting cluster results");
+
+				// compute values over RMI
+				try {
+					helper = new ComputeCallback(this);
+					ClusterComputeThread rmicliques = new ClusterComputeThread(
+							JobTypes.CLIQUE_JOB_OCCURRENCE, helper);
+					rmicliques.setAdjMatrix(np.getAdjacencyMatrix());
+					rmicliques.start();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else{
+				while (itn.hasNext()) {
+					bna = itn.next();
+					if(bna.hasAttributeByName(NodeAttributeNames.CLIQUES)){
+						coloring.put(bna, bna.getNodeAttributeByName(NodeAttributeNames.CLIQUES).getDoublevalue());
+					}
+				}							
+			}
+			
+			
 
 			break;
 		case FRLAYOUT:
@@ -451,6 +568,7 @@ public class GraphColoringGUI implements ActionListener {
 
 	public void returnComputeData(Hashtable<Integer, Double> table, int jobtype) {
 
+		BiologicalNodeAbstract bna;
 		// Determine jobtype and behaviour
 		switch (jobtype) {
 		case JobTypes.CYCLE_JOB_OCCURRENCE:
@@ -469,7 +587,12 @@ public class GraphColoringGUI implements ActionListener {
 					value = entry.getValue();
 					// debug
 					// System.out.println(key + " " + value);
-					coloring.put(np.getNodeAssignmentbackwards(key), value);
+					bna = np.getNodeAssignmentbackwards(key);
+					coloring.put(bna, value);
+					//saving
+					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
+							NodeAttributeNames.CYCLES,
+							coloring.get(bna));
 				}
 
 			}
@@ -492,7 +615,12 @@ public class GraphColoringGUI implements ActionListener {
 					value = entry.getValue();
 					// debug
 					// System.out.println(key + " " + value);
-					coloring.put(np.getNodeAssignmentbackwards(key), value);
+					bna = np.getNodeAssignmentbackwards(key);
+					coloring.put(bna, value);
+					//saving
+					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
+							NodeAttributeNames.CLIQUES,
+							coloring.get(bna));
 				}
 			}
 
