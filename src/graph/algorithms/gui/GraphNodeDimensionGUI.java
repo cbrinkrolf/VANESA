@@ -186,11 +186,8 @@ public class GraphNodeDimensionGUI implements ActionListener {
 				//DEBUG
 				//System.out.println("Node Weighting 0: None");
 				//Standard Nodesize to 1
-				itn = c.getPathway().getAllNodes().iterator();
-				while(itn.hasNext()){
-					bna = itn.next();
-					bna.setNodesize(1.0d);
-				}
+				GraphInstance.getMyGraph().getAllVertices().stream().
+					forEach(bna -> bna.setNodesize(1.0d));
 				nodesizefromspinner.setEnabled(false);
 				nodesizetospinner.setEnabled(false);
 				resizebutton.setEnabled(false);
