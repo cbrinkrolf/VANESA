@@ -27,7 +27,6 @@ import javax.swing.SwingWorker;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
@@ -43,6 +42,7 @@ import edu.uci.ics.jung.visualization.contrib.CircleLayout;
 import edu.uci.ics.jung.visualization.contrib.KKLayout;*/
 import graph.GraphInstance;
 import graph.layouts.gemLayout.GEMLayoutConfig;
+import graph.layouts.hebLayout.HEBLayoutConfig;
 import gui.RangeSelector;
 
 /**
@@ -106,6 +106,7 @@ public class LayoutConfig extends JPanel implements ActionListener {
 		}
 		//addTab(new MDForceLayoutConfig());
 		addTab(new ConfigPanel(CircleLayout.class));
+		addTab(HEBLayoutConfig.getInstance());
 		addTab(GEMLayoutConfig.getInstance());
 		addTab(new ConfigPanel(FRLayout.class));
 		addTab(new ConfigPanel(KKLayout.class));
