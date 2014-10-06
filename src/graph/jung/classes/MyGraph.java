@@ -72,6 +72,7 @@ import graph.jung.graphDrawing.MyVertexStringer;
 import graph.jung.graphDrawing.MyVertexStrokeHighlighting;
 import graph.layouts.GraphCenter;
 import graph.layouts.gemLayout.GEMLayout;
+import graph.layouts.hebLayout.HEBLayout;
 import gui.HeatgraphLayer;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
@@ -1009,6 +1010,10 @@ public class MyGraph {
 	public void changeToGEMLayout() {
 		changeToLayout(new GEMLayout(g));
 
+	}
+	
+	public void changeToHEBLayout() {
+		changeToLayout(new HEBLayout(g));
 	}
 
 	// public void changeToMDForceLayout() {
