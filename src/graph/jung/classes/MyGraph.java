@@ -1013,7 +1013,13 @@ public class MyGraph {
 	}
 	
 	public void changeToHEBLayout() {
-		changeToLayout(new HEBLayout(g));
+		HEBLayout l = new HEBLayout(g);
+		l.groupNodes();
+		changeToLayout(l);
+//		System.out.println("Radius: " + l.getRadius());
+//		for(BiologicalNodeAbstract bna : getAllVertices()){
+//			System.out.println(bna.getLabel() + ": " + l.getX(bna) + "," + l.getY(bna));
+//		}
 	}
 
 	// public void changeToMDForceLayout() {
