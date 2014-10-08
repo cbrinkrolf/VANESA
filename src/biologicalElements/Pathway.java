@@ -84,6 +84,8 @@ import biologicalObjects.nodes.TranscriptionFactor;
 import edu.uci.ics.jung.graph.util.Pair;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.utils.Pair;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 public class Pathway implements Cloneable {
 
@@ -152,13 +154,12 @@ public class Pathway implements Cloneable {
 	private HashMap<String, ChangedFlags> changedFlags = new HashMap<String, ChangedFlags>();
 
 	private HashMap<Parameter, GraphElementAbstract> changedParameters = new HashMap<Parameter, GraphElementAbstract>();
-	
+
 	private HashMap<Place, Double> changedInitialValues = new HashMap<Place, Double>();
-	
+
 	private HashMap<Place, Boundary> changedBoundaries = new HashMap<Place, Boundary>();
 
 	// ---Functional Methods---
-
 
 	public Pathway(String name) {
 		this.title = name;
@@ -1643,10 +1644,11 @@ public class Pathway implements Cloneable {
 		return changedInitialValues;
 	}
 
-	public void setChangedInitialValues(HashMap<Place, Double> changedInitialValues) {
+	public void setChangedInitialValues(
+			HashMap<Place, Double> changedInitialValues) {
 		this.changedInitialValues = changedInitialValues;
 	}
-	
+
 	public HashMap<Place, Boundary> getChangedBoundaries() {
 		return changedBoundaries;
 	}
@@ -1655,4 +1657,23 @@ public class Pathway implements Cloneable {
 		this.changedBoundaries = changedBoundaries;
 	}
 
+	public void stretchGraph(double factor) {
+
+		BiologicalNodeAbstract bna;
+		Point2D p;
+		Iterator<BiologicalNodeAbstract> it = getAllNodes().iterator();
+		while (it.hasNext()) {
+			bna = it.next();
+
+			p = getGraph().getVertexLocation(bna);
+
+			graph.getVisualizationViewer()
+					.getModel()
+					.getGraphLayout()
+					.setLocation(
+							bna,
+							new Point2D.Double(p.getX() * factor, p.getY()
+									* factor));
+		}
+	}
 }

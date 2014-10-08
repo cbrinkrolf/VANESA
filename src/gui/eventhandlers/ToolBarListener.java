@@ -102,7 +102,16 @@ public class ToolBarListener implements ActionListener {
 				MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 				g.zoomOut();
 			}
-		} else if ("edit".equals(event)) {
+		} else if("compressEdges".equals(event)){ 
+			if (con.containsPathway()) {
+				con.getPathway(w.getCurrentPathway()).stretchGraph(0.9);
+			}
+		
+		} else if("stretchEdges".equals(event)){
+			if (con.containsPathway()) {
+				con.getPathway(w.getCurrentPathway()).stretchGraph(1.1);
+			}
+		}else if ("edit".equals(event)) {
 			if (con.containsPathway()) {
 				con.changeMouseFunction("edit");
 				MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();

@@ -221,7 +221,17 @@ public class ToolBar {
 		fullScreen.setToolTipText("Full screen");
 		fullScreen.setActionCommand("full screen");
 		fullScreen.addActionListener(toolBarListener);
-
+		
+		JButton stretchEdges = new JButton("Stretch");
+		stretchEdges.setToolTipText("Stretch edge length");
+		stretchEdges.setActionCommand("stretchEdges");
+		stretchEdges.addActionListener(toolBarListener);
+		
+		JButton compressEdges = new JButton("Compress");
+		compressEdges.setToolTipText("Compress edge length");
+		compressEdges.setActionCommand("compressEdges");
+		compressEdges.addActionListener(toolBarListener);
+		
 		JButton merge = new JButton(new ImageIcon(
 				imagePath.getPath("maximize.png")));
 		merge.setToolTipText("Compare / Align graphs");
@@ -289,6 +299,9 @@ public class ToolBar {
 		viewPortControls.add(center);
 		viewPortControls.add(zoomIn);
 		viewPortControls.add(zoomOut);
+		viewPortControls.add(compressEdges);
+		viewPortControls.add(stretchEdges); 
+		
 		if (DeveloperClass.isDeveloperStatus) {
 			viewPortControls.add(dimView);
 		}
