@@ -1035,6 +1035,26 @@ public class MyGraph {
 	// this.clusteringLayout.addSubLayout(sub);
 	// }
 	// }
+	
+	public void updateLayout(){
+		if(layout instanceof HEBLayout){
+			changeToHEBLayout();
+		} else if (layout instanceof GEMLayout){
+			changeToGEMLayout();
+		} else if (layout instanceof StaticLayout){
+			changeToStaticLayout();
+		} else if (layout instanceof CircleLayout){
+			changeToCircleLayout();
+		} else if (layout instanceof SpringLayout){
+			changeToSpringLayout();
+		} else if (layout instanceof ISOMLayout){
+			changeToISOMLayout();
+		} else if (layout instanceof FRLayout){
+			changeToFRLayout();
+		} else if (layout instanceof KKLayout){
+			changeToKKLayout();
+		}
+	}
 
 	private void changeToLayout(
 			AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout) {
