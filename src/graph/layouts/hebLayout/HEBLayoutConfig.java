@@ -9,20 +9,24 @@ import graph.layouts.gemLayout.GEMLayoutConfig;
 
 public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 	
-	public static int GROUP_DISTANCE_FACTOR = 3;
+	private static HEBLayoutConfig instance;
+
+	public static int GROUP_DISTANCE_FACTOR = 5;
 	
 	public HEBLayoutConfig() {
 		super(HEBLayout.class);
 		// TODO Auto-generated constructor stub
 	}
-
-	private static HEBLayoutConfig instance;
 	
 	public static HEBLayoutConfig getInstance() {
 		if(instance == null){
 			instance = new HEBLayoutConfig();
 		}
 		return instance;
+	}
+	
+	public static double nodeDistance(int groups, int nodes){
+		return 2*Math.PI / ((GROUP_DISTANCE_FACTOR - 1)*groups+nodes);
 	}
 
 	@Override
