@@ -1013,13 +1013,7 @@ public class MyGraph {
 	}
 	
 	public void changeToHEBLayout() {
-		HEBLayout l = new HEBLayout(g);
-		l.groupNodes();
-		changeToLayout(l);
-//		System.out.println("Radius: " + l.getRadius());
-//		for(BiologicalNodeAbstract bna : getAllVertices()){
-//			System.out.println(bna.getLabel() + ": " + l.getX(bna) + "," + l.getY(bna));
-//		}
+		changeToLayout(new HEBLayout(g));
 	}
 
 	// public void changeToMDForceLayout() {
@@ -1040,19 +1034,19 @@ public class MyGraph {
 		if(layout instanceof HEBLayout){
 			changeToHEBLayout();
 		} else if (layout instanceof GEMLayout){
-			changeToGEMLayout();
+			//changeToGEMLayout();
 		} else if (layout instanceof StaticLayout){
-			changeToStaticLayout();
+			//changeToStaticLayout();
 		} else if (layout instanceof CircleLayout){
 			changeToCircleLayout();
 		} else if (layout instanceof SpringLayout){
-			changeToSpringLayout();
+			//changeToSpringLayout();
 		} else if (layout instanceof ISOMLayout){
-			changeToISOMLayout();
+			//changeToISOMLayout();
 		} else if (layout instanceof FRLayout){
-			changeToFRLayout();
+			//changeToFRLayout();
 		} else if (layout instanceof KKLayout){
-			changeToKKLayout();
+			//changeToKKLayout();
 		}
 	}
 
