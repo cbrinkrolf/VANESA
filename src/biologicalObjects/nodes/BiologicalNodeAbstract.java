@@ -758,6 +758,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		} else {
 			getRootPathway().addToOpenedSubPathways(this);
 		}
+		
+		currentGraph.getGraph().updateLayout();
 	}
 	
 	/**
@@ -791,6 +793,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		} else {
 			getRootPathway().removeFromOpenedSubPathways(this);
 		}
+		currentGraph.getGraph().updateLayout();
 	}
 
 

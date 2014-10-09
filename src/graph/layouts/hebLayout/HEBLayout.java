@@ -95,14 +95,14 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
                     int group_no = 0;
                     int vertex_no = 0;
                     //distance between two groups (added to small distance between two nodes)
-                    double largeDistance = 2*2*Math.PI / (2*bnaGroups.size()+vertex_ordered_list.size());
-                    double smallDistance = 2*Math.PI / (2*bnaGroups.size()+vertex_ordered_list.size());
+                    final double nodeDistance = 2*Math.PI / (2*bnaGroups.size()+vertex_ordered_list.size());
+                    final double groupDistance = (HEBLayoutConfig.GROUP_DISTANCE_FACTOR-1)*nodeDistance;
                     for (Set<BiologicalNodeAbstract> group : bnaGroups)
                     {
                     	for(BiologicalNodeAbstract v : group){
                     		apply(v);
 
-                            double angle = group_no*largeDistance+vertex_no*smallDistance;
+                            double angle = group_no*groupDistance+vertex_no*nodeDistance;
 
                             GraphInstance.getMyGraph().moveVertex(v, Math.cos(angle) * getRadius() + width / 2,
                                             Math.sin(angle) * getRadius() + height / 2);
@@ -115,6 +115,10 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
                     }
             }
     }
+	
+	public void reset(){
+		initialize();
+	}
 	
 	@Override
     protected CircleVertexData getCircleData(BiologicalNodeAbstract v) {
