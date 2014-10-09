@@ -19,9 +19,9 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 	
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph;
 	private Set<Set<BiologicalNodeAbstract>> bnaGroups;
-	private List<BiologicalNodeAbstract> vertex_ordered_list;
+	private Set<BiologicalNodeAbstract> graphNodes;
 	
-	Map<BiologicalNodeAbstract, CircleVertexData> circleVertexDataMap =
+	protected Map<BiologicalNodeAbstract, CircleVertexData> circleVertexDataMap =
            new HashMap<BiologicalNodeAbstract, CircleVertexData>();
 
 
@@ -29,15 +29,14 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 	public HEBLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		super(g);
 		graph = g;
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * Build groups with nodes of the same parent node.
+	 * @author tloka
 	 */
 	public void groupNodes(){
-		//Nodes in the graph.
-		Set<BiologicalNodeAbstract> graphNodes = new HashSet<BiologicalNodeAbstract>();
+		graphNodes = new HashSet<BiologicalNodeAbstract>();
 		graphNodes.addAll(graph.getVertices());
 
 		if(graphNodes.size()<2){return;}
@@ -65,14 +64,6 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 				bnaGroup.add(bna);
 			}
 		}
-
-		vertex_ordered_list = new Vector<BiologicalNodeAbstract>();
-		for(Set<BiologicalNodeAbstract> subSet : bnaGroups){
-			for(BiologicalNodeAbstract bna : subSet){
-				vertex_ordered_list.add(bna);
-			}
-		}
-		setVertexOrder(vertex_ordered_list);
 	}
 	
 	@Override
@@ -82,37 +73,39 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
            
             if (d != null)
             {
-                if (vertex_ordered_list == null)
-                    setVertexOrder(new Vector<BiologicalNodeAbstract>(getGraph().getVertices()));
+                if (bnaGroups == null){
+                    groupNodes();
+                }
 
-                    double height = d.getHeight();
-                    double width = d.getWidth();
+                double height = d.getHeight();
+                double width = d.getWidth();
 
-                    if (getRadius() <= 0) {
-                            setRadius(0.45 * (height < width ? height : width));
-                    }
+                if (getRadius() <= 0) {
+                	setRadius(0.45 * (height < width ? height : width));
+                }
 
-                    int group_no = 0;
-                    int vertex_no = 0;
-                    //distance between two groups (added to small distance between two nodes)
-                    final double nodeDistance = 2*Math.PI / (2*bnaGroups.size()+vertex_ordered_list.size());
-                    final double groupDistance = (HEBLayoutConfig.GROUP_DISTANCE_FACTOR-1)*nodeDistance;
-                    for (Set<BiologicalNodeAbstract> group : bnaGroups)
-                    {
-                    	for(BiologicalNodeAbstract v : group){
-                    		apply(v);
+                int group_no = 0;
+                int vertex_no = 0;
+                
+                //distance between two groups (added to small distance between two nodes)
+                final double nodeDistance = HEBLayoutConfig.nodeDistance(bnaGroups.size(), graphNodes.size());
+                System.out.println(HEBLayoutConfig.GROUP_DISTANCE_FACTOR);
+                System.out.println(nodeDistance);
+                final double groupDistance = (HEBLayoutConfig.GROUP_DISTANCE_FACTOR-1)*nodeDistance;
+                for (Set<BiologicalNodeAbstract> group : bnaGroups){
+                	for(BiologicalNodeAbstract v : group){
+                		apply(v);
+                		double angle = group_no*groupDistance+vertex_no*nodeDistance;
+                		GraphInstance.getMyGraph().moveVertex(v, 
+                				Math.cos(angle) * getRadius() + width / 2,
+                				Math.sin(angle) * getRadius() + height / 2);
 
-                            double angle = group_no*groupDistance+vertex_no*nodeDistance;
-
-                            GraphInstance.getMyGraph().moveVertex(v, Math.cos(angle) * getRadius() + width / 2,
-                                            Math.sin(angle) * getRadius() + height / 2);
-
-                            CircleVertexData data = getCircleData(v);
-                            data.setAngle(angle);
-                            vertex_no++;
-                    	}
-                        group_no++;
-                    }
+                		CircleVertexData data = getCircleData(v);
+                		data.setAngle(angle);
+                		vertex_no++;
+                	}
+                    group_no++;
+                }
             }
     }
 	

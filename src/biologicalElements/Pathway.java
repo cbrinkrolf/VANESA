@@ -1461,6 +1461,9 @@ public class Pathway implements Cloneable {
 					}
 					thisNode.getEnvironment().remove(node);
 				}
+				
+				getGraph().updateLayout();
+
 				break;
 
 			case COARSED:
@@ -1486,6 +1489,9 @@ public class Pathway implements Cloneable {
 				}
 
 				edgeSet.addAll(node.getParentNode().getConnectingEdges());
+				
+				getGraph().updateLayout();
+
 				break;
 
 			case CONNECTIONMODIFIED:
@@ -1503,6 +1509,9 @@ public class Pathway implements Cloneable {
 				if (thisNode.getBorder().contains(node)) {
 					thisNode.getBorder().remove(node);
 				}
+				
+				getGraph().updateLayout();
+
 				break;
 
 			default:
