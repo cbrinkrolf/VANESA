@@ -1,6 +1,11 @@
 package graph.layouts.hebLayout;
 
+import java.awt.Dimension;
+import java.awt.geom.Point2D;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -8,11 +13,18 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.graph.Graph;
+import graph.GraphInstance;
 
 public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>{
 	
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph;
 	private Set<Set<BiologicalNodeAbstract>> bnaGroups;
+	private List<BiologicalNodeAbstract> vertex_ordered_list;
+	
+	Map<BiologicalNodeAbstract, CircleVertexData> circleVertexDataMap =
+           new HashMap<BiologicalNodeAbstract, CircleVertexData>();
+
+
 
 	public HEBLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		super(g);
@@ -54,13 +66,88 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 			}
 		}
 
-		Vector<BiologicalNodeAbstract> vertexList = new Vector<BiologicalNodeAbstract>();
+		vertex_ordered_list = new Vector<BiologicalNodeAbstract>();
 		for(Set<BiologicalNodeAbstract> subSet : bnaGroups){
 			for(BiologicalNodeAbstract bna : subSet){
-				vertexList.add(bna);
+				vertex_ordered_list.add(bna);
 			}
 		}
-		setVertexOrder(vertexList);
+		setVertexOrder(vertex_ordered_list);
 	}
+	
+	@Override
+	public void initialize()
+    {
+            Dimension d = getSize();
+           
+            if (d != null)
+            {
+                if (vertex_ordered_list == null)
+                    setVertexOrder(new Vector<BiologicalNodeAbstract>(getGraph().getVertices()));
+
+                    double height = d.getHeight();
+                    double width = d.getWidth();
+
+                    if (getRadius() <= 0) {
+                            setRadius(0.45 * (height < width ? height : width));
+                    }
+
+                    int group_no = 0;
+                    int vertex_no = 0;
+                    //distance between two groups (added to small distance between two nodes)
+                    double largeDistance = 2*2*Math.PI / (2*bnaGroups.size()+vertex_ordered_list.size());
+                    double smallDistance = 2*Math.PI / (2*bnaGroups.size()+vertex_ordered_list.size());
+                    for (Set<BiologicalNodeAbstract> group : bnaGroups)
+                    {
+                    	for(BiologicalNodeAbstract v : group){
+                    		apply(v);
+
+                            double angle = group_no*largeDistance+vertex_no*smallDistance;
+
+                            GraphInstance.getMyGraph().moveVertex(v, Math.cos(angle) * getRadius() + width / 2,
+                                            Math.sin(angle) * getRadius() + height / 2);
+
+                            CircleVertexData data = getCircleData(v);
+                            data.setAngle(angle);
+                            vertex_no++;
+                    	}
+                        group_no++;
+                    }
+            }
+    }
+	
+	@Override
+    protected CircleVertexData getCircleData(BiologicalNodeAbstract v) {
+        return circleVertexDataMap.get(v);
+	}
+	
+	private CircleVertexData apply(BiologicalNodeAbstract v){
+		CircleVertexData cvData = new CircleVertexData();
+		circleVertexDataMap.put(v, cvData);
+		return cvData;
+	}
+
+
+protected static class CircleVertexData extends CircleLayout.CircleVertexData{
+		
+        private double angle;
+
+        @Override
+        protected double getAngle() {
+                return angle;
+        }
+
+        @Override
+        protected void setAngle(double angle) {
+                this.angle = angle;
+        }
+
+        @Override
+        public String toString() {
+                return "CircleVertexData: angle=" + angle;
+        }
+}
+
+
 	
 }
