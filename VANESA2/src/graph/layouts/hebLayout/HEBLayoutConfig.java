@@ -9,6 +9,8 @@ import graph.layouts.gemLayout.GEMLayoutConfig;
 
 public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 	
+	public static int GROUP_DISTANCE_FACTOR = 3;
+	
 	public HEBLayoutConfig() {
 		super(HEBLayout.class);
 		// TODO Auto-generated constructor stub
