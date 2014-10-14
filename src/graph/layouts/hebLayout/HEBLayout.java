@@ -1,6 +1,7 @@
 package graph.layouts.hebLayout;
 
 import java.awt.Dimension;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,10 +10,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.collections15.Transformer;
+
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
+
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import graph.GraphInstance;
 
 public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>{
@@ -20,6 +28,7 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph;
 	private Set<Set<BiologicalNodeAbstract>> bnaGroups;
 	private Set<BiologicalNodeAbstract> graphNodes;
+	private Point2D centerPoint;
 	
 	protected Map<BiologicalNodeAbstract, CircleVertexData> circleVertexDataMap =
            new HashMap<BiologicalNodeAbstract, CircleVertexData>();
@@ -83,14 +92,14 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
                 if (getRadius() <= 0) {
                 	setRadius(0.45 * (height < width ? height : width));
                 }
+                
+                centerPoint = new Point2D.Double(width/2, height/2);
 
                 int group_no = 0;
                 int vertex_no = 0;
                 
                 //distance between two groups (added to small distance between two nodes)
                 final double nodeDistance = HEBLayoutConfig.nodeDistance(bnaGroups.size(), graphNodes.size());
-                System.out.println(HEBLayoutConfig.GROUP_DISTANCE_FACTOR);
-                System.out.println(nodeDistance);
                 final double groupDistance = (HEBLayoutConfig.GROUP_DISTANCE_FACTOR-1)*nodeDistance;
                 for (Set<BiologicalNodeAbstract> group : bnaGroups){
                 	for(BiologicalNodeAbstract v : group){
@@ -107,10 +116,24 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
                     group_no++;
                 }
             }
+            setEdgeShapes();
     }
+	
+	public void setEdgeShapes(){
+//			Shape shape = new EdgeShape.Line<BiologicalNodeAbstract, BiologicalEdgeAbstract>().transform(Context.getInstance(graph, edge));
+//			edge.setShape(shape);
+			
+			Transformer est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(getCenterPoint());
+			
+			GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(est);
+	}
 	
 	public void reset(){
 		initialize();
+	}
+	
+	public Point2D getCenterPoint(){
+		return centerPoint;
 	}
 	
 	@Override
