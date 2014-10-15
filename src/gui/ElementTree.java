@@ -262,6 +262,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 
 	@Override
 	public void valueChanged(TreeSelectionEvent arg0) {
+		//System.out.println("click");
 		DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree
 				.getLastSelectedPathComponent();
 
@@ -354,7 +355,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 				};
 				Thread thread = new Thread(animator);
 				thread.start();
-				vv.getPickedVertexState().clear();
+				//vv.getPickedVertexState().clear();
 				
 				vv.getPickedVertexState().pick(bna, true);
 			}
@@ -368,7 +369,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("animated")) {
-			// System.out.println("klick");
+			 //System.out.println("klick");
 			// System.out.println(box.isSelected());
 			GraphInstance g = new GraphInstance();
 			g.getPathway().getGraph().setAnimatedPicking(box.isSelected());
