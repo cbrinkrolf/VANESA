@@ -62,11 +62,11 @@ public class MyEdgeDrawPaintFunction implements
 					else
 						return dotted;
 				} else {
-					return bea.getColor();
+					return bea.getColor().darker();
 				}
 			} else {
 				if (psE.isPicked(bea))
-					return bea.getColor();
+					return bea.getColor().darker();
 				else if (settings.isBackgroundColor())
 					return dotted_black;
 				else

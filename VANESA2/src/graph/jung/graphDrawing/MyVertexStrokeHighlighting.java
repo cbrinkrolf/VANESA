@@ -23,15 +23,15 @@ public class MyVertexStrokeHighlighting implements
 
 	protected Stroke pn_medium = new BasicStroke(4);
 
-	protected Stroke pn_light = new BasicStroke(3);
+	protected Stroke pn_light = new BasicStroke(2);
 
-	protected Stroke heavy = new BasicStroke(2);
+	protected Stroke heavy = new BasicStroke(3);
 
-	protected Stroke superHeavy = new BasicStroke(5);
+	protected Stroke superHeavy = new BasicStroke(6);
 
-	protected Stroke medium = new BasicStroke(1);
+	protected Stroke medium = new BasicStroke(2);
 
-	protected Stroke light = new BasicStroke(0);
+	protected Stroke light = new BasicStroke(1);
 
 	protected PickedState<BiologicalNodeAbstract> psV;
 
@@ -180,10 +180,10 @@ public class MyVertexStrokeHighlighting implements
 
 		if (bna.hasRef()) {
 
-			float dash1[] = { 3.0f };
+			float dash1[] = { 5.0f };
 
-			return new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
-					BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+			return new BasicStroke(3.0f, BasicStroke.CAP_BUTT,
+					BasicStroke.JOIN_MITER, 5.0f, dash1, 0.0f);
 
 		} else {
 

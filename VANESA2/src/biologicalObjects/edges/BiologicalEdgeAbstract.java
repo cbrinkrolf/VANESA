@@ -55,7 +55,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	
 	private String comments = "";
 	
-	private Color color = Color.LIGHT_GRAY;
+	private Color color = Color.GRAY;
 	
 	private String BiologicalElement = "";
 	
@@ -122,7 +122,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public Color getColor() {
 
 		if (isReference()) {
-			return Color.LIGHT_GRAY;
+			return Color.GRAY;
 		} else {
 			return color;
 		}
