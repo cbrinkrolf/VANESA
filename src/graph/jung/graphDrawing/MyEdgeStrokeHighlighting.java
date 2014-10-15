@@ -13,12 +13,16 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 public class MyEdgeStrokeHighlighting implements
 		Transformer<BiologicalEdgeAbstract, Stroke> {
 
-	protected static final Stroke basic = new BasicStroke(1);
+	protected static final Stroke basic = new BasicStroke(2);
 
-	protected static final Stroke heavy = new BasicStroke(2);
+	protected static final Stroke heavy = new BasicStroke(4);
 
 	// protected static final Stroke dotted = new SloppyStroke(2.0f, 3.0f);
-	protected static final Stroke dotted = PluggableRenderContext.DOTTED;
+	final static float dash1[] = {10.0f};
+	protected static final Stroke dotted =new BasicStroke(2.0f,
+            BasicStroke.CAP_BUTT,
+            BasicStroke.JOIN_MITER,
+            10.0f, dash1, 0.0f);;//PluggableRenderContext.DOTTED;
 
 	protected PickedState<BiologicalNodeAbstract> psV;
 	protected PickedState<BiologicalEdgeAbstract> psE;

@@ -226,7 +226,7 @@ public class PetriNetVertexDialog implements ActionListener {
 					//System.out.println("anfang");
 					
 					number = (Number)token.getValue();
-					Place p = new Place(label.getText(), name.getText(), number.doubleValue(), true);
+					Place p = new Place(label.getText(), name.getText(), 0, true);
 					
 					if(number != null){
 						p.setToken(number.doubleValue());
