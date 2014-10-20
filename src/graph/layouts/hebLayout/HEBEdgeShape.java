@@ -138,17 +138,24 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            // The gradient angel of a line between start- and endpoint.
            double gradientAngle = gradientAngle(gradient);
            
+           double moveQuotient = 4;
+           
            // Computation of the first control point to bundle all edges connecting the same groups.
-           Point2D cPoint1 = moveInCenterDirection(averagePoint(group1), center, 2);
+           Point2D cPoint1 = moveInCenterDirection(averagePoint(group1), center, moveQuotient);
            cPoint1 = computeControlPoint(cPoint1, center, startPoint, endPoint, distance, gradientAngle,1);
            
            // Computation of the second control point to bundle all edges connecting the same groups.
-           Point2D cPoint2 = moveInCenterDirection(averagePoint(group2), center, 2); 
+           Point2D cPoint2 = moveInCenterDirection(averagePoint(group2), center, moveQuotient); 
            cPoint2 = computeControlPoint(cPoint2, center, endPoint, startPoint, distance, gradientAngle,-1);
            
            //instance.setCurve(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, cPoint1.getX(), cPoint1.getY());
            //instance.setCurve(cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-           instance.setCurve(0.0f, 0.0f, cPoint1.getX(), cPoint1.getY(), cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f);
+           if(endpointNodes.getFirst().getParentNode() != endpointNodes.getSecond().getParentNode()){
+        	   instance.setCurve(0.0f, 0.0f, cPoint1.getX(), cPoint1.getY(), cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f);
+           } else {
+        	   double factor = cPoint1.getY()/Math.abs(cPoint1.getY())*(distance);
+        	   instance.setCurve(0.0f, 0.0f, 0.5f, factor/2, 0.5f, factor/2, 1.0f, 0.0f);
+           }
            return instance;
         }
     }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -20,6 +21,7 @@ import javax.swing.SwingWorker;
 import pojos.DBColumn;
 import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.PhysicalInteraction;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Protein;
@@ -28,6 +30,7 @@ import configurations.Wrapper;
 public class PPIConnector extends SwingWorker {
 
 	private HashMap<String, String[]> entries2infos = new HashMap<String, String[]>();
+	private HashMap<String, HashSet<String>> childNodes = new HashMap<String, HashSet<String>>();
 	private ArrayList<String[]> connections = new ArrayList<String[]>();
 	private HashSet<String> conSet = new HashSet<String>();
 	private HashSet<String> newNodes = new HashSet<String>();
@@ -51,6 +54,7 @@ public class PPIConnector extends SwingWorker {
 	private String query;
 	private String[] param;
 	private boolean finalise = true;
+	private boolean autoCoarse;
 	private boolean binary;
 	private boolean complex;
 
@@ -108,6 +112,20 @@ public class PPIConnector extends SwingWorker {
 				x++;
 			}
 
+		}
+	}
+	
+	private void autoCoarse(String node){
+		Set<BiologicalNodeAbstract> nextDepth = new HashSet<BiologicalNodeAbstract>();
+		for(String child : childNodes.get(node)){
+			nextDepth.add(name2Vertex.get(child));
+		}
+		BiologicalNodeAbstract.coarse(nextDepth, null, entries2infos.get(node)[0] + "_hits");
+		for(String child : childNodes.get(node)){
+			if(childNodes.containsKey(child)){
+				System.out.println(entries2infos.get(child)[0]);
+				autoCoarse(child);
+			}
 		}
 	}
 
@@ -229,7 +247,9 @@ public class PPIConnector extends SwingWorker {
 				}
 
 				results = new Wrapper().requestDbContent(dbID, query, param2);
-
+				if(!childNodes.containsKey(node)){
+					childNodes.put(node, new HashSet<String>());
+				}
 				for (DBColumn column : results) {
 					String[] row = column.getColumn();
 
@@ -265,12 +285,18 @@ public class PPIConnector extends SwingWorker {
 									sequence_A };
 							entries2infos.put(idA, infos_A);
 							newNodes.add(idA);
+							if(!idA.equals(node)){
+								childNodes.get(node).add(idA);
+							}
 						}
 						if (!entries2infos.containsKey(idB)) {
 							String[] infos_B = { shortLabel_B, fullName_B,
 									sequence_B };
 							entries2infos.put(idB, infos_B);
 							newNodes.add(idB);
+							if(!idB.equals(node)){
+								childNodes.get(node).add(idB);
+							}
 						}
 
 						String[] connection = { idA, idB };
@@ -418,6 +444,9 @@ public class PPIConnector extends SwingWorker {
 		myGraph.changeToGEMLayout();
 		myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
 		myGraph.normalCentering();
+		if(autoCoarse){
+			autoCoarse(root_id);
+		}
 		bar.closeWindow();
 
 		MainWindow window = MainWindowSingleton.getInstance();
@@ -428,6 +457,10 @@ public class PPIConnector extends SwingWorker {
 
 	public void setFinaliseGraph(boolean finaliseGraph) {
 		this.finalise = finaliseGraph;
+	}
+	
+	public void setAutoCoarse(boolean autoCoarseResults){
+		this.autoCoarse = autoCoarseResults;
 	}
 
 	public void setIncludeBinaryInteractions(boolean binaryInteractions) {

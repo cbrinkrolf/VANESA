@@ -49,6 +49,7 @@ public class PPISearchResultWindow extends JFrame implements ActionListener {
 	JSpinner serchDeapth;
 
 	JCheckBox finaliseGraph = new JCheckBox();
+	JCheckBox autoCoarse = new JCheckBox();
 
 	JCheckBox binaryInteractions = new JCheckBox();
 	JCheckBox complexInteractions = new JCheckBox();
@@ -132,6 +133,9 @@ public class PPISearchResultWindow extends JFrame implements ActionListener {
 		mainPanel.add(new JLabel("Connect nodes from the last iteration"),
 				"span 1, gaptop 2 ");
 		mainPanel.add(finaliseGraph, "span 1,wrap,gaptop 2");
+		
+		mainPanel.add(new JLabel("Coarse all results of the same query."), "span 1, gaptop 2 ");
+		mainPanel.add(autoCoarse, "span 1,wrap,gaptop 2");
 
 		// mainPanel.add(new JLabel("Disregard Elements"), "span 1, gaptop 2 ");
 		// mainPanel.add(disregard, "span 1,wrap,gaptop 2");
@@ -305,6 +309,10 @@ public class PPISearchResultWindow extends JFrame implements ActionListener {
 
 	public boolean getFinaliseGraph() {
 		return finaliseGraph.isSelected();
+	}
+	
+	public boolean getAutoCoarse() {
+		return autoCoarse.isSelected();
 	}
 
 	public boolean getBinaryInteractions() {
