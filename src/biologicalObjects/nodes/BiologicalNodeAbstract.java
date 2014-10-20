@@ -667,7 +667,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 		this.setStateChanged(NodeStateChanged.FLATTENED);
 		
-		getRootPathway().updateMyGraph();
 		
 //		printAllHierarchicalAttributes();
 	}

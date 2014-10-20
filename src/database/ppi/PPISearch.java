@@ -42,7 +42,7 @@ public class PPISearch extends SwingWorker{
 	private ArrayList<DBColumn> requestDbContent()
 	{
 
-		//MARTIN Abfrage für neue und alte DB (switch)
+		//MARTIN Abfrage fï¿½r neue und alte DB (switch)
 		
 		if (database.equals("HPRD"))
 		{
@@ -240,6 +240,7 @@ public class PPISearch extends SwingWorker{
 					PPIConnector ppiCon = new PPIConnector(bar,details, database);
 					ppiCon.setSearchDepth(ppiSearchResultWindow.getSerchDeapth());
 					ppiCon.setFinaliseGraph(ppiSearchResultWindow.getFinaliseGraph());
+					ppiCon.setAutoCoarse(ppiSearchResultWindow.getAutoCoarse());
 					ppiCon.setIncludeBinaryInteractions(ppiSearchResultWindow.getBinaryInteractions());
 					ppiCon.setIncludeComplexInteractions(ppiSearchResultWindow.getComplexInteractions());
 					
