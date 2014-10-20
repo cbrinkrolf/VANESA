@@ -115,18 +115,33 @@ public class PPIConnector extends SwingWorker {
 		}
 	}
 	
-	private void autoCoarse(String node){
+//	private void autoCoarse(String node){
+//		Set<BiologicalNodeAbstract> nextDepth = new HashSet<BiologicalNodeAbstract>();
+//		for(String child : childNodes.get(node)){
+//			nextDepth.add(name2Vertex.get(child));
+//		}
+//		BiologicalNodeAbstract.coarse(nextDepth, null, entries2infos.get(node)[0] + "_hits");
+//		for(String child : childNodes.get(node)){
+//			if(childNodes.containsKey(child)){
+//				autoCoarse(child);
+//			}
+//		}
+//	}
+	
+	private BiologicalNodeAbstract autoCoarse(String node){
 		Set<BiologicalNodeAbstract> nextDepth = new HashSet<BiologicalNodeAbstract>();
 		for(String child : childNodes.get(node)){
-			nextDepth.add(name2Vertex.get(child));
-		}
-		BiologicalNodeAbstract.coarse(nextDepth, null, entries2infos.get(node)[0] + "_hits");
-		for(String child : childNodes.get(node)){
 			if(childNodes.containsKey(child)){
-				System.out.println(entries2infos.get(child)[0]);
-				autoCoarse(child);
+				nextDepth.add(autoCoarse(child));
+			} else {
+				nextDepth.add(name2Vertex.get(child));
 			}
 		}
+		nextDepth.add(name2Vertex.get(node));
+		if(node==root_id){
+			return null;
+		}
+		return BiologicalNodeAbstract.coarse(nextDepth, null, entries2infos.get(node)[0] + "_hits");
 	}
 
 	private void drawEdges() {
