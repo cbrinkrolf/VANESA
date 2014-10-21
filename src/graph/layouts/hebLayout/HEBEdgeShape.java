@@ -115,15 +115,20 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
         	   }
            }
            
+           if(group1.equals(group2) && !HEBLayoutConfig.getInstance().getShowInternalEdges()){
+        	   instance.setCurve(0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
+        	   return instance;
+           }
+           
            
            // location of the startNode.
            Point2D startPoint = new Point2D.Double(myGraph.getVertexLocation(endpointNodes.getFirst()).getX(),
         		   myGraph.getVertexLocation(endpointNodes.getFirst()).getY());
-           
+                      
            // location of the endNode.
            Point2D endPoint = new Point2D.Double(myGraph.getVertexLocation(endpointNodes.getSecond()).getX(),
         		   myGraph.getVertexLocation(endpointNodes.getSecond()).getY());
-           
+                      
            // The circle's center.
            Point2D center = getCenterPoint();
            
@@ -148,14 +153,10 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            Point2D cPoint2 = moveInCenterDirection(averagePoint(group2), center, moveQuotient); 
            cPoint2 = computeControlPoint(cPoint2, center, endPoint, startPoint, distance, gradientAngle,-1);
            
-           //instance.setCurve(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, cPoint1.getX(), cPoint1.getY());
-           //instance.setCurve(cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-           if(endpointNodes.getFirst().getParentNode() != endpointNodes.getSecond().getParentNode()){
-        	   instance.setCurve(0.0f, 0.0f, cPoint1.getX(), cPoint1.getY(), cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f);
-           } else {
-        	   double factor = cPoint1.getY()/Math.abs(cPoint1.getY())*(distance);
-        	   instance.setCurve(0.0f, 0.0f, 0.5f, factor/2, 0.5f, factor/2, 1.0f, 0.0f);
-           }
+//           instance.setCurve(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, cPoint1.getX(), cPoint1.getY());
+//           instance.setCurve(cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+        	 instance.setCurve(0.0f, 0.0f, cPoint1.getX(), cPoint1.getY(), cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f);
+
            return instance;
         }
     }
@@ -194,33 +195,33 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
      * @return The controlPoint in transformed coordinates.
      */
     private static Point2D computeControlPoint(Point2D basis, Point2D center, Point2D startPoint, Point2D endPoint, double distance, double gradientAngel, double factor){
-    	    	
     	double c = Point2D.distance(basis.getX(), basis.getY(), startPoint.getX(), startPoint.getY());
         double cP1Gradient = gradient(basis.getX(),basis.getY(),startPoint.getX(), startPoint.getY());
         double alpha = 0;
-        alpha = gradientAngel>0 ? gradientAngle(cP1Gradient)-gradientAngel : gradientAngel - gradientAngle(cP1Gradient);
+        alpha = Math.abs(gradientAngel-gradientAngle(cP1Gradient));
         double beta = Math.PI/2-Math.abs(alpha);
         
         double a = c*Math.cos(beta);
         double b = Math.sqrt(Math.pow(c, 2)-Math.pow(a, 2));
         
-        if(cP1Gradient<0 && startPoint.getY()>center.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) < factor*endPoint.getY()){
+        if(cP1Gradient<0 && startPoint.getY()>basis.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) < factor*endPoint.getY()){
      	   a = -a;
         }
-        else if(cP1Gradient<0 && startPoint.getY()<center.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) > factor*endPoint.getY()){
+        else if(cP1Gradient<0 && startPoint.getY()<basis.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) > factor*endPoint.getY()){
      	  a = -a; 
         }
-        else if(cP1Gradient>0 && startPoint.getY()<center.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) < factor*endPoint.getY()){
+        else if(cP1Gradient>0 && startPoint.getY()<basis.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) < factor*endPoint.getY()){
       	  a = -a; 
          }
-        else if(cP1Gradient>0 && startPoint.getY()>center.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) > factor*endPoint.getY()){
+        else if(cP1Gradient>0 && startPoint.getY()>basis.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) > factor*endPoint.getY()){
        	  a = -a; 
          }
-        else if(cP1Gradient==0 && factor*startPoint.getY()>factor*endPoint.getY()){
+        else if(cP1Gradient==0){
      	   a=-a;
         }
+
         if(factor==-1){
-        	return new Point2D.Double(1-b/distance,a);
+        	return new Point2D.Double(1-(b/distance),a);
         }
         return new Point2D.Double(b/distance,a);
     }
