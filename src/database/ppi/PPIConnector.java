@@ -115,23 +115,16 @@ public class PPIConnector extends SwingWorker {
 		}
 	}
 	
-//	private void autoCoarse(String node){
-//		Set<BiologicalNodeAbstract> nextDepth = new HashSet<BiologicalNodeAbstract>();
-//		for(String child : childNodes.get(node)){
-//			nextDepth.add(name2Vertex.get(child));
-//		}
-//		BiologicalNodeAbstract.coarse(nextDepth, null, entries2infos.get(node)[0] + "_hits");
-//		for(String child : childNodes.get(node)){
-//			if(childNodes.containsKey(child)){
-//				autoCoarse(child);
-//			}
-//		}
-//	}
-	
+	/**
+	 * Automatically coarsing of the resulting graph. Is called iteratively.
+	 * For complete coarsing, call with the root id.
+	 * @param node id
+	 * @return the coarsed node
+	 */
 	private BiologicalNodeAbstract autoCoarse(String node){
 		Set<BiologicalNodeAbstract> nextDepth = new HashSet<BiologicalNodeAbstract>();
 		for(String child : childNodes.get(node)){
-			if(childNodes.containsKey(child)){
+			if(childNodes.containsKey(child) && !childNodes.get(child).isEmpty()){
 				nextDepth.add(autoCoarse(child));
 			} else {
 				nextDepth.add(name2Vertex.get(child));
@@ -141,7 +134,7 @@ public class PPIConnector extends SwingWorker {
 		if(node==root_id){
 			return null;
 		}
-		return BiologicalNodeAbstract.coarse(nextDepth, null, entries2infos.get(node)[0] + "_hits");
+		return BiologicalNodeAbstract.coarse(nextDepth, null, entries2infos.get(node)[0]);
 	}
 
 	private void drawEdges() {
