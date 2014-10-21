@@ -1,5 +1,9 @@
 package graph.layouts.hebLayout;
 
+import java.awt.GridLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -13,9 +17,20 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 
 	public static int GROUP_DISTANCE_FACTOR = 5;
 	
+	public static JCheckBox showInternalEdges;
+	
 	public HEBLayoutConfig() {
 		super(HEBLayout.class);
-		// TODO Auto-generated constructor stub
+
+		GridLayout layout = new GridLayout(0, 2);
+		setLayout(layout);
+		
+		 showInternalEdges= new JCheckBox();
+		 showInternalEdges.setSelected(true);
+		 showInternalEdges.setBorder(BorderFactory
+					.createTitledBorder("Show internal edges"));
+		 
+		 add(showInternalEdges);
 	}
 	
 	public static HEBLayoutConfig getInstance() {
@@ -27,6 +42,10 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 	
 	public static double nodeDistance(int groups, int nodes){
 		return 2*Math.PI / ((GROUP_DISTANCE_FACTOR - 1)*groups+nodes);
+	}
+	
+	public boolean getShowInternalEdges(){
+		return showInternalEdges.isSelected();
 	}
 
 	@Override
