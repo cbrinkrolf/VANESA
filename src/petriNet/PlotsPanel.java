@@ -120,8 +120,6 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			 * = -1; } } } }
 			 */
 
-			Double value;
-
 			// double min = Double.MAX_VALUE;
 			// double max = Double.MIN_VALUE;
 
@@ -132,27 +130,8 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 					// XYSeriesCollection();
 					// XYSeries series = new XYSeries(1);
 					//System.out.println(place.getName());
-					for (int i = 0; i < cols; i++) {
-						//System.out.println(place.getName());
-						// System.out.println(j + " " + i);
-						// System.out.println("test: " + table[j][i + 1]);
-						// value = place.getPetriNetSimulationData().get(i);
-
-						if (place.getPetriNetSimulationData().size() > i) {
-							value = place.getPetriNetSimulationData().get(i);
-						} else {
-							value = 0.0;
-						}
-
-						// value = Double.parseDouble(table[j][i +
-						// 1].toString());
-						if (value < min) {
-							min = value;
-						}
-						if (value > max) {
-							max = value;
-						}
-					}
+					min = Math.min(min, (double) Collections.min(place.getPetriNetSimulationData()));
+					max = Math.max(max, (double) Collections.max(place.getPetriNetSimulationData()));
 				}
 			}
 
@@ -215,7 +194,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			this.updateData();
 
 			for (int j = rows; j % 3 != 0; j++) {
-				final XYSeriesCollection dataset = new XYSeriesCollection();
+				//final XYSeriesCollection dataset = new XYSeriesCollection();
 
 				JPanel pane = new JPanel() {
 					public void paintComponent(Graphics g) {
@@ -246,7 +225,6 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	private void updateData() {
 		//System.out.println("update");
 		Place place;
-		Double value;
 		for (int j = 0; j < rows; j++) {
 			place = places.get(labels.get(j));
 			if (place.getPetriNetSimulationData().size() > 0) {
@@ -259,23 +237,13 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 					// System.out.println("test: " + table[j][i + 1]);
 					// value = place.getPetriNetSimulationData().get(i);
 
-					if (place.getPetriNetSimulationData().size() > i) {
-						value = place.getPetriNetSimulationData().get(i);
-					} else {
-						value = 0.0;
-					}
-
-					if (value < min) {
-						min = value;
-					}
-					if (value > max) {
-						max = value;
-					}
-
 					// value = Double.parseDouble(table[j][i +
 					// 1].toString());
-					series.add(pw.getPetriNet().getTime().get(i), value);
+					series.add(pw.getPetriNet().getTime().get(i), place.getPetriNetSimulationData().get(i));
 				}
+				min = Math.min(min, (double) Collections.min(place.getPetriNetSimulationData()));
+				max = Math.max(max, (double) Collections.max(place.getPetriNetSimulationData()));
+			
 			}
 		}
 	}

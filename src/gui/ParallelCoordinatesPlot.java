@@ -1204,7 +1204,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				rows[i][0] = bna.getLabel();
 				for (int j = 1; j <= rowsDim; j++) {
 					if (bna.getPetriNetSimulationData().size() > j - 1) {
-						rows[i][j] = bna.getPetriNetSimulationData().get(j - 1);
+						rows[i][j] = Math.max(0, bna.getPetriNetSimulationData().get(j - 1));
 					} else {
 						rows[i][j] = 0;
 					}
