@@ -491,7 +491,7 @@ public class PetriNetSimulation implements ActionListener {
 							}
 
 							if (flags.isBoundariesChanged()) {
-								System.out.println("chaaaaanged");
+								//System.out.println("chaaaaanged");
 								Iterator<Place> it = graphInstance.getPathway()
 										.getChangedBoundaries().keySet()
 										.iterator();
@@ -519,11 +519,11 @@ public class PetriNetSimulation implements ActionListener {
 							override += "\"";
 							System.out.println("override: " + override);
 							if (noEmmit) {
-								pb.command(pathSim + "simulation.exe",
+								pb.command(pathSim + "simulation.exe","-s="+menue.getIntegrator(),
 										override, "-port=11111",
 										"-noEventEmit", "-lv=LOG_STATS");
 							} else {
-								pb.command(pathSim + "simulation.exe",
+								pb.command(pathSim + "simulation.exe","-s="+menue.getIntegrator(),
 										override, "-port=11111",
 										"-lv=LOG_STATS");
 							}

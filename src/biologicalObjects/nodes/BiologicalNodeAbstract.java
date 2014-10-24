@@ -55,7 +55,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	// contains information on microarray data for this element
 
-	private Vector<Double> petriNetSimulationData;
+	private Vector<Double> petriNetSimulationData = new Vector<Double>();
 
 	public VertexShapes shapes;
 

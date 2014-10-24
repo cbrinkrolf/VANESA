@@ -326,8 +326,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private void drawPlot() {
 		Place place;
 		Transition transition;
-		double min = Double.MAX_VALUE;
-		double max = Double.MIN_VALUE;
 		// places = new ArrayList<Place>();
 		BiologicalNodeAbstract bna;
 		int pickedV = GraphInstance.getMyGraph().getVisualizationViewer()
@@ -358,9 +356,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							.identityHashCode(edge.getSim_tokens())), true);
 					renderer2.setSeriesVisible((int) vector2idx.get(System
 							.identityHashCode(edge.getSim_tokensSum())), true);
-					min = (double) Collections.min(edge.getSim_tokens());
-					max = (double) Collections.max(edge.getSim_tokens());
-					//System.out.println(min);
+					// System.out.println(min);
 				}
 			}
 		} else {
@@ -406,8 +402,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 						renderer.setSeriesVisible((int) vector2idx.get(System
 								.identityHashCode(place
 										.getPetriNetSimulationData())), true);
-						min = Math.min(min, (double) Collections.min(place.getPetriNetSimulationData()));
-						max = Math.max(max, (double) Collections.max(place.getPetriNetSimulationData()));
 					}
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
@@ -417,11 +411,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					}
 					if (vector2idx.get(System.identityHashCode(transition
 							.getSimActualSpeed())) != null) {
-					renderer.setSeriesVisible((int) vector2idx.get(System
-							.identityHashCode(transition.getSimActualSpeed())),
-							true);
-					min = Math.min(min, (double) Collections.min(transition.getSimActualSpeed()));
-					max = Math.max(max, (double) Collections.max(transition.getSimActualSpeed()));
+						renderer.setSeriesVisible((int) vector2idx.get(System
+								.identityHashCode(transition
+										.getSimActualSpeed())), true);
 					}
 				}
 
@@ -457,10 +449,13 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			NumberAxis domainAxis = new NumberAxis("Time");
 			plot.setDomainAxis(domainAxis);
 			NumberAxis na = new NumberAxis("Tokens");
-			na.setRange(min*0.95, 1.05 * max);
 			
+			//na.setRange(min * 0.95, 1.05 * max);
+			na.setAutoRange(true);
+			na.setAutoRangeIncludesZero(false);
+
 			plot.setRangeAxis(na);
-			
+
 			plot.setRenderer(1, renderer2);
 			NumberAxis axis = new NumberAxis("Tokens");
 			axis.setAxisLinePaint(Color.WHITE);
@@ -1204,7 +1199,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				rows[i][0] = bna.getLabel();
 				for (int j = 1; j <= rowsDim; j++) {
 					if (bna.getPetriNetSimulationData().size() > j - 1) {
-						rows[i][j] = Math.max(0, bna.getPetriNetSimulationData().get(j - 1));
+						rows[i][j] = Math.max(0, bna
+								.getPetriNetSimulationData().get(j - 1));
 					} else {
 						rows[i][j] = 0;
 					}
