@@ -6,12 +6,15 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
@@ -38,6 +41,8 @@ public class SimMenue extends JFrame {
 	private MyJFormattedTextField startTxt;
 	private MyJFormattedTextField stopTxt;
 	private MyJFormattedTextField intervalsTxt;
+	private JLabel integratorsLbl = new JLabel("Integartor:");
+	private JComboBox<String> integrators;
 
 	//private ActionListener listener;
 	
@@ -72,6 +77,22 @@ public class SimMenue extends JFrame {
 		
 		//northUp.setLayout(new GridLayout(1,5));
 		//northDown.setLayout();
+		integrators = new JComboBox<String>();
+		integrators.setSelectedItem("dassl");
+		AutoCompleteDecorator.decorate(integrators);
+		integrators.addItem("dassl");
+		integrators.addItem("dasslwort");
+		integrators.addItem("dasslNumJac");
+		integrators.addItem("dasslsteps");
+		integrators.addItem("euler");
+		integrators.addItem("lobatto2");
+		integrators.addItem("lobatto4");
+		integrators.addItem("lobatto6");
+		integrators.addItem("radau5");
+		integrators.addItem("radau3");
+		integrators.addItem("radau1");
+		integrators.addItem("rungekutta");
+		
 		
 		
 		this.setLayout(new BorderLayout());
@@ -86,6 +107,8 @@ public class SimMenue extends JFrame {
 		northDown.add(stopTxt);
 		northDown.add(intervalsLbl);
 		northDown.add(intervalsTxt);
+		northDown.add(integratorsLbl);
+		northDown.add(integrators);
 		
 		this.add(north, BorderLayout.NORTH);
 		north.setLayout(new GridLayout(2,1));
@@ -149,5 +172,9 @@ public class SimMenue extends JFrame {
 			return number.intValue();
 		}
 		return 100;
+	}
+	
+	public String getIntegrator(){
+		return (String) this.integrators.getSelectedItem();
 	}
 }
