@@ -3,6 +3,7 @@ package graph.gui;
 /*import edu.uci.ics.jung.graph.Edge;
  import edu.uci.ics.jung.graph.Vertex;
  import edu.uci.ics.jung.utils.Pair;*/
+import graph.ChangedFlags;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
@@ -84,6 +85,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private BiologicalNodeAbstract ref = null;
 	private GraphElementAbstract original;
 
+	private JCheckBox knockedOut;
+
 	// private Object element;
 
 	public ElementWindow() {
@@ -91,7 +94,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 	}
 
 	private void updateWindow(GraphElementAbstract element) {
-
+		p.removeAll();
 		// this.element = element;
 		// this.ab = (GraphElementAbstract) graphInstance
 		// .getPathwayElement(element);
@@ -100,7 +103,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 		JTextField label = new JTextField(20);
 		JTextField name = new JTextField(20);
-		
+
 		if (ref != null) {
 			this.ab = ref;
 			label.setText(ref.getLabel());
@@ -112,6 +115,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}
 
 		reference = new JCheckBox();
+		knockedOut = new JCheckBox();
 		colorButton = new JButton("Colour");
 		hideNeighbours = new JButton("Hide all Neighbours");
 		showNeighbours = new JButton("Show all Neighbours");
@@ -122,8 +126,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 		colorButton.setToolTipText("Colour");
 		colorButton.setActionCommand("colour");
 		colorButton.addActionListener(this);
-
-		
 
 		// System.out.println("label: "+ab.getLabel());
 		// System.out.println("name: "+ab.getName());
@@ -267,8 +269,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 				Place place = (Place) ab;
 
 				JLabel lswitchPlace = new JLabel("Place Type");
-				JComboBox<String> placeList = new JComboBox<String>(new String[] { "discrete",
-						"continuous" });
+				JComboBox<String> placeList = new JComboBox<String>(
+						new String[] { "discrete", "continuous" });
 				if (place.isDiscrete())
 					placeList.setSelectedItem("discrete");
 				else
@@ -282,29 +284,37 @@ public class ElementWindow implements ActionListener, ItemListener {
 				MyJFormattedTextField tokenStart;
 				MyJFormattedTextField tokenMin;
 				MyJFormattedTextField tokenMax;
-				
+
 				JLabel lblTokenStart = new JLabel("Token Start");
-				if(place.isDiscrete()){
-					token = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
-					tokenStart = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
-					tokenMin = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
-					tokenMax = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
-					token.setText((int)place.getToken()+"");
-					tokenStart.setText((int)place.getTokenStart() + "");
-					tokenMin.setText((int)place.getTokenMin() + "");
-					tokenMax.setText((int)place.getTokenMax() + "");
-				}else{
-					token = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-					tokenStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-					tokenMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-					tokenMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+				if (place.isDiscrete()) {
+					token = new MyJFormattedTextField(
+							MyNumberFormat.getIntegerFormat());
+					tokenStart = new MyJFormattedTextField(
+							MyNumberFormat.getIntegerFormat());
+					tokenMin = new MyJFormattedTextField(
+							MyNumberFormat.getIntegerFormat());
+					tokenMax = new MyJFormattedTextField(
+							MyNumberFormat.getIntegerFormat());
+					token.setText((int) place.getToken() + "");
+					tokenStart.setText((int) place.getTokenStart() + "");
+					tokenMin.setText((int) place.getTokenMin() + "");
+					tokenMax.setText((int) place.getTokenMax() + "");
+				} else {
+					token = new MyJFormattedTextField(
+							MyNumberFormat.getDecimalFormat());
+					tokenStart = new MyJFormattedTextField(
+							MyNumberFormat.getDecimalFormat());
+					tokenMin = new MyJFormattedTextField(
+							MyNumberFormat.getDecimalFormat());
+					tokenMax = new MyJFormattedTextField(
+							MyNumberFormat.getDecimalFormat());
 					token.setText(place.getToken() + "");
 					tokenStart.setText(place.getTokenStart() + "");
 					tokenMin.setText(place.getTokenMin() + "");
 					tokenMax.setText(place.getTokenMax() + "");
 				}
 				JLabel lblToken = new JLabel("Token");
-				
+
 				token.setName("token");
 				// token.addFocusListener(pwl);
 				token.setEditable(false);
@@ -319,7 +329,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 				tokenMin.addFocusListener(pwl);
 				JLabel lblTokenMin = new JLabel("min Tokens");
 
-				
 				tokenMax.setName("tokenMax");
 				tokenMax.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 				tokenMax.addFocusListener(pwl);
@@ -336,10 +345,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(tokenMax, "wrap");
 			} else if (ab instanceof Transition) {
 				JLabel lswitchTrans = new JLabel("Transition Type");
-				JComboBox<String> transList = new JComboBox<String>(new String[] {
-						DiscreteTransition.class.getName(),
-						ContinuousTransition.class.getName(),
-						StochasticTransition.class.getName() });
+				JComboBox<String> transList = new JComboBox<String>(
+						new String[] { DiscreteTransition.class.getName(),
+								ContinuousTransition.class.getName(),
+								StochasticTransition.class.getName() });
 				transList.setSelectedItem(ab.getClass().getCanonicalName());
 				transList.setName("transList");
 				transList.addFocusListener(pwl);
@@ -372,7 +381,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 					String[] disStrings = { "norm", "exp" };
 					// Create the combo box, select item at index 4.
 					// Indices start at 0, so 4 specifies the pig.
-					JComboBox<String> distributionList = new JComboBox<String>(disStrings);
+					JComboBox<String> distributionList = new JComboBox<String>(
+							disStrings);
 					distributionList.setSelectedItem(trans.getDistribution());
 					distributionList.setName("disList");
 					distributionList.addFocusListener(pwl);
@@ -390,6 +400,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 					p.add(lblMaxSpeed, "gap 5");
 					p.add(maxSpeed, "wrap");
+					
+					if(trans.isKnockedOut()){
+						maxSpeed.setEnabled(false);
+					}
 				}
 			} else if (ab instanceof GraphNode) {
 				GraphNode gnode = (GraphNode) ab;
@@ -521,7 +535,16 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}
 
 		p.add(new JLabel("Reference"), "gap 5 ");
-		p.add(reference, "wrap ,span 3");
+		p.add(reference, "wrap, span 3");
+		if (ab instanceof Transition) {
+			knockedOut.setSelected(((Transition) ab).isKnockedOut());
+			knockedOut.setToolTipText("Knock out");
+			knockedOut.setActionCommand("knockedOut");
+			knockedOut.addActionListener(this);
+			p.add(new JLabel("Knocked out"), "gap 5 ");
+			p.add(knockedOut, "wrap ,span 3");
+		}
+
 		if (ab.isVertex()) {
 			hideNeighbours
 					.setToolTipText("Sets all Neighbors of the selected Node to Reference");
@@ -795,6 +818,16 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("showLabels".equals(event)) {
 			// System.out.println("click");
 			new LabelsWindow(ab);
+		}else if("knockedOut".equals(event)){
+			
+				((Transition)ab).setKnockedOut(knockedOut.isSelected());
+				this.updateWindow(ab);
+				p.revalidate();
+				p.repaint();
+				Pathway pw = new GraphInstance().getPathway();
+				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				
+			//System.out.println("knocked out");
 		}
 
 		GraphInstance.getMyGraph().updateGraph();
