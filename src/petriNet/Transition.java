@@ -22,6 +22,8 @@ public class Transition extends BiologicalNodeAbstract {
 	private Vector<Double> simActualSpeed = new Vector<Double>();
 	private Color plotColor;
 	
+	private boolean knockedOut = false;
+	
 	public String getFiringCondition() {
 		return firingCondition;
 	}
@@ -124,6 +126,14 @@ public class Transition extends BiologicalNodeAbstract {
 
 	public Color getPlotColor() {
 		return plotColor;
+	}
+
+	public boolean isKnockedOut() {
+		return knockedOut;
+	}
+
+	public void setKnockedOut(boolean knockedOut) {
+		this.knockedOut = knockedOut;
 	}
 
 }
