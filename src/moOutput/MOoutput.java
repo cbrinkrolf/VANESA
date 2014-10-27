@@ -44,7 +44,8 @@ public class MOoutput {
 	private String places = "";
 	private String edgesString = "";
 	private double xshift = 0, yshift = 0;
-	private double xmin = Double.MAX_VALUE, xmax = Double.MIN_VALUE, ymin = Double.MAX_VALUE, ymax = Double.MIN_VALUE;
+	private double xmin = Double.MAX_VALUE, xmax = Double.MIN_VALUE,
+			ymin = Double.MAX_VALUE, ymax = Double.MIN_VALUE;
 	private final double scale = 2;
 	private final Hashtable<String, Integer> numInEdges = new Hashtable<String, Integer>();
 	private final Hashtable<String, Integer> numOutEdges = new Hashtable<String, Integer>();
@@ -130,7 +131,7 @@ public class MOoutput {
 				this.vertex2name.put(bna, name);
 				// nodePositions.put(name, p);
 				nodeType.put(bna, biologicalElement);
-				//bioName.put(name, bna.getLabel());
+				// bioName.put(name, bna.getLabel());
 				// bioObject.put(name, bna);
 
 				if (xmin > p.getX())
@@ -258,9 +259,14 @@ public class MOoutput {
 
 					ContinuousTransition t = (ContinuousTransition) bna;
 					// String atr = "maximumSpeed="+t.getMaximumSpeed();
-					String atr = "maximumSpeed="
-							+ this.replace(t.getMaximumSpeed(),
-									t.getParameters(), t);
+					String atr;
+					if (t.isKnockedOut()) {
+						atr = "maximumSpeed=0";
+					} else {
+						atr = "maximumSpeed="
+								+ this.replace(t.getMaximumSpeed(),
+										t.getParameters(), t);
+					}
 					// System.out.println("atr");
 					places = places.concat(getTransitionString(bna,
 							t.getModellicaString(), bna.getName(), atr, in,
@@ -282,25 +288,25 @@ public class MOoutput {
 		while (it.hasNext()) {
 
 			bea = it.next();
-			String fromString; 
+			String fromString;
 			String toString;
-			String fromType; 
-			
-			if(bea.getFrom().hasRef()){
-					fromString = vertex2name.get(bea.getFrom().getRef());
-					fromType = nodeType.get(bea.getFrom().getRef());
-			}else{
+			String fromType;
+
+			if (bea.getFrom().hasRef()) {
+				fromString = vertex2name.get(bea.getFrom().getRef());
+				fromType = nodeType.get(bea.getFrom().getRef());
+			} else {
 				fromString = vertex2name.get(bea.getFrom());
 				fromType = nodeType.get(bea.getFrom());
 			}
-			if(bea.getTo().hasRef()){
+			if (bea.getTo().hasRef()) {
 				toString = vertex2name.get(bea.getTo().getRef());
-			}else{
+			} else {
 				toString = vertex2name.get(bea.getTo());
 			}
-			//String fromString = vertex2name.get(bea.getFrom());
-			//String toString = vertex2name.get(bea.getTo());
-			//String fromType = nodeType.get(fromString);
+			// String fromString = vertex2name.get(bea.getFrom());
+			// String toString = vertex2name.get(bea.getTo());
+			// String fromType = nodeType.get(fromString);
 			// String toType = nodeType.get(toString);
 
 			// TODO funktionen werden zulassen
@@ -358,11 +364,14 @@ public class MOoutput {
 				}
 
 			} else if (fromType.equals(Elementdeclerations.s_place)) {
-				edgesString = edgesString.concat(getConnectionStringPT(fromString, toString, bea));
+				edgesString = edgesString.concat(getConnectionStringPT(
+						fromString, toString, bea));
 			} else if (fromType.equals(Elementdeclerations.place)) {
-				edgesString = edgesString.concat(getConnectionStringPT(fromString, toString, bea));
+				edgesString = edgesString.concat(getConnectionStringPT(
+						fromString, toString, bea));
 			} else {
-				edgesString = edgesString.concat(getConnectionStringTP(fromString, toString, bea));
+				edgesString = edgesString.concat(getConnectionStringTP(
+						fromString, toString, bea));
 			}
 
 			// BiologicalEdgeAbstract bna = (BiologicalEdgeAbstract) it.next();
@@ -684,9 +693,10 @@ public class MOoutput {
 				+ ";\r\n";
 	}
 
-	private String getConnectionStringTP(String from, String to, BiologicalEdgeAbstract bea) {
-		//String from = bea.getFrom().getName();
-		//String to = bea.getTo().getName();
+	private String getConnectionStringTP(String from, String to,
+			BiologicalEdgeAbstract bea) {
+		// String from = bea.getFrom().getName();
+		// String to = bea.getTo().getName();
 		String result = "\tconnect('" + from + "'.outPlaces["
 				+ (actualOutEdges.get(from) + 1) + "],'" + to
 				+ "'.inTransition[" + (actualInEdges.get(to) + 1) + "]);"
@@ -706,9 +716,10 @@ public class MOoutput {
 		return result;
 	}
 
-	private String getConnectionStringPT(String from, String to, BiologicalEdgeAbstract bea) {
-		//String from = bea.getFrom().getName();
-		//String to = bea.getTo().getName();
+	private String getConnectionStringPT(String from, String to,
+			BiologicalEdgeAbstract bea) {
+		// String from = bea.getFrom().getName();
+		// String to = bea.getTo().getName();
 		String result = "\tconnect('" + from + "'.outTransition["
 				+ (actualOutEdges.get(from) + 1) + "],'" + to + "'.inPlaces["
 				+ (actualInEdges.get(to) + 1) + "]);"
@@ -826,16 +837,16 @@ public class MOoutput {
 		BiologicalNodeAbstract bna;
 		Place p;
 		HashMap<String, String> referenceMapping = new HashMap<String, String>();
-		
+
 		while (it.hasNext()) {
 			bna = it.next();
 			if (bna instanceof Place) {
 				p = (Place) bna;
 				// names.add("P"+p.getID());
 				names.add(p.getName());
-				if(p.hasRef()){
+				if (p.hasRef()) {
 					referenceMapping.put(p.getName(), p.getRef().getName());
-				}else{
+				} else {
 					referenceMapping.put(p.getName(), p.getName());
 				}
 				// mNames.put("P"+p.getID(), "P"+p.getID() + ".t");
