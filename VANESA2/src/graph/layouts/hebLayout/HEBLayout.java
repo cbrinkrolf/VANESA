@@ -71,7 +71,7 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 				private MyGraph myGraph = GraphInstance.getMyGraph();
 				public int compare(BiologicalNodeAbstract n1, BiologicalNodeAbstract n2){
 					Integer n1ParentID = n1.getCurrentShownParentNode(myGraph).getID();
-					Integer n2ParentID = n1.getCurrentShownParentNode(myGraph).getID();
+					Integer n2ParentID = n2.getCurrentShownParentNode(myGraph).getID();
 					if(n1.getCurrentShownParentNode(myGraph).getParentNode()!=null){
 						n1ParentID = n1.getCurrentShownParentNode(myGraph).getParentNode().getID();
 					}
@@ -79,11 +79,17 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 						n2ParentID = n2.getCurrentShownParentNode(myGraph).getParentNode().getID();
 					}
 					
-					return n1ParentID.compareTo(n2ParentID);
+					return n1ParentID-n2ParentID;
 				}
 			});
 		}
-		
+		for(BiologicalNodeAbstract node : order){
+			if(node.getCurrentShownParentNode(GraphInstance.getMyGraph()).getParentNode()!=null){
+				System.out.println(node.getLabel() + " -> " + node.getCurrentShownParentNode(GraphInstance.getMyGraph()).getLabel() + " -> " + node.getCurrentShownParentNode(GraphInstance.getMyGraph()).getParentNode().getLabel());
+			} else {
+				System.out.println(node.getLabel() + " -> " + node.getCurrentShownParentNode(GraphInstance.getMyGraph()).getLabel());
+			}
+		}
 		bnaGroups = new ArrayList<List<BiologicalNodeAbstract>>();
 		List<BiologicalNodeAbstract> newGroup = new ArrayList<BiologicalNodeAbstract>();
 		BiologicalNodeAbstract currentNode;
