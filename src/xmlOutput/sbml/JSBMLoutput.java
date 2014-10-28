@@ -724,6 +724,10 @@ public class JSBMLoutput {
 					attr = String.valueOf(((ContinuousTransition) oneNode)
 							.getMaximumSpeed());
 					el.addChild(createElSub(attr, "maximumSpeed"));
+					attr = String.valueOf(((ContinuousTransition) oneNode)
+							.isKnockedOut());
+					el.addChild(createElSub(attr, "knockedOut"));
+					
 				} else if (oneNode instanceof StochasticTransition) {
 					attr = ((StochasticTransition) oneNode).getDistribution();
 					el.addChild(createElSub(attr, "distribution"));
