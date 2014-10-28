@@ -3,7 +3,10 @@ package graph.layouts.hebLayout;
 import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -25,12 +28,17 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 		GridLayout layout = new GridLayout(0, 2);
 		setLayout(layout);
 		
-		 showInternalEdges= new JCheckBox();
+		JPanel edgePreferences = new JPanel();
+		BoxLayout edgePreferencesLayout = new BoxLayout(edgePreferences, BoxLayout.PAGE_AXIS);
+		edgePreferences.setLayout(edgePreferencesLayout);
+		edgePreferences.setBorder(BorderFactory.createTitledBorder("Edge Preferences"));
+		
+		 showInternalEdges= new JCheckBox("Show group-internal edges");
 		 showInternalEdges.setSelected(true);
-		 showInternalEdges.setBorder(BorderFactory
-					.createTitledBorder("Show internal edges"));
+		 edgePreferences.add(showInternalEdges);
 		 
-		 add(showInternalEdges);
+		 
+		 add(edgePreferences);
 	}
 	
 	public static HEBLayoutConfig getInstance() {

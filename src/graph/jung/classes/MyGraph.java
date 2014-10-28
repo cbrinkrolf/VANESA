@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import org.apache.commons.collections15.Transformer;
 
 import petriNet.Place;
+import sun.security.action.GetLongAction;
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -1013,6 +1014,10 @@ public class MyGraph {
 	}
 	
 	public void changeToHEBLayout() {
+		if(layout instanceof HEBLayout){
+			changeToLayout(new HEBLayout(g, ((HEBLayout) layout).getOrder()));
+			return;
+		}
 		changeToLayout(new HEBLayout(g));
 	}
 
