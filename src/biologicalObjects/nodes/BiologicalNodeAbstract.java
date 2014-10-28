@@ -1366,6 +1366,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	public Set<BiologicalNodeAbstract> getAllRootNodes() {
 		Set<BiologicalNodeAbstract> rootNodes = new HashSet<BiologicalNodeAbstract>();
+		if(!isCoarseNode()){
+			rootNodes.add(this);
+			return rootNodes;
+		}
 		for(BiologicalNodeAbstract node : getInnerNodes()){
 			if(!node.isCoarseNode()){
 				rootNodes.add(node);
