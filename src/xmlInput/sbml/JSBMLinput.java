@@ -75,7 +75,7 @@ public class JSBMLinput {
 	 */
 	private BiologicalEdgeAbstract bea = null;
 	private final Hashtable<Integer, BiologicalNodeAbstract> nodes = new Hashtable<Integer, BiologicalNodeAbstract>();
-	
+
 	private Hashtable<BiologicalNodeAbstract, Integer> bna2Ref = new Hashtable<BiologicalNodeAbstract, Integer>();
 
 	public JSBMLinput() {
@@ -83,7 +83,7 @@ public class JSBMLinput {
 	}
 
 	public String loadSBMLFile(File file) {
-		//System.out.println("neu");
+		// System.out.println("neu");
 		String message = "Import was successful";
 		Document doc = null;
 
@@ -119,7 +119,7 @@ public class JSBMLinput {
 		handleReferences();
 		Element reactionNode = modelNode.getChild("listOfReactions", null);
 		createReaction(reactionNode);
-		
+
 		buildUpHierarchy(annotationNode);
 		// refresh view
 		try {
@@ -279,7 +279,7 @@ public class JSBMLinput {
 						nodes.get(to));
 				break;
 			case Elementdeclerations.dephosphorylationEdge:
-				//System.out.println("dephos:" + biologicalElement);
+				// System.out.println("dephos:" + biologicalElement);
 				bea = new Dephosphorylation(label, name, nodes.get(from),
 						nodes.get(to));
 				break;
@@ -329,8 +329,8 @@ public class JSBMLinput {
 				if (elSub != null) {
 					attr = elSub.getAttributeValue("ActivationProbability");
 				}
-				 ((PNEdge) bea).setActivationProbability(Double
-							.parseDouble(attr));
+				((PNEdge) bea).setActivationProbability(Double
+						.parseDouble(attr));
 				break;
 			case Elementdeclerations.pnInhibitionEdge:
 				elSub = reacAnnotation.getChild("Function", null);
@@ -349,7 +349,7 @@ public class JSBMLinput {
 						.parseDouble(attr));
 				break;
 			default:
-				//System.out.println(biologicalElement);
+				// System.out.println(biologicalElement);
 				break;
 			}
 			if (bea != null) {
@@ -528,7 +528,7 @@ public class JSBMLinput {
 				bna = new biologicalObjects.nodes.Site(label, name);
 				break;
 			case Elementdeclerations.place:
-				//System.out.println("plce");
+				// System.out.println("plce");
 				bna = new petriNet.Place(label, name, 1.0, true);
 				elSub = specAnnotation.getChild("token", null);
 				attr = String.valueOf(elSub.getAttributeValue("token"));
@@ -548,7 +548,7 @@ public class JSBMLinput {
 				bna = new petriNet.Place(label, name, 1.0, false);
 				elSub = specAnnotation.getChild("token", null);
 				attr = String.valueOf(elSub.getAttributeValue("token"));
-				//System.out.println(attr);
+				// System.out.println(attr);
 				((petriNet.Place) bna).setToken(Double.parseDouble(attr));
 				elSub = specAnnotation.getChild("tokenMin", null);
 				attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
@@ -575,6 +575,17 @@ public class JSBMLinput {
 				((petriNet.ContinuousTransition) bna).setMaximumSpeed(attr);
 				if (attr == null || attr.equals("")) {
 					((petriNet.ContinuousTransition) bna).setMaximumSpeed("1");
+				}
+				elSub = specAnnotation.getChild("knockedOut", null);
+				((petriNet.ContinuousTransition) bna).setKnockedOut(false);
+				if (elSub != null) {
+					attr = String
+							.valueOf(elSub.getAttributeValue("knockedOut"));
+
+					if (attr != null && attr.equals("true")) {
+						((petriNet.ContinuousTransition) bna)
+								.setKnockedOut(true);
+					}
 				}
 				break;
 			case Elementdeclerations.stochasticTransition:
@@ -612,22 +623,26 @@ public class JSBMLinput {
 				Double yCoord = new Double(
 						elSubSub.getAttributeValue("y_Coordinate"));
 				Point2D.Double p = new Point2D.Double(xCoord, yCoord);
-				
+
 				elSub = specAnnotation.getChild("Parameters", null);
-				
-				//elSubSub = elSub.getChild("x_Coordinate", null);
-				
+
+				// elSubSub = elSub.getChild("x_Coordinate", null);
+
 				ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 				Parameter param;
 				String pname = "";
 				Double value = 0.0;
 				String unit = "";
-				for(int j = 0; j<elSub.getChildren().size(); j++){
-					elSubSub = 	elSub.getChildren().get(j);
-					//System.out.println(elSubSub.getChild("Name", null).getAttributeValue("Name"));
-					pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
-					value = Double.valueOf(elSubSub.getChild("Value", null).getAttributeValue("Value"));
-					unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
+				for (int j = 0; j < elSub.getChildren().size(); j++) {
+					elSubSub = elSub.getChildren().get(j);
+					// System.out.println(elSubSub.getChild("Name",
+					// null).getAttributeValue("Name"));
+					pname = elSubSub.getChild("Name", null).getAttributeValue(
+							"Name");
+					value = Double.valueOf(elSubSub.getChild("Value", null)
+							.getAttributeValue("Value"));
+					unit = elSubSub.getChild("Unit", null).getAttributeValue(
+							"Unit");
 					param = new Parameter(pname, value, unit);
 					parameters.add(param);
 				}
@@ -641,61 +656,66 @@ public class JSBMLinput {
 			bna = null;
 		}
 	}
-	
+
 	/**
 	 * Coarses the nodes as described in the loaded sbml file.
-	 * @param annotationNode Annotation Area of the imported model.
+	 * 
+	 * @param annotationNode
+	 *            Annotation Area of the imported model.
 	 * @author tloka
 	 */
-	private void buildUpHierarchy(Element annotationNode){
-		
-		if(annotationNode == null)
+	private void buildUpHierarchy(Element annotationNode) {
+
+		if (annotationNode == null)
 			return;
-		
+
 		Element modelNode = annotationNode.getChild("model", null);
-		if(modelNode == null)
+		if (modelNode == null)
 			return;
-		
+
 		Element hierarchyList = modelNode.getChild("listOfHierarchies", null);
-		if(hierarchyList == null)
+		if (hierarchyList == null)
 			return;
-		
+
 		Map<Integer, Set<Integer>> hierarchyMap = new HashMap<Integer, Set<Integer>>();
 		Map<Integer, String> coarseNodeLabels = new HashMap<Integer, String>();
-		
-		for(Element coarseNode : hierarchyList.getChildren("coarseNode", null)){
-			if(coarseNode.getChildren("child", null)==null)
+
+		for (Element coarseNode : hierarchyList.getChildren("coarseNode", null)) {
+			if (coarseNode.getChildren("child", null) == null)
 				continue;
-			
+
 			Set<Integer> childrenSet = new HashSet<Integer>();
-			for(Element childElement : coarseNode.getChildren("child", null)){
-				Integer childNode = Integer.parseInt(childElement.getAttributeValue("id").split("_")[1]);
+			for (Element childElement : coarseNode.getChildren("child", null)) {
+				Integer childNode = Integer.parseInt(childElement
+						.getAttributeValue("id").split("_")[1]);
 				childrenSet.add(childNode);
 			}
-			
-			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id").split("_")[1]);
+
+			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id")
+					.split("_")[1]);
 			hierarchyMap.put(id, childrenSet);
 			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
 		}
-		
+
 		int coarsedNodes = 0;
-		
-		while(coarsedNodes<hierarchyMap.size()){
-			for(Integer parent : hierarchyMap.keySet()){
+
+		while (coarsedNodes < hierarchyMap.size()) {
+			for (Integer parent : hierarchyMap.keySet()) {
 				boolean toBeCoarsed = true;
 				Set<BiologicalNodeAbstract> coarseNodes = new HashSet<BiologicalNodeAbstract>();
-				for(Integer child : hierarchyMap.get(parent)){
-					if(!nodes.containsKey(child) || nodes.containsKey(parent)){
+				for (Integer child : hierarchyMap.get(parent)) {
+					if (!nodes.containsKey(child) || nodes.containsKey(parent)) {
 						toBeCoarsed = false;
 						break;
 					}
 					coarseNodes.add(nodes.get(child));
 				}
-				if(toBeCoarsed){
-					BiologicalNodeAbstract coarseNode = BiologicalNodeAbstract.coarse(coarseNodes, 
-							parent, coarseNodeLabels.get(parent));
+				if (toBeCoarsed) {
+					BiologicalNodeAbstract coarseNode = BiologicalNodeAbstract
+							.coarse(coarseNodes, parent,
+									coarseNodeLabels.get(parent));
 					nodes.put(parent, coarseNode);
-					coarsedNodes+=1;
+					coarsedNodes += 1;
 				}
 			}
 		}
@@ -814,9 +834,10 @@ public class JSBMLinput {
 			break;
 		case "NodeReference":
 			elSub = child.getChild("hasRef", null);
-			if(elSub.getAttributeValue("hasRef").equals("true")){
+			if (elSub.getAttributeValue("hasRef").equals("true")) {
 				elSub = child.getChild("RefID", null);
-				this.bna2Ref.put(bna, Integer.parseInt(elSub.getAttributeValue("RefID")));
+				this.bna2Ref.put(bna,
+						Integer.parseInt(elSub.getAttributeValue("RefID")));
 			}
 			break;
 		// special cases
@@ -1569,11 +1590,11 @@ public class JSBMLinput {
 		RangeSelector.getInstance().addRangesInMyGraph(pathway.getGraph(),
 				attrs);
 	}
-	
-	private void handleReferences(){
+
+	private void handleReferences() {
 		Iterator<BiologicalNodeAbstract> it = bna2Ref.keySet().iterator();
 		BiologicalNodeAbstract bna;
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			bna = it.next();
 			bna.setRef(this.nodes.get(bna2Ref.get(bna)));
 		}
