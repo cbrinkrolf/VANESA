@@ -1000,6 +1000,34 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	public BiologicalNodeAbstract getParentNode() {
 		return parentNode;
 	}
+	
+	public BiologicalNodeAbstract getLastParentNode() {
+		BiologicalNodeAbstract lastParent = getParentNode();
+		if(lastParent==null){
+			return lastParent;
+		}
+		while(lastParent.getParentNode()!=null){
+			lastParent = lastParent.getParentNode();
+		}
+		return lastParent;
+	}
+	
+	public BiologicalNodeAbstract getLastCommonParentNode(BiologicalNodeAbstract otherNode){
+		if(getLastParentNode() == otherNode.getLastParentNode()){
+			BiologicalNodeAbstract lastCommonParentNode = getLastParentNode();
+			while(true){
+				for(BiologicalNodeAbstract childNode : lastCommonParentNode.getInnerNodes()){
+					if(getAllParentNodes().contains(childNode) && otherNode.getAllParentNodes().contains(childNode)){
+						lastCommonParentNode = childNode;
+						break;
+					}
+				}
+				break;
+			}
+			return lastCommonParentNode;
+		}
+		return null;
+	}
 
 	public Set<BiologicalNodeAbstract> getAllParentNodes() {
 		BiologicalNodeAbstract node = this;
