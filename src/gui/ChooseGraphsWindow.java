@@ -25,8 +25,8 @@ import biologicalElements.Pathway;
 public abstract class ChooseGraphsWindow extends JFrame implements ActionListener {
 	private static final long serialVersionUID = -4040410943988968952L;
 	private JDialog dialog;
-	JOptionPane optionPane;
-	JPanel panel = new JPanel();
+	private JOptionPane optionPane;
+	private JPanel panel = new JPanel();
 	
 	private ArrayList<JCheckBox> checkboxes = new ArrayList<JCheckBox>();
 	

@@ -3,8 +3,6 @@
  */
 package graph.gui;
 
-import graph.GraphInstance;
-
 import java.awt.Dimension;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -24,7 +21,6 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import biologicalElements.ElementNamesSingelton;
 import biologicalElements.Elementdeclerations;
-import biologicalElements.Pathway;
 
 /**
  * @author Sebastian
@@ -35,14 +31,10 @@ public class VertexDialog{
 	private JPanel panel;
 	private String[] details = new String[3];
 	private JOptionPane pane;
-	private JTextField name;
 	private JComboBox<String> elementNames = new javax.swing.JComboBox<String>();
 	private JComboBox<String> compartment = new JComboBox<String>();
-	private GraphInstance graphInstance = new GraphInstance();
-	private Pathway pw = graphInstance.getPathway();
 	private JComboBox<String> box = new JComboBox<String>();
 	
-	boolean addedNewValues = false;
 	/**
 	 * 
 	 */

@@ -3,8 +3,6 @@ package petriNet;
 import graph.jung.graphDrawing.VertexShapes;
 
 import java.awt.Color;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
 import biologicalElements.Elementdeclerations;

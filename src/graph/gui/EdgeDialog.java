@@ -41,19 +41,19 @@ public class EdgeDialog extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JPanel panel;
-	String[] details = new String[3];
-	JOptionPane pane;
-	JTextField name;
-	JRadioButton directed, undirected;
+	private JPanel panel;
+	private String[] details = new String[3];
+	private JOptionPane pane;
+	private JTextField name;
+	private JRadioButton directed, undirected;
 
-	GraphInstance graphInstance = new GraphInstance();
-	Pathway pw = graphInstance.getPathway();
-	JComboBox<String> box = new JComboBox<String>();
-	JComboBox<String> fromBox = new JComboBox<String>();
-	HashMap<Integer,BiologicalNodeAbstract> fromMap = new HashMap<Integer, BiologicalNodeAbstract>();
-	JComboBox<String> toBox = new JComboBox<String>();
-	HashMap<Integer,BiologicalNodeAbstract> toMap = new HashMap<Integer, BiologicalNodeAbstract>();
+	private GraphInstance graphInstance = new GraphInstance();
+	private Pathway pw = graphInstance.getPathway();
+	private JComboBox<String> box = new JComboBox<String>();
+	private JComboBox<String> fromBox = new JComboBox<String>();
+	private HashMap<Integer,BiologicalNodeAbstract> fromMap = new HashMap<Integer, BiologicalNodeAbstract>();
+	private JComboBox<String> toBox = new JComboBox<String>();
+	private HashMap<Integer,BiologicalNodeAbstract> toMap = new HashMap<Integer, BiologicalNodeAbstract>();
 
 
 

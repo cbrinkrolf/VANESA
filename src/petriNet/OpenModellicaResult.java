@@ -34,10 +34,10 @@ public class OpenModellicaResult extends SwingWorker{
 	private final String modellicaSimulationNew = "csv";
 	
 	private final int option;
-	final ProgressBar bar = new ProgressBar();
+	private final ProgressBar bar = new ProgressBar();
 	
-	GraphContainer con = ContainerSingelton.getInstance();
-	GraphInstance graphInstance = new GraphInstance();
+	private GraphContainer con = ContainerSingelton.getInstance();
+	private GraphInstance graphInstance = new GraphInstance();
 
 	public OpenModellicaResult () {
 

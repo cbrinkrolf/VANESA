@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,20 +21,15 @@ public class ParameterWindow implements ActionListener{
 
 	
 	private JPanel panel;
-	private String[] details = new String[3];
 	private JOptionPane pane;
 	private JTextField name = new JTextField("a");
-	private JComboBox<String> elementNames = new javax.swing.JComboBox<String>();
-	private JComboBox<String> compartment = new JComboBox<String>();
 	private GraphInstance graphInstance = new GraphInstance();
 	private Pathway pw = graphInstance.getPathway();
-	private JComboBox<String> box = new JComboBox<String>();
 	private JTextField value = new JTextField("1");
 	private JTextField unit = new JTextField("u");
 	private JButton add;
 	private GraphElementAbstract gea;
 	
-	boolean addedNewValues = false;
 	private JDialog dialog;
 	//private HashMap<JButton, Parameter> parameters = new HashMap<JButton, Parameter>();
 

@@ -5,8 +5,6 @@ import graph.GraphInstance;
 import graph.jung.graphDrawing.VertexShapes;
 
 import java.awt.Color;
-import java.util.HashSet;
-import java.util.Set;
 
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;

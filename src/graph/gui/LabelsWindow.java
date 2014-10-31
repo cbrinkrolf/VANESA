@@ -24,7 +24,6 @@ public class LabelsWindow implements ActionListener{
 	private JButton add;
 	private GraphElementAbstract gea;
 	
-	boolean addedNewValues = false;
 	private JDialog dialog;
 	//private HashMap<JButton, Parameter> parameters = new HashMap<JButton, Parameter>();
 
