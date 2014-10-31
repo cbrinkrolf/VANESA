@@ -357,6 +357,31 @@ public class PetriNetSimulation implements ActionListener {
 							+ "simulation.mo"), graphInstance.getPathway());
 					bea2key = mo.getBea2resultkey();
 					//
+					
+					String filter = "variableFilter=\"";
+					
+					Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
+					BiologicalNodeAbstract bna;
+					while(it.hasNext()){
+						bna = it.next();
+						if(bna instanceof Place){
+							filter+="'"+bna.getName()+"'.t|";
+						}else if(bna instanceof Transition){
+							filter+="'"+bna.getName()+"'.fire|";
+							filter+="'"+bna.getName()+"'.actualSpeed|";
+						}
+					}
+					
+					Iterator<String> it2 = bea2key.values().iterator();
+					String s;
+					while(it2.hasNext()){
+						s = it2.next();
+						filter+=s+"|";
+						filter+="der("+s+")|";
+					}
+					//filter = filter.substring(0,  filter.length()-2);
+					filter+="\"";
+					//System.out.println(filter);
 					FileWriter fstream = new FileWriter(pathSim
 							+ "simulation.mos");
 					BufferedWriter out = new BufferedWriter(fstream);
@@ -367,9 +392,9 @@ public class PetriNetSimulation implements ActionListener {
 					out.write("getErrorString();\r\n");
 					out.write("loadFile(\"simulation.mo\");\r\n");
 					out.write("getErrorString();\r\n");
+					out.write("buildModel(simulation, "+filter+");\r\n");
 					out.write("buildModel(simulation);\r\n");
 					out.write("getErrorString();\r\n");
-					// variableFilter=\"^[a-zA-Z_0-9]*.t\" only places
 
 					// out.write("fileName=\"simulate.mat\";\r\n");
 					// out.write("CSVfile=\"simulate.csv\";\r\n");
