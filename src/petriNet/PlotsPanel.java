@@ -19,12 +19,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -33,15 +31,13 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import save.graphPicture.JpegFilter;
+import save.graphPicture.PngFilter;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
@@ -55,9 +51,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	private Pathway pw = new GraphInstance().getPathway();
 	private int rows = 0; //pw.getPetriNet().getNumberOfPlaces();
 	private int cols = pw.getPetriNet().getResultDimension();
-	private Object[][] table;
 	private ArrayList<String> labels = new ArrayList<String>();
-	private BufferedImage bi = null;
 	private JPanel p = new JPanel();
 	private double min = Double.MAX_VALUE;
 	private double max = Double.MIN_VALUE;
@@ -65,7 +59,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	private ArrayList<XYSeries> seriesList = new ArrayList<XYSeries>();
 	private ArrayList<JFreeChart> charts = new ArrayList<JFreeChart>();
 
-	HashMap<String, Place> places = new HashMap<String, Place>();
+	private HashMap<String, Place> places = new HashMap<String, Place>();
 
 	// ArrayList<String> labels = new ArrayList<String>();
 
@@ -197,6 +191,11 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 				//final XYSeriesCollection dataset = new XYSeriesCollection();
 
 				JPanel pane = new JPanel() {
+					/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 					public void paintComponent(Graphics g) {
 						g.setColor(new Color(255, 255, 255));
 						g.fillRect(0, 0, 322, 200);
@@ -259,14 +258,14 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 		JFileChooser chooser = new JFileChooser();
 		chooser.setAcceptAllFileFilterUsed(false);
-		JpegFilter filter = new JpegFilter();
+		PngFilter filter = new PngFilter();
 		chooser.addChoosableFileFilter(filter);
 		chooser.setFileFilter(filter);
 		int option = chooser.showSaveDialog(MainWindowSingleton.getInstance());
 		if (option == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
-			if (!file.getAbsolutePath().endsWith(".jpeg"))
-				file = new File(file.getAbsolutePath() + ".jpeg");
+			if (!file.getAbsolutePath().endsWith(".png"))
+				file = new File(file.getAbsolutePath() + ".png");
 			boolean overwrite = true;
 			if (file.exists()) {
 				int response = JOptionPane.showConfirmDialog(null,
@@ -281,7 +280,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			if (overwrite) {
 
 				try {
-					ImageIO.write(bi, "jpeg", file);
+					ImageIO.write(bi, "png", file);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
