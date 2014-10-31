@@ -149,7 +149,7 @@ public class Server {
 		System.out.println("Headers: " + names.size());
 		counter = 0;
 		for (int i = 0; i < names.size(); i++) {
-			// System.out.print(names.get(i) + "\t");
+			//System.out.print(names.get(i) + "\t");
 			counter += names.get(i).length();
 		}
 		System.out.println("sum: " + counter);
@@ -399,13 +399,14 @@ public class Server {
 		System.out.println("server destroyed");
 		try {
 			serverSocket.close();
+			running = false;
+			serverThread.stop();
+			//serverThread.destroy();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
-		running = false;
-		serverThread.stop();
-		serverThread.destroy();
+		
 	}
 
 }

@@ -14,10 +14,11 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 
 import org.jibble.epsgraphics.EpsGraphics2D;
 
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
@@ -27,7 +28,7 @@ import gui.MainWindowSingleton;
 
 public class WriteGraphPicture implements Printable {
 
-	VisualizationViewer vv;
+	VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 	MainWindow w;
 
 	private String fileFormat;
@@ -40,49 +41,9 @@ public class WriteGraphPicture implements Printable {
 		vv = g.getVisualizationViewer();
 	}
 
-	public void writeFile(BufferedImage image) {
-		JFileChooser chooser = new JFileChooser();
-		chooser.addChoosableFileFilter(new JpegFilter());
-		chooser.addChoosableFileFilter(new EPSFilter());
-		int option = chooser.showSaveDialog(w);
-		if (option == JFileChooser.APPROVE_OPTION) {
-			File file = chooser.getSelectedFile();
-			boolean overwrite = true;
-			if (file.exists()) {
-				int response = JOptionPane.showConfirmDialog(null,
-						"Overwrite existing file?", "Confirm Overwrite",
-						JOptionPane.OK_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE);
-				if (response == JOptionPane.CANCEL_OPTION) {
-					overwrite = false;
-				}
-			}
-
-			if (overwrite) {
-				String extension = file.getPath(), suffix = null;
-				int i = extension.lastIndexOf('.');
-				if (i > 0 && i < extension.length() - 1) {
-					try {
-						ImageIO.write(image, "jpeg", file);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else {
-					File withExtension = new File(file.getAbsolutePath()
-							+ ".jpeg");
-					try {
-						ImageIO.write(image, "jpeg", withExtension);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
-
 	public void writeFile() {
 		JFileChooser chooser = new JFileChooser();
-		chooser.addChoosableFileFilter(new JpegFilter());
+		chooser.addChoosableFileFilter(new PngFilter());
 		chooser.addChoosableFileFilter(new EPSFilter());
 		int option = chooser.showSaveDialog(w);
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -107,19 +68,19 @@ public class WriteGraphPicture implements Printable {
 	}
 
 	private void write(File file) {
-		if (fileFormat.equals("JPEG Files (*.jpeg)")) {
-			String extension = file.getPath(), suffix = null;
+		if (fileFormat.equals("PNG Files (*.png)")) {
+			String extension = file.getPath();
 			int i = extension.lastIndexOf('.');
 			if (i > 0 && i < extension.length() - 1) {
-				writeJPEGImage(file);
+				writePNGImage(file);
 			} else {
-				File withExtension = new File(file.getAbsolutePath() + ".jpeg");
-				writeJPEGImage(withExtension);
+				File withExtension = new File(file.getAbsolutePath() + ".png");
+				writePNGImage(withExtension);
 			}
 
 		} else if (fileFormat.equals("EPS Files (*.eps)")) {
 
-			String extension = file.getPath(), suffix = null;
+			String extension = file.getPath();
 			int i = extension.lastIndexOf('.');
 			if (i > 0 && i < extension.length() - 1) {
 				writeEPSImage(file);
@@ -129,13 +90,13 @@ public class WriteGraphPicture implements Printable {
 			}
 		}
 		else {
-			String extension = file.getPath(), suffix = null;
+			String extension = file.getPath();
 			int i = extension.lastIndexOf('.');
 			if (i > 0 && i < extension.length() - 1) {
-				writeJPEGImage(file);
+				writePNGImage(file);
 			} else {
 				File withExtension = new File(file.getAbsolutePath());
-				writeJPEGImage(withExtension);
+				writePNGImage(withExtension);
 			}
 		}
 	}
@@ -177,7 +138,7 @@ public class WriteGraphPicture implements Printable {
 
 	}
 
-	private void writeJPEGImage(File file) {
+	private void writePNGImage(File file) {
 
 		int width = vv.getSize().width;
 		int height = vv.getSize().height;
@@ -192,7 +153,7 @@ public class WriteGraphPicture implements Printable {
 		graphics.dispose();
 
 		try {
-			ImageIO.write(bi, "jpeg", file);
+			ImageIO.write(bi, "png", file);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

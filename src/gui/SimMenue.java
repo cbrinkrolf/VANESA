@@ -81,9 +81,6 @@ public class SimMenue extends JFrame {
 		integrators.setSelectedItem("dassl");
 		AutoCompleteDecorator.decorate(integrators);
 		integrators.addItem("dassl");
-		integrators.addItem("dasslwort");
-		integrators.addItem("dasslNumJac");
-		integrators.addItem("dasslsteps");
 		integrators.addItem("euler");
 		integrators.addItem("lobatto2");
 		integrators.addItem("lobatto4");
