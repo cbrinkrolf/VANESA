@@ -28,7 +28,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -37,7 +36,6 @@ import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-import cluster.graphdb.DatabaseEntry;
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.PNEdge;
@@ -57,6 +55,7 @@ import biologicalObjects.nodes.GraphNode;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
+import cluster.graphdb.DatabaseEntry;
 
 public class ElementWindow implements ActionListener, ItemListener {
 
@@ -65,11 +64,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private GraphInstance graphInstance;
 	boolean emptyPane = true;
 
-	boolean colorChanged = false;
-	boolean referenceChanged = false;
-
 	private JCheckBox reference;
-	private JLabel lblRef;
 	private JButton chooseRef;
 	private JButton deleteRef;
 	private JButton pickOrigin;
@@ -79,8 +74,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private JButton showNeighbours;
 	private JButton parametersButton;
 	private JButton showLabels;
-	boolean vertexElement = false;
-	private JTabbedPane pane = new JTabbedPane();
 
 	private BiologicalNodeAbstract ref = null;
 	private GraphElementAbstract original;
@@ -814,7 +807,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 		else if ("showParameters".equals(event)) {
 			// System.out.println("show parameters");
-			ParameterWindow parameterWindow = new ParameterWindow(ab);
+			new ParameterWindow(ab);
 		} else if ("showLabels".equals(event)) {
 			// System.out.println("click");
 			new LabelsWindow(ab);

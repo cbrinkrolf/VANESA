@@ -31,14 +31,14 @@ public class CoarseNodeDeleteDialog extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JPanel panel;
-	JOptionPane pane;
-	Checkbox saveAnswer;
+	private JPanel panel;
+	private JOptionPane pane;
+	private Checkbox saveAnswer;
 
-	GraphInstance graphInstance = new GraphInstance();
-	Pathway pw = graphInstance.getPathway();
-	JComboBox<String> edges = new JComboBox<String>();
-	HashMap<Integer,BiologicalEdgeAbstract> edgeMap = new HashMap<Integer, BiologicalEdgeAbstract>();
+	private GraphInstance graphInstance = new GraphInstance();
+	private Pathway pw = graphInstance.getPathway();
+	private JComboBox<String> edges = new JComboBox<String>();
+	private HashMap<Integer,BiologicalEdgeAbstract> edgeMap = new HashMap<Integer, BiologicalEdgeAbstract>();
 
 	/**
 	 * 

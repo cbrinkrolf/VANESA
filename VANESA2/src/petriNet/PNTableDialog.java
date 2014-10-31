@@ -137,6 +137,11 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		DefaultTableModel model = new DefaultTableModel(rows, new String[] {
 				"Name", "Label", "Token", "TokenMax", "TokenMin", "TokenStart",
 				"Type", "Delay", "Distribution" }) {
+			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 			public Class getColumnClass(int columnIndex) {
 				if (columnIndex == 0 || columnIndex == 1)
 					return String.class;
@@ -203,6 +208,11 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		DefaultTableModel model2 = new DefaultTableModel(rows2, new String[] {
 				"Name", "Label", "Start", "End", "Function", "Lower Boundary",
 				"UpperBoundary", "Activation Probability" }) {
+			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 			public Class getColumnClass(int columnIndex) {
 				if (columnIndex == 0 || columnIndex == 1 || columnIndex == 2
 						|| columnIndex == 3 || columnIndex == 4)

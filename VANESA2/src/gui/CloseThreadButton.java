@@ -21,8 +21,7 @@ import javax.swing.plaf.basic.BasicButtonUI;
 public class CloseThreadButton extends JButton implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	MainWindow w = MainWindowSingleton.getInstance();
-	ProgressBar bar;
+	private ProgressBar bar;
 	
 	public CloseThreadButton(ProgressBar bar) {
 		this.bar=bar;
