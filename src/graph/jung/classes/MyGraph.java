@@ -1054,6 +1054,10 @@ public class MyGraph {
 			//changeToKKLayout();
 		}
 	}
+	
+	public AbstractLayout<BiologicalNodeAbstract,BiologicalEdgeAbstract> getLayout(){
+		return layout;
+	}
 
 	private void changeToLayout(
 			AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout) {
