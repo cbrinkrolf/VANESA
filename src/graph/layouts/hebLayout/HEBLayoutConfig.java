@@ -19,8 +19,11 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 	private static HEBLayoutConfig instance;
 
 	public static int GROUP_DISTANCE_FACTOR = 5;
+	public static int EDGE_BENDING_FACTOR = 4;
 	
 	public static JCheckBox showInternalEdges;
+	public static JSlider groupSeperationSlider;
+	public static JSlider edgeBendingSlider;
 	
 	public HEBLayoutConfig() {
 		super(HEBLayout.class);
@@ -37,8 +40,39 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 		 showInternalEdges.setSelected(true);
 		 edgePreferences.add(showInternalEdges);
 		 
+		 JPanel groupPreferences = new JPanel();
+		 BoxLayout groupPreferencesLayout = new BoxLayout(groupPreferences, BoxLayout.PAGE_AXIS);
+		 groupPreferences.setLayout(groupPreferencesLayout);
+		 groupPreferences.setBorder(BorderFactory.createTitledBorder("Grouping Preferences"));
 		 
+		 groupSeperationSlider = new JSlider();
+			groupSeperationSlider.setBorder(BorderFactory
+					.createTitledBorder("Group seperation factor"));
+			groupSeperationSlider.setMinimum(1);
+			groupSeperationSlider.setMaximum(20);
+			groupSeperationSlider.setValue(GROUP_DISTANCE_FACTOR);
+			groupSeperationSlider.setMajorTickSpacing(5);
+			groupSeperationSlider.setMinorTickSpacing(2);
+			groupSeperationSlider.setPaintTicks(true);
+			groupSeperationSlider.setPaintLabels(true);
+			groupSeperationSlider.addChangeListener(this);
+			groupPreferences.add(groupSeperationSlider);
+			
+		edgeBendingSlider = new JSlider();
+		edgeBendingSlider.setBorder(BorderFactory
+				.createTitledBorder("Edge bending quotient"));
+		edgeBendingSlider.setMinimum(1);
+		edgeBendingSlider.setMaximum(20);
+		edgeBendingSlider.setValue(EDGE_BENDING_FACTOR);
+		edgeBendingSlider.setMajorTickSpacing(5);
+		edgeBendingSlider.setMinorTickSpacing(2);
+		edgeBendingSlider.setPaintTicks(true);
+		edgeBendingSlider.setPaintLabels(true);
+		edgeBendingSlider.addChangeListener(this);
+		edgePreferences.add(edgeBendingSlider);
+		
 		 add(edgePreferences);
+		 add(groupPreferences);
 	}
 	
 	public static HEBLayoutConfig getInstance() {
@@ -58,7 +92,10 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 
 	@Override
 	public void stateChanged(ChangeEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		if (arg0.getSource().equals(HEBLayoutConfig.groupSeperationSlider)) {
+			HEBLayoutConfig.GROUP_DISTANCE_FACTOR = HEBLayoutConfig.groupSeperationSlider.getValue();
+		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeBendingSlider)) {
+			HEBLayoutConfig.EDGE_BENDING_FACTOR = HEBLayoutConfig.edgeBendingSlider.getValue();
+		}
 	}
 }
