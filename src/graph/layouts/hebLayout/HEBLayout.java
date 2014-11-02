@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -69,28 +70,34 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 		newHEBLayoutComparator comp = new newHEBLayoutComparator(order);
 		newOrder.sort(comp);
 		order = newOrder;
-		for(BiologicalNodeAbstract node : order){
-			System.out.println(node.getLabel());
-		}
+//		for(BiologicalNodeAbstract node : order){
+//			System.out.println(node.getLabel());
+//		}
 		
 		bnaGroups = new ArrayList<List<BiologicalNodeAbstract>>();
 		List<BiologicalNodeAbstract> newGroup = new ArrayList<BiologicalNodeAbstract>();
 		BiologicalNodeAbstract currentNode;
+		Set<BiologicalNodeAbstract> addedNodes = new HashSet<BiologicalNodeAbstract>();
 		for(BiologicalNodeAbstract node : order){
 			currentNode = node.getCurrentShownParentNode(GraphInstance.getMyGraph());
-			if(newGroup.contains(currentNode)){
+			if(addedNodes.contains(currentNode)){
 				continue;
 			}
 			if(newGroup.isEmpty()){
 				newGroup.add(currentNode);
+				addedNodes.add(currentNode);
 				bnaGroups.add(newGroup);
 				continue;
 			}
 			if(currentNode.getParentNode() != null && (currentNode.getParentNode() == newGroup.iterator().next().getParentNode())){
-				newGroup.add(currentNode);
+				if(!newGroup.contains(currentNode)){
+					newGroup.add(currentNode);
+					addedNodes.add(currentNode);
+				}
 			} else {
 				newGroup = new ArrayList<BiologicalNodeAbstract>();
 				newGroup.add(currentNode);
+				addedNodes.add(currentNode);
 				bnaGroups.add(newGroup);
 			}
 		}
@@ -167,6 +174,23 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 		return order;
 	}
 	
+	public void fuseInOrder(BiologicalNodeAbstract node){
+		if(!node.isCoarseNode()){
+			return;
+		}
+		Set<BiologicalNodeAbstract> rootNodes = new HashSet<BiologicalNodeAbstract>();
+		rootNodes.addAll(node.getAllRootNodes());
+		System.out.println("Before:");
+		for(BiologicalNodeAbstract n : order){
+			System.out.println(n.getLabel());
+		}
+		order.sort(new OrderFusionComparator(order, rootNodes));
+		System.out.println("After:");
+		for(BiologicalNodeAbstract n : order){
+			System.out.println(n.getLabel());
+		}
+	}
+	
 	@Override
     protected CircleVertexData getCircleData(BiologicalNodeAbstract v) {
         return circleVertexDataMap.get(v);
@@ -199,7 +223,6 @@ protected static class CircleVertexData extends CircleLayout.CircleVertexData{
 }
 
 //TOBI: Do further comparator tests.
-//TOBI: Define what to do with added, deleted or flattened/recoarsed nodes.
 protected class newHEBLayoutComparator implements Comparator<BiologicalNodeAbstract>{
 		
 	List<BiologicalNodeAbstract> order;
@@ -249,6 +272,50 @@ protected class newHEBLayoutComparator implements Comparator<BiologicalNodeAbstr
 			}
 			return comp1.getID()-comp2.getID();
 		}
+	}
+}
+
+//TOBI: Do further comparator tests.
+protected class OrderFusionComparator implements Comparator<BiologicalNodeAbstract>{
+	List<BiologicalNodeAbstract> order;
+	Set<BiologicalNodeAbstract> fusionNodes;
+	int firstNodeIndex = -1;
+	newHEBLayoutComparator HEBLayoutComparator;
+	
+	public OrderFusionComparator(List<BiologicalNodeAbstract> o, Set<BiologicalNodeAbstract> fN){
+		this.order = o;
+		this.fusionNodes = fN;
+		for(BiologicalNodeAbstract node : order){
+			if(fusionNodes.contains(node)){
+				firstNodeIndex = order.indexOf(node);
+				break;
+			}
+		}
+		
+		//Add all nodes to order that does not exist yet.
+		List<BiologicalNodeAbstract> intersection = new ArrayList<BiologicalNodeAbstract>();
+		intersection.addAll(fusionNodes);
+		intersection.removeAll(this.order);
+		order.addAll(intersection);
+		
+		HEBLayoutComparator = new newHEBLayoutComparator(new ArrayList<BiologicalNodeAbstract>());
+	}
+	
+	public int compare(BiologicalNodeAbstract n1, BiologicalNodeAbstract n2){
+		
+		//If both nodes already exist in the order, keep the order of these nodes.
+		if(fusionNodes.contains(n1) && fusionNodes.contains(n2)){
+			return HEBLayoutComparator.compare(n1, n2);
+		} 
+		
+		if(fusionNodes.contains(n1)){
+			return firstNodeIndex-order.indexOf(n2);
+		}
+		
+		if(fusionNodes.contains(n2)){
+			return order.indexOf(n1)-firstNodeIndex;
+		}
+		return order.indexOf(n1)-order.indexOf(n2);
 	}
 }
 

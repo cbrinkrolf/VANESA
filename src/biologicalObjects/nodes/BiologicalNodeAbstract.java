@@ -493,6 +493,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		for(BiologicalNodeAbstract vertex : vertices){
 			Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
 			conEdges.addAll(vertex.getConnectingEdges());
+			if(conEdges.isEmpty()){
+				if(vertex.getParentNode()!=null){
+					addVertex(vertex, vertex.getParentNode().getGraph().getVertexLocation(vertex));
+				} else {
+					addVertex(vertex, getRootPathway().getGraph().getVertexLocation(vertex));
+				}
+			}
 			for(BiologicalEdgeAbstract conEdge : conEdges){
 				BiologicalNodeAbstract to = conEdge.getTo().getCurrentShownParentNode(currentGraph);
 				BiologicalNodeAbstract from = conEdge.getFrom().getCurrentShownParentNode(currentGraph);
@@ -590,9 +597,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		updateBorder();
 		updateEnvironment();
 		updateConnectingEdges();
-//		printAllHierarchicalAttributes();
+		printAllHierarchicalAttributes();
 		getRootPathway().updateMyGraph();
 		updateNodeType();
+		
 		return true;
 	}
 	

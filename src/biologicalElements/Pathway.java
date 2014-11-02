@@ -6,6 +6,7 @@ import graph.gui.Boundary;
 import graph.gui.EdgeDeleteDialog;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
+import graph.layouts.hebLayout.HEBLayout;
 import gui.GraphTab;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
@@ -1462,13 +1463,14 @@ public class Pathway implements Cloneable {
 					thisNode.getEnvironment().remove(node);
 				}
 				
-				getGraph().updateLayout();
-
 				break;
 
 			case COARSED:
 				// if already added in correct graph, break.
 				if (node.getParentNode() == this) {
+					if(getGraph().getLayout() instanceof HEBLayout){
+						((HEBLayout) getGraph().getLayout()).fuseInOrder(node.getParentNode());
+					}
 					break;
 				}
 				// coarse nodes
@@ -1489,9 +1491,9 @@ public class Pathway implements Cloneable {
 				}
 
 				edgeSet.addAll(node.getParentNode().getConnectingEdges());
-				
-				getGraph().updateLayout();
-
+				if(getGraph().getLayout() instanceof HEBLayout){
+					((HEBLayout) getGraph().getLayout()).fuseInOrder(node.getParentNode());
+				}
 				break;
 
 			case CONNECTIONMODIFIED:
@@ -1510,8 +1512,6 @@ public class Pathway implements Cloneable {
 					thisNode.getBorder().remove(node);
 				}
 				
-				getGraph().updateLayout();
-
 				break;
 
 			default:
@@ -1536,6 +1536,7 @@ public class Pathway implements Cloneable {
 			markPathwayUnchanged();
 			MainWindowSingleton.getInstance().updateElementTree();
 		}
+		getGraph().updateLayout();
 	}
 
 	/**
