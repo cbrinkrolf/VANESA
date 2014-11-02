@@ -74,6 +74,8 @@ public class PetriNetVertexDialog implements ActionListener {
 	private JTextField maxSpeed = new JTextField("1");
 
 	private String petriElement;
+	
+	private BiologicalNodeAbstract createdNode;
 
 	/**
 	 * 
@@ -244,6 +246,7 @@ public class PetriNetVertexDialog implements ActionListener {
 						p.setTokenMax(number.doubleValue());
 					}
 					pw.addVertex(p, point);
+					createdNode = p;
 				} else if (petriElement.equals("continuousPlace")) {
 					
 					Place p = new Place(label.getText(), name.getText(), 0.0, false);
@@ -265,6 +268,7 @@ public class PetriNetVertexDialog implements ActionListener {
 						p.setTokenMax(number.doubleValue());
 					}
 					pw.addVertex(p, point);
+					createdNode = p;
 				} else if (petriElement.equals("discreteTransition")) {
 					DiscreteTransition t = new DiscreteTransition(
 							label.getText(), name.getText());
@@ -274,6 +278,7 @@ public class PetriNetVertexDialog implements ActionListener {
 					t.setFiringCondition(firingCondition.getText());
 
 					pw.addVertex(t, point);
+					createdNode = t;
 				} else if (petriElement.equals("continiousTransition")) {
 					ContinuousTransition t = new ContinuousTransition(
 							label.getText(), name.getText());
@@ -283,6 +288,7 @@ public class PetriNetVertexDialog implements ActionListener {
 					t.setMaximumSpeed(maxSpeed.getText());
 
 					pw.addVertex(t, point);
+					createdNode = t;
 				} else if (petriElement.equals("stochasticTransition")) {
 					StochasticTransition t = new StochasticTransition(
 							label.getText(), name.getText());
@@ -293,6 +299,7 @@ public class PetriNetVertexDialog implements ActionListener {
 					t.setFiringCondition(firingCondition.getText());
 
 					pw.addVertex(t, point);
+					createdNode = t;
 				}
 				GraphContainer con = ContainerSingelton.getInstance();
 				MainWindow w = MainWindowSingleton.getInstance();
@@ -308,6 +315,10 @@ public class PetriNetVertexDialog implements ActionListener {
 			return false;
 		}
 
+	}
+	
+	public BiologicalNodeAbstract getCreatedNode(){
+		return createdNode;
 	}
 
 	@Override

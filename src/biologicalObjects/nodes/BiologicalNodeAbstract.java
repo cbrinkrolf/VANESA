@@ -1013,7 +1013,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 	
 	public BiologicalNodeAbstract getLastCommonParentNode(BiologicalNodeAbstract otherNode){
-		if(getLastParentNode() == otherNode.getLastParentNode()){
+		if(getLastParentNode() == otherNode.getLastParentNode() && getLastParentNode()!=null){
 			BiologicalNodeAbstract lastCommonParentNode = getLastParentNode();
 			while(true){
 				for(BiologicalNodeAbstract childNode : lastCommonParentNode.getInnerNodes()){

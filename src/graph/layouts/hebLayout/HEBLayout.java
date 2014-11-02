@@ -199,7 +199,7 @@ protected static class CircleVertexData extends CircleLayout.CircleVertexData{
 }
 
 //TOBI: Do further comparator tests.
-//TOBI: Define what to do with added, deleted or flattene/recoarsed nodes.
+//TOBI: Define what to do with added, deleted or flattened/recoarsed nodes.
 protected class newHEBLayoutComparator implements Comparator<BiologicalNodeAbstract>{
 		
 	List<BiologicalNodeAbstract> order;
@@ -210,43 +210,47 @@ protected class newHEBLayoutComparator implements Comparator<BiologicalNodeAbstr
 	
 	public int compare(BiologicalNodeAbstract n1, BiologicalNodeAbstract n2){
 		
-		if(!order.contains(n1) || !order.contains(n2)){
-			Set<BiologicalNodeAbstract> n1parents = n1.getAllParentNodes();
-			Set<BiologicalNodeAbstract> n2parents = n2.getAllParentNodes();
-			if(n1parents.isEmpty() && n2parents.isEmpty()){
-				return n1.getID()-n2.getID();
-			}
-			if(n1parents.isEmpty() && !n2parents.isEmpty()){
-				return compare(n1,n2.getLastParentNode());
-			}
-			if(!n1parents.isEmpty() && n2parents.isEmpty()){
-				return compare(n1.getLastParentNode(),n2);
-			}
-			if(n1.getParentNode()==n2.getParentNode()){
-				return 0;
-			}
-			Set<BiologicalNodeAbstract> intersect = new HashSet<BiologicalNodeAbstract>();
-			intersect.addAll(n1parents);
-			intersect.retainAll(n2parents);
-			if(intersect.isEmpty()){
-				return n1.getLastParentNode().getID()-n2.getLastParentNode().getID();
-			} else {
-				BiologicalNodeAbstract comp1 = n1;
-				BiologicalNodeAbstract comp2 = n2;
-				for(BiologicalNodeAbstract child : n1.getLastCommonParentNode(n2).getInnerNodes()){
-					if(n1.getAllParentNodes().contains(child) || n1==child){
-						comp1 = child;
-					}
-					if(n2.getAllParentNodes().contains(child) || n2==child){
-						comp2 = child;
-					}
-				}
-				return comp1.getID()-comp2.getID();
-			}
-		} else {
+		//If both nodes already exist in the order, keep the order of these nodes.
+		if(order.contains(n1) && order.contains(n2)){
 			return order.indexOf(n1)-order.indexOf(n2);
+		} 
+		
+		//Else: compute the order of both nodes.
+		Set<BiologicalNodeAbstract> n1parents = n1.getAllParentNodes();
+		Set<BiologicalNodeAbstract> n2parents = n2.getAllParentNodes();
+				
+		if(n1parents.isEmpty() && n2parents.isEmpty()){
+			return n1.getID()-n2.getID();
+		}
+		if(n1parents.isEmpty() && !n2parents.isEmpty()){
+			return compare(n1,n2.getLastParentNode());
+		}
+		if(!n1parents.isEmpty() && n2parents.isEmpty()){
+			return compare(n1.getLastParentNode(),n2);
+		}
+		if(n1.getParentNode()==n2.getParentNode()){
+			return 0;
+		}
+		Set<BiologicalNodeAbstract> intersect = new HashSet<BiologicalNodeAbstract>();
+		intersect.addAll(n1parents);
+		intersect.retainAll(n2parents);
+		if(intersect.isEmpty()){
+			return n1.getLastParentNode().getID()-n2.getLastParentNode().getID();
+		} else {
+			BiologicalNodeAbstract comp1 = n1;
+			BiologicalNodeAbstract comp2 = n2;
+			for(BiologicalNodeAbstract child : n1.getLastCommonParentNode(n2).getInnerNodes()){
+				if(n1.getAllParentNodes().contains(child) || n1==child){
+					comp1 = child;
+				}
+				if(n2.getAllParentNodes().contains(child) || n2==child){
+					comp2 = child;
+				}
+			}
+			return comp1.getID()-comp2.getID();
 		}
 	}
 }
+
 	
 }

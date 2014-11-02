@@ -186,7 +186,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 					layout.lock(iterator.next(), true);
 
 				}
-
+								
 				if (con.isPetriView()) {
 					// System.out.println("is petri");
 
@@ -206,6 +206,9 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 
 						// vv.getModel().restart();
 						//System.out.println("update");
+						if(pw instanceof BiologicalNodeAbstract){
+							dialog.getCreatedNode().setParentNode((BiologicalNodeAbstract) pw); 
+						}
 						MainWindowSingleton.getInstance().updateElementTree();
 						MainWindowSingleton.getInstance().updateFilterView();
 						MainWindowSingleton.getInstance().updatePathwayTree();
@@ -235,7 +238,10 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 //						newVertex.setCompartment(answers[2]);
 						// graphInstance.getPathway().addElement(newVertex);
 						// graph.addVertex(newVertex);
-						pw.addVertex(name, label, element, compartment, p);
+						BiologicalNodeAbstract newVertex = pw.addVertex(name, label, element, compartment, p);
+						if(pw instanceof BiologicalNodeAbstract){
+							newVertex.setParentNode((BiologicalNodeAbstract) pw);
+						}
 						//pw.addVertex(newVertex, p);
 						if (graph.getVertices().size() > 1) {
 							// System.exit(0);
@@ -256,6 +262,9 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 
 					}
 
+				}
+				if(pw instanceof BiologicalNodeAbstract){
+					
 				}
 			}
 			vv.repaint();
