@@ -143,7 +143,7 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            // The gradient angel of a line between start- and endpoint.
            double gradientAngle = gradientAngle(gradient);
            
-           double moveQuotient = 4;
+           double moveQuotient = HEBLayoutConfig.EDGE_BENDING_FACTOR;
            
            // Computation of the first control point to bundle all edges connecting the same groups.
            Point2D cPoint1 = moveInCenterDirection(averagePoint(group1), center, moveQuotient);
