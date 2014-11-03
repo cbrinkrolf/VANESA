@@ -89,7 +89,25 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 				bnaGroups.add(newGroup);
 				continue;
 			}
-			if(currentNode.getParentNode() != null && (currentNode.getParentNode() == newGroup.iterator().next().getParentNode())){
+			BiologicalNodeAbstract groupNode = newGroup.iterator().next();
+			BiologicalNodeAbstract lastCurrentNodeParent = currentNode;
+			Set<BiologicalNodeAbstract> currentNodeParents = new HashSet<BiologicalNodeAbstract>();
+			BiologicalNodeAbstract lastGroupNodeParent = groupNode;
+			Set<BiologicalNodeAbstract> groupNodeParents = new HashSet<BiologicalNodeAbstract>();
+			for(int i=0; i<HEBLayoutConfig.GROUP_DEPTH; i++){
+				if(lastGroupNodeParent.getParentNode()!=null){
+					lastGroupNodeParent = lastGroupNodeParent.getParentNode();
+					groupNodeParents.add(lastGroupNodeParent);
+				}
+				if(lastCurrentNodeParent.getParentNode()!=null){
+					lastCurrentNodeParent = lastCurrentNodeParent.getParentNode();
+					currentNodeParents.add(lastCurrentNodeParent);
+				}
+			}
+			
+			currentNodeParents.retainAll(groupNodeParents);
+
+			if(!currentNodeParents.isEmpty()){
 				if(!newGroup.contains(currentNode)){
 					newGroup.add(currentNode);
 					addedNodes.add(currentNode);
@@ -180,15 +198,7 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 		}
 		Set<BiologicalNodeAbstract> rootNodes = new HashSet<BiologicalNodeAbstract>();
 		rootNodes.addAll(node.getAllRootNodes());
-		System.out.println("Before:");
-		for(BiologicalNodeAbstract n : order){
-			System.out.println(n.getLabel());
-		}
 		order.sort(new OrderFusionComparator(order, rootNodes));
-		System.out.println("After:");
-		for(BiologicalNodeAbstract n : order){
-			System.out.println(n.getLabel());
-		}
 	}
 	
 	@Override

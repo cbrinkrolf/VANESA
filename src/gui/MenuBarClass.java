@@ -28,6 +28,7 @@ public class MenuBarClass {
 	private JMenuItem circleLayout;
 	private JMenuItem isomLayout;
 	private JMenuItem gemLayout;
+	private JMenuItem hebLayout;
 	//private JMenuItem centerGraph;
 	private JMenuItem databaseItem;
 	
@@ -220,6 +221,10 @@ public class MenuBarClass {
 		circleLayout = new JMenuItem("CircleLayout");
 		circleLayout.addActionListener(new MenuListener());
 		circleLayout.setActionCommand("circleLayout");
+		
+		hebLayout = new JMenuItem("HEBLayout");
+		hebLayout.addActionListener(new MenuListener());
+		hebLayout.setActionCommand("hebLayout");
 
 		isomLayout = new JMenuItem("ISOMLayout", KeyEvent.VK_S);
 		isomLayout.addActionListener(new MenuListener());
@@ -368,6 +373,7 @@ public class MenuBarClass {
 		generateGraph.add(hamiltonGraph);
 
 		layout.add(circleLayout);
+		layout.add(hebLayout);
 		layout.add(frLayout);
 		layout.add(isomLayout);
 		layout.add(kkLayout);

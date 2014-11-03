@@ -21,6 +21,7 @@ import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import graph.GraphInstance;
+import graph.layouts.hebLayout.HEBLayout;
 import gui.MainWindowSingleton;
 
 public class MyPickingGraphMousePlugin extends
@@ -28,7 +29,7 @@ public class MyPickingGraphMousePlugin extends
 	
 	private GraphInstance graphInstance = new GraphInstance();
 	private HashMap<BiologicalNodeAbstract, Point2D> oldVertexPositions = new HashMap<BiologicalNodeAbstract, Point2D>();
-
+	private Set<BiologicalNodeAbstract> originalSelection = new HashSet<BiologicalNodeAbstract>();
 	
 	public void mouseReleased(MouseEvent e) {
 
@@ -41,11 +42,19 @@ public class MyPickingGraphMousePlugin extends
 		}
 		
 		Collection<BiologicalNodeAbstract> selectedNodes = graphInstance.getPathway().getSelectedNodes();
-		
+
 		// If no nodes were selected, return.
 		if(selectedNodes.isEmpty()){
 			super.mouseReleased(e);
 			return;
+		}
+		
+		// Reselect the original selection.
+		Collection<BiologicalNodeAbstract> deselection = graphInstance.getPathway().getSelectedNodes();
+		deselection.removeAll(originalSelection);
+		for(BiologicalNodeAbstract node : deselection){
+			graphInstance.getMyGraph().getVisualizationViewer().
+				getPickedVertexState().pick(node, false);
 		}
 		
 		// Find coarse nodes in specified environment of the final mouse position.
@@ -118,6 +127,20 @@ public class MyPickingGraphMousePlugin extends
 		
 		//oldVertexPosition = graphInstance.getPathway().getGraph().getVertexLocation(pickSupport.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e.getPoint().getY()));
 		super.mousePressed(e);
+		originalSelection.clear();
+		originalSelection.addAll(graphInstance.getPathway().getSelectedNodes());
+		if(graphInstance.getMyGraph().getLayout() instanceof HEBLayout){
+			HEBLayout hebLayout = (HEBLayout) graphInstance.getMyGraph().getLayout();
+			for(BiologicalNodeAbstract selectedNode : graphInstance.getPathway().getSelectedNodes()){
+				if(selectedNode.getParentNode()!=null){
+					for(BiologicalNodeAbstract rootNode : selectedNode.getParentNode().getAllRootNodes()){
+						BiologicalNodeAbstract n = rootNode.getCurrentShownParentNode(graphInstance.getMyGraph());
+						graphInstance.getMyGraph().getVisualizationViewer().
+							getPickedVertexState().pick(n, true);
+					}
+				}
+			}
+		}
 		saveOldVertexPositions(e);
 	};
 	

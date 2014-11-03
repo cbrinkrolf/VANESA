@@ -24,6 +24,7 @@ import graph.algorithms.gui.RandomHamiltonGraphGui;
 import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.jung.classes.MyGraph;
 import graph.layouts.gemLayout.GEMLayout;
+import graph.layouts.hebLayout.HEBLayout;
 //import graph.layouts.modularLayout.MDForceLayout;
 import gui.AboutWindow;
 import gui.InfoWindow;
@@ -315,6 +316,18 @@ public class MenuListener implements ActionListener {
 					LayoutConfig.changeToLayout(CircleLayout.class);
 					// graphInstance.getMyGraph().changeGraphLayout(4);
 
+				} else {
+					JOptionPane.showMessageDialog(w,
+							"Please create a network before.");
+				}
+			} else {
+				JOptionPane.showMessageDialog(w,
+						"Please create a network before.");
+			}
+		} else if ("hebLayout".equals(event)) {
+			if (con.containsPathway()) {
+				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+					LayoutConfig.changeToLayout(HEBLayout.class);
 				} else {
 					JOptionPane.showMessageDialog(w,
 							"Please create a network before.");
