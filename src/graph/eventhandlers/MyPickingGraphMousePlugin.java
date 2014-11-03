@@ -1,13 +1,16 @@
 package graph.eventhandlers;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
@@ -18,9 +21,12 @@ import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
+import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
+import graph.layouts.hebLayout.HEBEdgeShape;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.MainWindowSingleton;
 
@@ -36,7 +42,7 @@ public class MyPickingGraphMousePlugin extends
 		// If mouse was released to change the selection, save vertex positions and return.
 		if(!oldVertexPositions.keySet().containsAll(graphInstance.getPathway().getSelectedNodes()) ||
 				oldVertexPositions.keySet().size()!=graphInstance.getPathway().getSelectedNodes().size()){
-			saveOldVertexPositions(e);
+			saveOldVertexPositions();
 			super.mouseReleased(e);
 			return;
 		}
@@ -125,31 +131,27 @@ public class MyPickingGraphMousePlugin extends
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
-		//oldVertexPosition = graphInstance.getPathway().getGraph().getVertexLocation(pickSupport.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e.getPoint().getY()));
 		super.mousePressed(e);
 		originalSelection.clear();
 		originalSelection.addAll(graphInstance.getPathway().getSelectedNodes());
 		if(graphInstance.getMyGraph().getLayout() instanceof HEBLayout){
 			HEBLayout hebLayout = (HEBLayout) graphInstance.getMyGraph().getLayout();
 			for(BiologicalNodeAbstract selectedNode : graphInstance.getPathway().getSelectedNodes()){
-				if(selectedNode.getParentNode()!=null){
-					for(BiologicalNodeAbstract rootNode : selectedNode.getParentNode().getAllRootNodes()){
-						BiologicalNodeAbstract n = rootNode.getCurrentShownParentNode(graphInstance.getMyGraph());
-						graphInstance.getMyGraph().getVisualizationViewer().
-							getPickedVertexState().pick(n, true);
+				for(List<BiologicalNodeAbstract> group : hebLayout.getBnaGroups()){
+					if(group.contains(selectedNode)){
+						for(BiologicalNodeAbstract n : group){
+							graphInstance.getMyGraph().getVisualizationViewer().
+								getPickedVertexState().pick(n,true);
+						}
 					}
 				}
 			}
 		}
-		saveOldVertexPositions(e);
+		saveOldVertexPositions();
 	};
 	
-	private void saveOldVertexPositions(MouseEvent e){
+	private void saveOldVertexPositions(){
 		oldVertexPositions.clear();
-		final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-				.getSource();
-		GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv
-				.getPickSupport();
 		for(BiologicalNodeAbstract vertex : graphInstance.getPathway().getSelectedNodes()){
 			oldVertexPositions.put(vertex, graphInstance.getPathway().getGraph().getVertexLocation(vertex));
 		}
@@ -198,4 +200,70 @@ public class MyPickingGraphMousePlugin extends
 			}
 		}
 	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e){
+		if(!(graphInstance.getMyGraph().getLayout() instanceof HEBLayout)){
+			super.mouseDragged(e);
+		} else {
+			if(locked == false) {
+				HEBLayout hebLayout= (HEBLayout) graphInstance.getMyGraph().getLayout();
+	            VisualizationViewer<BiologicalNodeAbstract,BiologicalEdgeAbstract> vv = (VisualizationViewer)e.getSource();
+	            if(vertex != null) {
+	                Point p = e.getPoint();
+	                Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
+	                Point2D graphDown = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
+	                Point2D centerPointTransform = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(hebLayout.getCenterPoint());
+	                Layout<BiologicalNodeAbstract,BiologicalEdgeAbstract> layout = vv.getGraphLayout();
+	                double dx = graphPoint.getX()-graphDown.getX();
+	                double dy = graphPoint.getY()-graphDown.getY();
+	                PickedState<BiologicalNodeAbstract> ps = vv.getPickedVertexState();
+	                
+	                //compute the new locations.
+	                Point2D vertexLocation;
+	                Point2D centerLocation = hebLayout.getCenterPoint();
+	                double nodeAngle;
+	                double oldMousePositionAngle;
+	                double newMousePositionAngle;
+	                double finalAngle;
+	                for(BiologicalNodeAbstract v : ps.getPicked()) {
+
+	                	vertexLocation = graphInstance.getMyGraph().getVertexLocation(v);
+	                	nodeAngle = HEBEdgeShape.gradientAngle(HEBEdgeShape.gradient(vertexLocation.getX(),vertexLocation.getY(),centerLocation.getX(), centerLocation.getY()));
+	                	
+	                	oldMousePositionAngle = Math.atan2(-graphDown.getY()+centerPointTransform.getY(), centerPointTransform.getX()-graphDown.getX());
+	                	newMousePositionAngle = Math.atan2(-graphPoint.getY()+centerPointTransform.getY(), centerPointTransform.getX()-graphPoint.getX());
+	                	
+	                	//this method provides error caused by 2PI-repeats.
+	                	finalAngle = Math.abs(newMousePositionAngle-oldMousePositionAngle);
+	                	if(newMousePositionAngle<oldMousePositionAngle){
+	                		finalAngle = -finalAngle;
+	                	}
+	                	finalAngle +=nodeAngle;
+
+	                	Point2D vp = layout.transform(v);
+
+	                	if(vertexLocation.getX()<centerLocation.getX()){
+	                		finalAngle += Math.PI;
+	                	}
+	                	vp.setLocation((float)Math.cos(finalAngle)*hebLayout.getRadius() + hebLayout.getCenterPoint().getX(), 
+	                			(float)Math.sin(finalAngle)*hebLayout.getRadius() + hebLayout.getCenterPoint().getY());
+	                	layout.setLocation(v, vp);
+	                	
+	                }
+	                down = p;
+
+	            } else {
+	                Point2D out = e.getPoint();
+	                if(e.getModifiers() == this.addToSelectionModifiers ||
+	                        e.getModifiers() == modifiers) {
+	                    rect.setFrameFromDiagonal(down,out);
+	                }
+	            }
+	            if(vertex != null) e.consume();
+	            vv.repaint();
+	        }
+		}
+	}
+	
 }

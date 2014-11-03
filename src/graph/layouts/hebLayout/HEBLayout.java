@@ -168,10 +168,8 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
     }
 	
 	public void setEdgeShapes(){
-//			Shape shape = new EdgeShape.Line<BiologicalNodeAbstract, BiologicalEdgeAbstract>().transform(Context.getInstance(graph, edge));
-//			edge.setShape(shape);
-			
-			Transformer est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(getCenterPoint());
+			Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>
+				est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(getCenterPoint());
 			
 			GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(est);
 	}
@@ -201,9 +199,17 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 		order.sort(new OrderFusionComparator(order, rootNodes));
 	}
 	
+	public CircleVertexData getCircleVertexData(BiologicalNodeAbstract v){
+		return getCircleData(v);
+	}
+	
 	@Override
     protected CircleVertexData getCircleData(BiologicalNodeAbstract v) {
         return circleVertexDataMap.get(v);
+	}
+	
+	public List<List<BiologicalNodeAbstract>> getBnaGroups(){
+		return bnaGroups;
 	}
 	
 	private CircleVertexData apply(BiologicalNodeAbstract v){
@@ -212,9 +218,13 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 		return cvData;
 	}
 
-protected static class CircleVertexData extends CircleLayout.CircleVertexData{
+public static class CircleVertexData extends CircleLayout.CircleVertexData{
 		
         private double angle;
+        
+        public double getVertexAngle(){
+        	return getAngle();
+        }
 
         @Override
         protected double getAngle() {
@@ -232,7 +242,6 @@ protected static class CircleVertexData extends CircleLayout.CircleVertexData{
         }
 }
 
-//TOBI: Do further comparator tests.
 protected class newHEBLayoutComparator implements Comparator<BiologicalNodeAbstract>{
 		
 	List<BiologicalNodeAbstract> order;
@@ -285,7 +294,6 @@ protected class newHEBLayoutComparator implements Comparator<BiologicalNodeAbstr
 	}
 }
 
-//TOBI: Do further comparator tests.
 protected class OrderFusionComparator implements Comparator<BiologicalNodeAbstract>{
 	List<BiologicalNodeAbstract> order;
 	Set<BiologicalNodeAbstract> fusionNodes;

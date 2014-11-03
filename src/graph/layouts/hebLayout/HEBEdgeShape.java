@@ -162,11 +162,11 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
         }
     }
     
-    private static double gradient(double x1, double y1, double x2, double y2){
+    public static double gradient(double x1, double y1, double x2, double y2){
     	return (y2-y1)/(x2-x1);
     }
     
-    private static double gradientAngle(double gradient){
+    public static double gradientAngle(double gradient){
     	return Math.atan(gradient);
     }
     
