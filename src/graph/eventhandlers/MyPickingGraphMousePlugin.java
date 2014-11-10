@@ -6,6 +6,7 @@ import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +27,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
+import graph.layouts.hebLayout.Circle;
 import graph.layouts.hebLayout.HEBEdgeShape;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.MainWindowSingleton;
@@ -137,13 +139,8 @@ public class MyPickingGraphMousePlugin extends
 		if(graphInstance.getMyGraph().getLayout() instanceof HEBLayout){
 			HEBLayout hebLayout = (HEBLayout) graphInstance.getMyGraph().getLayout();
 			for(BiologicalNodeAbstract selectedNode : graphInstance.getPathway().getSelectedNodes()){
-				for(List<BiologicalNodeAbstract> group : hebLayout.getBnaGroups()){
-					if(group.contains(selectedNode)){
-						for(BiologicalNodeAbstract n : group){
-							graphInstance.getMyGraph().getVisualizationViewer().
-								getPickedVertexState().pick(n,true);
-						}
-					}
+				for(BiologicalNodeAbstract node : hebLayout.getNodesGroup(selectedNode)){
+					graphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().pick(node, true);
 				}
 			}
 		}
@@ -207,50 +204,15 @@ public class MyPickingGraphMousePlugin extends
 			super.mouseDragged(e);
 		} else {
 			if(locked == false) {
-				HEBLayout hebLayout= (HEBLayout) graphInstance.getMyGraph().getLayout();
 	            VisualizationViewer<BiologicalNodeAbstract,BiologicalEdgeAbstract> vv = (VisualizationViewer)e.getSource();
 	            if(vertex != null) {
+					HEBLayout hebLayout= (HEBLayout) graphInstance.getMyGraph().getLayout();
+	            	//mouse position
 	                Point p = e.getPoint();
-	                Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
-	                Point2D graphDown = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
-	                Point2D centerPointTransform = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(hebLayout.getCenterPoint());
-	                Layout<BiologicalNodeAbstract,BiologicalEdgeAbstract> layout = vv.getGraphLayout();
-	                double dx = graphPoint.getX()-graphDown.getX();
-	                double dy = graphPoint.getY()-graphDown.getY();
-	                PickedState<BiologicalNodeAbstract> ps = vv.getPickedVertexState();
 	                
-	                //compute the new locations.
-	                Point2D vertexLocation;
-	                Point2D centerLocation = hebLayout.getCenterPoint();
-	                double nodeAngle;
-	                double oldMousePositionAngle;
-	                double newMousePositionAngle;
-	                double finalAngle;
-	                for(BiologicalNodeAbstract v : ps.getPicked()) {
-
-	                	vertexLocation = graphInstance.getMyGraph().getVertexLocation(v);
-	                	nodeAngle = HEBEdgeShape.gradientAngle(HEBEdgeShape.gradient(vertexLocation.getX(),vertexLocation.getY(),centerLocation.getX(), centerLocation.getY()));
-	                	
-	                	oldMousePositionAngle = Math.atan2(-graphDown.getY()+centerPointTransform.getY(), centerPointTransform.getX()-graphDown.getX());
-	                	newMousePositionAngle = Math.atan2(-graphPoint.getY()+centerPointTransform.getY(), centerPointTransform.getX()-graphPoint.getX());
-	                	
-	                	//this method provides error caused by 2PI-repeats.
-	                	finalAngle = Math.abs(newMousePositionAngle-oldMousePositionAngle);
-	                	if(newMousePositionAngle<oldMousePositionAngle){
-	                		finalAngle = -finalAngle;
-	                	}
-	                	finalAngle +=nodeAngle;
-
-	                	Point2D vp = layout.transform(v);
-
-	                	if(vertexLocation.getX()<centerLocation.getX()){
-	                		finalAngle += Math.PI;
-	                	}
-	                	vp.setLocation((float)Math.cos(finalAngle)*hebLayout.getRadius() + hebLayout.getCenterPoint().getX(), 
-	                			(float)Math.sin(finalAngle)*hebLayout.getRadius() + hebLayout.getCenterPoint().getY());
-	                	layout.setLocation(v, vp);
-	                	
-	                }
+	                //move nodes in layout
+	                hebLayout.moveOnCircle(p,down,vv);	                
+	                
 	                down = p;
 
 	            } else {

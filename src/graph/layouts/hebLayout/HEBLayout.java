@@ -1,8 +1,11 @@
 package graph.layouts.hebLayout;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -20,12 +23,19 @@ import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer;
+import edu.uci.ics.jung.visualization.renderers.Renderer;
+import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel;
 import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
+import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Positioner;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 
@@ -126,7 +136,8 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 	public void initialize()
     {
             Dimension d = getSize();
-           
+            setLabelPositions();
+
             if (d != null)
             {
                 if (bnaGroups == null){
@@ -153,8 +164,8 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
                 		apply(v);
                 		double angle = group_no*groupDistance+vertex_no*nodeDistance;
                 		GraphInstance.getMyGraph().moveVertex(v, 
-                				Math.cos(angle) * getRadius() + width / 2,
-                				Math.sin(angle) * getRadius() + height / 2);
+                				Math.cos(angle) * getRadius() + centerPoint.getX(),
+                				Math.sin(angle) * getRadius() + centerPoint.getY());
 
                 		CircleVertexData data = getCircleData(v);
                 		data.setAngle(angle);
@@ -164,7 +175,6 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
                 }
             }
             setEdgeShapes();
-            setLabelPositions();
     }
 	
 	public void setEdgeShapes(){
@@ -175,7 +185,10 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 	}
 	
 	public void setLabelPositions(){
-		//VisualizationViewer vv = GraphInstance.getMyGraph().getVisualizationViewer();
+		VisualizationViewer vv = GraphInstance.getMyGraph().getVisualizationViewer();
+		CirclePositioner cp = new CirclePositioner();
+		vv.getRenderer().setVertexLabelRenderer(cp);
+		
 	}
 	
 	public void reset(){
@@ -212,10 +225,100 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
 		return bnaGroups;
 	}
 	
+	/**
+	 * Switches the nodes of two groups in the layout order.
+	 * @param group1 First group
+	 * @param group2 Second group
+	 * @author tloka
+	 */
+//	public void switchGroups(List<BiologicalNodeAbstract> group1, List<BiologicalNodeAbstract> group2){
+//		List<BiologicalNodeAbstract> rootGroup1 = new ArrayList<BiologicalNodeAbstract>();
+//		List<BiologicalNodeAbstract> rootGroup2 = new ArrayList<BiologicalNodeAbstract>();
+//		for(BiologicalNodeAbstract n : group1){
+//			rootGroup1.addAll(n.getAllRootNodes());
+//		}
+//		for(BiologicalNodeAbstract n : group2){
+//			rootGroup2.addAll(n.getAllRootNodes());
+//		}
+//		int indexGroup1 = order.indexOf(rootGroup1.get(0));
+//		int indexGroup2 = order.indexOf(rootGroup2.get(0));
+//		
+//		rootGroup1.sort(new newHEBLayoutComparator(order));
+//		rootGroup2.sort(new newHEBLayoutComparator(order));
+//		if(indexGroup1<indexGroup2){
+//			order.removeAll(rootGroup1);
+//			order.addAll(indexGroup2-rootGroup1.size(),rootGroup1);
+//			order.removeAll(rootGroup2);
+//			order.addAll(indexGroup1, rootGroup2);
+//		} else {
+//			order.removeAll(rootGroup2);
+//			order.addAll(indexGroup1-rootGroup2.size(),rootGroup2);
+//			order.removeAll(rootGroup1);
+//			order.addAll(indexGroup2, rootGroup1);
+//		}
+//	}
+	
+	/**
+	 * Computes the point on the layout circle based on the input angle.
+	 * @param angle Input angle
+	 * @return Point on the circle.
+	 * @author tloka
+	 */
+	public Point2D getPointOnCircle(double angle){
+		double x = (float)Math.cos(angle) * getRadius() + getCenterPoint().getX();
+		double y = (float)Math.sin(angle)*getRadius() + getCenterPoint().getY();
+		return new Point2D.Double(x,y);
+	}
+	
+	/**
+	 * Moves the nodes on the circle based on the movement of a point.
+	 * @param p New position of the basis point (e.g. old mouse position)
+	 * @param down Old position of the basis point (e.g. new mouse position)
+	 * @param vv Visualization Viewer.
+	 * @author tloka
+	 */
+	public void moveOnCircle(Point p, Point down, VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv){
+        
+		Layout<BiologicalNodeAbstract,BiologicalEdgeAbstract> layout = vv.getGraphLayout();
+        
+		//compute movement angle
+		Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
+        Point2D graphDown = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
+        Point2D centerPointTransform = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(getCenterPoint());
+    	double oldMousePositionAngle = Circle.getAngle(centerPointTransform, graphDown);
+    	double newMousePositionAngle = Circle.getAngle(centerPointTransform,graphPoint);
+        double movementAngle = newMousePositionAngle-oldMousePositionAngle;
+        
+        //move all selected nodes on the circle
+		Point2D nodePoint;
+        double nodeAngle;
+        double finalAngle;
+        for(BiologicalNodeAbstract v : vv.getPickedVertexState().getPicked()) {
+
+        	nodePoint = GraphInstance.getMyGraph().getVertexLocation(v);
+        	nodeAngle = Circle.getAngle(getCenterPoint(),nodePoint);
+        	finalAngle = nodeAngle+(movementAngle);
+        	
+        	Point2D vp = layout.transform(v);
+
+        	vp.setLocation(getPointOnCircle(finalAngle));
+        	layout.setLocation(v, vp);     	
+        }
+	}
+	
 	private CircleVertexData apply(BiologicalNodeAbstract v){
 		CircleVertexData cvData = new CircleVertexData();
 		circleVertexDataMap.put(v, cvData);
 		return cvData;
+	}
+	
+	public List<BiologicalNodeAbstract> getNodesGroup(BiologicalNodeAbstract node){
+		for(List<BiologicalNodeAbstract> group : bnaGroups){
+			if(group.contains(node)){
+				return group;
+			}
+		}
+		return new ArrayList<BiologicalNodeAbstract>();
 	}
 
 public static class CircleVertexData extends CircleLayout.CircleVertexData{
@@ -335,6 +438,38 @@ protected class OrderFusionComparator implements Comparator<BiologicalNodeAbstra
 		}
 		return order.indexOf(n1)-order.indexOf(n2);
 	}
+}
+
+
+	public class CirclePositioner extends BasicVertexLabelRenderer<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
+
+		public CirclePositioner(){
+			super();
+		}
+		
+		@Override
+		protected Point getAnchorPoint(Rectangle2D vertexBounds, Dimension labelSize, Position position){
+			if(!(GraphInstance.getMyGraph().getLayout() instanceof HEBLayout)){
+				return super.getAnchorPoint(vertexBounds, labelSize, position);
+			}
+			Point2D vertexCenter = new Point2D.Double(vertexBounds.getCenterX(),vertexBounds.getCenterY());
+			
+			//TOBI: Find correct transformation to the coordinate system.
+			Point2D circleCenterPoint = GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).inverseTransform(((HEBLayout) GraphInstance.getMyGraph().getLayout()).getCenterPoint());
+			double x = vertexBounds.getCenterX()-Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*vertexBounds.getWidth()/2-Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*labelSize.getWidth();
+			if(circleCenterPoint.getX()<vertexCenter.getX()){
+				x= vertexBounds.getCenterX()+Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*vertexBounds.getWidth()/2;
+
+			}
+			double y = vertexBounds.getCenterY() - labelSize.getHeight()/2 - Math.abs(vertexBounds.getCenterY()-circleCenterPoint.getY())/circleCenterPoint.getY()*vertexBounds.getHeight();
+			if(circleCenterPoint.getY()<vertexCenter.getY()){
+				y = vertexBounds.getCenterY() + labelSize.getHeight()/2 + Math.abs(vertexBounds.getCenterY()-circleCenterPoint.getY())/circleCenterPoint.getY()*vertexBounds.getHeight();
+			}
+			return new Point((int) x, (int) y);
+			
+		}
+
+	
 }
 
 	

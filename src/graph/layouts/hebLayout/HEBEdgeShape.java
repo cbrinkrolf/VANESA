@@ -178,7 +178,7 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
     	return avPoint;
     }
     
-    private static Point2D moveInCenterDirection(Point2D point, Point2D center, double distancePart){
+    public static Point2D moveInCenterDirection(Point2D point, Point2D center, double distancePart){
     	return new Point2D.Double(1/distancePart*(center.getX()-point.getX())+point.getX(),
     			1/distancePart*(center.getY()-point.getY())+point.getY());
     }
