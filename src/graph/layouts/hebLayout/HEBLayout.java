@@ -302,6 +302,7 @@ public class HEBLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEd
         	Point2D vp = layout.transform(v);
 
         	vp.setLocation(getPointOnCircle(finalAngle));
+        	GraphInstance.getMyGraph().moveVertex(v, vp.getX(), vp.getY());
         	layout.setLocation(v, vp);     	
         }
 	}

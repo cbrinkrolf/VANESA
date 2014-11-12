@@ -132,32 +132,28 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            // The circle's center.
            Point2D center = getCenterPoint();
            
-           // The distance between start- and endpoint.
-           double distance = Point2D.distance(startPoint.getX(), startPoint.getY(),
-        		   endPoint.getX(), endPoint.getY());
-           
-           // The gradient of a line between start- and endpoint.
-           double gradient = gradient(startPoint.getX(), startPoint.getY(),
-        		   endPoint.getX(), endPoint.getY());
-           
-           // The gradient angel of a line between start- and endpoint.
-           double gradientAngle = gradientAngle(gradient);
-           
            double moveQuotient = group1.equals(group2) ? 
         		   HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_FACTOR : HEBLayoutConfig.EDGE_BENDING_FACTOR;
            
+           double circleRadius = Point2D.distance(centerPoint.getX(), centerPoint.getY(), startPoint.getX(), startPoint.getY());
+    
+           double group1Angle = Circle.getAngle(center,averagePoint(group1));
+           double group2Angle = Circle.getAngle(center,averagePoint(group2));
+                     
            // Computation of the first control point to bundle all edges connecting the same groups.
-           Point2D cPoint1 = moveInCenterDirection(averagePoint(group1), center, moveQuotient);
-           cPoint1 = computeControlPoint(cPoint1, center, startPoint, endPoint, distance, gradientAngle,1);
+           Point2D cPoint1 = Circle.getPointOnCircle(center, circleRadius, group1Angle);
+           cPoint1 = moveInCenterDirection(cPoint1, center, moveQuotient);
+           cPoint1 = computeControlPoint(cPoint1, center, startPoint, endPoint);
            
            // Computation of the second control point to bundle all edges connecting the same groups.
-           Point2D cPoint2 = moveInCenterDirection(averagePoint(group2), center, moveQuotient); 
-           cPoint2 = computeControlPoint(cPoint2, center, endPoint, startPoint, distance, gradientAngle,-1);
+           Point2D cPoint2 = Circle.getPointOnCircle(center, circleRadius, group2Angle);
+           cPoint2 = moveInCenterDirection(cPoint2, center, moveQuotient); 
+           cPoint2 = computeControlPoint(cPoint2, center, startPoint, endPoint);
            
 //           instance.setCurve(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, cPoint1.getX(), cPoint1.getY());
 //           instance.setCurve(cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
         	 instance.setCurve(0.0f, 0.0f, cPoint1.getX(), cPoint1.getY(), cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f);
-
+           
            return instance;
         }
     }
@@ -184,47 +180,30 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
     }
     
     /**
-     * 
+     * Method to compute the control Points in the coordinate system with Start=(0,0) and End=(1,0).
      * @param basis The controlPoint to be computed
      * @param center The center of the circle
-     * @param startPoint The location of node containing to the basis controlPoint
-     * @param endPoint The location of the other node
-     * @param distance The distance between the startPoint and endPoint
-     * @param gradientAngel The gradientAngel of the line between startPoint and endPoint
-     * @param factor A factor to change the operator of the case distinction. Has to be set 1 for the start
-     * control Point, -1 for the end control Point.
+     * @param startPoint The location of start node
+     * @param endPoint The location of end node
+    
      * @return The controlPoint in transformed coordinates.
      */
-    private static Point2D computeControlPoint(Point2D basis, Point2D center, Point2D startPoint, Point2D endPoint, double distance, double gradientAngel, double factor){
-    	double c = Point2D.distance(basis.getX(), basis.getY(), startPoint.getX(), startPoint.getY());
-        double cP1Gradient = gradient(basis.getX(),basis.getY(),startPoint.getX(), startPoint.getY());
-        double alpha = 0;
-        alpha = Math.abs(gradientAngel-gradientAngle(cP1Gradient));
-        double beta = Math.PI/2-Math.abs(alpha);
-        
-        double a = c*Math.cos(beta);
-        double b = Math.sqrt(Math.pow(c, 2)-Math.pow(a, 2));
-        
-        if(cP1Gradient<0 && startPoint.getY()>basis.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) < factor*endPoint.getY()){
-     	   a = -a;
-        }
-        else if(cP1Gradient<0 && startPoint.getY()<basis.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) > factor*endPoint.getY()){
-     	  a = -a; 
-        }
-        else if(cP1Gradient>0 && startPoint.getY()<basis.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) < factor*endPoint.getY()){
-      	  a = -a; 
-         }
-        else if(cP1Gradient>0 && startPoint.getY()>basis.getY() && factor*(startPoint.getY() + (endPoint.getX()-startPoint.getX())*cP1Gradient) > factor*endPoint.getY()){
-       	  a = -a; 
-         }
-        else if(cP1Gradient==0){
-     	   a=-a;
-        }
+    private static Point2D computeControlPoint(Point2D basis, Point2D center, Point2D startPoint, Point2D endPoint){
+    	double startBasisDistance = Point2D.distance(basis.getX(), basis.getY(), startPoint.getX(), startPoint.getY());
+    	double startEndDistance = Point2D.distance(startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY());
+    	double startEndAngle = Circle.getAngle(startPoint, endPoint);
+    	double startBasisAngle = Circle.getAngle(startPoint, basis);
+    	
+    	double alpha = startBasisAngle - startEndAngle;
 
-        if(factor==-1){
-        	return new Point2D.Double(1-(b/distance),a);
-        }
-        return new Point2D.Double(b/distance,a);
+    	double beta = Math.PI/2-alpha;
+    	
+    	double c = startBasisDistance;
+    	double a = startBasisDistance*Math.cos(beta);
+    	double b = Math.sqrt(Math.pow(c,2)-Math.pow(a, 2));
+    	
+    	return new Point2D.Double(b/startEndDistance,a);
+
     }
         
 }
