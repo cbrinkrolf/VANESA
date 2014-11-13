@@ -21,12 +21,14 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 	public static int GROUP_DISTANCE_FACTOR = 5;
 	public static int EDGE_BENDING_FACTOR = 4;
 	public static int GROUPINTERNAL_EDGE_BENDING_FACTOR = 4;
+	public static int EDGE_BUNDLING_FACTOR = 3;
 	public static int GROUP_DEPTH = 1;
 	
 	public static JCheckBox showInternalEdges;
 	public static JSlider groupSeperationSlider;
 	public static JSlider edgeBendingSlider;
 	public static JSlider internalEdgeBendingSlider;
+	public static JSlider edgeBundlingSlider;
 	public static JSlider groupDepthSlider;
 	
 	public HEBLayoutConfig() {
@@ -93,6 +95,19 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 		edgeBendingSlider.addChangeListener(this);
 		edgePreferences.add(edgeBendingSlider);
 		
+		edgeBundlingSlider = new JSlider();
+		edgeBundlingSlider.setBorder(BorderFactory
+				.createTitledBorder("Edge bundling quotient"));
+		edgeBundlingSlider.setMinimum(1);
+		edgeBundlingSlider.setMaximum(20);
+		edgeBundlingSlider.setValue(EDGE_BUNDLING_FACTOR);
+		edgeBundlingSlider.setMajorTickSpacing(5);
+		edgeBundlingSlider.setMinorTickSpacing(2);
+		edgeBundlingSlider.setPaintTicks(true);
+		edgeBundlingSlider.setPaintLabels(true);
+		edgeBundlingSlider.addChangeListener(this);
+		edgePreferences.add(edgeBundlingSlider);
+		
 		internalEdgeBendingSlider = new JSlider();
 		internalEdgeBendingSlider.setBorder(BorderFactory
 				.createTitledBorder("Edge bending quotient (group-internal)"));
@@ -136,6 +151,8 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 			HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_FACTOR = HEBLayoutConfig.internalEdgeBendingSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.groupDepthSlider)) {
 			HEBLayoutConfig.GROUP_DEPTH = HEBLayoutConfig.groupDepthSlider.getValue();
+		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeBundlingSlider)) {
+			HEBLayoutConfig.EDGE_BUNDLING_FACTOR = HEBLayoutConfig.edgeBundlingSlider.getValue();
 		}
 	}
 }
