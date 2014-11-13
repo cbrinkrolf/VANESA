@@ -135,6 +135,8 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            double moveQuotient = group1.equals(group2) ? 
         		   HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_FACTOR : HEBLayoutConfig.EDGE_BENDING_FACTOR;
            
+           double bundlingQuotient = HEBLayoutConfig.EDGE_BUNDLING_FACTOR;
+           
            double circleRadius = Point2D.distance(centerPoint.getX(), centerPoint.getY(), startPoint.getX(), startPoint.getY());
     
            double group1Angle = Circle.getAngle(center,averagePoint(group1));
@@ -142,13 +144,19 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
                      
            // Computation of the first control point to bundle all edges connecting the same groups.
            Point2D cPoint1 = Circle.getPointOnCircle(center, circleRadius, group1Angle);
-           cPoint1 = moveInCenterDirection(cPoint1, center, moveQuotient);
-           cPoint1 = computeControlPoint(cPoint1, center, startPoint, endPoint);
+           cPoint1 = moveInCenterDirection(cPoint1, center, moveQuotient);  
+           if(!group1.equals(group2)){
+        	   	cPoint1 = moveInCenterDirection(cPoint1, startPoint, -bundlingQuotient);
+           }
+           cPoint1 = computeControlPoint(cPoint1, center, startPoint, endPoint, edge);
            
            // Computation of the second control point to bundle all edges connecting the same groups.
            Point2D cPoint2 = Circle.getPointOnCircle(center, circleRadius, group2Angle);
            cPoint2 = moveInCenterDirection(cPoint2, center, moveQuotient); 
-           cPoint2 = computeControlPoint(cPoint2, center, startPoint, endPoint);
+           if(!group1.equals(group2)){
+        	   cPoint2 = moveInCenterDirection(cPoint2, endPoint, -bundlingQuotient);
+           }
+           cPoint2 = computeControlPoint(cPoint2, center, startPoint, endPoint,edge);
            
 //           instance.setCurve(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, cPoint1.getX(), cPoint1.getY());
 //           instance.setCurve(cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
@@ -188,22 +196,34 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
     
      * @return The controlPoint in transformed coordinates.
      */
-    private static Point2D computeControlPoint(Point2D basis, Point2D center, Point2D startPoint, Point2D endPoint){
+    private static Point2D computeControlPoint(Point2D basis, Point2D center, Point2D startPoint, Point2D endPoint, BiologicalEdgeAbstract edge){
+    	
     	double startBasisDistance = Point2D.distance(basis.getX(), basis.getY(), startPoint.getX(), startPoint.getY());
     	double startEndDistance = Point2D.distance(startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY());
     	double startEndAngle = Circle.getAngle(startPoint, endPoint);
     	double startBasisAngle = Circle.getAngle(startPoint, basis);
-    	
-    	double alpha = startBasisAngle - startEndAngle;
+    	    	
+   		double alpha = startBasisAngle - startEndAngle;
 
-    	double beta = Math.PI/2-alpha;
+   		double beta = Math.PI/2-alpha;
     	
-    	double c = startBasisDistance;
-    	double a = startBasisDistance*Math.cos(beta);
-    	double b = Math.sqrt(Math.pow(c,2)-Math.pow(a, 2));
+   		double c = startBasisDistance;
+   		double a = startBasisDistance*Math.cos(beta);
+   		double b = Math.sqrt(Math.pow(c,2)-Math.pow(a, 2));
     	
-    	return new Point2D.Double(b/startEndDistance,a);
-
-    }
+//    	if(edge.getFrom().getLabel().equals("9")){
+//    		System.out.println(edge.getTo().getLabel());
+//    		System.out.println(alpha);
+//    		System.out.println(beta);
+//    		System.out.println(c);
+//    		System.out.println(a);
+//    		System.out.println(b);
+//    		System.out.println();
+//    		
+//    	}
+   		Point2D longerControlPoint = new Point2D.Double(b/startEndDistance,a);
+   		return longerControlPoint;
+//   		return new Point2D.Double(b/startEndDistance,a);
+   	} 
         
 }
