@@ -95,24 +95,33 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            // current MyGraph
            MyGraph myGraph = GraphInstance.getMyGraph();
            
-           // the locations of all nodes containing to the same parentNode as the startNode.
-           Set<Point2D> group1 = new HashSet<Point2D>();
-           if(endpointNodes.getFirst().getParentNode()==null){
-        	   group1.add(myGraph.getVertexLocation(endpointNodes.getFirst()));
-           } else {
-        	   for(BiologicalNodeAbstract bna : endpointNodes.getFirst().getParentNode().getInnerNodes()){
-        		   group1.add(myGraph.getVertexLocation(bna));
-        	   }
-           }
+//           // the locations of all nodes containing to the same parentNode as the startNode.
+//           Set<Point2D> group1 = new HashSet<Point2D>();
+//           if(endpointNodes.getFirst().getParentNode()==null){
+//        	   group1.add(myGraph.getVertexLocation(endpointNodes.getFirst()));
+//           } else {
+//        	   for(BiologicalNodeAbstract bna : endpointNodes.getFirst().getParentNode().getInnerNodes()){
+//        		   group1.add(myGraph.getVertexLocation(bna));
+//        	   }
+//           }
+//           
+//           // the locations of all nodes containing to the same parentNode as the endNode.
+//           Set<Point2D> group2 = new HashSet<Point2D>();
+//           if(endpointNodes.getSecond().getParentNode()==null){
+//        	   group2.add(myGraph.getVertexLocation(endpointNodes.getSecond()));
+//           } else {
+//        	   for(BiologicalNodeAbstract bna : endpointNodes.getSecond().getParentNode().getInnerNodes()){
+//        		   group2.add(myGraph.getVertexLocation(bna));
+//        	   }
+//           }
            
-           // the locations of all nodes containing to the same parentNode as the endNode.
+           Set<Point2D> group1 = new HashSet<Point2D>();
+           for(BiologicalNodeAbstract bna : ((HEBLayout) myGraph.getLayout()).getNodesGroup(endpointNodes.getFirst())){
+        	   group1.add(myGraph.getVertexLocation(bna));
+           }
            Set<Point2D> group2 = new HashSet<Point2D>();
-           if(endpointNodes.getSecond().getParentNode()==null){
-        	   group2.add(myGraph.getVertexLocation(endpointNodes.getSecond()));
-           } else {
-        	   for(BiologicalNodeAbstract bna : endpointNodes.getSecond().getParentNode().getInnerNodes()){
-        		   group2.add(myGraph.getVertexLocation(bna));
-        	   }
+           for(BiologicalNodeAbstract bna : ((HEBLayout) myGraph.getLayout()).getNodesGroup(endpointNodes.getSecond())){
+        	   group2.add(myGraph.getVertexLocation(bna));
            }
            
            if(group1.equals(group2) && !HEBLayoutConfig.getInstance().getShowInternalEdges()){
@@ -133,14 +142,23 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            Point2D center = getCenterPoint();
            
            double moveQuotient = group1.equals(group2) ? 
-        		   HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_FACTOR : HEBLayoutConfig.EDGE_BENDING_FACTOR;
+        		   HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_PERCENTAGE : HEBLayoutConfig.EDGE_BENDING_PERCENTAGE;
            
-           double bundlingQuotient = HEBLayoutConfig.EDGE_BUNDLING_FACTOR;
+           double bundlingQuotient = HEBLayoutConfig.EDGE_BUNDLING_PERCENTAGE;
            
            double circleRadius = Point2D.distance(centerPoint.getX(), centerPoint.getY(), startPoint.getX(), startPoint.getY());
     
            double group1Angle = Circle.getAngle(center,averagePoint(group1));
            double group2Angle = Circle.getAngle(center,averagePoint(group2));
+           
+           //If points are in the same group, take the middle Point of them as control point of both.
+           if(group1.equals(group2)){
+        	   Set<Point2D> points = new HashSet<Point2D>();
+        	   points.add(startPoint);
+        	   points.add(endPoint);
+        	   group1Angle = Circle.getAngle(center, averagePoint(points));
+        	   group2Angle = group1Angle;
+           }
                      
            // Computation of the first control point to bundle all edges connecting the same groups.
            Point2D cPoint1 = Circle.getPointOnCircle(center, circleRadius, group1Angle);
@@ -182,9 +200,9 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
     	return avPoint;
     }
     
-    public static Point2D moveInCenterDirection(Point2D point, Point2D center, double distancePart){
-    	return new Point2D.Double(1/distancePart*(center.getX()-point.getX())+point.getX(),
-    			1/distancePart*(center.getY()-point.getY())+point.getY());
+    public static Point2D moveInCenterDirection(Point2D point, Point2D center, double percentage){
+    	return new Point2D.Double(percentage/100*(center.getX()-point.getX())+point.getX(),
+    			percentage/100*(center.getY()-point.getY())+point.getY());
     }
     
     /**

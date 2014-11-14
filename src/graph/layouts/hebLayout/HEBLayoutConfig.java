@@ -19,9 +19,9 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 	private static HEBLayoutConfig instance;
 
 	public static int GROUP_DISTANCE_FACTOR = 5;
-	public static int EDGE_BENDING_FACTOR = 4;
-	public static int GROUPINTERNAL_EDGE_BENDING_FACTOR = 4;
-	public static int EDGE_BUNDLING_FACTOR = 3;
+	public static int EDGE_BENDING_PERCENTAGE = 25;
+	public static int GROUPINTERNAL_EDGE_BENDING_PERCENTAGE = 25;
+	public static int EDGE_BUNDLING_PERCENTAGE = 30;
 	public static int GROUP_DEPTH = 1;
 	
 	public static JCheckBox showInternalEdges;
@@ -60,10 +60,10 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 		 groupSeperationSlider.setBorder(BorderFactory
 					.createTitledBorder("Group seperation factor"));
 		 groupSeperationSlider.setMinimum(1);
-		 groupSeperationSlider.setMaximum(20);
+		 groupSeperationSlider.setMaximum(100);
 		 groupSeperationSlider.setValue(GROUP_DISTANCE_FACTOR);
-		 groupSeperationSlider.setMajorTickSpacing(5);
-		 groupSeperationSlider.setMinorTickSpacing(2);
+		 groupSeperationSlider.setMajorTickSpacing(20);
+		 groupSeperationSlider.setMinorTickSpacing(5);
 		 groupSeperationSlider.setPaintTicks(true);
 		 groupSeperationSlider.setPaintLabels(true);
 		 groupSeperationSlider.addChangeListener(this);
@@ -84,12 +84,12 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 			
 		edgeBendingSlider = new JSlider();
 		edgeBendingSlider.setBorder(BorderFactory
-				.createTitledBorder("Edge bending quotient"));
-		edgeBendingSlider.setMinimum(1);
-		edgeBendingSlider.setMaximum(20);
-		edgeBendingSlider.setValue(EDGE_BENDING_FACTOR);
-		edgeBendingSlider.setMajorTickSpacing(5);
-		edgeBendingSlider.setMinorTickSpacing(2);
+				.createTitledBorder("Edge bending percentage"));
+		edgeBendingSlider.setMinimum(0);
+		edgeBendingSlider.setMaximum(100);
+		edgeBendingSlider.setValue(EDGE_BENDING_PERCENTAGE);
+		edgeBendingSlider.setMajorTickSpacing(20);
+		edgeBendingSlider.setMinorTickSpacing(5);
 		edgeBendingSlider.setPaintTicks(true);
 		edgeBendingSlider.setPaintLabels(true);
 		edgeBendingSlider.addChangeListener(this);
@@ -97,12 +97,12 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 		
 		edgeBundlingSlider = new JSlider();
 		edgeBundlingSlider.setBorder(BorderFactory
-				.createTitledBorder("Edge bundling quotient"));
-		edgeBundlingSlider.setMinimum(1);
-		edgeBundlingSlider.setMaximum(20);
-		edgeBundlingSlider.setValue(EDGE_BUNDLING_FACTOR);
-		edgeBundlingSlider.setMajorTickSpacing(5);
-		edgeBundlingSlider.setMinorTickSpacing(2);
+				.createTitledBorder("Edge bundling percentage"));
+		edgeBundlingSlider.setMinimum(0);
+		edgeBundlingSlider.setMaximum(100);
+		edgeBundlingSlider.setValue(EDGE_BUNDLING_PERCENTAGE);
+		edgeBundlingSlider.setMajorTickSpacing(20);
+		edgeBundlingSlider.setMinorTickSpacing(5);
 		edgeBundlingSlider.setPaintTicks(true);
 		edgeBundlingSlider.setPaintLabels(true);
 		edgeBundlingSlider.addChangeListener(this);
@@ -110,12 +110,12 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 		
 		internalEdgeBendingSlider = new JSlider();
 		internalEdgeBendingSlider.setBorder(BorderFactory
-				.createTitledBorder("Edge bending quotient (group-internal)"));
-		internalEdgeBendingSlider.setMinimum(1);
-		internalEdgeBendingSlider.setMaximum(20);
-		internalEdgeBendingSlider.setValue(GROUPINTERNAL_EDGE_BENDING_FACTOR);
-		internalEdgeBendingSlider.setMajorTickSpacing(5);
-		internalEdgeBendingSlider.setMinorTickSpacing(2);
+				.createTitledBorder("Edge bending percentage (group-internal)"));
+		internalEdgeBendingSlider.setMinimum(-50);
+		internalEdgeBendingSlider.setMaximum(50);
+		internalEdgeBendingSlider.setValue(GROUPINTERNAL_EDGE_BENDING_PERCENTAGE);
+		internalEdgeBendingSlider.setMajorTickSpacing(10);
+		internalEdgeBendingSlider.setMinorTickSpacing(5);
 		internalEdgeBendingSlider.setPaintTicks(true);
 		internalEdgeBendingSlider.setPaintLabels(true);
 		internalEdgeBendingSlider.addChangeListener(this);
@@ -146,13 +146,13 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 		if (arg0.getSource().equals(HEBLayoutConfig.groupSeperationSlider)) {
 			HEBLayoutConfig.GROUP_DISTANCE_FACTOR = HEBLayoutConfig.groupSeperationSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeBendingSlider)) {
-			HEBLayoutConfig.EDGE_BENDING_FACTOR = HEBLayoutConfig.edgeBendingSlider.getValue();
+			HEBLayoutConfig.EDGE_BENDING_PERCENTAGE = HEBLayoutConfig.edgeBendingSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.internalEdgeBendingSlider)) {
-			HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_FACTOR = HEBLayoutConfig.internalEdgeBendingSlider.getValue();
+			HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_PERCENTAGE = HEBLayoutConfig.internalEdgeBendingSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.groupDepthSlider)) {
 			HEBLayoutConfig.GROUP_DEPTH = HEBLayoutConfig.groupDepthSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeBundlingSlider)) {
-			HEBLayoutConfig.EDGE_BUNDLING_FACTOR = HEBLayoutConfig.edgeBundlingSlider.getValue();
+			HEBLayoutConfig.EDGE_BUNDLING_PERCENTAGE = HEBLayoutConfig.edgeBundlingSlider.getValue();
 		}
 	}
 }
