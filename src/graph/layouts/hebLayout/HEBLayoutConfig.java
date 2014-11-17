@@ -12,17 +12,21 @@ import javax.swing.event.ChangeListener;
 
 import configurations.gui.ConfigPanel;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import graph.layouts.HierarchicalCircleLayoutConfig;
 import graph.layouts.gemLayout.GEMLayoutConfig;
 
-public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
+public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements ChangeListener{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 852123;
+
 	private static HEBLayoutConfig instance;
 
-	public static int GROUP_DISTANCE_FACTOR = 5;
 	public static int EDGE_BENDING_PERCENTAGE = 25;
 	public static int GROUPINTERNAL_EDGE_BENDING_PERCENTAGE = 25;
 	public static int EDGE_BUNDLING_PERCENTAGE = 30;
-	public static int GROUP_DEPTH = 1;
 	
 	public static JCheckBox showInternalEdges;
 	public static JSlider groupSeperationSlider;
@@ -137,6 +141,7 @@ public class HEBLayoutConfig extends ConfigPanel implements ChangeListener{
 		return 2*Math.PI / ((GROUP_DISTANCE_FACTOR - 1)*groups+nodes);
 	}
 	
+	@Override
 	public boolean getShowInternalEdges(){
 		return showInternalEdges.isSelected();
 	}
