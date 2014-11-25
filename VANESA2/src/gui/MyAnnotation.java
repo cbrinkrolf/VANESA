@@ -1,7 +1,5 @@
 package gui;
 
-import java.awt.Paint;
-import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
 
 import edu.uci.ics.jung.visualization.annotations.Annotation;
@@ -9,10 +7,10 @@ import edu.uci.ics.jung.visualization.annotations.Annotation;
 public class MyAnnotation{
 
 	private RectangularShape shape;
-	private Annotation a;
+	private Annotation<Annotation.Layer> a;
 	private String text;
 	
-	public MyAnnotation(Annotation annotation, RectangularShape shape, String text){
+	public MyAnnotation(Annotation<Annotation.Layer> annotation, RectangularShape shape, String text){
 		this.a = annotation;
 		this.shape = shape;
 		this.text = text;
@@ -23,7 +21,7 @@ public class MyAnnotation{
 	}
 	
 	
-	public Annotation getAnnotation(){
+	public Annotation<Annotation.Layer> getAnnotation(){
 		return this.a;
 	}
 	
