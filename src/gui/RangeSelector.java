@@ -4,13 +4,6 @@
  */
 package gui;
 
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.annotations.Annotation;
-import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
-import gui.images.ImagePath;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -19,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
@@ -29,12 +21,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.collections.Factory;
 import org.apache.commons.collections.map.LazyMap;
+
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.annotations.Annotation;
+import graph.GraphInstance;
+import graph.jung.classes.MyGraph;
 
 /**
  * 
@@ -44,9 +43,9 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		ActionListener {
 
 	public static final int RECTANGLE = 0, ELLIPSE = 1, POLYGON = 3;
-	private int currentRangeType = RECTANGLE;
-	private Point2D startDragging;
-	private RangeInfo justCreated;
+	//private int currentRangeType = RECTANGLE;
+	//private Point2D startDragging;
+	//private RangeInfo justCreated;
 	// private Font font = new Font(Font.SERIF, Font.BOLD, 16);
 	private Map<MyGraph, List<RangeInfo>> ranges = LazyMap.decorate(
 			new HashMap(), new Factory() {
@@ -55,17 +54,17 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 					return new ArrayList();
 				}
 			});
-	private boolean enabled;
+	//private boolean enabled;
 	private static RangeSelector instance;
-	private Color fillColor = Color.cyan;
-	private Color textColor = Color.black;
-	private Color outlineColor = Color.yellow;
-	private int alpha = 150;
-	private List<Action> selectShapeActions = new ArrayList();
-	private List<Action> selectColorActions = new ArrayList();
-	private int xOffset = 0;
-	private int yOffset = 0;
-	private boolean showOutline;
+	//private Color fillColor = Color.cyan;
+	//private Color textColor = Color.black;
+	//private Color outlineColor = Color.yellow;
+	//private int alpha = 150;
+	//private List<Action> selectShapeActions = new ArrayList<Action>();
+	//private List<Action> selectColorActions = new ArrayList<Action>();
+	//private int xOffset = 0;
+	//private int yOffset = 0;
+	//private boolean showOutline;
 	private RangeShapeEditor rangeShapeEditor;
 	private JMenuItem dropRange;
 	private JMenuItem editRange;
@@ -73,7 +72,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	private JMenuItem moveDownRange;
 	private RangeSettings settings = new RangeSettings();
 	private GraphInstance graphInstance;
-	private ImagePath imagePath = ImagePath.getInstance();
+	//private ImagePath imagePath = ImagePath.getInstance();
 	private MyAnnotationManager am;
 
 	public static RangeSelector getInstance() {
@@ -231,7 +230,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 	public List<Map<String, String>> getRangesInMyGraph(MyGraph graph) {
 
-		List<Map<String, String>> allRanges = new ArrayList();
+		List<Map<String, String>> allRanges = new ArrayList<Map<String, String>>();
 		for (RangeInfo info : getShapes(graph)) {
 			try {
 				allRanges.add(info.getProperties());
@@ -490,7 +489,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 //	}
 
 	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+		//this.enabled = enabled;
 		this.rangeShapeEditor.enabled = enabled;
 		try {
 			GraphInstance.getMyGraph().getVisualizationViewer()
@@ -546,7 +545,8 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 //	}
 
 	private Point2D inverseTransform(MouseEvent e) {
-		VisualizationViewer vv = (VisualizationViewer) e.getSource();
+		
+		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
 		// System.out.println(e.getPoint());
 		// System.out.println(vv.getLocation(e.getPoint()));
 		// System.out.println(vv.getLocationOnScreen());
@@ -585,7 +585,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		private RangeInfo selected;
 		private double oldX, oldY;
 		private Cursor oldCursor;
-		private boolean resizing;
+		//private boolean resizing;
 		private double[] coords = new double[4];// lefttop x,y,rightbottom x,y
 		private boolean[] move = new boolean[4];// move lefttop x,y,rightbottom
 		// x,y
@@ -679,7 +679,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (enabled && justCreated == null) {
+			if (enabled) {
 				Point2D p = inverseTransform(e);
 				// select(p);
 				if (selected != null) {
