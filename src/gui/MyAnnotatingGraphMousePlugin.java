@@ -6,10 +6,11 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
-import java.awt.geom.Point2D.Double;
 
 import javax.swing.JOptionPane;
 
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.annotations.AnnotatingGraphMousePlugin;
@@ -45,7 +46,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 	@Override
 	public void mouseReleased(MouseEvent e) {
 
-		VisualizationViewer<V, E> vv = (VisualizationViewer) e.getSource();
+		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
 		if (currentType == AnnotationPainter.TEXT) {
 			annotationString = JOptionPane.showInputDialog(vv, "Annotation:");
 			if (annotationString != null && annotationString.length() > 0) {
@@ -62,8 +63,8 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 				//System.out.println();
 				RectangularShape arect = (RectangularShape) rectangularShape
 						.clone();
-				Point2D p = vv.getRenderContext().getMultiLayerTransformer()
-						.inverseTransform(down);
+				//Point2D p = vv.getRenderContext().getMultiLayerTransformer()
+				//		.inverseTransform(down);
 				//System.out.println(down);
 				//System.out.println(super.getAnnotationColor());
 				//arect.setFrameFromDiagonal(down, out);
@@ -79,7 +80,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 		vv.removePostRenderPaintable(lensPaintable);
 		vv.repaint();
 
-		Annotation a = ((MyAnnotationManager) this.annotationManager)
+		Annotation<Annotation.Layer> a = ((MyAnnotationManager) this.annotationManager)
 				.getCurrentAnnotation();
 		RectangularShape s = (RectangularShape) this.getRectangularShape()
 				.clone();

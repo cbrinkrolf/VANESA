@@ -18,7 +18,7 @@ public class MyAnnotationManager extends AnnotationManager {
 	
 	
 
-	public Annotation getCurrentAnnotation() {
+	public Annotation<Annotation.Layer> getCurrentAnnotation() {
 		return currentAnnotation;
 	}
 

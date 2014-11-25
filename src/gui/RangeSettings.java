@@ -29,17 +29,21 @@ import configurations.gui.LayoutConfig;
  */
 public class RangeSettings extends JPanel implements ActionListener {
 
-    private RangeInfo rangeInfo;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private RangeInfo rangeInfo;
     private JTextField jTitle = new JTextField();
     private JButton fillColor = new JButton("...");
     private JButton outlineColor = new JButton("...");
     private JButton textColor = new JButton("...");
-    private JComboBox titlePos = new JComboBox(
+    private JComboBox<String> titlePos = new JComboBox<String>(
             new String[]{"leftTop", "rightTop", "leftBottom", "rightBottom"});
-    public JComboBox outlineType = new JComboBox(
+    private JComboBox<String> outlineType = new JComboBox<String>(
             new String[]{"none", "single line", "double line"});
-    private JComboBox layerCombo = new JComboBox();
-    public JButton applyChange = new JButton("OK"),  cancel = new JButton("Cancel");
+    private JComboBox<Integer> layerCombo = new JComboBox<Integer>();
+    private JButton applyChange = new JButton("OK"),  cancel = new JButton("Cancel");
     public int layer;
     private JSpinner alpha=new JSpinner();
     public RangeSettings() {
