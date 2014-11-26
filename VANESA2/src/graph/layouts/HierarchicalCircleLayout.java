@@ -1,9 +1,7 @@
 package graph.layouts;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,9 +15,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import graph.layouts.hebLayout.Circle;
@@ -143,6 +139,15 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	}
 	
 	public void reset(){
+		order = new ArrayList<BiologicalNodeAbstract>();
+		bnaGroups = null;
+		
+	}
+	
+	public void update(boolean resetPossible){
+		if(getConfig().resetLayout() && resetPossible){
+			reset();
+		}
 		initialize();
 	}
 	
@@ -247,7 +252,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	public void saveCurrentOrder(){
 		order.sort(new AngleComparator());
 		groupNodes();
-		reset();
+		update(false);
 	}
 	
 	/**
