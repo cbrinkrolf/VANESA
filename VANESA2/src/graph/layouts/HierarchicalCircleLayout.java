@@ -138,18 +138,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 //		vv.getRenderer().setVertexLabelRenderer(cp);
 	}
 	
-	public void reset(){
-		order = new ArrayList<BiologicalNodeAbstract>();
-		bnaGroups = null;
-		
-	}
-	
-	public void update(boolean resetPossible){
-		if(getConfig().resetLayout() && resetPossible){
-			reset();
-		}
-		initialize();
-	}
+
 	
 	/**
 	 * Gives back the coordinates of the circle's center point.
@@ -252,7 +241,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	public void saveCurrentOrder(){
 		order.sort(new AngleComparator());
 		groupNodes();
-		update(false);
+		initialize();
 	}
 	
 	/**
