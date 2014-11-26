@@ -676,7 +676,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		this.setStateChanged(NodeStateChanged.FLATTENED);
 		getRootPathway().updateMyGraph();
 		
-		
 //		printAllHierarchicalAttributes();
 	}
 	
@@ -1077,6 +1076,18 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		} catch (NullPointerException e) {
 			return null;
 		}
+	}
+	
+	public Set<BiologicalNodeAbstract> getCurrentShownChildrenNodes(MyGraph graph){
+		Set<BiologicalNodeAbstract> cscn = new HashSet<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract n : getInnerNodes()){
+			if(graph.getAllVertices().contains(n)){
+				cscn.add(n);
+			} else if (n.isCoarseNode()){
+				cscn.addAll(n.getCurrentShownChildrenNodes(graph));
+			}
+		}
+		return cscn;
 	}
 
 	private MyGraph getActiveGraph() {
