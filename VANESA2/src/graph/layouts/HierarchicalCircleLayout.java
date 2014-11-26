@@ -137,9 +137,9 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	 * @author tloka
 	 */
 	public void setLabelPositions(){
-		VisualizationViewer vv = GraphInstance.getMyGraph().getVisualizationViewer();
-		CirclePositioner cp = new CirclePositioner();
-		vv.getRenderer().setVertexLabelRenderer(cp);
+//		VisualizationViewer vv = GraphInstance.getMyGraph().getVisualizationViewer();
+//		CirclePositioner cp = new CirclePositioner();
+//		vv.getRenderer().setVertexLabelRenderer(cp);
 	}
 	
 	public void reset(){
@@ -321,16 +321,20 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 		
 		public int compare (BiologicalNodeAbstract n1, BiologicalNodeAbstract n2){
 			MyGraph myGraph = GraphInstance.getMyGraph();
-			BiologicalNodeAbstract n1P = n1.getCurrentShownParentNode(myGraph);
-			BiologicalNodeAbstract n2P = n2.getCurrentShownParentNode(myGraph);
-			List<BiologicalNodeAbstract> n1G = getNodesGroup(n1);
-			List<BiologicalNodeAbstract> n2G = getNodesGroup(n2);
-			double n1GAngle = Circle.getAngle(centerPoint, myGraph.getVertexLocation(n1P));
-			double n2GAngle = Circle.getAngle(centerPoint, myGraph.getVertexLocation(n2P));
-			if(n1GAngle<0)
-				n1GAngle = n1GAngle+2*Math.PI;
-			if(n2GAngle<0)
-				n2GAngle = n2GAngle+2*Math.PI;
+			BiologicalNodeAbstract n1P = n1.getCurrentShownParentNode(myGraph).getParentNode();
+			BiologicalNodeAbstract n2P = n2.getCurrentShownParentNode(myGraph).getParentNode();
+			Set<BiologicalNodeAbstract> n1G = new HashSet<BiologicalNodeAbstract>();
+			Set<BiologicalNodeAbstract> n2G = new HashSet<BiologicalNodeAbstract>();
+			
+			if(n1P != null){n1G.addAll(n1P.getCurrentShownChildrenNodes(myGraph));}
+			else{n1G.add(n1.getCurrentShownParentNode(myGraph));}
+			
+			if(n2P != null){n2G.addAll(n2P.getCurrentShownChildrenNodes(myGraph));}
+			else{n2G.add(n2.getCurrentShownParentNode(myGraph));}
+			
+			double n1GAngle = 360;
+			double n2GAngle = 360;
+
 			for(BiologicalNodeAbstract n : n1G){
 				double angle = Circle.getAngle(centerPoint,  myGraph.getVertexLocation(n));
 				if(angle<0){
@@ -464,32 +468,32 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	 * Computes the Position of the vertex labels.
 	 * @author tobias
 	 */
-	public class CirclePositioner extends BasicVertexLabelRenderer<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
-
-		public CirclePositioner(){
-			super();
-		}
-		
-		@Override
-		protected Point getAnchorPoint(Rectangle2D vertexBounds, Dimension labelSize, Position position){
-			if(!(GraphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout)){
-				return super.getAnchorPoint(vertexBounds, labelSize, position);
-			}
-			Point2D vertexCenter = new Point2D.Double(vertexBounds.getCenterX(),vertexBounds.getCenterY());
-			
-			//TOBI: Find correct transformation to the coordinate system.
-			Point2D circleCenterPoint = GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).inverseTransform(((HierarchicalCircleLayout) GraphInstance.getMyGraph().getLayout()).getCenterPoint());
-			double x = vertexBounds.getCenterX()-Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*vertexBounds.getWidth()/2-Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*labelSize.getWidth();
-			if(circleCenterPoint.getX()<vertexCenter.getX()){
-				x= vertexBounds.getCenterX()+Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*vertexBounds.getWidth()/2;
-
-			}
-			double y = vertexBounds.getCenterY() - labelSize.getHeight()/2 - Math.abs(vertexBounds.getCenterY()-circleCenterPoint.getY())/circleCenterPoint.getY()*vertexBounds.getHeight();
-			if(circleCenterPoint.getY()<vertexCenter.getY()){
-				y = vertexBounds.getCenterY() + labelSize.getHeight()/2 + Math.abs(vertexBounds.getCenterY()-circleCenterPoint.getY())/circleCenterPoint.getY()*vertexBounds.getHeight();
-			}
-			return new Point((int) x, (int) y);
-			
-		}	
-	}
+//	public class CirclePositioner extends BasicVertexLabelRenderer<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
+//
+//		public CirclePositioner(){
+//			super();
+//		}
+//		
+//		@Override
+//		protected Point getAnchorPoint(Rectangle2D vertexBounds, Dimension labelSize, Position position){
+//			if(!(GraphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout)){
+//				return super.getAnchorPoint(vertexBounds, labelSize, position);
+//			}
+//			Point2D vertexCenter = new Point2D.Double(vertexBounds.getCenterX(),vertexBounds.getCenterY());
+//			
+//			//TOBI: Find correct transformation to the coordinate system.
+//			Point2D circleCenterPoint = GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).inverseTransform(((HierarchicalCircleLayout) GraphInstance.getMyGraph().getLayout()).getCenterPoint());
+//			double x = vertexBounds.getCenterX()-Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*vertexBounds.getWidth()/2-Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*labelSize.getWidth();
+//			if(circleCenterPoint.getX()<vertexCenter.getX()){
+//				x= vertexBounds.getCenterX()+Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*vertexBounds.getWidth()/2;
+//
+//			}
+//			double y = vertexBounds.getCenterY() - labelSize.getHeight()/2 - Math.abs(vertexBounds.getCenterY()-circleCenterPoint.getY())/circleCenterPoint.getY()*vertexBounds.getHeight();
+//			if(circleCenterPoint.getY()<vertexCenter.getY()){
+//				y = vertexBounds.getCenterY() + labelSize.getHeight()/2 + Math.abs(vertexBounds.getCenterY()-circleCenterPoint.getY())/circleCenterPoint.getY()*vertexBounds.getHeight();
+//			}
+//			return new Point((int) x, (int) y);
+//			
+//		}	
+//	}
 }
