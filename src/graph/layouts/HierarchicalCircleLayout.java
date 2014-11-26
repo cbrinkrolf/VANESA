@@ -21,6 +21,7 @@ import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.renderers.BasicVertexLabelRenderer;
 import graph.GraphInstance;
+import graph.jung.classes.MyGraph;
 import graph.layouts.hebLayout.Circle;
 
 public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>{
@@ -241,6 +242,15 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	}
 	
 	/**
+	 * Saves the current node order + relayouting.
+	 */
+	public void saveCurrentOrder(){
+		order.sort(new AngleComparator());
+		groupNodes();
+		reset();
+	}
+	
+	/**
 	 * Adds circle data of a vertex.
 	 * @param v vertex
 	 * @return The circle data of the vertex.
@@ -297,6 +307,52 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
         public String toString() {
                 return "CircleVertexData: angle=" + angle;
         }
+	}
+	
+	/**
+	 * Comparator to save the current shown node order with respect to their groups.
+	 * @author tobias
+	 *
+	 */
+	protected class AngleComparator implements Comparator<BiologicalNodeAbstract>{
+				
+		public AngleComparator(){
+		}
+		
+		public int compare (BiologicalNodeAbstract n1, BiologicalNodeAbstract n2){
+			MyGraph myGraph = GraphInstance.getMyGraph();
+			BiologicalNodeAbstract n1P = n1.getCurrentShownParentNode(myGraph);
+			BiologicalNodeAbstract n2P = n2.getCurrentShownParentNode(myGraph);
+			List<BiologicalNodeAbstract> n1G = getNodesGroup(n1);
+			List<BiologicalNodeAbstract> n2G = getNodesGroup(n2);
+			double n1GAngle = Circle.getAngle(centerPoint, myGraph.getVertexLocation(n1P));
+			double n2GAngle = Circle.getAngle(centerPoint, myGraph.getVertexLocation(n2P));
+			if(n1GAngle<0)
+				n1GAngle = n1GAngle+2*Math.PI;
+			if(n2GAngle<0)
+				n2GAngle = n2GAngle+2*Math.PI;
+			for(BiologicalNodeAbstract n : n1G){
+				double angle = Circle.getAngle(centerPoint,  myGraph.getVertexLocation(n));
+				if(angle<0){
+					angle += 2*Math.PI;
+				}
+				if(angle<n1GAngle){
+					n1GAngle = angle;
+				}
+			}
+			for(BiologicalNodeAbstract n : n2G){
+				double angle = Circle.getAngle(centerPoint,  myGraph.getVertexLocation(n));
+				if(angle<0){
+					angle += 2*Math.PI;
+				}
+				if(angle<n2GAngle){
+					n2GAngle = angle;
+				}
+			}
+			if(n1GAngle == n2GAngle)
+				return 0;
+			return n1GAngle>n2GAngle ? 1 : -1;
+		}
 	}
 
 	/**
