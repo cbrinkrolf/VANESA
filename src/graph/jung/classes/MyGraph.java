@@ -1014,10 +1014,8 @@ public class MyGraph {
 	}
 	
 	public void changeToHEBLayout() {
-		if(layout instanceof HEBLayout){
-			//changeToLayout(new HEBLayout(g, ((HEBLayout) layout).getOrder()));
-			((HEBLayout) layout).update(true);
-			vv.repaint();
+		if(layout instanceof HEBLayout && !((HEBLayout) layout).getConfig().resetLayout()){
+			changeToLayout(new HEBLayout(g, ((HEBLayout) layout).getOrder()));
 			return;
 		}
 		changeToLayout(new HEBLayout(g));
