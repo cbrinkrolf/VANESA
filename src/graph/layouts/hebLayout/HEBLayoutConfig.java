@@ -29,6 +29,7 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	public static int EDGE_BUNDLING_PERCENTAGE = 30;
 	
 	public static JCheckBox showInternalEdges;
+	public static JCheckBox resetLayout;
 	public static JSlider groupSeperationSlider;
 	public static JSlider edgeBendingSlider;
 	public static JSlider internalEdgeBendingSlider;
@@ -125,9 +126,14 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		internalEdgeBendingSlider.addChangeListener(this);
 		internalEdgePreferences.add(internalEdgeBendingSlider);
 		
+		resetLayout = new JCheckBox("Reset Layout");
+		resetLayout.setSelected(false);
+		groupPreferences.add(resetLayout);
+	
 		edgePreferences.add(internalEdgePreferences);
 		 add(edgePreferences);
 		 add(groupPreferences);
+		
 	}
 	
 	public static HEBLayoutConfig getInstance() {
@@ -144,6 +150,11 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	@Override
 	public boolean getShowInternalEdges(){
 		return showInternalEdges.isSelected();
+	}
+	
+	@Override
+	public boolean resetLayout(){
+		return resetLayout.isSelected();
 	}
 
 	@Override

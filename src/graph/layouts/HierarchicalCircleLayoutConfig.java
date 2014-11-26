@@ -1,10 +1,6 @@
 package graph.layouts;
 
 import graph.layouts.hebLayout.HEBLayoutConfig;
-
-import javax.swing.JCheckBox;
-import javax.swing.JSlider;
-
 import configurations.gui.ConfigPanel;
 
 public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
@@ -17,6 +13,7 @@ public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
 	public static int GROUP_DEPTH = 1;
 	
 	public boolean showInternalEdges = true;
+	public boolean resetLayout = false;
 	
 	public HierarchicalCircleLayoutConfig(Class<? extends HierarchicalCircleLayout> class1){
 		super(class1);
@@ -35,5 +32,9 @@ public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
 	
 	public boolean getShowInternalEdges(){
 		return showInternalEdges;
+	}
+	
+	public boolean resetLayout(){
+		return resetLayout;
 	}
 }
