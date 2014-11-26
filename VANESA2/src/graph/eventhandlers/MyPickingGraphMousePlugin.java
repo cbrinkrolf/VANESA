@@ -27,6 +27,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
+import graph.layouts.HierarchicalCircleLayout;
 import graph.layouts.hebLayout.Circle;
 import graph.layouts.hebLayout.HEBEdgeShape;
 import graph.layouts.hebLayout.HEBLayout;
@@ -40,7 +41,6 @@ public class MyPickingGraphMousePlugin extends
 	private Set<BiologicalNodeAbstract> originalSelection = new HashSet<BiologicalNodeAbstract>();
 	
 	public void mouseReleased(MouseEvent e) {
-
 		// If mouse was released to change the selection, save vertex positions and return.
 		if(!oldVertexPositions.keySet().containsAll(graphInstance.getPathway().getSelectedNodes()) ||
 				oldVertexPositions.keySet().size()!=graphInstance.getPathway().getSelectedNodes().size()){
@@ -48,7 +48,7 @@ public class MyPickingGraphMousePlugin extends
 			super.mouseReleased(e);
 			return;
 		}
-		
+
 		Collection<BiologicalNodeAbstract> selectedNodes = graphInstance.getPathway().getSelectedNodes();
 
 		// If no nodes were selected, return.
@@ -57,6 +57,11 @@ public class MyPickingGraphMousePlugin extends
 			return;
 		}
 		
+		if(graphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout){
+			HierarchicalCircleLayout hclayout = (HierarchicalCircleLayout) graphInstance.getMyGraph().getLayout();
+			hclayout.saveCurrentOrder();
+		}
+
 		// Reselect the original selection.
 		Collection<BiologicalNodeAbstract> deselection = graphInstance.getPathway().getSelectedNodes();
 		deselection.removeAll(originalSelection);
@@ -64,6 +69,7 @@ public class MyPickingGraphMousePlugin extends
 			graphInstance.getMyGraph().getVisualizationViewer().
 				getPickedVertexState().pick(node, false);
 		}
+		
 		
 		// Find coarse nodes in specified environment of the final mouse position.
 		final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
@@ -84,7 +90,7 @@ public class MyPickingGraphMousePlugin extends
 			super.mouseReleased(e);
 			return;
 		}
-		
+
 		// If node is a coarse node and not contained in the selection, add the selection to the coarse node.
 		if(vertex.isCoarseNode() && !selectedNodes.contains(vertex)){
 			// Disallow to add selection to environment coarse nodes.
@@ -101,6 +107,7 @@ public class MyPickingGraphMousePlugin extends
 			coarseNodeFusion(vertex);
 		}
 		oldVertexPositions.clear();
+		
 		super.mouseReleased(e);
 	}
 
@@ -200,18 +207,18 @@ public class MyPickingGraphMousePlugin extends
 	
 	@Override
 	public void mouseDragged(MouseEvent e){
-		if(!(graphInstance.getMyGraph().getLayout() instanceof HEBLayout)){
+		if(!(graphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout)){
 			super.mouseDragged(e);
 		} else {
 			if(locked == false) {
 	            VisualizationViewer<BiologicalNodeAbstract,BiologicalEdgeAbstract> vv = (VisualizationViewer)e.getSource();
 	            if(vertex != null) {
-					HEBLayout hebLayout= (HEBLayout) graphInstance.getMyGraph().getLayout();
+					HierarchicalCircleLayout hcLayout= (HierarchicalCircleLayout) graphInstance.getMyGraph().getLayout();
 	            	//mouse position
 	                Point p = e.getPoint();
 	                
 	                //move nodes in layout
-	                hebLayout.moveOnCircle(p,down,vv);	                
+	                hcLayout.moveOnCircle(p,down,vv);	                
 	                
 	                down = p;
 
