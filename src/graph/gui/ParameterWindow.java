@@ -68,6 +68,7 @@ public class ParameterWindow implements ActionListener{
 		
 		dialog = pane.createDialog(null, "Parameters");
 		this.repaint();
+		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		dialog.pack();
 		//dialog.show();
 		dialog.setVisible(true);
