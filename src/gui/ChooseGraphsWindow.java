@@ -61,11 +61,7 @@ public abstract class ChooseGraphsWindow extends JFrame implements ActionListene
 			this.setLayout(layout);
 			
 			dialog.pack();
-			ScreenSize screen = new ScreenSize();
-			int screenHeight = (int) screen.getheight();
-			int screenWidth = (int) screen.getwidth();
-			dialog.setLocation((screenWidth / 2) - dialog.getSize().width / 2,
-					(screenHeight / 2) - dialog.getSize().height / 2);
+			dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 			dialog.setVisible(true);
 	}
 

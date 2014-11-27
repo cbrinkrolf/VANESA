@@ -487,6 +487,7 @@ public class MenuListener implements ActionListener {
 			pane.add(testP);
 			pane.add(invariant);
 			d.pack();
+			d.setLocationRelativeTo(MainWindowSingleton.getInstance());
 			d.setVisible(true);
 
 		} else if ("openTestT".equals(event)) {
@@ -545,6 +546,7 @@ public class MenuListener implements ActionListener {
 			pane.add(testT);
 			pane.add(invariant);
 			d.pack();
+			d.setLocationRelativeTo(MainWindowSingleton.getInstance());
 			d.setVisible(true);
 
 			// System.out.println("testT");
@@ -577,11 +579,13 @@ public class MenuListener implements ActionListener {
 				// System.out.println("ist Invariante");
 				this.invariant.setText("This vector is a valid invariant");
 				d.pack();
+				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
 				d.setVisible(true);
 			} else {
 				// System.out.println("ist keine Invariante");
 				this.invariant.setText("This vector is not a valid invariant");
 				d.pack();
+				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
 				d.setVisible(true);
 			}
 		} else if ("testT".equals(event)) {
@@ -613,11 +617,13 @@ public class MenuListener implements ActionListener {
 				// System.out.println("ist Invariante");
 				this.invariant.setText("This vector is a valid invariant");
 				d.pack();
+				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
 				d.setVisible(true);
 			} else {
 				// System.out.println("ist keine Invariante");
 				this.invariant.setText("This vector is not a valid invariant");
 				d.pack();
+				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
 				d.setVisible(true);
 			}
 
@@ -676,6 +682,7 @@ public class MenuListener implements ActionListener {
 			pane.add(testCov);
 			pane.add(reachable);
 			d.pack();
+			d.setLocationRelativeTo(MainWindowSingleton.getInstance());
 			d.setVisible(true);
 			// String name = graphInstance.getPathway().getPetriNet()
 			// .getCovGraph();
@@ -720,11 +727,13 @@ public class MenuListener implements ActionListener {
 				// this.reachable.setText("This vector is a valid Invariante");
 				validInvariant = true;
 				d.pack();
+				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
 				d.setVisible(true);
 			} else {
 				// System.out.println("ist keine Invariante");
 				this.reachable.setText("no valid p-invariant");
 				d.pack();
+				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
 				d.setVisible(true);
 			}
 
@@ -860,6 +869,7 @@ public class MenuListener implements ActionListener {
 			 */
 
 			d.pack();
+			d.setLocationRelativeTo(MainWindowSingleton.getInstance());
 			d.setVisible(true);
 			// w.updateTheoryProperties();
 

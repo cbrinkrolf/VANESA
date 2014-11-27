@@ -1,6 +1,7 @@
 package graph.gui;
 
 import graph.GraphInstance;
+import gui.MainWindowSingleton;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -113,6 +114,7 @@ public class ReferenceDialog {
 
 		JDialog dialog = pane.createDialog(null, "Select a reference");
 		// dialog.show();
+		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 

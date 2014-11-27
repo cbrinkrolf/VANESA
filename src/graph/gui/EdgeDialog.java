@@ -4,6 +4,7 @@
 package graph.gui;
 
 import graph.GraphInstance;
+import gui.MainWindowSingleton;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -163,6 +164,7 @@ public class EdgeDialog extends JFrame {
 
 		JDialog dialog = pane.createDialog(EdgeDialog.this, "Create an edge");
 		//dialog.show();
+		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 		BiologicalNodeAbstract[] bnas = new BiologicalNodeAbstract[2];

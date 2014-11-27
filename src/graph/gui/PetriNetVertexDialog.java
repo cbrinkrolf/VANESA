@@ -201,6 +201,7 @@ public class PetriNetVertexDialog implements ActionListener {
 		JDialog dialog = pane.createDialog(null, title);
 		
 		//dialog.show();
+		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		dialog.setVisible(true);
 		Number number;
 		Integer value = (Integer) pane.getValue();
