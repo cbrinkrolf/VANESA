@@ -43,6 +43,7 @@ import edu.uci.ics.jung.visualization.contrib.KKLayout;*/
 import graph.GraphInstance;
 import graph.layouts.gemLayout.GEMLayoutConfig;
 import graph.layouts.hebLayout.HEBLayoutConfig;
+import gui.MainWindowSingleton;
 import gui.RangeSelector;
 
 /**
@@ -56,11 +57,11 @@ public class LayoutConfig extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	// Variables declaration
-	JButton cancel = new JButton("cancel");
-	JButton defaultButton = new JButton("reset");
-	JButton applyButton = new JButton("apply");
-	JButton[] buttons = { applyButton, defaultButton, cancel };
-	JTabbedPane tabbedPane = new JTabbedPane();
+	private JButton cancel = new JButton("cancel");
+	private JButton defaultButton = new JButton("reset");
+	private JButton applyButton = new JButton("apply");
+	private JButton[] buttons = { applyButton, defaultButton, cancel };
+	private JTabbedPane tabbedPane = new JTabbedPane();
 	private Map<String, ConfigPanel> tabs = new HashMap<String, ConfigPanel>();
 	private JProgressBar progressBar;
 	private static LayoutConfig INSTANCE;
@@ -125,7 +126,7 @@ public class LayoutConfig extends JPanel implements ActionListener {
 	}
 
 	private void showSettings() {
-		int option = JOptionPane.showOptionDialog(null, this,
+		int option = JOptionPane.showOptionDialog(MainWindowSingleton.getInstance(), this,
 				"Layout settings", JOptionPane.DEFAULT_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, buttons, applyButton);
 	}
