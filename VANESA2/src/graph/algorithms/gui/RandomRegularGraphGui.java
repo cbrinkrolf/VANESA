@@ -1,6 +1,7 @@
 package graph.algorithms.gui;
 
 import graph.algorithms.RandomRegularGraph;
+import gui.MainWindowSingleton;
 import gui.algorithms.ScreenSize;
 
 import java.awt.event.ActionEvent;
@@ -74,13 +75,8 @@ public class RandomRegularGraphGui extends JFrame implements ActionListener {
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-		ScreenSize screen = new ScreenSize();
-		int screenHeight = (int) screen.getheight();
-		int screenWidth = (int) screen.getwidth();
-
 		dialog.pack();
-		dialog.setLocation((screenWidth / 2) - dialog.getSize().width / 2,
-				(screenHeight / 2) - dialog.getSize().height / 2);
+		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		dialog.setVisible(true);
 	}
 

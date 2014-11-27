@@ -258,7 +258,7 @@ public class DataMapping2View extends JDialog implements Observer{
 
 		this.add(tabbedPane);
 		this.setMinimumSize(new Dimension(700, 700));
-		this.setLocationRelativeTo(w);
+		this.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		this.setResizable(false);
 		this.setVisible(true);
 	}
