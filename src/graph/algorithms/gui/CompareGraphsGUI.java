@@ -191,9 +191,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		panel.add(new JSeparator(), "growx, span");
 
 		dialog.pack();
-		dialog.setLocation((screenWidth / 2) - dialog.getSize().width / 2,
-				(screenHeight / 2) - dialog.getSize().height / 2);
-
+		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		splitPane.setDividerLocation(0.5);
 		dialog.setVisible(true);
 

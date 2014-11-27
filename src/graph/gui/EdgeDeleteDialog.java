@@ -4,6 +4,7 @@
 package graph.gui;
 
 import graph.GraphInstance;
+import gui.MainWindowSingleton;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -101,6 +102,7 @@ public class EdgeDeleteDialog extends JFrame {
 
 		JDialog dialog = pane.createDialog(EdgeDeleteDialog.this, "Delete a hierarchical edge");
 		//dialog.show();
+		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 		Set<BiologicalEdgeAbstract> ret = new HashSet<BiologicalEdgeAbstract>();

@@ -3,6 +3,8 @@
  */
 package graph.gui;
 
+import gui.MainWindowSingleton;
+
 import java.awt.Dimension;
 import java.util.Iterator;
 import java.util.List;
@@ -102,6 +104,7 @@ public class VertexDialog{
 
 		JDialog dialog = pane.createDialog(null, "Create an element");
 		//dialog.show();
+		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 		

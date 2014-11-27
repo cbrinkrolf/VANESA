@@ -137,13 +137,8 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 	}
 
 	public Vector<String[]> getAnswer() {
-		ScreenSize screen = new ScreenSize();
-		int screenHeight = (int) screen.getheight();
-		int screenWidth = (int) screen.getwidth();
-
 		dialog.pack();
-		dialog.setLocation((screenWidth / 2) - dialog.getSize().width / 2,
-				(screenHeight / 2) - dialog.getSize().height / 2);
+		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		dialog.setVisible(true);
 
 		Vector<String[]> v = new Vector<String[]>();

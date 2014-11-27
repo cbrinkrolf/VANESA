@@ -2,6 +2,7 @@ package graph.gui;
 
 import graph.ChangedFlags;
 import graph.GraphInstance;
+import gui.MainWindowSingleton;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -157,9 +158,6 @@ public class ParameterWindow implements ActionListener{
 		//pane.repaint();
 		//dialog.repaint();
 		dialog.pack();
-		
-		
-		
+		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 	}
-	
 }
