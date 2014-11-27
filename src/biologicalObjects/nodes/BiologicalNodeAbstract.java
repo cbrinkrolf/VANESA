@@ -283,7 +283,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		
 		String lbl;
 		if(label==null){
-			lbl = JOptionPane.showInputDialog(null, null, 
+			lbl = JOptionPane.showInputDialog(MainWindowSingleton.getInstance(), null, 
 					"Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
 			if(lbl==null){
 				return null;

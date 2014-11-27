@@ -1,5 +1,7 @@
 package graph.gui;
 
+import gui.MainWindowSingleton;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -59,7 +61,7 @@ public class LabelsWindow implements ActionListener{
 		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
 				JOptionPane.OK_CANCEL_OPTION);
 		
-		dialog = pane.createDialog(null, "Parameters");
+		dialog = pane.createDialog(MainWindowSingleton.getInstance(), "Labels");
 		this.repaint();
 		dialog.pack();
 		//dialog.show();
@@ -98,20 +100,11 @@ public class LabelsWindow implements ActionListener{
 		panel.add(new JLabel("Label"));
 		panel.add(label, "wrap");
 		
-		
-		
-		
-		
-		
 		panel.add(add, "wrap");
 		this.listParameters();
 		panel.repaint();
 		//pane.repaint();
 		//dialog.repaint();
 		dialog.pack();
-		
-		
-		
 	}
-	
 }
