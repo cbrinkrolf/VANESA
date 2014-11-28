@@ -1,6 +1,6 @@
 package configurations.gui;
 
-import gui.algorithms.ScreenSize;
+import gui.MainWindowSingleton;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,10 +33,6 @@ public class Settings extends JDialog implements ActionListener {
 	private JOptionPane optionPane;
 
 	public Settings(int type) {
-		ScreenSize screen = new ScreenSize();
-		int screenHeight = (int) screen.getheight();
-		int screenWidth = (int) screen.getwidth();
-
 		optionPane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
@@ -62,8 +58,7 @@ public class Settings extends JDialog implements ActionListener {
 		enableSettings(true);
 
 		this.setSize(300, 300);
-		this.setLocation((screenWidth / 2) - this.getSize().width / 2,
-				(screenHeight / 2) - this.getSize().height / 2);
+		this.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		this.pack();
 		this.setResizable(false);
 		this.setVisible(true);
