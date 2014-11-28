@@ -284,13 +284,8 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		setResizable(false);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-		ScreenSize screen = new ScreenSize();
-		int screenHeight = (int) screen.getheight();
-		int screenWidth = (int) screen.getwidth();
-
 		pack();
-		setLocation((screenWidth / 2) - getSize().width / 2, (screenHeight / 2)
-				- getSize().height / 2);
+		this.setLocationRelativeTo(MainWindowSingleton.getInstance());
 	}
 
 	@Override

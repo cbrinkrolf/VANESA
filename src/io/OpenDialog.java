@@ -53,8 +53,8 @@ public class OpenDialog extends SwingWorker {
 
 	private JFileChooser chooser;
 
-	GraphContainer con = ContainerSingelton.getInstance();
-	GraphInstance graphInstance = new GraphInstance();
+	private GraphContainer con = ContainerSingelton.getInstance();
+	private GraphInstance graphInstance = new GraphInstance();
 
 	public OpenDialog() {
 
@@ -79,7 +79,7 @@ public class OpenDialog extends SwingWorker {
 		chooser.addChoosableFileFilter(new MyFileFilter(txt, txtDescription));
 		
 
-		option = chooser.showOpenDialog(null);
+		option = chooser.showOpenDialog(MainWindowSingleton.getInstance());
 
 	}
 
@@ -93,7 +93,7 @@ public class OpenDialog extends SwingWorker {
 					try {
 						new VAMLInput(file);
 					} catch (XMLStreamException e) {
-						JOptionPane.showMessageDialog(null,
+						JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 								"An error occured during the loading. "
 										+ "The VAML file is not valid.",
 								"VAML read error", JOptionPane.ERROR_MESSAGE);

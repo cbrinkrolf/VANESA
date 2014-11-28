@@ -134,7 +134,7 @@ public class SaveDialog {
 					.addChoosableFileFilter(new MyFileFilter(txt,
 							txtDescription));
 
-		int option = chooser.showSaveDialog(null);
+		int option = chooser.showSaveDialog(MainWindowSingleton.getInstance());
 		if (option == JFileChooser.APPROVE_OPTION) {
 
 			fileFormat = chooser.getFileFilter().getDescription();

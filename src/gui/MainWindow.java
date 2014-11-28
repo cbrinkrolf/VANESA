@@ -437,7 +437,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		if (pw.hasGotAtLeastOneElement() && ask) {
 
 			// 0: yes, 1: no, 2: cancel, -1: x
-			int n = JOptionPane.showConfirmDialog(null,
+			int n = JOptionPane.showConfirmDialog(MainWindowSingleton.getInstance(),
 					"Would you like to save your network-model?",
 					"Save Question", JOptionPane.YES_NO_CANCEL_OPTION);
 			//System.out.println(n);
