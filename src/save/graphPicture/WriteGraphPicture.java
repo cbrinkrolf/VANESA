@@ -29,7 +29,6 @@ import gui.MainWindowSingleton;
 public class WriteGraphPicture implements Printable {
 
 	VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
-	MainWindow w;
 
 	private String fileFormat;
 
@@ -45,14 +44,14 @@ public class WriteGraphPicture implements Printable {
 		JFileChooser chooser = new JFileChooser();
 		chooser.addChoosableFileFilter(new PngFilter());
 		chooser.addChoosableFileFilter(new EPSFilter());
-		int option = chooser.showSaveDialog(w);
+		int option = chooser.showSaveDialog(MainWindowSingleton.getInstance());
 		if (option == JFileChooser.APPROVE_OPTION) {
 			File file = chooser.getSelectedFile();
 			fileFormat = chooser.getFileFilter().getDescription();
 
 			boolean overwrite = true;
 			if (file.exists()) {
-				int response = JOptionPane.showConfirmDialog(null,
+				int response = JOptionPane.showConfirmDialog(MainWindowSingleton.getInstance(),
 						"Overwrite existing file?", "Confirm Overwrite",
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.QUESTION_MESSAGE);

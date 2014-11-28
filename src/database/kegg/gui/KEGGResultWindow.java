@@ -3,6 +3,8 @@
  */
 package database.kegg.gui;
 
+import gui.MainWindowSingleton;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
@@ -173,7 +175,7 @@ public class KEGGResultWindow extends JFrame {
 
 	public Vector<String[]> getAnswer() {
 
-		JDialog dialog = pane.createDialog(KEGGResultWindow.this, "");
+		JDialog dialog = pane.createDialog(MainWindowSingleton.getInstance(), "");
 		dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);
 
