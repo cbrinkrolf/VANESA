@@ -1,8 +1,9 @@
 package database.mirna.gui;
 
+import gui.MainWindowSingleton;
+
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -22,13 +23,15 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import pojos.DBColumn;
-import database.kegg.gui.KEGGResultWindow;
 
 public class MirnaResultWindow extends JFrame {
 
 		
-		JPanel panel;
-		JOptionPane pane;
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+		private JOptionPane pane;
 		private ArrayList<String[]> map = new ArrayList<String[]>();
 		private MyTable table;
 
@@ -94,14 +97,14 @@ public class MirnaResultWindow extends JFrame {
 		}
 		
 
-		public Vector getAnswer() {
+		public Vector<String[]> getAnswer() {
 
-			JDialog dialog = pane.createDialog(MirnaResultWindow.this, "");
+			JDialog dialog = pane.createDialog(MainWindowSingleton.getInstance(), "");
 			dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 			
 			Integer value = (Integer) pane.getValue();
-			Vector v = new Vector();
+			Vector<String[]> v = new Vector<String[]>();
 			if (value != null) {
 				if (value.intValue() == JOptionPane.OK_OPTION) {
 					
