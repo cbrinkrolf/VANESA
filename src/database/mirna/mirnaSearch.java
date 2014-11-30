@@ -2,6 +2,8 @@ package database.mirna;
 
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
+import graph.layouts.hebLayout.HierarchyList;
+import graph.layouts.hebLayout.HierarchyListComparator;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.ProgressBar;
@@ -22,6 +24,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Expression;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.SRNA;
@@ -182,6 +185,40 @@ public class mirnaSearch extends SwingWorker {
 									.getInstance();
 							window.updateOptionPanel();
 							window.setVisible(true);
+							
+//							class HLC<E> implements HierarchyListComparator{
+//
+//								int c;
+//								public HLC(int chars){
+//									c = chars;
+//								}
+//								@Override
+//								public Integer getParentValue(
+//										BiologicalNodeAbstract n) {
+//									if(n == root){
+//										return null;
+//									}
+//									for(BiologicalNodeAbstract nd : myGraph.getAllVertices()){
+//										if(nd==root){
+//											continue;
+//										}
+//										if(n.getLabel().charAt(c) == nd.getLabel().charAt(c)){
+//											return nd.getID();
+//										}
+//									}
+//									return null;
+//									}
+//								
+//								@Override
+//								public Integer getValue(BiologicalNodeAbstract n) {
+//									return n.getID();
+//								}
+//							}
+//						HierarchyList<Integer> l = new HierarchyList<Integer>();	
+//						l.addAll(myGraph.getAllVertices());
+//						l.sort(new HLC<Integer>(0));
+//						l.coarse();
+						
 
 						}
 					}else if(gene.length() > 0){
