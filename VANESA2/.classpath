@@ -57,21 +57,21 @@
 	<classpathentry kind="lib" path="packages/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="packages/jfreesvg-2.0.jar"/>
 	<classpathentry kind="lib" path="packages/orsonpdf-1.6-eval.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/antlr-runtime-4.4.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-anim.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-awt-util.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-css.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-dom.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-ext.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-gui-util.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-gvt.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-parser.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-svg-dom.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-svggen.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-util.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/batik-xml.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/jlatexmath-1.0.3.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormular/pretty-formula.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/antlr-runtime-4.4.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-anim.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-awt-util.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-css.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-dom.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-ext.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-gui-util.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-gvt.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-parser.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-svg-dom.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-svggen.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-util.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/batik-xml.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/jlatexmath-1.0.3.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/pretty-formula.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
