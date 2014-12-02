@@ -13,6 +13,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -23,6 +25,10 @@ import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -47,6 +53,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 
 	private GraphInstance graphInstance = new GraphInstance();
 	private Pathway pw;
+	private HierarchyMenu menu;
 
 	public MyZoomThroughHierarchyGraphMousePlugin() {
 		this(InputEvent.BUTTON1_MASK);
@@ -84,6 +91,10 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	 * hide (is no coarse node) the subpathway.
 	 */
 	public void mousePressed(MouseEvent e) {
+		if(menu!=null){
+			menu = null;
+			return;
+		}
 		pw = graphInstance.getPathway();
 		if (checkModifiers(e)) {
 			
@@ -102,21 +113,12 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 			if(pw.isBNA() && ((BiologicalNodeAbstract) pw).getEnvironment().contains(vertex)){
 				return;
 			}
-			if (vertex != null) {
-				if(vertex.isCoarseNode() && javax.swing.SwingUtilities.isLeftMouseButton(e)){
-					vertex.showSubPathway();
-				} else if(vertex.getParentNode()!=null && javax.swing.SwingUtilities.isLeftMouseButton(e)){
-					vertex.getParentNode().hideSubPathway();
-				}
-			} else if(javax.swing.SwingUtilities.isLeftMouseButton(e)){
-				hideAllSubpathways();
-			}
-			vv.repaint();
+			openMenu(e,vertex);
 		}
 	}
 	
 	public void hideAllSubpathways(){
-		if(pw==null || pw!=new GraphInstance().getPathway()){
+		if(pw==null || pw!= graphInstance.getPathway()){
 			return;
 		}
 		Set<BiologicalNodeAbstract> parentNodes = new HashSet<BiologicalNodeAbstract>();
@@ -135,11 +137,12 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 			if(node.getParentNode()!=null && node.getParentNode().getCurrentShownParentNode(pw.getGraph())!=null){
 				continue;
 			}
-			node.hideSubPathway();
+			pw.closeSubPathway(node);
 		}
 	}
 
 	public void mouseReleased(MouseEvent e) {
+		
 	}
 
 	public void mouseDragged(MouseEvent e) {
@@ -156,4 +159,70 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 
 	public void mouseMoved(MouseEvent e) {
 	}
+	
+	private void openMenu(MouseEvent e, BiologicalNodeAbstract n){
+        menu = new HierarchyMenu(n);
+        menu.show(e.getComponent(), e.getX(), e.getY());
+    }
+	
+	class HierarchyMenu extends JPopupMenu {
+		private static final long serialVersionUID = 153465734562L;
+		JMenuItem openNode = new JMenuItem("Open subpathway");
+	    JMenuItem closeNode = new JMenuItem("Close subpathway");
+	    JMenuItem openAllNodes = new JMenuItem("Open all subpathways");
+	    JMenuItem openNetwork = new JMenuItem("Open full network");
+	    JMenuItem closeNetwork = new JMenuItem("close full network");
+	    BiologicalNodeAbstract node;
+	    ActionListener listener;
+	    
+	    public HierarchyMenu(BiologicalNodeAbstract n){
+	    	node = n;
+	    		listener = new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
+						if(e.getSource()==openNode){
+							pw.openSubPathway(node);
+						} else if(e.getSource()==closeNode){
+							pw.closeSubPathway(node.getParentNode());
+						} else if(e.getSource()==openAllNodes){
+							set.addAll(GraphInstance.getMyGraph().getAllVertices());
+							for(BiologicalNodeAbstract n : set){
+								if(n.isCoarseNode()){
+									pw.openSubPathway(n);
+								}
+							}
+						}else if(e.getSource()==openNetwork){
+							pw.openAllSubPathways();
+						} else if(e.getSource()==closeNetwork){
+							pw.closeAllSubPathways();
+						}
+						GraphInstance.getMyGraph().updateLayout();
+						GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+						menu = null;
+					}
+	    	    };
+	    	if(n==null){
+	    		add(openAllNodes);
+	    		openAllNodes.addActionListener(listener);
+	    		add(new JSeparator());
+	    		add(openNetwork);
+	    		openNetwork.addActionListener(listener);
+	    		add(closeNetwork);
+	    		closeNetwork.addActionListener(listener);
+	    	} else {
+	    		add(openNode);
+	    		openNode.addActionListener(listener);
+	    		add(closeNode);
+	    		closeNode.addActionListener(listener);
+	    		if(n.getParentNode() == pw || n.getParentNode() == null){
+	    			closeNode.setEnabled(false);
+	    		}
+	    		if(!n.isCoarseNode()){
+	    			openNode.setEnabled(false);
+	    		}
+	    	}
+	    }
+	}
+	
 }

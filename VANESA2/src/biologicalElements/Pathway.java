@@ -1579,13 +1579,92 @@ public class Pathway implements Cloneable {
 			}
 		}
 	}
-
-	public void addToOpenedSubPathways(BiologicalNodeAbstract subpathway) {
-		openedSubPathways.add(subpathway);
+	
+	public boolean openSubPathway(BiologicalNodeAbstract subPathway){
+		if(!subPathway.isCoarseNode()){
+			return false;
+		}
+		removeElement(subPathway);
+		for(BiologicalNodeAbstract node : subPathway.getInnerNodes()){
+			addVertex(node, this.getGraph().getVertexLocation(node));
+			node.setHidden(true);
+		}
+		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
+			BiologicalEdgeAbstract e = edge.clone();
+			e.setTo(e.getTo().getCurrentShownParentNode(getGraph()));
+			e.setFrom(e.getFrom().getCurrentShownParentNode(getGraph()));
+			if(e.isValid(false)){
+				addEdge(e);
+			}
+		}
+		for(BiologicalEdgeAbstract edge : subPathway.getAllEdges()){
+			if(!subPathway.getEnvironment().contains(edge.getTo()) && 
+					!subPathway.getEnvironment().contains(edge.getFrom())){
+				addEdge(edge);
+			}
+		}
+		openedSubPathways.add(subPathway);
+		return true;
 	}
-
-	public void removeFromOpenedSubPathways(BiologicalNodeAbstract subpathway) {
-		openedSubPathways.remove(subpathway);
+	
+	public void closeSubPathway(BiologicalNodeAbstract subPathway){
+		if(!openedSubPathways.contains(subPathway)){
+			return;
+		}
+		if(!subPathway.getBorder().isEmpty()){
+			addVertex(subPathway, getGraph().getVertexLocation(subPathway.getBorder().iterator().next()));
+		} else {
+			addVertex(subPathway, getGraph().getVertexLocation(subPathway.getInnerNodes().iterator().next()));
+		}
+		for(BiologicalNodeAbstract node : subPathway.getInnerNodes()){
+			closeSubPathway(node);
+			node.setHidden(false);
+			removeElement(node);
+		}
+		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
+			BiologicalEdgeAbstract e = edge.clone();
+			e.setTo(e.getTo().getCurrentShownParentNode(getGraph()));
+			e.setFrom(e.getFrom().getCurrentShownParentNode(getGraph()));
+			if(e.isValid(false)){
+				addEdge(e);
+			}
+		}
+		openedSubPathways.remove(subPathway);
+	}
+	
+	public void closeAllSubPathways(){
+		HashSet<BiologicalNodeAbstract> osp = new HashSet<BiologicalNodeAbstract>();
+		while(!openedSubPathways.isEmpty()){
+			osp.addAll(openedSubPathways);
+			HashSet<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
+			for(BiologicalNodeAbstract n : osp){
+				innerNodes.addAll(n.getInnerNodes());
+				innerNodes.retainAll(openedSubPathways);
+				if(innerNodes.isEmpty()){
+					closeSubPathway(n);
+				}
+				innerNodes.clear();
+			}
+			if(openedSubPathways.size()==osp.size()){
+				break;
+			}
+		}
+	}
+	
+	public void openAllSubPathways(){
+		
+		Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
+		boolean repeat = true;
+		
+		while(repeat){
+			repeat = false;
+			nodes.clear();
+			nodes.addAll(getAllNodes());
+			for(BiologicalNodeAbstract n : nodes){
+				if(openSubPathway(n))
+					repeat = true;
+			}
+		}
 	}
 
 	public Set<BiologicalNodeAbstract> getOpenedSubPathways() {
