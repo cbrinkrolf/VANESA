@@ -16,14 +16,12 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -56,10 +54,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
-import dataMapping.dataImport.ExcelException;
-import dataMapping.dataImport.ImportExcelxData;
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.Pathway;
+import dataMapping.dataImport.ExcelException;
+import dataMapping.dataImport.ImportExcelxData;
 
 /**
  * This class manage the GUI elements of the DataMapping

@@ -3,8 +3,6 @@
  */
 package database.brenda.gui;
 
-import java.awt.Container;
-
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -23,6 +21,10 @@ import net.miginfocom.swing.MigLayout;
  */
 public class BrendaSettingsDialog extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JPanel panel;
 	JOptionPane pane;
 
@@ -37,7 +39,7 @@ public class BrendaSettingsDialog extends JFrame {
 	 */
 	public BrendaSettingsDialog() {
 
-		Container contentPane = getContentPane();
+		//Container contentPane = getContentPane();
 		MigLayout layout = new MigLayout("", "[right]");
 
 		panel = new JPanel(layout);
@@ -69,7 +71,7 @@ public class BrendaSettingsDialog extends JFrame {
 				JOptionPane.OK_CANCEL_OPTION);
 		
 		JDialog dialog = pane.createDialog(BrendaSettingsDialog.this, "");
-		dialog.show();
+		dialog.setVisible(true);
 	}
 
 	public boolean continueProgress() {

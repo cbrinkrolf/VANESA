@@ -66,17 +66,17 @@ public class KEGGNode extends KEGGNodeGraphicRepresentation {
 
 	private String geneEnzyme = "";
 			
-	private Vector allKeggNames =  new Vector();
+	private Vector<String> allKeggNames =  new Vector<String>();
 
-	private Vector allDBLinks = new Vector();
+	private Vector<String> allDBLinks = new Vector<String>();
 	
-	private Vector allPathways = new Vector();
+	private Vector<String> allPathways = new Vector<String>();
 	
-	private Vector allStructures =  new Vector();
+	private Vector<String> allStructures =  new Vector<String>();
 	
-	private Vector geneMotifs = new Vector();
+	private Vector<String> geneMotifs = new Vector<String>();
 	
-	private Vector involvedWith = new Vector();
+	private Vector<String> involvedWith = new Vector<String>();
 	
 	private String glycanOrthology = "";
 	
@@ -109,11 +109,11 @@ public class KEGGNode extends KEGGNodeGraphicRepresentation {
 	
 	public String getAllInvolvedElements(){
 		
-		Iterator it = involvedWith.iterator();
+		Iterator<String> it = involvedWith.iterator();
 		String results="";
 		while(it.hasNext()){
 			
-			results = results + it.next().toString()+ " ";
+			results = results + it.next()+ " ";
 		}
 		
 		return results;
@@ -125,17 +125,17 @@ public class KEGGNode extends KEGGNodeGraphicRepresentation {
 	
 	public String getAllNames(){
 		
-		Iterator it = allKeggNames.iterator();
+		Iterator<String> it = allKeggNames.iterator();
 		String results="";
 		while(it.hasNext()){
 			
-			results = results + it.next().toString()+ " ";
+			results = results + it.next()+ " ";
 		}
 		
 		return results;
 	}
 	
-	public Vector getAllNamesAsVector(){
+	public Vector<String> getAllNamesAsVector(){
 		return allKeggNames;
 	}
 	
@@ -145,17 +145,17 @@ public class KEGGNode extends KEGGNodeGraphicRepresentation {
 	
 	public String getAllDBLinks(){
 		
-		Iterator it = allDBLinks.iterator();
+		Iterator<String> it = allDBLinks.iterator();
 		String results="";
 		while(it.hasNext()){
 			
-			results = results + it.next().toString()+ " ";
+			results = results + it.next()+ " ";
 		}
 		
 		return results;
 	}
 	
-	public Vector getAllDBLinksAsVector(){
+	public Vector<String> getAllDBLinksAsVector(){
 		return allDBLinks;
 	}
 	
@@ -165,17 +165,17 @@ public class KEGGNode extends KEGGNodeGraphicRepresentation {
 	
 	public String getAllGeneMotifs(){
 		
-		Iterator it = geneMotifs.iterator();
+		Iterator<String> it = geneMotifs.iterator();
 		String results="";
 		while(it.hasNext()){
 			
-			results = results + it.next().toString()+ " ";
+			results = results + it.next()+ " ";
 		}
 		
 		return results;
 	}
 	
-	public Vector getAllGeneMotifsAsVector(){
+	public Vector<String> getAllGeneMotifsAsVector(){
 		return geneMotifs;
 	}
 	
@@ -185,17 +185,17 @@ public class KEGGNode extends KEGGNodeGraphicRepresentation {
 	
 	public String getAllPathwayLinks(){
 		
-		Iterator it = allPathways.iterator();
+		Iterator<String> it = allPathways.iterator();
 		String results="";
 		while(it.hasNext()){
 			
-			results = results + it.next().toString()+ " ";
+			results = results + it.next()+ " ";
 		}
 		
 		return results;
 	}
 	
-	public Vector getAllPathwayLinksAsVector(){
+	public Vector<String> getAllPathwayLinksAsVector(){
 		return allPathways;
 	}
 	
@@ -205,17 +205,17 @@ public class KEGGNode extends KEGGNodeGraphicRepresentation {
 	
 	public String getAllStructures(){
 		
-		Iterator it = allStructures.iterator();
+		Iterator<String> it = allStructures.iterator();
 		String results="";
 		while(it.hasNext()){
 			
-			results = results + it.next().toString()+ " ";
+			results = results + it.next()+ " ";
 		}
 		
 		return results;
 	}	
 	
-	public Vector getAllStructuresAsVector(){
+	public Vector<String> getAllStructuresAsVector(){
 		return allStructures;
 	}
 	

@@ -25,7 +25,7 @@ public class PPIqueryMask {
 	private TitledTab tab;
 	private JPanel p;
 	
-	private JComboBox choosePPIdatabase;
+	private JComboBox<String> choosePPIdatabase;
 	private String[] dbNames =
 	{
 			"HPRD",
@@ -50,7 +50,7 @@ public class PPIqueryMask {
 		MigLayout layout = new MigLayout("", "[right]");
 		p = new JPanel(layout);
 		
-		choosePPIdatabase = new JComboBox(dbNames);
+		choosePPIdatabase = new JComboBox<String>(dbNames);
 		choosePPIdatabase.setSelectedItem(dbNames[0]);
 		choosePPIdatabase.addItemListener( new ItemListener() {
 	          public void itemStateChanged( ItemEvent e ) {

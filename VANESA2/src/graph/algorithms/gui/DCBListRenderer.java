@@ -3,7 +3,6 @@
  */
 package graph.algorithms.gui;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JLabel;
@@ -16,6 +15,11 @@ import javax.swing.UIManager;
  *
  */
 public class DCBListRenderer extends JLabel implements ListCellRenderer {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	/* (non-Javadoc)
 	 * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
@@ -33,11 +37,11 @@ public class DCBListRenderer extends JLabel implements ListCellRenderer {
 	    if(isSelected){
 	      // Schriftfarbe
 	      // UIManager.getColor("List.selectionForeground") gibt die 
-	      // Standard Schriftfarbe für ein markiertes Listen Element zurück
+	      // Standard Schriftfarbe fï¿½r ein markiertes Listen Element zurï¿½ck
 	      this.setForeground(value.getColor());
 	      // Hintergrund
 	      // UIManager.getColor("List.selectionBackground") gibt die 
-	      // Standard Hintergrundfarbe für ein markiertes Listen Element zurück      
+	      // Standard Hintergrundfarbe fï¿½r ein markiertes Listen Element zurï¿½ck      
 	      this.setBackground(UIManager.getColor("List.selectionBackground"));
 	    }
 	    // Element aus der Liste ist nicht markiert

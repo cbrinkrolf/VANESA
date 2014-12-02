@@ -1,8 +1,6 @@
 package graph.jung.graphDrawing;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.util.Iterator;
 

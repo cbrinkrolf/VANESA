@@ -1,22 +1,16 @@
 package database.kegg;
 
-import java.util.Iterator;
 import java.util.Vector;
-
-import configurations.Wrapper;
-import database.brenda.BRENDAQueries;
 
 public class KEGGnames {
 
-private Wrapper wrapper = new Wrapper();
-	
 	public KEGGnames() {
 	}
 	
-	public Vector getEnzymePossibilities(String pattern){
+	public Vector<String> getEnzymePossibilities(String pattern){
 		
-		Vector results = new Vector();
-		String[] entry = { pattern+"%", pattern+"%"};
+		Vector<String> results = new Vector<String>();
+		//String[] entry = { pattern+"%", pattern+"%"};
 		
 		//TODO
 		/*Vector v = wrapper.requestDbContent(2, BRENDAQueries.getPossibleBRENDAenzymeNames,entry);
@@ -31,10 +25,10 @@ private Wrapper wrapper = new Wrapper();
 		return results;
 	}
 
-	public Vector getCompoundPossibilities(String pattern){
+	public Vector<String> getCompoundPossibilities(String pattern){
 		
-		Vector results = new Vector();
-		String[] entry = { pattern+"%", pattern+"%"};
+		Vector<String> results = new Vector<String>();
+		//String[] entry = { pattern+"%", pattern+"%"};
 		
 		//TODO
 		/*Vector v = wrapper.requestDbContent(2, BRENDAQueries.getPossibleBRENDAenzymeNames,entry);

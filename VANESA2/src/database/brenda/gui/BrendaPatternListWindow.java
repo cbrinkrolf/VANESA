@@ -4,7 +4,6 @@
 package database.brenda.gui;
 
 import gui.MainWindowSingleton;
-import gui.algorithms.ScreenSize;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -43,6 +42,11 @@ import database.brenda.MoleculesPair;
  */
 public class BrendaPatternListWindow extends JFrame implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	JPanel panel;
 
 	JOptionPane pane;
@@ -72,7 +76,7 @@ public class BrendaPatternListWindow extends JFrame implements ActionListener {
 	public BrendaPatternListWindow() {
 
 		MoleculeBox box = MoleculeBoxSingelton.getInstance();
-		Vector v = box.getAllValues();
+		Vector<MoleculesPair> v = box.getAllValues();
 		for (int i = 0; i<v.size(); i++){
 		//	System.out.println(v.get(i));
 		}
@@ -80,11 +84,12 @@ public class BrendaPatternListWindow extends JFrame implements ActionListener {
 		
 		Object[][] rows = new Object[v.size()][3];
 		int iterator_count = 0;
-		Iterator it = v.iterator();
+		Iterator<MoleculesPair> it = v.iterator();
 
+		MoleculesPair p;
 		while (it.hasNext()) {
 			
-			MoleculesPair p = (MoleculesPair) it.next();
+			p = it.next();
 			rows[iterator_count][0] = p.getAmount();
 			rows[iterator_count][1] = p.getName();
 			rows[iterator_count][2] = p.isDisregard();

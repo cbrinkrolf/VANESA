@@ -34,23 +34,28 @@ import configurations.DeveloperClass;
 public class CompareGraphsGUI extends JFrame implements ActionListener,
 		ItemListener {
 
-	JPanel panel = new JPanel();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-	JPanel firstGraph = new JPanel();
+	private JPanel panel = new JPanel();
 
-	JPanel secondGraph = new JPanel();
+	private JPanel firstGraph = new JPanel();
 
-	JComboBox firstBox = new JComboBox();
+	private JPanel secondGraph = new JPanel();
 
-	JComboBox secondBox = new JComboBox();
+	private JComboBox<String> firstBox = new JComboBox<String>();
 
-	JOptionPane optionPane;
+	private JComboBox<String> secondBox = new JComboBox<String>();
 
-	JDialog dialog;
+	private JOptionPane optionPane;
 
-	JSplitPane splitPane;
+	private JDialog dialog;
 
-	GraphContainer con;
+	private JSplitPane splitPane;
+
+	private GraphContainer con;
 
 	private String mouseFunction;
 
@@ -136,13 +141,15 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		String firstSelectedPathway = "";
 		String secondSelectedPathway = "";
 
-		Iterator it = con.getAllPathways().iterator();
+		Iterator<Pathway> it = con.getAllPathways().iterator();
 		int i = 0;
-
+		Pathway p;
+		String pathwayName;
+		
 		while (it.hasNext()) {
 
-			Pathway p = (Pathway) it.next();
-			String pathwayName = p.getName();
+			p = it.next();
+			pathwayName = p.getName();
 
 			if (i == 0) {
 
@@ -220,7 +227,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		}
 	}
 
-	public void fillGraphPane(JPanel graphPanel, JComboBox box) {
+	public void fillGraphPane(JPanel graphPanel, JComboBox<String> box) {
 		MigLayout layout = new MigLayout("", "[grow,center]", "");
 		graphPanel.setLayout(layout);
 		graphPanel.add(box, "span, growx, wrap 5, align center");
@@ -276,12 +283,14 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 
 	private void resetPanels() {
 
-		Iterator it = con.getAllPathways().iterator();
+		Iterator<Pathway> it = con.getAllPathways().iterator();
 		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
+		Pathway p;
+		MyGraph graph;
+		
 		while (it.hasNext()) {
-
-			Pathway p = (Pathway) it.next();
-			MyGraph graph = p.getGraph();
+			p = it.next();
+			graph = p.getGraph();
 			graph.disableGraphTheory();
 			
 			graph.clearPickedElements();
@@ -295,7 +304,8 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 
 	public void itemStateChanged(ItemEvent e) {
 
-		JComboBox box = (JComboBox) e.getSource();
+		@SuppressWarnings("unchecked")
+		JComboBox<String> box = (JComboBox<String>) e.getSource();
 
 		if (box.getName().equals("first")) {
 			changeGraph(true, e.getItem().toString());

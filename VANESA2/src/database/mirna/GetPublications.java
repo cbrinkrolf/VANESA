@@ -1,14 +1,11 @@
 package database.mirna;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
 import pojos.DBColumn;
-
 import configurations.Wrapper;
 
 

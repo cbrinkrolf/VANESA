@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 import org.apache.commons.collections15.Transformer;
 
 import petriNet.Place;
-import sun.security.action.GetLongAction;
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -612,8 +611,8 @@ public class MyGraph {
 
 			if (bea.isDirected()) {
 
-				BiologicalNodeAbstract f;
-				BiologicalNodeAbstract t;
+				//BiologicalNodeAbstract f;
+				//BiologicalNodeAbstract t;
 
 				// g.removeVertex(bea.getFrom());
 				// //g.removeVertex(bea.getTo());
@@ -628,8 +627,8 @@ public class MyGraph {
 				// "");
 				// BiologicalNodeAbstract bna2 = new BiologicalNodeAbstract("",
 				// "");
-				Iterator<BiologicalNodeAbstract> it = g.getVertices()
-						.iterator();
+				//Iterator<BiologicalNodeAbstract> it = g.getVertices()
+					//	.iterator();
 				// bna1 = it.next();
 				// bna2 = it.next();
 				// this.addVertex(bna1, new Point(30, 30));
@@ -1064,7 +1063,7 @@ public class MyGraph {
 
 		this.layout = layout;
 		// this.clusteringLayout.removeAllSubLayouts();
-		Dimension oldDim = clusteringLayout.getSize();// getCurrentSize();
+		//Dimension oldDim = clusteringLayout.getSize();// getCurrentSize();
 		// vv.setLayout(new BorderLayout());
 
 		// vv.setGraphLayout(layout);
@@ -1108,13 +1107,6 @@ public class MyGraph {
 		Thread thread = new Thread(center);
 		thread.start();
 		// this.normalCentering(vv);
-
-		Iterator<BiologicalNodeAbstract> it = g.getVertices().iterator();
-		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = it.next();
-			// System.out.println("1: "+getVertexLocation(bna));
-			// System.out.println("2: "+layout.transform(bna));
-		}
 
 	}
 
@@ -1204,7 +1196,7 @@ public class MyGraph {
 		Dimension viewSize = viewer.getSize();
 		// System.out.println(viewSize);
 		// System.out.println(viewSize);
-		GraphCenter graphCenter = new GraphCenter(this, viewer.getGraphLayout());
+		//GraphCenter graphCenter = new GraphCenter(this, viewer.getGraphLayout());
 		// System.out.println("w: "+viewer.getWidth());
 		// System.out.println(": "+this.visualizationModel.getGraphLayout().getSize());
 		// GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout()
@@ -1261,7 +1253,7 @@ public class MyGraph {
 
 	}
 
-	public void normalCentering(VisualizationViewer viewer) {
+	public void normalCentering(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> viewer) {
 		//System.out.println("drin");
 		// System.out.println("drin");
 		// GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout()

@@ -1,6 +1,5 @@
 package graph.algorithms.gui;
 
-import graph.ChangedFlags;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -17,40 +16,35 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.management.remote.rmi.RMIIIOPServerImpl;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import cluster.ComputeCallback;
-import cluster.ClusterComputeThread;
-import cluster.JobTypes;
-import cluster.LayoutPoint2D;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import cluster.ClusterComputeThread;
+import cluster.ComputeCallback;
+import cluster.JobTypes;
+import cluster.LayoutPoint2D;
 
 public class GraphColoringGUI implements ActionListener {
 

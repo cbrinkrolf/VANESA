@@ -19,15 +19,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import pojos.DBColumn;
-import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.PhysicalInteraction;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Protein;
 import configurations.Wrapper;
 
-public class PPIConnector extends SwingWorker {
+public class PPIConnector extends SwingWorker<Object, Object> {
 
 	private HashMap<String, String[]> entries2infos = new HashMap<String, String[]>();
 	private HashMap<String, HashSet<String>> childNodes = new HashMap<String, HashSet<String>>();
@@ -52,7 +50,6 @@ public class PPIConnector extends SwingWorker {
 	private String database;
 
 	private String query;
-	private String[] param;
 	private boolean finalise = true;
 	private boolean autoCoarse;
 	private boolean binary;
@@ -240,6 +237,7 @@ public class PPIConnector extends SwingWorker {
 				}
 			}
 
+			@SuppressWarnings("unchecked")
 			HashSet<String> currentNodeSet = (HashSet<String>) newNodes.clone();
 			newNodes = new HashSet<String>();
 			
