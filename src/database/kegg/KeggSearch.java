@@ -1,8 +1,6 @@
 package database.kegg;
 
-import graph.ContainerSingelton;
 import graph.CreatePathway;
-import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.MergeGraphs;
 import gui.MainWindow;
@@ -20,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import pojos.DBColumn;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Compound;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -27,13 +26,11 @@ import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.SmallMolecule;
-
-import pojos.DBColumn;
 import configurations.Wrapper;
 import database.Connection.DatabaseQueryValidator;
 import database.kegg.gui.KEGGResultWindow;
 
-public class KeggSearch extends SwingWorker implements PropertyChangeListener {
+public class KeggSearch extends SwingWorker<Object, Object> implements PropertyChangeListener {
 
 	private String pathway = new String();
 	private String enzyme = new String();
@@ -342,7 +339,7 @@ public class KeggSearch extends SwingWorker implements PropertyChangeListener {
 	private final int SEPARATE_TABS = JOptionPane.YES_OPTION;
 	private final int OVERVIEW_PW = JOptionPane.NO_OPTION;
 	private final int MERGE = JOptionPane.CANCEL_OPTION;
-	private Iterator it;
+	private Iterator<String[]> it;
 	private int answer = SEPARATE_TABS;
 	private KEGGConnector kc;
 

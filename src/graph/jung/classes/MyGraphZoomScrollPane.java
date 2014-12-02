@@ -1,25 +1,24 @@
 package graph.jung.classes;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 
 public class MyGraphZoomScrollPane extends GraphZoomScrollPane{
 
-	public MyGraphZoomScrollPane(VisualizationViewer vv) {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public MyGraphZoomScrollPane(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv) {
 		super(vv);
 		
 	}
 
-	public void setVisualizationViewer(VisualizationViewer vv){
+	public void setVisualizationViewer(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv){
 		
 		remove(vv);
 		this.vv=vv;

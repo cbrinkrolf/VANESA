@@ -1,8 +1,6 @@
 package graph.jung.graphDrawing;
 
 import java.awt.Shape;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -12,7 +10,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape.QuadCurve;
 import graph.algorithms.alignment.AlignmentEdge;
 
 public class MyEdgeShapeFunction implements Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> {

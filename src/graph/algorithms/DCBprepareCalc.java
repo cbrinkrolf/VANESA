@@ -41,8 +41,8 @@ public class DCBprepareCalc extends SwingWorker<Void, Void>{
 	private ArrayList<String> attrNames;
 	private ArrayList<JFormattedTextField> rangeField;
 	private int nodeType = DenselyConnectedBiclusteringGUI.TYPE_BNA_NR;
-	private ArrayList<JComboBox> attrTypList;
-	private ArrayList<JComboBox> attrList;
+	private ArrayList<JComboBox<String>> attrTypList;
+	private ArrayList<JComboBox<String>> attrList;
 	
 	private HashMap<BiologicalNodeAbstract, Double> cyclesMap;
 	private HashMap<BiologicalNodeAbstract, Double> cliquesMap;
@@ -57,7 +57,7 @@ public class DCBprepareCalc extends SwingWorker<Void, Void>{
 	private NetworkProperties np;
 	
 	public DCBprepareCalc(DenselyConnectedBiclusteringGUI gui, double density, ArrayList<JFormattedTextField> rangeField, double attrdim,
-			ArrayList<JComboBox> attrTypList, ArrayList<JComboBox> attrList){
+			ArrayList<JComboBox<String>> attrTypList, ArrayList<JComboBox<String>> attrList){
 		this.gui = gui;
 		this.density = density;
 		this.rangeField = rangeField;

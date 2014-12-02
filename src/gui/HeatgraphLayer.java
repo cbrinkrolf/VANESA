@@ -5,18 +5,9 @@
 package gui;
 
 //import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-//import edu.uci.ics.jung.visualization.VisualizationViewer.Paintable;
-import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
-import graph.jung.graphDrawing.VertexShapes;
-import heatmap.AdoptedHeatmap;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -28,7 +19,14 @@ import org.apache.commons.collections.Factory;
 import org.apache.commons.collections.map.LazyMap;
 
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+//import edu.uci.ics.jung.visualization.VisualizationViewer.Paintable;
+import graph.GraphInstance;
+import graph.jung.classes.MyGraph;
+import heatmap.AdoptedHeatmap;
 
 /**
  * 
@@ -112,7 +110,7 @@ public class HeatgraphLayer extends MouseAdapter implements Paintable {
 		//List<RangeInfo> shapes = this.getShapes();
 		
 		//set the coordinates transford due to scrolling
-		VisualizationViewer vv = GraphInstance.getMyGraph()
+		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance.getMyGraph()
 				.getVisualizationViewer();
 		
 		AffineTransform oldXform = g2d.getTransform();

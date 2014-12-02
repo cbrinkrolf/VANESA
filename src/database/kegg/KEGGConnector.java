@@ -37,7 +37,7 @@ import database.mirna.miRNAqueries;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.utils.Pair;
 
-public class KEGGConnector extends SwingWorker {
+public class KEGGConnector extends SwingWorker<Object, Object> {
 
 	private ProgressBar bar;
 	private String title;

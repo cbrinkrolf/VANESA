@@ -1,6 +1,5 @@
 package configurations;
 
-import graph.GraphInstance;
 
 public class NetworkSettings {
 

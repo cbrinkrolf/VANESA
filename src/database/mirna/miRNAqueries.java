@@ -3,9 +3,7 @@ package database.mirna;
 import java.util.ArrayList;
 
 import pojos.DBColumn;
-
 import configurations.Wrapper;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class miRNAqueries {
 

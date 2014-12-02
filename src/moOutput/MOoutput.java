@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -195,8 +194,8 @@ public class MOoutput {
 			if (!bna.hasRef()) {
 				Point2D p = pw.getGraph().getVertexLocation(bna);
 				String biologicalElement = bna.getBiologicalElement();
-				double km = Double.NaN, kcat = Double.NaN;
-				String ec = "";
+				//double km = Double.NaN, kcat = Double.NaN;
+				//String ec = "";
 
 				int in = pw.getGraph().getJungGraph().getInEdges(bna).size();
 				int out = pw.getGraph().getJungGraph().getOutEdges(bna).size();

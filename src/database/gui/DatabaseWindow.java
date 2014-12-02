@@ -15,7 +15,7 @@ public class DatabaseWindow {
 	private TabbedPanel tabbedPanel;
 	private KEGGqueryMask kegg;
 	private BRENDAqueryMask brenda;
-	private QueryInfoWindow info;
+	//private QueryInfoWindow info;
 	private PPIqueryMask ppi;
 	private MirnaQueryClass mirna;
 	private UNIDQueryMask unid;
@@ -32,7 +32,7 @@ public class DatabaseWindow {
 
 		kegg = new KEGGqueryMask(this);
 		brenda = new BRENDAqueryMask(this);
-		info = new QueryInfoWindow();
+		//info = new QueryInfoWindow();
 		ppi = new PPIqueryMask(this);
 		mirna = new MirnaQueryClass(this);
 		unid = new UNIDQueryMask(this);

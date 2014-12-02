@@ -1,16 +1,5 @@
 package biologicalElements;
 
-import graph.ChangedFlags;
-import graph.filter.FilterSettings;
-import graph.gui.Boundary;
-import graph.gui.EdgeDeleteDialog;
-import graph.gui.Parameter;
-import graph.jung.classes.MyGraph;
-import graph.layouts.hebLayout.HEBLayout;
-import gui.GraphTab;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -26,8 +15,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
-
-import org.junit.internal.matchers.IsCollectionContaining;
 
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
@@ -83,10 +70,18 @@ import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
 import edu.uci.ics.jung.graph.util.Pair;
+import graph.ChangedFlags;
+import graph.filter.FilterSettings;
+import graph.gui.Boundary;
+import graph.gui.EdgeDeleteDialog;
+import graph.gui.Parameter;
+import graph.jung.classes.MyGraph;
+import graph.layouts.hebLayout.HEBLayout;
+import gui.GraphTab;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.utils.Pair;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 
 public class Pathway implements Cloneable {
 
@@ -400,7 +395,6 @@ public class Pathway implements Cloneable {
 			bea = new PhysicalInteraction(label, name, from, to);
 
 		} else if (element.equals(Elementdeclerations.pnDiscreteEdge)) {
-			String tokens = "1";
 			boolean wasUndirected = false;
 			double UpperBoundary = 0.0;
 			double LowerBoundary = 0.0;
@@ -420,7 +414,6 @@ public class Pathway implements Cloneable {
 			// System.out.println("discrete kante pw hinzugefuegt");
 
 		} else if (element.equals(Elementdeclerations.pnContinuousEdge)) {
-			String tokens = "1";
 			boolean wasUndirected = false;
 			double UpperBoundary = 0.0;
 			double LowerBoundary = 0.0;
@@ -441,7 +434,6 @@ public class Pathway implements Cloneable {
 			// System.out.println("continuous kante pw hinzugefuegt");
 
 		} else if (element.equals(Elementdeclerations.pnInhibitionEdge)) {
-			String tokens = "1";
 			boolean wasUndirected = false;
 			double UpperBoundary = 0.0;
 			double LowerBoundary = 0.0;
@@ -751,46 +743,46 @@ public class Pathway implements Cloneable {
 
 	public Object getNodeByKEGGEntryID(String id) {
 
-		Iterator it = biologicalElements.values().iterator();
+		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
 
+		GraphElementAbstract gea;
 		while (it.hasNext()) {
-			Object obj = it.next();
-			GraphElementAbstract gea = (GraphElementAbstract) obj;
-			if (gea.isVertex()) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) obj;
+			gea = it.next();
+			if (gea instanceof BiologicalNodeAbstract) {
+				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
 				if (bna.getKEGGnode().getKEGGentryID().equals(id)) {
-					return obj;
+					return gea;
 				}
 			}
 		}
 		return null;
 	}
 
-	public HashSet getAllKEGGEdges() {
+	public HashSet<BiologicalEdgeAbstract> getAllKEGGEdges() {
 
-		Iterator it = biologicalElements.values().iterator();
-		HashSet set = new HashSet();
+		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
+		HashSet<BiologicalEdgeAbstract> set = new HashSet<BiologicalEdgeAbstract>();
 
+		GraphElementAbstract gea;
 		while (it.hasNext()) {
-			Object obj = it.next();
-			GraphElementAbstract gea = (GraphElementAbstract) obj;
-			if (gea.isEdge() && gea.hasKEGGEdge()) {
-				set.add(obj);
+			gea = it.next();
+			if (gea instanceof BiologicalEdgeAbstract && gea.hasKEGGEdge()) {
+				set.add((BiologicalEdgeAbstract)gea);
 			}
 		}
 		return set;
 	}
 
-	public HashSet getAllReactionPairEdges() {
+	public HashSet<BiologicalEdgeAbstract> getAllReactionPairEdges() {
 
-		Iterator it = biologicalElements.values().iterator();
-		HashSet set = new HashSet();
+		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
+		HashSet<BiologicalEdgeAbstract> set = new HashSet<BiologicalEdgeAbstract>();
 
+		GraphElementAbstract gea;
 		while (it.hasNext()) {
-			Object obj = it.next();
-			GraphElementAbstract gea = (GraphElementAbstract) obj;
-			if (gea.isEdge() && gea.hasReactionPairEdge()) {
-				set.add(obj);
+			gea = it.next();
+			if (gea instanceof BiologicalEdgeAbstract && gea.hasReactionPairEdge()) {
+				set.add((BiologicalEdgeAbstract)gea);
 			}
 		}
 		return set;
@@ -881,32 +873,32 @@ public class Pathway implements Cloneable {
 		return sortedList;
 	}
 
-	public Vector getAllNodesAsVector() {
+	public Vector<BiologicalNodeAbstract> getAllNodesAsVector() {
 
-		Iterator it = biologicalElements.values().iterator();
-		Vector set = new Vector();
+		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
+		Vector<BiologicalNodeAbstract> set = new Vector<BiologicalNodeAbstract>();
 
+		GraphElementAbstract gea;
 		while (it.hasNext()) {
-			Object obj = it.next();
-			GraphElementAbstract gea = (GraphElementAbstract) obj;
-			if (gea.isVertex()) {
-				set.add(obj);
+			gea = it.next();
+			if (gea instanceof BiologicalNodeAbstract) {
+				set.add((BiologicalNodeAbstract)gea);
 			}
 		}
 
 		return set;
 	}
 
-	public Vector getAllEdgesAsVector() {
+	public Vector<BiologicalEdgeAbstract> getAllEdgesAsVector() {
 
-		Iterator it = biologicalElements.values().iterator();
-		Vector set = new Vector();
+		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
+		Vector<BiologicalEdgeAbstract> set = new Vector<BiologicalEdgeAbstract>();
 
+		GraphElementAbstract gea;
 		while (it.hasNext()) {
-			Object obj = it.next();
-			GraphElementAbstract gea = (GraphElementAbstract) obj;
-			if (gea.isEdge()) {
-				set.add(obj);
+			gea = it.next();
+			if (gea instanceof BiologicalEdgeAbstract) {
+				set.add((BiologicalEdgeAbstract)gea);
 			}
 		}
 
@@ -943,7 +935,6 @@ public class Pathway implements Cloneable {
 			// nodes.toArray(BiologicalNodeAbstract);
 			// System.out.println(getGraph().getAllVertices().size());
 			// System.out.println(getGraph().getAllEdges().size());
-			BiologicalNodeAbstract first = nodes.iterator().next();
 
 			Iterator<BiologicalNodeAbstract> it = nodes.iterator();
 

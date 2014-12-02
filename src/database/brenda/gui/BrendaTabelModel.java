@@ -7,6 +7,10 @@ import database.brenda.MoleculeBoxSingelton;
 
 public class BrendaTabelModel extends NodePropertyTableModel{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private MoleculeBox box = MoleculeBoxSingelton.getInstance();
 	
 	public BrendaTabelModel(Object[][] rows, String[] headers) {
@@ -15,7 +19,7 @@ public class BrendaTabelModel extends NodePropertyTableModel{
 	}
 	
 	@Override
-	public Class getColumnClass(int c) {
+	public Class<?> getColumnClass(int c) {
 		if (c == 2)
 			return Boolean.class;
 		else if (c == 0)

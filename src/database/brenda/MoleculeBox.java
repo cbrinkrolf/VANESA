@@ -8,15 +8,15 @@ import java.util.Vector;
 
 public class MoleculeBox {
 
-	private Hashtable molecules = new Hashtable();
-	private Vector v = new Vector();
+	private Hashtable<String, MoleculesPair> molecules = new Hashtable<String, MoleculesPair>();
+	private Vector<String> v = new Vector<String>();
 	
 	public MoleculeBox() {
 
 	}
 
-	public void fillTable(Vector v) {
-		Iterator it = v.iterator();
+	public void fillTable(Vector<MoleculesPair> v) {
+		Iterator<MoleculesPair> it = v.iterator();
 		while (it.hasNext()) {
 			MoleculesPair p = (MoleculesPair) it.next();
 			molecules.put(p.getName().trim(), p);
@@ -28,9 +28,9 @@ public class MoleculeBox {
 		v.clear();
 	}
 
-	public Vector getAllValues() {
-		Vector v = new Vector();
-		Enumeration e = molecules.elements();
+	public Vector<MoleculesPair> getAllValues() {
+		Vector<MoleculesPair> v = new Vector<MoleculesPair>();
+		Enumeration<MoleculesPair> e = molecules.elements();
 		while (e.hasMoreElements()) {
 			v.add(e.nextElement());
 		}
@@ -38,10 +38,10 @@ public class MoleculeBox {
 		return v;
 	}
 
-	public Vector getDisregardedValues() {
+	public Vector<String> getDisregardedValues() {
 
-		Vector results = new Vector();
-		Iterator it = molecules.values().iterator();
+		Vector<String> results = new Vector<String>();
+		Iterator<MoleculesPair> it = molecules.values().iterator();
 		while (it.hasNext()) {
 			MoleculesPair p = (MoleculesPair) it.next();
 			if (p.isDisregard())
@@ -57,7 +57,7 @@ public class MoleculeBox {
 	}
 
 	public void printElements() {
-		Enumeration e = molecules.elements();
+		Enumeration<MoleculesPair> e = molecules.elements();
 		while (e.hasMoreElements()) {
 			
 //				System.out.println(((MoleculesPair) e.nextElement()).getName());

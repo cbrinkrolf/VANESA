@@ -10,6 +10,8 @@ import java.util.logging.Logger;
 
 import javax.swing.JPanel;
 
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 
 //import edu.uci.ics.jung.visualization.Layout;
@@ -22,7 +24,11 @@ import graph.jung.classes.MyGraph;
  */
 public class ConfigPanel extends JPanel {
 
-    private final String layoutName;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final String layoutName;
 
     public ConfigPanel(Class<? extends Layout> layout) {
         layoutName = layout.getSimpleName();

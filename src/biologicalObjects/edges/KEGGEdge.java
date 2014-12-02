@@ -22,23 +22,23 @@ public class KEGGEdge {
 	
 	private String reactionType="";
 	
-	private Vector products= new Vector();
-	private Vector substrates= new Vector();
-	private Vector enzymes = new Vector();
-	private Vector catalysts = new Vector();
-	private Vector catalystsNames = new Vector();
-	private Vector inhibitors = new Vector();
-	private Vector inhibitorsName = new Vector();
+	private Vector<String> products= new Vector<String>();
+	private Vector<String> substrates= new Vector<String>();
+	private Vector<String> enzymes = new Vector<String>();
+	private Vector<String> catalysts = new Vector<String>();
+	private Vector<String> catalystsNames = new Vector<String>();
+	private Vector<String> inhibitors = new Vector<String>();
+	private Vector<String> inhibitorsName = new Vector<String>();
 	
 	private String involvedEnzyme = "";
 	
-	private Vector KEEGReactionID = new Vector();
+	private Vector<String> KEEGReactionID = new Vector<String>();
 	
 	public void addProduct(String name){
 		products.add(name);
 	}
 	
-	public Vector getAllProducts(){	
+	public Vector<String> getAllProducts(){	
 		return products;
 	}
 	
@@ -54,7 +54,7 @@ public class KEGGEdge {
 		enzymes.add(name);
 	}
 	
-	public Vector getAllEnzymes(){	
+	public Vector<String> getAllEnzymes(){	
 		return enzymes;
 	}
 	
@@ -63,7 +63,7 @@ public class KEGGEdge {
 		substrates.add(name);
 	}
 	
-	public Vector getAllSubstrates(){
+	public Vector<String> getAllSubstrates(){
 		
 		return substrates;
 	}
@@ -174,19 +174,19 @@ public class KEGGEdge {
 		return createString(KEEGReactionID);
 	}
 	
-	private String createString(Vector vec) {
+	private String createString(Vector<String> vec) {
 
 		String result = "";
 
-		Iterator it = vec.iterator();
+		Iterator<String> it = vec.iterator();
 
 		boolean first = true;
 		while (it.hasNext()) {
 			if (first) {
-				result = result + it.next().toString();
+				result = result + it.next();
 				first = false;
 			} else {
-				result = result + " ; " + it.next().toString();
+				result = result + " ; " + it.next();
 			}
 		}
 		return result;
@@ -221,7 +221,7 @@ public class KEGGEdge {
 	 * 
 	 * @return catalysts
 	 */
-	public Vector getCatalystsAsVector() {
+	public Vector<String> getCatalystsAsVector() {
 		return catalysts;
 	}
 	
@@ -240,7 +240,7 @@ public class KEGGEdge {
 	 * 
 	 * @return catalysts names
 	 */
-	public Vector getCatalystNamesAsVector() {
+	public Vector<String> getCatalystNamesAsVector() {
 		return catalystsNames;
 	}
 	
@@ -255,7 +255,7 @@ public class KEGGEdge {
 	 * 
 	 * @return inhibitors
 	 */
-	public Vector getInhibitorsAsVector() {
+	public Vector<String> getInhibitorsAsVector() {
 		return inhibitors;
 	}
 
@@ -274,7 +274,7 @@ public class KEGGEdge {
 	 * 
 	 * @return inhibitor names
 	 */
-	public Vector getInhibitorNamesAsVector() {
+	public Vector<String> getInhibitorNamesAsVector() {
 		return inhibitorsName;
 	}
 

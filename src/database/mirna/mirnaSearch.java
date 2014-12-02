@@ -2,43 +2,28 @@ package database.mirna;
 
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
-import graph.layouts.hebLayout.HierarchyList;
-import graph.layouts.hebLayout.HierarchyListComparator;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
-import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.tree.DefaultMutableTreeNode;
 
+import pojos.DBColumn;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Expression;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
-import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.SRNA;
 import configurations.Wrapper;
-import pojos.DBColumn;
-import database.kegg.KEGGConnector;
-import database.kegg.KEGGQueries;
-import database.mirna.gui.MirnaResultKeggWindow;
 import database.mirna.gui.MirnaResultWindow;
-import database.ppi.PPIConnector;
-import database.ppi.PPISearchResultWindow;
-import database.ppi.PPIqueries;
 
-public class mirnaSearch extends SwingWorker {
+public class mirnaSearch extends SwingWorker<Object, Object> {
 
 	private String name, acc, sequence, database, gene;
 

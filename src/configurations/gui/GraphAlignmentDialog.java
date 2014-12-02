@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
 
-import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -25,12 +24,12 @@ import configurations.GraphAlignmentSettings;
 public class GraphAlignmentDialog{
 
 	private JPanel panel;
-	private JComboBox chooseBLASTlocation;
+	private JComboBox<String> chooseBLASTlocation;
 	
 	private JTextField blastServerURL;
 	private JLabel statusBLASTserver;
 	
-	private JComboBox chooseMNAlignerLocation;
+	private JComboBox<String> chooseMNAlignerLocation;
 	
 	private JTextField rServerURL;
 	private JLabel statusRserver;
@@ -49,7 +48,7 @@ public class GraphAlignmentDialog{
 		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
 
 		panel.add(new JLabel("BLAST Location"), "span 2, gap 10, gaptop 2 ");
-		chooseBLASTlocation = new JComboBox(GraphAlignmentSettings.blastLocations);
+		chooseBLASTlocation = new JComboBox<String>(GraphAlignmentSettings.blastLocations);
 		chooseBLASTlocation.setSelectedIndex(GraphAlignmentSettings.blastLocation);
 		chooseBLASTlocation.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
@@ -75,7 +74,7 @@ public class GraphAlignmentDialog{
 		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
 		
 		panel.add(new JLabel("Algorithm Location"), "span 2, gap 10, gaptop 2 ");
-		chooseMNAlignerLocation = new JComboBox(GraphAlignmentSettings.mnAlignerLocations);
+		chooseMNAlignerLocation = new JComboBox<String>(GraphAlignmentSettings.mnAlignerLocations);
 		chooseMNAlignerLocation.setSelectedIndex(GraphAlignmentSettings.mnalignerLocation);
 		chooseMNAlignerLocation.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {

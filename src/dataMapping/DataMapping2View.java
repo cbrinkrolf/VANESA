@@ -6,21 +6,10 @@ import gui.MainWindow;
 import gui.MainWindowSingleton;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.LinearGradientPaint;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,9 +18,7 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -46,7 +33,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -58,13 +44,12 @@ import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import dataMapping.dataImport.ExcelException;
-import dataMapping.dataImport.ImportExcelxData;
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.Pathway;
+import dataMapping.dataImport.ExcelException;
+import dataMapping.dataImport.ImportExcelxData;
 
 /**
  * This class manage the GUI elements of the DataMapping
@@ -129,7 +114,6 @@ public class DataMapping2View extends JDialog implements Observer{
 	private JButton changeDataAndClose;
 	private JButton cancel;
 
-	private JPanel helpPanel;
 	private Object storedPathway;
 	private boolean inToolSearch;
 	private DefaultTableModel dmModel;
@@ -249,7 +233,6 @@ public class DataMapping2View extends JDialog implements Observer{
 		cancel.setActionCommand("cancelChange");
 
 		// panel for the screenshots tutorial
-		helpPanel = new JPanel();
 
 		// combine panels in tabbedPane 
 		tabbedPane.addTab("Data Input", mainPanel);
