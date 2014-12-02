@@ -2,7 +2,6 @@ package database.eventhandlers;
 
 import graph.ContainerSingelton;
 import graph.GraphContainer;
-import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
@@ -10,25 +9,21 @@ import gui.ProgressBar;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.GraphNode;
 import database.brenda.BRENDASearch;
 import database.brenda.gui.BrendaInfoWindow;
 import database.gui.DatabaseWindow;
 import database.kegg.KeggSearch;
 import database.kegg.gui.KEGGInfoWindow;
-import database.mirna.GetPublications;
 import database.mirna.mirnaSearch;
 import database.mirna.gui.MIRNAInfoWindow;
 import database.ppi.PPISearch;
 import database.unid.UNIDInfoWindow;
 import database.unid.UNIDSearch;
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class DatabaseSearchListener implements ActionListener {
 	private DatabaseWindow dw;

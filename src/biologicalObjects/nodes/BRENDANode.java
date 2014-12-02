@@ -8,12 +8,9 @@ public class BRENDANode {
 
 	private String name,ec_number,sysName,enzymeClass,reaction,kmValue,kcat,substrate,product;
 	
-	@SuppressWarnings("unchecked")
-	private Vector cofactor = new Vector();
-	@SuppressWarnings("unchecked")
-	private Vector inhibitor = new Vector();
-	@SuppressWarnings("unchecked")
-	private Vector comment = new Vector();
+	private Vector<String> cofactor = new Vector<String>();
+	private Vector<String> inhibitor = new Vector<String>();
+	private Vector<String> comment = new Vector<String>();
 	
 	public String getLink() {
 		return "http://www.brenda-enzymes.info/php/result_flat.php4?ecno="+ec_number;
@@ -82,58 +79,52 @@ public class BRENDANode {
 		this.sysName = sysName;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getCofactor() {
 		
 		String result="";
-		Iterator it = cofactor.iterator();
+		Iterator<String> it = cofactor.iterator();
 		boolean first = true;
 		while (it.hasNext()){
 			if(first){
-				result=result+it.next().toString();
+				result=result+it.next();
 				first=false;
 			}else{
-				result=result+" ; "+it.next().toString();
+				result=result+" ; "+it.next();
 			}
 		}	
 		return result;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Vector getCofactorsAsVector(){
+	public Vector<String> getCofactorsAsVector(){
 		return cofactor;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setCofactor(String cofactor_str) {
 		if(!cofactor.contains(cofactor_str)){
 			cofactor.add(cofactor_str);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getComment() {
 		String result="";
-		Iterator it = comment.iterator();
+		Iterator<String> it = comment.iterator();
 		boolean first = true;
 		while (it.hasNext()){
 			if(first){
-				result=result+it.next().toString();
+				result=result+it.next();
 				first=false;
 			}else{
-				result=result+" ; "+it.next().toString();
+				result=result+" ; "+it.next();
 			}
 		}	
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Vector getCommentsAsVector(){
+	public Vector<String> getCommentsAsVector(){
 		return comment;
 	}
 	
 	
-	@SuppressWarnings("unchecked")
 	public void setComment(String comment_str) {
 		if(!comment.contains(comment_str)){
 			comment.add(comment_str);
@@ -141,30 +132,26 @@ public class BRENDANode {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getInhibitor() {
 		String result="";
-		Iterator it = inhibitor.iterator();
+		Iterator<String> it = inhibitor.iterator();
 		boolean first = true;
 		while (it.hasNext()){
 			if(first){
-				result=result+it.next().toString();
+				result=result+it.next();
 				first=false;
 			}else{
-				result=result+" ; "+it.next().toString();
+				result=result+" ; "+it.next();
 			}
 		}	
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Vector getInhibitorAsVector(){
+	public Vector<String> getInhibitorAsVector(){
 		return inhibitor;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void setInhibitor(String inhibitor_str) {
-		
 		if(!inhibitor.contains(inhibitor_str)){
 			inhibitor.add(inhibitor_str);
 		}

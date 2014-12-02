@@ -1,15 +1,12 @@
 package biologicalObjects.nodes;
 
-import java.util.Vector;
-
-import biologicalElements.Elementdeclerations;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
+import biologicalElements.Elementdeclerations;
 
 
 public class Complex extends BiologicalNodeAbstract{
 	
-	Vector elements = new Vector();
 	
 	public Complex(String label, String name) {
 		super(label, name);
@@ -18,14 +15,7 @@ public class Complex extends BiologicalNodeAbstract{
 		setDefaultShape(shapes.getRegularStar(6));
 	}
 	
-	public void addElement(Object element){
-		elements.add(element);
-	}
 
-	public Vector getAllElements(){
-		return elements;
-	}
-	
 	@Override
 	public void rebuildShape(VertexShapes vs){
 		//setShape(shapes.getRegularStar(getVertex(), 6));

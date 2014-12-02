@@ -113,7 +113,7 @@ public class ElementNames {
 
 	public void fillEnzymeSet() {
 		
-			File file;
+			//File file;
 			try {
 //				file = new File(new BrendaDataPath().getPath("EnzymeNames.xml").toURI());
 //				file=new File(this.getClass().getClassLoader().getResource("resource/EnzymeNames.xml").toURI());

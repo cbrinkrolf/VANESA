@@ -75,9 +75,9 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	private JLabel attrlabel, attrminmax, presentationLabel;
 	private JComboBox<String> choosePresentation;
 	private ArrayList<JFormattedTextField> rangeField;
-	private ArrayList<JComboBox> attrTypList;
-	private ArrayList<DefaultComboBoxModel> comboBoxModel;
-	private ArrayList<JComboBox> attrList;
+	private ArrayList<JComboBox<String>> attrTypList;
+	private ArrayList<DefaultComboBoxModel<String>> comboBoxModel;
+	private ArrayList<JComboBox<String>> attrList;
 	private JScrollPane clusterPane;
 	private JList<DCBClusterLabel> clusterList;
 	public static ProgressBar progressBar;
@@ -389,11 +389,11 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 
 			// Create the combo box, select item at index 4.
 			// Indices start at 0, so 4 specifies the pig.
-			attrTypList = new ArrayList<JComboBox>();
+			attrTypList = new ArrayList<JComboBox<String>>();
 
 			String[] defaultAttrString = { GC_DEGREE, GC_NEIGHBOUR, GC_CYCLES, GC_CLIQUES };
-			comboBoxModel = new ArrayList<DefaultComboBoxModel>();
-			attrList = new ArrayList<JComboBox>();
+			comboBoxModel = new ArrayList<DefaultComboBoxModel<String>>();
+			attrList = new ArrayList<JComboBox<String>>();
 
 			for (int i = 0; i < num; i++) {
 

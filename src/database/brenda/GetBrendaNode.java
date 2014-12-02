@@ -2,11 +2,8 @@ package database.brenda;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Vector;
 
 import pojos.DBColumn;
-
 import biologicalObjects.nodes.BRENDANode;
 import configurations.Wrapper;
 import database.brenda.gui.PossibleBrendaEnzyme;

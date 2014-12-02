@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,7 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableModel;
 
 import miscalleanous.tables.MyTable;
 import miscalleanous.tables.NodePropertyTableModel;
@@ -184,20 +182,24 @@ public class KEGGResultWindow extends JFrame {
 				|| value.equals(JOptionPane.CANCEL_OPTION))
 			return null;
 
-		Vector v = new Vector();
+		Vector<String[]> v = new Vector<String[]>();
+		String organism;
+		String title;
+		Iterator<String[]> it;
+		String[] details;
 		if (value != null)
 			for (int i = 0; i < values_count; i++) {
 				if ((Boolean) table.getValueAt(table.convertRowIndexToView(i),
 						table.convertColumnIndexToView(0))) {
-					String organism = table.getValueAt(
+					organism = table.getValueAt(
 							table.convertRowIndexToView(i),
 							table.convertColumnIndexToView(2)).toString();
-					String title = table.getValueAt(
+					title = table.getValueAt(
 							table.convertRowIndexToView(i),
 							table.convertColumnIndexToView(1)).toString();
-					Iterator it = map.iterator();
+					it = map.iterator();
 					while (it.hasNext()) {
-						String[] details = (String[]) it.next();
+						details = (String[]) it.next();
 						if (details[1].equals(title)
 								&& details[2].equals(organism)) {
 							v.add(details);
@@ -231,8 +233,13 @@ public class KEGGResultWindow extends JFrame {
 	private void initTable(Object[][] rows, String[] columNames) {
 		NodePropertyTableModel model = new NodePropertyTableModel(rows,
 				columNames) {
+			/**
+					 * 
+					 */
+					private static final long serialVersionUID = 1L;
+
 			@Override
-			public Class getColumnClass(int columnIndex) {
+			public Class<?> getColumnClass(int columnIndex) {
 				if (columnIndex == 0)
 					return Boolean.class;
 				else

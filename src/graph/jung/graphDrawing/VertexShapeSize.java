@@ -1,6 +1,6 @@
 package graph.jung.graphDrawing;
 
-import java.awt.Shape;
+/*import java.awt.Shape;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -11,7 +11,6 @@ import edu.uci.ics.jung.graph.decorators.AbstractVertexShapeFunction;
 import edu.uci.ics.jung.graph.decorators.NumberVertexValue;
 import edu.uci.ics.jung.graph.decorators.VertexAspectRatioFunction;
 import edu.uci.ics.jung.graph.decorators.VertexSizeFunction;*/
-import graph.GraphInstance;
 
 /*public class VertexShapeSize  implements Transformer {
 

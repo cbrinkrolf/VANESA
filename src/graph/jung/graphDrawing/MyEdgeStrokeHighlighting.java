@@ -7,7 +7,6 @@ import org.apache.commons.collections15.Transformer;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import edu.uci.ics.jung.visualization.PluggableRenderContext;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyEdgeStrokeHighlighting implements

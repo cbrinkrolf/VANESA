@@ -1,18 +1,14 @@
 package biologicalObjects.nodes;
 
-import java.util.ArrayList;
-
-import pojos.DBColumn;
-import biologicalElements.Elementdeclerations;
-import biologicalElements.Pathway;
-import configurations.Wrapper;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
+import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 
 public class PathwayMap extends BiologicalNodeAbstract {
 
 	private boolean specification;
-	private String[] databases = { "KEGG", "Transpath" };
+	//private String[] databases = { "KEGG", "Transpath" };
 	
 	private Pathway pathwayLink=null;
 	

@@ -9,8 +9,6 @@ import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 
-import java.awt.Container;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,6 +27,10 @@ import configurations.NetworkSettingsSingelton;
  */
 public class GraphSettingsDialog extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JPanel panel;
 	JOptionPane pane;
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
@@ -97,7 +99,7 @@ public class GraphSettingsDialog extends JFrame {
 			white.setSelected(false);
 		}
 
-		Container contentPane = getContentPane();
+		//Container contentPane = getContentPane();
 		MigLayout layout = new MigLayout("", "[left]");
 
 		panel = new JPanel(layout);

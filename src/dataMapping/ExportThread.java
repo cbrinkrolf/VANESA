@@ -1,6 +1,5 @@
 package dataMapping;
 
-import graph.algorithms.gui.GraphColoringGUI;
 import gui.MainWindowSingleton;
 
 import java.net.MalformedURLException;
@@ -47,6 +46,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 //		HashMap<String, HashMap<String, Double>> experiments = new HashMap<String, HashMap<String, Double>>();
 		
 		String[] experimentArray = new String[header.size()];
+		@SuppressWarnings("unchecked")
 		HashMap<String, Double> mappings[] = new HashMap[header.size()]; 
 		for(int i = 0; i < header.size(); i++){
 			experimentArray[i] = header.get(i);

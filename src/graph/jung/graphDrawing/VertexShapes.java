@@ -43,7 +43,6 @@ public class VertexShapes
        this.varf = 1;
     }
     
-    private static final Rectangle2D theRectangle = new Rectangle2D.Float();
     /**
      * Returns a <code>Rectangle2D</code> whose width and 
      * height are defined by this instance's size and
@@ -86,7 +85,6 @@ public class VertexShapes
         return gp;
     }
     
-    private static final Ellipse2D theEllipse = new Ellipse2D.Float();
     /**
      * Returns a <code>Ellipse2D</code> whose width and 
      * height are defined by this instance's size and
@@ -142,8 +140,6 @@ public class VertexShapes
     	 return gp;
     }
     
-    private static final RoundRectangle2D theRoundRectangle =
-        new RoundRectangle2D.Float();
     /**
      * Returns a <code>RoundRectangle2D</code> whose width and 
      * height are defined by this instance's size and
@@ -163,7 +159,6 @@ public class VertexShapes
         return roundRectangle;
     }
     
-    private static final GeneralPath thePolygon = new GeneralPath();
     /**
      * Returns a regular <code>num_sides</code>-sided 
      * <code>Polygon</code> whose bounding 

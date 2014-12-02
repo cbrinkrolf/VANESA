@@ -3,9 +3,7 @@
  */
 package database.ppi;
 
-import gui.MainWindow;
 import gui.MainWindowSingleton;
-import gui.algorithms.ScreenSize;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -39,6 +37,11 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import pojos.DBColumn;
 
 public class PPISearchResultWindow extends JFrame implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	JPanel panel;
 
@@ -253,20 +256,21 @@ public class PPISearchResultWindow extends JFrame implements ActionListener {
 	// dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	// }
 
-	public Vector getAnswer() {
+	public Vector<String[]> getAnswer() {
 
 		dialog.pack();
 		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 		dialog.setVisible(true);
 
-		Vector v = new Vector();
+		Vector<String[]> v = new Vector<String[]>();
 		if (ok) {
 
 			int[] selectedRows = table.getSelectedRows();
+			String[] details;
 			for (int i = 0; i < selectedRows.length; i++) {
 
 				int pos = selectedRows[i];
-				String[] details = tableContent.get(pos);
+				details = tableContent.get(pos);
 				v.add(details);
 
 			}

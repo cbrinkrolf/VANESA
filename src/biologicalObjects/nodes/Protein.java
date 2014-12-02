@@ -1,13 +1,11 @@
 package biologicalObjects.nodes;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
-import pojos.DBColumn;
-import biologicalElements.Elementdeclerations;
-import configurations.Wrapper;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
+
+import java.util.Vector;
+
+import biologicalElements.Elementdeclerations;
 
 public class Protein extends BiologicalNodeAbstract {
 

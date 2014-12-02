@@ -20,14 +20,13 @@ import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import petriNet.Place;
-import petriNet.Transition;
-import configurations.NetworkSettings;
-import configurations.NetworkSettingsSingelton;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import configurations.NetworkSettings;
+import configurations.NetworkSettingsSingelton;
 
 public abstract class BiologicalNodeAbstract extends Pathway implements
 		GraphElementAbstract {

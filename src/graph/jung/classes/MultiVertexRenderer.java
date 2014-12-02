@@ -21,8 +21,6 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformerDecorator;
 import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
 
-import javax.swing.*;
-
 /*
 ** MultiVertexRenderer
 ** Copyright (C) 2011, Matt Johnson

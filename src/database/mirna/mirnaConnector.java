@@ -11,7 +11,7 @@ public class mirnaConnector{
 
 	Pathway p;	
 	
-	public mirnaConnector(Vector keggGenes, Pathway p) {
+	public mirnaConnector(Vector<String> keggGenes, Pathway p) {
 		
 		this.p = p;
 		

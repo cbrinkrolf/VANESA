@@ -1,6 +1,6 @@
 package graph.jung.graphDrawing;
 
-import java.math.RoundingMode;
+/*import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 import petriNet.Place;
@@ -12,7 +12,7 @@ import graph.GraphContainer;
 import graph.ContainerSingelton;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
+import gui.MainWindowSingleton;*/
 
 /*public class ToolTips extends DefaultToolTipFunction {
 

@@ -3,8 +3,6 @@ package dataMapping.biomartRetrieval;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.html.HTML.Attribute;
-
 /**
  * This abstract class manages the building of the xml query for the BioMart information retrieval
  * @author dborck

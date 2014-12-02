@@ -1,6 +1,6 @@
 package database.brenda;
 
-public class MoleculesPair implements Comparable{
+public class MoleculesPair implements Comparable<MoleculesPair>{
 
 	private String name;
 	private int amount;
@@ -12,7 +12,7 @@ public class MoleculesPair implements Comparable{
 		this.disregard=disregarded;
 	}
 
-	public int compareTo(Object anotherPair) {
+	public int compareTo(MoleculesPair anotherPair) {
 		if (!(anotherPair instanceof MoleculesPair))
 			throw new ClassCastException("A Pair object expected.");
 		int anotherPairAmount = ((MoleculesPair) anotherPair).getAmount();

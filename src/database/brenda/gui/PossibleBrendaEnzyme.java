@@ -4,7 +4,6 @@
 package database.brenda.gui;
 
 import gui.MainWindowSingleton;
-import gui.algorithms.ScreenSize;
 
 import java.awt.Color;
 import java.awt.Dimension;

@@ -2,7 +2,6 @@ package graph.algorithms.alignment;
 
 import java.awt.Color;
 
-import biologicalElements.GraphElementAbstract;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 //import edu.uci.ics.jung.graph.Edge;

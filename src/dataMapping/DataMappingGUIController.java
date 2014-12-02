@@ -13,7 +13,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;

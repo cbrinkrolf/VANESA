@@ -46,8 +46,8 @@ public class DynamicIcon implements Icon {
 		// d1.width, d1.height, true);
 		int x1 = (int) (p.getShape().getBounds2D().getMaxX() - p.getShape()
 				.getBounds2D().getMinX());
-		int y1 = (int) (p.getShape().getBounds2D().getMaxY() - p.getShape()
-				.getBounds2D().getMinY());
+		//int y1 = (int) (p.getShape().getBounds2D().getMaxY() - p.getShape()
+		//		.getBounds2D().getMinY());
 
 		// double x1 = c.getBounds().getMaxX()-c.getBounds().getMinX();
 		// double y1 = c.getBounds().getMaxY()-c.getBounds().getMinY();

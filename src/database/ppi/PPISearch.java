@@ -12,11 +12,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import pojos.DBColumn;
-
 import configurations.Wrapper;
-import database.Connection.DatabaseQueryValidator;
 
-public class PPISearch extends SwingWorker{
+public class PPISearch extends SwingWorker<Object, Object>{
 
 	private String fullName, alias, acNumber, database;
 
@@ -228,16 +226,19 @@ public class PPISearch extends SwingWorker{
 		}
 		
 		if (continueProgress) {
-			Vector results = ppiSearchResultWindow.getAnswer();
+			Vector<String[]> results = ppiSearchResultWindow.getAnswer();
 			if (results.size() != 0) {			
-				final Iterator it = results.iterator();
+				final Iterator<String[]> it = results.iterator();
+				String[] details;
+				PPIConnector ppiCon;
+				
 				while (it.hasNext()) {
 					
-					String[] details = (String[])it.next();
+					details = it.next();
 //					System.out.println(details[0] + " " + details[3] + " ");
 //					System.out.println(ppiSearchResultWindow.getSerchDeapth());
 					
-					PPIConnector ppiCon = new PPIConnector(bar,details, database);
+					ppiCon = new PPIConnector(bar,details, database);
 					ppiCon.setSearchDepth(ppiSearchResultWindow.getSerchDeapth());
 					ppiCon.setFinaliseGraph(ppiSearchResultWindow.getFinaliseGraph());
 					ppiCon.setAutoCoarse(ppiSearchResultWindow.getAutoCoarse());

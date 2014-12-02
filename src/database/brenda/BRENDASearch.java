@@ -6,33 +6,31 @@ import gui.ProgressBar;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import biologicalElements.Pathway;
-
 import pojos.DBColumn;
+import biologicalElements.Pathway;
 import configurations.Wrapper;
 import database.Connection.DatabaseQueryValidator;
 import database.brenda.gui.BrendaSearchResultWindow;
 
-public class BRENDASearch extends SwingWorker {
+public class BRENDASearch extends SwingWorker<Object, Object> {
 
 	String ec_number, name, substrat, product, organism;
 
 	private DatabaseQueryValidator dqv = new DatabaseQueryValidator();
 
-	MainWindow w;
-	ProgressBar bar;
+	private MainWindow w;
+	private ProgressBar bar;
 	// Vector results=new Vector();
 	// ArrayList<String[]> results = new ArrayList<String[]>();
-	String[][] results = null;
+	private String[][] results = null;
 
-	BrendaSearchResultWindow bsrw;
+	private BrendaSearchResultWindow bsrw;
 
 	private Pathway mergePW=null;
 	
@@ -129,18 +127,21 @@ public class BRENDASearch extends SwingWorker {
 		return queryStart + " order by e.ec_number;";
 	}
 
-	private Vector preparePattern(String patterns) {
+	/*private Vector<String> preparePattern(String patterns) {
 
-		Vector v = new Vector();
+		Vector<String> v = new Vector<String>();
 		StringTokenizer st = new StringTokenizer(patterns);
+		String t;
+		String sub;
 		while (st.hasMoreTokens()) {
 
-			String t = st.nextToken();
+			t = st.nextToken();
+			
 			boolean not = false;
 
 			if (t.startsWith("!")) {
 
-				String sub = t.substring(1, t.length());
+				sub = t.substring(1, t.length());
 				t = sub;
 				not = true;
 
@@ -148,7 +149,7 @@ public class BRENDASearch extends SwingWorker {
 
 			if (t.startsWith("*") && t.endsWith("*")) {
 
-				String sub = t.substring(1, t.length() - 1);
+				sub = t.substring(1, t.length() - 1);
 				t = sub;
 
 				if (not)
@@ -158,7 +159,7 @@ public class BRENDASearch extends SwingWorker {
 
 			} else if (t.startsWith("*")) {
 
-				String sub = t.substring(1, t.length());
+				sub = t.substring(1, t.length());
 				t = sub;
 
 				if (not)
@@ -168,7 +169,7 @@ public class BRENDASearch extends SwingWorker {
 
 			} else if (t.endsWith("*")) {
 
-				String sub = t.substring(0, t.length() - 1);
+				sub = t.substring(0, t.length() - 1);
 				t = sub;
 
 				if (not)
@@ -189,9 +190,9 @@ public class BRENDASearch extends SwingWorker {
 			}
 		}
 		return v;
-	}
+	}*/
 
-	private boolean containsProduct(String products) {
+	/*private boolean containsProduct(String products) {
 
 		if (product.equals("") || products.equals(""))
 			return true;
@@ -226,9 +227,9 @@ public class BRENDASearch extends SwingWorker {
 		}
 
 		return b;
-	}
+	}*/
 
-	private boolean containsSubstrates(String substrates) {
+	/*private boolean containsSubstrates(String substrates) {
 
 		if (substrat.equals("") || substrates.equals(""))
 			return true;
@@ -263,7 +264,7 @@ public class BRENDASearch extends SwingWorker {
 		}
 
 		return b;
-	}
+	}*/
 
 	/*private boolean containsReactionElement(String reaction) {
 

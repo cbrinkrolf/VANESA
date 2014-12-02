@@ -6,16 +6,12 @@ import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.rmi.Naming;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,16 +27,11 @@ import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
-import cluster.IJobServer;
-import cluster.JobTypes;
-import cluster.MappingCallback;
 import biologicalElements.Pathway;
 import dataMapping.biomartRetrieval.AgilentQueryRetrieval;
-import dataMapping.biomartRetrieval.BiomartQueryRetrieval;
 import dataMapping.biomartRetrieval.HPRDQueryRetrieval;
 import dataMapping.biomartRetrieval.IntActQueryRetrieval;
 import dataMapping.dataImport.ImportExcelxData;
-import database.unid.UNIDSearch;
 
 
 /**
@@ -68,7 +59,6 @@ public class DataMappingModelController extends Observable {
 
 	private boolean[] checks = {false, false, false, false, false};
 
-	private BiomartQueryRetrieval query;
 	private Map<String, String> resultMap;
 	private boolean withPathway;
 	private int headerIndex;
@@ -161,7 +151,6 @@ public class DataMappingModelController extends Observable {
 	 * the labels are used for the BioMart query
 	 * @param pw - the selected pathway
 	 */	
-	@SuppressWarnings("unchecked")
 	public void setPathwayLabels(Pathway pw) {
 		labels = new ArrayList<String>();
 		Iterator<String> it = pw.getAllNodeLabels().iterator();

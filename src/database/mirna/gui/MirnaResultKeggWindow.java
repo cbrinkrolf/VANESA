@@ -20,11 +20,14 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 
 import pojos.DBColumn;
-import database.kegg.gui.KEGGResultWindow;
 
 public class MirnaResultKeggWindow extends JFrame {
 
 		
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 		JPanel panel;
 		JOptionPane pane;
 		private ArrayList<String[]> map = new ArrayList<String[]>();
@@ -92,24 +95,27 @@ public class MirnaResultKeggWindow extends JFrame {
 		}
 		
 
-		public Vector getAnswer() {
+		public Vector<String[]> getAnswer() {
 
 			JDialog dialog = pane.createDialog(MirnaResultKeggWindow.this, "");
 			dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 			
 			Integer value = (Integer) pane.getValue();
-			Vector v = new Vector();
+			Vector<String[]> v = new Vector<String[]>();
+			String title;
+			Iterator<String[]> it;
+			String[] details;
 			if (value != null) {
 				if (value.intValue() == JOptionPane.OK_OPTION) {
 					
 					int[] selectedRows = table.getSelectedRows();
 					for(int i = 0; i< selectedRows.length;i++){
 			
-						String title = table.getValueAt(selectedRows[i], 0).toString();				
-						Iterator it = map.iterator();				
+						title = table.getValueAt(selectedRows[i], 0).toString();				
+						it = map.iterator();				
 						while(it.hasNext()){
-							String[] details = (String[])it.next();
+							details = (String[])it.next();
 							if (details[0].equals(title)){
 								v.add(details);
 							}	
