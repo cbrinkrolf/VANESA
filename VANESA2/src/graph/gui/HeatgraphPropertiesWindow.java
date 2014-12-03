@@ -25,8 +25,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.ListCellRenderer;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -57,18 +55,18 @@ public class HeatgraphPropertiesWindow implements ActionListener {
                             Gradient.GRADIENT_RED_TO_GREEN,
                             Gradient.GRADIENT_ROY};
 
-	private JComboBox visualizationStyleComboBox;
+	private JComboBox<String> visualizationStyleComboBox;
     
-    private JComboBox gradientComboBox;
+    private JComboBox<String> gradientComboBox;
 
 	private JSlider radius;
 
-	private JComboBox vertexFormComboBox;
+	private JComboBox<String> vertexFormComboBox;
 	
 	public HeatgraphPropertiesWindow() {
 		this.p.setLayout(new GridLayout(0,1));
 		
-		visualizationStyleComboBox = new JComboBox();
+		visualizationStyleComboBox = new JComboBox<String>();
 		visualizationStyleComboBox.addItemListener(new ItemListener() {
 			private String lastSelectedVisualisationStyle = AdoptedHeatmap.VISUALIZATION_HEAT;
 			
@@ -97,7 +95,7 @@ public class HeatgraphPropertiesWindow implements ActionListener {
 		visualizationStyleComboBox.addItem(AdoptedHeatmap.VISUALIZATION_HEAT);
 		visualizationStyleComboBox.addItem(AdoptedHeatmap.VISUALIZATION_SEEDED_POINTS);
 		
-		vertexFormComboBox = new JComboBox();
+		vertexFormComboBox = new JComboBox<String>();
 		vertexFormComboBox.addItemListener(new ItemListener() {
 
 			@Override
@@ -203,7 +201,7 @@ public class HeatgraphPropertiesWindow implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		
-		String event = e.getActionCommand();
+		//String event = e.getActionCommand();
 	
 	}
 	

@@ -1,15 +1,12 @@
 package graph.algorithms.gui;
 
 import graph.algorithms.RandomBipartiteGraph;
-import graph.algorithms.RandomGraph;
 import gui.MainWindowSingleton;
-import gui.algorithms.ScreenSize;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,11 +17,14 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
 
-import database.brenda.gui.BrendaPatternListWindow;
 import net.miginfocom.swing.MigLayout;
 
 public class RandomBipartiteGraphGui extends JFrame implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Variables declaration
 	JButton cancel = new JButton("cancel");
 	JButton applyButton = new JButton("generate Random Bipartite Graph");

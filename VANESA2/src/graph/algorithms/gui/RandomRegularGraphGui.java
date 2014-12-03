@@ -2,7 +2,6 @@ package graph.algorithms.gui;
 
 import graph.algorithms.RandomRegularGraph;
 import gui.MainWindowSingleton;
-import gui.algorithms.ScreenSize;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +21,10 @@ import net.miginfocom.swing.MigLayout;
 
 public class RandomRegularGraphGui extends JFrame implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Variables declaration
 	JButton cancel = new JButton("cancel");
 	JButton applyButton = new JButton("Generate Random Regular Graph");

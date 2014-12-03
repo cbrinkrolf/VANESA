@@ -12,7 +12,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.AnimatedPickingGraphMousePlugin;
 //import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import graph.GraphInstance;

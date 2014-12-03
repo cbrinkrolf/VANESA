@@ -10,14 +10,13 @@ import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
-import cern.colt.matrix.DoubleMatrix2D;
 
 //MARTIN class could be deleted?
 public class NodeSetComparison {
 
 	private HashMap<String, BiologicalNodeSet> type2NodeSet_graphA, type2NodeSet_graphB;
 	
-	private DoubleMatrix2D similarityMatrix;
+	//private DoubleMatrix2D similarityMatrix;
 	
 	
 	public NodeSetComparison(HashMap<String, BiologicalNodeSet> mapA, 
@@ -33,10 +32,14 @@ public class NodeSetComparison {
 
 	private void compare() {
 		
-		for (Iterator iter = type2NodeSet_graphB.keySet().iterator(); iter.hasNext();) {
-			String type = (String) iter.next();
-			BiologicalNodeSet nodeSet_A = type2NodeSet_graphA.get(type);
-			BiologicalNodeSet nodeSet_B = type2NodeSet_graphB.get(type);
+		String type;
+		BiologicalNodeSet nodeSet_A;
+		BiologicalNodeSet nodeSet_B;
+		
+		for (Iterator<String> iter = type2NodeSet_graphB.keySet().iterator(); iter.hasNext();) {
+			type = iter.next();
+			nodeSet_A = type2NodeSet_graphA.get(type);
+			nodeSet_B = type2NodeSet_graphB.get(type);
 			
 			if (nodeSet_A == null) {
 				// do not compare

@@ -3,14 +3,11 @@ package graph.algorithms.gui;
 import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
 
-import java.awt.Dimension;
-import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;

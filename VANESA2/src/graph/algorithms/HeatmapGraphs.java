@@ -5,16 +5,11 @@ import gui.HeatgraphLayer;
 import gui.MainWindowSingleton;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
-import javax.xml.stream.XMLStreamException;
-
-import xmlInput.sbml.VAMLInput;
 import xmlOutput.sbml.JSBMLoutput;
-import xmlOutput.sbml.VAMLoutput;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 

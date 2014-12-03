@@ -1,13 +1,9 @@
 package graph.eventhandlers;
 
-import graph.GraphInstance;
 import gui.MainWindow;
 
 import java.awt.Cursor;
 
-import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import net.infonode.tabbedpanel.Tab;
 import net.infonode.tabbedpanel.TabDragEvent;
 import net.infonode.tabbedpanel.TabEvent;
 import net.infonode.tabbedpanel.TabListener;

@@ -8,6 +8,10 @@ import javax.swing.table.TableCellRenderer;
 
 public class CustomTableCellRenderer extends JLabel implements TableCellRenderer{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public CustomTableCellRenderer() {
 		// TODO Auto-generated constructor stub
 	}
