@@ -236,12 +236,21 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	}
 	
 	/**
-	 * Saves the current node order + relayouting.
+	 * Saves the current node order + optional relayouting.
 	 */
 	public void saveCurrentOrder(){
 		order.sort(new AngleComparator());
-		groupNodes();
-		initialize();
+		if(getConfig().getAutoRelayout()){
+			groupNodes();
+			initialize();
+		} else {
+			MyGraph g = GraphInstance.getMyGraph();
+        	Point2D vp;
+			for(BiologicalNodeAbstract n : g.getAllVertices()){
+					vp = getPointOnCircle(Circle.getAngle(getCenterPoint(),g.getVertexLocation(n)));
+				g.moveVertex(n, vp.getX(), vp.getY());
+			}
+		}
 	}
 	
 	/**
@@ -347,8 +356,14 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 					n2GAngle = angle;
 				}
 			}
-			if(n1GAngle == n2GAngle)
-				return 0;
+			if(n1GAngle == n2GAngle){
+				n1GAngle = Circle.getAngle(centerPoint, myGraph.getVertexLocation(n1));
+				n2GAngle = Circle.getAngle(centerPoint, myGraph.getVertexLocation(n2));
+				if(n1GAngle<0)
+					n1GAngle += 2*Math.PI;
+				if(n2GAngle<0)
+					n2GAngle += 2*Math.PI;
+			}
 			return n1GAngle>n2GAngle ? 1 : -1;
 		}
 	}

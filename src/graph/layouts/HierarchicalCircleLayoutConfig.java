@@ -12,8 +12,10 @@ public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
 	public static int GROUP_DISTANCE_FACTOR = 5;
 	public static int GROUP_DEPTH = 1;
 	
-	public boolean showInternalEdges = true;
-	public boolean resetLayout = false;
+	protected boolean showInternalEdges = true;
+	protected boolean resetLayout = false;
+	protected boolean autoRelayout = true;
+	protected boolean moveInGroups = true;
 	
 	public HierarchicalCircleLayoutConfig(Class<? extends HierarchicalCircleLayout> class1){
 		super(class1);
@@ -36,5 +38,13 @@ public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
 	
 	public boolean resetLayout(){
 		return resetLayout;
+	}
+	
+	public boolean getAutoRelayout(){
+		return autoRelayout;
+	}
+	
+	public boolean getMoveInGroups(){
+		return moveInGroups;
 	}
 }

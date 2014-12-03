@@ -402,9 +402,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	public Set<BiologicalNodeAbstract> updateBorder(){
 		border.clear();
 		for(BiologicalEdgeAbstract edge : getAllEdges()){
-			if(edge.getTo().getParentNode() != this){
+			if(edge.getTo().getParentNode() != this && edge.getFrom().getParentNode() == this){
 				border.add(edge.getFrom());
-			} else if(edge.getFrom().getParentNode() != this){
+			} else if(edge.getFrom().getParentNode() != this && edge.getTo().getParentNode() == this){
 				border.add(edge.getTo());
 			}
 		}
@@ -627,6 +627,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * Development tool: method to print all relevant hierarchy sets.
 	 */
 	public void printAllHierarchicalAttributes(){
+		System.out.println("Name:");
+		System.out.println(getLabel());
 		System.out.println("All Nodes:");
 		for(BiologicalNodeAbstract node : getAllNodes()){
 			System.out.println(node.getLabel());
@@ -895,6 +897,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	public void setNodesize(double nodesize) {
 		this.nodesize = nodesize;
+	}
+	
+	public void setCoarseNodesize(){
+		if(isCoarseNode()){
+			setNodesize(defaultNodesize + Math.log(getAllRootNodes().size())/Math.log(100));
+		}
 	}
 
 	public void setOrganism(String org) {

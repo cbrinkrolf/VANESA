@@ -145,9 +145,11 @@ public class MyPickingGraphMousePlugin extends
 		originalSelection.addAll(graphInstance.getPathway().getSelectedNodes());
 		if(graphInstance.getMyGraph().getLayout() instanceof HEBLayout){
 			HEBLayout hebLayout = (HEBLayout) graphInstance.getMyGraph().getLayout();
-			for(BiologicalNodeAbstract selectedNode : graphInstance.getPathway().getSelectedNodes()){
-				for(BiologicalNodeAbstract node : hebLayout.getNodesGroup(selectedNode)){
-					graphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().pick(node, true);
+			if(hebLayout.getConfig().getMoveInGroups()){
+				for(BiologicalNodeAbstract selectedNode : graphInstance.getPathway().getSelectedNodes()){
+					for(BiologicalNodeAbstract node : hebLayout.getNodesGroup(selectedNode)){
+						graphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().pick(node, true);
+					}
 				}
 			}
 		}
