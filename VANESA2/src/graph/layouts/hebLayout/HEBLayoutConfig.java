@@ -30,6 +30,8 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	
 	public static JCheckBox showInternalEdges;
 	public static JCheckBox resetLayout;
+	public static JCheckBox autorelayout;
+	public static JCheckBox moveInGroups;
 	public static JSlider groupSeperationSlider;
 	public static JSlider edgeBendingSlider;
 	public static JSlider internalEdgeBendingSlider;
@@ -129,6 +131,16 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		resetLayout = new JCheckBox("Reset Layout");
 		resetLayout.setSelected(false);
 		groupPreferences.add(resetLayout);
+		
+		autorelayout = new JCheckBox("Automatical relayout");
+		autorelayout.setToolTipText("Relayout automatically when moving, coarsing or flatting nodes.");
+		autorelayout.setSelected(true);
+		groupPreferences.add(autorelayout);
+		
+		moveInGroups = new JCheckBox("Group selection");
+		moveInGroups.setToolTipText("Selects the whole group if a node is selected. So, nodes can only be moved groupwise.");
+		moveInGroups.setSelected(true);
+		groupPreferences.add(moveInGroups);
 	
 		edgePreferences.add(internalEdgePreferences);
 		 add(edgePreferences);
@@ -155,6 +167,16 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	@Override
 	public boolean resetLayout(){
 		return resetLayout.isSelected();
+	}
+	
+	@Override
+	public boolean getAutoRelayout(){
+		return autorelayout.isSelected();
+	}
+	
+	@Override
+	public boolean getMoveInGroups(){
+		return moveInGroups.isSelected();
 	}
 
 	@Override

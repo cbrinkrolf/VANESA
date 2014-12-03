@@ -1014,7 +1014,11 @@ public class MyGraph {
 	
 	public void changeToHEBLayout() {
 		if(layout instanceof HEBLayout && !((HEBLayout) layout).getConfig().resetLayout()){
-			changeToLayout(new HEBLayout(g, ((HEBLayout) layout).getOrder()));
+			if(((HEBLayout) layout).getConfig().getAutoRelayout()){
+				changeToLayout(new HEBLayout(g, ((HEBLayout) layout).getOrder()));
+			} else {
+				((HEBLayout) layout).saveCurrentOrder();
+			}
 			return;
 		}
 		changeToLayout(new HEBLayout(g));
