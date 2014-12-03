@@ -98,7 +98,10 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 			}
 
 			name2Vertex.put(id, protein);
-			pw.addVertex(protein, new Point(x*100, y*100));
+			BiologicalNodeAbstract node = pw.addVertex(protein, new Point(x*100, y*100));
+			if(id.equals(root_id)){
+				pw.setRootNode(node);
+			}
 
 			//myGraph.moveVertex(protein.getVertex(), x * 100, y * 100);
 
@@ -131,7 +134,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		if(node==root_id){
 			return null;
 		}
-		return BiologicalNodeAbstract.coarse(nextDepth, null, entries2infos.get(node)[0] + "coarse");
+		return BiologicalNodeAbstract.coarse(nextDepth, null, entries2infos.get(node)[0]);
 	}
 
 	private void drawEdges() {

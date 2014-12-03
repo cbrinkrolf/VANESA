@@ -21,7 +21,7 @@ public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
 		super(class1);
 	}
 	
-	public static HEBLayoutConfig getInstance() {
+	public static HierarchicalCircleLayoutConfig getInstance() {
 		if(instance == null){
 			instance = new HEBLayoutConfig();
 		}

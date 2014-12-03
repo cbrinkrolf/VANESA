@@ -39,6 +39,7 @@ import edu.uci.ics.jung.visualization.contrib.CircleLayout;
 import edu.uci.ics.jung.visualization.contrib.KKLayout;*/
 import graph.GraphInstance;
 import graph.layouts.gemLayout.GEMLayoutConfig;
+import graph.layouts.hctLayout.HCTLayoutConfig;
 import graph.layouts.hebLayout.HEBLayoutConfig;
 import gui.MainWindowSingleton;
 import gui.RangeSelector;
@@ -105,6 +106,7 @@ public class LayoutConfig extends JPanel implements ActionListener {
 		//addTab(new MDForceLayoutConfig());
 		addTab(new ConfigPanel(CircleLayout.class));
 		addTab(HEBLayoutConfig.getInstance());
+		addTab(HCTLayoutConfig.getInstance());
 		addTab(GEMLayoutConfig.getInstance());
 		addTab(new ConfigPanel(FRLayout.class));
 		addTab(new ConfigPanel(KKLayout.class));
