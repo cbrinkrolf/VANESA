@@ -72,6 +72,7 @@ import graph.jung.graphDrawing.MyVertexStringer;
 import graph.jung.graphDrawing.MyVertexStrokeHighlighting;
 import graph.layouts.GraphCenter;
 import graph.layouts.gemLayout.GEMLayout;
+import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.HeatgraphLayer;
 import gui.MainWindow;
@@ -1023,6 +1024,10 @@ public class MyGraph {
 		}
 		changeToLayout(new HEBLayout(g));
 	}
+	
+	public void changeToHCTLayout() {
+		changeToLayout(new HCTLayout(g,pathway.getRootNode()));
+	}
 
 	// public void changeToMDForceLayout() {
 	// if (stateV.getPickedVertices() == null
@@ -1041,6 +1046,8 @@ public class MyGraph {
 	public void updateLayout(){
 		if(layout instanceof HEBLayout){
 			changeToHEBLayout();
+		} else if(layout instanceof HCTLayout){
+			changeToHCTLayout();
 		} else if (layout instanceof GEMLayout){
 			//changeToGEMLayout();
 		} else if (layout instanceof StaticLayout){

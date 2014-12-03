@@ -29,6 +29,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	protected Point2D centerPoint;
 	protected Map<BiologicalNodeAbstract, CircleVertexData> circleVertexDataMap =
            new HashMap<BiologicalNodeAbstract, CircleVertexData>();
+	protected BiologicalNodeAbstract rootNode;
 
 	public HierarchicalCircleLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		super(g);
@@ -222,6 +223,10 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
         double nodeAngle;
         double finalAngle;
         for(BiologicalNodeAbstract v : vv.getPickedVertexState().getPicked()) {
+        	
+        	if(v == rootNode){
+        		continue;
+        	}
 
         	nodePoint = GraphInstance.getMyGraph().getVertexLocation(v);
         	nodeAngle = Circle.getAngle(getCenterPoint(),nodePoint);
