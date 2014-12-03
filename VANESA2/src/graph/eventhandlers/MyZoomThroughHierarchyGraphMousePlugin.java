@@ -111,33 +111,9 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 					.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e
 							.getPoint().getY());
 			if(pw.isBNA() && ((BiologicalNodeAbstract) pw).getEnvironment().contains(vertex)){
-				return;
+				openMenu(e,null);
 			}
 			openMenu(e,vertex);
-		}
-	}
-	
-	public void hideAllSubpathways(){
-		if(pw==null || pw!= graphInstance.getPathway()){
-			return;
-		}
-		Set<BiologicalNodeAbstract> parentNodes = new HashSet<BiologicalNodeAbstract>();
-		Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
-		if(pw.isBNA()){
-			innerNodes.addAll(((BiologicalNodeAbstract) pw).getInnerNodes());
-		} else {
-			innerNodes.addAll(pw.getAllNodes());
-		}
-		for(BiologicalNodeAbstract node : innerNodes){
-			if(node.getParentNode()!=null){
-				parentNodes.add(node.getParentNode());
-			}
-		}
-		for(BiologicalNodeAbstract node : parentNodes){
-			if(node.getParentNode()!=null && node.getParentNode().getCurrentShownParentNode(pw.getGraph())!=null){
-				continue;
-			}
-			pw.closeSubPathway(node);
 		}
 	}
 
