@@ -642,16 +642,10 @@ public class Pathway implements Cloneable {
 	}
 
 	public int edgeGrade(BiologicalEdgeAbstract edge) {
-		int grade = 0;
-		Set<BiologicalEdgeAbstract> conEdges = edge.getTo()
-				.getConnectingEdges();
-		for (BiologicalEdgeAbstract conEdge : conEdges) {
-			if (conEdge.getFrom().getCurrentShownParentNode(getGraph()) == edge
-					.getFrom()) {
-				grade += 1;
-			}
-		}
-		return grade;
+		Set<BiologicalEdgeAbstract> conEdgesTo = new HashSet<BiologicalEdgeAbstract>();
+		conEdgesTo.addAll(edge.getTo().getConnectingEdges());
+		conEdgesTo.retainAll(edge.getFrom().getConnectingEdges());
+		return conEdgesTo.size();
 	}
 
 	/*
@@ -1481,8 +1475,9 @@ public class Pathway implements Cloneable {
 
 				// root pathway
 				else {
-					addVertex(parentNode, this.getGraph()
-							.getVertexLocation(node));
+					Point2D loc = parentNode.getBorder().isEmpty() ? getGraph().getVertexLocation(node)
+							: getGraph().getVertexLocation(parentNode.getBorder().iterator().next());
+					addVertex(parentNode, loc);
 					removeElement(node);
 				}
 
@@ -1490,6 +1485,7 @@ public class Pathway implements Cloneable {
 				if(getGraph().getLayout() instanceof HEBLayout){
 					((HEBLayout) getGraph().getLayout()).fuseInOrder(parentNode);
 				}
+				parentNode.setCoarseNodesize();
 				break;
 
 			case CONNECTIONMODIFIED:
@@ -1513,13 +1509,14 @@ public class Pathway implements Cloneable {
 			default:
 				break;
 			}
-
+			
 			// update all included subpathways
 			if (thisNode == null) {
 				node.updateMyGraph();
 			} else if (!thisNode.getEnvironment().contains(node)) {
 				node.updateMyGraph();
 			}
+
 		}
 		// draw connecting edges
 		addEdgesToPathway(edgeSet);
@@ -1697,6 +1694,14 @@ public class Pathway implements Cloneable {
 
 	public Set<BiologicalNodeAbstract> getOpenedSubPathways() {
 		return openedSubPathways.keySet();
+	}
+	
+	public Point2D getOpenedSubPathwayLocation(BiologicalNodeAbstract n){
+		if(getAllNodes().contains(n))
+			return graph.getVertexLocation(n);
+		if(getOpenedSubPathways().contains(n))
+			return openedSubPathways.get(n);
+		return null;
 	}
 
 	public void handleChangeFlags(int flag) {
