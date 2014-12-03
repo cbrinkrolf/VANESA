@@ -51,7 +51,9 @@ import biologicalObjects.edges.StateChange;
 import biologicalObjects.edges.Ubiquitination;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DAWISNode;
+import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.KEGGNode;
+import biologicalObjects.nodes.RNA;
 
 /**
  * To read a SBML file and put the results on the graph. A SBML which has been
@@ -845,7 +847,13 @@ public class JSBMLinput {
 			((biologicalObjects.nodes.CollectorNode) bna).setObject(value);
 			break;
 		case "NtSequence":
-			((biologicalObjects.nodes.DNA) bna).setNtSequence(value);
+			if (bna instanceof DNA) {
+				((biologicalObjects.nodes.DNA) bna).setNtSequence(value);
+			} else if (bna instanceof RNA) {
+				//System.out.println(bna.getLabel());
+				((biologicalObjects.nodes.RNA) bna).setNtSequence(value);
+			}
+
 			break;
 		case "Cofactor":
 			((biologicalObjects.nodes.Enzyme) bna).setCofactor(value);
