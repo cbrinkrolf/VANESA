@@ -596,7 +596,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		updateBorder();
 		updateEnvironment();
 		updateConnectingEdges();
-		printAllHierarchicalAttributes();
+//		printAllHierarchicalAttributes();
 		getRootPathway().updateMyGraph();
 		updateNodeType();
 		
@@ -619,7 +619,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
 			setGraph(bna.getGraph());
 			new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
-			bna.printAllHierarchicalAttributes();
+//			bna.printAllHierarchicalAttributes();
 		}
 	}
 	
