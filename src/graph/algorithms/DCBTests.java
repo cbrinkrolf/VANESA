@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /*
- * Durchführung von Tests auf homogenity und density
+ * Durchfï¿½hrung von Tests auf homogenity und density
  */
 public class DCBTests {
 
@@ -31,8 +29,8 @@ public class DCBTests {
 
 	
 	/*
-	 * Durchläuft die Attributliste und findet den größten und kleinsten Wert für jedes Attribut.
-	 * Dannach wird die Distanz berechnet. Wenn die Distanz kleiner-gleich range für
+	 * Durchlï¿½uft die Attributliste und findet den grï¿½ï¿½ten und kleinsten Wert fï¿½r jedes Attribut.
+	 * Dannach wird die Distanz berechnet. Wenn die Distanz kleiner-gleich range fï¿½r
 	 * mindesten numDim Dimensionen ist sind die Knoten homogen.
 	 */
 	public boolean testHomogenity(HashSet<Integer> vertices){
@@ -64,9 +62,9 @@ public class DCBTests {
 	}
 
 	/*
-	 * Density = # existierender Knoten/ # max. mögliche Knoten
-	 * true wenn density des Subgraphs größer-gleich dem Grenzwert (density)
-	 * Jede Kante wird zweimal gezählt (da die Adjazenzliste einen gerichten Graphen darstellt
+	 * Density = # existierender Knoten/ # max. mï¿½gliche Knoten
+	 * true wenn density des Subgraphs grï¿½ï¿½er-gleich dem Grenzwert (density)
+	 * Jede Kante wird zweimal gezï¿½hlt (da die Adjazenzliste einen gerichten Graphen darstellt
 	 */
 	public boolean testDensity(HashSet<Integer> testVertices) {
 		double edgecounter = 0;
@@ -87,9 +85,9 @@ public class DCBTests {
 	
 	
 	/*
-	 * Durchläuft die Attributliste und findet den größten und kleinsten Wert für jedes Attribut.
+	 * Durchlï¿½uft die Attributliste und findet den grï¿½ï¿½ten und kleinsten Wert fï¿½r jedes Attribut.
 	 * Dannach wird die Distanz berechnet. Wenn die Distanz kleiner-gleich range wird der Score 
-	 * um eins erhöht.
+	 * um eins erhï¿½ht.
 	 */
 	public int homogenityScore(HashSet<Integer> vertices) {
 		Iterator<Integer> it = vertices.iterator();
@@ -117,7 +115,7 @@ public class DCBTests {
 	}
 
 	/*
-	 * Density = # existierender Knoten/ # max. mögliche Knoten
+	 * Density = # existierender Knoten/ # max. mï¿½gliche Knoten
 	 */
 	public double densityScore(HashSet<Integer> testVertices) {
 		double edgecounter = 0;

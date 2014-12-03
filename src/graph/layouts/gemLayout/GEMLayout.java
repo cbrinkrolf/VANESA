@@ -1,5 +1,12 @@
 package graph.layouts.gemLayout;
 
+/*import edu.uci.ics.jung.graph.DirectedEdge;
+ import edu.uci.ics.jung.graph.Edge;
+ import edu.uci.ics.jung.graph.Graph;
+ import edu.uci.ics.jung.graph.Vertex;
+ import edu.uci.ics.jung.utils.Pair;
+ import edu.uci.ics.jung.visualization.AbstractLayout;*/
+import graph.layouts.gemLayout.GEMLayoutConfig.GemP;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayPriorityQueue;
 import it.unimi.dsi.fastutil.ints.IntIterator;
@@ -13,17 +20,9 @@ import java.util.Iterator;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-
 import cern.colt.list.IntArrayList;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
-/*import edu.uci.ics.jung.graph.DirectedEdge;
- import edu.uci.ics.jung.graph.Edge;
- import edu.uci.ics.jung.graph.Graph;
- import edu.uci.ics.jung.graph.Vertex;
- import edu.uci.ics.jung.utils.Pair;
- import edu.uci.ics.jung.visualization.AbstractLayout;*/
-import graph.layouts.gemLayout.GEMLayoutConfig.GemP;
 
 /**
  * Java implementation of the gem 2D layout. <br>
@@ -599,9 +598,9 @@ public class GEMLayout extends
 	 * Runs the layout.
 	 */
 	public void initialize() {
-		long startTime, endTime;
+		//long startTime, endTime;
 
-		startTime = System.currentTimeMillis();
+		//startTime = System.currentTimeMillis();
 
 		// GEMLayoutConfig.clustered = GEMLayoutConfig.boxCluster.isSelected();
 
@@ -621,7 +620,7 @@ public class GEMLayout extends
 			coord.setLocation(p.x, p.y);
 		}
 		// }
-		endTime = System.currentTimeMillis();
+		//endTime = System.currentTimeMillis();
 
 		// System.out.println("Took: " + (endTime - startTime) + "msec");
 	}

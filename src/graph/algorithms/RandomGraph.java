@@ -2,7 +2,6 @@ package graph.algorithms;
 
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
-import gui.MainWindow;
 import gui.MainWindowSingleton;
 
 import java.awt.Point;

@@ -4,7 +4,6 @@ package graph.filter;
 import graph.GraphInstance;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -16,7 +15,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class FilterSettings {
 
-	LinkedList list = new LinkedList();
+	LinkedList<Filter> list = new LinkedList<Filter>();
 
 	GraphInstance graphInstance = new GraphInstance();
 
@@ -27,10 +26,10 @@ public class FilterSettings {
 		Elementdeclerations dec = new Elementdeclerations();
 		list.add(new Filter("references", true));
 
-		Iterator it = dec.getAllNodeDeclarations().iterator();
+		Iterator<String> it = dec.getAllNodeDeclarations().iterator();
 
 		while (it.hasNext()) {
-			list.add(new Filter(it.next().toString(), true));
+			list.add(new Filter(it.next(), true));
 		}
 	}
 
@@ -41,10 +40,11 @@ public class FilterSettings {
 
 	public boolean getFilterValue(String element) {
 
-		Iterator it = list.iterator();
+		Iterator<Filter> it = list.iterator();
+		Filter f;
 		while (it.hasNext()) {
 
-			Filter f = (Filter) it.next();
+			 f = it.next();
 			if (f.getElement().equals(element)) {
 				return f.isValue();
 			}
@@ -54,10 +54,11 @@ public class FilterSettings {
 
 	public void setFilterValue(String element, boolean value) {
 
-		Iterator it = list.iterator();
+		Iterator<Filter> it = list.iterator();
+		Filter f;
 		while (it.hasNext()) {
 
-			Filter f = (Filter) it.next();
+			f = it.next();
 			if (f.getElement().equals(element)) {
 				f.setValue(value);
 			}
@@ -70,14 +71,13 @@ public class FilterSettings {
 	private void applySettings(String element, boolean value) {
 
 		pw = graphInstance.getPathway();
-		HashMap map = pw.getBiologicalElements();
-		Iterator it = map.values().iterator();
-
+		HashMap<String, GraphElementAbstract> map = pw.getBiologicalElements();
+		Iterator<GraphElementAbstract> it = map.values().iterator();
+		GraphElementAbstract gea;
 		if (element.equals("references")) {
-
+			
 			while (it.hasNext()) {
-				Object obj = it.next();
-				GraphElementAbstract gea = (GraphElementAbstract) obj;
+				gea = it.next();
 				if (gea.isReference()) {
 					gea.setVisible(value);
 				}
@@ -85,7 +85,7 @@ public class FilterSettings {
 		} else {
 
 			while (it.hasNext()) {
-				GraphElementAbstract gea = (GraphElementAbstract) it.next();
+				gea = it.next();
 				if (gea.getBiologicalElement().equals(element)) {
 					if (value) {
 						// gea.setHidden(false);

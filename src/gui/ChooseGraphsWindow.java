@@ -1,7 +1,6 @@
 package gui;
 
 import graph.ContainerSingelton;
-import gui.algorithms.ScreenSize;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;

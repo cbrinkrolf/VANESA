@@ -1,21 +1,21 @@
 package graph.animations;
 
-import java.util.Hashtable;
-
 import javax.swing.table.DefaultTableModel;
 
 
 public class RegulationTabelModel extends DefaultTableModel{
 	
-	private Hashtable nodes;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
-	public RegulationTabelModel(Object[][] rows, String[] headers, Hashtable nodes) {
+	public RegulationTabelModel(Object[][] rows, String[] headers) {
 		super(rows, headers);
-		this.nodes = nodes;
 	}
 	
 	@Override
-	public Class getColumnClass(int c) {
+	public Class<?> getColumnClass(int c) {
 		if (c == 0) return String.class;
 		else return Integer.class;
     }

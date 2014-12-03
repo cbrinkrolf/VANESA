@@ -3,8 +3,6 @@
  */
 package gui;
 
-import gui.algorithms.ScreenSize;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +33,11 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
  * 
  */
 public class IntegrationResults extends JFrame implements ActionListener{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	JPanel panel;
 

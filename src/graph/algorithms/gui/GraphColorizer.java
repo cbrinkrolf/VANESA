@@ -1,24 +1,15 @@
 package graph.algorithms.gui;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 
-import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 /**
  * 
