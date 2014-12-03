@@ -28,6 +28,7 @@ import gui.InfoWindow;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import io.OpenDialog;
+import io.PNDoc;
 import io.SaveDialog;
 
 import java.awt.Component;
@@ -950,7 +951,9 @@ public class MenuListener implements ActionListener {
 						"new"));
 			}
 
-		} else if ("mirnaTest".equals(event)) {
+		} else if ("createDoc".equals(event)) {
+			new PNDoc();
+		}else if ("mirnaTest".equals(event)) {
 			System.out.println("mirnatest");
 			// code for testing number of mirnas matching a pathway
 
