@@ -16,6 +16,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
+
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.PNEdge;
@@ -145,7 +147,7 @@ public class Pathway implements Cloneable {
 
 	private SortedSet<Integer> ids = new TreeSet<Integer>();
 
-	private Set<BiologicalNodeAbstract> openedSubPathways = new HashSet<BiologicalNodeAbstract>();
+	private HashMap<BiologicalNodeAbstract, Point2D> openedSubPathways = new HashMap<BiologicalNodeAbstract,Point2D>();
 
 	private HashMap<String, ChangedFlags> changedFlags = new HashMap<String, ChangedFlags>();
 
@@ -1392,14 +1394,16 @@ public class Pathway implements Cloneable {
 		// go through all nodes in the current Pathway
 		Set<BiologicalNodeAbstract> nodeSet = new HashSet<BiologicalNodeAbstract>();
 		if (this.hasGraph()) {
-			nodeSet.addAll(openedSubPathways);
+			nodeSet.addAll(openedSubPathways.keySet());
 			nodeSet.addAll(getGraph().getAllVertices());
 		}
 
 		Iterator<BiologicalNodeAbstract> it = nodeSet.iterator();
+		BiologicalNodeAbstract node;
+		BiologicalNodeAbstract parentNode;
 		while (it.hasNext()) {
-			BiologicalNodeAbstract node = it.next();
-
+			node = it.next();
+			
 			switch (node.getStateChanged()) {
 
 			case UNCHANGED:
@@ -1457,33 +1461,34 @@ public class Pathway implements Cloneable {
 				break;
 
 			case COARSED:
+				parentNode = node.getParentNode();
 				// if already added in correct graph, break.
-				if (node.getParentNode() == this) {
+				if (parentNode == this) {
 					if(getGraph().getLayout() instanceof HEBLayout){
-						((HEBLayout) getGraph().getLayout()).fuseInOrder(node.getParentNode());
+						((HEBLayout) getGraph().getLayout()).fuseInOrder(parentNode);
 					}
 					break;
 				}
-				// coarse nodes
+				// Coarse nodes. Location is copied by a border node if possible.
 				if (this.isBNA()) {
-					if (!thisNode.getAllParentNodes().contains(
-							node.getParentNode())) {
-						addVertex(node.getParentNode(), this.getGraph()
-								.getVertexLocation(node));
+					if (!thisNode.getAllParentNodes().contains(parentNode)) {
+						Point2D loc = parentNode.getBorder().isEmpty() ? getGraph().getVertexLocation(node)
+								: getGraph().getVertexLocation(parentNode.getBorder().iterator().next());
+						addVertex(parentNode, loc);
 						removeElement(node);
 					}
 				}
 
 				// root pathway
 				else {
-					addVertex(node.getParentNode(), this.getGraph()
+					addVertex(parentNode, this.getGraph()
 							.getVertexLocation(node));
 					removeElement(node);
 				}
 
-				edgeSet.addAll(node.getParentNode().getConnectingEdges());
+				edgeSet.addAll(parentNode.getConnectingEdges());
 				if(getGraph().getLayout() instanceof HEBLayout){
-					((HEBLayout) getGraph().getLayout()).fuseInOrder(node.getParentNode());
+					((HEBLayout) getGraph().getLayout()).fuseInOrder(parentNode);
 				}
 				break;
 
@@ -1580,10 +1585,21 @@ public class Pathway implements Cloneable {
 		}
 	}
 	
+	/**
+	 * Opens a coarse node in the Pathway without flattening it in data structure.
+	 * @param subPathway Node to be opened
+	 * @return false, if opening action is not possible. true, if node was opened.
+	 * @author tloka
+	 */
 	public boolean openSubPathway(BiologicalNodeAbstract subPathway){
 		if(!subPathway.isCoarseNode()){
 			return false;
 		}
+		if((this instanceof BiologicalNodeAbstract && 
+				((BiologicalNodeAbstract) this).getEnvironment().contains(subPathway))){
+			return false;
+		}
+		Point2D location = getGraph().getVertexLocation(subPathway);
 		removeElement(subPathway);
 		for(BiologicalNodeAbstract node : subPathway.getInnerNodes()){
 			addVertex(node, this.getGraph().getVertexLocation(node));
@@ -1603,19 +1619,43 @@ public class Pathway implements Cloneable {
 				addEdge(edge);
 			}
 		}
-		openedSubPathways.add(subPathway);
+		openedSubPathways.put(subPathway,location);
 		return true;
 	}
 	
+	/**
+	 * Opens all coarse nodes (including sub-coarsenodes) in the Pathway 
+	 * without flattening it in data structure.
+	 * @author tloka
+	 */
+	public void openAllSubPathways(){
+		
+		Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
+		boolean repeat = true;
+		
+		while(repeat){
+			repeat = false;
+			nodes.clear();
+			nodes.addAll(getAllNodes());
+			for(BiologicalNodeAbstract n : nodes){
+				if(openSubPathway(n))
+					repeat = true;
+			}
+		}
+	}
+	
+	/**
+	 * Closes a coarse node in the Pathway.
+	 * @param subPathway The node to be closed.
+	 * @author tloka
+	 */
 	public void closeSubPathway(BiologicalNodeAbstract subPathway){
-		if(!openedSubPathways.contains(subPathway)){
+		if(!openedSubPathways.keySet().contains(subPathway)){
 			return;
 		}
-		if(!subPathway.getBorder().isEmpty()){
-			addVertex(subPathway, getGraph().getVertexLocation(subPathway.getBorder().iterator().next()));
-		} else {
-			addVertex(subPathway, getGraph().getVertexLocation(subPathway.getInnerNodes().iterator().next()));
-		}
+		
+		addVertex(subPathway, openedSubPathways.get(subPathway));
+
 		for(BiologicalNodeAbstract node : subPathway.getInnerNodes()){
 			closeSubPathway(node);
 			node.setHidden(false);
@@ -1632,14 +1672,18 @@ public class Pathway implements Cloneable {
 		openedSubPathways.remove(subPathway);
 	}
 	
+	/**
+	 * Closes all coarse nodes in the Pathway.
+	 * @author tloka
+	 */
 	public void closeAllSubPathways(){
 		HashSet<BiologicalNodeAbstract> osp = new HashSet<BiologicalNodeAbstract>();
 		while(!openedSubPathways.isEmpty()){
-			osp.addAll(openedSubPathways);
+			osp.addAll(openedSubPathways.keySet());
 			HashSet<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
 			for(BiologicalNodeAbstract n : osp){
 				innerNodes.addAll(n.getInnerNodes());
-				innerNodes.retainAll(openedSubPathways);
+				innerNodes.retainAll(openedSubPathways.keySet());
 				if(innerNodes.isEmpty()){
 					closeSubPathway(n);
 				}
@@ -1650,25 +1694,9 @@ public class Pathway implements Cloneable {
 			}
 		}
 	}
-	
-	public void openAllSubPathways(){
-		
-		Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
-		boolean repeat = true;
-		
-		while(repeat){
-			repeat = false;
-			nodes.clear();
-			nodes.addAll(getAllNodes());
-			for(BiologicalNodeAbstract n : nodes){
-				if(openSubPathway(n))
-					repeat = true;
-			}
-		}
-	}
 
 	public Set<BiologicalNodeAbstract> getOpenedSubPathways() {
-		return openedSubPathways;
+		return openedSubPathways.keySet();
 	}
 
 	public void handleChangeFlags(int flag) {
