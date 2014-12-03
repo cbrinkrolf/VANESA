@@ -17,7 +17,7 @@ public class TextfeldColorChanger implements FocusListener{
 
 	public void focusLost(FocusEvent event) {
 		
-		String source = event.getComponent().getName();	
+		//String source = event.getComponent().getName();	
 		event.getComponent().setBackground(Color.WHITE);
 	}
 }

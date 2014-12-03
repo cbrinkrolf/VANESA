@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /*
- * Implementierung des Callable-Interface für das Preprocessing.<BR>
- * Es wird Callable eingesetzt obwohl kein Rückgabewert benötigt wird. Grund dafür ist der Aufruf
- * der Threads über invokeAll den es für Runnable nicht gibt (gibt es eine bessere Möglichkeit?)
+ * Implementierung des Callable-Interface fï¿½r das Preprocessing.<BR>
+ * Es wird Callable eingesetzt obwohl kein Rï¿½ckgabewert benï¿½tigt wird. Grund dafï¿½r ist der Aufruf
+ * der Threads ï¿½ber invokeAll den es fï¿½r Runnable nicht gibt (gibt es eine bessere Mï¿½glichkeit?)
  * 
  */
 public class DCBpreprocessing implements Callable<HashSet<Integer>>{
@@ -30,8 +28,8 @@ public class DCBpreprocessing implements Callable<HashSet<Integer>>{
 
 
 	/*
-	 * Prüft ob die beiden übergebenen Knoten homogen sind. 
-	 * Rückgabewert:
+	 * Prï¿½ft ob die beiden ï¿½bergebenen Knoten homogen sind. 
+	 * Rï¿½ckgabewert:
 	 * 	Set der Knoten der Kante, wenn die Kante homogen ist;
 	 * 	ein leeres Set, sonst
 	 */

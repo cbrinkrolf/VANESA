@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
@@ -25,20 +24,18 @@ import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ShortestPathGui implements ActionListener {
 
-	JPanel p = new JPanel();
-	GraphElementAbstract ab;
-	GraphInstance graphInstance;
-	boolean emptyPane = true;
-	JComboBox fromBox = new JComboBox();
-	JComboBox ToBox = new JComboBox();
-	JCheckBox mindMaps = new JCheckBox("avoid pathway maps");
-	Hashtable<String, BiologicalNodeAbstract> table = new Hashtable<String, BiologicalNodeAbstract>();
+	private JPanel p = new JPanel();
+	private GraphInstance graphInstance;
+	private boolean emptyPane = true;
+	private JComboBox<String> fromBox = new JComboBox<String>();
+	private JComboBox<String> ToBox = new JComboBox<String>();
+	private JCheckBox mindMaps = new JCheckBox("avoid pathway maps");
+	private Hashtable<String, BiologicalNodeAbstract> table = new Hashtable<String, BiologicalNodeAbstract>();
 	private TitledTab tab;
 
 	private JButton calculate;
@@ -68,8 +65,8 @@ public class ShortestPathGui implements ActionListener {
 
 		Collections.sort(w);
 
-		fromBox = new JComboBox(w);
-		ToBox = new JComboBox(w);
+		fromBox = new JComboBox<String>(w);
+		ToBox = new JComboBox<String>(w);
 
 		AutoCompleteDecorator.decorate(fromBox);
 		AutoCompleteDecorator.decorate(ToBox);

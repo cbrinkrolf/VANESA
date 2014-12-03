@@ -59,7 +59,6 @@ public class HeatgraphLayer extends MouseAdapter implements Paintable {
 	private boolean enabled;
 	private static HeatgraphLayer instance;
 
-	private GraphInstance graphInstance;
 	private HashMap<String, Integer> lastCountByIdTemp;
 	private boolean canChangeVertexShape = true;
 	//private ImagePath imagePath = new ImagePath();

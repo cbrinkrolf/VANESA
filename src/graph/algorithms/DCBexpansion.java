@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 	
@@ -24,7 +22,7 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 	private HashMap<HashSet<Integer>, HashSet<Integer>> seeds;
 
 	//Summe der Nachbarn aller bisher enthaltener seeds
-	//(Nächster Seed wird immer dem Callable zugeordnet der bisher die wenigsten 
+	//(Nï¿½chster Seed wird immer dem Callable zugeordnet der bisher die wenigsten 
 	//Nachbarn (insgesamt) hat)
 	private int numOfNeighbours;
 
@@ -45,7 +43,7 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 
 
 	/*
-	 * Expansion: Seeds werden gemäß der Kriteiren (homogenity/density erweitert)
+	 * Expansion: Seeds werden gemï¿½ï¿½ der Kriteiren (homogenity/density erweitert)
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	public LinkedHashSet<HashSet<Integer>> call(){
@@ -89,7 +87,7 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 		
 		
 		/*
-		 * Entfernung doppelter Cluster: (geprüft wird auch ob ein Cluster ein anderes enthält)
+		 * Entfernung doppelter Cluster: (geprï¿½ft wird auch ob ein Cluster ein anderes enthï¿½lt)
 		 */
 //		LinkedHashSet<HashSet<Integer>> removeSubsets = new LinkedHashSet<HashSet<Integer>>();
 //		
@@ -110,7 +108,7 @@ public class DCBexpansion implements Callable<LinkedHashSet<HashSet<Integer>>>{
 		return extended;
 	}
 	
-	//hinzufügen eines seeds
+	//hinzufï¿½gen eines seeds
 	public void putSeed(HashSet<Integer> seed, HashSet<Integer> neighbours){
 		numOfNeighbours += neighbours.size();
 		seeds.put(seed, neighbours);

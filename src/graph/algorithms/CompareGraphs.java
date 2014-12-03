@@ -1,25 +1,13 @@
 package graph.algorithms;
 
 //import edu.uci.ics.jung.graph.Vertex;
-import graph.CreatePathway;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindowSingleton;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.xml.stream.XMLStreamException;
-
-import xmlInput.sbml.VAMLInput;
-import xmlOutput.sbml.VAMLoutput;
-import biologicalElements.GraphElementAbstract;
-import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -54,23 +42,26 @@ public class CompareGraphs {
 
 	public static void mergeGraph(Pathway pathway) {
 
-		Vector pathwayOneNodes = pathway.getAllNodesAsVector();
+		Vector<BiologicalNodeAbstract> pathwayOneNodes = pathway.getAllNodesAsVector();
 		MyGraph graph1 = pathway.getGraph();
 
 		graph1.enableGraphTheory();
 		Vector<BiologicalNodeAbstract> checked = new Vector<BiologicalNodeAbstract>();
 
-		Vector pathwayTwoNodes = pathway.getAllNodesAsVector();
+		Vector<BiologicalNodeAbstract> pathwayTwoNodes = pathway.getAllNodesAsVector();
 
-		Iterator it = pathwayOneNodes.iterator();
+		Iterator<BiologicalNodeAbstract> it = pathwayOneNodes.iterator();
+		BiologicalNodeAbstract bna;
+		BiologicalNodeAbstract bna2;
+		Iterator<BiologicalNodeAbstract> it2;
+		
 		while (it.hasNext()) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
+			bna = it.next();
 
-			Iterator it2 = pathwayTwoNodes.iterator();
+			it2 = pathwayTwoNodes.iterator();
 
 			while (it2.hasNext()) {
-				BiologicalNodeAbstract bna2 = (BiologicalNodeAbstract) it2
-						.next();
+				bna2 = it2.next();
 
 				if ((bna2 != bna) && !checked.contains(bna2)) {
 
@@ -103,23 +94,26 @@ public class CompareGraphs {
 
 		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
 
-		Vector pathwayOneNodes = one.getAllNodesAsVector();
+		Vector<BiologicalNodeAbstract> pathwayOneNodes = one.getAllNodesAsVector();
 		MyGraph graph1 = one.getGraph();
 		graph1.enableGraphTheory();
 
-		Vector pathwayTwoNodes = two.getAllNodesAsVector();
+		Vector<BiologicalNodeAbstract> pathwayTwoNodes = two.getAllNodesAsVector();
 		MyGraph graph2 = two.getGraph();
 		graph2.enableGraphTheory();
 
-		Iterator it = pathwayOneNodes.iterator();
+		Iterator<BiologicalNodeAbstract> it = pathwayOneNodes.iterator();
+		BiologicalNodeAbstract bna;
+		Iterator<BiologicalNodeAbstract> it2;
+		BiologicalNodeAbstract bna2;
+		
 		while (it.hasNext()) {
 
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) it.next();
-			Iterator it2 = pathwayTwoNodes.iterator();
+			bna = it.next();
+			it2 = pathwayTwoNodes.iterator();
 			while (it2.hasNext()) {
 
-				BiologicalNodeAbstract bna2 = (BiologicalNodeAbstract) it2
-						.next();
+				bna2 = it2.next();
 				if (areNodesEqualLabeled(bna, bna2)) {
 					graph1.getVisualizationViewer().getPickedVertexState()
 							.pick(bna, true);

@@ -1,25 +1,27 @@
 package graph.algorithms;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NavigableMap;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +30,6 @@ import java.util.concurrent.Future;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -36,13 +37,6 @@ import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.GraphNode;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
 
 public class DenselyConnectedBiclustering {
 	
@@ -92,11 +86,11 @@ public class DenselyConnectedBiclustering {
 	 * Eingabedaten des Benutzers:
 	 */
 	//Max. Distanz der Attribute
-	final ArrayList<Double>[] rangesArray;
+	private final ArrayList<Double>[] rangesArray;
 	//# der Attributs-Dimensionen dei �bereinstimmen m�ssen
-	int attrdim;
+	private int attrdim;
 	//Min. Dichte der Cluster
-	double density;
+	private double density;
 	//Test2:
 //	double range = 0.0;
 //	int numDim = 3;
@@ -111,8 +105,8 @@ public class DenselyConnectedBiclustering {
 //	double density = 0.8;
 	
 	//TODO entfernen (nur zum testen)
-	long preprocessingTime;
-	long seedGeneration1Time;
+	private long preprocessingTime;
+	private long seedGeneration1Time;
 
 	// Constructor: Benutzereingaben werden gesetzt. Aufruf der dcb-Methode
 	public DenselyConnectedBiclustering(double density, ArrayList<Double> ranges2, int nodeType, 

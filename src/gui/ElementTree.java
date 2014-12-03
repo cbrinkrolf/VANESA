@@ -3,7 +3,6 @@ package gui;
 //import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
 import graph.jung.classes.MyVisualizationViewer;
 
@@ -31,8 +30,6 @@ import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
-
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;

@@ -1218,6 +1218,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		for (i = 0; i < rowsDim; i++) {
 			columNames[i + 1] = "t=" + pw.getPetriNet().getTime().get(i);
 		}
-		return new RegulationTabelModel(rows, columNames, nodeTabel);
+		return new RegulationTabelModel(rows, columNames);
 	}
 }

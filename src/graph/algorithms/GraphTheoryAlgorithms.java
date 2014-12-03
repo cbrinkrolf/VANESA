@@ -1,6 +1,5 @@
 package graph.algorithms;
 
-import java.lang.Math.*;
 import java.util.Random;
 
 public class GraphTheoryAlgorithms extends Object {

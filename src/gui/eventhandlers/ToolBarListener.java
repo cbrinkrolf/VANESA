@@ -22,18 +22,13 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.apache.tools.ant.taskdefs.condition.IsSet;
-
 import petriNet.ConvertToPetriNet;
 import petriNet.OpenModellicaResult;
 import petriNet.PNTableDialog;
 import petriNet.PetriNetSimulation;
-import petriNet.Place;
 import petriNet.ReachController;
 import save.graphPicture.WriteGraphPicture;
-import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ToolBarListener implements ActionListener {
@@ -277,7 +272,7 @@ public class ToolBarListener implements ActionListener {
 				    "The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
 				    "Please Conform your action...",
 				    JOptionPane.YES_NO_OPTION)== JOptionPane.YES_OPTION) new ReachController();
-			graphInstance.getMyGraph().changeToGEMLayout();
+			GraphInstance.getMyGraph().changeToGEMLayout();
 		
 		}
 		else if ("editElements".equals(event)) {
@@ -294,7 +289,7 @@ public class ToolBarListener implements ActionListener {
 			new PetriNetSimulation();
 		}
 		else if ("coarseSelectedNodes".equals(event)){
-			if(graphInstance.getMyGraph() != null){
+			if(GraphInstance.getMyGraph() != null){
 				//System.out.println("coarse");
 				Set<BiologicalNodeAbstract> selectedNodes = new HashSet<BiologicalNodeAbstract>();
 				selectedNodes.addAll(graphInstance.getPathway().getSelectedNodes());
@@ -305,7 +300,7 @@ public class ToolBarListener implements ActionListener {
 			}
 		}
 		else if ("flatSelectedNodes".equals(event)){
-			if(graphInstance.getMyGraph() != null){
+			if(GraphInstance.getMyGraph() != null){
 				for(BiologicalNodeAbstract node : con.getPathway((w.getCurrentPathway())).getGraph().
 						getVisualizationViewer().getPickedVertexState().getPicked()){
 					node.flat();
@@ -317,7 +312,7 @@ public class ToolBarListener implements ActionListener {
 				}
 		}
 		else if ("enterNode".equals(event)){
-			if(graphInstance.getMyGraph() != null){
+			if(GraphInstance.getMyGraph() != null){
 					for(BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().
 							getVisualizationViewer().getPickedVertexState().getPicked()){
 						w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -347,7 +342,7 @@ public class ToolBarListener implements ActionListener {
 			}
 		}
 		else if("mergeSelectedNodes".equals(event)){
-			if(graphInstance.getMyGraph() != null){
+			if(GraphInstance.getMyGraph() != null){
 			//System.out.println("merge");
 			graphInstance.getPathway().mergeNodes(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
 			}else{
@@ -355,7 +350,7 @@ public class ToolBarListener implements ActionListener {
 			}
 		}
 		else if("splitNode".equals(event)){
-			if(graphInstance.getMyGraph() != null){
+			if(GraphInstance.getMyGraph() != null){
 				graphInstance.getPathway().splitNode(graphInstance.getPathway().getGraph().getVisualizationViewer().getPickedVertexState().getPicked());
 			}
 		}

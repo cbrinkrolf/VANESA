@@ -2,7 +2,6 @@ package graph.algorithms.gui;
 
 import graph.algorithms.RandomGraph;
 import gui.MainWindowSingleton;
-import gui.algorithms.ScreenSize;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

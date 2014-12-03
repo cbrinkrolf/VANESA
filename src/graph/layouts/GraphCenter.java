@@ -18,7 +18,6 @@ public class GraphCenter {
 	private double width;
 	private double height;
 	private Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
-	private MyGraph g;
 	
 	private double x_min=0;
 	private double x_max=0;
@@ -33,7 +32,6 @@ public class GraphCenter {
 	public GraphCenter(MyGraph g, Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> l){
 		layout=l;
 		vertices=g.getAllVertices();
-		this.g = g;
 		initBoundaries();
 	}
 	
