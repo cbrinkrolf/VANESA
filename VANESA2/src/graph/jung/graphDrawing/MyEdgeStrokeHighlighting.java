@@ -8,6 +8,7 @@ import org.apache.commons.collections15.Transformer;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.picking.PickedState;
+import graph.GraphInstance;
 
 public class MyEdgeStrokeHighlighting implements
 		Transformer<BiologicalEdgeAbstract, Stroke> {
@@ -15,6 +16,11 @@ public class MyEdgeStrokeHighlighting implements
 	protected static final Stroke basic = new BasicStroke(2);
 
 	protected static final Stroke heavy = new BasicStroke(4);
+	
+	protected static final float log = (float) Math.log(1.5);
+	protected static final float pickedFactor = 1.4f;
+	
+	protected static Stroke hierarchical;
 
 	// protected static final Stroke dotted = new SloppyStroke(2.0f, 3.0f);
 	final static float dash1[] = {10.0f};
@@ -35,13 +41,17 @@ public class MyEdgeStrokeHighlighting implements
 	}
 
 	private Stroke getStrokeWithoutGraphTheory(BiologicalEdgeAbstract bea) {
-
+		float strength = (float) Math.log1p(GraphInstance.getPathwayStatic().edgeGrade(bea))/log;
+		hierarchical = new BasicStroke(strength);
+		Stroke picked = new BasicStroke(pickedFactor*strength);
 		if (psV.getPicked().isEmpty()) {
 			if (psE.getPicked().isEmpty()) {
-				return basic;
+//				return basic;
+				return hierarchical;
 			} else {
 				if (psE.isPicked(bea)) {
-					return heavy;
+//					return heavy;
+					return picked;
 				} else {
 					return dotted;
 				}
@@ -49,7 +59,8 @@ public class MyEdgeStrokeHighlighting implements
 		} else {
 
 			if (psV.isPicked(bea.getFrom()) || psV.isPicked(bea.getTo())) {
-				return heavy;
+//				return heavy;
+				return picked;
 			} else {
 				return dotted;
 			}
