@@ -156,6 +156,8 @@ public class Pathway implements Cloneable {
 	private HashMap<Place, Double> changedInitialValues = new HashMap<Place, Double>();
 
 	private HashMap<Place, Boundary> changedBoundaries = new HashMap<Place, Boundary>();
+	
+	private BiologicalNodeAbstract rootNode;
 
 	// ---Functional Methods---
 
@@ -1702,6 +1704,17 @@ public class Pathway implements Cloneable {
 		if(getOpenedSubPathways().contains(n))
 			return openedSubPathways.get(n);
 		return null;
+	}
+	
+	public BiologicalNodeAbstract getRootNode(){
+		if(rootNode != null || getRootPathway()==this){
+			return rootNode;
+		}
+		return getRootPathway().getRootNode();
+	}
+	
+	public void setRootNode(BiologicalNodeAbstract node){
+		rootNode = node;
 	}
 
 	public void handleChangeFlags(int flag) {

@@ -463,9 +463,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 */
 	public void makeCoarseShape(){
 		Shape coarseShape = shape;
-		if(!isPetriNet()){
-			coarseShape = shapes.getEllipse();
-		}
+//		if(!isPetriNet()){
+//			coarseShape = shapes.getEllipse();
+//		}
 		coarseShape = shapes.makeCoarse(coarseShape);
 		setDefaultShape(coarseShape);
 		setShape(coarseShape);
