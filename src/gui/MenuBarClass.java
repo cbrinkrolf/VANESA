@@ -69,6 +69,8 @@ public class MenuBarClass {
 	private JMenuItem modellicaResult;
 	private JMenuItem editPNelements;
 	private JMenuItem simulate;
+	private JMenuItem createDoc;
+	
 	private JMenuItem convertPetriNet;
 	
 	private JMenuItem resolveReferences;
@@ -407,6 +409,11 @@ public class MenuBarClass {
 		simulate = new JMenuItem("Simulate");
 		simulate.addActionListener(new MenuListener());
 		simulate.setActionCommand("simulate");
+		
+		createDoc = new JMenuItem("Create Documentation");
+		createDoc.addActionListener(new MenuListener());
+		createDoc.setActionCommand("createDoc");
+		
 		editPNelements = new JMenuItem("Edit PN-Elements");
 		editPNelements.addActionListener(new MenuListener());
 		editPNelements.setActionCommand("editElements");
@@ -421,6 +428,7 @@ public class MenuBarClass {
 		petriNets.add(testTInvariant);
 		petriNets.add(cov);
 		petriNets.add(covreach);
+		petriNets.add(createDoc);
 		
 		transformation.add(resolveReferences);
 		
@@ -476,6 +484,7 @@ public class MenuBarClass {
 			covreach.setEnabled(true);
 			modellicaResult.setEnabled(true);
 			editPNelements.setEnabled(true);
+			createDoc.setEnabled(true);
 		} else
 			convertPetriNet.setEnabled(true);
 	}
@@ -489,6 +498,7 @@ public class MenuBarClass {
 		modellicaResult.setEnabled(isPetriNet);
 		editPNelements.setEnabled(isPetriNet);
 		convertPetriNet.setEnabled(!isPetriNet);
+		createDoc.setEnabled(isPetriNet);
 	}
 
 	public void disableCloseAndSaveFunctions() {
@@ -521,5 +531,6 @@ public class MenuBarClass {
 		convertPetriNet.setEnabled(false);
 		modellicaResult.setEnabled(false);
 		editPNelements.setEnabled(false);
+		createDoc.setEnabled(false);
 	}
 }
