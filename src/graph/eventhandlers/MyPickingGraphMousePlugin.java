@@ -143,11 +143,11 @@ public class MyPickingGraphMousePlugin extends
 		super.mousePressed(e);
 		originalSelection.clear();
 		originalSelection.addAll(graphInstance.getPathway().getSelectedNodes());
-		if(graphInstance.getMyGraph().getLayout() instanceof HEBLayout){
-			HEBLayout hebLayout = (HEBLayout) graphInstance.getMyGraph().getLayout();
-			if(hebLayout.getConfig().getMoveInGroups()){
+		if(graphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout){
+			HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) graphInstance.getMyGraph().getLayout();
+			if(hcLayout.getConfig().getMoveInGroups()){
 				for(BiologicalNodeAbstract selectedNode : graphInstance.getPathway().getSelectedNodes()){
-					for(BiologicalNodeAbstract node : hebLayout.getNodesGroup(selectedNode)){
+					for(BiologicalNodeAbstract node : hcLayout.getNodesGroup(selectedNode)){
 						graphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().pick(node, true);
 					}
 				}

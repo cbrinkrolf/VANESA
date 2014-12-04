@@ -193,9 +193,9 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	 * @return Point on the circle.
 	 * @author tloka
 	 */
-	public Point2D getPointOnCircle(double angle){
-		double x = (float)Math.cos(angle) * getRadius() + getCenterPoint().getX();
-		double y = (float)Math.sin(angle)*getRadius() + getCenterPoint().getY();
+	public Point2D getPointOnCircle(double angle, int circle){
+		double x = (float)Math.cos(angle) * circle* getRadius() + getCenterPoint().getX();
+		double y = (float)Math.sin(angle)* circle * getRadius() + getCenterPoint().getY();
 		return new Point2D.Double(x,y);
 	}
 	
@@ -234,7 +234,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
         	
         	Point2D vp = layout.transform(v);
 
-        	vp.setLocation(getPointOnCircle(finalAngle));
+        	vp.setLocation(getPointOnCircle(finalAngle, circleVertexDataMap.get(v).getCircleNumber()));
         	GraphInstance.getMyGraph().moveVertex(v, vp.getX(), vp.getY());
         	layout.setLocation(v, vp);     	
         }
@@ -252,7 +252,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 			MyGraph g = GraphInstance.getMyGraph();
         	Point2D vp;
 			for(BiologicalNodeAbstract n : g.getAllVertices()){
-					vp = getPointOnCircle(Circle.getAngle(getCenterPoint(),g.getVertexLocation(n)));
+					vp = getPointOnCircle(Circle.getAngle(getCenterPoint(),g.getVertexLocation(n)), circleVertexDataMap.get(n).getCircleNumber());
 				g.moveVertex(n, vp.getX(), vp.getY());
 			}
 		}
@@ -292,6 +292,10 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	public static class CircleVertexData extends CircleLayout.CircleVertexData{
 		
         private double angle;
+        
+        public int getCircleNumber(){
+        	return 1;
+        }
         
         public double getVertexAngle(){
         	return getAngle();
