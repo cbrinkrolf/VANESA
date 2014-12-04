@@ -1707,8 +1707,12 @@ public class Pathway implements Cloneable {
 	}
 	
 	public BiologicalNodeAbstract getRootNode(){
-		if(rootNode != null || getRootPathway()==this){
+		if(rootNode != null && getAllNodes().contains(rootNode))
 			return rootNode;
+		if(getRootPathway()==this && getAllNodes().contains(rootNode)){
+			return rootNode;
+		} else if(getRootPathway()==this){
+			return null;
 		}
 		return getRootPathway().getRootNode();
 	}
