@@ -29,6 +29,7 @@ public class MenuBarClass {
 	private JMenuItem isomLayout;
 	private JMenuItem gemLayout;
 	private JMenuItem hebLayout;
+	private JMenuItem hctLayout;
 	//private JMenuItem centerGraph;
 	private JMenuItem databaseItem;
 	
@@ -224,9 +225,14 @@ public class MenuBarClass {
 		circleLayout.addActionListener(new MenuListener());
 		circleLayout.setActionCommand("circleLayout");
 		
-		hebLayout = new JMenuItem("HEBLayout");
+		hebLayout = new JMenuItem("Hierarchical Edge Bundling");
 		hebLayout.addActionListener(new MenuListener());
 		hebLayout.setActionCommand("hebLayout");
+		
+		hctLayout = new JMenuItem("Hierarchical Circle Tree");
+		hctLayout.addActionListener(new MenuListener());
+		hctLayout.setActionCommand("hctLayout");
+		
 
 		isomLayout = new JMenuItem("ISOMLayout", KeyEvent.VK_S);
 		isomLayout.addActionListener(new MenuListener());
@@ -376,6 +382,7 @@ public class MenuBarClass {
 
 		layout.add(circleLayout);
 		layout.add(hebLayout);
+		layout.add(hctLayout);
 		layout.add(frLayout);
 		layout.add(isomLayout);
 		layout.add(kkLayout);
@@ -468,6 +475,8 @@ public class MenuBarClass {
 		kkLayout.setEnabled(true);
 		springLayout.setEnabled(true);
 		gemLayout.setEnabled(true);
+		hebLayout.setEnabled(true);
+		hctLayout.setEnabled(true);
 		// animations.setEnabled(true);
 		export.setEnabled(true);
 		/*
@@ -514,6 +523,8 @@ public class MenuBarClass {
 		kkLayout.setEnabled(false);
 		springLayout.setEnabled(false);
 		gemLayout.setEnabled(false);
+		hebLayout.setEnabled(false);
+		hctLayout.setEnabled(false);
 		// animations.setEnabled(false);
 		// openNetwork.setEnabled(false);
 		export.setEnabled(false);
