@@ -6,7 +6,6 @@ package petriNet;
 import graph.ContainerSingelton;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindowSingleton;
-import gui.algorithms.ScreenSize;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -142,7 +141,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 					 */
 					private static final long serialVersionUID = 1L;
 
-			public Class getColumnClass(int columnIndex) {
+			public Class<?> getColumnClass(int columnIndex) {
 				if (columnIndex == 0 || columnIndex == 1)
 					return String.class;
 				else if (columnIndex == 6 || columnIndex == 8)
@@ -213,7 +212,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 					 */
 					private static final long serialVersionUID = 1L;
 
-			public Class getColumnClass(int columnIndex) {
+			public Class<?> getColumnClass(int columnIndex) {
 				if (columnIndex == 0 || columnIndex == 1 || columnIndex == 2
 						|| columnIndex == 3 || columnIndex == 4)
 					return String.class;

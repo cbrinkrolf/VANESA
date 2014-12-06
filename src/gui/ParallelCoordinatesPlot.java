@@ -5,7 +5,6 @@ package gui;
  import edu.uci.ics.jung.utils.Pair;
  import edu.uci.ics.jung.utils.UserData;
  import edu.uci.ics.jung.visualization.PickedState;*/
-import edu.emory.mathcs.backport.java.util.Collections;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
 import graph.animations.RegulationTabelModel;
@@ -20,15 +19,11 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -63,7 +58,6 @@ import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
-import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -88,13 +82,13 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 	// prepare data sets
-	private Hashtable<Integer, BiologicalNodeAbstract> nodeTabel = new Hashtable<Integer, BiologicalNodeAbstract>();
+	//private Hashtable<Integer, BiologicalNodeAbstract> nodeTabel = new Hashtable<Integer, BiologicalNodeAbstract>();
 	// instance of main window
 	MainWindow w;
 
 	// create GUI components
 	private JButton showTable = new JButton("show detailed simulation results");
-	private JButton drawPlots = new JButton("show all animation result plots");
+	//private JButton drawPlots = new JButton("show all animation result plots");
 
 	private JButton drawPCP = new JButton("Draw Timeseries");
 	private JLabel stepLabel = new JLabel("Step 0");
@@ -386,7 +380,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 						.iterator();
 			}
 
-			int j = 0;
+			//int j = 0;
 			while (iterator.hasNext()) {
 				bna = iterator.next();
 

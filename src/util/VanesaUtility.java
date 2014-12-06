@@ -1,21 +1,16 @@
 package util;
 
-import java.util.Vector;
-
-import configurations.asyncWebservice.CallbackHandler;
-import configurations.asyncWebservice.WebServiceEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.ObjectSupplier;
+
 import pojos.DBColumn;
+import configurations.asyncWebservice.WebServiceEvent;
 
 /**
  *
@@ -40,14 +35,15 @@ public class VanesaUtility {
         // SOAP envelope -> create a readable OMElement
         OMElement element = event.getServiceResult();
         
-        Iterator it = element.getChildrenWithLocalName("column");
-            Object[] javaTypes = {DBColumn.class};
+        Iterator<OMElement> it = element.getChildrenWithLocalName("column");
+            //Object[] javaTypes = {DBColumn.class};
             ArrayList<DBColumn> results = new ArrayList<DBColumn>();
             ObjectSupplier objectSupplier = new AxisService().getObjectSupplier();
 
             // get all DBColumn deserialized
+            OMElement oneDBColumn;
         while(it.hasNext()){
-            OMElement oneDBColumn = (OMElement) (it.next());
+           oneDBColumn = (it.next());
 
             DBColumn workingColumn;
             try {

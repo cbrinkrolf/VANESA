@@ -106,7 +106,7 @@ public class JSBMLinput {
 		// get root-element
 		Element sbmlNode = doc.getRootElement();
 		Element modelNode = sbmlNode.getChild("model", null);
-		List<Element> modelNodeChildren = modelNode.getChildren();
+		//List<Element> modelNodeChildren = modelNode.getChildren();
 
 		Element annotationNode = modelNode.getChild("annotation", null);
 		createAnnotation(annotationNode);
