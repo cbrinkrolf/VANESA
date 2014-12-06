@@ -131,8 +131,7 @@ public class RandomGraphGui extends JFrame implements ActionListener {
 		} else if ("new".equals(event)) {
 			dialog.setVisible(false);
 
-			RandomGraph random = new RandomGraph();
-			random.generateRandomGraph((Integer) nodes.getValue(),
+			RandomGraph.generateRandomGraph((Integer) nodes.getValue(),
 					(Integer) edges.getValue(), simple.isSelected(),
 					directed.isSelected(), acyclic.isSelected(),
 					weighted.isSelected(), (Integer) minWeight.getValue(),

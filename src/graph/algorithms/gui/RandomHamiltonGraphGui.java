@@ -121,8 +121,7 @@ public class RandomHamiltonGraphGui extends JFrame implements ActionListener {
 		} else if ("new".equals(event)) {
 			dialog.setVisible(false);
 
-			RandomHamiltonGraph random = new RandomHamiltonGraph();
-			random.generateRandomGraph((Integer) nodes.getValue(),
+			RandomHamiltonGraph.generateRandomGraph((Integer) nodes.getValue(),
 					(Integer) edges.getValue(), directed.isSelected(),
 					weighted.isSelected(), (Integer) minWeight.getValue(),
 					(Integer) maxWeight.getValue());

@@ -80,12 +80,12 @@ public class MyAnimatedPickingGraphMousePlugin extends PickingGraphMousePlugin<B
 								Elementdeclerations.smallMolecule)) {
 					String urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/protein_result.jsp?Protein_Id="
 							+ bna.getLabel();
-					new FollowLink().openURL(urlString);
+					FollowLink.openURL(urlString);
 				} else if (bna.getBiologicalElement().equals(
 						Elementdeclerations.enzyme)) {
 					String urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/enzyme_result.jsp?Enzyme_Id="
 							+ bna.getLabel();
-					new FollowLink().openURL(urlString);
+					FollowLink.openURL(urlString);
 
 				}
 			}

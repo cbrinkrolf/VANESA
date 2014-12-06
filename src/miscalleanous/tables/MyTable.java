@@ -13,6 +13,10 @@ import org.jdesktop.swingx.JXTable;
 
 public class MyTable extends JXTable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected CellEditors editors;
 
 	public MyTable() {

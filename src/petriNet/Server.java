@@ -7,8 +7,10 @@ import gui.MainWindow;
 import gui.MainWindowSingleton;
 
 import java.awt.Color;
-import java.io.*;
-import java.net.Socket;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -17,8 +19,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;

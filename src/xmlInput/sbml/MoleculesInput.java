@@ -55,7 +55,7 @@ public class MoleculesInput {
 	
 	private void getData(InputStream stream) throws FileNotFoundException, XMLStreamException{
 		
-		Vector v = new Vector();
+		Vector<MoleculesPair> v = new Vector<MoleculesPair>();
 		
 //		InputStream in = new FileInputStream(file);
 		InputStream in = stream;

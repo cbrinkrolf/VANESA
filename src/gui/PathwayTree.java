@@ -8,16 +8,13 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 
-import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -30,6 +27,10 @@ import biologicalElements.Pathway;
 
 public class PathwayTree extends JPanel implements TreeSelectionListener{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JXTree tree = new JXTree(new DefaultMutableTreeNode() );
 	private JScrollPane scrollTree=new JScrollPane();
 	private DefaultTreeModel model;

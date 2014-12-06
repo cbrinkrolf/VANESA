@@ -33,7 +33,6 @@ import org.sbml.jsbml.xml.XMLTriple;
 
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
-import petriNet.PNEdge;
 import petriNet.StochasticTransition;
 import petriNet.Transition;
 import util.MyIntComparable;
@@ -41,7 +40,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DAWISNode;
-import biologicalObjects.nodes.MicroArrayAttributes;
 
 /**
  * This class represents a writer from graph data to a SBML file. The actual

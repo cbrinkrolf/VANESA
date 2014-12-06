@@ -59,14 +59,15 @@ public class IntegrationResults extends JFrame implements ActionListener{
 	 * 
 	 */
 
-	public IntegrationResults(Vector entries) {
+	public IntegrationResults(Vector<String[]> entries) {
 	
 		Object[][] rows = new Object[entries.size()][4];
 		int iterator_count = 0;
-		Iterator it = entries.iterator();
+		Iterator<String[]> it = entries.iterator();
+		String[] details;
 		while (it.hasNext()) {
 			
-			String[] details = (String[]) it.next();
+			details = it.next();
 			rows[iterator_count][0] = details[0];
 			rows[iterator_count][1] = details[1];
 			rows[iterator_count][2] = details[2];
@@ -144,13 +145,18 @@ public class IntegrationResults extends JFrame implements ActionListener{
 
 class TabelModel extends NodePropertyTableModel{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public TabelModel(Object[][] rows, String[] headers) {
 		super(rows, headers);
 		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
-	public Class getColumnClass(int c) {
+	public Class<?> getColumnClass(int c) {
 		return String.class;
     }
 
