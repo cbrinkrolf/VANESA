@@ -16,16 +16,12 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-
-import org.apache.commons.collections.Factory;
-import org.apache.commons.collections.map.LazyMap;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -47,13 +43,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	//private Point2D startDragging;
 	//private RangeInfo justCreated;
 	// private Font font = new Font(Font.SERIF, Font.BOLD, 16);
-	private Map<MyGraph, List<RangeInfo>> ranges = LazyMap.decorate(
-			new HashMap(), new Factory() {
-
-				public Object create() {
-					return new ArrayList();
-				}
-			});
+	
 	//private boolean enabled;
 	private static RangeSelector instance;
 	//private Color fillColor = Color.cyan;
@@ -157,7 +147,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		List<RangeInfo> list = new ArrayList<RangeInfo>();
 		Iterator<MyAnnotation> it = am.getAnnotations().iterator();
 		MyAnnotation an;
-		Annotation a;
+		Annotation<Annotation.Layer> a;
 		RangeInfo r;
 		while (it.hasNext()) {
 
@@ -189,7 +179,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 			// System.out.println(r.shape.getX());
 			// System.out.println(r.shape.getY());
 			graphInstance = new GraphInstance();
-			am = graphInstance.getMyGraph().getAnnotationManager();
+			am = GraphInstance.getMyGraph().getAnnotationManager();
 			// am = GraphInstance.getMyGraph().getAnnotationManager();
 
 			if (r.shape instanceof Ellipse2D) {
@@ -197,7 +187,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 			} else {
 				// System.out.println("rect");
 			}
-			Annotation a2;
+			Annotation<Annotation.Layer> a2;
 			if (r.text.length() > 0) {
 				// System.out.println(r.shape);
 				// System.out.println(r.shape.getMinX());
@@ -219,9 +209,9 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 			am.add(Annotation.Layer.LOWER, new MyAnnotation(a2, r.shape, r.text));
 			// System.out.println("drin");
 			// System.out.println("am: "+am);
-			graphInstance.getMyGraph().getVisualizationViewer()
+			GraphInstance.getMyGraph().getVisualizationViewer()
 					.addPreRenderPaintable(am.getLowerAnnotationPaintable());
-			graphInstance.getMyGraph().getVisualizationViewer()
+			GraphInstance.getMyGraph().getVisualizationViewer()
 					.addPostRenderPaintable(am.getUpperAnnotationPaintable());
 		} catch (Exception e) {
 			e.printStackTrace();

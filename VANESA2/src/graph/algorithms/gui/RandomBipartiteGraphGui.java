@@ -100,8 +100,7 @@ public class RandomBipartiteGraphGui extends JFrame implements ActionListener {
 		} else if ("new".equals(event)) {
 			dialog.setVisible(false);
 			
-			RandomBipartiteGraph random = new RandomBipartiteGraph(); 
-			random.generateRandomGraph((Integer) nodes.getValue(), (Integer) nodes2.getValue(), (Integer) edges.getValue());
+			RandomBipartiteGraph.generateRandomGraph((Integer) nodes.getValue(), (Integer) nodes2.getValue(), (Integer) edges.getValue());
 		}
 		
 	} 

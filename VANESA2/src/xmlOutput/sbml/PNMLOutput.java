@@ -5,12 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.regex.Pattern;
-
-import javax.swing.JOptionPane;
 
 import petriNet.PNEdge;
 import petriNet.Place;
@@ -24,12 +18,11 @@ import fr.lip6.move.pnml.framework.utils.exception.OtherException;
 import fr.lip6.move.pnml.framework.utils.exception.UnhandledNetType;
 import fr.lip6.move.pnml.framework.utils.exception.ValidationFailedException;
 import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
+import fr.lip6.move.pnml.ptnet.hlapi.ArcGraphicsHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.ArcHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.NameHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.NodeGraphicsHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.PNTypeHLAPI;
-import fr.lip6.move.pnml.ptnet.hlapi.PTMarkingHLAPI;
-import fr.lip6.move.pnml.ptnet.hlapi.ArcGraphicsHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.PageHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.PetriNetDocHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.PetriNetHLAPI;
@@ -37,9 +30,6 @@ import fr.lip6.move.pnml.ptnet.hlapi.PlaceHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.PositionHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.TransitionHLAPI;
 import graph.GraphInstance;
-import gui.MainWindowSingleton;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class PNMLOutput {
 
@@ -71,7 +61,7 @@ public class PNMLOutput {
 	// Arc in pnml
 	private ArcHLAPI arc;
 
-	private int workspace = 0;
+	//private int workspace = 0;
 
 	private int netId = 0;
 	// Petri Net is validated
@@ -81,9 +71,9 @@ public class PNMLOutput {
 
 	private boolean placeFrom = false;
 
-	private boolean transitionTo = false;
+	//private boolean transitionTo = false;
 
-	private boolean placeTo = false;
+	//private boolean placeTo = false;
 
 	private PetriNetDocHLAPI doc;
 
@@ -122,10 +112,10 @@ public class PNMLOutput {
 		PageHLAPI page = new PageHLAPI("toppage",
 				new NameHLAPI(file.getName()), null, net);
 
-		int labelid = 0;
+		//int labelid = 0;
 		int arcid = 0;
 		String placeLabel;
-		String placeLabel2;
+		//String placeLabel2;
 		String transitionLabel;
 
 		GraphInstance g = new GraphInstance();
@@ -145,8 +135,8 @@ public class PNMLOutput {
 				/*
 				 * Set the Marking of a place.
 				 */
-				PTMarkingHLAPI ptMarking = new PTMarkingHLAPI(
-						(int) this.bnaliste.get(i).getToken(), p1);
+				//PTMarkingHLAPI ptMarking = new PTMarkingHLAPI(
+					//	(int) this.bnaliste.get(i).getToken(), p1);
 				/*
 				 * Set the position of a place.
 				 */
@@ -218,13 +208,13 @@ public class PNMLOutput {
 			if (this.bealiste.get(i).getTo() instanceof Place) {
 				p1 = (PlaceHLAPI) placePNML.get("P_"
 						+ this.bealiste.get(i).getTo().getID());
-				placeTo = true;
+				//placeTo = true;
 
 			}
 			if (this.bealiste.get(i).getTo() instanceof Transition) {
 				t1 = (TransitionHLAPI) transitionPNML.get("T_"
 						+ this.bealiste.get(i).getTo().getID());
-				transitionTo = true;
+				//transitionTo = true;
 
 			}
 
@@ -236,9 +226,9 @@ public class PNMLOutput {
 
 			}
 			placeFrom = false;
-			transitionTo = false;
+			//transitionTo = false;
 			transitionFrom = false;
-			placeTo = false;
+			//placeTo = false;
 
 			/*
 			 * Position of arc

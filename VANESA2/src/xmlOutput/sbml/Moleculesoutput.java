@@ -54,11 +54,12 @@ public class Moleculesoutput {
 
 
 	private void getMolecules() throws XMLStreamException {
-		Iterator it = box.getAllValues().iterator();
+		Iterator<MoleculesPair> it = box.getAllValues().iterator();
 		int i = 0;
+		MoleculesPair p;
 		while (it.hasNext()) {
 
-			MoleculesPair p = (MoleculesPair) it.next();
+			p = it.next();
 
 			writer.writeStartElement("moleculeProperties");
 			writer.writeAttribute("name", p.getName());
