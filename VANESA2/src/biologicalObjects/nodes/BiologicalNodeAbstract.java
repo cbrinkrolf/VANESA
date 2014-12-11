@@ -250,6 +250,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * Method to coarse a set of nodes to a hierarchical node with automatic generated id.
 	 * @param vertices Nodes to coarse.
 	 * @return The created coarseNode. Null, if coarsing was not successful.
+	 * @author tloka
 	 */
 	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes){
 		return BiologicalNodeAbstract.coarse(nodes, null, null);
@@ -257,7 +258,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	/**
 	 * Method to coarse a set of nodes to a hierarchical node with a given id. 
-	 * ONLY TO BE USED DURING IMPORTING PROCESS, OTHERWISE USE METHOD WITHOUT ID PARAMETER!
+	 * ONLY SET ID DURING IMPORTING PROCESS.
 	 * 
 	 * @param nodes Nodes to coarse.
 	 * @param id Id for the new generated coarse node.			
@@ -269,10 +270,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		if(nodes == null  || nodes.size()<1){
 			return null;
 		}
+		
 		BiologicalNodeAbstract coarseNode = computeCoarseType(nodes);
 		
 		if(coarseNode == null || !isCoarsingAllowed(nodes)){
-//		if(coarseNode == null){
 			showCoarsingErrorMessage();
 			return null;
 		}
@@ -280,7 +281,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		coarseNode = coarseNode.clone();
 		coarseNode.cleanUpHierarchyElements();
 		
-		String lbl;
+		String lbl = label;
 		if(label==null){
 			lbl = JOptionPane.showInputDialog(MainWindowSingleton.getInstance(), null, 
 					"Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
@@ -289,9 +290,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			} else if(lbl.isEmpty()){
 				lbl = "id_" + coarseNode.getID();
 			}
-		} else {
-			lbl=label;
 		}
+		
 		if(id==null){
 			coarseNode.setID(true);
 		} else {
@@ -665,19 +665,17 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		if (!isCoarseNode())
 			return;
 		
-//		printAllHierarchicalAttributes();
 		if(this.getParentNode()!=null && this.getParentNode().getGraph()!=getActiveGraph()){
 			return;
-		}
-
-		for(BiologicalNodeAbstract node : getInnerNodes()){
-			node.setParentNode(getParentNode());
 		}
 
 		this.setStateChanged(NodeStateChanged.FLATTENED);
 		getRootPathway().updateMyGraph();
 		
-//		printAllHierarchicalAttributes();
+		for(BiologicalNodeAbstract node : getInnerNodes()){
+			node.setParentNode(getParentNode());
+		}
+		
 	}
 	
 	/** 
