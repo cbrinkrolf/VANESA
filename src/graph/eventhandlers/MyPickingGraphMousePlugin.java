@@ -172,6 +172,15 @@ public class MyPickingGraphMousePlugin extends
 		if (arg0.getClickCount() == 1) {
 			super.mouseClicked(arg0);
 			// System.out.println("v: "+this.vertex);
+			
+			Vector<BiologicalNodeAbstract> v = graphInstance.getPathway()
+					.getSelectedNodes();
+
+			Iterator<BiologicalNodeAbstract> it = v.iterator();
+			while (it.hasNext()) {
+				BiologicalNodeAbstract bna = it.next();
+				bna.printAllHierarchicalAttributes();
+			}
 
 		} else {
 
