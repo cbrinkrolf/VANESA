@@ -267,20 +267,25 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 */
 	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label){
 		
+		// Stop, if less than two nodes are selected.
 		if(nodes == null  || nodes.size()<1){
 			return null;
 		}
 		
+		// Get the node type
 		BiologicalNodeAbstract coarseNode = computeCoarseType(nodes);
 		
+		// Check, if coarsing operation is valid
 		if(coarseNode == null || !isCoarsingAllowed(nodes)){
 			showCoarsingErrorMessage();
 			return null;
 		}
 			
+		// Create a clean node of the correct node type
 		coarseNode = coarseNode.clone();
 		coarseNode.cleanUpHierarchyElements();
 		
+		// Set label, id, name and title
 		String lbl = label;
 		if(label==null){
 			lbl = JOptionPane.showInputDialog(MainWindowSingleton.getInstance(), null, 
@@ -301,24 +306,28 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		coarseNode.setName(lbl);
 		coarseNode.setTitle(lbl);
 		
+		// set attributes of the child nodes
 		for (BiologicalNodeAbstract node : nodes) {
 			node.setStateChanged(NodeStateChanged.COARSED);
 			node.setParentNode(coarseNode);
 		}
 		
+		// save the subgraph of the coarse node
 		coarseNode.makeSubGraph(nodes);
 		
+		//compute border, environment and connecting edges
 		if(BiologicalNodeAbstract.isValidBorder(coarseNode.isPetriNet(), coarseNode.updateBorder())){
 			
 			coarseNode.updateEnvironment();	
 			coarseNode.updateConnectingEdges();
 
 			coarseNode.makeCoarseShape();
-			coarseNode.getRootPathway().updateMyGraph();
 			
-			//coarseNode.printAllHierarchicalAttributes();
-
+			//update all graphs
+			coarseNode.getRootPathway().updateMyGraph();
 		} else {
+			
+			// if border is not valid, reset all attributes and stop coarsing
 			for (BiologicalNodeAbstract node : nodes) {
 				node.setStateChanged(NodeStateChanged.UNCHANGED);
 				node.setParentNode(coarseNode.getParentNode());
@@ -337,6 +346,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 */
 	private static boolean isCoarsingAllowed(Set<BiologicalNodeAbstract> vertices){
 		BiologicalNodeAbstract parentNode = null;
+		
+		// check if all nodes have the same parent node (can also be null)
 		if(vertices.iterator().hasNext()){
 			parentNode = vertices.iterator().next().getParentNode();
 		}
@@ -352,17 +363,20 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * Returns a node that can be cloned to create a coarse node of the given
 	 * set of nodes.
 	 * 
-	 * @param vertices
-	 *            Nodes selected for coarsing operation
+	 * @param vertices Nodes selected for coarsing operation
 	 * @return A node, that would be contained in the border if vertices were coarsed.
 	 * @author tloka
 	 */
 	private static BiologicalNodeAbstract computeCoarseType(
 			Set<BiologicalNodeAbstract> vertices) {
+		
+		// Stop if no input nodes
 		if(vertices==null || vertices.size()==0){
 			return null;
 		}
 		MyGraph activeGraph = new GraphInstance().getPathway().getGraph();
+		
+		// return the first found border node.
 		for(BiologicalNodeAbstract node : vertices){
 			for(BiologicalEdgeAbstract conEdge : node.getConnectingEdges()){
 				BiologicalNodeAbstract to = conEdge.getTo().getCurrentShownParentNode(activeGraph);
@@ -382,7 +396,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @author tloka
 	 */
 	public Set<BiologicalEdgeAbstract> updateConnectingEdges(){
+		
+		//Clear current set of connecting edges
 		connectingEdges.clear();
+		
+		// Iterate over all border nodes and add all their connecting edges that go outside
+		// this coarse node
 		for(BiologicalNodeAbstract node : border){
 			for(BiologicalEdgeAbstract conEdge : node.getConnectingEdges()){
 				if(environment.contains(conEdge.getTo().getCurrentShownParentNode(getGraph())) || 
@@ -400,7 +419,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @author tloka
 	 */
 	public Set<BiologicalNodeAbstract> updateBorder(){
+		
+		//Clear current set of border nodes
 		border.clear();
+		
+		// Iterate over all edges and add all nodes that are connected to a node
+		// not present in this coarse node
 		for(BiologicalEdgeAbstract edge : getAllEdges()){
 			if(edge.getTo().getParentNode() != this && edge.getFrom().getParentNode() == this){
 				border.add(edge.getFrom());
@@ -412,37 +436,18 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 	
 	/**
-	 * Checks if given Set of nodes is a valid border in the given type of graph.
-	 * @param isPetriNet
-	 * 			True to verify border candidate set for Petri Nets. False otherwise.
-	 * @param borderNodes
-	 * 			The border candidate set to verify.
-	 * @return
-	 * 			True, if border candidate set is valid, false otherwise.
-	 * @author tloka
-	 */
-	private static boolean isValidBorder(boolean isPetriNet, Set<BiologicalNodeAbstract> borderNodes){
-		if(isPetriNet && borderNodes.size()>=2){
-			Iterator<BiologicalNodeAbstract> iterator = borderNodes.iterator();
-			BiologicalNodeAbstract node1 = iterator.next();
-			BiologicalNodeAbstract node2;
-			while(iterator.hasNext()){
-				node2 = iterator.next();
-				if((node1 instanceof Place) != (node2 instanceof Place)){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
-	/**
 	 * Computes the set of environment nodes based on the internal graph.
 	 * @return The new environment.
 	 * @author tloka
 	 */
 	public Set<BiologicalNodeAbstract> updateEnvironment(){
+		
+		// Clear current set of environment nodes
 		environment.clear();
+		
+		// Go through all nodes in the graph. If this coarse node is not the parent, 
+		// add the node to environment if a connection to another node exists. 
+		// Otherwise remove it.
 		Set<BiologicalNodeAbstract> allNodes = new HashSet<BiologicalNodeAbstract>();
 		allNodes.addAll(getAllNodes());
 		for(BiologicalNodeAbstract node : allNodes){
@@ -458,14 +463,40 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 	
 	/**
+	 * Checks if given Set of nodes is a valid border in the given type of graph.
+	 * @param isPetriNet
+	 * 			True to verify border candidate set for Petri Nets. False otherwise.
+	 * @param borderNodes
+	 * 			The border candidate set to verify.
+	 * @return
+	 * 			True, if border candidate set is valid, false otherwise.
+	 * @author tloka
+	 */
+	private static boolean isValidBorder(boolean isPetriNet, Set<BiologicalNodeAbstract> borderNodes){
+		
+		// if coarse node is part of a petri net, check if all border nodes are the same
+		// tape of node (place or transition)
+		if(isPetriNet && borderNodes.size()>=2){
+			Iterator<BiologicalNodeAbstract> iterator = borderNodes.iterator();
+			BiologicalNodeAbstract node1 = iterator.next();
+			BiologicalNodeAbstract node2;
+			while(iterator.hasNext()){
+				node2 = iterator.next();
+				if((node1 instanceof Place) != (node2 instanceof Place)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	
+	/**
 	 * Changes current shape to shape in coarse node layout.
 	 * @author tloka
 	 */
 	public void makeCoarseShape(){
 		Shape coarseShape = shape;
-//		if(!isPetriNet()){
-//			coarseShape = shapes.getEllipse();
-//		}
 		coarseShape = shapes.makeCoarse(coarseShape);
 		setDefaultShape(coarseShape);
 		setShape(coarseShape);
@@ -488,6 +519,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @author tloka
 	 */
 	private void makeSubGraph(Set<BiologicalNodeAbstract> vertices){
+		// Get the active graph
 		MyGraph currentGraph = getActiveGraph();
 		for(BiologicalNodeAbstract vertex : vertices){
 			Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
@@ -662,6 +694,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 */
 	public void flat() {
 
+		// Stop, if flattening is not possible.
 		if (!isCoarseNode())
 			return;
 		
@@ -669,9 +702,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			return;
 		}
 
+		// Change node state.
 		this.setStateChanged(NodeStateChanged.FLATTENED);
+		
+		// Update all graphs.
 		getRootPathway().updateMyGraph();
 		
+		// Update the parent node of flattened node's children.
+		// Must be called AFTER updateMyGraph()!
 		for(BiologicalNodeAbstract node : getInnerNodes()){
 			node.setParentNode(getParentNode());
 		}
@@ -946,7 +984,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	public BiologicalNodeAbstract getLastParentNode() {
 		BiologicalNodeAbstract lastParent = getParentNode();
 		if(lastParent==null){
-			return lastParent;
+			return this;
 		}
 		while(lastParent.getParentNode()!=null){
 			lastParent = lastParent.getParentNode();

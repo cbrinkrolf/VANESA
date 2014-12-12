@@ -6,6 +6,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +21,8 @@ import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import graph.GraphInstance;
+import graph.algorithms.alignment.BiologicalNodeSet;
+import graph.jung.classes.MyGraph;
 import graph.layouts.HierarchicalCircleLayout;
 import graph.layouts.HierarchicalCircleLayout.CircleVertexData;
 
@@ -79,53 +82,95 @@ public class HCTLayout extends HierarchicalCircleLayout{
 
                 HashSet<BiologicalNodeAbstract> rootNodeSet = new HashSet<BiologicalNodeAbstract>();
                 rootNodeSet.add(rootNode);
-                placeNodes(rootNodeSet, null, 0);
+                List<BiologicalNodeAbstract> newOrder = new ArrayList<BiologicalNodeAbstract>();
+                for(BiologicalNodeAbstract bna : graph.getVertices()){
+                	newOrder.addAll(bna.getAllRootNodes());
+                }
+                newOrder.sort(new HierarchicalOrderComparator(order));
+                order = newOrder;
+                placeNodes();
             }
             setEdgeShapes();
     }
 	
-	public void placeNodes(Collection<BiologicalNodeAbstract> nodeList, BiologicalNodeAbstract ancestor, int radiusfactor){
-		int vertex_no = 0;
-		double angle = 0;
-		int circle;
-		int listSize = nodeList.size();
-		for(BiologicalNodeAbstract v : nodeList){
-			apply(v);
-			circle = radiusfactor;
-			
-			if(radiusfactor<=1){
-				angle = vertex_no*2*Math.PI/listSize;
-			} else {
-				double part = listSize<=1 ? 0.5 : (double) vertex_no/(listSize-1);
-				double angleVariance = -0.5/2 + part*0.5;
-				angle = circleVertexDataMap.get(ancestor).getVertexAngle()+angleVariance;
+	public void placeNodes(){
+		circleVertexDataMap.clear();
+//		BiologicalNodeAbstract currentNode;
+		MyGraph myGraph = GraphInstance.getMyGraph();
+		HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> ancestor = new HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract>();
+		HashMap<BiologicalNodeAbstract, List<BiologicalNodeAbstract>> ancestorChildren = new HashMap<BiologicalNodeAbstract, List<BiologicalNodeAbstract>>();
+		HashMap<Integer, List<BiologicalNodeAbstract>> circleNodes = new HashMap<Integer, List<BiologicalNodeAbstract>>();
+		int circle = 0;
+		for(BiologicalNodeAbstract bna : order){
+			HashSet<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
+			hierarchyNodes.add(bna);
+			hierarchyNodes.addAll(bna.getAllParentNodes());
+			for(BiologicalNodeAbstract currentNode : hierarchyNodes){
+
+			circle = currentNode.getAllParentNodes().size()+1;
+			if(currentNode.getParentNode()!=null && currentNode.getParentNode().getRootNode()==currentNode){
+				circle = circle-1;
 			}
-			GraphInstance.getMyGraph().moveVertex(v, 
-				Math.cos(angle) * circle*getRadius() + centerPoint.getX(),
-				Math.sin(angle) * circle*getRadius() + centerPoint.getY());
+			if(currentNode == rootNode){
+				circle = 0;
+			}
+			apply(currentNode);
+			((CircleVertexDataHCT) circleVertexDataMap.get(currentNode)).setCircleNumber(circle);
+			circleNodes.putIfAbsent(circle, new ArrayList<BiologicalNodeAbstract>());
+			if(!circleNodes.get(circle).contains(currentNode) && (myGraph.getAllVertices().contains(currentNode) || !myGraph.getAllVertices().contains(currentNode.getRootNode()))){
+					circleNodes.get(circle).add(currentNode);
+			}
 			
-			CircleVertexData data = getCircleData(v);
-			data.setVertexAngle(angle);
-			((CircleVertexDataHCT) data).setCircleNumber(circle);
-			vertex_no++;
-			placedNodes.add(v);
-			Set<BiologicalNodeAbstract> nextDepth = new HashSet<BiologicalNodeAbstract>();
-			if(!v.isCoarseNode()){
-				if(graph.getNeighbors(v) != null){
-					nextDepth.addAll(graph.getNeighbors(v));
-					nextDepth.removeAll(placedNodes);
-					nextDepth.removeAll(nodeList);
-					if(v != rootNode){
-						nextDepth.removeIf(p -> !p.getAllParentNodes().contains(v.getParentNode()));
-					}
-					placeNodes(nextDepth, v, radiusfactor+1);
-				}
+			if(currentNode.getParentNode() == null){
+				continue;
+			} else if(currentNode.getParentNode().getRootNode() == null){
+				ancestor.put(currentNode, currentNode.getParentNode());
+				ancestorChildren.putIfAbsent(currentNode.getParentNode(), new ArrayList<BiologicalNodeAbstract>());
+				ancestorChildren.get(currentNode.getParentNode()).add(currentNode);
 			} else {
-				nextDepth.addAll(v.getInnerNodes());
-				placeNodes(nextDepth, v, radiusfactor+1);
+				ancestor.put(currentNode, currentNode.getParentNode().getRootNode());
+				ancestorChildren.putIfAbsent(currentNode.getParentNode().getRootNode(), new ArrayList<BiologicalNodeAbstract>());
+				ancestorChildren.get(currentNode.getParentNode().getRootNode()).add(currentNode);
+			}
 			}
 		}
+		
+		//geht davon aus, dass jeder Kreis besetzt ist.
+		for(int i=0; i<circleNodes.keySet().size(); i++){
+			List<BiologicalNodeAbstract> nodes = circleNodes.get(i);
+			if(nodes == null){
+				continue;
+			}
+			for(int j=0; j<nodes.size(); j++){
+				System.out.println(nodes.get(j).getLabel() + ": " + i);
+				if(i<=1){
+					circleVertexDataMap.get(nodes.get(j)).setVertexAngle((double)((double) j/nodes.size())*2*Math.PI);
+				} else {
+					double seperator = 1.0-(double)getConfig().GROUP_DISTANCE_FACTOR/100;
+					double angleArea = (double) 2*Math.PI/circleNodes.get(i-1).size();
+					double nodeIndex = ancestorChildren.get(ancestor.get(nodes.get(j))).indexOf(nodes.get(j));
+					double nodeSize = ancestorChildren.get(ancestor.get(nodes.get(j))).size();
+					double movement = nodeIndex/nodeSize*angleArea*seperator;
+					movement = movement - 0.5*angleArea*seperator;
+					
+					circleVertexDataMap.get(nodes.get(j)).setVertexAngle(circleVertexDataMap.get(ancestor.get(nodes.get(j))).getVertexAngle() + movement);
+				}
+			}
+		}
+		
+		for(BiologicalNodeAbstract bna : myGraph.getAllVertices()){
+			double angle = circleVertexDataMap.get(bna).getVertexAngle();
+			int circ = circleVertexDataMap.get(bna).getCircleNumber();
+			myGraph.moveVertex(bna, 
+			Math.cos(angle) * circ*getRadius() + centerPoint.getX(),
+			Math.sin(angle) * circ*getRadius() + centerPoint.getY());
+		}
 	}
+	
+//	@Override
+//	public void saveCurrentOrder() {
+//		
+//	};
 
 	@Override
 	public void setEdgeShapes() {

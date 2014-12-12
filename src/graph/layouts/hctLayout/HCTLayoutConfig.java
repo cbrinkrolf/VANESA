@@ -20,10 +20,6 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	private static final long serialVersionUID = 852123;
 
 	private static HCTLayoutConfig instance;
-
-	public static int EDGE_BENDING_PERCENTAGE = 25;
-	public static int GROUPINTERNAL_EDGE_BENDING_PERCENTAGE = 25;
-	public static int EDGE_BUNDLING_PERCENTAGE = 30;
 	
 	public static JCheckBox showExternalEdges;
 	public static JCheckBox resetLayout;
