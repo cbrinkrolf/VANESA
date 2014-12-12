@@ -134,8 +134,8 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		if(node==root_id){
 			return null;
 		}
-		BiologicalNodeAbstract cn = BiologicalNodeAbstract.coarse(nextDepth, null, entries2infos.get(node)[0]);
-		cn.setRootNode(name2Vertex.get(entries2infos.get(node)[0]));
+		BiologicalNodeAbstract cn = BiologicalNodeAbstract.coarse(nextDepth, null, node);
+		cn.setRootNode(name2Vertex.get(node));
 		return cn;
 	}
 
