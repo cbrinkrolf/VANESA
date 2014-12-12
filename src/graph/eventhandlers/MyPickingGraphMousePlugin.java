@@ -57,7 +57,7 @@ public class MyPickingGraphMousePlugin extends
 			return;
 		}
 		
-		if(graphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout){
+		if(graphInstance.getMyGraph().getLayout() instanceof HEBLayout){
 			HierarchicalCircleLayout hclayout = (HierarchicalCircleLayout) graphInstance.getMyGraph().getLayout();
 			hclayout.saveCurrentOrder();
 		}
@@ -173,14 +173,14 @@ public class MyPickingGraphMousePlugin extends
 			super.mouseClicked(arg0);
 			// System.out.println("v: "+this.vertex);
 			
-			Vector<BiologicalNodeAbstract> v = graphInstance.getPathway()
-					.getSelectedNodes();
-
-			Iterator<BiologicalNodeAbstract> it = v.iterator();
-			while (it.hasNext()) {
-				BiologicalNodeAbstract bna = it.next();
-				bna.printAllHierarchicalAttributes();
-			}
+//			Vector<BiologicalNodeAbstract> v = graphInstance.getPathway()
+//					.getSelectedNodes();
+//
+//			Iterator<BiologicalNodeAbstract> it = v.iterator();
+//			while (it.hasNext()) {
+//				BiologicalNodeAbstract bna = it.next();
+//				bna.printAllHierarchicalAttributes();
+//			}
 
 		} else {
 
