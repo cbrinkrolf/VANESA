@@ -1,5 +1,6 @@
 package graph.layouts;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -23,8 +24,8 @@ import graph.layouts.hebLayout.Circle;
 public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>{
 	
 	protected Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph;
+	protected MyGraph myGraph;
 	protected List<BiologicalNodeAbstract> order = new ArrayList<BiologicalNodeAbstract>();
-	protected List<List<BiologicalNodeAbstract>> bnaGroups;
 	protected Set<BiologicalNodeAbstract> graphNodes;
 	protected Point2D centerPoint;
 	protected Map<BiologicalNodeAbstract, CircleVertexData> circleVertexDataMap =
@@ -34,6 +35,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	public HierarchicalCircleLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		super(g);
 		graph = g;
+		myGraph = GraphInstance.getMyGraph();
 	}
 	
 	public HierarchicalCircleLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g, List<BiologicalNodeAbstract> order){
@@ -41,122 +43,42 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 		graph = g;
 		this.order = order;
 	}
-	
-	/**
-	 * Must be implemented by extending classes to link to the corresponding config-class.
-	 * @return the corresponding config-class
-	 * @author tloka
-	 */
-	public abstract HierarchicalCircleLayoutConfig getConfig();
-	
+		
 	@Override
 	public abstract void initialize();
 	
-	/**
-	 * Must be implemented by extending classes. Sets the edge shape for the implemented layout.
-	 * @author tloka
-	 */
+	public abstract void groupNodes();
+	
+	public abstract List<BiologicalNodeAbstract> getNodesGroup(BiologicalNodeAbstract n);
+	
+	public abstract HierarchicalCircleLayoutConfig getConfig();
+	
 	public abstract void setEdgeShapes();
 	
 	@Override
     protected CircleVertexData getCircleData(BiologicalNodeAbstract v) {
         return circleVertexDataMap.get(v);
 	}
-
 	
-	/**
-	 * Build groups with nodes of the same parent node in the given depth.
-	 * @author tloka
-	 */
-	public void groupNodes(){
-		graphNodes = new HashSet<BiologicalNodeAbstract>();
-		graphNodes.addAll(graph.getVertices());
-
-		if(graphNodes.size()<2){return;}
-
+	public List<BiologicalNodeAbstract> computeOrder(){
 		List<BiologicalNodeAbstract> newOrder = new ArrayList<BiologicalNodeAbstract>();
 		for(BiologicalNodeAbstract node : graph.getVertices()){
 			newOrder.addAll(node.getAllRootNodes());
 		}
 		HierarchicalOrderComparator comp = new HierarchicalOrderComparator(order);
 		newOrder.sort(comp);
-		order = newOrder;
-		
-		bnaGroups = new ArrayList<List<BiologicalNodeAbstract>>();
-		List<BiologicalNodeAbstract> newGroup = new ArrayList<BiologicalNodeAbstract>();
-		BiologicalNodeAbstract currentNode;
-		Set<BiologicalNodeAbstract> addedNodes = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : order){
-			currentNode = node.getCurrentShownParentNode(GraphInstance.getMyGraph());
-			if(addedNodes.contains(currentNode)){
-				continue;
-			}
-			if(newGroup.isEmpty()){
-				newGroup.add(currentNode);
-				addedNodes.add(currentNode);
-				bnaGroups.add(newGroup);
-				continue;
-			}
-			BiologicalNodeAbstract groupNode = newGroup.iterator().next();
-			BiologicalNodeAbstract lastCurrentNodeParent = currentNode;
-			Set<BiologicalNodeAbstract> currentNodeParents = new HashSet<BiologicalNodeAbstract>();
-			BiologicalNodeAbstract lastGroupNodeParent = groupNode;
-			Set<BiologicalNodeAbstract> groupNodeParents = new HashSet<BiologicalNodeAbstract>();
-			for(int i=0; i<getConfig().GROUP_DEPTH; i++){
-				if(lastGroupNodeParent.getParentNode()!=null){
-					lastGroupNodeParent = lastGroupNodeParent.getParentNode();
-					groupNodeParents.add(lastGroupNodeParent);
-				}
-				if(lastCurrentNodeParent.getParentNode()!=null){
-					lastCurrentNodeParent = lastCurrentNodeParent.getParentNode();
-					currentNodeParents.add(lastCurrentNodeParent);
-				}
-			}
-			
-			currentNodeParents.retainAll(groupNodeParents);
+		return newOrder;
+	}
+	
+	public void computeCircleData(Dimension d){
+		double height = d.getHeight();
+        double width = d.getWidth();
 
-			if(!currentNodeParents.isEmpty()){
-				if(!newGroup.contains(currentNode)){
-					newGroup.add(currentNode);
-					addedNodes.add(currentNode);
-				}
-			} else {
-				newGroup = new ArrayList<BiologicalNodeAbstract>();
-				newGroup.add(currentNode);
-				addedNodes.add(currentNode);
-				bnaGroups.add(newGroup);
-			}
-		}
-	}
-	
-	/**
-	 * Sets the position of the vertex labels.
-	 * @author tloka
-	 */
-	public void setLabelPositions(){
-//		VisualizationViewer vv = GraphInstance.getMyGraph().getVisualizationViewer();
-//		CirclePositioner cp = new CirclePositioner();
-//		vv.getRenderer().setVertexLabelRenderer(cp);
-	}
-	
-
-	
-	/**
-	 * Gives back the coordinates of the circle's center point.
-	 * @return the center point of the circle
-	 * @author tloka
-	 */
-	public Point2D getCenterPoint(){
-		return centerPoint;
-	}
-	
-	/**
-	 * Gives back the current order of the nodes.
-	 * @return List of all leaf-nodes in the current order.
-	 * @author tloka
-	 */
-	public List<BiologicalNodeAbstract> getOrder(){
-		return order;
+        if (getRadius() <= 0) {
+        	setRadius(getConfig().CIRCLE_SIZE * (height < width ? height : width));
+        }
+        
+        centerPoint = new Point2D.Double(width/2, height/2);
 	}
 	
 	/**
@@ -164,27 +86,13 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	 * @param node Node to be added to the order.
 	 * @author tloka
 	 */
-	public void fuseInOrder(BiologicalNodeAbstract node){
+	public void addToOrder(BiologicalNodeAbstract node){
 		if(!node.isCoarseNode()){
 			return;
 		}
 		Set<BiologicalNodeAbstract> rootNodes = new HashSet<BiologicalNodeAbstract>();
 		rootNodes.addAll(node.getAllRootNodes());
 		order.sort(new OrderFusionComparator(order, rootNodes));
-	}
-	
-	/**
-	 * Get access to the circle data of a node.
-	 * @param v The vertex.
-	 * @return The circle data of the vertex.
-	 * @author tloka
-	 */
-	public CircleVertexData getCircleVertexData(BiologicalNodeAbstract v){
-		return getCircleData(v);
-	}
-	
-	public List<List<BiologicalNodeAbstract>> getBnaGroups(){
-		return bnaGroups;
 	}
 	
 	/**
@@ -268,21 +176,6 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 		CircleVertexData cvData = new CircleVertexData();
 		circleVertexDataMap.put(v, cvData);
 		return cvData;
-	}
-	
-	/**
-	 * Get the group of a node.
-	 * @param node The node.
-	 * @return The group of the node.
-	 * @author tloka
-	 */
-	public List<BiologicalNodeAbstract> getNodesGroup(BiologicalNodeAbstract node){
-		for(List<BiologicalNodeAbstract> group : bnaGroups){
-			if(group.contains(node)){
-				return group;
-			}
-		}
-		return new ArrayList<BiologicalNodeAbstract>();
 	}
 
 	/**
@@ -480,38 +373,17 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 			return order.indexOf(n1)-order.indexOf(n2);
 		}
 	}
+	
+	public CircleVertexData getCircleVertexData(BiologicalNodeAbstract v){
+		return getCircleData(v);
+	}
+	
+	public Point2D getCenterPoint(){
+		return centerPoint;
+	}
+	
+	public List<BiologicalNodeAbstract> getOrder(){
+		return order;
+	}
 
-
-	/**
-	 * Computes the Position of the vertex labels.
-	 * @author tobias
-	 */
-//	public class CirclePositioner extends BasicVertexLabelRenderer<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
-//
-//		public CirclePositioner(){
-//			super();
-//		}
-//		
-//		@Override
-//		protected Point getAnchorPoint(Rectangle2D vertexBounds, Dimension labelSize, Position position){
-//			if(!(GraphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout)){
-//				return super.getAnchorPoint(vertexBounds, labelSize, position);
-//			}
-//			Point2D vertexCenter = new Point2D.Double(vertexBounds.getCenterX(),vertexBounds.getCenterY());
-//			
-//			//TOBI: Find correct transformation to the coordinate system.
-//			Point2D circleCenterPoint = GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).inverseTransform(((HierarchicalCircleLayout) GraphInstance.getMyGraph().getLayout()).getCenterPoint());
-//			double x = vertexBounds.getCenterX()-Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*vertexBounds.getWidth()/2-Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*labelSize.getWidth();
-//			if(circleCenterPoint.getX()<vertexCenter.getX()){
-//				x= vertexBounds.getCenterX()+Math.abs(vertexBounds.getCenterX()-circleCenterPoint.getX())/circleCenterPoint.getX()*vertexBounds.getWidth()/2;
-//
-//			}
-//			double y = vertexBounds.getCenterY() - labelSize.getHeight()/2 - Math.abs(vertexBounds.getCenterY()-circleCenterPoint.getY())/circleCenterPoint.getY()*vertexBounds.getHeight();
-//			if(circleCenterPoint.getY()<vertexCenter.getY()){
-//				y = vertexBounds.getCenterY() + labelSize.getHeight()/2 + Math.abs(vertexBounds.getCenterY()-circleCenterPoint.getY())/circleCenterPoint.getY()*vertexBounds.getHeight();
-//			}
-//			return new Point((int) x, (int) y);
-//			
-//		}	
-//	}
 }
