@@ -30,6 +30,7 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	public HCTLayoutConfig() {
 		super(HCTLayout.class);
 
+		CIRCLE_SIZE = 0.25;
 		GridLayout layout = new GridLayout(0, 2);
 		setLayout(layout);
 		 

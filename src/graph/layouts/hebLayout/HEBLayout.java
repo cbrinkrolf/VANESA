@@ -2,8 +2,10 @@ package graph.layouts.hebLayout;
 
 import java.awt.Dimension;
 import java.awt.Shape;
-import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -16,7 +18,7 @@ import graph.layouts.HierarchicalCircleLayout;
 
 public class HEBLayout extends HierarchicalCircleLayout{
 	
-
+	protected List<List<BiologicalNodeAbstract>> bnaGroups;
 
 	public HEBLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		super(g);
@@ -34,22 +36,14 @@ public class HEBLayout extends HierarchicalCircleLayout{
 	public void initialize()
     {
             Dimension d = getSize();
-            setLabelPositions();
 
             if (d != null)
             {
                 if (bnaGroups == null){
                     groupNodes();
                 }
-
-                double height = d.getHeight();
-                double width = d.getWidth();
-
-                if (getRadius() <= 0) {
-                	setRadius(0.45 * (height < width ? height : width));
-                }
                 
-                centerPoint = new Point2D.Double(width/2, height/2);
+                computeCircleData(d);
 
                 int group_no = 0;
                 int vertex_no = 0;
@@ -75,44 +69,74 @@ public class HEBLayout extends HierarchicalCircleLayout{
             setEdgeShapes();
     }
 	
+	/**
+	 * Build groups with nodes of the same parent node in the given depth.
+	 * @author tloka
+	 */
+	public void groupNodes(){
+		graphNodes = new HashSet<BiologicalNodeAbstract>();
+		graphNodes.addAll(graph.getVertices());
+
+		if(graphNodes.size()<2){return;}
+
+		order = computeOrder();
+		
+		bnaGroups = new ArrayList<List<BiologicalNodeAbstract>>();
+		List<BiologicalNodeAbstract> newGroup = new ArrayList<BiologicalNodeAbstract>();
+		Set<BiologicalNodeAbstract> addedNodes = new HashSet<BiologicalNodeAbstract>();
+		BiologicalNodeAbstract currentNode;
+
+		for(BiologicalNodeAbstract node : order){
+			currentNode = node.getCurrentShownParentNode(myGraph);
+			if(addedNodes.contains(currentNode)){
+				continue;
+			}
+			
+			if(newGroup.isEmpty()){
+				newGroup.add(currentNode);
+				addedNodes.add(currentNode);
+				bnaGroups.add(newGroup);
+				continue;
+			}
+			
+			BiologicalNodeAbstract groupNode = newGroup.iterator().next();
+			if(groupNode.getHierarchyDistance(currentNode) < 0 || groupNode.getHierarchyDistance(currentNode)>getConfig().GROUP_DEPTH){
+				newGroup = new ArrayList<BiologicalNodeAbstract>();
+				newGroup.add(currentNode);
+				addedNodes.add(currentNode);
+				bnaGroups.add(newGroup);
+			} else {
+				if(!newGroup.contains(currentNode)){
+					newGroup.add(currentNode);
+					addedNodes.add(currentNode);
+				}
+			}
+		}
+	}
+	
 	public void setEdgeShapes(){
 		Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>
 			est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(getCenterPoint());
 		
 		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(est);
 	}
-
-
+	
 	/**
-	 * Switches the nodes of two groups in the layout order.
-	 * @param group1 First group
-	 * @param group2 Second group
+	 * Get the group of a node.
+	 * @param node The node.
+	 * @return The group of the node.
 	 * @author tloka
 	 */
-//	public void switchGroups(List<BiologicalNodeAbstract> group1, List<BiologicalNodeAbstract> group2){
-//		List<BiologicalNodeAbstract> rootGroup1 = new ArrayList<BiologicalNodeAbstract>();
-//		List<BiologicalNodeAbstract> rootGroup2 = new ArrayList<BiologicalNodeAbstract>();
-//		for(BiologicalNodeAbstract n : group1){
-//			rootGroup1.addAll(n.getAllRootNodes());
-//		}
-//		for(BiologicalNodeAbstract n : group2){
-//			rootGroup2.addAll(n.getAllRootNodes());
-//		}
-//		int indexGroup1 = order.indexOf(rootGroup1.get(0));
-//		int indexGroup2 = order.indexOf(rootGroup2.get(0));
-//		
-//		rootGroup1.sort(new newHEBLayoutComparator(order));
-//		rootGroup2.sort(new newHEBLayoutComparator(order));
-//		if(indexGroup1<indexGroup2){
-//			order.removeAll(rootGroup1);
-//			order.addAll(indexGroup2-rootGroup1.size(),rootGroup1);
-//			order.removeAll(rootGroup2);
-//			order.addAll(indexGroup1, rootGroup2);
-//		} else {
-//			order.removeAll(rootGroup2);
-//			order.addAll(indexGroup1-rootGroup2.size(),rootGroup2);
-//			order.removeAll(rootGroup1);
-//			order.addAll(indexGroup2, rootGroup1);
-//		}
-//	}	
+	public List<BiologicalNodeAbstract> getNodesGroup(BiologicalNodeAbstract node){
+		for(List<BiologicalNodeAbstract> group : bnaGroups){
+			if(group.contains(node)){
+				return group;
+			}
+		}
+		return new ArrayList<BiologicalNodeAbstract>();
+	}
+	
+	public List<List<BiologicalNodeAbstract>> getBnaGroups(){
+		return bnaGroups;
+	}
 }

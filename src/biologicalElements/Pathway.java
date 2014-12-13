@@ -1461,7 +1461,7 @@ public class Pathway implements Cloneable {
 				// if already added in correct graph, break.
 				if (parentNode == this) {
 					if(getGraph().getLayout() instanceof HEBLayout){
-						((HEBLayout) getGraph().getLayout()).fuseInOrder(parentNode);
+						((HEBLayout) getGraph().getLayout()).addToOrder(parentNode);
 					}
 					break;
 				}
@@ -1485,7 +1485,7 @@ public class Pathway implements Cloneable {
 
 				edgeSet.addAll(parentNode.getConnectingEdges());
 				if(getGraph().getLayout() instanceof HEBLayout){
-					((HEBLayout) getGraph().getLayout()).fuseInOrder(parentNode);
+					((HEBLayout) getGraph().getLayout()).addToOrder(parentNode);
 				}
 				parentNode.setCoarseNodesize();
 				break;

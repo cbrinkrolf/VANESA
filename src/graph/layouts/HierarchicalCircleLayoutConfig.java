@@ -11,6 +11,7 @@ public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
 
 	public static int GROUP_DISTANCE_FACTOR = 5;
 	public static int GROUP_DEPTH = 1;
+	public static double CIRCLE_SIZE = 0.45;
 	
 	protected boolean showInternalEdges = true;
 	protected boolean resetLayout = false;
