@@ -981,6 +981,26 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		return parentNode;
 	}
 	
+	public int getHierarchyDistance(BiologicalNodeAbstract otherNode){
+		BiologicalNodeAbstract commonParent = getLastCommonParentNode(otherNode);
+		if(commonParent==null){
+			return -1;
+		}
+		int distance = 0;
+		BiologicalNodeAbstract currentParent = this;
+		while(currentParent!=commonParent){
+			distance += 1;
+			currentParent = currentParent.getParentNode();
+		}
+		int newDistance = 0;
+		currentParent = otherNode;
+		while(currentParent!=commonParent){
+			newDistance += 1;
+			currentParent = currentParent.getParentNode();
+		}
+		return Math.max(distance, newDistance);
+	}
+	
 	public BiologicalNodeAbstract getLastParentNode() {
 		BiologicalNodeAbstract lastParent = getParentNode();
 		if(lastParent==null){
