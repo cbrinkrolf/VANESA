@@ -115,16 +115,16 @@ public class HCTLayout extends HierarchicalCircleLayout{
 					groups.get(getGroupParent(currentNode)).get(circle).add(currentNode);
 			}
 		}
-		for(BiologicalNodeAbstract key : groups.keySet()){
-			System.out.println("GroupParent: " + key.getLabel());
-			System.out.println("Angle: " + groupAngles.get(key).getFirst());
-			for(int k : groups.get(key).keySet()){
-				System.out.println("Circle: " + k);
-				for(BiologicalNodeAbstract n : groups.get(key).get(k)){
-					System.out.println(n.getLabel());
-				}
-			}
-		}
+//		for(BiologicalNodeAbstract key : groups.keySet()){
+//			System.out.println("GroupParent: " + key.getLabel());
+//			System.out.println("Angle: " + groupAngles.get(key).getFirst());
+//			for(int k : groups.get(key).keySet()){
+//				System.out.println("Circle: " + k);
+//				for(BiologicalNodeAbstract n : groups.get(key).get(k)){
+//					System.out.println(n.getLabel());
+//				}
+//			}
+//		}
 	}
 	
 	public BiologicalNodeAbstract getGroupParent(BiologicalNodeAbstract n){
@@ -148,8 +148,73 @@ public class HCTLayout extends HierarchicalCircleLayout{
 	
 	@Override
 	public List<BiologicalNodeAbstract> getNodesGroup(BiologicalNodeAbstract n) {
-		// TODO Auto-generated method stub
-		return null;
+		List<BiologicalNodeAbstract> selection = new ArrayList<BiologicalNodeAbstract>();
+		BiologicalNodeAbstract parent;
+		switch (getConfig().SELECTION){
+		case SINGLE:
+			selection.add(n);
+			break;
+		case PATH:
+			selection.add(n);
+			int circle = circleVertexDataMap.get(n).getCircleNumber();
+			List<BiologicalNodeAbstract> neighbors = new ArrayList<BiologicalNodeAbstract>();
+			while(circle>1){
+				circle -= 1;
+				for(BiologicalNodeAbstract ancestor : groups.get(getGroupParent(n)).get(circle)){
+					neighbors.addAll(graph.getNeighbors(ancestor));
+					neighbors.retainAll(selection);
+					if(neighbors.size()>0 && !selection.contains(ancestor)){
+						selection.add(ancestor);
+						break;
+					}
+				}
+			}
+			parent = n.getParentNode();
+			if(parent!=null && parent.getRootNode()==n){
+				for(BiologicalNodeAbstract child : parent.getCurrentShownChildrenNodes(myGraph)){
+					if(!selection.contains(child)){
+						selection.add(child);
+					}
+				}
+			} else {
+				for(BiologicalNodeAbstract child : n.getCurrentShownChildrenNodes(myGraph)){
+					if(!selection.contains(child)){
+						selection.add(child);
+					}
+				}
+			}
+			break;
+		case SUBPATH:
+			parent = n.getParentNode();
+			if(parent!=null && parent.getRootNode()==n){
+				for(BiologicalNodeAbstract child : parent.getCurrentShownChildrenNodes(myGraph)){
+					if(!selection.contains(child)){
+						selection.add(child);
+					}
+				}
+			} else {
+				for(BiologicalNodeAbstract child : n.getCurrentShownChildrenNodes(myGraph)){
+					if(!selection.contains(child)){
+						selection.add(child);
+					}
+				}
+			}
+			break;
+		
+		case GROUP:
+			parent = n.getLastParentNode();
+			for(BiologicalNodeAbstract child : parent.getCurrentShownChildrenNodes(myGraph)){
+				if(!selection.contains(child)){
+					selection.add(child);
+				}
+			}
+			break;
+			
+		default:
+			selection.add(n);
+			break;
+		}
+		return selection;
 	}
 
 	@Override
