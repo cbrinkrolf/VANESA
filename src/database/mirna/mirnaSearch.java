@@ -174,38 +174,38 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 							window.updateOptionPanel();
 							window.setVisible(true);
 							
-							class HLC<E> implements HierarchyListComparator{
-
-								int c;
-								public HLC(int chars){
-									c = chars;
-								}
-								@Override
-								public Integer getParentValue(
-										BiologicalNodeAbstract n) {
-									if(n == root){
-										return null;
-									}
-									for(BiologicalNodeAbstract nd : myGraph.getAllVertices()){
-										if(nd==root){
-											continue;
-										}
-										if(n.getLabel().charAt(c) == nd.getLabel().charAt(c)){
-											return nd.getID();
-										}
-									}
-									return null;
-									}
-								
-								@Override
-								public Integer getValue(BiologicalNodeAbstract n) {
-									return n.getID();
-								}
-							}
-						HierarchyList<Integer> l = new HierarchyList<Integer>();	
-						l.addAll(myGraph.getAllVertices());
-						l.sort(new HLC<Integer>(0));
-						l.coarse();
+//							class HLC<E> implements HierarchyListComparator{
+//
+//								int c;
+//								public HLC(int chars){
+//									c = chars;
+//								}
+//								@Override
+//								public Integer getParentValue(
+//										BiologicalNodeAbstract n) {
+//									if(n == root){
+//										return null;
+//									}
+//									for(BiologicalNodeAbstract nd : myGraph.getAllVertices()){
+//										if(nd==root){
+//											continue;
+//										}
+//										if(n.getLabel().charAt(c) == nd.getLabel().charAt(c)){
+//											return nd.getID();
+//										}
+//									}
+//									return null;
+//									}
+//								
+//								@Override
+//								public Integer getValue(BiologicalNodeAbstract n) {
+//									return n.getID();
+//								}
+//							}
+//						HierarchyList<Integer> l = new HierarchyList<Integer>();	
+//						l.addAll(myGraph.getAllVertices());
+//						l.sort(new HLC<Integer>(0));
+//						l.coarse();
 						
 
 						}
