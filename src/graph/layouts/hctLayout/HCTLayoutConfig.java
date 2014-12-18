@@ -85,8 +85,8 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		 groupSelection = new JComboBox<String>(groupSelectionOptions);
 		 groupSelection.setPreferredSize(new Dimension(200,30));
 		 groupSelection.setMaximumSize(groupSelection.getPreferredSize());
-		 groupSelection.setSelectedIndex(3);
 		 groupSelection.addActionListener(this);
+		 groupSelection.setSelectedIndex(3);
 		 nodeSelection.add(groupSelection);
 		 
 		 groupPreferences.add(nodeSelection);
