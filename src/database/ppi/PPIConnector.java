@@ -3,6 +3,8 @@ package database.ppi;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
+import graph.layouts.hebLayout.HierarchyList;
+import graph.layouts.hebLayout.HierarchyListComparator;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.ProgressBar;
@@ -29,10 +31,12 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 	private HashMap<String, String[]> entries2infos = new HashMap<String, String[]>();
 	private HashMap<String, HashSet<String>> childNodes = new HashMap<String, HashSet<String>>();
+	private HashMap<String, String> parentNodes = new HashMap<String, String>();
 	private ArrayList<String[]> connections = new ArrayList<String[]>();
 	private HashSet<String> conSet = new HashSet<String>();
 	private HashSet<String> newNodes = new HashSet<String>();
 	private HashMap<String, BiologicalNodeAbstract> name2Vertex = new HashMap<String, BiologicalNodeAbstract>();
+	private HashMap<BiologicalNodeAbstract, String> vertex2Name = new HashMap<BiologicalNodeAbstract, String>();
 
 	private Pathway pw;
 	private MyGraph myGraph;
@@ -98,6 +102,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 			}
 
 			name2Vertex.put(id, protein);
+			vertex2Name.put(protein, id);
 			BiologicalNodeAbstract node = pw.addVertex(protein, new Point(x*100, y*100));
 			if(id.equals(root_id)){
 				pw.setRootNode(node);
@@ -137,6 +142,31 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		BiologicalNodeAbstract cn = BiologicalNodeAbstract.coarse(nextDepth, null, node);
 		cn.setRootNode(name2Vertex.get(node));
 		return cn;
+	}
+	
+	private void autoCoarse(){
+		class HLC implements HierarchyListComparator<Integer>{
+			
+			public HLC(){
+			}
+
+			public Integer getValue(BiologicalNodeAbstract n) {
+				String parent = parentNodes.get(vertex2Name.get(n));
+				if(name2Vertex.get(parent)!=null){
+					return name2Vertex.get(parent).getID();
+				}
+				return getSubValue(n);
+			}
+
+			public Integer getSubValue(
+					BiologicalNodeAbstract n) {
+				return n.getID();
+			}
+		}
+		HierarchyList<Integer> l = new HierarchyList<Integer>();	
+		l.addAll(myGraph.getAllVertices());
+		l.sort(new HLC());
+		l.coarse();
 	}
 
 	private void drawEdges() {
@@ -298,6 +328,8 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 							newNodes.add(idA);
 							if(!idA.equals(node)){
 								childNodes.get(node).add(idA);
+								if(!node.equals(root_id))
+									parentNodes.put(idA, node);
 							}
 						}
 						if (!entries2infos.containsKey(idB)) {
@@ -307,6 +339,8 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 							newNodes.add(idB);
 							if(!idB.equals(node)){
 								childNodes.get(node).add(idB);
+								if(!node.equals(root_id))
+									parentNodes.put(idB, node);
 							}
 						}
 
@@ -456,7 +490,8 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
 		myGraph.normalCentering();
 		if(autoCoarse){
-			autoCoarse(root_id);
+//			autoCoarse(root_id);
+			autoCoarse();
 		}
 		bar.closeWindow();
 
