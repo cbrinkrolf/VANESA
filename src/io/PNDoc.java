@@ -12,6 +12,7 @@ import java.util.Iterator;
 
 import petriNet.ContinuousTransition;
 import petriNet.PNEdge;
+import petriNet.Place;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -30,10 +31,12 @@ public class PNDoc {
 		Pathway pw = con.getPathway(w.getCurrentPathway());
 
 		this.createHeader();
+		this.writeInitialValues();
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodesSortedAlphabetically().iterator();
 		BiologicalNodeAbstract bna;
 
+		sb.append("\\section{Gleichungen}\n");
 		int i = 0;
 		while (it.hasNext() && i < 3) {
 			bna = it.next();
@@ -56,7 +59,8 @@ public class PNDoc {
 				.getInEdges(t).iterator();
 		BiologicalEdgeAbstract bea;
 		BiologicalNodeAbstract bna;
-		sb.append("\\noindent\\verb+" + t.getName() + "+ : $");
+		sb.append("\\cprotect\\subsection{\\verb\""+t.getName()+"\"}\n"
+				+ "\\noindent\\verb\"" + t.getName() + "\" : $");
 		String weight;
 		PNEdge edge;
 
@@ -73,7 +77,7 @@ public class PNDoc {
 			if (bna.hasRef()) {
 				bna = bea.getFrom().getRef();
 			}
-			sb.append("\\verb+" + weight + bna.getName() + "+");
+			sb.append("\\verb\"" + weight + bna.getName() + "\"");
 			if (it.hasNext()) {
 				sb.append(" + ");
 			}
@@ -97,7 +101,7 @@ public class PNDoc {
 			if (bea.getTo().hasRef()) {
 				bna = bea.getTo().getRef();
 			}
-			sb.append("\\verb+" + weight + bna.getName() + "+");
+			sb.append("\\verb\"" + weight + bna.getName() + "\"");
 			if (it.hasNext()) {
 				sb.append(" + ");
 			}
@@ -138,8 +142,13 @@ public class PNDoc {
 
 	private void createHeader() {
 		sb.append("" + "\\documentclass{article}\n"
-				+ "\\usepackage{amsmath,verbatim,booktabs}\n"
-				+ "\\begin{document}\n");
+				+ "\\usepackage{amsmath,verbatim,booktabs,longtable,cprotect}\n"
+				+ "\\begin{document}\n"
+				+ "\\begin{center}"
+				+ "\\TeX ed by \\emph{VANESA} on \\today, Copyright \\copyright\n"
+				+ "\\end{center}\n"
+				+ "\\tableofcontents\n"
+				+ "\\newpage\n");
 	}
 
 	private void createFooter() {
@@ -157,6 +166,35 @@ public class PNDoc {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private void writeInitialValues(){
+		
+		
+		sb.append("\\section*{Startwerte}\n"
+				+ "\\addcontentsline{toc}{section}{Startwerte}\n"
+				+ "\\begin{center}\\begin{longtable}{lll}\\toprule\n");
+
+		sb.append("Name & Value & Unit\\\\\\midrule\n");
+
+		Iterator<BiologicalNodeAbstract> it = pw.getAllNodesSorted().iterator();
+		BiologicalNodeAbstract bna;
+		Place p;
+		int i = 0;
+		while (it.hasNext() && i < 3) {
+			bna = it.next();
+			if(bna instanceof Place){
+			
+			p = (Place) bna;
+
+			sb.append("\\verb+" + p.getName() + "+ & " + p.getTokenStart()
+					+ " & mmol" + "\\\\\n");
+			}
+		}
+		sb.append("\\bottomrule\n");
+		sb.append("\\end{longtable}\\end{center}\n"
+				+ "\\newpage\n");
+		
 	}
 
 }
