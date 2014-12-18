@@ -1,6 +1,6 @@
 package graph.layouts.hebLayout;
 
-import graph.jung.classes.MyGraph;
+import graph.GraphInstance;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ RandomAccess, Cloneable, java.io.Serializable{
 	List<HierarchyList<E>> hierarchyList = new ArrayList<HierarchyList<E>>();
 	List<BiologicalNodeAbstract> allElements = new ArrayList<BiologicalNodeAbstract>();
 	HashMap<E, HierarchyList<E>> hierarchyGroups = new HashMap<E, HierarchyList<E>>();
-	HierarchyListComparator stdComparator;
+	HierarchyListComparator<E> stdComparator;
 	BiologicalNodeAbstract node;
 	E value;
 	
@@ -245,7 +245,14 @@ RandomAccess, Cloneable, java.io.Serializable{
 		if(childNodes.size()>1 && !isInitialCall){
 			if(getNode()!=null){
 				BiologicalNodeAbstract coarseNode =  BiologicalNodeAbstract.coarse(childNodes, null, getNode().getLabel());
-				coarseNode.setRootNode(getNode());
+				if(coarseNode!=null)
+					coarseNode.setRootNode(getNode());
+//				else{
+//					for(BiologicalNodeAbstract c : childNodes){
+//						System.out.println(c.getID() + " " + c.getLabel());
+//					}
+//				}
+					
 				return coarseNode;
 			}
 			return BiologicalNodeAbstract.coarse(childNodes, null, getValue().toString());
@@ -272,51 +279,70 @@ RandomAccess, Cloneable, java.io.Serializable{
 		hierarchyList = new ArrayList<HierarchyList<E>>();
 		hierarchyGroups = new HashMap<E, HierarchyList<E>>();
 		HashMap<E, HierarchyList<E>> valueToList = new HashMap<E, HierarchyList<E>>();
-		List<HierarchyList<E>> finalLists = new ArrayList<HierarchyList<E>>();
+		List<HierarchyList<E>> assignedLists = new ArrayList<HierarchyList<E>>();
 		E value;
 		E subvalue;
 		
 		for(BiologicalNodeAbstract n : allElements){
 			value = comp.getValue(n);
+			subvalue = comp.getSubValue(n);
+			if(GraphInstance.getPathwayStatic().getRootNode() == n){
+				setNode(n);
+				this.value = subvalue;
+				valueToList.put(subvalue, this);
+				continue;
+			}
 			if(!valueToList.containsKey(value)){
 				HierarchyList<E> l = new HierarchyList<E>(value);
 				valueToList.put(value, l);
-				finalLists.add(l);
 			}
 		}
 
 		value = null;
 		subvalue = null;
 		
-		for(BiologicalNodeAbstract n : allElements){
+		List<BiologicalNodeAbstract> elements = new ArrayList<BiologicalNodeAbstract>();
+		elements.addAll(allElements);
+		
+		for(BiologicalNodeAbstract n : elements){
+			if(getNode()==n){
+				continue;
+			}
 			value = comp.getValue(n);
 			subvalue = comp.getSubValue(n);
 			if(valueToList.containsKey(subvalue)){
-				if(subvalue!=null && !subvalue.equals(value)){
+				if(value!=null && !subvalue.equals(value)){
 					valueToList.get(subvalue).setNode(n);
 					valueToList.get(value).add(valueToList.get(subvalue));
-					finalLists.remove(valueToList.get(subvalue));
+					assignedLists.add(valueToList.get(subvalue));
 				} else {
-					valueToList.get(value).setNode(n);
+					valueToList.get(subvalue).setNode(n);
+					add(valueToList.get(subvalue));
+					assignedLists.add(valueToList.get(subvalue));
 				}
 			} else {
 				valueToList.get(value).add(new HierarchyList<E>(n,subvalue));
 			}
 		}
-		for(HierarchyList<E> l : finalLists){
-			add(l);
+
+		for(HierarchyList<E> list : valueToList.values()){
+			if(!assignedLists.contains(list) && list != this)
+				add(list);
 		}
-		printSubLists();
+		
+//		printSubLists(0);
 	}
 	
-	public void printSubLists(){
+	public void printSubLists(int level){
+
 		if(getNode()!=null){
-			System.out.println(value + " " + getNode().getLabel());
+			System.out.println(level + " " + value + " " + getNode().getLabel());
 		} else {
-			System.out.println(value);
+			System.out.println(level + " " + value);
 		}
-		for(HierarchyList l : getSubLists()){
-			l.printSubLists();
+		for(HierarchyList<E> l : getSubLists()){
+//			if(level<5)
+				l.printSubLists(level+1);
 		}
 	}
 	
