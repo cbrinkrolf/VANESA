@@ -133,6 +133,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private NodeStateChanged state = NodeStateChanged.UNCHANGED;
 	
 	private HashSet<NodeAttribute> nodeAttributes = new HashSet<>();
+	
+	private boolean markedAsEnvironment = false;
 
 	public void setStateChanged(NodeStateChanged state) {
 		this.state = state;
@@ -1422,6 +1424,24 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			}
 		}
 		return rootNodes;
+	}
+	
+	public void markAsEnvironment(boolean value){
+		markedAsEnvironment = value;
+	}
+	
+	public boolean isMarkedAsEnvironment(){
+		return markedAsEnvironment;
+	}
+	
+	public boolean isEnvironmentNodeOf(Pathway parentNodeOfInterest){
+		if(isMarkedAsEnvironment()){
+			return true;
+		}
+		if(parentNodeOfInterest instanceof BiologicalNodeAbstract && ((BiologicalNodeAbstract) parentNodeOfInterest).getEnvironment().contains(this)){
+			return true;
+		}
+		return false;
 	}
 	
 	/**

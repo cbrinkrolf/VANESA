@@ -625,6 +625,14 @@ public class JSBMLinput {
 				Double yCoord = new Double(
 						elSubSub.getAttributeValue("y_Coordinate"));
 				Point2D.Double p = new Point2D.Double(xCoord, yCoord);
+				
+				elSub = specAnnotation.getChild("environmentNode", null);
+				if(elSub!=null){
+					if(String.valueOf(elSub.getAttributeValue("environmentNode")).equals("true")){
+						System.out.println("bla");
+						bna.markAsEnvironment(true);
+					}
+				}
 
 				elSub = specAnnotation.getChild("Parameters", null);
 
