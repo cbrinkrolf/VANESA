@@ -1141,7 +1141,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			System.out.println("return");
 			return;
 		} else {
-			set = new GraphInstance().getPathway().getIdSet();
+			set = getRootPathway().getIdSet();
 			// System.out.println("size: " + set.size());
 
 			if (set.contains(id)) {
@@ -1175,7 +1175,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 
 	public void setID(boolean overwriteOldID) {
-		set = new GraphInstance().getPathway().getIdSet();
+		set = getRootPathway().getIdSet();
 		// System.out.println(new GraphInstance().getPathway().getName());
 		// set id to highest current id+1;
 		if (overwriteOldID || ID <= 0) {
@@ -1428,6 +1428,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	public void markAsEnvironment(boolean value){
 		markedAsEnvironment = value;
+		
 	}
 	
 	public boolean isMarkedAsEnvironment(){

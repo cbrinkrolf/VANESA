@@ -539,7 +539,7 @@ public class Pathway implements Cloneable {
 				BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) element;
 				// Pair p = bea.getEdge().getEndpoints();
 				// System.out.println(edges.size());
-				if (bea.getTo().isCoarseNode() | bea.getFrom().isCoarseNode()) {
+				if (bea.getTo().isCoarseNode() || bea.getFrom().isCoarseNode()) {
 					EdgeDeleteDialog dialog = new EdgeDeleteDialog(bea);
 					Set<BiologicalEdgeAbstract> delBeas = dialog.getAnswer();
 					// aborted

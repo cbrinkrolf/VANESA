@@ -83,6 +83,10 @@ public class JSBMLinput {
 	public JSBMLinput() {
 
 	}
+	
+	public JSBMLinput(Pathway pw){
+		pathway = pw;
+	}
 
 	public String loadSBMLFile(File file) {
 		// System.out.println("neu");
@@ -100,7 +104,9 @@ public class JSBMLinput {
 		if (pathway == null) {
 			pathway = new CreatePathway(file.getName()).getPathway();
 		}
-		pathway.setFilename(file);
+		if(pathway.getFilename()==null){
+			pathway.setFilename(file);
+		}
 		pathway.getGraph().lockVertices();
 		pathway.getGraph().stopVisualizationModel();
 		// get root-element
@@ -604,7 +610,11 @@ public class JSBMLinput {
 				String id = species.getAttributeValue("id");
 				String[] idSplit = id.split("_");
 				int idInt = Integer.parseInt(idSplit[1]);
-				bna.setID(idInt);
+				if(pathway.getRootPathway().getIdSet().contains(idInt)){
+					bna.setID();
+				} else {
+					bna.setID(idInt);
+				}
 				String compartment = species.getAttributeValue("compartment");
 				String[] comp = compartment.split("_");
 				bna.setCompartment(comp[1]);
@@ -629,7 +639,6 @@ public class JSBMLinput {
 				elSub = specAnnotation.getChild("environmentNode", null);
 				if(elSub!=null){
 					if(String.valueOf(elSub.getAttributeValue("environmentNode")).equals("true")){
-						System.out.println("bla");
 						bna.markAsEnvironment(true);
 					}
 				}
