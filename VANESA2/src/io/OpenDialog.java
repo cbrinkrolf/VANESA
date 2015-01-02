@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.xml.stream.XMLStreamException;
 
+import biologicalElements.Pathway;
 import xmlInput.sbml.VAMLInput;
 import configurations.ConnectionSettings;
 
@@ -55,6 +56,13 @@ public class OpenDialog extends SwingWorker {
 
 	private GraphContainer con = ContainerSingelton.getInstance();
 	private GraphInstance graphInstance = new GraphInstance();
+	
+	private Pathway pathway = null;
+	
+	public OpenDialog(Pathway pw){
+		this();
+		pathway = pw;
+	}
 
 	public OpenDialog() {
 
@@ -103,7 +111,9 @@ public class OpenDialog extends SwingWorker {
 					e.printStackTrace();
 				}
 			}  else if (fileFormat.equals(sbmlDescription)) {
-					JSBMLinput jsbmlInput = new JSBMLinput();
+				
+					JSBMLinput jsbmlInput;
+					jsbmlInput = pathway==null ? new JSBMLinput() : new JSBMLinput(pathway);
 					String result = jsbmlInput.loadSBMLFile(file);
 					if(result.length() > 0){
 						JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
