@@ -1,6 +1,8 @@
 package xmlOutput.sbml;
 
 import graph.gui.Parameter;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
 import gui.RangeSelector;
 
 import java.awt.Color;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.sbml.jsbml.Annotation;
@@ -58,6 +61,7 @@ public class JSBMLoutput {
 	 * data from the graph
 	 */
 	private Pathway pathway = null;
+	private Pathway rootPathway;
 	private static final double INITIALVALUE = 1.0;
 	/*
 	 * current version number
@@ -76,6 +80,20 @@ public class JSBMLoutput {
 	 * Generates a SBML document via jSBML.
 	 */
 	public String generateSBMLDocument() {
+		int answer = JOptionPane.YES_OPTION;
+		if(pathway instanceof BiologicalNodeAbstract){
+			Object[] options = {"Save subpathway", "Save complete pathway"};
+			answer = JOptionPane.showOptionDialog(MainWindowSingleton.getInstance(),
+					"You try to save a opened subpathway. Do you want to save this subpathway?", 
+					"Save subpathway", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+					null, options, options[1]);
+		}
+		if(answer == JOptionPane.YES_OPTION){
+			rootPathway = pathway;
+		} else if(answer == JOptionPane.NO_OPTION){
+			rootPathway = pathway.getRootPathway();
+		}
+		
 		String message = "";
 		// Create a new SBMLDocument object, using SBML Level 3 Version 1.
 		SBMLDocument doc = new SBMLDocument(3, 1);
@@ -87,24 +105,26 @@ public class JSBMLoutput {
 
 		Compartment compartment;
 		// read all nodes from graph
-		List<BiologicalNodeAbstract> flattedPathwayNodes = new ArrayList<BiologicalNodeAbstract>();
+		List<BiologicalNodeAbstract> flattenedPathwayNodes = new ArrayList<BiologicalNodeAbstract>();
 		for(BiologicalNodeAbstract node : this.pathway.getAllNodesSorted()){
 			if(node.isCoarseNode()){
-				flattedPathwayNodes.addAll(node.getAllRootNodes());
+				flattenedPathwayNodes.addAll(node.getAllRootNodes());
 			} else {
-				flattedPathwayNodes.add(node);
+				flattenedPathwayNodes.add(node);
 			}
 		}
 		
-		Set<BiologicalEdgeAbstract> flattedPathwayEdges = new HashSet<BiologicalEdgeAbstract>();
-		Iterator<BiologicalNodeAbstract> nodeIterator = flattedPathwayNodes.iterator();
+		Set<BiologicalEdgeAbstract> flattenedPathwayEdges = new HashSet<BiologicalEdgeAbstract>();
+		Iterator<BiologicalNodeAbstract> nodeIterator = flattenedPathwayNodes.iterator();
 
 		BiologicalNodeAbstract oneNode;
 		try {
 			while (nodeIterator.hasNext()) {
 				oneNode = nodeIterator.next();
 				for(BiologicalEdgeAbstract conEdge : oneNode.getConnectingEdges()){
-					flattedPathwayEdges.add(conEdge);
+					if(!(conEdge.getFrom().isEnvironmentNodeOf(rootPathway) && conEdge.getTo().isEnvironmentNodeOf(rootPathway))){
+						flattenedPathwayEdges.add(conEdge);
+					}
 				}
 				// test to what compartment the node belongs
 				String nodeCompartment = COMP + oneNode.getCompartment();
@@ -144,7 +164,7 @@ public class JSBMLoutput {
 		
 		HashMap<Integer, BiologicalEdgeAbstract> map = new HashMap<Integer, BiologicalEdgeAbstract>();
 
-		for (BiologicalEdgeAbstract bea : flattedPathwayEdges) {
+		for (BiologicalEdgeAbstract bea : flattenedPathwayEdges) {
 			map.put(bea.getID(), bea);
 		}
 
@@ -239,7 +259,38 @@ public class JSBMLoutput {
 		XMLNode hierarchy = new XMLNode(new XMLNode(new XMLTriple(
 				"listOfHierarchies", "", ""), new XMLAttributes()));
 		Set<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
-		hierarchyNodes.addAll(pathway.getAllNodesSorted());
+		
+		int answer = JOptionPane.NO_OPTION;
+		if(!rootPathway.getOpenedSubPathways().isEmpty()){
+			Object[] options = {"Save hierarchies", "Discard hierarchies"};
+			answer = JOptionPane.showOptionDialog(MainWindowSingleton.getInstance(),
+					"You have opened subpathways in your graph. Do you want to save the hierarchical structure" + 
+					" of these subpathways?", 
+					"Save hierarchical structures", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+					null, options, options[1]);
+		}
+		if(answer == JOptionPane.YES_OPTION){
+			Set<BiologicalNodeAbstract> nodeSet = new HashSet<BiologicalNodeAbstract>();
+			nodeSet.addAll(rootPathway.getAllNodes());
+			Set<BiologicalNodeAbstract> newNodeSet = new HashSet<BiologicalNodeAbstract>();
+			while(!nodeSet.isEmpty()){
+				newNodeSet.clear();
+				for(BiologicalNodeAbstract n : nodeSet){
+					if(n.getParentNode()!=null && n.getParentNode()!=rootPathway){
+						newNodeSet.add(n.getParentNode());
+					} else {
+						hierarchyNodes.add(n);
+					}
+				}
+				nodeSet.clear();
+				nodeSet.addAll(newNodeSet);
+			}
+			
+		} else if(answer == JOptionPane.NO_OPTION){
+			hierarchyNodes.addAll(rootPathway.getAllNodes());
+		}
+		
+
 		for(BiologicalNodeAbstract node : hierarchyNodes){
 			if(node.isCoarseNode()){
 					addHierarchyXMLNode(hierarchy, node);
@@ -288,6 +339,9 @@ public class JSBMLoutput {
 		el.addChild(createElSub(attr, "BiologicalElement"));
 
 		Point2D p = pathway.getGraph().getVertexLocation(oneNode);
+		if(oneNode.getParentNode()!=null){
+			p = oneNode.getParentNode().getGraph().getVertexLocation(oneNode);
+		}
 		elSub = new XMLNode(new XMLNode(new XMLTriple("Coordinates", "", ""),
 				new XMLAttributes()));
 		attr = String.valueOf(p.getX());
@@ -295,7 +349,10 @@ public class JSBMLoutput {
 		attr = String.valueOf(p.getY());
 		elSub.addChild(createElSub(attr, "y_Coordinate"));
 		el.addChild(elSub);
-
+		
+		attr = oneNode.isEnvironmentNodeOf(rootPathway) ? "true" : "false";
+		el.addChild(createElSub(attr, "environmentNode"));
+		
 		XMLNode elSubSub;
 		elSub = new XMLNode(new XMLNode(new XMLTriple("Parameters", "", ""),
 				new XMLAttributes()));

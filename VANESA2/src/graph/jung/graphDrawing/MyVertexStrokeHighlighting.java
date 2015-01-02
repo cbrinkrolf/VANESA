@@ -66,9 +66,8 @@ public class MyVertexStrokeHighlighting implements
 		boolean isContPlace = false;
 		
 		// mark Environment nodes in hierarchical Nodes.
-		if(pw instanceof BiologicalNodeAbstract){
-			BiologicalNodeAbstract b = (BiologicalNodeAbstract) pw;
-			if(b.getEnvironment().contains(bna)){
+
+			if(bna.isEnvironmentNodeOf(pw)){
 				float dashPhase = 0f;
                 float dash[] = {5.0f,5.0f};
 				return new BasicStroke(
@@ -80,7 +79,6 @@ public class MyVertexStrokeHighlighting implements
                         dashPhase
                         );
 			}
-		}
 
 		if (((bna instanceof Place && !((Place) bna).isDiscrete()) || bna instanceof ContinuousTransition)) {
 			isContPlace = true;
