@@ -27,6 +27,7 @@ import org.jdom2.input.SAXBuilder;
 
 import petriNet.PNEdge;
 import biologicalElements.Elementdeclerations;
+import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Activation;
 import biologicalObjects.edges.BindingAssociation;
@@ -364,7 +365,11 @@ public class JSBMLinput {
 				// set ID of the reaction
 				id = reaction.getAttributeValue("id");
 				tmp = id.split("_");
-				bea.setID(Integer.parseInt(tmp[1]));
+				try{
+					bea.setID(Integer.parseInt(tmp[1]));
+				} catch(IDAlreadyExistException ex){
+					bea.setID();
+				}
 				// get additional information
 				List<Element> reacAnnotationChildren = reacAnnotation
 						.getChildren();
@@ -610,10 +615,10 @@ public class JSBMLinput {
 				String id = species.getAttributeValue("id");
 				String[] idSplit = id.split("_");
 				int idInt = Integer.parseInt(idSplit[1]);
-				if(pathway.getRootPathway().getIdSet().contains(idInt)){
-					bna.setID();
-				} else {
+				try{
 					bna.setID(idInt);
+				} catch(IDAlreadyExistException ex){
+					bna.setID();
 				}
 				String compartment = species.getAttributeValue("compartment");
 				String[] comp = compartment.split("_");

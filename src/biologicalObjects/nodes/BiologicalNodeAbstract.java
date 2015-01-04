@@ -22,6 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import petriNet.Place;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
+import biologicalElements.IDAlreadyExistException;
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -302,7 +303,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		if(id==null){
 			coarseNode.setID(true);
 		} else {
-			coarseNode.setID(id);
+			try{
+				coarseNode.setID(id);
+			} catch(IDAlreadyExistException ex){
+				coarseNode.setID(true);
+			}
 		}
 		coarseNode.setLabel(lbl);
 		coarseNode.setName(lbl);
@@ -1136,7 +1141,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 
 	// should only be used when loading a file with a network
-	public void setID(int id) {
+	public void setID(int id) throws IDAlreadyExistException{
 		if (this.ID == id) {
 			System.out.println("return");
 			return;
@@ -1145,7 +1150,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			// System.out.println("size: " + set.size());
 
 			if (set.contains(id)) {
-				System.err.println("Error: Id " + id + " is already existing!");
+//				System.err.println("Error: Id " + id + " is already existing!");
+				throw new IDAlreadyExistException("ID " + id + " is already existing.");
 			} else {
 				if (this.ID > 0) {
 					set.remove(ID);
@@ -1182,12 +1188,22 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			// System.out.println("neue ID");
 			if (set.size() > 0) {
 				// System.out.println("last: " + set.last());
+				try{
 				setID(set.last() + 1);
+				} catch(IDAlreadyExistException ex){
+					// cannot occur if program working fine.
+					ex.printStackTrace();
+				}
 				// System.out.println("size: " + set.size());
 				// System.out.println("groesster: " + set.last());
 				// System.out.println("kleinster: " + set.first());
 			} else {
+				try{
 				setID(100);
+				} catch(IDAlreadyExistException ex){
+					// cannot occur if program working fine.
+					ex.printStackTrace();
+				}
 			}
 		}
 	}

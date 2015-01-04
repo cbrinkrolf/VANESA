@@ -28,6 +28,7 @@ import petriNet.PNEdge;
 import petriNet.Place;
 import petriNet.StochasticTransition;
 import biologicalElements.Elementdeclerations;
+import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Activation;
 import biologicalObjects.edges.BindingAssociation;
@@ -458,7 +459,11 @@ public class VAMLInput {
 
 			}
 			// System.out.println("spech: "+elementSpecification);
-			bea.setID(id);
+			try{
+				bea.setID(id);
+			} catch(IDAlreadyExistException ex){
+				bea.setID();
+			}
 			bea.setDirected(isDirected);
 			bea.setColor(color);
 			bea.setComments(comment);

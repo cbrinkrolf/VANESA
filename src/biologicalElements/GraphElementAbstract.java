@@ -13,7 +13,7 @@ public interface GraphElementAbstract{
 	int getID();
 	
 	// should only be used when loading a file with a network
-	void setID(int id);
+	void setID(int id) throws IDAlreadyExistException;
 
 	void setID();
 
