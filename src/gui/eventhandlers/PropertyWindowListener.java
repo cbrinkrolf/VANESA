@@ -28,6 +28,7 @@ import petriNet.StochasticTransition;
 import petriNet.Transition;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
+import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
@@ -286,7 +287,11 @@ public class PropertyWindowListener implements FocusListener {
 			newP.setTokenMin(p.getTokenMin());
 			newP.setTokenStart(p.getTokenStart());
 			newP.setCompartment(p.getCompartment());
+			try{
 			newP.setID(p.getID());
+			} catch(IDAlreadyExistException ex){
+				newP.setID();
+			}
 			newP.rebuildShape(new VertexShapes());
 
 		} else if (source.equals("disList")) {
