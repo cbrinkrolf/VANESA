@@ -844,9 +844,24 @@ public class MyGraph {
 				if(pw instanceof BiologicalNodeAbstract){
 					BiologicalNodeAbstract pwNode = (BiologicalNodeAbstract) pw;
 					if (pwNode.getEnvironment().contains(bna)){
-						JOptionPane.showMessageDialog(null, "Can't delete environment nodes.", "Deletion Error",
+						if(pwNode.getGraph().getJungGraph().getNeighborCount(bna)!=0){
+							JOptionPane.showMessageDialog(null, "Can't delete connected environment nodes.", "Deletion Error",
 								JOptionPane.ERROR_MESSAGE);
-						continue;
+							continue;
+						} else {
+							Object[] options = {"Yes", "No"};
+							int answer = JOptionPane.showOptionDialog(vv, 
+									"Do you want to delete the predefined environment node " + bna.getLabel() + "?", 
+									"Delete predefined environment node" , JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+									null, options, options[1]);
+							if(answer == JOptionPane.NO_OPTION){
+								continue;
+							} else {
+								pw.removeElement(bna);
+								pw.getRootPathway().updateMyGraph();
+								continue;
+							}
+						}
 					}
 				}
 				if(!bna.getAllNodes().isEmpty() && savedAnswer == JOptionPane.NO_OPTION){

@@ -194,7 +194,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	    		if(n.getParentNode() == pw || n.getParentNode() == null){
 	    			closeNode.setEnabled(false);
 	    		}
-	    		if(!n.isCoarseNode()){
+	    		if(!n.isCoarseNode() || n.getInnerNodes().size()==0){
 	    			openNode.setEnabled(false);
 	    		}
 	    	}
