@@ -487,9 +487,11 @@ public class Pathway implements Cloneable {
 			getGraph().addEdge(bea);
 			bea.setID();
 			biologicalElements.put(bea.getID() + "", bea);
+//			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
+//					&& bea.getFrom().getParentNode() == null
+//					&& bea.getTo().getParentNode() == null && !bea.isClone()) {
 			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
-					&& bea.getFrom().getParentNode() == null
-					&& bea.getTo().getParentNode() == null && !bea.isClone()) {
+					&& !bea.isClone()) {
 				bea.getFrom().getConnectingEdges().add(bea);
 				bea.getTo().getConnectingEdges().add(bea);
 			}
@@ -620,8 +622,7 @@ public class Pathway implements Cloneable {
 			} else {
 				currentFrom.deleteSubEdge(edge);
 				currentTo.deleteSubEdge(edge);
-				currentFrom
-						.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
+				currentFrom.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
 				currentTo.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
 				updateMyGraph();
 				return;
@@ -1515,16 +1516,16 @@ public class Pathway implements Cloneable {
 
 			case DELETED:
 				removeElement(node);
-				if (thisNode == null) {
-					break;
-				}
-				if (thisNode.getEnvironment().contains(node)) {
-					thisNode.getEnvironment().remove(node);
-				}
-				if (thisNode.getBorder().contains(node)) {
-					thisNode.getBorder().remove(node);
-				}
-				
+//				if (thisNode == null) {
+//					break;
+//				}
+//				if (thisNode.getEnvironment().contains(node)) {
+//					thisNode.getEnvironment().remove(node);
+//				}
+//				if (thisNode.getBorder().contains(node)) {
+//					thisNode.getBorder().remove(node);
+//				}
+//				
 				break;
 
 			default:
@@ -1610,7 +1611,7 @@ public class Pathway implements Cloneable {
 	 * @author tloka
 	 */
 	public boolean openSubPathway(BiologicalNodeAbstract subPathway){
-		if(!subPathway.isCoarseNode()){
+		if(!subPathway.isCoarseNode() || subPathway.getInnerNodes().size()==0){
 			return false;
 		}
 		if((this instanceof BiologicalNodeAbstract && 

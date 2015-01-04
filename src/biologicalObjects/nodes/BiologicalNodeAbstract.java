@@ -128,6 +128,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private Set<BiologicalNodeAbstract> border = new HashSet<BiologicalNodeAbstract>();
 
 	private Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
+	
+	private Set<BiologicalNodeAbstract> predefinedEnvironment = new HashSet<BiologicalNodeAbstract>();
 
 	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<BiologicalEdgeAbstract>();
 	
@@ -257,6 +259,27 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 */
 	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes){
 		return BiologicalNodeAbstract.coarse(nodes, null, null);
+	}
+	
+	public static BiologicalNodeAbstract coarse(BiologicalNodeAbstract node){
+//		if(node==null){
+//			return null;
+//		}
+//		Set<BiologicalNodeAbstract> nodeSet = new HashSet<BiologicalNodeAbstract>();
+//		nodeSet.add(node);
+//		return BiologicalNodeAbstract.coarse(nodeSet, null, node.getLabel());
+		if(node.isCoarseNode()){
+			return node;
+		}
+		Pathway parentPathway = node.getParentNode()==null ? node.getRootPathway() : node.getParentNode();
+		node.getEnvironment().clear();
+		for(BiologicalNodeAbstract n : parentPathway.getGraph().getJungGraph().getNeighbors(node)){
+			node.addVertex(n, parentPathway.getGraph().getVertexLocation(n));
+			node.getPredefinedEnvironment().add(n);
+		}
+		node.updateEnvironment();
+		node.makeCoarseShape();
+		return node;
 	}
 	
 	/**
@@ -459,7 +482,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		allNodes.addAll(getAllNodes());
 		for(BiologicalNodeAbstract node : allNodes){
 			if(node.getParentNode() != this){
-				if(getGraph().getJungGraph().getNeighborCount(node)==0){
+				if(getGraph().getJungGraph().getNeighborCount(node)==0 && !predefinedEnvironment.contains(node)){
 					removeElement(node);
 				} else {
 					environment.add(node);
@@ -1379,6 +1402,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	public Set<BiologicalNodeAbstract> getEnvironment() {
 		return environment;
+	}
+	
+	public Set<BiologicalNodeAbstract> getPredefinedEnvironment() {
+		return predefinedEnvironment;
 	}
 
 	public Set<BiologicalNodeAbstract> getRefs() {
