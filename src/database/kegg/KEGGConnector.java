@@ -252,7 +252,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 		MainWindow window = MainWindowSingleton.getInstance();
 		window.updateOptionPanel();
-		window.setEnable(true);
 
 		bar.closeWindow();
 		firePropertyChange("finished", null, "finished");

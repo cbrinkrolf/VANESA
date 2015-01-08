@@ -294,7 +294,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	}*/
 
 	public String[][] getResults() throws SQLException {
-
+		
 		ArrayList<DBColumn> results = new Wrapper().requestDbContent(1,
 				getQuery());
 		String[][] container = new String[results.size()][4];
@@ -305,7 +305,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 			container[i][2] = results.get(i).getColumn()[3];
 			container[i][3] = results.get(i).getColumn()[4];
 		}
-
+		
 		return container;
 	}
 
@@ -313,7 +313,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	protected Object doInBackground() throws Exception {
 		w.setLockedPane(true);
 		results = getResults();
-		w.setLockedPane(false);
+		
 		return null;
 	}
 
@@ -363,7 +363,6 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 		Runnable run = new Runnable() {
 			public void run() {
 				bar.closeWindow();
-				w.setEnable(true);
 			}
 		};
 

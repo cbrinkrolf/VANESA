@@ -262,7 +262,6 @@ public class PPISearch extends SwingWorker<Object, Object>{
 			public void run()
 			{
 				bar.closeWindow();
-				w.setEnable(true);
 			}
 		};
 		

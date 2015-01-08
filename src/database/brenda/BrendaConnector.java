@@ -819,7 +819,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 			bar.closeWindow();
 		}
 		MainWindowSingleton.getInstance().updateAllGuiElements();
-		MainWindowSingleton.getInstance().setEnable(true);
 	}
 
 	private String cleanString(String s) {

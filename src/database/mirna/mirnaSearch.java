@@ -262,7 +262,6 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 		Runnable run = new Runnable() {
 			public void run() {
 				bar.closeWindow();
-				w.setEnable(true);
 			}
 		};
 		SwingUtilities.invokeLater(run);

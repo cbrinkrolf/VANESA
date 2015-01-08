@@ -262,7 +262,6 @@ public class GraphColoringGUI implements ActionListener {
 			if(nodewithAttribute == 0){
 				// Lock UI and initiate Progress Bar
 				mw = MainWindowSingleton.getInstance();
-				mw.setEnable(false);
 				mw.setLockedPane(true);
 				progressbar = new ProgressBar();
 				progressbar.init(100, "Computing", true);
@@ -309,7 +308,6 @@ public class GraphColoringGUI implements ActionListener {
 			if(nodewithAttribute == 0){
 				// Lock UI and initiate Progress Bar
 				mw = MainWindowSingleton.getInstance();
-				mw.setEnable(false);
 				mw.setLockedPane(true);
 				progressbar = new ProgressBar();
 				progressbar.init(100, "Computing", true);
@@ -341,7 +339,6 @@ public class GraphColoringGUI implements ActionListener {
 		case FRLAYOUT:
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
-			mw.setEnable(false);
 			mw.setLockedPane(true);
 			progressbar = new ProgressBar();
 			progressbar.init(100, "Computing", true);
@@ -428,7 +425,6 @@ public class GraphColoringGUI implements ActionListener {
 		case SPECTRAL:
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
-			mw.setEnable(false);
 			mw.setLockedPane(true);
 			progressbar = new ProgressBar();
 			progressbar.init(100, "Computing", true);
@@ -486,7 +482,6 @@ public class GraphColoringGUI implements ActionListener {
 		// close Progress bar and reactivate UI
 		GraphColoringGUI.progressbar.closeWindow();
 		mw = MainWindowSingleton.getInstance();
-		mw.setEnable(true);
 		mw.setLockedPane(false);
 	}
 
