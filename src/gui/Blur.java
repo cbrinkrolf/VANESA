@@ -16,8 +16,8 @@ import javax.swing.SwingUtilities;
 
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.interpolation.PropertySetter;
-import org.jdesktop.swingx.graphics.GraphicsUtilities;
 import org.jdesktop.swingx.image.ColorTintFilter;
+import org.jdesktop.swingx.util.GraphicsUtilities;
 
 public class Blur extends JPanel {
 	/**
