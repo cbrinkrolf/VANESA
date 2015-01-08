@@ -35,7 +35,6 @@
 	<classpathentry kind="lib" path="packages/jung/jung-io-2.0.1.jar"/>
 	<classpathentry kind="lib" path="packages/laf-plugin-50.jar"/>
 	<classpathentry kind="lib" path="packages/laf-widget.jar"/>
-	<classpathentry kind="lib" path="packages/swingx.jar"/>
 	<classpathentry kind="lib" path="packages/substance-swingx.jar"/>
 	<classpathentry kind="lib" path="packages/substance5.0fixedVersion.jar"/>
 	<classpathentry kind="lib" path="packages/jung/jung-graph-impl-2.0.1.jar"/>
@@ -72,6 +71,7 @@
 	<classpathentry kind="lib" path="packages/prettyFormula/batik-xml.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/jlatexmath-1.0.3.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/pretty-formula.jar"/>
+	<classpathentry kind="lib" path="packages/swingx-all-1.6.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
