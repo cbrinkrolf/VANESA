@@ -485,14 +485,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		return this;
 	}
 
-	public void setEnable(boolean enable) {
-		if (enable) {
-			setEnabled(true);
-		} else {
-			setEnabled(false);
-		}
-	}
-
 	public void setFullScreen() {
 		// if (fullScreen)
 		// {

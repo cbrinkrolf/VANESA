@@ -102,7 +102,6 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 			reset();
 		} else if(e.getActionCommand().equals("cancel")) {
 			reset();
-			DataMappingView.w.setEnable(true);
 			dataMappingView.dispose();
 		} else if(e.getActionCommand().equals("changeData")) {
 			JTable dmt = dataMappingView.getDataMappingTable();

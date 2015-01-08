@@ -104,7 +104,6 @@ public class ClusterComputeThread extends Thread {
 			});
 			GraphColoringGUI.progressbar.closeWindow();
 			mw = MainWindowSingleton.getInstance();
-			mw.setEnable(true);
 			mw.setLockedPane(false);
 			return false;
 
@@ -119,7 +118,6 @@ public class ClusterComputeThread extends Thread {
 			});
 			GraphColoringGUI.progressbar.closeWindow();
 			mw = MainWindowSingleton.getInstance();
-			mw.setEnable(true);
 			mw.setLockedPane(false);
 			return false;
 
@@ -134,7 +132,6 @@ public class ClusterComputeThread extends Thread {
 			});
 			GraphColoringGUI.progressbar.closeWindow();
 			mw = MainWindowSingleton.getInstance();
-			mw.setEnable(true);
 			mw.setLockedPane(false);
 			return false;
 		}

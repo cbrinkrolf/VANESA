@@ -495,7 +495,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			
 			
 			mw = MainWindowSingleton.getInstance();
-			mw.setEnable(false);
 			mw.setLockedPane(true);
 			
 			progressBar = new ProgressBar();
@@ -1059,7 +1058,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 
 		progressBar.closeWindow();
 
-		mw.setEnable(true);
 		mw.setLockedPane(false);
 	}
 
