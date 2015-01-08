@@ -106,7 +106,6 @@ public class DataMapping2GUIController implements ActionListener, MouseListener{
 			reset();
 		} else if(e.getActionCommand().equals("cancel")) {
 			reset();
-			DataMappingView.w.setEnable(true);
 			dataMappingView.dispose();
 //		} else if(e.getActionCommand().equals("changeData")) {
 //			JTable dmt = dataMappingView.getDataMappingTable();
@@ -114,11 +113,9 @@ public class DataMapping2GUIController implements ActionListener, MouseListener{
 		} else if(e.getActionCommand().equals("changeDataAndClose")) {
 			JTable dmt = dataMappingView.getDataMappingTable();
 			dataMappingModelController.setNewMergeMap(dmt);
-			DataMappingView.w.setEnable(true);
 			dataMappingView.dispose();
 			
 		} else if(e.getActionCommand().equals("cancelChange")) {
-			DataMappingView.w.setEnable(true);
 			dataMappingView.dispose();
 		}
 		

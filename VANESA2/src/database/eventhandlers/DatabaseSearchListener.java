@@ -72,7 +72,6 @@ public class DatabaseSearchListener implements ActionListener {
 		UNIDSearch.progressBar.init(100, "UNID", true);
 		UNIDSearch.progressBar.setProgressBarString("Getting search results");
 		MainWindow mw = MainWindowSingleton.getInstance();
-		mw.setEnable(false);
 		unidS.execute();
 		
 	}

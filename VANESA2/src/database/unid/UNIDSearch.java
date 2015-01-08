@@ -110,7 +110,6 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		// close Progress bar and reactivate UI
 		UNIDSearch.progressBar.closeWindow();
 		mw = MainWindowSingleton.getInstance();
-		mw.setEnable(true);
 		mw.setLockedPane(false);
 	}
 

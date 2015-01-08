@@ -24,6 +24,7 @@ public class KEGGqueryMask {
 	JTextField pathway, organism, enzyme, gene, compound;
 	
 	public KEGGqueryMask(DatabaseWindow dw){
+		
 		ImagePath imagePath = ImagePath.getInstance();
 		MigLayout layout = new MigLayout("", "[right]");
 		p = new JPanel(layout);

@@ -361,7 +361,6 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 			Vector<String[]> results = dsrw.getAnswer();
 			if (results == null)
 				return;
-			w.setEnable(true);
 			if (results.size() != 0) {
 				if (results.size() > 1 || mergePW != null)
 					answer = JOptionPane
@@ -425,7 +424,6 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 		Runnable run = new Runnable() {
 			public void run() {
 				bar.closeWindow();
-				w.setEnable(true);
 			}
 		};
 
@@ -452,7 +450,6 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 			} else {
 				mergePW = new GraphInstance().getContainer().getPathway(
 						w.getCurrentPathway());
-				w.setEnable(true);
 				w.setLockedPane(false);
 				w.updateAllGuiElements();
 				mergePW.getGraph().getVisualizationViewer().repaint();

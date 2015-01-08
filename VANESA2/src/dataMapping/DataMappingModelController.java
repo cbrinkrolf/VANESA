@@ -662,7 +662,6 @@ public class DataMappingModelController extends Observable {
 		// close Progress bar and reactivate UI
 		progressBarExport.closeWindow();
 		MainWindow mw = MainWindowSingleton.getInstance();
-		mw.setEnable(true);
 		mw.setLockedPane(false);
 	}
 
