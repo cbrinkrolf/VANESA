@@ -253,7 +253,7 @@ public class PetriNetSimulation implements ActionListener {
 		 * while(it.hasNext()){ bna = it.next(); if(bna instanceof Place){ p =
 		 * (Place) bna; p.getPetriNetSimulationData().add(Math.random());
 		 * //System.out.println(Math.random()); } }
-		 * 
+		 *
 		 * } System.out.println("endeeeeee"); stopped = true; } catch (Exception
 		 * e) { e.printStackTrace(); } } }; t2.start();
 		 */
@@ -357,9 +357,9 @@ public class PetriNetSimulation implements ActionListener {
 							+ "simulation.mo"), graphInstance.getPathway());
 					bea2key = mo.getBea2resultkey();
 					//
-					
+
 					String filter = "variableFilter=\"";
-					
+
 					Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
 					BiologicalNodeAbstract bna;
 					while(it.hasNext()){
@@ -371,7 +371,7 @@ public class PetriNetSimulation implements ActionListener {
 							filter+="'"+bna.getName()+"'.actualSpeed|";
 						}
 					}
-					
+
 					Iterator<String> it2 = bea2key.values().iterator();
 					String s;
 					while(it2.hasNext()){
@@ -472,7 +472,12 @@ public class PetriNetSimulation implements ActionListener {
 							ProcessBuilder pb = new ProcessBuilder();
 							boolean noEmmit = true;
 
-							String override = "\"-override=outputFormat=ia,stopTime="
+							String override = "";
+							if (SystemUtils.IS_OS_WINDOWS) {
+								override += "\"";
+							}
+
+							override += "-override=outputFormat=ia,stopTime="
 									+ stopTime
 									+ ",stepSize="
 									+ stopTime
@@ -541,14 +546,22 @@ public class PetriNetSimulation implements ActionListener {
 
 							}
 
-							override += "\"";
+							if (SystemUtils.IS_OS_WINDOWS) {
+								override += "\"";
+							}
 							System.out.println("override: " + override);
+
+							String program = "simulation";
+							if (SystemUtils.IS_OS_WINDOWS) {
+								program+=".exe";
+							}
+
 							if (noEmmit) {
-								pb.command(pathSim + "simulation.exe","-s="+menue.getIntegrator(),
+								pb.command(pathSim + program,"-s="+menue.getIntegrator(),
 										override, "-port=11111",
 										"-noEventEmit", "-lv=LOG_STATS");
 							} else {
-								pb.command(pathSim + "simulation.exe","-s="+menue.getIntegrator(),
+								pb.command(pathSim + program,"-s="+menue.getIntegrator(),
 										override, "-port=11111",
 										"-lv=LOG_STATS");
 							}
@@ -682,7 +695,7 @@ public class PetriNetSimulation implements ActionListener {
 				 * Thread t3 = new Thread() { public void run() { long totalTime
 				 * = 60000; try { sleep(2000); for (long t = 0; t < totalTime; t
 				 * += 200) {
-				 * 
+				 *
 				 * sleep(200); Iterator<BiologicalNodeAbstract> it =
 				 * graphInstance.getPathway().getAllNodes().iterator();
 				 * BiologicalNodeAbstract bna; Place p;
@@ -693,7 +706,7 @@ public class PetriNetSimulation implements ActionListener {
 				 * Place){ p = (Place) bna;
 				 * p.getPetriNetSimulationData().add(Math.random());
 				 * //System.out.println(Math.random()); } }
-				 * 
+				 *
 				 * } System.out.println("endeeeeee"); stopped = true; } catch
 				 * (Exception e) { e.printStackTrace(); } } }; t3.start();
 				 */
