@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -31,8 +33,17 @@ public class Server {
 	private HashMap<BiologicalEdgeAbstract, String> bea2key;
 	private ArrayList<String> names;
 	private boolean running = true;
+	
+	// size of modelica int;
+	private final int sizeOfInt;
 
 	public Server(HashMap<BiologicalEdgeAbstract, String> bea2key) {
+		
+		if (SystemUtils.IS_OS_WINDOWS) {
+			sizeOfInt = 4;
+		}else{
+			sizeOfInt = 8;
+		}
 		this.bea2key = bea2key;
 		this.init();
 	}
@@ -47,6 +58,7 @@ public class Server {
 					serverSocket = new java.net.ServerSocket(port);
 
 					while (true) {
+						//System.out.println("in while");
 						java.net.Socket client = warteAufAnmeldung(serverSocket);
 						// leseNachricht(client);
 
@@ -144,7 +156,7 @@ public class Server {
 
 		// running = true;
 		int j = 0;
-		int expected = 8 * reals + 4 * ints + bools;
+		int expected = reals * 8 + ints * sizeOfInt + bools;
 
 		System.out.println("Headers: " + names.size());
 		counter = 0;
@@ -174,6 +186,7 @@ public class Server {
 				}
 				values = new ArrayList<Object>();
 
+				//System.out.println("av: "+socket.available());
 				socket.readFully(buffer, 0, 5); // blockiert
 				// bis
 				// Nachricht
@@ -188,7 +201,7 @@ public class Server {
 						buffer.length - 2));
 				bb.order(ByteOrder.LITTLE_ENDIAN);
 				length = bb.getInt();
-				// System.out.println("length: " + length);
+				System.out.println("length: " + length);
 
 				switch (id) {
 				case 4:
@@ -202,7 +215,7 @@ public class Server {
 							// System.out.print(bb.getDouble() + "\t");
 						}
 						for (int i = 0; i < ints; i++) {
-							bb = ByteBuffer.wrap(buffer, reals * 8 + i * 4, 4);
+							bb = ByteBuffer.wrap(buffer, reals * 8 + i * sizeOfInt, sizeOfInt);
 							bb.order(ByteOrder.LITTLE_ENDIAN);
 							values.add(bb.getInt());
 							// System.out.print(bb.getInt() + "\t");
@@ -210,12 +223,13 @@ public class Server {
 						for (int b = 0; b < bools; b++) {
 							// bb = ByteBuffer.wrap(buffer, b, 1);
 							// bb.order(ByteOrder.LITTLE_ENDIAN);
-							btmp = buffer[reals * 8 + ints * 4 + b];
+							btmp = buffer[reals * 8 + ints * sizeOfInt + b];
 							values.add(new Double(btmp));
 							// values.add(buffer[reals * 8 + ints * 4 + b]);
 							// System.out.print(buffer[reals * 8 + ints * 4 + b]
 							// + "\t");
 						}
+						System.out.println("left: "+(length-expected));
 						bb = ByteBuffer.wrap(buffer, expected, length
 								- expected);
 						bb.order(ByteOrder.LITTLE_ENDIAN);
