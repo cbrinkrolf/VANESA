@@ -78,6 +78,18 @@ public class ClusterComputeThread extends Thread {
 					
 				}
 				break;
+				
+			case JobTypes.LAYOUT_MULTILEVEL_JOB:
+				if (!server.submitJob(job, edgearray, nodes,helper)) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							JOptionPane.showMessageDialog(
+									MainWindowSingleton.getInstance(), "Queue is at maximum capacity!");
+						}
+					});
+					
+				}
+				break;
 
 			default:
 				if (!server.submitJob(job, adjmatrix, helper)) {
