@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Vector;
@@ -1066,6 +1067,19 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	public Set<BiologicalNodeAbstract> getAllParentNodes() {
 		BiologicalNodeAbstract node = this;
 		HashSet<BiologicalNodeAbstract> ret = new HashSet<BiologicalNodeAbstract>();
+		if (node.getParentNode() == null) {
+			return ret;
+		}
+		while (node.getParentNode() != node && node.getParentNode() != null) {
+			node = node.getParentNode();
+			ret.add(node);
+		}
+		return ret;
+	}
+	
+	public List<BiologicalNodeAbstract> getAllParentNodesSorted() {
+		BiologicalNodeAbstract node = this;
+		ArrayList<BiologicalNodeAbstract> ret = new ArrayList<BiologicalNodeAbstract>();
 		if (node.getParentNode() == null) {
 			return ret;
 		}
