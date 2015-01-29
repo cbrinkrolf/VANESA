@@ -3,6 +3,7 @@ package graph.layouts.hebLayout;
 import java.awt.Dimension;
 import java.awt.Shape;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -115,9 +116,23 @@ public class HEBLayout extends HierarchicalCircleLayout{
 	}
 	
 	public void setEdgeShapes(){
+		HashMap<BiologicalNodeAbstract,Integer> layer = new HashMap<BiologicalNodeAbstract,Integer>();
+		int l;
+		for(BiologicalNodeAbstract node : getGraph().getVertices()){
+			l=0;
+			BiologicalNodeAbstract p = node;
+			while(p!=null){
+				if(layer.containsKey(p)){
+					layer.put(p,Math.max(l, layer.get(p)));
+				} else {
+					layer.put(p, l);
+				}
+				p=p.getParentNode();
+				l+=1;		
+			}
+		}
 		Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>
-			est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(getCenterPoint());
-		
+			est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(getCenterPoint(),layer);
 		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(est);
 	}
 	

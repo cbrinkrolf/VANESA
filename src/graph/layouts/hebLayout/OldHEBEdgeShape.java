@@ -3,16 +3,10 @@ package graph.layouts.hebLayout;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.CubicCurve2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
-import java.awt.geom.QuadCurve2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -36,7 +30,7 @@ import graph.jung.classes.MyGraph;
  * @param <Edge>
  */
 
-public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
+public class OldHEBEdgeShape<V,E> extends EdgeShape<V,E>{
 	 /**
      * An edge shape that renders as a CubicCurve between vertex
      * endpoints.  The two control points are at
@@ -49,26 +43,18 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
         /**
          * singleton instance of the CubicCurve edge shape
          */
-        private static Shape instance = new CubicCurve2D.Float();
+        private static CubicCurve2D instance = new CubicCurve2D.Float();
                  
         protected EdgeIndexFunction<V,E> parallelEdgeIndexFunction;
         
         private static Point2D centerPoint;
         
-        private HashMap<BiologicalNodeAbstract,Integer> layer;
-        private Integer maxLayer;
-        
         public Point2D getCenterPoint(){
         	return centerPoint;
         }
         
-        public HEBCurve(Point2D cP, HashMap<BiologicalNodeAbstract,Integer> l){
+        public HEBCurve(Point2D cP){
         	centerPoint = cP;
-        	layer = l;
-        	maxLayer = -1;
-        	for (Integer d : l.values()) {
-        	     if (d > maxLayer) maxLayer = d;
-        	}
         }
 
 		@SuppressWarnings("unchecked")
@@ -109,6 +95,26 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            // current MyGraph
            MyGraph myGraph = GraphInstance.getMyGraph();
            
+//           // the locations of all nodes containing to the same parentNode as the startNode.
+//           Set<Point2D> group1 = new HashSet<Point2D>();
+//           if(endpointNodes.getFirst().getParentNode()==null){
+//        	   group1.add(myGraph.getVertexLocation(endpointNodes.getFirst()));
+//           } else {
+//        	   for(BiologicalNodeAbstract bna : endpointNodes.getFirst().getParentNode().getInnerNodes()){
+//        		   group1.add(myGraph.getVertexLocation(bna));
+//        	   }
+//           }
+//           
+//           // the locations of all nodes containing to the same parentNode as the endNode.
+//           Set<Point2D> group2 = new HashSet<Point2D>();
+//           if(endpointNodes.getSecond().getParentNode()==null){
+//        	   group2.add(myGraph.getVertexLocation(endpointNodes.getSecond()));
+//           } else {
+//        	   for(BiologicalNodeAbstract bna : endpointNodes.getSecond().getParentNode().getInnerNodes()){
+//        		   group2.add(myGraph.getVertexLocation(bna));
+//        	   }
+//           }
+           
            Set<Point2D> group1 = new HashSet<Point2D>();
            for(BiologicalNodeAbstract bna : ((HEBLayout) myGraph.getLayout()).getNodesGroup(endpointNodes.getFirst())){
         	   group1.add(myGraph.getVertexLocation(bna));
@@ -119,8 +125,7 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            }
            
            if(group1.equals(group2) && !HEBLayoutConfig.getInstance().getShowInternalEdges()){
-        	   instance = new CubicCurve2D.Float();
-        	   ((CubicCurve2D) instance).setCurve(0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
+        	   instance.setCurve(0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
         	   return instance;
            }
            
@@ -135,41 +140,6 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
                       
            // The circle's center.
            Point2D center = getCenterPoint();
-           
-           BiologicalNodeAbstract lcp = endpointNodes.getFirst().getLastCommonParentNode(endpointNodes.getSecond());
-           List<Pair<java.lang.Double>> controlPoints = new ArrayList<Pair<java.lang.Double>>();
-           for(BiologicalNodeAbstract node : endpointNodes.getFirst().getAllParentNodesSorted()){
-        	   Set<Point2D> childNodePoints = new HashSet<Point2D>();
-        	   for(BiologicalNodeAbstract n : node.getCurrentShownChildrenNodes(myGraph)){
-        		   childNodePoints.add(myGraph.getVertexLocation(n));
-        	   }
-        	   Pair<java.lang.Double> cP = new Pair<java.lang.Double>(Circle.getAngle(center,averagePoint(childNodePoints)),layer.get(node).doubleValue());
-        	   controlPoints.add(cP);
-        	   if(node==lcp)
-        		   break;
-           }
-           boolean lcpreachedflag = false;
-           List<BiologicalNodeAbstract> node2Parents = endpointNodes.getSecond().getAllParentNodesSorted();
-           for(int i=node2Parents.size()-1; i>=0; i--){
-        	   if(node2Parents.get(i)==lcp)
-        		   lcpreachedflag = true;
-        	   if(lcp==null||lcpreachedflag){
-        		   BiologicalNodeAbstract node = node2Parents.get(i);
-        		   Set<Point2D> childNodePoints = new HashSet<Point2D>();
-        		   for(BiologicalNodeAbstract n : node.getCurrentShownChildrenNodes(myGraph)){
-        			   childNodePoints.add(myGraph.getVertexLocation(n));
-        		   }
-        		   Pair<java.lang.Double> cP = new Pair<java.lang.Double>(Circle.getAngle(center,averagePoint(childNodePoints)),layer.get(node).doubleValue());
-        		   controlPoints.add(cP);
-        		   Collection<BiologicalNodeAbstract> children = node.getInnerNodes();
-        		   children.retainAll(endpointNodes.getSecond().getAllParentNodes());
-        		   if(children.isEmpty()){
-        			   children.add(endpointNodes.getSecond());
-        		   }
-        		   node = children.iterator().next();
-        	   }
-           }
-           controlPoints.add(new Pair<java.lang.Double>(Circle.getAngle(center, myGraph.getVertexLocation(endpointNodes.getSecond())),0.0));
            
            double moveQuotient = group1.equals(group2) ? 
         		   HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_PERCENTAGE : HEBLayoutConfig.EDGE_BENDING_PERCENTAGE;
@@ -206,27 +176,11 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            }
            cPoint2 = computeControlPoint(cPoint2, center, startPoint, endPoint,edge);
            
-           List<QuadCurve2D> lines = new ArrayList<QuadCurve2D>();
-           Point2D lastPoint = new Point2D.Double(0.0f,0.0f);
-           for(int i=0; i<controlPoints.size(); i++){
-        	   Point2D nP = Circle.getPointOnCircle(center, circleRadius, controlPoints.get(i).getFirst());
-        	   nP = moveInCenterDirection(nP, center, 100*controlPoints.get(i).getSecond()/(maxLayer+1));
-        	   Point2D nP2 = new Point2D.Double(1.0f,0.0f);
-        	   if(i+1<controlPoints.size()){
-        		   nP2 = Circle.getPointOnCircle(center, circleRadius, controlPoints.get(i+1).getFirst());
-        		   nP2 = moveInCenterDirection(nP2, center, 100*controlPoints.get(i+1).getSecond()/(maxLayer+1));
-            	   nP2 = new Point2D.Double((nP.getX()+nP2.getX())/2,(nP.getY()+nP2.getY())/2);
-            	   nP2 = computeControlPoint(nP2,center,startPoint,endPoint,edge);
-        	   }
-        	   nP = computeControlPoint(nP,center,startPoint,endPoint,edge);
-        	   lines.add(new QuadCurve2D.Double(lastPoint.getX(), lastPoint.getY(), nP.getX(), nP.getY(), nP2.getX(), nP2.getY()));
-        	   lastPoint = nP2;
-           }
-           Path2D path = new Path2D.Double();
-           for(QuadCurve2D l : lines){
-             path.append(l,true);     
-           }           
-           return path;
+//           instance.setCurve(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, cPoint1.getX(), cPoint1.getY());
+//           instance.setCurve(cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+        	 instance.setCurve(0.0f, 0.0f, cPoint1.getX(), cPoint1.getY(), cPoint2.getX(), cPoint2.getY(), 1.0f, 0.0f);
+           
+           return instance;
         }
     }
     
