@@ -20,8 +20,8 @@ import database.gui.DatabaseWindow;
 public class KEGGqueryMask {
 	
 	private TitledTab tab;
-	JPanel p;
-	JTextField pathway, organism, enzyme, gene, compound;
+	private JPanel p;
+	private JTextField pathway, organism, enzyme, gene, compound;
 	
 	public KEGGqueryMask(DatabaseWindow dw){
 		

@@ -201,7 +201,7 @@ public class Server {
 						buffer.length - 2));
 				bb.order(ByteOrder.LITTLE_ENDIAN);
 				length = bb.getInt();
-				System.out.println("length: " + length);
+				//System.out.println("length: " + length);
 
 				switch (id) {
 				case 4:
@@ -229,7 +229,7 @@ public class Server {
 							// System.out.print(buffer[reals * 8 + ints * 4 + b]
 							// + "\t");
 						}
-						System.out.println("left: "+(length-expected));
+						//System.out.println("left: "+(length-expected));
 						bb = ByteBuffer.wrap(buffer, expected, length
 								- expected);
 						bb.order(ByteOrder.LITTLE_ENDIAN);
