@@ -130,7 +130,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			}
 
 			checkbox = new JCheckBox(
-					"User same scaling for each simulation plot of each place.");
+					"Use same scaling for each simulation plot of each place.");
 			// this.drawPlots();
 
 			p.removeAll();

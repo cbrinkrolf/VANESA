@@ -10,7 +10,7 @@ import net.infonode.tabbedpanel.titledtab.TitledTab;
 
 public class QueryInfoWindow {
 
-	JPanel p = new JPanel();
+	private JPanel p = new JPanel();
 	private final TitledTab tab;
 
 	public QueryInfoWindow() {

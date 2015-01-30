@@ -117,6 +117,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private JCheckBox animationColour = new JCheckBox();
 	private Thread thread;
 	private ChartPanel pane;
+	
+	private JButton exportSimResult;
 
 	// private JPanel invariants = new JPanel();
 
@@ -661,18 +663,27 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			MigLayout layout2 = new MigLayout();
 			dialogPanel = new JPanel(layout2);
 			dialogPanel.add(new JLabel(
-					"Results for each Timestep t and for all Places V:"),
+					"Results for each Timestep t and for all Places:"),
 					"span 2");
 			dialogPanel.add(new JSeparator(), "gap 10, wrap 15, growx");
-			dialogPanel.add(sp, "span 4, growx");
+			dialogPanel.add(sp, "span 4, growx, wrap");
 
+			//dialogPanel
+			//.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
+
+			//JPanel selectPanel = new JPanel();
+
+			//dialogPanel.add(selectPanel, "span,gaptop 1,align right,wrap");
+
+			exportSimResult = new JButton("Export Simulation Result");
+			exportSimResult.setActionCommand("exportSimResult");
+			exportSimResult.addActionListener(this);
+			
+			dialogPanel.add(exportSimResult, "wrap");
+			
 			dialogPanel
-					.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
-
-			JPanel selectPanel = new JPanel();
-
-			dialogPanel.add(selectPanel, "span,gaptop 1,align right,wrap");
-
+			.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
+			
 			// draw a new plot according to the current time step selection
 
 			PlotsPanel pp = new PlotsPanel();
@@ -689,7 +700,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			dialog.setResizable(true);
 			dialog.setContentPane(dialogPanel);
 			dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
 			ScreenSize screen = new ScreenSize();
 			int screenHeight = (int) screen.getheight();
 			int screenWidth = (int) screen.getwidth();
@@ -748,6 +758,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					}
 				}
 			}
+		}else if(event.equals("exportSimResult")){
+			//TODO CHRIS bit empty, yet :)
+			
+			System.out.println("click");
 		}
 		// TODO actions fuer T-Inv. und P-Inv. Test
 		/*
