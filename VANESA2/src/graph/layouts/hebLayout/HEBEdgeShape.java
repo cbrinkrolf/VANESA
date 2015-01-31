@@ -151,8 +151,10 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            boolean lcpreachedflag = false;
            List<BiologicalNodeAbstract> node2Parents = endpointNodes.getSecond().getAllParentNodesSorted();
            for(int i=node2Parents.size()-1; i>=0; i--){
-        	   if(node2Parents.get(i)==lcp)
+        	   if(node2Parents.get(i)==lcp){
         		   lcpreachedflag = true;
+        		   continue;
+        	   }
         	   if(lcp==null||lcpreachedflag){
         		   BiologicalNodeAbstract node = node2Parents.get(i);
         		   Set<Point2D> childNodePoints = new HashSet<Point2D>();
@@ -169,8 +171,7 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
         		   node = children.iterator().next();
         	   }
            }
-           controlPoints.add(new Pair<java.lang.Double>(Circle.getAngle(center, myGraph.getVertexLocation(endpointNodes.getSecond())),0.0));
-           
+
            double moveQuotient = group1.equals(group2) ? 
         		   HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_PERCENTAGE : HEBLayoutConfig.EDGE_BENDING_PERCENTAGE;
            
@@ -206,6 +207,11 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            }
            cPoint2 = computeControlPoint(cPoint2, center, startPoint, endPoint,edge);
            
+           if(controlPoints.size()==0){
+        	   Point2D centerTransform = new Point2D.Double(center.getX(),center.getY());
+        	   centerTransform = computeControlPoint(centerTransform,center,startPoint,endPoint,edge);
+        	   return new QuadCurve2D.Double(0.0, 0.0, centerTransform.getX(), centerTransform.getY(), 1.0, 0.0);
+           }
            List<QuadCurve2D> lines = new ArrayList<QuadCurve2D>();
            Point2D lastPoint = new Point2D.Double(0.0f,0.0f);
            for(int i=0; i<controlPoints.size(); i++){
