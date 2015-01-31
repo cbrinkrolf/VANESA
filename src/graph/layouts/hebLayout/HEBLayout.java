@@ -19,7 +19,8 @@ import graph.layouts.HierarchicalCircleLayout;
 
 public class HEBLayout extends HierarchicalCircleLayout{
 	
-	protected List<List<BiologicalNodeAbstract>> bnaGroups;
+	protected HashMap<Integer,List<BiologicalNodeAbstract>> bnaGroups;
+	protected List<Integer> groupKeys;
 
 	public HEBLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		super(g);
@@ -52,8 +53,8 @@ public class HEBLayout extends HierarchicalCircleLayout{
                 //distance between two groups (added to small distance between two nodes)
                 final double nodeDistance = HEBLayoutConfig.nodeDistance(bnaGroups.size(), graphNodes.size());
                 final double groupDistance = (HEBLayoutConfig.GROUP_DISTANCE_FACTOR-1)*nodeDistance;
-                for (List<BiologicalNodeAbstract> group : bnaGroups){
-                	for(BiologicalNodeAbstract v : group){
+                for(Integer i : groupKeys){
+                	for(BiologicalNodeAbstract v : bnaGroups.get(i)){
                 		apply(v);
                 		double angle = group_no*groupDistance+vertex_no*nodeDistance;
                 		GraphInstance.getMyGraph().moveVertex(v, 
@@ -82,9 +83,9 @@ public class HEBLayout extends HierarchicalCircleLayout{
 
 		order = computeOrder();
 		
-		bnaGroups = new ArrayList<List<BiologicalNodeAbstract>>();
-		List<BiologicalNodeAbstract> newGroup = new ArrayList<BiologicalNodeAbstract>();
+		bnaGroups = new HashMap<Integer,List<BiologicalNodeAbstract>>();
 		Set<BiologicalNodeAbstract> addedNodes = new HashSet<BiologicalNodeAbstract>();
+		groupKeys = new ArrayList<Integer>();
 		BiologicalNodeAbstract currentNode;
 
 		for(BiologicalNodeAbstract node : order){
@@ -93,25 +94,20 @@ public class HEBLayout extends HierarchicalCircleLayout{
 				continue;
 			}
 			
-			if(newGroup.isEmpty()){
-				newGroup.add(currentNode);
+			if(currentNode.getParentNode()==null){
+				groupKeys.add(currentNode.getID());
+				bnaGroups.put(currentNode.getID(), new ArrayList<BiologicalNodeAbstract>());
+				bnaGroups.get(currentNode.getID()).add(currentNode);
 				addedNodes.add(currentNode);
-				bnaGroups.add(newGroup);
 				continue;
 			}
 			
-			BiologicalNodeAbstract groupNode = newGroup.iterator().next();
-			if(groupNode.getHierarchyDistance(currentNode) < 0 || groupNode.getHierarchyDistance(currentNode)>getConfig().GROUP_DEPTH){
-				newGroup = new ArrayList<BiologicalNodeAbstract>();
-				newGroup.add(currentNode);
-				addedNodes.add(currentNode);
-				bnaGroups.add(newGroup);
-			} else {
-				if(!newGroup.contains(currentNode)){
-					newGroup.add(currentNode);
-					addedNodes.add(currentNode);
-				}
+			if(!groupKeys.contains(currentNode.getParentNode().getID())){
+				groupKeys.add(currentNode.getParentNode().getID());
+				bnaGroups.put(currentNode.getParentNode().getID(),new ArrayList<BiologicalNodeAbstract>());
 			}
+			bnaGroups.get(currentNode.getParentNode().getID()).add(currentNode);
+			addedNodes.add(currentNode);
 		}
 	}
 	
@@ -143,7 +139,7 @@ public class HEBLayout extends HierarchicalCircleLayout{
 	 * @author tloka
 	 */
 	public List<BiologicalNodeAbstract> getNodesGroup(BiologicalNodeAbstract node){
-		for(List<BiologicalNodeAbstract> group : bnaGroups){
+		for(List<BiologicalNodeAbstract> group : bnaGroups.values()){
 			if(group.contains(node)){
 				return group;
 			}
@@ -151,7 +147,7 @@ public class HEBLayout extends HierarchicalCircleLayout{
 		return new ArrayList<BiologicalNodeAbstract>();
 	}
 	
-	public List<List<BiologicalNodeAbstract>> getBnaGroups(){
+	public HashMap<Integer, List<BiologicalNodeAbstract>> getBnaGroups(){
 		return bnaGroups;
 	}
 }
