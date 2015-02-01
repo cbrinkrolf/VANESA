@@ -1,10 +1,12 @@
 package graph.layouts.hebLayout;
 
 import java.awt.GridLayout;
+import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -27,6 +29,8 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	public static int EDGE_BENDING_PERCENTAGE = 25;
 	public static int GROUPINTERNAL_EDGE_BENDING_PERCENTAGE = 25;
 	public static int EDGE_BUNDLING_PERCENTAGE = 30;
+	public static int ROUGHEST_LEVEL = 1;
+	public static int FINEST_LEVEL = 0;
 	
 	public static JCheckBox showInternalEdges;
 	public static JCheckBox resetLayout;
@@ -36,7 +40,7 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	public static JSlider edgeBendingSlider;
 	public static JSlider internalEdgeBendingSlider;
 	public static JSlider edgeBundlingSlider;
-//	public static JSlider groupDepthSlider;
+	public static JSlider groupDepthSlider;
 	
 	public HEBLayoutConfig() {
 		super(HEBLayout.class);
@@ -76,18 +80,21 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		 groupSeperationSlider.addChangeListener(this);
 		 groupPreferences.add(groupSeperationSlider);
 		 
-//		 groupDepthSlider = new JSlider();
-//		 groupDepthSlider.setBorder(BorderFactory
-//					.createTitledBorder("Grouping Depth"));
-//		 groupDepthSlider.setMinimum(0);
-//		 groupDepthSlider.setMaximum(10);
-//		 groupDepthSlider.setValue(GROUP_DEPTH);
-//		 groupDepthSlider.setMajorTickSpacing(5);
-//		 groupDepthSlider.setMinorTickSpacing(2);
-//		 groupDepthSlider.setPaintTicks(true);
-//		 groupDepthSlider.setPaintLabels(true);
-//		 groupDepthSlider.addChangeListener(this);
-//		 groupPreferences.add(groupDepthSlider);
+		 groupDepthSlider = new JSlider();
+		 groupDepthSlider.setBorder(BorderFactory
+					.createTitledBorder("Grouping"));
+		 groupDepthSlider.setMinimum(FINEST_LEVEL);
+		 groupDepthSlider.setMaximum(ROUGHEST_LEVEL);
+		 groupDepthSlider.setValue(ROUGHEST_LEVEL);
+		 groupDepthSlider.setMajorTickSpacing(1);
+		 groupDepthSlider.setPaintTicks(true);
+		 Hashtable<Integer,JLabel> labelTable = new Hashtable<Integer,JLabel>();
+		 labelTable.put( new Integer( FINEST_LEVEL ), new JLabel("Finest Level") );
+		 labelTable.put( new Integer( ROUGHEST_LEVEL ), new JLabel("Roughest Level") );
+		 groupDepthSlider.setLabelTable( labelTable );
+		 groupDepthSlider.setPaintLabels(true);
+		 groupDepthSlider.addChangeListener(this);
+		 groupPreferences.add(groupDepthSlider);
 			
 		edgeBendingSlider = new JSlider();
 		edgeBendingSlider.setBorder(BorderFactory
@@ -187,8 +194,8 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 			HEBLayoutConfig.EDGE_BENDING_PERCENTAGE = HEBLayoutConfig.edgeBendingSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.internalEdgeBendingSlider)) {
 			HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_PERCENTAGE = HEBLayoutConfig.internalEdgeBendingSlider.getValue();
-//		} else if (arg0.getSource().equals(HEBLayoutConfig.groupDepthSlider)) {
-//			HEBLayoutConfig.GROUP_DEPTH = HEBLayoutConfig.groupDepthSlider.getValue();
+		} else if (arg0.getSource().equals(HEBLayoutConfig.groupDepthSlider)) {
+			HEBLayoutConfig.GROUP_DEPTH = HEBLayoutConfig.groupDepthSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeBundlingSlider)) {
 			HEBLayoutConfig.EDGE_BUNDLING_PERCENTAGE = HEBLayoutConfig.edgeBundlingSlider.getValue();
 		}
