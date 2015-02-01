@@ -244,7 +244,7 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
     	return Math.atan(gradient);
     }
     
-    private static Point2D averagePoint(Set<Point2D> nodes){
+    public static Point2D averagePoint(Set<Point2D> nodes){
     	Point2D avPoint = new Point2D.Double(0,0);
     	for(Point2D node : nodes){
     		avPoint.setLocation(avPoint.getX()+(node.getX()/nodes.size()), avPoint.getY()+(node.getY()/nodes.size()));
@@ -266,7 +266,7 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
     
      * @return The controlPoint in transformed coordinates.
      */
-    private static Point2D computeControlPoint(Point2D basis, Point2D center, Point2D startPoint, Point2D endPoint, BiologicalEdgeAbstract edge){
+    public static Point2D computeControlPoint(Point2D basis, Point2D center, Point2D startPoint, Point2D endPoint, BiologicalEdgeAbstract edge){
     	
     	double startBasisDistance = Point2D.distance(basis.getX(), basis.getY(), startPoint.getX(), startPoint.getY());
     	double startEndDistance = Point2D.distance(startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY());

@@ -58,8 +58,8 @@ public class HEBLayout extends HierarchicalCircleLayout{
                 		apply(v);
                 		double angle = group_no*groupDistance+vertex_no*nodeDistance;
                 		GraphInstance.getMyGraph().moveVertex(v, 
-                				Math.cos(angle) * getRadius() + centerPoint.getX(),
-                				Math.sin(angle) * getRadius() + centerPoint.getY());
+                				Math.cos(angle) * getRadius() * Math.log10(graphNodes.size()) + centerPoint.getX(),
+                				Math.sin(angle) * getRadius() * Math.log10(graphNodes.size())+ centerPoint.getY());
 
                 		CircleVertexData data = getCircleData(v);
                 		data.setVertexAngle(angle);
@@ -87,6 +87,7 @@ public class HEBLayout extends HierarchicalCircleLayout{
 		Set<BiologicalNodeAbstract> addedNodes = new HashSet<BiologicalNodeAbstract>();
 		groupKeys = new ArrayList<Integer>();
 		BiologicalNodeAbstract currentNode;
+		BiologicalNodeAbstract referenceParent;
 
 		for(BiologicalNodeAbstract node : order){
 			currentNode = node.getCurrentShownParentNode(myGraph);
@@ -94,7 +95,8 @@ public class HEBLayout extends HierarchicalCircleLayout{
 				continue;
 			}
 			
-			if(currentNode.getParentNode()==null){
+			referenceParent = getConfig().GROUP_DEPTH==getConfig().FINEST_LEVEL ? currentNode.getParentNode() : currentNode.getLastParentNode();
+			if(referenceParent==null){
 				groupKeys.add(currentNode.getID());
 				bnaGroups.put(currentNode.getID(), new ArrayList<BiologicalNodeAbstract>());
 				bnaGroups.get(currentNode.getID()).add(currentNode);
@@ -102,11 +104,11 @@ public class HEBLayout extends HierarchicalCircleLayout{
 				continue;
 			}
 			
-			if(!groupKeys.contains(currentNode.getParentNode().getID())){
-				groupKeys.add(currentNode.getParentNode().getID());
-				bnaGroups.put(currentNode.getParentNode().getID(),new ArrayList<BiologicalNodeAbstract>());
+			if(!groupKeys.contains(referenceParent.getID())){
+				groupKeys.add(referenceParent.getID());
+				bnaGroups.put(referenceParent.getID(),new ArrayList<BiologicalNodeAbstract>());
 			}
-			bnaGroups.get(currentNode.getParentNode().getID()).add(currentNode);
+			bnaGroups.get(referenceParent.getID()).add(currentNode);
 			addedNodes.add(currentNode);
 		}
 	}
