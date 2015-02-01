@@ -174,27 +174,27 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 							window.updateOptionPanel();
 							window.setVisible(true);
 							
-//							class HLC implements HierarchyListComparator<String>{
-//
-//								int c;
-//								
-//								public HLC(int chars){
-//									c = chars;
-//								}
-//
-//								public String getValue(BiologicalNodeAbstract n) {
-//									return (String) n.getLabel().substring(0,c);
-//								}
-//
-//								public String getSubValue(
-//										BiologicalNodeAbstract n) {
-//									return n.getLabel();
-//								}
-//							}
-//						HierarchyList<String> l = new HierarchyList<String>();	
-//						l.addAll(myGraph.getAllVertices());
-//						l.sort(new HLC(1));
-//						l.coarse();
+							class HLC implements HierarchyListComparator<String>{
+
+								int c;
+								
+								public HLC(int chars){
+									c = chars;
+								}
+
+								public String getValue(BiologicalNodeAbstract n) {
+									return (String) n.getLabel().substring(0,c);
+								}
+
+								public String getSubValue(
+										BiologicalNodeAbstract n) {
+									return n.getLabel();
+								}
+							}
+						HierarchyList<String> l = new HierarchyList<String>();	
+						l.addAll(myGraph.getAllVertices());
+						l.sort(new HLC(1));
+						l.coarse();
 						
 
 						}
