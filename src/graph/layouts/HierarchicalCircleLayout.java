@@ -31,6 +31,8 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	protected Map<BiologicalNodeAbstract, CircleVertexData> circleVertexDataMap =
            new HashMap<BiologicalNodeAbstract, CircleVertexData>();
 	protected BiologicalNodeAbstract rootNode;
+	protected HashMap<BiologicalNodeAbstract,Integer> circles;
+	protected Integer maxCircle;
 
 	public HierarchicalCircleLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
 		super(g);
@@ -74,9 +76,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 		double height = d.getHeight();
         double width = d.getWidth();
 
-        if (getRadius() <= 0) {
-        	setRadius(getConfig().CIRCLE_SIZE * (height < width ? height : width));
-        }
+        setRadius(HierarchicalCircleLayoutConfig.CIRCLE_SIZE * (height < width ? height : width));
         
         centerPoint = new Point2D.Double(width/2, height/2);
 	}
@@ -185,10 +185,15 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	public static class CircleVertexData extends CircleLayout.CircleVertexData{
 		
         private double angle;
+		private int circleNumber = 1;
         
         public int getCircleNumber(){
-        	return 1;
+        	return circleNumber;
         }
+        
+        public void setCircleNumber(int no){
+			circleNumber = no;
+		}
         
         public double getVertexAngle(){
         	return getAngle();
