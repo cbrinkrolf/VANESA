@@ -44,25 +44,33 @@ public class HEBLayout extends HierarchicalCircleLayout{
                 if (bnaGroups == null){
                     groupNodes();
                 }
+                computeCircleNumbers();
                 
                 computeCircleData(d);
 
                 int group_no = 0;
                 int vertex_no = 0;
                 
+                //larger circle for a larger number of nodes on the outter circle.
+                setRadius(getRadius()*Math.log10(graphNodes.size()));
+                
+                //distance between two ndoes of the same group
+                final double nodeDistance = 2*Math.PI / ((HEBLayoutConfig.GROUP_DISTANCE_FACTOR-1)*bnaGroups.size()+graphNodes.size());
+                
                 //distance between two groups (added to small distance between two nodes)
-                final double nodeDistance = HEBLayoutConfig.nodeDistance(bnaGroups.size(), graphNodes.size());
                 final double groupDistance = (HEBLayoutConfig.GROUP_DISTANCE_FACTOR-1)*nodeDistance;
+                
                 for(Integer i : groupKeys){
                 	for(BiologicalNodeAbstract v : bnaGroups.get(i)){
-                		apply(v);
                 		double angle = group_no*groupDistance+vertex_no*nodeDistance;
                 		GraphInstance.getMyGraph().moveVertex(v, 
-                				Math.cos(angle) * getRadius() * Math.log10(graphNodes.size()) + centerPoint.getX(),
-                				Math.sin(angle) * getRadius() * Math.log10(graphNodes.size())+ centerPoint.getY());
+                				Math.cos(angle) * getRadius() + centerPoint.getX(),
+                				Math.sin(angle) * getRadius() + centerPoint.getY());
 
+                		apply(v);
                 		CircleVertexData data = getCircleData(v);
                 		data.setVertexAngle(angle);
+                		data.setCircleNumber(1);
                 		vertex_no++;
                 	}
                     group_no++;
@@ -70,6 +78,30 @@ public class HEBLayout extends HierarchicalCircleLayout{
             }
             setEdgeShapes();
     }
+	
+	/**
+	 * Computes for all graph nodes and their parents the circle they are part of.
+	 * @author tloka
+	 */
+	public void computeCircleNumbers(){
+		circles = new HashMap<BiologicalNodeAbstract,Integer>();
+		maxCircle = 0;
+		int c;
+		for(BiologicalNodeAbstract node : getGraph().getVertices()){
+			c=0;
+			BiologicalNodeAbstract p = node;
+			while(p!=null){
+				if(circles.containsKey(p)){
+					circles.put(p,Math.max(c, circles.get(p)));
+				} else {
+					circles.put(p, c);
+				}
+				maxCircle = Math.max(c,maxCircle);
+				p=p.getParentNode();
+				c+=1;		
+			}
+		}
+	}
 	
 	/**
 	 * Build groups with nodes of the same parent node in the given depth.
@@ -95,7 +127,7 @@ public class HEBLayout extends HierarchicalCircleLayout{
 				continue;
 			}
 			
-			referenceParent = getConfig().GROUP_DEPTH==getConfig().FINEST_LEVEL ? currentNode.getParentNode() : currentNode.getLastParentNode();
+			referenceParent = HEBLayoutConfig.GROUP_DEPTH==HEBLayoutConfig.FINEST_LEVEL ? currentNode.getParentNode() : currentNode.getLastParentNode();
 			if(referenceParent==null){
 				groupKeys.add(currentNode.getID());
 				bnaGroups.put(currentNode.getID(), new ArrayList<BiologicalNodeAbstract>());
@@ -113,24 +145,10 @@ public class HEBLayout extends HierarchicalCircleLayout{
 		}
 	}
 	
+	@Override
 	public void setEdgeShapes(){
-		HashMap<BiologicalNodeAbstract,Integer> layer = new HashMap<BiologicalNodeAbstract,Integer>();
-		int l;
-		for(BiologicalNodeAbstract node : getGraph().getVertices()){
-			l=0;
-			BiologicalNodeAbstract p = node;
-			while(p!=null){
-				if(layer.containsKey(p)){
-					layer.put(p,Math.max(l, layer.get(p)));
-				} else {
-					layer.put(p, l);
-				}
-				p=p.getParentNode();
-				l+=1;		
-			}
-		}
 		Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>
-			est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(getCenterPoint(),layer);
+			est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(getCenterPoint(),circles);
 		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(est);
 	}
 	
