@@ -42,6 +42,7 @@ public class SaveDialog {
 	private boolean txtBool = true;
 	private boolean itxtBool = true;
 	private boolean pnmlBool = true;
+	private boolean csvBool = true;
 
 	private String fileFormat;
 	private File file;
@@ -69,6 +70,9 @@ public class SaveDialog {
 
 	private String irinaDescription = "Irina Export File (*.itxt)";
 	private String irinaTxt = "itxt";
+	
+	private String csvDescription = "CSV Result Export (*.csv)";
+	private String csv = "csv";
 
 	private JFileChooser chooser;
 
@@ -84,6 +88,7 @@ public class SaveDialog {
 	public static int FORMAT_TXT = 32;
 	public static int FORMAT_ITXT = 64;
 	public static int FORMAT_PNML = 128;
+	public static int FORMAT_CSV = 256;
 
 	public SaveDialog(int format) {
 
@@ -95,6 +100,7 @@ public class SaveDialog {
 		txtBool = (format & FORMAT_TXT) == FORMAT_TXT;
 		itxtBool = (format & FORMAT_ITXT) == FORMAT_ITXT;
 		pnmlBool = (format & FORMAT_PNML) == FORMAT_PNML;
+		csvBool = (format & FORMAT_CSV) == FORMAT_CSV;
 
 		if (ConnectionSettings.getFileDirectory() != null) {
 			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
@@ -120,8 +126,7 @@ public class SaveDialog {
 			chooser.addChoosableFileFilter(new MyFileFilter(mo, moDescription));
 
 		if (gonBool)
-			chooser
-					.addChoosableFileFilter(new MyFileFilter(csml,
+			chooser.addChoosableFileFilter(new MyFileFilter(csml,
 							csmlDescription));
 		if (pnmlBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(pnml,
@@ -130,9 +135,13 @@ public class SaveDialog {
 			chooser.addChoosableFileFilter(new MyFileFilter(vaml,
 					vamlDescription));
 		if (txtBool)
-			chooser
-					.addChoosableFileFilter(new MyFileFilter(txt,
+			chooser.addChoosableFileFilter(new MyFileFilter(txt,
 							txtDescription));
+		if(csvBool)
+			chooser.addChoosableFileFilter(new MyFileFilter(csv, 
+					csvDescription));
+		
+		
 
 		int option = chooser.showSaveDialog(MainWindowSingleton.getInstance());
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -211,7 +220,13 @@ public class SaveDialog {
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					txtDescription + " File saved");
 
-		} else if (fileFormat.equals(pnmlDescription)) {
+		} else if (fileFormat.equals(csvDescription)) {
+			getCorrectFile(csv);
+			new CSVWriter(file, new GraphInstance().getPathway());
+			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+					csvDescription + " File saved");
+
+		}else if (fileFormat.equals(pnmlDescription)) {
 			GraphContainer con = ContainerSingelton.getInstance();
 			MainWindow w = MainWindowSingleton.getInstance();
 			if (!con.isPetriView()){

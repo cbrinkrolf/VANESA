@@ -10,6 +10,7 @@ import graph.GraphInstance;
 import graph.animations.RegulationTabelModel;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.algorithms.ScreenSize;
+import io.SaveDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -759,9 +760,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				}
 			}
 		}else if(event.equals("exportSimResult")){
-			//TODO CHRIS bit empty, yet :)
+			new SaveDialog(SaveDialog.FORMAT_CSV);
 			
-			System.out.println("click");
+			//System.out.println("click");
 		}
 		// TODO actions fuer T-Inv. und P-Inv. Test
 		/*
