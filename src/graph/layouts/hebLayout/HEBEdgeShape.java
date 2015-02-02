@@ -1,12 +1,10 @@
 package graph.layouts.hebLayout;
 
+import java.awt.Color;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,11 +43,6 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
      */
     public static class HEBCurve<V,E>
          extends AbstractEdgeShapeTransformer<V,E> implements IndexedRendering<V,E> {
-         
-        /**
-         * singleton instance of the CubicCurve edge shape
-         */
-        private static Shape instance = new CubicCurve2D.Float();
                  
         protected EdgeIndexFunction<V,E> parallelEdgeIndexFunction;
         
@@ -99,6 +92,8 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
             BiologicalEdgeAbstract edge = (BiologicalEdgeAbstract) e;
            Pair<V> endpoints = graph.getEndpoints(e);
            Pair<BiologicalNodeAbstract> endpointNodes = new Pair<BiologicalNodeAbstract>((BiologicalNodeAbstract) endpoints.getFirst(), (BiologicalNodeAbstract) endpoints.getSecond());
+           
+           // If Loop, draw loop.
            if(endpoints != null) {
                boolean isLoop = endpoints.getFirst().equals(endpoints.getSecond());
                if (isLoop) {
@@ -106,24 +101,18 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
                }
            }
            
+           // Dont draw if selected group parameters fit.
+           if(!HEBLayoutConfig.getInstance().getShowInternalEdges() && endpointNodes.getFirst().getParentNode()!=null){
+        	   if(HEBLayoutConfig.GROUP_DEPTH==HEBLayoutConfig.ROUGHEST_LEVEL && endpointNodes.getFirst().getLastParentNode()==endpointNodes.getSecond().getLastParentNode()){
+        		   return new Line2D.Double(0.0,0.0,0.0,0.0);
+        	   }
+        	   if(HEBLayoutConfig.GROUP_DEPTH==HEBLayoutConfig.FINEST_LEVEL && endpointNodes.getFirst().getParentNode()==endpointNodes.getSecond().getParentNode()){
+        		   return new Line2D.Double(0.0,0.0,0.0,0.0);
+        	   }
+           }
+           
            // current MyGraph
-           MyGraph myGraph = GraphInstance.getMyGraph();
-           
-           Set<Point2D> group1 = new HashSet<Point2D>();
-           for(BiologicalNodeAbstract bna : ((HEBLayout) myGraph.getLayout()).getNodesGroup(endpointNodes.getFirst())){
-        	   group1.add(myGraph.getVertexLocation(bna));
-           }
-           Set<Point2D> group2 = new HashSet<Point2D>();
-           for(BiologicalNodeAbstract bna : ((HEBLayout) myGraph.getLayout()).getNodesGroup(endpointNodes.getSecond())){
-        	   group2.add(myGraph.getVertexLocation(bna));
-           }
-           
-           if(group1.equals(group2) && !HEBLayoutConfig.getInstance().getShowInternalEdges()){
-        	   instance = new CubicCurve2D.Float();
-        	   ((CubicCurve2D) instance).setCurve(0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f);
-        	   return instance;
-           }
-           
+           MyGraph myGraph = GraphInstance.getMyGraph();           
            
            // location of the startNode.
            Point2D startPoint = new Point2D.Double(myGraph.getVertexLocation(endpointNodes.getFirst()).getX(),
@@ -133,9 +122,13 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            Point2D endPoint = new Point2D.Double(myGraph.getVertexLocation(endpointNodes.getSecond()).getX(),
         		   myGraph.getVertexLocation(endpointNodes.getSecond()).getY());
                       
-           // The circle's center.
+           // The circle's attributes.
            Point2D center = getCenterPoint();
+           double circleRadius = Point2D.distance(centerPoint.getX(), centerPoint.getY(), startPoint.getX(), startPoint.getY());
            
+           // Compute control points
+           double angle;
+           double bundling_error = (100-HEBLayoutConfig.EDGE_BUNDLING_PERCENTAGE)*0.01;
            BiologicalNodeAbstract lcp = endpointNodes.getFirst().getLastCommonParentNode(endpointNodes.getSecond());
            List<Pair<java.lang.Double>> controlPoints = new ArrayList<Pair<java.lang.Double>>();
            for(BiologicalNodeAbstract node : endpointNodes.getFirst().getAllParentNodesSorted()){
@@ -143,10 +136,14 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
         	   for(BiologicalNodeAbstract n : node.getCurrentShownChildrenNodes(myGraph)){
         		   childNodePoints.add(myGraph.getVertexLocation(n));
         	   }
-        	   Pair<java.lang.Double> cP = new Pair<java.lang.Double>(Circle.getAngle(center,averagePoint(childNodePoints)),layer.get(node).doubleValue());
+        	   angle = Circle.getAngle(center,Circle.averagePoint(childNodePoints));
+        	   Pair<java.lang.Double> cP = new Pair<java.lang.Double>(angle-bundling_error*(angle-Circle.getAngle(center,startPoint)),layer.get(node).doubleValue());
         	   controlPoints.add(cP);
         	   if(node==lcp)
         		   break;
+           }
+           if(lcp==null){
+        	   edge.setColor(Color.RED);
            }
            boolean lcpreachedflag = false;
            List<BiologicalNodeAbstract> node2Parents = endpointNodes.getSecond().getAllParentNodesSorted();
@@ -161,7 +158,8 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
         		   for(BiologicalNodeAbstract n : node.getCurrentShownChildrenNodes(myGraph)){
         			   childNodePoints.add(myGraph.getVertexLocation(n));
         		   }
-        		   Pair<java.lang.Double> cP = new Pair<java.lang.Double>(Circle.getAngle(center,averagePoint(childNodePoints)),layer.get(node).doubleValue());
+            	   angle = Circle.getAngle(center,Circle.averagePoint(childNodePoints));
+        		   Pair<java.lang.Double> cP = new Pair<java.lang.Double>(angle-bundling_error*(angle-Circle.getAngle(center,endPoint)),layer.get(node).doubleValue());
         		   controlPoints.add(cP);
         		   Collection<BiologicalNodeAbstract> children = node.getInnerNodes();
         		   children.retainAll(endpointNodes.getSecond().getAllParentNodes());
@@ -171,60 +169,28 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
         		   node = children.iterator().next();
         	   }
            }
-
-           double moveQuotient = group1.equals(group2) ? 
-        		   HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_PERCENTAGE : HEBLayoutConfig.EDGE_BENDING_PERCENTAGE;
-           
-           double bundlingQuotient = HEBLayoutConfig.EDGE_BUNDLING_PERCENTAGE;
-           
-           double circleRadius = Point2D.distance(centerPoint.getX(), centerPoint.getY(), startPoint.getX(), startPoint.getY());
     
-           double group1Angle = Circle.getAngle(center,averagePoint(group1));
-           double group2Angle = Circle.getAngle(center,averagePoint(group2));
-           
-           //If points are in the same group, take the middle Point of them as control point of both.
-           if(group1.equals(group2)){
-        	   Set<Point2D> points = new HashSet<Point2D>();
-        	   points.add(startPoint);
-        	   points.add(endPoint);
-        	   group1Angle = Circle.getAngle(center, averagePoint(points));
-        	   group2Angle = group1Angle;
-           }
-                     
-           // Computation of the first control point to bundle all edges connecting the same groups.
-           Point2D cPoint1 = Circle.getPointOnCircle(center, circleRadius, group1Angle);
-           cPoint1 = moveInCenterDirection(cPoint1, center, moveQuotient);  
-           if(!group1.equals(group2)){
-        	   	cPoint1 = moveInCenterDirection(cPoint1, startPoint, -bundlingQuotient);
-           }
-           cPoint1 = computeControlPoint(cPoint1, center, startPoint, endPoint, edge);
-           
-           // Computation of the second control point to bundle all edges connecting the same groups.
-           Point2D cPoint2 = Circle.getPointOnCircle(center, circleRadius, group2Angle);
-           cPoint2 = moveInCenterDirection(cPoint2, center, moveQuotient); 
-           if(!group1.equals(group2)){
-        	   cPoint2 = moveInCenterDirection(cPoint2, endPoint, -bundlingQuotient);
-           }
-           cPoint2 = computeControlPoint(cPoint2, center, startPoint, endPoint,edge);
-           
+           // if no control points exist, draw quadratic bezier with center as control point
            if(controlPoints.size()==0){
         	   Point2D centerTransform = new Point2D.Double(center.getX(),center.getY());
-        	   centerTransform = computeControlPoint(centerTransform,center,startPoint,endPoint,edge);
+        	   centerTransform = Circle.computeControlPoint(centerTransform,center,startPoint,endPoint);
         	   return new QuadCurve2D.Double(0.0, 0.0, centerTransform.getX(), centerTransform.getY(), 1.0, 0.0);
            }
+           
+           // build piecewise bezier curve
            List<QuadCurve2D> lines = new ArrayList<QuadCurve2D>();
            Point2D lastPoint = new Point2D.Double(0.0f,0.0f);
            for(int i=0; i<controlPoints.size(); i++){
         	   Point2D nP = Circle.getPointOnCircle(center, circleRadius, controlPoints.get(i).getFirst());
-        	   nP = moveInCenterDirection(nP, center, 100*controlPoints.get(i).getSecond()/(maxLayer+1));
+        	   nP = Circle.moveInCenterDirection(nP, center, 100*controlPoints.get(i).getSecond()/(maxLayer+1));
         	   Point2D nP2 = new Point2D.Double(1.0f,0.0f);
         	   if(i+1<controlPoints.size()){
         		   nP2 = Circle.getPointOnCircle(center, circleRadius, controlPoints.get(i+1).getFirst());
-        		   nP2 = moveInCenterDirection(nP2, center, 100*controlPoints.get(i+1).getSecond()/(maxLayer+1));
+        		   nP2 = Circle.moveInCenterDirection(nP2, center, 100*controlPoints.get(i+1).getSecond()/(maxLayer+1));
             	   nP2 = new Point2D.Double((nP.getX()+nP2.getX())/2,(nP.getY()+nP2.getY())/2);
-            	   nP2 = computeControlPoint(nP2,center,startPoint,endPoint,edge);
+            	   nP2 = Circle.computeControlPoint(nP2,center,startPoint,endPoint);
         	   }
-        	   nP = computeControlPoint(nP,center,startPoint,endPoint,edge);
+        	   nP = Circle.computeControlPoint(nP,center,startPoint,endPoint);
         	   lines.add(new QuadCurve2D.Double(lastPoint.getX(), lastPoint.getY(), nP.getX(), nP.getY(), nP2.getX(), nP2.getY()));
         	   lastPoint = nP2;
            }
@@ -236,64 +202,5 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
         }
     }
     
-    public static double gradient(double x1, double y1, double x2, double y2){
-    	return (y2-y1)/(x2-x1);
-    }
     
-    public static double gradientAngle(double gradient){
-    	return Math.atan(gradient);
-    }
-    
-    public static Point2D averagePoint(Set<Point2D> nodes){
-    	Point2D avPoint = new Point2D.Double(0,0);
-    	for(Point2D node : nodes){
-    		avPoint.setLocation(avPoint.getX()+(node.getX()/nodes.size()), avPoint.getY()+(node.getY()/nodes.size()));
-    	}
-    	return avPoint;
-    }
-    
-    public static Point2D moveInCenterDirection(Point2D point, Point2D center, double percentage){
-    	return new Point2D.Double(percentage/100*(center.getX()-point.getX())+point.getX(),
-    			percentage/100*(center.getY()-point.getY())+point.getY());
-    }
-    
-    /**
-     * Method to compute the control Points in the coordinate system with Start=(0,0) and End=(1,0).
-     * @param basis The controlPoint to be computed
-     * @param center The center of the circle
-     * @param startPoint The location of start node
-     * @param endPoint The location of end node
-    
-     * @return The controlPoint in transformed coordinates.
-     */
-    public static Point2D computeControlPoint(Point2D basis, Point2D center, Point2D startPoint, Point2D endPoint, BiologicalEdgeAbstract edge){
-    	
-    	double startBasisDistance = Point2D.distance(basis.getX(), basis.getY(), startPoint.getX(), startPoint.getY());
-    	double startEndDistance = Point2D.distance(startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY());
-    	double startEndAngle = Circle.getAngle(startPoint, endPoint);
-    	double startBasisAngle = Circle.getAngle(startPoint, basis);
-    	    	
-   		double alpha = startBasisAngle - startEndAngle;
-
-   		double beta = Math.PI/2-alpha;
-    	
-   		double c = startBasisDistance;
-   		double a = startBasisDistance*Math.cos(beta);
-   		double b = Math.sqrt(Math.pow(c,2)-Math.pow(a, 2));
-    	
-//    	if(edge.getFrom().getLabel().equals("9")){
-//    		System.out.println(edge.getTo().getLabel());
-//    		System.out.println(alpha);
-//    		System.out.println(beta);
-//    		System.out.println(c);
-//    		System.out.println(a);
-//    		System.out.println(b);
-//    		System.out.println();
-//    		
-//    	}
-   		Point2D longerControlPoint = new Point2D.Double(b/startEndDistance,a);
-   		return longerControlPoint;
-//   		return new Point2D.Double(b/startEndDistance,a);
-   	} 
-        
 }

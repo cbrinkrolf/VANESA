@@ -1,13 +1,10 @@
 package graph.layouts;
 
-import graph.layouts.hebLayout.HEBLayoutConfig;
 import configurations.gui.ConfigPanel;
 
 public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
 
 	private static final long serialVersionUID = 83123L;
-
-	private static HEBLayoutConfig instance;
 
 	public static int GROUP_DISTANCE_FACTOR = 5;
 	public static int GROUP_DEPTH = 1;
@@ -20,13 +17,6 @@ public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
 	
 	public HierarchicalCircleLayoutConfig(Class<? extends HierarchicalCircleLayout> class1){
 		super(class1);
-	}
-	
-	public static HierarchicalCircleLayoutConfig getInstance() {
-		if(instance == null){
-			instance = new HEBLayoutConfig();
-		}
-		return instance;
 	}
 	
 	public static double nodeDistance(int groups, int nodes){

@@ -12,10 +12,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import configurations.gui.ConfigPanel;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import graph.layouts.HierarchicalCircleLayoutConfig;
-import graph.layouts.gemLayout.GEMLayoutConfig;
 
 public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements ChangeListener{
 	
@@ -26,9 +23,8 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 
 	private static HEBLayoutConfig instance;
 
-	public static int EDGE_BENDING_PERCENTAGE = 25;
 	public static int GROUPINTERNAL_EDGE_BENDING_PERCENTAGE = 25;
-	public static int EDGE_BUNDLING_PERCENTAGE = 30;
+	public static int EDGE_BUNDLING_PERCENTAGE = 85;
 	public static int ROUGHEST_LEVEL = 1;
 	public static int FINEST_LEVEL = 0;
 	
@@ -37,7 +33,6 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	public static JCheckBox autorelayout;
 	public static JCheckBox moveInGroups;
 	public static JSlider groupSeperationSlider;
-	public static JSlider edgeBendingSlider;
 	public static JSlider internalEdgeBendingSlider;
 	public static JSlider edgeBundlingSlider;
 	public static JSlider groupDepthSlider;
@@ -95,19 +90,6 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		 groupDepthSlider.setPaintLabels(true);
 		 groupDepthSlider.addChangeListener(this);
 		 groupPreferences.add(groupDepthSlider);
-			
-		edgeBendingSlider = new JSlider();
-		edgeBendingSlider.setBorder(BorderFactory
-				.createTitledBorder("Edge bending percentage"));
-		edgeBendingSlider.setMinimum(0);
-		edgeBendingSlider.setMaximum(100);
-		edgeBendingSlider.setValue(EDGE_BENDING_PERCENTAGE);
-		edgeBendingSlider.setMajorTickSpacing(20);
-		edgeBendingSlider.setMinorTickSpacing(5);
-		edgeBendingSlider.setPaintTicks(true);
-		edgeBendingSlider.setPaintLabels(true);
-		edgeBendingSlider.addChangeListener(this);
-		edgePreferences.add(edgeBendingSlider);
 		
 		edgeBundlingSlider = new JSlider();
 		edgeBundlingSlider.setBorder(BorderFactory
@@ -190,8 +172,6 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	public void stateChanged(ChangeEvent arg0) {
 		if (arg0.getSource().equals(HEBLayoutConfig.groupSeperationSlider)) {
 			HEBLayoutConfig.GROUP_DISTANCE_FACTOR = HEBLayoutConfig.groupSeperationSlider.getValue();
-		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeBendingSlider)) {
-			HEBLayoutConfig.EDGE_BENDING_PERCENTAGE = HEBLayoutConfig.edgeBendingSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.internalEdgeBendingSlider)) {
 			HEBLayoutConfig.GROUPINTERNAL_EDGE_BENDING_PERCENTAGE = HEBLayoutConfig.internalEdgeBendingSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.groupDepthSlider)) {
