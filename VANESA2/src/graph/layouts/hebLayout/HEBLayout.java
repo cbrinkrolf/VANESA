@@ -55,11 +55,12 @@ public class HEBLayout extends HierarchicalCircleLayout{
                 setRadius(getRadius()*Math.log10(graphNodes.size()));
                 
                 //distance between two ndoes of the same group
-                final double nodeDistance = 2*Math.PI / ((HEBLayoutConfig.GROUP_DISTANCE_FACTOR-1)*bnaGroups.size()+graphNodes.size());
+                final double nodeDistance = HEBLayoutConfig.nodeDistance(bnaGroups.size(), graphNodes.size());
                 
                 //distance between two groups (added to small distance between two nodes)
-                final double groupDistance = (HEBLayoutConfig.GROUP_DISTANCE_FACTOR-1)*nodeDistance;
+                final double groupDistance = HEBLayoutConfig.groupDistance(nodeDistance);
                 
+                // Move nodes on their circle position
                 for(Integer i : groupKeys){
                 	for(BiologicalNodeAbstract v : bnaGroups.get(i)){
                 		double angle = group_no*groupDistance+vertex_no*nodeDistance;
@@ -70,12 +71,14 @@ public class HEBLayout extends HierarchicalCircleLayout{
                 		apply(v);
                 		CircleVertexData data = getCircleData(v);
                 		data.setVertexAngle(angle);
+                		// All nodes on the outter circle
                 		data.setCircleNumber(1);
                 		vertex_no++;
                 	}
                     group_no++;
                 }
             }
+            // compute the edge shapes
             setEdgeShapes();
     }
 	

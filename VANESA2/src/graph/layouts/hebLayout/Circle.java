@@ -1,6 +1,8 @@
 package graph.layouts.hebLayout;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+import java.util.Iterator;
 import java.util.Set;
 
 public class Circle {
@@ -66,22 +68,24 @@ public class Circle {
      */
     public static Point2D computeControlPoint(Point2D basis, Point2D center, Point2D startPoint, Point2D endPoint){
     	
-    	double startBasisDistance = Point2D.distance(basis.getX(), basis.getY(), startPoint.getX(), startPoint.getY());
-    	double startEndDistance = Point2D.distance(startPoint.getX(), startPoint.getY(), endPoint.getX(), endPoint.getY());
-    	double startEndAngle = Circle.getAngle(startPoint, endPoint);
-    	double startBasisAngle = Circle.getAngle(startPoint, basis);
-    	    	
-   		double alpha = startBasisAngle - startEndAngle;
+    	// Translation of coordinate system
+    	Point2D cP = new Point2D.Double(basis.getX()-startPoint.getX(),basis.getY()-startPoint.getY());
+    	double angle = Circle.getAngle(startPoint, endPoint);
+    	double r[] = new double[4];
+    	r[0]=Math.cos(angle);
+    	r[1]=Math.sin(angle);
+    	r[2]=-r[1];
+    	r[3]=r[0];
+    	
+    	// Rotation of coordinate system
+    	cP.setLocation(r[0]*cP.getX()+r[1]*cP.getY(),r[2]*cP.getX()+r[3]*cP.getY());
 
-   		double beta = Math.PI/2-alpha;
-    	
-   		double c = startBasisDistance;
-   		double a = startBasisDistance*Math.cos(beta);
-   		double b = Math.sqrt(Math.pow(c,2)-Math.pow(a, 2));
-    	
-   		Point2D longerControlPoint = new Point2D.Double(b/startEndDistance,a);
-   		return longerControlPoint;
-   	} 
+    	// compression of x-axis
+    	cP.setLocation(1/Math.sqrt(Math.pow(endPoint.getX()-startPoint.getX(),2)+Math.pow(endPoint.getY()-startPoint.getY(),2))*cP.getX(),cP.getY());
+   	
+    	return cP;
+    
+    } 
         
 	
 }
