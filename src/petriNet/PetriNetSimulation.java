@@ -253,7 +253,7 @@ public class PetriNetSimulation implements ActionListener {
 		 * while(it.hasNext()){ bna = it.next(); if(bna instanceof Place){ p =
 		 * (Place) bna; p.getPetriNetSimulationData().add(Math.random());
 		 * //System.out.println(Math.random()); } }
-		 *
+		 * 
 		 * } System.out.println("endeeeeee"); stopped = true; } catch (Exception
 		 * e) { e.printStackTrace(); } } }; t2.start();
 		 */
@@ -291,9 +291,20 @@ public class PetriNetSimulation implements ActionListener {
 				// this.path = "C:\\OpenModelica1.9.1Nightly\\";
 				zstVorher = System.currentTimeMillis();
 
+				boolean simExePresent = false;
+
+				String program = "simulation";
+				if (SystemUtils.IS_OS_WINDOWS) {
+					program += ".exe";
+				}
+
+				if (new File(pathSim + program).exists()) {
+					simExePresent = true;
+				}
+
 				if (flags.isEdgeChanged() || flags.isNodeChanged()
 						|| flags.isEdgeWeightChanged()
-						|| flags.isPnPropertiesChanged()) {
+						|| flags.isPnPropertiesChanged() || !simExePresent) {
 					System.out.println("edges changed: "
 							+ flags.isEdgeChanged());
 					System.out.println("nodes changed: "
@@ -360,28 +371,29 @@ public class PetriNetSimulation implements ActionListener {
 
 					String filter = "variableFilter=\"";
 
-					Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
+					Iterator<BiologicalNodeAbstract> it = graphInstance
+							.getPathway().getAllNodes().iterator();
 					BiologicalNodeAbstract bna;
-					while(it.hasNext()){
+					while (it.hasNext()) {
 						bna = it.next();
-						if(bna instanceof Place){
-							filter+="'"+bna.getName()+"'.t|";
-						}else if(bna instanceof Transition){
-							filter+="'"+bna.getName()+"'.fire|";
-							filter+="'"+bna.getName()+"'.actualSpeed|";
+						if (bna instanceof Place) {
+							filter += "'" + bna.getName() + "'.t|";
+						} else if (bna instanceof Transition) {
+							filter += "'" + bna.getName() + "'.fire|";
+							filter += "'" + bna.getName() + "'.actualSpeed|";
 						}
 					}
 
 					Iterator<String> it2 = bea2key.values().iterator();
 					String s;
-					while(it2.hasNext()){
+					while (it2.hasNext()) {
 						s = it2.next();
-						filter+=s+"|";
-						filter+="der("+s+")|";
+						filter += s + "|";
+						filter += "der(" + s + ")|";
 					}
-					//filter = filter.substring(0,  filter.length()-2);
-					filter+="\"";
-					//System.out.println(filter);
+					// filter = filter.substring(0, filter.length()-2);
+					filter += "\"";
+					// System.out.println(filter);
 					FileWriter fstream = new FileWriter(pathSim
 							+ "simulation.mos");
 					BufferedWriter out = new BufferedWriter(fstream);
@@ -392,7 +404,7 @@ public class PetriNetSimulation implements ActionListener {
 					out.write("getErrorString();\r\n");
 					out.write("loadFile(\"simulation.mo\");\r\n");
 					out.write("getErrorString();\r\n");
-					out.write("buildModel(simulation, "+filter+");\r\n");
+					out.write("buildModel(simulation, " + filter + ");\r\n");
 					out.write("buildModel(simulation);\r\n");
 					out.write("getErrorString();\r\n");
 
@@ -478,9 +490,7 @@ public class PetriNetSimulation implements ActionListener {
 							}
 
 							override += "-override=outputFormat=ia,stopTime="
-									+ stopTime
-									+ ",stepSize="
-									+ stopTime
+									+ stopTime + ",stepSize=" + stopTime
 									/ intervals + ",tolerance=0.0001";
 							if (flags.isParameterChanged()) {
 
@@ -521,7 +531,7 @@ public class PetriNetSimulation implements ActionListener {
 							}
 
 							if (flags.isBoundariesChanged()) {
-								//System.out.println("chaaaaanged");
+								// System.out.println("chaaaaanged");
 								Iterator<Place> it = graphInstance.getPathway()
 										.getChangedBoundaries().keySet()
 										.iterator();
@@ -553,15 +563,17 @@ public class PetriNetSimulation implements ActionListener {
 
 							String program = "simulation";
 							if (SystemUtils.IS_OS_WINDOWS) {
-								program+=".exe";
+								program += ".exe";
 							}
 
 							if (noEmmit) {
-								pb.command(pathSim + program,"-s="+menue.getIntegrator(),
+								pb.command(pathSim + program,
+										"-s=" + menue.getIntegrator(),
 										override, "-port=11111",
 										"-noEventEmit", "-lv=LOG_STATS");
 							} else {
-								pb.command(pathSim + program,"-s="+menue.getIntegrator(),
+								pb.command(pathSim + program,
+										"-s=" + menue.getIntegrator(),
 										override, "-port=11111",
 										"-lv=LOG_STATS");
 							}
@@ -660,10 +672,23 @@ public class PetriNetSimulation implements ActionListener {
 					}
 				};
 
-				t2.start();
-				t3.start();
+				simExePresent = false;
 
-				t1.start();
+				if (new File(pathSim + program).exists()) {
+					simExePresent = true;
+				}
+
+				if (simExePresent) {
+					t2.start();
+					t3.start();
+
+					t1.start();
+				} else {
+					//System.out.println("something wet wrong");
+					JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+							"Something wet wrong! Simulation could not be built!");
+					this.stopAction();
+				}
 
 				// System.out.println("before sim");
 				// w.updatePCPView();
@@ -695,7 +720,7 @@ public class PetriNetSimulation implements ActionListener {
 				 * Thread t3 = new Thread() { public void run() { long totalTime
 				 * = 60000; try { sleep(2000); for (long t = 0; t < totalTime; t
 				 * += 200) {
-				 *
+				 * 
 				 * sleep(200); Iterator<BiologicalNodeAbstract> it =
 				 * graphInstance.getPathway().getAllNodes().iterator();
 				 * BiologicalNodeAbstract bna; Place p;
@@ -706,7 +731,7 @@ public class PetriNetSimulation implements ActionListener {
 				 * Place){ p = (Place) bna;
 				 * p.getPetriNetSimulationData().add(Math.random());
 				 * //System.out.println(Math.random()); } }
-				 *
+				 * 
 				 * } System.out.println("endeeeeee"); stopped = true; } catch
 				 * (Exception e) { e.printStackTrace(); } } }; t3.start();
 				 */
@@ -904,20 +929,24 @@ public class PetriNetSimulation implements ActionListener {
 			}
 			// System.out.println("start");
 		} else if (event.getActionCommand().equals("stop")) {
-			System.out.println("stop");
-			this.menue.stopped();
-			if (s != null && s.isRunning()) {
-				s.stop();
-			}
-			if (process != null) {
-				this.process.destroy();
-			}
+			this.stopAction();
 		}
 
 	}
 
 	private void setReader(InputStreamReader reader) {
 		this.outputReader = new BufferedReader(reader);
+	}
+
+	private void stopAction() {
+		System.out.println("stop");
+		this.menue.stopped();
+		if (s != null && s.isRunning()) {
+			s.stop();
+		}
+		if (process != null) {
+			this.process.destroy();
+		}
 	}
 
 }
