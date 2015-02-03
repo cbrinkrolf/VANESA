@@ -54,8 +54,24 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		 groupSeperationSlider.setPaintLabels(true);
 		 groupSeperationSlider.addChangeListener(this);
 		 groupPreferences.add(groupSeperationSlider);
+		 
 
-		 showExternalEdges= new JCheckBox("Show group-external edges");
+		 JPanel nodeSelection = new JPanel();
+		 BoxLayout nodeSelectionLayout = new BoxLayout(nodeSelection, BoxLayout.PAGE_AXIS);
+		 nodeSelection.setLayout(nodeSelectionLayout);
+		 nodeSelection.setBorder(BorderFactory.createTitledBorder("Node Selection"));
+		 
+		 String[] groupSelectionOptions = {"Single Node", "Node Subpath","Finest Group","Roughest Group"};
+		 groupSelection = new JComboBox<String>(groupSelectionOptions);
+		 groupSelection.setPreferredSize(new Dimension(200,30));
+		 groupSelection.setMaximumSize(groupSelection.getPreferredSize());
+		 groupSelection.addActionListener(this);
+		 groupSelection.setSelectedIndex(2);
+		 nodeSelection.add(groupSelection);
+		 
+		 groupPreferences.add(nodeSelection);
+
+		 showExternalEdges= new JCheckBox("Show non-structural edges");
 		 showExternalEdges.setSelected(true);
 		 groupPreferences.add(showExternalEdges);
 		 
@@ -67,26 +83,6 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		autorelayout.setToolTipText("Relayout automatically when moving, coarsing or flatting nodes.");
 		autorelayout.setSelected(true);
 		groupPreferences.add(autorelayout);
-		
-		moveInGroups = new JCheckBox("Group selection");
-		moveInGroups.setToolTipText("Selects the whole group if a node is selected. So, nodes can only be moved groupwise.");
-		moveInGroups.setSelected(true);
-		groupPreferences.add(moveInGroups);
-		
-		 JPanel nodeSelection = new JPanel();
-		 BoxLayout nodeSelectionLayout = new BoxLayout(nodeSelection, BoxLayout.PAGE_AXIS);
-		 nodeSelection.setLayout(nodeSelectionLayout);
-		 nodeSelection.setBorder(BorderFactory.createTitledBorder("Node Selection"));
-		 
-		 String[] groupSelectionOptions = {"Single Node","Node Path", "Node Subpath", "Node Group"};
-		 groupSelection = new JComboBox<String>(groupSelectionOptions);
-		 groupSelection.setPreferredSize(new Dimension(200,30));
-		 groupSelection.setMaximumSize(groupSelection.getPreferredSize());
-		 groupSelection.addActionListener(this);
-		 groupSelection.setSelectedIndex(3);
-		 nodeSelection.add(groupSelection);
-		 
-		 groupPreferences.add(nodeSelection);
 	
 		 add(groupPreferences);
 		
@@ -111,7 +107,7 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	
 	@Override
 	public boolean getMoveInGroups(){
-		return moveInGroups.isSelected();
+		return true;
 	}
 	
 	public boolean getShowExternalEdges() {
@@ -130,21 +126,21 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		if (arg0.getSource().equals(HCTLayoutConfig.groupSelection)) {
 			if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Single Node")){
 				HCTLayoutConfig.SELECTION = GroupSelection.SINGLE;
-			} else if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Node Path")){
-				HCTLayoutConfig.SELECTION = GroupSelection.PATH;
+			} else if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Finest Group")){
+				HCTLayoutConfig.SELECTION = GroupSelection.FINESTGROUP;
 			} else if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Node Subpath")){
 				HCTLayoutConfig.SELECTION = GroupSelection.SUBPATH;
-			} else if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Node Group")){
-				HCTLayoutConfig.SELECTION = GroupSelection.GROUP;
+			} else if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Roughest Group")){
+				HCTLayoutConfig.SELECTION = GroupSelection.ROUGHESTGROUP;
 			}
 		}	
 	}
 	
 	public enum GroupSelection{
 		SINGLE,
-		PATH,
+		FINESTGROUP,
 		SUBPATH,
-		GROUP
+		ROUGHESTGROUP
 	}
 }
 

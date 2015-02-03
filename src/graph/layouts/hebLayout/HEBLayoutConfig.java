@@ -111,9 +111,9 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		autorelayout.setSelected(true);
 		preferences.add(autorelayout);
 
-//		resetLayout = new JCheckBox("Reset Layout");
-//		resetLayout.setSelected(false);
-//		preferences.add(resetLayout);
+		resetLayout = new JCheckBox("Reset Layout");
+		resetLayout.setSelected(false);
+		preferences.add(resetLayout);
 
 		add(preferences);		
 	}

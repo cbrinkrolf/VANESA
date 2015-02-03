@@ -124,7 +124,7 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
            double circleRadius = Point2D.distance(centerPoint.getX(), centerPoint.getY(), startPoint.getX(), startPoint.getY());
            
            // Bundling error. Defines, how strong the edges bundle. The higher, the less strong.
-           double bundling_error = 0.3*(100-HEBLayoutConfig.EDGE_BUNDLING_PERCENTAGE)*0.01;
+           double bundling_error = (100-HEBLayoutConfig.EDGE_BUNDLING_PERCENTAGE)*0.01;
 
            // Computation of control points
            double angle;

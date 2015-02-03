@@ -3,6 +3,8 @@ package graph.layouts.hctLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Shape;
+import java.awt.geom.Ellipse2D.Float;
+import java.awt.geom.QuadCurve2D.Double;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -225,36 +227,6 @@ public class HCTLayout extends HierarchicalCircleLayout{
 		case SINGLE:
 			selection.add(n);
 			break;
-		case PATH:
-			selection.add(n);
-			int circle = circleVertexDataMap.get(n).getCircleNumber();
-			List<BiologicalNodeAbstract> neighbors = new ArrayList<BiologicalNodeAbstract>();
-			while(circle>1){
-				circle -= 1;
-				for(BiologicalNodeAbstract ancestor : groups.get(getGroupParent(n)).get(circle)){
-					neighbors.addAll(graph.getNeighbors(ancestor));
-					neighbors.retainAll(selection);
-					if(neighbors.size()>0 && !selection.contains(ancestor)){
-						selection.add(ancestor);
-						break;
-					}
-				}
-			}
-			parent = n.getParentNode();
-			if(parent!=null && parent.getRootNode()==n){
-				for(BiologicalNodeAbstract child : parent.getCurrentShownChildrenNodes(myGraph)){
-					if(!selection.contains(child)){
-						selection.add(child);
-					}
-				}
-			} else {
-				for(BiologicalNodeAbstract child : n.getCurrentShownChildrenNodes(myGraph)){
-					if(!selection.contains(child)){
-						selection.add(child);
-					}
-				}
-			}
-			break;
 		case SUBPATH:
 			parent = n.getParentNode();
 			if(parent!=null && parent.getRootNode()==n){
@@ -271,8 +243,15 @@ public class HCTLayout extends HierarchicalCircleLayout{
 				}
 			}
 			break;
-		
-		case GROUP:
+		case FINESTGROUP:
+			parent = n.getParentNode();
+			for(BiologicalNodeAbstract child : parent.getCurrentShownChildrenNodes(myGraph)){
+				if(!selection.contains(child) && child!=parent.getRootNode()){
+					selection.add(child);
+				}
+			}
+			break;
+		case ROUGHESTGROUP:
 			parent = n.getLastParentNode();
 			for(BiologicalNodeAbstract child : parent.getCurrentShownChildrenNodes(myGraph)){
 				if(!selection.contains(child)){
@@ -326,56 +305,69 @@ public class HCTLayout extends HierarchicalCircleLayout{
 			Pair<BiologicalNodeAbstract> endpoints = graph.getEndpoints(edge);
 			BiologicalNodeAbstract first = endpoints.getFirst();
 			BiologicalNodeAbstract second = endpoints.getSecond();
-			Set<BiologicalNodeAbstract> parentNodes = new HashSet<BiologicalNodeAbstract>();
-			parentNodes.addAll(first.getAllParentNodes());
-			parentNodes.retainAll(second.getAllParentNodes());
-			if(first.getParentNode()==second.getParentNode()){
-				BiologicalNodeAbstract parentNode = first.getParentNode();
-				BiologicalNodeAbstract subRootNode = parentNode.getRootNode();
-				if(first!=subRootNode && second!=subRootNode)
-					edge.setColor(Color.RED);
-				return new Line2D.Float(0.0f, 0.0f, 1.0f, 0.0f);
+			List<BiologicalNodeAbstract> firstParentRootNodes = new ArrayList<BiologicalNodeAbstract>();
+			List<BiologicalNodeAbstract> secondParentRootNodes = new ArrayList<BiologicalNodeAbstract>();
+			for(BiologicalNodeAbstract n : first.getAllParentNodesSorted()){
+				if(n.getRootNode()!=null){
+					firstParentRootNodes.add(n.getRootNode());
+				}
 			}
-			if((!parentNodes.isEmpty() && (first.getLastCommonParentNode(second)==second.getParentNode() || first.getLastCommonParentNode(second)==first.getParentNode())) || first==rootNode || second==rootNode){
-				Path2D path = new Path2D.Double();
-				Point2D lastPoint = new Point2D.Double(0.0,0.0);
-				BiologicalNodeAbstract startNode = first;
-				BiologicalNodeAbstract endNode = second;
-				if(circles.get(first)>circles.get(second)){
-					startNode = second;
-					endNode = first;
-					lastPoint = new Point2D.Double(1.0,0.0);
+			for(BiologicalNodeAbstract n : second.getAllParentNodesSorted()){
+				if(n.getRootNode()!=null){
+					secondParentRootNodes.add(n.getRootNode());
 				}
-				BiologicalNodeAbstract parentNode = startNode.getParentNode();
-				while(parentNode!=null && parentNode.getRootNode()!=endNode){
-					Set<Point2D> childNodePoints = new HashSet<Point2D>();
-					for(BiologicalNodeAbstract child : parentNode.getCurrentShownChildrenNodes(myGraph)){
-						childNodePoints.add(myGraph.getVertexLocation(child));
-		     		}         	
-		   			double angle = Circle.getAngle(getCenterPoint(),Circle.averagePoint(childNodePoints));
-		     		Point2D location = Circle.getPointOnCircle(getCenterPoint(), getRadius()*(maxCircle-circles.get(parentNode)), angle);
-		     		location = Circle.computeControlPoint(location, getCenterPoint(), myGraph.getVertexLocation(first), myGraph.getVertexLocation(second));
-		     		Line2D line = new Line2D.Double(lastPoint,location);
-		     		path.append(line, true);
-		     		lastPoint = location;
-		     		parentNode = parentNode.getParentNode();
-		     	}
-				Line2D line;
-				if(endNode==first){
-					line = new Line2D.Double(lastPoint,new Point2D.Double(0.0,0.0));
-
-				} else {
-					line = new Line2D.Double(lastPoint,new Point2D.Double(1.0,0.0));
-				}
-		     	path.append(line, true);
-		     	return path;
 			}
 			
-			if(getConfig().getShowExternalEdges()){
-				edge.setColor(Color.RED);
-				return new Line2D.Float(0.0f, 0.0f, 1.0f, 0.0f);
+			if(first.getParentNode()!=null && first.getParentNode().getRootNode()==second){
+				return new Line2D.Double(0.0,0.0,1.0,0.0);
 			}
-			return new Line2D.Float(0.0f, 0.0f, 0.0f, 0.0f);
+			if(second.getParentNode()!=null && second.getParentNode().getRootNode()==first){
+				return new Line2D.Double(0.0,0.0,1.0,0.0);
+			}
+			if(first==rootNode || second==rootNode){
+				return new Line2D.Double(0.0,0.0,1.0,0.0);
+			}
+			
+			if(!(firstParentRootNodes.contains(second) || secondParentRootNodes.contains(first))){
+				if(getConfig().getShowExternalEdges()){
+					return new Line2D.Double(0.0,0.0,1.0,0.0);
+				}
+				return new Line2D.Double(0.0,0.0,0.0,0.0);
+			}
+			
+			Path2D path = new Path2D.Double();
+			Point2D lastPoint = new Point2D.Double(0.0,0.0);
+			BiologicalNodeAbstract startNode = first;
+			BiologicalNodeAbstract endNode = second;
+			if(circles.get(first)>circles.get(second)){
+				startNode = second;
+				endNode = first;
+				lastPoint = new Point2D.Double(1.0,0.0);
+			}
+			BiologicalNodeAbstract parentNode = startNode.getParentNode();
+			while(parentNode!=null && parentNode.getRootNode()!=endNode){
+				Set<Point2D> childNodePoints = new HashSet<Point2D>();
+				for(BiologicalNodeAbstract child : parentNode.getCurrentShownChildrenNodes(myGraph)){
+					childNodePoints.add(myGraph.getVertexLocation(child));
+	     		}         	
+	   			double angle = Circle.getAngle(getCenterPoint(),Circle.averagePoint(childNodePoints));
+	     		Point2D location = Circle.getPointOnCircle(getCenterPoint(), getRadius()*(maxCircle-circles.get(parentNode)), angle);
+	     		location = Circle.computeControlPoint(location, getCenterPoint(), myGraph.getVertexLocation(first), myGraph.getVertexLocation(second));
+	     		Line2D line = new Line2D.Double(lastPoint,location);
+	     		path.append(line, true);
+	     		lastPoint = location;
+	     		parentNode = parentNode.getParentNode();
+	     	}
+			Line2D line;
+			if(endNode==first){
+				line = new Line2D.Double(lastPoint,new Point2D.Double(0.0,0.0));
+
+			} else {
+				line = new Line2D.Double(lastPoint,new Point2D.Double(1.0,0.0));
+			}
+	     	path.append(line, true);
+	     	return path;
+			
 		}
 	}
 }
