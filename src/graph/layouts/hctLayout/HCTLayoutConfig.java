@@ -18,9 +18,6 @@ import graph.layouts.HierarchicalCircleLayoutConfig;
 
 public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements ChangeListener,ActionListener{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 852123;
 
 	private static HCTLayoutConfig instance;
@@ -100,10 +97,6 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 			instance = new HCTLayoutConfig();
 		}
 		return instance;
-	}
-	
-	public static double nodeDistance(int groups, int nodes){
-		return 2*Math.PI / ((GROUP_DISTANCE_FACTOR - 1)*groups+nodes);
 	}
 	
 	@Override

@@ -76,10 +76,10 @@ public class HCTLayout extends HierarchicalCircleLayout{
             setRadius(getRadius()*Math.log10(graphNodes.size()));
             
             //distance between two ndoes of the same group
-            final double nodeDistance = 2*Math.PI / ((HCTLayoutConfig.GROUP_DISTANCE_FACTOR-1)*bnaGroups.size()+graphNodes.size());
+            final double nodeDistance = HCTLayoutConfig.nodeDistance(bnaGroups.size(), graphNodes.size());
             
             //distance between two groups (added to small distance between two nodes)
-            final double groupDistance = (HCTLayoutConfig.GROUP_DISTANCE_FACTOR-1)*nodeDistance;
+            final double groupDistance = HCTLayoutConfig.groupDistance(nodeDistance);
             
             //positions of the outter circle nodes
             for(Integer i : groupKeys){
@@ -336,7 +336,7 @@ public class HCTLayout extends HierarchicalCircleLayout{
 					edge.setColor(Color.RED);
 				return new Line2D.Float(0.0f, 0.0f, 1.0f, 0.0f);
 			}
-			if(!parentNodes.isEmpty() || first==rootNode || second==rootNode){
+			if((!parentNodes.isEmpty() && (first.getLastCommonParentNode(second)==second.getParentNode() || first.getLastCommonParentNode(second)==first.getParentNode())) || first==rootNode || second==rootNode){
 				Path2D path = new Path2D.Double();
 				Point2D lastPoint = new Point2D.Double(0.0,0.0);
 				BiologicalNodeAbstract startNode = first;

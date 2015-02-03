@@ -23,6 +23,10 @@ public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
 		return 2*Math.PI / ((GROUP_DISTANCE_FACTOR - 1)*groups+nodes);
 	}
 	
+	public static double groupDistance(double nodeDistance){
+		return (GROUP_DISTANCE_FACTOR-1)*nodeDistance;
+	}
+	
 	public boolean getShowInternalEdges(){
 		return showInternalEdges;
 	}
