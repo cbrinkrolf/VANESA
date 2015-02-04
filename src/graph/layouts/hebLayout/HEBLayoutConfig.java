@@ -1,5 +1,6 @@
 package graph.layouts.hebLayout;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.Hashtable;
 
@@ -23,7 +24,7 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	/**
 	 * Higher value means stronger bundling (100% = equivalent subpaths)
 	 */
-	public static int EDGE_BUNDLING_PERCENTAGE = 80;
+	public static int EDGE_BUNDLING_PERCENTAGE = 90;
 
 	/**
 	 * Grouped by roughest level.
@@ -34,15 +35,26 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	 * Grouped by finest level.
 	 */
 	public static int FINEST_LEVEL = 0;
+	
+	/**
+	 * Edge Opacity
+	 */
+	public static int EDGE_OPACITY = 40;
+	
+	/**
+	 * Edge Color
+	 */
+	public static int EDGE_COLOR = 0;
 
 	public static JCheckBox showInternalEdges;
 	public static JCheckBox resetLayout;
 	public static JCheckBox autorelayout;
 	public static JCheckBox moveInGroups;
 	public static JSlider groupSeperationSlider;
-	public static JSlider internalEdgeBendingSlider;
 	public static JSlider edgeBundlingSlider;
 	public static JSlider groupDepthSlider;
+	public static JSlider edgeOpacitySlider;
+	public static JSlider edgeColorSlider;
 
 	public HEBLayoutConfig() {
 		super(HEBLayout.class);
@@ -96,6 +108,37 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		groupDepthSlider.setPaintLabels(true);
 		groupDepthSlider.addChangeListener(this);
 		preferences.add(groupDepthSlider);
+		
+		edgeOpacitySlider = new JSlider();
+		edgeOpacitySlider.setBorder(BorderFactory
+				.createTitledBorder("Edge Opacity"));
+		edgeOpacitySlider.setMinimum(0);
+		edgeOpacitySlider.setMaximum(100);
+		edgeOpacitySlider.setValue(255/40);
+		edgeOpacitySlider.setMajorTickSpacing(20);
+		edgeOpacitySlider.setMinorTickSpacing(10);
+		edgeOpacitySlider.setPaintTicks(true);
+		Hashtable<Integer,JLabel> labels = new Hashtable<Integer,JLabel>();
+		labels.put( new Integer(0), new JLabel("0%") );
+		labels.put( new Integer(20), new JLabel("20%") );
+		labels.put( new Integer(40), new JLabel("40%") );
+		labels.put( new Integer(60), new JLabel("60%") );
+		labels.put( new Integer(80), new JLabel("80%") );
+		labels.put( new Integer(100), new JLabel("100%") );
+		edgeOpacitySlider.setLabelTable( labels );
+		edgeOpacitySlider.setPaintLabels(true);
+		edgeOpacitySlider.addChangeListener(this);
+		preferences.add(edgeOpacitySlider);
+		
+		edgeColorSlider = new JSlider();
+		edgeColorSlider.setBorder(BorderFactory
+				.createTitledBorder("Edge Color"));
+		edgeColorSlider.setMinimum(0);
+		edgeColorSlider.setMaximum(240);
+		edgeColorSlider.setValue(EDGE_COLOR);
+		edgeColorSlider.addChangeListener(this);
+		edgeColorSlider.setBackground(getColor(edgeColorSlider.getValue()));
+		preferences.add(edgeColorSlider);
 
 		showInternalEdges= new JCheckBox("Show group-internal edges");
 		showInternalEdges.setSelected(true);
@@ -156,6 +199,41 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 			HEBLayoutConfig.GROUP_DEPTH = HEBLayoutConfig.groupDepthSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeBundlingSlider)) {
 			HEBLayoutConfig.EDGE_BUNDLING_PERCENTAGE = HEBLayoutConfig.edgeBundlingSlider.getValue();
+		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeOpacitySlider)) {
+			HEBLayoutConfig.EDGE_OPACITY = HEBLayoutConfig.edgeOpacitySlider.getValue()*255/100;
+		}  else if (arg0.getSource().equals(HEBLayoutConfig.edgeColorSlider)) {
+			HEBLayoutConfig.EDGE_COLOR = HEBLayoutConfig.edgeColorSlider.getValue();
+			edgeColorSlider.setBackground(getColor(edgeColorSlider.getValue()));
 		}
+	}
+	
+	public static Color getColor(int i){
+		
+		if(i==0 || i>240){
+			return Color.GRAY;
+		}
+		
+		int red;
+		if(i%(240/3)<(240/6)){
+			red = 240-i%(240/3)*6;
+		} else {
+			red = ((i%(240/6))*6);
+		}
+		
+		int green;
+		if(i%(240/2)<(240/4)){
+			green = i%(240/2)*4;
+		} else {
+			green = 240-((i%(240/4))*4);
+		}
+		
+		int blue;
+		if(i<(240/2)){
+			blue = i*2;
+		} else {
+			blue = 240-((i%(240/2))*2);
+		}
+
+		return new Color(red,green,blue);	
 	}
 }

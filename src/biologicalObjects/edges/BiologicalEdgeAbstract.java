@@ -56,6 +56,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	
 	private String comments = "";
 	
+	private Color defaultColor = Color.GRAY;
 	private Color color = Color.GRAY;
 	
 	private String BiologicalElement = "";
@@ -565,6 +566,14 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 		if(from==to && !allowFromEqualsTo)
 			return false;
 		return true;
+	}
+
+	public Color getDefaultColor() {
+		return defaultColor;
+	}
+
+	public void setDefaultColor(Color defaultColor) {
+		this.defaultColor = defaultColor;
 	}
 
 
