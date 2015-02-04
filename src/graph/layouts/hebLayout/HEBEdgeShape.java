@@ -1,5 +1,6 @@
 package graph.layouts.hebLayout;
 
+import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -87,8 +88,20 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
             if(!(e instanceof BiologicalEdgeAbstract)){
             	return new EdgeShape.CubicCurve<V, E>().transform(context);
             }
+           BiologicalEdgeAbstract edge = (BiologicalEdgeAbstract) e;
            Pair<V> endpoints = graph.getEndpoints(e);
            Pair<BiologicalNodeAbstract> endpointNodes = new Pair<BiologicalNodeAbstract>((BiologicalNodeAbstract) endpoints.getFirst(), (BiologicalNodeAbstract) endpoints.getSecond());
+           
+           // current MyGraph
+           MyGraph myGraph = GraphInstance.getMyGraph(); 
+           
+           edge.setColor(HEBLayoutConfig.getColor(HEBLayoutConfig.EDGE_COLOR));
+           if(new GraphInstance().getPathway().getSelectedNodes().contains(endpointNodes.getFirst()) || 
+        		   new GraphInstance().getPathway().getSelectedNodes().contains(endpointNodes.getSecond())){
+               edge.setColor(new Color(edge.getColor().getRed(),edge.getColor().getGreen(),edge.getColor().getBlue(),Math.min(255, HEBLayoutConfig.EDGE_OPACITY*2)));
+           } else {
+               edge.setColor(new Color(edge.getColor().getRed(),edge.getColor().getGreen(),edge.getColor().getBlue(),HEBLayoutConfig.EDGE_OPACITY));
+           }
            
            // If Loop, draw loop.
            if(endpoints != null) {
@@ -106,10 +119,7 @@ public class HEBEdgeShape<V,E> extends EdgeShape<V,E>{
         	   if(HEBLayoutConfig.GROUP_DEPTH==HEBLayoutConfig.FINEST_LEVEL && endpointNodes.getFirst().getParentNode()==endpointNodes.getSecond().getParentNode()){
         		   return new Line2D.Double(0.0,0.0,0.0,0.0);
         	   }
-           }
-           
-           // current MyGraph
-           MyGraph myGraph = GraphInstance.getMyGraph();           
+           }         
            
            // location of the startNode.
            Point2D startPoint = new Point2D.Double(myGraph.getVertexLocation(endpointNodes.getFirst()).getX(),

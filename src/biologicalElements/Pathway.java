@@ -1622,7 +1622,7 @@ public class Pathway implements Cloneable {
 		removeElement(subPathway);
 		for(BiologicalNodeAbstract node : subPathway.getInnerNodes()){
 			addVertex(node, this.getGraph().getVertexLocation(node));
-			node.setHidden(true);
+//			node.setHidden(true);
 		}
 		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
 			BiologicalEdgeAbstract e = edge.clone();
@@ -1677,7 +1677,7 @@ public class Pathway implements Cloneable {
 
 		for(BiologicalNodeAbstract node : subPathway.getInnerNodes()){
 			closeSubPathway(node);
-			node.setHidden(false);
+//			node.setHidden(false);
 			removeElement(node);
 		}
 		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
