@@ -569,7 +569,7 @@ public class Pathway implements Cloneable {
 		graphRepresentation.removeEdge(bea);
 		getGraph().removeEdge(bea);
 		if (removeID) {
-			ids.remove(bea.getID());
+			getRootPathway().getIdSet().remove(bea.getID());
 			biologicalElements.remove(bea.getID() + "");
 			}
 		this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
@@ -588,73 +588,6 @@ public class Pathway implements Cloneable {
 		}
 		getRootPathway().updateMyGraph();
 	}
-
-//	/**
-//	 * Method that deletes a chosen sub-edge completely from the hierarchical
-//	 * Pathway. !!Only to be used in the root Pathway!!
-//	 * 
-//	 * @param edge
-//	 *            The sub-edge to be deleted.
-//	 */
-//	public void deleteSubEdge(BiologicalEdgeAbstract edge) {
-//		BiologicalNodeAbstract thisNode = null;
-//		if (!hasGraph()) {
-//			if (isBNA()) {
-//				thisNode = (BiologicalNodeAbstract) this;
-//				thisNode.removeConnectingEdge(edge);
-//			}
-//			return;
-//		}
-//		BiologicalNodeAbstract currentFrom = edge.getFrom()
-//				.getCurrentShownParentNode(getGraph());
-//		BiologicalNodeAbstract currentTo = edge.getTo()
-//				.getCurrentShownParentNode(getGraph());
-//		if (currentFrom == null | currentTo == null) {
-//			// Edge not present in this pathway.
-//			return;
-//		} else if (currentFrom == currentTo) {
-//			// Edge is inner Edge of currentFrom/currentTo.
-//			currentFrom.deleteSubEdge(edge);
-//			if (isRootPathway()) {
-//				updateMyGraph();
-//			}
-//			return;
-//		} else if (existEdge(currentFrom, currentTo)) {
-//			Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
-//			edges.addAll(getAllEdges());
-//			for (BiologicalEdgeAbstract e : edges) {
-//				if (e.getFrom() == currentFrom && e.getTo() == currentTo) {
-//					if (edgeGrade(e) < 2) {
-//						removeEdge(e, true);
-//					}
-//				}
-//			}
-//			if (isBNA()) {
-//				thisNode = (BiologicalNodeAbstract) this;
-//			} else {
-//				currentFrom.deleteSubEdge(edge);
-//				currentTo.deleteSubEdge(edge);
-//				currentFrom.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
-//				currentTo.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
-//				updateMyGraph();
-//				return;
-//			}
-//
-//			thisNode.removeConnectingEdge(edge);
-//			thisNode.updateBorder();
-//			thisNode.updateEnvironment();
-//
-//			currentFrom.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
-//			currentTo.setStateChanged(NodeStateChanged.CONNECTIONMODIFIED);
-//
-//			if (!thisNode.getEnvironment().contains(currentFrom)) {
-//				currentFrom.deleteSubEdge(edge);
-//			}
-//			if (!thisNode.getEnvironment().contains(currentTo)) {
-//				currentTo.deleteSubEdge(edge);
-//			}
-//		}
-//	}
 
 	public int edgeGrade(BiologicalEdgeAbstract edge) {
 		Set<BiologicalEdgeAbstract> conEdgesTo = new HashSet<BiologicalEdgeAbstract>();
@@ -1397,7 +1330,9 @@ public class Pathway implements Cloneable {
 	}
 
 	public SortedSet<Integer> getIdSet() {
-		return this.ids;
+		if(getRootPathway()==this)
+			return this.ids;
+		return getRootPathway().getIdSet();
 	}
 
 	/**
@@ -1414,6 +1349,7 @@ public class Pathway implements Cloneable {
 		BiologicalNodeAbstract thisNode = null;
 		if (this.isBNA()) {
 			thisNode = (BiologicalNodeAbstract) this;
+//			System.out.println(thisNode.getLabel());
 		}
 
 		// go through all nodes in the current Pathway
@@ -1492,7 +1428,7 @@ public class Pathway implements Cloneable {
 				}
 				// Coarse nodes. Location is copied by a border node if possible.
 				if (this.isBNA()) {
-					if (!thisNode.getAllParentNodes().contains(parentNode)) {
+					if (!thisNode.getEnvironment().contains(node)) {
 						Point2D loc = parentNode.getBorder().isEmpty() ? getGraph().getVertexLocation(node)
 								: getGraph().getVertexLocation(parentNode.getBorder().iterator().next());
 						addVertex(parentNode, loc);
@@ -1534,33 +1470,44 @@ public class Pathway implements Cloneable {
 			}
 
 		}
-		// draw connecting edges
-		updateEdges();
-		if (isBNA() && thisNode.isCoarseNode()) {
-			thisNode.updateBorder();
-			thisNode.updateEnvironment();
-			thisNode.updateConnectingEdges();
+
+		if(getGraph(false)!=null){
+			if (isBNA() && thisNode.isCoarseNode()) {
+				thisNode.updateBorderEnvironment();
+			}
+			updateEdges();
+			if (isRootPathway()) {
+				markPathwayUnchanged();
+				MainWindowSingleton.getInstance().updateElementTree();
+			}
+			getGraph().updateLayout();
 		}
-		if (isRootPathway()) {
-			markPathwayUnchanged();
-			MainWindowSingleton.getInstance().updateElementTree();
-		}
-		getGraph().updateLayout();
 	}
 
 	/**
 	 * Add a Set of Edges to the Pathway. Used to draw connecting Edges of
 	 * coarsed Subnodes.
 	 */
-	private void updateEdges() {
+	protected void updateEdges() {
+		
+		BiologicalNodeAbstract thisNode = this instanceof BiologicalNodeAbstract ? (BiologicalNodeAbstract) this : null;
+		
 		for(BiologicalEdgeAbstract edge : getAllEdges()){
 			removeEdge(edge, true);
 		}
-		for(BiologicalNodeAbstract node : getAllNodes()){
+		Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
+		if(thisNode==null){
+			innerNodes.addAll(getAllNodes());
+		} else {
+			innerNodes.addAll(thisNode.getInnerNodes());
+		}
+		
+		for(BiologicalNodeAbstract node : innerNodes){
 			for (BiologicalEdgeAbstract connectingEdge : node.getConnectingEdges()) {
 				BiologicalEdgeAbstract newEdge = connectingEdge.clone();
 				newEdge.setTo(newEdge.getTo().getCurrentShownParentNode(getGraph()));
 				newEdge.setFrom(newEdge.getFrom().getCurrentShownParentNode(getGraph()));
+				
 				if (newEdge.isValid(false))
 					addEdge(newEdge);
 			}
@@ -1622,7 +1569,6 @@ public class Pathway implements Cloneable {
 			addVertex(node, this.getGraph().getVertexLocation(node));
 			color = node.getColor();
 			node.setColor(new Color((int) Math.min(255,color.getRed()*1.2f),(int) Math.min(255,(int) color.getGreen()*1.2f),(int) Math.min(255,(int) color.getBlue()*1.2f)));
-//			node.setHidden(true);
 		}
 		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
 			BiologicalEdgeAbstract e = edge.clone();
@@ -1680,7 +1626,6 @@ public class Pathway implements Cloneable {
 			closeSubPathway(node);
 			color = node.getColor();
 			node.setColor(new Color((int) Math.min(255,(int) color.getRed()/1.2f),(int) Math.min(255,(int) color.getGreen()/1.2f),(int) Math.min(255,(int) color.getBlue()/1.2f)));
-//			node.setHidden(false);
 			removeElement(node);
 		}
 		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
