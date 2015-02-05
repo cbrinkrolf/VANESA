@@ -44,7 +44,7 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	/**
 	 * Edge Color
 	 */
-	public static int EDGE_COLOR = 0;
+	public static int EDGE_COLOR = Color.GRAY.getRed()/8;
 
 	public static JCheckBox showInternalEdges;
 	public static JCheckBox resetLayout;
@@ -209,30 +209,54 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	
 	public static Color getColor(int i){
 		
-		if(i==0 || i>240){
+		if(i<0){
 			return Color.GRAY;
 		}
 		
 		int red;
-		if(i%(240/3)<(240/6)){
-			red = 240-i%(240/3)*6;
-		} else {
-			red = ((i%(240/6))*6);
-		}
 		
 		int green;
-		if(i%(240/2)<(240/4)){
-			green = i%(240/2)*4;
-		} else {
-			green = 240-((i%(240/4))*4);
-		}
 		
 		int blue;
-		if(i<(240/2)){
-			blue = i*2;
+
+		// grayscale
+		if(i<=30){
+			red = 240-i*8;
+			blue = 240-i*8;
+			green = 240-i*8;
+		// colorscale
+		} else if(i<=60){
+			red = (i-30)*8;
+			blue = 0;
+			green = 0;
+		} else if(i<=90){
+			red = 240;
+			green = (i-60)*8;
+			blue = 0;
+		} else if(i<=120){
+			red = 240-(i-90)*8;
+			green = 240;
+			blue = 0;
+		} else if(i<=150){
+			red = 0;
+			green = 240;
+			blue = (i-120)*8;
+		} else if(i<=180){
+			red = 0;
+			green = 240-(i-150)*8;
+			blue = 240;
+		} else if(i<=210){
+			red = (i-180)*8;
+			green = 0;
+			blue = 240;
+		} else if(i<=240){
+			red = 240;
+			green = 0;
+			blue = 240-(i-210)*8;
 		} else {
-			blue = 240-((i%(240/2))*2);
+			return Color.GRAY;
 		}
+		
 
 		return new Color(red,green,blue);	
 	}
