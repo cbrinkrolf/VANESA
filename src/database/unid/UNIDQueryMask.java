@@ -99,6 +99,10 @@ public class UNIDQueryMask {
 		pickCommons.setActionCommand("pickcommons");
 		pickCommons.addActionListener(new DatabaseSearchListener(dw));
 		
+		JButton pickNeighbors = new JButton("pick neighbors");
+		pickNeighbors.setActionCommand("pickneighbors");
+		pickNeighbors.addActionListener(new DatabaseSearchListener(dw));
+		
 		p.add(new JLabel("UNID Search Window"),"span 4");
 		p.add(new JSeparator(),"span, growx, wrap 15, gaptop 10, gap 5");
 		
@@ -127,6 +131,7 @@ public class UNIDQueryMask {
 		buttonPanel.add(search);
 		
 		p.add(buttonPanel,"span");
+		p.add(pickNeighbors,"span");
 		
 		JButton pick = new JButton(new ImageIcon(imagePath.getPath("infoButton.png")));
 		pick.addActionListener(new DatabaseSearchListener(dw));

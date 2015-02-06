@@ -9,10 +9,13 @@ import gui.ProgressBar;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import database.brenda.BRENDASearch;
 import database.brenda.gui.BrendaInfoWindow;
@@ -75,25 +78,6 @@ public class DatabaseSearchListener implements ActionListener {
 		unidS.execute();
 		
 	}
-	
-	private void pickCommons(){
-		String commonNames[] = dw.getInput()[2].split(",");
-		MainWindow w = MainWindowSingleton.getInstance();
-		GraphContainer con = ContainerSingelton.getInstance();
-		Pathway pw = con.getPathway(w.getCurrentPathway());
-		MyGraph mg = pw.getGraph();
-		
-		 for(BiologicalNodeAbstract bna : mg.getAllVertices()){
-				for (int i = 0; i < commonNames.length; i++) {
-					if(bna.getLabel().equals(commonNames[i])){
-						mg.getVisualizationViewer().getPickedVertexState().pick(bna, true);
-					}
-				}
-		 }
-		
-		
-		
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -128,6 +112,44 @@ public class DatabaseSearchListener implements ActionListener {
 			}
 		} else if ("pickcommons".equals(event)) {
 			pickCommons();			
+		} else if("pickneighbors".equals(event)){
+			pickNeighbors();
 		}
+	}
+	
+	private void pickCommons(){
+		String commonNames[] = dw.getInput()[2].split(",");
+		MainWindow w = MainWindowSingleton.getInstance();
+		GraphContainer con = ContainerSingelton.getInstance();
+		Pathway pw = con.getPathway(w.getCurrentPathway());
+		MyGraph mg = pw.getGraph();
+				
+		for(BiologicalNodeAbstract bna : mg.getAllVertices()){
+				for (int i = 0; i < commonNames.length; i++) {
+					if(bna.getLabel().equals(commonNames[i])){
+						mg.getVisualizationViewer().getPickedVertexState().pick(bna, true);
+					}
+				}
+		 }		
+	}	
+	
+	
+	private void pickNeighbors() {
+		MainWindow w = MainWindowSingleton.getInstance();
+		GraphContainer con = ContainerSingelton.getInstance();
+		Pathway pw = con.getPathway(w.getCurrentPathway());
+		MyGraph mg = pw.getGraph();
+
+		
+		
+		// mg.getVisualizationViewer().getPickedVertexState().pick(bna, true);
+		Set<BiologicalNodeAbstract> picked = mg.getVisualizationViewer().getPickedVertexState().getPicked();
+				
+		
+		for(BiologicalNodeAbstract b : picked){
+			for (BiologicalNodeAbstract c : mg.getJungGraph().getNeighbors(b)) {
+				mg.getVisualizationViewer().getPickedVertexState().pick(c, true);
+			}
+		}		
 	}
 }
