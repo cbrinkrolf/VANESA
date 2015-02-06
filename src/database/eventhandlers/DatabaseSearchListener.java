@@ -9,13 +9,11 @@ import gui.ProgressBar;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
 
 import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import database.brenda.BRENDASearch;
 import database.brenda.gui.BrendaInfoWindow;
@@ -45,8 +43,9 @@ public class DatabaseSearchListener implements ActionListener {
 
 	private void requestBrendaContent() {
 		BRENDASearch brendaSearch = new BRENDASearch(dw.getInput(),
-				MainWindowSingleton.getInstance(), new ProgressBar(), null);
+				MainWindowSingleton.getInstance(), new ProgressBar(), null, dw.isHeadless());
 		brendaSearch.execute();
+		System.out.println(dw.isHeadless());
 	}
 
 	/**
@@ -56,7 +55,7 @@ public class DatabaseSearchListener implements ActionListener {
 
 	private void requestPPIcontent() {
 		PPISearch ppiSearch = new PPISearch(dw.getInput(),
-				MainWindowSingleton.getInstance(), new ProgressBar());
+				MainWindowSingleton.getInstance(), new ProgressBar(), dw.isHeadless());
 		ppiSearch.execute();
 
 	}
@@ -64,13 +63,13 @@ public class DatabaseSearchListener implements ActionListener {
 	private void requestMIRNAcontent() {
 		
 		mirnaSearch mirnaS = new mirnaSearch(dw.getInput(),
-						MainWindowSingleton.getInstance(), new ProgressBar());
+						MainWindowSingleton.getInstance(), new ProgressBar(), dw.isHeadless());
 		
 		mirnaS.execute();   
 	}
 	
 	private void requestUNIDContent(){
-		UNIDSearch unidS = new UNIDSearch(dw.getInput());
+		UNIDSearch unidS = new UNIDSearch(dw.getInput(), dw.isHeadless());
 		UNIDSearch.progressBar = new ProgressBar();
 		UNIDSearch.progressBar.init(100, "UNID", true);
 		UNIDSearch.progressBar.setProgressBarString("Getting search results");

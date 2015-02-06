@@ -19,6 +19,8 @@ public class DatabaseWindow {
 	private PPIqueryMask ppi;
 	private MirnaQueryClass mirna;
 	private UNIDQueryMask unid;
+	
+	private boolean headless = false;
 
 	public DatabaseWindow() {
 
@@ -109,6 +111,11 @@ public class DatabaseWindow {
 		}
 	}
 
+	public void setHeadless(boolean headless){
+		this.headless = headless;
+	}
 	
-
+	public boolean isHeadless(){
+		return this.headless;
+	}
 }
