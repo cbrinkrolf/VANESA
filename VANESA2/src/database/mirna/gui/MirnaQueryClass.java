@@ -14,11 +14,11 @@ import javax.swing.JTextField;
 
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
-
+import database.gui.QueryMask;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 
-public class MirnaQueryClass {
+public class MirnaQueryClass extends QueryMask {
 	
 	private TitledTab tab;
 	private JPanel p;
@@ -26,6 +26,7 @@ public class MirnaQueryClass {
 	
 	
 	public MirnaQueryClass(DatabaseWindow dw) {
+		super(dw);
 		
 		ImagePath imagePath = ImagePath.getInstance();
 		MigLayout layout = new MigLayout("", "[right]");
@@ -47,20 +48,10 @@ public class MirnaQueryClass {
 		acc.addFocusListener(new TextfeldColorChanger());
 		sequences.addFocusListener(new TextfeldColorChanger());
 		
-		JButton search = new JButton("search");
-		search.setActionCommand("searchDatabase");
-		search.addActionListener(new DatabaseSearchListener(dw));
-		
 		JButton info = new JButton(new ImageIcon(imagePath.getPath("infoButton.png")));
 		info.setActionCommand("MIRNAinfo");
 		info.addActionListener(new DatabaseSearchListener(dw));
 		info.setBorderPainted(false);
-		
-
-		JButton reset = new JButton("reset");
-		reset.setActionCommand("reset");
-		reset.addActionListener(new DatabaseSearchListener(dw));
-		
 		
 		p.add(new JLabel("miRNA Search Window"),"span 4");
 		p.add(new JSeparator(),       "span, growx, wrap 15, gaptop 10, gap 5");
@@ -75,14 +66,8 @@ public class MirnaQueryClass {
 		p.add(acc,"span, wrap, growx, gap 10");
 		p.add(new JLabel("Sequence"),"span 2, gap 5 ");
 		p.add(sequences,"span, wrap, growx, gap 10");
-		//p.add(new JSeparator(), "span, growx, wrap 10 ");
-		p.add(new JLabel(),"gap 20, span 5");
-		
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.add(reset);
-		buttonPanel.add(search);
-		
-		p.add(buttonPanel,"span");
+
+		this.addControleButtons(p);
 			
 		tab = new TitledTab("miRNA", null, p, info);
 		tab.getProperties().setHighlightedRaised(2);
@@ -125,8 +110,4 @@ public class MirnaQueryClass {
 	public JPanel getPanel(){
 		return p;
 	}
-
-
-	
-	
 }
