@@ -24,8 +24,10 @@ public class PPISearch extends SwingWorker<Object, Object>{
 	private ProgressBar bar;
 	private ArrayList<DBColumn> results;
 	private PPISearchResultWindow ppiSearchResultWindow;
+	private boolean headless;
 	
-	public PPISearch(String[] input,MainWindow w, ProgressBar bar) {
+	
+	public PPISearch(String[] input,MainWindow w, ProgressBar bar, boolean headless) {
 
 		database = input[0];
 		fullName = input[1];
@@ -34,6 +36,8 @@ public class PPISearch extends SwingWorker<Object, Object>{
 		
 		this.w =w;
 		this.bar = bar;
+		
+		this.headless = headless;
 
 	}
 
@@ -238,7 +242,7 @@ public class PPISearch extends SwingWorker<Object, Object>{
 //					System.out.println(details[0] + " " + details[3] + " ");
 //					System.out.println(ppiSearchResultWindow.getSerchDeapth());
 					
-					ppiCon = new PPIConnector(bar,details, database);
+					ppiCon = new PPIConnector(bar,details, database, headless);
 					ppiCon.setSearchDepth(ppiSearchResultWindow.getSerchDeapth());
 					ppiCon.setFinaliseGraph(ppiSearchResultWindow.getFinaliseGraph());
 					ppiCon.setAutoCoarse(ppiSearchResultWindow.getAutoCoarse());

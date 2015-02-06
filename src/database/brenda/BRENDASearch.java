@@ -1,5 +1,6 @@
 package database.brenda;
 
+import graph.GraphInstance;
 import gui.MainWindow;
 import gui.ProgressBar;
 
@@ -32,9 +33,12 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 
 	private BrendaSearchResultWindow bsrw;
 
-	private Pathway mergePW=null;
-	
-	public BRENDASearch(String[] input, MainWindow w, ProgressBar bar, Pathway mergePW) {
+	private Pathway mergePW = null;
+
+	private boolean headless;
+
+	public BRENDASearch(String[] input, MainWindow w, ProgressBar bar,
+			Pathway mergePW, boolean headless) {
 
 		ec_number = input[0];
 		name = input[1];
@@ -44,8 +48,8 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 
 		this.w = w;
 		this.bar = bar;
-		this.mergePW=mergePW;
-		
+		this.mergePW = mergePW;
+		this.headless = headless;
 
 	}
 
@@ -127,174 +131,128 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 		return queryStart + " order by e.ec_number;";
 	}
 
-	/*private Vector<String> preparePattern(String patterns) {
+	/*
+	 * private Vector<String> preparePattern(String patterns) {
+	 * 
+	 * Vector<String> v = new Vector<String>(); StringTokenizer st = new
+	 * StringTokenizer(patterns); String t; String sub; while
+	 * (st.hasMoreTokens()) {
+	 * 
+	 * t = st.nextToken();
+	 * 
+	 * boolean not = false;
+	 * 
+	 * if (t.startsWith("!")) {
+	 * 
+	 * sub = t.substring(1, t.length()); t = sub; not = true;
+	 * 
+	 * }
+	 * 
+	 * if (t.startsWith("*") && t.endsWith("*")) {
+	 * 
+	 * sub = t.substring(1, t.length() - 1); t = sub;
+	 * 
+	 * if (not) v.add("!" + t); else v.add("=" + t);
+	 * 
+	 * } else if (t.startsWith("*")) {
+	 * 
+	 * sub = t.substring(1, t.length()); t = sub;
+	 * 
+	 * if (not) v.add("!" + t); else v.add("=" + t);
+	 * 
+	 * } else if (t.endsWith("*")) {
+	 * 
+	 * sub = t.substring(0, t.length() - 1); t = sub;
+	 * 
+	 * if (not) v.add("!" + t); else v.add("=" + t);
+	 * 
+	 * } else if (t.startsWith("&")) { } else if (t.startsWith("|")) {
+	 * v.add("|"); } else {
+	 * 
+	 * if (not) v.add("!" + t); else v.add("=" + t);
+	 * 
+	 * } } return v; }
+	 */
 
-		Vector<String> v = new Vector<String>();
-		StringTokenizer st = new StringTokenizer(patterns);
-		String t;
-		String sub;
-		while (st.hasMoreTokens()) {
+	/*
+	 * private boolean containsProduct(String products) {
+	 * 
+	 * if (product.equals("") || products.equals("")) return true;
+	 * 
+	 * Vector v = preparePattern(product.toUpperCase()); Iterator it =
+	 * v.iterator();
+	 * 
+	 * boolean b = true; boolean connection = false;
+	 * 
+	 * while (it.hasNext()) { String check = it.next().toString();
+	 * 
+	 * if (products.contains(check.substring(1, check.length())) &&
+	 * check.startsWith("=")) {
+	 * 
+	 * } else if (!products.contains(check.substring(1, check.length())) &&
+	 * check.startsWith("!")) {
+	 * 
+	 * } else if (check.startsWith("|")) { connection = true;
+	 * 
+	 * } else {
+	 * 
+	 * if (connection && b) { b = true; connection = false; } else { b = false;
+	 * } } }
+	 * 
+	 * return b; }
+	 */
 
-			t = st.nextToken();
-			
-			boolean not = false;
+	/*
+	 * private boolean containsSubstrates(String substrates) {
+	 * 
+	 * if (substrat.equals("") || substrates.equals("")) return true;
+	 * 
+	 * Vector v = preparePattern(substrat.toUpperCase()); Iterator it =
+	 * v.iterator();
+	 * 
+	 * boolean b = true; boolean connection = false;
+	 * 
+	 * while (it.hasNext()) { String check = it.next().toString();
+	 * 
+	 * if (substrates.contains(check.substring(1, check.length())) &&
+	 * check.startsWith("=")) {
+	 * 
+	 * } else if (!substrates.contains(check.substring(1, check.length())) &&
+	 * check.startsWith("!")) {
+	 * 
+	 * } else if (check.startsWith("|")) { connection = true;
+	 * 
+	 * } else {
+	 * 
+	 * if (connection && b) { b = true; connection = false; } else { b = false;
+	 * } } }
+	 * 
+	 * return b; }
+	 */
 
-			if (t.startsWith("!")) {
-
-				sub = t.substring(1, t.length());
-				t = sub;
-				not = true;
-
-			}
-
-			if (t.startsWith("*") && t.endsWith("*")) {
-
-				sub = t.substring(1, t.length() - 1);
-				t = sub;
-
-				if (not)
-					v.add("!" + t);
-				else
-					v.add("=" + t);
-
-			} else if (t.startsWith("*")) {
-
-				sub = t.substring(1, t.length());
-				t = sub;
-
-				if (not)
-					v.add("!" + t);
-				else
-					v.add("=" + t);
-
-			} else if (t.endsWith("*")) {
-
-				sub = t.substring(0, t.length() - 1);
-				t = sub;
-
-				if (not)
-					v.add("!" + t);
-				else
-					v.add("=" + t);
-
-			} else if (t.startsWith("&")) {
-			} else if (t.startsWith("|")) {
-				v.add("|");
-			} else {
-
-				if (not)
-					v.add("!" + t);
-				else
-					v.add("=" + t);
-
-			}
-		}
-		return v;
-	}*/
-
-	/*private boolean containsProduct(String products) {
-
-		if (product.equals("") || products.equals(""))
-			return true;
-
-		Vector v = preparePattern(product.toUpperCase());
-		Iterator it = v.iterator();
-
-		boolean b = true;
-		boolean connection = false;
-
-		while (it.hasNext()) {
-			String check = it.next().toString();
-
-			if (products.contains(check.substring(1, check.length()))
-					&& check.startsWith("=")) {
-
-			} else if (!products.contains(check.substring(1, check.length()))
-					&& check.startsWith("!")) {
-
-			} else if (check.startsWith("|")) {
-				connection = true;
-
-			} else {
-
-				if (connection && b) {
-					b = true;
-					connection = false;
-				} else {
-					b = false;
-				}
-			}
-		}
-
-		return b;
-	}*/
-
-	/*private boolean containsSubstrates(String substrates) {
-
-		if (substrat.equals("") || substrates.equals(""))
-			return true;
-
-		Vector v = preparePattern(substrat.toUpperCase());
-		Iterator it = v.iterator();
-
-		boolean b = true;
-		boolean connection = false;
-
-		while (it.hasNext()) {
-			String check = it.next().toString();
-
-			if (substrates.contains(check.substring(1, check.length()))
-					&& check.startsWith("=")) {
-
-			} else if (!substrates.contains(check.substring(1, check.length()))
-					&& check.startsWith("!")) {
-
-			} else if (check.startsWith("|")) {
-				connection = true;
-
-			} else {
-
-				if (connection && b) {
-					b = true;
-					connection = false;
-				} else {
-					b = false;
-				}
-			}
-		}
-
-		return b;
-	}*/
-
-	/*private boolean containsReactionElement(String reaction) {
-
-		if (reaction.equals("") || reaction == null)
-			return false;
-
-		StringTokenizer st = new StringTokenizer(reaction, "=");
-
-		String substrate = "";
-		String product = "";
-
-		int tokenCount = 0;
-		while (st.hasMoreTokens()) {
-
-			if (tokenCount == 0) {
-				tokenCount++;
-				substrate = st.nextToken().toUpperCase();
-			} else {
-				product = st.nextToken().toUpperCase();
-			}
-		}
-
-		if (containsSubstrates(substrate) && containsProduct(product))
-			return true;
-
-		return false;
-	}*/
+	/*
+	 * private boolean containsReactionElement(String reaction) {
+	 * 
+	 * if (reaction.equals("") || reaction == null) return false;
+	 * 
+	 * StringTokenizer st = new StringTokenizer(reaction, "=");
+	 * 
+	 * String substrate = ""; String product = "";
+	 * 
+	 * int tokenCount = 0; while (st.hasMoreTokens()) {
+	 * 
+	 * if (tokenCount == 0) { tokenCount++; substrate =
+	 * st.nextToken().toUpperCase(); } else { product =
+	 * st.nextToken().toUpperCase(); } }
+	 * 
+	 * if (containsSubstrates(substrate) && containsProduct(product)) return
+	 * true;
+	 * 
+	 * return false; }
+	 */
 
 	public String[][] getResults() throws SQLException {
-		
+
 		ArrayList<DBColumn> results = new Wrapper().requestDbContent(1,
 				getQuery());
 		String[][] container = new String[results.size()][4];
@@ -305,7 +263,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 			container[i][2] = results.get(i).getColumn()[3];
 			container[i][3] = results.get(i).getColumn()[4];
 		}
-		
+
 		return container;
 	}
 
@@ -313,7 +271,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	protected Object doInBackground() throws Exception {
 		w.setLockedPane(true);
 		results = getResults();
-		
+
 		return null;
 	}
 
@@ -340,16 +298,19 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 				String[] res;
 				while (it.hasNext()) {
 					res = it.next();
-					//System.out.println("drin");
-					//BrendaConnector bc = new BrendaPathway(bar, res, mergePW);
-					BrendaConnector bc = new BrendaConnector(bar, res, mergePW);
-					//System.out.println("newwwwww");
-					//BrendaConnectorNew bc = new BrendaConnectorNew(bar, res, mergePW);
+					// System.out.println("drin");
+					// BrendaConnector bc = new BrendaPathway(bar, res,
+					// mergePW);
+					BrendaConnector bc = new BrendaConnector(bar, res, mergePW,
+							headless);
+					// System.out.println("newwwwww");
+					// BrendaConnectorNew bc = new BrendaConnectorNew(bar, res,
+					// mergePW);
 					bc.setDisregarded(bsrw.getDisregarded());
 					bc.setOrganism_specific(bsrw.getOrganismSpecificDecision());
 					bc.setSearchDepth(bsrw.getSerchDeapth());
-				    bc.setCoFactors(bsrw.getCoFactorsDecision());
-				    bc.setInhibitors(bsrw.getInhibitorsDecision());
+					bc.setCoFactors(bsrw.getCoFactorsDecision());
+					bc.setInhibitors(bsrw.getInhibitorsDecision());
 
 					bc.execute();
 
@@ -357,6 +318,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 			}
 		}
 		endSearch(w, bar);
+
 	}
 
 	private void endSearch(final MainWindow w, final ProgressBar bar) {

@@ -28,8 +28,7 @@ import cluster.graphdb.GraphDBTransportNode;
 
 /**
  * 
- * @author mlewinsk
- * June 2014
+ * @author mlewinsk June 2014
  */
 public class UNIDSearch extends SwingWorker<Object, Object> {
 
@@ -44,54 +43,56 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	private String organism;
 	private int depth;
 	private HashSet<String> searchNames;
-	
-	
+
+	private boolean headless;
+
 	private HashMap<GraphDBTransportNode, HashSet<GraphDBTransportNode>> adjacencylist;
 
-	public UNIDSearch(String[] input) {
+	public UNIDSearch(String[] input, boolean headless) {
 		this.organism = input[0];
 		this.fullName = input[1];
 		this.commonName = input[2];
 		this.graphid = input[3];
 		this.depth = (int) Double.parseDouble(input[4]);
 		this.searchNames = new HashSet<>();
-		try{
+		try {
 			this.helper = new SearchCallback(this);
-		}catch(RemoteException re){
+		} catch (RemoteException re) {
 			re.printStackTrace();
 		}
+		this.headless = headless;
 	}
 
 	protected Object doInBackground() throws Exception {
-		
-		//check for multi name input
+
+		// check for multi name input
 		boolean multi_id_search = false;
 		HashSet<String> commonNames = new HashSet<String>();
-		if(commonName.contains(",")){
+		if (commonName.contains(",")) {
 			multi_id_search = true;
 			String name[] = commonName.split(",");
 			for (int i = 0; i < name.length; i++) {
 				searchNames.add(name[i]);
 				commonNames.add(name[i]);
-			}			
-		}else{
+			}
+		} else {
 			searchNames.add(commonName);
 		}
 
-		try{
-		 String url = "rmi://cassiopeidae/ClusterJobs";
-		 server = (IJobServer) Naming.lookup(url);
-		 if(multi_id_search){
-			 server.submitSearch(commonNames, depth, "any", helper);
-		 }else{
-			 
-			 server.submitSearch(commonName,depth,helper);
-//DEBUG Dataset Search			 
-//			 HashSet<String> datasets = new HashSet<String>();
-//			 datasets.add("FC_68_S01_GE2_107_Sep09_1_1");
-//			 server.submitSearch(datasets, 1, helper);
-		 }
-		}catch(Exception e){
+		try {
+			String url = "rmi://cassiopeidae/ClusterJobs";
+			server = (IJobServer) Naming.lookup(url);
+			if (multi_id_search) {
+				server.submitSearch(commonNames, depth, "any", helper);
+			} else {
+
+				server.submitSearch(commonName, depth, helper);
+				// DEBUG Dataset Search
+				// HashSet<String> datasets = new HashSet<String>();
+				// datasets.add("FC_68_S01_GE2_107_Sep09_1_1");
+				// server.submitSearch(datasets, 1, helper);
+			}
+		} catch (Exception e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					JOptionPane.showMessageDialog(MainWindowSingleton
@@ -114,11 +115,12 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	}
 
 	/**
-	 * Creates a new Network tab with the 
+	 * Creates a new Network tab with the
 	 */
 	public void createNetworkFromSearch() {
-		
-		Pathway pw = new CreatePathway(fullName+commonName+graphid+" depth="+depth+"(UNID)").getPathway();
+
+		Pathway pw = new CreatePathway(fullName + commonName + graphid
+				+ " depth=" + depth + "(UNID)").getPathway();
 		MyGraph myGraph = pw.getGraph();
 
 		myGraph.lockVertices();
@@ -129,15 +131,13 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		HashSet<GraphDBTransportNode> nodeset = new HashSet<>();
 		HashMap<GraphDBTransportNode, BiologicalNodeAbstract> nodes = new HashMap<>();
 
-		
-		
-		//Nodes first
+		// Nodes first
 		for (GraphDBTransportNode node : adjacencylist.keySet()) {
 			if (!nodeset.contains(node)) {
 				nodeset.add(node);
 				bna = new GraphNode(node);
 				bna.setReference(false);
-				if(searchNames.contains(node.commonName)){
+				if (searchNames.contains(node.commonName)) {
 					bna.setColor(Color.RED);
 				}
 				pw.addVertex(bna, new Point(150, 100));
@@ -149,16 +149,16 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 					nodeset.add(companion);
 					bna = new GraphNode(companion);
 					bna.setReference(false);
-					if(searchNames.contains(companion.commonName)){
-						bna.setColor(Color.RED);				
+					if (searchNames.contains(companion.commonName)) {
+						bna.setColor(Color.RED);
 					}
 					pw.addVertex(bna, new Point(150, 100));
 					nodes.put(companion, bna);
 				}
 			}
 		}
-		
-		//then edges
+
+		// then edges
 		ReactionEdge r;
 		for (GraphDBTransportNode node : adjacencylist.keySet()) {
 			HashSet<GraphDBTransportNode> companions = adjacencylist.get(node);
@@ -174,28 +174,29 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 				pw.addEdge(r);
 			}
 		}
-		
 
 		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
 
-		myGraph.normalCentering();
-
 		MainWindow window = MainWindowSingleton.getInstance();
 		window.updateOptionPanel();
 		window.setEnabled(true);
-		pw.getGraph().changeToCircleLayout();
-
+		if (!headless) {
+			pw.getGraph().changeToCircleLayout();
+			myGraph.normalCentering();
+		}
 		reactivateUI();
 
 	}
-	
+
 	/**
 	 * Set adjacency list, usually called by SearchCallback
+	 * 
 	 * @param adjacencylist
 	 */
-	public void setAdjacencyList(HashMap<GraphDBTransportNode, HashSet<GraphDBTransportNode>> adjacencylist){
+	public void setAdjacencyList(
+			HashMap<GraphDBTransportNode, HashSet<GraphDBTransportNode>> adjacencylist) {
 		this.adjacencylist = adjacencylist;
-		
+
 	}
 }

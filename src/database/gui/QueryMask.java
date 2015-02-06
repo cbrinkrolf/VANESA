@@ -1,5 +1,8 @@
 package database.gui;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -8,12 +11,15 @@ import javax.swing.JSeparator;
 
 import database.eventhandlers.DatabaseSearchListener;
 
-public class QueryMask {
+public class QueryMask implements ItemListener {
 	private DatabaseWindow dw;
 	private JCheckBox headless;
 
 	public QueryMask(DatabaseWindow dw) {
 		this.dw = dw;
+		headless = new JCheckBox("headless");
+		headless.addItemListener(this);
+		dw.setHeadless(headless.isSelected());
 	}
 
 	public void addControleButtons(JPanel p) {
@@ -25,20 +31,30 @@ public class QueryMask {
 		reset.setActionCommand("reset");
 		reset.addActionListener(new DatabaseSearchListener(dw));
 
-		headless = new JCheckBox("headless");
-		
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(headless);
 		buttonPanel.add(reset);
 		buttonPanel.add(search);
-		
+
 		p.add(new JSeparator(), "span, growx, wrap 10 ");
-		p.add(new JLabel(),"gap 20, span 5");
+		p.add(new JLabel(), "gap 20, span 5");
 		p.add(buttonPanel, "span");
 	}
-	
-	public boolean isHeadless(){
+
+	public boolean isHeadless() {
 		return headless.isSelected();
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		// TODO Auto-generated method stub
+
+		if (e.getSource() instanceof JCheckBox) {
+		
+			JCheckBox box = (JCheckBox) e.getSource();
+			dw.setHeadless(box.isSelected());
+		}
+
 	}
 
 }

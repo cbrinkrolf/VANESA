@@ -44,9 +44,6 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 	private ProgressBar bar;
 	private int buildingDepth;
 
-	private int x = 1;
-	private int y = 1;
-
 	private String root_id;
 
 	private String[] root_details;
@@ -59,19 +56,22 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 	private boolean binary;
 	private boolean complex;
 
-//	private long starttime;
-	
-	public PPIConnector(ProgressBar bar, String[] details, String db) {
+	boolean headless;
 
-//		System.out.println("Starting measurement");
-//		starttime = System.currentTimeMillis();
+	// private long starttime;
+
+	public PPIConnector(ProgressBar bar, String[] details, String db,
+			boolean headless) {
+
+		// System.out.println("Starting measurement");
+		// starttime = System.currentTimeMillis();
 		this.bar = bar;
 		this.root_details = details;
 		this.root_id = details[3];
 		this.database = db;
+		this.headless = headless;
 
 	}
-
 
 	private void stopVisualizationModel() {
 		myGraph.lockVertices();
@@ -88,8 +88,8 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		Iterator<String> i = entries2infos.keySet().iterator();
 		String id;
 		String[] infos;
-		Protein protein ;
-		
+		Protein protein;
+
 		while (i.hasNext()) {
 
 			id = i.next();
@@ -103,67 +103,63 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 			name2Vertex.put(id, protein);
 			vertex2Name.put(protein, id);
-			BiologicalNodeAbstract node = pw.addVertex(protein, new Point(x*100, y*100));
-			if(id.equals(root_id)){
+			BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10,10));
+			if (id.equals(root_id)) {
 				pw.setRootNode(node);
 			}
 
-			//myGraph.moveVertex(protein.getVertex(), x * 100, y * 100);
-
-			if (x > Math.sqrt(entries2infos.size())) {
-				x = 1;
-				y++;
-			} else {
-				x++;
-			}
+			// myGraph.moveVertex(protein.getVertex(), x * 100, y * 100);
 
 		}
 	}
-	
+
 	/**
-	 * Automatically coarsing of the resulting graph. Is called iteratively.
-	 * For complete coarsing, call with the root id.
-	 * @param node id
+	 * Automatically coarsing of the resulting graph. Is called iteratively. For
+	 * complete coarsing, call with the root id.
+	 * 
+	 * @param node
+	 *            id
 	 * @return the coarsed node
 	 */
-	private BiologicalNodeAbstract autoCoarse(String node){
+	private BiologicalNodeAbstract autoCoarse(String node) {
 		Set<BiologicalNodeAbstract> nextDepth = new HashSet<BiologicalNodeAbstract>();
-		for(String child : childNodes.get(node)){
-			if(childNodes.containsKey(child) && !childNodes.get(child).isEmpty()){
+		for (String child : childNodes.get(node)) {
+			if (childNodes.containsKey(child)
+					&& !childNodes.get(child).isEmpty()) {
 				nextDepth.add(autoCoarse(child));
 			} else {
 				nextDepth.add(name2Vertex.get(child));
 			}
 		}
 		nextDepth.add(name2Vertex.get(node));
-		if(node==root_id){
+		if (node == root_id) {
 			return null;
 		}
-		BiologicalNodeAbstract cn = BiologicalNodeAbstract.coarse(nextDepth, null, node);
+		BiologicalNodeAbstract cn = BiologicalNodeAbstract.coarse(nextDepth,
+				null, node);
 		cn.setRootNode(name2Vertex.get(node));
 		return cn;
 	}
-	
-	private void autoCoarse(){
-		class HLC implements HierarchyListComparator<Integer>{
-			
-			public HLC(){
+
+	private void autoCoarse() {
+		class HLC implements HierarchyListComparator<Integer> {
+
+			public HLC() {
 			}
 
 			public Integer getValue(BiologicalNodeAbstract n) {
 				String parent = parentNodes.get(vertex2Name.get(n));
-				if(name2Vertex.get(parent)!=null){
+				if (name2Vertex.get(parent) != null) {
 					return name2Vertex.get(parent).getID();
 				}
 				return getSubValue(n);
 			}
 
-			public Integer getSubValue(
-					BiologicalNodeAbstract n) {
+			public Integer getSubValue(BiologicalNodeAbstract n) {
 				return n.getID();
 			}
 		}
-		HierarchyList<Integer> l = new HierarchyList<Integer>();	
+		HierarchyList<Integer> l = new HierarchyList<Integer>();
 		l.addAll(myGraph.getAllVertices());
 		l.sort(new HLC());
 		l.coarse();
@@ -182,8 +178,10 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 			// System.out.println(entry[0] + " " + first+ "   ---   " + entry[1]
 			// + " " +second);
-			if(myGraph.getJungGraph().findEdge(first, second) == null && (first != second)){
-			//if (!adjazenzList.doesEdgeExist(first, second) && (first != second)) {
+			if (myGraph.getJungGraph().findEdge(first, second) == null
+					&& (first != second)) {
+				// if (!adjazenzList.doesEdgeExist(first, second) && (first !=
+				// second)) {
 				buildEdge(first, second, false);
 			}
 		}
@@ -192,7 +190,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 	private void buildEdge(BiologicalNodeAbstract one,
 			BiologicalNodeAbstract two, boolean directed) {
 
-		PhysicalInteraction r = new PhysicalInteraction( "", "", one, two);
+		PhysicalInteraction r = new PhysicalInteraction("", "", one, two);
 
 		r.setDirected(directed);
 		r.setReference(false);
@@ -242,14 +240,14 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 	private void buildInterations(boolean binary) {
 
-		//MARTIN Abfrage f�r neue und alte DB (switch)
-		
+		// MARTIN Abfrage f�r neue und alte DB (switch)
+
 		if (database.equals("HPRD")) {
-			if(MainWindow.useOldDB)
+			if (MainWindow.useOldDB)
 				query = PPIqueries.hprd_interactionsForID;
 			else
 				query = PPIqueries.hprd_interactionsForID_new;
-			
+
 		} else if (database.equals("MINT")) {
 			if (binary) {
 				query = PPIqueries.mint_interactionsForID;
@@ -275,7 +273,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 			@SuppressWarnings("unchecked")
 			HashSet<String> currentNodeSet = (HashSet<String>) newNodes.clone();
 			newNodes = new HashSet<String>();
-			
+
 			for (String node : currentNodeSet) {
 
 				String[] param2 = { node };
@@ -288,7 +286,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 				}
 
 				results = new Wrapper().requestDbContent(dbID, query, param2);
-				if(!childNodes.containsKey(node)){
+				if (!childNodes.containsKey(node)) {
 					childNodes.put(node, new HashSet<String>());
 				}
 				for (DBColumn column : results) {
@@ -326,9 +324,9 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 									sequence_A };
 							entries2infos.put(idA, infos_A);
 							newNodes.add(idA);
-							if(!idA.equals(node)){
+							if (!idA.equals(node)) {
 								childNodes.get(node).add(idA);
-								if(!node.equals(root_id))
+								if (!node.equals(root_id))
 									parentNodes.put(idA, node);
 							}
 						}
@@ -337,9 +335,9 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 									sequence_B };
 							entries2infos.put(idB, infos_B);
 							newNodes.add(idB);
-							if(!idB.equals(node)){
+							if (!idB.equals(node)) {
 								childNodes.get(node).add(idB);
-								if(!node.equals(root_id))
+								if (!node.equals(root_id))
 									parentNodes.put(idB, node);
 							}
 						}
@@ -461,7 +459,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 	@Override
 	public void done() {
 
-//		System.out.println("querytime :"+(System.currentTimeMillis()-starttime)+"ms");
+		// System.out.println("querytime :"+(System.currentTimeMillis()-starttime)+"ms");
 		bar.setProgressBarString("Drawing network");
 
 		String rootName = "";
@@ -486,11 +484,13 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		drawEdges();
 		startVisualizationModel();
 
-		myGraph.changeToGEMLayout();
-		myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
-		myGraph.normalCentering();
-		if(autoCoarse){
-//			autoCoarse(root_id);
+		if (!headless) {
+			myGraph.changeToGEMLayout();
+			myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
+			myGraph.normalCentering();
+		}
+		if (autoCoarse) {
+			// autoCoarse(root_id);
 			autoCoarse();
 		}
 		bar.closeWindow();
@@ -504,8 +504,8 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 	public void setFinaliseGraph(boolean finaliseGraph) {
 		this.finalise = finaliseGraph;
 	}
-	
-	public void setAutoCoarse(boolean autoCoarseResults){
+
+	public void setAutoCoarse(boolean autoCoarseResults) {
 		this.autoCoarse = autoCoarseResults;
 	}
 
