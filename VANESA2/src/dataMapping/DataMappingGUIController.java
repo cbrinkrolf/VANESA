@@ -364,7 +364,7 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 	 */
 	public void doPPISearch(String[] input) {
 
-		PPISearch search = new PPISearch(input, DataMappingView.w, new ProgressBar());
+		PPISearch search = new PPISearch(input, DataMappingView.w, new ProgressBar(), false);
 		search.execute();
 
 		SwingWorker<Void, Void> swingworker = new SwingWorker<Void, Void>() {

@@ -17,8 +17,8 @@ public class BrendaPathway extends BrendaConnector {
 	
 	private HashSet<String> enzymes2Search = new HashSet<String>();
 
-	public BrendaPathway(ProgressBar bar, String[] details, Pathway mergePW) {
-		super(bar, details, mergePW);
+	public BrendaPathway(ProgressBar bar, String[] details, Pathway mergePW, boolean headless) {
+		super(bar, details, mergePW, headless);
 
 	}
 

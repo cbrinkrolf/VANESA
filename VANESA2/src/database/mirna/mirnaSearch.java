@@ -34,8 +34,10 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 	private ProgressBar bar;
 	private ArrayList<DBColumn> resultsDBSearch;
 	private MirnaResultWindow mirnaResultWindow;
+	private boolean headless;
 
-	public mirnaSearch(String[] input, MainWindow w, ProgressBar bar) {
+	public mirnaSearch(String[] input, MainWindow w, ProgressBar bar,
+			boolean headless) {
 
 		name = input[0];
 		acc = input[1];
@@ -45,6 +47,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 		this.w = w;
 		this.bar = bar;
+		this.headless = headless;
 
 	}
 
@@ -116,13 +119,13 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 		if (continueProgress) {
 			Vector<String[]> results = mirnaResultWindow.getAnswer();
-			//System.out.println(results.get(0)[0] + " " + results.get(0)[1]);
+			// System.out.println(results.get(0)[0] + " " + results.get(0)[1]);
 			if (results.size() != 0) {
 				final Iterator<String[]> it = results.iterator();
 				while (it.hasNext()) {
 					String[] details = it.next();
 					String name = details[0];
-					//System.out.println(name);
+					// System.out.println(name);
 					final String QUESTION_MARK = new String("\\?");
 
 					if (this.name.length() > 0) {
@@ -130,7 +133,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 								.replaceFirst(QUESTION_MARK, "'" + name + "'");
 						resultsDBSearch = new Wrapper().requestDbContent(
 								Wrapper.dbtype_MiRNA, finalQueryString);
-						//System.out.println(finalQueryString);
+						// System.out.println(finalQueryString);
 						if (resultsDBSearch.size() > 0) {
 
 							Pathway pw = new CreatePathway(database
@@ -164,46 +167,51 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 							}
 							// startVisualizationModel();
 
-							myGraph.changeToGEMLayout();
-							myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
-							myGraph.normalCentering();
+							if (!headless) {
+								myGraph.changeToGEMLayout();
+								myGraph.fitScaleOfViewer(myGraph
+										.getSatelliteView());
+								myGraph.normalCentering();
+							}
 							bar.closeWindow();
 
 							MainWindow window = MainWindowSingleton
 									.getInstance();
 							window.updateOptionPanel();
 							window.setVisible(true);
-							
-//							class HLC implements HierarchyListComparator<String>{
-//
-//								int c;
-//								
-//								public HLC(int chars){
-//									c = chars;
-//								}
-//
-//								public String getValue(BiologicalNodeAbstract n) {
-//									return (String) n.getLabel().substring(0,c);
-//								}
-//
-//								public String getSubValue(
-//										BiologicalNodeAbstract n) {
-//									return n.getLabel();
-//								}
-//							}
-//						HierarchyList<String> l = new HierarchyList<String>();	
-//						l.addAll(myGraph.getAllVertices());
-//						l.sort(new HLC(1));
-//						l.coarse();
-						
+
+							// class HLC implements
+							// HierarchyListComparator<String>{
+							//
+							// int c;
+							//
+							// public HLC(int chars){
+							// c = chars;
+							// }
+							//
+							// public String getValue(BiologicalNodeAbstract n)
+							// {
+							// return (String) n.getLabel().substring(0,c);
+							// }
+							//
+							// public String getSubValue(
+							// BiologicalNodeAbstract n) {
+							// return n.getLabel();
+							// }
+							// }
+							// HierarchyList<String> l = new
+							// HierarchyList<String>();
+							// l.addAll(myGraph.getAllVertices());
+							// l.sort(new HLC(1));
+							// l.coarse();
 
 						}
-					}else if(gene.length() > 0){
+					} else if (gene.length() > 0) {
 						String finalQueryString = miRNAqueries.miRNA_get_Mirnas
 								.replaceFirst(QUESTION_MARK, "'" + name + "'");
 						resultsDBSearch = new Wrapper().requestDbContent(
 								Wrapper.dbtype_MiRNA, finalQueryString);
-						//System.out.println(finalQueryString);
+						// System.out.println(finalQueryString);
 						if (resultsDBSearch.size() > 0) {
 
 							Pathway pw = new CreatePathway(database
@@ -238,9 +246,12 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 							}
 							// startVisualizationModel();
 
-							myGraph.changeToGEMLayout();
-							myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
-							myGraph.normalCentering();
+							if (!headless) {
+								myGraph.changeToGEMLayout();
+								myGraph.fitScaleOfViewer(myGraph
+										.getSatelliteView());
+								myGraph.normalCentering();
+							}
 							bar.closeWindow();
 
 							MainWindow window = MainWindowSingleton
@@ -249,7 +260,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 							window.setVisible(true);
 
 						}
-						
+
 					}
 
 				}
