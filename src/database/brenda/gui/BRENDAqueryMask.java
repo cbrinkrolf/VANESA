@@ -16,15 +16,17 @@ import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
+import database.gui.QueryMask;
 
-public class BRENDAqueryMask {
+public class BRENDAqueryMask extends QueryMask{
 	
 	private TitledTab tab;
-	JPanel p;
-	JTextField ec_number, name, substrat, product, organism;
+	private JPanel p;
+	private JTextField ec_number, name, substrat, product, organism;
 	
 	public BRENDAqueryMask(DatabaseWindow dw){
-			
+		super(dw);
+		
 		ImagePath imagePath = ImagePath.getInstance();
 		MigLayout layout = new MigLayout("", "[right]");
 		p = new JPanel(layout);
@@ -45,15 +47,6 @@ public class BRENDAqueryMask {
 		product.addFocusListener(new TextfeldColorChanger());
 		organism.addFocusListener(new TextfeldColorChanger());
 		
-		JButton search = new JButton("search");
-		search.setActionCommand("searchDatabase");
-		search.addActionListener(new DatabaseSearchListener(dw));
-		
-		JButton reset = new JButton("reset");
-		reset.setActionCommand("reset");
-		reset.addActionListener(new DatabaseSearchListener(dw));
-		
-		
 		p.add(new JLabel("BRENDA Search Window"),"span 4");
 		p.add(new JSeparator(),       "span, growx, wrap 15, gaptop 10, gap 5");
 		
@@ -69,14 +62,8 @@ public class BRENDAqueryMask {
 		p.add(product,"span, wrap, growx, gap 10");
 		p.add(new JLabel("Organism"),"span 2, gap 5 ");
 		p.add(organism,"span, wrap 15, growx, gap 10");
-		p.add(new JSeparator(), "span, growx, wrap 10 ");
-		p.add(new JLabel(),"gap 20, span 5");
 		
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.add(reset);
-		buttonPanel.add(search);
-		
-		p.add(buttonPanel,"span");
+		this.addControleButtons(p);
 		
 		JButton pick = new JButton(new ImageIcon(imagePath.getPath("infoButton.png")));
 		pick.addActionListener(new DatabaseSearchListener(dw));
