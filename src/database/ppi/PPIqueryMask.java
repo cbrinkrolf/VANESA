@@ -19,8 +19,9 @@ import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
+import database.gui.QueryMask;
 
-public class PPIqueryMask {
+public class PPIqueryMask extends QueryMask{
 	
 	private TitledTab tab;
 	private JPanel p;
@@ -45,7 +46,7 @@ public class PPIqueryMask {
 //	};
 	
 	public PPIqueryMask(DatabaseWindow dw){
-			
+		super(dw);
 		ImagePath imagePath = ImagePath.getInstance();
 		MigLayout layout = new MigLayout("", "[right]");
 		p = new JPanel(layout);
@@ -70,15 +71,6 @@ public class PPIqueryMask {
 		alias.addFocusListener(new TextfeldColorChanger());
 		acNumber.addFocusListener(new TextfeldColorChanger());
 		
-		JButton search = new JButton("search");
-		search.setActionCommand("searchDatabase");
-		search.addActionListener(new DatabaseSearchListener(dw));
-		
-		JButton reset = new JButton("reset");
-		reset.setActionCommand("reset");
-		reset.addActionListener(new DatabaseSearchListener(dw));
-		
-		
 		p.add(new JLabel("PPI Search Window"),"span 4");
 		p.add(new JSeparator(),       "span, growx, wrap 15, gaptop 10, gap 5");
 		
@@ -94,14 +86,7 @@ public class PPIqueryMask {
 		p.add(new JLabel("AC number"),"span 2, gap 5 ");
 		p.add(acNumber,"span, wrap, growx, gap 10");
 		
-		p.add(new JSeparator(), "span, growx, wrap 10 ");
-		p.add(new JLabel(),"gap 20, span 5");
-		
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.add(reset);
-		buttonPanel.add(search);
-		
-		p.add(buttonPanel,"span");
+		this.addControleButtons(p);
 		
 		JButton pick = new JButton(new ImageIcon(imagePath.getPath("infoButton.png")));
 		pick.addActionListener(new DatabaseSearchListener(dw));
