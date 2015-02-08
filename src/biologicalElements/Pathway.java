@@ -1570,20 +1570,21 @@ public class Pathway implements Cloneable {
 			color = node.getColor();
 			node.setColor(new Color((int) Math.min(255,color.getRed()*1.2f),(int) Math.min(255,(int) color.getGreen()*1.2f),(int) Math.min(255,(int) color.getBlue()*1.2f)));
 		}
-		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
-			BiologicalEdgeAbstract e = edge.clone();
-			e.setTo(e.getTo().getCurrentShownParentNode(getGraph()));
-			e.setFrom(e.getFrom().getCurrentShownParentNode(getGraph()));
-			if(e.isValid(false)){
-				addEdge(e);
-			}
-		}
-		for(BiologicalEdgeAbstract edge : subPathway.getAllEdges()){
-			if(!subPathway.getEnvironment().contains(edge.getTo()) && 
-					!subPathway.getEnvironment().contains(edge.getFrom())){
-				addEdge(edge);
-			}
-		}
+//		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
+//			BiologicalEdgeAbstract e = edge.clone();
+//			e.setTo(e.getTo().getCurrentShownParentNode(getGraph()));
+//			e.setFrom(e.getFrom().getCurrentShownParentNode(getGraph()));
+//			if(e.isValid(false)){
+//				addEdge(e);
+//			}
+//		}
+//		for(BiologicalEdgeAbstract edge : subPathway.getAllEdges()){
+//			if(!subPathway.getEnvironment().contains(edge.getTo()) && 
+//					!subPathway.getEnvironment().contains(edge.getFrom())){
+//				addEdge(edge);
+//			}
+//		}
+		updateEdges();
 		openedSubPathways.put(subPathway,location);
 		return true;
 	}
@@ -1628,14 +1629,15 @@ public class Pathway implements Cloneable {
 			node.setColor(new Color((int) Math.min(255,(int) color.getRed()/1.2f),(int) Math.min(255,(int) color.getGreen()/1.2f),(int) Math.min(255,(int) color.getBlue()/1.2f)));
 			removeElement(node);
 		}
-		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
-			BiologicalEdgeAbstract e = edge.clone();
-			e.setTo(e.getTo().getCurrentShownParentNode(getGraph()));
-			e.setFrom(e.getFrom().getCurrentShownParentNode(getGraph()));
-			if(e.isValid(false)){
-				addEdge(e);
-			}
-		}
+//		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
+//			BiologicalEdgeAbstract e = edge.clone();
+//			e.setTo(e.getTo().getCurrentShownParentNode(getGraph()));
+//			e.setFrom(e.getFrom().getCurrentShownParentNode(getGraph()));
+//			if(e.isValid(false)){
+//				addEdge(e);
+//			}
+//		}
+		updateEdges();
 		openedSubPathways.remove(subPathway);
 	}
 	

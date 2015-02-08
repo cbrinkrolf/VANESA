@@ -59,7 +59,7 @@ public class InternalGraphRepresentation {
 			if (vertices.get(from).get(to) != null) {
 				vertices.get(from).remove(to);
 			} else {
-				System.err.println("Edge doese not exist!");
+				System.err.println("Edge does not exist!");
 			}
 		}
 	}
