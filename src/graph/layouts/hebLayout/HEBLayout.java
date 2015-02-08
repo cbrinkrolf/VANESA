@@ -1,6 +1,8 @@
 package graph.layouts.hebLayout;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Paint;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +16,8 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.decorators.GradientEdgePaintTransformer;
 import graph.GraphInstance;
 import graph.layouts.HierarchicalCircleLayout;
 
@@ -153,6 +157,10 @@ public class HEBLayout extends HierarchicalCircleLayout{
 		Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>
 			est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(getCenterPoint(),circles);
 		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(est);
+		HEBEdgePaintTransformer ptrans =  new HEBEdgePaintTransformer(
+				HEBLayoutConfig.getInColor(), HEBLayoutConfig.getOutColor(), 
+				GraphInstance.getMyGraph().getVisualizationViewer());
+		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeDrawPaintTransformer(ptrans);
 	}
 	
 	/**
@@ -172,5 +180,30 @@ public class HEBLayout extends HierarchicalCircleLayout{
 	
 	public HashMap<Integer, List<BiologicalNodeAbstract>> getBnaGroups(){
 		return bnaGroups;
+	}
+	
+	/**
+	 * Creates a color gradient for directed edges in HEBLayout.
+	 * @author tobias
+	 *
+	 */
+	class HEBEdgePaintTransformer extends GradientEdgePaintTransformer<BiologicalNodeAbstract,BiologicalEdgeAbstract>{
+		public HEBEdgePaintTransformer(Color c1, Color c2, VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv) {
+			super(c1,c2,vv);
+		}
+		
+		@Override
+		public Paint transform(BiologicalEdgeAbstract e){
+			if(e.isDirected()){
+				return super.transform(e);
+			} else {
+				Color oldc2 = c2;
+				c2 = c1;
+				Paint p = super.transform(e);
+				c2 = oldc2;
+				return p;
+			}
+			
+		}
 	}
 }

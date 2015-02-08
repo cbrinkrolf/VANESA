@@ -122,7 +122,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 
 	@Override
 	public Color getColor() {
-
 		if (isReference()) {
 			return Color.GRAY;
 		} else {

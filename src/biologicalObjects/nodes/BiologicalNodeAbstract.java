@@ -352,7 +352,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			
 			//update all graphs
 			coarseNode.getRootPathway().updateMyGraph();
-			coarseNode.printAllHierarchicalAttributes();
+//			coarseNode.printAllHierarchicalAttributes();
 		} else {
 			
 			// if border is not valid, reset all attributes and stop coarsing
@@ -824,7 +824,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	public Color getColor() {
 
-		if (isReference() | isHidden()) {
+		if (isReference() || isHidden()) {
 			return Color.WHITE;
 		} else {
 			return color;
@@ -1389,11 +1389,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			return rootNodes;
 		}
 		for(BiologicalNodeAbstract node : getInnerNodes()){
-			if(!node.isCoarseNode()){
-				rootNodes.add(node);
-			} else {
 				rootNodes.addAll(node.getAllRootNodes());
-			}
 		}
 		return rootNodes;
 	}
