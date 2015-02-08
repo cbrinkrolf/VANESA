@@ -703,6 +703,7 @@ public class JSBMLinput {
 
 		Map<Integer, Set<Integer>> hierarchyMap = new HashMap<Integer, Set<Integer>>();
 		Map<Integer, String> coarseNodeLabels = new HashMap<Integer, String>();
+		Set<Integer> openedCoarseNodes = new HashSet<Integer>();
 
 		for (Element coarseNode : hierarchyList.getChildren("coarseNode", null)) {
 			if (coarseNode.getChildren("child", null) == null)
@@ -719,6 +720,9 @@ public class JSBMLinput {
 					.split("_")[1]);
 			hierarchyMap.put(id, childrenSet);
 			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
+			if(coarseNode.getAttributeValue("opened").equals("true")){
+				openedCoarseNodes.add(id);
+			}
 		}
 
 		int coarsedNodes = 0;
@@ -740,6 +744,16 @@ public class JSBMLinput {
 									coarseNodeLabels.get(parent));
 					nodes.put(parent, coarseNode);
 					coarsedNodes += 1;
+				}
+			}
+			while(!openedCoarseNodes.isEmpty()){
+				Set<Integer> ocn = new HashSet<Integer>();
+				ocn.addAll(openedCoarseNodes);
+				for(Integer id : ocn){
+					if(pathway.getAllNodes().contains(nodes.get(id))){
+						pathway.openSubPathway(nodes.get(id));
+						openedCoarseNodes.remove(id);
+					}
 				}
 			}
 		}
@@ -854,7 +868,13 @@ public class JSBMLinput {
 		case "Color":
 			Element elSub = child.getChild("RGB", null);
 			int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
-			bna.setColor(new Color(rgb));
+//			System.out.println(rgb);
+			Color col = new Color(rgb);
+//			System.out.println(col.getRGB());
+			bna.setColor(col);
+//			System.out.println(bna.isReference() ? "reference" : "no reference");
+//			System.out.println(bna.isHidden() ? "hidden" : "not hidden");
+//			System.out.println(bna.getColor().getRGB());
 			break;
 		case "NodeReference":
 			elSub = child.getChild("hasRef", null);

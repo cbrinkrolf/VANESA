@@ -104,14 +104,11 @@ public class JSBMLoutput {
 		model.setAnnotation(a);
 
 		Compartment compartment;
+		
 		// read all nodes from graph
-		List<BiologicalNodeAbstract> flattenedPathwayNodes = new ArrayList<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : this.pathway.getAllNodesSorted()){
-			if(node.isCoarseNode()){
-				flattenedPathwayNodes.addAll(node.getAllRootNodes());
-			} else {
-				flattenedPathwayNodes.add(node);
-			}
+		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract node : rootPathway.getAllNodes()){
+			flattenedPathwayNodes.addAll(node.getAllRootNodes());
 		}
 		
 		Set<BiologicalEdgeAbstract> flattenedPathwayEdges = new HashSet<BiologicalEdgeAbstract>();
@@ -260,37 +257,19 @@ public class JSBMLoutput {
 				"listOfHierarchies", "", ""), new XMLAttributes()));
 		Set<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
 		
-		int answer = JOptionPane.NO_OPTION;
-		if(!rootPathway.getOpenedSubPathways().isEmpty()){
-			Object[] options = {"Save hierarchies", "Discard hierarchies"};
-			answer = JOptionPane.showOptionDialog(MainWindowSingleton.getInstance(),
-					"You have opened subpathways in your graph. Do you want to save the hierarchical structure" + 
-					" of these subpathways?", 
-					"Save hierarchical structures", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
-					null, options, options[1]);
+		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract node : rootPathway.getAllNodes()){
+			flattenedPathwayNodes.addAll(node.getAllRootNodes());
 		}
-		if(answer == JOptionPane.YES_OPTION){
-			Set<BiologicalNodeAbstract> nodeSet = new HashSet<BiologicalNodeAbstract>();
-			nodeSet.addAll(rootPathway.getAllNodes());
-			Set<BiologicalNodeAbstract> newNodeSet = new HashSet<BiologicalNodeAbstract>();
-			while(!nodeSet.isEmpty()){
-				newNodeSet.clear();
-				for(BiologicalNodeAbstract n : nodeSet){
-					if(n.getParentNode()!=null && n.getParentNode()!=rootPathway){
-						newNodeSet.add(n.getParentNode());
-					} else {
-						hierarchyNodes.add(n);
-					}
-				}
-				nodeSet.clear();
-				nodeSet.addAll(newNodeSet);
-			}
-			
-		} else if(answer == JOptionPane.NO_OPTION){
-			hierarchyNodes.addAll(rootPathway.getAllNodes());
-		}
-		
 
+		Set<BiologicalNodeAbstract> parentNodes = new HashSet<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract flattenedNode : flattenedPathwayNodes){
+			parentNodes = flattenedNode.getAllParentNodes();
+			for(BiologicalNodeAbstract parent : parentNodes){
+					hierarchyNodes.add(parent);
+			}
+		}
+			
 		for(BiologicalNodeAbstract node : hierarchyNodes){
 			if(node.isCoarseNode()){
 					addHierarchyXMLNode(hierarchy, node);
@@ -308,14 +287,12 @@ public class JSBMLoutput {
 				"coarseNode", "", ""), new XMLAttributes()));
 		hierarchyXMLNode.addAttr("id", "spec_" + node.getID());
 		hierarchyXMLNode.addAttr("label", node.getLabel());
+		hierarchyXMLNode.addAttr("opened", rootPathway.getOpenedSubPathways().contains(node) ? "true" : "false");
 		for(BiologicalNodeAbstract childNode : node.getInnerNodes()){
 			XMLNode childXMLNode = new XMLNode(new XMLNode(new XMLTriple(
 					"child", "", ""), new XMLAttributes()));
 			childXMLNode.addAttr("id", "spec_" + childNode.getID());
 			hierarchyXMLNode.addChild(childXMLNode);
-			if(childNode.isCoarseNode()){
-				addHierarchyXMLNode(hierarchy, childNode);
-			}
 		}
 		hierarchy.addChild(hierarchyXMLNode);
 	}
