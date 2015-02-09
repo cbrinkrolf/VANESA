@@ -38,6 +38,7 @@ import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
+import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.Layer;
@@ -111,7 +112,7 @@ public class MyGraph {
 
 	private int VisualizationViewerWidth = 1000;
 	private int VisualizationViewerHeigth = 1000;
-	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseGraph<BiologicalNodeAbstract, BiologicalEdgeAbstract>();
+	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<BiologicalNodeAbstract, BiologicalEdgeAbstract>();
 	private final MyVisualizationViewer vv;
 	private AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
 	final MyEditingModalGraphMouse graphMouse = new MyEditingModalGraphMouse();
@@ -593,12 +594,12 @@ public class MyGraph {
 	// return null;
 	// }
 
-	public void addEdge(BiologicalEdgeAbstract bea) {
+	public boolean addEdge(BiologicalEdgeAbstract bea) {
 		// Graph gs=vv.getGraphLayout().getGraph();
 
 		if (bea instanceof AlignmentEdge) {
 			AlignmentEdge aliEdge = (AlignmentEdge) bea;
-			g.addEdge(aliEdge, aliEdge.getFrom(), aliEdge.getTo(),
+			return g.addEdge(aliEdge, aliEdge.getFrom(), aliEdge.getTo(),
 					EdgeType.UNDIRECTED);
 
 		} else {
@@ -648,9 +649,9 @@ public class MyGraph {
 				// "", bna1, bna2), bna1,bna2, EdgeType.DIRECTED));//,from, to,
 				// EdgeType.DIRECTED);
 				// layout.setLocation(bea.getFrom(), 20, 20);
-				g.addEdge(bea, bea.getFrom(), bea.getTo(), EdgeType.DIRECTED);
+				return g.addEdge(bea, bea.getFrom(), bea.getTo(), EdgeType.DIRECTED);
 			} else {
-				g.addEdge(bea, bea.getFrom(), bea.getTo(), EdgeType.UNDIRECTED);
+				return g.addEdge(bea, bea.getFrom(), bea.getTo(), EdgeType.UNDIRECTED);
 			}
 			// Pair p = g.getEndpoints(bea.toString());
 			// System.out.println("f: "+layout.transform(p.getFirst()));
