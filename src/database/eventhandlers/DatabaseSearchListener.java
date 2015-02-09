@@ -140,14 +140,17 @@ public class DatabaseSearchListener implements ActionListener {
 		MyGraph mg = pw.getGraph();
 
 		
+		int amount_picked = mg.getVisualizationViewer().getPickedVertexState().getPicked().size();
+		BiologicalNodeAbstract picked[] =  new BiologicalNodeAbstract[amount_picked];
 		
-		// mg.getVisualizationViewer().getPickedVertexState().pick(bna, true);
-		Set<BiologicalNodeAbstract> picked = mg.getVisualizationViewer().getPickedVertexState().getPicked();
+		mg.getVisualizationViewer().getPickedVertexState().getPicked().toArray(picked);
 				
 		
-		for(BiologicalNodeAbstract b : picked){
-			for (BiologicalNodeAbstract c : mg.getJungGraph().getNeighbors(b)) {
-				mg.getVisualizationViewer().getPickedVertexState().pick(c, true);
+		for(BiologicalNodeAbstract source : picked){
+			for (BiologicalNodeAbstract neighbor : mg.getJungGraph().getNeighbors(source)) {
+				if(!mg.getVisualizationViewer().getPickedVertexState().isPicked(neighbor)){
+					mg.getVisualizationViewer().getPickedVertexState().pick(neighbor, true);
+				}
 			}
 		}		
 	}
