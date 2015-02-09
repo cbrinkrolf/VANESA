@@ -361,34 +361,7 @@ public class MyGraph {
 			}
 		};
 
-		pr.setVertexIconTransformer(vertexIconTransformer);
-
-		pr.setEdgeStrokeTransformer(esh);
-
-		pr.setEdgeDrawPaintTransformer(edpf);
-		pr.setEdgeFillPaintTransformer(efpf);
-
-		pr.setEdgeShapeTransformer(esf);
-
-		pr.setVertexLabelRenderer(vlr);
-		pr.setEdgeLabelRenderer(elr);
-
-		pr.setEdgeArrowTransformer(eaf);
-
-		satellitePr.setVertexStrokeTransformer(vsh);
-		satellitePr.setVertexLabelTransformer(vertexStringer);
-
-		satellitePr.setVertexShapeTransformer(vertexShapeTransformer);
-		satellitePr.setEdgeLabelTransformer(this.edgeStringer);
-		satellitePr.setVertexDrawPaintTransformer(vdpf);
-		satellitePr.setVertexFillPaintTransformer(vfpf);
-		satellitePr.setEdgeStrokeTransformer(esh); // pr.setEdgeStrokeFunction(esh);
-		satellitePr.setEdgeDrawPaintTransformer(edpf); // pr.setEdgePaintFunction(epf);
-		satellitePr.setEdgeFillPaintTransformer(efpf);
-		satellitePr.setEdgeShapeTransformer(esf);
-		satellitePr.setVertexLabelRenderer(vlr);
-		satellitePr.setEdgeLabelRenderer(elr);
-		satellitePr.setEdgeArrowTransformer(eaf);
+		makeDefaultObjectVisualization();
 
 		vv2.scaleToLayout(new CrossoverScalingControl());
 
@@ -437,6 +410,35 @@ public class MyGraph {
 		});
 		setMouseModePick();
 
+	}
+	
+	public void makeDefaultObjectVisualization(){
+		pr.setEdgeStrokeTransformer(esh);
+
+		pr.setEdgeDrawPaintTransformer(edpf);
+		pr.setEdgeFillPaintTransformer(efpf);
+
+		pr.setEdgeShapeTransformer(esf);
+
+		pr.setVertexLabelRenderer(vlr);
+		pr.setEdgeLabelRenderer(elr);
+
+		pr.setEdgeArrowTransformer(eaf);
+
+		satellitePr.setVertexStrokeTransformer(vsh);
+		satellitePr.setVertexLabelTransformer(vertexStringer);
+
+		satellitePr.setVertexShapeTransformer(vertexShapeTransformer);
+		satellitePr.setEdgeLabelTransformer(this.edgeStringer);
+		satellitePr.setVertexDrawPaintTransformer(vdpf);
+		satellitePr.setVertexFillPaintTransformer(vfpf);
+		satellitePr.setEdgeStrokeTransformer(esh);
+		satellitePr.setEdgeDrawPaintTransformer(edpf);
+		satellitePr.setEdgeFillPaintTransformer(efpf);
+		satellitePr.setEdgeShapeTransformer(esf);
+		satellitePr.setVertexLabelRenderer(vlr);
+		satellitePr.setEdgeLabelRenderer(elr);
+		satellitePr.setEdgeArrowTransformer(eaf);
 	}
 
 	/*
@@ -1088,6 +1090,7 @@ public class MyGraph {
 	private void changeToLayout(
 			AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout) {
 
+		makeDefaultObjectVisualization();
 		this.layout = layout;
 		// this.clusteringLayout.removeAllSubLayouts();
 		//Dimension oldDim = clusteringLayout.getSize();// getCurrentSize();

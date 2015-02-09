@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -16,7 +17,9 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.decorators.DirectionalEdgeArrowTransformer;
 import edu.uci.ics.jung.visualization.decorators.GradientEdgePaintTransformer;
 import graph.GraphInstance;
 import graph.layouts.HierarchicalCircleLayout;
@@ -157,10 +160,27 @@ public class HEBLayout extends HierarchicalCircleLayout{
 		Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>
 			est = new HEBEdgeShape.HEBCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>(getCenterPoint(),circles);
 		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(est);
+		
 		HEBEdgePaintTransformer ptrans =  new HEBEdgePaintTransformer(
-				HEBLayoutConfig.getInColor(), HEBLayoutConfig.getOutColor(), 
+				HEBLayoutConfig.EDGE_OUTCOLOR, HEBLayoutConfig.EDGE_INCOLOR, 
 				GraphInstance.getMyGraph().getVisualizationViewer());
 		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeDrawPaintTransformer(ptrans);
+		
+		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeArrowTransformer(new ShowEdgeArrowsTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract>());
+	}
+	
+	public class ShowEdgeArrowsTransformer<T1, T2> implements Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>{
+		
+		public ShowEdgeArrowsTransformer() {
+
+		}
+
+		@Override
+		public Shape transform(
+				Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract> arg0) {
+			return new DirectionalEdgeArrowTransformer<BiologicalNodeAbstract,BiologicalEdgeAbstract>(0,0,0).transform(arg0);
+		}
+
 	}
 	
 	/**
