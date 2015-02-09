@@ -13,6 +13,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import graph.layouts.ColorSlider;
 import graph.layouts.HierarchicalCircleLayoutConfig;
 
 public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements ChangeListener{
@@ -39,13 +40,13 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	/**
 	 * Edge Opacity
 	 */
-	public static int EDGE_OPACITY = 40;
+	public static int EDGE_OPACITY = 80;
 	
 	/**
 	 * Edge Color
 	 */
-	public static int EDGE_INCOLOR = Color.GRAY.getRed()/8;
-	public static int EDGE_OUTCOLOR = Color.GRAY.getRed()/8;
+	public static Color EDGE_INCOLOR = new Color(100,100,100,EDGE_OPACITY);
+	public static Color EDGE_OUTCOLOR = new Color(100,100,100,EDGE_OPACITY);
 
 	public static JCheckBox showInternalEdges;
 	public static JCheckBox resetLayout;
@@ -56,8 +57,8 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	public static JSlider edgeBundlingSlider;
 	public static JSlider groupDepthSlider;
 	public static JSlider edgeOpacitySlider;
-	public static JSlider edgeInColorSlider;
-	public static JSlider edgeOutColorSlider;
+	public static ColorSlider edgeInColorSlider;
+	public static ColorSlider edgeOutColorSlider;
 
 
 	public HEBLayoutConfig() {
@@ -78,13 +79,17 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 
 		groupSeperationSlider = new JSlider();
 		groupSeperationSlider.setBorder(BorderFactory
-				.createTitledBorder("Group seperation factor"));
+				.createTitledBorder("Group seperation"));
 		groupSeperationSlider.setMinimum(1);
 		groupSeperationSlider.setMaximum(100);
 		groupSeperationSlider.setValue(GROUP_DISTANCE_FACTOR);
 		groupSeperationSlider.setMajorTickSpacing(20);
 		groupSeperationSlider.setMinorTickSpacing(5);
 		groupSeperationSlider.setPaintTicks(true);
+		Hashtable<Integer,JLabel> sepLabels = new Hashtable<Integer,JLabel>();
+		sepLabels.put( new Integer( 1 ), new JLabel("min") );
+		sepLabels.put( new Integer( 100 ), new JLabel("max") );
+		groupSeperationSlider.setLabelTable(sepLabels);
 		groupSeperationSlider.setPaintLabels(true);
 		groupSeperationSlider.addChangeListener(this);
 		preferences.add(groupSeperationSlider);
@@ -123,7 +128,7 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 				.createTitledBorder("Edge Opacity"));
 		edgeOpacitySlider.setMinimum(0);
 		edgeOpacitySlider.setMaximum(100);
-		edgeOpacitySlider.setValue(255/40);
+		edgeOpacitySlider.setValue(100*EDGE_OPACITY/255);
 		edgeOpacitySlider.setMajorTickSpacing(20);
 		edgeOpacitySlider.setMinorTickSpacing(10);
 		edgeOpacitySlider.setPaintTicks(true);
@@ -139,14 +144,9 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		edgeOpacitySlider.addChangeListener(this);
 		colorPreferences.add(edgeOpacitySlider);
 		
-		edgeOutColorSlider = new JSlider();
-		edgeOutColorSlider.setBorder(BorderFactory
-				.createTitledBorder("Outgoing Edge Color"));
-		edgeOutColorSlider.setMinimum(0);
-		edgeOutColorSlider.setMaximum(240);
-		edgeOutColorSlider.setValue(EDGE_OUTCOLOR);
+		edgeOutColorSlider = new ColorSlider("Outgoing Edge Color", 20);
 		edgeOutColorSlider.addChangeListener(this);
-		edgeOutColorSlider.setBackground(getColor(edgeOutColorSlider.getValue()));
+		EDGE_OUTCOLOR = edgeOutColorSlider.getColor(EDGE_OPACITY);
 		colorPreferences.add(edgeOutColorSlider);
 		
 		edgeColorGradient = new JCheckBox("Edge color gradient");
@@ -154,15 +154,10 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		edgeColorGradient.addChangeListener(this);
 		colorPreferences.add(edgeColorGradient);
 		
-		edgeInColorSlider = new JSlider();
-		edgeInColorSlider.setBorder(BorderFactory
-				.createTitledBorder("Incoming Edge Color"));
-		edgeInColorSlider.setMinimum(0);
-		edgeInColorSlider.setMaximum(240);
-		edgeInColorSlider.setValue(EDGE_OUTCOLOR);
+		edgeInColorSlider = new ColorSlider("Incoming Edge Color", 20);
 		edgeInColorSlider.addChangeListener(this);
-		edgeInColorSlider.setBackground(getColor(edgeOutColorSlider.getValue()));
 		edgeInColorSlider.setEnabled(false);
+		EDGE_INCOLOR = edgeInColorSlider.getColor(EDGE_OPACITY);
 		colorPreferences.add(edgeInColorSlider);
 
 		showInternalEdges= new JCheckBox("Show group-internal edges");
@@ -227,12 +222,12 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 			HEBLayoutConfig.EDGE_BUNDLING_PERCENTAGE = HEBLayoutConfig.edgeBundlingSlider.getValue();
 		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeOpacitySlider)) {
 			HEBLayoutConfig.EDGE_OPACITY = HEBLayoutConfig.edgeOpacitySlider.getValue()*255/100;
+			HEBLayoutConfig.EDGE_INCOLOR = edgeInColorSlider.getColor(HEBLayoutConfig.EDGE_OPACITY);
+			HEBLayoutConfig.EDGE_OUTCOLOR = edgeOutColorSlider.getColor(HEBLayoutConfig.EDGE_OPACITY);
 		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeInColorSlider)) {
-			HEBLayoutConfig.EDGE_INCOLOR = HEBLayoutConfig.edgeInColorSlider.getValue();
-			edgeInColorSlider.setBackground(getColor(edgeInColorSlider.getValue()));
+			HEBLayoutConfig.EDGE_INCOLOR = HEBLayoutConfig.edgeInColorSlider.getColor(HEBLayoutConfig.EDGE_OPACITY);
 		} else if (arg0.getSource().equals(HEBLayoutConfig.edgeOutColorSlider)) {
-			HEBLayoutConfig.EDGE_OUTCOLOR = HEBLayoutConfig.edgeOutColorSlider.getValue();
-			edgeOutColorSlider.setBackground(getColor(edgeOutColorSlider.getValue()));
+			HEBLayoutConfig.EDGE_OUTCOLOR = HEBLayoutConfig.edgeOutColorSlider.getColor(HEBLayoutConfig.EDGE_OPACITY);
 			if(!edgeColorGradient.isSelected()){
 				HEBLayoutConfig.edgeInColorSlider.setValue(edgeOutColorSlider.getValue());
 			}
@@ -244,67 +239,5 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 				edgeInColorSlider.setEnabled(false);
 			}
 		}
-	}
-	
-	public static Color getInColor(){
-		return getColor(EDGE_OUTCOLOR);
-	}
-	
-	public static Color getOutColor(){
-		return getColor(EDGE_INCOLOR);
-	}
-	
-	private static Color getColor(int i){
-		
-		if(i<0){
-			return Color.GRAY;
-		}
-		
-		int red;
-		
-		int green;
-		
-		int blue;
-
-		// grayscale
-		if(i<=30){
-			red = 240-i*8;
-			blue = 240-i*8;
-			green = 240-i*8;
-		// colorscale
-		} else if(i<=60){
-			red = (i-30)*8;
-			blue = 0;
-			green = 0;
-		} else if(i<=90){
-			red = 240;
-			green = (i-60)*8;
-			blue = 0;
-		} else if(i<=120){
-			red = 240-(i-90)*8;
-			green = 240;
-			blue = 0;
-		} else if(i<=150){
-			red = 0;
-			green = 240;
-			blue = (i-120)*8;
-		} else if(i<=180){
-			red = 0;
-			green = 240-(i-150)*8;
-			blue = 240;
-		} else if(i<=210){
-			red = (i-180)*8;
-			green = 0;
-			blue = 240;
-		} else if(i<=240){
-			red = 240;
-			green = 0;
-			blue = 240-(i-210)*8;
-		} else {
-			return Color.GRAY;
-		}
-		
-
-		return new Color(red,green,blue,EDGE_OPACITY);	
 	}
 }

@@ -2,6 +2,8 @@ package graph.layouts.hctLayout;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D.Float;
 import java.awt.geom.QuadCurve2D.Double;
@@ -19,7 +21,9 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.Pair;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.decorators.GradientEdgePaintTransformer;
 import graph.GraphInstance;
 import graph.layouts.HierarchicalCircleLayout;
 import graph.layouts.hebLayout.Circle;
@@ -292,6 +296,38 @@ public class HCTLayout extends HierarchicalCircleLayout{
 	@Override
 	public void setEdgeShapes() {
 		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeShapeTransformer(new HctEdgeShape());
+		GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext().setEdgeDrawPaintTransformer(
+				new HCTEdgePaintTransformer(GraphInstance.getMyGraph().getVisualizationViewer()));
+
+	}
+	
+	protected class HCTEdgePaintTransformer extends GradientEdgePaintTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract>{
+		public HCTEdgePaintTransformer(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv) {
+			super(getConfig().INTERNAL_EDGE_COLOR, getConfig().EXTERNAL_EDGE_COLOR,vv);
+		}
+		
+		@Override
+		public Paint transform(BiologicalEdgeAbstract e){
+			GradientPaint gp = (GradientPaint) super.transform(e);
+			BiologicalNodeAbstract first = e.getFrom();
+			BiologicalNodeAbstract second = e.getTo();
+			List<BiologicalNodeAbstract> firstParentRootNodes = new ArrayList<BiologicalNodeAbstract>();
+			List<BiologicalNodeAbstract> secondParentRootNodes = new ArrayList<BiologicalNodeAbstract>();
+			for(BiologicalNodeAbstract n : first.getAllParentNodesSorted()){
+				if(n.getRootNode()!=null){
+					firstParentRootNodes.add(n.getRootNode());
+				}
+			}
+			for(BiologicalNodeAbstract n : second.getAllParentNodesSorted()){
+				if(n.getRootNode()!=null){
+					secondParentRootNodes.add(n.getRootNode());
+				}
+			}
+			if(!(firstParentRootNodes.contains(second) || secondParentRootNodes.contains(first)) && first!=rootNode && second!=rootNode){
+				return new GradientPaint(0, 0, getConfig().EXTERNAL_EDGE_COLOR, 0, 0, getConfig().EXTERNAL_EDGE_COLOR, true);
+			}
+			return new GradientPaint(0,0 , getConfig().INTERNAL_EDGE_COLOR, 0,0, getConfig().INTERNAL_EDGE_COLOR, true);
+		}
 	}
 	
 	protected class HctEdgeShape extends EdgeShape.Line<BiologicalNodeAbstract, BiologicalEdgeAbstract>{
