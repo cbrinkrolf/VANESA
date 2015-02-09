@@ -478,24 +478,24 @@ public class Pathway implements Cloneable {
 
 		if (bea != null) {
 
-			edges.put(
-					new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
-					bea);
-			// System.out.println(biologicalElements.size());
-			// Pair p = bea.getEdge().getEndpoints();
-			graphRepresentation.addEdge(bea);
-			getGraph().addEdge(bea);
-			bea.setID();
-			biologicalElements.put(bea.getID() + "", bea);
+//			edges.put(
+//					new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
+//					bea);
+//			// System.out.println(biologicalElements.size());
+//			// Pair p = bea.getEdge().getEndpoints();
+//			graphRepresentation.addEdge(bea);
+//			getGraph().addEdge(bea);
+//			bea.setID();
+//			biologicalElements.put(bea.getID() + "", bea);
 //			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
 //					&& bea.getFrom().getParentNode() == null
 //					&& bea.getTo().getParentNode() == null && !bea.isClone()) {
 			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
 					&& !bea.isClone()) {
-				bea.getFrom().getConnectingEdges().add(bea);
-				bea.getTo().getConnectingEdges().add(bea);
+				BiologicalNodeAbstract.addConnectingEdge(bea);
 			}
 			this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
+			getRootPathway().updateMyGraph();
 			return bea;
 		} else
 			try {
@@ -504,6 +504,27 @@ public class Pathway implements Cloneable {
 				e.printStackTrace();
 			}
 		return null;
+	}
+	
+	public void drawEdge(BiologicalEdgeAbstract bea){
+		Collection<BiologicalEdgeAbstract> existingEdges = getGraph().getJungGraph().findEdgeSet(bea.getFrom(), bea.getTo());
+		boolean add = true;
+		for(BiologicalEdgeAbstract edge : existingEdges){
+			if(bea.isDirected()==edge.isDirected()){
+				add=false;
+			}
+		}
+		if(add){
+			edges.put(
+				new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
+				bea);
+			// System.out.println(biologicalElements.size());
+			// Pair p = bea.getEdge().getEndpoints();
+			graphRepresentation.addEdge(bea);
+			getGraph().addEdge(bea);
+			bea.setID();
+			biologicalElements.put(bea.getID() + "", bea);
+		}
 	}
 
 	public void removeElement(GraphElementAbstract element) {
@@ -589,10 +610,22 @@ public class Pathway implements Cloneable {
 		getRootPathway().updateMyGraph();
 	}
 
-	public int edgeGrade(BiologicalEdgeAbstract edge) {
+	public int edgeGrade(BiologicalEdgeAbstract bea) {
 		Set<BiologicalEdgeAbstract> conEdgesTo = new HashSet<BiologicalEdgeAbstract>();
-		conEdgesTo.addAll(edge.getTo().getConnectingEdges());
-		conEdgesTo.retainAll(edge.getFrom().getConnectingEdges());
+		for(BiologicalEdgeAbstract edge : bea.getFrom().getConnectingEdges()){
+			if(edge.isDirected() == bea.isDirected()){
+				if(edge.isDirected()){
+					if(bea.getTo().getConnectingEdges().contains(edge) && edge.getFrom().getCurrentShownParentNode(getGraph())==bea.getFrom()){
+						conEdgesTo.add(edge);
+					}
+				} else {
+					if(bea.getTo().getConnectingEdges().contains(edge)){
+						conEdgesTo.add(edge);
+					}
+				}
+			}
+		}
+//		System.out.println(conEdgesTo.size());
 		return conEdgesTo.size();
 	}
 
@@ -1473,7 +1506,7 @@ public class Pathway implements Cloneable {
 
 		if(getGraph(false)!=null){
 			if (isBNA() && thisNode.isCoarseNode()) {
-				thisNode.updateBorderEnvironment();
+				thisNode.updateHierarchicalAttributes();
 			}
 			updateEdges();
 			if (isRootPathway()) {
@@ -1491,8 +1524,9 @@ public class Pathway implements Cloneable {
 	protected void updateEdges() {
 		
 		BiologicalNodeAbstract thisNode = this instanceof BiologicalNodeAbstract ? (BiologicalNodeAbstract) this : null;
-		
-		for(BiologicalEdgeAbstract edge : getAllEdges()){
+		Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
+		edges.addAll(getAllEdges());
+		for(BiologicalEdgeAbstract edge : edges){
 			removeEdge(edge, true);
 		}
 		Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
@@ -1509,7 +1543,7 @@ public class Pathway implements Cloneable {
 				newEdge.setFrom(newEdge.getFrom().getCurrentShownParentNode(getGraph()));
 				
 				if (newEdge.isValid(false))
-					addEdge(newEdge);
+					drawEdge(newEdge);
 			}
 		}
 	}

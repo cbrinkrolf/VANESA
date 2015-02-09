@@ -65,7 +65,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	public List<BiologicalNodeAbstract> computeOrder(){
 		List<BiologicalNodeAbstract> newOrder = new ArrayList<BiologicalNodeAbstract>();
 		for(BiologicalNodeAbstract node : graph.getVertices()){
-			newOrder.addAll(node.getAllRootNodes());
+			newOrder.addAll(node.getLeafNodes());
 		}
 		HierarchicalOrderComparator comp = new HierarchicalOrderComparator(order);
 		newOrder.sort(comp);
@@ -91,7 +91,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 			return;
 		}
 		Set<BiologicalNodeAbstract> rootNodes = new HashSet<BiologicalNodeAbstract>();
-		rootNodes.addAll(node.getAllRootNodes());
+		rootNodes.addAll(node.getLeafNodes());
 		order.sort(new OrderFusionComparator(order, rootNodes));
 	}
 	

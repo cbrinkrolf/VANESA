@@ -125,6 +125,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private Collection<Integer> originalGraphs;
 
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+	
+	private Set<BiologicalNodeAbstract> leafNodes = new HashSet<BiologicalNodeAbstract>();
 
 	private Set<BiologicalNodeAbstract> border = new HashSet<BiologicalNodeAbstract>();
 
@@ -139,16 +141,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private HashSet<NodeAttribute> nodeAttributes = new HashSet<>();
 	
 	private boolean markedAsEnvironment = false;
-
-	public void setStateChanged(NodeStateChanged state) {
-		this.state = state;
-	}
-
-	public NodeStateChanged getStateChanged() {
-		return state;
-	}
-
-	// ---Functional Methods---
 
 	public BiologicalNodeAbstract(String label, String name) {
 		super(name, new GraphInstance().getPathway());
@@ -295,8 +287,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		// Get the node type
 		BiologicalNodeAbstract coarseNode = computeCoarseType(nodes);
 		
-		// Check, if coarsing operation is valid
-		if(coarseNode == null || !isCoarsingAllowed(nodes)){
+		// If coarsing is not valid, abort.
+		if(coarseNode == null || !isCoarsingAllowed(coarseNode.isPetriNet(), nodes)){
 			showCoarsingErrorMessage();
 			return null;
 		}
@@ -305,18 +297,22 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		coarseNode = coarseNode.clone();
 		coarseNode.cleanUpHierarchyElements();
 		
-		// Set label, id, name and title
-		String lbl = label;
+		// Set label, name and title
+		String answer = label;
 		if(label==null){
-			lbl = JOptionPane.showInputDialog(MainWindowSingleton.getInstance(), null, 
+			answer = JOptionPane.showInputDialog(MainWindowSingleton.getInstance(), null, 
 					"Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
-			if(lbl==null){
+			if(answer==null){
 				return null;
-			} else if(lbl.isEmpty()){
-				lbl = "id_" + coarseNode.getID();
+			} else if(answer.isEmpty()){
+				answer = "id_" + coarseNode.getID();
 			}
 		}
+		coarseNode.setLabel(answer);
+		coarseNode.setName(answer);
+		coarseNode.setTitle(answer);
 		
+		// Set id
 		if(id==null){
 			coarseNode.setID(true);
 		} else {
@@ -326,10 +322,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				coarseNode.setID(true);
 			}
 		}
-		coarseNode.setLabel(lbl);
-		coarseNode.setName(lbl);
-		coarseNode.setTitle(lbl);
-		
+
 		// set attributes of the child nodes
 		for (BiologicalNodeAbstract node : nodes) {
 			node.setStateChanged(NodeStateChanged.COARSED);
@@ -339,40 +332,27 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				coarseNode.addVertex(node, node.getRootPathway().getGraph().getVertexLocation(node));
 			}
 			node.setParentNode(coarseNode);
+			coarseNode.getLeafNodes().addAll(node.getLeafNodes());
 		}
 				
 		//compute border, environment and connecting edges
-		coarseNode.updateBorderEnvironment();
-		if(BiologicalNodeAbstract.isValidBorder(coarseNode.isPetriNet(), coarseNode.getBorder())){
-			
-			coarseNode.saveConnectingEdges();
-			coarseNode.updateEdges();
+		coarseNode.updateHierarchicalAttributes();
+		
+		coarseNode.updateEdges();
+		coarseNode.makeCoarseShape();
+		coarseNode.getRootPathway().updateMyGraph();
 
-			coarseNode.makeCoarseShape();
-			
-			//update all graphs
-			coarseNode.getRootPathway().updateMyGraph();
-//			coarseNode.printAllHierarchicalAttributes();
-		} else {
-			
-			// if border is not valid, reset all attributes and stop coarsing
-			for (BiologicalNodeAbstract node : nodes) {
-				node.setStateChanged(NodeStateChanged.UNCHANGED);
-				node.setParentNode(coarseNode.getParentNode());
-			}
-			coarseNode = null;
-			showCoarsingErrorMessage();
-		}
 
 		return coarseNode;
 	}
 	
 	/**
 	 * Checks, if the node selection is valid for coarsing operation.
-	 * @param vertices
-	 * @return true is coarsing is allowed for the given set of nodes, false otherwise
+	 * @param isPetriNet True if Network is a Petri-Net.
+	 * @param vertices Set of nodes.
+	 * @return true is coarsing is allowed for the given set of nodes.
 	 */
-	private static boolean isCoarsingAllowed(Set<BiologicalNodeAbstract> vertices){
+	private static boolean isCoarsingAllowed(boolean isPetriNet, Set<BiologicalNodeAbstract> vertices){
 		BiologicalNodeAbstract parentNode = null;
 		
 		// check if all nodes have the same parent node (can also be null)
@@ -382,6 +362,56 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		for(BiologicalNodeAbstract vertex : vertices){
 			if(vertex.getParentNode()!=parentNode){
 				return false;
+			}
+		}
+		return hasValidBorder(isPetriNet, vertices);
+	}
+	
+	/**
+	 * Checks, if a selection of nodes has a valid border in the given type of graph.
+	 * @param isPetriNet True if Network is a Petri-Net.
+	 * @param vertices Set of nodes.
+	 * @return true, if set of nodes has a valid border.
+	 */
+	private static boolean hasValidBorder(boolean isPetriNet, Set<BiologicalNodeAbstract> vertices){
+		if(!isPetriNet)
+			return true;
+		Set<BiologicalNodeAbstract> leafVertices = new HashSet<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract v : vertices){
+			leafVertices.addAll(v.getLeafNodes());
+		}
+		Set<BiologicalNodeAbstract> borderNodes = new HashSet<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract v : leafVertices){
+			for(BiologicalEdgeAbstract e : v.getConnectingEdges()){
+				if(!leafVertices.contains(e.getTo()) || !leafVertices.contains(e.getFrom())){
+					borderNodes.add(v);
+					break;
+				}
+			}
+		}
+		return isValidBorder(isPetriNet,borderNodes);
+	}
+	
+	/**
+	 * Checks if given Set of nodes is a valid border in the given type of graph.
+	 * @param isPetriNet True if Network is a Petri-Net.
+	 * @param vertices Set of nodes.
+	 * @return True, if border candidate set is valid.
+	 * @author tloka
+	 */
+	private static boolean isValidBorder(boolean isPetriNet, Set<BiologicalNodeAbstract> borderNodes){
+		
+		// if coarse node is part of a petri net, check if all border nodes are the same
+		// tape of node (place or transition)
+		if(isPetriNet && borderNodes.size()>=2){
+			Iterator<BiologicalNodeAbstract> iterator = borderNodes.iterator();
+			BiologicalNodeAbstract node1 = iterator.next();
+			BiologicalNodeAbstract node2;
+			while(iterator.hasNext()){
+				node2 = iterator.next();
+				if((node1 instanceof Place) != (node2 instanceof Place)){
+					return false;
+				}
 			}
 		}
 		return true;
@@ -417,23 +447,34 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		return vertices.iterator().next();
 	}
 	
-	private void saveConnectingEdges(){
-		for(BiologicalNodeAbstract bNode : getBorder()){
-			for(BiologicalEdgeAbstract cEdge : bNode.getConnectingEdges()){
-				if(getEnvironment().contains(cEdge.getTo()) || getEnvironment().contains(cEdge.getFrom())){
-					connectingEdges.add(cEdge);
+	public void updateHierarchicalAttributes(){
+		updateConnectingEdges();
+		updateBorderEnvironment();
+	}
+	
+	private void updateConnectingEdges(){
+		if(!isCoarseNode()){
+			return;
+		}
+		connectingEdges.clear();
+		for(BiologicalNodeAbstract ln : getLeafNodes()){
+			for(BiologicalEdgeAbstract ce : ln.getConnectingEdges()){
+				if(!getLeafNodes().contains(ce.getTo()) || !getLeafNodes().contains(ce.getFrom())){
+					if(!connectingEdges.contains(ce)){
+						connectingEdges.add(ce);
+					}
 				}
 			}
 		}
 	}
 	
-	public void updateBorderEnvironment(){
+	private void updateBorderEnvironment(){
 		for(BiologicalNodeAbstract n : environment){
 			removeElement(n);
 		}
 		environment.clear();
 		border.clear();
-		for(BiologicalNodeAbstract n : getInnerNodes()){
+		for(BiologicalNodeAbstract n : getLeafNodes()){
 			for(BiologicalEdgeAbstract e : n.getConnectingEdges()){
 				if(e.getTo().getCurrentShownParentNode(getGraph())==null && e.getFrom().getCurrentShownParentNode(getGraph())!=null){
 					border.add(e.getFrom());
@@ -456,35 +497,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			}
 		}
 	}
-	
-	/**
-	 * Checks if given Set of nodes is a valid border in the given type of graph.
-	 * @param isPetriNet
-	 * 			True to verify border candidate set for Petri Nets. False otherwise.
-	 * @param borderNodes
-	 * 			The border candidate set to verify.
-	 * @return
-	 * 			True, if border candidate set is valid, false otherwise.
-	 * @author tloka
-	 */
-	private static boolean isValidBorder(boolean isPetriNet, Set<BiologicalNodeAbstract> borderNodes){
-		
-		// if coarse node is part of a petri net, check if all border nodes are the same
-		// tape of node (place or transition)
-		if(isPetriNet && borderNodes.size()>=2){
-			Iterator<BiologicalNodeAbstract> iterator = borderNodes.iterator();
-			BiologicalNodeAbstract node1 = iterator.next();
-			BiologicalNodeAbstract node2;
-			while(iterator.hasNext()){
-				node2 = iterator.next();
-				if((node1 instanceof Place) != (node2 instanceof Place)){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
 	
 	/**
 	 * Changes current shape to shape in coarse node layout.
@@ -511,78 +523,29 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				"Coarsing Error!", JOptionPane.ERROR_MESSAGE);
 	}
 	
-	/**
-	 * Adds the set of nodes to the coarse node if possible.
-	 * @param vertices Nodes to be added.
-	 * @return true if nodes were successfully added, false otherwise.
-	 * @author tloka
-	 */
-	public boolean tryAddToCoarseNode(Set<BiologicalNodeAbstract> vertices){
-		MyGraph activeGraph = getActiveGraph();
-		Set<BiologicalNodeAbstract> relevantNodes = new HashSet<BiologicalNodeAbstract>();
-		relevantNodes.addAll(vertices);
-		relevantNodes.add(this);
-		Set<BiologicalNodeAbstract> borderCandidate = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract vertex : relevantNodes){
-			for(BiologicalEdgeAbstract conEdge : vertex.getConnectingEdges()){
-				BiologicalNodeAbstract from = conEdge.getFrom().getCurrentShownParentNode(activeGraph);
-				BiologicalNodeAbstract to = conEdge.getTo().getCurrentShownParentNode(activeGraph);
-				if(relevantNodes.contains(from) && relevantNodes.contains(to)){
-					continue;
-				} else {
-					borderCandidate.add(vertex);
-				}
+	public boolean addToCoarseNode(Set<BiologicalNodeAbstract> vertices){
+		Set<BiologicalNodeAbstract> ln = new HashSet<BiologicalNodeAbstract>();
+		ln.addAll(getLeafNodes());
+		for(BiologicalNodeAbstract v : vertices){
+			ln.addAll(v.getLeafNodes());
+			if(v.getParentNode()!=this.getParentNode()){
+				return false;
 			}
 		}
-		if(isValidBorder(isPetriNet(), borderCandidate)){
-			return(addToCoarseNode(vertices));
-		} else {
-			return false;
-		}
-	}
-	
-	/**
-	 * Adds the input set of nodes to the coarse node if possible.
-	 * @param vertices Nodes to add.
-	 * @return true, if adding nodes was possible and successful. false otherwise.
-	 * @author tloka
-	 */
-	private boolean addToCoarseNode(Set<BiologicalNodeAbstract> vertices){
-		
-		for(BiologicalNodeAbstract vertex : vertices){
-			if(vertex.getEnvironment().contains(this)){
-				for(BiologicalEdgeAbstract conEdge : vertex.getConnectingEdges()){
-					BiologicalEdgeAbstract newEdge = conEdge.clone();
-					BiologicalNodeAbstract newNode = null;
-					if(conEdge.getTo().getCurrentShownParentNode(vertex.getGraph())==this){
-						newNode = conEdge.getTo().getCurrentShownParentNode(getGraph());
-						newEdge.setFrom(conEdge.getFrom().getCurrentShownParentNode(vertex.getGraph()));
-						newEdge.setTo(newNode);
-					}
-					else if(conEdge.getFrom().getCurrentShownParentNode(vertex.getGraph())==this){
-						newNode = conEdge.getFrom().getCurrentShownParentNode(getGraph());
-						newEdge.setTo(conEdge.getTo().getCurrentShownParentNode(vertex.getGraph()));
-						newEdge.setFrom(newNode);
-					}
-					if(newNode!=null){
-						vertex.addVertex(newNode, getGraph().getVertexLocation(newNode));
-					}
-					if(newEdge.isValid(false)){
-						vertex.addEdge(newEdge);
-					}
-				}
-				vertex.removeElement(this);
-				vertex.updateBorderEnvironment();
+		if(hasValidBorder(getRootPathway().isPetriNet(),ln)){
+			leafNodes = ln;
+			for(BiologicalNodeAbstract n : vertices){
+				n.setParentNode(this);
+				n.setStateChanged(NodeStateChanged.COARSED);
+				addVertex(n, GraphInstance.getMyGraph().getVertexLocation(n));
 			}
-			vertex.setStateChanged(NodeStateChanged.COARSED);
-			vertex.setParentNode(this);
+			updateHierarchicalAttributes();
+			getRootPathway().updateMyGraph();
+			updateNodeType();
+			return true;
 		}
-		updateBorderEnvironment();
-//		printAllHierarchicalAttributes();
-		getRootPathway().updateMyGraph();
-		updateNodeType();
+		return false;
 		
-		return true;
 	}
 	
 	/** If coarse node type is not identical in Petri Net, node is flattened and re-coarsed with the
@@ -603,6 +566,26 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
 //			bna.printAllHierarchicalAttributes();
 		}
+	}
+	
+	public static void addConnectingEdge(BiologicalEdgeAbstract bea){
+		if(bea.getFrom().isCoarseNode() || bea.getTo().isCoarseNode())
+			return;
+		bea.getFrom().addConEdge(bea);
+		bea.getTo().addConEdge(bea);
+	}
+	
+	private void addConEdge(BiologicalEdgeAbstract bea){
+		boolean edgeAlreadyExist = false;
+		for(BiologicalEdgeAbstract conEdge : getConnectingEdges()){
+			if(conEdge.getFrom()==bea.getFrom() && conEdge.getTo()==bea.getTo() && conEdge.isDirected() == bea.isDirected()){
+				edgeAlreadyExist = true;
+				break;				
+			}
+		}
+		if(!edgeAlreadyExist){
+			getConnectingEdges().add(bea);
+		}	
 	}
 	
 	/**
@@ -887,7 +870,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	public void setCoarseNodesize(){
 		if(isCoarseNode()){
-			setNodesize(defaultNodesize + Math.log(getAllRootNodes().size())/Math.log(100));
+			setNodesize(defaultNodesize + Math.log(getLeafNodes().size())/Math.log(100));
 		}
 	}
 
@@ -1346,7 +1329,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 
 	public Set<BiologicalEdgeAbstract> getConnectingEdges() {
-		return connectingEdges;
+			return connectingEdges;
 	}
 
 	public double getDefaultNodesize() {
@@ -1381,22 +1364,26 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		this.color = defaultColor;
 		this.nodesize = defaultNodesize;
 	}
+	
+	public Set<BiologicalNodeAbstract> getLeafNodes() {
+		if(isCoarseNode()){
+			return leafNodes;
+		}
+		Set<BiologicalNodeAbstract> ln = new HashSet<BiologicalNodeAbstract>();
+		ln.add(this);
+		return ln;
+	}
+	
+	public void setStateChanged(NodeStateChanged state) {
+		this.state = state;
+	}
 
-	public Set<BiologicalNodeAbstract> getAllRootNodes() {
-		Set<BiologicalNodeAbstract> rootNodes = new HashSet<BiologicalNodeAbstract>();
-		if(!isCoarseNode()){
-			rootNodes.add(this);
-			return rootNodes;
-		}
-		for(BiologicalNodeAbstract node : getInnerNodes()){
-				rootNodes.addAll(node.getAllRootNodes());
-		}
-		return rootNodes;
+	public NodeStateChanged getStateChanged() {
+		return state;
 	}
 	
 	public void markAsEnvironment(boolean value){
 		markedAsEnvironment = value;
-		
 	}
 	
 	public boolean isMarkedAsEnvironment(){
@@ -1583,10 +1570,4 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			return true;
 		}
 	}
-	/**
-	 * 
-	 * @author mlewinsk
-	 *
-	 * Attribute Types define the general category of the attribute
-	 */	
 }
