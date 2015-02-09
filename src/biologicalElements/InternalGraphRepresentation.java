@@ -45,9 +45,10 @@ public class InternalGraphRepresentation {
 
 		if (vertices.containsKey(v)) {
 			vertices.remove(v);
-		} else {
-			System.err.println("Vertex does not exist!");
-		}
+		} 
+//		else {
+//			System.err.println("Vertex does not exist!");
+//		}
 	}
 
 	public void removeEdge(BiologicalEdgeAbstract bea) {
@@ -58,9 +59,10 @@ public class InternalGraphRepresentation {
 		if (vertices.containsKey(from)) {
 			if (vertices.get(from).get(to) != null) {
 				vertices.get(from).remove(to);
-			} else {
-				System.err.println("Edge does not exist!");
-			}
+			} 
+//			else {
+//				System.err.println("Edge does not exist!");
+//			}
 		}
 	}
 	
