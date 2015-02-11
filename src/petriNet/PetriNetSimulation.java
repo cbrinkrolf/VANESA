@@ -391,7 +391,7 @@ public class PetriNetSimulation implements ActionListener {
 						filter += s + "|";
 						filter += "der(" + s + ")|";
 					}
-					filter = filter.substring(0, filter.length()-2);
+					filter = filter.substring(0, filter.length()-1);
 					filter += "\"";
 					//System.out.println("Filter: "+filter);
 					FileWriter fstream = new FileWriter(pathSim
@@ -406,8 +406,10 @@ public class PetriNetSimulation implements ActionListener {
 					out.write("getErrorString();\r\n");
 					out.write("setDebugFlags(\"disableComSubExp\");\r\n");
 					out.write("getErrorString();\r\n");
-					out.write("buildModel(simulation, " + filter + ");\r\n");
-					//out.write("buildModel(simulation);\r\n");
+					
+					//CHRIS improve / correct filter
+					//out.write("buildModel(simulation, " + filter + ");\r\n");
+					out.write("buildModel(simulation);\r\n");
 					out.write("getErrorString();\r\n");
 
 					// out.write("fileName=\"simulate.mat\";\r\n");
