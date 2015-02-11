@@ -3,12 +3,15 @@ package database.brenda;
 import graph.CreatePathway;
 import graph.algorithms.MergeGraphs;
 import graph.jung.classes.MyGraph;
+import graph.layouts.hebLayout.HierarchyList;
+import graph.layouts.hebLayout.HierarchyListComparator;
 import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -72,6 +75,9 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 	protected Hashtable<String, BiologicalNodeAbstract> enzymes = new Hashtable<String, BiologicalNodeAbstract>();
 
+	protected HashMap<BiologicalNodeAbstract, DefaultMutableTreeNode> enzymes2treeNode = new HashMap<BiologicalNodeAbstract, DefaultMutableTreeNode>();
+	
+	protected HashMap<BiologicalNodeAbstract, Integer> enzymeDepth = new HashMap<BiologicalNodeAbstract, Integer>();
 	// private Vector<String[]> edges = new Vector<String[]>();
 
 	private Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
@@ -79,6 +85,14 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 	private Pathway mergePW = null;
 
 	boolean headless;
+	
+	boolean autoCoarse;
+	
+//	protected HashMap<String, String> parentNodes = new HashMap<String, String>();
+//	
+//	protected HashMap<BiologicalNodeAbstract, String> nodes2enzymes = new HashMap<BiologicalNodeAbstract, String>();
+//
+//	protected HashMap<String, BiologicalNodeAbstract> allNodes = new HashMap<String, BiologicalNodeAbstract>();
 
 	// private int i = 0;
 
@@ -132,7 +146,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		// System.out.println("methode");
 		if (parentNode.getLevel() == 0
 				|| (parentNode.getLevel() / 2) < searchDepth + 1) {
-
+			
 			if (!disregarded || !box.getElementValue(node.getLabel())) {
 
 				String queryString = node.getLabel().replaceAll("'", "''")
@@ -191,6 +205,13 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 						e.setReference(false);
 
 						enzymes.put(clean, e);
+						enzymeDepth.put(e,parentNode.getDepth()/2);
+						
+//						nodes2enzymes.put(e,clean);
+//						allNodes.put(clean,e);
+//						allNodes.put(node.getLabel(),node);
+//						nodes2enzymes.put(node, node.getLabel());
+//						parentNodes.put(node.getLabel(), clean);
 
 						// System.out.println("size: "+left.length);
 						for (int i = 0; i < left.length; i++) {
@@ -224,7 +245,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 						newNode = new DefaultMutableTreeNode(e.getLabel());
 
-						tree.addNode(parentNode, newNode);
+						tree.addNode(parentNode, newNode, e);
 						if (resultDetails[3] != null) {
 							separateReaction(resultDetails[3], e, newNode);
 						}
@@ -353,7 +374,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 				newNode = new DefaultMutableTreeNode(substrate.getLabel());
 
-				tree.addNode(parentNode, newNode);
+				tree.addNode(parentNode, newNode, substrate);
 				searchPossibleEnzyms(substrate, newNode);
 
 			} else {
@@ -386,7 +407,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 					newNode = new DefaultMutableTreeNode(product.getLabel());
 
-					tree.addNode(parentNode, newNode);
+					tree.addNode(parentNode, newNode, product);
 					searchPossibleEnzyms(product, newNode);
 
 				} else {
@@ -403,7 +424,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 	protected void processBrendaElement(String enzyme,
 			DefaultMutableTreeNode node) {
-
+		
 		// System.out.println("l "+ node.getLevel());
 		// System.out.println("depth: "+searchDepth);
 		if (node.getLevel() == 0 || (node.getLevel() / 2) < searchDepth) {
@@ -433,13 +454,14 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 					// System.out.println("dort");
 					e.setReference(false);
 					e.setColor(Color.RED);
+					pw.setRootNode(e);
 
 					// String[] gesplittet = resultDetails[3].split("=");
 					e.hasBrendaNode(true);
 
 					newNode = new DefaultMutableTreeNode(e.getLabel());
 
-					tree.addNode(node, newNode);
+					tree.addNode(node, newNode, e);
 					enzymes.put(clean, e);
 
 					if (resultDetails[3] != null
@@ -472,6 +494,37 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 			// myGraph.moveVertex(node.getVertex(), column * 150, row * 100);
 
 		}
+	}
+	
+	private void autoCoarse() {
+		class HLC implements HierarchyListComparator<Integer> {
+
+			public HLC() {
+			}
+
+			public Integer getValue(BiologicalNodeAbstract n) {
+				DefaultMutableTreeNode treeNode = tree.getTreeNode(n);
+				if(treeNode == null || tree.getRoot() == treeNode){
+					return getSubValue(n);
+				}
+				DefaultMutableTreeNode parentTreeNode = (DefaultMutableTreeNode) treeNode.getParent();
+				if(parentTreeNode == null || parentTreeNode == tree.getRoot()){
+					return getSubValue(n);
+				}
+//				System.out.println(n.getLabel() + ": " + tree.getEnzyme(parentTreeNode).getLabel());
+				return tree.getEnzyme(parentTreeNode).getID();
+				
+			}
+
+			public Integer getSubValue(BiologicalNodeAbstract n) {
+				return n.getID();
+			}
+		}
+
+		HierarchyList<Integer> l = new HierarchyList<Integer>();
+		l.addAll(myGraph.getAllVertices());
+		l.sort(new HLC());
+		l.coarse();
 	}
 
 	protected String adoptOrganism(String organism) {
@@ -800,15 +853,25 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 			startVisualizationModel();
 			if (!headless) {
-				myGraph.changeToCircleLayout();
+//				myGraph.changeToCircleLayout();
+				myGraph.changeToGEMLayout();
 				// GraphInstance.getMyGraph().getVisualizationViewer().restart();
 				myGraph.normalCentering();
+			}
+			
+			if (autoCoarse) {
+				// autoCoarse(root_id);
+				autoCoarse();
 			}
 			if (answer == JOptionPane.NO_OPTION)
 				new MergeGraphs(pw, mergePW, true);
 			bar.closeWindow();
 		}
 		MainWindowSingleton.getInstance().updateAllGuiElements();
+	}
+	
+	public void setAutoCoarse(boolean ac){
+		autoCoarse = ac;
 	}
 
 	private String cleanString(String s) {

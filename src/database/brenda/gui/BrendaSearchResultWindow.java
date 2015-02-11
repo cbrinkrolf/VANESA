@@ -58,6 +58,8 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 	JCheckBox disregard = new JCheckBox();
 	JCheckBox inhibitorBox = new JCheckBox();
 	JCheckBox coFactorBox = new JCheckBox();
+	JCheckBox autoCoarse = new JCheckBox();
+
 	
 
 	private MyTable table;
@@ -114,6 +116,9 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 
 		mainPanel.add(new JLabel("Disregard Currency Metabolites"), "span 1, gaptop 2 ");
 		mainPanel.add(disregard, "span 1,wrap,gaptop 2");
+		
+		mainPanel.add(new JLabel("Coarse all results of the same query."), "span 1, gaptop 2 ");
+		mainPanel.add(autoCoarse, "span 1,wrap,gaptop 2");
 
 		mainPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
 
@@ -207,6 +212,10 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 	
 	public boolean getDisregarded() {
 		return disregard.isSelected();
+	}
+	
+	public boolean getAutoCoarse() {
+		return autoCoarse.isSelected();
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -113,34 +113,6 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		}
 	}
 
-	/**
-	 * Automatically coarsing of the resulting graph. Is called iteratively. For
-	 * complete coarsing, call with the root id.
-	 * 
-	 * @param node
-	 *            id
-	 * @return the coarsed node
-	 */
-	private BiologicalNodeAbstract autoCoarse(String node) {
-		Set<BiologicalNodeAbstract> nextDepth = new HashSet<BiologicalNodeAbstract>();
-		for (String child : childNodes.get(node)) {
-			if (childNodes.containsKey(child)
-					&& !childNodes.get(child).isEmpty()) {
-				nextDepth.add(autoCoarse(child));
-			} else {
-				nextDepth.add(name2Vertex.get(child));
-			}
-		}
-		nextDepth.add(name2Vertex.get(node));
-		if (node == root_id) {
-			return null;
-		}
-		BiologicalNodeAbstract cn = BiologicalNodeAbstract.coarse(nextDepth,
-				null, node);
-		cn.setRootNode(name2Vertex.get(node));
-		return cn;
-	}
-
 	private void autoCoarse() {
 		class HLC implements HierarchyListComparator<Integer> {
 
