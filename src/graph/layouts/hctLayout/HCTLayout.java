@@ -249,6 +249,9 @@ public class HCTLayout extends HierarchicalCircleLayout{
 			break;
 		case FINESTGROUP:
 			parent = n.getParentNode();
+			if(parent==null){
+				break;
+			}
 			for(BiologicalNodeAbstract child : parent.getCurrentShownChildrenNodes(myGraph)){
 				if(!selection.contains(child) && child!=parent.getRootNode()){
 					selection.add(child);

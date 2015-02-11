@@ -268,6 +268,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		return node;
 	}
 	
+	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label){
+		return BiologicalNodeAbstract.coarse(nodes,id,label,null);
+	}
+
+	
 	/**
 	 * Method to coarse a set of nodes to a hierarchical node with a given id. 
 	 * ONLY SET ID DURING IMPORTING PROCESS.
@@ -277,15 +282,17 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @return The created coarseNode. Null, if coarsing was not successful.
 	 * @author tloka
 	 */
-	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label){
+	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label, BiologicalNodeAbstract rootNode){
 		
 		// Stop, if less than two nodes are selected.
 		if(nodes == null  || nodes.size()<1){
 			return null;
 		}
 		
+		BiologicalNodeAbstract coarseNode = rootNode;
 		// Get the node type
-		BiologicalNodeAbstract coarseNode = computeCoarseType(nodes);
+		if(rootNode == null || rootNode.getRootPathway().isPetriNet())
+			coarseNode = computeCoarseType(nodes);
 		
 		// If coarsing is not valid, abort.
 		if(coarseNode == null || !isCoarsingAllowed(coarseNode.isPetriNet(), nodes)){
@@ -296,6 +303,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		// Create a clean node of the correct node type
 		coarseNode = coarseNode.clone();
 		coarseNode.cleanUpHierarchyElements();
+		coarseNode.setRootNode(rootNode);
 		
 		// Set label, name and title
 		String answer = label;
