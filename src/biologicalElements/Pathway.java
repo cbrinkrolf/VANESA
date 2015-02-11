@@ -998,26 +998,28 @@ public class Pathway implements Cloneable {
 			Set<BiologicalNodeAbstract> nodes) {
 		Iterator<BiologicalNodeAbstract> it = nodes.iterator();
 		BiologicalNodeAbstract bna;
+		BiologicalEdgeAbstract bea;
+		Iterator<BiologicalEdgeAbstract> itEdges;
+
 		while (it.hasNext()) {
+
 			bna = it.next();
-			if (bna != first) {
-				Iterator<BiologicalEdgeAbstract> it2 = getGraph()
-						.getJungGraph().getInEdges(bna).iterator();
-				BiologicalEdgeAbstract bea;
-				while (it2.hasNext()) {
-					bea = it2.next();
-					if (bea.isDirected() || bea.getTo() == bna) {
-						this.removeElement(bea);
-						bea.setTo(first);
-						this.addEdge(bea);
-					}
-				}
-				it2 = getGraph().getJungGraph().getOutEdges(bna).iterator();
-				while (it2.hasNext()) {
-					bea = it2.next();
-					if (bea.isDirected() || bea.getFrom() == bna) {
-						this.removeElement(bea);
-						bea.setFrom(first);
+			if (bna != first && bna.getParentNode()==first.getParentNode()) {
+
+				Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
+				edges.addAll(bna.getConnectingEdges());
+				itEdges = edges.iterator();
+				// System.out.println(graph.getJungGraph().getInEdges(bna).size());
+
+				while (itEdges.hasNext()) {
+					bea = itEdges.next();
+					if(bea.getFrom()==bna || bea.getTo()==bna){
+						deleteSubEdge(bea);
+						if(bea.getTo()==bna){
+							bea.setTo(first);
+						} else if(bea.getFrom()==bna){
+							bea.setFrom(first);
+						}
 						this.addEdge(bea);
 					}
 				}
@@ -1033,6 +1035,7 @@ public class Pathway implements Cloneable {
 				// System.out.println(itString.next());
 			}
 		}
+		updateMyGraph();
 		this.graph.getVisualizationViewer().getPickedVertexState().clear();
 		this.graph.getVisualizationViewer().getPickedEdgeState().clear();
 		this.graph.getVisualizationViewer().getPickedVertexState()
@@ -1046,7 +1049,7 @@ public class Pathway implements Cloneable {
 		BiologicalEdgeAbstract bea;
 		Iterator<BiologicalEdgeAbstract> itEdges;
 		BiologicalNodeAbstract newBNA;
-		Point2D p;
+		Point2D p = new Point2D.Double(0,0);
 
 		while (it.hasNext()) {
 			bna = it.next();
@@ -1054,51 +1057,36 @@ public class Pathway implements Cloneable {
 			if (this.graph.getJungGraph().getNeighborCount(bna) > 1) {
 
 				// edges = this.graph.getJungGraph().getInEdges(bna);
-				itEdges = this.graph.getJungGraph().getInEdges(bna).iterator();
+				Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
+				edges.addAll(bna.getConnectingEdges());
+				itEdges = edges.iterator();
 				// System.out.println(graph.getJungGraph().getInEdges(bna).size());
 
 				while (itEdges.hasNext()
 						&& this.graph.getJungGraph().getNeighborCount(bna) > 1) {
 					bea = itEdges.next();
-					if (bea.isDirected() || bea.getTo() == bna) {
-						this.removeElement(bea);
+						deleteSubEdge(bea);
 						newBNA = bna.clone();
 						newBNA.setID();
 						newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
 						newBNA.setRef(bna);
-						p = this.getGraph().getVertexLocation(bea.getFrom());
+						if(bea.getTo()==bna){
+							bea.setTo(newBNA);
+							p = this.getGraph().getVertexLocation(bea.getFrom());
+						} else if(bea.getFrom()==bna){
+							bea.setFrom(newBNA);
+							p = this.getGraph().getVertexLocation(bea.getTo());
+						}
 						this.addVertex(newBNA, new Point2D.Double(
 								p.getX() + 20, p.getY() + 20));
-						bea.setTo(newBNA);
 						this.addEdge(bea);
 						graph.getVisualizationViewer().getPickedVertexState()
 								.pick(newBNA, true);
-					}
-
 				}
 				// System.out.println(graph.getJungGraph().getOutEdges(bna).size());
-				itEdges = this.graph.getJungGraph().getOutEdges(bna).iterator();
-				while (itEdges.hasNext()
-						&& this.graph.getJungGraph().getNeighborCount(bna) > 1) {
-					bea = itEdges.next();
-					if (bea.isDirected() || bea.getFrom() == bna) {
-						this.removeElement(bea);
-						newBNA = bna.clone();
-						newBNA.setID();
-						newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
-						newBNA.setRef(bna);
-						p = this.getGraph().getVertexLocation(bea.getTo());
-						this.addVertex(newBNA, new Point2D.Double(
-								p.getX() + 20, p.getY() + 20));
-						bea.setFrom(newBNA);
-						this.addEdge(bea);
-						graph.getVisualizationViewer().getPickedVertexState()
-								.pick(newBNA, true);
-					}
-
-				}
 			}
 		}
+		updateMyGraph();
 		MainWindow mw = MainWindowSingleton.getInstance();
 		mw.updateElementTree();
 		mw.updateElementProperties();
