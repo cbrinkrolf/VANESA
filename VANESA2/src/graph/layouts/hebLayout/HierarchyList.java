@@ -244,9 +244,9 @@ RandomAccess, Cloneable, java.io.Serializable{
 		}
 		if(childNodes.size()>1 && !isInitialCall){
 			if(getNode()!=null){
-				BiologicalNodeAbstract coarseNode =  BiologicalNodeAbstract.coarse(childNodes, null, getNode().getLabel());
-				if(coarseNode!=null)
-					coarseNode.setRootNode(getNode());
+				BiologicalNodeAbstract coarseNode =  BiologicalNodeAbstract.coarse(childNodes, null, getNode().getLabel(), getNode());
+//				if(coarseNode!=null)
+//					coarseNode.setRootNode(getNode());
 //				else{
 //					for(BiologicalNodeAbstract c : childNodes){
 //						System.out.println(c.getID() + " " + c.getLabel());
