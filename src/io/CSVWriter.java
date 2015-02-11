@@ -28,7 +28,7 @@ public class CSVWriter {
 			buff.append("Time;");
 			while (it.hasNext()) {
 				bna = it.next();
-				if (bna instanceof Place) {
+				if (bna instanceof Place && !bna.hasRef()) {
 					buff.append(bna.getName() + ";");
 					places.add((Place) bna);
 				}
@@ -40,6 +40,7 @@ public class CSVWriter {
 				itPlace = places.iterator();
 				while (itPlace.hasNext()) {
 					bna = itPlace.next();
+					//System.out.println(bna.getName());
 					buff.append(bna.getPetriNetSimulationData().get(i) + ";");
 				}
 				buff.append("\r\n");
