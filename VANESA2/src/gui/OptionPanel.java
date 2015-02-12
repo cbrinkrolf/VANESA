@@ -8,6 +8,8 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import net.miginfocom.swing.MigLayout;
+
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
@@ -17,7 +19,7 @@ import database.gui.DatabaseWindow;
 
 public class OptionPanel {
 
-	private JPanel p = new JPanel();
+	private JPanel p = new JPanel(new MigLayout("insets 0"));
 
 	private JScrollPane scrollPane;
 
@@ -88,6 +90,8 @@ public class OptionPanel {
 	}
 
 	public OptionPanel() {
+		
+		taskPaneContainer.setLayout(new MigLayout("insets 0, wrap 1"));
 
 		databaseSearch = new JXTaskPane();
 		databaseSearch.setTitle("Database Search");
@@ -183,28 +187,28 @@ public class OptionPanel {
 		taskPaneContainer.add(petriNet);*/
 
 		if (DeveloperClass.isDeveloperStatus) {
-			taskPaneContainer.add(databaseSearch);
-			taskPaneContainer.add(pcpview);
-			taskPaneContainer.add(theory);
-			taskPaneContainer.add(satellite);
-			taskPaneContainer.add(elements);
-			taskPaneContainer.add(pathways);
-			taskPaneContainer.add(filter);
+			taskPaneContainer.add(databaseSearch, "growx");
+			taskPaneContainer.add(pcpview, "growx");
+			taskPaneContainer.add(theory, "growx");
+			taskPaneContainer.add(satellite, "growx");
+			taskPaneContainer.add(elements, "growx");
+			taskPaneContainer.add(pathways, "growx");
+			taskPaneContainer.add(filter, "growx");
 			// taskPaneContainer.add(dbProperties);
-			taskPaneContainer.add(generalProperties);
-			taskPaneContainer.add(heatgraphProperties);
-			taskPaneContainer.add(project);
+			taskPaneContainer.add(generalProperties, "growx");
+			taskPaneContainer.add(heatgraphProperties, "growx");
+			taskPaneContainer.add(project, "growx");
 			// taskPaneContainer.add(alignment);
 		} else {
-			taskPaneContainer.add(databaseSearch);
-			taskPaneContainer.add(satellite);
-			taskPaneContainer.add(elements);
-			taskPaneContainer.add(pathways);
-			taskPaneContainer.add(filter);
-			taskPaneContainer.add(theory);
+			taskPaneContainer.add(databaseSearch, "growx");
+			taskPaneContainer.add(satellite, "growx");
+			taskPaneContainer.add(elements, "growx");
+			taskPaneContainer.add(pathways, "growx");
+			taskPaneContainer.add(filter, "growx");
+			taskPaneContainer.add(theory, "growx");
 			// taskPaneContainer.add(dbProperties);
-			taskPaneContainer.add(generalProperties);
-			taskPaneContainer.add(project);
+			taskPaneContainer.add(generalProperties, "growx");
+			taskPaneContainer.add(project, "growx");
 			//taskPaneContainer.add(pcpview);
 			
 
