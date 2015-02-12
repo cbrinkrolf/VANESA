@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
@@ -20,7 +19,6 @@ import database.gui.QueryMask;
 
 public class BRENDAqueryMask extends QueryMask{
 	
-	private TitledTab tab;
 	private JPanel p;
 	private JTextField ec_number, name, substrat, product, organism;
 	
@@ -70,11 +68,6 @@ public class BRENDAqueryMask extends QueryMask{
 		pick.setActionCommand("BRENDAinfo");
 		pick.setBorderPainted(false);
 		
-		tab = new TitledTab("BRENDA", null, p, pick);
-		tab.getProperties().setHighlightedRaised(2);
-		tab.getProperties().getHighlightedProperties().getComponentProperties().setBackgroundColor(Color.WHITE);
-		tab.getProperties().getNormalProperties().getComponentProperties().setBackgroundColor(Color.LIGHT_GRAY);
-		
 	}
 
 	public void reset(){
@@ -86,10 +79,6 @@ public class BRENDAqueryMask extends QueryMask{
 		organism.setText("");
 	}
 	
-	
-	public TitledTab getTitelTab() {
-		return tab;
-	}
 	
 	public String[] getKeyword(){
 		
