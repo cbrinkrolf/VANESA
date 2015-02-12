@@ -8,11 +8,11 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 
+import net.miginfocom.swing.MigLayout;
 import configurations.DeveloperClass;
 
 public class ToolBar {
@@ -28,6 +28,9 @@ public class ToolBar {
 
 		bar.setOrientation(1);
 		bar.setFloatable(false);
+		MigLayout bl = new MigLayout("insets 0, wrap 1");
+		bar.setLayout(bl);
+		
 
 		String ModellingViewString = "<html>" + "<b>Change View</b> <br>"
 				+ "to Modelling" + "</html>";
@@ -43,67 +46,67 @@ public class ToolBar {
 		JButton convertIntoPetriNet = null;
 		JButton parallelview = null;
 		
-		parallelview = new JButton(new ImageIcon(
+		parallelview = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("parallelview.png")));
 		parallelview.setToolTipText("Create ParallelView from graphs");
 		parallelview.setActionCommand("parallelview");
 		parallelview.addActionListener(toolBarListener);
 		
 
-		JButton newDoc = new JButton(new ImageIcon(
+		JButton newDoc = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("newDocumentSmall.png")));
 
 		newDoc.setToolTipText("Create new network");
 		newDoc.setActionCommand("new Network");
 		newDoc.addActionListener(toolBarListener);
 
-		JButton pick = new JButton(new ImageIcon(
+		JButton pick = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("newPick.png")));
 		pick.setToolTipText("Pick element");
 		pick.setActionCommand("pick");
 		pick.addActionListener(toolBarListener);
 		
-		JButton hierarchy = new JButton("Hierarchy");
+		JButton hierarchy = new ToolBarButton("Hierarchy");
 		hierarchy.setToolTipText("Zoom through hierarchy");
 		hierarchy.setActionCommand("hierarchy");
 		hierarchy.addActionListener(toolBarListener);
 
-		JButton discretePlace = new JButton(new ImageIcon(
+		JButton discretePlace = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("discretePlace.png")));
 		discretePlace.setToolTipText("Discrete Place");
 		discretePlace.setActionCommand("discretePlace");
 		discretePlace.addActionListener(toolBarListener);
 
-		JButton continiousPlace = new JButton(new ImageIcon(
+		JButton continiousPlace = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("continiousPlace.png")));
 		continiousPlace.setToolTipText("Continuouse Place");
 		continiousPlace.setActionCommand("continuousPlace");
 		continiousPlace.addActionListener(toolBarListener);
 
-		convertIntoPetriNet = new JButton("convertIntoPetriNet");
+		convertIntoPetriNet = new ToolBarButton("convertIntoPetriNet");
 		convertIntoPetriNet.setToolTipText("Convert into Petri Net");
 		convertIntoPetriNet.setActionCommand("convertIntoPetriNet");
 		convertIntoPetriNet.addActionListener(toolBarListener);
 
-		JButton discreteTransition = new JButton(new ImageIcon(
+		JButton discreteTransition = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("discreteTransition.png")));
 		discreteTransition.setToolTipText("Discrete Transition");
 		discreteTransition.setActionCommand("discreteTransition");
 		discreteTransition.addActionListener(toolBarListener);
 
-		JButton continiousTransition = new JButton(new ImageIcon(
+		JButton continiousTransition = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("continiousTransition2.png")));
 		continiousTransition.setToolTipText("Continuouse Transition");
 		continiousTransition.setActionCommand("continiousTransition");
 		continiousTransition.addActionListener(toolBarListener);
 
-		JButton stochasticTransition = new JButton(new ImageIcon(
+		JButton stochasticTransition = new ToolBarButton(new ImageIcon(
 					imagePath.getPath("stochasticTransition2.png")));
 	stochasticTransition.setToolTipText("Stochastic Transition");
 		stochasticTransition.setActionCommand("stochasticTransition");
 		stochasticTransition.addActionListener(toolBarListener);
 
-		JPanel petriNetcontrols = new JPanel();
+		JPanel petriNetcontrols = new ToolBarPanel();
 		petriNetcontrols.setLayout(new GridLayout(3, 2));
 
 		// Add buttons to experiment with Grid Layout
@@ -113,36 +116,36 @@ public class ToolBar {
 		petriNetcontrols.add(continiousTransition);
 		petriNetcontrols.add(stochasticTransition);
 
-		JButton center = new JButton(new ImageIcon(
+		JButton center = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("centerGraph.png")));
 		center.setToolTipText("Center graph");
 		center.setActionCommand("center");
 		center.addActionListener(toolBarListener);
 
-		JButton move = new JButton(new ImageIcon(imagePath.getPath("move.png")));
+		JButton move = new ToolBarButton(new ImageIcon(imagePath.getPath("move.png")));
 		move.setToolTipText("Move graph");
 		move.setActionCommand("move");
 		move.addActionListener(toolBarListener);
 
-		JButton picture = new JButton(new ImageIcon(
+		JButton picture = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("picture.png")));
 		picture.setToolTipText("Save graph - picture");
 		picture.setActionCommand("picture");
 		picture.addActionListener(toolBarListener);
 
-		JButton zoomIn = new JButton(new ImageIcon(
+		JButton zoomIn = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("zoomPlus.png")));
 		zoomIn.setToolTipText("Zoom in");
 		zoomIn.setActionCommand("zoom in");
 		zoomIn.addActionListener(toolBarListener);
 
-		JButton zoomOut = new JButton(new ImageIcon(
+		JButton zoomOut = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("zoomMinus.png")));
 		zoomOut.setToolTipText("Zoom out");
 		zoomOut.setActionCommand("zoom out");
 		zoomOut.addActionListener(toolBarListener);
 
-		JButton trash = new JButton(new ImageIcon(
+		JButton trash = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("Trash.png")));
 		trash.setToolTipText("Delete selected items");
 		trash.setMnemonic(KeyEvent.VK_DELETE);
@@ -150,48 +153,48 @@ public class ToolBar {
 		trash.addActionListener(toolBarListener);
 
 		
-		JPanel infopanel = new JPanel();
+		JPanel infopanel = new ToolBarPanel();
 		infopanel.setLayout(new GridLayout(2, 2));
 		
-		JButton info = new JButton(new ImageIcon(
+		JButton info = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("InfoToolBarButton.png")));
 		info.setToolTipText("Info");
 		info.setActionCommand("info");
 		info.addActionListener(toolBarListener);
 		
 		
-		JButton infoextended = new JButton(new ImageIcon(
+		JButton infoextended = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("InfoToolBarButtonextended.png")));
 		infoextended.setToolTipText("More Info");
 		infoextended.setActionCommand("infoextended");
 		infoextended.addActionListener(toolBarListener);
 		
-		JButton mergeSelectedNodes = new JButton(new ImageIcon(imagePath.getPath("MergeNodesButton.png")));
+		JButton mergeSelectedNodes = new ToolBarButton(new ImageIcon(imagePath.getPath("MergeNodesButton.png")));
 		mergeSelectedNodes.setToolTipText("Merge Selected Nodes");
 		mergeSelectedNodes.setActionCommand("mergeSelectedNodes");
 		mergeSelectedNodes.addActionListener(toolBarListener);
 		
-		JButton splitNode = new JButton(new ImageIcon(imagePath.getPath("SplitNodesButton.png")));
+		JButton splitNode = new ToolBarButton(new ImageIcon(imagePath.getPath("SplitNodesButton.png")));
 		splitNode.setToolTipText("Split node (inverse operation of \"merge nodes\"");
 		splitNode.setActionCommand("splitNode");
 		splitNode.addActionListener(toolBarListener);
 		
-		JButton coarseSelectedNodes = new JButton(new ImageIcon(imagePath.getPath("CoarseNodesButton.png")));
+		JButton coarseSelectedNodes = new ToolBarButton(new ImageIcon(imagePath.getPath("CoarseNodesButton.png")));
 		coarseSelectedNodes.setToolTipText("Coarse selected nodes");
 		coarseSelectedNodes.setActionCommand("coarseSelectedNodes");
 		coarseSelectedNodes.addActionListener(toolBarListener);
 	
-		JButton flatSelectedNodes = new JButton(new ImageIcon(imagePath.getPath("FlatNodesButton.png")));
+		JButton flatSelectedNodes = new ToolBarButton(new ImageIcon(imagePath.getPath("FlatNodesButton.png")));
 		flatSelectedNodes.setToolTipText("Flat selected coarse node(s)");
 		flatSelectedNodes.setActionCommand("flatSelectedNodes");
 		flatSelectedNodes.addActionListener(toolBarListener);
 		
-		JButton enterSelectedNode = new JButton(new ImageIcon(imagePath.getPath("enterNode.png")));
+		JButton enterSelectedNode = new ToolBarButton(new ImageIcon(imagePath.getPath("enterNode.png")));
 		enterSelectedNode.setToolTipText("Enter selected coarse node(s)");
 		enterSelectedNode.setActionCommand("enterNode");
 		enterSelectedNode.addActionListener(toolBarListener);
 		
-		JButton newWindow = new JButton(new ImageIcon(imagePath.getPath("newWindow.png")));
+		JButton newWindow = new ToolBarButton(new ImageIcon(imagePath.getPath("newWindow.png")));
 		newWindow.setToolTipText("Open new window.");
 		newWindow.setActionCommand("newWindow");
 		newWindow.addActionListener(toolBarListener);
@@ -204,35 +207,35 @@ public class ToolBar {
 		infopanel.add(flatSelectedNodes);
 		infopanel.add(enterSelectedNode);
 
-		JButton dimView = new JButton(new ImageIcon(
+		JButton dimView = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("view.png")));
 		dimView.setToolTipText("3D View");
 		dimView.setActionCommand("3DView");
 		dimView.addActionListener(toolBarListener);
 
-		JButton printer = new JButton(new ImageIcon(
+		JButton printer = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("printer.png")));
 		printer.setToolTipText("Print graph");
 		printer.setActionCommand("print");
 		printer.addActionListener(toolBarListener);
 
-		JButton fullScreen = new JButton(new ImageIcon(
+		JButton fullScreen = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("newFullScreen.png")));
 		fullScreen.setToolTipText("Full screen");
 		fullScreen.setActionCommand("full screen");
 		fullScreen.addActionListener(toolBarListener);
 		
-		JButton stretchEdges = new JButton("Stretch");
+		JButton stretchEdges = new ToolBarButton("Stretch");
 		stretchEdges.setToolTipText("Stretch edge length");
 		stretchEdges.setActionCommand("stretchEdges");
 		stretchEdges.addActionListener(toolBarListener);
 		
-		JButton compressEdges = new JButton("Compress");
+		JButton compressEdges = new ToolBarButton("Compress");
 		compressEdges.setToolTipText("Compress edge length");
 		compressEdges.setActionCommand("compressEdges");
 		compressEdges.addActionListener(toolBarListener);
 		
-		JButton merge = new JButton(new ImageIcon(
+		JButton merge = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("maximize.png")));
 		merge.setToolTipText("Compare / Align graphs");
 		merge.setActionCommand("merge");
@@ -242,59 +245,70 @@ public class ToolBar {
 				.getSelectShapeActions());
 
 		chooser.setToolTipText("Draw compartments");
+		chooser.setBorder(null);
+		chooser.setBorderPainted(false);
+		
 
 		ButtonChooser colorChooser = new ButtonChooser(AnnotationPainter
 				.getInstance().getSelectColorActions());
 
 		colorChooser.setToolTipText("Set compartment colours");
+		colorChooser.setBorder(null);
+		colorChooser.setBorderPainted(false);
 
 //		petriNet = new JButton(PetriViewString);
 //		petriNet.setActionCommand("createPetriNet");
 //		petriNet.setToolTipText("Change to Petri Net View");
 //		petriNet.addActionListener(toolBarListener);
 		
-		covGraph = new JButton("Cov/Reach Graph");
+		covGraph = new ToolBarButton("Cov/Reach Graph");
 		covGraph.setActionCommand("createCov");
 		covGraph.setToolTipText("Create Cov/Reach Graph");
 		covGraph.addActionListener(toolBarListener);
 		
-		JButton editNodes = new JButton("Edit PN-Elements");
+		JButton editNodes = new ToolBarButton("Edit PN-Elements");
 		editNodes.setActionCommand("editElements");
 		editNodes.setToolTipText("Edit PN-Elements");
 		editNodes.addActionListener(toolBarListener);
 		
-		JButton loadModResult = new JButton("Load Modellica Result");
+		JButton loadModResult = new ToolBarButton("Load Modellica Result");
 		loadModResult.setActionCommand("loadModResult");
 		loadModResult.setToolTipText("Load Modellica Result");
 		loadModResult.addActionListener(toolBarListener);
 	
 		
-		JButton simulate = new JButton("Simulate Petri Net");
+		JButton simulate = new ToolBarButton("Simulate Petri Net");
 		simulate.setActionCommand("simulate");
 		simulate.setToolTipText("Simulate Petri Net");
 		simulate.addActionListener(toolBarListener);
 
-		modelling = new JButton(ModellingViewString);
+		modelling = new ToolBarButton(ModellingViewString);
 		modelling.setActionCommand("modelling");
 		modelling.addActionListener(toolBarListener);
 		modelling.setToolTipText("Change to Modelling View");
 
-		heatmap = new JButton(new ImageIcon(
+		heatmap = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("heatmapGraph.png")));
 		heatmap.setToolTipText("Create heatgraph");
 		heatmap.setActionCommand("heatmap");
 		heatmap.addActionListener(toolBarListener);
 
-		edit = new JButton(new ImageIcon(imagePath.getPath("TitleGraph.png")));
+		edit = new ToolBarButton(new ImageIcon(imagePath.getPath("TitleGraph.png")));
 		edit.setSelectedIcon(new ImageIcon(imagePath
 				.getPath("editSelected.png")));
 		edit.setToolTipText("Edit graph");
 		edit.setActionCommand("edit");
 		edit.addActionListener(toolBarListener);
 
-		JPanel viewPortControls = new JPanel();
+		JPanel viewPortControls = new ToolBarPanel();
 		viewPortControls.setLayout(new GridLayout(2, 2));
 
+		compressEdges.setBorder(null);
+		compressEdges.setBorderPainted(false);
+		//compressEdges.setContentAreaFilled(false);
+		//compressEdges.setBackground(new Color(0,255,0,0));
+		//compressEdges.setForeground(new Color(255,0,0,255));
+		
 		viewPortControls.add(fullScreen);
 		viewPortControls.add(center);
 		viewPortControls.add(zoomIn);
@@ -305,7 +319,7 @@ public class ToolBar {
 		if (DeveloperClass.isDeveloperStatus) {
 			viewPortControls.add(dimView);
 		}
-		JPanel editControls = new JPanel();
+		JPanel editControls = new ToolBarPanel();
 		editControls.setLayout(new GridLayout(2, 2));
 
 		if (!petriNetView) {
@@ -316,8 +330,8 @@ public class ToolBar {
 		editControls.add(trash);
 		editControls.add(hierarchy);
 
-		JPanel printControls = new JPanel();
-		printControls.setLayout(new GridLayout(2, 2));
+		JPanel printControls = new ToolBarPanel();
+		printControls.setLayout(new GridLayout(1, 2));
 
 		printControls.add(newDoc);
 		printControls.add(newWindow);
@@ -331,7 +345,7 @@ public class ToolBar {
 		petriNetcontrols.add(continiousTransition);
 		petriNetcontrols.add(stochasticTransition);
 
-		JPanel featureControls = new JPanel();
+		JPanel featureControls = new ToolBarPanel();
 
 		if (!petriNetView) {
 			featureControls.setLayout(new GridLayout(2, 2));
@@ -349,7 +363,14 @@ public class ToolBar {
 			featureControls.add(colorChooser);
 		}
 
-		JPanel toolBarControlControls = new JPanel();
+		//featureControls.setMaximumSize(featureControls.getPreferredSize());
+		//featureControls.set
+		//featureControls.setAlignmentX(Component.LEFT_ALIGNMENT);
+		//featureControls.setAlignmentY(Component.TOP_ALIGNMENT);
+		
+		
+		
+		JPanel toolBarControlControls = new ToolBarPanel();
 		toolBarControlControls.setLayout(new GridLayout(2, 1));
 //		if (petriNetView) {
 //			toolBarControlControls.add(modelling);
@@ -383,21 +404,26 @@ public class ToolBar {
 			} else {
 //				bar.add(toolBarControlControls);
 //				bar.add(new JSeparator());
-				bar.add(printControls);
-				bar.add(new JSeparator());
-				bar.add(editControls);
-				bar.add(new JSeparator());
-				bar.add(featureControls);
-				bar.add(new JSeparator());
-				bar.add(viewPortControls);
-				bar.add(new JSeparator());
-				bar.add(infopanel);
+				bar.add(printControls, "wrap");
+				bar.add(new ToolBarSeperator(), "growx, wrap");
+				bar.add(editControls, "wrap");
+				
+				bar.add(new ToolBarSeperator(), "growx, wrap");
+				
+				//
+				//bar.add(new JSeparator());
+				bar.add(featureControls, "wrap");
+				bar.add(new ToolBarSeperator(), "growx, wrap");
+				bar.add(viewPortControls, "wrap");
+				bar.add(new ToolBarSeperator(), "growx, wrap");
+				bar.add(infopanel, "wrap");
 			}
 		} else {
 
 			bar.add(printControls);
 			bar.add(new JSeparator());
 			bar.add(editControls);
+			
 			bar.add(new JSeparator());
 			bar.add(featureControls);
 			bar.add(new JSeparator());
