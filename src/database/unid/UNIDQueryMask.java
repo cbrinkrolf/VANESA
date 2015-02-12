@@ -17,7 +17,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
@@ -29,7 +28,6 @@ import database.gui.QueryMask;
  */
 public class UNIDQueryMask extends QueryMask {
 
-	private TitledTab tab;
 	private JPanel p;
 
 	private JComboBox<String> choosedatabase;
@@ -121,13 +119,6 @@ public class UNIDQueryMask extends QueryMask {
 		pick.setActionCommand("UNIDinfo");
 		pick.setBorderPainted(false);
 
-		tab = new TitledTab("UNID", null, p, pick);
-		tab.getProperties().setHighlightedRaised(2);
-		tab.getProperties().getHighlightedProperties().getComponentProperties()
-				.setBackgroundColor(Color.WHITE);
-		tab.getProperties().getNormalProperties().getComponentProperties()
-				.setBackgroundColor(Color.LIGHT_GRAY);
-
 	}
 
 	public void reset() {
@@ -136,10 +127,6 @@ public class UNIDQueryMask extends QueryMask {
 		commonName.setText("");
 		graphID.setText("");
 		depthspinner.setValue(1.0d);
-	}
-
-	public TitledTab getTitelTab() {
-		return tab;
 	}
 
 	public String[] getKeyword() {

@@ -4,6 +4,7 @@ import gui.eventhandlers.TextfeldColorChanger;
 import gui.images.ImagePath;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -12,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
@@ -20,13 +20,13 @@ import database.gui.QueryMask;
 
 public class KEGGqueryMask extends QueryMask {
 	
-	private TitledTab tab;
 	private JPanel p;
 	private JTextField pathway, organism, enzyme, gene, compound;
+	private DatabaseWindow dw;
 	
 	public KEGGqueryMask(DatabaseWindow dw){
 		super(dw);
-		
+		this.dw = dw;
 		ImagePath imagePath = ImagePath.getInstance();
 		MigLayout layout = new MigLayout("", "[right]");
 		p = new JPanel(layout);
@@ -69,12 +69,6 @@ public class KEGGqueryMask extends QueryMask {
 		p.add(compound,"span, wrap 15, growx, gap 10");
 		
 		super.addControleButtons(p);
-			
-		tab = new TitledTab("KEGG", null, p, info);
-		tab.getProperties().setHighlightedRaised(2);
-		tab.getProperties().getHighlightedProperties().getComponentProperties().setBackgroundColor(Color.WHITE);
-		tab.getProperties().getNormalProperties().getComponentProperties().setBackgroundColor(Color.LIGHT_GRAY);
-		
 	}
 
     public void reset(){
@@ -87,10 +81,6 @@ public class KEGGqueryMask extends QueryMask {
     	
 	}
 	
-	
-	public TitledTab getTitelTab() {
-		return tab;
-	}
 	
 	public String[] getKeyword(){
 		

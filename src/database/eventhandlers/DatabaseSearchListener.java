@@ -9,7 +9,6 @@ import gui.ProgressBar;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
 
@@ -88,7 +87,7 @@ public class DatabaseSearchListener implements ActionListener {
 			new KEGGInfoWindow();
 		} else if ("BRENDAinfo".equals(event)) {
 			new BrendaInfoWindow();
-		} else if ("MIRNAinfo".equals(event)) {
+		} else if ("miRNAinfo".equals(event)) {
 			new MIRNAInfoWindow();
 		} else if ("UNIDinfo".equals(event)) {
 			new UNIDInfoWindow();
