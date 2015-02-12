@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import graph.CreatePathway;
+import graph.algorithms.NodeAttributeNames;
+import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
@@ -22,8 +24,10 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.GraphNode;
+import biologicalObjects.nodes.Protein;
 import cluster.IJobServer;
 import cluster.SearchCallback;
+import cluster.graphdb.DatabaseEntry;
 import cluster.graphdb.GraphDBTransportNode;
 
 /**
@@ -120,14 +124,14 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	public void createNetworkFromSearch() {
 
 		Pathway pw = new CreatePathway(fullName + commonName + graphid
-				+ " depth=" + depth + "(UNID)").getPathway();
+				+ " depth=" + depth).getPathway();
 		MyGraph myGraph = pw.getGraph();
 
 		myGraph.lockVertices();
 		myGraph.stopVisualizationModel();
 
 		// DO ADDING
-		GraphNode bna;
+		Protein bna;
 		HashSet<GraphDBTransportNode> nodeset = new HashSet<>();
 		HashMap<GraphDBTransportNode, BiologicalNodeAbstract> nodes = new HashMap<>();
 
@@ -135,7 +139,10 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		for (GraphDBTransportNode node : adjacencylist.keySet()) {
 			if (!nodeset.contains(node)) {
 				nodeset.add(node);
-				bna = new GraphNode(node);
+				bna = new Protein(node.commonName, node.fullName);
+				//Add Attributes
+				addAttributes(bna, node);								
+				
 				bna.setReference(false);
 				if (searchNames.contains(node.commonName)) {
 					bna.setColor(Color.RED);
@@ -147,7 +154,8 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 			for (GraphDBTransportNode companion : companions) {
 				if (!nodeset.contains(companion)) {
 					nodeset.add(companion);
-					bna = new GraphNode(companion);
+					bna = new Protein(companion.commonName, companion.fullName);
+					addAttributes(bna, companion);
 					bna.setReference(false);
 					if (searchNames.contains(companion.commonName)) {
 						bna.setColor(Color.RED);
@@ -187,6 +195,30 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		}
 		reactivateUI();
 
+	}
+
+	private void addAttributes(Protein bna, GraphDBTransportNode node) {
+		//Experiments
+		int i = 0;
+		for(i = 0; i<node.biodata.length; i++){
+			bna.addAttribute(NodeAttributeTypes.EXPERIMENT,node.biodata[i], node.biodataEntries[i]);
+		}
+		
+		//Database IDs
+		for(DatabaseEntry de :node.dbIds){
+			bna.addAttribute(NodeAttributeTypes.DATABASE_ID, de.getDatabase(), de.getId());
+		}				
+		
+		//Annotations
+		for(i = 0; i<node.biologicalProcess.length; i++){
+			bna.addAttribute(NodeAttributeTypes.ANNOTATION,NodeAttributeNames.GO_BIOLOGICAL_PROCESS, node.biologicalProcess[i]);
+		}
+		for(i = 0; i<node.cellularComponent.length; i++){
+			bna.addAttribute(NodeAttributeTypes.ANNOTATION,NodeAttributeNames.GO_CELLULAR_COMPONENT, node.cellularComponent[i]);
+		}
+		for(i = 0; i<node.molecularFunction.length; i++){
+			bna.addAttribute(NodeAttributeTypes.ANNOTATION,NodeAttributeNames.GO_MOLECULAR_FUNCTION, node.molecularFunction[i]);
+		}	
 	}
 
 	/**
