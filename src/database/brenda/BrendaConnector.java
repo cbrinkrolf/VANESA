@@ -1,5 +1,6 @@
 package database.brenda;
 
+import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import graph.CreatePathway;
 import graph.algorithms.MergeGraphs;
 import graph.jung.classes.MyGraph;
@@ -11,10 +12,10 @@ import gui.ProgressBar;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -74,28 +75,15 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 	private String[] enzymeToSearch;
 
 	protected Hashtable<String, BiologicalNodeAbstract> enzymes = new Hashtable<String, BiologicalNodeAbstract>();
-
-	protected HashMap<BiologicalNodeAbstract, DefaultMutableTreeNode> enzymes2treeNode = new HashMap<BiologicalNodeAbstract, DefaultMutableTreeNode>();
 	
-	protected HashMap<BiologicalNodeAbstract, Integer> enzymeDepth = new HashMap<BiologicalNodeAbstract, Integer>();
-	// private Vector<String[]> edges = new Vector<String[]>();
-
 	private Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
 
 	private Pathway mergePW = null;
-
+	
 	boolean headless;
 	
-	boolean autoCoarse;
+	boolean autoCoarse = false;
 	
-//	protected HashMap<String, String> parentNodes = new HashMap<String, String>();
-//	
-//	protected HashMap<BiologicalNodeAbstract, String> nodes2enzymes = new HashMap<BiologicalNodeAbstract, String>();
-//
-//	protected HashMap<String, BiologicalNodeAbstract> allNodes = new HashMap<String, BiologicalNodeAbstract>();
-
-	// private int i = 0;
-
 	public BrendaConnector(ProgressBar bar, String[] details, Pathway mergePW,
 			boolean headless) {
 
@@ -205,13 +193,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 						e.setReference(false);
 
 						enzymes.put(clean, e);
-						enzymeDepth.put(e,parentNode.getDepth()/2);
-						
-//						nodes2enzymes.put(e,clean);
-//						allNodes.put(clean,e);
-//						allNodes.put(node.getLabel(),node);
-//						nodes2enzymes.put(node, node.getLabel());
-//						parentNodes.put(node.getLabel(), clean);
 
 						// System.out.println("size: "+left.length);
 						for (int i = 0; i < left.length; i++) {
@@ -246,6 +227,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 						newNode = new DefaultMutableTreeNode(e.getLabel());
 
 						tree.addNode(parentNode, newNode, e);
+
 						if (resultDetails[3] != null) {
 							separateReaction(resultDetails[3], e, newNode);
 						}
@@ -371,11 +353,11 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 				// buildEdge(substrate.getVertex(), enzyme.getVertex(), true);
 				// !!!!!
-
+				
 				newNode = new DefaultMutableTreeNode(substrate.getLabel());
-
 				tree.addNode(parentNode, newNode, substrate);
 				searchPossibleEnzyms(substrate, newNode);
+				
 
 			} else {
 
@@ -404,11 +386,11 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 					// buildEdge(enzyme.getVertex(), product.getVertex(), true);
 
 					this.buildEdge(enzyme, product, true, weight);
-
+					
 					newNode = new DefaultMutableTreeNode(product.getLabel());
-
 					tree.addNode(parentNode, newNode, product);
 					searchPossibleEnzyms(product, newNode);
+					
 
 				} else {
 
@@ -496,24 +478,53 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		}
 	}
 	
+	/**
+	 * For autocoarsing the resulting network.
+	 */
 	private void autoCoarse() {
+
+		/**
+		 * The parent of each node is the neighbor with the shortest path to the root node.
+		 * @author tobias
+		 */
 		class HLC implements HierarchyListComparator<Integer> {
 
+			Map<BiologicalNodeAbstract, Number> rootDistanceMap;
+			
 			public HLC() {
+				Pathway newPw = new Pathway("Brenda Search");
+				MyGraph searchGraph = new MyGraph(newPw);
+				for(BiologicalNodeAbstract nd : myGraph.getAllVertices()){
+					searchGraph.addVertex(nd, myGraph.getVertexLocation(nd));
+				}
+				for(BiologicalEdgeAbstract e : myGraph.getAllEdges()){
+					BiologicalEdgeAbstract reverseEdge = e.clone();
+					reverseEdge.setFrom(e.getTo());
+					reverseEdge.setTo(e.getFrom());
+					searchGraph.addEdge(e);
+					searchGraph.addEdge(reverseEdge);
+				}
+				UnweightedShortestPath<BiologicalNodeAbstract, BiologicalEdgeAbstract> path =
+						new UnweightedShortestPath<BiologicalNodeAbstract,BiologicalEdgeAbstract>(searchGraph.getJungGraph());
+				rootDistanceMap = path.getDistanceMap(pw.getRootNode());
 			}
 
 			public Integer getValue(BiologicalNodeAbstract n) {
-				DefaultMutableTreeNode treeNode = tree.getTreeNode(n);
-				if(treeNode == null || tree.getRoot() == treeNode){
-					return getSubValue(n);
+				Set<BiologicalNodeAbstract> neighbors = new HashSet<BiologicalNodeAbstract>();
+				neighbors.addAll(getGraph().getJungGraph().getNeighbors(n));
+				BiologicalNodeAbstract bestNeighbor = n;
+				int bestDistance = rootDistanceMap.get(n)==null ? Integer.MAX_VALUE : rootDistanceMap.get(n).intValue();
+				for(BiologicalNodeAbstract neighbor : neighbors){
+					if(rootDistanceMap.get(neighbor)!=null && (bestNeighbor==n || rootDistanceMap.get(neighbor).intValue()<=bestDistance)){
+						if(neighbor instanceof Factor || neighbor instanceof Inhibitor){
+							continue;
+						}
+						bestNeighbor = neighbor;
+						bestDistance = rootDistanceMap.get(neighbor).intValue();
+					}
 				}
-				DefaultMutableTreeNode parentTreeNode = (DefaultMutableTreeNode) treeNode.getParent();
-				if(parentTreeNode == null || parentTreeNode == tree.getRoot()){
-					return getSubValue(n);
-				}
-//				System.out.println(n.getLabel() + ": " + tree.getEnzyme(parentTreeNode).getLabel());
-				return tree.getEnzyme(parentTreeNode).getID();
-				
+				return bestNeighbor.getID();
+								
 			}
 
 			public Integer getSubValue(BiologicalNodeAbstract n) {

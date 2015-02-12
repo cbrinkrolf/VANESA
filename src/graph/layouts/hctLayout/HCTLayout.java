@@ -84,55 +84,10 @@ public class HCTLayout extends HierarchicalCircleLayout{
             
             //distance between two ndoes of the same group
             final double nodeDistance = HCTLayoutConfig.nodeDistance(bnaGroups.size()-1, outterNodes.size());
-            System.out.println(outterNodes.size());
+//            System.out.println(outterNodes.size());
             
             //distance between two groups (added to small distance between two nodes)
             final double groupDistance = HCTLayoutConfig.groupDistance(nodeDistance);
-            
-//            //positions of the outter circle nodes
-//            for(Integer i : groupKeys){
-//            	for(BiologicalNodeAbstract v : bnaGroups.get(i)){
-//            		double angle = group_no*groupDistance+vertex_no*nodeDistance;
-//            		GraphInstance.getMyGraph().moveVertex(v, 
-//            				Math.cos(angle) * getRadius() * maxCircle + centerPoint.getX(),
-//            				Math.sin(angle) * getRadius() * maxCircle + centerPoint.getY());
-//
-//            		apply(v);
-//        			CircleVertexData data = circleVertexDataMap.get(v);
-//        			data.setCircleNumber(maxCircle);            		
-//        			data.setVertexAngle(angle);
-//            		vertex_no++;
-//            	}
-//                group_no++;
-//            }
-//            
-//            //positions of the inner circles nodes.
-//     	   	Set<Point2D> childNodePoints = new HashSet<Point2D>();
-//            for(BiologicalNodeAbstract n : myGraph.getAllVertices()){
-//            	childNodePoints.clear();
-//            	if(circles.get(n)>=1 && !n.isCoarseNode()){
-//            		if(n!=rootNode){
-//     				   BiologicalNodeAbstract parentNode = n.getParentNode();
-//     				   for(BiologicalNodeAbstract pNode : n.getAllParentNodes()){
-//     					   if(pNode.getRootNode()==n){
-//     						   parentNode = pNode;
-//     						   break;
-//     					   }
-//     				   }
-//     				   for(BiologicalNodeAbstract child : parentNode.getCurrentShownChildrenNodes(myGraph)){
-//     					   if(child!=n){
-//     						   childNodePoints.add(myGraph.getVertexLocation(child));
-//     					   }
-//     				   }
-//     			   	}
-//            		apply(n);
-//            		CircleVertexData data = circleVertexDataMap.get(n);
-//            		data.setCircleNumber(maxCircle-circles.get(n));            		
-//            		data.setVertexAngle(Circle.getAngle(getCenterPoint(),Circle.averagePoint(childNodePoints)));
-//            		Point2D nodeLocation = Circle.getPointOnCircle(getCenterPoint(), getRadius() * data.getCircleNumber(), data.getVertexAngle());
-//            		myGraph.moveVertex(n,nodeLocation.getX(),nodeLocation.getY());
-//     		   	}
-//     	   	}
             
           Set<BiologicalNodeAbstract> rootNodes = new HashSet<BiologicalNodeAbstract>();
           for(Integer i : groupKeys){
@@ -175,7 +130,7 @@ public class HCTLayout extends HierarchicalCircleLayout{
         		childrenLocations.add(myGraph.getVertexLocation(child));
         	}
     		double angle = Circle.getAngle(centerPoint,Circle.averagePoint(childrenLocations));
-    		System.out.println(v.getLabel() + ": " + circles.get(v));
+//    		System.out.println(v.getLabel() + ": " + circles.get(v));
     		GraphInstance.getMyGraph().moveVertex(v, 
     				Math.cos(angle) * getRadius() * circles.get(v) + centerPoint.getX(),
     				Math.sin(angle) * getRadius() * circles.get(v) + centerPoint.getY());
