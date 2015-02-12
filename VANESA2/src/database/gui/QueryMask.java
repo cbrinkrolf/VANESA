@@ -1,14 +1,19 @@
 package database.gui;
 
+import gui.images.ImagePath;
+
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
+import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
 
 public class QueryMask implements ItemListener {
@@ -55,6 +60,19 @@ public class QueryMask implements ItemListener {
 			dw.setHeadless(box.isSelected());
 		}
 
+	}
+	
+	public JPanel getTitelTab(String db) {
+		ImagePath imagePath = ImagePath.getInstance();
+		JPanel pan = new JPanel(new MigLayout("ins 0"));
+		pan.add(new JLabel(db));
+		JButton info = new JButton(new ImageIcon(imagePath.getPath("infoButton.png")));
+		info.setMaximumSize(new Dimension(20,20));
+		info.setActionCommand(db+"info");
+		info.addActionListener(new DatabaseSearchListener(dw));
+		info.setBorderPainted(false);
+		pan.add(info);
+		return pan;
 	}
 
 }

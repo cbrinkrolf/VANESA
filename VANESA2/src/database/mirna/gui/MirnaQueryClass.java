@@ -15,12 +15,10 @@ import javax.swing.JTextField;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
 import database.gui.QueryMask;
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 
 public class MirnaQueryClass extends QueryMask {
 	
-	private TitledTab tab;
 	private JPanel p;
 	private JTextField name, acc, sequences, gene;
 	
@@ -69,11 +67,6 @@ public class MirnaQueryClass extends QueryMask {
 
 		this.addControleButtons(p);
 			
-		tab = new TitledTab("miRNA", null, p, info);
-		tab.getProperties().setHighlightedRaised(2);
-		tab.getProperties().getHighlightedProperties().getComponentProperties().setBackgroundColor(Color.WHITE);
-		tab.getProperties().getNormalProperties().getComponentProperties().setBackgroundColor(Color.LIGHT_GRAY);
-		
 	}
 
     public void reset(){
@@ -81,11 +74,6 @@ public class MirnaQueryClass extends QueryMask {
     	gene.setText("");
 		acc.setText("");
 		sequences.setText(""); 	
-	}
-	
-	
-	public TitledTab getTitelTab() {
-		return tab;
 	}
 	
 	public String[] getKeyword(){

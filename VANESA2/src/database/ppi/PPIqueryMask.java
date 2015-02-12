@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
@@ -23,7 +22,6 @@ import database.gui.QueryMask;
 
 public class PPIqueryMask extends QueryMask{
 	
-	private TitledTab tab;
 	private JPanel p;
 	
 	private JComboBox<String> choosePPIdatabase;
@@ -93,11 +91,6 @@ public class PPIqueryMask extends QueryMask{
 		pick.setActionCommand("PPIinfo");
 		pick.setBorderPainted(false);
 		
-		tab = new TitledTab("PPI", null, p, pick);
-		tab.getProperties().setHighlightedRaised(2);
-		tab.getProperties().getHighlightedProperties().getComponentProperties().setBackgroundColor(Color.WHITE);
-		tab.getProperties().getNormalProperties().getComponentProperties().setBackgroundColor(Color.LIGHT_GRAY);
-		
 	}
 
 	public void reset(){
@@ -105,11 +98,6 @@ public class PPIqueryMask extends QueryMask{
 		fullName.setText("");
 		alias.setText("");
 		acNumber.setText("");
-	}
-	
-	
-	public TitledTab getTitelTab() {
-		return tab;
 	}
 	
 	public String[] getKeyword(){
