@@ -20,6 +20,17 @@ public class NodeAttributeNames {
 	 */
 	public static final String CHOLESTEATOMA = "chol. logFC";
 	
+	/*
+	 * Foreign Database Ids
+	 */
+	public static final String HPRD = "Hprd";
+	public static final String UNIPROT = "Uniprot";
 	
+	/*
+	 * Annotations
+	 */
+	public static final String GO_CELLULAR_COMPONENT = "Cellular component";
+	public static final String GO_BIOLOGICAL_PROCESS = "Biological process";
+	public static final String GO_MOLECULAR_FUNCTION = "Molecular function";
 
 }
