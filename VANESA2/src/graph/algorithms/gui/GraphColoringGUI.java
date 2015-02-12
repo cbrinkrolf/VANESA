@@ -41,6 +41,7 @@ import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.GraphNode;
 import cluster.ClusterComputeThread;
 import cluster.ComputeCallback;
 import cluster.JobTypes;
@@ -497,7 +498,7 @@ public class GraphColoringGUI implements ActionListener {
 //			}
 
 //			printEdgeArray(mg.getAllVertices().size(), edgearray);
-			
+									
 			
 			// compute values over RMI
 			try {
@@ -566,6 +567,35 @@ public class GraphColoringGUI implements ActionListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		
+		//DEBUG print experimental data
+		try {
+			FileWriter fw = new FileWriter("experiments"+mw.getCurrentPathway());
+			BufferedWriter out = new BufferedWriter(fw);
+			
+			GraphNode gnode;
+			
+			for(int i = 0; i< nodes; i++){
+				gnode = (GraphNode) np.getNodeAssignmentbackwards(i);
+				
+				try{
+					out.write(i+"\t"+gnode.getSuperNode().biodataEntries[0]+"\n");
+				} catch (ArrayIndexOutOfBoundsException ae){
+					out.write(i+"\t"+0.0+"\n");
+				}
+
+
+			}			
+			out.close();
+			fw.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
 		
 		
 		// TODO Auto-generated method stub
