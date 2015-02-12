@@ -5,6 +5,7 @@ package graph.gui;
  import edu.uci.ics.jung.utils.Pair;*/
 import graph.ChangedFlags;
 import graph.GraphInstance;
+import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
@@ -49,9 +50,9 @@ import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Gene;
-import biologicalObjects.nodes.GraphNode;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
@@ -207,6 +208,106 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			p.add(new JLabel("Compartment"), "gap 5 ");
 			p.add(compartment, "wrap ,span 3");
+			
+		//ADDing Attributes (optional)
+			
+			// Show Database IDs
+			JTextArea dbids = new JTextArea();
+			String dbidstring = new String();
+			
+
+			p.add(new JLabel("IDs known:"), "gap 5");
+			p.add(dbids, "wrap, span 3");
+
+			// Show Experiment names and values
+			JTextArea experiments = new JTextArea();
+			String experimentstring = new String();
+//			for (int i = 0; i < gnode.getSuperNode().biodata.length; i++) {
+//				String valuestring = gnode.getSuperNode().biodataEntries[i]
+//						+ "";
+//				valuestring = (valuestring.length() > 3 ? valuestring
+//						.substring(0, 4) : valuestring);
+//
+//				experimentstring += gnode.getSuperNode().biodata[i] + ":\t"
+//						+ valuestring + "\n";
+//			}
+			
+			p.add(new JLabel("Data set:"), "gap 5");
+			p.add(experiments, "wrap, span 3");
+
+			// Show GO annotations
+			JTextArea goannoations = new JTextArea();
+			String annotationstring = new String();
+			goannoations.setEditable(false);
+			goannoations.setForeground(Color.BLUE);
+
+//			if (goentries > 0) {
+//				// biological process
+//				annotationstring += "Biological process:\n";
+//				for (int i = 0; i < gnode.getSuperNode().biologicalProcess.length; i++) {
+//					annotationstring += "   -"
+//							+ gnode.getSuperNode().biologicalProcess[i]
+//							+ "\n";
+//				}
+//				// molecular function
+//				annotationstring += "Molecular function:\n";
+//				for (int i = 0; i < gnode.getSuperNode().molecularFunction.length; i++) {
+//					annotationstring += "   -"
+//							+ gnode.getSuperNode().molecularFunction[i]
+//							+ "\n";
+//				}
+//				// cellular compartment
+//				annotationstring += "Cellular component:\n";
+//				for (int i = 0; i < gnode.getSuperNode().cellularComponent.length; i++) {
+//					annotationstring += "  -"
+//							+ gnode.getSuperNode().cellularComponent[i]
+//							+ "\n";
+//				}
+//			}
+
+
+
+			p.add(new JLabel("Gene Ontology:"), "gap 5");
+			p.add(goannoations, "wrap, span 3");
+
+			// JTextField aaSequence = new JTextField(20);
+			// aaSequence.setText(protein.getAaSequence());
+			// aaSequence.setName("protein");
+			// aaSequence.addFocusListener(pwl);
+			// p.add(new JLabel("AA-Sequence"), "gap 5 ");
+			// p.add(aaSequence, "wrap, span 3");
+			
+			String atname, atsvalue;
+			double atdvalue;
+			for(NodeAttribute att : bna.getNodeAttributes()){
+				atname = att.getName();
+				atsvalue = att.getStringvalue();
+				atdvalue = att.getDoublevalue();
+				
+				switch (att.getType()) {
+				case NodeAttributeTypes.EXPERIMENT:
+					experimentstring+=atname+":\t"+atdvalue+"\n";
+					break;
+					
+				case NodeAttributeTypes.DATABASE_ID:
+					dbidstring+=atname+":\t"+atsvalue+"\n";
+					break;
+
+				case NodeAttributeTypes.ANNOTATION:
+					annotationstring+=atname+":\t"+atsvalue+"\n";
+					
+					break;
+					
+				default:
+					break;
+				}				
+			}
+
+			experiments.setText(experimentstring);
+			dbids.setText(dbidstring);
+			goannoations.setText(annotationstring);			
+			
+			
 
 			if (ab instanceof PathwayMap) {
 				p.add(new JLabel("Linked to Pathway"), "gap 5 ");
@@ -398,84 +499,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 						maxSpeed.setEnabled(false);
 					}
 				}
-			} else if (ab instanceof GraphNode) {
-				GraphNode gnode = (GraphNode) ab;
+			} 
 
-				// Show Database IDs
-				JTextArea dbids = new JTextArea();
-				String dbidstring = new String();
-				for (DatabaseEntry dbid : gnode.getSuperNode().dbIds) {
-					dbidstring += dbid.getDatabase() + ":\t" + dbid.getId()
-							+ "\n";
-				}
-				dbids.setText(dbidstring);
-				p.add(new JLabel("IDs known:"), "gap 5");
-				p.add(dbids, "wrap, span 3");
-
-				// Show Experiment names and values
-				JTextArea experiments = new JTextArea();
-				String experimentstring = new String();
-				for (int i = 0; i < gnode.getSuperNode().biodata.length; i++) {
-					String valuestring = gnode.getSuperNode().biodataEntries[i]
-							+ "";
-					valuestring = (valuestring.length() > 3 ? valuestring
-							.substring(0, 4) : valuestring);
-
-					experimentstring += gnode.getSuperNode().biodata[i] + ":\t"
-							+ valuestring + "\n";
-				}
-				experiments.setText(experimentstring);
-				p.add(new JLabel("Data set:"), "gap 5");
-				p.add(experiments, "wrap, span 3");
-
-				// Show GO annotations
-				JTextArea goannoations = new JTextArea();
-				String annotationstring = new String();
-				goannoations.setEditable(false);
-				goannoations.setForeground(Color.BLUE);
-
-				// check if there are any entries:
-				int goentries = 0;
-				goentries = gnode.getSuperNode().biologicalProcess.length
-						+ gnode.getSuperNode().molecularFunction.length
-						+ gnode.getSuperNode().cellularComponent.length;
-
-				if (goentries > 0) {
-					// biological process
-					annotationstring += "Biological process:\n";
-					for (int i = 0; i < gnode.getSuperNode().biologicalProcess.length; i++) {
-						annotationstring += "   -"
-								+ gnode.getSuperNode().biologicalProcess[i]
-								+ "\n";
-					}
-					// molecular function
-					annotationstring += "Molecular function:\n";
-					for (int i = 0; i < gnode.getSuperNode().molecularFunction.length; i++) {
-						annotationstring += "   -"
-								+ gnode.getSuperNode().molecularFunction[i]
-								+ "\n";
-					}
-					// cellular compartment
-					annotationstring += "Cellular component:\n";
-					for (int i = 0; i < gnode.getSuperNode().cellularComponent.length; i++) {
-						annotationstring += "  -"
-								+ gnode.getSuperNode().cellularComponent[i]
-								+ "\n";
-					}
-				}
-
-				goannoations.setText(annotationstring);
-
-				p.add(new JLabel("Gene Ontology:"), "gap 5");
-				p.add(goannoations, "wrap, span 3");
-
-				// JTextField aaSequence = new JTextField(20);
-				// aaSequence.setText(protein.getAaSequence());
-				// aaSequence.setName("protein");
-				// aaSequence.addFocusListener(pwl);
-				// p.add(new JLabel("AA-Sequence"), "gap 5 ");
-				// p.add(aaSequence, "wrap, span 3");
-			}
 		} else if (ab.isEdge()) {
 			// System.out.println("edge");
 			if (ab instanceof PNEdge) {
