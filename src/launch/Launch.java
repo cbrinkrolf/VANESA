@@ -21,10 +21,12 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
-import org.jvnet.substance.skin.SubstanceMistSilverLookAndFeel;
 
 import biologicalElements.ElementNames;
 import biologicalElements.ElementNamesSingelton;
+
+import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
+
 import configurations.ConfigureLog4j;
 import configurations.ConnectionSettings;
 import configurations.ProgramFileLock;
@@ -86,7 +88,7 @@ public class Launch {
 						.get("RadioButtonMenuItemUI");
 				Object PopupMenuUI = UIManager.get("PopupMenuUI");
 
-				UIManager.setLookAndFeel(new SubstanceMistSilverLookAndFeel());
+				UIManager.setLookAndFeel(new AluminiumLookAndFeel());
 				UIManager.put("MenuBarUI", MenuBarUI);
 				UIManager.put("MenuUI", MenuUI);
 				UIManager.put("MenuItemUI", MenuItemUI);
@@ -94,7 +96,7 @@ public class Launch {
 				UIManager.put("RadioButtonMenuItemUI", RadioButtonMenuItemUI);
 				UIManager.put("PopupMenuUI", PopupMenuUI);
 			} else {
-				UIManager.setLookAndFeel(new SubstanceMistSilverLookAndFeel());
+				UIManager.setLookAndFeel(new AluminiumLookAndFeel());
 			}
 
 		} catch (Exception e) {
