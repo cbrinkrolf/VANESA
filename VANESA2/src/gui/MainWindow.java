@@ -84,9 +84,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public int getSelectedView(){
 		return selectedView;
 	}
-	
-	//MARTIN static Datenbank switcher
-	public static boolean useOldDB = false;
 
 	public ToolBar getBar() {
 		return bar;

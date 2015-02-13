@@ -79,55 +79,26 @@ public class PPIqueries {
 		"INNER JOIN intact_entries m3 ON m3.id=mi.participant_B " +
 		"where m.id=?;";
 	
-	//////////////////////
-	// HPRD queries
-	
-	public static String hprd_resultForACnumber = 
-		"SELECT main_name, geneSymbol, swissprot_id, HPRD_ID " +
-		"FROM hprd_hprd_id_mapping h " +
-		"WHERE h.swissprot_id=?";
-	
-	public static final String hprd_resultForName =
-		"SELECT main_name, geneSymbol, swissprot_id, HPRD_ID " +
-		"FROM hprd_hprd_id_mapping h " +
-		"WHERE h.main_name LIKE ?;";
-
-	public static String hprd_resultForAlias = 
-		"SELECT main_name, geneSymbol, swissprot_id, HPRD_ID " +
-		"FROM hprd_hprd_id_mapping h " +
-		"WHERE h.geneSymbol LIKE ?";
-	
-	public static String hprd_interactionsForID =
-		"SELECT DISTINCT h1.HPRD_ID, h1.geneSymbol, h1.main_name, ps1.seqeunce , " +
-		"h2.HPRD_ID , h2.geneSymbol, h2.main_name, ps2.seqeunce " +
-		"FROM hprd_hprd_id_mapping h1 " +
-		"INNER JOIN hprd_protein_sequences ps1 ON h1.HPRD_ID=ps1.HPRD_ID " +
-		"LEFT OUTER JOIN hprd_protein_protein_ref ppr ON ppr.interactor_1_hprd_id=h1.HPRD_ID " +
-		"INNER JOIN hprd_hprd_id_mapping h2 ON ppr.interactor_2_hprd_id=h2.HPRD_ID " +
-		"INNER JOIN hprd_protein_sequences ps2 ON ps2.HPRD_ID=h2.HPRD_ID " +
-		"WHERE h1.HPRD_ID=? OR h2.HPRD_ID=?;";
-	
-	//MARTIN neue DB queries, suffix: _new (solange die alte noch aktiv bleibt)
 		//////////////////////
 		// HPRD queries
 		
-	public static String hprd_resultForACnumber_new = 
+	public static final String hprd_resultForACnumber = 
 		"SELECT main_name, gene_symbol, protein_accession, hprd_id " +
 		"FROM hprd_id_mappings h " +
 		"WHERE h.protein_accession=?";	
 	//done,tested?
 		
-	public static final String hprd_resultForName_new =
+	public static final String hprd_resultForName =
 		"SELECT main_name, gene_symbol, protein_accession, hprd_id " +
 		"FROM hprd_id_mappings h " +
 		"WHERE h.main_name LIKE ?;";
 		
-	public static String hprd_resultForAlias_new = 
+	public static final String hprd_resultForAlias = 
 		"SELECT main_name, gene_symbol, protein_accession, hprd_id " +
 		"FROM hprd_id_mappings h " +
 		"WHERE h.gene_symbol LIKE ?";
 		
-	public static String hprd_interactionsForID_new =
+	public static final String hprd_interactionsForID =
 		"SELECT DISTINCT h1.hprd_id, h1.gene_symbol, h1.main_name, ps1.protein_seq , " +
 		"h2.hprd_id , h2.gene_symbol, h2.main_name, ps2.protein_seq " +
 		"FROM hprd_id_mappings h1 " +
