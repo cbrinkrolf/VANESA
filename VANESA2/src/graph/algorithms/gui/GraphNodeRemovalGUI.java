@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -59,8 +58,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 	private BiologicalNodeAbstract bna;
 	private SpinnerNumberModel modelremovenodesfrom;
 	private SpinnerNumberModel modelremovenodesto;
-
-	private TitledTab tab;
 
 	public GraphNodeRemovalGUI() {
 
@@ -142,13 +139,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 	public JPanel getPanel() {
 		p.setVisible(false);
 		return p;
-	}
-
-	public TitledTab getTitledTab() {
-
-		tab = new TitledTab("Node Removal", null, p, null);
-
-		return tab;
 	}
 
 	private void resetRemovalInterface() {

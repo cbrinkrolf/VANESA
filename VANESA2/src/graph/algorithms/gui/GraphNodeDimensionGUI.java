@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -49,8 +48,6 @@ public class GraphNodeDimensionGUI implements ActionListener {
 	private double minvalue, maxvalue, currentvalue;
 	private JButton resizebutton;
 
-	private TitledTab tab;
-	
 	public GraphNodeDimensionGUI() {
 
 	}
@@ -120,14 +117,6 @@ public class GraphNodeDimensionGUI implements ActionListener {
 		return p;
 	}
 
-	public TitledTab getTitledTab() {
-
-		tab = new TitledTab("Node Weighting", null, p, null);
-
-		return tab;
-	}
-	
-	
 	private void getNodeDegreeRatings() {
 		c = new NetworkProperties();
 		itn = c.getPathway().getAllNodes().iterator();

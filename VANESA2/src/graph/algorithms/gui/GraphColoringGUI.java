@@ -35,7 +35,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
@@ -81,8 +80,6 @@ public class GraphColoringGUI implements ActionListener {
 	private Iterator<BiologicalNodeAbstract> itn;
 	private Hashtable<BiologicalNodeAbstract, Double> coloring;
 	private BiologicalNodeAbstract bna;
-
-	private TitledTab tab;
 
 	private final Color greynodecolor = new Color(-4144960);
 
@@ -634,13 +631,6 @@ public class GraphColoringGUI implements ActionListener {
 	public JPanel getPanel() {
 		p.setVisible(false);
 		return p;
-	}
-
-	public TitledTab getTitledTab() {
-
-		tab = new TitledTab("Coloring", null, p, null);
-
-		return tab;
 	}
 
 	public void returnComputeData(HashSet<HashSet<Integer>> sets, int jobtype) {
