@@ -24,7 +24,7 @@ public class GraphAlgorithmsWindow {
 	private GraphColoringGUI coloredgraph = new GraphColoringGUI();
 	private GraphNodeRemovalGUI noderemoval = new GraphNodeRemovalGUI();
 	private GraphNodeDimensionGUI nodeweight = new GraphNodeDimensionGUI();
-	private DenselyConnectedBiclusteringGUI denselyConnected = new DenselyConnectedBiclusteringGUI();
+//	private DenselyConnectedBiclusteringGUI denselyConnected = new DenselyConnectedBiclusteringGUI();
 
 	public GraphAlgorithmsWindow() {
 
@@ -41,7 +41,7 @@ public class GraphAlgorithmsWindow {
 		tabbedPanel.addTab(nodeweight.getTitledTab());
 		tabbedPanel.addTab(noderemoval.getTitledTab());
 		tabbedPanel.addTab(shortestPath.getTitledTab());
-		tabbedPanel.addTab(denselyConnected.getTitledTab());
+//		tabbedPanel.addTab(denselyConnected.getTitledTab());
 
 	}
 
@@ -55,7 +55,7 @@ public class GraphAlgorithmsWindow {
 		nodeweight.revalidateView();
 		noderemoval.revalidateView();
 		shortestPath.revalidateView();
-		denselyConnected.revalidateView();
+//		denselyConnected.revalidateView();
 
 		p.setVisible(true);
 		p.repaint();
