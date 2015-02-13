@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,7 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import net.miginfocom.swing.MigLayout;
-
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -52,6 +52,7 @@ public class NetworkProperties extends Object {
 	int nodej[];
 
 	int adjacency[][];
+	int distances[][];
 	int nodedepths[];
 	int maxpath;
 	boolean nodemarked[];
@@ -735,28 +736,67 @@ public class NetworkProperties extends Object {
 		}
 	}
 
-	public void AllPairShortestPaths(boolean writeToFile) {
+	public int[][] AllPairShortestPaths(boolean writeToFile) {
 
+		distances = new int[nodes][nodes];		
+		int i, j, k;	
+			
+		
+		
+		
 		// FloydWarshall
-		// initialize adjacency matrix
-		int i, j;
+		// initialize distance matrix
+
 		for (i = 0; i < nodes; i++) {
-			for (j = 0; j < nodes; j++) {
-				if (i == j)
+			for (j = 0; j < nodes; j++) {	
+				if(i == j)
 					continue;
-				else {
-					adjacency[i][j] = (adjacency[i][j] == 1 ? 1
-							: Integer.MAX_VALUE);
-				}
+				if(adjacency[i][j] == 0)				
+					distances[i][j] = nodes;
+				else
+					distances[i][j] = adjacency[i][j];
 			}
 		}
 
+//		//DEBUG
+//		for (i = 0; i < nodes; i++) {
+//			for (j = 0; j < nodes; j++) {
+//					System.out.print(distances[i][j]);
+//			}
+//			System.out.println();
+//		}		
+		
+		int dist;
 		// run the floyd warshall
 		for (i = 0; i < nodes; i++) {
 			for (j = 0; j < nodes; j++) {
-
+				for (k = 0; k < nodes; k++) {
+					dist = distances[i][k]+distances[k][j];
+					if(distances[i][j] > dist){
+						distances[i][j] = dist;						
+					}
+				}
 			}
 		}
+		
+//		TreeSet<String> notconnected = new TreeSet<>();
+//		
+//		//DEBUG
+//		for (i = 0; i < nodes; i++) {
+//			for (j = 0; j < nodes; j++) {
+//					if(distances[i][j] == nodes)
+//						notconnected.add(nodeassignsback.get(i).getLabel()
+//								+"-"+
+//								nodeassignsback.get(j).getLabel());
+//					System.out.print(distances[i][j]);
+//			}
+//			System.out.println();
+//		}
+//		
+//		
+//		System.out.println(notconnected.toString());
+		
+		
 
 		// write to File
 		if (writeToFile)
@@ -767,9 +807,9 @@ public class NetworkProperties extends Object {
 				for (i = 0; i < nodes; i++) {
 					for (j = 0; j < nodes; j++) {
 						if (j == nodes - 1)
-							out.write(adjacency[i][j] + "");
+							out.write(distances[i][j] + "");
 						else
-							out.write(adjacency[i][j] + "\t");
+							out.write(distances[i][j] + "\t");
 					}
 					out.write("\n");
 				}
@@ -780,6 +820,8 @@ public class NetworkProperties extends Object {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		
+		return distances;
 	}
 
 	public void removeGreyNodes() {
