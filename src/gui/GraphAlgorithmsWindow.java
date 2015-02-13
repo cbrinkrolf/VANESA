@@ -6,18 +6,15 @@ import graph.algorithms.gui.GraphNodeRemovalGUI;
 import graph.algorithms.gui.GraphNodeDimensionGUI;
 import graph.algorithms.gui.ShortestPathGui;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
-import net.infonode.tabbedpanel.TabDropDownListVisiblePolicy;
-import net.infonode.tabbedpanel.TabbedPanel;
-import net.infonode.util.Direction;
+import net.miginfocom.swing.MigLayout;
 
 public class GraphAlgorithmsWindow {
 
-	private TabbedPanel tabbedPanel;
-	private JPanel p = new JPanel();
+	private JTabbedPane tabbedPanel;
+	private JPanel p = new JPanel(new MigLayout("ins 0, wrap 1"));
 	boolean emptyPane = true;
 
 	private ShortestPathGui shortestPath = new ShortestPathGui();
@@ -28,27 +25,44 @@ public class GraphAlgorithmsWindow {
 
 	public GraphAlgorithmsWindow() {
 
-		tabbedPanel = new TabbedPanel();
-		tabbedPanel.getProperties().setTabAreaOrientation(Direction.UP);
-		tabbedPanel.getProperties().setEnsureSelectedTabVisible(true);
-		tabbedPanel.getProperties().setHighlightPressedTab(true);
-		tabbedPanel.getProperties().setTabReorderEnabled(false);
-		tabbedPanel.getProperties().setTabDropDownListVisiblePolicy(
-				TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE);
+		
+		tabbedPanel = new JTabbedPane();
+		//tabbedPanel.getProperties().setTabAreaOrientation(Direction.UP);
+		//tabbedPanel.getProperties().setEnsureSelectedTabVisible(true);
+		//tabbedPanel.getProperties().setHighlightPressedTab(true);
+		//tabbedPanel.getProperties().setTabReorderEnabled(false);
+		//tabbedPanel.getProperties().setTabDropDownListVisiblePolicy(
+		//		TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE);
 		
 		//Martin
-		tabbedPanel.addTab(coloredgraph.getTitledTab());
-		tabbedPanel.addTab(nodeweight.getTitledTab());
-		tabbedPanel.addTab(noderemoval.getTitledTab());
-		tabbedPanel.addTab(shortestPath.getTitledTab());
-//		tabbedPanel.addTab(denselyConnected.getTitledTab());
+		tabbedPanel.addTab("Coloring", coloredgraph.getPanel());
+		//JPanel p = new JPanel(new MigLayout("ins 0"));
+		//p.add(new JLabel("Coloring"));
+		//tabbedPanel.setTabComponentAt(0, p);
+		
+		tabbedPanel.addTab("Node Weighting", nodeweight.getPanel());
+		//JPanel p1 = new JPanel(new MigLayout("ins 0"));
+		//p1.add(new JLabel("Node Weighting"));
+		//tabbedPanel.setTabComponentAt(1, p1);
+		
+		tabbedPanel.addTab("Node Removal", noderemoval.getPanel());
+		//JPanel p2 = new JPanel(new MigLayout("ins 0"));
+		//p2.add(new JLabel("Node Removal"));
+		//tabbedPanel.setTabComponentAt(2, p2);
+		
+		tabbedPanel.addTab("Shortest Path", shortestPath.getPanel());
+		//JPanel p3 = new JPanel(new MigLayout("ins 0"));
+		//p3.add(new JLabel("Shortest Path"));
+		//tabbedPanel.setTabComponentAt(3, p3);
+		
+//		tabbedPanel.addTab("DCB", denselyConnected.getPanel());
 
 	}
 
 	public void revalidateView() {
 
 		if (emptyPane) {
-			p.add(tabbedPanel, BorderLayout.CENTER);
+			p.add(tabbedPanel);//, BorderLayout.CENTER);
 			emptyPane = false;
 		}
 		coloredgraph.revalidateView();
