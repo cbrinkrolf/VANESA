@@ -33,8 +33,8 @@ import javax.swing.SwingUtilities;
 import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import biologicalObjects.nodes.DNA;
-import biologicalObjects.nodes.GraphNode;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
 
@@ -197,26 +197,24 @@ public class DenselyConnectedBiclustering {
 		
 		boolean experimentsIsSet = false;
 		HashSet<String> experiments = null;
-		GraphNode graphNode;
-		
+		BiologicalNodeAbstract graphNode;
+		HashSet<NodeAttribute> nodeatts;
 		
 
+		
 		if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE_NR){
 			for(BiologicalNodeAbstract vertex : mg.getAllVertices()){
-				if(vertex instanceof GraphNode){
 					if(!experimentsIsSet){
 						experiments = setExperiments();
 						experimentsIsSet = true;
 					}
-					graphNode = (GraphNode) vertex;
+					graphNode = vertex;
 					
-					@SuppressWarnings("unchecked")
-					List<String> biodata = Arrays.asList(graphNode.getSuperNode().biodata);
+					nodeatts = graphNode.getNodeAttributesByType(NodeAttributeTypes.EXPERIMENT);
+					ArrayList<String> biodata = new ArrayList<>();
 					if(biodata.containsAll(experiments)){
 						allVertices.add(vertex);
 					}
-					
-				}
 			}
 		}else if(nodeType == DenselyConnectedBiclusteringGUI.TYPE_DNA_NR){
 			for(BiologicalNodeAbstract vertex : mg.getAllVertices()){
@@ -415,15 +413,15 @@ public class DenselyConnectedBiclustering {
 				        }
 			            break;
 			        case DenselyConnectedBiclusteringGUI.TYPE_GRAPHNODE:
-			        	GraphNode graphNode = (GraphNode) vertex;
-			        	if(experimentNames == null){
-			        		experimentNames = new ArrayList<String>();
-			        		for(int j = 0; j < graphNode.getSuperNode().biodata.length; j++){
-			        			experimentNames.add(graphNode.getSuperNode().biodata[j]);
-			        		}
-			        	}
-
-			        	valuesArray[z].add(graphNode.getSuperNode().biodataEntries[experimentNames.indexOf(item)]);
+			        	BiologicalNodeAbstract graphNode;
+//			        	if(experimentNames == null){
+//			        		experimentNames = new ArrayList<String>();
+//			        		for(int j = 0; j < graphNode.getSuperNode().biodata.length; j++){
+//			        			experimentNames.add(graphNode.getSuperNode().biodata[j]);
+//			        		}
+//			        	}
+//
+//			        	valuesArray[z].add(graphNode.getSuperNode().biodataEntries[experimentNames.indexOf(item)]);
 			        	
 			        	
 			            break;

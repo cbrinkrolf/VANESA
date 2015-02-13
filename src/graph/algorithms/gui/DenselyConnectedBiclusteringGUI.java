@@ -55,7 +55,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
-import biologicalObjects.nodes.GraphNode;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
 
@@ -779,40 +778,40 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	 * 
 	 */
 	private void setAttrTypes() {
-		attrTypes = new ArrayList<String>();
-		experiments = new ArrayList<String>();
-
-		
-		attrTypes.add("Graph characteristic");
-		GraphNode graphNode;
-		String expermientName;
-		
-		for(BiologicalNodeAbstract node : graphInstance.getPathway().getAllNodes()){
-			if(node instanceof GraphNode){
-				if(!attrTypes.contains(TYPE_GRAPHNODE)){
-					attrTypes.add(TYPE_GRAPHNODE);
-				}
-				graphNode = (GraphNode) node;
-				
-				for (int i = 0; i < graphNode.getSuperNode().biodata.length; i++) {
-					expermientName = graphNode.getSuperNode().biodata[i];
-					if(!experiments.contains(expermientName)){
-						experiments.add(expermientName);
-					}
-				}
-
-			}else if((node instanceof DNA) && !attrTypes.contains(TYPE_DNA)){
-				attrTypes.add(TYPE_DNA);
-
-			}else if((node instanceof Protein) && !attrTypes.contains(TYPE_PROTEIN)){
-				attrTypes.add(TYPE_PROTEIN);
-
-			}else if((node instanceof RNA) && !attrTypes.contains(TYPE_RNA)){
-				attrTypes.add(TYPE_RNA);
-
-			}
-			
-		}
+//		attrTypes = new ArrayList<String>();
+//		experiments = new ArrayList<String>();
+//
+//		
+//		attrTypes.add("Graph characteristic");
+//		GraphNode graphNode;
+//		String expermientName;
+//		
+//		for(BiologicalNodeAbstract node : graphInstance.getPathway().getAllNodes()){
+//			if(node instanceof GraphNode){
+//				if(!attrTypes.contains(TYPE_GRAPHNODE)){
+//					attrTypes.add(TYPE_GRAPHNODE);
+//				}
+//				graphNode = (GraphNode) node;
+//				
+//				for (int i = 0; i < graphNode.getSuperNode().biodata.length; i++) {
+//					expermientName = graphNode.getSuperNode().biodata[i];
+//					if(!experiments.contains(expermientName)){
+//						experiments.add(expermientName);
+//					}
+//				}
+//
+//			}else if((node instanceof DNA) && !attrTypes.contains(TYPE_DNA)){
+//				attrTypes.add(TYPE_DNA);
+//
+//			}else if((node instanceof Protein) && !attrTypes.contains(TYPE_PROTEIN)){
+//				attrTypes.add(TYPE_PROTEIN);
+//
+//			}else if((node instanceof RNA) && !attrTypes.contains(TYPE_RNA)){
+//				attrTypes.add(TYPE_RNA);
+//
+//			}
+//			
+//		}
 		
 	}
 

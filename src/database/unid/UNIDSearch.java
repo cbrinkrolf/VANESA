@@ -23,7 +23,6 @@ import javax.swing.SwingWorker;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.GraphNode;
 import biologicalObjects.nodes.Protein;
 import cluster.IJobServer;
 import cluster.SearchCallback;
