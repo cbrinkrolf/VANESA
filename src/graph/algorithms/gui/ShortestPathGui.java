@@ -19,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
@@ -36,7 +35,6 @@ public class ShortestPathGui implements ActionListener {
 	private JComboBox<String> ToBox = new JComboBox<String>();
 	private JCheckBox mindMaps = new JCheckBox("avoid pathway maps");
 	private Hashtable<String, BiologicalNodeAbstract> table = new Hashtable<String, BiologicalNodeAbstract>();
-	private TitledTab tab;
 
 	private JButton calculate;
 
@@ -127,8 +125,8 @@ public class ShortestPathGui implements ActionListener {
 			// p.setVisible(true);
 
 		}
-		tab.repaint();
-		tab.revalidate();
+		//tab.repaint();
+		//tab.revalidate();
 	}
 
 	public void removeAllElements() {
@@ -163,12 +161,4 @@ public class ShortestPathGui implements ActionListener {
 		}
 	}
 
-	/*
-	 * 
-	 */
-	public TitledTab getTitledTab() {
-
-		tab = new TitledTab("Shortest Path", null, getPanel(), null);
-		return tab;
-	}
 }

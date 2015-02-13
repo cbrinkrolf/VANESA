@@ -47,7 +47,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.InternalGraphRepresentation;
@@ -64,7 +63,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	GraphElementAbstract ab;
 	GraphInstance graphInstance;
 	boolean emptyPane = true;
-	private TitledTab tab;
 
 	private JButton calculate, applyNum, file, clear, back, forward;
 	private JPanel propertypanel, clusterpanel, densitypanel, attrdimpanel, attrnumpanel, attrpanel,
@@ -281,8 +279,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			p.setVisible(true);
 
 		}
-		tab.repaint();
-		tab.revalidate();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -580,9 +576,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			p.add(clusterpanel);
 
 			
-			tab.repaint();
-			tab.revalidate();
-
 			switch (choosePresentation.getSelectedIndex()) {
 			case 0: // "size"
 				HashMap<BiologicalNodeAbstract, Double> sizes = new HashMap<BiologicalNodeAbstract, Double>();
@@ -741,15 +734,11 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			p.add(propertypanel);
 			forward.setVisible(true);
 
-			tab.repaint();
-			tab.revalidate();
 		}
 		if("forward".equals(event)){
 			p.removeAll();
 			p.add(clusterpanel);
 
-			tab.repaint();
-			tab.revalidate();
 		}
 	}
 
@@ -912,12 +901,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 
 	}
 
-	public TitledTab getTitledTab() {
-
-		tab = new TitledTab("DCB", null, getPanel(), null);
-		return tab;
-	}
-	
 	private Color sumColors(Color color1, Color color2){
 		
 		Color result = new Color(color1.getRGB()+color2.getRGB());
