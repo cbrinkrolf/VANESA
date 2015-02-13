@@ -33,8 +33,7 @@ public class MenuBarClass {
 	//private JMenuItem centerGraph;
 	private JMenuItem databaseItem;
 	
-	//MARTIN db Switcher
-	public JMenuItem dbSwitcher;
+
 	// JMenuItem keggItem;
 	// JMenuItem brendaItem;
 	// JMenuItem dawisItem;
@@ -249,11 +248,7 @@ public class MenuBarClass {
 		databaseItem = new JMenuItem("Database Connection");
 		databaseItem.addActionListener(new MenuListener());
 		databaseItem.setActionCommand("database settings");
-		
-		//MARTIN DB Switcher
-		dbSwitcher = new JMenuItem("Switch DB-Version(new)");
-		dbSwitcher.addActionListener(new MenuListener());
-		dbSwitcher.setActionCommand("switch db version");
+
 
 		// keggItem = new JMenuItem("KEGG Connection");
 		// keggItem.addActionListener(new MenuListener());
@@ -363,7 +358,6 @@ public class MenuBarClass {
 		settings.add(internet);
 		settings.add(graphAlignment);
 		settings.add(graphSettings);
-		settings.add(dbSwitcher);
 
 		// snapshot.add(savePicture);
 		// snapshot.add(printPicture);

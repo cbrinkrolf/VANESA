@@ -942,29 +942,6 @@ public class MenuListener implements ActionListener {
 			// Tansformation.resolveReferences(pw);
 			// pw = old;
 
-		}
-		// MARTIN db switcher
-		else if ("switch db version".equals(event)) {
-			// DO switching stuff
-			MainWindow m = MainWindowSingleton.getInstance();
-
-			MainWindow.useOldDB = !MainWindow.useOldDB;
-			String switchertext = m.getmyMenu().dbSwitcher.getText();
-
-			if (MainWindow.useOldDB) {
-				System.out.println("using old DB: dawis_md");
-				ConnectionSettings.getDBConnection().setDawisDBName("dawis_md");
-				ConnectionSettings.getDBConnection().setDatabase("dawis_md");
-				m.getmyMenu().dbSwitcher.setText(switchertext.replaceAll("new",
-						"old"));
-			} else {
-				System.out.println("using new DB: dawismd");
-				ConnectionSettings.getDBConnection().setDawisDBName("dawismd");
-				ConnectionSettings.getDBConnection().setDatabase("dawismd");
-				m.getmyMenu().dbSwitcher.setText(switchertext.replaceAll("old",
-						"new"));
-			}
-
 		} else if ("createDoc".equals(event)) {
 			new PNDoc();
 		}else if ("mirnaTest".equals(event)) {
