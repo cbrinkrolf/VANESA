@@ -1459,6 +1459,21 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		}
 		return false;
 	}
+	
+	/**
+	 * 
+	 * @param nodeAttributeType
+	 * @return Attributes of the node with given type, if none exist it returns empty.
+	 */
+	public HashSet<NodeAttribute> getNodeAttributesByType(int nodeAttributeType){
+		HashSet<NodeAttribute> returnlist = new HashSet<>(nodeAttributes.size());
+		for(NodeAttribute na : nodeAttributes){
+			if(na.getType() == nodeAttributeType)
+				returnlist.add(na);
+		}
+		return returnlist;
+	}
+	
 
 	
 	/**
