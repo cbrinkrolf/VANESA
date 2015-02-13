@@ -22,6 +22,9 @@ public class InfoWindow {
 
 		NetworkProperties cs = new NetworkProperties();
 
+//		cs.AllPairShortestPaths(true);	
+		
+		
 		nodes = cs.getNodeCount();
 		edges = cs.getEdgeCount();
 		density = cs.getDensity();
@@ -90,10 +93,14 @@ public class InfoWindow {
 		// cs.getAdjacencyMatrix(), cs);
 		// endTime("Cluster cycles");
 
-		// cs.removeGreyNodes();
+//		 cs.removeGreyNodes();
 		// startTime();
 		// GPUSocketClient l = new GPUSocketClient();
 		// endTime("GPU APSP");
+		
+	
+		
+		
 
 	}
 
