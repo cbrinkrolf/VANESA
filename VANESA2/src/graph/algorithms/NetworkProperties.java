@@ -51,8 +51,8 @@ public class NetworkProperties extends Object {
 	int nodei[];
 	int nodej[];
 
-	int adjacency[][];
-	int distances[][];
+	short adjacency[][];
+	short distances[][];
 	int nodedepths[];
 	int maxpath;
 	boolean nodemarked[];
@@ -78,7 +78,7 @@ public class NetworkProperties extends Object {
 		nodei = new int[edges + 1];
 		nodej = new int[edges + 1];
 
-		adjacency = new int[nodes][nodes];
+		adjacency = new short[nodes][nodes];
 
 		// Induce mapping to local adjacency matrix and data structures (BNA.ID)
 		Iterator<BiologicalNodeAbstract> it = mg.getAllVertices().iterator();
@@ -103,7 +103,7 @@ public class NetworkProperties extends Object {
 		nodei = new int[edges + 1];
 		nodej = new int[edges + 1];
 
-		adjacency = new int[nodes][nodes];
+		adjacency = new short[nodes][nodes];
 
 		// Induce mapping to local adjacency matrix and data structures (BNA.ID)
 		Iterator<BiologicalNodeAbstract> it = mg.getAllVertices().iterator();
@@ -171,7 +171,7 @@ public class NetworkProperties extends Object {
 
 	}
 
-	public int[][] getAdjacencyMatrix() {
+	public short[][] getAdjacencyMatrix() {
 		return adjacency;
 	}
 
@@ -737,9 +737,9 @@ public class NetworkProperties extends Object {
 		}
 	}
 
-	public int[][] AllPairShortestPaths(boolean writeToFile) {
+	public short[][] AllPairShortestPaths(boolean writeToFile) {
 
-		distances = new int[nodes][nodes];		
+		distances = new short[nodes][nodes];		
 		int i, j, k;		
 		
 		// FloydWarshall
@@ -751,18 +751,18 @@ public class NetworkProperties extends Object {
 					distances[i][j] = 0;
 				else 
 					if(adjacency[i][j] == 0)				
-					distances[i][j] = nodes;
+					distances[i][j] = Short.MAX_VALUE/2;
 				else
 					distances[i][j] = adjacency[i][j];
 			}
 		}
 
-		int dist;
+		short dist;
 		// run the floyd warshall
 		for (k = 0; k < nodes; k++) {
 			for (i = 0; i < nodes; i++) {
 				for (j = 0; j < nodes; j++) {				
-					dist = distances[i][k]+distances[k][j];
+					dist = (short) (distances[i][k]+distances[k][j]);
 					if(distances[i][j] > dist){
 						distances[i][j] = dist;						
 					}

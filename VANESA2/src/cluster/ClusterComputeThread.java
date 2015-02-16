@@ -26,7 +26,7 @@ public class ClusterComputeThread extends Thread {
 
 	private Hashtable<Integer, Double> resulttable;
 	private HashSet<HashSet<Integer>> resultset;
-	private int[][] shortestdistances, adjmatrix;
+	private short[][] shortestdistances, adjmatrix;
 	private int[] edgearray, nodearray;
 	private int nodes;
 	private int job;
@@ -155,7 +155,7 @@ public class ClusterComputeThread extends Thread {
 		this.nodes = nodes;
 	}
 
-	public void setAdjMatrix(int adjmatrix[][]) {
+	public void setAdjMatrix(short adjmatrix[][]) {
 		this.adjmatrix = adjmatrix;
 	}
 
