@@ -20,7 +20,7 @@ public interface IJobServer extends Remote {
          * @return true if job could be queued, false if queue is full.
          * @throws RemoteException
          */
-        public boolean submitJob(int jobType, int[][] adjmatrix, IComputeCallback helper) throws RemoteException;
+        public boolean submitJob(int jobType, short[][] adjmatrix, IComputeCallback helper) throws RemoteException;
 
         /**
          * submit job method for adjacency lists
