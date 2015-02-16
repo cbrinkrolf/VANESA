@@ -87,6 +87,7 @@ public class NetworkProperties extends Object {
 			reassignNodeBNA(bna);
 		}
 
+
 		fillAdjacencyData();
 		countNodeDegrees();
 
@@ -739,10 +740,7 @@ public class NetworkProperties extends Object {
 	public int[][] AllPairShortestPaths(boolean writeToFile) {
 
 		distances = new int[nodes][nodes];		
-		int i, j, k;	
-			
-		
-		
+		int i, j, k;		
 		
 		// FloydWarshall
 		// initialize distance matrix
@@ -750,27 +748,20 @@ public class NetworkProperties extends Object {
 		for (i = 0; i < nodes; i++) {
 			for (j = 0; j < nodes; j++) {	
 				if(i == j)
-					continue;
-				if(adjacency[i][j] == 0)				
+					distances[i][j] = 0;
+				else 
+					if(adjacency[i][j] == 0)				
 					distances[i][j] = nodes;
 				else
 					distances[i][j] = adjacency[i][j];
 			}
 		}
 
-//		//DEBUG
-//		for (i = 0; i < nodes; i++) {
-//			for (j = 0; j < nodes; j++) {
-//					System.out.print(distances[i][j]);
-//			}
-//			System.out.println();
-//		}		
-		
 		int dist;
 		// run the floyd warshall
-		for (i = 0; i < nodes; i++) {
-			for (j = 0; j < nodes; j++) {
-				for (k = 0; k < nodes; k++) {
+		for (k = 0; k < nodes; k++) {
+			for (i = 0; i < nodes; i++) {
+				for (j = 0; j < nodes; j++) {				
 					dist = distances[i][k]+distances[k][j];
 					if(distances[i][j] > dist){
 						distances[i][j] = dist;						
@@ -778,25 +769,6 @@ public class NetworkProperties extends Object {
 				}
 			}
 		}
-		
-//		TreeSet<String> notconnected = new TreeSet<>();
-//		
-//		//DEBUG
-//		for (i = 0; i < nodes; i++) {
-//			for (j = 0; j < nodes; j++) {
-//					if(distances[i][j] == nodes)
-//						notconnected.add(nodeassignsback.get(i).getLabel()
-//								+"-"+
-//								nodeassignsback.get(j).getLabel());
-//					System.out.print(distances[i][j]);
-//			}
-//			System.out.println();
-//		}
-//		
-//		
-//		System.out.println(notconnected.toString());
-		
-		
 
 		// write to File
 		if (writeToFile)
