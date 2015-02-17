@@ -360,6 +360,8 @@ public class MyGraph {
 				}
 			}
 		};
+		
+		pr.setVertexIconTransformer(vertexIconTransformer);
 
 		makeDefaultObjectVisualization();
 
