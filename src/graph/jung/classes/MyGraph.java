@@ -467,7 +467,7 @@ public class MyGraph {
 	// }
 
 	public void restartVisualizationModel() {
-
+		pathway.updateMyGraph();
 		// vv.getModel().restart();
 	}
 

@@ -495,7 +495,6 @@ public class Pathway implements Cloneable {
 				BiologicalNodeAbstract.addConnectingEdge(bea);
 			}
 			this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
-			getRootPathway().updateMyGraph();
 			return bea;
 		} else
 			try {
