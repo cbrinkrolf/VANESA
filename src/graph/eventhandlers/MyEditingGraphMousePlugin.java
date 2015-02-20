@@ -425,6 +425,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 			edgeIsDirected = false;
 			vv.removePostRenderPaintable(edgePaintable);
 			vv.removePostRenderPaintable(arrowPaintable);
+			pw.updateMyGraph();
 		}
 	}
 
