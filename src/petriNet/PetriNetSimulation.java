@@ -374,13 +374,16 @@ public class PetriNetSimulation implements ActionListener {
 					Iterator<BiologicalNodeAbstract> it = graphInstance
 							.getPathway().getAllNodes().iterator();
 					BiologicalNodeAbstract bna;
+					int vars = 0;
 					while (it.hasNext()) {
 						bna = it.next();
-						if (bna instanceof Place) {
+						if (bna instanceof Place && !bna.hasRef()) {
 							filter += "'" + bna.getName() + "'.t|";
+							vars++;
 						} else if (bna instanceof Transition) {
 							filter += "'" + bna.getName() + "'.fire|";
 							filter += "'" + bna.getName() + "'.actualSpeed|";
+							vars+=2;
 						}
 					}
 
@@ -389,27 +392,31 @@ public class PetriNetSimulation implements ActionListener {
 					while (it2.hasNext()) {
 						s = it2.next();
 						filter += s + "|";
-						filter += "der(" + s + ")|";
+						filter += "der\\\\(" + s + "\\\\)|";
+						vars+=2;
 					}
+					filter = filter.replace("[", "\\\\[");
+					filter = filter.replace("]", "\\\\]");
 					filter = filter.substring(0, filter.length()-1);
 					filter += "\"";
-					//System.out.println("Filter: "+filter);
+					System.out.println("Filter: "+filter);
+					System.out.println("vars: "+vars);
 					FileWriter fstream = new FileWriter(pathSim
 							+ "simulation.mos");
 					BufferedWriter out = new BufferedWriter(fstream);
 					pathSim = pathSim.replace('\\', '/');
-					out.write("cd(\"" + pathSim + "\");\r\n");
+					out.write("cd(\"" + pathSim + "\"); ");
 					out.write("getErrorString();\r\n");
-					out.write("loadFile(\"../PNlib.mo\");\r\n");
+					out.write("loadFile(\"../PNlib.mo\"); ");
 					out.write("getErrorString();\r\n");
-					out.write("loadFile(\"simulation.mo\");\r\n");
+					out.write("loadFile(\"simulation.mo\"); ");
 					out.write("getErrorString();\r\n");
-					out.write("setDebugFlags(\"disableComSubExp\");\r\n");
+					out.write("setDebugFlags(\"disableComSubExp\"); ");
 					out.write("getErrorString();\r\n");
 					
 					//CHRIS improve / correct filter
-					//out.write("buildModel(simulation, " + filter + ");\r\n");
-					out.write("buildModel(simulation);\r\n");
+					out.write("buildModel(simulation, " + filter + ");\r\n");
+					//out.write("buildModel(simulation);\r\n");
 					out.write("getErrorString();\r\n");
 
 					// out.write("fileName=\"simulate.mat\";\r\n");

@@ -161,7 +161,7 @@ public class Server {
 		System.out.println("Headers: " + names.size());
 		counter = 0;
 		for (int i = 0; i < names.size(); i++) {
-			//System.out.print(names.get(i) + "\t");
+			System.out.print(names.get(i) + "\t");
 			counter += names.get(i).length();
 		}
 		System.out.println("sum: " + counter);
