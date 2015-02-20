@@ -29,6 +29,7 @@ import gui.AboutWindow;
 import gui.InfoWindow;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
+import io.EdalSaveDialog;
 import io.OpenDialog;
 import io.PNDoc;
 import io.SaveDialog;
@@ -201,6 +202,20 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog(SaveDialog.FORMAT_SBML);
+				} else {
+					JOptionPane.showMessageDialog(w,
+							"Please create a network before.");
+				}
+			} else {
+				JOptionPane.showMessageDialog(w,
+						"Please create a network before.");
+			}
+		} else if ("saveEdal".equals(event)) {
+			if (con.containsPathway()) {
+				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+					//System.out.println("click");
+					new EdalSaveDialog();
+					//new SaveDialog(SaveDialog.FORMAT_SBML);
 				} else {
 					JOptionPane.showMessageDialog(w,
 							"Please create a network before.");

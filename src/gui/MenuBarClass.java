@@ -18,6 +18,7 @@ public class MenuBarClass {
 
 	private JMenuItem saveNetworkAs;
 	private JMenuItem saveNetwork;
+	private JMenuItem saveEdal;
 	private JMenuItem closeAllNetworks;
 	private JMenuItem closeNetwork;
 	private JMenuItem savePicture;
@@ -193,6 +194,10 @@ public class MenuBarClass {
 		saveNetworkAs = new JMenuItem("Save As");
 		saveNetworkAs.addActionListener(new MenuListener());
 		saveNetworkAs.setActionCommand("save as");
+		
+		saveEdal = new JMenuItem("Save online");
+		saveEdal.addActionListener(new MenuListener());
+		saveEdal.setActionCommand("saveEdal");
 
 		savePicture = new JMenuItem("Save A Graph-Picture", KeyEvent.VK_G);
 		savePicture.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
@@ -329,6 +334,7 @@ public class MenuBarClass {
 		file.add(new JSeparator());
 		file.add(saveNetwork);
 		file.add(saveNetworkAs);
+		file.add(saveEdal);
 		file.add(savePicture);
 		file.add(printPicture);
 		file.add(export);
@@ -457,6 +463,7 @@ public class MenuBarClass {
 
 	public void enableCloseAndSaveFunctions() {
 		saveNetworkAs.setEnabled(true);
+		saveEdal.setEnabled(true);
 		saveNetwork.setEnabled(true);
 		openNetwork.setEnabled(true);
 		closeAllNetworks.setEnabled(true);
@@ -506,6 +513,7 @@ public class MenuBarClass {
 
 	public void disableCloseAndSaveFunctions() {
 		saveNetworkAs.setEnabled(false);
+		saveEdal.setEnabled(false);
 		saveNetwork.setEnabled(false);
 		closeAllNetworks.setEnabled(false);
 		closeNetwork.setEnabled(false);
