@@ -166,6 +166,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 							}
 							// startVisualizationModel();
+							myGraph.restartVisualizationModel();
 
 							if (!headless) {
 								myGraph.changeToGEMLayout();
