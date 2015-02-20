@@ -5,6 +5,8 @@ package database.kegg.gui;
 
 import gui.MainWindowSingleton;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
@@ -43,10 +45,15 @@ public class KEGGResultWindow extends JFrame {
 	private MyTable table;
 
 	private JCheckBox checkBox;
+	private JCheckBox autoCoarse;
 
 	public JCheckBox getCheckBox() {
 		//checkBox.setSelected(false);
 		return checkBox;
+	}
+	
+	public boolean getAutoCoarse(){
+		return autoCoarse.isSelected();
 	}
 
 	/**
@@ -101,6 +108,22 @@ public class KEGGResultWindow extends JFrame {
 		JPanel mainPanel = new JPanel(layout);
 		checkBox = new JCheckBox(
 				"Search MirBase/TarBase for possibly connected microRNAs", false);
+		autoCoarse = new JCheckBox("Coarse MirBase/TarBase results to their associated node", false);
+		autoCoarse.setEnabled(false);
+		checkBox.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(checkBox.isSelected()){
+					autoCoarse.setEnabled(true);
+				} else {
+					autoCoarse.setSelected(false);
+					autoCoarse.setEnabled(false);
+				}
+				
+			}
+			
+		});
 
 		mainPanel
 				.add(new JLabel(
@@ -110,6 +133,8 @@ public class KEGGResultWindow extends JFrame {
 		mainPanel.add(sp, "span 2, growx");
 		mainPanel.add(new JSeparator(), "gap 10, wrap, growx");
 		mainPanel.add(checkBox);
+		mainPanel.add(new JSeparator(), "gap 10, wrap, growx");
+		mainPanel.add(autoCoarse);
 
 		pane = new JOptionPane(mainPanel, JOptionPane.QUESTION_MESSAGE,
 				JOptionPane.OK_CANCEL_OPTION);

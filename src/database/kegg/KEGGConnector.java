@@ -2,6 +2,9 @@ package database.kegg;
 
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
+import graph.layouts.hebLayout.Circle;
+import graph.layouts.hebLayout.HierarchyList;
+import graph.layouts.hebLayout.HierarchyListComparator;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.ProgressBar;
@@ -48,6 +51,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 	private String pathwayNumber;
 	private String mirnaName = null;
 	private boolean searchMicroRNAs = true;
+	private HashMap<Integer, Integer> srnaParents = new HashMap<Integer,Integer>();
 
 	public String getMirnaName() {
 		return mirnaName;
@@ -120,6 +124,8 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 	}
 
 	private HashMap<KeggNodeDescribtion, BiologicalNodeAbstract> nodeLowToHighPriorityMap = new HashMap<KeggNodeDescribtion, BiologicalNodeAbstract>();
+	
+	private boolean autocoarse;
 
 	public KEGGConnector(ProgressBar bar, String[] details,
 			boolean dontCreatePathway) {
@@ -247,7 +253,10 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
 		myGraph.normalCentering();
-
+		if(isAutoCoarse()){
+			autoCoarse();
+		}
+		
 		bar.closeWindow();
 
 		MainWindow window = MainWindowSingleton.getInstance();
@@ -463,11 +472,13 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 					srna = srnas.get(column[0]);
 				}else{
 				srna = new SRNA(column[0], column[0]);
-				p = new Point2D.Double(0, 0);//.findNearestFreeVertexPosition(bna.getKEGGnode()
+//				p = new Point2D.Double(myGraph.getVertexLocation(bna).getX(), myGraph.getVertexLocation(bna).getY());
+				//.findNearestFreeVertexPosition(bna.getKEGGnode()
 						//.getXPos(), bna.getKEGGnode().getYPos(), 100);
-				
+				p = Circle.getPointOnCircle(myGraph.getVertexLocation(bna), 20, 2.0*((double) (Math.random()%(Math.PI))));
 				pw.addVertex(srna, p);
 				srnas.put(column[0], srna);
+				srnaParents.put(srna.getID(), bna.getID());
 				}
 				srna.setReference(false);
 				e = new Expression("", "", srna, bna);
@@ -478,6 +489,33 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 		}
 
+	}
+	
+	private void autoCoarse(){
+		class HLC implements HierarchyListComparator<Integer> {
+
+			public HLC() {
+			}
+
+			public Integer getValue(BiologicalNodeAbstract n) {
+				if(n instanceof SRNA){
+					if(!srnaParents.containsKey(n.getID())){
+						return getSubValue(n);
+					} else {
+						return srnaParents.get(n.getID());
+					}
+				}
+				return getSubValue(n);
+			}
+
+			public Integer getSubValue(BiologicalNodeAbstract n) {
+				return n.getID();
+			}
+		}
+		HierarchyList<Integer> l = new HierarchyList<Integer>();
+		l.addAll(myGraph.getAllVertices());
+		l.sort(new HLC());
+		l.coarse();
 	}
 
 	private void drawRelations(ArrayList<DBColumn> allGeneralRelations,
@@ -681,6 +719,14 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 	public void setSearchMicroRNAs(boolean searchMicroRNAs) {
 		this.searchMicroRNAs = searchMicroRNAs;
+	}
+	
+	public void setAutoCoarse(boolean autoCoarse){
+		this.autocoarse = autoCoarse;
+	}
+	
+	public boolean isAutoCoarse(){
+		return autocoarse;
 	}
 
 	public boolean isSearchMicroRNAs() {

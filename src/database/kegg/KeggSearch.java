@@ -413,6 +413,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 							!(mergePW == null));
 					kc.addPropertyChangeListener(this);
 					kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
+					kc.setAutoCoarse(dsrw.getAutoCoarse());
 					kc.execute();
 				}
 			}
@@ -446,6 +447,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 						!(answer == SEPARATE_TABS));
 				kc.addPropertyChangeListener(this);
 				kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
+				kc.setAutoCoarse(dsrw.getAutoCoarse());
 				kc.execute();
 			} else {
 				mergePW = new GraphInstance().getContainer().getPathway(
