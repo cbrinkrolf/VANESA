@@ -2,102 +2,107 @@ package graph.layouts.hebLayout;
 
 import graph.GraphInstance;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.RandomAccess;
 import java.util.Set;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
-public class HierarchyList<E> extends AbstractList<BiologicalNodeAbstract>implements List<BiologicalNodeAbstract>,
-RandomAccess, Cloneable, java.io.Serializable{
+/**
+ * List extension for automatic reconstruction of hierarchical structures.
+ * Native ArrayList elements are the elements that are considered for the
+ * construction of the hierarchical structures. So, it contains all nodes
+ * of the related subtree. These elements can be handled as in standard 
+ * ArrayLists.
+ * 
+ * @author tobias
+ *
+ * @param <E> Data type of the criteria values for sorting the elements
+ * into a hierarchical structure. Must be equal to the data type of <E>
+ * in the related HierarchyListComparator. Additionally, BiologicalNodeAbstract
+ * should not be set as <E> due to unexpected behavior using native ArrayList 
+ * operations.
+ */
+public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 	
-	List<HierarchyList<E>> hierarchyList = new ArrayList<HierarchyList<E>>();
-	List<BiologicalNodeAbstract> allElements = new ArrayList<BiologicalNodeAbstract>();
+	private static final long serialVersionUID = 1392848302093883L;
+	/**
+	 * Next hierarchy level (children nodes of this HierarchyList).
+	 */
 	HashMap<E, HierarchyList<E>> hierarchyGroups = new HashMap<E, HierarchyList<E>>();
-	HierarchyListComparator<E> stdComparator;
+	
+	/**
+	 * Root node of this hierarchical level.
+	 */
 	BiologicalNodeAbstract node;
+	
+	/**
+	 * Related value to this hierarchical level.
+	 */
 	E value;
 	
+	/**
+	 * Standard List constructor.
+	 */
 	public HierarchyList(){
-		
+		super();
 	}
 	
-//	public HierarchyList(HierarchyListComparator hlc){
-//		
-//	}
-	
+	/**
+	 * Constructor defining root node and value.
+	 * @param n Root node of the related hierarchical level.
+	 * @param val Value of the related hierarchical level.
+	 */
 	public HierarchyList(BiologicalNodeAbstract n, E val){
+		super();
 		node = n;
 		value = val;
 	}
 	
+	/**
+	 * Constructor defining value.
+	 * @param val Value of the related hierarchical level.
+	 */
 	public HierarchyList(E val){
+		super();
 		value = val;
 	}
 
 	/**
-	 * 
+	 * Add a Children List.
+	 * @param arg0 Children list to be added.
+	 * @return True, if list was added.
 	 */
-	private static final long serialVersionUID = 1392848302093883L;
-
-	@Override
-	public boolean add(BiologicalNodeAbstract arg0) {
-		return allElements.add(arg0);
-	}
-	
 	public boolean add(HierarchyList<E> arg0){
 		if(arg0.getNode()!=null)
-			allElements.add(arg0.getNode());
-		hierarchyList.add(arg0);
-		hierarchyGroups.put(arg0.getValue(),arg0);
-		return true;	
-	}
-
-	@Override
-	public void add(int arg0, BiologicalNodeAbstract arg1) {
-			allElements.add(arg0, arg1);
-	}
-
-	@Override
-	public boolean addAll(Collection<? extends BiologicalNodeAbstract> arg0) {
-		for(BiologicalNodeAbstract n : arg0){
-			add(n);
+			add(arg0.getNode());
+		if(arg0.getValue()!=null){
+			hierarchyGroups.put(arg0.getValue(),arg0);
+			return true;	
 		}
 		return false;
 	}
 
 	@Override
-	public boolean addAll(int arg0,
-			Collection<? extends BiologicalNodeAbstract> arg1) {
-		return allElements.addAll(arg0, arg1);
-	}
-
-	@Override
 	public void clear() {
-		allElements.clear();
-		hierarchyList.clear();
+		super.clear();
 		hierarchyGroups.clear();
+		node=null;
+		value=null;
 	}
 
 	@Override
 	public boolean contains(Object arg0) {
 		if(arg0 instanceof BiologicalNodeAbstract){
-			return allElements.contains(arg0);
-		}
-		if(arg0 instanceof Integer){
-			return hierarchyGroups.containsKey(arg0);
+			return super.contains(arg0);
 		}
 		if(arg0 instanceof HierarchyList){
 			return hierarchyGroups.containsValue(arg0);
 		}
-		return false;
+		return hierarchyGroups.containsKey(arg0);
 	}
 
 	@Override
@@ -111,72 +116,20 @@ RandomAccess, Cloneable, java.io.Serializable{
 	}
 
 	@Override
-	public BiologicalNodeAbstract get(int arg0) {
-		if(hierarchyGroups.containsKey(arg0)){
-			return hierarchyGroups.get(arg0).getNode();
-		}
-		return null;
-	}
-
-	@Override
-	public int indexOf(Object arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		
-		return allElements.isEmpty();
-	}
-
-	@Override
-	public Iterator<BiologicalNodeAbstract> iterator() {
-		return allElements.iterator();
-	}
-
-	@Override
-	public int lastIndexOf(Object arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public ListIterator<BiologicalNodeAbstract> listIterator() {
-		return allElements.listIterator();
-	}
-
-	@Override
-	public ListIterator<BiologicalNodeAbstract> listIterator(int arg0) {
-		return allElements.listIterator(arg0);
-	}
-
-	@Override
 	public boolean remove(Object arg0) {
-		if(arg0 instanceof BiologicalNodeAbstract){
-			hierarchyGroups.remove(((BiologicalNodeAbstract) arg0).getID());
-			return (allElements.remove(arg0));
+		boolean ret = false;
+		ret = super.remove(arg0) ? true : ret;
+		ret = hierarchyGroups.remove(arg0)!=null ? true : ret;
+		if(hierarchyGroups.values().contains(arg0)){
+			List<E> keySet = new ArrayList<E>();
+			keySet.addAll(hierarchyGroups.keySet());
+			for(E val : keySet){
+				if(hierarchyGroups.get(val).contains(arg0)){
+					ret = hierarchyGroups.remove(val)!=null ? true : ret;
+				}
+			}
 		}
-		if(arg0 instanceof Integer){
-			hierarchyGroups.remove(arg0);
-			return (allElements.remove(hierarchyGroups.get(arg0).getNode()));
-		}
-		if(arg0 instanceof HierarchyList<?>){
-			hierarchyGroups.remove(((HierarchyList<?>) arg0).getNode().getID());
-			return (allElements.remove(((HierarchyList<?>) arg0).getNode()));
-		}
-		return false;
-	}
-
-	@Override
-	public BiologicalNodeAbstract remove(int arg0) {
-		if(!hierarchyGroups.keySet().contains(arg0)){
-			return null;
-		}
-		BiologicalNodeAbstract n = hierarchyGroups.get(arg0).getNode();
-		hierarchyGroups.remove(arg0);
-		allElements.remove(hierarchyGroups.get(arg0).getNode());
-		return n;
+		return ret;
 	}
 
 	@Override
@@ -188,38 +141,20 @@ RandomAccess, Cloneable, java.io.Serializable{
 		}
 		return true;
 	}
-
-	@Override
-	public boolean retainAll(Collection<?> arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public BiologicalNodeAbstract set(int arg0, BiologicalNodeAbstract arg1) {
-		// TODO Auto-generated method stub
+	
+	/**
+	 * Returns the BNA that belongs to the given value if present in this HierarchyList.
+	 * @param arg0 The value
+	 * @return The BNA
+	 */
+	public BiologicalNodeAbstract get(E arg0) {
+		if(hierarchyGroups.containsKey(arg0)){
+			return hierarchyGroups.get(arg0).getNode();
+		}
+		if(value.equals(arg0)){
+			return node;
+		}
 		return null;
-	}
-
-	@Override
-	public int size() {
-		return allElements.size();
-	}
-
-	@Override
-	public List<BiologicalNodeAbstract> subList(int arg0, int arg1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object[] toArray() {
-		return allElements.toArray();
-	}
-
-	@Override
-	public <T> T[] toArray(T[] arg0) {
-		return allElements.toArray(arg0);
 	}
 	
 	public BiologicalNodeAbstract getNode(){
@@ -230,6 +165,12 @@ RandomAccess, Cloneable, java.io.Serializable{
 		return value;
 	}
 	
+	/**
+	 * Automatic coarsing based on the hierarchyGroups.
+	 * Should only be called from public coarse() method.
+	 * @param isInitialCall Has always to be set "true" if called from outside.
+	 * @return Hierarchical BNA created by the method call.
+	 */
 	private BiologicalNodeAbstract coarse(boolean isInitialCall){
 		Set<BiologicalNodeAbstract> childNodes = new HashSet<BiologicalNodeAbstract>();
 		if(getNode()!=null)
@@ -245,14 +186,6 @@ RandomAccess, Cloneable, java.io.Serializable{
 		if(childNodes.size()>1 && !isInitialCall){
 			if(getNode()!=null){
 				BiologicalNodeAbstract coarseNode =  BiologicalNodeAbstract.coarse(childNodes, null, getNode().getLabel(), getNode());
-//				if(coarseNode!=null)
-//					coarseNode.setRootNode(getNode());
-//				else{
-//					for(BiologicalNodeAbstract c : childNodes){
-//						System.out.println(c.getID() + " " + c.getLabel());
-//					}
-//				}
-					
 				return coarseNode;
 			}
 			return BiologicalNodeAbstract.coarse(childNodes, null, getValue().toString());
@@ -260,6 +193,9 @@ RandomAccess, Cloneable, java.io.Serializable{
 		return getNode();
 	}
 	
+	/**
+	 * Coarse the BNAs as sorted.
+	 */
 	public void coarse(){
 		coarse(true);
 	}
@@ -268,22 +204,22 @@ RandomAccess, Cloneable, java.io.Serializable{
 		node = n;
 	}
 	
-	public List<HierarchyList<E>> getSubLists(){
-		return hierarchyList;
+	public Collection<HierarchyList<E>> getSubLists(){
+		return hierarchyGroups.values();
 	}
 	
-	
-
-	
+	/**
+	 * Automatic sorting of all contained BNAs.
+	 * @param comp
+	 */
 	public void sort(HierarchyListComparator<? extends E> comp){
-		hierarchyList = new ArrayList<HierarchyList<E>>();
 		hierarchyGroups = new HashMap<E, HierarchyList<E>>();
 		HashMap<E, HierarchyList<E>> valueToList = new HashMap<E, HierarchyList<E>>();
 		List<HierarchyList<E>> assignedLists = new ArrayList<HierarchyList<E>>();
 		E value;
 		E subvalue;
 		
-		for(BiologicalNodeAbstract n : allElements){
+		for(BiologicalNodeAbstract n : this){
 			value = comp.getValue(n);
 			subvalue = comp.getSubValue(n);
 			if(GraphInstance.getPathwayStatic().getRootNode() == n){
@@ -302,7 +238,7 @@ RandomAccess, Cloneable, java.io.Serializable{
 		subvalue = null;
 		
 		List<BiologicalNodeAbstract> elements = new ArrayList<BiologicalNodeAbstract>();
-		elements.addAll(allElements);
+		elements.addAll(this);
 		
 		for(BiologicalNodeAbstract n : elements){
 			if(getNode()==n){
