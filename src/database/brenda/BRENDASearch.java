@@ -311,7 +311,8 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 					bc.setSearchDepth(bsrw.getSerchDeapth());
 					bc.setCoFactors(bsrw.getCoFactorsDecision());
 					bc.setInhibitors(bsrw.getInhibitorsDecision());
-					bc.setAutoCoarse(bsrw.getAutoCoarse());
+					bc.setAutoCoarseDepth(bsrw.getAutoCoarseDepth());
+					bc.setAutoCoarseEnzymeNomenclature(bsrw.getAutoCoarseEnzymeNomenclature());
 
 					bc.execute();
 

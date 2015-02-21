@@ -25,8 +25,8 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.decorators.GradientEdgePaintTransformer;
 import graph.GraphInstance;
+import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
-import graph.layouts.hebLayout.Circle;
 
 public class HCTLayout extends HierarchicalCircleLayout{
 	
