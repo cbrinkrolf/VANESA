@@ -8,23 +8,13 @@
  */
 package graph.eventhandlers;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.CubicCurve2D;
-import java.awt.geom.Point2D;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -34,12 +24,8 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractGraphMousePlugin;
-import edu.uci.ics.jung.visualization.util.ArrowFactory;
-import graph.ContainerSingelton;
-import graph.GraphContainer;
 import graph.GraphInstance;
 
 /**
@@ -145,9 +131,10 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 		private static final long serialVersionUID = 153465734562L;
 		JMenuItem openNode = new JMenuItem("Open subpathway");
 	    JMenuItem closeNode = new JMenuItem("Close subpathway");
-	    JMenuItem openAllNodes = new JMenuItem("Open all subpathways");
+	    JMenuItem openAllNodes = new JMenuItem("Open next level");
+	    JMenuItem closeAllNodes = new JMenuItem("Close finest level");
 	    JMenuItem openNetwork = new JMenuItem("Open full network");
-	    JMenuItem closeNetwork = new JMenuItem("close full network");
+	    JMenuItem closeNetwork = new JMenuItem("Close full network");
 	    BiologicalNodeAbstract node;
 	    ActionListener listener;
 	    
@@ -168,6 +155,19 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 									pw.openSubPathway(n);
 								}
 							}
+						} else if(e.getSource()==closeAllNodes){
+							int maxLevel = 0;
+							for(BiologicalNodeAbstract n : GraphInstance.getMyGraph().getAllVertices()){
+								if(n.getAllParentNodes().size()>0){
+									set.add(n.getParentNode());
+									maxLevel = Math.max(maxLevel,n.getAllParentNodes().size()-1);
+								}
+							}
+							for(BiologicalNodeAbstract n : set){
+								if(n.getAllParentNodes().size()==maxLevel){
+									pw.closeSubPathway(n);
+								}
+							}
 						}else if(e.getSource()==openNetwork){
 							pw.openAllSubPathways();
 						} else if(e.getSource()==closeNetwork){
@@ -181,6 +181,8 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	    	if(n==null){
 	    		add(openAllNodes);
 	    		openAllNodes.addActionListener(listener);
+	    		add(closeAllNodes);
+	    		closeAllNodes.addActionListener(listener);
 	    		add(new JSeparator());
 	    		add(openNetwork);
 	    		openNetwork.addActionListener(listener);

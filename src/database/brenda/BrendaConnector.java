@@ -575,7 +575,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 				l.add(n);
 			}
 		}
-		l.sortMultiLayer(new HLC(struc),struc);
+		l.sort(new HLC(struc),struc);
 		l.coarse();
 	}
 

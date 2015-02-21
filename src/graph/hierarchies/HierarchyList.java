@@ -16,7 +16,8 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
  * Native ArrayList elements are the elements that are considered for the
  * construction of the hierarchical structures. So, it contains all nodes
  * of the related subtree. These elements can be handled as in standard 
- * ArrayLists.
+ * ArrayLists. If one element is removed, it is also removed from all 
+ * sublists.
  * 
  * @author tobias
  *
@@ -129,6 +130,11 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 				if(hierarchyGroups.get(val).contains(arg0)){
 					ret = hierarchyGroups.remove(val)!=null ? true : ret;
 				}
+			}
+		}
+		if(ret){
+			for(HierarchyList<E> v : hierarchyGroups.values()){
+				v.remove(arg0);
 			}
 		}
 		return ret;
@@ -280,7 +286,7 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 	 * (e.g. in depth search), use default sort()-Method.
 	 * @param comp
 	 */
-	public void sortMultiLayer(HierarchyListComparator<? extends E> comp, HierarchyStructure<? extends E> struc){
+	public void sort(HierarchyListComparator<? extends E> comp, HierarchyStructure<? extends E> struc){
 		hierarchyGroups = new HashMap<E, HierarchyList<E>>();
 		HashMap<E, HierarchyList<E>> valueToList = new HashMap<E, HierarchyList<E>>();
 		E value;
