@@ -1447,19 +1447,14 @@ public class Pathway implements Cloneable {
 					break;
 				}
 				// Coarse nodes. Location is copied by a border node if possible.
-				if (this.isBNA()) {
-					if (!thisNode.getEnvironment().contains(node)) {
-						Point2D loc = parentNode.getBorder().isEmpty() ? getGraph().getVertexLocation(node)
+				if ((this.isBNA() && !thisNode.getEnvironment().contains(node)) || !this.isBNA()) {
+					Point2D loc;
+					if(parentNode.getRootNode()!=null && getGraph().getAllVertices().contains(parentNode.getRootNode())){
+						loc = getGraph().getVertexLocation(parentNode.getRootNode());
+					} else {
+						loc = parentNode.getBorder().isEmpty() ? getGraph().getVertexLocation(node)
 								: getGraph().getVertexLocation(parentNode.getBorder().iterator().next());
-						addVertex(parentNode, loc);
-						removeElement(node);
 					}
-				}
-
-				// root pathway
-				else {
-					Point2D loc = parentNode.getBorder().isEmpty() ? getGraph().getVertexLocation(node)
-							: getGraph().getVertexLocation(parentNode.getBorder().iterator().next());
 					addVertex(parentNode, loc);
 					removeElement(node);
 				}

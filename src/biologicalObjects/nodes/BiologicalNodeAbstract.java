@@ -363,12 +363,16 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private static boolean isCoarsingAllowed(boolean isPetriNet, Set<BiologicalNodeAbstract> vertices){
 		BiologicalNodeAbstract parentNode = null;
 		
-		// check if all nodes have the same parent node (can also be null)
 		if(vertices.iterator().hasNext()){
 			parentNode = vertices.iterator().next().getParentNode();
 		}
 		for(BiologicalNodeAbstract vertex : vertices){
+			// fail if at least 2 nodes don't have the same parent node (can also be null)
 			if(vertex.getParentNode()!=parentNode){
+				return false;
+			}
+			// fail if at least 1 selected node is environment node of the current shown graph
+			if(GraphInstance.getPathwayStatic().isBNA() && ((BiologicalNodeAbstract) GraphInstance.getPathwayStatic()).getEnvironment().contains(vertex)){
 				return false;
 			}
 		}
