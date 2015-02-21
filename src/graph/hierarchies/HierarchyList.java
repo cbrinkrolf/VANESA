@@ -1,4 +1,4 @@
-package graph.layouts.hebLayout;
+package graph.hierarchies;
 
 import graph.GraphInstance;
 
@@ -59,6 +59,7 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 	public HierarchyList(BiologicalNodeAbstract n, E val){
 		super();
 		node = n;
+		add(n);
 		value = val;
 	}
 	
@@ -81,6 +82,7 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 			add(arg0.getNode());
 		if(arg0.getValue()!=null){
 			hierarchyGroups.put(arg0.getValue(),arg0);
+			addAll(arg0);
 			return true;	
 		}
 		return false;
@@ -189,6 +191,8 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 				return coarseNode;
 			}
 			return BiologicalNodeAbstract.coarse(childNodes, null, getValue().toString());
+		} else if(childNodes.size()==1){
+			return childNodes.iterator().next();
 		}
 		return getNode();
 	}
@@ -266,6 +270,50 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 				add(list);
 		}
 		
+//		printSubLists(0);
+	}
+	
+	/**
+	 * Method to sort over multiple hierarchical levels without refering to 
+	 * other nodes.
+	 * IMPORTANT: For multilayer sort with other nodes as references
+	 * (e.g. in depth search), use default sort()-Method.
+	 * @param comp
+	 */
+	public void sortMultiLayer(HierarchyListComparator<? extends E> comp, HierarchyStructure<? extends E> struc){
+		hierarchyGroups = new HashMap<E, HierarchyList<E>>();
+		HashMap<E, HierarchyList<E>> valueToList = new HashMap<E, HierarchyList<E>>();
+		E value;
+		E subvalue;
+		HashSet<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
+		nodes.addAll(this);
+		for(BiologicalNodeAbstract n : nodes){
+			subvalue = comp.getSubValue(n);
+			value = comp.getValue(n);
+			HierarchyList<E> list = new HierarchyList<E>(n,subvalue);
+			valueToList.put(subvalue,list);
+			if(value == null){
+				add(list);
+				continue;
+			}
+			while(value!=null){
+				HierarchyList<E> lastList = list;
+				if(!valueToList.containsKey(value)){
+					list = new HierarchyList<E>(value);
+					valueToList.put(value, list);
+					list.add(lastList);
+					if(struc.containsKey(value)){
+						value = struc.get(value);
+						continue;
+					} else {
+						add(list);
+						break;
+					}
+				}
+				valueToList.get(value).add(list);
+				break;
+			}
+		}
 //		printSubLists(0);
 	}
 	

@@ -58,7 +58,8 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 	JCheckBox disregard = new JCheckBox();
 	JCheckBox inhibitorBox = new JCheckBox();
 	JCheckBox coFactorBox = new JCheckBox();
-	JCheckBox autoCoarse = new JCheckBox();
+	JCheckBox autoCoarseDepth = new JCheckBox();
+	JCheckBox autoCoarseEnzymeNomenclature = new JCheckBox();
 
 	
 
@@ -118,7 +119,32 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 		mainPanel.add(disregard, "span 1,wrap,gaptop 2");
 		
 		mainPanel.add(new JLabel("Coarse all results of the same query."), "span 1, gaptop 2 ");
-		mainPanel.add(autoCoarse, "span 1,wrap,gaptop 2");
+		mainPanel.add(autoCoarseDepth, "span 1,wrap,gaptop 2");
+		
+		mainPanel.add(new JLabel("Coarse enzyme due to their Enzyme nomenclature (EC-Number)."), "span 1, gaptop 2 ");
+		mainPanel.add(autoCoarseEnzymeNomenclature, "span 1,wrap,gaptop 2");
+		
+		ActionListener coarseListener = new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(autoCoarseEnzymeNomenclature.isSelected()){
+					autoCoarseDepth.setSelected(false);
+					autoCoarseDepth.setEnabled(false);
+				} else if(autoCoarseDepth.isSelected()){
+					autoCoarseEnzymeNomenclature.setSelected(false);
+					autoCoarseEnzymeNomenclature.setEnabled(false);
+				} else {
+					autoCoarseEnzymeNomenclature.setEnabled(true);
+					autoCoarseDepth.setEnabled(true);
+				}
+				
+			}
+			
+		};
+		
+		autoCoarseEnzymeNomenclature.addActionListener(coarseListener);
+		autoCoarseDepth.addActionListener(coarseListener);
 
 		mainPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
 
@@ -214,8 +240,12 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 		return disregard.isSelected();
 	}
 	
-	public boolean getAutoCoarse() {
-		return autoCoarse.isSelected();
+	public boolean getAutoCoarseDepth() {
+		return autoCoarseDepth.isSelected();
+	}
+	
+	public boolean getAutoCoarseEnzymeNomenclature() {
+		return autoCoarseEnzymeNomenclature.isSelected();
 	}
 
 	public void actionPerformed(ActionEvent e) {

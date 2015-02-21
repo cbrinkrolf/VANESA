@@ -19,7 +19,6 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
-import graph.layouts.hebLayout.Circle;
 
 public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>{
 	

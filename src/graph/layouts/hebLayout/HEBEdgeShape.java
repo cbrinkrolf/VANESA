@@ -22,6 +22,7 @@ import edu.uci.ics.jung.visualization.decorators.AbstractEdgeShapeTransformer;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
+import graph.layouts.Circle;
 
 
 /**

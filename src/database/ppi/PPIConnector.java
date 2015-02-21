@@ -2,9 +2,9 @@ package database.ppi;
 
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.CreatePathway;
+import graph.hierarchies.HierarchyList;
+import graph.hierarchies.HierarchyListComparator;
 import graph.jung.classes.MyGraph;
-import graph.layouts.hebLayout.HierarchyList;
-import graph.layouts.hebLayout.HierarchyListComparator;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.ProgressBar;

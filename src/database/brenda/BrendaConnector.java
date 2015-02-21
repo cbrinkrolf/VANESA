@@ -3,9 +3,11 @@ package database.brenda;
 import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import graph.CreatePathway;
 import graph.algorithms.MergeGraphs;
+import graph.hierarchies.EnzymeNomenclature;
+import graph.hierarchies.HierarchyList;
+import graph.hierarchies.HierarchyListComparator;
+import graph.hierarchies.HierarchyStructure;
 import graph.jung.classes.MyGraph;
-import graph.layouts.hebLayout.HierarchyList;
-import graph.layouts.hebLayout.HierarchyListComparator;
 import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
@@ -82,7 +84,9 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 	
 	boolean headless;
 	
-	boolean autoCoarse = false;
+	boolean autoCoarseDepth = false;
+
+	boolean autoCoarseEnzymeNomenclature = false;
 	
 	public BrendaConnector(ProgressBar bar, String[] details, Pathway mergePW,
 			boolean headless) {
@@ -481,7 +485,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 	/**
 	 * For autocoarsing the resulting network.
 	 */
-	private void autoCoarse() {
+	private void autoCoarseDepth() {
 
 		/**
 		 * The parent of each node is the neighbor with the shortest path to the root node.
@@ -535,6 +539,43 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		HierarchyList<Integer> l = new HierarchyList<Integer>();
 		l.addAll(myGraph.getAllVertices());
 		l.sort(new HLC());
+		l.coarse();
+	}
+	
+	/**
+	 * For autocoarsing the resulting network.
+	 */
+	private void autoCoarseEnzymeNomenclature() {
+
+		EnzymeNomenclature struc = new EnzymeNomenclature();
+		/**
+		 * The parent of each node is the neighbor with the shortest path to the root node.
+		 * @author tobias
+		 */
+		class HLC implements HierarchyListComparator<String> {
+
+			EnzymeNomenclature struc;
+			
+			public HLC(EnzymeNomenclature struc) {
+				this.struc = struc;
+			}
+
+			public String getValue(BiologicalNodeAbstract n) {
+				return struc.ECtoClass(n.getLabel());
+			}
+
+			public String getSubValue(BiologicalNodeAbstract n) {
+				return n.getLabel();
+			}
+		}
+
+		HierarchyList<String> l = new HierarchyList<String>();
+		for(BiologicalNodeAbstract n : myGraph.getAllVertices()){
+			if(n instanceof Enzyme){
+				l.add(n);
+			}
+		}
+		l.sortMultiLayer(new HLC(struc),struc);
 		l.coarse();
 	}
 
@@ -870,9 +911,11 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 				myGraph.normalCentering();
 			}
 			
-			if (autoCoarse) {
-				// autoCoarse(root_id);
-				autoCoarse();
+			if (autoCoarseDepth) {
+				autoCoarseDepth();
+			}
+			if (autoCoarseEnzymeNomenclature) {
+				autoCoarseEnzymeNomenclature();
 			}
 			if (answer == JOptionPane.NO_OPTION)
 				new MergeGraphs(pw, mergePW, true);
@@ -881,8 +924,14 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		MainWindowSingleton.getInstance().updateAllGuiElements();
 	}
 	
-	public void setAutoCoarse(boolean ac){
-		autoCoarse = ac;
+	public void setAutoCoarseDepth(boolean ac){
+		autoCoarseDepth = ac;
+	}
+	
+	public void setAutoCoarseEnzymeNomenclature(
+			boolean autoCoarseEnzymeNomenclature) {
+		this.autoCoarseEnzymeNomenclature = autoCoarseEnzymeNomenclature;
+		
 	}
 
 	private String cleanString(String s) {
