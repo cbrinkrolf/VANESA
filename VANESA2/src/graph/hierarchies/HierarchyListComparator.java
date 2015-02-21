@@ -1,4 +1,4 @@
-package graph.layouts.hebLayout;
+package graph.hierarchies;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 

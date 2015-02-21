@@ -1,10 +1,10 @@
 package database.kegg;
 
 import graph.CreatePathway;
+import graph.hierarchies.HierarchyList;
+import graph.hierarchies.HierarchyListComparator;
 import graph.jung.classes.MyGraph;
-import graph.layouts.hebLayout.Circle;
-import graph.layouts.hebLayout.HierarchyList;
-import graph.layouts.hebLayout.HierarchyListComparator;
+import graph.layouts.Circle;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.ProgressBar;
