@@ -194,6 +194,11 @@ public class ToolBar {
 		enterSelectedNode.setActionCommand("enterNode");
 		enterSelectedNode.addActionListener(toolBarListener);
 		
+		JButton autoCoarse = new ToolBarButton("Autocoarse");
+		autoCoarse.setToolTipText("Autocoarse current Pathway");
+		autoCoarse.setActionCommand("autocoarse");
+		autoCoarse.addActionListener(toolBarListener);
+		
 		JButton newWindow = new ToolBarButton(new ImageIcon(imagePath.getPath("newWindow.png")));
 		newWindow.setToolTipText("Open new window.");
 		newWindow.setActionCommand("newWindow");
@@ -206,6 +211,7 @@ public class ToolBar {
 		infopanel.add(coarseSelectedNodes);
 		infopanel.add(flatSelectedNodes);
 		infopanel.add(enterSelectedNode);
+		infopanel.add(autoCoarse);
 
 		JButton dimView = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("view.png")));

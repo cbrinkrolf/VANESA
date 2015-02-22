@@ -5,6 +5,7 @@ import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.gui.CompareGraphsGUI;
+import graph.hierarchies.AutoCoarse;
 import graph.jung.classes.MyGraph;
 import gui.HeatmapChooseGraphsWindow;
 import gui.InfoWindow;
@@ -324,13 +325,18 @@ public class ToolBarListener implements ActionListener {
 						graphInstance.getPathway().setPetriNet(node.isPetriNet());
 						w.getBar().paintToolbar(node.isPetriNet());
 						w.updateAllGuiElements();
-					}
-					
-					
+					}	
 			}else{
 				System.out.println("No Graph exists!");
 				}
-		}
+		}else if ("autocoarse".equals(event)){
+			if(GraphInstance.getMyGraph() != null){
+				AutoCoarse.coarseSeperatedSubgraphs(graphInstance.getPathway());
+				new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
+			}else{
+			System.out.println("No Graph exists!");
+			}
+	}
 		else if("newWindow".equals(event)){
 			MainWindowSingleton.getInstance().addView();
 		} 
