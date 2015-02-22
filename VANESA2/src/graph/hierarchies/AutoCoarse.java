@@ -46,20 +46,19 @@ public class AutoCoarse {
 			subgraphs.put(n.getID(),theSubgraphs);
 		}
 		
+		// Compute seperating nodes with more than 2 neighbors
 		HashSet<BiologicalNodeAbstract> sortedNodes = new HashSet<BiologicalNodeAbstract>();
 		HashSet<BiologicalNodeAbstract> retainCheck = new HashSet<BiologicalNodeAbstract>();
 		boolean somethingChanged= true;
 		for(BiologicalNodeAbstract n : nodes){
+			if(neighbors.get(n.getID()).size()<3){
+				subgraphs.remove(n.getID());
+				continue;
+			}
 			somethingChanged= true;
-//			System.out.println(n.getLabel() + ":");
 			neigh = neighbors.get(n.getID());
 			sortedNodes = new HashSet<BiologicalNodeAbstract>();
 			while(somethingChanged){
-//				System.out.print("sorted nodes:");
-//				for(BiologicalNodeAbstract nd : sortedNodes){
-//					System.out.print(nd.getLabel() + ",");
-//				}
-//				System.out.println();
 				if(subgraphs.get(n.getID()).size()<2){
 					break;
 				}
@@ -67,19 +66,14 @@ public class AutoCoarse {
 				theSubgraphs = new ArrayList<List<BiologicalNodeAbstract>>();
 				theSubgraphs.addAll(subgraphs.get(n.getID()));
 				for(List<BiologicalNodeAbstract> sg : theSubgraphs){
+					boolean somethingChangedInThisSubgraph = false;
 					HashSet<BiologicalNodeAbstract> newNodeCopy = new HashSet<BiologicalNodeAbstract>();
 					newNodeCopy.addAll(sg);
 					for(BiologicalNodeAbstract newNode : newNodeCopy){
-//						System.out.println("newnode:" + newNode.getLabel());
 							HashSet<BiologicalNodeAbstract> newElements = new HashSet<BiologicalNodeAbstract>();
 							newElements.addAll(neighbors.get(newNode.getID()));
 							newElements.remove(n);
 							newElements.removeIf(p -> sg.contains(p));
-//							System.out.print("newElements");
-//							for(BiologicalNodeAbstract nd : newElements){
-//								System.out.print(nd.getLabel() + ",");
-//							}
-//							System.out.println();
 							retainCheck = new HashSet<BiologicalNodeAbstract>();
 							retainCheck.addAll(newElements);
 							retainCheck.retainAll(sortedNodes);
@@ -87,13 +81,28 @@ public class AutoCoarse {
 								sortedNodes.removeAll(sg);
 								subgraphs.get(n.getID()).remove(sg);
 								somethingChanged = true;
+								somethingChangedInThisSubgraph = true;
 								break;
 							}
 							if(!newElements.isEmpty()){
 								sg.addAll(newElements);
 								sortedNodes.add(newNode);
+								somethingChangedInThisSubgraph = true;
 								somethingChanged = true;
 							}
+					}
+					// If only 2 subgraphs left and one of them is not changing any more, we're done.
+					if(!somethingChangedInThisSubgraph && subgraphs.get(n.getID()).size()==2){
+						List<BiologicalNodeAbstract> othersg = theSubgraphs.get(0);
+						if(othersg==sg){
+							othersg = theSubgraphs.get(1);
+						}
+						othersg.clear();
+						othersg.addAll(nodes);
+						othersg.remove(n);
+						othersg.removeAll(sg);
+						somethingChanged = false;
+						break;
 					}
 				}
 			}
@@ -109,6 +118,7 @@ public class AutoCoarse {
 				subgraphs.get(n.getID()).remove(largestList);
 			}
 		}
+		System.out.println("done1");
 		
 //		List<BiologicalNodeAbstract> largestList = new ArrayList<BiologicalNodeAbstract>();
 //		for(Integer key : subgraphs.keySet()){
@@ -164,7 +174,9 @@ public class AutoCoarse {
 		HierarchyList<Integer> l = new HierarchyList<Integer>();
 		l.addAll(nodes);
 		l.sort(new HLC());
+		System.out.println("done2");
 		l.coarse();
+		System.out.println("done3");
 		
 	}
 }
