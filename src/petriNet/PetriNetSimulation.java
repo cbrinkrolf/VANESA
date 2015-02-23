@@ -415,8 +415,8 @@ public class PetriNetSimulation implements ActionListener {
 					out.write("getErrorString();\r\n");
 					
 					//CHRIS improve / correct filter
-					out.write("buildModel(simulation, " + filter + ");\r\n");
-					//out.write("buildModel(simulation);\r\n");
+					//out.write("buildModel(simulation, " + filter + "); ");
+					out.write("buildModel(simulation); ");
 					out.write("getErrorString();\r\n");
 
 					// out.write("fileName=\"simulate.mat\";\r\n");
