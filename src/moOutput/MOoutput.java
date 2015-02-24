@@ -636,10 +636,10 @@ public class MOoutput {
 		out = "{" + outNumbers + "}";
 		// System.out.println("name: "+bna.getName());
 		if (in.length() == 2) {
-			in = "fill(1," + bna.getName() + ".nIn)";
+			in = "fill(1,'" + bna.getName() + "'.nIn)";
 		}
 		if (out.length() == 2) {
-			out = "fill(1," + bna.getName() + ".nOut)";
+			out = "fill(1,'" + bna.getName() + "'.nOut)";
 		}
 		// System.out.println("inPropper: " + in);
 		// System.out.println("outPropper: " + out);
