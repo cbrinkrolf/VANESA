@@ -819,7 +819,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	public Color getColor() {
 
-		if (isReference() || isHidden()) {
+//		if (isReference() || isHidden()) {
+		if (isHidden()){
 			return Color.WHITE;
 		} else {
 			return color;
