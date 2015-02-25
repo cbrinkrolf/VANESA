@@ -550,6 +550,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				n.setParentNode(this);
 				n.setStateChanged(NodeStateChanged.COARSED);
 				addVertex(n, GraphInstance.getMyGraph().getVertexLocation(n));
+				if(getEnvironment().contains(n)){
+					getEnvironment().remove(n);
+				}
 			}
 			updateHierarchicalAttributes();
 			getRootPathway().updateMyGraph();
