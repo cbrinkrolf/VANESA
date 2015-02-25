@@ -119,22 +119,11 @@ public class MyPickingGraphMousePlugin extends
 				vertex.getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), 
 						oldVertexPositions.get(node).getY());
 			}
-		} else {
-			for(BiologicalNodeAbstract node : selection){
-				graphInstance.getPathway().getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), 
-						oldVertexPositions.get(node).getY());
-			}
+		} 
+		for(BiologicalNodeAbstract node : selection){
+			graphInstance.getPathway().getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), 
+					oldVertexPositions.get(node).getY());
 		}
-//		Set<BiologicalNodeAbstract> coarseNodes = new HashSet<BiologicalNodeAbstract>();
-//		coarseNodes.addAll(selection);
-//		coarseNodes.addAll(vertex.getInnerNodes());
-//		vertex.flat();
-//		if(vertex.computeCoarseType(coarseNodes)!=null){
-//			vertex.tryAddToCoarseNode(coarseNodes);
-//			for(BiologicalNodeAbstract node : selection){
-//				vertex.getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), oldVertexPositions.get(node).getY());
-//			}
-//		}
 	}
 	
 	@Override
