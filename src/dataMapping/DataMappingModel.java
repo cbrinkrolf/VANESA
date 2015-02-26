@@ -208,6 +208,11 @@ public class DataMappingModel {
 		for(Entry<String, ArrayList<String>> entry : identifiersMultiValuesMap.entrySet()){
 			if(entry.getKey().length()<2)
 				toRemove.add(entry.getKey());
+			if(entry.getValue().isEmpty())
+				toRemove.add(entry.getKey());
+			if(entry.getValue().get(0) == null)
+				toRemove.add(entry.getKey());
+				
 		}
 		
 		for(String removekey : toRemove){			
@@ -218,10 +223,19 @@ public class DataMappingModel {
 		
 			if(entry.getValue() != null) {
 				double tmpValue = 0;
+				
+				ArrayList<String> tmplist = entry.getValue();	
+				
 				try {
-					tmpValue = Double.parseDouble(entry.getValue().get(0));
+					
+//					tmpValue = Double.parseDouble(entry.getValue().get(0));
+					tmpValue = Double.parseDouble(tmplist.get(0));
 				} catch (Exception e) {
 					// do nothing if the entry is not a number
+					
+					System.out.println("key is:"+entry.getKey()+"value is: "+tmpValue);
+					System.out.println(tmplist.toString());
+					
 					e.printStackTrace();
 					continue;
 				}
