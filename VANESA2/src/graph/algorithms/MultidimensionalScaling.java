@@ -100,10 +100,9 @@ public class MultidimensionalScaling {
 			}
 		}
 		
-		
-		
-		System.out.println(Arrays.toString(mins));
-		System.out.println(Arrays.toString(maxes));
+		//DEBUG
+//		System.out.println(Arrays.toString(mins));
+//		System.out.println(Arrays.toString(maxes));
 		
 		
 		realignNetwork();
@@ -133,7 +132,7 @@ public class MultidimensionalScaling {
 					duplicatecoords++;				
 			}			
 		}		
-		System.out.println("piled nodes "+duplicatecoords);
+//		System.out.println("piled nodes "+duplicatecoords);
 		
 		
 		for (int node = 0; node < nodes; node++) {
