@@ -202,13 +202,27 @@ public class DataMappingModel {
 	public void setColoringParameters() {
 		double minValue = Double.MAX_VALUE;
 		double maxValue = Double.MIN_VALUE;
+
+		//filter null values
+		ArrayList<String> toRemove = new ArrayList<>();
+		for(Entry<String, ArrayList<String>> entry : identifiersMultiValuesMap.entrySet()){
+			if(entry.getKey().length()<2)
+				toRemove.add(entry.getKey());
+		}
+		
+		for(String removekey : toRemove){			
+			identifiersMultiValuesMap.remove(removekey);
+		}		
+		
 		for (Entry<String, ArrayList<String>> entry : identifiersMultiValuesMap.entrySet()) {
+		
 			if(entry.getValue() != null) {
 				double tmpValue = 0;
 				try {
 					tmpValue = Double.parseDouble(entry.getValue().get(0));
-				} catch (NumberFormatException e) {
+				} catch (Exception e) {
 					// do nothing if the entry is not a number
+					e.printStackTrace();
 					continue;
 				}
 				if(tmpValue < minValue) {

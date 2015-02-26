@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
@@ -170,10 +171,10 @@ public class DataMappingModelController extends Observable {
 		createIdentifierMultiValueMap();
 		//TODO numOfThreads
 		int numOfThreads = 1;
-		System.out.println("Anzahl Threads: " + numOfThreads);
+//		System.out.println("Anzahl Threads: " + numOfThreads);
 	
 		if(withPathway){ // = color the shown network
-//			createIdentifierMultiValueMap();
+			createIdentifierMultiValueMap();
 			List<Future<Map<String, String>>> resultMapPart = new LinkedList<>();
 			ExecutorService executeQuerys = Executors.newFixedThreadPool(numOfThreads);
 			HashSet<QueryParallel> tasksQuery = new HashSet<>();
@@ -213,20 +214,13 @@ public class DataMappingModelController extends Observable {
 					}	
 				}
 			} else if(detectPathwayOrigin() == null) {
-				// TODO: throw Exception
+
 				System.out.println("Cannot determine the origin source of the pathway");
 			}
-			
-			
-//			try {
-//				query.retrieveQueryResults(identifierType, labels);
-//			} catch (IOException e) {
-//				// TODO: manage exceptions if for example the BioMart server is down
-//				e.printStackTrace();
-//			}
 //			
 			try {
 				resultMapPart = executeQuerys.invokeAll(tasksQuery);
+
 			} catch (InterruptedException e1) {
 				JOptionPane.showMessageDialog(
 						null,
@@ -641,7 +635,7 @@ public class DataMappingModelController extends Observable {
 		
 		
 		progressBarExport = new ProgressBar();
-		progressBarExport.init(100, "DATAMAPPING", true);
+		progressBarExport.init(200, "DATAMAPPING", true);
 		
 
 		ArrayList<String> header = dataMappingModel.getHeader();
