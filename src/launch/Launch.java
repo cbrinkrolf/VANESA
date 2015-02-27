@@ -7,6 +7,7 @@ import gui.MainWindow;
 import gui.MainWindowSingleton;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -71,6 +72,9 @@ public class Launch {
 
 		try {
 
+			 Properties props = new Properties();
+			  props.put("logoString", "VANESA");
+			  AluminiumLookAndFeel.setCurrentTheme(props);
 			// SubstanceBusinessBlueSteelLookAndFeel lf = new
 			// SubstanceBusinessBlueSteelLookAndFeel();
 			// lf.setSkin("");
