@@ -1,12 +1,13 @@
 package io;
 
 import java.io.File;
+import java.io.OutputStream;
 
 import biologicalElements.Pathway;
 
 public class IrinaGraphTextWriter {
 
-	public IrinaGraphTextWriter(File file, Pathway pw) {
+	public IrinaGraphTextWriter(OutputStream file, Pathway pw) {
 		
 		// CHRIS reimplement Irina output
 

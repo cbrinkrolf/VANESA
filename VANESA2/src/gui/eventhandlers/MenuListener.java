@@ -228,8 +228,8 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					if (graphInstance.getPathway().getFilename() != null) {
-						new JSBMLoutput(graphInstance.getPathway()
-								.getFilename(), graphInstance.getPathway());
+						//new JSBMLoutput(graphInstance.getPathway()
+						//		.getFilename(), graphInstance.getPathway());
 					} else {
 						new SaveDialog(SaveDialog.FORMAT_SBML);
 					}

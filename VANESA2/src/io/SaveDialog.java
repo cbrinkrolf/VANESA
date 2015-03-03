@@ -12,12 +12,16 @@ import io.graphML.SaveGraphML;
 
 import java.awt.HeadlessException;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
+
 
 //import ch.qos.logback.classic.LoggerContext;
 import moOutput.MOoutput;
@@ -159,7 +163,12 @@ public class SaveDialog {
 				}
 			}
 			if (overwrite) {
-				write();
+				try {
+					write();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 		}
@@ -176,7 +185,7 @@ public class SaveDialog {
 
 	}
 
-	private void write() {
+	private void write() throws FileNotFoundException {
 
 		ConnectionSettings.setFileDirectory(file.getAbsolutePath());
 		if (fileFormat.equals(sbmlDescription)) {
@@ -188,7 +197,7 @@ public class SaveDialog {
 //				JOptionPane.showMessageDialog(
 //						MainWindowSingelton.getInstance(), sbmlDescription
 //								+ sbmlOutput.generateSBMLDocument());
-			JSBMLoutput jsbmlOutput = new JSBMLoutput(file, new GraphInstance().getPathway());
+			JSBMLoutput jsbmlOutput = new JSBMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
 			JOptionPane.showMessageDialog(
 					MainWindowSingleton.getInstance(), sbmlDescription
 							+ jsbmlOutput.generateSBMLDocument());
@@ -199,30 +208,30 @@ public class SaveDialog {
 			//					+ " File not saved");
 		} else if (fileFormat.equals(graphMlDescription)) {
 			getCorrectFile(graphMl);
-			new SaveGraphML(file);
+			new SaveGraphML(new FileOutputStream(file));
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					graphMlDescription + " File saved");
 		} else if (fileFormat.equals(irinaDescription)) {
 			getCorrectFile(irinaTxt);
-			new IrinaGraphTextWriter(file, new GraphInstance().getPathway());
+			new IrinaGraphTextWriter(new FileOutputStream(file), new GraphInstance().getPathway());
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					irinaDescription + " File saved");
 
 		} else if (fileFormat.equals(moDescription)) {
 			getCorrectFile(mo);
-			new MOoutput(file, new GraphInstance().getPathway());
+			new MOoutput(new FileOutputStream(file), new GraphInstance().getPathway());
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					moDescription + " File saved");
 
 		} else if (fileFormat.equals(txtDescription)) {
 			getCorrectFile(txt);
-			new GraphTextWriter(file, new GraphInstance().getPathway());
+			new GraphTextWriter(new FileOutputStream(file), new GraphInstance().getPathway());
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					txtDescription + " File saved");
 
 		} else if (fileFormat.equals(csvDescription)) {
 			getCorrectFile(csv);
-			new CSVWriter(file, new GraphInstance().getPathway());
+			new CSVWriter(new FileOutputStream(file), new GraphInstance().getPathway());
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					csvDescription + " File saved");
 
@@ -274,7 +283,7 @@ public class SaveDialog {
 						 transitionList.add((Transition)bna);
 					}
 				}
-
+				// only output on file system possible
 				PNMLOutput pnmlOutput = new PNMLOutput(file, edgeList, nodeList,transitionList);
 				
 				try {
@@ -301,14 +310,14 @@ public class SaveDialog {
 			} 
 		}else if (fileFormat.equals(csmlDescription)) {
 			getCorrectFile(csml);
-			new GONoutput(file, new GraphInstance().getPathway());
+			new GONoutput(new FileOutputStream(file), new GraphInstance().getPathway());
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					csmlDescription + " File saved");
 
 		} else if (fileFormat.equals(vamlDescription)) {
 			getCorrectFile(vaml);
 			try {
-				new VAMLoutput(file, new GraphInstance().getPathway());
+				new VAMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
 				JOptionPane.showMessageDialog(
 						MainWindowSingleton.getInstance(), vamlDescription
 								+ " File saved");

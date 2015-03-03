@@ -37,8 +37,8 @@ public class HeatmapGraphs {
 	 */
 	private void copyElements(Pathway from, Pathway to) {
 		File file1 = new File("test");
-		new JSBMLoutput(file1, from);
-		new JSBMLoutput(file1, to);
+		//new JSBMLoutput(file1, from);
+		//new JSBMLoutput(file1, to);
 	}
 	
 	/** build the merged graph and the heatgraph-layer for it */

@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,10 +36,10 @@ public class MOoutput {
 
 	private static final boolean debug = !false;
 
-	private File file = null;
+	private OutputStream os = null;
 	private String modelName = null;
 	private Pathway pw = null;
-	private FileWriter fwriter;
+	//private FileWriter fwriter;
 
 	private String places = "";
 	private String edgesString = "";
@@ -64,19 +65,19 @@ public class MOoutput {
 
 	private HashMap<BiologicalEdgeAbstract, String> bea2resultkey = new HashMap<BiologicalEdgeAbstract, String>();
 
-	public MOoutput(File file, Pathway pathway) {
+	public MOoutput(OutputStream os, Pathway pathway) {
 
 		if (debug)
 			System.out.println();
 		if (debug)
-			System.out.println("MOoutput(File " + file + " Pathway " + pathway
+			System.out.println("MOoutput(File " + pathway.getName() + " Pathway " + pathway
 					+ ")");
-
-		this.file = file;
-		this.modelName = file.getName().substring(0,
-				file.getName().lastIndexOf("."));
+		
+		this.os = os;
+		this.modelName = pathway.getName();//.substring(0,
+				//pathway.getName().lastIndexOf("."));
 		if (debug)
-			System.out.println("Model Name = " + modelName);
+			System.out.println("Model Name = '" + modelName+"'");
 		this.pw = pathway;
 
 		try {
@@ -88,7 +89,7 @@ public class MOoutput {
 
 	private void write() throws IOException {
 
-		fwriter = new FileWriter(file);
+		//fwriter = new FileWriter(file);
 
 		prepare();
 		// buildProperties();
@@ -99,14 +100,14 @@ public class MOoutput {
 		// if (debug)
 		// System.out.println(properties+places+transitions+edgesString);
 
-		fwriter.write("model " + modelName + "\r\n");
+		os.write(new String("model '" + modelName + "'\r\n").getBytes());
 		// fwriter.write(properties);
-		fwriter.write(places);
+		os.write(places.getBytes());
 		// fwriter.write(transitions);
-		fwriter.write("equation\r\n");
-		fwriter.write(edgesString);
-		fwriter.write("end " + modelName + ";");
-		fwriter.close();
+		os.write(new String("equation\r\n").getBytes());
+		os.write(edgesString.getBytes());
+		os.write(new String("end '" + modelName + "';").getBytes());
+		os.close();
 
 	}
 
