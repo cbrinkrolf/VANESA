@@ -59,7 +59,7 @@ public class JSBMLoutput {
 	/*
 	 * the sbml document which has to be filled
 	 */
-	private OutputStream file = null;
+	private OutputStream os = null;
 	/*
 	 * data from the graph
 	 */
@@ -74,8 +74,8 @@ public class JSBMLoutput {
 	private static final String SPEC = "spec_";
 	private static final String REAC = "reac_";
 
-	public JSBMLoutput(OutputStream file, Pathway pathway) {
-		this.file = file;
+	public JSBMLoutput(OutputStream os, Pathway pathway) {
+		this.os = os;
 		this.pathway = pathway;
 	}
 
@@ -220,13 +220,13 @@ public class JSBMLoutput {
 
 		// Write the SBML document to a file.
 		try {
-			System.out.println("vor write");
-			SBMLWriter.write(doc, file, "VANESA", VERSION);
+			//System.out.println("vor write");
+			SBMLWriter.write(doc, os, "VANESA", VERSION);
 			//PipedInputStream in = new PipedInputStream();
 			 // PipedOutputStream out = new PipedOutputStream(in);
 			 // SBMLWriter.write(doc, out, "VANESA", VERSION)
 			  //OutputStream os = new Outputstream
-			System.out.println("nach write");
+			//System.out.println("nach write");
 			message = "\nExport was successful.";
 		} catch (SBMLException e) {
 			e.printStackTrace();
