@@ -9,6 +9,9 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,7 +59,7 @@ public class JSBMLoutput {
 	/*
 	 * the sbml document which has to be filled
 	 */
-	private File file = null;
+	private OutputStream file = null;
 	/*
 	 * data from the graph
 	 */
@@ -71,7 +74,7 @@ public class JSBMLoutput {
 	private static final String SPEC = "spec_";
 	private static final String REAC = "reac_";
 
-	public JSBMLoutput(File file, Pathway pathway) {
+	public JSBMLoutput(OutputStream file, Pathway pathway) {
 		this.file = file;
 		this.pathway = pathway;
 	}
@@ -217,15 +220,18 @@ public class JSBMLoutput {
 
 		// Write the SBML document to a file.
 		try {
+			System.out.println("vor write");
 			SBMLWriter.write(doc, file, "VANESA", VERSION);
+			//PipedInputStream in = new PipedInputStream();
+			 // PipedOutputStream out = new PipedOutputStream(in);
+			 // SBMLWriter.write(doc, out, "VANESA", VERSION)
+			  //OutputStream os = new Outputstream
+			System.out.println("nach write");
 			message = "\nExport was successful.";
 		} catch (SBMLException e) {
 			e.printStackTrace();
 			message = "\nWriting SBML file was not successful.";
 		} catch (XMLStreamException e) {
-			e.printStackTrace();
-			message = "\nWriting SBML file was not successful.";
-		} catch (IOException e) {
 			e.printStackTrace();
 			message = "\nWriting SBML file was not successful.";
 		}

@@ -1,9 +1,8 @@
 package gonOutput;
 
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -27,9 +26,8 @@ public class GONoutput {
 
 	//private static final boolean debug = false;
 
-	private File file = null;
 	private Pathway pw = null;
-	private FileWriter fwriter;
+	private OutputStream os;
 
 	private String places = "", transitions = "";
 	private int connector = 0;
@@ -45,8 +43,8 @@ public class GONoutput {
 	//HashSet<BiologicalNodeAbstract> placesHS = new HashSet<BiologicalNodeAbstract>();
 	//HashSet<BiologicalNodeAbstract> transitionsHS = new HashSet<BiologicalNodeAbstract>();
 
-	public GONoutput(File file, Pathway pathway) {
-		this.file = file;
+	public GONoutput(OutputStream os, Pathway pathway) {
+		this.os = os;
 		this.pw = pathway;
 		try {
 			write();
@@ -57,21 +55,20 @@ public class GONoutput {
 
 	private void write() throws IOException {
 
-		fwriter = new FileWriter(file);
 
 		// must be in this order
 		prepare();
 		buildConnections();
 		buildNodes();
 
-		fwriter
-				.write("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\r\n<csml:project\r\n xmlns:csml=\"http://www.csml.org/csml/version3\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" majorVersion=\"3\" minorVersion=\"0\" projectID=\"local\" projectVersionID=\"undef\">\r\n <csml:model modelID=\"undef\" modelVersionID=\"undef\">\r\n <csml:entitySet>\r\n");
-		fwriter.write(places);
-		fwriter.write("</csml:entitySet>\r\n<csml:processSet>\r\n");
-		fwriter.write(transitions);
-		fwriter
-				.write("</csml:processSet>\r\n</csml:model>\r\n<csml:viewSet><csml:view name=\"Default View\" refAnimationID=\"default\" refModelID=\"undef\" refPositionID=\"default\" refShapeID=\"default\" viewID=\"default\">\r\n</csml:view>\r\n</csml:viewSet>\r\n</csml:project>\r\n");
-		fwriter.close();
+		os
+				.write(new String("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\r\n<csml:project\r\n xmlns:csml=\"http://www.csml.org/csml/version3\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" majorVersion=\"3\" minorVersion=\"0\" projectID=\"local\" projectVersionID=\"undef\">\r\n <csml:model modelID=\"undef\" modelVersionID=\"undef\">\r\n <csml:entitySet>\r\n").getBytes());
+		os.write(new String(places).getBytes());
+		os.write(new String("</csml:entitySet>\r\n<csml:processSet>\r\n").getBytes());
+		os.write(new String(transitions).getBytes());
+		os
+				.write(new String("</csml:processSet>\r\n</csml:model>\r\n<csml:viewSet><csml:view name=\"Default View\" refAnimationID=\"default\" refModelID=\"undef\" refPositionID=\"default\" refShapeID=\"default\" viewID=\"default\">\r\n</csml:view>\r\n</csml:viewSet>\r\n</csml:project>\r\n").getBytes());
+		os.close();
 
 	}
 

@@ -1,6 +1,7 @@
 package graph.algorithms;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import graph.CreatePathway;
@@ -34,7 +35,7 @@ public class MergeGraphs {
 		//CHRIS better deep copy of pathway
 		File file1 = new File("test");
 		try {
-			new VAMLoutput(file1, one);
+			new VAMLoutput(new FileOutputStream(file1), one);
 			new VAMLInput(file1, pw_new);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -44,7 +45,7 @@ public class MergeGraphs {
 
 		File file2 = new File("test2");
 		try {
-			new VAMLoutput(file2, two);
+			new VAMLoutput(new FileOutputStream(file2), two);
 			new VAMLInput(file2, pw_new);
 		} catch (IOException e) {
 			e.printStackTrace();

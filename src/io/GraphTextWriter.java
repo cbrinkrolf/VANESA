@@ -1,9 +1,7 @@
 package io;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -14,13 +12,13 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class GraphTextWriter {
 
-	public GraphTextWriter(File file, Pathway pw) {
+	public GraphTextWriter(OutputStream os, Pathway pw) {
 
 		HashSet<String> nodes = new HashSet<String>();
 		//int counter = 0;
 
 		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			//BufferedWriter out = new BufferedWriter(file);
 
 			StringBuffer buff = new StringBuffer();
 			buff.append("#Nodes \n");
@@ -68,9 +66,9 @@ public class GraphTextWriter {
 			// }
 			// }
 			// buff.append("\n");
-			out.write(buff.toString());
+			os.write(buff.toString().getBytes());
 
-			out.close();
+			os.close();
 		} catch (IOException e) {
 		}
 	}

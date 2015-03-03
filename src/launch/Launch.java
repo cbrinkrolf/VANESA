@@ -48,7 +48,9 @@ public class Launch {
 	 */
 	public static void main(String[] args) {
 		// avoid strange awt/swing exceptions:
-		// Exception in thread "AWT-EventQueue-0" java.lang.IllegalArgumentException: Comparison method violates its general contract!
+		// Exception in thread "AWT-EventQueue-0"
+		// java.lang.IllegalArgumentException: Comparison method violates its
+		// general contract!
 		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
 		// set app name for mac osx
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -72,9 +74,9 @@ public class Launch {
 
 		try {
 
-			 Properties props = new Properties();
-			  props.put("logoString", "VANESA");
-			  AluminiumLookAndFeel.setCurrentTheme(props);
+			Properties props = new Properties();
+			props.put("logoString", "VANESA");
+
 			// SubstanceBusinessBlueSteelLookAndFeel lf = new
 			// SubstanceBusinessBlueSteelLookAndFeel();
 			// lf.setSkin("");
@@ -99,10 +101,13 @@ public class Launch {
 				UIManager.put("CheckBoxMenuItemUI", CheckBoxMenuItemUI);
 				UIManager.put("RadioButtonMenuItemUI", RadioButtonMenuItemUI);
 				UIManager.put("PopupMenuUI", PopupMenuUI);
+				props.put("macStyleWindowDecoration", "on");
+				props.put("macStyleScrollBar", "on");
+
 			} else {
 				UIManager.setLookAndFeel(new AluminiumLookAndFeel());
 			}
-
+			AluminiumLookAndFeel.setCurrentTheme(props);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("fail");
@@ -227,15 +232,16 @@ public class Launch {
 					;
 					// fill data from the remote control (only if database is
 					// reachable)
-					//TODO uncomment if DAWIS DB integrated
-					
-					/*if (dawis_sessionid != null) {
-						System.out.println("start");
-						DAWISWebstartConnector dws = new DAWISWebstartConnector(
-								dawis_sessionid);
-						dws.execute();
+					// TODO uncomment if DAWIS DB integrated
 
-					}*/
+					/*
+					 * if (dawis_sessionid != null) {
+					 * System.out.println("start"); DAWISWebstartConnector dws =
+					 * new DAWISWebstartConnector( dawis_sessionid);
+					 * dws.execute();
+					 * 
+					 * }
+					 */
 
 				}
 				// else {
