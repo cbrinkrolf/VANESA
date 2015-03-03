@@ -1,9 +1,7 @@
 package io;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,13 +12,13 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class CSVWriter {
 
-	public CSVWriter(File file, Pathway pw) {
+	public CSVWriter(OutputStream os, Pathway pw) {
 
 		List<BiologicalNodeAbstract> nodes = pw
 				.getAllNodesSortedAlphabetically();
 		List<Place> places = new ArrayList<Place>();
 		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			//BufferedWriter out = new BufferedWriter(new FileWriter(file));
 
 			StringBuffer buff = new StringBuffer();
 			Iterator<BiologicalNodeAbstract> it = nodes.iterator();
@@ -46,9 +44,9 @@ public class CSVWriter {
 				buff.append("\r\n");
 			}
 
-			out.write(buff.toString());
+			os.write(buff.toString().getBytes());
 
-			out.close();
+			os.close();
 		} catch (IOException e) {
 		}
 	}

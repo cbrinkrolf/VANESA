@@ -16,13 +16,17 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
@@ -51,6 +55,8 @@ public class PetriNetSimulation implements ActionListener {
 
 	private ChangedFlags flags;
 	private Server s;
+	
+	private String simName;
 
 	public PetriNetSimulation() {
 		// menue = new SimMenue(this);
@@ -133,7 +139,7 @@ public class PetriNetSimulation implements ActionListener {
 					return;
 				}
 
-				MOoutput mo = new MOoutput(new File(pathSim + "simulation.mo"),
+				MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim + "simulation.mo")),
 						graphInstance.getPathway());
 				HashMap<BiologicalEdgeAbstract, String> bea2key = mo
 						.getBea2resultkey();
@@ -261,6 +267,7 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void runOMCIA() {
+		System.out.println("simNameOld: "+simName);
 		GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		MainWindow w = MainWindowSingleton.getInstance();
@@ -293,12 +300,7 @@ public class PetriNetSimulation implements ActionListener {
 
 				boolean simExePresent = false;
 
-				String program = "simulation";
-				if (SystemUtils.IS_OS_WINDOWS) {
-					program += ".exe";
-				}
-
-				if (new File(pathSim + program).exists()) {
+				if (new File(simName).exists()) {
 					simExePresent = true;
 				}
 
@@ -364,8 +366,8 @@ public class PetriNetSimulation implements ActionListener {
 						return;
 					}
 
-					MOoutput mo = new MOoutput(new File(pathSim
-							+ "simulation.mo"), graphInstance.getPathway());
+					MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim
+							+ "simulation.mo")), graphInstance.getPathway());
 					bea2key = mo.getBea2resultkey();
 					//
 
@@ -416,7 +418,7 @@ public class PetriNetSimulation implements ActionListener {
 					
 					//CHRIS improve / correct filter
 					//out.write("buildModel(simulation, " + filter + "); ");
-					out.write("buildModel(simulation); ");
+					out.write("buildModel('"+graphInstance.getPathway().getName()+"'); ");
 					out.write("getErrorString();\r\n");
 
 					// out.write("fileName=\"simulate.mat\";\r\n");
@@ -441,7 +443,8 @@ public class PetriNetSimulation implements ActionListener {
 					}
 					final Process p = new ProcessBuilder(bin, pathSim
 							+ "simulation.mos").start();
-
+					InputStream os = p.getInputStream();
+					
 					// simulation.exe -override=outputFormat=ia -port=11111
 					// -lv=LOG_STATS
 
@@ -463,6 +466,22 @@ public class PetriNetSimulation implements ActionListener {
 					};
 					t.start();
 					p.waitFor();
+					//System.out.println("av: " +os.available());
+					byte[] bytes = new byte[os.available()];
+					os.read(bytes);
+					String buildOutput = new String(bytes);
+					System.out.println(buildOutput);
+					StringTokenizer tokenizer = new StringTokenizer(buildOutput,",");
+					String tmp = tokenizer.nextToken();
+					//tmp.indexOf("{");
+					simName = tmp.substring(tmp.indexOf("{")+2,tmp.length()-1);
+					System.out.println("simName: "+simName);
+					
+					if (SystemUtils.IS_OS_WINDOWS) {
+						simName += ".exe";
+					}
+					
+					
 					try {
 						t.stop();
 					} catch (Exception e) {
@@ -470,6 +489,7 @@ public class PetriNetSimulation implements ActionListener {
 					}
 
 					if (buildSuccess) {
+						
 						this.flags.reset();
 						graphInstance.getPathway().getChangedInitialValues()
 								.clear();
@@ -572,18 +592,14 @@ public class PetriNetSimulation implements ActionListener {
 							}
 							System.out.println("override: " + override);
 
-							String program = "simulation";
-							if (SystemUtils.IS_OS_WINDOWS) {
-								program += ".exe";
-							}
-
+							//String program = "_omcQuot_556E7469746C6564";
 							if (noEmmit) {
-								pb.command(pathSim + program,
+								pb.command(simName,
 										"-s=" + menue.getIntegrator(),
 										override, "-port=11111",
 										"-noEventEmit", "-lv=LOG_STATS");
 							} else {
-								pb.command(pathSim + program,
+								pb.command(simName,
 										"-s=" + menue.getIntegrator(),
 										override, "-port=11111",
 										"-lv=LOG_STATS");
@@ -685,7 +701,9 @@ public class PetriNetSimulation implements ActionListener {
 
 				simExePresent = false;
 
-				if (new File(pathSim + program).exists()) {
+				System.out.println(simName);
+				if (new File(simName).exists()) {
+					System.out.println("sim exists");
 					simExePresent = true;
 				}
 
@@ -842,7 +860,7 @@ public class PetriNetSimulation implements ActionListener {
 			new File(pathCompiler + "simulate.mat").delete();
 			new File(pathCompiler + "simulate.csv").delete();
 			new File(pathCompiler + "simulation.mos").delete();
-			new MOoutput(new File(pathCompiler + "simulation.mo"),
+			new MOoutput(new FileOutputStream(new File(pathCompiler + "simulation.mo")),
 					graphInstance.getPathway());
 
 			FileWriter fstream = new FileWriter(pathCompiler + "simulation.mos");

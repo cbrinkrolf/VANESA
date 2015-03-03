@@ -25,6 +25,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.jfree.chart.renderer.Outlier;
+
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.PNEdge;
@@ -50,17 +52,16 @@ import biologicalObjects.nodes.RNA;
  */
 public class VAMLoutput {
 
-	private File file = null;
+	private OutputStream out = null;
 	private Pathway pw = null;
 	private XMLStreamWriter writer;
 	Hashtable<String, String> speciesTypeID = new Hashtable<String, String>();
 	Hashtable<BiologicalNodeAbstract, String> compartments = new Hashtable<BiologicalNodeAbstract, String>();
 
-	public VAMLoutput(File file, Pathway pathway) throws IOException {
+	public VAMLoutput(OutputStream out, Pathway pathway) throws IOException {
 
-		this.file = file;
+		this.out = out;
 		this.pw = pathway;
-		pw.setFilename(file);
 
 		try {
 			write();
@@ -690,7 +691,7 @@ public class VAMLoutput {
 				if (map.getPathwayLink() != null) {
 					try {
 						new File("Temp").delete();
-						new VAMLoutput(new File("Temp"), map.getPathwayLink());
+						new VAMLoutput(new FileOutputStream(new File("Temp")), map.getPathwayLink());
 						String s = fileToString("Temp");
 						writer.writeStartElement("pathway");
 						writer.writeCData(s);
@@ -1445,7 +1446,7 @@ public class VAMLoutput {
 
 	public void write() throws XMLStreamException, IOException {
 
-		OutputStream out = new FileOutputStream(file);
+		//OutputStream out = new FileOutputStream(file);
 
 		XMLOutputFactory factory = XMLOutputFactory.newInstance();
 		writer = factory.createXMLStreamWriter(out);
