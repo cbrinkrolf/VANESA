@@ -85,7 +85,7 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		nodeSelection.setLayout(nodeSelectionLayout);
 		nodeSelection.setBorder(BorderFactory.createTitledBorder("Node Selection"));
 
-		String[] groupSelectionOptions = {"Single Node", "Node Subpath","Finest Group","Roughest Group"};
+		String[] groupSelectionOptions = {"Single Node", "Node Subpath","Node Path","Node Group"};
 		groupSelection = new JComboBox<String>(groupSelectionOptions);
 		groupSelection.setPreferredSize(new Dimension(200,30));
 		groupSelection.setMaximumSize(groupSelection.getPreferredSize());
@@ -225,11 +225,11 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		if (arg0.getSource().equals(HCTLayoutConfig.groupSelection)) {
 			if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Single Node")){
 				HCTLayoutConfig.SELECTION = GroupSelection.SINGLE;
-			} else if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Finest Group")){
-				HCTLayoutConfig.SELECTION = GroupSelection.FINESTGROUP;
+			} else if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Node Path")){
+				HCTLayoutConfig.SELECTION = GroupSelection.PATH;
 			} else if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Node Subpath")){
 				HCTLayoutConfig.SELECTION = GroupSelection.SUBPATH;
-			} else if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Roughest Group")){
+			} else if(HCTLayoutConfig.groupSelection.getSelectedItem().equals("Node Group")){
 				HCTLayoutConfig.SELECTION = GroupSelection.ROUGHESTGROUP;
 			} 
 		}
@@ -237,7 +237,7 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 
 	public enum GroupSelection{
 		SINGLE,
-		FINESTGROUP,
+		PATH,
 		SUBPATH,
 		ROUGHESTGROUP
 	}

@@ -576,12 +576,17 @@ public class Pathway implements Cloneable {
 				getRootPathway().deleteSubEdge(bea);
 				return;
 			}
-			ids.remove(element.getID());
+//			ids.remove(element.getID());
 			// System.out.println(biologicalElements.size());
 			biologicalElements.remove(element.getID() + "");
 			this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
 			// System.out.println(biologicalElements.size());
 		}
+	}
+	
+	public void removeElementWithID(GraphElementAbstract element){
+		removeElement(element);
+		ids.remove(element.getID());
 	}
 
 	public void removeEdge(BiologicalEdgeAbstract bea, boolean removeID) {
@@ -590,7 +595,7 @@ public class Pathway implements Cloneable {
 		graphRepresentation.removeEdge(bea);
 		getGraph().removeEdge(bea);
 		if (removeID) {
-			getRootPathway().getIdSet().remove(bea.getID());
+			getIdSet().remove(bea.getID());
 			biologicalElements.remove(bea.getID() + "");
 			}
 		this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
@@ -1510,7 +1515,7 @@ public class Pathway implements Cloneable {
 		Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
 		edges.addAll(getAllEdges());
 		for(BiologicalEdgeAbstract edge : edges){
-			removeEdge(edge, true);
+			removeEdge(edge, false);
 		}
 		Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
 		if(thisNode==null){
@@ -1524,7 +1529,6 @@ public class Pathway implements Cloneable {
 				BiologicalEdgeAbstract newEdge = connectingEdge.clone();
 				newEdge.setTo(newEdge.getTo().getCurrentShownParentNode(getGraph()));
 				newEdge.setFrom(newEdge.getFrom().getCurrentShownParentNode(getGraph()));
-				
 				if (newEdge.isValid(false))
 					drawEdge(newEdge);
 			}
