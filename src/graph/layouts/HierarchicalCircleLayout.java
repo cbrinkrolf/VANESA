@@ -2,6 +2,7 @@ package graph.layouts;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -11,12 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections15.Transformer;
+
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.decorators.DirectionalEdgeArrowTransformer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 
@@ -376,6 +381,20 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 			}
 			return order.indexOf(n1)-order.indexOf(n2);
 		}
+	}
+	
+	protected class ShowEdgeArrowsTransformer<T1, T2> implements Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>{
+		
+		public ShowEdgeArrowsTransformer() {
+
+		}
+
+		@Override
+		public Shape transform(
+				Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract> arg0) {
+			return new DirectionalEdgeArrowTransformer<BiologicalNodeAbstract,BiologicalEdgeAbstract>(0,0,0).transform(arg0);
+		}
+
 	}
 	
 	public CircleVertexData getCircleVertexData(BiologicalNodeAbstract v){

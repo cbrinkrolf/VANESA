@@ -323,10 +323,10 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 //				System.err.println("Error: Id " + id + " is already existing!");
 				throw new IDAlreadyExistException("ID " + id + " is already existing.");
 			} else {
-				if (this.ID > 0) {
-					set.remove(ID);
-					// System.out.println("removed: " + ID);
-				}
+//				if (this.ID > 0) {
+//					set.remove(ID);
+//					// System.out.println("removed: " + ID);
+//				}
 				// System.out.println("id added: " + id);
 				set.add(id);
 				this.ID = id;

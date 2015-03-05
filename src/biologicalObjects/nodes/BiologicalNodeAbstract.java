@@ -305,6 +305,17 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		coarseNode.cleanUpHierarchyElements();
 		coarseNode.setRootNode(rootNode);
 		
+		// Set id
+		if(id==null){
+			coarseNode.setID(true);
+		} else {
+			try{
+				coarseNode.setID(id);
+			} catch(IDAlreadyExistException ex){
+				coarseNode.setID(true);
+			}
+		}
+		
 		// Set label, name and title
 		String answer = label;
 		if(label==null){
@@ -319,17 +330,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		coarseNode.setLabel(answer);
 		coarseNode.setName(answer);
 		coarseNode.setTitle(answer);
-		
-		// Set id
-		if(id==null){
-			coarseNode.setID(true);
-		} else {
-			try{
-				coarseNode.setID(id);
-			} catch(IDAlreadyExistException ex){
-				coarseNode.setID(true);
-			}
-		}
 
 		// set attributes of the child nodes
 		for (BiologicalNodeAbstract node : nodes) {
@@ -662,6 +662,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			node.setParentNode(getParentNode());
 		}
 		
+		//remove id from rootPathway id set.
+		getIdSet().remove(ID);
+		
 	}
 	
 	/** 
@@ -673,6 +676,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		for(BiologicalEdgeAbstract conEdge : conEdges){
 			if(conEdge.getTo()==edge.getTo() && conEdge.getFrom()==edge.getFrom() && conEdge.isDirected() == edge.isDirected()){
 				getConnectingEdges().remove(conEdge);
+				getIdSet().remove(conEdge.getID());
 			}
 		}
 	}
@@ -1104,10 +1108,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 //				System.err.println("Error: Id " + id + " is already existing!");
 				throw new IDAlreadyExistException("ID " + id + " is already existing.");
 			} else {
-				if (this.ID > 0) {
-					set.remove(ID);
+//				if (this.ID > 0) {
+//					set.remove(ID);
 					// System.out.println("removed: " + ID);
-				}
+//				}
 				// System.out.println("id added: " + id);
 				set.add(id);
 				this.ID = id;
