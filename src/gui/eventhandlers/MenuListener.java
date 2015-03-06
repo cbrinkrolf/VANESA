@@ -2,6 +2,14 @@ package gui.eventhandlers;
 
 import dataMapping.DataMapping2MVC;
 import dataMapping.DataMappingColorMVC;
+import de.ipk_gatersleben.bit.bi.edal.primary_data.file.PrimaryDataFileException;
+import de.ipk_gatersleben.bit.bi.edal.primary_data.security.EdalAuthenticateException;
+import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientDataManager;
+import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientPrimaryDataEntity;
+import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientPrimaryDataFile;
+import de.ipk_gatersleben.bit.bi.edal.rmi.client.gui.EdalFileChooser;
+import de.ipk_gatersleben.bit.bi.edal.rmi.server.Authentication;
+import de.ipk_gatersleben.bit.bi.edal.sample.EdalHelpers;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
@@ -39,14 +47,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.security.auth.Subject;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -113,7 +126,7 @@ public class MenuListener implements ActionListener {
 	private MainWindow w;
 
 	private Cov cov;
-	
+
 	private PetriNetSimulation simulation = null;
 
 	@Override
@@ -143,6 +156,65 @@ public class MenuListener implements ActionListener {
 
 			OpenDialog op = new OpenDialog();
 			op.execute();
+
+		} else if ("openEdal".equals(event)) {
+			int SERVER_PORT = 2000;
+			String SERVER_ADDRESS = "bit-249.ipk-gatersleben.de";
+
+			Subject subject = null;
+			try {
+				subject = EdalHelpers.authenticateSampleUser();
+			} catch (EdalAuthenticateException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			/** alternatively use Google+ login **/
+			// Subject subject = EdalHelpers.authenticateGoogleUser("", 3128);
+
+			/** connect to running EDAL server on "bit-249" **/
+			ClientDataManager dataManagerClient = null;
+			try {
+				dataManagerClient = new ClientDataManager(SERVER_ADDRESS,
+						SERVER_PORT, new Authentication(subject));
+			} catch (EdalAuthenticateException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			// JFrame jf = new JFrame();
+
+			EdalFileChooser dialog = new EdalFileChooser(
+					MainWindowSingleton.getInstance(), dataManagerClient);
+			dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+			dialog.setFileSelectionMode(EdalFileChooser.FILES_AND_DIRECTORIES);
+			dialog.showConnectionButton(false);
+
+			// dialog.setFileFilter(new EdalFileNameExtensionFilter("sbml",
+			// "sbml"));
+
+			int result = dialog.showOpenDialog();
+			System.out.println(result + " " + EdalFileChooser.APPROVE_OPTION);
+			if (result == EdalFileChooser.APPROVE_OPTION) {
+				ClientPrimaryDataFile df = null;
+				ClientPrimaryDataEntity de = dialog.getSelectedFile();
+				if (de instanceof ClientPrimaryDataFile) {
+					df = (ClientPrimaryDataFile) de;
+					//File f = new File(df.getName());
+					//File f;
+					try {
+						df.read(new FileOutputStream(new File("bla.txt")));
+					
+					} catch (RemoteException | FileNotFoundException
+							| PrimaryDataFileException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+				} else {
+					System.out.println("please choose a file, not a dir");
+				}
+			}
 
 		} else if ("close Network".equals(event)) {
 
@@ -183,9 +255,10 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog( // GRAPHML+MO+GON=14
-							SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO
+							SaveDialog.FORMAT_GRAPHML
+									+ SaveDialog.FORMAT_MO
 									+ SaveDialog.FORMAT_GON
-									//+ SaveDialog.FORMAT_SBML
+									// + SaveDialog.FORMAT_SBML
 									+ SaveDialog.FORMAT_PNML
 									+ SaveDialog.FORMAT_ITXT
 									+ SaveDialog.FORMAT_TXT);
@@ -213,9 +286,9 @@ public class MenuListener implements ActionListener {
 		} else if ("saveEdal".equals(event)) {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					//System.out.println("click");
+					// System.out.println("click");
 					new EdalSaveDialog();
-					//new SaveDialog(SaveDialog.FORMAT_SBML);
+					// new SaveDialog(SaveDialog.FORMAT_SBML);
 				} else {
 					JOptionPane.showMessageDialog(w,
 							"Please create a network before.");
@@ -228,8 +301,8 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					if (graphInstance.getPathway().getFilename() != null) {
-						//new JSBMLoutput(graphInstance.getPathway()
-						//		.getFilename(), graphInstance.getPathway());
+						// new JSBMLoutput(graphInstance.getPathway()
+						// .getFilename(), graphInstance.getPathway());
 					} else {
 						new SaveDialog(SaveDialog.FORMAT_SBML);
 					}
@@ -350,7 +423,7 @@ public class MenuListener implements ActionListener {
 				JOptionPane.showMessageDialog(w,
 						"Please create a network before.");
 			}
-		}else if ("gemLayout".equals(event)) {
+		} else if ("gemLayout".equals(event)) {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToCircleLayout();
@@ -908,13 +981,12 @@ public class MenuListener implements ActionListener {
 			new PNTableDialog().setVisible(true);
 		else if ("loadModResult".equals(event))
 			new OpenModellicaResult().execute();
-		else if ("simulate".equals(event)){
-			if (simulation == null){
+		else if ("simulate".equals(event)) {
+			if (simulation == null) {
 				simulation = new PetriNetSimulation();
 			}
 			simulation.showMenue();
-		}
-		else if ("convertIntoPetriNet".equals(event)
+		} else if ("convertIntoPetriNet".equals(event)
 				&& (con.getPathwayNumbers() > 0)) {
 			MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			g.disableGraphTheory();
@@ -959,7 +1031,7 @@ public class MenuListener implements ActionListener {
 
 		} else if ("createDoc".equals(event)) {
 			new PNDoc();
-		}else if ("mirnaTest".equals(event)) {
+		} else if ("mirnaTest".equals(event)) {
 			System.out.println("mirnatest");
 			// code for testing number of mirnas matching a pathway
 
@@ -1012,7 +1084,7 @@ public class MenuListener implements ActionListener {
 			Iterator<String> its = pws.iterator();
 
 			double count = 0;
-			String output="";
+			String output = "";
 			while (its.hasNext()) {
 
 				// if(count%10 == 0){
@@ -1020,23 +1092,23 @@ public class MenuListener implements ActionListener {
 				// }
 				pw = its.next();
 
-				//finalQueryString = "SELECT distinct kegg_genes_name.name FROM dawismd.kegg_genes_pathway join dawismd.kegg_genes_name on kegg_genes_pathway.id = kegg_genes_name.id where kegg_genes_pathway.number = '"
-				//		+ pw + "' AND kegg_genes_pathway.org = 'hsa';";
+				// finalQueryString =
+				// "SELECT distinct kegg_genes_name.name FROM dawismd.kegg_genes_pathway join dawismd.kegg_genes_name on kegg_genes_pathway.id = kegg_genes_name.id where kegg_genes_pathway.number = '"
+				// + pw + "' AND kegg_genes_pathway.org = 'hsa';";
 
-				finalQueryString = "SELECT count(distinct kegg_genes_pathway.id) FROM dawismd.kegg_genes_pathway inner join dawismd.kegg_genes_name on kegg_genes_pathway.id = kegg_genes_name.id where kegg_genes_pathway.number='"+ pw +"' and kegg_genes_pathway.org = 'hsa';";
-				
-				
-				
+				finalQueryString = "SELECT count(distinct kegg_genes_pathway.id) FROM dawismd.kegg_genes_pathway inner join dawismd.kegg_genes_name on kegg_genes_pathway.id = kegg_genes_name.id where kegg_genes_pathway.number='"
+						+ pw + "' and kegg_genes_pathway.org = 'hsa';";
+
 				list = new Wrapper().requestDbContent(Wrapper.dbtype_KEGG,
 						finalQueryString);
-				/*if (list.size() > 0) {
-					pw2genes.put(pw, new HashSet<String>());
-				}
-
-				for (int i = 0; i < list.size(); i++) {
-					pw2genes.get(pw).add(list.get(i).getColumn()[0]);
-				}*/
-				output+=pw+"\t"+list.get(0).getColumn()[0]+"\r\n";
+				/*
+				 * if (list.size() > 0) { pw2genes.put(pw, new
+				 * HashSet<String>()); }
+				 * 
+				 * for (int i = 0; i < list.size(); i++) {
+				 * pw2genes.get(pw).add(list.get(i).getColumn()[0]); }
+				 */
+				output += pw + "\t" + list.get(0).getColumn()[0] + "\r\n";
 				count++;
 			}
 			System.out.println(output);
