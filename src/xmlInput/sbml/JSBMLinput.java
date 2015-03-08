@@ -703,6 +703,7 @@ public class JSBMLinput {
 
 		Map<Integer, Set<Integer>> hierarchyMap = new HashMap<Integer, Set<Integer>>();
 		Map<Integer, String> coarseNodeLabels = new HashMap<Integer, String>();
+		Map<Integer, Integer> hierarchyRootNodes = new HashMap<Integer, Integer>();
 		Set<Integer> openedCoarseNodes = new HashSet<Integer>();
 
 		for (Element coarseNode : hierarchyList.getChildren("coarseNode", null)) {
@@ -718,6 +719,10 @@ public class JSBMLinput {
 
 			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id")
 					.split("_")[1]);
+			String rootNode = coarseNode.getAttribute("root", null) == null ? "null" : coarseNode.getAttributeValue("root");
+			if(!rootNode.equals("null")){
+				hierarchyRootNodes.put(id, Integer.parseInt(coarseNode.getAttributeValue("root").split("_")[1]));
+			}
 			hierarchyMap.put(id, childrenSet);
 			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
 			if(coarseNode.getAttributeValue("opened").equals("true")){
@@ -739,9 +744,16 @@ public class JSBMLinput {
 					coarseNodes.add(nodes.get(child));
 				}
 				if (toBeCoarsed) {
-					BiologicalNodeAbstract coarseNode = BiologicalNodeAbstract
-							.coarse(coarseNodes, parent,
-									coarseNodeLabels.get(parent));
+					BiologicalNodeAbstract coarseNode;
+					if(hierarchyRootNodes.containsKey(parent)){
+						coarseNode = BiologicalNodeAbstract.coarse(coarseNodes, parent,
+								coarseNodeLabels.get(parent),nodes.get(hierarchyRootNodes.get(parent)));
+					
+					} else {
+						coarseNode = BiologicalNodeAbstract.coarse(coarseNodes, parent,
+										coarseNodeLabels.get(parent));
+					}
+
 					nodes.put(parent, coarseNode);
 					coarsedNodes += 1;
 				}

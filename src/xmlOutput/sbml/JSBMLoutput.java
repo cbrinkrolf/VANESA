@@ -294,6 +294,7 @@ public class JSBMLoutput {
 		hierarchyXMLNode.addAttr("id", "spec_" + node.getID());
 		hierarchyXMLNode.addAttr("label", node.getLabel());
 		hierarchyXMLNode.addAttr("opened", rootPathway.getOpenedSubPathways().contains(node) ? "true" : "false");
+		hierarchyXMLNode.addAttr("root", node.getRootNode()==null ? "null" : "spec_" + node.getRootNode().getID());
 		for(BiologicalNodeAbstract childNode : node.getInnerNodes()){
 			XMLNode childXMLNode = new XMLNode(new XMLNode(new XMLTriple(
 					"child", "", ""), new XMLAttributes()));
