@@ -154,7 +154,7 @@ public class SaveDialog {
 			file = chooser.getSelectedFile();
 			boolean overwrite = true;
 			if (file.exists()) {
-				int response = JOptionPane.showConfirmDialog(null,
+				int response = JOptionPane.showConfirmDialog(MainWindowSingleton.getInstance(),
 						"Overwrite existing file?", "Confirm Overwrite",
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.QUESTION_MESSAGE);
