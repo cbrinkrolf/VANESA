@@ -105,7 +105,7 @@ public class DatabaseSearchListener implements ActionListener {
 					this.requestUNIDContent();
 				}
 			} else {
-				JOptionPane.showConfirmDialog(null,
+				JOptionPane.showConfirmDialog(MainWindowSingleton.getInstance(),
 						"Please type something into the search form.");
 			}
 		} else if ("pickcommons".equals(event)) {
