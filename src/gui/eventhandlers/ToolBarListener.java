@@ -423,12 +423,13 @@ public class ToolBarListener implements ActionListener {
 						point = graphInstance.getPathway().getGraph()
 								.getVertexLocation(nodes.get(i));
 						if (point.getX() < minx) {
-							minx = point.getY();
+							minx = point.getX();
 						}
 					}
 					for (int i = 0; i < nodes.size(); i++) {
 						point = graphInstance.getPathway().getGraph()
 								.getVertexLocation(nodes.get(i));
+						
 						point.setLocation(minx, point.getY());
 						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(nodes.get(i), point);
 						
