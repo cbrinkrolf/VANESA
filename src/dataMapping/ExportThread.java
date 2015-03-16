@@ -15,9 +15,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import cluster.IJobServer;
-import cluster.JobTypes;
-import cluster.MappingCallback;
+import cluster.clientimpl.MappingCallback;
+import cluster.master.IClusterJobs;
+import cluster.slave.JobTypes;
 
 /**
  * @author Britta Niemann
@@ -41,7 +41,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 	@Override
 	protected Integer doInBackground() throws Exception {
 		String url = "rmi://cassiopeidae/ClusterJobs";
-		IJobServer server;
+		IClusterJobs server;
 
 //		HashMap<String, HashMap<String, Double>> experiments = new HashMap<String, HashMap<String, Double>>();
 		
@@ -80,7 +80,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 		MappingCallback helper;
 		try {
 			
-			server = (IJobServer) Naming.lookup(url);
+			server = (IClusterJobs) Naming.lookup(url);
 
 			
 			helper = new MappingCallback();
