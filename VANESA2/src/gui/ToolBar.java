@@ -387,6 +387,38 @@ public class ToolBar {
 //		}
 //		if (!petriNetView) toolBarControlControls.add(convertIntoPetriNet);
 		
+		JPanel nodeAdjustment = new ToolBarPanel();
+		nodeAdjustment.setLayout(new GridLayout(1,1));
+		
+		
+		JButton adjustDown = new JButton("_");
+		adjustDown.setActionCommand("adjustDown");
+		adjustDown.addActionListener(toolBarListener);
+		adjustDown.setToolTipText("Adjust selected nodes to lowest node");
+		
+		JButton adjustLeft = new JButton("|");
+		adjustLeft.setActionCommand("adjustLeft");
+		adjustLeft.addActionListener(toolBarListener);
+		adjustLeft.setToolTipText("Adjust selected nodes to left");
+		
+		JButton adjustHorizontalSpace = new JButton("||");
+		adjustHorizontalSpace.setActionCommand("adjustHorizontalSpace");
+		adjustHorizontalSpace.addActionListener(toolBarListener);
+		adjustHorizontalSpace.setToolTipText("Adjust horizontal space of selected nodes");
+		
+		JButton adjustVerticalSpace = new JButton("=");
+		adjustVerticalSpace.setActionCommand("adjustVerticalSpace");
+		adjustVerticalSpace.addActionListener(toolBarListener);
+		adjustVerticalSpace.setToolTipText("Adjust vertical space of selected nodes");
+		
+		nodeAdjustment.add(adjustDown);
+		nodeAdjustment.add(adjustLeft);
+		nodeAdjustment.add(adjustHorizontalSpace);
+		nodeAdjustment.add(adjustVerticalSpace);
+		
+		
+		
+		
 		
 		if (DeveloperClass.isDeveloperStatus) {
 			if (petriNetView) {
@@ -406,6 +438,9 @@ public class ToolBar {
 				bar.add(new JSeparator());
 				bar.add(viewPortControls);
 				bar.add(new JSeparator());
+				bar.add(nodeAdjustment);
+				bar.add(new JSeparator());
+				
 				bar.add(infopanel);
 			} else {
 //				bar.add(toolBarControlControls);
@@ -421,6 +456,8 @@ public class ToolBar {
 				bar.add(featureControls, "wrap");
 				bar.add(new ToolBarSeperator(), "growx, wrap");
 				bar.add(viewPortControls, "wrap");
+				bar.add(new JSeparator());
+				bar.add(nodeAdjustment);
 				bar.add(new ToolBarSeperator(), "growx, wrap");
 				bar.add(infopanel, "wrap");
 			}
@@ -434,6 +471,8 @@ public class ToolBar {
 			bar.add(featureControls);
 			bar.add(new JSeparator());
 			bar.add(viewPortControls);
+			bar.add(new JSeparator());
+			bar.add(nodeAdjustment);
 			bar.add(new JSeparator());
 			bar.add(infopanel);
 
