@@ -40,10 +40,10 @@ import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import cluster.ClusterComputeThread;
-import cluster.ComputeCallback;
-import cluster.JobTypes;
-import cluster.LayoutPoint2D;
+import cluster.clientimpl.ClusterComputeThread;
+import cluster.clientimpl.ComputeCallback;
+import cluster.slave.JobTypes;
+import cluster.slave.LayoutPoint2D;
 
 public class GraphColoringGUI implements ActionListener {
 
