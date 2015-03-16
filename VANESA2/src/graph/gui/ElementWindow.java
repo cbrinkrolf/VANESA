@@ -3,6 +3,7 @@ package graph.gui;
 /*import edu.uci.ics.jung.graph.Edge;
  import edu.uci.ics.jung.graph.Vertex;
  import edu.uci.ics.jung.utils.Pair;*/
+import edu.emory.mathcs.backport.java.util.Collections;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import graph.algorithms.NodeAttributeTypes;
@@ -17,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -198,11 +200,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			JComboBox<String> compartment = new JComboBox<String>();
 			addCompartmentItems(compartment);
 			AutoCompleteDecorator.decorate(compartment);
-			// compartment.setMaximumSize(new Dimension(250,300));
-			// BiologicalNodeAbstract bna = (BiologicalNodeAbstract)
-			// graphInstance
-			// .getPathwayElement(element);
-			// BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
+
 			compartment.setSelectedItem(bna.getCompartment());
 			compartment.addItemListener(this);
 
@@ -222,16 +220,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// Show Experiment names and values
 			JTextArea experiments = new JTextArea();
 			String experimentstring = new String();
-//			for (int i = 0; i < gnode.getSuperNode().biodata.length; i++) {
-//				String valuestring = gnode.getSuperNode().biodataEntries[i]
-//						+ "";
-//				valuestring = (valuestring.length() > 3 ? valuestring
-//						.substring(0, 4) : valuestring);
-//
-//				experimentstring += gnode.getSuperNode().biodata[i] + ":\t"
-//						+ valuestring + "\n";
-//			}
-			
+
 			p.add(new JLabel("Data set:"), "gap 5");
 			p.add(experiments, "wrap, span 3");
 
@@ -240,32 +229,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 			String annotationstring = new String();
 			goannoations.setEditable(false);
 			goannoations.setForeground(Color.BLUE);
-
-//			if (goentries > 0) {
-//				// biological process
-//				annotationstring += "Biological process:\n";
-//				for (int i = 0; i < gnode.getSuperNode().biologicalProcess.length; i++) {
-//					annotationstring += "   -"
-//							+ gnode.getSuperNode().biologicalProcess[i]
-//							+ "\n";
-//				}
-//				// molecular function
-//				annotationstring += "Molecular function:\n";
-//				for (int i = 0; i < gnode.getSuperNode().molecularFunction.length; i++) {
-//					annotationstring += "   -"
-//							+ gnode.getSuperNode().molecularFunction[i]
-//							+ "\n";
-//				}
-//				// cellular compartment
-//				annotationstring += "Cellular component:\n";
-//				for (int i = 0; i < gnode.getSuperNode().cellularComponent.length; i++) {
-//					annotationstring += "  -"
-//							+ gnode.getSuperNode().cellularComponent[i]
-//							+ "\n";
-//				}
-//			}
-
-
 
 			p.add(new JLabel("Gene Ontology:"), "gap 5");
 			p.add(goannoations, "wrap, span 3");
@@ -279,6 +242,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 			
 			String atname, atsvalue;
 			double atdvalue;
+
+			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries= new ArrayList<>(), annotationentries
+					= new ArrayList<>();
+			
 			for(NodeAttribute att : bna.getNodeAttributes()){
 				atname = att.getName();
 				atsvalue = att.getStringvalue();
@@ -286,22 +253,35 @@ public class ElementWindow implements ActionListener, ItemListener {
 				
 				switch (att.getType()) {
 				case NodeAttributeTypes.EXPERIMENT:
-					experimentstring+=atname+":\t"+atdvalue+"\n";
+					experimententries.add(atname+":\t"+atdvalue+"\n");
 					break;
 					
 				case NodeAttributeTypes.DATABASE_ID:
-					dbidstring+=atname+":\t"+atsvalue+"\n";
+					databaseidentries.add(atname+":\t"+atsvalue+"\n");
 					break;
 
 				case NodeAttributeTypes.ANNOTATION:
-					annotationstring+=atname+":\t"+atsvalue+"\n";
-					
+					annotationentries.add(atname+":\t"+atsvalue+"\n");
 					break;
 					
 				default:
 					break;
 				}				
 			}
+			
+			//Sort for more convenient display
+			Collections.sort(experimententries);
+			for(String exp : experimententries)
+				experimentstring+=exp;
+			
+			Collections.sort(databaseidentries);
+			for(String dbid : databaseidentries)
+				dbidstring+=dbid;
+			
+			Collections.sort(annotationentries);
+			for(String ann : annotationentries)
+				annotationstring+=ann;
+			
 
 			experiments.setText(experimentstring);
 			dbids.setText(dbidstring);
