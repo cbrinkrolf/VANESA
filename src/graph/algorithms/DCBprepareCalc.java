@@ -22,9 +22,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import cluster.ClusterComputeThread2;
-import cluster.ComputeCallback2;
-import cluster.JobTypes;
+import cluster.clientimpl.ClusterComputeThread2;
+import cluster.clientimpl.ComputeCallback2;
+import cluster.slave.JobTypes;
 import dataMapping.DataMappingModelController;
 
 /**

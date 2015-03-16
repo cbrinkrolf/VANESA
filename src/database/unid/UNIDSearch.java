@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -24,10 +23,10 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Protein;
-import cluster.IJobServer;
-import cluster.SearchCallback;
+import cluster.clientimpl.SearchCallback;
 import cluster.graphdb.DatabaseEntry;
 import cluster.graphdb.GraphDBTransportNode;
+import cluster.master.IClusterJobs;
 
 /**
  * 
@@ -37,7 +36,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 
 	public static ProgressBar progressBar;
 	private MainWindow mw;
-	private IJobServer server;
+	private IClusterJobs server;
 	private SearchCallback helper;
 
 	private String graphid;
@@ -84,7 +83,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 
 		try {
 			String url = "rmi://cassiopeidae/ClusterJobs";
-			server = (IJobServer) Naming.lookup(url);
+			server = (IClusterJobs) Naming.lookup(url);
 			if (multi_id_search) {
 				server.submitSearch(commonNames, depth, "any", helper);
 			} else {
@@ -96,6 +95,10 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 				// server.submitSearch(datasets, 1, helper);
 			}
 		} catch (Exception e) {
+			//MARTIN rmi search debug print
+			e.printStackTrace();
+			
+			
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					JOptionPane.showMessageDialog(MainWindowSingleton
