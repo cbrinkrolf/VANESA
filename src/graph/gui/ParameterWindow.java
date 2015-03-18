@@ -113,14 +113,14 @@ public class ParameterWindow implements ActionListener {
 			down.addActionListener(this);
 			// parameters.put(del, p);
 
-			panel.add(del, "span 1, wmax pref-15px");
+			panel.add(del, "span 1");
 			if (i == 0) {
-				panel.add(down, "skip, span 1, wrap, wmax 30");
+				panel.add(down, "skip, span 1, wrap");
 			} else if (i == gea.getParameters().size() - 1) {
-				panel.add(up, "span 1, gapright 4, wmax 30");
+				panel.add(up, "span 1, gapright 4");
 			} else {
-				panel.add(up, "span 1, gapright 4, wmax 30");
-				panel.add(down, "span 1, wrap, wmax 30");
+				panel.add(up, "span 1, gapright 4");
+				panel.add(down, "span 1, wrap");
 			}
 		}
 	}

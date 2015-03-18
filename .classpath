@@ -72,6 +72,9 @@
 	<classpathentry kind="lib" path="packages/JTattoo-1.6.11.jar"/>
 	<classpathentry kind="lib" path="packages/swingx-all-1.6.4.jar"/>
 	<classpathentry kind="lib" path="packages/eDAL-MetaDataAPI-Client-2.3.5-SNAPSHOT-jar-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/xerces_2_5_0.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/xml-apis.jar"/>
+	<classpathentry kind="lib" path="packages/prettyFormula/xml-apis-ext.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="packages/mdsj.jar"/>
 	<classpathentry kind="output" path="bin"/>
