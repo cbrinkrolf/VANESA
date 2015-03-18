@@ -1,6 +1,8 @@
 package gui.eventhandlers;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
@@ -17,6 +19,7 @@ import gui.ParallelChooseGraphsWindow;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -37,6 +40,7 @@ import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 import save.graphPicture.WriteGraphPicture;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ToolBarListener implements ActionListener {
@@ -393,7 +397,24 @@ public class ToolBarListener implements ActionListener {
 				Point2D point;
 				if (nodes.size() > 1) {
 					for (int i = 0; i < nodes.size(); i++) {
-
+						Rectangle r = nodes.get(i).getShape().getBounds();
+						/*VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance
+								.getPathway().getGraph()
+								.getVisualizationViewer();
+						double scaleV = vv.getRenderContext()
+								.getMultiLayerTransformer()
+								.getTransformer(Layer.VIEW).getScale();
+						double scaleL = vv.getRenderContext()
+								.getMultiLayerTransformer()
+								.getTransformer(Layer.LAYOUT).getScale();
+						double scale;
+						if (scaleV < 1) {
+							scale = scaleV;
+						} else {
+							scale = scaleL;
+						}
+						
+						System.out.println((r.getMaxX()-r.getMinX())/scale);*/
 						point = graphInstance.getPathway().getGraph()
 								.getVertexLocation(nodes.get(i));
 						if (point.getY() > maxy) {

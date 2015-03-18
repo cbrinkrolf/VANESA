@@ -58,7 +58,6 @@ public class Server {
 					serverSocket = new java.net.ServerSocket(port);
 
 					while (true) {
-						//System.out.println("in while");
 						java.net.Socket client = warteAufAnmeldung(serverSocket);
 						// leseNachricht(client);
 
@@ -91,7 +90,6 @@ public class Server {
 	}
 
 	private void leseNachricht(DataInputStream socket) throws IOException {
-
 		int lengthMax = 2048;
 		// char[] buffer = new char[200];
 		byte[] buffer = new byte[lengthMax];

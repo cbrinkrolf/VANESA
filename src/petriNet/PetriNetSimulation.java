@@ -300,7 +300,7 @@ public class PetriNetSimulation implements ActionListener {
 
 				boolean simExePresent = false;
 
-				if (new File(simName).exists()) {
+				if (simName != null && new File(simName).exists()) {
 					simExePresent = true;
 				}
 
@@ -413,8 +413,8 @@ public class PetriNetSimulation implements ActionListener {
 					out.write("getErrorString();\r\n");
 					out.write("loadFile(\"simulation.mo\"); ");
 					out.write("getErrorString();\r\n");
-					out.write("setDebugFlags(\"disableComSubExp\"); ");
-					out.write("getErrorString();\r\n");
+					//out.write("setDebugFlags(\"disableComSubExp\"); ");
+					//out.write("getErrorString();\r\n");
 					
 					//CHRIS improve / correct filter
 					//out.write("buildModel(simulation, " + filter + "); ");
@@ -607,9 +607,9 @@ public class PetriNetSimulation implements ActionListener {
 							pb.redirectOutput();
 							pb.directory(new File(pathSim));
 							process = pb.start();
+							
 							setReader(new InputStreamReader(
 									process.getInputStream()));
-
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -626,7 +626,7 @@ public class PetriNetSimulation implements ActionListener {
 								.getPetriNet().getTime();
 						// System.out.println("running");
 						while (s.isRunning()) {
-							// System.out.println("im thread");
+							//System.out.println("im thread");
 							w.redrawGraphs();
 							// GraphInstance graphInstance = new
 							// GraphInstance();
