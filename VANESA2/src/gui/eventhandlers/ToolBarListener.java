@@ -155,21 +155,6 @@ public class ToolBarListener implements ActionListener {
 			new InfoWindow(false);
 		} else if ("infoextended".equals(event)) {
 			new InfoWindow(true);
-		} else if ("3DView".equals(event)) {
-			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					Pathway p = graphInstance.getPathway();
-					Pathway[] pathways = new Pathway[1];
-					pathways[0] = p;
-					// CompareGraphs3D view3d =
-					// new CompareGraphs3D(pathways);
-
-				} else {
-					this.showCreateBeforeMessage();
-				}
-			} else {
-				this.showCreateBeforeMessage();
-			}
 		} else if ("heatmap".equals(event)) {
 			if (con.getPathwayNumbers() > 1) {
 				new HeatmapChooseGraphsWindow();
