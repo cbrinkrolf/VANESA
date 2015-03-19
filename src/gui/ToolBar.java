@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
@@ -106,16 +107,6 @@ public class ToolBar {
 		stochasticTransition.setActionCommand("stochasticTransition");
 		stochasticTransition.addActionListener(toolBarListener);
 
-		JPanel petriNetcontrols = new ToolBarPanel();
-		petriNetcontrols.setLayout(new GridLayout(3, 2));
-
-		// Add buttons to experiment with Grid Layout
-		petriNetcontrols.add(discretePlace);
-		petriNetcontrols.add(continiousPlace);
-		petriNetcontrols.add(discreteTransition);
-		petriNetcontrols.add(continiousTransition);
-		petriNetcontrols.add(stochasticTransition);
-
 		JButton center = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("centerGraph.png")));
 		center.setToolTipText("Center graph");
@@ -154,7 +145,7 @@ public class ToolBar {
 
 		
 		JPanel infopanel = new ToolBarPanel();
-		infopanel.setLayout(new GridLayout(2, 2));
+		infopanel.setLayout(new GridLayout(4, 2));
 		
 		JButton info = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("InfoToolBarButton.png")));
@@ -212,12 +203,6 @@ public class ToolBar {
 		infopanel.add(flatSelectedNodes);
 		infopanel.add(enterSelectedNode);
 		infopanel.add(autoCoarse);
-
-		JButton dimView = new ToolBarButton(new ImageIcon(
-				imagePath.getPath("view.png")));
-		dimView.setToolTipText("3D View");
-		dimView.setActionCommand("3DView");
-		dimView.addActionListener(toolBarListener);
 
 		JButton printer = new ToolBarButton(new ImageIcon(
 				imagePath.getPath("printer.png")));
@@ -307,7 +292,7 @@ public class ToolBar {
 		edit.addActionListener(toolBarListener);
 
 		JPanel viewPortControls = new ToolBarPanel();
-		viewPortControls.setLayout(new GridLayout(2, 2));
+		viewPortControls.setLayout(new GridLayout(3, 2));
 
 		compressEdges.setBorder(null);
 		compressEdges.setBorderPainted(false);
@@ -322,14 +307,12 @@ public class ToolBar {
 		viewPortControls.add(compressEdges);
 		viewPortControls.add(stretchEdges); 
 		
-		if (DeveloperClass.isDeveloperStatus) {
-			viewPortControls.add(dimView);
-		}
 		JPanel editControls = new ToolBarPanel();
-		editControls.setLayout(new GridLayout(2, 2));
+		editControls.setLayout(new GridLayout(0, 2));
 
 		if (!petriNetView) {
 			editControls.add(edit);
+			editControls.add(new JLabel());
 		}
 		editControls.add(pick);
 		editControls.add(move);
@@ -345,8 +328,12 @@ public class ToolBar {
 		printControls.add(picture);
 
 		// Add buttons to experiment with Grid Layout
+		JPanel petriNetcontrols = new ToolBarPanel();
+		petriNetcontrols.setLayout(new GridLayout(2, 3));
+		
 		petriNetcontrols.add(discretePlace);
 		petriNetcontrols.add(continiousPlace);
+		petriNetcontrols.add(new JLabel());
 		petriNetcontrols.add(discreteTransition);
 		petriNetcontrols.add(continiousTransition);
 		petriNetcontrols.add(stochasticTransition);
@@ -360,7 +347,6 @@ public class ToolBar {
 				featureControls.add(heatmap);
 				featureControls.add(parallelview);
 			}
-			featureControls.add(dimView);
 			featureControls.add(chooser);
 			featureControls.add(colorChooser);
 		} else {
@@ -477,9 +463,13 @@ public class ToolBar {
 			bar.add(infopanel);
 
 		}
-		bar.setVisible(true);
-		bar.repaint();
+		
+		
 		bar.revalidate();
+		bar.repaint();
+		bar.setVisible(true);
+		
+		
 	}
 
 	public ToolBar(Boolean petriNetView) {
