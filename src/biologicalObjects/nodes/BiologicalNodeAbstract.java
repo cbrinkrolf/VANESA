@@ -8,6 +8,7 @@ import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.awt.Shape;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -141,6 +142,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private HashSet<NodeAttribute> nodeAttributes = new HashSet<>();
 	
 	private boolean markedAsEnvironment = false;
+	
+	private Point2D parentNodeDistance = new Point2D.Double(0,0);
 
 	public BiologicalNodeAbstract(String label, String name) {
 		super(name, new GraphInstance().getPathway());
@@ -1488,6 +1491,16 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 
 	
+	public Point2D getParentNodeDistance() {
+		return parentNodeDistance;
+	}
+
+	public void setParentNodeDistance(Point2D parentNodeDistance) {
+		this.parentNodeDistance = parentNodeDistance;
+	}
+
+
+
 	/**
 	 * 
 	 * @author mlewinsk

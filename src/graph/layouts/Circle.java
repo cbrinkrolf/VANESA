@@ -86,6 +86,14 @@ public class Circle {
     	return cP;
     
     } 
+    
+    public static Point2D addPoints(Point2D node1, Point2D node2){
+    	return new Point2D.Double(node1.getX() + node2.getX(), node1.getY() + node2.getY());
+    }
+    
+    public static Point2D get2Ddistance(Point2D node1, Point2D node2){
+    	return new Point2D.Double(node2.getX()-node1.getX(), node2.getY()-node1.getY());
+    }
         
 	
 }
