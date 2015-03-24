@@ -26,6 +26,8 @@ public class OptionPanel {
 	private DatabaseWindow dw;
 
 	 private ElementTree tree;
+	 
+	 private BuildingBlocks bb;
 
 	private SatelliteWindow satelliteWindow;
 	
@@ -84,6 +86,8 @@ public class OptionPanel {
 	private HeatgraphPropertiesWindow heatgraphPropertiesWindow;
 
 	private JXTaskPane heatgraphProperties;
+
+	private JXTaskPane bbProperties;
 
 	public JXTaskPaneContainer getTaskPaneContainer() {
 		return taskPaneContainer;
@@ -160,6 +164,13 @@ public class OptionPanel {
 		elementWindow = new ElementWindow();
 		generalProperties.add(elementWindow.getPanel());
 		generalProperties.setCollapsed(true);
+		
+		bbProperties = new JXTaskPane();
+		bbProperties.setTitle("Building Blocks");
+		bb = new BuildingBlocks();
+		bbProperties.add(bb);
+		bbProperties.setCollapsed(true);
+
 
 		heatgraphProperties = new JXTaskPane();
 		heatgraphProperties.setTitle("Heatgraph Properties");
@@ -192,6 +203,7 @@ public class OptionPanel {
 			taskPaneContainer.add(theory, "growx");
 			taskPaneContainer.add(satellite, "growx");
 			taskPaneContainer.add(elements, "growx");
+			taskPaneContainer.add(bbProperties, "growx");
 			taskPaneContainer.add(pathways, "growx");
 			taskPaneContainer.add(filter, "growx");
 			// taskPaneContainer.add(dbProperties);
@@ -203,6 +215,7 @@ public class OptionPanel {
 			taskPaneContainer.add(databaseSearch, "growx");
 			taskPaneContainer.add(satellite, "growx");
 			taskPaneContainer.add(elements, "growx");
+			taskPaneContainer.add(bbProperties, "growx");
 			taskPaneContainer.add(pathways, "growx");
 			taskPaneContainer.add(filter, "growx");
 			taskPaneContainer.add(theory, "growx");
@@ -228,6 +241,7 @@ public class OptionPanel {
 
 	public void removeAllElements() {
 		tree.removeTree();
+		bb.removeTree();
 		pathwayTree.removeTree();
 		satelliteWindow.removeAllElements();
 		PCPWindow.removeAllElements();
@@ -275,6 +289,8 @@ public class OptionPanel {
 				pathwayTree.revalidateView();
 			}else if (element.equals("initPCP")){
 				PCPWindow.initGraphs();
+			} else if (element.equals("bb")){
+//				bb.revalidateView();
 			}
 		}
 	}

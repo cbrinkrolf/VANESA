@@ -540,6 +540,10 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void updatePathwayTree() {
 		optionPanel.updatePanel("pathwayTree");
 	}
+	
+	public void updateBuildingBlocks() {
+		optionPanel.updatePanel("bb");
+	}
 
 	public void updateProjectProperties() {
 		optionPanel.updatePanel("project");
@@ -558,6 +562,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		optionPanel.updatePanel("alignment");
 		optionPanel.updatePanel("pcp");
 		optionPanel.updatePanel("pathwayTree");
+		optionPanel.updatePanel("bb");
 	}
 
 	public void updateAllGuiElements() {
@@ -572,6 +577,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		optionPanel.updatePanel("Database");
 		optionPanel.updatePanel("pathwayTree");
 		optionPanel.updatePanel("initPCP");
+		optionPanel.updatePanel("bb");
 	}
 
 	public void updateDAWISVertexWindow() {

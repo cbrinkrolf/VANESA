@@ -78,7 +78,8 @@ public class JSBMLinput {
 	 */
 	private BiologicalEdgeAbstract bea = null;
 	private final Hashtable<Integer, BiologicalNodeAbstract> nodes = new Hashtable<Integer, BiologicalNodeAbstract>();
-
+	private boolean coarsePathway = false;
+	
 	private Hashtable<BiologicalNodeAbstract, Integer> bna2Ref = new Hashtable<BiologicalNodeAbstract, Integer>();
 
 	public JSBMLinput() {
@@ -104,6 +105,8 @@ public class JSBMLinput {
 		}
 		if (pathway == null) {
 			pathway = new CreatePathway(file.getName()).getPathway();
+		} else {
+			coarsePathway = true;
 		}
 		if(pathway.getFilename()==null){
 			pathway.setFilename(file);
@@ -491,8 +494,10 @@ public class JSBMLinput {
 			case Elementdeclerations.sRNA:
 				bna = new biologicalObjects.nodes.SRNA(label, name);
 				elSub = specAnnotation.getChild("NtSequence", null);
-				attr = String.valueOf(elSub.getAttributeValue("NtSequence"));
-				((biologicalObjects.nodes.SRNA) bna).setNtSequence(attr);
+				if(elSub!=null){
+					attr = String.valueOf(elSub.getAttributeValue("NtSequence"));
+					((biologicalObjects.nodes.SRNA) bna).setNtSequence(attr);
+				}
 				break;
 			case Elementdeclerations.smallMolecule:
 				bna = new biologicalObjects.nodes.SmallMolecule(label, name);
@@ -725,7 +730,7 @@ public class JSBMLinput {
 			}
 			hierarchyMap.put(id, childrenSet);
 			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
-			if(coarseNode.getAttributeValue("opened").equals("true")){
+			if(coarseNode.getAttributeValue("opened")!=null && coarseNode.getAttributeValue("opened").equals("true")){
 				openedCoarseNodes.add(id);
 			}
 		}
@@ -758,15 +763,27 @@ public class JSBMLinput {
 					coarsedNodes += 1;
 				}
 			}
-			while(!openedCoarseNodes.isEmpty()){
-				Set<Integer> ocn = new HashSet<Integer>();
-				ocn.addAll(openedCoarseNodes);
-				for(Integer id : ocn){
-					if(pathway.getAllNodes().contains(nodes.get(id))){
-						pathway.openSubPathway(nodes.get(id));
-						openedCoarseNodes.remove(id);
+			if(!coarsePathway){
+				while(!openedCoarseNodes.isEmpty()){
+					Set<Integer> ocn = new HashSet<Integer>();
+					ocn.addAll(openedCoarseNodes);
+					for(Integer id : ocn){
+						if(pathway.getAllNodes().contains(nodes.get(id))){
+							pathway.openSubPathway(nodes.get(id));
+							openedCoarseNodes.remove(id);
+						}
 					}
 				}
+			}
+		}
+		if(coarsePathway){
+			Set<BiologicalNodeAbstract> roughestAbstractionNodes = new HashSet<BiologicalNodeAbstract>();
+			roughestAbstractionNodes.addAll(nodes.values());
+			roughestAbstractionNodes.removeIf(p -> p.getParentNode()!=null && p.getParentNode()!=p);
+			roughestAbstractionNodes.removeIf(p -> p.isMarkedAsEnvironment());
+			BiologicalNodeAbstract.coarse(roughestAbstractionNodes);
+			for(BiologicalNodeAbstract node : nodes.values()){
+					node.markAsEnvironment(false);
 			}
 		}
 	}
