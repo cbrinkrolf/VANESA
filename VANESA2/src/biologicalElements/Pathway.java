@@ -78,6 +78,7 @@ import graph.gui.Boundary;
 import graph.gui.EdgeDeleteDialog;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
+import graph.layouts.Circle;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.GraphTab;
 import gui.MainWindow;
@@ -1458,10 +1459,16 @@ public class Pathway implements Cloneable {
 					if(parentNode.getRootNode()!=null && getGraph().getAllVertices().contains(parentNode.getRootNode())){
 						loc = getGraph().getVertexLocation(parentNode.getRootNode());
 					} else {
-						loc = parentNode.getBorder().isEmpty() ? getGraph().getVertexLocation(node)
-								: getGraph().getVertexLocation(parentNode.getBorder().iterator().next());
+//						loc = parentNode.getBorder().isEmpty() ? getGraph().getVertexLocation(node)
+//								: getGraph().getVertexLocation(parentNode.getBorder().iterator().next());
+						Set<Point2D> locations = new HashSet<Point2D>();
+						for(BiologicalNodeAbstract n : parentNode.getInnerNodes()){
+							locations.add(this.getGraph().getVertexLocation(n));
+						}
+						loc = Circle.averagePoint(locations);
 					}
 					addVertex(parentNode, loc);
+					node.setParentNodeDistance(Circle.get2Ddistance(loc, this.getGraph().getVertexLocation(node)));
 					removeElement(node);
 				}
 
@@ -1587,7 +1594,7 @@ public class Pathway implements Cloneable {
 		removeElement(subPathway);
 		Color color;
 		for(BiologicalNodeAbstract node : subPathway.getInnerNodes()){
-			addVertex(node, this.getGraph().getVertexLocation(node));
+			addVertex(node, Circle.addPoints(location,node.getParentNodeDistance()));
 			color = node.getColor();
 			node.setColor(new Color((int) Math.min(255,color.getRed()*1.2f),(int) Math.min(255,(int) color.getGreen()*1.2f),(int) Math.min(255,(int) color.getBlue()*1.2f)));
 		}
@@ -1640,8 +1647,17 @@ public class Pathway implements Cloneable {
 		if(!openedSubPathways.keySet().contains(subPathway)){
 			return;
 		}
-		
-		addVertex(subPathway, openedSubPathways.get(subPathway));
+		if(subPathway.getRootNode()!=null){
+			addVertex(subPathway, this.getGraph().getVertexLocation(subPathway.getRootNode()));
+		} else if(subPathway.getInnerNodes().size()>0){
+			BiologicalNodeAbstract locationNode = subPathway.getInnerNodes().iterator().next();
+			Point2D loc = this.getGraph().getVertexLocation(locationNode);
+			Point2D dist = locationNode.getParentNodeDistance();
+			dist = new Point2D.Double(-dist.getX(),-dist.getY());
+			addVertex(subPathway, Circle.addPoints(loc, dist));
+		} else {
+			addVertex(subPathway, this.getGraph().getVertexLocation(subPathway));
+		}
 
 		Color color;
 		for(BiologicalNodeAbstract node : subPathway.getInnerNodes()){
