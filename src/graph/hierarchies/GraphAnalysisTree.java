@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JTree;
@@ -21,6 +22,7 @@ public class GraphAnalysisTree{
 	private BiologicalNodeAbstract root;
 	private HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>> children = new HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>>();
 	private HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> parents = new HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract>();	
+	private Set<BiologicalNodeAbstract> allNodes = new HashSet<BiologicalNodeAbstract>();
 	
 	public GraphAnalysisTree(Pathway pw){
 		this.pw = pw;
@@ -29,8 +31,9 @@ public class GraphAnalysisTree{
 	public void build(){
 		
 		// Compute the root node
-		BiologicalNodeAbstract rootNode = pw.getAllNodes().iterator().next();
-		for(BiologicalNodeAbstract n : pw.getAllNodes()){
+		allNodes.addAll(pw.getAllNodes());
+		BiologicalNodeAbstract rootNode = allNodes.iterator().next();
+		for(BiologicalNodeAbstract n : allNodes){
 			if(n.isEnvironmentNodeOf(pw)){
 				continue;
 			}
@@ -208,6 +211,8 @@ public class GraphAnalysisTree{
 		Set<Set<BiologicalNodeAbstract>> childLists;
 		Set<BiologicalNodeAbstract> childList = new HashSet<BiologicalNodeAbstract>();
 		
+		HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>> currentChildren = new HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>>();
+		
 		while(row>=0){
 			thisLevel.clear();
 			thisLevel.addAll(depth.get(row));
@@ -223,6 +228,12 @@ public class GraphAnalysisTree{
 //				}
 					childLists = new HashSet<Set<BiologicalNodeAbstract>>();
 					nodeChildren.addAll(children.get(n));
+					currentChildren.put(n, new HashSet<BiologicalNodeAbstract>());
+					for(BiologicalNodeAbstract child : children.get(n)){
+						nodeChildren.add(child);
+						currentChildren.get(n).add(child);
+						currentChildren.get(n).addAll(currentChildren.get(child));
+					}
 					Set<BiologicalNodeAbstract> parentList = null;
 					while(!nodeChildren.isEmpty()){
 						childList = new HashSet<BiologicalNodeAbstract>();
@@ -295,26 +306,45 @@ public class GraphAnalysisTree{
 						parts.remove(n);
 					} else {
 						if(n!=root){
-							parentList.addAll(pw.getAllNodes());
-							parentList.remove(n);
+//							parentList.addAll(pw.getAllNodes());
+//							parentList.remove(n);
 						}
-						Set<BiologicalNodeAbstract> setCopy;
+						int maxSize = 0;
+						int totalSize = 0;
+						Set<BiologicalNodeAbstract> maxList = new HashSet<BiologicalNodeAbstract>();
 						for(Set<BiologicalNodeAbstract> set : parts.get(n)){
-							if(n != root && set!=parentList){
-								setCopy = new HashSet<BiologicalNodeAbstract>();
-								setCopy.addAll(set);
-								for(BiologicalNodeAbstract subNode : setCopy){
-									if(children.get(n).contains(subNode)){
-										set.addAll(getAllDescendents(subNode));
-									}
+							if(set!=parentList){
+								Iterator<BiologicalNodeAbstract> it = set.iterator();
+								Set<BiologicalNodeAbstract> newChildren = new HashSet<BiologicalNodeAbstract>();
+								while(it.hasNext()){
+									BiologicalNodeAbstract next = it.next();
+									newChildren.addAll(currentChildren.get(next));
 								}
-								parentList.removeAll(set);
+								set.addAll(newChildren);
+								if(set.size()>maxSize){
+									maxSize = set.size();
+									maxList = set;
+								}
+								totalSize += set.size();
+								if(n!=root)
+									parentList.removeAll(set);
+							}
+						}
+						if((allNodes.size()-totalSize)>=maxSize){
+							parts.get(n).remove(parentList);
+						} else {
+							if(n!=root){
+								parentList.addAll(getParentNodes(n));
+							}
+							for(Set<BiologicalNodeAbstract> set : parts.get(n)){
+								set.removeAll(maxList);
 							}
 						}
 					}
 					finishedNodesRow.addAll(children.get(n));
 				}
 			finishedNodes.addAll(finishedNodesRow);
+			currentChildren.remove(finishedNodesRow);
 			finishedNodesRow.clear();
 			row -= 1;
 		}
@@ -333,6 +363,22 @@ public class GraphAnalysisTree{
 //		}
 //		System.out.println("done");
 	}
+	
+	private Set<BiologicalNodeAbstract> getParentNodes(BiologicalNodeAbstract node){
+		Set<BiologicalNodeAbstract> ret = new HashSet<BiologicalNodeAbstract>();
+		if(node!=root){
+			ret.add(parents.get(node));
+			ret.addAll(getParentNodes(parents.get(node)));
+			for(BiologicalNodeAbstract child : children.get(parents.get(node))){
+				if(child!=node){
+					ret.add(child);
+					ret.addAll(getAllDescendents(child));
+				}
+			}
+		}
+		return ret;
+	}
+	
 
 	public void printTree(){
 		printChildren(root);

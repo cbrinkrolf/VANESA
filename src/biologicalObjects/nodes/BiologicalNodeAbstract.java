@@ -287,74 +287,80 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 */
 	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label, BiologicalNodeAbstract rootNode){
 		
+		return coarse(nodes, id, label, rootNode, true);
+	}
+	
+	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label, BiologicalNodeAbstract rootNode, boolean updatePathway){
 		// Stop, if less than two nodes are selected.
-		if(nodes == null  || nodes.size()<1){
-			return null;
-		}
-		
-		BiologicalNodeAbstract coarseNode = rootNode;
-		// Get the node type
-		if(rootNode == null || rootNode.getRootPathway().isPetriNet())
-			coarseNode = computeCoarseType(nodes);
-		
-		// If coarsing is not valid, abort.
-		if(coarseNode == null || !isCoarsingAllowed(coarseNode.isPetriNet(), nodes)){
-			showCoarsingErrorMessage();
-			return null;
-		}
-			
-		// Create a clean node of the correct node type
-		coarseNode = coarseNode.clone();
-		coarseNode.cleanUpHierarchyElements();
-		coarseNode.setRootNode(rootNode);
-		
-		// Set id
-		if(id==null){
-			coarseNode.setID(true);
-		} else {
-			try{
-				coarseNode.setID(id);
-			} catch(IDAlreadyExistException ex){
-				coarseNode.setID(true);
-			}
-		}
-		
-		// Set label, name and title
-		String answer = label;
-		if(label==null){
-			answer = JOptionPane.showInputDialog(MainWindowSingleton.getInstance(), null, 
-					"Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
-			if(answer==null){
-				return null;
-			} else if(answer.isEmpty()){
-				answer = "id_" + coarseNode.getID();
-			}
-		}
-		coarseNode.setLabel(answer);
-		coarseNode.setName(answer);
-		coarseNode.setTitle(answer);
-
-		// set attributes of the child nodes
-		for (BiologicalNodeAbstract node : nodes) {
-			node.setStateChanged(NodeStateChanged.COARSED);
-			if(node.getParentNode()!=null){
-				coarseNode.addVertex(node, node.getParentNode().getGraph().getVertexLocation(node));
-			} else {
-				coarseNode.addVertex(node, node.getRootPathway().getGraph().getVertexLocation(node));
-			}
-			node.setParentNode(coarseNode);
-			coarseNode.getLeafNodes().addAll(node.getLeafNodes());
-		}
+				if(nodes == null  || nodes.size()<1){
+					return null;
+				}
 				
-		//compute border, environment and connecting edges
-		coarseNode.updateHierarchicalAttributes();
-		
-		coarseNode.updateEdges();
-		coarseNode.makeCoarseShape();
-		coarseNode.getRootPathway().updateMyGraph();
+				BiologicalNodeAbstract coarseNode = rootNode;
+				// Get the node type
+				if(rootNode == null || rootNode.getRootPathway().isPetriNet())
+					coarseNode = computeCoarseType(nodes);
+				
+				// If coarsing is not valid, abort.
+				if(coarseNode == null || !isCoarsingAllowed(coarseNode.isPetriNet(), nodes)){
+					showCoarsingErrorMessage();
+					return null;
+				}
+					
+				// Create a clean node of the correct node type
+				coarseNode = coarseNode.clone();
+				coarseNode.cleanUpHierarchyElements();
+				coarseNode.setRootNode(rootNode);
+				
+				// Set id
+				if(id==null){
+					coarseNode.setID(true);
+				} else {
+					try{
+						coarseNode.setID(id);
+					} catch(IDAlreadyExistException ex){
+						coarseNode.setID(true);
+					}
+				}
+				
+				// Set label, name and title
+				String answer = label;
+				if(label==null){
+					answer = JOptionPane.showInputDialog(MainWindowSingleton.getInstance(), null, 
+							"Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
+					if(answer==null){
+						return null;
+					} else if(answer.isEmpty()){
+						answer = "id_" + coarseNode.getID();
+					}
+				}
+				coarseNode.setLabel(answer);
+				coarseNode.setName(answer);
+				coarseNode.setTitle(answer);
+
+				// set attributes of the child nodes
+				for (BiologicalNodeAbstract node : nodes) {
+					node.setStateChanged(NodeStateChanged.COARSED);
+					if(node.getParentNode()!=null){
+						coarseNode.addVertex(node, node.getParentNode().getGraph().getVertexLocation(node));
+					} else {
+						coarseNode.addVertex(node, node.getRootPathway().getGraph().getVertexLocation(node));
+					}
+					node.setParentNode(coarseNode);
+					coarseNode.getLeafNodes().addAll(node.getLeafNodes());
+				}
+						
+				//compute border, environment and connecting edges
+				coarseNode.updateHierarchicalAttributes();
+				
+				coarseNode.updateEdges();
+				coarseNode.makeCoarseShape();
+//				if(updatePathway){
+					coarseNode.getRootPathway().updateMyGraph();
+//				}
 
 
-		return coarseNode;
+				return coarseNode;
 	}
 	
 	/**

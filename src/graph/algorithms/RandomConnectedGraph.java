@@ -124,7 +124,10 @@ public class RandomConnectedGraph {
 			 MainWindow window = MainWindowSingleton.getInstance();
 			 window.updateOptionPanel();
 			// window.enable(true);
+			 
 			pw.getGraph().changeToGEMLayout();
+//			 return pw;
 		}
+//		return null;
 	}
 }
