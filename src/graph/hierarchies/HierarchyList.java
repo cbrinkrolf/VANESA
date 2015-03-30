@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.id.IdentityGenerator.GetGeneratedKeysDelegate;
+
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 /**
@@ -193,7 +195,7 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 		}
 		if(childNodes.size()>1 && !isInitialCall){
 			if(getNode()!=null){
-				BiologicalNodeAbstract coarseNode =  BiologicalNodeAbstract.coarse(childNodes, null, getNode().getLabel(), getNode());
+				BiologicalNodeAbstract coarseNode =  BiologicalNodeAbstract.coarse(childNodes, null, getNode().getLabel(), getNode(), false);
 				return coarseNode;
 			}
 			return BiologicalNodeAbstract.coarse(childNodes, null, getValue().toString());
@@ -208,6 +210,7 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 	 */
 	public void coarse(){
 		coarse(true);
+		GraphInstance.getPathwayStatic().getRootPathway().updateMyGraph();
 	}
 	
 	public void setNode(BiologicalNodeAbstract n){

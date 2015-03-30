@@ -1,5 +1,7 @@
 package graph.hierarchies;
 
+import graph.algorithms.RandomConnectedGraph;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -179,30 +181,66 @@ public class AutoCoarse {
 //	}
 	
 	
+	
+	
+	
+	
+//	public static void coarseSeperatedSubgraphs(Pathway pw){
+//		int node = 100;
+//		int edges = node;
+////		while(node <=3200){
+//			while(edges <= (node*(node-1)/2)){
+//				if(edges<node){
+//					edges *= 2;
+//					continue;
+//				}
+//				System.out.println(node + " Nodes, " + edges + " Edges");
+//				for(int i=0; i<5; i++){
+//					Pathway p = RandomConnectedGraph.generateRandomGraph(node, edges, false, 1, 1);
+//					coarseSeperatedSubgraphs2(p);
+//					System.out.print("");
+//					coarseSeperatedSubgraphs2(p);
+//					System.out.print("");
+//					coarseSeperatedSubgraphs2(p);
+//					System.out.print("");
+//					coarseSeperatedSubgraphs2(p);
+//					System.out.print("");
+//					coarseSeperatedSubgraphs2(p);
+//					System.out.println();
+//				}
+//				System.out.println();
+//				System.out.println();
+//				edges *= 2;
+//			}
+////			node *=2;
+////			edges = node;
+////		}
+//	}
+	
 public static void coarseSeperatedSubgraphs(Pathway pw){
-		
+	
 		// Build Graph Analysis Tree
-		long timeStart = System.currentTimeMillis();
+	
+//		long timeStart = System.currentTimeMillis();
 		GraphAnalysisTree gat = new GraphAnalysisTree(pw);
 		gat.build();
-		gat.getSplittingNodes();
-		long timeEnd = System.currentTimeMillis();
-		System.out.println("Runtime: " + (timeEnd-timeStart) + " millis");
+//		gat.printTree();
+//		long timeEnd = System.currentTimeMillis();
+//		System.out.println("Tree: " + (timeEnd-timeStart) + " millis");
 		HashMap<BiologicalNodeAbstract, Collection<Set<BiologicalNodeAbstract>>> map = gat.getSplittingNodes();
-
-		for(BiologicalNodeAbstract key : map.keySet()){
-			int maxSize = 0;
-			Set<BiologicalNodeAbstract> toBeRemoved = null;
-			for(Set<BiologicalNodeAbstract> l : map.get(key)){
-				if(l.size()>maxSize){
-					toBeRemoved = l;
-					maxSize = l.size();
-				}
-			}
-			for(Set<BiologicalNodeAbstract> l : map.get(key)){
-				l.removeAll(toBeRemoved);
-			}
-		}
+//		long timeEnd2 = System.currentTimeMillis();
+//		System.out.println("Search: " + (timeEnd2-timeEnd) + " millis");
+//		System.out.print((timeEnd2-timeStart) + ",");
+//		for(BiologicalNodeAbstract key : map.keySet()){
+//			System.out.println(key.getLabel() + ":");
+//			for(Set<BiologicalNodeAbstract> set : map.get(key)){
+//				for(BiologicalNodeAbstract node : set){
+//					System.out.print(node.getLabel() + ",");
+//				}
+//				System.out.println();
+//			}
+//		}
+//
 		class HLC implements HierarchyListComparator<Integer> {
 			
 			public HLC() {
@@ -234,7 +272,7 @@ public static void coarseSeperatedSubgraphs(Pathway pw){
 		l.addAll(pw.getAllNodes());
 		l.sort(new HLC());
 		l.coarse();
-		timeEnd = System.currentTimeMillis();
-		System.out.println("Runtime: " + (timeEnd-timeStart) + " millis");		
+//		timeEnd = System.currentTimeMillis();
+//		System.out.println("Runtime: " + (timeEnd-timeStart) + " millis");		
 	}
 }
