@@ -52,15 +52,16 @@ public class ParameterWindow implements ActionListener {
 		// elementNames.setSelectedItem(" ");
 		// AutoCompleteDecorator.decorate(elementNames);
 
+		panel = new JPanel(layout);
+		
 		if (gea instanceof ContinuousTransition) {
 
 			fp = new FormularPanel(
 					((ContinuousTransition) gea).getMaximumSpeed());
 			fp.setVisible(true);
-
+			panel.add(fp);
 		}
-		panel = new JPanel(layout);
-		panel.add(fp);
+		
 
 		add = new JButton("Add");
 		add.setActionCommand("add");
