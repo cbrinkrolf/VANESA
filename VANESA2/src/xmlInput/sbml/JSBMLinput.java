@@ -7,8 +7,19 @@ import gui.RangeSelector;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.CharBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,10 +31,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.xml.sax.InputSource;
 
 import petriNet.PNEdge;
 import biologicalElements.Elementdeclerations;
@@ -89,27 +102,40 @@ public class JSBMLinput {
 	public JSBMLinput(Pathway pw){
 		pathway = pw;
 	}
+	
+	public String loadSBMLFile(File file){
+		try {
+			InputStream is = new FileInputStream(file);
+			return this.loadSBMLFile(is, file.getName()); 
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "Something went wrong!";
+	}
 
-	public String loadSBMLFile(File file) {
+	public String loadSBMLFile(InputStream is, String name) {
 		// System.out.println("neu");
+	
 		String message = "Import was successful";
 		Document doc = null;
-
+		InputSource  in = new InputSource(is);
+		
 		// siehe http://www.javabeginners.de/XML/XML-Datei_lesen.php
 		// create document
 		SAXBuilder builder = new SAXBuilder();
 		try {
-			doc = builder.build(file);
+			doc = builder.build(in);
 		} catch (JDOMException | IOException e) {
 			message = "An error occured";
 		}
 		if (pathway == null) {
-			pathway = new CreatePathway(file.getName()).getPathway();
+			pathway = new CreatePathway(name).getPathway();
 		} else {
 			coarsePathway = true;
 		}
 		if(pathway.getFilename()==null){
-			pathway.setFilename(file);
+			pathway.setFilename(name);
 		}
 		pathway.getGraph().lockVertices();
 		pathway.getGraph().stopVisualizationModel();
