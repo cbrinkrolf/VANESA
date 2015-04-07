@@ -1159,6 +1159,7 @@ public class Pathway implements Cloneable {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+		//System.out.println(filename);
 	}
 
 	public String getLink() {

@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -62,7 +64,12 @@ public class BuildingBlocks extends JPanel implements TreeSelectionListener{
         	    	  DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         	         if(map.containsKey(node) && map.get(node).isFile()){
         	        	 JSBMLinput input = new JSBMLinput(GraphInstance.getPathwayStatic());
-        	 			input.loadSBMLFile(map.get(node));
+        	 			try {
+							input.loadSBMLFile(new FileInputStream(map.get(node)), map.get(node).getName());
+						} catch (FileNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
         	         }
         	      }
         	   }

@@ -103,17 +103,6 @@ public class JSBMLinput {
 		pathway = pw;
 	}
 	
-	public String loadSBMLFile(File file){
-		try {
-			InputStream is = new FileInputStream(file);
-			return this.loadSBMLFile(is, file.getName()); 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "Something went wrong!";
-	}
-
 	public String loadSBMLFile(InputStream is, String name) {
 		// System.out.println("neu");
 	

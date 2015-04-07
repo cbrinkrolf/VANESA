@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -25,10 +27,10 @@ public class TxtInput {
 	private Hashtable<String, BiologicalNodeAbstract> mapping = new Hashtable<String, BiologicalNodeAbstract>();
 	private Pathway pw = new CreatePathway().getPathway();
 
-	public TxtInput(File file) throws IOException {
-		BufferedReader in = new BufferedReader(new FileReader(file));
-		
-		pw.setFilename(file.getName());
+	public TxtInput(InputStream is, String name) throws IOException {
+		//BufferedReader in = new BufferedReader(new FileReader(file));
+		BufferedReader in = new BufferedReader(new InputStreamReader(is));
+		pw.setFilename(name);
 		pw.getGraph().lockVertices();
 		pw.getGraph().stopVisualizationModel();
 
