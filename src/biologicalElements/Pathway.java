@@ -90,7 +90,7 @@ public class Pathway implements Cloneable {
 
 	// ---Fields---
 
-	private File filename = null;
+	private String filename = null;
 
 	private String name = "";
 
@@ -1153,11 +1153,11 @@ public class Pathway implements Cloneable {
 		ImagePath = imagePath;
 	}
 
-	public File getFilename() {
+	public String getFilename() {
 		return filename;
 	}
 
-	public void setFilename(File filename) {
+	public void setFilename(String filename) {
 		this.filename = filename;
 	}
 

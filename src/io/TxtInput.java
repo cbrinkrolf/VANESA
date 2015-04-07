@@ -28,7 +28,7 @@ public class TxtInput {
 	public TxtInput(File file) throws IOException {
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		
-		pw.setFilename(file);
+		pw.setFilename(file.getName());
 		pw.getGraph().lockVertices();
 		pw.getGraph().stopVisualizationModel();
 

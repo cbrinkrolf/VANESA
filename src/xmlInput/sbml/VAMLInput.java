@@ -1278,7 +1278,7 @@ public class VAMLInput {
 		if (pw == null) {
 			pw = new CreatePathway(file.getName()).getPathway();
 		}
-		pw.setFilename(file);
+		pw.setFilename(file.getName());
 		pw.getGraph().lockVertices();
 		pw.getGraph().stopVisualizationModel();
 
