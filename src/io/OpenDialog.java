@@ -9,6 +9,8 @@ import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
@@ -114,14 +116,20 @@ public class OpenDialog extends SwingWorker {
 				
 					JSBMLinput jsbmlInput;
 					jsbmlInput = pathway==null ? new JSBMLinput() : new JSBMLinput(pathway);
-					String result = jsbmlInput.loadSBMLFile(file);
-					if(result.length() > 0){
-						JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
-								result);
+					String result;
+					try {
+						result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file.getName());
+						if(result.length() > 0){
+							JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+									result);
+						}
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 			} else if (fileFormat.equals(txtDescription)) {
 				try {
-					new TxtInput(file);
+					new TxtInput(new FileInputStream(file), file.getName());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
