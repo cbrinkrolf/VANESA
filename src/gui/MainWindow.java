@@ -17,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.HashMap;
@@ -440,7 +441,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			if (n == 0) {
 				if (pw.getFilename() != null) {
 					try {
-						new JSBMLoutput(new FileOutputStream(pw.getFilename()), pw);
+						new JSBMLoutput(new FileOutputStream(new File(pw.getFilename())), pw);
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

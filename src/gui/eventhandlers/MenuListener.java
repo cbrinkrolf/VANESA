@@ -46,12 +46,17 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,6 +85,7 @@ import petriNet.SimpleMatrixDouble;
 import petriNet.Transition;
 import pojos.DBColumn;
 import save.graphPicture.WriteGraphPicture;
+import xmlInput.sbml.JSBMLinput;
 import xmlOutput.sbml.JSBMLoutput;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -194,7 +200,7 @@ public class MenuListener implements ActionListener {
 			// "sbml"));
 
 			int result = dialog.showOpenDialog();
-			System.out.println(result + " " + EdalFileChooser.APPROVE_OPTION);
+			//System.out.println(result + " " + EdalFileChooser.APPROVE_OPTION);
 			if (result == EdalFileChooser.APPROVE_OPTION) {
 				ClientPrimaryDataFile df = null;
 				ClientPrimaryDataEntity de = dialog.getSelectedFile();
@@ -203,10 +209,20 @@ public class MenuListener implements ActionListener {
 					//File f = new File(df.getName());
 					//File f;
 					try {
-						df.read(new FileOutputStream(new File("bla.txt")));
-					
-					} catch (RemoteException | FileNotFoundException
-							| PrimaryDataFileException e1) {
+						ByteArrayOutputStream os = new ByteArrayOutputStream();
+						
+						df.read(os);
+						byte[] b = os.toByteArray();
+						InputStream is = new ByteArrayInputStream(b);
+						JSBMLinput jsbmlInput = new JSBMLinput();
+						//jsbmlInput = pathway==null ? new JSBMLinput() : new JSBMLinput(pathway);
+						String res = jsbmlInput.loadSBMLFile(is, df.getName());
+						if(res.length() > 0){
+							JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+									res);
+						}
+						//os.
+					} catch (RemoteException | PrimaryDataFileException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
