@@ -59,12 +59,12 @@ public class GraphColoringGUI implements ActionListener {
 
 	private String[] algorithmNames = { "Node Degree", "Neighbor Degree",
 			"Cycles (remote)", "Cliques (remote)", "FRlayout (remote)",
-			"Spectral apsp (remote)", "Multilayout (remote)" };
+			"Spectral apsp (remote)", "Multilayout (remote)", "MDS forcelayout (remote)" };
 	private int currentalgorithmindex = 0;
 	private String[] colorrangenames = { "bluesea", "skyline", "darkmiddle",
 			"darkleftmiddle", "rainbow" };
 	private final int NODE_DEGREE = 0, NEIGHBOR_DEGREE = 1, CYCLES = 2,
-			CLIQUES = 3, FRLAYOUT = 4, SPECTRAL = 5, MULTILAYOUT = 6;
+			CLIQUES = 3, FRLAYOUT = 4, SPECTRAL = 5, MULTILAYOUT = 6, MDSFLAYOUT = 7;
 
 	private ImageIcon[] icons;
 
@@ -508,11 +508,8 @@ public class GraphColoringGUI implements ActionListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			//reactiveateUI();
-			
-			
 			break;
+
 		case SPECTRAL:
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
@@ -534,10 +531,80 @@ public class GraphColoringGUI implements ActionListener {
 			rmispectral.start();
 			break;
 
-		default:
-			System.err.println("ERROR! JobType not found.");
+		case MDSFLAYOUT:
+			// Lock UI and initiate Progress Bar
+			mw = MainWindowSingleton.getInstance();
+			mw.setLockedPane(true);
+			progressbar = new ProgressBar();
+			progressbar.init(100, "Computing", true);
+			progressbar.setProgressBarString("Setting up data.");
+
+			// get network structure
+			con = ContainerSingelton.getInstance();
+			pw = con.getPathway(mw.getCurrentPathway());
+			mg = pw.getGraph();
+
+			// setup assignment maps
+			nodeassignment = new HashMap<BiologicalNodeAbstract, Integer>();
+			nodeassignmentbackward = new HashMap<Integer, BiologicalNodeAbstract>();
+			nodeindex = 0;
+
+			// assign nodes
+			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
+				nodeassignment.put(bna, nodeindex);
+				nodeassignmentbackward.put(nodeindex, bna);
+				nodeindex++;
+			}
+
+			// determine right edge amount
+			edgeindex = 0;
+			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+				if (bea.isDirected()) {
+					edgeindex++;
+				} else {
+					edgeindex += 2;
+				}
+			}
+			//DEBUG
+//			System.out.println("number of real edges: " + edgeindex
+//					+ "\n size: " + mg.getAllEdges().size());
+
+			edgearray = new int[edgeindex];
+			edgeindex = 0;
+			// build edgearray
+
+			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+				from = bea.getFrom();
+				to = bea.getTo();
+
+				edgearray[edgeindex] = nodeassignment.get(from);
+				edgeindex++;
+				edgearray[edgeindex] = nodeassignment.get(to);
+				edgeindex++;
+
+//				// only undirected graphs
+//				edgearray[edgeindex] = nodeassignment.get(to);
+//				edgeindex++;
+//				edgearray[edgeindex] = nodeassignment.get(from);
+//				edgeindex++;
+			}
+
+			// compute values over RMI
+			try {
+				helper = new ComputeCallback(this);
+				ClusterComputeThread rmimdsflayout = new ClusterComputeThread(
+						JobTypes.LAYOUT_MDS_FR_JOB, helper);
+				rmimdsflayout.setEdgeArray(edgearray);
+				rmimdsflayout.setNodes(nodeassignment.size());
+				rmimdsflayout.start();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
+
 		}
+		
 
 		gc = new GraphColorizer(coloring, currentimageid, logview.isSelected());
 		// recolor button enable after first Coloring, logview enabled
