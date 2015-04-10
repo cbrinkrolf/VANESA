@@ -92,19 +92,29 @@ public class ClusterComputeThread extends Thread {
 					
 				}
 				break;
-
-			default:
-				if (!jobinterface.submitJob(job, adjmatrix, helper)) {
+				
+			case JobTypes.LAYOUT_MDS_FR_JOB:
+				if (!jobinterface.submitJob(job, edgearray, nodes,helper)) {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							JOptionPane.showMessageDialog(
 									MainWindowSingleton.getInstance(), "Queue is at maximum capacity!");
 						}
 					});
-				}	
+					
+				}
+				break;
+
+			default:
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(
+								MainWindowSingleton.getInstance(),
+								"Jobtype not pecified in ComputeThread!");
+					}
+				});
 				break;
 			}
-			
 			
 
 		}catch (NotBoundException e) {

@@ -15,6 +15,7 @@ public class JobTypes {
 	public static final int SPECTRAL_CLUSTERING_JOB = 40;
 	public static final int LAYOUT_FR_JOB = 50;
 	public static final int LAYOUT_MULTILEVEL_JOB = 60;
+	public static final int LAYOUT_MDS_FR_JOB = 70;
 	
 	
 	/**
