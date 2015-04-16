@@ -45,75 +45,57 @@ public class ClusterComputeThread extends Thread {
 	@Override
 	public void run() {
 		// compute job on server
-		computeInBackground();
-//		new TestClusterMapping();
-			// RMI Error
-		// Else is done by ClientHelper
+		submitJob();
 	}
 
-	public boolean computeInBackground() {
+	public boolean submitJob() {
 
-		// Catch if any input Data is given
-//		if (adjmatrix == null) {
-//			System.out.println("Please set adjacency data.");
-//			return false;
-//		}
-
-		// MARTIN: set server by job type
+		//URL of Master server
 		String url = "rmi://cassiopeidae/ClusterJobs";
-		// System.setProperty("java.rmi.server.hostname", "cassiopeidae");
 		// String url = "rmi://nero/Server";
-		// System.setProperty("java.rmi.server.hostname", "nero");
 		resulttable = new Hashtable<Integer, Double>();
 		try {
 			jobinterface = (IClusterJobs) Naming.lookup(url);
-
+		
 			switch (job) {
+			case JobTypes.CYCLE_JOB_OCCURRENCE:
+				if (!jobinterface.submitJob(job,adjmatrix,helper)) {
+					displayNotice("Queue is at maximum capacity!");
+				}
+				break;		
+				
+			case JobTypes.CLIQUE_JOB_OCCURRENCE:
+				if (!jobinterface.submitJob(job,adjmatrix,helper)){
+					displayNotice("Queue is at maximum capacity!");
+				}
+				break;
+			
 			case JobTypes.LAYOUT_FR_JOB:
 				if (!jobinterface.submitJob(job, edgearray, nodes,helper)) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							JOptionPane.showMessageDialog(
-									MainWindowSingleton.getInstance(), "Queue is at maximum capacity!");
-						}
-					});
-					
+					displayNotice("Queue is at maximum capacity!");					
 				}
 				break;
 				
 			case JobTypes.LAYOUT_MULTILEVEL_JOB:
 				if (!jobinterface.submitJob(job, edgearray, nodes,helper)) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							JOptionPane.showMessageDialog(
-									MainWindowSingleton.getInstance(), "Queue is at maximum capacity!");
-						}
-					});
-					
+					displayNotice("Queue is at maximum capacity!");		
 				}
 				break;
 				
 			case JobTypes.LAYOUT_MDS_FR_JOB:
 				if (!jobinterface.submitJob(job, edgearray, nodes,helper)) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							JOptionPane.showMessageDialog(
-									MainWindowSingleton.getInstance(), "Queue is at maximum capacity!");
-						}
-					});
-					
+					displayNotice("Queue is at maximum capacity!");							
 				}
 				break;
 
 			default:
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						JOptionPane.showMessageDialog(
-								MainWindowSingleton.getInstance(),
-								"Jobtype not pecified in ComputeThread!");
-					}
-				});
+				displayNotice("Jobtype not pecified in ComputeThread!");		
+				
+				GraphColoringGUI.progressbar.closeWindow();
+				mw = MainWindowSingleton.getInstance();
+				mw.setLockedPane(false);
 				break;
+			
 			}
 			
 
@@ -163,6 +145,15 @@ public class ClusterComputeThread extends Thread {
 		return true;
 	}
 	
+	private void displayNotice(String string) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JOptionPane.showMessageDialog(
+						MainWindowSingleton.getInstance(), string);
+			}
+		});		
+	}
+
 	public void setNodes(int nodes){
 		this.nodes = nodes;
 	}
