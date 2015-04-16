@@ -269,7 +269,7 @@ public class GraphColoringGUI implements ActionListener {
 				mw.setLockedPane(true);
 				progressbar = new ProgressBar();
 				progressbar.init(100, "Computing", true);
-				progressbar.setProgressBarString("Getting cluster results");
+				progressbar.setProgressBarString("Attempting to queue job");
 
 				// compute values over RMI
 				try {
@@ -315,7 +315,7 @@ public class GraphColoringGUI implements ActionListener {
 				mw.setLockedPane(true);
 				progressbar = new ProgressBar();
 				progressbar.init(100, "Computing", true);
-				progressbar.setProgressBarString("Getting cluster results");
+				progressbar.setProgressBarString("Attempting to queue job");
 
 				// compute values over RMI
 				try {
@@ -516,7 +516,7 @@ public class GraphColoringGUI implements ActionListener {
 			mw.setLockedPane(true);
 			progressbar = new ProgressBar();
 			progressbar.init(100, "Computing", true);
-			progressbar.setProgressBarString("Getting cluster results");
+			progressbar.setProgressBarString("Attempting to queue job");
 
 			// compute values over RMI
 			try {
