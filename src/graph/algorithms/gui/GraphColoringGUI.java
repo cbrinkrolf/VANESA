@@ -247,7 +247,7 @@ public class GraphColoringGUI implements ActionListener {
 			parameters = new HashMap<>();
 			parameters.put("neigborrating", "--neighborsOff");
 			parameters.put("connectivityrating", "--connectivityOff");
-			
+
 			// open objectstream
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
@@ -279,12 +279,12 @@ public class GraphColoringGUI implements ActionListener {
 		case FRLAYOUT:
 			//Set parameters
 			parameters = new HashMap<>();
-			parameters.put("width", ""+800);
-			parameters.put("height", ""+800);
+			parameters.put("width", ""+1200);
+			parameters.put("height", ""+1200);
 			parameters.put("iterations",""+700);
-			parameters.put("temperaturecurve","linear");
-			parameters.put("attraction",""+0.5);
-			parameters.put("repulsion",""+0.5);
+			parameters.put("temperaturecurve","const"); //linear/const
+			parameters.put("attraction",""+1.0);
+			parameters.put("repulsion",""+10.0);
 			parameters.put("starttemperature",""+0.1);			
 			
 			// open objectstream
@@ -373,8 +373,8 @@ public class GraphColoringGUI implements ActionListener {
 		case MULTILAYOUT:
 			//Set parameters
 			parameters = new HashMap<>();
-			parameters.put("edgecutting", ""+0.7);
-			parameters.put("seed", ""+1337);
+			parameters.put("edgecutting", ""+0.6);
+			parameters.put("seed", ""+(int) (Math.random()*1000));
 			
 			// open objectstream
 			baos = new ByteArrayOutputStream();
@@ -494,7 +494,10 @@ public class GraphColoringGUI implements ActionListener {
 		case MDSFLAYOUT:
 			//Set parameters
 			parameters = new HashMap<>();
-			
+			parameters.put("cycles", ""+50);
+			parameters.put("edgeweighting", "-distance_by_degree"); //-distance_by_degree, -floyd, empty
+			parameters.put("randomedgeweight", "yes");
+						
 			// open objectstream
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
