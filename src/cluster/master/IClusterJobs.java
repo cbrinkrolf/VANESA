@@ -20,32 +20,16 @@ public interface IClusterJobs extends Remote {
 	public boolean submitJob(int jobType, IComputeCallback helper) throws RemoteException;
 	
 
-    /**
+	 /**
      * Submit method for the compute cluster, returns true if job could be queued.
      * Available "job-types" can be drawn from JobTypes.java
      * @param jobType - Type of the submitted job, according to JobTypes.
-     * @param adjmatrix - the adjacency matrix of the network.
+     * @param jobinformation - bytearray containing serialized objects.
      * @param helper - Callback object to the client. Handles progress and results of the compute job.
      * @return true if job could be queued, false if queue is full.
      * @throws RemoteException
      */
-    public boolean submitJob(int jobType, short[][] adjmatrix, IComputeCallback helper) throws RemoteException;
-
-    /**
-     * submit job method for adjacency lists
-     */
-    
-    /**
-     * Submit method for the compute cluster, returns true if job could be queued.
-     * Available "job-types" can be drawn from JobTypes.java
-     * @param jobType - Type of the submitted job, according to JobTypes.
-     * @param adjarray - the adjacency array of the network.
-     * @param helper - Callback object to the client. Handles progress and results of the compute job.
-     * @return true if job could be queued, false if queue is full.
-     * @throws RemoteException
-     */
-    public boolean submitJob(int jobType, int[] adjarray, int nodes, IComputeCallback helper) throws RemoteException;
-    
+    public boolean submitJob(int jobType, byte[] jobinformation, IComputeCallback helper) throws RemoteException;
     /**
      * Submit method for the graph database, returns true if job could be queued.
      * This method invokes Depth searches on the graph db. 

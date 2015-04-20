@@ -22,8 +22,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import cluster.clientimpl.ClusterComputeThread2;
-import cluster.clientimpl.ComputeCallback2;
 import cluster.slave.JobTypes;
 import dataMapping.DataMappingModelController;
 
@@ -199,7 +197,8 @@ public class DCBprepareCalc extends SwingWorker<Void, Void>{
 			}else{
 				np = new NetworkProperties();
 				
-				
+				//MARTIN Fix DCB in vanesa
+				/*
 				if(attrNames.contains(DenselyConnectedBiclusteringGUI.GC_CYCLES)){
 					numOfServerJobs++;
 		    		ComputeCallback2 helper;
@@ -246,7 +245,7 @@ public class DCBprepareCalc extends SwingWorker<Void, Void>{
 							});
 							e1.printStackTrace();
 						}
-				}
+				}*/
 				
 			}
 
