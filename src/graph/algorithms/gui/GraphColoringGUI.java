@@ -17,8 +17,10 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,12 +61,14 @@ public class GraphColoringGUI implements ActionListener {
 
 	private String[] algorithmNames = { "Node Degree", "Neighbor Degree",
 			"Cycles (remote)", "Cliques (remote)", "FRlayout (remote)",
-			"Spectral apsp (remote)", "Multilayout (remote)", "MDS forcelayout (remote)" };
+			"Spectral apsp (remote)", "Multilayout (remote)",
+			"MDS forcelayout (remote)" };
 	private int currentalgorithmindex = 0;
 	private String[] colorrangenames = { "bluesea", "skyline", "darkmiddle",
 			"darkleftmiddle", "rainbow" };
 	private final int NODE_DEGREE = 0, NEIGHBOR_DEGREE = 1, CYCLES = 2,
-			CLIQUES = 3, FRLAYOUT = 4, SPECTRAL = 5, MULTILAYOUT = 6, MDSFLAYOUT = 7;
+			CLIQUES = 3, FRLAYOUT = 4, SPECTRAL = 5, MULTILAYOUT = 6,
+			MDSFLAYOUT = 7;
 
 	private ImageIcon[] icons;
 
@@ -91,13 +95,17 @@ public class GraphColoringGUI implements ActionListener {
 	private MyGraph mg;
 
 	private ComputeCallback helper;
-	
+
 	private HashMap<BiologicalNodeAbstract, Integer> nodeassignment;
 	private HashMap<Integer, BiologicalNodeAbstract> nodeassignmentbackward;
-	
+
 	private int nodeindex, edgeindex;
-	private BiologicalNodeAbstract from, to;
 	private int[] edgearray;
+
+	private ByteArrayOutputStream baos;
+	private ObjectOutputStream oos;
+	private byte[] jobinformation;
+	private HashMap<String,String> parameters;
 
 	public GraphColoringGUI() {
 		// set icon paths
@@ -139,7 +147,7 @@ public class GraphColoringGUI implements ActionListener {
 		resetcolorbutton.setActionCommand("resetcolors");
 		resetcolorbutton.addActionListener(this);
 		resetcolorbutton.setEnabled(false);
-	
+
 		MigLayout layout = new MigLayout("", "[][grow]", "");
 		p.setLayout(layout);
 		p.add(new JLabel("Algorithm"), "wrap");
@@ -159,189 +167,129 @@ public class GraphColoringGUI implements ActionListener {
 		degreedistributionbutton = new JButton("Degree distribution");
 		degreedistributionbutton.setActionCommand("degreedistribution");
 		degreedistributionbutton.addActionListener(this);
-		
+
 		p.add(logview, "align left");
 		p.add(colorizebutton, "align right, wrap");
 		p.add(resetcolorbutton, "align left, wrap");
-		p.add(degreedistributionbutton,"span 2, align right, wrap");
+		p.add(degreedistributionbutton, "span 2, align right, wrap");
 
 	}
 
-	public synchronized void recolorGraph() {
+	public void recolorGraph() throws IOException {
 
 		np = new NetworkProperties();
 		itn = np.getPathway().getAllNodes().iterator();
 		coloring = new Hashtable<BiologicalNodeAbstract, Double>();
 
-		int nodes = np.getPathway().countNodes(),
-		nodewithAttribute = 0;
-		
+		int nodes = np.getPathway().countNodes(), nodewithAttribute = 0;
+
 		switch (currentalgorithmindex) {
 		case NODE_DEGREE:
-//			//CHANGE 			
-//			Pathway pwxxx =  np.getPathway();
-//			
-//			
-//			ChangedFlags cf = pwxxx.getChangedFlags("graphanalysis");
-//			System.out.println(cf.isNodeChanged());
-//			cf.reset();
-//			System.out.println(cf.isNodeChanged());
-			
-			//check for existance
-			nodes = np.getPathway().countNodes();
-			nodewithAttribute = 0;
-			for(BiologicalNodeAbstract bn: np.getPathway().getAllNodes()){
-				if(bn.getNodeAttributeByName(NodeAttributeNames.NODE_DEGREE)!= null){
-					nodewithAttribute++;
-				}
+			// get current node degree values
+			while (itn.hasNext()) {
+				bna = itn.next();
+				coloring.put(bna,
+						(double) np.getNodeDegree(np.getNodeAssignment(bna)));
+				// saving
+				bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
+						NodeAttributeNames.NODE_DEGREE,
+						np.getNodeDegree(np.getNodeAssignment(bna)));
 			}
-			
-			//not existant
-			if(nodewithAttribute!=nodes){
-				//get current node degree values
-				while (itn.hasNext()) {
-					bna = itn.next();
-					coloring.put(bna, (double) np.getNodeDegree(np
-							.getNodeAssignment(bna)));
-					// saving
-					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
-							NodeAttributeNames.NODE_DEGREE,
-							np.getNodeDegree(np.getNodeAssignment(bna)));
-				}
-				
-			//already exists
-			}else{
-				while (itn.hasNext()) {
-					bna = itn.next();
-					coloring.put(bna, bna.getNodeAttributeByName(NodeAttributeNames.NODE_DEGREE).getDoublevalue());
-				}
-			}
-			
 			break;
-			
+
 		case NEIGHBOR_DEGREE:
-			//check for existance
-			nodes = np.getPathway().countNodes();
-			nodewithAttribute = 0;
-			for(BiologicalNodeAbstract bn: np.getPathway().getAllNodes()){
-				if(bn.getNodeAttributeByName(NodeAttributeNames.NEIGHBOR_DEGREE)!= null){
-					nodewithAttribute++;
-				}
+			while (itn.hasNext()) {
+				bna = itn.next();
+				coloring.put(
+						bna,
+						bna.getNodeAttributeByName(
+								NodeAttributeNames.NEIGHBOR_DEGREE)
+								.getDoublevalue());
 			}
-			
-			//not existant
-			if(nodewithAttribute!=nodes){
-				coloring = np.averageNeighbourDegreeTable();
-				
-				//saving
-				while (itn.hasNext()) {
-					bna = itn.next();
-					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
-							NodeAttributeNames.NEIGHBOR_DEGREE,
-							coloring.get(bna));
-				}
-				
-				
-			//already exists	
-			}else{
-				while (itn.hasNext()) {
-					bna = itn.next();
-					coloring.put(bna, bna.getNodeAttributeByName(NodeAttributeNames.NEIGHBOR_DEGREE).getDoublevalue());
-				}
-			}
-			
-			
 			break;
+			
 		case CYCLES:
+			//Set parameters
+			parameters = new HashMap<>();
+			parameters.put("mincirclesize", ""+4);
 			
-			//check for existance
-			nodewithAttribute = 0;
-			for(BiologicalNodeAbstract bn: np.getPathway().getAllNodes()){
-				if(bn.getNodeAttributeByName(NodeAttributeNames.CYCLES)!= null){
-					nodewithAttribute++;
-				}
+			// open objectstream
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
+			// Lock UI and initiate Progress Bar
+			mw = MainWindowSingleton.getInstance();
+			mw.setLockedPane(true);
+			progressbar = new ProgressBar();
+			progressbar.init(100, "Computing", true);
+			progressbar.setProgressBarString("Attempting to queue job");
+						
+			oos.writeObject(np.getAdjacencyMatrix());
+			oos.writeObject(parameters);
+						
+			//close objectstream and transform to bytearray
+			oos.close();			
+			jobinformation = baos.toByteArray();
+			
+			// compute values over RMI
+			try {
+				helper = new ComputeCallback(this);
+				ClusterComputeThread rmicycles = new ClusterComputeThread(
+						JobTypes.CYCLE_JOB_OCCURRENCE,jobinformation, helper);
+				rmicycles.start();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+				reactiveateUI();
 			}
-			
-			//not existant
-			if(nodewithAttribute == 0){
-				// Lock UI and initiate Progress Bar
-				mw = MainWindowSingleton.getInstance();
-				mw.setLockedPane(true);
-				progressbar = new ProgressBar();
-				progressbar.init(100, "Computing", true);
-				progressbar.setProgressBarString("Attempting to queue job");
-
-				// compute values over RMI
-				try {
-					helper = new ComputeCallback(this);
-					ClusterComputeThread rmicycles = new ClusterComputeThread(
-							JobTypes.CYCLE_JOB_OCCURRENCE, helper);
-					rmicycles.setAdjMatrix(np.getAdjacencyMatrix());
-					rmicycles.start();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				//Saving in different thread
-				
-			//already exists
-			}else{
-				while (itn.hasNext()) {
-					bna = itn.next();
-					if(bna.hasAttributeByName(NodeAttributeNames.CYCLES)){
-						coloring.put(bna, bna.getNodeAttributeByName(NodeAttributeNames.CYCLES).getDoublevalue());
-					}
-				}				
-			}
-			
-			
-			
-
 			break;
+
 		case CLIQUES:
+			//Set parameters
+			parameters = new HashMap<>();
+			parameters.put("neigborrating", "--neighborsOff");
+			parameters.put("connectivityrating", "--connectivityOff");
 			
-			//check for existance
-			nodewithAttribute = 0;
-			for(BiologicalNodeAbstract bn: np.getPathway().getAllNodes()){
-				if(bn.getNodeAttributeByName(NodeAttributeNames.CLIQUES)!= null){
-					nodewithAttribute++;
-				}
-			}
-			
-			//not existant
-			if(nodewithAttribute == 0){
-				// Lock UI and initiate Progress Bar
-				mw = MainWindowSingleton.getInstance();
-				mw.setLockedPane(true);
-				progressbar = new ProgressBar();
-				progressbar.init(100, "Computing", true);
-				progressbar.setProgressBarString("Attempting to queue job");
+			// open objectstream
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
+			// Lock UI and initiate Progress Bar
+			mw = MainWindowSingleton.getInstance();
+			mw.setLockedPane(true);
+			progressbar = new ProgressBar();
+			progressbar.init(100, "Computing", true);
+			progressbar.setProgressBarString("Attempting to queue job");
 
-				// compute values over RMI
-				try {
-					helper = new ComputeCallback(this);
-					ClusterComputeThread rmicliques = new ClusterComputeThread(
-							JobTypes.CLIQUE_JOB_OCCURRENCE, helper);
-					rmicliques.setAdjMatrix(np.getAdjacencyMatrix());
-					rmicliques.start();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}else{
-				while (itn.hasNext()) {
-					bna = itn.next();
-					if(bna.hasAttributeByName(NodeAttributeNames.CLIQUES)){
-						coloring.put(bna, bna.getNodeAttributeByName(NodeAttributeNames.CLIQUES).getDoublevalue());
-					}
-				}							
+			oos.writeObject(np.getAdjacencyMatrix());
+			oos.writeObject(parameters);
+			
+			//close objectstream and transform to bytearray
+			oos.close();			
+			jobinformation = baos.toByteArray();			
+			// compute values over RMI
+			try {
+				helper = new ComputeCallback(this);
+				ClusterComputeThread rmicliques = new ClusterComputeThread(
+						JobTypes.CLIQUE_JOB_OCCURRENCE, jobinformation, helper);
+				rmicliques.start();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+				reactiveateUI();
 			}
-			
-			
-
 			break;
-			
+
 		case FRLAYOUT:
+			//Set parameters
+			parameters = new HashMap<>();
+			parameters.put("width", ""+800);
+			parameters.put("height", ""+800);
+			parameters.put("iterations",""+700);
+			parameters.put("temperaturecurve","linear");
+			parameters.put("attraction",""+0.5);
+			parameters.put("repulsion",""+0.5);
+			parameters.put("starttemperature",""+0.1);			
+			
+			// open objectstream
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
 			mw.setLockedPane(true);
@@ -349,87 +297,88 @@ public class GraphColoringGUI implements ActionListener {
 			progressbar.init(100, "Computing", true);
 			progressbar.setProgressBarString("Setting up data.");
 
-			
-			
-			//get network structure
+			// get network structure
 			con = ContainerSingelton.getInstance();
 			pw = con.getPathway(mw.getCurrentPathway());
 			mg = pw.getGraph();
 
-			//setup assignment maps
+			// setup assignment maps
 			nodeassignment = new HashMap<BiologicalNodeAbstract, Integer>();
 			nodeassignmentbackward = new HashMap<Integer, BiologicalNodeAbstract>();
-						
+
 			nodeindex = 0;
-			
-			//assign nodes
+
+			// assign nodes
 			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
 				nodeassignment.put(bna, nodeindex);
-				nodeassignmentbackward.put(nodeindex,bna);
+				nodeassignmentbackward.put(nodeindex, bna);
 				nodeindex++;
 			}
 
-			//determine right edge amount
+			// determine right edge amount
 			edgeindex = 0;
 			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
-				if(bea.isDirected()){
+				if (bea.isDirected()) {
 					edgeindex++;
-				}else{
-					edgeindex+=2;
+				} else {
+					edgeindex += 2;
 				}
-			}			
-			System.out.println("number of real edges: "+edgeindex+"\n size: "+mg.getAllEdges().size());
-						
-			edgearray = new int[edgeindex*2];
+			}
+			System.out.println("number of real edges: " + edgeindex
+					+ "\n size: " + mg.getAllEdges().size());
+
+			edgearray = new int[edgeindex * 2];
 			edgeindex = 0;
-			//build edgearray
-			BiologicalNodeAbstract from, to;
+			// build edgearray
+			BiologicalNodeAbstract from,
+			to;
 			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
 				from = bea.getFrom();
 				to = bea.getTo();
-				
+
 				edgearray[edgeindex] = nodeassignment.get(from);
 				edgeindex++;
 				edgearray[edgeindex] = nodeassignment.get(to);
 				edgeindex++;
-				
-				//if undirected, set second edge, too
-				if(!bea.isDirected()){
+
+				// if undirected, set second edge, too
+				if (!bea.isDirected()) {
 					edgearray[edgeindex] = nodeassignment.get(to);
 					edgeindex++;
 					edgearray[edgeindex] = nodeassignment.get(from);
-					edgeindex++;					
+					edgeindex++;
 				}
-			}			
-// DEBUG			
-//			for (int i = 0; i < edgearray.length; i++) {
-//				System.out.print(nodeassignmentbackward.get(edgearray[i]).getLabel()+",");
-//				if((i+1) %2 == 0)
-//					System.out.println();
-//			}
-
-//			printEdgeArray(mg.getAllVertices().size(), edgearray);
+			}
 			
+			oos.writeObject(mg.getAllVertices().size());
+			oos.writeObject(edgearray);
+			oos.writeObject(parameters);
+			
+			//close objectstream and transform to bytearray
+			oos.close();			
+			jobinformation = baos.toByteArray();
 			
 			// compute values over RMI
 			try {
 				helper = new ComputeCallback(this);
 				ClusterComputeThread rmifrlayout = new ClusterComputeThread(
-						JobTypes.LAYOUT_FR_JOB, helper);
-				rmifrlayout.setEdgeArray(edgearray);
-				rmifrlayout.setNodes(nodeassignment.size());
+						JobTypes.LAYOUT_FR_JOB, jobinformation, helper);
 				rmifrlayout.start();
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				reactiveateUI();
 			}
-			
-			//reactiveateUI();
-			
-			
-			break;	
-			
+			break;
+
 		case MULTILAYOUT:
+			//Set parameters
+			parameters = new HashMap<>();
+			parameters.put("edgecutting", ""+0.7);
+			parameters.put("seed", ""+1337);
+			
+			// open objectstream
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
 			mw.setLockedPane(true);
@@ -437,80 +386,82 @@ public class GraphColoringGUI implements ActionListener {
 			progressbar.init(100, "Computing", true);
 			progressbar.setProgressBarString("Setting up data.");
 
-			//get network structure
-			
+			// get network structure
+
 			con = ContainerSingelton.getInstance();
 			pw = con.getPathway(mw.getCurrentPathway());
 			mg = pw.getGraph();
 
-			//setup assignment maps
+			// setup assignment maps
 			nodeassignment = new HashMap<BiologicalNodeAbstract, Integer>();
 			nodeassignmentbackward = new HashMap<Integer, BiologicalNodeAbstract>();
-						
+
 			nodeindex = 0;
-			
-			//assign nodes
+
+			// assign nodes
 			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
 				nodeassignment.put(bna, nodeindex);
-				nodeassignmentbackward.put(nodeindex,bna);
+				nodeassignmentbackward.put(nodeindex, bna);
 				nodeindex++;
 			}
 
-			//determine right edge amount
+			// determine right edge amount
 			edgeindex = 0;
 			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
-				if(bea.isDirected()){
+				if (bea.isDirected()) {
 					edgeindex++;
-				}else{
-					edgeindex+=2;
+				} else {
+					edgeindex += 2;
 				}
-			}			
-			System.out.println("number of real edges: "+edgeindex+"\n size: "+mg.getAllEdges().size());
-						
-			edgearray = new int[edgeindex*2];
+			}
+			
+			edgearray = new int[edgeindex * 2];
 			edgeindex = 0;
-			//build edgearray
+			// build edgearray
 
 			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
 				from = bea.getFrom();
 				to = bea.getTo();
-				
+
 				edgearray[edgeindex] = nodeassignment.get(from);
 				edgeindex++;
 				edgearray[edgeindex] = nodeassignment.get(to);
 				edgeindex++;
-				
+
 				// only undirected graphs
 				edgearray[edgeindex] = nodeassignment.get(to);
 				edgeindex++;
 				edgearray[edgeindex] = nodeassignment.get(from);
 				edgeindex++;
-			}			
-// DEBUG			
-//			for (int i = 0; i < edgearray.length; i++) {
-//				System.out.print(nodeassignmentbackward.get(edgearray[i]).getLabel()+",");
-//				if((i+1) %2 == 0)
-//					System.out.println();
-//			}
+			}
 
-//			printEdgeArray(mg.getAllVertices().size(), edgearray);
-									
+			oos.writeObject(mg.getAllVertices().size());
+			oos.writeObject(edgearray);
+			oos.writeObject(parameters);
 			
+			//close objectstream and transform to bytearray
+			oos.close();			
+			jobinformation = baos.toByteArray();
+
 			// compute values over RMI
 			try {
 				helper = new ComputeCallback(this);
 				ClusterComputeThread rmimultilayout = new ClusterComputeThread(
-						JobTypes.LAYOUT_MULTILEVEL_JOB, helper);
-				rmimultilayout.setEdgeArray(edgearray);
-				rmimultilayout.setNodes(nodeassignment.size());
+						JobTypes.LAYOUT_MULTILEVEL_JOB, jobinformation, helper);
 				rmimultilayout.start();
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				reactiveateUI();
 			}
 			break;
 
 		case SPECTRAL:
+			//Set parameters
+			parameters = new HashMap<>();
+			
+			// open objectstream
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
 			mw.setLockedPane(true);
@@ -522,16 +473,31 @@ public class GraphColoringGUI implements ActionListener {
 			try {
 				helper = new ComputeCallback(this);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				reactiveateUI();
 			}
+			
+			oos.writeObject(np.getAdjacencyMatrix());
+			oos.writeObject(parameters);
+						
+			//close objectstream and transform to bytearray
+			oos.close();			
+			jobinformation = baos.toByteArray();
+			
 			ClusterComputeThread rmispectral = new ClusterComputeThread(
-					JobTypes.SPECTRAL_CLUSTERING_JOB, helper);
-			rmispectral.setAdjMatrix(np.getAdjacencyMatrix());
+					JobTypes.SPECTRAL_CLUSTERING_JOB, jobinformation, helper);
 			rmispectral.start();
+
+			oos.close();
 			break;
 
 		case MDSFLAYOUT:
+			//Set parameters
+			parameters = new HashMap<>();
+			
+			// open objectstream
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
 			mw.setLockedPane(true);
@@ -565,9 +531,6 @@ public class GraphColoringGUI implements ActionListener {
 					edgeindex += 2;
 				}
 			}
-			//DEBUG
-//			System.out.println("number of real edges: " + edgeindex
-//					+ "\n size: " + mg.getAllEdges().size());
 
 			edgearray = new int[edgeindex];
 			edgeindex = 0;
@@ -582,29 +545,31 @@ public class GraphColoringGUI implements ActionListener {
 				edgearray[edgeindex] = nodeassignment.get(to);
 				edgeindex++;
 
-//				// only undirected graphs
-//				edgearray[edgeindex] = nodeassignment.get(to);
-//				edgeindex++;
-//				edgearray[edgeindex] = nodeassignment.get(from);
-//				edgeindex++;
 			}
+						
+			oos.writeObject(mg.getAllVertices().size());
+			oos.writeObject(edgearray);
+			oos.writeObject(parameters);
+						
+			//close objectstream and transform to bytearray
+			oos.close();			
+			jobinformation = baos.toByteArray();
 
 			// compute values over RMI
 			try {
 				helper = new ComputeCallback(this);
 				ClusterComputeThread rmimdsflayout = new ClusterComputeThread(
-						JobTypes.LAYOUT_MDS_FR_JOB, helper);
-				rmimdsflayout.setEdgeArray(edgearray);
-				rmimdsflayout.setNodes(nodeassignment.size());
+						JobTypes.LAYOUT_MDS_FR_JOB, jobinformation, helper);
 				rmimdsflayout.start();
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				reactiveateUI();
 			}
+
+			oos.close();
 			break;
 
 		}
-		
 
 		gc = new GraphColorizer(coloring, currentimageid, logview.isSelected());
 		// recolor button enable after first Coloring, logview enabled
@@ -615,54 +580,47 @@ public class GraphColoringGUI implements ActionListener {
 
 	private void printEdgeArray(int nodes, int[] edgearray) {
 		try {
-			FileWriter fw = new FileWriter("edjearray"+mw.getCurrentPathway());
+			FileWriter fw = new FileWriter("edjearray" + mw.getCurrentPathway());
 			BufferedWriter out = new BufferedWriter(fw);
-			
-			out.write(nodes+"\n");
-			out.write((edgearray.length/2)+"\n");
+
+			out.write(nodes + "\n");
+			out.write((edgearray.length / 2) + "\n");
 			for (int i = 0; i < edgearray.length; i++) {
-				out.write(edgearray[i]+"\t");
+				out.write(edgearray[i] + "\t");
 			}
-			
+
 			out.close();
 			fw.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
-//		//DEBUG print experimental data
-//		try {
-//			FileWriter fw = new FileWriter("experiments"+mw.getCurrentPathway());
-//			BufferedWriter out = new BufferedWriter(fw);
-//			
-//			GraphNode gnode;
-//			
-//			for(int i = 0; i< nodes; i++){
-//				gnode = (GraphNode) np.getNodeAssignmentbackwards(i);
-//				
-//				try{
-//					out.write(i+"\t"+gnode.getSuperNode().biodataEntries[0]+"\n");
-//				} catch (ArrayIndexOutOfBoundsException ae){
-//					out.write(i+"\t"+0.0+"\n");
-//				}
-//
-//
-//			}			
-//			out.close();
-//			fw.close();
-//
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
-		
-		
-		
-		
-		// TODO Auto-generated method stub
-		
+
+		// //DEBUG print experimental data
+		// try {
+		// FileWriter fw = new FileWriter("experiments"+mw.getCurrentPathway());
+		// BufferedWriter out = new BufferedWriter(fw);
+		//
+		// GraphNode gnode;
+		//
+		// for(int i = 0; i< nodes; i++){
+		// gnode = (GraphNode) np.getNodeAssignmentbackwards(i);
+		//
+		// try{
+		// out.write(i+"\t"+gnode.getSuperNode().biodataEntries[0]+"\n");
+		// } catch (ArrayIndexOutOfBoundsException ae){
+		// out.write(i+"\t"+0.0+"\n");
+		// }
+		//
+		//
+		// }
+		// out.close();
+		// fw.close();
+		//
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+
 	}
 
 	public void reactiveateUI() {
@@ -758,10 +716,9 @@ public class GraphColoringGUI implements ActionListener {
 					// System.out.println(key + " " + value);
 					bna = np.getNodeAssignmentbackwards(key);
 					coloring.put(bna, value);
-					//saving
+					// saving
 					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
-							NodeAttributeNames.CYCLES,
-							coloring.get(bna));
+							NodeAttributeNames.CYCLES, coloring.get(bna));
 				}
 
 			}
@@ -770,7 +727,7 @@ public class GraphColoringGUI implements ActionListener {
 
 		case JobTypes.CLIQUE_JOB_OCCURRENCE:
 			Hashtable<Integer, Double> cliquedata = table;
-			
+
 			if (!cliquedata.isEmpty()) {
 				// Map ids to BNAs
 				Iterator<Entry<Integer, Double>> it = cliquedata.entrySet()
@@ -786,10 +743,9 @@ public class GraphColoringGUI implements ActionListener {
 					// System.out.println(key + " " + value);
 					bna = np.getNodeAssignmentbackwards(key);
 					coloring.put(bna, value);
-					//saving
+					// saving
 					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
-							NodeAttributeNames.CLIQUES,
-							coloring.get(bna));
+							NodeAttributeNames.CLIQUES, coloring.get(bna));
 				}
 			}
 
@@ -811,59 +767,70 @@ public class GraphColoringGUI implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 
-		String command = e.getActionCommand();
+		try {
 
-		if ("colorize".equals(command)) {
-			recolorGraph();
-			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
-		} else if ("resetcolors".equals(command)) {
-			GraphInstance.getMyGraph().getAllVertices().stream().
-				forEach(bna -> bna.resetAppearance());
-			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+			String command = e.getActionCommand();
 
-		} else if ("algorithm".equals(command)) {
-			currentalgorithmindex = chooseAlgorithm.getSelectedIndex();
-			for (int i = 0; i < colorrangeradio.length; i++) {
-				if (colorrangeradio[i].isSelected()) {
+			if ("colorize".equals(command)) {
+				recolorGraph();
+				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+			} else if ("resetcolors".equals(command)) {
+				GraphInstance.getMyGraph().getAllVertices().stream()
+						.forEach(bna -> bna.resetAppearance());
+				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+
+			} else if ("algorithm".equals(command)) {
+				currentalgorithmindex = chooseAlgorithm.getSelectedIndex();
+				for (int i = 0; i < colorrangeradio.length; i++) {
+					if (colorrangeradio[i].isSelected()) {
+						recolorGraph();
+						break;
+					}
+				}
+				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+			} else if ("logview".equals(command)) {
+				recolorGraph();
+				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+			} else if ("degreedistribution".equals(command)) {
+				NetworkProperties np = new NetworkProperties();
+				np.showDegreeDistrbutionFrame(np.getPathway().getName());
+			}
+
+			// get proper icon path
+			for (int i = 0; i < colorrangenames.length; i++) {
+				if ((i + "").equals(command)) {
+					currentimage = icons[i];
+					currentimageid = i;
 					recolorGraph();
+					// repaint, damit Farben auch angezeigt werden
+					GraphInstance.getMyGraph().getVisualizationViewer()
+							.repaint();
 					break;
 				}
 			}
-			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
-		} else if ("logview".equals(command)) {
-			recolorGraph();
-			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
-		} else if ("degreedistribution".equals(command)) {
-			NetworkProperties np = new NetworkProperties();
-			np.showDegreeDistrbutionFrame(np.getPathway().getName());			
-		}
-		
-		// get proper icon path
-		for (int i = 0; i < colorrangenames.length; i++) {
-			if ((i + "").equals(command)) {
-				currentimage = icons[i];
-				currentimageid = i;
-				recolorGraph();
-				// repaint, damit Farben auch angezeigt werden
-				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
-				break;
-			}
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 
 	public void realignNetwork(HashMap<Integer, LayoutPoint2D> coords) {
-		//get network structure
+		// get network structure
 		MainWindow w = MainWindowSingleton.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
 		MyGraph mg = pw.getGraph();
-		
+
 		for (Entry<Integer, LayoutPoint2D> entry : coords.entrySet()) {
-			//get bna from assignment
-			//tmppoint= new 
-			mg.getVisualizationViewer().getModel().getGraphLayout()
-			.setLocation(nodeassignmentbackward.get(entry.getKey()),
-					new Point((int)entry.getValue().getX(), (int)entry.getValue().getY()));
-		}		
+			// get bna from assignment
+			// tmppoint= new
+			mg.getVisualizationViewer()
+					.getModel()
+					.getGraphLayout()
+					.setLocation(
+							nodeassignmentbackward.get(entry.getKey()),
+							new Point((int) entry.getValue().getX(),
+									(int) entry.getValue().getY()));
+		}
 	}
 }
