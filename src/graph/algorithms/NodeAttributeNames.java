@@ -14,7 +14,8 @@ public class NodeAttributeNames {
 	public static final String CLIQUES = "cliques";
 	public static final String CYCLES = "cycles";
 	public static final String SPECTRAL_CLUSTERING = "spectral clustering";
-	
+	public static final String SP_CLUSTERING = "shortestpaths clustering";
+		
 	/*
 	 * Biological experiments
 	 */
