@@ -37,11 +37,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import com.sun.javafx.applet.ExperimentalExtensions;
+
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import cluster.clientimpl.ClusterComputeThread;
 import cluster.clientimpl.ComputeCallback;
 import cluster.slave.JobTypes;
@@ -62,13 +65,13 @@ public class GraphColoringGUI implements ActionListener {
 	private String[] algorithmNames = { "Node Degree", "Neighbor Degree",
 			"Cycles (remote)", "Cliques (remote)", "FRlayout (remote)",
 			"Spectral apsp (remote)", "Multilayout (remote)",
-			"MDS forcelayout (remote)" };
+			"MDS forcelayout (remote)", "APSP Clustering (r)" };
 	private int currentalgorithmindex = 0;
 	private String[] colorrangenames = { "bluesea", "skyline", "darkmiddle",
 			"darkleftmiddle", "rainbow" };
 	private final int NODE_DEGREE = 0, NEIGHBOR_DEGREE = 1, CYCLES = 2,
 			CLIQUES = 3, FRLAYOUT = 4, SPECTRAL = 5, MULTILAYOUT = 6,
-			MDSFLAYOUT = 7;
+			MDSFLAYOUT = 7, APSPCLUSTERING = 8;
 
 	private ImageIcon[] icons;
 
@@ -98,6 +101,7 @@ public class GraphColoringGUI implements ActionListener {
 
 	private HashMap<BiologicalNodeAbstract, Integer> nodeassignment;
 	private HashMap<Integer, BiologicalNodeAbstract> nodeassignmentbackward;
+	private BiologicalNodeAbstract from,to;
 
 	private int nodeindex, edgeindex;
 	private int[] edgearray;
@@ -330,8 +334,7 @@ public class GraphColoringGUI implements ActionListener {
 			edgearray = new int[edgeindex * 2];
 			edgeindex = 0;
 			// build edgearray
-			BiologicalNodeAbstract from,
-			to;
+
 			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
 				from = bea.getFrom();
 				to = bea.getTo();
@@ -434,7 +437,7 @@ public class GraphColoringGUI implements ActionListener {
 				edgearray[edgeindex] = nodeassignment.get(from);
 				edgeindex++;
 			}
-
+			
 			oos.writeObject(mg.getAllVertices().size());
 			oos.writeObject(edgearray);
 			oos.writeObject(parameters);
@@ -571,6 +574,109 @@ public class GraphColoringGUI implements ActionListener {
 
 			oos.close();
 			break;
+			
+		case APSPCLUSTERING:
+			//Set parameters
+			parameters = new HashMap<>();
+			parameters.put("minclustersize", ""+5);
+			parameters.put("topclusters",""+50);
+			HashMap<Integer, Double> experimentdata = new HashMap<>();
+			
+			
+			// open objectstream
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
+			// Lock UI and initiate Progress Bar
+			mw = MainWindowSingleton.getInstance();
+			mw.setLockedPane(true);
+			progressbar = new ProgressBar();
+			progressbar.init(100, "Computing", true);
+			progressbar.setProgressBarString("Setting up data.");
+
+			// get network structure
+			con = ContainerSingelton.getInstance();
+			pw = con.getPathway(mw.getCurrentPathway());
+			mg = pw.getGraph();
+
+			// setup assignment maps
+			nodeassignment = new HashMap<BiologicalNodeAbstract, Integer>();
+			nodeassignmentbackward = new HashMap<Integer, BiologicalNodeAbstract>();
+
+			nodeindex = 0;
+
+			// assign nodes
+			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
+				nodeassignment.put(bna, nodeindex);
+				nodeassignmentbackward.put(nodeindex, bna);
+				nodeindex++;
+			}
+
+			// determine right edge amount
+			edgeindex = 0;
+			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+				if (bea.isDirected()) {
+					edgeindex++;
+				} else {
+					edgeindex += 2;
+				}
+			}
+			System.out.println("number of real edges: " + edgeindex
+					+ "\n size: " + mg.getAllEdges().size());
+
+			edgearray = new int[edgeindex * 2];
+			edgeindex = 0;
+			// build edgearray
+			BiologicalNodeAbstract from,
+			to;
+			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+				from = bea.getFrom();
+				to = bea.getTo();
+
+				edgearray[edgeindex] = nodeassignment.get(from);
+				edgeindex++;
+				edgearray[edgeindex] = nodeassignment.get(to);
+				edgeindex++;
+
+				// if undirected, set second edge, too
+				if (!bea.isDirected()) {
+					edgearray[edgeindex] = nodeassignment.get(to);
+					edgeindex++;
+					edgearray[edgeindex] = nodeassignment.get(from);
+					edgeindex++;
+				}
+			}
+			
+			NodeAttribute att;
+			BiologicalNodeAbstract gnode;
+			for (int i = 0; i < nodes; i++) {
+				gnode = np.getNodeAssignmentbackwards(i);
+				att = gnode.getNodeAttributeByName("chol logFC");
+				if(att != null)
+					experimentdata.put(i,att.getDoublevalue());
+				else
+					experimentdata.put(i,0.0d);
+
+			}
+			oos.writeObject(mg.getAllVertices().size());
+			oos.writeObject(edgearray);
+			oos.writeObject(experimentdata);
+			oos.writeObject(parameters);
+			
+			//close objectstream and transform to bytearray
+			oos.close();			
+			jobinformation = baos.toByteArray();
+			
+			// compute values over RMI
+			try {
+				helper = new ComputeCallback(this);
+				ClusterComputeThread rmiapspclustering = new ClusterComputeThread(
+						JobTypes.APSP_CLUSTERING_JOB, jobinformation, helper);
+				rmiapspclustering.start();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+				reactiveateUI();
+			}
+			break;
 
 		}
 
@@ -600,29 +706,28 @@ public class GraphColoringGUI implements ActionListener {
 		}
 
 		// //DEBUG print experimental data
-		// try {
-		// FileWriter fw = new FileWriter("experiments"+mw.getCurrentPathway());
-		// BufferedWriter out = new BufferedWriter(fw);
-		//
-		// GraphNode gnode;
-		//
-		// for(int i = 0; i< nodes; i++){
-		// gnode = (GraphNode) np.getNodeAssignmentbackwards(i);
-		//
-		// try{
-		// out.write(i+"\t"+gnode.getSuperNode().biodataEntries[0]+"\n");
-		// } catch (ArrayIndexOutOfBoundsException ae){
-		// out.write(i+"\t"+0.0+"\n");
-		// }
-		//
-		//
-		// }
-		// out.close();
-		// fw.close();
-		//
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
+		try {
+			FileWriter fw = new FileWriter("experiments"
+					+ mw.getCurrentPathway());
+			BufferedWriter out = new BufferedWriter(fw);
+
+			BiologicalNodeAbstract gnode;
+
+			NodeAttribute att;
+			for (int i = 0; i < nodes; i++) {
+				gnode = np.getNodeAssignmentbackwards(i);
+				att = gnode.getNodeAttributeByName("chol logFC");
+				
+				if(att != null)
+					out.write(i + "\t" + att.getDoublevalue()+"\n");
+
+			}
+			out.close();
+			fw.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -753,6 +858,29 @@ public class GraphColoringGUI implements ActionListener {
 			}
 
 			break;
+			
+		case JobTypes.APSP_CLUSTERING_JOB:
+			if (!table.isEmpty()) {
+				// Map ids to BNAs
+				Iterator<Entry<Integer, Double>> it = table.entrySet()
+						.iterator();
+				int key;
+				double value;
+
+				while (it.hasNext()) {
+					Entry<Integer, Double> entry = it.next();
+					key = entry.getKey();
+					value = entry.getValue();
+					bna = np.getNodeAssignmentbackwards(key);
+					coloring.put(bna, value);
+					// saving
+					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
+							NodeAttributeNames.SP_CLUSTERING, coloring.get(bna));
+				}
+			}
+			
+			break;
+	
 
 		default:
 			System.out.println("Wrong Job Type: returnComputeData - "
