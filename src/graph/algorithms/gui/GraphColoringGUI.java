@@ -62,16 +62,16 @@ public class GraphColoringGUI implements ActionListener {
 	private JButton resetcolorbutton;
 	private JButton degreedistributionbutton;
 
-	private String[] algorithmNames = { "Node Degree", "Neighbor Degree",
+	private String[] algorithmNames = { "Node Degree", 
 			"Cycles (remote)", "Cliques (remote)", "FRlayout (remote)",
 			"Spectral apsp (remote)", "Multilayout (remote)",
 			"MDS forcelayout (remote)", "APSP Clustering (r)" };
 	private int currentalgorithmindex = 0;
 	private String[] colorrangenames = { "bluesea", "skyline", "darkmiddle",
 			"darkleftmiddle", "rainbow" };
-	private final int NODE_DEGREE = 0, NEIGHBOR_DEGREE = 1, CYCLES = 2,
-			CLIQUES = 3, FRLAYOUT = 4, SPECTRAL = 5, MULTILAYOUT = 6,
-			MDSFLAYOUT = 7, APSPCLUSTERING = 8;
+	private final int NODE_DEGREE = 0, CYCLES = 1,
+			CLIQUES = 2, FRLAYOUT = 3, SPECTRAL = 4, MULTILAYOUT = 5,
+			MDSFLAYOUT = 6, APSPCLUSTERING = 7;
 
 	private ImageIcon[] icons;
 
@@ -198,17 +198,6 @@ public class GraphColoringGUI implements ActionListener {
 				bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
 						NodeAttributeNames.NODE_DEGREE,
 						np.getNodeDegree(np.getNodeAssignment(bna)));
-			}
-			break;
-
-		case NEIGHBOR_DEGREE:
-			while (itn.hasNext()) {
-				bna = itn.next();
-				coloring.put(
-						bna,
-						bna.getNodeAttributeByName(
-								NodeAttributeNames.NEIGHBOR_DEGREE)
-								.getDoublevalue());
 			}
 			break;
 			

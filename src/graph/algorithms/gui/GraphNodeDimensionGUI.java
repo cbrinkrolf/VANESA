@@ -29,7 +29,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 
 	private JComboBox<String> chooseAlgorithm;
 	//private JButton weight;
-	private String[] algorithmNames = { "None","Node Degree", "Neighbor Degree", "Clique" };
+	private String[] algorithmNames = { "None","Node Degree"};
 	private int currentalgorithmindex = 0;
 	private JSpinner nodesizefromspinner, nodesizetospinner;
 	private SpinnerNumberModel frommodel, tomodel;
@@ -191,22 +191,6 @@ public class GraphNodeDimensionGUI implements ActionListener {
 				
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 				
-				break;
-			case 2:
-				//DEBUG
-				//System.out.println("Node Weighting 2: Neighbor Degree");
-				ratings = c.averageNeighbourDegreeTable();
-
-				//calclulate Weighting
-				transformRatingToWeighting((double)nodesizefromspinner.getValue(),(double)nodesizetospinner.getValue());		
-				
-				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
-
-				break;
-			case 3:
-				//DEBUG
-				//System.out.println("Node Weighting 3: Clique");
-				//MARTIN: Clique dimension rating
 				break;
 				
 			default:
