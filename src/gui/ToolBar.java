@@ -67,8 +67,8 @@ public class ToolBar {
 		pick.setActionCommand("pick");
 		pick.addActionListener(toolBarListener);
 		
-		JButton hierarchy = new ToolBarButton("Hierarchy");
-		hierarchy.setToolTipText("Zoom through hierarchy");
+		JButton hierarchy = new ToolBarButton(new ImageIcon(imagePath.getPath("hierarchy_button.png")));
+		hierarchy.setToolTipText("Hierarchy mode");
 		hierarchy.setActionCommand("hierarchy");
 		hierarchy.addActionListener(toolBarListener);
 
@@ -185,7 +185,7 @@ public class ToolBar {
 		enterSelectedNode.setActionCommand("enterNode");
 		enterSelectedNode.addActionListener(toolBarListener);
 		
-		JButton autoCoarse = new ToolBarButton("Autocoarse");
+		JButton autoCoarse = new ToolBarButton(new ImageIcon(imagePath.getPath("autocoarse.png")));
 		autoCoarse.setToolTipText("Autocoarse current Pathway");
 		autoCoarse.setActionCommand("autocoarse");
 		autoCoarse.addActionListener(toolBarListener);
