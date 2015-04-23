@@ -1,6 +1,9 @@
 package gui;
 
+import graph.algorithms.MultidimensionalScaling;
 import graph.algorithms.NetworkProperties;
+import graph.algorithms.NodeAttributeNames;
+import graph.algorithms.ShortestPathsExperimentClustering;
 
 import javax.swing.JOptionPane;
 
@@ -22,9 +25,6 @@ public class InfoWindow {
 
 		NetworkProperties cs = new NetworkProperties();
 
-//		cs.AllPairShortestPaths(true);	
-		
-		
 		nodes = cs.getNodeCount();
 		edges = cs.getEdgeCount();
 		density = cs.getDensity();
@@ -78,27 +78,29 @@ public class InfoWindow {
 //		cs.saveAdjMatrix("Jan.N"+nodes+"E"+edges+".adj");
 //		System.out.println("export done.");
 
- //cs.saveGraphCoordinates("clustering_coords.dat");
+		//cs.saveGraphCoordinates("clustering_coords.dat");
 		// cs.savePackedAdjList("padjlist");
 
 		// startTime();
-		// cs.runFloydWarshall(false);
+		// cs.AllPairShortestPaths(false);
 		// endTime("FloydWarshall");
-
-		// // startTime();
-		// //Socket Client testing
-
-		// startTime();
-		// SocketClient cliques = new SocketClient("nero", 11337,
-		// cs.getAdjacencyMatrix(), cs);
-		// endTime("Cluster cycles");
 
 //		 cs.removeGreyNodes();
 		// startTime();
 		// GPUSocketClient l = new GPUSocketClient();
 		// endTime("GPU APSP");
 		
+//		new ShortestPathsExperimentClustering("Norm");	
 	
+//		new MultidimensionalScaling("inv1");
+//		new MultidimensionalScaling(NodeAttributeNames.CHOLESTEATOMA, false);
+
+//		new MultidimensionalScaling(NodeAttributeNames.GO_CELLULAR_COMPONENT,true);
+
+//		new MultidimensionalScaling(NodeAttributeNames.GO_BIOLOGICAL_PROCESS,true);
+		
+		
+		
 		
 		
 
