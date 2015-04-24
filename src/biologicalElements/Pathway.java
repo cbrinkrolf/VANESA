@@ -272,6 +272,10 @@ public class Pathway implements Cloneable {
 			bna = new Protein(label + "FAILSAFE", name + "FAILSAFE");
 		if (bna != null) {
 			bna.setCompartment(compartment);
+			if(isBNA()){
+				Pathway parent = ((BiologicalNodeAbstract) this).getParentNode()==null ? getRootPathway() : ((BiologicalNodeAbstract) this).getParentNode();
+				bna.setParentNodeDistance(Circle.get2Ddistance(parent.getGraph().getVertexLocation((BiologicalNodeAbstract) this),p));
+			}
 			return addVertex(bna, p);
 		} else
 			try {
@@ -1473,6 +1477,24 @@ public class Pathway implements Cloneable {
 					node.setParentNodeDistance(Circle.get2Ddistance(loc, this.getGraph().getVertexLocation(node)));
 					removeElement(node);
 				}
+
+				if(getGraph().getLayout() instanceof HEBLayout){
+					((HEBLayout) getGraph().getLayout()).addToOrder(parentNode);
+				}
+				parentNode.setCoarseNodesize();
+				break;
+				
+			case ADDED:
+				parentNode = node.getParentNode();
+				// if already added in correct graph, break.
+				if (parentNode == this) {
+					if(getGraph().getLayout() instanceof HEBLayout){
+						((HEBLayout) getGraph().getLayout()).addToOrder(parentNode);
+					}
+					break;
+				}
+				// Coarse nodes. Location is copied by a border node if possible.
+				removeElement(node);
 
 				if(getGraph().getLayout() instanceof HEBLayout){
 					((HEBLayout) getGraph().getLayout()).addToOrder(parentNode);

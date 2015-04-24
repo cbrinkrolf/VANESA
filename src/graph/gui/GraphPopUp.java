@@ -30,15 +30,10 @@ public class GraphPopUp {
 		JMenuItem cutSelection = new JMenuItem("cut");
 		JMenuItem pasteselection = new JMenuItem("paste");
 		JMenuItem deleteSelection = new JMenuItem("delete");
-
-		JMenuItem environmentSelection = new JMenuItem("(Un)mark as environment node");
-		JMenuItem coarseSelection = new JMenuItem("Convert to coarse node");
 		
 		JMenuItem openPathway = new JMenuItem("Open Pathway as Sub-Pathway");
 		JMenuItem openPathwayTab = new JMenuItem("Open Pathway in new Tab");
-		JMenu openPathwayMenu = new JMenu("Open Pathway");
-		JMenuItem addPathway = new JMenuItem("Add a pathway from file");
-		
+		JMenu openPathwayMenu = new JMenu("Open Pathway");		
 		
 		JMenuItem returnToParent =new JMenuItem("Return to Parent-Pathway");
 		
@@ -67,12 +62,6 @@ public class GraphPopUp {
 
 		deleteSelection.setActionCommand("delete");
 		deleteSelection.addActionListener(new PopUpListener());
-		
-		environmentSelection.setActionCommand("environment");
-		environmentSelection.addActionListener(new PopUpListener());
-
-		coarseSelection.setActionCommand("coarse");
-		coarseSelection.addActionListener(new PopUpListener());
 
 		centerGraph.setActionCommand("center");
 		centerGraph.addActionListener(new PopUpListener());
@@ -109,9 +98,6 @@ public class GraphPopUp {
 		openPathwayTab.setActionCommand("openPathwayTab");
 		openPathwayTab.addActionListener(new PopUpListener());
 		
-		addPathway.setActionCommand("addPathway");
-		addPathway.addActionListener(new PopUpListener());
-		
 		returnToParent.setActionCommand("returnToParent");
 		returnToParent.addActionListener(new PopUpListener());
 		
@@ -133,17 +119,12 @@ public class GraphPopUp {
 
 		popup.add(openPathwayMenu);
 		popup.add(returnToParent);
-		popup.add(addPathway);
 		popup.add(new JSeparator());
 		popup.add(copySelection);
 		popup.add(cutSelection);
 		popup.add(pasteselection);
 		popup.add(deleteSelection);
 		
-		popup.add(new JSeparator());
-		popup.add(coarseSelection);
-		popup.add(environmentSelection);
-
 		// popup.add(new JSeparator());
 		// popup.add(layout);
 		// popup.add(graph);
