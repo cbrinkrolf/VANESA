@@ -139,6 +139,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	    JMenu marking = new JMenu("Change node type");
 		JMenuItem environmentSelection = new JMenuItem("(Un)mark as environment node");
 		JMenuItem coarseSelection = new JMenuItem("Convert to coarse node");
+		JMenuItem setAsRootNode = new JMenuItem("(Un)mark as parent's root node");
 	    BiologicalNodeAbstract node;
 	    ActionListener listener;
 	    
@@ -180,6 +181,20 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 							BiologicalNodeAbstract.coarse(n);
 						} else if(e.getSource()==environmentSelection){
 							n.markAsEnvironment(!n.isMarkedAsEnvironment());
+						} else if(e.getSource()==setAsRootNode){
+							if(n.getParentNode()==null){
+								if(n.getRootPathway().getRootNode()==n){
+									n.getRootPathway().setRootNode(null);
+								} else {
+									n.getRootPathway().setRootNode(n);
+								}
+							} else {
+								if(n.getParentNode().getRootNode()==n){
+									n.getParentNode().setRootNode(null);
+								} else {
+									n.getParentNode().setRootNode(n);
+								}
+							}
 						}
 						GraphInstance.getMyGraph().updateLayout();
 						GraphInstance.getMyGraph().getVisualizationViewer().repaint();
@@ -203,8 +218,10 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	    		closeNode.addActionListener(listener);
 	    		environmentSelection.addActionListener(listener);
 	    		coarseSelection.addActionListener(listener);
+	    		setAsRootNode.addActionListener(listener);
 	    		marking.add(environmentSelection);
 	    		marking.add(coarseSelection);
+	    		marking.add(setAsRootNode);
 	    		add(marking);
 	    		if(n.getParentNode() == pw || n.getParentNode() == null){
 	    			closeNode.setEnabled(false);

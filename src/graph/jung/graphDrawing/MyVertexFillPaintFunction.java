@@ -33,6 +33,12 @@ public class MyVertexFillPaintFunction implements
 
 	private Paint getFillPaintWithoutGraphTheory(BiologicalNodeAbstract v) {
 		
+		if(pw.getRootNode()==v){
+			if(psV.getPicked().isEmpty() || psV.getPicked().contains(v)){
+				return Color.RED;
+			}
+		}
+		
 		// mark Environment nodes in hierarchical Nodes.
 		if(pw instanceof BiologicalNodeAbstract){
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) pw;
