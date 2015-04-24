@@ -670,7 +670,7 @@ public class Pathway implements Cloneable {
 	}
 
 	public boolean hasGotAtLeastOneElement() {
-		if (biologicalElements.size() > 0)
+		if (!biologicalElements.isEmpty())
 			return true;
 		else
 			return false;
