@@ -118,13 +118,18 @@ public class HCTLayout extends HierarchicalCircleLayout{
         	}
             group_no++;
         }   
+        int currentCircle = maxCircle-1;
+        while(currentCircle>0){
         for(BiologicalNodeAbstract v : rootNodes){
+        	if(circles.get(v)!=currentCircle){
+        		continue;
+        	}
         	Set<BiologicalNodeAbstract> children = new HashSet<BiologicalNodeAbstract>();
         	children.addAll(v.getParentNode().getCurrentShownChildrenNodes(myGraph));
         	children.remove(v);
         	Set<Point2D> childrenLocations = new HashSet<Point2D>();
         	for(BiologicalNodeAbstract child : children){
-        		childrenLocations.add(myGraph.getVertexLocation(child));
+        		childrenLocations.add(Circle.getPointOnCircle(centerPoint, getRadius()*circles.get(child), circleVertexDataMap.get(child).getVertexAngle()));
         	}
     		double angle = Circle.getAngle(centerPoint,Circle.averagePoint(childrenLocations));
 //    		System.out.println(v.getLabel() + ": " + circles.get(v));
@@ -136,6 +141,8 @@ public class HCTLayout extends HierarchicalCircleLayout{
 			CircleVertexData data = circleVertexDataMap.get(v);
 			data.setCircleNumber(circles.get(v));            		
 			data.setVertexAngle(angle);
+        }
+        currentCircle -= 1;
         }
           
           

@@ -57,7 +57,7 @@ public class MyPickingGraphMousePlugin extends
 			return;
 		}
 		
-		if(graphInstance.getMyGraph().getLayout() instanceof HEBLayout){
+		if(graphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout){
 			HierarchicalCircleLayout hclayout = (HierarchicalCircleLayout) graphInstance.getMyGraph().getLayout();
 			hclayout.saveCurrentOrder();
 		}
