@@ -79,6 +79,7 @@ import graph.gui.EdgeDeleteDialog;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
 import graph.layouts.Circle;
+import graph.layouts.HierarchicalCircleLayout;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.GraphTab;
 import gui.MainWindow;
@@ -1615,6 +1616,9 @@ public class Pathway implements Cloneable {
 //		}
 		updateEdges();
 		openedSubPathways.put(subPathway,location);
+		if(getGraph().getLayout() instanceof HierarchicalCircleLayout){
+			((HierarchicalCircleLayout) getGraph().getLayout()).getConfig().setRelayout(true);
+		}
 		return true;
 	}
 	
@@ -1665,6 +1669,7 @@ public class Pathway implements Cloneable {
 			closeSubPathway(node);
 			color = node.getColor();
 			node.setColor(new Color((int) Math.min(255,(int) color.getRed()/1.2f),(int) Math.min(255,(int) color.getGreen()/1.2f),(int) Math.min(255,(int) color.getBlue()/1.2f)));
+//			subPathway.getGraph().moveVertex(node, this.getGraph().getVertexLocation(node).getX(), this.getGraph().getVertexLocation(node).getY());
 			removeElement(node);
 		}
 //		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
@@ -1677,6 +1682,9 @@ public class Pathway implements Cloneable {
 //		}
 		updateEdges();
 		openedSubPathways.remove(subPathway);
+		if(getGraph().getLayout() instanceof HierarchicalCircleLayout){
+			((HierarchicalCircleLayout) getGraph().getLayout()).getConfig().setRelayout(true);
+		}
 	}
 	
 	/**

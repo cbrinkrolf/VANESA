@@ -188,10 +188,20 @@ public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 	public boolean resetLayout(){
 		return resetLayout.isSelected();
 	}
+	
+	@Override
+	public void setResetLayout(boolean reset){
+		resetLayout.setSelected(reset);
+	}
 
 	@Override
 	public boolean getAutoRelayout(){
 		return autorelayout.isSelected();
+	}
+	
+	@Override
+	public void setAutoRelayout(boolean auto){
+		autorelayout.setSelected(auto);
 	}
 
 	@Override
