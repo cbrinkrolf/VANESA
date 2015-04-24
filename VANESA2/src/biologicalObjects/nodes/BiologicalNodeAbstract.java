@@ -143,6 +143,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	private boolean markedAsEnvironment = false;
 	
+	private boolean markedAsCoarseNode = false;
+	
 	private Point2D parentNodeDistance = new Point2D.Double(0,0);
 
 	public BiologicalNodeAbstract(String label, String name) {
@@ -261,13 +263,24 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		if(node.isCoarseNode()){
 			return node;
 		}
-		Pathway parentPathway = node.getParentNode()==null ? node.getRootPathway() : node.getParentNode();
-		node.getEnvironment().clear();
-		for(BiologicalNodeAbstract n : parentPathway.getGraph().getJungGraph().getNeighbors(node)){
-			node.addVertex(n, parentPathway.getGraph().getVertexLocation(n));
-			node.getPredefinedEnvironment().add(n);
+		for(BiologicalEdgeAbstract e : node.getConnectingEdges()){
+			Pathway neighborParent = node.getRootPathway();
+			if(e.getFrom()!=node){
+				neighborParent = e.getFrom().getParentNode()==null ? node.getRootPathway() : e.getFrom().getParentNode();
+				node.addVertex(e.getFrom(), neighborParent.getGraph().getVertexLocation(e.getFrom()));
+				node.getPredefinedEnvironment().add(e.getFrom());
+				e.getFrom().removeConnectingEdge(e);
+			} else if(e.getTo()!=node){
+				neighborParent = e.getTo().getParentNode()==null ? node.getRootPathway() : e.getTo().getParentNode();
+				node.addVertex(e.getTo(), neighborParent.getGraph().getVertexLocation(e.getTo()));
+				node.getPredefinedEnvironment().add(e.getTo());
+				e.getTo().removeConnectingEdge(e);
+			}
 		}
 		node.makeCoarseShape();
+		node.markAsCoarseNode(true);
+		node.updateHierarchicalAttributes();
+		node.getRootPathway().updateMyGraph();
 		return node;
 	}
 	
@@ -490,6 +503,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 	
 	private void updateBorderEnvironment(){
+		System.out.println("update");
 		for(BiologicalNodeAbstract n : environment){
 			removeElement(n);
 		}
@@ -504,6 +518,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 					} else {
 						addVertex(e.getTo(), e.getTo().getRootPathway().getGraph().getVertexLocation(e.getTo()));
 					}
+					predefinedEnvironment.remove(e.getTo());
 					environment.add(e.getTo());
 				}
 				if(e.getFrom().getCurrentShownParentNode(getGraph())==null && e.getTo().getCurrentShownParentNode(getGraph())!=null){
@@ -513,9 +528,16 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 					} else {
 						addVertex(e.getFrom(), e.getFrom().getRootPathway().getGraph().getVertexLocation(e.getFrom()));
 					}
+					predefinedEnvironment.remove(e.getFrom());
 					environment.add(e.getFrom());
 				}
 			}
+		}
+		Pathway neighborParent = getRootPathway();
+		for(BiologicalNodeAbstract pe : predefinedEnvironment){
+			neighborParent = pe.getParentNode()==null ? getRootPathway() : pe.getParentNode();
+			addVertex(pe, neighborParent.getGraph().getVertexLocation(pe));
+			environment.add(pe);
 		}
 	}
 	
@@ -723,7 +745,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @return true, if coarse-node.
 	 */
 	public boolean isCoarseNode(){
-		if(getAllNodes().isEmpty()){
+		if(getInnerNodes().isEmpty()){
 			return false;
 		}
 		if(getGraph(false)==null){
@@ -1415,8 +1437,16 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		markedAsEnvironment = value;
 	}
 	
+	protected void markAsCoarseNode(boolean value){
+		markedAsCoarseNode = value;
+	}
+	
 	public boolean isMarkedAsEnvironment(){
 		return markedAsEnvironment;
+	}
+	
+	public boolean isMarkedAsCoarseNode(){
+		return markedAsCoarseNode;
 	}
 	
 	public boolean isEnvironmentNodeOf(Pathway parentNodeOfInterest){
