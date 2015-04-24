@@ -114,15 +114,11 @@ public class MyPickingGraphMousePlugin extends
 	private void coarseNodeFusion(BiologicalNodeAbstract vertex){
 		Set<BiologicalNodeAbstract> selection = new HashSet<BiologicalNodeAbstract>();
 		selection.addAll(graphInstance.getPathway().getSelectedNodes());
-		if(vertex.addToCoarseNode(selection)){
+		if(!vertex.addToCoarseNode(selection, oldVertexPositions)){
 			for(BiologicalNodeAbstract node : selection){
-				vertex.getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), 
-						oldVertexPositions.get(node).getY());
-			}
-		} 
-		for(BiologicalNodeAbstract node : selection){
-			graphInstance.getPathway().getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), 
+				graphInstance.getPathway().getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), 
 					oldVertexPositions.get(node).getY());
+			}
 		}
 	}
 	

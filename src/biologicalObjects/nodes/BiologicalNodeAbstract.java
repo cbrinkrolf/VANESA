@@ -4,6 +4,7 @@ import graph.GraphInstance;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
 import graph.jung.graphDrawing.VertexShapes;
+import graph.layouts.Circle;
 import gui.MainWindowSingleton;
 
 import java.awt.Color;
@@ -11,6 +12,7 @@ import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -503,7 +505,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 	
 	private void updateBorderEnvironment(){
-		System.out.println("update");
 		for(BiologicalNodeAbstract n : environment){
 			removeElement(n);
 		}
@@ -566,7 +567,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				"Coarsing Error!", JOptionPane.ERROR_MESSAGE);
 	}
 	
-	public boolean addToCoarseNode(Set<BiologicalNodeAbstract> vertices){
+	public boolean addToCoarseNode(Set<BiologicalNodeAbstract> vertices, HashMap<BiologicalNodeAbstract, Point2D> vertexLocations){
 		Set<BiologicalNodeAbstract> ln = new HashSet<BiologicalNodeAbstract>();
 		ln.addAll(getLeafNodes());
 		for(BiologicalNodeAbstract v : vertices){
@@ -579,8 +580,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			leafNodes = ln;
 			for(BiologicalNodeAbstract n : vertices){
 				n.setParentNode(this);
-				n.setStateChanged(NodeStateChanged.COARSED);
-				addVertex(n, GraphInstance.getMyGraph().getVertexLocation(n));
+				n.setParentNodeDistance(Circle.get2Ddistance(GraphInstance.getMyGraph().getVertexLocation(this),vertexLocations.get(n)));
+				n.setStateChanged(NodeStateChanged.ADDED);
+				addVertex(n, vertexLocations.get(n));
 				if(getEnvironment().contains(n)){
 					getEnvironment().remove(n);
 				}

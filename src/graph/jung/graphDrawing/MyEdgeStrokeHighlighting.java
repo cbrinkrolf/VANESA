@@ -5,6 +5,7 @@ import java.awt.Stroke;
 
 import org.apache.commons.collections15.Transformer;
 
+import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.picking.PickedState;
@@ -41,7 +42,17 @@ public class MyEdgeStrokeHighlighting implements
 	}
 
 	private Stroke getStrokeWithoutGraphTheory(BiologicalEdgeAbstract bea) {
+		Pathway p = GraphInstance.getPathwayStatic();
+		if(p.isBNA()){
+			BiologicalNodeAbstract pathway = (BiologicalNodeAbstract) p;
+			if(pathway.getEnvironment().contains(bea.getFrom()) || pathway.getEnvironment().contains(bea.getTo())){
+				final float dash2[] = {2.0f};
+				return new BasicStroke(1.0f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,
+			            10.0f, dash2, 0.0f);
+			}
+		}
 		float strength = (float) Math.log1p(GraphInstance.getPathwayStatic().edgeGrade(bea))/log;
+		strength = Math.max(strength, 2);
 		hierarchical = new BasicStroke(strength);
 		Stroke picked = new BasicStroke(pickedFactor*strength);
 		if (psV.getPicked().isEmpty()) {

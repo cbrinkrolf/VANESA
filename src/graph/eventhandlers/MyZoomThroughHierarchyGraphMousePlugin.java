@@ -16,6 +16,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.HashSet;
 
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
@@ -135,6 +136,9 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	    JMenuItem closeAllNodes = new JMenuItem("Close finest level");
 	    JMenuItem openNetwork = new JMenuItem("Open full network");
 	    JMenuItem closeNetwork = new JMenuItem("Close full network");
+	    JMenu marking = new JMenu("Change node type");
+		JMenuItem environmentSelection = new JMenuItem("(Un)mark as environment node");
+		JMenuItem coarseSelection = new JMenuItem("Convert to coarse node");
 	    BiologicalNodeAbstract node;
 	    ActionListener listener;
 	    
@@ -172,6 +176,10 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 							pw.openAllSubPathways();
 						} else if(e.getSource()==closeNetwork){
 							pw.closeAllSubPathways();
+						} else if(e.getSource()==coarseSelection){
+							BiologicalNodeAbstract.coarse(n);
+						} else if(e.getSource()==environmentSelection){
+							n.markAsEnvironment(!n.isMarkedAsEnvironment());
 						}
 						GraphInstance.getMyGraph().updateLayout();
 						GraphInstance.getMyGraph().getVisualizationViewer().repaint();
@@ -193,12 +201,31 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	    		openNode.addActionListener(listener);
 	    		add(closeNode);
 	    		closeNode.addActionListener(listener);
+	    		environmentSelection.addActionListener(listener);
+	    		coarseSelection.addActionListener(listener);
+	    		marking.add(environmentSelection);
+	    		marking.add(coarseSelection);
+	    		add(marking);
 	    		if(n.getParentNode() == pw || n.getParentNode() == null){
 	    			closeNode.setEnabled(false);
 	    		}
 	    		if(!n.isCoarseNode() || n.getInnerNodes().size()==0){
 	    			openNode.setEnabled(false);
 	    		}
+	    		if(n.isCoarseNode() || n.isMarkedAsCoarseNode()){
+	    			coarseSelection.setEnabled(false);
+	    			environmentSelection.setEnabled(false);
+	    		}
+	    		if(n.isEnvironmentNodeOf(pw)){
+	    			coarseSelection.setEnabled(false);
+	    		}
+    			if(n.getParentNode()!=null || pw.isBNA()){
+    				environmentSelection.setEnabled(false);
+    			}
+    			if(!coarseSelection.isEnabled() && !environmentSelection.isEnabled()){
+    				marking.setEnabled(false);
+    			}
+
 	    	}
 	    }
 	}
