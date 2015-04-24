@@ -325,6 +325,9 @@ public class ToolBarListener implements ActionListener {
 				for (BiologicalNodeAbstract node : graphInstance.getPathway()
 						.getGraph().getVisualizationViewer()
 						.getPickedVertexState().getPicked()) {
+					if(!node.isCoarseNode() && !node.isMarkedAsCoarseNode()){
+						continue;
+					}
 					w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 					// Pathway newPW = null;
 					String newPathwayName = con.addPathway(node.getLabel(),
