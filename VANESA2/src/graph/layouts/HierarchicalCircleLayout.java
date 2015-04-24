@@ -24,6 +24,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.DirectionalEdgeArrowTransformer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
+import graph.layouts.hctLayout.HCTLayout;
 
 public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>{
 	
@@ -157,17 +158,29 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	 */
 	public void saveCurrentOrder(){
 		order.sort(new AngleComparator());
-		if(getConfig().getAutoRelayout()){
+		if(getConfig().getRelayout()){
 			groupNodes();
 			initialize();
 		} else {
 			MyGraph g = GraphInstance.getMyGraph();
+			HashSet<BiologicalNodeAbstract> orderNodes = new HashSet<BiologicalNodeAbstract>();
+			orderNodes.addAll(g.getAllVertices());
+			orderNodes.removeAll(circleVertexDataMap.keySet());
+			if(!orderNodes.isEmpty()){
+				getConfig().setRelayout(true);
+				saveCurrentOrder();
+				return;
+			}
+			
         	Point2D vp;
 			for(BiologicalNodeAbstract n : g.getAllVertices()){
-					vp = getPointOnCircle(Circle.getAngle(getCenterPoint(),g.getVertexLocation(n)), circleVertexDataMap.get(n).getCircleNumber());
+				vp = getPointOnCircle(Circle.getAngle(getCenterPoint(),g.getVertexLocation(n)), circleVertexDataMap.get(n).getCircleNumber());
 				g.moveVertex(n, vp.getX(), vp.getY());
 			}
+			setEdgeShapes();
 		}
+		getConfig().setRelayout(false);
+		getConfig().setResetLayout(false);
 	}
 	
 	/**
