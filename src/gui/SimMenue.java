@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -43,11 +45,16 @@ public class SimMenue extends JFrame {
 	private MyJFormattedTextField intervalsTxt;
 	private JLabel integratorsLbl = new JLabel("Integartor:");
 	private JComboBox<String> integrators;
+	private JLabel simLibLbl = new JLabel("Simlation library");
+	private JComboBox<String> simLibs;
 
 	//private ActionListener listener;
 	
+	private List<String> libs;
 	
-	public SimMenue(ActionListener listener){
+	
+	public SimMenue(ActionListener listener, List<String> libs){
+		this.libs = libs;
 		//this.listener = listener;
 		start.setActionCommand("start");
 		start.addActionListener(listener);
@@ -90,7 +97,12 @@ public class SimMenue extends JFrame {
 		integrators.addItem("radau1");
 		integrators.addItem("rungekutta");
 		
-		
+		simLibs = new JComboBox<String>();
+		Iterator<String> it = libs.iterator();
+		while(it.hasNext()){
+			simLibs.addItem(it.next());
+		}
+		simLibs.setSelectedIndex(0);
 		
 		this.setLayout(new BorderLayout());
 		this.stop.setEnabled(false);
@@ -106,6 +118,8 @@ public class SimMenue extends JFrame {
 		northDown.add(intervalsTxt);
 		northDown.add(integratorsLbl);
 		northDown.add(integrators);
+		northDown.add(simLibLbl);
+		northDown.add(simLibs);
 		
 		this.add(north, BorderLayout.NORTH);
 		north.setLayout(new GridLayout(2,1));
@@ -173,5 +187,13 @@ public class SimMenue extends JFrame {
 	
 	public String getIntegrator(){
 		return (String) this.integrators.getSelectedItem();
+	}
+	
+	public void setLibs(List<String> libs) {
+		this.libs = libs;
+	}
+	
+	public String getSimLib(){
+		return this.simLibs.getSelectedItem().toString();
 	}
 }

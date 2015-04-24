@@ -39,7 +39,7 @@ public class MOoutput {
 	private OutputStream os = null;
 	private String modelName = null;
 	private Pathway pw = null;
-	//private FileWriter fwriter;
+	// private FileWriter fwriter;
 
 	private String places = "";
 	private String edgesString = "";
@@ -65,19 +65,25 @@ public class MOoutput {
 
 	private HashMap<BiologicalEdgeAbstract, String> bea2resultkey = new HashMap<BiologicalEdgeAbstract, String>();
 
-	public MOoutput(OutputStream os, Pathway pathway) {
+	private String packageInfo = null;
 
+	public MOoutput(OutputStream os, Pathway pathway) {
+		this(os, pathway, null);
+	}
+
+	public MOoutput(OutputStream os, Pathway pathway, String packageInfo) {
+		this.packageInfo = packageInfo;
 		if (debug)
 			System.out.println();
 		if (debug)
-			System.out.println("MOoutput(File " + pathway.getName() + " Pathway " + pathway
-					+ ")");
-		
+			System.out.println("MOoutput(File " + pathway.getName()
+					+ " Pathway " + pathway + ")");
+
 		this.os = os;
-		this.modelName = pathway.getName();//.substring(0,
-				//pathway.getName().lastIndexOf("."));
+		this.modelName = pathway.getName();// .substring(0,
+		// pathway.getName().lastIndexOf("."));
 		if (debug)
-			System.out.println("Model Name = '" + modelName+"'");
+			System.out.println("Model Name = '" + modelName + "'");
 		this.pw = pathway;
 
 		try {
@@ -85,11 +91,12 @@ public class MOoutput {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	private void write() throws IOException {
 
-		//fwriter = new FileWriter(file);
+		// fwriter = new FileWriter(file);
 
 		prepare();
 		// buildProperties();
@@ -101,6 +108,11 @@ public class MOoutput {
 		// System.out.println(properties+places+transitions+edgesString);
 
 		os.write(new String("model '" + modelName + "'\r\n").getBytes());
+
+		if (packageInfo != null) {
+			os.write(new String("\t"+this.packageInfo+"\r\n").getBytes());
+			//os.write(new String("\timport PNlib = ConPNlib;\r\n").getBytes());
+		}
 		// fwriter.write(properties);
 		os.write(places.getBytes());
 		// fwriter.write(transitions);
@@ -195,8 +207,8 @@ public class MOoutput {
 			if (!bna.hasRef()) {
 				Point2D p = pw.getGraph().getVertexLocation(bna);
 				String biologicalElement = bna.getBiologicalElement();
-				//double km = Double.NaN, kcat = Double.NaN;
-				//String ec = "";
+				// double km = Double.NaN, kcat = Double.NaN;
+				// String ec = "";
 
 				int in = pw.getGraph().getJungGraph().getInEdges(bna).size();
 				int out = pw.getGraph().getJungGraph().getOutEdges(bna).size();
