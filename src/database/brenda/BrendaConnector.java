@@ -8,6 +8,7 @@ import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
 import graph.hierarchies.HierarchyStructure;
 import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
@@ -72,8 +73,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 	private MoleculeBox box = MoleculeBoxSingelton.getInstance();
 
-	private ProgressBar bar;
-
 	private String[] enzymeToSearch;
 
 	protected Hashtable<String, BiologicalNodeAbstract> enzymes = new Hashtable<String, BiologicalNodeAbstract>();
@@ -88,10 +87,8 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 	boolean autoCoarseEnzymeNomenclature = false;
 	
-	public BrendaConnector(ProgressBar bar, String[] details, Pathway mergePW,
+	public BrendaConnector(String[] details, Pathway mergePW,
 			boolean headless) {
-
-		this.bar = bar;
 		enzymeToSearch = details;
 		this.mergePW = mergePW;
 		this.headless = headless;
@@ -177,8 +174,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 				for (DBColumn column : results) {
 					resultDetails = (String[]) column.getColumn();
 
-					bar.setProgressBarString("Gathering information for Enzyme: "
-							+ resultDetails[0]);
 					clean = this.cleanString(resultDetails[0]);
 					if (!enzymes.containsKey(clean)) {
 						// System.out.println("details: "+resultDetails[3]);
@@ -416,8 +411,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		if (node.getLevel() == 0 || (node.getLevel() / 2) < searchDepth) {
 			// System.out.println("if");
 			String[] param = { enzyme };
-			bar.setProgressBarString("Gathering information for Enzyme: "
-					+ enzyme);
 
 			ArrayList<DBColumn> results = new Wrapper().requestDbContent(1,
 					BRENDAQueries.getBRENDAenzymeDetails, param);
@@ -819,29 +812,13 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 	@Override
 	protected Object doInBackground() throws Exception {
-
-		Runnable run = new Runnable() {
-			public void run() {
-				bar = new ProgressBar();
-				bar.init(100,
-						"   Loading Data for Enzyme " + enzymeToSearch[0], true);
-				bar.setProgressBarString("Querying Database");
-			}
-		};
-		SwingUtilities.invokeLater(run);
-
+		
 		getPathway();
 
 		box.getDisregardedValues();
 
 		title = enzymeToSearch[0];
 
-		bar.setProgressBarString("Getting Enzymes");
-		// System.out.println("123");
-		// System.out.println("do");
-		// pw = new CreatePathway("EC: " + title).getPathway();
-
-		// System.out.println("do in background");
 		return null;
 	}
 
@@ -886,16 +863,16 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 			// System.out.println(enzymeList);
 			if (CoFactors) {
-				bar.setProgressBarString("Getting Cofactors");
+				MainWindow.progressbar.setProgressBarString("Getting Cofactors");
 				getCofactors(enzymeList);
 			}
 
 			if (Inhibitors) {
-				bar.setProgressBarString("Getting Inhibitors");
+				MainWindow.progressbar.setProgressBarString("Getting Inhibitors");
 				getInhibitors(enzymeList);
 			}
 
-			bar.setProgressBarString("Drawing network");
+			MainWindow.progressbar.setProgressBarString("Drawing network");
 
 			myGraph = pw.getGraph();
 
@@ -919,7 +896,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 			}
 			if (answer == JOptionPane.NO_OPTION)
 				new MergeGraphs(pw, mergePW, true);
-			bar.closeWindow();
+			MainWindowSingleton.getInstance().closeProgressBar();
 		}
 		MainWindowSingleton.getInstance().updateAllGuiElements();
 	}
@@ -931,8 +908,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 	public void setAutoCoarseEnzymeNomenclature(
 			boolean autoCoarseEnzymeNomenclature) {
 		this.autoCoarseEnzymeNomenclature = autoCoarseEnzymeNomenclature;
-		
-	}
+			}
 
 	private String cleanString(String s) {
 		return s.toLowerCase();

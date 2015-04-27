@@ -4,6 +4,7 @@ import graph.CreatePathway;
 import graph.GraphInstance;
 import graph.algorithms.MergeGraphs;
 import gui.MainWindow;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.awt.Color;
@@ -45,7 +46,6 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 	private boolean continueProgress = false;
 	private KEGGResultWindow dsrw = null;
 	private MainWindow w = null;
-	private ProgressBar bar = null;
 	private Pathway mergePW = null;
 
 	public KeggSearch(String[] input) {
@@ -56,15 +56,13 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 		compound = input[4];
 	}
 
-	public KeggSearch(String[] input, MainWindow w, ProgressBar bar,
-			Pathway mergePW) {
+	public KeggSearch(String[] input, MainWindow w, Pathway mergePW) {
 		pathway = input[0];
 		organismus = input[1];
 		enzyme = input[2];
 		gene = input[3];
 		compound = input[4];
 		this.w = w;
-		this.bar = bar;
 		this.mergePW = mergePW;
 	}
 
@@ -328,11 +326,10 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 
 	@Override
 	protected Void doInBackground() throws Exception {
-		w.setLockedPane(true);
 		// results=requestDbContent();
 		results = KEGGQueries.requestDbContent(pathway, organismus, gene,
 				compound, enzyme);
-		w.setLockedPane(false);
+		
 		return null;
 	}
 
@@ -346,13 +343,12 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 	@Override
 	public void done() {
 
-		endSearch(w, bar);
+		MainWindowSingleton.getInstance().closeProgressBar();
 		if (results.size() > 0) {
 			continueProgress = true;
 			dsrw = new KEGGResultWindow(results);
 
 		} else {
-			endSearch(w, bar);
 			JOptionPane.showMessageDialog(w,
 					"Sorry, no entries have been found.");
 		}
@@ -409,7 +405,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 					newPW.getGraph().changeToGEMLayout();
 					newPW.getGraph().normalCentering();
 				} else {
-					kc = new KEGGConnector(bar, (String[]) it.next(),
+					kc = new KEGGConnector((String[]) it.next(),
 							!(mergePW == null));
 					kc.addPropertyChangeListener(this);
 					kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
@@ -443,7 +439,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 							.getPw_new();
 				}
 			if (it != null && it.hasNext()) {
-				kc = new KEGGConnector(bar, (String[]) it.next(),
+				kc = new KEGGConnector((String[]) it.next(),
 						!(answer == SEPARATE_TABS));
 				kc.addPropertyChangeListener(this);
 				kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
@@ -452,7 +448,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 			} else {
 				mergePW = new GraphInstance().getContainer().getPathway(
 						w.getCurrentPathway());
-				w.setLockedPane(false);
+				MainWindowSingleton.getInstance().closeProgressBar();
 				w.updateAllGuiElements();
 				mergePW.getGraph().getVisualizationViewer().repaint();
 				mergePW.getGraph().disableGraphTheory();

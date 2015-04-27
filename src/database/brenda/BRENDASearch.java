@@ -2,6 +2,7 @@ package database.brenda;
 
 import graph.GraphInstance;
 import gui.MainWindow;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.sql.SQLException;
@@ -26,9 +27,6 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	private DatabaseQueryValidator dqv = new DatabaseQueryValidator();
 
 	private MainWindow w;
-	private ProgressBar bar;
-	// Vector results=new Vector();
-	// ArrayList<String[]> results = new ArrayList<String[]>();
 	private String[][] results = null;
 
 	private BrendaSearchResultWindow bsrw;
@@ -37,8 +35,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 
 	private boolean headless;
 
-	public BRENDASearch(String[] input, MainWindow w, ProgressBar bar,
-			Pathway mergePW, boolean headless) {
+	public BRENDASearch(String[] input, MainWindow w,Pathway mergePW, boolean headless) {
 
 		ec_number = input[0];
 		name = input[1];
@@ -47,7 +44,6 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 		organism = input[4];
 
 		this.w = w;
-		this.bar = bar;
 		this.mergePW = mergePW;
 		this.headless = headless;
 
@@ -269,7 +265,6 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 
 	@Override
 	protected Object doInBackground() throws Exception {
-		w.setLockedPane(true);
 		results = getResults();
 
 		return null;
@@ -278,15 +273,13 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	@Override
 	public void done() {
 
+		MainWindowSingleton.getInstance().closeProgressBar();
 		Boolean continueProgress = false;
-		endSearch(w, bar);
 
-		// if (results.size() > 0) {
 		if (results.length > 0) {
 			continueProgress = true;
 			bsrw = new BrendaSearchResultWindow(results);
 		} else {
-			endSearch(w, bar);
 			JOptionPane.showMessageDialog(w,
 					"Sorry, no entries have been found.");
 		}
@@ -294,18 +287,15 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 		if (continueProgress) {
 			Vector<String[]> results = bsrw.getAnswer();
 			if (results.size() != 0) {
+				MainWindowSingleton.getInstance().showProgressBar("Fetching Network.");
 				final Iterator<String[]> it = results.iterator();
 				String[] res;
+		
+
 				while (it.hasNext()) {
 					res = it.next();
-					// System.out.println("drin");
-					// BrendaConnector bc = new BrendaPathway(bar, res,
-					// mergePW);
-					BrendaConnector bc = new BrendaConnector(bar, res, mergePW,
+					BrendaConnector bc = new BrendaConnector(res, mergePW,
 							headless);
-					// System.out.println("newwwwww");
-					// BrendaConnectorNew bc = new BrendaConnectorNew(bar, res,
-					// mergePW);
 					bc.setDisregarded(bsrw.getDisregarded());
 					bc.setOrganism_specific(bsrw.getOrganismSpecificDecision());
 					bc.setSearchDepth(bsrw.getSerchDeapth());
@@ -313,24 +303,10 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 					bc.setInhibitors(bsrw.getInhibitorsDecision());
 					bc.setAutoCoarseDepth(bsrw.getAutoCoarseDepth());
 					bc.setAutoCoarseEnzymeNomenclature(bsrw.getAutoCoarseEnzymeNomenclature());
-
 					bc.execute();
 
 				}
 			}
 		}
-		endSearch(w, bar);
-
 	}
-
-	private void endSearch(final MainWindow w, final ProgressBar bar) {
-		Runnable run = new Runnable() {
-			public void run() {
-				bar.closeWindow();
-			}
-		};
-
-		SwingUtilities.invokeLater(run);
-	}
-
 }

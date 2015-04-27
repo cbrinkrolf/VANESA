@@ -1,5 +1,6 @@
 package cluster.clientimpl;
 
+import gui.MainWindow;
 import gui.MainWindowSingleton;
 
 import java.io.Serializable;
@@ -42,7 +43,7 @@ public class SearchCallback extends UnicastRemoteObject implements ISearchCallba
 		}else{
 			// Preset adjacency list in Search object
 			usearch.setAdjacencyList(adjacencylist);
-			UNIDSearch.progressBar.setProgressBarString("Applying Layout..");
+			MainWindow.progressbar.setProgressBarString("Applying Layout..");
 			
 			//DEBUG
 //			HashSet<String> allnodes = new HashSet<String>();
@@ -56,7 +57,6 @@ public class SearchCallback extends UnicastRemoteObject implements ISearchCallba
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					usearch.createNetworkFromSearch();
-					usearch.reactivateUI();
 				}
 			});			
 		}		
@@ -65,8 +65,8 @@ public class SearchCallback extends UnicastRemoteObject implements ISearchCallba
 
 	@Override
 	public void progressNotify(String message) throws RemoteException {
-		if (UNIDSearch.progressBar != null) {
-			UNIDSearch.progressBar.setProgressBarString(message);
+		if (MainWindow.progressbar != null) {
+			MainWindow.progressbar.setProgressBarString(message);
 		}
 	}
 }

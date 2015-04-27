@@ -41,7 +41,6 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 	private Pathway pw;
 	private MyGraph myGraph;
 
-	private ProgressBar bar;
 	private int buildingDepth;
 
 	private String root_id;
@@ -60,12 +59,11 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 	// private long starttime;
 
-	public PPIConnector(ProgressBar bar, String[] details, String db,
+	public PPIConnector(String[] details, String db,
 			boolean headless) {
 
 		// System.out.println("Starting measurement");
 		// starttime = System.currentTimeMillis();
-		this.bar = bar;
 		this.root_details = details;
 		this.root_id = details[3];
 		this.database = db;
@@ -186,15 +184,6 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 	@Override
 	protected Object doInBackground() throws Exception {
-
-		Runnable run = new Runnable() {
-			public void run() {
-				bar = new ProgressBar();
-				bar.init(100, "   Loading Data from " + database, true);
-				bar.setProgressBarString("Querying Database");
-			}
-		};
-		SwingUtilities.invokeLater(run);
 
 		if (binary) {
 			newNodes = new HashSet<String>();
@@ -428,7 +417,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 	public void done() {
 
 		// System.out.println("querytime :"+(System.currentTimeMillis()-starttime)+"ms");
-		bar.setProgressBarString("Drawing network");
+		MainWindow.progressbar.setProgressBarString("Drawing network");
 
 		String rootName = "";
 		if (database.equals("HPRD")) {
@@ -461,7 +450,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 			// autoCoarse(root_id);
 			autoCoarse();
 		}
-		bar.closeWindow();
+		MainWindowSingleton.getInstance().closeProgressBar();
 
 		MainWindow window = MainWindowSingleton.getInstance();
 		window.updateOptionPanel();
