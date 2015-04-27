@@ -101,7 +101,7 @@ public class PetriNetSimulation implements ActionListener {
 		GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		MainWindow w = MainWindowSingleton.getInstance();
-		w.setLockedPane(true);
+		w.blurrUI();
 		Map<String, String> env = System.getenv();
 
 		if (SystemUtils.IS_OS_WINDOWS) {
@@ -165,7 +165,7 @@ public class PetriNetSimulation implements ActionListener {
 									"Following files which are required for simulation are missing in the dymola folder:\n"
 											+ missing, "Simulation aborted...",
 									JOptionPane.ERROR_MESSAGE);
-					w.setLockedPane(false);
+					w.unBlurrUI();
 					return;
 				}
 
@@ -260,10 +260,10 @@ public class PetriNetSimulation implements ActionListener {
 								MainWindowSingleton.getInstance(),
 								"Something went wrong. The model couldn't be simulated!",
 								"Error occured...", JOptionPane.ERROR_MESSAGE);
-				w.setLockedPane(false);
+				w.unBlurrUI();
 				return;
 			}
-			w.setLockedPane(false);
+			w.unBlurrUI();
 			JOptionPane
 					.showMessageDialog(
 							w,
@@ -274,7 +274,7 @@ public class PetriNetSimulation implements ActionListener {
 			JOptionPane.showMessageDialog(w,
 					"Environment variable OPENMODELICAHOME not found.",
 					"OPENMODELICA not found...", JOptionPane.QUESTION_MESSAGE);
-			w.setLockedPane(false);
+			w.unBlurrUI();
 		}
 
 		/*
@@ -301,7 +301,7 @@ public class PetriNetSimulation implements ActionListener {
 		GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		MainWindow w = MainWindowSingleton.getInstance();
-		w.setLockedPane(true);
+		w.blurrUI();
 		
 		flags = graphInstance.getPathway().getChangedFlags("petriNetSim");
 
@@ -384,7 +384,7 @@ public class PetriNetSimulation implements ActionListener {
 												+ missing,
 										"Simulation aborted...",
 										JOptionPane.ERROR_MESSAGE);
-						w.setLockedPane(false);
+						w.unBlurrUI();
 						return;
 					}
 					simLib = menue.getSimLib();
@@ -810,12 +810,12 @@ public class PetriNetSimulation implements ActionListener {
 								MainWindowSingleton.getInstance(),
 								"Something went wrong. The model couldn't be simulated!",
 								"Error occured...", JOptionPane.ERROR_MESSAGE);
-				w.setLockedPane(false);
+				w.unBlurrUI();
 				this.menue.stopped();
 				this.process.destroy();
 				return;
 			}
-			w.setLockedPane(false);
+			w.unBlurrUI();
 			/*
 			 * JOptionPane .showMessageDialog( w,
 			 * "Simulation is completed. Select one or more places and click on Petri Net Simulation in the left toolbar to visualize and animate the results!"
@@ -825,7 +825,7 @@ public class PetriNetSimulation implements ActionListener {
 			JOptionPane.showMessageDialog(w,
 					"Environment variable OPENMODELICAHOME not found.",
 					"OPENMODELICA not found...", JOptionPane.QUESTION_MESSAGE);
-			w.setLockedPane(false);
+			w.unBlurrUI();
 		}
 	}
 
@@ -833,7 +833,7 @@ public class PetriNetSimulation implements ActionListener {
 		GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		MainWindow w = MainWindowSingleton.getInstance();
-		w.setLockedPane(true);
+		w.blurrUI();
 		try {
 			JOptionPane
 					.showMessageDialog(
@@ -853,7 +853,7 @@ public class PetriNetSimulation implements ActionListener {
 			if (chooser.showOpenDialog(w) == JFileChooser.APPROVE_OPTION) {
 				pathCompiler = chooser.getSelectedFile().getAbsolutePath();
 			} else {
-				w.setLockedPane(false);
+				w.unBlurrUI();
 				return;
 			}
 			if (pathCompiler.charAt(pathCompiler.length() - 1) != '\\')
@@ -879,7 +879,7 @@ public class PetriNetSimulation implements ActionListener {
 								"Following files which are required for simulation are missing in the dymola folder:\n"
 										+ missing, "Simulation aborted...",
 								JOptionPane.ERROR_MESSAGE);
-				w.setLockedPane(false);
+				w.unBlurrUI();
 				return;
 			}
 
@@ -958,10 +958,10 @@ public class PetriNetSimulation implements ActionListener {
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					"Something went wrong. The model couldn't be simulated!",
 					"Error occured...", JOptionPane.ERROR_MESSAGE);
-			w.setLockedPane(false);
+			w.unBlurrUI();
 			return;
 		}
-		w.setLockedPane(false);
+		w.unBlurrUI();
 		JOptionPane
 				.showMessageDialog(
 						w,

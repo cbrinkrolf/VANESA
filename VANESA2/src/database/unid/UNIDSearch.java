@@ -34,7 +34,6 @@ import cluster.master.IClusterJobs;
  */
 public class UNIDSearch extends SwingWorker<Object, Object> {
 
-	public static ProgressBar progressBar;
 	private MainWindow mw;
 	private IClusterJobs server;
 	private SearchCallback helper;
@@ -115,9 +114,8 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 
 	public void reactivateUI() {
 		// close Progress bar and reactivate UI
-		UNIDSearch.progressBar.closeWindow();
 		mw = MainWindowSingleton.getInstance();
-		mw.setLockedPane(false);
+		mw.closeProgressBar();
 	}
 
 	/**

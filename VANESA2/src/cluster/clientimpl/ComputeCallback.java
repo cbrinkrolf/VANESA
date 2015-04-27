@@ -1,6 +1,8 @@
 package cluster.clientimpl;
 
 import graph.algorithms.gui.GraphColoringGUI;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -25,8 +27,8 @@ public class ComputeCallback extends UnicastRemoteObject implements Serializable
 
 	@Override
 	public void progressNotify(String message) throws RemoteException {
-		if (GraphColoringGUI.progressbar != null) {
-			GraphColoringGUI.progressbar.setProgressBarString(message);
+		if (MainWindow.progressbar != null) {
+			MainWindow.progressbar.setProgressBarString(message);
 		}
 	}
 

@@ -60,7 +60,7 @@ public class CallbackHandler implements AxisCallback {
 			public void run() {
 				JOptionPane.showMessageDialog(window, error, "Fault",
 						JOptionPane.ERROR_MESSAGE);
-				window.setLockedPane(false);
+				window.closeProgressBar();
 			}
 		});
 	}
@@ -74,7 +74,7 @@ public class CallbackHandler implements AxisCallback {
 			public void run() {
 				JOptionPane.showMessageDialog(window, message, "Error",
 						JOptionPane.ERROR_MESSAGE);
-				window.setLockedPane(false);
+				window.closeProgressBar();
 			}
 		});
 	}

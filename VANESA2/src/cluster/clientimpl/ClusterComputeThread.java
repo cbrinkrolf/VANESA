@@ -61,9 +61,9 @@ public class ClusterComputeThread extends Thread {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			});
-			GraphColoringGUI.progressbar.closeWindow();
+
 			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(false);
+			mw.closeProgressBar();
 
 		} catch (RemoteException e) {
 			SwingUtilities.invokeLater(new Runnable() {
@@ -74,9 +74,9 @@ public class ClusterComputeThread extends Thread {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			});
-			GraphColoringGUI.progressbar.closeWindow();
+
 			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(false);
+			mw.closeProgressBar();
 
 		} catch (MalformedURLException e) {
 			SwingUtilities.invokeLater(new Runnable() {
@@ -87,9 +87,9 @@ public class ClusterComputeThread extends Thread {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			});
-			GraphColoringGUI.progressbar.closeWindow();
+
 			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(false);
+			mw.closeProgressBar();
 		}
 
 	}

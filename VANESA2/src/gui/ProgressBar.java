@@ -22,7 +22,6 @@ public class ProgressBar{
 		int bar_max=0;
 		Thread thread=null;
 		boolean threading = false;
-		MainWindow w;
 		JPanel mainPanel;
 		//Blur blur;
 		JPanel glass;
@@ -37,12 +36,10 @@ public class ProgressBar{
 			bar = new JProgressBar();
 			this.thread = thread;
 			threading=true;
-			w =MainWindowSingleton.getInstance();		
 		}
 		
 		public ProgressBar() {
 			bar = new JProgressBar();
-			w = MainWindowSingleton.getInstance();
 		}
 		
 		public void init(int max, String info, boolean indeterminate){	
@@ -50,9 +47,8 @@ public class ProgressBar{
 			//(when running in multi threaded environment)
 			if (!this.wasClosed) { 
 				isOpen = true;
-				glass = (JPanel)w.getGlassPane();
+				glass = (JPanel) MainWindowSingleton.getInstance().getGlassPane();
 				glass.setVisible(false);
-				w.setLockedPane(false);
 				
 				int width = 250;
 				int height = 58;
@@ -102,13 +98,6 @@ public class ProgressBar{
 				glass.add(mainPanel, new GridBagConstraints());
 				glass.revalidate();
 				glass.setVisible(true);
-				w.setLockedPane(true);
-				
-			 //   BlurPane blurPane = new BlurPane(mainPanel);
-			  //  blur = new Blur(blurPane);
-			  //  blur.setSize(w.getGlassPane().getWidth(),w.getGlassPane().getHeight());
-			  //  w.setGlassPane(blur);
-			  //  blur.fadeIn();
 			}	
 		}
 
@@ -117,19 +106,11 @@ public class ProgressBar{
 			this.wasClosed = true;
 			
 			bar.setValue(bar_max);
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			if (glass!=null) {
 				glass.removeAll();
-				glass.setVisible(false);
-				w.setLockedPane(false);
+			//	glass.setVisible(false);
+			//	w.setLockedPane(false);
 			}
-			// blur.fadeOut();
-			// blur.setVisible(false);
 		
 		}
 
@@ -154,7 +135,6 @@ public class ProgressBar{
 			interupted = true;
 			glass.removeAll();
 			glass.setVisible(false);
-			w.setLockedPane(false);
 //			thread.interrupt();
 			thread.stop();
 		}
@@ -176,6 +156,7 @@ public class ProgressBar{
 		}
 		
 		public void setVis(boolean vis){
+			System.out.println("ProgressBar:setVis "+Thread.currentThread().toString());
 			glass.setVisible(vis);
 		}
 		

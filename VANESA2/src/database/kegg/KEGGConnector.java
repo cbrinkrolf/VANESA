@@ -42,7 +42,6 @@ import database.mirna.miRNAqueries;
 
 public class KEGGConnector extends SwingWorker<Object, Object> {
 
-	private ProgressBar bar;
 	private String title;
 	private String organism;
 	private String pathwayID;
@@ -127,34 +126,27 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 	
 	private boolean autocoarse;
 
-	public KEGGConnector(ProgressBar bar, String[] details,
+	public KEGGConnector(String[] details,
 			boolean dontCreatePathway) {
 
-		this(bar, details);
+		this(details);
 		this.dontCreatePathway = dontCreatePathway;
 	}
 
-	private KEGGConnector(ProgressBar bar, String[] details) {
+	private KEGGConnector(String[] details) {
 		pathwayID = details[0];
 		organism = details[2];
-		this.bar = bar;
 	}
 
 	@Override
 	protected Void doInBackground() throws Exception {
 
-		Runnable run = new Runnable() {
-			public void run() {
-				bar = new ProgressBar();
-				bar.init(100, "   Loading Data ", true);
-			}
-		};
-		SwingUtilities.invokeLater(run);
-
-		bar.setProgressBarString("Getting Pathway Information");
+		MainWindowSingleton.getInstance().showProgressBar("Loading Data");
+		
+//		bar.setProgressBarString("Getting Pathway Information");
 		getPathway(pathwayID);
 
-		bar.setProgressBarString("Getting Pathway Elements");
+//		bar.setProgressBarString("Getting Pathway Elements");
 
 		allOrgElements = KEGGQueries.getPathwayElements(pathwayOrg
 				+ pathwayNumber);
@@ -162,7 +154,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 		allRnElements = KEGGQueries.getPathwayElements("rn" + pathwayNumber);
 		allKoElements = KEGGQueries.getPathwayElements("ko" + pathwayNumber);
 
-		bar.setProgressBarString("Getting Element Relations");
+//		bar.setProgressBarString("Getting Element Relations");
 
 		allOrgRelations = KEGGQueries.getRelations(pathwayOrg + pathwayNumber);
 		allEcRelations = KEGGQueries.getRelations("ec" + pathwayNumber);
@@ -257,12 +249,9 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 			autoCoarse();
 		}
 		
-		bar.closeWindow();
-
 		MainWindow window = MainWindowSingleton.getInstance();
 		window.updateOptionPanel();
 
-		bar.closeWindow();
 		firePropertyChange("finished", null, "finished");
 	}
 

@@ -1,6 +1,7 @@
 package database.ppi;
 
 import gui.MainWindow;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.util.ArrayList;
@@ -21,13 +22,12 @@ public class PPISearch extends SwingWorker<Object, Object>{
 //	private DatabaseQueryValidator dqv = new DatabaseQueryValidator();
 	
 	private MainWindow w;
-	private ProgressBar bar;
 	private ArrayList<DBColumn> results;
 	private PPISearchResultWindow ppiSearchResultWindow;
 	private boolean headless;
 	
 	
-	public PPISearch(String[] input,MainWindow w, ProgressBar bar, boolean headless) {
+	public PPISearch(String[] input,MainWindow w, boolean headless) {
 
 		database = input[0];
 		fullName = input[1];
@@ -35,7 +35,6 @@ public class PPISearch extends SwingWorker<Object, Object>{
 		acNumber = input[3];
 		
 		this.w =w;
-		this.bar = bar;
 		
 		this.headless = headless;
 
@@ -192,9 +191,7 @@ public class PPISearch extends SwingWorker<Object, Object>{
 	@Override
 	protected Object doInBackground() throws Exception
 	{
-		w.setLockedPane(true);
 		results=requestDbContent();
-		w.setLockedPane(false);
 		return null;
 	}
 	
@@ -203,31 +200,31 @@ public class PPISearch extends SwingWorker<Object, Object>{
 	public void done() {
 		
     	Boolean continueProgress = false;
-		endSearch(w, bar);
+    	MainWindowSingleton.getInstance().closeProgressBar();
+    	
 		
 		if (results.size() > 0) {
 			continueProgress = true;	
 			ppiSearchResultWindow = new PPISearchResultWindow(results, database);		
 		} else {
-			endSearch(w, bar);
 			JOptionPane.showMessageDialog(w,
 					"Sorry, no entries have been found.");
 		}
 		
 		if (continueProgress) {
 			Vector<String[]> results = ppiSearchResultWindow.getAnswer();
-			if (results.size() != 0) {			
+			if (results.size() > 0) {			
+				MainWindowSingleton.getInstance().showProgressBar("getting PPI Network");
 				final Iterator<String[]> it = results.iterator();
 				String[] details;
-				PPIConnector ppiCon;
-				
+				PPIConnector ppiCon;				
 				while (it.hasNext()) {
 					
 					details = it.next();
 //					System.out.println(details[0] + " " + details[3] + " ");
 //					System.out.println(ppiSearchResultWindow.getSerchDeapth());
 					
-					ppiCon = new PPIConnector(bar,details, database, headless);
+					ppiCon = new PPIConnector(details, database, headless);
 					ppiCon.setSearchDepth(ppiSearchResultWindow.getSerchDeapth());
 					ppiCon.setFinaliseGraph(ppiSearchResultWindow.getFinaliseGraph());
 					ppiCon.setAutoCoarse(ppiSearchResultWindow.getAutoCoarse());
@@ -239,22 +236,5 @@ public class PPISearch extends SwingWorker<Object, Object>{
 				}
 			}
 		}
-		endSearch(w, bar);
-	} 
-	
-	
-	
-	private void endSearch(final MainWindow w, final ProgressBar bar) 
-	{
-		Runnable run=new Runnable()
-		{
-			public void run()
-			{
-				bar.closeWindow();
-			}
-		};
-		
-		SwingUtilities.invokeLater(run);
 	}
-	
 }
