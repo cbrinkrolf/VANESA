@@ -30,7 +30,7 @@ import edu.uci.ics.jung.visualization.control.AbstractGraphMousePlugin;
 import graph.GraphInstance;
 
 /**
- * A plugin that zooms throgh the hierarchies without changing the saved Pathway.
+ * A plugin that zooms through the hierarchies without changing the saved Pathway.
  * 
  * @author Tobias Loka
  * 
@@ -232,14 +232,16 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	    		if(n.isCoarseNode() || n.isMarkedAsCoarseNode()){
 	    			coarseSelection.setEnabled(false);
 	    			environmentSelection.setEnabled(false);
+	    			setAsRootNode.setEnabled(false);
 	    		}
 	    		if(n.isEnvironmentNodeOf(pw)){
 	    			coarseSelection.setEnabled(false);
+	    			setAsRootNode.setEnabled(false);
 	    		}
     			if(n.getParentNode()!=null || pw.isBNA()){
     				environmentSelection.setEnabled(false);
     			}
-    			if(!coarseSelection.isEnabled() && !environmentSelection.isEnabled()){
+    			if(!coarseSelection.isEnabled() && !environmentSelection.isEnabled() && !setAsRootNode.isEnabled()){
     				marking.setEnabled(false);
     			}
 
