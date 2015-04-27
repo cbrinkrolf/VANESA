@@ -34,15 +34,17 @@ public class DatabaseSearchListener implements ActionListener {
 
 	private void requestKEGGcontent() {
 		//new GetPublications("C:\\Users\\Vallani\\Desktop\\result.txt");
-	
+
+		MainWindowSingleton.getInstance().showProgressBar("KEGG query");
 		KeggSearch keggSearch = new KeggSearch(dw.getInput(),
-				MainWindowSingleton.getInstance(), new ProgressBar(),null);
+				MainWindowSingleton.getInstance(),null);
 		keggSearch.execute();
 	}
 
 	private void requestBrendaContent() {
+		MainWindowSingleton.getInstance().showProgressBar("BRENDA query");
 		BRENDASearch brendaSearch = new BRENDASearch(dw.getInput(),
-				MainWindowSingleton.getInstance(), new ProgressBar(), null, dw.isHeadless());
+				MainWindowSingleton.getInstance(), null, dw.isHeadless());
 		brendaSearch.execute();
 		System.out.println(dw.isHeadless());
 	}
@@ -53,26 +55,24 @@ public class DatabaseSearchListener implements ActionListener {
 
 
 	private void requestPPIcontent() {
+		MainWindowSingleton.getInstance().showProgressBar("PPI query");
 		PPISearch ppiSearch = new PPISearch(dw.getInput(),
-				MainWindowSingleton.getInstance(), new ProgressBar(), dw.isHeadless());
+				MainWindowSingleton.getInstance(),dw.isHeadless());
 		ppiSearch.execute();
 
 	}
 	
 	private void requestMIRNAcontent() {
-		
+		MainWindowSingleton.getInstance().showProgressBar("miRNA query");		
 		mirnaSearch mirnaS = new mirnaSearch(dw.getInput(),
-						MainWindowSingleton.getInstance(), new ProgressBar(), dw.isHeadless());
+						MainWindowSingleton.getInstance(), dw.isHeadless());
 		
 		mirnaS.execute();   
 	}
 	
 	private void requestUNIDContent(){
+		MainWindowSingleton.getInstance().showProgressBar("UNID query.");
 		UNIDSearch unidS = new UNIDSearch(dw.getInput(), dw.isHeadless());
-		UNIDSearch.progressBar = new ProgressBar();
-		UNIDSearch.progressBar.init(100, "UNID", true);
-		UNIDSearch.progressBar.setProgressBarString("Getting search results");
-		MainWindow mw = MainWindowSingleton.getInstance();
 		unidS.execute();
 		
 	}

@@ -127,6 +127,8 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	// private boolean fullScreen = false;
 
 	private Application macOsxHandler;
+	
+	public static ProgressBar progressbar;
 
 	public MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
@@ -475,11 +477,32 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	public void renameSelectedTab(String name) {
 		tabbedPanels.get(getSelectedView()).getSelectedTab().setName(name);
-	}
+	}	
 
-	public void setLockedPane(boolean lock) {
-		blurUI.setLocked(lock);
+	public synchronized void showProgressBar(String text) {
+		System.out.println("Blurring with Bar \t"+Thread.currentThread().toString());
+		progressbar = new ProgressBar();
+		progressbar.init(100, "Please Wait.", true);
+		progressbar.setProgressBarString(text);
+		blurUI.setLocked(true);
 	}
+	
+	public synchronized void closeProgressBar(){
+		System.out.println("Unblurring with Bar \t"+Thread.currentThread().toString());
+		progressbar.closeWindow();
+		blurUI.setLocked(false);
+	}
+	
+	public synchronized void blurrUI(){
+		System.out.println("Blurring \t"+Thread.currentThread().toString());
+		blurUI.setLocked(true);
+	}
+	
+	public synchronized void unBlurrUI(){
+		System.out.println("Unblurring \t"+Thread.currentThread().toString());
+		blurUI.setLocked(false);
+	}
+	
 
 	public String getCurrentPathway() {
 		TitledTab t = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();

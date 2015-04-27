@@ -632,10 +632,8 @@ public class DataMappingModelController extends Observable {
 	private void export(Map<String, List<String>> newMergeMap) {
 		// TODO Auto-generated method stub
 		//ExportThread erzeugen newM �bergeben
-		
-		
-		progressBarExport = new ProgressBar();
-		progressBarExport.init(200, "DATAMAPPING", true);
+
+		MainWindowSingleton.getInstance().showProgressBar("Datamapping");
 		
 
 		ArrayList<String> header = dataMappingModel.getHeader();
@@ -654,9 +652,7 @@ public class DataMappingModelController extends Observable {
 	
 	public static void reactivateUI() {
 		// close Progress bar and reactivate UI
-		progressBarExport.closeWindow();
-		MainWindow mw = MainWindowSingleton.getInstance();
-		mw.setLockedPane(false);
+		MainWindowSingleton.getInstance().closeProgressBar();		
 	}
 
 

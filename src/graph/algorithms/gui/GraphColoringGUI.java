@@ -90,8 +90,6 @@ public class GraphColoringGUI implements ActionListener {
 
 	private final Color greynodecolor = new Color(-4144960);
 
-	public static ProgressBar progressbar;
-
 	private MainWindow mw;
 	private GraphContainer con;
 	private Pathway pw;
@@ -211,10 +209,8 @@ public class GraphColoringGUI implements ActionListener {
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(true);
-			progressbar = new ProgressBar();
-			progressbar.init(100, "Computing", true);
-			progressbar.setProgressBarString("Attempting to queue job");
+			mw.showProgressBar("attempting to queue job.");
+
 						
 			oos.writeObject(np.getAdjacencyMatrix());
 			oos.writeObject(parameters);
@@ -246,10 +242,9 @@ public class GraphColoringGUI implements ActionListener {
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(true);
-			progressbar = new ProgressBar();
-			progressbar.init(100, "Computing", true);
-			progressbar.setProgressBarString("Attempting to queue job");
+			MainWindow.progressbar = new ProgressBar();
+			MainWindow.progressbar.init(100, "Computing", true);
+			MainWindow.progressbar.setProgressBarString("Setting up data.");
 
 			oos.writeObject(np.getAdjacencyMatrix());
 			oos.writeObject(parameters);
@@ -284,11 +279,9 @@ public class GraphColoringGUI implements ActionListener {
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(true);
-			progressbar = new ProgressBar();
-			progressbar.init(100, "Computing", true);
-			progressbar.setProgressBarString("Setting up data.");
+			mw = MainWindowSingleton.getInstance();			
+			mw.showProgressBar("attempting to queue job.");
+
 
 			// get network structure
 			con = ContainerSingelton.getInstance();
@@ -373,10 +366,8 @@ public class GraphColoringGUI implements ActionListener {
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(true);
-			progressbar = new ProgressBar();
-			progressbar.init(100, "Computing", true);
-			progressbar.setProgressBarString("Setting up data.");
+			mw.showProgressBar("attempting to queue job.");
+
 
 			// get network structure
 
@@ -456,10 +447,8 @@ public class GraphColoringGUI implements ActionListener {
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(true);
-			progressbar = new ProgressBar();
-			progressbar.init(100, "Computing", true);
-			progressbar.setProgressBarString("Attempting to queue job");
+			mw.showProgressBar("attempting to queue job.");
+
 
 			// compute values over RMI
 			try {
@@ -495,10 +484,8 @@ public class GraphColoringGUI implements ActionListener {
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(true);
-			progressbar = new ProgressBar();
-			progressbar.init(100, "Computing", true);
-			progressbar.setProgressBarString("Setting up data.");
+			mw.showProgressBar("attempting to queue job.");
+
 
 			// get network structure
 			con = ContainerSingelton.getInstance();
@@ -577,10 +564,8 @@ public class GraphColoringGUI implements ActionListener {
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(true);
-			progressbar = new ProgressBar();
-			progressbar.init(100, "Computing", true);
-			progressbar.setProgressBarString("Setting up data.");
+			mw.showProgressBar("attempting to queue job.");
+
 
 			// get network structure
 			con = ContainerSingelton.getInstance();
@@ -722,9 +707,9 @@ public class GraphColoringGUI implements ActionListener {
 
 	public void reactiveateUI() {
 		// close Progress bar and reactivate UI
-		GraphColoringGUI.progressbar.closeWindow();
 		mw = MainWindowSingleton.getInstance();
-		mw.setLockedPane(false);
+		mw.closeProgressBar();
+
 	}
 
 	public void revalidateView() {

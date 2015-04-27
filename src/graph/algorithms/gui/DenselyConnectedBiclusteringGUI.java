@@ -490,11 +490,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			
 			
 			mw = MainWindowSingleton.getInstance();
-			mw.setLockedPane(true);
-			
-			progressBar = new ProgressBar();
-			progressBar.init(100, "DCB", true);
-			progressBar.setProgressBarString("started");
+			mw.showProgressBar("started");
 
 			
 			density = ((Number) desityField.getValue()).doubleValue();
@@ -1038,9 +1034,8 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 	
 	public static void reactivateUI() {
 
-		progressBar.closeWindow();
-
-		mw.setLockedPane(false);
+		mw.closeProgressBar();
+		
 	}
 
 

@@ -253,7 +253,7 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 
 		if ("cancel".equals(event)) {
 			dialog.setVisible(false);
-			MainWindowSingleton.getInstance().setLockedPane(false);
+			MainWindowSingleton.getInstance().closeProgressBar();
 		} else if ("new".equals(event)) {
 			if (table.getSelectedRows().length == 0) {
 				JOptionPane.showMessageDialog(this, "Please choose an enzyme.",
