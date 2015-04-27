@@ -58,6 +58,7 @@ public class GraphColoringGUI implements ActionListener {
 	boolean emptyPane = true;
 
 	private JComboBox<String> chooseAlgorithm;
+	private JComboBox<ImageIcon> chooseColorPalette;
 	private JButton colorizebutton;
 	private JButton resetcolorbutton;
 	private JButton degreedistributionbutton;
@@ -77,7 +78,6 @@ public class GraphColoringGUI implements ActionListener {
 
 	private ImageIcon currentimage;
 	private int currentimageid;
-	private JRadioButton[] colorrangeradio = new JRadioButton[colorrangenames.length];
 	private GraphColorizer gc;
 	private JCheckBox logview;
 	private ButtonGroup bg;
@@ -132,39 +132,30 @@ public class GraphColoringGUI implements ActionListener {
 		chooseAlgorithm = new JComboBox<String>(algorithmNames);
 		chooseAlgorithm.setActionCommand("algorithm");
 		chooseAlgorithm.addActionListener(this);
+		
+		chooseColorPalette = new JComboBox<ImageIcon>(icons);	
+		chooseColorPalette.setActionCommand("colorpalette");
+		chooseColorPalette.addActionListener(this);
 
-		for (int i = 0; i < colorrangenames.length; i++) {
-			colorrangeradio[i] = new JRadioButton(colorrangenames[i]);
-			colorrangeradio[i].setActionCommand("" + i);
-			colorrangeradio[i].addActionListener(this);
-			bg.add(colorrangeradio[i]);
-
-		}
 		colorizebutton = new JButton("color selection");
 		colorizebutton.setActionCommand("colorize");
 		colorizebutton.addActionListener(this);
-		colorizebutton.setEnabled(false);
 
 		resetcolorbutton = new JButton("reset colors");
 		resetcolorbutton.setActionCommand("resetcolors");
 		resetcolorbutton.addActionListener(this);
-		resetcolorbutton.setEnabled(false);
 
 		MigLayout layout = new MigLayout("", "[][grow]", "");
 		p.setLayout(layout);
 		p.add(new JLabel("Algorithm"), "wrap");
 		p.add(chooseAlgorithm, "wrap");
 		p.add(new JLabel("Color Range"), "wrap");
-		for (int i = 0; i < colorrangenames.length; i++) {
-			p.add(colorrangeradio[i]);
-			p.add(new JLabel(icons[i]), "wrap");
-		}
+		p.add(chooseColorPalette, "wrap");		
 
 		logview = new JCheckBox("Data in log(10)");
 		logview.setSelected(false);
 		logview.setActionCommand("logview");
 		logview.addActionListener(this);
-		logview.setEnabled(false);
 
 		degreedistributionbutton = new JButton("Degree distribution");
 		degreedistributionbutton.setActionCommand("degreedistribution");
@@ -183,7 +174,7 @@ public class GraphColoringGUI implements ActionListener {
 		itn = np.getPathway().getAllNodes().iterator();
 		coloring = new Hashtable<BiologicalNodeAbstract, Double>();
 
-		int nodes = np.getPathway().countNodes(), nodewithAttribute = 0;
+		int nodes = np.getPathway().countNodes();
 
 		switch (currentalgorithmindex) {
 		case NODE_DEGREE:
@@ -655,10 +646,6 @@ public class GraphColoringGUI implements ActionListener {
 		}
 
 		gc = new GraphColorizer(coloring, currentimageid, logview.isSelected());
-		// recolor button enable after first Coloring, logview enabled
-		colorizebutton.setEnabled(true);
-		logview.setEnabled(true);
-		resetcolorbutton.setEnabled(true);
 	}
 
 	private void printEdgeArray(int nodes, int[] edgearray) {
@@ -885,13 +872,7 @@ public class GraphColoringGUI implements ActionListener {
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 
 			} else if ("algorithm".equals(command)) {
-				currentalgorithmindex = chooseAlgorithm.getSelectedIndex();
-				for (int i = 0; i < colorrangeradio.length; i++) {
-					if (colorrangeradio[i].isSelected()) {
-						recolorGraph();
-						break;
-					}
-				}
+				currentalgorithmindex = chooseAlgorithm.getSelectedIndex();				
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 			} else if ("logview".equals(command)) {
 				recolorGraph();
@@ -899,7 +880,8 @@ public class GraphColoringGUI implements ActionListener {
 			} else if ("degreedistribution".equals(command)) {
 				NetworkProperties np = new NetworkProperties();
 				np.showDegreeDistrbutionFrame(np.getPathway().getName());
-			}
+			} else if ("colorpalette".equals(command)){
+				currentimageid = chooseColorPalette.getSelectedIndex();			}
 
 			// get proper icon path
 			for (int i = 0; i < colorrangenames.length; i++) {
