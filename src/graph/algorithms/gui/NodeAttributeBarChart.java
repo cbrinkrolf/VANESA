@@ -10,15 +10,12 @@ import javax.swing.JFrame;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
 /**
@@ -39,6 +36,20 @@ public class NodeAttributeBarChart extends JFrame {
 	private String charttitle, xaxistext, yaxistext;
 	private Map<Integer, Integer> dataset;
 
+	/**
+	 * Initiates
+	 * 
+	 * @param title
+	 *            - Title of the JFrame
+	 * @param charttitle
+	 *            - Title of the chart
+	 * @param xaxistext
+	 *            - X-Axis description
+	 * @param yaxistext
+	 *            - Y-Axis desciption
+	 * @param dataset
+	 *            - Map which contains Keys and Values (e.g. count)
+	 */
 	public NodeAttributeBarChart(final String title, final String charttitle,
 			final String xaxistext, final String yaxistext,
 			Map<Integer, Integer> dataset) {
@@ -68,6 +79,7 @@ public class NodeAttributeBarChart extends JFrame {
 
 		for (Entry<Integer, Integer> entry : this.dataset.entrySet()) {
 			bardataset.setValue(entry.getValue(), xaxistext, entry.getKey());
+//			bardataset.setValue(entry.getKey(), xaxistext, entry.getValue());
 		}
 
 		return bardataset;
@@ -82,7 +94,7 @@ public class NodeAttributeBarChart extends JFrame {
 				xaxistext, // domain axis label
 				yaxistext, // range axis label
 				dataset, // data
-				PlotOrientation.VERTICAL, // orientation
+				PlotOrientation.HORIZONTAL, // orientation
 				false, // include legend
 				true, // tooltips?
 				false // URLs?
@@ -98,12 +110,9 @@ public class NodeAttributeBarChart extends JFrame {
 		final BarRenderer renderer = (BarRenderer) plot.getRenderer();
 		renderer.setDrawBarOutline(false);
 		renderer.setSeriesPaint(0, Color.ORANGE);
-		final CategoryAxis domainAxis = plot.getDomainAxis();
-		domainAxis.setCategoryLabelPositions(CategoryLabelPositions
-				.createUpRotationLabelPositions(Math.PI / 6.0));
-
-		
-		
+//		final CategoryAxis domainAxis = plot.getDomainAxis();
+//		domainAxis.setCategoryLabelPositions(CategoryLabelPositions
+//				.createUpRotationLabelPositions(Math.PI / 5.0));
 		return chart;
 
 	}
