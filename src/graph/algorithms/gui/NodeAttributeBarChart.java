@@ -67,7 +67,7 @@ public class NodeAttributeBarChart extends JFrame {
 		final DefaultCategoryDataset bardataset = new DefaultCategoryDataset();
 
 		for (Entry<Integer, Integer> entry : this.dataset.entrySet()) {
-			bardataset.setValue(entry.getKey(), xaxistext, entry.getValue());
+			bardataset.setValue(entry.getValue(), xaxistext, entry.getKey());
 		}
 
 		return bardataset;
