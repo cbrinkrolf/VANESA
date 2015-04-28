@@ -119,14 +119,32 @@ public class NetworkProperties extends Object {
 	public HashMap<Integer, Integer> getNodeDegreeDistribution(){
 		HashMap<Integer, Integer> occurrenceMap = new HashMap<Integer, Integer>();
 
-		//Count occuances 
-		for (int degree : nodedegrees) {
-			if (occurrenceMap.containsKey(degree)) {
-				//not first
-				occurrenceMap.put(degree, occurrenceMap.get(degree) + 1);
-			} else {
-				// first
-				occurrenceMap.put(degree, 1);
+		Set<BiologicalNodeAbstract> pickedbnas =  mg.getVisualizationViewer().getPickedVertexState().getPicked();
+	 
+		if(pickedbnas.size()>0){
+			System.out.println(pickedbnas.size());
+			int degree = 0;
+			//Count occurrences, just picked nodes
+			for(BiologicalNodeAbstract bna : pickedbnas){
+				degree = nodedegreetable.get(nodeassings.get(bna));
+				if (occurrenceMap.containsKey(degree)) {
+					//not first
+					occurrenceMap.put(degree, occurrenceMap.get(degree) + 1);
+				} else {
+					// first
+					occurrenceMap.put(degree, 1);
+				}			
+			}	
+		}else{
+			//Count occurrences, all nodes
+			for (int degree : nodedegrees) {				
+				if (occurrenceMap.containsKey(degree)) {
+					//not first
+					occurrenceMap.put(degree, occurrenceMap.get(degree) + 1);
+				} else {
+					// first
+					occurrenceMap.put(degree, 1);
+				}
 			}
 		}
 		

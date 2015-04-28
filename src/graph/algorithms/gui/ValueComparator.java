@@ -15,6 +15,7 @@ class ValueComparator implements Comparator<Integer> {
 	// equals.
 	public int compare(Integer a, Integer b) {
 		if (base.get(a) >= base.get(b)) {
+//		if (a >= a) {
 			return -1;
 		} else {
 			return 1;
