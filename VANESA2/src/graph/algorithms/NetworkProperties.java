@@ -116,10 +116,8 @@ public class NetworkProperties extends Object {
 		countNodeDegrees();
 	}
 
-	public void showDegreeDistrbutionFrame(String title) {
-		JFrame degreesframe = new JFrame("Degree distribution: "+title);
-		JPanel degrees = new JPanel(new MigLayout("","[][grow][]",""));
-		Map<Integer, Integer> occurrenceMap = new HashMap<Integer, Integer>();
+	public HashMap<Integer, Integer> getNodeDegreeDistribution(){
+		HashMap<Integer, Integer> occurrenceMap = new HashMap<Integer, Integer>();
 
 		//Count occuances 
 		for (int degree : nodedegrees) {
@@ -131,46 +129,10 @@ public class NetworkProperties extends Object {
 				occurrenceMap.put(degree, 1);
 			}
 		}
-
-		//Instantiate Panel
-		JScrollPane pane = new JScrollPane(degrees);
-				
-		JPanel degreebar = new JPanel();
-		int maxpixelswidth = 750,
-				minpixelswidth = 10;
-		//determine pixel steps
-		int pixperamount = maxpixelswidth /Collections.max(occurrenceMap.values());
-		if(pixperamount == 0)
-			pixperamount = 1;
 		
-		//populate Panel
-		for (int degree : nodedegreessingle) {
-			//Node Degree
-			degrees.add(new JLabel(""+degree), "align left");
-			//Bar
-			degreebar = new JPanel();
-			degreebar.setOpaque(true);
-			degreebar.setBackground(Color.ORANGE);
-			degreebar.setPreferredSize(new Dimension(pixperamount*occurrenceMap.get(degree), minpixelswidth));
-			//Occurrence
-			degrees.add(degreebar, "align left");
-			degrees.add(new JLabel(""+occurrenceMap.get(degree)), "align left, wrap");
-		}			
-
-		//standard Frame options
-		degreesframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		//degreesframe.add(degrees);
-		degreesframe.add(pane);
-		degreesframe.pack();
-		degreesframe.setMinimumSize(new Dimension(800,600));
-		degreesframe.setSize(degreesframe.getWidth(), 600);
-		degreesframe.setVisible(true);
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		degreesframe.setLocation(dim.width/2-degreesframe.getSize().width/2, dim.height/2-degreesframe.getSize().height/2);
-		
-
+		return occurrenceMap;
 	}
-
+	
 	public short[][] getAdjacencyMatrix() {
 		return adjacency;
 	}

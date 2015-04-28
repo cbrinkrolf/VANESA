@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.swing.ButtonGroup;
@@ -35,9 +36,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-
-import com.sun.javafx.applet.ExperimentalExtensions;
 
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
@@ -879,23 +877,16 @@ public class GraphColoringGUI implements ActionListener {
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 			} else if ("degreedistribution".equals(command)) {
 				NetworkProperties np = new NetworkProperties();
-				np.showDegreeDistrbutionFrame(np.getPathway().getName());
+				HashMap<Integer, Integer> degreemap = np.getNodeDegreeDistribution();
+				ValueComparator bvc = new ValueComparator(degreemap);
+				TreeMap<Integer, Integer> sorted_map = new TreeMap<Integer, Integer>(bvc);
+				sorted_map.putAll(degreemap);
+				new NodeAttributeBarChart("Statistics","Node degree distibution", "Degree", "Count", sorted_map);
+				
 			} else if ("colorpalette".equals(command)){
 				currentimageid = chooseColorPalette.getSelectedIndex();			}
 
-			// get proper icon path
-			for (int i = 0; i < colorrangenames.length; i++) {
-				if ((i + "").equals(command)) {
-					currentimage = icons[i];
-					currentimageid = i;
-					recolorGraph();
-					// repaint, damit Farben auch angezeigt werden
-					GraphInstance.getMyGraph().getVisualizationViewer()
-							.repaint();
-					break;
-				}
-			}
-
+			
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
