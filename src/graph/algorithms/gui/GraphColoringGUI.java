@@ -347,7 +347,7 @@ public class GraphColoringGUI implements ActionListener {
 		case MULTILAYOUT:
 			//Set parameters
 			parameters = new HashMap<>();
-			parameters.put("edgecutting", ""+0.6);
+			parameters.put("edgecutting", ""+0.86);
 			parameters.put("seed", ""+(int) (Math.random()*1000));
 			
 			// open objectstream
@@ -877,10 +877,19 @@ public class GraphColoringGUI implements ActionListener {
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 			} else if ("degreedistribution".equals(command)) {
 				NetworkProperties np = new NetworkProperties();
-				HashMap<Integer, Integer> degreemap = np.getNodeDegreeDistribution();
-				ValueComparator bvc = new ValueComparator(degreemap);
-				TreeMap<Integer, Integer> sorted_map = new TreeMap<Integer, Integer>(bvc);
-				sorted_map.putAll(degreemap);
+				TreeMap<String, Integer> sorted_map = new TreeMap<String, Integer>();
+				for(Entry<Integer,Integer> entry : np.getNodeDegreeDistribution().entrySet()){
+					sorted_map.put(entry.getKey().toString(),entry.getValue());
+				}			
+				
+				//sort by occurrence
+//				ValueComparator bvc = new ValueComparator(degreemap);
+//				TreeMap<Integer, Integer> sorted_map = new TreeMap<Integer, Integer>(bvc);
+//				sorted_map.putAll(degreemap);
+	
+				//sort by key value
+				
+				
 				new NodeAttributeBarChart("Statistics","Node degree distibution", "Degree", "Count", sorted_map);
 				
 			} else if ("colorpalette".equals(command)){
