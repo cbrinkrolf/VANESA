@@ -22,12 +22,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.rmi.RemoteException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -877,10 +881,13 @@ public class GraphColoringGUI implements ActionListener {
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 			} else if ("degreedistribution".equals(command)) {
 				NetworkProperties np = new NetworkProperties();
-				TreeMap<String, Integer> sorted_map = new TreeMap<String, Integer>();
-				for(Entry<Integer,Integer> entry : np.getNodeDegreeDistribution().entrySet()){
-					sorted_map.put(entry.getKey().toString(),entry.getValue());
-				}			
+				TreeMap<String, Integer> sorted_map = new TreeMap<String, Integer>(new NumbersThenWordsComparator());
+				
+				for(Entry<Integer,Integer> entry: np.getNodeDegreeDistribution().entrySet()){
+					sorted_map.put(entry.getKey()+"", entry.getValue());
+					
+				}
+				
 				
 				//sort by occurrence
 //				ValueComparator bvc = new ValueComparator(degreemap);
@@ -920,4 +927,30 @@ public class GraphColoringGUI implements ActionListener {
 									(int) entry.getValue().getY()));
 		}
 	}
+	
+	class NumbersThenWordsComparator implements Comparator<String> {
+	    private Integer intValue(String s) {
+	        try {
+	            return Integer.valueOf(s);
+	        } catch (NumberFormatException e) {
+	            return null;
+	        }
+	    }
+
+	    @Override
+	    public int compare(String s1, String s2) {
+	        Integer i1 = intValue(s1);
+	        Integer i2 = intValue(s2);
+	        if (i1 == null && i2 == null) {
+	            return s1.compareTo(s2);
+	        } else if (i1 == null) {
+	            return -1;
+	        } else if (i2 == null) {
+	            return 1;
+	        } else {
+	            return i1.compareTo(i2);
+	        }
+	    }       
+	}
+
 }
