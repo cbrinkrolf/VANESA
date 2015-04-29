@@ -34,7 +34,7 @@ public class NodeAttributeBarChart extends JFrame {
 	private static final long serialVersionUID = -4206605543774794331L;
 
 	private String charttitle, xaxistext, yaxistext;
-	private Map<Integer, Integer> dataset;
+	private Map<String, Integer> dataset;
 
 	/**
 	 * Initiates
@@ -52,7 +52,7 @@ public class NodeAttributeBarChart extends JFrame {
 	 */
 	public NodeAttributeBarChart(final String title, final String charttitle,
 			final String xaxistext, final String yaxistext,
-			Map<Integer, Integer> dataset) {
+			Map<String, Integer> dataset) {
 		super(title);
 
 		this.charttitle = charttitle;
@@ -72,12 +72,12 @@ public class NodeAttributeBarChart extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 	}
-
+	
 	private CategoryDataset createDataset() {
 
 		final DefaultCategoryDataset bardataset = new DefaultCategoryDataset();
 
-		for (Entry<Integer, Integer> entry : this.dataset.entrySet()) {
+		for (Entry<String, Integer> entry : this.dataset.entrySet()) {
 			bardataset.setValue(entry.getValue(), xaxistext, entry.getKey());
 //			bardataset.setValue(entry.getKey(), xaxistext, entry.getValue());
 		}

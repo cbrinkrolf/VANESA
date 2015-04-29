@@ -9,6 +9,7 @@ import org.jfree.chart.JFreeChart;
 
 import graph.ContainerSingelton;
 import graph.GraphContainer;
+import graph.algorithms.gui.NodeAttributeBarChart;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
@@ -133,9 +134,11 @@ public class MultidimensionalScaling {
 				}
 			}
 			
-			System.out.println(entriesSortedByValues(occur));
+//			System.out.println(entriesSortedByValues(occur));
 
 			//display sorted values
+			
+			new NodeAttributeBarChart("Statistics",nodeAttributeName,"X","Y",occur);
 			
 			
 			ArrayList<BiologicalNodeAbstract> nodes = new ArrayList<>();

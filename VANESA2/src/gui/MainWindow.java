@@ -480,7 +480,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}	
 
 	public synchronized void showProgressBar(String text) {
-		System.out.println("Blurring with Bar \t"+Thread.currentThread().toString());
 		progressbar = new ProgressBar();
 		progressbar.init(100, "Please Wait.", true);
 		progressbar.setProgressBarString(text);
@@ -488,18 +487,15 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 	
 	public synchronized void closeProgressBar(){
-		System.out.println("Unblurring with Bar \t"+Thread.currentThread().toString());
 		progressbar.closeWindow();
 		blurUI.setLocked(false);
 	}
 	
 	public synchronized void blurrUI(){
-		System.out.println("Blurring \t"+Thread.currentThread().toString());
 		blurUI.setLocked(true);
 	}
 	
 	public synchronized void unBlurrUI(){
-		System.out.println("Unblurring \t"+Thread.currentThread().toString());
 		blurUI.setLocked(false);
 	}
 	
