@@ -60,9 +60,7 @@ public class NodeAttributePieChart extends JFrame {
 
 		HashMap<Integer, Integer> degreemap = np.getNodeDegreeDistribution();
 
-		ValueComparator bvc = new ValueComparator(degreemap);
-		TreeMap<Integer, Integer> sorted_map = new TreeMap<Integer, Integer>(bvc);
-		sorted_map.putAll(degreemap);
+		TreeMap<Integer, Integer> sorted_map = new TreeMap<Integer, Integer>(degreemap);
 		
 
 		for (Entry<Integer, Integer> entry : sorted_map.entrySet()) {
