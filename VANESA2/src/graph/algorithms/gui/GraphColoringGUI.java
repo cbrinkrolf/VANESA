@@ -6,6 +6,7 @@ import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
 import graph.algorithms.NodeAttributeNames;
 import graph.algorithms.NodeAttributeTypes;
+import graph.algorithms.gui.clusters.GraphClusterDyer;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
@@ -620,8 +621,8 @@ public class GraphColoringGUI implements ActionListener {
 				att = gnode.getNodeAttributeByName("chol logFC");
 				if(att != null)
 					experimentdata.put(i,att.getDoublevalue());
-				else
-					experimentdata.put(i,0.0d);
+//				else
+//					experimentdata.put(i,0.0d);
 
 			}
 			oos.writeObject(mg.getAllVertices().size());
@@ -824,22 +825,43 @@ public class GraphColoringGUI implements ActionListener {
 			
 		case JobTypes.APSP_CLUSTERING_JOB:
 			if (!table.isEmpty()) {
+				
+				TreeMap<Double, TreeSet<String>> dataset = new TreeMap<>();
+				TreeSet<String> tmpset;
+				
 				// Map ids to BNAs
 				Iterator<Entry<Integer, Double>> it = table.entrySet()
 						.iterator();
 				int key;
 				double value;
 
+				
+				
 				while (it.hasNext()) {
 					Entry<Integer, Double> entry = it.next();
 					key = entry.getKey();
 					value = entry.getValue();
 					bna = np.getNodeAssignmentbackwards(key);
 					coloring.put(bna, value);
+					
+					//cluster viewer
+						
+					if(dataset.containsKey(value)){
+						dataset.get(value).add(bna.getLabel());
+					}else{
+						tmpset = new TreeSet<>();
+						tmpset.add(bna.getLabel());	
+						dataset.put(value, tmpset);
+					}
+				
 					// saving
 					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
 							NodeAttributeNames.SP_CLUSTERING, coloring.get(bna));
 				}
+				
+				System.out.println(dataset);
+				new GraphClusterDyer(dataset);
+				
 			}
 			
 			break;
