@@ -45,6 +45,13 @@ public class ComputeCallback extends UnicastRemoteObject implements Serializable
 		gui.returnComputeData(set, jobtype);
 		gui.reactiveateUI();
 	}
+	
+	@Override
+	public void setResultMap(HashMap<Double,HashSet<Integer>> map, int jobtype)
+			throws RemoteException {
+		gui.returnComputeData(map, jobtype);
+		gui.reactiveateUI();
+	}
 
 	@Override
 	public void setResultMatrix(int[][] matrix) throws RemoteException {

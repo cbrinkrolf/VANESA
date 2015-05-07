@@ -25,6 +25,15 @@ public interface IComputeCallback extends Remote, INotifyable {
 	public void setResultSet(HashSet<HashSet<Integer>> set, int jobtype) throws RemoteException;
 	
 	/**
+	 * Set a predefined result set.
+	 * @param set
+	 * @param jobtype
+	 * @throws RemoteException
+	 */
+	public void setResultMap(HashMap<Double,HashSet<Integer>> map, int jobtype) throws RemoteException;
+	
+	
+	/**
 	 * Set a modified matrix.
 	 * @param matrix
 	 * @throws RemoteException

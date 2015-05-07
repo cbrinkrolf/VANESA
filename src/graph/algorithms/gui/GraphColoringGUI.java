@@ -67,15 +67,15 @@ public class GraphColoringGUI implements ActionListener {
 	private JButton degreedistributionbutton;
 
 	private String[] algorithmNames = { "Node Degree", 
-			"Cycles (remote)", "Cliques (remote)", "FRlayout (remote)",
-			"Spectral apsp (remote)", "Multilayout (remote)",
-			"MDS forcelayout (remote)", "APSP Clustering (r)" };
+			"Cycles (r)", "Cliques (r)", "FRlayout (r)",
+			"Spectral apsp (r)", "Multilayout (remote)",
+			"MDS forcelayout (r)", "APSP Clustering occ (r)",
+			"APSP Clustering score (r)"};
 	private int currentalgorithmindex = 0;
-	private String[] colorrangenames = { "bluesea", "skyline", "darkmiddle",
-			"darkleftmiddle", "rainbow" };
+
 	private final int NODE_DEGREE = 0, CYCLES = 1,
 			CLIQUES = 2, FRLAYOUT = 3, SPECTRAL = 4, MULTILAYOUT = 5,
-			MDSFLAYOUT = 6, APSPCLUSTERING = 7;
+			MDSFLAYOUT = 6, APSPCLUSTERING_OCC = 7, APSPCLUSTERING_SCORE = 8;
 
 	private ImageIcon[] icons;
 
@@ -545,7 +545,8 @@ public class GraphColoringGUI implements ActionListener {
 			oos.close();
 			break;
 			
-		case APSPCLUSTERING:
+		case APSPCLUSTERING_OCC:
+		case APSPCLUSTERING_SCORE:
 			//Set parameters
 			parameters = new HashMap<>();
 			parameters.put("minclustersize", ""+5);
@@ -588,9 +589,7 @@ public class GraphColoringGUI implements ActionListener {
 					edgeindex += 2;
 				}
 			}
-			System.out.println("number of real edges: " + edgeindex
-					+ "\n size: " + mg.getAllEdges().size());
-
+			
 			edgearray = new int[edgeindex * 2];
 			edgeindex = 0;
 			// build edgearray
@@ -633,13 +632,21 @@ public class GraphColoringGUI implements ActionListener {
 			//close objectstream and transform to bytearray
 			oos.close();			
 			jobinformation = baos.toByteArray();
-			
+
 			// compute values over RMI
 			try {
 				helper = new ComputeCallback(this);
-				ClusterComputeThread rmiapspclustering = new ClusterComputeThread(
-						JobTypes.APSP_CLUSTERING_JOB, jobinformation, helper);
-				rmiapspclustering.start();
+				if (currentalgorithmindex == APSPCLUSTERING_OCC) {
+					ClusterComputeThread rmiapspclustering = new ClusterComputeThread(
+							JobTypes.APSP_CLUSTERING_JOB_OCCURENCE,
+							jobinformation, helper);
+					rmiapspclustering.start();
+				} else if (currentalgorithmindex == APSPCLUSTERING_SCORE) {
+					ClusterComputeThread rmiapspclustering = new ClusterComputeThread(
+							JobTypes.APSP_CLUSTERING_JOB_SCORING,
+							jobinformation, helper);
+					rmiapspclustering.start();
+				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
 				reactiveateUI();
@@ -764,6 +771,58 @@ public class GraphColoringGUI implements ActionListener {
 		logview.setEnabled(true);
 		resetcolorbutton.setEnabled(true);
 	}
+	
+	public void returnComputeData(HashMap<Double, HashSet<Integer>> map,
+			int jobtype) {
+
+		System.out.println(map.toString());
+		BiologicalNodeAbstract bna;
+		// Determine jobtype and behaviour
+		switch (jobtype) {
+		case JobTypes.APSP_CLUSTERING_JOB_SCORING:
+			if (!map.isEmpty()) {
+				
+				TreeMap<Double, TreeSet<String>> dataset = new TreeMap<>();
+				TreeSet<String> tmpset;
+				
+				// Map ids to BNAs
+				Iterator<Entry<Double, HashSet<Integer>>> it = map.entrySet()
+						.iterator();
+				double key;
+				HashSet<Integer> value;
+				TreeSet<String> clusterlabels;
+
+				
+				
+				while (it.hasNext()) {
+					Entry<Double, HashSet<Integer>> entry = it.next();
+					key = entry.getKey();
+					value = entry.getValue();
+					
+					//cluster viewer
+					clusterlabels = new TreeSet<>();
+					for(Integer nodeid : value){
+						bna = np.getNodeAssignmentbackwards(nodeid);
+						clusterlabels.add(bna.getLabel());
+					}					
+					
+					dataset.put(key, clusterlabels);
+				}
+				
+				System.out.println(dataset);
+				new GraphClusterDyer(dataset);
+				
+			}
+			
+			break;
+	
+
+		default:
+			System.out.println("Wrong Job Type: returnComputeData - "
+					+ toString());
+			break;
+		}
+	}
 
 	public void returnComputeData(Hashtable<Integer, Double> table, int jobtype) {
 
@@ -823,7 +882,7 @@ public class GraphColoringGUI implements ActionListener {
 
 			break;
 			
-		case JobTypes.APSP_CLUSTERING_JOB:
+		case JobTypes.APSP_CLUSTERING_JOB_OCCURENCE:
 			if (!table.isEmpty()) {
 				
 				TreeMap<Double, TreeSet<String>> dataset = new TreeMap<>();
@@ -974,5 +1033,7 @@ public class GraphColoringGUI implements ActionListener {
 	        }
 	    }       
 	}
+
+
 
 }
