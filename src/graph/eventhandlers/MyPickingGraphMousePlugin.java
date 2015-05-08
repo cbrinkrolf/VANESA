@@ -62,15 +62,6 @@ public class MyPickingGraphMousePlugin extends
 			hclayout.saveCurrentOrder();
 		}
 
-		// Reselect the original selection.
-		Collection<BiologicalNodeAbstract> deselection = graphInstance.getPathway().getSelectedNodes();
-		deselection.removeAll(originalSelection);
-		for(BiologicalNodeAbstract node : deselection){
-			graphInstance.getMyGraph().getVisualizationViewer().
-				getPickedVertexState().pick(node, false);
-		}
-		
-		
 		// Find coarse nodes in specified environment of the final mouse position.
 		final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
 				.getSource();
