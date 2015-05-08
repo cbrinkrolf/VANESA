@@ -710,6 +710,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			// 2,
 			// (screenHeight / 2) - dialog.getSize().height / 2);
 			dialog.setVisible(true);
+			dialog.setLocationRelativeTo(w);
 		} else if (event.equals("animatePetriNet")) {
 			// redraw plot and set new colors/sizes
 
