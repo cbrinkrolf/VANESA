@@ -156,13 +156,20 @@ public class Server {
 		int j = 0;
 		int expected = reals * 8 + ints * sizeOfInt + bools;
 
+		try{
+		System.out.println("expected: "+expected);
 		System.out.println("Headers: " + names.size());
 		counter = 0;
 		for (int i = 0; i < names.size(); i++) {
 			System.out.print(names.get(i) + "\t");
 			counter += names.get(i).length();
 		}
+		System.out.println();
 		System.out.println("sum: " + counter);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		System.out.println("ende");
 		byte btmp;
 		ArrayList<Object> values;
 		GraphInstance graphInstance = new GraphInstance();
@@ -190,7 +197,7 @@ public class Server {
 				// Nachricht
 				// empfangen
 				id = (int) buffer[0];
-				// System.out.println("id: " + (int) buffer[0]);
+				//System.out.println("id: " + (int) buffer[0]);
 				// socket.getInputStream().read(buffer, 0, 4);
 				// System.out.println("length: "+buffer[0]+
 				// " "+buffer[1]+" "+buffer[2]+" "+buffer[3] );
@@ -199,7 +206,7 @@ public class Server {
 						buffer.length - 2));
 				bb.order(ByteOrder.LITTLE_ENDIAN);
 				length = bb.getInt();
-				//System.out.println("length: " + length);
+				//System.out.println("length in loop: " + length);
 
 				switch (id) {
 				case 4:
@@ -345,6 +352,15 @@ public class Server {
 		Iterator<BiologicalEdgeAbstract> itBea = pw.getAllEdges().iterator();
 		BiologicalEdgeAbstract bea;
 		PNEdge e;
+		
+		//System.out.println("hashmap size: "+bea2key.size());
+		//Iterator<String> it5 = bea2key.values().iterator();
+		//while(it5.hasNext()){
+			//System.out.print(it5.next()+"\t");
+		//}
+		//System.out.println();
+		
+		
 		while (itBea.hasNext()) {
 			bea = itBea.next();
 			if (bea instanceof PNEdge) {
@@ -354,7 +370,8 @@ public class Server {
 				// v2 = pnResult.get("der("+bea2key.get(bea)+")");
 				// e.setSim_tokensSum(v);
 				// e.setSim_tokens(v2);
-				// System.out.println("index: "+names.indexOf("der("
+				//System.out.println("key: "+bea2key.get(bea));
+				//System.out.println("index: "+names.indexOf("der("
 				// + bea2key.get(bea) + ")"));
 				e.getSim_tokens().add(
 						(Double) values.get(names.indexOf("der("

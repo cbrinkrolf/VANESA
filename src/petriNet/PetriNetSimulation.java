@@ -94,6 +94,7 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	public void showMenue() {
+		this.simLibs = this.getLibs(new File(pathWorkingDirectory));
 		menue = new SimMenue(this, this.simLibs);
 	}
 
@@ -388,9 +389,11 @@ public class PetriNetSimulation implements ActionListener {
 						return;
 					}
 					simLib = menue.getSimLib();
-					
+					System.out.println("simulation lib: "+simLib);
 					String packageInfo = null;
-					if(!simLib.equals("PNlib")){
+					if(simLib.equals("PNlib")){
+						//packageInfo = "inner PNlib.Settings settings1;";
+					}else{
 						packageInfo = "import PNlib = "+simLib+";";
 					}
 					MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim
