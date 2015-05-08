@@ -2,6 +2,7 @@ package petriNet;
 
 import graph.GraphInstance;
 import gui.MainWindowSingleton;
+import io.SaveDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -249,7 +250,11 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		BufferedImage bi = new BufferedImage(p.getWidth(), p.getHeight(),
+		
+		new SaveDialog(SaveDialog.FORMAT_PNG, p);
+		
+		
+		/*BufferedImage bi = new BufferedImage(p.getWidth(), p.getHeight(),
 				BufferedImage.TYPE_INT_BGR);
 		Graphics2D graphics = bi.createGraphics();
 		p.paint(graphics);
@@ -286,7 +291,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 				}
 
 			}
-		}
+		}*/
 	}
 
 	@Override
