@@ -4,16 +4,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -22,15 +18,10 @@ import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
-import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
-import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
-import graph.layouts.hebLayout.HEBEdgeShape;
-import graph.layouts.hebLayout.HEBLayout;
 import gui.MainWindowSingleton;
 
 public class MyPickingGraphMousePlugin extends
