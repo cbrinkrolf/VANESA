@@ -41,16 +41,12 @@ public class CompareGraphs {
 	}
 
 	public static void mergeGraph(Pathway pathway) {
-
-		Vector<BiologicalNodeAbstract> pathwayOneNodes = pathway.getAllNodesAsVector();
 		MyGraph graph1 = pathway.getGraph();
 
 		graph1.enableGraphTheory();
 		Vector<BiologicalNodeAbstract> checked = new Vector<BiologicalNodeAbstract>();
 
-		Vector<BiologicalNodeAbstract> pathwayTwoNodes = pathway.getAllNodesAsVector();
-
-		Iterator<BiologicalNodeAbstract> it = pathwayOneNodes.iterator();
+		Iterator<BiologicalNodeAbstract> it = pathway.getAllNodes().iterator();
 		BiologicalNodeAbstract bna;
 		BiologicalNodeAbstract bna2;
 		Iterator<BiologicalNodeAbstract> it2;
@@ -58,7 +54,7 @@ public class CompareGraphs {
 		while (it.hasNext()) {
 			bna = it.next();
 
-			it2 = pathwayTwoNodes.iterator();
+			it2 = pathway.getAllNodes().iterator();
 
 			while (it2.hasNext()) {
 				bna2 = it2.next();
@@ -94,15 +90,13 @@ public class CompareGraphs {
 
 		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
 
-		Vector<BiologicalNodeAbstract> pathwayOneNodes = one.getAllNodesAsVector();
 		MyGraph graph1 = one.getGraph();
 		graph1.enableGraphTheory();
 
-		Vector<BiologicalNodeAbstract> pathwayTwoNodes = two.getAllNodesAsVector();
 		MyGraph graph2 = two.getGraph();
 		graph2.enableGraphTheory();
 
-		Iterator<BiologicalNodeAbstract> it = pathwayOneNodes.iterator();
+		Iterator<BiologicalNodeAbstract> it = one.getAllNodes().iterator();
 		BiologicalNodeAbstract bna;
 		Iterator<BiologicalNodeAbstract> it2;
 		BiologicalNodeAbstract bna2;
@@ -110,7 +104,7 @@ public class CompareGraphs {
 		while (it.hasNext()) {
 
 			bna = it.next();
-			it2 = pathwayTwoNodes.iterator();
+			it2 = two.getAllNodes().iterator();
 			while (it2.hasNext()) {
 
 				bna2 = it2.next();

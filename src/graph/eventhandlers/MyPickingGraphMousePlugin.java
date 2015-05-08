@@ -169,14 +169,15 @@ public class MyPickingGraphMousePlugin extends
 
 		} else {
 
-			Vector<BiologicalNodeAbstract> v = graphInstance.getPathway()
-					.getSelectedNodes();
-
-			Iterator<BiologicalNodeAbstract> it = v.iterator();
+			Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway()
+					.getSelectedNodes().iterator();
+			BiologicalNodeAbstract bna;
+			String urlString;
+			
 			while (it.hasNext()) {
 				// BiologicalNodeAbstract vertex = (BiologicalNodeAbstract)
 				// it.next();
-				BiologicalNodeAbstract bna = it.next();// (BiologicalNodeAbstract)
+				bna = it.next();// (BiologicalNodeAbstract)
 														// graphInstance
 				// .getPathway().getNodeByVertexID(vertex.toString());
 				if (bna.getBiologicalElement().equals(
@@ -187,12 +188,12 @@ public class MyPickingGraphMousePlugin extends
 								Elementdeclerations.factor)
 						|| bna.getBiologicalElement().equals(
 								Elementdeclerations.smallMolecule)) {
-					String urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/protein_result.jsp?Protein_Id="
+					urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/protein_result.jsp?Protein_Id="
 							+ bna.getLabel();
 					new FollowLink().openURL(urlString);
 				} else if (bna.getBiologicalElement().equals(
 						Elementdeclerations.enzyme)) {
-					String urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/enzyme_result.jsp?Enzyme_Id="
+					urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/enzyme_result.jsp?Enzyme_Id="
 							+ bna.getLabel();
 					new FollowLink().openURL(urlString);
 

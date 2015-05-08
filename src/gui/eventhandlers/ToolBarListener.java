@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -378,14 +379,18 @@ public class ToolBarListener implements ActionListener {
 			}
 		} else if ("adjustDown".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				Vector<BiologicalNodeAbstract> nodes = graphInstance
+				Set<BiologicalNodeAbstract> nodes = graphInstance
 						.getPathway().getSelectedNodes();
 
 				double maxy = Double.MIN_VALUE;
 				Point2D point;
+				Rectangle r;
 				if (nodes.size() > 1) {
-					for (int i = 0; i < nodes.size(); i++) {
-						Rectangle r = nodes.get(i).getShape().getBounds();
+					Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+					BiologicalNodeAbstract bna;
+					while(it.hasNext()){
+						bna = it.next();
+						r = bna.getShape().getBounds();
 						/*VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance
 								.getPathway().getGraph()
 								.getVisualizationViewer();
@@ -404,16 +409,18 @@ public class ToolBarListener implements ActionListener {
 						
 						System.out.println((r.getMaxX()-r.getMinX())/scale);*/
 						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(nodes.get(i));
+								.getVertexLocation(bna);
 						if (point.getY() > maxy) {
 							maxy = point.getY();
 						}
 					}
-					for (int i = 0; i < nodes.size(); i++) {
+					it = nodes.iterator();
+					while(it.hasNext()){
+						bna = it.next();
 						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(nodes.get(i));
+								.getVertexLocation(bna);
 						point.setLocation(point.getX(), maxy);
-						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(nodes.get(i), point);
+						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
 						
 					}
 				}
@@ -421,33 +428,37 @@ public class ToolBarListener implements ActionListener {
 
 		} else if ("adjustLeft".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				Vector<BiologicalNodeAbstract> nodes = graphInstance
+				Set<BiologicalNodeAbstract> nodes = graphInstance
 						.getPathway().getSelectedNodes();
 
 				double minx = Double.MAX_VALUE;
 				Point2D point;
 				if (nodes.size() > 1) {
-					for (int i = 0; i < nodes.size(); i++) {
-
+					Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+					BiologicalNodeAbstract bna;
+					while(it.hasNext()) {
+						bna = it.next();
 						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(nodes.get(i));
+								.getVertexLocation(bna);
 						if (point.getX() < minx) {
 							minx = point.getX();
 						}
 					}
-					for (int i = 0; i < nodes.size(); i++) {
+					it = nodes.iterator();
+					while(it.hasNext()) {
+						bna = it.next();
 						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(nodes.get(i));
+								.getVertexLocation(bna);
 						
 						point.setLocation(minx, point.getY());
-						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(nodes.get(i), point);
+						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
 						
 					}
 				}
 			}
 		}else if ("adjustHorizontalSpace".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				Vector<BiologicalNodeAbstract> nodes = graphInstance
+				Set<BiologicalNodeAbstract> nodes = graphInstance
 						.getPathway().getSelectedNodes();
 
 				double minx = Double.MAX_VALUE;
@@ -456,24 +467,28 @@ public class ToolBarListener implements ActionListener {
 				HashMap<BiologicalNodeAbstract, Double> map = new HashMap<BiologicalNodeAbstract, Double>();
 				Point2D point;
 				if (nodes.size() > 2) {
-					for (int i = 0; i < nodes.size(); i++) {
-						
+					Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+					BiologicalNodeAbstract bna;
+					while(it.hasNext()) {
+						bna = it.next();
 						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(nodes.get(i));
+								.getVertexLocation(bna);
 						if (point.getX() < minx) {
 							minx = point.getX();
 						}
 						if(point.getX() > maxx){
 							maxx = point.getX();
 						}
-						map.put(nodes.get(i),point.getX());
+						map.put(bna, point.getX());
 					}
 					
 					 List<Double> c = new ArrayList<Double>(map.values());
 					 Collections.sort(c);
 					 
-					for (int i = 0; i < nodes.size(); i++) {
-						int d = c.indexOf(map.get(nodes.get(i)));
+					it = nodes.iterator();
+					while(it.hasNext()) {
+						bna = it.next();
+						int d = c.indexOf(map.get(bna));
 						double newx;
 						if(d == 0){
 							newx = minx;
@@ -483,16 +498,16 @@ public class ToolBarListener implements ActionListener {
 							newx = minx+d*((Math.abs(maxx-minx))/(nodes.size()-1));
 						}
 						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(nodes.get(i));
+								.getVertexLocation(bna);
 						point.setLocation(newx, point.getY());
-						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(nodes.get(i), point);
+						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
 						
 					}
 				}
 			}
 		}else if ("adjustVerticalSpace".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				Vector<BiologicalNodeAbstract> nodes = graphInstance
+				Set<BiologicalNodeAbstract> nodes = graphInstance
 						.getPathway().getSelectedNodes();
 
 				double miny = Double.MAX_VALUE;
@@ -501,24 +516,28 @@ public class ToolBarListener implements ActionListener {
 				HashMap<BiologicalNodeAbstract, Double> map = new HashMap<BiologicalNodeAbstract, Double>();
 				Point2D point;
 				if (nodes.size() > 2) {
-					for (int i = 0; i < nodes.size(); i++) {
-						
+					Iterator<BiologicalNodeAbstract> it = nodes.iterator();
+					BiologicalNodeAbstract bna;
+					while(it.hasNext()) {
+						bna = it.next();
 						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(nodes.get(i));
+								.getVertexLocation(bna);
 						if (point.getY() < miny) {
 							miny = point.getY();
 						}
 						if(point.getY() > maxy){
 							maxy = point.getY();
 						}
-						map.put(nodes.get(i),point.getY());
+						map.put(bna, point.getY());
 					}
 					
 					 List<Double> c = new ArrayList<Double>(map.values());
 					 Collections.sort(c);
 					 
-					for (int i = 0; i < nodes.size(); i++) {
-						int d = c.indexOf(map.get(nodes.get(i)));
+					 it = nodes.iterator();
+					while(it.hasNext()) {
+						bna = it.next();
+						int d = c.indexOf(map.get(bna));
 						double newy;
 						if(d == 0){
 							newy = miny;
@@ -528,9 +547,9 @@ public class ToolBarListener implements ActionListener {
 							newy = miny+d*((Math.abs(maxy-miny))/(nodes.size()-1));
 						}
 						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(nodes.get(i));
+								.getVertexLocation(bna);
 						point.setLocation(point.getX(), newy);
-						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(nodes.get(i), point);
+						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
 						
 					}
 				}

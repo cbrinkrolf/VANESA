@@ -2,7 +2,6 @@ package biologicalElements;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,9 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Vector;
-
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
@@ -880,48 +876,9 @@ public class Pathway implements Cloneable {
 		return sortedList;
 	}
 
-	public Vector<BiologicalNodeAbstract> getAllNodesAsVector() {
-
-		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
-		Vector<BiologicalNodeAbstract> set = new Vector<BiologicalNodeAbstract>();
-
-		GraphElementAbstract gea;
-		while (it.hasNext()) {
-			gea = it.next();
-			if (gea instanceof BiologicalNodeAbstract) {
-				set.add((BiologicalNodeAbstract)gea);
-			}
-		}
-
-		return set;
-	}
-
-	public Vector<BiologicalEdgeAbstract> getAllEdgesAsVector() {
-
-		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
-		Vector<BiologicalEdgeAbstract> set = new Vector<BiologicalEdgeAbstract>();
-
-		GraphElementAbstract gea;
-		while (it.hasNext()) {
-			gea = it.next();
-			if (gea instanceof BiologicalEdgeAbstract) {
-				set.add((BiologicalEdgeAbstract)gea);
-			}
-		}
-
-		return set;
-	}
-
-	public Vector<BiologicalNodeAbstract> getSelectedNodes() {
-		Vector<BiologicalNodeAbstract> ve = new Vector<BiologicalNodeAbstract>();
-		Iterator<BiologicalNodeAbstract> it = getGraph()
-				.getVisualizationViewer().getPickedVertexState().getPicked()
-				.iterator();
-		while (it.hasNext()) {
-			BiologicalNodeAbstract v = it.next();
-			ve.add(v);
-		}
-		return ve;
+	public Set<BiologicalNodeAbstract> getSelectedNodes() {
+		return getGraph()
+				.getVisualizationViewer().getPickedVertexState().getPicked();
 	}
 
 	public int countNodes() {
