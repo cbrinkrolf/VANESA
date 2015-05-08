@@ -80,8 +80,7 @@ public class MyEdgeStrokeHighlighting implements
 
 	private Stroke getStrokeWithGraphTheory(BiologicalEdgeAbstract bea) {
 
-		if (psV.isPicked(bea.getFrom()) == true
-				&& psV.isPicked(bea.getTo()) == true) {
+		if (psV.isPicked(bea.getFrom())	&& psV.isPicked(bea.getTo())) {
 			return heavy;
 		} else {
 			return dotted;

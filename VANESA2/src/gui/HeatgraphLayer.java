@@ -12,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
@@ -121,14 +122,17 @@ public class HeatgraphLayer extends MouseAdapter implements Paintable {
 		
 		//scan again through the nodes and fill the hashmap
 		Pathway pw_new = GraphInstance.getPathwayStatic();
-		Vector<BiologicalNodeAbstract> nodes = pw_new.getAllNodesAsVector();
+		Iterator<BiologicalNodeAbstract> nodes = pw_new.getAllNodes().iterator();
 		AdoptedHeatmap h = this.getHeatmapForActiveGraph();
 		HashMap<String, Integer> countById = this.countData.get(GraphInstance.getMyGraph());
 		
 		//search for not active nodes and mark them as 0
 		HashMap<String, Integer> countByIdTemp = new HashMap<String, Integer>();
-		for(BiologicalNodeAbstract bna : nodes ) {
-			String id = bna.getName()+bna.getLabel();
+		BiologicalNodeAbstract bna;
+		String id;
+		while(nodes.hasNext()) {
+			bna = nodes.next();
+			id = bna.getName()+bna.getLabel();
 			if (countById.containsKey(id) && GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().isPicked(bna)) {
 				countByIdTemp.put(id, countById.get(id));
 			}
@@ -140,9 +144,10 @@ public class HeatgraphLayer extends MouseAdapter implements Paintable {
 			h.resetPoints();
 			//NodeRankingVertexSizeFunction sf = new NodeRankingVertexSizeFunction("madata",1);
 			//VertexShapes vs = new VertexShapes(sf, new ConstantVertexAspectRatioFunction(1.0f));
-			
-			for(BiologicalNodeAbstract bna : nodes ) {
-				String id = bna.getName()+bna.getLabel();
+			nodes = pw_new.getAllNodes().iterator();
+			while(nodes.hasNext()) {
+				bna = nodes.next();
+				id = bna.getName()+bna.getLabel();
 				
 				if (countByIdTemp.containsKey(id)) {
 					//Point2D p = GraphInstance.getMyGraph().getVertexLocations().getLocation(bna.getVertex());

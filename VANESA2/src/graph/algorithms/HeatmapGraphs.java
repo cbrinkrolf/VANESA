@@ -7,6 +7,7 @@ import gui.MainWindowSingleton;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 import xmlOutput.sbml.JSBMLoutput;
@@ -65,9 +66,13 @@ public class HeatmapGraphs {
 		//count all nodes by id
 		//elements that are in both graphs will be double in the new graph
 		HashMap<String, Integer> countById = new HashMap<String, Integer>();
-		Vector<BiologicalNodeAbstract> nodes = pw_new.getAllNodesAsVector();
-		for(BiologicalNodeAbstract bna : nodes) {
-			String id = bna.getName()+bna.getLabel();
+		//Vector<BiologicalNodeAbstract> nodes = pw_new.getAllNodesAsVector();
+		Iterator<BiologicalNodeAbstract> nodes = pw_new.getAllNodes().iterator(); 
+		String id;
+		BiologicalNodeAbstract bna;
+		while(nodes.hasNext()) {
+			bna = nodes.next();
+			id = bna.getName()+bna.getLabel();
 			if (countById.containsKey(id)) {
 				countById.put(id, countById.get(id)+1);
 				
@@ -78,8 +83,10 @@ public class HeatmapGraphs {
 		}
 		
 		//set the form of vertices depending on counts
-		for(BiologicalNodeAbstract bna : nodes) {
-			String id = bna.getName()+bna.getLabel();
+		nodes = pw_new.getAllNodes().iterator(); 
+		while(nodes.hasNext()){
+			bna = nodes.next();
+			id = bna.getName()+bna.getLabel();
 			countById.get(id);
 			//bna.setShape(vs.getEllipse(getVertex()))
 		}
