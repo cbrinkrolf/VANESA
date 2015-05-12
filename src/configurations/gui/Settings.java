@@ -1,15 +1,21 @@
 package configurations.gui;
 
+import graph.GraphInstance;
+import gui.MainWindow;
 import gui.MainWindowSingleton;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
+
+import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Settings extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -4497946706066898835L;
@@ -24,11 +30,13 @@ public class Settings extends JDialog implements ActionListener {
 	private InternetConnectionDialog internet = new InternetConnectionDialog();
 	private GraphAlignmentDialog ali = new GraphAlignmentDialog();
 	private GraphSettingsDialog gset = new GraphSettingsDialog();
+	private VisualizationDialog visDialog = new VisualizationDialog();
 
 	private String database_label = new String("Database Settings");
 	private String interner_label = new String("Internet");
 	private String ali_label = new String("Graph Alignment");
 	private String gset_label = new String("Graph Settings");
+	private String visDialog_label = new String("Visualization");
 
 	private JOptionPane optionPane;
 
@@ -53,6 +61,7 @@ public class Settings extends JDialog implements ActionListener {
 		tabbedPane.addTab(interner_label, null, internet, interner_label);
 		tabbedPane.addTab(ali_label, null, ali.getPanel(), ali_label);
 		tabbedPane.addTab(gset_label, null, gset.getPanel(), gset_label);
+		tabbedPane.addTab(visDialog_label, null, visDialog.getPanel(), visDialog_label);
 
 		tabbedPane.setSelectedIndex(type);
 		enableSettings(true);
@@ -89,6 +98,9 @@ public class Settings extends JDialog implements ActionListener {
 				ali.applyDefaults();
 			else if (tab_name.equals(gset_label))
 				gset.applyDefaults();
+			else if (tab_name.equals(visDialog_label)){
+				visDialog.setDefaultYamlPath();
+			}
 		} else if ("accept".equals(event)) {
 			String tab_name = tabbedPane.getTitleAt(tabbedPane
 					.getSelectedIndex());
@@ -101,6 +113,10 @@ public class Settings extends JDialog implements ActionListener {
 				this.setVisible(!ali.applyNewSettings());
 			else if (tab_name.equals(gset_label))
 				this.setVisible(!gset.applyNewSettings());
+			else if (tab_name.equals(visDialog_label)){
+				visDialog.acceptConfig();
+				this.dispose();
+			}
 
 			//this.setVisible(false);
 		} else if ("ok".equals(event)) {

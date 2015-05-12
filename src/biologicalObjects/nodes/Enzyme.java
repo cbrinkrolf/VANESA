@@ -21,9 +21,8 @@ public class Enzyme extends Protein {
 	public Enzyme(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.enzyme);
-		shapes = new VertexShapes();	
-		setDefaultShape(shapes.getRegularPolygon(3));
-		setDefaultColor(Color.green);
+		shapes = new VertexShapes();
+		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 
 	public String getCofactor() {

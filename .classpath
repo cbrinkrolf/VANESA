@@ -75,6 +75,7 @@
 	<classpathentry kind="lib" path="packages/prettyFormula/xerces_2_5_0.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/xml-apis.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/xml-apis-ext.jar"/>
+	<classpathentry kind="lib" path="packages/snakeyaml-1.14.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="packages/mdsj.jar"/>
 	<classpathentry kind="output" path="bin"/>

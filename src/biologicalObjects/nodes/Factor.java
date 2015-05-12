@@ -11,8 +11,7 @@ public class Factor extends BiologicalNodeAbstract{
 		super(label,name);
 		setBiologicalElement(Elementdeclerations.factor);
 		shapes = new VertexShapes();	
-		setDefaultShape(shapes.getEllipse());
-		setDefaultColor(Color.cyan);
+		attributeSetter(this.getClass().getSimpleName(), this);
 		setReference(false);
 	}
 	

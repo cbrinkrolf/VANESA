@@ -36,6 +36,7 @@ public class MenuBarClass {
 	private JMenuItem databaseItem;
 	
 
+	private JMenuItem visualizationSettings;
 	// JMenuItem keggItem;
 	// JMenuItem brendaItem;
 	// JMenuItem dawisItem;
@@ -258,6 +259,11 @@ public class MenuBarClass {
 		databaseItem = new JMenuItem("Database Connection");
 		databaseItem.addActionListener(new MenuListener());
 		databaseItem.setActionCommand("database settings");
+		
+
+		visualizationSettings = new JMenuItem("Visualization Settings");
+		visualizationSettings.addActionListener(new MenuListener());
+		visualizationSettings.setActionCommand("visualizationSettings");
 
 
 		// keggItem = new JMenuItem("KEGG Connection");
@@ -370,6 +376,7 @@ public class MenuBarClass {
 		settings.add(internet);
 		settings.add(graphAlignment);
 		settings.add(graphSettings);
+		settings.add(visualizationSettings);
 
 		// snapshot.add(savePicture);
 		// snapshot.add(printPicture);

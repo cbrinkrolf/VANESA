@@ -9,7 +9,7 @@ public class Site extends BiologicalNodeAbstract{
 		super(label,name);
 		setBiologicalElement(Elementdeclerations.site);
 		shapes = new VertexShapes();	
-		setDefaultShape(shapes.getEllipse());
+		attributeSetter(this.getClass().getSimpleName(), this);
 		setReference(false);
 	}
 	

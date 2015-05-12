@@ -11,8 +11,7 @@ public class Inhibitor extends BiologicalNodeAbstract {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.inhibitor);
 		shapes = new VertexShapes();
-		setDefaultShape(shapes.getEllipse());
-		setDefaultColor(Color.pink);
+		attributeSetter(this.getClass().getSimpleName(), this);
 		setReference(false);
 	}
 

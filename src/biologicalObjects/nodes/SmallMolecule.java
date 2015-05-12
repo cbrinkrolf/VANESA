@@ -32,8 +32,7 @@ public class SmallMolecule extends BiologicalNodeAbstract{
 		super(label,name);
 		setBiologicalElement(Elementdeclerations.smallMolecule);
 		shapes = new VertexShapes();	
-		setDefaultShape(shapes.getRegularPolygon(8));
-		setDefaultColor(Color.yellow);
+		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 	
 	@Override

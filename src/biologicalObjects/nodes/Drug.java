@@ -8,8 +8,8 @@ public class Drug extends BiologicalNodeAbstract{
 	public Drug(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.drug);
-		VertexShapes shapes = new VertexShapes();	
-		setDefaultShape(shapes.getEllipse());
+		VertexShapes shapes = new VertexShapes();
+		attributeSetter(this.getClass().getSimpleName(), this);
 		setReference(false);
 	}
 	

@@ -8,6 +8,8 @@ import gui.algorithms.CenterWindow;
 import gui.algorithms.ScreenSize;
 import gui.eventhandlers.PanelListener;
 import gui.images.ImagePath;
+import gui.visualization.YamlToObjectParser;
+import gui.visualization.VisualizationConfigBeans.Bean;
 import io.SaveDialog;
 
 import java.awt.BorderLayout;
@@ -17,11 +19,16 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
@@ -67,7 +74,30 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	private ToolBar bar = new ToolBar(false);
 	private int maxPanelID = -1;
 	private int selectedView = 0;
+	private YamlToObjectParser yamlToObject;
+	private List<Bean> beansList = new ArrayList<Bean>();
+	private String loadedYaml = null;
 	
+	public List<Bean> getBeansList() {
+		return beansList;
+	}
+
+	public void setBeansList(List<Bean> beansList) {
+		this.beansList = beansList;
+	}
+
+	
+
+	public String getLoadedYaml() {
+		return loadedYaml;
+	}
+
+
+	public void setLoadedYaml(String loadedYaml) {
+		this.loadedYaml = loadedYaml;
+	}
+
+
 	public void setSelectedView(View v){
 		for(int key : views.keySet()){
 			if(views.get(key).equals(v)){
@@ -253,8 +283,89 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		this.setContentPane(layer);
 
 		setVisible(true);
+		
+		try {
+			askForYaml();
+		} catch (FileNotFoundException e1) {
+			System.out.println("askForYaml Method Error");
+			e1.printStackTrace();
+		}
 	}
 
+	
+	public void nodeAttributeChanger(BiologicalNodeAbstract bna, boolean doResetAppearance){
+		for(Bean bean : beansList){
+			String shapeBean = bean.getShape();
+			if(bean.getName().equals(bna.getBiologicalElement())){
+				switch(shapeBean){
+				case "ellipse":
+					bna.setDefaultShape(bna.shapes.getEllipse());
+					break;
+				case "rectangle":
+					bna.setDefaultShape(bna.shapes.getRectangle());
+					break;
+				case "rounded rectangle":
+					bna.setDefaultShape(bna.shapes.getRegularStar(7));
+					break;
+				case "triangle":
+					bna.setDefaultShape(bna.shapes.getRegularPolygon(3));
+					break;
+				case "pentagon":
+					bna.setDefaultShape(bna.shapes.getRegularPolygon(5));
+					break;
+				case "hexagon":
+					bna.setDefaultShape(bna.shapes.getRegularPolygon(6));
+					break;
+				case "5 star":
+					bna.setDefaultShape(bna.shapes.getRegularStar(5));
+					break;
+				case "6 star":
+					bna.setDefaultShape(bna.shapes.getRegularStar(6));
+					break;
+				case "7 star":
+					bna.setDefaultShape(bna.shapes.getRegularStar(7));
+					break;
+				case "8 star":
+					bna.setDefaultShape(bna.shapes.getRegularStar(8));
+					break;
+				}		
+				Color colorBean = new Color(bean.getColorRed(), bean.getColorGreen(), bean.getColorBlue());
+				bna.setDefaultColor(colorBean);
+				double nodeSizeBean = bean.getSizefactor();
+				bna.setDefaultNodesize(nodeSizeBean);
+			}
+		}
+		if(doResetAppearance == true){
+			bna.resetAppearance();
+		}
+	}
+	
+	
+	public void askForYaml() throws FileNotFoundException{
+		String yamlSourceFile = new File("YamlSourceFile.txt").getAbsolutePath();
+		File file = new File(yamlSourceFile);
+		BufferedReader buffReader = null;
+		System.out.println(yamlSourceFile);
+		if(file.exists()){
+		try {
+			buffReader = new BufferedReader(new FileReader(yamlSourceFile));
+			loadedYaml = buffReader.readLine();
+		} catch (IOException e) {
+			System.out.println("Buffered Reader (YamlSource) Error");
+			e.printStackTrace();
+		}
+		yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
+		beansList = yamlToObject.startConfig();
+		}else{
+			loadedYaml = "defaultYaml";
+			yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
+			beansList = yamlToObject.startConfig();
+		}
+	}
+
+	
+	
+	
 	/*
 	 * private DockingWindow setWindowLayout() {
 	 * 
@@ -502,7 +613,11 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	public String getCurrentPathway() {
 		TitledTab t = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();
+		if(t != null){
 		return t.getText();
+		}else{
+			return null;
+			}
 	}
 
 	public JFrame returnFrame() {
