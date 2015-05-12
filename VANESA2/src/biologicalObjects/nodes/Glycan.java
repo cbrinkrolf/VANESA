@@ -10,7 +10,7 @@ public class Glycan extends BiologicalNodeAbstract{
 		super(label,name);
 		setBiologicalElement(Elementdeclerations.glycan);
 		shapes = new VertexShapes();	
-		setDefaultShape(shapes.getRegularPolygon(8));
+		attributeSetter(this.getClass().getSimpleName(), this);
 		setReference(false);
 	}
 	

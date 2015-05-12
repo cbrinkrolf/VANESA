@@ -10,6 +10,7 @@ public class RNA extends BiologicalNodeAbstract{
 	public RNA(String label, String name) {
 		super(label, name);
 		// TODO Auto-generated constructor stub
+		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 
 	public String getNtSequence() {

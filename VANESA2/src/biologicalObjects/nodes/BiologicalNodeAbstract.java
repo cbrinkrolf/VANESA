@@ -5,7 +5,9 @@ import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
 import graph.jung.graphDrawing.VertexShapes;
 import graph.layouts.Circle;
+import gui.MainWindow;
 import gui.MainWindowSingleton;
+import gui.visualization.VisualizationConfigBeans.Bean;
 
 import java.awt.Color;
 import java.awt.Shape;
@@ -148,7 +150,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private boolean markedAsCoarseNode = false;
 	
 	private Point2D parentNodeDistance = new Point2D.Double(0,0);
-
+	
+	private MainWindow mainWindow = MainWindowSingleton.getInstance();
+	
 	public BiologicalNodeAbstract(String label, String name) {
 		super(name, new GraphInstance().getPathway());
 		super.setName(name);
@@ -202,6 +206,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * stringsEqualAndAreNotEmpty(label,label2); }
 	 */
 
+	public void attributeSetter(String className, BiologicalNodeAbstract bna){
+		mainWindow.nodeAttributeChanger(bna, false);
+	}
+	
+	
 	public void addOriginalGraph(int g) {
 		this.getOriginalGraphs().add(g);
 	}
@@ -1611,6 +1620,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		private BiologicalNodeAbstract getOuterType() {
 			return BiologicalNodeAbstract.this;
 		}
+		
 		
 		@Override
 		public int hashCode() {

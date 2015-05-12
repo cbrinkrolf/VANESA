@@ -9,7 +9,7 @@ public class Reaction extends BiologicalNodeAbstract{
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.reaction);
 		shapes = new VertexShapes();	
-		setDefaultShape(shapes.getEllipse());
+		attributeSetter(this.getClass().getSimpleName(), this);
 		setReference(false);
 	}
 	

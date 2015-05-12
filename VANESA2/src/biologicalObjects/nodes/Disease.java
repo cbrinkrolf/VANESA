@@ -10,7 +10,7 @@ public class Disease extends BiologicalNodeAbstract {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.disease);
 		shapes = new VertexShapes();	
-		setDefaultShape(shapes.getRegularStar(8));
+		attributeSetter(this.getClass().getSimpleName(), this);
 		setReference(false);
 	}
 	
