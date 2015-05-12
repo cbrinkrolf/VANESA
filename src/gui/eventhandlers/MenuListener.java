@@ -528,7 +528,9 @@ public class MenuListener implements ActionListener {
 
 			new Settings(3);
 
-		} /*
+		} else if ("visualizationSettings".equals(event)){
+			new Settings(4);
+		}/*
 		 * else if ("animation".equals(event)) { if (con.containsPathway()) { }
 		 * //new Regulation(); }
 		 */

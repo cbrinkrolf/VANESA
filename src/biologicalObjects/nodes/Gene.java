@@ -21,7 +21,7 @@ public class Gene extends BiologicalNodeAbstract {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.gene);
 		shapes = new VertexShapes();
-		setDefaultShape(shapes.getEllipse());
+		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 	
 //	@SuppressWarnings("unchecked")

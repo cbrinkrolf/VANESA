@@ -10,7 +10,7 @@ public class OrthologGroup extends Complex{
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.orthologGroup);
 		shapes = new VertexShapes();	
-		setDefaultShape(shapes.getRegularStar(10));
+		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 	
 	@Override

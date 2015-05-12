@@ -9,7 +9,7 @@ public class Matrix extends BiologicalNodeAbstract{
 		super(label,name);
 		setBiologicalElement(Elementdeclerations.matrix);
 		shapes = new VertexShapes();	
-		setDefaultShape(shapes.getEllipse());
+		attributeSetter(this.getClass().getSimpleName(), this);
 		setReference(false);
 	}
 	

@@ -9,7 +9,7 @@ public class GeneOntology extends BiologicalNodeAbstract{
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.go);
 		shapes = new VertexShapes();	
-		setDefaultShape(shapes.getEllipse());
+		attributeSetter(this.getClass().getSimpleName(), this);
 		setReference(false);
 	}
 	

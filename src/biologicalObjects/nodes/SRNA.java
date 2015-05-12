@@ -17,7 +17,7 @@ public class SRNA extends RNA{
 	public SRNA(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.sRNA);
-		setDefaultColor(Color.ORANGE);
+		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 
 	public void setTarbase_DS(String tarbase_DS) {
