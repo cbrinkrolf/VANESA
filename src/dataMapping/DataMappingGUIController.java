@@ -1,5 +1,12 @@
 package dataMapping;
 
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.GraphInstance;
+import graph.algorithms.NodeAttributeTypes;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
 import gui.ProgressBar;
 
 import java.awt.Color;
@@ -12,16 +19,22 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 
+import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import dataMapping.dataImport.ExcelException;
 import database.ppi.PPISearch;
 
@@ -111,6 +124,45 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 			JTable dmt = dataMappingView.getDataMappingTable();
 			dataMappingModelController.setNewMergeMap(dmt);
 			dataMappingView.dispose();
+			
+		} else if(e.getActionCommand().equals("save")){
+			
+			String input = JOptionPane.showInputDialog(null,"Enter experiment label","Save mapped Data as Attribute");
+			System.out.println(input);
+			if(input.length() > 0){
+				//get BNAs and mapping
+			
+				JTable dmt = dataMappingView.getDataMappingTable();
+				JRadioButton jButton;
+				HashMap<String, Double> labelsAndValues = new HashMap<String, Double>();
+
+				//retrieve Label and corresponding expression value
+				for(int i = 0; i<dmt.getRowCount(); i++) {
+					 jButton = (JRadioButton) dmt.getValueAt(i, 3);
+					if(jButton.isSelected()) {
+						labelsAndValues.put((String)dmt.getValueAt(i, 0), Double.parseDouble((String)dmt.getValueAt(i, 2)));			
+					}
+				}
+				
+				//MAP from network label to BNA and save attribute
+				String label;
+				// get network structure
+				MainWindow w = MainWindowSingleton.getInstance();
+				GraphContainer con = ContainerSingelton.getInstance();
+				Pathway pw = con.getPathway(w.getCurrentPathway());
+				MyGraph mg = pw.getGraph();
+				
+				
+				for(BiologicalNodeAbstract bna : mg.getAllVertices()){
+					label = bna.getLabel();
+					if(labelsAndValues.containsKey(label)){
+						bna.addAttribute(NodeAttributeTypes.EXPERIMENT,input, labelsAndValues.get(label));
+					}
+				}
+				
+				
+			}
+			
 			
 		}
 	}
