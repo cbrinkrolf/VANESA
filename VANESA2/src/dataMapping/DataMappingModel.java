@@ -1,5 +1,7 @@
 package dataMapping;
 
+import graph.algorithms.NodeAttributeTypes;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.Map.Entry;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 
 /**
  * This class holds the structures for the color coded mapping of a VANESA PPI network
@@ -164,6 +167,7 @@ public class DataMappingModel {
 							green = 255;
 					}
 					bna.setColor(new Color(red, green, blue));
+					
 					//System.out.println(bna.getLabel() + ";" + value + " Red: " + red + " Green: " + green + " Blue: " + blue);
 				}
 			}

@@ -118,6 +118,7 @@ public class DataMappingView extends JDialog implements Observer{
 	private JScrollPane dataMappingScroll;
 	private JButton changeData;
 	private JButton changeDataAndClose;
+	private JButton saveAsNodeAttribute;
 
 	private JPanel helpPanel;
 	private Object storedPathway;
@@ -234,6 +235,9 @@ public class DataMappingView extends JDialog implements Observer{
 		changeData.setActionCommand("changeData");
 		changeDataAndClose = new JButton("OK");
 		changeDataAndClose.setActionCommand("changeDataAndClose");
+		saveAsNodeAttribute = new JButton("save");
+		saveAsNodeAttribute.setActionCommand("save");
+		
 		
 		// panel for the screenshots tutorial
 		helpPanel = new JPanel();
@@ -467,6 +471,7 @@ public class DataMappingView extends JDialog implements Observer{
 		
 		buttonPanel.add(changeDataAndClose, "");
 		buttonPanel.add(changeData, "");
+		buttonPanel.add(saveAsNodeAttribute,"");
 
 		dataAdjust.add(buttonPanel, "skip 1");
 		
@@ -494,6 +499,7 @@ public class DataMappingView extends JDialog implements Observer{
 		table.addMouseListener(controller);
 		changeData.addActionListener(controller);
 		changeDataAndClose.addActionListener(controller);
+		saveAsNodeAttribute.addActionListener(controller);
 	} 
 
 	/**
