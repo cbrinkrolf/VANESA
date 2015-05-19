@@ -9,14 +9,12 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import biologicalElements.Elementdeclerations;
-import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ShortestPath {
 
 	GraphInstance graphInstance = new GraphInstance();
-	InternalGraphRepresentation graphRepresentation;
 	HashMap<BiologicalNodeAbstract, Pair> vertices = new HashMap<BiologicalNodeAbstract, Pair>();
 	Vector<Pair> priorityQueue = new Vector<Pair>();
 	//HashMap vertexNames = new HashMap();
@@ -28,8 +26,6 @@ public class ShortestPath {
 
 	public ShortestPath(BiologicalNodeAbstract start, BiologicalNodeAbstract end, Boolean mindMaps) {
 
-		graphRepresentation = graphInstance.getPathway()
-				.getGraphRepresentation();
 		pw = graphInstance.getPathway();
 		startNode = start;
 		endNode = end;
