@@ -128,8 +128,7 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 		} else if(e.getActionCommand().equals("save")){
 			
 			String input = JOptionPane.showInputDialog(null,"Enter experiment label","Savetag");
-			System.out.println(input);
-			if(input.length() > 0){
+			if(input!=null  && input.length() > 0){
 				//get BNAs and mapping
 			
 				JTable dmt = dataMappingView.getDataMappingTable();

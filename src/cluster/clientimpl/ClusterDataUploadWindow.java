@@ -6,6 +6,7 @@ import graph.algorithms.NodeAttributeNames;
 import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
 import gui.MainWindowSingleton;
+import gui.OptionPanel;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.TreeSet;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -72,17 +74,20 @@ public class ClusterDataUploadWindow extends JFrame {
 		super("Cluster Upload window: "
 				+ MainWindowSingleton.getInstance().getCurrentPathway());
 		// setPreferredSize(new Dimension(X, Y));
-		mg = GraphInstance.getMyGraph();
 
-		TablePanel newContentPane = new TablePanel();
-		newContentPane.setOpaque(true); // content panes must be opaque
-		setContentPane(newContentPane);
+		if (MainWindowSingleton.getInstance().getCurrentPathway() != null) {
 
-		pack();
-		RefineryUtilities.centerFrameOnScreen(this);
-		setVisible(true);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		// setResizable(false);
+			TablePanel newContentPane = new TablePanel();
+			newContentPane.setOpaque(true); // content panes must be opaque
+			setContentPane(newContentPane);
+
+			pack();
+			RefineryUtilities.centerFrameOnScreen(this);
+			setVisible(true);
+			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			// setResizable(false);
+		}else
+			JOptionPane.showMessageDialog(null, "please load or create a network");
 
 	}
 
@@ -250,7 +255,6 @@ public class ClusterDataUploadWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			ClusterDataUploadWindow.this.setVisible(false);
-			
 
 			// determine
 			mappingslist = new ArrayList<HashMap<String, Double>>();
@@ -266,14 +270,14 @@ public class ClusterDataUploadWindow extends JFrame {
 								.getNodeAttributeByName((String) data[line][NAME_STR]);
 						if (att != null) {
 							db = bna.getNodeAttributeByName(NodeAttributeNames.UNIPROT);
-							if(db != null){
+							if (db != null) {
 								id = db.getStringvalue();
 								id = id.trim();
 								if (id.length() > 6)
 									id = id.substring(0, 6);
 
 								uniprotmapping.put(id, att.getDoublevalue());
-							}					
+							}
 						}
 
 					}
@@ -283,18 +287,18 @@ public class ClusterDataUploadWindow extends JFrame {
 				}
 			}
 
-			//Transfer to arrays
-			String[] experimentArray = new String[attnames.size()]; 
-			for(int i = 0; i< attnames.size(); i++)
-				experimentArray[i] = attnames.get(i);				
-			
-			@SuppressWarnings("unchecked")
-			HashMap<String, Double>[] mappingsarray = new HashMap[attnames.size()];
-			for(int i = 0; i< attnames.size(); i++)
-				mappingsarray[i] = mappingslist.get(i);
-			
+			// Transfer to arrays
+			String[] experimentArray = new String[attnames.size()];
+			for (int i = 0; i < attnames.size(); i++)
+				experimentArray[i] = attnames.get(i);
 
-			Thread export = new Thread(new Runnable() {				
+			@SuppressWarnings("unchecked")
+			HashMap<String, Double>[] mappingsarray = new HashMap[attnames
+					.size()];
+			for (int i = 0; i < attnames.size(); i++)
+				mappingsarray[i] = mappingslist.get(i);
+
+			Thread export = new Thread(new Runnable() {
 				@Override
 				public void run() {// send over RMI
 					if (!mappingslist.isEmpty()) {
@@ -310,7 +314,8 @@ public class ClusterDataUploadWindow extends JFrame {
 								SwingUtilities.invokeLater(new Runnable() {
 									public void run() {
 										JOptionPane.showMessageDialog(
-												MainWindowSingleton.getInstance(),
+												MainWindowSingleton
+														.getInstance(),
 												"Queue is at maximum capacity!");
 									}
 								});
@@ -319,10 +324,14 @@ public class ClusterDataUploadWindow extends JFrame {
 						} catch (NotBoundException nbe) {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
-									JOptionPane.showMessageDialog(MainWindowSingleton
-											.getInstance().returnFrame(),
-											"RMI Interface could not be established.",
-											"Error", JOptionPane.ERROR_MESSAGE);
+									JOptionPane
+											.showMessageDialog(
+													MainWindowSingleton
+															.getInstance()
+															.returnFrame(),
+													"RMI Interface could not be established.",
+													"Error",
+													JOptionPane.ERROR_MESSAGE);
 								}
 							});
 							nbe.printStackTrace();
@@ -330,8 +339,9 @@ public class ClusterDataUploadWindow extends JFrame {
 						} catch (RemoteException re) {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
-									JOptionPane.showMessageDialog(MainWindowSingleton
-											.getInstance().returnFrame(),
+									JOptionPane.showMessageDialog(
+											MainWindowSingleton.getInstance()
+													.returnFrame(),
 											"Cluster not reachable.", "Error",
 											JOptionPane.ERROR_MESSAGE);
 								}
@@ -341,10 +351,14 @@ public class ClusterDataUploadWindow extends JFrame {
 						} catch (MalformedURLException mue) {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
-									JOptionPane.showMessageDialog(MainWindowSingleton
-											.getInstance().returnFrame(),
-											"Clusteradress could not be resolved.",
-											"Error", JOptionPane.ERROR_MESSAGE);
+									JOptionPane
+											.showMessageDialog(
+													MainWindowSingleton
+															.getInstance()
+															.returnFrame(),
+													"Clusteradress could not be resolved.",
+													"Error",
+													JOptionPane.ERROR_MESSAGE);
 								}
 							});
 							mue.printStackTrace();
@@ -352,18 +366,16 @@ public class ClusterDataUploadWindow extends JFrame {
 						}
 
 					}
-					
+
 				}
 			});
-			
-			
-			
-			//lock UI
-			MainWindowSingleton.getInstance().showProgressBar("submitting data to cluster");			
-			
-			//Start export
+
+			// lock UI
+			MainWindowSingleton.getInstance().showProgressBar(
+					"submitting data to cluster");
+
+			// Start export
 			export.start();
-			
 
 		}
 
