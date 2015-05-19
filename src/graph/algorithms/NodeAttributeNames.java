@@ -24,8 +24,8 @@ public class NodeAttributeNames {
 	/*
 	 * Foreign Database Ids
 	 */
-	public static final String HPRD = "Hprd";
-	public static final String UNIPROT = "Uniprot";
+	public static final String HPRD = "HPRD";
+	public static final String UNIPROT = "UNIPROT";
 	
 	/*
 	 * Annotations

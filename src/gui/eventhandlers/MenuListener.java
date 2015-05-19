@@ -71,6 +71,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import cluster.clientimpl.ClusterDataUploadWindow;
 import miscalleanous.tables.MyTable;
 import petriNet.ConvertToPetriNet;
 import petriNet.Cov;
@@ -1027,7 +1028,9 @@ public class MenuListener implements ActionListener {
 		} else if ("dataMappingColor".equals(event)) {
 			DataMappingColorMVC.createDataMapping();
 		} else if ("dataMappingDB".equals(event)) {
-			DataMapping2MVC.createDataMapping();
+			
+			new ClusterDataUploadWindow();
+			
 		} else if ("resolveReferences".equals(event)) {
 
 			// System.out.println("resolve");
