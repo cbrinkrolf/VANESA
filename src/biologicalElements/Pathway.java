@@ -137,8 +137,6 @@ public class Pathway implements Cloneable {
 
 	private final FilterSettings filterSettings;
 
-	private final InternalGraphRepresentation graphRepresentation = new InternalGraphRepresentation();
-
 	private boolean isDAWISProject = false;
 
 	private Pathway parent;
@@ -295,7 +293,6 @@ public class Pathway implements Cloneable {
 		bna.setName(bna.getName().trim());
 
 		// System.out.println(biologicalElements.size());
-		graphRepresentation.addVertex(bna);
 		getGraph().addVertex(bna, p);
 		if (bna instanceof Place) {
 			this.petriNet.setPlaces(this.petriNet.getPlaces() + 1);
@@ -522,7 +519,6 @@ public class Pathway implements Cloneable {
 				bea);
 			// System.out.println(biologicalElements.size());
 			// Pair p = bea.getEdge().getEndpoints();
-			graphRepresentation.addEdge(bea);
 			getGraph().addEdge(bea);
 			bea.setID();
 			biologicalElements.put(bea.getID() + "", bea);
@@ -535,7 +531,6 @@ public class Pathway implements Cloneable {
 				// System.out.println(biologicalElements.size());
 				// System.out.println("drin");
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
-				graphRepresentation.removeVertex(bna);
 				getGraph().removeVertex(bna);
 
 				// System.out.println("durch");
@@ -594,7 +589,6 @@ public class Pathway implements Cloneable {
 	public void removeEdge(BiologicalEdgeAbstract bea, boolean removeID) {
 		edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea
 				.getTo()));
-		graphRepresentation.removeEdge(bea);
 		getGraph().removeEdge(bea);
 		if (removeID) {
 			getIdSet().remove(bea.getID());
@@ -647,6 +641,10 @@ public class Pathway implements Cloneable {
 			BiologicalNodeAbstract to) {
 
 		return edges.containsKey(new Pair<BiologicalNodeAbstract>(from, to));
+	}
+	
+	public BiologicalEdgeAbstract getEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
+		return edges.get(new Pair<BiologicalNodeAbstract>(from, to));
 	}
 
 	public boolean containsElement(Object graphElement) {
@@ -1234,10 +1232,6 @@ public class Pathway implements Cloneable {
 
 	public void setDate(String date) {
 		this.date = date;
-	}
-
-	public InternalGraphRepresentation getGraphRepresentation() {
-		return graphRepresentation;
 	}
 
 	public void setSettings(boolean[] set) {

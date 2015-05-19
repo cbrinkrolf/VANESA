@@ -30,7 +30,6 @@ import java.util.concurrent.Future;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
@@ -43,7 +42,6 @@ public class DenselyConnectedBiclustering {
 	
 	private MainWindow w = MainWindowSingleton.getInstance();
 	private GraphContainer con = ContainerSingelton.getInstance();
-	private InternalGraphRepresentation graphRepresentation = con.getPathway(w.getCurrentPathway()).getGraphRepresentation(); 
 	private Pathway pw = con.getPathway(w.getCurrentPathway());
 	private MyGraph mg = pw.getGraph();
 	private NetworkProperties np;
@@ -271,7 +269,7 @@ public class DenselyConnectedBiclustering {
 				
 				
 					
-				if(graphRepresentation.doesEdgeExist(vertex1, vertex2) || graphRepresentation.doesEdgeExist(vertex2, vertex1)){
+				if(pw.existEdge(vertex1, vertex2) || pw.existEdge(vertex2, vertex1)){
 					
 					neigbours.add(vertex2.getID());
 					
