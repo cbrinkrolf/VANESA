@@ -1,6 +1,5 @@
 package cluster.clientimpl;
 
-import gui.MainWindow;
 import gui.MainWindowSingleton;
 
 import java.io.Serializable;
@@ -26,7 +25,7 @@ public class MappingCallback extends UnicastRemoteObject implements
 
 	@Override
 	public void progressNotify(String message) throws RemoteException {
-		DataMappingModelController.progressBarExport.setProgressBarString(message);
+		MainWindowSingleton.getInstance().progressbar.setProgressBarString(message);
 
 	}
 

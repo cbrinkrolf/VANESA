@@ -1,7 +1,5 @@
 package graph.algorithms.gui.clusters;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindowSingleton;
@@ -10,8 +8,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -23,6 +19,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
+import org.jdesktop.swingx.JXTable;
 import org.jfree.ui.RefineryUtilities;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -98,7 +95,7 @@ public class GraphClusterDyer extends JFrame {
 
 			ClusterTableModel tablemodel = new ClusterTableModel(columnNames,
 					data);
-			JTable table = new JTable(tablemodel);
+			JTable table = new JXTable(tablemodel);
 			// JTable table = new JTable(data,columnNames);
 			table.setPreferredScrollableViewportSize(new Dimension(500, 70));
 			table.setFillsViewportHeight(true);
@@ -198,6 +195,7 @@ public class GraphClusterDyer extends JFrame {
 
 		}
 
+		@SuppressWarnings("unchecked")
 		private void colorClusterNodes(Object newcolor, Object labelstopaint) {
 			
 			Color color = (Color) newcolor;
