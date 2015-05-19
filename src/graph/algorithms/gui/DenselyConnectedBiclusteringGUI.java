@@ -49,7 +49,6 @@ import javax.swing.table.TableModel;
 
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
-import biologicalElements.InternalGraphRepresentation;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -926,10 +925,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		}else if(e.getSource().hashCode() == clusterList.hashCode()){
 		
 		
-			InternalGraphRepresentation graphRepresentation = pw
-					.getGraphRepresentation();
-	
-			
 		    if (e.getValueIsAdjusting() == false) {
 	
 		        if (clusterList.getSelectedIndex() == -1) {
@@ -993,8 +988,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		
 			            	//TODO edge color!
 				            for(BiologicalNodeAbstract bna2 : selectedClusters.get(clusterIndex)){
-								BiologicalEdgeAbstract edge = graphRepresentation
-										.getEdge(bna1, bna2);
+								BiologicalEdgeAbstract edge = pw.getEdge(bna1, bna2);
 								if(edge != null){
 									if(!pickedEdges.keySet().contains(edge)){
 										pickedEdges.put(edge, edge.getColor());
@@ -1013,11 +1007,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			            }
 		        	}
 		            
-		            
-		            
 		        	clear.setEnabled(true);
-		            
-		           
 		            
 		        }
 		        mg.getVisualizationViewer().repaint();
@@ -1027,18 +1017,9 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		}
 	}
 
-
-
-
-	
-	
 	public static void reactivateUI() {
 
 		mw.closeProgressBar();
 		
 	}
-
-
-	
-	
 }
