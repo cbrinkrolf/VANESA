@@ -62,7 +62,7 @@ public class UNIDQueryMask extends QueryMask {
 			}
 		});
 
-		modeldepthspinner = new SpinnerNumberModel(1.0d, 0.0d, 6.0d, 1.0d);
+		modeldepthspinner = new SpinnerNumberModel(1.0d, 0.0d, 10.0d, 1.0d);
 		;
 		depthspinner = new JSpinner(modeldepthspinner);
 
