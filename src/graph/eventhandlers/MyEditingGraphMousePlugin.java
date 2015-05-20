@@ -373,11 +373,13 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 //							BiologicalEdgeAbstract bea = pw.addEdge(label, name, startVertex, vertex, element, directed).clone();
 //							bea.setFrom(nodes[0]);
 //							bea.setTo(nodes[1]);
-							BiologicalEdgeAbstract bea = new Pathway("").addEdge(label, name, nodes[0], nodes[1], element, directed);
-							pw.addEdge(label, name, startVertex, vertex, element, directed);
 							Set<BiologicalNodeAbstract> parentBNAs = new HashSet<BiologicalNodeAbstract>();
 							parentBNAs.addAll(nodes[0].getAllParentNodes());
 							parentBNAs.addAll(nodes[1].getAllParentNodes());
+							BiologicalEdgeAbstract bea = pw.addEdge(label, name, nodes[0], nodes[1], element, directed);
+							pw.addEdge(label, name, startVertex, vertex, element, directed);
+							
+							
 							for(BiologicalNodeAbstract bna : parentBNAs){
 //								System.out.println(bna.getLabel());
 //								System.out.println(bea + ": " + bea.getFrom().getLabel() + "->" + bea.getTo().getLabel());
