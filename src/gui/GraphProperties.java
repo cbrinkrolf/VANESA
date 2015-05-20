@@ -30,6 +30,8 @@ public class GraphProperties implements ActionListener {
 
 	public void revalidateView() {
 
+		//TODO reimplement if necessary
+		/*
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
 		filterSettings = pw.getFilterSettings();
@@ -61,7 +63,7 @@ public class GraphProperties implements ActionListener {
 			} else {
 				removeAllElements();
 			}
-		}
+		}*/
 	}
 
 	public JPanel getPanel() {
