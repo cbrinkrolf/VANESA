@@ -1,5 +1,7 @@
 package graph.algorithms.gui.clusters;
 
+import graph.ContainerSingelton;
+import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindowSingleton;
@@ -8,7 +10,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -23,6 +28,7 @@ import org.jdesktop.swingx.JXTable;
 import org.jfree.ui.RefineryUtilities;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 
 /**
  * The GraphClusterDyer applies colors to given BiologicalNodeAbstract_s
@@ -37,7 +43,7 @@ public class GraphClusterDyer extends JFrame {
 	 */
 	private static final long serialVersionUID = -5481882713834668420L;
 
-	final boolean DEBUG = true;
+	final boolean DEBUG = false;
 
 	private final int X = 800, Y = 600;
 	private Object[][] data;
@@ -52,9 +58,45 @@ public class GraphClusterDyer extends JFrame {
 	public GraphClusterDyer(TreeMap<Double, TreeSet<String>> dataset) {
 		super("Cluster Dyer: "+MainWindowSingleton.getInstance().getCurrentPathway());
 		setPreferredSize(new Dimension(X, Y));
-		mg = GraphInstance.getMyGraph();
+		
+		mg = ContainerSingelton.getInstance().getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).getGraph();
 
-		TablePanel newContentPane = new TablePanel(dataset);
+		HashMap<String, Double> expvalues = new HashMap<>();
+		
+		NodeAttribute att;
+		for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
+			if((att = bna.getNodeAttributeByName("chol logFC")) != null){
+				expvalues.put(bna.getLabel(),att.getDoublevalue());
+			}
+		}
+		
+		String[] values = new String[dataset.size()];
+		//iterate over dataset and determine the experimental values
+
+		String valuesentry;
+		int linecounter = dataset.size() - 1;
+		double avgval;
+		for(Entry<Double, TreeSet<String>> e : dataset.entrySet()){
+			valuesentry = "";
+			avgval = 0;
+			
+			for(String label : e.getValue()){
+				valuesentry+=expvalues.get(label)+"; ";		
+				avgval += expvalues.get(label);
+			}
+			
+			valuesentry+=("®"+(avgval/e.getValue().size())).substring(0, 6);
+			
+			values[linecounter] = valuesentry;
+			linecounter--;
+						
+		}
+		
+		
+		
+		
+				
+		TablePanel newContentPane = new TablePanel(dataset,values);
 		newContentPane.setOpaque(true); // content panes must be opaque
 		setContentPane(newContentPane);
 
@@ -72,7 +114,7 @@ public class GraphClusterDyer extends JFrame {
 		 */
 		private static final long serialVersionUID = 7594693595853651596L;
 
-		public TablePanel(TreeMap<Double, TreeSet<String>> dataset) {
+		public TablePanel(TreeMap<Double, TreeSet<String>> dataset, String[] values) {
 			super(new GridLayout(1, 0));
 
 			String[] columnNames = { "Score", "Labels", "Color" };
@@ -104,17 +146,21 @@ public class GraphClusterDyer extends JFrame {
 			table.setRowHeight(table.getRowHeight() + 5);
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			table.getColumnModel().getColumn(0).setPreferredWidth(50);
-			table.getColumnModel().getColumn(1).setPreferredWidth(680);
+			table.getColumnModel().getColumn(1).setPreferredWidth(650);
 			table.getColumnModel().getColumn(2).setPreferredWidth(50);
 
 			table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			
-	        //Set up renderer and editor for the Favorite Color column.
+	        //Set up renderer and editor for the Color column.
 	        table.setDefaultRenderer(Color.class,
 	                                 new ClusterColorRenderer(true));
 	        table.setDefaultEditor(Color.class,
 	                               new ClusterColorEditor());
-
+	       
+	        
+	        //Set up renderer for cluster tooltips
+	        table.setDefaultRenderer(TreeSet.class, new ClusterValueTooltipRenderer(values));
+	        
 			// Create the scroll pane and add the table to it.
 			JScrollPane scrollPane = new JScrollPane(table);
 
