@@ -123,7 +123,8 @@ public class Pathway implements Cloneable {
 
 	private final PetriNet petriNet = new PetriNet();
 
-	private final HashMap<String, GraphElementAbstract> biologicalElements = new HashMap<String, GraphElementAbstract>();
+	// private final HashMap<String, GraphElementAbstract> biologicalElements =
+	// new HashMap<String, GraphElementAbstract>();
 
 	private HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
 
@@ -139,7 +140,7 @@ public class Pathway implements Cloneable {
 
 	private SortedSet<Integer> ids = new TreeSet<Integer>();
 
-	private HashMap<BiologicalNodeAbstract, Point2D> openedSubPathways = new HashMap<BiologicalNodeAbstract,Point2D>();
+	private HashMap<BiologicalNodeAbstract, Point2D> openedSubPathways = new HashMap<BiologicalNodeAbstract, Point2D>();
 
 	private HashMap<String, ChangedFlags> changedFlags = new HashMap<String, ChangedFlags>();
 
@@ -148,7 +149,7 @@ public class Pathway implements Cloneable {
 	private HashMap<Place, Double> changedInitialValues = new HashMap<Place, Double>();
 
 	private HashMap<Place, Boundary> changedBoundaries = new HashMap<Place, Boundary>();
-	
+
 	private BiologicalNodeAbstract rootNode;
 
 	// ---Functional Methods---
@@ -262,9 +263,13 @@ public class Pathway implements Cloneable {
 			bna = new Protein(label + "FAILSAFE", name + "FAILSAFE");
 		if (bna != null) {
 			bna.setCompartment(compartment);
-			if(isBNA()){
-				Pathway parent = ((BiologicalNodeAbstract) this).getParentNode()==null ? getRootPathway() : ((BiologicalNodeAbstract) this).getParentNode();
-				bna.setParentNodeDistance(Circle.get2Ddistance(parent.getGraph().getVertexLocation((BiologicalNodeAbstract) this),p));
+			if (isBNA()) {
+				Pathway parent = ((BiologicalNodeAbstract) this)
+						.getParentNode() == null ? getRootPathway()
+						: ((BiologicalNodeAbstract) this).getParentNode();
+				bna.setParentNodeDistance(Circle.get2Ddistance(
+						parent.getGraph().getVertexLocation(
+								(BiologicalNodeAbstract) this), p));
 			}
 			return addVertex(bna, p);
 		} else
@@ -307,7 +312,7 @@ public class Pathway implements Cloneable {
 		}
 		// System.out.println("new id: "+bna.getID());
 		bna.setID();
-		biologicalElements.put(bna.getID() + "", bna);
+		// biologicalElements.put(bna.getID() + "", bna);
 		//
 		// System.out.println(this.graph.getAllVertices().size());
 		// bna.setNodesize(this.graph.getAllVertices().size());
@@ -468,23 +473,22 @@ public class Pathway implements Cloneable {
 
 	public BiologicalEdgeAbstract addEdge(BiologicalEdgeAbstract bea) {
 
-	
 		// System.out.println("edge hinzugefuegt");
 
 		if (bea != null) {
 
-//			edges.put(
-//					new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
-//					bea);
-//			// System.out.println(biologicalElements.size());
-//			// Pair p = bea.getEdge().getEndpoints();
-//			graphRepresentation.addEdge(bea);
-//			getGraph().addEdge(bea);
-//			bea.setID();
-//			biologicalElements.put(bea.getID() + "", bea);
-//			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
-//					&& bea.getFrom().getParentNode() == null
-//					&& bea.getTo().getParentNode() == null && !bea.isClone()) {
+			// edges.put(
+			// new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
+			// bea);
+			// // System.out.println(biologicalElements.size());
+			// // Pair p = bea.getEdge().getEndpoints();
+			// graphRepresentation.addEdge(bea);
+			// getGraph().addEdge(bea);
+			// bea.setID();
+			// biologicalElements.put(bea.getID() + "", bea);
+			// if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
+			// && bea.getFrom().getParentNode() == null
+			// && bea.getTo().getParentNode() == null && !bea.isClone()) {
 			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
 					&& !bea.isClone()) {
 				BiologicalNodeAbstract.addConnectingEdge(bea);
@@ -500,21 +504,22 @@ public class Pathway implements Cloneable {
 			}
 		return null;
 	}
-	
-	public void drawEdge(BiologicalEdgeAbstract bea){
-		Collection<BiologicalEdgeAbstract> existingEdges = getGraph().getJungGraph().findEdgeSet(bea.getFrom(), bea.getTo());
+
+	public void drawEdge(BiologicalEdgeAbstract bea) {
+		Collection<BiologicalEdgeAbstract> existingEdges = getGraph()
+				.getJungGraph().findEdgeSet(bea.getFrom(), bea.getTo());
 		boolean add = true;
-		for(BiologicalEdgeAbstract edge : existingEdges){
-			if(bea.isDirected()==edge.isDirected()){
-				add=false;
+		for (BiologicalEdgeAbstract edge : existingEdges) {
+			if (bea.isDirected() == edge.isDirected()) {
+				add = false;
 			}
 		}
-		if(add){
+		if (add) {
 			// System.out.println(biologicalElements.size());
 			// Pair p = bea.getEdge().getEndpoints();
 			getGraph().addEdge(bea);
 			bea.setID();
-			biologicalElements.put(bea.getID() + "", bea);
+			// biologicalElements.put(bea.getID() + "", bea);
 		}
 	}
 
@@ -566,15 +571,15 @@ public class Pathway implements Cloneable {
 				getRootPathway().deleteSubEdge(bea);
 				return;
 			}
-//			ids.remove(element.getID());
+			// ids.remove(element.getID());
 			// System.out.println(biologicalElements.size());
-			biologicalElements.remove(element.getID() + "");
+			// biologicalElements.remove(element.getID() + "");
 			this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
 			// System.out.println(biologicalElements.size());
 		}
 	}
-	
-	public void removeElementWithID(GraphElementAbstract element){
+
+	public void removeElementWithID(GraphElementAbstract element) {
 		removeElement(element);
 		ids.remove(element.getID());
 	}
@@ -583,12 +588,12 @@ public class Pathway implements Cloneable {
 		getGraph().removeEdge(bea);
 		if (removeID) {
 			getIdSet().remove(bea.getID());
-			biologicalElements.remove(bea.getID() + "");
-			}
+			// biologicalElements.remove(bea.getID() + "");
+		}
 		this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
 	}
-	
-	public void deleteSubEdge(BiologicalEdgeAbstract edge){
+
+	public void deleteSubEdge(BiologicalEdgeAbstract edge) {
 		BiologicalNodeAbstract from = edge.getFrom();
 		BiologicalNodeAbstract to = edge.getTo();
 		Set<BiologicalNodeAbstract> parentNodes = new HashSet<BiologicalNodeAbstract>();
@@ -596,7 +601,7 @@ public class Pathway implements Cloneable {
 		parentNodes.addAll(to.getAllParentNodes());
 		parentNodes.add(from);
 		parentNodes.add(to);
-		for(BiologicalNodeAbstract parent : parentNodes){
+		for (BiologicalNodeAbstract parent : parentNodes) {
 			parent.removeConnectingEdge(edge);
 		}
 		getRootPathway().updateMyGraph();
@@ -604,20 +609,22 @@ public class Pathway implements Cloneable {
 
 	public int edgeGrade(BiologicalEdgeAbstract bea) {
 		Set<BiologicalEdgeAbstract> conEdgesTo = new HashSet<BiologicalEdgeAbstract>();
-		for(BiologicalEdgeAbstract edge : bea.getFrom().getConnectingEdges()){
-			if(edge.isDirected() == bea.isDirected()){
-				if(edge.isDirected()){
-					if(bea.getTo().getConnectingEdges().contains(edge) && edge.getFrom().getCurrentShownParentNode(getGraph())==bea.getFrom()){
+		for (BiologicalEdgeAbstract edge : bea.getFrom().getConnectingEdges()) {
+			if (edge.isDirected() == bea.isDirected()) {
+				if (edge.isDirected()) {
+					if (bea.getTo().getConnectingEdges().contains(edge)
+							&& edge.getFrom().getCurrentShownParentNode(
+									getGraph()) == bea.getFrom()) {
 						conEdgesTo.add(edge);
 					}
 				} else {
-					if(bea.getTo().getConnectingEdges().contains(edge)){
+					if (bea.getTo().getConnectingEdges().contains(edge)) {
 						conEdgesTo.add(edge);
 					}
 				}
 			}
 		}
-//		System.out.println(conEdgesTo.size());
+		// System.out.println(conEdgesTo.size());
 		return conEdgesTo.size();
 	}
 
@@ -631,16 +638,21 @@ public class Pathway implements Cloneable {
 	public boolean existEdge(BiologicalNodeAbstract from,
 			BiologicalNodeAbstract to) {
 		return null != this.graph.getJungGraph().findEdge(from, to);
-		//return edges.containsKey(new Pair<BiologicalNodeAbstract>(from, to));
-	}
-	
-	public BiologicalEdgeAbstract getEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
-		return this.graph.getJungGraph().findEdge(from, to);
-		//return edges.get(new Pair<BiologicalNodeAbstract>(from, to));
+		// return edges.containsKey(new Pair<BiologicalNodeAbstract>(from, to));
 	}
 
-	public boolean containsElement(Object graphElement) {
-		return biologicalElements.containsValue(graphElement);
+	public BiologicalEdgeAbstract getEdge(BiologicalNodeAbstract from,
+			BiologicalNodeAbstract to) {
+		return this.graph.getJungGraph().findEdge(from, to);
+		// return edges.get(new Pair<BiologicalNodeAbstract>(from, to));
+	}
+
+	public boolean containsVertex(BiologicalNodeAbstract bna) {
+		return this.graph.getJungGraph().containsVertex(bna);
+	}
+
+	public boolean containsEdge(BiologicalEdgeAbstract bea) {
+		return this.graph.getJungGraph().containsEdge(bea);
 	}
 
 	public Set<String> getAllNodeDescriptions() {
@@ -660,28 +672,10 @@ public class Pathway implements Cloneable {
 	}
 
 	public boolean hasGotAtLeastOneElement() {
-		if (!biologicalElements.isEmpty())
+		if (!this.getAllNodes().isEmpty())
 			return true;
 		else
 			return false;
-	}
-
-	public BiologicalNodeAbstract getNodeByName(String name) {
-
-		Iterator<GraphElementAbstract> it = biologicalElements.values()
-				.iterator();
-		GraphElementAbstract gea;
-		BiologicalNodeAbstract bna;
-		while (it.hasNext()) {
-			gea = it.next();
-			if (gea.isVertex()) {
-				bna = (BiologicalNodeAbstract) gea;
-				if (bna.getName().equals(name)) {
-					return bna;
-				}
-			}
-		}
-		return null;
 	}
 
 	/*
@@ -698,68 +692,16 @@ public class Pathway implements Cloneable {
 
 	public BiologicalNodeAbstract getNodeByLabel(String label) {
 
-		Iterator<GraphElementAbstract> it = biologicalElements.values()
-				.iterator();
+		Iterator<BiologicalNodeAbstract> it = this.getAllNodes().iterator();
 
-		GraphElementAbstract gea;
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
-			gea = it.next();
-			if (gea.isVertex()) {
-				bna = (BiologicalNodeAbstract) gea;
-				if (bna.getLabel().equals(label)) {
-					return bna;
-				}
+			bna = it.next();
+			if (bna.getLabel().equals(label)) {
+				return bna;
 			}
 		}
 		return null;
-	}
-
-	public Object getNodeByKEGGEntryID(String id) {
-
-		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
-
-		GraphElementAbstract gea;
-		while (it.hasNext()) {
-			gea = it.next();
-			if (gea instanceof BiologicalNodeAbstract) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
-				if (bna.getKEGGnode().getKEGGentryID().equals(id)) {
-					return gea;
-				}
-			}
-		}
-		return null;
-	}
-
-	public HashSet<BiologicalEdgeAbstract> getAllKEGGEdges() {
-
-		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
-		HashSet<BiologicalEdgeAbstract> set = new HashSet<BiologicalEdgeAbstract>();
-
-		GraphElementAbstract gea;
-		while (it.hasNext()) {
-			gea = it.next();
-			if (gea instanceof BiologicalEdgeAbstract && gea.hasKEGGEdge()) {
-				set.add((BiologicalEdgeAbstract)gea);
-			}
-		}
-		return set;
-	}
-
-	public HashSet<BiologicalEdgeAbstract> getAllReactionPairEdges() {
-
-		Iterator<GraphElementAbstract> it = biologicalElements.values().iterator();
-		HashSet<BiologicalEdgeAbstract> set = new HashSet<BiologicalEdgeAbstract>();
-
-		GraphElementAbstract gea;
-		while (it.hasNext()) {
-			gea = it.next();
-			if (gea instanceof BiologicalEdgeAbstract && gea.hasReactionPairEdge()) {
-				set.add((BiologicalEdgeAbstract)gea);
-			}
-		}
-		return set;
 	}
 
 	/*
@@ -846,7 +788,7 @@ public class Pathway implements Cloneable {
 
 		return sortedList;
 	}
-	
+
 	public List<BiologicalNodeAbstract> getAllNodesSortedAlphabetically() {
 
 		HashMap<String, BiologicalNodeAbstract> map = new HashMap<String, BiologicalNodeAbstract>();
@@ -867,8 +809,8 @@ public class Pathway implements Cloneable {
 	}
 
 	public Set<BiologicalNodeAbstract> getSelectedNodes() {
-		return getGraph()
-				.getVisualizationViewer().getPickedVertexState().getPicked();
+		return getGraph().getVisualizationViewer().getPickedVertexState()
+				.getPicked();
 	}
 
 	public int countNodes() {
@@ -962,7 +904,7 @@ public class Pathway implements Cloneable {
 		while (it.hasNext()) {
 
 			bna = it.next();
-			if (bna != first && bna.getParentNode()==first.getParentNode()) {
+			if (bna != first && bna.getParentNode() == first.getParentNode()) {
 
 				Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
 				edges.addAll(bna.getConnectingEdges());
@@ -971,11 +913,11 @@ public class Pathway implements Cloneable {
 
 				while (itEdges.hasNext()) {
 					bea = itEdges.next();
-					if(bea.getFrom()==bna || bea.getTo()==bna){
+					if (bea.getFrom() == bna || bea.getTo() == bna) {
 						deleteSubEdge(bea);
-						if(bea.getTo()==bna){
+						if (bea.getTo() == bna) {
 							bea.setTo(first);
-						} else if(bea.getFrom()==bna){
+						} else if (bea.getFrom() == bna) {
 							bea.setFrom(first);
 						}
 						this.addEdge(bea);
@@ -1007,7 +949,7 @@ public class Pathway implements Cloneable {
 		BiologicalEdgeAbstract bea;
 		Iterator<BiologicalEdgeAbstract> itEdges;
 		BiologicalNodeAbstract newBNA;
-		Point2D p = new Point2D.Double(0,0);
+		Point2D p = new Point2D.Double(0, 0);
 
 		while (it.hasNext()) {
 			bna = it.next();
@@ -1023,23 +965,23 @@ public class Pathway implements Cloneable {
 				while (itEdges.hasNext()
 						&& this.graph.getJungGraph().getNeighborCount(bna) > 1) {
 					bea = itEdges.next();
-						deleteSubEdge(bea);
-						newBNA = bna.clone();
-						newBNA.setID();
-						newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
-						newBNA.setRef(bna);
-						if(bea.getTo()==bna){
-							bea.setTo(newBNA);
-							p = this.getGraph().getVertexLocation(bea.getFrom());
-						} else if(bea.getFrom()==bna){
-							bea.setFrom(newBNA);
-							p = this.getGraph().getVertexLocation(bea.getTo());
-						}
-						this.addVertex(newBNA, new Point2D.Double(
-								p.getX() + 20, p.getY() + 20));
-						this.addEdge(bea);
-						graph.getVisualizationViewer().getPickedVertexState()
-								.pick(newBNA, true);
+					deleteSubEdge(bea);
+					newBNA = bna.clone();
+					newBNA.setID();
+					newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
+					newBNA.setRef(bna);
+					if (bea.getTo() == bna) {
+						bea.setTo(newBNA);
+						p = this.getGraph().getVertexLocation(bea.getFrom());
+					} else if (bea.getFrom() == bna) {
+						bea.setFrom(newBNA);
+						p = this.getGraph().getVertexLocation(bea.getTo());
+					}
+					this.addVertex(newBNA,
+							new Point2D.Double(p.getX() + 20, p.getY() + 20));
+					this.addEdge(bea);
+					graph.getVisualizationViewer().getPickedVertexState()
+							.pick(newBNA, true);
 				}
 				// System.out.println(graph.getJungGraph().getOutEdges(bna).size());
 			}
@@ -1056,7 +998,6 @@ public class Pathway implements Cloneable {
 	 * Reset Element lists.
 	 */
 	public void clearElements() {
-		biologicalElements.clear();
 		set.clear();
 	}
 
@@ -1110,7 +1051,7 @@ public class Pathway implements Cloneable {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
-		//System.out.println(filename);
+		// System.out.println(filename);
 	}
 
 	public String getLink() {
@@ -1191,10 +1132,6 @@ public class Pathway implements Cloneable {
 			tab.setTitle(name);
 		}
 		return tab;
-	}
-
-	public HashMap<String, GraphElementAbstract> getBiologicalElements() {
-		return biologicalElements;
 	}
 
 	public FilterSettings getFilterSettings() {
@@ -1305,7 +1242,7 @@ public class Pathway implements Cloneable {
 	}
 
 	public SortedSet<Integer> getIdSet() {
-		if(getRootPathway()==this)
+		if (getRootPathway() == this)
 			return this.ids;
 		return getRootPathway().getIdSet();
 	}
@@ -1324,7 +1261,7 @@ public class Pathway implements Cloneable {
 		BiologicalNodeAbstract thisNode = null;
 		if (this.isBNA()) {
 			thisNode = (BiologicalNodeAbstract) this;
-//			System.out.println(thisNode.getLabel());
+			// System.out.println(thisNode.getLabel());
 		}
 
 		// go through all nodes in the current Pathway
@@ -1339,7 +1276,7 @@ public class Pathway implements Cloneable {
 		BiologicalNodeAbstract parentNode;
 		while (it.hasNext()) {
 			node = it.next();
-			
+
 			switch (node.getStateChanged()) {
 
 			case UNCHANGED:
@@ -1389,56 +1326,68 @@ public class Pathway implements Cloneable {
 					}
 					thisNode.getEnvironment().remove(node);
 				}
-				
+
 				break;
 
 			case COARSED:
 				parentNode = node.getParentNode();
 				// if already added in correct graph, break.
 				if (parentNode == this) {
-					if(getGraph().getLayout() instanceof HEBLayout){
-						((HEBLayout) getGraph().getLayout()).addToOrder(parentNode);
+					if (getGraph().getLayout() instanceof HEBLayout) {
+						((HEBLayout) getGraph().getLayout())
+								.addToOrder(parentNode);
 					}
 					break;
 				}
-				// Coarse nodes. Location is copied by a border node if possible.
-				if ((this.isBNA() && !thisNode.getEnvironment().contains(node)) || !this.isBNA()) {
+				// Coarse nodes. Location is copied by a border node if
+				// possible.
+				if ((this.isBNA() && !thisNode.getEnvironment().contains(node))
+						|| !this.isBNA()) {
 					Point2D loc;
-					if(parentNode.getRootNode()!=null && getGraph().getAllVertices().contains(parentNode.getRootNode())){
-						loc = getGraph().getVertexLocation(parentNode.getRootNode());
+					if (parentNode.getRootNode() != null
+							&& getGraph().getAllVertices().contains(
+									parentNode.getRootNode())) {
+						loc = getGraph().getVertexLocation(
+								parentNode.getRootNode());
 					} else {
-//						loc = parentNode.getBorder().isEmpty() ? getGraph().getVertexLocation(node)
-//								: getGraph().getVertexLocation(parentNode.getBorder().iterator().next());
+						// loc = parentNode.getBorder().isEmpty() ?
+						// getGraph().getVertexLocation(node)
+						// :
+						// getGraph().getVertexLocation(parentNode.getBorder().iterator().next());
 						Set<Point2D> locations = new HashSet<Point2D>();
-						for(BiologicalNodeAbstract n : parentNode.getInnerNodes()){
+						for (BiologicalNodeAbstract n : parentNode
+								.getInnerNodes()) {
 							locations.add(this.getGraph().getVertexLocation(n));
 						}
 						loc = Circle.averagePoint(locations);
 					}
 					addVertex(parentNode, loc);
-					node.setParentNodeDistance(Circle.get2Ddistance(loc, this.getGraph().getVertexLocation(node)));
+					node.setParentNodeDistance(Circle.get2Ddistance(loc, this
+							.getGraph().getVertexLocation(node)));
 					removeElement(node);
 				}
 
-				if(getGraph().getLayout() instanceof HEBLayout){
+				if (getGraph().getLayout() instanceof HEBLayout) {
 					((HEBLayout) getGraph().getLayout()).addToOrder(parentNode);
 				}
 				parentNode.setCoarseNodesize();
 				break;
-				
+
 			case ADDED:
 				parentNode = node.getParentNode();
 				// if already added in correct graph, break.
 				if (parentNode == this) {
-					if(getGraph().getLayout() instanceof HEBLayout){
-						((HEBLayout) getGraph().getLayout()).addToOrder(parentNode);
+					if (getGraph().getLayout() instanceof HEBLayout) {
+						((HEBLayout) getGraph().getLayout())
+								.addToOrder(parentNode);
 					}
 					break;
 				}
-				// Coarse nodes. Location is copied by a border node if possible.
+				// Coarse nodes. Location is copied by a border node if
+				// possible.
 				removeElement(node);
 
-				if(getGraph().getLayout() instanceof HEBLayout){
+				if (getGraph().getLayout() instanceof HEBLayout) {
 					((HEBLayout) getGraph().getLayout()).addToOrder(parentNode);
 				}
 				parentNode.setCoarseNodesize();
@@ -1455,7 +1404,7 @@ public class Pathway implements Cloneable {
 			default:
 				break;
 			}
-			
+
 			// update all included subpathways
 			if (thisNode == null) {
 				node.updateMyGraph();
@@ -1465,7 +1414,7 @@ public class Pathway implements Cloneable {
 
 		}
 
-		if(getGraph(false)!=null){
+		if (getGraph(false) != null) {
 			if (isBNA() && thisNode.isCoarseNode()) {
 				thisNode.updateHierarchicalAttributes();
 			}
@@ -1483,25 +1432,29 @@ public class Pathway implements Cloneable {
 	 * coarsed Subnodes.
 	 */
 	protected void updateEdges() {
-		
-		BiologicalNodeAbstract thisNode = this instanceof BiologicalNodeAbstract ? (BiologicalNodeAbstract) this : null;
+
+		BiologicalNodeAbstract thisNode = this instanceof BiologicalNodeAbstract ? (BiologicalNodeAbstract) this
+				: null;
 		Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
 		edges.addAll(getAllEdges());
-		for(BiologicalEdgeAbstract edge : edges){
+		for (BiologicalEdgeAbstract edge : edges) {
 			removeEdge(edge, false);
 		}
 		Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
-		if(thisNode==null){
+		if (thisNode == null) {
 			innerNodes.addAll(getAllNodes());
 		} else {
 			innerNodes.addAll(thisNode.getInnerNodes());
 		}
-		
-		for(BiologicalNodeAbstract node : innerNodes){
-			for (BiologicalEdgeAbstract connectingEdge : node.getConnectingEdges()) {
+
+		for (BiologicalNodeAbstract node : innerNodes) {
+			for (BiologicalEdgeAbstract connectingEdge : node
+					.getConnectingEdges()) {
 				BiologicalEdgeAbstract newEdge = connectingEdge.clone();
-				newEdge.setTo(newEdge.getTo().getCurrentShownParentNode(getGraph()));
-				newEdge.setFrom(newEdge.getFrom().getCurrentShownParentNode(getGraph()));
+				newEdge.setTo(newEdge.getTo().getCurrentShownParentNode(
+						getGraph()));
+				newEdge.setFrom(newEdge.getFrom().getCurrentShownParentNode(
+						getGraph()));
 				if (newEdge.isValid(false))
 					drawEdge(newEdge);
 			}
@@ -1541,134 +1494,155 @@ public class Pathway implements Cloneable {
 			}
 		}
 	}
-	
+
 	/**
-	 * Opens a coarse node in the Pathway without flattening it in data structure.
-	 * @param subPathway Node to be opened
-	 * @return false, if opening action is not possible. true, if node was opened.
+	 * Opens a coarse node in the Pathway without flattening it in data
+	 * structure.
+	 * 
+	 * @param subPathway
+	 *            Node to be opened
+	 * @return false, if opening action is not possible. true, if node was
+	 *         opened.
 	 * @author tloka
 	 */
-	public boolean openSubPathway(BiologicalNodeAbstract subPathway){
-		if(!subPathway.isCoarseNode() || subPathway.getInnerNodes().size()==0){
+	public boolean openSubPathway(BiologicalNodeAbstract subPathway) {
+		if (!subPathway.isCoarseNode()
+				|| subPathway.getInnerNodes().size() == 0) {
 			return false;
 		}
-		if((this instanceof BiologicalNodeAbstract && 
-				((BiologicalNodeAbstract) this).getEnvironment().contains(subPathway))){
+		if ((this instanceof BiologicalNodeAbstract && ((BiologicalNodeAbstract) this)
+				.getEnvironment().contains(subPathway))) {
 			return false;
 		}
 		Point2D location = getGraph().getVertexLocation(subPathway);
 		removeElement(subPathway);
 		Color color;
-		for(BiologicalNodeAbstract node : subPathway.getInnerNodes()){
-			addVertex(node, Circle.addPoints(location,node.getParentNodeDistance()));
+		for (BiologicalNodeAbstract node : subPathway.getInnerNodes()) {
+			addVertex(node,
+					Circle.addPoints(location, node.getParentNodeDistance()));
 			color = node.getColor();
-			node.setColor(new Color((int) Math.min(255,color.getRed()*1.2f),(int) Math.min(255,(int) color.getGreen()*1.2f),(int) Math.min(255,(int) color.getBlue()*1.2f)));
+			node.setColor(new Color((int) Math.min(255, color.getRed() * 1.2f),
+					(int) Math.min(255, (int) color.getGreen() * 1.2f),
+					(int) Math.min(255, (int) color.getBlue() * 1.2f)));
 		}
-//		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
-//			BiologicalEdgeAbstract e = edge.clone();
-//			e.setTo(e.getTo().getCurrentShownParentNode(getGraph()));
-//			e.setFrom(e.getFrom().getCurrentShownParentNode(getGraph()));
-//			if(e.isValid(false)){
-//				addEdge(e);
-//			}
-//		}
-//		for(BiologicalEdgeAbstract edge : subPathway.getAllEdges()){
-//			if(!subPathway.getEnvironment().contains(edge.getTo()) && 
-//					!subPathway.getEnvironment().contains(edge.getFrom())){
-//				addEdge(edge);
-//			}
-//		}
+		// for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
+		// BiologicalEdgeAbstract e = edge.clone();
+		// e.setTo(e.getTo().getCurrentShownParentNode(getGraph()));
+		// e.setFrom(e.getFrom().getCurrentShownParentNode(getGraph()));
+		// if(e.isValid(false)){
+		// addEdge(e);
+		// }
+		// }
+		// for(BiologicalEdgeAbstract edge : subPathway.getAllEdges()){
+		// if(!subPathway.getEnvironment().contains(edge.getTo()) &&
+		// !subPathway.getEnvironment().contains(edge.getFrom())){
+		// addEdge(edge);
+		// }
+		// }
 		updateEdges();
-		openedSubPathways.put(subPathway,location);
-		if(getGraph().getLayout() instanceof HierarchicalCircleLayout){
-			((HierarchicalCircleLayout) getGraph().getLayout()).getConfig().setRelayout(true);
+		openedSubPathways.put(subPathway, location);
+		if (getGraph().getLayout() instanceof HierarchicalCircleLayout) {
+			((HierarchicalCircleLayout) getGraph().getLayout()).getConfig()
+					.setRelayout(true);
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Opens all coarse nodes (including sub-coarsenodes) in the Pathway 
-	 * without flattening it in data structure.
+	 * Opens all coarse nodes (including sub-coarsenodes) in the Pathway without
+	 * flattening it in data structure.
+	 * 
 	 * @author tloka
 	 */
-	public void openAllSubPathways(){
-		
+	public void openAllSubPathways() {
+
 		Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
 		boolean repeat = true;
-		
-		while(repeat){
+
+		while (repeat) {
 			repeat = false;
 			nodes.clear();
 			nodes.addAll(getAllNodes());
-			for(BiologicalNodeAbstract n : nodes){
-				if(openSubPathway(n))
+			for (BiologicalNodeAbstract n : nodes) {
+				if (openSubPathway(n))
 					repeat = true;
 			}
 		}
 	}
-	
+
 	/**
 	 * Closes a coarse node in the Pathway.
-	 * @param subPathway The node to be closed.
+	 * 
+	 * @param subPathway
+	 *            The node to be closed.
 	 * @author tloka
 	 */
-	public void closeSubPathway(BiologicalNodeAbstract subPathway){
-		if(!openedSubPathways.keySet().contains(subPathway)){
+	public void closeSubPathway(BiologicalNodeAbstract subPathway) {
+		if (!openedSubPathways.keySet().contains(subPathway)) {
 			return;
 		}
-		if(subPathway.getRootNode()!=null){
-			addVertex(subPathway, this.getGraph().getVertexLocation(subPathway.getRootNode()));
-		} else if(subPathway.getInnerNodes().size()>0){
-			BiologicalNodeAbstract locationNode = subPathway.getInnerNodes().iterator().next();
+		if (subPathway.getRootNode() != null) {
+			addVertex(subPathway,
+					this.getGraph().getVertexLocation(subPathway.getRootNode()));
+		} else if (subPathway.getInnerNodes().size() > 0) {
+			BiologicalNodeAbstract locationNode = subPathway.getInnerNodes()
+					.iterator().next();
 			Point2D loc = this.getGraph().getVertexLocation(locationNode);
 			Point2D dist = locationNode.getParentNodeDistance();
-			dist = new Point2D.Double(-dist.getX(),-dist.getY());
+			dist = new Point2D.Double(-dist.getX(), -dist.getY());
 			addVertex(subPathway, Circle.addPoints(loc, dist));
 		} else {
 			addVertex(subPathway, this.getGraph().getVertexLocation(subPathway));
 		}
 
 		Color color;
-		for(BiologicalNodeAbstract node : subPathway.getInnerNodes()){
+		for (BiologicalNodeAbstract node : subPathway.getInnerNodes()) {
 			closeSubPathway(node);
 			color = node.getColor();
-			node.setColor(new Color((int) Math.min(255,(int) color.getRed()/1.2f),(int) Math.min(255,(int) color.getGreen()/1.2f),(int) Math.min(255,(int) color.getBlue()/1.2f)));
-//			subPathway.getGraph().moveVertex(node, this.getGraph().getVertexLocation(node).getX(), this.getGraph().getVertexLocation(node).getY());
+			node.setColor(new Color((int) Math.min(255,
+					(int) color.getRed() / 1.2f), (int) Math.min(255,
+					(int) color.getGreen() / 1.2f), (int) Math.min(255,
+					(int) color.getBlue() / 1.2f)));
+			// subPathway.getGraph().moveVertex(node,
+			// this.getGraph().getVertexLocation(node).getX(),
+			// this.getGraph().getVertexLocation(node).getY());
 			removeElement(node);
 		}
-//		for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
-//			BiologicalEdgeAbstract e = edge.clone();
-//			e.setTo(e.getTo().getCurrentShownParentNode(getGraph()));
-//			e.setFrom(e.getFrom().getCurrentShownParentNode(getGraph()));
-//			if(e.isValid(false)){
-//				addEdge(e);
-//			}
-//		}
+		// for(BiologicalEdgeAbstract edge : subPathway.getConnectingEdges()){
+		// BiologicalEdgeAbstract e = edge.clone();
+		// e.setTo(e.getTo().getCurrentShownParentNode(getGraph()));
+		// e.setFrom(e.getFrom().getCurrentShownParentNode(getGraph()));
+		// if(e.isValid(false)){
+		// addEdge(e);
+		// }
+		// }
 		updateEdges();
 		openedSubPathways.remove(subPathway);
-		if(getGraph().getLayout() instanceof HierarchicalCircleLayout){
-			((HierarchicalCircleLayout) getGraph().getLayout()).getConfig().setRelayout(true);
+		if (getGraph().getLayout() instanceof HierarchicalCircleLayout) {
+			((HierarchicalCircleLayout) getGraph().getLayout()).getConfig()
+					.setRelayout(true);
 		}
 	}
-	
+
 	/**
 	 * Closes all coarse nodes in the Pathway.
+	 * 
 	 * @author tloka
 	 */
-	public void closeAllSubPathways(){
+	public void closeAllSubPathways() {
 		HashSet<BiologicalNodeAbstract> osp = new HashSet<BiologicalNodeAbstract>();
-		while(!openedSubPathways.isEmpty()){
+		while (!openedSubPathways.isEmpty()) {
 			osp.addAll(openedSubPathways.keySet());
 			HashSet<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
-			for(BiologicalNodeAbstract n : osp){
+			for (BiologicalNodeAbstract n : osp) {
 				innerNodes.addAll(n.getInnerNodes());
 				innerNodes.retainAll(openedSubPathways.keySet());
-				if(innerNodes.isEmpty()){
+				if (innerNodes.isEmpty()) {
 					closeSubPathway(n);
 				}
 				innerNodes.clear();
 			}
-			if(openedSubPathways.size()==osp.size()){
+			if (openedSubPathways.size() == osp.size()) {
 				break;
 			}
 		}
@@ -1677,28 +1651,28 @@ public class Pathway implements Cloneable {
 	public Set<BiologicalNodeAbstract> getOpenedSubPathways() {
 		return openedSubPathways.keySet();
 	}
-	
-	public Point2D getOpenedSubPathwayLocation(BiologicalNodeAbstract n){
-		if(graph.getJungGraph().containsVertex(n))
+
+	public Point2D getOpenedSubPathwayLocation(BiologicalNodeAbstract n) {
+		if (graph.getJungGraph().containsVertex(n))
 			return graph.getVertexLocation(n);
-		if(getOpenedSubPathways().contains(n))
+		if (getOpenedSubPathways().contains(n))
 			return openedSubPathways.get(n);
 		return null;
 	}
-	
-	public BiologicalNodeAbstract getRootNode(){
-//		if(rootNode != null && getAllNodes().contains(rootNode))
-//			return rootNode;
-//		if(getRootPathway()==this && getAllNodes().contains(rootNode)){
-//			return rootNode;
-//		} else if(getRootPathway()==this){
-//			return null;
-//		}
-//		return null;
+
+	public BiologicalNodeAbstract getRootNode() {
+		// if(rootNode != null && getAllNodes().contains(rootNode))
+		// return rootNode;
+		// if(getRootPathway()==this && getAllNodes().contains(rootNode)){
+		// return rootNode;
+		// } else if(getRootPathway()==this){
+		// return null;
+		// }
+		// return null;
 		return rootNode;
 	}
-	
-	public void setRootNode(BiologicalNodeAbstract node){
+
+	public void setRootNode(BiologicalNodeAbstract node) {
 		rootNode = node;
 	}
 
