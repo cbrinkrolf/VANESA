@@ -111,8 +111,6 @@ public class Pathway implements Cloneable {
 
 	private String description = "";
 
-	private String number = "";
-
 	private boolean[] settings = new boolean[11];
 
 	private boolean isPetriNet = false;
@@ -1109,14 +1107,6 @@ public class Pathway implements Cloneable {
 
 	public FilterSettings getFilterSettings() {
 		return filterSettings;
-	}
-
-	public String getNumber() {
-		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
 	}
 
 	public String getVersion() {
