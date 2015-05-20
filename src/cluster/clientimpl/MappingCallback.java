@@ -33,13 +33,15 @@ public class MappingCallback extends UnicastRemoteObject implements
 	public void setMappingProgress(int mappedNodes, String experiment)
 			throws RemoteException {	
 		final String message = mappedNodes + " successfull mapped.";
+		MainWindowSingleton.getInstance().closeProgressBar();
+		
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JOptionPane.showMessageDialog(
 						MainWindowSingleton.getInstance(),
 						message,
 						"Mapping done", JOptionPane.INFORMATION_MESSAGE);
-				DataMappingModelController.reactivateUI();
 			}
 		});
 		

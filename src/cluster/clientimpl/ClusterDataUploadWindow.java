@@ -376,6 +376,8 @@ public class ClusterDataUploadWindow extends JFrame {
 
 			// Start export
 			export.start();
+			
+			ClusterDataUploadWindow.this.dispose();;
 
 		}
 
