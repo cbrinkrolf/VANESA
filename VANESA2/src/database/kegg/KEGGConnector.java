@@ -553,13 +553,13 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 					subtype = bna;
 			}
 
-			if (!pw.containsElement(bna1))
+			if (!pw.containsVertex(bna1))
 				bna1 = nodeLowToHighPriorityMap.get(new KeggNodeDescribtion(
 						keggPathway, entry1));
-			if (!pw.containsElement(bna2))
+			if (!pw.containsVertex(bna2))
 				bna2 = nodeLowToHighPriorityMap.get(new KeggNodeDescribtion(
 						keggPathway, entry2));
-			if (!pw.containsElement(subtype))
+			if (!pw.containsVertex(subtype))
 				subtype = nodeLowToHighPriorityMap.get(new KeggNodeDescribtion(
 						keggPathway, subtypeValue));
 
@@ -667,13 +667,13 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 						enzyme = bna;
 				}
 			}
-			if (!pw.containsElement(substrate))
+			if (!pw.containsVertex(substrate))
 				substrate = nodeLowToHighPriorityMap
 						.get(new KeggNodeDescribtion(keggPathway, substrateId));
-			if (!pw.containsElement(product))
+			if (!pw.containsVertex(product))
 				product = nodeLowToHighPriorityMap.get(new KeggNodeDescribtion(
 						keggPathway, productId));
-			if (!pw.containsElement(enzyme))
+			if (!pw.containsVertex(enzyme))
 				enzyme = nodeLowToHighPriorityMap.get(new KeggNodeDescribtion(
 						keggPathway, enzymeId));
 
