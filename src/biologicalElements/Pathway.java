@@ -113,8 +113,6 @@ public class Pathway implements Cloneable {
 
 	private String number = "";
 
-	private Hashtable<String, Integer> nodeDescription = new Hashtable<String, Integer>();
-
 	private boolean[] settings = new boolean[11];
 
 	private boolean isPetriNet = false;
@@ -303,13 +301,6 @@ public class Pathway implements Cloneable {
 		}
 		// System.out.println("node eingefuegt");
 
-		if (!nodeDescription.containsKey(bna.getBiologicalElement())) {
-			nodeDescription.put(bna.getBiologicalElement(), 1);
-		} else {
-			Integer temp = nodeDescription.get(bna.getBiologicalElement()) + 1;
-			nodeDescription.remove(bna.getBiologicalElement());
-			nodeDescription.put(bna.getBiologicalElement(), temp);
-		}
 		// System.out.println("new id: "+bna.getID());
 		bna.setID();
 		// biologicalElements.put(bna.getID() + "", bna);
@@ -532,19 +523,6 @@ public class Pathway implements Cloneable {
 				getGraph().removeVertex(bna);
 
 				// System.out.println("durch");
-				if (!nodeDescription.containsKey(bna.getBiologicalElement())) {
-				} else {
-					Integer temp = nodeDescription.get(bna
-							.getBiologicalElement());
-					// System.out.println(temp);
-					if (temp == 1) {
-						nodeDescription.remove(bna.getBiologicalElement());
-					} else {
-						nodeDescription.remove(bna.getBiologicalElement());
-						nodeDescription.put(bna.getBiologicalElement(),
-								temp - 1);
-					}
-				}
 				if (bna instanceof Place) {
 					this.petriNet.setPlaces(this.petriNet.getPlaces() - 1);
 				}
@@ -653,11 +631,6 @@ public class Pathway implements Cloneable {
 
 	public boolean containsEdge(BiologicalEdgeAbstract bea) {
 		return this.graph.getJungGraph().containsEdge(bea);
-	}
-
-	public Set<String> getAllNodeDescriptions() {
-
-		return nodeDescription.keySet();
 	}
 
 	public HashSet<String> getAllNodeLabels() {
