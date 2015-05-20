@@ -188,7 +188,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 		pw.setOrganism(organism);
 		pw.setLink(pathwayLink);
 		pw.setImagePath(pathwayImage);
-		pw.setNumber(pathwayNumber);
 
 		myGraph = pw.getGraph();
 

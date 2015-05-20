@@ -849,7 +849,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 			pw.setOrganism(organism);
 			pw.setLink(pathwayLink);
 			pw.setImagePath(pathwayImage);
-			pw.setNumber(pathwayNumber);
 
 			// GraphInstance i = new GraphInstance();
 			// Pathway pw = new CreatePathway().getPathway();
