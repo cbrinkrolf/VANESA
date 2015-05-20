@@ -70,7 +70,9 @@ public class FilterSettings {
 	
 	private void applySettings(String element, boolean value) {
 
-		pw = graphInstance.getPathway();
+		//TODO reimplement if necessary
+		
+		/*pw = graphInstance.getPathway();
 		HashMap<String, GraphElementAbstract> map = pw.getBiologicalElements();
 		Iterator<GraphElementAbstract> it = map.values().iterator();
 		GraphElementAbstract gea;
@@ -97,7 +99,7 @@ public class FilterSettings {
 					}
 				}
 			}
-		}
+		}*/
 
 //		HashSet set_edges = pw.getAllEdges();
 		Iterator<BiologicalEdgeAbstract> it2 = pw.getAllEdges().iterator();
