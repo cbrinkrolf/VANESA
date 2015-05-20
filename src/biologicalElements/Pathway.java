@@ -1,5 +1,20 @@
 package biologicalElements;
 
+import graph.ChangedFlags;
+import graph.filter.FilterSettings;
+import graph.gui.Boundary;
+import graph.gui.EdgeDeleteDialog;
+import graph.gui.Parameter;
+import graph.jung.classes.MyGraph;
+import graph.layouts.Circle;
+import graph.layouts.HierarchicalCircleLayout;
+import graph.layouts.hebLayout.HEBLayout;
+import gui.GraphTab;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+//import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.utils.Pair;
+
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -67,21 +82,6 @@ import biologicalObjects.nodes.SRNA;
 import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
-import edu.uci.ics.jung.graph.util.Pair;
-import graph.ChangedFlags;
-import graph.filter.FilterSettings;
-import graph.gui.Boundary;
-import graph.gui.EdgeDeleteDialog;
-import graph.gui.Parameter;
-import graph.jung.classes.MyGraph;
-import graph.layouts.Circle;
-import graph.layouts.HierarchicalCircleLayout;
-import graph.layouts.hebLayout.HEBLayout;
-import gui.GraphTab;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.utils.Pair;
 
 public class Pathway implements Cloneable {
 
@@ -125,11 +125,7 @@ public class Pathway implements Cloneable {
 
 	private final HashMap<String, GraphElementAbstract> biologicalElements = new HashMap<String, GraphElementAbstract>();
 
-	// private HashSet <Vertex> set = new HashSet <Vertex> ();
-
 	private HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
-
-	private HashMap<Pair<BiologicalNodeAbstract>, BiologicalEdgeAbstract> edges = new HashMap<Pair<BiologicalNodeAbstract>, BiologicalEdgeAbstract>();
 
 	private MyGraph graph;
 
@@ -286,7 +282,7 @@ public class Pathway implements Cloneable {
 		// System.out.println(bna.getClass().getName());
 		// Object graphElement = element;
 		// GraphElementAbstract gea = (GraphElementAbstract) element;
-		if (getAllNodes().contains(bna)) {
+		if (graph.getJungGraph().containsVertex(bna)) {
 			return bna;
 		}
 		bna.setLabel(bna.getLabel().trim());
@@ -472,7 +468,7 @@ public class Pathway implements Cloneable {
 
 	public BiologicalEdgeAbstract addEdge(BiologicalEdgeAbstract bea) {
 
-		// System.out.println("id in pw: "+bea.getID());
+	
 		// System.out.println("edge hinzugefuegt");
 
 		if (bea != null) {
@@ -514,9 +510,6 @@ public class Pathway implements Cloneable {
 			}
 		}
 		if(add){
-			edges.put(
-				new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
-				bea);
 			// System.out.println(biologicalElements.size());
 			// Pair p = bea.getEdge().getEndpoints();
 			getGraph().addEdge(bea);
@@ -587,8 +580,6 @@ public class Pathway implements Cloneable {
 	}
 
 	public void removeEdge(BiologicalEdgeAbstract bea, boolean removeID) {
-		edges.remove(new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea
-				.getTo()));
 		getGraph().removeEdge(bea);
 		if (removeID) {
 			getIdSet().remove(bea.getID());
@@ -639,12 +630,13 @@ public class Pathway implements Cloneable {
 
 	public boolean existEdge(BiologicalNodeAbstract from,
 			BiologicalNodeAbstract to) {
-
-		return edges.containsKey(new Pair<BiologicalNodeAbstract>(from, to));
+		return null != this.graph.getJungGraph().findEdge(from, to);
+		//return edges.containsKey(new Pair<BiologicalNodeAbstract>(from, to));
 	}
 	
 	public BiologicalEdgeAbstract getEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
-		return edges.get(new Pair<BiologicalNodeAbstract>(from, to));
+		return this.graph.getJungGraph().findEdge(from, to);
+		//return edges.get(new Pair<BiologicalNodeAbstract>(from, to));
 	}
 
 	public boolean containsElement(Object graphElement) {
@@ -1066,7 +1058,6 @@ public class Pathway implements Cloneable {
 	public void clearElements() {
 		biologicalElements.clear();
 		set.clear();
-		edges.clear();
 	}
 
 	@Override
@@ -1688,7 +1679,7 @@ public class Pathway implements Cloneable {
 	}
 	
 	public Point2D getOpenedSubPathwayLocation(BiologicalNodeAbstract n){
-		if(getAllNodes().contains(n))
+		if(graph.getJungGraph().containsVertex(n))
 			return graph.getVertexLocation(n);
 		if(getOpenedSubPathways().contains(n))
 			return openedSubPathways.get(n);
