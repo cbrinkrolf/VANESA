@@ -783,7 +783,7 @@ public class JSBMLinput {
 					Set<Integer> ocn = new HashSet<Integer>();
 					ocn.addAll(openedCoarseNodes);
 					for(Integer id : ocn){
-						if(pathway.getAllNodes().contains(nodes.get(id))){
+						if(pathway.containsVertex(nodes.get(id))){
 							pathway.openSubPathway(nodes.get(id));
 							openedCoarseNodes.remove(id);
 						}
