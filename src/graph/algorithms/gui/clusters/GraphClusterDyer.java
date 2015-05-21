@@ -250,7 +250,7 @@ public class GraphClusterDyer extends JFrame {
 			
 			for (BiologicalNodeAbstract bna : mg.getAllVertices()){
 				if(labels.contains(bna.getLabel())){
-					if(bna.getColor().equals(GREY))
+					if(bna.getColor().equals(bna.getDefaultColor()))
 						bna.setColor(color);
 					else
 						bna.setColor(blend(color, bna.getColor()));
