@@ -639,39 +639,6 @@ public class NetworkProperties extends Object {
 		}
 	}
 
-	public void saveGraphCoordinates(String filename) {
-		// Graph coordinates
-		try {
-			FileWriter fw = new FileWriter(filename);
-			BufferedWriter out = new BufferedWriter(fw);
-
-			String line = "";
-
-			Iterator<BiologicalNodeAbstract> itbna = mg.getAllVertices()
-					.iterator();
-			line += nodes;
-			out.write(line + "\n");
-			line = "";
-			while (itbna.hasNext()) {
-				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) itbna
-						.next();
-				Point2D pt = mg.nodePositions.get(bna);
-
-				line = pt.getX() + " " + pt.getY();
-
-				out.write(line + "\n");
-				line = "";
-
-			}
-
-			out.close();
-			fw.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public void savePackedAdjList(String filename) {
 		// array of size(nodes): narray
 		// array of size(edges - 2*edges): earray
