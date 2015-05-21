@@ -142,7 +142,6 @@ public class MyGraph {
 	GraphInstance graphInstance = new GraphInstance();
 	private final VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> visualizationModel;
 	private final AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout;
-	public final HashMap<BiologicalNodeAbstract, Point2D> nodePositions = new HashMap<BiologicalNodeAbstract, Point2D>();
 	private MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
 	private MyEdgeLabelRenderer elr = new MyEdgeLabelRenderer(Color.blue);
 
@@ -533,7 +532,6 @@ public class MyGraph {
 		// System.out.println(p.toString());
 		// System.out.println(bna.isReference());
 		// System.out.println(bna1.isReference());
-		this.nodePositions.put(bna, p);
 		// System.out.println(this.nodePositions.size());
 		// this.layout.setLocation(bna, p);
 		// this.layout.lock(bna, true);
@@ -913,7 +911,6 @@ public class MyGraph {
 	}
 
 	public void removeVertex(BiologicalNodeAbstract v) {
-		nodePositions.remove(v);
 		g.removeVertex(v);
 	}
 
