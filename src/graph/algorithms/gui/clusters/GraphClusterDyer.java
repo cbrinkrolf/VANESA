@@ -81,11 +81,18 @@ public class GraphClusterDyer extends JFrame {
 			avgval = 0;
 			
 			for(String label : e.getValue()){
-				valuesentry+=expvalues.get(label)+"; ";		
-				avgval += expvalues.get(label);
+				if (expvalues.get(label) != null) {
+					valuesentry += expvalues.get(label) + "; ";
+					avgval += expvalues.get(label);
+				}else
+					valuesentry+="null; ";
 			}
 			
-			valuesentry+=("®"+(avgval/e.getValue().size())).substring(0, 6);
+			String avgString = "®"+(avgval/e.getValue().size());
+			if(avgString.length()>6)
+				valuesentry+=avgString.substring(0, 6);
+			else
+				valuesentry+=avgString;
 			
 			values[linecounter] = valuesentry;
 			linecounter--;
