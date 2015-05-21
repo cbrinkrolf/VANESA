@@ -19,9 +19,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -620,10 +622,36 @@ public class GraphColoringGUI implements ActionListener {
 				att = gnode.getNodeAttributeByName("chol logFC");
 				if(att != null)
 					experimentdata.put(i,att.getDoublevalue());
-//				else
-//					experimentdata.put(i,0.0d);
-
 			}
+			
+
+//			PrintWriter out = new PrintWriter("dcb.exp","UTF-8");
+//			out.println(nodes);
+//			out.println(7);
+//			for (int i = 0; i < nodes; i++) {
+//				String line = "";
+//				gnode = np.getNodeAssignmentbackwards(i);
+//				// patient data export
+//				for (int p = 1; p <= 7; p++) {
+//					att = gnode.getNodeAttributeByName("Chol" + p);
+//					if (att != null) {
+//						if(p<7)
+//							line+= att.getDoublevalue()+"\t";
+//						else
+//							line+= att.getDoublevalue();
+//					}
+//				}
+//				
+//				if(line.length()>0){
+//					out.println(i+"\t"+line);
+//				}				
+//			}
+//			
+//			out.close();
+
+			
+			
+			
 			oos.writeObject(mg.getAllVertices().size());
 			oos.writeObject(edgearray);
 			oos.writeObject(experimentdata);
@@ -775,7 +803,6 @@ public class GraphColoringGUI implements ActionListener {
 	public void returnComputeData(HashMap<Double, HashSet<Integer>> map,
 			int jobtype) {
 
-		System.out.println(map.toString());
 		BiologicalNodeAbstract bna;
 		// Determine jobtype and behaviour
 		switch (jobtype) {
@@ -809,7 +836,6 @@ public class GraphColoringGUI implements ActionListener {
 					dataset.put(key, clusterlabels);
 				}
 				
-				System.out.println(dataset);
 				new GraphClusterDyer(dataset);
 				
 			}
