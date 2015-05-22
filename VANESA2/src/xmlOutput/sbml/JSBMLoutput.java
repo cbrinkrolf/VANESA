@@ -1,17 +1,12 @@
 package xmlOutput.sbml;
 
 import graph.gui.Parameter;
-import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.RangeSelector;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,7 +40,6 @@ import util.MyIntComparable;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.DAWISNode;
 
 /**
  * This class represents a writer from graph data to a SBML file. The actual
@@ -362,17 +356,11 @@ public class JSBMLoutput {
 		attr = oneNode.getComments();
 		el.addChild(createElSub(attr, "Comments"));
 
-		attr = String.valueOf(oneNode.getElementsVector());
-		el.addChild(createElSub(attr, "ElementsVector"));
-
 		attr = oneNode.getDescription();
 		el.addChild(createElSub(attr, "Description"));
 
 		attr = oneNode.getNetworklabel();
 		el.addChild(createElSub(attr, "Networklabel"));
-
-		attr = oneNode.getDB();
-		el.addChild(createElSub(attr, "DB"));
 
 		attr = oneNode.getOrganism();
 		el.addChild(createElSub(attr, "Organism"));
@@ -532,109 +520,7 @@ public class JSBMLoutput {
 			}
 		}
 
-		attrb = oneNode.hasDAWISNode();
-		attr = String.valueOf(attrb);
-		el.addChild(createElSub(attr, "HasDAWISNode"));
 		// only if hasDAWISNode = true the following data should be saved.
-		if (attrb) {
-			DAWISNode dawisN = oneNode.getDAWISNode();
-			String[] attrs = { dawisN.getActivity(), dawisN.getAminoAcidSeq(),
-					dawisN.getAminoAcidSeqLength(), dawisN.getAtoms(),
-					dawisN.getAtomsNr(), dawisN.getBonds(),
-					dawisN.getBondsNumber(), dawisN.getBracket(),
-					dawisN.getCodonUsage(), dawisN.getComment(),
-					dawisN.getComplexName(), dawisN.getComponent(),
-					dawisN.getComposition(), dawisN.getDataLoadedAsString(),
-					dawisN.getDB(), dawisN.getDefinition(),
-					dawisN.getDiagnosisType(), dawisN.getDisorder(),
-					dawisN.getEdge(), dawisN.getEffect(), dawisN.getElement(),
-					dawisN.getEncodingGene(), dawisN.getEndPoint(),
-					dawisN.getEquation(), dawisN.getFactorClass(),
-					dawisN.getFormula(), dawisN.getID(),
-					dawisN.getInformation(), dawisN.getIsoelectricPoint(),
-					dawisN.getIsoformenNumber(), dawisN.getModule(),
-					dawisN.getName(), dawisN.getNode(),
-					dawisN.getNucleotidSequence(),
-					dawisN.getNucleotidSequenceLength(), dawisN.getObject(),
-					dawisN.getOntology(), dawisN.getOrganelle(),
-					dawisN.getOrganism(), dawisN.getOriginal(),
-					dawisN.getPathwayMap(), dawisN.getPosition(),
-					dawisN.getRDM(), dawisN.getRemarks(), dawisN.getRepeat(),
-					dawisN.getSequenceSource(), dawisN.getSpecificityNeg(),
-					dawisN.getSpecificityPos(), dawisN.getStartPoint(),
-					dawisN.getTarget(), dawisN.getTransfacGene(),
-					dawisN.getType(), dawisN.getWeigth(),
-					dawisN.getAccessionnumbersAsVector().toString(),
-					dawisN.getCatalystsAsVector().toString(),
-					dawisN.getCatalystNamesAsVector().toString(),
-					dawisN.getClassificationAsVector().toString(),
-					dawisN.getCofactorsAsVector().toString(),
-					dawisN.getCofactorNamesAsVector().toString(),
-					dawisN.getDBLinksAsVector().toString(),
-					dawisN.getDomainsAsVector().toString(),
-					dawisN.getEffectorNamesAsVector().toString(),
-					dawisN.getEffectorsAsVector().toString(),
-					dawisN.getElementsAsVector().toString(),
-					dawisN.getFeaturesAsVector().toString(),
-					dawisN.getFunctionsAsVector().toString(),
-					dawisN.getGeneNamesAsVector().toString(),
-					dawisN.getInhibitorsAsVector().toString(),
-					dawisN.getInhibitorNamesAsVector().toString(),
-					dawisN.getLocationsAsVector().toString(),
-					dawisN.getMethodsAsSVector().toString(),
-					dawisN.getMotifsAsVector().toString(),
-					dawisN.getOrthologyAsVector().toString(),
-					dawisN.getPDBsAsVector().toString(),
-					dawisN.getProductNamesAsVector().toString(),
-					dawisN.getProductsAsVector().toString(),
-					dawisN.getProzessesAsVector().toString(),
-					dawisN.getReferenceAsVector().toString(),
-					dawisN.getSubfamiliesAsVector().toString(),
-					dawisN.getSubstrateNamesAsVector().toString(),
-					dawisN.getSubstratesAsVector().toString() };
-
-			boolean dawis = false;
-			for (int i = 0; i < attrs.length; i++) {
-				if (attrs[i] != "" && attrs[i] != null
-						&& !attrs[i].equals("[]")) {
-					dawis = true;
-					break;
-				}
-			}
-			if (dawis) {
-				elSub = new XMLNode(new XMLNode(new XMLTriple("DAWISNode", "",
-						""), new XMLAttributes()));
-				String[] names = { "Activity", "AminoAcidSeq",
-						"AminoAcidSeqLength", "Atoms", "AtomsNumber", "Bonds",
-						"BondsNumber", "Bracket", "CodonUsage", "Comment",
-						"ComplexName", "Component", "Composition",
-						"DataLoaded", "DB", "Definition", "DiagnosisType",
-						"Disorder", "Edge", "Effect", "Element",
-						"EncodingGene", "EndPoint", "Equation", "FactorClass",
-						"Formula", "ID", "Information", "IsoelectricPoint",
-						"IsoformenNumber", "Module", "Name", "Node",
-						"NucleotidSequence", "NucleotidSequenceLength",
-						"Object", "Ontology", "Organelle", "Organism",
-						"Original", "PathwayMap", "Position", "RDM", "Remarks",
-						"Repeat", "SequenceSource", "SpecificityNeg",
-						"SpecificityPos", "StartPoint", "Target",
-						"TransfacGene", "Type", "Weigth", "Accessionnumbers",
-						"Catalysts", "CatalystNames", "Classifications",
-						"Cofactors", "CofactorNames", "DBLinks", "Domains",
-						"EffectorNames", "Effectors", "CollectorElements",
-						"Features", "Functions", "GeneNames", "Inhibitors",
-						"InhibitorNames", "Locations", "Methods", "Motifs",
-						"Orthologies", "PDBs", "ProductNames", "Products",
-						"Processes", "References", "Subfamilies",
-						"SubstrateNames", "Substrates" };
-				// test which data are set to save them
-				for (int i = 0; i < names.length; i++) {
-					elSub.addChild(createElSub(attrs[i], names[i]));
-				}
-				el.addChild(elSub);
-			}
-		}
-
 		Color col = oneNode.getColor();
 		if (col != null) {
 			elSub = new XMLNode(new XMLNode(new XMLTriple("Color", "", ""),
@@ -665,12 +551,7 @@ public class JSBMLoutput {
 
 		el.addChild(elSub);
 		// test which type the node is to save additional data
-		if (oneNode instanceof biologicalObjects.nodes.CollectorNode) {
-			attr = ((biologicalObjects.nodes.CollectorNode) oneNode)
-					.getObject();
-			el.addChild(createElSub(attr, "ElementObject"));
-
-		} else if (oneNode instanceof biologicalObjects.nodes.DNA) {
+		if (oneNode instanceof biologicalObjects.nodes.DNA) {
 			attr = ((biologicalObjects.nodes.DNA) oneNode).getNtSequence();
 			el.addChild(createElSub(attr, "NtSequence"));
 
@@ -820,67 +701,6 @@ public class JSBMLoutput {
 		attr = String.valueOf(attrb);
 		el.addChild(createElSub(attr, "HasKEGGEdge"));
 
-		// Test if hasKEGGEdge = true
-		// only if the following data has to be saved
-		if (attrb && oneEdge.getKeggEdge() != null) {
-			String[] attrs = new String[23];
-			attrs[0] = oneEdge.getKeggEdge().getKEEGReactionID();
-			attrs[1] = oneEdge.getKeggEdge().getEntry1();
-			attrs[2] = oneEdge.getKeggEdge().getEntry2();
-			attrs[3] = oneEdge.getKeggEdge().getType();
-			attrs[4] = oneEdge.getKeggEdge().getDescription();
-			attrs[5] = oneEdge.getKeggEdge().getName();
-			attrs[6] = oneEdge.getKeggEdge().getRemark();
-			attrs[7] = oneEdge.getKeggEdge().getOrthology();
-			attrs[8] = oneEdge.getKeggEdge().getReference();
-			attrs[9] = oneEdge.getKeggEdge().getComment();
-			attrs[10] = oneEdge.getKeggEdge().getDefinition();
-			attrs[11] = oneEdge.getKeggEdge().getEquation();
-			attrs[12] = oneEdge.getKeggEdge().getRpair();
-			attrs[13] = oneEdge.getKeggEdge().getEffect();
-			attrs[14] = oneEdge.getKeggEdge().getReactionType();
-			attrs[15] = oneEdge.getKeggEdge().getInvolvedEnzyme();
-			// Save vectors
-			attrs[16] = oneEdge.getKeggEdge().getAllProducts().toString();
-			attrs[17] = oneEdge.getKeggEdge().getAllEnzymes().toString();
-			attrs[18] = oneEdge.getKeggEdge().getAllSubstrates().toString();
-			attrs[19] = oneEdge.getKeggEdge().getCatalystsAsVector().toString();
-			attrs[20] = oneEdge.getKeggEdge().getCatalystNamesAsVector()
-					.toString();
-			attrs[21] = oneEdge.getKeggEdge().getInhibitorsAsVector()
-					.toString();
-			attrs[22] = oneEdge.getKeggEdge().getInhibitorNamesAsVector()
-					.toString();
-
-			// Test if min. 1 attribute is set
-			// only if the XML-Node has to be created
-			boolean kegg = false;
-			for (int i = 0; i < 23; i++) {
-				if (attrs[i] != "" && attrs[i] != null
-						&& !attrs[i].equals("[]")) {
-					kegg = true;
-					break;
-				}
-			}
-			if (kegg) {
-				// Test which attributes are set and save them
-				elSub = new XMLNode(new XMLNode(new XMLTriple("KEGGEdge", "",
-						""), new XMLAttributes()));
-				// Names of the attributes in the appropriate order
-				String[] names = { "KEEGReactionID", "Entry1", "Entry2",
-						"Type", "Description", "Name", "Remark", "Orthology",
-						"Reference", "Comment", "Definition", "Equation",
-						"Rpair", "Effect", "ReactionType", "InvolvedEnzyme",
-						"AllProducts", "AllEnzymes", "AllSubstrates",
-						"Catalysts", "CatalystNames", "Inhibitors",
-						"InhibitorNames" };
-				for (int i = 0; i < 23; i++) {
-					elSub.addChild(createElSub(attrs[i], names[i]));
-				}
-
-				el.addChild(elSub);
-			}
-		}
 		// Save additional data
 		if (oneEdge instanceof biologicalObjects.edges.ReactionPair) {
 			attrb = ((biologicalObjects.edges.ReactionPair) oneEdge)

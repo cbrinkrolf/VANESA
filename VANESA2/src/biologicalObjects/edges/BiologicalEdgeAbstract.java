@@ -6,18 +6,14 @@ import graph.gui.Parameter;
 import java.awt.Color;
 import java.awt.Shape;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.SortedSet;
 
-import configurations.NetworkSettings;
-import configurations.NetworkSettingsSingelton;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
-import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-
-//import edu.uci.ics.jung.graph.Edge;
+import configurations.NetworkSettings;
+import configurations.NetworkSettingsSingelton;
 
 public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Cloneable {
 
@@ -28,9 +24,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	
 	// private Edge edge;
 	
-	private KEGGEdge keggEdge;
-	
-	ReactionPairEdge reactionPairEdge;
+	private ReactionPairEdge reactionPairEdge;
 	
 	private boolean isDirected;
 	
@@ -50,7 +44,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	
 	private SortedSet<Integer> set;
 
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	private NetworkSettings settings = NetworkSettingsSingelton.getInstance();
 	
 	private String description = "";
 	
@@ -79,16 +73,12 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	
 	private HashSet<String> labelSet = new HashSet<String>();
 	
-	private Collection<Integer> originalGraphs;
-	
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>(); 
 
 	private boolean isWeighted = false;
 	
 	private int weight = 0;
 
-	private SBMLEdge sbml = new SBMLEdge();
-	
 	private BiologicalNodeAbstract from;
 	
 	private BiologicalNodeAbstract to;
@@ -176,17 +166,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	 * stringsEqualAndAreNotEmpty(label,label2); }
 	 */
 
-	public void addOriginalGraph(int g) {
-		this.getOriginalGraphs().add(g);
-	}
-
-	public boolean containedInAllOriginalGraphs(Pathway[] pathways) {
-		boolean contained = true;
-		for (int i = 1; i < pathways.length; i++)
-			contained = contained && this.getOriginalGraphs().contains(i);
-		return contained;
-	}
-	
 	private String getCorrectLabel(Integer type) {
 
 		if ((getLabel().length() == 0 || getLabel().equals(" "))
@@ -262,17 +241,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 		this.to = to;
 	}
 	
-	public SBMLEdge getSbml() {
-		sbml.setFrom(this.getFrom().getID() + "");
-		sbml.setTo(this.getTo().getID() + "");
-		sbml.setEdge(this.getID() + "");
-		return sbml;
-	}
-
-	public void setSbml(SBMLEdge sbml) {
-		this.sbml = sbml;
-	}
-	
 	/* public Edge getEdge() {
 	* return edge;
 	* }
@@ -291,15 +259,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 		this.isDirected = isDirected;
 	}
 
-	public KEGGEdge getKeggEdge() {
-		return keggEdge;
-	}
-
-	public void setKeggEdge(KEGGEdge keggEdge) {
-		this.keggEdge = keggEdge;
-	}
-
-	
 	public void setReactionPairEdge(ReactionPairEdge reactPEdge) {
 		this.reactionPairEdge = reactPEdge;
 	}
@@ -374,17 +333,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 		}
 	}
 	
-	public Collection<Integer> getOriginalGraphs() {
-		if (this.originalGraphs == null) {
-			this.setOriginalGraphs(new ArrayList<Integer>());
-		}
-		return this.originalGraphs;
-	}
-
-	public void setOriginalGraphs(Collection<Integer> graphs) {
-		this.originalGraphs = graphs;
-	}
-
 	public String getNetworklabel() {
 		return getCorrectLabel(settings.getEdgeLabel());
 	}

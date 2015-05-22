@@ -1,6 +1,5 @@
 package biologicalObjects.nodes;
 
-//import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
 
 import java.util.Vector;
@@ -10,8 +9,8 @@ import biologicalElements.Elementdeclerations;
 public class Protein extends BiologicalNodeAbstract {
 
 	private String aaSequence = "";
-	Vector<String> accessionnumbers = new Vector<String>();
-	String uniprotProtein = "";
+	private Vector<String> accessionnumbers = new Vector<String>();
+	private String uniprotProtein = "";
 	public static boolean labelIsAccessionNumber = false;
 
 	public Protein(String label, String name) {

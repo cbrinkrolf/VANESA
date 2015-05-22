@@ -1,5 +1,11 @@
 package xmlInput.sbml;
 
+import graph.ContainerSingelton;
+import graph.CreatePathway;
+import graph.GraphContainer;
+import gui.MainWindowSingleton;
+import gui.RangeSelector;
+
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -41,7 +47,6 @@ import biologicalObjects.edges.Glycosylation;
 import biologicalObjects.edges.HiddenCompound;
 import biologicalObjects.edges.IndirectEffect;
 import biologicalObjects.edges.Inhibition;
-import biologicalObjects.edges.KEGGEdge;
 import biologicalObjects.edges.Methylation;
 import biologicalObjects.edges.Phosphorylation;
 import biologicalObjects.edges.PhysicalInteraction;
@@ -52,10 +57,8 @@ import biologicalObjects.edges.Repression;
 import biologicalObjects.edges.StateChange;
 import biologicalObjects.edges.Ubiquitination;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.CollectorNode;
 import biologicalObjects.nodes.Complex;
 import biologicalObjects.nodes.CompoundNode;
-import biologicalObjects.nodes.DAWISNode;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Degraded;
 import biologicalObjects.nodes.Disease;
@@ -84,12 +87,6 @@ import biologicalObjects.nodes.Site;
 import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
-//import edu.uci.ics.jung.graph.Vertex;
-import graph.ContainerSingelton;
-import graph.CreatePathway;
-import graph.GraphContainer;
-import gui.MainWindowSingleton;
-import gui.RangeSelector;
 
 /**
  * @author sebastian and olga
@@ -155,7 +152,6 @@ public class VAMLInput {
 						i = i + 1;
 					}
 				}
-				pw.setDAWISProject();
 				pw.setSettings(set);
 			}
 		}
@@ -185,7 +181,6 @@ public class VAMLInput {
 		String comment = "";
 		Color color = null;
 		BiologicalEdgeAbstract bea = null;
-		KEGGEdge keggEdge = null;
 		ReactionPairEdge rpEdge = null;
 		Double passingTokens = 0.0;
 		String function = "";
@@ -240,59 +235,6 @@ public class VAMLInput {
 								.getAttributeValue(new QName("b"))));
 			} else if (element.getLocalName().equals("isDirected")) {
 				directed = element.getText();
-			} else if (element.getLocalName().equals("KeggEdge")) {
-
-				keggEdge = new KEGGEdge();
-				Iterator<OMElement> it3 = element.getChildren();
-
-				while (it3.hasNext()) {
-					OMElement element2 = it3.next();
-
-					if (element2.getLocalName().equals("entry1")) {
-						keggEdge.setEntry1(element2.getText());
-					} else if (element2.getLocalName().equals("entry2")) {
-						keggEdge.setEntry2(element2.getText());
-					} else if (element2.getLocalName().equals("type")) {
-						keggEdge.setType(element2.getText());
-					} else if (element2.getLocalName().equals("description")) {
-						keggEdge.setDescription(element2.getText());
-					} else if (element2.getLocalName().equals("name")) {
-						keggEdge.setName(element2.getText());
-					} else if (element2.getLocalName().equals("remark")) {
-						keggEdge.setRemark(element2.getText());
-					} else if (element2.getLocalName().equals("orthology")) {
-						keggEdge.setOrthology(element2.getText());
-					} else if (element2.getLocalName().equals("reference")) {
-						keggEdge.setReference(element2.getText());
-					} else if (element2.getLocalName().equals("comment")) {
-						keggEdge.setComment(element2.getText());
-					} else if (element2.getLocalName().equals("definition")) {
-						keggEdge.setDefinition(element2.getText());
-					} else if (element2.getLocalName().equals("equation")) {
-						keggEdge.setEquation(element2.getText());
-					} else if (element2.getLocalName().equals("rpair")) {
-						keggEdge.setRpair(element2.getText());
-					} else if (element2.getLocalName().equals("KEEGReactionID")) {
-						keggEdge.setKEEGReactionID(element2.getText());
-					} else if (element2.getLocalName().equals("InvolvedEnzyme")) {
-						keggEdge.setInvolvedEnzyme(element2.getText());
-					} else if (element2.getLocalName().equals("products")) {
-
-						Iterator<OMElement> it4 = element2.getChildren();
-						while (it4.hasNext()) {
-							OMElement element3 = it4.next();
-							keggEdge.addProduct(element3.getText());
-						}
-
-					} else if (element2.getLocalName().equals("substrates")) {
-
-						Iterator<OMElement> it4 = element2.getChildren();
-						while (it4.hasNext()) {
-							OMElement element3 = it4.next();
-							keggEdge.addSubstrate(element3.getText());
-						}
-					}
-				}
 			} else if (element.getLocalName().equals("ReactionPairEdge")) {
 				rpEdge = new ReactionPairEdge();
 
@@ -474,10 +416,6 @@ public class VAMLInput {
 				bea.setReference(false);
 			}
 
-			if (keggEdge != null) {
-				bea.setKeggEdge(keggEdge);
-				bea.hasKEGGEdge(true);
-			}
 			if (rpEdge != null) {
 				bea.setReactionPairEdge(rpEdge);
 				bea.hasReactionPairEdge(true);
@@ -676,7 +614,6 @@ public class VAMLInput {
 		Boolean isReference = false;
 		BiologicalNodeAbstract bna = null;
 		KEGGNode keggNode = null;
-		DAWISNode dawisNode = null;
 
 		String aaSequence = "";
 		String pathway = null;
@@ -712,8 +649,6 @@ public class VAMLInput {
 				location = element.getText();
 			} else if (element.getLocalName().equals("keggProperties")) {
 				keggNode = addKeggNode(element);
-			} else if (element.getLocalName().equals("dawisProperties")) {
-				dawisNode = addDawisNode(element);
 			} else if (element.getLocalName().equals("aaSequence")) {
 				aaSequence = element.getText();
 			}
@@ -805,8 +740,6 @@ public class VAMLInput {
 			bna = new TranscriptionFactor(label, name);
 		} else if (biologicalElement.equals(Elementdeclerations.glycan)) {
 			bna = new Glycan(label, name);
-		} else if (biologicalElement.equals(Elementdeclerations.collector)) {
-			bna = new CollectorNode(label, name);
 		} else if (biologicalElement.equals(Elementdeclerations.compound)) {
 			bna = new CompoundNode(label, name);
 		} else if (biologicalElement.equals(Elementdeclerations.disease)) {
@@ -894,11 +827,6 @@ public class VAMLInput {
 				bna.setKEGGnode(keggNode);
 			}
 
-			if (dawisNode != null) {
-				bna.setDAWISNode(dawisNode);
-				bna.setDB(dawisNode.getDB());
-			}
-
 			mapping.put(vertexID, bna);
 
 			if (bna instanceof Protein) {
@@ -912,356 +840,6 @@ public class VAMLInput {
 		}
 
 		// pw.getGraph().moveVertex(bna.getVertex(), x_coord, y_coord);
-	}
-
-	private DAWISNode addDawisNode(OMElement dawisElement) {
-		DAWISNode node = new DAWISNode(null);
-		String elementID = "";
-		Iterator<OMElement> it = dawisElement.getChildren();
-		while (it.hasNext()) {
-
-			OMElement element = it.next();
-			if (element.getLocalName().equals("object")) {
-				node.setObject(element.getText());
-			} else if (element.getLocalName().equals("loaded")) {
-				String loaded = element.getText();
-				if (loaded.equals("true")) {
-					node.setDataLoaded();
-				}
-			} else if (element.getLocalName().equals("id")) {
-				elementID = element.getText();
-				node.setID(elementID);
-			} else if (element.getLocalName().equals("name")) {
-				node.setName(element.getText());
-			} else if (element.getLocalName().equals("db")) {
-				node.setDB(element.getText());
-			} else if (element.getLocalName().equals("organism")) {
-				node.setOrganism(element.getText());
-			} else if (element.getLocalName().equals("diagnosisType")) {
-				node.setDiagnosisType(element.getText());
-			} else if (element.getLocalName().equals("disorder")) {
-				node.setDisorder(element.getText());
-			} else if (element.getLocalName().equals("pathwayMap")) {
-				node.setPathwayMap(element.getText());
-			} else if (element.getLocalName().equals("ontology")) {
-				node.setOntology(element.getText());
-			} else if (element.getLocalName().equals("definition")) {
-				node.setDefinition(element.getText());
-			} else if (element.getLocalName().equals("position")) {
-				node.setPosition(element.getText());
-			} else if (element.getLocalName().equals("codonUsage")) {
-				node.setCodonUsage(element.getText());
-			} else if (element.getLocalName().equals("nucleotidSequenceLength")) {
-				node.setNucleotidSequenceLength(element.getText());
-			} else if (element.getLocalName().equals("nucleotidSequence")) {
-				node.setNucleotidSequence(element.getText());
-			} else if (element.getLocalName().equals("aminoAcidSequenceLength")) {
-				node.setAminoAcidSeqLength(element.getText());
-			} else if (element.getLocalName().equals("aminoAcidSequence")) {
-				node.setAminoAcidSeq(element.getText());
-			} else if (element.getLocalName().equals("motif")) {
-				node.setMotif(element.getText());
-			} else if (element.getLocalName().equals("organelle")) {
-				node.setOrganelle(element.getText());
-			} else if (element.getLocalName().equals("weight")) {
-				node.setWeight(element.getText());
-			} else if (element.getLocalName().equals("comment")) {
-				node.setComment(element.getText());
-			} else if (element.getLocalName().equals("equation")) {
-				node.setEquation(element.getText());
-			} else if (element.getLocalName().equals("rDM")) {
-				node.setRDM(element.getText());
-			} else if (element.getLocalName().equals("formula")) {
-				node.setFormula(element.getText());
-			} else if (element.getLocalName().equals("atoms")) {
-				node.setAtoms(element.getText());
-			} else if (element.getLocalName().equals("atomsNumber")) {
-				node.setAtomsNumber(element.getText());
-			} else if (element.getLocalName().equals("bonds")) {
-				node.setBonds(element.getText());
-			} else if (element.getLocalName().equals("bondsNumber")) {
-				node.setBondsNumber(element.getText());
-			} else if (element.getLocalName().equals("module")) {
-				node.setModule(element.getText());
-			} else if (element.getLocalName().equals("sequenceSource")) {
-				node.setSequenceSource(element.getText());
-			} else if (element.getLocalName().equals("remark")) {
-				node.setRemark(element.getText());
-			} else if (element.getLocalName().equals("composition")) {
-				node.setComposition(element.getText());
-			} else if (element.getLocalName().equals("node")) {
-				node.setNode(element.getText());
-			} else if (element.getLocalName().equals("edge")) {
-				node.setEdge(element.getText());
-			} else if (element.getLocalName().equals("target")) {
-				node.setTarget(element.getText());
-			} else if (element.getLocalName().equals("bracket")) {
-				node.setBracket(element.getText());
-			} else if (element.getLocalName().equals("original")) {
-				node.setOriginal(element.getText());
-			} else if (element.getLocalName().equals("repeat")) {
-				node.setRepeat(element.getText());
-			} else if (element.getLocalName().equals("activity")) {
-				node.setActivity(element.getText());
-			} else if (element.getLocalName().equals("type")) {
-				node.setType(element.getText());
-			} else if (element.getLocalName().equals("effect")) {
-				node.setEffect(element.getText());
-			} else if (element.getLocalName().equals("information")) {
-				node.setInformation(element.getText());
-			} else if (element.getLocalName().equals("isoelectricPoint")) {
-				node.setIsoelectricPoint(element.getText());
-			} else if (element.getLocalName().equals("isoformenNumber")) {
-				node.setIsoformenNumber(element.getText());
-			} else if (element.getLocalName().equals("specifityNegative")) {
-				node.setSpecificityNeg(element.getText());
-			} else if (element.getLocalName().equals("specifityPositiv")) {
-				node.setSpecificityPos(element.getText());
-			} else if (element.getLocalName().equals("factorClass")) {
-				node.setFactorClass(element.getText());
-			} else if (element.getLocalName().equals("encodingGene")) {
-				node.setEncodingGene(element.getText());
-			} else if (element.getLocalName().equals("startPoint")) {
-				node.setStartPoint(element.getText());
-			} else if (element.getLocalName().equals("endPoint")) {
-				node.setEndPoint(element.getText());
-			} else if (element.getLocalName().equals("complexName")) {
-				node.setComplexName(element.getText());
-			} else if (element.getLocalName().equals("allSynonyms")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setSynonym(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allDomains")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setDomain(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allFeatures")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setFeature(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allLocations")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setFeature(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allGeneNames")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setGeneName(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allPDBs")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setPDBs(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allAccessionnumbers")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setAccessionnumber(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allClassifications")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setClassification(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allSubstrates")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setSubstrates(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allSubstrateNames")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setSubstratesName(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allProducts")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setProducts(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allProductNames")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setProductsName(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allCofactors")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setCofactors(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allCofactorNames")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setCofactorsName(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allInhibitors")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setInhibitors(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allInhibitorNames")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setInhibitorsName(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allEffectors")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setEffectors(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allEffectorNames")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setEffectorsName(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allOrthologys")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setOrthology(temp.getText());
-				}
-			} else if (element.getLocalName().equals("allDBLinks")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setDBLink(temp.getText());
-				}
-			} else if (element.getLocalName().equals("catalysts")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setCatalysts(temp.getText());
-				}
-			} else if (element.getLocalName().equals("catalystNames")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setCatalystsName(temp.getText());
-				}
-			} else if (element.getLocalName().equals("superfamilies")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setSuperfamily(temp.getText());
-				}
-			} else if (element.getLocalName().equals("subfamilies")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setSubfamily(temp.getText());
-				}
-			} else if (element.getLocalName().equals("expressions")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setExpression(temp.getText());
-				}
-			} else if (element.getLocalName().equals("prozesses")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setProzess(temp.getText());
-				}
-			} else if (element.getLocalName().equals("functions")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setFunction(temp.getText());
-				}
-			} else if (element.getLocalName().equals("references")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setReference(temp.getText());
-				}
-			} else if (element.getLocalName().equals("motifs")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setMotif(temp.getText());
-				}
-			} else if (element.getLocalName().equals("methods")) {
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					node.setMethod(temp.getText());
-				}
-			} else if (element.getLocalName().equals("idDBRelations")) {
-				String key = "";
-				String value = "";
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					if (temp.getLocalName().equals("key")) {
-						key = temp.getText();
-					} else if (temp.getLocalName().equals("value")) {
-						value = temp.getText();
-						node.addIDDBRelation(key, value);
-					}
-				}
-			} else if (element.getLocalName().equals("idIDRelations")) {
-				String key = "";
-				String value = "";
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					if (temp.getLocalName().equals("key")) {
-						key = temp.getText();
-					} else if (temp.getLocalName().equals("value")) {
-						value = temp.getText();
-						node.addID(key, value);
-					}
-				}
-			} else if (element.getLocalName().equals("allCollectorElements")) {
-				String id = "";
-				String name = "";
-				boolean hasID = false;
-				Iterator<OMElement> it2 = element.getChildren();
-				while (it2.hasNext()) {
-					OMElement temp = it2.next();
-					if (temp.getLocalName().equals("collectorElementID")) {
-						if (hasID) {
-							id = temp.getText();
-							String[] collectorElement = { id };
-							node.setCollectorElements(collectorElement);
-							hasID = false;
-						}
-						id = temp.getText();
-
-						hasID = true;
-					} else if (temp.getLocalName().equals(
-							"collectorElementName")) {
-						name = temp.getText();
-
-						String[] collectorElement = { id, name };
-						node.setCollectorElements(collectorElement);
-						hasID = false;
-					}
-				}
-			}
-		}
-		return node;
 	}
 
 	private void getData(Pathway pw) throws FileNotFoundException,

@@ -7,7 +7,6 @@ import graph.jung.graphDrawing.VertexShapes;
 import graph.layouts.Circle;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
-import gui.visualization.VisualizationConfigBeans.Bean;
 
 import java.awt.Color;
 import java.awt.Shape;
@@ -44,8 +43,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	private KEGGNode KEGGnode;
 
-	private DAWISNode dawisNode;
-
 	private String compartment = Elementdeclerations.cytoplasma;
 
 	// private HashMap<Integer, Integer> values = new HashMap<Integer,
@@ -54,8 +51,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private double nodesize = 1;
 
 	private double defaultNodesize = 1;
-
-	private Vector<CollectorNode> collectorNodes = new Vector<CollectorNode>();
 
 	private BiologicalNodeAbstract parentNode;
 
@@ -67,17 +62,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	private String organism = "";
 
-	String db = "";
-
 	private DefaultMutableTreeNode treeNode;
 
-	private Vector<String> elementsVector;
-
-	private SBMLNode sbml = new SBMLNode();
-
 	// private int original_graph;
-
-	private MicroArrayAttributes microarrayAttributes = null;
 
 	private BiologicalNodeAbstract ref = null;
 
@@ -97,7 +84,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	private SortedSet<Integer> set;
 
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	private NetworkSettings settings = NetworkSettingsSingelton.getInstance();
 
 	private String comments = "";
 
@@ -119,15 +106,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	private boolean hasFeatureEdge = false;
 
-	private boolean hasDAWISNode = false;
-
 	private boolean hasReactionPairEdge = false;
 
 	private boolean hasBrendaNode = false;
 
 	private HashSet<String> labelSet = new HashSet<String>();
-
-	private Collection<Integer> originalGraphs;
 
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 	
@@ -171,12 +154,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		// initialize microarray data vector
 		petriNetSimulationData = new Vector<Double>();
 
-		sbml.setName(name.toLowerCase());
-		sbml.setLabel(label.toLowerCase());
-		// if (vertex != null) {
-		// sbml.setVertex(vertex.toString());
-		// }
-		sbml.setBiologicalNodeDescription(Elementdeclerations.transcriptionFactor);
 	}
 
 	/*
@@ -210,18 +187,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		mainWindow.nodeAttributeChanger(bna, false);
 	}
 	
-	
-	public void addOriginalGraph(int g) {
-		this.getOriginalGraphs().add(g);
-	}
-
-	public boolean containedInAllOriginalGraphs(Pathway[] pathways) {
-		boolean contained = true;
-		for (int i = 1; i < pathways.length; i++)
-			contained = contained && this.getOriginalGraphs().contains(i);
-		return contained;
-	}
-
 	private String getCorrectLabel(Integer type) {
 
 		if ((getLabel().length() == 0 || getLabel().equals(" "))
@@ -772,24 +737,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	// ---Getter/Setter---
 
-	public MicroArrayAttributes getMicroarrayAttributes() {
-		return microarrayAttributes;
-	}
-
-	public void setMicroarrayAttributes(
-			MicroArrayAttributes microarrayAttributes) {
-		this.microarrayAttributes = microarrayAttributes;
-	}
-
-	public SBMLNode getSbml() {
-		sbml.setVertex(this.getID() + "");
-		return sbml;
-	}
-
-	public void setSbml(SBMLNode sbml) {
-		this.sbml = sbml;
-	}
-
 	public KEGGNode getKEGGnode() {
 		return KEGGnode;
 	}
@@ -837,28 +784,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		}
 	}
 
-	/**
-	 * Removes a single value from the microarray data vector.
-	 * 
-	 * @author tschoeni
-	 * @param index
-	 *            The index to remove
-	 */
-	public void removeMicroArrayValue(int index) {
-		petriNetSimulationData.remove(index);
-	}
-
-	/**
-	 * Adds a new value to the microarray data vector.
-	 * 
-	 * @author tschoeni
-	 * @param index
-	 * @param value
-	 */
-	public void addMicroArrayValue(int index, Double value) {
-		petriNetSimulationData.add(index, value);
-	}
-
 	/*
 	 * public Vertex getVertex() { return vertex; }
 	 * 
@@ -894,25 +819,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * 
 	 * public int getAnimationSteps() { return values.size(); }
 	 */
-
-	/**
-	 * get DAWIS OMIM node
-	 * 
-	 * @return dawisNode
-	 */
-	public DAWISNode getDAWISNode() {
-		return dawisNode;
-	}
-
-	/**
-	 * set DAWIS OMIM node
-	 * 
-	 * @param dawisNode
-	 */
-	public void setDAWISNode(DAWISNode dawisNode) {
-		this.dawisNode = dawisNode;
-		hasDAWISNode(true);
-	}
 
 	public static void setShapes(VertexShapes s) {
 		// shapes = s;
@@ -950,22 +856,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	public DefaultMutableTreeNode getDefaultMutableTreeNode() {
 		return this.treeNode;
-	}
-
-	public void setElementsVector(Vector<String> v) {
-		this.elementsVector = v;
-	}
-
-	public Vector<String> getElementsVector() {
-		return this.elementsVector;
-	}
-
-	public void addCollectorNode(CollectorNode collectorNode) {
-		collectorNodes.add(collectorNode);
-	}
-
-	public Vector<CollectorNode> getCollectorNodes() {
-		return collectorNodes;
 	}
 
 	public void setParentNode(BiologicalNodeAbstract parent) {
@@ -1095,14 +985,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		return new GraphInstance().getPathway().getGraph();
 	}
 
-	public void setDB(String database) {
-		this.db = database;
-	}
-
-	public String getDB() {
-		return this.db;
-	}
-
 	public boolean hasRef() {
 		if (this.ref != null) {
 			return true;
@@ -1203,17 +1085,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				}
 			}
 		}
-	}
-
-	public Collection<Integer> getOriginalGraphs() {
-		if (this.originalGraphs == null) {
-			this.setOriginalGraphs(new ArrayList<Integer>());
-		}
-		return this.originalGraphs;
-	}
-
-	public void setOriginalGraphs(Collection<Integer> graphs) {
-		this.originalGraphs = graphs;
 	}
 
 	public String getNetworklabel() {
@@ -1332,14 +1203,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	public void hasBrendaNode(boolean hasBrendaNode) {
 		this.hasBrendaNode = hasBrendaNode;
-	}
-
-	public boolean hasDAWISNode() {
-		return hasDAWISNode;
-	}
-
-	public void hasDAWISNode(boolean node) {
-		hasDAWISNode = node;
 	}
 
 	public ArrayList<Parameter> getParameters() {

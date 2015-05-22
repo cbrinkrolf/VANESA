@@ -5,7 +5,6 @@ import biologicalElements.Elementdeclerations;
 import graph.jung.graphDrawing.VertexShapes;
 
 public class Disease extends BiologicalNodeAbstract {
-	public final String Object = "Disease";
 	public Disease(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.disease);
