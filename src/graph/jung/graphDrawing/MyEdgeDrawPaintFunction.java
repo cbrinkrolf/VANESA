@@ -11,7 +11,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.picking.PickedState;
-import graph.algorithms.alignment.AlignmentEdge;
 /*import edu.uci.ics.jung.graph.Edge;
  import edu.uci.ics.jung.graph.Vertex;
  import edu.uci.ics.jung.graph.decorators.EdgePaintFunction;
@@ -101,15 +100,6 @@ public class MyEdgeDrawPaintFunction implements
 
 	@Override
 	public Paint transform(BiologicalEdgeAbstract bea) {
-		if (bea instanceof AlignmentEdge) {
-			// TODO val von ali-edge
-			double val = 1;// ((Double)
-							// e.getUserDatum("alignment")).doubleValue();
-			int r = (int) (255 * val);
-			int b = (int) (255 * (1 - val));
-			return new Color(r, 0, b);
-		}
-
 		if (!graphTheory)
 			return getDrawPaintWithoutGraphTheory(bea);
 		else

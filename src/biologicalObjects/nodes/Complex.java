@@ -1,6 +1,5 @@
 package biologicalObjects.nodes;
 
-//import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
 import biologicalElements.Elementdeclerations;
 

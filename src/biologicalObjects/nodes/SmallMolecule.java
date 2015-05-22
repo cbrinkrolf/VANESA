@@ -1,10 +1,7 @@
 package biologicalObjects.nodes;
 
-import java.awt.Color;
-
-import biologicalElements.Elementdeclerations;
-//import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
+import biologicalElements.Elementdeclerations;
 
 
 public class SmallMolecule extends BiologicalNodeAbstract{

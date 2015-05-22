@@ -7,21 +7,9 @@ import gui.RangeSelector;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.CharBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -29,9 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
-import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -53,7 +39,6 @@ import biologicalObjects.edges.Glycosylation;
 import biologicalObjects.edges.HiddenCompound;
 import biologicalObjects.edges.IndirectEffect;
 import biologicalObjects.edges.Inhibition;
-import biologicalObjects.edges.KEGGEdge;
 import biologicalObjects.edges.Methylation;
 import biologicalObjects.edges.Phosphorylation;
 import biologicalObjects.edges.PhysicalInteraction;
@@ -64,7 +49,6 @@ import biologicalObjects.edges.Repression;
 import biologicalObjects.edges.StateChange;
 import biologicalObjects.edges.Ubiquitination;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.DAWISNode;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.RNA;
@@ -527,9 +511,6 @@ public class JSBMLinput {
 			case Elementdeclerations.glycan:
 				bna = new biologicalObjects.nodes.Glycan(label, name);
 				break;
-			case Elementdeclerations.collector:
-				bna = new biologicalObjects.nodes.CollectorNode(label, name);
-				break;
 			case Elementdeclerations.compound:
 				bna = new biologicalObjects.nodes.CompoundNode(label, name);
 				break;
@@ -833,10 +814,6 @@ public class JSBMLinput {
 		case "HasKEGGEdge":
 			bea.hasKEGGEdge(Boolean.parseBoolean(value));
 			break;
-		case "KEGGEdge":
-			bea.setKeggEdge(new KEGGEdge());
-			addKEGGEdge(child);
-			break;
 		case "HasReactionPairEdge":
 			bea.hasReactionPairEdge(Boolean.parseBoolean(value));
 			break;
@@ -878,19 +855,11 @@ public class JSBMLinput {
 		case "Comments":
 			bna.setComments(value);
 			break;
-		case "ElementsVector":
-			Vector<String> v = new Vector<String>(
-					Arrays.asList(stringToArray(value)));
-			bna.setElementsVector(v);
-			break;
 		case "Description":
 			bna.setDescription(value);
 			break;
 		case "Networklabel":
 			// no set-method available
-			break;
-		case "DB":
-			bna.setDB(value);
 			break;
 		case "Organism":
 			bna.setOrganism(value);
@@ -902,13 +871,6 @@ public class JSBMLinput {
 		case "KEGGNode":
 			bna.setKEGGnode(new KEGGNode());
 			addKEGGNode(child);
-		case "HasDAWISNode":
-			b = Boolean.parseBoolean(value);
-			bna.hasDAWISNode(b);
-			break;
-		case "DAWISNode":
-			bna.setDAWISNode(new DAWISNode(""));
-			addDAWISNode(child);
 		case "Color":
 			Element elSub = child.getChild("RGB", null);
 			int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
@@ -929,9 +891,6 @@ public class JSBMLinput {
 			}
 			break;
 		// special cases
-		case "ElementObject":
-			((biologicalObjects.nodes.CollectorNode) bna).setObject(value);
-			break;
 		case "NtSequence":
 			if (bna instanceof DNA) {
 				((biologicalObjects.nodes.DNA) bna).setNtSequence(value);
@@ -1016,109 +975,6 @@ public class JSBMLinput {
 			x[i] = x[i].trim();
 		}
 		return x;
-	}
-
-	private void addKEGGEdge(Element keggEdge) {
-		List<Element> keggEdgeChildren = keggEdge.getChildren();
-		KEGGEdge kegg = bea.getKeggEdge();
-		for (int i = 0; i < keggEdgeChildren.size(); i++) {
-			Element child = keggEdgeChildren.get(i);
-			String name = child.getName();
-			String value = child.getAttributeValue(name);
-			switch (name) {
-			case "KEEGReactionID":
-				kegg.setKEEGReactionID(value);
-				break;
-			case "Entry1":
-				kegg.setEntry1(value);
-				break;
-			case "Entry2":
-				kegg.setEntry2(value);
-				break;
-			case "Type":
-				kegg.setType(value);
-				break;
-			case "Description":
-				kegg.setDescription(value);
-				break;
-			case "Name":
-				kegg.setName(value);
-				break;
-			case "Remark":
-				kegg.setRemark(value);
-				break;
-			case "Orthology":
-				kegg.setOrthology(value);
-				break;
-			case "Reference":
-				kegg.setReference(value);
-				break;
-			case "Comment":
-				kegg.setComment(value);
-				break;
-			case "Definition":
-				kegg.setDefinition(value);
-				break;
-			case "Equation":
-				kegg.setEquation(value);
-				break;
-			case "Rpair":
-				kegg.setRpair(value);
-				break;
-			case "Effect":
-				kegg.setEffect(value);
-				break;
-			case "ReactionType":
-				kegg.setReactionType(value);
-				break;
-			case "InvolvedEnzyme":
-				kegg.setInvolvedEnzyme(value);
-				break;
-			// Vectors:
-			case "AllProducts":
-				String[] s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					kegg.addProduct(s[j]);
-				}
-				break;
-			case "AllEnzymes":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					kegg.addEnzyme(s[j]);
-				}
-				break;
-			case "AllSubstrates":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					kegg.addSubstrate(s[j]);
-				}
-				break;
-			case "Catalysts":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					kegg.setCatalysts(s[j]);
-				}
-				break;
-			case "CatalystNames":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					kegg.setCatalystsName(s[j]);
-				}
-				break;
-			case "Inhibitors":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					kegg.setInhibitors(s[j]);
-				}
-				break;
-			case "InhibitorNames":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					kegg.setInhibitorsName(s[j]);
-				}
-				break;
-			}
-		}
 	}
 
 	private void addKEGGNode(Element keggNode) {
@@ -1320,345 +1176,6 @@ public class JSBMLinput {
 				s = stringToArray(value);
 				for (int j = 0; j < s.length; j++) {
 					kegg.addStructure(s[j]);
-				}
-				break;
-			}
-		}
-	}
-
-	private void addDAWISNode(Element dawisNode) {
-		List<Element> dawisNodeChildren = dawisNode.getChildren();
-		DAWISNode dawis = bna.getDAWISNode();
-		for (int i = 0; i < dawisNodeChildren.size(); i++) {
-			// go through all Subnodes and look up what is set
-			Element child = dawisNodeChildren.get(i);
-			String name = child.getName();
-			String value = child.getAttributeValue(name);
-			switch (name) {
-			case "Activity":
-				dawis.setActivity(value);
-				break;
-			case "AminoAcidSeq":
-				dawis.setAminoAcidSeq(value);
-				break;
-			case "AminoAcidSeqLength":
-				dawis.setAminoAcidSeqLength(value);
-				break;
-			case "Atoms":
-				dawis.setAtoms(value);
-				break;
-			case "AtomsNumber":
-				dawis.setAtomsNumber(value);
-				break;
-			case "Bonds":
-				dawis.setBonds(value);
-				break;
-			case "BondsNumber":
-				dawis.setBondsNumber(value);
-				break;
-			case "Bracket":
-				dawis.setBracket(value);
-				break;
-			case "CodonUsage":
-				dawis.setCodonUsage(value);
-				break;
-			case "Comment":
-				dawis.setComment(value);
-				break;
-			case "ComplexName":
-				dawis.setComplexName(value);
-				break;
-			case "Component":
-				dawis.setComponent(value);
-				break;
-			case "Composition":
-				dawis.setComposition(value);
-				break;
-			case "DataLoaded":
-				dawis.setDataLoaded();
-				break;
-			case "DB":
-				dawis.setDB(value);
-				break;
-			case "Definition":
-				dawis.setDefinition(value);
-				break;
-			case "DiagnosisType":
-				dawis.setDiagnosisType(value);
-				break;
-			case "Disorder":
-				dawis.setDisorder(value);
-				break;
-			case "Edge":
-				dawis.setEdge(value);
-				break;
-			case "Effect":
-				dawis.setEffect(value);
-				break;
-			case "Element":
-				dawis.setElement(value);
-				break;
-			case "EncodingGene":
-				dawis.setEncodingGene(value);
-				break;
-			case "EndPoint":
-				dawis.setEndPoint(value);
-				break;
-			case "Equation":
-				dawis.setEquation(value);
-				break;
-			case "FactorClass":
-				dawis.setFactorClass(value);
-				break;
-			case "Formula":
-				dawis.setFormula(value);
-				break;
-			case "ID":
-				dawis.setID(value);
-				break;
-			case "Information":
-				dawis.setInformation(value);
-				break;
-			case "IsoelectricPoint":
-				dawis.setIsoelectricPoint(value);
-				break;
-			case "IsoformenNumber":
-				dawis.setIsoformenNumber(value);
-				break;
-			case "Module":
-				dawis.setModule(value);
-				break;
-			case "Name":
-				dawis.setName(value);
-				break;
-			case "Node":
-				dawis.setNode(value);
-				break;
-			case "NucleotidSequence":
-				dawis.setNucleotidSequence(value);
-				break;
-			case "NucleotidSequenceLength":
-				dawis.setNucleotidSequenceLength(value);
-				break;
-			case "Object":
-				dawis.setObject(value);
-				break;
-			case "Ontology":
-				dawis.setOrthology(value);
-				break;
-			case "Organelle":
-				dawis.setOrganelle(value);
-				break;
-			case "Organism":
-				dawis.setOrganism(value);
-				break;
-			case "Original":
-				dawis.setOriginal(value);
-				break;
-			case "PathwayMap":
-				dawis.setPathwayMap(value);
-				break;
-			case "Position":
-				dawis.setPosition(value);
-				break;
-			case "RDM":
-				dawis.setRDM(value);
-				break;
-			case "Remarks":
-				dawis.setRemark(value);
-				break;
-			case "Repeat":
-				dawis.setRepeat(value);
-				break;
-			case "SequenceSource":
-				dawis.setSequenceSource(value);
-				break;
-			case "SpecificityNeg":
-				dawis.setSpecificityNeg(value);
-				break;
-			case "SpecificityPos":
-				dawis.setSpecificityPos(value);
-				break;
-			case "StartPoint":
-				dawis.setStartPoint(value);
-				break;
-			case "Target":
-				dawis.setTarget(value);
-				break;
-			case "TransfacGene":
-				dawis.setTransfacGene(value);
-				break;
-			case "Type":
-				dawis.setType(value);
-				break;
-			case "Weigth":
-				dawis.setWeight(value);
-				break;
-			// information which was saved as a String from a Vector
-			case "Accessionnumbers":
-				String[] s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setAccessionnumber(s[j]);
-				}
-				break;
-			case "Catalysts":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setCatalysts(s[j]);
-				}
-				break;
-			case "CatalystNames":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setCatalystsName(s[j]);
-				}
-				break;
-			case "Classifications":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setClassification(s[j]);
-				}
-				break;
-			case "Cofactors":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setCofactors(s[j]);
-				}
-				break;
-			case "CofactorNames":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setCofactorsName(s[j]);
-				}
-				break;
-			case "DBLinks":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setDBLink(s[j]);
-				}
-				break;
-			case "Domains":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setDomain(s[j]);
-				}
-				break;
-			case "EffectorNames":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setEffectorsName(s[j]);
-				}
-				break;
-			case "Effectors":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setEffectors(s[j]);
-				}
-				break;
-			case "CollectorElements":
-				s = stringToArray(value);
-				dawis.setCollectorElements(s);
-				break;
-			case "Features":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setFeature(s[j]);
-				}
-				break;
-			case "Functions":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setFunction(s[j]);
-				}
-				break;
-			case "GeneNames":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setGeneName(s[j]);
-				}
-				break;
-			case "Inhibitors":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setInhibitors(s[j]);
-				}
-				break;
-			case "InhibitorNames":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setInhibitorsName(s[j]);
-				}
-				break;
-			case "Locations":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setLocation(s[j]);
-				}
-				break;
-			case "Methods":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setMethod(s[j]);
-				}
-				break;
-			case "Motifs":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setMotif(s[j]);
-				}
-				break;
-			case "Orthologies":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setOrthology(s[j]);
-				}
-				break;
-			case "PDBs":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setPDBs(s[j]);
-				}
-				break;
-			case "ProductNames":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setProductsName(s[j]);
-				}
-				break;
-			case "Products":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setProducts(s[j]);
-				}
-				break;
-			case "Processes":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setProzess(s[j]);
-				}
-				break;
-			case "References":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setReference(s[j]);
-				}
-				break;
-			case "Subfamilies":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setSubfamily(s[j]);
-				}
-				break;
-			case "SubstrateNames":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setSubstratesName(s[j]);
-				}
-				break;
-			case "Substrates":
-				s = stringToArray(value);
-				for (int j = 0; j < s.length; j++) {
-					dawis.setSubstrates(s[j]);
 				}
 				break;
 			}

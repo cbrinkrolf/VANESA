@@ -1,9 +1,7 @@
 package biologicalObjects.nodes;
 
-import biologicalElements.Elementdeclerations;
-//import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
-import gui.MainWindow;
+import biologicalElements.Elementdeclerations;
 
 public class Other extends BiologicalNodeAbstract {
 

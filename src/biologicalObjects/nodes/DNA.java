@@ -1,18 +1,7 @@
 package biologicalObjects.nodes;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.yaml.snakeyaml.Yaml;
-
-import biologicalElements.Elementdeclerations;
-//import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
+import biologicalElements.Elementdeclerations;
 
 
 public class DNA extends BiologicalNodeAbstract {
@@ -38,5 +27,4 @@ public class DNA extends BiologicalNodeAbstract {
 	public void setNtSequence(String ntSequence) {
 		this.ntSequence = ntSequence;
 	}
-
 }

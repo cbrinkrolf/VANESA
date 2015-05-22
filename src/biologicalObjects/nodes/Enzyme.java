@@ -1,9 +1,6 @@
 package biologicalObjects.nodes;
 
 import graph.jung.graphDrawing.VertexShapes;
-
-import java.awt.Color;
-
 import biologicalElements.Elementdeclerations;
 
 public class Enzyme extends Protein {

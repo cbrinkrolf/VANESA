@@ -11,7 +11,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -37,7 +36,6 @@ import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
@@ -53,7 +51,6 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import graph.GraphInstance;
-import graph.algorithms.alignment.AlignmentEdge;
 import graph.eventhandlers.MyEditingModalGraphMouse;
 import graph.gui.CoarseNodeDeleteDialog;
 import graph.gui.GraphPopUp;
@@ -282,10 +279,10 @@ public class MyGraph {
 
 		// set the inner nodes to be painted after the actual graph
 		// vv.addPostRenderPaintable(new InnerNodeRenderer(vv));
-		//vv.addPostRenderPaintable(new TokenRenderer(vv));
+		// vv.addPostRenderPaintable(new TokenRenderer(vv));
 		pickSupport = new ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				vv);
-		
+
 		stateV = vv.getPickedVertexState();
 		stateE = vv.getPickedEdgeState();
 
@@ -359,7 +356,7 @@ public class MyGraph {
 				}
 			}
 		};
-		
+
 		pr.setVertexIconTransformer(vertexIconTransformer);
 
 		makeDefaultObjectVisualization();
@@ -412,8 +409,8 @@ public class MyGraph {
 		setMouseModePick();
 
 	}
-	
-	public void makeDefaultObjectVisualization(){
+
+	public void makeDefaultObjectVisualization() {
 		pr.setEdgeStrokeTransformer(esh);
 
 		pr.setEdgeDrawPaintTransformer(edpf);
@@ -495,8 +492,8 @@ public class MyGraph {
 		Point2D p = new Point.Double(xPos, yPos);
 		// nodePositions.setLocation(vertex, vv.getRenderContext()
 		// .getMultiLayerTransformer().inverseTransform(p));
-//		this.nodePositions.remove(vertex);
-//		this.nodePositions.put(vertex, p);
+		// this.nodePositions.remove(vertex);
+		// this.nodePositions.put(vertex, p);
 		layout.setLocation(vertex, p);
 	}
 
@@ -599,68 +596,62 @@ public class MyGraph {
 	public boolean addEdge(BiologicalEdgeAbstract bea) {
 		// Graph gs=vv.getGraphLayout().getGraph();
 
-		if (bea instanceof AlignmentEdge) {
-			AlignmentEdge aliEdge = (AlignmentEdge) bea;
-			return g.addEdge(aliEdge, aliEdge.getFrom(), aliEdge.getTo(),
-					EdgeType.UNDIRECTED);
+		// BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) edge;
 
+		// System.out.println("from: " + bea.getFrom());
+		// System.out.println("to: " + bea.getTo());
+		// g.addVertex("2");
+		// g.addVertex(bea.getFrom());
+		// g.addVertex(bea.getTo());
+
+		if (bea.isDirected()) {
+
+			// BiologicalNodeAbstract f;
+			// BiologicalNodeAbstract t;
+
+			// g.removeVertex(bea.getFrom());
+			// //g.removeVertex(bea.getTo());
+			// BiologicalNodeAbstract bna = new BiologicalNodeAbstract("",
+			// "");
+			// nodePositions.put(bna, new Point(10, 10));
+			// System.out.println(g.containsVertex(bea.getFrom()));
+			// System.out.println(g.containsVertex(bea.getTo()));
+			// System.out.println("from: " + bea.getFrom().getID());
+			// System.out.println("to: " + bea.getTo().getID());
+			// BiologicalNodeAbstract bna1 = new BiologicalNodeAbstract("",
+			// "");
+			// BiologicalNodeAbstract bna2 = new BiologicalNodeAbstract("",
+			// "");
+			// Iterator<BiologicalNodeAbstract> it = g.getVertices()
+			// .iterator();
+			// bna1 = it.next();
+			// bna2 = it.next();
+			// this.addVertex(bna1, new Point(30, 30));
+			// this.addVertex(bna2, new Point(50, 50));
+			// System.out.println("pos2: "+g.getVertices());
+			// System.out.println("pos2: "+nodePositions.get(bea.getTo()));
+			// g.addVertex(new BiologicalNodeAbstract("", ""));
+			// System.out.println(layout.getX(bea.getFrom()));
+			// System.out.println(layout.getY(bea.getFrom()));
+			// System.out.println(layout.getX(bea.getTo()));
+			// System.out.println(layout.getY(bea.getTo()));
+			// System.out.println(layout.transform(bea.getFrom()));
+			// System.out.println(layout.transform(bea.getTo()));
+			// System.out.println(bea.getFrom() == bea.getTo());
+			// System.out.println(g.addEdge(new BiologicalEdgeAbstract("",
+			// "", bna1, bna2), bna1,bna2, EdgeType.DIRECTED));//,from, to,
+			// EdgeType.DIRECTED);
+			// layout.setLocation(bea.getFrom(), 20, 20);
+			return g.addEdge(bea, bea.getFrom(), bea.getTo(), EdgeType.DIRECTED);
 		} else {
-			// BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) edge;
-
-			// System.out.println("from: " + bea.getFrom());
-			// System.out.println("to: " + bea.getTo());
-			// g.addVertex("2");
-			// g.addVertex(bea.getFrom());
-			// g.addVertex(bea.getTo());
-
-			if (bea.isDirected()) {
-
-				//BiologicalNodeAbstract f;
-				//BiologicalNodeAbstract t;
-
-				// g.removeVertex(bea.getFrom());
-				// //g.removeVertex(bea.getTo());
-				// BiologicalNodeAbstract bna = new BiologicalNodeAbstract("",
-				// "");
-				// nodePositions.put(bna, new Point(10, 10));
-				// System.out.println(g.containsVertex(bea.getFrom()));
-				// System.out.println(g.containsVertex(bea.getTo()));
-				// System.out.println("from: " + bea.getFrom().getID());
-				// System.out.println("to: " + bea.getTo().getID());
-				// BiologicalNodeAbstract bna1 = new BiologicalNodeAbstract("",
-				// "");
-				// BiologicalNodeAbstract bna2 = new BiologicalNodeAbstract("",
-				// "");
-				//Iterator<BiologicalNodeAbstract> it = g.getVertices()
-					//	.iterator();
-				// bna1 = it.next();
-				// bna2 = it.next();
-				// this.addVertex(bna1, new Point(30, 30));
-				// this.addVertex(bna2, new Point(50, 50));
-				// System.out.println("pos2: "+g.getVertices());
-				// System.out.println("pos2: "+nodePositions.get(bea.getTo()));
-				// g.addVertex(new BiologicalNodeAbstract("", ""));
-				// System.out.println(layout.getX(bea.getFrom()));
-				// System.out.println(layout.getY(bea.getFrom()));
-				// System.out.println(layout.getX(bea.getTo()));
-				// System.out.println(layout.getY(bea.getTo()));
-				// System.out.println(layout.transform(bea.getFrom()));
-				// System.out.println(layout.transform(bea.getTo()));
-				// System.out.println(bea.getFrom() == bea.getTo());
-				// System.out.println(g.addEdge(new BiologicalEdgeAbstract("",
-				// "", bna1, bna2), bna1,bna2, EdgeType.DIRECTED));//,from, to,
-				// EdgeType.DIRECTED);
-				// layout.setLocation(bea.getFrom(), 20, 20);
-				return g.addEdge(bea, bea.getFrom(), bea.getTo(), EdgeType.DIRECTED);
-			} else {
-				return g.addEdge(bea, bea.getFrom(), bea.getTo(), EdgeType.UNDIRECTED);
-			}
-			// Pair p = g.getEndpoints(bea.toString());
-			// System.out.println("f: "+layout.transform(p.getFirst()));
-			// System.out.println("s: "+layout.transform(p.getSecond()));
-			// System.out.println(g.findEdge(bea.getFrom(), bea.getTo()));
-			// getEdgeStringer().addEdge(edge);
+			return g.addEdge(bea, bea.getFrom(), bea.getTo(),
+					EdgeType.UNDIRECTED);
 		}
+		// Pair p = g.getEndpoints(bea.toString());
+		// System.out.println("f: "+layout.transform(p.getFirst()));
+		// System.out.println("s: "+layout.transform(p.getSecond()));
+		// System.out.println(g.findEdge(bea.getFrom(), bea.getTo()));
+		// getEdgeStringer().addEdge(edge);
 		// System.out.println(g);
 		// vv.revalidate();
 		// vv.
@@ -702,7 +693,7 @@ public class MyGraph {
 		graphMouse.setMode(ModalGraphMouse.Mode.EDITING);
 		vv.setGraphMouse(graphMouse);
 	}
-	
+
 	public void setMouseModeSelectRange() {
 		stateV.clear();
 		// stateV.clearPickedEdges();
@@ -844,20 +835,28 @@ public class MyGraph {
 			Integer savedAnswer = -1;
 			while (it.hasNext()) {
 				bna = it.next();
-				if(pw instanceof BiologicalNodeAbstract){
+				if (pw instanceof BiologicalNodeAbstract) {
 					BiologicalNodeAbstract pwNode = (BiologicalNodeAbstract) pw;
-					if (pwNode.getEnvironment().contains(bna)){
-						if(pwNode.getGraph().getJungGraph().getNeighborCount(bna)!=0){
-							JOptionPane.showMessageDialog(null, "Can't delete connected environment nodes.", "Deletion Error",
-								JOptionPane.ERROR_MESSAGE);
+					if (pwNode.getEnvironment().contains(bna)) {
+						if (pwNode.getGraph().getJungGraph()
+								.getNeighborCount(bna) != 0) {
+							JOptionPane
+									.showMessageDialog(
+											null,
+											"Can't delete connected environment nodes.",
+											"Deletion Error",
+											JOptionPane.ERROR_MESSAGE);
 							continue;
 						} else {
-							Object[] options = {"Yes", "No"};
-							int answer = JOptionPane.showOptionDialog(vv, 
-									"Do you want to delete the predefined environment node " + bna.getLabel() + "?", 
-									"Delete predefined environment node" , JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
-									null, options, options[1]);
-							if(answer == JOptionPane.NO_OPTION){
+							Object[] options = { "Yes", "No" };
+							int answer = JOptionPane.showOptionDialog(vv,
+									"Do you want to delete the predefined environment node "
+											+ bna.getLabel() + "?",
+									"Delete predefined environment node",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.QUESTION_MESSAGE, null,
+									options, options[1]);
+							if (answer == JOptionPane.NO_OPTION) {
 								continue;
 							} else {
 								pw.removeElement(bna);
@@ -867,27 +866,30 @@ public class MyGraph {
 						}
 					}
 				}
-				if(!bna.getAllNodes().isEmpty() && savedAnswer == JOptionPane.NO_OPTION){
+				if (!bna.getAllNodes().isEmpty()
+						&& savedAnswer == JOptionPane.NO_OPTION) {
 					continue;
 				}
-				if(!bna.getAllNodes().isEmpty() && savedAnswer != JOptionPane.YES_OPTION){
-					CoarseNodeDeleteDialog dialog = new CoarseNodeDeleteDialog(bna);
+				if (!bna.getAllNodes().isEmpty()
+						&& savedAnswer != JOptionPane.YES_OPTION) {
+					CoarseNodeDeleteDialog dialog = new CoarseNodeDeleteDialog(
+							bna);
 					Integer[] del = dialog.getAnswer();
-					if(del[0]==JOptionPane.NO_OPTION){
-						if(del[1]==1){
+					if (del[0] == JOptionPane.NO_OPTION) {
+						if (del[1] == 1) {
 							savedAnswer = JOptionPane.NO_OPTION;
 						}
 						continue;
-					} else if(del[0]==JOptionPane.YES_OPTION){
-						if(del[1]==1){
+					} else if (del[0] == JOptionPane.YES_OPTION) {
+						if (del[1] == 1) {
 							savedAnswer = JOptionPane.YES_OPTION;
 						}
 					}
 				}
-				
+
 				Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
 				conEdges.addAll(bna.getConnectingEdges());
-				for(BiologicalEdgeAbstract edge : conEdges){
+				for (BiologicalEdgeAbstract edge : conEdges) {
 					pw.getRootPathway().deleteSubEdge(edge);
 				}
 				setVertexStateDeleted(bna);
@@ -896,12 +898,12 @@ public class MyGraph {
 			}
 		}
 	}
-	
-	private void setVertexStateDeleted(BiologicalNodeAbstract vertex){
+
+	private void setVertexStateDeleted(BiologicalNodeAbstract vertex) {
 		vertex.setStateChanged(NodeStateChanged.DELETED);
-		for(BiologicalNodeAbstract child : vertex.getAllNodes()){
-			if(!vertex.getEnvironment().contains(child)){
-				if(child.getAllNodes().isEmpty()){
+		for (BiologicalNodeAbstract child : vertex.getAllNodes()) {
+			if (!vertex.getEnvironment().contains(child)) {
+				if (child.getAllNodes().isEmpty()) {
 					child.setStateChanged(NodeStateChanged.DELETED);
 				} else {
 					setVertexStateDeleted(child);
@@ -1029,10 +1031,11 @@ public class MyGraph {
 		changeToLayout(new GEMLayout(g));
 
 	}
-	
+
 	public void changeToHEBLayout() {
-		if(layout instanceof HEBLayout && !((HEBLayout) layout).getConfig().resetLayout()){
-			if(((HEBLayout) layout).getConfig().getAutoRelayout()){
+		if (layout instanceof HEBLayout
+				&& !((HEBLayout) layout).getConfig().resetLayout()) {
+			if (((HEBLayout) layout).getConfig().getAutoRelayout()) {
 				changeToLayout(new HEBLayout(g, ((HEBLayout) layout).getOrder()));
 			} else {
 				((HEBLayout) layout).saveCurrentOrder();
@@ -1041,9 +1044,9 @@ public class MyGraph {
 		}
 		changeToLayout(new HEBLayout(g));
 	}
-	
+
 	public void changeToHCTLayout() {
-		changeToLayout(new HCTLayout(g,pathway.getRootNode()));
+		changeToLayout(new HCTLayout(g, pathway.getRootNode()));
 	}
 
 	// public void changeToMDForceLayout() {
@@ -1059,30 +1062,30 @@ public class MyGraph {
 	// this.clusteringLayout.addSubLayout(sub);
 	// }
 	// }
-	
-	public void updateLayout(){
-		if(layout instanceof HEBLayout){
+
+	public void updateLayout() {
+		if (layout instanceof HEBLayout) {
 			changeToHEBLayout();
-		} else if(layout instanceof HCTLayout){
+		} else if (layout instanceof HCTLayout) {
 			changeToHCTLayout();
-		} else if (layout instanceof GEMLayout){
-			//changeToGEMLayout();
-		} else if (layout instanceof StaticLayout){
-			//changeToStaticLayout();
-		} else if (layout instanceof CircleLayout){
+		} else if (layout instanceof GEMLayout) {
+			// changeToGEMLayout();
+		} else if (layout instanceof StaticLayout) {
+			// changeToStaticLayout();
+		} else if (layout instanceof CircleLayout) {
 			changeToCircleLayout();
-		} else if (layout instanceof SpringLayout){
-			//changeToSpringLayout();
-		} else if (layout instanceof ISOMLayout){
-			//changeToISOMLayout();
-		} else if (layout instanceof FRLayout){
-			//changeToFRLayout();
-		} else if (layout instanceof KKLayout){
-			//changeToKKLayout();
+		} else if (layout instanceof SpringLayout) {
+			// changeToSpringLayout();
+		} else if (layout instanceof ISOMLayout) {
+			// changeToISOMLayout();
+		} else if (layout instanceof FRLayout) {
+			// changeToFRLayout();
+		} else if (layout instanceof KKLayout) {
+			// changeToKKLayout();
 		}
 	}
-	
-	public AbstractLayout<BiologicalNodeAbstract,BiologicalEdgeAbstract> getLayout(){
+
+	public AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> getLayout() {
 		return layout;
 	}
 
@@ -1092,7 +1095,7 @@ public class MyGraph {
 		makeDefaultObjectVisualization();
 		this.layout = layout;
 		// this.clusteringLayout.removeAllSubLayouts();
-		//Dimension oldDim = clusteringLayout.getSize();// getCurrentSize();
+		// Dimension oldDim = clusteringLayout.getSize();// getCurrentSize();
 		// vv.setLayout(new BorderLayout());
 
 		// vv.setGraphLayout(layout);
@@ -1100,7 +1103,7 @@ public class MyGraph {
 
 		// vv.setModel(visualizationModel);
 		// vv2.setModel(visualizationModel);
-		
+
 		// normalCentering();
 		// this.clusteringLayout.setDelegate(layout);
 		// this.clusteringLayout.initialize();//initialize(oldDim);
@@ -1110,22 +1113,22 @@ public class MyGraph {
 		 */
 
 		// normalCentering(vv2);
-		//normalCentering(vv);
+		// normalCentering(vv);
 		// normalCentering();
 		visualizationModel.setGraphLayout(layout);
-		
+
 		Runnable center = new Runnable() {
 
 			@Override
 			public void run() {
 				try {
 					Thread.sleep(500);
-					
+
 					// fitScaleOfViewer(vv2);
 					// fitScaleOfViewer(vv);
 
 					normalCentering();
-					//fitScaleOfSatellitView();
+					// fitScaleOfSatellitView();
 					// normalCentering();
 					// System.out.println("test");
 				} catch (InterruptedException ex) {
@@ -1138,7 +1141,6 @@ public class MyGraph {
 		// this.normalCentering(vv);
 
 	}
-
 
 	public Point2D findNearestFreeVertexPosition(
 			double startSearchCoordinatesX, double startSearchCoordinatesY,
@@ -1187,7 +1189,8 @@ public class MyGraph {
 		viewer.getRenderContext().getMultiLayerTransformer()
 				.getTransformer(Layer.VIEW).setScale(1, 1, viewer.getCenter());
 		viewer.getRenderContext().getMultiLayerTransformer()
-				.getTransformer(Layer.LAYOUT).setScale(1, 1, viewer.getCenter());
+				.getTransformer(Layer.LAYOUT)
+				.setScale(1, 1, viewer.getCenter());
 
 		while (it.hasNext()) {
 			bna = it.next();
@@ -1225,7 +1228,8 @@ public class MyGraph {
 		Dimension viewSize = viewer.getSize();
 		// System.out.println(viewSize);
 		// System.out.println(viewSize);
-		//GraphCenter graphCenter = new GraphCenter(this, viewer.getGraphLayout());
+		// GraphCenter graphCenter = new GraphCenter(this,
+		// viewer.getGraphLayout());
 		// System.out.println("w: "+viewer.getWidth());
 		// System.out.println(": "+this.visualizationModel.getGraphLayout().getSize());
 		// GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout()
@@ -1269,12 +1273,12 @@ public class MyGraph {
 
 	public void normalCentering() {
 
-		 fitScaleOfViewer(this.vv);
-		 fitScaleOfViewer(this.vv2);
+		fitScaleOfViewer(this.vv);
+		fitScaleOfViewer(this.vv2);
 		normalCentering(this.vv);
 		normalCentering(this.vv2);
 
-		//vv.repaint();
+		// vv.repaint();
 		// vv.restart();
 
 		// vv2.repaint();
@@ -1282,8 +1286,9 @@ public class MyGraph {
 
 	}
 
-	public void normalCentering(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> viewer) {
-		//System.out.println("drin");
+	public void normalCentering(
+			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> viewer) {
+		// System.out.println("drin");
 		// System.out.println("drin");
 		// GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout()
 		// .getGraph(), viewer.getGraphLayout());
@@ -1314,16 +1319,15 @@ public class MyGraph {
 		// System.out.println(viewer.getClass()+" "+dx+" "+dy);
 		viewer.getRenderContext().getMultiLayerTransformer()
 				.getTransformer(Layer.LAYOUT).translate(dx, dy);
-		
-		
+
 		// viewer.getLayoutTransformer().translate(dx, dy);
 
 	}
 
 	public void animatedCentering() {
 
-		//this.fitScaleOfViewer(vv);
-		//System.out.println("bla");
+		// this.fitScaleOfViewer(vv);
+		// System.out.println("bla");
 		// System.out.println(vv.getSize());
 
 		// System.out.println("animated centring");
@@ -1331,7 +1335,7 @@ public class MyGraph {
 
 		GraphCenter graphCenter = new GraphCenter(this, layout);
 		Point2D q = graphCenter.getCenter(); // Point2D lvc =
-		//vv.inverseTransform(vv.getCenter());
+		// vv.inverseTransform(vv.getCenter());
 		Point2D lvc = vv.getRenderContext().getMultiLayerTransformer()
 				.inverseTransform(vv.getCenter());
 
@@ -1339,14 +1343,14 @@ public class MyGraph {
 		final double dy = (lvc.getY() - q.getY()) / 10; // System.out.println(dx+" "+dy);
 
 		// System.out.println("nodes: "+g.getVertexCount()); //
-		//System.out.println(g.getEdgeCount()); //
-		//System.out.println(dx + " " + dy);
+		// System.out.println(g.getEdgeCount()); //
+		// System.out.println(dx + " " + dy);
 		Runnable animator = new Runnable() {
 
 			@Override
 			public void run() {
 				for (int i = 0; i < 10; i++) { //
-					//vv.getLayoutTransformer().translate(dx, dy);
+					// vv.getLayoutTransformer().translate(dx, dy);
 					vv.getRenderContext().getMultiLayerTransformer()
 							.getTransformer(Layer.LAYOUT).translate(dx, dy);
 
@@ -1490,7 +1494,7 @@ public class MyGraph {
 		vv.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 		graphMouse.setMode(ModalGraphMouse.Mode.ANNOTATING);
 		vv.setGraphMouse(graphMouse);
-		
+
 	}
 
 }

@@ -1,9 +1,6 @@
 package biologicalObjects.nodes;
 
-import java.awt.Color;
-
 import biologicalElements.Elementdeclerations;
-//import edu.uci.ics.jung.graph.Vertex;
 
 
 public class SRNA extends RNA{

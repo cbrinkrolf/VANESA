@@ -1,6 +1,5 @@
 package biologicalObjects.nodes;
 
-//import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
 
 import java.util.Vector;
@@ -152,13 +151,4 @@ public class Gene extends BiologicalNodeAbstract {
 		this.ntSequence = ntSequence;
 	}
 
-	@Override
-	public void setDB(String geneDB) {
-		this.db = geneDB;
-	}
-
-	@Override
-	public String getDB() {
-		return this.db;
-	}
 }

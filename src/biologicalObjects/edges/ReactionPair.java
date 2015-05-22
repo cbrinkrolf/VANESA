@@ -6,8 +6,8 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ReactionPair extends BiologicalEdgeAbstract {
 
-	ReactionPairEdge rpEdge = new ReactionPairEdge();
-	boolean hasRPairEdge = false;
+	private ReactionPairEdge rpEdge = new ReactionPairEdge();
+	private boolean hasRPairEdge = false;
 	
 	public ReactionPair(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 		super(label, name, from, to);

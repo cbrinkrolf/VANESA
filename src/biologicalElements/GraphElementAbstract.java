@@ -5,7 +5,6 @@ import graph.gui.Parameter;
 import java.awt.Color;
 import java.awt.Shape;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 
 public interface GraphElementAbstract{
@@ -16,14 +15,6 @@ public interface GraphElementAbstract{
 	void setID(int id) throws IDAlreadyExistException;
 
 	void setID();
-
-	public Collection<Integer> getOriginalGraphs();
-
-	public void setOriginalGraphs(Collection<Integer> graphs);
-
-	public void addOriginalGraph(int g);
-
-	public boolean containedInAllOriginalGraphs(Pathway[] pathways);
 
 	public String getNetworklabel();
 
@@ -91,10 +82,6 @@ public interface GraphElementAbstract{
 
 	public void hasBrendaNode(boolean hasBrendaNode);
 
-	public boolean hasDAWISNode();
-
-	public void hasDAWISNode(boolean node);
-	
 	public ArrayList<Parameter> getParameters();
 
 	public void setParameters(ArrayList<Parameter> parameters);
@@ -106,8 +93,6 @@ public interface GraphElementAbstract{
 	public void addLabel(String label);
 	
 	public void addLabel(HashSet<String> labels);
-	
-	public void removeLabel(String label);
 	
 	public void resetAppearance();
 
