@@ -12,8 +12,6 @@ import graph.layouts.hebLayout.HEBLayout;
 import gui.GraphTab;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.utils.Pair;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -22,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -56,7 +53,6 @@ import biologicalObjects.edges.Repression;
 import biologicalObjects.edges.StateChange;
 import biologicalObjects.edges.Ubiquitination;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.CollectorNode;
 import biologicalObjects.nodes.Complex;
 import biologicalObjects.nodes.CompoundNode;
 import biologicalObjects.nodes.DNA;
@@ -129,8 +125,6 @@ public class Pathway implements Cloneable {
 	private GraphTab tab;
 
 	private final FilterSettings filterSettings;
-
-	private boolean isDAWISProject = false;
 
 	private Pathway parent;
 
@@ -244,8 +238,6 @@ public class Pathway implements Cloneable {
 			bna = new Gene(label, name);
 		else if (elementDecleration.equals(Elementdeclerations.reaction))
 			bna = new Reaction(label, name);
-		else if (elementDecleration.equals(Elementdeclerations.collector))
-			bna = new CollectorNode(label, name);
 		else if (elementDecleration
 				.equals(Elementdeclerations.stochasticTransition))
 			bna = new StochasticTransition(label, name);
@@ -998,14 +990,6 @@ public class Pathway implements Cloneable {
 
 	public void setGraph(MyGraph graph) {
 		this.graph = graph;
-	}
-
-	public void setDAWISProject() {
-		isDAWISProject = true;
-	}
-
-	public boolean isDAWISProject() {
-		return isDAWISProject;
 	}
 
 	public String getImagePath() {

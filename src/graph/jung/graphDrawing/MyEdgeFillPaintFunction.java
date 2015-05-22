@@ -10,7 +10,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.picking.PickedState;
-import graph.algorithms.alignment.AlignmentEdge;
 
 public class MyEdgeFillPaintFunction implements Transformer<BiologicalEdgeAbstract, Paint> {
 
@@ -35,14 +34,6 @@ public class MyEdgeFillPaintFunction implements Transformer<BiologicalEdgeAbstra
 
 	@Override
 	public Paint transform(BiologicalEdgeAbstract bea) {
-		if (bea instanceof AlignmentEdge) {
-			// TODO val fuer ali-Edge setzen
-			double val = 1;//((Double) e.getUserDatum("alignment")).doubleValue();
-			int r = (int) (255 * val);
-			int b = (int) (255 * (1 - val));
-			return new Color(r, 0, b);
-		} else{
 			return null;
-		}
 	}
 }
