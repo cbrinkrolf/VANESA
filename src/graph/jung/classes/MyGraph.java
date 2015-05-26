@@ -328,36 +328,7 @@ public class MyGraph {
 		vlr.setForeground(Color.WHITE);
 
 		pr = vv.getRenderContext();
-		annotationManager = new MyAnnotationManager(pr);
-		// vv.getRenderer().getVertexRenderer().
-		// TODO
-		// System.out.println(pr.getClass().getName());
-		// pr.setVertexStringer(vertexStringer);
-
-		pr.setVertexStrokeTransformer(vsh);
-		pr.setVertexLabelTransformer(vertexStringer);
-
-		pr.setVertexShapeTransformer(vertexShapeTransformer);
-
-		pr.setEdgeLabelTransformer(this.edgeStringer);
-
-		pr.setVertexDrawPaintTransformer(vdpf);
-		pr.setVertexFillPaintTransformer(vfpf);
-
-		Transformer<BiologicalNodeAbstract, Icon> vertexIconTransformer = new Transformer<BiologicalNodeAbstract, Icon>() {
-
-			public Icon transform(BiologicalNodeAbstract bna) {
-				if (bna instanceof Place) {
-					Icon icon = new DynamicIcon((Place) bna);
-
-					return icon;
-				} else {
-					return null;
-				}
-			}
-		};
-
-		pr.setVertexIconTransformer(vertexIconTransformer);
+		
 
 		makeDefaultObjectVisualization();
 
@@ -426,6 +397,37 @@ public class MyGraph {
 		pr.setEdgeLabelRenderer(elr);
 
 		pr.setEdgeArrowTransformer(eaf);
+		
+		annotationManager = new MyAnnotationManager(pr);
+		// vv.getRenderer().getVertexRenderer().
+		// TODO
+		// System.out.println(pr.getClass().getName());
+		// pr.setVertexStringer(vertexStringer);
+
+		pr.setVertexStrokeTransformer(vsh);
+		pr.setVertexLabelTransformer(vertexStringer);
+
+		pr.setVertexShapeTransformer(vertexShapeTransformer);
+
+		pr.setEdgeLabelTransformer(this.edgeStringer);
+
+		pr.setVertexDrawPaintTransformer(vdpf);
+		pr.setVertexFillPaintTransformer(vfpf);
+
+		Transformer<BiologicalNodeAbstract, Icon> vertexIconTransformer = new Transformer<BiologicalNodeAbstract, Icon>() {
+
+			public Icon transform(BiologicalNodeAbstract bna) {
+				if (bna instanceof Place) {
+					Icon icon = new DynamicIcon((Place) bna);
+
+					return icon;
+				} else {
+					return null;
+				}
+			}
+		};
+
+		pr.setVertexIconTransformer(vertexIconTransformer);
 
 		satellitePr.setVertexStrokeTransformer(vsh);
 		satellitePr.setVertexLabelTransformer(vertexStringer);
