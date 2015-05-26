@@ -368,6 +368,7 @@ public class MyGraph {
 		// vv.getPickedEdgeState().addItemListener(new EdgePickListener());
 		stateV.addItemListener(new ItemListener() {
 
+			MainWindow w = MainWindowSingleton.getInstance();
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				// TODO Auto-generated method stub
@@ -376,9 +377,12 @@ public class MyGraph {
 					graphInstance
 							.setSelectedObject((BiologicalNodeAbstract) stateV
 									.getSelectedObjects()[0]);
+					
+					w.updateElementProperties();
 				}
-				MainWindow w = MainWindowSingleton.getInstance();
-				w.updateElementProperties();
+				//System.out.println("vorher");
+				
+				//System.out.println("nachher");
 				if (graphInstance.getPathway().isPetriNetSimulation()) {
 					// System.out.println("sim");
 					w.updatePCPView();
@@ -388,7 +392,7 @@ public class MyGraph {
 		});
 
 		stateE.addItemListener(new ItemListener() {
-
+			MainWindow w = MainWindowSingleton.getInstance();
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				// TODO Auto-generated method stub
@@ -397,9 +401,9 @@ public class MyGraph {
 					graphInstance
 							.setSelectedObject((BiologicalEdgeAbstract) stateE
 									.getSelectedObjects()[0]);
+					w.updateElementProperties();
 				}
-				MainWindow w = MainWindowSingleton.getInstance();
-				w.updateElementProperties();
+				
 				if (graphInstance.getPathway().isPetriNetSimulation()) {
 					// System.out.println("sim");
 					w.updatePCPView();
