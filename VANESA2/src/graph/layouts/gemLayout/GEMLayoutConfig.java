@@ -14,13 +14,11 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-
 import cern.colt.list.IntArrayList;
 import configurations.gui.ConfigPanel;
 //import edu.uci.ics.jung.graph.Vertex;
 
-public class GEMLayoutConfig extends ConfigPanel implements ChangeListener{
+public class GEMLayoutConfig<V> extends ConfigPanel implements ChangeListener{
 
 	/**
 	 * 
@@ -28,169 +26,137 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener{
 	private static final long serialVersionUID = 1L;
 
 	// number of nodes in the graph
-	public static int nodeCount;
+	public  int nodeCount;
 
 	//
 	// GEM Constants
 	//
-	public static int ELEN = 128;
+	public int ELEN = 128;
 
-	public static int ELENSQR = ELEN * ELEN;
+	public int ELENSQR = ELEN * ELEN;
 
-	public static int MAXATTRACT = 1048576;
+	public int MAXATTRACT = 1048576;
 
 	//
 	// GEM variables
 	//
-	public static long iteration;
+	public long iteration;
 
-	public static long temperature;
+	public long temperature;
 
-	public static int centerX, centerY;
+	public int centerX, centerY;
 
-	public static long maxtemp;
+	public long maxtemp;
 
-	public static float oscillation, rotation;
+	public float oscillation, rotation;
 
 	//
 	// GEM Default Parameter Values
 	//
-	public static float i_maxtemp = (float) 1.0;
+	public float i_maxtemp = (float) 1.0;
 
-	public static float a_maxtemp = (float) 1.5;
+	public float a_maxtemp = (float) 1.5;
 
-	public static float o_maxtemp = (float) 0.25;
+	public float o_maxtemp = (float) 0.25;
 
-	public static float i_starttemp = (float) 0.3;
+	public float i_starttemp = (float) 0.3;
 
-	public static float a_starttemp = (float) 1.0;
+	public float a_starttemp = (float) 1.0;
 
-	public static float o_starttemp = (float) 1.0;
+	public float o_starttemp = (float) 1.0;
 
-	public static float i_finaltemp = (float) 0.05;
+	public float i_finaltemp = (float) 0.05;
 
-	public static float a_finaltemp = (float) 0.02;
+	public float a_finaltemp = (float) 0.02;
 
-	public static float o_finaltemp = (float) 1.0;
+	public float o_finaltemp = (float) 1.0;
 
-	public static int i_maxiter = 10;
+	public int i_maxiter = 10;
 
-	public static int a_maxiter = 3;
+	public int a_maxiter = 3;
 
-	public static int o_maxiter = 3;
+	public int o_maxiter = 3;
 
-	public static float i_gravity = (float) 0.05;
+	public float i_gravity = (float) 0.05;
 
-	public static float i_oscillation = (float) 0.4;
+	public float i_oscillation = (float) 0.4;
 
-	public static float i_rotation = (float) 0.5;
+	public float i_rotation = (float) 0.5;
 
-	public static float i_shake = (float) 0.2;
+	public float i_shake = (float) 0.2;
 
-	public static float a_gravity = (float) 0.1;
+	public float a_gravity = (float) 0.1;
 
-	public static float a_oscillation = (float) 0.4;
+	public float a_oscillation = (float) 0.4;
 
-	public static float a_rotation = (float) 0.9;
+	public float a_rotation = (float) 0.9;
 
-	public static float a_shake = (float) 0.3;
+	public float a_shake = (float) 0.3;
 
-	public static float o_gravity = (float) 0.1;
+	public float o_gravity = (float) 0.1;
 
-	public static float o_oscillation = (float) 0.4;
+	public float o_oscillation = (float) 0.4;
 
-	public static float o_rotation = (float) 0.9;
+	public float o_rotation = (float) 0.9;
 
-	public static float o_shake = (float) 0.3;
+	public float o_shake = (float) 0.3;
 
 	// list of properties for each node
-	public static GemP gemProp[];
+	public GemP gemProp[];
 
 	// inverse map from int id to Vertex
-	public static BiologicalNodeAbstract invmap[];
+	public V invmap[];
 
 	// adjacent int ids for a given Vertex int id
-	public static Int2ObjectOpenHashMap<IntArrayList> adjacent;
+	public Int2ObjectOpenHashMap<IntArrayList> adjacent;
 
 	// map from Vertex to int id
-	public static Object2IntOpenHashMap<BiologicalNodeAbstract> nodeNumbers;
+	public Object2IntOpenHashMap<V> nodeNumbers;
 
 	// randomizer used for node selection
-	public static Random rand = new Random();
+	public Random rand = new Random();
 
 	// map used for current random set of nodes
-	public static int map[];
+	public int map[];
 
 	// priority queue for BFS
-	public static IntArrayPriorityQueue q;
+	public IntArrayPriorityQueue q;
 
 	// slider for edge length
-	public static JSlider sliderElen = null;
+	public JSlider sliderElen = null;
 
 	// slider for i_maxiter
-	public static JSlider sliderIMaxIter = null;
+	public JSlider sliderIMaxIter = null;
 
 	// slider for i_gravity
-	public static JSlider sliderIGravity = null;
+	public JSlider sliderIGravity = null;
 
 	// slider for i_shake
-	public static JSlider sliderIShake = null;
+	public JSlider sliderIShake = null;
 
 	// slider for a_maxiter
-	public static JSlider sliderAMaxIter = null;
+	public JSlider sliderAMaxIter = null;
 
 	// slider for a_gravity
-	public static JSlider sliderAGravity = null;
+	public JSlider sliderAGravity = null;
 
 	// slider for a_shake
-	public static JSlider sliderAShake = null;
+	public JSlider sliderAShake = null;
 
 	// slider for o_maxiter
-	public static JSlider sliderOMaxIter = null;
+	public JSlider sliderOMaxIter = null;
 
 	// slider for o_gravity
-	public static JSlider sliderOGravity = null;
+	public JSlider sliderOGravity = null;
 
 	// slider for o_shake
-	public static JSlider sliderOShake = null;
+	public JSlider sliderOShake = null;
 
-	private static GEMLayoutConfig instance;
+	private GEMLayoutConfig<V> instance;
 
-	/**
-	 * Class containing properties per node.
-	 * 
-	 * @author taubertj
-	 * 
-	 */
-	public class GemP {
-
-		public int x, y; // position
-
-		public int in;
-
-		public int iX, iY; // impulse
-
-		public float dir; // direction
-
-		public float heat; // heat
-
-		public float mass; // weight = nr edges
-
-		public boolean mark;
-
-		public GemP(int m) {
-			x = 0;
-			y = 0;
-			iX = iY = 0;
-			dir = (float) 0.0;
-			heat = 0;
-			mass = m;
-			mark = false;
-		}
-	}
 
 	
-	private GEMLayoutConfig() {
+	public GEMLayoutConfig() {
 		super(GEMLayout.class);
 			//BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
 			GridLayout layout = new GridLayout(0, 2);
@@ -346,34 +312,29 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener{
 	}
 	
 	public void stateChanged(ChangeEvent arg0) {
-		if (arg0.getSource().equals(GEMLayoutConfig.sliderElen)) {
-			GEMLayoutConfig.ELEN = GEMLayoutConfig.sliderElen.getValue();
-			GEMLayoutConfig.ELENSQR = GEMLayoutConfig.ELEN * GEMLayoutConfig.ELEN;
-		} else if (arg0.getSource().equals(GEMLayoutConfig.sliderIMaxIter)) {
-			GEMLayoutConfig.i_maxiter = GEMLayoutConfig.sliderIMaxIter.getValue();
-		} else if (arg0.getSource().equals(GEMLayoutConfig.sliderAMaxIter)) {
-			GEMLayoutConfig.a_maxiter = GEMLayoutConfig.sliderAMaxIter.getValue();
-		} else if (arg0.getSource().equals(GEMLayoutConfig.sliderOMaxIter)) {
-			GEMLayoutConfig.o_maxiter = GEMLayoutConfig.sliderOMaxIter.getValue();
-		} else if (arg0.getSource().equals(GEMLayoutConfig.sliderIGravity)) {
-			GEMLayoutConfig.i_gravity = GEMLayoutConfig.sliderIGravity.getValue() / 100f;
-		} else if (arg0.getSource().equals(GEMLayoutConfig.sliderAGravity)) {
-			GEMLayoutConfig.a_gravity = GEMLayoutConfig.sliderAGravity.getValue() / 100f;
-		} else if (arg0.getSource().equals(GEMLayoutConfig.sliderOGravity)) {
-			GEMLayoutConfig.o_gravity = GEMLayoutConfig.sliderOGravity.getValue() / 100f;
-		} else if (arg0.getSource().equals(GEMLayoutConfig.sliderIShake)) {
-			GEMLayoutConfig.i_shake = GEMLayoutConfig.sliderIShake.getValue() / 100f;
-		} else if (arg0.getSource().equals(GEMLayoutConfig.sliderAShake)) {
-			GEMLayoutConfig.a_shake = GEMLayoutConfig.sliderAShake.getValue() / 100f;
-		} else if (arg0.getSource().equals(GEMLayoutConfig.sliderOShake)) {
-			GEMLayoutConfig.o_shake = GEMLayoutConfig.sliderOShake.getValue() / 100f;
+		
+		if (arg0.getSource().equals(sliderElen)) {
+			ELEN = sliderElen.getValue();
+			ELENSQR = ELEN * ELEN;
+		} else if (arg0.getSource().equals(sliderIMaxIter)) {
+			i_maxiter = sliderIMaxIter.getValue();
+		} else if (arg0.getSource().equals(sliderAMaxIter)) {
+			a_maxiter = sliderAMaxIter.getValue();
+		} else if (arg0.getSource().equals(sliderOMaxIter)) {
+			o_maxiter = sliderOMaxIter.getValue();
+		} else if (arg0.getSource().equals(sliderIGravity)) {
+			i_gravity = sliderIGravity.getValue() / 100f;
+		} else if (arg0.getSource().equals(sliderAGravity)) {
+			a_gravity = sliderAGravity.getValue() / 100f;
+		} else if (arg0.getSource().equals(sliderOGravity)) {
+			o_gravity = sliderOGravity.getValue() / 100f;
+		} else if (arg0.getSource().equals(sliderIShake)) {
+			i_shake = sliderIShake.getValue() / 100f;
+		} else if (arg0.getSource().equals(sliderAShake)) {
+			a_shake = sliderAShake.getValue() / 100f;
+		} else if (arg0.getSource().equals(sliderOShake)) {
+			o_shake = sliderOShake.getValue() / 100f;
 		}
 	}
 
-	public static GEMLayoutConfig getInstance() {
-		if(instance == null){
-			instance = new GEMLayoutConfig();
-		}
-		return instance;
-	}
 }

@@ -110,7 +110,7 @@ public class MyGraph {
 	private int VisualizationViewerWidth = 1000;
 	private int VisualizationViewerHeigth = 1000;
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<BiologicalNodeAbstract, BiologicalEdgeAbstract>();
-	private final MyVisualizationViewer vv;
+	private final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 	private AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
 	final MyEditingModalGraphMouse graphMouse = new MyEditingModalGraphMouse();
 	private final SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv2;
@@ -136,7 +136,7 @@ public class MyGraph {
 
 	protected PickedState<BiologicalNodeAbstract> stateV;
 	protected PickedState<BiologicalEdgeAbstract> stateE;
-	GraphInstance graphInstance = new GraphInstance();
+	private GraphInstance graphInstance = new GraphInstance();
 	private final VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> visualizationModel;
 	private final AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout;
 	private MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
@@ -198,7 +198,7 @@ public class MyGraph {
 				clusteringLayout, preferredSize);
 		visualizationModel.getRelaxer().setSleepTime(10);
 		// visualizationModel.setRelaxerThreadSleepTime(10);
-		vv = new MyVisualizationViewer(visualizationModel, preferredSize,
+		vv = new MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(visualizationModel, preferredSize,
 				pathway);
 
 		vv.setSize(preferredSize);
@@ -746,7 +746,7 @@ public class MyGraph {
 		thread.start();
 	}
 
-	public MyVisualizationViewer getVisualizationViewer() {
+	public MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> getVisualizationViewer() {
 		vv.setDoubleBuffered(true);
 		return vv;
 	}

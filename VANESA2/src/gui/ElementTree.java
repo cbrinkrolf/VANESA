@@ -281,7 +281,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 			BiologicalNodeAbstract bna = table.get(node.getIndex(currentNode));
 			// System.out.println(bna.getLabel());
 			GraphInstance g = new GraphInstance();
-			final MyVisualizationViewer vv = g.getPathway().getGraph()
+			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = g.getPathway().getGraph()
 					.getVisualizationViewer();
 			
 
