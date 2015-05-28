@@ -7,9 +7,7 @@ public class Series {
 
 	private List<Double> values;
 	public Series(){
-		
 		values = new ArrayList<Double>();
-		
 	}
 	
 	public List<Double> getAll(){
@@ -22,6 +20,10 @@ public class Series {
 	
 	public void add(Double d){
 		values.add(d);
+	}
+	
+	public int getSize(){
+		return values.size();
 	}
 	
 }
