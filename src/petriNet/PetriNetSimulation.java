@@ -12,7 +12,6 @@ import gui.SimMenue;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,9 +20,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,11 +31,13 @@ import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import moOutput.MOoutput;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 
-import moOutput.MOoutput;
 import biologicalElements.GraphElementAbstract;
+import biologicalElements.Pathway;
 import biologicalElements.PetriNet;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -299,12 +297,12 @@ public class PetriNetSimulation implements ActionListener {
 
 	private void runOMCIA() {
 		System.out.println("simNameOld: "+simName);
-		GraphInstance graphInstance = new GraphInstance();
+		Pathway pw = new GraphInstance().getPathway();
 		GraphContainer con = ContainerSingelton.getInstance();
 		MainWindow w = MainWindowSingleton.getInstance();
 		w.blurrUI();
 		
-		flags = graphInstance.getPathway().getChangedFlags("petriNetSim");
+		flags = pw.getChangedFlags("petriNetSim");
 
 		Map<String, String> env = System.getenv();
 
@@ -397,14 +395,13 @@ public class PetriNetSimulation implements ActionListener {
 						packageInfo = "import PNlib = "+simLib+";";
 					}
 					MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim
-							+ "simulation.mo")), graphInstance.getPathway(), packageInfo);
+							+ "simulation.mo")), pw, packageInfo);
 					bea2key = mo.getBea2resultkey();
 					//
 
 					String filter = "variableFilter=\"";
 
-					Iterator<BiologicalNodeAbstract> it = graphInstance
-							.getPathway().getAllNodes().iterator();
+					Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
 					BiologicalNodeAbstract bna;
 					int vars = 0;
 					while (it.hasNext()) {
@@ -448,7 +445,7 @@ public class PetriNetSimulation implements ActionListener {
 					
 					//CHRIS improve / correct filter
 					//out.write("buildModel(simulation, " + filter + "); ");
-					out.write("buildModel('"+graphInstance.getPathway().getName()+"'); ");
+					out.write("buildModel('"+pw.getName()+"'); ");
 					out.write("getErrorString();\r\n");
 
 					// out.write("fileName=\"simulate.mat\";\r\n");
@@ -521,20 +518,20 @@ public class PetriNetSimulation implements ActionListener {
 					if (buildSuccess) {
 						
 						this.flags.reset();
-						graphInstance.getPathway().getChangedInitialValues()
+						pw.getChangedInitialValues()
 								.clear();
-						graphInstance.getPathway().getChangedParameters()
+						pw.getChangedParameters()
 								.clear();
-						graphInstance.getPathway().getChangedBoundaries()
+						pw.getChangedBoundaries()
 								.clear();
 					}
 
 				}
-				s = new Server(bea2key);
+				s = new Server(pw, bea2key);
 
-				s.test();
+				s.start();
 				System.out.println("building ended");
-				graphInstance.getPathway().setPetriNetSimulation(true);
+				pw.setPetriNetSimulation(true);
 				w.initPCPGraphs();
 
 				System.out.println("stop: " + stopTime);
@@ -555,16 +552,14 @@ public class PetriNetSimulation implements ActionListener {
 									/ intervals + ",tolerance=0.0001";
 							if (flags.isParameterChanged()) {
 
-								Iterator<Parameter> it = graphInstance
-										.getPathway().getChangedParameters()
+								Iterator<Parameter> it = pw.getChangedParameters()
 										.keySet().iterator();
 								GraphElementAbstract gea;
 								Parameter param;
 
 								while (it.hasNext()) {
 									param = it.next();
-									gea = graphInstance.getPathway()
-											.getChangedParameters().get(param);
+									gea = pw.getChangedParameters().get(param);
 									BiologicalNodeAbstract bna;
 									if (gea instanceof BiologicalNodeAbstract) {
 										bna = (BiologicalNodeAbstract) gea;
@@ -577,14 +572,14 @@ public class PetriNetSimulation implements ActionListener {
 							}
 
 							if (flags.isInitialValueChanged()) {
-								Iterator<Place> it = graphInstance.getPathway()
+								Iterator<Place> it = pw
 										.getChangedInitialValues().keySet()
 										.iterator();
 								Place p;
 								Double d;
 								while (it.hasNext()) {
 									p = it.next();
-									d = graphInstance.getPathway()
+									d = pw
 											.getChangedInitialValues().get(p);
 									override += ",'" + p.getName()
 											+ "'.startMarks=" + d;
@@ -593,14 +588,14 @@ public class PetriNetSimulation implements ActionListener {
 
 							if (flags.isBoundariesChanged()) {
 								// System.out.println("chaaaaanged");
-								Iterator<Place> it = graphInstance.getPathway()
+								Iterator<Place> it = pw
 										.getChangedBoundaries().keySet()
 										.iterator();
 								Place p;
 								Boundary b;
 								while (it.hasNext()) {
 									p = it.next();
-									b = graphInstance.getPathway()
+									b = pw
 											.getChangedBoundaries().get(p);
 									if (b.isLowerBoundarySet()) {
 										override += ",'" + p.getName()
@@ -649,10 +644,10 @@ public class PetriNetSimulation implements ActionListener {
 
 				Thread t2 = new Thread() {
 					public void run() {
-						graphInstance.getPathway().getGraph()
+						pw.getGraph()
 								.getVisualizationViewer().requestFocus();
 						w.redrawGraphs();
-						Vector<Double> v = graphInstance.getPathway()
+						Vector<Double> v = pw
 								.getPetriNet().getTime();
 						// System.out.println("running");
 						while (s.isRunning()) {
@@ -796,7 +791,7 @@ public class PetriNetSimulation implements ActionListener {
 				 */
 
 				if (con.containsPathway()
-						&& graphInstance.getPathway().hasGotAtLeastOneElement()
+						&& pw.hasGotAtLeastOneElement()
 						&& !stopped) {
 					// graphInstance.getPathway().setPetriNet(true);
 					// PetriNet petrinet = graphInstance.getPathway()

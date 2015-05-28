@@ -67,7 +67,10 @@ import petriNet.AnimationThread;
 import petriNet.PNEdge;
 import petriNet.Place;
 import petriNet.PlotsPanel;
+import petriNet.TimeSeries;
 import petriNet.Transition;
+import util.DoubleHashMap;
+import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -145,6 +148,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private ArrayList<XYSeries> seriesListR1 = new ArrayList<XYSeries>();
 	private ArrayList<XYSeries> seriesListR2 = new ArrayList<XYSeries>();
 
+	private DoubleHashMap<GraphElementAbstract, Integer, Integer> series2idx = new DoubleHashMap<GraphElementAbstract, Integer, Integer>();
 	private HashMap<Integer, Integer> vector2idx = new HashMap<Integer, Integer>();
 
 	// private HashMap<XYSeries, Integer> series2id = new HashMap<XYSeries,
@@ -996,6 +1000,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		seriesListR2.clear();
 		// series2id.clear();
 		vector2idx.clear();
+		series2idx.clear();
 		// get Selected Places and their index+label
 		Place place;
 		Transition transition;
@@ -1019,6 +1024,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					s = new XYSeries(count);
 					vector2idx.put(System.identityHashCode(place
 							.getPetriNetSimulationData()), count);
+					
 					seriesListR1.add(s);
 					// System.out.println(System.identityHashCode(place.getPetriNetSimulationData())
 					// + " added");

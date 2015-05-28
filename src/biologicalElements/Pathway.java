@@ -30,6 +30,7 @@ import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.PNEdge;
 import petriNet.Place;
+import petriNet.SimulationResultController;
 import petriNet.StochasticTransition;
 import petriNet.Transition;
 import util.MyIntComparable;
@@ -141,6 +142,8 @@ public class Pathway implements Cloneable {
 	private HashMap<Place, Boundary> changedBoundaries = new HashMap<Place, Boundary>();
 
 	private BiologicalNodeAbstract rootNode;
+
+	private SimulationResultController simResController = null;
 
 	// ---Functional Methods---
 
@@ -1707,5 +1710,12 @@ public class Pathway implements Cloneable {
 							new Point2D.Double(p.getX() * factor, p.getY()
 									* factor));
 		}
+	}
+
+	public SimulationResultController getSimResController() {
+		if (simResController == null) {
+			simResController = new SimulationResultController();
+		}
+		return simResController;
 	}
 }

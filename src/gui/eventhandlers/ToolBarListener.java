@@ -1,8 +1,6 @@
 package gui.eventhandlers;
 
 import edu.emory.mathcs.backport.java.util.Collections;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
@@ -24,13 +22,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -41,7 +37,6 @@ import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 import save.graphPicture.WriteGraphPicture;
 import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ToolBarListener implements ActionListener {

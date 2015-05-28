@@ -6,8 +6,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 /*import edu.uci.ics.jung.graph.Edge;
@@ -17,8 +15,8 @@ import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.ContainerSingelton;
 
-public class MyVisualizationViewer extends
-		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
+public class MyVisualizationViewer<V,E> extends
+		VisualizationViewer<V, E> {
 
 	/**
 	 * 
@@ -28,22 +26,22 @@ public class MyVisualizationViewer extends
 	private Pathway pw;
 
 	public MyVisualizationViewer(
-			VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> arg0,
+			VisualizationModel<V, E> arg0,
 			Dimension arg2, Pathway pw) {
 		super(arg0, arg2);
 		this.pw = pw;
 		// TODO Auto-generated constructor stub
 	}
 
-	long[] relaxTimes = new long[5];
+	private long[] relaxTimes = new long[5];
 
-	long[] paintTimes = new long[5];
+	private long[] paintTimes = new long[5];
 
-	int relaxIndex = 0;
+	private int relaxIndex = 0;
 
-	int paintIndex = 0;
+	private int paintIndex = 0;
 
-	double paintfps, relaxfps;
+	private double paintfps, relaxfps;
 
 	/**
 	 * a collection of user-implementable functions to render under the topology

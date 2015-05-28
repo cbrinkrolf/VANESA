@@ -6,7 +6,6 @@ package graph.layouts.gemLayout;
  import edu.uci.ics.jung.graph.Vertex;
  import edu.uci.ics.jung.utils.Pair;
  import edu.uci.ics.jung.visualization.AbstractLayout;*/
-import graph.layouts.gemLayout.GEMLayoutConfig.GemP;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayPriorityQueue;
 import it.unimi.dsi.fastutil.ints.IntIterator;
@@ -18,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 import cern.colt.list.IntArrayList;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
@@ -36,17 +33,18 @@ import edu.uci.ics.jung.graph.Graph;
  * @author Hacked by Eytan Adar for Guess
  * @author Hacked by taubertj for OVTK2
  */
-public class GEMLayout extends
-		AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
+public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 
 	// JUNG wrapped ONDEX graph
-	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph;
+	private Graph<V, E> graph;
 
 	// all nodes in the graph
-	private Collection<BiologicalNodeAbstract> nodes;
+	private Collection<V> nodes;
 
 	// all edges in the graph
-	private Collection<BiologicalEdgeAbstract> edges;
+	private Collection<E> edges;
+
+	private GEMLayoutConfig<V> layoutConfig;
 
 	/**
 	 * Required for compatibility to OVTK2lite
@@ -56,11 +54,11 @@ public class GEMLayout extends
 	 * @param jung
 	 *            ONDEXSparseGraph
 	 */
-	public GEMLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
+	public GEMLayout(Graph<V, E> g) {
 		super(g);
 	}
 
-	public void setGraph(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g) {
+	public void setGraph(Graph<V, E> g) {
 		this.graph = g;
 	}
 
@@ -70,7 +68,7 @@ public class GEMLayout extends
 	 * @return int
 	 */
 	private int rand() {
-		return (int) (GEMLayoutConfig.rand.nextDouble() * Integer.MAX_VALUE);
+		return (int) (layoutConfig.rand.nextDouble() * Integer.MAX_VALUE);
 	}
 
 	/**
@@ -83,23 +81,23 @@ public class GEMLayout extends
 		int u;
 		int n, v;
 
-		if (GEMLayoutConfig.iteration == 0) {
+		if (layoutConfig.iteration == 0) {
 			// System.out.print( "New map for " + nodeCount );
-			GEMLayoutConfig.map = new int[GEMLayoutConfig.nodeCount];
-			for (int i = 0; i < GEMLayoutConfig.nodeCount; i++)
-				GEMLayoutConfig.map[i] = i;
+			layoutConfig.map = new int[layoutConfig.nodeCount];
+			for (int i = 0; i < layoutConfig.nodeCount; i++)
+				layoutConfig.map[i] = i;
 		}
-		n = (int) (GEMLayoutConfig.nodeCount - GEMLayoutConfig.iteration
-				% GEMLayoutConfig.nodeCount);
+		n = (int) (layoutConfig.nodeCount - layoutConfig.iteration
+				% layoutConfig.nodeCount);
 		v = rand() % n; // was 1 + rand() % n due to numbering in GEM
-		if (v == GEMLayoutConfig.nodeCount)
+		if (v == layoutConfig.nodeCount)
 			v--;
-		if (n == GEMLayoutConfig.nodeCount)
+		if (n == layoutConfig.nodeCount)
 			n--;
 		// System.out.println( "Access n = " + n + " v = " + v );
-		u = GEMLayoutConfig.map[v];
-		GEMLayoutConfig.map[v] = GEMLayoutConfig.map[n];
-		GEMLayoutConfig.map[n] = u;
+		u = layoutConfig.map[v];
+		layoutConfig.map[v] = layoutConfig.map[n];
+		layoutConfig.map[n] = u;
 		return u;
 	}
 
@@ -116,27 +114,27 @@ public class GEMLayout extends
 		int v, ui;
 
 		if (root >= 0) {
-			GEMLayoutConfig.q = new IntArrayPriorityQueue();
-			if (!GEMLayoutConfig.gemProp[root].mark) { // root > 0
-				for (int vi = 0; vi < GEMLayoutConfig.nodeCount; vi++) {
-					GEMLayoutConfig.gemProp[vi].in = 0;
+			layoutConfig.q = new IntArrayPriorityQueue();
+			if (!layoutConfig.gemProp[root].mark) { // root > 0
+				for (int vi = 0; vi < layoutConfig.nodeCount; vi++) {
+					layoutConfig.gemProp[vi].in = 0;
 				}
 			} else
-				GEMLayoutConfig.gemProp[root].mark = true; // root = -root;
-			GEMLayoutConfig.q.enqueue(root);
-			GEMLayoutConfig.gemProp[root].in = 1;
+				layoutConfig.gemProp[root].mark = true; // root = -root;
+			layoutConfig.q.enqueue(root);
+			layoutConfig.gemProp[root].in = 1;
 		}
-		if (GEMLayoutConfig.q.size() == 0)
+		if (layoutConfig.q.size() == 0)
 			return -1; // null
-		v = GEMLayoutConfig.q.dequeueInt();
+		v = layoutConfig.q.dequeueInt();
 
-		nodeSet = IntIterators.asIntIterator(GEMLayoutConfig.adjacent.get(v)
+		nodeSet = IntIterators.asIntIterator(layoutConfig.adjacent.get(v)
 				.toList().iterator());
 		while (nodeSet.hasNext()) {
 			ui = nodeSet.nextInt();
-			if (GEMLayoutConfig.gemProp[ui].in != 0) {
-				GEMLayoutConfig.q.enqueue(ui);
-				GEMLayoutConfig.gemProp[ui].in = GEMLayoutConfig.gemProp[v].in + 1;
+			if (layoutConfig.gemProp[ui].in != 0) {
+				layoutConfig.q.enqueue(ui);
+				layoutConfig.gemProp[ui].in = layoutConfig.gemProp[v].in + 1;
 			}
 		}
 
@@ -149,18 +147,20 @@ public class GEMLayout extends
 	 * @return int
 	 */
 	private int graph_center() {
-		GEMLayoutConfig.GemP p;
+		GEMLayoutConfig<V> layoutConfig = GEMLayoutConfigSingleton.getInstance();
+
+		GemP p;
 		int c, u, v, w; // nodes
 		int h;
 
 		c = -1; // for a contented compiler.
 		u = -1;
 
-		h = GEMLayoutConfig.nodeCount + 1;
+		h = layoutConfig.nodeCount + 1;
 
-		for (w = 0; w < GEMLayoutConfig.nodeCount; w++) {
+		for (w = 0; w < layoutConfig.nodeCount; w++) {
 			v = bfs(w);
-			while (v >= 0 && GEMLayoutConfig.gemProp[v].in < h) {
+			while (v >= 0 && layoutConfig.gemProp[v].in < h) {
 				u = v;
 				v = bfs(-1); // null
 			}
@@ -170,7 +170,7 @@ public class GEMLayout extends
 				// return 0;
 			}
 
-			p = GEMLayoutConfig.gemProp[u];
+			p = layoutConfig.gemProp[u];
 			if (p.in < h) {
 				h = p.in;
 				c = w;
@@ -188,18 +188,20 @@ public class GEMLayout extends
 	 */
 	private void vertexdata_init(float starttemp) {
 
-		GEMLayoutConfig.temperature = 0;
-		GEMLayoutConfig.centerX = GEMLayoutConfig.centerY = 0;
+		layoutConfig.temperature = 0;
+		layoutConfig.centerX = layoutConfig.centerY = 0;
 
-		for (int v = 0; v < GEMLayoutConfig.nodeCount; v++) {
-			GEMLayoutConfig.GemP p = GEMLayoutConfig.gemProp[v];
-			p.heat = starttemp * GEMLayoutConfig.ELEN;
-			GEMLayoutConfig.temperature += p.heat * p.heat;
+		GemP p;
+
+		for (int v = 0; v < layoutConfig.nodeCount; v++) {
+			p = layoutConfig.gemProp[v];
+			p.heat = starttemp * layoutConfig.ELEN;
+			layoutConfig.temperature += p.heat * p.heat;
 			p.iX = p.iY = 0;
 			p.dir = 0;
-			p.mass = 1 + GEMLayoutConfig.gemProp[v].mass / 3;
-			GEMLayoutConfig.centerX += p.x;
-			GEMLayoutConfig.centerY += p.y;
+			p.mass = 1 + layoutConfig.gemProp[v].mass / 3;
+			layoutConfig.centerX += p.x;
+			layoutConfig.centerY += p.y;
 		}
 	}
 
@@ -212,45 +214,45 @@ public class GEMLayout extends
 
 		int iX, iY, dX, dY, pX, pY;
 		int n;
-		GEMLayoutConfig.GemP p, q;
+		GemP p, q;
 
-		p = GEMLayoutConfig.gemProp[v];
+		p = layoutConfig.gemProp[v];
 		pX = p.x;
 		pY = p.y;
 
-		n = (int) (GEMLayoutConfig.i_shake * GEMLayoutConfig.ELEN);
+		n = (int) (layoutConfig.i_shake * layoutConfig.ELEN);
 		iX = rand() % (2 * n + 1) - n;
 		iY = rand() % (2 * n + 1) - n;
-		iX += (GEMLayoutConfig.centerX / GEMLayoutConfig.nodeCount - pX)
-				* p.mass * GEMLayoutConfig.i_gravity;
-		iY += (GEMLayoutConfig.centerY / GEMLayoutConfig.nodeCount - pY)
-				* p.mass * GEMLayoutConfig.i_gravity;
+		iX += (layoutConfig.centerX / layoutConfig.nodeCount - pX) * p.mass
+				* layoutConfig.i_gravity;
+		iY += (layoutConfig.centerY / layoutConfig.nodeCount - pY) * p.mass
+				* layoutConfig.i_gravity;
 
-		for (int u = 0; u < GEMLayoutConfig.nodeCount; u++) {
-			q = GEMLayoutConfig.gemProp[u];
+		for (int u = 0; u < layoutConfig.nodeCount; u++) {
+			q = layoutConfig.gemProp[u];
 			if (q.in > 0) {
 				dX = pX - q.x;
 				dY = pY - q.y;
 				n = dX * dX + dY * dY;
 				if (n > 0) {
-					iX += dX * GEMLayoutConfig.ELENSQR / n;
-					iY += dY * GEMLayoutConfig.ELENSQR / n;
+					iX += dX * layoutConfig.ELENSQR / n;
+					iY += dY * layoutConfig.ELENSQR / n;
 				}
 			}
 		}
-		nodeSet = IntIterators.asIntIterator(GEMLayoutConfig.adjacent.get(v)
+		nodeSet = IntIterators.asIntIterator(layoutConfig.adjacent.get(v)
 				.toList().iterator());
 		int u;
 		while (nodeSet.hasNext()) {
 			u = nodeSet.nextInt();
-			q = GEMLayoutConfig.gemProp[u];
+			q = layoutConfig.gemProp[u];
 			if (q.in > 0) {
 				dX = pX - q.x;
 				dY = pY - q.y;
 				n = (int) ((dX * dX + dY * dY) / p.mass);
-				n = Math.min(n, GEMLayoutConfig.MAXATTRACT);
-				iX -= dX * n / GEMLayoutConfig.ELENSQR;
-				iY -= dY * n / GEMLayoutConfig.ELENSQR;
+				n = Math.min(n, layoutConfig.MAXATTRACT);
+				iX -= dX * n / layoutConfig.ELENSQR;
+				iY -= dY * n / layoutConfig.ELENSQR;
 			}
 		}
 
@@ -260,59 +262,60 @@ public class GEMLayout extends
 	private void insert() {
 
 		IntIterator nodeSet2;
-		GEMLayoutConfig.GemP p, q;
+		GemP p, q;
 		int startNode;
 
 		int v, w;
 
 		int d;
 
+		layoutConfig = GEMLayoutConfigSingleton.getInstance();
 		// System.out.println( "insert phase" );
 
-		vertexdata_init(GEMLayoutConfig.i_starttemp);
+		vertexdata_init(layoutConfig.i_starttemp);
 
-		GEMLayoutConfig.oscillation = GEMLayoutConfig.i_oscillation;
-		GEMLayoutConfig.rotation = GEMLayoutConfig.i_rotation;
-		GEMLayoutConfig.maxtemp = (int) (GEMLayoutConfig.i_maxtemp * GEMLayoutConfig.ELEN);
+		layoutConfig.oscillation = layoutConfig.i_oscillation;
+		layoutConfig.rotation = layoutConfig.i_rotation;
+		layoutConfig.maxtemp = (int) (layoutConfig.i_maxtemp * layoutConfig.ELEN);
 
 		v = graph_center();
 
-		for (int ui = 0; ui < GEMLayoutConfig.nodeCount; ui++) {
-			GEMLayoutConfig.gemProp[ui].in = 0;
+		for (int ui = 0; ui < layoutConfig.nodeCount; ui++) {
+			layoutConfig.gemProp[ui].in = 0;
 		}
 
-		GEMLayoutConfig.gemProp[v].in = -1;
+		layoutConfig.gemProp[v].in = -1;
 
 		startNode = -1;
-		for (int i = 0; i < GEMLayoutConfig.nodeCount; i++) {
+		for (int i = 0; i < layoutConfig.nodeCount; i++) {
 			d = 0;
-			for (int u = 0; u < GEMLayoutConfig.nodeCount; u++) {
-				if (GEMLayoutConfig.gemProp[u].in < d) {
-					d = GEMLayoutConfig.gemProp[u].in;
+			for (int u = 0; u < layoutConfig.nodeCount; u++) {
+				if (layoutConfig.gemProp[u].in < d) {
+					d = layoutConfig.gemProp[u].in;
 					v = u;
 				}
 			}
-			GEMLayoutConfig.gemProp[v].in = 1;
+			layoutConfig.gemProp[v].in = 1;
 
-			nodeSet2 = IntIterators.asIntIterator(GEMLayoutConfig.adjacent
-					.get(v).toList().iterator());
+			nodeSet2 = IntIterators.asIntIterator(layoutConfig.adjacent.get(v)
+					.toList().iterator());
 			int u;
 			while (nodeSet2.hasNext()) {
 				u = nodeSet2.nextInt();
-				if (GEMLayoutConfig.gemProp[u].in <= 0)
-					GEMLayoutConfig.gemProp[u].in--;
+				if (layoutConfig.gemProp[u].in <= 0)
+					layoutConfig.gemProp[u].in--;
 			}
-			p = GEMLayoutConfig.gemProp[v];
+			p = layoutConfig.gemProp[v];
 			p.x = p.y = 0;
 
 			if (startNode >= 0) {
 				d = 0;
-				p = GEMLayoutConfig.gemProp[v];
-				nodeSet2 = IntIterators.asIntIterator(GEMLayoutConfig.adjacent
+				p = layoutConfig.gemProp[v];
+				nodeSet2 = IntIterators.asIntIterator(layoutConfig.adjacent
 						.get(v).toList().iterator());
 				while (nodeSet2.hasNext()) {
 					w = nodeSet2.nextInt();
-					q = GEMLayoutConfig.gemProp[w];
+					q = layoutConfig.gemProp[w];
 					if (q.in > 0) {
 						p.x += q.x;
 						p.y += q.y;
@@ -324,9 +327,9 @@ public class GEMLayout extends
 					p.y /= d;
 				}
 				d = 0;
-				while ((d++ < GEMLayoutConfig.i_maxiter)
-						&& (p.heat > GEMLayoutConfig.i_finaltemp
-								* GEMLayoutConfig.ELEN)) {
+				while ((d++ < layoutConfig.i_maxiter)
+						&& (p.heat > layoutConfig.i_finaltemp
+								* layoutConfig.ELEN)) {
 					int[] i_impulse = i_impulse(v);
 					displace(v, i_impulse[0], i_impulse[1]);
 				}
@@ -349,26 +352,25 @@ public class GEMLayout extends
 				iX /= n;
 				iY /= n;
 			}
-			p = GEMLayoutConfig.gemProp[v];
+			p = layoutConfig.gemProp[v];
 			t = (int) p.heat;
 			n = (int) Math.sqrt(iX * iX + iY * iY);
 			iX = iX * t / n;
 			iY = iY * t / n;
 			p.x += iX;
 			p.y += iY;
-			GEMLayoutConfig.centerX += iX;
-			GEMLayoutConfig.centerY += iY;
+			layoutConfig.centerX += iX;
+			layoutConfig.centerY += iY;
 			// imp = &vi[v].imp;
 			n = t * (int) Math.sqrt(p.iX * p.iX + p.iY * p.iY);
 			if (n > 0) {
-				GEMLayoutConfig.temperature -= t * t;
-				t += t * GEMLayoutConfig.oscillation * (iX * p.iX + iY * p.iY)
-						/ n;
-				t = (int) Math.min(t, GEMLayoutConfig.maxtemp);
-				p.dir += GEMLayoutConfig.rotation * (iX * p.iY - iY * p.iX) / n;
-				t -= t * Math.abs(p.dir) / GEMLayoutConfig.nodeCount;
+				layoutConfig.temperature -= t * t;
+				t += t * layoutConfig.oscillation * (iX * p.iX + iY * p.iY) / n;
+				t = (int) Math.min(t, layoutConfig.maxtemp);
+				p.dir += layoutConfig.rotation * (iX * p.iY - iY * p.iX) / n;
+				t -= t * Math.abs(p.dir) / layoutConfig.nodeCount;
 				t = Math.max(t, 2);
-				GEMLayoutConfig.temperature += t * t;
+				layoutConfig.temperature += t * t;
 				p.heat = t;
 			}
 			p.iX = iX;
@@ -386,46 +388,46 @@ public class GEMLayout extends
 		int pX, pY;
 		GemP p, q;
 
-		for (int i = 0; i < GEMLayoutConfig.nodeCount; i++) {
+		for (int i = 0; i < layoutConfig.nodeCount; i++) {
 			v = select();
-			p = GEMLayoutConfig.gemProp[v];
+			p = layoutConfig.gemProp[v];
 
 			pX = p.x;
 			pY = p.y;
 
-			n = (int) (GEMLayoutConfig.a_shake * GEMLayoutConfig.ELEN);
+			n = (int) (layoutConfig.a_shake * layoutConfig.ELEN);
 			iX = rand() % (2 * n + 1) - n;
 			iY = rand() % (2 * n + 1) - n;
-			iX += (GEMLayoutConfig.centerX / GEMLayoutConfig.nodeCount - pX)
-					* p.mass * GEMLayoutConfig.a_gravity;
-			iY += (GEMLayoutConfig.centerY / GEMLayoutConfig.nodeCount - pY)
-					* p.mass * GEMLayoutConfig.a_gravity;
+			iX += (layoutConfig.centerX / layoutConfig.nodeCount - pX) * p.mass
+					* layoutConfig.a_gravity;
+			iY += (layoutConfig.centerY / layoutConfig.nodeCount - pY) * p.mass
+					* layoutConfig.a_gravity;
 
-			for (int u = 0; u < GEMLayoutConfig.nodeCount; u++) {
-				q = GEMLayoutConfig.gemProp[u];
+			for (int u = 0; u < layoutConfig.nodeCount; u++) {
+				q = layoutConfig.gemProp[u];
 				dX = pX - q.x;
 				dY = pY - q.y;
 				n = dX * dX + dY * dY;
 				if (n > 0) {
-					iX += dX * GEMLayoutConfig.ELENSQR / n;
-					iY += dY * GEMLayoutConfig.ELENSQR / n;
+					iX += dX * layoutConfig.ELENSQR / n;
+					iY += dY * layoutConfig.ELENSQR / n;
 				}
 			}
-			nodeSet = IntIterators.asIntIterator(GEMLayoutConfig.adjacent
-					.get(v).toList().iterator());
+			nodeSet = IntIterators.asIntIterator(layoutConfig.adjacent.get(v)
+					.toList().iterator());
 			int u;
 			while (nodeSet.hasNext()) {
 				u = nodeSet.nextInt();
-				q = GEMLayoutConfig.gemProp[u];
+				q = layoutConfig.gemProp[u];
 				dX = pX - q.x;
 				dY = pY - q.y;
 				n = (int) ((dX * dX + dY * dY) / p.mass);
-				n = Math.min(n, GEMLayoutConfig.MAXATTRACT);
-				iX -= dX * n / GEMLayoutConfig.ELENSQR;
-				iY -= dY * n / GEMLayoutConfig.ELENSQR;
+				n = Math.min(n, layoutConfig.MAXATTRACT);
+				iX -= dX * n / layoutConfig.ELENSQR;
+				iY -= dY * n / layoutConfig.ELENSQR;
 			}
 			displace(v, iX, iY);
-			GEMLayoutConfig.iteration++;
+			layoutConfig.iteration++;
 		}
 	}
 
@@ -434,23 +436,23 @@ public class GEMLayout extends
 		long stop_temperature;
 		long stop_iteration;
 
-		vertexdata_init(GEMLayoutConfig.a_starttemp);
+		vertexdata_init(layoutConfig.a_starttemp);
 
-		GEMLayoutConfig.oscillation = GEMLayoutConfig.a_oscillation;
-		GEMLayoutConfig.rotation = GEMLayoutConfig.a_rotation;
-		GEMLayoutConfig.maxtemp = (int) (GEMLayoutConfig.a_maxtemp * GEMLayoutConfig.ELEN);
-		stop_temperature = (int) (GEMLayoutConfig.a_finaltemp
-				* GEMLayoutConfig.a_finaltemp * GEMLayoutConfig.ELENSQR * GEMLayoutConfig.nodeCount);
-		stop_iteration = GEMLayoutConfig.a_maxiter * GEMLayoutConfig.nodeCount
-				* GEMLayoutConfig.nodeCount;
-		GEMLayoutConfig.iteration = 0;
+		layoutConfig.oscillation = layoutConfig.a_oscillation;
+		layoutConfig.rotation = layoutConfig.a_rotation;
+		layoutConfig.maxtemp = (int) (layoutConfig.a_maxtemp * layoutConfig.ELEN);
+		stop_temperature = (int) (layoutConfig.a_finaltemp
+				* layoutConfig.a_finaltemp * layoutConfig.ELENSQR * layoutConfig.nodeCount);
+		stop_iteration = layoutConfig.a_maxiter * layoutConfig.nodeCount
+				* layoutConfig.nodeCount;
+		layoutConfig.iteration = 0;
 
 		// System.out.print( "arrange phase -- temp " );
 		// System.out.print( stop_temperature + " iter ");
 		// System.out.println ( stop_iteration );
 
-		while (GEMLayoutConfig.temperature > stop_temperature
-				&& GEMLayoutConfig.iteration < stop_iteration) {
+		while (layoutConfig.temperature > stop_temperature
+				&& layoutConfig.iteration < stop_iteration) {
 			// com.hp.hpl.guess.ui.StatusBar.setValue((int)stop_iteration,
 			// (int)iteration);
 			a_round();
@@ -463,9 +465,9 @@ public class GEMLayout extends
 	 */
 	private int[] EVdistance(int thisNode, int thatNode, int v) {
 
-		GemP thisGP = GEMLayoutConfig.gemProp[thisNode];
-		GemP thatGP = GEMLayoutConfig.gemProp[thatNode];
-		GemP nodeGP = GEMLayoutConfig.gemProp[v];
+		GemP thisGP = layoutConfig.gemProp[thisNode];
+		GemP thatGP = layoutConfig.gemProp[thatNode];
+		GemP nodeGP = layoutConfig.gemProp[v];
 
 		int aX = thisGP.x;
 		int aY = thisGP.y;
@@ -497,39 +499,41 @@ public class GEMLayout extends
 
 	private int[] o_impulse(int v) {
 
-		Iterator<BiologicalEdgeAbstract> edgeSet;
+		Iterator<E> edgeSet;
 		int u, w;
-		BiologicalEdgeAbstract e;
+		E e;
 		int iX, iY, dX, dY;
 		int n;
 		GemP p, up, wp;
 		int pX, pY;
 
-		p = GEMLayoutConfig.gemProp[v];
+		p = layoutConfig.gemProp[v];
 		pX = p.x;
 		pY = p.y;
 
-		n = (int) (GEMLayoutConfig.o_shake * GEMLayoutConfig.ELEN);
+		n = (int) (layoutConfig.o_shake * layoutConfig.ELEN);
 		iX = rand() % (2 * n + 1) - n;
 		iY = rand() % (2 * n + 1) - n;
-		iX += (GEMLayoutConfig.centerX / GEMLayoutConfig.nodeCount - pX)
-				* p.mass * GEMLayoutConfig.o_gravity;
-		iY += (GEMLayoutConfig.centerY / GEMLayoutConfig.nodeCount - pY)
-				* p.mass * GEMLayoutConfig.o_gravity;
+		iX += (layoutConfig.centerX / layoutConfig.nodeCount - pX) * p.mass
+				* layoutConfig.o_gravity;
+		iY += (layoutConfig.centerY / layoutConfig.nodeCount - pY) * p.mass
+				* layoutConfig.o_gravity;
 
 		edgeSet = edges.iterator();
 		while (edgeSet.hasNext()) {
 			e = edgeSet.next();
 			// Pair ends = e.getEndpoints();
-			u = GEMLayoutConfig.nodeNumbers.getInt(e.getFrom());
-			w = GEMLayoutConfig.nodeNumbers.getInt(e.getTo());
+			u = layoutConfig.nodeNumbers.getInt(graph.getEndpoints(e)
+					.getFirst());
+			w = layoutConfig.nodeNumbers.getInt(graph.getEndpoints(e)
+					.getSecond());
 			if (u != v && w != v) {
-				up = GEMLayoutConfig.gemProp[u];
-				wp = GEMLayoutConfig.gemProp[w];
+				up = layoutConfig.gemProp[u];
+				wp = layoutConfig.gemProp[w];
 				dX = (up.x + wp.x) / 2 - pX;
 				dY = (up.y + wp.y) / 2 - pY;
 				n = dX * dX + dY * dY;
-				if (n < 8 * GEMLayoutConfig.ELENSQR) {
+				if (n < 8 * layoutConfig.ELENSQR) {
 					int[] evdist = EVdistance(u, w, v); // source, dest, vert
 					dX = evdist[0];
 					dY = evdist[1];
@@ -538,19 +542,19 @@ public class GEMLayout extends
 					n = dX * dX + dY * dY;
 				}
 				if (n > 0) {
-					iX -= dX * GEMLayoutConfig.ELENSQR / n;
-					iY -= dY * GEMLayoutConfig.ELENSQR / n;
+					iX -= dX * layoutConfig.ELENSQR / n;
+					iY -= dY * layoutConfig.ELENSQR / n;
 				}
 			} else {
 				if (u == v)
 					u = w;
-				up = GEMLayoutConfig.gemProp[u];
+				up = layoutConfig.gemProp[u];
 				dX = pX - up.x;
 				dY = pY - up.y;
 				n = (int) ((dX * dX + dY * dY) / p.mass);
-				n = Math.min(n, GEMLayoutConfig.MAXATTRACT);
-				iX -= dX * n / GEMLayoutConfig.ELENSQR;
-				iY -= dY * n / GEMLayoutConfig.ELENSQR;
+				n = Math.min(n, layoutConfig.MAXATTRACT);
+				iX -= dX * n / layoutConfig.ELENSQR;
+				iY -= dY * n / layoutConfig.ELENSQR;
 			}
 		}
 		return new int[] { iX, iY };
@@ -559,11 +563,11 @@ public class GEMLayout extends
 	private void o_round() {
 
 		int v;
-		for (int i = 0; i < GEMLayoutConfig.nodeCount; i++) {
+		for (int i = 0; i < layoutConfig.nodeCount; i++) {
 			v = select();
 			int[] o_impulse = o_impulse(v);
 			displace(v, o_impulse[0], o_impulse[1]);
-			GEMLayoutConfig.iteration++;
+			layoutConfig.iteration++;
 		}
 	}
 
@@ -572,23 +576,23 @@ public class GEMLayout extends
 		long stop_temperature;
 		long stop_iteration;
 
-		vertexdata_init(GEMLayoutConfig.o_starttemp);
-		GEMLayoutConfig.oscillation = GEMLayoutConfig.o_oscillation;
-		GEMLayoutConfig.rotation = GEMLayoutConfig.o_rotation;
-		GEMLayoutConfig.maxtemp = (int) (GEMLayoutConfig.o_maxtemp * GEMLayoutConfig.ELEN);
-		stop_temperature = (int) (GEMLayoutConfig.o_finaltemp
-				* GEMLayoutConfig.o_finaltemp * GEMLayoutConfig.ELENSQR * GEMLayoutConfig.nodeCount);
-		stop_iteration = GEMLayoutConfig.o_maxiter * GEMLayoutConfig.nodeCount
-				* GEMLayoutConfig.nodeCount;
+		vertexdata_init(layoutConfig.o_starttemp);
+		layoutConfig.oscillation = layoutConfig.o_oscillation;
+		layoutConfig.rotation = layoutConfig.o_rotation;
+		layoutConfig.maxtemp = (int) (layoutConfig.o_maxtemp * layoutConfig.ELEN);
+		stop_temperature = (int) (layoutConfig.o_finaltemp
+				* layoutConfig.o_finaltemp * layoutConfig.ELENSQR * layoutConfig.nodeCount);
+		stop_iteration = layoutConfig.o_maxiter * layoutConfig.nodeCount
+				* layoutConfig.nodeCount;
 
 		// System.out.print( "optimise phase -- temp " );
 		// System.out.print( stop_temperature + " iter ");
 		// System.out.println ( stop_iteration );
 
-		while (GEMLayoutConfig.temperature > stop_temperature
-				&& GEMLayoutConfig.iteration < stop_iteration) {
+		while (layoutConfig.temperature > stop_temperature
+				&& layoutConfig.iteration < stop_iteration) {
 			o_round();
-			if ((GEMLayoutConfig.iteration % 20000) == 0) {
+			if ((layoutConfig.iteration % 20000) == 0) {
 				// System.out.println( iteration + "\t" + temperature );
 			}
 		}
@@ -598,9 +602,9 @@ public class GEMLayout extends
 	 * Runs the layout.
 	 */
 	public void initialize() {
-		//long startTime, endTime;
+		// long startTime, endTime;
 
-		//startTime = System.currentTimeMillis();
+		// startTime = System.currentTimeMillis();
 
 		// GEMLayoutConfig.clustered = GEMLayoutConfig.boxCluster.isSelected();
 
@@ -612,25 +616,24 @@ public class GEMLayout extends
 		runNormal();
 
 		// set location of nodes in graph
-		for (int i = 0; i < GEMLayoutConfig.nodeCount; i++) {
-			GemP p = GEMLayoutConfig.gemProp[i];
-			BiologicalNodeAbstract n = GEMLayoutConfig.invmap[i];
+		for (int i = 0; i < layoutConfig.nodeCount; i++) {
+			GemP p = layoutConfig.gemProp[i];
+			V n = layoutConfig.invmap[i];
 
 			Point2D coord = transform(n);// getCoordinates(n);
 			coord.setLocation(p.x, p.y);
 		}
 		// }
-		//endTime = System.currentTimeMillis();
+		// endTime = System.currentTimeMillis();
 
 		// System.out.println("Took: " + (endTime - startTime) + "msec");
 	}
 
-	private Collection<BiologicalNodeAbstract> getNeighbours(
-			BiologicalNodeAbstract n) {
-		Collection<BiologicalNodeAbstract> neighbours = new ArrayList<BiologicalNodeAbstract>();
-		for (BiologicalEdgeAbstract o : getGraph().getEdges()) {
-			BiologicalNodeAbstract first = o.getFrom();
-			BiologicalNodeAbstract second = o.getTo();
+	private Collection<V> getNeighbours(V n) {
+		Collection<V> neighbours = new ArrayList<V>();
+		for (E o : getGraph().getEdges()) {
+			V first = graph.getEndpoints(o).getFirst();
+			V second = graph.getEndpoints(o).getSecond();
 			if (n.equals(first)) {
 				neighbours.add(second);
 			}
@@ -648,53 +651,54 @@ public class GEMLayout extends
 
 		nodes = graph.getVertices();
 		edges = graph.getEdges();
+		
+		layoutConfig = GEMLayoutConfigSingleton.getInstance();
 
-		GEMLayoutConfig.nodeCount = nodes.size();
+		layoutConfig.nodeCount = nodes.size();
 
-		GEMLayoutConfig.gemProp = new GEMLayoutConfig.GemP[GEMLayoutConfig.nodeCount];
-		GEMLayoutConfig.invmap = new BiologicalNodeAbstract[GEMLayoutConfig.nodeCount];
-		GEMLayoutConfig.adjacent = new Int2ObjectOpenHashMap<IntArrayList>(
-				GEMLayoutConfig.nodeCount);
-		GEMLayoutConfig.nodeNumbers = new Object2IntOpenHashMap<BiologicalNodeAbstract>();
+		layoutConfig.gemProp = new GemP[layoutConfig.nodeCount];
+		layoutConfig.invmap = (V[]) new Object[layoutConfig.nodeCount];
+		layoutConfig.adjacent = new Int2ObjectOpenHashMap<IntArrayList>(
+				layoutConfig.nodeCount);
+		layoutConfig.nodeNumbers = new Object2IntOpenHashMap<V>();
 
 		// initialize node lists and gemProp
-		Iterator<BiologicalNodeAbstract> nodeSet = nodes.iterator();
+		Iterator<V> nodeSet = nodes.iterator();
 		for (int i = 0; nodeSet.hasNext(); i++) {
-			BiologicalNodeAbstract n = nodeSet.next();
-			Collection<BiologicalEdgeAbstract> edges = new ArrayList<BiologicalEdgeAbstract>();
-			for (BiologicalEdgeAbstract o : graph.getEdges()) {
+			V n = nodeSet.next();
+			Collection<E> edges = new ArrayList<E>();
+			for (E o : graph.getEdges()) {
 				// if (o instanceof DirectedEdge) {
 				// DirectedEdge e = (DirectedEdge) o;
-				if (o.getFrom().equals(n)) {
+				if (graph.getEndpoints(o).getFirst().equals(n)) {
 					edges.add(o);
 				}
 				// }
 			}
 
 			// graph.getOutEdges(n)
-			GEMLayoutConfig.gemProp[i] = GEMLayoutConfig.getInstance().new GemP(
-					edges.size());
-			GEMLayoutConfig.invmap[i] = n;
-			GEMLayoutConfig.nodeNumbers.put(n, i);
+			layoutConfig.gemProp[i] = new GemP(edges.size());
+			layoutConfig.invmap[i] = n;
+			layoutConfig.nodeNumbers.put(n, i);
 		}
 
 		// fill adjacent lists
-		Collection<BiologicalNodeAbstract> neighbors;
-		for (int i = 0; i < GEMLayoutConfig.nodeCount; i++) {
-			neighbors = getNeighbours(GEMLayoutConfig.invmap[i]); // graph.getNeighbours(invmap[i]);
-			GEMLayoutConfig.adjacent.put(i, new IntArrayList(neighbors.size()));
-			for (BiologicalNodeAbstract n : neighbors) {
-				GEMLayoutConfig.adjacent.get(i).add(
-						GEMLayoutConfig.nodeNumbers.getInt(n));
+		Collection<V> neighbors;
+		for (int i = 0; i < layoutConfig.nodeCount; i++) {
+			neighbors = getNeighbours(layoutConfig.invmap[i]); // graph.getNeighbours(invmap[i]);
+			layoutConfig.adjacent.put(i, new IntArrayList(neighbors.size()));
+			for (V n : neighbors) {
+				layoutConfig.adjacent.get(i).add(
+						layoutConfig.nodeNumbers.getInt(n));
 			}
 		}
 
 		// actual layout
-		if (GEMLayoutConfig.i_finaltemp < GEMLayoutConfig.i_starttemp)
+		if (layoutConfig.i_finaltemp < layoutConfig.i_starttemp)
 			insert();
-		if (GEMLayoutConfig.a_finaltemp < GEMLayoutConfig.a_starttemp)
+		if (layoutConfig.a_finaltemp < layoutConfig.a_starttemp)
 			arrange();
-		if (GEMLayoutConfig.o_finaltemp < GEMLayoutConfig.o_starttemp)
+		if (layoutConfig.o_finaltemp < layoutConfig.o_starttemp)
 			optimize();
 	}
 
