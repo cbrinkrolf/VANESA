@@ -31,7 +31,7 @@ public class SimMenue extends JFrame {
 	private JButton start = new JButton("Start");
 	private JButton stop = new JButton("Stop");
 	private JLabel status = new JLabel("");
-	private JLabel time = new JLabel("Time: ");
+	private JLabel time = new JLabel("Time: -");
 	private JTextArea textArea = new JTextArea(20,80);
 	private JPanel north = new JPanel();
 	private JPanel northUp = new JPanel();
@@ -140,6 +140,7 @@ public class SimMenue extends JFrame {
 	public void started(){
 		start.setEnabled(false);
 		stop.setEnabled(true);
+		this.setTime("-");
 	}
 	
 	public void stopped(){
@@ -147,7 +148,7 @@ public class SimMenue extends JFrame {
 		stop.setEnabled(false);
 	}
 	
-	public void setTime(double time){
+	public void setTime(String time){
 		this.time.setText("Time: "+time);
 		this.time.repaint();
 	}

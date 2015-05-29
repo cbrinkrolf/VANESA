@@ -15,14 +15,14 @@ public class Series {
 	}
 	
 	public Double get(int pos){
-		return this.get(pos);
+		return values.get(pos);
 	}
 	
 	public void add(Double d){
 		values.add(d);
 	}
 	
-	public int getSize(){
+	public int size(){
 		return values.size();
 	}
 	
