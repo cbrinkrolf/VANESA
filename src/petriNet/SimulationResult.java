@@ -72,5 +72,13 @@ public class SimulationResult {
 	public void refreshFilter(){
 		resultFiltered = new DoubleHashMap<GraphElementAbstract, Integer, TimeSeries>();
 	}
+	
+	public boolean contains(GraphElementAbstract gea){
+		return result.contains(gea);
+	}
+	
+	public boolean contains(GraphElementAbstract gea, int type){
+		return result.contains(gea, type);
+	}
 
 }

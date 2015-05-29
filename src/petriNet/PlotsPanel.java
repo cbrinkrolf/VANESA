@@ -1,30 +1,23 @@
 package petriNet;
 
 import graph.GraphInstance;
-import gui.MainWindowSingleton;
 import io.SaveDialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.imageio.ImageIO;
 import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -38,7 +31,6 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import save.graphPicture.PngFilter;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
@@ -51,7 +43,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 	private Pathway pw = new GraphInstance().getPathway();
 	private int rows = 0; //pw.getPetriNet().getNumberOfPlaces();
-	private int cols = pw.getPetriNet().getResultDimension();
+	private int cols = 0;//pw.getPetriNet().getResultDimension();
 	private ArrayList<String> labels = new ArrayList<String>();
 	private JPanel p = new JPanel();
 	private double min = Double.MAX_VALUE;
@@ -63,6 +55,11 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	private HashMap<String, Place> places = new HashMap<String, Place>();
 
 	// ArrayList<String> labels = new ArrayList<String>();
+	private static int TOKEN = SimulationResultController.SIM_TOKEN;
+	private static int ACTUAL_FIRING_SPEED = SimulationResultController.SIM_ACTUAL_FIRING_SPEED;
+	public static int FIRE = SimulationResultController.SIM_FIRE;
+	public static int SUM_OF_TOKEN = SimulationResultController.SIM_SUM_OF_TOKEN;
+	public static int ACTUAL_TOKEN_FLOW = SimulationResultController.SIM_ACTUAL_TOKEN_FLOW;
 
 	public PlotsPanel() {
 		// System.out.println("cols: "+cols);
@@ -117,16 +114,17 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 			// double min = Double.MAX_VALUE;
 			// double max = Double.MIN_VALUE;
-
+			SimulationResult simRes = pw.getSimResController().get();
+			cols = simRes.getTime().size();
 			for (int j = 0; j < rows; j++) {
 				place = places.get(labels.get(j));
-				if (place.getPetriNetSimulationData().size() > 0) {
+				if (simRes.contains(place, TOKEN) && simRes.get(place, TOKEN).size() > 0) {
 					// final XYSeriesCollection dataset = new
 					// XYSeriesCollection();
 					// XYSeries series = new XYSeries(1);
 					//System.out.println(place.getName());
-					min = Math.min(min, (double) Collections.min(place.getPetriNetSimulationData()));
-					max = Math.max(max, (double) Collections.max(place.getPetriNetSimulationData()));
+					min = Math.min(min, (double) Collections.min(simRes.get(place, TOKEN).getAll()));
+					max = Math.max(max, (double) Collections.max(simRes.get(place, TOKEN).getAll()));
 				}
 			}
 
@@ -140,7 +138,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			// Double value;
 			for (int j = 0; j < rows; j++) {
 				place = places.get(labels.get(j));
-				if (place.getPetriNetSimulationData().size() > 0) {
+				if (simRes.contains(place, TOKEN) && simRes.get(place, TOKEN).size() > 0) {
 					final XYSeriesCollection dataset = new XYSeriesCollection();
 
 					seriesList.add(new XYSeries(j));
@@ -167,8 +165,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 					final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 					chart.addSubtitle(new TextTitle("StartToken="
-							+ place.getPetriNetSimulationData().get(0)
-									.toString()));
+							+ simRes.get(place, TOKEN).get(0).toString()));
 					// NumberAxis yAxis = new NumberAxis();
 					// xAxis.setTickUnit(new NumberTickUnit(2));
 					// xAxis.setRange(0, 50);
@@ -223,11 +220,12 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	}
 
 	private void updateData() {
+		SimulationResult simRes = pw.getSimResController().get();
 		//System.out.println("update");
 		Place place;
 		for (int j = 0; j < rows; j++) {
 			place = places.get(labels.get(j));
-			if (place.getPetriNetSimulationData().size() > 0) {
+			if (simRes.contains(place, TOKEN) && simRes.get(place, TOKEN).size() > 0) {
 				// final XYSeriesCollection dataset = new XYSeriesCollection();
 
 				// seriesList.add(new XYSeries(1));
@@ -239,10 +237,10 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 					// value = Double.parseDouble(table[j][i +
 					// 1].toString());
-					series.add(pw.getPetriNet().getTime().get(i), place.getPetriNetSimulationData().get(i));
+					series.add(simRes.getTime().get(i), simRes.get(place, TOKEN).get(i));
 				}
-				min = Math.min(min, (double) Collections.min(place.getPetriNetSimulationData()));
-				max = Math.max(max, (double) Collections.max(place.getPetriNetSimulationData()));
+				min = Math.min(min, (double) Collections.min(simRes.get(place, TOKEN).getAll()));
+				max = Math.max(max, (double) Collections.max(simRes.get(place, TOKEN).getAll()));
 			
 			}
 		}

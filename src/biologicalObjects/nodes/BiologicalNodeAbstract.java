@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -55,8 +54,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private BiologicalNodeAbstract parentNode;
 
 	// contains information on microarray data for this element
-
-	private Vector<Double> petriNetSimulationData = new Vector<Double>();
 
 	public VertexShapes shapes;
 
@@ -150,9 +147,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		// values.put(1, 0);
 		shapes = new VertexShapes();
 		// setShape(shapes.getEllipse());
-
-		// initialize microarray data vector
-		petriNetSimulationData = new Vector<Double>();
 
 	}
 
@@ -744,44 +738,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	public void setKEGGnode(KEGGNode gnode) {
 		hasKEGGNode(true);
 		KEGGnode = gnode;
-	}
-
-	/**
-	 * Returns the vector of this biological element's microarray data.
-	 * 
-	 * @author tschoeni
-	 * @return microArrayData
-	 */
-	public Vector<Double> getPetriNetSimulationData() {
-		return petriNetSimulationData;
-	}
-
-	/**
-	 * Setter for this element's microarray data. Expects a vector containing
-	 * Doubles.
-	 * 
-	 * @author tschoeni
-	 * @param newmicroArrayData
-	 */
-	public void setPetriNetSimulationData(Vector<Double> petriNetSimulationData) {
-		this.petriNetSimulationData = petriNetSimulationData;
-	}
-
-	/**
-	 * This method expects an index and returns the corresponding value of the
-	 * microarray data. It's return value is null, when the index exceeds the
-	 * vectors size.
-	 * 
-	 * @author tschoeni
-	 * @param index
-	 * @return Double
-	 */
-	public Double getMicroArrayValue(int index) {
-		if (index > petriNetSimulationData.size()) {
-			return null;
-		} else {
-			return petriNetSimulationData.get(index);
-		}
 	}
 
 	/*

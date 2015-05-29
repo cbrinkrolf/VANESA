@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Vector;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -36,9 +35,6 @@ public class PNEdge extends BiologicalEdgeAbstract {
 
 	private boolean wasUndirected = false;
 	
-	private Vector<Double> sim_tokens = new Vector<Double>();
-	private Vector<Double> sim_tokensSum = new Vector<Double>();
-
 	public boolean wasUndirected() {
 		return wasUndirected;
 	}
@@ -315,21 +311,6 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		return mFunction.toString();
 	}
 
-	public Vector<Double> getSim_tokens() {
-		return sim_tokens;
-	}
-
-	public void setSim_tokens(Vector<Double> sim_tokens) {
-		this.sim_tokens = sim_tokens;
-	}
-
-	public Vector<Double> getSim_tokensSum() {
-		return sim_tokensSum;
-	}
-
-	public void setSim_tokensSum(Vector<Double> sim_tokensSum) {
-		this.sim_tokensSum = sim_tokensSum;
-	}
 }
 
 class StringLengthComparator implements Comparator<String> {

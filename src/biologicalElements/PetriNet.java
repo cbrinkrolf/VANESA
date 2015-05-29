@@ -3,7 +3,6 @@ package biologicalElements;
 import graph.GraphInstance;
 import gui.MainWindowSingleton;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import petriNet.CSVInputReader;
-import petriNet.PNEdge;
 import petriNet.PNResultInputReader;
 import petriNet.Place;
 import petriNet.Transition;
@@ -32,8 +30,6 @@ public class PetriNet {
 	private int currentTimeStep = 0;
 	private String covGraph;
 	private boolean omc = false;
-
-	private Vector<Double> time = new Vector<Double>();
 
 	public String getCovGraph() {
 		return this.covGraph;
@@ -143,6 +139,9 @@ public class PetriNet {
 
 	private void setDataToNodes(HashMap<BiologicalEdgeAbstract, String> bea2key)
 			throws Exception {
+		
+		/*
+		
 		// System.out.println(pnResult.keySet().size());
 		places = 0;
 		transitions = 0;
@@ -265,7 +264,7 @@ public class PetriNet {
 			}
 			pw.setPetriNetSimulation(true);
 		}
-
+*/
 	}
 
 	private void deleteDateFromNodes() {
@@ -279,7 +278,7 @@ public class PetriNet {
 				if (bna instanceof Place) {
 					Place p = (Place) bna;
 					// if (p.getPetriNetSimulationData() != null) {
-					p.setPetriNetSimulationData(new Vector<Double>());
+					//p.setPetriNetSimulationData(new Vector<Double>());
 					// }
 					// System.out.println(p.getPetriNetSimulationData().size());
 				}
@@ -292,10 +291,6 @@ public class PetriNet {
 
 	public int getNumberOfPlaces() {
 		return this.places;
-	}
-
-	public int getResultDimension() {
-		return this.time.size();
 	}
 
 	public int getPlaces() {
@@ -312,14 +307,6 @@ public class PetriNet {
 
 	public void setTransitions(int transitions) {
 		this.transitions = transitions;
-	}
-
-	public Vector<Double> getTime() {
-		return this.time;
-	}
-
-	public void addTime(Double t) {
-		this.time.add(t);
 	}
 
 }

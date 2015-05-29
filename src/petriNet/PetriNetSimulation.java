@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -56,24 +55,22 @@ public class PetriNetSimulation implements ActionListener {
 
 	private ChangedFlags flags;
 	private Server s;
-	
+
 	private String simName;
-	
+
 	private String simLib;
 	private List<String> simLibs;
 
 	public PetriNetSimulation() {
-		
-		
+
 		Map<String, String> env = System.getenv();
 		if (SystemUtils.IS_OS_WINDOWS) {
 			pathWorkingDirectory = env.get("APPDATA");
 		} else {
 			pathWorkingDirectory = env.get("HOME");
 		}
-	
-		if (pathWorkingDirectory.charAt(pathWorkingDirectory
-				.length() - 1) != File.separatorChar) {
+
+		if (pathWorkingDirectory.charAt(pathWorkingDirectory.length() - 1) != File.separatorChar) {
 			pathWorkingDirectory += File.separator;
 		}
 
@@ -84,9 +81,9 @@ public class PetriNetSimulation implements ActionListener {
 		if (!dir.isDirectory()) {
 			dir.mkdir();
 		}
-		
+
 		this.simLibs = this.getLibs(dir);
-	
+
 		// menue = new SimMenue(this);
 		// flags = new ChangedFlags();
 	}
@@ -168,8 +165,8 @@ public class PetriNetSimulation implements ActionListener {
 					return;
 				}
 
-				MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim + "simulation.mo")),
-						graphInstance.getPathway());
+				MOoutput mo = new MOoutput(new FileOutputStream(new File(
+						pathSim + "simulation.mo")), graphInstance.getPathway());
 				HashMap<BiologicalEdgeAbstract, String> bea2key = mo
 						.getBea2resultkey();
 				//
@@ -296,12 +293,12 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void runOMCIA() {
-		System.out.println("simNameOld: "+simName);
+		System.out.println("simNameOld: " + simName);
 		Pathway pw = new GraphInstance().getPathway();
 		GraphContainer con = ContainerSingelton.getInstance();
 		MainWindow w = MainWindowSingleton.getInstance();
 		w.blurrUI();
-		
+
 		flags = pw.getChangedFlags("petriNetSim");
 
 		Map<String, String> env = System.getenv();
@@ -322,9 +319,9 @@ public class PetriNetSimulation implements ActionListener {
 				int intervals = menue.getIntervals();
 				// this.path = "C:\\OpenModelica1.9.1Nightly\\";
 				zstVorher = System.currentTimeMillis();
-				
+
 				boolean simLibChanged = false;
-				if(menue.getSimLib() !=this.simLib){
+				if (menue.getSimLib() != this.simLib) {
 					simLibChanged = true;
 				}
 
@@ -336,7 +333,8 @@ public class PetriNetSimulation implements ActionListener {
 
 				if (flags.isEdgeChanged() || flags.isNodeChanged()
 						|| flags.isEdgeWeightChanged()
-						|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged) {
+						|| flags.isPnPropertiesChanged() || !simExePresent
+						|| simLibChanged) {
 					System.out.println("edges changed: "
 							+ flags.isEdgeChanged());
 					System.out.println("nodes changed: "
@@ -350,9 +348,7 @@ public class PetriNetSimulation implements ActionListener {
 					if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
 						pathCompiler += File.separator;
 					}
-					
-					
-					
+
 					pathSim = pathWorkingDirectory + "simulation"
 							+ File.separator;
 					File dirSim = new File(pathSim);
@@ -366,8 +362,9 @@ public class PetriNetSimulation implements ActionListener {
 					String missing = "";
 					if (simLibs.size() < 1) {
 						abort = true;
-						//missing += "PNlib.mo\n in " + pathWorkingDirectory;
-						missing += "missing lib folders in " + pathWorkingDirectory;
+						// missing += "PNlib.mo\n in " + pathWorkingDirectory;
+						missing += "missing lib folders in "
+								+ pathWorkingDirectory;
 					}
 					/*
 					 * if (!new File(path + "dsmodel.c").exists()) { abort =
@@ -387,21 +384,22 @@ public class PetriNetSimulation implements ActionListener {
 						return;
 					}
 					simLib = menue.getSimLib();
-					System.out.println("simulation lib: "+simLib);
+					System.out.println("simulation lib: " + simLib);
 					String packageInfo = null;
-					if(simLib.equals("PNlib")){
-						//packageInfo = "inner PNlib.Settings settings1;";
-					}else{
-						packageInfo = "import PNlib = "+simLib+";";
+					if (simLib.equals("PNlib")) {
+						// packageInfo = "inner PNlib.Settings settings1;";
+					} else {
+						packageInfo = "import PNlib = " + simLib + ";";
 					}
-					MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim
-							+ "simulation.mo")), pw, packageInfo);
+					MOoutput mo = new MOoutput(new FileOutputStream(new File(
+							pathSim + "simulation.mo")), pw, packageInfo);
 					bea2key = mo.getBea2resultkey();
 					//
 
 					String filter = "variableFilter=\"";
 
-					Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+					Iterator<BiologicalNodeAbstract> it = pw.getAllNodes()
+							.iterator();
 					BiologicalNodeAbstract bna;
 					int vars = 0;
 					while (it.hasNext()) {
@@ -412,7 +410,7 @@ public class PetriNetSimulation implements ActionListener {
 						} else if (bna instanceof Transition) {
 							filter += "'" + bna.getName() + "'.fire|";
 							filter += "'" + bna.getName() + "'.actualSpeed|";
-							vars+=2;
+							vars += 2;
 						}
 					}
 
@@ -422,30 +420,30 @@ public class PetriNetSimulation implements ActionListener {
 						s = it2.next();
 						filter += s + "|";
 						filter += "der\\\\(" + s + "\\\\)|";
-						vars+=2;
+						vars += 2;
 					}
 					filter = filter.replace("[", "\\\\[");
 					filter = filter.replace("]", "\\\\]");
-					filter = filter.substring(0, filter.length()-1);
+					filter = filter.substring(0, filter.length() - 1);
 					filter += "\"";
-					System.out.println("Filter: "+filter);
-					System.out.println("vars: "+vars);
+					System.out.println("Filter: " + filter);
+					System.out.println("vars: " + vars);
 					FileWriter fstream = new FileWriter(pathSim
 							+ "simulation.mos");
 					BufferedWriter out = new BufferedWriter(fstream);
 					pathSim = pathSim.replace('\\', '/');
 					out.write("cd(\"" + pathSim + "\"); ");
 					out.write("getErrorString();\r\n");
-					out.write("loadFile(\"../"+simLib+"/package.mo\"); ");
+					out.write("loadFile(\"../" + simLib + "/package.mo\"); ");
 					out.write("getErrorString();\r\n");
 					out.write("loadFile(\"simulation.mo\"); ");
 					out.write("getErrorString();\r\n");
-					//out.write("setDebugFlags(\"disableComSubExp\"); ");
-					//out.write("getErrorString();\r\n");
-					
-					//CHRIS improve / correct filter
-					//out.write("buildModel(simulation, " + filter + "); ");
-					out.write("buildModel('"+pw.getName()+"'); ");
+					// out.write("setDebugFlags(\"disableComSubExp\"); ");
+					// out.write("getErrorString();\r\n");
+
+					// CHRIS improve / correct filter
+					// out.write("buildModel(simulation, " + filter + "); ");
+					out.write("buildModel('" + pw.getName() + "'); ");
 					out.write("getErrorString();\r\n");
 
 					// out.write("fileName=\"simulate.mat\";\r\n");
@@ -471,7 +469,7 @@ public class PetriNetSimulation implements ActionListener {
 					final Process p = new ProcessBuilder(bin, pathSim
 							+ "simulation.mos").start();
 					InputStream os = p.getInputStream();
-					
+
 					// simulation.exe -override=outputFormat=ia -port=11111
 					// -lv=LOG_STATS
 
@@ -493,22 +491,23 @@ public class PetriNetSimulation implements ActionListener {
 					};
 					t.start();
 					p.waitFor();
-					//System.out.println("av: " +os.available());
+					// System.out.println("av: " +os.available());
 					byte[] bytes = new byte[os.available()];
 					os.read(bytes);
 					String buildOutput = new String(bytes);
 					System.out.println(buildOutput);
-					StringTokenizer tokenizer = new StringTokenizer(buildOutput,",");
+					StringTokenizer tokenizer = new StringTokenizer(
+							buildOutput, ",");
 					String tmp = tokenizer.nextToken();
-					//tmp.indexOf("{");
-					simName = tmp.substring(tmp.indexOf("{")+2,tmp.length()-1);
-					System.out.println("simName: "+simName);
-					
+					// tmp.indexOf("{");
+					simName = tmp.substring(tmp.indexOf("{") + 2,
+							tmp.length() - 1);
+					System.out.println("simName: " + simName);
+
 					if (SystemUtils.IS_OS_WINDOWS) {
 						simName += ".exe";
 					}
-					
-					
+
 					try {
 						t.stop();
 					} catch (Exception e) {
@@ -516,14 +515,11 @@ public class PetriNetSimulation implements ActionListener {
 					}
 
 					if (buildSuccess) {
-						
+
 						this.flags.reset();
-						pw.getChangedInitialValues()
-								.clear();
-						pw.getChangedParameters()
-								.clear();
-						pw.getChangedBoundaries()
-								.clear();
+						pw.getChangedInitialValues().clear();
+						pw.getChangedParameters().clear();
+						pw.getChangedBoundaries().clear();
 					}
 
 				}
@@ -552,8 +548,9 @@ public class PetriNetSimulation implements ActionListener {
 									/ intervals + ",tolerance=0.0001";
 							if (flags.isParameterChanged()) {
 
-								Iterator<Parameter> it = pw.getChangedParameters()
-										.keySet().iterator();
+								Iterator<Parameter> it = pw
+										.getChangedParameters().keySet()
+										.iterator();
 								GraphElementAbstract gea;
 								Parameter param;
 
@@ -579,8 +576,7 @@ public class PetriNetSimulation implements ActionListener {
 								Double d;
 								while (it.hasNext()) {
 									p = it.next();
-									d = pw
-											.getChangedInitialValues().get(p);
+									d = pw.getChangedInitialValues().get(p);
 									override += ",'" + p.getName()
 											+ "'.startMarks=" + d;
 								}
@@ -588,15 +584,13 @@ public class PetriNetSimulation implements ActionListener {
 
 							if (flags.isBoundariesChanged()) {
 								// System.out.println("chaaaaanged");
-								Iterator<Place> it = pw
-										.getChangedBoundaries().keySet()
-										.iterator();
+								Iterator<Place> it = pw.getChangedBoundaries()
+										.keySet().iterator();
 								Place p;
 								Boundary b;
 								while (it.hasNext()) {
 									p = it.next();
-									b = pw
-											.getChangedBoundaries().get(p);
+									b = pw.getChangedBoundaries().get(p);
 									if (b.isLowerBoundarySet()) {
 										override += ",'" + p.getName()
 												+ "'.minMarks="
@@ -617,7 +611,7 @@ public class PetriNetSimulation implements ActionListener {
 							}
 							System.out.println("override: " + override);
 
-							//String program = "_omcQuot_556E7469746C6564";
+							// String program = "_omcQuot_556E7469746C6564";
 							if (noEmmit) {
 								pb.command(simName,
 										"-s=" + menue.getIntegrator(),
@@ -632,7 +626,7 @@ public class PetriNetSimulation implements ActionListener {
 							pb.redirectOutput();
 							pb.directory(new File(pathSim));
 							process = pb.start();
-							
+
 							setReader(new InputStreamReader(
 									process.getInputStream()));
 						} catch (IOException e1) {
@@ -644,14 +638,13 @@ public class PetriNetSimulation implements ActionListener {
 
 				Thread t2 = new Thread() {
 					public void run() {
-						pw.getGraph()
-								.getVisualizationViewer().requestFocus();
+						pw.getGraph().getVisualizationViewer().requestFocus();
 						w.redrawGraphs();
-						Vector<Double> v = pw
-								.getPetriNet().getTime();
+						List<Double> v = pw.getSimResController().get()
+								.getTime().getAll();
 						// System.out.println("running");
 						while (s.isRunning()) {
-							//System.out.println("im thread");
+							// System.out.println("im thread");
 							w.redrawGraphs();
 							// GraphInstance graphInstance = new
 							// GraphInstance();
@@ -661,7 +654,7 @@ public class PetriNetSimulation implements ActionListener {
 
 							// double time =
 							if (v.size() > 0) {
-								menue.setTime(v.get(v.size() - 1));
+								menue.setTime((v.get(v.size() - 1)).toString());
 							}
 							try {
 								sleep(100);
@@ -672,10 +665,12 @@ public class PetriNetSimulation implements ActionListener {
 						}
 						menue.stopped();
 						System.out.println("end of simulation");
+						w.updatePCPView();
 						w.redrawGraphs();
+					
 						w.repaint();
 						if (v.size() > 0) {
-							menue.setTime(v.get(v.size() - 1));
+							menue.setTime((v.get(v.size() - 1)).toString());
 						}
 						// w.updatePCPView();
 					}
@@ -738,9 +733,11 @@ public class PetriNetSimulation implements ActionListener {
 
 					t1.start();
 				} else {
-					//System.out.println("something wet wrong");
-					JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
-							"Something wet wrong! Simulation could not be built!");
+					// System.out.println("something wet wrong");
+					JOptionPane
+							.showMessageDialog(
+									MainWindowSingleton.getInstance(),
+									"Something wet wrong! Simulation could not be built!");
 					this.stopAction();
 				}
 
@@ -790,8 +787,7 @@ public class PetriNetSimulation implements ActionListener {
 				 * (Exception e) { e.printStackTrace(); } } }; t3.start();
 				 */
 
-				if (con.containsPathway()
-						&& pw.hasGotAtLeastOneElement()
+				if (con.containsPathway() && pw.hasGotAtLeastOneElement()
 						&& !stopped) {
 					// graphInstance.getPathway().setPetriNet(true);
 					// PetriNet petrinet = graphInstance.getPathway()
@@ -885,8 +881,8 @@ public class PetriNetSimulation implements ActionListener {
 			new File(pathCompiler + "simulate.mat").delete();
 			new File(pathCompiler + "simulate.csv").delete();
 			new File(pathCompiler + "simulation.mos").delete();
-			new MOoutput(new FileOutputStream(new File(pathCompiler + "simulation.mo")),
-					graphInstance.getPathway());
+			new MOoutput(new FileOutputStream(new File(pathCompiler
+					+ "simulation.mo")), graphInstance.getPathway());
 
 			FileWriter fstream = new FileWriter(pathCompiler + "simulation.mos");
 			BufferedWriter out = new BufferedWriter(fstream);
@@ -1002,22 +998,22 @@ public class PetriNetSimulation implements ActionListener {
 			this.process.destroy();
 		}
 	}
-	
-	private List<String> getLibs(File directory){
+
+	private List<String> getLibs(File directory) {
 		List<String> libs = new ArrayList<String>();
-		if(directory.isDirectory()){
+		if (directory.isDirectory()) {
 			File[] files = directory.listFiles();
 			File f;
-			for(int i = 0; i< files.length; i++){
+			for (int i = 0; i < files.length; i++) {
 				f = files[i];
-				if(f.isDirectory()){
-					//System.out.println("folder: "+f.getName());
-					if(new File(f, "package.mo").exists()){
+				if (f.isDirectory()) {
+					// System.out.println("folder: "+f.getName());
+					if (new File(f, "package.mo").exists()) {
 						libs.add(f.getName());
-						//System.out.println("existiert: "+ f.getName());
+						// System.out.println("existiert: "+ f.getName());
 					}
 				}
-				//System.out.println(files[i].getName());
+				// System.out.println(files[i].getName());
 			}
 		}
 		return libs;

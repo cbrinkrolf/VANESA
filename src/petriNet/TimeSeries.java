@@ -26,6 +26,9 @@ public class TimeSeries {
 		values.add(v);
 	}
 	
+	public int size(){
+		return time.size();
+	}
 	
 	
 }
