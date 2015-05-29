@@ -1,15 +1,13 @@
 package petriNet;
 
+//import edu.uci.ics.jung.graph.Vertex;
+import graph.jung.graphDrawing.VertexShapes;
+
 import java.awt.Color;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.util.Vector;
 
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-//import edu.uci.ics.jung.graph.Vertex;
-import graph.jung.graphDrawing.VertexShapes;
 
 public class Transition extends BiologicalNodeAbstract {
 
@@ -19,7 +17,7 @@ public class Transition extends BiologicalNodeAbstract {
 
 	private String firingCondition = "true";//"time>9.8";
 	
-	private Vector<Double> simActualSpeed = new Vector<Double>();
+	//private Vector<Double> simActualSpeed = new Vector<Double>();
 	private Color plotColor;
 	
 	private boolean knockedOut = false;
@@ -41,17 +39,6 @@ public class Transition extends BiologicalNodeAbstract {
 //	}
 
 	
-
-	private Vector<Transition> TransitionOut = new Vector<Transition>();
-
-	public Vector<Transition> getTransitionOut() {
-		return TransitionOut;
-	}
-
-	public void setTransitionOut(Vector<Transition> transitionOut) {
-		TransitionOut = transitionOut;
-	}
-
 	private String modellicaString;
 
 	public String getModellicaString() {
@@ -112,14 +99,6 @@ public class Transition extends BiologicalNodeAbstract {
 		this.simulationActive = simulationActive;
 	}
 
-	public Vector<Double> getSimActualSpeed() {
-		return simActualSpeed;
-	}
-
-	public void setSimActualSpeed(Vector<Double> simActualSpeed) {
-		this.simActualSpeed = simActualSpeed;
-	}
-	
 	public void setPlotColor(Color plotColor) {
 		this.plotColor = plotColor;
 	}

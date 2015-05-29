@@ -61,9 +61,8 @@ public class Server {
 				try {
 					int port = 11111;
 					serverSocket = new java.net.ServerSocket(port);
-					simName = "simulation_"
-							+ pw.getSimResController().getSize() + "_"
-							+ System.nanoTime();
+					simName = "simulation_" + pw.getSimResController().size()
+							+ "_" + System.nanoTime();
 					simResult = pw.getSimResController().get(simName);
 					System.out.println(simName);
 
@@ -191,13 +190,7 @@ public class Server {
 		try {
 			while (running) {
 				try {
-					if (pw.getPetriNet().getTime().size() > 0
-							&& pw.getPetriNet().getTime()
-									.get(pw.getPetriNet().getTime().size() - 1) > 0.01) {
-						Thread.sleep(1);
-					} else {
-						Thread.sleep(1);
-					}
+					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -319,7 +312,7 @@ public class Server {
 			} else if (bna instanceof Transition) {
 				transitions++;
 			}
-			bna.getPetriNetSimulationData().clear();
+			// bna.getPetriNetSimulationData().clear();
 		}
 		it = hs.iterator();
 		int i = 0;
@@ -333,7 +326,7 @@ public class Server {
 			} else if (bna instanceof Transition) {
 				((Transition) bna).setPlotColor(Color.getHSBColor(j * 1.0f
 						/ (transitions), 1, 1));
-				((Transition) bna).getSimActualSpeed().clear();
+				//((Transition) bna).getSimActualSpeed().clear();
 				j++;
 			}
 		}
@@ -345,11 +338,11 @@ public class Server {
 			bea = it2.next();
 			if (bea instanceof PNEdge) {
 				e = (PNEdge) bea;
-				e.getSim_tokens().clear();
-				e.getSim_tokensSum().clear();
+				//e.getSim_tokens().clear();
+				//e.getSim_tokensSum().clear();
 			}
 		}
-		pw.getPetriNet().getTime().clear();
+		//pw.getPetriNet().getTime().clear();
 	}
 
 	private void setData(ArrayList<Object> values) {
@@ -387,7 +380,7 @@ public class Server {
 						+ bea2key.get(bea) + ")"));
 
 				if (old) {
-					e.getSim_tokens().add(value);
+					//e.getSim_tokens().add(value);
 				}
 				this.simResult
 						.addValue(
@@ -398,7 +391,7 @@ public class Server {
 				value = (Double) values.get(name2index.get(bea2key.get(bea)));
 
 				if (old) {
-					e.getSim_tokensSum().add(value);
+					//e.getSim_tokensSum().add(value);
 				}
 
 				this.simResult.addValue(e,
@@ -419,7 +412,7 @@ public class Server {
 					value = (Double) (values.get(name2index.get("'"
 							+ bna.getName() + "'.t")));
 					if (old) {
-						bna.getPetriNetSimulationData().add(value);
+						// bna.getPetriNetSimulationData().add(value);
 					}
 					this.simResult.addValue(bna,
 							SimulationResultController.SIM_TOKEN, value);
@@ -434,7 +427,7 @@ public class Server {
 							+ bna.getName() + "'.fire"));
 
 					if (old) {
-						bna.getPetriNetSimulationData().add(value);
+						// bna.getPetriNetSimulationData().add(value);
 					}
 					this.simResult.addValue(bna,
 							SimulationResultController.SIM_FIRE, value);
@@ -442,7 +435,7 @@ public class Server {
 					value = (Double) values.get(name2index.get("'"
 							+ bna.getName() + "'.actualSpeed"));
 					if (old) {
-						((Transition) bna).getSimActualSpeed().add(value);
+						// ((Transition) bna).getSimActualSpeed().add(value);
 					}
 
 					this.simResult.addValue(bna,
@@ -459,11 +452,11 @@ public class Server {
 		value = (Double) values.get(name2index.get("time"));
 
 		if (old) {
-			pw.getPetriNet().addTime(value);
+			// pw.getPetriNet().addTime(value);
 		}
 		this.simResult.addTime(value);
-		//System.out.println("Time size: " + simResult.getTime().getSize());
-		//System.out.println("old size: " + pw.getPetriNet().getTime().size());
+		// System.out.println("Time size: " + simResult.getTime().getSize());
+		// System.out.println("old size: " + pw.getPetriNet().getTime().size());
 		// this.time = pnResult.get("time");
 		// pw.setPetriNetSimulation(true);
 	}
