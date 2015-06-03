@@ -12,8 +12,11 @@ public class SimulationResult {
 	//private HashMap<GraphElementAbstract, HashMap<Integer, Series>> result;
 	//private HashMap<GraphElementAbstract, HashMap<Integer, TimeSeries>> resultFiltered;
 	private Series time;
+	private boolean active = true;
+	private String name;
 
-	public SimulationResult(boolean filtered) {
+	public SimulationResult(String name, boolean filtered) {
+		this.name = name;
 		result = new DoubleHashMap<GraphElementAbstract, Integer, Series>();
 		time = new Series();
 		if (filtered) {
@@ -79,6 +82,22 @@ public class SimulationResult {
 	
 	public boolean contains(GraphElementAbstract gea, int type){
 		return result.contains(gea, type);
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
