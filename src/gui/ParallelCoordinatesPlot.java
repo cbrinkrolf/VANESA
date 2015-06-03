@@ -121,6 +121,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private ChartPanel pane;
 
 	private JButton exportSimResult;
+	private JButton updateGraph;
 
 	// private JPanel invariants = new JPanel();
 
@@ -260,9 +261,16 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			animationColour.setSelected(false);
 
 			mainPanel = new JPanel(layout);
+			
+			updateGraph = new JButton("update Graph");
+			updateGraph.addActionListener(this);
+			updateGraph.setActionCommand("updateGraph");
+			
 			showTable = new JButton("show detailed simulation results");
 			showTable.addActionListener(this);
 			showTable.setActionCommand("show");
+			
+			
 			slider.setMinimum(0);
 			slider.setMaximum(rowsDim - 1);
 			slider.setMajorTickSpacing(1);
@@ -280,6 +288,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			resetPetriNet.setBackground(Color.white);
 			petriNetStopAnimationButton.setEnabled(false);
 
+			controlPanel.add(updateGraph);
+			controlPanel.add(showTable, "align left");
+			controlPanel.add(new JLabel(""), "align left,wrap 10, growx");
+			
 			controlPanel.add(new JSeparator(), "span, wrap 10, growx");
 
 			controlPanel.add(new JLabel("Animation Start:"), "align left");
@@ -294,15 +306,13 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			controlPanel.add(new JLabel("Animation Colour:"), "align left");
 			controlPanel.add(animationColour, "align left,wrap 10, growx");
 
-			controlPanel.add(showTable, "align left");
-			controlPanel.add(new JLabel(""), "align left,wrap 10, growx");
 
 			controlPanel2.add(petriNetAnimationButton, "align left");
 			controlPanel2.add(petriNetStopAnimationButton, "align left");
 			controlPanel2.add(resetPetriNet, "align left");
 
 			controlPanel.add(controlPanel2, "span, wrap,growx");
-			controlPanel.add(new JSeparator(), "span, wrap 10, growx");
+			
 			controlPanel.add(slider, "align left");
 			controlPanel.add(stepLabel, "align left,wrap, growx");
 
@@ -488,7 +498,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 	public void updateData() {
 		// System.out.println("update data begin");
-		if (pw.isPetriNet() && pw.isPetriNetSimulation()) {
+		SimulationResult simRes = pw.getSimResController().get();
+		
+		if (pw.isPetriNet() && pw.isPetriNetSimulation() && simRes != null) {
 
 			BiologicalNodeAbstract bna;
 			BiologicalEdgeAbstract bea;
@@ -500,7 +512,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			Transition transition;
 			int stop;
 			int steps = 0;
-			SimulationResult simRes = pw.getSimResController().get();
+			
 
 			rowsDim = simRes.getTime().size();
 
@@ -679,7 +691,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	public void actionPerformed(ActionEvent e) {
 
 		String event = e.getActionCommand();
-		if ("reset".equals(event)) {
+		
+		if("updateGraph".equals(event)){
+			this.drawPlot();
+		}else if ("reset".equals(event)) {
 			for (Iterator i = pw.getAllNodes().iterator(); i.hasNext();) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) i.next();
 				if (bna instanceof Place) {

@@ -2,6 +2,7 @@ package petriNet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class SimulationResultController {
@@ -28,7 +29,7 @@ public class SimulationResultController {
 
 	public SimulationResult get(String simulation) {
 		if (!series.containsKey(simulation)) {
-			series.put(simulation, new SimulationResult(filteredDefault));
+			series.put(simulation, new SimulationResult(simulation, filteredDefault));
 			simNames.add(simulation);
 		}
 		return series.get(simulation);
@@ -47,11 +48,44 @@ public class SimulationResultController {
 
 	public SimulationResult get() {
 		if (series.size() > 0) {
-			//System.out.println("returned: "+simNames.get(simNames.size()-1));
-			return series.get(simNames.get(simNames.size()-1));
+			// System.out.println("returned: "+simNames.get(simNames.size()-1));
+			return series.get(simNames.get(simNames.size() - 1));
 		} else {
 			return null;
 		}
 	}
 
+	public List<SimulationResult> getAll() {
+		List<SimulationResult> list = new ArrayList<SimulationResult>();
+		for (int i = 0; i < this.simNames.size(); i++) {
+			list.add(this.series.get(this.simNames.get(i)));
+		}
+
+		return list;
+	}
+
+	public List<SimulationResult> getAllActive() {
+		List<SimulationResult> list = new ArrayList<SimulationResult>();
+		for (int i = 0; i < this.simNames.size(); i++) {
+			if (this.series.get(this.simNames.get(i)).isActive()) {
+				list.add(this.series.get(this.simNames.get(i)));
+			}
+		}
+
+		return list;
+	}
+
+	public void setAllActive(boolean active) {
+		Iterator<SimulationResult> it = series.values().iterator();
+		SimulationResult simRes;
+		while (it.hasNext()) {
+			simRes = it.next();
+			simRes.setActive(active);
+		}
+	}
+	
+	public void remove(int i){
+		this.series.remove(this.simNames.get(i));
+		this.simNames.remove(i);
+	}
 }
