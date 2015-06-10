@@ -122,15 +122,16 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 				while (it.hasNext()) {
 					String[] details = it.next();
 					String name = details[0];
-					// System.out.println(name);
+					//System.out.println("name: "+name);
 					final String QUESTION_MARK = new String("\\?");
-
-					if (this.name.length() > 0) {
+					if (name.length() > 0) {
 						String finalQueryString = miRNAqueries.miRNA_get_Genes
 								.replaceFirst(QUESTION_MARK, "'" + name + "'");
+						//System.out.println(finalQueryString);
 						resultsDBSearch = new Wrapper().requestDbContent(
 								Wrapper.dbtype_MiRNA, finalQueryString);
-						// System.out.println(finalQueryString);
+						//System.out.println(resultsDBSearch.size());
+						
 						if (resultsDBSearch.size() > 0) {
 
 							Pathway pw = new CreatePathway(database
@@ -243,6 +244,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 							}
 							// startVisualizationModel();
+							myGraph.restartVisualizationModel();
 
 							if (!headless) {
 								myGraph.changeToGEMLayout();
