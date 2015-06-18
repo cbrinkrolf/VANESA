@@ -6,6 +6,7 @@ import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.visualization.VisualizationConfigBeans;
 import gui.visualization.YamlToObjectParser;
+import io.SaveDialog;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -18,12 +19,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,15 +44,20 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.commons.io.FilenameUtils;
 import org.yaml.snakeyaml.Yaml;
+
+import com.mchange.io.FileUtils;
+import com.sun.javafx.Utils;
 
 import sun.tools.jar.resources.jar;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 
 public class VisualizationDialog {
+	public static final String DEFAULTYAML = "defaultYaml";
 	
-	YamlToObjectParser yamlToObjectParser;
+	private YamlToObjectParser yamlToObjectParser;
 	
 	private VisualizationConfigBeans bean;
 	
@@ -94,6 +102,7 @@ public class VisualizationDialog {
 	private Map<String, Map<String,Object>> objectClass;
 	
 	private String loadedYaml = null;
+	private MainWindow mWindow;
 	
 	private Elementdeclerations elementdeclerations = new Elementdeclerations();
 	
@@ -142,9 +151,9 @@ public class VisualizationDialog {
 		panel.add(colorChooser.getPreviewPanel(), "span, right, gapright 20, wrap");
 		
 		
-		MainWindow mWindow = MainWindowSingleton.getInstance();
+		mWindow = MainWindowSingleton.getInstance();
 		
-		JLabel labelButton = new JLabel("Configurationfile(.yml): ");
+		JLabel labelButton = new JLabel("Configurationfile(.yaml): ");
 		labelButton.setFont(labelButton.getFont().deriveFont(Font.BOLD));
 		loadedYamlLabel = new JLabel();
 		if(mWindow.getLoadedYaml() != null){
@@ -169,6 +178,7 @@ public class VisualizationDialog {
 					if(dataChosen == JFileChooser.APPROVE_OPTION){
 						loadedYaml = fileChooser.getSelectedFile().getPath();
 						loadedYamlLabel.setText(loadedYaml);
+						mWindow.setLoadedYaml(loadedYaml);
 						PrintWriter pWriter = null;
 						try {
 							pWriter = new PrintWriter(new BufferedWriter(new FileWriter(new File("YamlSourceFile.txt").getAbsolutePath())));
@@ -195,6 +205,22 @@ public class VisualizationDialog {
 		panel.add(labelButton, "gaptop 50, bot");
 		panel.add(loadedYamlLabel, "left, gaptop 50, bot");
 		panel.add(loadYamlButton, "span, right, gapleft 10, gaptop 50, bot");
+		JLabel exportLabel = new JLabel("To customize press export. The resulting file will take over all future customizations.");
+		JLabel spacer = new JLabel("");
+		JButton exportButton = new JButton("Export");
+		exportButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(e.getSource() == exportButton){
+					SaveDialog saveDialog = new SaveDialog(SaveDialog.FORMAT_YAML);
+				}
+				
+			}
+		});
+		panel.add(spacer, "gaptop 10, bot");
+		panel.add(exportLabel, "gaptop 10, bot");
+		panel.add(exportButton, "span, right, gapleft 10, gaptop 10, bot");
 
 		
 		Yaml yaml = new Yaml();
@@ -205,7 +231,7 @@ public class VisualizationDialog {
 			System.out.println("Dialog NullError");
 		}
 		
-		if(loadedYaml.equals("defaultYaml")){
+		if(loadedYaml.equals(VisualizationDialog.DEFAULTYAML)){
 			shapeBox.setEnabled(false);
 			sizeMultiplierBox.setEnabled(false);
 			colorChooser.setEnabled(false);
@@ -228,8 +254,8 @@ public class VisualizationDialog {
 		InputStream input = null;
 		BufferedReader reader = null;
 		if(loadedYaml != null){
-		if(loadedYaml.equals("defaultYaml")){
-			input = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yml");
+		if(loadedYaml.equals(VisualizationDialog.DEFAULTYAML)){
+			input = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
 			reader = new BufferedReader(new InputStreamReader(input));
 		}else{
 			try {
@@ -264,7 +290,7 @@ public class VisualizationDialog {
 					colorChooser.setColor((int)object.get(keyValue).get("red"), 
 							(int)object.get(keyValue).get("green"), 
 							(int)object.get(keyValue).get("blue"));
-					if(loadedYaml.equals("defaultYaml")){
+					if(loadedYaml.equals(VisualizationDialog.DEFAULTYAML)){
 						shapeBox.setEnabled(false);
 						sizeMultiplierBox.setEnabled(false);
 						colorChooser.setEnabled(false);
@@ -284,7 +310,7 @@ public class VisualizationDialog {
 
 		Writer writer = null;
 		if(loadedYaml != null){
-			if(loadedYaml.equals("defaultYaml") == false){
+			if(loadedYaml.equals(VisualizationDialog.DEFAULTYAML) == false){
 				try {
 					writer = new FileWriter(loadedYaml);
 				} catch (IOException e1) {
@@ -306,12 +332,17 @@ public class VisualizationDialog {
 		yamlWriter(yaml, biologicalElementsBox.getSelectedItem().toString(), true);
 		yamlToObjectParser = new YamlToObjectParser(this.getPanel(), loadedYaml);
 		yamlToObjectParser.acceptConfig();
-		
-		
 	}
 
 	public void setDefaultYamlPath(){
-		loadedYaml = "defaultYaml";
+		String yamlSourceFile = new File("YamlSourceFile.txt").getAbsolutePath();
+		File file = new File(yamlSourceFile);
+		if(file.exists()){
+			file.delete();
+		}
+		mWindow = MainWindowSingleton.getInstance();
+		mWindow.setLoadedYaml(VisualizationDialog.DEFAULTYAML);
+		loadedYaml = VisualizationDialog.DEFAULTYAML;
 		System.out.println(loadedYaml);
 		loadedYamlLabel.setText(loadedYaml);
 		shapeBox.setEnabled(false);
