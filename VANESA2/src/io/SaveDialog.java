@@ -17,14 +17,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-
 import javax.swing.JPanel;
+
+
+
+import org.jdesktop.swingx.color.EyeDropperColorChooserPanel;
 
 //import ch.qos.logback.classic.LoggerContext;
 import moOutput.MOoutput;
@@ -53,6 +57,8 @@ public class SaveDialog {
 	private boolean pnmlBool = true;
 	private boolean csvBool = true;
 	private boolean pngBool = true;
+	private boolean yamlBool = true;
+	private boolean ymlBool = true;
 
 	private String fileFormat;
 	private File file;
@@ -86,6 +92,9 @@ public class SaveDialog {
 
 	private String pngDescription = "PNG Image (*.png)";
 	private String png = "png";
+	
+	private String yamlDescription = "YAML File (*.yaml)";
+	private String yaml = "yaml";
 
 	private JPanel p = null;
 	private JFileChooser chooser;
@@ -104,6 +113,7 @@ public class SaveDialog {
 	public static int FORMAT_PNML = 128;
 	public static int FORMAT_CSV = 256;
 	public static int FORMAT_PNG = 512;
+	public static int FORMAT_YAML = 1024;
 
 	public SaveDialog(int format, JPanel p) {
 
@@ -119,6 +129,7 @@ public class SaveDialog {
 		pnmlBool = (format & FORMAT_PNML) == FORMAT_PNML;
 		csvBool = (format & FORMAT_CSV) == FORMAT_CSV;
 		pngBool = (format & FORMAT_PNG) == FORMAT_PNG;
+		yamlBool = (format & FORMAT_YAML) == FORMAT_YAML;
 
 		if (ConnectionSettings.getFileDirectory() != null) {
 			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
@@ -159,6 +170,8 @@ public class SaveDialog {
 			chooser.addChoosableFileFilter(new MyFileFilter(csv, csvDescription));
 		if (pngBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(png, pngDescription));
+		if(yamlBool)
+			chooser.addChoosableFileFilter(new MyFileFilter(yaml, yamlDescription));
 
 		int option = chooser.showSaveDialog(MainWindowSingleton.getInstance());
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -374,6 +387,35 @@ public class SaveDialog {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+		} else if(fileFormat.equals(yamlDescription)){
+			getCorrectFile(yaml);
+			try{
+				String exportPath = chooser.getSelectedFile().getPath();
+				
+				if(exportPath.contains(".yaml") == false){
+					exportPath = exportPath + ".yaml";
+				}
+				
+				InputStream internYaml = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
+				FileOutputStream exportYaml = null;
+				File exportFile = new File(exportPath);
+				exportYaml = new FileOutputStream(exportFile);
+				byte [] buffer = new byte[4096];
+				int bytesRead = -1;
+				bytesRead = internYaml.read(buffer);
+				while(bytesRead != -1){
+					exportYaml.write(buffer, 0 ,bytesRead);
+					bytesRead = internYaml.read(buffer);
+				};
+					internYaml.close();
+					exportYaml.close();
+				JOptionPane.showMessageDialog(
+						MainWindowSingleton.getInstance(), yamlDescription
+									+ " File exported");
+			} catch (IOException e){
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

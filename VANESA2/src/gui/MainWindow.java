@@ -64,6 +64,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import com.jhlabs.image.BlurFilter;
 
 import configurations.gui.Settings;
+import configurations.gui.VisualizationDialog;
 
 public class MainWindow extends JFrame implements ApplicationListener {
 	private static final long serialVersionUID = -8328247684408223577L;
@@ -347,17 +348,24 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		BufferedReader buffReader = null;
 		System.out.println(yamlSourceFile);
 		if(file.exists()){
-		try {
-			buffReader = new BufferedReader(new FileReader(yamlSourceFile));
-			loadedYaml = buffReader.readLine();
-		} catch (IOException e) {
-			System.out.println("Buffered Reader (YamlSource) Error");
-			e.printStackTrace();
-		}
-		yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
-		beansList = yamlToObject.startConfig();
+			try {
+				buffReader = new BufferedReader(new FileReader(yamlSourceFile));
+				loadedYaml = buffReader.readLine();
+			} catch (IOException e) {
+				System.out.println("Buffered Reader (YamlSource) Error");
+				e.printStackTrace();
+			}
+			File yamlFile = new File(loadedYaml);
+			if(yamlFile.exists()){
+				yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
+				beansList = yamlToObject.startConfig();
+			}else{
+				loadedYaml = VisualizationDialog.DEFAULTYAML;
+				yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
+				beansList = yamlToObject.startConfig();
+			}
 		}else{
-			loadedYaml = "defaultYaml";
+			loadedYaml = VisualizationDialog.DEFAULTYAML;
 			yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
 			beansList = yamlToObject.startConfig();
 		}
