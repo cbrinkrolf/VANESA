@@ -15,7 +15,8 @@ public static void coarseSeperatedSubgraphs(Pathway pw){
 
 		// Get the autoCoarse mapping for coarsing splitting node subpathways.
 		HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> map = gat.getSplittingNodesMapping();
-				
+			
+		System.out.println("done");
 		// Comparator using the mapping.
 		class HLC implements HierarchyListComparator<Integer> {
 		
