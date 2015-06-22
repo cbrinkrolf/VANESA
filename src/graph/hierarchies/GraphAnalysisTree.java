@@ -175,11 +175,11 @@ public class GraphAnalysisTree{
 		HashMap<BiologicalNodeAbstract, HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>>> separatedNetworkParts =
 				new HashMap<BiologicalNodeAbstract, HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>>>();
 		
-		//HashMap with divided children/parent subnetworks (only contains the direct child/parent node)
+		// HashMap with divided children/parent subnetworks (only contains the direct child/parent node)
 		HashMap<BiologicalNodeAbstract, Collection<Pair<BiologicalNodeAbstract>>> pairwiseconnectedSubpathways = 
 				new HashMap<BiologicalNodeAbstract, Collection<Pair<BiologicalNodeAbstract>>>();
 		
-		// Initialization
+		// Map for each depth of the GAT (depth -> Set of nodes)
 		HashMap<Integer, Set<BiologicalNodeAbstract>> depths = new HashMap<Integer, Set<BiologicalNodeAbstract>>();
 		int maxDepth = 0;
 		for(BiologicalNodeAbstract node : getSubSet(getRootNode())){
@@ -192,11 +192,20 @@ public class GraphAnalysisTree{
 				maxDepth = getDepth(node);
 			}
 		}
+		
+		// Nodes of the current level
 		Set<BiologicalNodeAbstract> currentLevel = new HashSet<BiologicalNodeAbstract>();
+		
+		// Nodes of the previous level
 		Set<BiologicalNodeAbstract> deeperLevel = getLeafs(root);
+		
+		// Connections of the current level
 		Set<Pair<BiologicalNodeAbstract>> curCon = new HashSet<Pair<BiologicalNodeAbstract>>();
+		
+		// Set for abstracting edges on the next level
 		Set<Pair<BiologicalNodeAbstract>> newCon = new HashSet<Pair<BiologicalNodeAbstract>>();
 		
+		// Initialize edges of the deepest level
 		for(BiologicalEdgeAbstract edge : pw.getAllEdges()){
 			if(deeperLevel.contains(edge.getFrom()) || deeperLevel.contains(edge.getTo())){
 				if(parents.get(edge.getFrom()) != edge.getTo() && parents.get(edge.getTo()) != edge.getFrom()){
@@ -205,10 +214,12 @@ public class GraphAnalysisTree{
 			}
 		}
 		
+		// connections for the leaf nodes (empty)
 		for(BiologicalNodeAbstract leafNode : deeperLevel){
 			pairwiseconnectedSubpathways.put(leafNode, new HashSet<Pair<BiologicalNodeAbstract>>());
 		}
 		
+		// current depth
 		int depth = maxDepth;
 		
 		// Iteration through all GAT levels
@@ -222,14 +233,17 @@ public class GraphAnalysisTree{
 			currentLevel.clear();
 			currentLevel.addAll(depths.get(depth));
 			
+			// Initialize connections for all nodes of the current level
 			for(BiologicalNodeAbstract node : currentLevel){
 				pairwiseconnectedSubpathways.put(node, new HashSet<Pair<BiologicalNodeAbstract>>());				
 			}
 			
+			// Iterate through all current connections
 			for(Pair<BiologicalNodeAbstract> edge : curCon){
 				
 				Pair<BiologicalNodeAbstract> pair;
-				// Edge connects two nodes of deeper Level
+				
+				// If edge connects two nodes of deeper Level
 				if(deeperLevel.contains(edge.getFirst()) && deeperLevel.contains(edge.getSecond())){
 					if(parents.get(edge.getFirst())==parents.get(edge.getSecond())){
 						pair = new Pair<BiologicalNodeAbstract>(edge.getFirst(), edge.getSecond());
@@ -256,7 +270,7 @@ public class GraphAnalysisTree{
 			
 			
 			
-			// Abstract edges to the next layer
+			// Abstract edges to the next GAT level
 			newCon.clear();
 			for(Pair<BiologicalNodeAbstract> edge : curCon){
 				if(currentLevel.contains(edge.getFirst()) && deeperLevel.contains(edge.getSecond())){
@@ -270,7 +284,7 @@ public class GraphAnalysisTree{
 				}
 			}
 			
-			// Add edges of the next layer
+			// Add edges of the next GAT level
 			for(BiologicalEdgeAbstract edge : pw.getAllEdges()){
 				if((currentLevel.contains(edge.getFrom()) || currentLevel.contains(edge.getTo())) && 
 						(!deeperLevel.contains(edge.getFrom()) && !deeperLevel.contains(edge.getTo()))){
@@ -285,12 +299,13 @@ public class GraphAnalysisTree{
 			newCon.clear();
 		}
 		
-		// build rootPairs
+		// Compute connections of the GAT root
 		for(Pair<BiologicalNodeAbstract> edge : curCon){
 			Pair<BiologicalNodeAbstract> pair = new Pair<BiologicalNodeAbstract>(edge.getFirst(), edge.getSecond());
 			pairwiseconnectedSubpathways.get(parents.get(edge.getSecond())).add(pair);
 		}
 		
+		// Merge the pairwise connections of each node to common sets if they are connected
 		for(BiologicalNodeAbstract node : allNodes){
 			separatedNetworkParts.put(node, new HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>>());
 			HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>> networkParts = separatedNetworkParts.get(node);
@@ -327,65 +342,62 @@ public class GraphAnalysisTree{
 		}
 		
 		// Select only the subsets of splitting nodes.
-				for(BiologicalNodeAbstract key : separatedNetworkParts.keySet()){
-					if(separatedNetworkParts.get(key).values().size()>1){
-						subsets.put(key, new HashSet<Set<BiologicalNodeAbstract>>());
-						subsets.get(key).addAll(separatedNetworkParts.get(key).values());
-						if(subsets.get(key).size()<=1){
-							subsets.remove(key);
-					}
-					}
+		for(BiologicalNodeAbstract key : separatedNetworkParts.keySet()){
+			if(separatedNetworkParts.get(key).values().size()>1){
+				subsets.put(key, new HashSet<Set<BiologicalNodeAbstract>>());
+				subsets.get(key).addAll(separatedNetworkParts.get(key).values());
+				if(subsets.get(key).size()<=1){
+					subsets.remove(key);
 				}
+			}
+		}
 				
-				// Add all subnodes to the particular set (TODO: this step requires too long).
-				HashSet<BiologicalNodeAbstract> tempSet = new HashSet<BiologicalNodeAbstract>();
-				for(BiologicalNodeAbstract key : subsets.keySet()){
-					int largestSet = 0;
-					for(Set<BiologicalNodeAbstract> subnet : subsets.get(key)){
-						tempSet.clear();
-						tempSet.addAll(subnet);
-						for(BiologicalNodeAbstract node : tempSet){
-							if(isChildOf(node, key)){
-								subnet.addAll(getSubSet(node));
-							} else {
-								HashSet<BiologicalNodeAbstract> theRest = new HashSet<BiologicalNodeAbstract>();
-								theRest.addAll(getSubSet(getRootNode()));
-								theRest.removeAll(getSubSet(key));
-								subnet.addAll(theRest);
-							}
-						}
-						if(subnet.size()>largestSet){
-							largestSet = subnet.size();
-						}
+		// Add all subnodes to the particular set (TODO: this step requires too long).
+		HashSet<BiologicalNodeAbstract> tempSet = new HashSet<BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract key : subsets.keySet()){
+			int largestSet = 0;
+			for(Set<BiologicalNodeAbstract> subnet : subsets.get(key)){
+				tempSet.clear();
+				tempSet.addAll(subnet);
+				for(BiologicalNodeAbstract node : tempSet){
+					if(isChildOf(node, key)){
+						subnet.addAll(getSubSet(node));
+					} else {
+						HashSet<BiologicalNodeAbstract> theRest = new HashSet<BiologicalNodeAbstract>();
+						theRest.addAll(getSubSet(getRootNode()));
+						theRest.removeAll(getSubSet(key));
+						subnet.addAll(theRest);
 					}
-					final int largestSetFinal = largestSet;
-					System.out.println("largestSet node " + key.getLabel() + " = "+ largestSetFinal);
-
-					for(Set<BiologicalNodeAbstract> set : subsets.get(key)){
-						if(set.size()>=largestSet){
-							continue;
+				}
+				if(subnet.size()>largestSet){
+					largestSet = subnet.size();
+				}
+			}
+			final int largestSetFinal = largestSet;
+			for(Set<BiologicalNodeAbstract> set : subsets.get(key)){
+				if(set.size()>=largestSet){
+					continue;
+				}
+				for(BiologicalNodeAbstract n : set){
+					if(!coarseMapping.containsKey(n)){
+						coarseMapping.put(n, key);
+						minimalSubnetwork.put(n, set.size());
+					} else {
+						Integer smallestValue = Integer.MAX_VALUE;
+						if(minimalSubnetwork.get(n)<smallestValue){
+							smallestValue = minimalSubnetwork.get(n);
 						}
-						for(BiologicalNodeAbstract n : set){
-							if(!coarseMapping.containsKey(n)){
-								coarseMapping.put(n, key);
-								minimalSubnetwork.put(n, set.size());
-							} else {
-								Integer smallestValue = Integer.MAX_VALUE;
-								if(minimalSubnetwork.get(n)<smallestValue){
-									smallestValue = minimalSubnetwork.get(n);
-								}
-								if(smallestValue > set.size()){
-									coarseMapping.put(n, key);
-									minimalSubnetwork.put(n, set.size());
-								}
-							}
+						if(smallestValue > set.size()){
+							coarseMapping.put(n, key);
+							minimalSubnetwork.put(n, set.size());
 						}
 					}
 				}
+			}
+		}
 		
 		//return HashMap
-		return coarseMapping;
-		
+		return coarseMapping;		
 	}
 
 	/**
