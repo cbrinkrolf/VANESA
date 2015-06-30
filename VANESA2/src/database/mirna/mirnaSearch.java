@@ -104,7 +104,6 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 	public void done() {
 		Boolean continueProgress = false;
 		MainWindowSingleton.getInstance().closeProgressBar();
-
 		if (resultsDBSearch.size() > 0) {
 			continueProgress = true;
 			mirnaResultWindow = new MirnaResultWindow(resultsDBSearch);
@@ -124,7 +123,9 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 					String name = details[0];
 					//System.out.println("name: "+name);
 					final String QUESTION_MARK = new String("\\?");
-					if (name.length() > 0) {
+					//System.out.println(name);
+					if (this.name.length() > 0) {
+						//System.out.println("longer");
 						String finalQueryString = miRNAqueries.miRNA_get_Genes
 								.replaceFirst(QUESTION_MARK, "'" + name + "'");
 						//System.out.println(finalQueryString);
@@ -210,7 +211,6 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 								.replaceFirst(QUESTION_MARK, "'" + name + "'");
 						resultsDBSearch = new Wrapper().requestDbContent(
 								Wrapper.dbtype_MiRNA, finalQueryString);
-						// System.out.println(finalQueryString);
 						if (resultsDBSearch.size() > 0) {
 
 							Pathway pw = new CreatePathway(database
@@ -262,7 +262,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 						}
 
 					}
-
+					MainWindowSingleton.getInstance().closeProgressBar();
 				}
 			}
 		}
