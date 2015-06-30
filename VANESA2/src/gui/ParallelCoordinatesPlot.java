@@ -65,6 +65,7 @@ import petriNet.PlotsPanel;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 import petriNet.Transition;
+import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 import util.DoubleHashMap;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
