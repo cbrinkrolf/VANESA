@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,12 +73,15 @@ public class GraphColoringGUI implements ActionListener {
 			"Cycles (r)", "Cliques (r)", "FRlayout (r)",
 			"Spectral apsp (r)", "Multilayout (remote)",
 			"MDS forcelayout (r)", "APSP Clustering occ (r)",
-			"APSP Clustering score (r)"};
+			"APSP Clustering score (r)",
+			"DCB clusters(r)",
+			"DCB grid(r)"};
 	private int currentalgorithmindex = 0;
 
 	private final int NODE_DEGREE = 0, CYCLES = 1,
 			CLIQUES = 2, FRLAYOUT = 3, SPECTRAL = 4, MULTILAYOUT = 5,
-			MDSFLAYOUT = 6, APSPCLUSTERING_OCC = 7, APSPCLUSTERING_SCORE = 8;
+			MDSFLAYOUT = 6, APSPCLUSTERING_OCC = 7, APSPCLUSTERING_SCORE = 8,
+			DCB_CLUSTERS = 9, DCB_GRID = 10;
 
 	private ImageIcon[] icons;
 
@@ -93,8 +97,6 @@ public class GraphColoringGUI implements ActionListener {
 	private Hashtable<BiologicalNodeAbstract, Double> coloring;
 	private BiologicalNodeAbstract bna;
 
-	private final Color greynodecolor = new Color(-4144960);
-
 	private MainWindow mw;
 	private GraphContainer con;
 	private Pathway pw;
@@ -105,14 +107,17 @@ public class GraphColoringGUI implements ActionListener {
 	private HashMap<BiologicalNodeAbstract, Integer> nodeassignment;
 	private HashMap<Integer, BiologicalNodeAbstract> nodeassignmentbackward;
 	private BiologicalNodeAbstract from,to;
+	private NodeAttribute att;
+	private BiologicalNodeAbstract gnode;
 
 	private int nodeindex, edgeindex;
 	private int[] edgearray;
-
+	
 	private ByteArrayOutputStream baos;
 	private ObjectOutputStream oos;
 	private byte[] jobinformation;
 	private HashMap<String,String> parameters;
+	
 
 	public GraphColoringGUI() {
 		// set icon paths
@@ -297,39 +302,105 @@ public class GraphColoringGUI implements ActionListener {
 				nodeindex++;
 			}
 
+			
+			//REGULAR
 			// determine right edge amount
+//			edgeindex = 0;
+//			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+//				if (bea.isDirected()) {
+//					edgeindex++;
+//				} else {
+//					edgeindex += 2;
+//				}
+//			}
+//			System.out.println("number of real edges: " + edgeindex
+//					+ "\n size: " + mg.getAllEdges().size());
+//
+//			edgearray = new int[edgeindex * 2];
+//			edgeindex = 0;
+//			// build edgearray
+//
+//			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+//				from = bea.getFrom();
+//				to = bea.getTo();
+//
+//				edgearray[edgeindex] = nodeassignment.get(from);
+//				edgeindex++;
+//				edgearray[edgeindex] = nodeassignment.get(to);
+//				edgeindex++;
+//
+//				// if undirected, set second edge, too
+//				if (!bea.isDirected()) {
+//					edgearray[edgeindex] = nodeassignment.get(to);
+//					edgeindex++;
+//					edgearray[edgeindex] = nodeassignment.get(from);
+//					edgeindex++;
+//				}
+//			}
+			
+			
+			//Property based
+			HashMap<String, HashSet<BiologicalNodeAbstract>> locales = new HashMap<String, HashSet<BiologicalNodeAbstract>>();
 			edgeindex = 0;
-			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
-				if (bea.isDirected()) {
-					edgeindex++;
-				} else {
-					edgeindex += 2;
+			String locale; HashSet<BiologicalNodeAbstract> tmpset;
+			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
+				for(NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.ANNOTATION)){
+					if(na!= null && na.getName().equals(NodeAttributeNames.GO_CELLULAR_COMPONENT)){
+						locale = na.getStringvalue();
+						System.out.println(bna.getLabel() + "\t"+na.getStringvalue());
+						if(!locales.containsKey(na.getStringvalue())){
+							tmpset = new HashSet<BiologicalNodeAbstract>();
+							tmpset.add(bna);
+							locales.put(locale, tmpset);
+						}else{
+							locales.get(locale).add(bna);
+						}						
+					}
 				}
 			}
-			System.out.println("number of real edges: " + edgeindex
-					+ "\n size: " + mg.getAllEdges().size());
-
-			edgearray = new int[edgeindex * 2];
-			edgeindex = 0;
-			// build edgearray
-
-			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
-				from = bea.getFrom();
-				to = bea.getTo();
-
-				edgearray[edgeindex] = nodeassignment.get(from);
-				edgeindex++;
-				edgearray[edgeindex] = nodeassignment.get(to);
-				edgeindex++;
-
-				// if undirected, set second edge, too
-				if (!bea.isDirected()) {
-					edgearray[edgeindex] = nodeassignment.get(to);
-					edgeindex++;
-					edgearray[edgeindex] = nodeassignment.get(from);
-					edgeindex++;
+			
+			//Count edges first
+			int edges = 0,size;
+			for(Entry<String, HashSet<BiologicalNodeAbstract>> e: locales.entrySet()){
+				size = e.getValue().size();
+				if(size>1){
+					edges+=(2*size*(size-1));
 				}
 			}
+			
+			System.out.println("network has "+ edges+ " EDGES ");
+			edgearray = new int[edges];
+			
+			
+			BiologicalNodeAbstract[] bnaarr;
+			for(Entry<String, HashSet<BiologicalNodeAbstract>> e: locales.entrySet()){
+				bnaarr = new BiologicalNodeAbstract[e.getValue().size()];
+				e.getValue().toArray(bnaarr);
+				
+				if(bnaarr.length>1){
+					for(int i = 0; i<bnaarr.length;i++){
+						for (int j = i+1; j < bnaarr.length; j++) {
+							edgearray[edgeindex] = nodeassignment.get(bnaarr[i]);
+							edgeindex++;
+							edgearray[edgeindex] = nodeassignment.get(bnaarr[j]);
+							edgeindex++;
+							//add both sides of the connection
+							edgearray[edgeindex] = nodeassignment.get(bnaarr[j]);
+							edgeindex++;
+							edgearray[edgeindex] = nodeassignment.get(bnaarr[i]);
+							edgeindex++;						
+						}
+					}
+				}			
+			}
+			
+			
+			
+			//DEBUG
+			
+			
+			
+			
 			
 			oos.writeObject(mg.getAllVertices().size());
 			oos.writeObject(edgearray);
@@ -547,13 +618,15 @@ public class GraphColoringGUI implements ActionListener {
 			oos.close();
 			break;
 			
-		case APSPCLUSTERING_OCC:
-		case APSPCLUSTERING_SCORE:
+		case DCB_CLUSTERS:
+		case DCB_GRID:
 			//Set parameters
 			parameters = new HashMap<>();
-			parameters.put("minclustersize", ""+5);
+			parameters.put("alpha",""+0.9);
+			parameters.put("delta",""+5);
+			parameters.put("omega",""+0.15);
 			parameters.put("topclusters",""+50);
-			HashMap<Integer, Double> experimentdata = new HashMap<>();
+			HashMap<Integer, ArrayList<Double>> experimentdata = new HashMap<>();
 			
 			
 			// open objectstream
@@ -595,8 +668,7 @@ public class GraphColoringGUI implements ActionListener {
 			edgearray = new int[edgeindex * 2];
 			edgeindex = 0;
 			// build edgearray
-			BiologicalNodeAbstract from,
-			to;
+
 			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
 				from = bea.getFrom();
 				to = bea.getTo();
@@ -615,46 +687,160 @@ public class GraphColoringGUI implements ActionListener {
 				}
 			}
 			
-			NodeAttribute att;
-			BiologicalNodeAbstract gnode;
+			ArrayList<Double> values;
+			int experiments = 7;
+			for (int i = 0; i < nodes; i++) {
+				gnode = np.getNodeAssignmentbackwards(i);
+				values = new ArrayList<Double>(7);
+				for(int j = 1; j <= experiments; j++){
+					att = gnode.getNodeAttributeByName("Chol"+j);
+					if(att != null)
+						values.add(att.getDoublevalue());
+				}
+				
+				if(values.size() == experiments)
+					experimentdata.put(i, values);
+			}
+			
+			//DEBUG
+			System.out.println(experimentdata.size()+"\n"+experimentdata);
+			
+			
+			oos.writeObject(mg.getAllVertices().size());
+			oos.writeObject(edgearray);
+			oos.writeObject(experimentdata);
+			oos.writeObject(parameters);
+			
+			//close objectstream and transform to bytearray
+			oos.close();			
+			jobinformation = baos.toByteArray();
+
+			// compute values over RMI
+			try {
+				helper = new ComputeCallback(this);
+				if (currentalgorithmindex == DCB_CLUSTERS) {
+					ClusterComputeThread rmiapspclustering = new ClusterComputeThread(
+							JobTypes.DCB_CLUSTERING_CLUSTERS,
+							jobinformation, helper);
+					rmiapspclustering.start();
+				} else if (currentalgorithmindex == DCB_GRID) {
+					ClusterComputeThread rmiapspclustering = new ClusterComputeThread(
+							JobTypes.DCB_CLUSTERING_GRID,
+							jobinformation, helper);
+					rmiapspclustering.start();
+				}
+			} catch (RemoteException e) {
+				e.printStackTrace();
+				reactiveateUI();
+			}
+			break;
+			
+		case APSPCLUSTERING_OCC:
+		case APSPCLUSTERING_SCORE:
+			//Set parameters
+			parameters = new HashMap<>();
+			parameters.put("minclustersize", ""+5);
+			parameters.put("topclusters",""+50);
+			HashMap<Integer, Double> singleexperimentdata = new HashMap<>();
+			
+			
+			// open objectstream
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
+			// Lock UI and initiate Progress Bar
+			mw = MainWindowSingleton.getInstance();
+			mw.showProgressBar("attempting to queue job.");
+
+
+			// get network structure
+			con = ContainerSingelton.getInstance();
+			pw = con.getPathway(mw.getCurrentPathway());
+			mg = pw.getGraph();
+
+			// setup assignment maps
+			nodeassignment = new HashMap<BiologicalNodeAbstract, Integer>();
+			nodeassignmentbackward = new HashMap<Integer, BiologicalNodeAbstract>();
+
+			nodeindex = 0;
+
+			// assign nodes
+			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
+				nodeassignment.put(bna, nodeindex);
+				nodeassignmentbackward.put(nodeindex, bna);
+				nodeindex++;
+			}
+
+			// determine right edge amount
+			edgeindex = 0;
+			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+				if (bea.isDirected()) {
+					edgeindex++;
+				} else {
+					edgeindex += 2;
+				}
+			}
+			
+			edgearray = new int[edgeindex * 2];
+			edgeindex = 0;
+			// build edgearray
+
+			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+				from = bea.getFrom();
+				to = bea.getTo();
+
+				edgearray[edgeindex] = nodeassignment.get(from);
+				edgeindex++;
+				edgearray[edgeindex] = nodeassignment.get(to);
+				edgeindex++;
+
+				// if undirected, set second edge, too
+				if (!bea.isDirected()) {
+					edgearray[edgeindex] = nodeassignment.get(to);
+					edgeindex++;
+					edgearray[edgeindex] = nodeassignment.get(from);
+					edgeindex++;
+				}
+			}
+			
+
 			for (int i = 0; i < nodes; i++) {
 				gnode = np.getNodeAssignmentbackwards(i);
 				att = gnode.getNodeAttributeByName("chol logFC");
 				if(att != null)
-					experimentdata.put(i,att.getDoublevalue());
+					singleexperimentdata.put(i,att.getDoublevalue());
 			}
 			
 
-//			PrintWriter out = new PrintWriter("dcb.exp","UTF-8");
-//			out.println(nodes);
-//			out.println(7);
-//			for (int i = 0; i < nodes; i++) {
-//				String line = "";
-//				gnode = np.getNodeAssignmentbackwards(i);
-//				// patient data export
-//				for (int p = 1; p <= 7; p++) {
-//					att = gnode.getNodeAttributeByName("Chol" + p);
-//					if (att != null) {
-//						if(p<7)
-//							line+= att.getDoublevalue()+"\t";
-//						else
-//							line+= att.getDoublevalue();
-//					}
-//				}
-//				
-//				if(line.length()>0){
-//					out.println(i+"\t"+line);
-//				}				
-//			}
-//			
-//			out.close();
+			/*PrintWriter out = new PrintWriter("GBM.exp","UTF-8");
+			out.println(nodes);
+			out.println(6);
+			for (int i = 0; i < nodes; i++) {
+				String line = "";
+				gnode = np.getNodeAssignmentbackwards(i);
+				// patient data export
+				for (int p = 1; p <= 6; p++) {
+					att = gnode.getNodeAttributeByName("GBM" + p);
+					if (att != null) {
+						if(p<6)
+							line+= att.getDoublevalue()+"\t";
+						else
+							line+= att.getDoublevalue();
+					}
+				}
+				
+				if(line.length()>0){
+					out.println(i+"\t"+line);
+				}				
+			}
+			
+			out.close();*/
 
 			
 			
 			
 			oos.writeObject(mg.getAllVertices().size());
 			oos.writeObject(edgearray);
-			oos.writeObject(experimentdata);
+			oos.writeObject(singleexperimentdata);
 			oos.writeObject(parameters);
 			
 			//close objectstream and transform to bytearray
@@ -684,6 +870,10 @@ public class GraphColoringGUI implements ActionListener {
 		}
 
 		gc = new GraphColorizer(coloring, currentimageid, logview.isSelected());
+		
+		
+		
+		
 	}
 
 	private void printEdgeArray(int nodes, int[] edgearray) {
@@ -807,6 +997,43 @@ public class GraphColoringGUI implements ActionListener {
 		// Determine jobtype and behaviour
 		switch (jobtype) {
 		case JobTypes.APSP_CLUSTERING_JOB_SCORING:
+			if (!map.isEmpty()) {
+				
+				TreeMap<Double, TreeSet<String>> dataset = new TreeMap<>();
+				TreeSet<String> tmpset;
+				
+				// Map ids to BNAs
+				Iterator<Entry<Double, HashSet<Integer>>> it = map.entrySet()
+						.iterator();
+				double key;
+				HashSet<Integer> value;
+				TreeSet<String> clusterlabels;
+
+				
+				
+				while (it.hasNext()) {
+					Entry<Double, HashSet<Integer>> entry = it.next();
+					key = entry.getKey();
+					value = entry.getValue();
+					
+					//cluster viewer
+					clusterlabels = new TreeSet<>();
+					for(Integer nodeid : value){
+						bna = np.getNodeAssignmentbackwards(nodeid);
+						clusterlabels.add(bna.getLabel());
+					}					
+					
+					dataset.put(key, clusterlabels);
+				}
+				
+				new GraphClusterDyer(dataset);
+				
+			}
+			
+			break;
+		case JobTypes.DCB_CLUSTERING_CLUSTERS:
+			
+			System.out.println("DONE");
 			if (!map.isEmpty()) {
 				
 				TreeMap<Double, TreeSet<String>> dataset = new TreeMap<>();
