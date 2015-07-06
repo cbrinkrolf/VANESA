@@ -17,6 +17,9 @@ public class JobTypes {
 	public static final int LAYOUT_FR_JOB = 50;
 	public static final int LAYOUT_MULTILEVEL_JOB = 60;
 	public static final int LAYOUT_MDS_FR_JOB = 70;
+	public static final int DCB_CLUSTERING_CLUSTERS = 80;
+	public static final int DCB_CLUSTERING_GRID = 81;
+	
 	
 	
 	/**
