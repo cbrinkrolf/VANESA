@@ -147,7 +147,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		List<RangeInfo> list = new ArrayList<RangeInfo>();
 		Iterator<MyAnnotation> it = am.getAnnotations().iterator();
 		MyAnnotation an;
-		Annotation<Annotation.Layer> a;
+		Annotation<?> a;
 		RangeInfo r;
 		while (it.hasNext()) {
 
@@ -205,7 +205,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 			// MyAnnotationManager m = new
 			// MyAnnotationManager(GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext());
-			am.add(Annotation.Layer.LOWER, a2);
+			//am.add(Annotation.Layer.LOWER, a2);
 			am.add(Annotation.Layer.LOWER, new MyAnnotation(a2, r.shape, r.text));
 			// System.out.println("drin");
 			// System.out.println("am: "+am);
