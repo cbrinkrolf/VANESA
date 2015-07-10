@@ -1204,11 +1204,13 @@ public class JSBMLinput {
 		attrs.put("title", "");
 		String[] keys = { "textColor", "outlineType", "fillColor", "alpha",
 				"maxY", "outlineColor", "maxX", "isEllipse", "minX", "minY",
-				"titlePos" };
+				"titlePos", "title" };
 		for (int i = 0; i < keys.length; i++) {
 			Element tmp = rangeElement.getChild(keys[i], null);
-			String value = tmp.getAttributeValue(keys[i]);
-			attrs.put(keys[i], value);
+			if (tmp != null) {
+				String value = tmp.getAttributeValue(keys[i]);
+				attrs.put(keys[i], value);
+			}
 		}
 		RangeSelector.getInstance().addRangesInMyGraph(pathway.getGraph(),
 				attrs);
