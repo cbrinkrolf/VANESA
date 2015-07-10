@@ -76,24 +76,24 @@ public class JSBMLinput {
 	private BiologicalEdgeAbstract bea = null;
 	private final Hashtable<Integer, BiologicalNodeAbstract> nodes = new Hashtable<Integer, BiologicalNodeAbstract>();
 	private boolean coarsePathway = false;
-	
+
 	private Hashtable<BiologicalNodeAbstract, Integer> bna2Ref = new Hashtable<BiologicalNodeAbstract, Integer>();
 
 	public JSBMLinput() {
 
 	}
-	
-	public JSBMLinput(Pathway pw){
+
+	public JSBMLinput(Pathway pw) {
 		pathway = pw;
 	}
-	
+
 	public String loadSBMLFile(InputStream is, String name) {
 		// System.out.println("neu");
-	
+
 		String message = "Import was successful";
 		Document doc = null;
-		InputSource  in = new InputSource(is);
-		
+		InputSource in = new InputSource(is);
+
 		// siehe http://www.javabeginners.de/XML/XML-Datei_lesen.php
 		// create document
 		SAXBuilder builder = new SAXBuilder();
@@ -107,7 +107,7 @@ public class JSBMLinput {
 		} else {
 			coarsePathway = true;
 		}
-		if(pathway.getFilename()==null){
+		if (pathway.getFilename() == null) {
 			pathway.setFilename(name);
 		}
 		pathway.getGraph().lockVertices();
@@ -115,7 +115,7 @@ public class JSBMLinput {
 		// get root-element
 		Element sbmlNode = doc.getRootElement();
 		Element modelNode = sbmlNode.getChild("model", null);
-		//List<Element> modelNodeChildren = modelNode.getChildren();
+		// List<Element> modelNodeChildren = modelNode.getChildren();
 
 		Element annotationNode = modelNode.getChild("annotation", null);
 		createAnnotation(annotationNode);
@@ -367,9 +367,9 @@ public class JSBMLinput {
 				// set ID of the reaction
 				id = reaction.getAttributeValue("id");
 				tmp = id.split("_");
-				try{
+				try {
 					bea.setID(Integer.parseInt(tmp[1]));
-				} catch(IDAlreadyExistException ex){
+				} catch (IDAlreadyExistException ex) {
 					bea.setID();
 				}
 				// get additional information
@@ -417,7 +417,10 @@ public class JSBMLinput {
 				name = "";
 			}
 			elSub = specAnnotation.getChild("Label", null);
-			String label = elSub.getAttributeValue("Label");
+			String label = "";
+			if (elSub != null) {
+				elSub.getAttributeValue("Label");
+			}
 			String attr;
 			switch (biologicalElement) {
 			case Elementdeclerations.enzyme:
@@ -493,8 +496,9 @@ public class JSBMLinput {
 			case Elementdeclerations.sRNA:
 				bna = new biologicalObjects.nodes.SRNA(label, name);
 				elSub = specAnnotation.getChild("NtSequence", null);
-				if(elSub!=null){
-					attr = String.valueOf(elSub.getAttributeValue("NtSequence"));
+				if (elSub != null) {
+					attr = String
+							.valueOf(elSub.getAttributeValue("NtSequence"));
 					((biologicalObjects.nodes.SRNA) bna).setNtSequence(attr);
 				}
 				break;
@@ -616,9 +620,9 @@ public class JSBMLinput {
 				String id = species.getAttributeValue("id");
 				String[] idSplit = id.split("_");
 				int idInt = Integer.parseInt(idSplit[1]);
-				try{
+				try {
 					bna.setID(idInt);
-				} catch(IDAlreadyExistException ex){
+				} catch (IDAlreadyExistException ex) {
 					bna.setID();
 				}
 				String compartment = species.getAttributeValue("compartment");
@@ -641,10 +645,12 @@ public class JSBMLinput {
 				Double yCoord = new Double(
 						elSubSub.getAttributeValue("y_Coordinate"));
 				Point2D.Double p = new Point2D.Double(xCoord, yCoord);
-				
+
 				elSub = specAnnotation.getChild("environmentNode", null);
-				if(elSub!=null){
-					if(String.valueOf(elSub.getAttributeValue("environmentNode")).equals("true")){
+				if (elSub != null) {
+					if (String.valueOf(
+							elSub.getAttributeValue("environmentNode")).equals(
+							"true")) {
 						bna.markAsEnvironment(true);
 					}
 				}
@@ -720,13 +726,16 @@ public class JSBMLinput {
 
 			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id")
 					.split("_")[1]);
-			String rootNode = coarseNode.getAttribute("root", null) == null ? "null" : coarseNode.getAttributeValue("root");
-			if(!rootNode.equals("null")){
-				hierarchyRootNodes.put(id, Integer.parseInt(coarseNode.getAttributeValue("root").split("_")[1]));
+			String rootNode = coarseNode.getAttribute("root", null) == null ? "null"
+					: coarseNode.getAttributeValue("root");
+			if (!rootNode.equals("null")) {
+				hierarchyRootNodes.put(id, Integer.parseInt(coarseNode
+						.getAttributeValue("root").split("_")[1]));
 			}
 			hierarchyMap.put(id, childrenSet);
 			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
-			if(coarseNode.getAttributeValue("opened")!=null && coarseNode.getAttributeValue("opened").equals("true")){
+			if (coarseNode.getAttributeValue("opened") != null
+					&& coarseNode.getAttributeValue("opened").equals("true")) {
 				openedCoarseNodes.add(id);
 			}
 		}
@@ -746,25 +755,26 @@ public class JSBMLinput {
 				}
 				if (toBeCoarsed) {
 					BiologicalNodeAbstract coarseNode;
-					if(hierarchyRootNodes.containsKey(parent)){
-						coarseNode = BiologicalNodeAbstract.coarse(coarseNodes, parent,
-								coarseNodeLabels.get(parent),nodes.get(hierarchyRootNodes.get(parent)));
-					
+					if (hierarchyRootNodes.containsKey(parent)) {
+						coarseNode = BiologicalNodeAbstract.coarse(coarseNodes,
+								parent, coarseNodeLabels.get(parent),
+								nodes.get(hierarchyRootNodes.get(parent)));
+
 					} else {
-						coarseNode = BiologicalNodeAbstract.coarse(coarseNodes, parent,
-										coarseNodeLabels.get(parent));
+						coarseNode = BiologicalNodeAbstract.coarse(coarseNodes,
+								parent, coarseNodeLabels.get(parent));
 					}
 
 					nodes.put(parent, coarseNode);
 					coarsedNodes += 1;
 				}
 			}
-			if(!coarsePathway){
-				while(!openedCoarseNodes.isEmpty()){
+			if (!coarsePathway) {
+				while (!openedCoarseNodes.isEmpty()) {
 					Set<Integer> ocn = new HashSet<Integer>();
 					ocn.addAll(openedCoarseNodes);
-					for(Integer id : ocn){
-						if(pathway.containsVertex(nodes.get(id))){
+					for (Integer id : ocn) {
+						if (pathway.containsVertex(nodes.get(id))) {
 							pathway.openSubPathway(nodes.get(id));
 							openedCoarseNodes.remove(id);
 						}
@@ -772,14 +782,15 @@ public class JSBMLinput {
 				}
 			}
 		}
-		if(coarsePathway){
+		if (coarsePathway) {
 			Set<BiologicalNodeAbstract> roughestAbstractionNodes = new HashSet<BiologicalNodeAbstract>();
 			roughestAbstractionNodes.addAll(nodes.values());
-			roughestAbstractionNodes.removeIf(p -> p.getParentNode()!=null && p.getParentNode()!=p);
+			roughestAbstractionNodes.removeIf(p -> p.getParentNode() != null
+					&& p.getParentNode() != p);
 			roughestAbstractionNodes.removeIf(p -> p.isMarkedAsEnvironment());
 			BiologicalNodeAbstract.coarse(roughestAbstractionNodes);
-			for(BiologicalNodeAbstract node : nodes.values()){
-					node.markAsEnvironment(false);
+			for (BiologicalNodeAbstract node : nodes.values()) {
+				node.markAsEnvironment(false);
 			}
 		}
 	}
@@ -874,13 +885,14 @@ public class JSBMLinput {
 		case "Color":
 			Element elSub = child.getChild("RGB", null);
 			int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
-//			System.out.println(rgb);
+			// System.out.println(rgb);
 			Color col = new Color(rgb);
-//			System.out.println(col.getRGB());
+			// System.out.println(col.getRGB());
 			bna.setColor(col);
-//			System.out.println(bna.isReference() ? "reference" : "no reference");
-//			System.out.println(bna.isHidden() ? "hidden" : "not hidden");
-//			System.out.println(bna.getColor().getRGB());
+			// System.out.println(bna.isReference() ? "reference" :
+			// "no reference");
+			// System.out.println(bna.isHidden() ? "hidden" : "not hidden");
+			// System.out.println(bna.getColor().getRGB());
 			break;
 		case "NodeReference":
 			elSub = child.getChild("hasRef", null);
@@ -895,7 +907,7 @@ public class JSBMLinput {
 			if (bna instanceof DNA) {
 				((biologicalObjects.nodes.DNA) bna).setNtSequence(value);
 			} else if (bna instanceof RNA) {
-				//System.out.println(bna.getLabel());
+				// System.out.println(bna.getLabel());
 				((biologicalObjects.nodes.RNA) bna).setNtSequence(value);
 			}
 
