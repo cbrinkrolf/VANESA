@@ -226,6 +226,7 @@ public class MyGraph {
 								bna.getRef().getRefs().remove(bna);
 							}
 							pathway.removeElement(bna);
+							
 						}
 						vv.getPickedVertexState().clear();
 					}

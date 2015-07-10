@@ -307,7 +307,7 @@ public class JSBMLoutput {
 				new XMLAttributes()));
 		XMLNode elSub;
 
-		String attr = oneNode.getLabel();
+		String attr = oneNode.getLabel()+"";
 		el.addChild(createElSub(attr, "Label"));
 
 		attr = String.valueOf(oneNode.getNodesize());

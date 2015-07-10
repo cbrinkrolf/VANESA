@@ -88,4 +88,8 @@ public class SimulationResultController {
 		this.series.remove(this.simNames.get(i));
 		this.simNames.remove(i);
 	}
+	
+	public List<String> getSimNames(){
+		return this.simNames;
+	}
 }

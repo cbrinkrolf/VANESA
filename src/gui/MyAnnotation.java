@@ -7,10 +7,10 @@ import edu.uci.ics.jung.visualization.annotations.Annotation;
 public class MyAnnotation{
 
 	private RectangularShape shape;
-	private Annotation<Annotation.Layer> a;
+	private Annotation<?> a;
 	private String text;
 	
-	public MyAnnotation(Annotation<Annotation.Layer> annotation, RectangularShape shape, String text){
+	public MyAnnotation(Annotation<?> annotation, RectangularShape shape, String text){
 		this.a = annotation;
 		this.shape = shape;
 		this.text = text;
@@ -21,7 +21,7 @@ public class MyAnnotation{
 	}
 	
 	
-	public Annotation<Annotation.Layer> getAnnotation(){
+	public Annotation<?> getAnnotation(){
 		return this.a;
 	}
 	

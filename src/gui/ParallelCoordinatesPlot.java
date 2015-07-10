@@ -38,6 +38,7 @@ import javax.swing.event.ChangeListener;
 import miscalleanous.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.batik.dom.util.TriplyIndexedTable;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jfree.chart.ChartFactory;
@@ -67,6 +68,7 @@ import petriNet.SimulationResultController;
 import petriNet.Transition;
 import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 import util.DoubleHashMap;
+import util.TripleHashMap;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -148,7 +150,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private ArrayList<XYSeries> seriesListR1 = new ArrayList<XYSeries>();
 	private ArrayList<XYSeries> seriesListR2 = new ArrayList<XYSeries>();
 
-	private DoubleHashMap<GraphElementAbstract, Integer, Integer> series2idx = new DoubleHashMap<GraphElementAbstract, Integer, Integer>();
+	//private DoubleHashMap<GraphElementAbstract, Integer, Integer> series2idx = new DoubleHashMap<GraphElementAbstract, Integer, Integer>();
+	
+	private TripleHashMap<GraphElementAbstract, Integer, String, Integer> series2idx = new TripleHashMap<GraphElementAbstract, Integer, String, Integer>();
+	
 
 	// private HashMap<XYSeries, Integer> series2id = new HashMap<XYSeries,
 	// Integer>();
@@ -373,11 +378,11 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				if (simRes.contains(edge, SUM_OF_TOKEN)
 						&& simRes.contains(edge, ACTUAL_TOKEN_FLOW)
 						&& simRes.get(edge, SUM_OF_TOKEN).size() > 0) {
-					System.out.println("true");
+					//System.out.println("true");
 					renderer.setSeriesVisible(
-							(int) series2idx.get(edge, ACTUAL_TOKEN_FLOW), true);
+							(int) series2idx.get(edge, ACTUAL_TOKEN_FLOW, "test"), true);
 					renderer2.setSeriesVisible(
-							(int) series2idx.get(edge, SUM_OF_TOKEN), true);
+							(int) series2idx.get(edge, SUM_OF_TOKEN, "test"), true);
 					// System.out.println(min);
 				}
 			}
@@ -423,7 +428,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// .getPetriNetSimulationData())) != null) {
 					if (this.series2idx.contains(place, TOKEN)) {
 						renderer.setSeriesVisible(
-								(int) series2idx.get(place, TOKEN), true);
+								(int) series2idx.get(place, TOKEN, "test"), true);
 					}
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
@@ -433,7 +438,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					}
 					if (series2idx.contains(transition, ACTUAL_FIRING_SPEED)) {
 						renderer.setSeriesVisible((int) series2idx.get(
-								transition, ACTUAL_FIRING_SPEED), true);
+								transition, ACTUAL_FIRING_SPEED, "test"), true);
 					}
 				}
 
@@ -539,7 +544,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					if (simRes.contains(place, TOKEN)
 							&& simRes.get(place, TOKEN).size() > 0) {
 						series = this.seriesListR1.get(series2idx.get(place,
-								TOKEN));
+								TOKEN, "test"));
 						// System.out.println(seriesList.get(j).getItemCount());
 						// if (simRes.getTime().size() != place
 						// .getPetriNetSimulationData().size()) {
@@ -592,7 +597,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							&& simRes.get(transition, ACTUAL_FIRING_SPEED)
 									.size() > 0) {
 						series = this.seriesListR1.get(series2idx.get(
-								transition, ACTUAL_FIRING_SPEED));
+								transition, ACTUAL_FIRING_SPEED, "test"));
 						// System.out.println(transition.getName());
 						stop = Math.min(
 								simRes.get(transition, ACTUAL_FIRING_SPEED)
@@ -624,9 +629,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					long diff = 0;
 					edge = (PNEdge) bea;
 					series = this.seriesListR1.get(series2idx.get(edge,
-							ACTUAL_TOKEN_FLOW));
+							ACTUAL_TOKEN_FLOW, "test"));
 					series2 = this.seriesListR2.get(series2idx.get(edge,
-							SUM_OF_TOKEN));
+							SUM_OF_TOKEN, "test"));
 					if (simRes.contains(edge, SUM_OF_TOKEN)
 							&& simRes.get(edge, SUM_OF_TOKEN).size() > 0
 							&& simRes.get(edge, ACTUAL_TOKEN_FLOW).size() > 0) {
@@ -1080,6 +1085,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		}
 		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllNodes().iterator();
 		XYSeries s;
+		List<String> simNames = pw.getSimResController().getSimNames();
 		while (itNodes.hasNext()) {
 			bna = itNodes.next();
 			if (!bna.hasRef()) {
@@ -1088,7 +1094,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// if (place.getPetriNetSimulationData().size() > 0) {
 					places.add(place);
 					s = new XYSeries(count);
-					series2idx.put(place, TOKEN, count);
+					series2idx.put(place, TOKEN, "test", count);
 
 					seriesListR1.add(s);
 					// System.out.println(System.identityHashCode(place.getPetriNetSimulationData())
@@ -1106,7 +1112,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					transition = (Transition) bna;
 					// if (transition.getPetriNetSimulationData().size() > 0) {
 					s = new XYSeries(count);
-					series2idx.put(transition, ACTUAL_FIRING_SPEED, count);
+					series2idx.put(transition, ACTUAL_FIRING_SPEED, "test", count);
 					// seriesList.add(new XYSeries(j));
 					// series2id.put(s, count);
 					seriesListR1.add(s);
@@ -1132,7 +1138,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				PNEdge edge = (PNEdge) bea;
 
 				s = new XYSeries(count);
-				series2idx.put(edge, ACTUAL_TOKEN_FLOW, count);
+				series2idx.put(edge, ACTUAL_TOKEN_FLOW, "test", count);
 				seriesListR1.add(s);
 				// series2id.put(s, count);
 				dataset.addSeries(s);
@@ -1143,7 +1149,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				labels.add("Tokens");
 				count++;
 				s = new XYSeries(count);
-				series2idx.put(edge, SUM_OF_TOKEN, seriesListR2.size());
+				series2idx.put(edge, SUM_OF_TOKEN, "test", seriesListR2.size());
 
 				// System.out.println(count + ": " + edge.getID());
 				// series2id.put(s, count);
