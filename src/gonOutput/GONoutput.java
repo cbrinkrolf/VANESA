@@ -73,7 +73,7 @@ public class GONoutput {
 	}
 
 	private void prepare() {
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();

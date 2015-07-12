@@ -44,7 +44,7 @@ public class VisualizationConfigBeans {
 			MainWindow w = MainWindowSingleton.getInstance();
 			if(w.getCurrentPathway() != null){
 				pathway = graphInstance.getPathway();
-				Collection<BiologicalNodeAbstract> allNodes = pathway.getAllNodes();
+				Collection<BiologicalNodeAbstract> allNodes = pathway.getAllGraphNodes();
 				w.setBeansList(beansList);
 				for(BiologicalNodeAbstract nodes : allNodes){
 					w.nodeAttributeChanger(nodes, true);

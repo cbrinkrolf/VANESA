@@ -124,7 +124,7 @@ public class MOoutput {
 	}
 
 	private void prepare() {
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
@@ -185,7 +185,7 @@ public class MOoutput {
 			places += "PNlib.IA inhibitorArc" + i + ";\r\n";
 		BiologicalNodeAbstract bna;
 		ArrayList<String> names = new ArrayList<String>();
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		while (it.hasNext()) {
 			// System.out.println("knoten");
 			bna = it.next();
@@ -201,7 +201,7 @@ public class MOoutput {
 			}
 		}
 
-		it = pw.getAllNodes().iterator();
+		it = pw.getAllGraphNodes().iterator();
 		while (it.hasNext()) {
 			bna = it.next();
 			if (!bna.hasRef()) {
@@ -844,7 +844,7 @@ public class MOoutput {
 		// replace places
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		ArrayList<String> names = new ArrayList<String>();
 		BiologicalNodeAbstract bna;
 		Place p;

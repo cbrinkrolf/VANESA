@@ -70,7 +70,7 @@ public class ShortestPath {
 	private void initStart() {
 
 		//Enumeration<String> e = graphRepresentation.getAllVertices();
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();

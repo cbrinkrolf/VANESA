@@ -297,8 +297,8 @@ public class Server {
 
 	private void init() {
 
-		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Collection<BiologicalNodeAbstract> hs = pw.getAllGraphNodes();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		int places = 0;
 		int transitions = 0;
@@ -348,7 +348,7 @@ public class Server {
 	private void setData(ArrayList<Object> values) {
 
 		// System.out.println("set Data");
-		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
+		Collection<BiologicalNodeAbstract> hs = pw.getAllGraphNodes();
 		// pnResult = pw.getPetriNet().getPnResult();
 		// rowsSize = 0;
 		// System.out.println("size: "+ pnResult.size());

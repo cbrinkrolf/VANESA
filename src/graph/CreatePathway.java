@@ -41,7 +41,7 @@ public class CreatePathway {
 		
 		HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> nodes = new HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract>();
 		
-		Iterator<BiologicalNodeAbstract> it = pathway.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pathway.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		BiologicalNodeAbstract clone;
 		while(it.hasNext()){
@@ -51,7 +51,7 @@ public class CreatePathway {
 			pw.addVertex(clone, pathway.getGraph().getVertexLocation(bna));
 		}
 		
-		it = pw.getAllNodes().iterator();
+		it = pw.getAllGraphNodes().iterator();
 		while(it.hasNext()){
 			bna = it.next();
 			if(bna.hasRef()){

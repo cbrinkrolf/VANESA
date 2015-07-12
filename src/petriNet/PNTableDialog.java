@@ -56,9 +56,9 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		final Pathway pw = ContainerSingelton.getInstance().getPathway(
 				MainWindowSingleton.getInstance().getCurrentPathway());
 
-		Object[][] rows = new Object[pw.getAllNodes().toArray().length][9];
-		bnas = new BiologicalNodeAbstract[pw.getAllNodes().toArray().length];
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Object[][] rows = new Object[pw.getAllGraphNodes().toArray().length][9];
+		bnas = new BiologicalNodeAbstract[pw.getAllGraphNodes().toArray().length];
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
@@ -102,7 +102,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			rows2[i][0] = edge.getName();
 			rows2[i][1] = edge.getLabel();
 
-			it2 = pw.getAllNodes().iterator();
+			it2 = pw.getAllGraphNodes().iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (edge.getFrom().equals(bna)) {
@@ -297,7 +297,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		if (e.getActionCommand().equals("submit")) {
 			boolean changedAllStates = true;
 			// System.out.println("nodes: "+pw.getAllNodes().toArray().length);
-			for (int i = 0; i < pw.getAllNodes().toArray().length; i++) {
+			for (int i = 0; i < pw.getAllGraphNodes().toArray().length; i++) {
 				//System.out.println("i: " + i);
 				bnas[i].setName((String) table.getValueAt(
 						table.convertRowIndexToView(i),
@@ -327,7 +327,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 							.iterator();
 					while (k.hasNext()) {
 						neighbour = k.next();
-						Iterator<BiologicalNodeAbstract> j = pw.getAllNodes()
+						Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes()
 								.iterator();
 						while (j.hasNext()) {
 							node = j.next();
@@ -358,7 +358,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 					boolean stateChanged = true;
 					while (k.hasNext()) {
 						neighbour = k.next();
-						j = pw.getAllNodes().iterator();
+						j = pw.getAllGraphNodes().iterator();
 						while (j.hasNext()) {
 							node = j.next();
 							if (node.equals(neighbour)

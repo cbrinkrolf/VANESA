@@ -398,7 +398,7 @@ public class PetriNetSimulation implements ActionListener {
 
 					String filter = "variableFilter=\"";
 
-					Iterator<BiologicalNodeAbstract> it = pw.getAllNodes()
+					Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes()
 							.iterator();
 					BiologicalNodeAbstract bna;
 					int vars = 0;

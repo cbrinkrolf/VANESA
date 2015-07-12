@@ -539,7 +539,7 @@ public class MenuListener implements ActionListener {
 			// System.out.println("testP");
 			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
-			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 			BiologicalNodeAbstract bna;
 
 			places = 0;
@@ -557,7 +557,7 @@ public class MenuListener implements ActionListener {
 
 			int i = 0;
 
-			Iterator<BiologicalNodeAbstract> it2 = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes().iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Place) {
@@ -600,7 +600,7 @@ public class MenuListener implements ActionListener {
 
 			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
-			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 			BiologicalNodeAbstract bna;
 
 			transitions = 0;
@@ -619,7 +619,7 @@ public class MenuListener implements ActionListener {
 
 			int i = 0;
 
-			Iterator<BiologicalNodeAbstract> it2 = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes().iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Transition) {
@@ -736,7 +736,7 @@ public class MenuListener implements ActionListener {
 		} else if ("openCov".equals(event)) {
 			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
-			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 			BiologicalNodeAbstract bna;
 
 			places = 0;
@@ -759,7 +759,7 @@ public class MenuListener implements ActionListener {
 			rI[0][0] = "Places";
 			rI[0][1] = "P-Invariants";
 
-			Iterator<BiologicalNodeAbstract> it2 = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes().iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Place) {
@@ -892,7 +892,7 @@ public class MenuListener implements ActionListener {
 					// System.out.println(name2id);
 					Pathway pw = graphInstance.getContainer()
 							.getPathway(pwName);
-					Iterator<BiologicalNodeAbstract> iter = pw.getAllNodes()
+					Iterator<BiologicalNodeAbstract> iter = pw.getAllGraphNodes()
 							.iterator();
 					CovNode n = null;
 					Object o;
@@ -914,7 +914,7 @@ public class MenuListener implements ActionListener {
 						}
 					}
 
-					Iterator<BiologicalNodeAbstract> iter2 = pw.getAllNodes()
+					Iterator<BiologicalNodeAbstract> iter2 = pw.getAllGraphNodes()
 							.iterator();
 					while (iter2.hasNext() && !reachable) {
 						o = iter2.next();
@@ -1278,7 +1278,7 @@ public class MenuListener implements ActionListener {
 						offset /= scale;
 
 						Iterator<BiologicalNodeAbstract> it = graphInstance
-								.getPathway().getAllNodes().iterator();
+								.getPathway().getAllGraphNodes().iterator();
 						while (it.hasNext()) {
 							bna = it.next();
 
@@ -1328,7 +1328,7 @@ public class MenuListener implements ActionListener {
 	private void createCMatrix() {
 		GraphInstance graphInstance = new GraphInstance();
 		Iterator<BiologicalNodeAbstract> hsit = graphInstance.getPathway()
-				.getAllNodes().iterator();
+				.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		Place p;
 		HashMap<BiologicalNodeAbstract, Integer> hmplaces = new HashMap<BiologicalNodeAbstract, Integer>();

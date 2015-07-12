@@ -113,9 +113,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	private Set<BiologicalNodeAbstract> leafNodes = new HashSet<BiologicalNodeAbstract>();
 
-	private Set<BiologicalNodeAbstract> border = new HashSet<BiologicalNodeAbstract>();
+//	private Set<BiologicalNodeAbstract> border = new HashSet<BiologicalNodeAbstract>();
 
-	private Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
+//	private Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
 	
 	private Set<BiologicalNodeAbstract> predefinedEnvironment = new HashSet<BiologicalNodeAbstract>();
 
@@ -132,6 +132,42 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private Point2D parentNodeDistance = new Point2D.Double(0,0);
 	
 	private MainWindow mainWindow = MainWindowSingleton.getInstance();
+	
+	private boolean deleted = false;
+	
+	public boolean isDeleted(){
+		return deleted;
+	}
+	
+	public void delete(){
+		delete(true);
+	}
+	
+	public void delete(boolean showDialog){
+		if(isCoarseNode()){
+			Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
+			nodes.addAll(getVertices().keySet());
+			for(BiologicalNodeAbstract n : nodes){
+				n.delete(false);
+			}
+		} else {
+			getRootPathway().getVertices().remove(this);
+			for(BiologicalNodeAbstract parent : getAllParentNodes()){
+				parent.getVertices().remove(this);
+			}
+			Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
+			conEdges.addAll(getConnectingEdges());
+			for(BiologicalEdgeAbstract e : conEdges){
+				e.getFrom().removeConnectingEdge(e);
+				e.getTo().removeConnectingEdge(e);
+			}
+			setParentNode(null);
+			if(hasRef()){
+				getRef().getRefs().remove(this);
+			}
+		}
+		deleted = true;
+	}
 	
 	public BiologicalNodeAbstract(String label, String name) {
 		super(name, new GraphInstance().getPathway());
@@ -323,25 +359,20 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 				// set attributes of the child nodes
 				for (BiologicalNodeAbstract node : nodes) {
-					node.setStateChanged(NodeStateChanged.COARSED);
-					if(node.getParentNode()!=null){
-						coarseNode.addVertex(node, node.getParentNode().getGraph().getVertexLocation(node));
-					} else {
-						coarseNode.addVertex(node, node.getRootPathway().getGraph().getVertexLocation(node));
-					}
 					node.setParentNode(coarseNode);
-					coarseNode.getLeafNodes().addAll(node.getLeafNodes());
+					if(!node.isCoarseNode()){
+						coarseNode.getVertices().put(node, node.getRootPathway().getVertices().get(node));
+					} else {
+						coarseNode.getVertices().putAll(node.getVertices());
+					}
 				}
 						
 				//compute border, environment and connecting edges
 				coarseNode.updateHierarchicalAttributes();
 				
-				coarseNode.updateEdges();
 				coarseNode.makeCoarseShape();
-//				if(updatePathway){
-					coarseNode.getRootPathway().updateMyGraph();
-//				}
-
+				
+				GraphInstance.getPathwayStatic().getClosedSubPathways().add(coarseNode);
 
 				return coarseNode;
 	}
@@ -453,7 +484,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	public void updateHierarchicalAttributes(){
 		updateConnectingEdges();
-		updateBorderEnvironment();
 	}
 	
 	private void updateConnectingEdges(){
@@ -469,44 +499,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 					}
 				}
 			}
-		}
-	}
-	
-	private void updateBorderEnvironment(){
-		for(BiologicalNodeAbstract n : environment){
-			removeElement(n);
-		}
-		environment.clear();
-		border.clear();
-		for(BiologicalNodeAbstract n : getLeafNodes()){
-			for(BiologicalEdgeAbstract e : n.getConnectingEdges()){
-				if(e.getTo().getCurrentShownParentNode(getGraph())==null && e.getFrom().getCurrentShownParentNode(getGraph())!=null){
-					border.add(e.getFrom());
-					if(e.getTo().getParentNode()!=null){
-						addVertex(e.getTo(), e.getTo().getParentNode().getGraph().getVertexLocation(e.getTo()));
-					} else {
-						addVertex(e.getTo(), e.getTo().getRootPathway().getGraph().getVertexLocation(e.getTo()));
-					}
-					predefinedEnvironment.remove(e.getTo());
-					environment.add(e.getTo());
-				}
-				if(e.getFrom().getCurrentShownParentNode(getGraph())==null && e.getTo().getCurrentShownParentNode(getGraph())!=null){
-					border.add(e.getTo());
-					if(e.getFrom().getParentNode()!=null){
-						addVertex(e.getFrom(), e.getFrom().getParentNode().getGraph().getVertexLocation(e.getFrom()));
-					} else {
-						addVertex(e.getFrom(), e.getFrom().getRootPathway().getGraph().getVertexLocation(e.getFrom()));
-					}
-					predefinedEnvironment.remove(e.getFrom());
-					environment.add(e.getFrom());
-				}
-			}
-		}
-		Pathway neighborParent = getRootPathway();
-		for(BiologicalNodeAbstract pe : predefinedEnvironment){
-			neighborParent = pe.getParentNode()==null ? getRootPathway() : pe.getParentNode();
-			addVertex(pe, neighborParent.getGraph().getVertexLocation(pe));
-			environment.add(pe);
 		}
 	}
 	
@@ -539,24 +531,21 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		Set<BiologicalNodeAbstract> ln = new HashSet<BiologicalNodeAbstract>();
 		ln.addAll(getLeafNodes());
 		for(BiologicalNodeAbstract v : vertices){
-			ln.addAll(v.getLeafNodes());
 			if(v.getParentNode()!=this.getParentNode()){
 				return false;
 			}
+			ln.addAll(v.getLeafNodes());
 		}
 		if(hasValidBorder(getRootPathway().isPetriNet(),ln)){
-			leafNodes = ln;
+			getVertices().clear();
+			for(BiologicalNodeAbstract leafNode : ln){
+				getVertices().put(leafNode, getRootPathway().getVertices().get(leafNode));
+			}
 			for(BiologicalNodeAbstract n : vertices){
 				n.setParentNode(this);
 				n.setParentNodeDistance(Circle.get2Ddistance(GraphInstance.getMyGraph().getVertexLocation(this),vertexLocations.get(n)));
 				n.setStateChanged(NodeStateChanged.ADDED);
-				addVertex(n, vertexLocations.get(n));
-				if(getEnvironment().contains(n)){
-					getEnvironment().remove(n);
-				}
 			}
-			updateHierarchicalAttributes();
-			getRootPathway().updateMyGraph();
 			updateNodeType();
 			return true;
 		}
@@ -569,12 +558,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 *  @author tloka
 	 */
 	public void updateNodeType(){
+		Set<BiologicalNodeAbstract> border = getBorder();
 		if(border.isEmpty()){
 			return;
 		}
 		if(border.iterator().next() instanceof Place != this instanceof Place){
 			Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
-			innerNodes.addAll(getInnerNodes());
+			innerNodes.addAll(getChildrenNodes());
 			this.flat();
 			MainWindowSingleton.getInstance().removeTab(false, getTab().getTitelTab(), this);
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
@@ -611,7 +601,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		System.out.println("Name:");
 		System.out.println(getLabel());
 		System.out.println("All Nodes:");
-		for(BiologicalNodeAbstract node : getAllNodes()){
+		for(BiologicalNodeAbstract node : getVertices().keySet()){
 			System.out.println(node.getLabel());
 		}
 		System.out.println("");
@@ -621,12 +611,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		}
 		System.out.println("");
 		System.out.println("Border: ");
-		for(BiologicalNodeAbstract bnode : border){
+		for(BiologicalNodeAbstract bnode : getBorder()){
 			System.out.println(bnode.getLabel());
 		}
 		System.out.println("");
 		System.out.println("Environment: ");
-		for(BiologicalNodeAbstract bnode : environment){
+		for(BiologicalNodeAbstract bnode : getEnvironment()){
 			System.out.println(bnode.getLabel());
 		}
 		System.out.println("");
@@ -643,25 +633,16 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 */
 	public void flat() {
 
-		// Stop, if flattening is not possible.
-		if (!isCoarseNode())
-			return;
-		
-		if(this.getParentNode()!=null && this.getParentNode().getGraph()!=getActiveGraph()){
+		if(!isCoarseNode()){
 			return;
 		}
-
-		// Change node state.
-		this.setStateChanged(NodeStateChanged.FLATTENED);
-		
-		// Update all graphs.
-		getRootPathway().updateMyGraph();
-		
+	
 		// Update the parent node of flattened node's children.
-		// Must be called AFTER updateMyGraph()!
-		for(BiologicalNodeAbstract node : getInnerNodes()){
+		for(BiologicalNodeAbstract node : getChildrenNodes()){
 			node.setParentNode(getParentNode());
 		}
+		
+		deleted = true;
 		
 		//remove id from rootPathway id set.
 		getIdSet().remove(ID);
@@ -686,28 +667,49 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * Re-Initialise all hierarchy elements and sets for providing pointer-conflicts.
 	 */
 	public void cleanUpHierarchyElements(){
-		border = new HashSet<BiologicalNodeAbstract>();
-		environment = new HashSet<BiologicalNodeAbstract>();
 		connectingEdges = new HashSet<BiologicalEdgeAbstract>();
 		setGraph(new MyGraph(this));
 		setStateChanged(NodeStateChanged.UNCHANGED);
+		cleanVertices();
 	}
 	
 	/**
 	 * To get all internal non-environment nodes.
 	 * @return The internal nodes excluding environment nodes.
 	 */
-	public Collection<BiologicalNodeAbstract> getInnerNodes(){
-		Collection<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
-		if(getAllNodes().isEmpty()){
-			return innerNodes;
-		}
-		for(BiologicalNodeAbstract node : getAllNodes()){
-			if(!environment.contains(node.getCurrentShownParentNode(getGraph()))){
-				innerNodes.add(node);
+//	public Collection<BiologicalNodeAbstract> getInnerNodes(){
+//		Collection<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
+//		if(getVertices().isEmpty()){
+//			return innerNodes;
+//		}
+//		for(BiologicalNodeAbstract node : getVertices().keySet()){
+//			if(!getEnvironment().contains(node.getCurrentShownParentNode(getGraph()))){
+//				innerNodes.add(node);
+//			}
+//		}
+//		return innerNodes;
+//	}
+	
+	public Collection<BiologicalNodeAbstract> getChildrenNodes(){
+		Set<BiologicalNodeAbstract> childrenNodes = new HashSet<BiologicalNodeAbstract>();
+		Set<BiologicalNodeAbstract> done = new HashSet<BiologicalNodeAbstract>();
+		BiologicalNodeAbstract currentNode;
+		for(BiologicalNodeAbstract n : getLeafNodes()){
+			if(done.contains(n)){
+				continue;
+			}
+			currentNode = n;
+			while(currentNode.getParentNode() != null){
+				if(currentNode.getParentNode() == this){
+					childrenNodes.add(currentNode);
+					done.addAll(currentNode.getLeafNodes());
+					break;
+				} else {
+					currentNode = currentNode.getParentNode();
+				}
 			}
 		}
-		return innerNodes;
+		return childrenNodes;
 	}
 	
 	/**
@@ -715,13 +717,16 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @return true, if coarse-node.
 	 */
 	public boolean isCoarseNode(){
-		if(getInnerNodes().isEmpty()){
-			return false;
-		}
-		if(getGraph(false)==null){
-			return false;
-		}
-		return true;
+		if(!getVertices().isEmpty())
+			return true;
+//		if(getInnerNodes().isEmpty()){
+//			return false;
+//		}
+//		if(getGraph(false)==null){
+//			return false;
+//		}
+//		return true;
+		return false;
 	}
 
 	@Override
@@ -857,7 +862,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		if(getLastParentNode() == otherNode.getLastParentNode() && getLastParentNode()!=null){
 			BiologicalNodeAbstract lastCommonParentNode = getLastParentNode();
 			while(true){
-				for(BiologicalNodeAbstract childNode : lastCommonParentNode.getInnerNodes()){
+				for(BiologicalNodeAbstract childNode : lastCommonParentNode.getChildrenNodes()){
 					if(getAllParentNodes().contains(childNode) && otherNode.getAllParentNodes().contains(childNode)){
 						lastCommonParentNode = childNode;
 						break;
@@ -927,7 +932,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	public Set<BiologicalNodeAbstract> getCurrentShownChildrenNodes(MyGraph graph){
 		Set<BiologicalNodeAbstract> cscn = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract n : getInnerNodes()){
+		for(BiologicalNodeAbstract n : getChildrenNodes()){
 			if(graph.getAllVertices().contains(n)){
 				cscn.add(n);
 			} else if (n.isCoarseNode()){
@@ -1190,11 +1195,57 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 
 	public Set<BiologicalNodeAbstract> getBorder() {
-		return border;
+		
+		Set<BiologicalNodeAbstract> bord = new HashSet<BiologicalNodeAbstract>();
+		
+		// If node is no coarse node and has connections, return itself
+		if(!isCoarseNode()){
+			if(getConnectingEdges().isEmpty())
+				bord.add(this);
+			return bord;
+		}
+		
+		// Otherwise, go through connecting edges to find border nodes
+		for(BiologicalEdgeAbstract e : getConnectingEdges()){
+			if(!getVertices().keySet().contains(e.getFrom())){
+				bord.add(e.getTo());
+			}
+			else if(!getVertices().keySet().contains(e.getTo())){
+				bord.add(e.getFrom()); 
+			}
+		}
+		return bord;
+//		return border;
 	}
 
 	public Set<BiologicalNodeAbstract> getEnvironment() {
-		return environment;
+		
+		Set<BiologicalNodeAbstract> env = new HashSet<BiologicalNodeAbstract>();
+		
+		// If node is no coarse node and has connections
+		if(!isCoarseNode()){
+			for(BiologicalEdgeAbstract e : getConnectingEdges()){
+				if(e.getFrom()!=this){
+					env.add(e.getFrom());
+				}
+				if(e.getTo()!=this){
+					env.add(e.getTo());
+				}
+			}
+			return env;
+		}
+		
+		// Otherwise, go through connecting edges to find environment nodes
+		for(BiologicalEdgeAbstract e : getConnectingEdges()){
+			if(!getVertices().keySet().contains(e.getFrom())){
+				env.add(e.getFrom());
+			}
+			else if(!getVertices().keySet().contains(e.getTo())){
+				env.add(e.getTo()); 
+			}
+		}
+		return env;
+//		return environment;
 	}
 	
 	public Set<BiologicalNodeAbstract> getPredefinedEnvironment() {
@@ -1210,7 +1261,21 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 
 	public Set<BiologicalEdgeAbstract> getConnectingEdges() {
+		if(isCoarseNode()){
+			Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
+			for(BiologicalNodeAbstract n : getVertices().keySet()){
+				for(BiologicalEdgeAbstract e : n.getConnectingEdges()){
+					if(getVertices().keySet().contains(e.getFrom()) != 
+							getVertices().keySet().contains(e.getTo())){
+						conEdges.add(e);
+					}
+				}
+			}
+			connectingEdges = conEdges;
+			return conEdges;
+		} else {
 			return connectingEdges;
+		}
 	}
 
 	public double getDefaultNodesize() {
@@ -1248,7 +1313,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	public Set<BiologicalNodeAbstract> getLeafNodes() {
 		if(isCoarseNode()){
-			return leafNodes;
+			return getVertices().keySet();
 		}
 		Set<BiologicalNodeAbstract> ln = new HashSet<BiologicalNodeAbstract>();
 		ln.add(this);

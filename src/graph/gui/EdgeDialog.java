@@ -77,7 +77,7 @@ public class EdgeDialog extends JFrame {
 		name = new JTextField(20);
 		panel = new JPanel(layout);
 		
-		if(!from.getAllNodes().isEmpty()){
+		if(!from.getVertices().isEmpty()){
 			panel.add(new JLabel("Select Start Node"), "");
 			addAllChildNodes(from, fromBox, fromMap);
 			AutoCompleteDecorator.decorate(fromBox);
@@ -86,7 +86,7 @@ public class EdgeDialog extends JFrame {
 			fromBox.addItem(from.getLabel());
 			fromMap.put(fromBox.getItemCount()-1, from);
 		}
-		if(!to.getAllNodes().isEmpty()){
+		if(!to.getVertices().isEmpty()){
 			panel.add(new JLabel("Select End Node"), "");
 			addAllChildNodes(to, toBox, toMap);
 			AutoCompleteDecorator.decorate(toBox);
@@ -126,7 +126,7 @@ public class EdgeDialog extends JFrame {
 	}
 	
 	private void addAllChildNodes(BiologicalNodeAbstract vertex, JComboBox<String> nodeBox, HashMap<Integer, BiologicalNodeAbstract> map){
-		for(BiologicalNodeAbstract child : vertex.getAllNodes()){
+		for(BiologicalNodeAbstract child : vertex.getVertices().keySet()){
 			if(vertex.isPetriNet()){
 				if((vertex instanceof Place && child instanceof Transition) |
 						(vertex instanceof Transition && child instanceof Place)){
@@ -134,7 +134,7 @@ public class EdgeDialog extends JFrame {
 				}
 			}
 			if(!vertex.getEnvironment().contains(child)){
-				if(child.getAllNodes().isEmpty()){
+				if(child.getVertices().isEmpty()){
 					nodeBox.addItem(child.getLabel());
 					map.put(nodeBox.getItemCount()-1, child);
 				} else {

@@ -150,7 +150,7 @@ public class Cov {
 				tmp.addTokens(this.cMatrix.getColumn(i));
 				// System.out.println("new: " + tmp);
 				boolean found = false;
-				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllNodes().iterator();
+				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
 				CovNode cn;
 
 				if (this.isBoundaryHold(tmp)) {
@@ -199,7 +199,7 @@ public class Cov {
 								}
 
 								// fuer alle Knoten
-								Iterator<BiologicalNodeAbstract> it2 = graphInstance.getPathway().getAllNodes().iterator();
+								Iterator<BiologicalNodeAbstract> it2 = graphInstance.getPathway().getAllGraphNodes().iterator();
 								boolean cond1;
 								boolean cond2;
 								while (it2.hasNext()) {
@@ -303,7 +303,7 @@ public class Cov {
 		// .getPathway().getGraph().getVertexLocations();
 		this.oldName = this.graphInstance.getPathway().getName();
 		// Hashmaps fuer places und transitions
-		Iterator<BiologicalNodeAbstract> hsit = graphInstance.getPathway().getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> hsit = graphInstance.getPathway().getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		// Place p;
 		// System.out.println("vertices:");
@@ -471,7 +471,7 @@ public class Cov {
 	//	System.out.println("oldname: " + pwold.getName());
 		pwold.getGraph().lockVertices();
 		pwold.getGraph().stopVisualizationModel();
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		// this.graphInstance.getContainer().
 		double[] tokens = null;
 		BiologicalNodeAbstract bna = null;
@@ -491,7 +491,7 @@ public class Cov {
 
 			for (int i = 0; i < tokens.length; i++) {
 				if (tokens[i] == -1.0) {
-					it2 = pwold.getAllNodes().iterator();
+					it2 = pwold.getAllGraphNodes().iterator();
 					while (it2.hasNext()) {
 						bna = it2.next();
 						if (bna.getName().equals(this.idToName.get(i))) {

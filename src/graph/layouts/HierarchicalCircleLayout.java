@@ -336,7 +336,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 		} else {
 			BiologicalNodeAbstract comp1 = n1;
 			BiologicalNodeAbstract comp2 = n2;
-			for(BiologicalNodeAbstract child : n1.getLastCommonParentNode(n2).getInnerNodes()){
+			for(BiologicalNodeAbstract child : n1.getLastCommonParentNode(n2).getChildrenNodes()){
 				if(n1.getAllParentNodes().contains(child) || n1==child){
 					comp1 = child;
 				}

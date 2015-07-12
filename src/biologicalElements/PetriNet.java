@@ -66,7 +66,7 @@ public class PetriNet {
 
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
-		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
+		Collection<BiologicalNodeAbstract> hs = pw.getAllGraphNodes();
 		// pnResult = pw.getPetriNet().getPnResult();
 		ArrayList<String> columns = new ArrayList<String>();
 		// rowsSize = 0;
@@ -270,7 +270,7 @@ public class PetriNet {
 	private void deleteDateFromNodes() {
 		graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
+		Collection<BiologicalNodeAbstract> hs = pw.getAllGraphNodes();
 		if (hs != null) {
 			Iterator<BiologicalNodeAbstract> it = hs.iterator();
 			while (it.hasNext()) {

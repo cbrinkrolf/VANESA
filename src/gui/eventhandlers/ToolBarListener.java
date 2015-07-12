@@ -296,6 +296,7 @@ public class ToolBarListener implements ActionListener {
 				selectedNodes.addAll(graphInstance.getPathway()
 						.getSelectedNodes());
 				BiologicalNodeAbstract.coarse(selectedNodes);
+				graphInstance.getPathway().updateMyGraph();
 				graphInstance.getPathway().getGraph().getVisualizationViewer()
 						.repaint();
 			} else {
@@ -308,6 +309,7 @@ public class ToolBarListener implements ActionListener {
 						.getVisualizationViewer().getPickedVertexState()
 						.getPicked()) {
 					node.flat();
+					graphInstance.getPathway().updateMyGraph();
 					MainWindowSingleton.getInstance().removeTab(false,
 							node.getTab().getTitelTab(), node);
 				}
@@ -550,5 +552,6 @@ public class ToolBarListener implements ActionListener {
 				}
 			}
 		}
+		GraphInstance.getPathwayStatic().updateMyGraph();
 	}
 }

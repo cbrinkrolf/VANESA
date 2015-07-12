@@ -67,7 +67,7 @@ public class HeatmapGraphs {
 		//elements that are in both graphs will be double in the new graph
 		HashMap<String, Integer> countById = new HashMap<String, Integer>();
 		//Vector<BiologicalNodeAbstract> nodes = pw_new.getAllNodesAsVector();
-		Iterator<BiologicalNodeAbstract> nodes = pw_new.getAllNodes().iterator(); 
+		Iterator<BiologicalNodeAbstract> nodes = pw_new.getAllGraphNodes().iterator(); 
 		String id;
 		BiologicalNodeAbstract bna;
 		while(nodes.hasNext()) {
@@ -83,7 +83,7 @@ public class HeatmapGraphs {
 		}
 		
 		//set the form of vertices depending on counts
-		nodes = pw_new.getAllNodes().iterator(); 
+		nodes = pw_new.getAllGraphNodes().iterator(); 
 		while(nodes.hasNext()){
 			bna = nodes.next();
 			id = bna.getName()+bna.getLabel();

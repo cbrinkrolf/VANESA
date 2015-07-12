@@ -42,7 +42,7 @@ public class ConvertToPetriNet {
 
 	public ConvertToPetriNet() {
 		int answer = JOptionPane.YES_NO_OPTION;
-		if (!graphInstance.getPathway().getAllNodes().isEmpty())
+		if (!graphInstance.getPathway().getAllGraphNodes().isEmpty())
 			answer = JOptionPane.showOptionDialog(
 					MainWindowSingleton.getInstance(),
 					"What type of Petri Net do you want?",
@@ -194,7 +194,7 @@ public class ConvertToPetriNet {
 		// this.simulateSteps(10);
 
 		HashSet<Place> allPlaces = new HashSet<Place>();
-		Iterator<BiologicalNodeAbstract> iter = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> iter = pw.getAllGraphNodes().iterator();
 		// BiologicalNodeAbstract bna;
 		while (iter.hasNext()) {
 			bna = iter.next();

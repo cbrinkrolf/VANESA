@@ -151,7 +151,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 
 	private void getNodeDegreeRatings() {
 		c = new NetworkProperties();
-		itn = c.getPathway().getAllNodes().iterator();
+		itn = c.getPathway().getAllGraphNodes().iterator();
 		nodevalues = new Hashtable<BiologicalNodeAbstract, Double>();
 		minvalue = Double.MAX_VALUE;
 		maxvalue = Double.MIN_NORMAL;

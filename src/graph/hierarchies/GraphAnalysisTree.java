@@ -53,7 +53,7 @@ public class GraphAnalysisTree{
 	public void build(){
 		
 		// Compute the root node
-		allNodes.addAll(pw.getAllNodes());
+		allNodes.addAll(pw.getAllGraphNodes());
 		BiologicalNodeAbstract rootNode = allNodes.iterator().next();
 		for(BiologicalNodeAbstract n : allNodes){
 			if(n.isEnvironmentNodeOf(pw)){

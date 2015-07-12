@@ -212,7 +212,7 @@ public class PropertyWindowListener implements FocusListener {
 			BiologicalNodeAbstract node;
 			while (k.hasNext()) {
 				neighbour = k.next();
-				Iterator<BiologicalNodeAbstract> j = pw.getAllNodes()
+				Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes()
 						.iterator();
 				while (j.hasNext()) {
 					node = j.next();
@@ -258,7 +258,7 @@ public class PropertyWindowListener implements FocusListener {
 			BiologicalNodeAbstract node;
 			while (k.hasNext()) {
 				neighbour = k.next();
-				for (Iterator<BiologicalNodeAbstract> j = pw.getAllNodes()
+				for (Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes()
 						.iterator(); j.hasNext();) {
 					node = j.next();
 					if (node.equals(neighbour)

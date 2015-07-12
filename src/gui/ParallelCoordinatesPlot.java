@@ -525,7 +525,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			// System.out.println("dim: "+rowsDim);
 			// Iterator<BiologicalNodeAbstract> itBna =
 			// pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator();
-			Iterator<BiologicalNodeAbstract> itBna = pw.getAllNodes()
+			Iterator<BiologicalNodeAbstract> itBna = pw.getAllGraphNodes()
 					.iterator();
 			List<Double> time = simRes.getTimeValues();// pw.getPetriNet().getTime();
 			while (itBna.hasNext()) {
@@ -701,7 +701,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		if("updateGraph".equals(event)){
 			this.drawPlot();
 		}else if ("reset".equals(event)) {
-			for (Iterator i = pw.getAllNodes().iterator(); i.hasNext();) {
+			for (Iterator i = pw.getAllGraphNodes().iterator(); i.hasNext();) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) i.next();
 				if (bna instanceof Place) {
 					bna.rebuildShape(new VertexShapes());
@@ -1083,7 +1083,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		if (pw == null) {
 			return;
 		}
-		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllGraphNodes().iterator();
 		XYSeries s;
 		List<String> simNames = pw.getSimResController().getSimNames();
 		while (itNodes.hasNext()) {
@@ -1266,7 +1266,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		// System.out.println("rows: "+rowsSize);
 		// System.out.println("rowsDim: "+rowsDim);
 		// get Data from all Places
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		rows = new Object[rowsSize][rowsDim + 1];
 		int i = 0;
 

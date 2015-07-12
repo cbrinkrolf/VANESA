@@ -181,7 +181,7 @@ public class GraphColoringGUI implements ActionListener {
 	public void recolorGraph() throws IOException {
 
 		np = new NetworkProperties();
-		itn = np.getPathway().getAllNodes().iterator();
+		itn = np.getPathway().getAllGraphNodes().iterator();
 		coloring = new Hashtable<BiologicalNodeAbstract, Double>();
 
 		int nodes = np.getPathway().countNodes();

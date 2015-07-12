@@ -104,7 +104,7 @@ public class JSBMLoutput {
 		
 		// read all nodes from graph
 		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : rootPathway.getAllNodes()){
+		for(BiologicalNodeAbstract node : rootPathway.getAllGraphNodes()){
 			flattenedPathwayNodes.addAll(node.getLeafNodes());
 		}
 		
@@ -258,7 +258,7 @@ public class JSBMLoutput {
 		Set<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
 		
 		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : rootPathway.getAllNodes()){
+		for(BiologicalNodeAbstract node : rootPathway.getAllGraphNodes()){
 			flattenedPathwayNodes.addAll(node.getLeafNodes());
 		}
 
@@ -287,9 +287,9 @@ public class JSBMLoutput {
 				"coarseNode", "", ""), new XMLAttributes()));
 		hierarchyXMLNode.addAttr("id", "spec_" + node.getID());
 		hierarchyXMLNode.addAttr("label", node.getLabel());
-		hierarchyXMLNode.addAttr("opened", rootPathway.getOpenedSubPathways().contains(node) ? "true" : "false");
+		hierarchyXMLNode.addAttr("opened", !rootPathway.getClosedSubPathways().contains(node) ? "true" : "false");
 		hierarchyXMLNode.addAttr("root", node.getRootNode()==null ? "null" : "spec_" + node.getRootNode().getID());
-		for(BiologicalNodeAbstract childNode : node.getInnerNodes()){
+		for(BiologicalNodeAbstract childNode : node.getChildrenNodes()){
 			XMLNode childXMLNode = new XMLNode(new XMLNode(new XMLTriple(
 					"child", "", ""), new XMLAttributes()));
 			childXMLNode.addAttr("id", "spec_" + childNode.getID());
