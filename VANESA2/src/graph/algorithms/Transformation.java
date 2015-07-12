@@ -15,7 +15,7 @@ public class Transformation {
 		BiologicalEdgeAbstract bea;
 		BiologicalNodeAbstract ref;
 		HashSet<BiologicalNodeAbstract> references = new HashSet<BiologicalNodeAbstract>();
-		System.out.println("nodes: "+pw.getAllNodes().size());
+		System.out.println("nodes: "+pw.getAllGraphNodes().size());
 		while(it.hasNext()){
 			bea = it.next();
 			System.out.println(bea.getFrom().getLabel()+" -> "+bea.getTo().getLabel());

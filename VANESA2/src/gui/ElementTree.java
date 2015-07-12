@@ -116,7 +116,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		tree.addHighlighter(new ColorHighlighter());
 		tree.expandAll();
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 
 		Vector<String> v = new Vector<String>();
 		Hashtable<String, BiologicalNodeAbstract> currenTable = new Hashtable<String, BiologicalNodeAbstract>();
@@ -174,10 +174,10 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 
 	private void addChildNodes(BiologicalNodeAbstract vertex,
 			DefaultMutableTreeNode n) {
-		if (vertex.getAllNodes().isEmpty()) {
+		if (vertex.getAllGraphNodes().isEmpty()) {
 			return;
 		}
-		for (BiologicalNodeAbstract child : vertex.getAllNodes()) {
+		for (BiologicalNodeAbstract child : vertex.getAllGraphNodes()) {
 			if (!vertex.getEnvironment().contains(child)) {
 				String lbl;
 				if (child.getLabel().length() == 0) {
@@ -203,7 +203,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		node = new DefaultMutableTreeNode("Nodes");
 		root.add(node);
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 
 		Vector<String> v = new Vector<String>();
 		Hashtable<String, BiologicalNodeAbstract> currenTable = new Hashtable<String, BiologicalNodeAbstract>();

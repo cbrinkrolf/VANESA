@@ -70,7 +70,7 @@ public class ReferenceDialog {
 
 	private void addNodeItems() {
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 
 		// sort entries by network label
 		HashMap<String, BiologicalNodeAbstract> map = new HashMap<String, BiologicalNodeAbstract>();

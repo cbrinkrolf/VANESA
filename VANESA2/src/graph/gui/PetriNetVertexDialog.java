@@ -212,7 +212,7 @@ public class PetriNetVertexDialog implements ActionListener {
 					return false;
 				}
 				
-				Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+				Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 				BiologicalNodeAbstract bna;
 				
 				while(it.hasNext()){

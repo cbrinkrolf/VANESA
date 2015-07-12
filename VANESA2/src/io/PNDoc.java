@@ -33,7 +33,7 @@ public class PNDoc {
 		this.createHeader();
 		this.writeInitialValues();
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodesSortedAlphabetically().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		BiologicalNodeAbstract bna;
 
 		sb.append("\\section{Gleichungen}\n");
@@ -177,7 +177,7 @@ public class PNDoc {
 
 		sb.append("Name & Value & Unit\\\\\\midrule\n");
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodesSorted().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSorted().iterator();
 		BiologicalNodeAbstract bna;
 		Place p;
 		int i = 0;

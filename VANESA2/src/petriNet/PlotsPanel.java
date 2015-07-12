@@ -71,7 +71,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			// table = new Object[rows][cols + 1];
 			// System.out.println("rowsSize: " + rowsSize);
 			// System.out.println("rowsDim: " + rowsDim);
-			Collection<BiologicalNodeAbstract> hs = pw.getAllNodes();
+			Collection<BiologicalNodeAbstract> hs = pw.getAllGraphNodes();
 			// BiologicalNodeAbstract[] bnas = (BiologicalNodeAbstract[]) hs
 			// .toArray(new BiologicalNodeAbstract[0]);
 

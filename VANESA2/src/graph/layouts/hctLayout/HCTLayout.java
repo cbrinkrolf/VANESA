@@ -416,10 +416,6 @@ public class HCTLayout extends HierarchicalCircleLayout{
 			}
 			
 			if(first.getParentNode()!=null && first.getParentNode().getRootNode()==second){
-				System.out.println(first.getLabel());
-				System.out.println(first.getParentNode().getLabel());
-				System.out.println(first.getParentNode().getRootNode().getLabel());
-				System.out.println();
 				return new Line2D.Double(0.0,0.0,1.0,0.0);
 			}
 			if(second.getParentNode()!=null && second.getParentNode().getRootNode()==first){

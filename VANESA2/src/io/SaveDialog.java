@@ -312,7 +312,7 @@ public class SaveDialog {
 				ArrayList<Place> nodeList = new ArrayList<Place>();
 				ArrayList<Transition> transitionList = new ArrayList<Transition>();
 				Iterator<BiologicalNodeAbstract> itNode = con
-						.getPathway(w.getCurrentPathway()).getAllNodes()
+						.getPathway(w.getCurrentPathway()).getAllGraphNodes()
 						.iterator();
 
 				while (itNode.hasNext()) {

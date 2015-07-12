@@ -122,7 +122,7 @@ public class HeatgraphLayer extends MouseAdapter implements Paintable {
 		
 		//scan again through the nodes and fill the hashmap
 		Pathway pw_new = GraphInstance.getPathwayStatic();
-		Iterator<BiologicalNodeAbstract> nodes = pw_new.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> nodes = pw_new.getAllGraphNodes().iterator();
 		AdoptedHeatmap h = this.getHeatmapForActiveGraph();
 		HashMap<String, Integer> countById = this.countData.get(GraphInstance.getMyGraph());
 		
@@ -144,7 +144,7 @@ public class HeatgraphLayer extends MouseAdapter implements Paintable {
 			h.resetPoints();
 			//NodeRankingVertexSizeFunction sf = new NodeRankingVertexSizeFunction("madata",1);
 			//VertexShapes vs = new VertexShapes(sf, new ConstantVertexAspectRatioFunction(1.0f));
-			nodes = pw_new.getAllNodes().iterator();
+			nodes = pw_new.getAllGraphNodes().iterator();
 			while(nodes.hasNext()) {
 				bna = nodes.next();
 				id = bna.getName()+bna.getLabel();

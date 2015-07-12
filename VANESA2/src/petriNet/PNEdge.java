@@ -137,7 +137,7 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
 		// System.out.println("nodes: " + hs.size());
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		ArrayList<String> names = new ArrayList<String>();
 
 		// HashMap<String, Double> name2token = new HashMap<String, Double>();
@@ -217,7 +217,7 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		StringBuilder mFunction = new StringBuilder(this.function);
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		ArrayList<String> names = new ArrayList<String>();
 		HashMap<String, String> mNames = new HashMap<String, String>();
 		BiologicalNodeAbstract bna;

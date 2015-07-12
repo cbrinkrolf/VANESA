@@ -46,7 +46,7 @@ public class ShortestPathGui implements ActionListener {
 		mindMaps.setSelected(true);
 		graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 
 		Vector<String> w = new Vector<String>();
 

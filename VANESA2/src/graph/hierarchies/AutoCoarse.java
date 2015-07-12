@@ -37,7 +37,7 @@ public static void coarseSeperatedSubgraphs(Pathway pw){
 		
 		// automated reconstruction
 		HierarchyList<Integer> l = new HierarchyList<Integer>();
-		l.addAll(pw.getAllNodes());
+		l.addAll(pw.getAllGraphNodes());
 		l.sort(new HLC());
 		l.coarse();
 	}

@@ -67,7 +67,7 @@ public class VAMLoutput {
 
 	private void getCompartment() throws XMLStreamException {
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		writer.writeStartElement("listOfCompartments");
 		int i = 1;
 		BiologicalNodeAbstract bna;
@@ -240,7 +240,7 @@ public class VAMLoutput {
 
 	private void writeAnnotation() throws XMLStreamException {
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		writer.writeStartElement("annotation");
 		writer.writeStartElement("NetworkEditorSettings");
 
@@ -383,7 +383,7 @@ public class VAMLoutput {
 
 	private void getSpeciesType() throws XMLStreamException {
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		writer.writeStartElement("listOfSpeciesTypes");
 		int i = 1;
 		BiologicalNodeAbstract bna;
@@ -416,7 +416,7 @@ public class VAMLoutput {
 
 	private void getSpecies() throws XMLStreamException {
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		writer.writeStartElement("listOfSpecies");
 
 		BiologicalNodeAbstract bna;

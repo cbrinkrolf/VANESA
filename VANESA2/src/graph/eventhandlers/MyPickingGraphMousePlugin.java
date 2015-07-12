@@ -101,6 +101,8 @@ public class MyPickingGraphMousePlugin extends
 				graphInstance.getPathway().getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), 
 					oldVertexPositions.get(node).getY());
 			}
+		} else {
+			graphInstance.getPathway().updateMyGraph();
 		}
 	}
 	

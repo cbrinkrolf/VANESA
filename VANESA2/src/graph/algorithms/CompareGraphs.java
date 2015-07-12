@@ -46,7 +46,7 @@ public class CompareGraphs {
 		graph1.enableGraphTheory();
 		Vector<BiologicalNodeAbstract> checked = new Vector<BiologicalNodeAbstract>();
 
-		Iterator<BiologicalNodeAbstract> it = pathway.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pathway.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		BiologicalNodeAbstract bna2;
 		Iterator<BiologicalNodeAbstract> it2;
@@ -54,7 +54,7 @@ public class CompareGraphs {
 		while (it.hasNext()) {
 			bna = it.next();
 
-			it2 = pathway.getAllNodes().iterator();
+			it2 = pathway.getAllGraphNodes().iterator();
 
 			while (it2.hasNext()) {
 				bna2 = it2.next();
@@ -96,7 +96,7 @@ public class CompareGraphs {
 		MyGraph graph2 = two.getGraph();
 		graph2.enableGraphTheory();
 
-		Iterator<BiologicalNodeAbstract> it = one.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = one.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		Iterator<BiologicalNodeAbstract> it2;
 		BiologicalNodeAbstract bna2;
@@ -104,7 +104,7 @@ public class CompareGraphs {
 		while (it.hasNext()) {
 
 			bna = it.next();
-			it2 = two.getAllNodes().iterator();
+			it2 = two.getAllGraphNodes().iterator();
 			while (it2.hasNext()) {
 
 				bna2 = it2.next();
