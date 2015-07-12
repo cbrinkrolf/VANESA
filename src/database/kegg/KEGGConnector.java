@@ -214,7 +214,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 		// }
 		if (isSearchMicroRNAs()) {
 
-			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getVertices().keySet().iterator();
 			BiologicalNodeAbstract bna;
 			ArrayList<DBColumn> dbcol;
 			String finalQueryString;
@@ -362,7 +362,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 			bna.setKEGGnode(node);
 			bna.hasKEGGNode(true);
 			boolean addBNA = true;
-			Iterator<BiologicalNodeAbstract> it = pw.getAllNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getVertices().keySet().iterator();
 			BiologicalNodeAbstract old_bna;
 			while (it.hasNext()) {
 				old_bna = it.next();
@@ -531,7 +531,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 			BiologicalNodeAbstract subtype = null;
 			BiologicalNodeAbstract bna2 = null;
 			BiologicalNodeAbstract bna;
-			for (Iterator<BiologicalNodeAbstract> it = pw.getAllNodes()
+			for (Iterator<BiologicalNodeAbstract> it = pw.getVertices().keySet()
 					.iterator(); it.hasNext();) {
 				bna = it.next();
 				if (bna.getKEGGnode() != null
@@ -648,7 +648,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 			BiologicalNodeAbstract enzyme = null;
 			BiologicalNodeAbstract product = null;
 			BiologicalNodeAbstract bna;
-			for (Iterator<BiologicalNodeAbstract> it = pw.getAllNodes()
+			for (Iterator<BiologicalNodeAbstract> it = pw.getVertices().keySet()
 					.iterator(); it.hasNext();) {
 				bna = it.next();
 				if (bna.getKEGGnode().getKEGGPathway().equals(keggPathway)) {

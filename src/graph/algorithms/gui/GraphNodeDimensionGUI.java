@@ -119,7 +119,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 
 	private void getNodeDegreeRatings() {
 		c = new NetworkProperties();
-		itn = c.getPathway().getAllNodes().iterator();
+		itn = c.getPathway().getAllGraphNodes().iterator();
 		ratings = new Hashtable<BiologicalNodeAbstract,Double>();
 		minvalue = Double.MAX_VALUE;
 		maxvalue = Double.MIN_NORMAL;

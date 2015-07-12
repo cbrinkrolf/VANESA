@@ -873,11 +873,11 @@ public class MyGraph {
 						}
 					}
 				}
-				if (!bna.getAllNodes().isEmpty()
+				if (bna.isCoarseNode()
 						&& savedAnswer == JOptionPane.NO_OPTION) {
 					continue;
 				}
-				if (!bna.getAllNodes().isEmpty()
+				if (bna.isCoarseNode()
 						&& savedAnswer != JOptionPane.YES_OPTION) {
 					CoarseNodeDeleteDialog dialog = new CoarseNodeDeleteDialog(
 							bna);
@@ -896,11 +896,11 @@ public class MyGraph {
 
 				Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
 				conEdges.addAll(bna.getConnectingEdges());
-				for (BiologicalEdgeAbstract edge : conEdges) {
-					pw.getRootPathway().deleteSubEdge(edge);
+				for (BiologicalEdgeAbstract bea : conEdges) {
+					bea.getFrom().removeConnectingEdge(bea);
+					bea.getTo().removeConnectingEdge(bea);
 				}
-				setVertexStateDeleted(bna);
-				pw.getRootPathway().updateMyGraph();
+				pw.removeElement(bna);
 
 			}
 		}
@@ -908,9 +908,9 @@ public class MyGraph {
 
 	private void setVertexStateDeleted(BiologicalNodeAbstract vertex) {
 		vertex.setStateChanged(NodeStateChanged.DELETED);
-		for (BiologicalNodeAbstract child : vertex.getAllNodes()) {
+		for (BiologicalNodeAbstract child : vertex.getAllGraphNodes()) {
 			if (!vertex.getEnvironment().contains(child)) {
-				if (child.getAllNodes().isEmpty()) {
+				if (child.getAllGraphNodes().isEmpty()) {
 					child.setStateChanged(NodeStateChanged.DELETED);
 				} else {
 					setVertexStateDeleted(child);
@@ -926,6 +926,27 @@ public class MyGraph {
 	public void removeEdge(BiologicalEdgeAbstract bea) {
 		// graphInstance.getPathway().removeElement(bea);
 		g.removeEdge(bea);
+	}
+	
+	public void removeAllVertices(){
+		Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
+		nodes.addAll(getAllVertices());
+		for(BiologicalNodeAbstract n : nodes){
+			removeVertex(n);
+		}
+	}
+	
+	public void removeAllEdges(){
+		Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
+		edges.addAll(getAllEdges());
+		for(BiologicalEdgeAbstract e : edges){
+			removeEdge(e);
+		}
+	}
+	
+	public void removeAllElements(){
+		removeAllEdges();
+		removeAllVertices();
 	}
 
 	public Collection<BiologicalNodeAbstract> getAllVertices() {
@@ -1167,7 +1188,7 @@ public class MyGraph {
 				boolean positionOK = true;
 
 				Iterator<BiologicalNodeAbstract> it = graphInstance
-						.getPathway().getAllNodes().iterator();
+						.getPathway().getAllGraphNodes().iterator();
 				while (it.hasNext()) {
 					BiologicalNodeAbstract bna = it.next();
 					Point2D p = getVertexLocation(bna);

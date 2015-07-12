@@ -120,7 +120,7 @@ public class DataMappingModel {
 	 * @param mergeMap - the merged map from the BioMart query and the data input
 	 */
 	public void coloringPathway() {
-		Iterator<BiologicalNodeAbstract> allNodes = pw.getAllNodes().iterator();
+		Iterator<BiologicalNodeAbstract> allNodes = pw.getAllGraphNodes().iterator();
 		while (allNodes.hasNext()) {
 			BiologicalNodeAbstract bna = allNodes.next();
 			// decolor the nodes if they were highlighted before

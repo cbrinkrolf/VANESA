@@ -17,7 +17,7 @@ public class CSVWriter {
 	public CSVWriter(OutputStream os, Pathway pw) {
 
 		List<BiologicalNodeAbstract> nodes = pw
-				.getAllNodesSortedAlphabetically();
+				.getAllGraphNodesSortedAlphabetically();
 		List<Place> places = new ArrayList<Place>();
 		try {
 
