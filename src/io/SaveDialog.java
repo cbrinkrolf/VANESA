@@ -413,6 +413,7 @@ public class SaveDialog {
 				JOptionPane.showMessageDialog(
 						MainWindowSingleton.getInstance(), yamlDescription
 									+ " File exported");
+				MainWindowSingleton.getInstance().setLoadedYaml(exportPath);
 			} catch (IOException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();
