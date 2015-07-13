@@ -214,6 +214,8 @@ public class VisualizationDialog {
 			public void actionPerformed(ActionEvent e) {
 				if(e.getSource() == exportButton){
 					SaveDialog saveDialog = new SaveDialog(SaveDialog.FORMAT_YAML);
+					loadedYaml = MainWindowSingleton.getInstance().getLoadedYaml();
+					loadedYamlLabel.setText(MainWindowSingleton.getInstance().getLoadedYaml());
 				}
 				
 			}
