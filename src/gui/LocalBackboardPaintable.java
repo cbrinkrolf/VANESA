@@ -1,9 +1,12 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RadialGradientPaint;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.util.HashSet;
 
@@ -32,7 +35,7 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 	 * @param drawsize
 	 *            - size of the shape.
 	 * @param shape
-	 *            - rect, oval(default), roundrect
+	 *            - rect, oval, roundrect, fadeoval (oval with fade to transparent)
 	 */
 	public LocalBackboardPaintable(HashSet<BiologicalNodeAbstract> bnas,
 			Color bgcolor, int drawsize, String shape) {
@@ -63,7 +66,8 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 			vv.getModel().getGraphLayout().getSize();
 			Point2D p = GraphInstance.getMyGraph().getVertexLocation(bna);
 			double px, py;
-
+		
+			
 			px = p.getX();
 			py = p.getY();
 
@@ -79,6 +83,13 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 			case "oval":
 				g.fillOval((int) (px - (drawsize / 2)),
 						(int) (py - (drawsize / 2)), drawsize, drawsize);
+				break;		
+			case "fadeoval":
+				float[] fracs = {0.0f, 1.0f};
+				Color[] colors = {bgcolor,new Color(bgcolor.getRed(),bgcolor.getGreen(),bgcolor.getBlue(),0)};
+				RadialGradientPaint gp = new RadialGradientPaint(p, drawsize/2, fracs, colors);
+				g2d.setPaint(gp);
+				g2d.fill(new Ellipse2D.Double(px-(drawsize/2),py-(drawsize/2),drawsize,drawsize));
 				break;			
 
 			default:
