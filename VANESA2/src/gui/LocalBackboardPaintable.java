@@ -8,6 +8,8 @@ import java.awt.RadialGradientPaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.util.HashSet;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -35,7 +37,8 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 	 * @param drawsize
 	 *            - size of the shape.
 	 * @param shape
-	 *            - rect, oval, roundrect, fadeoval (oval with fade to transparent)
+	 *            - rect, oval, roundrect, fadeoval (oval with fade to
+	 *            transparent)
 	 */
 	public LocalBackboardPaintable(HashSet<BiologicalNodeAbstract> bnas,
 			Color bgcolor, int drawsize, String shape) {
@@ -66,36 +69,40 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 			vv.getModel().getGraphLayout().getSize();
 			Point2D p = GraphInstance.getMyGraph().getVertexLocation(bna);
 			double px, py;
-		
-			
+
 			px = p.getX();
 			py = p.getY();
 
 			switch (shape) {
 			case "rect":
-				g.fillRect((int) (px - (drawsize / 2)),
-						(int) (py - (drawsize / 2)), drawsize, drawsize);			
+				g2d.fill(new Rectangle2D.Double(px - (drawsize / 2), py
+						- (drawsize / 2), drawsize, drawsize));
 				break;
 			case "roundrect":
-				g.fillRoundRect((int) (px - (drawsize / 2)),
-						(int) (py - (drawsize / 2)), drawsize, drawsize, 10, 10);
+				g2d.fill(new RoundRectangle2D.Double(px - (drawsize / 2), py
+						- (drawsize / 2), drawsize, drawsize, 10.0d, 10.0d));
 				break;
 			case "oval":
-				g.fillOval((int) (px - (drawsize / 2)),
-						(int) (py - (drawsize / 2)), drawsize, drawsize);
-				break;		
+				g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
+						- (drawsize / 2), drawsize, drawsize));
+				break;
 			case "fadeoval":
-				float[] fracs = {0.0f, 1.0f};
-				Color[] colors = {bgcolor,new Color(bgcolor.getRed(),bgcolor.getGreen(),bgcolor.getBlue(),0)};
-				RadialGradientPaint gp = new RadialGradientPaint(p, drawsize/2, fracs, colors);
+				float[] fracs = { 0.0f, 1.0f };
+				Color[] colors = {
+						bgcolor,
+						new Color(bgcolor.getRed(), bgcolor.getGreen(),
+								bgcolor.getBlue(), 0) };
+				RadialGradientPaint gp = new RadialGradientPaint(p,
+						drawsize / 2, fracs, colors);
 				g2d.setPaint(gp);
-				g2d.fill(new Ellipse2D.Double(px-(drawsize/2),py-(drawsize/2),drawsize,drawsize));
-				break;			
-
+				g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
+						- (drawsize / 2), drawsize, drawsize));
+				break;
 			default:
-				System.out.println("LocalBackboardPaintable: shapte not found, using OVAL.");
-				g.fillOval((int) (px - (drawsize / 2)),
-						(int) (py - (drawsize / 2)), drawsize, drawsize);
+				System.out
+						.println(this.getClass().toString()+": shape not found, using OVAL.");
+				g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
+						- (drawsize / 2), drawsize, drawsize));
 				break;
 			}
 		}
