@@ -216,6 +216,9 @@ public class VisualizationDialog {
 					SaveDialog saveDialog = new SaveDialog(SaveDialog.FORMAT_YAML);
 					loadedYaml = MainWindowSingleton.getInstance().getLoadedYaml();
 					loadedYamlLabel.setText(MainWindowSingleton.getInstance().getLoadedYaml());
+					shapeBox.setEnabled(true);
+					sizeMultiplierBox.setEnabled(true);
+					colorChooser.setEnabled(true);
 				}
 				
 			}
