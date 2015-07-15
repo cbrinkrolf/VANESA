@@ -4,10 +4,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.List;
 
 import biologicalElements.Pathway;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
+import edu.uci.ics.jung.visualization.VisualizationServer;
 /*import edu.uci.ics.jung.graph.Edge;
  import edu.uci.ics.jung.graph.Vertex;
  import edu.uci.ics.jung.visualization.Layout;
@@ -88,6 +90,10 @@ public class MyVisualizationViewer<V,E> extends
 		//g2d.drawString("x", 580, 533);
 		//System.out.println(this.getWidth());
 		// ContainerSingelton.getInstance().setPetriView(true);
+	}
+	
+	public List<VisualizationServer.Paintable> getPreRenderers(){
+		return super.preRenderers;
 	}
 
 	/*
