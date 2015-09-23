@@ -1,6 +1,7 @@
 package graph.algorithms.gui;
 
 import graph.ContainerSingelton;
+import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
@@ -17,6 +18,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -49,10 +51,13 @@ import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import cluster.clientimpl.ClusterComputeThread;
 import cluster.clientimpl.ComputeCallback;
+import cluster.slave.Cluster;
 import cluster.slave.JobTypes;
 import cluster.slave.LayoutPoint2D;
 
@@ -305,94 +310,94 @@ public class GraphColoringGUI implements ActionListener {
 			
 			//REGULAR
 			// determine right edge amount
-//			edgeindex = 0;
-//			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
-//				if (bea.isDirected()) {
-//					edgeindex++;
-//				} else {
-//					edgeindex += 2;
-//				}
-//			}
-//			System.out.println("number of real edges: " + edgeindex
-//					+ "\n size: " + mg.getAllEdges().size());
-//
-//			edgearray = new int[edgeindex * 2];
-//			edgeindex = 0;
-//			// build edgearray
-//
-//			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
-//				from = bea.getFrom();
-//				to = bea.getTo();
-//
-//				edgearray[edgeindex] = nodeassignment.get(from);
-//				edgeindex++;
-//				edgearray[edgeindex] = nodeassignment.get(to);
-//				edgeindex++;
-//
-//				// if undirected, set second edge, too
-//				if (!bea.isDirected()) {
-//					edgearray[edgeindex] = nodeassignment.get(to);
-//					edgeindex++;
-//					edgearray[edgeindex] = nodeassignment.get(from);
-//					edgeindex++;
-//				}
-//			}
+			edgeindex = 0;
+			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+				if (bea.isDirected()) {
+					edgeindex++;
+				} else {
+					edgeindex += 2;
+				}
+			}
+			System.out.println("number of real edges: " + edgeindex
+					+ "\n size: " + mg.getAllEdges().size());
+
+			edgearray = new int[edgeindex * 2];
+			edgeindex = 0;
+			// build edgearray
+
+			for (BiologicalEdgeAbstract bea : mg.getAllEdges()) {
+				from = bea.getFrom();
+				to = bea.getTo();
+
+				edgearray[edgeindex] = nodeassignment.get(from);
+				edgeindex++;
+				edgearray[edgeindex] = nodeassignment.get(to);
+				edgeindex++;
+
+				// if undirected, set second edge, too
+				if (!bea.isDirected()) {
+					edgearray[edgeindex] = nodeassignment.get(to);
+					edgeindex++;
+					edgearray[edgeindex] = nodeassignment.get(from);
+					edgeindex++;
+				}
+			}
 			
 			
 			//Property based
-			HashMap<String, HashSet<BiologicalNodeAbstract>> locales = new HashMap<String, HashSet<BiologicalNodeAbstract>>();
-			edgeindex = 0;
-			String locale; HashSet<BiologicalNodeAbstract> tmpset;
-			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
-				for(NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.ANNOTATION)){
-					if(na!= null && na.getName().equals(NodeAttributeNames.GO_CELLULAR_COMPONENT)){
-						locale = na.getStringvalue();
-						System.out.println(bna.getLabel() + "\t"+na.getStringvalue());
-						if(!locales.containsKey(na.getStringvalue())){
-							tmpset = new HashSet<BiologicalNodeAbstract>();
-							tmpset.add(bna);
-							locales.put(locale, tmpset);
-						}else{
-							locales.get(locale).add(bna);
-						}						
-					}
-				}
-			}
-			
-			//Count edges first
-			int edges = 0,size;
-			for(Entry<String, HashSet<BiologicalNodeAbstract>> e: locales.entrySet()){
-				size = e.getValue().size();
-				if(size>1){
-					edges+=(2*size*(size-1));
-				}
-			}
-			
-			System.out.println("network has "+ edges+ " EDGES ");
-			edgearray = new int[edges];
-			
-			
-			BiologicalNodeAbstract[] bnaarr;
-			for(Entry<String, HashSet<BiologicalNodeAbstract>> e: locales.entrySet()){
-				bnaarr = new BiologicalNodeAbstract[e.getValue().size()];
-				e.getValue().toArray(bnaarr);
-				
-				if(bnaarr.length>1){
-					for(int i = 0; i<bnaarr.length;i++){
-						for (int j = i+1; j < bnaarr.length; j++) {
-							edgearray[edgeindex] = nodeassignment.get(bnaarr[i]);
-							edgeindex++;
-							edgearray[edgeindex] = nodeassignment.get(bnaarr[j]);
-							edgeindex++;
-							//add both sides of the connection
-							edgearray[edgeindex] = nodeassignment.get(bnaarr[j]);
-							edgeindex++;
-							edgearray[edgeindex] = nodeassignment.get(bnaarr[i]);
-							edgeindex++;						
-						}
-					}
-				}			
-			}
+//			HashMap<String, HashSet<BiologicalNodeAbstract>> locales = new HashMap<String, HashSet<BiologicalNodeAbstract>>();
+//			edgeindex = 0;
+//			String locale; HashSet<BiologicalNodeAbstract> tmpset;
+//			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
+//				for(NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.ANNOTATION)){
+//					if(na!= null && na.getName().equals(NodeAttributeNames.GO_CELLULAR_COMPONENT)){
+//						locale = na.getStringvalue();
+//						System.out.println(bna.getLabel() + "\t"+na.getStringvalue());
+//						if(!locales.containsKey(na.getStringvalue())){
+//							tmpset = new HashSet<BiologicalNodeAbstract>();
+//							tmpset.add(bna);
+//							locales.put(locale, tmpset);
+//						}else{
+//							locales.get(locale).add(bna);
+//						}						
+//					}
+//				}
+//			}
+//			
+//			//Count edges first
+//			int edges = 0,size;
+//			for(Entry<String, HashSet<BiologicalNodeAbstract>> e: locales.entrySet()){
+//				size = e.getValue().size();
+//				if(size>1){
+//					edges+=(2*size*(size-1));
+//				}
+//			}
+//			
+//			System.out.println("network has "+ edges+ " EDGES ");
+//			edgearray = new int[edges];
+//			
+//			
+//			BiologicalNodeAbstract[] bnaarr;
+//			for(Entry<String, HashSet<BiologicalNodeAbstract>> e: locales.entrySet()){
+//				bnaarr = new BiologicalNodeAbstract[e.getValue().size()];
+//				e.getValue().toArray(bnaarr);
+//				
+//				if(bnaarr.length>1){
+//					for(int i = 0; i<bnaarr.length;i++){
+//						for (int j = i+1; j < bnaarr.length; j++) {
+//							edgearray[edgeindex] = nodeassignment.get(bnaarr[i]);
+//							edgeindex++;
+//							edgearray[edgeindex] = nodeassignment.get(bnaarr[j]);
+//							edgeindex++;
+//							//add both sides of the connection
+//							edgearray[edgeindex] = nodeassignment.get(bnaarr[j]);
+//							edgeindex++;
+//							edgearray[edgeindex] = nodeassignment.get(bnaarr[i]);
+//							edgeindex++;						
+//						}
+//					}
+//				}			
+//			}
 			
 			
 			
@@ -622,10 +627,10 @@ public class GraphColoringGUI implements ActionListener {
 		case DCB_GRID:
 			//Set parameters
 			parameters = new HashMap<>();
-			parameters.put("alpha",""+0.9);
+			parameters.put("alpha",""+0.7);
 			parameters.put("delta",""+5);
-			parameters.put("omega",""+0.15);
-			parameters.put("topclusters",""+50);
+			parameters.put("omega",""+0.25);
+			parameters.put("topclusters",""+100);
 			HashMap<Integer, ArrayList<Double>> experimentdata = new HashMap<>();
 			
 			
@@ -1104,7 +1109,6 @@ public class GraphColoringGUI implements ActionListener {
 					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
 							NodeAttributeNames.CYCLES, coloring.get(bna));
 				}
-
 			}
 
 			break;
@@ -1285,6 +1289,100 @@ public class GraphColoringGUI implements ActionListener {
 	            return i1.compareTo(i2);
 	        }
 	    }       
+	}
+
+	public void createNewPathway(ArrayList<Cluster> clusters) {
+		//DEBUG
+//		for(Cluster c : clusters)
+//			System.out.println(c.toString());
+		
+		//create new window
+		
+		Pathway oldpw = GraphInstance.getPathwayStatic();
+		Pathway pw = new CreatePathway("IR PATHWAYS!").getPathway();
+		MyGraph myGraph = pw.getGraph();
+
+		myGraph.lockVertices();
+		myGraph.stopVisualizationModel();
+		
+		// DO ADDING
+		BiologicalNodeAbstract a, b;
+		ReactionEdge re;
+		
+		//save new label -> BNA connection
+		HashMap<BiologicalNodeAbstract, HashSet<String>> clustermap = new HashMap<>();
+		HashSet<HashSet<BiologicalNodeAbstract>> bnaclusters = new HashSet<>();
+		HashSet<String> neighborlabels;
+		
+		// Nodes first
+		for(Cluster c : clusters){
+			HashSet<BiologicalNodeAbstract> bnacluster = new HashSet<>();
+			for(int i = 0 ; i< c.size ; i++){
+				b = np.getNodeAssignmentbackwards(c.ids[i]);
+				a = new Protein(b.getLabel(),"");
+				a.setColor(b.getColor());
+				a.setNodeAttributes(b.getNodeAttributes());				
+				
+				pw.addVertex(a, new Point2D.Float(c.coords[i*2], c.coords[i*2+1]));
+				bnacluster.add(a);
+				
+				neighborlabels = new HashSet<String>();
+				for(BiologicalNodeAbstract bn : oldpw.getGraph().getJungGraph().getNeighbors(b)){
+					neighborlabels.add(bn.getLabel());
+				}
+				
+				clustermap.put(a, neighborlabels);
+				
+			}
+			bnaclusters.add(bnacluster);
+		}
+		
+		//the edges
+		for(HashSet<BiologicalNodeAbstract> bnac : bnaclusters){
+			BiologicalNodeAbstract[] bnar = new BiologicalNodeAbstract[bnac.size()];
+			bnac.toArray(bnar);
+
+			for (int i = 0; i < bnar.length; i++) {
+				for (int j = i + 1; j < bnar.length; j++) {
+					if (clustermap.get(bnar[i]).contains(bnar[j].getLabel())) {
+						re = new ReactionEdge("", "", bnar[i], bnar[j]);
+						re.setDirected(false);
+						re.setReference(false);
+						re.setHidden(false);
+						re.setVisible(true);
+						pw.addEdge(re);
+					}
+				}
+			}		
+		}
+		
+		
+		//Highlight same Proteins with edges			
+		BiologicalNodeAbstract[] bnar = new BiologicalNodeAbstract[GraphInstance.getMyGraph().getAllVertices().size()];
+		GraphInstance.getMyGraph().getAllVertices().toArray(bnar);
+		for (int i = 0; i < bnar.length; i++) {
+			for (int j = i+1; j < bnar.length; j++) {
+				if(bnar[i].getLabel().equals(bnar[j].getLabel())){
+					re = new ReactionEdge("", "", bnar[i], bnar[j]);
+					re.setDirected(false);
+					re.setReference(false);
+					re.setHidden(false);
+					re.setVisible(true);			
+					//MARTIN DCB result: make color pickable
+					re.setColor(new Color(255,0,255,0));
+					
+					pw.addEdge(re);
+				}
+			}
+		}
+		
+		
+		
+		
+
+		myGraph.unlockVertices();
+		myGraph.restartVisualizationModel();
+		
 	}
 
 

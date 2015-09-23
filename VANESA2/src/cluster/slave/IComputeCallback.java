@@ -2,6 +2,7 @@ package cluster.slave;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -46,4 +47,13 @@ public interface IComputeCallback extends Remote, INotifyable {
 	 * @throws RemoteException
 	 */
 	public void setResultCoordinates(HashMap<Integer,LayoutPoint2D> coords) throws RemoteException;
+	
+	/**
+	 * Set a group of clusters with coordinates and integer ids.
+	 * @param clusters
+	 * @throws RemoteException
+	 */
+	public void setResultClusters(ArrayList<Cluster> clusters) throws RemoteException;
+
+	
 }

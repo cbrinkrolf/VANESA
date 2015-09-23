@@ -39,6 +39,7 @@ public class RangeInfo {
 
     public RangeInfo(Map<String, String> properties, RangeSelector outer) {
         super();
+        
         this.text = properties.get("title");
         this.titlePos = Integer.parseInt(properties.get("titlePos"));
         this.fillColor = new Color(Integer.parseInt(properties.get("fillColor")));

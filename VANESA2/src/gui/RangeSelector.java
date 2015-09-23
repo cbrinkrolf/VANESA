@@ -171,6 +171,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 	public void addRangesInMyGraph(MyGraph graph, Map<String, String> attributes) {
 		try {
+	        
 			RangeInfo r = new RangeInfo(attributes, this);
 			this.getShapes(graph).add(r);
 			// System.out.println(r.shape.getWidth());
