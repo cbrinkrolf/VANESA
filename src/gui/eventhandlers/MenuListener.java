@@ -37,6 +37,7 @@ import gui.AboutWindow;
 import gui.InfoWindow;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
+import gui.visualization.PreRenderManager;
 import io.EdalSaveDialog;
 import io.OpenDialog;
 import io.PNDoc;
@@ -1030,6 +1031,13 @@ public class MenuListener implements ActionListener {
 		} else if ("dataMappingDB".equals(event)) {
 			
 			new ClusterDataUploadWindow();
+			
+		} else if("rendererSettings".equals(event)){
+			try{
+				PreRenderManager.getInstance();
+			}catch(NullPointerException npe){
+				JOptionPane.showMessageDialog(null,"please load a network first.");
+			}
 			
 		} else if ("resolveReferences".equals(event)) {
 

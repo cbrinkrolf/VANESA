@@ -1380,6 +1380,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		return this.nodeAttributes;
 	}
 	
+	public void setNodeAttributes(HashSet<NodeAttribute> attributes){
+		this.nodeAttributes = attributes;
+	}
+	
 	public void resetNodeAttributes(){
 		this.nodeAttributes = new HashSet<BiologicalNodeAbstract.NodeAttribute>();
 	}

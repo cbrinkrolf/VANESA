@@ -8,6 +8,7 @@ import gui.visualization.VisualizationConfigBeans;
 import gui.visualization.YamlToObjectParser;
 import io.SaveDialog;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,12 +19,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +44,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.commons.io.FilenameUtils;
 import org.yaml.snakeyaml.Yaml;
 
+import com.mchange.io.FileUtils;
+import com.sun.javafx.Utils;
+
+import sun.tools.jar.resources.jar;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 

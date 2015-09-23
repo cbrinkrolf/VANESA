@@ -7,10 +7,12 @@ import gui.MainWindowSingleton;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 
+import cluster.slave.Cluster;
 import cluster.slave.IComputeCallback;
 import cluster.slave.LayoutPoint2D;
 
@@ -64,5 +66,12 @@ public class ComputeCallback extends UnicastRemoteObject implements Serializable
 		gui.realignNetwork(coords);
 		gui.reactiveateUI();
 		
+	}
+
+	@Override
+	public void setResultClusters(ArrayList<Cluster> clusters)
+			throws RemoteException {
+		gui.createNewPathway(clusters);
+		gui.reactiveateUI();
 	}
 }
