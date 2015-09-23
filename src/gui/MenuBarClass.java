@@ -77,6 +77,7 @@ public class MenuBarClass {
 	private JMenuItem convertPetriNet;
 	
 	private JMenuItem resolveReferences;
+	private JMenuItem rendererSettings;
 
 	public MenuBarClass(Application application) {
 		int MENUSHORTCUT = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -293,6 +294,10 @@ public class MenuBarClass {
 		graphAlignment = new JMenuItem("Graph Alignment");
 		graphAlignment.addActionListener(new MenuListener());
 		graphAlignment.setActionCommand("graphAlignemnt");
+		
+		rendererSettings = new JMenuItem("Renderer Settings");
+		rendererSettings.addActionListener(new MenuListener());
+		rendererSettings.setActionCommand("rendererSettings");
 
 		mathLaw = new JMenuItem("Generate Random Graph");
 		mathLaw.addActionListener(new MenuListener());
@@ -377,6 +382,7 @@ public class MenuBarClass {
 		settings.add(graphAlignment);
 		settings.add(graphSettings);
 		settings.add(visualizationSettings);
+		settings.add(rendererSettings);
 
 		// snapshot.add(savePicture);
 		// snapshot.add(printPicture);

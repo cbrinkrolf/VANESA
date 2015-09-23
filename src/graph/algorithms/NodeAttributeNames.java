@@ -19,7 +19,7 @@ public class NodeAttributeNames {
 	/*
 	 * Biological experiments
 	 */
-	public static final String CHOLESTEATOMA = "chol. logFC";
+	public static final String CHOLESTEATOMA = "chol logFC";
 	
 	/*
 	 * Foreign Database Ids

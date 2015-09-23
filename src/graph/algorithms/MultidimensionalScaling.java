@@ -134,11 +134,23 @@ public class MultidimensionalScaling {
 				}
 			}
 			
+			//filter by occurrence
+			HashMap<String,Integer> occurfilter = new HashMap<>();
+			
+			for(Entry<String, Integer> e : occur.entrySet()){
+				if(e.getValue()>100)
+					occurfilter.put(e.getKey(), e.getValue());
+			}
+			
+			
+			
+			
+			
 //			System.out.println(entriesSortedByValues(occur));
 
 			//display sorted values
 			
-			new NodeAttributeBarChart("Statistics",nodeAttributeName,"X","Y",occur);
+			new NodeAttributeBarChart("Statistics",nodeAttributeName,"X","Y",occurfilter);
 			
 			
 			ArrayList<BiologicalNodeAbstract> nodes = new ArrayList<>();
@@ -152,8 +164,8 @@ public class MultidimensionalScaling {
 							if(na.getName().equals(nodeAttributeName)){
 								if(nb.getName().equals(nodeAttributeName)){
 									if(na.getStringvalue().equals(nb.getStringvalue())){
-									dissim[i][j]+= (Math.random()/10.0d)+1; 
-									dissim[j][i] = dissim[i][j]; 
+										dissim[i][j]+= (Math.random()/10.0d)+2; 
+										dissim[j][i] = dissim[i][j]; 
 									}
 								}	
 							}	
@@ -162,7 +174,7 @@ public class MultidimensionalScaling {
 				}
 			}
 
-			output = MDSJ.stressMinimization(dissim, dimensions);
+//			output = MDSJ.stressMinimization(dissim, dimensions);
 					
 
 		}

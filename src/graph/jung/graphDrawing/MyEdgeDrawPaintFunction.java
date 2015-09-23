@@ -48,7 +48,7 @@ public class MyEdgeDrawPaintFunction implements
 	}
 
 	public Paint getDrawPaintWithoutGraphTheory(BiologicalEdgeAbstract bea) {
-
+/*
 		if (psV.getPicked().isEmpty()) {
 			if (psE.getPicked().isEmpty()) {
 
@@ -92,6 +92,9 @@ public class MyEdgeDrawPaintFunction implements
 				return dotted;
 			}
 		}
+		*/
+		
+		return null;
 	}
 
 	public void setGraphTheory(boolean graphTheory) {

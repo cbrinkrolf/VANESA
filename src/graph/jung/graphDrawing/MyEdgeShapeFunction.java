@@ -1,5 +1,6 @@
 package graph.jung.graphDrawing;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
 
 import org.apache.commons.collections15.Transformer;
@@ -32,7 +33,8 @@ public class MyEdgeShapeFunction implements Transformer<Context<Graph<Biological
 			return (new EdgeShape.Line<BiologicalNodeAbstract, BiologicalEdgeAbstract>()).transform(context);
 		}
 		else{
-			return (new EdgeShape.QuadCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>()).transform(context);
+//			return new Rectangle();
+			return (new EdgeShape.Line<BiologicalNodeAbstract, BiologicalEdgeAbstract>()).transform(context);
 		}
 	}
 

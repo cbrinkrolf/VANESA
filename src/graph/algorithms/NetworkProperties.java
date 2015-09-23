@@ -41,7 +41,7 @@ public class NetworkProperties extends Object {
 	GraphContainer con = ContainerSingelton.getInstance();
 	GraphInstance graphInstance = new GraphInstance();
 	Pathway pw;
-	MyGraph mg;
+	public MyGraph mg;
 
 	BiologicalNodeAbstract from, to;
 

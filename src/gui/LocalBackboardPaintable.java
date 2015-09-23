@@ -14,7 +14,6 @@ import java.util.HashSet;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
@@ -25,6 +24,8 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 	private Color bgcolor;
 	private int drawsize;
 	private String shape;
+	private boolean active = true;
+	private String name;
 
 	/**
 	 * Background painter for BiologicalNodeAbstract(s).
@@ -41,77 +42,126 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 	 *            transparent)
 	 */
 	public LocalBackboardPaintable(HashSet<BiologicalNodeAbstract> bnas,
-			Color bgcolor, int drawsize, String shape) {
+			Color bgcolor, int drawsize, String shape, String name) {
 		this.bnas = bnas;
 		this.bgcolor = bgcolor;
 		this.drawsize = drawsize;
 		this.shape = shape;
+		this.name = name;
 	}
 
 	@Override
 	public void paint(Graphics g) {
-		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance
-				.getMyGraph().getVisualizationViewer();
-		Graphics2D g2d = (Graphics2D) g;
-		AffineTransform oldXform = g2d.getTransform();
-		AffineTransform lat = vv.getRenderContext().getMultiLayerTransformer()
-				.getTransformer(Layer.LAYOUT).getTransform();
-		AffineTransform vat = vv.getRenderContext().getMultiLayerTransformer()
-				.getTransformer(Layer.VIEW).getTransform();
-		AffineTransform at = new AffineTransform();
-		at.concatenate(g2d.getTransform());
-		at.concatenate(vat);
-		at.concatenate(lat);
-		g2d.setTransform(at);
+		if (active) {
 
-		g.setColor(bgcolor);
-		for (BiologicalNodeAbstract bna : bnas) {
-			vv.getModel().getGraphLayout().getSize();
-			Point2D p = GraphInstance.getMyGraph().getVertexLocation(bna);
-			double px, py;
+			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance
+					.getMyGraph().getVisualizationViewer();
+						
+			Graphics2D g2d = (Graphics2D) g;
+			AffineTransform oldXform = g2d.getTransform();
+			AffineTransform lat = vv.getRenderContext()
+					.getMultiLayerTransformer().getTransformer(Layer.LAYOUT)
+					.getTransform();
+			AffineTransform vat = vv.getRenderContext()
+					.getMultiLayerTransformer().getTransformer(Layer.VIEW)
+					.getTransform();
+			AffineTransform at = new AffineTransform();
+			at.concatenate(g2d.getTransform());
+			at.concatenate(vat);
+			at.concatenate(lat);
+			g2d.setTransform(at);
 
-			px = p.getX();
-			py = p.getY();
+			g2d.setColor(bgcolor);
+			for (BiologicalNodeAbstract bna : bnas) {
+				vv.getModel().getGraphLayout().getSize();
+				Point2D p = GraphInstance.getMyGraph().getVertexLocation(bna);
+				double px, py;
 
-			switch (shape) {
-			case "rect":
-				g2d.fill(new Rectangle2D.Double(px - (drawsize / 2), py
-						- (drawsize / 2), drawsize, drawsize));
-				break;
-			case "roundrect":
-				g2d.fill(new RoundRectangle2D.Double(px - (drawsize / 2), py
-						- (drawsize / 2), drawsize, drawsize, 10.0d, 10.0d));
-				break;
-			case "oval":
-				g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
-						- (drawsize / 2), drawsize, drawsize));
-				break;
-			case "fadeoval":
-				float[] fracs = { 0.0f, 1.0f };
-				Color[] colors = {
-						bgcolor,
-						new Color(bgcolor.getRed(), bgcolor.getGreen(),
-								bgcolor.getBlue(), 0) };
-				RadialGradientPaint gp = new RadialGradientPaint(p,
-						drawsize / 2, fracs, colors);
-				g2d.setPaint(gp);
-				g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
-						- (drawsize / 2), drawsize, drawsize));
-				break;
-			default:
-				System.out
-						.println(this.getClass().toString()+": shape not found, using OVAL.");
-				g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
-						- (drawsize / 2), drawsize, drawsize));
-				break;
+				px = p.getX();
+				py = p.getY();
+
+				switch (shape) {
+				case "rect":
+					g2d.fill(new Rectangle2D.Double(px - (drawsize / 2), py
+							- (drawsize / 2), drawsize, drawsize));
+					break;
+				case "roundrect":
+					g2d.fill(new RoundRectangle2D.Double(px - (drawsize / 2),
+							py - (drawsize / 2), drawsize, drawsize, 10.0d,
+							10.0d));
+					break;
+				case "oval":
+					g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
+							- (drawsize / 2), drawsize, drawsize));
+					break;
+				case "fadeoval":
+					float[] fracs = { 0.0f, 1.0f };
+					Color[] colors = {
+							bgcolor,
+							new Color(bgcolor.getRed(), bgcolor.getGreen(),
+									bgcolor.getBlue(), 0) };
+					RadialGradientPaint gp = new RadialGradientPaint(p,
+							drawsize / 2, fracs, colors);
+					g2d.setPaint(gp);
+					g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
+							- (drawsize / 2), drawsize, drawsize));
+					break;
+				default:
+					System.out.println(this.getClass().toString()
+							+ ": shape not found, using OVAL.");
+					g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
+							- (drawsize / 2), drawsize, drawsize));
+					break;
+				}
 			}
-		}
 
-		g2d.setTransform(oldXform);
+			g2d.setTransform(oldXform);
+		}
+	}
+
+	public Color getBgcolor() {
+		return bgcolor;
+	}
+
+	public void setBgcolor(Color bgcolor) {
+		this.bgcolor = bgcolor;
+	}
+
+	public int getDrawsize() {
+		return drawsize;
+	}
+
+	public void setDrawsize(int drawsize) {
+		this.drawsize = drawsize;
+	}
+
+	public String getShape() {
+		return shape;
+	}
+
+	public void setShape(String shape) {
+		this.shape = shape;
+	}
+	
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public boolean useTransform() {
 		return false;
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
+	public void setName(String name){
+		this.name = name;
 	}
 
 }

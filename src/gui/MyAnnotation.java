@@ -9,6 +9,7 @@ public class MyAnnotation{
 	private RectangularShape shape;
 	private Annotation<?> a;
 	private String text;
+	private String name = "";
 	
 	public MyAnnotation(Annotation<?> annotation, RectangularShape shape, String text){
 		this.a = annotation;
@@ -28,5 +29,15 @@ public class MyAnnotation{
 	public String getText(){
 		return this.text;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
 
 }

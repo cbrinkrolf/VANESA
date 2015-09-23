@@ -2,6 +2,8 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
@@ -11,7 +13,8 @@ import edu.uci.ics.jung.visualization.annotations.AnnotationPaintable;
 public class MyAnnotationManager extends AnnotationManager {
 
 	//private List<MyAnnotation> annotations;
-	private ArrayList<MyAnnotation> annotations; 
+	private List<MyAnnotation> annotations; 
+	private HashMap<Annotation<?>, MyAnnotation> annotationMap;
 	
 	
 	
@@ -19,6 +22,7 @@ public class MyAnnotationManager extends AnnotationManager {
 		super(rc);
 		//this.annotations = new ArrayList<MyAnnotation>();
 		annotations = new ArrayList<MyAnnotation>();
+		annotationMap = new HashMap<Annotation<?>, MyAnnotation>();
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -39,9 +43,17 @@ public class MyAnnotationManager extends AnnotationManager {
 		super.add(layer, annotation.getAnnotation());
 		
 		annotations.add(annotation);
+		annotationMap.put(annotation.getAnnotation(), annotation);
 		//System.out.println("shape: "+annotation.getShape());
 		//System.out.println("anzahl: " + this.annotations.size());
 		
+	}
+	
+	@Override
+	public void remove(Annotation<?> annotation){
+		super.remove(annotation);
+		annotations.remove(annotationMap.get(annotation));
+		annotationMap.remove(annotation);
 	}
 
 	public void remove(MyAnnotation annotation) {
@@ -49,6 +61,7 @@ public class MyAnnotationManager extends AnnotationManager {
 		
 		super.remove(annotation.getAnnotation());
 		annotations.remove(annotation);
+		annotationMap.remove(annotation.getAnnotation());
 		//System.out.println("anzahl: " + this.mapping.size());
 	}
 	
@@ -60,8 +73,21 @@ public class MyAnnotationManager extends AnnotationManager {
 		return this.upperAnnotationPaintable;
 	}
 	
-	public Collection<MyAnnotation> getAnnotations(){
+	public List<MyAnnotation> getAnnotations(){
 		return this.annotations;
+	}
+	
+	public void setEnable(MyAnnotation annotation, boolean enable){
+		if(enable){
+			super.add(Annotation.Layer.LOWER, annotation.getAnnotation());
+		}else{
+			super.remove(annotation.getAnnotation());
+		}
+	}
+	
+	public boolean isEnabled(MyAnnotation ma){
+				
+		return super.getLowerAnnotationPaintable().getAnnotations().contains(ma.getAnnotation());
 	}
 
 }
