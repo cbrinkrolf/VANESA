@@ -7,7 +7,7 @@ import javax.swing.JTabbedPane;
 import database.brenda.gui.BRENDAqueryMask;
 import database.kegg.gui.KEGGqueryMask;
 import database.mirna.gui.MirnaQueryClass;
-import database.ppi.PPIqueryMask;
+import database.ppi.gui.PPIqueryMask;
 import database.unid.UNIDQueryMask;
 
 public class DatabaseWindow {

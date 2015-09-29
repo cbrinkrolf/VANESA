@@ -1,7 +1,7 @@
 /**
  * 
  */
-package database.ppi;
+package database.ppi.gui;
 
 import gui.MainWindowSingleton;
 
