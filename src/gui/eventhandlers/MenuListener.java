@@ -521,8 +521,9 @@ public class MenuListener implements ActionListener {
 			new Settings(2);
 
 		} else if ("interaction".equals(event)) {
-
-			new InfoWindow(false);
+			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				new InfoWindow(false);
+			}
 
 		} else if ("about".equals(event)) {
 
