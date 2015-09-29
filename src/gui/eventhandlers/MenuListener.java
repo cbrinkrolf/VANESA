@@ -1050,22 +1050,24 @@ public class MenuListener implements ActionListener {
 
 		} else if ("resolveReferences".equals(event)) {
 
-			// System.out.println("resolve");
-			Pathway old = con.getPathway(w.getCurrentPathway());
-			//
-			// Pathway new =
+			if (con.containsPathway()) {
+				// System.out.println("resolve");
+				Pathway old = con.getPathway(w.getCurrentPathway());
+				//
+				// Pathway new =
 
-			// ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			// Serialize it
+				// ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				// Serialize it
 
-			Pathway pw = new CreatePathway(old).getPathway();
-			// pw = old.clone()
+				Pathway pw = new CreatePathway(old).getPathway();
+				// pw = old.clone()
 
-			Transformation t = new Transformation();
-			t.resolveReferences(pw);
-			// MainWindow.
-			// Tansformation.resolveReferences(pw);
-			// pw = old;
+				Transformation t = new Transformation();
+				t.resolveReferences(pw);
+				// MainWindow.
+				// Tansformation.resolveReferences(pw);
+				// pw = old;
+			}
 
 		} else if ("createDoc".equals(event)) {
 			new PNDoc();
