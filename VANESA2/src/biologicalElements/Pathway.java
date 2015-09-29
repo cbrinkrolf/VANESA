@@ -1512,7 +1512,6 @@ public class Pathway implements Cloneable {
 	}
 
 	public void stretchGraph(double factor) {
-
 		BiologicalNodeAbstract bna;
 		Point2D p;
 		Iterator<BiologicalNodeAbstract> it = getAllGraphNodes().iterator();
@@ -1520,15 +1519,31 @@ public class Pathway implements Cloneable {
 			bna = it.next();
 
 			p = getGraph().getVertexLocation(bna);
-
-			graph.getVisualizationViewer()
+			//p = graph.getVisualizationViewer().getModel().getGraphLayout().transform(bna);
+			
+			//System.out.println(p);
+			p.setLocation(p.getX()*factor, p.getY()*factor);
+			
+			/*graph.getVisualizationViewer()
 					.getModel()
 					.getGraphLayout()
 					.setLocation(
 							bna,
 							new Point2D.Double(p.getX() * factor, p.getY()
-									* factor));
+									* factor));*/
+			
+			
+			//System.out.println(graph.getVisualizationViewer().getModel().getGraphLayout().transform(bna));
+			p = this.vertices.get(bna);
+			
+			//System.out.println(p);
+			p.setLocation(p.getX()*factor, p.getY()*factor);
+			//System.out.println(vertices.get(bna));
+			//vertices.put(bna, p);
+			//System.out.println("---");
+			
 		}
+		graph.getVisualizationViewer().repaint();
 	}
 
 	public SimulationResultController getSimResController() {
