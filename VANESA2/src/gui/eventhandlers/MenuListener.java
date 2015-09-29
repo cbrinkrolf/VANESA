@@ -202,33 +202,35 @@ public class MenuListener implements ActionListener {
 			// "sbml"));
 
 			int result = dialog.showOpenDialog();
-			//System.out.println(result + " " + EdalFileChooser.APPROVE_OPTION);
+			// System.out.println(result + " " +
+			// EdalFileChooser.APPROVE_OPTION);
 			if (result == EdalFileChooser.APPROVE_OPTION) {
 				ClientPrimaryDataFile df = null;
 				ClientPrimaryDataEntity de = dialog.getSelectedFile();
 				if (de instanceof ClientPrimaryDataFile) {
 					df = (ClientPrimaryDataFile) de;
-					//File f = new File(df.getName());
-					//File f;
+					// File f = new File(df.getName());
+					// File f;
 					try {
 						ByteArrayOutputStream os = new ByteArrayOutputStream();
-						
+
 						df.read(os);
 						byte[] b = os.toByteArray();
 						InputStream is = new ByteArrayInputStream(b);
 						JSBMLinput jsbmlInput = new JSBMLinput();
-						//jsbmlInput = pathway==null ? new JSBMLinput() : new JSBMLinput(pathway);
+						// jsbmlInput = pathway==null ? new JSBMLinput() : new
+						// JSBMLinput(pathway);
 						String res = jsbmlInput.loadSBMLFile(is, df.getName());
-						if(res.length() > 0){
-							JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
-									res);
+						if (res.length() > 0) {
+							JOptionPane.showMessageDialog(
+									MainWindowSingleton.getInstance(), res);
 						}
-						//os.
+						// os.
 					} catch (RemoteException | PrimaryDataFileException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					
+
 				} else {
 					System.out.println("please choose a file, not a dir");
 				}
@@ -530,7 +532,7 @@ public class MenuListener implements ActionListener {
 
 			new Settings(3);
 
-		} else if ("visualizationSettings".equals(event)){
+		} else if ("visualizationSettings".equals(event)) {
 			new Settings(4);
 		}/*
 		 * else if ("animation".equals(event)) { if (con.containsPathway()) { }
@@ -540,7 +542,8 @@ public class MenuListener implements ActionListener {
 			// System.out.println("testP");
 			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
-			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes()
+					.iterator();
 			BiologicalNodeAbstract bna;
 
 			places = 0;
@@ -558,7 +561,8 @@ public class MenuListener implements ActionListener {
 
 			int i = 0;
 
-			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes()
+					.iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Place) {
@@ -601,7 +605,8 @@ public class MenuListener implements ActionListener {
 
 			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
-			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes()
+					.iterator();
 			BiologicalNodeAbstract bna;
 
 			transitions = 0;
@@ -620,7 +625,8 @@ public class MenuListener implements ActionListener {
 
 			int i = 0;
 
-			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes()
+					.iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Transition) {
@@ -737,7 +743,8 @@ public class MenuListener implements ActionListener {
 		} else if ("openCov".equals(event)) {
 			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
-			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes()
+					.iterator();
 			BiologicalNodeAbstract bna;
 
 			places = 0;
@@ -760,7 +767,8 @@ public class MenuListener implements ActionListener {
 			rI[0][0] = "Places";
 			rI[0][1] = "P-Invariants";
 
-			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes().iterator();
+			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes()
+					.iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Place) {
@@ -893,8 +901,8 @@ public class MenuListener implements ActionListener {
 					// System.out.println(name2id);
 					Pathway pw = graphInstance.getContainer()
 							.getPathway(pwName);
-					Iterator<BiologicalNodeAbstract> iter = pw.getAllGraphNodes()
-							.iterator();
+					Iterator<BiologicalNodeAbstract> iter = pw
+							.getAllGraphNodes().iterator();
 					CovNode n = null;
 					Object o;
 
@@ -915,8 +923,8 @@ public class MenuListener implements ActionListener {
 						}
 					}
 
-					Iterator<BiologicalNodeAbstract> iter2 = pw.getAllGraphNodes()
-							.iterator();
+					Iterator<BiologicalNodeAbstract> iter2 = pw
+							.getAllGraphNodes().iterator();
 					while (iter2.hasNext() && !reachable) {
 						o = iter2.next();
 						if (o instanceof CovNode) {
@@ -1029,16 +1037,17 @@ public class MenuListener implements ActionListener {
 		} else if ("dataMappingColor".equals(event)) {
 			DataMappingColorMVC.createDataMapping();
 		} else if ("dataMappingDB".equals(event)) {
-			
+
 			new ClusterDataUploadWindow();
-			
-		} else if("rendererSettings".equals(event)){
-			try{
+
+		} else if ("rendererSettings".equals(event)) {
+			try {
 				PreRenderManager.getInstance();
-			}catch(NullPointerException npe){
-				JOptionPane.showMessageDialog(null,"please load a network first.");
+			} catch (NullPointerException npe) {
+				JOptionPane.showMessageDialog(null,
+						"please load a network first.");
 			}
-			
+
 		} else if ("resolveReferences".equals(event)) {
 
 			// System.out.println("resolve");
@@ -1254,73 +1263,73 @@ public class MenuListener implements ActionListener {
 		} else if ("shake".equals(event)) {
 			// System.out.println("shake it");
 
-			Runnable animator = new Runnable() {
+			if (con.containsPathway()) {
+				Runnable animator = new Runnable() {
 
-				@Override
-				public void run() {
-					BiologicalNodeAbstract bna;
-					Point2D p;
-					Point2D inv;
-					GraphInstance graphInstance = new GraphInstance();
-					for (int i = 0; i < 10; i++) { //
-						// vv.getLayoutTransformer().translate(dx, dy);
-						double offset = 5;
-						if (i % 2 == 0) {
-							offset *= -1;
-						}
-						VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance
-								.getPathway().getGraph()
-								.getVisualizationViewer();
-						double scaleV = vv.getRenderContext()
-								.getMultiLayerTransformer()
-								.getTransformer(Layer.VIEW).getScale();
-						double scaleL = vv.getRenderContext()
-								.getMultiLayerTransformer()
-								.getTransformer(Layer.LAYOUT).getScale();
-						double scale;
-						if (scaleV < 1) {
-							scale = scaleV;
-						} else {
-							scale = scaleL;
-						}
-						offset /= scale;
+					@Override
+					public void run() {
+						BiologicalNodeAbstract bna;
+						Point2D p;
+						Point2D inv;
+						GraphInstance graphInstance = new GraphInstance();
+						for (int i = 0; i < 10; i++) { //
+							// vv.getLayoutTransformer().translate(dx, dy);
+							double offset = 5;
+							if (i % 2 == 0) {
+								offset *= -1;
+							}
+							VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance
+									.getPathway().getGraph()
+									.getVisualizationViewer();
+							double scaleV = vv.getRenderContext()
+									.getMultiLayerTransformer()
+									.getTransformer(Layer.VIEW).getScale();
+							double scaleL = vv.getRenderContext()
+									.getMultiLayerTransformer()
+									.getTransformer(Layer.LAYOUT).getScale();
+							double scale;
+							if (scaleV < 1) {
+								scale = scaleV;
+							} else {
+								scale = scaleL;
+							}
+							offset /= scale;
 
-						Iterator<BiologicalNodeAbstract> it = graphInstance
-								.getPathway().getAllGraphNodes().iterator();
-						while (it.hasNext()) {
-							bna = it.next();
+							Iterator<BiologicalNodeAbstract> it = graphInstance
+									.getPathway().getAllGraphNodes().iterator();
+							while (it.hasNext()) {
+								bna = it.next();
 
-							if (bna instanceof Enzyme) {
-								p = graphInstance.getPathway().getGraph()
-										.getVertexLocation(bna);
-								// inv =
-								// graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(p);
-								// inv.setLocation(inv.getX() + offset,
-								// inv.getY());
+								if (bna instanceof Enzyme) {
+									p = graphInstance.getPathway().getGraph()
+											.getVertexLocation(bna);
+									// inv =
+									// graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(p);
+									// inv.setLocation(inv.getX() + offset,
+									// inv.getY());
 
-								// p =
-								// graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().transform(inv);
-								vv.getModel()
-										.getGraphLayout()
-										.setLocation(
-												bna,
-												new Point2D.Double(p.getX()
-														+ offset, p.getY()));
+									// p =
+									// graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().transform(inv);
+									vv.getModel()
+											.getGraphLayout()
+											.setLocation(
+													bna,
+													new Point2D.Double(p.getX()
+															+ offset, p.getY()));
+								}
+							}
+
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException ex) {
 							}
 						}
-
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException ex) {
-						}
 					}
-				}
-			};
-			Thread thread = new Thread(animator);
-			thread.start();
-
+				};
+				Thread thread = new Thread(animator);
+				thread.start();
+			}
 		}
-
 	}
 
 	private double[][] initArray(int m, int n) {
