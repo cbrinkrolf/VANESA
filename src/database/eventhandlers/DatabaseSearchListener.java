@@ -5,7 +5,6 @@ import graph.GraphContainer;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
-import gui.ProgressBar;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +21,7 @@ import database.kegg.gui.KEGGInfoWindow;
 import database.mirna.mirnaSearch;
 import database.mirna.gui.MIRNAInfoWindow;
 import database.ppi.PPISearch;
+import database.ppi.gui.PPIInfoWindow;
 import database.unid.UNIDInfoWindow;
 import database.unid.UNIDSearch;
 
@@ -80,11 +80,12 @@ public class DatabaseSearchListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String event = e.getActionCommand();
-
 		if ("reset".equals(event)) {
 			dw.reset();
 		} else if ("KEGGinfo".equals(event)) {
 			new KEGGInfoWindow();
+		} else if ("PPIinfo".equals(event)) {
+			new PPIInfoWindow();
 		} else if ("BRENDAinfo".equals(event)) {
 			new BrendaInfoWindow();
 		} else if ("miRNAinfo".equals(event)) {
