@@ -337,6 +337,7 @@ public class ToolBarListener implements ActionListener {
 					graphInstance.getPathway().setPetriNet(node.isPetriNet());
 					w.getBar().paintToolbar(node.isPetriNet());
 					w.updateAllGuiElements();
+					graphInstance.getPathway().getGraph().normalCentering();
 				}
 			} else {
 				System.out.println("No Graph exists!");
@@ -359,7 +360,7 @@ public class ToolBarListener implements ActionListener {
 			}
 		} else if ("mergeSelectedNodes".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				// System.out.println("merge");
+				//System.out.println("merge");
 				graphInstance.getPathway().mergeNodes(
 						graphInstance.getPathway().getGraph()
 								.getVisualizationViewer()
