@@ -14,6 +14,7 @@ import javax.swing.SwingWorker;
 
 import pojos.DBColumn;
 import configurations.Wrapper;
+import database.ppi.gui.PPISearchResultWindow;
 
 public class PPISearch extends SwingWorker<Object, Object>{
 

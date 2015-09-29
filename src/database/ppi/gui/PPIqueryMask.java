@@ -1,4 +1,4 @@
-package database.ppi;
+package database.ppi.gui;
 
 import gui.eventhandlers.TextfeldColorChanger;
 import gui.images.ImagePath;
