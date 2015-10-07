@@ -11,6 +11,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.picking.PickedState;
+
 /*import edu.uci.ics.jung.graph.Edge;
  import edu.uci.ics.jung.graph.Vertex;
  import edu.uci.ics.jung.graph.decorators.EdgePaintFunction;
@@ -48,51 +49,55 @@ public class MyEdgeDrawPaintFunction implements
 	}
 
 	public Paint getDrawPaintWithoutGraphTheory(BiologicalEdgeAbstract bea) {
+		// uncomment for edges
+		if (NetworkSettingsSingelton.getInstance().getDrawEdges()) {
 
-		if (psV.getPicked().isEmpty()) {
-			if (psE.getPicked().isEmpty()) {
+			if (psV.getPicked().isEmpty()) {
+				if (psE.getPicked().isEmpty()) {
 
-				BiologicalNodeAbstract a = bea.getFrom();
-				BiologicalNodeAbstract b = bea.getTo();
+					BiologicalNodeAbstract a = bea.getFrom();
+					BiologicalNodeAbstract b = bea.getTo();
 
-				if (a.isHidden() || b.isHidden()) {
-					if (settings.isBackgroundColor())
+					if (a.isHidden() || b.isHidden()) {
+						if (settings.isBackgroundColor())
+							return dotted_black;
+						else
+							return dotted;
+					} else {
+						return bea.getColor().darker();
+					}
+				} else {
+					if (psE.isPicked(bea))
+						return bea.getColor().darker();
+					else if (settings.isBackgroundColor())
 						return dotted_black;
 					else
 						return dotted;
-				} else {
-					return bea.getColor().darker();
 				}
 			} else {
-				if (psE.isPicked(bea))
-					return bea.getColor().darker();
-				else if (settings.isBackgroundColor())
-					return dotted_black;
-				else
-					return dotted;
-			}
-		} else {
 
-			Iterator<BiologicalNodeAbstract> it = psV.getPicked().iterator();
-			BiologicalNodeAbstract bna;
+				Iterator<BiologicalNodeAbstract> it = psV.getPicked()
+						.iterator();
+				BiologicalNodeAbstract bna;
 
-			while (it.hasNext()) {
-				bna = it.next();
-				if (bna == bea.getFrom() || bna == bea.getTo())
+				while (it.hasNext()) {
+					bna = it.next();
+					if (bna == bea.getFrom() || bna == bea.getTo())
+						return bea.getColor();
+				}
+
+				if (psE.isPicked(bea)) {
 					return bea.getColor();
-			}
+				}
 
-			if (psE.isPicked(bea)) {
-				return bea.getColor();
+				if (settings.isBackgroundColor()) {
+					return dotted_black;
+				} else {
+					return dotted;
+				}
 			}
-
-			if (settings.isBackgroundColor()) {
-				return dotted_black;
-			} else {
-				return dotted;
-			}
-		}
-		//return null;
+		} else
+			return null;
 	}
 
 	public void setGraphTheory(boolean graphTheory) {

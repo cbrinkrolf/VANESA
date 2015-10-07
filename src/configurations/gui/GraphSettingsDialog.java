@@ -50,6 +50,10 @@ public class GraphSettingsDialog extends JFrame {
 	ButtonGroup group3 = new ButtonGroup();
 	JRadioButton black = new JRadioButton("", true);
 	JRadioButton white = new JRadioButton("", true);
+	
+	ButtonGroup group4 = new ButtonGroup();
+	JRadioButton yes = new JRadioButton("", true);
+	JRadioButton no = new JRadioButton("", true);
 
 	MainWindow w = MainWindowSingleton.getInstance();
 	GraphInstance graphInstance = new GraphInstance();
@@ -98,6 +102,17 @@ public class GraphSettingsDialog extends JFrame {
 		} else {
 			white.setSelected(false);
 		}
+		
+		group4.add(yes);
+		group4.add(no);
+		
+		
+		if(settings.getDrawEdges())
+			yes.setSelected(true);
+		else
+			no.setSelected(true);
+		
+		
 
 		//Container contentPane = getContentPane();
 		MigLayout layout = new MigLayout("", "[left]");
@@ -155,6 +170,23 @@ public class GraphSettingsDialog extends JFrame {
 		connectionPanel3.add(new JLabel("black"));
 
 		panel.add(connectionPanel3, "wrap,align left, gap 10, gaptop 2");
+		
+		
+		// Edge drawing
+		panel.add(new JLabel("Should the graph edges be displayed?"), "span 4");
+		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
+		
+		JPanel edgedrawpanel = new JPanel();
+		
+		edgedrawpanel.add(yes);
+		edgedrawpanel.add(new JLabel("yes   |"));
+		edgedrawpanel.add(no);
+		edgedrawpanel.add(new JLabel("no"));
+		
+		panel.add(edgedrawpanel, "wrap,align left, gap 10, gaptop 2");
+		
+		
+		
 
 	}
 
@@ -176,6 +208,9 @@ public class GraphSettingsDialog extends JFrame {
 
 		white.setEnabled(enabled);
 		black.setEnabled(enabled);
+		
+		yes.setEnabled(enabled);
+		no.setEnabled(enabled);
 
 	}
 
@@ -192,6 +227,8 @@ public class GraphSettingsDialog extends JFrame {
 				white.setSelected(true);
 				graphInstance.getPathway().changeBackground("white");
 				settings.setBackgroundColor(false);
+				
+				yes.setSelected(true);
 
 			} else {
 				JOptionPane.showMessageDialog(w,
@@ -237,6 +274,14 @@ public class GraphSettingsDialog extends JFrame {
 					settings.setBackgroundColor(false);
 					graphInstance.getPathway().changeBackground("white");
 				}
+				
+				if(yes.isSelected()){
+					settings.setDrawEdges(true);
+				} else{
+					settings.setDrawEdges(false);
+					no.setSelected(true);
+				}
+				
 
 			} else {
 				JOptionPane.showMessageDialog(w,
