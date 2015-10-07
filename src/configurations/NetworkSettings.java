@@ -6,6 +6,7 @@ public class NetworkSettings {
 	private Integer nodeLabel;
 	private Integer edgeLabel;
 	private boolean backgroundColor = false;
+	private boolean drawEdges = true;
 
 	public boolean isBackgroundColor() {
 		return backgroundColor;
@@ -26,6 +27,14 @@ public class NetworkSettings {
 
 	public Integer getEdgeLabel() {
 		return edgeLabel;
+	}
+	
+	public void setDrawEdges(boolean draw){
+		this.drawEdges = draw;
+	}
+	
+	public boolean getDrawEdges(){
+		return drawEdges;
 	}
 
 	/*public void setEdgeLabel(Integer edgeLabel) {
