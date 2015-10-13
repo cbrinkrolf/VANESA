@@ -1275,12 +1275,7 @@ public class Pathway implements Cloneable {
 	 */
 	public void updateMyGraph() {
 
-		// // to differ between bna and pathway objects.
-		// BiologicalNodeAbstract thisNode = null;
-		// if (this.isBNA()) {
-		// thisNode = (BiologicalNodeAbstract) this;
-		// // System.out.println(thisNode.getLabel());
-		// }
+//		System.out.println("startlagg");
 
 		// Save current node locations
 		saveVertexLocations();
@@ -1288,15 +1283,19 @@ public class Pathway implements Cloneable {
 		// Clear myGraph
 		getGraph().removeAllElements();
 
+		// Set of all edges of the finest abstraction level
 		Set<BiologicalEdgeAbstract> flattenedEdges = new HashSet<BiologicalEdgeAbstract>();
-
-		// Add flattened nodes
-		for (BiologicalNodeAbstract n : vertices.keySet()) {
-			addVertexToView(n, getVertexPosition(n));
+		
+		// Set of all visible nodes (built up successively, starting with finest abstraction level)
+		Set<BiologicalNodeAbstract> visibleNodes = new HashSet<BiologicalNodeAbstract>();
+		visibleNodes.addAll(vertices.keySet());
+		
+		// Add all flattened edges to the set of flattened edges
+		for (BiologicalNodeAbstract n : visibleNodes) {
 			flattenedEdges.addAll(n.getConnectingEdges());
 		}
 
-		// Abstract all closed nodes
+		// Abstract nodes
 		Set<BiologicalNodeAbstract> csp = new HashSet<BiologicalNodeAbstract>();
 		csp.addAll(closedSubPathways);
 		for (BiologicalNodeAbstract n : csp) {
@@ -1314,37 +1313,33 @@ public class Pathway implements Cloneable {
 			}
 
 			// Remove all descendants from the view and add the coarse node
-			for (BiologicalNodeAbstract child : n.getVertices().keySet()) {
-				removeElementFromView(child);
-			}
+			visibleNodes.removeAll(n.getVertices().keySet());
+			visibleNodes.add(n);
+		}
+		
+		// Add visible nodes to view
+		for(BiologicalNodeAbstract n : visibleNodes){
 			addVertexToView(n, getVertexPosition(n));
 		}
 
-		// Abstract all edges and add environment nodes
-		for (BiologicalEdgeAbstract e : flattenedEdges) {
-			BiologicalEdgeAbstract edge = e.clone();
-			BiologicalNodeAbstract newFrom = edge.getFrom()
-					.getCurrentShownParentNode(getGraph());
-			BiologicalNodeAbstract newTo = edge.getTo()
-					.getCurrentShownParentNode(getGraph());
-			edge.setFrom(newFrom == null ? edge.getFrom() : newFrom);
-			edge.setTo(newTo == null ? edge.getTo() : newTo);
-			if (edge.isValid(false)) {
-				addEdgeToView(edge, true);
+		// Abstract edges and add them to view (includes drawing environment nodes implicitly)
+		while(!flattenedEdges.isEmpty()){
+			BiologicalEdgeAbstract next = flattenedEdges.iterator().next();
+			BiologicalEdgeAbstract clone = next.clone();
+			BiologicalNodeAbstract newFrom = clone.getFrom().getCurrentShownParentNode(getGraph());
+			BiologicalNodeAbstract newTo = clone.getTo().getCurrentShownParentNode(getGraph());
+			clone.setFrom(newFrom == null ? clone.getFrom() : newFrom);
+			clone.setTo(newTo == null ? clone.getTo() : newTo);
+			if (clone.isValid(false)) {
+				addEdgeToView(clone, true);
+				flattenedEdges.removeIf(e -> e.getFrom().getAllParentNodes().contains(clone.getFrom()) &&
+						e.getTo().getAllParentNodes().contains(clone.getTo()));
 			}
+			flattenedEdges.remove(next);
 		}
 
-		// if (getGraph(false) != null) {
-		// if (isBNA() && thisNode.isCoarseNode()) {
-		// thisNode.updateHierarchicalAttributes();
-		// }
-		// updateEdges();
-		// if (isRootPathway()) {
-		// markPathwayUnchanged();
-		// MainWindowSingleton.getInstance().updateElementTree();
-		// }
-		// getGraph().updateLayout();
-		// }
+//		System.out.println("endlagg");
+
 	}
 
 	private void saveVertexLocations() {
@@ -1416,7 +1411,6 @@ public class Pathway implements Cloneable {
 			return false;
 		}
 		closedSubPathways.remove(subPathway);
-		updateMyGraph();
 		return true;
 	}
 
@@ -1428,7 +1422,6 @@ public class Pathway implements Cloneable {
 	 */
 	public void openAllSubPathways() {
 		closedSubPathways.clear();
-		updateMyGraph();
 	}
 
 	/**
@@ -1440,7 +1433,6 @@ public class Pathway implements Cloneable {
 	 */
 	public void closeSubPathway(BiologicalNodeAbstract subPathway) {
 		closedSubPathways.add(subPathway);
-		updateMyGraph();
 	}
 
 	/**
@@ -1452,7 +1444,6 @@ public class Pathway implements Cloneable {
 		for (BiologicalNodeAbstract v : getVertices().keySet()) {
 			closedSubPathways.addAll(v.getAllParentNodes());
 		}
-		updateMyGraph();
 	}
 
 	public BiologicalNodeAbstract getRootNode() {

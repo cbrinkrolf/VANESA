@@ -151,8 +151,10 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 						HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
 						if(e.getSource()==openNode){
 							pw.openSubPathway(node);
+							pw.updateMyGraph();
 						} else if(e.getSource()==closeNode){
 							pw.closeSubPathway(node.getParentNode());
+							pw.updateMyGraph();
 						} else if(e.getSource()==openAllNodes){
 							set.addAll(GraphInstance.getMyGraph().getAllVertices());
 							for(BiologicalNodeAbstract n : set){
@@ -160,6 +162,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 									pw.openSubPathway(n);
 								}
 							}
+							pw.updateMyGraph();
 						} else if(e.getSource()==closeAllNodes){
 							int maxLevel = 0;
 							for(BiologicalNodeAbstract n : GraphInstance.getMyGraph().getAllVertices()){
@@ -173,10 +176,13 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 									pw.closeSubPathway(n);
 								}
 							}
+							pw.updateMyGraph();
 						}else if(e.getSource()==openNetwork){
 							pw.openAllSubPathways();
+							pw.updateMyGraph();
 						} else if(e.getSource()==closeNetwork){
 							pw.closeAllSubPathways();
+							pw.updateMyGraph();
 						} else if(e.getSource()==coarseSelection){
 							BiologicalNodeAbstract.coarse(n);
 						} else if(e.getSource()==environmentSelection){
