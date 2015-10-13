@@ -114,11 +114,13 @@ public class ToolBarListener implements ActionListener {
 		} else if ("compressEdges".equals(event)) {
 			if (con.containsPathway()) {
 				con.getPathway(w.getCurrentPathway()).stretchGraph(0.9);
+				con.getPathway(w.getCurrentPathway()).updateMyGraph();
 			}
 
 		} else if ("stretchEdges".equals(event)) {
 			if (con.containsPathway()) {
 				con.getPathway(w.getCurrentPathway()).stretchGraph(1.1);
+				con.getPathway(w.getCurrentPathway()).updateMyGraph();
 			}
 		} else if ("edit".equals(event)) {
 			if (con.containsPathway()) {

@@ -1278,7 +1278,7 @@ public class Pathway implements Cloneable {
 //		System.out.println("startlagg");
 
 		// Save current node locations
-		saveVertexLocations();
+//		saveVertexLocations();
 
 		// Clear myGraph
 		getGraph().removeAllElements();
@@ -1342,15 +1342,15 @@ public class Pathway implements Cloneable {
 
 	}
 
-	private void saveVertexLocations() {
-		Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
-		nodes.addAll(vertices.keySet());
-		for (BiologicalNodeAbstract n : nodes) {
-			if (getGraph().getAllVertices().contains(n)) {
-				vertices.put(n, getGraph().getVertexLocation(n));
-			}
-		}
-	}
+//	private void saveVertexLocations() {
+//		Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
+//		nodes.addAll(vertices.keySet());
+//		for (BiologicalNodeAbstract n : nodes) {
+//			if (getGraph().getAllVertices().contains(n)) {
+//				vertices.put(n, getGraph().getVertexLocation(n));
+//			}
+//		}
+//	}
 
 	private Point2D getVertexPosition(BiologicalNodeAbstract n) {
 		if (vertices.keySet().contains(n)) {
@@ -1526,14 +1526,19 @@ public class Pathway implements Cloneable {
 		Iterator<BiologicalNodeAbstract> it = getAllGraphNodes().iterator();
 		while (it.hasNext()) {
 			bna = it.next();
+			if(!vertices.containsKey(bna)){
+				for(BiologicalNodeAbstract child : bna.getVertices().keySet()){
+					p = vertices.get(child);
+					p.setLocation(p.getX() * factor, p.getY() * factor);
+				}
+			} else {
+				p = vertices.get(bna);
+				System.out.println(bna.getLabel() + ": " + vertices.get(bna).getX() + "," + vertices.get(bna).getY());
+				p.setLocation(p.getX() * factor, p.getY() * factor);
+				System.out.println(bna.getLabel() + ": " + vertices.get(bna).getX() + "," + vertices.get(bna).getY());
 
-			p = getGraph().getVertexLocation(bna);
-			// p =
-			// graph.getVisualizationViewer().getModel().getGraphLayout().transform(bna);
 
-			// System.out.println(p);
-			p.setLocation(p.getX() * factor, p.getY() * factor);
-
+			}
 			/*
 			 * graph.getVisualizationViewer() .getModel() .getGraphLayout()
 			 * .setLocation( bna, new Point2D.Double(p.getX() * factor, p.getY()
@@ -1541,13 +1546,7 @@ public class Pathway implements Cloneable {
 			 */
 
 			// System.out.println(graph.getVisualizationViewer().getModel().getGraphLayout().transform(bna));
-			
-			if(this.vertices.containsKey(bna)){
-			p = this.vertices.get(bna);
-
-			// System.out.println(p);
-				p.setLocation(p.getX() * factor, p.getY() * factor);
-			}
+		
 			// System.out.println(vertices.get(bna));
 			// vertices.put(bna, p);
 			// System.out.println("---");
