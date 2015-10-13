@@ -84,7 +84,7 @@ public class MyPickingGraphMousePlugin extends
 							graph.getVertexLocation(selectedNode).getY() - 
 							oldVertexPositions.get(selectedNode).getY());
 					for(BiologicalNodeAbstract child : selectedNode.getVertices().keySet()){
-						pw.getVertices().put(child, Circle.addPoints(pw.getVertices().get(child), movement));
+						pw.getVertices().get(child).setLocation(Circle.addPoints(pw.getVertices().get(child), movement));
 					}
 				} else {
 					if(pw.getVertices().keySet().contains(selectedNode)){

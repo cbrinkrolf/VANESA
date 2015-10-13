@@ -1277,9 +1277,6 @@ public class Pathway implements Cloneable {
 
 //		System.out.println("startlagg");
 
-		// Save current node locations
-//		saveVertexLocations();
-
 		// Clear myGraph
 		getGraph().removeAllElements();
 
