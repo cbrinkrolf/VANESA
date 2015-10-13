@@ -887,6 +887,8 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 				myGraph.normalCentering();
 			}
 			
+			pw.saveVertexLocations();
+			
 			if (autoCoarseDepth) {
 				autoCoarseDepth();
 			}

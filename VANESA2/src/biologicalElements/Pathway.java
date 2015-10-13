@@ -1342,15 +1342,15 @@ public class Pathway implements Cloneable {
 
 	}
 
-//	private void saveVertexLocations() {
-//		Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
-//		nodes.addAll(vertices.keySet());
-//		for (BiologicalNodeAbstract n : nodes) {
-//			if (getGraph().getAllVertices().contains(n)) {
-//				vertices.put(n, getGraph().getVertexLocation(n));
-//			}
-//		}
-//	}
+	public void saveVertexLocations() {
+		Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
+		nodes.addAll(vertices.keySet());
+		for (BiologicalNodeAbstract n : nodes) {
+			if (getGraph().getAllVertices().contains(n)) {
+				vertices.put(n, getGraph().getVertexLocation(n));
+			}
+		}
+	}
 
 	private Point2D getVertexPosition(BiologicalNodeAbstract n) {
 		if (vertices.keySet().contains(n)) {

@@ -446,6 +446,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 			myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
 			myGraph.normalCentering();
 		}
+		pw.saveVertexLocations();
 		if (autoCoarse) {
 			// autoCoarse(root_id);
 			autoCoarse();
