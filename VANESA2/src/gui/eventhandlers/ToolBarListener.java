@@ -337,6 +337,7 @@ public class ToolBarListener implements ActionListener {
 					graphInstance.getPathway().setPetriNet(node.isPetriNet());
 					w.getBar().paintToolbar(node.isPetriNet());
 					w.updateAllGuiElements();
+					graphInstance.getPathway().updateMyGraph();
 					graphInstance.getPathway().getGraph().normalCentering();
 				}
 			} else {
@@ -561,9 +562,6 @@ public class ToolBarListener implements ActionListener {
 					}
 				}
 			}
-		}
-		if (GraphInstance.getPathwayStatic() != null) {
-			GraphInstance.getPathwayStatic().updateMyGraph();
 		}
 	}
 }
