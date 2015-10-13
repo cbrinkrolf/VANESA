@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,12 +16,15 @@ import javax.swing.JOptionPane;
 
 import miscalleanous.internet.FollowLink;
 import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import graph.GraphInstance;
+import graph.jung.classes.MyGraph;
+import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
 import gui.MainWindowSingleton;
 
@@ -70,6 +74,18 @@ public class MyPickingGraphMousePlugin extends
 			vertex = vertices.iterator().next();
 		} else {
 			super.mouseReleased(e);
+			Point2D movement = new Point2D.Double();
+			MyGraph graph = graphInstance.getMyGraph();
+			Pathway pw = graphInstance.getPathwayStatic();
+			for(BiologicalNodeAbstract selectedNode : selectedNodes){
+				movement.setLocation(graph.getVertexLocation(selectedNode).getX() - 
+						oldVertexPositions.get(selectedNode).getX(), 
+						graph.getVertexLocation(selectedNode).getY() - 
+						oldVertexPositions.get(selectedNode).getY());
+				for(BiologicalNodeAbstract child : selectedNode.getVertices().keySet()){
+					pw.getVertices().put(child, Circle.addPoints(pw.getVertices().get(child), movement));
+				}
+			}
 			return;
 		}
 

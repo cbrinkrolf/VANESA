@@ -328,6 +328,9 @@ public class ToolBarListener implements ActionListener {
 					}
 					w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 					// Pathway newPW = null;
+					for(BiologicalNodeAbstract n : node.getVertices().keySet()){
+						node.getVertices().put(n, graphInstance.getPathway().getVertices().get(n));
+					}
 					String newPathwayName = con.addPathway(node.getLabel(),
 							node);
 					Pathway pw = con.getPathway(newPathwayName);
