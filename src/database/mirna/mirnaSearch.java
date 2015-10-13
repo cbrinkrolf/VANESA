@@ -252,6 +252,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 										.getSatelliteView());
 								myGraph.normalCentering();
 							}
+							pw.saveVertexLocations();
 							MainWindowSingleton.getInstance().closeProgressBar();
 
 							MainWindow window = MainWindowSingleton

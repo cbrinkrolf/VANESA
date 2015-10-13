@@ -244,6 +244,9 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
 		myGraph.normalCentering();
+		
+		pw.saveVertexLocations();
+
 		if(isAutoCoarse()){
 			autoCoarse();
 		}
