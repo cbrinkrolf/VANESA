@@ -78,12 +78,18 @@ public class MyPickingGraphMousePlugin extends
 			MyGraph graph = graphInstance.getMyGraph();
 			Pathway pw = graphInstance.getPathwayStatic();
 			for(BiologicalNodeAbstract selectedNode : selectedNodes){
-				movement.setLocation(graph.getVertexLocation(selectedNode).getX() - 
-						oldVertexPositions.get(selectedNode).getX(), 
-						graph.getVertexLocation(selectedNode).getY() - 
-						oldVertexPositions.get(selectedNode).getY());
-				for(BiologicalNodeAbstract child : selectedNode.getVertices().keySet()){
-					pw.getVertices().put(child, Circle.addPoints(pw.getVertices().get(child), movement));
+				if(selectedNode.isCoarseNode()){
+					movement.setLocation(graph.getVertexLocation(selectedNode).getX() - 
+							oldVertexPositions.get(selectedNode).getX(), 
+							graph.getVertexLocation(selectedNode).getY() - 
+							oldVertexPositions.get(selectedNode).getY());
+					for(BiologicalNodeAbstract child : selectedNode.getVertices().keySet()){
+						pw.getVertices().put(child, Circle.addPoints(pw.getVertices().get(child), movement));
+					}
+				} else {
+					if(pw.getVertices().keySet().contains(selectedNode)){
+						pw.getVertices().get(selectedNode).setLocation(graph.getVertexLocation(selectedNode));
+					}
 				}
 			}
 			return;
