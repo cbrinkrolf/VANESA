@@ -126,6 +126,7 @@ public class RandomConnectedGraph {
 			// window.enable(true);
 			 
 			pw.getGraph().changeToGEMLayout();
+			pw.saveVertexLocations();
 //			 return pw;
 		}
 //		return null;
