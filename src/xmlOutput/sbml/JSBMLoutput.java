@@ -308,7 +308,7 @@ public class JSBMLoutput {
 		XMLNode elSub;
 
 		String attr = oneNode.getLabel()+"";
-		el.addChild(createElSub(attr, "Label"));
+		el.addChild(createElSub(attr, "label"));
 
 		attr = String.valueOf(oneNode.getNodesize());
 		el.addChild(createElSub(attr, "Nodesize"));
@@ -316,10 +316,16 @@ public class JSBMLoutput {
 		attr = oneNode.getBiologicalElement();
 		el.addChild(createElSub(attr, "BiologicalElement"));
 
-		Point2D p = pathway.getGraph().getVertexLocation(oneNode);
-		if(oneNode.getParentNode()!=null){
-			p = oneNode.getParentNode().getGraph().getVertexLocation(oneNode);
+//		Point2D p = pathway.getGraph().getVertexLocation(oneNode);
+//		if(oneNode.getParentNode()!=null){
+//			p = oneNode.getParentNode().getGraph().getVertexLocation(oneNode);
+//		}
+		Point2D p = new Point2D.Double(0, 0);
+		if(!oneNode.isCoarseNode()){
+			p = pathway.getVertices().get(oneNode);
 		}
+		
+		
 		elSub = new XMLNode(new XMLNode(new XMLTriple("Coordinates", "", ""),
 				new XMLAttributes()));
 		attr = String.valueOf(p.getX());
@@ -667,7 +673,7 @@ public class JSBMLoutput {
 				new XMLAttributes()));
 		XMLNode elSub;
 		String attr = oneEdge.getLabel();
-		el.addChild(createElSub(attr, "Label"));
+		el.addChild(createElSub(attr, "label"));
 		attr = String.valueOf(oneEdge.isWeighted());
 		el.addChild(createElSub(attr, "IsWeighted"));
 		attr = String.valueOf(oneEdge.getWeight());
