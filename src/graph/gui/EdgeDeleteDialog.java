@@ -84,9 +84,9 @@ public class EdgeDeleteDialog extends JFrame {
 			if(childEdge.getFrom().getCurrentShownParentNode(graphInstance.getPathway().getGraph())==edge.getFrom() | 
 					childEdge.getTo().getCurrentShownParentNode(graphInstance.getPathway().getGraph())==edge.getFrom()){
 				if(childEdge.isDirected()){
-					edgeBox.addItem(childEdge.getFrom().getLabel() + " |-> " + childEdge.getTo().getLabel());
+					edgeBox.addItem(childEdge.getFrom().getLabel() + " --> " + childEdge.getTo().getLabel());
 				} else {
-					edgeBox.addItem(childEdge.getFrom().getLabel() + " <-> " + childEdge.getTo().getLabel());
+					edgeBox.addItem(childEdge.getFrom().getLabel() + " --- " + childEdge.getTo().getLabel());
 				}
 				edgeMap.put(edgeBox.getItemCount()-1, childEdge);
 			}

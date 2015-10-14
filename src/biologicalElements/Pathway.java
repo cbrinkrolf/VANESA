@@ -595,7 +595,7 @@ public class Pathway implements Cloneable {
 
 	public void removeElement(GraphElementAbstract element) {
 		if (element != null) {
-			removeElementFromView(element);
+//			removeElementFromView(element);
 			if (element.isVertex()) {
 				// System.out.println(biologicalElements.size());
 				// System.out.println("drin");

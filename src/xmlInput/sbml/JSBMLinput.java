@@ -216,7 +216,7 @@ public class JSBMLinput {
 			elSub = reacAnnotation.getChild("Label", null);
 			String label = "";
 			if (elSub != null) {
-				label = elSub.getAttributeValue("Label");
+				label = elSub.getAttributeValue("label");
 			}
 			// get from an to nodes for the reaction
 			Element rectantsNode = reaction.getChild("listOfReactants", null);
@@ -416,10 +416,15 @@ public class JSBMLinput {
 			if (name == null) {
 				name = "";
 			}
-			elSub = specAnnotation.getChild("Label", null);
+			elSub = specAnnotation.getChild("label", null);
 			String label = "";
 			if (elSub != null) {
-				elSub.getAttributeValue("Label");
+				label = elSub.getAttributeValue("label");
+			} else {
+				elSub = specAnnotation.getChild("Label", null);
+				if(elSub != null){
+					label = elSub.getAttributeValue("Label");
+				}
 			}
 			String attr;
 			switch (biologicalElement) {

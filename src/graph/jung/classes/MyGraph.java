@@ -815,7 +815,8 @@ public class MyGraph {
 		// vv.getPickedState().clearPickedEdges();
 		// vv.getPickedState().clearPickedVertices();
 		updateGraph();
-
+		pathway.updateMyGraph();
+		
 	}
 
 	public void removeSelectedEdges() {
