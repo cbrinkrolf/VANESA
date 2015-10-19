@@ -48,7 +48,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import com.mchange.io.FileUtils;
-import com.sun.javafx.Utils;
 
 import sun.tools.jar.resources.jar;
 import biologicalElements.Elementdeclerations;

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,9 +30,9 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import petriNet.SimulationResult;
-import biologicalElements.Pathway;
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
+import biologicalElements.Pathway;
 
 public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
@@ -62,9 +63,9 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
 	// private ActionListener listener;
 
-	private List<String> libs;
+	private List<File> libs;
 
-	public SimMenue(ActionListener listener, List<String> libs) {
+	public SimMenue(ActionListener listener, List<File> libs) {
 		this.libs = libs;
 		// this.listener = listener;
 		start.setActionCommand("start");
@@ -108,9 +109,9 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		integrators.addItem("rungekutta");
 
 		simLibs = new JComboBox<String>();
-		Iterator<String> it = libs.iterator();
+		Iterator<File> it = libs.iterator();
 		while (it.hasNext()) {
-			simLibs.addItem(it.next());
+			simLibs.addItem(it.next().getName());
 		}
 		simLibs.setSelectedIndex(0);
 
@@ -205,12 +206,12 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		return (String) this.integrators.getSelectedItem();
 	}
 
-	public void setLibs(List<String> libs) {
+	public void setLibs(List<File> libs) {
 		this.libs = libs;
 	}
 
-	public String getSimLib() {
-		return this.simLibs.getSelectedItem().toString();
+	public File getSimLib() {
+		return this.libs.get(this.simLibs.getSelectedIndex());
 	}
 
 	public void updateSimulationResults() {

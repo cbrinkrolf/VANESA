@@ -58,8 +58,8 @@ public class PetriNetSimulation implements ActionListener {
 
 	private String simName;
 
-	private String simLib;
-	private List<String> simLibs;
+	private File simLib;
+	private List<File> simLibs;
 
 	public PetriNetSimulation() {
 
@@ -386,10 +386,10 @@ public class PetriNetSimulation implements ActionListener {
 					simLib = menue.getSimLib();
 					System.out.println("simulation lib: " + simLib);
 					String packageInfo = null;
-					if (simLib.equals("PNlib")) {
+					if (simLib.getName().equals("PNlib")) {
 						// packageInfo = "inner PNlib.Settings settings1;";
 					} else {
-						packageInfo = "import PNlib = " + simLib + ";";
+						packageInfo = "import PNlib = " + simLib.getName() + ";";
 					}
 					MOoutput mo = new MOoutput(new FileOutputStream(new File(
 							pathSim + "simulation.mo")), pw, packageInfo);
@@ -434,7 +434,7 @@ public class PetriNetSimulation implements ActionListener {
 					pathSim = pathSim.replace('\\', '/');
 					out.write("cd(\"" + pathSim + "\"); ");
 					out.write("getErrorString();\r\n");
-					out.write("loadFile(\"../" + simLib + "/package.mo\"); ");
+					out.write("loadFile(\""+simLib.getPath().replace("\\", "/") + "/package.mo\"); ");
 					out.write("getErrorString();\r\n");
 					out.write("loadFile(\"simulation.mo\"); ");
 					out.write("getErrorString();\r\n");
@@ -999,8 +999,8 @@ public class PetriNetSimulation implements ActionListener {
 		}
 	}
 
-	private List<String> getLibs(File directory) {
-		List<String> libs = new ArrayList<String>();
+	private List<File> getLibs(File directory) {
+		List<File> libs = new ArrayList<File>();
 		if (directory.isDirectory()) {
 			File[] files = directory.listFiles();
 			File f;
@@ -1009,8 +1009,13 @@ public class PetriNetSimulation implements ActionListener {
 				if (f.isDirectory()) {
 					// System.out.println("folder: "+f.getName());
 					if (new File(f, "package.mo").exists()) {
-						libs.add(f.getName());
+						libs.add(f);
 						// System.out.println("existiert: "+ f.getName());
+					}else{
+						File g = new File(f+"/"+f.getName());
+						if(new File(g, "package.mo").exists()){
+							libs.add(g);
+						}
 					}
 				}
 				// System.out.println(files[i].getName());

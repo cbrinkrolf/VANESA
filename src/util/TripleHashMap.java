@@ -24,6 +24,9 @@ public class TripleHashMap<KEY1, KEY2, KEY3, V> {
 	}
 
 	public V get(KEY1 k1, KEY2 k2, KEY3 k3) {
+		//System.out.println("k1: "+k1);
+		//System.out.println("k2: "+k2);
+		//System.out.println("k3: "+k3);
 		return map.get(k1).get(k2).get(k3);
 	}
 
