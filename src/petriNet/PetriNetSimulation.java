@@ -1012,7 +1012,7 @@ public class PetriNetSimulation implements ActionListener {
 						libs.add(f);
 						// System.out.println("existiert: "+ f.getName());
 					}else{
-						File g = new File(f+"/"+f.getName());
+						File g = new File(f+File.separator+f.getName());
 						if(new File(g, "package.mo").exists()){
 							libs.add(g);
 						}
