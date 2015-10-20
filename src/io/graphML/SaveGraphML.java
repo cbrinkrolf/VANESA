@@ -21,6 +21,7 @@ public class SaveGraphML {
 			//out = new OutputStreamWriter(out);
 			//out = new BufferedWriter(new FileWriter(file));
 			writer.save(GraphInstance.getMyGraph().getJungGraph(), new OutputStreamWriter(os));
+			os.close();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

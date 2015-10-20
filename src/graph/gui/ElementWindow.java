@@ -78,10 +78,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private JButton parametersButton;
 	private JButton showLabels;
 
+	private JCheckBox constCheck;
+
 	private BiologicalNodeAbstract ref = null;
 	private GraphElementAbstract original;
 
 	private JCheckBox knockedOut;
+	private MyJFormattedTextField tokenMin;
+	private MyJFormattedTextField tokenMax;
 
 	// private Object element;
 
@@ -206,13 +210,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			p.add(new JLabel("Compartment"), "gap 5 ");
 			p.add(compartment, "wrap ,span 3");
-			
-		//ADDing Attributes (optional)
-			
+
+			// ADDing Attributes (optional)
+
 			// Show Database IDs
 			JTextArea dbids = new JTextArea();
 			String dbidstring = new String();
-			
 
 			p.add(new JLabel("IDs known:"), "gap 5");
 			p.add(dbids, "wrap, span 3");
@@ -239,55 +242,51 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// aaSequence.addFocusListener(pwl);
 			// p.add(new JLabel("AA-Sequence"), "gap 5 ");
 			// p.add(aaSequence, "wrap, span 3");
-			
+
 			String atname, atsvalue;
 			double atdvalue;
 
-			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries= new ArrayList<>(), annotationentries
-					= new ArrayList<>();
-			
-			for(NodeAttribute att : bna.getNodeAttributes()){
+			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries = new ArrayList<>(), annotationentries = new ArrayList<>();
+
+			for (NodeAttribute att : bna.getNodeAttributes()) {
 				atname = att.getName();
 				atsvalue = att.getStringvalue();
 				atdvalue = att.getDoublevalue();
-				
+
 				switch (att.getType()) {
 				case NodeAttributeTypes.EXPERIMENT:
-					experimententries.add(atname+":\t"+atdvalue+"\n");
+					experimententries.add(atname + ":\t" + atdvalue + "\n");
 					break;
-					
+
 				case NodeAttributeTypes.DATABASE_ID:
-					databaseidentries.add(atname+":\t"+atsvalue+"\n");
+					databaseidentries.add(atname + ":\t" + atsvalue + "\n");
 					break;
 
 				case NodeAttributeTypes.ANNOTATION:
-					annotationentries.add(atname+":\t"+atsvalue+"\n");
+					annotationentries.add(atname + ":\t" + atsvalue + "\n");
 					break;
-					
+
 				default:
 					break;
-				}				
+				}
 			}
-			
-			//Sort for more convenient display
+
+			// Sort for more convenient display
 			Collections.sort(experimententries);
-			for(String exp : experimententries)
-				experimentstring+=exp;
-			
+			for (String exp : experimententries)
+				experimentstring += exp;
+
 			Collections.sort(databaseidentries);
-			for(String dbid : databaseidentries)
-				dbidstring+=dbid;
-			
+			for (String dbid : databaseidentries)
+				dbidstring += dbid;
+
 			Collections.sort(annotationentries);
-			for(String ann : annotationentries)
-				annotationstring+=ann;
-			
+			for (String ann : annotationentries)
+				annotationstring += ann;
 
 			experiments.setText(experimentstring);
 			dbids.setText(dbidstring);
-			goannoations.setText(annotationstring);			
-			
-			
+			goannoations.setText(annotationstring);
 
 			if (ab instanceof PathwayMap) {
 				p.add(new JLabel("Linked to Pathway"), "gap 5 ");
@@ -356,8 +355,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				MyJFormattedTextField token;
 				MyJFormattedTextField tokenStart;
-				MyJFormattedTextField tokenMin;
-				MyJFormattedTextField tokenMax;
 
 				JLabel lblTokenStart = new JLabel("Token Start");
 				if (place.isDiscrete()) {
@@ -411,8 +408,18 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(token, "wrap");
 
 				p.add(lblTokenStart, "gap 5 ");
-				p.add(tokenStart, "wrap");
+				p.add(tokenStart, "");
 
+				constCheck = new JCheckBox("constant");
+				constCheck.setActionCommand("constCheck");
+				constCheck.addActionListener(this);
+				constCheck.setSelected(place.isConstant());
+				p.add(constCheck, "wrap");
+
+				if (constCheck.isSelected()) {
+					tokenMin.setEnabled(false);
+					tokenMax.setEnabled(false);
+				}
 				p.add(lblTokenMin, "gap 5 ");
 				p.add(tokenMin, "wrap");
 				p.add(lblTokenMax, "gap 5");
@@ -474,12 +481,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 					p.add(lblMaxSpeed, "gap 5");
 					p.add(maxSpeed, "wrap");
-					
-					if(trans.isKnockedOut()){
+
+					if (trans.isKnockedOut()) {
 						maxSpeed.setEnabled(false);
 					}
 				}
-			} 
+			}
 
 		} else if (ab.isEdge()) {
 			// System.out.println("edge");
@@ -816,16 +823,31 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("showLabels".equals(event)) {
 			// System.out.println("click");
 			new LabelsWindow(ab);
-		}else if("knockedOut".equals(event)){
-			
-				((Transition)ab).setKnockedOut(knockedOut.isSelected());
-				this.updateWindow(ab);
-				p.revalidate();
-				p.repaint();
-				Pathway pw = new GraphInstance().getPathway();
-				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
-				
-			//System.out.println("knocked out");
+		} else if ("knockedOut".equals(event)) {
+
+			((Transition) ab).setKnockedOut(knockedOut.isSelected());
+			this.updateWindow(ab);
+			p.revalidate();
+			p.repaint();
+			Pathway pw = new GraphInstance().getPathway();
+			pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+
+			// System.out.println("knocked out");
+		} else if ("constCheck".equals(event)) {
+			if (ab instanceof BiologicalNodeAbstract) {
+				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
+				if (constCheck.isSelected()) {
+					this.tokenMin.setEnabled(false);
+					this.tokenMax.setEnabled(false);
+					bna.setConstant(true);
+				} else {
+					this.tokenMin.setEnabled(true);
+					this.tokenMax.setEnabled(true);
+					bna.setConstant(false);
+				}
+			}
+			// System.out.println(this.constCheck.isSelected());
+
 		}
 
 		GraphInstance.getMyGraph().updateGraph();
