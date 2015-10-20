@@ -6,6 +6,7 @@ import gui.RangeSelector;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,8 @@ import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.xml.XMLAttributes;
 import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.jsbml.xml.XMLTriple;
+
+import com.sun.xml.internal.bind.v2.TODO;
 
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
@@ -75,6 +78,7 @@ public class JSBMLoutput {
 
 	/**
 	 * Generates a SBML document via jSBML.
+	 * @throws IOException 
 	 */
 	public String generateSBMLDocument() {
 		int answer = JOptionPane.YES_OPTION;
@@ -221,6 +225,8 @@ public class JSBMLoutput {
 			 // SBMLWriter.write(doc, out, "VANESA", VERSION)
 			  //OutputStream os = new Outputstream
 			//System.out.println("nach write");
+			
+			os.close();
 			message = "\nExport was successful.";
 		} catch (SBMLException e) {
 			e.printStackTrace();
@@ -228,6 +234,9 @@ public class JSBMLoutput {
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
 			message = "\nWriting SBML file was not successful.";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return message;
 	}
@@ -556,6 +565,15 @@ public class JSBMLoutput {
 		}
 
 		el.addChild(elSub);
+		
+		
+		if (oneNode.isConstant()) {
+			attr = "true";
+		} else {
+			attr = "false";
+		}
+		el.addChild(createElSub(attr, "constCheck"));
+		
 		// test which type the node is to save additional data
 		if (oneNode instanceof biologicalObjects.nodes.DNA) {
 			attr = ((biologicalObjects.nodes.DNA) oneNode).getNtSequence();

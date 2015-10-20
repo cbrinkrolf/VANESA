@@ -907,6 +907,14 @@ public class JSBMLinput {
 						Integer.parseInt(elSub.getAttributeValue("RefID")));
 			}
 			break;
+		case "constCheck":
+			if (value.equals("true")){
+				bna.setConstant(true);
+			}else{
+				bna.setConstant(false);
+			}
+			break;
+			
 		// special cases
 		case "NtSequence":
 			if (bna instanceof DNA) {
@@ -915,7 +923,6 @@ public class JSBMLinput {
 				// System.out.println(bna.getLabel());
 				((biologicalObjects.nodes.RNA) bna).setNtSequence(value);
 			}
-
 			break;
 		case "Cofactor":
 			((biologicalObjects.nodes.Enzyme) bna).setCofactor(value);
