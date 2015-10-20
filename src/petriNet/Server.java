@@ -13,9 +13,11 @@ import java.io.PrintWriter;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -374,8 +376,8 @@ public class Server {
 				// e.setSim_tokensSum(v);
 				// e.setSim_tokens(v2);
 				// System.out.println("key: "+bea2key.get(bea));
-				// System.out.println("index: "+names.indexOf("der("
-				// + bea2key.get(bea) + ")"));
+				// System.out.println("index: der("
+				// + bea2key.get(bea) + ")");
 				value = (Double) values.get(name2index.get("der("
 						+ bea2key.get(bea) + ")"));
 
@@ -448,7 +450,10 @@ public class Server {
 				}
 			}
 		}
-		System.out.println(values.get(name2index.get("time")));
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String time = sdf.format(new Date());
+		
+		System.out.println(time+": "+values.get(name2index.get("time")));
 		value = (Double) values.get(name2index.get("time"));
 
 		if (old) {
