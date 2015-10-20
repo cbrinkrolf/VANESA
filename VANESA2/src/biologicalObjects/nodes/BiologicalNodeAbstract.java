@@ -135,6 +135,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	private boolean deleted = false;
 	
+	// BNA has constant value
+	private boolean constant = false;
+	
 	public boolean isDeleted(){
 		return deleted;
 	}
@@ -1553,5 +1556,15 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				return false;
 			return true;
 		}
+	}
+
+
+
+	public boolean isConstant() {
+		return constant;
+	}
+
+	public void setConstant(boolean constant) {
+		this.constant = constant;
 	}
 }
