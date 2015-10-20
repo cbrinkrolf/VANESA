@@ -239,6 +239,7 @@ public class MyGraph {
 						vv.getPickedEdgeState().clear();
 
 					}
+					pathway.updateMyGraph();
 					MainWindow mw = MainWindowSingleton.getInstance();
 					mw.updateAllGuiElements();
 					// vv.repaint();
