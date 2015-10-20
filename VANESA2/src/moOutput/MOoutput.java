@@ -110,10 +110,21 @@ public class MOoutput {
 		os.write(new String("model '" + modelName + "'\r\n").getBytes());
 
 		if (packageInfo != null) {
-			os.write(new String("\t"+this.packageInfo+"\r\n").getBytes());
-			//os.write(new String("\timport PNlib = ConPNlib;\r\n").getBytes());
+			os.write(new String("\t" + this.packageInfo + "\r\n").getBytes());
+			// os.write(new
+			// String("\timport PNlib = ConPNlib;\r\n").getBytes());
 		}
+
 		// fwriter.write(properties);
+		if (this.packageInfo == null) {
+			os.write(new String("\tinner PNlib.Settings\r\n").getBytes());
+			os.write(new String("\tsettings1();\r\n")
+					.getBytes());
+			
+			//os.write(new String("\tsettings1(showTokenFlow = true);\r\n")
+			//.getBytes());
+		}
+
 		os.write(places.getBytes());
 		// fwriter.write(transitions);
 		os.write(new String("equation\r\n").getBytes());
@@ -721,7 +732,7 @@ public class MOoutput {
 				+ "\r\n";
 		// System.out.println(to+".tSumIn_["+(actualInEdges.get(to) + 1)+"]");
 		this.bea2resultkey.put(bea,
-				"'" + to + "'.tSumIn_[" + (actualInEdges.get(to) + 1) + "]");
+				"'" + to + "'.tInflow[" + (actualInEdges.get(to) + 1) + "]");
 
 		actualInEdges.put(to, actualInEdges.get(to) + 1);
 		actualOutEdges.put(from, actualOutEdges.get(from) + 1);
@@ -744,7 +755,7 @@ public class MOoutput {
 				+ "\r\n";
 		// System.out.println(from+".tSumOut_["+(actualOutEdges.get(from) +
 		// 1)+"]");
-		this.bea2resultkey.put(bea, "'" + from + "'.tSumOut_["
+		this.bea2resultkey.put(bea, "'" + from + "'.tOutflow["
 				+ (actualOutEdges.get(from) + 1) + "]");
 
 		actualInEdges.put(to, actualInEdges.get(to) + 1);

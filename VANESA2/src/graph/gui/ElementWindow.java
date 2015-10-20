@@ -845,6 +845,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 					this.tokenMax.setEnabled(true);
 					bna.setConstant(false);
 				}
+				Pathway pw = new GraphInstance().getPathway();
+				pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
 			}
 			// System.out.println(this.constCheck.isSelected());
 
