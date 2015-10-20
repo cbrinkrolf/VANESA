@@ -213,7 +213,12 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		return true;
 	}
 
-	public String getModellicaFunction() {		
+	public String getModellicaFunction() {
+		
+		if(this.getFrom().isConstant() || this.getTo().isConstant()){
+			return "0";
+		}
+		
 		StringBuilder mFunction = new StringBuilder(this.function);
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
