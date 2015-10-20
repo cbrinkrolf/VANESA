@@ -604,6 +604,13 @@ public class Pathway implements Cloneable {
 				for (BiologicalNodeAbstract parent : bna.getAllParentNodes()) {
 					parent.getVertices().remove(bna);
 				}
+				if (bna instanceof Place) {
+					this.petriNet.setPlaces(this.petriNet.getPlaces() - 1);
+				}
+				if (bna instanceof Transition) {
+					this.petriNet
+							.setTransitions(this.petriNet.getTransitions() - 1);
+				}
 				bna.delete();
 
 				this.handleChangeFlags(ChangedFlags.NODE_CHANGED);
