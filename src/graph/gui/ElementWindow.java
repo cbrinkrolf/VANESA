@@ -820,6 +820,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 		else if ("showParameters".equals(event)) {
 			// System.out.println("show parameters");
 			new ParameterWindow(ab);
+			this.updateWindow(ab);
+			p.revalidate();
 		} else if ("showLabels".equals(event)) {
 			// System.out.println("click");
 			new LabelsWindow(ab);
@@ -828,7 +830,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			((Transition) ab).setKnockedOut(knockedOut.isSelected());
 			this.updateWindow(ab);
 			p.revalidate();
-			p.repaint();
+			//p.repaint();
 			Pathway pw = new GraphInstance().getPathway();
 			pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 
