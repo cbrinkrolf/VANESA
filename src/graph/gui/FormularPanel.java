@@ -143,7 +143,6 @@ private final DefaultHighlightPainter errorHighlighter;
 
    private void jTextPane1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextPane1KeyReleased
       this.jLabel1.setText("");
-      
       //this.jLabel2.getGraphics().clearRect(0, 0, this.jLabel2.getWidth(), this.jLabel2.getHeight());
       this.jTextPane1.getHighlighter().removeAllHighlights();
 
@@ -195,4 +194,8 @@ private final DefaultHighlightPainter errorHighlighter;
    private javax.swing.JScrollPane jScrollPane1;
    private javax.swing.JTextPane jTextPane1;
    // End of variables declaration//GEN-END:variables
+   
+   public String getFormular(){
+	   return this.jTextPane1.getText();
+   }
 }

@@ -53,7 +53,7 @@ public class ParameterWindow implements ActionListener {
 		// AutoCompleteDecorator.decorate(elementNames);
 
 		panel = new JPanel(layout);
-		
+
 		if (gea instanceof ContinuousTransition) {
 
 			fp = new FormularPanel(
@@ -61,8 +61,8 @@ public class ParameterWindow implements ActionListener {
 			fp.setVisible(true);
 			panel.add(fp);
 		}
-		
 
+		// fp.get
 		add = new JButton("Add");
 		add.setActionCommand("add");
 		add.addActionListener(this);
@@ -84,6 +84,21 @@ public class ParameterWindow implements ActionListener {
 		// dialog.show();
 		dialog.setVisible(true);
 
+		if (pane.getValue() != null
+				&& (int) pane.getValue() == JOptionPane.OK_OPTION) {
+			if (gea instanceof ContinuousTransition) {
+				ContinuousTransition ct = (ContinuousTransition) gea;
+				String formular = fp.getFormular();
+				String formularClean = formular.replaceAll("\\s", "");
+
+				String orgClean = ct.getMaximumSpeed().replaceAll("\\s", "");
+
+				if (!orgClean.equals(formularClean)) {
+					ct.setMaximumSpeed(formular);
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}
+			}
+		}
 	}
 
 	private void listParameters() {
@@ -134,7 +149,7 @@ public class ParameterWindow implements ActionListener {
 			for (int i = 0; i < gea.getParameters().size(); i++) {
 				p = gea.getParameters().get(i);
 				if (p.getName().equals(name.getText())) {
-					// System.out.println("schon vorhanden");
+					//System.out.println("schon vorhanden");
 					return;
 				}
 			}
