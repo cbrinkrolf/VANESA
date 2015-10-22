@@ -66,6 +66,8 @@ public class MOoutput {
 	private HashMap<BiologicalEdgeAbstract, String> bea2resultkey = new HashMap<BiologicalEdgeAbstract, String>();
 
 	private String packageInfo = null;
+	
+	private boolean noIdent = false;
 
 	public MOoutput(OutputStream os, Pathway pathway) {
 		this(os, pathway, null);
@@ -106,30 +108,46 @@ public class MOoutput {
 
 		// if (debug)
 		// System.out.println(properties+places+transitions+edgesString);
-
-		os.write(new String("model '" + modelName + "'\r\n").getBytes());
+		StringBuilder sb = new StringBuilder();
+		sb.append("model '" + modelName + "'\r\n");;
+		//os.write(new String("model '" + modelName + "'\r\n").getBytes());
 
 		if (packageInfo != null) {
-			os.write(new String("\t" + this.packageInfo + "\r\n").getBytes());
+			//os.write(new String("\t" + this.packageInfo + "\r\n").getBytes());
+			sb.append("\t" + this.packageInfo + "\r\n");
 			// os.write(new
 			// String("\timport PNlib = ConPNlib;\r\n").getBytes());
 		}
 
 		// fwriter.write(properties);
 		if (this.packageInfo == null) {
-			os.write(new String("\tinner PNlib.Settings\r\n").getBytes());
-			os.write(new String("\tsettings1();\r\n")
-					.getBytes());
-			
-			//os.write(new String("\tsettings1(showTokenFlow = true);\r\n")
-			//.getBytes());
+			//sb.append("\tinner PNlib.Settings settings1();\r\n");
+			sb.append("\tinner PNlib.Settings settings1(showTokenFlow = true);\r\n");
 		}
 
-		os.write(places.getBytes());
+		//os.write(places.getBytes());
+		sb.append(places);
 		// fwriter.write(transitions);
-		os.write(new String("equation\r\n").getBytes());
-		os.write(edgesString.getBytes());
-		os.write(new String("end '" + modelName + "';").getBytes());
+		//os.write(new String("equation\r\n").getBytes());
+		sb.append("equation\r\n");
+		//os.write(edgesString.getBytes());
+		sb.append(edgesString);
+		//os.write(new String("end '" + modelName + "';").getBytes());
+		sb.append("end '" + modelName + "';");
+		
+		String data = sb.toString();
+		if(noIdent){
+			//System.out.println("replace");
+			//remove "'"
+			data = data.replaceAll("'", "");
+			
+			// remove "+" in names
+			data= data.replaceAll("(\\S)\\+", "$1_plus");
+			
+			//remove "-" in names
+			data= data.replaceAll("(\\S)\\-", "$1_");
+		}
+		os.write(data.getBytes());
 		os.close();
 
 	}
@@ -732,7 +750,7 @@ public class MOoutput {
 				+ "\r\n";
 		// System.out.println(to+".tSumIn_["+(actualInEdges.get(to) + 1)+"]");
 		this.bea2resultkey.put(bea,
-				"'" + to + "'.tInflow[" + (actualInEdges.get(to) + 1) + "]");
+				"'" + to + "'.tokenFlow.inflow[" + (actualInEdges.get(to) + 1) + "]");
 
 		actualInEdges.put(to, actualInEdges.get(to) + 1);
 		actualOutEdges.put(from, actualOutEdges.get(from) + 1);
@@ -755,7 +773,7 @@ public class MOoutput {
 				+ "\r\n";
 		// System.out.println(from+".tSumOut_["+(actualOutEdges.get(from) +
 		// 1)+"]");
-		this.bea2resultkey.put(bea, "'" + from + "'.tOutflow["
+		this.bea2resultkey.put(bea, "'" + from + "'.tokenFlow.outflow["
 				+ (actualOutEdges.get(from) + 1) + "]");
 
 		actualInEdges.put(to, actualInEdges.get(to) + 1);
