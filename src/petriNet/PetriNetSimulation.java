@@ -60,6 +60,7 @@ public class PetriNetSimulation implements ActionListener {
 
 	private File simLib;
 	private List<File> simLibs;
+	private Pathway pw;
 
 	public PetriNetSimulation() {
 
@@ -294,7 +295,7 @@ public class PetriNetSimulation implements ActionListener {
 
 	private void runOMCIA() {
 		System.out.println("simNameOld: " + simName);
-		Pathway pw = new GraphInstance().getPathway();
+		this.pw = new GraphInstance().getPathway();
 		GraphContainer con = ContainerSingelton.getInstance();
 		MainWindow w = MainWindowSingleton.getInstance();
 		w.blurrUI();
@@ -396,65 +397,8 @@ public class PetriNetSimulation implements ActionListener {
 					bea2key = mo.getBea2resultkey();
 					//
 
-					String filter = "variableFilter=\"";
-
-					Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes()
-							.iterator();
-					BiologicalNodeAbstract bna;
-					int vars = 0;
-					while (it.hasNext()) {
-						bna = it.next();
-						if (bna instanceof Place && !bna.hasRef()) {
-							filter += "'" + bna.getName() + "'.t|";
-							vars++;
-						} else if (bna instanceof Transition) {
-							filter += "'" + bna.getName() + "'.fire|";
-							filter += "'" + bna.getName() + "'.actualSpeed|";
-							vars += 2;
-						}
-					}
-
-					Iterator<String> it2 = bea2key.values().iterator();
-					String s;
-					while (it2.hasNext()) {
-						s = it2.next();
-						filter += s + "|";
-						filter += "der\\\\(" + s + "\\\\)|";
-						vars += 2;
-					}
-					filter = filter.replace("[", "\\\\[");
-					filter = filter.replace("]", "\\\\]");
-					filter = filter.substring(0, filter.length() - 1);
-					filter += "\"";
-					System.out.println("Filter: " + filter);
-					System.out.println("vars: " + vars);
-					FileWriter fstream = new FileWriter(pathSim
-							+ "simulation.mos");
-					BufferedWriter out = new BufferedWriter(fstream);
-					pathSim = pathSim.replace('\\', '/');
-					out.write("cd(\"" + pathSim + "\"); ");
-					out.write("getErrorString();\r\n");
-					out.write("loadFile(\""+simLib.getPath().replace("\\", "/") + "/package.mo\"); ");
-					out.write("getErrorString();\r\n");
-					out.write("loadFile(\"simulation.mo\"); ");
-					out.write("getErrorString();\r\n");
-					// out.write("setDebugFlags(\"disableComSubExp\"); ");
-					// out.write("getErrorString();\r\n");
-
-					// CHRIS improve / correct filter
-					// out.write("buildModel(simulation, " + filter + "); ");
-					out.write("buildModel('" + pw.getName() + "'); ");
-					out.write("getErrorString();\r\n");
-
-					// out.write("fileName=\"simulate.mat\";\r\n");
-					// out.write("CSVfile=\"simulate.csv\";\r\n");
-					// out.write("n=readTrajectorySize(fileName);\r\n");
-					// out.write("names = readTrajectoryNames(fileName);\r\n");
-					// out.write("traj=readTrajectory(fileName,names,n);\r\n");
-					// out.write("traj_transposed=transpose(traj);\r\n");
-					// out.write("DataFiles.writeCSVmatrix(CSVfile, names, traj_transposed);\r\n");
-					// out.write("exit();\r\n");
-					out.close();
+					this.writeMosFile();
+					
 					stopped = false;
 
 					// simT.run();
@@ -963,6 +907,70 @@ public class PetriNetSimulation implements ActionListener {
 						"Simulation done...", JOptionPane.INFORMATION_MESSAGE);
 
 	}
+	
+	private void writeMosFile() throws IOException{
+		String filter = "variableFilter=\"";
+
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes()
+				.iterator();
+		BiologicalNodeAbstract bna;
+		int vars = 0;
+		while (it.hasNext()) {
+			bna = it.next();
+			if (bna instanceof Place && !bna.hasRef()) {
+				filter += "'" + bna.getName() + "'.t|";
+				vars++;
+			} else if (bna instanceof Transition) {
+				filter += "'" + bna.getName() + "'.fire|";
+				filter += "'" + bna.getName() + "'.actualSpeed|";
+				vars += 2;
+			}
+		}
+
+		Iterator<String> it2 = bea2key.values().iterator();
+		String s;
+		while (it2.hasNext()) {
+			s = it2.next();
+			filter += s + "|";
+			filter += "der\\\\(" + s + "\\\\)|";
+			vars += 2;
+		}
+		filter = filter.replace("[", "\\\\[");
+		filter = filter.replace("]", "\\\\]");
+		filter = filter.substring(0, filter.length() - 1);
+		filter += "\"";
+		System.out.println("Filter: " + filter);
+		System.out.println("vars: " + vars);
+		FileWriter fstream = new FileWriter(pathSim
+				+ "simulation.mos");
+		BufferedWriter out = new BufferedWriter(fstream);
+		pathSim = pathSim.replace('\\', '/');
+		out.write("cd(\"" + pathSim + "\"); ");
+		out.write("getErrorString();\r\n");
+		out.write("loadFile(\""+simLib.getPath().replace("\\", "/") + "/package.mo\"); ");
+		out.write("getErrorString();\r\n");
+		out.write("loadFile(\"simulation.mo\"); ");
+		out.write("getErrorString();\r\n");
+		// out.write("setDebugFlags(\"disableComSubExp\"); ");
+		// out.write("getErrorString();\r\n");
+		out.write("setCommandLineOptions(\"+d=disableComSubExp\");");
+		out.write("getErrorString();\r\n");
+
+		// CHRIS improve / correct filter
+		// out.write("buildModel(simulation, " + filter + "); ");
+		out.write("buildModel('" + pw.getName() + "'); ");
+		out.write("getErrorString();\r\n");
+
+		// out.write("fileName=\"simulate.mat\";\r\n");
+		// out.write("CSVfile=\"simulate.csv\";\r\n");
+		// out.write("n=readTrajectorySize(fileName);\r\n");
+		// out.write("names = readTrajectoryNames(fileName);\r\n");
+		// out.write("traj=readTrajectory(fileName,names,n);\r\n");
+		// out.write("traj_transposed=transpose(traj);\r\n");
+		// out.write("DataFiles.writeCSVmatrix(CSVfile, names, traj_transposed);\r\n");
+		// out.write("exit();\r\n");
+		out.close();
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
@@ -1023,5 +1031,7 @@ public class PetriNetSimulation implements ActionListener {
 		}
 		return libs;
 	}
+	
+	
 
 }

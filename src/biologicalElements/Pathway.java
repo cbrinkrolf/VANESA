@@ -536,7 +536,7 @@ public class Pathway implements Cloneable {
 	 * 
 	 * @param element
 	 */
-	public void removeElementFromView(GraphElementAbstract element) {
+	/*public void removeElementFromView(GraphElementAbstract element) {
 		if (element != null) {
 			if (element.isVertex()) {
 
@@ -556,7 +556,7 @@ public class Pathway implements Cloneable {
 				getGraph().removeEdge(bea);
 			}
 		}
-	}
+	}*/
 
 	/**
 	 * Add a vertex to the current view (MyGraph)
