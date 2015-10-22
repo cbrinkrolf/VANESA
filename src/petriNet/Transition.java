@@ -9,7 +9,7 @@ import java.awt.geom.AffineTransform;
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
-public class Transition extends BiologicalNodeAbstract {
+public class Transition extends PNNode {
 
 	private boolean simulationActive;
 

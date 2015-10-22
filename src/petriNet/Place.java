@@ -9,7 +9,7 @@ import java.awt.Color;
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
-public class Place extends BiologicalNodeAbstract {
+public class Place extends PNNode {
 
 	private double token = 0;
 	private double tokenMin = 0.0;
