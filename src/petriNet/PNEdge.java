@@ -218,13 +218,19 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		if(this.getFrom().isConstant() || this.getTo().isConstant()){
 			return "0";
 		}
+		if(this.getFrom().hasRef() && this.getFrom().getRef().isConstant()){
+			return "0";
+		}
+		if(this.getTo().hasRef() && this.getTo().getRef().isConstant()){
+			return "0";
+		}
 		
 		StringBuilder mFunction = new StringBuilder(this.function);
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		ArrayList<String> names = new ArrayList<String>();
-		HashMap<String, String> mNames = new HashMap<String, String>();
+		//HashMap<String, String> mNames = new HashMap<String, String>();
 		BiologicalNodeAbstract bna;
 		Place p;
 		
