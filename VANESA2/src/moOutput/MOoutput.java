@@ -122,7 +122,7 @@ public class MOoutput {
 		// fwriter.write(properties);
 		if (this.packageInfo == null) {
 			//sb.append("\tinner PNlib.Settings settings1();\r\n");
-			sb.append("\tinner PNlib.Settings settings1(showTokenFlow = true);\r\n");
+			sb.append("\tinner PNlib.Settings settings(showTokenFlow = true);\r\n");
 		}
 
 		//os.write(places.getBytes());
