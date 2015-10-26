@@ -223,7 +223,7 @@ public class MOoutput {
 					// params+="\t\tparameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
 					places = places.concat("\tparameter Real '_"
 							+ bna.getName() + "_"
-							+ bna.getParameters().get(i).getName() + "' = "
+							+ bna.getParameters().get(i).getName() + "'(final unit=\""+bna.getParameters().get(i).getUnit()+"\") = "
 							+ bna.getParameters().get(i).getValue() + ";\r\n");
 					// System.out.println("drin");
 				}
