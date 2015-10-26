@@ -1537,9 +1537,9 @@ public class Pathway implements Cloneable {
 				}
 			} else {
 				p = vertices.get(bna);
-				System.out.println(bna.getLabel() + ": " + vertices.get(bna).getX() + "," + vertices.get(bna).getY());
+				//System.out.println(bna.getLabel() + ": " + vertices.get(bna).getX() + "," + vertices.get(bna).getY());
 				p.setLocation(p.getX() * factor, p.getY() * factor);
-				System.out.println(bna.getLabel() + ": " + vertices.get(bna).getX() + "," + vertices.get(bna).getY());
+				//System.out.println(bna.getLabel() + ": " + vertices.get(bna).getX() + "," + vertices.get(bna).getY());
 
 
 			}
