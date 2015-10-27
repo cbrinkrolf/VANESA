@@ -83,6 +83,7 @@ public class MOoutput {
 
 		this.os = os;
 		this.modelName = pathway.getName();// .substring(0,
+	//	this.modelName = this.modelName.replace(".", "_");
 		// pathway.getName().lastIndexOf("."));
 		if (debug)
 			System.out.println("Model Name = '" + modelName + "'");
@@ -142,10 +143,10 @@ public class MOoutput {
 			data = data.replaceAll("'", "");
 			
 			// remove "+" in names
-			data= data.replaceAll("(\\S)\\+", "$1_plus");
+			//data= data.replaceAll("(\\S)\\+", "$1_plus");
 			
 			//remove "-" in names
-			data= data.replaceAll("(\\S)\\-", "$1_");
+			//data= data.replaceAll("(\\S)\\-", "$1_");
 		}
 		os.write(data.getBytes());
 		os.close();
@@ -272,7 +273,7 @@ public class MOoutput {
 					Place place = (Place) bna;
 					String atr = "startMarks=" + place.getTokenStart()
 							+ ",minMarks=" + place.getTokenMin() + ",maxMarks="
-							+ place.getTokenMax();
+							+ place.getTokenMax()+",t(final unit=\"mmol\")";
 					places = places.concat(getPlaceString(
 							place.getModellicaString(), bna, atr, in, out, p));
 
@@ -302,9 +303,9 @@ public class MOoutput {
 					// String atr = "maximumSpeed="+t.getMaximumSpeed();
 					String atr;
 					if (t.isKnockedOut()) {
-						atr = "maximumSpeed=0";
+						atr = "maximumSpeed(final unit=\"mmol/min\")=0";
 					} else {
-						atr = "maximumSpeed="
+						atr = "maximumSpeed(final unit=\"mmol/min\")="
 								+ this.replace(t.getMaximumSpeed(),
 										t.getParameters(), t);
 					}

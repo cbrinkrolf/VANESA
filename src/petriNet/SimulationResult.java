@@ -99,5 +99,9 @@ public class SimulationResult {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public int size(){
+		return this.result.size();
+	}
 
 }

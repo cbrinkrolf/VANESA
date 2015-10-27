@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -150,10 +151,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private ArrayList<XYSeries> seriesListR1 = new ArrayList<XYSeries>();
 	private ArrayList<XYSeries> seriesListR2 = new ArrayList<XYSeries>();
 
-	//private DoubleHashMap<GraphElementAbstract, Integer, Integer> series2idx = new DoubleHashMap<GraphElementAbstract, Integer, Integer>();
-	
+	// private DoubleHashMap<GraphElementAbstract, Integer, Integer> series2idx
+	// = new DoubleHashMap<GraphElementAbstract, Integer, Integer>();
+
 	private TripleHashMap<GraphElementAbstract, Integer, String, Integer> series2idx = new TripleHashMap<GraphElementAbstract, Integer, String, Integer>();
-	
 
 	// private HashMap<XYSeries, Integer> series2id = new HashMap<XYSeries,
 	// Integer>();
@@ -267,16 +268,15 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			animationColour.setSelected(false);
 
 			mainPanel = new JPanel(layout);
-			
+
 			updateGraph = new JButton("update Graph");
 			updateGraph.addActionListener(this);
 			updateGraph.setActionCommand("updateGraph");
-			
+
 			showTable = new JButton("show detailed simulation results");
 			showTable.addActionListener(this);
 			showTable.setActionCommand("show");
-			
-			
+
 			slider.setMinimum(0);
 			slider.setMaximum(rowsDim - 1);
 			slider.setMajorTickSpacing(1);
@@ -297,7 +297,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			controlPanel.add(updateGraph);
 			controlPanel.add(showTable, "align left");
 			controlPanel.add(new JLabel(""), "align left,wrap 10, growx");
-			
+
 			controlPanel.add(new JSeparator(), "span, wrap 10, growx");
 
 			controlPanel.add(new JLabel("Animation Start:"), "align left");
@@ -312,13 +312,12 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			controlPanel.add(new JLabel("Animation Colour:"), "align left");
 			controlPanel.add(animationColour, "align left,wrap 10, growx");
 
-
 			controlPanel2.add(petriNetAnimationButton, "align left");
 			controlPanel2.add(petriNetStopAnimationButton, "align left");
 			controlPanel2.add(resetPetriNet, "align left");
 
 			controlPanel.add(controlPanel2, "span, wrap,growx");
-			
+
 			controlPanel.add(slider, "align left");
 			controlPanel.add(stepLabel, "align left,wrap, growx");
 
@@ -378,11 +377,14 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				if (simRes.contains(edge, SUM_OF_TOKEN)
 						&& simRes.contains(edge, ACTUAL_TOKEN_FLOW)
 						&& simRes.get(edge, SUM_OF_TOKEN).size() > 0) {
-					//System.out.println("true");
-					renderer.setSeriesVisible(
-							(int) series2idx.get(edge, ACTUAL_TOKEN_FLOW, "test"), true);
+					//System.out.println("contains: " + edge.getFrom().getName()
+					//		+ " " + edge.getTo().getName());
+					// System.out.println("true");
+					renderer.setSeriesVisible((int) series2idx.get(edge,
+							ACTUAL_TOKEN_FLOW, "test"), true);
 					renderer2.setSeriesVisible(
-							(int) series2idx.get(edge, SUM_OF_TOKEN, "test"), true);
+							(int) series2idx.get(edge, SUM_OF_TOKEN, "test"),
+							true);
 					// System.out.println(min);
 				}
 			}
@@ -428,7 +430,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// .getPetriNetSimulationData())) != null) {
 					if (this.series2idx.contains(place, TOKEN)) {
 						renderer.setSeriesVisible(
-								(int) series2idx.get(place, TOKEN, "test"), true);
+								(int) series2idx.get(place, TOKEN, "test"),
+								true);
 					}
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
@@ -505,7 +508,21 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	public void updateData() {
 		// System.out.println("update data begin");
 		SimulationResult simRes = pw.getSimResController().get();
+
+		Set<GraphElementAbstract> keys = series2idx.getKeys();
+		Iterator<GraphElementAbstract> itKeys = keys.iterator();
+		//System.out.println("-------------------keys----------------------");
+		while(itKeys.hasNext()){
+			GraphElementAbstract gea = itKeys.next();
+			if(gea instanceof BiologicalNodeAbstract){
+				//System.out.println(gea + ":"+ gea.getName());
+			}else if (gea instanceof BiologicalEdgeAbstract){
+				//System.out.println(gea+":"+((BiologicalEdgeAbstract) gea).getFrom().getName()+" -> "+((BiologicalEdgeAbstract) gea).getTo().getName());
+			}
+			
+		}
 		
+		//System.out.println("-----------------------------");
 		if (pw.isPetriNet() && pw.isPetriNetSimulation() && simRes != null) {
 
 			BiologicalNodeAbstract bna;
@@ -518,7 +535,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			Transition transition;
 			int stop;
 			int steps = 0;
-			
 
 			rowsDim = simRes.getTime().size();
 
@@ -628,63 +644,82 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					long begin = System.currentTimeMillis();
 					long diff = 0;
 					edge = (PNEdge) bea;
-					series = this.seriesListR1.get(series2idx.get(edge,
-							ACTUAL_TOKEN_FLOW, "test"));
-					series2 = this.seriesListR2.get(series2idx.get(edge,
-							SUM_OF_TOKEN, "test"));
-					if (simRes.contains(edge, SUM_OF_TOKEN)
-							&& simRes.get(edge, SUM_OF_TOKEN).size() > 0
-							&& simRes.get(edge, ACTUAL_TOKEN_FLOW).size() > 0) {
-						stop = Math.min(Math.min(
-								simRes.get(edge, ACTUAL_TOKEN_FLOW).size(),
-								simRes.get(edge, SUM_OF_TOKEN).size()), time
-								.size());
-						// System.out.println(edge.getFrom().getName()+" -> "+edge.getTo().getName());
-						// System.out.println("s: "+step);
-						// System.out.println(edge.getID());
-						long begin2 = System.currentTimeMillis();
-						steps = stop
-								- Math.min(series.getItemCount(),
-										series2.getItemCount());
-						if (steps > 0) {
-							for (int i = Math.min(series.getItemCount(),
-									series2.getItemCount()); i < stop; i++) {
+					//System.out.println(simRes.size());
+					//System.out.println(edge.getFrom()
+						//	.getName()
+							//+ " => "
+						//	+ edge.getTo().getName());
+					//System.out.println(edge+":"+simRes.contains(edge));
+					if (simRes.contains(edge)) {
+						// System.out.println(simRes.get(edge,
+						// ACTUAL_TOKEN_FLOW).size());
+						// if (simRes.contains(edge, ACTUAL_TOKEN_FLOW)
+						// && simRes.get(edge, ACTUAL_TOKEN_FLOW).size() > 0) {
+						//System.out.println(seriesListR1.size());
+						//System.out.println(seriesListR2.size());
+						//System.out.println("null: " + series2idx.size());
+						series = this.seriesListR1.get(series2idx.get(edge,
+								ACTUAL_TOKEN_FLOW, "test"));
+						series2 = this.seriesListR2.get(series2idx.get(edge,
+								SUM_OF_TOKEN, "test"));
+						if (simRes.contains(edge, SUM_OF_TOKEN)
+								&& simRes.get(edge, SUM_OF_TOKEN).size() > 0
+								&& simRes.get(edge, ACTUAL_TOKEN_FLOW).size() > 0) {
+							stop = Math.min(Math.min(
+									simRes.get(edge, ACTUAL_TOKEN_FLOW).size(),
+									simRes.get(edge, SUM_OF_TOKEN).size()),
+									time.size());
+							// System.out.println(edge.getFrom().getName()+" -> "+edge.getTo().getName());
+							// System.out.println("s: "+step);
+							// System.out.println(edge.getID());
+							long begin2 = System.currentTimeMillis();
+							steps = stop
+									- Math.min(series.getItemCount(),
+											series2.getItemCount());
+							if (steps > 0) {
+								for (int i = Math.min(series.getItemCount(),
+										series2.getItemCount()); i < stop; i++) {
 
-								value = simRes.get(edge, ACTUAL_TOKEN_FLOW)
-										.get(i);
-								if (series == null) {
-									System.out.println(edge.getFrom().getName()
-											+ " => " + edge.getTo().getName());
+									value = simRes.get(edge, ACTUAL_TOKEN_FLOW)
+											.get(i);
+									if (series == null) {
+										System.out.println(edge.getFrom()
+												.getName()
+												+ " => "
+												+ edge.getTo().getName());
+									}
+									if (series2 == null) {
+										System.out.println("null: "
+												+ edge.getFrom().getName()
+												+ " -> "
+												+ edge.getTo().getName());
+									}
+									series.add(simRes.getTime().get(i), value,
+											false);
+									// System.out.println(series2.getItemCount());
+									// System.out.println(pw.getPetriNet().getTime().get(i)
+									// +" "+ edge
+									// .getSim_tokensSum().get(i));
+									series2.add(simRes.getTime().get(i), simRes
+											.get(edge, SUM_OF_TOKEN).get(i),
+											false);
 								}
-								if (series2 == null) {
-									System.out.println("null: "
-											+ edge.getFrom().getName() + " -> "
-											+ edge.getTo().getName());
-								}
-								series.add(simRes.getTime().get(i), value,
-										false);
-								// System.out.println(series2.getItemCount());
-								// System.out.println(pw.getPetriNet().getTime().get(i)
-								// +" "+ edge
-								// .getSim_tokensSum().get(i));
-								series2.add(simRes.getTime().get(i), simRes
-										.get(edge, SUM_OF_TOKEN).get(i), false);
+								series.fireSeriesChanged();
+								series2.fireSeriesChanged();
 							}
-							series.fireSeriesChanged();
-							series2.fireSeriesChanged();
+							diff = System.currentTimeMillis() - begin2;
+							if (stop > 0) {
+								// System.out.println("edge: "+edge.getID()+" time: "
+								// +
+								// diff / (double)steps + " steps: "+steps);
+							}
 						}
-						diff = System.currentTimeMillis() - begin2;
-						if (stop > 0) {
-							// System.out.println("edge: "+edge.getID()+" time: "
-							// +
-							// diff / (double)steps + " steps: "+steps);
-						}
-					}
-					// long end = System.currentTimeMillis();
+						// long end = System.currentTimeMillis();
 
+					}
 				}
+				chart.fireChartChanged();
 			}
-			chart.fireChartChanged();
 		}
 		// chart.fireChartChanged();
 		// pane.setPreferredSize(new Dimension(320, 500));
@@ -697,10 +732,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	public void actionPerformed(ActionEvent e) {
 
 		String event = e.getActionCommand();
-		
-		if("updateGraph".equals(event)){
+
+		if ("updateGraph".equals(event)) {
 			this.drawPlot();
-		}else if ("reset".equals(event)) {
+		} else if ("reset".equals(event)) {
 			for (Iterator i = pw.getAllGraphNodes().iterator(); i.hasNext();) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) i.next();
 				if (bna instanceof Place) {
@@ -1083,7 +1118,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		if (pw == null) {
 			return;
 		}
-		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllGraphNodes().iterator();
+		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllGraphNodes()
+				.iterator();
 		XYSeries s;
 		List<String> simNames = pw.getSimResController().getSimNames();
 		while (itNodes.hasNext()) {
@@ -1112,7 +1148,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					transition = (Transition) bna;
 					// if (transition.getPetriNetSimulationData().size() > 0) {
 					s = new XYSeries(count);
-					series2idx.put(transition, ACTUAL_FIRING_SPEED, "test", count);
+					series2idx.put(transition, ACTUAL_FIRING_SPEED, "test",
+							count);
 					// seriesList.add(new XYSeries(j));
 					// series2id.put(s, count);
 					seriesListR1.add(s);
