@@ -50,5 +50,8 @@ public class DoubleHashMap<KEY1,KEY2,V>{
 		return map.containsKey(k1) && map.get(k1).containsKey(k2);
 	}
 	
+	public int size(){
+		return map.size();
+	}
 	
 }

@@ -422,7 +422,7 @@ public class PetriNetSimulation implements ActionListener {
 
 					Thread t = new Thread() {
 						public void run() {
-							long totalTime = 120000;
+							long totalTime = 1200000;
 							try {
 								for (long t = 0; t < totalTime; t += 1000) {
 									sleep(1000);

@@ -377,7 +377,7 @@ public class Server {
 				// e.setSim_tokens(v2);
 				// System.out.println("key: "+bea2key.get(bea));
 				// System.out.println("index: der("
-				// + bea2key.get(bea) + ")");
+				 //+ bea2key.get(bea) + ")");
 				value = (Double) values.get(name2index.get("der("
 						+ bea2key.get(bea) + ")"));
 

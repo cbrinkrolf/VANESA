@@ -1,6 +1,9 @@
 package util;
 
 import java.util.HashMap;
+import java.util.Set;
+
+import petriNet.PNEdge;
 
 public class TripleHashMap<KEY1, KEY2, KEY3, V> {
 
@@ -24,10 +27,21 @@ public class TripleHashMap<KEY1, KEY2, KEY3, V> {
 	}
 
 	public V get(KEY1 k1, KEY2 k2, KEY3 k3) {
-		//System.out.println("k1: "+k1);
-		//System.out.println("k2: "+k2);
-		//System.out.println("k3: "+k3);
-		return map.get(k1).get(k2).get(k3);
+		// System.out.println("k1: "+k1);
+		// System.out.println("k2: "+k2);
+		// System.out.println("k3: "+k3);
+		try {
+			return map.get(k1).get(k2).get(k3);
+		} catch (Exception e) {
+			if(k1 instanceof PNEdge){
+				System.out.println(((PNEdge) k1).getFrom().getName());
+				System.out.println(((PNEdge) k1).getTo().getName());
+			}
+			System.err.println("k1: " + k1);
+			System.err.println("k2: " + k2);
+			System.err.println("k3: " + k3);
+		}
+		return null;
 	}
 
 	public void clear() {
@@ -52,6 +66,14 @@ public class TripleHashMap<KEY1, KEY2, KEY3, V> {
 
 	public boolean contains(KEY1 k1, KEY2 k2, KEY3 k3) {
 		return map.containsKey(k1) && map.get(k1).contains(k2, k3);
+	}
+	
+	public int size(){
+		return map.size();
+	}
+	
+	public Set<KEY1> getKeys(){
+		return map.keySet();
 	}
 
 }
