@@ -133,6 +133,9 @@ public class Place extends PNNode {
 	}
 
 	public double getTokenMin() {
+		if(this.isCoarseNode()){
+			return 0;
+		}
 		return tokenMin;
 	}
 
@@ -141,6 +144,9 @@ public class Place extends PNNode {
 	}
 
 	public double getTokenMax() {
+		if(this.isConstant()){
+			return Double.MAX_VALUE;
+		}
 		return tokenMax;
 	}
 
