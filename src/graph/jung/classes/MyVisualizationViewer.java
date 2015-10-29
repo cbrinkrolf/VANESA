@@ -4,9 +4,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.Point2D;
+import java.awt.geom.RoundRectangle2D;
+import java.util.Iterator;
 import java.util.List;
 
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationServer;
@@ -17,8 +26,7 @@ import edu.uci.ics.jung.visualization.VisualizationServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.ContainerSingelton;
 
-public class MyVisualizationViewer<V,E> extends
-		VisualizationViewer<V, E> {
+public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
 	/**
 	 * 
@@ -27,9 +35,8 @@ public class MyVisualizationViewer<V,E> extends
 
 	private Pathway pw;
 
-	public MyVisualizationViewer(
-			VisualizationModel<V, E> arg0,
-			Dimension arg2, Pathway pw) {
+	public MyVisualizationViewer(VisualizationModel<V, E> arg0, Dimension arg2,
+			Pathway pw) {
 		super(arg0, arg2);
 		this.pw = pw;
 		// TODO Auto-generated constructor stub
@@ -58,8 +65,9 @@ public class MyVisualizationViewer<V,E> extends
 	// protected List<Paintable> postRenderers = new ArrayList<Paintable>();
 
 	protected void renderGraph(Graphics2D g2d) {
-
+		
 		super.renderGraph(g2d);
+		//this.drawCompartments(g2d);
 		g2d.setFont(new Font("default", Font.BOLD, 12));
 		g2d.setColor(Color.red);
 
@@ -79,21 +87,85 @@ public class MyVisualizationViewer<V,E> extends
 		double scaleL = this.getRenderContext().getMultiLayerTransformer()
 				.getTransformer(Layer.LAYOUT).getScale();
 		double scale;
-		if(scaleV < 1){
+		if (scaleV < 1) {
 			scale = scaleV;
-		}else{
+		} else {
 			scale = scaleL;
 		}
-		scale = ((double)((int)(scale *100))/100);
-		g2d.drawString("Zoom: " + scale+"x", this.getWidth()-75, 11);
-		
-		//g2d.drawString("x", 580, 533);
-		//System.out.println(this.getWidth());
+		scale = ((double) ((int) (scale * 100)) / 100);
+		g2d.drawString("Zoom: " + scale + "x", this.getWidth() - 75, 11);
+
+		// g2d.drawString("x", 580, 533);
+		// System.out.println(this.getWidth());
 		// ContainerSingelton.getInstance().setPetriView(true);
+
 	}
-	
-	public List<VisualizationServer.Paintable> getPreRenderers(){
+
+	public List<VisualizationServer.Paintable> getPreRenderers() {
 		return super.preRenderers;
+	}
+
+	public void drawCompartments(Graphics2D g2d){
+			Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
+		
+		BiologicalNodeAbstract bna1;
+		BiologicalNodeAbstract bna2;
+		BiologicalEdgeAbstract bea;
+		while(it.hasNext()){
+			bea = it.next();
+			bna1 = bea.getFrom();
+			bna2 = bea.getTo();
+			//System.out.println(bna.getName());
+			//System.out.println(pw.getGraph().getVertexLocation(bna));
+			Point2D p1 = pw.getGraph().getVertexLocation(bna1);//pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
+			Point2D p2 = pw.getGraph().getVertexLocation(bna2);
+			
+			
+			//g2d.drawString("b",(int)((p.getX())), (int)((p.getY())*scale));
+			Point2D p1inv = this.getRenderContext().getMultiLayerTransformer()
+						.transform(p1);
+			Point2D p2inv = this.getRenderContext().getMultiLayerTransformer()
+					.transform(p2);
+			
+			Shape s1 = this.getRenderContext().getMultiLayerTransformer()
+			.getTransformer(Layer.VIEW).transform(bna1.getShape().getBounds2D());
+			Shape s2 = this.getRenderContext().getMultiLayerTransformer()
+					.getTransformer(Layer.VIEW).transform(bna2.getShape().getBounds2D());
+			
+			
+			//Shape s3 = this.getRenderContext().getMultiLayerTransformer()
+				//	.getTransformer(Layer.VIEW).transform(bea.getShape().getBounds2D());
+			//System.out.println(loc);
+			int h1 = (int) s1.getBounds2D().getHeight();
+			int h2 = (int) s2.getBounds2D().getHeight()/2;
+			
+			int c1x = (int) s1.getBounds2D().getMaxX();
+			int c1y = (int) s1.getBounds2D().getMaxY();
+			//System.out.println(s.getBounds2D().getHeight());
+			Polygon poly = new Polygon();
+			//System.out.println(this.getRenderContext().);
+			//poly.addPoint(0, 0);
+			poly.addPoint((int)(p1inv.getX()+3), (int)(p1inv.getY()-3));
+			poly.addPoint((int)(p2inv.getX()-3), (int)(p2inv.getY()-3));
+			poly.addPoint((int)(p2inv.getX()-3), (int)(p2inv.getY()+3));
+			poly.addPoint((int)(p1inv.getX()+3), (int)(p1inv.getY()+3));
+			
+			
+			//poly.addPoint((int)(p1inv.getX()+h1), (int)(p1inv.getY()-h1));
+			//poly.addPoint((int)(p2inv.getX()-h2), (int)(p2inv.getY()-h2));
+			//poly.addPoint((int)(p2inv.getX()-h2), (int)(p2inv.getY()+h2));
+			//poly.addPoint((int)(p1inv.getX()+h1), (int)(p1inv.getY()+h1));
+			
+			
+			g2d.drawPolygon(poly);
+			g2d.setColor(new Color(255, 0,0,30));;
+			g2d.fillPolygon(poly);
+			//RoundRectangle2D r1 = new 
+			
+			g2d.fillRoundRect((int)(p1inv.getX()-h1*1.5), (int)(p1inv.getY()-h1*1.5), 3*h1, 3*h1, 15, 15);
+			g2d.fillRoundRect((int)(p2inv.getX()-h2*1.5), (int)(p2inv.getY()-h2*1.5), 3*h2, 3*h2, 15, 15);
+			//g2d.drawRect((int)(p1inv.getX()-20), (int)(p1inv.getY()-20), (int)(p2inv.getX()-p1inv.getX()+20), (int)(p2inv.getY()-p1inv.getY())+20);
+		}
 	}
 
 	/*
@@ -244,20 +316,19 @@ public class MyVisualizationViewer<V,E> extends
 	public Pathway getPw() {
 		return pw;
 	}
-	
-	public double getScale(){
+
+	public double getScale() {
 		double scaleV = this.getRenderContext().getMultiLayerTransformer()
 				.getTransformer(Layer.VIEW).getScale();
 		double scaleL = this.getRenderContext().getMultiLayerTransformer()
 				.getTransformer(Layer.LAYOUT).getScale();
 		double scale;
-		if(scaleV < 1){
+		if (scaleV < 1) {
 			scale = scaleV;
-		}else{
+		} else {
 			scale = scaleL;
 		}
 		return scale;
 	}
-	
 
 }
