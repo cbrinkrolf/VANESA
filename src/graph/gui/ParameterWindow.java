@@ -6,6 +6,10 @@ import gui.MainWindowSingleton;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -13,13 +17,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import net.miginfocom.swing.MigLayout;
 import petriNet.ContinuousTransition;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 
-public class ParameterWindow implements ActionListener {
+public class ParameterWindow implements ActionListener, DocumentListener {
 
 	private JPanel panel;
 	private JOptionPane pane;
@@ -31,6 +37,8 @@ public class ParameterWindow implements ActionListener {
 	private JButton add;
 	private GraphElementAbstract gea;
 	private FormularPanel fp;
+
+	private boolean editMode = false;
 
 	private JDialog dialog;
 
@@ -62,8 +70,9 @@ public class ParameterWindow implements ActionListener {
 			panel.add(fp);
 		}
 
+		name.getDocument().addDocumentListener(this);
 		// fp.get
-		add = new JButton("Add");
+		add = new JButton("add");
 		add.setActionCommand("add");
 		add.addActionListener(this);
 
@@ -115,7 +124,11 @@ public class ParameterWindow implements ActionListener {
 
 			panel.add(new JLabel(p.getUnit()), "span 1, gapright 4");
 
-			JButton del = new JButton("Delete");
+			JButton edit = new JButton("edit");
+			edit.setActionCommand("edit" + i);
+			edit.addActionListener(this);
+
+			JButton del = new JButton("delete");
 			del.setActionCommand("del" + i);
 
 			del.addActionListener(this);
@@ -129,7 +142,9 @@ public class ParameterWindow implements ActionListener {
 			down.addActionListener(this);
 			// parameters.put(del, p);
 
+			panel.add(edit, "span 1");
 			panel.add(del, "span 1");
+
 			if (i == 0) {
 				panel.add(down, "skip, span 1, wrap");
 			} else if (i == gea.getParameters().size() - 1) {
@@ -149,8 +164,23 @@ public class ParameterWindow implements ActionListener {
 			for (int i = 0; i < gea.getParameters().size(); i++) {
 				p = gea.getParameters().get(i);
 				if (p.getName().equals(name.getText())) {
-					//System.out.println("schon vorhanden");
+					if (this.editMode) {
+						p.setValue(Double.valueOf(this.value.getText()));
+						p.setUnit(unit.getText());
+						//TODO handling of rebuild
+						pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
+						this.editMode = false;
+						this.add.setText("add");
+						this.repaint();
+					}else{
+					// System.out.println("schon vorhanden");
+					JOptionPane
+					.showMessageDialog(
+							dialog,
+							"Parameter with same name already exists! Use edit button to edit parameter","Parameter warning", JOptionPane.WARNING_MESSAGE);
+				}
 					return;
+					
 				}
 			}
 			p = new Parameter(name.getText(), Double.valueOf(value.getText()),
@@ -183,6 +213,18 @@ public class ParameterWindow implements ActionListener {
 			gea.getParameters().set(idx - 1, p);
 
 			this.repaint();
+		} else if (e.getActionCommand().startsWith("edit")) {
+
+			this.add.setText("Override");
+			int idx = Integer.parseInt(e.getActionCommand().substring(4));
+			Parameter p = gea.getParameters().get(idx);
+			this.name.setText(p.getName());
+			this.value.setText(p.getValue() + "");
+			this.unit.setText(p.getUnit());
+			this.editMode = true;
+			this.repaint();
+			// gea.getParameters().set(idx, gea.getParameters().get(idx - 1));
+			// gea.getParameters().set(idx - 1, p);
 		}
 
 	}
@@ -212,4 +254,29 @@ public class ParameterWindow implements ActionListener {
 		dialog.pack();
 		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 	}
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		handleChangedName();
+
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		handleChangedName();
+
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+
+	}
+
+	private void handleChangedName() {
+		if (editMode) {
+			this.editMode = false;
+			this.add.setText("add");
+		}
+	}
+
 }
