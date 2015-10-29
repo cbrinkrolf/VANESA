@@ -60,6 +60,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	private JLabel simLibLbl = new JLabel("Simlation library");
 	private JComboBox<String> simLibs;
 	private JPanel west = new JPanel();
+	private JCheckBox forceRebuild = new JCheckBox("force rebuild");
 
 	// private ActionListener listener;
 
@@ -131,6 +132,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		northDown.add(integrators);
 		northDown.add(simLibLbl);
 		northDown.add(simLibs);
+		northDown.add(forceRebuild);
 
 		this.add(north, BorderLayout.NORTH);
 		north.setLayout(new GridLayout(2, 1));
@@ -298,6 +300,10 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	private void updateList(){
 		
 		
+	}
+	
+	public boolean isForceRebuild(){
+		return forceRebuild.isSelected();
 	}
 
 }
