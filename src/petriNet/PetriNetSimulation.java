@@ -335,7 +335,7 @@ public class PetriNetSimulation implements ActionListener {
 				if (flags.isEdgeChanged() || flags.isNodeChanged()
 						|| flags.isEdgeWeightChanged()
 						|| flags.isPnPropertiesChanged() || !simExePresent
-						|| simLibChanged) {
+						|| simLibChanged || menue.isForceRebuild()) {
 					System.out.println("edges changed: "
 							+ flags.isEdgeChanged());
 					System.out.println("nodes changed: "
