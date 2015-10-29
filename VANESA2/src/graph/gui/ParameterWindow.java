@@ -143,16 +143,22 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			// parameters.put(del, p);
 
 			panel.add(edit, "span 1");
-			panel.add(del, "span 1");
-
-			if (i == 0) {
-				panel.add(down, "skip, span 1, wrap");
-			} else if (i == gea.getParameters().size() - 1) {
-				panel.add(up, "span 1, gapright 4");
+			if (gea.getParameters().size() == 1) {
+				panel.add(del, "wrap");
 			} else {
-				panel.add(up, "span 1, gapright 4");
-				panel.add(down, "span 1, wrap");
+				panel.add(del, "span 1");
 			}
+			if (gea.getParameters().size() > 1) {
+				if (i == 0) {
+					panel.add(down, "skip, span 1, wrap");
+				} else if (i == gea.getParameters().size() - 1) {
+					panel.add(up, "span 1, gapright 4");
+				} else {
+					panel.add(up, "span 1, gapright 4");
+					panel.add(down, "span 1, wrap");
+				}
+			}
+			// panel.add(null, "span 1, wrap");
 		}
 	}
 
@@ -167,20 +173,22 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 					if (this.editMode) {
 						p.setValue(Double.valueOf(this.value.getText()));
 						p.setUnit(unit.getText());
-						//TODO handling of rebuild
+						// TODO handling of rebuild
 						pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
 						this.editMode = false;
 						this.add.setText("add");
 						this.repaint();
-					}else{
-					// System.out.println("schon vorhanden");
-					JOptionPane
-					.showMessageDialog(
-							dialog,
-							"Parameter with same name already exists! Use edit button to edit parameter","Parameter warning", JOptionPane.WARNING_MESSAGE);
-				}
+					} else {
+						// System.out.println("schon vorhanden");
+						JOptionPane
+								.showMessageDialog(
+										dialog,
+										"Parameter with same name already exists! Use edit button to edit parameter",
+										"Parameter warning",
+										JOptionPane.WARNING_MESSAGE);
+					}
 					return;
-					
+
 				}
 			}
 			p = new Parameter(name.getText(), Double.valueOf(value.getText()),
