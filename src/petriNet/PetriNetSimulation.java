@@ -440,6 +440,25 @@ public class PetriNetSimulation implements ActionListener {
 					os.read(bytes);
 					String buildOutput = new String(bytes);
 					System.out.println(buildOutput);
+					
+					if(buildOutput.contains("Warning: The following equation is INCONSISTENT due to specified unit information:")){
+						String message = "";
+						int number = 0;
+						String[] split = buildOutput.split("Warning: ");
+						for(int i = 1; i<split.length; i++){
+							if(split[i].startsWith("The following equation is INCONSISTENT due to specified unit information:")){
+							number++;
+							message+= split[i]+"\r\n";
+							}
+						}
+						
+						JOptionPane
+						.showMessageDialog(
+								w,
+								message,
+								"Warning: "+number+" expression(s) are inconsistent:", JOptionPane.WARNING_MESSAGE);
+					}
+					
 					StringTokenizer tokenizer = new StringTokenizer(
 							buildOutput, ",");
 					String tmp = tokenizer.nextToken();
@@ -953,7 +972,7 @@ public class PetriNetSimulation implements ActionListener {
 		out.write("getErrorString();\r\n");
 		// out.write("setDebugFlags(\"disableComSubExp\"); ");
 		// out.write("getErrorString();\r\n");
-		out.write("setCommandLineOptions(\"+d=disableComSubExp\");");
+		out.write("setCommandLineOptions(\"+d=disableComSubExp +newUnitChecking\");");
 		out.write("getErrorString();\r\n");
 
 		// CHRIS improve / correct filter
