@@ -33,7 +33,7 @@ public class ContinuousTransition extends Transition {
 		*/
 		AffineTransform transform2 = new AffineTransform();
 		
-		transform2.translate(1, 1);
+//		/transform2.translate(1, 1);
 		transform2.scale(1, 2);
 		setDefaultShape(transform2.createTransformedShape(shapes.getDoubleRectangle()));
 
