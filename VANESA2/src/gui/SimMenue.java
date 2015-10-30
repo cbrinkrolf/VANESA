@@ -114,7 +114,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		while (it.hasNext()) {
 			simLibs.addItem(it.next().getName());
 		}
-		simLibs.setSelectedIndex(0);
+		simLibs.setSelectedIndex(libs.size()-1);
 
 		this.setLayout(new BorderLayout());
 		this.stop.setEnabled(false);
