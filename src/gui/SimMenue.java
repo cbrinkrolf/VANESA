@@ -67,6 +67,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	private List<File> libs;
 
 	public SimMenue(ActionListener listener, List<File> libs) {
+		this.setTitle("VANESA - simulation setup");
 		this.libs = libs;
 		// this.listener = listener;
 		start.setActionCommand("start");
