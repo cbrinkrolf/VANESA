@@ -1,6 +1,5 @@
 package gui.eventhandlers;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
@@ -22,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
