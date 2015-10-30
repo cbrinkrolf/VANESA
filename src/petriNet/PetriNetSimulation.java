@@ -959,7 +959,7 @@ public class PetriNetSimulation implements ActionListener {
 		filter = filter.substring(0, filter.length() - 1);
 		filter += "\"";
 		System.out.println("Filter: " + filter);
-		System.out.println("vars: " + vars);
+		System.out.println("expected number of output vars: " + vars);
 		FileWriter fstream = new FileWriter(pathSim
 				+ "simulation.mos");
 		BufferedWriter out = new BufferedWriter(fstream);
@@ -972,7 +972,8 @@ public class PetriNetSimulation implements ActionListener {
 		out.write("getErrorString();\r\n");
 		// out.write("setDebugFlags(\"disableComSubExp\"); ");
 		// out.write("getErrorString();\r\n");
-		out.write("setCommandLineOptions(\"+d=disableComSubExp +newUnitChecking\");");
+		out.write("setCommandLineOptions(\"+newUnitChecking\");");
+		//out.write("setCommandLineOptions(\"+d=disableComSubExp +newUnitChecking\");");
 		out.write("getErrorString();\r\n");
 
 		// CHRIS improve / correct filter

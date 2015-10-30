@@ -222,13 +222,12 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 
 			this.repaint();
 		} else if (e.getActionCommand().startsWith("edit")) {
-
-			this.add.setText("Override");
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
 			Parameter p = gea.getParameters().get(idx);
 			this.name.setText(p.getName());
 			this.value.setText(p.getValue() + "");
 			this.unit.setText(p.getUnit());
+			this.add.setText("Override");
 			this.editMode = true;
 			this.repaint();
 			// gea.getParameters().set(idx, gea.getParameters().get(idx - 1));
