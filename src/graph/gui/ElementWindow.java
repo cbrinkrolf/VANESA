@@ -3,7 +3,6 @@ package graph.gui;
 /*import edu.uci.ics.jung.graph.Edge;
  import edu.uci.ics.jung.graph.Vertex;
  import edu.uci.ics.jung.utils.Pair;*/
-import edu.emory.mathcs.backport.java.util.Collections;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import graph.algorithms.NodeAttributeTypes;
@@ -19,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
