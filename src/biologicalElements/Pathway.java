@@ -1290,12 +1290,14 @@ public class Pathway implements Cloneable {
 		// Set of all edges of the finest abstraction level
 		Set<BiologicalEdgeAbstract> flattenedEdges = new HashSet<BiologicalEdgeAbstract>();
 		
-		// Set of all visible nodes (built up successively, starting with finest abstraction level)
-		Set<BiologicalNodeAbstract> visibleNodes = new HashSet<BiologicalNodeAbstract>();
-		visibleNodes.addAll(vertices.keySet());
+		// HashMap for abstracted nodes
+		HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> abstractedNodes = new HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract>();
+		for(BiologicalNodeAbstract n : vertices.keySet()){
+			abstractedNodes.put(n, n);
+		}
 		
 		// Add all flattened edges to the set of flattened edges
-		for (BiologicalNodeAbstract n : visibleNodes) {
+		for (BiologicalNodeAbstract n : abstractedNodes.keySet()) {
 			flattenedEdges.addAll(n.getConnectingEdges());
 		}
 
@@ -1315,14 +1317,14 @@ public class Pathway implements Cloneable {
 			if (csp.contains(n.getParentNode())) {
 				continue;
 			}
-
-			// Remove all descendants from the view and add the coarse node
-			visibleNodes.removeAll(n.getVertices().keySet());
-			visibleNodes.add(n);
+			
+			for(BiologicalNodeAbstract child : n.getVertices().keySet()){
+				abstractedNodes.put(child, n);
+			}
 		}
 		
 		// Add visible nodes to view
-		for(BiologicalNodeAbstract n : visibleNodes){
+		for(BiologicalNodeAbstract n : abstractedNodes.values()){
 			addVertexToView(n, getVertexPosition(n));
 		}
 
@@ -1330,8 +1332,8 @@ public class Pathway implements Cloneable {
 		while(!flattenedEdges.isEmpty()){
 			BiologicalEdgeAbstract next = flattenedEdges.iterator().next();
 			BiologicalEdgeAbstract clone = next.clone();
-			BiologicalNodeAbstract newFrom = clone.getFrom().getCurrentShownParentNode(getGraph());
-			BiologicalNodeAbstract newTo = clone.getTo().getCurrentShownParentNode(getGraph());
+			BiologicalNodeAbstract newFrom = abstractedNodes.get(clone.getFrom());
+			BiologicalNodeAbstract newTo = abstractedNodes.get(clone.getTo());
 			clone.setFrom(newFrom == null ? clone.getFrom() : newFrom);
 			clone.setTo(newTo == null ? clone.getTo() : newTo);
 			if (clone.isValid(false)) {
@@ -1339,8 +1341,8 @@ public class Pathway implements Cloneable {
 					addEdgeToView(next, true);
 				else
 					addEdgeToView(clone, true);
-				flattenedEdges.removeIf(e -> e.getFrom().getAllParentNodes().contains(clone.getFrom()) &&
-						e.getTo().getAllParentNodes().contains(clone.getTo()));
+				flattenedEdges.removeIf(e -> abstractedNodes.get(e.getFrom())==clone.getFrom() &&
+						abstractedNodes.get(e.getTo()) == clone.getTo());
 			}
 			flattenedEdges.remove(next);
 		}
