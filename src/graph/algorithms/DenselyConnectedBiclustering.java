@@ -1,6 +1,5 @@
 package graph.algorithms;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
