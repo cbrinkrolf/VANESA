@@ -108,7 +108,7 @@ public class JSBMLoutput {
 		
 		// read all nodes from graph
 		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : rootPathway.getAllGraphNodes()){
+		for(BiologicalNodeAbstract node : rootPathway.getAllGraphNodesSorted()){
 			flattenedPathwayNodes.addAll(node.getLeafNodes());
 		}
 		
@@ -267,7 +267,7 @@ public class JSBMLoutput {
 		Set<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
 		
 		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : rootPathway.getAllGraphNodes()){
+		for(BiologicalNodeAbstract node : rootPathway.getAllGraphNodesSorted()){
 			flattenedPathwayNodes.addAll(node.getLeafNodes());
 		}
 
