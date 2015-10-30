@@ -344,79 +344,26 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 											"Unallowed Operation...",
 											JOptionPane.ERROR_MESSAGE);
 						else {
-							//BiologicalEdgeAbstract bea;
-							//System.out.println(nodes[0].getLabel() + " -> " + nodes[1].getLabel());
 							String name = answers[0];
 							String label = answers[0];
 							String element = answers[2];
 							boolean directed = false;
 							if (answers[1].equals("directed_edge")) {
-
-								// Edge newEdge = new DirectedSparseEdge(
-								// startVertex, vertex);
-//								bea = new BiologicalEdgeAbstract(answers[0],
-//										"", startVertex, vertex);
-//								bea.setDirected(true);
 								directed = true;
-
-							} else {
-
-								// Edge newEdge = new UndirectedSparseEdge(
-								// startVertex, vertex);
-//								bea = new BiologicalEdgeAbstract(answers[0],
-//										"", startVertex, vertex);
-//								bea.setDirected(false);
 							}
 
-//							bea.setBiologicalElement(answers[2]);
-							// System.out.println("vor add");
-//							BiologicalEdgeAbstract bea = pw.addEdge(label, name, startVertex, vertex, element, directed).clone();
-//							bea.setFrom(nodes[0]);
-//							bea.setTo(nodes[1]);
 							Set<BiologicalNodeAbstract> parentBNAs = new HashSet<BiologicalNodeAbstract>();
 							parentBNAs.addAll(nodes[0].getAllParentNodes());
 							parentBNAs.addAll(nodes[1].getAllParentNodes());
 							BiologicalEdgeAbstract bea = pw.addEdge(label, name, nodes[0], nodes[1], element, directed);
-							pw.addEdge(label, name, startVertex, vertex, element, directed);
-							
-							
-							for(BiologicalNodeAbstract bna : parentBNAs){
-//								System.out.println(bna.getLabel());
-//								System.out.println(bea + ": " + bea.getFrom().getLabel() + "->" + bea.getTo().getLabel());
-								BiologicalNodeAbstract from = nodes[0].getCurrentShownParentNode(bna.getGraph());
-								BiologicalNodeAbstract to = nodes[1].getCurrentShownParentNode(bna.getGraph());
-//								System.out.println("CON before:");
-//								for(BiologicalEdgeAbstract ed : bna.getConnectingEdges()){
-//									System.out.println(ed + ": " + ed.getFrom().getLabel() + "->" + ed.getTo().getLabel());
-//								}
-								if(from!=null && to!=null && from!=to){
-									bna.addEdge(label, name, from, to, element, directed);
-									if(bna.getEnvironment().contains(from) | bna.getEnvironment().contains(to)){
-										bna.getConnectingEdges().add(bea);
-									}
-								} else if(from==null && to!=null){
-									BiologicalNodeAbstract newEnvNode = startVertex.getCurrentShownParentNode(pw.getGraph());
-									bna.getEnvironment().add(newEnvNode);
-									bna.getBorder().add(to);
-									bna.addVertex(newEnvNode, pw.getGraph().getVertexLocation(newEnvNode));
-									bna.addEdge(label, name, newEnvNode, to, element, directed);
-									bna.getConnectingEdges().add(bea);
-								} else if(from!=null && to==null){
-									BiologicalNodeAbstract newEnvNode = vertex.getCurrentShownParentNode(pw.getGraph());
-									bna.getEnvironment().add(newEnvNode);
-									bna.getBorder().add(from);
-									bna.addVertex(newEnvNode, pw.getGraph().getVertexLocation(newEnvNode));
-									bna.addEdge(label, name, from, newEnvNode, element, directed);
-									bna.getConnectingEdges().add(bea);
-								}
-//								System.out.println("CON after:");
-//								for(BiologicalEdgeAbstract ed : bna.getConnectingEdges()){
-//									System.out.println(ed + ": " + ed.getFrom().getLabel() + "->" + ed.getTo().getLabel());
-//								}
+							if(nodes[0]==startVertex && nodes[1]==vertex)
+								pw.addEdgeToView(bea, false);
+							else{
+								BiologicalEdgeAbstract clone = bea.clone();
+								clone.setFrom(startVertex);
+								clone.setTo(vertex);
+								pw.addEdgeToView(clone, false);
 							}
-							//pw.getRootPathway().updateMyGraph();
-
-							// MainWindowSingelton.getInstance().updateElementTree();
 						}
 					}
 				}
@@ -427,7 +374,6 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 			edgeIsDirected = false;
 			vv.removePostRenderPaintable(edgePaintable);
 			vv.removePostRenderPaintable(arrowPaintable);
-			pw.updateMyGraph();
 		}
 	}
 
