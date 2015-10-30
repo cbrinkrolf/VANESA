@@ -1335,13 +1335,15 @@ public class Pathway implements Cloneable {
 			clone.setFrom(newFrom == null ? clone.getFrom() : newFrom);
 			clone.setTo(newTo == null ? clone.getTo() : newTo);
 			if (clone.isValid(false)) {
-				addEdgeToView(clone, true);
+				if(clone.getTo()==next.getTo() && clone.getFrom()==next.getFrom())
+					addEdgeToView(next, true);
+				else
+					addEdgeToView(clone, true);
 				flattenedEdges.removeIf(e -> e.getFrom().getAllParentNodes().contains(clone.getFrom()) &&
 						e.getTo().getAllParentNodes().contains(clone.getTo()));
 			}
 			flattenedEdges.remove(next);
 		}
-
 //		System.out.println("endlagg");
 
 	}
