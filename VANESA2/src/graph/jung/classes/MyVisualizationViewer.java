@@ -17,8 +17,11 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import petriNet.Transition;
 
 import com.sun.javafx.geom.Path2D;
 
@@ -45,15 +48,19 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	private static final long serialVersionUID = 1L;
 
 	private Pathway pw;
-	
-	private Area a;
+
+	private HashMap<String, Area> areas = new HashMap<String, Area>();
 
 	public MyVisualizationViewer(VisualizationModel<V, E> arg0, Dimension arg2,
 			Pathway pw) {
 		super(arg0, arg2);
 		this.pw = pw;
-		a = new Area();
-		//this.prepareCompartments();
+		areas.put("Cytoplasma", new Area());
+		areas.put("Nucleus", new Area());
+		areas.put("Membrane", new Area());
+		areas.put("Inside the cell", new Area());
+
+		// this.prepareCompartments();
 		// TODO Auto-generated constructor stub
 	}
 
@@ -66,8 +73,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	private int paintIndex = 0;
 
 	private double paintfps, relaxfps;
-	
-	
 
 	/**
 	 * a collection of user-implementable functions to render under the topology
@@ -81,10 +86,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	 */
 	// protected List<Paintable> postRenderers = new ArrayList<Paintable>();
 
-
 	protected void renderGraph(Graphics2D g2d) {
-		
-		
+
 		//this.prepareCompartments();
 
 		super.renderGraph(g2d);
@@ -127,7 +130,13 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	}
 
 	private void prepareCompartments() {
-		a = new Area();
+		
+		Iterator<String> comp = this.areas.keySet().iterator();
+		
+		while(comp.hasNext()){
+			this.areas.put(comp.next(), new Area());
+		}
+		
 		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
 
 		long l1 = System.nanoTime();
@@ -136,8 +145,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		BiologicalNodeAbstract bna2;
 		BiologicalEdgeAbstract bea;
 
-		
 		while (it.hasNext()) {
+			Area a;
 			bea = it.next();
 			bna1 = bea.getFrom();
 			bna2 = bea.getTo();
@@ -165,7 +174,16 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			// .getTransformer(Layer.VIEW).transform(bea.getShape().getBounds2D());
 			// System.out.println(loc);
 			int h1 = (int) s1.getBounds2D().getHeight();
-			int h2 = (int) s2.getBounds2D().getHeight() / 2;
+			int h2 = (int) s2.getBounds2D().getHeight();
+
+			if (bna1 instanceof Transition) {
+				h1 = h1 / 2;
+				//System.out.println(bna1.getCompartment());
+				a = areas.get(bna1.getCompartment());
+			} else {
+				h2 = h2 / 2;
+				a = areas.get(bna2.getCompartment());
+			}
 
 			int c1x = (int) s1.getBounds2D().getMaxX();
 			int c1y = (int) s1.getBounds2D().getMaxY();
@@ -195,14 +213,14 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			poly1.addPoint((int) (p2inv.getX() + width),
 					(int) (p2inv.getY() + width));
 
-			//Polygon poly2 = new Polygon();
-			poly1.addPoint((int) (p1inv.getX() + width),
+			Polygon poly2 = new Polygon();
+			poly2.addPoint((int) (p1inv.getX() + width),
 					(int) (p1inv.getY() - width));
-			poly1.addPoint((int) (p1inv.getX() - width),
+			poly2.addPoint((int) (p1inv.getX() - width),
 					(int) (p1inv.getY() + width));
-			poly1.addPoint((int) (p2inv.getX() - width),
+			poly2.addPoint((int) (p2inv.getX() - width),
 					(int) (p2inv.getY() + width));
-			poly1.addPoint((int) (p2inv.getX() + width),
+			poly2.addPoint((int) (p2inv.getX() + width),
 					(int) (p2inv.getY() - width));
 
 			// poly.addPoint((int)(s1.getBounds2D().getMinX()),
@@ -239,14 +257,13 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			Area a2 = new Area(r2);
 
 			Area a3 = new Area(poly1);
-			//Area a4 = new Area(poly2);
+			Area a4 = new Area(poly2);
 
 			a.add(a3);
-			//a.add(a1);
-			//a.add(a2);
-			//a.add(a4);
-			
-			
+			a.add(a1);
+			a.add(a2);
+			a.add(a4);
+
 			// a3.add(new Area(arc));
 			// a3.add(new Area(l));
 			// a1.add(a2);
@@ -270,21 +287,48 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			// (int)(p2inv.getY()-p1inv.getY())+20);
 		}
 		long l2 = System.nanoTime();
-		
-		System.out.println("adding: "+(l2-l1)/1000);
+
+		//System.out.println("adding: " + (l2 - l1) / 1000);
 		// }
-		
-		
-		System.out.println("painting "+(System.nanoTime()-l2)/1000);
+
+		//System.out.println("painting " + (System.nanoTime() - l2) / 1000);
 	}
-	
-	private void drawCompartemnts(Graphics2D g2d){
+
+	private void drawCompartemnts(Graphics2D g2d) {
+
+		Iterator<String> it = this.areas.keySet().iterator();
+		String comp;
+		while (it.hasNext()) {
+			comp = it.next();
+
+			switch (comp) {
+			case "Cytoplasma":
+				g2d.setColor(new Color(0, 255, 0, 50));
+				g2d.fill(areas.get(comp));
+				break;
+
+			case "Nucleus":
+				g2d.setColor(new Color(0, 0, 255, 50));
+				g2d.fill(areas.get(comp));
+				break;
+
+			case "Membrane":
+				g2d.setColor(new Color(255, 128, 0, 50));
+				g2d.fill(areas.get(comp));
+				break;
+
+			case "Inside the cell":
+				g2d.setColor(new Color(127, 0, 255, 50));
+				g2d.fill(areas.get(comp));
+				break;
+			}
+			
+			
+		}
+		//g2d.setColor(new Color(255, 0, 0, 30));
+		// a.transform(new AffineTransform(0.5, 0.5,0.5,0.5,0.5,0.5));
 		
-		g2d.setColor(new Color(255, 0, 0, 30));
-		//a.transform(new AffineTransform(0.5, 0.5,0.5,0.5,0.5,0.5));
-		g2d.fill(a);
 	}
-	
 
 	/*
 	 * @Override protected void renderGraph(Graphics2D g2d) {
