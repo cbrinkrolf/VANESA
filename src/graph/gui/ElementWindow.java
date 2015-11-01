@@ -830,7 +830,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			((Transition) ab).setKnockedOut(knockedOut.isSelected());
 			this.updateWindow(ab);
 			p.revalidate();
-			//p.repaint();
+			// p.repaint();
 			Pathway pw = new GraphInstance().getPathway();
 			pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 
@@ -859,14 +859,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent event) {
-		System.out.println("item changed");
-		// CHRIS probably never executed
 
-		/*
-		 * int state = event.getStateChange(); String item = (String)
-		 * event.getItem(); if (ab.isVertex()) { BiologicalNodeAbstract bna =
-		 * (BiologicalNodeAbstract) graphInstance .getPathwayElement(element);
-		 * bna.setCompartment(item); }
-		 */
+		int state = event.getStateChange();
+		String item = (String) event.getItem();
+		if (ab.isVertex()) {
+			((BiologicalNodeAbstract) ab).setCompartment(item);
+		}
+
 	}
 }
