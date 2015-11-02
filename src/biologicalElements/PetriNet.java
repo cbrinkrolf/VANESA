@@ -134,6 +134,9 @@ public class PetriNet {
 					"Result file does not fit on Graph!");
 
 		}
+		
+		this.pw.setPetriNet(true);
+		MainWindowSingleton.getInstance().updateOptionPanel();
 
 	}
 
