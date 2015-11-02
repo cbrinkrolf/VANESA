@@ -47,7 +47,7 @@ public class PetriNetSimulation implements ActionListener {
 	private static String pathWorkingDirectory = null;
 	private static String pathSim = null;
 	private boolean stopped = false;
-	private SimMenue menue;
+	private SimMenue menue = null;
 	private Process process;
 
 	private BufferedReader outputReader;
@@ -90,8 +90,18 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	public void showMenue() {
-		this.simLibs = this.getLibs(new File(pathWorkingDirectory));
-		menue = new SimMenue(this, this.simLibs);
+		if (this.menue == null) {
+			this.simLibs = this.getLibs(new File(pathWorkingDirectory));
+			menue = new SimMenue(this, this.simLibs);
+		} else {
+			if (!menue.isVisible()) {
+				this.simLibs = this.getLibs(new File(pathWorkingDirectory));
+				this.menue.setLibs(this.simLibs);
+				menue.setVisible(true);
+			}else{
+				this.menue.requestFocus();
+			}
+		}
 	}
 
 	private void runOMC() {
@@ -390,7 +400,8 @@ public class PetriNetSimulation implements ActionListener {
 					if (simLib.getName().equals("PNlib")) {
 						// packageInfo = "inner PNlib.Settings settings1;";
 					} else {
-						packageInfo = "import PNlib = " + simLib.getName() + ";";
+						packageInfo = "import PNlib = " + simLib.getName()
+								+ ";";
 					}
 					MOoutput mo = new MOoutput(new FileOutputStream(new File(
 							pathSim + "simulation.mo")), pw, packageInfo);
@@ -398,7 +409,7 @@ public class PetriNetSimulation implements ActionListener {
 					//
 
 					this.writeMosFile();
-					
+
 					stopped = false;
 
 					// simT.run();
@@ -440,25 +451,25 @@ public class PetriNetSimulation implements ActionListener {
 					os.read(bytes);
 					String buildOutput = new String(bytes);
 					System.out.println(buildOutput);
-					
-					if(buildOutput.contains("Warning: The following equation is INCONSISTENT due to specified unit information:")){
+
+					if (buildOutput
+							.contains("Warning: The following equation is INCONSISTENT due to specified unit information:")) {
 						String message = "";
 						int number = 0;
 						String[] split = buildOutput.split("Warning: ");
-						for(int i = 1; i<split.length; i++){
-							if(split[i].startsWith("The following equation is INCONSISTENT due to specified unit information:")){
-							number++;
-							message+= split[i]+"\r\n";
+						for (int i = 1; i < split.length; i++) {
+							if (split[i]
+									.startsWith("The following equation is INCONSISTENT due to specified unit information:")) {
+								number++;
+								message += split[i] + "\r\n";
 							}
 						}
-						
-						JOptionPane
-						.showMessageDialog(
-								w,
-								message,
-								"Warning: "+number+" expression(s) are inconsistent:", JOptionPane.WARNING_MESSAGE);
+
+						JOptionPane.showMessageDialog(w, message, "Warning: "
+								+ number + " expression(s) are inconsistent:",
+								JOptionPane.WARNING_MESSAGE);
 					}
-					
+
 					StringTokenizer tokenizer = new StringTokenizer(
 							buildOutput, ",");
 					String tmp = tokenizer.nextToken();
@@ -630,7 +641,7 @@ public class PetriNetSimulation implements ActionListener {
 						System.out.println("end of simulation");
 						w.updatePCPView();
 						w.redrawGraphs();
-					
+
 						w.repaint();
 						if (v.size() > 0) {
 							menue.setTime((v.get(v.size() - 1)).toString());
@@ -926,12 +937,11 @@ public class PetriNetSimulation implements ActionListener {
 						"Simulation done...", JOptionPane.INFORMATION_MESSAGE);
 
 	}
-	
-	private void writeMosFile() throws IOException{
+
+	private void writeMosFile() throws IOException {
 		String filter = "variableFilter=\"";
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes()
-				.iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		int vars = 0;
 		while (it.hasNext()) {
@@ -960,20 +970,20 @@ public class PetriNetSimulation implements ActionListener {
 		filter += "\"";
 		System.out.println("Filter: " + filter);
 		System.out.println("expected number of output vars: " + vars);
-		FileWriter fstream = new FileWriter(pathSim
-				+ "simulation.mos");
+		FileWriter fstream = new FileWriter(pathSim + "simulation.mos");
 		BufferedWriter out = new BufferedWriter(fstream);
 		pathSim = pathSim.replace('\\', '/');
 		out.write("cd(\"" + pathSim + "\"); ");
 		out.write("getErrorString();\r\n");
-		out.write("loadFile(\""+simLib.getPath().replace("\\", "/") + "/package.mo\"); ");
+		out.write("loadFile(\"" + simLib.getPath().replace("\\", "/")
+				+ "/package.mo\"); ");
 		out.write("getErrorString();\r\n");
 		out.write("loadFile(\"simulation.mo\"); ");
 		out.write("getErrorString();\r\n");
 		// out.write("setDebugFlags(\"disableComSubExp\"); ");
 		// out.write("getErrorString();\r\n");
 		out.write("setCommandLineOptions(\"+newUnitChecking\");");
-		//out.write("setCommandLineOptions(\"+d=disableComSubExp +newUnitChecking\");");
+		// out.write("setCommandLineOptions(\"+d=disableComSubExp +newUnitChecking\");");
 		out.write("getErrorString();\r\n");
 
 		// CHRIS improve / correct filter
@@ -1039,9 +1049,9 @@ public class PetriNetSimulation implements ActionListener {
 					if (new File(f, "package.mo").exists()) {
 						libs.add(f);
 						// System.out.println("existiert: "+ f.getName());
-					}else{
-						File g = new File(f+File.separator+f.getName());
-						if(new File(g, "package.mo").exists()){
+					} else {
+						File g = new File(f + File.separator + f.getName());
+						if (new File(g, "package.mo").exists()) {
 							libs.add(g);
 						}
 					}
@@ -1051,7 +1061,5 @@ public class PetriNetSimulation implements ActionListener {
 		}
 		return libs;
 	}
-	
-	
 
 }
