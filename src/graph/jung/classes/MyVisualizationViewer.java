@@ -1,32 +1,21 @@
 package graph.jung.classes;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import petriNet.Transition;
-
-import com.sun.javafx.geom.Path2D;
-
-import javafx.scene.shape.Line;
-import antlr.collections.impl.LList;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -58,7 +47,7 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		areas.put("Cytoplasma", new Area());
 		areas.put("Nucleus", new Area());
 		areas.put("Membrane", new Area());
-		areas.put("Inside the cell", new Area());
+		areas.put("InsideTheCell", new Area());
 
 		// this.prepareCompartments();
 		// TODO Auto-generated constructor stub
@@ -202,7 +191,7 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			Point2D pp1inv = getRenderContext().getMultiLayerTransformer()
 					.transform(pp1);
 
-			double width = 15;
+			double width = 12;
 			Polygon poly1 = new Polygon();
 			poly1.addPoint((int) (p1inv.getX() + width),
 					(int) (p1inv.getY() + width));
@@ -259,6 +248,7 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			Area a3 = new Area(poly1);
 			Area a4 = new Area(poly2);
 
+			//System.out.println(bna1.getName()+" "+bna2.getName());
 			a.add(a3);
 			a.add(a1);
 			a.add(a2);
@@ -317,7 +307,7 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 				g2d.fill(areas.get(comp));
 				break;
 
-			case "Inside the cell":
+			case "InsideTheCell":
 				g2d.setColor(new Color(127, 0, 255, 50));
 				g2d.fill(areas.get(comp));
 				break;

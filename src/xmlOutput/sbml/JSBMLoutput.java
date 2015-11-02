@@ -126,9 +126,11 @@ public class JSBMLoutput {
 				}
 				// test to what compartment the node belongs
 				String nodeCompartment = COMP + oneNode.getCompartment();
+				//System.out.println(nodeCompartment);
 				// test if compartment already exists
 				Compartment testCompartment = model
 						.getCompartment(nodeCompartment);
+				//System.out.println(testCompartment);
 				if (testCompartment != null) {
 					compartment = testCompartment;
 				} else {
@@ -136,6 +138,7 @@ public class JSBMLoutput {
 					compartment = model.createCompartment();
 					compartment.setId(nodeCompartment);
 					compartment.setConstant(false);
+					//System.out.println("durch");
 				}
 				// The ID of a species has to be a string and could not begin
 				// with a number
@@ -154,6 +157,7 @@ public class JSBMLoutput {
 				spec.setAnnotation(a);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			// if something went wrong, the user get's a notification
 			message = "\nCreating SBML was not successful.";
 		}
