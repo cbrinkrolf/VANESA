@@ -222,6 +222,7 @@ public class JSBMLinput {
 			Element rectantsNode = reaction.getChild("listOfReactants", null);
 			Element rectant = rectantsNode.getChild("speciesReference", null);
 			String id = rectant.getAttributeValue("species");
+			//System.out.println(id);
 			String[] tmp = id.split("_");
 			int from = Integer.parseInt(tmp[1]);
 			Element productsNode = reaction.getChild("listOfProducts", null);

@@ -98,9 +98,9 @@ public class Elementdeclerations {
 
 	public static final String membrane = "Membrane";
 
-	public static final String cellInside = "Inside the cell";
+	public static final String cellInside = "InsideTheCell";
 
-	public static final String cellOutside = "Outside the cell";
+	public static final String cellOutside = "OutsideTheCell";
 
 	public static final String cytoplasma = "Cytoplasma";
 
