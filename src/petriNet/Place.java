@@ -133,7 +133,7 @@ public class Place extends PNNode {
 	}
 
 	public double getTokenMin() {
-		if(this.isCoarseNode()){
+		if(this.isConstant()){
 			return 0;
 		}
 		return tokenMin;
