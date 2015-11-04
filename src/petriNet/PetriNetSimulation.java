@@ -967,8 +967,10 @@ public class PetriNetSimulation implements ActionListener {
 		}
 		filter = filter.replace("[", "\\\\[");
 		filter = filter.replace("]", "\\\\]");
+		filter = filter.replace(".", "\\\\.");
 		filter = filter.substring(0, filter.length() - 1);
 		filter += "\"";
+		//filter = "variableFilter=\".*\"";
 		System.out.println("Filter: " + filter);
 		System.out.println("expected number of output vars: " + vars);
 		FileWriter fstream = new FileWriter(pathSim + "simulation.mos");
@@ -988,8 +990,8 @@ public class PetriNetSimulation implements ActionListener {
 		out.write("getErrorString();\r\n");
 
 		// CHRIS improve / correct filter
-		// out.write("buildModel(simulation, " + filter + "); ");
-		out.write("buildModel('" + pw.getName() + "'); ");
+		out.write("buildModel('" + pw.getName() + "', " + filter + "); ");
+		//out.write("buildModel('" + pw.getName() + "'); ");
 		out.write("getErrorString();\r\n");
 
 		// out.write("fileName=\"simulate.mat\";\r\n");
