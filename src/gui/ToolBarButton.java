@@ -1,11 +1,15 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
-public class ToolBarButton extends JButton {
+public class ToolBarButton extends JButton implements MouseListener{
 
 	/**
 	 * 
@@ -26,15 +30,52 @@ public class ToolBarButton extends JButton {
 	}
 
 	private void setProperties() {
-		this.setBorder(null);
+		this.addMouseListener(this);
+		Border thickBorder = new LineBorder(Color.black);
+		this.setBorder(thickBorder);
+		//this.setBorder(null);
 		this.setBorderPainted(false);
 		// this.setPreferredSize(this.getMinimumSize());
 		this.setMaximumSize(this.getPreferredSize());
 		// this.setSize(10, 10);
-		this.setContentAreaFilled(true);
+		this.setBackground(Color.GRAY.LIGHT_GRAY);
+		this.setContentAreaFilled(false);
+		
 		this.revalidate();
 
 		// this.setOpaque(true);
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		this.setContentAreaFilled(true);
+		this.setBorderPainted(true);
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		this.setContentAreaFilled(false);
+		this.setBorderPainted(false);
+		
 	}
 
 	/*

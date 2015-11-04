@@ -294,12 +294,6 @@ public class ToolBar {
 		JPanel viewPortControls = new ToolBarPanel();
 		viewPortControls.setLayout(new GridLayout(3, 2));
 
-		compressEdges.setBorder(null);
-		compressEdges.setBorderPainted(false);
-		//compressEdges.setContentAreaFilled(false);
-		//compressEdges.setBackground(new Color(0,255,0,0));
-		//compressEdges.setForeground(new Color(255,0,0,255));
-		
 		viewPortControls.add(fullScreen);
 		viewPortControls.add(center);
 		viewPortControls.add(zoomIn);

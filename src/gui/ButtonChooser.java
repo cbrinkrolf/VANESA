@@ -33,7 +33,7 @@ import javax.swing.event.AncestorListener;
  * 
  * @author star
  */
-public class ButtonChooser extends JButton implements ActionListener,
+public class ButtonChooser extends ToolBarButton implements ActionListener,
 		MouseListener, FocusListener, AncestorListener {
 
 	/**
@@ -49,6 +49,7 @@ public class ButtonChooser extends JButton implements ActionListener,
 	private JPanel popupPanel;
 
 	public ButtonChooser(List<Action> actions) {
+		super("");
 		this.setAction(actions.get(0));
 		selectedIndex = 0;
 		buttons = new Vector<JButton>(actions.size());
@@ -133,6 +134,7 @@ public class ButtonChooser extends JButton implements ActionListener,
 	}
 
 	public void mouseEntered(MouseEvent e) {
+		super.mouseEntered(e);
 	}
 
 	public void mouseExited(MouseEvent e) {
@@ -142,6 +144,7 @@ public class ButtonChooser extends JButton implements ActionListener,
 						e.getLocationOnScreen())) {
 			hidePopup();
 		}
+		super.mouseExited(e);
 	}
 
 	public void mousePressed(MouseEvent e) {

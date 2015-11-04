@@ -332,7 +332,8 @@ public class PetriNetSimulation implements ActionListener {
 				zstVorher = System.currentTimeMillis();
 
 				boolean simLibChanged = false;
-				if (menue.getSimLib() != this.simLib) {
+				if (this.simLib != null && !menue.getSimLib().getAbsolutePath().equals(this.simLib.getAbsolutePath())) {
+					System.out.println("lib changed");
 					simLibChanged = true;
 				}
 
