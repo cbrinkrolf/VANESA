@@ -34,10 +34,20 @@ public class UNIDQueryMask extends QueryMask {
 	private String[] dbNames = { "UNID" };
 
 	private JTextField fullName, commonName, graphID;
+	private JLabel labeldatabase = new JLabel("Database"),
+			labeltype = new JLabel("Type"),
+			labelfullname = new JLabel("Full Name"),
+			labelcommonname = new JLabel("Common Name"),
+			labelgraphid = new JLabel("GraphID"),
+			labeldepth = new JLabel("Depth"),
+			labeldirection = new JLabel("Direction");
 
-	private JComboBox<String> chooseOrganism;
-	private String[] orgNames = { "all", "Homo sapiens",
-			"Saccharomyces cerevisiae", "Mus musculus" };
+	private JComboBox<String> chooseType;
+	private String[] typeNames = { "Protein (HPRD)", "cellular_component",
+			"biological_process", "molecular_function" };
+	
+	private JComboBox<String> chooseDirection;
+	private String[] directionsNames = {"both","uptree","downtree"};
 
 	private JSpinner depthspinner;
 	private SpinnerNumberModel modeldepthspinner;
@@ -55,21 +65,60 @@ public class UNIDQueryMask extends QueryMask {
 			}
 		});
 
-		chooseOrganism = new JComboBox<String>(orgNames);
-		chooseOrganism.setSelectedIndex(0);
-		chooseOrganism.addItemListener(new ItemListener() {
+		chooseType = new JComboBox<String>(typeNames);
+		chooseType.setSelectedIndex(0);
+		chooseType.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+			
+				switch (chooseType.getSelectedIndex()) {
+				case 0: // Protein
+					labelcommonname.setEnabled(true);
+					commonName.setEnabled(true);					
+					labelgraphid.setEnabled(true);
+					graphID.setEnabled(true);
+					
+					labeldirection.setEnabled(false);
+					chooseDirection.setEnabled(false);					
+					break;
+
+				case 1:// GO stuff
+				case 2:
+				case 3:
+					labelcommonname.setEnabled(false);
+					commonName.setEnabled(false);
+					labelgraphid.setEnabled(false);
+					graphID.setEnabled(false);
+					
+					labeldirection.setEnabled(true);
+					chooseDirection.setEnabled(true);	
+					break;
+					
+				default:
+					System.out.println("UNKNOWN CASE IN SWITCH:"+this.getClass());
+					break;
+				} 
+				
+				
+			}
+		});
+		
+		chooseDirection = new JComboBox<String>(directionsNames);
+		chooseDirection.setSelectedIndex(0);
+		chooseDirection.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 			}
 		});
-
-		modeldepthspinner = new SpinnerNumberModel(1.0d, 0.0d, 10.0d, 1.0d);
-		;
+		
+		
+		modeldepthspinner = new SpinnerNumberModel(1.0d, 0.0d, 20.0d, 1.0d);
 		depthspinner = new JSpinner(modeldepthspinner);
 
 		fullName = new JTextField(20);
 		commonName = new JTextField(20);
 		graphID = new JTextField(20);
 
+		
+		
 		fullName.setText("");
 		commonName.setText("HMGCR");
 		graphID.setText("");
@@ -92,19 +141,25 @@ public class UNIDQueryMask extends QueryMask {
 		p.add(new JLabel(new ImageIcon(imagePath.getPath("dataServer.png"))),
 				"span 2 6");
 
-		p.add(new JLabel("Database"), "span 2, gap 5 ");
+		p.add(labeldatabase, "span 2, gap 5 ");
 		p.add(choosedatabase, "span,wrap,growx ,gap 10");
-		p.add(new JLabel("Organism"), "span 2, gap 5 ");
-		p.add(chooseOrganism, "span,wrap,growx ,gap 10");
-		p.add(new JLabel("Full Name"), "span 2, gap 5 ");
+		p.add(labeltype, "span 2, gap 5 ");
+		p.add(chooseType, "span,wrap,growx ,gap 10");
+		p.add(labelfullname, "span 2, gap 5 ");
 		p.add(fullName, "span,wrap,growx ,gap 10");
-		p.add(new JLabel("Common Name"), "span 2, gap 5 ");
+		p.add(labelcommonname, "span 2, gap 5 ");
 		p.add(commonName, "span,wrap,growx ,gap 10");
-		p.add(new JLabel("GraphID"), "span 2, gap 5 ");
+		p.add(labelgraphid, "span 2, gap 5 ");
 		p.add(graphID, "span, wrap, growx, gap 10");
-		p.add(new JLabel("Depth"), "span 2, gap 5");
+		p.add(labeldepth, "span 2, gap 5");
 		p.add(depthspinner, "span, wrap, growx, gap 10");
+		p.add(labeldirection,"span 4, gap 5");
+		p.add(chooseDirection, "span, wrap, growx, gap 10");
 
+		//Standard, protein search. show only if GO search is chosen
+		labeldirection.setEnabled(false);
+		chooseDirection.setEnabled(false);
+		
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(pickCommons);
 		
@@ -127,6 +182,7 @@ public class UNIDQueryMask extends QueryMask {
 		commonName.setText("");
 		graphID.setText("");
 		depthspinner.setValue(1.0d);
+		chooseDirection.setSelectedIndex(0);
 	}
 
 	public String[] getKeyword() {

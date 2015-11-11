@@ -65,7 +65,7 @@ public class GraphClusterDyer extends JFrame {
 		
 		NodeAttribute att;
 		for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
-			if((att = bna.getNodeAttributeByName("chol logFC")) != null){
+			if((att = bna.getNodeAttributeByName("CholAVG")) != null){
 				expvalues.put(bna.getLabel(),att.getDoublevalue());
 			}
 		}

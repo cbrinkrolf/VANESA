@@ -41,7 +41,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	private String graphid;
 	private String fullName;
 	private String commonName;
-	private String organism;
+	private String type;
 	private int depth;
 	private HashSet<String> searchNames;
 
@@ -50,7 +50,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	private HashMap<GraphDBTransportNode, HashSet<GraphDBTransportNode>> adjacencylist;
 
 	public UNIDSearch(String[] input, boolean headless) {
-		this.organism = input[0];
+		this.type = input[0];
 		this.fullName = input[1];
 		this.commonName = input[2];
 		this.graphid = input[3];
@@ -95,7 +95,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 			}
 		} catch (Exception e) {
 			//MARTIN rmi search debug print
-			e.printStackTrace();
+//			e.printStackTrace();
 			
 			
 			SwingUtilities.invokeLater(new Runnable() {
@@ -123,6 +123,12 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	 */
 	public void createNetworkFromSearch() {
 
+		//cutoff Name for multi ID searches
+		if(commonName.length() > 20){
+			commonName = commonName.substring(0, 20);
+			commonName+="..";
+		}
+		
 		Pathway pw = new CreatePathway(fullName + commonName + graphid
 				+ " depth=" + depth).getPathway();
 		MyGraph myGraph = pw.getGraph();
