@@ -429,7 +429,7 @@ public class MenuBarClass {
 		covreach = new JMenuItem("Cov/Reach Graph");
 		covreach.addActionListener(new MenuListener());
 		covreach.setActionCommand("createCov");
-		modellicaResult = new JMenuItem("Load Modellica Result");
+		modellicaResult = new JMenuItem("Load Simulation Result");
 		modellicaResult.addActionListener(new MenuListener());
 		modellicaResult.setActionCommand("loadModResult");
 		simulate = new JMenuItem("Simulate");
