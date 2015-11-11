@@ -93,7 +93,7 @@ public class JSBMLinput {
 		String message = "Import was successful";
 		Document doc = null;
 		InputSource in = new InputSource(is);
-
+		
 		// siehe http://www.javabeginners.de/XML/XML-Datei_lesen.php
 		// create document
 		SAXBuilder builder = new SAXBuilder();
@@ -134,6 +134,7 @@ public class JSBMLinput {
 		buildUpHierarchy(annotationNode);
 		// refresh view
 		try {
+			is.close();
 			this.pathway.getGraph().unlockVertices();
 			this.pathway.getGraph().restartVisualizationModel();
 			MainWindowSingleton.getInstance().updateProjectProperties();

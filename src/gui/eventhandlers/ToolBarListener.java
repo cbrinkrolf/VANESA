@@ -430,6 +430,7 @@ public class ToolBarListener implements ActionListener {
 
 					}
 				}
+				graphInstance.getPathway().saveVertexLocations();
 			}
 
 		} else if ("adjustLeft".equals(event)) {
