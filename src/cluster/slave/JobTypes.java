@@ -35,4 +35,7 @@ public class JobTypes {
 	public static final int SEARCH_DEPTH = 100;
 	public static final int SEARCH_MINIMAL_NETWORK = 101;
 	public static final int SEARCH_DATASET = 102;
+	public static final int SEARCH_GO_CELLULAR_COMPONENT = 103;
+	public static final int SEARCH_GO_BIOLOGICAL_PROCESS = 104;
+	public static final int SEARCH_GO_MOLECULAR_FUNCTION = 105;
 }
