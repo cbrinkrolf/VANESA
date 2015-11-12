@@ -38,4 +38,7 @@ public class JobTypes {
 	public static final int SEARCH_GO_CELLULAR_COMPONENT = 103;
 	public static final int SEARCH_GO_BIOLOGICAL_PROCESS = 104;
 	public static final int SEARCH_GO_MOLECULAR_FUNCTION = 105;
+	public static final int SEARCH_DIRECTION_BOTH = 1000;
+	public static final int SEARCH_DIRECTION_INCOMING = 1001;
+	public static final int SEARCH_DIRECTION_OUTGOING = 1002;	
 }
