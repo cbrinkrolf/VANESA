@@ -36,10 +36,12 @@ public interface IClusterJobs extends Remote {
      * @param startname
      * @param depth
      * @param helper
+     * @param db
+     * @param direction
      * @return
      * @throws RemoteException
      */
-    public boolean submitSearch(String startname, int depth, ISearchCallback helper) throws RemoteException;
+    public boolean submitSearch(String startname, int depth, ISearchCallback helper, String db, int direction) throws RemoteException;
     
     /**
      * Submit method for the graph database, returns true if job could be queued.

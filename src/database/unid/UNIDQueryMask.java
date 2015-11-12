@@ -43,11 +43,11 @@ public class UNIDQueryMask extends QueryMask {
 			labeldirection = new JLabel("Direction");
 
 	private JComboBox<String> chooseType;
-	private String[] typeNames = { "Protein (HPRD)", "cellular_component",
+	private String[] typeNames = { "ppi", "cellular_component",
 			"biological_process", "molecular_function" };
 	
 	private JComboBox<String> chooseDirection;
-	private String[] directionsNames = {"both","uptree","downtree"};
+	private String[] directionsNames = {"both","outgoing","incoming"};
 
 	private JSpinner depthspinner;
 	private SpinnerNumberModel modeldepthspinner;
@@ -187,12 +187,14 @@ public class UNIDQueryMask extends QueryMask {
 
 	public String[] getKeyword() {
 
-		String[] input = new String[5];
+		String[] input = new String[7];
 		input[0] = (String) choosedatabase.getSelectedItem();
-		input[1] = fullName.getText();
-		input[2] = commonName.getText();
-		input[3] = graphID.getText();
-		input[4] = depthspinner.getValue() + "";
+		input[1] = (String) chooseType.getSelectedItem();
+		input[2] = fullName.getText();
+		input[3] = commonName.getText();
+		input[4] = graphID.getText();
+		input[5] = depthspinner.getValue() + "";
+		input[6] = (String) chooseDirection.getSelectedItem();
 		return input;
 	}
 

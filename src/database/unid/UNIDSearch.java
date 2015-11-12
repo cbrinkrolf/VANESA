@@ -27,6 +27,7 @@ import cluster.clientimpl.SearchCallback;
 import cluster.graphdb.DatabaseEntry;
 import cluster.graphdb.GraphDBTransportNode;
 import cluster.master.IClusterJobs;
+import cluster.slave.JobTypes;
 
 /**
  * 
@@ -43,19 +44,47 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	private String commonName;
 	private String type;
 	private int depth;
+	private int direction;
 	private HashSet<String> searchNames;
 
 	private boolean headless;
 
 	private HashMap<GraphDBTransportNode, HashSet<GraphDBTransportNode>> adjacencylist;
-
+/*
+	input[0] = (String) choosedatabase.getSelectedItem();
+	input[1] = (String) chooseType.getSelectedItem();
+	input[2] = fullName.getText();
+	input[3] = commonName.getText();
+	input[4] = graphID.getText();
+	input[5] = depthspinner.getValue() + "";
+	input[6] = (String) chooseDirection.getSelectedItem();
+*/
+	
+	
 	public UNIDSearch(String[] input, boolean headless) {
-		this.type = input[0];
-		this.fullName = input[1];
-		this.commonName = input[2];
-		this.graphid = input[3];
-		this.depth = (int) Double.parseDouble(input[4]);
+		this.type = input[1];
+		this.fullName = input[2];
+		this.commonName = input[3];
+		this.graphid = input[4];
+		this.depth = (int) Double.parseDouble(input[5]);
 		this.searchNames = new HashSet<>();
+		
+		switch (input[6]) {
+		case "both":
+			direction = JobTypes.SEARCH_DIRECTION_BOTH;
+			break;
+		case "outgoing":
+			direction = JobTypes.SEARCH_DIRECTION_OUTGOING;
+			break;
+		case "incoming":
+			direction = JobTypes.SEARCH_DIRECTION_INCOMING;
+			break;
+		default:
+			direction = JobTypes.SEARCH_DIRECTION_BOTH;
+			break;
+		}		
+		
+		
 		try {
 			this.helper = new SearchCallback(this);
 		} catch (RemoteException re) {
@@ -87,7 +116,10 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 				server.submitSearch(commonNames, depth, "any", helper);
 			} else {
 
-				server.submitSearch(commonName, depth, helper);
+				if(type.equals("ppi"))
+					server.submitSearch(commonName, depth, helper,type, JobTypes.SEARCH_DIRECTION_BOTH);
+				else
+					server.submitSearch(fullName, depth, helper, type, direction);
 				// DEBUG Dataset Search
 				// HashSet<String> datasets = new HashSet<String>();
 				// datasets.add("FC_68_S01_GE2_107_Sep09_1_1");
@@ -156,18 +188,18 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 				pw.addVertex(bna, new Point(150, 100));
 				nodes.put(node, bna);
 			}
-			HashSet<GraphDBTransportNode> companions = adjacencylist.get(node);
-			for (GraphDBTransportNode companion : companions) {
-				if (!nodeset.contains(companion)) {
-					nodeset.add(companion);
-					bna = new Protein(companion.commonName, companion.fullName);
-					addAttributes(bna, companion);
+			HashSet<GraphDBTransportNode> partners = adjacencylist.get(node);
+			for (GraphDBTransportNode partner : partners) {
+				if (!nodeset.contains(partner)) {
+					nodeset.add(partner);
+					bna = new Protein(partner.commonName, partner.fullName);
+					addAttributes(bna, partner);
 					bna.setReference(false);
-					if (searchNames.contains(companion.commonName)) {
+					if (searchNames.contains(partner.commonName)) {
 						bna.setColor(Color.RED);
 					}
 					pw.addVertex(bna, new Point(150, 100));
-					nodes.put(companion, bna);
+					nodes.put(partner, bna);
 				}
 			}
 		}
@@ -180,7 +212,10 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 				r = new ReactionEdge("", "", nodes.get(node),
 						nodes.get(companion));
 
-				r.setDirected(false);
+				if(type.equals("ppi"))
+					r.setDirected(false);
+				else
+					r.setDirected(true);
 				r.setReference(false);
 				r.setHidden(false);
 				r.setVisible(true);
@@ -202,6 +237,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		reactivateUI();
 
 	}
+	
 
 	private void addAttributes(Protein bna, GraphDBTransportNode node) {
 		//Experiments
