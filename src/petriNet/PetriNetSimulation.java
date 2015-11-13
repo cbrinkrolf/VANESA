@@ -985,7 +985,7 @@ public class PetriNetSimulation implements ActionListener {
 		out.write("getErrorString();\r\n");
 		// out.write("setDebugFlags(\"disableComSubExp\"); ");
 		// out.write("getErrorString();\r\n");
-		out.write("setCommandLineOptions(\"+newUnitChecking\");");
+		out.write("setCommandLineOptions(\"--preOptModules+=unitChecking\");");
 		// out.write("setCommandLineOptions(\"+d=disableComSubExp +newUnitChecking\");");
 		out.write("getErrorString();\r\n");
 
