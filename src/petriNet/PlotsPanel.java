@@ -67,7 +67,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 		Place place;
 
-		if (pw.isPetriNet() && pw.isPetriNetSimulation()) {
+		if (pw.isPetriNet() && pw.getPetriNet().isPetriNetSimulation()) {
 			// table = new Object[rows][cols + 1];
 			// System.out.println("rowsSize: " + rowsSize);
 			// System.out.println("rowsDim: " + rowsDim);
@@ -114,7 +114,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 			// double min = Double.MAX_VALUE;
 			// double max = Double.MIN_VALUE;
-			SimulationResult simRes = pw.getSimResController().get();
+			SimulationResult simRes = pw.getPetriNet().getSimResController().get();
 			cols = simRes.getTime().size();
 			for (int j = 0; j < rows; j++) {
 				place = places.get(labels.get(j));
@@ -220,7 +220,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	}
 
 	private void updateData() {
-		SimulationResult simRes = pw.getSimResController().get();
+		SimulationResult simRes = pw.getPetriNet().getSimResController().get();
 		//System.out.println("update");
 		Place place;
 		for (int j = 0; j < rows; j++) {

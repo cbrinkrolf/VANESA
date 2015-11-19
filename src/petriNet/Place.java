@@ -41,7 +41,7 @@ public class Place extends PNNode {
 
 	public void setTokenStart(double tokenStart) {
 		this.tokenStart = tokenStart;
-		if (!new GraphInstance().getPathway().isPetriNetSimulation())
+		if (!new GraphInstance().getPathway().getPetriNet().isPetriNetSimulation())
 			token = tokenStart;
 	}
 

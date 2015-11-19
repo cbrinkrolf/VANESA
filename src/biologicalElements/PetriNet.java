@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import petriNet.CSVInputReader;
 import petriNet.PNResultInputReader;
 import petriNet.Place;
+import petriNet.SimulationResultController;
 import petriNet.Transition;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -30,6 +31,8 @@ public class PetriNet {
 	private int currentTimeStep = 0;
 	private String covGraph;
 	private boolean omc = false;
+	private boolean isPetriNetSimulation = false;
+	private SimulationResultController simResController = null;
 
 	public String getCovGraph() {
 		return this.covGraph;
@@ -310,6 +313,21 @@ public class PetriNet {
 
 	public void setTransitions(int transitions) {
 		this.transitions = transitions;
+	}
+	
+	public void setPetriNetSimulation(boolean isPetriNetSimulation) {
+		this.isPetriNetSimulation = isPetriNetSimulation;
+	}
+
+	public boolean isPetriNetSimulation() {
+		return isPetriNetSimulation;
+	}
+	
+	public SimulationResultController getSimResController() {
+		if (simResController == null) {
+			simResController = new SimulationResultController();
+		}
+		return simResController;
 	}
 
 }
