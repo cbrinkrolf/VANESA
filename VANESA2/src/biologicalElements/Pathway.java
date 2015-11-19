@@ -110,8 +110,6 @@ public class Pathway implements Cloneable {
 
 	private boolean isPetriNet = false;
 
-	private boolean isPetriNetSimulation = false;
-
 	private final PetriNet petriNet = new PetriNet();
 
 	// private final HashMap<String, GraphElementAbstract> biologicalElements =
@@ -140,8 +138,6 @@ public class Pathway implements Cloneable {
 	private HashMap<Place, Boundary> changedBoundaries = new HashMap<Place, Boundary>();
 
 	private BiologicalNodeAbstract rootNode;
-
-	private SimulationResultController simResController = null;
 
 	private HashMap<BiologicalNodeAbstract, Point2D> vertices = new HashMap<BiologicalNodeAbstract, Point2D>();
 
@@ -1231,14 +1227,6 @@ public class Pathway implements Cloneable {
 		}
 	}
 
-	public void setPetriNetSimulation(boolean isPetriNetSimulation) {
-		this.isPetriNetSimulation = isPetriNetSimulation;
-	}
-
-	public boolean isPetriNetSimulation() {
-		return isPetriNetSimulation;
-	}
-
 	public void setParent(Pathway parent) {
 		this.parent = parent;
 	}
@@ -1561,12 +1549,5 @@ public class Pathway implements Cloneable {
 
 		}
 		graph.getVisualizationViewer().repaint();
-	}
-
-	public SimulationResultController getSimResController() {
-		if (simResController == null) {
-			simResController = new SimulationResultController();
-		}
-		return simResController;
 	}
 }

@@ -25,7 +25,7 @@ public class CSVWriter {
 
 		try {
 
-			SimulationResult simRes = pw.getSimResController().get();
+			SimulationResult simRes = pw.getPetriNet().getSimResController().get();
 			if (simRes != null) {
 				// BufferedWriter out = new BufferedWriter(new
 				// FileWriter(file));
