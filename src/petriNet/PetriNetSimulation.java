@@ -502,7 +502,7 @@ public class PetriNetSimulation implements ActionListener {
 
 				s.start();
 				System.out.println("building ended");
-				pw.setPetriNetSimulation(true);
+				pw.getPetriNet().setPetriNetSimulation(true);
 				w.initPCPGraphs();
 
 				System.out.println("stop: " + stopTime);
@@ -615,7 +615,7 @@ public class PetriNetSimulation implements ActionListener {
 					public void run() {
 						pw.getGraph().getVisualizationViewer().requestFocus();
 						w.redrawGraphs();
-						List<Double> v = pw.getSimResController().get()
+						List<Double> v = pw.getPetriNet().getSimResController().get()
 								.getTime().getAll();
 						// System.out.println("running");
 						while (s.isRunning()) {

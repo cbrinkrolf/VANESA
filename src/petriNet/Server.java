@@ -63,9 +63,9 @@ public class Server {
 				try {
 					int port = 11111;
 					serverSocket = new java.net.ServerSocket(port);
-					simName = "simulation_" + pw.getSimResController().size()
+					simName = "simulation_" + pw.getPetriNet().getSimResController().size()
 							+ "_" + System.nanoTime();
-					simResult = pw.getSimResController().get(simName);
+					simResult = pw.getPetriNet().getSimResController().get(simName);
 					System.out.println(simName);
 
 					while (true) {

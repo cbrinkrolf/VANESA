@@ -218,9 +218,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
 
-		SimulationResult simRes = pw.getSimResController().get();
+		SimulationResult simRes = pw.getPetriNet().getSimResController().get();
 
-		if (pw.isPetriNet() && pw.isPetriNetSimulation() && simRes != null) {
+		if (pw.isPetriNet() && pw.getPetriNet().isPetriNetSimulation() && simRes != null) {
 
 			main.removeAll();
 			w = MainWindowSingleton.getInstance();
@@ -370,7 +370,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					.getVisualizationViewer().getPickedEdgeState().getPicked()
 					.iterator().next();
 			if (bea instanceof PNEdge) {
-				SimulationResult simRes = pw.getSimResController().get();
+				SimulationResult simRes = pw.getPetriNet().getSimResController().get();
 				secondAxis = true;
 				PNEdge edge = (PNEdge) bea;
 				// System.out.println(edge.getID());
@@ -507,7 +507,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 	public void updateData() {
 		// System.out.println("update data begin");
-		SimulationResult simRes = pw.getSimResController().get();
+		SimulationResult simRes = pw.getPetriNet().getSimResController().get();
 
 		Set<GraphElementAbstract> keys = series2idx.getKeys();
 		Iterator<GraphElementAbstract> itKeys = keys.iterator();
@@ -523,7 +523,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		}
 		
 		//System.out.println("-----------------------------");
-		if (pw.isPetriNet() && pw.isPetriNetSimulation() && simRes != null) {
+		if (pw.isPetriNet() && pw.getPetriNet().isPetriNetSimulation() && simRes != null) {
 
 			BiologicalNodeAbstract bna;
 			BiologicalEdgeAbstract bea;
@@ -938,7 +938,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	 * reference).
 	 */
 	public void stateChanged(ChangeEvent e) {
-		if (pw.isPetriNet() && pw.isPetriNetSimulation()) {
+		if (pw.isPetriNet() && pw.getPetriNet().isPetriNetSimulation()) {
 			if (e.getSource().equals(animationStart))
 				animationStartInit = (Integer) animationStart.getValue();
 			else if (e.getSource().equals(animationStop))
@@ -946,7 +946,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			else if (e.getSource().equals(animationSpeed))
 				animationSpeedInit = (Integer) animationSpeed.getValue();
 			else {
-				SimulationResult simRes = pw.getSimResController().get();
+				SimulationResult simRes = pw.getPetriNet().getSimResController().get();
 				pw.getPetriNet().setCurrentTimeStep(this.slider.getValue());
 				slider.setToolTipText("Time: " + this.slider.getValue());
 				if (simRes.getTime().size() > 0) {
@@ -1121,7 +1121,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllGraphNodes()
 				.iterator();
 		XYSeries s;
-		List<String> simNames = pw.getSimResController().getSimNames();
+		List<String> simNames = pw.getPetriNet().getSimResController().getSimNames();
 		while (itNodes.hasNext()) {
 			bna = itNodes.next();
 			if (!bna.hasRef()) {
@@ -1293,7 +1293,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	private RegulationTabelModel getTableModel() {
 
 		BiologicalNodeAbstract bna;
-		SimulationResult simRes = pw.getSimResController().get();
+		SimulationResult simRes = pw.getPetriNet().getSimResController().get();
 
 		rowsSize = pw.getPetriNet().getPlaces();
 
