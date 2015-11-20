@@ -9,7 +9,6 @@ import gui.ProgressBar;
 import io.MyFileFilter;
 
 import java.io.File;
-import java.util.HashMap;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -17,7 +16,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import biologicalElements.PetriNet;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
 import configurations.ConnectionSettings;
 
 public class OpenModellicaResult extends SwingWorker {
@@ -47,7 +45,7 @@ public class OpenModellicaResult extends SwingWorker {
 		}
 
 		chooser.setAcceptAllFileFilterUsed(false);
-		chooser.addChoosableFileFilter(new MyFileFilter(modelicaSimulation, modelicaResultDescription));
+		//chooser.addChoosableFileFilter(new MyFileFilter(modelicaSimulation, modelicaResultDescription));
 		chooser.addChoosableFileFilter(new MyFileFilter(vanesaSimulation, vanesaResultDescription));
 
 		option = chooser.showOpenDialog(null);
@@ -61,11 +59,9 @@ public class OpenModellicaResult extends SwingWorker {
 			if (fileFormat.equals(vanesaResultDescription)) {
 				if (con.containsPathway()) {
 					if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-						System.out.println("load");
 						graphInstance.getPathway().setPetriNet(true);
 						PetriNet petrinet = graphInstance.getPathway().getPetriNet();
-						petrinet.setPetriNetSimulationFile(file.getAbsolutePath(), false);
-						petrinet.initializePetriNet(new HashMap<BiologicalEdgeAbstract, String>());
+						petrinet.loadVanesaSimulationResult(file);
 
 					} else {
 						JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Please load or create a network first!");
@@ -80,8 +76,7 @@ public class OpenModellicaResult extends SwingWorker {
 
 						graphInstance.getPathway().setPetriNet(true);
 						PetriNet petrinet = graphInstance.getPathway().getPetriNet();
-						petrinet.setPetriNetSimulationFile(file.getAbsolutePath(), false);
-						petrinet.initializePetriNet(new HashMap<BiologicalEdgeAbstract, String>());
+						petrinet.setPetriNetSimulationFile(file.getAbsolutePath());
 
 					} else {
 						JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Please load or create a network first!");
