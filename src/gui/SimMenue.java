@@ -295,16 +295,9 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 			new GraphInstance().getPathway().getPetriNet().getSimResController().remove(i);
 			this.updateSimulationResults();
 		}
-
-	}
-	
-	private void updateList(){
-		
-		
 	}
 	
 	public boolean isForceRebuild(){
 		return forceRebuild.isSelected();
 	}
-
 }

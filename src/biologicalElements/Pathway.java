@@ -28,7 +28,6 @@ import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.PNEdge;
 import petriNet.Place;
-import petriNet.SimulationResultController;
 import petriNet.StochasticTransition;
 import petriNet.Transition;
 import util.MyIntComparable;

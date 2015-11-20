@@ -949,6 +949,12 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				SimulationResult simRes = pw.getPetriNet().getSimResController().get();
 				pw.getPetriNet().setCurrentTimeStep(this.slider.getValue());
 				slider.setToolTipText("Time: " + this.slider.getValue());
+				if(simRes == null){
+					graphInstance.getPathway().getPetriNet().setPetriNetSimulation(false);
+					MainWindow w = MainWindowSingleton.getInstance();
+					w.updateAllGuiElements();
+					return;
+				}
 				if (simRes.getTime().size() > 0) {
 
 					// System.out.println("time size: "+simRes.getTime().size());
