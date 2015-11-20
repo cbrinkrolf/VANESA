@@ -1,5 +1,9 @@
 package petriNet;
 
+import graph.GraphInstance;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +32,7 @@ public class SimulationResultController {
 	}
 
 	public SimulationResult get(String simulation) {
-		if (!series.containsKey(simulation)) {
+		if (!simNames.contains(simulation)) {
 			series.put(simulation, new SimulationResult(simulation, filteredDefault));
 			simNames.add(simulation);
 		}
@@ -87,6 +91,12 @@ public class SimulationResultController {
 	public void remove(int i){
 		this.series.remove(this.simNames.get(i));
 		this.simNames.remove(i);
+		if(simNames.size() < 1){
+			GraphInstance graphInstance = new GraphInstance();
+			graphInstance.getPathway().getPetriNet().setPetriNetSimulation(false);
+			MainWindow w = MainWindowSingleton.getInstance();
+			w.updateAllGuiElements();
+		}
 	}
 	
 	public List<String> getSimNames(){
