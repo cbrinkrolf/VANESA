@@ -78,6 +78,7 @@ public class MenuBarClass {
 	
 	private JMenuItem resolveReferences;
 	private JMenuItem rendererSettings;
+	private JMenuItem dataLabelMapping;
 
 	public MenuBarClass(Application application) {
 		int MENUSHORTCUT = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -114,6 +115,17 @@ public class MenuBarClass {
 		dataMappingDb.addActionListener(new MenuListener());
 		dataMappingDb.setActionCommand("dataMappingDB");
 		tools.add(dataMappingDb);
+
+
+		
+		// items for label to data mapping
+		dataLabelMapping = new JMenuItem("Label->Data Mapping");
+		dataLabelMapping.addActionListener(new MenuListener());
+		dataLabelMapping.setActionCommand("dataLabelMapping");
+		if(MainWindow.developer){
+			tools.add(new JSeparator());
+			tools.add(dataLabelMapping);
+		}
 
 		JMenuItem phosphoImport = new JMenuItem("PhosphoSite input");
 		phosphoImport.addActionListener(new MenuListener());
@@ -298,7 +310,7 @@ public class MenuBarClass {
 		rendererSettings = new JMenuItem("Renderer Settings");
 		rendererSettings.addActionListener(new MenuListener());
 		rendererSettings.setActionCommand("rendererSettings");
-
+		
 		mathLaw = new JMenuItem("Generate Random Graph");
 		mathLaw.addActionListener(new MenuListener());
 		mathLaw.setActionCommand("mathGraph");
@@ -392,7 +404,7 @@ public class MenuBarClass {
 		math.add(mirnaTest);
 		math.add(shake);
 		//math.add(visualAnalysis);
-
+		
 		generateGraph.add(mathLaw);
 		generateGraph.add(biGraph);
 		generateGraph.add(regularGraph);
