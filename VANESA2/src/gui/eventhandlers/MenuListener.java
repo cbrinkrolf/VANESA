@@ -1072,6 +1072,12 @@ public class MenuListener implements ActionListener {
 
 		} else if ("createDoc".equals(event)) {
 			new PNDoc();
+		} else if("dataLabelMapping".equals(event)){
+			
+			//Open new window for file input
+			
+			//
+			
 		} else if ("mirnaTest".equals(event)) {
 			System.out.println("mirnatest");
 			// code for testing number of mirnas matching a pathway
