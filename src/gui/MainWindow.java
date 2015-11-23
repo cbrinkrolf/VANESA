@@ -63,6 +63,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 import com.jhlabs.image.BlurFilter;
 
+import configurations.ResourceLibrary;
 import configurations.gui.Settings;
 import configurations.gui.VisualizationDialog;
 
@@ -78,6 +79,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	private YamlToObjectParser yamlToObject;
 	private List<Bean> beansList = new ArrayList<Bean>();
 	private String loadedYaml = null;
+	public static boolean developer;
 	
 	public List<Bean> getBeansList() {
 		return beansList;
@@ -163,7 +165,10 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	public MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
-
+		
+		// Set developer status
+		developer = Boolean.parseBoolean(ResourceLibrary.getSettingsResource("settings.default.developer"));
+		
 		// try {
 		//
 		// //SubstanceBusinessBlueSteelLookAndFeel lf = new
@@ -617,7 +622,10 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public synchronized void unBlurrUI(){
 		blurUI.setLocked(false);
 	}
-	
+		
+	public boolean getDeveloperStatus(){
+		return developer;
+	}
 
 	public String getCurrentPathway() {
 		TitledTab t = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();

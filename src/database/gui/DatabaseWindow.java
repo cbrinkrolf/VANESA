@@ -1,5 +1,8 @@
 package database.gui;
 
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+
 import java.util.HashMap;
 
 import javax.swing.JTabbedPane;
@@ -57,10 +60,13 @@ public class DatabaseWindow {
 		tabbedPanel.addTab("miRNA", mirna.getPanel());
 		tabbedPanel.setTabComponentAt(3, mirna.getTitelTab("miRNA"));
 		tabs.put(3, "miRNA");
+
 		
-		tabbedPanel.addTab("UNID", unid.getPanel());
-		tabbedPanel.setTabComponentAt(4, unid.getTitelTab("UNID"));
-		tabs.put(4, "UNID");
+		if(MainWindow.developer){
+			tabbedPanel.addTab("UNID", unid.getPanel());
+			tabbedPanel.setTabComponentAt(4, unid.getTitelTab("UNID"));
+			tabs.put(4, "UNID");
+		}
 		
 		// tabbedPanel.addTab(unid.getTitelTab());
 
