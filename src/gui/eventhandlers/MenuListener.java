@@ -35,6 +35,7 @@ import graph.layouts.hctLayout.HCTLayout;
 //import graph.layouts.modularLayout.MDForceLayout;
 import gui.AboutWindow;
 import gui.InfoWindow;
+import gui.LabelToDataMappingWindow;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.visualization.PreRenderManager;
@@ -1075,6 +1076,8 @@ public class MenuListener implements ActionListener {
 		} else if("dataLabelMapping".equals(event)){
 			
 			//Open new window for file input
+			new LabelToDataMappingWindow();
+			
 			
 			//
 			
