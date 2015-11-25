@@ -2,12 +2,14 @@ package gui.visualization;
 
 import graph.GraphInstance;
 import graph.algorithms.NodeAttributeNames;
+import graph.algorithms.NodeAttributeTypes;
 import gui.LocalBackboardPaintable;
 import gui.MainWindowSingleton;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
 
@@ -263,8 +265,16 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 			case "Annotation":
 				nodeattributesbox.removeAllItems();
 				nodeattributesbox.addItem("");
-				for (String ann : nodeattributes_GO)
+				TreeSet<String> annstrings = new TreeSet<>();
+				for(BiologicalNodeAbstract bna :GraphInstance.getMyGraph().getAllVertices()){
+					for(NodeAttribute na :bna.getNodeAttributesByType(NodeAttributeTypes.ANNOTATION))
+						annstrings.add(na.getName());
+				}
+				for(String ann : annstrings)
 					nodeattributesbox.addItem(ann);
+				
+//				for (String ann : nodeattributes_GO)
+//					nodeattributesbox.addItem(ann);
 				nodeattributesbox.setEnabled(true);
 				break;
 
