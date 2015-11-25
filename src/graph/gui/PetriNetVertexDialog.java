@@ -3,7 +3,6 @@
  */
 package graph.gui;
 
-//import edu.uci.ics.jung.graph.Vertex;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
