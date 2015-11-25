@@ -405,17 +405,17 @@ public class ToolBar {
 //				toolBarControlControls.add(simulate);
 //				bar.add(new JSeparator());
 				bar.add(printControls);
-				bar.add(new JSeparator());
+				bar.add(new ToolBarSeperator(), "growx, wrap");
 				bar.add(editControls);
-				bar.add(new JSeparator());
+				bar.add(new ToolBarSeperator(), "growx, wrap");
 				bar.add(petriNetcontrols);
-				bar.add(new JSeparator());
+				bar.add(new ToolBarSeperator(), "growx, wrap");
 				bar.add(featureControls);
-				bar.add(new JSeparator());
+				bar.add(new ToolBarSeperator(), "growx, wrap");
 				bar.add(viewPortControls);
-				bar.add(new JSeparator());
+				bar.add(new ToolBarSeperator(), "growx, wrap");
 				bar.add(nodeAdjustment);
-				bar.add(new JSeparator());
+				bar.add(new ToolBarSeperator(), "growx, wrap");
 				
 				bar.add(infopanel);
 			} else {
@@ -432,7 +432,7 @@ public class ToolBar {
 				bar.add(featureControls, "wrap");
 				bar.add(new ToolBarSeperator(), "growx, wrap");
 				bar.add(viewPortControls, "wrap");
-				bar.add(new JSeparator());
+				bar.add(new ToolBarSeperator(), "growx, wrap");
 				bar.add(nodeAdjustment);
 				bar.add(new ToolBarSeperator(), "growx, wrap");
 				bar.add(infopanel, "wrap");
