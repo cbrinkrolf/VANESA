@@ -36,6 +36,7 @@ import graph.layouts.hctLayout.HCTLayout;
 import gui.AboutWindow;
 import gui.InfoWindow;
 import gui.LabelToDataMappingWindow;
+import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.visualization.PreRenderManager;
@@ -88,6 +89,7 @@ import petriNet.SimpleMatrixDouble;
 import petriNet.Transition;
 import pojos.DBColumn;
 import save.graphPicture.WriteGraphPicture;
+import sun.awt.X11.MWMConstants;
 import xmlInput.sbml.JSBMLinput;
 import xmlOutput.sbml.JSBMLoutput;
 import biologicalElements.Pathway;
@@ -1076,10 +1078,13 @@ public class MenuListener implements ActionListener {
 		} else if("dataLabelMapping".equals(event)){
 			
 			//Open new window for file input
-			new LabelToDataMappingWindow();
-			
-			
-			//
+			try {
+				new LabelToDataMappingWindow();
+			} catch (IOException ioe) {
+				ioe.printStackTrace();
+			} catch (InputFormatException ife ){
+				JOptionPane.showMessageDialog(w, ife.getMessage(),"Inputfile error",JOptionPane.ERROR_MESSAGE);
+			}
 			
 		} else if ("mirnaTest".equals(event)) {
 			System.out.println("mirnatest");
