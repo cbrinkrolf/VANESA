@@ -20,6 +20,16 @@ import javax.swing.JOptionPane;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
+/**
+ * Window for mapping custom datasets to a loaded vanesa network. The data will
+ * bemapped using the 'label' variable of network nodes (BiologicalNodeAbstract
+ * s). For a successful mapping the data has to be tab separated in the pattern
+ * of label(tab)value so each line contains a label and a value. Labels
+ * specified in the file must be unique.
+ * 
+ * @author mlewinsk
+ *
+ */
 public class LabelToDataMappingWindow {
 
 	private JFileChooser filechooser;
@@ -27,8 +37,17 @@ public class LabelToDataMappingWindow {
 	private HashMap<String, String> datamapping;
 	private final String delimiter = "\t";
 	private String linecuts[], key, value;
-	private int linenumber;
+	private int linenumber, successfulmappings;
 
+	/**
+	 * Regular constructor opens a JFileChooser to specify the input file for
+	 * the mapping. Check if a network is loaded has to be done prior.
+	 * 
+	 * @throws IOException
+	 *             if the filestream fails
+	 * @throws InputFormatException
+	 *             if the input format is invalid
+	 */
 	public LabelToDataMappingWindow() throws IOException, InputFormatException {
 		// Check for open pathways, if not shoe message
 		if (ContainerSingelton.getInstance().getPathwayNumbers() == 0) {
@@ -63,6 +82,12 @@ public class LabelToDataMappingWindow {
 
 	}
 
+	/**
+	 * 
+	 * @return true if successful, false if the file entered was invalid
+	 * @throws IOException
+	 * @throws InputFormatException
+	 */
 	private boolean processFile() throws IOException, InputFormatException {
 
 		datafile = filechooser.getSelectedFile();
@@ -76,6 +101,7 @@ public class LabelToDataMappingWindow {
 					fstream));
 			String strLine;
 			linenumber = 1;
+			successfulmappings = 0;
 			// Read File Line By Line
 			while ((strLine = br.readLine()) != null) {
 				processLine(strLine);
@@ -104,6 +130,7 @@ public class LabelToDataMappingWindow {
 				if (datamapping.containsKey(bnalabel)) {
 					bna.addAttribute(NodeAttributeTypes.ANNOTATION,
 							attributename, datamapping.get(bnalabel));
+					successfulmappings++;
 				}
 			}
 		}
@@ -113,11 +140,29 @@ public class LabelToDataMappingWindow {
 		// Charset.defaultCharset())) {
 		// lines.forEach(line -> processLine(line));
 		// }
-		
+
+		JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+				successfulmappings + " of " + datamapping.size()
+						+ " entries \nhave been mapped and updated.\n\n("
+						+ MainWindowSingleton.getInstance().getCurrentPathway()
+						+ ")");
+
 		return true;
 
 	}
 
+	/**
+	 * Processing of the Strings of the file reader. Data input format will be
+	 * checked and transferred to the 'datamapping' variable.
+	 * 
+	 * @param line
+	 *            String from filereader
+	 * @throws InputFormatException
+	 *             custom exception to deal with wrong input formats. i.e.
+	 *             key->value is not splitted correctly or duplicate labels
+	 *             exist.
+	 * 
+	 */
 	private void processLine(String line) throws InputFormatException {
 		linecuts = line.split(delimiter);
 		if (linecuts.length != 2) {
@@ -136,6 +181,13 @@ public class LabelToDataMappingWindow {
 		}
 	}
 
+	/**
+	 * Custom exeption to cancel the current data mapping and provide the user
+	 * with information about the error.
+	 * 
+	 * @author mlewinsk
+	 *
+	 */
 	public class InputFormatException extends Exception {
 
 		/**
