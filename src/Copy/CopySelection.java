@@ -1,16 +1,5 @@
 package Copy;
 
-//import edu.uci.ics.jung.graph.Edge;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
-//import edu.uci.ics.jung.graph.impl.SparseVertex;
-//import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
-//import edu.uci.ics.jung.utils.UserDataContainer.CopyAction;
-//import edu.uci.ics.jung.visualization.AbstractLayout;
-//import edu.uci.ics.jung.visualization.Coordinates;
-//import edu.uci.ics.jung.visualization.DefaultSettableVertexLocationFunction;
-//import edu.uci.ics.jung.visualization.Layout;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindowSingleton;
@@ -26,7 +15,6 @@ import javax.swing.JOptionPane;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-//import edu.uci.ics.jung.visualization.subLayout.SubLayoutDecorator;
 
 public class CopySelection {
 
@@ -52,8 +40,6 @@ public class CopySelection {
 
 	public void paste() {
 
-		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance.getMyGraph()
-				.getVisualizationViewer();
 		Pathway pw = new GraphInstance().getPathway();
 		if (petriNet ^ pw.isPetriNet()) {
 			JOptionPane
@@ -72,24 +58,14 @@ public class CopySelection {
 		//}
 			
 		//HashMap<Vertex, Vertex> map = new HashMap<Vertex, Vertex>();
+		HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> map = new HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract>();
 		
-		for (BiologicalNodeAbstract bna : bnas) {
-			//Vertex vertex = new SparseVertex();
-			//Object key = ((AbstractLayout) ((SubLayoutDecorator) layout)
-		//			.getDelegate()).getBaseKey();
-			//Object datum = new Coordinates(vv.inverseTransform(
-			//		locations.get(bna.getVertex())).getX(), vv
-			//		.inverseTransform(locations.get(bna.getVertex())).getY());
-			//vertex.setUserDatum(key, datum, new CopyAction.Clone());
-			//Vertex oldVertex = bna.getVertex();
-			//bna.setVertex(vertex);
-			new GraphInstance().getPathway().addVertex(bna, locations.get(bna));
-			//vv.getGraphLayout().getGraph().addVertex(bna.getVertex());
-			//bna.setVertex(oldVertex);
-			//map.put(oldVertex, vertex);
-			vv.getPickedVertexState().pick(bna, true);
-		}
+		BiologicalNodeAbstract bna1;
+		BiologicalNodeAbstract bna2;
+		
+		BiologicalEdgeAbstract bea2;
 		for (BiologicalEdgeAbstract bea : beas) {
+			//System.out.println("bla");
 			/*Edge edge = new UndirectedSparseEdge(map.get(bea.getEdge()
 					.getEndpoints().getFirst()), map.get(bea.getEdge()
 					.getEndpoints().getSecond()));
@@ -99,24 +75,51 @@ public class CopySelection {
 						.getEndpoints().getFirst()), map.get(bea.getEdge()
 						.getEndpoints().getSecond()));
 			bea.setEdge(edge);*/
-			pw.addEdge(bea);
+			//System.out.println("bea: "+bea);
+			if(!map.containsKey(bea.getFrom())){
+				bna1 = bea.getFrom().clone();
+				bna1.removeAllConnectionEdges();
+				//System.out.println("connedged: "+bna1.getConnectingEdges().size());
+				map.put(bea.getFrom(), bna1);
+				pw.addVertex(bna1, locations.get(bea.getFrom()));
+				
+			}else{
+				bna1 = map.get(bea.getFrom());
+			}
+			if(!map.containsKey(bea.getTo())){
+				bna2 = bea.getTo().clone();
+				bna2.removeAllConnectionEdges();
+				map.put(bea.getTo(), bna2);
+				pw.addVertex(bna2, locations.get(bea.getTo()));
+			}else{
+				bna2 = map.get(bea.getTo());
+			}
+			//System.out.println("bna1: "+bna1.getConnectingEdges().size());
+			//System.out.println("bna2: "+bna2.getConnectingEdges().size());
+			bea2 = bea.clone();
+			bea2.setFrom(bna1);
+			bea2.setTo(bna2);
+			
+			
+			pw.addEdge(bea2);
+			//System.out.println(bea2.isClone());
+			//System.out.println("durch "+pw.getAllEdges().size());
+			
 			//bea.setEdge(oldEdge);
 		}
+		
+		for (BiologicalNodeAbstract bna : bnas) {
+			if(!map.containsKey(bna)){
+				bna1 = bna.clone();
+				bna1.removeAllConnectionEdges();
+				//System.out.println("connedged: "+bna1.getConnectingEdges().size());
+				map.put(bna, bna1);
+				pw.addVertex(bna1, locations.get(bna));
+			}
+		}
+		pw.updateMyGraph();
 
 		MainWindowSingleton.getInstance().updateElementTree();
 		MainWindowSingleton.getInstance().updateFilterView();
-		
-		
-		/*pw = new GraphInstance().getPathway();
-		for (Iterator iterator = pw.getAllNodes().iterator(); iterator
-				.hasNext();) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) iterator
-					.next();
-			bna.rebuildShape(new VertexShapes());
-		}*/
-		//for (Iterator iterator = vv.getGraphLayout().getGraph().getVertices()
-		//		.iterator(); iterator.hasNext();) {
-			//layout.unlockVertex((Vertex) iterator.next());
-		//}
 	}
 }

@@ -73,7 +73,7 @@ public class CompareGraphs {
 			checked.add(bna);
 		}
 
-		graph1.removeSelection();
+		pathway.removeSelection();
 		graph1.updateGraph();
 	}
 

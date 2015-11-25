@@ -141,15 +141,13 @@ public class ToolBarListener implements ActionListener {
 			}
 		} else if ("del".equals(event)) {
 			if (con.containsPathway()) {
-				MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
-				g.lockVertices();
+				Pathway pw = con.getPathway(w.getCurrentPathway());
 				// g.stopVisualizationModel();
-				g.removeSelection();
+				pw.removeSelection();
 				w.updateElementTree();
 				w.updateFilterView();
 				w.updatePathwayTree();
 				// w.updateTheoryProperties();
-				g.unlockVertices();
 				// g.restartVisualizationModel();
 			}
 		} else if ("info".equals(event)) {

@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.Icon;
-import javax.swing.JOptionPane;
 
 import org.apache.commons.collections15.Transformer;
 
@@ -52,7 +51,6 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import graph.GraphInstance;
 import graph.eventhandlers.MyEditingModalGraphMouse;
-import graph.gui.CoarseNodeDeleteDialog;
 import graph.gui.GraphPopUp;
 import graph.jung.graphDrawing.DynamicIcon;
 import graph.jung.graphDrawing.MyEdgeArrowFunction;
@@ -78,32 +76,6 @@ import gui.MainWindowSingleton;
 import gui.MyAnnotationManager;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
-//import edu.uci.ics.jung.graph.Edge;
-//import edu.uci.ics.jung.graph.SparseGraph;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.graph.decorators.EdgeShape;
-//import edu.uci.ics.jung.graph.event.GraphEventType;
-//import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
-//import edu.uci.ics.jung.graph.impl.SparseGraph;
-//import edu.uci.ics.jung.graph.impl.SparseVertex;
-//import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
-//import edu.uci.ics.jung.visualization.AbstractLayout;
-//import edu.uci.ics.jung.visualization.DefaultSettableVertexLocationFunction;
-//import edu.uci.ics.jung.visualization.FRLayout;
-//import edu.uci.ics.jung.visualization.ISOMLayout;
-//import edu.uci.ics.jung.visualization.Layout;
-//import edu.uci.ics.jung.visualization.PickSupport;
-//import edu.uci.ics.jung.visualization.PickedState;
-//import edu.uci.ics.jung.visualization.PluggableRenderer;
-//import edu.uci.ics.jung.visualization.ShapePickSupport;
-//import edu.uci.ics.jung.visualization.SpringLayout;
-//import edu.uci.ics.jung.visualization.StaticLayout;
-//import edu.uci.ics.jung.visualization.VisualizationViewer.Paintable;
-//import edu.uci.ics.jung.visualization.contrib.CircleLayout;
-//import edu.uci.ics.jung.visualization.contrib.KKLayout;
-//import edu.uci.ics.jung.visualization.subLayout.SubLayoutDecorator;
-//import graph.jung.graphDrawing.ToolTips;
-//import graph.jung.graphDrawing.VertexShapeSize;
 
 public class MyGraph {
 
@@ -808,106 +780,7 @@ public class MyGraph {
 	// return ve;
 	// }
 
-	public void removeSelection() {
-		removeSelectedEdges();
-		removeSelectedVertices();
-		vv.getPickedEdgeState().clear();
-		vv.getPickedVertexState().clear();
-		// vv.getPickedState().clearPickedEdges();
-		// vv.getPickedState().clearPickedVertices();
-		updateGraph();
-		pathway.updateMyGraph();
-		
-	}
-
-	public void removeSelectedEdges() {
-
-		if (g.getEdgeCount() > 0) {
-			// System.out.println("e: "+vv.getPickedEdgeState().getSelectedObjects().length);
-			Pathway pw = vv.getPw();
-			Iterator<BiologicalEdgeAbstract> it = vv.getPickedEdgeState()
-					.getPicked().iterator();
-			// Iterator it = vv.getPickedState().getPickedEdges().iterator();
-			while (it.hasNext()) {
-				pw.removeElement(it.next());
-			}
-		}
-	}
-
-	private void removeSelectedVertices() {
-		// System.out.println(vv.getPickedVertexState().getPicked().size());
-		if (g.getVertexCount() > 0) {
-			Pathway pw = vv.getPw();
-			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState()
-					.getPicked().iterator();
-			BiologicalNodeAbstract bna;
-			Integer savedAnswer = -1;
-			while (it.hasNext()) {
-				bna = it.next();
-				if (pw instanceof BiologicalNodeAbstract) {
-					BiologicalNodeAbstract pwNode = (BiologicalNodeAbstract) pw;
-					if (pwNode.getEnvironment().contains(bna)) {
-						if (pwNode.getGraph().getJungGraph()
-								.getNeighborCount(bna) != 0) {
-							JOptionPane
-									.showMessageDialog(
-											null,
-											"Can't delete connected environment nodes.",
-											"Deletion Error",
-											JOptionPane.ERROR_MESSAGE);
-							continue;
-						} else {
-							Object[] options = { "Yes", "No" };
-							int answer = JOptionPane.showOptionDialog(vv,
-									"Do you want to delete the predefined environment node "
-											+ bna.getLabel() + "?",
-									"Delete predefined environment node",
-									JOptionPane.YES_NO_OPTION,
-									JOptionPane.QUESTION_MESSAGE, null,
-									options, options[1]);
-							if (answer == JOptionPane.NO_OPTION) {
-								continue;
-							} else {
-								pw.removeElement(bna);
-								pw.getRootPathway().updateMyGraph();
-								continue;
-							}
-						}
-					}
-				}
-				if (bna.isCoarseNode()
-						&& savedAnswer == JOptionPane.NO_OPTION) {
-					continue;
-				}
-				if (bna.isCoarseNode()
-						&& savedAnswer != JOptionPane.YES_OPTION) {
-					CoarseNodeDeleteDialog dialog = new CoarseNodeDeleteDialog(
-							bna);
-					Integer[] del = dialog.getAnswer();
-					if (del[0] == JOptionPane.NO_OPTION) {
-						if (del[1] == 1) {
-							savedAnswer = JOptionPane.NO_OPTION;
-						}
-						continue;
-					} else if (del[0] == JOptionPane.YES_OPTION) {
-						if (del[1] == 1) {
-							savedAnswer = JOptionPane.YES_OPTION;
-						}
-					}
-				}
-
-				Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
-				conEdges.addAll(bna.getConnectingEdges());
-				for (BiologicalEdgeAbstract bea : conEdges) {
-					bea.getFrom().removeConnectingEdge(bea);
-					bea.getTo().removeConnectingEdge(bea);
-				}
-				pw.removeElement(bna);
-
-			}
-		}
-	}
-
+	
 	private void setVertexStateDeleted(BiologicalNodeAbstract vertex) {
 		vertex.setStateChanged(NodeStateChanged.DELETED);
 		for (BiologicalNodeAbstract child : vertex.getAllGraphNodes()) {

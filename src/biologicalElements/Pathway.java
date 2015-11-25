@@ -3,9 +3,11 @@ package biologicalElements;
 import graph.ChangedFlags;
 import graph.filter.FilterSettings;
 import graph.gui.Boundary;
+import graph.gui.CoarseNodeDeleteDialog;
 import graph.gui.EdgeDeleteDialog;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
+import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.Circle;
 import gui.GraphTab;
 import gui.MainWindow;
@@ -23,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.swing.JOptionPane;
 
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
@@ -479,7 +483,6 @@ public class Pathway implements Cloneable {
 		// System.out.println("edge hinzugefuegt");
 
 		if (bea != null) {
-
 			// edges.put(
 			// new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
 			// bea);
@@ -492,8 +495,8 @@ public class Pathway implements Cloneable {
 			// if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
 			// && bea.getFrom().getParentNode() == null
 			// && bea.getTo().getParentNode() == null && !bea.isClone()) {
-			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
-					&& !bea.isClone()) {
+			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()){
+					//&& !bea.isClone()) {
 				BiologicalNodeAbstract.addConnectingEdge(bea);
 				bea.setID();
 			}
@@ -576,6 +579,9 @@ public class Pathway implements Cloneable {
 	 *            edge will be added
 	 */
 	public void addEdgeToView(BiologicalEdgeAbstract bea, boolean force) {
+		//System.out.println("f: "+bea.getFrom());
+		//System.out.println("t: "+bea.getTo());
+		//System.out.println(getGraph().getAllVertices().iterator().next());
 		if (getGraph().getAllVertices().contains(bea.getFrom())
 				&& getGraph().getAllVertices().contains(bea.getTo())) {
 			getGraph().addEdge(bea);
@@ -1285,6 +1291,7 @@ public class Pathway implements Cloneable {
 		
 		// Add all flattened edges to the set of flattened edges
 		for (BiologicalNodeAbstract n : abstractedNodes.keySet()) {
+			//System.out.println("bea: "+n.getConnectingEdges().iterator().next());
 			flattenedEdges.addAll(n.getConnectingEdges());
 		}
 
@@ -1314,7 +1321,6 @@ public class Pathway implements Cloneable {
 		for(BiologicalNodeAbstract n : abstractedNodes.values()){
 			addVertexToView(n, getVertexPosition(n));
 		}
-
 		// Abstract edges and add them to view (includes drawing environment nodes implicitly)
 		while(!flattenedEdges.isEmpty()){
 			BiologicalEdgeAbstract next = flattenedEdges.iterator().next();
@@ -1549,4 +1555,105 @@ public class Pathway implements Cloneable {
 		}
 		graph.getVisualizationViewer().repaint();
 	}
+	
+	public void removeSelection() {
+		removeSelectedEdges();
+		removeSelectedVertices();
+		this.getGraph().getVisualizationViewer().getPickedEdgeState().clear();
+		this.getGraph().getVisualizationViewer().getPickedVertexState().clear();
+		// vv.getPickedState().clearPickedEdges();
+		// vv.getPickedState().clearPickedVertices();
+		this.getGraph().updateGraph();
+		updateMyGraph();
+		
+	}
+
+	private void removeSelectedEdges() {
+
+		if (getGraph().getAllEdges().size() > 0) {
+			// System.out.println("e: "+vv.getPickedEdgeState().getSelectedObjects().length);
+			
+			Iterator<BiologicalEdgeAbstract> it = getGraph().getVisualizationViewer().getPickedEdgeState()
+					.getPicked().iterator();
+			// Iterator it = vv.getPickedState().getPickedEdges().iterator();
+			while (it.hasNext()) {
+				removeElement(it.next());
+			}
+		}
+	}
+
+	private void removeSelectedVertices() {
+		// System.out.println(vv.getPickedVertexState().getPicked().size());
+		if (getGraph().getAllVertices().size() > 0) {
+			MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph().getVisualizationViewer();
+			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState()
+					.getPicked().iterator();
+			BiologicalNodeAbstract bna;
+			Integer savedAnswer = -1;
+			while (it.hasNext()) {
+				bna = it.next();
+				if (this instanceof BiologicalNodeAbstract) {
+					BiologicalNodeAbstract pwNode = (BiologicalNodeAbstract) this;
+					if (pwNode.getEnvironment().contains(bna)) {
+						if (pwNode.getGraph().getJungGraph()
+								.getNeighborCount(bna) != 0) {
+							JOptionPane
+									.showMessageDialog(
+											null,
+											"Can't delete connected environment nodes.",
+											"Deletion Error",
+											JOptionPane.ERROR_MESSAGE);
+							continue;
+						} else {
+							Object[] options = { "Yes", "No" };
+							int answer = JOptionPane.showOptionDialog(vv,
+									"Do you want to delete the predefined environment node "
+											+ bna.getLabel() + "?",
+									"Delete predefined environment node",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.QUESTION_MESSAGE, null,
+									options, options[1]);
+							if (answer == JOptionPane.NO_OPTION) {
+								continue;
+							} else {
+								removeElement(bna);
+								getRootPathway().updateMyGraph();
+								continue;
+							}
+						}
+					}
+				}
+				if (bna.isCoarseNode()
+						&& savedAnswer == JOptionPane.NO_OPTION) {
+					continue;
+				}
+				if (bna.isCoarseNode()
+						&& savedAnswer != JOptionPane.YES_OPTION) {
+					CoarseNodeDeleteDialog dialog = new CoarseNodeDeleteDialog(
+							bna);
+					Integer[] del = dialog.getAnswer();
+					if (del[0] == JOptionPane.NO_OPTION) {
+						if (del[1] == 1) {
+							savedAnswer = JOptionPane.NO_OPTION;
+						}
+						continue;
+					} else if (del[0] == JOptionPane.YES_OPTION) {
+						if (del[1] == 1) {
+							savedAnswer = JOptionPane.YES_OPTION;
+						}
+					}
+				}
+
+				Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
+				conEdges.addAll(bna.getConnectingEdges());
+				for (BiologicalEdgeAbstract bea : conEdges) {
+					bea.getFrom().removeConnectingEdge(bea);
+					bea.getTo().removeConnectingEdge(bea);
+				}
+				removeElement(bna);
+
+			}
+		}
+	}
+
 }

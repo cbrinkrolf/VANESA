@@ -22,10 +22,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationServer;
-/*import edu.uci.ics.jung.graph.Edge;
- import edu.uci.ics.jung.graph.Vertex;
- import edu.uci.ics.jung.visualization.Layout;
- import edu.uci.ics.jung.visualization.Renderer;*/
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.ContainerSingelton;
 
@@ -460,14 +456,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	 * g2d.setTransform(oldXform);
 	 */
 	// }
-
-	public void setPw(Pathway pw) {
-		this.pw = pw;
-	}
-
-	public Pathway getPw() {
-		return pw;
-	}
 
 	public double getScale() {
 		double scaleV = this.getRenderContext().getMultiLayerTransformer()

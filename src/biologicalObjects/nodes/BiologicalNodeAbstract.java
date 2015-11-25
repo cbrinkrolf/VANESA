@@ -666,6 +666,15 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		}
 	}
 	
+	
+	public void removeAllConnectionEdges(){
+		Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
+		conEdges.addAll(getConnectingEdges());
+		for(BiologicalEdgeAbstract edge : conEdges){
+			this.removeConnectingEdge(edge);
+		}
+	}
+	
 	/** 
 	 * Re-Initialise all hierarchy elements and sets for providing pointer-conflicts.
 	 */
