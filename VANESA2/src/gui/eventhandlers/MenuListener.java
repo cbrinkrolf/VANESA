@@ -89,7 +89,6 @@ import petriNet.SimpleMatrixDouble;
 import petriNet.Transition;
 import pojos.DBColumn;
 import save.graphPicture.WriteGraphPicture;
-import sun.awt.X11.MWMConstants;
 import xmlInput.sbml.JSBMLinput;
 import xmlOutput.sbml.JSBMLoutput;
 import biologicalElements.Pathway;
