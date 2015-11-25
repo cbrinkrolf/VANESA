@@ -236,16 +236,12 @@ public class ToolBar {
 				.getSelectShapeActions());
 
 		chooser.setToolTipText("Draw compartments");
-		chooser.setBorder(null);
-		chooser.setBorderPainted(false);
 		
 
 		ButtonChooser colorChooser = new ButtonChooser(AnnotationPainter
 				.getInstance().getSelectColorActions());
 
 		colorChooser.setToolTipText("Set compartment colours");
-		colorChooser.setBorder(null);
-		colorChooser.setBorderPainted(false);
 
 //		petriNet = new JButton(PetriViewString);
 //		petriNet.setActionCommand("createPetriNet");
