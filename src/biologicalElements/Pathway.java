@@ -1005,9 +1005,11 @@ public class Pathway implements Cloneable {
 
 				while (itEdges.hasNext()
 						&& this.graph.getJungGraph().getNeighborCount(bna) > 1) {
+					
 					bea = itEdges.next();
 					bea.getFrom().removeConnectingEdge(bea);
 					bea.getTo().removeConnectingEdge(bea);
+					//this.removeElement(bea);
 					newBNA = bna.clone();
 					newBNA.setID();
 					newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
@@ -1024,15 +1026,15 @@ public class Pathway implements Cloneable {
 					this.addEdge(bea);
 					graph.getVisualizationViewer().getPickedVertexState()
 							.pick(newBNA, true);
+					updateMyGraph();
 				}
+				//System.out.println(this.graph.getJungGraph().getNeighborCount(bna));
 				// System.out.println(graph.getJungGraph().getOutEdges(bna).size());
 			}
 		}
-		updateMyGraph();
 		MainWindow mw = MainWindowSingleton.getInstance();
 		mw.updateElementTree();
 		mw.updateElementProperties();
-
 		this.graph.getVisualizationViewer().repaint();
 	}
 
