@@ -183,18 +183,20 @@ public class PNDoc {
 		int i = 0;
 		while (it.hasNext() && i < 3) {
 			bna = it.next();
-			if(bna instanceof Place){
+			if(bna instanceof Place && !bna.hasRef()){
 			
 			p = (Place) bna;
 
 			sb.append("\\verb+" + p.getName() + "+ & " + p.getTokenStart()
-					+ " & mmol" + "\\\\\n");
+					+ " & mmol");
+			if(bna.isConstant()){
+				sb.append(" (const.)");
+			}
+			sb.append("\\\\\n");
 			}
 		}
 		sb.append("\\bottomrule\n");
 		sb.append("\\end{longtable}\\end{center}\n"
 				+ "\\newpage\n");
-		
 	}
-
 }
