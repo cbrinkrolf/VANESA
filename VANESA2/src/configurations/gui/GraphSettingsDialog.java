@@ -16,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
+import javax.swing.JSlider;
 
 import net.miginfocom.swing.MigLayout;
 import configurations.NetworkSettings;
@@ -55,6 +56,8 @@ public class GraphSettingsDialog extends JFrame {
 	JRadioButton yes = new JRadioButton("", true);
 	JRadioButton no = new JRadioButton("", true);
 
+	JSlider opacityslider = new JSlider(JSlider.HORIZONTAL, 0,255,255);
+	
 	MainWindow w = MainWindowSingleton.getInstance();
 	GraphInstance graphInstance = new GraphInstance();
 	GraphContainer con = ContainerSingelton.getInstance();;
@@ -111,6 +114,8 @@ public class GraphSettingsDialog extends JFrame {
 			yes.setSelected(true);
 		else
 			no.setSelected(true);
+		
+		opacityslider.setValue(settings.getEdgeOpacity());
 		
 		
 
@@ -184,6 +189,24 @@ public class GraphSettingsDialog extends JFrame {
 		edgedrawpanel.add(new JLabel("no"));
 		
 		panel.add(edgedrawpanel, "wrap,align left, gap 10, gaptop 2");
+		
+		// Edge opacity
+		panel.add(new JLabel("opacity of the edges?"), "span 3");
+		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
+		
+		JPanel edgeopacitypanel = new JPanel();
+		
+		
+		
+		opacityslider.setMajorTickSpacing(50);
+//		opacityslider.setMinorTickSpacing();
+		opacityslider.setPaintTicks(true);
+		opacityslider.setPaintLabels(true);
+		panel.add(opacityslider);		
+		
+		panel.add(edgeopacitypanel, "wrap,align left, gap 10, gaptop 2");
+		
+		
 		
 		
 		
@@ -281,6 +304,8 @@ public class GraphSettingsDialog extends JFrame {
 					settings.setDrawEdges(false);
 					no.setSelected(true);
 				}
+				
+				settings.setEdgeOpacity(opacityslider.getValue());
 				
 
 			} else {
