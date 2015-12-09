@@ -54,7 +54,7 @@ public class MyEdgeDrawPaintFunction implements
 
 			if (psV.getPicked().isEmpty()) {
 				if (psE.getPicked().isEmpty()) {
-
+					
 					BiologicalNodeAbstract a = bea.getFrom();
 					BiologicalNodeAbstract b = bea.getTo();
 
@@ -64,7 +64,9 @@ public class MyEdgeDrawPaintFunction implements
 						else
 							return dotted;
 					} else {
-						return bea.getColor().darker();
+						// Set opacity specified by settings value
+						return new Color( bea.getColor().getRed(),  bea.getColor().getGreen(),  bea.getColor().getBlue(), settings.getEdgeOpacity());
+//						return bea.getColor().darker();
 					}
 				} else {
 					if (psE.isPicked(bea))
