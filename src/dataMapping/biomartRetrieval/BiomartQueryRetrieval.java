@@ -81,7 +81,11 @@ public abstract class BiomartQueryRetrieval {
 	 */
 	private void proceedRequest(String request) throws IOException {
 		// URL to the BioMart service
-		URL url = new URL("http://www.biomart.org/biomart/martservice");
+		URL url = new URL("http://www.ensembl.org/biomart/martservice");
+
+//		URL url = new URL("http://www.biomart.org/biomart/martservice");
+		
+		
 		//alternative url to access biomart
 //		URL url = new URL("http://www.ensembl.org/biomart/martservice");	
 			
