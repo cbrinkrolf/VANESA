@@ -27,6 +27,7 @@ import graph.algorithms.gui.RandomConnectedGraphGui;
 import graph.algorithms.gui.RandomGraphGui;
 import graph.algorithms.gui.RandomHamiltonGraphGui;
 import graph.algorithms.gui.RandomRegularGraphGui;
+import graph.algorithms.gui.smacof.view.SmacofView;
 import graph.jung.classes.MyGraph;
 import graph.layouts.gemLayout.GEMLayout;
 import graph.layouts.hebLayout.HEBLayout;
@@ -1043,6 +1044,8 @@ public class MenuListener implements ActionListener {
 
 			new ClusterDataUploadWindow();
 
+		} else if ("datamining".equals(event)) {
+			new SmacofView();
 		} else if ("rendererSettings".equals(event)) {
 			try {
 				PreRenderManager.getInstance();
