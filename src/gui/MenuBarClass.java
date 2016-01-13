@@ -115,6 +115,12 @@ public class MenuBarClass {
 		dataMappingDb.addActionListener(new MenuListener());
 		dataMappingDb.setActionCommand("dataMappingDB");
 		tools.add(dataMappingDb);
+		
+		// items for datamining, including smacof
+		JMenuItem datamining = new JMenuItem("Data Mining (SMACOF)");
+		datamining.addActionListener(new MenuListener());
+		datamining.setActionCommand("datamining");
+		tools.add(datamining);
 
 
 		
