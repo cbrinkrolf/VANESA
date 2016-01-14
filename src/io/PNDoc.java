@@ -144,10 +144,13 @@ public class PNDoc {
 		sb.append("" + "\\documentclass{article}\n"
 				+ "\\usepackage{amsmath,verbatim,booktabs,longtable,cprotect}\n"
 				+ "\\begin{document}\n"
-				+ "\\begin{center}"
-				+ "\\TeX ed by \\emph{VANESA} on \\today, Copyright \\copyright\n"
-				+ "\\end{center}\n"
+				+ "\\begin{titlepage}"
+				+ "\\author{\\TeX ed by \\emph{VANESA} Copyright \\copyright}\n"
+				+ "\\title{Documentation of: "+ pw.getName() +"}\n"
+				+ "\\date{\\today}\n"
+				+ "\\maketitle\n"
 				+ "\\tableofcontents\n"
+				+ "\\end{titlepage}\n"
 				+ "\\newpage\n");
 	}
 
