@@ -214,7 +214,7 @@ public class MyGraph {
 					pathway.updateMyGraph();
 					MainWindow mw = MainWindowSingleton.getInstance();
 					mw.updateAllGuiElements();
-					// vv.repaint();
+					//vv.repaint();
 				}
 			}
 
@@ -931,7 +931,7 @@ public class MyGraph {
 	}
 
 	public void changeToGEMLayout() {
-		changeToLayout(new GEMLayout(g));
+		changeToLayout(new GEMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 
 	}
 
@@ -1042,7 +1042,7 @@ public class MyGraph {
 		Thread thread = new Thread(center);
 		thread.start();
 		// this.normalCentering(vv);
-
+		graphInstance.getPathway().saveVertexLocations();
 	}
 
 	public Point2D findNearestFreeVertexPosition(
