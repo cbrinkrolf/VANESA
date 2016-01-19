@@ -1,8 +1,8 @@
-BiologicalNodeAbstract: {shape: ellipse, sizefactor: 0.5, red: 255, green: 255, blue: 255}
+BiologicalNodeAbstract: {shape: ellipse, sizefactor: 1, red: 255, green: 255, blue: 255}
 ---
 Collector: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Complex: {shape: rounded rectangle, sizefactor: 2.0, red: 41, green: 232, blue: 70}
+Complex: {shape: 6 star, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Compound: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
@@ -10,21 +10,21 @@ Degraded: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Disease: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-DNA: {shape: rectangle, sizefactor: 1.0, red: 255, green: 0, blue: 0}
+DNA: {shape: rounded rectangle, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Domain: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Drug: {shape: ellipse, sizefactor: 1.0, red: 251, green: 86, blue: 119}
+Drug: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Enzyme: {shape: triangle, sizefactor: 1.0, red: 255, green: 236, blue: 0}
+Enzyme: {shape: triangle, sizefactor: 1.0, red: 0, green: 255, blue: 0}
 ---
 Exon: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Factor: {shape: ellipse, sizefactor: 1.0, red: 0, green: 255, blue: 255}
+Factor: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Fragment: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Gene: {shape: rectangle, sizefactor: 1.0, red: 255, green: 0, blue: 0}
+Gene: {shape: rectangle, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Gene Onthology: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
@@ -32,9 +32,9 @@ Glycan: {shape: regularoctapolygon, sizefactor: 1.0, red: 255, green: 255, blue:
 ---
 Homodimer Formation: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Inhibitor: {shape: ellipse, sizefactor: 1.0, red: 176, green: 48, blue: 96}
+Inhibitor: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Ligand Binding: {shape: 8 star, sizefactor: 1.0, red: 43, green: 120, blue: 45}
+Ligand Binding: {shape: 8 star, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Matrix: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
@@ -42,11 +42,11 @@ Membrane Channel: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 
 ---
 Membrane Receptor: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-mRNA: {shape: 8 star, sizefactor: 0.5, red: 255, green: 255, blue: 255}
+mRNA: {shape: 8 star, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Ortholog Group: {shape: regulardecastar, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Other: {shape: 5 star, sizefactor: 2.0, red: 106, green: 97, blue: 223}
+Other: {ellipse, sizefactor: 1.0, red: 106, green: 97, blue: 223}
 ---
 Pathway Map: {shape: rectangle, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
@@ -60,10 +60,10 @@ RNA: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Site: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Small Molecule: {shape: pentagon, sizefactor: 2.0, red: 239, green: 239, blue: 42}
+Small Molecule: {shape: octagon, sizefactor: 1.0, red: 239, green: 239, blue: 42}
 ---
 Soluble Receptor: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-sRNA: {shape: ellipse, sizefactor: 1.0, red: 255, green: 165, blue: 0}
+sRNA: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Transcription Factor: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}

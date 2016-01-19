@@ -7,7 +7,6 @@ import graph.jung.classes.MyGraph;
 import graph.layouts.Circle;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
-import gui.ProgressBar;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -17,10 +16,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Vector;
 
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import configurations.Wrapper;
 import pojos.DBColumn;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Compound;
@@ -35,6 +32,7 @@ import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.SRNA;
 import biologicalObjects.nodes.SmallMolecule;
+import configurations.Wrapper;
 import database.mirna.miRNAqueries;
 //import edu.uci.ics.jung.graph.Edge;
 //import edu.uci.ics.jung.graph.Vertex;
@@ -199,12 +197,12 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 		drawNodes(allRnElements);
 		drawNodes(allKoElements);
 
-		drawReactions(allOrgReactions, true);
+		drawReactions(allOrgReactions, false);
 		drawReactions(allEcReactions, false);
 		drawReactions(allRnReactions, false);
 		drawReactions(allKoReactions, false);
 
-		drawRelations(allOrgRelations, true);
+		drawRelations(allOrgRelations, false);
 		drawRelations(allEcRelations, false);
 		drawRelations(allRnRelations, false);
 		drawRelations(allKoRelations, false);
