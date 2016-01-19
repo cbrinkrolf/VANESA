@@ -311,7 +311,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					bna.setDefaultShape(bna.shapes.getRectangle());
 					break;
 				case "rounded rectangle":
-					bna.setDefaultShape(bna.shapes.getRegularStar(7));
+					bna.setDefaultShape(bna.shapes.getRoundRectangle());
 					break;
 				case "triangle":
 					bna.setDefaultShape(bna.shapes.getRegularPolygon(3));
@@ -321,6 +321,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					break;
 				case "hexagon":
 					bna.setDefaultShape(bna.shapes.getRegularPolygon(6));
+					break;
+				case "octagon":
+					bna.setDefaultShape(bna.shapes.getRegularPolygon(8));
 					break;
 				case "5 star":
 					bna.setDefaultShape(bna.shapes.getRegularStar(5));

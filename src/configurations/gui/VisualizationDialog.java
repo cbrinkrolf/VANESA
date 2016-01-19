@@ -1,14 +1,10 @@
 package configurations.gui;
 
-import graph.GraphInstance;
-import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
-import gui.visualization.VisualizationConfigBeans;
 import gui.visualization.YamlToObjectParser;
 import io.SaveDialog;
 
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,18 +15,17 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
@@ -44,28 +39,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.miginfocom.swing.MigLayout;
 
-import org.apache.commons.io.FilenameUtils;
 import org.yaml.snakeyaml.Yaml;
 
-import com.mchange.io.FileUtils;
-
-import sun.tools.jar.resources.jar;
 import biologicalElements.Elementdeclerations;
-import biologicalElements.Pathway;
 
 public class VisualizationDialog {
 	public static final String DEFAULTYAML = "defaultYaml";
 	
 	private YamlToObjectParser yamlToObjectParser;
 	
-	private VisualizationConfigBeans bean;
-	
-	private GraphInstance graphInstance = null;
-	private Pathway pathway;
-	
-	private boolean yamlChangedStatus = false;
-	
-	private VertexShapes shapeYaml;
 	private JPanel panel;
 
 	private JLabel loadedYamlLabel;
@@ -80,6 +62,7 @@ public class VisualizationDialog {
 		"rounded rectangle",
 		"pentagon",
 		"hexagon",
+		"octagon",
 		"5 star",
 		"6 star",
 		"7 star",
@@ -93,12 +76,10 @@ public class VisualizationDialog {
 		"2.0"
 		};
 	
-	private JComboBox biologicalElementsBox;
-	private JComboBox colorBox;
-	private JComboBox shapeBox;
-	private JComboBox sizeMultiplierBox;
+	private JComboBox<String> biologicalElementsBox;
+	private JComboBox<String> shapeBox;
+	private JComboBox<String> sizeMultiplierBox;
 	private JColorChooser colorChooser;
-	private Map<String, Map<String,Object>> objectClass;
 	
 	private String loadedYaml = null;
 	private MainWindow mWindow;
@@ -120,19 +101,20 @@ public class VisualizationDialog {
 		
 		
 		panel.add(new JLabel("Element"));
-		biologicalElementsBox = new JComboBox(biologicalElements.toArray());
+		biologicalElementsBox = new JComboBox<String>();
+		biologicalElementsBox.setModel(new DefaultComboBoxModel<String>(biologicalElements.toArray(new String[biologicalElements.size()])));
 	    
 		panel.add(biologicalElementsBox, "span 2, right, growx, wrap");
 		
 		
 		panel.add(new JLabel("Shape"));
-		shapeBox = new JComboBox(shapes);
+		shapeBox = new JComboBox<String>(shapes);
 		panel.add(shapeBox, "span, wrap, growx");
 		
 		
 		panel.add(new JLabel("Size"));
-		sizeMultiplierBox = new JComboBox(size);
-	    
+		sizeMultiplierBox = new JComboBox<String>(size);
+	    sizeMultiplierBox.setSelectedIndex(1);
 		panel.add(sizeMultiplierBox, "span, growx, wrap");
 		
 		
@@ -212,7 +194,7 @@ public class VisualizationDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(e.getSource() == exportButton){
-					SaveDialog saveDialog = new SaveDialog(SaveDialog.FORMAT_YAML);
+					new SaveDialog(SaveDialog.FORMAT_YAML);
 					loadedYaml = MainWindowSingleton.getInstance().getLoadedYaml();
 					loadedYamlLabel.setText(MainWindowSingleton.getInstance().getLoadedYaml());
 					shapeBox.setEnabled(true);
@@ -245,7 +227,7 @@ public class VisualizationDialog {
 			
 			@Override
 			public void itemStateChanged(ItemEvent event) {
-				if(event.getStateChange() == event.DESELECTED){
+				if(event.getStateChange() == ItemEvent.DESELECTED){
 					yamlWriter(yaml, event.getItem().toString(),false);
 				}
 			}

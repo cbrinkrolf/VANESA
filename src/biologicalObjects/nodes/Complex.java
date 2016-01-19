@@ -12,9 +12,6 @@ public class Complex extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.complex);
 		shapes = new VertexShapes();
 		attributeSetter(this.getClass().getSimpleName(), this);
-		System.out.println("asd");
-		System.out.println(label);
-		System.out.println(name);
 	}
 	
 
