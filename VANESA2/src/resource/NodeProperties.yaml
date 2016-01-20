@@ -46,7 +46,7 @@ mRNA: {shape: 8 star, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Ortholog Group: {shape: regulardecastar, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Other: {ellipse, sizefactor: 1.0, red: 106, green: 97, blue: 223}
+Other: {shape: ellipse, sizefactor: 1.0, red: 106, green: 97, blue: 223}
 ---
 Pathway Map: {shape: rectangle, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
