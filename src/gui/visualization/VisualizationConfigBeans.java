@@ -27,7 +27,7 @@ public class VisualizationConfigBeans {
 		parseInBean = object;
 		for(String key : parseInBean.keySet()){
 			Bean bean =  new Bean();
-			bean.setName(key);		
+			bean.setName(key);
 			bean.setShape(parseInBean.get(key).get("shape").toString());
 			bean.setSizefactor(Double.parseDouble(parseInBean.get(key).get("sizefactor").toString()));
 			bean.setColorRed((int)parseInBean.get(key).get("red"));
