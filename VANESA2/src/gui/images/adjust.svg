@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg5247"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="adjust.svg">
+  <defs
+     id="defs5249">
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Send"
+       style="overflow:visible;">
+      <path
+         id="path3802"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.2) rotate(180) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Sstart"
+       style="overflow:visible">
+      <path
+         id="path3799"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.2) translate(6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Mstart"
+       style="overflow:visible">
+      <path
+         id="path3811"
+         style="fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.6) translate(0,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Mend"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3814"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5267"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5269"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Mend-7"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3814-7"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5313"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5315"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Mend-6"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3814-5"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker5383"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5385"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Mstart-8"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3811-6"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(0.6,0.6)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Mend-5"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3814-0"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="scale(-0.6,-0.6)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Sstart-0"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3799-0"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.2,0,0,0.2,1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-6"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3802-1"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Sstart-8"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3799-9"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.2,0,0,0.2,1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-3"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3802-4"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Sstart-6"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3799-06"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.2,0,0,0.2,1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-61"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3802-8"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Sstart-9"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3799-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.2,0,0,0.2,1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-37"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3802-88"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker7102"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path7104"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.2,0,0,0.2,1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker7106"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path7108"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="199.04595"
+     inkscape:cy="555.90499"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1153"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid5276" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5252">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3.9375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path2987"
+       sodipodi:cx="90"
+       sodipodi:cy="82.362183"
+       sodipodi:rx="10"
+       sodipodi:ry="10"
+       d="m 100,82.362183 a 10,10 0 1 1 -20,0 10,10 0 1 1 20,0 z"
+       transform="matrix(0.76190476,0,0,0.76190476,126.23826,39.533368)"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustDown.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3.9375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path2987-1"
+       sodipodi:cx="90"
+       sodipodi:cy="82.362183"
+       sodipodi:rx="10"
+       sodipodi:ry="10"
+       d="m 100,82.362183 a 10,10 0 1 1 -20,0 10,10 0 1 1 20,0 z"
+       transform="matrix(0.76190476,0,0,0.76190476,177.48003,39.533368)"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustDown.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 202.42874,102.28551 36.00367,0"
+       id="path3777"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path2987"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path2987-1"
+       inkscape:connection-end-point="d4"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustDown.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend)"
+       d="m 194.78086,49.757643 0,31.1143"
+       id="path3781"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustDown.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend)"
+       d="m 246.02263,49.758048 0,31.11349"
+       id="path3781-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustDown.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3.9375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path2987-9"
+       sodipodi:cx="90"
+       sodipodi:cy="82.362183"
+       sodipodi:rx="10"
+       sodipodi:ry="10"
+       d="m 100,82.362183 a 10,10 0 1 1 -20,0 10,10 0 1 1 20,0 z"
+       transform="matrix(0,0.76190476,-0.76190476,0,220.72831,85.638828)"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustDown.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3.9375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path2987-1-3"
+       sodipodi:cx="90"
+       sodipodi:cy="82.362183"
+       sodipodi:rx="10"
+       sodipodi:ry="10"
+       d="m 100,82.362183 a 10,10 0 1 1 -20,0 10,10 0 1 1 20,0 z"
+       transform="matrix(0,0.76190476,-0.76190476,0,220.72831,136.8806)"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustDown.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 157.97617,161.8293 0,36.00368"
+       id="path3777-1"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path2987-9"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path2987-1-3"
+       inkscape:connection-end-point="d4"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustDown.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend)"
+       d="m 210.50404,154.18143 -31.1143,0"
+       id="path3781-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustDown.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Mend)"
+       d="m 210.50363,205.4232 -31.11349,0"
+       id="path3781-0-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustDown.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3.9375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path2987-9-0"
+       sodipodi:cx="90"
+       sodipodi:cy="82.362183"
+       sodipodi:rx="10"
+       sodipodi:ry="10"
+       d="m 100,82.362183 a 10,10 0 1 1 -20,0 10,10 0 1 1 20,0 z"
+       transform="matrix(0,0.76190476,-0.76190476,0,205.72831,190.63883)"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3.9375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path2987-1-3-2"
+       sodipodi:cx="90"
+       sodipodi:cy="82.362183"
+       sodipodi:rx="10"
+       sodipodi:ry="10"
+       d="m 100,82.362183 a 10,10 0 1 1 -20,0 10,10 0 1 1 20,0 z"
+       transform="matrix(0,0.76190476,-0.76190476,0,205.72831,241.8806)"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 142.97617,266.82931 0,36.00367"
+       id="path3777-1-8"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#path2987-9-0"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#path2987-1-3-2"
+       inkscape:connection-end-point="d4"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Sstart);marker-end:url(#Arrow1Send)"
+       d="m 171.46149,297.21332 0,-22.86295"
+       id="path3781-9-6"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#000000;stroke-width:3.9375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path2987-1-3-2-2"
+       sodipodi:cx="90"
+       sodipodi:cy="82.362183"
+       sodipodi:rx="10"
+       sodipodi:ry="10"
+       d="m 100,82.362183 a 10,10 0 1 1 -20,0 10,10 0 1 1 20,0 z"
+       transform="matrix(0,0.76190476,-0.76190476,0,205.52653,294.55571)"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 142.77439,337.94977 0,17.55832"
+       id="path3777-1-8-4"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-end="#path2987-1-3-2-2"
+       inkscape:connection-end-point="d4"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Sstart);marker-end:url(#Arrow1Send)"
+       d="m 171.46149,349.31485 0,-22.86295"
+       id="path3781-9-6-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+       inkscape:export-xdpi="40.866428"
+       inkscape:export-ydpi="40.866428" />
+    <g
+       id="g7152"
+       transform="matrix(0,-1,1,0,-296.92278,695.41462)"
+       inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustVerticalSpace.png"
+       inkscape:export-xdpi="38.974239"
+       inkscape:export-ydpi="38.974239">
+      <path
+         inkscape:export-ydpi="40.866428"
+         inkscape:export-xdpi="40.866428"
+         inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+         transform="matrix(0,0.76190476,-0.76190476,0,250.72831,375.63883)"
+         d="m 100,82.362183 c 0,5.522847 -4.477153,10 -10,10 -5.522847,0 -10,-4.477153 -10,-10 0,-5.522848 4.477153,-10 10,-10 5.522847,0 10,4.477152 10,10 z"
+         sodipodi:ry="10"
+         sodipodi:rx="10"
+         sodipodi:cy="82.362183"
+         sodipodi:cx="90"
+         id="path2987-9-0-2"
+         style="fill:none;stroke:#000000;stroke-width:3.9375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="arc" />
+      <path
+         inkscape:export-ydpi="40.866428"
+         inkscape:export-xdpi="40.866428"
+         inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+         transform="matrix(0,0.76190476,-0.76190476,0,250.72831,426.8806)"
+         d="m 100,82.362183 c 0,5.522847 -4.477153,10 -10,10 -5.522847,0 -10,-4.477153 -10,-10 0,-5.522848 4.477153,-10 10,-10 5.522847,0 10,4.477152 10,10 z"
+         sodipodi:ry="10"
+         sodipodi:rx="10"
+         sodipodi:cy="82.362183"
+         sodipodi:cx="90"
+         id="path2987-1-3-2-9"
+         style="fill:none;stroke:#000000;stroke-width:3.9375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="arc" />
+      <path
+         inkscape:export-ydpi="40.866428"
+         inkscape:export-xdpi="40.866428"
+         inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+         inkscape:connection-end-point="d4"
+         inkscape:connection-end="#path2987-1-3-2-9"
+         inkscape:connection-start-point="d4"
+         inkscape:connection-start="#path2987-9-0-2"
+         inkscape:connector-curvature="0"
+         inkscape:connector-type="polyline"
+         id="path3777-1-8-1"
+         d="m 187.97617,451.82931 0,36.00367"
+         style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         inkscape:export-ydpi="40.866428"
+         inkscape:export-xdpi="40.866428"
+         inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path3781-9-6-3"
+         d="m 216.46149,482.21332 0,-22.86295"
+         style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Sstart);marker-end:url(#Arrow1Send)" />
+      <path
+         inkscape:export-ydpi="40.866428"
+         inkscape:export-xdpi="40.866428"
+         inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+         transform="matrix(0,0.76190476,-0.76190476,0,250.52653,479.55571)"
+         d="m 100,82.362183 c 0,5.522847 -4.477153,10 -10,10 -5.522847,0 -10,-4.477153 -10,-10 0,-5.522848 4.477153,-10 10,-10 5.522847,0 10,4.477152 10,10 z"
+         sodipodi:ry="10"
+         sodipodi:rx="10"
+         sodipodi:cy="82.362183"
+         sodipodi:cx="90"
+         id="path2987-1-3-2-2-5"
+         style="fill:none;stroke:#000000;stroke-width:3.9375;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         sodipodi:type="arc" />
+      <path
+         inkscape:export-ydpi="40.866428"
+         inkscape:export-xdpi="40.866428"
+         inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+         inkscape:connection-end-point="d4"
+         inkscape:connection-end="#path2987-1-3-2-2-5"
+         inkscape:connector-curvature="0"
+         inkscape:connector-type="polyline"
+         id="path3777-1-8-4-9"
+         d="m 187.77439,504.50442 0,36.00367"
+         style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         inkscape:export-ydpi="40.866428"
+         inkscape:export-xdpi="40.866428"
+         inkscape:export-filename="D:\javaworkspace\VANESA2\src\gui\images\adjustHorizontalSpace.png"
+         sodipodi:nodetypes="cc"
+         inkscape:connector-curvature="0"
+         id="path3781-9-6-4-8"
+         d="m 216.46149,534.31485 0,-22.86295"
+         style="fill:none;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Sstart);marker-end:url(#Arrow1Send)" />
+    </g>
+  </g>
+</svg>
