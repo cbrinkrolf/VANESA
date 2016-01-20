@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Created by VANESA version 1.0 on 2016-01-20 14:40 with jsbml version 0.8. -->
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="VANESA">
+    <annotation>
+<model><listOfRanges /><listOfHierarchies /><isPetriNet isPetriNet="false" /></model>    </annotation>
+    <listOfCompartments>
+      <compartment constant="false" id="comp_Cytoplasma" />
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="enzyme" id="spec_100" initialConcentration="1">
+        <annotation>
+<spec><label label="enzyme" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="493.9512939453125" /><y_Coordinate y_Coordinate="716.4000244140625" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="enzyme" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="fragment" id="spec_112" initialConcentration="1">
+        <annotation>
+<spec><label label="fragment" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Fragment" /><Coordinates><x_Coordinate x_Coordinate="480.4512939453125" /><y_Coordinate y_Coordinate="933.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="fragment" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="gene ontology" id="spec_113" initialConcentration="1">
+        <annotation>
+<spec><label label="gene ontology" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Gene Ontology" /><Coordinates><x_Coordinate x_Coordinate="802.4512939453125" /><y_Coordinate y_Coordinate="-18.500019073486328" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="gene ontology" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-4144960" /><Blue Blue="192" /><Green Green="192" /><Red Red="192" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="homodimer formation" id="spec_115" initialConcentration="1">
+        <annotation>
+<spec><label label="homodimer formation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Homodimer Formation" /><Coordinates><x_Coordinate x_Coordinate="793.4512939453125" /><y_Coordinate y_Coordinate="138.49998474121094" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="homodimer formation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="site" id="spec_128" initialConcentration="1">
+        <annotation>
+<spec><label label="site" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Site" /><Coordinates><x_Coordinate x_Coordinate="1036.4512939453125" /><y_Coordinate y_Coordinate="142.49998474121094" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="site" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="compound" id="spec_102" initialConcentration="1">
+        <annotation>
+<spec><label label="compound" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Compound" /><Coordinates><x_Coordinate x_Coordinate="508.6512756347656" /><y_Coordinate y_Coordinate="159.29998779296875" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="compound" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="factor" id="spec_110" initialConcentration="1">
+        <annotation>
+<spec><label label="factor" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Factor" /><Coordinates><x_Coordinate x_Coordinate="483.4512939453125" /><y_Coordinate y_Coordinate="875.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="factor" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="mRNA" id="spec_121" initialConcentration="1">
+        <annotation>
+<spec><label label="mRNA" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="mRNA" /><Coordinates><x_Coordinate x_Coordinate="797.4512939453125" /><y_Coordinate y_Coordinate="610.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="mRNA" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="pathway map" id="spec_124" initialConcentration="1">
+        <annotation>
+<spec><label label="pathway map" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Pathway Map" /><Coordinates><x_Coordinate x_Coordinate="795.4512939453125" /><y_Coordinate y_Coordinate="837.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="pathway map" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /><Specification Specification="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="ligand binding" id="spec_117" initialConcentration="1">
+        <annotation>
+<spec><label label="ligand binding" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Ligand Binding" /><Coordinates><x_Coordinate x_Coordinate="802.4512939453125" /><y_Coordinate y_Coordinate="305.4999694824219" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="ligand binding" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="disease" id="spec_105" initialConcentration="1">
+        <annotation>
+<spec><label label="disease" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Disease" /><Coordinates><x_Coordinate x_Coordinate="483.3512878417969" /><y_Coordinate y_Coordinate="360.6000061035156" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="disease" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="soluble receptor" id="spec_130" initialConcentration="1">
+        <annotation>
+<spec><label label="soluble receptor" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Soluble Receptor" /><Coordinates><x_Coordinate x_Coordinate="1031.4512939453125" /><y_Coordinate y_Coordinate="300.4999694824219" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="soluble receptor" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="other" id="spec_123" initialConcentration="1">
+        <annotation>
+<spec><label label="other" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Other" /><Coordinates><x_Coordinate x_Coordinate="793.4512939453125" /><y_Coordinate y_Coordinate="772.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="other" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-9805345" /><Blue Blue="223" /><Green Green="97" /><Red Red="106" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="receptor" id="spec_127" initialConcentration="1">
+        <annotation>
+<spec><label label="receptor" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Receptor" /><Coordinates><x_Coordinate x_Coordinate="1039.4512939453125" /><y_Coordinate y_Coordinate="66.4999771118164" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="receptor" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="complex" id="spec_101" initialConcentration="1">
+        <annotation>
+<spec><label label="complex" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Complex" /><Coordinates><x_Coordinate x_Coordinate="533.9512939453125" /><y_Coordinate y_Coordinate="67.9999771118164" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="complex" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="matrix" id="spec_118" initialConcentration="1">
+        <annotation>
+<spec><label label="matrix" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Matrix" /><Coordinates><x_Coordinate x_Coordinate="798.4512939453125" /><y_Coordinate y_Coordinate="384.4999694824219" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="matrix" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="membrane receptor" id="spec_120" initialConcentration="1">
+        <annotation>
+<spec><label label="membrane receptor" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Membrane Receptor" /><Coordinates><x_Coordinate x_Coordinate="798.4512939453125" /><y_Coordinate y_Coordinate="532.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="membrane receptor" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="reaction" id="spec_126" initialConcentration="1">
+        <annotation>
+<spec><label label="reaction" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Reaction" /><Coordinates><x_Coordinate x_Coordinate="1049.4512939453125" /><y_Coordinate y_Coordinate="-2.5000195503234863" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="reaction" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="sRNA" id="spec_131" initialConcentration="1">
+        <annotation>
+<spec><label label="sRNA" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="sRNA" /><Coordinates><x_Coordinate x_Coordinate="1038.4512939453125" /><y_Coordinate y_Coordinate="391.4999694824219" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="sRNA" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="drug" id="spec_108" initialConcentration="1">
+        <annotation>
+<spec><label label="drug" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Drug" /><Coordinates><x_Coordinate x_Coordinate="490.4512939453125" /><y_Coordinate y_Coordinate="629.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="drug" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="collector" id="spec_104" initialConcentration="1">
+        <annotation>
+<spec><label label="collector" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Collector" /><Coordinates><x_Coordinate x_Coordinate="539.4512939453125" /><y_Coordinate y_Coordinate="-15.600022315979004" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="collector" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="small molecule" id="spec_129" initialConcentration="1">
+        <annotation>
+<spec><label label="small molecule" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Small Molecule" /><Coordinates><x_Coordinate x_Coordinate="1036.4512939453125" /><y_Coordinate y_Coordinate="219.49998474121094" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="small molecule" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1052886" /><Blue Blue="42" /><Green Green="239" /><Red Red="239" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="protein" id="spec_125" initialConcentration="1">
+        <annotation>
+<spec><label label="protein" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Protein" /><Coordinates><x_Coordinate x_Coordinate="800.4512939453125" /><y_Coordinate y_Coordinate="904.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="protein" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="exon" id="spec_109" initialConcentration="1">
+        <annotation>
+<spec><label label="exon" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Exon" /><Coordinates><x_Coordinate x_Coordinate="491.4512939453125" /><y_Coordinate y_Coordinate="799.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="exon" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="DNA" id="spec_106" initialConcentration="1">
+        <annotation>
+<spec><label label="DNA" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="DNA" /><Coordinates><x_Coordinate x_Coordinate="499.4512939453125" /><y_Coordinate y_Coordinate="473.4999694824219" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="DNA" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="transcription factor" id="spec_132" initialConcentration="1">
+        <annotation>
+<spec><label label="transcription factor" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Transcription Factor" /><Coordinates><x_Coordinate x_Coordinate="1036.4512939453125" /><y_Coordinate y_Coordinate="451.4999694824219" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="transcription factor" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="degraded" id="spec_103" initialConcentration="1">
+        <annotation>
+<spec><label label="degraded" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Degraded" /><Coordinates><x_Coordinate x_Coordinate="489.9512939453125" /><y_Coordinate y_Coordinate="268.1999816894531" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="degraded" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="ortholog group" id="spec_122" initialConcentration="1">
+        <annotation>
+<spec><label label="ortholog group" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Ortholog Group" /><Coordinates><x_Coordinate x_Coordinate="793.4512939453125" /><y_Coordinate y_Coordinate="699.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="ortholog group" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="Glycan" id="spec_114" initialConcentration="1">
+        <annotation>
+<spec><label label="Glycan" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Glycan" /><Coordinates><x_Coordinate x_Coordinate="795.4512939453125" /><y_Coordinate y_Coordinate="65.4999771118164" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="Glycan" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="inhibitor" id="spec_116" initialConcentration="1">
+        <annotation>
+<spec><label label="inhibitor" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Inhibitor" /><Coordinates><x_Coordinate x_Coordinate="792.4512939453125" /><y_Coordinate y_Coordinate="210.49998474121094" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="inhibitor" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="domain" id="spec_107" initialConcentration="1">
+        <annotation>
+<spec><label label="domain" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Domain" /><Coordinates><x_Coordinate x_Coordinate="498.4512939453125" /><y_Coordinate y_Coordinate="558.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="domain" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="membrane channel" id="spec_119" initialConcentration="1">
+        <annotation>
+<spec><label label="membrane channel" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Membrane Channel" /><Coordinates><x_Coordinate x_Coordinate="793.4512939453125" /><y_Coordinate y_Coordinate="459.4999694824219" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="membrane channel" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-1" /><Blue Blue="255" /><Green Green="255" /><Red Red="255" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+    </listOfSpecies>
+  </model>
+</sbml>
