@@ -74,11 +74,13 @@ public class GraphColoringGUI implements ActionListener {
 	private JButton resetcolorbutton;
 	private JButton degreedistributionbutton;
 
-	private String[] algorithmNames = { "Node Degree", "Cycles (r)",
+	private String[] algorithmNamesRemote = { "Node Degree", "Cycles (r)",
 			"Cliques (r)", "FRlayout (r)", "Spectral apsp (r)",
 			"Multilayout (remote)", "MDS forcelayout (r)",
 			"APSP Clustering occ (r)", "APSP Clustering score (r)",
 			"DCB clusters(r)", "DCB grid(r)" };
+	private String[] algorithmNames = {"Node Degree"};
+	
 	private int currentalgorithmindex = 0;
 
 	private final int NODE_DEGREE = 0, CYCLES = 1, CLIQUES = 2, FRLAYOUT = 3,
@@ -141,7 +143,10 @@ public class GraphColoringGUI implements ActionListener {
 
 		bg = new ButtonGroup();
 
-		chooseAlgorithm = new JComboBox<String>(algorithmNames);
+		if(mw.developer == true)
+			chooseAlgorithm = new JComboBox<String>(algorithmNamesRemote);
+		else
+			chooseAlgorithm = new JComboBox<>(algorithmNames);
 		chooseAlgorithm.setActionCommand("algorithm");
 		chooseAlgorithm.addActionListener(this);
 
