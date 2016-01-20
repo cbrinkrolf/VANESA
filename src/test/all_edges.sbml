@@ -1,0 +1,321 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!-- Created by VANESA version 1.0 on 2016-01-20 15:15 with jsbml version 0.8. -->
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="VANESA">
+    <annotation>
+<model><listOfRanges /><listOfHierarchies /><isPetriNet isPetriNet="false" /></model>    </annotation>
+    <listOfCompartments>
+      <compartment constant="false" id="comp_Cytoplasma" />
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="hidden compound" id="spec_121" initialConcentration="1">
+        <annotation>
+<spec><label label="hidden compound" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="204.0" /><y_Coordinate y_Coordinate="675.375" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="hidden compound" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="inhibition" id="spec_128" initialConcentration="1">
+        <annotation>
+<spec><label label="inhibition" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="826.6362915039062" /><y_Coordinate y_Coordinate="191.6387939453125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="inhibition" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="Reaction Pair" id="spec_139" initialConcentration="1">
+        <annotation>
+<spec><label label="Reaction Pair" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="671.6362915039062" /><y_Coordinate y_Coordinate="480.3530796595982" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="Reaction Pair" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="state change" id="spec_145" initialConcentration="1">
+        <annotation>
+<spec><label label="state change" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="671.6362915039062" /><y_Coordinate y_Coordinate="625.210222516741" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="state change" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="dissociation" id="spec_113" initialConcentration="1">
+        <annotation>
+<spec><label label="dissociation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="350.0" /><y_Coordinate y_Coordinate="463.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="dissociation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="glycosylation" id="spec_118" initialConcentration="1">
+        <annotation>
+<spec><label label="glycosylation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="204.0" /><y_Coordinate y_Coordinate="604.75" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="glycosylation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="state change" id="spec_146" initialConcentration="1">
+        <annotation>
+<spec><label label="state change" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="826.6362915039062" /><y_Coordinate y_Coordinate="624.6387939453125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="state change" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="glycosylation" id="spec_119" initialConcentration="1">
+        <annotation>
+<spec><label label="glycosylation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="350.0" /><y_Coordinate y_Coordinate="604.75" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="glycosylation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="inhibition" id="spec_127" initialConcentration="1">
+        <annotation>
+<spec><label label="inhibition" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="671.6362915039062" /><y_Coordinate y_Coordinate="191.6387939453125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="inhibition" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="repression" id="spec_143" initialConcentration="1">
+        <annotation>
+<spec><label label="repression" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="826.6362915039062" /><y_Coordinate y_Coordinate="542.6387939453125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="repression" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="binding/association" id="spec_103" initialConcentration="1">
+        <annotation>
+<spec><label label="binding/association" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="204.0" /><y_Coordinate y_Coordinate="251.625" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="binding/association" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="ubiquitination" id="spec_148" initialConcentration="1">
+        <annotation>
+<spec><label label="ubiquitination" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="671.6362915039062" /><y_Coordinate y_Coordinate="697.6387939453125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="ubiquitination" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="activation" id="spec_100" initialConcentration="1">
+        <annotation>
+<spec><label label="activation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="204.0" /><y_Coordinate y_Coordinate="181.0" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="activation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="Reaction Pair" id="spec_140" initialConcentration="1">
+        <annotation>
+<spec><label label="Reaction Pair" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="826.6362915039062" /><y_Coordinate y_Coordinate="475.6387939453125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="Reaction Pair" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="indirect effect" id="spec_124" initialConcentration="1">
+        <annotation>
+<spec><label label="indirect effect" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="204.0" /><y_Coordinate y_Coordinate="746.0" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="indirect effect" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="dephosphorylation" id="spec_110" initialConcentration="1">
+        <annotation>
+<spec><label label="dephosphorylation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="350.0" /><y_Coordinate y_Coordinate="392.875" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="dephosphorylation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="phosphorylation" id="spec_133" initialConcentration="1">
+        <annotation>
+<spec><label label="phosphorylation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="671.6362915039062" /><y_Coordinate y_Coordinate="335.4959368024554" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="phosphorylation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="activation" id="spec_101" initialConcentration="1">
+        <annotation>
+<spec><label label="activation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="350.0" /><y_Coordinate y_Coordinate="181.0" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="activation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="reaction" id="spec_136" initialConcentration="1">
+        <annotation>
+<spec><label label="reaction" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="671.6362915039062" /><y_Coordinate y_Coordinate="407.9245082310268" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="reaction" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="ubiquitination" id="spec_149" initialConcentration="1">
+        <annotation>
+<spec><label label="ubiquitination" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="826.6362915039062" /><y_Coordinate y_Coordinate="697.6387939453125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="ubiquitination" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="indirect effect" id="spec_125" initialConcentration="1">
+        <annotation>
+<spec><label label="indirect effect" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="350.0" /><y_Coordinate y_Coordinate="746.0" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="indirect effect" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="binding/association" id="spec_104" initialConcentration="1">
+        <annotation>
+<spec><label label="binding/association" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="350.0" /><y_Coordinate y_Coordinate="251.625" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="binding/association" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="compound" id="spec_106" initialConcentration="1">
+        <annotation>
+<spec><label label="compound" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="204.0" /><y_Coordinate y_Coordinate="322.25" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="compound" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="phosphorylation" id="spec_134" initialConcentration="1">
+        <annotation>
+<spec><label label="phosphorylation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="826.6362915039062" /><y_Coordinate y_Coordinate="336.6387939453125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="phosphorylation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="methylation" id="spec_131" initialConcentration="1">
+        <annotation>
+<spec><label label="methylation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="826.6362915039062" /><y_Coordinate y_Coordinate="266.6387939453125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="methylation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="methylation" id="spec_130" initialConcentration="1">
+        <annotation>
+<spec><label label="methylation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="671.6362915039062" /><y_Coordinate y_Coordinate="263.06736537388394" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="methylation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="dissociation" id="spec_112" initialConcentration="1">
+        <annotation>
+<spec><label label="dissociation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="204.0" /><y_Coordinate y_Coordinate="463.5" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="dissociation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="expression" id="spec_116" initialConcentration="1">
+        <annotation>
+<spec><label label="expression" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="350.0" /><y_Coordinate y_Coordinate="534.125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="expression" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="reaction" id="spec_137" initialConcentration="1">
+        <annotation>
+<spec><label label="reaction" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="826.6362915039062" /><y_Coordinate y_Coordinate="412.6387939453125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="reaction" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="expression" id="spec_115" initialConcentration="1">
+        <annotation>
+<spec><label label="expression" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="204.0" /><y_Coordinate y_Coordinate="534.125" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="expression" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="compound" id="spec_107" initialConcentration="1">
+        <annotation>
+<spec><label label="compound" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="350.0" /><y_Coordinate y_Coordinate="322.25" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="compound" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="dephosphorylation" id="spec_109" initialConcentration="1">
+        <annotation>
+<spec><label label="dephosphorylation" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="204.0" /><y_Coordinate y_Coordinate="392.875" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="dephosphorylation" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="hidden compound" id="spec_122" initialConcentration="1">
+        <annotation>
+<spec><label label="hidden compound" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="350.0" /><y_Coordinate y_Coordinate="675.375" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="hidden compound" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+      <species boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false" compartment="comp_Cytoplasma" name="repression" id="spec_142" initialConcentration="1">
+        <annotation>
+<spec><label label="repression" /><Nodesize Nodesize="1.0" /><BiologicalElement BiologicalElement="Enzyme" /><Coordinates><x_Coordinate x_Coordinate="671.6362915039062" /><y_Coordinate y_Coordinate="552.7816510881696" /></Coordinates><environmentNode environmentNode="false" /><Parameters /><Networklabel Networklabel="repression" /><HasKEGGNode HasKEGGNode="false" /><Color><RGB RGB="-16711936" /><Blue Blue="0" /><Green Green="255" /><Red Red="0" /></Color><NodeReference><hasRef hasRef="false" /></NodeReference><constCheck constCheck="false" /></spec>        </annotation>
+</species>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction compartment="comp_Cytoplasma" name="activation" fast="false" id="reac_102" reversible="false">
+        <annotation>
+<reac><label label="activation" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="activation" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_100" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_101" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="binding/association" fast="false" id="reac_105" reversible="false">
+        <annotation>
+<reac><label label="binding/association" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="binding/association" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_103" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_104" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="compound" fast="false" id="reac_108" reversible="false">
+        <annotation>
+<reac><label label="compound" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="compound" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_106" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_107" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="dephosphorylation" fast="false" id="reac_111" reversible="false">
+        <annotation>
+<reac><label label="dephosphorylation" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="dephosphorylation" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_109" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_110" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="dissociation" fast="false" id="reac_114" reversible="false">
+        <annotation>
+<reac><label label="dissociation" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="dissociation" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_112" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_113" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="expression" fast="false" id="reac_117" reversible="false">
+        <annotation>
+<reac><label label="expression" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="expression" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_115" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_116" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="glycosylation" fast="false" id="reac_120" reversible="false">
+        <annotation>
+<reac><label label="glycosylation" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="glycosylation" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_118" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_119" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="hidden compound" fast="false" id="reac_123" reversible="false">
+        <annotation>
+<reac><label label="hidden compound" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="hidden compound" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_121" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_122" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="indirect effect" fast="false" id="reac_126" reversible="false">
+        <annotation>
+<reac><label label="indirect effect" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="indirect effect" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_124" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_125" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="inhibition" fast="false" id="reac_129" reversible="false">
+        <annotation>
+<reac><label label="inhibition" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="inhibition" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_127" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_128" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="methylation" fast="false" id="reac_132" reversible="false">
+        <annotation>
+<reac><label label="methylation" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="methylation" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_130" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_131" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="phosphorylation" fast="false" id="reac_135" reversible="false">
+        <annotation>
+<reac><label label="phosphorylation" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="phosphorylation" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_133" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_134" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="reaction" fast="false" id="reac_138" reversible="false">
+        <annotation>
+<reac><label label="reaction" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="reaction" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_136" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_137" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="Reaction Pair" fast="false" id="reac_141" reversible="false">
+        <annotation>
+<reac><label label="Reaction Pair" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="Reaction Pair" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /><HasReactionPairEdge HasReactionPairEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_139" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_140" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="repression" fast="false" id="reac_144" reversible="false">
+        <annotation>
+<reac><label label="repression" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="repression" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_142" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_143" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="state change" fast="false" id="reac_147" reversible="false">
+        <annotation>
+<reac><label label="state change" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="state change" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_145" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_146" constant="false" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="comp_Cytoplasma" name="ubiquitination" fast="false" id="reac_150" reversible="false">
+        <annotation>
+<reac><label label="ubiquitination" /><IsWeighted IsWeighted="false" /><Weight Weight="0" /><Color><RGB RGB="-8355712" /><Blue Blue="128" /><Green Green="128" /><Red Red="128" /></Color><IsDirected IsDirected="true" /><BiologicalElement BiologicalElement="ubiquitination" /><HasFeatureEdge HasFeatureEdge="false" /><HasKEGGEdge HasKEGGEdge="false" /></reac>        </annotation>
+        <listOfReactants>
+          <speciesReference species="spec_148" constant="false" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="spec_149" constant="false" />
+        </listOfProducts>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

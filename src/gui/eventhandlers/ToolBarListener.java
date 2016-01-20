@@ -389,13 +389,12 @@ public class ToolBarListener implements ActionListener {
 
 				double maxy = Double.MIN_VALUE;
 				Point2D point;
-				Rectangle r;
 				if (nodes.size() > 1) {
 					Iterator<BiologicalNodeAbstract> it = nodes.iterator();
 					BiologicalNodeAbstract bna;
 					while (it.hasNext()) {
 						bna = it.next();
-						r = bna.getShape().getBounds();
+						//r = bna.getShape().getBounds();
 						/*
 						 * VisualizationViewer<BiologicalNodeAbstract,
 						 * BiologicalEdgeAbstract> vv = graphInstance
@@ -462,6 +461,7 @@ public class ToolBarListener implements ActionListener {
 
 					}
 				}
+				graphInstance.getPathway().saveVertexLocations();
 			}
 		} else if ("adjustHorizontalSpace".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
@@ -514,6 +514,7 @@ public class ToolBarListener implements ActionListener {
 								.getGraphLayout().setLocation(bna, point);
 
 					}
+					graphInstance.getPathway().saveVertexLocations();
 				}
 			}
 		} else if ("adjustVerticalSpace".equals(event)) {
@@ -567,6 +568,7 @@ public class ToolBarListener implements ActionListener {
 								.getGraphLayout().setLocation(bna, point);
 
 					}
+					graphInstance.getPathway().saveVertexLocations();
 				}
 			}
 		}

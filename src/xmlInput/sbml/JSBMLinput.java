@@ -93,7 +93,7 @@ public class JSBMLinput {
 		String message = "Import was successful";
 		Document doc = null;
 		InputSource in = new InputSource(is);
-		
+
 		// siehe http://www.javabeginners.de/XML/XML-Datei_lesen.php
 		// create document
 		SAXBuilder builder = new SAXBuilder();
@@ -160,8 +160,7 @@ public class JSBMLinput {
 		Element modelNode = annotationNode.getChild("model", null);
 		// get the information if the imported net is a Petri net
 		Element isPetriNetNode = modelNode.getChild("isPetriNet", null);
-		Boolean isPetri = Boolean.parseBoolean(isPetriNetNode
-				.getAttributeValue("isPetriNet"));
+		Boolean isPetri = Boolean.parseBoolean(isPetriNetNode.getAttributeValue("isPetriNet"));
 		this.pathway.setPetriNet(isPetri);
 		// get the ranges if present
 		Element rangeNode = modelNode.getChild("listOfRanges", null);
@@ -207,8 +206,7 @@ public class JSBMLinput {
 			Element reacAnnotation = annotation.getChild("reac", null);
 			// test which bea has to be created
 			Element elSub = reacAnnotation.getChild("BiologicalElement", null);
-			String biologicalElement = elSub
-					.getAttributeValue("BiologicalElement");
+			String biologicalElement = elSub.getAttributeValue("BiologicalElement");
 			// get name and label to create the bea
 			String name = reaction.getAttributeValue("name");
 			if (name == null) {
@@ -223,7 +221,7 @@ public class JSBMLinput {
 			Element rectantsNode = reaction.getChild("listOfReactants", null);
 			Element rectant = rectantsNode.getChild("speciesReference", null);
 			String id = rectant.getAttributeValue("species");
-			//System.out.println(id);
+			// System.out.println(id);
 			String[] tmp = id.split("_");
 			int from = Integer.parseInt(tmp[1]);
 			Element productsNode = reaction.getChild("listOfProducts", null);
@@ -238,75 +236,58 @@ public class JSBMLinput {
 				bea = new Compound(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.physicalInteraction:
-				bea = new PhysicalInteraction(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new PhysicalInteraction(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.hiddenCompoundEdge:
-				bea = new HiddenCompound(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new HiddenCompound(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.reactionEdge:
 				// System.out.println("reaction edge");
-				bea = new ReactionEdge(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new ReactionEdge(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.reactionPair:
 				// System.out.println("reaction pair");
-				bea = new ReactionPair(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new ReactionPair(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.activationEdge:
-				bea = new Activation(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new Activation(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.inhibitionEdge:
-				bea = new Inhibition(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new Inhibition(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.expressionEdge:
-				bea = new Expression(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new Expression(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.repressionEdge:
-				bea = new Repression(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new Repression(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.indirectEffectEdge:
-				bea = new IndirectEffect(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new IndirectEffect(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.stateChangeEdge:
-				bea = new StateChange(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new StateChange(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.bindingEdge:
-				bea = new BindingAssociation(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new BindingAssociation(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.dissociationEdge:
-				bea = new Dissociation(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new Dissociation(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.phosphorylationEdge:
-				bea = new Phosphorylation(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new Phosphorylation(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.dephosphorylationEdge:
 				// System.out.println("dephos:" + biologicalElement);
-				bea = new Dephosphorylation(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new Dephosphorylation(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.glycosylationEdge:
-				bea = new Glycosylation(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new Glycosylation(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.ubiquitinationEdge:
-				bea = new Ubiquitination(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new Ubiquitination(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.methylationEdge:
-				bea = new Methylation(label, name, nodes.get(from),
-						nodes.get(to));
+				bea = new Methylation(label, name, nodes.get(from), nodes.get(to));
 				break;
 			case Elementdeclerations.pnDiscreteEdge:
 				// TODO: ???
@@ -315,15 +296,12 @@ public class JSBMLinput {
 				if (elSub != null) {
 					attr = elSub.getAttributeValue("Function");
 				}
-				bea = new PNEdge(nodes.get(from), nodes.get(to), label, name,
-						biologicalElements.Elementdeclerations.pnDiscreteEdge,
-						attr);
+				bea = new PNEdge(nodes.get(from), nodes.get(to), label, name, biologicalElements.Elementdeclerations.pnDiscreteEdge, attr);
 				elSub = reacAnnotation.getChild("ActivationProbability", null);
 				if (elSub != null) {
 					attr = elSub.getAttributeValue("ActivationProbability");
 				}
-				((PNEdge) bea).setActivationProbability(Double
-						.parseDouble(attr));
+				((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
 				break;
 			case Elementdeclerations.pnContinuousEdge:
 				elSub = reacAnnotation.getChild("Function", null);
@@ -331,19 +309,12 @@ public class JSBMLinput {
 				if (elSub != null) {
 					attr = elSub.getAttributeValue("Function");
 				}
-				bea = new PNEdge(
-						nodes.get(from),
-						nodes.get(to),
-						label,
-						name,
-						biologicalElements.Elementdeclerations.pnContinuousEdge,
-						attr);
+				bea = new PNEdge(nodes.get(from), nodes.get(to), label, name, biologicalElements.Elementdeclerations.pnContinuousEdge, attr);
 				elSub = reacAnnotation.getChild("ActivationProbability", null);
 				if (elSub != null) {
 					attr = elSub.getAttributeValue("ActivationProbability");
 				}
-				((PNEdge) bea).setActivationProbability(Double
-						.parseDouble(attr));
+				((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
 				break;
 			case Elementdeclerations.pnInhibitionEdge:
 				elSub = reacAnnotation.getChild("Function", null);
@@ -351,15 +322,8 @@ public class JSBMLinput {
 				if (elSub != null) {
 					attr = elSub.getAttributeValue("Function");
 				}
-				bea = new PNEdge(
-						nodes.get(from),
-						nodes.get(to),
-						label,
-						name,
-						biologicalElements.Elementdeclerations.pnInhibitionEdge,
-						attr);
-				((PNEdge) bea).setActivationProbability(Double
-						.parseDouble(attr));
+				bea = new PNEdge(nodes.get(from), nodes.get(to), label, name, biologicalElements.Elementdeclerations.pnInhibitionEdge, attr);
+				((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
 				break;
 			default:
 				// System.out.println(biologicalElement);
@@ -375,8 +339,7 @@ public class JSBMLinput {
 					bea.setID();
 				}
 				// get additional information
-				List<Element> reacAnnotationChildren = reacAnnotation
-						.getChildren();
+				List<Element> reacAnnotationChildren = reacAnnotation.getChildren();
 				for (int j = 0; j < reacAnnotationChildren.size(); j++) {
 					// go through all Nodes and look up what is set
 					Element child = reacAnnotationChildren.get(j);
@@ -411,8 +374,7 @@ public class JSBMLinput {
 
 			// test which bna has to be created
 			Element elSub = specAnnotation.getChild("BiologicalElement", null);
-			String biologicalElement = elSub
-					.getAttributeValue("BiologicalElement");
+			String biologicalElement = elSub.getAttributeValue("BiologicalElement");
 			// get name and label to create the bna
 			String name = species.getAttributeValue("name");
 			if (name == null) {
@@ -424,7 +386,7 @@ public class JSBMLinput {
 				label = elSub.getAttributeValue("label");
 			} else {
 				elSub = specAnnotation.getChild("Label", null);
-				if(elSub != null){
+				if (elSub != null) {
 					label = elSub.getAttributeValue("Label");
 				}
 			}
@@ -436,6 +398,9 @@ public class JSBMLinput {
 			case Elementdeclerations.others:
 				bna = new biologicalObjects.nodes.Other(label, name);
 				break;
+			case Elementdeclerations.collector:
+				bna = new biologicalObjects.nodes.Collector(label, name);
+				break;
 			case Elementdeclerations.complex:
 				bna = new biologicalObjects.nodes.Complex(label, name);
 				break;
@@ -445,9 +410,11 @@ public class JSBMLinput {
 			case Elementdeclerations.dna:
 				bna = new biologicalObjects.nodes.DNA(label, name);
 				break;
+			case Elementdeclerations.exon:
+				bna = new biologicalObjects.nodes.Exon(label, name);
+				break;
 			case Elementdeclerations.homodimerFormation:
-				bna = new biologicalObjects.nodes.HomodimerFormation(label,
-						name);
+				bna = new biologicalObjects.nodes.HomodimerFormation(label, name);
 				break;
 			case Elementdeclerations.ligandBinding:
 				bna = new biologicalObjects.nodes.LigandBinding(label, name);
@@ -461,8 +428,10 @@ public class JSBMLinput {
 			case Elementdeclerations.mRNA:
 				bna = new biologicalObjects.nodes.MRNA(label, name);
 				elSub = specAnnotation.getChild("NtSequence", null);
-				attr = elSub.getAttributeValue("NtSequence");
-				((biologicalObjects.nodes.MRNA) bna).setNtSequence(attr);
+				if (elSub != null) {
+					attr = elSub.getAttributeValue("NtSequence");
+					((biologicalObjects.nodes.MRNA) bna).setNtSequence(attr);
+				}
 				break;
 			case Elementdeclerations.orthologGroup:
 				bna = new biologicalObjects.nodes.OrthologGroup(label, name);
@@ -471,8 +440,7 @@ public class JSBMLinput {
 				bna = new biologicalObjects.nodes.PathwayMap(label, name);
 				elSub = specAnnotation.getChild("PathwayLink", null);
 				if (elSub != null) {
-					pathwayLink = String.valueOf(elSub
-							.getAttributeValue("PathwayLink"));
+					pathwayLink = String.valueOf(elSub.getAttributeValue("PathwayLink"));
 				}
 				// if (pathwayLink != null) {
 				// TODO: ???
@@ -504,8 +472,7 @@ public class JSBMLinput {
 				bna = new biologicalObjects.nodes.SRNA(label, name);
 				elSub = specAnnotation.getChild("NtSequence", null);
 				if (elSub != null) {
-					attr = String
-							.valueOf(elSub.getAttributeValue("NtSequence"));
+					attr = String.valueOf(elSub.getAttributeValue("NtSequence"));
 					((biologicalObjects.nodes.SRNA) bna).setNtSequence(attr);
 				}
 				break;
@@ -516,8 +483,7 @@ public class JSBMLinput {
 				bna = new biologicalObjects.nodes.SolubleReceptor(label, name);
 				break;
 			case Elementdeclerations.transcriptionFactor:
-				bna = new biologicalObjects.nodes.TranscriptionFactor(label,
-						name);
+				bna = new biologicalObjects.nodes.TranscriptionFactor(label, name);
 				break;
 			case Elementdeclerations.glycan:
 				bna = new biologicalObjects.nodes.Glycan(label, name);
@@ -530,6 +496,9 @@ public class JSBMLinput {
 				break;
 			case Elementdeclerations.drug:
 				bna = new biologicalObjects.nodes.Drug(label, name);
+				break;
+			case Elementdeclerations.domain:
+				bna = new biologicalObjects.nodes.Domain(label, name);
 				break;
 			case Elementdeclerations.gene:
 				bna = new biologicalObjects.nodes.Gene(label, name);
@@ -590,8 +559,7 @@ public class JSBMLinput {
 				bna = new petriNet.DiscreteTransition(label, name);
 				elSub = specAnnotation.getChild("delay", null);
 				attr = String.valueOf(elSub.getAttributeValue("delay"));
-				((petriNet.DiscreteTransition) bna).setDelay(Double
-						.parseDouble(attr));
+				((petriNet.DiscreteTransition) bna).setDelay(Double.parseDouble(attr));
 				break;
 			case Elementdeclerations.continuousTransition:
 				bna = new petriNet.ContinuousTransition(label, name);
@@ -604,12 +572,10 @@ public class JSBMLinput {
 				elSub = specAnnotation.getChild("knockedOut", null);
 				((petriNet.ContinuousTransition) bna).setKnockedOut(false);
 				if (elSub != null) {
-					attr = String
-							.valueOf(elSub.getAttributeValue("knockedOut"));
+					attr = String.valueOf(elSub.getAttributeValue("knockedOut"));
 
 					if (attr != null && attr.equals("true")) {
-						((petriNet.ContinuousTransition) bna)
-								.setKnockedOut(true);
+						((petriNet.ContinuousTransition) bna).setKnockedOut(true);
 					}
 				}
 				break;
@@ -636,8 +602,7 @@ public class JSBMLinput {
 				String[] comp = compartment.split("_");
 				bna.setCompartment(comp[1]);
 				// get additional information
-				List<Element> specAnnotationChildren = specAnnotation
-						.getChildren();
+				List<Element> specAnnotationChildren = specAnnotation.getChildren();
 				for (int j = 0; j < specAnnotationChildren.size(); j++) {
 					// go through all Nodes and look up what is set
 					Element child = specAnnotationChildren.get(j);
@@ -646,18 +611,14 @@ public class JSBMLinput {
 				// get the coordinates of the bna
 				elSub = specAnnotation.getChild("Coordinates", null);
 				Element elSubSub = elSub.getChild("x_Coordinate", null);
-				Double xCoord = new Double(
-						elSubSub.getAttributeValue("x_Coordinate"));
+				Double xCoord = new Double(elSubSub.getAttributeValue("x_Coordinate"));
 				elSubSub = elSub.getChild("y_Coordinate", null);
-				Double yCoord = new Double(
-						elSubSub.getAttributeValue("y_Coordinate"));
+				Double yCoord = new Double(elSubSub.getAttributeValue("y_Coordinate"));
 				Point2D.Double p = new Point2D.Double(xCoord, yCoord);
 
 				elSub = specAnnotation.getChild("environmentNode", null);
 				if (elSub != null) {
-					if (String.valueOf(
-							elSub.getAttributeValue("environmentNode")).equals(
-							"true")) {
+					if (String.valueOf(elSub.getAttributeValue("environmentNode")).equals("true")) {
 						bna.markAsEnvironment(true);
 					}
 				}
@@ -675,12 +636,9 @@ public class JSBMLinput {
 					elSubSub = elSub.getChildren().get(j);
 					// System.out.println(elSubSub.getChild("Name",
 					// null).getAttributeValue("Name"));
-					pname = elSubSub.getChild("Name", null).getAttributeValue(
-							"Name");
-					value = Double.valueOf(elSubSub.getChild("Value", null)
-							.getAttributeValue("Value"));
-					unit = elSubSub.getChild("Unit", null).getAttributeValue(
-							"Unit");
+					pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
+					value = Double.valueOf(elSubSub.getChild("Value", null).getAttributeValue("Value"));
+					unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
 					param = new Parameter(pname, value, unit);
 					parameters.add(param);
 				}
@@ -726,23 +684,18 @@ public class JSBMLinput {
 
 			Set<Integer> childrenSet = new HashSet<Integer>();
 			for (Element childElement : coarseNode.getChildren("child", null)) {
-				Integer childNode = Integer.parseInt(childElement
-						.getAttributeValue("id").split("_")[1]);
+				Integer childNode = Integer.parseInt(childElement.getAttributeValue("id").split("_")[1]);
 				childrenSet.add(childNode);
 			}
 
-			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id")
-					.split("_")[1]);
-			String rootNode = coarseNode.getAttribute("root", null) == null ? "null"
-					: coarseNode.getAttributeValue("root");
+			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id").split("_")[1]);
+			String rootNode = coarseNode.getAttribute("root", null) == null ? "null" : coarseNode.getAttributeValue("root");
 			if (!rootNode.equals("null")) {
-				hierarchyRootNodes.put(id, Integer.parseInt(coarseNode
-						.getAttributeValue("root").split("_")[1]));
+				hierarchyRootNodes.put(id, Integer.parseInt(coarseNode.getAttributeValue("root").split("_")[1]));
 			}
 			hierarchyMap.put(id, childrenSet);
 			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
-			if (coarseNode.getAttributeValue("opened") != null
-					&& coarseNode.getAttributeValue("opened").equals("true")) {
+			if (coarseNode.getAttributeValue("opened") != null && coarseNode.getAttributeValue("opened").equals("true")) {
 				openedCoarseNodes.add(id);
 			}
 		}
@@ -763,13 +716,11 @@ public class JSBMLinput {
 				if (toBeCoarsed) {
 					BiologicalNodeAbstract coarseNode;
 					if (hierarchyRootNodes.containsKey(parent)) {
-						coarseNode = BiologicalNodeAbstract.coarse(coarseNodes,
-								parent, coarseNodeLabels.get(parent),
+						coarseNode = BiologicalNodeAbstract.coarse(coarseNodes, parent, coarseNodeLabels.get(parent),
 								nodes.get(hierarchyRootNodes.get(parent)));
 
 					} else {
-						coarseNode = BiologicalNodeAbstract.coarse(coarseNodes,
-								parent, coarseNodeLabels.get(parent));
+						coarseNode = BiologicalNodeAbstract.coarse(coarseNodes, parent, coarseNodeLabels.get(parent));
 					}
 
 					nodes.put(parent, coarseNode);
@@ -792,8 +743,7 @@ public class JSBMLinput {
 		if (coarsePathway) {
 			Set<BiologicalNodeAbstract> roughestAbstractionNodes = new HashSet<BiologicalNodeAbstract>();
 			roughestAbstractionNodes.addAll(nodes.values());
-			roughestAbstractionNodes.removeIf(p -> p.getParentNode() != null
-					&& p.getParentNode() != p);
+			roughestAbstractionNodes.removeIf(p -> p.getParentNode() != null && p.getParentNode() != p);
 			roughestAbstractionNodes.removeIf(p -> p.isMarkedAsEnvironment());
 			BiologicalNodeAbstract.coarse(roughestAbstractionNodes);
 			for (BiologicalNodeAbstract node : nodes.values()) {
@@ -905,18 +855,17 @@ public class JSBMLinput {
 			elSub = child.getChild("hasRef", null);
 			if (elSub.getAttributeValue("hasRef").equals("true")) {
 				elSub = child.getChild("RefID", null);
-				this.bna2Ref.put(bna,
-						Integer.parseInt(elSub.getAttributeValue("RefID")));
+				this.bna2Ref.put(bna, Integer.parseInt(elSub.getAttributeValue("RefID")));
 			}
 			break;
 		case "constCheck":
-			if (value.equals("true")){
+			if (value.equals("true")) {
 				bna.setConstant(true);
-			}else{
+			} else {
 				bna.setConstant(false);
 			}
 			break;
-			
+
 		// special cases
 		case "NtSequence":
 			if (bna instanceof DNA) {
@@ -955,12 +904,10 @@ public class JSBMLinput {
 			((biologicalObjects.nodes.Enzyme) bna).setSysName(value);
 			break;
 		case "Proteins":
-			((biologicalObjects.nodes.Gene) bna)
-					.addProtein(stringToArray(value));
+			((biologicalObjects.nodes.Gene) bna).addProtein(stringToArray(value));
 			break;
 		case "Enzymes":
-			((biologicalObjects.nodes.Gene) bna)
-					.addEnzyme(stringToArray(value));
+			((biologicalObjects.nodes.Gene) bna).addEnzyme(stringToArray(value));
 			break;
 		case "Specification":
 			b = Boolean.parseBoolean(value);
@@ -1216,9 +1163,8 @@ public class JSBMLinput {
 	private void addRange(Element rangeElement) {
 		Map<String, String> attrs = new HashMap<String, String>();
 		attrs.put("title", "");
-		String[] keys = { "textColor", "outlineType", "fillColor", "alpha",
-				"maxY", "outlineColor", "maxX", "isEllipse", "minX", "minY",
-				"titlePos", "title" };
+		String[] keys = { "textColor", "outlineType", "fillColor", "alpha", "maxY", "outlineColor", "maxX", "isEllipse", "minX", "minY", "titlePos",
+				"title" };
 		for (int i = 0; i < keys.length; i++) {
 			Element tmp = rangeElement.getChild(keys[i], null);
 			if (tmp != null) {
@@ -1226,8 +1172,7 @@ public class JSBMLinput {
 				attrs.put(keys[i], value);
 			}
 		}
-		RangeSelector.getInstance().addRangesInMyGraph(pathway.getGraph(),
-				attrs);
+		RangeSelector.getInstance().addRangesInMyGraph(pathway.getGraph(), attrs);
 	}
 
 	private void handleReferences() {
