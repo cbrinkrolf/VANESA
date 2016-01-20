@@ -216,12 +216,12 @@ public class ToolBar {
 		fullScreen.setActionCommand("full screen");
 		fullScreen.addActionListener(toolBarListener);
 		
-		JButton stretchEdges = new ToolBarButton("Stretch");
+		JButton stretchEdges = new ToolBarButton(new ImageIcon(imagePath.getPath("stretchEdges.png")));
 		stretchEdges.setToolTipText("Stretch edge length");
 		stretchEdges.setActionCommand("stretchEdges");
 		stretchEdges.addActionListener(toolBarListener);
 		
-		JButton compressEdges = new ToolBarButton("Compress");
+		JButton compressEdges = new ToolBarButton(new ImageIcon(imagePath.getPath("compressEdges.png")));
 		compressEdges.setToolTipText("Compress edge length");
 		compressEdges.setActionCommand("compressEdges");
 		compressEdges.addActionListener(toolBarListener);
@@ -364,33 +364,34 @@ public class ToolBar {
 //		if (!petriNetView) toolBarControlControls.add(convertIntoPetriNet);
 		
 		JPanel nodeAdjustment = new ToolBarPanel();
-		nodeAdjustment.setLayout(new GridLayout(1,1));
+		nodeAdjustment.setLayout(new GridLayout(2,2));
 		
 		
-		JButton adjustDown = new JButton("_");
+		JButton adjustDown = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustDown.png")));
 		adjustDown.setActionCommand("adjustDown");
 		adjustDown.addActionListener(toolBarListener);
 		adjustDown.setToolTipText("Adjust selected nodes to lowest node");
 		
-		JButton adjustLeft = new JButton("|");
+		JButton adjustLeft = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustLeft.png")));
 		adjustLeft.setActionCommand("adjustLeft");
 		adjustLeft.addActionListener(toolBarListener);
 		adjustLeft.setToolTipText("Adjust selected nodes to left");
 		
-		JButton adjustHorizontalSpace = new JButton("||");
-		adjustHorizontalSpace.setActionCommand("adjustHorizontalSpace");
-		adjustHorizontalSpace.addActionListener(toolBarListener);
-		adjustHorizontalSpace.setToolTipText("Adjust horizontal space of selected nodes");
-		
-		JButton adjustVerticalSpace = new JButton("=");
+		JButton adjustVerticalSpace = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustVerticalSpace.png")));
 		adjustVerticalSpace.setActionCommand("adjustVerticalSpace");
 		adjustVerticalSpace.addActionListener(toolBarListener);
 		adjustVerticalSpace.setToolTipText("Adjust vertical space of selected nodes");
 		
+		JButton adjustHorizontalSpace = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustHorizontalSpace.png")));
+		adjustHorizontalSpace.setActionCommand("adjustHorizontalSpace");
+		adjustHorizontalSpace.addActionListener(toolBarListener);
+		adjustHorizontalSpace.setToolTipText("Adjust horizontal space of selected nodes");
+		
 		nodeAdjustment.add(adjustDown);
 		nodeAdjustment.add(adjustLeft);
-		nodeAdjustment.add(adjustHorizontalSpace);
+		
 		nodeAdjustment.add(adjustVerticalSpace);
+		nodeAdjustment.add(adjustHorizontalSpace);
 		
 		
 		
