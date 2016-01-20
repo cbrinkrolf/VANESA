@@ -338,7 +338,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					bna.setDefaultShape(bna.shapes.getRegularStar(8));
 					break;
 				default:
-					System.out.println("No shape defined! Default shape used!");
+					System.out.println(bna.getName()+": No shape defined! Default shape used!");
 					bna.setDefaultShape(bna.shapes.getEllipse());
 				}		
 				Color colorBean = new Color(bean.getColorRed(), bean.getColorGreen(), bean.getColorBlue());

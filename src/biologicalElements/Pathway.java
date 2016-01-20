@@ -55,19 +55,26 @@ import biologicalObjects.edges.Repression;
 import biologicalObjects.edges.StateChange;
 import biologicalObjects.edges.Ubiquitination;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.Collector;
 import biologicalObjects.nodes.Complex;
 import biologicalObjects.nodes.CompoundNode;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Degraded;
 import biologicalObjects.nodes.Disease;
+import biologicalObjects.nodes.Domain;
 import biologicalObjects.nodes.Drug;
 import biologicalObjects.nodes.Enzyme;
+import biologicalObjects.nodes.Exon;
+import biologicalObjects.nodes.Factor;
+import biologicalObjects.nodes.Fragment;
 import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.GeneOntology;
 import biologicalObjects.nodes.Glycan;
 import biologicalObjects.nodes.HomodimerFormation;
+import biologicalObjects.nodes.Inhibitor;
 import biologicalObjects.nodes.LigandBinding;
 import biologicalObjects.nodes.MRNA;
+import biologicalObjects.nodes.Matrix;
 import biologicalObjects.nodes.MembraneChannel;
 import biologicalObjects.nodes.MembraneReceptor;
 import biologicalObjects.nodes.OrthologGroup;
@@ -77,6 +84,7 @@ import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.Reaction;
 import biologicalObjects.nodes.Receptor;
 import biologicalObjects.nodes.SRNA;
+import biologicalObjects.nodes.Site;
 import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
@@ -249,16 +257,32 @@ public class Pathway implements Cloneable {
 			bna = new OrthologGroup(label, name);
 		else if (elementDecleration.equals(Elementdeclerations.compound))
 			bna = new CompoundNode(label, name);
+		else if (elementDecleration.equals(Elementdeclerations.collector))
+			bna = new Collector(label, name);
 		else if (elementDecleration.equals(Elementdeclerations.disease))
 			bna = new Disease(label, name);
+		else if (elementDecleration.equals(Elementdeclerations.domain))
+			bna = new Domain(label, name);
 		else if (elementDecleration.equals(Elementdeclerations.drug))
 			bna = new Drug(label, name);
+		else if (elementDecleration.equals(Elementdeclerations.exon))
+			bna = new Exon(label, name);
+		else if (elementDecleration.equals(Elementdeclerations.factor))
+			bna = new Factor(label, name);
+		else if (elementDecleration.equals(Elementdeclerations.fragment))
+			bna = new Fragment(label, name);
 		else if (elementDecleration.equals(Elementdeclerations.go))
 			bna = new GeneOntology(label, name);
 		else if (elementDecleration.equals(Elementdeclerations.gene))
 			bna = new Gene(label, name);
+		else if (elementDecleration.equals(Elementdeclerations.inhibitor))
+			bna = new Inhibitor(label, name);
+		else if (elementDecleration.equals(Elementdeclerations.matrix))
+			bna = new Matrix(label, name);
 		else if (elementDecleration.equals(Elementdeclerations.reaction))
 			bna = new Reaction(label, name);
+		else if (elementDecleration.equals(Elementdeclerations.site))
+			bna = new Site(label, name);
 		else if (elementDecleration.equals(Elementdeclerations.stochasticTransition))
 			bna = new StochasticTransition(label, name);
 		else if (elementDecleration.equals(Elementdeclerations.discreteTransition))
