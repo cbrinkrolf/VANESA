@@ -1047,12 +1047,12 @@ public class MenuListener implements ActionListener {
 		} else if ("datamining".equals(event)) {
 			new SmacofView();
 		} else if ("rendererSettings".equals(event)) {
-			try {
+			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				PreRenderManager.getInstance();
-			} catch (NullPointerException npe) {
-				JOptionPane.showMessageDialog(null,
-						"please load a network first.");
 			}
+			else
+				JOptionPane.showMessageDialog(null,	"please load a network first.");
+			
 
 		} else if ("resolveReferences".equals(event)) {
 
