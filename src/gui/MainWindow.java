@@ -73,7 +73,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	private HashMap<Integer, View> views = new HashMap<Integer, View>();
 	private ViewMap viewMap = new ViewMap();
 	private RootWindow rootWindow;
-	private ToolBar bar = new ToolBar(false);
+	private ToolBar bar;
 	private int maxPanelID = -1;
 	private int selectedView = 0;
 	private YamlToObjectParser yamlToObject;
@@ -168,7 +168,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		
 		// Set developer status
 		developer = Boolean.parseBoolean(ResourceLibrary.getSettingsResource("settings.default.developer"));
-		
+		System.out.println("main: "+developer);
 		// try {
 		//
 		// //SubstanceBusinessBlueSteelLookAndFeel lf = new
@@ -245,7 +245,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			}
 
 		});
-
+		bar = new ToolBar(false);
 		// create menu
 		setJMenuBar(myMenu.returnMenu());
 		// toolbar with the buttons on the right
@@ -629,10 +629,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		blurUI.setLocked(false);
 	}
 		
-	public boolean getDeveloperStatus(){
-		return developer;
-	}
-
 	public String getCurrentPathway() {
 		TitledTab t = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();
 		if(t != null){
