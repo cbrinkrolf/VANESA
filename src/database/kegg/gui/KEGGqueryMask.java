@@ -3,9 +3,6 @@ package database.kegg.gui;
 import gui.eventhandlers.TextfeldColorChanger;
 import gui.images.ImagePath;
 
-import java.awt.Color;
-import java.awt.Dimension;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -22,11 +19,12 @@ public class KEGGqueryMask extends QueryMask {
 	
 	private JPanel p;
 	private JTextField pathway, organism, enzyme, gene, compound;
-	private DatabaseWindow dw;
+	//private DatabaseWindow dw;
 	
 	public KEGGqueryMask(DatabaseWindow dw){
 		super(dw);
-		this.dw = dw;
+		headless.setEnabled(false);
+		//this.dw = dw;
 		ImagePath imagePath = ImagePath.getInstance();
 		MigLayout layout = new MigLayout("", "[right]");
 		p = new JPanel(layout);
