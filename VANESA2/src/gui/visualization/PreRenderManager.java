@@ -196,21 +196,19 @@ public class PreRenderManager extends JFrame implements ActionListener {
 		String pathwayname = MainWindowSingleton.getInstance().getCurrentPathway();		
 		PreRenderManager prm = instances.get(pathwayname);
 		
-		if(prm != null)
+		if (prm != null)
 			prm = new PreRenderManager(pathwayname);
-		
-		if(prm == null){
-			try{
-			prm = new PreRenderManager(pathwayname);
-			instances.put(pathwayname, prm);
-			} catch(IndexOutOfBoundsException ioobe){
-				
+		else
+			try {
+				prm = new PreRenderManager(pathwayname);
+				instances.put(pathwayname, prm);
+			} catch (IndexOutOfBoundsException ioobe) {
+				//MARTIN Show empty table in PreRender Manager instead of creating a new renderer dialog
+				// show empty table if
 				new AddRendererDialog();
-				JOptionPane.showMessageDialog(null,"No renderers present.");
+				// JOptionPane.showMessageDialog(null,"No renderers present.");
 			}
-		}
 		return prm;
-
 	}
 
 	private void initTable(Object[][] rows, String[] columNames) {
