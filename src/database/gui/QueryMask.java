@@ -18,7 +18,7 @@ import database.eventhandlers.DatabaseSearchListener;
 
 public class QueryMask implements ItemListener {
 	private DatabaseWindow dw;
-	private JCheckBox headless;
+	protected JCheckBox headless;
 
 	public QueryMask(DatabaseWindow dw) {
 		this.dw = dw;
@@ -59,7 +59,6 @@ public class QueryMask implements ItemListener {
 			JCheckBox box = (JCheckBox) e.getSource();
 			dw.setHeadless(box.isSelected());
 		}
-
 	}
 	
 	public JPanel getTitelTab(String db) {
@@ -74,5 +73,4 @@ public class QueryMask implements ItemListener {
 		pan.add(info);
 		return pan;
 	}
-
 }

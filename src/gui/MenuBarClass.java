@@ -32,9 +32,8 @@ public class MenuBarClass {
 	private JMenuItem gemLayout;
 	private JMenuItem hebLayout;
 	private JMenuItem hctLayout;
-	//private JMenuItem centerGraph;
+	// private JMenuItem centerGraph;
 	private JMenuItem databaseItem;
-	
 
 	private JMenuItem visualizationSettings;
 	// JMenuItem keggItem;
@@ -49,14 +48,14 @@ public class MenuBarClass {
 	private JMenuItem openNetwork;
 	private JMenuItem interaction;
 	private JMenuItem mathLaw;
-	//private JMenuItem phosphoImport;
+	// private JMenuItem phosphoImport;
 
-	//private JMenuItem kcore;
+	// private JMenuItem kcore;
 	private JMenuItem hamiltonGraph;
 	// JMenuItem animations;
 	private JMenuItem about;
 	private JMenuItem mdLayout;
-	//private JMenuItem dbInformation;
+	// private JMenuItem dbInformation;
 	private JMenuItem export;
 
 	/*
@@ -73,9 +72,9 @@ public class MenuBarClass {
 	private JMenuItem editPNelements;
 	private JMenuItem simulate;
 	private JMenuItem createDoc;
-	
+
 	private JMenuItem convertPetriNet;
-	
+
 	private JMenuItem resolveReferences;
 	private JMenuItem rendererSettings;
 	private JMenuItem dataLabelMapping;
@@ -88,47 +87,44 @@ public class MenuBarClass {
 		JMenu math = new JMenu("Graph");
 
 		JMenu generateGraph = new JMenu("Generate Graph");
-		//JMenu visualAnalysis = new JMenu("Visual Analysis");
+		// JMenu visualAnalysis = new JMenu("Visual Analysis");
 
-		//JMenu graph = new JMenu("Graph");
+		// JMenu graph = new JMenu("Graph");
 		// JMenu snapshot = new JMenu("Snapshot");
 		JMenu layout = new JMenu("Layout");
 		JMenu help = new JMenu("Help");
 		JMenu settings = new JMenu("Settings");
 		// JMenu experiments = new JMenu("Experiments");
 		JMenu petriNets = new JMenu("Petri Net");
-		
+
 		// a menu part to collect some tools
 		JMenu tools = new JMenu("Tools");
-		
+
 		JMenu transformation = new JMenu("Transformation");
-		
+
 		// items for the dataMapping
 		JMenuItem dataMapping = new JMenuItem("Data Mapping (color)");
 		dataMapping.addActionListener(new MenuListener());
 		dataMapping.setActionCommand("dataMappingColor");
 		tools.add(dataMapping);
-		
-		
+
 		// items for the dataMapping
 		JMenuItem dataMappingDb = new JMenuItem("Data Mapping (DB)");
 		dataMappingDb.addActionListener(new MenuListener());
 		dataMappingDb.setActionCommand("dataMappingDB");
 		tools.add(dataMappingDb);
-		
+
 		// items for datamining, including smacof
 		JMenuItem datamining = new JMenuItem("Data Mining (SMACOF)");
 		datamining.addActionListener(new MenuListener());
 		datamining.setActionCommand("datamining");
 		tools.add(datamining);
 
-
-		
 		// items for label to data mapping
 		dataLabelMapping = new JMenuItem("Label->Data Mapping");
 		dataLabelMapping.addActionListener(new MenuListener());
 		dataLabelMapping.setActionCommand("dataLabelMapping");
-		if(MainWindow.developer){
+		if (MainWindow.developer) {
 			tools.add(new JSeparator());
 			tools.add(dataLabelMapping);
 		}
@@ -140,31 +136,27 @@ public class MenuBarClass {
 		JMenuItem mirnaTest = new JMenuItem("MirnaTest");
 		mirnaTest.addActionListener(new MenuListener());
 		mirnaTest.setActionCommand("mirnaTest");
-		
+
 		JMenuItem shake = new JMenuItem("Shake Enzymes!");
 		shake.addActionListener(new MenuListener());
 		shake.setActionCommand("shake");
-		
-		
+
 		JMenuItem fabricio = new JMenuItem("Patricios Data");
 		fabricio.addActionListener(new MenuListener());
 		fabricio.setActionCommand("fabricio");
 
 		JMenuItem newNetwork = new JMenuItem("New", KeyEvent.VK_N);
-		newNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-				MENUSHORTCUT));
+		newNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, MENUSHORTCUT));
 		newNetwork.addActionListener(new MenuListener());
 		newNetwork.setActionCommand("new Network");
 
 		openNetwork = new JMenuItem("Open File", KeyEvent.VK_O);
-		openNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		openNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		openNetwork.addActionListener(new MenuListener());
 		openNetwork.setActionCommand("open Network");
 
 		export = new JMenuItem("Export Network", KeyEvent.VK_E);
-		export.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-				MENUSHORTCUT));
+		export.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, MENUSHORTCUT));
 		export.addActionListener(new MenuListener());
 		export.setActionCommand("export Network");
 
@@ -194,46 +186,41 @@ public class MenuBarClass {
 		// animations.setActionCommand("animation");
 
 		closeNetwork = new JMenuItem("Close Network", KeyEvent.VK_C);
-		closeNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,
-				MENUSHORTCUT));
+		closeNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, MENUSHORTCUT));
 
 		closeNetwork.addActionListener(new MenuListener());
 		closeNetwork.setActionCommand("close Network");
 
 		closeAllNetworks = new JMenuItem("Close All Networks", KeyEvent.VK_L);
-		closeAllNetworks.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L,
-				MENUSHORTCUT));
+		closeAllNetworks.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, MENUSHORTCUT));
 		closeAllNetworks.addActionListener(new MenuListener());
 		closeAllNetworks.setActionCommand("close All Networks");
 
 		saveNetwork = new JMenuItem("Save", KeyEvent.VK_S);
-		saveNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				MENUSHORTCUT));
+		saveNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, MENUSHORTCUT));
 		saveNetwork.addActionListener(new MenuListener());
 		saveNetwork.setActionCommand("save");
 
 		saveNetworkAs = new JMenuItem("Save As");
 		saveNetworkAs.addActionListener(new MenuListener());
 		saveNetworkAs.setActionCommand("save as");
-		
+
 		saveEdal = new JMenuItem("Save online");
 		saveEdal.addActionListener(new MenuListener());
 		saveEdal.setActionCommand("saveEdal");
-		
+
 		openEdal = new JMenuItem("Open online");
 		openEdal.addActionListener(new MenuListener());
 		openEdal.setActionCommand("openEdal");
 
 		savePicture = new JMenuItem("Save A Graph-Picture", KeyEvent.VK_G);
-		savePicture.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G,
-				MENUSHORTCUT));
+		savePicture.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, MENUSHORTCUT));
 
 		savePicture.addActionListener(new MenuListener());
 		savePicture.setActionCommand("graphPicture");
 
 		printPicture = new JMenuItem("Print A Graph-Picture", KeyEvent.VK_P);
-		printPicture.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
-				MENUSHORTCUT));
+		printPicture.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, MENUSHORTCUT));
 
 		printPicture.addActionListener(new MenuListener());
 		printPicture.setActionCommand("printPicture");
@@ -253,15 +240,14 @@ public class MenuBarClass {
 		circleLayout = new JMenuItem("CircleLayout");
 		circleLayout.addActionListener(new MenuListener());
 		circleLayout.setActionCommand("circleLayout");
-		
+
 		hebLayout = new JMenuItem("Hierarchical Edge Bundling");
 		hebLayout.addActionListener(new MenuListener());
 		hebLayout.setActionCommand("hebLayout");
-		
+
 		hctLayout = new JMenuItem("Hierarchical Circle Tree");
 		hctLayout.addActionListener(new MenuListener());
 		hctLayout.setActionCommand("hctLayout");
-		
 
 		isomLayout = new JMenuItem("ISOMLayout", KeyEvent.VK_S);
 		isomLayout.addActionListener(new MenuListener());
@@ -278,12 +264,10 @@ public class MenuBarClass {
 		databaseItem = new JMenuItem("Database Connection");
 		databaseItem.addActionListener(new MenuListener());
 		databaseItem.setActionCommand("database settings");
-		
 
 		visualizationSettings = new JMenuItem("Visualization Settings");
 		visualizationSettings.addActionListener(new MenuListener());
 		visualizationSettings.setActionCommand("visualizationSettings");
-
 
 		// keggItem = new JMenuItem("KEGG Connection");
 		// keggItem.addActionListener(new MenuListener());
@@ -312,11 +296,11 @@ public class MenuBarClass {
 		graphAlignment = new JMenuItem("Graph Alignment");
 		graphAlignment.addActionListener(new MenuListener());
 		graphAlignment.setActionCommand("graphAlignemnt");
-		
+
 		rendererSettings = new JMenuItem("Renderer Settings");
 		rendererSettings.addActionListener(new MenuListener());
 		rendererSettings.setActionCommand("rendererSettings");
-		
+
 		mathLaw = new JMenuItem("Generate Random Graph");
 		mathLaw.addActionListener(new MenuListener());
 		mathLaw.setActionCommand("mathGraph");
@@ -364,7 +348,7 @@ public class MenuBarClass {
 
 		file.add(newNetwork);
 		file.add(openNetwork);
-		//file.add(sessionID);
+		// file.add(sessionID);
 		file.add(openEdal);
 		file.add(new JSeparator());
 		file.add(saveNetwork);
@@ -383,8 +367,7 @@ public class MenuBarClass {
 		// Exit is allready present on mac osx
 		if (!application.isMac()) {
 			JMenuItem exit = new JMenuItem("Exit", KeyEvent.VK_X);
-			exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
-					MENUSHORTCUT));
+			exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, MENUSHORTCUT));
 			exit.addActionListener(new MenuListener());
 			exit.setActionCommand("exit");
 			file.add(new JSeparator());
@@ -407,10 +390,13 @@ public class MenuBarClass {
 
 		math.add(generateGraph);
 		math.add(phosphoImport);
-		math.add(mirnaTest);
-		math.add(shake);
-		//math.add(visualAnalysis);
-		
+
+		if (MainWindow.developer) {
+			math.add(mirnaTest);
+			math.add(shake);
+		}
+		// math.add(visualAnalysis);
+
 		generateGraph.add(mathLaw);
 		generateGraph.add(biGraph);
 		generateGraph.add(regularGraph);
@@ -430,8 +416,8 @@ public class MenuBarClass {
 		// graph.add(layout);
 		// graph.add(snapshot);
 		// graph.add(animations);
-		//graph.add(centerGraph);
-		//graph.add(phosphoImport);
+		// graph.add(centerGraph);
+		// graph.add(phosphoImport);
 
 		// experiments.add(fabricio);
 		// TODO
@@ -453,11 +439,11 @@ public class MenuBarClass {
 		simulate = new JMenuItem("Simulate");
 		simulate.addActionListener(new MenuListener());
 		simulate.setActionCommand("simulate");
-		
+
 		createDoc = new JMenuItem("Create Documentation");
 		createDoc.addActionListener(new MenuListener());
 		createDoc.setActionCommand("createDoc");
-		
+
 		editPNelements = new JMenuItem("Edit PN-Elements");
 		editPNelements.addActionListener(new MenuListener());
 		editPNelements.setActionCommand("editElements");
@@ -473,11 +459,11 @@ public class MenuBarClass {
 		petriNets.add(cov);
 		petriNets.add(covreach);
 		petriNets.add(createDoc);
-		
+
 		transformation.add(resolveReferences);
-		
+
 		bar.add(file);
-		//bar.add(graph);
+		// bar.add(graph);
 		bar.add(math);
 		bar.add(petriNets);
 		bar.add(transformation);
@@ -486,7 +472,7 @@ public class MenuBarClass {
 		bar.add(tools);
 		bar.add(settings);
 		bar.add(help);
-		
+
 		init();
 	}
 
