@@ -17,51 +17,30 @@ public class MyTable extends JXTable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	protected CellEditors editors;
 
 	public MyTable() {
 		super();
-		editors = null;
 	}
 
 	public MyTable(TableModel tm) {
 		super(tm);
-		editors = null;
 	}
 
 	public MyTable(TableModel tm, TableColumnModel cm) {
 		super(tm, cm);
-		editors = null;
 	}
 
 	public MyTable(TableModel tm, TableColumnModel cm, ListSelectionModel sm) {
 		super(tm, cm, sm);
-		editors = null;
 	}
 
 	public MyTable(final Object[][] rowData, final Object[] colNames) {
 		super(rowData, colNames);
-		editors = null;
-	}
-
-	public void setCellEditors(CellEditors e) {
-		editors = e;
-	}
-
-	public CellEditors getCellEditorModel() {
-		return editors;
 	}
 
 	@Override
 	public TableCellEditor getCellEditor(int row, int col) {
-
-		TableCellEditor tmpEditor = null;
-		if (editors != null)
-			tmpEditor = editors.getEditor(row, col);
-		if (tmpEditor != null)
-			return tmpEditor;
 		return super.getCellEditor(row, col);
-
 	}
 
 	@Override
