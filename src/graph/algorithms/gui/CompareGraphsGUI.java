@@ -7,6 +7,7 @@ import graph.algorithms.CompareGraphs;
 import graph.algorithms.HeatmapGraphs;
 import graph.algorithms.MergeGraphs;
 import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.algorithms.ScreenSize;
 
@@ -29,7 +30,6 @@ import javax.swing.WindowConstants;
 
 import net.miginfocom.swing.MigLayout;
 import biologicalElements.Pathway;
-import configurations.DeveloperClass;
 
 public class CompareGraphsGUI extends JFrame implements ActionListener,
 		ItemListener {
@@ -81,7 +81,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		JButton heatmap = new JButton("heatmap");
 		JButton compare3d = new JButton("compare 3D");
 
-		if (DeveloperClass.isDeveloperStatus) {
+		if (MainWindow.developer) {
 			buttons = new JButton[] { newButton, compare, merge, heatmap,
 					compare3d, align, reset };
 		} else {

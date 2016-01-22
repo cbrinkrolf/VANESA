@@ -14,7 +14,6 @@ import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
 import biologicalElements.Pathway;
-import configurations.DeveloperClass;
 import database.gui.DatabaseWindow;
 
 public class OptionPanel {
@@ -197,7 +196,7 @@ public class OptionPanel {
 		petriNet.add(petriNetProperties.getPanel());
 		taskPaneContainer.add(petriNet);*/
 
-		if (DeveloperClass.isDeveloperStatus) {
+		if (MainWindow.developer) {
 			taskPaneContainer.add(databaseSearch, "growx");
 			taskPaneContainer.add(pcpview, "growx");
 			taskPaneContainer.add(theory, "growx");
