@@ -14,7 +14,6 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 
 import net.miginfocom.swing.MigLayout;
-import configurations.DeveloperClass;
 
 public class ToolBar {
 
@@ -180,7 +179,6 @@ public class ToolBar {
 		infopanel.add(info);
 		infopanel.add(infoextended);
 		
-		System.out.println(MainWindow.developer);
 		if (MainWindow.developer) {
 			infopanel.add(mergeSelectedNodes);
 			infopanel.add(splitNode);
@@ -314,7 +312,7 @@ public class ToolBar {
 		if (!petriNetView) {
 			featureControls.setLayout(new GridLayout(2, 2));
 			featureControls.add(merge);
-			if (DeveloperClass.isDeveloperStatus) {
+			if (MainWindow.developer) {
 				featureControls.add(heatmap);
 				featureControls.add(parallelview);
 			}
@@ -371,7 +369,7 @@ public class ToolBar {
 		nodeAdjustment.add(adjustVerticalSpace);
 		nodeAdjustment.add(adjustHorizontalSpace);
 
-		if (DeveloperClass.isDeveloperStatus) {
+		if (MainWindow.developer) {
 			if (petriNetView) {
 				// bar.add(toolBarControlControls);
 				// toolBarControlControls.add(covGraph);
