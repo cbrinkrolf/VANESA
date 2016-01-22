@@ -7,50 +7,32 @@ import gui.MyAnnotation;
 import java.awt.Color;
 import java.util.HashMap;
 
-import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 
-public class PreRenderManagerTablemodel extends AbstractTableModel {
+public class PreRenderManagerTablemodel extends DefaultTableModel{
 
 	private static final long serialVersionUID = -7174001672428120676L;
-
-	private String[] columnNames;
 	private HashMap<Integer, Object> tablecontent;
-	public Object[][] data;
 
 	public PreRenderManagerTablemodel(Object[][] rows, String[] headers,
 			HashMap<Integer, Object> tablecontent) {
-		this.columnNames = headers;
-		this.data = rows;
+		super(rows, headers);
+
 		this.tablecontent = tablecontent;
 	}
 
-	public int getColumnCount() {
-		return columnNames.length;
-	}
-
-	public int getRowCount() {
-		return data.length;
-	}
-
-	@Override
-	public String getColumnName(int col) {
-		return columnNames[col];
-	}
-
-	public Object getValueAt(int row, int col) {
-		return data[row][col];
-	}
 
 	@Override
 	public Class<?> getColumnClass(int c) {
 
-		return getValueAt(0, c).getClass();
+		if(super.getRowCount()>0)
+			return getValueAt(0, c).getClass();
+		else
+			return null;
 	}
 
 	@Override
 	public void setValueAt(Object value, int row, int col) {
-		data[row][col] = value;
-
 		// determine action from column number
 		// 0 : activate/deactivate visualization
 		// 1 : name of visualization
@@ -58,6 +40,8 @@ public class PreRenderManagerTablemodel extends AbstractTableModel {
 		// 3 : change color of visualization
 		// 4 : shape of visualization
 		// 5 : size of visualization
+		
+		boolean valid = true;
 		
 		if(col == 0){
 			boolean active = (boolean) value;
@@ -99,21 +83,29 @@ public class PreRenderManagerTablemodel extends AbstractTableModel {
 			} 
 		} else if(col == 5){
 			int newsize = (int) value;
-			if (tablecontent.get(row) instanceof LocalBackboardPaintable) {
-				LocalBackboardPaintable tosize = (LocalBackboardPaintable) tablecontent
-						.get(row);
-				tosize.setDrawsize(newsize);
-			} 
+			if(newsize < 300 && newsize >0){
+				if (tablecontent.get(row) instanceof LocalBackboardPaintable) {
+					LocalBackboardPaintable tosize = (LocalBackboardPaintable) tablecontent
+							.get(row);
+					tosize.setDrawsize(newsize);
+				}
+			}else{
+				valid = false;
+			}
 		}
+		
+		if(valid){
+			super.setValueAt(value, row, col);
 
 		GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 		fireTableCellUpdated(row, col);
+		}
 	}
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
 		//general column permission
-		if (col == 0 || col == 1 || col == 3){
+		if (col == 0 || col == 1 || col == 3 || col == 4 || col == 5){
 			return true;
 			
 		//partial column permission
