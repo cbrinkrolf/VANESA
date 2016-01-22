@@ -53,6 +53,10 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 
 	private JComboBox<String> shapebox;
 	private JSpinner sizespinner;
+	
+	private PreRenderManager manager;
+	
+	
 
 	private final String[] renderertypes = { "", "LocalBackboard" };
 	private final String[] attributetypes = { "", "Annotation", "Color",
@@ -67,8 +71,9 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 			NodeAttributeNames.NODE_DEGREE, NodeAttributeNames.NEIGHBOR_DEGREE };
 	private final String[] shapes = { "oval", "fadeoval", "rect", "roundrect" };
 
-	public AddRendererDialog() {
+	public AddRendererDialog(PreRenderManager manager) {
 
+		this.manager = manager;
 		MigLayout layout = new MigLayout("", "",
 				"[][]40[][]40[][]40[][][][]40[][][][][][][]");
 
@@ -223,12 +228,17 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 				}
 			}
 
+			LocalBackboardPaintable lp = new LocalBackboardPaintable(bnas, Color.red,
+					drawsize, shape, name);
+			
 			GraphInstance
 					.getMyGraph()
 					.getVisualizationViewer()
-					.addPreRenderPaintable(
-							new LocalBackboardPaintable(bnas, Color.red,
-									drawsize, shape, name));
+					.addPreRenderPaintable(lp);		
+			
+			manager.addRow(lp);
+			
+			
 			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 
 			this.dispose();

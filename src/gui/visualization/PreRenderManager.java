@@ -45,7 +45,7 @@ import net.miginfocom.swing.MigLayout;
  *         The PreRenderManager allows dynamic adjustment and/or managing of
  *         JUNG's prerender paintables.
  */
-public class PreRenderManager extends JFrame implements ActionListener {
+public class PreRenderManager implements ActionListener {
 
 	private static HashMap<String,PreRenderManager> instances = new HashMap<>();
 	private static final long serialVersionUID = -1988094647704411183L;
@@ -79,7 +79,7 @@ public class PreRenderManager extends JFrame implements ActionListener {
 	private PreRenderManager(String pathwayname) {
 		this.pathwayname = pathwayname;
 		
-		setupData();	
+		fillTable();	
 
 
 		sp = new JScrollPane(table);
@@ -132,7 +132,7 @@ public class PreRenderManager extends JFrame implements ActionListener {
 		dialog = new JFrame("Prerender Settings for network: "+pathwayname);
 
 		dialog.setContentPane(optionPane);
-		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
 		// show
 		dialog.pack();
@@ -142,7 +142,7 @@ public class PreRenderManager extends JFrame implements ActionListener {
 
 	}
 
-	private void setupData() {
+	public void fillTable() {
 		// get Pre renderers from Mygraph
 				ArrayList<Paintable> paintables = new ArrayList<>();
 				ArrayList<MyAnnotation> annotations = new ArrayList<>();
@@ -160,7 +160,6 @@ public class PreRenderManager extends JFrame implements ActionListener {
 
 				// initiate table model
 				rows = new Object[paintables.size() + annotations.size()][columnnames.length];
-
 			
 				int rowcounter = 0;
 				for (Paintable p : paintables) {
@@ -186,9 +185,27 @@ public class PreRenderManager extends JFrame implements ActionListener {
 							: "shape";
 					rows[rowcounter][SIZE] = (int) ma.getShape().getWidth();
 					rowcounter++;
-				}				
+				}	
+				
+//				if(rowcounter == 0){
+//					Object emptyrow = {null,null,null};
+//					rows = new Object[1][columnnames.length];
+//					rows[0] = emptyrow;
+//				}
 				initTable(rows, columnnames);
 		
+	}
+	
+	public void addRow(LocalBackboardPaintable lp){
+		Object newrow[] = new Object[columnnames.length]; 
+		newrow[ACTIVE] = lp.isActive();
+		newrow[NAME] = lp.getName();
+		newrow[TYPE] = BACKBOARD_PAINT;
+		newrow[COLOR] = lp.getBgcolor();
+		newrow[SHAPE] = lp.getShape();
+		newrow[SIZE] = lp.getDrawsize();
+		
+		model.addRow(newrow);
 	}
 
 	public static PreRenderManager getInstance() {
@@ -196,18 +213,19 @@ public class PreRenderManager extends JFrame implements ActionListener {
 		String pathwayname = MainWindowSingleton.getInstance().getCurrentPathway();		
 		PreRenderManager prm = instances.get(pathwayname);
 		
-		if (prm != null)
-			prm = new PreRenderManager(pathwayname);
+		if (prm != null){
+			prm.dialog.setVisible(true);			
+		}
 		else
-			try {
+//			try {
 				prm = new PreRenderManager(pathwayname);
 				instances.put(pathwayname, prm);
-			} catch (IndexOutOfBoundsException ioobe) {
-				//MARTIN Show empty table in PreRender Manager instead of creating a new renderer dialog
-				// show empty table if
-				new AddRendererDialog();
-				// JOptionPane.showMessageDialog(null,"No renderers present.");
-			}
+//			} catch (IndexOutOfBoundsException ioobe) {
+//				//MARTIN Show empty table in PreRender Manager instead of creating a new renderer dialog
+//				// show empty table if
+//				new AddRendererDialog();
+//				// JOptionPane.showMessageDialog(null,"No renderers present.");
+//			}
 		return prm;
 	}
 
@@ -228,6 +246,9 @@ public class PreRenderManager extends JFrame implements ActionListener {
 				new PreRenderManagerColorRenderer(true));
 		table.setDefaultEditor(Color.class, new ClusterColorEditor());
 		
+		//MARTIN sorting an empty table results in nullpointers in (TableSortController.java:120)
+		table.setSortable(false);
+		
 		TableColumn shapeColumn = table.getColumnModel().getColumn(SHAPE);
 
 		JComboBox<String> comboBox = new JComboBox<String>();
@@ -244,7 +265,7 @@ public class PreRenderManager extends JFrame implements ActionListener {
 		String event = e.getActionCommand();
 		switch (event) {
 		case "ok":
-			dialog.dispose();		
+			dialog.setVisible(false);
 			break;
 		case "switchjung":
 			
@@ -280,9 +301,9 @@ public class PreRenderManager extends JFrame implements ActionListener {
 			}
 			break;
 		case "addrenderer":
-			new AddRendererDialog();
-			new PreRenderManager(pathwayname);
-			dialog.dispose();	
+			new AddRendererDialog(this);
+			
+			
 			GraphInstance.getMyGraph().getVisualizationViewer().repaint();			
 			break;
 			
@@ -294,11 +315,11 @@ public class PreRenderManager extends JFrame implements ActionListener {
 			else if(tablecontent.get(table.getSelectedRow()) instanceof MyAnnotation){
 				GraphInstance.getMyGraph().getAnnotationManager().remove((MyAnnotation)tablecontent.get(table.getSelectedRow()));
 			}
+				
+			if(model.getRowCount()>0)
+				model.removeRow(table.getSelectedRow());
 			
-			
-			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));			
-			new PreRenderManager(pathwayname);
-			dialog.dispose();
+
 			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 			break;		
 			
