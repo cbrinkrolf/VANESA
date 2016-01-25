@@ -326,7 +326,6 @@ public class PreRenderManager implements ActionListener {
 				int row =table.getSelectedRow();
 				model.removeRow(row);
 				//update tablecontent mapping (current row id -> paintable)
-				System.out.println(tablecontent.toString());
 				HashMap<Integer,Object> contenttmp = new HashMap<>();
 				
 				TreeSet<Integer> sortset = new TreeSet<>(tablecontent.keySet());
@@ -337,7 +336,6 @@ public class PreRenderManager implements ActionListener {
 						contenttmp.put((id-1), tablecontent.get(id));
 				
 				}				
-				System.out.println(contenttmp.toString());
 				model.updateContent(contenttmp);
 				tablecontent = contenttmp;
 				
