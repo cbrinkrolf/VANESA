@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -206,6 +207,11 @@ public class PreRenderManager implements ActionListener {
 		newrow[SIZE] = lp.getDrawsize();
 		
 		model.addRow(newrow);
+		tablecontent.put(model.getRowCount()-1, lp);
+//		model.addTablecontent(model.getRowCount()-1,lp);
+
+		
+		
 	}
 
 	public static PreRenderManager getInstance() {
@@ -316,8 +322,26 @@ public class PreRenderManager implements ActionListener {
 				GraphInstance.getMyGraph().getAnnotationManager().remove((MyAnnotation)tablecontent.get(table.getSelectedRow()));
 			}
 				
-			if(model.getRowCount()>0)
-				model.removeRow(table.getSelectedRow());
+			if(model.getRowCount()>0){
+				int row =table.getSelectedRow();
+				model.removeRow(row);
+				//update tablecontent mapping (current row id -> paintable)
+				System.out.println(tablecontent.toString());
+				HashMap<Integer,Object> contenttmp = new HashMap<>();
+				
+				TreeSet<Integer> sortset = new TreeSet<>(tablecontent.keySet());
+				for(int id : sortset){
+					if(id < row)
+						contenttmp.put(id, tablecontent.get(id));
+					else if (id > row)
+						contenttmp.put((id-1), tablecontent.get(id));
+				
+				}				
+				System.out.println(contenttmp.toString());
+				model.updateContent(contenttmp);
+				tablecontent = contenttmp;
+				
+			}
 			
 
 			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
