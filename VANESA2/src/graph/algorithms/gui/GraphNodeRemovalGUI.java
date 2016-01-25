@@ -234,7 +234,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 
 				mg = c.getPathway().getGraph();
 				mw = MainWindowSingleton.getInstance();
-				mg.lockVertices();
 				itn = removals.iterator();
 				while (itn.hasNext()) {
 					mg.removeVertex(itn.next());
@@ -242,7 +241,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 				mw.updateElementTree();
 				mw.updateFilterView();
 				mw.updatePathwayTree();
-				mg.unlockVertices();
 
 				//GraphInstance.getMyGraph().changeToGEMLayout();
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
@@ -289,7 +287,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 
 					mg = c.getPathway().getGraph();
 					mw = MainWindowSingleton.getInstance();
-					mg.lockVertices();
 					itn = removals.iterator();
 					while (itn.hasNext()) {
 						mg.removeVertex(itn.next());
@@ -297,7 +294,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 					mw.updateElementTree();
 					mw.updateFilterView();
 					mw.updatePathwayTree();
-					mg.unlockVertices();
 
 //					GraphInstance.getMyGraph().changeToGEMLayout();
 					GraphInstance.getMyGraph().getVisualizationViewer()

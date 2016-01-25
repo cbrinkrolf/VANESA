@@ -857,8 +857,6 @@ public class VAMLInput {
 			pw = new CreatePathway(file.getName()).getPathway();
 		}
 		pw.setFilename(file.getName());
-		pw.getGraph().lockVertices();
-		pw.getGraph().stopVisualizationModel();
 
 		StAXOMBuilder builder = new StAXOMBuilder(reader);
 
@@ -920,7 +918,6 @@ public class VAMLInput {
 			BiologicalNodeAbstract b = (BiologicalNodeAbstract) it2.next();
 			// System.out.println("V "+b.getID());
 		}
-		pw.getGraph().unlockVertices();
 		pw.getGraph().restartVisualizationModel();
 		MainWindowSingleton.getInstance().updateProjectProperties();
 		// MainWindowSingelton.getInstance().updateOptionPanel();

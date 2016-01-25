@@ -1269,9 +1269,6 @@ public class GraphColoringGUI implements ActionListener {
 		Pathway pw = new CreatePathway("IR PATHWAYS!").getPathway();
 		MyGraph myGraph = pw.getGraph();
 
-		myGraph.lockVertices();
-		myGraph.stopVisualizationModel();
-
 		// DO ADDING
 		BiologicalNodeAbstract a, b;
 		ReactionEdge re;
@@ -1346,9 +1343,7 @@ public class GraphColoringGUI implements ActionListener {
 			}
 		}
 
-		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
 
 	}
-
 }

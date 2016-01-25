@@ -110,8 +110,6 @@ public class JSBMLinput {
 		if (pathway.getFilename() == null) {
 			pathway.setFilename(name);
 		}
-		pathway.getGraph().lockVertices();
-		pathway.getGraph().stopVisualizationModel();
 		// get root-element
 		Element sbmlNode = doc.getRootElement();
 		Element modelNode = sbmlNode.getChild("model", null);
@@ -135,7 +133,6 @@ public class JSBMLinput {
 		// refresh view
 		try {
 			is.close();
-			this.pathway.getGraph().unlockVertices();
 			this.pathway.getGraph().restartVisualizationModel();
 			MainWindowSingleton.getInstance().updateProjectProperties();
 			MainWindowSingleton.getInstance().updateOptionPanel();
