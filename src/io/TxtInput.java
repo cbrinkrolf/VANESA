@@ -29,8 +29,6 @@ public class TxtInput {
 		//BufferedReader in = new BufferedReader(new FileReader(file));
 		BufferedReader in = new BufferedReader(new InputStreamReader(is));
 		pw.setFilename(name);
-		pw.getGraph().lockVertices();
-		pw.getGraph().stopVisualizationModel();
 
 		while ((line = in.readLine()) != null) {
 			if (!firstNode) { 
@@ -61,7 +59,6 @@ public class TxtInput {
 
 		in.close();
 		is.close();
-		pw.getGraph().unlockVertices();
 		pw.getGraph().changeToCircleLayout();
 		pw.getGraph().restartVisualizationModel();
 		pw.getGraph().normalCentering();

@@ -53,8 +53,6 @@ public class RandomGraph {
 			Pathway pw = new CreatePathway("Random Graph").getPathway();
 			MyGraph myGraph = pw.getGraph();
 
-			myGraph.lockVertices();
-			myGraph.stopVisualizationModel();
 			HashSet<Integer> set = new HashSet<Integer>();
 
 			int nodeNumberCounter = 0;
@@ -142,7 +140,6 @@ public class RandomGraph {
 				}
 			}
 
-			 myGraph.unlockVertices();
 			 myGraph.restartVisualizationModel();
 
 			//MainWindow window = MainWindowSingelton.getInstance();

@@ -29,9 +29,6 @@ public class MergeGraphs {
 		pw_new.setOrganism("");
 		pw_new.setLink("");
 
-		pw_new.getGraph().lockVertices();
-		pw_new.getGraph().stopVisualizationModel();
-
 		//CHRIS better deep copy of pathway
 		File file1 = new File("test");
 		try {

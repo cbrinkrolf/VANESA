@@ -95,13 +95,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 	}
 
-	private void stopVisualizationModel() {
-		myGraph.lockVertices();
-		myGraph.stopVisualizationModel();
-	}
-
 	private void startVisualizationModel() {
-		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
 	}
 
@@ -875,7 +869,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 			myGraph = pw.getGraph();
 
-			stopVisualizationModel();
 			drawNodes();
 			drawEdges();
 

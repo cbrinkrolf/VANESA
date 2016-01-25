@@ -189,9 +189,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 		myGraph = pw.getGraph();
 
-		myGraph.lockVertices();
-		myGraph.stopVisualizationModel();
-
 		drawNodes(allOrgElements);
 		drawNodes(allEcElements);
 		drawNodes(allRnElements);
@@ -239,7 +236,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 		}
 
-		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
 		myGraph.normalCentering();
 		

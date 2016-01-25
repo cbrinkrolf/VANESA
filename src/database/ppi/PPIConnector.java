@@ -71,13 +71,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 	}
 
-	private void stopVisualizationModel() {
-		myGraph.lockVertices();
-		myGraph.stopVisualizationModel();
-	}
-
 	private void startVisualizationModel() {
-		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
 	}
 
@@ -436,7 +430,6 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		// pw.setNumber(pathwayNumber);
 		myGraph = pw.getGraph();
 
-		stopVisualizationModel();
 		drawNodes();
 		drawEdges();
 		startVisualizationModel();

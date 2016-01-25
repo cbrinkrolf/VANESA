@@ -53,8 +53,6 @@ public class HeatmapGraphs {
 		Pathway pw_new = new CreatePathway(title).getPathway();
 		pw_new.setOrganism("");
 		pw_new.setLink("");
-		pw_new.getGraph().lockVertices();
-		pw_new.getGraph().stopVisualizationModel();
 
 		for(Pathway pw : pathways) {
 			this.copyElements(pw, pw_new);
@@ -99,7 +97,6 @@ public class HeatmapGraphs {
 		MainWindowSingleton.getInstance().enableOptionPanelUpdate(true);
 		
 		//pw_new.getGraph().changeToGEMLayout();
-		pw_new.getGraph().unlockVertices();
 		pw_new.getGraph().restartVisualizationModel();
 		/*JOptionPane.showMessageDialog(null,
 		"Heatmap ready"+countById.toString());*/

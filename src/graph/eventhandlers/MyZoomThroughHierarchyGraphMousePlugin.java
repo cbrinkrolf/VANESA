@@ -92,7 +92,6 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 					.getPickSupport();
 
 			BiologicalNodeAbstract vertex = null;
-			pw.getGraph().lockVertices();
 			
 			vertex = (BiologicalNodeAbstract) pickSupport
 					.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e

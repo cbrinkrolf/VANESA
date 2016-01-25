@@ -38,9 +38,6 @@ public class RandomRegularGraph {
 		HashSet<Integer> set = new HashSet<Integer>();
 		Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<Integer, BiologicalNodeAbstract>();
 
-		myGraph.lockVertices();
-		myGraph.stopVisualizationModel();
-
 		if (k != 0) {
 
 		} else {
@@ -74,7 +71,6 @@ public class RandomRegularGraph {
 
 			}
 		}
-		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
 
 		myGraph.normalCentering();

@@ -54,8 +54,6 @@ public class RandomConnectedGraph {
 					.getPathway();
 			MyGraph myGraph = pw.getGraph();
 
-			myGraph.lockVertices();
-			myGraph.stopVisualizationModel();
 			HashSet<Integer> set = new HashSet<Integer>();
 
 			int nodeNumberCounter = 0;
@@ -116,7 +114,6 @@ public class RandomConnectedGraph {
 
 			}
 
-			myGraph.unlockVertices();
 			myGraph.restartVisualizationModel();
 
 			myGraph.normalCentering();
