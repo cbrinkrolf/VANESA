@@ -41,6 +41,15 @@ public class PreRenderManagerTablemodel extends DefaultTableModel{
 		// 4 : shape of visualization
 		// 5 : size of visualization
 		
+		
+		for(int contentid : tablecontent.keySet()){
+			
+			System.out.print("id: "+contentid);
+			System.out.println(((LocalBackboardPaintable)tablecontent.get(contentid)).getBgcolor().toString());
+			
+		}
+		
+		
 		boolean valid = true;
 		
 		if(col == 0){
@@ -121,5 +130,15 @@ public class PreRenderManagerTablemodel extends DefaultTableModel{
 				return false;
 		} else
 			return false;
+	}
+	
+	void addTablecontent(){
+		
+	}
+
+
+	public void updateContent(HashMap<Integer, Object> contenttmp) {
+		
+		tablecontent = contenttmp;		
 	}
 }
