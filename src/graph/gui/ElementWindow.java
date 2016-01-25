@@ -13,6 +13,7 @@ import gui.eventhandlers.PropertyWindowListener;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -211,11 +212,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 			p.add(new JLabel("Compartment"), "gap 5 ");
 			p.add(compartment, "wrap ,span 3");
 
-			// ADDing Attributes (optional)
+			// ADDing Attributes (for all nodes)
 
 			// Show Database IDs
 			JTextArea dbids = new JTextArea();
 			String dbidstring = new String();
+			dbids.setEditable(false);
+			dbids.setFont(dbids.getFont().deriveFont(Font.BOLD));
+			dbids.setBackground(Color.WHITE);
 
 			p.add(new JLabel("IDs known:"), "gap 5");
 			p.add(dbids, "wrap, span 3");
@@ -223,8 +227,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// Show Experiment names and values
 			JTextArea experiments = new JTextArea();
 			String experimentstring = new String();
+			experiments.setEditable(false);
+			experiments.setBackground(Color.WHITE);
 
-			p.add(new JLabel("Data set:"), "gap 5");
+			p.add(new JLabel("Dataset:"), "gap 5");
 			p.add(experiments, "wrap, span 3");
 
 			// Show GO annotations
@@ -232,10 +238,22 @@ public class ElementWindow implements ActionListener, ItemListener {
 			String annotationstring = new String();
 			goannoations.setEditable(false);
 			goannoations.setForeground(Color.BLUE);
+			goannoations.setBackground(Color.WHITE);
 
 			p.add(new JLabel("Gene Ontology:"), "gap 5");
 			p.add(goannoations, "wrap, span 3");
 
+			//Show graph properties (local property)
+			JTextArea graphproperties = new JTextArea();
+			String propertiesstring = new String();
+			graphproperties.setEditable(false);
+			graphproperties.setForeground(new Color(255,55,55));
+			graphproperties.setBackground(Color.WHITE);
+
+			p.add(new JLabel("Graph properties:"), "gap 5");
+			p.add(graphproperties, "wrap, span 3");
+			
+			
 			// JTextField aaSequence = new JTextField(20);
 			// aaSequence.setText(protein.getAaSequence());
 			// aaSequence.setName("protein");
@@ -246,7 +264,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 			String atname, atsvalue;
 			double atdvalue;
 
-			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries = new ArrayList<>(), annotationentries = new ArrayList<>();
+			ArrayList<String> experimententries = new ArrayList<>(), 
+					databaseidentries = new ArrayList<>(), 
+					annotationentries = new ArrayList<>(),
+					graphpropertiesentries = new ArrayList<>();
 
 			for (NodeAttribute att : bna.getNodeAttributes()) {
 				atname = att.getName();
@@ -264,6 +285,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				case NodeAttributeTypes.ANNOTATION:
 					annotationentries.add(atname + ":\t" + atsvalue + "\n");
+					break;
+				
+				case NodeAttributeTypes.GRAPH_PROPERTY:
+					graphpropertiesentries.add(atname + ":\t" + atdvalue + "\n");
 					break;
 
 				default:
@@ -283,10 +308,15 @@ public class ElementWindow implements ActionListener, ItemListener {
 			Collections.sort(annotationentries);
 			for (String ann : annotationentries)
 				annotationstring += ann;
+			
+			Collections.sort(graphpropertiesentries);
+			for (String gprop : graphpropertiesentries)
+				propertiesstring += gprop;
 
 			experiments.setText(experimentstring);
 			dbids.setText(dbidstring);
 			goannoations.setText(annotationstring);
+			graphproperties.setText(propertiesstring);
 
 			if (ab instanceof PathwayMap) {
 				p.add(new JLabel("Linked to Pathway"), "gap 5 ");
