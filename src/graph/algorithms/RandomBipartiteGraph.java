@@ -38,9 +38,6 @@ public class RandomBipartiteGraph {
 		Pathway pw = new CreatePathway("Random Bipartite Graph").getPathway();
 		MyGraph myGraph = pw.getGraph();
 
-		myGraph.lockVertices();
-		myGraph.stopVisualizationModel();
-
 		HashSet<Integer> set = new HashSet<Integer>();
 
 		for (int k = 1; k <= nodei[0]; k++) {
@@ -76,7 +73,6 @@ public class RandomBipartiteGraph {
 
 		}
 
-		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
 		pw.getGraph().normalCentering();
 

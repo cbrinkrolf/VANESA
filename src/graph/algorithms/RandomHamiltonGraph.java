@@ -52,8 +52,6 @@ public class RandomHamiltonGraph {
 					.getPathway();
 			MyGraph myGraph = pw.getGraph();
 
-			myGraph.lockVertices();
-			myGraph.stopVisualizationModel();
 			HashSet<Integer> set = new HashSet<Integer>();
 			Map<Integer, BiologicalNodeAbstract> nodes = new HashMap<Integer, BiologicalNodeAbstract>();
 
@@ -132,7 +130,6 @@ public class RandomHamiltonGraph {
 				}
 			}
 
-			myGraph.unlockVertices();
 			myGraph.restartVisualizationModel();
 
 			myGraph.normalCentering();

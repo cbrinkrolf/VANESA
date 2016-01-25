@@ -58,8 +58,6 @@ public class Cov {
 
 		pw = new CreatePathway().getPathway();
 		this.newName = pw.getName();
-		pw.getGraph().lockVertices();
-		pw.getGraph().stopVisualizationModel();
 		root = new CovNode("label", "name", this.numberPlaces);
 		CovList list = new CovList(numberPlaces);
 		// node.setVisible(false);
@@ -116,7 +114,6 @@ public class Cov {
 		//System.out.println(p.getAllNodeLabels());
 		this.paintCoveredNodes();
 
-		pw.getGraph().unlockVertices();
 		pw.getGraph().restartVisualizationModel();
 
 		pw.getPetriNet().setCovGraph(pw.getName());
@@ -469,8 +466,6 @@ public class Cov {
 		Pathway pwold = this.graphInstance.getContainer().getPathway(
 				this.oldName);
 	//	System.out.println("oldname: " + pwold.getName());
-		pwold.getGraph().lockVertices();
-		pwold.getGraph().stopVisualizationModel();
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		// this.graphInstance.getContainer().
 		double[] tokens = null;
@@ -505,7 +500,6 @@ public class Cov {
 			}
 
 		}
-		pwold.getGraph().unlockVertices();
 		pwold.getGraph().restartVisualizationModel();
 		// MainWindowSingelton.getInstance().updateProjectProperties();
 		// TODO

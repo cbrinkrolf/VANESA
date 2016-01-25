@@ -373,8 +373,6 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 				if (answer == OVERVIEW_PW) {
 					Pathway newPW = new CreatePathway("Overview Pathway")
 							.getPathway();
-					newPW.getGraph().lockVertices();
-					newPW.getGraph().stopVisualizationModel();
 					ArrayList<BiologicalNodeAbstract> bnas = new ArrayList<BiologicalNodeAbstract>();
 					if (!(enzyme == null || enzyme.equals("")))
 						bnas.add(new Enzyme(enzyme, enzyme));
@@ -399,7 +397,6 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 
 						}
 					}
-					newPW.getGraph().unlockVertices();
 					newPW.getGraph().restartVisualizationModel();
 					w.updateAllGuiElements();
 					newPW.getGraph().changeToGEMLayout();

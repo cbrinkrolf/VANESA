@@ -141,7 +141,6 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 			// System.out.println(pickSupport.g);
 
 			BiologicalNodeAbstract vertex = null;
-			pw.getGraph().lockVertices();
 
 			vertex = (BiologicalNodeAbstract) pickSupport
 					.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e

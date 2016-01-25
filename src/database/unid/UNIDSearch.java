@@ -165,9 +165,6 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 				+ " depth=" + depth).getPathway();
 		MyGraph myGraph = pw.getGraph();
 
-		myGraph.lockVertices();
-		myGraph.stopVisualizationModel();
-
 		// DO ADDING
 		Protein bna;
 		HashSet<GraphDBTransportNode> nodeset = new HashSet<>();
@@ -224,7 +221,6 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 			}
 		}
 
-		myGraph.unlockVertices();
 		myGraph.restartVisualizationModel();
 
 		MainWindow window = MainWindowSingleton.getInstance();

@@ -69,8 +69,6 @@ public class ConvertToPetriNet {
 		Pathway pwOld = graphInstance.getPathway();
 
 		pw = new CreatePathway().getPathway();
-		pw.getGraph().lockVertices();
-		pw.getGraph().stopVisualizationModel();
 		pw.setPetriNet(true);
 		Iterator<BiologicalNodeAbstract> it = pwOld.getGraph().getAllVertices()
 				.iterator();
@@ -216,7 +214,6 @@ public class ConvertToPetriNet {
 		// p.setRelativeColor(color, color, color);
 		// // System.out.println("Color: "+color);
 		// }
-		pw.getGraph().unlockVertices();
 		pw.getGraph().restartVisualizationModel();
 		MainWindowSingleton.getInstance().updateProjectProperties();
 		MainWindowSingleton.getInstance().updateOptionPanel();

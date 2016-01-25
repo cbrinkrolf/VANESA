@@ -753,7 +753,6 @@ public class NetworkProperties extends Object {
 				removals.add(tmp);
 		}
 
-		mg.lockVertices();
 		itn = removals.iterator();
 		while (itn.hasNext()) {
 			mg.removeVertex(itn.next());
@@ -761,7 +760,6 @@ public class NetworkProperties extends Object {
 		w.updateElementTree();
 		w.updateFilterView();
 		w.updatePathwayTree();
-		mg.unlockVertices();
 
 	}
 

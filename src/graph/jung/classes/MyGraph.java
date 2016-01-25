@@ -423,14 +423,6 @@ public class MyGraph {
 	 * public HashSet<Vertex> getLoadedElements() { return set; }
 	 */
 
-	public Dimension getVisibleRect() {
-		return new Dimension(pane.getVisibleRect().getSize());
-	}
-
-	public Point2D getScreenCenter() {
-		return vv.getCenter();
-	}
-
 	/*
 	 * public void changeGraphLayout(int type) { vv.stop(); new
 	 * ClusterLayout(stateV, type, clusteringLayout); vv.restart(); }
@@ -445,19 +437,6 @@ public class MyGraph {
 	public void restartVisualizationModel() {
 		pathway.updateMyGraph();
 		// vv.getModel().restart();
-	}
-
-	public void stopVisualizationModel() {
-		// vv.getModel().stop();
-	}
-
-	public void lockVertices() {
-		layout.lock(true);
-
-	}
-
-	public void unlockVertices() {
-		layout.lock(false);
 	}
 
 	/*
