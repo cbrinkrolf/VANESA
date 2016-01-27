@@ -4,12 +4,11 @@ import graph.ChangedFlags;
 import graph.GraphInstance;
 import gui.MainWindowSingleton;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -17,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -24,6 +25,7 @@ import net.miginfocom.swing.MigLayout;
 import petriNet.ContinuousTransition;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ParameterWindow implements ActionListener, DocumentListener {
 
@@ -37,6 +39,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 	private JButton add;
 	private GraphElementAbstract gea;
 	private FormularPanel fp;
+	private JTextPane formular;
 
 	private boolean editMode = false;
 
@@ -61,10 +64,67 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		// AutoCompleteDecorator.decorate(elementNames);
 
 		panel = new JPanel(layout);
+		formular = new JTextPane();
+		
+		
+		
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            	AutoSuggestor autoSuggestor = new AutoSuggestor(formular, dialog, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
+                    @Override
+                    boolean wordTyped(String typedWord) {
 
+                        //create list for dictionary this in your case might be done via calling a method which queries db and returns results as arraylist
+                        ArrayList<String> words = new ArrayList<>();
+                        
+                        //pw.getAllNodeLabels();
+                        //HashSet<String> set = new HashSet<String>();
+                		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();// biologicalElements.values().iterator();
+                		BiologicalNodeAbstract bna;
+                		while (it.hasNext()) {
+                			bna = it.next();
+                			if(!bna.hasRef()){
+                				//words.add(bna.getRef().getLink());
+                				words.add(bna.getLabel());
+                			}
+                		}
+                		
+                		for (int i = 0; i < gea.getParameters().size(); i++) {
+                			words.add(gea.getParameters().get(i).getName());
+                		}
+                		
+                		
+                        //words.addAll(pw.getAllNodeLabels());
+                        
+                        /*
+                        words.add("hello");
+                        words.add("heritage");
+                        words.add("happiness");
+                        words.add("goodbye");
+                        words.add("cruel");
+                        words.add("car");
+                        words.add("war");
+                        words.add("will");
+                        words.add("world");
+                        words.add("wall");
+                        */
+
+
+                        setDictionary(words);
+                        //addToDictionary("bye");//adds a single word
+
+                        return super.wordTyped(typedWord);//now call super to check for any matches against newest dictionary
+                    }
+                };
+                //System.out.println("ended");
+            }
+        });
+		
+		
 		if (gea instanceof ContinuousTransition) {
 
-			fp = new FormularPanel(
+			fp = new FormularPanel(formular, 
 					((ContinuousTransition) gea).getMaximumSpeed());
 			fp.setVisible(true);
 			panel.add(fp);
@@ -99,7 +159,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 				ContinuousTransition ct = (ContinuousTransition) gea;
 				String formular = fp.getFormular();
 				String formularClean = formular.replaceAll("\\s", "");
-
+				//System.out.println(":"+formularClean+":");
 				String orgClean = ct.getMaximumSpeed().replaceAll("\\s", "");
 
 				if (!orgClean.equals(formularClean)) {

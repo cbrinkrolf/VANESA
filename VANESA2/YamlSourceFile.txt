@@ -1,0 +1,2 @@
+D:\Desktop\test\test.yaml
+If you want to use your own YAML configuration file, THIS file has to be at the same location as the VANESA jar!
