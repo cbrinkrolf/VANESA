@@ -24,11 +24,13 @@ import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
+import graph.algorithms.GraphTheoryAlgorithms;
 import graph.algorithms.MultidimensionalScaling;
 import graph.algorithms.NetworkProperties;
 import graph.algorithms.NodeAttributeNames;
 import graph.algorithms.NodeAttributeTypes;
 import graph.algorithms.ShortestPathsExperimentClustering;
+//import graph.algorithms.SteinerTree;
 import graph.jung.classes.MyGraph;
 import graph.jung.classes.MyVisualizationViewer;
 import gui.visualization.PreRenderManager;
@@ -61,14 +63,17 @@ import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 
 
 
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.math.plot.Plot2DPanel;
 import org.math.plot.PlotPanel;
 import org.math.plot.render.AbstractDrawer;
+import org.math.plot.plots.ColoredScatterPlot;
 import org.math.plot.plots.ScatterPlot;
 
 import com.jujutsu.tsne.FastTSne;
@@ -142,11 +147,19 @@ public class InfoWindow {
 		}
 
 		instructions += tableEnd + "</html>";
-		
-		
+
 		// REENABLE
-		// JOptionPane.showMessageDialog(w.returnFrame(), instructions,
-		// "Network Properties", JOptionPane.DEFAULT_OPTION);
+		 JOptionPane.showMessageDialog(w.returnFrame(), instructions,
+		 "Network Properties", JOptionPane.DEFAULT_OPTION);
+		
+		
+//		HashSet<String> m = new HashSet<>();
+//		m.add("STARD13");
+//		m.add("ARHGAP1");
+//		m.add("AAA");
+//		new SteinerTree(m);
+		
+		
 		//
 		// System.out.println("done.");
 		// cs.saveAdjMatrix("Jan.N"+nodes+"E"+edges+".adj");
@@ -182,10 +195,40 @@ public class InfoWindow {
 
 		// new ClusterDataUploadWindow();
 
-		// np.AllPairShortestPaths(true);
+//		 np.AllPairShortestPaths(true);
 
 		// int nodes = np.getNodeCount();
 
+/*		double nodedegree, ndegree, cycles, cliques;
+		
+		for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph()
+				.getAllVertices()) {
+			try {
+				nodedegree = bna.getNodeAttributeByName(NodeAttributeNames.NODE_DEGREE).getDoublevalue();
+			} catch (NullPointerException e) {
+				nodedegree = 0.0;
+			}
+			try {
+				ndegree = bna.getNodeAttributeByName(NodeAttributeNames.NEIGHBOR_DEGREE).getDoublevalue();
+				} catch (NullPointerException e) {
+				ndegree = 0.0;
+			}			
+			try {
+				cycles = bna.getNodeAttributeByName(NodeAttributeNames.CYCLES).getDoublevalue();
+			} catch (NullPointerException e) {
+				cycles = 0.0;
+			}
+			try {
+				cliques = bna.getNodeAttributeByName(NodeAttributeNames.CLIQUES).getDoublevalue();
+				} catch (NullPointerException e) {
+				cliques = 0.0;
+			}
+			System.out.println(bna.getLabel()+"\t"+nodedegree+"\t"+ndegree+"\t"+cycles+"\t"+cliques);
+		}
+		
+		
+		
+	*/	
 		// rectangle paint testing
 
 		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance
@@ -220,23 +263,22 @@ public class InfoWindow {
 		Color anno = new Color((int) (Math.random() * 0x1000000));
 		Random r = new Random(System.currentTimeMillis());
 		anno = new Color(anno.getRed(), anno.getGreen(), anno.getBlue(), 180);
-						
-		Color grey = new Color(192,192,192);
-		for(BiologicalNodeAbstract b : GraphInstance.getMyGraph().getAllVertices()){
-			
-			System.out.println(b.getColor() +" \t " + b.getDefaultColor());
-			if(b.getColor().equals(grey)){
-				b.setColor(new Color(0,0,100));
-			}
-			
-		}
-		
-		
-		
-//		 vv.addPreRenderPaintable(new LocalBackboardPaintable(bnas_cyto, anno,
-//		 100, "fadeoval", "Cytoplasm"));
-//		 vv.addPreRenderPaintable(new LocalBackboardPaintable(bnas_nucl,
-//		 Color.RED, 40, "rect", "Nucleus"));
+
+//		Color grey = new Color(192, 192, 192);
+//		for (BiologicalNodeAbstract b : GraphInstance.getMyGraph()
+//				.getAllVertices()) {
+//
+//			System.out.println(b.getColor() + " \t " + b.getDefaultColor());
+//			if (b.getColor().equals(grey)) {
+//				b.setColor(new Color(0, 0, 100));
+//			}
+//
+//		}
+
+		// vv.addPreRenderPaintable(new LocalBackboardPaintable(bnas_cyto, anno,
+		// 100, "fadeoval", "Cytoplasm"));
+		// vv.addPreRenderPaintable(new LocalBackboardPaintable(bnas_nucl,
+		// Color.RED, 40, "rect", "Nucleus"));
 		// vv.addPreRenderPaintable(new LocalBackboardPaintable(bnas_nucle,
 		// Color.blue, 25, "oval"));
 
@@ -245,14 +287,14 @@ public class InfoWindow {
 
 		// double perplexity = 50.0d;
 
-		 TSne tsne = new FastTSne();
-//		 TSne tsne = new SimpleTSne();
-//		 TSne tsne = new MemOptimizedTSne();
-		 int iters = 10;
-		 System.out.println("Running " + iters + " iterations of TSne on "
-		 + "Chol dataset");
-//		 double [][] X = MatrixUtils.simpleRead2DMatrix(new File(filename),
-//		 " ");
+//		TSne tsne = new FastTSne();
+		// TSne tsne = new SimpleTSne();
+		// TSne tsne = new MemOptimizedTSne();
+		int iters = 10;
+//		System.out.println("Running " + iters + " iterations of TSne on "
+//				+ "Chol dataset");
+		// double [][] X = MatrixUtils.simpleRead2DMatrix(new File(filename),
+		// " ");
 
 		// LOC
 		/*
@@ -481,51 +523,15 @@ public class InfoWindow {
 			e.printStackTrace();
 		}
 
-		
-		double[][] chol = MatrixUtils.simpleRead2DMatrix(new File("chol1-7.dat"), " "),
-		cellcomp = MatrixUtils.simpleRead2DMatrix(new File("cellularcomp.dat"),",");
-		
-		
-		double[][] cholcellcomp = new double[chol.length][chol[0].length+cellcomp[0].length];
-		for (int i = 0; i < chol.length; i++) {
-			for (int j = 0; j < chol[0].length; j++) {
-				cholcellcomp[i][j] = chol[i][j];
-			}
-		}
-		for (int i = 0; i < cellcomp.length; i++) {
-			for (int j = 0; j < cellcomp[0].length; j++) {
-				cholcellcomp[i][experiments+j] = cellcomp[i][j];
-			}
-		}
-		
-//		for (int i = 0; i < nodes; i++) {
-//			System.out.println(Arrays.toString(cholcellcomp[i])+"  \t"+np.getNodeAssignmentbackwards(i).getLabel());
-//		}
-		
-		
-		
-		double [][] Y = tsne.tsne(cholcellcomp, 2, 6, 500, 500,true);
-		
-		
-		for (int i = 0; i < nodes; i++) {
-			BiologicalNodeAbstract bna = np.getNodeAssignmentbackwards(i);
-			
-			Point2D pos = GraphInstance.getPathwayStatic().getGraph().getVertexLocation(bna);
-			
-			pos.setLocation(100.0d*Y[i][0],100.0d*Y[i][1]);
-		}
-	
-//		for(BiologicalEdgeAbstract bea : GraphInstance.getMyGraph().getAllEdges()){
-//			bea.setColor(new Color(192,192,192,30));
-//		}
-		
+		// for(BiologicalEdgeAbstract bea :
+		// GraphInstance.getMyGraph().getAllEdges()){
+		// bea.setColor(new Color(192,192,192,30));
+		// }
+
 		GraphInstance.getMyGraph().getVisualizationViewer().repaint();
-		
-		
-		
-		
-		
-		
+
+		//USUAL DATA OUTPUT just for testing
+/*		
 		try {
 			PrintWriter data = new PrintWriter("biolproc.dat", "UTF-8");
 			BiologicalNodeAbstract bna;
@@ -583,6 +589,46 @@ public class InfoWindow {
 			e.printStackTrace();
 		}
 
+		double[][] chol = MatrixUtils.simpleRead2DMatrix(
+				new File("chol1-7.dat"), " "),
+		// cellular component:
+		// annotation = MatrixUtils.simpleRead2DMatrix(newFile("cellularcomp.dat"),",");
+
+		// molecular function:
+//		annotation = MatrixUtils.simpleRead2DMatrix(new File("molecfunc.dat"),",");
+		
+		// biological process
+		annotation = MatrixUtils.simpleRead2DMatrix(new File("biolproc.dat"),",");
+
+
+		double[][] cholannotation = new double[chol.length][chol[0].length
+				+ annotation[0].length];
+		for (int i = 0; i < chol.length; i++) {
+			for (int j = 0; j < chol[0].length; j++) {
+				cholannotation[i][j] = chol[i][j];
+			}
+		}
+		for (int i = 0; i < annotation.length; i++) {
+			for (int j = 0; j < annotation[0].length; j++) {
+				cholannotation[i][experiments + j] = annotation[i][j];
+			}
+		}
+		
+		*/
+		//RUN TSNE
+//		System.out.println(Arrays.toString(cholannotation[0]));
+//
+//		double[][] Y = tsne.tsne(cholannotation, 2, 6, 50, 500, true);
+//
+//		for (int i = 0; i < nodes; i++) {
+//			BiologicalNodeAbstract bna = np.getNodeAssignmentbackwards(i);
+//
+//			Point2D pos = GraphInstance.getPathwayStatic().getGraph()
+//					.getVertexLocation(bna);
+//
+//			pos.setLocation(100.0d * Y[i][0], 100.0d * Y[i][1]);
+//		}
+
 		// System.out.println(Arrays.toString(X[0]));
 		//
 		// X = MatrixUtils.simpleRead2DMatrix(new File("ESC.dissim"), ",");
@@ -627,23 +673,23 @@ public class InfoWindow {
 		// x = (int) (Y[i][0] * 10.0d);
 		// y = (int) (Y[i][1] * 10.0d);
 		//
-		
+
 		// }
 
-		// Plot2DPanel plot = new Plot2DPanel();
-		//
-		// ColoredScatterPlot setosaPlot = new ColoredScatterPlot("setosa", Y,
-		// labels);
-		//
-		// // ScatterPlot setosaPlot = new ScatterPlot("setosa", Color.BLACK,
-		// Y,);
-		// plot.plotCanvas.setNotable(true);
-		// plot.plotCanvas.setNoteCoords(true);
-		// plot.plotCanvas.addPlot(setosaPlot);
-		//
-		// FrameView plotframe = new FrameView(plot);
-		// plotframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		// plotframe.setVisible(true);
+//		 Plot2DPanel plot = new Plot2DPanel();
+//		
+//		 ColoredScatterPlot setosaPlot = new ColoredScatterPlot("setosa", Y,
+//		 labels);
+//		
+//		 // ScatterPlot setosaPlot = new ScatterPlot("setosa", Color.BLACK,
+//		 Y,);
+//		 plot.plotCanvas.setNotable(true);
+//		 plot.plotCanvas.setNoteCoords(true);
+//		 plot.plotCanvas.addPlot(setosaPlot);
+//		
+//		 FrameView plotframe = new FrameView(plot);
+//		 plotframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//		 plotframe.setVisible(true);
 
 	}
 
