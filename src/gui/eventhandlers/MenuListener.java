@@ -77,6 +77,7 @@ import javax.swing.JPanel;
 
 import cluster.clientimpl.ClusterDataUploadWindow;
 import miscalleanous.tables.MyTable;
+import petriNet.ConvertMetabolicNet;
 import petriNet.ConvertToPetriNet;
 import petriNet.Cov;
 import petriNet.CovNode;
@@ -1023,9 +1024,9 @@ public class MenuListener implements ActionListener {
 			MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			g.disableGraphTheory();
 			// new CompareGraphsGUI();
-			new ConvertToPetriNet();
+			new ConvertMetabolicNet();
 
-			Component[] c = MainWindowSingleton.getInstance().getContentPane()
+			/*Component[] c = MainWindowSingleton.getInstance().getContentPane()
 					.getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
@@ -1037,7 +1038,7 @@ public class MenuListener implements ActionListener {
 											.isPetriNet());
 					break;
 				}
-			}
+			}*/
 		} else if ("dataMappingColor".equals(event)) {
 			DataMappingColorMVC.createDataMapping();
 		} else if ("dataMappingDB".equals(event)) {

@@ -17,27 +17,29 @@ import javax.swing.JOptionPane;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.Enzyme;
+import biologicalObjects.nodes.SmallMolecule;
 
-public class ConvertToPetriNet {
+public class ConvertMetabolicNet {
 	private petriNetProperties prop;
 	private GraphInstance graphInstance = new GraphInstance();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
 	private Pathway pw;
 
-	private final int scaleFactor = 2;
+	private final int scaleFactor = 1;
 	private final double initialTokens = 10;
 
-	private static ConvertToPetriNet instance = null;
+	private static ConvertMetabolicNet instance = null;
 
 	/** synchronized needed for thread-safety */
-	public static synchronized ConvertToPetriNet getInstance() {
+	public static synchronized ConvertMetabolicNet getInstance() {
 		if (instance == null) {
-			instance = new ConvertToPetriNet();
+			instance = new ConvertMetabolicNet();
 		}
 		return instance;
 	}
 
-	public ConvertToPetriNet() {
+	public ConvertMetabolicNet() {
 		int answer = JOptionPane.YES_NO_OPTION;
 		if (!graphInstance.getPathway().getAllGraphNodes().isEmpty())
 			answer = JOptionPane.showOptionDialog(
@@ -56,7 +58,7 @@ public class ConvertToPetriNet {
 		prop = new petriNetProperties();
 		// System.out.println("alle knoten: "+GraphInstance.getMyGraph().getAllvertices());
 
-		HashMap<BiologicalNodeAbstract, Place> node2place = new HashMap<BiologicalNodeAbstract, Place>();
+		HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> node2place = new HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract>();
 
 		// Set<BiologicalNodeAbstract> hsVertex = new
 		// HashSet<BiologicalNodeAbstract>();
@@ -70,10 +72,13 @@ public class ConvertToPetriNet {
 		Iterator<BiologicalNodeAbstract> it = pwOld.getGraph().getAllVertices()
 				.iterator();
 		BiologicalNodeAbstract bna;
+		BiologicalNodeAbstract bna2;
 		Place p;
+		Transition t;
 		while (it.hasNext()) {
 
 			bna = it.next();
+			if(bna instanceof SmallMolecule){
 			// bna =
 			// System.out.println("Name: "+bna.getName());
 			// System.out.println("Label: "+bna.getLabel());
@@ -81,7 +86,7 @@ public class ConvertToPetriNet {
 			p = new Place(bna.getLabel(), bna.getName(), this.initialTokens,
 					answer == JOptionPane.YES_OPTION);
 			p.setTokenStart(this.initialTokens);
-			p.setTokenMax(1000);
+			//p.setTokenMax(1000);
 
 			p.setColor(bna.getColor());
 			// System.out.println("Vertex: "+p.getName());
@@ -93,8 +98,23 @@ public class ConvertToPetriNet {
 			// x,scaleFactor* y);
 			pw.addVertex(p,
 					new Point2D.Double(scaleFactor * x, scaleFactor * y));
+			
 			// this.graphRepresentation.getAllVertices();
 			node2place.put(bna, p);
+			}else if(bna instanceof Enzyme){
+				t = new ContinuousTransition(bna.getLabel(), bna.getName());
+				t.setColor(bna.getColor());
+				// System.out.println("Vertex: "+p.getName());
+				// System.out.println("x: "+locations.getLocation(bna.getVertex()).getX());
+				double x = pwOld.getGraph().getVertexLocation(bna).getX();// locations.getLocation(bna.getVertex()).getX();
+				double y = pwOld.getGraph().getVertexLocation(bna).getY();// locations.getLocation(bna.getVertex()).getY();
+				// System.out.println("x: "+x+" y: "+y);
+				// pw.getGraph().moveVertex(p.getVertex(), scaleFactor*
+				// x,scaleFactor* y);
+				pw.addVertex(t,
+						new Point2D.Double(scaleFactor * x, scaleFactor * y));
+				node2place.put(bna, t);
+			}
 
 		}
 
@@ -131,57 +151,29 @@ public class ConvertToPetriNet {
 			// System.out.println("first_1: "+bea.getEdge().getEndpoints().getFirst());
 			// System.out.println("second: "+bea.getEdge().getEndpoints().getSecond());
 			// v1 = (Vertex) bea.getEdge().getEndpoints().getFirst();
-			p1 = node2place.get(bea.getFrom());
+			bna = node2place.get(bea.getFrom());
 			// v1 = p1.getVertex();
-			p2 = node2place.get(bea.getTo());
+			bna2 = node2place.get(bea.getTo());
 			// v2 = p2.getVertex();
-			Transition t;
-			if (answer == JOptionPane.YES_OPTION)
-				/*
-				 * t = new DiscreteTransition(p1.getName() + "_" + p2.getName(),
-				 * "t" + countTrainsition);
-				 */
-				t = new DiscreteTransition("t" + countTrainsition, "t"
-						+ countTrainsition);
-			else
-				/*
-				 * t = new ContinuousTransition(p1.getName() + "_" +
-				 * p2.getName(), "t" + countTrainsition);
-				 */
-				t = new ContinuousTransition("t" + countTrainsition, "t"
-						+ countTrainsition);
+			//Transition t;
+			
+			
 
-			x1 = pw.getGraph().getVertexLocation(p1).getX();// locationsNew.getLocation(p1.getVertex()).getX();
-			y1 = pw.getGraph().getVertexLocation(p1).getY();// locationsNew.getLocation(p1.getVertex()).getY();
-			x2 = pw.getGraph().getVertexLocation(p2).getX();// locationsNew.getLocation(p2.getVertex()).getX();
-			y2 = pw.getGraph().getVertexLocation(p2).getY();// locationsNew.getLocation(p2.getVertex()).getY();
-
-			pw.addVertex(t, new Point2D.Double((x2 + x1) / 2, (y2 + y1) / 2));
-
-			PNEdge edge1 = new PNEdge(p1, t, "label", "name", "discrete", "1");
+			PNEdge edge1 = new PNEdge(bna, bna2, bea.getLabel(), bea.getName(), "discrete", bea.getLabel());
 			edge1.setDirected(true);
 			// System.out.println(edge1.isDirected());
 			// System.out.println(edge1.getEdge().getClass());
-			PNEdge edge2 = new PNEdge(t, p2, "label2", "name2",
-					bea.getBiologicalElement(), "1");
-
-			if (!bea.isDirected()) {
-				isUnDirEdge = true;
-				edge1.wasUndirected(true);
-				edge2.wasUndirected(true);
-			}
+			
+			edge1.setDirected(true);
 
 			pw.addEdge(edge1);
-
-			edge2.setDirected(true);
-			pw.addEdge(edge2);
 
 			// p1orginal = (Place)
 			// graphInstance.getPathway().getNodeByName(p1.getName());
 			// System.out.println("Placename: "+p1orginal.getName());
 			// v1orginal = p1orginal.getVertex();
 			// System.out.println("x1: "+x1 +" x2: "+x2+" y1: "+y1+" y2");
-			this.transitions.add(t);
+			//this.transitions.add(t);
 			countTrainsition++;
 
 		}
@@ -232,8 +224,11 @@ public class ConvertToPetriNet {
 				e.setVisible(true);
 			}
 		}
-		if (pw.countNodes() > 0)
+		if (pw.countNodes() > 0){
 			new PNTableDialog().setVisible(true);
+		}
+		pw.getGraph().normalCentering();
+		
 	}
 
 	public petriNetProperties getProp() {
