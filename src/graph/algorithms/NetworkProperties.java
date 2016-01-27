@@ -65,6 +65,8 @@ public class NetworkProperties extends Object {
 	Hashtable<BiologicalNodeAbstract, Integer> nodeassings = new Hashtable<BiologicalNodeAbstract, Integer>();
 	Hashtable<Integer, BiologicalNodeAbstract> nodeassignsback = new Hashtable<Integer, BiologicalNodeAbstract>();
 	Hashtable<Integer, Integer> nodedegreetable = new Hashtable<Integer, Integer>();
+	Hashtable<Integer, Double> neighbordegreetable = new Hashtable<Integer, Double>();
+	
 
 	private int nodeincrement = 0;
 
@@ -90,6 +92,7 @@ public class NetworkProperties extends Object {
 
 		fillAdjacencyData();
 		countNodeDegrees();
+		averageNeighbourDegreeTable();
 
 	}
 
@@ -114,6 +117,7 @@ public class NetworkProperties extends Object {
 
 		fillAdjacencyData();
 		countNodeDegrees();
+		averageNeighbourDegreeTable();
 	}
 
 	public HashMap<Integer, Integer> getNodeDegreeDistribution(){
@@ -157,6 +161,10 @@ public class NetworkProperties extends Object {
 
 	public int getNodeDegree(int nodeID) {
 		return nodedegreetable.get(nodeID);
+	}
+	
+	public double getNeighborDegree(int nodeID){
+		return neighbordegreetable.get(nodeID);
 	}
 
 	public int getNodeAssignment(BiologicalNodeAbstract bna) {
@@ -261,6 +269,7 @@ public class NetworkProperties extends Object {
 	public int countNodeDegrees() {
 		// Count of different Node degrees
 		nodedegrees = new LinkedList<Integer>();
+		// count node degrees per node and save them
 		int degree = 0;
 		for (int i = 0; i < nodes; i++) {
 			// row-wise addition
@@ -276,6 +285,7 @@ public class NetworkProperties extends Object {
 			// reset of degree
 			degree = 0;
 		}
+				
 		Collections.sort(nodedegreessingle);
 		return nodedegreessingle.size();
 	}
@@ -331,6 +341,8 @@ public class NetworkProperties extends Object {
 				oneavgdegree = (oneavgdegree / verticedegrees[i]);
 
 			ht.put(nodeassignsback.get(i), oneavgdegree);
+			//save neighbordegree
+			nodeassignsback.get(i).addAttribute(NodeAttributeTypes.GRAPH_PROPERTY, NodeAttributeNames.NEIGHBOR_DEGREE, oneavgdegree);			
 			oneavgdegree = 0f;
 		}
 
@@ -685,6 +697,10 @@ public class NetworkProperties extends Object {
 	}
 
 	public short[][] AllPairShortestPaths(boolean writeToFile) {
+		//Time
+		//long start = System.currentTimeMillis();
+		//System.out.println("starting apsp");
+		
 
 		distances = new short[nodes][nodes];		
 		int i, j, k;		
@@ -739,6 +755,9 @@ public class NetworkProperties extends Object {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		
+		//Time
+		//System.out.println("apsp:"+ (System.currentTimeMillis()-start)/1000.0);
 		
 		return distances;
 	}
