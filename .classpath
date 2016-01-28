@@ -80,6 +80,7 @@
 	<classpathentry kind="lib" path="packages/tsne/jama-1.0.2.jar"/>
 	<classpathentry kind="lib" path="packages/tsne/tsne.jar"/>
 	<classpathentry kind="lib" path="packages/jmathplot-1.0.0.jar"/>
+	<classpathentry kind="lib" path="packages/smacof/MatrixLib-1.3.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="packages/mdsj.jar"/>
 	<classpathentry kind="lib" path="packages/smacof/core-math-1.3.1.jar"/>
