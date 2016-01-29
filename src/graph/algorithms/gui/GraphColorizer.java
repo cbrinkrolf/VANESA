@@ -1,6 +1,10 @@
 package graph.algorithms.gui;
 
+import gui.images.ImagePath;
+
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 /**
@@ -33,37 +38,46 @@ public class GraphColorizer {
 	public GraphColorizer(Hashtable<BiologicalNodeAbstract,Double> nodevalues, int rangeimage, boolean logarithmic){
 		this.nodevalues = nodevalues;
 		
-		//Get image and assign the rangewidth
-		try{
-			switch (rangeimage) {
-			case 0:
-				rangesource = ImageIO.read(new File("src/gui/images/colorrange_bluesea.png"));
-				break;
-			case 1:		
-				rangesource = ImageIO.read(new File("src/gui/images/colorrange_skyline.png"));
-				break;
-			case 2:				
-				rangesource = ImageIO.read(new File("src/gui/images/colorrange_darkmiddle.png"));
-				break;
-			case 3:		
-				rangesource = ImageIO.read(new File("src/gui/images/colorrange_dark.png"));
-				break;
-			case 4:		
-				rangesource = ImageIO.read(new File("src/gui/images/colorrange_rainbow.png"));
-				break;
-			default:
-				break;
-			}
-		}catch (IOException e){
-			System.out.println("Error in GraphColorizer.java while reading image :"+rangeimage);
+		// Get image and assign the rangewidth
+		ImagePath imagepath = ImagePath.getInstance();
+		ImageIcon ii = new ImageIcon();
+		Image img;
+
+		switch (rangeimage) {
+		case 0:
+			ii = new ImageIcon(imagepath.getPath("colorrange_bluesea.png"));
+			break;
+		case 1:
+			ii = new ImageIcon(imagepath.getPath("colorrange_skyline.png"));
+			break;
+		case 2:
+			ii = new ImageIcon(imagepath.getPath("colorrange_darkmiddle.png"));
+			break;
+		case 3:
+			ii = new ImageIcon(imagepath.getPath("colorrange_dark.png"));
+			break;
+		case 4:
+			ii = new ImageIcon(imagepath.getPath("colorrange_rainbow.png"));
+			break;
+		default:
+			ii = new ImageIcon(imagepath.getPath("colorrange_bluesea.png"));
+			break;
 		}
-			
-//			rangesource = ImageIO.read(new File("pictures/colorrange_bluesea.png"));
-//			rangesource = ImageIO.read(new File("pictures/colorrange_skyline.png"));
-//			rangesource = ImageIO.read(new File("pictures/colorrange_darkmiddle.png"));
-//			rangesource = ImageIO.read(new File("pictures/colorrange_dark.png"));
-						
-			imagewidth = rangesource.getWidth();			
+
+		//convert to image and transfer the buffered Image
+		//This step is needed to access the RGB code at a specified position
+		//The Image Icon class does not support this feature
+		img = ii.getImage();
+		rangesource = new BufferedImage(img.getWidth(null),
+				img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		// Draw the image on to the buffered image
+		Graphics2D bGr = rangesource.createGraphics();
+		bGr.drawImage(img, 0, 0, null);
+		bGr.dispose();
+		
+		
+		
+		imagewidth = rangesource.getWidth(null);			
 
 
 		//do magic
