@@ -33,8 +33,6 @@ import org.sbml.jsbml.xml.XMLAttributes;
 import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.jsbml.xml.XMLTriple;
 
-import com.sun.xml.internal.bind.v2.TODO;
-
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.StochasticTransition;
@@ -47,9 +45,9 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 /**
  * This class represents a writer from graph data to a SBML file. The actual
  * version supports SBML Level 3 Version 1 only by jSBML.
- * 
+ *
  * @author Annika and Sandra
- * 
+ *
  */
 public class JSBMLoutput {
 
@@ -78,15 +76,15 @@ public class JSBMLoutput {
 
 	/**
 	 * Generates a SBML document via jSBML.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public String generateSBMLDocument() {
 		int answer = JOptionPane.YES_OPTION;
 		if(pathway instanceof BiologicalNodeAbstract){
 			Object[] options = {"Save subpathway", "Save complete pathway"};
 			answer = JOptionPane.showOptionDialog(MainWindowSingleton.getInstance(),
-					"You try to save a opened subpathway. Do you want to save this subpathway?", 
-					"Save subpathway", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+					"You try to save a opened subpathway. Do you want to save this subpathway?",
+					"Save subpathway", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
 					null, options, options[1]);
 		}
 		if(answer == JOptionPane.YES_OPTION){
@@ -94,7 +92,7 @@ public class JSBMLoutput {
 		} else if(answer == JOptionPane.NO_OPTION){
 			rootPathway = pathway.getRootPathway();
 		}
-		
+
 		String message = "";
 		// Create a new SBMLDocument object, using SBML Level 3 Version 1.
 		SBMLDocument doc = new SBMLDocument(3, 1);
@@ -105,13 +103,13 @@ public class JSBMLoutput {
 		model.setAnnotation(a);
 
 		Compartment compartment;
-		
+
 		// read all nodes from graph
 		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
 		for(BiologicalNodeAbstract node : rootPathway.getAllGraphNodesSorted()){
 			flattenedPathwayNodes.addAll(node.getLeafNodes());
 		}
-		
+
 		Set<BiologicalEdgeAbstract> flattenedPathwayEdges = new HashSet<BiologicalEdgeAbstract>();
 		Iterator<BiologicalNodeAbstract> nodeIterator = flattenedPathwayNodes.iterator();
 
@@ -163,7 +161,7 @@ public class JSBMLoutput {
 		}
 
 		// reactions to sbml
-		
+
 		HashMap<Integer, BiologicalEdgeAbstract> map = new HashMap<Integer, BiologicalEdgeAbstract>();
 
 		for (BiologicalEdgeAbstract bea : flattenedPathwayEdges) {
@@ -177,8 +175,8 @@ public class JSBMLoutput {
 		for (int i = 0; i < ids.size(); i++) {
 			sortedEdges.add(map.get(ids.get(i)));
 		}
-		
-		
+
+
 		Iterator<BiologicalEdgeAbstract> edgeIterator = sortedEdges.iterator();
 
 		BiologicalEdgeAbstract oneEdge;
@@ -229,7 +227,7 @@ public class JSBMLoutput {
 			 // SBMLWriter.write(doc, out, "VANESA", VERSION)
 			  //OutputStream os = new Outputstream
 			//System.out.println("nach write");
-			
+
 			os.close();
 			message = "\nExport was successful.";
 		} catch (SBMLException e) {
@@ -269,7 +267,7 @@ public class JSBMLoutput {
 		XMLNode hierarchy = new XMLNode(new XMLNode(new XMLTriple(
 				"listOfHierarchies", "", ""), new XMLAttributes()));
 		Set<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
-		
+
 		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
 		for(BiologicalNodeAbstract node : rootPathway.getAllGraphNodesSorted()){
 			flattenedPathwayNodes.addAll(node.getLeafNodes());
@@ -282,7 +280,7 @@ public class JSBMLoutput {
 					hierarchyNodes.add(parent);
 			}
 		}
-			
+
 		for(BiologicalNodeAbstract node : hierarchyNodes){
 			if(node.isCoarseNode()){
 					addHierarchyXMLNode(hierarchy, node);
@@ -294,7 +292,7 @@ public class JSBMLoutput {
 		a.appendNoRDFAnnotation(el.toXMLString());
 		return a;
 	}
-	
+
 	private void addHierarchyXMLNode(XMLNode hierarchy, BiologicalNodeAbstract node){
 		XMLNode hierarchyXMLNode = new XMLNode(new XMLNode(new XMLTriple(
 				"coarseNode", "", ""), new XMLAttributes()));
@@ -337,8 +335,8 @@ public class JSBMLoutput {
 		if(!oneNode.isCoarseNode()){
 			p = pathway.getVertices().get(oneNode);
 		}
-		
-		
+
+
 		elSub = new XMLNode(new XMLNode(new XMLTriple("Coordinates", "", ""),
 				new XMLAttributes()));
 		attr = String.valueOf(p.getX());
@@ -346,10 +344,10 @@ public class JSBMLoutput {
 		attr = String.valueOf(p.getY());
 		elSub.addChild(createElSub(attr, "y_Coordinate"));
 		el.addChild(elSub);
-		
+
 		attr = oneNode.isEnvironmentNodeOf(rootPathway) ? "true" : "false";
 		el.addChild(createElSub(attr, "environmentNode"));
-		
+
 		XMLNode elSubSub;
 		elSub = new XMLNode(new XMLNode(new XMLTriple("Parameters", "", ""),
 				new XMLAttributes()));
@@ -569,15 +567,15 @@ public class JSBMLoutput {
 		}
 
 		el.addChild(elSub);
-		
-		
+
+
 		if (oneNode.isConstant()) {
 			attr = "true";
 		} else {
 			attr = "false";
 		}
 		el.addChild(createElSub(attr, "constCheck"));
-		
+
 		// test which type the node is to save additional data
 		if (oneNode instanceof biologicalObjects.nodes.DNA) {
 			attr = ((biologicalObjects.nodes.DNA) oneNode).getNtSequence();
@@ -675,7 +673,7 @@ public class JSBMLoutput {
 					attr = String.valueOf(((ContinuousTransition) oneNode)
 							.isKnockedOut());
 					el.addChild(createElSub(attr, "knockedOut"));
-					
+
 				} else if (oneNode instanceof StochasticTransition) {
 					attr = ((StochasticTransition) oneNode).getDistribution();
 					el.addChild(createElSub(attr, "distribution"));
