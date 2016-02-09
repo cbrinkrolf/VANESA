@@ -120,7 +120,7 @@
     <antcall target="build"/>
   </target>
 
-  <target name="Launch">
+  <target name="run" depends="build">
     <java classname="launch.Launch" failonerror="true" fork="yes">
       <classpath refid="VANESA2.classpath"/>
     </java>
