@@ -33,7 +33,7 @@ public class MOoutput {
 
 	private static final boolean debug = MainWindow.developer;
 	private static final String indentation = "  ";
-	private static final String nwln = System.getProperty("line.separator");
+	private static final String endl = System.getProperty("line.separator");
 
 	private OutputStream os = null;
 	private String modelName = null;
@@ -101,28 +101,28 @@ public class MOoutput {
 		// if (debug)
 		// System.out.println(properties+places+transitions+edgesString);
 		StringBuilder sb = new StringBuilder();
-		sb.append("model '" + modelName + "'" + this.nwln);
+		sb.append("model '" + modelName + "'" + this.endl);
 		;
-		// os.write(new String("model '" + modelName + "'"'" + this.nwln").getBytes());
+		// os.write(new String("model '" + modelName + "'"'" + this.endl").getBytes());
 
 		if (packageInfo != null) {
 			// os.write(new String(this.indentation + this.packageInfo +
-			// this.nwln).getBytes());
-			sb.append(this.indentation + this.packageInfo + this.nwln);
+			// this.endl).getBytes());
+			sb.append(this.indentation + this.packageInfo + this.endl);
 			// os.write(new
-			// String(this.indentation + "import PNlib = ConPNlib;" + this.nwln).getBytes());
+			// String(this.indentation + "import PNlib = ConPNlib;" + this.endl).getBytes());
 		}
 
 		// if (this.packageInfo == null) {
-		// sb.append(this.indentation + "inner PNlib.Settings settings1();" + this.nwln);
-		sb.append(this.indentation + "inner PNlib.Settings settings(showTokenFlow = true);" + this.nwln);
+		// sb.append(this.indentation + "inner PNlib.Settings settings1();" + this.endl);
+		sb.append(this.indentation + "inner PNlib.Settings settings(showTokenFlow = true);" + this.endl);
 		// }
 
 		sb.append(places);
-		sb.append("equation" + this.nwln);
+		sb.append("equation" + this.endl);
 		sb.append(edgesString);
-		sb.append(this.indentation + "annotation(Icon(coordinateSystem(extent={{"+(minX-50)+","+(minY-50)+"},{"+(maxX+50)+","+(maxY+50)+"}})), Diagram(coordinateSystem(extent={{"+(minX-50)+","+(minY-50)+"},{"+(maxX+50)+","+(maxY+50)+"}})));" + this.nwln);
-		sb.append("end '" + modelName + "';");
+		sb.append(this.indentation + "annotation(Icon(coordinateSystem(extent={{"+(minX-50)+","+(minY-50)+"},{"+(maxX+50)+","+(maxY+50)+"}})), Diagram(coordinateSystem(extent={{"+(minX-50)+","+(minY-50)+"},{"+(maxX+50)+","+(maxY+50)+"}})));" + this.endl);
+		sb.append("end '" + modelName + "';" + this.endl);
 
 		String data = sb.toString();
 		if (noIdent) {
@@ -175,7 +175,7 @@ public class MOoutput {
 
 	private void buildNodes() {
 		for (int i = 1; i <= inhibitCount; i++)
-			places += "PNlib.IA inhibitorArc" + i + ";" + this.nwln;
+			places += "PNlib.IA inhibitorArc" + i + ";" + this.endl;
 		BiologicalNodeAbstract bna;
 		ArrayList<String> names = new ArrayList<String>();
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
@@ -184,12 +184,12 @@ public class MOoutput {
 			bna = it.next();
 			if (!bna.hasRef()) {
 				for (int i = 0; i < bna.getParameters().size(); i++) {
-					// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.nwln;
+					// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.endl;
 					places = places.concat(this.indentation + "parameter Real '_" + bna.getName() + "_" + bna.getParameters().get(i).getName() + "'");
 					if (bna.getParameters().get(i).getUnit().length() > 0) {
 						places = places.concat("(final unit=\"" + bna.getParameters().get(i).getUnit() + "\")");
 					}
-					places = places.concat(" = " + bna.getParameters().get(i).getValue() + ";" + this.nwln);
+					places = places.concat(" = " + bna.getParameters().get(i).getValue() + ";" + this.endl);
 					// System.out.println("drin");
 				}
 			}
@@ -327,9 +327,9 @@ public class MOoutput {
 				inhibitCount++;
 				if (fromType.equals(Elementdeclerations.s_place) || fromType.equals(Elementdeclerations.place)) {
 					edgesString += this.indentation + "connect('" + fromString + "'.outTransition[" + (actualOutEdges.get(fromString) + 1) + "],"
-							+ "inhibitorArc" + inhibitCount + ".inPlace);" + this.nwln;
+							+ "inhibitorArc" + inhibitCount + ".inPlace);" + this.endl;
 					edgesString += this.indentation + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString + "'.inPlaces["
-							+ (actualInEdges.get(toString) + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo()) + ";" + this.nwln;
+							+ (actualInEdges.get(toString) + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo()) + ";" + this.endl;
 					actualOutEdges.put(fromString, actualOutEdges.get(fromString) + 1);
 					actualInEdges.put(toString, actualInEdges.get(toString) + 1);
 				}
@@ -348,7 +348,7 @@ public class MOoutput {
 	private String getPlaceString(String element, BiologicalNodeAbstract bna, String atr, int inEdges, int outEdges) {
 
 		for (int i = 0; i < bna.getParameters().size(); i++) {
-			// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.nwln;
+			// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.endl;
 		}
 		return this.indentation + element + " '" +
 
@@ -361,12 +361,12 @@ public class MOoutput {
 				// +" annotation(Placement(transformation(x = "+Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84), "
 				// +"iconTransformation(x = "
 				// +Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84)))"
-				+  getPlacementAnnotation(bna) + ";" + this.nwln;
+				+  getPlacementAnnotation(bna) + ";" + this.endl;
 	}
 
 	private String getTransitionString(BiologicalNodeAbstract bna, String element, String name, String atr, int inEdges, int outEdges) {
 		for (int i = 0; i < bna.getParameters().size(); i++) {
-			// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.nwln;
+			// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.endl;
 		}
 
 		// String inNumbers = "";
@@ -396,7 +396,7 @@ public class MOoutput {
 		// System.out.println("outPropper: " + out);
 
 		return this.indentation + element + " '" + bna.getName() + "'(nIn=" + inEdges + ",nOut=" + outEdges + "," + atr + ",arcWeightIn=" + in + ",arcWeightOut="
-				+ out + ") " + getPlacementAnnotation(bna) + ";" + this.nwln;
+				+ out + ") " + getPlacementAnnotation(bna) + ";" + this.endl;
 	}
 
 	private String getConnectionStringTP(String from, String to, BiologicalEdgeAbstract bea) {
@@ -410,7 +410,7 @@ public class MOoutput {
 				// +Math.floor(scale*(toPoint. getX()+xshift)-19)+","
 				// +Math.floor(scale*(-(toPoint.
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
-				+ this.nwln;
+				+ this.endl;
 		// System.out.println(to+".tSumIn_["+(actualInEdges.get(to) + 1)+"]");
 		this.bea2resultkey.put(bea, "'" + to + "'.tokenFlow.inflow[" + (actualInEdges.get(to) + 1) + "]");
 
@@ -430,7 +430,7 @@ public class MOoutput {
 				// +Math.floor(scale*(toPoint. getX()+xshift)-10)+","
 				// +Math.floor(scale*(-(toPoint.
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
-				+ this.nwln;
+				+ this.endl;
 		// System.out.println(from+".tSumOut_["+(actualOutEdges.get(from) +
 		// 1)+"]");
 		this.bea2resultkey.put(bea, "'" + from + "'.tokenFlow.outflow[" + (actualOutEdges.get(from) + 1) + "]");
@@ -645,13 +645,14 @@ public class MOoutput {
 			maxY = y;
 		}
 
-		return "annotation(Placement(visible=true,transformation(origin={" + x + "," + y + "}, extent={{-20,-20},{20,20}},rotation=0)))";
+		return "annotation(Placement(visible=true, transformation(origin={" + x + "," + y + "}, extent={{-20,-20}, {20,20}}, rotation=0)))";
 	}
 
 	private String getFromToAnnotation(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
 
 		Point2D p1;
 		Point2D p2;
+		String color;
 
 		if(from.hasRef()){
 			p1 = pw.getGraph().getVertexLocation(from.getRef());
@@ -664,6 +665,12 @@ public class MOoutput {
 			p2 = pw.getGraph().getVertexLocation(to);
 		}
 
-		return "annotation(Line(points={{"+p1.getX()+","+p1.getY()*factor+"}, {"+p2.getX()+","+p2.getY()*factor+"}}))";
+		if(from.hasRef() || to.hasRef()){
+			color = "{180, 180, 180}";
+		}else{
+			color = "{0, 0, 0}";
+		}
+
+		return "annotation(Line(color=" + color + ", points={{"+p1.getX()+","+p1.getY()*factor+"}, {"+p2.getX()+","+p2.getY()*factor+"}}))";
 	}
 }
