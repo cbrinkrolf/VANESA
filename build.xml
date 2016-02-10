@@ -32,7 +32,7 @@
     <pathelement location="packages/jfreesvg-2.0.jar"/>
     <pathelement location="packages/jing.jar"/>
     <pathelement location="packages/jmathplot-1.0.0.jar"/>
-    <pathelement location="packages/jsbml-0.8-with-dependencies.jar"/>
+    <pathelement location="packages/jsbml-1.1-with-dependencies.jar"/>
     <pathelement location="packages/JTattoo-1.6.11.jar"/>
     <pathelement location="packages/jung/collections-generic-4.01.jar"/>
     <pathelement location="packages/jung/jung-api-2.0.1.jar"/>
