@@ -67,7 +67,6 @@ import petriNet.PlotsPanel;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 import petriNet.Transition;
-import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 import util.DoubleHashMap;
 import util.TripleHashMap;
 import biologicalElements.GraphElementAbstract;
@@ -79,9 +78,9 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
  * This class creates a parallel coordinates plot to be shown in the side bar.
  * The plot will be used to visualize all microarray data of the current pathway
  * for all timesteps.
- * 
+ *
  * @author tschoeni
- * 
+ *
  */
 public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
@@ -193,7 +192,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 	/**
 	 * Getter for the main GUI panel. Is used in OptionPanel.
-	 * 
+	 *
 	 * @return main
 	 */
 	public JPanel getPanel() {
@@ -519,9 +518,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			}else if (gea instanceof BiologicalEdgeAbstract){
 				//System.out.println(gea+":"+((BiologicalEdgeAbstract) gea).getFrom().getName()+" -> "+((BiologicalEdgeAbstract) gea).getTo().getName());
 			}
-			
+
 		}
-		
+
 		//System.out.println("-----------------------------");
 		if (pw.isPetriNet() && pw.getPetriNet().isPetriNetSimulation() && simRes != null) {
 
@@ -904,20 +903,20 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		 * SimpleMatrixDouble(f); SimpleMatrixDouble cMatrix = new
 		 * SimpleMatrixDouble(this.initArray( numberPlaces, numberTransitions));
 		 * cMatrix.add(bMatrix); cMatrix.add(fMatrix);
-		 * 
+		 *
 		 * double[] vd = new double[names.size()]; HashMap<String, Double>
 		 * values = new HashMap<String, Double>();
-		 * 
-		 * 
+		 *
+		 *
 		 * //this.t.getColumn(0);
 		 * //System.out.println(t.getModel().getValueAt(1, 1));
-		 * 
+		 *
 		 * for (int i = 0; i < names.size(); i++) {
 		 * values.put(t.getModel().getValueAt(i, 0).toString(),
 		 * Double.parseDouble(t.getModel().getValueAt(i, 1).toString())); } for
 		 * (int i = 0; i < names.size(); i++) { vd[i] =
 		 * values.get(names.get(i)); }
-		 * 
+		 *
 		 * DenseDoubleMatrix2D c = new DenseDoubleMatrix2D(cMatrix.getData());
 		 * DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
 		 * DenseDoubleMatrix1D x = new DenseDoubleMatrix1D(5); c.zMult(v, x, 1,
@@ -926,7 +925,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		 * System.out.println(l.size()); if (l.size() == 0) {
 		 * System.out.println("ist Invariante"); } else {
 		 * System.out.println("ist keine Invariante"); }
-		 * 
+		 *
 		 * for (int i = 0; i < this.r.length; i++) { //
 		 * System.out.println(r[i][1]); } }
 		 */
