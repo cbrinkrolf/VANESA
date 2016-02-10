@@ -588,6 +588,7 @@ public class JSBMLinput {
 			if (bna != null) {
 				// set id and compartment of the bna
 				String id = species.getAttributeValue("id");
+				//System.out.println("id: " + id);
 				String[] idSplit = id.split("_");
 				int idInt = Integer.parseInt(idSplit[1]);
 				try {
@@ -810,6 +811,7 @@ public class JSBMLinput {
 	 * @param attrtmp
 	 */
 	private void handleNodeInformation(String attrtmp, Element child) {
+		//System.out.println("child: "+child);
 		String value = child.getAttributeValue(attrtmp);
 		switch (attrtmp) {
 		// standard cases
@@ -836,13 +838,19 @@ public class JSBMLinput {
 		case "KEGGNode":
 			bna.setKEGGnode(new KEGGNode());
 			addKEGGNode(child);
+			break;
 		case "Color":
 			Element elSub = child.getChild("RGB", null);
-			int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
-			// System.out.println(rgb);
-			Color col = new Color(rgb);
-			// System.out.println(col.getRGB());
-			bna.setColor(col);
+			if (elSub != null) {
+				int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
+				// System.out.println(rgb);
+				Color col = new Color(rgb);
+				// System.out.println(col.getRGB());
+				bna.setColor(col);
+				//System.out.println("color set");
+			}else{
+				//System.out.println("skipped");
+			}
 			// System.out.println(bna.isReference() ? "reference" :
 			// "no reference");
 			// System.out.println(bna.isHidden() ? "hidden" : "not hidden");
