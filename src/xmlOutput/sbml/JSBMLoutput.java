@@ -76,9 +76,10 @@ public class JSBMLoutput {
 
 	/**
 	 * Generates a SBML document via jSBML.
+	 * @throws XMLStreamException 
 	 * @throws IOException
 	 */
-	public String generateSBMLDocument() {
+	public String generateSBMLDocument() throws XMLStreamException {
 		int answer = JOptionPane.YES_OPTION;
 		if(pathway instanceof BiologicalNodeAbstract){
 			Object[] options = {"Save subpathway", "Save complete pathway"};
@@ -243,7 +244,7 @@ public class JSBMLoutput {
 		return message;
 	}
 
-	private Annotation createAnnotation() {
+	private Annotation createAnnotation() throws XMLStreamException {
 		Annotation a = new Annotation();
 		// Save Shape
 		List<Map<String, String>> rangeInfos = RangeSelector.getInstance()
@@ -289,7 +290,7 @@ public class JSBMLoutput {
 		el.addChild(hierarchy);
 		String attr = String.valueOf(pathway.isPetriNet());
 		el.addChild(createElSub(attr, "isPetriNet"));
-		a.appendNoRDFAnnotation(el.toXMLString());
+		a.appendNonRDFAnnotation(el);
 		return a;
 	}
 
@@ -310,7 +311,7 @@ public class JSBMLoutput {
 	}
 
 	// save additional data of the nodes
-	private Annotation createAnnotation(BiologicalNodeAbstract oneNode) {
+	private Annotation createAnnotation(BiologicalNodeAbstract oneNode) throws XMLStreamException {
 		// create new annotation
 		Annotation a = new Annotation();
 		// Save attributes that every node has
@@ -681,12 +682,12 @@ public class JSBMLoutput {
 			}
 		}
 
-		a.appendNoRDFAnnotation(el.toXMLString());
+		a.appendNonRDFAnnotation(el);
 		return a;
 	}
 
 	// Save additional data of the edges
-	private Annotation createAnnotation(BiologicalEdgeAbstract oneEdge) {
+	private Annotation createAnnotation(BiologicalEdgeAbstract oneEdge) throws XMLStreamException {
 		Annotation a = new Annotation();
 		// Save the attributes which every edge has
 		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("reac", "", ""),
@@ -772,7 +773,7 @@ public class JSBMLoutput {
 			el.addChild(createElSub(attr, "ActivationProbability"));
 			// TODO !!!
 		}
-		a.appendNoRDFAnnotation(el.toXMLString());
+		a.appendNonRDFAnnotation(el);
 		return a;
 	}
 

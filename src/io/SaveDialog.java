@@ -25,8 +25,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-
+import javax.xml.stream.XMLStreamException;
 
 import org.jdesktop.swingx.color.EyeDropperColorChooserPanel;
 
@@ -192,7 +191,7 @@ public class SaveDialog {
 			if (overwrite) {
 				try {
 					write();
-				} catch (FileNotFoundException e) {
+				} catch (FileNotFoundException | HeadlessException | XMLStreamException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -216,7 +215,7 @@ public class SaveDialog {
 
 	}
 
-	private void write() throws FileNotFoundException {
+	private void write() throws FileNotFoundException, HeadlessException, XMLStreamException {
 
 		ConnectionSettings.setFileDirectory(file.getAbsolutePath());
 		if (fileFormat.equals(sbmlDescription)) {
