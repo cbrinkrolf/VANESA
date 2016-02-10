@@ -1,5 +1,4 @@
 # VANESA2
-
 To build VANESA2 run `$ ant build`.  
 To run VANESA2 run `$ ant run`.  
 To cleanup generated files from the build process run `$ ant clean`.
