@@ -32,7 +32,8 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 public class MOoutput {
 
 	private static final boolean debug = MainWindow.developer;
-	private static final String tab = "  ";
+	private static final String indentation = "  ";
+	private static final String nwln = System.getProperty("line.separator");
 
 	private OutputStream os = null;
 	private String modelName = null;
@@ -100,27 +101,27 @@ public class MOoutput {
 		// if (debug)
 		// System.out.println(properties+places+transitions+edgesString);
 		StringBuilder sb = new StringBuilder();
-		sb.append("model '" + modelName + "'\r\n");
+		sb.append("model '" + modelName + "'" + this.nwln);
 		;
-		// os.write(new String("model '" + modelName + "'\r\n").getBytes());
+		// os.write(new String("model '" + modelName + "'"'" + this.nwln").getBytes());
 
 		if (packageInfo != null) {
-			// os.write(new String(this.tab + this.packageInfo +
-			// "\r\n").getBytes());
-			sb.append(this.tab + this.packageInfo + "\r\n");
+			// os.write(new String(this.indentation + this.packageInfo +
+			// this.nwln).getBytes());
+			sb.append(this.indentation + this.packageInfo + this.nwln);
 			// os.write(new
-			// String(this.tab + "import PNlib = ConPNlib;\r\n").getBytes());
+			// String(this.indentation + "import PNlib = ConPNlib;" + this.nwln).getBytes());
 		}
 
 		// if (this.packageInfo == null) {
-		// sb.append(this.tab + "inner PNlib.Settings settings1();\r\n");
-		sb.append(this.tab + "inner PNlib.Settings settings(showTokenFlow = true);\r\n");
+		// sb.append(this.indentation + "inner PNlib.Settings settings1();" + this.nwln);
+		sb.append(this.indentation + "inner PNlib.Settings settings(showTokenFlow = true);" + this.nwln);
 		// }
 
 		sb.append(places);
-		sb.append("equation\r\n");
+		sb.append("equation" + this.nwln);
 		sb.append(edgesString);
-		sb.append(this.tab + "annotation(Icon(coordinateSystem(extent={{"+(minX-50)+","+(minY-50)+"},{"+(maxX+50)+","+(maxY+50)+"}})), Diagram(coordinateSystem(extent={{"+(minX-50)+","+(minY-50)+"},{"+(maxX+50)+","+(maxY+50)+"}})));\r\n");
+		sb.append(this.indentation + "annotation(Icon(coordinateSystem(extent={{"+(minX-50)+","+(minY-50)+"},{"+(maxX+50)+","+(maxY+50)+"}})), Diagram(coordinateSystem(extent={{"+(minX-50)+","+(minY-50)+"},{"+(maxX+50)+","+(maxY+50)+"}})));" + this.nwln);
 		sb.append("end '" + modelName + "';");
 
 		String data = sb.toString();
@@ -174,7 +175,7 @@ public class MOoutput {
 
 	private void buildNodes() {
 		for (int i = 1; i <= inhibitCount; i++)
-			places += "PNlib.IA inhibitorArc" + i + ";\r\n";
+			places += "PNlib.IA inhibitorArc" + i + ";" + this.nwln;
 		BiologicalNodeAbstract bna;
 		ArrayList<String> names = new ArrayList<String>();
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
@@ -183,12 +184,12 @@ public class MOoutput {
 			bna = it.next();
 			if (!bna.hasRef()) {
 				for (int i = 0; i < bna.getParameters().size(); i++) {
-					// params+=this.tab + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
-					places = places.concat(this.tab + "parameter Real '_" + bna.getName() + "_" + bna.getParameters().get(i).getName() + "'");
+					// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.nwln;
+					places = places.concat(this.indentation + "parameter Real '_" + bna.getName() + "_" + bna.getParameters().get(i).getName() + "'");
 					if (bna.getParameters().get(i).getUnit().length() > 0) {
 						places = places.concat("(final unit=\"" + bna.getParameters().get(i).getUnit() + "\")");
 					}
-					places = places.concat(" = " + bna.getParameters().get(i).getValue() + ";\r\n");
+					places = places.concat(" = " + bna.getParameters().get(i).getValue() + ";" + this.nwln);
 					// System.out.println("drin");
 				}
 			}
@@ -325,10 +326,10 @@ public class MOoutput {
 			if (bea instanceof PNEdge && bea.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
 				inhibitCount++;
 				if (fromType.equals(Elementdeclerations.s_place) || fromType.equals(Elementdeclerations.place)) {
-					edgesString += this.tab + "connect('" + fromString + "'.outTransition[" + (actualOutEdges.get(fromString) + 1) + "],"
-							+ "inhibitorArc" + inhibitCount + ".inPlace);" + "\r\n";
-					edgesString += this.tab + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString + "'.inPlaces["
-							+ (actualInEdges.get(toString) + 1) + "])"+this.getFromToAnnotation(bea.getFrom(), bea.getTo())+";\r\n";
+					edgesString += this.indentation + "connect('" + fromString + "'.outTransition[" + (actualOutEdges.get(fromString) + 1) + "],"
+							+ "inhibitorArc" + inhibitCount + ".inPlace);" + this.nwln;
+					edgesString += this.indentation + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString + "'.inPlaces["
+							+ (actualInEdges.get(toString) + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo()) + ";" + this.nwln;
 					actualOutEdges.put(fromString, actualOutEdges.get(fromString) + 1);
 					actualInEdges.put(toString, actualInEdges.get(toString) + 1);
 				}
@@ -347,25 +348,25 @@ public class MOoutput {
 	private String getPlaceString(String element, BiologicalNodeAbstract bna, String atr, int inEdges, int outEdges) {
 
 		for (int i = 0; i < bna.getParameters().size(); i++) {
-			// params+=this.tab + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
+			// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.nwln;
 		}
-		return this.tab + element + " '" +
+		return this.indentation + element + " '" +
 
 		// falls die anzahlen nicht stimmen
 		// +numInEdges.get(bna.getVertex().toString())
 		// +numOutEdges.get(bna.getVertex().toString())
 		//
-				bna.getName() + "'(nIn=" + inEdges + ",nOut=" + outEdges + "," + atr + ")"
+				bna.getName() + "'(nIn=" + inEdges + ",nOut=" + outEdges + "," + atr + ") "
 				// +(bioName.containsKey(name)?"(biologicalName = \""+bioName.get(name)+"\")":"")
 				// +" annotation(Placement(transformation(x = "+Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84), "
 				// +"iconTransformation(x = "
 				// +Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84)))"
-				+  getPlacementAnnotation(bna)+";\r\n";
+				+  getPlacementAnnotation(bna) + ";" + this.nwln;
 	}
 
 	private String getTransitionString(BiologicalNodeAbstract bna, String element, String name, String atr, int inEdges, int outEdges) {
 		for (int i = 0; i < bna.getParameters().size(); i++) {
-			// params+=this.tab + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";\r\n";
+			// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.nwln;
 		}
 
 		// String inNumbers = "";
@@ -394,22 +395,22 @@ public class MOoutput {
 		// System.out.println("inPropper: " + in);
 		// System.out.println("outPropper: " + out);
 
-		return this.tab + element + " '" + bna.getName() + "'(nIn=" + inEdges + ",nOut=" + outEdges + "," + atr + ",arcWeightIn=" + in + ",arcWeightOut="
-				+ out + ")" + getPlacementAnnotation(bna)+";\r\n";
+		return this.indentation + element + " '" + bna.getName() + "'(nIn=" + inEdges + ",nOut=" + outEdges + "," + atr + ",arcWeightIn=" + in + ",arcWeightOut="
+				+ out + ") " + getPlacementAnnotation(bna) + ";" + this.nwln;
 	}
 
 	private String getConnectionStringTP(String from, String to, BiologicalEdgeAbstract bea) {
 		// String from = bea.getFrom().getName();
 		// String to = bea.getTo().getName();
-		String result = this.tab + "connect('" + from + "'.outPlaces[" + (actualOutEdges.get(from) + 1) + "],'" + to + "'.inTransition["
-				+ (actualInEdges.get(to) + 1) + "])"+this.getFromToAnnotation(bea.getFrom(), bea.getTo())+";"
+		String result = this.indentation + "connect('" + from + "'.outPlaces[" + (actualOutEdges.get(from) + 1) + "],'" + to + "'.inTransition["
+				+ (actualInEdges.get(to) + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo())+";"
 				// +" annotation(Line(points = {{"
 				// +Math.floor(scale*(fromPoint.getX()+xshift)+10)+","
 				// +Math.floor(scale*(-(fromPoint.getY()+yshift))+((numOutEdges.get(from)-1)*pinabstand/2-(actualOutEdges.get(from))*pinabstand))+"},{"
 				// +Math.floor(scale*(toPoint. getX()+xshift)-19)+","
 				// +Math.floor(scale*(-(toPoint.
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
-				+ "\r\n";
+				+ this.nwln;
 		// System.out.println(to+".tSumIn_["+(actualInEdges.get(to) + 1)+"]");
 		this.bea2resultkey.put(bea, "'" + to + "'.tokenFlow.inflow[" + (actualInEdges.get(to) + 1) + "]");
 
@@ -421,15 +422,15 @@ public class MOoutput {
 	private String getConnectionStringPT(String from, String to, BiologicalEdgeAbstract bea) {
 		// String from = bea.getFrom().getName();
 		// String to = bea.getTo().getName();
-		String result = this.tab + "connect('" + from + "'.outTransition[" + (actualOutEdges.get(from) + 1) + "],'" + to + "'.inPlaces["
-				+ (actualInEdges.get(to) + 1) + "])"+this.getFromToAnnotation(bea.getFrom(), bea.getTo())+";"
+		String result = this.indentation + "connect('" + from + "'.outTransition[" + (actualOutEdges.get(from) + 1) + "],'" + to + "'.inPlaces["
+				+ (actualInEdges.get(to) + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo()) + ";"
 				// +" annotation(Line(points = {{"
 				// +Math.floor(scale*(fromPoint.getX()+xshift)+19)+","
 				// +Math.floor(scale*(-(fromPoint.getY()+yshift))+((numOutEdges.get(from)-1)*pinabstand/2-(actualOutEdges.get(from))*pinabstand))+"},{"
 				// +Math.floor(scale*(toPoint. getX()+xshift)-10)+","
 				// +Math.floor(scale*(-(toPoint.
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
-				+ "\r\n";
+				+ this.nwln;
 		// System.out.println(from+".tSumOut_["+(actualOutEdges.get(from) +
 		// 1)+"]");
 		this.bea2resultkey.put(bea, "'" + from + "'.tokenFlow.outflow[" + (actualOutEdges.get(from) + 1) + "]");
