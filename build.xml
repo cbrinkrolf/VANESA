@@ -105,6 +105,7 @@
   <target name="clean">
     <delete dir="bin"/>
     <delete dir="logfiles"/>
+    <delete file="jsbml.log"/>
   </target>
 
   <target name="cleanall" depends="clean"/>
