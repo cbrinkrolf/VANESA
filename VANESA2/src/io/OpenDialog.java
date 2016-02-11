@@ -1,27 +1,27 @@
 package io;
 
-import xmlInput.sbml.JSBMLinput;
+import biologicalElements.Pathway;
+import configurations.ConnectionSettings;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindowSingleton;
 import gui.ProgressBar;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.xml.stream.XMLStreamException;
-
-import biologicalElements.Pathway;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.lang3.SystemUtils;
+import xmlInput.sbml.JSBMLinput;
 import xmlInput.sbml.VAMLInput;
-import configurations.ConnectionSettings;
 
 public class OpenDialog extends SwingWorker {
 
@@ -58,9 +58,9 @@ public class OpenDialog extends SwingWorker {
 
 	private GraphContainer con = ContainerSingelton.getInstance();
 	private GraphInstance graphInstance = new GraphInstance();
-	
+
 	private Pathway pathway = null;
-	
+
 	public OpenDialog(Pathway pw){
 		this();
 		pathway = pw;
@@ -68,17 +68,37 @@ public class OpenDialog extends SwingWorker {
 
 	public OpenDialog() {
 
-		if (ConnectionSettings.getFileDirectory() != null) {
-			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
+		String pathWorkingDirectory = null;
+		String path = "";
+
+		if (SystemUtils.IS_OS_WINDOWS) {
+			pathWorkingDirectory = System.getenv("APPDATA");
 		} else {
-			chooser = new JFileChooser();
+			pathWorkingDirectory = System.getenv("HOME");
 		}
+		pathWorkingDirectory += File.separator + "vanesa";
+
+		try {
+			XMLConfiguration xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+			path = xmlSettings.getString("OpenDialog-Path");
+		}
+		catch(ConfigurationException e)
+		{
+			System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
+		}
+
+		//if (ConnectionSettings.getFileDirectory() != null) {
+		//	chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
+		//} else {
+		//	chooser = new JFileChooser(path);
+		//}
+		chooser = new JFileChooser(path);
 
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.addChoosableFileFilter(new MyFileFilter(sbml, sbmlDescription));
 		chooser.addChoosableFileFilter(new MyFileFilter(vaml, vamlDescription));
 		// chooser.addChoosableFileFilter(new MyFileFilter(mo, moDescription));
-		
+
 //		chooser.addChoosableFileFilter(new MyFileFilter(modellicaSimulation,
 //				modellicaResultDescription));
 //		chooser.addChoosableFileFilter(new MyFileFilter(modellicaSimulationNew,
@@ -87,10 +107,23 @@ public class OpenDialog extends SwingWorker {
 		chooser.addChoosableFileFilter(new MyFileFilter(poDescription,
 				phosphoMlDescription));
 		chooser.addChoosableFileFilter(new MyFileFilter(txt, txtDescription));
-		
 
 		option = chooser.showOpenDialog(MainWindowSingleton.getInstance());
 
+		if (option == JFileChooser.APPROVE_OPTION)
+		{
+			File fileDir = chooser.getCurrentDirectory();
+			XMLConfiguration xmlSettings = new XMLConfiguration();
+			xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
+			xmlSettings.addProperty("OpenDialog-Path", fileDir.getAbsolutePath());
+			try {
+				xmlSettings.save();
+			}
+			catch(ConfigurationException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private void open() {
@@ -113,7 +146,7 @@ public class OpenDialog extends SwingWorker {
 					e.printStackTrace();
 				}
 			}  else if (fileFormat.equals(sbmlDescription)) {
-				
+
 					JSBMLinput jsbmlInput;
 					jsbmlInput = pathway==null ? new JSBMLinput() : new JSBMLinput(pathway);
 					String result;
