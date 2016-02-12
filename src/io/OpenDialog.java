@@ -69,8 +69,6 @@ public class OpenDialog extends SwingWorker {
 	public OpenDialog() {
 
 		String pathWorkingDirectory = null;
-		String path = "";
-
 		if (SystemUtils.IS_OS_WINDOWS) {
 			pathWorkingDirectory = System.getenv("APPDATA");
 		} else {
@@ -78,21 +76,20 @@ public class OpenDialog extends SwingWorker {
 		}
 		pathWorkingDirectory += File.separator + "vanesa";
 
-		try {
-			XMLConfiguration xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-			path = xmlSettings.getString("OpenDialog-Path");
+		if (ConnectionSettings.getFileDirectory() != null) {
+			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
+		} else {
+			String path = "";
+			try {
+				XMLConfiguration xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+				path = xmlSettings.getString("OpenDialog-Path");
+			}
+			catch(ConfigurationException e)
+			{
+				System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
+			}
+			chooser = new JFileChooser(path);
 		}
-		catch(ConfigurationException e)
-		{
-			System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
-		}
-
-		//if (ConnectionSettings.getFileDirectory() != null) {
-		//	chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
-		//} else {
-		//	chooser = new JFileChooser(path);
-		//}
-		chooser = new JFileChooser(path);
 
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.addChoosableFileFilter(new MyFileFilter(sbml, sbmlDescription));
@@ -113,10 +110,16 @@ public class OpenDialog extends SwingWorker {
 		if (option == JFileChooser.APPROVE_OPTION)
 		{
 			File fileDir = chooser.getCurrentDirectory();
-			XMLConfiguration xmlSettings = new XMLConfiguration();
-			xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
-			xmlSettings.addProperty("OpenDialog-Path", fileDir.getAbsolutePath());
 			try {
+				XMLConfiguration xmlSettings = null;
+				File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
+				if(f.exists()){
+					xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+				}else{
+					xmlSettings = new XMLConfiguration();
+					xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
+				}
+				xmlSettings.setProperty("OpenDialog-Path", fileDir.getAbsolutePath());
 				xmlSettings.save();
 			}
 			catch(ConfigurationException e)
