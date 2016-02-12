@@ -1,5 +1,9 @@
 package io;
 
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+//import ch.qos.logback.classic.LoggerContext;
+import configurations.ConnectionSettings;
 import fr.lip6.move.pnml.framework.utils.exception.InvalidIDException;
 import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
 import gonOutput.GONoutput;
@@ -9,40 +13,34 @@ import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import io.graphML.SaveGraphML;
-
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.xml.stream.XMLStreamException;
-
-import org.jdesktop.swingx.color.EyeDropperColorChooserPanel;
-
-//import ch.qos.logback.classic.LoggerContext;
 import moOutput.MOoutput;
-import petriNet.PNEdge;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.lang3.SystemUtils;
+import org.jdesktop.swingx.color.EyeDropperColorChooserPanel;
+//import org.slf4j.LoggerFactory;
 import petriNet.Place;
+import petriNet.PNEdge;
 import petriNet.Transition;
 import save.graphPicture.PngFilter;
 import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.PNMLOutput;
 import xmlOutput.sbml.VAMLoutput;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.ConnectionSettings;
-
-//import org.slf4j.LoggerFactory;
 
 public class SaveDialog {
 
@@ -91,7 +89,7 @@ public class SaveDialog {
 
 	private String pngDescription = "PNG Image (*.png)";
 	private String png = "png";
-	
+
 	private String yamlDescription = "YAML File (*.yaml)";
 	private String yaml = "yaml";
 
@@ -118,6 +116,15 @@ public class SaveDialog {
 
 		this.p = p;
 
+		// Get working directory
+		String pathWorkingDirectory = null;
+		if (SystemUtils.IS_OS_WINDOWS) {
+			pathWorkingDirectory = System.getenv("APPDATA");
+		} else {
+			pathWorkingDirectory = System.getenv("HOME");
+		}
+		pathWorkingDirectory += File.separator + "vanesa";
+
 		sbmlBool = (format & FORMAT_SBML) == FORMAT_SBML;
 		graphMLBool = (format & FORMAT_GRAPHML) == FORMAT_GRAPHML;
 		moBool = (format & FORMAT_MO) == FORMAT_MO;
@@ -133,7 +140,18 @@ public class SaveDialog {
 		if (ConnectionSettings.getFileDirectory() != null) {
 			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
 		} else {
-			chooser = new JFileChooser();
+			// Use the path that was used last time
+			String path = "";
+
+			try {
+				XMLConfiguration xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+				path = xmlSettings.getString("SaveDialog-Path");
+			}
+			catch(ConfigurationException e)
+			{
+				System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
+			}
+			chooser = new JFileChooser(path);
 		}
 
 		chooser.setAcceptAllFileFilterUsed(false);
@@ -174,6 +192,24 @@ public class SaveDialog {
 
 		int option = chooser.showSaveDialog(MainWindowSingleton.getInstance());
 		if (option == JFileChooser.APPROVE_OPTION) {
+			// Save path to settings.xml
+			File fileDir = chooser.getCurrentDirectory();
+			XMLConfiguration xmlSettings = null;
+			File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
+			try {
+				if(f.exists()){
+					xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+				}else{
+					xmlSettings = new XMLConfiguration();
+					xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
+				}
+				xmlSettings.setProperty("SaveDialog-Path", fileDir.getAbsolutePath());
+				xmlSettings.save();
+			}
+			catch(ConfigurationException e)
+			{
+				e.printStackTrace();
+			}
 
 			fileFormat = chooser.getFileFilter().getDescription();
 			file = chooser.getSelectedFile();
@@ -282,7 +318,7 @@ public class SaveDialog {
 				 * convertToPetriNet.getBiologicalEdges
 				 * (),convertToPetriNet.getBiologicalNodes
 				 * (),convertToPetriNet.getBiologicalTransitions());
-				 * 
+				 *
 				 * try { JOptionPane.showMessageDialog(
 				 * MainWindowSingelton.getInstance(),pnmlDescription +
 				 * pnmlOutput.generatePNMLDocument() + " File saved"); } catch
@@ -391,11 +427,11 @@ public class SaveDialog {
 			getCorrectFile(yaml);
 			try{
 				String exportPath = chooser.getSelectedFile().getPath();
-				
+
 				if(exportPath.contains(".yaml") == false){
 					exportPath = exportPath + ".yaml";
 				}
-				
+
 				InputStream internYaml = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
 				FileOutputStream exportYaml = null;
 				File exportFile = new File(exportPath);

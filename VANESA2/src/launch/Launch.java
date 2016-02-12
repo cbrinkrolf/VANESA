@@ -221,8 +221,7 @@ public class Launch {
 
 				ConnectionSettings.setWebServiceUrl(webservice);
 
-				ConnectionSettings.setFileDirectory(System
-						.getProperty("user.home"));
+				ConnectionSettings.setFileDirectory(null);
 
 				// if(ConnectionSettingsSingelton.getInstance().isInternetConnection()){
 				try {
@@ -239,7 +238,7 @@ public class Launch {
 					 * System.out.println("start"); DAWISWebstartConnector dws =
 					 * new DAWISWebstartConnector( dawis_sessionid);
 					 * dws.execute();
-					 * 
+					 *
 					 * }
 					 */
 
