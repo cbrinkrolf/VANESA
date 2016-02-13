@@ -56,9 +56,9 @@ import biologicalObjects.nodes.RNA;
 /**
  * To read a SBML file and put the results on the graph. A SBML which has been
  * passed over to an instance of this class will be parsed to the VANESA graph.
- * 
+ *
  * @author Annika and Sandra
- * 
+ *
  */
 public class JSBMLinput {
 
@@ -145,7 +145,7 @@ public class JSBMLinput {
 
 	/**
 	 * creates the annotation of the model
-	 * 
+	 *
 	 * @param annotationNode
 	 */
 	private void createAnnotation(Element annotationNode) {
@@ -173,7 +173,7 @@ public class JSBMLinput {
 
 	/**
 	 * creates the compartments not needed yet
-	 * 
+	 *
 	 * @param compartmentNode
 	 */
 	private void createCompartment(Element compartmentNode) {
@@ -187,7 +187,7 @@ public class JSBMLinput {
 
 	/**
 	 * creates the reactions
-	 * 
+	 *
 	 * @param reactionNode
 	 */
 	private void createReaction(Element reactionNode) {
@@ -351,7 +351,7 @@ public class JSBMLinput {
 
 	/**
 	 * creates the species
-	 * 
+	 *
 	 * @param speciesNode
 	 */
 	private void createSpecies(Element speciesNode) {
@@ -653,7 +653,7 @@ public class JSBMLinput {
 
 	/**
 	 * Coarses the nodes as described in the loaded sbml file.
-	 * 
+	 *
 	 * @param annotationNode
 	 *            Annotation Area of the imported model.
 	 * @author tloka
@@ -807,7 +807,7 @@ public class JSBMLinput {
 
 	/**
 	 * Test which Information is set and handle it
-	 * 
+	 *
 	 * @param attrtmp
 	 */
 	private void handleNodeInformation(String attrtmp, Element child) {
@@ -1162,7 +1162,7 @@ public class JSBMLinput {
 
 	/**
 	 * adds ranges to the graph
-	 * 
+	 *
 	 * @param rangeElement
 	 */
 	private void addRange(Element rangeElement) {

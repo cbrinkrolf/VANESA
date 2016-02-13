@@ -653,6 +653,8 @@ public class MOoutput {
 		Point2D p1;
 		Point2D p2;
 		String color;
+		double shiftFrom;
+		double shiftTo;
 
 		if(from.hasRef()){
 			p1 = pw.getGraph().getVertexLocation(from.getRef());
@@ -671,6 +673,18 @@ public class MOoutput {
 			color = "{0, 0, 0}";
 		}
 
-		return "annotation(Line(color=" + color + ", points={{"+p1.getX()+","+p1.getY()*factor+"}, {"+p2.getX()+","+p2.getY()*factor+"}}))";
+		if(from.getBiologicalElement().equals(Elementdeclerations.s_place)) {
+			shiftFrom = 25;
+		} else {
+			shiftFrom = 10;
+		}
+
+		if(to.getBiologicalElement().equals(Elementdeclerations.s_place)) {
+			shiftTo = -25;
+		} else {
+			shiftTo = -10;
+		}
+
+		return "annotation(Line(color=" + color + ", points={{"+(p1.getX()+shiftFrom)+","+p1.getY()*factor+"}, {"+(p2.getX()+shiftTo)+","+p2.getY()*factor+"}}))";
 	}
 }
