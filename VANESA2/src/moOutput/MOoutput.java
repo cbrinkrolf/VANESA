@@ -41,7 +41,6 @@ public class MOoutput {
 
 	private String places = "";
 	private String edgesString = "";
-	private double xmin = Double.MAX_VALUE, xmax = Double.MIN_VALUE, ymin = Double.MAX_VALUE, ymax = Double.MIN_VALUE;
 	private final Hashtable<String, Integer> numInEdges = new Hashtable<String, Integer>();
 	private final Hashtable<String, Integer> numOutEdges = new Hashtable<String, Integer>();
 	private final Hashtable<String, Integer> actualInEdges = new Hashtable<String, Integer>();
@@ -59,8 +58,8 @@ public class MOoutput {
 
 	double minX = Double.MAX_VALUE;
 	double minY = Double.MAX_VALUE;
-	double maxX = Double.MIN_VALUE;
-	double maxY = Double.MIN_VALUE;
+	double maxX = -Double.MAX_VALUE;
+	double maxY = -Double.MAX_VALUE;
 
 	double factor = -1;
 
@@ -160,15 +159,6 @@ public class MOoutput {
 				nodeType.put(bna, biologicalElement);
 				// bioName.put(name, bna.getLabel());
 				// bioObject.put(name, bna);
-
-				if (xmin > p.getX())
-					xmin = p.getX();
-				if (xmax < p.getX())
-					xmax = p.getX();
-				if (ymin > p.getY())
-					ymin = p.getY();
-				if (ymax < p.getY())
-					ymax = p.getY();
 			}
 		}
 	}
