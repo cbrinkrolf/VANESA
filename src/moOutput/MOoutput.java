@@ -114,7 +114,7 @@ public class MOoutput {
 
 		// if (this.packageInfo == null) {
 		// sb.append(this.indentation + "inner PNlib.Settings settings1();" + this.endl);
-		sb.append(this.indentation + "inner PNlib.Settings settings(showTokenFlow = true);" + this.endl);
+		sb.append(this.indentation + "inner PNlib.Settings settings(showTokenFlow = true) annotation(Placement(visible=true, transformation(origin={"+(minX-30)+","+(maxY+30)+"}, extent={{-20,-20}, {20,20}}, rotation=0)));" + this.endl);
 		// }
 
 		sb.append(places);
