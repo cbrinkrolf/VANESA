@@ -61,8 +61,6 @@ public class MOoutput {
 	double maxX = -Double.MAX_VALUE;
 	double maxY = -Double.MAX_VALUE;
 
-	double factor = -1;
-
 	public MOoutput(OutputStream os, Pathway pathway) {
 		this(os, pathway, null);
 	}
@@ -621,7 +619,7 @@ public class MOoutput {
 	private String getPlacementAnnotation(BiologicalNodeAbstract bna) {
 
 		double x = pw.getGraph().getVertexLocation(bna).getX();
-		double y = pw.getGraph().getVertexLocation(bna).getY()*factor;
+		double y = -pw.getGraph().getVertexLocation(bna).getY();
 		if (x < minX) {
 			minX = x;
 		}
@@ -675,6 +673,6 @@ public class MOoutput {
 			shiftTo = -10;
 		}
 
-		return "annotation(Line(color=" + color + ", points={{"+(p1.getX()+shiftFrom)+","+p1.getY()*factor+"}, {"+(p2.getX()+shiftTo)+","+p2.getY()*factor+"}}))";
+		return "annotation(Line(color=" + color + ", points={{"+(p1.getX()+shiftFrom)+","+(-p1.getY())+"}, {"+(p2.getX()+shiftTo)+","+(-p2.getY())+"}}))";
 	}
 }
