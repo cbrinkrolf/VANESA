@@ -1,5 +1,9 @@
 package petriNet;
 
+import biologicalElements.GraphElementAbstract;
+import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.ChangedFlags;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
@@ -9,7 +13,7 @@ import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 import gui.SimMenue;
-
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -17,27 +21,20 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import javax.swing.JOptionPane;
-
 import moOutput.MOoutput;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
-
-import biologicalElements.GraphElementAbstract;
-import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class PetriNetSimulation implements ActionListener {
 	private static String pathCompiler = null;
@@ -170,28 +167,17 @@ public class PetriNetSimulation implements ActionListener {
 						new File(pathSim).mkdir();
 					}
 
-					boolean abort = false;
-					String missing = "";
 					if (simLibs.size() < 1) {
-						abort = true;
-						// missing += "PNlib.mo\n in " + pathWorkingDirectory;
-						missing += "missing lib folders in "
-								+ pathWorkingDirectory;
-					}
-					/*
-					 * if (!new File(path + "dsmodel.c").exists()) { abort =
-					 * true; missing += "dsmodel.c\n"; } if (!new File(path +
-					 * "myrandom.c").exists()) { abort = true; missing +=
-					 * "myrandom.c\n"; }
-					 */
-					if (abort) {
-						JOptionPane
-								.showMessageDialog(
-										w,
-										"Following files which are required for simulation are missing in the simulation folder:\n"
-												+ missing,
-										"Simulation aborted...",
-										JOptionPane.ERROR_MESSAGE);
+						if(JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(w,
+							"Cannot find any Modelica Petri net library in the working directory.\n\n"
+							+ "Please put a Modelica Petri net library into \"" + pathWorkingDirectory + "\".\n"
+							+ "You can download the latest version of PNlib on GitHub (\"https://github.com/modelica-3rdparty/PNlib\")\n\n"
+							+ "Do you want to open the download page in your default web browser?",
+							"Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
+							if(Desktop.isDesktopSupported()) {
+								Desktop.getDesktop().browse(new URI("https://github.com/modelica-3rdparty/PNlib/releases"));
+							}
+						}
 						w.unBlurrUI();
 						return;
 					}
@@ -215,19 +201,15 @@ public class PetriNetSimulation implements ActionListener {
 
 					// simT.run();
 
-					String bin = null;
+					String bin = pathCompiler + "bin" + File.separator + "omc";
 
 					if (SystemUtils.IS_OS_WINDOWS) {
-						bin = pathCompiler + "bin" + File.separator + "omc.exe";
-					} else {
-						bin = pathCompiler + "bin" + File.separator + "omc";
+						bin += ".exe";
 					}
+
 					final Process p = new ProcessBuilder(bin, pathSim
 							+ "simulation.mos").start();
 					InputStream os = p.getInputStream();
-
-					// simulation.exe -override=outputFormat=ia -port=11111
-					// -lv=LOG_STATS
 
 					// System.out.println(s);
 					boolean buildSuccess = true;
@@ -546,7 +528,7 @@ public class PetriNetSimulation implements ActionListener {
 				 * Thread t3 = new Thread() { public void run() { long totalTime
 				 * = 60000; try { sleep(2000); for (long t = 0; t < totalTime; t
 				 * += 200) {
-				 * 
+				 *
 				 * sleep(200); Iterator<BiologicalNodeAbstract> it =
 				 * graphInstance.getPathway().getAllNodes().iterator();
 				 * BiologicalNodeAbstract bna; Place p;
@@ -557,7 +539,7 @@ public class PetriNetSimulation implements ActionListener {
 				 * Place){ p = (Place) bna;
 				 * p.getPetriNetSimulationData().add(Math.random());
 				 * //System.out.println(Math.random()); } }
-				 * 
+				 *
 				 * } System.out.println("endeeeeee"); stopped = true; } catch
 				 * (Exception e) { e.printStackTrace(); } } }; t3.start();
 				 */
@@ -704,22 +686,23 @@ public class PetriNetSimulation implements ActionListener {
 		List<File> libs = new ArrayList<File>();
 		if (directory.isDirectory()) {
 			File[] files = directory.listFiles();
-			File f;
 			for (int i = 0; i < files.length; i++) {
-				f = files[i];
+				File f = files[i];
 				if (f.isDirectory()) {
-					// System.out.println("folder: "+f.getName());
+					// System.out.println("folder: " + f.getName());
 					if (new File(f, "package.mo").exists()) {
 						libs.add(f);
-						// System.out.println("existiert: "+ f.getName());
+						// System.out.println("existiert: " + f.getName());
 					} else {
-						File g = new File(f + File.separator + f.getName());
-						if (new File(g, "package.mo").exists()) {
-							libs.add(g);
+						File[] files2 = f.listFiles();
+						for (int j = 0; j < files2.length; j++) {
+							File f2 = files2[j];
+							if (new File(f2, "package.mo").exists()) {
+								libs.add(f2);
+							}
 						}
 					}
 				}
-				// System.out.println(files[i].getName());
 			}
 		}
 		return libs;
