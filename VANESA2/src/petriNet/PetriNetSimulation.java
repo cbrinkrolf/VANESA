@@ -573,9 +573,21 @@ public class PetriNetSimulation implements ActionListener {
 			 * , "Simulation done...", JOptionPane.INFORMATION_MESSAGE);
 			 */
 		} else {
-			JOptionPane.showMessageDialog(w,
-					"Environment variable OPENMODELICAHOME not found.",
-					"OPENMODELICA not found...", JOptionPane.QUESTION_MESSAGE);
+			if(JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(w,
+				"Cannot find OpenModelica installation.\n\n"
+				+ "Please install OpenModelica from \"https://openmodelica.org\".\n"
+				+ "If OpenModelica is already installed, please set\n"
+				+ "environment variable OPENMODELICAHOME to the installation directory.\n\n"
+				+ "Do you want to open the OpenModelica homepage in your default web browser?",
+				"Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
+				try {
+					if(Desktop.isDesktopSupported()) {
+						Desktop.getDesktop().browse(new URI("https://openmodelica.org"));
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
 			w.unBlurrUI();
 		}
 	}
