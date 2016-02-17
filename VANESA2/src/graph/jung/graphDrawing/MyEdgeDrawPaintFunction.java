@@ -27,6 +27,9 @@ public class MyEdgeDrawPaintFunction implements
 	Color dotted = Color.LIGHT_GRAY;
 	Color dotted_black = Color.BLACK.brighter();
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	Color alphaEdge = new Color(dotted.darker().getRed(),  
+			dotted.darker().getGreen(),  
+			dotted.darker().getBlue(), settings.getEdgeOpacity());
 
 	protected boolean graphTheory = false;
 
@@ -65,7 +68,7 @@ public class MyEdgeDrawPaintFunction implements
 							return dotted;
 					} else {
 						// Set opacity specified by settings value
-						return new Color( bea.getColor().getRed(),  bea.getColor().getGreen(),  bea.getColor().getBlue(), settings.getEdgeOpacity());
+						return alphaEdge;
 //						return bea.getColor().darker();
 					}
 				} else {
@@ -113,5 +116,8 @@ public class MyEdgeDrawPaintFunction implements
 		else
 			return getDrawPaintWithGraphTheory(bea);
 	}
-
+	
+	public void updateEdgeAlphaValue(){
+		alphaEdge = new Color(dotted.getRed(),  dotted.getGreen(),  dotted.getBlue(), settings.getEdgeOpacity());
+	}
 }
