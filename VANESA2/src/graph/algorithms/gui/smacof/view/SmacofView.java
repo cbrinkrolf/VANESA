@@ -19,12 +19,21 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.lucene.analysis.CharArrayMap.EntrySet;
 import org.jdesktop.swingx.JXTable;
 import org.jfree.ui.RefineryUtilities;
 
+import cern.colt.Arrays;
+import cluster.clientimpl.ClusterComputeThread;
+import cluster.clientimpl.ComputeCallback;
+import cluster.slave.JobTypes;
+import cluster.slave.LayoutPoint2D;
 import biologicalElements.GraphElementAbstract;
+import biologicalElements.Pathway;
 import graph.ContainerSingelton;
+import graph.GraphContainer;
 import graph.GraphInstance;
+import graph.algorithms.NetworkProperties;
 import graph.algorithms.NodeAttributeNames;
 import graph.algorithms.NodeAttributeTypes;
 import graph.algorithms.gui.smacof.DoSmacof;
@@ -40,13 +49,17 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -69,6 +82,7 @@ public class SmacofView extends JFrame implements ActionListener {
 	private JComboBox<String> choosedismeasure;
 	private JButton startcomputationbutton;
 	private JButton stopcomputationbutton;
+	private JCheckBox remotecomputation;
 	private JSlider slidermaxiter;
 	private JSlider sliderepsilon;
 	private JSlider sliderp;
@@ -92,12 +106,27 @@ public class SmacofView extends JFrame implements ActionListener {
 		    "WAVE_HEDGES",
 		    "ANGULAR_SEPERATION",
 		    "CORRELATION" };
+	private final String[] dismeasure_remote = {
+            "euclidean",
+            "cityblock",
+            "minkowski",
+            "correlation",
+            "angularseperatin",
+            "wavehedges",
+            "bahattacharyya",
+            "soergel",
+            "braycurtis",
+            "divergence",
+            "canberra"};
 	private HashMap<Integer, double[]> smacof_data_map = new HashMap<>();
 	private HashMap<BiologicalNodeAbstract, Integer> mapped_nodes = new HashMap<>();
+	private HashMap<Integer, BiologicalNodeAbstract> mapped_nodes_backwards = new HashMap<>();
 	private HashMap<String, Integer> attributes = new HashMap<>();
 	private Object[][] tabledata;
 	private String[] tableColumnNames = { "Type", "Name", "Count", "Evaluate" };
 	final int TYPE_STR = 0, NAME_STR = 1, COUNT_STR = 2, UPLOAD_BOOL = 3;
+	
+	private ComputeCallback helper;
 
 	public SmacofView() {		
 		super("SMACOF: "+MainWindowSingleton.getInstance().getCurrentPathway());
@@ -117,6 +146,17 @@ public class SmacofView extends JFrame implements ActionListener {
 						attributes.put(na.getName(), attributes.get(na.getName()) + 1);
 					}
 				}
+				//Martin
+				for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.GRAPH_PROPERTY)) {
+					// count mapped nodes with given attribute
+					if (!attributes.containsKey(na.getName())) {
+						attributes.put(na.getName(), 1);
+					} else {
+						attributes.put(na.getName(), attributes.get(na.getName()) + 1);
+					}
+				}
+				
+				
 			}
 			// tabledata fuer die Datentabelle anlegen und befuellen
 			tabledata = new Object[attributes.keySet().size()][tableColumnNames.length];
@@ -206,11 +246,17 @@ public class SmacofView extends JFrame implements ActionListener {
 		startcomputationbutton = new JButton("start computation");
 		startcomputationbutton.setActionCommand("start computation");
 		startcomputationbutton.addActionListener(this);
-		
+				
 		stopcomputationbutton = new JButton("stop computation");
 		stopcomputationbutton.setActionCommand("stop computation");
 		stopcomputationbutton.addActionListener(this);
 		stopcomputationbutton.setEnabled(false);
+		
+		remotecomputation = new JCheckBox("over remote");
+		remotecomputation.setEnabled(true);
+		remotecomputation.addActionListener(this);
+		remotecomputation.setActionCommand("remotecomputation");
+		
 		
 		labelcuriteration = new JLabel("iteration");
 		labelcurepsilon = new JLabel("current epsilon");
@@ -234,7 +280,8 @@ public class SmacofView extends JFrame implements ActionListener {
 		panelparam.add(sliderresultdim, "wrap");
 		
 		panelparam.add(startcomputationbutton, "");
-		panelparam.add(stopcomputationbutton, "wrap");
+		panelparam.add(stopcomputationbutton, "");
+		panelparam.add(remotecomputation, "wrap");
 		
 		panelparam.add(new JLabel("computation status"), "wrap");
 		panelparam.add(labelcuriteration, "wrap");
@@ -247,6 +294,23 @@ public class SmacofView extends JFrame implements ActionListener {
 		try {
 			String command = e.getActionCommand();
 			switch(command) {
+			
+			// Bei auswahl des remote Aufrufs gelten andere Distanzmaﬂe
+			// Diese werden dann beim ausw‰hlen gesetzt
+			case "remotecomputation":
+				
+				if(remotecomputation.isSelected()){
+					choosedismeasure.removeAllItems();
+					for(String rd : dismeasure_remote)
+						choosedismeasure.addItem(rd);
+				}else{
+					choosedismeasure.removeAllItems();
+					for(String ld : dismeasure)
+						choosedismeasure.addItem(ld);
+				}				
+				break;
+			
+			
 			// Start der Berechnungen
 			case "start computation":
 				// Bevor der Algorithmus gestartet wird, muessen die angewaehlten Daten verpackt werden:
@@ -262,6 +326,7 @@ public class SmacofView extends JFrame implements ActionListener {
 				int node_id = 0;
 				for (BiologicalNodeAbstract bna : graph.getAllVertices()) {
 					mapped_nodes.put(bna, node_id);
+					mapped_nodes_backwards.put(node_id, bna);
 					smacof_data_map.put(node_id, new double[size_used_attributes]);
 					for (int line = 0; line < attributes.keySet().size(); line++) {
 						if ((Boolean) tabledata[line][UPLOAD_BOOL]) {
@@ -277,6 +342,21 @@ public class SmacofView extends JFrame implements ActionListener {
 				
 				// hier wird der Thread fuer den SMACOF Algorithmus angestossen
 				double myepsilon = sliderepsilon.getValue() >= 0 ? sliderepsilon.getValue() : Math.pow(10, sliderepsilon.getValue());
+				//MARTIN
+//				//APSP statt werte
+//				NetworkProperties np = new NetworkProperties();
+//				short[][] apsp = np.AllPairShortestPaths(false);
+//				smacof_data_map.clear();
+//				for (int i = 0; i < apsp.length; i++) {
+//					double[] dline = new double[apsp[i].length];
+//					for(int j = 0; j< apsp[i].length; j++){
+//						dline[j] = apsp[i][j];
+//					}
+//					smacof_data_map.put(i, dline);
+//					
+//				}
+				
+				if(!remotecomputation.isSelected()){
 				dosmacof = new DoSmacof(smacof_data_map,
 						mapped_nodes,
 						(String) choosedismeasure.getSelectedItem(),
@@ -287,6 +367,11 @@ public class SmacofView extends JFrame implements ActionListener {
 				// start SMACOF algorithm as a thread
 				startcomputationbutton.setEnabled(false);
 				dosmacof.start();
+				}else {
+					//Do remote call
+					startRemoteCall();
+				}				
+				
 				MainWindow w = MainWindowSingleton.getInstance();
 				w.showProgressBar("computing new coordinates via SMACOF ...");
 				stopcomputationbutton.setEnabled(true);
@@ -347,6 +432,156 @@ public class SmacofView extends JFrame implements ActionListener {
         return shortend;
     }
 	
+    /**
+     * invoke the remote call over DaNIeL and get results
+     * @throws IOException 
+     */
+    private void startRemoteCall() throws IOException{
+    	//convert Smacof data map to Double variant
+    	HashMap<Integer, Double[]> tcpmap = new HashMap<>(); 
+    	Double[] tcparray;
+    	for(Entry<Integer,double[]> entry : smacof_data_map.entrySet()){
+    		Integer key = entry.getKey();
+    		double[] value = entry.getValue();
+    		
+    		tcparray = new Double[value.length];
+    		for(int i = 0; i<value.length; i++){
+    			tcparray[i] = new Double(value[i]);
+    		}
+    		
+    		tcpmap.put(key, tcparray);   		
+    	}
+    	// cellular component smacof daten
+    	BiologicalNodeAbstract bna;
+		Double[] cells;
+
+		for (int i = 0; i < smacof_data_map.size(); i++) {
+			cells = new Double[11];
+			for (int b = 0; b < cells.length; b++) {
+				cells[b] = new Double(0);
+			}
+			bna = mapped_nodes_backwards.get(i);
+			for (NodeAttribute na : bna.getNodeAttributes()) {
+				if (na.getName().equals(NodeAttributeNames.GO_CELLULAR_COMPONENT)) {
+
+					if (na.getStringvalue().equals("Nucleus"))
+						cells[0] = new Double(1);
+					else if (na.getStringvalue().equals("Cytoplasm"))
+						cells[1] = new Double(1);
+					else if (na.getStringvalue().equals("Plasma membrane"))
+						cells[2] = new Double(1);
+					else if (na.getStringvalue().equals("Extracellular"))
+						cells[3] = new Double(1);
+					else if (na.getStringvalue().equals("Mitochondrion"))
+						cells[4] = new Double(1);
+					else if (na.getStringvalue().equals("Nucleolus"))
+						cells[5] = new Double(1);
+					else if (na.getStringvalue().equals("Endoplasmic reticulum"))
+						cells[6] = new Double(1);
+					else if (na.getStringvalue().equals("Golgi apparatus"))
+						cells[7] = new Double(1);
+					else if (na.getStringvalue().equals("Endosome"))
+						cells[8] = new Double(1);
+					else if (na.getStringvalue().equals("Cytosol"))
+						cells[9] = new Double(1);
+					else if (na.getStringvalue().equals("Integral to membrane"))
+						cells[10] = new Double(1);
+				}
+			}
+			
+			Double[] current = tcpmap.get(i);
+			Double[] newcurrent = new Double[11+current.length];
+			
+			for(int j = 0; j<current.length; j++){
+				newcurrent[j] = current[j];
+			}
+			
+			for(int j = 0; j<cells.length; j++){
+				newcurrent[j+current.length] = cells[j];
+			}
+			tcpmap.put(i, newcurrent);		
+			
+		}   
+		
+			
+/* Parameters for remote access:
+       disfunc - dissimilarity measure: ...
+		               0 - euclidean
+		               1 - cityblock
+		               2 - minkowski
+		               3 - correlation
+		               4 - angularseperatin
+		               5 - wavehedges
+		               6 - bahattacharyya
+		               7 - soergel
+		               8 - braycurtis
+		               9 - divergence
+		               10 - canberra
+		maxiter - maximum number of iterations to use: a positive integer
+		epsilon - the maximum error value which is allowed: a positive real_t
+		metric_p - a special value to adjust some dissimilarity functions: a positive integer
+*/
+		double myepsilon = sliderepsilon.getValue() >= 0 ? sliderepsilon.getValue() : Math.pow(10, sliderepsilon.getValue());
+		// Set parameters
+		HashMap<String,String>parameters = new HashMap<>();
+		parameters.put("disfunc", choosedismeasure.getSelectedIndex()+"");
+		parameters.put("maxiter", slidermaxiter.getValue()+"");
+		parameters.put("epsilon", myepsilon+"");
+		parameters.put("metric_p", sliderp.getValue()+"");
+
+		// open objectstream
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		// Lock UI and initiate Progress Bar
+//		MainWindowSingleton.getInstance().showProgressBar("attempting to queue job.");
+
+//		oos.writeObject(smacof_data_map); //does not work fine with remote 
+		oos.writeObject(tcpmap);
+		oos.writeObject(parameters);
+
+		// close objectstream and transform to bytearray
+		oos.close();
+		byte[] jobinformation = baos.toByteArray();
+
+		// compute values over RMI
+		try {
+			helper = new ComputeCallback(this);
+			ClusterComputeThread smacof = new ClusterComputeThread(
+					JobTypes.LAYOUT_SMACOF_JOB, jobinformation, helper);
+			smacof.start();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			MainWindowSingleton.getInstance().closeProgressBar();
+		}
+    }
+
+    public void realignNetwork(HashMap<Integer, LayoutPoint2D> coords) {
+		MainWindow w = MainWindowSingleton.getInstance();
+		GraphContainer con = ContainerSingelton.getInstance();
+		Pathway pw = con.getPathway(w.getCurrentPathway());
+		float scaling = 1000.0f;
+		
+		int key;
+		LayoutPoint2D value;
+		for(Entry<Integer,LayoutPoint2D> entry : coords.entrySet()){
+			 key = entry.getKey();
+			 value = entry.getValue();
+			 pw.getVertices()
+				.get(mapped_nodes_backwards.get(key))
+				.setLocation(value.getX()*scaling,
+						value.getY()*scaling);		 
+		}
+		
+		con.getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).updateMyGraph();
+		con.getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).getGraph().getVisualizationViewer().repaint();
+		con.getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).getGraph().normalCentering();
+		
+		w.closeProgressBar();		
+	}
+
+    
+    
+    
 	
 	
 	class SmacofTablePanel extends JPanel {
@@ -374,9 +609,7 @@ public class SmacofView extends JFrame implements ActionListener {
 			this.setVisible(true);
 		}
 	}
-	
-	
-	
+		
 	class SmacofTableModel extends AbstractTableModel {
 		
 		private static final long serialVersionUID = -1996177080571000673L;
@@ -454,5 +687,7 @@ public class SmacofView extends JFrame implements ActionListener {
 			System.out.println("------------------");
 		}
 	}
+
+
 	
 }
