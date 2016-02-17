@@ -1378,5 +1378,9 @@ public class MyGraph {
 		vv.setGraphMouse(graphMouse);
 
 	}
+	
+	public MyEdgeDrawPaintFunction getEdgeDrawPaintFunction(){
+		return edpf;
+	}
 
 }

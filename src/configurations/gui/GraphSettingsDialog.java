@@ -6,6 +6,7 @@ package configurations.gui;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
+import graph.jung.graphDrawing.MyEdgeDrawPaintFunction;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 
@@ -306,6 +307,9 @@ public class GraphSettingsDialog extends JFrame {
 				}
 				
 				settings.setEdgeOpacity(opacityslider.getValue());
+				con.getPathway(w.getCurrentPathway()).getGraph().getEdgeDrawPaintFunction().updateEdgeAlphaValue();
+				
+				
 				
 
 			} else {

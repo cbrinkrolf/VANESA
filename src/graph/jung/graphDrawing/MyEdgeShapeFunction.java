@@ -11,9 +11,14 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape.Line;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape.QuadCurve;
 
 public class MyEdgeShapeFunction implements Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> {
 
+	QuadCurve<BiologicalNodeAbstract,BiologicalEdgeAbstract> quadcurve = new EdgeShape.QuadCurve<>();
+	Line<BiologicalNodeAbstract,BiologicalEdgeAbstract> line = new EdgeShape.Line<>();	
+	
 	public MyEdgeShapeFunction(){
 		
 	}
@@ -28,13 +33,13 @@ public class MyEdgeShapeFunction implements Transformer<Context<Graph<Biological
 			
 			PNEdge e = (PNEdge) context.element;
 			if(context.graph.findEdge(e.getTo(), e.getFrom()) != null){
-				return (new EdgeShape.QuadCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract>()).transform(context);
+				return (quadcurve).transform(context);
 			}
-			return (new EdgeShape.Line<BiologicalNodeAbstract, BiologicalEdgeAbstract>()).transform(context);
+			return (line).transform(context);
 		}
 		else{
 //			return new Rectangle();
-			return (new EdgeShape.Line<BiologicalNodeAbstract, BiologicalEdgeAbstract>()).transform(context);
+			return (line).transform(context);
 		}
 	}
 
