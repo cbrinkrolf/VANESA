@@ -22,6 +22,7 @@ import graph.algorithms.gui.smacof.view.SmacofView;
 public class Smacof {
 
     private final Mat TEST_Z = getTestZ();
+    private final int STANDARD_METRIC = 2;
 
     public Smacof() {
 
@@ -66,7 +67,7 @@ public class Smacof {
             System.out.println("Z");
             System.out.println(Z);
         }
-        TriMat D_Z = Metrics.calcTriDistanceMatrix(Z, metric);
+        TriMat D_Z = Metrics.calcTriDistanceMatrix(Z, STANDARD_METRIC);
         if (print) {
             System.out.println("D(Z)");
             System.out.println(D_Z);
@@ -76,8 +77,8 @@ public class Smacof {
             System.out.println("B(Z)");
             System.out.println(B_Z);
         }
-        double sigma_prev = computeSigma(null, X, Delta, metric);
-        double sigma = 0.0f;
+        double sigma_prev = 0.0f;
+        double sigma = computeSigma(null, X, Delta, STANDARD_METRIC);
         if (print) {
         	System.out.println("starting iteration:");
             System.out.println("iteration:0" + " epsilon:" + Math.abs(sigma_prev - sigma));
@@ -86,10 +87,10 @@ public class Smacof {
         StopWatch swatch = new StopWatch();
         while (k < maxiter && Math.abs(sigma_prev - sigma) > epsilon) {
             swatch.start();
-            sigma_prev = computeSigma(null, X, Delta, metric);
             Z = X;
-            X = guttmanTransformation(null, Delta, Z, metric);
-            sigma = computeSigma(null, X, Delta, metric);
+            sigma_prev = sigma;
+            X = guttmanTransformation(null, Delta, Z);
+            sigma = computeSigma(null, X, Delta, STANDARD_METRIC);
             swatch.end();
             SmacofView.setLabelcuriteration(k);
             SmacofView.setLabelcurepsilon(sigma_prev - sigma);
@@ -124,20 +125,20 @@ public class Smacof {
      * @param metric
      * @return
      */
-    public Mat guttmanTransformation(TriMat W, TriMat Delta, Mat Z, int metric) {
+    public Mat guttmanTransformation(TriMat W, TriMat Delta, Mat Z) {
         Mat X_update;
         double norm_factor = 1.0f / (double) Delta.getSize();
         // if all weights are equal to 1, use simple guttman formula
         if (W == null) {
-            X_update = computeB_Z(null, Delta, Metrics.calcTriDistanceMatrix(Z, metric)).matrixMultiplication(Z).scalarMultiplication(norm_factor);
+            X_update = computeB_Z(null, Delta, Metrics.calcTriDistanceMatrix(Z, STANDARD_METRIC)).matrixMultiplication(Z).scalarMultiplication(norm_factor);
         } // if we have weights, we have to use a more advanced formula
         else {
             Mat V = computeV(W);
             Mat pseudoInverse = V.moorePenroseInverse();
-            Mat tmp = computeB_Z(W, Delta, Metrics.calcTriDistanceMatrix(Z, metric)).matrixMultiplication(Z);
+            Mat tmp = computeB_Z(W, Delta, Metrics.calcTriDistanceMatrix(Z, STANDARD_METRIC)).matrixMultiplication(Z);
             System.out.println(pseudoInverse);
             System.out.println(tmp);
-            X_update = pseudoInverse.matrixMultiplication(computeB_Z(W, Delta, Metrics.calcTriDistanceMatrix(Z, metric)).matrixMultiplication(Z));
+            X_update = pseudoInverse.matrixMultiplication(computeB_Z(W, Delta, Metrics.calcTriDistanceMatrix(Z, STANDARD_METRIC)).matrixMultiplication(Z));
             System.out.println(X_update);
         }
         return X_update;
@@ -232,7 +233,7 @@ public class Smacof {
             for (int i = 0; i < size; i++) {
                 for (int j = i; j < size; j++) {
                     if (i != j) {
-                        double value = (double) -(Delta.getElement(i, j) / D_Z.getElement(i, j));
+                        double value = (double) D_Z.getElement(i, j) != 0 ? -(Delta.getElement(i, j) / D_Z.getElement(i, j)) : 0.0d;
                         res.setElement(i, j, value);
                     }
                 }
@@ -241,7 +242,7 @@ public class Smacof {
             for (int i = 0; i < size; i++) {
                 for (int j = i; j < size; j++) {
                     if (i != j) {
-                        double value = (double) -((W.getElement(i, j) * Delta.getElement(i, j)) / D_Z.getElement(i, j));
+                        double value = (double)  D_Z.getElement(i, j) != 0 ? -((W.getElement(i, j) * Delta.getElement(i, j)) / D_Z.getElement(i, j)) : 0.0d;
                         res.setElement(i, j, value);
                     }
                 }
