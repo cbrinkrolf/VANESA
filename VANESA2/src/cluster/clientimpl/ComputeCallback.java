@@ -1,6 +1,7 @@
 package cluster.clientimpl;
 
 import graph.algorithms.gui.GraphColoringGUI;
+import graph.algorithms.gui.smacof.view.SmacofView;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 
@@ -20,11 +21,17 @@ public class ComputeCallback extends UnicastRemoteObject implements Serializable
 
 	private static final long serialVersionUID = -5452379957017610971L;
 
-	private GraphColoringGUI gui;
+	private GraphColoringGUI gui = null;
+	private SmacofView sv = null;
 
 	public ComputeCallback(GraphColoringGUI gui) throws RemoteException {
 		super();
 		this.gui = gui;
+	}
+	
+	public ComputeCallback(SmacofView sv) throws RemoteException {
+		super();
+		this.sv = sv;
 	}
 
 	@Override
@@ -63,8 +70,13 @@ public class ComputeCallback extends UnicastRemoteObject implements Serializable
 	@Override
 	public void setResultCoordinates(HashMap<Integer, LayoutPoint2D> coords)
 			throws RemoteException {
-		gui.realignNetwork(coords);
-		gui.reactiveateUI();
+		if(gui!=null){
+			gui.realignNetwork(coords);
+			gui.reactiveateUI();
+		}else{
+			sv.realignNetwork(coords);
+		}
+		
 		
 	}
 

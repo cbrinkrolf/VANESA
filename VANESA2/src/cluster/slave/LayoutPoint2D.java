@@ -60,5 +60,10 @@ public class LayoutPoint2D implements Serializable{
 	public void setY(float y) {
 		this.y = y;
 	}
+	
+	@Override
+	public String toString() {
+		return "LayoutPoint2D [x=" + x + ", y=" + y + "]";
+	}
 
 }

@@ -1,6 +1,5 @@
 package cluster.clientimpl;
 
-import graph.algorithms.gui.GraphColoringGUI;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 
@@ -42,6 +41,8 @@ public class ClusterComputeThread extends Thread {
 
 		//URL of Master server
 		String url = "rmi://cassiopeidae/ClusterJobs";
+
+//		String url = "rmi://griseue/ClusterJobs";
 		// String url = "rmi://nero/Server";
 		resulttable = new Hashtable<Integer, Double>();
 		try {

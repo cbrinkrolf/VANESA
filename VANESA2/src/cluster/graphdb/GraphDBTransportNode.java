@@ -1,7 +1,7 @@
 package cluster.graphdb;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.Arrays;
 
 
 public class GraphDBTransportNode implements Serializable{
@@ -12,11 +12,81 @@ public class GraphDBTransportNode implements Serializable{
 	public String commonName;
 	public String type;
 	public String fullName;
-	public HashSet<DatabaseEntry> dbIds;
+	public DatabaseEntry dbIds[];
 
+	public String getCommonName() {
+		return commonName;
+	}
+
+	public void setCommonName(String commonName) {
+		this.commonName = commonName;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
+	public DatabaseEntry[] getDbIds() {
+		return dbIds;
+	}
+
+	public void setDbIds(DatabaseEntry[] dbIds) {
+		this.dbIds = dbIds;
+	}
+
+	public String[] getBiodata() {
+		return biodata;
+	}
+
+	public void setBiodata(String[] biodata) {
+		this.biodata = biodata;
+	}
+
+	public double[] getBiodataEntries() {
+		return biodataEntries;
+	}
+
+	public void setBiodataEntries(double[] biodataEntries) {
+		this.biodataEntries = biodataEntries;
+	}
+
+	public String[] getMolecularFunction() {
+		return molecularFunction;
+	}
+
+	public void setMolecularFunction(String[] molecularFunction) {
+		this.molecularFunction = molecularFunction;
+	}
+
+	public String[] getBiologicalProcess() {
+		return biologicalProcess;
+	}
+
+	public void setBiologicalProcess(String[] biologicalProcess) {
+		this.biologicalProcess = biologicalProcess;
+	}
+
+	public String[] getCellularComponent() {
+		return cellularComponent;
+	}
+
+	public void setCellularComponent(String[] cellularComponent) {
+		this.cellularComponent = cellularComponent;
+	}
 	public String[] biodata;
 	public double[] biodataEntries;
-
 
 	public String molecularFunction[];
 	public String biologicalProcess[];
@@ -31,7 +101,7 @@ public class GraphDBTransportNode implements Serializable{
 		this.commonName = commonName;
 		this.type = "NA";
 		this.fullName = "NA";
-		this.dbIds = new HashSet<DatabaseEntry>();
+		this.dbIds = new DatabaseEntry[0];
 		this.biodata = new String[0];
 		this.biodataEntries = new double[0];
 		this.molecularFunction = new String[0];
@@ -42,7 +112,7 @@ public class GraphDBTransportNode implements Serializable{
 
 	// Constructor with full data input for convenience
 	public GraphDBTransportNode(String type, String name, String fullName,
-			HashSet<DatabaseEntry> dbIds, String[] biodata,
+			DatabaseEntry[] dbIds, String[] biodata,
 			double[] biodataEntry, String molecularFunction[],
 			String biologicalProcess[], String cellularComponent[]) {
 		this.type = type;
@@ -64,7 +134,6 @@ public class GraphDBTransportNode implements Serializable{
 		
 		return result;
 	}
-	
 
 	@Override
 	public int hashCode() {
@@ -103,5 +172,11 @@ public class GraphDBTransportNode implements Serializable{
 		} else if (!type.equals(other.type))
 			return false;
 		return true;
+	}
+	@Override
+	public String toString() {
+		return "GraphDBTransportNode [commonName=" + commonName + ", type="
+				+ type + ", fullName=" + fullName + ", dbIds="
+				+ Arrays.toString(dbIds) + "]";
 	}
 }
