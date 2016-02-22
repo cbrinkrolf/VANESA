@@ -12,14 +12,13 @@
 	auf agbi liegt zwar auch dawis_md, aber der direkte Zugriff auf die DB funktioniert nicht 
 	<entry key="settings.default.server">agbi</entry>
 -->
-
-<!-- dawismd ist die neue Datenbank, die SearchQueries sind allerdings noch nicht angepasst, deswegen geht nur dawis_md -->	
 	<entry key="settings.default.database.DAWIS">dawismd</entry>
 	<entry key="settings.default.database.PPI">ppi_db</entry>
-	<entry key="settings.default.database.mirna">db_mirna3</entry>
+	<entry key="settings.default.database.mirna">db_mirna4</entry>
 	
 <!-- alternativ: http://tunicata.techfak... -->
-	<entry key="settings.default.webservice.url">http://agbi.techfak.uni-bielefeld.de/webservice/db</entry>
+	<entry key="settings.default.webservice.url">http://tunicata.techfak.uni-bielefeld.de/webservice/db</entry>
+	<!--  <entry key="settings.default.webservice.url">http://agbi.techfak.uni-bielefeld.de/webservice/db</entry>-->
 	<entry key="settings.default.proxy.host"></entry>
 	<entry key="settings.default.proxy.port"></entry>
 </properties>
