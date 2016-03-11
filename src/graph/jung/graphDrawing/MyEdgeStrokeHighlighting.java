@@ -17,6 +17,10 @@ public class MyEdgeStrokeHighlighting implements
 	protected static final Stroke basic = new BasicStroke(2);
 
 	protected static final Stroke heavy = new BasicStroke(4);
+	protected static final float dash2[] = {2.0f};
+	protected static final Stroke nogt = new BasicStroke(1.0f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,
+            10.0f, dash2, 0.0f);
+	
 	
 	protected static final float log = (float) Math.log(1.5);
 	protected static final float pickedFactor = 1.4f;
@@ -46,9 +50,8 @@ public class MyEdgeStrokeHighlighting implements
 		if(p.isBNA()){
 			BiologicalNodeAbstract pathway = (BiologicalNodeAbstract) p;
 			if(pathway.getEnvironment().contains(bea.getFrom()) || pathway.getEnvironment().contains(bea.getTo())){
-				final float dash2[] = {2.0f};
-				return new BasicStroke(1.0f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,
-			            10.0f, dash2, 0.0f);
+				
+				return nogt;
 			}
 		}
 		float strength = (float) Math.log1p(GraphInstance.getPathwayStatic().edgeGrade(bea))/log;
