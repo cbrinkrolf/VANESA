@@ -2,6 +2,7 @@ package database.eventhandlers;
 
 import graph.ContainerSingelton;
 import graph.GraphContainer;
+import graph.algorithms.gui.smacof.view.SmacofView;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
@@ -116,42 +117,52 @@ public class DatabaseSearchListener implements ActionListener {
 		}
 	}
 	
-	private void pickCommons(){
-		String commonNames[] = dw.getInput()[2].split(",");
-		MainWindow w = MainWindowSingleton.getInstance();
-		GraphContainer con = ContainerSingelton.getInstance();
-		Pathway pw = con.getPathway(w.getCurrentPathway());
-		MyGraph mg = pw.getGraph();
-				
-		for(BiologicalNodeAbstract bna : mg.getAllVertices()){
+	private void pickCommons() {
+		if (ContainerSingelton.getInstance().containsPathway()) {
+			String commonNames[] = dw.getInput()[2].split(",");
+			MainWindow w = MainWindowSingleton.getInstance();
+			GraphContainer con = ContainerSingelton.getInstance();
+			Pathway pw = con.getPathway(w.getCurrentPathway());
+			MyGraph mg = pw.getGraph();
+
+			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
 				for (int i = 0; i < commonNames.length; i++) {
-					if(bna.getLabel().equals(commonNames[i])){
-						mg.getVisualizationViewer().getPickedVertexState().pick(bna, true);
+					if (bna.getLabel().equals(commonNames[i])) {
+						mg.getVisualizationViewer().getPickedVertexState()
+								.pick(bna, true);
 					}
 				}
-		 }		
-	}	
-	
-	
-	private void pickNeighbors() {
-		MainWindow w = MainWindowSingleton.getInstance();
-		GraphContainer con = ContainerSingelton.getInstance();
-		Pathway pw = con.getPathway(w.getCurrentPathway());
-		MyGraph mg = pw.getGraph();
+			}
+		} else
+			JOptionPane.showMessageDialog(null, "please load a network first.");
 
-		
-		int amount_picked = mg.getVisualizationViewer().getPickedVertexState().getPicked().size();
-		BiologicalNodeAbstract picked[] =  new BiologicalNodeAbstract[amount_picked];
-		
-		mg.getVisualizationViewer().getPickedVertexState().getPicked().toArray(picked);
-				
-		
-		for(BiologicalNodeAbstract source : picked){
-			for (BiologicalNodeAbstract neighbor : mg.getJungGraph().getNeighbors(source)) {
-				if(!mg.getVisualizationViewer().getPickedVertexState().isPicked(neighbor)){
-					mg.getVisualizationViewer().getPickedVertexState().pick(neighbor, true);
+	}
+
+	private void pickNeighbors() {
+		if (ContainerSingelton.getInstance().containsPathway()) {
+			MainWindow w = MainWindowSingleton.getInstance();
+			GraphContainer con = ContainerSingelton.getInstance();
+			Pathway pw = con.getPathway(w.getCurrentPathway());
+			MyGraph mg = pw.getGraph();
+
+			int amount_picked = mg.getVisualizationViewer()
+					.getPickedVertexState().getPicked().size();
+			BiologicalNodeAbstract picked[] = new BiologicalNodeAbstract[amount_picked];
+
+			mg.getVisualizationViewer().getPickedVertexState().getPicked()
+					.toArray(picked);
+
+			for (BiologicalNodeAbstract source : picked) {
+				for (BiologicalNodeAbstract neighbor : mg.getJungGraph()
+						.getNeighbors(source)) {
+					if (!mg.getVisualizationViewer().getPickedVertexState()
+							.isPicked(neighbor)) {
+						mg.getVisualizationViewer().getPickedVertexState()
+								.pick(neighbor, true);
+					}
 				}
 			}
-		}		
+		} else
+			JOptionPane.showMessageDialog(null, "please load a network first.");
 	}
 }
