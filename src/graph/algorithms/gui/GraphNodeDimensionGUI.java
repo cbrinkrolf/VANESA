@@ -59,8 +59,8 @@ public class GraphNodeDimensionGUI implements ActionListener {
 		chooseAlgorithm.addActionListener(this);
 		
 		
-		frommodel = new SpinnerNumberModel(1.0d, 1.0d, 8.0d, 1.0d);
-		tomodel = new SpinnerNumberModel(4.0d, 1.0d, 8.0d, 1.0d);
+		frommodel = new SpinnerNumberModel(1.0d, 0.0d, 20.0d, 0.1d);
+		tomodel = new SpinnerNumberModel(4.0d, 0.0d, 20.0d, 0.1d);
 		
 		nodesizefromspinner = new JSpinner(frommodel);
 		nodesizetospinner = new JSpinner(tomodel);
