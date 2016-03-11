@@ -39,6 +39,22 @@ public class MyVertexStrokeHighlighting implements
 
 	private Pathway pw;
 
+	private final float dashPhase = 0f;
+    private final float dash[] = {5.0f,5.0f};
+    private final BasicStroke basicstroke = new BasicStroke(
+            1f,
+            BasicStroke.CAP_ROUND,
+            BasicStroke.JOIN_MITER,
+            1.5f, //miter limit
+            dash,
+            dashPhase
+            );
+    
+
+	private final float dash1[] = { 5.0f };
+	private final BasicStroke refstroke = new BasicStroke(3.0f, BasicStroke.CAP_BUTT,
+			BasicStroke.JOIN_MITER, 5.0f, dash1, 0.0f);
+	
 	public MyVertexStrokeHighlighting(PickedState<BiologicalNodeAbstract> psV,
 			PickedState<BiologicalEdgeAbstract> psE, Pathway pw) {
 		this.psV = psV;
@@ -47,7 +63,7 @@ public class MyVertexStrokeHighlighting implements
 	}
 
 	public Stroke withGraphTheory(BiologicalNodeAbstract v) {
-		if (new GraphInstance().getPathway().isPetriNet())
+		if (GraphInstance.getPathwayStatic().isPetriNet())
 			if (psV.isPicked(v))
 				return pn_heavy;
 			else
@@ -62,22 +78,13 @@ public class MyVertexStrokeHighlighting implements
 
 	public Stroke withoutGraphTheory(BiologicalNodeAbstract bna) {
 
-		boolean petriNet = new GraphInstance().getPathway().isPetriNet();
+		boolean petriNet = GraphInstance.getPathwayStatic().isPetriNet();
 		boolean isContPlace = false;
 		
 		// mark Environment nodes in hierarchical Nodes.
 
 			if(bna.isEnvironmentNodeOf(pw)){
-				float dashPhase = 0f;
-                float dash[] = {5.0f,5.0f};
-				return new BasicStroke(
-                        1f,
-                        BasicStroke.CAP_ROUND,
-                        BasicStroke.JOIN_MITER,
-                        1.5f, //miter limit
-                        dash,
-                        dashPhase
-                        );
+				return basicstroke;
 			}
 
 		if (((bna instanceof Place && !((Place) bna).isDiscrete()) || bna instanceof ContinuousTransition)) {
@@ -176,10 +183,7 @@ public class MyVertexStrokeHighlighting implements
 
 		if (bna.hasRef()) {
 
-			float dash1[] = { 5.0f };
-
-			return new BasicStroke(3.0f, BasicStroke.CAP_BUTT,
-					BasicStroke.JOIN_MITER, 5.0f, dash1, 0.0f);
+			return refstroke;
 
 		} else {
 
