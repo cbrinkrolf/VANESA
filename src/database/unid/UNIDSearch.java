@@ -154,6 +154,9 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 	 * Creates a new Network tab with the
 	 */
 	public void createNetworkFromSearch() {
+		new Thread(new Runnable() {
+			public void run() {
+//				
 
 		//cutoff Name for multi ID searches
 		if(commonName.length() > 20){
@@ -232,6 +235,9 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 		}
 		reactivateUI();
 
+			}
+		}).start();
+		
 	}
 	
 
