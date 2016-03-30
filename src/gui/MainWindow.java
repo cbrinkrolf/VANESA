@@ -168,7 +168,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		
 		// Set developer status
 		developer = Boolean.parseBoolean(ResourceLibrary.getSettingsResource("settings.default.developer"));
-		System.out.println("main: "+developer);
+//		System.out.println("main: "+developer);
 		// try {
 		//
 		// //SubstanceBusinessBlueSteelLookAndFeel lf = new
