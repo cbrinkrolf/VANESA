@@ -8,6 +8,8 @@ import gui.MainWindowSingleton;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -256,9 +258,20 @@ public class Launch {
 			}
 		};
 
-		new Thread(programStart).start();
-		new Thread(dbStart).start();
-		new Thread(containerStart).start();
+		//run executor
+		ExecutorService executorService = Executors.newFixedThreadPool(4);
+
+		executorService.execute(programStart);
+		executorService.execute(dbStart);
+		executorService.execute(containerStart);
+
+		
+		
+		executorService.shutdown();
+//		
+//		new Thread(programStart).start();
+//		new Thread(dbStart).start();
+//		new Thread(containerStart).start();
 
 	}
 
