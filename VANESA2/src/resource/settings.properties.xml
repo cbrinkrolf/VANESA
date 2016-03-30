@@ -6,7 +6,7 @@
 	<entry key="settings.default.user">user</entry>
 	<entry key="settings.default.password">password</entry>
 	<entry key="settings.default.server">127.0.0.1</entry>
-	<entry key="settings.default.developer">true</entry>
+	<entry key="settings.default.developer">false</entry>
 	
 <!--
 	auf agbi liegt zwar auch dawis_md, aber der direkte Zugriff auf die DB funktioniert nicht 
