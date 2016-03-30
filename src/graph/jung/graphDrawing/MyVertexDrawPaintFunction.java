@@ -66,7 +66,7 @@ public class MyVertexDrawPaintFunction implements
 				else
 
 				if (settings.isBackgroundColor())
-					return Color.WHITE;
+					return Color.DARK_GRAY.brighter();
 				else
 					// return Color.BLACK;
 					return Color.DARK_GRAY;
