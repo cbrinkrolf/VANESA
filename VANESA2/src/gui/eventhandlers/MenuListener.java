@@ -1,6 +1,83 @@
 package gui.eventhandlers;
 
-import dataMapping.DataMapping2MVC;
+import graph.ContainerSingelton;
+import graph.CreatePathway;
+import graph.GraphContainer;
+import graph.GraphInstance;
+import graph.algorithms.Transformation;
+import graph.algorithms.gui.RandomBipartiteGraphGui;
+import graph.algorithms.gui.RandomConnectedGraphGui;
+import graph.algorithms.gui.RandomGraphGui;
+import graph.algorithms.gui.RandomHamiltonGraphGui;
+import graph.algorithms.gui.RandomRegularGraphGui;
+import graph.algorithms.gui.smacof.view.SmacofView;
+import graph.jung.classes.MyGraph;
+import graph.layouts.gemLayout.GEMLayout;
+import graph.layouts.hctLayout.HCTLayout;
+import graph.layouts.hebLayout.HEBLayout;
+//import graph.layouts.modularLayout.MDForceLayout;
+import gui.AboutWindow;
+import gui.InfoWindow;
+import gui.LabelToDataMappingWindow;
+import gui.LabelToDataMappingWindow.InputFormatException;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+import gui.visualization.PreRenderManager;
+import io.EdalSaveDialog;
+import io.OpenDialog;
+import io.PNDoc;
+import io.SaveDialog;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+import javax.security.auth.Subject;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import miscalleanous.tables.MyTable;
+import petriNet.ConvertMetabolicNet;
+import petriNet.Cov;
+import petriNet.CovNode;
+import petriNet.OpenModellicaResult;
+import petriNet.PNEdge;
+import petriNet.PNTableDialog;
+import petriNet.PetriNetSimulation;
+import petriNet.Place;
+import petriNet.ReachController;
+import petriNet.SimpleMatrixDouble;
+import petriNet.Transition;
+import pojos.DBColumn;
+import save.graphPicture.WriteGraphPicture;
+import xmlInput.sbml.JSBMLinput;
+import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.Enzyme;
+import cern.colt.list.IntArrayList;
+import cern.colt.matrix.impl.DenseDoubleMatrix1D;
+import cern.colt.matrix.impl.DenseDoubleMatrix2D;
+import cluster.clientimpl.ClusterDataUploadWindow;
+import configurations.ProgramFileLock;
+import configurations.Wrapper;
+import configurations.gui.LayoutConfig;
+import configurations.gui.Settings;
 import dataMapping.DataMappingColorMVC;
 import de.ipk_gatersleben.bit.bi.edal.primary_data.file.PrimaryDataFileException;
 import de.ipk_gatersleben.bit.bi.edal.primary_data.security.EdalAuthenticateException;
@@ -17,94 +94,6 @@ import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import graph.ContainerSingelton;
-import graph.CreatePathway;
-import graph.GraphContainer;
-import graph.GraphInstance;
-import graph.algorithms.Transformation;
-import graph.algorithms.gui.RandomBipartiteGraphGui;
-import graph.algorithms.gui.RandomConnectedGraphGui;
-import graph.algorithms.gui.RandomGraphGui;
-import graph.algorithms.gui.RandomHamiltonGraphGui;
-import graph.algorithms.gui.RandomRegularGraphGui;
-import graph.algorithms.gui.smacof.view.SmacofView;
-import graph.jung.classes.MyGraph;
-import graph.layouts.gemLayout.GEMLayout;
-import graph.layouts.hebLayout.HEBLayout;
-import graph.layouts.hctLayout.HCTLayout;
-
-//import graph.layouts.modularLayout.MDForceLayout;
-import gui.AboutWindow;
-import gui.InfoWindow;
-import gui.LabelToDataMappingWindow;
-import gui.LabelToDataMappingWindow.InputFormatException;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.visualization.PreRenderManager;
-import io.EdalSaveDialog;
-import io.OpenDialog;
-import io.PNDoc;
-import io.SaveDialog;
-
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.security.auth.Subject;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
-import cluster.clientimpl.ClusterDataUploadWindow;
-import miscalleanous.tables.MyTable;
-import petriNet.ConvertMetabolicNet;
-import petriNet.ConvertToPetriNet;
-import petriNet.Cov;
-import petriNet.CovNode;
-import petriNet.OpenModellicaResult;
-import petriNet.PNEdge;
-import petriNet.PNTableDialog;
-import petriNet.PetriNetSimulation;
-import petriNet.Place;
-import petriNet.ReachController;
-import petriNet.SimpleMatrixDouble;
-import petriNet.Transition;
-import pojos.DBColumn;
-import save.graphPicture.WriteGraphPicture;
-import xmlInput.sbml.JSBMLinput;
-import xmlOutput.sbml.JSBMLoutput;
-import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Enzyme;
-import cern.colt.list.IntArrayList;
-import cern.colt.matrix.impl.DenseDoubleMatrix1D;
-import cern.colt.matrix.impl.DenseDoubleMatrix2D;
-import configurations.ConnectionSettings;
-import configurations.ProgramFileLock;
-import configurations.Wrapper;
-import configurations.gui.LayoutConfig;
-import configurations.gui.Settings;
 
 /*import edu.uci.ics.jung.graph.Edge;
  import edu.uci.ics.jung.graph.Vertex;
@@ -1042,11 +1031,19 @@ public class MenuListener implements ActionListener {
 		} else if ("dataMappingColor".equals(event)) {
 			DataMappingColorMVC.createDataMapping();
 		} else if ("dataMappingDB".equals(event)) {
-
-			new ClusterDataUploadWindow();
+			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				new ClusterDataUploadWindow();
+			} else
+				JOptionPane.showMessageDialog(null,
+						"please load a network first.");
 
 		} else if ("datamining".equals(event)) {
-			new SmacofView();
+			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				new SmacofView();			
+			}
+			else
+				JOptionPane.showMessageDialog(null,	"please load a network first.");
+			
 		} else if ("rendererSettings".equals(event)) {
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				PreRenderManager.getInstance();
@@ -1079,15 +1076,21 @@ public class MenuListener implements ActionListener {
 		} else if ("createDoc".equals(event)) {
 			new PNDoc();
 		} else if("dataLabelMapping".equals(event)){
-			
-			//Open new window for file input
-			try {
-				new LabelToDataMappingWindow();
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-			} catch (InputFormatException ife ){
-				JOptionPane.showMessageDialog(w, ife.getMessage(),"Inputfile error",JOptionPane.ERROR_MESSAGE);
-			}
+
+			// Open new window for file input
+			if (con.containsPathway()
+					&& graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				try {
+					new LabelToDataMappingWindow();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				} catch (InputFormatException ife) {
+					JOptionPane.showMessageDialog(w, ife.getMessage(),
+							"Inputfile error", JOptionPane.ERROR_MESSAGE);
+				}
+			} else
+				JOptionPane.showMessageDialog(null,
+						"please load a network first.");
 			
 		} else if ("mirnaTest".equals(event)) {
 			System.out.println("mirnatest");
