@@ -355,7 +355,7 @@ public class DataMappingView extends JDialog implements Observer{
 		}
 		if (arg.getClass().equals(String.class) && arg.equals("reset")) {
 			okButton.setEnabled(false);
-			pathwayCB.setSelectedIndex(0);
+			pathwayCB.setSelectedItem(w.getCurrentPathway());;
 			identifierCB.setSelectedIndex(0);
 		}
 		if (arg.getClass().equals(DataMappingModel.class)) {
