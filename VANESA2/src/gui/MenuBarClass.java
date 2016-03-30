@@ -119,17 +119,14 @@ public class MenuBarClass {
 		JMenuItem datamining = new JMenuItem("Data Mining (SMACOF)");
 		datamining.addActionListener(new MenuListener());
 		datamining.setActionCommand("datamining");
-		if(MainWindow.developer)
-			tools.add(datamining);
+		tools.add(datamining);
 
 		// items for label to data mapping
 		dataLabelMapping = new JMenuItem("Label->Data Mapping");
 		dataLabelMapping.addActionListener(new MenuListener());
 		dataLabelMapping.setActionCommand("dataLabelMapping");
-		if (MainWindow.developer) {
-			tools.add(new JSeparator());
-			tools.add(dataLabelMapping);
-		}
+		tools.add(new JSeparator());
+		tools.add(dataLabelMapping);
 
 		JMenuItem phosphoImport = new JMenuItem("PhosphoSite input");
 		phosphoImport.addActionListener(new MenuListener());
