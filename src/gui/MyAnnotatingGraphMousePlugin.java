@@ -169,5 +169,20 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends
 			//}
 		}
 	}
+	
+	public void mouseClicked(MouseEvent e) {
+		// System.out.println("click: ");
+		// System.out.println(e.getClickCount());
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
+	}
+
+	public void mouseMoved(MouseEvent e) {
+	}
+
 
 }
