@@ -17,30 +17,32 @@ public class DissimilarityFunctions {
     /**
      * Not ready yet!.
      *
-     * @param a
-     * @param b
-     * @return
+     * @param a array of doubles
+     * @param b array of doubles
+     * @return mahalanobis distance
      */
     public static double mahalanobis(double[] a, double[] b) {
         if (a.length == b.length) {
-            return Double.NaN;
+            throw new UnsupportedOperationException("not implemented.");
         } else {
-            throw new IllegalArgumentException("vector double[] a and double[] b differ in length");
+            throw new UnsupportedOperationException("not implemented.");
         }
     }
 
     /**
      * Calculate the canberra distance between two vectors.
      *
-     * @param a
-     * @param b
+     * @param a array of doubles
+     * @param b array of doubles
      * @return canberra distance
      */
     public static double canberra(double[] a, double[] b) {
         if (a.length == b.length) {
             double sum = 0;
+            double den = 0;
             for (int i = 0; i < a.length; i++) {
-                sum += (Math.abs(a[i] - b[i])) / (a[i] + b[i]);
+                den = Math.abs(a[i]) + Math.abs(b[i]);
+                sum += (den != 0.0) ? (Math.abs(a[i] - b[i])) / den : 0.0;
             }
             return sum;
         } else {
@@ -51,18 +53,19 @@ public class DissimilarityFunctions {
     /**
      * Calculate the divergence distance between two vectors.
      *
-     * @param a
-     * @param b
-     * @param p
+     * @param a array of doubles
+     * @param b array of doubles
      * @return the divergence
      */
-    public static double divergence(double[] a, double[] b, double p) {
+    public static double divergence(double[] a, double[] b) {
         if (a.length == b.length) {
             double sum = 0;
+            double den = 0;
             for (int i = 0; i < a.length; i++) {
-                sum += ((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i]));
+                den = (a[i] + b[i]) * (a[i] + b[i]);
+                sum += (den != 0.0) ? ((a[i] - b[i]) * (a[i] - b[i])) / den : 0.0;
             }
-            return (1.0 / p) * sum;
+            return sum;
         } else {
             throw new IllegalArgumentException("vector double[] a and double[] b differ in length");
         }
@@ -71,20 +74,19 @@ public class DissimilarityFunctions {
     /**
      * Calculate the Bray-Curtis distance between two vectors.
      *
-     * @param a
-     * @param b
-     * @param p
+     * @param a array of doubles
+     * @param b array of doubles
      * @return the bray-curtis distance
      */
-    public static double brayCurtis(double[] a, double[] b, double p) {
+    public static double brayCurtis(double[] a, double[] b) {
         if (a.length == b.length) {
             double sum_num = 0;
-            double sum_den = 0;
+            double sum_den = 2;
             for (int i = 0; i < a.length; i++) {
                 sum_num += Math.abs(a[i] - b[i]);
                 sum_den += a[i] + b[i];
             }
-            return (1.0 / p) * (sum_num / sum_den);
+            return sum_num / sum_den;
         } else {
             throw new IllegalArgumentException("vector double[] a and double[] b differ in length");
         }
@@ -93,12 +95,11 @@ public class DissimilarityFunctions {
     /**
      * Calculate the Soergel distance between two vectors.
      *
-     * @param a
-     * @param b
-     * @param p
+     * @param a array of doubles
+     * @param b array of doubles
      * @return the soergel distance
      */
-    public static double soergel(double[] a, double[] b, double p) {
+    public static double soergel(double[] a, double[] b) {
         if (a.length == b.length) {
             double sum_num = 0;
             double sum_den = 0;
@@ -106,7 +107,7 @@ public class DissimilarityFunctions {
                 sum_num += Math.abs(a[i] - b[i]);
                 sum_den += Math.max(a[i], b[i]);
             }
-            return (1.0 / p) * (sum_num / sum_den);
+            return (sum_den != 0) ? sum_num / sum_den : 0.0;
         } else {
             throw new IllegalArgumentException("vector double[] a and double[] b differ in length");
         }
@@ -115,15 +116,15 @@ public class DissimilarityFunctions {
     /**
      * Calculate the Bahattacharyya distance between two vectors.
      *
-     * @param a
-     * @param b
+     * @param a array of doubles
+     * @param b array of doubles
      * @return the bahattacharyya distance
      */
     public static double bahattacharyya(double[] a, double[] b) {
         if (a.length == b.length) {
             for (int i = 0; i < a.length; i++) {
                 if (a[i] < 0 || b[i] < 0) {
-                    throw new IllegalArgumentException("vector double[] a or double[] b contains negative numbers");
+                    throw new IllegalArgumentException("bahattacharyya only availible for positive numbers!");
                 }
             }
             double sum = 0;
@@ -139,15 +140,17 @@ public class DissimilarityFunctions {
     /**
      * Calculate the Wave-Hedges distance between two vectors.
      *
-     * @param a
-     * @param b
+     * @param a array of doubles
+     * @param b array of doubles
      * @return the wave-hedges distance
      */
     public static double waveHedges(double[] a, double[] b) {
         if (a.length == b.length) {
             double sum = 0;
+            double den = 0;
             for (int i = 0; i < a.length; i++) {
-                sum += 1 - (Math.min(a[i], b[i]) / Math.max(a[i], b[i]));
+                den = Math.max(a[i], b[i]);
+                sum += (den != 0.0) ? 1 - (Math.min(a[i], b[i]) / den) : 1;
             }
             return sum;
         } else {
@@ -158,8 +161,8 @@ public class DissimilarityFunctions {
     /**
      * Calculate the Angular Seperation distance between two vectors.
      *
-     * @param a
-     * @param b
+     * @param a array of doubles
+     * @param b array of doubles
      * @return the angular-seperation
      */
     public static double angularSeperation(double[] a, double[] b) {
@@ -167,12 +170,14 @@ public class DissimilarityFunctions {
             double sum_num = 0;
             double sum_den_a = 0;
             double sum_den_b = 0;
+            double sum_den = 0;
             for (int i = 0; i < a.length; i++) {
                 sum_num += a[i] * b[i];
                 sum_den_a += a[i] * a[i];
                 sum_den_b += b[i] * b[i];
             }
-            return 1 - (sum_num / Math.sqrt(sum_den_a * sum_den_b));
+            sum_den = Math.sqrt(sum_den_a * sum_den_b);
+            return (sum_den != 0.0) ? 1 - (sum_num / sum_den) : 1;
         } else {
             throw new IllegalArgumentException("vector double[] a and double[] b differ in length");
         }
@@ -181,8 +186,8 @@ public class DissimilarityFunctions {
     /**
      * Calculate the Correlation between two vectors.
      *
-     * @param a
-     * @param b
+     * @param a array of doubles
+     * @param b array of doubles
      * @return the correlation
      */
     public static double correlation(double[] a, double[] b) {
@@ -201,10 +206,9 @@ public class DissimilarityFunctions {
                 sum_num += (a[i] - mean_a) * (b[i] - mean_b);
                 sum_den += (a[i] - mean_a) * (a[i] - mean_a) * (b[i] - mean_b) * (b[i] - mean_b);
             }
-            return 1 - (sum_num / Math.sqrt(sum_den));
+            return (sum_den != 0.0) ? 1 - (sum_num / Math.sqrt(sum_den)) : 1;
         } else {
             throw new IllegalArgumentException("vector double[] a and double[] b differ in length");
         }
     }
 }
-

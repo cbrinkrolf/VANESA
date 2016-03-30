@@ -1,7 +1,6 @@
 package graph.algorithms.gui.smacof.view;
 
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -12,18 +11,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
-import org.apache.lucene.analysis.CharArrayMap.EntrySet;
 import org.jdesktop.swingx.JXTable;
 import org.jfree.ui.RefineryUtilities;
 
-import cern.colt.Arrays;
 import cluster.clientimpl.ClusterComputeThread;
 import cluster.clientimpl.ComputeCallback;
 import cluster.slave.JobTypes;
@@ -33,15 +28,13 @@ import biologicalElements.Pathway;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
-import graph.algorithms.NetworkProperties;
 import graph.algorithms.NodeAttributeNames;
 import graph.algorithms.NodeAttributeTypes;
 import graph.algorithms.gui.smacof.DoSmacof;
-import graph.algorithms.gui.smacof.algorithms.Dissimilarities;
+import graph.algorithms.gui.smacof.algorithms.Weighting;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
-import gui.images.ImagePath;
 import net.miginfocom.swing.MigLayout;
 
 import java.awt.BorderLayout;
@@ -49,18 +42,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -94,16 +82,17 @@ public class SmacofView extends JFrame implements ActionListener {
 	private static JLabel labelcuriteration = null;
 	private static JLabel labelcurepsilon = null;
 	private static JLabel labelcurtime = null;
-	private final String[] dismeasure = { "EUCLIDEAN",
+	private final String[] dismeasure = { 
+			"EUCLIDEAN",
 			"MINKOWSKI",
-			"NONE",
-			"MAHALANOBIS",
+// no support	"NONE",
+//			"MAHALANOBIS",
 		    "CANBERRA",
-		    "DIVERGENCE",
-		    "BRAY_CURTIS",
-		    "SOERGEL",
-		    "BAHATTACHARYYA",
-		    "WAVE_HEDGES",
+//		    "DIVERGENCE",
+//		    "BRAY_CURTIS",
+//		    "SOERGEL",
+//		    "BAHATTACHARYYA",
+//		    "WAVE_HEDGES",
 		    "ANGULAR_SEPERATION",
 		    "CORRELATION" };
 	private final String[] dismeasure_remote = {
@@ -111,7 +100,7 @@ public class SmacofView extends JFrame implements ActionListener {
             "cityblock",
             "minkowski",
             "correlation",
-            "angularseperatin",
+            "angularseperatoin",
             "wavehedges",
             "bahattacharyya",
             "soergel",
@@ -126,67 +115,78 @@ public class SmacofView extends JFrame implements ActionListener {
 	private String[] tableColumnNames = { "Type", "Name", "Count", "Evaluate" };
 	final int TYPE_STR = 0, NAME_STR = 1, COUNT_STR = 2, UPLOAD_BOOL = 3;
 	
-	private ComputeCallback helper;
+	private ComputeCallback helper;   
 
-	public SmacofView() {		
-		super("SMACOF: "+MainWindowSingleton.getInstance().getCurrentPathway());
+	public SmacofView() {
+		super("SMACOF: "
+				+ MainWindowSingleton.getInstance().getCurrentPathway());
 		setPreferredSize(new Dimension(X, Y));
-		
-		graph = GraphInstance.getMyGraph();
-		
-		if(graph != null) {
-		
-			// Hier werden die Daten aus dem Graphen gelesen
-			for (BiologicalNodeAbstract bna : graph.getAllVertices()) {
-				for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.EXPERIMENT)) {
-					// count mapped nodes with given attribute
-					if (!attributes.containsKey(na.getName())) {
-						attributes.put(na.getName(), 1);
-					} else {
-						attributes.put(na.getName(), attributes.get(na.getName()) + 1);
-					}
-				}
-				//Martin
-				for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.GRAPH_PROPERTY)) {
-					// count mapped nodes with given attribute
-					if (!attributes.containsKey(na.getName())) {
-						attributes.put(na.getName(), 1);
-					} else {
-						attributes.put(na.getName(), attributes.get(na.getName()) + 1);
-					}
-				}
-				
-				
-			}
-			// tabledata fuer die Datentabelle anlegen und befuellen
-			tabledata = new Object[attributes.keySet().size()][tableColumnNames.length];
-			TreeSet<String> displayset = new TreeSet<>(attributes.keySet());
-			for (int line = 0; line < attributes.keySet().size(); line++) {
-				// hard coded for now, can be dynamically chosen in future
-				tabledata[line][TYPE_STR] = "Experiment";
-				tabledata[line][NAME_STR] = displayset.pollFirst();
-				tabledata[line][COUNT_STR] = attributes.get(tabledata[line][NAME_STR])
-						+ "/" + graph.getAllVertices().size();
-				tabledata[line][UPLOAD_BOOL] = new Boolean(true);
 
+		graph = GraphInstance.getMyGraph();
+
+		if (graph != null) {
+			try {
+
+				// Hier werden die Daten aus dem Graphen gelesen
+				for (BiologicalNodeAbstract bna : graph.getAllVertices()) {
+					for (NodeAttribute na : bna
+							.getNodeAttributesByType(NodeAttributeTypes.EXPERIMENT)) {
+						// count mapped nodes with given attribute
+						if (!attributes.containsKey(na.getName())) {
+							attributes.put(na.getName(), 1);
+						} else {
+							attributes.put(na.getName(),
+									attributes.get(na.getName()) + 1);
+						}
+					}
+					// Martin
+					for (NodeAttribute na : bna
+							.getNodeAttributesByType(NodeAttributeTypes.GRAPH_PROPERTY)) {
+						// count mapped nodes with given attribute
+						if (!attributes.containsKey(na.getName())) {
+							attributes.put(na.getName(), 1);
+						} else {
+							attributes.put(na.getName(),
+									attributes.get(na.getName()) + 1);
+						}
+					}
+
+				}
+				// tabledata fuer die Datentabelle anlegen und befuellen
+				tabledata = new Object[attributes.keySet().size()][tableColumnNames.length];
+				TreeSet<String> displayset = new TreeSet<>(attributes.keySet());
+				for (int line = 0; line < attributes.keySet().size(); line++) {
+					// hard coded for now, can be dynamically chosen in future
+					tabledata[line][TYPE_STR] = "Experiment";
+					tabledata[line][NAME_STR] = displayset.pollFirst();
+					tabledata[line][COUNT_STR] = attributes
+							.get(tabledata[line][NAME_STR])
+							+ "/"
+							+ graph.getAllVertices().size();
+					tabledata[line][UPLOAD_BOOL] = new Boolean(true);
+
+				}
+
+				// hier wird das Fenster fertiggemacht
+				initPanel();
+				this.setLayout(new BorderLayout(5, 5));
+				this.add(panelparam, BorderLayout.NORTH);
+				SmacofTablePanel tablepanel = new SmacofTablePanel();
+				tablepanel.setOpaque(true);
+				this.add(tablepanel, BorderLayout.SOUTH);
+				pack();
+				RefineryUtilities.centerFrameOnScreen(this);
+				setVisible(true);
+				setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				// setResizable(false);
+			} catch (IndexOutOfBoundsException ex) {
+				JOptionPane.showMessageDialog(null,
+						"Network contains no additional attributes.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
-		
-			
-			// hier wird das Fenster fertiggemacht
-			initPanel();
-			this.setLayout(new BorderLayout(5, 5));
-			this.add(panelparam, BorderLayout.NORTH);
-			SmacofTablePanel tablepanel = new SmacofTablePanel();
-			tablepanel.setOpaque(true);
-			this.add(tablepanel, BorderLayout.SOUTH);
-			pack();
-			RefineryUtilities.centerFrameOnScreen(this);
-			setVisible(true);
-			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			// setResizable(false);
 		} else {
-			final JPanel panel = new JPanel();
-			JOptionPane.showMessageDialog(panel, "please open a network first", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Please open a network first.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -264,7 +264,7 @@ public class SmacofView extends JFrame implements ActionListener {
 
 		MigLayout layout = new MigLayout("", "[][grow]", "");
 		panelparam.setLayout(layout);
-		panelparam.add(new JLabel("dissimilarity measure"), "");
+		panelparam.add(new JLabel("dissimilarity measure                "), "");
 		panelparam.add(choosedismeasure, "wrap");
 		
 		panelparam.add(labelmaxiter, "");
@@ -279,9 +279,16 @@ public class SmacofView extends JFrame implements ActionListener {
 		panelparam.add(labelresultdim, "");
 		panelparam.add(sliderresultdim, "wrap");
 		
-		panelparam.add(startcomputationbutton, "");
-		panelparam.add(stopcomputationbutton, "");
-		panelparam.add(remotecomputation, "wrap");
+		//enable remote computation only on dev mode
+		if(MainWindow.developer){
+			panelparam.add(startcomputationbutton, "");
+			panelparam.add(stopcomputationbutton, "");
+			panelparam.add(remotecomputation, "wrap");
+		}else{
+			panelparam.add(startcomputationbutton, "");
+			panelparam.add(stopcomputationbutton, "wrap");			
+		}
+		
 		
 		panelparam.add(new JLabel("computation status"), "wrap");
 		panelparam.add(labelcuriteration, "wrap");
@@ -342,7 +349,6 @@ public class SmacofView extends JFrame implements ActionListener {
 				
 				// hier wird der Thread fuer den SMACOF Algorithmus angestossen
 				double myepsilon = sliderepsilon.getValue() >= 0 ? sliderepsilon.getValue() : Math.pow(10, sliderepsilon.getValue());
-				//MARTIN
 //				//APSP statt werte
 //				NetworkProperties np = new NetworkProperties();
 //				short[][] apsp = np.AllPairShortestPaths(false);
@@ -357,17 +363,23 @@ public class SmacofView extends JFrame implements ActionListener {
 //				}
 				
 				if(!remotecomputation.isSelected()){
-				dosmacof = new DoSmacof(smacof_data_map,
-						mapped_nodes,
-						(String) choosedismeasure.getSelectedItem(),
-						slidermaxiter.getValue(),
-						myepsilon,
-						sliderp.getValue(),
-						sliderresultdim.getValue());
-				// start SMACOF algorithm as a thread
-				startcomputationbutton.setEnabled(false);
-				dosmacof.start();
-				}else {
+
+					//get weights:
+//					Weighting W = new Weighting(mapped_nodes, mapped_nodes_backwards);
+//					W.getWeightsByAdjacency();
+//			    	W.getWeightsByCellularComponent();
+		
+					
+					dosmacof = new DoSmacof(smacof_data_map, mapped_nodes,
+							(String) choosedismeasure.getSelectedItem(),
+							slidermaxiter.getValue(), myepsilon,
+							sliderp.getValue(), sliderresultdim.getValue(),
+							this);
+					// start SMACOF algorithm as a thread
+
+					startcomputationbutton.setEnabled(false);
+					dosmacof.start();
+			}else {
 					//Do remote call
 					startRemoteCall();
 				}				
@@ -380,7 +392,8 @@ public class SmacofView extends JFrame implements ActionListener {
 			case "stop computation":
 				try {
 					if(dosmacof != null && dosmacof.isAlive()){
-						dosmacof.stop();
+						dosmacof.stopSmacof();
+						dosmacof.interrupt();
 						stopcomputationbutton.setEnabled(false);
 						startcomputationbutton.setEnabled(true);
 						MainWindow mw = MainWindowSingleton.getInstance();
@@ -437,6 +450,19 @@ public class SmacofView extends JFrame implements ActionListener {
      * @throws IOException 
      */
     private void startRemoteCall() throws IOException{
+    	
+		Weighting W = new Weighting(mapped_nodes, mapped_nodes_backwards);
+//		W.getWeightsByAdjacency();
+    	float weightings[][];
+    	weightings = W.getWeightsByCellularComponent();
+//    	weightings = W.getWeightsByAdjacency();
+    	
+    	
+
+    	
+    	double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
+    	
+    	
     	//convert Smacof data map to Double variant
     	HashMap<Integer, Double[]> tcpmap = new HashMap<>(); 
     	Double[] tcparray;
@@ -447,11 +473,31 @@ public class SmacofView extends JFrame implements ActionListener {
     		tcparray = new Double[value.length];
     		for(int i = 0; i<value.length; i++){
     			tcparray[i] = new Double(value[i]);
+    			if(tcparray[i] > max)
+    				max = tcparray[i];
+    			if(tcparray[i] < min)
+    				min = tcparray[i];
     		}
     		
     		tcpmap.put(key, tcparray);   		
     	}
+    	//normalize expression to -1 .. +1:
+    	Double[] value;
+    	System.out.println(min +"   "+max);
+    	min = min*-1.0d;
+    	for(Entry<Integer,Double[]> entry : tcpmap.entrySet()){
+    		value = entry.getValue();
+    		for(int i = 0; i<value.length; i++){
+    			if(value[i]<0.0d)
+    				value[i]/=min;
+    			if(value[i]>0.0d)
+    				value[i]/=max;
+    		}
+    	}
+    	
+    	
     	// cellular component smacof daten
+///*
     	BiologicalNodeAbstract bna;
 		Double[] cells;
 
@@ -503,6 +549,7 @@ public class SmacofView extends JFrame implements ActionListener {
 			
 		}   
 		
+// */
 			
 /* Parameters for remote access:
        disfunc - dissimilarity measure: ...
@@ -538,6 +585,7 @@ public class SmacofView extends JFrame implements ActionListener {
 //		oos.writeObject(smacof_data_map); //does not work fine with remote 
 		oos.writeObject(tcpmap);
 		oos.writeObject(parameters);
+		oos.writeObject(weightings);
 
 		// close objectstream and transform to bytearray
 		oos.close();
@@ -555,28 +603,97 @@ public class SmacofView extends JFrame implements ActionListener {
 		}
     }
 
-    public void realignNetwork(HashMap<Integer, LayoutPoint2D> coords) {
+    @SuppressWarnings("static-access")
+	public void realignNetwork(HashMap<Integer, LayoutPoint2D> coords) {
 		MainWindow w = MainWindowSingleton.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
-		float scaling = 1000.0f;
+		float scaling = 0.0f, desired_diameter = 1000.0f;
 		
+		//set smaller diameter for large networks
+		if(pw.getVertices().size()>=1000)
+			desired_diameter = 3000.0f;
+
+		//determine optimal result scaling by formula
+		//first get the networks real width and height
 		int key;
+		float minX = Float.MAX_VALUE, maxX = Float.MIN_NORMAL, minY = Float.MAX_VALUE, maxY = Float.MIN_NORMAL, xdiff, ydiff;
+		float x,y;
 		LayoutPoint2D value;
 		for(Entry<Integer,LayoutPoint2D> entry : coords.entrySet()){
 			 key = entry.getKey();
 			 value = entry.getValue();
-			 pw.getVertices()
-				.get(mapped_nodes_backwards.get(key))
-				.setLocation(value.getX()*scaling,
-						value.getY()*scaling);		 
+			 x = value.getX();
+			 y = value.getY();
+			 
+			 if(x < minX)
+				 minX = x;
+			 if(x > maxX)
+				 maxX = x;
+			 
+			 if(y < minY)
+				 minY = y;
+			 if(y>maxY)
+				 maxY = y;	 
 		}
 		
-		con.getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).updateMyGraph();
-		con.getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).getGraph().getVisualizationViewer().repaint();
-		con.getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).getGraph().normalCentering();
+		//check if coordinates are as thought (may be improved, what if min is positive?)
+		if(minY < 0 && maxY > 0)
+			System.out.println("Y IS OK!");
+		else
+			System.out.println("Y IS BROKEN!!!");
+		if(minX < 0 && maxX > 0)
+			System.out.println("X IS OK!");
+		else
+			System.out.println("X IS BROKEN!!!");
 		
-		w.closeProgressBar();		
+		//get width and height of current network coordinates
+		xdiff = Math.abs(minX)+maxX;
+		ydiff = Math.abs(minY)+maxY;
+		
+		//set scaling width and height to at least to ~1000
+		// scaling has to be proportional, so take the larger value from X and Y as scaling
+		scaling = desired_diameter/xdiff;
+		if(desired_diameter/ydiff > scaling)
+			scaling = desired_diameter/ydiff;
+				
+		GraphInstance graphInstance = new GraphInstance();
+		
+
+		
+		System.out.println("scaling was set to:"+scaling);
+		for(Entry<Integer,LayoutPoint2D> entry : coords.entrySet()){
+			 key = entry.getKey();
+			 value = entry.getValue();
+			 x = value.getX();
+			 y = value.getY();
+			 Point2D point = new Point2D.Double(x*scaling, y*scaling);
+			 
+				graphInstance.getPathway().getGraph()
+				.getVisualizationViewer().getModel()
+				.getGraphLayout().setLocation(mapped_nodes_backwards.get(key), point);
+			 
+//			 pw.getGraph().getVertexLocation(mapped_nodes_backwards.get(key)).setLocation(x*scaling,y*scaling);
+//			 getVertices()
+//				.get(mapped_nodes_backwards.get(key))
+//				.setLocation(x*scaling,y*scaling);	 
+		}
+		 
+
+		
+//		System.out.printf("X:%f ~ %f\tY:%f ~ %f\t xdiff:%f\t ydiff:%f\n",minX,maxX,minY,maxY,Math.abs(minX)+maxX,Math.abs(minY)+maxY);
+		
+		w.progressbar.setProgressBarString("updating graph structure");
+		pw.saveVertexLocations();
+		
+		//center automatically
+
+//		graphInstance.getPathway().getGraph().normalCentering();
+		pw.getGraph().normalCentering();
+		
+		w.closeProgressBar();
+		returned();
+
 	}
 
     
@@ -686,6 +803,16 @@ public class SmacofView extends JFrame implements ActionListener {
 			}
 			System.out.println("------------------");
 		}
+	}
+
+	/*
+	 * Smacof thread returns and is done, reenable buttons
+	 */
+	public void returned() {
+
+		startcomputationbutton.setEnabled(true);
+		stopcomputationbutton.setEnabled(false);
+		
 	}
 
 

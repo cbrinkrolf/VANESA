@@ -186,21 +186,21 @@ public class Metrics {
             case DIVERGENCE:
                 for (int i = 0; i < values.length; i++) {
                     for (int j = i; j < values.length; j++) {
-                        dist_mat.setElement(j, i, DissimilarityFunctions.divergence((double[]) values[i], (double[]) values[j], metric));
+                        dist_mat.setElement(j, i, DissimilarityFunctions.divergence((double[]) values[i], (double[]) values[j]));
                     }
                 }
                 break;
             case BRAY_CURTIS:
                 for (int i = 0; i < values.length; i++) {
                     for (int j = i; j < values.length; j++) {
-                        dist_mat.setElement(j, i, DissimilarityFunctions.brayCurtis((double[]) values[i], (double[]) values[j], metric));
+                        dist_mat.setElement(j, i, DissimilarityFunctions.brayCurtis((double[]) values[i], (double[]) values[j]));
                     }
                 }
                 break;
             case SOERGEL:
                 for (int i = 0; i < values.length; i++) {
                     for (int j = i; j < values.length; j++) {
-                        dist_mat.setElement(j, i, DissimilarityFunctions.soergel((double[]) values[i], (double[]) values[j], metric));
+                        dist_mat.setElement(j, i, DissimilarityFunctions.soergel((double[]) values[i], (double[]) values[j]));
                     }
                 }
                 break;

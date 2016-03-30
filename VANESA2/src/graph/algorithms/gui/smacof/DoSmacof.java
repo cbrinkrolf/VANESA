@@ -12,6 +12,7 @@ import graph.GraphInstance;
 import graph.algorithms.gui.smacof.algorithms.Dissimilarities;
 import graph.algorithms.gui.smacof.algorithms.Smacof;
 import graph.algorithms.gui.smacof.datastructures.Mat;
+import graph.algorithms.gui.smacof.view.SmacofView;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 
@@ -19,6 +20,7 @@ public class DoSmacof extends Thread {
 	
 	// Die Daten des BiologicalNodeAbstract koennen ueber die ID der HashMaps
 	// identifiziert werden: mapped_nodes und smacof_data_map.
+	private SmacofView view;
 	private final HashMap<Integer, double[]> smacof_data_map;
 	private final HashMap<BiologicalNodeAbstract, Integer> mapped_nodes;
 	private final Dissimilarities dis;
@@ -26,6 +28,7 @@ public class DoSmacof extends Thread {
 	private final double epsilon;
 	private final int p;
 	private final int resultdim;
+	private Smacof smac;
 
 	public DoSmacof(HashMap<Integer, double[]> data_map,
 			HashMap<BiologicalNodeAbstract, Integer> mapped_nodes,
@@ -33,7 +36,8 @@ public class DoSmacof extends Thread {
 			int maxiter,
 			double epslion,
 			int p,
-			int resultdim) {
+			int resultdim,
+			SmacofView view) {
 		
 		this.smacof_data_map = data_map;
 		this.mapped_nodes = mapped_nodes;
@@ -41,6 +45,9 @@ public class DoSmacof extends Thread {
 		this.epsilon = epslion;
 		this.p = p;
 		this.resultdim = resultdim;
+		this.view = view;
+		
+		
 		// look up the dissimilarity measure
 		switch(dis) {
         case "NONE":
@@ -89,7 +96,7 @@ public class DoSmacof extends Thread {
 	   	
 
 	   
-	   Smacof smac = new Smacof();
+	   smac = new Smacof();
 	   Mat result_mat = smac.smacofAlgorithm(this.smacof_data_map,
 			   this.maxiter,
 			   this.epsilon,
@@ -98,8 +105,8 @@ public class DoSmacof extends Thread {
 			   this.p,
 			   false);
 	   
-	   System.out.println("Result_Mat:");
-	   System.out.println(result_mat);
+//	   System.out.println("Result_Mat:");
+//	   System.out.println(result_mat);
 	   
 	   // Skalierung der Ergebnisse um (hoffentlich) besser Darstellung zu erhalten
 	   // es muss noch auf sinnvolle Weise der Skalierungsfaktor automatisch bestimmt werden!
@@ -128,7 +135,7 @@ public class DoSmacof extends Thread {
 						point.setLocation(result_mat.getColumn(id)[0], 0);
 					} else if (result_mat.getSecondDimSize() == 2) {
 						point.setLocation(result_mat.getColumn(id)[0], result_mat.getColumn(id)[1]);
-						System.out.println("ID:"+id+" "+vertices.get(bna));
+//						System.out.println("ID:"+id+" "+vertices.get(bna));
 					}
 				}
 			} else {
@@ -137,7 +144,7 @@ public class DoSmacof extends Thread {
 					point.setLocation(result_mat.getColumn(id)[0], 0);
 				} else if (result_mat.getSecondDimSize() == 2) {
 					point.setLocation(result_mat.getColumn(id)[0], result_mat.getColumn(id)[1]);
-					System.out.println("ID:"+id+" "+vertices.get(bna));
+//					System.out.println("ID:"+id+" "+vertices.get(bna));
 				}
 			}
 
@@ -148,5 +155,16 @@ public class DoSmacof extends Thread {
 	   	   
 		MainWindow w = MainWindowSingleton.getInstance();
 		w.closeProgressBar();
+		view.returned();
+		
+		
 	  }
+	
+	/**
+	 * stop execution of smacof iterations
+	 */
+	public void stopSmacof(){
+		smac.interrupt();
+	}
+	
 }
