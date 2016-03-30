@@ -1,35 +1,25 @@
 package graph.algorithms;
 
-import graph.GraphContainer;
 import graph.ContainerSingelton;
+import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.geom.Point2D;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-import net.miginfocom.swing.MigLayout;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -525,8 +515,12 @@ public class NetworkProperties extends Object {
 	// connected networks
 	public int[] getCutNodes() {
 
-		if (isGraphConnected()) {
 			cutnodes = new int[nodes + 1];
+			
+			System.out.println(nodes+" "+edges);
+			System.out.println(Arrays.toString(nodei).replaceAll("\\[", "").replaceAll("\\]", ""));
+			System.out.println(Arrays.toString(nodej).replaceAll("\\[", "").replaceAll("\\]", ""));
+			
 			GraphTheoryAlgorithms
 					.cutNodes(nodes, edges, nodei, nodej, cutnodes);
 
@@ -544,11 +538,6 @@ public class NetworkProperties extends Object {
 			// GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 
 			return cutnodes;
-		} else {
-			// return error value if not possible
-			int[] ret = { -1 };
-			return ret;
-		}
 	}
 
 	// directed only
@@ -780,6 +769,30 @@ public class NetworkProperties extends Object {
 		w.updateFilterView();
 		w.updatePathwayTree();
 
+	}
+
+	public void getSpanningTree() {
+		
+		int[] weight = new int[edges+1], treearc1 = new int[nodes], treearc2 = new int[nodes];
+		
+		Arrays.fill(weight, 10);
+		
+		
+		GraphTheoryAlgorithms.minimumSpanningTreeKruskal(nodes, edges, nodei, nodej, weight, treearc1, treearc2);
+		System.out.println(Arrays.toString(treearc1));
+		System.out.println(Arrays.toString(treearc2));
+		
+		BiologicalNodeAbstract bnax,bnay;
+		for(int i = 1; i<=treearc1[0]; i++){
+			bnax = nodeassignsback.get(treearc1[i]-1);
+			bnay = nodeassignsback.get(treearc2[i]-1);
+			
+			pw.getEdge(bnax, bnay).setColor(Color.red);
+			System.out.println(bnax.getLabel()+" - "+ bnay.getLabel());
+		}
+		
+		
+		
 	}
 
 	// public int getNumberOfCliques(){
