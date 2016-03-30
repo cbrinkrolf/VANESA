@@ -23,6 +23,7 @@ public class Smacof {
 
     private final Mat TEST_Z = getTestZ();
     private final int STANDARD_METRIC = 2;
+    private boolean interrupted = false;
 
     public Smacof() {
 
@@ -85,7 +86,7 @@ public class Smacof {
         }
         int k = 1;
         StopWatch swatch = new StopWatch();
-        while (k < maxiter && Math.abs(sigma_prev - sigma) > epsilon) {
+        while (!interrupted && k < maxiter && Math.abs(sigma_prev - sigma) > epsilon) {
             swatch.start();
             Z = X;
             sigma_prev = sigma;
@@ -276,6 +277,13 @@ public class Smacof {
         mt[2] = c;
         mt[3] = d;
         return m;
+    }
+    
+    /**
+     * interrupt computation on stop button
+     */
+    public void interrupt(){
+    	this.interrupted = true;
     }
 
 }
