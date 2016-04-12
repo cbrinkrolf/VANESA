@@ -207,19 +207,20 @@ public class OptionPanel {
 			taskPaneContainer.add(pathways, "growx");
 			taskPaneContainer.add(filter, "growx");
 			// taskPaneContainer.add(dbProperties);
-			taskPaneContainer.add(heatgraphProperties, "growx");
+//			taskPaneContainer.add(heatgraphProperties, "growx");
 			taskPaneContainer.add(project, "growx");
 			// taskPaneContainer.add(alignment);
 		} else {
 			taskPaneContainer.add(databaseSearch, "growx");
+			taskPaneContainer.add(pcpview, "growx");
+			taskPaneContainer.add(theory, "growx");
+			taskPaneContainer.add(generalProperties, "growx");
 			taskPaneContainer.add(satellite, "growx");
 			taskPaneContainer.add(elements, "growx");
 			taskPaneContainer.add(bbProperties, "growx");
 			taskPaneContainer.add(pathways, "growx");
 			taskPaneContainer.add(filter, "growx");
-			taskPaneContainer.add(theory, "growx");
 			// taskPaneContainer.add(dbProperties);
-			taskPaneContainer.add(generalProperties, "growx");
 			taskPaneContainer.add(project, "growx");
 			//taskPaneContainer.add(pcpview);
 			
