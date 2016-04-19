@@ -142,7 +142,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 	private List<RangeInfo> getShapes(MyGraph mg) {
 		// return this.ranges.get(mg);
-
+		//System.out.println(mg.getAnnotationManager().getAnnotations().size());
 		MyAnnotationManager am = mg.getAnnotationManager();
 		List<RangeInfo> list = new ArrayList<RangeInfo>();
 		Iterator<MyAnnotation> it = am.getAnnotations().iterator();
@@ -164,7 +164,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 			// RangeSelector.getInstance().addRangeInfo(r);
 			list.add(r);
 		}
-		// System.out.println("g: "+list.size());
+		//System.out.println("g: "+list.size());
 		return list;
 
 	}

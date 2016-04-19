@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="packages/backport-util-concurrent-3.1.jar"/>
 	<classpathentry kind="lib" path="packages/commons-cli-1.1.jar"/>
 	<classpathentry kind="lib" path="packages/commons-collections-3.2.jar"/>
-	<classpathentry kind="lib" path="packages/epsgraphics.jar"/>
 	<classpathentry kind="lib" path="packages/fastutil-5.1.5.jar"/>
 	<classpathentry kind="lib" path="packages/filters.jar"/>
 	<classpathentry kind="lib" path="packages/jxlayer.jar"/>
@@ -68,7 +67,6 @@
 	<classpathentry kind="lib" path="packages/prettyFormula/batik-xml.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/jlatexmath-1.0.3.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/pretty-formula.jar"/>
-	<classpathentry kind="lib" path="packages/JTattoo-1.6.11.jar"/>
 	<classpathentry kind="lib" path="packages/swingx-all-1.6.4.jar"/>
 	<classpathentry kind="lib" path="packages/eDAL-MetaDataAPI-Client-2.3.5-SNAPSHOT-jar-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/xerces_2_5_0.jar"/>
@@ -82,6 +80,25 @@
 	<classpathentry kind="lib" path="packages/smacof/MatrixLib-1.3.1.jar"/>
 	<classpathentry kind="lib" path="packages/jsbml-1.1-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="packages/commons-configuration-1.10.jar"/>
+	<classpathentry kind="lib" path="packages/JTattoo-1.6.11.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-export-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphics2d-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-emf-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-java-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-pdf-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-ps-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-svg-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-swf-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-tests-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-io-2.0.2.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-swing-2.0.3.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-util-2.0.2.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/freehep-xml-2.1.1.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/jas-plotter-2.2.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/jdom-1.0.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/junit-3.8.2.jar"/>
+	<classpathentry kind="lib" path="packages/freeHEP/openide-lookup-1.9-patched-1.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="packages/mdsj.jar"/>
 	<classpathentry kind="lib" path="packages/smacof/core-math-1.3.1.jar"/>

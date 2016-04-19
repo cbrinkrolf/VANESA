@@ -107,11 +107,6 @@ public class ToolBar {
 		move.setActionCommand("move");
 		move.addActionListener(toolBarListener);
 
-		JButton picture = new ToolBarButton(new ImageIcon(imagePath.getPath("picture.png")));
-		picture.setToolTipText("Save graph - picture");
-		picture.setActionCommand("picture");
-		picture.addActionListener(toolBarListener);
-
 		JButton zoomIn = new ToolBarButton(new ImageIcon(imagePath.getPath("zoomPlus.png")));
 		zoomIn.setToolTipText("Zoom in");
 		zoomIn.setActionCommand("zoom in");
@@ -191,11 +186,6 @@ public class ToolBar {
 		if (MainWindow.developer) {
 			infopanel.add(autoCoarse);
 		}
-
-		JButton printer = new ToolBarButton(new ImageIcon(imagePath.getPath("printer.png")));
-		printer.setToolTipText("Print graph");
-		printer.setActionCommand("print");
-		printer.addActionListener(toolBarListener);
 
 		JButton fullScreen = new ToolBarButton(new ImageIcon(imagePath.getPath("newFullScreen.png")));
 		fullScreen.setToolTipText("Full screen");
@@ -293,8 +283,6 @@ public class ToolBar {
 
 		printControls.add(newDoc);
 		printControls.add(newWindow);
-		printControls.add(printer);
-		printControls.add(picture);
 
 		// Add buttons to experiment with Grid Layout
 		JPanel petriNetcontrols = new ToolBarPanel();

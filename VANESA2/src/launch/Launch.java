@@ -1,11 +1,5 @@
 package launch;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import gui.IntroScreen;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -25,17 +19,20 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 
-import biologicalElements.ElementNames;
-import biologicalElements.ElementNamesSingelton;
-
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
 
+import biologicalElements.ElementNames;
+import biologicalElements.ElementNamesSingelton;
 import configurations.ConfigureLog4j;
 import configurations.ConnectionSettings;
 import configurations.ProgramFileLock;
 import configurations.ResourceLibrary;
 import database.Connection.DBconnection;
 import database.brenda.MostWantedMolecules;
+import graph.ContainerSingelton;
+import gui.IntroScreen;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
 
 public class Launch {
 
@@ -161,7 +158,7 @@ public class Launch {
 
 		// go on with creating the editor window
 
-		boolean loaded = false;
+		//boolean loaded = false;
 
 		// create 3 Runable instances to run them in separate
 		// threads simulanously
@@ -186,7 +183,7 @@ public class Launch {
 		Runnable containerStart = new Runnable() {
 			public void run() {
 				intro.setLoadingText("WebConnection");
-				GraphContainer con = ContainerSingelton.getInstance();
+				ContainerSingelton.getInstance();
 
 				intro.setLoadingText("Database Information");
 				new MostWantedMolecules();
