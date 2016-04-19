@@ -1385,6 +1385,7 @@ public class Pathway implements Cloneable {
 		nodes.addAll(vertices.keySet());
 		for (BiologicalNodeAbstract n : nodes) {
 			if (getGraph().getAllVertices().contains(n)) {
+				//System.out.println(getGraph().getVertexLocation(n));
 				vertices.put(n, getGraph().getVertexLocation(n));
 			}
 		}

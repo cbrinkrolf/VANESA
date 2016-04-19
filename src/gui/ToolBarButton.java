@@ -16,8 +16,8 @@ public class ToolBarButton extends JButton implements MouseListener{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Color hoverBackgroundColor = new Color(3, 59, 90).brighter();
-	private Color pressedBackgroundColor = Color.PINK;
+	//private Color hoverBackgroundColor = new Color(3, 59, 90).brighter();
+	//private Color pressedBackgroundColor = Color.PINK;
 
 	public ToolBarButton(Icon icon) {
 		super(icon);
@@ -38,7 +38,7 @@ public class ToolBarButton extends JButton implements MouseListener{
 		// this.setPreferredSize(this.getMinimumSize());
 		this.setMaximumSize(this.getPreferredSize());
 		// this.setSize(10, 10);
-		this.setBackground(Color.GRAY.LIGHT_GRAY);
+		this.setBackground(Color.LIGHT_GRAY);
 		this.setContentAreaFilled(false);
 		
 		this.revalidate();

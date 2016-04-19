@@ -23,7 +23,6 @@ public class MenuBarClass {
 	private JMenuItem closeAllNetworks;
 	private JMenuItem closeNetwork;
 	private JMenuItem savePicture;
-	private JMenuItem printPicture;
 	private JMenuItem springLayout;
 	private JMenuItem kkLayout;
 	private JMenuItem frLayout;
@@ -135,6 +134,10 @@ public class MenuBarClass {
 		JMenuItem mirnaTest = new JMenuItem("MirnaTest");
 		mirnaTest.addActionListener(new MenuListener());
 		mirnaTest.setActionCommand("mirnaTest");
+		
+		JMenuItem mirnaTargets = new JMenuItem("Enrich miRNA targets");
+		mirnaTargets.addActionListener(new MenuListener());
+		mirnaTargets.setActionCommand("mirnaTargets");
 
 		JMenuItem shake = new JMenuItem("Shake Enzymes!");
 		shake.addActionListener(new MenuListener());
@@ -217,12 +220,6 @@ public class MenuBarClass {
 
 		savePicture.addActionListener(new MenuListener());
 		savePicture.setActionCommand("graphPicture");
-
-		printPicture = new JMenuItem("Print A Graph-Picture", KeyEvent.VK_P);
-		printPicture.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, MENUSHORTCUT));
-
-		printPicture.addActionListener(new MenuListener());
-		printPicture.setActionCommand("printPicture");
 
 		springLayout = new JMenuItem("SpringLayout");
 		springLayout.addActionListener(new MenuListener());
@@ -358,7 +355,6 @@ public class MenuBarClass {
 			file.add(saveEdal);
 		}
 		file.add(savePicture);
-		file.add(printPicture);
 		file.add(export);
 		/*
 		 * file.add(exportGraphMl); file.add(exportMo); file.add(exportGon);
@@ -396,6 +392,7 @@ public class MenuBarClass {
 
 		if (MainWindow.developer) {
 			math.add(mirnaTest);
+			math.add(mirnaTargets);
 			math.add(shake);
 		}
 		// math.add(visualAnalysis);
@@ -496,7 +493,6 @@ public class MenuBarClass {
 		closeAllNetworks.setEnabled(true);
 		closeNetwork.setEnabled(true);
 		savePicture.setEnabled(true);
-		printPicture.setEnabled(true);
 		circleLayout.setEnabled(true);
 		frLayout.setEnabled(true);
 		isomLayout.setEnabled(true);
@@ -545,7 +541,6 @@ public class MenuBarClass {
 		closeAllNetworks.setEnabled(false);
 		closeNetwork.setEnabled(false);
 		savePicture.setEnabled(false);
-		printPicture.setEnabled(false);
 		circleLayout.setEnabled(false);
 		frLayout.setEnabled(false);
 		isomLayout.setEnabled(false);

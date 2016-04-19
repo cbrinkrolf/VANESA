@@ -1,22 +1,8 @@
 package gui.eventhandlers;
 
-import graph.ContainerSingelton;
-import graph.CreatePathway;
-import graph.GraphContainer;
-import graph.GraphInstance;
-import graph.algorithms.gui.CompareGraphsGUI;
-import graph.hierarchies.AutoCoarse;
-import graph.jung.classes.MyGraph;
-import gui.HeatmapChooseGraphsWindow;
-import gui.InfoWindow;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ParallelChooseGraphsWindow;
-
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -30,14 +16,25 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.ContainerSingelton;
+import graph.CreatePathway;
+import graph.GraphContainer;
+import graph.GraphInstance;
+import graph.algorithms.gui.CompareGraphsGUI;
+import graph.hierarchies.AutoCoarse;
+import graph.jung.classes.MyGraph;
+import gui.HeatmapChooseGraphsWindow;
+import gui.InfoWindow;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+import gui.ParallelChooseGraphsWindow;
 import petriNet.ConvertToPetriNet;
 import petriNet.OpenModellicaResult;
 import petriNet.PNTableDialog;
 import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
-import save.graphPicture.WriteGraphPicture;
-import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class ToolBarListener implements ActionListener {
 
@@ -159,26 +156,6 @@ public class ToolBarListener implements ActionListener {
 				new HeatmapChooseGraphsWindow();
 			} else {
 				this.showCreate2NetworksMessage();
-			}
-		} else if ("picture".equals(event)) {
-			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new WriteGraphPicture().writeFile();
-				} else {
-					this.showCreateBeforeMessage();
-				}
-			} else {
-				this.showCreateBeforeMessage();
-			}
-		} else if ("print".equals(event)) {
-			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new WriteGraphPicture().printGraph();
-				} else {
-					this.showCreateBeforeMessage();
-				}
-			} else {
-				this.showCreateBeforeMessage();
 			}
 		} else if ("modelling".equals(event)) {
 

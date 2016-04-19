@@ -1,96 +1,69 @@
 package graph.layouts;
 
 import java.awt.geom.Point2D;
-import java.util.Collection;
+import java.awt.geom.RectangularShape;
 import java.util.Iterator;
 
-import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import graph.jung.classes.MyGraph;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.visualization.Layout;
 
 public class GraphCenter {
 
-	private Collection<BiologicalNodeAbstract> vertices;
 	private Point2D center;
 	private double width;
 	private double height;
-	private Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
 	
-	private double x_min=0;
-	private double x_max=0;
-	private double y_min=0;
-	private double y_max=0;
-	private double radius = 0;
+	private double minX = Double.MAX_VALUE;
+	private double minY = Double.MAX_VALUE;
+	private double maxX = -Double.MAX_VALUE;
+	private double maxY = -Double.MAX_VALUE;
+	private MyGraph g;
 	
+	public GraphCenter(MyGraph g){
+		this.g = g;
+		init();
+	}
 	
-	boolean firstValues = false;
+	private void init(){
+		Iterator<BiologicalNodeAbstract> it = g.getAllVertices().iterator();
+		
+		BiologicalNodeAbstract bna;
+		while (it.hasNext()) {
+			bna = it.next();
+			Point2D p = g.getVertexLocation(bna);
+			if (p.getX() < minX) {
+				minX = p.getX();
+			}
+			if (p.getX() > maxX) {
+				maxX = p.getX();
+			}
+			if (p.getY() < minY) {
+				minY = p.getY();
+			}
+			if (p.getY() > maxY) {
+				maxY = p.getY();
+			}
 
-	
-	public GraphCenter(MyGraph g, Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> l){
-		layout=l;
-		vertices=g.getAllVertices();
-		initBoundaries();
-	}
-	
-	private void initBoundaries(){
-		Iterator<BiologicalNodeAbstract> it = vertices.iterator();
-		BiologicalNodeAbstract v;
-		while (it.hasNext()){
-			
-			v = it.next();		
-			Point2D point = layout.transform(v);
-			//System.out.println(point);
-			
-			if(!firstValues){
-				
-				x_min =point.getX();
-				x_max=point.getX();
-				y_min=point.getY();
-				y_max=point.getY();
-				firstValues=true;
-			}else{
-				updateboundaries(point);
-			}		
 		}
-		calculateLengths();
-		calculateCenter();
-	}
-	
-	public double getRadius(){
-		return radius;
-	}
-	
-	private void calculateLengths(){
-		width = x_max-x_min;
-		height = y_max-y_min;
-	}
-	
-	private void calculateCenter(){
-		double x_center = x_min + (width/2);
-		double y_center = y_min + (height/2);
-		center = new Point2D.Double(x_center,y_center);
-	}
-	
-	private void updateboundaries(Point2D point){
 		
-		double x = point.getX();
-		double y = point.getY();
-		
-		if(x>x_max){
-			x_max=x;
-		} 		
-		if(x<x_min){
-			x_min=x;
-		}			
-		if(y>y_max){
-			y_max=y;
-		}		
-		if(y<y_min){
-			y_min=y;
-		}		
+		for(int i = 0; i<g.getAnnotationManager().getAnnotations().size(); i++){
+			RectangularShape s = g.getAnnotationManager().getAnnotations().get(i).getShape();
+			if (s.getMinX() < minX) {
+				minX = s.getMinX();
+			}
+			if (s.getMaxX() > maxX) {
+				maxX = s.getMaxX();
+			}
+			if (s.getMinY() < minY) {
+				minY = s.getMinY();
+			}
+			if (s.getMaxY() > maxY) {
+				maxY = s.getMaxY();
+			}
+		}
+		this.width = maxX-minX;
+		this.height = maxY-minY;
+		this.center = new Point2D.Double(minX+width/2, minY+height/2);
 	}
 	
 	public Point2D getCenter(){
@@ -105,18 +78,19 @@ public class GraphCenter {
 		return width;
 	}
 
-	/**
-	 * @return the x_min
-	 */
-	public double getXmin() {
-		return x_min;
+	public double getMinX() {
+		return minX;
 	}
 
+	public double getMinY() {
+		return minY;
+	}
 
-	/**
-	 * @return the y_min
-	 */
-	public double getYmin() {
-		return y_min;
+	public double getMaxX() {
+		return maxX;
+	}
+
+	public double getMaxY() {
+		return maxY;
 	}
 }

@@ -4,6 +4,7 @@
  */
 package gui;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -26,6 +27,8 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
@@ -33,7 +36,7 @@ import javax.swing.event.AncestorListener;
  * 
  * @author star
  */
-public class ButtonChooser extends ToolBarButton implements ActionListener,
+public class ButtonChooser extends JButton implements ActionListener,
 		MouseListener, FocusListener, AncestorListener {
 
 	/**
@@ -63,6 +66,18 @@ public class ButtonChooser extends ToolBarButton implements ActionListener,
 		addFocusListener(this);
 		addMouseListener(this);
 		addAncestorListener(this);
+		
+		Border thickBorder = new LineBorder(Color.black);
+		this.setBorder(thickBorder);
+		//this.setBorder(null);
+		this.setBorderPainted(false);
+		// this.setPreferredSize(this.getMinimumSize());
+		this.setMaximumSize(this.getPreferredSize());
+		// this.setSize(10, 10);
+		this.setBackground(Color.LIGHT_GRAY);
+		this.setContentAreaFilled(false);
+		
+		this.revalidate();
 	}
 
 	private void initPopup() {
@@ -134,7 +149,8 @@ public class ButtonChooser extends ToolBarButton implements ActionListener,
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		super.mouseEntered(e);
+		this.setContentAreaFilled(true);
+		this.setBorderPainted(true);
 	}
 
 	public void mouseExited(MouseEvent e) {
@@ -144,7 +160,8 @@ public class ButtonChooser extends ToolBarButton implements ActionListener,
 						e.getLocationOnScreen())) {
 			hidePopup();
 		}
-		super.mouseExited(e);
+		this.setContentAreaFilled(false);
+		this.setBorderPainted(false);
 	}
 
 	public void mousePressed(MouseEvent e) {
