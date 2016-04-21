@@ -2,12 +2,17 @@ package graph.algorithms.gui;
 
 import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
+import graph.algorithms.centralities.betweenness.Betweennesscentralitiy;
+import graph.algorithms.centralities.betweenness.Betweennesscentralitiy.GraphCentrality;
+import graph.algorithms.centralities.betweenness.Vertex;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -29,7 +34,7 @@ public class GraphNodeDimensionGUI implements ActionListener {
 
 	private JComboBox<String> chooseAlgorithm;
 	//private JButton weight;
-	private String[] algorithmNames = { "None","Node Degree"};
+	private String[] algorithmNames = { "None","Node Degree","Betweenness"};
 	private int currentalgorithmindex = 0;
 	private JSpinner nodesizefromspinner, nodesizetospinner;
 	private SpinnerNumberModel frommodel, tomodel;
@@ -135,6 +140,67 @@ public class GraphNodeDimensionGUI implements ActionListener {
 		}
 	}
 	
+	private void getNodeBetweennesCentrality(){
+		c = new NetworkProperties();
+		ratings = new Hashtable<BiologicalNodeAbstract,Double>();
+		minvalue = Double.MAX_VALUE;
+		maxvalue = Double.MIN_NORMAL;
+		int[] nodei, nodej, tmpi, tmpj;
+		nodei = c.getNodeI();
+		nodej = c.getNodeJ();
+		
+//		System.out.println(Arrays.toString(nodei));
+//
+//		System.out.println(Arrays.toString(nodej));
+		
+		//remove unused element 0 from old data structure and create undirected graph
+		//(each edge has to be inserted twice)
+		tmpi = new int[(nodei.length-1)*2];
+		int tmppos=0;
+		for(int i = 1; i<nodei.length; i++){
+			tmpi[tmppos] = nodei[i]-1;
+			tmppos++;
+			tmpi[tmppos] = nodej[i]-1;
+			tmppos++;			
+		}
+
+		tmpj = new int[(nodej.length-1)*2];
+		tmppos=0;
+		for(int i = 1; i<nodej.length; i++){
+			tmpj[tmppos] = nodej[i]-1;
+			tmppos++;
+			tmpj[tmppos] = nodei[i]-1;
+			tmppos++;			
+		}
+		
+		//overwrite old data structure
+		nodei = tmpi;
+		nodej = tmpj;
+		
+//		System.out.println(Arrays.toString(nodei));
+//
+//		System.out.println(Arrays.toString(nodej));
+		
+		//invoke betweenness-centrality
+		Betweennesscentralitiy b = new Betweennesscentralitiy(nodei, nodej);
+		try {
+			GraphCentrality g = b.calcCentrality();
+			for(Vertex v : g.vertices){
+//				System.out.println(v.id+"  ");
+				if(v.timeswalkedover.doubleValue()<minvalue)
+					minvalue=v.timeswalkedover.doubleValue();
+				if(v.timeswalkedover.doubleValue()>maxvalue)
+					maxvalue=v.timeswalkedover.doubleValue();
+				
+				ratings.put(c.getNodeAssignmentbackwards(v.id), v.timeswalkedover.doubleValue());
+			}
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
+		//DEBUG
+//		System.out.println(ratings.toString());
+	}
+	
 	private void transformRatingToWeighting(double minweight , double maxweight) {
 
 		it = ratings.entrySet().iterator();
@@ -169,8 +235,6 @@ public class GraphNodeDimensionGUI implements ActionListener {
 			//do calculations
 			switch (currentalgorithmindex) {
 			case 0:
-				//DEBUG
-				//System.out.println("Node Weighting 0: None");
 				//Standard Nodesize to 1
 				GraphInstance.getMyGraph().getAllVertices().stream().
 					forEach(bna -> bna.setNodesize(1.0d));
@@ -181,10 +245,18 @@ public class GraphNodeDimensionGUI implements ActionListener {
 				
 				break;
 			case 1:
-				//DEBUG
-				//System.out.println("Node Weighting 1: Node Degree");
 				//Node Degree rating				
 				getNodeDegreeRatings();
+				
+				//calclulate Weighting
+				transformRatingToWeighting((double)nodesizefromspinner.getValue(),(double)nodesizetospinner.getValue());		
+				
+				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
+				
+				break;
+			case 2:
+				//Betweenness centrality weighting				
+				getNodeBetweennesCentrality();			
 				
 				//calclulate Weighting
 				transformRatingToWeighting((double)nodesizefromspinner.getValue(),(double)nodesizetospinner.getValue());		

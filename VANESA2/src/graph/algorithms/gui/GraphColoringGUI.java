@@ -428,7 +428,7 @@ public class GraphColoringGUI implements ActionListener {
 		case MULTILAYOUT:
 			// Set parameters
 			parameters = new HashMap<>();
-			parameters.put("edgecutting", "" + 0.95);
+			parameters.put("edgecutting", "" + 0.7);
 			parameters.put("seed", "" + (int) (Math.random() * 1000));
 
 			// open objectstream
@@ -693,7 +693,7 @@ public class GraphColoringGUI implements ActionListener {
 				gnode = np.getNodeAssignmentbackwards(i);
 				values = new ArrayList<Double>(7);
 				for (int j = 1; j <= experiments; j++) {
-					att = gnode.getNodeAttributeByName("Chol" + j);
+					att = gnode.getNodeAttributeByName("CholGEO" + j);
 					if (att != null)
 						values.add(att.getDoublevalue());
 				}

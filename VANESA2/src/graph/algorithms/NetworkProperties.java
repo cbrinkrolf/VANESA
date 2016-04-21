@@ -794,6 +794,16 @@ public class NetworkProperties extends Object {
 		
 		
 	}
+	
+	public int[] getNodeI(){
+		return nodei;
+	}
+	
+	public int[] getNodeJ(){
+		return nodej;
+	}
+	
+	
 
 	// public int getNumberOfCliques(){
 	//
