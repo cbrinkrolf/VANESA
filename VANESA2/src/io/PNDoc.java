@@ -141,12 +141,14 @@ public class PNDoc {
 	}
 
 	private void createHeader() {
+		String name = pw.getName();
+		name = name.replace("_", "\\_");
 		sb.append("" + "\\documentclass{article}\n"
 				+ "\\usepackage{amsmath,verbatim,booktabs,longtable,cprotect}\n"
 				+ "\\begin{document}\n"
 				+ "\\begin{titlepage}"
 				+ "\\author{\\TeX ed by \\emph{VANESA} Copyright \\copyright}\n"
-				+ "\\title{Documentation of: "+ pw.getName() +"}\n"
+				+ "\\title{Documentation of: "+ name +"}\n"
 				+ "\\date{\\today}\n"
 				+ "\\maketitle\n"
 				+ "\\tableofcontents\n"
