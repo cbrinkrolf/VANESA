@@ -182,14 +182,13 @@ public class PNDoc {
 
 		sb.append("Name & Value & Unit\\\\\\midrule\n");
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSorted().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		BiologicalNodeAbstract bna;
 		Place p;
-		int i = 0;
-		while (it.hasNext() && i < 3) {
+		while (it.hasNext()) {
 			bna = it.next();
 			if(bna instanceof Place && !bna.hasRef()){
-			
+			System.out.println(bna.getName());
 			p = (Place) bna;
 
 			sb.append("\\verb+" + p.getName() + "+ & " + p.getTokenStart()

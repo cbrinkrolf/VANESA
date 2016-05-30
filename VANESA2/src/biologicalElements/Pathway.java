@@ -826,7 +826,7 @@ public class Pathway implements Cloneable {
 		HashMap<String, BiologicalNodeAbstract> map = new HashMap<String, BiologicalNodeAbstract>();
 
 		for (BiologicalNodeAbstract bna : this.getAllGraphNodes()) {
-			map.put(bna.getName(), bna);
+			map.put(bna.getName().toLowerCase(), bna);
 		}
 
 		ArrayList<String> ids = new ArrayList<String>(map.keySet());
