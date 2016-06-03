@@ -70,10 +70,6 @@ public interface GraphElementAbstract{
 
 	public void setReference(boolean isReference);
 
-	public boolean isHidden();
-
-	public void setHidden(boolean hidden);
-
 	public boolean isVisible();
 
 	public void setVisible(boolean isVisible);

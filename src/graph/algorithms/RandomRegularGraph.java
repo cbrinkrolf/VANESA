@@ -65,7 +65,6 @@ public class RandomRegularGraph {
 
 				r.setDirected(false);
 				r.setReference(false);
-				r.setHidden(false);
 				r.setVisible(true);
 				pw.addEdge(r);
 

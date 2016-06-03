@@ -102,7 +102,6 @@ public class RandomConnectedGraph {
 
 				r.setDirected(false);
 				r.setReference(false);
-				r.setHidden(false);
 				r.setVisible(true);
 
 				if (weightedGraph) {

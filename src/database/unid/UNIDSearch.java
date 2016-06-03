@@ -217,7 +217,6 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 				else
 					r.setDirected(true);
 				r.setReference(false);
-				r.setHidden(false);
 				r.setVisible(true);
 
 				pw.addEdge(r);

@@ -1315,7 +1315,6 @@ public class GraphColoringGUI implements ActionListener {
 						re = new ReactionEdge("", "", bnar[i], bnar[j]);
 						re.setDirected(false);
 						re.setReference(false);
-						re.setHidden(false);
 						re.setVisible(true);
 						pw.addEdge(re);
 					}
@@ -1333,7 +1332,6 @@ public class GraphColoringGUI implements ActionListener {
 					re = new ReactionEdge("", "", bnar[i], bnar[j]);
 					re.setDirected(false);
 					re.setReference(false);
-					re.setHidden(false);
 					re.setVisible(true);
 					// MARTIN DCB result: make color pickable
 					re.setColor(new Color(255, 0, 255, 0));

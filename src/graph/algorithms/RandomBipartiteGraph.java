@@ -67,7 +67,6 @@ public class RandomBipartiteGraph {
 			// System.out.println(r.getID());
 			r.setDirected(false);
 			r.setReference(false);
-			r.setHidden(false);
 			r.setVisible(true);
 			pw.addEdge(r);
 
