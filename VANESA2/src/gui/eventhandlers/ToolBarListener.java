@@ -47,7 +47,7 @@ public class ToolBarListener implements ActionListener {
 		JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 				"Please create two networks first!");
 	}
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 

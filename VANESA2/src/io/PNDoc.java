@@ -188,7 +188,7 @@ public class PNDoc {
 		while (it.hasNext()) {
 			bna = it.next();
 			if(bna instanceof Place && !bna.hasRef()){
-			System.out.println(bna.getName());
+			//System.out.println(bna.getName());
 			p = (Place) bna;
 
 			sb.append("\\verb+" + p.getName() + "+ & " + p.getTokenStart()
