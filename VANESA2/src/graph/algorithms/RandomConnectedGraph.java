@@ -101,7 +101,6 @@ public class RandomConnectedGraph {
 						nodes.get(nodej[k]));
 
 				r.setDirected(false);
-				r.setReference(false);
 				r.setVisible(true);
 
 				if (weightedGraph) {

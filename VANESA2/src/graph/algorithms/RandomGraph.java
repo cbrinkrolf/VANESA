@@ -106,7 +106,6 @@ public class RandomGraph {
 					// "", "");
 
 					r.setDirected(true);
-					r.setReference(false);
 					r.setVisible(true);
 
 					if (weightedGraph) {
@@ -126,7 +125,6 @@ public class RandomGraph {
 					// "", "");
 
 					r.setDirected(false);
-					r.setReference(false);
 					r.setVisible(true);
 
 					if (weightedGraph) {

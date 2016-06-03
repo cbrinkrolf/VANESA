@@ -68,7 +68,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private GraphInstance graphInstance;
 	boolean emptyPane = true;
 
-	private JCheckBox reference;
 	private JButton chooseRef;
 	private JButton deleteRef;
 	private JButton pickOrigin;
@@ -115,7 +114,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 			name.setText(ab.getName());
 		}
 
-		reference = new JCheckBox();
 		knockedOut = new JCheckBox();
 		colorButton = new JButton("Colour");
 		hideNeighbours = new JButton("Hide all Neighbours");
@@ -135,11 +133,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 		label.addFocusListener(pwl);
 		name.addFocusListener(pwl);
-
-		reference.setSelected(ab.isReference());
-		reference.setToolTipText("Set this element to a reference");
-		reference.setActionCommand("reference");
-		reference.addActionListener(this);
 
 		MigLayout headerlayout = new MigLayout("fillx",
 				"[right]rel[grow,fill]", "");
@@ -569,8 +562,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 			}
 		}
 
-		p.add(new JLabel("Reference"), "gap 5 ");
-		p.add(reference, "wrap, span 3");
 		if (ab instanceof Transition) {
 			knockedOut.setSelected(((Transition) ab).isKnockedOut());
 			knockedOut.setToolTipText("Knock out");
@@ -657,32 +648,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}
 	}
 
-	private void updateReferences(boolean reference) {
-
-		// CHRIS reimplement of updateReferences
-
-		/*
-		 * if (ab.isVertex()) {
-		 * 
-		 * Pathway pw = graphInstance.getPathway(); BiologicalNodeAbstract bna =
-		 * (BiologicalNodeAbstract) pw .getElement(element); Iterator it =
-		 * bna.getVertex().getIncidentEdges().iterator();
-		 * 
-		 * while (it.hasNext()) { Edge e = (Edge) it.next(); Pair p =
-		 * e.getEndpoints();
-		 * 
-		 * BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) pw
-		 * .getElement(e); BiologicalNodeAbstract first =
-		 * (BiologicalNodeAbstract) pw .getElement(p.getFirst());
-		 * BiologicalNodeAbstract second = (BiologicalNodeAbstract) pw
-		 * .getElement(p.getSecond());
-		 * 
-		 * if (first.isReference() == false && second.isReference() == false) {
-		 * bea.setReference(false); } else { bea.setReference(true); } } } else
-		 * { ab.setReference(reference); }
-		 */
-	}
-
 	private void addCompartmentItems(JComboBox<String> compartment) {
 
 		List<String> compartmentList = new Elementdeclerations()
@@ -715,20 +680,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 			b.setBackground(newColor);
 
 			ab.setColor(newColor);
-			ab.setReference(false);
 			ab.setVisible(true);
 			// reference.setSelected(false);
 			// updateReferences(false);
 
-		} else if ("reference".equals(event)) {
-			// TODO calculate References properly
-			ab.setReference(reference.isSelected());
-			if (reference.isSelected()) {
-				updateReferences(true);
-			} else {
-				updateReferences(false);
-			}
-			colorButton.setBackground(ab.getColor());
 		} else if ("pathwayLink".equals(event)) {
 			if (JOptionPane
 					.showConfirmDialog(

@@ -181,11 +181,6 @@ public class VAMLoutput {
 			// System.out.println("name " + bna.getName());
 			writer.writeEndElement();
 
-			writer.writeStartElement("reference");
-			writer.writeCData(bea.isReference() + "");
-			// System.out.println("reference " + bna.isReference() + "");
-			writer.writeEndElement();
-
 			writer.writeStartElement("comment");
 			writer.writeCData(bea.getComments());
 			// System.out.println("comments " + bna.getComments());

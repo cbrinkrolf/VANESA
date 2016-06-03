@@ -219,7 +219,6 @@ public class ConvertMetabolicNet {
 			PNEdge e = (PNEdge) ite.next();
 			if (e.wasUndirected()) {
 				e.setColor(Color.red);
-				e.setReference(false);
 				e.setVisible(true);
 			}
 		}

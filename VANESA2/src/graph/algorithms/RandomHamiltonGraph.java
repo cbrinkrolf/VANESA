@@ -101,7 +101,6 @@ public class RandomHamiltonGraph {
 							nodes.get(nodei[k]), nodes.get(nodej[k]));
 
 					r.setDirected(true);
-					r.setReference(false);
 					r.setVisible(true);
 
 					if (weightedGraph) {
@@ -116,7 +115,6 @@ public class RandomHamiltonGraph {
 							nodes.get(nodei[k]), nodes.get(nodej[k]));
 
 					r.setDirected(false);
-					r.setReference(false);
 					r.setVisible(true);
 
 					if (weightedGraph) {

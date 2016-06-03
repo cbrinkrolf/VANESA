@@ -66,10 +66,6 @@ public interface GraphElementAbstract{
 
 	public void setShape(Shape shape);
 
-	public boolean isReference();
-
-	public void setReference(boolean isReference);
-
 	public boolean isVisible();
 
 	public void setVisible(boolean isVisible);

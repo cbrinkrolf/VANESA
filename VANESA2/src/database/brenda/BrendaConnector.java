@@ -254,7 +254,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 			ReactionEdge r = new ReactionEdge(weight, "", first, second);
 
 			r.setDirected(directed);
-			r.setReference(false);
 			r.setVisible(true);
 			this.edges.add(r);
 		}

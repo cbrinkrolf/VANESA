@@ -392,7 +392,6 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 							//newPW.getGraph().moveVertex(bna.getVertex(), 0, 0);
 							Compound c = new Compound("", "",bna,map);
 							c.setDirected(true);
-							c.setReference(false);
 							newPW.addEdge(c);
 
 						}

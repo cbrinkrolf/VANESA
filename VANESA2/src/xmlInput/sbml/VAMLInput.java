@@ -176,7 +176,6 @@ public class VAMLInput {
 		String label = "";
 		Integer from = 0;
 		Integer to = 0;
-		String reference = "";
 		String directed = "";
 		String comment = "";
 		Color color = null;
@@ -225,8 +224,6 @@ public class VAMLInput {
 				label = element.getText();
 			} else if (element.getLocalName().equals("name")) {
 				name = element.getText();
-			} else if (element.getLocalName().equals("reference")) {
-				reference = element.getText();
 			} else if (element.getLocalName().equals("colour")) {
 				color = new Color(Integer.parseInt(element
 						.getAttributeValue(new QName("r"))),
@@ -409,12 +406,6 @@ public class VAMLInput {
 			bea.setDirected(isDirected);
 			bea.setColor(color);
 			bea.setComments(comment);
-
-			if (reference.equals("true")) {
-				bea.setReference(true);
-			} else {
-				bea.setReference(false);
-			}
 
 			if (rpEdge != null) {
 				bea.setReactionPairEdge(rpEdge);

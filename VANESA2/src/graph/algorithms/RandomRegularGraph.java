@@ -64,7 +64,6 @@ public class RandomRegularGraph {
 						nodes.get(nodej[k]));
 
 				r.setDirected(false);
-				r.setReference(false);
 				r.setVisible(true);
 				pw.addEdge(r);
 

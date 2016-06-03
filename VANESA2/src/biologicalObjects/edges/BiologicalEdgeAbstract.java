@@ -15,80 +15,73 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 
-public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Cloneable {
+public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cloneable {
 
-	
 	// ---Fields---
-	
-	
-	
+
 	// private Edge edge;
-	
+
 	private ReactionPairEdge reactionPairEdge;
-	
+
 	private boolean isDirected;
-	
+
 	private boolean isReference = false;
-	
+
 	private boolean isVisible = true;
-	
+
 	private boolean isClone = false;
 
 	private String name = "not mentioned";
-	
+
 	private String label = "???";
-	
+
 	// private String networklabel = "";
-	
+
 	private int ID = 0;
-	
+
 	private SortedSet<Integer> set;
 
 	private NetworkSettings settings = NetworkSettingsSingelton.getInstance();
-	
+
 	private String description = "";
-	
+
 	private String comments = "";
-	
+
 	private Color defaultColor = Color.GRAY;
-	
+
 	private Color color = Color.GRAY;
-	
+
 	private String BiologicalElement = "";
-	
+
 	private Shape shape;
-	
+
 	private boolean hasKEGGNode = false;
-	
+
 	private boolean hasKEGGEdge = false;
-	
+
 	private boolean hasFeatureEdge = false;
-	
+
 	private boolean hasDAWISNode = false;
-	
+
 	private boolean hasReactionPairEdge = false;
 
 	private boolean hasBrendaNode = false;
-	
+
 	private HashSet<String> labelSet = new HashSet<String>();
-	
-	private ArrayList<Parameter> parameters = new ArrayList<Parameter>(); 
+
+	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 
 	private boolean isWeighted = false;
-	
+
 	private int weight = 0;
 
 	private BiologicalNodeAbstract from;
-	
-	private BiologicalNodeAbstract to;
-	
-	
-	// ---Functional Methods---
-	
-	
 
-	public BiologicalEdgeAbstract(String label, String name,
-			BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
+	private BiologicalNodeAbstract to;
+
+	// ---Functional Methods---
+
+	public BiologicalEdgeAbstract(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 
 		// this.edge=edge;
 		this.label = label;
@@ -111,39 +104,34 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 
 	@Override
 	public Color getColor() {
-		if (isReference()) {
-			return Color.GRAY;
-		} else {
-			System.out.println(color.getRGB());
-			return color;
-		}
+		return color;
 	}
 
 	@Override
 	public BiologicalEdgeAbstract clone() {
-		try{
+		try {
 			BiologicalEdgeAbstract cloneEdge = (BiologicalEdgeAbstract) super.clone();
 			cloneEdge.setClone(true);
-		return cloneEdge;
-		}catch(CloneNotSupportedException e){
+			return cloneEdge;
+		} catch (CloneNotSupportedException e) {
 			// Kann eigentlich nicht passieren, da Cloneable
 			throw new InternalError();
 		}
 	}
-	
-	private void setClone(boolean c){
+
+	private void setClone(boolean c) {
 		isClone = c;
 	}
-	
-	public boolean isClone(){
+
+	public boolean isClone() {
 		return isClone;
 	}
-		
-	/* private boolean stringsEqualAndAreNotEmpty(String s1, String s2) {
-	* return s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2);
-	* }
-	*/
-	
+
+	/*
+	 * private boolean stringsEqualAndAreNotEmpty(String s1, String s2) { return
+	 * s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2); }
+	 */
+
 	/**
 	 * checks if the given BiologicalNodeAbstract is equal to this one nodes are
 	 * equal if name OR label match (also when name matches the label of the
@@ -168,8 +156,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 
 	private String getCorrectLabel(Integer type) {
 
-		if ((getLabel().length() == 0 || getLabel().equals(" "))
-				&& (getName().length() == 0 || getName().equals(" "))) {
+		if ((getLabel().length() == 0 || getLabel().equals(" ")) && (getName().length() == 0 || getName().equals(" "))) {
 			return "";
 		} else {
 
@@ -202,13 +189,9 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 		}
 		return "";
 	}
-	
-	
-	
+
 	// ---Getter/Setter---
-	
-	
-	
+
 	public boolean isWeighted() {
 		return isWeighted;
 	}
@@ -224,7 +207,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void setWeight(int weight) {
 		this.weight = weight;
 	}
-	
+
 	public BiologicalNodeAbstract getFrom() {
 		return from;
 	}
@@ -240,17 +223,15 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void setTo(BiologicalNodeAbstract to) {
 		this.to = to;
 	}
-	
-	/* public Edge getEdge() {
-	* return edge;
-	* }
-	*/
-	
-	/* public void setEdge(Edge edge) {
-	* this.edge = edge;
-	* }
-	*/
-	
+
+	/*
+	 * public Edge getEdge() { return edge; }
+	 */
+
+	/*
+	 * public void setEdge(Edge edge) { this.edge = edge; }
+	 */
+
 	public boolean isDirected() {
 		return isDirected;
 	}
@@ -266,26 +247,27 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public ReactionPairEdge getReactionPairEdge() {
 		return reactionPairEdge;
 	}
-	
+
 	public int getID() {
 		return ID;
 	}
-	
+
 	// should only be used when loading a file with a network
-	public void setID(int id) throws IDAlreadyExistException{
+	public void setID(int id) throws IDAlreadyExistException {
 		if (this.ID == id) {
 			return;
 		} else {
 			set = new GraphInstance().getPathway().getIdSet();
 			// System.out.println("size: " + set.size());
 			if (set.contains(id)) {
-//				System.err.println("Error: Id " + id + " is already existing!");
+				// System.err.println("Error: Id " + id + " is already
+				// existing!");
 				throw new IDAlreadyExistException("ID " + id + " is already existing.");
 			} else {
-//				if (this.ID > 0) {
-//					set.remove(ID);
-//					// System.out.println("removed: " + ID);
-//				}
+				// if (this.ID > 0) {
+				// set.remove(ID);
+				// // System.out.println("removed: " + ID);
+				// }
 				// System.out.println("id added: " + id);
 				set.add(id);
 				this.ID = id;
@@ -313,9 +295,9 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 			// System.out.println("neue ID");
 			if (set.size() > 0) {
 				// System.out.println("last: " + set.last());
-				try{
+				try {
 					setID(set.last() + 1);
-				} catch(IDAlreadyExistException ex){
+				} catch (IDAlreadyExistException ex) {
 					// cannot occur if program working fine.
 					ex.printStackTrace();
 				}
@@ -323,16 +305,16 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 				// System.out.println("groesster: " + set.last());
 				// System.out.println("kleinster: " + set.first());
 			} else {
-				try{
+				try {
 					setID(100);
-				} catch(IDAlreadyExistException ex){
+				} catch (IDAlreadyExistException ex) {
 					// cannot occur if program working fine.
 					ex.printStackTrace();
 				}
 			}
 		}
 	}
-	
+
 	public String getNetworklabel() {
 		return getCorrectLabel(settings.getEdgeLabel());
 	}
@@ -434,15 +416,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 		this.shape = shape;
 	}
 
-	public boolean isReference() {
-		return isReference;
-	}
-
-	public void setReference(boolean isReference) {
-		this.isReference = isReference;
-
-	}
-
 	public boolean isVisible() {
 		return isVisible;
 	}
@@ -466,7 +439,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void hasDAWISNode(boolean node) {
 		hasDAWISNode = node;
 	}
-	
+
 	public ArrayList<Parameter> getParameters() {
 		return parameters;
 	}
@@ -474,7 +447,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void setParameters(ArrayList<Parameter> parameters) {
 		this.parameters = parameters;
 	}
-	
+
 	public HashSet<String> getLabelSet() {
 		return labelSet;
 	}
@@ -482,27 +455,27 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void setLabelSet(HashSet<String> labelSet) {
 		this.labelSet = labelSet;
 	}
-	
-	public void addLabel(String label){
+
+	public void addLabel(String label) {
 		this.labelSet.add(label);
 	}
-	
-	public void addLabel(HashSet<String> labels){
+
+	public void addLabel(HashSet<String> labels) {
 		this.labelSet.addAll(labels);
 	}
-	
-	public void removeLabel(String label){
+
+	public void removeLabel(String label) {
 		this.labelSet.remove(label);
 	}
-	
-	public void resetAppearance(){
-		
+
+	public void resetAppearance() {
+
 	}
-	
-	public boolean isValid(boolean allowFromEqualsTo){
-		if(to==null || from==null)
+
+	public boolean isValid(boolean allowFromEqualsTo) {
+		if (to == null || from == null)
 			return false;
-		if(from==to && !allowFromEqualsTo)
+		if (from == to && !allowFromEqualsTo)
 			return false;
 		return true;
 	}
@@ -514,6 +487,5 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void setDefaultColor(Color defaultColor) {
 		this.defaultColor = defaultColor;
 	}
-
 
 }
