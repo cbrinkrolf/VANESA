@@ -992,7 +992,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 								if(edge != null){
 									if(!pickedEdges.keySet().contains(edge)){
 										pickedEdges.put(edge, edge.getColor());
-										edge.setReference(false);
 									}
 									
 					            	if(!edge.getColor().equals(pickedEdges.get(edge))){

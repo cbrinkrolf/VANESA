@@ -157,7 +157,6 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		PhysicalInteraction r = new PhysicalInteraction("", "", one, two);
 
 		r.setDirected(directed);
-		r.setReference(false);
 		r.setVisible(true);
 
 		pw.addEdge(r);
