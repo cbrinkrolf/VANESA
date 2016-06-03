@@ -1,21 +1,28 @@
 package graph.algorithms;
 
 import java.awt.Point;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.DoubleSummaryStatistics;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.jfree.chart.JFreeChart;
-
+import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.algorithms.gui.NodeAttributeBarChart;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
-import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import mdsj.MDSJ;
 
 public class MultidimensionalScaling {

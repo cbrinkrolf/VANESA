@@ -1,18 +1,14 @@
 package graph.algorithms;
 
-import graph.CreatePathway;
-import gui.HeatgraphLayer;
-import gui.MainWindowSingleton;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
 
-import xmlOutput.sbml.JSBMLoutput;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.CreatePathway;
+import gui.HeatgraphLayer;
+import gui.MainWindowSingleton;
 
 public class HeatmapGraphs {
 	
@@ -37,7 +33,6 @@ public class HeatmapGraphs {
 	 * @param to
 	 */
 	private void copyElements(Pathway from, Pathway to) {
-		File file1 = new File("test");
 		//new JSBMLoutput(file1, from);
 		//new JSBMLoutput(file1, to);
 	}

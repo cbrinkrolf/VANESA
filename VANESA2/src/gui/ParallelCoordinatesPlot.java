@@ -1,12 +1,5 @@
 package gui;
 
-import edu.uci.ics.jung.visualization.picking.PickedState;
-import graph.GraphInstance;
-import graph.animations.RegulationTabelModel;
-import graph.jung.graphDrawing.VertexShapes;
-import gui.algorithms.ScreenSize;
-import io.SaveDialog;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -36,10 +29,6 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import miscalleanous.tables.MyTable;
-import net.miginfocom.swing.MigLayout;
-
-import org.apache.batik.dom.util.TriplyIndexedTable;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jfree.chart.ChartFactory;
@@ -60,6 +49,18 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import biologicalElements.GraphElementAbstract;
+import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import edu.uci.ics.jung.visualization.picking.PickedState;
+import graph.GraphInstance;
+import graph.animations.RegulationTabelModel;
+import graph.jung.graphDrawing.VertexShapes;
+import gui.algorithms.ScreenSize;
+import io.SaveDialog;
+import miscalleanous.tables.MyTable;
+import net.miginfocom.swing.MigLayout;
 import petriNet.AnimationThread;
 import petriNet.PNEdge;
 import petriNet.Place;
@@ -67,12 +68,7 @@ import petriNet.PlotsPanel;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 import petriNet.Transition;
-import util.DoubleHashMap;
 import util.TripleHashMap;
-import biologicalElements.GraphElementAbstract;
-import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 /**
  * This class creates a parallel coordinates plot to be shown in the side bar.

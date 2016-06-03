@@ -1,9 +1,5 @@
 package database.ppi.gui;
 
-import gui.eventhandlers.TextfeldColorChanger;
-import gui.images.ImagePath;
-
-import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -15,10 +11,12 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
 import database.gui.QueryMask;
+import gui.eventhandlers.TextfeldColorChanger;
+import gui.images.ImagePath;
+import net.miginfocom.swing.MigLayout;
 
 public class PPIqueryMask extends QueryMask{
 	

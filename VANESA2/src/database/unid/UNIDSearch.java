@@ -7,14 +7,6 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import graph.CreatePathway;
-import graph.algorithms.NodeAttributeNames;
-import graph.algorithms.NodeAttributeTypes;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -28,6 +20,12 @@ import cluster.graphdb.DatabaseEntry;
 import cluster.graphdb.GraphDBTransportNode;
 import cluster.master.IClusterJobs;
 import cluster.slave.JobTypes;
+import graph.CreatePathway;
+import graph.algorithms.NodeAttributeNames;
+import graph.algorithms.NodeAttributeTypes;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
 
 /**
  * 

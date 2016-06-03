@@ -1,24 +1,20 @@
 package database.brenda;
 
-import graph.GraphInstance;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import pojos.DBColumn;
 import biologicalElements.Pathway;
 import configurations.Wrapper;
 import database.Connection.DatabaseQueryValidator;
 import database.brenda.gui.BrendaSearchResultWindow;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+import pojos.DBColumn;
 
 public class BRENDASearch extends SwingWorker<Object, Object> {
 

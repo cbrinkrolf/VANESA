@@ -1,13 +1,11 @@
 package petriNet;
 
-//import edu.uci.ics.jung.graph.Vertex;
 import graph.jung.graphDrawing.VertexShapes;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 import biologicalElements.Elementdeclerations;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Transition extends PNNode {
 

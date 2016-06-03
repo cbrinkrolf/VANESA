@@ -1,9 +1,5 @@
 package gui;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.algorithms.NetworkProperties;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -11,6 +7,7 @@ import java.util.ArrayList;
 import org.mediavirus.parvis.gui.MainFrame;
 
 import biologicalElements.Pathway;
+import graph.algorithms.NetworkProperties;
 
 public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 

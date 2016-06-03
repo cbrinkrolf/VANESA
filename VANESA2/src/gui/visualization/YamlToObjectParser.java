@@ -1,9 +1,5 @@
 package gui.visualization;
 
-import gui.visualization.VisualizationConfigBeans;
-import gui.visualization.YamlToObjectParser;
-import gui.visualization.VisualizationConfigBeans.Bean;
-
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,10 +15,10 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
-import org.scilab.forge.jlatexmath.VdotsAtom;
 import org.yaml.snakeyaml.Yaml;
 
 import configurations.gui.VisualizationDialog;
+import gui.visualization.VisualizationConfigBeans.Bean;
 
 public class YamlToObjectParser {
 	

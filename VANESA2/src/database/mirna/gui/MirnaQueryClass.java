@@ -1,10 +1,5 @@
 package database.mirna.gui;
 
-import gui.eventhandlers.TextfeldColorChanger;
-import gui.images.ImagePath;
-
-import java.awt.Color;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -15,6 +10,8 @@ import javax.swing.JTextField;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
 import database.gui.QueryMask;
+import gui.eventhandlers.TextfeldColorChanger;
+import gui.images.ImagePath;
 import net.miginfocom.swing.MigLayout;
 
 public class MirnaQueryClass extends QueryMask {

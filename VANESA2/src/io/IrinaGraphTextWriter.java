@@ -1,6 +1,5 @@
 package io;
 
-import java.io.File;
 import java.io.OutputStream;
 
 import biologicalElements.Pathway;

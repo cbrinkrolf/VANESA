@@ -107,8 +107,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 	
-	private Set<BiologicalNodeAbstract> leafNodes = new HashSet<BiologicalNodeAbstract>();
-
 //	private Set<BiologicalNodeAbstract> border = new HashSet<BiologicalNodeAbstract>();
 
 //	private Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
@@ -139,15 +137,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 	
 	public void delete(){
-		delete(true);
-	}
-	
-	public void delete(boolean showDialog){
 		if(isCoarseNode()){
 			Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
 			nodes.addAll(getVertices().keySet());
 			for(BiologicalNodeAbstract n : nodes){
-				n.delete(false);
+				n.delete();
 			}
 		} else {
 			getRootPathway().getVertices().remove(this);

@@ -1,10 +1,5 @@
 package dataMapping;
 
-import graph.GraphInstance;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +10,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
@@ -33,6 +27,9 @@ import dataMapping.biomartRetrieval.AgilentQueryRetrieval;
 import dataMapping.biomartRetrieval.HPRDQueryRetrieval;
 import dataMapping.biomartRetrieval.IntActQueryRetrieval;
 import dataMapping.dataImport.ImportExcelxData;
+import graph.GraphInstance;
+import gui.MainWindowSingleton;
+import gui.ProgressBar;
 
 
 /**

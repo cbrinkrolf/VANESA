@@ -5,7 +5,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +13,6 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import miscalleanous.internet.FollowLink;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -27,6 +25,7 @@ import graph.jung.classes.MyGraph;
 import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
 import gui.MainWindowSingleton;
+import miscalleanous.internet.FollowLink;
 
 public class MyPickingGraphMousePlugin extends
 		PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {

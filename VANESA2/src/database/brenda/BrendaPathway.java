@@ -1,7 +1,5 @@
 package database.brenda;
 
-import gui.ProgressBar;
-
 import java.awt.Color;
 import java.util.HashSet;
 import java.util.Iterator;

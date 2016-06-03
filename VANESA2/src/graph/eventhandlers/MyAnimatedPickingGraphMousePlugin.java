@@ -3,9 +3,7 @@ package graph.eventhandlers;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
-import java.util.Vector;
 
-import miscalleanous.internet.FollowLink;
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -15,6 +13,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 //import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import graph.GraphInstance;
+import miscalleanous.internet.FollowLink;
 
 public class MyAnimatedPickingGraphMousePlugin extends PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 

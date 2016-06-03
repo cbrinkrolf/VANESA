@@ -62,7 +62,7 @@ public class LoadScreen extends JFrame {
 	protected static ImageIcon createImageIcon(String path, String description) {
 		
 		File file = new File(path);
-		if (file != null) {
+		if (file.exists()) {
 			return new ImageIcon(path, description);
 		} else {
 			System.err.println("Couldn't find file: " + path);

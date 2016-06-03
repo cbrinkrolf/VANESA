@@ -1,56 +1,9 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationServer;
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import graph.ContainerSingelton;
-import graph.CreatePathway;
-import graph.GraphContainer;
-import graph.GraphInstance;
-import graph.algorithms.GraphTheoryAlgorithms;
-import graph.algorithms.MultidimensionalScaling;
-import graph.algorithms.NetworkProperties;
-import graph.algorithms.NodeAttributeNames;
-import graph.algorithms.NodeAttributeTypes;
-import graph.algorithms.ShortestPathsExperimentClustering;
-//import graph.algorithms.SteinerTree;
-import graph.jung.classes.MyGraph;
-import graph.jung.classes.MyVisualizationViewer;
-import gui.visualization.PreRenderManager;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import mdsj.MDSJ;
-
-//import org.math.plot.FrameView;
-//import org.math.plot.Plot2DPanel;
-//import org.math.plot.plots.ColoredScatterPlot;
-//import org.math.plot.plots.ScatterPlot;
-
-import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.ReactionEdge;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Protein;
-import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 
 //import com.jujutsu.tsne.FastTSne;
 //import com.jujutsu.tsne.MatrixOps;
@@ -65,23 +18,22 @@ import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import org.math.plot.Plot2DPanel;
-import org.math.plot.PlotPanel;
-import org.math.plot.render.AbstractDrawer;
-import org.math.plot.plots.ColoredScatterPlot;
-import org.math.plot.plots.ScatterPlot;
+import javax.swing.JOptionPane;
 
-import com.jujutsu.tsne.FastTSne;
-import com.jujutsu.tsne.TSne;
-import com.jujutsu.utils.MatrixUtils;
-
-import cluster.clientimpl.ClusterDataUploadWindow;
-import cluster.graphdb.GraphDBTransportNode;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
+import edu.uci.ics.jung.visualization.VisualizationServer;
+import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import graph.GraphInstance;
+import graph.algorithms.NetworkProperties;
+import graph.algorithms.NodeAttributeNames;
+import graph.jung.classes.MyVisualizationViewer;
 
 public class InfoWindow {
 

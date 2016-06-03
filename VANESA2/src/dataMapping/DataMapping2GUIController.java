@@ -1,7 +1,5 @@
 package dataMapping;
 
-import gui.ProgressBar;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;

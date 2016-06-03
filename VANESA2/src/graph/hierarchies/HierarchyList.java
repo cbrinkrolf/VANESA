@@ -1,7 +1,5 @@
 package graph.hierarchies;
 
-import graph.GraphInstance;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,9 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.id.IdentityGenerator.GetGeneratedKeysDelegate;
-
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.GraphInstance;
 
 /**
  * List extension for automatic reconstruction of hierarchical structures.

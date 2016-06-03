@@ -1,12 +1,5 @@
 package database.eventhandlers;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.algorithms.gui.smacof.view.SmacofView;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -25,6 +18,11 @@ import database.ppi.PPISearch;
 import database.ppi.gui.PPIInfoWindow;
 import database.unid.UNIDInfoWindow;
 import database.unid.UNIDSearch;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
 
 public class DatabaseSearchListener implements ActionListener {
 	private DatabaseWindow dw;

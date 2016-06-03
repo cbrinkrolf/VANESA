@@ -1,5 +1,19 @@
 package database.ppi;
 
+import java.awt.Color;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import javax.swing.SwingWorker;
+
+import biologicalElements.Pathway;
+import biologicalObjects.edges.PhysicalInteraction;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.Protein;
+import configurations.Wrapper;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.CreatePathway;
 import graph.hierarchies.HierarchyList;
@@ -7,25 +21,7 @@ import graph.hierarchies.HierarchyListComparator;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
-import gui.ProgressBar;
-
-import java.awt.Color;
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-
 import pojos.DBColumn;
-import biologicalElements.Pathway;
-import biologicalObjects.edges.PhysicalInteraction;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Protein;
-import configurations.Wrapper;
 
 public class PPIConnector extends SwingWorker<Object, Object> {
 

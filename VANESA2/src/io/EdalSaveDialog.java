@@ -1,48 +1,25 @@
 package io;
 
-import graph.GraphInstance;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.nio.file.Paths;
-import java.rmi.RemoteException;
-import java.util.concurrent.CountDownLatch;
 
 import javax.security.auth.Subject;
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import xmlOutput.sbml.JSBMLoutput;
-import de.ipk_gatersleben.bit.bi.edal.primary_data.DataManager;
-import de.ipk_gatersleben.bit.bi.edal.primary_data.file.PrimaryDataDirectory;
-import de.ipk_gatersleben.bit.bi.edal.primary_data.file.PrimaryDataEntityVersionException;
-import de.ipk_gatersleben.bit.bi.edal.primary_data.file.PrimaryDataFileException;
 import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientDataManager;
 import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientPrimaryDataDirectory;
 import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientPrimaryDataEntity;
 import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientPrimaryDataFile;
 import de.ipk_gatersleben.bit.bi.edal.rmi.client.gui.EdalFileChooser;
-import de.ipk_gatersleben.bit.bi.edal.rmi.client.util.EdalAbstractFileFilter;
-import de.ipk_gatersleben.bit.bi.edal.rmi.client.util.EdalFileNameExtensionFilter;
 import de.ipk_gatersleben.bit.bi.edal.rmi.server.Authentication;
 import de.ipk_gatersleben.bit.bi.edal.sample.EdalHelpers;
+import graph.GraphInstance;
+import gui.MainWindowSingleton;
+import xmlOutput.sbml.JSBMLoutput;
 
 public class EdalSaveDialog {
 

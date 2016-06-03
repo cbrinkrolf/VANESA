@@ -1,19 +1,12 @@
 package graph.layouts;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Stroke;
-import java.awt.geom.GeneralPath;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import javax.swing.plaf.basic.BasicSliderUI;
 
 import com.jtattoo.plaf.AbstractLookAndFeel;
 import com.jtattoo.plaf.ColorHelper;

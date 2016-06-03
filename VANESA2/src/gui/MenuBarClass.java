@@ -1,9 +1,5 @@
 package gui;
 
-import graph.GraphInstance;
-import gui.eventhandlers.MenuListener;
-import gui.eventhandlers.MenuListenerSingleton;
-
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 
@@ -14,6 +10,9 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
 import org.simplericity.macify.eawt.Application;
+
+import graph.GraphInstance;
+import gui.eventhandlers.MenuListenerSingleton;
 
 public class MenuBarClass {
 

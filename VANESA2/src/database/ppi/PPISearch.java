@@ -1,20 +1,17 @@
 package database.ppi;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import pojos.DBColumn;
 import configurations.Wrapper;
 import database.ppi.gui.PPISearchResultWindow;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+import pojos.DBColumn;
 
 public class PPISearch extends SwingWorker<Object, Object>{
 

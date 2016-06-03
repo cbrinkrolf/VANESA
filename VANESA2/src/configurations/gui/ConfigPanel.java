@@ -10,10 +10,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JPanel;
 
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.Layout;
-
 //import edu.uci.ics.jung.visualization.Layout;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
