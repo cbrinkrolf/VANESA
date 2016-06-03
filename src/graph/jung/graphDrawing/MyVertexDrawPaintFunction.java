@@ -59,9 +59,7 @@ public class MyVertexDrawPaintFunction implements
 		if (psV.getPicked().isEmpty()) {
 			if (psE.getPicked().isEmpty()) {
 
-				if (v.isReference() || v.isHidden())
-					return Color.LIGHT_GRAY;
-				else if (v.hasBrendaNode() || v.hasKEGGNode())
+				if (v.hasBrendaNode() || v.hasKEGGNode())
 					return Color.RED;
 				else
 

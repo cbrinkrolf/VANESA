@@ -11,7 +11,6 @@ public class Glycan extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.glycan);
 		shapes = new VertexShapes();	
 		attributeSetter(this.getClass().getSimpleName(), this);
-		setReference(false);
 	}
 	
 	@Override

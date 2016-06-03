@@ -10,7 +10,6 @@ public class Inhibitor extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.inhibitor);
 		shapes = new VertexShapes();
 		attributeSetter(this.getClass().getSimpleName(), this);
-		setReference(false);
 	}
 
 	@Override

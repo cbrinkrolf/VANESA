@@ -10,7 +10,6 @@ public class GeneOntology extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.go);
 		shapes = new VertexShapes();	
 		attributeSetter(this.getClass().getSimpleName(), this);
-		setReference(false);
 	}
 	
 //	public void lookUpAtAllDatabases() {

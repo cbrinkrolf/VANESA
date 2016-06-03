@@ -99,7 +99,6 @@ public class Place extends PNNode {
 		// this.setLabel(token+" "+label);
 		// this.setComments("commetnr");
 		// this.set
-		setReference(false);
 		setDefaultColor(Color.WHITE);
 		if (discrete) {
 			setModellicaString("PNlib.PD");

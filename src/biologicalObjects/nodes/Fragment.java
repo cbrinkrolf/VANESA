@@ -10,7 +10,6 @@ public class Fragment extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.fragment);
 		shapes = new VertexShapes();	
 		attributeSetter(this.getClass().getSimpleName(), this);
-		setReference(false);
 	}
 	
 	@Override

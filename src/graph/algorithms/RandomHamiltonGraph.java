@@ -62,7 +62,6 @@ public class RandomHamiltonGraph {
 				if (!set.contains(nodei[k])) {
 					set.add(nodei[k]);
 					Other node = new Other(nodei[k] + "", nodei[k] + "");
-					node.setReference(false);
 					pw.addVertex(node, new Point(150, 100));
 					// myGraph.moveVertex(node.getVertex(), 150, 100);
 					nodes.put(nodei[k], node);
@@ -73,7 +72,6 @@ public class RandomHamiltonGraph {
 				if (!set.contains(nodej[k])) {
 					set.add(nodej[k]);
 					Other node = new Other(nodej[k] + "", nodej[k] + "");
-					node.setReference(false);
 					pw.addVertex(node, new Point(150, 100));
 					// myGraph.moveVertex(node.getVertex(), 150, 100);
 					nodes.put(nodej[k], node);
@@ -86,7 +84,6 @@ public class RandomHamiltonGraph {
 					if (!set.contains(k)) {
 						set.add(k);
 						Other node = new Other(k + "", k + "");
-						node.setReference(false);
 						pw.addVertex(node, new Point(150, 100));
 						// myGraph.moveVertex(node.getVertex(), 150, 100);
 						nodes.put(k, node);

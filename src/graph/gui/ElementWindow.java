@@ -725,7 +725,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 				// System.out.println("drin");
 				node = it2.next();
 				node.setVisible(!hide);
-				node.setHidden(hide);
 			}
 
 		} else if ("dirChanger".equals(event) && ab.isEdge()) {

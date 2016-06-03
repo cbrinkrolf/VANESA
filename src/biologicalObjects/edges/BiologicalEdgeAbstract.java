@@ -25,8 +25,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	private boolean isDirected;
 
-	private boolean isReference = false;
-
 	private boolean isVisible = true;
 
 	private boolean isClone = false;

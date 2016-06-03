@@ -15,7 +15,6 @@ public class CovNode extends BiologicalNodeAbstract {
 		shapes = new VertexShapes();
 		setShape(shapes.getEllipse());
 		setColor(Color.WHITE);
-		setReference(false);
 		this.tokenList = new CovList(numberPlaces);
 		//super.setLabel(this.tokenList.toString());
 	}

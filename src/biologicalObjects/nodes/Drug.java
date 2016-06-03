@@ -8,6 +8,5 @@ public class Drug extends BiologicalNodeAbstract{
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.drug);
 		attributeSetter(this.getClass().getSimpleName(), this);
-		setReference(false);
 	}
 }

@@ -154,7 +154,6 @@ public class TxtInput {
 
 					Color colour = new Color(red, green, blue);
 					p.setColor(colour);*/
-					p.setReference(false);
 
 					pw.addVertex(p, new Point2D.Double(10,10));
 					//pw.getGraph().moveVertex(p.getVertex(), 10, 10);

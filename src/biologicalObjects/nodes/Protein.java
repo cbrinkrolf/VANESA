@@ -18,7 +18,6 @@ public class Protein extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.protein);
 		shapes = new VertexShapes();
 		attributeSetter(this.getClass().getSimpleName(), this);
-		setReference(false);
 	}
 
 	@Override

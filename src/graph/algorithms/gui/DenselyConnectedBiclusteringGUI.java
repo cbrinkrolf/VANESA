@@ -575,7 +575,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			case 0: // "size"
 				HashMap<BiologicalNodeAbstract, Double> sizes = new HashMap<BiologicalNodeAbstract, Double>();
 				for (BiologicalNodeAbstract vertex : mg.getAllVertices()) {
-					vertex.setReference(false);
 					sizes.put(vertex, 0.0);
 				}
 
@@ -605,7 +604,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 				//alt
 				Hashtable<BiologicalNodeAbstract, Double> coloring = new Hashtable<BiologicalNodeAbstract, Double>();
 				for (BiologicalNodeAbstract vertex : mg.getAllVertices()) {
-					vertex.setReference(false);
 					coloring.put(vertex, 0.0);
 				}
 
@@ -973,7 +971,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			        
 			            	if(!pickedVertices.keySet().contains(bna1)){
 			            		pickedVertices.put(bna1, bna1.getColor());
-			            		bna1.setReference(false);
 			            	}
 			            	
 			            	if(!bna1.getColor().equals(pickedVertices.get(bna1))){

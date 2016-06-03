@@ -10,7 +10,6 @@ public class Disease extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.disease);
 		shapes = new VertexShapes();	
 		attributeSetter(this.getClass().getSimpleName(), this);
-		setReference(false);
 	}
 	
 	@Override

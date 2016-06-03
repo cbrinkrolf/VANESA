@@ -67,8 +67,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	private Set<BiologicalNodeAbstract> refs = new HashSet<BiologicalNodeAbstract>();
 
-	private boolean isReference = true;
-
 	private boolean isVisible = true;
 
 	// private String name = "not mentioned";
@@ -94,8 +92,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private Shape shape = new VertexShapes().getEllipse();
 
 	private Shape defaultShape = new VertexShapes().getEllipse();
-
-	private boolean hidden = false;
 
 	private boolean hasKEGGNode = false;
 
@@ -767,11 +763,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	public Color getColor() {
 
 //		if (isReference() || isHidden()) {
-		if (isHidden()){
-			return Color.WHITE;
-		} else {
 			return color;
-		}
 	}
 
 	public String getCompartment() {
@@ -1143,23 +1135,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	public void setShape(Shape shape) {
 		// System.out.println(shape);
 		this.shape = shape;
-	}
-
-	public boolean isReference() {
-		return isReference;
-	}
-
-	public void setReference(boolean isReference) {
-		this.isReference = isReference;
-
-	}
-
-	public boolean isHidden() {
-		return hidden;
-	}
-
-	public void setHidden(boolean hidden) {
-		this.hidden = hidden;
 	}
 
 	public boolean isVisible() {

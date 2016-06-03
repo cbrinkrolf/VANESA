@@ -1286,7 +1286,6 @@ public class MenuListener implements ActionListener {
 								// srnaParents.put(srna.getID(),
 								// bna.getID());
 							}
-							srna.setReference(false);
 							exp = new Expression("", "", srna, bna);
 							exp.setDirected(true);
 							pw.addEdge(exp);
