@@ -132,7 +132,7 @@ public class MenuListener implements ActionListener {
 	private Cov cov;
 
 	private PetriNetSimulation simulation = null;
-
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		w = MainWindowSingleton.getInstance();
