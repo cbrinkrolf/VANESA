@@ -38,6 +38,10 @@ import petriNet.ReachController;
 
 public class ToolBarListener implements ActionListener {
 
+	protected ToolBarListener(){
+		
+	}
+	
 	public void showCreateBeforeMessage() {
 		JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 				"Please create a network first!");

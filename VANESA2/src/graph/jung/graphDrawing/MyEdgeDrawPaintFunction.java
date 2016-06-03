@@ -68,16 +68,18 @@ public class MyEdgeDrawPaintFunction implements
 							return dotted;
 					} else {
 						// Set opacity specified by settings value
-						return alphaEdge;
+						//return alphaEdge;
+						return bea.getColor();
 //						return bea.getColor().darker();
 					}
 				} else {
 					if (psE.isPicked(bea))
-						return bea.getColor().darker();
+						return bea.getColor();
 					else if (settings.isBackgroundColor())
 						return dotted_black;
-					else
-						return dotted;
+					else{
+						return bea.getColor();
+					}
 				}
 			} else {
 
@@ -98,7 +100,7 @@ public class MyEdgeDrawPaintFunction implements
 				if (settings.isBackgroundColor()) {
 					return dotted_black;
 				} else {
-					return dotted;
+					return bea.getColor();
 				}
 			}
 		} else
