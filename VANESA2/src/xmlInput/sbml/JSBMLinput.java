@@ -898,10 +898,6 @@ public class JSBMLinput {
 		case "Reaction":
 			((biologicalObjects.nodes.Enzyme) bna).setReaction(value);
 			break;
-		case "Reference":
-			b = Boolean.parseBoolean(value);
-			((biologicalObjects.nodes.Enzyme) bna).setReference(b);
-			break;
 		case "Substrate":
 			((biologicalObjects.nodes.Enzyme) bna).setSubstrate(value);
 			break;

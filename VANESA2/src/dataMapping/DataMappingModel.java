@@ -126,7 +126,6 @@ public class DataMappingModel {
 			// decolor the nodes if they were highlighted before
 			bna.setColor(Color.LIGHT_GRAY);
 			// set Reference to false to be able to color KEGG Pathways
-			bna.setReference(false);
 			String labelTmp = bna.getLabel().toUpperCase();
 			if (mergeMap.containsKey(labelTmp)) {// ignore nodes which are not part of the data input
 				if((!mergeMap.get(labelTmp).get(1).equals("")) && (!mergeMap.get(labelTmp).get(1).equals("{#VALUE!}"))) {// ignore empty strings in the data input

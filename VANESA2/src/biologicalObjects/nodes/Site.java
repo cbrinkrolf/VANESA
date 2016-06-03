@@ -10,7 +10,6 @@ public class Site extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.site);
 		shapes = new VertexShapes();	
 		attributeSetter(this.getClass().getSimpleName(), this);
-		setReference(false);
 	}
 	
 	@Override

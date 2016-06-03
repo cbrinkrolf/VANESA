@@ -181,7 +181,6 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 				//Add Attributes
 				addAttributes(bna, node);								
 				
-				bna.setReference(false);
 				if (searchNames.contains(node.commonName)) {
 					bna.setColor(Color.RED);
 				}
@@ -194,7 +193,6 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 					nodeset.add(partner);
 					bna = new Protein(partner.commonName, partner.fullName);
 					addAttributes(bna, partner);
-					bna.setReference(false);
 					if (searchNames.contains(partner.commonName)) {
 						bna.setColor(Color.RED);
 					}

@@ -324,10 +324,6 @@ public class VAMLoutput {
 			writer.writeCData(bna.getName());
 			writer.writeEndElement();
 
-			writer.writeStartElement("reference");
-			writer.writeCData(bna.isReference() + "");
-			writer.writeEndElement();
-
 			writer.writeStartElement("location");
 			writer.writeCData(bna.getCompartment() + "");
 			writer.writeEndElement();

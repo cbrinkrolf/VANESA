@@ -18,8 +18,7 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
  import edu.uci.ics.jung.utils.Pair;
  import edu.uci.ics.jung.visualization.PickedState;*/
 
-public class MyEdgeDrawPaintFunction implements
-		Transformer<BiologicalEdgeAbstract, Paint> {
+public class MyEdgeDrawPaintFunction implements Transformer<BiologicalEdgeAbstract, Paint> {
 
 	protected PickedState<BiologicalNodeAbstract> psV;
 	protected PickedState<BiologicalEdgeAbstract> psE;
@@ -27,14 +26,11 @@ public class MyEdgeDrawPaintFunction implements
 	Color dotted = Color.LIGHT_GRAY;
 	Color dotted_black = Color.BLACK.brighter();
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
-	Color alphaEdge = new Color(dotted.darker().getRed(),  
-			dotted.darker().getGreen(),  
-			dotted.darker().getBlue(), settings.getEdgeOpacity());
+	Color alphaEdge = new Color(dotted.darker().getRed(), dotted.darker().getGreen(), dotted.darker().getBlue(), settings.getEdgeOpacity());
 
 	protected boolean graphTheory = false;
 
-	public MyEdgeDrawPaintFunction(PickedState<BiologicalNodeAbstract> psV,
-			PickedState<BiologicalEdgeAbstract> psE) {
+	public MyEdgeDrawPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE) {
 		this.psV = psV;
 		this.psE = psE;
 	}
@@ -57,34 +53,26 @@ public class MyEdgeDrawPaintFunction implements
 
 			if (psV.getPicked().isEmpty()) {
 				if (psE.getPicked().isEmpty()) {
-					
+
 					BiologicalNodeAbstract a = bea.getFrom();
 					BiologicalNodeAbstract b = bea.getTo();
 
-					if (a.isHidden() || b.isHidden()) {
-						if (settings.isBackgroundColor())
-							return dotted_black;
-						else
-							return dotted;
-					} else {
-						// Set opacity specified by settings value
-						//return alphaEdge;
+					if (settings.isBackgroundColor())
+						return dotted_black;
+					else
 						return bea.getColor();
-//						return bea.getColor().darker();
-					}
 				} else {
 					if (psE.isPicked(bea))
 						return bea.getColor();
 					else if (settings.isBackgroundColor())
 						return dotted_black;
-					else{
+					else {
 						return bea.getColor();
 					}
 				}
 			} else {
 
-				Iterator<BiologicalNodeAbstract> it = psV.getPicked()
-						.iterator();
+				Iterator<BiologicalNodeAbstract> it = psV.getPicked().iterator();
 				BiologicalNodeAbstract bna;
 
 				while (it.hasNext()) {
@@ -118,8 +106,8 @@ public class MyEdgeDrawPaintFunction implements
 		else
 			return getDrawPaintWithGraphTheory(bea);
 	}
-	
-	public void updateEdgeAlphaValue(){
-		alphaEdge = new Color(dotted.getRed(),  dotted.getGreen(),  dotted.getBlue(), settings.getEdgeOpacity());
+
+	public void updateEdgeAlphaValue() {
+		alphaEdge = new Color(dotted.getRed(), dotted.getGreen(), dotted.getBlue(), settings.getEdgeOpacity());
 	}
 }

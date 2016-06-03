@@ -10,7 +10,6 @@ public class Matrix extends BiologicalNodeAbstract{
 		setBiologicalElement(Elementdeclerations.matrix);
 		shapes = new VertexShapes();	
 		attributeSetter(this.getClass().getSimpleName(), this);
-		setReference(false);
 	}
 	
 	@Override

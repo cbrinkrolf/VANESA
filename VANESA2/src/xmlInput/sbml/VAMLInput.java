@@ -806,7 +806,6 @@ public class VAMLInput {
 			bna.setCompartment(location);
 			bna.setComments(comment);
 			bna.setColor(color);
-			bna.setReference(isReference);
 			try {
 				int id = Integer.parseInt(node.getAttributeValue(new QName(
 						"ElementID")));

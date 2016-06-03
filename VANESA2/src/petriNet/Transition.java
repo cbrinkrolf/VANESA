@@ -75,7 +75,6 @@ public class Transition extends PNNode {
 		setDefaultShape(transform2.createTransformedShape(shapes.getRectangle()));
 		setDefaultColor(Color.white);
 		
-		setReference(false);
 		setBiologicalElement(Elementdeclerations.transition);
 	}
 

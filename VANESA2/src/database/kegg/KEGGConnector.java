@@ -465,7 +465,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 				srnas.put(column[0], srna);
 				srnaParents.put(srna.getID(), bna.getID());
 				}
-				srna.setReference(false);
 				e = new Expression("", "", srna, bna);
 				e.setDirected(true);
 				pw.addEdge(e);
