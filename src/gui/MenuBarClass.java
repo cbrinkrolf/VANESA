@@ -2,6 +2,7 @@ package gui;
 
 import graph.GraphInstance;
 import gui.eventhandlers.MenuListener;
+import gui.eventhandlers.MenuListenerSingleton;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -103,63 +104,63 @@ public class MenuBarClass {
 
 		// items for the dataMapping
 		JMenuItem dataMapping = new JMenuItem("Data Mapping (color)");
-		dataMapping.addActionListener(new MenuListener());
+		dataMapping.addActionListener(MenuListenerSingleton.getInstance());
 		dataMapping.setActionCommand("dataMappingColor");
 		tools.add(dataMapping);
 
 		// items for the dataMapping
 		JMenuItem dataMappingDb = new JMenuItem("Data Mapping (DB)");
-		dataMappingDb.addActionListener(new MenuListener());
+		dataMappingDb.addActionListener(MenuListenerSingleton.getInstance());
 		dataMappingDb.setActionCommand("dataMappingDB");
 		if(MainWindow.developer)
 			tools.add(dataMappingDb);
 
 		// items for datamining, including smacof
 		JMenuItem datamining = new JMenuItem("Data Mining (SMACOF)");
-		datamining.addActionListener(new MenuListener());
+		datamining.addActionListener(MenuListenerSingleton.getInstance());
 		datamining.setActionCommand("datamining");
 		tools.add(datamining);
 
 		// items for label to data mapping
 		dataLabelMapping = new JMenuItem("Label->Data Mapping");
-		dataLabelMapping.addActionListener(new MenuListener());
+		dataLabelMapping.addActionListener(MenuListenerSingleton.getInstance());
 		dataLabelMapping.setActionCommand("dataLabelMapping");
 		tools.add(new JSeparator());
 		tools.add(dataLabelMapping);
 
 		JMenuItem phosphoImport = new JMenuItem("PhosphoSite input");
-		phosphoImport.addActionListener(new MenuListener());
+		phosphoImport.addActionListener(MenuListenerSingleton.getInstance());
 		phosphoImport.setActionCommand("phospho");
 
 		JMenuItem mirnaTest = new JMenuItem("MirnaTest");
-		mirnaTest.addActionListener(new MenuListener());
+		mirnaTest.addActionListener(MenuListenerSingleton.getInstance());
 		mirnaTest.setActionCommand("mirnaTest");
 		
 		JMenuItem mirnaTargets = new JMenuItem("Enrich miRNA targets");
-		mirnaTargets.addActionListener(new MenuListener());
+		mirnaTargets.addActionListener(MenuListenerSingleton.getInstance());
 		mirnaTargets.setActionCommand("mirnaTargets");
 
 		JMenuItem shake = new JMenuItem("Shake Enzymes!");
-		shake.addActionListener(new MenuListener());
+		shake.addActionListener(MenuListenerSingleton.getInstance());
 		shake.setActionCommand("shake");
 
 		JMenuItem fabricio = new JMenuItem("Patricios Data");
-		fabricio.addActionListener(new MenuListener());
+		fabricio.addActionListener(MenuListenerSingleton.getInstance());
 		fabricio.setActionCommand("fabricio");
 
 		JMenuItem newNetwork = new JMenuItem("New", KeyEvent.VK_N);
 		newNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, MENUSHORTCUT));
-		newNetwork.addActionListener(new MenuListener());
+		newNetwork.addActionListener(MenuListenerSingleton.getInstance());
 		newNetwork.setActionCommand("new Network");
 
 		openNetwork = new JMenuItem("Open File", KeyEvent.VK_O);
 		openNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-		openNetwork.addActionListener(new MenuListener());
+		openNetwork.addActionListener(MenuListenerSingleton.getInstance());
 		openNetwork.setActionCommand("open Network");
 
 		export = new JMenuItem("Export Network", KeyEvent.VK_E);
 		export.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, MENUSHORTCUT));
-		export.addActionListener(new MenuListener());
+		export.addActionListener(MenuListenerSingleton.getInstance());
 		export.setActionCommand("export Network");
 
 		/*
@@ -184,145 +185,145 @@ public class MenuBarClass {
 		 */
 
 		// animations = new JMenuItem("Animation", KeyEvent.VK_O);
-		// animations.addActionListener(new MenuListener());
+		// animations.addActionListener(MenuListenerSingleton.getInstance());
 		// animations.setActionCommand("animation");
 
 		closeNetwork = new JMenuItem("Close Network", KeyEvent.VK_C);
 		closeNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, MENUSHORTCUT));
 
-		closeNetwork.addActionListener(new MenuListener());
+		closeNetwork.addActionListener(MenuListenerSingleton.getInstance());
 		closeNetwork.setActionCommand("close Network");
 
 		closeAllNetworks = new JMenuItem("Close All Networks", KeyEvent.VK_L);
 		closeAllNetworks.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, MENUSHORTCUT));
-		closeAllNetworks.addActionListener(new MenuListener());
+		closeAllNetworks.addActionListener(MenuListenerSingleton.getInstance());
 		closeAllNetworks.setActionCommand("close All Networks");
 
 		saveNetwork = new JMenuItem("Save", KeyEvent.VK_S);
 		saveNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, MENUSHORTCUT));
-		saveNetwork.addActionListener(new MenuListener());
+		saveNetwork.addActionListener(MenuListenerSingleton.getInstance());
 		saveNetwork.setActionCommand("save");
 
 		saveNetworkAs = new JMenuItem("Save As");
-		saveNetworkAs.addActionListener(new MenuListener());
+		saveNetworkAs.addActionListener(MenuListenerSingleton.getInstance());
 		saveNetworkAs.setActionCommand("save as");
 
 		saveEdal = new JMenuItem("Save online");
-		saveEdal.addActionListener(new MenuListener());
+		saveEdal.addActionListener(MenuListenerSingleton.getInstance());
 		saveEdal.setActionCommand("saveEdal");
 
 		openEdal = new JMenuItem("Open online");
-		openEdal.addActionListener(new MenuListener());
+		openEdal.addActionListener(MenuListenerSingleton.getInstance());
 		openEdal.setActionCommand("openEdal");
 
 		savePicture = new JMenuItem("Save A Graph-Picture", KeyEvent.VK_G);
 		savePicture.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, MENUSHORTCUT));
 
-		savePicture.addActionListener(new MenuListener());
+		savePicture.addActionListener(MenuListenerSingleton.getInstance());
 		savePicture.setActionCommand("graphPicture");
 
 		springLayout = new JMenuItem("SpringLayout");
-		springLayout.addActionListener(new MenuListener());
+		springLayout.addActionListener(MenuListenerSingleton.getInstance());
 		springLayout.setActionCommand("springLayout");
 
 		kkLayout = new JMenuItem("KKLayout");
-		kkLayout.addActionListener(new MenuListener());
+		kkLayout.addActionListener(MenuListenerSingleton.getInstance());
 		kkLayout.setActionCommand("kkLayout");
 
 		frLayout = new JMenuItem("FRLayout");
-		frLayout.addActionListener(new MenuListener());
+		frLayout.addActionListener(MenuListenerSingleton.getInstance());
 		frLayout.setActionCommand("frLayout");
 
 		circleLayout = new JMenuItem("CircleLayout");
-		circleLayout.addActionListener(new MenuListener());
+		circleLayout.addActionListener(MenuListenerSingleton.getInstance());
 		circleLayout.setActionCommand("circleLayout");
 
 		hebLayout = new JMenuItem("Hierarchical Edge Bundling");
-		hebLayout.addActionListener(new MenuListener());
+		hebLayout.addActionListener(MenuListenerSingleton.getInstance());
 		hebLayout.setActionCommand("hebLayout");
 
 		hctLayout = new JMenuItem("Hierarchical Circle Tree");
-		hctLayout.addActionListener(new MenuListener());
+		hctLayout.addActionListener(MenuListenerSingleton.getInstance());
 		hctLayout.setActionCommand("hctLayout");
 
 		isomLayout = new JMenuItem("ISOMLayout", KeyEvent.VK_S);
-		isomLayout.addActionListener(new MenuListener());
+		isomLayout.addActionListener(MenuListenerSingleton.getInstance());
 		isomLayout.setActionCommand("isomLayout");
 
 		mdLayout = new JMenuItem("MDLayout");
-		mdLayout.addActionListener(new MenuListener());
+		mdLayout.addActionListener(MenuListenerSingleton.getInstance());
 		mdLayout.setActionCommand("MDLayout");
 
 		gemLayout = new JMenuItem("GEMLayout");
-		gemLayout.addActionListener(new MenuListener());
+		gemLayout.addActionListener(MenuListenerSingleton.getInstance());
 		gemLayout.setActionCommand("gemLayout");
 
 		databaseItem = new JMenuItem("Database Connection");
-		databaseItem.addActionListener(new MenuListener());
+		databaseItem.addActionListener(MenuListenerSingleton.getInstance());
 		databaseItem.setActionCommand("database settings");
 
 		visualizationSettings = new JMenuItem("Visualization Settings");
-		visualizationSettings.addActionListener(new MenuListener());
+		visualizationSettings.addActionListener(MenuListenerSingleton.getInstance());
 		visualizationSettings.setActionCommand("visualizationSettings");
 
 		// keggItem = new JMenuItem("KEGG Connection");
-		// keggItem.addActionListener(new MenuListener());
+		// keggItem.addActionListener(MenuListenerSingleton.getInstance());
 		// keggItem.setActionCommand("kegg settings");
 
 		// brendaItem = new JMenuItem("BRENDA Connection");
-		// brendaItem.addActionListener(new MenuListener());
+		// brendaItem.addActionListener(MenuListenerSingleton.getInstance());
 		// brendaItem.setActionCommand("brenda settings");
 		//
 		// dawisItem = new JMenuItem("DAWIS Connection");
-		// dawisItem.addActionListener(new MenuListener());
+		// dawisItem.addActionListener(MenuListenerSingleton.getInstance());
 		// dawisItem.setActionCommand("dawis settings");
 		//
 		// ppiItem = new JMenuItem("PPI Connection");
-		// ppiItem.addActionListener(new MenuListener());
+		// ppiItem.addActionListener(MenuListenerSingleton.getInstance());
 		// ppiItem.setActionCommand("ppi settings");
 
 		interaction = new JMenuItem("User interaction");
-		interaction.addActionListener(new MenuListener());
+		interaction.addActionListener(MenuListenerSingleton.getInstance());
 		interaction.setActionCommand("interaction");
 
 		internet = new JMenuItem("Internet Connection");
-		internet.addActionListener(new MenuListener());
+		internet.addActionListener(MenuListenerSingleton.getInstance());
 		internet.setActionCommand("internet");
 
 		graphAlignment = new JMenuItem("Graph Alignment");
-		graphAlignment.addActionListener(new MenuListener());
+		graphAlignment.addActionListener(MenuListenerSingleton.getInstance());
 		graphAlignment.setActionCommand("graphAlignemnt");
 
 		rendererSettings = new JMenuItem("Renderer Settings");
-		rendererSettings.addActionListener(new MenuListener());
+		rendererSettings.addActionListener(MenuListenerSingleton.getInstance());
 		rendererSettings.setActionCommand("rendererSettings");
 
 		mathLaw = new JMenuItem("Generate Random Graph");
-		mathLaw.addActionListener(new MenuListener());
+		mathLaw.addActionListener(MenuListenerSingleton.getInstance());
 		mathLaw.setActionCommand("mathGraph");
 
 		biGraph = new JMenuItem("Generate Bipartite Graph");
-		biGraph.addActionListener(new MenuListener());
+		biGraph.addActionListener(MenuListenerSingleton.getInstance());
 		biGraph.setActionCommand("biGraph");
 
 		regularGraph = new JMenuItem("Generate Regular Graph");
-		regularGraph.addActionListener(new MenuListener());
+		regularGraph.addActionListener(MenuListenerSingleton.getInstance());
 		regularGraph.setActionCommand("regularGraph");
 
 		connectedGraph = new JMenuItem("Generate Connected Graph");
-		connectedGraph.addActionListener(new MenuListener());
+		connectedGraph.addActionListener(MenuListenerSingleton.getInstance());
 		connectedGraph.setActionCommand("connectedGraph");
 
 		hamiltonGraph = new JMenuItem("Generate Hamilton Graph");
-		hamiltonGraph.addActionListener(new MenuListener());
+		hamiltonGraph.addActionListener(MenuListenerSingleton.getInstance());
 		hamiltonGraph.setActionCommand("hamiltonGraph");
 
 		graphSettings = new JMenuItem("Graph Settings");
-		graphSettings.addActionListener(new MenuListener());
+		graphSettings.addActionListener(MenuListenerSingleton.getInstance());
 		graphSettings.setActionCommand("graphSettings");
 
 		resolveReferences = new JMenuItem("Resolve Reverences");
-		resolveReferences.addActionListener(new MenuListener());
+		resolveReferences.addActionListener(MenuListenerSingleton.getInstance());
 		resolveReferences.setActionCommand("resolveReferences");
 
 		help.add(interaction);
@@ -330,7 +331,7 @@ public class MenuBarClass {
 		// about item is allready present on mac osx
 		if (!application.isMac()) {
 			about = new JMenuItem("About");
-			about.addActionListener(new MenuListener());
+			about.addActionListener(MenuListenerSingleton.getInstance());
 			about.setActionCommand("about");
 			help.add(about);
 		}
@@ -367,7 +368,7 @@ public class MenuBarClass {
 		if (!application.isMac()) {
 			JMenuItem exit = new JMenuItem("Exit", KeyEvent.VK_X);
 			exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, MENUSHORTCUT));
-			exit.addActionListener(new MenuListener());
+			exit.addActionListener(MenuListenerSingleton.getInstance());
 			exit.setActionCommand("exit");
 			file.add(new JSeparator());
 			file.add(exit);
@@ -422,33 +423,33 @@ public class MenuBarClass {
 		// experiments.add(fabricio);
 		// TODO
 		testPInvariant = new JMenuItem("Test P Invariante");
-		testPInvariant.addActionListener(new MenuListener());
+		testPInvariant.addActionListener(MenuListenerSingleton.getInstance());
 		testPInvariant.setActionCommand("openTestP");
 		testTInvariant = new JMenuItem("Test T Invariante");
-		testTInvariant.addActionListener(new MenuListener());
+		testTInvariant.addActionListener(MenuListenerSingleton.getInstance());
 		testTInvariant.setActionCommand("openTestT");
 		cov = new JMenuItem("Cov");
-		cov.addActionListener(new MenuListener());
+		cov.addActionListener(MenuListenerSingleton.getInstance());
 		cov.setActionCommand("openCov");
 		covreach = new JMenuItem("Cov/Reach Graph");
-		covreach.addActionListener(new MenuListener());
+		covreach.addActionListener(MenuListenerSingleton.getInstance());
 		covreach.setActionCommand("createCov");
 		modellicaResult = new JMenuItem("Load Simulation Result");
-		modellicaResult.addActionListener(new MenuListener());
+		modellicaResult.addActionListener(MenuListenerSingleton.getInstance());
 		modellicaResult.setActionCommand("loadModResult");
 		simulate = new JMenuItem("Simulate");
-		simulate.addActionListener(new MenuListener());
+		simulate.addActionListener(MenuListenerSingleton.getInstance());
 		simulate.setActionCommand("simulate");
 
 		createDoc = new JMenuItem("Create Documentation");
-		createDoc.addActionListener(new MenuListener());
+		createDoc.addActionListener(MenuListenerSingleton.getInstance());
 		createDoc.setActionCommand("createDoc");
 
 		editPNelements = new JMenuItem("Edit PN-Elements");
-		editPNelements.addActionListener(new MenuListener());
+		editPNelements.addActionListener(MenuListenerSingleton.getInstance());
 		editPNelements.setActionCommand("editElements");
 		convertPetriNet = new JMenuItem("Convert Graph into Petri-Net");
-		convertPetriNet.addActionListener(new MenuListener());
+		convertPetriNet.addActionListener(MenuListenerSingleton.getInstance());
 		convertPetriNet.setActionCommand("convertIntoPetriNet");
 		petriNets.add(convertPetriNet);
 		petriNets.add(editPNelements);
