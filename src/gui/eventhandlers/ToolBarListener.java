@@ -146,7 +146,6 @@ public class ToolBarListener implements ActionListener {
 				// g.stopVisualizationModel();
 				pw.removeSelection();
 				w.updateElementTree();
-				w.updateFilterView();
 				w.updatePathwayTree();
 				// w.updateTheoryProperties();
 				// g.restartVisualizationModel();

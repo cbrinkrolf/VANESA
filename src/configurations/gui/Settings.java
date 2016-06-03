@@ -1,12 +1,7 @@
 package configurations.gui;
 
-import graph.GraphInstance;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -14,8 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
+import gui.MainWindowSingleton;
 
 public class Settings extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -4497946706066898835L;

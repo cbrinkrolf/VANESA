@@ -239,7 +239,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 					mg.removeVertex(itn.next());
 				}
 				mw.updateElementTree();
-				mw.updateFilterView();
 				mw.updatePathwayTree();
 
 				//GraphInstance.getMyGraph().changeToGEMLayout();
@@ -292,7 +291,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 						mg.removeVertex(itn.next());
 					}
 					mw.updateElementTree();
-					mw.updateFilterView();
 					mw.updatePathwayTree();
 
 //					GraphInstance.getMyGraph().changeToGEMLayout();

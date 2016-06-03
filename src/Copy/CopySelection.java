@@ -120,6 +120,5 @@ public class CopySelection {
 		pw.updateMyGraph();
 
 		MainWindowSingleton.getInstance().updateElementTree();
-		MainWindowSingleton.getInstance().updateFilterView();
 	}
 }

@@ -678,10 +678,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		optionPanel.updatePanel("pcp");
 	}
 
-	public void updateFilterView() {
-		optionPanel.updatePanel("Filter");
-	}
-
 	public void updateDatabaseProperties() {
 		optionPanel.updatePanel("Database");
 	}

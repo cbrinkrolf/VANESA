@@ -209,7 +209,6 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 							dialog.getCreatedNode().setParentNode((BiologicalNodeAbstract) pw); 
 						}
 						MainWindowSingleton.getInstance().updateElementTree();
-						MainWindowSingleton.getInstance().updateFilterView();
 						MainWindowSingleton.getInstance().updatePathwayTree();
 						//MainWindowSingelton.getInstance().updateAllGuiElements();
 						//MainWindowSingelton.getInstance().updateOptionPanel();
@@ -250,7 +249,6 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// layout.setLocation(newVertex, p);
 						// vv.getModel().restart();
 						MainWindowSingleton.getInstance().updateElementTree();
-						MainWindowSingleton.getInstance().updateFilterView();
 						// MainWindowSingelton.getInstance()
 						// .updateTheoryProperties();
 

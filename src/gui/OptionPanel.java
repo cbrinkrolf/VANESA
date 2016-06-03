@@ -30,8 +30,6 @@ public class OptionPanel {
 
 	private SatelliteWindow satelliteWindow;
 	
-	private GraphProperties graphProperties;
-
 	// private ElementInformationWindow information;
 
 	private ElementWindow elementWindow;
@@ -50,8 +48,6 @@ public class OptionPanel {
 
 	// GUI component used for rendering the parallel coordinates plot
 	private ParallelCoordinatesPlot PCPWindow;
-
-	private JXTaskPane filter;
 
 	// private JXTaskPane dbProperties;
 
@@ -140,12 +136,6 @@ public class OptionPanel {
 		// databaseSearch.setCollapsed(false);
 		// satellite.setCollapsed(true);
 		//
-		filter = new JXTaskPane();
-		filter.setTitle("Show/Hide Nodes");
-		graphProperties = new GraphProperties();
-		filter.add(graphProperties.getPanel());
-		filter.setCollapsed(true);
-
 		// // edges = new JXTaskPane();
 		// // edges.setTitle("Show/Hide Edges");
 		// // graphProperties = new GraphProperties();
@@ -205,7 +195,6 @@ public class OptionPanel {
 			taskPaneContainer.add(elements, "growx");
 			taskPaneContainer.add(bbProperties, "growx");
 			taskPaneContainer.add(pathways, "growx");
-			taskPaneContainer.add(filter, "growx");
 			// taskPaneContainer.add(dbProperties);
 //			taskPaneContainer.add(heatgraphProperties, "growx");
 			taskPaneContainer.add(project, "growx");
@@ -219,7 +208,6 @@ public class OptionPanel {
 			taskPaneContainer.add(elements, "growx");
 			taskPaneContainer.add(bbProperties, "growx");
 			taskPaneContainer.add(pathways, "growx");
-			taskPaneContainer.add(filter, "growx");
 			// taskPaneContainer.add(dbProperties);
 			taskPaneContainer.add(project, "growx");
 			//taskPaneContainer.add(pcpview);
@@ -245,7 +233,6 @@ public class OptionPanel {
 		pathwayTree.removeTree();
 		satelliteWindow.removeAllElements();
 		PCPWindow.removeAllElements();
-		graphProperties.removeAllElements();
 		elementWindow.removeAllElements();
 		// information.removeAllElements();
 		projectWindow.removeAllElements();
@@ -270,8 +257,6 @@ public class OptionPanel {
 			} else if (element.equals("element")) {
 				elementWindow.revalidateView();
 				//System.out.println("bla");
-			} else if (element.equals("Filter")) {
-				graphProperties.revalidateView();
 			} else if (element.equals("project")) {
 				projectWindow.revalidateView();
 				// } // else if (element.equals("Database")) {
