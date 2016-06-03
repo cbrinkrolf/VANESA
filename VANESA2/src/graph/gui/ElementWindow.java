@@ -716,7 +716,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			ab.setColor(newColor);
 			ab.setReference(false);
-			ab.setHidden(false);
 			ab.setVisible(true);
 			// reference.setSelected(false);
 			// updateReferences(false);
@@ -725,10 +724,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// TODO calculate References properly
 			ab.setReference(reference.isSelected());
 			if (reference.isSelected()) {
-				ab.setHidden(true);
 				updateReferences(true);
 			} else {
-				ab.setHidden(false);
 				updateReferences(false);
 			}
 			colorButton.setBackground(ab.getColor());

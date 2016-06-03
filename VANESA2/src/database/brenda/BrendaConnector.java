@@ -255,7 +255,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 			r.setDirected(directed);
 			r.setReference(false);
-			r.setHidden(false);
 			r.setVisible(true);
 			this.edges.add(r);
 		}

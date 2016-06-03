@@ -102,7 +102,6 @@ public class RandomHamiltonGraph {
 
 					r.setDirected(true);
 					r.setReference(false);
-					r.setHidden(false);
 					r.setVisible(true);
 
 					if (weightedGraph) {
@@ -118,7 +117,6 @@ public class RandomHamiltonGraph {
 
 					r.setDirected(false);
 					r.setReference(false);
-					r.setHidden(false);
 					r.setVisible(true);
 
 					if (weightedGraph) {

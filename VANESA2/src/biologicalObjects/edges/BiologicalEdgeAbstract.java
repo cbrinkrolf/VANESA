@@ -58,8 +58,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	
 	private Shape shape;
 	
-	private boolean hidden = false;
-
 	private boolean hasKEGGNode = false;
 	
 	private boolean hasKEGGEdge = false;
@@ -443,14 +441,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	public void setReference(boolean isReference) {
 		this.isReference = isReference;
 
-	}
-
-	public boolean isHidden() {
-		return hidden;
-	}
-
-	public void setHidden(boolean hidden) {
-		this.hidden = hidden;
 	}
 
 	public boolean isVisible() {

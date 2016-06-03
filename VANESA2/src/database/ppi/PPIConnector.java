@@ -158,7 +158,6 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 		r.setDirected(directed);
 		r.setReference(false);
-		r.setHidden(false);
 		r.setVisible(true);
 
 		pw.addEdge(r);
