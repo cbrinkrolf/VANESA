@@ -1,18 +1,15 @@
 package configurations;
 
-import gui.MainWindow;
-
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import pojos.DBColumn;
-import util.VanesaUtility;
 import configurations.asyncWebservice.AsynchroneWebServiceWrapper;
 import configurations.asyncWebservice.WebServiceEvent;
 import configurations.asyncWebservice.WebServiceListener;
 import database.Connection.DBconnection;
-import database.ppi.PPIqueries;
+import pojos.DBColumn;
+import util.VanesaUtility;
 
 public class Wrapper implements WebServiceListener {
 

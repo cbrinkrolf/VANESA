@@ -1,16 +1,5 @@
 package graph.gui;
 
-/*import edu.uci.ics.jung.graph.Edge;
- import edu.uci.ics.jung.graph.Vertex;
- import edu.uci.ics.jung.utils.Pair;*/
-import graph.ChangedFlags;
-import graph.GraphInstance;
-import graph.algorithms.NodeAttributeTypes;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.eventhandlers.PropertyWindowListener;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -36,18 +25,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-import petriNet.ContinuousTransition;
-import petriNet.DiscreteTransition;
-import petriNet.PNEdge;
-import petriNet.Place;
-import petriNet.StochasticTransition;
-import petriNet.Transition;
-import util.MyJFormattedTextField;
-import util.MyNumberFormat;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
@@ -59,7 +38,25 @@ import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
-import cluster.graphdb.DatabaseEntry;
+/*import edu.uci.ics.jung.graph.Edge;
+ import edu.uci.ics.jung.graph.Vertex;
+ import edu.uci.ics.jung.utils.Pair;*/
+import graph.ChangedFlags;
+import graph.GraphInstance;
+import graph.algorithms.NodeAttributeTypes;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+import gui.eventhandlers.PropertyWindowListener;
+import net.miginfocom.swing.MigLayout;
+import petriNet.ContinuousTransition;
+import petriNet.DiscreteTransition;
+import petriNet.PNEdge;
+import petriNet.Place;
+import petriNet.StochasticTransition;
+import petriNet.Transition;
+import util.MyJFormattedTextField;
+import util.MyNumberFormat;
 
 public class ElementWindow implements ActionListener, ItemListener {
 
@@ -840,8 +837,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent event) {
-
-		int state = event.getStateChange();
 		String item = (String) event.getItem();
 		if (ab.isVertex()) {
 			((BiologicalNodeAbstract) ab).setCompartment(item);

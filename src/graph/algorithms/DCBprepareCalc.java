@@ -3,10 +3,6 @@
  */
 package graph.algorithms;
 
-import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
-import gui.MainWindowSingleton;
-
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -23,7 +19,7 @@ import javax.swing.SwingWorker;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import cluster.slave.JobTypes;
-import dataMapping.DataMappingModelController;
+import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
 
 /**
  * @author Britta Niemann

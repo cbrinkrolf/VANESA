@@ -1,9 +1,5 @@
 package database.unid;
 
-import gui.eventhandlers.TextfeldColorChanger;
-import gui.images.ImagePath;
-
-import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -17,10 +13,12 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
 import database.gui.QueryMask;
+import gui.eventhandlers.TextfeldColorChanger;
+import gui.images.ImagePath;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * 

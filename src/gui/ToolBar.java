@@ -1,9 +1,5 @@
 package gui;
 
-import gui.eventhandlers.ToolBarListener;
-import gui.eventhandlers.ToolBarListenerSingleton;
-import gui.images.ImagePath;
-
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 
@@ -14,6 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 
+import gui.eventhandlers.ToolBarListenerSingleton;
+import gui.images.ImagePath;
 import net.miginfocom.swing.MigLayout;
 
 public class ToolBar {

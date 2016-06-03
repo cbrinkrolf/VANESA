@@ -1,8 +1,5 @@
 package database.gui;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.util.HashMap;
 
 import javax.swing.JTabbedPane;
@@ -12,6 +9,7 @@ import database.kegg.gui.KEGGqueryMask;
 import database.mirna.gui.MirnaQueryClass;
 import database.ppi.gui.PPIqueryMask;
 import database.unid.UNIDQueryMask;
+import gui.MainWindow;
 
 public class DatabaseWindow {
 

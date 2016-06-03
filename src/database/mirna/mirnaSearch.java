@@ -1,30 +1,24 @@
 package database.mirna;
 
-import graph.CreatePathway;
-import graph.hierarchies.HierarchyList;
-import graph.hierarchies.HierarchyListComparator;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import pojos.DBColumn;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Expression;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.SRNA;
 import configurations.Wrapper;
 import database.mirna.gui.MirnaResultWindow;
+import graph.CreatePathway;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+import pojos.DBColumn;
 
 public class mirnaSearch extends SwingWorker<Object, Object> {
 

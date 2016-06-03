@@ -1,13 +1,9 @@
 package gui;
 
 
-import gui.algorithms.CenterWindow;
-import gui.images.ImagePath;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -15,6 +11,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
+
+import gui.algorithms.CenterWindow;
+import gui.images.ImagePath;
 
 public class IntroScreen extends JFrame {
 
@@ -65,16 +64,5 @@ public class IntroScreen extends JFrame {
 		}
 		label.setText("<html><p align=\"left\">Loading Module: "+text+"</p></html>");
 		
-	}
-	
-	protected static ImageIcon createImageIcon(String path, String description) {
-		
-		File file = new File(path);
-		if (file != null) {
-			return new ImageIcon(path, description);
-		} else {
-			System.err.println("Couldn't find file: " + path);
-			return null;
-		}
 	}
 }

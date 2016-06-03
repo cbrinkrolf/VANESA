@@ -3,13 +3,11 @@ package gui;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
-import edu.uci.ics.jung.visualization.annotations.Annotation.Layer;
 import edu.uci.ics.jung.visualization.annotations.AnnotationManager;
 import edu.uci.ics.jung.visualization.annotations.AnnotationPaintable;
 

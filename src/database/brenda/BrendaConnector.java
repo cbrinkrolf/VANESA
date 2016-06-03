@@ -1,17 +1,5 @@
 package database.brenda;
 
-import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
-import graph.CreatePathway;
-import graph.algorithms.MergeGraphs;
-import graph.hierarchies.EnzymeNomenclature;
-import graph.hierarchies.HierarchyList;
-import graph.hierarchies.HierarchyListComparator;
-import graph.hierarchies.HierarchyStructure;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -24,11 +12,9 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import pojos.DBColumn;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.ReactionEdge;
@@ -38,6 +24,16 @@ import biologicalObjects.nodes.Factor;
 import biologicalObjects.nodes.Inhibitor;
 import biologicalObjects.nodes.SmallMolecule;
 import configurations.Wrapper;
+import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
+import graph.CreatePathway;
+import graph.algorithms.MergeGraphs;
+import graph.hierarchies.EnzymeNomenclature;
+import graph.hierarchies.HierarchyList;
+import graph.hierarchies.HierarchyListComparator;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+import pojos.DBColumn;
 
 //import edu.uci.ics.jung.graph.Vertex;
 

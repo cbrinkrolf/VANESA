@@ -1,24 +1,20 @@
 package gui;
 
-import graph.ContainerSingelton;
-import graph.GraphInstance;
-import graph.algorithms.NodeAttributeTypes;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.stream.Stream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.ContainerSingelton;
+import graph.GraphInstance;
+import graph.algorithms.NodeAttributeTypes;
 
 /**
  * Window for mapping custom datasets to a loaded vanesa network. The data will

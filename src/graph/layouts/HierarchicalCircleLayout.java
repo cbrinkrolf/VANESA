@@ -24,7 +24,6 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.decorators.DirectionalEdgeArrowTransformer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
-import graph.layouts.hctLayout.HCTLayout;
 
 public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>{
 	

@@ -1,14 +1,5 @@
 package dataMapping;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.GraphInstance;
-import graph.algorithms.NodeAttributeTypes;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
@@ -19,10 +10,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -37,6 +26,12 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import dataMapping.dataImport.ExcelException;
 import database.ppi.PPISearch;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.algorithms.NodeAttributeTypes;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
 
 
 /**

@@ -1,15 +1,8 @@
 package gui.visualization;
 
-import graph.GraphInstance;
-import graph.algorithms.NodeAttributeNames;
-import graph.algorithms.NodeAttributeTypes;
-import gui.LocalBackboardPaintable;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
 
@@ -28,6 +21,11 @@ import javax.swing.WindowConstants;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
+import graph.GraphInstance;
+import graph.algorithms.NodeAttributeNames;
+import graph.algorithms.NodeAttributeTypes;
+import gui.LocalBackboardPaintable;
+import gui.MainWindowSingleton;
 import net.miginfocom.swing.MigLayout;
 
 public class AddRendererDialog extends JFrame implements ActionListener {

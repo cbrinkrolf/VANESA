@@ -1,8 +1,6 @@
 package graph.layouts;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-import java.util.Iterator;
 import java.util.Set;
 
 public class Circle {

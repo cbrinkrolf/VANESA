@@ -3,12 +3,8 @@
  */
 package graph.gui;
 
-import graph.GraphInstance;
-
 import java.awt.Checkbox;
-import java.util.HashMap;
 
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,10 +12,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import net.miginfocom.swing.MigLayout;
-import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author tloka
@@ -35,10 +29,6 @@ public class CoarseNodeDeleteDialog extends JFrame {
 	private JOptionPane pane;
 	private Checkbox saveAnswer;
 
-	private GraphInstance graphInstance = new GraphInstance();
-	private Pathway pw = graphInstance.getPathway();
-	private JComboBox<String> edges = new JComboBox<String>();
-	private HashMap<Integer,BiologicalEdgeAbstract> edgeMap = new HashMap<Integer, BiologicalEdgeAbstract>();
 
 	/**
 	 * 

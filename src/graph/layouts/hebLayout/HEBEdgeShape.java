@@ -1,6 +1,5 @@
 package graph.layouts.hebLayout;
 
-import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;

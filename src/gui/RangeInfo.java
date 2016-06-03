@@ -1,14 +1,13 @@
 package gui;
 
-import graph.GraphInstance;
-
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.util.HashMap;
 import java.util.Map;
+
+import graph.GraphInstance;
 
 public class RangeInfo {
 

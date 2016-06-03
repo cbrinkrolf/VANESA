@@ -1,14 +1,12 @@
 package gui;
 
-import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
-import graph.algorithms.gui.GraphColoringGUI;
-import graph.algorithms.gui.GraphNodeRemovalGUI;
-import graph.algorithms.gui.GraphNodeDimensionGUI;
-import graph.algorithms.gui.ShortestPathGui;
-
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import graph.algorithms.gui.GraphColoringGUI;
+import graph.algorithms.gui.GraphNodeDimensionGUI;
+import graph.algorithms.gui.GraphNodeRemovalGUI;
+import graph.algorithms.gui.ShortestPathGui;
 import net.miginfocom.swing.MigLayout;
 
 public class GraphAlgorithmsWindow {

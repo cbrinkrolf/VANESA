@@ -14,13 +14,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import graph.layouts.ColorSlider;
 import graph.layouts.HierarchicalCircleLayoutConfig;
-import graph.layouts.hebLayout.HEBLayoutConfig;
 
 public class HCTLayoutConfig extends HierarchicalCircleLayoutConfig implements ChangeListener,ActionListener{
 

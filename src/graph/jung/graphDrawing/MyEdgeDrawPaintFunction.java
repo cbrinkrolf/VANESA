@@ -54,9 +54,6 @@ public class MyEdgeDrawPaintFunction implements Transformer<BiologicalEdgeAbstra
 			if (psV.getPicked().isEmpty()) {
 				if (psE.getPicked().isEmpty()) {
 
-					BiologicalNodeAbstract a = bea.getFrom();
-					BiologicalNodeAbstract b = bea.getTo();
-
 					if (settings.isBackgroundColor())
 						return dotted_black;
 					else

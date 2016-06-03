@@ -1,26 +1,20 @@
 package graph.jung.graphDrawing;
 
-import java.awt.Rectangle;
 import java.awt.Shape;
 
 import org.apache.commons.collections15.Transformer;
 
-import petriNet.PNEdge;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape.Line;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape.QuadCurve;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape.BentLine;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape.CubicCurve;
+import edu.uci.ics.jung.visualization.decorators.EdgeShape.Line;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape.Orthogonal;
-
-
-
-
-
+import edu.uci.ics.jung.visualization.decorators.EdgeShape.QuadCurve;
+import petriNet.PNEdge;
 
 public class MyEdgeShapeFunction implements Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> {
 
