@@ -3,13 +3,6 @@
  */
 package configurations.gui;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.GraphInstance;
-import graph.jung.graphDrawing.MyEdgeDrawPaintFunction;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,9 +12,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 
-import net.miginfocom.swing.MigLayout;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.GraphInstance;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author Sebastian

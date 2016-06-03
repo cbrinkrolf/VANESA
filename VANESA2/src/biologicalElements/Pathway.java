@@ -1,18 +1,5 @@
 package biologicalElements;
 
-import graph.ChangedFlags;
-import graph.filter.FilterSettings;
-import graph.gui.Boundary;
-import graph.gui.CoarseNodeDeleteDialog;
-import graph.gui.EdgeDeleteDialog;
-import graph.gui.Parameter;
-import graph.jung.classes.MyGraph;
-import graph.jung.classes.MyVisualizationViewer;
-import graph.layouts.Circle;
-import gui.GraphTab;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -28,13 +15,6 @@ import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
 
-import petriNet.ContinuousTransition;
-import petriNet.DiscreteTransition;
-import petriNet.PNEdge;
-import petriNet.Place;
-import petriNet.StochasticTransition;
-import petriNet.Transition;
-import util.MyIntComparable;
 import biologicalObjects.edges.Activation;
 import biologicalObjects.edges.BindingAssociation;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -88,6 +68,24 @@ import biologicalObjects.nodes.Site;
 import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
+import graph.ChangedFlags;
+import graph.gui.Boundary;
+import graph.gui.CoarseNodeDeleteDialog;
+import graph.gui.EdgeDeleteDialog;
+import graph.gui.Parameter;
+import graph.jung.classes.MyGraph;
+import graph.jung.classes.MyVisualizationViewer;
+import graph.layouts.Circle;
+import gui.GraphTab;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+import petriNet.ContinuousTransition;
+import petriNet.DiscreteTransition;
+import petriNet.PNEdge;
+import petriNet.Place;
+import petriNet.StochasticTransition;
+import petriNet.Transition;
+import util.MyIntComparable;
 
 public class Pathway implements Cloneable {
 
@@ -131,8 +129,6 @@ public class Pathway implements Cloneable {
 	private MyGraph graph;
 
 	private GraphTab tab;
-
-	private final FilterSettings filterSettings;
 
 	private Pathway parent;
 
@@ -181,13 +177,11 @@ public class Pathway implements Cloneable {
 		this.title = name;
 		graph = new MyGraph(this);
 		tab = new GraphTab(name, graph.getGraphVisualization());
-		filterSettings = new FilterSettings();
 	}
 
 	public Pathway(String name, Pathway parent) {
 		// this(name);
 		this.title = name;
-		filterSettings = new FilterSettings();
 		this.parent = parent;
 	}
 
@@ -1201,10 +1195,6 @@ public class Pathway implements Cloneable {
 			tab.setTitle(name);
 		}
 		return tab;
-	}
-
-	public FilterSettings getFilterSettings() {
-		return filterSettings;
 	}
 
 	public String getVersion() {

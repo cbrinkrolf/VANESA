@@ -766,7 +766,6 @@ public class NetworkProperties extends Object {
 			mg.removeVertex(itn.next());
 		}
 		w.updateElementTree();
-		w.updateFilterView();
 		w.updatePathwayTree();
 
 	}
