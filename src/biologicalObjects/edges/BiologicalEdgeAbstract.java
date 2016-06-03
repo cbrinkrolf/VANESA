@@ -28,7 +28,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	
 	private boolean isDirected;
 	
-	private boolean isReference = true;
+	private boolean isReference = false;
 	
 	private boolean isVisible = true;
 	
@@ -51,6 +51,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 	private String comments = "";
 	
 	private Color defaultColor = Color.GRAY;
+	
 	private Color color = Color.GRAY;
 	
 	private String BiologicalElement = "";
@@ -115,6 +116,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract,Clo
 		if (isReference()) {
 			return Color.GRAY;
 		} else {
+			System.out.println(color.getRGB());
 			return color;
 		}
 	}

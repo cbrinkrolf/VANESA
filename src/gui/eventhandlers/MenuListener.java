@@ -133,6 +133,10 @@ public class MenuListener implements ActionListener {
 
 	private PetriNetSimulation simulation = null;
 	
+	protected MenuListener(){
+		
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		w = MainWindowSingleton.getInstance();
