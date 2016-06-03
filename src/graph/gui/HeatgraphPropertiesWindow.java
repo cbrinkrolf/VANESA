@@ -1,14 +1,5 @@
 package graph.gui;
 
-import graph.ContainerSingelton;
-import gui.HeatgraphLayer;
-import gui.MainWindowSingleton;
-import gui.eventhandlers.ToolBarListener;
-import gui.images.ImagePath;
-import heatmap.AdoptedHeatmap;
-import heatmap.Gradient;
-import heatmap.HeatmapPoint;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -27,6 +18,15 @@ import javax.swing.JSlider;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import graph.ContainerSingelton;
+import gui.HeatgraphLayer;
+import gui.MainWindowSingleton;
+import gui.eventhandlers.ToolBarListenerSingleton;
+import gui.images.ImagePath;
+import heatmap.AdoptedHeatmap;
+import heatmap.Gradient;
+import heatmap.HeatmapPoint;
 
 public class HeatgraphPropertiesWindow implements ActionListener {
 
@@ -85,7 +85,7 @@ public class HeatgraphPropertiesWindow implements ActionListener {
 							MainWindowSingleton.getInstance().repaint(); 
 						}
 						else {
-							new ToolBarListener().showCreateBeforeMessage();
+							ToolBarListenerSingleton.getInstance().showCreateBeforeMessage();
 						}
 					}
 		        }
@@ -165,7 +165,7 @@ public class HeatgraphPropertiesWindow implements ActionListener {
         		            MainWindowSingleton.getInstance().repaint();
         				}
         				else {
-        					new ToolBarListener().showCreateBeforeMessage();
+        					ToolBarListenerSingleton.getInstance().showCreateBeforeMessage();
         				}	
                 }
         	}

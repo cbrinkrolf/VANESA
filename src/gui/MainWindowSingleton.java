@@ -1,15 +1,13 @@
 package gui;
 
+public class MainWindowSingleton {
 
-public class MainWindowSingleton extends MainWindow {
-
-	private static final long serialVersionUID = 1L;
 	private static MainWindow instance = null;
 	
 	/** synchronized needed for thread-safety */
 	public static synchronized MainWindow getInstance(){
 		if(instance ==null){
-			instance = new MainWindowSingleton();
+			instance = new MainWindow();
 		}
 		return instance;
 	}
@@ -19,9 +17,5 @@ public class MainWindowSingleton extends MainWindow {
 		instance=submitted;
 	
 	}
-
-	protected MainWindowSingleton(){
-		
-	}	
 }
 

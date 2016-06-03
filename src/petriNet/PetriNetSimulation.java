@@ -640,7 +640,7 @@ public class PetriNetSimulation implements ActionListener {
 		// out.write("setDebugFlags(\"disableComSubExp\"); ");
 		// out.write("getErrorString();\r\n");
 		out.write("setCommandLineOptions(\"--preOptModules+=unitChecking\");");
-		// out.write("setCommandLineOptions(\"+d=disableComSubExp +newUnitChecking\");");
+		// out.write("setCommandLineOptions(\"+d=disableComSubExp +unitChecking\");");
 		out.write("getErrorString();\r\n");
 
 		// CHRIS improve / correct filter
