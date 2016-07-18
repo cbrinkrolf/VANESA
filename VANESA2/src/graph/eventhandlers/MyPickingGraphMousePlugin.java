@@ -1,5 +1,6 @@
 package graph.eventhandlers;
 
+import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -19,11 +20,14 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
+import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
+import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
+import graph.gui.GraphPopUp;
 import graph.jung.classes.MyGraph;
 import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
@@ -36,11 +40,11 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	private HashMap<BiologicalNodeAbstract, Point2D> oldVertexPositions = new HashMap<BiologicalNodeAbstract, Point2D>();
 	private Set<BiologicalNodeAbstract> originalSelection = new HashSet<BiologicalNodeAbstract>();
 	private boolean inwindow = false;
-	
+
 	private boolean dragging = false;
-	
 
 	public void mouseReleased(MouseEvent e) {
+		//System.out.println("released");
 		if (inwindow) {
 			// If mouse was released to change the selection, save vertex
 			// positions and return.
@@ -135,9 +139,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (SwingUtilities.isRightMouseButton(e)) {
-			System.out.println("right clicked");
-		}
+		//System.out.println("pressed");
 		if (inwindow) {
 
 			super.mousePressed(e);
@@ -165,15 +167,32 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
+	public void mouseClicked(MouseEvent e) {
+		//System.out.println("clicked");
+		
 		if (inwindow) {
+			if (dragging) {// && SwingUtilities.isRightMouseButton(e)){
+				this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+				//System.out.println("dragging false");
+				dragging = false;
+				VisualizationViewer vv = (VisualizationViewer) e.getSource();
+				// vv.setComponentPopupMenu(new GraphPopUp().returnPopUp());
+				MainWindowSingleton.getInstance().setCursor(cursor);
+				vv.setCursor(cursor);
+				vv.getComponentPopupMenu().show();
+				//System.out.println("durch");
+				// this.mouseClicked(e);
+				// this.mouseClicked(e);
+				// vv.getComponentPopupMenu().setEnabled(true);
 
+				//this.mouseClicked(e);
+			}
 			// System.out.println("Picked E:
 			// "+graphInstance.getMyGraph().getVisualizationViewer().getPickedEdgeState().getPicked().size());
 			// System.out.println("Picked V:
 			// "+graphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
-			if (arg0.getClickCount() == 1) {
-				super.mouseClicked(arg0);
+			if (e.getClickCount() == 1) {
+				super.mouseClicked(e);
 				// System.out.println("v: "+this.vertex);
 
 				// Vector<BiologicalNodeAbstract> v = graphInstance.getPathway()
@@ -210,24 +229,57 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 					}
 				}
 			}
+
 		}
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (inwindow) {
-
+			// System.out.println("d");
 			if (!(graphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout)) {
-				
+
 				if (SwingUtilities.isRightMouseButton(e)) {
-					System.out.println("dragged");
-					if(!dragging){
-						graphInstance.getMyGraph().setMouseModeTransform();
+					VisualizationViewer vv = (VisualizationViewer) e.getSource();
+					if (!dragging) {
 						dragging = true;
+						//System.out.println("dragged");
+
+						vv.getComponentPopupMenu().hide();
+						//System.out.println("paintes");
+						 this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+						 MainWindowSingleton.getInstance().setCursor(cursor);
+						 vv.setCursor(cursor);
+						//this.mouseClicked(e);
 					}
+					// vv.getComponentPopupMenu();
+					// vv.getComponentPopupMenu().removeAll();
+					MutableTransformer modelTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+					
+					
+					try {
+						Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
+						Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
+						float dx = (float) (p.getX() - q.getX());
+						float dy = (float) (p.getY() - q.getY());
+
+						modelTransformer.translate(dx, dy);
+						down.x = e.getX();
+						down.y = e.getY();
+					} catch (RuntimeException ex) {
+						System.err.println("down = " + down + ", e = " + e);
+						throw ex;
+					}
+
+					e.consume();
+					vv.repaint();
+					// }
+
+					// graphInstance.getMyGraph().setMouseModeTransform();
+
 					//
-				}else{
-					//System.out.println("stop");
+				} else {
+					// System.out.println("stop");
 					super.mouseDragged(e);
 				}
 			} else {
@@ -259,14 +311,22 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	public void mouseEntered(MouseEvent e) {
 		if (e.getComponent().toString().contains("MyVisualizationViewer")) {
+			
 			inwindow = true;
-			// System.out.println("entered");
+			VisualizationViewer vv = (VisualizationViewer) e.getSource();
+			//this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+			vv.setCursor(cursor);
+			MainWindowSingleton.getInstance().setCursor(cursor);
+			vv.revalidate();
+			vv.repaint();
+			//System.out.println("entered");
 		}
 	}
 
 	public void mouseExited(MouseEvent e) {
 		if (e.getComponent().toString().contains("MyVisualizationViewer")) {
 			inwindow = false;
+			MainWindowSingleton.getInstance().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			// System.out.println("left");
 		}
 	}
