@@ -36,7 +36,7 @@ public class PNDoc {
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		BiologicalNodeAbstract bna;
 
-		sb.append("\\section{Gleichungen}\n");
+		sb.append("\\section{Equations}\n");
 		int i = 0;
 		while (it.hasNext() && i < 3) {
 			bna = it.next();
@@ -59,7 +59,12 @@ public class PNDoc {
 				.getInEdges(t).iterator();
 		BiologicalEdgeAbstract bea;
 		BiologicalNodeAbstract bna;
-		sb.append("\\cprotect\\subsection{\\verb\""+t.getName()+"\"}\n"
+		
+		String knocked = "";
+		if(t.isKnockedOut()){
+			knocked = " (knocked out, $v=0$)";
+		}
+		sb.append("\\cprotect\\subsection{\\verb\""+t.getName()+"\""+knocked+"}\n"
 				+ "\\noindent\\verb\"" + t.getName() + "\" : $");
 		String weight;
 		PNEdge edge;
@@ -176,8 +181,8 @@ public class PNDoc {
 	private void writeInitialValues(){
 		
 		
-		sb.append("\\section*{Startwerte}\n"
-				+ "\\addcontentsline{toc}{section}{Startwerte}\n"
+		sb.append("\\section*{Initial values}\n"
+				+ "\\addcontentsline{toc}{section}{Initial values}\n"
 				+ "\\begin{center}\\begin{longtable}{lll}\\toprule\n");
 
 		sb.append("Name & Value & Unit\\\\\\midrule\n");
