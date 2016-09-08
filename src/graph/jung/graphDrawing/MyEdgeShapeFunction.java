@@ -14,38 +14,32 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape.CubicCurve;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape.Line;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape.Orthogonal;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape.QuadCurve;
-import petriNet.PNEdge;
 
-public class MyEdgeShapeFunction implements Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> {
+public class MyEdgeShapeFunction
+		implements Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> {
 
-	private final QuadCurve<BiologicalNodeAbstract,BiologicalEdgeAbstract> quadcurve = new EdgeShape.QuadCurve<>();
-	private final Line<BiologicalNodeAbstract,BiologicalEdgeAbstract> line = new EdgeShape.Line<>();	
-	private final BentLine<BiologicalNodeAbstract,BiologicalEdgeAbstract> bentline = new EdgeShape.BentLine<>();
-	private final CubicCurve<BiologicalNodeAbstract,BiologicalEdgeAbstract> cubiccurve = new EdgeShape.CubicCurve<>();
-	private final Orthogonal<BiologicalNodeAbstract,BiologicalEdgeAbstract> orthogonal = new EdgeShape.Orthogonal<>();
-	
-	public MyEdgeShapeFunction(){
-		
+	private final QuadCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract> quadcurve = new EdgeShape.QuadCurve<>();
+	private final Line<BiologicalNodeAbstract, BiologicalEdgeAbstract> line = new EdgeShape.Line<>();
+	private final BentLine<BiologicalNodeAbstract, BiologicalEdgeAbstract> bentline = new EdgeShape.BentLine<>();
+	private final CubicCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract> cubiccurve = new EdgeShape.CubicCurve<>();
+	private final Orthogonal<BiologicalNodeAbstract, BiologicalEdgeAbstract> orthogonal = new EdgeShape.Orthogonal<>();
+
+	public MyEdgeShapeFunction() {
+
 	}
 
 	@Override
-	public Shape transform(
-			Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract> context) {
-		
-		//if(context.element instanceof AlignmentEdge)
-			//return (new EdgeShape.Wedge<BiologicalNodeAbstract, BiologicalEdgeAbstract>(6)).transform(context);
-		if(context.element instanceof PNEdge){
-			
-			PNEdge e = (PNEdge) context.element;
-			if(context.graph.findEdge(e.getTo(), e.getFrom()) != null){
-				return (quadcurve).transform(context);
-			}
-			return (line).transform(context);
+	public Shape transform(Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract> context) {
+
+		// if(context.element instanceof AlignmentEdge)
+		// return (new EdgeShape.Wedge<BiologicalNodeAbstract,
+		// BiologicalEdgeAbstract>(6)).transform(context);
+
+		BiologicalEdgeAbstract e = context.element;
+		if (context.graph.findEdge(e.getTo(), e.getFrom()) != null) {
+			return (quadcurve).transform(context);
 		}
-		else{
-//			return new Rectangle();
-			return (line).transform(context);
-		}
+		return (line).transform(context);
 	}
 
 }
