@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -51,6 +52,7 @@ import biologicalObjects.edges.Ubiquitination;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.KEGGNode;
+import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.RNA;
 
 /**
@@ -75,6 +77,7 @@ public class JSBMLinput {
 	 */
 	private BiologicalEdgeAbstract bea = null;
 	private final Hashtable<Integer, BiologicalNodeAbstract> nodes = new Hashtable<Integer, BiologicalNodeAbstract>();
+	private final HashMap<String, Integer> string2id = new HashMap<String, Integer>();
 	private boolean coarsePathway = false;
 
 	private Hashtable<BiologicalNodeAbstract, Integer> bna2Ref = new Hashtable<BiologicalNodeAbstract, Integer>();
@@ -156,19 +159,24 @@ public class JSBMLinput {
 		int size = annotationNodeChildren.size();
 		Element modelNode = annotationNode.getChild("model", null);
 		// get the information if the imported net is a Petri net
-		Element isPetriNetNode = modelNode.getChild("isPetriNet", null);
-		Boolean isPetri = Boolean.parseBoolean(isPetriNetNode.getAttributeValue("isPetriNet"));
-		this.pathway.setPetriNet(isPetri);
-		// get the ranges if present
-		Element rangeNode = modelNode.getChild("listOfRanges", null);
-		if (rangeNode != null) {
-			List<Element> rangeNodeChildren = rangeNode.getChildren();
-			size = rangeNodeChildren.size();
-			for (int i = 0; i < size; i++) {
-				Element range = rangeNodeChildren.get(i);
-				addRange(range);
+
+		Boolean isPetri = false;
+		if (modelNode != null) {
+			Element isPetriNetNode = modelNode.getChild("isPetriNet", null);
+			isPetri = Boolean.parseBoolean(isPetriNetNode.getAttributeValue("isPetriNet"));
+
+			// get the ranges if present
+			Element rangeNode = modelNode.getChild("listOfRanges", null);
+			if (rangeNode != null) {
+				List<Element> rangeNodeChildren = rangeNode.getChildren();
+				size = rangeNodeChildren.size();
+				for (int i = 0; i < size; i++) {
+					Element range = rangeNodeChildren.get(i);
+					addRange(range);
+				}
 			}
 		}
+		this.pathway.setPetriNet(isPetri);
 	}
 
 	/**
@@ -197,155 +205,176 @@ public class JSBMLinput {
 		List<Element> reactionNodeChildren = reactionNode.getChildren();
 		int size = reactionNodeChildren.size();
 		// for each reaction
+		BiologicalNodeAbstract from;
+		BiologicalNodeAbstract to;
 		for (int i = 0; i < size; i++) {
 			Element reaction = reactionNodeChildren.get(i);
-			Element annotation = reaction.getChild("annotation", null);
-			Element reacAnnotation = annotation.getChild("reac", null);
 			// test which bea has to be created
-			Element elSub = reacAnnotation.getChild("BiologicalElement", null);
-			String biologicalElement = elSub.getAttributeValue("BiologicalElement");
+
 			// get name and label to create the bea
 			String name = reaction.getAttributeValue("name");
 			if (name == null) {
 				name = "";
 			}
-			elSub = reacAnnotation.getChild("Label", null);
-			String label = "";
-			if (elSub != null) {
-				label = elSub.getAttributeValue("label");
-			}
+
 			// get from an to nodes for the reaction
 			Element rectantsNode = reaction.getChild("listOfReactants", null);
-			Element rectant = rectantsNode.getChild("speciesReference", null);
-			String id = rectant.getAttributeValue("species");
-			// System.out.println(id);
-			String[] tmp = id.split("_");
-			int from = Integer.parseInt(tmp[1]);
 			Element productsNode = reaction.getChild("listOfProducts", null);
-			Element product = productsNode.getChild("speciesReference", null);
-			id = product.getAttributeValue("species");
-			tmp = id.split("_");
-			int to = Integer.parseInt(tmp[1]);
-			String attr = "";
+			if (rectantsNode != null && productsNode != null) {
 
-			switch (biologicalElement) {
-			case Elementdeclerations.compoundEdge:
-				bea = new Compound(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.physicalInteraction:
-				bea = new PhysicalInteraction(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.hiddenCompoundEdge:
-				bea = new HiddenCompound(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.reactionEdge:
-				// System.out.println("reaction edge");
-				bea = new ReactionEdge(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.reactionPair:
-				// System.out.println("reaction pair");
-				bea = new ReactionPair(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.activationEdge:
-				bea = new Activation(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.inhibitionEdge:
-				bea = new Inhibition(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.expressionEdge:
-				bea = new Expression(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.repressionEdge:
-				bea = new Repression(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.indirectEffectEdge:
-				bea = new IndirectEffect(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.stateChangeEdge:
-				bea = new StateChange(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.bindingEdge:
-				bea = new BindingAssociation(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.dissociationEdge:
-				bea = new Dissociation(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.phosphorylationEdge:
-				bea = new Phosphorylation(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.dephosphorylationEdge:
-				// System.out.println("dephos:" + biologicalElement);
-				bea = new Dephosphorylation(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.glycosylationEdge:
-				bea = new Glycosylation(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.ubiquitinationEdge:
-				bea = new Ubiquitination(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.methylationEdge:
-				bea = new Methylation(label, name, nodes.get(from), nodes.get(to));
-				break;
-			case Elementdeclerations.pnDiscreteEdge:
-				// TODO: ???
-				elSub = reacAnnotation.getChild("Function", null);
-				attr = "";
-				if (elSub != null) {
-					attr = elSub.getAttributeValue("Function");
+				Element rectant = rectantsNode.getChild("speciesReference", null);
+				String id = rectant.getAttributeValue("species");
+				// System.out.println(id);
+				from = nodes.get(string2id.get(id));
+
+				Element product = productsNode.getChild("speciesReference", null);
+				id = product.getAttributeValue("species");
+				to = nodes.get(string2id.get(id));
+				String attr = "";
+				String label = name;
+
+				bea = new ReactionEdge(label, name, from, to);
+				bea.setDirected(true);
+
+				Element annotation = reaction.getChild("annotation", null);
+				if (annotation != null) {
+					Element reacAnnotation = annotation.getChild("reac", null);
+					if (reacAnnotation != null) {
+						Element elSub = reacAnnotation.getChild("BiologicalElement", null);
+						String biologicalElement = elSub.getAttributeValue("BiologicalElement");
+
+						elSub = reacAnnotation.getChild("Label", null);
+
+						if (elSub != null) {
+							label = elSub.getAttributeValue("label");
+						}
+
+						switch (biologicalElement) {
+						case Elementdeclerations.compoundEdge:
+							bea = new Compound(label, name, from, to);
+							break;
+						case Elementdeclerations.physicalInteraction:
+							bea = new PhysicalInteraction(label, name, from, to);
+							break;
+						case Elementdeclerations.hiddenCompoundEdge:
+							bea = new HiddenCompound(label, name, from, to);
+							break;
+						case Elementdeclerations.reactionEdge:
+							// System.out.println("reaction edge");
+							bea = new ReactionEdge(label, name, from, to);
+							break;
+						case Elementdeclerations.reactionPair:
+							// System.out.println("reaction pair");
+							bea = new ReactionPair(label, name, from, to);
+							break;
+						case Elementdeclerations.activationEdge:
+							bea = new Activation(label, name, from, to);
+							break;
+						case Elementdeclerations.inhibitionEdge:
+							bea = new Inhibition(label, name, from, to);
+							break;
+						case Elementdeclerations.expressionEdge:
+							bea = new Expression(label, name, from, to);
+							break;
+						case Elementdeclerations.repressionEdge:
+							bea = new Repression(label, name, from, to);
+							break;
+						case Elementdeclerations.indirectEffectEdge:
+							bea = new IndirectEffect(label, name, from, to);
+							break;
+						case Elementdeclerations.stateChangeEdge:
+							bea = new StateChange(label, name, from, to);
+							break;
+						case Elementdeclerations.bindingEdge:
+							bea = new BindingAssociation(label, name, from, to);
+							break;
+						case Elementdeclerations.dissociationEdge:
+							bea = new Dissociation(label, name, from, to);
+							break;
+						case Elementdeclerations.phosphorylationEdge:
+							bea = new Phosphorylation(label, name, from, to);
+							break;
+						case Elementdeclerations.dephosphorylationEdge:
+							// System.out.println("dephos:" +
+							// biologicalElement);
+							bea = new Dephosphorylation(label, name, from, to);
+							break;
+						case Elementdeclerations.glycosylationEdge:
+							bea = new Glycosylation(label, name, from, to);
+							break;
+						case Elementdeclerations.ubiquitinationEdge:
+							bea = new Ubiquitination(label, name, from, to);
+							break;
+						case Elementdeclerations.methylationEdge:
+							bea = new Methylation(label, name, from, to);
+							break;
+						case Elementdeclerations.pnDiscreteEdge:
+							// TODO: ???
+							elSub = reacAnnotation.getChild("Function", null);
+							attr = "";
+							if (elSub != null) {
+								attr = elSub.getAttributeValue("Function");
+							}
+							bea = new PNEdge(from, to, label, name, biologicalElements.Elementdeclerations.pnDiscreteEdge, attr);
+							elSub = reacAnnotation.getChild("ActivationProbability", null);
+							if (elSub != null) {
+								attr = elSub.getAttributeValue("ActivationProbability");
+							}
+							((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
+							break;
+						case Elementdeclerations.pnContinuousEdge:
+							elSub = reacAnnotation.getChild("Function", null);
+							attr = "";
+							if (elSub != null) {
+								attr = elSub.getAttributeValue("Function");
+							}
+							bea = new PNEdge(from, to, label, name, biologicalElements.Elementdeclerations.pnContinuousEdge, attr);
+							elSub = reacAnnotation.getChild("ActivationProbability", null);
+							if (elSub != null) {
+								attr = elSub.getAttributeValue("ActivationProbability");
+							}
+							((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
+							break;
+						case Elementdeclerations.pnInhibitionEdge:
+							elSub = reacAnnotation.getChild("Function", null);
+							attr = "";
+							if (elSub != null) {
+								attr = elSub.getAttributeValue("Function");
+							}
+							bea = new PNEdge(from, to, label, name, biologicalElements.Elementdeclerations.pnInhibitionEdge, attr);
+							((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
+							break;
+						default:
+							// System.out.println(biologicalElement);
+							break;
+						}
+						// get additional information
+						List<Element> reacAnnotationChildren = reacAnnotation.getChildren();
+						for (int j = 0; j < reacAnnotationChildren.size(); j++) {
+							// go through all Nodes and look up what is set
+							Element child = reacAnnotationChildren.get(j);
+							handleEdgeInformation(child.getName(), child);
+						}
+					}
 				}
-				bea = new PNEdge(nodes.get(from), nodes.get(to), label, name, biologicalElements.Elementdeclerations.pnDiscreteEdge, attr);
-				elSub = reacAnnotation.getChild("ActivationProbability", null);
-				if (elSub != null) {
-					attr = elSub.getAttributeValue("ActivationProbability");
-				}
-				((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
-				break;
-			case Elementdeclerations.pnContinuousEdge:
-				elSub = reacAnnotation.getChild("Function", null);
-				attr = "";
-				if (elSub != null) {
-					attr = elSub.getAttributeValue("Function");
-				}
-				bea = new PNEdge(nodes.get(from), nodes.get(to), label, name, biologicalElements.Elementdeclerations.pnContinuousEdge, attr);
-				elSub = reacAnnotation.getChild("ActivationProbability", null);
-				if (elSub != null) {
-					attr = elSub.getAttributeValue("ActivationProbability");
-				}
-				((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
-				break;
-			case Elementdeclerations.pnInhibitionEdge:
-				elSub = reacAnnotation.getChild("Function", null);
-				attr = "";
-				if (elSub != null) {
-					attr = elSub.getAttributeValue("Function");
-				}
-				bea = new PNEdge(nodes.get(from), nodes.get(to), label, name, biologicalElements.Elementdeclerations.pnInhibitionEdge, attr);
-				((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
-				break;
-			default:
-				// System.out.println(biologicalElement);
-				break;
-			}
-			if (bea != null) {
+
 				// set ID of the reaction
 				id = reaction.getAttributeValue("id");
-				tmp = id.split("_");
+
+				int idint = this.getID(id);
 				try {
-					bea.setID(Integer.parseInt(tmp[1]));
+					if (idint > -1) {
+						bea.setID(idint);
+					} else {
+						bea.setID();
+					}
 				} catch (IDAlreadyExistException ex) {
 					bea.setID();
 				}
-				// get additional information
-				List<Element> reacAnnotationChildren = reacAnnotation.getChildren();
-				for (int j = 0; j < reacAnnotationChildren.size(); j++) {
-					// go through all Nodes and look up what is set
-					Element child = reacAnnotationChildren.get(j);
-					handleEdgeInformation(child.getName(), child);
-				}
 				this.pathway.addEdge(bea);
+				// reset because bea is global defined
+				bea = null;
 			}
-			// reset because bea is global defined
-			bea = null;
 		}
 	}
 
@@ -366,286 +395,307 @@ public class JSBMLinput {
 		// for each species
 		for (int i = 0; i < size; i++) {
 			Element species = speciesNodeChildren.get(i);
-			Element annotation = species.getChild("annotation", null);
-			Element specAnnotation = annotation.getChild("spec", null);
 
 			// test which bna has to be created
-			Element elSub = specAnnotation.getChild("BiologicalElement", null);
-			String biologicalElement = elSub.getAttributeValue("BiologicalElement");
+
 			// get name and label to create the bna
 			String name = species.getAttributeValue("name");
 			if (name == null) {
 				name = "";
 			}
-			elSub = specAnnotation.getChild("label", null);
-			String label = "";
-			if (elSub != null) {
-				label = elSub.getAttributeValue("label");
-			} else {
-				elSub = specAnnotation.getChild("Label", null);
-				if (elSub != null) {
-					label = elSub.getAttributeValue("Label");
-				}
-			}
-			String attr;
-			switch (biologicalElement) {
-			case Elementdeclerations.enzyme:
-				bna = new biologicalObjects.nodes.Enzyme(label, name);
-				break;
-			case Elementdeclerations.others:
-				bna = new biologicalObjects.nodes.Other(label, name);
-				break;
-			case Elementdeclerations.collector:
-				bna = new biologicalObjects.nodes.Collector(label, name);
-				break;
-			case Elementdeclerations.complex:
-				bna = new biologicalObjects.nodes.Complex(label, name);
-				break;
-			case Elementdeclerations.degraded:
-				bna = new biologicalObjects.nodes.Degraded(label, name);
-				break;
-			case Elementdeclerations.dna:
-				bna = new biologicalObjects.nodes.DNA(label, name);
-				break;
-			case Elementdeclerations.exon:
-				bna = new biologicalObjects.nodes.Exon(label, name);
-				break;
-			case Elementdeclerations.homodimerFormation:
-				bna = new biologicalObjects.nodes.HomodimerFormation(label, name);
-				break;
-			case Elementdeclerations.ligandBinding:
-				bna = new biologicalObjects.nodes.LigandBinding(label, name);
-				break;
-			case Elementdeclerations.membraneChannel:
-				bna = new biologicalObjects.nodes.MembraneChannel(label, name);
-				break;
-			case Elementdeclerations.membraneReceptor:
-				bna = new biologicalObjects.nodes.Receptor(label, name);
-				break;
-			case Elementdeclerations.mRNA:
-				bna = new biologicalObjects.nodes.MRNA(label, name);
-				elSub = specAnnotation.getChild("NtSequence", null);
-				if (elSub != null) {
-					attr = elSub.getAttributeValue("NtSequence");
-					((biologicalObjects.nodes.MRNA) bna).setNtSequence(attr);
-				}
-				break;
-			case Elementdeclerations.orthologGroup:
-				bna = new biologicalObjects.nodes.OrthologGroup(label, name);
-				break;
-			case Elementdeclerations.pathwayMap:
-				bna = new biologicalObjects.nodes.PathwayMap(label, name);
-				elSub = specAnnotation.getChild("PathwayLink", null);
-				if (elSub != null) {
-					pathwayLink = String.valueOf(elSub.getAttributeValue("PathwayLink"));
-				}
-				// if (pathwayLink != null) {
-				// TODO: ???
-				// try {
-				// new File("Temp").delete();
-				// FileWriter w = new FileWriter(new File("Temp"), false);
-				// w.write(pathway);
-				// w.close();
-				// File file = new File("Temp");
-				// Pathway newPW = new Pathway(label);
-				// new VAMLInput(file, newPW);
-				// ((PathwayMap) bna).setPathwayLink(newPW);
-				// newPW.setParent(pw);
-				// } catch (Exception e1) {
-				// e1.printStackTrace();
-				// }
-				// }
-				break;
-			case Elementdeclerations.inhibitor:
-				bna = new biologicalObjects.nodes.Inhibitor(label, name);
-				break;
-			case Elementdeclerations.protein:
-				bna = new biologicalObjects.nodes.Protein(label, name);
-				break;
-			case Elementdeclerations.receptor:
-				bna = new biologicalObjects.nodes.Receptor(label, name);
-				break;
-			case Elementdeclerations.sRNA:
-				bna = new biologicalObjects.nodes.SRNA(label, name);
-				elSub = specAnnotation.getChild("NtSequence", null);
-				if (elSub != null) {
-					attr = String.valueOf(elSub.getAttributeValue("NtSequence"));
-					((biologicalObjects.nodes.SRNA) bna).setNtSequence(attr);
-				}
-				break;
-			case Elementdeclerations.smallMolecule:
-				bna = new biologicalObjects.nodes.SmallMolecule(label, name);
-				break;
-			case Elementdeclerations.solubleReceptor:
-				bna = new biologicalObjects.nodes.SolubleReceptor(label, name);
-				break;
-			case Elementdeclerations.transcriptionFactor:
-				bna = new biologicalObjects.nodes.TranscriptionFactor(label, name);
-				break;
-			case Elementdeclerations.glycan:
-				bna = new biologicalObjects.nodes.Glycan(label, name);
-				break;
-			case Elementdeclerations.compound:
-				bna = new biologicalObjects.nodes.CompoundNode(label, name);
-				break;
-			case Elementdeclerations.disease:
-				bna = new biologicalObjects.nodes.Disease(label, name);
-				break;
-			case Elementdeclerations.drug:
-				bna = new biologicalObjects.nodes.Drug(label, name);
-				break;
-			case Elementdeclerations.domain:
-				bna = new biologicalObjects.nodes.Domain(label, name);
-				break;
-			case Elementdeclerations.gene:
-				bna = new biologicalObjects.nodes.Gene(label, name);
-				break;
-			case Elementdeclerations.go:
-				bna = new biologicalObjects.nodes.GeneOntology(label, name);
-				break;
-			case Elementdeclerations.reaction:
-				bna = new biologicalObjects.nodes.Reaction(label, name);
-				break;
-			case Elementdeclerations.matrix:
-				bna = new biologicalObjects.nodes.Matrix(label, name);
-				break;
-			case Elementdeclerations.factor:
-				bna = new biologicalObjects.nodes.Factor(label, name);
-				break;
-			case Elementdeclerations.fragment:
-				bna = new biologicalObjects.nodes.Fragment(label, name);
-				break;
-			case Elementdeclerations.site:
-				bna = new biologicalObjects.nodes.Site(label, name);
-				break;
-			case Elementdeclerations.place:
-				// System.out.println("plce");
-				bna = new petriNet.Place(label, name, 1.0, true);
-				elSub = specAnnotation.getChild("token", null);
-				attr = String.valueOf(elSub.getAttributeValue("token"));
-				((petriNet.Place) bna).setToken(Double.parseDouble(attr));
-				elSub = specAnnotation.getChild("tokenMin", null);
-				attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
-				((petriNet.Place) bna).setTokenMin(Double.parseDouble(attr));
-				elSub = specAnnotation.getChild("tokenMax", null);
-				attr = String.valueOf(elSub.getAttributeValue("tokenMax"));
-				((petriNet.Place) bna).setTokenMax(Double.parseDouble(attr));
-				elSub = specAnnotation.getChild("tokenStart", null);
-				attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
-				((petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
-				((petriNet.Place) bna).setDiscrete(true);
-				break;
-			case Elementdeclerations.s_place:
-				bna = new petriNet.Place(label, name, 1.0, false);
-				elSub = specAnnotation.getChild("token", null);
-				attr = String.valueOf(elSub.getAttributeValue("token"));
-				// System.out.println(attr);
-				((petriNet.Place) bna).setToken(Double.parseDouble(attr));
-				elSub = specAnnotation.getChild("tokenMin", null);
-				attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
-				((petriNet.Place) bna).setTokenMin(Double.parseDouble(attr));
-				elSub = specAnnotation.getChild("tokenMax", null);
-				attr = String.valueOf(elSub.getAttributeValue("tokenMax"));
-				((petriNet.Place) bna).setTokenMax(Double.parseDouble(attr));
-				elSub = specAnnotation.getChild("tokenStart", null);
-				attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
-				((petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
-				((petriNet.Place) bna).setDiscrete(false);
-				break;
-			case Elementdeclerations.discreteTransition:
-				bna = new petriNet.DiscreteTransition(label, name);
-				elSub = specAnnotation.getChild("delay", null);
-				attr = String.valueOf(elSub.getAttributeValue("delay"));
-				((petriNet.DiscreteTransition) bna).setDelay(Double.parseDouble(attr));
-				break;
-			case Elementdeclerations.continuousTransition:
-				bna = new petriNet.ContinuousTransition(label, name);
-				elSub = specAnnotation.getChild("maximumSpeed", null);
-				attr = String.valueOf(elSub.getAttributeValue("maximumSpeed"));
-				((petriNet.ContinuousTransition) bna).setMaximumSpeed(attr);
-				if (attr == null || attr.equals("")) {
-					((petriNet.ContinuousTransition) bna).setMaximumSpeed("1");
-				}
-				elSub = specAnnotation.getChild("knockedOut", null);
-				((petriNet.ContinuousTransition) bna).setKnockedOut(false);
-				if (elSub != null) {
-					attr = String.valueOf(elSub.getAttributeValue("knockedOut"));
 
-					if (attr != null && attr.equals("true")) {
-						((petriNet.ContinuousTransition) bna).setKnockedOut(true);
+			String label = name;
+			bna = new Other(label, name);
+			Point2D.Double p = new Point2D.Double(0.0, 0.0);
+
+			Element annotation = species.getChild("annotation", null);
+			if (annotation != null) {
+				Element specAnnotation = annotation.getChild("spec", null);
+				if (specAnnotation != null) {
+					Element elSub = specAnnotation.getChild("BiologicalElement", null);
+					String biologicalElement = elSub.getAttributeValue("BiologicalElement");
+					elSub = specAnnotation.getChild("label", null);
+
+					if (elSub != null) {
+						label = elSub.getAttributeValue("label");
+					} else {
+						elSub = specAnnotation.getChild("Label", null);
+						if (elSub != null) {
+							label = elSub.getAttributeValue("Label");
+						}
 					}
+					String attr;
+					switch (biologicalElement) {
+					case Elementdeclerations.enzyme:
+						bna = new biologicalObjects.nodes.Enzyme(label, name);
+						break;
+					case Elementdeclerations.others:
+						bna = new biologicalObjects.nodes.Other(label, name);
+						break;
+					case Elementdeclerations.collector:
+						bna = new biologicalObjects.nodes.Collector(label, name);
+						break;
+					case Elementdeclerations.complex:
+						bna = new biologicalObjects.nodes.Complex(label, name);
+						break;
+					case Elementdeclerations.degraded:
+						bna = new biologicalObjects.nodes.Degraded(label, name);
+						break;
+					case Elementdeclerations.dna:
+						bna = new biologicalObjects.nodes.DNA(label, name);
+						break;
+					case Elementdeclerations.exon:
+						bna = new biologicalObjects.nodes.Exon(label, name);
+						break;
+					case Elementdeclerations.homodimerFormation:
+						bna = new biologicalObjects.nodes.HomodimerFormation(label, name);
+						break;
+					case Elementdeclerations.ligandBinding:
+						bna = new biologicalObjects.nodes.LigandBinding(label, name);
+						break;
+					case Elementdeclerations.membraneChannel:
+						bna = new biologicalObjects.nodes.MembraneChannel(label, name);
+						break;
+					case Elementdeclerations.membraneReceptor:
+						bna = new biologicalObjects.nodes.Receptor(label, name);
+						break;
+					case Elementdeclerations.mRNA:
+						bna = new biologicalObjects.nodes.MRNA(label, name);
+						elSub = specAnnotation.getChild("NtSequence", null);
+						if (elSub != null) {
+							attr = elSub.getAttributeValue("NtSequence");
+							((biologicalObjects.nodes.MRNA) bna).setNtSequence(attr);
+						}
+						break;
+					case Elementdeclerations.orthologGroup:
+						bna = new biologicalObjects.nodes.OrthologGroup(label, name);
+						break;
+					case Elementdeclerations.pathwayMap:
+						bna = new biologicalObjects.nodes.PathwayMap(label, name);
+						elSub = specAnnotation.getChild("PathwayLink", null);
+						if (elSub != null) {
+							pathwayLink = String.valueOf(elSub.getAttributeValue("PathwayLink"));
+						}
+						// if (pathwayLink != null) {
+						// TODO: ???
+						// try {
+						// new File("Temp").delete();
+						// FileWriter w = new FileWriter(new File("Temp"),
+						// false);
+						// w.write(pathway);
+						// w.close();
+						// File file = new File("Temp");
+						// Pathway newPW = new Pathway(label);
+						// new VAMLInput(file, newPW);
+						// ((PathwayMap) bna).setPathwayLink(newPW);
+						// newPW.setParent(pw);
+						// } catch (Exception e1) {
+						// e1.printStackTrace();
+						// }
+						// }
+						break;
+					case Elementdeclerations.inhibitor:
+						bna = new biologicalObjects.nodes.Inhibitor(label, name);
+						break;
+					case Elementdeclerations.protein:
+						bna = new biologicalObjects.nodes.Protein(label, name);
+						break;
+					case Elementdeclerations.receptor:
+						bna = new biologicalObjects.nodes.Receptor(label, name);
+						break;
+					case Elementdeclerations.sRNA:
+						bna = new biologicalObjects.nodes.SRNA(label, name);
+						elSub = specAnnotation.getChild("NtSequence", null);
+						if (elSub != null) {
+							attr = String.valueOf(elSub.getAttributeValue("NtSequence"));
+							((biologicalObjects.nodes.SRNA) bna).setNtSequence(attr);
+						}
+						break;
+					case Elementdeclerations.smallMolecule:
+						bna = new biologicalObjects.nodes.SmallMolecule(label, name);
+						break;
+					case Elementdeclerations.solubleReceptor:
+						bna = new biologicalObjects.nodes.SolubleReceptor(label, name);
+						break;
+					case Elementdeclerations.transcriptionFactor:
+						bna = new biologicalObjects.nodes.TranscriptionFactor(label, name);
+						break;
+					case Elementdeclerations.glycan:
+						bna = new biologicalObjects.nodes.Glycan(label, name);
+						break;
+					case Elementdeclerations.compound:
+						bna = new biologicalObjects.nodes.CompoundNode(label, name);
+						break;
+					case Elementdeclerations.disease:
+						bna = new biologicalObjects.nodes.Disease(label, name);
+						break;
+					case Elementdeclerations.drug:
+						bna = new biologicalObjects.nodes.Drug(label, name);
+						break;
+					case Elementdeclerations.domain:
+						bna = new biologicalObjects.nodes.Domain(label, name);
+						break;
+					case Elementdeclerations.gene:
+						bna = new biologicalObjects.nodes.Gene(label, name);
+						break;
+					case Elementdeclerations.go:
+						bna = new biologicalObjects.nodes.GeneOntology(label, name);
+						break;
+					case Elementdeclerations.reaction:
+						bna = new biologicalObjects.nodes.Reaction(label, name);
+						break;
+					case Elementdeclerations.matrix:
+						bna = new biologicalObjects.nodes.Matrix(label, name);
+						break;
+					case Elementdeclerations.factor:
+						bna = new biologicalObjects.nodes.Factor(label, name);
+						break;
+					case Elementdeclerations.fragment:
+						bna = new biologicalObjects.nodes.Fragment(label, name);
+						break;
+					case Elementdeclerations.site:
+						bna = new biologicalObjects.nodes.Site(label, name);
+						break;
+					case Elementdeclerations.place:
+						// System.out.println("plce");
+						bna = new petriNet.Place(label, name, 1.0, true);
+						elSub = specAnnotation.getChild("token", null);
+						attr = String.valueOf(elSub.getAttributeValue("token"));
+						((petriNet.Place) bna).setToken(Double.parseDouble(attr));
+						elSub = specAnnotation.getChild("tokenMin", null);
+						attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
+						((petriNet.Place) bna).setTokenMin(Double.parseDouble(attr));
+						elSub = specAnnotation.getChild("tokenMax", null);
+						attr = String.valueOf(elSub.getAttributeValue("tokenMax"));
+						((petriNet.Place) bna).setTokenMax(Double.parseDouble(attr));
+						elSub = specAnnotation.getChild("tokenStart", null);
+						attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
+						((petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
+						((petriNet.Place) bna).setDiscrete(true);
+						break;
+					case Elementdeclerations.s_place:
+						bna = new petriNet.Place(label, name, 1.0, false);
+						elSub = specAnnotation.getChild("token", null);
+						attr = String.valueOf(elSub.getAttributeValue("token"));
+						// System.out.println(attr);
+						((petriNet.Place) bna).setToken(Double.parseDouble(attr));
+						elSub = specAnnotation.getChild("tokenMin", null);
+						attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
+						((petriNet.Place) bna).setTokenMin(Double.parseDouble(attr));
+						elSub = specAnnotation.getChild("tokenMax", null);
+						attr = String.valueOf(elSub.getAttributeValue("tokenMax"));
+						((petriNet.Place) bna).setTokenMax(Double.parseDouble(attr));
+						elSub = specAnnotation.getChild("tokenStart", null);
+						attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
+						((petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
+						((petriNet.Place) bna).setDiscrete(false);
+						break;
+					case Elementdeclerations.discreteTransition:
+						bna = new petriNet.DiscreteTransition(label, name);
+						elSub = specAnnotation.getChild("delay", null);
+						attr = String.valueOf(elSub.getAttributeValue("delay"));
+						((petriNet.DiscreteTransition) bna).setDelay(Double.parseDouble(attr));
+						break;
+					case Elementdeclerations.continuousTransition:
+						bna = new petriNet.ContinuousTransition(label, name);
+						elSub = specAnnotation.getChild("maximumSpeed", null);
+						attr = String.valueOf(elSub.getAttributeValue("maximumSpeed"));
+						((petriNet.ContinuousTransition) bna).setMaximumSpeed(attr);
+						if (attr == null || attr.equals("")) {
+							((petriNet.ContinuousTransition) bna).setMaximumSpeed("1");
+						}
+						elSub = specAnnotation.getChild("knockedOut", null);
+						((petriNet.ContinuousTransition) bna).setKnockedOut(false);
+						if (elSub != null) {
+							attr = String.valueOf(elSub.getAttributeValue("knockedOut"));
+
+							if (attr != null && attr.equals("true")) {
+								((petriNet.ContinuousTransition) bna).setKnockedOut(true);
+							}
+						}
+						break;
+					case Elementdeclerations.stochasticTransition:
+						bna = new petriNet.StochasticTransition(label, name);
+						elSub = specAnnotation.getChild("distribution", null);
+						attr = String.valueOf(elSub.getAttributeValue("distribution"));
+						((petriNet.StochasticTransition) bna).setDistribution(attr);
+						break;
+					}
+
+					// get additional information
+					List<Element> specAnnotationChildren = specAnnotation.getChildren();
+					for (int j = 0; j < specAnnotationChildren.size(); j++) {
+						// go through all Nodes and look up what is set
+						Element child = specAnnotationChildren.get(j);
+						handleNodeInformation(child.getName(), child);
+					}
+					// get the coordinates of the bna
+					elSub = specAnnotation.getChild("Coordinates", null);
+					Element elSubSub = elSub.getChild("x_Coordinate", null);
+					Double xCoord = new Double(elSubSub.getAttributeValue("x_Coordinate"));
+					elSubSub = elSub.getChild("y_Coordinate", null);
+					Double yCoord = new Double(elSubSub.getAttributeValue("y_Coordinate"));
+					p = new Point2D.Double(xCoord, yCoord);
+
+					elSub = specAnnotation.getChild("environmentNode", null);
+					if (elSub != null) {
+						if (String.valueOf(elSub.getAttributeValue("environmentNode")).equals("true")) {
+							bna.markAsEnvironment(true);
+						}
+					}
+
+					elSub = specAnnotation.getChild("Parameters", null);
+
+					// elSubSub = elSub.getChild("x_Coordinate", null);
+
+					ArrayList<Parameter> parameters = new ArrayList<Parameter>();
+					Parameter param;
+					String pname = "";
+					Double value = 0.0;
+					String unit = "";
+					for (int j = 0; j < elSub.getChildren().size(); j++) {
+						elSubSub = elSub.getChildren().get(j);
+						// System.out.println(elSubSub.getChild("Name",
+						// null).getAttributeValue("Name"));
+						pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
+						value = Double.valueOf(elSubSub.getChild("Value", null).getAttributeValue("Value"));
+						unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
+						param = new Parameter(pname, value, unit);
+						parameters.add(param);
+					}
+					bna.setParameters(parameters);
 				}
-				break;
-			case Elementdeclerations.stochasticTransition:
-				bna = new petriNet.StochasticTransition(label, name);
-				elSub = specAnnotation.getChild("distribution", null);
-				attr = String.valueOf(elSub.getAttributeValue("distribution"));
-				((petriNet.StochasticTransition) bna).setDistribution(attr);
-				break;
 			}
 			// test which annotations are set
 			// only if bna was created above
-			if (bna != null) {
-				// set id and compartment of the bna
-				String id = species.getAttributeValue("id");
-				//System.out.println("id: " + id);
-				String[] idSplit = id.split("_");
-				int idInt = Integer.parseInt(idSplit[1]);
-				try {
-					bna.setID(idInt);
-				} catch (IDAlreadyExistException ex) {
+			// set id and compartment of the bna
+
+			String id = species.getAttributeValue("id");
+
+			int intid = this.getID(id);
+			try {
+				if (intid > -1) {
+					bna.setID(intid);
+				} else {
 					bna.setID();
 				}
-				String compartment = species.getAttributeValue("compartment");
+			} catch (IDAlreadyExistException ex) {
+				bna.setID();
+			}
+
+			String compartment = species.getAttributeValue("compartment");
+			if (compartment.contains("comp_")) {
 				String[] comp = compartment.split("_");
 				bna.setCompartment(comp[1]);
-				// get additional information
-				List<Element> specAnnotationChildren = specAnnotation.getChildren();
-				for (int j = 0; j < specAnnotationChildren.size(); j++) {
-					// go through all Nodes and look up what is set
-					Element child = specAnnotationChildren.get(j);
-					handleNodeInformation(child.getName(), child);
-				}
-				// get the coordinates of the bna
-				elSub = specAnnotation.getChild("Coordinates", null);
-				Element elSubSub = elSub.getChild("x_Coordinate", null);
-				Double xCoord = new Double(elSubSub.getAttributeValue("x_Coordinate"));
-				elSubSub = elSub.getChild("y_Coordinate", null);
-				Double yCoord = new Double(elSubSub.getAttributeValue("y_Coordinate"));
-				Point2D.Double p = new Point2D.Double(xCoord, yCoord);
-
-				elSub = specAnnotation.getChild("environmentNode", null);
-				if (elSub != null) {
-					if (String.valueOf(elSub.getAttributeValue("environmentNode")).equals("true")) {
-						bna.markAsEnvironment(true);
-					}
-				}
-
-				elSub = specAnnotation.getChild("Parameters", null);
-
-				// elSubSub = elSub.getChild("x_Coordinate", null);
-
-				ArrayList<Parameter> parameters = new ArrayList<Parameter>();
-				Parameter param;
-				String pname = "";
-				Double value = 0.0;
-				String unit = "";
-				for (int j = 0; j < elSub.getChildren().size(); j++) {
-					elSubSub = elSub.getChildren().get(j);
-					// System.out.println(elSubSub.getChild("Name",
-					// null).getAttributeValue("Name"));
-					pname = elSubSub.getChild("Name", null).getAttributeValue("Name");
-					value = Double.valueOf(elSubSub.getChild("Value", null).getAttributeValue("Value"));
-					unit = elSubSub.getChild("Unit", null).getAttributeValue("Unit");
-					param = new Parameter(pname, value, unit);
-					parameters.add(param);
-				}
-				bna.setParameters(parameters);
-				// add bna to the graph
-				this.pathway.addVertex(bna, p);
-				// add bna to hashtable
-				nodes.put(idInt, bna);
+			} else {
+				bna.setCompartment(compartment);
 			}
+
+			// add bna to the graph
+			this.pathway.addVertex(bna, p);
+			// add bna to hashtable
+			nodes.put(bna.getID(), bna);
+			string2id.put(id, bna.getID());
 			// reset because bna is global defined
 			bna = null;
 		}
@@ -811,7 +861,7 @@ public class JSBMLinput {
 	 * @param attrtmp
 	 */
 	private void handleNodeInformation(String attrtmp, Element child) {
-		//System.out.println("child: "+child);
+		// System.out.println("child: "+child);
 		String value = child.getAttributeValue(attrtmp);
 		switch (attrtmp) {
 		// standard cases
@@ -847,9 +897,9 @@ public class JSBMLinput {
 				Color col = new Color(rgb);
 				// System.out.println(col.getRGB());
 				bna.setColor(col);
-				//System.out.println("color set");
-			}else{
-				//System.out.println("skipped");
+				// System.out.println("color set");
+			} else {
+				// System.out.println("skipped");
 			}
 			// System.out.println(bna.isReference() ? "reference" :
 			// "no reference");
@@ -1183,5 +1233,18 @@ public class JSBMLinput {
 			bna = it.next();
 			bna.setRef(this.nodes.get(bna2Ref.get(bna)));
 		}
+	}
+
+	private Integer getID(String id) {
+		if (NumberUtils.isNumber(id)) {
+			return Integer.parseInt(id);
+		}
+		if (id.contains("spec_")) {
+			String[] idSplit = id.split("_");
+			if (NumberUtils.isNumber(idSplit[1])) {
+				return Integer.parseInt(idSplit[1]);
+			}
+		}
+		return -1;
 	}
 }
