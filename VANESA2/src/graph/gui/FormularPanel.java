@@ -41,10 +41,12 @@ private final DefaultHighlightPainter errorHighlighter;
     * Creates new form GUIWindow
     */
    public FormularPanel(JTextPane textField, String formular) {
-      initComponents(textField, formular);
+      initComponents(textField, "");
       this.errorHighlighter = new DefaultHighlightPainter(Color.red);
       this.fileChooser = new JFileChooser();
       this.fileChooser.setFileFilter(new FileNameExtensionFilter("SVG file", "svg", "SVG"));
+      jTextPane1.setText(formular);
+      jTextPane1KeyReleased(null);
    }
 
    /**
