@@ -731,9 +731,14 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		return false;
 	}
 
+	// still buggy, do not use too frequent
 	@Override
 	public BiologicalNodeAbstract clone() {
-		return (BiologicalNodeAbstract) super.clone();
+		BiologicalNodeAbstract bna = (BiologicalNodeAbstract) super.clone();
+		bna.removeAllConnectionEdges();
+		bna.getRefs().clear();
+		bna.setID();
+		return bna;
 	}
 
 	// ---Getter/Setter---

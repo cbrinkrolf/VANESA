@@ -928,11 +928,12 @@ public class Pathway implements Cloneable {
 				Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
 				edges.addAll(bna.getConnectingEdges());
 				itEdges = edges.iterator();
-				// System.out.println(graph.getJungGraph().getInEdges(bna).size());
+				 //System.out.println(graph.getJungGraph().getInEdges(bna).size());
 
 				while (itEdges.hasNext()) {
 					bea = itEdges.next();
 					if (bea.getFrom() == bna || bea.getTo() == bna) {
+						this.removeElement(bea);
 						bea.getFrom().removeConnectingEdge(bea);
 						bea.getTo().removeConnectingEdge(bea);
 						if (bea.getTo() == bna) {
@@ -940,14 +941,16 @@ public class Pathway implements Cloneable {
 						} else if (bea.getFrom() == bna) {
 							bea.setFrom(first);
 						}
-						// System.out.println(bea.getFrom());
-						// System.out.println(bea.getTo());
-						// System.out.println(first+" "+first.getConnectingEdges().size());
+						 System.out.println(bea.getFrom().getName());
+						 System.out.println(bea.getTo().getName());
+						 System.out.println(first.getName()+" "+first.getConnectingEdges().size());
 						this.addEdge(bea);
-						// iologicalNodeAbstract.addConnectingEdge(bea);
-						//System.out.println(first + " " + first.getConnectingEdges().size());
-						//System.out.println("added");
+						this.updateMyGraph();
+						//BiologicalNodeAbstract.addConnectingEdge(bea);
+						System.out.println(first.getName() + " " + first.getConnectingEdges().size());
+						System.out.println("added");
 					}
+					
 				}
 				first.addLabel(bna.getLabelSet());
 
@@ -961,7 +964,7 @@ public class Pathway implements Cloneable {
 				}
 				System.out.println("all edges:");
 				for (BiologicalEdgeAbstract v : this.getAllEdges()) {
-					//System.out.println(v.getFrom() + "->" + v.getTo());
+					System.out.println(v.getFrom().getName() + "->" + v.getTo().getName());
 				}
 				//System.out.println("remove: " + bna);
 				//bna.updateHierarchicalAttributes();
@@ -986,16 +989,20 @@ public class Pathway implements Cloneable {
 				// System.out.println(itString.next());
 			}
 		}
-
+		System.out.println(graph.getJungGraph().getEdgeCount());
+		System.out.println(this.graph.getAllEdges().size());
 		//System.out.println(this.getAllEdges().size());
-		 updateMyGraph();
+		updateMyGraph();
 		//System.out.println(this.getAllEdges().size());
 		this.graph.getVisualizationViewer().getPickedVertexState().clear();
 		this.graph.getVisualizationViewer().getPickedEdgeState().clear();
 		this.graph.getVisualizationViewer().getPickedVertexState().pick(first, true);
+		System.out.println(graph.getJungGraph().getEdgeCount());
+		System.out.println(this.graph.getAllEdges().size());
 		// System.out.println("labels: " + first.getLabelSet().size());
 	}
 
+	// CHRIS buggy, merging works!!!
 	public void splitNode(Set<BiologicalNodeAbstract> nodes) {
 		BiologicalNodeAbstract bna;
 		Iterator<BiologicalNodeAbstract> it = nodes.iterator();
@@ -1013,19 +1020,23 @@ public class Pathway implements Cloneable {
 				Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
 				edges.addAll(bna.getConnectingEdges());
 				itEdges = edges.iterator();
-				// System.out.println(graph.getJungGraph().getInEdges(bna).size());
+				//System.out.println(graph.getJungGraph().getInEdges(bna).size());
 
 				while (itEdges.hasNext() && this.graph.getJungGraph().getNeighborCount(bna) > 1) {
 					//System.out.println("while: "+bna.getName()+" "+this.graph.getJungGraph().getNeighborCount(bna));
 					bea = itEdges.next();
-					bea.getFrom().removeConnectingEdge(bea);
-					bea.getTo().removeConnectingEdge(bea);
+					//bea.getFrom().removeConnectingEdge(bea);
+					//bea.getTo().removeConnectingEdge(bea);
 					this.removeElement(bea);
+					updateMyGraph();
 					for (BiologicalNodeAbstract node : graph.getJungGraph().getVertices()) {
 						if (!node.hasRef()) {
 							//System.out.println(node.getName() + "v: " + this.graph.getJungGraph().getNeighborCount(node));
 						}
 					}
+					//newBNA = bna.clone();
+					
+					//newBNA = new Other(bna.getName(), bna.getLabel());
 					newBNA = bna.clone();
 					newBNA.setID();
 					newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
@@ -1047,6 +1058,7 @@ public class Pathway implements Cloneable {
 							//System.out.println(node.getName() + "n: " + this.graph.getJungGraph().getNeighborCount(node));
 						}
 					}
+					updateMyGraph();
 				}
 				updateMyGraph();
 				// System.out.println(this.graph.getJungGraph().getNeighborCount(bna));
@@ -1063,6 +1075,9 @@ public class Pathway implements Cloneable {
 		mw.updateElementTree();
 		mw.updateElementProperties();
 		this.graph.getVisualizationViewer().repaint();
+		
+		//System.out.println(graph.getJungGraph().getEdgeCount());
+		//System.out.println(this.graph.getAllEdges().size());
 	}
 
 	/**
