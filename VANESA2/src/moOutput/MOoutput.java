@@ -255,7 +255,7 @@ public class MOoutput {
 
 	private void buildConnections() {
 
-		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdgesSorted().iterator();
 
 		BiologicalEdgeAbstract bea;
 		PNEdge e;
