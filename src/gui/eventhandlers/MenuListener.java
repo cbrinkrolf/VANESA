@@ -1048,7 +1048,7 @@ public class MenuListener implements ActionListener {
 				t.start();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.err.println("Could not compile latex. Find tex-file at: "+docDir);
 			}
 
 		} else if ("dataLabelMapping".equals(event)) {
