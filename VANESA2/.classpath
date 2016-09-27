@@ -16,7 +16,7 @@
 	<classpathentry kind="lib" path="packages/jxlayer.jar"/>
 	<classpathentry kind="lib" path="packages/macify-1.3.jar"/>
 	<classpathentry kind="lib" path="packages/miglayout-swing.jar"/>
-	<classpathentry kind="lib" path="packages/mysql-connector-java-5.1.5-bin.jar"/>
+	<classpathentry kind="lib" path="packages/mysql-connector-java-5.1.39-bin.jar"/>
 	<classpathentry kind="lib" path="packages/neethi-2.0.4.jar"/>
 	<classpathentry kind="lib" path="packages/parvis.jar"/>
 	<classpathentry kind="lib" path="packages/REngine.jar"/>
