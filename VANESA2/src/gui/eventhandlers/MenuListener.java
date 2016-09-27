@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.Subject;
@@ -26,6 +28,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.freehep.util.export.ExportDialog;
 
 import biologicalElements.Pathway;
@@ -132,11 +136,11 @@ public class MenuListener implements ActionListener {
 	private Cov cov;
 
 	private PetriNetSimulation simulation = null;
-	
-	protected MenuListener(){
-		
+
+	protected MenuListener() {
+
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		w = MainWindowSingleton.getInstance();
@@ -997,7 +1001,56 @@ public class MenuListener implements ActionListener {
 			}
 
 		} else if ("createDoc".equals(event)) {
-			new PNDoc();
+			String docDir = MainWindowSingleton.getInstance().pathWorkingDirectory + "documentation" + File.separator;
+			File dir = new File(docDir);
+
+			if (!dir.isDirectory()) {
+				dir.mkdir();
+			}
+
+			try {
+				FileUtils.cleanDirectory(dir);
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+
+			new PNDoc(docDir + "doc.tex");
+
+			String bin = "pdflatex";
+
+			if (SystemUtils.IS_OS_WINDOWS) {
+				bin += ".exe";
+			}
+
+			ProcessBuilder pb;
+			Process p;
+
+			try {
+				pb = new ProcessBuilder(bin, docDir + "doc.tex");
+				pb.directory(new File(docDir));
+				p = pb.start();
+				//System.out.println(p.isAlive());
+
+				Thread t = new Thread() {
+					public void run() {
+						try {
+							while (p.isAlive()) {
+								//System.out.println("sleep");
+								sleep(100);
+							}
+							Process p = pb.start();
+							//System.out.println("restart");
+						} catch (Exception e) {
+						}
+					}
+				};
+				t.start();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
 		} else if ("dataLabelMapping".equals(event)) {
 
 			// Open new window for file input
@@ -1337,11 +1390,12 @@ public class MenuListener implements ActionListener {
 								if (bna instanceof Enzyme) {
 									p = graphInstance.getPathway().getGraph().getVertexLocation(bna); //
 									inv = //
-									graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
-											.inverseTransform(p); // inv.setLocation(inv.getX()
-																	// + offset,
-																	// //
-																	// inv.getY());
+											graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext()
+													.getMultiLayerTransformer().inverseTransform(p); // inv.setLocation(inv.getX()
+																										// +
+																										// offset,
+																										// //
+																										// inv.getY());
 
 									// p = //
 									graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
@@ -1475,10 +1529,10 @@ public class MenuListener implements ActionListener {
 			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(scaleL,
 			// scaleL, wvv.getCenter());
 
-			//Properties p = new Properties();
-			//p.setProperty("PageSize", "A5");
+			// Properties p = new Properties();
+			// p.setProperty("PageSize", "A5");
 			// p.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, "false");
-			//VectorGraphics g;
+			// VectorGraphics g;
 
 			// g = new SVGGraphics2D(new File("Output.svg"), new Dimension(100,
 			// 100));

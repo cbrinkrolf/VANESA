@@ -25,7 +25,7 @@ public class PNDoc {
 	private GraphContainer con = ContainerSingelton.getInstance();
 	private Pathway pw = con.getPathway(w.getCurrentPathway());
 
-	public PNDoc() {
+	public PNDoc(String file) {
 		MainWindow w = MainWindowSingleton.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
@@ -48,7 +48,7 @@ public class PNDoc {
 		}
 
 		this.createFooter();
-		this.writeFile();
+		this.writeFile(file);
 
 	}
 
@@ -165,10 +165,10 @@ public class PNDoc {
 		sb.append("\\end{document}");
 	}
 
-	private void writeFile() {
+	private void writeFile(String file) {
 		PrintWriter out;
 		try {
-			out = new PrintWriter("doc.tex");
+			out = new PrintWriter(file);
 			out.println(sb.toString());
 			out.close();
 		} catch (FileNotFoundException e) {
