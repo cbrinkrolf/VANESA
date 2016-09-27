@@ -59,24 +59,11 @@ public class PetriNetSimulation implements ActionListener {
 
 	public PetriNetSimulation() {
 
-		Map<String, String> env = System.getenv();
-		if (SystemUtils.IS_OS_WINDOWS) {
-			pathWorkingDirectory = env.get("APPDATA");
-		} else {
-			pathWorkingDirectory = env.get("HOME");
-		}
 
-		if (pathWorkingDirectory.charAt(pathWorkingDirectory.length() - 1) != File.separatorChar) {
-			pathWorkingDirectory += File.separator;
-		}
-
-		pathWorkingDirectory += "vanesa" + File.separator;
-
+		MainWindowSingleton.getInstance();
+		pathWorkingDirectory = MainWindow.pathWorkingDirectory;
+		
 		File dir = new File(pathWorkingDirectory);
-
-		if (!dir.isDirectory()) {
-			dir.mkdir();
-		}
 
 		this.simLibs = this.getLibs(dir);
 

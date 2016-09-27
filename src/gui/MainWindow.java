@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
@@ -49,6 +50,7 @@ import net.infonode.tabbedpanel.TabbedPanel;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.infonode.util.Direction;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
 import org.jdesktop.jxlayer.plaf.ext.LockableUI;
@@ -79,7 +81,11 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	private YamlToObjectParser yamlToObject;
 	private List<Bean> beansList = new ArrayList<Bean>();
 	private String loadedYaml = null;
+	
+	// global constants
 	public static boolean developer;
+	public static String pathWorkingDirectory;
+	
 	
 	public List<Bean> getBeansList() {
 		return beansList;
@@ -295,6 +301,25 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		} catch (FileNotFoundException e1) {
 			System.out.println("askForYaml Method Error");
 			e1.printStackTrace();
+		}
+		
+		Map<String, String> env = System.getenv();
+		if (SystemUtils.IS_OS_WINDOWS) {
+			pathWorkingDirectory = env.get("APPDATA");
+		} else {
+			pathWorkingDirectory = env.get("HOME");
+		}
+
+		if (pathWorkingDirectory.charAt(pathWorkingDirectory.length() - 1) != File.separatorChar) {
+			pathWorkingDirectory += File.separator;
+		}
+
+		pathWorkingDirectory += "vanesa" + File.separator;
+
+		File dir = new File(pathWorkingDirectory);
+
+		if (!dir.isDirectory()) {
+			dir.mkdir();
 		}
 	}
 
