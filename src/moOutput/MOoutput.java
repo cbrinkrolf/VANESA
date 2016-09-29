@@ -32,8 +32,8 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 public class MOoutput {
 
 	private static final boolean debug = MainWindow.developer;
-	private static final String indentation = "  ";
-	private static final String endl = System.getProperty("line.separator");
+	private static final String INDENT = "  ";
+	private static final String ENDL = System.getProperty("line.separator");
 
 	private OutputStream os = null;
 	private String modelName = null;
@@ -41,10 +41,8 @@ public class MOoutput {
 
 	private String places = "";
 	private String edgesString = "";
-	private final Hashtable<String, Integer> numInEdges = new Hashtable<String, Integer>();
-	private final Hashtable<String, Integer> numOutEdges = new Hashtable<String, Integer>();
-	private final Hashtable<String, Integer> actualInEdges = new Hashtable<String, Integer>();
-	private final Hashtable<String, Integer> actualOutEdges = new Hashtable<String, Integer>();
+	private final Hashtable<String, ArrayList<BiologicalNodeAbstract>> actualInEdges = new Hashtable<String, ArrayList<BiologicalNodeAbstract>>();
+	private final Hashtable<String, ArrayList<BiologicalNodeAbstract>> actualOutEdges = new Hashtable<String, ArrayList<BiologicalNodeAbstract>>();
 	private final Hashtable<BiologicalNodeAbstract, String> nodeType = new Hashtable<BiologicalNodeAbstract, String>();
 	private final HashMap<BiologicalNodeAbstract, String> vertex2name = new HashMap<BiologicalNodeAbstract, String>();
 	private HashMap<String, String> inWeights = new HashMap<String, String>();
@@ -52,7 +50,11 @@ public class MOoutput {
 
 	private HashMap<BiologicalEdgeAbstract, String> bea2resultkey = new HashMap<BiologicalEdgeAbstract, String>();
 
+	private Set<BiologicalNodeAbstract> marked;
+
 	private String packageInfo = null;
+
+	private boolean colored = false;
 
 	private boolean noIdent = false;
 
@@ -61,17 +63,19 @@ public class MOoutput {
 	double maxX = -Double.MAX_VALUE;
 	double maxY = -Double.MAX_VALUE;
 
-	public MOoutput(OutputStream os, Pathway pathway) {
-		this(os, pathway, null);
+	Set<Character> chars = new HashSet<Character>();
+
+	public MOoutput(OutputStream os, Pathway pathway, boolean colored) {
+		this(os, pathway, null, colored);
 	}
 
-	public MOoutput(OutputStream os, Pathway pathway, String packageInfo) {
+	public MOoutput(OutputStream os, Pathway pathway, String packageInfo, boolean colored) {
+		this.init();
 		this.packageInfo = packageInfo;
-		if (debug)
-			System.out.println();
-		if (debug)
+		this.colored = colored;
+		if (debug) {
 			System.out.println("MOoutput(File " + pathway.getName() + " Pathway " + pathway + ")");
-
+		}
 		this.os = os;
 		this.modelName = pathway.getName();// .substring(0,
 		// this.modelName = this.modelName.replace(".", "_");
@@ -88,6 +92,19 @@ public class MOoutput {
 
 	}
 
+	private void init() {
+		marked = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked();
+		System.out.println(marked.size());
+		chars.add('*');
+		chars.add('+');
+		chars.add('/');
+		chars.add('-');
+		chars.add('^');
+		chars.add('(');
+		chars.add(')');
+		chars.add(' ');
+	}
+
 	private void write() throws IOException {
 
 		prepare();
@@ -98,28 +115,36 @@ public class MOoutput {
 		// if (debug)
 		// System.out.println(properties+places+transitions+edgesString);
 		StringBuilder sb = new StringBuilder();
-		sb.append("model '" + modelName + "'" + this.endl);
-		;
-		// os.write(new String("model '" + modelName + "'"'" + this.endl").getBytes());
+		sb.append("model '" + modelName + "'" + ENDL);
+		if (colored) {
+			sb.append(this.getgFunctions());
+		}
+		// os.write(new String("model '" + modelName + "'"'" +
+		// this.endl").getBytes());
 
 		if (packageInfo != null) {
 			// os.write(new String(this.indentation + this.packageInfo +
 			// this.endl).getBytes());
-			sb.append(this.indentation + this.packageInfo + this.endl);
+			sb.append(INDENT + this.packageInfo + ENDL);
 			// os.write(new
-			// String(this.indentation + "import PNlib = ConPNlib;" + this.endl).getBytes());
+			// String(this.indentation + "import PNlib = ConPNlib;" +
+			// this.endl).getBytes());
 		}
 
 		// if (this.packageInfo == null) {
-		// sb.append(this.indentation + "inner PNlib.Settings settings1();" + this.endl);
-		sb.append(this.indentation + "inner PNlib.Settings settings(showTokenFlow = true) annotation(Placement(visible=true, transformation(origin={"+(minX-30)+","+(maxY+30)+"}, extent={{-20,-20}, {20,20}}, rotation=0)));" + this.endl);
+		// sb.append(this.indentation + "inner PNlib.Settings settings1();" +
+		// this.endl);
+		sb.append(INDENT + "inner PNlib.Settings settings(showTokenFlow = true) annotation(Placement(visible=true, transformation(origin={"
+				+ (minX - 30) + "," + (maxY + 30) + "}, extent={{-20,-20}, {20,20}}, rotation=0)));" + ENDL);
 		// }
 
 		sb.append(places);
-		sb.append("equation" + this.endl);
+		sb.append("equation" + ENDL);
 		sb.append(edgesString);
-		sb.append(this.indentation + "annotation(Icon(coordinateSystem(extent={{"+(minX-50)+","+(minY-50)+"},{"+(maxX+50)+","+(maxY+50)+"}})), Diagram(coordinateSystem(extent={{"+(minX-50)+","+(minY-50)+"},{"+(maxX+50)+","+(maxY+50)+"}})));" + this.endl);
-		sb.append("end '" + modelName + "';" + this.endl);
+		sb.append(INDENT + "annotation(Icon(coordinateSystem(extent={{" + (minX - 50) + "," + (minY - 50) + "},{" + (maxX + 50) + "," + (maxY + 50)
+				+ "}})), Diagram(coordinateSystem(extent={{" + (minX - 50) + "," + (minY - 50) + "},{" + (maxX + 50) + "," + (maxY + 50) + "}})));"
+				+ ENDL);
+		sb.append("end '" + modelName + "';" + ENDL);
 
 		String data = sb.toString();
 		if (noIdent) {
@@ -138,12 +163,11 @@ public class MOoutput {
 	}
 
 	private void prepare() {
-		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
 			if (!bna.hasRef()) {
-				Point2D p = pw.getGraph().getVertexLocation(bna);
 				String biologicalElement = bna.getBiologicalElement();
 				String name = "";
 				if (biologicalElement.equals(biologicalElements.Elementdeclerations.place)
@@ -163,27 +187,29 @@ public class MOoutput {
 
 	private void buildNodes() {
 		for (int i = 1; i <= inhibitCount; i++)
-			places += "PNlib.IA inhibitorArc" + i + ";" + this.endl;
+			places += "PNlib.IA inhibitorArc" + i + ";" + ENDL;
 		BiologicalNodeAbstract bna;
 		ArrayList<String> names = new ArrayList<String>();
-		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		while (it.hasNext()) {
 			// System.out.println("knoten");
 			bna = it.next();
 			if (!bna.hasRef()) {
 				for (int i = 0; i < bna.getParameters().size(); i++) {
-					// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.endl;
-					places = places.concat(this.indentation + "parameter Real '_" + bna.getName() + "_" + bna.getParameters().get(i).getName() + "'");
+					// params += this.indentation + "parameter Real
+					// "+bna.getParameters().get(i).getName()+" =
+					// "+bna.getParameters().get(i).getValue()+";" + this.endl;
+					places = places.concat(INDENT + "parameter Real '_" + bna.getName() + "_" + bna.getParameters().get(i).getName() + "'");
 					if (bna.getParameters().get(i).getUnit().length() > 0) {
 						places = places.concat("(final unit=\"" + bna.getParameters().get(i).getUnit() + "\")");
 					}
-					places = places.concat(" = " + bna.getParameters().get(i).getValue() + ";" + this.endl);
+					places = places.concat(" = " + bna.getParameters().get(i).getValue() + ";" + ENDL);
 					// System.out.println("drin");
 				}
 			}
 		}
 
-		it = pw.getAllGraphNodes().iterator();
+		it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		while (it.hasNext()) {
 			bna = it.next();
 			if (!bna.hasRef()) {
@@ -211,44 +237,57 @@ public class MOoutput {
 
 					String atr = "startTokens=" + (int) place.getTokenStart() + ",minTokens=" + (int) place.getTokenMin() + ",maxTokens="
 							+ (int) place.getTokenMax();
-					places = places.concat(getPlaceString(place.getModellicaString(), bna, atr, in, out));
+					places = places.concat(getPlaceString(getModelicaString(place), bna, atr, in, out));
 
 				} else if (biologicalElement.equals(Elementdeclerations.s_place)) {
 
 					Place place = (Place) bna;
-					String atr = "startMarks=" + place.getTokenStart() + ",minMarks=" + place.getTokenMin() + ",maxMarks=" + place.getTokenMax()
-							+ ",t(final unit=\"mmol\")";
-					places = places.concat(getPlaceString(place.getModellicaString(), bna, atr, in, out));
+					String start = "";
+					String min = "";
+					String max = "";
+
+					if (colored) {
+						start = "{0.0, " + place.getTokenStart() + "}";
+						min = "{" + place.getTokenMin() + ", " + place.getTokenMin() + "}";
+						max = "{" + place.getTokenMax() + ", " + place.getTokenMax() + "}";
+					} else {
+						start = place.getTokenStart() + "";
+						min = place.getTokenMin() + "";
+						max = place.getTokenMax() + "";
+					}
+
+					String atr = "startMarks=" + start + ",minMarks=" + min + ",maxMarks=" + max + ",t(final unit=\"mmol\")";
+					places = places.concat(getPlaceString(getModelicaString(place), bna, atr, in, out));
 
 				} else if (biologicalElement.equals(Elementdeclerations.stochasticTransition)) {
 
 					StochasticTransition t = (StochasticTransition) bna;
 					// String atr = "h=" + t.getDistribution();
 					String atr = "h=1.0";
-					places = places.concat(getTransitionString(bna, t.getModellicaString(), bna.getName(), atr, in, out));
+					places = places.concat(getTransitionString(bna, getModelicaString(t), bna.getName(), atr, in, out));
 
 				} else if (biologicalElement.equals(Elementdeclerations.discreteTransition)) {
 
 					DiscreteTransition t = (DiscreteTransition) bna;
 					String atr = "delay=" + t.getDelay();
-					places = places.concat(getTransitionString(bna, t.getModellicaString(), bna.getName(), atr, in, out));
+					places = places.concat(getTransitionString(bna, getModelicaString(t), bna.getName(), atr, in, out));
 
 				} else if (biologicalElement.equals(Elementdeclerations.continuousTransition)) {
 
 					ContinuousTransition t = (ContinuousTransition) bna;
 					// String atr = "maximumSpeed="+t.getMaximumSpeed();
 					String atr;
+					String speed = this.replaceAll(t.getMaximumSpeed(), t.getParameters(), t);
 					if (t.isKnockedOut()) {
-						atr = "maximumSpeed(final unit=\"mmol/min\")=0";
+						atr = "maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/";
 					} else {
-						atr = "maximumSpeed(final unit=\"mmol/min\")=" + this.replace(t.getMaximumSpeed(), t.getParameters(), t);
+						atr = "maximumSpeed(final unit=\"mmol/min\")=" + speed;
 					}
 					// System.out.println("atr");
-					places = places.concat(getTransitionString(bna, t.getModellicaString(), bna.getName(), atr, in, out));
+					places = places.concat(getTransitionString(bna, getModelicaString(t), bna.getName(), atr, in, out));
 				}
 			}
 		}
-
 	}
 
 	private int inhibitCount = 0;
@@ -259,6 +298,7 @@ public class MOoutput {
 
 		BiologicalEdgeAbstract bea;
 		PNEdge e;
+		Set<BiologicalNodeAbstract> markedOut;
 		while (it.hasNext()) {
 
 			bea = it.next();
@@ -284,42 +324,93 @@ public class MOoutput {
 			// String toType = nodeType.get(toString);
 
 			// TODO funktionen werden zulassen
+			String weight;
 			if (bea instanceof PNEdge) {
 				e = (PNEdge) bea;
-				if (this.inWeights.containsKey(toString)) {
-					this.inWeights.put(toString, this.inWeights.get(toString).concat("," + e.getModellicaFunction()));
+
+				// Edge Place -> Transition
+				if (e.getFrom() instanceof Place) {
+
+					weight = "";
+					if (colored) {
+						if (marked.contains(bea.getFrom())) {
+							weight += "g1('" + resolveReference(bea.getFrom()).getName() + "'.color)";
+						} else {
+							weight += "{0," + this.getModelicaEdgeFunction(e) + "}/*" + fromString + "*/";
+						}
+
+					} else {
+						weight += this.getModelicaEdgeFunction(e);
+					}
+
+					if (this.inWeights.containsKey(toString)) {
+						this.inWeights.put(toString, inWeights.get(toString) + "," + weight);
+					} else {
+						this.inWeights.put(toString, weight);
+					}
+
+					// Edge Transition -> Place
 				} else {
-					this.inWeights.put(toString, e.getModellicaFunction() + "");
+					// System.out.println("kante");
+					weight = "";
+					if (colored) {
+						markedOut = this.getMarkedNeighborsIn(bea.getFrom());
+						String tmp = "g";
+						if (markedOut.size() == 0) {
+							tmp = "{0," + this.getModelicaEdgeFunction(e) + "}/*" + toString + "*/";
+						} else {
+							String nodes = "";
+							Iterator<BiologicalNodeAbstract> itBNA = markedOut.iterator();
+							BiologicalNodeAbstract node;
+							while (itBNA.hasNext()) {
+								node = itBNA.next();
+								nodes += "'" + resolveReference(node).getName() + "'.color,";
+							}
+							// ={g2('DHAP'.color, 'GAP'.color)}
+							tmp = "g" + markedOut.size() + "(" + nodes.substring(0, nodes.length() - 1) + ")";
+							// System.out.println(tmp);
+						}
+
+						if (marked.contains(e.getTo())) {
+							weight = tmp;
+						} else {
+							weight = "{0," + this.getModelicaEdgeFunction(e) + "}/*" + fromString + "*/";
+						}
+						// System.out.println("weight:"+weight);
+					} else {
+						weight += this.getModelicaEdgeFunction(e) + "";
+					}
+
+					if (this.outWeights.containsKey(fromString)) {
+						this.outWeights.put(fromString, outWeights.get(fromString) + "," + weight);
+					} else {
+						this.outWeights.put(fromString, weight);
+					}
+
 				}
-				if (this.outWeights.containsKey(fromString)) {
-					this.outWeights.put(fromString, this.outWeights.get(fromString).concat("," + e.getModellicaFunction()));
-				} else {
-					this.outWeights.put(fromString, e.getModellicaFunction() + "");
-				}
+
 			}
 
-			if (numInEdges.containsKey(toString))
-				numInEdges.put(toString, numInEdges.get(toString) + 1);
-			else {
-				numInEdges.put(toString, 1);
-				actualInEdges.put(toString, 0);
+			if (!actualInEdges.containsKey(toString)) {
+				actualInEdges.put(toString, new ArrayList<BiologicalNodeAbstract>());
+			}
+			actualInEdges.get(toString).add(bea.getFrom());
+
+			if (!actualOutEdges.containsKey(fromString)) {
+				actualOutEdges.put(fromString, new ArrayList<BiologicalNodeAbstract>());
 			}
 
-			if (numOutEdges.containsKey(fromString))
-				numOutEdges.put(fromString, numOutEdges.get(fromString) + 1);
-			else {
-				numOutEdges.put(fromString, 1);
-				actualOutEdges.put(fromString, 0);
-			}
+			actualOutEdges.get(fromString).add(bea.getTo());
+
 			if (bea instanceof PNEdge && bea.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
 				inhibitCount++;
 				if (fromType.equals(Elementdeclerations.s_place) || fromType.equals(Elementdeclerations.place)) {
-					edgesString += this.indentation + "connect('" + fromString + "'.outTransition[" + (actualOutEdges.get(fromString) + 1) + "],"
-							+ "inhibitorArc" + inhibitCount + ".inPlace);" + this.endl;
-					edgesString += this.indentation + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString + "'.inPlaces["
-							+ (actualInEdges.get(toString) + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo()) + ";" + this.endl;
-					actualOutEdges.put(fromString, actualOutEdges.get(fromString) + 1);
-					actualInEdges.put(toString, actualInEdges.get(toString) + 1);
+					edgesString += INDENT + "connect('" + fromString + "'.outTransition[" + (actualOutEdges.get(fromString).size() + 1) + "],"
+							+ "inhibitorArc" + inhibitCount + ".inPlace);" + ENDL;
+					edgesString += INDENT + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString + "'.inPlaces["
+							+ (actualInEdges.get(toString).size() + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo()) + ";" + ENDL;
+					actualOutEdges.get(fromString).add(bea.getFrom());
+					actualInEdges.get(toString).add(bea.getTo());
 				}
 
 			} else if (fromType.equals(Elementdeclerations.s_place)) {
@@ -336,25 +427,33 @@ public class MOoutput {
 	private String getPlaceString(String element, BiologicalNodeAbstract bna, String atr, int inEdges, int outEdges) {
 
 		for (int i = 0; i < bna.getParameters().size(); i++) {
-			// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.endl;
+			// params += this.indentation + "parameter Real
+			// "+bna.getParameters().get(i).getName()+" =
+			// "+bna.getParameters().get(i).getValue()+";" + this.endl;
 		}
-		return this.indentation + element + " '" +
+		return INDENT + element + " '" +
 
 		// falls die anzahlen nicht stimmen
 		// +numInEdges.get(bna.getVertex().toString())
 		// +numOutEdges.get(bna.getVertex().toString())
 		//
 				bna.getName() + "'(nIn=" + inEdges + ",nOut=" + outEdges + "," + atr + ") "
-				// +(bioName.containsKey(name)?"(biologicalName = \""+bioName.get(name)+"\")":"")
-				// +" annotation(Placement(transformation(x = "+Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84), "
+				// +(bioName.containsKey(name)?"(biologicalName =
+				// \""+bioName.get(name)+"\")":"")
+				// +" annotation(Placement(transformation(x =
+				// "+Math.floor(scale*(p.getX()+xshift))+", y =
+				// "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84), "
 				// +"iconTransformation(x = "
-				// +Math.floor(scale*(p.getX()+xshift))+", y = "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84)))"
-				+  getPlacementAnnotation(bna) + ";" + this.endl;
+				// +Math.floor(scale*(p.getX()+xshift))+", y =
+				// "+Math.floor(scale*(-(p.getY()+yshift)))+", scale = 0.84)))"
+				+ getPlacementAnnotation(bna) + ";" + ENDL;
 	}
 
 	private String getTransitionString(BiologicalNodeAbstract bna, String element, String name, String atr, int inEdges, int outEdges) {
 		for (int i = 0; i < bna.getParameters().size(); i++) {
-			// params += this.indentation + "parameter Real "+bna.getParameters().get(i).getName()+" = "+bna.getParameters().get(i).getValue()+";" + this.endl;
+			// params += this.indentation + "parameter Real
+			// "+bna.getParameters().get(i).getName()+" =
+			// "+bna.getParameters().get(i).getValue()+";" + this.endl;
 		}
 
 		// String inNumbers = "";
@@ -371,60 +470,63 @@ public class MOoutput {
 		String in = "";
 		String out = "";
 
-		in = "{" + inNumbers + "}";
-		out = "{" + outNumbers + "}";
+		in = ",arcWeightIn={" + inNumbers + "}";
+		out = ",arcWeightOut={" + outNumbers + "}";
 		// System.out.println("name: "+bna.getName());
-		if (in.length() == 2) {
-			in = "fill(1,'" + bna.getName() + "'.nIn)";
+		if (inNumbers.length() == 0) {
+			in = "";
 		}
-		if (out.length() == 2) {
-			out = "fill(1,'" + bna.getName() + "'.nOut)";
+		if (outNumbers.length() == 0) {
+			out = "";
 		}
 		// System.out.println("inPropper: " + in);
 		// System.out.println("outPropper: " + out);
 
-		return this.indentation + element + " '" + bna.getName() + "'(nIn=" + inEdges + ",nOut=" + outEdges + "," + atr + ",arcWeightIn=" + in + ",arcWeightOut="
-				+ out + ") " + getPlacementAnnotation(bna) + ";" + this.endl;
+		return INDENT + element + " '" + bna.getName() + "'(nIn=" + inEdges + ",nOut=" + outEdges + "," + atr + in + out + ") "
+				+ getPlacementAnnotation(bna) + ";" + ENDL;
 	}
 
 	private String getConnectionStringTP(String from, String to, BiologicalEdgeAbstract bea) {
 		// String from = bea.getFrom().getName();
 		// String to = bea.getTo().getName();
-		String result = this.indentation + "connect('" + from + "'.outPlaces[" + (actualOutEdges.get(from) + 1) + "],'" + to + "'.inTransition["
-				+ (actualInEdges.get(to) + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo())+";"
+		String result = INDENT + "connect('" + from + "'.outPlaces[" + (actualOutEdges.get(from).indexOf(bea.getTo()) + 1) + "],'" + to
+				+ "'.inTransition[" + (actualInEdges.get(to).indexOf(bea.getFrom()) + 1) + "]) "
+				+ this.getFromToAnnotation(bea.getFrom(), bea.getTo()) + ";"
 				// +" annotation(Line(points = {{"
 				// +Math.floor(scale*(fromPoint.getX()+xshift)+10)+","
 				// +Math.floor(scale*(-(fromPoint.getY()+yshift))+((numOutEdges.get(from)-1)*pinabstand/2-(actualOutEdges.get(from))*pinabstand))+"},{"
 				// +Math.floor(scale*(toPoint. getX()+xshift)-19)+","
 				// +Math.floor(scale*(-(toPoint.
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
-				+ this.endl;
+				+ ENDL;
 		// System.out.println(to+".tSumIn_["+(actualInEdges.get(to) + 1)+"]");
-		this.bea2resultkey.put(bea, "'" + to + "'.tokenFlow.inflow[" + (actualInEdges.get(to) + 1) + "]");
+		this.bea2resultkey.put(bea, "'" + to + "'.tokenFlow.inflow[" + (actualInEdges.get(to).indexOf(bea.getFrom()) + 1) + "]");
 
-		actualInEdges.put(to, actualInEdges.get(to) + 1);
-		actualOutEdges.put(from, actualOutEdges.get(from) + 1);
+		// actualInEdges.get(to).add(bea.getTo());
+		// actualOutEdges.get(from).add(bea.getFrom());
 		return result;
 	}
 
 	private String getConnectionStringPT(String from, String to, BiologicalEdgeAbstract bea) {
 		// String from = bea.getFrom().getName();
 		// String to = bea.getTo().getName();
-		String result = this.indentation + "connect('" + from + "'.outTransition[" + (actualOutEdges.get(from) + 1) + "],'" + to + "'.inPlaces["
-				+ (actualInEdges.get(to) + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo()) + ";"
+		String result = INDENT + "connect('" + from + "'.outTransition[" + (actualOutEdges.get(from).indexOf(bea.getTo()) + 1) + "],'" + to
+				+ "'.inPlaces[" + (actualInEdges.get(to).indexOf(bea.getFrom()) + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo())
+				+ ";"
 				// +" annotation(Line(points = {{"
 				// +Math.floor(scale*(fromPoint.getX()+xshift)+19)+","
 				// +Math.floor(scale*(-(fromPoint.getY()+yshift))+((numOutEdges.get(from)-1)*pinabstand/2-(actualOutEdges.get(from))*pinabstand))+"},{"
 				// +Math.floor(scale*(toPoint. getX()+xshift)-10)+","
 				// +Math.floor(scale*(-(toPoint.
 				// getY()+yshift))+((numInEdges.get(to)-1)*pinabstand/2-(actualInEdges.get(to))*pinabstand))+"}}));"
-				+ this.endl;
+				+ ENDL;
 		// System.out.println(from+".tSumOut_["+(actualOutEdges.get(from) +
 		// 1)+"]");
-		this.bea2resultkey.put(bea, "'" + from + "'.tokenFlow.outflow[" + (actualOutEdges.get(from) + 1) + "]");
+		this.bea2resultkey.put(bea, "'" + from + "'.tokenFlow.outflow[" + (actualOutEdges.get(from).indexOf(bea.getTo()) + 1) + "]");
 
-		actualInEdges.put(to, actualInEdges.get(to) + 1);
-		actualOutEdges.put(from, actualOutEdges.get(from) + 1);
+		// actualInEdges.get(to).add(bea.getTo());
+		// actualOutEdges.get(from).add(bea.getFrom());
+
 		return result;
 	}
 
@@ -432,27 +534,125 @@ public class MOoutput {
 		return bea2resultkey;
 	}
 
-	private String replace(String function, ArrayList<Parameter> params, BiologicalNodeAbstract node) {
-		StringBuilder mFunction = new StringBuilder(function);
-		Set<Character> chars = new HashSet<Character>();
-		chars.add('*');
-		chars.add('+');
-		chars.add('/');
-		chars.add('-');
-		chars.add('^');
-		chars.add('(');
-		chars.add(')');
-		chars.add(' ');
+	private String replaceAll(String function, ArrayList<Parameter> params, BiologicalNodeAbstract node) {
 
-		// replace parameters
-		ArrayList<String> paramNames = new ArrayList<String>();
+		String mFunction = this.replaceParameters(function, params, node);
+		mFunction = this.replaceNames(mFunction);
+		return mFunction;
+	}
 
-		for (int i = 0; i < params.size(); i++) {
-			paramNames.add(params.get(i).getName());
+	class StringLengthComparator implements Comparator<String> {
+
+		// compares descending
+		public int compare(String s1, String s2) {
+			int i = s2.length() - s1.length();
+			return i;
+		}
+	}
+
+	private String getPlacementAnnotation(BiologicalNodeAbstract bna) {
+
+		double x = pw.getGraph().getVertexLocation(bna).getX();
+		double y = -pw.getGraph().getVertexLocation(bna).getY();
+		if (x < minX) {
+			minX = x;
+		}
+		if (x > maxX) {
+			maxX = x;
+		}
+		if (y < minY) {
+			minY = y;
+		}
+		if (y > maxY) {
+			maxY = y;
 		}
 
-		Collections.sort(paramNames, new StringLengthComparator());
+		return "annotation(Placement(visible=true, transformation(origin={" + x + "," + y + "}, extent={{-20,-20}, {20,20}}, rotation=0)))";
+	}
 
+	private String getFromToAnnotation(BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
+
+		Point2D p1;
+		Point2D p2;
+		String color;
+		double shiftFrom;
+		double shiftTo;
+
+		if (from.hasRef()) {
+			p1 = pw.getGraph().getVertexLocation(from.getRef());
+		} else {
+			p1 = pw.getGraph().getVertexLocation(from);
+		}
+		if (to.hasRef()) {
+			p2 = pw.getGraph().getVertexLocation(to.getRef());
+		} else {
+			p2 = pw.getGraph().getVertexLocation(to);
+		}
+
+		if (from.hasRef() || to.hasRef()) {
+			color = "{180, 180, 180}";
+		} else {
+			color = "{0, 0, 0}";
+		}
+
+		if (from.getBiologicalElement().equals(Elementdeclerations.s_place)) {
+			shiftFrom = 25;
+		} else {
+			shiftFrom = 10;
+		}
+
+		if (to.getBiologicalElement().equals(Elementdeclerations.s_place)) {
+			shiftTo = -25;
+		} else {
+			shiftTo = -10;
+		}
+
+		return "annotation(Line(color=" + color + ", points={{" + (p1.getX() + shiftFrom) + "," + (-p1.getY()) + "}, {" + (p2.getX() + shiftTo) + ","
+				+ (-p2.getY()) + "}}))";
+	}
+
+	private String getModelicaString(BiologicalNodeAbstract bna) {
+
+		if (bna instanceof ContinuousTransition) {
+			if (colored) {
+				return "PNlib.Examples.Models.ColoredPlaces.CTC";
+			}
+			return "PNlib.TC";
+		} else if (bna instanceof DiscreteTransition) {
+			return "PNlib.TD";
+		} else if (bna instanceof StochasticTransition) {
+			return "PNlib.TS";
+		} else if (bna instanceof Place) {
+			if (((Place) bna).isDiscrete()) {
+				return "PNlib.PD";
+			} else {
+				if (colored) {
+					return "PNlib.Examples.Models.ColoredPlaces.CPC";
+				}
+				return "PNlib.PC";
+			}
+		}
+		return null;
+	}
+
+	private String getModelicaEdgeFunction(PNEdge bea) {
+
+		if (bea.getFrom().isConstant() || bea.getTo().isConstant()) {
+			return "0";
+		}
+		if (bea.getFrom().hasRef() && bea.getFrom().getRef().isConstant()) {
+			return "0";
+		}
+		if (bea.getTo().hasRef() && bea.getTo().getRef().isConstant()) {
+			return "0";
+		}
+
+		return replaceNames(bea.getFunction());
+
+	}
+
+	private String replaceNames(String function) {
+		StringBuilder mFunction = new StringBuilder(function);
 		String name = "";
 		// System.out.println("drin");
 		// Character c;
@@ -463,57 +663,7 @@ public class MOoutput {
 		int index = 0;
 		int idxNew = 0;
 		String insert;
-		for (int i = 0; i < paramNames.size(); i++) {
-			index = 0;
-			name = paramNames.get(i);
 
-			// System.out.println("name: "+name );
-			// System.out.println("fkt: "+mFunction);
-
-			while (mFunction.indexOf(name, index) >= 0) {
-				check = false;
-				idxNew = mFunction.indexOf(name, index);
-				// System.out.println("index: "+index);
-				// System.out.println("idxNew: "+idxNew);
-				if (mFunction.length() >= idxNew + name.length()) {
-					// System.out.println("groesser gleich");
-					if (mFunction.length() > idxNew + name.length()) {
-						// System.out.println("groesser");
-						r = mFunction.charAt(idxNew + name.length());
-					} else {
-						// System.out.println("else");
-						// Parameter is last term of function
-						r = ' ';
-					}
-					if (idxNew == 0) {
-						check = true;
-					} else {
-						check = chars.contains(mFunction.charAt(idxNew - 1));
-					}
-					// System.out.println("l: "+r+" r: "+r);
-					// if (!Character.isDigit(c) && !Character.isAlphabetic(c))
-					// {
-					if (check && chars.contains(r)) {
-						// mFunction = mFunction.replaceFirst(name, mNames
-						// .get(name));
-						insert = "'_" + node.getName() + "_" + name + "'";
-						mFunction.replace(idxNew, idxNew + name.length(), insert);
-						// mFunction.insert(idxNew, "_" + node.getName() + "_");
-						// index = idxNew + name.length() + 2
-						// + node.getName().length();
-						index = idxNew + insert.length();
-						// System.out.println(name+" ersetzt durch: "+mNames.get(name));
-					} else {
-						index = idxNew + name.length();
-						// System.out.println("Error");
-						// break;
-					}
-				} else {
-					// /System.out.println("break");
-					break;
-				}
-			}
-		}
 		// System.out.println("2: "+mFunction);
 		// replace places
 		GraphInstance graphInstance = new GraphInstance();
@@ -590,7 +740,8 @@ public class MOoutput {
 
 						// mFunction.insert(idxNew + name.length(), ".t");
 						index = idxNew + insert.length();
-						// System.out.println(name+" ersetzt durch: "+mNames.get(name));
+						// System.out.println(name+" ersetzt durch:
+						// "+mNames.get(name));
 					} else {
 						index = idxNew + name.length();
 						// System.out.println("Error");
@@ -607,72 +758,114 @@ public class MOoutput {
 		return mFunction.toString();
 	}
 
-	class StringLengthComparator implements Comparator<String> {
+	private String replaceParameters(String function, ArrayList<Parameter> params, BiologicalNodeAbstract node) {
+		StringBuilder mFunction = new StringBuilder(function);
 
-		// compares descending
-		public int compare(String s1, String s2) {
-			int i = s2.length() - s1.length();
-			return i;
+		// replace parameters
+		ArrayList<String> paramNames = new ArrayList<String>();
+
+		for (int i = 0; i < params.size(); i++) {
+			paramNames.add(params.get(i).getName());
 		}
+
+		Collections.sort(paramNames, new StringLengthComparator());
+
+		String name = "";
+		// System.out.println("drin");
+		// Character c;
+
+		// Character l;
+		Character r;
+		boolean check;
+		int index = 0;
+		int idxNew = 0;
+		String insert;
+		for (int i = 0; i < paramNames.size(); i++) {
+			index = 0;
+			name = paramNames.get(i);
+
+			// System.out.println("name: "+name );
+			// System.out.println("fkt: "+mFunction);
+
+			while (mFunction.indexOf(name, index) >= 0) {
+				check = false;
+				idxNew = mFunction.indexOf(name, index);
+				// System.out.println("index: "+index);
+				// System.out.println("idxNew: "+idxNew);
+				if (mFunction.length() >= idxNew + name.length()) {
+					// System.out.println("groesser gleich");
+					if (mFunction.length() > idxNew + name.length()) {
+						// System.out.println("groesser");
+						r = mFunction.charAt(idxNew + name.length());
+					} else {
+						// System.out.println("else");
+						// Parameter is last term of function
+						r = ' ';
+					}
+					if (idxNew == 0) {
+						check = true;
+					} else {
+						check = chars.contains(mFunction.charAt(idxNew - 1));
+					}
+					// System.out.println("l: "+r+" r: "+r);
+					// if (!Character.isDigit(c) && !Character.isAlphabetic(c))
+					// {
+					if (check && chars.contains(r)) {
+						// mFunction = mFunction.replaceFirst(name, mNames
+						// .get(name));
+						insert = "'_" + node.getName() + "_" + name + "'";
+						mFunction.replace(idxNew, idxNew + name.length(), insert);
+						// mFunction.insert(idxNew, "_" + node.getName() + "_");
+						// index = idxNew + name.length() + 2
+						// + node.getName().length();
+						index = idxNew + insert.length();
+						// System.out.println(name+" ersetzt durch:
+						// "+mNames.get(name));
+					} else {
+						index = idxNew + name.length();
+						// System.out.println("Error");
+						// break;
+					}
+				} else {
+					// /System.out.println("break");
+					break;
+				}
+			}
+		}
+		return mFunction.toString();
 	}
 
-	private String getPlacementAnnotation(BiologicalNodeAbstract bna) {
-
-		double x = pw.getGraph().getVertexLocation(bna).getX();
-		double y = -pw.getGraph().getVertexLocation(bna).getY();
-		if (x < minX) {
-			minX = x;
+	private Set<BiologicalNodeAbstract> getMarkedNeighborsIn(BiologicalNodeAbstract bna) {
+		HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
+		Iterator<BiologicalEdgeAbstract> it = GraphInstance.getMyGraph().getJungGraph().getInEdges(bna).iterator();
+		BiologicalEdgeAbstract bea;
+		while (it.hasNext()) {
+			bea = it.next();
+			if (marked.contains(bea.getFrom())) {
+				set.add(bea.getFrom());
+			}
 		}
-		if (x > maxX) {
-			maxX = x;
-		}
-		if (y < minY) {
-			minY = y;
-		}
-		if (y > maxY) {
-			maxY = y;
-		}
-
-		return "annotation(Placement(visible=true, transformation(origin={" + x + "," + y + "}, extent={{-20,-20}, {20,20}}, rotation=0)))";
+		return set;
 	}
 
-	private String getFromToAnnotation(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
-
-		Point2D p1;
-		Point2D p2;
-		String color;
-		double shiftFrom;
-		double shiftTo;
-
-		if(from.hasRef()){
-			p1 = pw.getGraph().getVertexLocation(from.getRef());
-		}else{
-			p1 = pw.getGraph().getVertexLocation(from);
+	private BiologicalNodeAbstract resolveReference(BiologicalNodeAbstract bna) {
+		if (bna.hasRef()) {
+			return this.resolveReference(bna.getRef());
 		}
-		if(to.hasRef()){
-			p2 = pw.getGraph().getVertexLocation(to.getRef());
-		}else{
-			p2 = pw.getGraph().getVertexLocation(to);
-		}
+		return bna;
+	}
 
-		if(from.hasRef() || to.hasRef()){
-			color = "{180, 180, 180}";
-		}else{
-			color = "{0, 0, 0}";
-		}
-
-		if(from.getBiologicalElement().equals(Elementdeclerations.s_place)) {
-			shiftFrom = 25;
-		} else {
-			shiftFrom = 10;
-		}
-
-		if(to.getBiologicalElement().equals(Elementdeclerations.s_place)) {
-			shiftTo = -25;
-		} else {
-			shiftTo = -10;
-		}
-
-		return "annotation(Line(color=" + color + ", points={{"+(p1.getX()+shiftFrom)+","+(-p1.getY())+"}, {"+(p2.getX()+shiftTo)+","+(-p2.getY())+"}}))";
+	private String getgFunctions() {
+		String f = "function g1" + ENDL +"    input Real[2] inColors;" + ENDL +"    output Real[2] outWeights;" + ENDL +"  algorithm" + ENDL
+				+ "    if sum(inColors) < 1e-12 then" + ENDL +"      outWeights := fill(1, 2);" + ENDL +"    else" + ENDL
+				+ "      outWeights[1] := inColors[1] / sum(inColors);" + ENDL +"      outWeights[2] := inColors[2] / sum(inColors);" + ENDL +"    end if;"+ENDL
+				+ "  end g1;" + ENDL +"  function g2" + ENDL +"    input Real[2] inColors1;" + ENDL +"    input Real[2] inColors2;" + ENDL +"    output Real[2] outWeights;"+ENDL
+				+ "  algorithm" + ENDL +"    if sum(inColors1) < 1e-12 then" + ENDL +"      outWeights := fill(0.5, 2);" + ENDL +"    else" + ENDL
+				+ "      outWeights[1] := inColors1[1] / sum(inColors1) / 2;" + ENDL +"      outWeights[2] := inColors1[2] / sum(inColors1) / 2;"+ ENDL
+				+ "    end if;" + ENDL +"" + ENDL +"    if sum(inColors2) < 1e-12 then" + ENDL +"      outWeights[1] := outWeights[1] + 0.5;"+ ENDL
+				+ "      outWeights[2] := outWeights[2] + 0.5;" + ENDL +"    else"+ ENDL
+				+ "      outWeights[1] := outWeights[1] + inColors2[1] / sum(inColors2) / 2;"+ ENDL
+				+ "      outWeights[2] := outWeights[2] + inColors2[2] / sum(inColors2) / 2;" + ENDL +"    end if;" + ENDL +"  end g2;"+ ENDL;
+		return f;
 	}
 }

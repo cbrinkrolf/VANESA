@@ -25,10 +25,8 @@ public class Place extends PNNode {
 	public void setDiscrete(boolean discrete) {
 		if (discrete) {
 			setBiologicalElement(Elementdeclerations.place);
-			setModellicaString("PNlib.PD");
 		} else {
 			setBiologicalElement(Elementdeclerations.s_place);
-			setModellicaString("PNlib.PC");
 		}
 		this.discrete = discrete;
 	}
@@ -43,15 +41,6 @@ public class Place extends PNNode {
 			token = tokenStart;
 	}
 
-	private String modellicaString;
-
-	public String getModellicaString() {
-		return modellicaString;
-	}
-
-	public void setModellicaString(String modellicaString) {
-		this.modellicaString = modellicaString;
-	}
 
 	// private int r;
 	// private int b;
@@ -98,11 +87,6 @@ public class Place extends PNNode {
 		// this.setComments("commetnr");
 		// this.set
 		setDefaultColor(Color.WHITE);
-		if (discrete) {
-			setModellicaString("PNlib.PD");
-		} else {
-			setModellicaString("PNlib.PC");
-		}
 	}
 
 	@Override

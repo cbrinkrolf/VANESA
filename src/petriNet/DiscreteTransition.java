@@ -11,7 +11,6 @@ public class DiscreteTransition extends Transition{
 	public DiscreteTransition(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.discreteTransition);
-		setModellicaString("PNlib.TD"); 
 		setColor(Color.WHITE);
 	}
 	public double getDelay() {

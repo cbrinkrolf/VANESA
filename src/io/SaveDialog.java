@@ -287,7 +287,9 @@ public class SaveDialog {
 		} else if (fileFormat.equals(moDescription)) {
 			getCorrectFile(mo);
 			new MOoutput(new FileOutputStream(file),
-					new GraphInstance().getPathway());
+					new GraphInstance().getPathway(), false);
+			new MOoutput(new FileOutputStream(new File(file.getAbsolutePath()+"_colored.mo")),
+					new GraphInstance().getPathway(), true);
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 					moDescription + " File saved");
 
