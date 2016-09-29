@@ -178,7 +178,7 @@ public class PetriNetSimulation implements ActionListener {
 								+ ";";
 					}
 					MOoutput mo = new MOoutput(new FileOutputStream(new File(
-							pathSim + "simulation.mo")), pw, packageInfo);
+							pathSim + "simulation.mo")), pw, packageInfo, false);
 					bea2key = mo.getBea2resultkey();
 					//
 
@@ -384,6 +384,7 @@ public class PetriNetSimulation implements ActionListener {
 					public void run() {
 						pw.getGraph().getVisualizationViewer().requestFocus();
 						w.redrawGraphs();
+						//CHRIS sometimes nullpointer
 						List<Double> v = pw.getPetriNet().getSimResController().get()
 								.getTime().getAll();
 						// System.out.println("running");

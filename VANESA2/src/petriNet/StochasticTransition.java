@@ -13,7 +13,6 @@ public class StochasticTransition extends Transition{
 	public StochasticTransition(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.stochasticTransition);
-		setModellicaString("PNlib.TS"); 
 		 this.setDefaultColor(Color.DARK_GRAY);
 	}
 

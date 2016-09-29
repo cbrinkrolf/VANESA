@@ -37,16 +37,6 @@ public class Transition extends PNNode {
 //	}
 
 	
-	private String modellicaString;
-
-	public String getModellicaString() {
-		return modellicaString;
-	}
-
-	public void setModellicaString(String modellicaString) {
-		this.modellicaString = modellicaString;
-	}
-
 	public Transition(String label, String name) {		
 		super(label, name);
 		if (label.equals("")) setLabel(name);
