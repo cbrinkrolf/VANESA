@@ -16,13 +16,16 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class CSVWriter {
 
-	public CSVWriter(OutputStream os, Pathway pw) {
+	public CSVWriter() {
+	}
 
+	public String write(OutputStream os, Pathway pw) {
 		List<BiologicalNodeAbstract> nodes = pw.getAllGraphNodesSortedAlphabetically();
 		List<Place> places = new ArrayList<Place>();
 		List<Transition> transitions = new ArrayList<Transition>();
 		List<BiologicalEdgeAbstract> edges = new ArrayList<BiologicalEdgeAbstract>();
 
+		String returnMessage = "";
 		try {
 
 			SimulationResult simRes = pw.getPetriNet().getSimResController().get();
@@ -72,10 +75,12 @@ public class CSVWriter {
 					}
 					for (int i = 0; i < transitions.size(); i++) {
 						buff.append(simRes.get(transitions.get(i), SimulationResultController.SIM_FIRE).get(t) + ";");
-						buff.append(simRes.get(transitions.get(i), SimulationResultController.SIM_ACTUAL_FIRING_SPEED).get(t) + ";");
+						buff.append(simRes.get(transitions.get(i), SimulationResultController.SIM_ACTUAL_FIRING_SPEED)
+								.get(t) + ";");
 					}
 					for (int i = 0; i < edges.size(); i++) {
-						buff.append(simRes.get(edges.get(i), SimulationResultController.SIM_ACTUAL_TOKEN_FLOW).get(t) + ";");
+						buff.append(simRes.get(edges.get(i), SimulationResultController.SIM_ACTUAL_TOKEN_FLOW).get(t)
+								+ ";");
 						buff.append(simRes.get(edges.get(i), SimulationResultController.SIM_SUM_OF_TOKEN).get(t) + ";");
 					}
 
@@ -87,7 +92,9 @@ public class CSVWriter {
 				os.close();
 			}
 		} catch (IOException e) {
+			returnMessage += "an error occured!";
 			e.printStackTrace();
 		}
+		return returnMessage;
 	}
 }

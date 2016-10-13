@@ -94,7 +94,7 @@ public class JSBMLinput {
 	public String loadSBMLFile(InputStream is, String name) {
 		// System.out.println("neu");
 
-		String message = "Import was successful";
+		String message = "";
 		Document doc = null;
 		InputSource in = new InputSource(is);
 
@@ -104,6 +104,7 @@ public class JSBMLinput {
 		try {
 			doc = builder.build(in);
 		} catch (JDOMException | IOException e) {
+			e.printStackTrace();
 			message = "An error occured";
 		}
 		if (pathway == null) {
@@ -142,6 +143,7 @@ public class JSBMLinput {
 			MainWindowSingleton.getInstance().updateOptionPanel();
 
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			message = "An error occured during the loading.";
 		}
 		return message;

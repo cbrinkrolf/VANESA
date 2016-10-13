@@ -3,6 +3,7 @@ package graph.gui;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import gui.MainWindowSingleton;
+import gui.MyPopUpSingleton;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -65,85 +66,60 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 
 		panel = new JPanel(layout);
 		formular = new JTextPane();
-		
-		
-		
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-            	AutoSuggestor autoSuggestor = new AutoSuggestor(formular, dialog, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
-                    @Override
-                    boolean wordTyped(String typedWord) {
 
-                        //create list for dictionary this in your case might be done via calling a method which queries db and returns results as arraylist
-                        ArrayList<String> words = new ArrayList<>();
-                        
-                        //pw.getAllNodeLabels();
-                        //HashSet<String> set = new HashSet<String>();
-                		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();// biologicalElements.values().iterator();
-                		BiologicalNodeAbstract bna;
-                		while (it.hasNext()) {
-                			bna = it.next();
-                			if(!bna.hasRef()){
-                				//words.add(bna.getRef().getLink());
-                				words.add(bna.getLabel());
-                			}
-                		}
-                		
-                		for (int i = 0; i < gea.getParameters().size(); i++) {
-                			words.add(gea.getParameters().get(i).getName());
-                		}
-                		
-                		
-                        //words.addAll(pw.getAllNodeLabels());
-                        
-                        /*
-                        words.add("hello");
-                        words.add("heritage");
-                        words.add("happiness");
-                        words.add("goodbye");
-                        words.add("cruel");
-                        words.add("car");
-                        words.add("war");
-                        words.add("will");
-                        words.add("world");
-                        words.add("wall");
-                        */
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				AutoSuggestor autoSuggestor = new AutoSuggestor(formular, dialog, null, Color.WHITE.brighter(),
+						Color.BLUE, Color.RED, 0.75f) {
+					@Override
+					boolean wordTyped(String typedWord) {
 
+						// create list for dictionary this in your case might be
+						// done via calling a method which queries db and
+						// returns results as arraylist
+						ArrayList<String> words = new ArrayList<>();
 
-                        setDictionary(words);
-                        //addToDictionary("bye");//adds a single word
+						// pw.getAllNodeLabels();
+						// HashSet<String> set = new HashSet<String>();
+						Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();// biologicalElements.values().iterator();
+						BiologicalNodeAbstract bna;
+						while (it.hasNext()) {
+							bna = it.next();
+							if (!bna.hasRef()) {
+								// words.add(bna.getRef().getLink());
+								words.add(bna.getLabel());
+							}
+						}
 
-                        return super.wordTyped(typedWord);//now call super to check for any matches against newest dictionary
-                    }
-                };
-                //System.out.println("ended");
-            }
-        });
-		
-		
+						for (int i = 0; i < gea.getParameters().size(); i++) {
+							words.add(gea.getParameters().get(i).getName());
+						}
+
+						setDictionary(words);
+						// addToDictionary("bye");//adds a single word
+
+						return super.wordTyped(typedWord);// now call super to
+															// check for any
+															// matches against
+															// newest dictionary
+					}
+				};
+			}
+		});
+
 		if (gea instanceof ContinuousTransition) {
-
-			fp = new FormularPanel(formular, 
-					((ContinuousTransition) gea).getMaximumSpeed());
+			fp = new FormularPanel(formular, ((ContinuousTransition) gea).getMaximumSpeed());
 			fp.setVisible(true);
 			panel.add(fp);
 		}
 
 		name.getDocument().addDocumentListener(this);
-		// fp.get
 		add = new JButton("add");
 		add.setActionCommand("add");
 		add.addActionListener(this);
 
-		// panel.add(value, "span,wrap 5,growx ,gaptop 2");
-
-		// panel.add(new JLabel("Label"), "span 2, gaptop 2 ");
-		// panel.add(elementNames, "span,wrap,growx ,gap 10, gaptop 2");
-		// panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
-
-		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
-				JOptionPane.OK_CANCEL_OPTION);
+		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
 		dialog = pane.createDialog(null, "Parameters");
 		this.repaint();
@@ -153,13 +129,12 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		// dialog.show();
 		dialog.setVisible(true);
 
-		if (pane.getValue() != null
-				&& (int) pane.getValue() == JOptionPane.OK_OPTION) {
+		if (pane.getValue() != null && (int) pane.getValue() == JOptionPane.OK_OPTION) {
 			if (gea instanceof ContinuousTransition) {
 				ContinuousTransition ct = (ContinuousTransition) gea;
 				String formular = fp.getFormular();
 				String formularClean = formular.replaceAll("\\s", "");
-				//System.out.println(":"+formularClean+":");
+				// System.out.println(":"+formularClean+":");
 				String orgClean = ct.getMaximumSpeed().replaceAll("\\s", "");
 
 				if (!orgClean.equals(formularClean)) {
@@ -184,41 +159,49 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 
 			panel.add(new JLabel(p.getUnit()), "span 1, gapright 4");
 
-			JButton edit = new JButton("edit");
+			JButton edit = new JButton("✎");
 			edit.setActionCommand("edit" + i);
 			edit.addActionListener(this);
+			edit.setToolTipText("edit entry");
+			edit.setMaximumSize(edit.getMinimumSize());
 
-			JButton del = new JButton("delete");
+			JButton del = new JButton("✖");
+			del.setBackground(Color.RED);
 			del.setActionCommand("del" + i);
+			del.setToolTipText("delete entry");
 
 			del.addActionListener(this);
 
-			JButton up = new JButton("u");
+			JButton up = new JButton("↑");
 			up.setActionCommand("up" + i);
 			up.addActionListener(this);
+			up.setToolTipText("move up");
 
-			JButton down = new JButton("d");
+			JButton down = new JButton("↓");
 			down.setActionCommand("down" + i);
 			down.addActionListener(this);
-			// parameters.put(del, p);
+			down.setToolTipText("move down");
 
-			panel.add(edit, "span 1");
-			if (gea.getParameters().size() == 1) {
-				panel.add(del, "wrap");
-			} else {
-				panel.add(del, "span 1");
-			}
 			if (gea.getParameters().size() > 1) {
 				if (i == 0) {
-					panel.add(down, "skip, span 1, wrap");
+					panel.add(down, "skip, span 1");
 				} else if (i == gea.getParameters().size() - 1) {
 					panel.add(up, "span 1, gapright 4");
 				} else {
 					panel.add(up, "span 1, gapright 4");
-					panel.add(down, "span 1, wrap");
+					panel.add(down, "span 1");
 				}
 			}
-			// panel.add(null, "span 1, wrap");
+			if (i == gea.getParameters().size() - 1) {
+				panel.add(edit, "skip, span 1");
+			} else {
+				panel.add(edit, "span 1");
+			}
+			if (gea.getParameters().size() == 1) {
+				panel.add(del, "wrap");
+			} else {
+				panel.add(del, "span 1, wrap");
+			}
 		}
 	}
 
@@ -230,37 +213,43 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			for (int i = 0; i < gea.getParameters().size(); i++) {
 				p = gea.getParameters().get(i);
 				if (p.getName().equals(name.getText())) {
-					if (this.editMode) {
-						p.setValue(Double.valueOf(this.value.getText()));
-						p.setUnit(unit.getText());
-						// TODO handling of rebuild
-						pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
-						this.editMode = false;
-						this.add.setText("add");
-						this.repaint();
+					if (this.editMode && name.getText().trim().length() > 0) {
+						try {
+							p.setValue(Double.valueOf(this.value.getText()));
+							p.setUnit(unit.getText());
+							// TODO handling of rebuild
+							pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
+							this.editMode = false;
+							this.add.setText("add");
+							this.repaint();
+						} catch (NumberFormatException nfe) {
+							MyPopUpSingleton.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+						}
 					} else {
 						// System.out.println("schon vorhanden");
-						JOptionPane
-								.showMessageDialog(
-										dialog,
-										"Parameter with same name already exists! Use edit button to edit parameter",
-										"Parameter warning",
-										JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(dialog,
+								"Parameter with same name already exists! Use edit button to edit parameter",
+								"Parameter warning", JOptionPane.WARNING_MESSAGE);
 					}
 					return;
-
 				}
 			}
-			p = new Parameter(name.getText(), Double.valueOf(value.getText()),
-					unit.getText());
-			gea.getParameters().add(p);
-			pw.getChangedParameters().put(p, gea);
-			pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
-			panel.add(new JLabel(name.getText()), "span 1, gaptop 2 ");
-			panel.add(new JLabel(value.getText()), "span 1, gapright 4");
-			panel.add(new JLabel(unit.getText()), "span 1, gapright 4, wrap");
-
-			this.repaint();
+			if(name.getText().trim().length() > 0){
+			try {
+				p = new Parameter(name.getText(), Double.valueOf(value.getText()), unit.getText());
+				gea.getParameters().add(p);
+				pw.getChangedParameters().put(p, gea);
+				pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
+				panel.add(new JLabel(name.getText()), "span 1, gaptop 2 ");
+				panel.add(new JLabel(value.getText()), "span 1, gapright 4");
+				panel.add(new JLabel(unit.getText()), "span 1, gapright 4, wrap");
+				this.repaint();
+			} catch (NumberFormatException nfx) {
+				MyPopUpSingleton.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+			}
+		}else{
+			MyPopUpSingleton.getInstance().show("Parameter", "Name is empty!");
+		}
 
 		} else if (e.getActionCommand().startsWith("del")) {
 			pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
@@ -279,7 +268,6 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			Parameter p = gea.getParameters().get(idx);
 			gea.getParameters().set(idx, gea.getParameters().get(idx - 1));
 			gea.getParameters().set(idx - 1, p);
-
 			this.repaint();
 		} else if (e.getActionCommand().startsWith("edit")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
@@ -290,16 +278,11 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			this.add.setText("Override");
 			this.editMode = true;
 			this.repaint();
-			// gea.getParameters().set(idx, gea.getParameters().get(idx - 1));
-			// gea.getParameters().set(idx - 1, p);
 		}
-
 	}
 
 	private void repaint() {
 		panel.removeAll();
-		// parameters.clear();
-
 		if (gea instanceof ContinuousTransition) {
 			panel.add(fp, "span 20, wrap");
 		}
@@ -316,27 +299,21 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		panel.add(add, "wrap");
 		this.listParameters();
 		panel.repaint();
-		// pane.repaint();
-		// dialog.repaint();
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
 	}
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 		handleChangedName();
-
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent e) {
 		handleChangedName();
-
 	}
 
 	@Override
 	public void changedUpdate(DocumentEvent e) {
-
 	}
 
 	private void handleChangedName() {
@@ -345,5 +322,4 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			this.add.setText("add");
 		}
 	}
-
 }
