@@ -159,6 +159,7 @@ public class OpenDialog extends SwingWorker {
 							JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 									result);
 						}
+						
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -218,10 +219,10 @@ public class OpenDialog extends SwingWorker {
 
 					//GraphInstance.getMyGraph().getVisualizationViewer()
 					//		.restart();
+					
+					MainWindowSingleton.getInstance().updateAllGuiElements();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();
-					MainWindowSingleton.getInstance().updateAllGuiElements();
-
 				}
 			}
 		}

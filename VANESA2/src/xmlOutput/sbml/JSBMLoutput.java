@@ -230,7 +230,7 @@ public class JSBMLoutput {
 			//System.out.println("nach write");
 
 			os.close();
-			message = "\nExport was successful.";
+			message = "";
 		} catch (SBMLException e) {
 			e.printStackTrace();
 			message = "\nWriting SBML file was not successful.";

@@ -12,6 +12,8 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MainWindowSingleton;
+import gui.MyPopUp;
+import gui.MyPopUpSingleton;
 import io.graphML.SaveGraphML;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
@@ -265,8 +267,14 @@ public class SaveDialog {
 			JSBMLoutput jsbmlOutput = new JSBMLoutput(
 					new FileOutputStream(file),
 					new GraphInstance().getPathway());
+			
+			String out = jsbmlOutput.generateSBMLDocument();
+			if(out.length() > 0){
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
-					sbmlDescription + jsbmlOutput.generateSBMLDocument());
+					sbmlDescription + out);
+			}else{
+				MyPopUpSingleton.getInstance().show("JSbml export", "Saving was successful!");
+			}
 
 			// else
 			// JOptionPane.showMessageDialog(
@@ -302,10 +310,15 @@ public class SaveDialog {
 
 		} else if (fileFormat.equals(csvDescription)) {
 			getCorrectFile(csv);
-			new CSVWriter(new FileOutputStream(file),
+			String result = new CSVWriter().write(new FileOutputStream(file),
 					new GraphInstance().getPathway());
+			
+			if(result.length() > 0){
 			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
-					csvDescription + " File saved");
+					csvDescription + result);
+			}else{
+				MyPopUpSingleton.getInstance().show("csv", "Saving was successful!");
+			}
 
 		} else if (fileFormat.equals(pnmlDescription)) {
 			GraphContainer con = ContainerSingelton.getInstance();
@@ -363,10 +376,16 @@ public class SaveDialog {
 						nodeList, transitionList);
 
 				try {
-					JOptionPane.showMessageDialog(
-							MainWindowSingleton.getInstance(), pnmlDescription
-									+ pnmlOutput.generatePNMLDocument()
-									+ "File saved. File validated and saved.");
+					String result = pnmlOutput.generatePNMLDocument();
+					
+					if(result.length() > 0){
+						JOptionPane.showMessageDialog(
+								MainWindowSingleton.getInstance(), pnmlDescription
+										+ "an error occured: "+ result);
+					}else{
+						MyPopUpSingleton.getInstance().show("PNML export", "Saving was successful!");
+					}
+					
 
 					if (pnmlOutput.getFinished()) {
 						// LoggerContext loggerContext = (LoggerContext)
@@ -415,9 +434,7 @@ public class SaveDialog {
 					p.paint(graphics);
 					graphics.dispose();
 					ImageIO.write(bi, "png", file);
-					JOptionPane.showMessageDialog(
-							MainWindowSingleton.getInstance(), pngDescription
-									+ " File saved");
+					MyPopUpSingleton.getInstance().show("PNG", "Picture saved successfully!");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
