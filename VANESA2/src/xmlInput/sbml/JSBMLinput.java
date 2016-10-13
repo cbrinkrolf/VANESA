@@ -310,27 +310,14 @@ public class JSBMLinput {
 						case Elementdeclerations.methylationEdge:
 							bea = new Methylation(label, name, from, to);
 							break;
-						case Elementdeclerations.pnDiscreteEdge:
+						case Elementdeclerations.pnEdge:
 							// TODO: ???
 							elSub = reacAnnotation.getChild("Function", null);
 							attr = "";
 							if (elSub != null) {
 								attr = elSub.getAttributeValue("Function");
 							}
-							bea = new PNEdge(from, to, label, name, biologicalElements.Elementdeclerations.pnDiscreteEdge, attr);
-							elSub = reacAnnotation.getChild("ActivationProbability", null);
-							if (elSub != null) {
-								attr = elSub.getAttributeValue("ActivationProbability");
-							}
-							((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
-							break;
-						case Elementdeclerations.pnContinuousEdge:
-							elSub = reacAnnotation.getChild("Function", null);
-							attr = "";
-							if (elSub != null) {
-								attr = elSub.getAttributeValue("Function");
-							}
-							bea = new PNEdge(from, to, label, name, biologicalElements.Elementdeclerations.pnContinuousEdge, attr);
+							bea = new PNEdge(from, to, label, name, biologicalElements.Elementdeclerations.pnEdge, attr);
 							elSub = reacAnnotation.getChild("ActivationProbability", null);
 							if (elSub != null) {
 								attr = elSub.getAttributeValue("ActivationProbability");

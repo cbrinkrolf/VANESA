@@ -297,7 +297,7 @@ public class Pathway implements Cloneable {
 
 			bea = new PhysicalInteraction(label, name, from, to);
 
-		} else if (element.equals(Elementdeclerations.pnDiscreteEdge)) {
+		} else if (element.equals(Elementdeclerations.pnEdge)) {
 			boolean wasUndirected = false;
 			double UpperBoundary = 0.0;
 			double LowerBoundary = 0.0;
@@ -316,37 +316,11 @@ public class Pathway implements Cloneable {
 			((PNEdge) bea).setBiologicalElement(bea.getBiologicalElement());
 			// System.out.println("discrete kante pw hinzugefuegt");
 
-		} else if (element.equals(Elementdeclerations.pnContinuousEdge)) {
-			boolean wasUndirected = false;
-			double UpperBoundary = 0.0;
-			double LowerBoundary = 0.0;
-			double ActivationProbability = 1.0;
-			/*
-			 * if (bea instanceof PNEdge) { PNEdge e = (PNEdge) bea; tokens =
-			 * e.getFunction(); wasUndirected = e.wasUndirected(); UpperBoundary
-			 * = e.getUpperBoundary(); LowerBoundary = e.getLowerBoundary();
-			 * ActivationProbability = e.getActivationProbability(); }
-			 */
-			bea = new PNEdge(from, to, label, name,
-					Elementdeclerations.pnContinuousEdge, label);
-			((PNEdge) bea).wasUndirected(wasUndirected);
-			((PNEdge) bea).setLowerBoundary(LowerBoundary);
-			((PNEdge) bea).setUpperBoundary(UpperBoundary);
-			((PNEdge) bea).setActivationProbability(ActivationProbability);
-			((PNEdge) bea).setBiologicalElement(bea.getBiologicalElement());
-			// System.out.println("continuous kante pw hinzugefuegt");
-
 		} else if (element.equals(Elementdeclerations.pnInhibitionEdge)) {
 			boolean wasUndirected = false;
 			double UpperBoundary = 0.0;
 			double LowerBoundary = 0.0;
 			double ActivationProbability = 1.0;
-			/*
-			 * if (bea instanceof PNEdge) { PNEdge e = (PNEdge) bea; tokens =
-			 * e.getFunction(); wasUndirected = e.wasUndirected(); UpperBoundary
-			 * = e.getUpperBoundary(); LowerBoundary = e.getLowerBoundary();
-			 * ActivationProbability = e.getActivationProbability(); }
-			 */
 			bea = new PNEdge(from, to, label, name,
 					Elementdeclerations.pnInhibitionEdge, label);
 			((PNEdge) bea).wasUndirected(wasUndirected);
@@ -355,7 +329,6 @@ public class Pathway implements Cloneable {
 			((PNEdge) bea).setActivationProbability(ActivationProbability);
 			((PNEdge) bea).setBiologicalElement(bea.getBiologicalElement());
 			// System.out.println("inhibition kante pw hinzugefuegt");
-
 		}
 
 		if (bea != null) {
@@ -629,27 +602,8 @@ public class Pathway implements Cloneable {
 		return null;
 	}
 
-	/*
-	 * public boolean existEdge(Vertex vertex1, Vertex vertex2) { for (Iterator
-	 * i = getAllEdges().iterator(); i.hasNext();) { BiologicalEdgeAbstract bea
-	 * = (BiologicalEdgeAbstract) i.next(); if
-	 * (bea.getEdge().getEndpoints().getFirst().equals(vertex1) &&
-	 * bea.getEdge().getEndpoints().getSecond().equals(vertex2)) return true; }
-	 * return false; }
-	 */
-
 	public Collection<BiologicalEdgeAbstract> getAllEdges() {
 
-		/*
-		 * Iterator<GraphElementAbstract> it =
-		 * biologicalElements.values().iterator();
-		 * HashSet<BiologicalEdgeAbstract> set = new
-		 * HashSet<BiologicalEdgeAbstract>();
-		 * 
-		 * GraphElementAbstract gea; while (it.hasNext()) { gea = it.next(); if
-		 * (gea instanceof BiologicalEdgeAbstract) {
-		 * set.add((BiologicalEdgeAbstract)gea); } } return set;
-		 */
 		if (getGraph(false) == null) {
 			return Collections.emptyList();
 		}
