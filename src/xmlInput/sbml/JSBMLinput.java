@@ -310,8 +310,9 @@ public class JSBMLinput {
 						case Elementdeclerations.methylationEdge:
 							bea = new Methylation(label, name, from, to);
 							break;
+						case "PN Discrete Edge":
+							//old description
 						case Elementdeclerations.pnEdge:
-							// TODO: ???
 							elSub = reacAnnotation.getChild("Function", null);
 							attr = "";
 							if (elSub != null) {

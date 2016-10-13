@@ -372,9 +372,9 @@ public class VAMLInput {
 						mapping.get(to));
 
 			} else if (elementSpecification
-					.equals(Elementdeclerations.pnEdge)) {
+					.equals(Elementdeclerations.pnEdge) || elementSpecification.equals("PN Discrete Edge")) {
 				bea = new PNEdge(mapping.get(from), mapping.get(to), label,
-						name, "PN Discrete Edge", function);
+						name, Elementdeclerations.pnEdge, function);
 				((PNEdge) bea).setActivationProbability(activationProb);
 			} else if (elementSpecification
 					.equals(Elementdeclerations.pnInhibitionEdge)) {
