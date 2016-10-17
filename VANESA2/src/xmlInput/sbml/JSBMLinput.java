@@ -32,6 +32,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.Activation;
 import biologicalObjects.edges.BindingAssociation;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
 import biologicalObjects.edges.Compound;
 import biologicalObjects.edges.Dephosphorylation;
 import biologicalObjects.edges.Dissociation;
@@ -236,8 +237,7 @@ public class JSBMLinput {
 				String attr = "";
 				String label = name;
 
-				bea = new ReactionEdge(label, name, from, to);
-				bea.setDirected(true);
+				
 
 				Element annotation = reaction.getChild("annotation", null);
 				if (annotation != null) {
@@ -250,75 +250,21 @@ public class JSBMLinput {
 						if (elSub != null) {
 							label = elSub.getAttributeValue("label");
 						}
-
+						bea = BiologicalEdgeAbstractFactory.create(biologicalElement, null);
+						bea.setDirected(true);
+						bea.setFrom(from);
+						bea.setTo(to);
+						bea.setLabel(label);
+						bea.setName(name);
+						
 						switch (biologicalElement) {
-						case Elementdeclerations.compoundEdge:
-							bea = new Compound(label, name, from, to);
-							break;
-						case Elementdeclerations.physicalInteraction:
-							bea = new PhysicalInteraction(label, name, from, to);
-							break;
-						case Elementdeclerations.hiddenCompoundEdge:
-							bea = new HiddenCompound(label, name, from, to);
-							break;
-						case Elementdeclerations.reactionEdge:
-							// System.out.println("reaction edge");
-							bea = new ReactionEdge(label, name, from, to);
-							break;
-						case Elementdeclerations.reactionPair:
-							// System.out.println("reaction pair");
-							bea = new ReactionPair(label, name, from, to);
-							break;
-						case Elementdeclerations.activationEdge:
-							bea = new Activation(label, name, from, to);
-							break;
-						case Elementdeclerations.inhibitionEdge:
-							bea = new Inhibition(label, name, from, to);
-							break;
-						case Elementdeclerations.expressionEdge:
-							bea = new Expression(label, name, from, to);
-							break;
-						case Elementdeclerations.repressionEdge:
-							bea = new Repression(label, name, from, to);
-							break;
-						case Elementdeclerations.indirectEffectEdge:
-							bea = new IndirectEffect(label, name, from, to);
-							break;
-						case Elementdeclerations.stateChangeEdge:
-							bea = new StateChange(label, name, from, to);
-							break;
-						case Elementdeclerations.bindingEdge:
-							bea = new BindingAssociation(label, name, from, to);
-							break;
-						case Elementdeclerations.dissociationEdge:
-							bea = new Dissociation(label, name, from, to);
-							break;
-						case Elementdeclerations.phosphorylationEdge:
-							bea = new Phosphorylation(label, name, from, to);
-							break;
-						case Elementdeclerations.dephosphorylationEdge:
-							// System.out.println("dephos:" +
-							// biologicalElement);
-							bea = new Dephosphorylation(label, name, from, to);
-							break;
-						case Elementdeclerations.glycosylationEdge:
-							bea = new Glycosylation(label, name, from, to);
-							break;
-						case Elementdeclerations.ubiquitinationEdge:
-							bea = new Ubiquitination(label, name, from, to);
-							break;
-						case Elementdeclerations.methylationEdge:
-							bea = new Methylation(label, name, from, to);
-							break;
-						case "PN Discrete Edge":
-							//old description
 						case Elementdeclerations.pnEdge:
 							elSub = reacAnnotation.getChild("Function", null);
 							attr = "";
 							if (elSub != null) {
 								attr = elSub.getAttributeValue("Function");
 							}
-							bea = new PNEdge(from, to, label, name, biologicalElements.Elementdeclerations.pnEdge, attr);
+							
 							elSub = reacAnnotation.getChild("ActivationProbability", null);
 							if (elSub != null) {
 								attr = elSub.getAttributeValue("ActivationProbability");
@@ -432,23 +378,6 @@ public class JSBMLinput {
 						if (elSub != null) {
 							pathwayLink = String.valueOf(elSub.getAttributeValue("PathwayLink"));
 						}
-						// if (pathwayLink != null) {
-						// TODO: ???
-						// try {
-						// new File("Temp").delete();
-						// FileWriter w = new FileWriter(new File("Temp"),
-						// false);
-						// w.write(pathway);
-						// w.close();
-						// File file = new File("Temp");
-						// Pathway newPW = new Pathway(label);
-						// new VAMLInput(file, newPW);
-						// ((PathwayMap) bna).setPathwayLink(newPW);
-						// newPW.setParent(pw);
-						// } catch (Exception e1) {
-						// e1.printStackTrace();
-						// }
-						// }
 						break;
 					case Elementdeclerations.sRNA:
 						elSub = specAnnotation.getChild("NtSequence", null);

@@ -34,6 +34,7 @@ import util.MyIntComparable;
 import biologicalObjects.edges.Activation;
 import biologicalObjects.edges.BindingAssociation;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
 import biologicalObjects.edges.Compound;
 import biologicalObjects.edges.Dephosphorylation;
 import biologicalObjects.edges.Dissociation;
@@ -188,10 +189,6 @@ public class Pathway implements Cloneable {
 
 	public BiologicalNodeAbstract addVertex(BiologicalNodeAbstract bna,
 			Point2D p) {
-		// System.out.println("add");
-		// System.out.println(bna.getClass().getName());
-		// Object graphElement = element;
-		// GraphElementAbstract gea = (GraphElementAbstract) element;
 		if (graph.getJungGraph().containsVertex(bna)) {
 			return bna;
 		}
@@ -223,124 +220,35 @@ public class Pathway implements Cloneable {
 			BiologicalNodeAbstract from, BiologicalNodeAbstract to,
 			String element, boolean directed) {
 
-		BiologicalEdgeAbstract bea = null;
+		BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(element, null);
+		bea.setLabel(label);
+		bea.setName(name);
+		bea.setFrom(from);
+		bea.setTo(to);
+		bea.setDirected(directed);
 
-		if (element.equals(Elementdeclerations.compoundEdge)) {
-
-			bea = new Compound(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.hiddenCompoundEdge)) {
-
-			bea = new HiddenCompound(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.reactionEdge)) {
-			// System.out.println("drin");
-			bea = new ReactionEdge(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.activationEdge)) {
-
-			bea = new Activation(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.inhibitionEdge)) {
-
-			bea = new Inhibition(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.expressionEdge)) {
-
-			bea = new Expression(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.repressionEdge)) {
-
-			bea = new Repression(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.indirectEffectEdge)) {
-
-			bea = new IndirectEffect(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.stateChangeEdge)) {
-
-			bea = new StateChange(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.bindingEdge)) {
-
-			bea = new BindingAssociation(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.dissociationEdge)) {
-
-			bea = new Dissociation(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.phosphorylationEdge)) {
-
-			bea = new Phosphorylation(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.dephosphorylationEdge)) {
-
-			bea = new Dephosphorylation(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.glycosylationEdge)) {
-
-			bea = new Glycosylation(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.ubiquitinationEdge)) {
-
-			bea = new Ubiquitination(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.methylationEdge)) {
-
-			bea = new Methylation(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.reactionPairEdge)) {
-
-			bea = new ReactionPair(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.physicalInteraction)) {
-
-			bea = new PhysicalInteraction(label, name, from, to);
-
-		} else if (element.equals(Elementdeclerations.pnEdge)) {
+		if (element.equals(Elementdeclerations.pnEdge)) {
 			boolean wasUndirected = false;
 			double UpperBoundary = 0.0;
 			double LowerBoundary = 0.0;
 			double ActivationProbability = 1.0;
-			/*
-			 * if (bea instanceof PNEdge) { PNEdge e = (PNEdge) bea; tokens =
-			 * e.getFunction(); wasUndirected = e.wasUndirected(); UpperBoundary
-			 * = e.getUpperBoundary(); LowerBoundary = e.getLowerBoundary();
-			 * ActivationProbability = e.getActivationProbability(); }
-			 */
-			bea = new PNEdge(from, to, label, name, "discrete", label);
+			
 			((PNEdge) bea).wasUndirected(wasUndirected);
 			((PNEdge) bea).setLowerBoundary(LowerBoundary);
 			((PNEdge) bea).setUpperBoundary(UpperBoundary);
 			((PNEdge) bea).setActivationProbability(ActivationProbability);
-			((PNEdge) bea).setBiologicalElement(bea.getBiologicalElement());
-			// System.out.println("discrete kante pw hinzugefuegt");
 
 		} else if (element.equals(Elementdeclerations.pnInhibitionEdge)) {
 			boolean wasUndirected = false;
 			double UpperBoundary = 0.0;
 			double LowerBoundary = 0.0;
 			double ActivationProbability = 1.0;
-			bea = new PNEdge(from, to, label, name,
-					Elementdeclerations.pnInhibitionEdge, label);
 			((PNEdge) bea).wasUndirected(wasUndirected);
 			((PNEdge) bea).setLowerBoundary(LowerBoundary);
 			((PNEdge) bea).setUpperBoundary(UpperBoundary);
 			((PNEdge) bea).setActivationProbability(ActivationProbability);
-			((PNEdge) bea).setBiologicalElement(bea.getBiologicalElement());
-			// System.out.println("inhibition kante pw hinzugefuegt");
 		}
-
-		if (bea != null) {
-			bea.setDirected(directed);
-			return this.addEdge(bea);
-		} else
-			try {
-				throw new NullPointerException();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		return null;
+		return bea;
 	}
 
 	public BiologicalEdgeAbstract addEdge(BiologicalEdgeAbstract bea) {
