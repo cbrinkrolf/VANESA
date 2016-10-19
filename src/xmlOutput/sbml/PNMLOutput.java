@@ -64,8 +64,6 @@ public class PNMLOutput {
 	//private int workspace = 0;
 
 	private int netId = 0;
-	// Petri Net is validated
-	private boolean finish = false;
 
 	private boolean transitionFrom = false;
 
@@ -254,41 +252,35 @@ public class PNMLOutput {
 			arc.setNameHLAPI(new NameHLAPI(t.getLabel()));
 
 			arcid++;
-
 		}
 
 		ModelRepository mr = ModelRepository.getInstance();
 		mr.setPrettyPrintStatus(true);
 		PnmlExport pex = new PnmlExport();
 		//pex.
+		String result = "";
 		try {
 			pex.exportObject(doc, file.getAbsolutePath());
 		} catch (UnhandledNetType e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			result+="Error: Unhandled Net Type!\r\n";
 		} catch (OCLValidationFailed e) {
-
 			e.printStackTrace();
+			result+="Error: OCLValidation failed!\r\n";
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			result+="Error: IO Exception!\r\n";
 		} catch (ValidationFailedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			result+="Error: Validation failed!\r\n";
 		} catch (BadFileFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			result+="Error: Bad file format!\r\n";
 		} catch (OtherException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			result+="Error: Other exception!\r\n";
 		}
 		ModelRepository.getInstance().destroyCurrentWorkspace();
-		finish = true;
-		return " ";
-	}
-
-	public boolean getFinished() {
-		return finish;
-
+		return result;
 	}
 }

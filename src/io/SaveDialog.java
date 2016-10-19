@@ -385,14 +385,6 @@ public class SaveDialog {
 					}else{
 						MyPopUpSingleton.getInstance().show("PNML export", "Saving was successful!");
 					}
-					
-
-					if (pnmlOutput.getFinished()) {
-						// LoggerContext loggerContext = (LoggerContext)
-						// LoggerFactory.getILoggerFactory();
-						// loggerContext.stop();
-					}
-
 				} catch (HeadlessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
