@@ -191,10 +191,9 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 
 					PetriNetVertexDialog dialog = new PetriNetVertexDialog(
 							con.getPetriNetEditingMode());
-					boolean answer = dialog.getAnswer(p);
+					BiologicalNodeAbstract bna = dialog.getAnswer(p);
 					// System.out.println();
-					if (answer) {
-
+					if (bna != null) {
 						// BiologicalNodeAbstract ba = new
 						// BiologicalNodeAbstract(
 						// answers[0], "", newVertex);
@@ -206,7 +205,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// vv.getModel().restart();
 						//System.out.println("update");
 						if(pw instanceof BiologicalNodeAbstract){
-							dialog.getCreatedNode().setParentNode((BiologicalNodeAbstract) pw); 
+							bna.setParentNode((BiologicalNodeAbstract) pw); 
 						}
 						MainWindowSingleton.getInstance().updateElementTree();
 						MainWindowSingleton.getInstance().updatePathwayTree();
@@ -236,6 +235,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 //						newVertex.setCompartment(answers[2]);
 						// graphInstance.getPathway().addElement(newVertex);
 						// graph.addVertex(newVertex);
+						
 						BiologicalNodeAbstract newVertex = pw.addVertex(name, label, element, compartment, p);
 						if(pw instanceof BiologicalNodeAbstract){
 							newVertex.setParentNode((BiologicalNodeAbstract) pw);

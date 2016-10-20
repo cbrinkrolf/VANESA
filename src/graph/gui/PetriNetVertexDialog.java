@@ -3,14 +3,6 @@
  */
 package graph.gui;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.GraphInstance;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.List;
@@ -24,24 +16,29 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
+import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.GraphInstance;
+import gui.MainWindow;
+import gui.MainWindowSingleton;
+import gui.MyPopUpSingleton;
+import net.miginfocom.swing.MigLayout;
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.Place;
 import petriNet.StochasticTransition;
 import util.MyNumberFormat;
-import biologicalElements.Elementdeclerations;
-import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 /**
  * @author Sebastian
  * 
  */
-public class PetriNetVertexDialog implements ActionListener {
+public class PetriNetVertexDialog {
 
 	private JPanel panel;
 	private JOptionPane pane;
@@ -74,8 +71,6 @@ public class PetriNetVertexDialog implements ActionListener {
 
 	private String petriElement;
 	
-	private BiologicalNodeAbstract createdNode;
-
 	/**
 	 * 
 	 */
@@ -182,7 +177,7 @@ public class PetriNetVertexDialog implements ActionListener {
 		}
 	}
 
-	public boolean getAnswer(Point2D point) {
+	public BiologicalNodeAbstract getAnswer(Point2D point) {
 		
 		String title = "";
 		if (petriElement.equals("discretePlace")) {
@@ -207,8 +202,8 @@ public class PetriNetVertexDialog implements ActionListener {
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
 				
-				if(name.getText().length() <1 || name.getText().charAt(0) == '_'){
-					return false;
+				if(name.getText().trim().length() <1 || name.getText().trim().charAt(0) == '_'){
+					return null;
 				}
 				
 				Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
@@ -216,19 +211,17 @@ public class PetriNetVertexDialog implements ActionListener {
 				
 				while(it.hasNext()){
 					bna = it.next();
-					if(bna.getName().equals(name.getText())){
-						return false;
+					if(bna.getName().equals(name.getText().trim())){
+						MyPopUpSingleton.getInstance().show("Adding Place", "Cannot add Place! There is already a place with this name in the network!");
+						return null;
 					}
 				}
-				
-				
-				// Vertex v = pw.getGraph().createNewVertex();
-
+				BiologicalNodeAbstract createdNode = null;
 				if (petriElement.equals("discretePlace")) {
 					//System.out.println("anfang");
 					
 					number = (Number)token.getValue();
-					Place p = new Place(label.getText(), name.getText(), 0, true);
+					Place p = new Place(label.getText().trim(), name.getText().trim(), 0, true);
 					
 					if(number != null){
 						p.setToken(number.doubleValue());
@@ -245,11 +238,10 @@ public class PetriNetVertexDialog implements ActionListener {
 					if(number != null){
 						p.setTokenMax(number.doubleValue());
 					}
-					pw.addVertex(p, point);
 					createdNode = p;
 				} else if (petriElement.equals("continuousPlace")) {
 					
-					Place p = new Place(label.getText(), name.getText(), 0.0, false);
+					Place p = new Place(label.getText().trim(), name.getText().trim(), 0.0, false);
 					number = (Number)token.getValue();
 					if(number != null){
 						p.setToken(number.doubleValue());
@@ -267,39 +259,36 @@ public class PetriNetVertexDialog implements ActionListener {
 					if(number != null){
 						p.setTokenMax(number.doubleValue());
 					}
-					pw.addVertex(p, point);
 					createdNode = p;
 				} else if (petriElement.equals("discreteTransition")) {
 					DiscreteTransition t = new DiscreteTransition(
-							label.getText(), name.getText());
-					t.setDelay(Double.parseDouble(delay.getText()));
+							label.getText().trim(), name.getText().trim());
+					t.setDelay(Double.parseDouble(delay.getText().trim()));
 
 					//t.setFireTransition(transitionfire.isSelected());
-					t.setFiringCondition(firingCondition.getText());
-
-					pw.addVertex(t, point);
+					t.setFiringCondition(firingCondition.getText().trim());
 					createdNode = t;
 				} else if (petriElement.equals("continiousTransition")) {
 					ContinuousTransition t = new ContinuousTransition(
-							label.getText(), name.getText());
+							label.getText().trim(), name.getText().trim());
 
 					//t.setFireTransition(transitionfire.isSelected());
-					t.setFiringCondition(firingCondition.getText());
-					t.setMaximumSpeed(maxSpeed.getText());
-
-					pw.addVertex(t, point);
+					t.setFiringCondition(firingCondition.getText().trim());
+					t.setMaximumSpeed(maxSpeed.getText().trim());
 					createdNode = t;
 				} else if (petriElement.equals("stochasticTransition")) {
 					StochasticTransition t = new StochasticTransition(
-							label.getText(), name.getText());
+							label.getText().trim(), name.getText().trim());
 					t.setDistribution(distributionList.getSelectedItem()
 							.toString());
 
 					//t.setFireTransition(transitionfire.isSelected());
-					t.setFiringCondition(firingCondition.getText());
-
-					pw.addVertex(t, point);
+					t.setFiringCondition(firingCondition.getText().trim());
 					createdNode = t;
+				}
+				
+				if(createdNode != null){
+					pw.addVertex(createdNode, point);
 				}
 				GraphContainer con = ContainerSingelton.getInstance();
 				MainWindow w = MainWindowSingleton.getInstance();
@@ -307,23 +296,12 @@ public class PetriNetVertexDialog implements ActionListener {
 
 				// Graph graph = vv.getGraphLayout().getGraph();
 
-				return true;
+				return createdNode;
 			} else {
-				return false;
+				return null;
 			}
 		} else {
-			return false;
+			return null;
 		}
-
-	}
-	
-	public BiologicalNodeAbstract getCreatedNode(){
-		return createdNode;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 }
