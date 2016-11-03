@@ -111,11 +111,12 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		integrators.addItem("rungekutta");
 
 		simLibs = new JComboBox<String>();
+		simLibs.addItem("PNlib (default)");
 		Iterator<File> it = libs.iterator();
 		while (it.hasNext()) {
 			simLibs.addItem(it.next().getName());
 		}
-		simLibs.setSelectedIndex(libs.size()-1);
+		simLibs.setSelectedIndex(0);
 
 		this.setLayout(new BorderLayout());
 		this.stop.setEnabled(false);
@@ -214,6 +215,9 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	}
 
 	public File getSimLib() {
+		if(simLibs.getSelectedIndex() == 0){
+			return null;
+		}
 		return this.libs.get(this.simLibs.getSelectedIndex());
 	}
 

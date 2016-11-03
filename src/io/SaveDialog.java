@@ -126,8 +126,8 @@ public class SaveDialog {
 		pathWorkingDirectory += File.separator + "vanesa";
 
 		sbmlBool = (format & FORMAT_SBML) == FORMAT_SBML;
-		graphMLBool = (format & FORMAT_GRAPHML) == FORMAT_GRAPHML;
 		moBool = (format & FORMAT_MO) == FORMAT_MO;
+		graphMLBool = (format & FORMAT_GRAPHML) == FORMAT_GRAPHML;
 		gonBool = (format & FORMAT_GON) == FORMAT_GON;
 		vaBool = (format & FORMAT_VA) == FORMAT_VA;
 		txtBool = (format & FORMAT_TXT) == FORMAT_TXT;
@@ -164,13 +164,12 @@ public class SaveDialog {
 		 * if (itxtBool) chooser.addChoosableFileFilter(new
 		 * MyFileFilter(irinaTxt, irinaDescription));
 		 */
-
+		if (moBool)
+			chooser.addChoosableFileFilter(new MyFileFilter(mo, moDescription));
+		
 		if (graphMLBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(graphMl,
 					graphMlDescription));
-
-		if (moBool)
-			chooser.addChoosableFileFilter(new MyFileFilter(mo, moDescription));
 
 		if (gonBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(csml,

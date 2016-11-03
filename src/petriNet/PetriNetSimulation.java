@@ -59,10 +59,9 @@ public class PetriNetSimulation implements ActionListener {
 
 	public PetriNetSimulation() {
 
-
 		MainWindowSingleton.getInstance();
 		pathWorkingDirectory = MainWindow.pathWorkingDirectory;
-		
+
 		File dir = new File(pathWorkingDirectory);
 
 		this.simLibs = this.getLibs(dir);
@@ -81,7 +80,7 @@ public class PetriNetSimulation implements ActionListener {
 				this.menue.setLibs(this.simLibs);
 				this.menue.updateSimulationResults();
 				menue.setVisible(true);
-			}else{
+			} else {
 				this.menue.requestFocus();
 			}
 		}
@@ -98,8 +97,7 @@ public class PetriNetSimulation implements ActionListener {
 
 		Map<String, String> env = System.getenv();
 
-		if (env.containsKey("OPENMODELICAHOME")
-				&& new File(env.get("OPENMODELICAHOME")).isDirectory()) {
+		if (env.containsKey("OPENMODELICAHOME") && new File(env.get("OPENMODELICAHOME")).isDirectory()) {
 			pathCompiler = env.get("OPENMODELICAHOME");
 
 			try {
@@ -127,26 +125,19 @@ public class PetriNetSimulation implements ActionListener {
 					simExePresent = true;
 				}
 
-				if (flags.isEdgeChanged() || flags.isNodeChanged()
-						|| flags.isEdgeWeightChanged()
-						|| flags.isPnPropertiesChanged() || !simExePresent
+				if (flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged() || flags.isPnPropertiesChanged() || !simExePresent
 						|| simLibChanged || menue.isForceRebuild()) {
-					System.out.println("edges changed: "
-							+ flags.isEdgeChanged());
-					System.out.println("nodes changed: "
-							+ flags.isNodeChanged());
-					System.out.println("edge weight changed: "
-							+ flags.isEdgeWeightChanged());
-					System.out.println("pn prop changed "
-							+ flags.isPnPropertiesChanged());
+					System.out.println("edges changed: " + flags.isEdgeChanged());
+					System.out.println("nodes changed: " + flags.isNodeChanged());
+					System.out.println("edge weight changed: " + flags.isEdgeWeightChanged());
+					System.out.println("pn prop changed " + flags.isPnPropertiesChanged());
 
 					System.out.println("Building new executable");
 					if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
 						pathCompiler += File.separator;
 					}
 
-					pathSim = pathWorkingDirectory + "simulation"
-							+ File.separator;
+					pathSim = pathWorkingDirectory + "simulation" + File.separator;
 					File dirSim = new File(pathSim);
 					if (dirSim.isDirectory()) {
 						FileUtils.cleanDirectory(dirSim);
@@ -154,31 +145,30 @@ public class PetriNetSimulation implements ActionListener {
 						new File(pathSim).mkdir();
 					}
 
-					if (simLibs.size() < 1) {
-						if(JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(w,
-							"Cannot find any Modelica Petri net library in the working directory.\n\n"
-							+ "Please put a Modelica Petri net library into \"" + pathWorkingDirectory + "\".\n"
-							+ "You can download the latest version of PNlib on GitHub (\"https://github.com/modelica-3rdparty/PNlib\")\n\n"
-							+ "Do you want to open the download page in your default web browser?",
-							"Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
-							if(Desktop.isDesktopSupported()) {
-								Desktop.getDesktop().browse(new URI("https://github.com/modelica-3rdparty/PNlib/releases"));
-							}
-						}
-						w.unBlurrUI();
-						return;
-					}
+					/*
+					 * if (simLibs.size() < 1) { if(JOptionPane.YES_OPTION ==
+					 * JOptionPane.showConfirmDialog(w,
+					 * "Cannot find any Modelica Petri net library in the working directory.\n\n"
+					 * + "Please put a Modelica Petri net library into \"" +
+					 * pathWorkingDirectory + "\".\n" +
+					 * "You can download the latest version of PNlib on GitHub (\"https://github.com/modelica-3rdparty/PNlib\")\n\n"
+					 * +
+					 * "Do you want to open the download page in your default web browser?"
+					 * , "Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
+					 * if(Desktop.isDesktopSupported()) {
+					 * Desktop.getDesktop().browse(new
+					 * URI("https://github.com/modelica-3rdparty/PNlib/releases"
+					 * )); } } w.unBlurrUI(); return; }
+					 */
 					simLib = menue.getSimLib();
 					System.out.println("simulation lib: " + simLib);
-					String packageInfo = null;
-					if (simLib.getName().equals("PNlib")) {
+					String packageInfo = "";
+					if (simLib == null || simLib.getName().equals("PNlib")) {
 						// packageInfo = "inner PNlib.Settings settings1;";
 					} else {
-						packageInfo = "import PNlib = " + simLib.getName()
-								+ ";";
+						packageInfo = "import PNlib = " + simLib.getName() + ";";
 					}
-					MOoutput mo = new MOoutput(new FileOutputStream(new File(
-							pathSim + "simulation.mo")), pw, packageInfo, false);
+					MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim + "simulation.mo")), pw, packageInfo, false);
 					bea2key = mo.getBea2resultkey();
 					//
 
@@ -194,8 +184,7 @@ public class PetriNetSimulation implements ActionListener {
 						bin += ".exe";
 					}
 
-					final Process p = new ProcessBuilder(bin, pathSim
-							+ "simulation.mos").start();
+					final Process p = new ProcessBuilder(bin, pathSim + "simulation.mos").start();
 					InputStream os = p.getInputStream();
 
 					// System.out.println(s);
@@ -222,30 +211,25 @@ public class PetriNetSimulation implements ActionListener {
 					String buildOutput = new String(bytes);
 					System.out.println(buildOutput);
 
-					if (buildOutput
-							.contains("Warning: The following equation is INCONSISTENT due to specified unit information:")) {
+					if (buildOutput.contains("Warning: The following equation is INCONSISTENT due to specified unit information:")) {
 						String message = "";
 						int number = 0;
 						String[] split = buildOutput.split("Warning: ");
 						for (int i = 1; i < split.length; i++) {
-							if (split[i]
-									.startsWith("The following equation is INCONSISTENT due to specified unit information:")) {
+							if (split[i].startsWith("The following equation is INCONSISTENT due to specified unit information:")) {
 								number++;
 								message += split[i] + "\r\n";
 							}
 						}
 
-						JOptionPane.showMessageDialog(w, message, "Warning: "
-								+ number + " expression(s) are inconsistent:",
+						JOptionPane.showMessageDialog(w, message, "Warning: " + number + " expression(s) are inconsistent:",
 								JOptionPane.WARNING_MESSAGE);
 					}
 
-					StringTokenizer tokenizer = new StringTokenizer(
-							buildOutput, ",");
+					StringTokenizer tokenizer = new StringTokenizer(buildOutput, ",");
 					String tmp = tokenizer.nextToken();
 					// tmp.indexOf("{");
-					simName = tmp.substring(tmp.indexOf("{") + 2,
-							tmp.length() - 1);
+					simName = tmp.substring(tmp.indexOf("{") + 2, tmp.length() - 1);
 					System.out.println("simName: " + simName);
 
 					if (SystemUtils.IS_OS_WINDOWS) {
@@ -287,14 +271,10 @@ public class PetriNetSimulation implements ActionListener {
 								override += "\"";
 							}
 
-							override += "-override=outputFormat=ia,stopTime="
-									+ stopTime + ",stepSize=" + stopTime
-									/ intervals + ",tolerance=0.0001";
+							override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize=" + stopTime / intervals + ",tolerance=0.0001";
 							if (flags.isParameterChanged()) {
 
-								Iterator<Parameter> it = pw
-										.getChangedParameters().keySet()
-										.iterator();
+								Iterator<Parameter> it = pw.getChangedParameters().keySet().iterator();
 								GraphElementAbstract gea;
 								Parameter param;
 
@@ -304,46 +284,36 @@ public class PetriNetSimulation implements ActionListener {
 									BiologicalNodeAbstract bna;
 									if (gea instanceof BiologicalNodeAbstract) {
 										bna = (BiologicalNodeAbstract) gea;
-										override += ",'_" + bna.getName() + "_"
-												+ param.getName() + "'="
-												+ param.getValue();
+										override += ",'_" + bna.getName() + "_" + param.getName() + "'=" + param.getValue();
 									}
 								}
 
 							}
 
 							if (flags.isInitialValueChanged()) {
-								Iterator<Place> it = pw
-										.getChangedInitialValues().keySet()
-										.iterator();
+								Iterator<Place> it = pw.getChangedInitialValues().keySet().iterator();
 								Place p;
 								Double d;
 								while (it.hasNext()) {
 									p = it.next();
 									d = pw.getChangedInitialValues().get(p);
-									override += ",'" + p.getName()
-											+ "'.startMarks=" + d;
+									override += ",'" + p.getName() + "'.startMarks=" + d;
 								}
 							}
 
 							if (flags.isBoundariesChanged()) {
 								// System.out.println("chaaaaanged");
-								Iterator<Place> it = pw.getChangedBoundaries()
-										.keySet().iterator();
+								Iterator<Place> it = pw.getChangedBoundaries().keySet().iterator();
 								Place p;
 								Boundary b;
 								while (it.hasNext()) {
 									p = it.next();
 									b = pw.getChangedBoundaries().get(p);
 									if (b.isLowerBoundarySet()) {
-										override += ",'" + p.getName()
-												+ "'.minMarks="
-												+ b.getLowerBoundary();
+										override += ",'" + p.getName() + "'.minMarks=" + b.getLowerBoundary();
 									}
 									if (b.isUpperBoundarySet()) {
-										override += ",'" + p.getName()
-												+ "'.maxMarks="
-												+ b.getUpperBoundary();
+										override += ",'" + p.getName() + "'.maxMarks=" + b.getUpperBoundary();
 									}
 
 								}
@@ -357,22 +327,21 @@ public class PetriNetSimulation implements ActionListener {
 
 							// String program = "_omcQuot_556E7469746C6564";
 							if (noEmmit) {
-								pb.command(simName,
-										"-s=" + menue.getIntegrator(),
-										override, "-port=11111",
-										"-noEventEmit", "-lv=LOG_STATS");
+								pb.command(simName, "-s=" + menue.getIntegrator(), override, "-port=11111", "-noEventEmit", "-lv=LOG_STATS");
 							} else {
-								pb.command(simName,
-										"-s=" + menue.getIntegrator(),
-										override, "-port=11111",
-										"-lv=LOG_STATS");
+								pb.command(simName, "-s=" + menue.getIntegrator(), override, "-port=11111", "-lv=LOG_STATS");
 							}
 							pb.redirectOutput();
 							pb.directory(new File(pathSim));
+							Map<String, String> env = pb.environment();
+							String envPath = env.get("PATH");
+							envPath+=pathCompiler+"bin;";
+							env.put("PATH", envPath);
+							System.out.println("working path:"+env.get("PATH"));
+							
 							process = pb.start();
 
-							setReader(new InputStreamReader(
-									process.getInputStream()));
+							setReader(new InputStreamReader(process.getInputStream()));
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -384,9 +353,8 @@ public class PetriNetSimulation implements ActionListener {
 					public void run() {
 						pw.getGraph().getVisualizationViewer().requestFocus();
 						w.redrawGraphs();
-						//CHRIS sometimes nullpointer
-						List<Double> v = pw.getPetriNet().getSimResController().get()
-								.getTime().getAll();
+						// CHRIS sometimes nullpointer
+						List<Double> v = pw.getPetriNet().getSimResController().get().getTime().getAll();
 						// System.out.println("running");
 						while (s.isRunning()) {
 							// System.out.println("im thread");
@@ -479,10 +447,7 @@ public class PetriNetSimulation implements ActionListener {
 					t1.start();
 				} else {
 					// System.out.println("something wet wrong");
-					JOptionPane
-							.showMessageDialog(
-									MainWindowSingleton.getInstance(),
-									"Something wet wrong! Simulation could not be built!");
+					JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Something wet wrong! Simulation could not be built!");
 					this.stopAction();
 				}
 
@@ -507,10 +472,8 @@ public class PetriNetSimulation implements ActionListener {
 				System.out.println("drin");
 
 				zstNachher = System.currentTimeMillis();
-				System.out.println("Zeit benoetigt: "
-						+ ((zstNachher - zstVorher) / 1000) + " sec");
-				System.out.println("Zeit benoetigt: "
-						+ ((zstNachher - zstVorher)) + " millisec");
+				System.out.println("Zeit benoetigt: " + ((zstNachher - zstVorher) / 1000) + " sec");
+				System.out.println("Zeit benoetigt: " + ((zstNachher - zstVorher)) + " millisec");
 
 				/*
 				 * Thread t3 = new Thread() { public void run() { long totalTime
@@ -532,8 +495,7 @@ public class PetriNetSimulation implements ActionListener {
 				 * (Exception e) { e.printStackTrace(); } } }; t3.start();
 				 */
 
-				if (con.containsPathway() && pw.hasGotAtLeastOneElement()
-						&& !stopped) {
+				if (con.containsPathway() && pw.hasGotAtLeastOneElement() && !stopped) {
 					// graphInstance.getPathway().setPetriNet(true);
 					// PetriNet petrinet = graphInstance.getPathway()
 					// .getPetriNet();
@@ -544,11 +506,8 @@ public class PetriNetSimulation implements ActionListener {
 					throw new Exception();
 			} catch (Exception e) {
 				e.printStackTrace();
-				JOptionPane
-						.showMessageDialog(
-								MainWindowSingleton.getInstance(),
-								"Something went wrong. The model couldn't be simulated!",
-								"Error occured...", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Something went wrong. The model couldn't be simulated!",
+						"Error occured...", JOptionPane.ERROR_MESSAGE);
 				w.unBlurrUI();
 				this.menue.stopped();
 				this.process.destroy();
@@ -561,25 +520,23 @@ public class PetriNetSimulation implements ActionListener {
 			 * , "Simulation done...", JOptionPane.INFORMATION_MESSAGE);
 			 */
 		} else {
-			if(JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(w,
-				"Cannot find OpenModelica installation.\n\n"
-				+ "Please install OpenModelica from \"https://openmodelica.org\".\n"
-				+ "If OpenModelica is already installed, please set\n"
-				+ "environment variable OPENMODELICAHOME to the installation directory.\n\n"
-				+ "Do you want to open the OpenModelica homepage in your default web browser?",
-				"Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
+			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(w,
+					"Cannot find OpenModelica installation.\n\n" + "Please install OpenModelica from \"https://openmodelica.org\".\n"
+							+ "If OpenModelica is already installed, please set\n"
+							+ "environment variable OPENMODELICAHOME to the installation directory.\n\n"
+							+ "Do you want to open the OpenModelica homepage in your default web browser?",
+					"Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
 				try {
-					if(Desktop.isDesktopSupported()) {
+					if (Desktop.isDesktopSupported()) {
 						Desktop.getDesktop().browse(new URI("https://openmodelica.org"));
 					}
-				} catch(Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 			w.unBlurrUI();
 		}
 	}
-
 
 	private void writeMosFile() throws IOException {
 		String filter = "variableFilter=\"";
@@ -612,7 +569,7 @@ public class PetriNetSimulation implements ActionListener {
 		filter = filter.replace(".", "\\\\.");
 		filter = filter.substring(0, filter.length() - 1);
 		filter += "\"";
-		//filter = "variableFilter=\".*\"";
+		// filter = "variableFilter=\".*\"";
 		System.out.println("Filter: " + filter);
 		System.out.println("expected number of output vars: " + vars);
 		FileWriter fstream = new FileWriter(pathSim + "simulation.mos");
@@ -620,20 +577,24 @@ public class PetriNetSimulation implements ActionListener {
 		pathSim = pathSim.replace('\\', '/');
 		out.write("cd(\"" + pathSim + "\"); ");
 		out.write("getErrorString();\r\n");
-		out.write("loadFile(\"" + simLib.getPath().replace("\\", "/")
-				+ "/package.mo\"); ");
+		if (simLib != null) {
+			out.write("loadFile(\"" + simLib.getPath().replace("\\", "/") + "/package.mo\"); ");
+		}else{
+			out.write("loadModel(PNlib);");
+		}
 		out.write("getErrorString();\r\n");
 		out.write("loadFile(\"simulation.mo\"); ");
 		out.write("getErrorString();\r\n");
 		// out.write("setDebugFlags(\"disableComSubExp\"); ");
 		// out.write("getErrorString();\r\n");
 		out.write("setCommandLineOptions(\"--preOptModules+=unitChecking\");");
-		// out.write("setCommandLineOptions(\"+d=disableComSubExp +unitChecking\");");
+		// out.write("setCommandLineOptions(\"+d=disableComSubExp
+		// +unitChecking\");");
 		out.write("getErrorString();\r\n");
 
 		// CHRIS improve / correct filter
 		out.write("buildModel('" + pw.getName() + "', " + filter + "); ");
-		//out.write("buildModel('" + pw.getName() + "'); ");
+		// out.write("buildModel('" + pw.getName() + "'); ");
 		out.write("getErrorString();\r\n");
 
 		// out.write("fileName=\"simulate.mat\";\r\n");
@@ -642,7 +603,8 @@ public class PetriNetSimulation implements ActionListener {
 		// out.write("names = readTrajectoryNames(fileName);\r\n");
 		// out.write("traj=readTrajectory(fileName,names,n);\r\n");
 		// out.write("traj_transposed=transpose(traj);\r\n");
-		// out.write("DataFiles.writeCSVmatrix(CSVfile, names, traj_transposed);\r\n");
+		// out.write("DataFiles.writeCSVmatrix(CSVfile, names,
+		// traj_transposed);\r\n");
 		// out.write("exit();\r\n");
 		out.close();
 	}
@@ -658,7 +620,7 @@ public class PetriNetSimulation implements ActionListener {
 				// this.runOMC();
 				this.runOMCIA();
 			} else {
-				//this.runDymola();
+				// this.runDymola();
 			}
 			// System.out.println("start");
 		} else if (event.getActionCommand().equals("stop")) {

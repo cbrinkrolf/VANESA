@@ -327,7 +327,7 @@ public class MOoutput {
 			String weight;
 			if (bea instanceof PNEdge) {
 				e = (PNEdge) bea;
-
+				System.out.println("edge");
 				// Edge Place -> Transition
 				if (e.getFrom() instanceof Place) {
 
