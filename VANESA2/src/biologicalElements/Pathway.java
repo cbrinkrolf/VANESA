@@ -248,7 +248,7 @@ public class Pathway implements Cloneable {
 			((PNEdge) bea).setUpperBoundary(UpperBoundary);
 			((PNEdge) bea).setActivationProbability(ActivationProbability);
 		}
-		return bea;
+		return addEdge(bea);
 	}
 
 	public BiologicalEdgeAbstract addEdge(BiologicalEdgeAbstract bea) {

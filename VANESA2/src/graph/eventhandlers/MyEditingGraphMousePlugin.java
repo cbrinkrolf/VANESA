@@ -353,8 +353,9 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 							parentBNAs.addAll(nodes[0].getAllParentNodes());
 							parentBNAs.addAll(nodes[1].getAllParentNodes());
 							BiologicalEdgeAbstract bea = pw.addEdge(label, name, nodes[0], nodes[1], element, directed);
-							if(nodes[0]==startVertex && nodes[1]==vertex)
+							if(nodes[0]==startVertex && nodes[1]==vertex){
 								pw.addEdgeToView(bea, false);
+							}
 							else{
 								BiologicalEdgeAbstract clone = bea.clone();
 								clone.setFrom(startVertex);
