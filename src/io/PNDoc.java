@@ -36,7 +36,9 @@ public class PNDoc {
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		BiologicalNodeAbstract bna;
 
-		sb.append("\\section{Equations}\n");
+		sb.append("\\section*{Equations}\n"
+		+ "\\addcontentsline{toc}{section}{Equations}\n");
+		
 		int i = 0;
 		while (it.hasNext() && i < 3) {
 			bna = it.next();
@@ -149,16 +151,26 @@ public class PNDoc {
 		String name = pw.getName();
 		name = name.replace("_", "\\_");
 		sb.append("" + "\\documentclass{article}\n"
-				+ "\\usepackage{amsmath,verbatim,booktabs,longtable,cprotect}\n"
+				+ "\\usepackage{amsmath,verbatim,booktabs,longtable,cprotect,graphicx}\n"
 				+ "\\begin{document}\n"
+				+ "\\pagenumbering{gobble}\n"
 				+ "\\begin{titlepage}"
 				+ "\\author{\\TeX ed by \\emph{VANESA} Copyright \\copyright}\n"
-				+ "\\title{Documentation of: "+ name +"}\n"
+				+ "\\title{Documentation of "+ name +"}\n"
 				+ "\\date{\\today}\n"
 				+ "\\maketitle\n"
-				+ "\\tableofcontents\n"
 				+ "\\end{titlepage}\n"
-				+ "\\newpage\n");
+				+ "\\newpage\n"
+				+ "\\pagenumbering{arabic}\n"
+				+ "\\begin{figure}[!ht]\n"
+				+ "\\centering\n"
+				+ "\\includegraphics[width=1.0\\textwidth]{export.pdf}\n"
+				+ "\\caption{Picture of Network}\n"
+				+ "\\end{figure}\n"
+				+ "\\newpage\n"
+				+ "\\tableofcontents\n"
+				+ "\\newpage\n"
+				+ "\\setcounter{section}{1}");
 	}
 
 	private void createFooter() {
