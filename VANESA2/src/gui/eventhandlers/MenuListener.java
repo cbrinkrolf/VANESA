@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -1027,7 +1028,7 @@ public class MenuListener implements ActionListener {
 			}
 			
 			
-			/*VisualizationImageServer< BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
+			VisualizationImageServer< BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
 			
 			PDFGraphics2D pdf;
 			try {
@@ -1038,10 +1039,10 @@ public class MenuListener implements ActionListener {
 			} catch (FileNotFoundException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
-			}*/
+			}
 			
 			
-			/*Thread thread = new Thread() {
+			Thread thread = new Thread() {
 				public void run() {
 					try {
 						while (!new File(docDir+"export.pdf").exists()) {
@@ -1055,7 +1056,7 @@ public class MenuListener implements ActionListener {
 					}
 				}
 			};
-			thread.start();*/
+			thread.start();
 			
 			
 				
@@ -1085,15 +1086,22 @@ public class MenuListener implements ActionListener {
 				Thread t = new Thread() {
 					public void run() {
 						try {
+							BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 							while (p.isAlive()) {
+								System.out.println(br.readLine());
 								// System.out.println("sleep");
 								sleep(100);
 								System.out.println("alive1");
 							}
+							//p.destroyForcibly();
+							
 							Process p2 = pb.start();
+							BufferedReader br2 = new BufferedReader(new InputStreamReader(p2.getInputStream()));
+							
 							while(p2.isAlive()){
+								System.out.println(br2.readLine());
 								sleep(100);
-								System.out.println("alive2");
+								//System.out.println("alive2");
 							}
 							System.out.println("pdf ended");
 							// System.out.println("restart");
