@@ -1,6 +1,9 @@
 package gui.eventhandlers;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -22,15 +25,24 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.Subject;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.apache.commons.collections15.Transformer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.freehep.graphics2d.VectorGraphics;
+import org.freehep.graphicsio.pdf.PDF;
+import org.freehep.graphicsio.pdf.PDFGraphics2D;
+import org.freehep.graphicsio.png.PNGEncoder;
+import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.freehep.util.export.ExportDialog;
+
+import com.sun.imageio.plugins.png.PNGImageWriter;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -66,6 +78,7 @@ import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
@@ -79,6 +92,7 @@ import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.algorithms.gui.smacof.view.SmacofView;
 import graph.jung.classes.MyGraph;
 import graph.jung.classes.MyVisualizationViewer;
+import graph.jung.graphDrawing.DynamicIcon;
 import graph.layouts.Circle;
 import graph.layouts.GraphCenter;
 import graph.layouts.gemLayout.GEMLayout;
@@ -145,7 +159,7 @@ public class MenuListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		w = MainWindowSingleton.getInstance();
 		String event = e.getActionCommand();
-		GraphInstance graphInstance = new GraphInstance();
+		final GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 
 		if ("new Network".equals(event)) {
@@ -485,7 +499,6 @@ public class MenuListener implements ActionListener {
 			 */
 		else if ("openTestP".equals(event)) {
 			// System.out.println("testP");
-			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
 			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 			BiologicalNodeAbstract bna;
@@ -546,7 +559,6 @@ public class MenuListener implements ActionListener {
 
 		} else if ("openTestT".equals(event)) {
 
-			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
 			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 			BiologicalNodeAbstract bna;
@@ -680,7 +692,6 @@ public class MenuListener implements ActionListener {
 			}
 
 		} else if ("openCov".equals(event)) {
-			graphInstance = new GraphInstance();
 			Pathway pw = graphInstance.getPathway();
 			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 			BiologicalNodeAbstract bna;
@@ -1014,6 +1025,45 @@ public class MenuListener implements ActionListener {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
+			
+			
+			/*VisualizationImageServer< BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
+			
+			PDFGraphics2D pdf;
+			try {
+				pdf = new PDFGraphics2D(new File(docDir+"export.pdf"), new Dimension(wvv.getWidth(), wvv.getHeight()));
+				pdf.startExport();
+				wvv.print(pdf);
+				pdf.endExport();
+			} catch (FileNotFoundException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}*/
+			
+			
+			/*Thread thread = new Thread() {
+				public void run() {
+					try {
+						while (!new File(docDir+"export.pdf").exists()) {
+							System.out.println("sleep");
+							sleep(100);
+						}
+						System.out.println("file found");
+						stop();
+						// System.out.println("restart");
+					} catch (Exception e) {
+					}
+				}
+			};
+			thread.start();*/
+			
+			
+				
+			
+			System.out.println("nach thread");
+				
+			 
+			 
 
 			new PNDoc(docDir + "doc.tex");
 
@@ -1030,25 +1080,32 @@ public class MenuListener implements ActionListener {
 				pb = new ProcessBuilder(bin, docDir + "doc.tex");
 				pb.directory(new File(docDir));
 				p = pb.start();
-				//System.out.println(p.isAlive());
+				// System.out.println(p.isAlive());
 
 				Thread t = new Thread() {
 					public void run() {
 						try {
 							while (p.isAlive()) {
-								//System.out.println("sleep");
+								// System.out.println("sleep");
 								sleep(100);
+								System.out.println("alive1");
 							}
-							Process p = pb.start();
-							//System.out.println("restart");
+							Process p2 = pb.start();
+							while(p2.isAlive()){
+								sleep(100);
+								System.out.println("alive2");
+							}
+							System.out.println("pdf ended");
+							// System.out.println("restart");
 						} catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 				};
 				t.start();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				System.err.println("Could not compile latex. Find tex-file at: "+docDir);
+				System.err.println("Could not compile latex. Find tex-file at: " + docDir);
 			}
 
 		} else if ("dataLabelMapping".equals(event)) {
@@ -1360,210 +1417,259 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				Runnable animator = new Runnable() {
 
-					@Override
-					public void run() {
-						BiologicalNodeAbstract bna;
-						Point2D p;
-						Point2D inv;
-						GraphInstance graphInstance = new GraphInstance();
-						for (int i = 0; i < 10; i++) { // //
-							double offset = 5;
-							if (i % 2 == 0) {
-								offset *= -1;
-							}
-							VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance.getPathway().getGraph()
-									.getVisualizationViewer();
-							double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
-							double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
-							double scale;
-							if (scaleV < 1) {
-								scale = scaleV;
-							} else {
-								scale = scaleL;
-							}
-							offset /= scale;
-
-							Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
-							while (it.hasNext()) {
-								bna = it.next();
-
-								if (bna instanceof Enzyme) {
-									p = graphInstance.getPathway().getGraph().getVertexLocation(bna); //
-									inv = //
-											graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext()
-													.getMultiLayerTransformer().inverseTransform(p); // inv.setLocation(inv.getX()
-																										// +
-																										// offset,
-																										// //
-																										// inv.getY());
-
-									// p = //
-									graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
-											.transform(inv);
-									vv.getModel().getGraphLayout().setLocation(bna, new Point2D.Double(p.getX() + offset, p.getY()));
-								}
-							}
-
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException ex) {
-							}
-						}
-					}
-				};
-				Thread thread = new Thread(animator);
-				thread.start();
+	@Override
+	public void run() {
+		BiologicalNodeAbstract bna;
+		Point2D p;
+		Point2D inv;
+		GraphInstance graphInstance = new GraphInstance();
+		for (int i = 0; i < 10; i++) { // //
+			double offset = 5;
+			if (i % 2 == 0) {
+				offset *= -1;
 			}
-
-		} else if ("graphPicture".equals(event)) {
-			// System.out.println("shake it");
-			// String latexFormula = FormulaParser.parseToLatex(formula);
-			// TeXIcon icon = FormulaParser.getTeXIcon(latexFormula);
-			Pathway pw = graphInstance.getPathway();
-			MyGraph mg = pw.getGraph();
-			MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> v = pw.getGraph().getVisualizationViewer();
-			// System.out.println(v.getGraphLayout().getClass());
-			// v.setBackground(Color.white);
-			if (!(mg.getLayout() instanceof StaticLayout)) {
-				graphInstance.getPathway().getGraph().changeToStaticLayout();
-			}
-			BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = new BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
-					pw.getGraph().getLayout());
-			// System.out.println(vv.getGraphLayout().getSize());
-			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = new VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
-					pw.getGraph().getLayout(), pw.getGraph().getLayout().getSize());
-			wvv.setBackground(Color.white);
-			for (int i = 0; i < v.getPreRenderers().size(); i++) {
-				wvv.addPreRenderPaintable(v.getPreRenderers().get(i));
-			}
-
-			GraphCenter gc = new GraphCenter(mg);
-			double width = gc.getWidth() * 2;
-			double height = gc.getHeight() * 2;
-
-			// System.out.println(v.getWidth());
-			// System.out.println(maxX-minX);
-			// System.out.println();
-			// System.out.println(v.getWidth());
-			// System.out.println(v.getHeight());
-
-			// wvv.setSize(new Dimension((int) width, (int) height));
-
-			// wvv.setSize(1300,700);
-
-			// v.getRenderer();
-			/*
-			 * wvv.getRenderer().setEdgeLabelRenderer((v.getRenderer().
-			 * getEdgeLabelRenderer()));
-			 * wvv.getRenderer().setEdgeRenderer(v.getRenderer().getEdgeRenderer
-			 * ()); wvv.getRenderer().setVertexLabelRenderer(v.getRenderer().
-			 * getVertexLabelRenderer());
-			 * wvv.getRenderer().setVertexRenderer(v.getRenderer().
-			 * getVertexRenderer());
-			 * 
-			 * 
-			 * 
-			 * 
-			 * 
-			 * wvv.getRenderContext().setVertexStrokeTransformer(v.
-			 * getRenderContext().getVertexStrokeTransformer());
-			 * wvv.getRenderContext().setVertexLabelTransformer(v.
-			 * getRenderContext().getVertexLabelTransformer());
-			 * wvv.getRenderContext().setVertexShapeTransformer(v.
-			 * getRenderContext().getVertexShapeTransformer());
-			 * wvv.getRenderContext().setVertexDrawPaintTransformer(v.
-			 * getRenderContext().getVertexDrawPaintTransformer());
-			 * wvv.getRenderContext().setVertexFillPaintTransformer(v.
-			 * getRenderContext().getVertexFillPaintTransformer());
-			 * wvv.getRenderContext().setVertexLabelRenderer(v.getRenderContext(
-			 * ).getVertexLabelRenderer());
-			 * 
-			 * wvv.getRenderContext().setEdgeLabelTransformer(v.getRenderContext
-			 * ().getEdgeLabelTransformer());
-			 * wvv.getRenderContext().setEdgeStrokeTransformer(v.
-			 * getRenderContext().getEdgeArrowStrokeTransformer());
-			 * wvv.getRenderContext().setEdgeDrawPaintTransformer(v.
-			 * getRenderContext().getEdgeDrawPaintTransformer());
-			 * wvv.getRenderContext().setEdgeFillPaintTransformer(v.
-			 * getRenderContext().getEdgeFillPaintTransformer());
-			 * wvv.getRenderContext().setEdgeShapeTransformer(v.getRenderContext
-			 * ().getEdgeShapeTransformer());
-			 * wvv.getRenderContext().setEdgeLabelRenderer(v.getRenderContext().
-			 * getEdgeLabelRenderer());
-			 * wvv.getRenderContext().setEdgeArrowTransformer(v.getRenderContext
-			 * ().getEdgeArrowTransformer());
-			 */
-			// wvv.setSize(v.getSize());
-
-			// wvv.setRenderContext(v.getRenderContext());
-			wvv.setBackground(Color.white);
-			// int width = v.getSize().width;
-			// int height = v.getSize().height;
-			// wvv.setDoubleBuffered(false);
-			// v.setDoubleBuffered(false);
-			// vv.setDoubleBuffered(false);
-			wvv.setRenderContext(v.getRenderContext());
-
-			double scaleV = v.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
-			double scaleL = v.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
-
+			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance.getPathway().getGraph().getVisualizationViewer();
+			double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
+			double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
 			double scale;
 			if (scaleV < 1) {
 				scale = scaleV;
-				// System.out.println("kleiner");
-				// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
-				// scaleV, wvv.getCenter());
-				// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(1,
-				// 1, wvv.getCenter());
 			} else {
 				scale = scaleL;
-				// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
-				// scaleV, wvv.getCenter());
-				// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(scaleL,
-				// scaleL, wvv.getCenter());
 			}
-			// System.out.println(scaleL);
-			wvv.setBounds((int) (gc.getMinX()), (int) (gc.getMinX()), (int) (width * scale) + 100, (int) (height * scale) + 100);
+			offset /= scale;
+
+			Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
+			while (it.hasNext()) {
+				bna = it.next();
+
+				if (bna instanceof Enzyme) {
+					p = graphInstance.getPathway().getGraph().getVertexLocation(bna); //
+					inv = //
+							graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
+									.inverseTransform(p); // inv.setLocation(inv.getX()
+															// +
+															// offset,
+															// //
+															// inv.getY());
+
+					// p = //
+					graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().transform(inv);
+					vv.getModel().getGraphLayout().setLocation(bna, new Point2D.Double(p.getX() + offset, p.getY()));
+				}
+			}
+
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException ex) {
+			}
+		}
+	}};
+
+	Thread thread = new Thread(animator);thread.start();}
+
+	}else if("graphPicture".equals(event)){
+	VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
+	ExportDialog export = new ExportDialog();
+
+	// export.setUserProperties(p);
+	// System.out.println(export.getInitialValue());
+
+	// export.setWantsInput(true);
+	// export.setInitialSelectionValue(5);
+
+	export.showExportDialog(MainWindowSingleton.getInstance(),"Export graph as ...",wvv,"export");
+	}
+
+	}
+
+	private VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> prepareGraphToPrint() {
+
+		// System.out.println("shake it");
+		// String latexFormula = FormulaParser.parseToLatex(formula);
+		// TeXIcon icon = FormulaParser.getTeXIcon(latexFormula);
+		GraphInstance graphInstance = new GraphInstance();
+		Pathway pw = graphInstance.getPathway();
+		MyGraph mg = pw.getGraph();
+		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> v = pw.getGraph().getVisualizationViewer();
+		// System.out.println(v.getGraphLayout().getClass());
+		// v.setBackground(Color.white);
+		if (!(mg.getLayout() instanceof StaticLayout)) {
+			graphInstance.getPathway().getGraph().changeToStaticLayout();
+		}
+		BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = new BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+				pw.getGraph().getLayout());
+		// System.out.println(vv.getGraphLayout().getSize());
+		VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = new VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+				pw.getGraph().getLayout(), pw.getGraph().getLayout().getSize());
+		wvv.setBackground(Color.white);
+		for (int i = 0; i < v.getPreRenderers().size(); i++) {
+			wvv.addPreRenderPaintable(v.getPreRenderers().get(i));
+		}
+
+		// wvv.addPostRenderPaintable(paintable);
+
+		wvv.addPostRenderPaintable(new Paintable() {
+
+			@Override
+			public boolean useTransform() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			@Override
+			public void paint(Graphics g) {
+
+				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
+
+				Place p;
+				BiologicalNodeAbstract bna;
+				while (it.hasNext()) {
+					bna = it.next();
+					if (bna instanceof Place) {
+						p = (Place) bna;
+						int x1 = (int) (p.getShape().getBounds2D().getMaxX() - p.getShape().getBounds2D().getMinX());
+						// int y1 = (int) (p.getShape().getBounds2D().getMaxY()
+						// - p.getShape()
+						// .getBounds2D().getMinY());
+
+						// double x1 =
+						// c.getBounds().getMaxX()-c.getBounds().getMinX();
+						// double y1 =
+						// c.getBounds().getMaxY()-c.getBounds().getMinY();
+
+						boolean discrete = false;
+						String tokens = p.getToken() + "";
+						if (p.isDiscrete()) {
+							tokens = (int) p.getToken() + "";
+							discrete = true;
+						}
+
+						if (p.hasRef() && p.getRef() instanceof Place) {
+							tokens = ((Place) p.getRef()).getToken() + "";
+							if (((Place) p.getRef()).isDiscrete()) {
+								tokens = (int) ((Place) p.getRef()).getToken() + "";
+								discrete = true;
+							}
+						}
+
+						int xpos;
+
+						Point2D point = v.getGraphLayout().transform(p);
+
+						// Point2D point = pw.getGraph().getVertexLocation(p);//
+						// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
+
+						// g2d.drawString("b",(int)((p.getX())),
+						// (int)((p.getY())*scale));
+						Point2D p1inv = v.getRenderContext().getMultiLayerTransformer().transform(point);
+
+						if (discrete) {
+							xpos = new Double(p1inv.getX() - x1 + 19 - 5 * ((double) tokens.length() / 2)).intValue();
+						} else {
+							xpos = new Double(p1inv.getX() - x1 + 21 - 5 * ((double) tokens.length() / 2)).intValue();
+						}
+
+						g.setColor(Color.BLACK);
+						int y = (int) p1inv.getY();
+						// g2.draw(AffineTransform.getScaleInstance(p.getNodesize(),
+						// p.getNodesize()).createTransformedShape(s));
+
+						// g.getFont()
+						// g.setFont(new Font("Arial",Font.PLAIN,12));
+						// g2.draw(s);
+						g.drawString(tokens, xpos, y + 7);
+						// TODO Auto-generated method stub
+
+					}
+				}
+			}
+		});
+
+		wvv.setBackground(Color.white);
+		// int width = v.getSize().width;
+		// int height = v.getSize().height;
+		// wvv.setDoubleBuffered(false);
+		// v.setDoubleBuffered(false);
+		// vv.setDoubleBuffered(false);
+
+		wvv.setRenderContext(v.getRenderContext());
+
+		double scaleV = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
+		double scaleL = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
+		// wvv.getRenderContext().setLabelOffset(-10);
+		// System.out.println("offset:
+		// "+wvv.getRenderContext().getLabelOffset());
+		double scale;
+		if (scaleV < 1) {
+			scale = scaleV;
+			// System.out.println("kleiner");
+			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
+			// scaleV, wvv.getCenter());
+			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(1,
+			// 1, wvv.getCenter());
+		} else {
+			scale = scaleL;
 			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
 			// scaleV, wvv.getCenter());
 			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(scaleL,
 			// scaleL, wvv.getCenter());
+		}
+		// System.out.println(scaleL);
+		// System.out.println(scale);
+		GraphCenter gc = new GraphCenter(mg);
+		double width = gc.getWidth();
+		double height = gc.getHeight();
 
-			// Properties p = new Properties();
-			// p.setProperty("PageSize", "A5");
-			// p.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, "false");
-			// VectorGraphics g;
-
-			// g = new SVGGraphics2D(new File("Output.svg"), new Dimension(100,
-			// 100));
-			// g.setProperties(p);
-			// g.startExport();
-			// wvv.print(g);
-			// g.endExport();
-
-			ExportDialog export = new ExportDialog();
-			// export.setUserProperties(p);
-			// System.out.println(export.getInitialValue());
-
-			// export.setWantsInput(true);
-			// export.setInitialSelectionValue(5);
-			export.showExportDialog(v, "Export graph as ...", wvv, "export");
-			// System.out.println(export.getSelectionValues());
-			// wvv.setDoubleBuffered(true);
-			// vv.setDoubleBuffered(true);
-			// v.setDoubleBuffered(true);
-
-			/*
-			 * Properties p = new Properties(); p.setProperty("PageSize", "A5");
-			 * VectorGraphics g; try { g = new SVGGraphics2D(new
-			 * File("Output.svg"), new Dimension(400, 300));
-			 * g.setBackground(Color.WHITE); g.setProperties(p);
-			 * g.startExport(); //vis.paintAll(g); g.endExport(); } catch
-			 * (IOException e1) { // TODO Auto-generated catch block
-			 * e1.printStackTrace(); }
-			 */
+		if (width > height) {
+			width = width * scale;
+		} else {
+			height = height * scale;
 		}
 
+		// System.out.println("widht: "+width);
+		// System.out.println("height: "+height);
+		// System.out.println("minx:"+gc.getMinX());
+		// System.out.println("maxX:" + gc.getMaxX());
+		// System.out.println("miny:"+gc.getMinY());
+
+		Point2D p1inv = v.getRenderContext().getMultiLayerTransformer()
+				.transform(new Point2D.Double(gc.getMinX() + gc.getWidth(), gc.getMinY() + gc.getHeight()));
+
+		wvv.setBounds(0, 0, (int) p1inv.getX() + 50, (int) p1inv.getY() + 50);
+		// wvv.setBounds((int) (gc.getMinX()), (int) (gc.getMinY()), (int)
+		// (width)+50, (int) (height)+50);
+		// System.out.println("minx:"+gc.getMinX());
+		// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
+		// scaleV, wvv.getCenter());
+		// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(scaleL,
+		// scaleL, wvv.getCenter());
+
+		// Properties p = new Properties();
+		// p.setProperty("PageSize", "A5");
+		// p.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, "false");
+
+		/*
+		 * try { SVGGraphics2D g; g = new SVGGraphics2D(new File("Output.svg"),
+		 * new Dimension((int)(width), (int)(height))); // g.setProperties(p);
+		 * g.startExport(); wvv.print(g); g.endExport(); } catch (IOException
+		 * e1) { // TODO Auto-generated catch block e1.printStackTrace(); }
+		 */
+
+		// System.out.println(export.getSelectionValues());
+		// wvv.setDoubleBuffered(true);
+		// vv.setDoubleBuffered(true);
+		// v.setDoubleBuffered(true);
+
+		/*
+		 * Properties p = new Properties(); p.setProperty("PageSize", "A5");
+		 * VectorGraphics g; try { g = new SVGGraphics2D(new File("Output.svg"),
+		 * new Dimension(400, 300)); g.setBackground(Color.WHITE);
+		 * g.setProperties(p); g.startExport(); //vis.paintAll(g);
+		 * g.endExport(); } catch (IOException e1) { // TODO Auto-generated
+		 * catch block e1.printStackTrace(); }
+		 */
+		return wvv;
 	}
 
 	private double[][] initArray(int m, int n) {

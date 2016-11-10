@@ -3,6 +3,8 @@ package graph.jung.classes;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
@@ -41,6 +43,7 @@ import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationModel;
+import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.EditingPopupGraphMousePlugin;
@@ -62,6 +65,7 @@ import graph.jung.graphDrawing.MyEdgeStringer;
 import graph.jung.graphDrawing.MyEdgeStrokeHighlighting;
 import graph.jung.graphDrawing.MyVertexDrawPaintFunction;
 import graph.jung.graphDrawing.MyVertexFillPaintFunction;
+import graph.jung.graphDrawing.MyVertexIconTransformer;
 import graph.jung.graphDrawing.MyVertexLabelRenderer;
 import graph.jung.graphDrawing.MyVertexShapeTransformer;
 import graph.jung.graphDrawing.MyVertexStringer;
@@ -101,6 +105,7 @@ public class MyGraph {
 	protected MyVertexStrokeHighlighting vsh;
 	protected MyVertexDrawPaintFunction vdpf;
 	protected MyVertexFillPaintFunction vfpf;
+	protected MyVertexIconTransformer vit;
 	protected MyEdgeStrokeHighlighting esh;
 	protected MyEdgeDrawPaintFunction edpf;
 	protected MyEdgeFillPaintFunction efpf;
@@ -253,6 +258,7 @@ public class MyGraph {
 		vsh = new MyVertexStrokeHighlighting(stateV, stateE, pathway);
 		vdpf = new MyVertexDrawPaintFunction(stateV, stateE, pathway);
 		vfpf = new MyVertexFillPaintFunction(stateV, stateE, pathway);
+		vit = new MyVertexIconTransformer();
 		// vssa = new VertexShapeSize(pathway);
 		esh = new MyEdgeStrokeHighlighting(stateV, stateE);
 		edpf = new MyEdgeDrawPaintFunction(stateV, stateE);
@@ -374,20 +380,101 @@ public class MyGraph {
 		pr.setVertexDrawPaintTransformer(vdpf);
 		pr.setVertexFillPaintTransformer(vfpf);
 
-		Transformer<BiologicalNodeAbstract, Icon> vertexIconTransformer = new Transformer<BiologicalNodeAbstract, Icon>() {
+		pr.setVertexIconTransformer(vit);
+		
+		vv.addPostRenderPaintable(new Paintable() {
 
-			public Icon transform(BiologicalNodeAbstract bna) {
-				if (bna instanceof Place) {
-					Icon icon = new DynamicIcon((Place) bna);
+			@Override
+			public boolean useTransform() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 
-					return icon;
-				} else {
-					return null;
+			@Override
+			public void paint(Graphics g) {
+
+				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
+
+				Place p;
+				BiologicalNodeAbstract bna;
+				while (it.hasNext()) {
+					bna = it.next();
+					if (bna instanceof Place) {
+						p = (Place) bna;
+						int x1 = (int) (p.getShape().getBounds2D().getMaxX() - p.getShape().getBounds2D().getMinX());
+						// int y1 = (int) (p.getShape().getBounds2D().getMaxY()
+						// - p.getShape()
+						// .getBounds2D().getMinY());
+
+						// double x1 =
+						// c.getBounds().getMaxX()-c.getBounds().getMinX();
+						// double y1 =
+						// c.getBounds().getMaxY()-c.getBounds().getMinY();
+
+						boolean discrete = false;
+						String tokens = p.getToken() + "";
+						if (p.isDiscrete()) {
+							tokens = (int) p.getToken() + "";
+							discrete = true;
+						}
+
+						if (p.hasRef() && p.getRef() instanceof Place) {
+							tokens = ((Place) p.getRef()).getToken() + "";
+							if (((Place) p.getRef()).isDiscrete()) {
+								tokens = (int) ((Place) p.getRef()).getToken() + "";
+								discrete = true;
+							}
+						}
+
+						int xpos;
+
+						Point2D point = vv.getGraphLayout().transform(p);
+						
+						//Point2D point = pw.getGraph().getVertexLocation(p);// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
+
+						// g2d.drawString("b",(int)((p.getX())), (int)((p.getY())*scale));
+						Point2D p1inv = vv.getRenderContext().getMultiLayerTransformer()
+								.transform(point);
+						
+						double scaleV = vv.getRenderContext().getMultiLayerTransformer()
+								.getTransformer(Layer.VIEW).getScale();
+						
+						
+						if (discrete) {
+							xpos = new Double(p1inv.getX() - x1 + (19 - 5 * (double) tokens.length() / 2)).intValue();
+						} else {
+							xpos = new Double(p1inv.getX() - x1 + (21 - 5 * (double) tokens.length() / 2)).intValue() ;
+						}
+
+						g.setColor(Color.BLACK);
+						int y = (int) p1inv.getY();
+						// g2.draw(AffineTransform.getScaleInstance(p.getNodesize(),
+						// p.getNodesize()).createTransformedShape(s));
+						
+						//g.getFont()
+						
+						
+						double scaleL = vv.getRenderContext().getMultiLayerTransformer()
+								.getTransformer(Layer.LAYOUT).getScale();
+						double scale;
+						if (scaleV < 1) {
+							scale = scaleV;
+						} else {
+							scale = scaleL;
+						}
+						scale = ((double) ((int) (scale * 100)) / 100);
+						
+						int fontSize =(int) (14.0 * scaleV);
+						g.setFont(new Font("Arial", Font.PLAIN, fontSize));
+						//g.setFont(new Font);
+						// g2.draw(s);
+						g.drawString(tokens, xpos, (int)(y + 7*scaleV));
+						// TODO Auto-generated method stub
+
+					}
 				}
 			}
-		};
-
-		pr.setVertexIconTransformer(vertexIconTransformer);
+		});
 
 		satellitePr.setVertexStrokeTransformer(vsh);
 		satellitePr.setVertexLabelTransformer(vertexStringer);
@@ -396,6 +483,7 @@ public class MyGraph {
 		satellitePr.setEdgeLabelTransformer(this.edgeStringer);
 		satellitePr.setVertexDrawPaintTransformer(vdpf);
 		satellitePr.setVertexFillPaintTransformer(vfpf);
+		satellitePr.setVertexIconTransformer(vit);
 		satellitePr.setEdgeStrokeTransformer(esh);
 		satellitePr.setEdgeDrawPaintTransformer(edpf);
 		satellitePr.setEdgeFillPaintTransformer(efpf);
@@ -842,6 +930,7 @@ public class MyGraph {
 		pr_compare.setEdgeLabelTransformer(this.edgeStringer);
 		pr_compare.setVertexDrawPaintTransformer(vdpf);
 		pr_compare.setVertexFillPaintTransformer(vfpf);
+		pr_compare.setVertexIconTransformer(vit);
 		pr_compare.setEdgeStrokeTransformer(esh);
 		pr_compare.setEdgeDrawPaintTransformer(edpf);
 		pr_compare.setEdgeFillPaintTransformer(efpf);
