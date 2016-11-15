@@ -327,7 +327,7 @@ public class MOoutput {
 			String weight;
 			if (bea instanceof PNEdge) {
 				e = (PNEdge) bea;
-				System.out.println("edge");
+				//System.out.println("edge");
 				// Edge Place -> Transition
 				if (e.getFrom() instanceof Place) {
 
@@ -615,7 +615,7 @@ public class MOoutput {
 
 		if (bna instanceof ContinuousTransition) {
 			if (colored) {
-				return "PNlib.Examples.Models.ColoredPlaces.CTC";
+				return "PNlib.Examples.Models.BicoloredPlaces.CTC";
 			}
 			return "PNlib.TC";
 		} else if (bna instanceof DiscreteTransition) {
@@ -627,7 +627,7 @@ public class MOoutput {
 				return "PNlib.PD";
 			} else {
 				if (colored) {
-					return "PNlib.Examples.Models.ColoredPlaces.CPC";
+					return "PNlib.Examples.Models.BicoloredPlaces.CPC";
 				}
 				return "PNlib.PC";
 			}
