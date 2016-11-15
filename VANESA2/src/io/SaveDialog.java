@@ -295,10 +295,17 @@ public class SaveDialog {
 			getCorrectFile(mo);
 			new MOoutput(new FileOutputStream(file),
 					new GraphInstance().getPathway(), false);
-			new MOoutput(new FileOutputStream(new File(file.getAbsolutePath()+"_colored.mo")),
+			String path_colored = file.getAbsolutePath();
+			if (path_colored.endsWith(".mo")) {
+				path_colored = path_colored.substring(0, path_colored.length()-3);
+			}
+	
+			new MOoutput(new FileOutputStream(new File(path_colored+"_colored.mo")),
 					new GraphInstance().getPathway(), true);
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
-					moDescription + " File saved");
+			
+			MyPopUpSingleton.getInstance().show("Modelica export", moDescription + " File saved");
+			//JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+				//	moDescription + " File saved");
 
 		} else if (fileFormat.equals(txtDescription)) {
 			getCorrectFile(txt);

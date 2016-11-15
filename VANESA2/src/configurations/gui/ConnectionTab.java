@@ -82,6 +82,13 @@ public class ConnectionTab extends JPanel {
 
 		this.add(connectionPanel, "span,wrap ,growx ,gap 10, gaptop 2");
 
+		
+		this.add(new JLabel("Web Server Settings"), "span 4");
+		this.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
+
+		this.add(new JLabel("Server URL"), "span 2, gap 17, gaptop 2 ");
+		this.add(server_url, "span,wrap 15 ,growx ,gap 10, gaptop 2");
+
 		this.add(new JLabel("Database Settings"), "span 4");
 		this.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
 
@@ -97,12 +104,8 @@ public class ConnectionTab extends JPanel {
 		this.add(new JLabel("Host:Port"), "span 2, gap 17, gaptop 2 ");
 		this.add(host, "span,wrap 15 ,growx ,gap 10, gaptop 2");
 
-		this.add(new JLabel("Web Server Settings"), "span 4");
-		this.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
-
-		this.add(new JLabel("Server URL"), "span 2, gap 17, gaptop 2 ");
-		this.add(server_url, "span,wrap 15 ,growx ,gap 10, gaptop 2");
-
+		this.add(new JLabel("Local databases to apply settings"), "span 4,wrap");
+		
 		this.add(new JLabel("WebService Type"), "span 4");
 		this.add(new JSeparator(), "span, growx, wrap 5, gaptop 2, gap 5");
 		this.add(new JLabel("With adressing"), "span 2, gap 17, gaptop 2 ");
