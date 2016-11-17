@@ -232,7 +232,7 @@ public class VisualizationDialog {
 				}
 			}
 		});
-		System.out.println("Dialog Konstruktor: " + loadedYaml);			
+		//System.out.println("Dialog Konstruktor: " + loadedYaml);			
 	}
 	
 	
@@ -345,9 +345,4 @@ public class VisualizationDialog {
 	public void setPanel(JPanel panel) {
 		this.panel = panel;
 	}
-
-
-
 }
-	
-

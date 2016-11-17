@@ -45,7 +45,6 @@ public class DatabaseSearchListener implements ActionListener {
 		BRENDASearch brendaSearch = new BRENDASearch(dw.getInput(),
 				MainWindowSingleton.getInstance(), null, dw.isHeadless());
 		brendaSearch.execute();
-		System.out.println(dw.isHeadless());
 	}
 
 	/**

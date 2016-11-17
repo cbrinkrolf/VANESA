@@ -132,7 +132,5 @@ public class Settings extends JDialog implements ActionListener {
 						"Error found - please change settings!");
 			}
 		}
-
 	}
-
 }
