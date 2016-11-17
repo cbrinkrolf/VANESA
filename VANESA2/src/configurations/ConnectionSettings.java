@@ -15,6 +15,13 @@ public class ConnectionSettings
 	private static DBconnection db_connection=null;
 	private static boolean useInternetConnection=true;
 	
+	private static boolean localMiRNA = false;
+	private static boolean localKegg = false;
+	private static boolean localHprd = false;
+	private static boolean localMint = false;
+	private static boolean localIntact = false;
+	private static boolean localBrenda = false;
+	
 	private static String web_service_url=new String(); 
 	
 	private static String proxy_host=new String();
@@ -112,5 +119,53 @@ public class ConnectionSettings
 	public static void setWebServiceUrl(String web_service_url)
 	{
 		ConnectionSettings.web_service_url=web_service_url;
+	}
+
+	public static boolean isLocalKegg() {
+		return localKegg;
+	}
+
+	public static void setLocalKegg(boolean localKegg) {
+		ConnectionSettings.localKegg = localKegg;
+	}
+
+	public static boolean isLocalHprd() {
+		return localHprd;
+	}
+
+	public static void setLocalHprd(boolean localHprd) {
+		ConnectionSettings.localHprd = localHprd;
+	}
+
+	public static boolean isLocalMint() {
+		return localMint;
+	}
+
+	public static void setLocalMint(boolean localMint) {
+		ConnectionSettings.localMint = localMint;
+	}
+
+	public static boolean isLocalIntact() {
+		return localIntact;
+	}
+
+	public static void setLocalIntact(boolean localIntact) {
+		ConnectionSettings.localIntact = localIntact;
+	}
+
+	public static boolean isLocalBrenda() {
+		return localBrenda;
+	}
+
+	public static void setLocalBrenda(boolean localBrenda) {
+		ConnectionSettings.localBrenda = localBrenda;
+	}
+
+	public static boolean isLocalMiRNA() {
+		return localMiRNA;
+	}
+
+	public static void setLocalMiRNA(boolean localMiRNA) {
+		ConnectionSettings.localMiRNA = localMiRNA;
 	}
 }

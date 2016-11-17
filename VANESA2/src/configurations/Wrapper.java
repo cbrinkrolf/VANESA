@@ -21,7 +21,6 @@ public class Wrapper implements WebServiceListener {
 	public static final int dbtype_Cardio = 5;
 	public static final int dbtype_MiRNA = 6;
 
-	
 	private DBconnection db;
 
 	private AsynchroneWebServiceWrapper web_service = null;
@@ -49,85 +48,81 @@ public class Wrapper implements WebServiceListener {
 	 * @param attributes
 	 * @return
 	 */
-	public ArrayList<DBColumn> requestDbContent(int database, String query,
-			String[] attributes) {
-		//System.out.println(database);
+	public ArrayList<DBColumn> requestDbContent(int database, String query, String[] attributes) {
+		// System.out.println(database);
 		if (!ConnectionSettings.useInternetConnection()) {
 			// -- use database --
-			if (dbtype_PPI == database)
-				ConnectionSettings.getDBConnection().useDatabase(
-						ConnectionSettings.getDBConnection().getPpiDBName());
-			else if (dbtype_MiRNA == database) {
-				ConnectionSettings.getDBConnection().useDatabase(
-						ConnectionSettings.getDBConnection().getmirnaDBName());
-		
+			if (dbtype_MiRNA == database && ConnectionSettings.isLocalMiRNA()) {
+				return getLocalRequestDbContent(database, query, attributes);
 			}
-			else
-				ConnectionSettings.getDBConnection().useDatabase(
-						ConnectionSettings.getDBConnection().getDawisDBName());
+		}
+		return getOnlineRequestDbContent(database, query, attributes);
 
-			return getDBResult(query, attributes);
-		} else {
-			// -- build a query string with attributes --
-			query = buildQueryWithAttributes(query, attributes);
+	}
 
-			// -- use webservice --
-			
-			if (dbtype_PPI == database){
-					getWebserviceResult(ConnectionSettings.getDBConnection().getPpiDBName(), query);
-			}
+	private ArrayList<DBColumn> getOnlineRequestDbContent(int database, String query, String[] attributes) {
+		// -- build a query string with attributes --
+		query = buildQueryWithAttributes(query, attributes);
 
-			else if (dbtype_MiRNA == database) {
-				getWebserviceResult(ConnectionSettings.getDBConnection()
-						.getmirnaDBName(), query);
-			}
-			else
-				getWebserviceResult(ConnectionSettings.getDBConnection()
-						.getDawisDBName(), query);
+		// -- use webservice --
 
-			return dbResults;
+		if (dbtype_PPI == database) {
+			getWebserviceResult(ConnectionSettings.getDBConnection().getPpiDBName(), query);
 		}
 
+		else if (dbtype_MiRNA == database) {
+			getWebserviceResult(ConnectionSettings.getDBConnection().getmirnaDBName(), query);
+		} else
+			getWebserviceResult(ConnectionSettings.getDBConnection().getDawisDBName(), query);
+
+		return dbResults;
+
+	}
+
+	private ArrayList<DBColumn> getLocalRequestDbContent(int database, String query, String[] attributes) {
+		if (dbtype_PPI == database)
+			ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.getDBConnection().getPpiDBName());
+		else if (dbtype_MiRNA == database) {
+			ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.getDBConnection().getmirnaDBName());
+		} else
+			ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.getDBConnection().getDawisDBName());
+		System.out.println("local");
+		return getDBResult(query, attributes);
 	}
 
 	public ArrayList<DBColumn> requestDbContent(int database, String query) {
-		if (!ConnectionSettings.useInternetConnection()) {
-			// -- use database --
-			
-			if (dbtype_PPI == database)
-				ConnectionSettings.getDBConnection().useDatabase(
-						ConnectionSettings.getDBConnection().getPpiDBName());
-			else if (dbtype_MiRNA == database) {
-				
-				ConnectionSettings.getDBConnection().useDatabase(
-						ConnectionSettings.getDBConnection().getmirnaDBName());
-			}
-			else
-				ConnectionSettings.getDBConnection().useDatabase(
-						ConnectionSettings.getDBConnection().getDawisDBName());
 
-			return getDBResult(query, null);
-		} else {
-			// -- use webservice --
-			if (dbtype_PPI == database){
-				getWebserviceResult(ConnectionSettings.getDBConnection()
-						.getPpiDBName(), query);
-			}
-			
-			else if(dbtype_MiRNA == database){
-				getWebserviceResult(ConnectionSettings.getDBConnection()
-						.getmirnaDBName(), query);
-				
-			}
-				else{ getWebserviceResult(ConnectionSettings.getDBConnection()
-						.getDawisDBName(), query);
-			}
-			return dbResults;
-		}
+		return this.requestDbContent(database, query, null);
+		/*
+		 * if (!ConnectionSettings.useInternetConnection()) { // -- use database
+		 * --
+		 * 
+		 * if (dbtype_PPI == database)
+		 * ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.
+		 * getDBConnection().getPpiDBName()); else if (dbtype_MiRNA == database)
+		 * {
+		 * 
+		 * ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.
+		 * getDBConnection().getmirnaDBName()); } else
+		 * ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.
+		 * getDBConnection().getDawisDBName());
+		 * 
+		 * return getDBResult(query, null); } else { // -- use webservice -- if
+		 * (dbtype_PPI == database) {
+		 * getWebserviceResult(ConnectionSettings.getDBConnection().getPpiDBName
+		 * (), query); }
+		 * 
+		 * else if (dbtype_MiRNA == database) {
+		 * getWebserviceResult(ConnectionSettings.getDBConnection().
+		 * getmirnaDBName(), query);
+		 * 
+		 * } else { getWebserviceResult(ConnectionSettings.getDBConnection().
+		 * getDawisDBName(), query); } return dbResults; }
+		 */
 	}
 
 	private void getWebserviceResult(String database, String query) {
-		if(web_service.isWithAddressing()) {
+		if (web_service.isWithAddressing()) {
 			UUID requestID = web_service.callWebserviceWithQuery(database, query);
 
 			serviceRequestIDs.add(requestID);
@@ -136,11 +131,10 @@ public class Wrapper implements WebServiceListener {
 			waitOnServiceResult();
 
 			serviceRequestIDs.remove(requestID);
-		}
-		else {
+		} else {
 			web_service.callWebserviceWithQuery(database, query);
 		}
-		
+
 	}
 
 	private void waitOnServiceResult() {
@@ -154,16 +148,17 @@ public class Wrapper implements WebServiceListener {
 		}
 	}
 
-	public String buildQueryWithAttributes(String workingQuery,
-			String[] attributes) {
+	public String buildQueryWithAttributes(String workingQuery, String[] attributes) {
 		String finalQuery = workingQuery;
 
-		for (String attribute : attributes) {
-			finalQuery = finalQuery.replaceFirst(QUESTION_MARK, "\""
-					+ attribute + "\"");
+		if (attributes == null) {
+			return finalQuery;
 		}
-
+		for (String attribute : attributes) {
+			finalQuery = finalQuery.replaceFirst(QUESTION_MARK, "\"" + attribute + "\"");
+		}
 		return finalQuery + ";";
+
 	}
 
 	public ArrayList<DBColumn> getDBResult(String query, String[] attributes) {
@@ -209,6 +204,6 @@ public class Wrapper implements WebServiceListener {
 			columnResult = VanesaUtility.createResultList(event);
 			dbResults = columnResult;
 		}
-		
+
 	}
 }

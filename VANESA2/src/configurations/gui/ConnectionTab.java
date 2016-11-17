@@ -5,6 +5,8 @@
 package configurations.gui;
 
 import java.awt.Color;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.net.InetAddress;
 import java.net.URL;
 
@@ -17,11 +19,11 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import net.miginfocom.swing.MigLayout;
 import configurations.ConnectionSettings;
 import configurations.ResourceLibrary;
 import configurations.asyncWebservice.AsynchroneWebServiceWrapper;
 import database.Connection.DBconnection;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author Benjamin Kormeier
@@ -37,8 +39,16 @@ public class ConnectionTab extends JPanel {
 	private JLabel status = new JLabel(" ");
 	private JTextField server_url;
 	private ButtonGroup group = new ButtonGroup();
-	private JRadioButton server = new JRadioButton("", true);
-	private JRadioButton database = new JRadioButton("", true);
+	private JRadioButton server = new JRadioButton("", false);
+	private JRadioButton database = new JRadioButton("", false);
+
+	private JCheckBox allChk = new JCheckBox("all");
+	private JCheckBox keggChk = new JCheckBox("KEGG");
+	private JCheckBox hprdChk = new JCheckBox("HPRD");
+	private JCheckBox mintChk = new JCheckBox("Mint");
+	private JCheckBox intactChk = new JCheckBox("IntAct");
+	private JCheckBox brendaChk = new JCheckBox("Brenda");
+	private JCheckBox mirnaChk = new JCheckBox("miRNA");
 
 	private DBconnection db_connection = ConnectionSettings.getDBConnection();
 
@@ -48,6 +58,11 @@ public class ConnectionTab extends JPanel {
 	public ConnectionTab() {
 		MigLayout layout = new MigLayout("", "[left]");
 
+		if (ConnectionSettings.useInternetConnection()) {
+			server.setSelected(true);
+		} else {
+			database.setSelected(true);
+		}
 		group.add(server);
 		group.add(database);
 
@@ -66,8 +81,28 @@ public class ConnectionTab extends JPanel {
 		server_url = new JTextField(20);
 		server_url.setText(ConnectionSettings.getWebServiceUrl());
 
+		keggChk.setSelected(ConnectionSettings.isLocalKegg());
+		hprdChk.setSelected(ConnectionSettings.isLocalHprd());
+		mintChk.setSelected(ConnectionSettings.isLocalMint());
+		intactChk.setSelected(ConnectionSettings.isLocalIntact());
+		brendaChk.setSelected(ConnectionSettings.isLocalBrenda());
+		mirnaChk.setSelected(ConnectionSettings.isLocalMiRNA());
 		status.setForeground(Color.RED);
 
+		allChk.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getItem() == allChk){
+					keggChk.setSelected(allChk.isSelected());
+					hprdChk.setSelected(allChk.isSelected());
+					mintChk.setSelected(allChk.isSelected());
+					intactChk.setSelected(allChk.isSelected());
+					brendaChk.setSelected(allChk.isSelected());
+					mirnaChk.setSelected(allChk.isSelected());
+				}
+			}
+		});
+		
 		this.setLayout(layout);
 
 		this.add(new JLabel("Connection Type"), "span 4");
@@ -82,7 +117,6 @@ public class ConnectionTab extends JPanel {
 
 		this.add(connectionPanel, "span,wrap ,growx ,gap 10, gaptop 2");
 
-		
 		this.add(new JLabel("Web Server Settings"), "span 4");
 		this.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
 
@@ -104,8 +138,16 @@ public class ConnectionTab extends JPanel {
 		this.add(new JLabel("Host:Port"), "span 2, gap 17, gaptop 2 ");
 		this.add(host, "span,wrap 15 ,growx ,gap 10, gaptop 2");
 
-		this.add(new JLabel("Local databases to apply settings"), "span 4,wrap");
-		
+		this.add(new JLabel("Apply local databases to"), "span 4,wrap");
+
+		this.add(allChk, "span 4, wrap");
+		this.add(keggChk, "span 4");
+		this.add(hprdChk, "span 4");
+		this.add(intactChk, "span 4, wrap");
+		this.add(mintChk, "span 4");
+		this.add(brendaChk, "span 4");
+		this.add(mirnaChk, "span 4, wrap");
+
 		this.add(new JLabel("WebService Type"), "span 4");
 		this.add(new JSeparator(), "span, growx, wrap 5, gaptop 2, gap 5");
 		this.add(new JLabel("With adressing"), "span 2, gap 17, gaptop 2 ");
@@ -139,6 +181,13 @@ public class ConnectionTab extends JPanel {
 			ConnectionSettings.setInternetConnection(false);
 		}
 
+		ConnectionSettings.setLocalBrenda(brendaChk.isSelected());
+		ConnectionSettings.setLocalHprd(hprdChk.isSelected());
+		ConnectionSettings.setLocalIntact(intactChk.isSelected());
+		ConnectionSettings.setLocalKegg(keggChk.isSelected());
+		ConnectionSettings.setLocalMint(mintChk.isSelected());
+		ConnectionSettings.setLocalMiRNA(mirnaChk.isSelected());
+
 		asyn_webservice.setAddressing(withWSAasynchron.isSelected());
 
 		ConnectionSettings.setWebServiceUrl(server_url.getText());
@@ -160,6 +209,7 @@ public class ConnectionTab extends JPanel {
 
 		ConnectionSettings.setDBConnection(db_connection);
 		ConnectionSettings.setInternetConnection(true);
+		ConnectionSettings.setLocalMiRNA(false);
 		ConnectionSettings.setWebServiceUrl(def_webservice);
 
 		asyn_webservice.setAddressing(true);
