@@ -354,9 +354,16 @@ public class PetriNetSimulation implements ActionListener {
 						pw.getGraph().getVisualizationViewer().requestFocus();
 						w.redrawGraphs();
 						// CHRIS sometimes nullpointer
-						List<Double> v = pw.getPetriNet().getSimResController().get().getTime().getAll();
+						System.out.println(pw.getPetriNet());
+						System.out.println(pw.getPetriNet().getSimResController());
+						System.out.println(pw.getPetriNet().getSimResController().get());
+						System.out.println(pw.getPetriNet().getSimResController().get().getTime());
+						List<Double> v = null;//pw.getPetriNet().getSimResController().get().getTime().getAll();
 						// System.out.println("running");
 						while (s.isRunning()) {
+							if(v == null && pw.getPetriNet().getSimResController().get() != null){
+								v = pw.getPetriNet().getSimResController().get().getTime().getAll();
+							}
 							// System.out.println("im thread");
 							w.redrawGraphs();
 							// GraphInstance graphInstance = new
@@ -366,7 +373,7 @@ public class PetriNetSimulation implements ActionListener {
 							// MainWindow w = MainWindowSingelton.getInstance();
 
 							// double time =
-							if (v.size() > 0) {
+							if (v != null && v.size() > 0) {
 								menue.setTime((v.get(v.size() - 1)).toString());
 							}
 							try {
