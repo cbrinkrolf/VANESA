@@ -1,5 +1,9 @@
 package gui;
 
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
@@ -22,6 +26,7 @@ public class MyPopUp {
 	}
 
 	public void show(String title, String message) {
+
 		JOptionPane pane = new JOptionPane(message, JOptionPane.NO_OPTION);
 		JDialog dialog = pane.createDialog(null, title);
 		dialog.setModal(false);
@@ -35,18 +40,66 @@ public class MyPopUp {
 		dialog.setLocation(x - dialog.getWidth() - 10, y - ((pos + 1) * dialog.getHeight()) - 10);
 		dialog.setVisible(true);
 		dialog.setFocusableWindowState(false);
+		dialog.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//stop count down if pop up is clicked
+				if (!dialog.getTitle().startsWith("Stopped...")) {
+					dialog.setTitle("Stopped... " + dialog.getTitle());
+				}
+			}
+		});
+
+		dialog.addComponentListener(new ComponentListener() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+			}
+
+			public void componentHidden(ComponentEvent e) {
+				// free stack position after closing pop up window
+				freePosition(pos);
+			}
+		});
 
 		Thread t = new Thread() {
 			public void run() {
 				long totalTime = time;
 				try {
 					for (long t = 0; t < totalTime; t += 1000) {
+						if (dialog.getTitle().startsWith("Stopped...")) {
+							break;
+						}
 						dialog.setTitle(title + " " + (time - t) / 1000 + "s");
 						sleep(1000);
 					}
-					dialog.setVisible(false);
-					dialog.dispose();
-					freePosition(pos);
+					if (!dialog.getTitle().startsWith("Stopped...")) {
+						dialog.setVisible(false);
+						dialog.dispose();
+					}
 				} catch (Exception e) {
 				}
 			}
