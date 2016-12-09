@@ -27,9 +27,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import petriNet.ContinuousTransition;
-import petriNet.Place;
-import petriNet.Transition;
+import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -47,6 +45,9 @@ import graph.gui.EdgeDialog;
 import graph.gui.PetriNetVertexDialog;
 import graph.gui.VertexDialog;
 import gui.MainWindowSingleton;
+import petriNet.ContinuousTransition;
+import petriNet.Place;
+import petriNet.Transition;
 
 /**
  * A plugin that can create vertices, undirected edges, and directed edges using
@@ -329,10 +330,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 					BiologicalNodeAbstract[] nodes = answer.getRight();
 
 					if (answers != null) {
-
 						if (answers[2] != null
-								&& answers[2]
-										.equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)
+								&& answers[2].toLowerCase().contains("inhibi")
 								&& !(startVertex instanceof Place && vertex instanceof Transition))
 							JOptionPane
 									.showMessageDialog(
@@ -344,6 +343,9 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 							String name = answers[0];
 							String label = answers[0];
 							String element = answers[2];
+							if(answers[2].toLowerCase().contains("inhibi")){
+								element = Elementdeclerations.pnInhibitionEdge;
+							}
 							boolean directed = false;
 							if (answers[1].equals("directed_edge")) {
 								directed = true;

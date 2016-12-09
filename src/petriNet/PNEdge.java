@@ -36,7 +36,7 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		super.setDirected(true);
 		this.type = type;
 		if (type.equals(biologicalElements.Elementdeclerations.inhibitionEdge)
-				|| type.equals(biologicalElements.Elementdeclerations.inhibitor)) {
+				|| type.equals(biologicalElements.Elementdeclerations.inhibitor) || type.equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
 			setBiologicalElement(biologicalElements.Elementdeclerations.pnInhibitionEdge);
 		} else {
 			setBiologicalElement(biologicalElements.Elementdeclerations.pnEdge);
