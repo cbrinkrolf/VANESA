@@ -54,6 +54,8 @@ public class Wrapper implements WebServiceListener {
 			// -- use database --
 			if (dbtype_MiRNA == database && ConnectionSettings.isLocalMiRNA()) {
 				return getLocalRequestDbContent(database, query, attributes);
+			}else if(dbtype_KEGG == database && ConnectionSettings.isLocalKegg()){
+				return getLocalRequestDbContent(database, query, attributes);
 			}
 		}
 		return getOnlineRequestDbContent(database, query, attributes);

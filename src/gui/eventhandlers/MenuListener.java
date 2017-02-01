@@ -2,7 +2,6 @@ package gui.eventhandlers;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,28 +21,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.Subject;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.apache.commons.collections15.Transformer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.freehep.graphics2d.VectorGraphics;
-import org.freehep.graphicsio.pdf.PDF;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
-import org.freehep.graphicsio.png.PNGEncoder;
-import org.freehep.graphicsio.svg.SVGGraphics2D;
 import org.freehep.util.export.ExportDialog;
-
-import com.sun.imageio.plugins.png.PNGImageWriter;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -61,14 +51,6 @@ import configurations.gui.LayoutConfig;
 import configurations.gui.Settings;
 import dataMapping.DataMappingColorMVC;
 import database.mirna.miRNAqueries;
-import de.ipk_gatersleben.bit.bi.edal.primary_data.file.PrimaryDataFileException;
-import de.ipk_gatersleben.bit.bi.edal.primary_data.security.EdalAuthenticateException;
-import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientDataManager;
-import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientPrimaryDataEntity;
-import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientPrimaryDataFile;
-import de.ipk_gatersleben.bit.bi.edal.rmi.client.gui.EdalFileChooser;
-import de.ipk_gatersleben.bit.bi.edal.rmi.server.Authentication;
-import de.ipk_gatersleben.bit.bi.edal.sample.EdalHelpers;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
@@ -78,8 +60,8 @@ import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
@@ -93,7 +75,6 @@ import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.algorithms.gui.smacof.view.SmacofView;
 import graph.jung.classes.MyGraph;
 import graph.jung.classes.MyVisualizationViewer;
-import graph.jung.graphDrawing.DynamicIcon;
 import graph.layouts.Circle;
 import graph.layouts.GraphCenter;
 import graph.layouts.gemLayout.GEMLayout;
@@ -180,7 +161,7 @@ public class MenuListener implements ActionListener {
 			op.execute();
 
 		} else if ("openEdal".equals(event)) {
-			int SERVER_PORT = 2000;
+			/*int SERVER_PORT = 2000;
 			String SERVER_ADDRESS = "bit-249.ipk-gatersleben.de";
 
 			Subject subject = null;
@@ -191,10 +172,10 @@ public class MenuListener implements ActionListener {
 				e1.printStackTrace();
 			}
 
-			/** alternatively use Google+ login **/
+			// alternatively use Google+ login 
 			// Subject subject = EdalHelpers.authenticateGoogleUser("", 3128);
 
-			/** connect to running EDAL server on "bit-249" **/
+			// connect to running EDAL server on "bit-249"
 			ClientDataManager dataManagerClient = null;
 			try {
 				dataManagerClient = new ClientDataManager(SERVER_ADDRESS, SERVER_PORT, new Authentication(subject));
@@ -245,7 +226,7 @@ public class MenuListener implements ActionListener {
 				} else {
 					System.out.println("please choose a file, not a dir");
 				}
-			}
+			}*/
 
 		} else if ("close Network".equals(event)) {
 

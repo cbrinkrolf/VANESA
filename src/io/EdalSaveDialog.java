@@ -10,13 +10,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientDataManager;
+/*import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientDataManager;
 import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientPrimaryDataDirectory;
 import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientPrimaryDataEntity;
 import de.ipk_gatersleben.bit.bi.edal.rmi.client.ClientPrimaryDataFile;
 import de.ipk_gatersleben.bit.bi.edal.rmi.client.gui.EdalFileChooser;
 import de.ipk_gatersleben.bit.bi.edal.rmi.server.Authentication;
-import de.ipk_gatersleben.bit.bi.edal.sample.EdalHelpers;
+import de.ipk_gatersleben.bit.bi.edal.sample.EdalHelpers;*/
 import graph.GraphInstance;
 import gui.MainWindowSingleton;
 import xmlOutput.sbml.JSBMLoutput;
@@ -49,13 +49,14 @@ public class EdalSaveDialog {
 	}
 
 	public void openWindow() throws Exception {
-		/** use windows or unix login **/
+		/*
+		// use windows or unix login 
 		Subject subject = EdalHelpers.authenticateSampleUser();
 
-		/** alternatively use Google+ login **/
+		// alternatively use Google+ login 
 		// Subject subject = EdalHelpers.authenticateGoogleUser("", 3128);
 
-		/** connect to running EDAL server on "bit-249" **/
+		// connect to running EDAL server on "bit-249" 
 		ClientDataManager dataManagerClient = new ClientDataManager(
 				SERVER_ADDRESS, SERVER_PORT, new Authentication(subject));
 
@@ -157,82 +158,8 @@ public class EdalSaveDialog {
 					}
 				}
 
-				// VantedFileStoreSwingWorker v = new
-				// VantedFileStoreSwingWorker(df);
-				// v.execute();
-				// FileOutputStream fop = new FileOutputStream(new
-				// File("test.txt"));
-				// in.r
-				// fop.write(in.);
-				// ClientPrimaryDataFile datafile = new ClientPrimaryDataFile(,
-				// dataManagerClient);
-				/*
-				 * new Thread( new Runnable(){ public void run(){ try {
-				 * 
-				 * df.store(in); in.close(); } catch (PrimaryDataFileException |
-				 * PrimaryDataEntityVersionException | IOException e) { // TODO
-				 * Auto-generated catch block e.printStackTrace(); } }
-				 * }).start();
-				 * 
-				 * new Thread( new Runnable(){ public void run(){ JSBMLoutput
-				 * jsbmlOutput = new JSBMLoutput(out, new
-				 * GraphInstance().getPathway());
-				 * System.out.println("######################"
-				 * +jsbmlOutput.generateSBMLDocument()); } } ).start();
-				 */
-
-				// System.out.println("2");
-				// in.close();
-				// out.close();
-				// final PipedInputStream pin = getInputStream();
-				// final PipedOutputStream pout = getOutputStream();
-
-				/*
-				 * final CountDownLatch latch = new CountDownLatch(1);
-				 * 
-				 * InputStream in = new InputStream() {
-				 * 
-				 * @Override public int read() throws IOException { return
-				 * pin.read(); }
-				 * 
-				 * @Override public void close() throws IOException {
-				 * super.close(); latch.countDown(); } };
-				 * 
-				 * 
-				 * OutputStream out = new OutputStream(){
-				 * 
-				 * @Override public void write(int b) throws IOException {
-				 * pout.write(b); }
-				 * 
-				 * @Override public void close() throws IOException {
-				 * while(latch.getCount()!=0) { try { latch.await(); } catch
-				 * (InterruptedException e) { //too bad } } super.close(); } };
-				 */
-
-				// give the streams to your threads, they don't know a latch
-				// ever
-				// existed
-				// threadOne.feed(in);
-				// threadTwo.feed(out);
-
-				/*
-				 * new Thread( new Runnable(){ public void run(){ try {
-				 * df.store(in); } catch (PrimaryDataFileException |
-				 * PrimaryDataEntityVersionException | IOException e) { // TODO
-				 * Auto-generated catch block e.printStackTrace(); } }
-				 * }).start();
-				 * 
-				 * new Thread( new Runnable(){ public void run(){
-				 * 
-				 * JSBMLoutput jsbmlOutput = new JSBMLoutput(out, new
-				 * GraphInstance().getPathway());
-				 * System.out.println("######################"
-				 * +jsbmlOutput.generateSBMLDocument()); } } ).start();
-				 */
-				// new ByteArrayInputStream()
-				// ClientPrimaryDataFile
 			}
-		}
+		}*/
 
 	}
 

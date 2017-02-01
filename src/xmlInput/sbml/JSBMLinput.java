@@ -18,11 +18,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.math.NumberUtils;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
 import org.xml.sax.InputSource;
 
 import petriNet.PNEdge;
@@ -98,6 +102,17 @@ public class JSBMLinput {
 		String message = "";
 		Document doc = null;
 		InputSource in = new InputSource(is);
+		
+		/*SBMLReader reader = new SBMLReader();
+		try {
+			SBMLDocument document = reader.readSBMLFromStream(is);
+			document.getNumErrors();
+			//document.getModel().get
+		} catch (XMLStreamException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}*/
+		
 
 		// siehe http://www.javabeginners.de/XML/XML-Datei_lesen.php
 		// create document
