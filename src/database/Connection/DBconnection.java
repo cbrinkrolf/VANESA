@@ -46,6 +46,8 @@ public class DBconnection
 
 	public void checkConnection() throws Exception
 	{
+		connect2mysql(server, user, password);
+		useDatabase(database);
 		if (con==null)
 		{
 			connect2mysql(server, user, password);

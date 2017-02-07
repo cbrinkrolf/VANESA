@@ -178,6 +178,7 @@ public class ConnectionTab extends JPanel {
 		if (server.isSelected()) {
 			ConnectionSettings.setInternetConnection(true);
 		} else {
+			//System.out.println("local");
 			ConnectionSettings.setInternetConnection(false);
 		}
 
@@ -237,6 +238,7 @@ public class ConnectionTab extends JPanel {
 		// -- check database connection --
 		try {
 			if (database.isSelected()) {
+				//System.out.println("local selected");
 				status.setText("Database not reachable - change settings!");
 				ConnectionSettings.getDBConnection().checkConnection();
 			}
@@ -249,7 +251,7 @@ public class ConnectionTab extends JPanel {
 
 			return true;
 		} catch (Exception e) {
-			System.out.println(e);
+			//System.out.println(e);
 			status.setToolTipText(e.toString());
 			return false;
 		}
