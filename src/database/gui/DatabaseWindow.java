@@ -19,7 +19,7 @@ public class DatabaseWindow {
 	// private QueryInfoWindow info;
 	private PPIqueryMask ppi;
 	private MirnaQueryClass mirna;
-	private UNIDQueryMask unid;
+	//private UNIDQueryMask unid;
 
 	private boolean headless = false;
 
@@ -40,7 +40,7 @@ public class DatabaseWindow {
 		// info = new QueryInfoWindow();
 		ppi = new PPIqueryMask(this);
 		mirna = new MirnaQueryClass(this);
-		unid = new UNIDQueryMask(this);
+		//unid = new UNIDQueryMask(this);
 
 		tabbedPanel.addTab("KEGG", kegg.getPanel());
 		tabbedPanel.setTabComponentAt(0, kegg.getTitelTab("KEGG"));
@@ -61,9 +61,9 @@ public class DatabaseWindow {
 
 		
 		if(MainWindow.developer){
-			tabbedPanel.addTab("UNID", unid.getPanel());
-			tabbedPanel.setTabComponentAt(4, unid.getTitelTab("UNID"));
-			tabs.put(4, "UNID");
+			//tabbedPanel.addTab("UNID", unid.getPanel());
+			//tabbedPanel.setTabComponentAt(4, unid.getTitelTab("UNID"));
+			//tabs.put(4, "UNID");
 		}
 		
 		// tabbedPanel.addTab(unid.getTitelTab());
@@ -90,7 +90,7 @@ public class DatabaseWindow {
 		} else if (selectedDatabase().equals("miRNA")) {
 			return mirna.doSearchCriteriaExist();
 		} else if (selectedDatabase().equals("UNID")) {
-			return unid.doSearchCriteriaExist();
+			//return unid.doSearchCriteriaExist();
 		}
 		return false;
 	}
@@ -115,7 +115,7 @@ public class DatabaseWindow {
 		} else if (db.equals("miRNA")) {
 			return mirna.getKeyword();
 		} else if (db.equals("UNID")) {
-			return unid.getKeyword();
+			//return unid.getKeyword();
 		}
 		return null;
 	}
@@ -133,7 +133,7 @@ public class DatabaseWindow {
 		} else if (db.equals("miRNA")) {
 			mirna.reset();
 		} else if (db.equals("UNID")) {
-			unid.reset();
+			//unid.reset();
 		}
 	}
 
