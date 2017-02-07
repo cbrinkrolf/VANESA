@@ -189,11 +189,17 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 		myGraph = pw.getGraph();
 
+		//System.out.println("before");
+		//System.out.println(allOrgElements.size());
 		drawNodes(allOrgElements);
+		//System.out.println("1");
 		drawNodes(allEcElements);
+		//System.out.println("1");
 		drawNodes(allRnElements);
+		//System.out.println("1");
 		drawNodes(allKoElements);
-
+		//System.out.println("1");
+		
 		drawReactions(allOrgReactions, false);
 		drawReactions(allEcReactions, false);
 		drawReactions(allRnReactions, false);
