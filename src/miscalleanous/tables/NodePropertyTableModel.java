@@ -40,8 +40,14 @@ public class NodePropertyTableModel extends AbstractTableModel
 	@Override
 	public Class<?> getColumnClass(int c)
 	{
-
-		return getValueAt(0, c).getClass();
+		Class<?> returnValue;
+		if((c >= 0) && (c < getColumnCount())){
+			returnValue = getValueAt(0, c).getClass();
+		}else{
+			returnValue = Object.class;
+		}
+		return returnValue;
+		//return getValueAt(0, c).getClass();
 	}
 
 	@Override
