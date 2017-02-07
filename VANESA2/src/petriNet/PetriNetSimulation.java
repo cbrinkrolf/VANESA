@@ -357,7 +357,7 @@ public class PetriNetSimulation implements ActionListener {
 						System.out.println(pw.getPetriNet());
 						System.out.println(pw.getPetriNet().getSimResController());
 						System.out.println(pw.getPetriNet().getSimResController().get());
-						System.out.println(pw.getPetriNet().getSimResController().get().getTime());
+						//System.out.println(pw.getPetriNet().getSimResController().get().getTime());
 						List<Double> v = null;//pw.getPetriNet().getSimResController().get().getTime().getAll();
 						// System.out.println("running");
 						while (s.isRunning()) {
