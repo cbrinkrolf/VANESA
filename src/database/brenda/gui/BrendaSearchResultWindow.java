@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -21,9 +23,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import miscalleanous.tables.MyTable;
 import miscalleanous.tables.NodePropertyTableModel;
@@ -61,7 +68,8 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 	JCheckBox autoCoarseDepth = new JCheckBox();
 	JCheckBox autoCoarseEnzymeNomenclature = new JCheckBox();
 
-	
+	JTextField field = new JTextField(10);
+	TableRowSorter<NodePropertyTableModel> sorter;
 
 	private MyTable table;
 
@@ -124,6 +132,37 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 		mainPanel.add(new JLabel("Coarse enzyme due to their Enzyme nomenclature (EC-Number)."), "span 1, gaptop 2 ");
 		mainPanel.add(autoCoarseEnzymeNomenclature, "span 1,wrap,gaptop 2");
 		
+		field.addKeyListener(new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				if(field.getText().trim().length() < 1){
+					//System.out.println("null");
+					sorter.setRowFilter(null);
+				}else{
+					//System.out.println("filter: "+field.getText());
+					sorter.setRowFilter(RowFilter.regexFilter(field.getText().trim()));
+				}
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		mainPanel.add(new JLabel("Filter results"), "span 1, gaptop 2 ");
+		mainPanel.add(field, "span 1,wrap,gaptop 2");
+		
+		
 		ActionListener coarseListener = new ActionListener(){
 
 			@Override
@@ -138,7 +177,6 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 					autoCoarseEnzymeNomenclature.setEnabled(true);
 					autoCoarseDepth.setEnabled(true);
 				}
-				
 			}
 			
 		};
@@ -201,7 +239,12 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 				columNames);
 
 		table = new MyTable();
+		sorter = new TableRowSorter<NodePropertyTableModel>(model);
 		table.setModel(model);
+		sorter.setRowFilter(null);
+		table.setRowSorter(sorter);
+		
+		
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setColumnControlVisible(false);
 		table.setHighlighters(HighlighterFactory.createSimpleStriping());
