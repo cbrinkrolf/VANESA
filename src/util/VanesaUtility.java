@@ -2,6 +2,7 @@ package util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
@@ -72,6 +73,26 @@ public class VanesaUtility {
     	return finalQuery + ";";
     }
     
+    public static Double getMean(List<Double> list){
+    	double mean = 0;
+    	for(int i = 0; i<list.size(); i++){
+    		mean += list.get(i);
+    	}
+    	
+    	return mean/list.size();
+    }
+    
+    public static Double getMedian(List<Double> list){
+    	double median = 0;
+    		if(list.size()>0){
+    			if(list.size() % 2 == 0){
+    				return (list.get(list.size()/2) + list.get(list.size()/2+1))/2;
+    			}else{
+    				return list.get((list.size()-1)/2);
+    			}
+    		}
+    	return median;
+    }
 }
 
 

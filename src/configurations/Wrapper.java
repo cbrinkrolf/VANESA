@@ -20,6 +20,7 @@ public class Wrapper implements WebServiceListener {
 	public static final int dbtype_PPI = 4;
 	public static final int dbtype_Cardio = 5;
 	public static final int dbtype_MiRNA = 6;
+	public static final int dbtype_BRENDA2 = 7;
 
 	private DBconnection db;
 
@@ -54,7 +55,7 @@ public class Wrapper implements WebServiceListener {
 			// -- use database --
 			if (dbtype_MiRNA == database && ConnectionSettings.isLocalMiRNA()) {
 				return getLocalRequestDbContent(database, query, attributes);
-			}else if(dbtype_KEGG == database && ConnectionSettings.isLocalKegg()){
+			} else if (dbtype_KEGG == database && ConnectionSettings.isLocalKegg()) {
 				return getLocalRequestDbContent(database, query, attributes);
 			}
 		}
@@ -93,34 +94,7 @@ public class Wrapper implements WebServiceListener {
 	}
 
 	public ArrayList<DBColumn> requestDbContent(int database, String query) {
-
 		return this.requestDbContent(database, query, null);
-		/*
-		 * if (!ConnectionSettings.useInternetConnection()) { // -- use database
-		 * --
-		 * 
-		 * if (dbtype_PPI == database)
-		 * ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.
-		 * getDBConnection().getPpiDBName()); else if (dbtype_MiRNA == database)
-		 * {
-		 * 
-		 * ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.
-		 * getDBConnection().getmirnaDBName()); } else
-		 * ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.
-		 * getDBConnection().getDawisDBName());
-		 * 
-		 * return getDBResult(query, null); } else { // -- use webservice -- if
-		 * (dbtype_PPI == database) {
-		 * getWebserviceResult(ConnectionSettings.getDBConnection().getPpiDBName
-		 * (), query); }
-		 * 
-		 * else if (dbtype_MiRNA == database) {
-		 * getWebserviceResult(ConnectionSettings.getDBConnection().
-		 * getmirnaDBName(), query);
-		 * 
-		 * } else { getWebserviceResult(ConnectionSettings.getDBConnection().
-		 * getDawisDBName(), query); } return dbResults; }
-		 */
 	}
 
 	private void getWebserviceResult(String database, String query) {
@@ -206,6 +180,5 @@ public class Wrapper implements WebServiceListener {
 			columnResult = VanesaUtility.createResultList(event);
 			dbResults = columnResult;
 		}
-
 	}
 }
