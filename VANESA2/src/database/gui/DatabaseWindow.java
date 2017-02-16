@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.swing.JTabbedPane;
 
 import database.brenda.gui.BRENDAqueryMask;
+import database.brenda2.gui.BRENDA2queryMask;
 import database.kegg.gui.KEGGqueryMask;
 import database.mirna.gui.MirnaQueryClass;
 import database.ppi.gui.PPIqueryMask;
@@ -20,6 +21,7 @@ public class DatabaseWindow {
 	private PPIqueryMask ppi;
 	private MirnaQueryClass mirna;
 	//private UNIDQueryMask unid;
+	private BRENDA2queryMask brenda2;
 
 	private boolean headless = false;
 
@@ -41,6 +43,7 @@ public class DatabaseWindow {
 		ppi = new PPIqueryMask(this);
 		mirna = new MirnaQueryClass(this);
 		//unid = new UNIDQueryMask(this);
+		brenda2 = new BRENDA2queryMask(this);
 
 		tabbedPanel.addTab("KEGG", kegg.getPanel());
 		tabbedPanel.setTabComponentAt(0, kegg.getTitelTab("KEGG"));
@@ -64,6 +67,9 @@ public class DatabaseWindow {
 			//tabbedPanel.addTab("UNID", unid.getPanel());
 			//tabbedPanel.setTabComponentAt(4, unid.getTitelTab("UNID"));
 			//tabs.put(4, "UNID");
+			tabbedPanel.addTab("BRENDA2", brenda2.getPanel());
+			tabbedPanel.setTabComponentAt(4, brenda2.getTitelTab("B2"));
+			tabs.put(4, "BRENDA2");
 		}
 		
 		// tabbedPanel.addTab(unid.getTitelTab());
@@ -91,6 +97,8 @@ public class DatabaseWindow {
 			return mirna.doSearchCriteriaExist();
 		} else if (selectedDatabase().equals("UNID")) {
 			//return unid.doSearchCriteriaExist();
+		} else if(selectedDatabase().equals("BRENDA2")){
+			return brenda2.doSearchCriteriaExist();
 		}
 		return false;
 	}
@@ -105,7 +113,7 @@ public class DatabaseWindow {
 		// TitledTab t = (TitledTab) tabbedPanel.getSelectedTab();
 
 		String db = tabs.get(tabbedPanel.getSelectedIndex());
-
+		//System.out.println(db);
 		if (db.equals("KEGG")) {
 			return kegg.getKeyword();
 		} else if (db.equals("BRENDA")) {
@@ -116,13 +124,14 @@ public class DatabaseWindow {
 			return mirna.getKeyword();
 		} else if (db.equals("UNID")) {
 			//return unid.getKeyword();
+		}else if (db.equals("BRENDA2")){
+			return brenda2.getKeyword();
 		}
 		return null;
 	}
 
 	public void reset() {
 
-		//TitledTab t = (TitledTab) tabbedPanel.getSelectedTab();
 		String db = tabs.get(tabbedPanel.getSelectedIndex());
 		if (db.equals("KEGG")) {
 			kegg.reset();
@@ -134,6 +143,8 @@ public class DatabaseWindow {
 			mirna.reset();
 		} else if (db.equals("UNID")) {
 			//unid.reset();
+		}else if(db.equals("BRENDA2")){
+			brenda2.reset();
 		}
 	}
 

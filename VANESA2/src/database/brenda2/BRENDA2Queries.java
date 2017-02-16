@@ -1,6 +1,13 @@
 package database.brenda2;
 
 public class BRENDA2Queries {
+	
+	public static final String getOrganismByName = "SELECT * FROM brenda2_organism o where o.name like ?;";
+	//select * from brenda2_organism
+	//where brenda2_organism.id in (1,2);
+	
+	public static final String getEnzymes =  "SELECT distinct e.* FROM brenda2_enzyme e";
+	
 	/*
 	// getting reaction from ec / organism
 	use dawismd;
@@ -89,6 +96,17 @@ public class BRENDA2Queries {
 	join brenda2_metabolite as subM on sub.metabolite_id = subM.id
 	join brenda2_metabolite as prodM on prod.metabolite_id = prodM.id
 	where prodM.name = 'h2o' or subM.name  = 'h2o') as t;
+	
+	
+	select distinct brenda2_enzyme.* FROM brenda2_enzyme
+	join brenda2_reaction on brenda2_enzyme.enzyme_id = brenda2_reaction.enzyme_id
+	join brenda2_product2reaction on brenda2_reaction.id = brenda2_product2reaction.reaction_id
+	join brenda2_subtrate2reaction on brenda2_reaction.id = brenda2_subtrate2reaction.reaction_id
+	join brenda2_reactand as prod on brenda2_product2reaction.reactand_id = prod.id
+	join brenda2_reactand as sub on brenda2_subtrate2reaction.reactand_id = sub.id
+	join brenda2_metabolite as subM on sub.metabolite_id = subM.id
+	join brenda2_metabolite as prodM on prod.metabolite_id = prodM.id
+	where (prodM.name like '%butanol%' or subM.name like '%butanol%') AND brenda2_enzyme.recommendedName like '%ald%';
 
 */
 }

@@ -9,6 +9,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import database.brenda.BRENDASearch;
 import database.brenda.gui.BrendaInfoWindow;
+import database.brenda2.BRENDA2Search;
 import database.gui.DatabaseWindow;
 import database.kegg.KeggSearch;
 import database.kegg.gui.KEGGInfoWindow;
@@ -45,6 +46,12 @@ public class DatabaseSearchListener implements ActionListener {
 		BRENDASearch brendaSearch = new BRENDASearch(dw.getInput(),
 				MainWindowSingleton.getInstance(), null, dw.isHeadless());
 		brendaSearch.execute();
+	}
+	
+	private void requestBrenda2Content() {
+		MainWindowSingleton.getInstance().showProgressBar("BRENDA 2 query");
+		BRENDA2Search brenda2Search = new BRENDA2Search(dw.getInput(), null, dw.isHeadless());
+		brenda2Search.execute();
 	}
 
 	/**
@@ -102,6 +109,8 @@ public class DatabaseSearchListener implements ActionListener {
 					this.requestMIRNAcontent();
 				}else if (dw.selectedDatabase().equals("UNID")) {
 					this.requestUNIDContent();
+				}else if(dw.selectedDatabase().equals("BRENDA2")){
+					this.requestBrenda2Content();
 				}
 			} else {
 				JOptionPane.showConfirmDialog(MainWindowSingleton.getInstance(),
