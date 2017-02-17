@@ -126,8 +126,17 @@ public class MenuListener implements ActionListener {
 
 	private PetriNetSimulation simulation = null;
 
-	protected MenuListener() {
+	private static MenuListener instance; 
+	
+	private MenuListener() {
 
+	}
+	
+	public static synchronized MenuListener getInstance(){
+		if(MenuListener.instance == null){
+			MenuListener.instance = new MenuListener();
+		}
+		return MenuListener.instance;
 	}
 
 	@Override
