@@ -1,9 +1,5 @@
 package gui;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.GraphInstance;
-
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -18,12 +14,14 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 
 import biologicalElements.Pathway;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.GraphInstance;
+import net.miginfocom.swing.MigLayout;
 
 public class PathwayTree extends JPanel implements TreeSelectionListener{
 	
@@ -94,7 +92,7 @@ public class PathwayTree extends JPanel implements TreeSelectionListener{
 
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		GraphContainer con =ContainerSingelton.getInstance();
 		DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree
 		.getLastSelectedPathComponent();

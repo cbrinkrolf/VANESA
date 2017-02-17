@@ -46,7 +46,6 @@ import graph.GraphInstance;
 import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import gui.eventhandlers.PropertyWindowListener;
 import net.miginfocom.swing.MigLayout;
 import petriNet.ContinuousTransition;
@@ -665,7 +664,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		String event = e.getActionCommand();
 
 		if ("colour".equals(event)) {

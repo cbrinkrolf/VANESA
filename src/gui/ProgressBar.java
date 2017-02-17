@@ -47,7 +47,7 @@ public class ProgressBar{
 			//(when running in multi threaded environment)
 			if (!this.wasClosed) { 
 				isOpen = true;
-				glass = (JPanel) MainWindowSingleton.getInstance().getGlassPane();
+				glass = (JPanel) MainWindow.getInstance().getGlassPane();
 				glass.setVisible(false);
 				
 				int width = 250;

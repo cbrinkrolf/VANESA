@@ -1,13 +1,5 @@
 package database.kegg;
 
-import graph.CreatePathway;
-import graph.hierarchies.HierarchyList;
-import graph.hierarchies.HierarchyListComparator;
-import graph.jung.classes.MyGraph;
-import graph.layouts.Circle;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -18,7 +10,6 @@ import java.util.Vector;
 
 import javax.swing.SwingWorker;
 
-import pojos.DBColumn;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Compound;
 import biologicalObjects.edges.Expression;
@@ -34,6 +25,13 @@ import biologicalObjects.nodes.SRNA;
 import biologicalObjects.nodes.SmallMolecule;
 import configurations.Wrapper;
 import database.mirna.miRNAqueries;
+import graph.CreatePathway;
+import graph.hierarchies.HierarchyList;
+import graph.hierarchies.HierarchyListComparator;
+import graph.jung.classes.MyGraph;
+import graph.layouts.Circle;
+import gui.MainWindow;
+import pojos.DBColumn;
 //import edu.uci.ics.jung.graph.Edge;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.utils.Pair;
@@ -139,7 +137,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 	@Override
 	protected Void doInBackground() throws Exception {
 
-		MainWindowSingleton.getInstance().showProgressBar("Loading Data");
+		MainWindow.getInstance().showProgressBar("Loading Data");
 		
 //		bar.setProgressBarString("Getting Pathway Information");
 		getPathway(pathwayID);
@@ -251,7 +249,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 			autoCoarse();
 		}
 		
-		MainWindow window = MainWindowSingleton.getInstance();
+		MainWindow window = MainWindow.getInstance();
 		window.updateOptionPanel();
 
 		firePropertyChange("finished", null, "finished");

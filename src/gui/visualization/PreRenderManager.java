@@ -25,7 +25,7 @@ import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import graph.GraphInstance;
 import graph.algorithms.gui.clusters.ClusterColorEditor;
 import gui.LocalBackboardPaintable;
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 import gui.MyAnnotation;
 import miscalleanous.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
@@ -128,7 +128,7 @@ public class PreRenderManager implements ActionListener {
 
 		// show
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 		dialog.setResizable(false);
 
@@ -207,7 +207,7 @@ public class PreRenderManager implements ActionListener {
 
 	public static PreRenderManager getInstance() {
 			
-		String pathwayname = MainWindowSingleton.getInstance().getCurrentPathway();		
+		String pathwayname = MainWindow.getInstance().getCurrentPathway();		
 		PreRenderManager prm = instances.get(pathwayname);
 		
 		if (prm != null){

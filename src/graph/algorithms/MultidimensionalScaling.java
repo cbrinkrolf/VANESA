@@ -22,11 +22,10 @@ import graph.GraphContainer;
 import graph.algorithms.gui.NodeAttributeBarChart;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import mdsj.MDSJ;
 
 public class MultidimensionalScaling {
-	private MainWindow w = MainWindowSingleton.getInstance();
+	private MainWindow w = MainWindow.getInstance();
 	private GraphContainer con = ContainerSingelton.getInstance();
 	private Pathway pw;
 	private MyGraph mg;

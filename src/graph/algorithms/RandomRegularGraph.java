@@ -1,10 +1,5 @@
 package graph.algorithms;
 
-import graph.CreatePathway;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +9,9 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Other;
+import graph.CreatePathway;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 
 public class RandomRegularGraph {
 
@@ -71,7 +69,7 @@ public class RandomRegularGraph {
 
 		myGraph.normalCentering();
 
-		MainWindow window = MainWindowSingleton.getInstance();
+		MainWindow window = MainWindow.getInstance();
 		window.updateOptionPanel();
 		// window.enable(true);
 		pw.getGraph().changeToGEMLayout();

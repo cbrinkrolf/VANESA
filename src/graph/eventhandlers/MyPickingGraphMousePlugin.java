@@ -24,14 +24,11 @@ import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
-import graph.ContainerSingelton;
-import graph.GraphContainer;
 import graph.GraphInstance;
-import graph.gui.GraphPopUp;
 import graph.jung.classes.MyGraph;
 import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 import miscalleanous.internet.FollowLink;
 
 public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
@@ -110,7 +107,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				// Disallow to add selection to environment coarse nodes.
 				if (graphInstance.getPathway().isBNA()) {
 					if (((BiologicalNodeAbstract) graphInstance.getPathway()).getEnvironment().contains(vertices)) {
-						JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Not possible to add nodes to environment nodes.",
+						JOptionPane.showMessageDialog(MainWindow.getInstance(), "Not possible to add nodes to environment nodes.",
 								"Coarse node integration Error!", JOptionPane.ERROR_MESSAGE);
 						oldVertexPositions.clear();
 						super.mouseReleased(e);
@@ -177,7 +174,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				dragging = false;
 				VisualizationViewer vv = (VisualizationViewer) e.getSource();
 				// vv.setComponentPopupMenu(new GraphPopUp().returnPopUp());
-				MainWindowSingleton.getInstance().setCursor(cursor);
+				MainWindow.getInstance().setCursor(cursor);
 				vv.setCursor(cursor);
 				vv.getComponentPopupMenu().show();
 				//System.out.println("durch");
@@ -248,7 +245,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 						vv.getComponentPopupMenu().hide();
 						//System.out.println("paintes");
 						 this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
-						 MainWindowSingleton.getInstance().setCursor(cursor);
+						 MainWindow.getInstance().setCursor(cursor);
 						 vv.setCursor(cursor);
 						//this.mouseClicked(e);
 					}
@@ -316,7 +313,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			VisualizationViewer vv = (VisualizationViewer) e.getSource();
 			//this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 			vv.setCursor(cursor);
-			MainWindowSingleton.getInstance().setCursor(cursor);
+			MainWindow.getInstance().setCursor(cursor);
 			vv.revalidate();
 			vv.repaint();
 			//System.out.println("entered");
@@ -326,7 +323,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	public void mouseExited(MouseEvent e) {
 		if (e.getComponent().toString().contains("MyVisualizationViewer")) {
 			inwindow = false;
-			MainWindowSingleton.getInstance().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			MainWindow.getInstance().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			// System.out.println("left");
 		}
 	}

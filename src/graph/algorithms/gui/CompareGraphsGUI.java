@@ -1,16 +1,5 @@
 package graph.algorithms.gui;
 
-import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.algorithms.CompareGraphs;
-import graph.algorithms.HeatmapGraphs;
-import graph.algorithms.MergeGraphs;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.algorithms.ScreenSize;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,8 +17,17 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
-import net.miginfocom.swing.MigLayout;
 import biologicalElements.Pathway;
+import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.algorithms.CompareGraphs;
+import graph.algorithms.HeatmapGraphs;
+import graph.algorithms.MergeGraphs;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.algorithms.ScreenSize;
+import net.miginfocom.swing.MigLayout;
 
 public class CompareGraphsGUI extends JFrame implements ActionListener,
 		ItemListener {
@@ -198,7 +196,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		panel.add(new JSeparator(), "growx, span");
 
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		splitPane.setDividerLocation(0.5);
 		dialog.setVisible(true);
 
@@ -271,7 +269,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		} else if ("align".equals(event)) {
 
 			closeDialog();
-			MainWindowSingleton.getInstance().openAlignmentGUI(
+			MainWindow.getInstance().openAlignmentGUI(
 					con.getPathway(firstBox.getSelectedItem().toString()),
 					con.getPathway(secondBox.getSelectedItem().toString()));
 
@@ -284,7 +282,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 	private void resetPanels() {
 
 		Iterator<Pathway> it = con.getAllPathways().iterator();
-		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
+		MainWindow.getInstance().enableOptionPanelUpdate(false);
 		Pathway p;
 		MyGraph graph;
 		
@@ -299,7 +297,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 
 		firstGraph.updateUI();
 		secondGraph.updateUI();
-		MainWindowSingleton.getInstance().enableOptionPanelUpdate(true);
+		MainWindow.getInstance().enableOptionPanelUpdate(true);
 	}
 
 	public void itemStateChanged(ItemEvent e) {

@@ -1,7 +1,5 @@
 package graph.gui;
 
-import gui.MainWindowSingleton;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,8 +12,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
+import gui.MainWindow;
+import net.miginfocom.swing.MigLayout;
 
 public class LabelsWindow implements ActionListener{
 
@@ -61,7 +60,7 @@ public class LabelsWindow implements ActionListener{
 		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
 				JOptionPane.OK_CANCEL_OPTION);
 		
-		dialog = pane.createDialog(MainWindowSingleton.getInstance(), "Labels");
+		dialog = pane.createDialog(MainWindow.getInstance(), "Labels");
 		this.repaint();
 		dialog.pack();
 		//dialog.show();

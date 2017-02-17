@@ -95,7 +95,7 @@ public class HeatgraphLayer extends MouseAdapter implements Paintable {
 	public void repaintActiveGraph() {
 		AdoptedHeatmap h = this.getHeatmapForActiveGraph();
 		h.updateData();
-		MainWindowSingleton.getInstance().repaint(300);
+		MainWindow.getInstance().repaint(300);
 	}
 	
 	public void paint(Graphics g) {

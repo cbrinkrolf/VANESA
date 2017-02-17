@@ -20,7 +20,6 @@ import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import pojos.DBColumn;
 
 public class PPIConnector extends SwingWorker<Object, Object> {
@@ -438,9 +437,9 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 			// autoCoarse(root_id);
 			autoCoarse();
 		}
-		MainWindowSingleton.getInstance().closeProgressBar();
+		MainWindow.getInstance().closeProgressBar();
 
-		MainWindow window = MainWindowSingleton.getInstance();
+		MainWindow window = MainWindow.getInstance();
 		window.updateOptionPanel();
 		window.setVisible(true);
 

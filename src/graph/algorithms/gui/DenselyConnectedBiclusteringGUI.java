@@ -1,13 +1,5 @@
 package graph.algorithms.gui;
 
-import graph.GraphInstance;
-import graph.algorithms.DCBprepareCalc;
-import graph.algorithms.DCBresultSet;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -24,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -47,14 +40,17 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.DNA;
-import biologicalObjects.nodes.Protein;
-import biologicalObjects.nodes.RNA;
+import graph.GraphInstance;
+import graph.algorithms.DCBprepareCalc;
+import graph.algorithms.DCBresultSet;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.ProgressBar;
+import net.miginfocom.swing.MigLayout;
 
 public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSelectionListener{
 
@@ -488,7 +484,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 		if ("calculate".equals(event)) {
 			
 			
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.showProgressBar("started");
 
 			
@@ -832,7 +828,7 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 					JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
 					null, new Object[] {}, null);
 
-			dialog = optionPane.createDialog(MainWindowSingleton.getInstance(),
+			dialog = optionPane.createDialog(MainWindow.getInstance(),
 					"Choose Cluster");
 			dialog.setVisible(true);
 

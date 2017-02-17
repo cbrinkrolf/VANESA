@@ -1,9 +1,8 @@
 package database.mirna.gui;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import javax.swing.JOptionPane;
+
+import gui.MainWindow;
 
 public class MIRNAInfoWindow {
 
@@ -43,7 +42,7 @@ public class MIRNAInfoWindow {
 	        
 	        "</html>";
 		
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		JOptionPane.showMessageDialog(w.returnFrame(), instructions,"KEGG Information",1);
 		
 	}

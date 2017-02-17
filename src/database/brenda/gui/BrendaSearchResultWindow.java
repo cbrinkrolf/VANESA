@@ -3,8 +3,6 @@
  */
 package database.brenda.gui;
 
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -28,16 +26,15 @@ import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-
-import miscalleanous.tables.MyTable;
-import miscalleanous.tables.NodePropertyTableModel;
-import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+
+import gui.MainWindow;
+import miscalleanous.tables.MyTable;
+import miscalleanous.tables.NodePropertyTableModel;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author Sebastian
@@ -206,7 +203,7 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 
 	public Vector<String[]> getAnswer() {
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 
 		Vector<String[]> v = new Vector<String[]>();
@@ -296,7 +293,7 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 
 		if ("cancel".equals(event)) {
 			dialog.setVisible(false);
-			MainWindowSingleton.getInstance().closeProgressBar();
+			MainWindow.getInstance().closeProgressBar();
 		} else if ("new".equals(event)) {
 			if (table.getSelectedRows().length == 0) {
 				JOptionPane.showMessageDialog(this, "Please choose an enzyme.",

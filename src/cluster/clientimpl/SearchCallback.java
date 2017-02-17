@@ -1,8 +1,5 @@
 package cluster.clientimpl;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,8 +10,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import cluster.graphdb.GraphDBTransportNode;
-import database.unid.UNIDSearch;
 import cluster.slave.ISearchCallback;
+import database.unid.UNIDSearch;
+import gui.MainWindow;
 
 public class SearchCallback extends UnicastRemoteObject implements ISearchCallback, Serializable {
 
@@ -36,7 +34,7 @@ public class SearchCallback extends UnicastRemoteObject implements ISearchCallba
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					JOptionPane.showMessageDialog(
-							MainWindowSingleton.getInstance(), "No elements could be found");
+							MainWindow.getInstance(), "No elements could be found");
 					usearch.reactivateUI();
 				}
 			});

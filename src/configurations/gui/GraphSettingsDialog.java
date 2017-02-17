@@ -18,7 +18,6 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -57,7 +56,7 @@ public class GraphSettingsDialog extends JFrame {
 
 	JSlider opacityslider = new JSlider(JSlider.HORIZONTAL, 0,255,255);
 	
-	MainWindow w = MainWindowSingleton.getInstance();
+	MainWindow w = MainWindow.getInstance();
 	GraphInstance graphInstance = new GraphInstance();
 	GraphContainer con = ContainerSingelton.getInstance();;
 

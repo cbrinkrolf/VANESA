@@ -1,7 +1,5 @@
 package gui;
 
-import graph.GraphInstance;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
@@ -25,14 +23,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
+import biologicalElements.Pathway;
+import graph.GraphInstance;
+import net.miginfocom.swing.MigLayout;
 import petriNet.SimulationResult;
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
-import biologicalElements.Pathway;
 
 public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
@@ -150,7 +148,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		this.add(west, BorderLayout.WEST);
 		this.pack();
 		// this.setLocation(w.getLocation());
-		this.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance());
 		// this.setLocationRelativeTo(null);
 		this.setVisible(true);
 

@@ -1,16 +1,15 @@
 package graph.algorithms;
 
-//import edu.uci.ics.jung.graph.Vertex;
-import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
-import gui.MainWindowSingleton;
-
 import java.util.Iterator;
 import java.util.Vector;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+//import edu.uci.ics.jung.graph.Vertex;
+import graph.GraphInstance;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 
 /**
  * This class is for comparison or merging of two or more graphs Also it is
@@ -88,7 +87,7 @@ public class CompareGraphs {
 
 	public static void compareGraphs(Pathway one, Pathway two) {
 
-		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
+		MainWindow.getInstance().enableOptionPanelUpdate(false);
 
 		MyGraph graph1 = one.getGraph();
 		graph1.enableGraphTheory();
@@ -119,6 +118,6 @@ public class CompareGraphs {
 
 		graph1.updateGraph();
 		graph2.updateGraph();
-		MainWindowSingleton.getInstance().enableOptionPanelUpdate(true);
+		MainWindow.getInstance().enableOptionPanelUpdate(true);
 	}
 }

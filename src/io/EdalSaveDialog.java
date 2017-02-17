@@ -1,9 +1,5 @@
 package io;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import javax.security.auth.Subject;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -18,8 +14,7 @@ import de.ipk_gatersleben.bit.bi.edal.rmi.client.gui.EdalFileChooser;
 import de.ipk_gatersleben.bit.bi.edal.rmi.server.Authentication;
 import de.ipk_gatersleben.bit.bi.edal.sample.EdalHelpers;*/
 import graph.GraphInstance;
-import gui.MainWindowSingleton;
-import xmlOutput.sbml.JSBMLoutput;
+import gui.MainWindow;
 
 public class EdalSaveDialog {
 
@@ -179,7 +174,7 @@ public class EdalSaveDialog {
 		pane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
 		JDialog dialog = pane.createDialog(null, "Choose filename");
 
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 		// System.out.println(pane.getValue());
 		if ((int) pane.getValue() == JOptionPane.OK_OPTION) {

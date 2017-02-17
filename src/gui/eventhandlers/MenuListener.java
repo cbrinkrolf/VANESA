@@ -7,23 +7,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.security.auth.Subject;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -86,7 +81,6 @@ import gui.InfoWindow;
 import gui.LabelToDataMappingWindow;
 import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import gui.visualization.PreRenderManager;
 import io.EdalSaveDialog;
 import io.OpenDialog;
@@ -105,7 +99,6 @@ import petriNet.ReachController;
 import petriNet.SimpleMatrixDouble;
 import petriNet.Transition;
 import pojos.DBColumn;
-import xmlInput.sbml.JSBMLinput;
 
 public class MenuListener implements ActionListener {
 
@@ -139,14 +132,14 @@ public class MenuListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		w = MainWindowSingleton.getInstance();
+		w = MainWindow.getInstance();
 		String event = e.getActionCommand();
 		final GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 
 		if ("new Network".equals(event)) {
 
-			int option = JOptionPane.showOptionDialog(MainWindowSingleton.getInstance(), "Which type of modeling do you prefer?",
+			int option = JOptionPane.showOptionDialog(w, "Which type of modeling do you prefer?",
 					"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
@@ -536,7 +529,7 @@ public class MenuListener implements ActionListener {
 			pane.add(testP);
 			pane.add(invariant);
 			d.pack();
-			d.setLocationRelativeTo(MainWindowSingleton.getInstance());
+			d.setLocationRelativeTo(w);
 			d.setVisible(true);
 
 		} else if ("openTestT".equals(event)) {
@@ -594,7 +587,7 @@ public class MenuListener implements ActionListener {
 			pane.add(testT);
 			pane.add(invariant);
 			d.pack();
-			d.setLocationRelativeTo(MainWindowSingleton.getInstance());
+			d.setLocationRelativeTo(w);
 			d.setVisible(true);
 
 			// System.out.println("testT");
@@ -626,13 +619,13 @@ public class MenuListener implements ActionListener {
 				// System.out.println("ist Invariante");
 				this.invariant.setText("This vector is a valid invariant");
 				d.pack();
-				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
+				d.setLocationRelativeTo(w);
 				d.setVisible(true);
 			} else {
 				// System.out.println("ist keine Invariante");
 				this.invariant.setText("This vector is not a valid invariant");
 				d.pack();
-				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
+				d.setLocationRelativeTo(w);
 				d.setVisible(true);
 			}
 		} else if ("testT".equals(event)) {
@@ -663,13 +656,13 @@ public class MenuListener implements ActionListener {
 				// System.out.println("ist Invariante");
 				this.invariant.setText("This vector is a valid invariant");
 				d.pack();
-				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
+				d.setLocationRelativeTo(w);
 				d.setVisible(true);
 			} else {
 				// System.out.println("ist keine Invariante");
 				this.invariant.setText("This vector is not a valid invariant");
 				d.pack();
-				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
+				d.setLocationRelativeTo(w);
 				d.setVisible(true);
 			}
 
@@ -727,7 +720,7 @@ public class MenuListener implements ActionListener {
 			pane.add(testCov);
 			pane.add(reachable);
 			d.pack();
-			d.setLocationRelativeTo(MainWindowSingleton.getInstance());
+			d.setLocationRelativeTo(w);
 			d.setVisible(true);
 			// String name = graphInstance.getPathway().getPetriNet()
 			// .getCovGraph();
@@ -772,13 +765,13 @@ public class MenuListener implements ActionListener {
 				// this.reachable.setText("This vector is a valid Invariante");
 				validInvariant = true;
 				d.pack();
-				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
+				d.setLocationRelativeTo(w);
 				d.setVisible(true);
 			} else {
 				// System.out.println("ist keine Invariante");
 				this.reachable.setText("no valid p-invariant");
 				d.pack();
-				d.setLocationRelativeTo(MainWindowSingleton.getInstance());
+				d.setLocationRelativeTo(w);
 				d.setVisible(true);
 			}
 
@@ -911,7 +904,7 @@ public class MenuListener implements ActionListener {
 			 */
 
 			d.pack();
-			d.setLocationRelativeTo(MainWindowSingleton.getInstance());
+			d.setLocationRelativeTo(w);
 			d.setVisible(true);
 			// w.updateTheoryProperties();
 
@@ -924,7 +917,7 @@ public class MenuListener implements ActionListener {
 			// System.out.println("cov erstellen");
 			// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			// Cov cov = new Cov();
-			if (JOptionPane.showConfirmDialog(MainWindowSingleton.getInstance(),
+			if (JOptionPane.showConfirmDialog(w,
 					"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
 					"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 				new ReachController();
@@ -994,7 +987,7 @@ public class MenuListener implements ActionListener {
 			}
 
 		} else if ("createDoc".equals(event)) {
-			String docDir = MainWindowSingleton.getInstance().pathWorkingDirectory + "documentation" + File.separator;
+			String docDir = w.pathWorkingDirectory + "documentation" + File.separator;
 			File dir = new File(docDir);
 
 			if (!dir.isDirectory()) {
@@ -1467,7 +1460,7 @@ public class MenuListener implements ActionListener {
 	// export.setWantsInput(true);
 	// export.setInitialSelectionValue(5);
 
-	export.showExportDialog(MainWindowSingleton.getInstance(),"Export graph as ...",wvv,"export");
+	export.showExportDialog(MainWindow.getInstance(),"Export graph as ...",wvv,"export");
 	}
 
 	}

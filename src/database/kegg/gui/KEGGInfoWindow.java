@@ -1,9 +1,8 @@
 package database.kegg.gui;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import javax.swing.JOptionPane;
+
+import gui.MainWindow;
 
 public class KEGGInfoWindow {
 
@@ -45,7 +44,7 @@ public class KEGGInfoWindow {
 	        
 	        "</html>";
 		
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		JOptionPane.showMessageDialog(w.returnFrame(), instructions,"KEGG Information",1);
 		
 	}

@@ -41,7 +41,7 @@ import graph.GraphInstance;
 import graph.layouts.gemLayout.GEMLayoutConfigSingleton;
 import graph.layouts.hctLayout.HCTLayoutConfig;
 import graph.layouts.hebLayout.HEBLayoutConfig;
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 import gui.RangeSelector;
 
 /**
@@ -125,7 +125,7 @@ public class LayoutConfig extends JPanel implements ActionListener {
 	}
 
 	private void showSettings() {
-		int option = JOptionPane.showOptionDialog(MainWindowSingleton.getInstance(), this,
+		int option = JOptionPane.showOptionDialog(MainWindow.getInstance(), this,
 				"Layout settings", JOptionPane.DEFAULT_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, buttons, applyButton);
 	}

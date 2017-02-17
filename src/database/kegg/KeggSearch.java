@@ -1,12 +1,5 @@
 package database.kegg;
 
-import graph.CreatePathway;
-import graph.GraphInstance;
-import graph.algorithms.MergeGraphs;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-
 import java.awt.Color;
 import java.awt.Point;
 import java.beans.PropertyChangeEvent;
@@ -19,7 +12,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import pojos.DBColumn;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Compound;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -30,6 +22,12 @@ import biologicalObjects.nodes.SmallMolecule;
 import configurations.Wrapper;
 import database.Connection.DatabaseQueryValidator;
 import database.kegg.gui.KEGGResultWindow;
+import graph.CreatePathway;
+import graph.GraphInstance;
+import graph.algorithms.MergeGraphs;
+import gui.MainWindow;
+import gui.ProgressBar;
+import pojos.DBColumn;
 
 public class KeggSearch extends SwingWorker<Object, Object> implements PropertyChangeListener {
 
@@ -343,7 +341,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 	@Override
 	public void done() {
 
-		MainWindowSingleton.getInstance().closeProgressBar();
+		MainWindow.getInstance().closeProgressBar();
 		if (results.size() > 0) {
 			continueProgress = true;
 			dsrw = new KEGGResultWindow(results);
@@ -442,7 +440,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 			} else {
 				mergePW = new GraphInstance().getContainer().getPathway(
 						w.getCurrentPathway());
-				MainWindowSingleton.getInstance().closeProgressBar();
+				MainWindow.getInstance().closeProgressBar();
 				w.updateAllGuiElements();
 				mergePW.getGraph().getVisualizationViewer().repaint();
 				mergePW.getGraph().disableGraphTheory();

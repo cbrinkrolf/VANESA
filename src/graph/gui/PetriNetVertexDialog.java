@@ -25,7 +25,6 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import gui.MyPopUpSingleton;
 import net.miginfocom.swing.MigLayout;
 import petriNet.ContinuousTransition;
@@ -195,7 +194,7 @@ public class PetriNetVertexDialog {
 		JDialog dialog = pane.createDialog(null, title);
 		
 		//dialog.show();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 		Number number;
 		Integer value = (Integer) pane.getValue();
@@ -291,7 +290,7 @@ public class PetriNetVertexDialog {
 					pw.addVertex(createdNode, point);
 				}
 				GraphContainer con = ContainerSingelton.getInstance();
-				MainWindow w = MainWindowSingleton.getInstance();
+				MainWindow w = MainWindow.getInstance();
 				con.getPathway(w.getCurrentPathway());
 
 				// Graph graph = vv.getGraphLayout().getGraph();

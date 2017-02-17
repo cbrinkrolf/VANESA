@@ -3,9 +3,6 @@
  */
 package graph.gui;
 
-import graph.GraphInstance;
-import gui.MainWindowSingleton;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,11 +17,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import graph.GraphInstance;
+import gui.MainWindow;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author tloka
@@ -102,7 +100,7 @@ public class EdgeDeleteDialog extends JFrame {
 
 		JDialog dialog = pane.createDialog(EdgeDeleteDialog.this, "Delete a hierarchical edge");
 		//dialog.show();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 		Set<BiologicalEdgeAbstract> ret = new HashSet<BiologicalEdgeAbstract>();

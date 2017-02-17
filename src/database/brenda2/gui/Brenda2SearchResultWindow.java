@@ -32,7 +32,7 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import database.brenda2.BRENDA2Search;
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 import miscalleanous.tables.MyTable;
 import miscalleanous.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
@@ -177,7 +177,7 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 	}
 
@@ -287,7 +287,7 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 
 		if ("cancel".equals(event)) {
 			dialog.setVisible(false);
-			MainWindowSingleton.getInstance().closeProgressBar();
+			MainWindow.getInstance().closeProgressBar();
 		} else if ("new".equals(event)) {
 			if (enzymeTable.getSelectedRows().length == 0) {
 				JOptionPane.showMessageDialog(this, "Please choose an enzyme.", "Message", 1);
@@ -296,12 +296,12 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 				dialog.setVisible(false);
 			}
 		} else if (event.equals("updateEnzymes")) {
-			MainWindowSingleton.getInstance().showProgressBar("BRENDA 2 query");
+			MainWindow.getInstance().showProgressBar("BRENDA 2 query");
 			BRENDA2Search brenda2Search = new BRENDA2Search(this, BRENDA2Search.enzymeSearch);
 			brenda2Search.execute();
 		} else if (event.equals("updateKm")) {
 			// System.out.println(enzymeTable.getSelectedColumn());
-			MainWindowSingleton.getInstance().showProgressBar("update Km Values");
+			MainWindow.getInstance().showProgressBar("update Km Values");
 			this.ecNumber.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 1));
 			BRENDA2Search brenda2Search = new BRENDA2Search(this, BRENDA2Search.kmSearch);
 			brenda2Search.execute();

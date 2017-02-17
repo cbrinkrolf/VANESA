@@ -1,32 +1,30 @@
 package io;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.gui.Parameter;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
-import petriNet.ContinuousTransition;
-import petriNet.PNEdge;
-import petriNet.Place;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import de.uni_bielefeld.cebitec.mzurowie.pretty_formula.main.FormulaParser;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.gui.Parameter;
+import gui.MainWindow;
+import petriNet.ContinuousTransition;
+import petriNet.PNEdge;
+import petriNet.Place;
 
 public class PNDoc {
 
 	private StringBuilder sb = new StringBuilder();
-	private MainWindow w = MainWindowSingleton.getInstance();
+	private MainWindow w = MainWindow.getInstance();
 	private GraphContainer con = ContainerSingelton.getInstance();
 	private Pathway pw = con.getPathway(w.getCurrentPathway());
 
 	public PNDoc(String file) {
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
 

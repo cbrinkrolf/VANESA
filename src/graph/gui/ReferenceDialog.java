@@ -1,8 +1,5 @@
 package graph.gui;
 
-import graph.GraphInstance;
-import gui.MainWindowSingleton;
-
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,14 +13,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-import petriNet.Place;
-import petriNet.Transition;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.GraphInstance;
+import gui.MainWindow;
+import net.miginfocom.swing.MigLayout;
+import petriNet.Place;
+import petriNet.Transition;
 
 public class ReferenceDialog {
 
@@ -114,7 +112,7 @@ public class ReferenceDialog {
 
 		JDialog dialog = pane.createDialog(null, "Select a reference");
 		// dialog.show();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 

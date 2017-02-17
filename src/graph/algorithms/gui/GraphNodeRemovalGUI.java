@@ -1,11 +1,5 @@
 package graph.algorithms.gui;
 
-import graph.GraphInstance;
-import graph.algorithms.NetworkProperties;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
@@ -21,9 +15,13 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.GraphInstance;
+import graph.algorithms.NetworkProperties;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import net.miginfocom.swing.MigLayout;
 
 public class GraphNodeRemovalGUI implements ActionListener {
 
@@ -233,7 +231,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 				}
 
 				mg = c.getPathway().getGraph();
-				mw = MainWindowSingleton.getInstance();
+				mw = MainWindow.getInstance();
 				itn = removals.iterator();
 				while (itn.hasNext()) {
 					mg.removeVertex(itn.next());
@@ -249,7 +247,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 				// System.out.println(" Node Removal: "+removals.size()+" Nodes Removed.");
 
 				if (removals.size() > 0) {
-					JOptionPane.showMessageDialog(MainWindowSingleton
+					JOptionPane.showMessageDialog(MainWindow
 							.getInstance().returnFrame(),
 							"Nodes removed from network: " + removals.size(),
 							"Remove Success", JOptionPane.INFORMATION_MESSAGE);
@@ -285,7 +283,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 					}
 
 					mg = c.getPathway().getGraph();
-					mw = MainWindowSingleton.getInstance();
+					mw = MainWindow.getInstance();
 					itn = removals.iterator();
 					while (itn.hasNext()) {
 						mg.removeVertex(itn.next());

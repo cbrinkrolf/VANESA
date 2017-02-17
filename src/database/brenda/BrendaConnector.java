@@ -32,7 +32,6 @@ import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import pojos.DBColumn;
 
 //import edu.uci.ics.jung.graph.Vertex;
@@ -811,7 +810,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		if (mergePW != null)
 			answer = JOptionPane
 					.showOptionDialog(
-							MainWindowSingleton.getInstance(),
+							MainWindow.getInstance(),
 							"A new tab will be created with the pathway you selected. Shall this tab be a merge between the current pathway and the selected or contain only the selected pathway?",
 							"", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null,
@@ -879,9 +878,9 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 			}
 			if (answer == JOptionPane.NO_OPTION)
 				new MergeGraphs(pw, mergePW, true);
-			MainWindowSingleton.getInstance().closeProgressBar();
+			MainWindow.getInstance().closeProgressBar();
 		}
-		MainWindowSingleton.getInstance().updateAllGuiElements();
+		MainWindow.getInstance().updateAllGuiElements();
 	}
 	
 	public void setAutoCoarseDepth(boolean ac){

@@ -1,31 +1,14 @@
 package graph.algorithms.gui;
 
-import graph.ContainerSingelton;
-import graph.CreatePathway;
-import graph.GraphContainer;
-import graph.GraphInstance;
-import graph.algorithms.NetworkProperties;
-import graph.algorithms.NodeAttributeNames;
-import graph.algorithms.NodeAttributeTypes;
-import graph.algorithms.gui.clusters.GraphClusterDyer;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-import gui.images.ImagePath;
-
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,10 +16,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.swing.ButtonGroup;
@@ -47,19 +28,31 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
+import biologicalObjects.nodes.Protein;
 import cluster.clientimpl.ClusterComputeThread;
 import cluster.clientimpl.ComputeCallback;
 import cluster.slave.Cluster;
 import cluster.slave.JobTypes;
 import cluster.slave.LayoutPoint2D;
+import graph.ContainerSingelton;
+import graph.CreatePathway;
+import graph.GraphContainer;
+import graph.GraphInstance;
+import graph.algorithms.NetworkProperties;
+import graph.algorithms.NodeAttributeNames;
+import graph.algorithms.NodeAttributeTypes;
+import graph.algorithms.gui.clusters.GraphClusterDyer;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.ProgressBar;
+import gui.images.ImagePath;
+import net.miginfocom.swing.MigLayout;
 
 public class GraphColoringGUI implements ActionListener {
 
@@ -217,7 +210,7 @@ public class GraphColoringGUI implements ActionListener {
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.showProgressBar("attempting to queue job.");
 
 			oos.writeObject(np.getAdjacencyMatrix());
@@ -249,7 +242,7 @@ public class GraphColoringGUI implements ActionListener {
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			MainWindow.progressbar = new ProgressBar();
 			MainWindow.progressbar.init(100, "Computing", true);
 			MainWindow.progressbar.setProgressBarString("Setting up data.");
@@ -287,7 +280,7 @@ public class GraphColoringGUI implements ActionListener {
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.showProgressBar("attempting to queue job.");
 
 			// get network structure
@@ -435,7 +428,7 @@ public class GraphColoringGUI implements ActionListener {
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.showProgressBar("attempting to queue job.");
 
 			// get network structure
@@ -515,7 +508,7 @@ public class GraphColoringGUI implements ActionListener {
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.showProgressBar("attempting to queue job.");
 
 			// compute values over RMI
@@ -553,7 +546,7 @@ public class GraphColoringGUI implements ActionListener {
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.showProgressBar("attempting to queue job.");
 
 			// get network structure
@@ -634,7 +627,7 @@ public class GraphColoringGUI implements ActionListener {
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.showProgressBar("attempting to queue job.");
 
 			// get network structure
@@ -746,7 +739,7 @@ public class GraphColoringGUI implements ActionListener {
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.showProgressBar("attempting to queue job.");
 
 			// get network structure
@@ -901,7 +894,7 @@ public class GraphColoringGUI implements ActionListener {
 
 	public void reactiveateUI() {
 		// close Progress bar and reactivate UI
-		mw = MainWindowSingleton.getInstance();
+		mw = MainWindow.getInstance();
 		mw.closeProgressBar();
 
 	}
@@ -1217,7 +1210,7 @@ public class GraphColoringGUI implements ActionListener {
 
 	public void realignNetwork(HashMap<Integer, LayoutPoint2D> coords) {
 		// get network structure
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
 

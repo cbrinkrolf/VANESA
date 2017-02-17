@@ -24,7 +24,7 @@ public class CloseButton extends JButton implements ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private MainWindow w = MainWindowSingleton.getInstance();
+	private MainWindow w = MainWindow.getInstance();
 
 	public CloseButton() {
 

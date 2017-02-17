@@ -1,11 +1,5 @@
 package xmlInput.sbml;
 
-import graph.ContainerSingelton;
-import graph.CreatePathway;
-import graph.GraphContainer;
-import gui.MainWindowSingleton;
-import gui.RangeSelector;
-
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -28,11 +22,6 @@ import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 
-import petriNet.ContinuousTransition;
-import petriNet.DiscreteTransition;
-import petriNet.PNEdge;
-import petriNet.Place;
-import petriNet.StochasticTransition;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
@@ -87,6 +76,16 @@ import biologicalObjects.nodes.Site;
 import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
+import graph.ContainerSingelton;
+import graph.CreatePathway;
+import graph.GraphContainer;
+import gui.MainWindow;
+import gui.RangeSelector;
+import petriNet.ContinuousTransition;
+import petriNet.DiscreteTransition;
+import petriNet.PNEdge;
+import petriNet.Place;
+import petriNet.StochasticTransition;
 
 /**
  * @author sebastian and olga
@@ -904,7 +903,7 @@ public class VAMLInput {
 			// System.out.println("V "+b.getID());
 		}
 		pw.getGraph().restartVisualizationModel();
-		MainWindowSingleton.getInstance().updateProjectProperties();
+		MainWindow.getInstance().updateProjectProperties();
 		// MainWindowSingelton.getInstance().updateOptionPanel();
 
 	}

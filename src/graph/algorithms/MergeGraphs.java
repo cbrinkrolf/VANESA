@@ -4,15 +4,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import graph.CreatePathway;
-import gui.MainWindowSingleton;
-
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
+import biologicalElements.Pathway;
+import graph.CreatePathway;
+import gui.MainWindow;
 import xmlInput.sbml.VAMLInput;
 import xmlOutput.sbml.VAMLoutput;
-import biologicalElements.Pathway;
 
 public class MergeGraphs {
 
@@ -50,12 +49,12 @@ public class MergeGraphs {
 			e.printStackTrace();
 		}
 		
-		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
+		MainWindow.getInstance().enableOptionPanelUpdate(false);
 		CompareGraphs.mergeGraph(pw_new);
-		MainWindowSingleton.getInstance().enableOptionPanelUpdate(true);
+		MainWindow.getInstance().enableOptionPanelUpdate(true);
 		
-		MainWindowSingleton.getInstance().updateProjectProperties();
-		MainWindowSingleton.getInstance().updateOptionPanel();
+		MainWindow.getInstance().updateProjectProperties();
+		MainWindow.getInstance().updateOptionPanel();
 
 		if (showMessage) JOptionPane.showMessageDialog(null,
 				"The graphs have been merged and are visualized in a new tab.");

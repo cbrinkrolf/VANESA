@@ -1,13 +1,5 @@
 package biologicalObjects.nodes;
 
-import graph.GraphInstance;
-import graph.gui.Parameter;
-import graph.jung.classes.MyGraph;
-import graph.jung.graphDrawing.VertexShapes;
-import graph.layouts.Circle;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
@@ -23,7 +15,6 @@ import java.util.SortedSet;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import petriNet.Place;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
@@ -32,6 +23,13 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
+import graph.GraphInstance;
+import graph.gui.Parameter;
+import graph.jung.classes.MyGraph;
+import graph.jung.graphDrawing.VertexShapes;
+import graph.layouts.Circle;
+import gui.MainWindow;
+import petriNet.Place;
 
 public abstract class BiologicalNodeAbstract extends Pathway implements
 		GraphElementAbstract {
@@ -125,7 +123,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	
 	private Point2D parentNodeDistance = new Point2D.Double(0,0);
 	
-	private MainWindow mainWindow = MainWindowSingleton.getInstance();
+	private MainWindow mainWindow = MainWindow.getInstance();
 	
 	private boolean deleted = false;
 	
@@ -338,7 +336,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 				// Set label, name and title
 				String answer = label;
 				if(label==null){
-					answer = JOptionPane.showInputDialog(MainWindowSingleton.getInstance(), null, 
+					answer = JOptionPane.showInputDialog(MainWindow.getInstance(), null, 
 							"Name of the coarse Node", JOptionPane.QUESTION_MESSAGE);
 					if(answer==null){
 						return null;
@@ -515,7 +513,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 * @author tloka
 	 */
 	private static void showCoarsingErrorMessage(){
-		JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), 
+		JOptionPane.showMessageDialog(MainWindow.getInstance(), 
 				"No coarsing possible with the given set of nodes.", 
 				"Coarsing Error!", JOptionPane.ERROR_MESSAGE);
 	}
@@ -559,7 +557,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
 			innerNodes.addAll(getChildrenNodes());
 			this.flat();
-			MainWindowSingleton.getInstance().removeTab(false, getTab().getTitelTab(), this);
+			MainWindow.getInstance().removeTab(false, getTab().getTitelTab(), this);
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
 			setGraph(bna.getGraph());
 			new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();

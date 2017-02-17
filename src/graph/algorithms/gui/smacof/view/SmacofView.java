@@ -1,6 +1,20 @@
 package graph.algorithms.gui.smacof.view;
 
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.TreeSet;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -19,12 +33,14 @@ import javax.swing.table.AbstractTableModel;
 import org.jdesktop.swingx.JXTable;
 import org.jfree.ui.RefineryUtilities;
 
+import biologicalElements.GraphElementAbstract;
+import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import cluster.clientimpl.ClusterComputeThread;
 import cluster.clientimpl.ComputeCallback;
 import cluster.slave.JobTypes;
 import cluster.slave.LayoutPoint2D;
-import biologicalElements.GraphElementAbstract;
-import biologicalElements.Pathway;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -34,25 +50,7 @@ import graph.algorithms.gui.smacof.DoSmacof;
 import graph.algorithms.gui.smacof.algorithms.Weighting;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import net.miginfocom.swing.MigLayout;
-
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.TreeSet;
-
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 
 public class SmacofView extends JFrame implements ActionListener {
 	
@@ -119,7 +117,7 @@ public class SmacofView extends JFrame implements ActionListener {
 
 	public SmacofView() {
 		super("SMACOF: "
-				+ MainWindowSingleton.getInstance().getCurrentPathway());
+				+ MainWindow.getInstance().getCurrentPathway());
 		setPreferredSize(new Dimension(X, Y));
 
 		graph = GraphInstance.getMyGraph();
@@ -302,8 +300,8 @@ public class SmacofView extends JFrame implements ActionListener {
 			String command = e.getActionCommand();
 			switch(command) {
 			
-			// Bei auswahl des remote Aufrufs gelten andere Distanzmaße
-			// Diese werden dann beim auswählen gesetzt
+			// Bei auswahl des remote Aufrufs gelten andere Distanzmaï¿½e
+			// Diese werden dann beim auswï¿½hlen gesetzt
 			case "remotecomputation":
 				
 				if(remotecomputation.isSelected()){
@@ -384,7 +382,7 @@ public class SmacofView extends JFrame implements ActionListener {
 					startRemoteCall();
 				}				
 				
-				MainWindow w = MainWindowSingleton.getInstance();
+				MainWindow w = MainWindow.getInstance();
 				w.showProgressBar("computing new coordinates via SMACOF ...");
 				stopcomputationbutton.setEnabled(true);
 				break;
@@ -396,7 +394,7 @@ public class SmacofView extends JFrame implements ActionListener {
 						dosmacof.interrupt();
 						stopcomputationbutton.setEnabled(false);
 						startcomputationbutton.setEnabled(true);
-						MainWindow mw = MainWindowSingleton.getInstance();
+						MainWindow mw = MainWindow.getInstance();
 						mw.closeProgressBar();
 					} 
 				} catch (Exception ex) {
@@ -599,13 +597,13 @@ public class SmacofView extends JFrame implements ActionListener {
 			smacof.start();
 		} catch (RemoteException e) {
 			e.printStackTrace();
-			MainWindowSingleton.getInstance().closeProgressBar();
+			MainWindow.getInstance().closeProgressBar();
 		}
     }
 
     @SuppressWarnings("static-access")
 	public void realignNetwork(HashMap<Integer, LayoutPoint2D> coords) {
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
 		float scaling = 0.0f, desired_diameter = 1000.0f;

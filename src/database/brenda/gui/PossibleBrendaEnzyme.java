@@ -3,8 +3,6 @@
  */
 package database.brenda.gui;
 
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -25,13 +23,13 @@ import javax.swing.WindowConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import miscalleanous.tables.MyTable;
-import miscalleanous.tables.NodePropertyTableModel;
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
+import gui.MainWindow;
+import miscalleanous.tables.MyTable;
+import miscalleanous.tables.NodePropertyTableModel;
+import net.miginfocom.swing.MigLayout;
 import pojos.DBColumn;
 
 
@@ -120,7 +118,7 @@ public class PossibleBrendaEnzyme extends JFrame implements ActionListener, Tabl
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 	}
 	

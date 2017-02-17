@@ -1,19 +1,11 @@
 package graph.algorithms.gui.clusters;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -29,6 +21,10 @@ import org.jfree.ui.RefineryUtilities;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
+import graph.ContainerSingelton;
+import graph.GraphInstance;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 
 /**
  * The GraphClusterDyer applies colors to given BiologicalNodeAbstract_s
@@ -56,10 +52,10 @@ public class GraphClusterDyer extends JFrame {
 	
 
 	public GraphClusterDyer(TreeMap<Double, TreeSet<String>> dataset) {
-		super("Cluster Dyer: "+MainWindowSingleton.getInstance().getCurrentPathway());
+		super("Cluster Dyer: "+MainWindow.getInstance().getCurrentPathway());
 		setPreferredSize(new Dimension(X, Y));
 		
-		mg = ContainerSingelton.getInstance().getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).getGraph();
+		mg = ContainerSingelton.getInstance().getPathway(MainWindow.getInstance().getCurrentPathway()).getGraph();
 
 		HashMap<String, Double> expvalues = new HashMap<>();
 		
@@ -88,7 +84,7 @@ public class GraphClusterDyer extends JFrame {
 					valuesentry+="null; ";
 			}
 			
-			String avgString = "®"+(avgval/e.getValue().size());
+			String avgString = "ï¿½"+(avgval/e.getValue().size());
 			if(avgString.length()>6)
 				valuesentry+=avgString.substring(0, 6);
 			else

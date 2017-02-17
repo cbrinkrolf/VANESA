@@ -1,14 +1,5 @@
 package gui.eventhandlers;
 
-//import edu.uci.ics.jung.graph.ArchetypeVertex;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.visualization.Layout;
-import graph.ChangedFlags;
-import graph.GraphInstance;
-import graph.gui.Boundary;
-import graph.jung.graphDrawing.VertexShapes;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
@@ -20,12 +11,6 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import petriNet.ContinuousTransition;
-import petriNet.DiscreteTransition;
-import petriNet.PNEdge;
-import petriNet.Place;
-import petriNet.StochasticTransition;
-import petriNet.Transition;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
@@ -35,6 +20,20 @@ import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
+//import edu.uci.ics.jung.graph.ArchetypeVertex;
+//import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.visualization.Layout;
+import graph.ChangedFlags;
+import graph.GraphInstance;
+import graph.gui.Boundary;
+import graph.jung.graphDrawing.VertexShapes;
+import gui.MainWindow;
+import petriNet.ContinuousTransition;
+import petriNet.DiscreteTransition;
+import petriNet.PNEdge;
+import petriNet.Place;
+import petriNet.StochasticTransition;
+import petriNet.Transition;
 
 public class PropertyWindowListener implements FocusListener {
 
@@ -72,7 +71,7 @@ public class PropertyWindowListener implements FocusListener {
 			text = ((JTextField) event.getSource()).getText().trim();
 			if (!text.equals("") && !text.equals(geb.getLabel())) {
 				geb.setLabel(text);
-				MainWindowSingleton.getInstance().updateElementTree();
+				MainWindow.getInstance().updateElementTree();
 				if (geb instanceof BiologicalNodeAbstract) {
 					pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
 				} else {
@@ -83,7 +82,7 @@ public class PropertyWindowListener implements FocusListener {
 			text = ((JTextField) event.getSource()).getText().trim();
 			if (!text.equals("") && !text.equals(geb.getName())) {
 				geb.setName(text);
-				MainWindowSingleton.getInstance().updateElementTree();
+				MainWindow.getInstance().updateElementTree();
 				if (geb instanceof BiologicalNodeAbstract) {
 					pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
 				} else {
@@ -226,7 +225,7 @@ public class PropertyWindowListener implements FocusListener {
 
 						JOptionPane
 								.showMessageDialog(
-										MainWindowSingleton.getInstance(),
+										MainWindow.getInstance(),
 										"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
 										"Unallowed Operation...",
 										JOptionPane.ERROR_MESSAGE);
@@ -269,7 +268,7 @@ public class PropertyWindowListener implements FocusListener {
 
 						JOptionPane
 								.showMessageDialog(
-										MainWindowSingleton.getInstance(),
+										MainWindow.getInstance(),
 										"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
 										"Unallowed Operation...",
 										JOptionPane.ERROR_MESSAGE);

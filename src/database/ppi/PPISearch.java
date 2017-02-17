@@ -10,7 +10,6 @@ import javax.swing.SwingWorker;
 import configurations.Wrapper;
 import database.ppi.gui.PPISearchResultWindow;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import pojos.DBColumn;
 
 public class PPISearch extends SwingWorker<Object, Object>{
@@ -198,7 +197,7 @@ public class PPISearch extends SwingWorker<Object, Object>{
 	public void done() {
 		
     	Boolean continueProgress = false;
-    	MainWindowSingleton.getInstance().closeProgressBar();
+    	MainWindow.getInstance().closeProgressBar();
     	
 		
 		if (results.size() > 0) {
@@ -212,7 +211,7 @@ public class PPISearch extends SwingWorker<Object, Object>{
 		if (continueProgress) {
 			Vector<String[]> results = ppiSearchResultWindow.getAnswer();
 			if (results.size() > 0) {			
-				MainWindowSingleton.getInstance().showProgressBar("getting PPI Network");
+				MainWindow.getInstance().showProgressBar("getting PPI Network");
 				final Iterator<String[]> it = results.iterator();
 				String[] details;
 				PPIConnector ppiCon;				

@@ -1,7 +1,5 @@
 package database.mirna.gui;
 
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -15,13 +13,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListSelectionModel;
 
-import miscalleanous.tables.MyTable;
-import miscalleanous.tables.NodePropertyTableModel;
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
+import gui.MainWindow;
+import miscalleanous.tables.MyTable;
+import miscalleanous.tables.NodePropertyTableModel;
+import net.miginfocom.swing.MigLayout;
 import pojos.DBColumn;
 
 public class MirnaResultWindow extends JFrame {
@@ -99,7 +97,7 @@ public class MirnaResultWindow extends JFrame {
 
 		public Vector<String[]> getAnswer() {
 
-			JDialog dialog = pane.createDialog(MainWindowSingleton.getInstance(), "");
+			JDialog dialog = pane.createDialog(MainWindow.getInstance(), "");
 			dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 			

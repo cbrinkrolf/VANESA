@@ -1,9 +1,5 @@
 package Copy;
 
-import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
-import gui.MainWindowSingleton;
-
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +11,9 @@ import javax.swing.JOptionPane;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.GraphInstance;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 
 public class CopySelection {
 
@@ -44,7 +43,7 @@ public class CopySelection {
 		if (petriNet ^ pw.isPetriNet()) {
 			JOptionPane
 					.showMessageDialog(
-							MainWindowSingleton.getInstance(),
+							MainWindow.getInstance(),
 							"Copy-Paste is not possible from biological graph to petri net and vice versa!",
 							"Operation not possible...",
 							JOptionPane.ERROR_MESSAGE);
@@ -119,6 +118,6 @@ public class CopySelection {
 		}
 		pw.updateMyGraph();
 
-		MainWindowSingleton.getInstance().updateElementTree();
+		MainWindow.getInstance().updateElementTree();
 	}
 }

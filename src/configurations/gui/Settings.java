@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 
 public class Settings extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -4497946706066898835L;
@@ -61,7 +61,7 @@ public class Settings extends JDialog implements ActionListener {
 		enableSettings(true);
 
 		this.setSize(300, 300);
-		this.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance());
 		this.pack();
 		this.setResizable(false);
 		this.setVisible(true);

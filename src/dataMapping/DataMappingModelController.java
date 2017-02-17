@@ -28,7 +28,7 @@ import dataMapping.biomartRetrieval.HPRDQueryRetrieval;
 import dataMapping.biomartRetrieval.IntActQueryRetrieval;
 import dataMapping.dataImport.ImportExcelxData;
 import graph.GraphInstance;
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 import gui.ProgressBar;
 
 
@@ -316,7 +316,7 @@ public class DataMappingModelController extends Observable {
 				SwingUtilities.invokeLater(new Runnable() {
 				     public void run() {
 							JOptionPane.showMessageDialog(
-									MainWindowSingleton.getInstance(),
+									MainWindow.getInstance(),
 							"Query dosen't work (no results).",
 							"Error", JOptionPane.ERROR_MESSAGE);
 				     }
@@ -630,7 +630,7 @@ public class DataMappingModelController extends Observable {
 		// TODO Auto-generated method stub
 		//ExportThread erzeugen newM �bergeben
 
-		MainWindowSingleton.getInstance().showProgressBar("Datamapping");
+		MainWindow.getInstance().showProgressBar("Datamapping");
 		
 
 		ArrayList<String> header = dataMappingModel.getHeader();
@@ -649,7 +649,7 @@ public class DataMappingModelController extends Observable {
 	
 	public static void reactivateUI() {
 		// close Progress bar and reactivate UI
-		MainWindowSingleton.getInstance().closeProgressBar();		
+		MainWindow.getInstance().closeProgressBar();		
 	}
 
 

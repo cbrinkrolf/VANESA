@@ -1,7 +1,5 @@
 package dataMapping;
 
-import gui.MainWindowSingleton;
-
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -18,6 +16,7 @@ import javax.swing.SwingWorker;
 import cluster.clientimpl.MappingCallback;
 import cluster.master.IClusterJobs;
 import cluster.slave.JobTypes;
+import gui.MainWindow;
 
 /**
  * @author Britta Niemann
@@ -89,7 +88,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 					public void run() {
 						DataMappingModelController.reactivateUI();
 						JOptionPane.showMessageDialog(
-								MainWindowSingleton.getInstance(), "Queue is at maximum capacity!");
+								MainWindow.getInstance(), "Queue is at maximum capacity!");
 					}
 					
 				});
@@ -101,7 +100,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					DataMappingModelController.reactivateUI();
-					JOptionPane.showMessageDialog(MainWindowSingleton
+					JOptionPane.showMessageDialog(MainWindow
 							.getInstance().returnFrame(),
 							"RMI Interface could not be established.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -113,7 +112,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					DataMappingModelController.reactivateUI();
-					JOptionPane.showMessageDialog(MainWindowSingleton
+					JOptionPane.showMessageDialog(MainWindow
 							.getInstance().returnFrame(),
 							"Cluster not reachable.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -125,7 +124,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					DataMappingModelController.reactivateUI();
-					JOptionPane.showMessageDialog(MainWindowSingleton
+					JOptionPane.showMessageDialog(MainWindow
 							.getInstance().returnFrame(),
 							"Clusteradress could not be resolved.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -138,7 +137,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 				public void run() {
 					DataMappingModelController.reactivateUI();
 					JOptionPane.showMessageDialog(
-							MainWindowSingleton.getInstance(), "Data export could not be executed.", "Error",
+							MainWindow.getInstance(), "Data export could not be executed.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 				
