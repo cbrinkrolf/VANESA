@@ -32,7 +32,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MyPopUpSingleton;
+import gui.MyPopUp;
 import io.graphML.SaveGraphML;
 import moOutput.MOoutput;
 import petriNet.PNEdge;
@@ -273,7 +273,7 @@ public class SaveDialog {
 			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					sbmlDescription + out);
 			}else{
-				MyPopUpSingleton.getInstance().show("JSbml export", "Saving was successful!");
+				MyPopUp.getInstance().show("JSbml export", "Saving was successful!");
 			}
 
 			// else
@@ -304,7 +304,7 @@ public class SaveDialog {
 			new MOoutput(new FileOutputStream(new File(path_colored+"_colored.mo")),
 					new GraphInstance().getPathway(), true);
 			
-			MyPopUpSingleton.getInstance().show("Modelica export", moDescription + " File saved");
+			MyPopUp.getInstance().show("Modelica export", moDescription + " File saved");
 			//JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
 				//	moDescription + " File saved");
 
@@ -324,7 +324,7 @@ public class SaveDialog {
 			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					csvDescription + result);
 			}else{
-				MyPopUpSingleton.getInstance().show("csv", "Saving was successful!");
+				MyPopUp.getInstance().show("csv", "Saving was successful!");
 			}
 
 		} else if (fileFormat.equals(pnmlDescription)) {
@@ -390,7 +390,7 @@ public class SaveDialog {
 								MainWindow.getInstance(), pnmlDescription
 										+ "an error occured: "+ result);
 					}else{
-						MyPopUpSingleton.getInstance().show("PNML export", "Saving was successful!");
+						MyPopUp.getInstance().show("PNML export", "Saving was successful!");
 					}
 				} catch (HeadlessException e) {
 					// TODO Auto-generated catch block
@@ -433,7 +433,7 @@ public class SaveDialog {
 					p.paint(graphics);
 					graphics.dispose();
 					ImageIO.write(bi, "png", file);
-					MyPopUpSingleton.getInstance().show("PNG", "Picture saved successfully!");
+					MyPopUp.getInstance().show("PNG", "Picture saved successfully!");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

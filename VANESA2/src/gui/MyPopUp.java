@@ -15,14 +15,23 @@ public class MyPopUp {
 	private float opacity = 0.9f;
 	private int time = 5000;
 
-	ArrayList<Integer> list;
+	private ArrayList<Integer> list;
 
-	public MyPopUp() {
+	private static MyPopUp instance;
+
+	private MyPopUp() {
 		w = MainWindow.getInstance();
 		list = new ArrayList<Integer>();
 		for (int i = 0; i < 100; i++) {
 			list.add(0);
 		}
+	}
+
+	public static synchronized MyPopUp getInstance() {
+		if (MyPopUp.instance == null) {
+			MyPopUp.instance = new MyPopUp();
+		}
+		return MyPopUp.instance;
 	}
 
 	public void show(String title, String message) {
@@ -59,7 +68,7 @@ public class MyPopUp {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//stop count down if pop up is clicked
+				// stop count down if pop up is clicked
 				if (!dialog.getTitle().startsWith("Stopped...")) {
 					dialog.setTitle("Stopped... " + dialog.getTitle());
 				}

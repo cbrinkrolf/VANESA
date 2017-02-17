@@ -23,7 +23,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MyPopUpSingleton;
+import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
 import petriNet.ContinuousTransition;
 
@@ -222,7 +222,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 							this.add.setText("add");
 							this.repaint();
 						} catch (NumberFormatException nfe) {
-							MyPopUpSingleton.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+							MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
 						}
 					} else {
 						// System.out.println("schon vorhanden");
@@ -244,10 +244,10 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 				panel.add(new JLabel(unit.getText()), "span 1, gapright 4, wrap");
 				this.repaint();
 			} catch (NumberFormatException nfx) {
-				MyPopUpSingleton.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+				MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
 			}
 		}else{
-			MyPopUpSingleton.getInstance().show("Parameter", "Name is empty!");
+			MyPopUp.getInstance().show("Parameter", "Name is empty!");
 		}
 
 		} else if (e.getActionCommand().startsWith("del")) {

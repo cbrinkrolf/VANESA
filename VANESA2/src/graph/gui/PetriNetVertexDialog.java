@@ -25,7 +25,7 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MyPopUpSingleton;
+import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
@@ -211,7 +211,7 @@ public class PetriNetVertexDialog {
 				while(it.hasNext()){
 					bna = it.next();
 					if(bna.getName().equals(name.getText().trim())){
-						MyPopUpSingleton.getInstance().show("Adding Place", "Cannot add Place! There is already a place with this name in the network!");
+						MyPopUp.getInstance().show("Adding Place", "Cannot add Place! There is already a place with this name in the network!");
 						return null;
 					}
 				}
