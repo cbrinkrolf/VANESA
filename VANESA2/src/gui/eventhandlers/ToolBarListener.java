@@ -36,9 +36,18 @@ import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 
 public class ToolBarListener implements ActionListener {
+	
+	private static ToolBarListener instance; 
 
-	protected ToolBarListener(){
+	private ToolBarListener(){
 		
+	}
+	
+	public static synchronized ToolBarListener getInstance(){
+		if(ToolBarListener.instance == null){
+			ToolBarListener.instance = new ToolBarListener();
+		}
+		return ToolBarListener.instance;
 	}
 	
 	public void showCreateBeforeMessage() {

@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 
-import gui.eventhandlers.ToolBarListenerSingleton;
+import gui.eventhandlers.ToolBarListener;
 import gui.images.ImagePath;
 import net.miginfocom.swing.MigLayout;
 
@@ -47,79 +47,79 @@ public class ToolBar {
 		parallelview = new ToolBarButton(new ImageIcon(imagePath.getPath("parallelview.png")));
 		parallelview.setToolTipText("Create ParallelView from graphs");
 		parallelview.setActionCommand("parallelview");
-		parallelview.addActionListener(ToolBarListenerSingleton.getInstance());
+		parallelview.addActionListener(ToolBarListener.getInstance());
 
 		JButton newDoc = new ToolBarButton(new ImageIcon(imagePath.getPath("newDocumentSmall.png")));
 
 		newDoc.setToolTipText("Create new network");
 		newDoc.setActionCommand("new Network");
-		newDoc.addActionListener(ToolBarListenerSingleton.getInstance());
+		newDoc.addActionListener(ToolBarListener.getInstance());
 
 		JButton pick = new ToolBarButton(new ImageIcon(imagePath.getPath("newPick.png")));
 		pick.setToolTipText("Pick element");
 		pick.setActionCommand("pick");
-		pick.addActionListener(ToolBarListenerSingleton.getInstance());
+		pick.addActionListener(ToolBarListener.getInstance());
 
 		JButton hierarchy = new ToolBarButton(new ImageIcon(imagePath.getPath("hierarchy_button.png")));
 		hierarchy.setToolTipText("Hierarchy mode");
 		hierarchy.setActionCommand("hierarchy");
-		hierarchy.addActionListener(ToolBarListenerSingleton.getInstance());
+		hierarchy.addActionListener(ToolBarListener.getInstance());
 
 		JButton discretePlace = new ToolBarButton(new ImageIcon(imagePath.getPath("discretePlace.png")));
 		discretePlace.setToolTipText("Discrete Place");
 		discretePlace.setActionCommand("discretePlace");
-		discretePlace.addActionListener(ToolBarListenerSingleton.getInstance());
+		discretePlace.addActionListener(ToolBarListener.getInstance());
 
 		JButton continiousPlace = new ToolBarButton(new ImageIcon(imagePath.getPath("continiousPlace.png")));
 		continiousPlace.setToolTipText("Continuouse Place");
 		continiousPlace.setActionCommand("continuousPlace");
-		continiousPlace.addActionListener(ToolBarListenerSingleton.getInstance());
+		continiousPlace.addActionListener(ToolBarListener.getInstance());
 
 		convertIntoPetriNet = new ToolBarButton("convertIntoPetriNet");
 		convertIntoPetriNet.setToolTipText("Convert into Petri Net");
 		convertIntoPetriNet.setActionCommand("convertIntoPetriNet");
-		convertIntoPetriNet.addActionListener(ToolBarListenerSingleton.getInstance());
+		convertIntoPetriNet.addActionListener(ToolBarListener.getInstance());
 
 		JButton discreteTransition = new ToolBarButton(new ImageIcon(imagePath.getPath("discreteTransition.png")));
 		discreteTransition.setToolTipText("Discrete Transition");
 		discreteTransition.setActionCommand("discreteTransition");
-		discreteTransition.addActionListener(ToolBarListenerSingleton.getInstance());
+		discreteTransition.addActionListener(ToolBarListener.getInstance());
 
 		JButton continiousTransition = new ToolBarButton(new ImageIcon(imagePath.getPath("continiousTransition2.png")));
 		continiousTransition.setToolTipText("Continuouse Transition");
 		continiousTransition.setActionCommand("continiousTransition");
-		continiousTransition.addActionListener(ToolBarListenerSingleton.getInstance());
+		continiousTransition.addActionListener(ToolBarListener.getInstance());
 
 		JButton stochasticTransition = new ToolBarButton(new ImageIcon(imagePath.getPath("stochasticTransition2.png")));
 		stochasticTransition.setToolTipText("Stochastic Transition");
 		stochasticTransition.setActionCommand("stochasticTransition");
-		stochasticTransition.addActionListener(ToolBarListenerSingleton.getInstance());
+		stochasticTransition.addActionListener(ToolBarListener.getInstance());
 
 		JButton center = new ToolBarButton(new ImageIcon(imagePath.getPath("centerGraph.png")));
 		center.setToolTipText("Center graph");
 		center.setActionCommand("center");
-		center.addActionListener(ToolBarListenerSingleton.getInstance());
+		center.addActionListener(ToolBarListener.getInstance());
 
 		JButton move = new ToolBarButton(new ImageIcon(imagePath.getPath("move.png")));
 		move.setToolTipText("Move graph");
 		move.setActionCommand("move");
-		move.addActionListener(ToolBarListenerSingleton.getInstance());
+		move.addActionListener(ToolBarListener.getInstance());
 
 		JButton zoomIn = new ToolBarButton(new ImageIcon(imagePath.getPath("zoomPlus.png")));
 		zoomIn.setToolTipText("Zoom in");
 		zoomIn.setActionCommand("zoom in");
-		zoomIn.addActionListener(ToolBarListenerSingleton.getInstance());
+		zoomIn.addActionListener(ToolBarListener.getInstance());
 
 		JButton zoomOut = new ToolBarButton(new ImageIcon(imagePath.getPath("zoomMinus.png")));
 		zoomOut.setToolTipText("Zoom out");
 		zoomOut.setActionCommand("zoom out");
-		zoomOut.addActionListener(ToolBarListenerSingleton.getInstance());
+		zoomOut.addActionListener(ToolBarListener.getInstance());
 
 		JButton trash = new ToolBarButton(new ImageIcon(imagePath.getPath("Trash.png")));
 		trash.setToolTipText("Delete selected items");
 		trash.setMnemonic(KeyEvent.VK_DELETE);
 		trash.setActionCommand("del");
-		trash.addActionListener(ToolBarListenerSingleton.getInstance());
+		trash.addActionListener(ToolBarListener.getInstance());
 
 		JPanel infopanel = new ToolBarPanel();
 		infopanel.setLayout(new GridLayout(4, 2));
@@ -127,47 +127,47 @@ public class ToolBar {
 		JButton info = new ToolBarButton(new ImageIcon(imagePath.getPath("InfoToolBarButton.png")));
 		info.setToolTipText("Info");
 		info.setActionCommand("info");
-		info.addActionListener(ToolBarListenerSingleton.getInstance());
+		info.addActionListener(ToolBarListener.getInstance());
 
 		JButton infoextended = new ToolBarButton(new ImageIcon(imagePath.getPath("InfoToolBarButtonextended.png")));
 		infoextended.setToolTipText("More Info");
 		infoextended.setActionCommand("infoextended");
-		infoextended.addActionListener(ToolBarListenerSingleton.getInstance());
+		infoextended.addActionListener(ToolBarListener.getInstance());
 
 		JButton mergeSelectedNodes = new ToolBarButton(new ImageIcon(imagePath.getPath("MergeNodesButton.png")));
 		mergeSelectedNodes.setToolTipText("Merge Selected Nodes");
 		mergeSelectedNodes.setActionCommand("mergeSelectedNodes");
-		mergeSelectedNodes.addActionListener(ToolBarListenerSingleton.getInstance());
+		mergeSelectedNodes.addActionListener(ToolBarListener.getInstance());
 
 		JButton splitNode = new ToolBarButton(new ImageIcon(imagePath.getPath("SplitNodesButton.png")));
 		splitNode.setToolTipText("Split node (inverse operation of \"merge nodes\"");
 		splitNode.setActionCommand("splitNode");
-		splitNode.addActionListener(ToolBarListenerSingleton.getInstance());
+		splitNode.addActionListener(ToolBarListener.getInstance());
 
 		JButton coarseSelectedNodes = new ToolBarButton(new ImageIcon(imagePath.getPath("CoarseNodesButton.png")));
 		coarseSelectedNodes.setToolTipText("Coarse selected nodes");
 		coarseSelectedNodes.setActionCommand("coarseSelectedNodes");
-		coarseSelectedNodes.addActionListener(ToolBarListenerSingleton.getInstance());
+		coarseSelectedNodes.addActionListener(ToolBarListener.getInstance());
 
 		JButton flatSelectedNodes = new ToolBarButton(new ImageIcon(imagePath.getPath("FlatNodesButton.png")));
 		flatSelectedNodes.setToolTipText("Flat selected coarse node(s)");
 		flatSelectedNodes.setActionCommand("flatSelectedNodes");
-		flatSelectedNodes.addActionListener(ToolBarListenerSingleton.getInstance());
+		flatSelectedNodes.addActionListener(ToolBarListener.getInstance());
 
 		JButton enterSelectedNode = new ToolBarButton(new ImageIcon(imagePath.getPath("enterNode.png")));
 		enterSelectedNode.setToolTipText("Enter selected coarse node(s)");
 		enterSelectedNode.setActionCommand("enterNode");
-		enterSelectedNode.addActionListener(ToolBarListenerSingleton.getInstance());
+		enterSelectedNode.addActionListener(ToolBarListener.getInstance());
 
 		JButton autoCoarse = new ToolBarButton(new ImageIcon(imagePath.getPath("autocoarse.png")));
 		autoCoarse.setToolTipText("Autocoarse current Pathway");
 		autoCoarse.setActionCommand("autocoarse");
-		autoCoarse.addActionListener(ToolBarListenerSingleton.getInstance());
+		autoCoarse.addActionListener(ToolBarListener.getInstance());
 
 		JButton newWindow = new ToolBarButton(new ImageIcon(imagePath.getPath("newWindow.png")));
 		newWindow.setToolTipText("Open new window.");
 		newWindow.setActionCommand("newWindow");
-		newWindow.addActionListener(ToolBarListenerSingleton.getInstance());
+		newWindow.addActionListener(ToolBarListener.getInstance());
 
 		infopanel.add(info);
 		infopanel.add(infoextended);
@@ -188,22 +188,22 @@ public class ToolBar {
 		JButton fullScreen = new ToolBarButton(new ImageIcon(imagePath.getPath("newFullScreen.png")));
 		fullScreen.setToolTipText("Full screen");
 		fullScreen.setActionCommand("full screen");
-		fullScreen.addActionListener(ToolBarListenerSingleton.getInstance());
+		fullScreen.addActionListener(ToolBarListener.getInstance());
 
 		JButton stretchEdges = new ToolBarButton(new ImageIcon(imagePath.getPath("stretchEdges.png")));
 		stretchEdges.setToolTipText("Stretch edge length");
 		stretchEdges.setActionCommand("stretchEdges");
-		stretchEdges.addActionListener(ToolBarListenerSingleton.getInstance());
+		stretchEdges.addActionListener(ToolBarListener.getInstance());
 
 		JButton compressEdges = new ToolBarButton(new ImageIcon(imagePath.getPath("compressEdges.png")));
 		compressEdges.setToolTipText("Compress edge length");
 		compressEdges.setActionCommand("compressEdges");
-		compressEdges.addActionListener(ToolBarListenerSingleton.getInstance());
+		compressEdges.addActionListener(ToolBarListener.getInstance());
 
 		JButton merge = new ToolBarButton(new ImageIcon(imagePath.getPath("maximize.png")));
 		merge.setToolTipText("Compare / Align graphs");
 		merge.setActionCommand("merge");
-		merge.addActionListener(ToolBarListenerSingleton.getInstance());
+		merge.addActionListener(ToolBarListener.getInstance());
 
 		ButtonChooser chooser = new ButtonChooser(AnnotationPainter.getInstance().getSelectShapeActions());
 
@@ -221,38 +221,38 @@ public class ToolBar {
 		covGraph = new ToolBarButton("Cov/Reach Graph");
 		covGraph.setActionCommand("createCov");
 		covGraph.setToolTipText("Create Cov/Reach Graph");
-		covGraph.addActionListener(ToolBarListenerSingleton.getInstance());
+		covGraph.addActionListener(ToolBarListener.getInstance());
 
 		JButton editNodes = new ToolBarButton("Edit PN-Elements");
 		editNodes.setActionCommand("editElements");
 		editNodes.setToolTipText("Edit PN-Elements");
-		editNodes.addActionListener(ToolBarListenerSingleton.getInstance());
+		editNodes.addActionListener(ToolBarListener.getInstance());
 
 		JButton loadModResult = new ToolBarButton("Load Modellica Result");
 		loadModResult.setActionCommand("loadModResult");
 		loadModResult.setToolTipText("Load Modellica Result");
-		loadModResult.addActionListener(ToolBarListenerSingleton.getInstance());
+		loadModResult.addActionListener(ToolBarListener.getInstance());
 
 		JButton simulate = new ToolBarButton("Simulate Petri Net");
 		simulate.setActionCommand("simulate");
 		simulate.setToolTipText("Simulate Petri Net");
-		simulate.addActionListener(ToolBarListenerSingleton.getInstance());
+		simulate.addActionListener(ToolBarListener.getInstance());
 
 		modelling = new ToolBarButton(ModellingViewString);
 		modelling.setActionCommand("modelling");
-		modelling.addActionListener(ToolBarListenerSingleton.getInstance());
+		modelling.addActionListener(ToolBarListener.getInstance());
 		modelling.setToolTipText("Change to Modelling View");
 
 		heatmap = new ToolBarButton(new ImageIcon(imagePath.getPath("heatmapGraph.png")));
 		heatmap.setToolTipText("Create heatgraph");
 		heatmap.setActionCommand("heatmap");
-		heatmap.addActionListener(ToolBarListenerSingleton.getInstance());
+		heatmap.addActionListener(ToolBarListener.getInstance());
 
 		edit = new ToolBarButton(new ImageIcon(imagePath.getPath("TitleGraph.png")));
 		edit.setSelectedIcon(new ImageIcon(imagePath.getPath("editSelected.png")));
 		edit.setToolTipText("Edit graph");
 		edit.setActionCommand("edit");
-		edit.addActionListener(ToolBarListenerSingleton.getInstance());
+		edit.addActionListener(ToolBarListener.getInstance());
 
 		JPanel viewPortControls = new ToolBarPanel();
 		viewPortControls.setLayout(new GridLayout(3, 2));
@@ -331,22 +331,22 @@ public class ToolBar {
 
 		JButton adjustDown = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustDown.png")));
 		adjustDown.setActionCommand("adjustDown");
-		adjustDown.addActionListener(ToolBarListenerSingleton.getInstance());
+		adjustDown.addActionListener(ToolBarListener.getInstance());
 		adjustDown.setToolTipText("Adjust selected nodes to lowest node");
 
 		JButton adjustLeft = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustLeft.png")));
 		adjustLeft.setActionCommand("adjustLeft");
-		adjustLeft.addActionListener(ToolBarListenerSingleton.getInstance());
+		adjustLeft.addActionListener(ToolBarListener.getInstance());
 		adjustLeft.setToolTipText("Adjust selected nodes to left");
 
 		JButton adjustVerticalSpace = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustVerticalSpace.png")));
 		adjustVerticalSpace.setActionCommand("adjustVerticalSpace");
-		adjustVerticalSpace.addActionListener(ToolBarListenerSingleton.getInstance());
+		adjustVerticalSpace.addActionListener(ToolBarListener.getInstance());
 		adjustVerticalSpace.setToolTipText("Adjust vertical space of selected nodes");
 
 		JButton adjustHorizontalSpace = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustHorizontalSpace.png")));
 		adjustHorizontalSpace.setActionCommand("adjustHorizontalSpace");
-		adjustHorizontalSpace.addActionListener(ToolBarListenerSingleton.getInstance());
+		adjustHorizontalSpace.addActionListener(ToolBarListener.getInstance());
 		adjustHorizontalSpace.setToolTipText("Adjust horizontal space of selected nodes");
 
 		nodeAdjustment.add(adjustDown);
