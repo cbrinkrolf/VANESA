@@ -32,12 +32,12 @@ import org.sbml.jsbml.xml.XMLTriple;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.RangeSelector;
-import petriNet.ContinuousTransition;
-import petriNet.DiscreteTransition;
-import petriNet.StochasticTransition;
 import petriNet.Transition;
 import util.MyIntComparable;
 
@@ -651,14 +651,14 @@ public class JSBMLoutput {
 		}
 		// if Net is a petri Net
 		if (pathway.isPetriNet()) {
-			if (oneNode instanceof petriNet.Place) {
-				attr = String.valueOf(((petriNet.Place) oneNode).getToken());
+			if (oneNode instanceof biologicalObjects.nodes.petriNet.Place) {
+				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getToken());
 				el.addChild(createElSub(attr, "token"));
-				attr = String.valueOf(((petriNet.Place) oneNode).getTokenMin());
+				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getTokenMin());
 				el.addChild(createElSub(attr, "tokenMin"));
-				attr = String.valueOf(((petriNet.Place) oneNode).getTokenMax());
+				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getTokenMax());
 				el.addChild(createElSub(attr, "tokenMax"));
-				attr = String.valueOf(((petriNet.Place) oneNode)
+				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode)
 						.getTokenStart());
 				el.addChild(createElSub(attr, "tokenStart"));
 			} else if (oneNode instanceof Transition) {
@@ -764,10 +764,10 @@ public class JSBMLoutput {
 					el.addChild(elSub);
 				}
 			}
-		} else if (oneEdge instanceof petriNet.PNEdge) {
-			attr = ((petriNet.PNEdge) oneEdge).getFunction();
+		} else if (oneEdge instanceof biologicalObjects.edges.petriNet.PNEdge) {
+			attr = ((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getFunction();
 			el.addChild(createElSub(attr, "Function"));
-			attr = String.valueOf(((petriNet.PNEdge) oneEdge)
+			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge)
 					.getActivationProbability());
 			el.addChild(createElSub(attr, "ActivationProbability"));
 			// TODO !!!

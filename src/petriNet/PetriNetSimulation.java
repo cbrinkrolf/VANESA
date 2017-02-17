@@ -28,6 +28,7 @@ import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.Place;
 import graph.ChangedFlags;
 import graph.ContainerSingelton;
 import graph.GraphContainer;

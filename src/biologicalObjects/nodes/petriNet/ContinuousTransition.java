@@ -1,6 +1,7 @@
-package petriNet;
+package biologicalObjects.nodes.petriNet;
 
 import graph.jung.graphDrawing.VertexShapes;
+import petriNet.Transition;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;

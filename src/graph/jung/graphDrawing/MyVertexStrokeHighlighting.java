@@ -6,11 +6,11 @@ import java.util.Iterator;
 
 import org.apache.commons.collections15.Transformer;
 
-import petriNet.ContinuousTransition;
-import petriNet.Place;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.Place;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
 

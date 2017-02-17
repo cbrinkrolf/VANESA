@@ -26,6 +26,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
 import biologicalObjects.edges.ReactionPairEdge;
+import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.DNA;
@@ -36,7 +37,6 @@ import graph.CreatePathway;
 import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.RangeSelector;
-import petriNet.PNEdge;
 
 /**
  * To read a SBML file and put the results on the graph. A SBML which has been
@@ -382,60 +382,60 @@ public class JSBMLinput {
 						// System.out.println("plce");
 						elSub = specAnnotation.getChild("token", null);
 						attr = String.valueOf(elSub.getAttributeValue("token"));
-						((petriNet.Place) bna).setToken(Double.parseDouble(attr));
+						((biologicalObjects.nodes.petriNet.Place) bna).setToken(Double.parseDouble(attr));
 						elSub = specAnnotation.getChild("tokenMin", null);
 						attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
-						((petriNet.Place) bna).setTokenMin(Double.parseDouble(attr));
+						((biologicalObjects.nodes.petriNet.Place) bna).setTokenMin(Double.parseDouble(attr));
 						elSub = specAnnotation.getChild("tokenMax", null);
 						attr = String.valueOf(elSub.getAttributeValue("tokenMax"));
-						((petriNet.Place) bna).setTokenMax(Double.parseDouble(attr));
+						((biologicalObjects.nodes.petriNet.Place) bna).setTokenMax(Double.parseDouble(attr));
 						elSub = specAnnotation.getChild("tokenStart", null);
 						attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
-						((petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
-						((petriNet.Place) bna).setDiscrete(true);
+						((biologicalObjects.nodes.petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
+						((biologicalObjects.nodes.petriNet.Place) bna).setDiscrete(true);
 						break;
 					case Elementdeclerations.s_place:
 						elSub = specAnnotation.getChild("token", null);
 						attr = String.valueOf(elSub.getAttributeValue("token"));
 						// System.out.println(attr);
-						((petriNet.Place) bna).setToken(Double.parseDouble(attr));
+						((biologicalObjects.nodes.petriNet.Place) bna).setToken(Double.parseDouble(attr));
 						elSub = specAnnotation.getChild("tokenMin", null);
 						attr = String.valueOf(elSub.getAttributeValue("tokenMin"));
-						((petriNet.Place) bna).setTokenMin(Double.parseDouble(attr));
+						((biologicalObjects.nodes.petriNet.Place) bna).setTokenMin(Double.parseDouble(attr));
 						elSub = specAnnotation.getChild("tokenMax", null);
 						attr = String.valueOf(elSub.getAttributeValue("tokenMax"));
-						((petriNet.Place) bna).setTokenMax(Double.parseDouble(attr));
+						((biologicalObjects.nodes.petriNet.Place) bna).setTokenMax(Double.parseDouble(attr));
 						elSub = specAnnotation.getChild("tokenStart", null);
 						attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
-						((petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
-						((petriNet.Place) bna).setDiscrete(false);
+						((biologicalObjects.nodes.petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
+						((biologicalObjects.nodes.petriNet.Place) bna).setDiscrete(false);
 						break;
 					case Elementdeclerations.discreteTransition:
 						elSub = specAnnotation.getChild("delay", null);
 						attr = String.valueOf(elSub.getAttributeValue("delay"));
-						((petriNet.DiscreteTransition) bna).setDelay(Double.parseDouble(attr));
+						((biologicalObjects.nodes.petriNet.DiscreteTransition) bna).setDelay(Double.parseDouble(attr));
 						break;
 					case Elementdeclerations.continuousTransition:
 						elSub = specAnnotation.getChild("maximumSpeed", null);
 						attr = String.valueOf(elSub.getAttributeValue("maximumSpeed"));
-						((petriNet.ContinuousTransition) bna).setMaximumSpeed(attr);
+						((biologicalObjects.nodes.petriNet.ContinuousTransition) bna).setMaximumSpeed(attr);
 						if (attr == null || attr.equals("")) {
-							((petriNet.ContinuousTransition) bna).setMaximumSpeed("1");
+							((biologicalObjects.nodes.petriNet.ContinuousTransition) bna).setMaximumSpeed("1");
 						}
 						elSub = specAnnotation.getChild("knockedOut", null);
-						((petriNet.ContinuousTransition) bna).setKnockedOut(false);
+						((biologicalObjects.nodes.petriNet.ContinuousTransition) bna).setKnockedOut(false);
 						if (elSub != null) {
 							attr = String.valueOf(elSub.getAttributeValue("knockedOut"));
 
 							if (attr != null && attr.equals("true")) {
-								((petriNet.ContinuousTransition) bna).setKnockedOut(true);
+								((biologicalObjects.nodes.petriNet.ContinuousTransition) bna).setKnockedOut(true);
 							}
 						}
 						break;
 					case Elementdeclerations.stochasticTransition:
 						elSub = specAnnotation.getChild("distribution", null);
 						attr = String.valueOf(elSub.getAttributeValue("distribution"));
-						((petriNet.StochasticTransition) bna).setDistribution(attr);
+						((biologicalObjects.nodes.petriNet.StochasticTransition) bna).setDistribution(attr);
 						break;
 					}
 

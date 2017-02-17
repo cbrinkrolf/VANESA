@@ -6,15 +6,15 @@ import java.util.Iterator;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.Place;
 import de.uni_bielefeld.cebitec.mzurowie.pretty_formula.main.FormulaParser;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.gui.Parameter;
 import gui.MainWindow;
-import petriNet.ContinuousTransition;
-import petriNet.PNEdge;
-import petriNet.Place;
 
 public class PNDoc {
 

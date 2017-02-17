@@ -20,12 +20,12 @@ import javax.swing.event.DocumentListener;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
-import petriNet.ContinuousTransition;
 
 public class ParameterWindow implements ActionListener, DocumentListener {
 

@@ -21,6 +21,7 @@ import biologicalElements.IDAlreadyExistException;
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.petriNet.Place;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import graph.GraphInstance;
@@ -29,7 +30,6 @@ import graph.jung.classes.MyGraph;
 import graph.jung.graphDrawing.VertexShapes;
 import graph.layouts.Circle;
 import gui.MainWindow;
-import petriNet.Place;
 
 public abstract class BiologicalNodeAbstract extends Pathway implements
 		GraphElementAbstract {

@@ -5,7 +5,7 @@ import javax.swing.Icon;
 import org.apache.commons.collections15.Transformer;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import petriNet.Place;
+import biologicalObjects.nodes.petriNet.Place;
 
 public class MyVertexIconTransformer implements Transformer<BiologicalNodeAbstract, Icon> {
 

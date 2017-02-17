@@ -1,10 +1,10 @@
 package biologicalObjects.nodes;
 
-import petriNet.ContinuousTransition;
-import petriNet.DiscreteTransition;
-import petriNet.Place;
-import petriNet.StochasticTransition;
 import biologicalElements.Elementdeclerations;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 
 public class BiologicalNodeAbstractFactory {
 

@@ -1,7 +1,8 @@
-package petriNet;
+package biologicalObjects.edges.petriNet;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import petriNet.FunctionParser;
 
 public class PNEdge extends BiologicalEdgeAbstract {
 

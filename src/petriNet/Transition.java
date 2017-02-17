@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 import biologicalElements.Elementdeclerations;
+import biologicalObjects.nodes.petriNet.PNNode;
 
 public class Transition extends PNNode {
 

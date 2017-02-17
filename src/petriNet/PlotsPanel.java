@@ -33,6 +33,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.Place;
 
 public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 

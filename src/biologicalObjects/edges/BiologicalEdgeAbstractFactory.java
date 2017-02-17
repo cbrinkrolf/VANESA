@@ -1,8 +1,8 @@
 package biologicalObjects.edges;
 
 import biologicalElements.Elementdeclerations;
+import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import petriNet.PNEdge;
 
 public class BiologicalEdgeAbstractFactory {
 

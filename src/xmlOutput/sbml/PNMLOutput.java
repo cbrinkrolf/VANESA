@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import petriNet.PNEdge;
-import petriNet.Place;
+import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.nodes.petriNet.Place;
 import petriNet.Transition;
 import fr.lip6.move.pnml.framework.general.PnmlExport;
 import fr.lip6.move.pnml.framework.utils.ModelRepository;

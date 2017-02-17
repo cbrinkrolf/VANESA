@@ -1,9 +1,10 @@
-package petriNet;
+package biologicalObjects.nodes.petriNet;
 
 import java.awt.Color;
 
 import biologicalElements.Elementdeclerations;
 //import edu.uci.ics.jung.graph.Vertex;
+import petriNet.Transition;
 
 public class StochasticTransition extends Transition{
 

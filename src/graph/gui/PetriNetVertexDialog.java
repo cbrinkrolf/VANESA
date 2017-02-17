@@ -21,16 +21,16 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
-import petriNet.ContinuousTransition;
-import petriNet.DiscreteTransition;
-import petriNet.Place;
-import petriNet.StochasticTransition;
 import util.MyNumberFormat;
 
 /**
