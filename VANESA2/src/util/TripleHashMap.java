@@ -3,7 +3,7 @@ package util;
 import java.util.HashMap;
 import java.util.Set;
 
-import petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNEdge;
 
 public class TripleHashMap<KEY1, KEY2, KEY3, V> {
 

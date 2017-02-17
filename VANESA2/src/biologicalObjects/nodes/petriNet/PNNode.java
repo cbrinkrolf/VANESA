@@ -1,4 +1,4 @@
-package petriNet;
+package biologicalObjects.nodes.petriNet;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
@@ -38,6 +38,4 @@ public class PNNode extends BiologicalNodeAbstract{
 		
 		return s;
 	}
-	
-
 }

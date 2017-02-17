@@ -7,15 +7,15 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import petriNet.ContinuousTransition;
-import petriNet.DiscreteTransition;
-import petriNet.Place;
-import petriNet.StochasticTransition;
 import petriNet.Transition;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 
 /**
  * Anpassung an CSML 3.0

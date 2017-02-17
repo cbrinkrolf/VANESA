@@ -24,6 +24,7 @@ import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.Place;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
@@ -76,7 +77,6 @@ import gui.MainWindow;
 import gui.MyAnnotationManager;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
-import petriNet.Place;
 
 public class MyGraph {
 

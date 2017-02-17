@@ -12,7 +12,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.Icon;
 
-import petriNet.Place;
+import biologicalObjects.nodes.petriNet.Place;
 
 public class DynamicIcon implements Icon {
 

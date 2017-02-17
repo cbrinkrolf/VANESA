@@ -17,9 +17,11 @@ import javax.swing.JOptionPane;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
+import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.PathwayMap;
+import biologicalObjects.nodes.petriNet.Place;
 import graph.ChangedFlags;
 import graph.gui.Boundary;
 import graph.gui.CoarseNodeDeleteDialog;
@@ -30,8 +32,6 @@ import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.Circle;
 import gui.GraphTab;
 import gui.MainWindow;
-import petriNet.PNEdge;
-import petriNet.Place;
 import petriNet.Transition;
 import util.MyIntComparable;
 

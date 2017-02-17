@@ -15,11 +15,16 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 //import edu.uci.ics.jung.graph.ArchetypeVertex;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.visualization.Layout;
@@ -28,11 +33,6 @@ import graph.GraphInstance;
 import graph.gui.Boundary;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindow;
-import petriNet.ContinuousTransition;
-import petriNet.DiscreteTransition;
-import petriNet.PNEdge;
-import petriNet.Place;
-import petriNet.StochasticTransition;
 import petriNet.Transition;
 
 public class PropertyWindowListener implements FocusListener {

@@ -9,12 +9,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import petriNet.PNResultInputReader;
-import petriNet.Place;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 import petriNet.Transition;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.Place;
 
 public class PetriNet {
 	private GraphInstance graphInstance = null;

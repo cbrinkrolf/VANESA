@@ -1,4 +1,4 @@
-package petriNet;
+package biologicalObjects.nodes.petriNet;
 
 import java.awt.Color;
 

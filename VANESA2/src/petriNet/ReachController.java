@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.Place;
 
 public class ReachController {
 

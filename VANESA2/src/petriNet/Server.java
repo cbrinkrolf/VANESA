@@ -20,7 +20,9 @@ import org.apache.commons.lang3.SystemUtils;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.Place;
 // import java.net.ServerSocket;
 // import java.net.Socket;
 import gui.MainWindow;

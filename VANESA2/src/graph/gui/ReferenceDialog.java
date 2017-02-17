@@ -17,10 +17,10 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.Place;
 import graph.GraphInstance;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
-import petriNet.Place;
 import petriNet.Transition;
 
 public class ReferenceDialog {

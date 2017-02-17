@@ -45,6 +45,7 @@ import biologicalObjects.edges.ReactionPairEdge;
 import biologicalObjects.edges.Repression;
 import biologicalObjects.edges.StateChange;
 import biologicalObjects.edges.Ubiquitination;
+import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Complex;
 import biologicalObjects.nodes.CompoundNode;
@@ -76,16 +77,15 @@ import biologicalObjects.nodes.Site;
 import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import gui.MainWindow;
 import gui.RangeSelector;
-import petriNet.ContinuousTransition;
-import petriNet.DiscreteTransition;
-import petriNet.PNEdge;
-import petriNet.Place;
-import petriNet.StochasticTransition;
 
 /**
  * @author sebastian and olga
