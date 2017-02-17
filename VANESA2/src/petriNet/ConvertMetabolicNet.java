@@ -1,10 +1,5 @@
 package petriNet;
 
-import graph.ContainerSingelton;
-import graph.CreatePathway;
-import graph.GraphInstance;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -19,6 +14,10 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.SmallMolecule;
+import graph.ContainerSingelton;
+import graph.CreatePathway;
+import graph.GraphInstance;
+import gui.MainWindow;
 
 public class ConvertMetabolicNet {
 	private petriNetProperties prop;
@@ -43,7 +42,7 @@ public class ConvertMetabolicNet {
 		int answer = JOptionPane.YES_NO_OPTION;
 		if (!graphInstance.getPathway().getAllGraphNodes().isEmpty())
 			answer = JOptionPane.showOptionDialog(
-					MainWindowSingleton.getInstance(),
+					MainWindow.getInstance(),
 					"What type of Petri Net do you want?",
 					"Choose PN type...?", JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, new String[] {
@@ -204,13 +203,13 @@ public class ConvertMetabolicNet {
 		// // System.out.println("Color: "+color);
 		// }
 		pw.getGraph().restartVisualizationModel();
-		MainWindowSingleton.getInstance().updateProjectProperties();
-		MainWindowSingleton.getInstance().updateOptionPanel();
+		MainWindow.getInstance().updateProjectProperties();
+		MainWindow.getInstance().updateOptionPanel();
 
 		if (isUnDirEdge)
 			JOptionPane
 					.showMessageDialog(
-							MainWindowSingleton.getInstance(),
+							MainWindow.getInstance(),
 							"There were some undirected Edges in your graph. For creating the PN the program had interpretated those randomly and marked them red. So you can change their direction if you want.",
 							"Undirected Edges found...",
 							JOptionPane.WARNING_MESSAGE);

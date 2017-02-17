@@ -5,9 +5,6 @@
 
 package configurations.asyncWebservice;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.util.UUID;
 
 import javax.swing.JOptionPane;
@@ -18,6 +15,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.log4j.Logger;
+
+import gui.MainWindow;
 
 /**
  * 
@@ -31,7 +30,7 @@ public class CallbackHandler implements AxisCallback {
 
 	private Logger logger = Logger.getRootLogger();
 
-	private MainWindow window = MainWindowSingleton.getInstance();
+	private MainWindow window = MainWindow.getInstance();
 
 	public CallbackHandler(UUID webServiceIdent) {
 		this.webServiceIdent = webServiceIdent;

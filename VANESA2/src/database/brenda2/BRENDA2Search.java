@@ -10,7 +10,7 @@ import biologicalElements.Pathway;
 import configurations.Wrapper;
 import database.Connection.DatabaseQueryValidator;
 import database.brenda2.gui.Brenda2SearchResultWindow;
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 import pojos.DBColumn;
 
 public class BRENDA2Search extends SwingWorker<Object, Object> {
@@ -184,7 +184,7 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
 	@Override
 	public void done() {
 
-		MainWindowSingleton.getInstance().closeProgressBar();
+		MainWindow.getInstance().closeProgressBar();
 
 		if (results != null && results.length > 0) {
 			if (bsrw == null) {
@@ -200,7 +200,7 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
 				}
 			}
 		} else {
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Sorry, no entries have been found.");
+			JOptionPane.showMessageDialog(MainWindow.getInstance(), "Sorry, no entries have been found.");
 		}
 	}
 }

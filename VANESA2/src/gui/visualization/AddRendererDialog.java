@@ -25,7 +25,7 @@ import graph.GraphInstance;
 import graph.algorithms.NodeAttributeNames;
 import graph.algorithms.NodeAttributeTypes;
 import gui.LocalBackboardPaintable;
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
 public class AddRendererDialog extends JFrame implements ActionListener {
@@ -158,7 +158,7 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 	}
 

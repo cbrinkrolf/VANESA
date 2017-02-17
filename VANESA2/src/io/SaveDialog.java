@@ -1,5 +1,26 @@
 package io;
 
+import java.awt.Graphics2D;
+import java.awt.HeadlessException;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.lang3.SystemUtils;
+
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 //import ch.qos.logback.classic.LoggerContext;
@@ -11,32 +32,12 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.MyPopUp;
 import gui.MyPopUpSingleton;
 import io.graphML.SaveGraphML;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.xml.stream.XMLStreamException;
 import moOutput.MOoutput;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.lang3.SystemUtils;
+import petriNet.PNEdge;
 //import org.slf4j.LoggerFactory;
 import petriNet.Place;
-import petriNet.PNEdge;
 import petriNet.Transition;
 import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.PNMLOutput;
@@ -189,7 +190,7 @@ public class SaveDialog {
 		if(yamlBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(yaml, yamlDescription));
 
-		int option = chooser.showSaveDialog(MainWindowSingleton.getInstance());
+		int option = chooser.showSaveDialog(MainWindow.getInstance());
 		if (option == JFileChooser.APPROVE_OPTION) {
 			// Save path to settings.xml
 			File fileDir = chooser.getCurrentDirectory();
@@ -215,7 +216,7 @@ public class SaveDialog {
 			boolean overwrite = true;
 			if (file.exists()) {
 				int response = JOptionPane.showConfirmDialog(
-						MainWindowSingleton.getInstance(),
+						MainWindow.getInstance(),
 						"Overwrite existing file?", "Confirm Overwrite",
 						JOptionPane.OK_CANCEL_OPTION,
 						JOptionPane.QUESTION_MESSAGE);
@@ -269,7 +270,7 @@ public class SaveDialog {
 			
 			String out = jsbmlOutput.generateSBMLDocument();
 			if(out.length() > 0){
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					sbmlDescription + out);
 			}else{
 				MyPopUpSingleton.getInstance().show("JSbml export", "Saving was successful!");
@@ -282,13 +283,13 @@ public class SaveDialog {
 		} else if (fileFormat.equals(graphMlDescription)) {
 			getCorrectFile(graphMl);
 			new SaveGraphML(new FileOutputStream(file));
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					graphMlDescription + " File saved");
 		} else if (fileFormat.equals(irinaDescription)) {
 			getCorrectFile(irinaTxt);
 			new IrinaGraphTextWriter(new FileOutputStream(file),
 					new GraphInstance().getPathway());
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					irinaDescription + " File saved");
 
 		} else if (fileFormat.equals(moDescription)) {
@@ -311,7 +312,7 @@ public class SaveDialog {
 			getCorrectFile(txt);
 			new GraphTextWriter(new FileOutputStream(file),
 					new GraphInstance().getPathway());
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					txtDescription + " File saved");
 
 		} else if (fileFormat.equals(csvDescription)) {
@@ -320,7 +321,7 @@ public class SaveDialog {
 					new GraphInstance().getPathway());
 			
 			if(result.length() > 0){
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					csvDescription + result);
 			}else{
 				MyPopUpSingleton.getInstance().show("csv", "Saving was successful!");
@@ -328,7 +329,7 @@ public class SaveDialog {
 
 		} else if (fileFormat.equals(pnmlDescription)) {
 			GraphContainer con = ContainerSingelton.getInstance();
-			MainWindow w = MainWindowSingleton.getInstance();
+			MainWindow w = MainWindow.getInstance();
 			if (!con.isPetriView()) {
 				/*
 				 * ConvertToPetriNet convertToPetriNet = new
@@ -386,7 +387,7 @@ public class SaveDialog {
 					
 					if(result.length() > 0){
 						JOptionPane.showMessageDialog(
-								MainWindowSingleton.getInstance(), pnmlDescription
+								MainWindow.getInstance(), pnmlDescription
 										+ "an error occured: "+ result);
 					}else{
 						MyPopUpSingleton.getInstance().show("PNML export", "Saving was successful!");
@@ -407,7 +408,7 @@ public class SaveDialog {
 			getCorrectFile(csml);
 			new GONoutput(new FileOutputStream(file),
 					new GraphInstance().getPathway());
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					csmlDescription + " File saved");
 
 		} else if (fileFormat.equals(vamlDescription)) {
@@ -416,7 +417,7 @@ public class SaveDialog {
 				new VAMLoutput(new FileOutputStream(file),
 						new GraphInstance().getPathway());
 				JOptionPane.showMessageDialog(
-						MainWindowSingleton.getInstance(), vamlDescription
+						MainWindow.getInstance(), vamlDescription
 								+ " File saved");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -461,9 +462,9 @@ public class SaveDialog {
 					internYaml.close();
 					exportYaml.close();
 				JOptionPane.showMessageDialog(
-						MainWindowSingleton.getInstance(), yamlDescription
+						MainWindow.getInstance(), yamlDescription
 									+ " File exported");
-				MainWindowSingleton.getInstance().setLoadedYaml(exportPath);
+				MainWindow.getInstance().setLoadedYaml(exportPath);
 			} catch (IOException e){
 				// TODO Auto-generated catch block
 				e.printStackTrace();

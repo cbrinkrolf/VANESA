@@ -1,9 +1,8 @@
 package database.unid;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import javax.swing.JOptionPane;
+
+import gui.MainWindow;
 
 /**
  * 
@@ -27,7 +26,7 @@ public class UNIDInfoWindow {
 	        	        
 	        "</html>";
 		
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		JOptionPane.showMessageDialog(w.returnFrame(), instructions,"UNID Information",1);
 		
 	}

@@ -1,10 +1,5 @@
 package dataMapping;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
@@ -46,10 +41,13 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
-import net.miginfocom.swing.MigLayout;
 import biologicalElements.Pathway;
 import dataMapping.dataImport.ExcelException;
 import dataMapping.dataImport.ImportExcelxData;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import gui.MainWindow;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * This class manage the GUI elements of the DataMapping
@@ -59,7 +57,7 @@ import dataMapping.dataImport.ImportExcelxData;
 public class DataMapping2View extends JDialog implements Observer{
 
 	private static final long serialVersionUID = 1L;
-	public static MainWindow w = MainWindowSingleton.getInstance();
+	public static MainWindow w = MainWindow.getInstance();
 	private GraphContainer con = ContainerSingelton.getInstance();
 
 	private JTabbedPane tabbedPane = new JTabbedPane();
@@ -241,7 +239,7 @@ public class DataMapping2View extends JDialog implements Observer{
 
 		this.add(tabbedPane);
 		this.setMinimumSize(new Dimension(700, 700));
-		this.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance());
 		this.setResizable(false);
 		this.setVisible(true);
 	}

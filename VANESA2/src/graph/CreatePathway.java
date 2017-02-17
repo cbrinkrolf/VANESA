@@ -1,8 +1,5 @@
 package graph;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Cursor;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,10 +7,11 @@ import java.util.Iterator;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import gui.MainWindow;
 
 public class CreatePathway {
 
-	MainWindow w = MainWindowSingleton.getInstance();
+	MainWindow w = MainWindow.getInstance();
 	GraphContainer con = ContainerSingelton.getInstance();
 	String pathwayName;
 	Pathway pw;

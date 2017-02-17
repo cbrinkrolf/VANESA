@@ -1,10 +1,5 @@
 package xmlInput.sbml;
 
-import graph.CreatePathway;
-import graph.gui.Parameter;
-import gui.MainWindowSingleton;
-import gui.RangeSelector;
-
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.IOException;
@@ -18,48 +13,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLReader;
 import org.xml.sax.InputSource;
 
-import petriNet.PNEdge;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
-import biologicalObjects.edges.Activation;
-import biologicalObjects.edges.BindingAssociation;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
-import biologicalObjects.edges.Compound;
-import biologicalObjects.edges.Dephosphorylation;
-import biologicalObjects.edges.Dissociation;
-import biologicalObjects.edges.Expression;
-import biologicalObjects.edges.Glycosylation;
-import biologicalObjects.edges.HiddenCompound;
-import biologicalObjects.edges.IndirectEffect;
-import biologicalObjects.edges.Inhibition;
-import biologicalObjects.edges.Methylation;
-import biologicalObjects.edges.Phosphorylation;
-import biologicalObjects.edges.PhysicalInteraction;
-import biologicalObjects.edges.ReactionEdge;
-import biologicalObjects.edges.ReactionPair;
 import biologicalObjects.edges.ReactionPairEdge;
-import biologicalObjects.edges.Repression;
-import biologicalObjects.edges.StateChange;
-import biologicalObjects.edges.Ubiquitination;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.RNA;
+import graph.CreatePathway;
+import graph.gui.Parameter;
+import gui.MainWindow;
+import gui.RangeSelector;
+import petriNet.PNEdge;
 
 /**
  * To read a SBML file and put the results on the graph. A SBML which has been
@@ -155,8 +132,8 @@ public class JSBMLinput {
 		try {
 			is.close();
 			this.pathway.getGraph().restartVisualizationModel();
-			MainWindowSingleton.getInstance().updateProjectProperties();
-			MainWindowSingleton.getInstance().updateOptionPanel();
+			MainWindow.getInstance().updateProjectProperties();
+			MainWindow.getInstance().updateOptionPanel();
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

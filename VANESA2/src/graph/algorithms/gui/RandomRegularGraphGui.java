@@ -1,8 +1,5 @@
 package graph.algorithms.gui;
 
-import graph.algorithms.RandomRegularGraph;
-import gui.MainWindowSingleton;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,6 +14,8 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
 
+import graph.algorithms.RandomRegularGraph;
+import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
 public class RandomRegularGraphGui extends JFrame implements ActionListener {
@@ -79,7 +78,7 @@ public class RandomRegularGraphGui extends JFrame implements ActionListener {
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 	}
 

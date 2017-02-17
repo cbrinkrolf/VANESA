@@ -1,20 +1,17 @@
 package graph.algorithms.gui.smacof;
 
 import java.awt.geom.Point2D;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
-import graph.GraphInstance;
 import graph.algorithms.gui.smacof.algorithms.Dissimilarities;
 import graph.algorithms.gui.smacof.algorithms.Smacof;
 import graph.algorithms.gui.smacof.datastructures.Mat;
 import graph.algorithms.gui.smacof.view.SmacofView;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 
 public class DoSmacof extends Thread {
 	
@@ -120,11 +117,11 @@ public class DoSmacof extends Thread {
 	   // In result_mat und result_map stehen die Ergebnisse
 	   // hier werden die Ergebnisse als neue Koordinaten der Knoten gesetzt
 	   GraphContainer con = ContainerSingelton.getInstance();
-	   HashMap<BiologicalNodeAbstract, Point2D> vertices = con.getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).getVertices();
+	   HashMap<BiologicalNodeAbstract, Point2D> vertices = con.getPathway(MainWindow.getInstance().getCurrentPathway()).getVertices();
 	   BiologicalNodeAbstract bna;
 	   Point2D point = null;
 	   int id;
-	   Iterator<BiologicalNodeAbstract> it = con.getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).getAllGraphNodes().iterator();
+	   Iterator<BiologicalNodeAbstract> it = con.getPathway(MainWindow.getInstance().getCurrentPathway()).getAllGraphNodes().iterator();
 		while (it.hasNext()) {
 			bna = it.next();
 			id = mapped_nodes.get(bna);
@@ -150,10 +147,10 @@ public class DoSmacof extends Thread {
 
 		}
 		
-		con.getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).getGraph().getVisualizationViewer().repaint();
-		con.getPathway(MainWindowSingleton.getInstance().getCurrentPathway()).updateMyGraph();
+		con.getPathway(MainWindow.getInstance().getCurrentPathway()).getGraph().getVisualizationViewer().repaint();
+		con.getPathway(MainWindow.getInstance().getCurrentPathway()).updateMyGraph();
 	   	   
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		w.closeProgressBar();
 		view.returned();
 		

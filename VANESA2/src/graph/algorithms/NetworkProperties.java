@@ -1,12 +1,5 @@
 package graph.algorithms;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -24,10 +17,15 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Protein;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.GraphInstance;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 
 public class NetworkProperties extends Object {
 
-	MainWindow w = MainWindowSingleton.getInstance();
+	MainWindow w = MainWindow.getInstance();
 	GraphContainer con = ContainerSingelton.getInstance();
 	GraphInstance graphInstance = new GraphInstance();
 	Pathway pw;

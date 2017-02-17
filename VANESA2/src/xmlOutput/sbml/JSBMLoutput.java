@@ -1,9 +1,5 @@
 package xmlOutput.sbml;
 
-import graph.gui.Parameter;
-import gui.MainWindowSingleton;
-import gui.RangeSelector;
-
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.IOException;
@@ -33,14 +29,17 @@ import org.sbml.jsbml.xml.XMLAttributes;
 import org.sbml.jsbml.xml.XMLNode;
 import org.sbml.jsbml.xml.XMLTriple;
 
+import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.gui.Parameter;
+import gui.MainWindow;
+import gui.RangeSelector;
 import petriNet.ContinuousTransition;
 import petriNet.DiscreteTransition;
 import petriNet.StochasticTransition;
 import petriNet.Transition;
 import util.MyIntComparable;
-import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 /**
  * This class represents a writer from graph data to a SBML file. The actual
@@ -83,7 +82,7 @@ public class JSBMLoutput {
 		int answer = JOptionPane.YES_OPTION;
 		if(pathway instanceof BiologicalNodeAbstract){
 			Object[] options = {"Save subpathway", "Save complete pathway"};
-			answer = JOptionPane.showOptionDialog(MainWindowSingleton.getInstance(),
+			answer = JOptionPane.showOptionDialog(MainWindow.getInstance(),
 					"You try to save a opened subpathway. Do you want to save this subpathway?",
 					"Save subpathway", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
 					null, options, options[1]);

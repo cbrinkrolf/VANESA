@@ -1,6 +1,6 @@
 package gui.eventhandlers;
 
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 import net.infonode.docking.DockingWindow;
 import net.infonode.docking.DockingWindowListener;
 import net.infonode.docking.OperationAbortedException;
@@ -22,7 +22,7 @@ public class PanelListener implements DockingWindowListener{
 
 	@Override
 	public void windowClosed(DockingWindow arg0) {
-		MainWindowSingleton.getInstance().removeView(arg0);	
+		MainWindow.getInstance().removeView(arg0);	
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class PanelListener implements DockingWindowListener{
 	@Override
 	public void windowShown(DockingWindow arg0) {
 		if(arg0 instanceof View){
-			MainWindowSingleton.getInstance().setSelectedView((View) arg0);
+			MainWindow.getInstance().setSelectedView((View) arg0);
 		}
 	}
 

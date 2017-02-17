@@ -25,7 +25,6 @@ import graph.algorithms.NodeAttributeNames;
 import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 
 /**
  * 
@@ -130,7 +129,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 			
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingleton
+					JOptionPane.showMessageDialog(MainWindow
 							.getInstance().returnFrame(),
 							"Cluster not reachable.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -144,7 +143,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 
 	public void reactivateUI() {
 		// close Progress bar and reactivate UI
-		mw = MainWindowSingleton.getInstance();
+		mw = MainWindow.getInstance();
 		mw.closeProgressBar();
 	}
 
@@ -220,7 +219,7 @@ public class UNIDSearch extends SwingWorker<Object, Object> {
 
 		myGraph.restartVisualizationModel();
 
-		MainWindow window = MainWindowSingleton.getInstance();
+		MainWindow window = MainWindow.getInstance();
 		window.updateOptionPanel();
 		window.setEnabled(true);
 		if (!headless) {

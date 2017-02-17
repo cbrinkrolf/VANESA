@@ -18,7 +18,7 @@ public class MyPopUp {
 	ArrayList<Integer> list;
 
 	public MyPopUp() {
-		w = MainWindowSingleton.getInstance();
+		w = MainWindow.getInstance();
 		list = new ArrayList<Integer>();
 		for (int i = 0; i < 100; i++) {
 			list.add(0);

@@ -8,7 +8,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.CreatePathway;
 import gui.HeatgraphLayer;
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 
 public class HeatmapGraphs {
 	
@@ -53,8 +53,8 @@ public class HeatmapGraphs {
 			this.copyElements(pw, pw_new);
 		}
 
-		MainWindowSingleton.getInstance().updateProjectProperties();
-		MainWindowSingleton.getInstance().updateOptionPanel();
+		MainWindow.getInstance().updateProjectProperties();
+		MainWindow.getInstance().updateOptionPanel();
 		
 		//count all nodes by id
 		//elements that are in both graphs will be double in the new graph
@@ -87,9 +87,9 @@ public class HeatmapGraphs {
 		/*for(String s : countById.keySet()) {
 			System.out.println(s+" = "+countById.get(s));
 		}*/
-		MainWindowSingleton.getInstance().enableOptionPanelUpdate(false);
+		MainWindow.getInstance().enableOptionPanelUpdate(false);
 		CompareGraphs.mergeGraph(pw_new);
-		MainWindowSingleton.getInstance().enableOptionPanelUpdate(true);
+		MainWindow.getInstance().enableOptionPanelUpdate(true);
 		
 		//pw_new.getGraph().changeToGEMLayout();
 		pw_new.getGraph().restartVisualizationModel();

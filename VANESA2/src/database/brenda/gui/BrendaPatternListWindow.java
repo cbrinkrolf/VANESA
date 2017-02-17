@@ -3,8 +3,6 @@
  */
 package database.brenda.gui;
 
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -25,15 +23,15 @@ import javax.swing.JSpinner;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 
-import miscalleanous.tables.MyTable;
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import database.brenda.MoleculeBox;
 import database.brenda.MoleculeBoxSingelton;
 import database.brenda.MoleculesPair;
+import gui.MainWindow;
+import miscalleanous.tables.MyTable;
+import net.miginfocom.swing.MigLayout;
 
 
 /**
@@ -144,7 +142,7 @@ public class BrendaPatternListWindow extends JFrame implements ActionListener {
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 	}
 

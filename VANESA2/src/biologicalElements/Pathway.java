@@ -1,17 +1,5 @@
 package biologicalElements;
 
-import graph.ChangedFlags;
-import graph.gui.Boundary;
-import graph.gui.CoarseNodeDeleteDialog;
-import graph.gui.EdgeDeleteDialog;
-import graph.gui.Parameter;
-import graph.jung.classes.MyGraph;
-import graph.jung.classes.MyVisualizationViewer;
-import graph.layouts.Circle;
-import gui.GraphTab;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -27,33 +15,25 @@ import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
 
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
+import biologicalObjects.nodes.PathwayMap;
+import graph.ChangedFlags;
+import graph.gui.Boundary;
+import graph.gui.CoarseNodeDeleteDialog;
+import graph.gui.EdgeDeleteDialog;
+import graph.gui.Parameter;
+import graph.jung.classes.MyGraph;
+import graph.jung.classes.MyVisualizationViewer;
+import graph.layouts.Circle;
+import gui.GraphTab;
+import gui.MainWindow;
 import petriNet.PNEdge;
 import petriNet.Place;
 import petriNet.Transition;
 import util.MyIntComparable;
-import biologicalObjects.edges.Activation;
-import biologicalObjects.edges.BindingAssociation;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
-import biologicalObjects.edges.Compound;
-import biologicalObjects.edges.Dephosphorylation;
-import biologicalObjects.edges.Dissociation;
-import biologicalObjects.edges.Expression;
-import biologicalObjects.edges.Glycosylation;
-import biologicalObjects.edges.HiddenCompound;
-import biologicalObjects.edges.IndirectEffect;
-import biologicalObjects.edges.Inhibition;
-import biologicalObjects.edges.Methylation;
-import biologicalObjects.edges.Phosphorylation;
-import biologicalObjects.edges.PhysicalInteraction;
-import biologicalObjects.edges.ReactionEdge;
-import biologicalObjects.edges.ReactionPair;
-import biologicalObjects.edges.Repression;
-import biologicalObjects.edges.StateChange;
-import biologicalObjects.edges.Ubiquitination;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
-import biologicalObjects.nodes.PathwayMap;
 
 public class Pathway implements Cloneable {
 
@@ -670,7 +650,7 @@ public class Pathway implements Cloneable {
 
 			}
 			if (merged) {
-				MainWindow mw = MainWindowSingleton.getInstance();
+				MainWindow mw = MainWindow.getInstance();
 				mw.updateElementTree();
 				mw.updateElementProperties();
 
@@ -854,7 +834,7 @@ public class Pathway implements Cloneable {
 				// this.graph.getJungGraph().getNeighborCount(node));
 			}
 		}
-		MainWindow mw = MainWindowSingleton.getInstance();
+		MainWindow mw = MainWindow.getInstance();
 		mw.updateElementTree();
 		mw.updateElementProperties();
 		this.graph.getVisualizationViewer().repaint();

@@ -218,7 +218,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		if (pw.isPetriNet() && pw.getPetriNet().isPetriNetSimulation() && simRes != null) {
 
 			main.removeAll();
-			w = MainWindowSingleton.getInstance();
+			w = MainWindow.getInstance();
 
 			// get pathway and nodes
 
@@ -883,7 +883,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				slider.setToolTipText("Time: " + this.slider.getValue());
 				if (simRes == null) {
 					graphInstance.getPathway().getPetriNet().setPetriNetSimulation(false);
-					MainWindow w = MainWindowSingleton.getInstance();
+					MainWindow w = MainWindow.getInstance();
 					w.updateAllGuiElements();
 					return;
 				}

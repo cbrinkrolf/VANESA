@@ -1,10 +1,5 @@
 package graph.gui;
 
-import graph.ChangedFlags;
-import graph.GraphInstance;
-import gui.MainWindowSingleton;
-import gui.MyPopUpSingleton;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,11 +17,15 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import net.miginfocom.swing.MigLayout;
-import petriNet.ContinuousTransition;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.ChangedFlags;
+import graph.GraphInstance;
+import gui.MainWindow;
+import gui.MyPopUpSingleton;
+import net.miginfocom.swing.MigLayout;
+import petriNet.ContinuousTransition;
 
 public class ParameterWindow implements ActionListener, DocumentListener {
 
@@ -124,7 +123,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		dialog = pane.createDialog(null, "Parameters");
 		this.repaint();
 		dialog.setResizable(true);
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.pack();
 		// dialog.show();
 		dialog.setVisible(true);

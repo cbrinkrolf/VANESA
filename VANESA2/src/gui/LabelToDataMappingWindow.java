@@ -47,7 +47,7 @@ public class LabelToDataMappingWindow {
 	public LabelToDataMappingWindow() throws IOException, InputFormatException {
 		// Check for open pathways, if not shoe message
 		if (ContainerSingelton.getInstance().getPathwayNumbers() == 0) {
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					"Please load or create a network first.",
 					"no network found", JOptionPane.WARNING_MESSAGE);
 			return;
@@ -57,7 +57,7 @@ public class LabelToDataMappingWindow {
 		filechooser
 				.setDialogTitle("please choose your mapping file (label->data)");
 
-		int status = filechooser.showOpenDialog(MainWindowSingleton
+		int status = filechooser.showOpenDialog(MainWindow
 				.getInstance());
 
 		switch (status) {
@@ -66,7 +66,7 @@ public class LabelToDataMappingWindow {
 		case JFileChooser.CANCEL_OPTION:
 			break;
 		case JFileChooser.ERROR_OPTION:
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					"Error while loading file.");
 			break;
 
@@ -107,13 +107,13 @@ public class LabelToDataMappingWindow {
 			// Close the input stream
 			br.close();
 		} catch (FileNotFoundException fnfe) {
-			JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					"Error while loading file.");
 			return false;
 		}
 
 		String attributename = JOptionPane.showInputDialog(
-				MainWindowSingleton.getInstance(),
+				MainWindow.getInstance(),
 				"file accepted.\n please enter a name for the dataset:\n",
 				datafile.getName() + "");
 
@@ -137,10 +137,10 @@ public class LabelToDataMappingWindow {
 		// lines.forEach(line -> processLine(line));
 		// }
 
-		JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+		JOptionPane.showMessageDialog(MainWindow.getInstance(),
 				successfulmappings + " of " + datamapping.size()
 						+ " entries \nhave been mapped and updated.\n\n("
-						+ MainWindowSingleton.getInstance().getCurrentPathway()
+						+ MainWindow.getInstance().getCurrentPathway()
 						+ ")");
 
 		return true;

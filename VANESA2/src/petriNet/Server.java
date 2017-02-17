@@ -1,10 +1,5 @@
 package petriNet;
 
-// import java.net.ServerSocket;
-// import java.net.Socket;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -26,6 +21,9 @@ import org.apache.commons.lang3.SystemUtils;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+// import java.net.ServerSocket;
+// import java.net.Socket;
+import gui.MainWindow;
 
 public class Server {
 
@@ -264,7 +262,7 @@ public class Server {
 				case 6:
 					running = false;
 					System.out.println("server shut down");
-					MainWindow w = MainWindowSingleton.getInstance();
+					MainWindow w = MainWindow.getInstance();
 					// w.redrawGraphs();
 					break;
 				}

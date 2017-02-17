@@ -1,9 +1,5 @@
 package gui.visualization;
 
-import graph.GraphInstance;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,6 +8,8 @@ import java.util.Map;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.GraphInstance;
+import gui.MainWindow;
 
 public class VisualizationConfigBeans {
 	private List<Bean> beansList = new ArrayList<Bean>();
@@ -38,7 +36,7 @@ public class VisualizationConfigBeans {
 		
 		if(doAdjust == true){
 			graphInstance = new GraphInstance();
-			MainWindow w = MainWindowSingleton.getInstance();
+			MainWindow w = MainWindow.getInstance();
 			if(w.getCurrentPathway() != null){
 				pathway = graphInstance.getPathway();
 				Collection<BiologicalNodeAbstract> allNodes = pathway.getAllGraphNodes();

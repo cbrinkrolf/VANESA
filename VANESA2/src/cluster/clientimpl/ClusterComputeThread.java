@@ -1,8 +1,5 @@
 package cluster.clientimpl;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -14,6 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import cluster.master.IClusterJobs;
+import gui.MainWindow;
 
 public class ClusterComputeThread extends Thread {
 
@@ -56,40 +54,40 @@ public class ClusterComputeThread extends Thread {
 		}catch (NotBoundException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingleton
+					JOptionPane.showMessageDialog(MainWindow
 							.getInstance().returnFrame(),
 							"RMI Interface could not be established.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			});
 
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.closeProgressBar();
 
 		} catch (RemoteException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingleton
+					JOptionPane.showMessageDialog(MainWindow
 							.getInstance().returnFrame(),
 							"Cluster not reachable.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			});
 
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.closeProgressBar();
 
 		} catch (MalformedURLException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindowSingleton
+					JOptionPane.showMessageDialog(MainWindow
 							.getInstance().returnFrame(),
 							"Clusteradress could not be resolved.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			});
 
-			mw = MainWindowSingleton.getInstance();
+			mw = MainWindow.getInstance();
 			mw.closeProgressBar();
 		}
 
@@ -99,7 +97,7 @@ public class ClusterComputeThread extends Thread {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JOptionPane.showMessageDialog(
-						MainWindowSingleton.getInstance(), string);
+						MainWindow.getInstance(), string);
 			}
 		});		
 	}

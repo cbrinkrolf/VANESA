@@ -1,8 +1,5 @@
 package io;
 
-import graph.CreatePathway;
-import gui.MainWindowSingleton;
-
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +12,8 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Protein;
+import graph.CreatePathway;
+import gui.MainWindow;
 
 public class TxtInput {
 	
@@ -62,7 +61,7 @@ public class TxtInput {
 		pw.getGraph().changeToCircleLayout();
 		pw.getGraph().restartVisualizationModel();
 		pw.getGraph().normalCentering();
-		MainWindowSingleton.getInstance().updateProjectProperties();
+		MainWindow.getInstance().updateProjectProperties();
 		
 	}
 	

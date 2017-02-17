@@ -17,7 +17,6 @@ import database.mirna.gui.MirnaResultWindow;
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import pojos.DBColumn;
 
 public class mirnaSearch extends SwingWorker<Object, Object> {
@@ -97,7 +96,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 	public void done() {
 		Boolean continueProgress = false;
-		MainWindowSingleton.getInstance().closeProgressBar();
+		MainWindow.getInstance().closeProgressBar();
 		if (resultsDBSearch.size() > 0) {
 			continueProgress = true;
 			//System.out.println(resultsDBSearch.size());
@@ -111,7 +110,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 			Vector<String[]> results = mirnaResultWindow.getAnswer();
 			// System.out.println(results.get(0)[0] + " " + results.get(0)[1]);
 			if (results.size() != 0) {
-				MainWindowSingleton.getInstance().showProgressBar("Fetching network.");
+				MainWindow.getInstance().showProgressBar("Fetching network.");
 				final Iterator<String[]> it = results.iterator();
 				while (it.hasNext()) {
 					String[] details = it.next();
@@ -169,9 +168,9 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 										.getSatelliteView());
 								myGraph.normalCentering();
 							}
-							MainWindowSingleton.getInstance().closeProgressBar();
+							MainWindow.getInstance().closeProgressBar();
 
-							MainWindow window = MainWindowSingleton
+							MainWindow window = MainWindow
 									.getInstance();
 							window.updateOptionPanel();
 							window.setVisible(true);
@@ -250,9 +249,9 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 								myGraph.normalCentering();
 							}
 							pw.saveVertexLocations();
-							MainWindowSingleton.getInstance().closeProgressBar();
+							MainWindow.getInstance().closeProgressBar();
 
-							MainWindow window = MainWindowSingleton
+							MainWindow window = MainWindow
 									.getInstance();
 							window.updateOptionPanel();
 							window.setVisible(true);
@@ -260,7 +259,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 						}
 
 					}
-					MainWindowSingleton.getInstance().closeProgressBar();
+					MainWindow.getInstance().closeProgressBar();
 				}
 			}
 		}

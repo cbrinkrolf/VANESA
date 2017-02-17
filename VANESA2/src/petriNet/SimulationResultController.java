@@ -1,13 +1,12 @@
 package petriNet;
 
-import graph.GraphInstance;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import graph.GraphInstance;
+import gui.MainWindow;
 
 public class SimulationResultController {
 
@@ -94,7 +93,7 @@ public class SimulationResultController {
 		if(simNames.size() < 1){
 			GraphInstance graphInstance = new GraphInstance();
 			graphInstance.getPathway().getPetriNet().setPetriNetSimulation(false);
-			MainWindow w = MainWindowSingleton.getInstance();
+			MainWindow w = MainWindow.getInstance();
 			w.updateAllGuiElements();
 		}
 	}

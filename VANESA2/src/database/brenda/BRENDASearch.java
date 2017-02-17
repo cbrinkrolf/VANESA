@@ -13,7 +13,6 @@ import configurations.Wrapper;
 import database.Connection.DatabaseQueryValidator;
 import database.brenda.gui.BrendaSearchResultWindow;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import pojos.DBColumn;
 
 public class BRENDASearch extends SwingWorker<Object, Object> {
@@ -269,7 +268,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	@Override
 	public void done() {
 
-		MainWindowSingleton.getInstance().closeProgressBar();
+		MainWindow.getInstance().closeProgressBar();
 		Boolean continueProgress = false;
 
 		if (results.length > 0) {
@@ -283,7 +282,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 		if (continueProgress) {
 			Vector<String[]> results = bsrw.getAnswer();
 			if (results.size() != 0) {
-				MainWindowSingleton.getInstance().showProgressBar("Fetching Network.");
+				MainWindow.getInstance().showProgressBar("Fetching Network.");
 				final Iterator<String[]> it = results.iterator();
 				String[] res;
 		

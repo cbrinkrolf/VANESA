@@ -1,9 +1,8 @@
 package database.ppi.gui;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import javax.swing.JOptionPane;
+
+import gui.MainWindow;
 
 public class PPIInfoWindow {
 
@@ -21,7 +20,7 @@ public class PPIInfoWindow {
 	        	        
 	        "</html>";
 		
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		JOptionPane.showMessageDialog(w.returnFrame(), instructions,"PPI Information",1);
 	}
 }

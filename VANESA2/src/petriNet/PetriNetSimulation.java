@@ -1,5 +1,29 @@
 package petriNet;
 
+import java.awt.Desktop;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.swing.JOptionPane;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
+
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -11,30 +35,8 @@ import graph.GraphInstance;
 import graph.gui.Boundary;
 import graph.gui.Parameter;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import gui.SimMenue;
-import java.awt.Desktop;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-import javax.swing.JOptionPane;
 import moOutput.MOoutput;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.SystemUtils;
 
 public class PetriNetSimulation implements ActionListener {
 	private static String pathCompiler = null;
@@ -59,7 +61,7 @@ public class PetriNetSimulation implements ActionListener {
 
 	public PetriNetSimulation() {
 
-		MainWindowSingleton.getInstance();
+		MainWindow.getInstance();
 		pathWorkingDirectory = MainWindow.pathWorkingDirectory;
 
 		File dir = new File(pathWorkingDirectory);
@@ -90,7 +92,7 @@ public class PetriNetSimulation implements ActionListener {
 		System.out.println("simNameOld: " + simName);
 		this.pw = new GraphInstance().getPathway();
 		GraphContainer con = ContainerSingelton.getInstance();
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		w.blurrUI();
 
 		flags = pw.getChangedFlags("petriNetSim");
@@ -454,7 +456,7 @@ public class PetriNetSimulation implements ActionListener {
 					t1.start();
 				} else {
 					// System.out.println("something wet wrong");
-					JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Something wet wrong! Simulation could not be built!");
+					JOptionPane.showMessageDialog(MainWindow.getInstance(), "Something wet wrong! Simulation could not be built!");
 					this.stopAction();
 				}
 
@@ -513,7 +515,7 @@ public class PetriNetSimulation implements ActionListener {
 					throw new Exception();
 			} catch (Exception e) {
 				e.printStackTrace();
-				JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Something went wrong. The model couldn't be simulated!",
+				JOptionPane.showMessageDialog(MainWindow.getInstance(), "Something went wrong. The model couldn't be simulated!",
 						"Error occured...", JOptionPane.ERROR_MESSAGE);
 				w.unBlurrUI();
 				this.menue.stopped();

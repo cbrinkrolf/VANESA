@@ -28,7 +28,7 @@ public class AboutWindow {
 	        
 	        "</html>";
 		
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		JOptionPane.showMessageDialog(w.returnFrame(), instructions,"About",1);
 		
 	}

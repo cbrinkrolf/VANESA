@@ -28,7 +28,6 @@ import graph.jung.classes.MyGraph;
 import gui.HeatmapChooseGraphsWindow;
 import gui.InfoWindow;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import gui.ParallelChooseGraphsWindow;
 import petriNet.ConvertToPetriNet;
 import petriNet.OpenModellicaResult;
@@ -43,12 +42,12 @@ public class ToolBarListener implements ActionListener {
 	}
 	
 	public void showCreateBeforeMessage() {
-		JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+		JOptionPane.showMessageDialog(MainWindow.getInstance(),
 				"Please create a network first!");
 	}
 
 	public void showCreate2NetworksMessage() {
-		JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+		JOptionPane.showMessageDialog(MainWindow.getInstance(),
 				"Please create two networks first!");
 	}
 	
@@ -56,14 +55,14 @@ public class ToolBarListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		String event = e.getActionCommand();
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		GraphInstance graphInstance = new GraphInstance();
 
 		if ("new Network".equals(event)) {
 
 			int option = JOptionPane.showOptionDialog(
-					MainWindowSingleton.getInstance(),
+					MainWindow.getInstance(),
 					"Which type of modeling do you prefer?",
 					"Choose Network Type...", JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, new String[] {
@@ -164,11 +163,11 @@ public class ToolBarListener implements ActionListener {
 
 			con.setPetriView(false);
 
-			Component[] c = MainWindowSingleton.getInstance().getContentPane()
+			Component[] c = MainWindow.getInstance().getContentPane()
 					.getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindowSingleton.getInstance().getBar()
+					MainWindow.getInstance().getBar()
 							.paintToolbar(false);
 					break;
 				}
@@ -186,11 +185,11 @@ public class ToolBarListener implements ActionListener {
 			// new CompareGraphsGUI();
 			new ConvertToPetriNet();
 
-			Component[] c = MainWindowSingleton.getInstance().getContentPane()
+			Component[] c = MainWindow.getInstance().getContentPane()
 					.getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindowSingleton
+					MainWindow
 							.getInstance()
 							.getBar()
 							.paintToolbar(
@@ -226,11 +225,11 @@ public class ToolBarListener implements ActionListener {
 		} else if ("createPetriNet".equals(event)) {
 			con.setPetriView(true);
 
-			Component[] c = MainWindowSingleton.getInstance().getContentPane()
+			Component[] c = MainWindow.getInstance().getContentPane()
 					.getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindowSingleton.getInstance().getBar()
+					MainWindow.getInstance().getBar()
 							.paintToolbar(true);
 					break;
 				}
@@ -256,7 +255,7 @@ public class ToolBarListener implements ActionListener {
 			// Cov cov = new Cov();
 			if (JOptionPane
 					.showConfirmDialog(
-							MainWindowSingleton.getInstance(),
+							MainWindow.getInstance(),
 							"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
 							"Please Conform your action...",
 							JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
@@ -293,7 +292,7 @@ public class ToolBarListener implements ActionListener {
 						.getPicked()) {
 					node.flat();
 					graphInstance.getPathway().updateMyGraph();
-					MainWindowSingleton.getInstance().removeTab(false,
+					MainWindow.getInstance().removeTab(false,
 							node.getTab().getTitelTab(), node);
 				}
 				new GraphInstance().getPathway().getGraph()
@@ -338,7 +337,7 @@ public class ToolBarListener implements ActionListener {
 				System.out.println("No Graph exists!");
 			}
 		} else if ("newWindow".equals(event)) {
-			MainWindowSingleton.getInstance().addView();
+			MainWindow.getInstance().addView();
 		} else if ("hierarchy".equals(event)) {
 			if (con.containsPathway()) {
 				con.changeMouseFunction("hierarchy");

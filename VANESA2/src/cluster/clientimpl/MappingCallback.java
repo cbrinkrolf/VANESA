@@ -1,7 +1,5 @@
 package cluster.clientimpl;
 
-import gui.MainWindowSingleton;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -9,9 +7,8 @@ import java.rmi.server.UnicastRemoteObject;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import dataMapping.DataMappingModelController;
-
 import cluster.slave.IMappingCallback;
+import gui.MainWindow;
 
 public class MappingCallback extends UnicastRemoteObject implements
 		IMappingCallback, Serializable {
@@ -25,7 +22,7 @@ public class MappingCallback extends UnicastRemoteObject implements
 
 	@Override
 	public void progressNotify(String message) throws RemoteException {
-		MainWindowSingleton.getInstance().progressbar.setProgressBarString(message);
+		MainWindow.getInstance().progressbar.setProgressBarString(message);
 
 	}
 
@@ -33,13 +30,13 @@ public class MappingCallback extends UnicastRemoteObject implements
 	public void setMappingProgress(int mappedNodes, String experiment)
 			throws RemoteException {	
 		final String message = mappedNodes + " successfull mapped.";
-		MainWindowSingleton.getInstance().closeProgressBar();
+		MainWindow.getInstance().closeProgressBar();
 		
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				JOptionPane.showMessageDialog(
-						MainWindowSingleton.getInstance(),
+						MainWindow.getInstance(),
 						message,
 						"Mapping done", JOptionPane.INFORMATION_MESSAGE);
 			}

@@ -32,7 +32,6 @@ import database.brenda.MostWantedMolecules;
 import graph.ContainerSingelton;
 import gui.IntroScreen;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 
 public class Launch {
 
@@ -169,7 +168,7 @@ public class Launch {
 					public void run() {
 						// TODO Auto-generated method stub
 						intro.setLoadingText("Graphical User Interface");
-						MainWindow w = MainWindowSingleton.getInstance();
+						MainWindow w = MainWindow.getInstance();
 						intro.closeWindow();
 						w.setEnabled(true);
 						SwingUtilities.updateComponentTreeUI(w);
@@ -247,7 +246,7 @@ public class Launch {
 					if (dawis_sessionid != null) {
 						JOptionPane
 								.showMessageDialog(
-										MainWindowSingleton.getInstance(),
+										MainWindow.getInstance(),
 										"No internet connection available, can not load data from the remote control!"
 												+ " Please check the connection settings and restart the program!");
 					}

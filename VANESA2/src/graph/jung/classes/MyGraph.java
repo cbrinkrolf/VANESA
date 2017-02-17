@@ -18,8 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.swing.Icon;
-
 import org.apache.commons.collections15.Transformer;
 
 import biologicalElements.NodeStateChanged;
@@ -55,7 +53,6 @@ import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import graph.GraphInstance;
 import graph.eventhandlers.MyEditingModalGraphMouse;
 import graph.gui.GraphPopUp;
-import graph.jung.graphDrawing.DynamicIcon;
 import graph.jung.graphDrawing.MyEdgeArrowFunction;
 import graph.jung.graphDrawing.MyEdgeDrawPaintFunction;
 import graph.jung.graphDrawing.MyEdgeFillPaintFunction;
@@ -76,7 +73,6 @@ import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.HeatgraphLayer;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 import gui.MyAnnotationManager;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
@@ -212,7 +208,7 @@ public class MyGraph {
 
 					}
 					pathway.updateMyGraph();
-					MainWindow mw = MainWindowSingleton.getInstance();
+					MainWindow mw = MainWindow.getInstance();
 					mw.updateAllGuiElements();
 					// vv.repaint();
 				}
@@ -307,7 +303,7 @@ public class MyGraph {
 		// vv.getPickedEdgeState().addItemListener(new EdgePickListener());
 		stateV.addItemListener(new ItemListener() {
 
-			MainWindow w = MainWindowSingleton.getInstance();
+			MainWindow w = MainWindow.getInstance();
 
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -330,7 +326,7 @@ public class MyGraph {
 		});
 
 		stateE.addItemListener(new ItemListener() {
-			MainWindow w = MainWindowSingleton.getInstance();
+			MainWindow w = MainWindow.getInstance();
 
 			@Override
 			public void itemStateChanged(ItemEvent e) {

@@ -1,8 +1,5 @@
 package gui.eventhandlers;
 
-import graph.ContainerSingelton;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.FocusEvent;
@@ -12,6 +9,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import biologicalElements.Pathway;
+import graph.ContainerSingelton;
+import gui.MainWindow;
 
 public class ProjectWindowListener implements FocusListener {
 
@@ -31,16 +30,16 @@ public class ProjectWindowListener implements FocusListener {
 		String newName = ContainerSingelton.getInstance().renamePathway(pw,
 				value);
 		pw.setName(newName);
-		MainWindowSingleton.getInstance().renameSelectedTab(pw.getName());
+		MainWindow.getInstance().renameSelectedTab(pw.getName());
 
 		ContainerSingelton.getInstance().setPetriView(pw.isPetriNet());
-		Component[] c = MainWindowSingleton.getInstance().getContentPane()
+		Component[] c = MainWindow.getInstance().getContentPane()
 				.getComponents();
 		for (int i = 0; i < c.length; i++) {
 			if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-				MainWindowSingleton.getInstance().getBar()
+				MainWindow.getInstance().getBar()
 						.paintToolbar(pw.isPetriNet());
-				MainWindowSingleton.getInstance().getmyMenu().setPetriView(pw.isPetriNet());
+				MainWindow.getInstance().getmyMenu().setPetriView(pw.isPetriNet());
 				break;
 			}
 		}
@@ -56,10 +55,10 @@ public class ProjectWindowListener implements FocusListener {
 			String value = ((JTextField) event.getSource()).getText();
 			String newName = ContainerSingelton.getInstance().renamePathway(pw,
 					value);
-			MainWindowSingleton.getInstance().checkForAlignmentOptionTab(
+			MainWindow.getInstance().checkForAlignmentOptionTab(
 					oldName, newName);
 			pw.setTitle(newName);
-			MainWindowSingleton.getInstance().renameSelectedTab(pw.getName());
+			MainWindow.getInstance().renameSelectedTab(pw.getName());
 			((JTextField) event.getSource()).setText(newName);
 
 		} else if (source.equals("author")) {

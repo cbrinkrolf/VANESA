@@ -3,8 +3,6 @@
  */
 package graph.gui;
 
-import gui.MainWindowSingleton;
-
 import java.awt.Dimension;
 import java.util.Iterator;
 import java.util.List;
@@ -17,12 +15,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import biologicalElements.ElementNamesSingelton;
 import biologicalElements.Elementdeclerations;
+import gui.MainWindow;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * @author Sebastian
@@ -104,7 +102,7 @@ public class VertexDialog{
 
 		JDialog dialog = pane.createDialog(null, "Create an element");
 		//dialog.show();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 		

@@ -1,10 +1,5 @@
 package cluster.clientimpl;
 
-import graph.algorithms.gui.GraphColoringGUI;
-import graph.algorithms.gui.smacof.view.SmacofView;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -16,6 +11,9 @@ import java.util.Hashtable;
 import cluster.slave.Cluster;
 import cluster.slave.IComputeCallback;
 import cluster.slave.LayoutPoint2D;
+import graph.algorithms.gui.GraphColoringGUI;
+import graph.algorithms.gui.smacof.view.SmacofView;
+import gui.MainWindow;
 
 public class ComputeCallback extends UnicastRemoteObject implements Serializable, IComputeCallback {
 

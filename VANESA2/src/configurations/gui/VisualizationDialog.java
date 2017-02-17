@@ -1,10 +1,5 @@
 package configurations.gui;
 
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-import gui.visualization.YamlToObjectParser;
-import io.SaveDialog;
-
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,11 +32,13 @@ import javax.swing.JSeparator;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.yaml.snakeyaml.Yaml;
 
 import biologicalElements.Elementdeclerations;
+import gui.MainWindow;
+import gui.visualization.YamlToObjectParser;
+import io.SaveDialog;
+import net.miginfocom.swing.MigLayout;
 
 public class VisualizationDialog {
 	public static final String DEFAULTYAML = "defaultYaml";
@@ -132,7 +129,7 @@ public class VisualizationDialog {
 		panel.add(colorChooser.getPreviewPanel(), "span, right, gapright 20, wrap");
 		
 		
-		mWindow = MainWindowSingleton.getInstance();
+		mWindow = MainWindow.getInstance();
 		
 		JLabel labelButton = new JLabel("Configurationfile(.yaml): ");
 		labelButton.setFont(labelButton.getFont().deriveFont(Font.BOLD));
@@ -195,8 +192,8 @@ public class VisualizationDialog {
 			public void actionPerformed(ActionEvent e) {
 				if(e.getSource() == exportButton){
 					new SaveDialog(SaveDialog.FORMAT_YAML);
-					loadedYaml = MainWindowSingleton.getInstance().getLoadedYaml();
-					loadedYamlLabel.setText(MainWindowSingleton.getInstance().getLoadedYaml());
+					loadedYaml = MainWindow.getInstance().getLoadedYaml();
+					loadedYamlLabel.setText(MainWindow.getInstance().getLoadedYaml());
 					shapeBox.setEnabled(true);
 					sizeMultiplierBox.setEnabled(true);
 					colorChooser.setEnabled(true);
@@ -326,7 +323,7 @@ public class VisualizationDialog {
 		if(file.exists()){
 			file.delete();
 		}
-		mWindow = MainWindowSingleton.getInstance();
+		mWindow = MainWindow.getInstance();
 		mWindow.setLoadedYaml(VisualizationDialog.DEFAULTYAML);
 		loadedYaml = VisualizationDialog.DEFAULTYAML;
 		System.out.println(loadedYaml);

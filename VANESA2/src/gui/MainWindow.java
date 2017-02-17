@@ -1,17 +1,5 @@
 package gui;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.eventhandlers.GraphTabListener;
-import graph.eventhandlers.GraphWindowListener;
-import gui.algorithms.CenterWindow;
-import gui.algorithms.ScreenSize;
-import gui.eventhandlers.PanelListener;
-import gui.images.ImagePath;
-import gui.visualization.YamlToObjectParser;
-import gui.visualization.VisualizationConfigBeans.Bean;
-import io.SaveDialog;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
@@ -22,10 +10,10 @@ import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +27,33 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
+import org.apache.commons.lang3.SystemUtils;
+import org.jdesktop.jxlayer.JXLayer;
+import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
+import org.jdesktop.jxlayer.plaf.ext.LockableUI;
+import org.simplericity.macify.eawt.Application;
+import org.simplericity.macify.eawt.ApplicationEvent;
+import org.simplericity.macify.eawt.ApplicationListener;
+import org.simplericity.macify.eawt.DefaultApplication;
+
+import com.jhlabs.image.BlurFilter;
+
+import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import configurations.ResourceLibrary;
+import configurations.gui.Settings;
+import configurations.gui.VisualizationDialog;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.eventhandlers.GraphTabListener;
+import graph.eventhandlers.GraphWindowListener;
+import gui.algorithms.CenterWindow;
+import gui.algorithms.ScreenSize;
+import gui.eventhandlers.PanelListener;
+import gui.images.ImagePath;
+import gui.visualization.VisualizationConfigBeans.Bean;
+import gui.visualization.YamlToObjectParser;
+import io.SaveDialog;
 import net.infonode.docking.DockingWindow;
 import net.infonode.docking.RootWindow;
 import net.infonode.docking.View;
@@ -49,25 +64,7 @@ import net.infonode.tabbedpanel.TabDropDownListVisiblePolicy;
 import net.infonode.tabbedpanel.TabbedPanel;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.infonode.util.Direction;
-
-import org.apache.commons.lang3.SystemUtils;
-import org.jdesktop.jxlayer.JXLayer;
-import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
-import org.jdesktop.jxlayer.plaf.ext.LockableUI;
-import org.simplericity.macify.eawt.Application;
-import org.simplericity.macify.eawt.ApplicationEvent;
-import org.simplericity.macify.eawt.ApplicationListener;
-import org.simplericity.macify.eawt.DefaultApplication;
-
 import xmlOutput.sbml.JSBMLoutput;
-import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-
-import com.jhlabs.image.BlurFilter;
-
-import configurations.ResourceLibrary;
-import configurations.gui.Settings;
-import configurations.gui.VisualizationDialog;
 
 public class MainWindow extends JFrame implements ApplicationListener {
 	private static final long serialVersionUID = -8328247684408223577L;
@@ -87,63 +84,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public static String pathWorkingDirectory;
 	
 	
-	public List<Bean> getBeansList() {
-		return beansList;
-	}
-
-	public void setBeansList(List<Bean> beansList) {
-		this.beansList = beansList;
-	}
-
 	
-
-	public String getLoadedYaml() {
-		return loadedYaml;
-	}
-
-
-	public void setLoadedYaml(String loadedYaml) {
-		this.loadedYaml = loadedYaml;
-	}
-
-
-	public void setSelectedView(View v){
-		for(int key : views.keySet()){
-			if(views.get(key).equals(v)){
-				selectedView = key;
-			}
-		}
-	}
-	
-	public void setSelectedView(TabbedPanel t){
-		for(int key : tabbedPanels.keySet()){
-			if(tabbedPanels.get(key).equals(t)){
-				selectedView = key;
-			}
-		}
-	}
-	
-	public int getSelectedView(){
-		return selectedView;
-	}
-
-	public ToolBar getBar() {
-		return bar;
-	}
-
-	public void setBar(ToolBar bar) {
-		this.bar = bar;
-	}
-
-	private JComponent root;
-
-	public JComponent getRoot() {
-		return root;
-	}
-
-	public void setRoot(JComponent root) {
-		this.root = root;
-	}
 
 	private JXLayer<JComponent> layer;
 	private LockableUI blurUI = new LockableUI(new BufferedImageOpEffect(
@@ -169,7 +110,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	
 	public static ProgressBar progressbar;
 
-	public MainWindow() {
+	private static MainWindow instance;
+	
+	private MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		
 		// Set developer status
@@ -323,6 +266,12 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		}
 	}
 
+	public static synchronized MainWindow getInstance(){
+		if(MainWindow.instance == null){
+			MainWindow.instance = new MainWindow();
+		}
+		return MainWindow.instance;
+	}
 	
 	public void nodeAttributeChanger(BiologicalNodeAbstract bna, boolean doResetAppearance){
 		for(Bean bean : beansList){
@@ -591,7 +540,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		if (pw.hasGotAtLeastOneElement() && ask) {
 
 			// 0: yes, 1: no, 2: cancel, -1: x
-			int n = JOptionPane.showConfirmDialog(MainWindowSingleton.getInstance(),
+			int n = JOptionPane.showConfirmDialog(MainWindow.getInstance(),
 					"Would you like to save your network-model?",
 					"Save Question", JOptionPane.YES_NO_CANCEL_OPTION);
 			//System.out.println(n);
@@ -845,5 +794,62 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	 */
 	public Application getMacOsxHandler() {
 		return macOsxHandler;
+	}
+	public List<Bean> getBeansList() {
+		return beansList;
+	}
+
+	public void setBeansList(List<Bean> beansList) {
+		this.beansList = beansList;
+	}
+
+	
+
+	public String getLoadedYaml() {
+		return loadedYaml;
+	}
+
+
+	public void setLoadedYaml(String loadedYaml) {
+		this.loadedYaml = loadedYaml;
+	}
+
+
+	public void setSelectedView(View v){
+		for(int key : views.keySet()){
+			if(views.get(key).equals(v)){
+				selectedView = key;
+			}
+		}
+	}
+	
+	public void setSelectedView(TabbedPanel t){
+		for(int key : tabbedPanels.keySet()){
+			if(tabbedPanels.get(key).equals(t)){
+				selectedView = key;
+			}
+		}
+	}
+	
+	public int getSelectedView(){
+		return selectedView;
+	}
+
+	public ToolBar getBar() {
+		return bar;
+	}
+
+	public void setBar(ToolBar bar) {
+		this.bar = bar;
+	}
+
+	private JComponent root;
+
+	public JComponent getRoot() {
+		return root;
+	}
+
+	public void setRoot(JComponent root) {
+		this.root = root;
 	}
 }

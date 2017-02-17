@@ -3,8 +3,6 @@
  */
 package database.kegg.gui;
 
-import gui.MainWindowSingleton;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -21,12 +19,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListSelectionModel;
 
+import org.jdesktop.swingx.decorator.ColorHighlighter;
+
+import gui.MainWindow;
 import miscalleanous.tables.MyTable;
 import miscalleanous.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
-
-import org.jdesktop.swingx.decorator.ColorHighlighter;
-
 import pojos.DBColumn;
 
 /**
@@ -198,7 +196,7 @@ public class KEGGResultWindow extends JFrame {
 
 	public Vector<String[]> getAnswer() {
 
-		JDialog dialog = pane.createDialog(MainWindowSingleton.getInstance(), "");
+		JDialog dialog = pane.createDialog(MainWindow.getInstance(), "");
 		dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);
 

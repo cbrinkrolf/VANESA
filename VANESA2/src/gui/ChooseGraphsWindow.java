@@ -60,7 +60,7 @@ public abstract class ChooseGraphsWindow extends JFrame implements ActionListene
 			this.setLayout(layout);
 			
 			dialog.pack();
-			dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+			dialog.setLocationRelativeTo(MainWindow.getInstance());
 			dialog.setVisible(true);
 	}
 
@@ -90,7 +90,7 @@ public abstract class ChooseGraphsWindow extends JFrame implements ActionListene
 			}
 			
 			if (chosen_pathways.size()<2) {
-				JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+				JOptionPane.showMessageDialog(MainWindow.getInstance(),
 				"Please select at least 2 graphs!");
 			}
 			else {		

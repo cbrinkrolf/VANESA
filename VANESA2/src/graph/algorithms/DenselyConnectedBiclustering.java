@@ -1,12 +1,5 @@
 package graph.algorithms;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,11 +28,16 @@ import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 
 public class DenselyConnectedBiclustering {
 	
 	
-	private MainWindow w = MainWindowSingleton.getInstance();
+	private MainWindow w = MainWindow.getInstance();
 	private GraphContainer con = ContainerSingelton.getInstance();
 	private Pathway pw = con.getPathway(w.getCurrentPathway());
 	private MyGraph mg = pw.getGraph();

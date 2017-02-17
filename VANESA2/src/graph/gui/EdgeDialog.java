@@ -3,9 +3,6 @@
  */
 package graph.gui;
 
-import graph.GraphInstance;
-import gui.MainWindowSingleton;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -21,16 +18,17 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-import petriNet.Place;
-import petriNet.Transition;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.GraphInstance;
+import gui.MainWindow;
+import net.miginfocom.swing.MigLayout;
+import petriNet.Place;
+import petriNet.Transition;
 
 /**
  * @author Sebastian
@@ -164,7 +162,7 @@ public class EdgeDialog extends JFrame {
 
 		JDialog dialog = pane.createDialog(EdgeDialog.this, "Create an edge");
 		//dialog.show();
-		dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 		BiologicalNodeAbstract[] bnas = new BiologicalNodeAbstract[2];

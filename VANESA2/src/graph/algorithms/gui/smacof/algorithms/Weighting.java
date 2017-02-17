@@ -1,13 +1,5 @@
 package graph.algorithms.gui.smacof.algorithms;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.algorithms.NodeAttributeNames;
-import graph.algorithms.NodeAttributeTypes;
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-import gui.MainWindowSingleton;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,6 +7,12 @@ import java.util.Iterator;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.algorithms.NodeAttributeNames;
+import graph.algorithms.NodeAttributeTypes;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 
 /**
  * 
@@ -53,7 +51,7 @@ public class Weighting {
 	 */
 	public float[][] getWeightsByAdjacency(){
 		weights = new float[mapped_nodes.size()][mapped_nodes.size()];
-		MainWindow w = MainWindowSingleton.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		GraphContainer con = ContainerSingelton.getInstance();
 		MyGraph mg = con.getPathway(w.getCurrentPathway()).getGraph();
 		

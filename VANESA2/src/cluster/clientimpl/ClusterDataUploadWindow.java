@@ -1,13 +1,5 @@
 package cluster.clientimpl;
 
-import graph.ContainerSingelton;
-import graph.GraphInstance;
-import graph.algorithms.NodeAttributeNames;
-import graph.algorithms.NodeAttributeTypes;
-import graph.jung.classes.MyGraph;
-import gui.MainWindowSingleton;
-import gui.OptionPanel;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -22,7 +14,6 @@ import java.util.HashMap;
 import java.util.TreeSet;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,16 +23,19 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.JXTable;
 import org.jfree.ui.RefineryUtilities;
 
-import cluster.master.IClusterJobs;
-import cluster.slave.JobTypes;
-import dataMapping.DataMappingModelController;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
+import cluster.master.IClusterJobs;
+import cluster.slave.JobTypes;
+import graph.ContainerSingelton;
+import graph.algorithms.NodeAttributeNames;
+import graph.algorithms.NodeAttributeTypes;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The GraphClusterDyer applies colors to given BiologicalNodeAbstract_s
@@ -72,10 +66,10 @@ public class ClusterDataUploadWindow extends JFrame {
 
 	public ClusterDataUploadWindow() {
 		super("Cluster Upload window: "
-				+ MainWindowSingleton.getInstance().getCurrentPathway());
+				+ MainWindow.getInstance().getCurrentPathway());
 		// setPreferredSize(new Dimension(X, Y));
 
-		if (MainWindowSingleton.getInstance().getCurrentPathway() != null) {
+		if (MainWindow.getInstance().getCurrentPathway() != null) {
 
 			TablePanel newContentPane = new TablePanel();
 			newContentPane.setOpaque(true); // content panes must be opaque
@@ -108,7 +102,7 @@ public class ClusterDataUploadWindow extends JFrame {
 			mg = ContainerSingelton
 					.getInstance()
 					.getPathway(
-							MainWindowSingleton.getInstance()
+							MainWindow.getInstance()
 									.getCurrentPathway()).getGraph();
 
 			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
@@ -314,7 +308,7 @@ public class ClusterDataUploadWindow extends JFrame {
 								SwingUtilities.invokeLater(new Runnable() {
 									public void run() {
 										JOptionPane.showMessageDialog(
-												MainWindowSingleton
+												MainWindow
 														.getInstance(),
 												"Queue is at maximum capacity!");
 									}
@@ -326,7 +320,7 @@ public class ClusterDataUploadWindow extends JFrame {
 								public void run() {
 									JOptionPane
 											.showMessageDialog(
-													MainWindowSingleton
+													MainWindow
 															.getInstance()
 															.returnFrame(),
 													"RMI Interface could not be established.",
@@ -340,7 +334,7 @@ public class ClusterDataUploadWindow extends JFrame {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
 									JOptionPane.showMessageDialog(
-											MainWindowSingleton.getInstance()
+											MainWindow.getInstance()
 													.returnFrame(),
 											"Cluster not reachable.", "Error",
 											JOptionPane.ERROR_MESSAGE);
@@ -353,7 +347,7 @@ public class ClusterDataUploadWindow extends JFrame {
 								public void run() {
 									JOptionPane
 											.showMessageDialog(
-													MainWindowSingleton
+													MainWindow
 															.getInstance()
 															.returnFrame(),
 													"Clusteradress could not be resolved.",
@@ -371,16 +365,13 @@ public class ClusterDataUploadWindow extends JFrame {
 			});
 
 			// lock UI
-			MainWindowSingleton.getInstance().showProgressBar(
+			MainWindow.getInstance().showProgressBar(
 					"submitting data to cluster");
 
 			// Start export
 			export.start();
 			
 			ClusterDataUploadWindow.this.dispose();;
-
 		}
-
 	}
-
 }

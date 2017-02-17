@@ -1,13 +1,5 @@
 package petriNet;
 
-import graph.ContainerSingelton;
-import graph.GraphContainer;
-import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
-import gui.MainWindowSingleton;
-import gui.ProgressBar;
-import io.MyFileFilter;
-
 import java.io.File;
 
 import javax.swing.JFileChooser;
@@ -17,6 +9,13 @@ import javax.swing.SwingWorker;
 
 import biologicalElements.PetriNet;
 import configurations.ConnectionSettings;
+import graph.ContainerSingelton;
+import graph.GraphContainer;
+import graph.GraphInstance;
+import graph.jung.classes.MyGraph;
+import gui.MainWindow;
+import gui.ProgressBar;
+import io.MyFileFilter;
 
 public class OpenModellicaResult extends SwingWorker {
 	private JFileChooser chooser;
@@ -64,10 +63,10 @@ public class OpenModellicaResult extends SwingWorker {
 						petrinet.loadVanesaSimulationResult(file);
 
 					} else {
-						JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Please load or create a network first!");
+						JOptionPane.showMessageDialog(MainWindow.getInstance(), "Please load or create a network first!");
 					}
 				} else {
-					JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Please load or create a network first!");
+					JOptionPane.showMessageDialog(MainWindow.getInstance(), "Please load or create a network first!");
 				}
 
 			} else if (fileFormat.equals(modelicaResultDescription)) {
@@ -79,10 +78,10 @@ public class OpenModellicaResult extends SwingWorker {
 						petrinet.setPetriNetSimulationFile(file.getAbsolutePath());
 
 					} else {
-						JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Please load or create a network first!");
+						JOptionPane.showMessageDialog(MainWindow.getInstance(), "Please load or create a network first!");
 					}
 				} else {
-					JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), "Please load or create a network first!");
+					JOptionPane.showMessageDialog(MainWindow.getInstance(), "Please load or create a network first!");
 				}
 			}
 		}
@@ -123,7 +122,7 @@ public class OpenModellicaResult extends SwingWorker {
 					// .restart();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();
-					MainWindowSingleton.getInstance().updateAllGuiElements();
+					MainWindow.getInstance().updateAllGuiElements();
 
 				}
 			}

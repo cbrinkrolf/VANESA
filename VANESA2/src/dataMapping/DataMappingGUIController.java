@@ -31,7 +31,6 @@ import graph.GraphContainer;
 import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 
 
 /**
@@ -141,7 +140,7 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 				//MAP from network label to BNA and save attribute
 				String label;
 				// get network structure
-				MainWindow w = MainWindowSingleton.getInstance();
+				MainWindow w = MainWindow.getInstance();
 				GraphContainer con = ContainerSingelton.getInstance();
 				Pathway pw = con.getPathway(w.getCurrentPathway());
 				MyGraph mg = pw.getGraph();

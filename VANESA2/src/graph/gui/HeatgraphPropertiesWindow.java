@@ -21,7 +21,7 @@ import javax.swing.event.ChangeListener;
 
 import graph.ContainerSingelton;
 import gui.HeatgraphLayer;
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 import gui.eventhandlers.ToolBarListenerSingleton;
 import gui.images.ImagePath;
 import heatmap.AdoptedHeatmap;
@@ -82,7 +82,7 @@ public class HeatgraphPropertiesWindow implements ActionListener {
 							HeatgraphLayer.getInstance().getHeatmapForActiveGraph().updateVisualizationStyle((String) item);
 							AdoptedHeatmap.defaultVisualizationStyle = (String) item;
 							HeatgraphLayer.getInstance().getHeatmapForActiveGraph().updateData();
-							MainWindowSingleton.getInstance().repaint(); 
+							MainWindow.getInstance().repaint(); 
 						}
 						else {
 							ToolBarListenerSingleton.getInstance().showCreateBeforeMessage();
@@ -162,7 +162,7 @@ public class HeatgraphPropertiesWindow implements ActionListener {
         			        
         		            HeatgraphLayer.getInstance().getHeatmapForActiveGraph().updateGradient(gradients[ix]);
         		            AdoptedHeatmap.defaultGradient = gradients[ix];
-        		            MainWindowSingleton.getInstance().repaint();
+        		            MainWindow.getInstance().repaint();
         				}
         				else {
         					ToolBarListenerSingleton.getInstance().showCreateBeforeMessage();

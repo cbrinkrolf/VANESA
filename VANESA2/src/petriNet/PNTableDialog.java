@@ -1,12 +1,5 @@
 package petriNet;
 
-//import edu.uci.ics.jung.graph.ArchetypeVertex;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.graph.event.GraphEventType.AllSingleEvents;
-import graph.ContainerSingelton;
-import graph.jung.graphDrawing.VertexShapes;
-import gui.MainWindowSingleton;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -30,8 +23,6 @@ import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -40,6 +31,13 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+//import edu.uci.ics.jung.graph.ArchetypeVertex;
+//import edu.uci.ics.jung.graph.Vertex;
+//import edu.uci.ics.jung.graph.event.GraphEventType.AllSingleEvents;
+import graph.ContainerSingelton;
+import graph.jung.graphDrawing.VertexShapes;
+import gui.MainWindow;
+import net.miginfocom.swing.MigLayout;
 
 public class PNTableDialog extends JDialog implements ActionListener {
 
@@ -50,11 +48,11 @@ public class PNTableDialog extends JDialog implements ActionListener {
 	private PNEdge[] edges;
 
 	public PNTableDialog() {
-		super(MainWindowSingleton.getInstance(), true);
+		super(MainWindow.getInstance(), true);
 
 		int i = 0;
 		final Pathway pw = ContainerSingelton.getInstance().getPathway(
-				MainWindowSingleton.getInstance().getCurrentPathway());
+				MainWindow.getInstance().getCurrentPathway());
 
 		Object[][] rows = new Object[pw.getAllGraphNodes().toArray().length][9];
 		bnas = new BiologicalNodeAbstract[pw.getAllGraphNodes().toArray().length];
@@ -284,13 +282,13 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		pack();
-		this.setLocationRelativeTo(MainWindowSingleton.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance());
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Pathway pw = ContainerSingelton.getInstance().getPathway(
-				MainWindowSingleton.getInstance().getCurrentPathway());
+				MainWindow.getInstance().getCurrentPathway());
 		Place p;
 		BiologicalNodeAbstract neighbour;
 		BiologicalNodeAbstract node;
@@ -455,7 +453,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			if (!changedAllStates)
 				JOptionPane
 						.showMessageDialog(
-								MainWindowSingleton.getInstance(),
+								MainWindow.getInstance(),
 								"You tried to change the type of your transitions or places in a way, such that there were a relation between a continious transition and a discrete place! The objects which type was not changed are marked red.",
 								"Action could not be fully performed...",
 								JOptionPane.ERROR_MESSAGE);

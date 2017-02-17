@@ -23,7 +23,6 @@ import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MainWindowSingleton;
 
 public class DatabaseSearchListener implements ActionListener {
 	private DatabaseWindow dw;
@@ -35,21 +34,21 @@ public class DatabaseSearchListener implements ActionListener {
 	private void requestKEGGcontent() {
 		//new GetPublications("C:\\Users\\Vallani\\Desktop\\result.txt");
 
-		MainWindowSingleton.getInstance().showProgressBar("KEGG query");
+		MainWindow.getInstance().showProgressBar("KEGG query");
 		KeggSearch keggSearch = new KeggSearch(dw.getInput(),
-				MainWindowSingleton.getInstance(),null);
+				MainWindow.getInstance(),null);
 		keggSearch.execute();
 	}
 
 	private void requestBrendaContent() {
-		MainWindowSingleton.getInstance().showProgressBar("BRENDA query");
+		MainWindow.getInstance().showProgressBar("BRENDA query");
 		BRENDASearch brendaSearch = new BRENDASearch(dw.getInput(),
-				MainWindowSingleton.getInstance(), null, dw.isHeadless());
+				MainWindow.getInstance(), null, dw.isHeadless());
 		brendaSearch.execute();
 	}
 	
 	private void requestBrenda2Content() {
-		MainWindowSingleton.getInstance().showProgressBar("BRENDA 2 query");
+		MainWindow.getInstance().showProgressBar("BRENDA 2 query");
 		BRENDA2Search brenda2Search = new BRENDA2Search(dw.getInput(), null, dw.isHeadless());
 		brenda2Search.execute();
 	}
@@ -60,23 +59,23 @@ public class DatabaseSearchListener implements ActionListener {
 
 
 	private void requestPPIcontent() {
-		MainWindowSingleton.getInstance().showProgressBar("PPI query");
+		MainWindow.getInstance().showProgressBar("PPI query");
 		PPISearch ppiSearch = new PPISearch(dw.getInput(),
-				MainWindowSingleton.getInstance(),dw.isHeadless());
+				MainWindow.getInstance(),dw.isHeadless());
 		ppiSearch.execute();
 
 	}
 	
 	private void requestMIRNAcontent() {
-		MainWindowSingleton.getInstance().showProgressBar("miRNA query");		
+		MainWindow.getInstance().showProgressBar("miRNA query");		
 		mirnaSearch mirnaS = new mirnaSearch(dw.getInput(),
-						MainWindowSingleton.getInstance(), dw.isHeadless());
+				MainWindow.getInstance(), dw.isHeadless());
 		
 		mirnaS.execute();   
 	}
 	
 	private void requestUNIDContent(){
-		MainWindowSingleton.getInstance().showProgressBar("UNID query.");
+		MainWindow.getInstance().showProgressBar("UNID query.");
 		UNIDSearch unidS = new UNIDSearch(dw.getInput(), dw.isHeadless());
 		unidS.execute();
 		
@@ -113,7 +112,7 @@ public class DatabaseSearchListener implements ActionListener {
 					this.requestBrenda2Content();
 				}
 			} else {
-				JOptionPane.showConfirmDialog(MainWindowSingleton.getInstance(),
+				JOptionPane.showConfirmDialog(MainWindow.getInstance(),
 						"Please type something into the search form.");
 			}
 		} else if ("pickcommons".equals(event)) {
@@ -126,7 +125,7 @@ public class DatabaseSearchListener implements ActionListener {
 	private void pickCommons() {
 		if (ContainerSingelton.getInstance().containsPathway()) {
 			String commonNames[] = dw.getInput()[2].split(",");
-			MainWindow w = MainWindowSingleton.getInstance();
+			MainWindow w = MainWindow.getInstance();
 			GraphContainer con = ContainerSingelton.getInstance();
 			Pathway pw = con.getPathway(w.getCurrentPathway());
 			MyGraph mg = pw.getGraph();
@@ -146,7 +145,7 @@ public class DatabaseSearchListener implements ActionListener {
 
 	private void pickNeighbors() {
 		if (ContainerSingelton.getInstance().containsPathway()) {
-			MainWindow w = MainWindowSingleton.getInstance();
+			MainWindow w = MainWindow.getInstance();
 			GraphContainer con = ContainerSingelton.getInstance();
 			Pathway pw = con.getPathway(w.getCurrentPathway());
 			MyGraph mg = pw.getGraph();

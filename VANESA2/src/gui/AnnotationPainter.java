@@ -228,7 +228,7 @@ public class AnnotationPainter {
 		// System.out.println("color: "+oldColor);
 		Color newColor = oldColor;
 		try {
-			newColor = JColorChooser.showDialog(MainWindowSingleton.getInstance(), "select a new color.",
+			newColor = JColorChooser.showDialog(MainWindow.getInstance(), "select a new color.",
 					oldColor);
 		} catch (Exception e) {
 

@@ -1,25 +1,28 @@
 package io;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.lang3.SystemUtils;
+
 import biologicalElements.Pathway;
 import configurations.ConnectionSettings;
 import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
-import gui.MainWindowSingleton;
+import gui.MainWindow;
 import gui.ProgressBar;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.xml.stream.XMLStreamException;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.lang3.SystemUtils;
 import xmlInput.sbml.JSBMLinput;
 import xmlInput.sbml.VAMLInput;
 
@@ -105,7 +108,7 @@ public class OpenDialog extends SwingWorker {
 				phosphoMlDescription));
 		chooser.addChoosableFileFilter(new MyFileFilter(txt, txtDescription));
 
-		option = chooser.showOpenDialog(MainWindowSingleton.getInstance());
+		option = chooser.showOpenDialog(MainWindow.getInstance());
 
 		if (option == JFileChooser.APPROVE_OPTION)
 		{
@@ -139,7 +142,7 @@ public class OpenDialog extends SwingWorker {
 					try {
 						new VAMLInput(file);
 					} catch (XMLStreamException e) {
-						JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+						JOptionPane.showMessageDialog(MainWindow.getInstance(),
 								"An error occured during the loading. "
 										+ "The VAML file is not valid.",
 								"VAML read error", JOptionPane.ERROR_MESSAGE);
@@ -156,7 +159,7 @@ public class OpenDialog extends SwingWorker {
 					try {
 						result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file.getName());
 						if(result.length() > 0){
-							JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+							JOptionPane.showMessageDialog(MainWindow.getInstance(),
 									result);
 						}
 						
@@ -220,7 +223,7 @@ public class OpenDialog extends SwingWorker {
 					//GraphInstance.getMyGraph().getVisualizationViewer()
 					//		.restart();
 					
-					MainWindowSingleton.getInstance().updateAllGuiElements();
+					MainWindow.getInstance().updateAllGuiElements();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();
 				}
