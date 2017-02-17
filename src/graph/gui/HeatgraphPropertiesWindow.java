@@ -22,7 +22,7 @@ import javax.swing.event.ChangeListener;
 import graph.ContainerSingelton;
 import gui.HeatgraphLayer;
 import gui.MainWindow;
-import gui.eventhandlers.ToolBarListenerSingleton;
+import gui.eventhandlers.ToolBarListener;
 import gui.images.ImagePath;
 import heatmap.AdoptedHeatmap;
 import heatmap.Gradient;
@@ -85,7 +85,7 @@ public class HeatgraphPropertiesWindow implements ActionListener {
 							MainWindow.getInstance().repaint(); 
 						}
 						else {
-							ToolBarListenerSingleton.getInstance().showCreateBeforeMessage();
+							ToolBarListener.getInstance().showCreateBeforeMessage();
 						}
 					}
 		        }
@@ -165,7 +165,7 @@ public class HeatgraphPropertiesWindow implements ActionListener {
         		            MainWindow.getInstance().repaint();
         				}
         				else {
-        					ToolBarListenerSingleton.getInstance().showCreateBeforeMessage();
+        					ToolBarListener.getInstance().showCreateBeforeMessage();
         				}	
                 }
         	}
