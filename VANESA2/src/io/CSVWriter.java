@@ -8,11 +8,11 @@ import java.util.List;
 
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
-import petriNet.Transition;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.Transition;
 
 public class CSVWriter {
 

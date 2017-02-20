@@ -38,6 +38,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.SRNA;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.Transition;
 import cern.colt.list.IntArrayList;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
@@ -97,7 +98,6 @@ import petriNet.PNTableDialog;
 import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 import petriNet.SimpleMatrixDouble;
-import petriNet.Transition;
 import pojos.DBColumn;
 
 public class MenuListener implements ActionListener {

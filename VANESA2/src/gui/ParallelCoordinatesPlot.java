@@ -55,6 +55,7 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
 import graph.animations.RegulationTabelModel;
@@ -67,7 +68,6 @@ import petriNet.AnimationThread;
 import petriNet.PlotsPanel;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
-import petriNet.Transition;
 import util.TripleHashMap;
 
 /**

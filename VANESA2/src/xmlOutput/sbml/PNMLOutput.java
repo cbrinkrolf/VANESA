@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.petriNet.Place;
-import petriNet.Transition;
+import biologicalObjects.nodes.petriNet.Transition;
 import fr.lip6.move.pnml.framework.general.PnmlExport;
 import fr.lip6.move.pnml.framework.utils.ModelRepository;
 import fr.lip6.move.pnml.framework.utils.exception.BadFileFormatException;

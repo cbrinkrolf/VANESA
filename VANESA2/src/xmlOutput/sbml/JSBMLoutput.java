@@ -34,11 +34,12 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
+import biologicalObjects.nodes.petriNet.Transition;
 import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.RangeSelector;
-import petriNet.Transition;
 import util.MyIntComparable;
 
 /**
@@ -75,21 +76,21 @@ public class JSBMLoutput {
 
 	/**
 	 * Generates a SBML document via jSBML.
-	 * @throws XMLStreamException 
+	 * 
+	 * @throws XMLStreamException
 	 * @throws IOException
 	 */
 	public String generateSBMLDocument() throws XMLStreamException {
 		int answer = JOptionPane.YES_OPTION;
-		if(pathway instanceof BiologicalNodeAbstract){
-			Object[] options = {"Save subpathway", "Save complete pathway"};
+		if (pathway instanceof BiologicalNodeAbstract) {
+			Object[] options = { "Save subpathway", "Save complete pathway" };
 			answer = JOptionPane.showOptionDialog(MainWindow.getInstance(),
-					"You try to save a opened subpathway. Do you want to save this subpathway?",
-					"Save subpathway", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-					null, options, options[1]);
+					"You try to save a opened subpathway. Do you want to save this subpathway?", "Save subpathway", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		}
-		if(answer == JOptionPane.YES_OPTION){
+		if (answer == JOptionPane.YES_OPTION) {
 			rootPathway = pathway;
-		} else if(answer == JOptionPane.NO_OPTION){
+		} else if (answer == JOptionPane.NO_OPTION) {
 			rootPathway = pathway.getRootPathway();
 		}
 
@@ -106,7 +107,7 @@ public class JSBMLoutput {
 
 		// read all nodes from graph
 		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : rootPathway.getAllGraphNodesSorted()){
+		for (BiologicalNodeAbstract node : rootPathway.getAllGraphNodesSorted()) {
 			flattenedPathwayNodes.addAll(node.getLeafNodes());
 		}
 
@@ -117,18 +118,17 @@ public class JSBMLoutput {
 		try {
 			while (nodeIterator.hasNext()) {
 				oneNode = nodeIterator.next();
-				for(BiologicalEdgeAbstract conEdge : oneNode.getConnectingEdges()){
-					if(!(conEdge.getFrom().isEnvironmentNodeOf(rootPathway) && conEdge.getTo().isEnvironmentNodeOf(rootPathway))){
+				for (BiologicalEdgeAbstract conEdge : oneNode.getConnectingEdges()) {
+					if (!(conEdge.getFrom().isEnvironmentNodeOf(rootPathway) && conEdge.getTo().isEnvironmentNodeOf(rootPathway))) {
 						flattenedPathwayEdges.add(conEdge);
 					}
 				}
 				// test to what compartment the node belongs
 				String nodeCompartment = COMP + oneNode.getCompartment();
-				//System.out.println(nodeCompartment);
+				// System.out.println(nodeCompartment);
 				// test if compartment already exists
-				Compartment testCompartment = model
-						.getCompartment(nodeCompartment);
-				//System.out.println(testCompartment);
+				Compartment testCompartment = model.getCompartment(nodeCompartment);
+				// System.out.println(testCompartment);
 				if (testCompartment != null) {
 					compartment = testCompartment;
 				} else {
@@ -136,7 +136,7 @@ public class JSBMLoutput {
 					compartment = model.createCompartment();
 					compartment.setId(nodeCompartment);
 					compartment.setConstant(false);
-					//System.out.println("durch");
+					// System.out.println("durch");
 				}
 				// The ID of a species has to be a string and could not begin
 				// with a number
@@ -175,7 +175,6 @@ public class JSBMLoutput {
 		for (int i = 0; i < ids.size(); i++) {
 			sortedEdges.add(map.get(ids.get(i)));
 		}
-
 
 		Iterator<BiologicalEdgeAbstract> edgeIterator = sortedEdges.iterator();
 
@@ -220,13 +219,13 @@ public class JSBMLoutput {
 
 		// Write the SBML document to a file.
 		try {
-			//System.out.println("vor write");
+			// System.out.println("vor write");
 			SBMLWriter.write(doc, os, "VANESA", VERSION);
-			//PipedInputStream in = new PipedInputStream();
-			 // PipedOutputStream out = new PipedOutputStream(in);
-			 // SBMLWriter.write(doc, out, "VANESA", VERSION)
-			  //OutputStream os = new Outputstream
-			//System.out.println("nach write");
+			// PipedInputStream in = new PipedInputStream();
+			// PipedOutputStream out = new PipedOutputStream(in);
+			// SBMLWriter.write(doc, out, "VANESA", VERSION)
+			// OutputStream os = new Outputstream
+			// System.out.println("nach write");
 
 			os.close();
 			message = "";
@@ -246,16 +245,12 @@ public class JSBMLoutput {
 	private Annotation createAnnotation() throws XMLStreamException {
 		Annotation a = new Annotation();
 		// Save Shape
-		List<Map<String, String>> rangeInfos = RangeSelector.getInstance()
-				.getRangesInMyGraph(pathway.getGraph());
-		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("model", "", ""),
-				new XMLAttributes()));
+		List<Map<String, String>> rangeInfos = RangeSelector.getInstance().getRangesInMyGraph(pathway.getGraph());
+		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("model", "", ""), new XMLAttributes()));
 		if (rangeInfos != null) {
-			XMLNode elSub = new XMLNode(new XMLNode(new XMLTriple(
-					"listOfRanges", "", ""), new XMLAttributes()));
+			XMLNode elSub = new XMLNode(new XMLNode(new XMLTriple("listOfRanges", "", ""), new XMLAttributes()));
 			for (Map<String, String> range : rangeInfos) {
-				XMLNode elSubSub = new XMLNode(new XMLNode(new XMLTriple(
-						"Range", "", ""), new XMLAttributes()));
+				XMLNode elSubSub = new XMLNode(new XMLNode(new XMLTriple("Range", "", ""), new XMLAttributes()));
 				for (String key : range.keySet()) {
 					String value = range.get(key);
 					elSubSub.addChild(createElSub(value, key));
@@ -264,26 +259,25 @@ public class JSBMLoutput {
 			}
 			el.addChild(elSub);
 		}
-		XMLNode hierarchy = new XMLNode(new XMLNode(new XMLTriple(
-				"listOfHierarchies", "", ""), new XMLAttributes()));
+		XMLNode hierarchy = new XMLNode(new XMLNode(new XMLTriple("listOfHierarchies", "", ""), new XMLAttributes()));
 		Set<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
 
 		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract node : rootPathway.getAllGraphNodesSorted()){
+		for (BiologicalNodeAbstract node : rootPathway.getAllGraphNodesSorted()) {
 			flattenedPathwayNodes.addAll(node.getLeafNodes());
 		}
 
 		Set<BiologicalNodeAbstract> parentNodes = new HashSet<BiologicalNodeAbstract>();
-		for(BiologicalNodeAbstract flattenedNode : flattenedPathwayNodes){
+		for (BiologicalNodeAbstract flattenedNode : flattenedPathwayNodes) {
 			parentNodes = flattenedNode.getAllParentNodes();
-			for(BiologicalNodeAbstract parent : parentNodes){
-					hierarchyNodes.add(parent);
+			for (BiologicalNodeAbstract parent : parentNodes) {
+				hierarchyNodes.add(parent);
 			}
 		}
 
-		for(BiologicalNodeAbstract node : hierarchyNodes){
-			if(node.isCoarseNode()){
-					addHierarchyXMLNode(hierarchy, node);
+		for (BiologicalNodeAbstract node : hierarchyNodes) {
+			if (node.isCoarseNode()) {
+				addHierarchyXMLNode(hierarchy, node);
 			}
 		}
 		el.addChild(hierarchy);
@@ -293,16 +287,14 @@ public class JSBMLoutput {
 		return a;
 	}
 
-	private void addHierarchyXMLNode(XMLNode hierarchy, BiologicalNodeAbstract node){
-		XMLNode hierarchyXMLNode = new XMLNode(new XMLNode(new XMLTriple(
-				"coarseNode", "", ""), new XMLAttributes()));
+	private void addHierarchyXMLNode(XMLNode hierarchy, BiologicalNodeAbstract node) {
+		XMLNode hierarchyXMLNode = new XMLNode(new XMLNode(new XMLTriple("coarseNode", "", ""), new XMLAttributes()));
 		hierarchyXMLNode.addAttr("id", "spec_" + node.getID());
 		hierarchyXMLNode.addAttr("label", node.getLabel());
 		hierarchyXMLNode.addAttr("opened", !rootPathway.getClosedSubPathways().contains(node) ? "true" : "false");
-		hierarchyXMLNode.addAttr("root", node.getRootNode()==null ? "null" : "spec_" + node.getRootNode().getID());
-		for(BiologicalNodeAbstract childNode : node.getChildrenNodes()){
-			XMLNode childXMLNode = new XMLNode(new XMLNode(new XMLTriple(
-					"child", "", ""), new XMLAttributes()));
+		hierarchyXMLNode.addAttr("root", node.getRootNode() == null ? "null" : "spec_" + node.getRootNode().getID());
+		for (BiologicalNodeAbstract childNode : node.getChildrenNodes()) {
+			XMLNode childXMLNode = new XMLNode(new XMLNode(new XMLTriple("child", "", ""), new XMLAttributes()));
 			childXMLNode.addAttr("id", "spec_" + childNode.getID());
 			hierarchyXMLNode.addChild(childXMLNode);
 		}
@@ -314,11 +306,10 @@ public class JSBMLoutput {
 		// create new annotation
 		Annotation a = new Annotation();
 		// Save attributes that every node has
-		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("spec", "", ""),
-				new XMLAttributes()));
+		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("spec", "", ""), new XMLAttributes()));
 		XMLNode elSub;
 
-		String attr = oneNode.getLabel()+"";
+		String attr = oneNode.getLabel() + "";
 		el.addChild(createElSub(attr, "label"));
 
 		attr = String.valueOf(oneNode.getNodesize());
@@ -327,18 +318,16 @@ public class JSBMLoutput {
 		attr = oneNode.getBiologicalElement();
 		el.addChild(createElSub(attr, "BiologicalElement"));
 
-//		Point2D p = pathway.getGraph().getVertexLocation(oneNode);
-//		if(oneNode.getParentNode()!=null){
-//			p = oneNode.getParentNode().getGraph().getVertexLocation(oneNode);
-//		}
+		// Point2D p = pathway.getGraph().getVertexLocation(oneNode);
+		// if(oneNode.getParentNode()!=null){
+		// p = oneNode.getParentNode().getGraph().getVertexLocation(oneNode);
+		// }
 		Point2D p = new Point2D.Double(0, 0);
-		if(!oneNode.isCoarseNode()){
+		if (!oneNode.isCoarseNode()) {
 			p = pathway.getVertices().get(oneNode);
 		}
 
-
-		elSub = new XMLNode(new XMLNode(new XMLTriple("Coordinates", "", ""),
-				new XMLAttributes()));
+		elSub = new XMLNode(new XMLNode(new XMLTriple("Coordinates", "", ""), new XMLAttributes()));
 		attr = String.valueOf(p.getX());
 		elSub.addChild(createElSub(attr, "x_Coordinate"));
 		attr = String.valueOf(p.getY());
@@ -349,15 +338,13 @@ public class JSBMLoutput {
 		el.addChild(createElSub(attr, "environmentNode"));
 
 		XMLNode elSubSub;
-		elSub = new XMLNode(new XMLNode(new XMLTriple("Parameters", "", ""),
-				new XMLAttributes()));
+		elSub = new XMLNode(new XMLNode(new XMLTriple("Parameters", "", ""), new XMLAttributes()));
 
 		Parameter param;
 		Iterator<Parameter> it = oneNode.getParameters().iterator();
 		while (it.hasNext()) {
 			param = it.next();
-			elSubSub = new XMLNode(new XMLNode(new XMLTriple("Parameter", "",
-					""), new XMLAttributes()));
+			elSubSub = new XMLNode(new XMLNode(new XMLTriple("Parameter", "", ""), new XMLAttributes()));
 			elSubSub.addChild(createElSub(param.getName(), "Name"));
 			elSubSub.addChild(createElSub(param.getValue() + "", "Value"));
 			elSubSub.addChild(createElSub(param.getUnit(), "Unit"));
@@ -447,27 +434,21 @@ public class JSBMLoutput {
 			attrs[55] = oneNode.getKEGGnode().getNodeLabel();
 			attrs[56] = oneNode.getKEGGnode().getShape();
 			attrs[57] = oneNode.getKEGGnode().getWidth();
-			attrs[58] = oneNode.getKEGGnode().getAllDBLinksAsVector()
-					.toString();
-			attrs[59] = oneNode.getKEGGnode().getAllGeneMotifsAsVector()
-					.toString();
+			attrs[58] = oneNode.getKEGGnode().getAllDBLinksAsVector().toString();
+			attrs[59] = oneNode.getKEGGnode().getAllGeneMotifsAsVector().toString();
 			attrs[60] = oneNode.getKEGGnode().getAllNamesAsVector().toString();
-			attrs[61] = oneNode.getKEGGnode().getAllPathwayLinksAsVector()
-					.toString();
-			attrs[62] = oneNode.getKEGGnode().getAllStructuresAsVector()
-					.toString();
+			attrs[61] = oneNode.getKEGGnode().getAllPathwayLinksAsVector().toString();
+			attrs[62] = oneNode.getKEGGnode().getAllStructuresAsVector().toString();
 
 			boolean kegg = false;
 			for (int i = 0; i < attrs.length; i++) {
-				if (attrs[i] != "" && attrs[i] != null
-						&& !attrs[i].equals("[]")) {
+				if (attrs[i] != "" && attrs[i] != null && !attrs[i].equals("[]")) {
 					kegg = true;
 					break;
 				}
 			}
 			if (kegg) {
-				elSub = new XMLNode(new XMLNode(new XMLTriple("KEGGNode", "",
-						""), new XMLAttributes()));
+				elSub = new XMLNode(new XMLNode(new XMLTriple("KEGGNode", "", ""), new XMLAttributes()));
 				// test which data are set to save them
 				elSub.addChild(createElSub(attrs[0], "AllDBLinks"));
 				elSub.addChild(createElSub(attrs[1], "AllGeneMotifs"));
@@ -540,8 +521,7 @@ public class JSBMLoutput {
 		// only if hasDAWISNode = true the following data should be saved.
 		Color col = oneNode.getColor();
 		if (col != null) {
-			elSub = new XMLNode(new XMLNode(new XMLTriple("Color", "", ""),
-					new XMLAttributes()));
+			elSub = new XMLNode(new XMLNode(new XMLTriple("Color", "", ""), new XMLAttributes()));
 			attr = String.valueOf(col.getRGB());
 			elSub.addChild(createElSub(attr, "RGB"));
 			attr = String.valueOf(col.getBlue());
@@ -553,21 +533,19 @@ public class JSBMLoutput {
 			el.addChild(elSub);
 		}
 
-		elSub = new XMLNode(new XMLNode(new XMLTriple("NodeReference", "", ""),
-				new XMLAttributes()));
+		elSub = new XMLNode(new XMLNode(new XMLTriple("NodeReference", "", ""), new XMLAttributes()));
 		if (oneNode.hasRef()) {
 			attr = "true";
 		} else {
 			attr = "false";
 		}
 		elSub.addChild(createElSub(attr, "hasRef"));
-		if(oneNode.hasRef()){
-			attr = oneNode.getRef().getID()+"";
+		if (oneNode.hasRef()) {
+			attr = oneNode.getRef().getID() + "";
 			elSub.addChild(createElSub(attr, "RefID"));
 		}
 
 		el.addChild(elSub);
-
 
 		if (oneNode.isConstant()) {
 			attr = "true";
@@ -575,6 +553,17 @@ public class JSBMLoutput {
 			attr = "false";
 		}
 		el.addChild(createElSub(attr, "constCheck"));
+
+		if (!(oneNode instanceof PNNode)) {
+			attr = oneNode.getConcentration() + "";
+			el.addChild(createElSub(attr, "concentration"));
+			attr = oneNode.getConcentrationStart() + "";
+			el.addChild(createElSub(attr, "concentrationStart"));
+			attr = oneNode.getConcentrationMin() + "";
+			el.addChild(createElSub(attr, "concentrationMin"));
+			attr = oneNode.getConcentrationMax() + "";
+			el.addChild(createElSub(attr, "concentrationMax"));
+		}
 
 		// test which type the node is to save additional data
 		if (oneNode instanceof biologicalObjects.nodes.DNA) {
@@ -606,20 +595,15 @@ public class JSBMLoutput {
 			attr = ((biologicalObjects.nodes.Gene) oneNode).getNtSequence();
 			el.addChild(createElSub(attr, "NtSequence"));
 
-			attr = ((biologicalObjects.nodes.Gene) oneNode).getProteins()
-					.toString();
+			attr = ((biologicalObjects.nodes.Gene) oneNode).getProteins().toString();
 			el.addChild(createElSub(attr, "Proteins"));
-			attr = ((biologicalObjects.nodes.Gene) oneNode).getEnzymes()
-					.toString();
+			attr = ((biologicalObjects.nodes.Gene) oneNode).getEnzymes().toString();
 			el.addChild(createElSub(attr, "Enzymes"));
 		} else if (oneNode instanceof biologicalObjects.nodes.PathwayMap) {
-			attr = String
-					.valueOf(((biologicalObjects.nodes.PathwayMap) oneNode)
-							.getSpecification());
+			attr = String.valueOf(((biologicalObjects.nodes.PathwayMap) oneNode).getSpecification());
 			el.addChild(createElSub(attr, "Specification"));
 			if (((biologicalObjects.nodes.PathwayMap) oneNode).getPathwayLink() != null) {
-				attr = ((biologicalObjects.nodes.PathwayMap) oneNode)
-						.getPathwayLink().toString();
+				attr = ((biologicalObjects.nodes.PathwayMap) oneNode).getPathwayLink().toString();
 				el.addChild(createElSub(attr, "PathwayLink"));
 			}
 		} else if (oneNode instanceof biologicalObjects.nodes.Protein) {
@@ -631,20 +615,17 @@ public class JSBMLoutput {
 			el.addChild(createElSub(attr, "NtSequence"));
 
 		} else if (oneNode instanceof biologicalObjects.nodes.SmallMolecule) {
-			attr = ((biologicalObjects.nodes.SmallMolecule) oneNode)
-					.getFormula();
+			attr = ((biologicalObjects.nodes.SmallMolecule) oneNode).getFormula();
 			el.addChild(createElSub(attr, "Formula"));
 			attr = ((biologicalObjects.nodes.SmallMolecule) oneNode).getMass();
 			el.addChild(createElSub(attr, "Mass"));
 
 		} else if (oneNode instanceof biologicalObjects.nodes.SRNA) {
-			attr = ((biologicalObjects.nodes.SRNA) oneNode)
-					.getTarbase_accession();
+			attr = ((biologicalObjects.nodes.SRNA) oneNode).getTarbase_accession();
 			el.addChild(createElSub(attr, "Tarbase_accession"));
 			attr = ((biologicalObjects.nodes.SRNA) oneNode).getTarbase_DS();
 			el.addChild(createElSub(attr, "Tarbase_DS"));
-			attr = ((biologicalObjects.nodes.SRNA) oneNode)
-					.getTarbase_ensemble();
+			attr = ((biologicalObjects.nodes.SRNA) oneNode).getTarbase_ensemble();
 			el.addChild(createElSub(attr, "Tarbase_ensemble"));
 			attr = ((biologicalObjects.nodes.SRNA) oneNode).getTarbase_IS();
 			el.addChild(createElSub(attr, "Tarbase_IS"));
@@ -658,20 +639,16 @@ public class JSBMLoutput {
 				el.addChild(createElSub(attr, "tokenMin"));
 				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getTokenMax());
 				el.addChild(createElSub(attr, "tokenMax"));
-				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode)
-						.getTokenStart());
+				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getTokenStart());
 				el.addChild(createElSub(attr, "tokenStart"));
 			} else if (oneNode instanceof Transition) {
 				if (oneNode instanceof DiscreteTransition) {
-					attr = String.valueOf(((DiscreteTransition) oneNode)
-							.getDelay());
+					attr = String.valueOf(((DiscreteTransition) oneNode).getDelay());
 					el.addChild(createElSub(attr, "delay"));
 				} else if (oneNode instanceof ContinuousTransition) {
-					attr = String.valueOf(((ContinuousTransition) oneNode)
-							.getMaximumSpeed());
+					attr = String.valueOf(((ContinuousTransition) oneNode).getMaximumSpeed());
 					el.addChild(createElSub(attr, "maximumSpeed"));
-					attr = String.valueOf(((ContinuousTransition) oneNode)
-							.isKnockedOut());
+					attr = String.valueOf(((ContinuousTransition) oneNode).isKnockedOut());
 					el.addChild(createElSub(attr, "knockedOut"));
 
 				} else if (oneNode instanceof StochasticTransition) {
@@ -689,8 +666,7 @@ public class JSBMLoutput {
 	private Annotation createAnnotation(BiologicalEdgeAbstract oneEdge) throws XMLStreamException {
 		Annotation a = new Annotation();
 		// Save the attributes which every edge has
-		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("reac", "", ""),
-				new XMLAttributes()));
+		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("reac", "", ""), new XMLAttributes()));
 		XMLNode elSub;
 		String attr = oneEdge.getLabel();
 		el.addChild(createElSub(attr, "label"));
@@ -700,8 +676,7 @@ public class JSBMLoutput {
 		el.addChild(createElSub(attr, "Weight"));
 		Color col = oneEdge.getColor();
 		if (col != null) {
-			elSub = new XMLNode(new XMLNode(new XMLTriple("Color", "", ""),
-					new XMLAttributes()));
+			elSub = new XMLNode(new XMLNode(new XMLTriple("Color", "", ""), new XMLAttributes()));
 			attr = String.valueOf(col.getRGB());
 			elSub.addChild(createElSub(attr, "RGB"));
 			attr = String.valueOf(col.getBlue());
@@ -729,8 +704,7 @@ public class JSBMLoutput {
 
 		// Save additional data
 		if (oneEdge instanceof biologicalObjects.edges.ReactionPair) {
-			attrb = ((biologicalObjects.edges.ReactionPair) oneEdge)
-					.hasRPairEdge();
+			attrb = ((biologicalObjects.edges.ReactionPair) oneEdge).hasRPairEdge();
 			attr = String.valueOf(attrb);
 			el.addChild(createElSub(attr, "HasReactionPairEdge"));
 			// Test if hasRPairEdge = true
@@ -738,12 +712,9 @@ public class JSBMLoutput {
 			if (attrb) {
 				// Data to save
 				String[] attrs = new String[3];
-				attrs[0] = ((biologicalObjects.edges.ReactionPair) oneEdge)
-						.getReactionPairEdge().getReactionPairID();
-				attrs[1] = ((biologicalObjects.edges.ReactionPair) oneEdge)
-						.getReactionPairEdge().getName();
-				attrs[2] = ((biologicalObjects.edges.ReactionPair) oneEdge)
-						.getReactionPairEdge().getType();
+				attrs[0] = ((biologicalObjects.edges.ReactionPair) oneEdge).getReactionPairEdge().getReactionPairID();
+				attrs[1] = ((biologicalObjects.edges.ReactionPair) oneEdge).getReactionPairEdge().getName();
+				attrs[2] = ((biologicalObjects.edges.ReactionPair) oneEdge).getReactionPairEdge().getType();
 				// Test if one of the attributes is set
 				// if not, no node has to be created
 				boolean kegg = false;
@@ -754,8 +725,7 @@ public class JSBMLoutput {
 					}
 				}
 				if (kegg) {
-					elSub = new XMLNode(new XMLNode(new XMLTriple(
-							"ReactionPairEdge", "", ""), new XMLAttributes()));
+					elSub = new XMLNode(new XMLNode(new XMLTriple("ReactionPairEdge", "", ""), new XMLAttributes()));
 					// Test which attributes are set
 					elSub.addChild(createElSub(attrs[0], "ReactionPairEdgeID"));
 					elSub.addChild(createElSub(attrs[1], "ReactionPairName"));
@@ -767,8 +737,7 @@ public class JSBMLoutput {
 		} else if (oneEdge instanceof biologicalObjects.edges.petriNet.PNEdge) {
 			attr = ((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getFunction();
 			el.addChild(createElSub(attr, "Function"));
-			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge)
-					.getActivationProbability());
+			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getActivationProbability());
 			el.addChild(createElSub(attr, "ActivationProbability"));
 			// TODO !!!
 		}
@@ -777,10 +746,8 @@ public class JSBMLoutput {
 	}
 
 	private XMLNode createElSub(String attr, String name) {
-		if (attr != "" && attr != null && !attr.equals("null")
-				&& !attr.equals("[]")) {
-			XMLNode elSub = new XMLNode(new XMLNode(
-					new XMLTriple(name, "", ""), new XMLAttributes()));
+		if (attr != "" && attr != null && !attr.equals("null") && !attr.equals("[]")) {
+			XMLNode elSub = new XMLNode(new XMLNode(new XMLTriple(name, "", ""), new XMLAttributes()));
 			elSub.addAttr(name, attr);
 			return elSub;
 		} else {

@@ -36,6 +36,7 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
+import biologicalObjects.nodes.petriNet.Transition;
 //import edu.uci.ics.jung.graph.ArchetypeVertex;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.graph.event.GraphEventType.AllSingleEvents;
