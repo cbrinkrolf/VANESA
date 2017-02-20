@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.tools.ant.taskdefs.Javac.ImplementationSpecificArgument;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Model;
@@ -32,6 +33,7 @@ import org.sbml.jsbml.xml.XMLTriple;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.PNNode;
@@ -564,7 +566,6 @@ public class JSBMLoutput {
 			attr = oneNode.getConcentrationMax() + "";
 			el.addChild(createElSub(attr, "concentrationMax"));
 		}
-
 		// test which type the node is to save additional data
 		if (oneNode instanceof biologicalObjects.nodes.DNA) {
 			attr = ((biologicalObjects.nodes.DNA) oneNode).getNtSequence();
@@ -630,6 +631,13 @@ public class JSBMLoutput {
 			attr = ((biologicalObjects.nodes.SRNA) oneNode).getTarbase_IS();
 			el.addChild(createElSub(attr, "Tarbase_IS"));
 		}
+		
+		if(oneNode instanceof DynamicNode){
+			attr = String.valueOf(((DynamicNode) oneNode).getMaximumSpeed());
+			el.addChild(createElSub(attr, "maximumSpeed"));
+			attr = String.valueOf(((DynamicNode) oneNode).isKnockedOut());
+			el.addChild(createElSub(attr, "knockedOut"));
+		}
 		// if Net is a petri Net
 		if (pathway.isPetriNet()) {
 			if (oneNode instanceof biologicalObjects.nodes.petriNet.Place) {
@@ -646,10 +654,7 @@ public class JSBMLoutput {
 					attr = String.valueOf(((DiscreteTransition) oneNode).getDelay());
 					el.addChild(createElSub(attr, "delay"));
 				} else if (oneNode instanceof ContinuousTransition) {
-					attr = String.valueOf(((ContinuousTransition) oneNode).getMaximumSpeed());
-					el.addChild(createElSub(attr, "maximumSpeed"));
-					attr = String.valueOf(((ContinuousTransition) oneNode).isKnockedOut());
-					el.addChild(createElSub(attr, "knockedOut"));
+					
 
 				} else if (oneNode instanceof StochasticTransition) {
 					attr = ((StochasticTransition) oneNode).getDistribution();

@@ -6,10 +6,11 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 import biologicalElements.Elementdeclerations;
+import biologicalObjects.nodes.DynamicNode;
 
 //import edu.uci.ics.jung.graph.Vertex;
 
-public class ContinuousTransition extends Transition {
+public class ContinuousTransition extends Transition implements DynamicNode{
 
 	//private final double delay = 1;
 
@@ -41,15 +42,19 @@ public class ContinuousTransition extends Transition {
 	//public double getDelay() {
 		//return delay;
 	//}
-
+	@Override
 	public String getMaximumSpeed() {
 		return maximumSpeed;
 	}
-
+	@Override
 	public void setMaximumSpeed(String maximumSpeed) {
 		this.maximumSpeed = maximumSpeed;
 	}
-
+	@Override
+	public void setKnockedOut(Boolean knockedOut) {
+		super.setKnockedOut(knockedOut);
+	}
+	
 	public void rebuildShape(VertexShapes vs) {
 		/*
 		 * System.out.println("rebuild"); Shape s = null; //
@@ -60,5 +65,4 @@ public class ContinuousTransition extends Transition {
 		 */
 		// setShape(s);
 	}
-
 }
