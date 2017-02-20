@@ -20,6 +20,8 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.xml.sax.InputSource;
 
+import com.sun.corba.se.spi.presentation.rmi.DynamicMethodMarshaller;
+
 import biologicalElements.Elementdeclerations;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
@@ -30,6 +32,7 @@ import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.DNA;
+import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.RNA;
@@ -410,21 +413,6 @@ public class JSBMLinput {
 						((biologicalObjects.nodes.petriNet.DiscreteTransition) bna).setDelay(Double.parseDouble(attr));
 						break;
 					case Elementdeclerations.continuousTransition:
-						elSub = specAnnotation.getChild("maximumSpeed", null);
-						attr = String.valueOf(elSub.getAttributeValue("maximumSpeed"));
-						((biologicalObjects.nodes.petriNet.ContinuousTransition) bna).setMaximumSpeed(attr);
-						if (attr == null || attr.equals("")) {
-							((biologicalObjects.nodes.petriNet.ContinuousTransition) bna).setMaximumSpeed("1");
-						}
-						elSub = specAnnotation.getChild("knockedOut", null);
-						((biologicalObjects.nodes.petriNet.ContinuousTransition) bna).setKnockedOut(false);
-						if (elSub != null) {
-							attr = String.valueOf(elSub.getAttributeValue("knockedOut"));
-
-							if (attr != null && attr.equals("true")) {
-								((biologicalObjects.nodes.petriNet.ContinuousTransition) bna).setKnockedOut(true);
-							}
-						}
 						break;
 					case Elementdeclerations.stochasticTransition:
 						elSub = specAnnotation.getChild("distribution", null);
@@ -743,8 +731,26 @@ public class JSBMLinput {
 		case "concentrationMax":
 			bna.setConcentrationMax(Double.parseDouble(value));
 			break;
-			
+
 		// special cases
+
+		case "maximumSpeed":
+			if (bna instanceof DynamicNode) {
+				String speed = value;
+				if (value == null || value.equals("")) {
+					speed = "1";
+				}
+				((DynamicNode) bna).setMaximumSpeed(speed);
+			}
+			break;
+		case "knockedOut":
+			if (bna instanceof DynamicNode) {
+				((biologicalObjects.nodes.DynamicNode) bna).setKnockedOut(false);
+				if (value != null && value.equals("true")) {
+					((biologicalObjects.nodes.DynamicNode) bna).setKnockedOut(true);
+				}
+			}
+			break;
 		case "NtSequence":
 			if (bna instanceof DNA) {
 				((biologicalObjects.nodes.DNA) bna).setNtSequence(value);

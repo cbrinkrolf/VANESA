@@ -18,6 +18,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
+import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
@@ -226,11 +227,11 @@ public class PropertyWindowListener implements FocusListener {
 			}
 
 		} else if (source.equals("maximumSpeed")) {
-			if (geb instanceof ContinuousTransition) {
-				ContinuousTransition t = (ContinuousTransition) geb;
+			if (geb instanceof DynamicNode) {
+				DynamicNode dn = (DynamicNode) geb;
 			text = ((JTextField) event.getSource()).getText().trim();
-			if (!text.equals("") && !text.equals(t.getMaximumSpeed())) {
-					t.setMaximumSpeed(text);
+			if (!text.equals("") && !text.equals(dn.getMaximumSpeed())) {
+					dn.setMaximumSpeed(text);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			}

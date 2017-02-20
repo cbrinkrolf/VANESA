@@ -41,6 +41,7 @@ import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import biologicalObjects.nodes.DNA;
+import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.Protein;
@@ -142,11 +143,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 		MigLayout layout = new MigLayout("fillx", "[grow,fill]", "");
 		p.setLayout(layout);
 		p.add(new JLabel("Element"), "gap 5 ");
-		p.add(new JLabel(ab.getBiologicalElement()), "wrap,span 3");
+		p.add(new JLabel(ab.getBiologicalElement()), "wrap,span 1");
 		p.add(new JLabel("Label"), "gap 5 ");
-		p.add(label, "wrap,span 3");
+		p.add(label, "span 1, wrap");
 		p.add(new JLabel("Name"), "gap 5 ");
-		p.add(name, "wrap ,span 3");
+		p.add(name, "span 1, wrap");
 
 		// JCheckBox transitionfire = new JCheckBox("Should transition fire:",
 		// true);
@@ -191,7 +192,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			showLabels.setToolTipText("Show all Labels");
 			showLabels.setActionCommand("showLabels");
 			showLabels.addActionListener(this);
-			p.add(showLabels, "wrap");
+			p.add(showLabels, "span 1, wrap");
 
 			JComboBox<String> compartment = new JComboBox<String>();
 			addCompartmentItems(compartment);
@@ -201,7 +202,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			compartment.addItemListener(this);
 
 			p.add(new JLabel("Compartment"), "gap 5 ");
-			p.add(compartment, "wrap ,span 3");
+			p.add(compartment, "wrap ,span 1");
 
 			// ADDing Attributes (for all nodes)
 
@@ -410,7 +411,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				JTextField id = new JTextField(20);
 				id.setText("P" + Integer.toString(ab.getID()));
 				id.setEditable(false);
-				p.add(id, "wrap ,span 3");
+				p.add(id, "wrap ,span 1");
 				Place place = (Place) ab;
 
 				JLabel lswitchPlace = new JLabel("Place Type");
@@ -468,20 +469,20 @@ public class ElementWindow implements ActionListener, ItemListener {
 				tokenMax.addFocusListener(pwl);
 				JLabel lblTokenMax = new JLabel("max Tokens");
 				p.add(lblToken, "gap 5 ");
-				p.add(token, "wrap");
+				p.add(token, "span 1, wrap");
 
 				p.add(lblTokenStart, "gap 5 ");
-				p.add(tokenStart, "");
+				p.add(tokenStart, "span 1");
 
 				p.add(constCheck, "wrap");
 				p.add(lblTokenMin, "gap 5 ");
-				p.add(tokenMin, "wrap");
+				p.add(tokenMin, "span 1, wrap");
 				p.add(lblTokenMax, "gap 5");
-				p.add(tokenMax, "wrap");
+				p.add(tokenMax, "span 1, wrap");
 			} else if (ab instanceof Transition) {
 				JLabel lswitchTrans = new JLabel("Transition Type");
-				JComboBox<String> transList = new JComboBox<String>(new String[] { DiscreteTransition.class.getName(),
-						ContinuousTransition.class.getName(), StochasticTransition.class.getName() });
+				JComboBox<String> transList = new JComboBox<String>(new String[] { DiscreteTransition.class.getSimpleName(),
+						ContinuousTransition.class.getSimpleName(), StochasticTransition.class.getSimpleName() });
 				transList.setSelectedItem(ab.getClass().getCanonicalName());
 				transList.setName("transList");
 				transList.addFocusListener(pwl);
@@ -522,8 +523,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 					p.add(distributionList, "wrap");
 				}
 
-				else if (ab instanceof ContinuousTransition) {
-					ContinuousTransition trans = (ContinuousTransition) ab;
+				else if (ab instanceof DynamicNode) {
+					DynamicNode trans = (DynamicNode) ab;
 					JTextField maxSpeed = new JTextField(4);
 					JLabel lblMaxSpeed = new JLabel("Maximum Speed");
 					maxSpeed.setText(trans.getMaximumSpeed());
@@ -598,13 +599,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 			}
 		}
 
-		if (ab instanceof Transition) {
-			knockedOut.setSelected(((Transition) ab).isKnockedOut());
+		if (ab instanceof DynamicNode) {
+			knockedOut.setSelected(((DynamicNode) ab).isKnockedOut());
 			knockedOut.setToolTipText("Knock out");
 			knockedOut.setActionCommand("knockedOut");
 			knockedOut.addActionListener(this);
 			p.add(new JLabel("Knocked out"), "gap 5 ");
-			p.add(knockedOut, "wrap ,span 3");
+			p.add(knockedOut, "wrap ,span 1");
 		}
 
 		if (ab.isVertex()) {
@@ -616,15 +617,15 @@ public class ElementWindow implements ActionListener, ItemListener {
 			showNeighbours.setActionCommand("showNeighbours");
 			showNeighbours.addActionListener(this);
 			showNeighbours.setMaximumSize(new Dimension(120, 30));
-			p.add(showNeighbours);
-			p.add(hideNeighbours);
+			p.add(showNeighbours, "flowx");
+			p.add(hideNeighbours, "flowx, split 2");
 		}
 		parametersButton.setToolTipText("Show all Parameters");
 		parametersButton.setActionCommand("showParameters");
 		parametersButton.addActionListener(this);
 		p.add(parametersButton);
 
-		p.add(colorButton, "gap 5");
+		p.add(colorButton, "gap 5, wrap");
 
 	}
 
@@ -828,7 +829,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			new LabelsWindow(ab);
 		} else if ("knockedOut".equals(event)) {
 
-			((Transition) ab).setKnockedOut(knockedOut.isSelected());
+			((DynamicNode) ab).setKnockedOut(knockedOut.isSelected());
 			this.updateWindow(ab);
 			p.revalidate();
 			// p.repaint();
