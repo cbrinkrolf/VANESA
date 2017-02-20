@@ -25,10 +25,10 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.Transition;
 import graph.GraphInstance;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
-import petriNet.Transition;
 
 /**
  * @author Sebastian

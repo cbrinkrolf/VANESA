@@ -25,6 +25,7 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
+import biologicalObjects.nodes.petriNet.Transition;
 //import edu.uci.ics.jung.graph.ArchetypeVertex;
 //import edu.uci.ics.jung.graph.Vertex;
 //import edu.uci.ics.jung.visualization.Layout;
@@ -33,7 +34,6 @@ import graph.GraphInstance;
 import graph.gui.Boundary;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindow;
-import petriNet.Transition;
 
 public class PropertyWindowListener implements FocusListener {
 
@@ -117,6 +117,40 @@ public class PropertyWindowListener implements FocusListener {
 			RNA rna = (RNA) geb;
 			if (!text.equals("") && !text.equals(rna.getNtSequence())) {
 				rna.setNtSequence(text);
+			}
+		}else if (source.equals("concentration")) {
+			Number n = (Number) ((JFormattedTextField) event.getSource())
+					.getValue();
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
+			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
+				double conc = n.doubleValue();
+				bna.setConcentration(conc);
+			}
+
+		}else if (source.equals("concentrationMin")) {
+			Number n = (Number) ((JFormattedTextField) event.getSource())
+					.getValue();
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
+			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
+				double concentrationMin = n.doubleValue();
+				bna.setConcentrationMin(concentrationMin);
+			}
+		} else if (source.equals("concentrationStart")) {
+			Number n = (Number) ((JFormattedTextField) event.getSource())
+					.getValue();
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
+			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
+				double concentrationStart = n.doubleValue();
+				bna.setConcentrationStart(concentrationStart);
+				bna.setConcentration(bna.getConcentrationStart());
+			}
+		} else if (source.equals("concentrationMax")) {
+			Number n = (Number) ((JFormattedTextField) event.getSource())
+					.getValue();
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
+			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
+				double concentrationMax = n.doubleValue();
+				bna.setConcentrationMax(concentrationMax);
 			}
 		}
 		// for Places

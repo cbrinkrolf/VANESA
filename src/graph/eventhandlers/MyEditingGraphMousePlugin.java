@@ -33,6 +33,7 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -47,7 +48,6 @@ import graph.gui.EdgeDialog;
 import graph.gui.PetriNetVertexDialog;
 import graph.gui.VertexDialog;
 import gui.MainWindow;
-import petriNet.Transition;
 
 /**
  * A plugin that can create vertices, undirected edges, and directed edges using

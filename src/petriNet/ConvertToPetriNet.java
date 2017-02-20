@@ -16,6 +16,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.Transition;
 import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphInstance;

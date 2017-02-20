@@ -36,99 +36,73 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	// ---Fields---
 
-	// private Vertex vertex;
-
 	private KEGGNode KEGGnode;
-
 	private String compartment = Elementdeclerations.cytoplasma;
-
-	// private HashMap<Integer, Integer> values = new HashMap<Integer,
-	// Integer>();
-
 	private double nodesize = 1;
-
 	private double defaultNodesize = 1;
-
 	private BiologicalNodeAbstract parentNode;
-
-	// contains information on microarray data for this element
-
 	public VertexShapes shapes;
-
 	private String organism = "";
-
 	private DefaultMutableTreeNode treeNode;
-
-	// private int original_graph;
-
 	private BiologicalNodeAbstract ref = null;
-
 	private Set<BiologicalNodeAbstract> refs = new HashSet<BiologicalNodeAbstract>();
-
 	private boolean isVisible = true;
-
-	// private String name = "not mentioned";
-
 	private String label = "???";
-
-	// private String networklabel = "";
-
 	private int ID = 0;
-
 	private SortedSet<Integer> set;
-
 	private NetworkSettings settings = NetworkSettingsSingelton.getInstance();
-
 	private String comments = "";
-
 	private Color color = Color.LIGHT_GRAY;
-
 	private Color defaultColor = Color.LIGHT_GRAY;
-
 	private String BiologicalElement = "";
-
 	private Shape shape = new VertexShapes().getEllipse();
-
 	private Shape defaultShape = new VertexShapes().getEllipse();
-
 	private boolean hasKEGGNode = false;
-
 	private boolean hasKEGGEdge = false;
-
 	private boolean hasFeatureEdge = false;
-
 	private boolean hasReactionPairEdge = false;
-
 	private boolean hasBrendaNode = false;
-
 	private HashSet<String> labelSet = new HashSet<String>();
-
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
-	
 //	private Set<BiologicalNodeAbstract> border = new HashSet<BiologicalNodeAbstract>();
-
 //	private Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
-	
 	private Set<BiologicalNodeAbstract> predefinedEnvironment = new HashSet<BiologicalNodeAbstract>();
-
 	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<BiologicalEdgeAbstract>();
-	
 	private NodeStateChanged state = NodeStateChanged.UNCHANGED;
-	
 	private HashSet<NodeAttribute> nodeAttributes = new HashSet<>();
-	
 	private boolean markedAsEnvironment = false;
-	
 	private boolean markedAsCoarseNode = false;
-	
 	private Point2D parentNodeDistance = new Point2D.Double(0,0);
-	
 	private MainWindow mainWindow = MainWindow.getInstance();
-	
 	private boolean deleted = false;
 	
 	// BNA has constant value
 	private boolean constant = false;
+	
+	private double concentration = 1;
+	private double concentrationMin = 0.0;
+	private double concentrationMax = Double.MAX_VALUE;
+	private double concentrationStart = 1;
+	
+	
+	
+	public BiologicalNodeAbstract(String label, String name) {
+		super(name, new GraphInstance().getPathway());
+		super.setName(name);
+		this.label = label;
+		this.labelSet.add(label);
+		//
+		// setLabel(label.toLowerCase());
+		// setName(name.toLowerCase());
+		// setVertex(vertex);
+		setPetriNet(new GraphInstance().getPathway().isPetriNet());
+
+		// values.put(1, 0);
+		shapes = new VertexShapes();
+		// setShape(shapes.getEllipse());
+
+	}
+
 	
 	public boolean isDeleted(){
 		return deleted;
@@ -160,23 +134,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		deleted = true;
 	}
 	
-	public BiologicalNodeAbstract(String label, String name) {
-		super(name, new GraphInstance().getPathway());
-		super.setName(name);
-		this.label = label;
-		this.labelSet.add(label);
-		//
-		// setLabel(label.toLowerCase());
-		// setName(name.toLowerCase());
-		// setVertex(vertex);
-		setPetriNet(new GraphInstance().getPathway().isPetriNet());
-
-		// values.put(1, 0);
-		shapes = new VertexShapes();
-		// setShape(shapes.getEllipse());
-
-	}
-
 	/*
 	 * private boolean stringsEqualAndAreNotEmpty(String s1, String s2) { return
 	 * s1.length() > 0 && s2.length() > 0 && s1.equalsIgnoreCase(s2); }
@@ -1539,13 +1496,43 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		}
 	}
 
-
-
 	public boolean isConstant() {
 		return constant;
 	}
 
 	public void setConstant(boolean constant) {
 		this.constant = constant;
+	}
+
+	public double getConcentration() {
+		return concentration;
+	}
+
+	public void setConcentration(double concentration) {
+		this.concentration = concentration;
+	}
+
+	public double getConcentrationMin() {
+		return concentrationMin;
+	}
+
+	public void setConcentrationMin(double concentrationMin) {
+		this.concentrationMin = concentrationMin;
+	}
+
+	public double getConcentrationMax() {
+		return concentrationMax;
+	}
+
+	public void setConcentrationMax(double concentrationMax) {
+		this.concentrationMax = concentrationMax;
+	}
+
+	public double getConcentrationStart() {
+		return concentrationStart;
+	}
+
+	public void setConcentrationStart(double concentrationStart) {
+		this.concentrationStart = concentrationStart;
 	}
 }

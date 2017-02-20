@@ -23,6 +23,7 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.Transition;
 // import java.net.ServerSocket;
 // import java.net.Socket;
 import gui.MainWindow;

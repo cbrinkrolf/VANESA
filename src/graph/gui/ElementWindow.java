@@ -36,8 +36,10 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
+import biologicalObjects.nodes.petriNet.Transition;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.PathwayMap;
@@ -53,7 +55,6 @@ import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.eventhandlers.PropertyWindowListener;
 import net.miginfocom.swing.MigLayout;
-import petriNet.Transition;
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
 
@@ -82,6 +83,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private JCheckBox knockedOut;
 	private MyJFormattedTextField tokenMin;
 	private MyJFormattedTextField tokenMax;
+	private MyJFormattedTextField concentrationMin;
+	private MyJFormattedTextField concentrationMax;
 
 	// private Object element;
 
@@ -130,8 +133,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		label.addFocusListener(pwl);
 		name.addFocusListener(pwl);
 
-		MigLayout headerlayout = new MigLayout("fillx",
-				"[right]rel[grow,fill]", "");
+		MigLayout headerlayout = new MigLayout("fillx", "[right]rel[grow,fill]", "");
 		JPanel headerPanel = new JPanel(headerlayout);
 		// headerPanel.setBackground(new Color(192, 215, 227));
 		headerPanel.add(new JLabel(ab.getBiologicalElement()), "");
@@ -232,17 +234,23 @@ public class ElementWindow implements ActionListener, ItemListener {
 			p.add(new JLabel("Gene Ontology:"), "gap 5");
 			p.add(goannoations, "wrap, span 3");
 
-			//Show graph properties (local property)
+			// Show graph properties (local property)
 			JTextArea graphproperties = new JTextArea();
 			String propertiesstring = new String();
 			graphproperties.setEditable(false);
-			graphproperties.setForeground(new Color(255,55,55));
+			graphproperties.setForeground(new Color(255, 55, 55));
 			graphproperties.setBackground(Color.WHITE);
 
 			p.add(new JLabel("Graph properties:"), "gap 5");
 			p.add(graphproperties, "wrap, span 3");
+
+			constCheck = new JCheckBox("constant");
+			constCheck.setActionCommand("constCheck");
+			constCheck.addActionListener(this);
+			constCheck.setSelected(bna.isConstant());
+
 			
-			
+
 			// JTextField aaSequence = new JTextField(20);
 			// aaSequence.setText(protein.getAaSequence());
 			// aaSequence.setName("protein");
@@ -253,9 +261,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			String atname, atsvalue;
 			double atdvalue;
 
-			ArrayList<String> experimententries = new ArrayList<>(), 
-					databaseidentries = new ArrayList<>(), 
-					annotationentries = new ArrayList<>(),
+			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries = new ArrayList<>(), annotationentries = new ArrayList<>(),
 					graphpropertiesentries = new ArrayList<>();
 
 			for (NodeAttribute att : bna.getNodeAttributes()) {
@@ -275,7 +281,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				case NodeAttributeTypes.ANNOTATION:
 					annotationentries.add(atname + ":\t" + atsvalue + "\n");
 					break;
-				
+
 				case NodeAttributeTypes.GRAPH_PROPERTY:
 					graphpropertiesentries.add(atname + ":\t" + atdvalue + "\n");
 					break;
@@ -297,7 +303,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			Collections.sort(annotationentries);
 			for (String ann : annotationentries)
 				annotationstring += ann;
-			
+
 			Collections.sort(graphpropertiesentries);
 			for (String gprop : graphpropertiesentries)
 				propertiesstring += gprop;
@@ -306,6 +312,53 @@ public class ElementWindow implements ActionListener, ItemListener {
 			dbids.setText(dbidstring);
 			goannoations.setText(annotationstring);
 			graphproperties.setText(propertiesstring);
+
+			if (!(bna instanceof PNNode)) {
+				MyJFormattedTextField concentration;
+				MyJFormattedTextField concentrationStart;
+
+				JLabel lblTokenStart = new JLabel("Concentration Start");
+				concentration = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+				concentrationStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+				concentrationMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+				concentrationMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+				concentration.setText(bna.getConcentration() + "");
+				concentrationStart.setText(bna.getConcentrationStart() + "");
+				concentrationMin.setText(bna.getConcentrationMin() + "");
+				concentrationMax.setText(bna.getConcentrationMax() + "");
+
+				JLabel lblConcentration = new JLabel("Concentration");
+
+				concentration.setName("concentration");
+				// token.addFocusListener(pwl);
+				concentration.setEditable(false);
+				concentration.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+
+				concentrationStart.setName("concentrationStart");
+				concentrationStart.setFocusLostBehavior(JFormattedTextField.COMMIT);
+				concentrationStart.addFocusListener(pwl);
+
+				concentrationMin.setName("concentrationMin");
+				concentrationMin.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+				concentrationMin.addFocusListener(pwl);
+				JLabel lblTokenMin = new JLabel("min Conc.");
+
+				concentrationMax.setName("concentrationMax");
+				concentrationMax.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+				concentrationMax.addFocusListener(pwl);
+				JLabel lblTokenMax = new JLabel("max Conc.");
+				p.add(lblConcentration, "gap 5 ");
+				p.add(concentration, "wrap");
+
+				p.add(lblTokenStart, "gap 5 ");
+				p.add(concentrationStart, "");
+
+				p.add(constCheck, "wrap");
+				p.add(lblTokenMin, "gap 5 ");
+				p.add(concentrationMin, "wrap");
+				p.add(lblTokenMax, "gap 5");
+				p.add(concentrationMax, "wrap");
+			}
 
 			if (ab instanceof PathwayMap) {
 				p.add(new JLabel("Linked to Pathway"), "gap 5 ");
@@ -361,8 +414,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				Place place = (Place) ab;
 
 				JLabel lswitchPlace = new JLabel("Place Type");
-				JComboBox<String> placeList = new JComboBox<String>(
-						new String[] { "discrete", "continuous" });
+				JComboBox<String> placeList = new JComboBox<String>(new String[] { "discrete", "continuous" });
 				if (place.isDiscrete())
 					placeList.setSelectedItem("discrete");
 				else
@@ -377,27 +429,19 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				JLabel lblTokenStart = new JLabel("Token Start");
 				if (place.isDiscrete()) {
-					token = new MyJFormattedTextField(
-							MyNumberFormat.getIntegerFormat());
-					tokenStart = new MyJFormattedTextField(
-							MyNumberFormat.getIntegerFormat());
-					tokenMin = new MyJFormattedTextField(
-							MyNumberFormat.getIntegerFormat());
-					tokenMax = new MyJFormattedTextField(
-							MyNumberFormat.getIntegerFormat());
+					token = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+					tokenStart = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+					tokenMin = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+					tokenMax = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 					token.setText((int) place.getToken() + "");
 					tokenStart.setText((int) place.getTokenStart() + "");
 					tokenMin.setText((int) place.getTokenMin() + "");
 					tokenMax.setText((int) place.getTokenMax() + "");
 				} else {
-					token = new MyJFormattedTextField(
-							MyNumberFormat.getDecimalFormat());
-					tokenStart = new MyJFormattedTextField(
-							MyNumberFormat.getDecimalFormat());
-					tokenMin = new MyJFormattedTextField(
-							MyNumberFormat.getDecimalFormat());
-					tokenMax = new MyJFormattedTextField(
-							MyNumberFormat.getDecimalFormat());
+					token = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					tokenStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					tokenMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					tokenMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					token.setText(place.getToken() + "");
 					tokenStart.setText(place.getTokenStart() + "");
 					tokenMin.setText(place.getTokenMin() + "");
@@ -429,26 +473,15 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(lblTokenStart, "gap 5 ");
 				p.add(tokenStart, "");
 
-				constCheck = new JCheckBox("constant");
-				constCheck.setActionCommand("constCheck");
-				constCheck.addActionListener(this);
-				constCheck.setSelected(place.isConstant());
 				p.add(constCheck, "wrap");
-
-				if (constCheck.isSelected()) {
-					tokenMin.setEnabled(false);
-					tokenMax.setEnabled(false);
-				}
 				p.add(lblTokenMin, "gap 5 ");
 				p.add(tokenMin, "wrap");
 				p.add(lblTokenMax, "gap 5");
 				p.add(tokenMax, "wrap");
 			} else if (ab instanceof Transition) {
 				JLabel lswitchTrans = new JLabel("Transition Type");
-				JComboBox<String> transList = new JComboBox<String>(
-						new String[] { DiscreteTransition.class.getName(),
-								ContinuousTransition.class.getName(),
-								StochasticTransition.class.getName() });
+				JComboBox<String> transList = new JComboBox<String>(new String[] { DiscreteTransition.class.getName(),
+						ContinuousTransition.class.getName(), StochasticTransition.class.getName() });
 				transList.setSelectedItem(ab.getClass().getCanonicalName());
 				transList.setName("transList");
 				transList.addFocusListener(pwl);
@@ -481,8 +514,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					String[] disStrings = { "norm", "exp" };
 					// Create the combo box, select item at index 4.
 					// Indices start at 0, so 4 specifies the pig.
-					JComboBox<String> distributionList = new JComboBox<String>(
-							disStrings);
+					JComboBox<String> distributionList = new JComboBox<String>(disStrings);
 					distributionList.setSelectedItem(trans.getDistribution());
 					distributionList.setName("disList");
 					distributionList.addFocusListener(pwl);
@@ -505,6 +537,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 						maxSpeed.setEnabled(false);
 					}
 				}
+			}
+			if (constCheck.isSelected()) {
+				if (tokenMin != null && tokenMax != null) {
+					tokenMin.setEnabled(false);
+					tokenMax.setEnabled(false);
+				}
+				concentrationMin.setEnabled(false);
+				concentrationMax.setEnabled(false);
 			}
 
 		} else if (ab.isEdge()) {
@@ -568,13 +608,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}
 
 		if (ab.isVertex()) {
-			hideNeighbours
-					.setToolTipText("Sets all Neighbors of the selected Node to Reference");
+			hideNeighbours.setToolTipText("Sets all Neighbors of the selected Node to Reference");
 			hideNeighbours.setActionCommand("hideNeighbours");
 			hideNeighbours.addActionListener(this);
 			hideNeighbours.setMaximumSize(new Dimension(120, 30));
-			showNeighbours
-					.setToolTipText("Delete Reference flag of all Neighbours of the current Node");
+			showNeighbours.setToolTipText("Delete Reference flag of all Neighbours of the current Node");
 			showNeighbours.setActionCommand("showNeighbours");
 			showNeighbours.addActionListener(this);
 			showNeighbours.setMaximumSize(new Dimension(120, 30));
@@ -604,10 +642,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 		graphInstance = new GraphInstance();
 
 		if (graphInstance.getSelectedObject() instanceof BiologicalNodeAbstract
-				&& ((BiologicalNodeAbstract) graphInstance.getSelectedObject())
-						.hasRef()) {
-			this.ref = ((BiologicalNodeAbstract) graphInstance
-					.getSelectedObject()).getRef();
+				&& ((BiologicalNodeAbstract) graphInstance.getSelectedObject()).hasRef()) {
+			this.ref = ((BiologicalNodeAbstract) graphInstance.getSelectedObject()).getRef();
 		} else {
 			this.ref = null;
 		}
@@ -646,8 +682,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	private void addCompartmentItems(JComboBox<String> compartment) {
 
-		List<String> compartmentList = new Elementdeclerations()
-				.getAllCompartmentDeclaration();
+		List<String> compartmentList = new Elementdeclerations().getAllCompartmentDeclaration();
 		Iterator<String> it = compartmentList.iterator();
 
 		while (it.hasNext()) {
@@ -670,8 +705,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		if ("colour".equals(event)) {
 
 			// TODO fail due to old substance API / Bug in API
-			Color newColor = JColorChooser.showDialog(w,
-					"Choose Element Colour", getElementColor());
+			Color newColor = JColorChooser.showDialog(w, "Choose Element Colour", getElementColor());
 			JButton b = ((JButton) e.getSource());
 			b.setBackground(newColor);
 
@@ -681,13 +715,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// updateReferences(false);
 
 		} else if ("pathwayLink".equals(event)) {
-			if (JOptionPane
-					.showConfirmDialog(
-							w,
-							"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
-							"Delete the Sub-Pathway...",
-							JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION
+			if (JOptionPane.showConfirmDialog(w,
+					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
+					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION
 					&& ab instanceof PathwayMap) {
 				((PathwayMap) ab).setPathwayLink(null);
 				w.updateElementTree();
@@ -695,15 +725,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 				ab.setColor(Color.white);
 			}
 			w.updateElementProperties();
-		} else if (("hideNeighbours".equals(event) || ("showNeighbours"
-				.equals(event))) && ab instanceof BiologicalNodeAbstract) {
+		} else if (("hideNeighbours".equals(event) || ("showNeighbours".equals(event))) && ab instanceof BiologicalNodeAbstract) {
 			// TODO visible wird noch nicht gehandelt in transformators
 			Pathway pw = graphInstance.getPathway();
 			boolean hide = "hideNeighbours".equals(event);
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
 
-			Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getJungGraph()
-					.getIncidentEdges(bna).iterator();
+			Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getJungGraph().getIncidentEdges(bna).iterator();
 			BiologicalEdgeAbstract bea;
 
 			while (it.hasNext()) {
@@ -713,8 +741,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				// bea.setLabel(!hide+"");
 			}
 
-			Iterator<BiologicalNodeAbstract> it2 = pw.getGraph().getJungGraph()
-					.getNeighbors(bna).iterator();
+			Iterator<BiologicalNodeAbstract> it2 = pw.getGraph().getJungGraph().getNeighbors(bna).iterator();
 
 			BiologicalNodeAbstract node;
 			while (it2.hasNext()) {
@@ -727,9 +754,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			Pathway pw = graphInstance.getPathway();
 			PNEdge edge = (PNEdge) ab;
 
-			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(),
-					edge.getLabel(), edge.getName(),
-					edge.getBiologicalElement(), edge.getFunction());
+			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(), edge.getBiologicalElement(),
+					edge.getFunction());
 			newEdge.setUpperBoundary(edge.getUpperBoundary());
 			newEdge.setLowerBoundary(edge.getLowerBoundary());
 			newEdge.setActivationProbability(edge.getActivationProbability());
@@ -767,8 +793,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			Pathway pw = graphInstance.getPathway();
 			pw = graphInstance.getPathway();
 			MyGraph g = pw.getGraph();
-			g.getVisualizationViewer().getPickedVertexState()
-					.pick(bna.getRef(), true);
+			g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
 
 			this.revalidateView();
 
@@ -786,8 +811,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				pick = it.next();
 				// System.out.println(pick.getLabel());
 				// System.out.println(pick);
-				g.getVisualizationViewer().getPickedVertexState()
-						.pick(pick, true);
+				g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
 
 			}
 			// System.out.println(g.getVisualizationViewer().getPickedVertexState().getPicked().size());
@@ -816,12 +840,20 @@ public class ElementWindow implements ActionListener, ItemListener {
 			if (ab instanceof BiologicalNodeAbstract) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
 				if (constCheck.isSelected()) {
-					this.tokenMin.setEnabled(false);
-					this.tokenMax.setEnabled(false);
+					if (tokenMin != null && tokenMax != null) {
+						this.tokenMin.setEnabled(false);
+						this.tokenMax.setEnabled(false);
+					}
+					this.concentrationMin.setEnabled(false);
+					this.concentrationMax.setEnabled(false);
 					bna.setConstant(true);
 				} else {
-					this.tokenMin.setEnabled(true);
-					this.tokenMax.setEnabled(true);
+					if (tokenMin != null && tokenMax != null) {
+						this.tokenMin.setEnabled(true);
+						this.tokenMax.setEnabled(true);
+					}
+					this.concentrationMin.setEnabled(true);
+					this.concentrationMax.setEnabled(true);
 					bna.setConstant(false);
 				}
 				Pathway pw = new GraphInstance().getPathway();

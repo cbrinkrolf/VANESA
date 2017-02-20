@@ -22,6 +22,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.Transition;
 import graph.ChangedFlags;
 import graph.gui.Boundary;
 import graph.gui.CoarseNodeDeleteDialog;
@@ -32,7 +33,6 @@ import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.Circle;
 import gui.GraphTab;
 import gui.MainWindow;
-import petriNet.Transition;
 import util.MyIntComparable;
 
 public class Pathway implements Cloneable {

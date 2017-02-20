@@ -79,17 +79,13 @@ public class JSBMLinput {
 		String message = "";
 		Document doc = null;
 		InputSource in = new InputSource(is);
-		
-		/*SBMLReader reader = new SBMLReader();
-		try {
-			SBMLDocument document = reader.readSBMLFromStream(is);
-			document.getNumErrors();
-			//document.getModel().get
-		} catch (XMLStreamException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}*/
-		
+
+		/*
+		 * SBMLReader reader = new SBMLReader(); try { SBMLDocument document =
+		 * reader.readSBMLFromStream(is); document.getNumErrors();
+		 * //document.getModel().get } catch (XMLStreamException e1) { // TODO
+		 * Auto-generated catch block e1.printStackTrace(); }
+		 */
 
 		// siehe http://www.javabeginners.de/XML/XML-Datei_lesen.php
 		// create document
@@ -229,8 +225,6 @@ public class JSBMLinput {
 				String attr = "";
 				String label = name;
 
-				
-
 				Element annotation = reaction.getChild("annotation", null);
 				if (annotation != null) {
 					Element reacAnnotation = annotation.getChild("reac", null);
@@ -248,7 +242,7 @@ public class JSBMLinput {
 						bea.setTo(to);
 						bea.setLabel(label);
 						bea.setName(name);
-						
+
 						switch (biologicalElement) {
 						case Elementdeclerations.pnEdge:
 							elSub = reacAnnotation.getChild("Function", null);
@@ -256,7 +250,7 @@ public class JSBMLinput {
 							if (elSub != null) {
 								attr = elSub.getAttributeValue("Function");
 							}
-							
+
 							elSub = reacAnnotation.getChild("ActivationProbability", null);
 							if (elSub != null) {
 								attr = elSub.getAttributeValue("ActivationProbability");
@@ -353,7 +347,7 @@ public class JSBMLinput {
 						}
 					}
 					String attr;
-					
+
 					bna = BiologicalNodeAbstractFactory.create(biologicalElement, null);
 					bna.setLabel(label);
 					bna.setName(name);
@@ -737,7 +731,19 @@ public class JSBMLinput {
 				bna.setConstant(false);
 			}
 			break;
-
+		case "concentration":
+			bna.setConcentration(Double.parseDouble(value));
+			break;
+		case "concentrationStart":
+			bna.setConcentrationStart(Double.parseDouble(value));
+			break;
+		case "concentrationMin":
+			bna.setConcentrationMin(Double.parseDouble(value));
+			break;
+		case "concentrationMax":
+			bna.setConcentrationMax(Double.parseDouble(value));
+			break;
+			
 		// special cases
 		case "NtSequence":
 			if (bna instanceof DNA) {
