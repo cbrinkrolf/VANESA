@@ -212,8 +212,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			dbids.setFont(dbids.getFont().deriveFont(Font.BOLD));
 			dbids.setBackground(Color.WHITE);
 
-			p.add(new JLabel("IDs known:"), "gap 5");
-			p.add(dbids, "wrap, span 3");
+			//p.add(new JLabel("IDs known:"), "gap 5");
+			//p.add(dbids, "wrap, span 3");
 
 			// Show Experiment names and values
 			JTextArea experiments = new JTextArea();
@@ -221,8 +221,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			experiments.setEditable(false);
 			experiments.setBackground(Color.WHITE);
 
-			p.add(new JLabel("Dataset:"), "gap 5");
-			p.add(experiments, "wrap, span 3");
+			//p.add(new JLabel("Dataset:"), "gap 5");
+			//p.add(experiments, "wrap, span 3");
 
 			// Show GO annotations
 			JTextArea goannoations = new JTextArea();
@@ -231,8 +231,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			goannoations.setForeground(Color.BLUE);
 			goannoations.setBackground(Color.WHITE);
 
-			p.add(new JLabel("Gene Ontology:"), "gap 5");
-			p.add(goannoations, "wrap, span 3");
+			//p.add(new JLabel("Gene Ontology:"), "gap 5");
+			//p.add(goannoations, "wrap, span 3");
 
 			// Show graph properties (local property)
 			JTextArea graphproperties = new JTextArea();
@@ -241,8 +241,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			graphproperties.setForeground(new Color(255, 55, 55));
 			graphproperties.setBackground(Color.WHITE);
 
-			p.add(new JLabel("Graph properties:"), "gap 5");
-			p.add(graphproperties, "wrap, span 3");
+			//p.add(new JLabel("Graph properties:"), "gap 5");
+			//p.add(graphproperties, "wrap, span 3");
 
 			constCheck = new JCheckBox("constant");
 			constCheck.setActionCommand("constCheck");
