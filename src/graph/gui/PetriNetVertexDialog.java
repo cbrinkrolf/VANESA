@@ -61,22 +61,23 @@ public class PetriNetVertexDialog {
 	private JTextField delay = new JTextField("1");
 	private String[] disStrings = { "norm", "exp" };
 	private JComboBox<String> distributionList = new JComboBox<String>(disStrings);
-	//JCheckBox transitionfire = new JCheckBox("Should transition fire:", true);
+	// JCheckBox transitionfire = new JCheckBox("Should transition fire:",
+	// true);
 	private JTextField firingCondition = new JTextField("true");
 	private JLabel lblFiringCondition = new JLabel("Firing Condition");
-	
+
 	private JLabel lblMaxSpeed = new JLabel("Maximum Speed");
 	private JTextField maxSpeed = new JTextField("1");
 
 	private String petriElement;
-	
+
 	/**
 	 * 
 	 */
 	public PetriNetVertexDialog(String petriElement) {
 		this.petriElement = petriElement;
 		MigLayout layout = new MigLayout("", "[left]");
-		
+
 		panel = new JPanel(layout);
 		panel.add(new JLabel("Label"), "span 2, gaptop 2 ");
 		panel.add(label, "span,wrap,growx ,gap 10, gaptop 2");
@@ -87,10 +88,10 @@ public class PetriNetVertexDialog {
 		compartment.setSelectedItem("Cytoplasma");
 		panel.add(compartment, "span,wrap 5,growx ,gaptop 2");
 		panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
-		
+
 		if (this.petriElement.equals("discretePlace")) {
-			label.setText("p"+(pw.getPetriNet().getPlaces()+1));
-			name.setText("p"+(pw.getPetriNet().getPlaces()+1));
+			label.setText("p" + (pw.getPetriNet().getPlaces() + 1));
+			name.setText("p" + (pw.getPetriNet().getPlaces() + 1));
 			panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
 			token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
 			token.setText("0");
@@ -105,11 +106,11 @@ public class PetriNetVertexDialog {
 			panel.add(tokenMin, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(new JLabel("TokenMax"), "span 2, gaptop 2 ");
 			tokenMax = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
-			tokenMax.setText(Integer.MAX_VALUE+"");
+			tokenMax.setText(Integer.MAX_VALUE + "");
 			panel.add(tokenMax, "span,wrap,growx ,gap 10, gaptop 2");
 		} else if (this.petriElement.equals("continuousPlace")) {
-			label.setText("p"+(pw.getPetriNet().getPlaces()+1));
-			name.setText("p"+(pw.getPetriNet().getPlaces()+1));
+			label.setText("p" + (pw.getPetriNet().getPlaces() + 1));
+			name.setText("p" + (pw.getPetriNet().getPlaces() + 1));
 			panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
 			token = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
 			token.setText("0.0");
@@ -124,11 +125,11 @@ public class PetriNetVertexDialog {
 			panel.add(tokenMin, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(new JLabel("TokenMax"), "span 2, gaptop 2 ");
 			tokenMax = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
-			tokenMax.setText(Double.MAX_VALUE+"");
+			tokenMax.setText(Double.MAX_VALUE + "");
 			panel.add(tokenMax, "span,wrap,growx ,gap 10, gaptop 2");
 		} else if (this.petriElement.equals("discreteTransition")) {
-			label.setText("t"+(pw.getPetriNet().getTransitions()+1));
-			name.setText("t"+(pw.getPetriNet().getTransitions()+1));
+			label.setText("t" + (pw.getPetriNet().getTransitions() + 1));
+			name.setText("t" + (pw.getPetriNet().getTransitions() + 1));
 			panel.add(lblFiringCondition, "span 2, gaptop 2 ");
 			panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 
@@ -136,16 +137,16 @@ public class PetriNetVertexDialog {
 			panel.add(delay, "span,wrap,growx ,gap 10, gaptop 2");
 
 		} else if (this.petriElement.equals("continiousTransition")) {
-			label.setText("t"+(pw.getPetriNet().getTransitions()+1));
-			name.setText("t"+(pw.getPetriNet().getTransitions()+1));
+			label.setText("t" + (pw.getPetriNet().getTransitions() + 1));
+			name.setText("t" + (pw.getPetriNet().getTransitions() + 1));
 			panel.add(lblMaxSpeed, "span 2, gaptop 2 ");
 			panel.add(maxSpeed, "span,wrap,growx ,gap 10, gaptop 2");
 			panel.add(lblFiringCondition, "span 2, gaptop 2 ");
 			panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 
 		} else if (this.petriElement.equals("stochasticTransition")) {
-			label.setText("t"+(pw.getPetriNet().getTransitions()+1));
-			name.setText("t"+(pw.getPetriNet().getTransitions()+1));
+			label.setText("t" + (pw.getPetriNet().getTransitions() + 1));
+			name.setText("t" + (pw.getPetriNet().getTransitions() + 1));
 			panel.add(lblFiringCondition, "span 2, gaptop 2 ");
 			panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 
@@ -156,8 +157,7 @@ public class PetriNetVertexDialog {
 		addNodeItems();
 		// panel.add(new JLabel("Element"), "span 4");
 
-		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
-				JOptionPane.OK_CANCEL_OPTION);
+		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 	}
 
 	private void addNodeItems() {
@@ -165,8 +165,7 @@ public class PetriNetVertexDialog {
 		// box.addItem("Discrete Place");
 		// box.addItem("Continues Place");
 
-		List<String> compartmentList = new Elementdeclerations()
-				.getAllCompartmentDeclaration();
+		List<String> compartmentList = new Elementdeclerations().getAllCompartmentDeclaration();
 		Iterator<String> it2 = compartmentList.iterator();
 
 		String element;
@@ -177,7 +176,7 @@ public class PetriNetVertexDialog {
 	}
 
 	public BiologicalNodeAbstract getAnswer(Point2D point) {
-		
+
 		String title = "";
 		if (petriElement.equals("discretePlace")) {
 			title = "Create a discrete Place";
@@ -192,102 +191,114 @@ public class PetriNetVertexDialog {
 		}
 
 		JDialog dialog = pane.createDialog(null, title);
-		
-		//dialog.show();
+
+		// dialog.show();
 		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
 		Number number;
 		Integer value = (Integer) pane.getValue();
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
-				
-				if(name.getText().trim().length() <1 || name.getText().trim().charAt(0) == '_'){
+
+				if (name.getText().trim().length() < 1 || name.getText().trim().charAt(0) == '_') {
+					MyPopUp.getInstance().show("Adding Place", "Cannot add Place! Empty name or name starts with \"_\"");
 					return null;
 				}
-				
-				Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-				BiologicalNodeAbstract bna;
-				
-				while(it.hasNext()){
-					bna = it.next();
-					if(bna.getName().equals(name.getText().trim())){
-						MyPopUp.getInstance().show("Adding Place", "Cannot add Place! There is already a place with this name in the network!");
-						return null;
-					}
-				}
+
 				BiologicalNodeAbstract createdNode = null;
 				if (petriElement.equals("discretePlace")) {
-					//System.out.println("anfang");
-					
-					number = (Number)token.getValue();
+					// System.out.println("anfang");
+
+					number = (Number) token.getValue();
 					Place p = new Place(label.getText().trim(), name.getText().trim(), 0, true);
-					
-					if(number != null){
+
+					if (number != null) {
 						p.setToken(number.doubleValue());
 					}
-					number = (Number)tokenStart.getValue();
-					if(number != null){
+					number = (Number) tokenStart.getValue();
+					if (number != null) {
 						p.setTokenStart(number.doubleValue());
 					}
-					number = (Number)tokenMin.getValue();
-					if(number != null){
+					number = (Number) tokenMin.getValue();
+					if (number != null) {
 						p.setTokenMin(number.doubleValue());
 					}
-					number = (Number)tokenMin.getValue();
-					if(number != null){
+					number = (Number) tokenMin.getValue();
+					if (number != null) {
 						p.setTokenMax(number.doubleValue());
 					}
 					createdNode = p;
 				} else if (petriElement.equals("continuousPlace")) {
-					
+
 					Place p = new Place(label.getText().trim(), name.getText().trim(), 0.0, false);
-					number = (Number)token.getValue();
-					if(number != null){
+					number = (Number) token.getValue();
+					if (number != null) {
 						p.setToken(number.doubleValue());
 					}
-					number = (Number)tokenStart.getValue();
-					if(number != null){
+					number = (Number) tokenStart.getValue();
+					if (number != null) {
 						p.setTokenStart(number.doubleValue());
 						p.setToken(number.doubleValue());
 					}
-					number = (Number)tokenMin.getValue();
-					if(number != null){
+					number = (Number) tokenMin.getValue();
+					if (number != null) {
 						p.setTokenMin(number.doubleValue());
 					}
-					number = (Number)tokenMin.getValue();
-					if(number != null){
+					number = (Number) tokenMin.getValue();
+					if (number != null) {
 						p.setTokenMax(number.doubleValue());
 					}
 					createdNode = p;
 				} else if (petriElement.equals("discreteTransition")) {
-					DiscreteTransition t = new DiscreteTransition(
-							label.getText().trim(), name.getText().trim());
+					DiscreteTransition t = new DiscreteTransition(label.getText().trim(), name.getText().trim());
 					t.setDelay(Double.parseDouble(delay.getText().trim()));
 
-					//t.setFireTransition(transitionfire.isSelected());
+					// t.setFireTransition(transitionfire.isSelected());
 					t.setFiringCondition(firingCondition.getText().trim());
 					createdNode = t;
 				} else if (petriElement.equals("continiousTransition")) {
-					ContinuousTransition t = new ContinuousTransition(
-							label.getText().trim(), name.getText().trim());
+					ContinuousTransition t = new ContinuousTransition(label.getText().trim(), name.getText().trim());
 
-					//t.setFireTransition(transitionfire.isSelected());
+					// t.setFireTransition(transitionfire.isSelected());
 					t.setFiringCondition(firingCondition.getText().trim());
 					t.setMaximumSpeed(maxSpeed.getText().trim());
 					createdNode = t;
 				} else if (petriElement.equals("stochasticTransition")) {
-					StochasticTransition t = new StochasticTransition(
-							label.getText().trim(), name.getText().trim());
-					t.setDistribution(distributionList.getSelectedItem()
-							.toString());
+					StochasticTransition t = new StochasticTransition(label.getText().trim(), name.getText().trim());
+					t.setDistribution(distributionList.getSelectedItem().toString());
 
-					//t.setFireTransition(transitionfire.isSelected());
+					// t.setFireTransition(transitionfire.isSelected());
 					t.setFiringCondition(firingCondition.getText().trim());
 					createdNode = t;
 				}
-				
-				if(createdNode != null){
+
+				if (createdNode != null) {
+					Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
+					BiologicalNodeAbstract bna;
+
+					boolean createdRef = false;
+					while (it.hasNext()) {
+						bna = it.next();
+						if (bna.getName().equals(name.getText().trim())) {
+							createdNode.setRef(bna);
+							createdRef = true;
+						}
+					}
+					int i = 1;
+					if (createdRef) {
+						while (true) {
+							if (!pw.getAllNodeLabels().contains((name.getText().trim()+i))) {
+								createdNode.setName(name.getText().trim()+i);
+								break;
+							}
+							i++;
+						}
+					}
+
 					pw.addVertex(createdNode, point);
+					if(createdRef){
+						MyPopUp.getInstance().show("Adding Place", "Name already exists. Created reference place instead.");
+					}
 				}
 				GraphContainer con = ContainerSingelton.getInstance();
 				MainWindow w = MainWindow.getInstance();
