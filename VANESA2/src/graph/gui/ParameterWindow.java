@@ -20,7 +20,7 @@ import javax.swing.event.DocumentListener;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.DynamicNode;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import gui.MainWindow;
@@ -107,8 +107,8 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			}
 		});
 
-		if (gea instanceof ContinuousTransition) {
-			fp = new FormularPanel(formular, ((ContinuousTransition) gea).getMaximumSpeed());
+		if (gea instanceof DynamicNode) {
+			fp = new FormularPanel(formular, ((DynamicNode) gea).getMaximumSpeed());
 			fp.setVisible(true);
 			panel.add(fp);
 		}
@@ -129,15 +129,15 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		dialog.setVisible(true);
 
 		if (pane.getValue() != null && (int) pane.getValue() == JOptionPane.OK_OPTION) {
-			if (gea instanceof ContinuousTransition) {
-				ContinuousTransition ct = (ContinuousTransition) gea;
+			if (gea instanceof DynamicNode) {
+				DynamicNode dn = (DynamicNode) gea;
 				String formular = fp.getFormular();
 				String formularClean = formular.replaceAll("\\s", "");
 				// System.out.println(":"+formularClean+":");
-				String orgClean = ct.getMaximumSpeed().replaceAll("\\s", "");
+				String orgClean = dn.getMaximumSpeed().replaceAll("\\s", "");
 
 				if (!orgClean.equals(formularClean)) {
-					ct.setMaximumSpeed(formular);
+					dn.setMaximumSpeed(formular);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			}
@@ -282,7 +282,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 
 	private void repaint() {
 		panel.removeAll();
-		if (gea instanceof ContinuousTransition) {
+		if (gea instanceof DynamicNode) {
 			panel.add(fp, "span 20, wrap");
 		}
 

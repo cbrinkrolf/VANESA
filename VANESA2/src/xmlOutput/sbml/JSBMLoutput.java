@@ -16,7 +16,6 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.tools.ant.taskdefs.Javac.ImplementationSpecificArgument;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Model;
@@ -570,26 +569,6 @@ public class JSBMLoutput {
 		if (oneNode instanceof biologicalObjects.nodes.DNA) {
 			attr = ((biologicalObjects.nodes.DNA) oneNode).getNtSequence();
 			el.addChild(createElSub(attr, "NtSequence"));
-
-		} else if (oneNode instanceof biologicalObjects.nodes.Enzyme) {
-			attr = ((biologicalObjects.nodes.Enzyme) oneNode).getCofactor();
-			el.addChild(createElSub(attr, "Cofactor"));
-			attr = ((biologicalObjects.nodes.Enzyme) oneNode).getEffector();
-			el.addChild(createElSub(attr, "Effector"));
-			attr = ((biologicalObjects.nodes.Enzyme) oneNode).getEnzymeClass();
-			el.addChild(createElSub(attr, "EnzymeClass"));
-			attr = ((biologicalObjects.nodes.Enzyme) oneNode).getOrthology();
-			el.addChild(createElSub(attr, "Orthology"));
-			attr = ((biologicalObjects.nodes.Enzyme) oneNode).getProdukt();
-			el.addChild(createElSub(attr, "Produkt"));
-			attr = ((biologicalObjects.nodes.Enzyme) oneNode).getReaction();
-			el.addChild(createElSub(attr, "Reaction"));
-			attr = ((biologicalObjects.nodes.Enzyme) oneNode).getReference();
-			el.addChild(createElSub(attr, "Reference"));
-			attr = ((biologicalObjects.nodes.Enzyme) oneNode).getSubstrate();
-			el.addChild(createElSub(attr, "Substrate"));
-			attr = ((biologicalObjects.nodes.Enzyme) oneNode).getSysName();
-			el.addChild(createElSub(attr, "SysName"));
 
 		} else if (oneNode instanceof biologicalObjects.nodes.Gene) {
 
