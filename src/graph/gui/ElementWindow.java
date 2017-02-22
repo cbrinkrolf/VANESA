@@ -198,7 +198,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			addCompartmentItems(compartment);
 			AutoCompleteDecorator.decorate(compartment);
 
-			compartment.setSelectedItem(bna.getCompartment());
+			compartment.setSelectedItem(((BiologicalNodeAbstract)ab).getCompartment());
 			compartment.addItemListener(this);
 
 			p.add(new JLabel("Compartment"), "gap 5 ");
@@ -213,8 +213,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			dbids.setFont(dbids.getFont().deriveFont(Font.BOLD));
 			dbids.setBackground(Color.WHITE);
 
-			//p.add(new JLabel("IDs known:"), "gap 5");
-			//p.add(dbids, "wrap, span 3");
+			// p.add(new JLabel("IDs known:"), "gap 5");
+			// p.add(dbids, "wrap, span 3");
 
 			// Show Experiment names and values
 			JTextArea experiments = new JTextArea();
@@ -222,8 +222,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			experiments.setEditable(false);
 			experiments.setBackground(Color.WHITE);
 
-			//p.add(new JLabel("Dataset:"), "gap 5");
-			//p.add(experiments, "wrap, span 3");
+			// p.add(new JLabel("Dataset:"), "gap 5");
+			// p.add(experiments, "wrap, span 3");
 
 			// Show GO annotations
 			JTextArea goannoations = new JTextArea();
@@ -232,8 +232,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			goannoations.setForeground(Color.BLUE);
 			goannoations.setBackground(Color.WHITE);
 
-			//p.add(new JLabel("Gene Ontology:"), "gap 5");
-			//p.add(goannoations, "wrap, span 3");
+			// p.add(new JLabel("Gene Ontology:"), "gap 5");
+			// p.add(goannoations, "wrap, span 3");
 
 			// Show graph properties (local property)
 			JTextArea graphproperties = new JTextArea();
@@ -242,15 +242,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 			graphproperties.setForeground(new Color(255, 55, 55));
 			graphproperties.setBackground(Color.WHITE);
 
-			//p.add(new JLabel("Graph properties:"), "gap 5");
-			//p.add(graphproperties, "wrap, span 3");
+			// p.add(new JLabel("Graph properties:"), "gap 5");
+			// p.add(graphproperties, "wrap, span 3");
 
 			constCheck = new JCheckBox("constant");
 			constCheck.setActionCommand("constCheck");
 			constCheck.addActionListener(this);
-			constCheck.setSelected(bna.isConstant());
-
-			
+			constCheck.setSelected(((BiologicalNodeAbstract)ab).isConstant());
 
 			// JTextField aaSequence = new JTextField(20);
 			// aaSequence.setText(protein.getAaSequence());
@@ -314,7 +312,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			goannoations.setText(annotationstring);
 			graphproperties.setText(propertiesstring);
 
-			if (!(bna instanceof PNNode)) {
+			if (!(ab instanceof PNNode)) {
 				MyJFormattedTextField concentration;
 				MyJFormattedTextField concentrationStart;
 
@@ -323,10 +321,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 				concentrationStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				concentrationMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				concentrationMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-				concentration.setText(bna.getConcentration() + "");
-				concentrationStart.setText(bna.getConcentrationStart() + "");
-				concentrationMin.setText(bna.getConcentrationMin() + "");
-				concentrationMax.setText(bna.getConcentrationMax() + "");
+				concentration.setText(((BiologicalNodeAbstract)ab).getConcentration() + "");
+				concentrationStart.setText(((BiologicalNodeAbstract)ab).getConcentrationStart() + "");
+				concentrationMin.setText(((BiologicalNodeAbstract)ab).getConcentrationMin() + "");
+				concentrationMax.setText(((BiologicalNodeAbstract)ab).getConcentrationMax() + "");
 
 				JLabel lblConcentration = new JLabel("Concentration");
 
@@ -543,9 +541,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 				if (tokenMin != null && tokenMax != null) {
 					tokenMin.setEnabled(false);
 					tokenMax.setEnabled(false);
+				}if(concentrationMin != null && concentrationMax != null){
+					concentrationMin.setEnabled(false);
+					concentrationMax.setEnabled(false);
 				}
-				concentrationMin.setEnabled(false);
-				concentrationMax.setEnabled(false);
 			}
 
 		} else if (ab.isEdge()) {
@@ -844,17 +843,20 @@ public class ElementWindow implements ActionListener, ItemListener {
 					if (tokenMin != null && tokenMax != null) {
 						this.tokenMin.setEnabled(false);
 						this.tokenMax.setEnabled(false);
+					} 
+					if(concentrationMin != null && concentrationMax != null){
+						this.concentrationMin.setEnabled(false);
+						this.concentrationMax.setEnabled(false);
 					}
-					this.concentrationMin.setEnabled(false);
-					this.concentrationMax.setEnabled(false);
 					bna.setConstant(true);
 				} else {
 					if (tokenMin != null && tokenMax != null) {
 						this.tokenMin.setEnabled(true);
 						this.tokenMax.setEnabled(true);
+					} if(concentrationMin != null && concentrationMax != null){
+						this.concentrationMin.setEnabled(true);
+						this.concentrationMax.setEnabled(true);
 					}
-					this.concentrationMin.setEnabled(true);
-					this.concentrationMax.setEnabled(true);
 					bna.setConstant(false);
 				}
 				Pathway pw = new GraphInstance().getPathway();

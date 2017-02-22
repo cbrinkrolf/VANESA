@@ -36,6 +36,8 @@ import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.RNA;
+import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.Transition;
 import graph.CreatePathway;
 import graph.gui.Parameter;
 import gui.MainWindow;
@@ -68,6 +70,8 @@ public class JSBMLinput {
 
 	private Hashtable<BiologicalNodeAbstract, Integer> bna2Ref = new Hashtable<BiologicalNodeAbstract, Integer>();
 
+	private boolean reverseEngineering = false;
+	
 	public JSBMLinput() {
 
 	}
@@ -159,7 +163,9 @@ public class JSBMLinput {
 		if (modelNode != null) {
 			Element isPetriNetNode = modelNode.getChild("isPetriNet", null);
 			isPetri = Boolean.parseBoolean(isPetriNetNode.getAttributeValue("isPetriNet"));
-
+			if(reverseEngineering){
+				isPetri = false;
+			}
 			// get the ranges if present
 			Element rangeNode = modelNode.getChild("listOfRanges", null);
 			if (rangeNode != null) {
@@ -352,9 +358,16 @@ public class JSBMLinput {
 					String attr;
 
 					bna = BiologicalNodeAbstractFactory.create(biologicalElement, null);
+					if(reverseEngineering){
+						if (bna instanceof Place){
+							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.smallMolecule, null);
+						}else if(bna instanceof Transition){
+							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.enzyme, null);
+						}
+					}
 					bna.setLabel(label);
 					bna.setName(name);
-					switch (biologicalElement) {
+					switch (bna.getBiologicalElement()) {
 					case Elementdeclerations.mRNA:
 						elSub = specAnnotation.getChild("NtSequence", null);
 						if (elSub != null) {
@@ -662,9 +675,15 @@ public class JSBMLinput {
 	private void handleNodeInformation(String attrtmp, Element child) {
 		// System.out.println("child: "+child);
 		String value = child.getAttributeValue(attrtmp);
+		if(reverseEngineering){
+			attrtmp = attrtmp.replace("token", "concentration");
+		}
 		switch (attrtmp) {
 		// standard cases
 		case "Nodesize":
+			if(reverseEngineering){
+				break;
+			}
 			Double d = Double.parseDouble(value);
 			bna.setNodesize(d);
 			break;
@@ -689,6 +708,9 @@ public class JSBMLinput {
 			addKEGGNode(child);
 			break;
 		case "Color":
+			if(reverseEngineering){
+				break;
+			}
 			Element elSub = child.getChild("RGB", null);
 			if (elSub != null) {
 				int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
@@ -758,30 +780,6 @@ public class JSBMLinput {
 				// System.out.println(bna.getLabel());
 				((biologicalObjects.nodes.RNA) bna).setNtSequence(value);
 			}
-			break;
-		case "Cofactor":
-			((biologicalObjects.nodes.Enzyme) bna).setCofactor(value);
-			break;
-		case "Effector":
-			((biologicalObjects.nodes.Enzyme) bna).setEffector(value);
-			break;
-		case "EnzymeClass":
-			((biologicalObjects.nodes.Enzyme) bna).setEnzymeClass(value);
-			break;
-		case "Orthology":
-			((biologicalObjects.nodes.Enzyme) bna).setOrthology(value);
-			break;
-		case "Produkt":
-			((biologicalObjects.nodes.Enzyme) bna).setProdukt(value);
-			break;
-		case "Reaction":
-			((biologicalObjects.nodes.Enzyme) bna).setReaction(value);
-			break;
-		case "Substrate":
-			((biologicalObjects.nodes.Enzyme) bna).setSubstrate(value);
-			break;
-		case "SysName":
-			((biologicalObjects.nodes.Enzyme) bna).setSysName(value);
 			break;
 		case "Proteins":
 			((biologicalObjects.nodes.Gene) bna).addProtein(stringToArray(value));
