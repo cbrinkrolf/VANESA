@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Vector;
 
 import javax.swing.SwingWorker;
 
@@ -32,9 +31,7 @@ import graph.jung.classes.MyGraph;
 import graph.layouts.Circle;
 import gui.MainWindow;
 import pojos.DBColumn;
-//import edu.uci.ics.jung.graph.Edge;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.utils.Pair;
+
 
 public class KEGGConnector extends SwingWorker<Object, Object> {
 
@@ -42,29 +39,9 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 	private String organism;
 	private String pathwayID;
 	private String pathwayLink;
-	private String pathwayImage;
 	private String pathwayNumber;
-	private String mirnaName = null;
 	private boolean searchMicroRNAs = true;
 	private HashMap<Integer, Integer> srnaParents = new HashMap<Integer,Integer>();
-
-	public String getMirnaName() {
-		return mirnaName;
-	}
-
-	public void setMirnaName(String mirnaName) {
-		this.mirnaName = mirnaName;
-	}
-
-	private Vector<String> mirnas;
-
-	public Vector<String> getMirnas() {
-		return mirnas;
-	}
-
-	public void setMirnas(Vector<String> mirnas) {
-		this.mirnas = mirnas;
-	}
 
 	private Pathway pw;
 
@@ -183,7 +160,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 		pw.setOrganism(organism);
 		pw.setLink(pathwayLink);
-		pw.setImagePath(pathwayImage);
 
 		myGraph = pw.getGraph();
 
@@ -262,7 +238,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 			String[] resultDetails = column.getColumn();
 			title = resultDetails[1];
 			pathwayLink = resultDetails[5];
-			pathwayImage = resultDetails[4];
+			//pathwayImage = resultDetails[4];
 			pathwayNumber = resultDetails[3];
 			pathwayOrg = resultDetails[2];
 			// System.out.println("inside");

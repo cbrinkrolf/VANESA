@@ -52,10 +52,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 	private String pathwayLink = "";
 
-	private String pathwayImage = "";
-
-	private String pathwayNumber = "";
-
 	private int searchDepth = 4;
 
 	protected BrendaTree tree = new BrendaTree();
@@ -66,7 +62,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 	private boolean disregarded = false;
 
-	private MoleculeBox box = MoleculeBoxSingelton.getInstance();
+	private MoleculeBox box = MoleculeBox.getInstance();
 
 	private String[] enzymeToSearch;
 
@@ -100,16 +96,13 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		title = "BRENDA Pathway";
 		organism = "";
 		pathwayLink = "";
-		pathwayImage = "";
-		pathwayNumber = "";
-
 	}
 
 	private BiologicalNodeAbstract addReactionNodes(String node) {
 		// node = node.toLowerCase();
 		String clean = this.cleanString(node);
 		if (!enzymes.containsKey(clean)) {
-			SmallMolecule sm = new SmallMolecule(clean, "");
+			SmallMolecule sm = new SmallMolecule(clean, clean);
 			enzymes.put(clean, sm);
 			return sm;
 
@@ -720,6 +713,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		// System.out.println(tree.getRoot());
 		// System.out.println("vor");
 		// System.out.println("e: " + enzyme);
+		System.out.println("root: "+tree.getRoot());
 		processBrendaElement(details[0], tree.getRoot());
 		// System.out.println("ende");
 
@@ -830,8 +824,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 			}
 			pw.setOrganism(organism);
 			pw.setLink(pathwayLink);
-			pw.setImagePath(pathwayImage);
-
 			// GraphInstance i = new GraphInstance();
 			// Pathway pw = new CreatePathway().getPathway();
 			// System.out.println("p: "+i.getPathway());
@@ -895,20 +887,4 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 	private String cleanString(String s) {
 		return s.toLowerCase();
 	}
-
-	static public String byteToHex(byte b) {
-		// Returns hex String representation of byte b
-		char hexDigit[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				'a', 'b', 'c', 'd', 'e', 'f' };
-		char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
-		return new String(array);
-	}
-
-	static public String charToHex(char c) {
-		// Returns hex String representation of char c
-		byte hi = (byte) (c >>> 8);
-		byte lo = (byte) (c & 0xff);
-		return byteToHex(hi) + byteToHex(lo);
-	}
-
 }

@@ -55,8 +55,6 @@ public class Pathway implements Cloneable {
 
 	private String link = "";
 
-	private String ImagePath = "";
-
 	private String organism = "";
 
 	private boolean orgSpecification;
@@ -876,14 +874,6 @@ public class Pathway implements Cloneable {
 
 	public void setGraph(MyGraph graph) {
 		this.graph = graph;
-	}
-
-	public String getImagePath() {
-		return ImagePath;
-	}
-
-	public void setImagePath(String imagePath) {
-		ImagePath = imagePath;
 	}
 
 	public String getFilename() {

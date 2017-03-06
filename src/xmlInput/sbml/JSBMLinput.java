@@ -20,8 +20,6 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.xml.sax.InputSource;
 
-import com.sun.corba.se.spi.presentation.rmi.DynamicMethodMarshaller;
-
 import biologicalElements.Elementdeclerations;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;

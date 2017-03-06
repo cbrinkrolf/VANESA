@@ -18,7 +18,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import database.brenda.MoleculeBox;
-import database.brenda.MoleculeBoxSingelton;
 import database.brenda.MoleculesPair;
 
 /**
@@ -40,7 +39,7 @@ public class Moleculesoutput {
 			
 			this.file=file;
 			this.defaultValues = defaultValues;
-			box = MoleculeBoxSingelton.getInstance();
+			box = MoleculeBox.getInstance();
 			write();
 
 		} catch (FileNotFoundException e) {

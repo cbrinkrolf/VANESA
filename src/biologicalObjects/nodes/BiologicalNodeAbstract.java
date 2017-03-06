@@ -1115,6 +1115,15 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		this.parameters = parameters;
 	}
 
+	public boolean containsParameter(String name){
+		for(int i = 0; i< parameters.size(); i++){
+			if(parameters.get(0).getName().equals(name)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public HashSet<String> getLabelSet() {
 		return labelSet;
 	}

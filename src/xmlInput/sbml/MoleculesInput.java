@@ -21,7 +21,6 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import database.brenda.MoleculeBox;
-import database.brenda.MoleculeBoxSingelton;
 import database.brenda.MoleculesPair;
 
 
@@ -95,7 +94,7 @@ public class MoleculesInput {
 			}
 		}
 		
-		MoleculeBox box = MoleculeBoxSingelton.getInstance();
+		MoleculeBox box = MoleculeBox.getInstance();
 		box.clear();
 		box.fillTable(v);
 	
