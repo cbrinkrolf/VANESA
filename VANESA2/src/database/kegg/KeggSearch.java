@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import biologicalElements.Pathway;
@@ -26,7 +25,6 @@ import graph.CreatePathway;
 import graph.GraphInstance;
 import graph.algorithms.MergeGraphs;
 import gui.MainWindow;
-import gui.ProgressBar;
 import pojos.DBColumn;
 
 public class KeggSearch extends SwingWorker<Object, Object> implements PropertyChangeListener {
@@ -192,136 +190,6 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 
 	}
 
-	// public Vector requestDbContent() throws SQLException,
-	// InstantiationException,
-	// IllegalAccessException, ClassNotFoundException {
-	//
-	// String queryStart = "Select pathway.pathway_name from ";
-	// String queryEnd = "";
-	// boolean firstEntries = false;
-	// boolean organism = false;
-	//
-	// if (!pathway.equals("")) {
-	// queryStart = queryStart + "(" + KEGGQueries.KEGGPathwayQuery
-	// + dqv.prepareString(pathway, "p.pathway_name", "p.title")
-	// + ") as pathway";
-	// firstEntries = true;
-	// }
-	//
-	// if (!organismus.equals("")) {
-	// organism = true;
-	// }
-	//
-	// if (!enzyme.equals("")) {
-	// if (firstEntries) {
-	// queryStart = queryStart + " Inner join ("
-	// + KEGGQueries.KEGGEnzymeQuery
-	// + dqv.prepareString(enzyme, "n.entry", "n.name")
-	// + ") as enzyme ";
-	// queryEnd = " on pathway.pathway_name=enzyme.pathway_name";
-	//
-	// } else {
-	// firstEntries = true;
-	// queryStart = queryStart + "(" + KEGGQueries.KEGGEnzymeQuery
-	// + dqv.prepareString(enzyme, "n.entry", "n.name")
-	// + ") as pathway ";
-	// }
-	// }
-	//
-	// if (!gene.equals("")) {
-	//
-	// if (firstEntries) {
-	// queryStart = queryStart + " Inner join ("
-	// + KEGGQueries.KEGGGeneQuery
-	// + dqv.prepareString(gene, "n.entry", "n.name")
-	// + ") as gene ";
-	//
-	// if (queryEnd.equals("")) {
-	// queryEnd = " on pathway.pathway_name=gene.pathway_name";
-	// } else {
-	// queryEnd = queryEnd + "=gene.pathway_name";
-	// }
-	//
-	// } else {
-	// queryStart = queryStart + "(" + KEGGQueries.KEGGGeneQuery
-	// + dqv.prepareString(gene, "n.entry", "n.name")
-	// + ") as pathway ";
-	// firstEntries = true;
-	// }
-	// }
-	//
-	// if (!compound.equals("")) {
-	//
-	// if (firstEntries) {
-	// queryStart = queryStart + " Inner join ("
-	// + KEGGQueries.KEGGCompoundQuery
-	// + dqv.prepareString(compound, "c.entry", "c.name")
-	// + ") as compound ";
-	//
-	// if (queryEnd.equals("")) {
-	// queryEnd = " on pathway.pathway_name=compound.pathway_name";
-	// } else {
-	// queryEnd = queryEnd + "=compound.pathway_name";
-	// }
-	//
-	// } else {
-	// queryStart = queryStart + "(" + KEGGQueries.KEGGCompoundQuery
-	// + dqv.prepareString(compound, "c.entry", "c.name")
-	// + ") as pathway ";
-	// firstEntries = true;
-	// }
-	// }
-	//
-	// String pathway_names = "(";
-	//
-	// Vector tempResults = new Vector();
-	// if (firstEntries) {
-	// tempResults = new Wrapper().requestDbContent(2, queryStart
-	// + queryEnd + " LIMIT 0,1000;");
-	// Iterator tempIt = tempResults.iterator();
-	// boolean firstPathwayName = true;
-	// while (tempIt.hasNext()) {
-	// String[] d = (String[]) tempIt.next();
-	// if (firstPathwayName) {
-	// pathway_names = pathway_names + "'" + d[0] + "'";
-	// firstPathwayName = false;
-	// } else {
-	// pathway_names = pathway_names + ",'" + d[0] + "'";
-	// }
-	// }
-	// }
-	// pathway_names = pathway_names + ")";
-	//
-	// String lastQuery;
-	//
-	// if (!organism && !firstEntries) {
-	// return new Vector();
-	// } else if (!organism && tempResults.size() == 0) {
-	// return new Vector();
-	// } else if (organism && firstEntries && tempResults.size() == 0) {
-	// return new Vector();
-	// } else if (!organism && tempResults.size() > 0) {
-	// lastQuery = "Select p.pathway_name, p.title, t.name from kegg_pathway p "
-	// +
-	// "LEFT OUTER JOIN kegg_taxonomy as t on p.org=t.org where p.pathway_name In "
-	// + pathway_names;
-	// } else if (organism && pathway_names.length() < 4) {
-	// lastQuery = "Select p.pathway_name, p.title, t.name from kegg_pathway p "
-	// + "LEFT OUTER JOIN kegg_taxonomy as t on p.org=t.org where "
-	// + dqv.prepareString(organismus, "t.name", "t.latin_name");
-	// } else {
-	// lastQuery = "Select p.pathway_name, p.title, t.name from kegg_pathway p "
-	// +
-	// "LEFT OUTER JOIN kegg_taxonomy as t on p.org=t.org where p.pathway_name In "
-	// + pathway_names
-	// + " AND "
-	// + dqv.prepareString(organismus, "t.name", "t.latin_name");
-	// }
-	//
-	// return new Wrapper().requestDbContent(2, lastQuery + " LIMIT 0,1000;");
-	//
-	// }
-
 	@Override
 	protected Void doInBackground() throws Exception {
 		// results=requestDbContent();
@@ -406,17 +274,6 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 				}
 			}
 		}
-
-	}
-
-	private void endSearch(final MainWindow w, final ProgressBar bar) {
-		Runnable run = new Runnable() {
-			public void run() {
-				bar.closeWindow();
-			}
-		};
-
-		SwingUtilities.invokeLater(run);
 	}
 
 	@Override
@@ -449,5 +306,4 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 			}
 		}
 	}
-
 }

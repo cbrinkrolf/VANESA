@@ -10,9 +10,17 @@ public class MoleculeBox {
 
 	private Hashtable<String, MoleculesPair> molecules = new Hashtable<String, MoleculesPair>();
 	private Vector<String> v = new Vector<String>();
+	private static MoleculeBox instance = null;
 	
-	public MoleculeBox() {
+	private MoleculeBox() {
 
+	}
+	
+	public static synchronized MoleculeBox getInstance(){
+		if(MoleculeBox.instance == null){
+			MoleculeBox.instance = new MoleculeBox();
+		}
+		return MoleculeBox.instance;
 	}
 
 	public void fillTable(Vector<MoleculesPair> v) {

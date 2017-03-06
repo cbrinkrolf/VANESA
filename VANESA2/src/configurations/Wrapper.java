@@ -89,7 +89,7 @@ public class Wrapper implements WebServiceListener {
 			ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.getDBConnection().getmirnaDBName());
 		} else
 			ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.getDBConnection().getDawisDBName());
-		System.out.println("local");
+		//System.out.println("local");
 		return getDBResult(query, attributes);
 	}
 

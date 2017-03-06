@@ -1,8 +1,7 @@
 package database.brenda.gui;
 
-import miscalleanous.tables.NodePropertyTableModel;
 import database.brenda.MoleculeBox;
-import database.brenda.MoleculeBoxSingelton;
+import miscalleanous.tables.NodePropertyTableModel;
 
 
 public class BrendaTabelModel extends NodePropertyTableModel{
@@ -11,7 +10,7 @@ public class BrendaTabelModel extends NodePropertyTableModel{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private MoleculeBox box = MoleculeBoxSingelton.getInstance();
+	private MoleculeBox box = MoleculeBox.getInstance();
 	
 	public BrendaTabelModel(Object[][] rows, String[] headers) {
 		super(rows, headers);

@@ -9,9 +9,9 @@ import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import configurations.Wrapper;
 import pojos.DBColumn;
 import xmlInput.sbml.MoleculesInput;
-import configurations.Wrapper;
 
 public class MostWantedMolecules {
 
@@ -73,7 +73,7 @@ public class MostWantedMolecules {
 		}
 
 		sortElements();
-		MoleculeBoxSingelton.getInstance().fillTable(v);
+		MoleculeBox.getInstance().fillTable(v);
 
 		// TODO generate Molecules file, if not deprecated
 		// try
@@ -145,7 +145,7 @@ public class MostWantedMolecules {
 	}
 
 	public void fillTables() {
-		MoleculeBox box = MoleculeBoxSingelton.getInstance();
+		MoleculeBox box = MoleculeBox.getInstance();
 		box.clear();
 		box.fillTable(v);
 	}
@@ -170,7 +170,5 @@ public class MostWantedMolecules {
 				}
 			}
 		}
-
 	}
-
 }

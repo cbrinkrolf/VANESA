@@ -27,7 +27,6 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import database.brenda.MoleculeBox;
-import database.brenda.MoleculeBoxSingelton;
 import database.brenda.MoleculesPair;
 import gui.MainWindow;
 import miscalleanous.tables.MyTable;
@@ -73,7 +72,7 @@ public class BrendaPatternListWindow extends JFrame implements ActionListener {
 
 	public BrendaPatternListWindow() {
 
-		MoleculeBox box = MoleculeBoxSingelton.getInstance();
+		MoleculeBox box = MoleculeBox.getInstance();
 		Vector<MoleculesPair> v = box.getAllValues();
 		for (int i = 0; i<v.size(); i++){
 		//	System.out.println(v.get(i));
