@@ -713,7 +713,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		// System.out.println(tree.getRoot());
 		// System.out.println("vor");
 		// System.out.println("e: " + enzyme);
-		System.out.println("root: "+tree.getRoot());
+		//System.out.println("root: "+tree.getRoot());
 		processBrendaElement(details[0], tree.getRoot());
 		// System.out.println("ende");
 

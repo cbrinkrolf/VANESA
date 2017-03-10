@@ -212,7 +212,7 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 		enzymeTable.setModel(enzymeModel);
 		enzymeSorter.setRowFilter(null);
 		enzymeTable.setRowSorter(enzymeSorter);
-
+		
 		enzymeTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		enzymeTable.setColumnControlVisible(false);
 		enzymeTable.setHighlighters(HighlighterFactory.createSimpleStriping());

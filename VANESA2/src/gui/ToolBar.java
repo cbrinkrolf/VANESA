@@ -25,7 +25,7 @@ public class ToolBar {
 		ImagePath imagePath = ImagePath.getInstance();
 
 		bar.setOrientation(1);
-		bar.setFloatable(false);
+		bar.setFloatable(true);
 		MigLayout bl = new MigLayout("insets 0, wrap 1");
 		bar.setLayout(bl);
 

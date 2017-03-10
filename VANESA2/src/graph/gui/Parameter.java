@@ -9,7 +9,7 @@ public class Parameter {
 	
 	
 	public Parameter(String name, double value, String unit) {
-		this.name = name;
+		this.name = name.trim();
 		this.value = value;
 		this.unit = unit;
 	}
@@ -18,7 +18,7 @@ public class Parameter {
 		return name;
 	}
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 	public double getValue() {
 		return value;
