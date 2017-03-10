@@ -1117,7 +1117,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	public boolean containsParameter(String name){
 		for(int i = 0; i< parameters.size(); i++){
-			if(parameters.get(0).getName().equals(name)){
+			if(parameters.get(i).getName().equals(name.trim())){
 				return true;
 			}
 		}

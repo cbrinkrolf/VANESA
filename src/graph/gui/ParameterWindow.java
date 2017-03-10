@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import javax.swing.JButton;
@@ -19,6 +20,7 @@ import javax.swing.event.DocumentListener;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DynamicNode;
 import graph.ChangedFlags;
@@ -69,8 +71,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				AutoSuggestor autoSuggestor = new AutoSuggestor(formular, dialog, null, Color.WHITE.brighter(),
-						Color.BLUE, Color.RED, 0.75f) {
+				AutoSuggestor autoSuggestor = new AutoSuggestor(formular, dialog, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
 					@Override
 					boolean wordTyped(String typedWord) {
 
@@ -226,29 +227,28 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 						}
 					} else {
 						// System.out.println("schon vorhanden");
-						JOptionPane.showMessageDialog(dialog,
-								"Parameter with same name already exists! Use edit button to edit parameter",
+						JOptionPane.showMessageDialog(dialog, "Parameter with same name already exists! Use edit button to edit parameter",
 								"Parameter warning", JOptionPane.WARNING_MESSAGE);
 					}
 					return;
 				}
 			}
-			if(name.getText().trim().length() > 0){
-			try {
-				p = new Parameter(name.getText(), Double.valueOf(value.getText()), unit.getText());
-				gea.getParameters().add(p);
-				pw.getChangedParameters().put(p, gea);
-				pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
-				panel.add(new JLabel(name.getText()), "span 1, gaptop 2 ");
-				panel.add(new JLabel(value.getText()), "span 1, gapright 4");
-				panel.add(new JLabel(unit.getText()), "span 1, gapright 4, wrap");
-				this.repaint();
-			} catch (NumberFormatException nfx) {
-				MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+			if (name.getText().trim().length() > 0) {
+				try {
+					p = new Parameter(name.getText(), Double.valueOf(value.getText()), unit.getText());
+					gea.getParameters().add(p);
+					pw.getChangedParameters().put(p, gea);
+					pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
+					panel.add(new JLabel(name.getText()), "span 1, gaptop 2 ");
+					panel.add(new JLabel(value.getText()), "span 1, gapright 4");
+					panel.add(new JLabel(unit.getText()), "span 1, gapright 4, wrap");
+					this.repaint();
+				} catch (NumberFormatException nfx) {
+					MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+				}
+			} else {
+				MyPopUp.getInstance().show("Parameter", "Name is empty!");
 			}
-		}else{
-			MyPopUp.getInstance().show("Parameter", "Name is empty!");
-		}
 
 		} else if (e.getActionCommand().startsWith("del")) {
 			pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
@@ -277,6 +277,9 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			this.add.setText("Override");
 			this.editMode = true;
 			this.repaint();
+		} else if (e.getActionCommand().equals("guessKinetic")) {
+			this.guessKinetic();
+			this.repaint();
 		}
 	}
 
@@ -285,6 +288,11 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		if (gea instanceof DynamicNode) {
 			panel.add(fp, "span 20, wrap");
 		}
+
+		JButton guessKinetic = new JButton("kinetics");
+		guessKinetic.addActionListener(this);
+		guessKinetic.setActionCommand("guessKinetic");
+		panel.add(guessKinetic, "wrap");
 
 		panel.add(new JLabel("Name"), "span 1, gaptop 2 ");
 		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
@@ -319,6 +327,139 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		if (editMode) {
 			this.editMode = false;
 			this.add.setText("add");
+		}
+	}
+
+	private void guessKinetic() {
+		if (gea instanceof DynamicNode) {
+			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
+			StringBuilder sb = new StringBuilder();
+
+			Collection<BiologicalEdgeAbstract> substrateEdges = pw.getGraph().getJungGraph().getInEdges(bna);
+
+			Collection<BiologicalEdgeAbstract> productEdges = pw.getGraph().getJungGraph().getOutEdges(bna);
+
+			BiologicalEdgeAbstract bea;
+
+			// numerator
+			sb.append(bna.getName() + " * ( v_f");
+			if (!bna.containsParameter("v_f")){
+				bna.getParameters().add(new Parameter("v_f", 1, "mmol/s"));
+			}
+			Iterator<BiologicalEdgeAbstract> itBea = substrateEdges.iterator();
+			int weight;
+			while (itBea.hasNext()) {
+				weight = 1;
+				bea = itBea.next();
+				if (bea.getLabel().length() > 0) {
+					try {
+						weight = Integer.parseInt(bea.getLabel());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				sb.append(" * ");
+				if (weight > 1) {
+					sb.append("(");
+				}
+				sb.append(bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
+				if (!bna.containsParameter("km_"+bea.getFrom().getName())){
+					bna.getParameters().add(new Parameter("km_"+bea.getFrom().getName(), 1, "1/mmol"));
+				}
+				if (weight > 1) {
+					sb.append(")^" + weight);
+				}
+			}
+			sb.append(" - v_r ");
+			if (!bna.containsParameter("v_r")){
+				bna.getParameters().add(new Parameter("v_r", 1, "mmol/s"));
+			}
+			itBea = productEdges.iterator();
+			while (itBea.hasNext()) {
+				weight = 1;
+				bea = itBea.next();
+				if (bea.getLabel().length() > 0) {
+					try {
+						weight = Integer.parseInt(bea.getLabel());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				sb.append(" * ");
+				if (weight > 1) {
+					sb.append("(");
+				}
+				sb.append(bea.getTo().getName() + " / km_" + bea.getTo().getName());
+				if (!bna.containsParameter("km_"+bea.getTo().getName())){
+					bna.getParameters().add(new Parameter("km_" + bea.getTo().getName(), 1, "1/mmol"));
+				}
+				if (weight > 1) {
+					sb.append(")^" + weight);
+				}
+			}
+			sb.append(") / (");
+
+			// dominator
+			itBea = substrateEdges.iterator();
+			while (itBea.hasNext()) {
+				weight = 1;
+				bea = itBea.next();
+				if (bea.getLabel().length() > 0) {
+					try {
+						weight = Integer.parseInt(bea.getLabel());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+				sb.append("(");
+				for (int i = 0; i <= weight; i++) {
+					if (i == 0) {
+						sb.append(" 1 ");
+					} else if (i == 1) {
+						sb.append(" + " + bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
+					} else {
+						sb.append(" + (" + bea.getFrom().getName() + " / km_" + bea.getFrom().getName() + ")^" + weight);
+					}
+				}
+				sb.append(")");
+				if (itBea.hasNext()) {
+					sb.append(" * ");
+				}
+			}
+			sb.append(" + ");
+			
+			itBea = productEdges.iterator();
+			while (itBea.hasNext()) {
+				weight = 1;
+				bea = itBea.next();
+				if (bea.getLabel().length() > 0) {
+					try {
+						weight = Integer.parseInt(bea.getLabel());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+				sb.append("(");
+				for (int i = 0; i <= weight; i++) {
+					if (i == 0) {
+						sb.append(" 1 ");
+					} else if (i == 1) {
+						sb.append(" + " + bea.getTo().getName() + " / km_" + bea.getTo().getName());
+					} else {
+						sb.append(" + (" + bea.getTo().getName() + " / km_" + bea.getTo().getName() + ")^" + weight);
+					}
+				}
+				sb.append(")");
+				if (itBea.hasNext()) {
+					sb.append(" * ");
+				}
+			}
+
+			sb.append(")");
+			formular.setText(sb.toString());
+
 		}
 	}
 }

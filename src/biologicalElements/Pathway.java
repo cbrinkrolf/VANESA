@@ -33,6 +33,7 @@ import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.Circle;
 import gui.GraphTab;
 import gui.MainWindow;
+import util.FormularSafety;
 import util.MyIntComparable;
 
 public class Pathway implements Cloneable {
@@ -898,7 +899,7 @@ public class Pathway implements Cloneable {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = FormularSafety.replace(name);
 		if (tab != null) {
 			tab.setTitle(name);
 		}
