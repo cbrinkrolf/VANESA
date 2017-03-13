@@ -78,7 +78,6 @@ public class VanesaUtility {
     	for(int i = 0; i<list.size(); i++){
     		mean += list.get(i);
     	}
-    	
     	return mean/list.size();
     }
     
@@ -86,7 +85,7 @@ public class VanesaUtility {
     	double median = 0;
     		if(list.size()>0){
     			if(list.size() % 2 == 0){
-    				return (list.get(list.size()/2) + list.get(list.size()/2+1))/2;
+    				return (list.get(list.size()/2) + list.get(list.size()/2-1))/2;
     			}else{
     				return list.get((list.size()-1)/2);
     			}
