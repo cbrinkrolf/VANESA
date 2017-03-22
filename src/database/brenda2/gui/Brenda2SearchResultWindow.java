@@ -9,6 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -172,13 +176,14 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog = new JDialog(this, "Settings", false);
+		dialog = new JDialog(this, "Brenda 2 Search", false);
 		dialog.setAlwaysOnTop(false);
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		dialog.pack();
 		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.setVisible(true);
+		
 	}
 
 	public Vector<String[]> getAnswer() {
@@ -212,7 +217,7 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 		enzymeTable.setModel(enzymeModel);
 		enzymeSorter.setRowFilter(null);
 		enzymeTable.setRowSorter(enzymeSorter);
-		
+
 		enzymeTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		enzymeTable.setColumnControlVisible(false);
 		enzymeTable.setHighlighters(HighlighterFactory.createSimpleStriping());
@@ -255,10 +260,33 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 			kmTable.getTableHeader().setReorderingAllowed(false);
 			kmTable.getTableHeader().setResizingAllowed(true);
 			// kmTable.setRowSelectionInterval(0, 0);
-			
+			kmTable.addMouseListener(new MouseListener() {
+				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					//System.out.println("clicked");
+					setKmStatistics();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
 			
 			mainPanel.add(kmStatistics, "span 12, wrap");
-			
+
 			JScrollPane sp = new JScrollPane(kmTable);
 			sp.setPreferredSize(new Dimension(100, 400));
 			mainPanel.add(sp, "growx, span 2");
@@ -267,8 +295,8 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 			this.setKmStatistics();
 			mainPanel.revalidate();
 		} else {
-			//System.out.println("update");
-			
+			// System.out.println("update");
+
 			kmModel = new NodePropertyTableModel(rows, kmColumnNames);
 
 			// enzymeSorter = new
@@ -297,13 +325,39 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 			}
 		} else if (event.equals("updateEnzymes")) {
 			MainWindow.getInstance().showProgressBar("BRENDA 2 query");
-			BRENDA2Search brenda2Search = new BRENDA2Search(this, BRENDA2Search.enzymeSearch);
+			BRENDA2Search brenda2Search = new BRENDA2Search(BRENDA2Search.enzymeSearch);
+			brenda2Search.setEcNumber(this.getEcNumber());
+			brenda2Search.setName(this.getName());
+			brenda2Search.setMetabolite(this.getMetabolite());
+			brenda2Search.setOrg(this.getOrganism());
+			brenda2Search.setSyn(this.getSynonym());
+			brenda2Search.addPropertyChangeListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					if(evt.getNewValue().toString().equals("DONE")){
+						updateEnzymeTable(brenda2Search.getResults());
+					}
+				}
+			});
 			brenda2Search.execute();
 		} else if (event.equals("updateKm")) {
 			// System.out.println(enzymeTable.getSelectedColumn());
 			MainWindow.getInstance().showProgressBar("update Km Values");
 			this.ecNumber.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 1));
-			BRENDA2Search brenda2Search = new BRENDA2Search(this, BRENDA2Search.kmSearch);
+			BRENDA2Search brenda2Search = new BRENDA2Search(BRENDA2Search.kmSearch);
+			brenda2Search.setEcNumber(this.getEcNumber());
+			brenda2Search.setName(this.getName());
+			brenda2Search.setMetabolite(this.getMetabolite());
+			brenda2Search.setOrg(this.getOrganism());
+			brenda2Search.setSyn(this.getSynonym());
+			brenda2Search.addPropertyChangeListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					if(evt.getNewValue().toString().equals("DONE")){
+						updateKmTable(brenda2Search.getResults());
+					}
+				}
+			});
 			brenda2Search.execute();
 		}
 	}
@@ -311,14 +365,18 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 	private void setKmStatistics() {
 
 		List<Double> list = new ArrayList<Double>();
-		for(int i = 0; i<kmTable.getRowCount(); i++){
-			list.add(Double.parseDouble((String) kmTable.getValueAt(i, 3)));
+		//System.out.println("count: "+kmTable.getSelectedRowCount());
+		for (int i = 0; i < kmTable.getRowCount(); i++) {
+			if (kmTable.getSelectedRowCount() == 0 || kmTable.isRowSelected(i)) {
+				list.add(Double.parseDouble((String) kmTable.getValueAt(i, 3)));
+			}
 		}
-		//System.out.println(list.size());
+		// System.out.println(list.size());
 		Collections.sort(list, new MyDoubleComparable());
 		double mean = VanesaUtility.getMean(list);
 		double median = VanesaUtility.getMedian(list);
-		this.kmStatistics.setText("n: "+list.size()+" min: "+list.get(0)+" max: "+list.get(list.size()-1)+" mean: "+Math.round(mean*10000.0)/10000.0+" meadian: "+median);
+		this.kmStatistics.setText("n: " + list.size() + " min: " + list.get(0) + " max: " + list.get(list.size() - 1) + " mean: "
+				+ Math.round(mean * 10000.0) / 10000.0 + " meadian: " + median);
 	}
 
 	public String getEcNumber() {

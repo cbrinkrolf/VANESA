@@ -2,6 +2,8 @@ package database.eventhandlers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JOptionPane;
 
@@ -10,6 +12,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import database.brenda.BRENDASearch;
 import database.brenda.gui.BrendaInfoWindow;
 import database.brenda2.BRENDA2Search;
+import database.brenda2.gui.Brenda2SearchResultWindow;
 import database.gui.DatabaseWindow;
 import database.kegg.KeggSearch;
 import database.kegg.gui.KEGGInfoWindow;
@@ -32,8 +35,6 @@ public class DatabaseSearchListener implements ActionListener {
 	}
 
 	private void requestKEGGcontent() {
-		//new GetPublications("C:\\Users\\Vallani\\Desktop\\result.txt");
-
 		MainWindow.getInstance().showProgressBar("KEGG query");
 		KeggSearch keggSearch = new KeggSearch(dw.getInput(),
 				MainWindow.getInstance(),null);
@@ -50,6 +51,14 @@ public class DatabaseSearchListener implements ActionListener {
 	private void requestBrenda2Content() {
 		MainWindow.getInstance().showProgressBar("BRENDA 2 query");
 		BRENDA2Search brenda2Search = new BRENDA2Search(dw.getInput(), null, dw.isHeadless());
+		brenda2Search.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if(evt.getNewValue().toString().equals("DONE")){
+					new Brenda2SearchResultWindow(brenda2Search.getResults(), brenda2Search.getEcNumber(), brenda2Search.getName(), brenda2Search.getSyn(), brenda2Search.getMetabolite(), brenda2Search.getOrg());
+				}
+			}
+		});
 		brenda2Search.execute();
 	}
 

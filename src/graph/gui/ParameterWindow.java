@@ -3,6 +3,8 @@ package graph.gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -126,23 +128,52 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		dialog.setResizable(true);
 		dialog.setLocationRelativeTo(MainWindow.getInstance());
 		dialog.pack();
+		dialog.setAlwaysOnTop(false);
+		dialog.setModal(false);
 		// dialog.show();
 		dialog.setVisible(true);
 
-		if (pane.getValue() != null && (int) pane.getValue() == JOptionPane.OK_OPTION) {
-			if (gea instanceof DynamicNode) {
-				DynamicNode dn = (DynamicNode) gea;
-				String formular = fp.getFormular();
-				String formularClean = formular.replaceAll("\\s", "");
-				// System.out.println(":"+formularClean+":");
-				String orgClean = dn.getMaximumSpeed().replaceAll("\\s", "");
-
-				if (!orgClean.equals(formularClean)) {
-					dn.setMaximumSpeed(formular);
-					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+		dialog.addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(WindowEvent e) {
+			}
+			@Override
+			public void windowIconified(WindowEvent e) {
+			}
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+			}
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				//System.out.println("deactivated");
+				//System.out.println("value: "+pane.getValue());
+				if (pane.getValue() != null && !pane.getValue().equals("uninitializedValue") && (int) pane.getValue() == JOptionPane.OK_OPTION) {
+					//System.out.println("ok");
+					if (gea instanceof DynamicNode) {
+						//System.out.println("clicked ok");
+						DynamicNode dn = (DynamicNode) gea;
+						String formular = fp.getFormular();
+						String formularClean = formular.replaceAll("\\s", "");
+						// System.out.println(":"+formularClean+":");
+						String orgClean = dn.getMaximumSpeed().replaceAll("\\s", "");
+						if (!orgClean.equals(formularClean)) {
+							dn.setMaximumSpeed(formular);
+							pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+						}
+					}
 				}
 			}
-		}
+			@Override
+			public void windowClosing(WindowEvent e) {
+			}
+			@Override
+			public void windowClosed(WindowEvent e) {
+			}
+			@Override
+			public void windowActivated(WindowEvent e) {
+			}
+		});
 	}
 
 	private void listParameters() {
@@ -280,6 +311,10 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		} else if (e.getActionCommand().equals("guessKinetic")) {
 			this.guessKinetic();
 			this.repaint();
+		}else if (e.getActionCommand().equals("setValues")) {
+			if(gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract){
+			new ParameterSearcher((BiologicalNodeAbstract)gea);
+			}
 		}
 	}
 
@@ -289,10 +324,15 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			panel.add(fp, "span 20, wrap");
 		}
 
-		JButton guessKinetic = new JButton("kinetics");
+		JButton guessKinetic = new JButton("guess kinetics");
 		guessKinetic.addActionListener(this);
 		guessKinetic.setActionCommand("guessKinetic");
-		panel.add(guessKinetic, "wrap");
+		panel.add(guessKinetic);
+		
+		JButton setValues = new JButton("set values");
+		setValues.addActionListener(this);
+		setValues.setActionCommand("setValues");
+		panel.add(setValues, "wrap");
 
 		panel.add(new JLabel("Name"), "span 1, gaptop 2 ");
 		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
