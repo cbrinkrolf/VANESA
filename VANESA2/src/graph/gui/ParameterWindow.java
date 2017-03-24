@@ -383,7 +383,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 
 			// numerator
 			sb.append(bna.getName() + " * ( v_f");
-			if (!bna.containsParameter("v_f")){
+			if (bna.getParameter("v_f") == null){
 				bna.getParameters().add(new Parameter("v_f", 1, "mmol/s"));
 			}
 			Iterator<BiologicalEdgeAbstract> itBea = substrateEdges.iterator();
@@ -403,7 +403,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 					sb.append("(");
 				}
 				sb.append(bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
-				if (!bna.containsParameter("km_"+bea.getFrom().getName())){
+				if (bna.getParameter("km_"+bea.getFrom().getName()) == null){
 					bna.getParameters().add(new Parameter("km_"+bea.getFrom().getName(), 1, "1/mmol"));
 				}
 				if (weight > 1) {
@@ -411,7 +411,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 				}
 			}
 			sb.append(" - v_r ");
-			if (!bna.containsParameter("v_r")){
+			if (bna.getParameter("v_r") == null){
 				bna.getParameters().add(new Parameter("v_r", 1, "mmol/s"));
 			}
 			itBea = productEdges.iterator();
@@ -430,7 +430,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 					sb.append("(");
 				}
 				sb.append(bea.getTo().getName() + " / km_" + bea.getTo().getName());
-				if (!bna.containsParameter("km_"+bea.getTo().getName())){
+				if (bna.getParameter("km_"+bea.getTo().getName()) == null){
 					bna.getParameters().add(new Parameter("km_" + bea.getTo().getName(), 1, "1/mmol"));
 				}
 				if (weight > 1) {
