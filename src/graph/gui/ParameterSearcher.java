@@ -27,6 +27,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -42,6 +44,7 @@ import database.brenda2.BRENDA2Search;
 import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MyPopUp;
+import gui.visualization.RangeSlider;
 import miscalleanous.tables.MyTable;
 import miscalleanous.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
@@ -102,6 +105,8 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 	private JButton mean = new JButton();
 	private JButton median = new JButton();
 	
+	private RangeSlider slider = new RangeSlider();
+
 	public ParameterSearcher(BiologicalNodeAbstract bna) {
 		super("Brenda 2 Parameter");
 		this.bna = bna;
@@ -138,7 +143,6 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		kmStatistics.setForeground(Color.RED);
 
 		this.updateValuesPanel();
-		
 
 		mainPanel.add(new JLabel("Following enzymes have been found. Please select the enzymes of interest"), "span 2");
 		mainPanel.add(new JSeparator(), "gap 10, wrap 15, growx");
@@ -227,7 +231,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		newButton.setActionCommand("new");
 
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
-		JButton[] b =  { newButton, cancel };
+		JButton[] b = { newButton, cancel };
 		optionPane.setOptions(b);
 
 		this.setAlwaysOnTop(false);
@@ -301,36 +305,58 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 				public void valueChanged(ListSelectionEvent e) {
 					// avoid multiple events
 					if (e.getValueIsAdjusting()) {
-						setKmStatistics();
+						updateKmStatistics();
 					}
 				}
 			});
 
 			number.setText("");
+			number.setMinimumSize(new Dimension(60, number.getHeight()));
 			number.addActionListener(this);
 			number.setActionCommand("setValue");
 			number.setToolTipText("set");
 
 			min.setText("");
+			min.setMinimumSize(new Dimension(70, min.getHeight()));
 			min.addActionListener(this);
 			min.setActionCommand("setValue");
 			min.setToolTipText("set");
 
 			max.setText("");
+			max.setMinimumSize(new Dimension(70, max.getHeight()));
 			max.addActionListener(this);
 			max.setActionCommand("setValue");
 			max.setToolTipText("set");
 
 			mean.setText("");
+			mean.setMinimumSize(new Dimension(70, mean.getHeight()));
 			mean.addActionListener(this);
 			mean.setActionCommand("setValue");
 			mean.setToolTipText("set");
 
 			median.setText("");
+			median.setMinimumSize(new Dimension(70, median.getHeight()));
 			median.addActionListener(this);
 			median.setActionCommand("setValue");
 			median.setToolTipText("set");
 
+			slider.setPreferredSize(new Dimension(500, slider.getPreferredSize().height));
+			
+			slider.setMinimum(0);
+			slider.setMaximum(kmModel.getRowCount()-1);
+			
+			slider.setValue(0);
+			slider.setUpperValue(slider.getMaximum());
+			
+			slider.addChangeListener(new ChangeListener() {
+				
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					sliderStateChanged();
+				}
+			});
+			
+			statisticPanel.add(slider, "span, wrap");
 			statisticPanel.add(new JLabel("n:"));
 			statisticPanel.add(number);
 			statisticPanel.add(new JLabel("min:"));
@@ -350,7 +376,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			sp.setPreferredSize(new Dimension(100, 400));
 			mainPanel.add(sp, "growx, span 4");
 			// mainPanel.repaint();
-			this.setKmStatistics();
+			this.updateKmStatistics();
 			mainPanel.revalidate();
 		} else {
 			// System.out.println("update");
@@ -360,7 +386,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			// enzymeSorter = new
 			// TableRowSorter<NodePropertyTableModel>(enzymeModel);
 			kmTable.setModel(kmModel);
-			this.setKmStatistics();
+			this.updateKmStatistics();
 		}
 	}
 
@@ -444,19 +470,19 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
 			this.currentParameter = bna.getParameter(event.substring(4));
 		} else if (event.equals("setValue")) {
-			
+
 			if (e.getSource() instanceof JButton) {
 				JButton button = (JButton) e.getSource();
-				if(this.currentParameter == null){
+				if (this.currentParameter == null) {
 					MyPopUp.getInstance().show("Missing Parameter", "Select a Parameter first!");
 					return;
 				}
-				if(button.getText().trim().length() > 0){
-					try{
+				if (button.getText().trim().length() > 0) {
+					try {
 						Double d = Double.parseDouble(button.getText().trim());
 						this.currentParameter.setValue(d);
 						this.updateValuesPanel();
-					}catch(Exception ex){
+					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
 				}
@@ -480,7 +506,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		}
 	}
 
-	private void setKmStatistics() {
+	private void updateKmStatistics() {
 		// System.out.println("new km statistics");
 		List<Double> list = new ArrayList<Double>();
 		// System.out.println("count: "+kmTable.getSelectedRowCount());
@@ -498,8 +524,8 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			this.min.setText(list.get(0) + "");
 			this.max.setText(list.get(list.size() - 1) + "");
 			this.mean.setText(Math.round(mean * 10000.0) / 10000.0 + "");
-			this.median.setText(median + "");
-
+			this.median.setText(Math.round(median * 10000.0) / 10000.0 + "");
+			//System.out.println(median);
 			// this.kmStatistics.setText("n: " + list.size() + " min: " +
 			// list.get(0) + " max: " + list.get(list.size() - 1) + " mean: "
 			// + Math.round(mean * 10000.0) / 10000.0 + " meadian: " + median);
@@ -553,10 +579,11 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 				kmSorter.setRowFilter(RowFilter.andFilter(listOfFilters));
 			}
 		}
-		setKmStatistics();
+		//System.out.println("sorter updated");
+		this.updateSlider();
 	}
-	
-	private void updateValuesPanel(){
+
+	private void updateValuesPanel() {
 		valuesPanel.removeAll();
 		valuesPanel.add(new JLabel("Substrates:"));
 		JButton button;
@@ -597,5 +624,23 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		valuesPanel.add(new JLabel("Values:"));
 		valuesPanel.add(new JLabel("test2"));
 		valuesPanel.revalidate();
+	}
+	
+	private void updateSlider(){
+		slider.setMinimum(0);
+		slider.setMaximum(kmTable.getRowCount()-1);
+		slider.setValue(0);
+		slider.setUpperValue(kmTable.getRowCount()-1);
+		//System.out.println("count: "+kmTable.getRowCount());
+		//System.out.println(kmTable.filt);
+		slider.getUpperValue();
+	}
+	
+	private void sliderStateChanged(){
+		//System.out.println(slider.getValue()+" - " + slider.getUpperValue());
+		kmTable.setRowSelectionInterval(slider.getValue(), slider.getUpperValue());
+		//kmTable.select
+		//System.out.println("selection changed");
+		this.updateKmStatistics();
 	}
 }
