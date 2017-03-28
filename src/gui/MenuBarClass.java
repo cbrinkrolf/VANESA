@@ -42,7 +42,6 @@ public class MenuBarClass {
 	private JMenuItem biGraph;
 	private JMenuItem connectedGraph;
 	private JMenuItem internet;
-	private JMenuItem graphAlignment;
 	private JMenuItem graphSettings;
 	private JMenuItem openNetwork;
 	private JMenuItem interaction;
@@ -289,10 +288,6 @@ public class MenuBarClass {
 		internet.addActionListener(MenuListener.getInstance());
 		internet.setActionCommand("internet");
 
-		graphAlignment = new JMenuItem("Graph Alignment");
-		graphAlignment.addActionListener(MenuListener.getInstance());
-		graphAlignment.setActionCommand("graphAlignemnt");
-
 		rendererSettings = new JMenuItem("Renderer Settings");
 		rendererSettings.addActionListener(MenuListener.getInstance());
 		rendererSettings.setActionCommand("rendererSettings");
@@ -379,7 +374,6 @@ public class MenuBarClass {
 		// settings.add(ppiItem);
 		settings.add(databaseItem);
 		settings.add(internet);
-		settings.add(graphAlignment);
 		settings.add(graphSettings);
 		settings.add(visualizationSettings);
 		settings.add(rendererSettings);

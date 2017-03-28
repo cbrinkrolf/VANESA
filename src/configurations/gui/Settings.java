@@ -22,13 +22,11 @@ public class Settings extends JDialog implements ActionListener {
 	private JTabbedPane tabbedPane = new JTabbedPane();
 	private ConnectionTab database = new ConnectionTab();
 	private InternetConnectionDialog internet = new InternetConnectionDialog();
-	private GraphAlignmentDialog ali = new GraphAlignmentDialog();
 	private GraphSettingsDialog gset = new GraphSettingsDialog();
 	private VisualizationDialog visDialog = new VisualizationDialog();
 
 	private String database_label = new String("Database Settings");
 	private String interner_label = new String("Internet");
-	private String ali_label = new String("Graph Alignment");
 	private String gset_label = new String("Graph Settings");
 	private String visDialog_label = new String("Visualization");
 
@@ -53,7 +51,6 @@ public class Settings extends JDialog implements ActionListener {
 
 		tabbedPane.addTab(database_label, null, database, database_label);
 		tabbedPane.addTab(interner_label, null, internet, interner_label);
-		tabbedPane.addTab(ali_label, null, ali.getPanel(), ali_label);
 		tabbedPane.addTab(gset_label, null, gset.getPanel(), gset_label);
 		tabbedPane.addTab(visDialog_label, null, visDialog.getPanel(), visDialog_label);
 
@@ -88,8 +85,6 @@ public class Settings extends JDialog implements ActionListener {
 				database.applyDefaults();
 			else if (tab_name.equals(interner_label))
 				internet.applyDefaults();
-			else if (tab_name.equals(ali_label))
-				ali.applyDefaults();
 			else if (tab_name.equals(gset_label))
 				gset.applyDefaults();
 			else if (tab_name.equals(visDialog_label)){
@@ -103,8 +98,6 @@ public class Settings extends JDialog implements ActionListener {
 				this.setVisible(!database.applyNewSettings());
 			else if (tab_name.equals(interner_label))
 				this.setVisible(!internet.applyNewSettings());
-			else if (tab_name.equals(ali_label))
-				this.setVisible(!ali.applyNewSettings());
 			else if (tab_name.equals(gset_label))
 				this.setVisible(!gset.applyNewSettings());
 			else if (tab_name.equals(visDialog_label)){
@@ -119,8 +112,6 @@ public class Settings extends JDialog implements ActionListener {
 			if (!database.applyNewSettings())
 				apply_all = false;
 			else if (!internet.applyNewSettings())
-				apply_all = false;
-			else if (!ali.applyNewSettings())
 				apply_all = false;
 			else if (!gset.applyNewSettings())
 				apply_all = false;

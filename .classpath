@@ -20,7 +20,6 @@
 	<classpathentry kind="lib" path="packages/neethi-2.0.4.jar"/>
 	<classpathentry kind="lib" path="packages/parvis.jar"/>
 	<classpathentry kind="lib" path="packages/REngine.jar"/>
-	<classpathentry kind="lib" path="packages/Rserve.jar"/>
 	<classpathentry kind="lib" path="packages/TimingFramework-1.0.jar"/>
 	<classpathentry kind="lib" path="packages/vecmath.jar"/>
 	<classpathentry kind="lib" path="packages/woden-api-1.0M8.jar"/>
