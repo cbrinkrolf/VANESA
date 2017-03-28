@@ -458,11 +458,7 @@ public class MenuListener implements ActionListener {
 
 			new Settings(1);
 
-		} else if ("graphAlignemnt".equals(event)) {
-
-			new Settings(2);
-
-		} else if ("interaction".equals(event)) {
+		}  else if ("interaction".equals(event)) {
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				new InfoWindow(false);
 			}
@@ -473,10 +469,10 @@ public class MenuListener implements ActionListener {
 
 		} else if ("graphSettings".equals(event)) {
 
-			new Settings(3);
+			new Settings(2);
 
 		} else if ("visualizationSettings".equals(event)) {
-			new Settings(4);
+			new Settings(3);
 		} /*
 			 * else if ("animation".equals(event)) { if (con.containsPathway())
 			 * { } //new Regulation(); }
@@ -1040,15 +1036,7 @@ public class MenuListener implements ActionListener {
 				}
 			};
 			thread.start();
-			
-			
-				
-			
 			System.out.println("nach thread");
-				
-			 
-			 
-
 			new PNDoc(docDir + "doc.tex");
 
 			String bin = "pdflatex";
