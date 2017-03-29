@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
@@ -16,11 +18,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
@@ -69,7 +73,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 	private JTextField org = new JTextField();
 
 	private JButton btnUpdateEnzyme;
-	private JButton btnUpdateKm;
+	private JButton btnUpdateValues;
 
 	private JButton cancel = new JButton("cancel");
 	private JButton newButton = new JButton("ok");
@@ -79,21 +83,22 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 	private JPanel valuesPanel;
 	private JPanel statisticPanel;
 
-	private JTextField enzymeFilter = new JTextField(20);
+	private JTextField enzymeFilter = new JTextField(30);
 	private TableRowSorter<NodePropertyTableModel> enzymeSorter;
 
-	private TableRowSorter<NodePropertyTableModel> kmSorter;
+	private TableRowSorter<NodePropertyTableModel> valueSorter;
 
 	private NodePropertyTableModel enzymeModel;
 
 	private MyTable enzymeTable;
 	private String[] enzymeColumnNames = { "ID", "Ec number", "Recommended name" };
 
-	private MyTable kmTable = null;
-	private String[] kmColumnNames = { "Ec number", "Organism", "Metabolite", "Value" };
-	private NodePropertyTableModel kmModel;
-	private JLabel kmStatistics = new JLabel();
+	private MyTable valueTable = null;
+	private String[] valueColumnNames = { "Ec number", "Organism", "Metabolite", "Value" };
+	private NodePropertyTableModel valueModel;
+	private JLabel valueStatistics = new JLabel();
 	private Parameter currentParameter = null;
+	private JLabel lblCurrentParameter = new JLabel();
 	private BiologicalNodeAbstract bna;
 
 	public static final String enzymeSearch = "enzymeSearch";
@@ -104,7 +109,11 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 	private JButton max = new JButton();
 	private JButton mean = new JButton();
 	private JButton median = new JButton();
-	
+
+	private ButtonGroup groupType = new ButtonGroup();
+	private JRadioButton kmRadio = new JRadioButton("km");
+	private JRadioButton turnoverRadio = new JRadioButton("kcat");
+
 	private RangeSlider slider = new RangeSlider();
 
 	public ParameterSearcher(BiologicalNodeAbstract bna) {
@@ -115,9 +124,9 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		btnUpdateEnzyme.setActionCommand("updateEnzymes");
 		btnUpdateEnzyme.addActionListener(this);
 
-		btnUpdateKm = new JButton("Update Km Values");
-		btnUpdateKm.setActionCommand("updateKm");
-		btnUpdateKm.addActionListener(this);
+		btnUpdateValues = new JButton("Update Values");
+		btnUpdateValues.setActionCommand("updateValues");
+		btnUpdateValues.addActionListener(this);
 
 		this.ecNumber.setText(bna.getLabel());
 		this.name.setText(bna.getName());
@@ -125,7 +134,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		this.metabolite.setText("");
 		this.org.setText("");
 
-		this.ecNumber.setColumns(5);
+		this.ecNumber.setColumns(8);
 		this.name.setColumns(20);
 		this.syn.setColumns(20);
 		this.metabolite.setColumns(20);
@@ -140,17 +149,40 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		mainPanel = new JPanel(layout);
 		valuesPanel = new JPanel(new MigLayout());
 		statisticPanel = new JPanel(new MigLayout());
-		kmStatistics.setForeground(Color.RED);
+		valueStatistics.setForeground(Color.RED);
 
 		this.updateValuesPanel();
 
-		mainPanel.add(new JLabel("Following enzymes have been found. Please select the enzymes of interest"), "span 2");
-		mainPanel.add(new JSeparator(), "gap 10, wrap 15, growx");
+		groupType.add(kmRadio);
+		groupType.add(turnoverRadio);
+		
+		kmRadio.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					btnUpdateValues.setText("Update km values");
+			    }
+			}
+		});
+		kmRadio.setSelected(true);
+		turnoverRadio.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					btnUpdateValues.setText("Update kcat values");
+			    }
+			}
+		});
+
+		lblCurrentParameter.setText("not selected");
+		mainPanel.add(new JLabel("Current Paremter: "), "span 1");
+		mainPanel.add(lblCurrentParameter, "wrap");
+		mainPanel.add(new JSeparator(), "span, wrap 15, growx");
 		mainPanel.add(valuesPanel, "span, wrap");
 		mainPanel.add(new JLabel("Ec number:"), "span 1, gaptop 2 ");
-		mainPanel.add(this.ecNumber, "span 1,wrap,gaptop 2");
+		mainPanel.add(this.ecNumber, "span 1, wrap, gaptop 2");
 		mainPanel.add(new JLabel("Name:"), "span 1, gaptop 2 ");
-		mainPanel.add(this.name, "span 1,wrap,gaptop 2");
+		mainPanel.add(this.name, "span 1, wrap, gaptop 2");
 		mainPanel.add(new JLabel("Synonym:"), "span 1, gaptop 2 ");
 		mainPanel.add(this.syn, "span 1,wrap,gaptop 2");
 		mainPanel.add(new JLabel("Metabolite:"), "span 1, gaptop 2 ");
@@ -158,28 +190,30 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		mainPanel.add(new JLabel("Organism:"), "span 1, gaptop 2 ");
 		mainPanel.add(this.org, "span 1,gaptop 2");
 		mainPanel.add(this.btnUpdateEnzyme, "span 1,wrap,gaptop 2");
-
+		mainPanel.add(new JLabel("Type:"));
+		mainPanel.add(kmRadio);
+		mainPanel.add(turnoverRadio, "span ,wrap,gaptop 2");
 		mainPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
 
-		mainPanel.add(sp, "span 4, growx");
+		mainPanel.add(sp, "span 4, growx, wrap");
 		mainPanel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
 
 		metabolite.getDocument().addDocumentListener(new DocumentListener() {
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				setKmSorterListener();
+				setValueSorterListener();
 			}
 
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				// System.out.println("insert");
-				setKmSorterListener();
+				setValueSorterListener();
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				setKmSorterListener();
+				setValueSorterListener();
 			}
 		});
 
@@ -190,7 +224,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				setKmSorterListener();
+				setValueSorterListener();
 			}
 
 			@Override
@@ -218,9 +252,9 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			public void keyPressed(KeyEvent e) {
 			}
 		});
-		mainPanel.add(btnUpdateKm, "span 1, gaptop 2");
-		mainPanel.add(new JLabel("Filter enzymes:"), "span 1, gaptop 2");
-		mainPanel.add(enzymeFilter, "span 1, wrap");
+		mainPanel.add(btnUpdateValues, "gaptop 2");
+		mainPanel.add(new JLabel("Filter enzymes:"), "gaptop 2");
+		mainPanel.add(enzymeFilter, "wrap");
 
 		mainPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
 
@@ -274,42 +308,45 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		enzymeTable.setRowSelectionInterval(0, 0);
 	}
 
-	public void updateKmTable(Object[][] rows) {
+	private void updateValueTable(Object[][] rows) {
 
-		if (kmTable == null) {
-			kmModel = new NodePropertyTableModel(rows, kmColumnNames);
-			kmSorter = new TableRowSorter<NodePropertyTableModel>(kmModel);
-			kmTable = new MyTable();
+		if (valueTable == null) {
+			valueModel = new NodePropertyTableModel(rows, valueColumnNames);
+			valueSorter = new TableRowSorter<NodePropertyTableModel>(valueModel);
+			
+			valueTable = new MyTable();
 			// enzymeSorter = new
 			// TableRowSorter<NodePropertyTableModel>(enzymeModel);
-			kmTable.setModel(kmModel);
-			kmSorter.setRowFilter(null);
-			kmTable.setRowSorter(kmSorter);
+			valueTable.setModel(valueModel);
+			valueSorter.setRowFilter(null);
+			
+			valueTable.setRowSorter(valueSorter);
 			// organismSorter.setRowFilter(null);
 			// kmTable.setRowSorter(organismSorter);
 			// enzymeSorter.setRowFilter(null);
 			// enzymeTable.setRowSorter(enzymeSorter);
 
-			kmTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			kmTable.setColumnControlVisible(false);
-			kmTable.setHighlighters(HighlighterFactory.createSimpleStriping());
-			kmTable.setFillsViewportHeight(true);
-			kmTable.addHighlighter(new ColorHighlighter(new Color(192, 215, 227), Color.BLACK));
-			kmTable.setHorizontalScrollEnabled(true);
-			kmTable.getTableHeader().setReorderingAllowed(false);
-			kmTable.getTableHeader().setResizingAllowed(true);
-			// kmTable.setRowSelectionInterval(0, 0);
-			kmTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			valueTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+			valueTable.setColumnControlVisible(false);
+			valueTable.setHighlighters(HighlighterFactory.createSimpleStriping());
+			valueTable.setFillsViewportHeight(true);
+			valueTable.addHighlighter(new ColorHighlighter(new Color(192, 215, 227), Color.BLACK));
+			valueTable.setHorizontalScrollEnabled(true);
+			valueTable.getTableHeader().setReorderingAllowed(false);
+			valueTable.getTableHeader().setResizingAllowed(true);
+			
+			valueTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
+					//System.out.println(e.g);
 					// avoid multiple events
 					if (e.getValueIsAdjusting()) {
-						updateKmStatistics();
+						updateValueStatistics();
 					}
 				}
 			});
-
+			valueTable.setRowSelectionInterval(0, 0);
 			number.setText("");
 			number.setMinimumSize(new Dimension(60, number.getHeight()));
 			number.addActionListener(this);
@@ -341,21 +378,21 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			median.setToolTipText("set");
 
 			slider.setPreferredSize(new Dimension(500, slider.getPreferredSize().height));
-			
+
 			slider.setMinimum(0);
-			slider.setMaximum(kmModel.getRowCount()-1);
-			
+			slider.setMaximum(valueModel.getRowCount() - 1);
+
 			slider.setValue(0);
 			slider.setUpperValue(slider.getMaximum());
-			
+
 			slider.addChangeListener(new ChangeListener() {
-				
+
 				@Override
 				public void stateChanged(ChangeEvent e) {
 					sliderStateChanged();
 				}
 			});
-			
+
 			statisticPanel.add(slider, "span, wrap");
 			statisticPanel.add(new JLabel("n:"));
 			statisticPanel.add(number);
@@ -367,27 +404,51 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			statisticPanel.add(mean);
 			statisticPanel.add(new JLabel("median:"));
 			statisticPanel.add(median);
-			statisticPanel.add(kmStatistics);
+			statisticPanel.add(valueStatistics);
 			mainPanel.add(statisticPanel, "span, wrap");
 
 			// mainPanel.add(kmStatistics, "span 12, wrap");
 
-			JScrollPane sp = new JScrollPane(kmTable);
+			JScrollPane sp = new JScrollPane(valueTable);
 			sp.setPreferredSize(new Dimension(100, 400));
 			mainPanel.add(sp, "growx, span 4");
 			// mainPanel.repaint();
-			this.updateKmStatistics();
+			this.updateValueStatistics();
 			mainPanel.revalidate();
 		} else {
 			// System.out.println("update");
 
-			kmModel = new NodePropertyTableModel(rows, kmColumnNames);
-
-			// enzymeSorter = new
-			// TableRowSorter<NodePropertyTableModel>(enzymeModel);
-			kmTable.setModel(kmModel);
-			this.updateKmStatistics();
+			valueModel = new NodePropertyTableModel(rows, valueColumnNames);
+			valueSorter = new TableRowSorter<NodePropertyTableModel>(valueModel);
+			valueTable.setModel(valueModel);
+			valueSorter.setRowFilter(null);
+			valueTable.setRowSorter(valueSorter);
+			//valueTable.setModel(valueModel);
+			//valueTable.updateUI();
+			this.updateValueStatistics();
 		}
+	}
+
+	private void updateValues(String searchType) {
+		MainWindow.getInstance().showProgressBar("update values");
+		this.ecNumber.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 1));
+		MainWindow.getInstance().showProgressBar("BRENDA 2 query");
+		BRENDA2Search brenda2Search = new BRENDA2Search(searchType);
+		brenda2Search.setEcNumber(this.getEcNumber());
+		brenda2Search.setName(this.getName());
+		brenda2Search.setMetabolite(this.getMetabolite());
+		brenda2Search.setOrg(this.getOrganism());
+		brenda2Search.setSyn(this.getSynonym());
+		brenda2Search.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getNewValue().toString().equals("DONE")) {
+					updateValueTable(brenda2Search.getResults());
+				}
+			}
+		});
+		brenda2Search.execute();
+
 	}
 
 	public boolean continueProgress() {
@@ -431,28 +492,15 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			brenda2Search.execute();
 
 			// brenda2Search.execute();
-		} else if (event.equals("updateKm")) {
+		} else if (event.equals("updateValues")) {
 			// System.out.println(enzymeTable.getSelectedColumn());
 
 			if (enzymeTable.getSelectedRowCount() > 0) {
-				MainWindow.getInstance().showProgressBar("update Km Values");
-				this.ecNumber.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 1));
-				MainWindow.getInstance().showProgressBar("BRENDA 2 query");
-				BRENDA2Search brenda2Search = new BRENDA2Search(BRENDA2Search.kmSearch);
-				brenda2Search.setEcNumber(this.getEcNumber());
-				brenda2Search.setName(this.getName());
-				brenda2Search.setMetabolite(this.getMetabolite());
-				brenda2Search.setOrg(this.getOrganism());
-				brenda2Search.setSyn(this.getSynonym());
-				brenda2Search.addPropertyChangeListener(new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						if (evt.getNewValue().toString().equals("DONE")) {
-							updateKmTable(brenda2Search.getResults());
-						}
-					}
-				});
-				brenda2Search.execute();
+				if (kmRadio.isSelected()) {
+					this.updateValues(BRENDA2Search.kmSearch);
+				} else {
+					this.updateValues(BRENDA2Search.turnoverSearch);
+				}
 			} else {
 				MyPopUp.getInstance().show("Empty enzyme", "Please select an enzyme first!");
 			}
@@ -464,11 +512,21 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			JButton b = (JButton) e.getSource();
 
 			// System.out.println(b.getText());
-			if (!metabolite.getText().trim().equals(b.getText().trim())) {
-				this.metabolite.setText(b.getText());
-			}
 
 			this.currentParameter = bna.getParameter(event.substring(4));
+			String parameter = b.getText().trim();
+			this.lblCurrentParameter.setText(parameter);
+			valueTable.getSelectionModel().clearSelection();
+			if (parameter.equals("v_f") || parameter.equals("v_r")) {
+				turnoverRadio.setSelected(true);
+				this.metabolite.setText("");
+			} else {
+				if (!metabolite.getText().trim().equals(b.getText().trim())) {
+					this.metabolite.setText(b.getText());
+				}
+				kmRadio.setSelected(true);
+
+			}
 		} else if (event.equals("setValue")) {
 
 			if (e.getSource() instanceof JButton) {
@@ -487,32 +545,21 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 					}
 				}
 			}
-		} else if (event.equals("setMin")) {
-			if (e.getSource() instanceof JButton) {
-
-			}
-		} else if (event.equals("setMax")) {
-			if (e.getSource() instanceof JButton) {
-
-			}
-		} else if (event.equals("setMean")) {
-			if (e.getSource() instanceof JButton) {
-
-			}
-		} else if (event.equals("setMedian")) {
-			if (e.getSource() instanceof JButton) {
-
-			}
+		} else if (event.equals("kmRadio")) {
+			btnUpdateValues.setText("Update km values");
+		} else if (event.equals("turnoverRadio")) {
+			btnUpdateValues.setText("Update kcat values");
 		}
 	}
 
-	private void updateKmStatistics() {
-		// System.out.println("new km statistics");
+	private void updateValueStatistics() {
+		//System.out.println("new km statistics");
 		List<Double> list = new ArrayList<Double>();
-		// System.out.println("count: "+kmTable.getSelectedRowCount());
-		for (int i = 0; i < kmTable.getRowCount(); i++) {
-			if (kmTable.getSelectedRowCount() == 0 || kmTable.isRowSelected(i)) {
-				list.add(Double.parseDouble((String) kmTable.getValueAt(i, 3)));
+		//System.out.println("count: "+valueTable.getRowCount());
+		for (int i = 0; i < Math.min(valueTable.getRowCount(), valueModel.getRowCount()); i++) {
+			//System.out.println("i: "+i);
+			if (valueTable.getSelectedRowCount() == 0 || valueTable.isRowSelected(i)) {
+				list.add(Double.parseDouble((String) valueTable.getValueAt(i, 3)));
 			}
 		}
 		// System.out.println(list.size());
@@ -525,18 +572,18 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			this.max.setText(list.get(list.size() - 1) + "");
 			this.mean.setText(Math.round(mean * 10000.0) / 10000.0 + "");
 			this.median.setText(Math.round(median * 10000.0) / 10000.0 + "");
-			//System.out.println(median);
+			// System.out.println(median);
 			// this.kmStatistics.setText("n: " + list.size() + " min: " +
 			// list.get(0) + " max: " + list.get(list.size() - 1) + " mean: "
 			// + Math.round(mean * 10000.0) / 10000.0 + " meadian: " + median);
-			this.kmStatistics.setText("");
+			this.valueStatistics.setText("");
 		} else {
 			this.number.setText("");
 			this.min.setText("");
 			this.max.setText("");
 			this.mean.setText("");
 			this.median.setText("");
-			this.kmStatistics.setText(" No values selected!");
+			this.valueStatistics.setText(" No values selected!");
 		}
 	}
 
@@ -560,11 +607,15 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		return this.org.getText().trim();
 	}
 
-	private void setKmSorterListener() {
+	private void setValueSorterListener() {
 
+		if (valueSorter == null) {
+			return;
+		}
 		if (metabolite.getText().trim().length() < 1 && org.getText().trim().length() < 1) {
-			kmSorter.setRowFilter(null);
+			valueSorter.setRowFilter(null);
 		} else {
+			//System.out.println("setValueSorterListener");
 			List<RowFilter<NodePropertyTableModel, Integer>> listOfFilters = new ArrayList<>();
 			if (metabolite.getText().trim().length() > 0) {
 
@@ -576,10 +627,12 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			// kmSorter.setRowFilter(RowFilter.regexFilter(metabolite.getText().trim(),2));
 			// kmSorter.setRowFilter(RowFilter.regexFilter(org.getText().trim(),1));
 			if (listOfFilters.size() > 0) {
-				kmSorter.setRowFilter(RowFilter.andFilter(listOfFilters));
+				//System.out.println("before set -----------------------");
+				valueSorter.setRowFilter(RowFilter.andFilter(listOfFilters));
+				//System.out.println("after set -----------------------");
 			}
 		}
-		//System.out.println("sorter updated");
+		//System.out.println("update slider finally");
 		this.updateSlider();
 	}
 
@@ -619,28 +672,39 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			valuesPanel.add(new JLabel(p.getValue() + ""));
 		}
 		valuesPanel.add(new JLabel(), "wrap");
+		valuesPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
 		valuesPanel.add(new JLabel("Products:"));
 		valuesPanel.add(new JLabel(), "wrap");
 		valuesPanel.add(new JLabel("Values:"));
 		valuesPanel.add(new JLabel("test2"));
 		valuesPanel.revalidate();
 	}
-	
-	private void updateSlider(){
+
+	private void updateSlider() {
 		slider.setMinimum(0);
-		slider.setMaximum(kmTable.getRowCount()-1);
+		slider.setMaximum(valueTable.getRowCount() - 1);
 		slider.setValue(0);
-		slider.setUpperValue(kmTable.getRowCount()-1);
-		//System.out.println("count: "+kmTable.getRowCount());
-		//System.out.println(kmTable.filt);
+		slider.setUpperValue(valueTable.getRowCount() - 1);
+		// System.out.println("count: "+kmTable.getRowCount());
+		// System.out.println(kmTable.filt);
 		slider.getUpperValue();
 	}
-	
-	private void sliderStateChanged(){
+
+	private void sliderStateChanged() {
 		//System.out.println(slider.getValue()+" - " + slider.getUpperValue());
-		kmTable.setRowSelectionInterval(slider.getValue(), slider.getUpperValue());
-		//kmTable.select
-		//System.out.println("selection changed");
-		this.updateKmStatistics();
+		boolean all = false;
+		//System.out.println("upper: "+slider.getUpperValue()+" vs. "+valueTable.getRowCount());
+		if(slider.getValue() == 0 && slider.getUpperValue() == valueTable.getRowCount()-1){
+			//System.out.println("maximum");
+			valueTable.getSelectionModel().clearSelection();
+			all = true;
+		}
+		if (valueTable.getRowCount() > 0 && !all) {
+			//valueTable.setUpdateSelectionOnSort(false);
+			
+			valueTable.setRowSelectionInterval(slider.getValue(), slider.getUpperValue());
+		}
+		// kmTable.select
+		this.updateValueStatistics();
 	}
 }
