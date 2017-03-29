@@ -9,7 +9,6 @@ import javax.swing.SwingWorker;
 import biologicalElements.Pathway;
 import configurations.Wrapper;
 import database.Connection.DatabaseQueryValidator;
-import database.brenda2.gui.Brenda2SearchResultWindow;
 import gui.MainWindow;
 import pojos.DBColumn;
 
@@ -25,6 +24,7 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
 
 	public static final String enzymeSearch = "enzymeSearch";
 	public static final String kmSearch = "kmSearch";
+	public static final String turnoverSearch = "turnoverSearch";
 
 	private String search = BRENDA2Search.enzymeSearch;
 
@@ -132,17 +132,18 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
 		String query = "select e.ec, org.name, met.name, km.value from brenda2_km as km"
 				+ " join brenda2_metabolite as met on km.metabolite_id = met.id" + " join brenda2_organism as org on km.organism_id = org.id"
 				+ " join brenda2_enzyme as e on km.enzyme_id = e.enzyme_id" + " where e.ec = '" + ecNumber + "'";
-		//System.out.println(query);
-		// = 3713"
-		// select km.value, met.name, org.name from brenda2_km as km join
-		// brenda2_metabolite as met on km.metabolite_id = met.id join
-		// brenda2_organism as org on km.organism_id = org.id where km.enzyme_id
-		// = 3713 LIMIT 0, 1000
+		return query;
+	}
+	
+	private String getTurnoverQuery(){
+		String query = "select e.ec, org.name, met.name, tn.min from brenda2_turnovernumber as tn"
+				+ " join brenda2_metabolite as met on tn.metabolite_id = met.id"
+				+ " join brenda2_organism as org on tn.organism_id = org.id"
+				+ " join brenda2_enzyme as e on tn.enzyme_id = e.enzyme_id" + " where e.ec = '" + ecNumber + "'";
 		return query;
 	}
 
 	public String[][] getResults(){
-
 		return this.results;
 	}
 
@@ -162,6 +163,9 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
 			headers = 4;
 			results = new Wrapper().requestDbContent(Wrapper.dbtype_BRENDA2, getKmQuery());
 			break;
+		case turnoverSearch:
+			headers = 4;
+			results = new Wrapper().requestDbContent(Wrapper.dbtype_BRENDA2, getTurnoverQuery());
 		}
 
 		String[][] container = new String[results.size()][headers];
@@ -180,20 +184,7 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
 	public void done() {
 		MainWindow.getInstance().closeProgressBar();
 		
-		if (results != null && results.length > 0) {
-			/*if (bsrw == null) {
-				bsrw = new Brenda2SearchResultWindow(results, ecNumber, name, syn, metabolite, org);
-			} else {
-				switch(this.search){
-				case enzymeSearch:
-					bsrw.updateEnzymeTable(results);
-					break;
-				case kmSearch:
-					bsrw.updateKmTable(results);
-					break;
-				}
-			}*/
-		} else {
+		if (results == null && results.length <1) {
 			JOptionPane.showMessageDialog(MainWindow.getInstance(), "Sorry, no entries have been found.");
 		}
 	}

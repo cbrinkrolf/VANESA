@@ -9,7 +9,6 @@ import database.brenda2.gui.BRENDA2queryMask;
 import database.kegg.gui.KEGGqueryMask;
 import database.mirna.gui.MirnaQueryClass;
 import database.ppi.gui.PPIqueryMask;
-import database.unid.UNIDQueryMask;
 import gui.MainWindow;
 
 public class DatabaseWindow {
