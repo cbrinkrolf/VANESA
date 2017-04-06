@@ -486,7 +486,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 			boolean specific) {
 
 		boolean first = true;
-		// System.out.println("drin"+allGeneralRelations.size());
+		//System.out.println("drin"+allGeneralRelations.size());
 
 		for (DBColumn column : allGeneralRelations) {
 			if (first) {
@@ -543,6 +543,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 				// Vertex vertex2 = bna2.getVertex();
 
 				if (subtype != null) {
+					//System.out.println("subtype not null:"+subtypeValue+" bna:"+subtype.getName()+" "+subtype.getLabel());
 					// Vertex subVertex = subtype.getVertex();
 					if (!pw.existEdge(bna1, subtype)
 							&& (!pw.existEdge(subtype, bna1))) {
@@ -550,7 +551,9 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 						c.setDirected(true);
 						if (specific)
 							bna1.setColor(Color.GREEN);
+						//pw.addEdgeToView(c, true);
 						pw.addEdge(c);
+						pw.updateMyGraph();
 					}
 
 					if (!pw.existEdge(subtype, bna2)
@@ -560,6 +563,8 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 						if (specific)
 							bna2.setColor(Color.GREEN);
 						pw.addEdge(c2);
+						pw.updateMyGraph();
+						//pw.addEdgeToView(c2, true);
 					}
 
 				} else
@@ -594,6 +599,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 						if (specific)
 							bna1.setColor(Color.GREEN);
 						pw.addEdge(c);
+						pw.updateMyGraph();
 						// System.out.println("type: "+edgeType);
 					}
 				}
@@ -666,6 +672,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 					}
 					pw.addEdge(c);
 					c.setDirected(true);
+					pw.updateMyGraph();
 				}
 				if (specific) {
 					// enzyme.setColor(Color.GREEN);
@@ -675,6 +682,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 					Compound c2 = new Compound("", "", enzyme, product);
 					pw.addEdge(c2);
 					c2.setDirected(true);
+					pw.updateMyGraph();
 				}
 
 			}
