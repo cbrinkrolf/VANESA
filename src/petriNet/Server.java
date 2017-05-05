@@ -68,7 +68,7 @@ public class Server {
 							+ "_" + System.nanoTime();
 					simResult = pw.getPetriNet().getSimResController().get(simName);
 					System.out.println(simName);
-
+					MainWindow.getInstance().initPCPGraphs();
 					while (true) {
 						java.net.Socket client = warteAufAnmeldung(serverSocket);
 						// leseNachricht(client);
