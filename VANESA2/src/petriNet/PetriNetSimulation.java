@@ -260,7 +260,7 @@ public class PetriNetSimulation implements ActionListener {
 				s.start();
 				System.out.println("building ended");
 				pw.getPetriNet().setPetriNetSimulation(true);
-				w.initPCPGraphs();
+				
 
 				System.out.println("stop: " + stopTime);
 				Thread t1 = new Thread() {

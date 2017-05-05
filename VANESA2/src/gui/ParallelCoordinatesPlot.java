@@ -1,10 +1,16 @@
 package gui;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -145,6 +151,11 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 	private ArrayList<XYSeries> seriesListR1 = new ArrayList<XYSeries>();
 	private ArrayList<XYSeries> seriesListR2 = new ArrayList<XYSeries>();
+	private int r1Count = 0;
+	private int r2Count = 0;
+
+	private XYSeriesCollection dataset = new XYSeriesCollection();
+	private XYSeriesCollection dataset2 = new XYSeriesCollection();
 
 	// private DoubleHashMap<GraphElementAbstract, Integer, Integer> series2idx
 	// = new DoubleHashMap<GraphElementAbstract, Integer, Integer>();
@@ -338,6 +349,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 	 * This method redraws the time series plot in the left sidebar.
 	 */
 	private void drawPlot() {
+		System.out.println("draw plot");
 		Place place;
 		Transition transition;
 		// places = new ArrayList<Place>();
@@ -352,12 +364,12 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		for (int i = 0; i < seriesListR2.size(); i++) {
 			renderer2.setSeriesVisible(i, false);
 		}
-
+		SimulationResult simRes = pw.getPetriNet().getSimResController().get();
 		boolean secondAxis = false;
 		if (pickedV == 0 && pickedE == 1) {
 			BiologicalEdgeAbstract bea = GraphInstance.getMyGraph().getVisualizationViewer().getPickedEdgeState().getPicked().iterator().next();
 			if (bea instanceof PNEdge) {
-				SimulationResult simRes = pw.getPetriNet().getSimResController().get();
+
 				secondAxis = true;
 				PNEdge edge = (PNEdge) bea;
 				// System.out.println(edge.getID());
@@ -366,12 +378,52 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// edge.getFrom().getName()
 					// + " " + edge.getTo().getName());
 					// System.out.println("true");
-					renderer.setSeriesVisible((int) series2idx.get(edge, ACTUAL_TOKEN_FLOW, "test"), true);
-					renderer2.setSeriesVisible((int) series2idx.get(edge, SUM_OF_TOKEN, "test"), true);
+					renderer.setSeriesVisible((int) series2idx.get(edge, ACTUAL_TOKEN_FLOW, simRes.getName()), true);
+					renderer2.setSeriesVisible((int) series2idx.get(edge, SUM_OF_TOKEN, simRes.getName()), true);
 					// System.out.println(min);
 				}
 			}
-		} else {
+		} else if(pickedV == 1 && pickedE == 0){
+			bna = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator().next();
+			Iterator<SimulationResult> it = pw.getPetriNet().getSimResController().getAllActive().iterator();
+			SimulationResult result;
+			int total = pw.getPetriNet().getSimResController().getAllActive().size();
+			for(int i = 0; i<pw.getPetriNet().getSimResController().getAllActive().size(); i++){
+				result = pw.getPetriNet().getSimResController().getAllActive().get(i);
+				//System.out.println(result.getName());
+				//System.out.println(series2idx.get(bna, TOKEN, result.getName()));
+				//System.out.println(dataset.getSeriesCount());
+				//System.out.println(renderer.getPassCount());
+				//if (this.series2idx.contains(bna, TOKEN)) {
+					renderer.setSeriesVisible((int) series2idx.get(bna, TOKEN, result.getName()), true);
+					//renderer.setSeriesPaint((int) series2idx.get(bna, TOKEN, result.getName()), Color.BLACK);
+					//System.out.println(renderer.getSeriesVisible((int) series2idx.get(bna, TOKEN, result.getName())));
+					System.out.println(renderer.getPlot().getSeriesCount());
+					int idx = series2idx.get(bna, TOKEN, result.getName());
+					
+						Stroke dash1 = new BasicStroke(1.0f,
+		                        BasicStroke.CAP_SQUARE,
+		                        BasicStroke.JOIN_MITER,
+		                        1.0f,
+		                        new float[] {2.0f,i*2+2.0f},
+		                        0.0f);
+						//renderer.getLegendItem(0,0).setLinePaint(Color.BLUE);
+						//Line2D.Double l = new Line2D.Double(0, 0, 1, 1);
+						
+						//renderer.setStroke(new BasicStroke(1.0f));
+						BasicStroke thickLine = new BasicStroke( 4.0f ); 
+						renderer.setSeriesStroke(idx, dash1);
+						Color c = Color.getHSBColor(i * 1.0f
+								/ (total), 1, 1);
+						renderer.setSeriesPaint(idx, c);
+						//renderer.setLegendLine();
+						//System.out.println(renderer.getLegendItem(0,0).getLinePaint());
+						
+					//renderer.setSeriesVisible(0, true);
+				//}
+			}
+			
+		} else{
 
 			boolean onlyT = true;
 			if (GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size() > 0) {
@@ -408,7 +460,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// if (vector2idx.get(System.identityHashCode(place
 					// .getPetriNetSimulationData())) != null) {
 					if (this.series2idx.contains(place, TOKEN)) {
-						renderer.setSeriesVisible((int) series2idx.get(place, TOKEN, "test"), true);
+						renderer.setSeriesVisible((int) series2idx.get(place, TOKEN, simRes.getName()), true);
 					}
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
@@ -416,10 +468,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 						transition = (Transition) transition.getRef();
 					}
 					if (series2idx.contains(transition, ACTUAL_FIRING_SPEED)) {
-						renderer.setSeriesVisible((int) series2idx.get(transition, ACTUAL_FIRING_SPEED, "test"), true);
+						renderer.setSeriesVisible((int) series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getName()), true);
 					}
 				}
-
 			}
 		}
 
@@ -470,19 +521,22 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			if (pane.getChart().getLegend() == null) {
 				pane.getChart().addLegend(this.legend);
 			}
-
 		}
 
-		updateData();
+		//updateData();
 
 		pane.requestFocus();
-		// chart.fireChartChanged();
+		//chart.fireChartChanged();
 
 	}
+	
+	public void updateDateCurrentSimulation(){
+		this.updateData(pw.getPetriNet().getSimResController().get().getName());
+	}
 
-	public void updateData() {
+	public void updateData(String simName) {
 		// System.out.println("update data begin");
-		SimulationResult simRes = pw.getPetriNet().getSimResController().get();
+		SimulationResult simRes = pw.getPetriNet().getSimResController().get(simName);
 
 		Set<GraphElementAbstract> keys = series2idx.getKeys();
 		Iterator<GraphElementAbstract> itKeys = keys.iterator();
@@ -535,7 +589,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// System.out.println("size:
 					// "+place.getPetriNetSimulationData().size());
 					if (simRes.contains(place, TOKEN) && simRes.get(place, TOKEN).size() > 0) {
-						series = this.seriesListR1.get(series2idx.get(place, TOKEN, "test"));
+						series = this.seriesListR1.get(series2idx.get(place, TOKEN, simRes.getName()));
 						// System.out.println(seriesList.get(j).getItemCount());
 						// if (simRes.getTime().size() != place
 						// .getPetriNetSimulationData().size()) {
@@ -581,7 +635,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// System.out.println("only t");
 					// System.out.println(transition.getSimActualSpeed().size());
 					if (simRes.contains(transition, ACTUAL_FIRING_SPEED) && simRes.get(transition, ACTUAL_FIRING_SPEED).size() > 0) {
-						series = this.seriesListR1.get(series2idx.get(transition, ACTUAL_FIRING_SPEED, "test"));
+						series = this.seriesListR1.get(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getName()));
 						// System.out.println(transition.getName());
 						stop = Math.min(simRes.get(transition, ACTUAL_FIRING_SPEED).size(), time.size());
 						// System.out.println(stop);
@@ -621,8 +675,8 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 						// System.out.println(seriesListR1.size());
 						// System.out.println(seriesListR2.size());
 						// System.out.println("null: " + series2idx.size());
-						series = this.seriesListR1.get(series2idx.get(edge, ACTUAL_TOKEN_FLOW, "test"));
-						series2 = this.seriesListR2.get(series2idx.get(edge, SUM_OF_TOKEN, "test"));
+						series = this.seriesListR1.get(series2idx.get(edge, ACTUAL_TOKEN_FLOW, simRes.getName()));
+						series2 = this.seriesListR2.get(series2idx.get(edge, SUM_OF_TOKEN, simRes.getName()));
 						if (simRes.contains(edge, SUM_OF_TOKEN) && simRes.get(edge, SUM_OF_TOKEN).size() > 0
 								&& simRes.get(edge, ACTUAL_TOKEN_FLOW).size() > 0) {
 							stop = Math.min(Math.min(simRes.get(edge, ACTUAL_TOKEN_FLOW).size(), simRes.get(edge, SUM_OF_TOKEN).size()), time.size());
@@ -661,10 +715,13 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 							}
 						}
 						// long end = System.currentTimeMillis();
-
 					}
 				}
+			}
+			if (chart != null) {
+				//System.out.println("chart fired changed");
 				chart.fireChartChanged();
+				//System.out.println(seriesListR1.size()+" "+seriesListR2.size());
 			}
 		}
 		// chart.fireChartChanged();
@@ -1021,119 +1078,60 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
 
-		// System.out.println("inti Graphs");
+		if (!pw.isPetriNet() || !pw.hasGotAtLeastOneElement()) {
+			return;
+		}
+		System.out.println("init Graphs");
 		p.removeAll();
-		final XYSeriesCollection dataset = new XYSeriesCollection();
-		final XYSeriesCollection dataset2 = new XYSeriesCollection();
 
-		renderer = new XYLineAndShapeRenderer();
+		renderer = new XYLineAndShapeRenderer();/*{
+			@Override
+	        public Stroke getItemStroke(int row, int col){
+	            Stroke dash1 = new BasicStroke(1.0f,
+	                        BasicStroke.CAP_SQUARE,
+	                        BasicStroke.JOIN_MITER,
+	                        10.0f,
+	                        new float[] {10.0f,5.0f},
+	                        0.0f);
+	            return dash1;
+	       
+			}
+			
+	    };*/
+	    
+	    
+	    //renderer.setBaseShapesFilled(false);
+	    //renderer.setDrawOutlines(false);
+	    renderer.setDrawSeriesLineAsPath(true);//this line is the solution
+	    
 		renderer2 = new XYLineAndShapeRenderer();
 
 		labels.clear();
 		// plotEntities.clear();
 		seriesListR1.clear();
 		seriesListR2.clear();
+		dataset.removeAllSeries();
+		dataset2.removeAllSeries();
+		r1Count = 0;
+		r2Count = 0;
 		// series2id.clear();
 		series2idx.clear();
-		// get Selected Places and their index+label
-		Place place;
-		Transition transition;
 		places = new ArrayList<BiologicalNodeAbstract>();
+		// get Selected Places and their index+label
 
-		int count = 0;
-		BiologicalNodeAbstract bna;
-		BiologicalEdgeAbstract bea;
-		if (pw == null) {
-			return;
-		}
-		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllGraphNodes().iterator();
-		XYSeries s;
-		List<String> simNames = pw.getPetriNet().getSimResController().getSimNames();
-		while (itNodes.hasNext()) {
-			bna = itNodes.next();
-			if (!bna.hasRef()) {
-				if (bna instanceof Place) {
-					place = (Place) bna;
-					// if (place.getPetriNetSimulationData().size() > 0) {
-					places.add(place);
-					s = new XYSeries(count);
-					series2idx.put(place, TOKEN, "test", count);
-
-					seriesListR1.add(s);
-					// System.out.println(System.identityHashCode(place.getPetriNetSimulationData())
-					// + " added");
-					dataset.addSeries(s);
-					labels.add(place.getName());// rows[indices.get(j)][0].toString());
-
-					renderer.setSeriesPaint(count, place.getPlotColor());
-
-					renderer.setSeriesItemLabelsVisible(count, true);
-					renderer.setSeriesShapesVisible(count, false);
-					count++;
-					// }
-				} else if (bna instanceof Transition) {
-					transition = (Transition) bna;
-					// if (transition.getPetriNetSimulationData().size() > 0) {
-					s = new XYSeries(count);
-					series2idx.put(transition, ACTUAL_FIRING_SPEED, "test", count);
-					// seriesList.add(new XYSeries(j));
-					// series2id.put(s, count);
-					seriesListR1.add(s);
-					dataset.addSeries(s);
-					labels.add(transition.getName());// rows[indices.get(j)][0].toString());
-
-					renderer.setSeriesPaint(count, Color.BLACK);
-
-					renderer.setSeriesItemLabelsVisible(count, true);
-					renderer.setSeriesShapesVisible(count, false);
-					renderer.setSeriesVisible(count, false);
-					count++;
-					// }
-				}
-			}
-		}
-
-		Iterator<BiologicalEdgeAbstract> itEdges = pw.getAllEdges().iterator();
-		while (itEdges.hasNext()) {
-			bea = itEdges.next();
-
-			if (bea instanceof PNEdge) {
-				PNEdge edge = (PNEdge) bea;
-
-				s = new XYSeries(count);
-				series2idx.put(edge, ACTUAL_TOKEN_FLOW, "test", count);
-				seriesListR1.add(s);
-				// series2id.put(s, count);
-				dataset.addSeries(s);
-				renderer.setSeriesPaint(count, Color.black);
-				renderer.setSeriesShapesVisible(count, false);
-				renderer.setSeriesVisible(count, false);
-
-				labels.add("Tokens");
-				count++;
-				s = new XYSeries(count);
-				series2idx.put(edge, SUM_OF_TOKEN, "test", seriesListR2.size());
-
-				// System.out.println(count + ": " + edge.getID());
-				// series2id.put(s, count);
-				renderer2.setSeriesPaint(seriesListR2.size(), Color.RED);
-				renderer2.setSeriesShapesVisible(seriesListR2.size(), false);
-				renderer2.setSeriesVisible(seriesListR2.size(), false);
-				labels.add("Sum of tokens");
-				seriesListR2.add(s);
-				// dataset.gets
-				dataset2.addSeries(s);
-
-				// count++;
-			}
-
+		Iterator<String> it = pw.getPetriNet().getSimResController().getSimNames().iterator();
+		String simName;
+		while (it.hasNext()) {
+			simName = it.next();
+			addSimulationToChart(simName);
+			updateData(simName);
 		}
 
 		renderer.setToolTipGenerator(new XYToolTipGenerator() {
 
 			@Override
 			public String generateToolTip(XYDataset arg0, int arg1, int arg2) {
-				return labels.get(arg1);
+				return "blabla";//labels.get(arg1);
 			}
 		});
 
@@ -1142,6 +1140,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			@Override
 			public String generateLabel(XYDataset arg0, int arg1) {
+				//arg0.get
 				return labels.get(arg1);
 			}
 		});
@@ -1182,15 +1181,14 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					if (pickedE == 0 && pickedV == 0) {
 
 						XYItemEntity entity = (XYItemEntity) event.getEntity();
+						System.out.println(entity.getSeriesIndex());
 						BiologicalNodeAbstract p = places.get(entity.getSeriesIndex());
 						PickedState<BiologicalNodeAbstract> ps = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState();
 						// ps.clearPickedVertices();
 						ps.clear();
 						ps.pick(p, true);
 					}
-
 				}
-
 			}
 
 			@Override
@@ -1204,7 +1202,108 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		p.add(pane, BorderLayout.CENTER);
 		p.setVisible(true);
 		this.revalidateView();
-		updateData();
+	}
+
+	private void addSimulationToChart(String simName) {
+		Place place;
+		Transition transition;
+		
+		//int count = seriesListR1.size() + seriesListR2.size();
+		//System.out.println("counter start: "+count);
+		BiologicalNodeAbstract bna;
+		BiologicalEdgeAbstract bea;
+		if (pw == null) {
+			return;
+		}
+		Iterator<BiologicalNodeAbstract> itNodes = pw.getAllGraphNodes().iterator();
+		XYSeries s;
+		System.out.println("resultssize: " + pw.getPetriNet().getSimResController().getSimNames().size());
+		if (pw.getPetriNet().getSimResController().get(simName) == null) {
+			System.out.println("PCPError, no such simulation name");
+			return;
+		}
+		while (itNodes.hasNext()) {
+			bna = itNodes.next();
+			if (!bna.hasRef()) {
+				if (bna instanceof Place) {
+					place = (Place) bna;
+					// if (place.getPetriNetSimulationData().size() > 0) {
+					places.add(place);
+					s = new XYSeries(r1Count);
+					series2idx.put(place, TOKEN, simName, r1Count);
+					System.out.println(r1Count+" "+place.getName()+" ");
+					seriesListR1.add(s);
+					
+					// System.out.println(System.identityHashCode(place.getPetriNetSimulationData())
+					// + " added");
+					dataset.addSeries(s);
+					
+					labels.add(place.getName());// rows[indices.get(j)][0].toString());
+
+					renderer.setSeriesPaint(r1Count, place.getPlotColor());
+
+					renderer.setSeriesItemLabelsVisible(r1Count, true);
+					renderer.setSeriesShapesVisible(r1Count, false);
+					r1Count++;
+					// }
+				} else if (bna instanceof Transition) {
+					transition = (Transition) bna;
+					// if (transition.getPetriNetSimulationData().size() > 0) {
+					places.add(transition);
+					s = new XYSeries(r1Count);
+					series2idx.put(transition, ACTUAL_FIRING_SPEED, simName, r1Count);
+					System.out.println(r1Count+" "+transition.getName()+" ");
+					// seriesList.add(new XYSeries(j));
+					// series2id.put(s, count);
+					seriesListR1.add(s);
+					dataset.addSeries(s);
+					labels.add(transition.getName());// rows[indices.get(j)][0].toString());
+
+					renderer.setSeriesPaint(r1Count, Color.BLACK);
+
+					renderer.setSeriesItemLabelsVisible(r1Count, true);
+					renderer.setSeriesShapesVisible(r1Count, false);
+					renderer.setSeriesVisible(r1Count, false);
+					r1Count++;
+					// }
+				}
+			}
+		}
+
+		Iterator<BiologicalEdgeAbstract> itEdges = pw.getAllEdges().iterator();
+		while (itEdges.hasNext()) {
+			bea = itEdges.next();
+
+			if (bea instanceof PNEdge) {
+				PNEdge edge = (PNEdge) bea;
+				places.add(edge.getFrom());
+				s = new XYSeries(r1Count);
+				series2idx.put(edge, ACTUAL_TOKEN_FLOW, simName, r1Count);
+				System.out.println(r1Count+" edgeF:"+edge.getFrom().getName()+" ");
+				seriesListR1.add(s);
+				// series2id.put(s, count);
+				dataset.addSeries(s);
+				renderer.setSeriesPaint(r1Count, Color.black);
+				renderer.setSeriesShapesVisible(r1Count, false);
+				renderer.setSeriesVisible(r1Count, false);
+
+				labels.add("blablalblalba");
+				r1Count++;
+				s = new XYSeries(r2Count);
+				series2idx.put(edge, SUM_OF_TOKEN, simName, seriesListR2.size());
+				System.out.println(r2Count+" edgeF:"+edge.getFrom().getName()+" ");
+				// System.out.println(count + ": " + edge.getID());
+				// series2id.put(s, count);
+				renderer2.setSeriesPaint(seriesListR2.size(), Color.RED);
+				renderer2.setSeriesShapesVisible(seriesListR2.size(), false);
+				renderer2.setSeriesVisible(seriesListR2.size(), false);
+				//labels.add("Sum of tokens");
+				seriesListR2.add(s);
+				// dataset.gets
+				dataset2.addSeries(s);
+				r2Count++;
+			}
+		}
 	}
 
 	private RegulationTabelModel getTableModel() {
@@ -1246,7 +1345,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// System.out.println(i+" "+j +" "+ MAData.get(j -
 					// 1));
 				}
-
 				i++;
 			}
 		}

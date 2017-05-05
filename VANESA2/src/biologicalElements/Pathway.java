@@ -232,7 +232,7 @@ public class Pathway implements Cloneable {
 
 	public BiologicalEdgeAbstract addEdge(BiologicalEdgeAbstract bea) {
 
-		// System.out.println("edge hinzugefuegt");
+		//System.out.println("edge hinzugefuegt");
 
 		if (bea != null) {
 			// edges.put(
@@ -247,9 +247,10 @@ public class Pathway implements Cloneable {
 			// if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
 			// && bea.getFrom().getParentNode() == null
 			// && bea.getTo().getParentNode() == null && !bea.isClone()) {
+			//System.out.println("edge:");
 			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()) {
 				// && !bea.isClone()) {
-				// System.out.println("added edge");
+				//System.out.println("added edge");
 				BiologicalNodeAbstract.addConnectingEdge(bea);
 				bea.setID();
 			}
@@ -396,6 +397,22 @@ public class Pathway implements Cloneable {
 	}
 
 	public int edgeGrade(BiologicalEdgeAbstract bea) {
+		//System.out.println("bla");
+		if(bea.getFrom().getName().equals("C05999")){
+			//System.out.println("to: "+bea.getTo().getLabel());
+			bea.getTo().updateHierarchicalAttributes();
+			//System.out.println(bea.getTo().getConnectingEdges().size());
+			
+			Iterator<BiologicalEdgeAbstract> it = bea.getTo().getConnectingEdges().iterator();
+			while(it.hasNext()){
+			BiologicalEdgeAbstract edge = it.next();
+			//System.out.println(edge);
+				//System.out.println("from: "+edge.getFrom()+" -> "+edge.getTo());
+			}
+		}
+		if(bea.getTo().getName().equals("C05999")){
+			//System.out.println("from: "+bea.getFrom().getLabel());
+		}
 		Set<BiologicalEdgeAbstract> conEdgesTo = new HashSet<BiologicalEdgeAbstract>();
 		for (BiologicalEdgeAbstract edge : bea.getFrom().getConnectingEdges()) {
 			if (edge.isDirected() == bea.isDirected()) {
@@ -412,7 +429,7 @@ public class Pathway implements Cloneable {
 				}
 			}
 		}
-		// System.out.println(conEdgesTo.size());
+		//System.out.println(conEdgesTo.size());
 		return conEdgesTo.size();
 	}
 
