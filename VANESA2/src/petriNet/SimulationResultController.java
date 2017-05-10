@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import biologicalElements.GraphElementAbstract;
 import graph.GraphInstance;
 import gui.MainWindow;
 
@@ -22,7 +23,7 @@ public class SimulationResultController {
 	public static int SIM_ACTUAL_TOKEN_FLOW = 4;
 
 	private HashMap<String, SimulationResult> series;
-	private List<String> simNames = new ArrayList<String>();
+	private List<String> simIds = new ArrayList<String>();
 
 	private boolean filteredDefault = false;
 
@@ -30,29 +31,29 @@ public class SimulationResultController {
 		series = new HashMap<String, SimulationResult>();
 	}
 
-	public SimulationResult get(String simulation) {
-		if (!simNames.contains(simulation)) {
-			series.put(simulation, new SimulationResult(simulation, filteredDefault));
-			simNames.add(simulation);
+	public SimulationResult get(String simId) {
+		if (!simIds.contains(simId)) {
+			series.put(simId, new SimulationResult(simId, simIds.size()+"",filteredDefault));
+			simIds.add(simId);
 		}
-		return series.get(simulation);
+		return series.get(simId);
 	}
 
-	public void removeSimulationResult(String result) {
-		if (series.containsKey(result)) {
-			series.remove(result);
-			simNames.remove(result);
+	public void removeSimulationResult(String simId) {
+		if (series.containsKey(simId)) {
+			series.remove(simId);
+			simIds.remove(simId);
 		}
 	}
 
 	public int size() {
-		return simNames.size();
+		return simIds.size();
 	}
 
-	public SimulationResult get() {
-		if (series.size() > 0) {
-			// System.out.println("returned: "+simNames.get(simNames.size()-1));
-			return series.get(simNames.get(simNames.size() - 1));
+	public SimulationResult getLastActive() {
+		List<SimulationResult> active = this.getAllActive();
+		if (active.size() > 0) {
+			return active.get(active.size() - 1);
 		} else {
 			return null;
 		}
@@ -60,21 +61,30 @@ public class SimulationResultController {
 
 	public List<SimulationResult> getAll() {
 		List<SimulationResult> list = new ArrayList<SimulationResult>();
-		for (int i = 0; i < this.simNames.size(); i++) {
-			list.add(this.series.get(this.simNames.get(i)));
+		for (int i = 0; i < this.simIds.size(); i++) {
+			list.add(this.series.get(this.simIds.get(i)));
 		}
-
 		return list;
 	}
 
 	public List<SimulationResult> getAllActive() {
 		List<SimulationResult> list = new ArrayList<SimulationResult>();
-		for (int i = 0; i < this.simNames.size(); i++) {
-			if (this.series.get(this.simNames.get(i)).isActive()) {
-				list.add(this.series.get(this.simNames.get(i)));
+		for (int i = 0; i < this.simIds.size(); i++) {
+			if (this.series.get(this.simIds.get(i)).isActive()) {
+				list.add(this.series.get(this.simIds.get(i)));
 			}
 		}
-
+		return list;
+	}
+	
+	public List<SimulationResult> getAllActiveWithData(GraphElementAbstract gea, int simulationAttribute){
+		List<SimulationResult> list = new ArrayList<SimulationResult>();
+		List<SimulationResult> active = getAllActive();
+		for (int i = 0; i < active.size(); i++) {
+			if (active.get(i).contains(gea, simulationAttribute)) {
+				list.add(active.get(i));
+			}
+		}
 		return list;
 	}
 
@@ -88,9 +98,9 @@ public class SimulationResultController {
 	}
 	
 	public void remove(int i){
-		this.series.remove(this.simNames.get(i));
-		this.simNames.remove(i);
-		if(simNames.size() < 1){
+		this.series.remove(this.simIds.get(i));
+		this.simIds.remove(i);
+		if(simIds.size() < 1){
 			GraphInstance graphInstance = new GraphInstance();
 			graphInstance.getPathway().getPetriNet().setPetriNetSimulation(false);
 			MainWindow w = MainWindow.getInstance();
@@ -98,7 +108,7 @@ public class SimulationResultController {
 		}
 	}
 	
-	public List<String> getSimNames(){
-		return this.simNames;
+	public List<String> getSimIds(){
+		return this.simIds;
 	}
 }

@@ -115,7 +115,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 			// double min = Double.MAX_VALUE;
 			// double max = Double.MIN_VALUE;
-			SimulationResult simRes = pw.getPetriNet().getSimResController().get();
+			SimulationResult simRes = pw.getPetriNet().getSimResController().getLastActive();
 			cols = simRes.getTime().size();
 			for (int j = 0; j < rows; j++) {
 				place = places.get(labels.get(j));
@@ -221,7 +221,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	}
 
 	private void updateData() {
-		SimulationResult simRes = pw.getPetriNet().getSimResController().get();
+		SimulationResult simRes = pw.getPetriNet().getSimResController().getLastActive();
 		//System.out.println("update");
 		Place place;
 		for (int j = 0; j < rows; j++) {
