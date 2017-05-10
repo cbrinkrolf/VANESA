@@ -14,8 +14,10 @@ public class SimulationResult {
 	private Series time;
 	private boolean active = true;
 	private String name;
+	private String id;
 
-	public SimulationResult(String name, boolean filtered) {
+	public SimulationResult(String id, String name, boolean filtered) {
+		this.id = id;
 		this.name = name;
 		result = new DoubleHashMap<GraphElementAbstract, Integer, Series>();
 		time = new Series();
@@ -92,12 +94,16 @@ public class SimulationResult {
 		this.active = active;
 	}
 
-	public String getName() {
-		return name;
+	public String getId() {
+		return this.id;
+	}
+	
+	public String getName(){
+		return this.name;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 	
 	public int size(){

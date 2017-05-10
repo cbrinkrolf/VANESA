@@ -6,9 +6,12 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
@@ -59,6 +63,8 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	private JComboBox<String> simLibs;
 	private JPanel west = new JPanel();
 	private JCheckBox forceRebuild = new JCheckBox("force rebuild");
+	
+	private HashMap<JTextField, SimulationResult> text2sim;
 
 	// private ActionListener listener;
 
@@ -221,7 +227,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
 	public void updateSimulationResults() {
 		west.removeAll();
-
+		text2sim = new HashMap<JTextField, SimulationResult>();
 		west.add(new JSeparator(), "growx, span, wrap");
 
 		JCheckBox all = new JCheckBox();
@@ -250,7 +256,23 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 			button.setActionCommand(i + "");
 			// System.out.println("name: "+results.get(i).getName());
 			west.add(button);
-			west.add(new JLabel(results.get(i).getName()), "wrap");
+			JTextField text = new JTextField(10);
+			text.setText(results.get(i).getName());
+			text2sim.put(text, results.get(i));
+			text.addFocusListener(new FocusListener() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					if(!text.getText().trim().equals(text2sim.get(e.getSource()).getName())){
+						text2sim.get(e.getSource()).setName(text.getText().trim());
+					}
+				}
+				
+				@Override
+				public void focusGained(FocusEvent e) {
+					// TODO Auto-generated method stub
+				}
+			});
+			west.add(text, "wrap");
 		}
 		this.pack();
 		west.repaint();

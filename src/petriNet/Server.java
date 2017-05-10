@@ -37,7 +37,7 @@ public class Server {
 	private HashMap<String, Integer> name2index;
 	private boolean running = true;
 	private Pathway pw;
-	private String simName;
+	private String simId;
 	private SimulationResult simResult;
 
 	// size of modelica int;
@@ -64,10 +64,10 @@ public class Server {
 				try {
 					int port = 11111;
 					serverSocket = new java.net.ServerSocket(port);
-					simName = "simulation_" + pw.getPetriNet().getSimResController().size()
+					simId = "simulation_" + pw.getPetriNet().getSimResController().size()
 							+ "_" + System.nanoTime();
-					simResult = pw.getPetriNet().getSimResController().get(simName);
-					System.out.println(simName);
+					simResult = pw.getPetriNet().getSimResController().get(simId);
+					System.out.println(simId);
 					MainWindow.getInstance().initPCPGraphs();
 					while (true) {
 						java.net.Socket client = warteAufAnmeldung(serverSocket);

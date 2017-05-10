@@ -268,7 +268,7 @@ public class PetriNetSimulation implements ActionListener {
 
 						try {
 							ProcessBuilder pb = new ProcessBuilder();
-							boolean noEmmit = true;
+							boolean noEmmit = !true;
 
 							String override = "";
 							if (SystemUtils.IS_OS_WINDOWS) {
@@ -357,16 +357,12 @@ public class PetriNetSimulation implements ActionListener {
 					public void run() {
 						pw.getGraph().getVisualizationViewer().requestFocus();
 						w.redrawGraphs();
-						// CHRIS sometimes nullpointer
-						System.out.println(pw.getPetriNet());
-						System.out.println(pw.getPetriNet().getSimResController());
-						System.out.println(pw.getPetriNet().getSimResController().get());
 						//System.out.println(pw.getPetriNet().getSimResController().get().getTime());
 						List<Double> v = null;//pw.getPetriNet().getSimResController().get().getTime().getAll();
 						// System.out.println("running");
 						while (s.isRunning()) {
-							if(v == null && pw.getPetriNet().getSimResController().get() != null){
-								v = pw.getPetriNet().getSimResController().get().getTime().getAll();
+							if(v == null && pw.getPetriNet().getSimResController().getLastActive() != null){
+								v = pw.getPetriNet().getSimResController().getLastActive().getTime().getAll();
 							}
 							// System.out.println("im thread");
 							w.redrawGraphs();
@@ -483,8 +479,8 @@ public class PetriNetSimulation implements ActionListener {
 				System.out.println("drin");
 
 				zstNachher = System.currentTimeMillis();
-				System.out.println("Zeit benoetigt: " + ((zstNachher - zstVorher) / 1000) + " sec");
-				System.out.println("Zeit benoetigt: " + ((zstNachher - zstVorher)) + " millisec");
+				//System.out.println("Zeit benoetigt: " + ((zstNachher - zstVorher) / 1000) + " sec");
+				System.out.println("Time for compiling: " + ((zstNachher - zstVorher)) + " millisec");
 
 				/*
 				 * Thread t3 = new Thread() { public void run() { long totalTime
