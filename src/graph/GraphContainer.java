@@ -1,6 +1,7 @@
 package graph;
 
 import graph.jung.classes.MyGraph;
+import gui.MainWindow;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,6 +24,15 @@ public class GraphContainer {
 	
 	private String PetriNetEditingMode = "discretePlace";
 	
+	private static GraphContainer instance;
+	
+	public static synchronized GraphContainer getInstance(){
+		if(GraphContainer.instance == null){
+			GraphContainer.instance = new GraphContainer();
+		}
+		return GraphContainer.instance;
+	}
+	
 	public String getPetriNetEditingMode() {
 		return PetriNetEditingMode;
 	}
@@ -39,10 +49,6 @@ public class GraphContainer {
 		this.isPetriView = isPetriView;
 	}
 	
-	public GraphContainer(){	
-	
-	}
-	
 	public GraphElementAbstract getSelectedObject() {
 		return selectedObject;
 	}
@@ -52,15 +58,13 @@ public class GraphContainer {
 	}
 	
 	public String addPathway(String name,Pathway pathway){
-		
 		String realName= checkNameDuplicates(name,1);
 		pathway.setName(realName);
 		map.put(realName, pathway);
-		
 		return realName;
 	}
 	
-	public String checkNameDuplicates(String name, int i){
+	private String checkNameDuplicates(String name, int i){
 		
 		int count = i;
 		String newName = name;
@@ -75,7 +79,6 @@ public class GraphContainer {
 	}
 	
 	public String renamePathway(Pathway pw, String newName){
-		
 		removePathway(pw.getName());
 		return addPathway(newName,pw);
 	}

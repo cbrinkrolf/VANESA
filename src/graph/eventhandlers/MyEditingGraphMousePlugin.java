@@ -41,7 +41,6 @@ import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractGraphMousePlugin;
 import edu.uci.ics.jung.visualization.util.ArrowFactory;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.gui.EdgeDialog;
@@ -70,7 +69,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 	private Paintable edgePaintable;
 	private Paintable arrowPaintable;
 	private boolean edgeIsDirected;
-	private GraphContainer con = ContainerSingelton.getInstance();
+	private GraphContainer con = GraphContainer.getInstance();
 
 	private GraphInstance graphInstance = new GraphInstance();
 	private Pathway pw;

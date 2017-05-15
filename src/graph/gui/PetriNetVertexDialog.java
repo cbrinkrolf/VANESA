@@ -25,7 +25,6 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
@@ -300,7 +299,7 @@ public class PetriNetVertexDialog {
 						MyPopUp.getInstance().show("Adding Place", "Name already exists. Created reference place instead.");
 					}
 				}
-				GraphContainer con = ContainerSingelton.getInstance();
+				GraphContainer con = GraphContainer.getInstance();
 				MainWindow w = MainWindow.getInstance();
 				con.getPathway(w.getCurrentPathway());
 

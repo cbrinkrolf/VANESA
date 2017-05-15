@@ -14,7 +14,6 @@ import javax.swing.JSlider;
 
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
@@ -58,7 +57,7 @@ public class GraphSettingsDialog extends JFrame {
 	
 	MainWindow w = MainWindow.getInstance();
 	GraphInstance graphInstance = new GraphInstance();
-	GraphContainer con = ContainerSingelton.getInstance();;
+	GraphContainer con = GraphContainer.getInstance();;
 
 	/**
 	 * 

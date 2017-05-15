@@ -9,7 +9,6 @@ import javax.swing.SwingWorker;
 
 import biologicalElements.PetriNet;
 import configurations.ConnectionSettings;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
@@ -32,7 +31,7 @@ public class OpenModellicaResult extends SwingWorker {
 	private final int option;
 	private final ProgressBar bar = new ProgressBar();
 
-	private GraphContainer con = ContainerSingelton.getInstance();
+	private GraphContainer con = GraphContainer.getInstance();
 	private GraphInstance graphInstance = new GraphInstance();
 
 	public OpenModellicaResult() {

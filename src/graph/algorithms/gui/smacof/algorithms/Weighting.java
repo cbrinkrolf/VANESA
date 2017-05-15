@@ -7,7 +7,6 @@ import java.util.Iterator;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.algorithms.NodeAttributeNames;
 import graph.algorithms.NodeAttributeTypes;
@@ -52,7 +51,7 @@ public class Weighting {
 	public float[][] getWeightsByAdjacency(){
 		weights = new float[mapped_nodes.size()][mapped_nodes.size()];
 		MainWindow w = MainWindow.getInstance();
-		GraphContainer con = ContainerSingelton.getInstance();
+		GraphContainer con = GraphContainer.getInstance();
 		MyGraph mg = con.getPathway(w.getCurrentPathway()).getGraph();
 		
 		// for non non zero entries

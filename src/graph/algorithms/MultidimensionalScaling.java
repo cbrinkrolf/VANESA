@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.algorithms.gui.NodeAttributeBarChart;
 import graph.jung.classes.MyGraph;
@@ -26,7 +25,7 @@ import mdsj.MDSJ;
 
 public class MultidimensionalScaling {
 	private MainWindow w = MainWindow.getInstance();
-	private GraphContainer con = ContainerSingelton.getInstance();
+	private GraphContainer con = GraphContainer.getInstance();
 	private Pathway pw;
 	private MyGraph mg;
 	private int nodes, dimensions = 2, scaling = 1024; // scaling in pixels x*y

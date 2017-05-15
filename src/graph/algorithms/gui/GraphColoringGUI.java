@@ -40,7 +40,6 @@ import cluster.clientimpl.ComputeCallback;
 import cluster.slave.Cluster;
 import cluster.slave.JobTypes;
 import cluster.slave.LayoutPoint2D;
-import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -284,7 +283,7 @@ public class GraphColoringGUI implements ActionListener {
 			mw.showProgressBar("attempting to queue job.");
 
 			// get network structure
-			con = ContainerSingelton.getInstance();
+			con = GraphContainer.getInstance();
 			pw = con.getPathway(mw.getCurrentPathway());
 			mg = pw.getGraph();
 
@@ -433,7 +432,7 @@ public class GraphColoringGUI implements ActionListener {
 
 			// get network structure
 
-			con = ContainerSingelton.getInstance();
+			con = GraphContainer.getInstance();
 			pw = con.getPathway(mw.getCurrentPathway());
 			mg = pw.getGraph();
 
@@ -550,7 +549,7 @@ public class GraphColoringGUI implements ActionListener {
 			mw.showProgressBar("attempting to queue job.");
 
 			// get network structure
-			con = ContainerSingelton.getInstance();
+			con = GraphContainer.getInstance();
 			pw = con.getPathway(mw.getCurrentPathway());
 			mg = pw.getGraph();
 
@@ -631,7 +630,7 @@ public class GraphColoringGUI implements ActionListener {
 			mw.showProgressBar("attempting to queue job.");
 
 			// get network structure
-			con = ContainerSingelton.getInstance();
+			con = GraphContainer.getInstance();
 			pw = con.getPathway(mw.getCurrentPathway());
 			mg = pw.getGraph();
 
@@ -743,7 +742,7 @@ public class GraphColoringGUI implements ActionListener {
 			mw.showProgressBar("attempting to queue job.");
 
 			// get network structure
-			con = ContainerSingelton.getInstance();
+			con = GraphContainer.getInstance();
 			pw = con.getPathway(mw.getCurrentPathway());
 			mg = pw.getGraph();
 
@@ -1211,7 +1210,7 @@ public class GraphColoringGUI implements ActionListener {
 	public void realignNetwork(HashMap<Integer, LayoutPoint2D> coords) {
 		// get network structure
 		MainWindow w = MainWindow.getInstance();
-		GraphContainer con = ContainerSingelton.getInstance();
+		GraphContainer con = GraphContainer.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
 
 		for (Entry<Integer, LayoutPoint2D> entry : coords.entrySet()) {

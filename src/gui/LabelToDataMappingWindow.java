@@ -12,7 +12,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.ContainerSingelton;
+import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.NodeAttributeTypes;
 
@@ -46,7 +46,7 @@ public class LabelToDataMappingWindow {
 	 */
 	public LabelToDataMappingWindow() throws IOException, InputFormatException {
 		// Check for open pathways, if not shoe message
-		if (ContainerSingelton.getInstance().getPathwayNumbers() == 0) {
+		if (GraphContainer.getInstance().getPathwayNumbers() == 0) {
 			JOptionPane.showMessageDialog(MainWindow.getInstance(),
 					"Please load or create a network first.",
 					"no network found", JOptionPane.WARNING_MESSAGE);

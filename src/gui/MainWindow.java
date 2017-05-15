@@ -43,7 +43,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.ResourceLibrary;
 import configurations.gui.Settings;
 import configurations.gui.VisualizationDialog;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.eventhandlers.GraphTabListener;
 import graph.eventhandlers.GraphWindowListener;
@@ -94,7 +93,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	//private TabbedPanel tabbedPanel;
 	private HashMap<Integer, TabbedPanel> tabbedPanels = new HashMap<Integer, TabbedPanel>();
 	// private TabbedPanel tabbedPanelProperties;
-	private final GraphContainer con = ContainerSingelton.getInstance();
+	private final GraphContainer con = GraphContainer.getInstance();
 	private int addedtabs = 0;
 	private final MenuBarClass myMenu;
 

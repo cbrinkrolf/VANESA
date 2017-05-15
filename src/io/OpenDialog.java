@@ -17,7 +17,6 @@ import org.apache.commons.lang3.SystemUtils;
 
 import biologicalElements.Pathway;
 import configurations.ConnectionSettings;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
@@ -59,7 +58,7 @@ public class OpenDialog extends SwingWorker {
 
 	private JFileChooser chooser;
 
-	private GraphContainer con = ContainerSingelton.getInstance();
+	private GraphContainer con = GraphContainer.getInstance();
 	private GraphInstance graphInstance = new GraphInstance();
 
 	private Pathway pathway = null;

@@ -17,7 +17,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Protein;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
@@ -26,7 +25,7 @@ import gui.MainWindow;
 public class NetworkProperties extends Object {
 
 	MainWindow w = MainWindow.getInstance();
-	GraphContainer con = ContainerSingelton.getInstance();
+	GraphContainer con = GraphContainer.getInstance();
 	GraphInstance graphInstance = new GraphInstance();
 	Pathway pw;
 	public MyGraph mg;

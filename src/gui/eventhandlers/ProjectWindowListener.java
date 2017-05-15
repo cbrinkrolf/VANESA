@@ -9,7 +9,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import biologicalElements.Pathway;
-import graph.ContainerSingelton;
+import graph.GraphContainer;
 import gui.MainWindow;
 
 public class ProjectWindowListener implements FocusListener {
@@ -27,12 +27,12 @@ public class ProjectWindowListener implements FocusListener {
 	public void updateWindowTab(String name) {
 
 		String value = name;
-		String newName = ContainerSingelton.getInstance().renamePathway(pw,
+		String newName = GraphContainer.getInstance().renamePathway(pw,
 				value);
 		pw.setName(newName);
 		MainWindow.getInstance().renameSelectedTab(pw.getName());
 
-		ContainerSingelton.getInstance().setPetriView(pw.isPetriNet());
+		GraphContainer.getInstance().setPetriView(pw.isPetriNet());
 		Component[] c = MainWindow.getInstance().getContentPane()
 				.getComponents();
 		for (int i = 0; i < c.length; i++) {
@@ -53,7 +53,7 @@ public class ProjectWindowListener implements FocusListener {
 		if (source.equals("pathway")) {
 			String oldName = pw.getName();
 			String value = ((JTextField) event.getSource()).getText();
-			String newName = ContainerSingelton.getInstance().renamePathway(pw,
+			String newName = GraphContainer.getInstance().renamePathway(pw,
 					value);
 			MainWindow.getInstance().checkForAlignmentOptionTab(
 					oldName, newName);

@@ -23,7 +23,7 @@ import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import graph.ContainerSingelton;
+import graph.GraphContainer;
 
 public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
@@ -80,7 +80,7 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		g2d.setFont(new Font("default", Font.BOLD, 12));
 		g2d.setColor(Color.red);
 
-		if (ContainerSingelton.getInstance().isPetriView()) {
+		if (GraphContainer.getInstance().isPetriView()) {
 			g2d.drawString("P: " + pw.getPetriNet().getPlaces() + " T: "
 					+ pw.getPetriNet().getTransitions() + " Edges: "
 					+ pw.getGraph().getAllEdges().size(), 1, 11);

@@ -26,7 +26,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import dataMapping.dataImport.ExcelException;
 import database.ppi.PPISearch;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
@@ -141,7 +140,7 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
 				String label;
 				// get network structure
 				MainWindow w = MainWindow.getInstance();
-				GraphContainer con = ContainerSingelton.getInstance();
+				GraphContainer con = GraphContainer.getInstance();
 				Pathway pw = con.getPathway(w.getCurrentPathway());
 				MyGraph mg = pw.getGraph();
 				
