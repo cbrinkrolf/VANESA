@@ -21,7 +21,7 @@ import org.jfree.ui.RefineryUtilities;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
-import graph.ContainerSingelton;
+import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
@@ -55,7 +55,7 @@ public class GraphClusterDyer extends JFrame {
 		super("Cluster Dyer: "+MainWindow.getInstance().getCurrentPathway());
 		setPreferredSize(new Dimension(X, Y));
 		
-		mg = ContainerSingelton.getInstance().getPathway(MainWindow.getInstance().getCurrentPathway()).getGraph();
+		mg = GraphContainer.getInstance().getPathway(MainWindow.getInstance().getCurrentPathway()).getGraph();
 
 		HashMap<String, Double> expvalues = new HashMap<>();
 		

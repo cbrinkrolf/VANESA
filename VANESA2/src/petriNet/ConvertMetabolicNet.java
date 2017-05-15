@@ -18,8 +18,8 @@ import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import graph.ContainerSingelton;
 import graph.CreatePathway;
+import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
 
@@ -53,11 +53,11 @@ public class ConvertMetabolicNet {
 							"Discrete PN", "Continuous PN" },
 					JOptionPane.CANCEL_OPTION);
 		if (answer != JOptionPane.YES_OPTION && answer != JOptionPane.NO_OPTION) {
-			ContainerSingelton.getInstance().setPetriView(false);
+			GraphContainer.getInstance().setPetriView(false);
 			return;
 		}
 
-		ContainerSingelton.getInstance().setPetriView(true);
+		GraphContainer.getInstance().setPetriView(true);
 		prop = new petriNetProperties();
 		// System.out.println("alle knoten: "+GraphInstance.getMyGraph().getAllvertices());
 

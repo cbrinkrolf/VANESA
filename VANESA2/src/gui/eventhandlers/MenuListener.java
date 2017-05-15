@@ -60,7 +60,6 @@ import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -144,7 +143,7 @@ public class MenuListener implements ActionListener {
 		w = MainWindow.getInstance();
 		String event = e.getActionCommand();
 		final GraphInstance graphInstance = new GraphInstance();
-		GraphContainer con = ContainerSingelton.getInstance();
+		GraphContainer con = GraphContainer.getInstance();
 
 		if ("new Network".equals(event)) {
 

@@ -12,7 +12,7 @@ import gui.MainWindow;
 public class CreatePathway {
 
 	MainWindow w = MainWindow.getInstance();
-	GraphContainer con = ContainerSingelton.getInstance();
+	GraphContainer con = GraphContainer.getInstance();
 	String pathwayName;
 	Pathway pw;
 	Pathway parent=null;

@@ -1,7 +1,5 @@
 package gui;
 
-import graph.ContainerSingelton;
-
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,8 +16,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import net.miginfocom.swing.MigLayout;
 import biologicalElements.Pathway;
+import graph.GraphContainer;
+import net.miginfocom.swing.MigLayout;
 
 public abstract class ChooseGraphsWindow extends JFrame implements ActionListener {
 	private static final long serialVersionUID = -4040410943988968952L;
@@ -47,7 +46,7 @@ public abstract class ChooseGraphsWindow extends JFrame implements ActionListene
 			panel.setLayout(new GridLayout(0,1));
 			panel.add(new JLabel("Please choose graphs!")
 					);
-			Collection<Pathway> pathways = ContainerSingelton.getInstance().getAllPathways();
+			Collection<Pathway> pathways = GraphContainer.getInstance().getAllPathways();
 			//Collections.reverse(new ArrayList(pathways));
 			for (Object o : pathways) {
 				Pathway p = (Pathway) o;
@@ -81,7 +80,7 @@ public abstract class ChooseGraphsWindow extends JFrame implements ActionListene
 			}
 			
 			ArrayList<Pathway> chosen_pathways = new ArrayList<Pathway>();
-			Collection<Pathway> pathways = ContainerSingelton.getInstance().getAllPathways();
+			Collection<Pathway> pathways = GraphContainer.getInstance().getAllPathways();
 			for (Object o : pathways) {
 				Pathway p = (Pathway) o;
 				if (names.contains(p.getName())) {
@@ -99,8 +98,6 @@ public abstract class ChooseGraphsWindow extends JFrame implements ActionListene
 				this.handleChosenGraphs(chosen_pathways);
 				
 			}
-			
-			
 		}
 	}
 	

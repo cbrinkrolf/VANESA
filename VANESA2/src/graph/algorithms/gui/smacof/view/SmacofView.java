@@ -41,7 +41,6 @@ import cluster.clientimpl.ClusterComputeThread;
 import cluster.clientimpl.ComputeCallback;
 import cluster.slave.JobTypes;
 import cluster.slave.LayoutPoint2D;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.NodeAttributeNames;
@@ -604,7 +603,7 @@ public class SmacofView extends JFrame implements ActionListener {
     @SuppressWarnings("static-access")
 	public void realignNetwork(HashMap<Integer, LayoutPoint2D> coords) {
 		MainWindow w = MainWindow.getInstance();
-		GraphContainer con = ContainerSingelton.getInstance();
+		GraphContainer con = GraphContainer.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
 		float scaling = 0.0f, desired_diameter = 1000.0f;
 		

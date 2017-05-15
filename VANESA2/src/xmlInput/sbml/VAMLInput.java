@@ -81,7 +81,6 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
-import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import gui.MainWindow;
@@ -95,7 +94,7 @@ public class VAMLInput {
 
 	private File file = null;
 	private final Hashtable<Integer, BiologicalNodeAbstract> mapping = new Hashtable<Integer, BiologicalNodeAbstract>();
-	GraphContainer con = ContainerSingelton.getInstance();
+	GraphContainer con = GraphContainer.getInstance();
 
 	public VAMLInput(File file) throws IOException, XMLStreamException {
 		this.file = file;

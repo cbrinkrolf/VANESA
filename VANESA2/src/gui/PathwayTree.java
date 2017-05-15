@@ -18,27 +18,25 @@ import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 
 import biologicalElements.Pathway;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import net.miginfocom.swing.MigLayout;
 
-public class PathwayTree extends JPanel implements TreeSelectionListener{
-	
+public class PathwayTree extends JPanel implements TreeSelectionListener {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JXTree tree = new JXTree(new DefaultMutableTreeNode() );
-	private JScrollPane scrollTree=new JScrollPane();
+	private JXTree tree = new JXTree(new DefaultMutableTreeNode());
+	private JScrollPane scrollTree = new JScrollPane();
 	private DefaultTreeModel model;
-	private HashMap<DefaultMutableTreeNode,Pathway> map= new HashMap<DefaultMutableTreeNode,Pathway>();
+	private HashMap<DefaultMutableTreeNode, Pathway> map = new HashMap<DefaultMutableTreeNode, Pathway>();
 	private DefaultMutableTreeNode actualNode;
-	
-	public PathwayTree(){				
+
+	public PathwayTree() {
 		tree.setEditable(false);
-		tree.getSelectionModel().setSelectionMode(
-				TreeSelectionModel.SINGLE_TREE_SELECTION);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		tree.setRolloverEnabled(true);
 		tree.addTreeSelectionListener(this);
 		tree.addHighlighter(new ColorHighlighter());
@@ -51,36 +49,37 @@ public class PathwayTree extends JPanel implements TreeSelectionListener{
 		scrollTree.setVisible(true);
 		tree.setVisible(true);
 	}
-	
+
 	private void buildTree(Pathway rootPW, DefaultMutableTreeNode root) {
 		ArrayList<Pathway> childs = rootPW.getChilds();
-		for (Pathway pw:childs){
-			DefaultMutableTreeNode node =new DefaultMutableTreeNode(pw.getTitle());
+		for (Pathway pw : childs) {
+			DefaultMutableTreeNode node = new DefaultMutableTreeNode(pw.getTitle());
 			map.put(node, pw);
 			root.add(node);
-			if (new GraphInstance().getPathway().equals(pw)) 
-				actualNode=node;		
-			buildTree(pw,node);
+			if (new GraphInstance().getPathway().equals(pw))
+				actualNode = node;
+			buildTree(pw, node);
 		}
-		
+
 	}
-	
-	
-	public void revalidateView(){
+
+	public void revalidateView() {
 		tree.removeAll();
-		actualNode=null;
+		actualNode = null;
 		model = (DefaultTreeModel) tree.getModel();
-		Pathway pw=new GraphInstance().getPathway();
-		if (pw==null) return;
+		Pathway pw = new GraphInstance().getPathway();
+		if (pw == null)
+			return;
 		Pathway rootPW = pw.getRootPathway();
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Pathways Tree:");
 		model.setRoot(root);
 		DefaultMutableTreeNode node = new DefaultMutableTreeNode(rootPW.getTitle());
 		root.add(node);
 		buildTree(rootPW, node);
-		if (actualNode==null) actualNode=node;
-		actualNode.setUserObject(pw.getTitle()+"*");
-		map.put(node, rootPW);	
+		if (actualNode == null)
+			actualNode = node;
+		actualNode.setUserObject(pw.getTitle() + "*");
+		map.put(node, rootPW);
 		model.nodeStructureChanged(root);
 		model.reload();
 		tree.expandAll();
@@ -89,17 +88,15 @@ public class PathwayTree extends JPanel implements TreeSelectionListener{
 		tree.addTreeSelectionListener(this);
 	}
 
-
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 		MainWindow w = MainWindow.getInstance();
-		GraphContainer con =ContainerSingelton.getInstance();
-		DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree
-		.getLastSelectedPathComponent();
+		GraphContainer con = GraphContainer.getInstance();
+		DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 		Pathway newPW = map.get(currentNode);
-		if (newPW!=null){
-			String pwName=w.getCurrentPathway();
-			w.removeTab(false);	
+		if (newPW != null) {
+			String pwName = w.getCurrentPathway();
+			w.removeTab(false);
 			w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 			String newPathwayName = con.addPathway(pwName, newPW);
 			newPW = con.getPathway(newPathwayName);
@@ -112,5 +109,4 @@ public class PathwayTree extends JPanel implements TreeSelectionListener{
 	public void removeTree() {
 		tree.removeAll();
 	}
-	
 }

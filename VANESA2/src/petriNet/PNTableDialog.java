@@ -37,10 +37,7 @@ import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
-//import edu.uci.ics.jung.graph.ArchetypeVertex;
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.graph.event.GraphEventType.AllSingleEvents;
-import graph.ContainerSingelton;
+import graph.GraphContainer;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
@@ -57,7 +54,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		super(MainWindow.getInstance(), true);
 
 		int i = 0;
-		final Pathway pw = ContainerSingelton.getInstance().getPathway(
+		final Pathway pw = GraphContainer.getInstance().getPathway(
 				MainWindow.getInstance().getCurrentPathway());
 
 		Object[][] rows = new Object[pw.getAllGraphNodes().toArray().length][9];
@@ -293,7 +290,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Pathway pw = ContainerSingelton.getInstance().getPathway(
+		Pathway pw = GraphContainer.getInstance().getPathway(
 				MainWindow.getInstance().getCurrentPathway());
 		Place p;
 		BiologicalNodeAbstract neighbour;

@@ -22,7 +22,6 @@ import database.ppi.PPISearch;
 import database.ppi.gui.PPIInfoWindow;
 import database.unid.UNIDInfoWindow;
 import database.unid.UNIDSearch;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
@@ -132,10 +131,10 @@ public class DatabaseSearchListener implements ActionListener {
 	}
 	
 	private void pickCommons() {
-		if (ContainerSingelton.getInstance().containsPathway()) {
+		if (GraphContainer.getInstance().containsPathway()) {
 			String commonNames[] = dw.getInput()[2].split(",");
 			MainWindow w = MainWindow.getInstance();
-			GraphContainer con = ContainerSingelton.getInstance();
+			GraphContainer con = GraphContainer.getInstance();
 			Pathway pw = con.getPathway(w.getCurrentPathway());
 			MyGraph mg = pw.getGraph();
 
@@ -153,9 +152,9 @@ public class DatabaseSearchListener implements ActionListener {
 	}
 
 	private void pickNeighbors() {
-		if (ContainerSingelton.getInstance().containsPathway()) {
+		if (GraphContainer.getInstance().containsPathway()) {
 			MainWindow w = MainWindow.getInstance();
-			GraphContainer con = ContainerSingelton.getInstance();
+			GraphContainer con = GraphContainer.getInstance();
 			Pathway pw = con.getPathway(w.getCurrentPathway());
 			MyGraph mg = pw.getGraph();
 

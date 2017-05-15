@@ -31,7 +31,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.ChangedFlags;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.gui.Boundary;
@@ -93,7 +92,7 @@ public class PetriNetSimulation implements ActionListener {
 	private void runOMCIA() {
 		System.out.println("simNameOld: " + simName);
 		this.pw = new GraphInstance().getPathway();
-		GraphContainer con = ContainerSingelton.getInstance();
+		GraphContainer con = GraphContainer.getInstance();
 		MainWindow w = MainWindow.getInstance();
 		w.blurrUI();
 

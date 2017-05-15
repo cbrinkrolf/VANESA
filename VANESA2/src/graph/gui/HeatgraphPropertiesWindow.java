@@ -19,7 +19,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import graph.ContainerSingelton;
+import graph.GraphContainer;
 import gui.HeatgraphLayer;
 import gui.MainWindow;
 import gui.eventhandlers.ToolBarListener;
@@ -77,7 +77,7 @@ public class HeatgraphPropertiesWindow implements ActionListener {
 		        {
 					Object item = e.getItem();
 					if (!this.lastSelectedVisualisationStyle.equals(item)) {
-						if (ContainerSingelton.getInstance().getPathwayNumbers() > 1) {
+						if (GraphContainer.getInstance().getPathwayNumbers() > 1) {
 							this.lastSelectedVisualisationStyle = (String) item;
 							HeatgraphLayer.getInstance().getHeatmapForActiveGraph().updateVisualizationStyle((String) item);
 							AdoptedHeatmap.defaultVisualizationStyle = (String) item;
@@ -157,7 +157,7 @@ public class HeatgraphPropertiesWindow implements ActionListener {
         		if (e.getStateChange() == ItemEvent.SELECTED)
                 {
         				//gradient selection	
-        				if (ContainerSingelton.getInstance().getPathwayNumbers() > 1) {
+        				if (GraphContainer.getInstance().getPathwayNumbers() > 1) {
         					Integer ix = (Integer) item;
         			        
         		            HeatgraphLayer.getInstance().getHeatmapForActiveGraph().updateGradient(gradients[ix]);

@@ -18,7 +18,6 @@ import javax.swing.JOptionPane;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.ContainerSingelton;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -65,7 +64,7 @@ public class ToolBarListener implements ActionListener {
 
 		String event = e.getActionCommand();
 		MainWindow w = MainWindow.getInstance();
-		GraphContainer con = ContainerSingelton.getInstance();
+		GraphContainer con = GraphContainer.getInstance();
 		GraphInstance graphInstance = new GraphInstance();
 
 		if ("new Network".equals(event)) {

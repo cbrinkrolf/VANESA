@@ -31,7 +31,6 @@ import configurations.ConnectionSettings;
 import fr.lip6.move.pnml.framework.utils.exception.InvalidIDException;
 import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
 import gonOutput.GONoutput;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
@@ -327,7 +326,7 @@ public class SaveDialog {
 			}
 
 		} else if (fileFormat.equals(pnmlDescription)) {
-			GraphContainer con = ContainerSingelton.getInstance();
+			GraphContainer con = GraphContainer.getInstance();
 			MainWindow w = MainWindow.getInstance();
 			if (!con.isPetriView()) {
 				/*

@@ -28,7 +28,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.algorithms.gui.DenselyConnectedBiclusteringGUI;
 import graph.jung.classes.MyGraph;
@@ -38,7 +37,7 @@ public class DenselyConnectedBiclustering {
 	
 	
 	private MainWindow w = MainWindow.getInstance();
-	private GraphContainer con = ContainerSingelton.getInstance();
+	private GraphContainer con = GraphContainer.getInstance();
 	private Pathway pw = con.getPathway(w.getCurrentPathway());
 	private MyGraph mg = pw.getGraph();
 	private NetworkProperties np;

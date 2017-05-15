@@ -52,7 +52,6 @@ import javax.swing.table.TableColumn;
 import biologicalElements.Pathway;
 import dataMapping.dataImport.ExcelException;
 import dataMapping.dataImport.ImportExcelxData;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
@@ -66,7 +65,7 @@ public class DataMappingView extends JDialog implements Observer{
 
 	private static final long serialVersionUID = 1L;
 	public static MainWindow w = MainWindow.getInstance();
-	private GraphContainer con = ContainerSingelton.getInstance();
+	private GraphContainer con = GraphContainer.getInstance();
 
 	private JTabbedPane tabbedPane = new JTabbedPane();
 	private JPanel mainPanel;
@@ -296,7 +295,7 @@ public class DataMappingView extends JDialog implements Observer{
 	 * initialize the pathway ComboBox at the beginning
 	 */
 	public void initPathwayComboBox() {
-		con = ContainerSingelton.getInstance();
+		con = GraphContainer.getInstance();
 		pathwayCounts = con.getAllPathways().size();
 		if(pathwayCB == null) {
 			storedPathway = "none";

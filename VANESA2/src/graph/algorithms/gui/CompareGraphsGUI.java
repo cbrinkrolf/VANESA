@@ -19,7 +19,6 @@ import javax.swing.WindowConstants;
 
 import biologicalElements.Pathway;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.algorithms.CompareGraphs;
 import graph.algorithms.HeatmapGraphs;
@@ -67,7 +66,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 
 	public CompareGraphsGUI() {
 
-		con = ContainerSingelton.getInstance();
+		con = GraphContainer.getInstance();
 		mouseFunction = con.getMouseFunction();
 		con.changeMouseFunction("move");
 

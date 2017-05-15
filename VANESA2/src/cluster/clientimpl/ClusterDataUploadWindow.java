@@ -30,7 +30,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import cluster.master.IClusterJobs;
 import cluster.slave.JobTypes;
-import graph.ContainerSingelton;
+import graph.GraphContainer;
 import graph.algorithms.NodeAttributeNames;
 import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
@@ -99,7 +99,7 @@ public class ClusterDataUploadWindow extends JFrame {
 			// deterimine experimental datasets on current network
 			attributes = new HashMap<String, Integer>();
 
-			mg = ContainerSingelton
+			mg = GraphContainer
 					.getInstance()
 					.getPathway(
 							MainWindow.getInstance()

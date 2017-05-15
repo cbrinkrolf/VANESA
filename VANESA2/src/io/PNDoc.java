@@ -11,7 +11,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import de.uni_bielefeld.cebitec.mzurowie.pretty_formula.main.FormulaParser;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.gui.Parameter;
 import gui.MainWindow;
@@ -20,12 +19,11 @@ public class PNDoc {
 
 	private StringBuilder sb = new StringBuilder();
 	private MainWindow w = MainWindow.getInstance();
-	private GraphContainer con = ContainerSingelton.getInstance();
+	private GraphContainer con = GraphContainer.getInstance();
 	private Pathway pw = con.getPathway(w.getCurrentPathway());
 
 	public PNDoc(String file) {
 		MainWindow w = MainWindow.getInstance();
-		GraphContainer con = ContainerSingelton.getInstance();
 		Pathway pw = con.getPathway(w.getCurrentPathway());
 
 		this.createHeader();

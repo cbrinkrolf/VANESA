@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.ContainerSingelton;
 import graph.GraphContainer;
 import graph.algorithms.gui.smacof.algorithms.Dissimilarities;
 import graph.algorithms.gui.smacof.algorithms.Smacof;
@@ -116,7 +115,7 @@ public class DoSmacof extends Thread {
 	   
 	   // In result_mat und result_map stehen die Ergebnisse
 	   // hier werden die Ergebnisse als neue Koordinaten der Knoten gesetzt
-	   GraphContainer con = ContainerSingelton.getInstance();
+	   GraphContainer con = GraphContainer.getInstance();
 	   HashMap<BiologicalNodeAbstract, Point2D> vertices = con.getPathway(MainWindow.getInstance().getCurrentPathway()).getVertices();
 	   BiologicalNodeAbstract bna;
 	   Point2D point = null;

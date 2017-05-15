@@ -29,7 +29,7 @@ import configurations.ProgramFileLock;
 import configurations.ResourceLibrary;
 import database.Connection.DBconnection;
 import database.brenda.MostWantedMolecules;
-import graph.ContainerSingelton;
+import graph.GraphContainer;
 import gui.IntroScreen;
 import gui.MainWindow;
 
@@ -182,7 +182,7 @@ public class Launch {
 		Runnable containerStart = new Runnable() {
 			public void run() {
 				intro.setLoadingText("WebConnection");
-				ContainerSingelton.getInstance();
+				GraphContainer.getInstance();
 
 				intro.setLoadingText("Database Information");
 				new MostWantedMolecules();
