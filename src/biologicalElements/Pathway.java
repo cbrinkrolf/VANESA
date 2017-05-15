@@ -397,22 +397,6 @@ public class Pathway implements Cloneable {
 	}
 
 	public int edgeGrade(BiologicalEdgeAbstract bea) {
-		//System.out.println("bla");
-		if(bea.getFrom().getName().equals("C05999")){
-			//System.out.println("to: "+bea.getTo().getLabel());
-			bea.getTo().updateHierarchicalAttributes();
-			//System.out.println(bea.getTo().getConnectingEdges().size());
-			
-			Iterator<BiologicalEdgeAbstract> it = bea.getTo().getConnectingEdges().iterator();
-			while(it.hasNext()){
-			BiologicalEdgeAbstract edge = it.next();
-			//System.out.println(edge);
-				//System.out.println("from: "+edge.getFrom()+" -> "+edge.getTo());
-			}
-		}
-		if(bea.getTo().getName().equals("C05999")){
-			//System.out.println("from: "+bea.getFrom().getLabel());
-		}
 		Set<BiologicalEdgeAbstract> conEdgesTo = new HashSet<BiologicalEdgeAbstract>();
 		for (BiologicalEdgeAbstract edge : bea.getFrom().getConnectingEdges()) {
 			if (edge.isDirected() == bea.isDirected()) {
@@ -429,16 +413,8 @@ public class Pathway implements Cloneable {
 				}
 			}
 		}
-		//System.out.println(conEdgesTo.size());
 		return conEdgesTo.size();
 	}
-
-	/*
-	 * public Object getElement(Object graphElement) {
-	 * 
-	 * if (biologicalElements.get(graphElement) != null) { return
-	 * biologicalElements.get(graphElement); } else return null; }
-	 */
 
 	public boolean existEdge(BiologicalNodeAbstract from,
 			BiologicalNodeAbstract to) {
@@ -478,18 +454,6 @@ public class Pathway implements Cloneable {
 		else
 			return false;
 	}
-
-	/*
-	 * public BiologicalNodeAbstract getNodeByVertexID(String vertexID) {
-	 * 
-	 * Iterator it = biologicalElements.values().iterator();
-	 * 
-	 * while (it.hasNext()) { Object obj = it.next(); GraphElementAbstract gea =
-	 * (GraphElementAbstract) obj; if (gea.isVertex()) { BiologicalNodeAbstract
-	 * bna = (BiologicalNodeAbstract) obj; if
-	 * (bna.getVertex().toString().equals(vertexID)) { return bna; } } } return
-	 * null; }
-	 */
 
 	public BiologicalNodeAbstract getNodeByLabel(String label) {
 
@@ -535,18 +499,6 @@ public class Pathway implements Cloneable {
 
 	public Collection<BiologicalNodeAbstract> getAllGraphNodes() {
 
-		/*
-		 * Iterator<GraphElementAbstract> it =
-		 * biologicalElements.values().iterator();
-		 * HashSet<BiologicalNodeAbstract> set = new
-		 * HashSet<BiologicalNodeAbstract>();
-		 * 
-		 * while (it.hasNext()) { Object obj = it.next(); GraphElementAbstract
-		 * gea = (GraphElementAbstract) obj; if (gea.isVertex()) {
-		 * set.add((BiologicalNodeAbstract)obj); } }
-		 * 
-		 * return set;
-		 */
 		if (getGraph(false) == null) {
 			return Collections.emptyList();
 		}
@@ -663,7 +615,6 @@ public class Pathway implements Cloneable {
 			if (n.size() > 1) {
 				this.mergeNodes(n.iterator().next(), n);
 				merged = true;
-
 			}
 			if (merged) {
 				MainWindow mw = MainWindow.getInstance();
@@ -674,9 +625,7 @@ public class Pathway implements Cloneable {
 				this.graph.getVisualizationViewer().repaint();
 
 			}
-
 		}
-
 	}
 
 	private void mergeNodes(BiologicalNodeAbstract first,
@@ -916,8 +865,10 @@ public class Pathway implements Cloneable {
 	}
 
 	public void setName(String name) {
+		// if PW is BNA
 		this.name = FormularSafety.replace(name);
 		if (tab != null) {
+			this.name = name;
 			tab.setTitle(name);
 		}
 	}
@@ -1384,8 +1335,6 @@ public class Pathway implements Cloneable {
 		removeSelectedVertices();
 		this.getGraph().getVisualizationViewer().getPickedEdgeState().clear();
 		this.getGraph().getVisualizationViewer().getPickedVertexState().clear();
-		// vv.getPickedState().clearPickedEdges();
-		// vv.getPickedState().clearPickedVertices();
 		this.getGraph().updateGraph();
 		updateMyGraph();
 
@@ -1474,9 +1423,7 @@ public class Pathway implements Cloneable {
 					bea.getTo().removeConnectingEdge(bea);
 				}
 				removeElement(bna);
-
 			}
 		}
 	}
-
 }
