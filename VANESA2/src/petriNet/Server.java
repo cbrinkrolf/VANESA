@@ -3,8 +3,6 @@ package petriNet;
 import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -18,6 +16,7 @@ import java.util.Iterator;
 
 import org.apache.commons.lang3.SystemUtils;
 
+import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
@@ -64,20 +63,18 @@ public class Server {
 				try {
 					int port = 11111;
 					serverSocket = new java.net.ServerSocket(port);
-					simId = "simulation_" + pw.getPetriNet().getSimResController().size()
-							+ "_" + System.nanoTime();
+					simId = "simulation_" + pw.getPetriNet().getSimResController().size() + "_" + System.nanoTime();
 					simResult = pw.getPetriNet().getSimResController().get(simId);
 					System.out.println(simId);
 					MainWindow.getInstance().initPCPGraphs();
 					while (true) {
-						java.net.Socket client = warteAufAnmeldung(serverSocket);
+						java.net.Socket client = waitForClient(serverSocket);
 						// leseNachricht(client);
 
 						// InputStream is = new
 						// BufferedInputStream(client.getInputStream());
-						DataInputStream is = new DataInputStream(
-								client.getInputStream());
-						leseNachricht(is);
+						DataInputStream is = new DataInputStream(client.getInputStream());
+						readData(is);
 						// System.out.println("server: " + nachricht);
 						// schreibeNachricht(client, nachricht);
 
@@ -93,15 +90,12 @@ public class Server {
 
 	}
 
-	java.net.Socket warteAufAnmeldung(java.net.ServerSocket serverSocket)
-			throws IOException {
-		java.net.Socket socket = serverSocket.accept(); // blockiert, bis sich
-														// ein Client angemeldet
-														// hat
+	java.net.Socket waitForClient(java.net.ServerSocket serverSocket) throws IOException {
+		java.net.Socket socket = serverSocket.accept(); 
 		return socket;
 	}
 
-	private void leseNachricht(DataInputStream socket) throws IOException {
+	private void readData(DataInputStream socket) throws IOException {
 		int lengthMax = 2048;
 		// char[] buffer = new char[200];
 		byte[] buffer = new byte[lengthMax];
@@ -211,8 +205,7 @@ public class Server {
 				// System.out.println("length: "+buffer[0]+
 				// " "+buffer[1]+" "+buffer[2]+" "+buffer[3] );
 
-				bb = ByteBuffer.wrap(Arrays.copyOfRange(buffer, 1,
-						buffer.length - 2));
+				bb = ByteBuffer.wrap(Arrays.copyOfRange(buffer, 1, buffer.length - 2));
 				bb.order(ByteOrder.LITTLE_ENDIAN);
 				length = bb.getInt();
 				// System.out.println("length in loop: " + length);
@@ -229,8 +222,7 @@ public class Server {
 							// System.out.print(bb.getDouble() + "\t");
 						}
 						for (int i = 0; i < ints; i++) {
-							bb = ByteBuffer.wrap(buffer, reals * 8 + i
-									* sizeOfInt, sizeOfInt);
+							bb = ByteBuffer.wrap(buffer, reals * 8 + i * sizeOfInt, sizeOfInt);
 							bb.order(ByteOrder.LITTLE_ENDIAN);
 							values.add(bb.getInt());
 							// System.out.print(bb.getInt() + "\t");
@@ -245,12 +237,10 @@ public class Server {
 							// + "\t");
 						}
 						// System.out.println("left: "+(length-expected));
-						bb = ByteBuffer.wrap(buffer, expected, length
-								- expected);
+						bb = ByteBuffer.wrap(buffer, expected, length - expected);
 						bb.order(ByteOrder.LITTLE_ENDIAN);
 
-						String[] sValues = (new String(buffer, expected, length
-								- expected)).split("\u0000");
+						String[] sValues = (new String(buffer, expected, length - expected)).split("\u0000");
 
 						for (int i = 0; i < sValues.length; i++) {
 							values.add(sValues[i]);
@@ -290,14 +280,6 @@ public class Server {
 		// return nachricht;
 	}
 
-	void schreibeNachricht(java.net.Socket socket, String nachricht)
-			throws IOException {
-		PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(
-				socket.getOutputStream()));
-		printWriter.print(nachricht);
-		printWriter.flush();
-	}
-
 	private void init() {
 
 		Collection<BiologicalNodeAbstract> hs = pw.getAllGraphNodes();
@@ -315,7 +297,6 @@ public class Server {
 			} else if (bna instanceof Transition) {
 				transitions++;
 			}
-			// bna.getPetriNetSimulationData().clear();
 		}
 		it = hs.iterator();
 		int i = 0;
@@ -323,13 +304,10 @@ public class Server {
 		while (it.hasNext()) {
 			bna = it.next();
 			if (bna instanceof Place) {
-				((Place) bna).setPlotColor(Color.getHSBColor(i * 1.0f
-						/ (places), 1, 1));
+				((Place) bna).setPlotColor(Color.getHSBColor(i * 1.0f / (places), 1, 1));
 				i++;
 			} else if (bna instanceof Transition) {
-				((Transition) bna).setPlotColor(Color.getHSBColor(j * 1.0f
-						/ (transitions), 1, 1));
-				//((Transition) bna).getSimActualSpeed().clear();
+				((Transition) bna).setPlotColor(Color.getHSBColor(j * 1.0f / (transitions), 1, 1));
 				j++;
 			}
 		}
@@ -341,11 +319,8 @@ public class Server {
 			bea = it2.next();
 			if (bea instanceof PNEdge) {
 				e = (PNEdge) bea;
-				//e.getSim_tokens().clear();
-				//e.getSim_tokensSum().clear();
 			}
 		}
-		//pw.getPetriNet().getTime().clear();
 	}
 
 	private void setData(ArrayList<Object> values) {
@@ -365,106 +340,67 @@ public class Server {
 		// System.out.print(it5.next()+"\t");
 		// }
 		// System.out.println();
-		boolean old = true;
 		double value;
+		Object o;
 		while (itBea.hasNext()) {
 			bea = itBea.next();
 			if (bea instanceof PNEdge) {
 				e = (PNEdge) bea;
-
-				// v = pnResult.get(bea2key.get(bea));
-				// v2 = pnResult.get("der("+bea2key.get(bea)+")");
-				// e.setSim_tokensSum(v);
-				// e.setSim_tokens(v2);
-				// System.out.println("key: "+bea2key.get(bea));
-				// System.out.println("index: der("
-				 //+ bea2key.get(bea) + ")");
-				value = (Double) values.get(name2index.get("der("
-						+ bea2key.get(bea) + ")"));
-
-				if (old) {
-					//e.getSim_tokens().add(value);
+				if (name2index.get("der(" + bea2key.get(bea) + ")") != null) {
+					o = values.get(name2index.get("der(" + bea2key.get(bea) + ")"));
+					this.checkAndAddValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, o);
 				}
-				this.simResult
-						.addValue(
-								e,
-								SimulationResultController.SIM_ACTUAL_TOKEN_FLOW,
-								value);
-
-				value = (Double) values.get(name2index.get(bea2key.get(bea)));
-
-				if (old) {
-					//e.getSim_tokensSum().add(value);
+				if (name2index.get(bea2key.get(bea)) != null) {
+					o = values.get(name2index.get(bea2key.get(bea)));
+					this.checkAndAddValue(e, SimulationResultController.SIM_SUM_OF_TOKEN, o);
 				}
-
-				this.simResult.addValue(e,
-						SimulationResultController.SIM_SUM_OF_TOKEN, value);
-				// System.out.println(values.get(names.indexOf(bea2key.get(bea))));
-
 			}
 		}
 
 		Iterator<BiologicalNodeAbstract> it = hs.iterator();
 		BiologicalNodeAbstract bna;
-
 		while (it.hasNext()) {
 			bna = it.next();
 			// System.out.println(bna.getName());
 			if (!bna.hasRef()) {
 				if (bna instanceof Place) {
-					value = (Double) (values.get(name2index.get("'"
-							+ bna.getName() + "'.t")));
-					if (old) {
-						// bna.getPetriNetSimulationData().add(value);
+					if (name2index.get("'" + bna.getName() + "'.t") != null) {
+						o = values.get(name2index.get("'" + bna.getName() + "'.t"));
+						this.checkAndAddValue(bna, SimulationResultController.SIM_TOKEN, o);
 					}
-					this.simResult.addValue(bna,
-							SimulationResultController.SIM_TOKEN, value);
-
 				} else if (bna instanceof Transition) {
-
-					// System.out.println(bna.getName()+".fire" +
-					// names.indexOf("'"
-					// + bna.getName()
-					// + "'.fire"));
-					value = (Double) values.get(name2index.get("'"
-							+ bna.getName() + "'.fire"));
-
-					if (old) {
-						// bna.getPetriNetSimulationData().add(value);
+					if (name2index.get("'" + bna.getName() + "'.fire") != null) {
+						o = values.get(name2index.get("'" + bna.getName() + "'.fire"));
+						this.checkAndAddValue(bna, SimulationResultController.SIM_FIRE, o);
 					}
-					this.simResult.addValue(bna,
-							SimulationResultController.SIM_FIRE, value);
-
-					value = (Double) values.get(name2index.get("'"
-							+ bna.getName() + "'.actualSpeed"));
-					if (old) {
-						// ((Transition) bna).getSimActualSpeed().add(value);
+					if (name2index.get("'" + bna.getName() + "'.actualSpeed") != null) {
+						o = values.get(name2index.get("'" + bna.getName() + "'.actualSpeed"));
+						this.checkAndAddValue(bna, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, o);
 					}
-
-					this.simResult.addValue(bna,
-							SimulationResultController.SIM_ACTUAL_FIRING_SPEED,
-							value);
-					// System.out.println(bna.getName()+" "+(Double)
-					// values.get(names.indexOf("'"
-					// + bna.getName() + "'.actualSpeed")));
-					// System.out.println("speed: "+((Transition)bna).getSimActualSpeed());
 				}
 			}
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		String time = sdf.format(new Date());
-		
-		System.out.println(time+": "+values.get(name2index.get("time")));
+
+		System.out.println(time + ": " + values.get(name2index.get("time")));
 		value = (Double) values.get(name2index.get("time"));
 
-		if (old) {
-			// pw.getPetriNet().addTime(value);
-		}
 		this.simResult.addTime(value);
 		// System.out.println("Time size: " + simResult.getTime().getSize());
 		// System.out.println("old size: " + pw.getPetriNet().getTime().size());
 		// this.time = pnResult.get("time");
 		// pw.setPetriNetSimulation(true);
+	}
+	
+	private void checkAndAddValue(GraphElementAbstract gea, int type, Object o){
+		double value;
+		if (o instanceof Integer) {
+			value = (double) ((int) o);
+		} else {
+			value = (double) o;
+		}
+		this.simResult.addValue(gea, type, value);
 	}
 
 	public boolean isRunning() {
@@ -482,7 +418,5 @@ public class Server {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 		}
-
 	}
-
 }
