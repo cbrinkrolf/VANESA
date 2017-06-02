@@ -670,15 +670,37 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			name = bea.getFrom().getName();
 			name = FormularSafety.replace(name);
 			p = bna.getParameter("km_" + name);
-			// System.out.println(name);
 			valuesPanel.add(new JLabel(p.getValue() + ""));
 		}
 		valuesPanel.add(new JLabel(), "wrap");
 		valuesPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
 		valuesPanel.add(new JLabel("Products:"));
+		button = new JButton("v_r");
+		button.addActionListener(this);
+		button.setActionCommand("btn_" + "v_r");
+		valuesPanel.add(button);
+		
+		it = GraphInstance.getMyGraph().getJungGraph().getOutEdges(bna).iterator();
+		while (it.hasNext()) {
+			bea = it.next();
+			button = new JButton(bea.getTo().getLabel());
+			button.addActionListener(this);
+			button.setActionCommand("btn_" + "km_" + FormularSafety.replace(bea.getTo().getName()));
+			valuesPanel.add(button);
+		}
 		valuesPanel.add(new JLabel(), "wrap");
 		valuesPanel.add(new JLabel("Values:"));
-		valuesPanel.add(new JLabel("test2"));
+		p = bna.getParameter("v_f");
+		valuesPanel.add(new JLabel(p.getValue() + ""));
+		it = GraphInstance.getMyGraph().getJungGraph().getOutEdges(bna).iterator();
+		while (it.hasNext()) {
+			bea = it.next();
+			name = bea.getTo().getName();
+			name = FormularSafety.replace(name);
+			p = bna.getParameter("km_" + name);
+			valuesPanel.add(new JLabel(p.getValue() + ""));
+		}
+		
 		valuesPanel.revalidate();
 	}
 

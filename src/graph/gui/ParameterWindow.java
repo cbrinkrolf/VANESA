@@ -3,7 +3,10 @@ package graph.gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -146,7 +149,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			}
 			@Override
 			public void windowDeactivated(WindowEvent e) {
-				//System.out.println("deactivated");
+				System.out.println("deactivated");
 				//System.out.println("value: "+pane.getValue());
 				if (pane.getValue() != null && !pane.getValue().equals("uninitializedValue") && (int) pane.getValue() == JOptionPane.OK_OPTION) {
 					//System.out.println("ok");
@@ -172,6 +175,18 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			}
 			@Override
 			public void windowActivated(WindowEvent e) {
+			}
+		});
+		
+		dialog.addWindowFocusListener(new WindowFocusListener() {
+			
+			@Override
+			public void windowLostFocus(WindowEvent e) {
+			}
+			
+			@Override
+			public void windowGainedFocus(WindowEvent e) {
+				repaint();
 			}
 		});
 	}
