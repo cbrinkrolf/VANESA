@@ -155,13 +155,13 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
 		groupType.add(kmRadio);
 		groupType.add(turnoverRadio);
-		
+
 		kmRadio.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					btnUpdateValues.setText("Update km values");
-			    }
+				}
 			}
 		});
 		kmRadio.setSelected(true);
@@ -170,7 +170,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					btnUpdateValues.setText("Update kcat values");
-			    }
+				}
 			}
 		});
 
@@ -313,13 +313,13 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		if (valueTable == null) {
 			valueModel = new NodePropertyTableModel(rows, valueColumnNames);
 			valueSorter = new TableRowSorter<NodePropertyTableModel>(valueModel);
-			
+
 			valueTable = new MyTable();
 			// enzymeSorter = new
 			// TableRowSorter<NodePropertyTableModel>(enzymeModel);
 			valueTable.setModel(valueModel);
 			valueSorter.setRowFilter(null);
-			
+
 			valueTable.setRowSorter(valueSorter);
 			// organismSorter.setRowFilter(null);
 			// kmTable.setRowSorter(organismSorter);
@@ -334,12 +334,12 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			valueTable.setHorizontalScrollEnabled(true);
 			valueTable.getTableHeader().setReorderingAllowed(false);
 			valueTable.getTableHeader().setResizingAllowed(true);
-			
+
 			valueTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
 				@Override
 				public void valueChanged(ListSelectionEvent e) {
-					//System.out.println(e.g);
+					// System.out.println(e.g);
 					// avoid multiple events
 					if (e.getValueIsAdjusting()) {
 						updateValueStatistics();
@@ -423,8 +423,8 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			valueTable.setModel(valueModel);
 			valueSorter.setRowFilter(null);
 			valueTable.setRowSorter(valueSorter);
-			//valueTable.setModel(valueModel);
-			//valueTable.updateUI();
+			// valueTable.setModel(valueModel);
+			// valueTable.updateUI();
 			this.updateValueStatistics();
 		}
 	}
@@ -516,7 +516,9 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			this.currentParameter = bna.getParameter(event.substring(4));
 			String parameter = b.getText().trim();
 			this.lblCurrentParameter.setText(parameter);
-			valueTable.getSelectionModel().clearSelection();
+			if (valueTable != null) {
+				valueTable.getSelectionModel().clearSelection();
+			}
 			if (parameter.equals("v_f") || parameter.equals("v_r")) {
 				turnoverRadio.setSelected(true);
 				this.metabolite.setText("");
@@ -553,11 +555,11 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 	}
 
 	private void updateValueStatistics() {
-		//System.out.println("new km statistics");
+		// System.out.println("new km statistics");
 		List<Double> list = new ArrayList<Double>();
-		//System.out.println("count: "+valueTable.getRowCount());
+		// System.out.println("count: "+valueTable.getRowCount());
 		for (int i = 0; i < Math.min(valueTable.getRowCount(), valueModel.getRowCount()); i++) {
-			//System.out.println("i: "+i);
+			// System.out.println("i: "+i);
 			if (valueTable.getSelectedRowCount() == 0 || valueTable.isRowSelected(i)) {
 				list.add(Double.parseDouble((String) valueTable.getValueAt(i, 3)));
 			}
@@ -615,7 +617,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		if (metabolite.getText().trim().length() < 1 && org.getText().trim().length() < 1) {
 			valueSorter.setRowFilter(null);
 		} else {
-			//System.out.println("setValueSorterListener");
+			// System.out.println("setValueSorterListener");
 			List<RowFilter<NodePropertyTableModel, Integer>> listOfFilters = new ArrayList<>();
 			if (metabolite.getText().trim().length() > 0) {
 
@@ -627,12 +629,12 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			// kmSorter.setRowFilter(RowFilter.regexFilter(metabolite.getText().trim(),2));
 			// kmSorter.setRowFilter(RowFilter.regexFilter(org.getText().trim(),1));
 			if (listOfFilters.size() > 0) {
-				//System.out.println("before set -----------------------");
+				// System.out.println("before set -----------------------");
 				valueSorter.setRowFilter(RowFilter.andFilter(listOfFilters));
-				//System.out.println("after set -----------------------");
+				// System.out.println("after set -----------------------");
 			}
 		}
-		//System.out.println("update slider finally");
+		// System.out.println("update slider finally");
 		this.updateSlider();
 	}
 
@@ -691,17 +693,18 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 	}
 
 	private void sliderStateChanged() {
-		//System.out.println(slider.getValue()+" - " + slider.getUpperValue());
+		// System.out.println(slider.getValue()+" - " + slider.getUpperValue());
 		boolean all = false;
-		//System.out.println("upper: "+slider.getUpperValue()+" vs. "+valueTable.getRowCount());
-		if(slider.getValue() == 0 && slider.getUpperValue() == valueTable.getRowCount()-1){
-			//System.out.println("maximum");
+		// System.out.println("upper: "+slider.getUpperValue()+" vs.
+		// "+valueTable.getRowCount());
+		if (slider.getValue() == 0 && slider.getUpperValue() == valueTable.getRowCount() - 1) {
+			// System.out.println("maximum");
 			valueTable.getSelectionModel().clearSelection();
 			all = true;
 		}
 		if (valueTable.getRowCount() > 0 && !all) {
-			//valueTable.setUpdateSelectionOnSort(false);
-			
+			// valueTable.setUpdateSelectionOnSort(false);
+
 			valueTable.setRowSelectionInterval(slider.getValue(), slider.getUpperValue());
 		}
 		// kmTable.select
