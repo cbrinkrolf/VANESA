@@ -249,6 +249,7 @@ public class KEGGQueries {
 				if (!compound.equals(""))query+="AND cn.name ='" + compound + "' ";
 				if (!enzyme.equals("")) query+="AND en.entry='" + enzyme + "' ";
 				query+="limit 0,1000;";
+				//System.out.println(query);
 		return new Wrapper().requestDbContent(2, query);
 	}
 
@@ -276,4 +277,8 @@ public class KEGGQueries {
 			"where r.pathway_name='"+pathwayID+"' and e.pathway_name='"+pathwayID+"'; ";
 			return new Wrapper().requestDbContent(2, query);
 	}
+	//query for gene list and number of pathways hit
+	//select pw_name, count(pw_name) from (select distinct kegg_genes_name.name, kegg_genes_pathway.name as pw_name FROM dawismd.kegg_genes_name join dawismd.kegg_genes_pathway on kegg_genes_name.id = dawismd.kegg_genes_pathway.id where kegg_genes_name.name = "cdk2" or kegg_genes_name.name = "ANAPC2") as T group by pw_name;
+	//select pw_name, count(pw_name) from (select distinct kegg_genes_name.name, kegg_genes_pathway.name as pw_name FROM dawismd.kegg_genes_name join dawismd.kegg_genes_pathway on kegg_genes_name.id = dawismd.kegg_genes_pathway.id where kegg_genes_name.name in ("cdk2", "ANAPC2")) as T group by pw_name;
+
 }

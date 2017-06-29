@@ -199,7 +199,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 				if (bna instanceof DNA) {
 
-					finalQueryString = miRNAqueries.miRNA_get_Mirnas
+					finalQueryString = miRNAqueries.miRNA_get_MirnaTargets
 							.replaceFirst(QUESTION_MARK, "'" + bna.getLabel()
 									+ "'");
 

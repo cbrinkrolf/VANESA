@@ -203,7 +203,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 						}
 					} else if (gene.length() > 0) {
-						String finalQueryString = miRNAqueries.miRNA_get_Mirnas
+						String finalQueryString = miRNAqueries.miRNA_get_MirnaTargets
 								.replaceFirst(QUESTION_MARK, "'" + name + "'");
 						resultsDBSearch = new Wrapper().requestDbContent(
 								Wrapper.dbtype_MiRNA, finalQueryString);
