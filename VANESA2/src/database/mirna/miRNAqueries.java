@@ -25,8 +25,13 @@ public class miRNAqueries {
 
 	public static final String miRNA_get_Genes = "SELECT distinct TargetGene.Accession, TargetGene.DB FROM Matures Matures inner join TargetGenes TargetGenes on Matures.ID=TargetGenes.mID inner join TargetGene TargetGene on TargetGenes.ID=TargetGene.tgsID where NOT DB = 'ensemble' AND Matures.Name = ? AND TargetGenes.SpeciesID=54;";
 
-	public static final String miRNA_get_Mirnas = "SELECT distinct Matures.Name FROM Matures Matures inner join TargetGenes TargetGenes on Matures.ID=TargetGenes.mID inner join TargetGene TargetGene on TargetGenes.ID=TargetGene.tgsID where NOT DB='ensemble' AND TargetGene.Accession = ? AND TargetGenes.SpeciesID=54;";
-
+	// miRNAs which target given gene
+	public static final String miRNA_get_MirnaTargets = "SELECT distinct Matures.Name FROM Matures Matures inner join TargetGenes TargetGenes on Matures.ID=TargetGenes.mID inner join TargetGene TargetGene on TargetGenes.ID=TargetGene.tgsID where NOT DB='ensemble' AND TargetGene.Accession = ? ;";//AND TargetGenes.SpeciesID=54;";
+	
+	// miRNAs are produced by given gene (where given gene is origin for)
+	public static final String miRNA_get_MirnaSources = "SELECT Matures.Name FROM Matures join overlappingtranscripts on matures.hpID = overlappingtranscripts.hpID join hairpins on matures.hpID = hairpins.ID where overlappingtranscripts.Name = overlappingtranscripts.Accession and overlappingtranscripts.Name = ? ;";//AND speciesID=54;";
+	
+	
 	public static final String miRNA_get_Pathways = "SELECT kegg_genes_pathway.name,kegg_genes_pathway.name,"
 			+ "kegg_genes_pathway.number,kegg_genes_pathway.org, kegg_genes_name.name FROM "
 			+ "dawismd.kegg_genes_pathway inner join "

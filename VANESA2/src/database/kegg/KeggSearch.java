@@ -67,7 +67,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 		String queryEnd = "";
 		boolean firstEntries = false;
 		boolean organism = false;
-
+		
 		if (!pathway.equals("")) {
 			queryStart = queryStart + "(" + KEGGQueries.KEGGPathwayQuery
 					+ dqv.prepareString(pathway, "p.pathway_name", "p.title")
@@ -142,7 +142,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 		String pathway_names = "(";
 
 		ArrayList<DBColumn> tempResults = new ArrayList<DBColumn>();
-
+		System.out.println(queryStart);
 		if (firstEntries) {
 			tempResults = new Wrapper().requestDbContent(2, queryStart
 					+ queryEnd + " LIMIT 0,1000;");

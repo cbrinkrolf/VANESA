@@ -82,7 +82,7 @@ public class MenuBarClass {
 
 		bar = new JMenuBar();
 		JMenu file = new JMenu("File");
-		JMenu math = new JMenu("Graph");
+		JMenu graph = new JMenu("Graph");
 
 		JMenu generateGraph = new JMenu("Generate Graph");
 		// JMenu visualAnalysis = new JMenu("Visual Analysis");
@@ -133,6 +133,10 @@ public class MenuBarClass {
 		JMenuItem mirnaTest = new JMenuItem("MirnaTest");
 		mirnaTest.addActionListener(MenuListener.getInstance());
 		mirnaTest.setActionCommand("mirnaTest");
+		
+		JMenuItem mirnaSources = new JMenuItem("Enrich miRNA sources");
+		mirnaSources.addActionListener(MenuListener.getInstance());
+		mirnaSources.setActionCommand("mirnaSources");
 		
 		JMenuItem mirnaTargets = new JMenuItem("Enrich miRNA targets");
 		mirnaTargets.addActionListener(MenuListener.getInstance());
@@ -331,7 +335,7 @@ public class MenuBarClass {
 		}
 
 		file.setMnemonic(KeyEvent.VK_F);
-		math.setMnemonic(KeyEvent.VK_G);
+		graph.setMnemonic(KeyEvent.VK_G);
 		layout.setMnemonic(KeyEvent.VK_L);
 		settings.setMnemonic(KeyEvent.VK_S);
 		tools.setMnemonic(KeyEvent.VK_T);
@@ -381,13 +385,14 @@ public class MenuBarClass {
 		// snapshot.add(savePicture);
 		// snapshot.add(printPicture);
 
-		math.add(generateGraph);
-		math.add(phosphoImport);
+		graph.add(generateGraph);
+		graph.add(phosphoImport);
 
 		if (MainWindow.developer) {
-			math.add(mirnaTest);
-			math.add(mirnaTargets);
-			math.add(shake);
+			graph.add(mirnaTest);
+			graph.add(mirnaSources);
+			graph.add(mirnaTargets);
+			graph.add(shake);
 		}
 		// math.add(visualAnalysis);
 
@@ -458,7 +463,7 @@ public class MenuBarClass {
 
 		bar.add(file);
 		// bar.add(graph);
-		bar.add(math);
+		bar.add(graph);
 		bar.add(petriNets);
 		bar.add(transformation);
 		// bar.add(experiments);

@@ -48,6 +48,7 @@ import configurations.Wrapper;
 import configurations.gui.LayoutConfig;
 import configurations.gui.Settings;
 import dataMapping.DataMappingColorMVC;
+import database.mirna.MirnaStatistics;
 import database.mirna.miRNAqueries;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
@@ -83,6 +84,7 @@ import gui.InfoWindow;
 import gui.LabelToDataMappingWindow;
 import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
+import gui.MyPopUp;
 import gui.visualization.PreRenderManager;
 import io.EdalSaveDialog;
 import io.OpenDialog;
@@ -125,14 +127,14 @@ public class MenuListener implements ActionListener {
 
 	private PetriNetSimulation simulation = null;
 
-	private static MenuListener instance; 
-	
+	private static MenuListener instance;
+
 	private MenuListener() {
 
 	}
-	
-	public static synchronized MenuListener getInstance(){
-		if(MenuListener.instance == null){
+
+	public static synchronized MenuListener getInstance() {
+		if (MenuListener.instance == null) {
 			MenuListener.instance = new MenuListener();
 		}
 		return MenuListener.instance;
@@ -147,9 +149,8 @@ public class MenuListener implements ActionListener {
 
 		if ("new Network".equals(event)) {
 
-			int option = JOptionPane.showOptionDialog(w, "Which type of modeling do you prefer?",
-					"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
+			int option = JOptionPane.showOptionDialog(w, "Which type of modeling do you prefer?", "Choose Network Type...", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
 				new CreatePathway();
 				graphInstance.getPathway().setPetriNet(option == JOptionPane.NO_OPTION);
@@ -162,72 +163,60 @@ public class MenuListener implements ActionListener {
 			op.execute();
 
 		} else if ("openEdal".equals(event)) {
-			/*int SERVER_PORT = 2000;
-			String SERVER_ADDRESS = "bit-249.ipk-gatersleben.de";
-
-			Subject subject = null;
-			try {
-				subject = EdalHelpers.authenticateSampleUser();
-			} catch (EdalAuthenticateException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			// alternatively use Google+ login 
-			// Subject subject = EdalHelpers.authenticateGoogleUser("", 3128);
-
-			// connect to running EDAL server on "bit-249"
-			ClientDataManager dataManagerClient = null;
-			try {
-				dataManagerClient = new ClientDataManager(SERVER_ADDRESS, SERVER_PORT, new Authentication(subject));
-			} catch (EdalAuthenticateException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			// JFrame jf = new JFrame();
-
-			EdalFileChooser dialog = new EdalFileChooser(MainWindowSingleton.getInstance(), dataManagerClient);
-			dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
-			dialog.setFileSelectionMode(EdalFileChooser.FILES_AND_DIRECTORIES);
-			dialog.showConnectionButton(false);
-
-			// dialog.setFileFilter(new EdalFileNameExtensionFilter("sbml",
-			// "sbml"));
-
-			int result = dialog.showOpenDialog();
-			// System.out.println(result + " " +
-			// EdalFileChooser.APPROVE_OPTION);
-			if (result == EdalFileChooser.APPROVE_OPTION) {
-				ClientPrimaryDataFile df = null;
-				ClientPrimaryDataEntity de = dialog.getSelectedFile();
-				if (de instanceof ClientPrimaryDataFile) {
-					df = (ClientPrimaryDataFile) de;
-					// File f = new File(df.getName());
-					// File f;
-					try {
-						ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-						df.read(os);
-						byte[] b = os.toByteArray();
-						InputStream is = new ByteArrayInputStream(b);
-						JSBMLinput jsbmlInput = new JSBMLinput();
-						// jsbmlInput = pathway==null ? new JSBMLinput() : new
-						// JSBMLinput(pathway);
-						String res = jsbmlInput.loadSBMLFile(is, df.getName());
-						if (res.length() > 0) {
-							JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), res);
-						}
-						// os.
-					} catch (RemoteException | PrimaryDataFileException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-				} else {
-					System.out.println("please choose a file, not a dir");
-				}
-			}*/
+			/*
+			 * int SERVER_PORT = 2000; String SERVER_ADDRESS =
+			 * "bit-249.ipk-gatersleben.de";
+			 * 
+			 * Subject subject = null; try { subject =
+			 * EdalHelpers.authenticateSampleUser(); } catch
+			 * (EdalAuthenticateException e1) { // TODO Auto-generated catch
+			 * block e1.printStackTrace(); }
+			 * 
+			 * // alternatively use Google+ login // Subject subject =
+			 * EdalHelpers.authenticateGoogleUser("", 3128);
+			 * 
+			 * // connect to running EDAL server on "bit-249" ClientDataManager
+			 * dataManagerClient = null; try { dataManagerClient = new
+			 * ClientDataManager(SERVER_ADDRESS, SERVER_PORT, new
+			 * Authentication(subject)); } catch (EdalAuthenticateException e1)
+			 * { // TODO Auto-generated catch block e1.printStackTrace(); }
+			 * 
+			 * // JFrame jf = new JFrame();
+			 * 
+			 * EdalFileChooser dialog = new
+			 * EdalFileChooser(MainWindowSingleton.getInstance(),
+			 * dataManagerClient);
+			 * dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
+			 * dialog.setFileSelectionMode(EdalFileChooser.FILES_AND_DIRECTORIES
+			 * ); dialog.showConnectionButton(false);
+			 * 
+			 * // dialog.setFileFilter(new EdalFileNameExtensionFilter("sbml",
+			 * // "sbml"));
+			 * 
+			 * int result = dialog.showOpenDialog(); //
+			 * System.out.println(result + " " + //
+			 * EdalFileChooser.APPROVE_OPTION); if (result ==
+			 * EdalFileChooser.APPROVE_OPTION) { ClientPrimaryDataFile df =
+			 * null; ClientPrimaryDataEntity de = dialog.getSelectedFile(); if
+			 * (de instanceof ClientPrimaryDataFile) { df =
+			 * (ClientPrimaryDataFile) de; // File f = new File(df.getName());
+			 * // File f; try { ByteArrayOutputStream os = new
+			 * ByteArrayOutputStream();
+			 * 
+			 * df.read(os); byte[] b = os.toByteArray(); InputStream is = new
+			 * ByteArrayInputStream(b); JSBMLinput jsbmlInput = new
+			 * JSBMLinput(); // jsbmlInput = pathway==null ? new JSBMLinput() :
+			 * new // JSBMLinput(pathway); String res =
+			 * jsbmlInput.loadSBMLFile(is, df.getName()); if (res.length() > 0)
+			 * {
+			 * JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			 * res); } // os. } catch (RemoteException |
+			 * PrimaryDataFileException e1) { // TODO Auto-generated catch block
+			 * e1.printStackTrace(); }
+			 * 
+			 * } else { System.out.println("please choose a file, not a dir"); }
+			 * }
+			 */
 
 		} else if ("close Network".equals(event)) {
 
@@ -426,38 +415,13 @@ public class MenuListener implements ActionListener {
 			} else {
 				JOptionPane.showMessageDialog(w, "Please create a network before.");
 			}
-		}
-		// else if ("kegg settings".equals(event))
-		// {
-		//
-		// new Settings().setSelection(0);
-		//
-		// }
-		// else if ("brenda settings".equals(event))
-		// {
-		//
-		// new Settings().setSelection(1);
-		//
-		// }
-		// else if ("dawis settings".equals(event))
-		// {
-		//
-		// new Settings().setSelection(2);
-		//
-		// }
-		// else if ("ppi settings".equals(event))
-		// {
-		//
-		// new Settings().setSelection(3);
-		//
-		// }
-		else if ("database settings".equals(event)) {
+		} else if ("database settings".equals(event)) {
 			new Settings(0);
 		} else if ("internet".equals(event)) {
 
 			new Settings(1);
 
-		}  else if ("interaction".equals(event)) {
+		} else if ("interaction".equals(event)) {
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				new InfoWindow(false);
 			}
@@ -1004,13 +968,12 @@ public class MenuListener implements ActionListener {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
-			
-			
-			VisualizationImageServer< BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
-			
+
+			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
+
 			PDFGraphics2D pdf;
 			try {
-				pdf = new PDFGraphics2D(new File(docDir+"export.pdf"), new Dimension(wvv.getWidth(), wvv.getHeight()));
+				pdf = new PDFGraphics2D(new File(docDir + "export.pdf"), new Dimension(wvv.getWidth(), wvv.getHeight()));
 				pdf.startExport();
 				wvv.print(pdf);
 				pdf.endExport();
@@ -1018,12 +981,11 @@ public class MenuListener implements ActionListener {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
-			
-			
+
 			Thread thread = new Thread() {
 				public void run() {
 					try {
-						while (!new File(docDir+"export.pdf").exists()) {
+						while (!new File(docDir + "export.pdf").exists()) {
 							System.out.println("sleep");
 							sleep(100);
 						}
@@ -1063,15 +1025,15 @@ public class MenuListener implements ActionListener {
 								sleep(100);
 								System.out.println("alive1");
 							}
-							//p.destroyForcibly();
-							
+							// p.destroyForcibly();
+
 							Process p2 = pb.start();
 							BufferedReader br2 = new BufferedReader(new InputStreamReader(p2.getInputStream()));
-							
-							while(p2.isAlive()){
+
+							while (p2.isAlive()) {
 								System.out.println(br2.readLine());
 								sleep(100);
-								//System.out.println("alive2");
+								// System.out.println("alive2");
 							}
 							System.out.println("pdf ended");
 							// System.out.println("restart");
@@ -1102,287 +1064,29 @@ public class MenuListener implements ActionListener {
 
 		} else if ("mirnaTest".equals(event)) {
 			System.out.println("mirnatest");
-			// code for testing number of mirnas matching a pathway
-
-			/*
-			 * Iterator<BiologicalNodeAbstract> bnas =
-			 * graphInstance.getMyGraph().getAllVertices().iterator(); int c =0;
-			 * while(bnas.hasNext()){ if(bnas.next() instanceof DNA){ c++; } }
-			 * System.out.println("dnas: "+c);
-			 */
-			final String QUESTION_MARK = new String("\\?");
-			String finalQueryString = "SELECT distinct targetgene FROM db_mirna2.mirtarbase;";// SELECT
-																								// COUNT(DISTINCT
-			Set<String> pws = new HashSet<String>(); // targetgene
-			// FROM
-			ArrayList<DBColumn> list = new ArrayList<DBColumn>();
-
-			// list = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA,
-			// finalQueryString);
-			// System.out.println(list.size());
-			HashMap<String, Integer> map = new HashMap<String, Integer>();
-			// System.out.println("res: "+list.get(0).getColumn()[0]);
-			// System.out.println(list.size());
-			HashMap<String, HashSet<String>> pw2genes = new HashMap<String, HashSet<String>>();
-			HashMap<String, HashSet<String>> genes2mrina = new HashMap<String, HashSet<String>>();
-			BufferedReader in;
-			String pw;
-			String mirna;
-			System.out.println(list.size());
-
-			FileReader fr;
-			try {
-				fr = new FileReader("pws.txt");
-
-				BufferedReader br = new BufferedReader(fr);
-
-				String zeile = br.readLine();
-
-				while ((zeile = br.readLine()) != null) {
-					pws.add(zeile);
-					// pws.add("00062");
+			MirnaStatistics mirna = new MirnaStatistics();
+			mirna.createKeggStatistics(true, true, !true);
+		} else if ("mirnaSources".equals(event)) {
+			if (con.containsPathway()) {
+				Pathway pw = graphInstance.getPathway();
+				if (pw.hasGotAtLeastOneElement()) {
+					
+					MirnaStatistics mirna = new MirnaStatistics();
+					mirna.addMirnaSources(pw);
+				} else {
+					JOptionPane.showMessageDialog(w, "Please create a network before.");
 				}
-
-				br.close();
-
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			} else {
+				JOptionPane.showMessageDialog(w, "Please create a network before.");
 			}
-
-			System.out.println("PWs: " + pws.size());
-			Iterator<String> its = pws.iterator();
-
-			double count = 0;
-			String output = "";
-			while (its.hasNext()) {
-
-				// if(count%10 == 0){
-				System.out.println(count / (pws.size()) * 100.0 + "%");
-				// }
-				pw = its.next();
-
-				finalQueryString = "SELECT distinct kegg_genes_name.name FROM dawismd.kegg_genes_pathway join dawismd.kegg_genes_name on kegg_genes_pathway.id = kegg_genes_name.id where kegg_genes_pathway.number = '"
-						+ pw + "' AND kegg_genes_pathway.org = 'hsa';";
-
-				// finalQueryString = "SELECT count(distinct
-				// kegg_genes_pathway.id) FROM dawismd.kegg_genes_pathway inner
-				// join dawismd.kegg_genes_name on kegg_genes_pathway.id =
-				// kegg_genes_name.id where kegg_genes_pathway.number='"
-				// + pw + "' and kegg_genes_pathway.org = 'hsa';";
-
-				list = new Wrapper().requestDbContent(Wrapper.dbtype_KEGG, finalQueryString);
-				System.out.println(list.size());
-				if (list.size() > 0) {
-					// System.out.println("drin");
-					pw2genes.put(pw, new HashSet<String>());
-				}
-
-				for (int i = 0; i < list.size(); i++) {
-					pw2genes.get(pw).add(list.get(i).getColumn()[0]);
-				}
-
-				output += pw + "\t" + list.get(0).getColumn()[0] + "\r\n";
-				count++;
-			}
-			System.out.println(output);
-			HashSet<String> genes = new HashSet<String>();
-
-			System.out.println("pws: " + pw2genes.keySet().size());
-			int sum = 0;
-
-			for (String key : pw2genes.keySet()) {
-				genes.addAll(pw2genes.get(key));
-			}
-
-			System.out.println("all genes: " + genes.size());
-			String number;
-			String gene;
-			Iterator<String> it = genes.iterator();
-			count = 0;
-			while (it.hasNext()) {
-				System.out.println("Retr. mirnas: " + count / (genes.size()) * 100.0 + "%");
-				gene = it.next();
-				if (!gene.contains("'")) {
-					// finalQueryString = "SELECT distinct mirnaname FROM
-					// mirtarbase where targetgene = '" + gene + "';";
-
-					finalQueryString = "SELECT distinct Matures.Name FROM Matures Matures inner join TargetGenes TargetGenes on Matures.ID=TargetGenes.mID inner join TargetGene TargetGene on TargetGenes.ID=TargetGene.tgsID where NOT DB='ensemble' AND TargetGene.Accession = '"
-							+ gene + "' AND TargetGenes.SpeciesID = 54;";
-					list = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
-					// if (list.size() > 0) {
-					genes2mrina.put(gene, new HashSet<String>());
-					// }
-
-					for (int i = 0; i < list.size(); i++) {
-						genes2mrina.get(gene).add(list.get(i).getColumn()[0]);
-					}
-				}
-				count++;
-
-			}
-
-			HashSet<String> cleanMirna = new HashSet<String>();
-
-			// HashSet<String> mirnas;
-			Iterator<String> it2;
-			// String mirna;
-			StringBuilder sb = new StringBuilder();
-			sb.append("PathwayID\tunigene\tmirna\r\n");
-			for (String pathway : pw2genes.keySet()) {
-				it = pw2genes.get(pathway).iterator();
-				while (it.hasNext()) {
-					gene = it.next();
-					if (genes2mrina.containsKey(gene)) {
-						it2 = genes2mrina.get(gene).iterator();
-						while (it2.hasNext()) {
-							mirna = it2.next();
-							sb.append(pathway + "\t" + gene + "\t" + mirna + "\r\n");
-						}
-					}
-				}
-			}
-
-			PrintWriter out;
-			try {
-				out = new PrintWriter("output.txt");
-				out.println(sb.toString());
-				out.close();
-			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			for (String key : pw2genes.keySet()) {
-				cleanMirna.clear();
-				it = pw2genes.get(key).iterator();
-
-				while (it.hasNext()) {
-					gene = it.next();
-					if (genes2mrina.containsKey(gene)) {
-						cleanMirna.addAll(genes2mrina.get(gene));
-					}
-				}
-				System.out.println("PW: " + key + " genes: " + pw2genes.get(key).size() + " mirnas: " + cleanMirna.size());
-
-			}
-
-			/*
-			 * Iterator<String> it = gene2mirna.keySet().iterator();
-			 * ArrayList<DBColumn> list2 = new ArrayList<DBColumn>();
-			 * 
-			 * Writer writer = null; try { writer = new BufferedWriter(new
-			 * OutputStreamWriter( new FileOutputStream("genes2miRNA.txt"),
-			 * "utf-8")); writer.write("gene,miRNAs"); while (it.hasNext()) {
-			 * gene = it.next(); writer.write(gene + "," + gene2mirna.get(gene)
-			 * + "\n"); // System.out.println(gene+" "+gCount.get(gene));; }
-			 * 
-			 * } catch (IOException ex) { // report } finally { try {
-			 * writer.close(); } catch (Exception ex) { } }
-			 * 
-			 * int i = 0; while (it.hasNext()) {// && i<10) { if (i % 10 == 0) {
-			 * // System.out.println(i*100.0/gCount.keySet().size()+"%"); // }
-			 * gene = it.next();// list.get(i).getColumn()[0];
-			 * System.out.println(gene2mirna.get(gene));
-			 * 
-			 * String q2 =
-			 * "SELECT kegg_genes_pathway.name,kegg_genes_pathway.name," +
-			 * "kegg_genes_pathway.number,kegg_genes_pathway.org, kegg_genes_name.name FROM "
-			 * + "dawismd.kegg_genes_pathway inner join " +
-			 * "dawismd.kegg_genes_name on kegg_genes_pathway.id=kegg_genes_name.id "
-			 * + "where kegg_genes_name.name = '" + gene +
-			 * "' and kegg_genes_pathway.org='hsa' order by kegg_genes_pathway.name,"
-			 * + "kegg_genes_name.name;"; //
-			 * q2.replaceFirst(QUESTION_MARK,gene); // System.out.println(q2);
-			 * list2 = new // Wrapper().requestDbContent(2, q2); //
-			 * System.out.println(list2.size()); for (int j = 0; j <
-			 * list2.size(); j++) { number = list2.get(j).getColumn()[2];
-			 * 
-			 * if (map.containsKey(number)) { map.put(number,
-			 * 
-			 * map.get(number) + gene2mirna.get(gene)); } else { map.put(number,
-			 * gene2mirna.get(gene)); } } i++; }
-			 * 
-			 * it = map.keySet().iterator(); String key; while (it.hasNext()) {
-			 * key = it.next(); System.out.println(key + "\t" + map.get(key)); }
-			 */
-
-			/*
-			 * if (allKEGGPathways.size() > 0) { MirnaResultKeggWindow
-			 * mirnaResultKeggWindow = new MirnaResultKeggWindow(
-			 * allKEGGPathways); Vector keggPAthwayResults =
-			 * mirnaResultKeggWindow .getAnswer(); if (keggPAthwayResults.size()
-			 * != 0) { String keggPathwayNumber = ""; String keggPathwayName =
-			 * ""; final Iterator it3 = keggPAthwayResults .iterator(); while
-			 * (it3.hasNext()) {
-			 * 
-			 * String[] pathwayResutls = (String[]) it3 .next();
-			 * keggPathwayNumber= "hsa"+pathwayResutls[1]; keggPathwayName =
-			 * pathwayResutls[0]; } } }
-			 */
-			// }
-			// }
 
 		} else if ("mirnaTargets".equals(event)) {
 			// System.out.println("targets: ");
 			if (con.containsPathway()) {
 				Pathway pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
-					Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-					BiologicalNodeAbstract bna;
-					final String QUESTION_MARK = new String("\\?");
-					ArrayList<DBColumn> resultsDBSearch;
-					HashMap<String, SRNA> srnas = new HashMap<String, SRNA>();
-					SRNA srna;
-					Point2D p;
-					Expression exp;
-					HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>> data = new HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>>();
-					while (it.hasNext()) {
-						bna = it.next();
-
-						// System.out.println(it.next().getName());
-						String finalQueryString = miRNAqueries.miRNA_get_Mirnas.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
-						// System.out.println(finalQueryString);
-						resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
-						if (resultsDBSearch.size() > 0) {
-							data.put(bna, resultsDBSearch);
-						}
-					}
-
-					String[] column;
-
-					Iterator<BiologicalNodeAbstract> itBNA = data.keySet().iterator();
-
-					while (itBNA.hasNext()) {
-						bna = itBNA.next();
-						resultsDBSearch = data.get(bna);
-						for (int i = 0; i < resultsDBSearch.size(); i++) {
-							column = resultsDBSearch.get(i).getColumn();
-							if (srnas.containsKey(column[0])) {
-								srna = srnas.get(column[0]);
-							} else {
-								srna = new SRNA(column[0], column[0]);
-								// p = new
-								// Point2D.Double(myGraph.getVertexLocation(bna).getX(),
-								// myGraph.getVertexLocation(bna).getY());
-								// .findNearestFreeVertexPosition(bna.getKEGGnode()
-								// .getXPos(), bna.getKEGGnode().getYPos(),
-								// 100);
-								p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20, 2.0 * ((double) (Math.random() % (Math.PI))));
-								pw.addVertex(srna, p);
-								srnas.put(column[0], srna);
-								// srnaParents.put(srna.getID(),
-								// bna.getID());
-							}
-							exp = new Expression("", "", srna, bna);
-							exp.setDirected(true);
-							pw.addEdge(exp);
-							pw.addEdgeToView(exp, true);
-						}
-					}
-					pw.getGraph().updateGraph();
-					pw.getGraph().updateLayout();
-
+					MirnaStatistics mirna = new MirnaStatistics();
+					mirna.addMirnaTargets(pw);
 				} else {
 					JOptionPane.showMessageDialog(w, "Please create a network before.");
 				}
@@ -1395,69 +1099,74 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				Runnable animator = new Runnable() {
 
-	@Override
-	public void run() {
-		BiologicalNodeAbstract bna;
-		Point2D p;
-		Point2D inv;
-		GraphInstance graphInstance = new GraphInstance();
-		for (int i = 0; i < 10; i++) { // //
-			double offset = 5;
-			if (i % 2 == 0) {
-				offset *= -1;
-			}
-			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance.getPathway().getGraph().getVisualizationViewer();
-			double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
-			double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
-			double scale;
-			if (scaleV < 1) {
-				scale = scaleV;
-			} else {
-				scale = scaleL;
-			}
-			offset /= scale;
+					@Override
+					public void run() {
+						BiologicalNodeAbstract bna;
+						Point2D p;
+						Point2D inv;
+						GraphInstance graphInstance = new GraphInstance();
+						for (int i = 0; i < 10; i++) { // //
+							double offset = 5;
+							if (i % 2 == 0) {
+								offset *= -1;
+							}
+							VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance.getPathway().getGraph()
+									.getVisualizationViewer();
+							double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
+							double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
+							double scale;
+							if (scaleV < 1) {
+								scale = scaleV;
+							} else {
+								scale = scaleL;
+							}
+							offset /= scale;
 
-			Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
-			while (it.hasNext()) {
-				bna = it.next();
+							Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
+							while (it.hasNext()) {
+								bna = it.next();
 
-				if (bna instanceof Enzyme) {
-					p = graphInstance.getPathway().getGraph().getVertexLocation(bna); //
-					inv = //
-							graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
-									.inverseTransform(p); // inv.setLocation(inv.getX()
-															// +
-															// offset,
-															// //
-															// inv.getY());
+								if (bna instanceof Enzyme) {
+									p = graphInstance.getPathway().getGraph().getVertexLocation(bna); //
+									inv = //
+											graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext()
+													.getMultiLayerTransformer().inverseTransform(p); // inv.setLocation(inv.getX()
+																										// +
+																										// offset,
+																										// //
+																										// inv.getY());
 
-					// p = //
-					graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer().transform(inv);
-					vv.getModel().getGraphLayout().setLocation(bna, new Point2D.Double(p.getX() + offset, p.getY()));
-				}
+									// p = //
+									graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
+											.transform(inv);
+									vv.getModel().getGraphLayout().setLocation(bna, new Point2D.Double(p.getX() + offset, p.getY()));
+								}
+							}
+
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException ex) {
+							}
+						}
+					}
+				};
+
+				Thread thread = new Thread(animator);
+				thread.start();
 			}
 
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException ex) {
-			}
+		} else if ("graphPicture".equals(event)) {
+			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
+			ExportDialog export = new ExportDialog();
+
+			// export.setUserProperties(p);
+			// System.out.println(export.getInitialValue());
+
+			// export.setWantsInput(true);
+			// export.setInitialSelectionValue(5);
+
+			export.showExportDialog(MainWindow.getInstance(), "Export graph as ...", wvv, "export");
 		}
-	}};
-
-	Thread thread = new Thread(animator);thread.start();}
-
-	}else if("graphPicture".equals(event)){
-	VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
-	ExportDialog export = new ExportDialog();
-
-	// export.setUserProperties(p);
-	// System.out.println(export.getInitialValue());
-
-	// export.setWantsInput(true);
-	// export.setInitialSelectionValue(5);
-
-	export.showExportDialog(MainWindow.getInstance(),"Export graph as ...",wvv,"export");
-	}
 
 	}
 

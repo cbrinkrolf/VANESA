@@ -46,6 +46,7 @@ public class DBconnection
 
 	public void checkConnection() throws Exception
 	{
+		//System.out.println(con);
 		connect2mysql(server, user, password);
 		useDatabase(database);
 		if (con==null)
@@ -94,7 +95,7 @@ public class DBconnection
 	{
 		ResultSet rs=null;
 		
-		checkConnection();
+		//checkConnection();
 
 		stmt=con.createStatement();
 		rs=stmt.executeQuery(query);
@@ -104,7 +105,7 @@ public class DBconnection
 
 	public ResultSet selectQuery(String preparedStatement, String[] inserts) throws Exception 
 	{
-		checkConnection();
+		//checkConnection();
 
 		PreparedStatement ps=con.prepareStatement(preparedStatement);
 		ResultSet rs=null;
