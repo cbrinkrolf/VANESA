@@ -376,11 +376,15 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				// }
 			}
 		} else if (pickedV == 1 && pickedE == 0) {
-
+			//System.out.println("one picked");
 			SimulationResult result;
 			List<SimulationResult> listActive = null;
 			if(bna instanceof Place){
+				if(bna.hasRef() && bna.getRef() instanceof Place){
+					bna = bna.getRef();
+				}
 				listActive = pw.getPetriNet().getSimResController().getAllActiveWithData(bna, TOKEN);
+				//System.out.println(listActive.size());
 			}else if (bna instanceof Transition){
 				listActive = pw.getPetriNet().getSimResController().getAllActiveWithData(bna, ACTUAL_FIRING_SPEED);
 			}
