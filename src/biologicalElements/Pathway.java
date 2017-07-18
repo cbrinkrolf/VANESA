@@ -381,12 +381,13 @@ public class Pathway implements Cloneable {
 				}
 				bea.getFrom().removeConnectingEdge(bea);
 				bea.getTo().removeConnectingEdge(bea);
+				this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
 				return;
 			}
 			// ids.remove(element.getID());
 			// System.out.println(biologicalElements.size());
 			// biologicalElements.remove(element.getID() + "");
-			this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
+			
 			// System.out.println(biologicalElements.size());
 		}
 	}
