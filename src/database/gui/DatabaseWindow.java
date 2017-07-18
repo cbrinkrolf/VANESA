@@ -154,4 +154,8 @@ public class DatabaseWindow {
 	public boolean isHeadless() {
 		return this.headless;
 	}
+	
+	public boolean isHsaOnlyMirna(){
+		return mirna.isHsaOnly();
+	}
 }

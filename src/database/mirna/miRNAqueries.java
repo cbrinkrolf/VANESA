@@ -23,7 +23,7 @@ public class miRNAqueries {
 
 	public static final String miRNA_sequence_name = "select distinct Name, Sequence from Matures where Sequence like ? and Name like ?";
 
-	public static final String miRNA_get_Genes = "SELECT distinct TargetGene.Accession, TargetGene.DB FROM Matures Matures inner join TargetGenes TargetGenes on Matures.ID=TargetGenes.mID inner join TargetGene TargetGene on TargetGenes.ID=TargetGene.tgsID where NOT DB = 'ensemble' AND Matures.Name = ? AND TargetGenes.SpeciesID=54;";
+	public static final String miRNA_get_Genes = "SELECT distinct TargetGene.Accession, TargetGene.DB FROM Matures Matures inner join TargetGenes TargetGenes on Matures.ID=TargetGenes.mID inner join TargetGene TargetGene on TargetGenes.ID=TargetGene.tgsID where NOT DB = 'ensemble' AND Matures.Name = ? ;";//AND TargetGenes.SpeciesID=54;";
 
 	// miRNAs which target given gene
 	public static final String miRNA_get_MirnaTargets = "SELECT distinct Matures.Name FROM Matures Matures inner join TargetGenes TargetGenes on Matures.ID=TargetGenes.mID inner join TargetGene TargetGene on TargetGenes.ID=TargetGene.tgsID where NOT DB='ensemble' AND TargetGene.Accession = ? ;";//AND TargetGenes.SpeciesID=54;";

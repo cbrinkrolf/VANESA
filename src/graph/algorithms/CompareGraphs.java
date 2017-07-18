@@ -33,6 +33,8 @@ public class CompareGraphs {
 			if (pw.getGraph().getJungGraph().findEdge(bna, two) == null
 					&& pw.getGraph().getJungGraph().findEdge(two, one) == null) {
 				ReactionEdge e = new ReactionEdge("", "", two, bna);
+				e.setDirected(true);
+				//System.out.println(one.getName()+" -> "+two.getName());
 				pw.addEdge(e);
 
 			}

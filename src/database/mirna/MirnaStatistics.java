@@ -79,6 +79,7 @@ public class MirnaStatistics {
 					counterNodes++;
 					// srnaParents.put(srna.getID(),
 					// bna.getID());
+					System.out.println(srna.getName());
 				}
 				if (!pw.existEdge(bna, srna)) {
 					exp = new Expression("", "", bna, srna);

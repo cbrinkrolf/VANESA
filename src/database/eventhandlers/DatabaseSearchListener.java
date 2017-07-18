@@ -76,9 +76,8 @@ public class DatabaseSearchListener implements ActionListener {
 	
 	private void requestMIRNAcontent() {
 		MainWindow.getInstance().showProgressBar("miRNA query");		
-		mirnaSearch mirnaS = new mirnaSearch(dw.getInput(),
-				MainWindow.getInstance(), dw.isHeadless());
-		
+		mirnaSearch mirnaS = new mirnaSearch(dw.getInput(), dw.isHsaOnlyMirna(),
+				dw.isHeadless());
 		mirnaS.execute();   
 	}
 	
