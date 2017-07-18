@@ -87,6 +87,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private MyJFormattedTextField concentrationMin;
 	private MyJFormattedTextField concentrationMax;
 
+	private JCheckBox isDirected;
 	// private Object element;
 
 	public ElementWindow() {
@@ -115,6 +116,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}
 
 		knockedOut = new JCheckBox();
+		isDirected = new JCheckBox();
 		colorButton = new JButton("Colour");
 		hideNeighbours = new JButton("Hide all Neighbours");
 		showNeighbours = new JButton("Show all Neighbours");
@@ -596,6 +598,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(upBoundary, "wrap");
 
 			}
+			
+			isDirected.setSelected(((BiologicalEdgeAbstract) ab).isDirected());
+			isDirected.setToolTipText("is directed");
+			isDirected.setActionCommand("isDirected");
+			isDirected.addActionListener(this);
+			p.add(new JLabel("is directed"), "gap 5 ");
+			p.add(isDirected, "wrap ,span 1");
+			
 		}
 
 		if (ab instanceof DynamicNode) {
@@ -676,7 +686,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 				}
 			};
 			worker.start();
-
 		}
 	}
 
@@ -836,6 +845,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 			pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 
 			// System.out.println("knocked out");
+		} else if ("isDirected".equals(event)){ 
+			if(ab instanceof BiologicalEdgeAbstract){
+				((BiologicalEdgeAbstract)ab).setDirected(isDirected.isSelected());
+				Pathway pw = new GraphInstance().getPathway();
+				pw.updateMyGraph();
+			}
 		} else if ("constCheck".equals(event)) {
 			if (ab instanceof BiologicalNodeAbstract) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
@@ -863,9 +878,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
 			}
 			// System.out.println(this.constCheck.isSelected());
-
 		}
-
 		GraphInstance.getMyGraph().updateGraph();
 	}
 
@@ -875,6 +888,5 @@ public class ElementWindow implements ActionListener, ItemListener {
 		if (ab.isVertex()) {
 			((BiologicalNodeAbstract) ab).setCompartment(item);
 		}
-
 	}
 }

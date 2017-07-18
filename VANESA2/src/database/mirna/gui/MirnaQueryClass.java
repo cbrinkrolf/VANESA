@@ -2,6 +2,7 @@ package database.mirna.gui;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -18,6 +19,7 @@ public class MirnaQueryClass extends QueryMask {
 	
 	private JPanel p;
 	private JTextField name, acc, sequences, gene;
+	private JCheckBox hsaOnly;
 	
 	
 	public MirnaQueryClass(DatabaseWindow dw) {
@@ -31,7 +33,8 @@ public class MirnaQueryClass extends QueryMask {
 		gene = new JTextField(20);
 		acc = new JTextField(20);
 		sequences = new JTextField(20);
-		
+		hsaOnly = new JCheckBox("human only");
+		hsaOnly.setSelected(true);
 		
 		name.setText("hsa-miR-15a");
 		gene.setText("");
@@ -61,20 +64,20 @@ public class MirnaQueryClass extends QueryMask {
 		p.add(acc,"span, wrap, growx, gap 10");
 		p.add(new JLabel("Sequence"),"span 2, gap 5 ");
 		p.add(sequences,"span, wrap, growx, gap 10");
+		p.add(hsaOnly,"span, wrap, growx, gap 10");
 
 		this.addControleButtons(p);
-			
 	}
 
     public void reset(){
     	name.setText("");
     	gene.setText("");
 		acc.setText("");
-		sequences.setText(""); 	
+		sequences.setText("");
+		hsaOnly.setSelected(true);
 	}
 	
 	public String[] getKeyword(){
-		
 		String[] input = new String[5];
 		input[0]=name.getText();
 		input[1]=acc.getText();
@@ -84,7 +87,6 @@ public class MirnaQueryClass extends QueryMask {
 	}
 	
 	public boolean doSearchCriteriaExist(){
-		
 		if(name.getText().length()>0 || acc.getText().length()>0 || sequences.getText().length()>0 || gene.getText().length()>0){
 			return true;
 		}else{
@@ -94,5 +96,9 @@ public class MirnaQueryClass extends QueryMask {
 	
 	public JPanel getPanel(){
 		return p;
+	}
+	
+	public boolean isHsaOnly(){
+		return this.hsaOnly.isSelected();
 	}
 }
