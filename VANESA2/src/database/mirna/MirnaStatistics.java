@@ -24,7 +24,6 @@ import pojos.DBColumn;
 public class MirnaStatistics {
 
 	public void addMirnaSources(Pathway pw) {
-
 		int counterEdges = 0;
 		int counterNodes = 0;
 
@@ -33,40 +32,44 @@ public class MirnaStatistics {
 		final String QUESTION_MARK = new String("\\?");
 		ArrayList<DBColumn> resultsDBSearch;
 		HashMap<String, BiologicalNodeAbstract> bnas = new HashMap<String, BiologicalNodeAbstract>();
-		SRNA srna;
+		// SRNA srna;
 		Point2D p;
 		Expression exp;
 		HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>> data = new HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>>();
 		while (it.hasNext()) {
 			bna = it.next();
 			bnas.put(bna.getLabel(), bna);
+		}
 
-			if (!(bna instanceof SRNA)) {
-				// System.out.println(it.next().getName());
-				String finalQueryString = miRNAqueries.miRNA_get_MirnaSources.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
-				// System.out.println(finalQueryString);
-				resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
-				// System.out.println(resultsDBSearch.size());
-				if (resultsDBSearch.size() > 0) {
-					// System.out.println(resultsDBSearch.size());
-					data.put(bna, resultsDBSearch);
-				}
+		if (pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().size() > 0) {
+			it = pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator();
+		} else {
+			it = pw.getAllGraphNodes().iterator();
+		}
+		
+		while (it.hasNext()) {
+			bna = it.next();
+			String finalQueryString = miRNAqueries.miRNA_get_MirnaSources.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
+			if (resultsDBSearch.size() > 0) {
+				data.put(bna, resultsDBSearch);
 			}
 		}
+		
 
 		String[] column;
 
 		Iterator<BiologicalNodeAbstract> itBNA = data.keySet().iterator();
-
+		BiologicalNodeAbstract tmp;
 		while (itBNA.hasNext()) {
 			bna = itBNA.next();
 			resultsDBSearch = data.get(bna);
 			for (int i = 0; i < resultsDBSearch.size(); i++) {
 				column = resultsDBSearch.get(i).getColumn();
-				if (bnas.containsKey(column[0]) && bnas.get(column[0]) instanceof SRNA) {
-					srna = (SRNA) bnas.get(column[0]);
+				if (bnas.containsKey(column[0])) {
+					tmp = bnas.get(column[0]);
 				} else {
-					srna = new SRNA(column[0], column[0]);
+					tmp = new SRNA(column[0], column[0]);
 					// p = new
 					// Point2D.Double(myGraph.getVertexLocation(bna).getX(),
 					// myGraph.getVertexLocation(bna).getY());
@@ -74,15 +77,15 @@ public class MirnaStatistics {
 					// .getXPos(), bna.getKEGGnode().getYPos(),
 					// 100);
 					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20, 2.0 * ((double) (Math.random() % (Math.PI))));
-					pw.addVertex(srna, p);
-					bnas.put(column[0], srna);
+					pw.addVertex(tmp, p);
+					bnas.put(column[0], tmp);
 					counterNodes++;
 					// srnaParents.put(srna.getID(),
 					// bna.getID());
-					System.out.println(srna.getName());
+					System.out.println(tmp.getName());
 				}
-				if (!pw.existEdge(bna, srna)) {
-					exp = new Expression("", "", bna, srna);
+				if (!pw.existEdge(bna, tmp)) {
+					exp = new Expression("", "", bna, tmp);
 					exp.setDirected(true);
 					pw.addEdge(exp);
 					pw.addEdgeToView(exp, true);
@@ -104,21 +107,27 @@ public class MirnaStatistics {
 		final String QUESTION_MARK = new String("\\?");
 		ArrayList<DBColumn> resultsDBSearch;
 		HashMap<String, BiologicalNodeAbstract> bnas = new HashMap<String, BiologicalNodeAbstract>();
-		SRNA srna;
+		BiologicalNodeAbstract tmp;
 		Point2D p;
 		Expression exp;
 		HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>> data = new HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>>();
 		while (it.hasNext()) {
 			bna = it.next();
 			bnas.put(bna.getLabel(), bna);
-			if (!(bna instanceof SRNA)) {
-				// System.out.println(it.next().getName());
-				String finalQueryString = miRNAqueries.miRNA_get_MirnaTargets.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
-				// System.out.println(finalQueryString);
-				resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
-				if (resultsDBSearch.size() > 0) {
-					data.put(bna, resultsDBSearch);
-				}
+		}
+		
+		if (pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().size() > 0) {
+			it = pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator();
+		} else {
+			it = pw.getAllGraphNodes().iterator();
+		}
+		
+		while (it.hasNext()) {
+			bna = it.next();
+			String finalQueryString = miRNAqueries.miRNA_get_MirnaTargets.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
+			if (resultsDBSearch.size() > 0) {
+				data.put(bna, resultsDBSearch);
 			}
 		}
 
@@ -131,10 +140,10 @@ public class MirnaStatistics {
 			resultsDBSearch = data.get(bna);
 			for (int i = 0; i < resultsDBSearch.size(); i++) {
 				column = resultsDBSearch.get(i).getColumn();
-				if (bnas.containsKey(column[0]) && bnas.get(column[0]) instanceof SRNA) {
-					srna = (SRNA) bnas.get(column[0]);
+				if (bnas.containsKey(column[0])) {
+					tmp = bnas.get(column[0]);
 				} else {
-					srna = new SRNA(column[0], column[0]);
+					tmp = new SRNA(column[0], column[0]);
 					// p = new
 					// Point2D.Double(myGraph.getVertexLocation(bna).getX(),
 					// myGraph.getVertexLocation(bna).getY());
@@ -142,14 +151,14 @@ public class MirnaStatistics {
 					// .getXPos(), bna.getKEGGnode().getYPos(),
 					// 100);
 					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20, 2.0 * ((double) (Math.random() % (Math.PI))));
-					pw.addVertex(srna, p);
-					bnas.put(column[0], srna);
+					pw.addVertex(tmp, p);
+					bnas.put(column[0], tmp);
 					// srnaParents.put(srna.getID(),
 					// bna.getID());
 					counterNodes++;
 				}
-				if (!pw.existEdge(srna, bna)) {
-					exp = new Expression("", "", srna, bna);
+				if (!pw.existEdge(tmp, bna)) {
+					exp = new Expression("", "", tmp, bna);
 					exp.setDirected(true);
 					pw.addEdge(exp);
 					pw.addEdgeToView(exp, true);
@@ -203,9 +212,9 @@ public class MirnaStatistics {
 
 			while ((zeile = br.readLine()) != null) {
 				pws.add(zeile);
-				//pws.add("00010");
-				//pws.add("00020");
-				//pws.add("00061");
+				// pws.add("00010");
+				// pws.add("00020");
+				// pws.add("00061");
 			}
 
 			br.close();
@@ -230,7 +239,7 @@ public class MirnaStatistics {
 			finalQueryString = "SELECT distinct kegg_genes_name.name FROM dawismd.kegg_genes_pathway join dawismd.kegg_genes_name on kegg_genes_pathway.id = kegg_genes_name.id where kegg_genes_pathway.number = '"
 					+ pw + "' AND kegg_genes_pathway.org = 'hsa';";
 
-			//System.out.println(finalQueryString);
+			// System.out.println(finalQueryString);
 			// finalQueryString = "SELECT count(distinct
 			// kegg_genes_pathway.id) FROM dawismd.kegg_genes_pathway inner
 			// join dawismd.kegg_genes_name on kegg_genes_pathway.id =
@@ -240,7 +249,7 @@ public class MirnaStatistics {
 			list = new Wrapper().requestDbContent(Wrapper.dbtype_KEGG, finalQueryString);
 			System.out.println(list.size());
 			if (list.size() > 0) {
-				//System.out.println("drin");
+				// System.out.println("drin");
 				pw2genes.put(pw, new HashSet<String>());
 			}
 
@@ -270,12 +279,12 @@ public class MirnaStatistics {
 			System.out.println("Retr. mirnas: " + count / (genes.size()) * 100.0 + "%");
 			gene = it.next();
 			if (!gene.contains("'")) {
-				//System.out.println(gene);
+				// System.out.println(gene);
 				// finalQueryString = "SELECT distinct mirnaname FROM
 				// mirtarbase where targetgene = '" + gene + "';";
-				
+
 				// miRNA sources
-				
+
 				finalQueryString = "SELECT distinct Matures.Name FROM Matures join overlappingtranscripts on matures.hpID = overlappingtranscripts.hpID join hairpins on matures.hpID = hairpins.ID where overlappingtranscripts.Name = overlappingtranscripts.Accession and overlappingtranscripts.Name = '"
 						+ gene + "' ";
 				if (hsaOnly) {
@@ -284,9 +293,9 @@ public class MirnaStatistics {
 				finalQueryString += ";";
 				list = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
 				genes2mrinaSources.put(gene, new HashSet<String>());
-				
+
 				for (int i = 0; i < list.size(); i++) {
-					//System.out.println(gene);
+					// System.out.println(gene);
 					genes2mrinaSources.get(gene).add(list.get(i).getColumn()[0]);
 				}
 
@@ -300,9 +309,9 @@ public class MirnaStatistics {
 				finalQueryString += ";";
 
 				list = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
-				//System.out.println(list.size());
+				// System.out.println(list.size());
 				genes2mrinaTargets.put(gene, new HashSet<String>());
-				
+
 				for (int i = 0; i < list.size(); i++) {
 					genes2mrinaTargets.get(gene).add(list.get(i).getColumn()[0]);
 				}
@@ -347,13 +356,13 @@ public class MirnaStatistics {
 			cleanMirnaT.clear();
 			cleanMirnaS.clear();
 			cleanMirnaST.clear();
-			
+
 			it = pw2genes.get(key).iterator();
 
 			while (it.hasNext()) {
 				gene = it.next();
-				
-				if(genes2mrinaSources.containsKey(gene)){
+
+				if (genes2mrinaSources.containsKey(gene)) {
 					cleanMirnaS.addAll(genes2mrinaSources.get(gene));
 				}
 				if (genes2mrinaTargets.containsKey(gene)) {
@@ -361,10 +370,11 @@ public class MirnaStatistics {
 				}
 				cleanMirnaST.addAll(cleanMirnaS);
 				cleanMirnaST.addAll(cleanMirnaT);
-				
-				
+
 			}
-			System.out.println("PW: " + key + " genes: " + pw2genes.get(key).size() + " Sources: " + cleanMirnaS.size() + " Targets: " + cleanMirnaT.size() + " Union_S+T: " + cleanMirnaST.size() + " Intersect_S+T: "+(cleanMirnaS.size()+cleanMirnaT.size()-cleanMirnaST.size()));
+			System.out.println("PW: " + key + " genes: " + pw2genes.get(key).size() + " Sources: " + cleanMirnaS.size() + " Targets: "
+					+ cleanMirnaT.size() + " Union_S+T: " + cleanMirnaST.size() + " Intersect_S+T: "
+					+ (cleanMirnaS.size() + cleanMirnaT.size() - cleanMirnaST.size()));
 
 		}
 
