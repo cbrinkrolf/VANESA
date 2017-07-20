@@ -135,10 +135,12 @@ public class MenuBarClass {
 		mirnaTest.setActionCommand("mirnaTest");
 		
 		JMenuItem mirnaSources = new JMenuItem("Enrich miRNA sources");
+		mirnaSources.setToolTipText("enriches (selected) genes which are source gene for miRNAs");
 		mirnaSources.addActionListener(MenuListener.getInstance());
 		mirnaSources.setActionCommand("mirnaSources");
 		
 		JMenuItem mirnaTargets = new JMenuItem("Enrich miRNA targets");
+		mirnaTargets.setToolTipText("enriches (selected) genes with targeting miRNA(s)"); 
 		mirnaTargets.addActionListener(MenuListener.getInstance());
 		mirnaTargets.setActionCommand("mirnaTargets");
 
