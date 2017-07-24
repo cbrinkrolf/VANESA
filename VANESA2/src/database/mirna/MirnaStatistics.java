@@ -49,7 +49,7 @@ public class MirnaStatistics {
 		
 		while (it.hasNext()) {
 			bna = it.next();
-			String finalQueryString = miRNAqueries.miRNA_get_MirnaSources.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			String finalQueryString = miRNAqueries.miRNA_get_SourcingMirnas.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
 			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
 			if (resultsDBSearch.size() > 0) {
 				data.put(bna, resultsDBSearch);
@@ -124,7 +124,7 @@ public class MirnaStatistics {
 		
 		while (it.hasNext()) {
 			bna = it.next();
-			String finalQueryString = miRNAqueries.miRNA_get_MirnaTargets.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			String finalQueryString = miRNAqueries.miRNA_get_TargetingMirnas.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
 			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
 			if (resultsDBSearch.size() > 0) {
 				data.put(bna, resultsDBSearch);

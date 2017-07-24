@@ -1,10 +1,12 @@
 package database.mirna.gui;
 
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
@@ -20,6 +22,10 @@ public class MirnaQueryClass extends QueryMask {
 	private JPanel p;
 	private JTextField name, acc, sequences, gene;
 	private JCheckBox hsaOnly;
+	private ButtonGroup typeGroup;
+	private JRadioButton sources;
+	private JRadioButton targets;
+	private JRadioButton sourcesAndTargets;
 	
 	
 	public MirnaQueryClass(DatabaseWindow dw) {
@@ -35,6 +41,18 @@ public class MirnaQueryClass extends QueryMask {
 		sequences = new JTextField(20);
 		hsaOnly = new JCheckBox("human only");
 		hsaOnly.setSelected(true);
+		
+		typeGroup = new ButtonGroup();
+		sources = new JRadioButton("sources");
+		targets = new JRadioButton("targets");
+		sourcesAndTargets = new JRadioButton("both");
+		sourcesAndTargets.setSelected(true);
+		
+		typeGroup.add(sources);
+		typeGroup.add(targets);
+		typeGroup.add(sourcesAndTargets);
+		
+		
 		
 		name.setText("hsa-miR-15a");
 		gene.setText("");
@@ -64,7 +82,10 @@ public class MirnaQueryClass extends QueryMask {
 		p.add(acc,"span, wrap, growx, gap 10");
 		p.add(new JLabel("Sequence"),"span 2, gap 5 ");
 		p.add(sequences,"span, wrap, growx, gap 10");
-		p.add(hsaOnly,"span, wrap, growx, gap 10");
+		p.add(hsaOnly, "span 2");
+		p.add(sources, "flowx, span, split 3");
+		p.add(targets);
+		p.add(sourcesAndTargets, "wrap");
 
 		this.addControleButtons(p);
 	}
@@ -100,5 +121,13 @@ public class MirnaQueryClass extends QueryMask {
 	
 	public boolean isHsaOnly(){
 		return this.hsaOnly.isSelected();
+	}
+	
+	public boolean isSourcesSelected(){
+		return (sourcesAndTargets.isSelected() || sources.isSelected());
+	}
+	
+	public boolean isTargetsSelected(){
+		return (sourcesAndTargets.isSelected() || targets.isSelected());
 	}
 }
