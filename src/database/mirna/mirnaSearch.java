@@ -113,7 +113,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 					if (this.name.length() > 0) {
 						// System.out.println("longer");
 
-						String finalQueryString = miRNAqueries.miRNA_get_Genes.replaceFirst(QUESTION_MARK, "'" + name + "'");
+						String finalQueryString = miRNAqueries.miRNA_get_TargetGenes.replaceFirst(QUESTION_MARK, "'" + name + "'");
 						//System.out.println(finalQueryString);
 						if (this.hsaOnly) {
 							finalQueryString = finalQueryString.substring(0, finalQueryString.length() - 2);
@@ -195,7 +195,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 						}
 					} else if (gene.length() > 0) {
-						String finalQueryString = miRNAqueries.miRNA_get_MirnaTargets.replaceFirst(QUESTION_MARK, "'" + name + "'");
+						String finalQueryString = miRNAqueries.miRNA_get_TargetingMirnas.replaceFirst(QUESTION_MARK, "'" + name + "'");
 						//System.out.println(finalQueryString);
 						if (this.hsaOnly) {
 							finalQueryString = finalQueryString.substring(0, finalQueryString.length() - 2);

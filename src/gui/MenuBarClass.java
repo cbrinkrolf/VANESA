@@ -148,10 +148,6 @@ public class MenuBarClass {
 		shake.addActionListener(MenuListener.getInstance());
 		shake.setActionCommand("shake");
 
-		JMenuItem fabricio = new JMenuItem("Patricios Data");
-		fabricio.addActionListener(MenuListener.getInstance());
-		fabricio.setActionCommand("fabricio");
-
 		JMenuItem newNetwork = new JMenuItem("New", KeyEvent.VK_N);
 		newNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, MENUSHORTCUT));
 		newNetwork.addActionListener(MenuListener.getInstance());
