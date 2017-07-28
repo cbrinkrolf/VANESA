@@ -1053,15 +1053,15 @@ public class MenuListener implements ActionListener {
 
 		} else if ("mirnaTest".equals(event)) {
 			System.out.println("mirnatest");
-			MirnaStatistics mirna = new MirnaStatistics();
+			MirnaStatistics mirna = new MirnaStatistics(null);
 			mirna.createKeggStatistics(true, true, !true);
-		} else if ("mirnaSources".equals(event)) {
+		} else if ("enrichMirna".equals(event)) {
 			if (con.containsPathway()) {
 				Pathway pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
 					
-					MirnaStatistics mirna = new MirnaStatistics();
-					mirna.addMirnaSources(pw);
+					MirnaStatistics mirna = new MirnaStatistics(pw);
+					mirna.enrichMirna();
 				} else {
 					JOptionPane.showMessageDialog(w, "Please create a network before.");
 				}
@@ -1069,13 +1069,13 @@ public class MenuListener implements ActionListener {
 				JOptionPane.showMessageDialog(w, "Please create a network before.");
 			}
 
-		} else if ("mirnaTargets".equals(event)) {
+		} else if ("enrichGene".equals(event)) {
 			// System.out.println("targets: ");
 			if (con.containsPathway()) {
 				Pathway pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
-					MirnaStatistics mirna = new MirnaStatistics();
-					mirna.addMirnaTargets(pw);
+					MirnaStatistics mirna = new MirnaStatistics(pw);
+					mirna.enrichGenes();
 				} else {
 					JOptionPane.showMessageDialog(w, "Please create a network before.");
 				}

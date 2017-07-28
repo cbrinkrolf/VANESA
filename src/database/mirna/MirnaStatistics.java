@@ -15,6 +15,7 @@ import java.util.Set;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Expression;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.SRNA;
 import configurations.Wrapper;
 import graph.layouts.Circle;
@@ -22,8 +23,98 @@ import gui.MyPopUp;
 import pojos.DBColumn;
 
 public class MirnaStatistics {
+	
+	private Pathway pw;
+	
+	public MirnaStatistics(Pathway pw){
+		this.pw = pw;
+	}
+	
+	public void enrichGenes(){
+		this.enrichGeneSources();
+		this.enrichGeneTargets();
+	}
+	
+	public void enrichMirna(){
+		this.enrichMiRNASources();
+		this.enrichMiRNATargets();
+	}
+	
+	private void enrichGeneSources(){
+		int counterEdges = 0;
+		int counterNodes = 0;
 
-	public void addMirnaSources(Pathway pw) {
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
+		BiologicalNodeAbstract bna;
+		final String QUESTION_MARK = new String("\\?");
+		ArrayList<DBColumn> resultsDBSearch;
+		HashMap<String, BiologicalNodeAbstract> bnas = new HashMap<String, BiologicalNodeAbstract>();
+		BiologicalNodeAbstract tmp;
+		Point2D p;
+		Expression exp;
+		HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>> data = new HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>>();
+		while (it.hasNext()) {
+			bna = it.next();
+			bnas.put(bna.getLabel(), bna);
+		}
+		
+		if (pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().size() > 0) {
+			it = pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator();
+		} else {
+			it = pw.getAllGraphNodes().iterator();
+		}
+		
+		while (it.hasNext()) {
+			bna = it.next();
+			String finalQueryString = miRNAqueries.miRNA_get_TargetingMirnas.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
+			if (resultsDBSearch.size() > 0) {
+				data.put(bna, resultsDBSearch);
+			}
+		}
+
+		String[] column;
+
+		Iterator<BiologicalNodeAbstract> itBNA = data.keySet().iterator();
+
+		while (itBNA.hasNext()) {
+			bna = itBNA.next();
+			resultsDBSearch = data.get(bna);
+			for (int i = 0; i < resultsDBSearch.size(); i++) {
+				column = resultsDBSearch.get(i).getColumn();
+				if (bnas.containsKey(column[0])) {
+					tmp = bnas.get(column[0]);
+				} else {
+					tmp = new SRNA(column[0], column[0]);
+					// p = new
+					// Point2D.Double(myGraph.getVertexLocation(bna).getX(),
+					// myGraph.getVertexLocation(bna).getY());
+					// .findNearestFreeVertexPosition(bna.getKEGGnode()
+					// .getXPos(), bna.getKEGGnode().getYPos(),
+					// 100);
+					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20, 2.0 * ((double) (Math.random() % (Math.PI))));
+					pw.addVertex(tmp, p);
+					bnas.put(column[0], tmp);
+					// srnaParents.put(srna.getID(),
+					// bna.getID());
+					counterNodes++;
+				}
+				if (!pw.existEdge(tmp, bna)) {
+					exp = new Expression("", "", tmp, bna);
+					exp.setDirected(true);
+					pw.addEdge(exp);
+					pw.addEdgeToView(exp, true);
+					counterEdges++;
+				}
+			}
+		}
+		pw.getGraph().updateGraph();
+		pw.getGraph().updateLayout();
+		MyPopUp.getInstance().show("miRNA target enrichment", counterNodes + " nodes and " + counterEdges + " edges have been added!");
+		
+	}
+	
+	private void enrichGeneTargets(){
 		int counterEdges = 0;
 		int counterNodes = 0;
 
@@ -97,8 +188,8 @@ public class MirnaStatistics {
 		pw.getGraph().updateLayout();
 		MyPopUp.getInstance().show("miRNA source enrichment", counterNodes + " nodes and " + counterEdges + " edges have been added!");
 	}
-
-	public void addMirnaTargets(Pathway pw) {
+	
+	private void enrichMiRNASources(){
 		int counterEdges = 0;
 		int counterNodes = 0;
 
@@ -124,7 +215,7 @@ public class MirnaStatistics {
 		
 		while (it.hasNext()) {
 			bna = it.next();
-			String finalQueryString = miRNAqueries.miRNA_get_TargetingMirnas.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			String finalQueryString = miRNAqueries.miRNA_get_SourceGenes.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
 			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
 			if (resultsDBSearch.size() > 0) {
 				data.put(bna, resultsDBSearch);
@@ -143,7 +234,7 @@ public class MirnaStatistics {
 				if (bnas.containsKey(column[0])) {
 					tmp = bnas.get(column[0]);
 				} else {
-					tmp = new SRNA(column[0], column[0]);
+					tmp = new DNA(column[0], column[0]);
 					// p = new
 					// Point2D.Double(myGraph.getVertexLocation(bna).getX(),
 					// myGraph.getVertexLocation(bna).getY());
@@ -159,6 +250,79 @@ public class MirnaStatistics {
 				}
 				if (!pw.existEdge(tmp, bna)) {
 					exp = new Expression("", "", tmp, bna);
+					exp.setDirected(true);
+					pw.addEdge(exp);
+					pw.addEdgeToView(exp, true);
+					counterEdges++;
+				}
+			}
+		}
+		pw.getGraph().updateGraph();
+		pw.getGraph().updateLayout();
+		MyPopUp.getInstance().show("miRNA target enrichment", counterNodes + " nodes and " + counterEdges + " edges have been added!");
+	}
+	
+	private void enrichMiRNATargets(){
+		int counterEdges = 0;
+		int counterNodes = 0;
+
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
+		BiologicalNodeAbstract bna;
+		final String QUESTION_MARK = new String("\\?");
+		ArrayList<DBColumn> resultsDBSearch;
+		HashMap<String, BiologicalNodeAbstract> bnas = new HashMap<String, BiologicalNodeAbstract>();
+		BiologicalNodeAbstract tmp;
+		Point2D p;
+		Expression exp;
+		HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>> data = new HashMap<BiologicalNodeAbstract, ArrayList<DBColumn>>();
+		while (it.hasNext()) {
+			bna = it.next();
+			bnas.put(bna.getLabel(), bna);
+		}
+		
+		if (pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().size() > 0) {
+			it = pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator();
+		} else {
+			it = pw.getAllGraphNodes().iterator();
+		}
+		
+		while (it.hasNext()) {
+			bna = it.next();
+			String finalQueryString = miRNAqueries.miRNA_get_TargetGenes.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
+			if (resultsDBSearch.size() > 0) {
+				data.put(bna, resultsDBSearch);
+			}
+		}
+
+		String[] column;
+
+		Iterator<BiologicalNodeAbstract> itBNA = data.keySet().iterator();
+
+		while (itBNA.hasNext()) {
+			bna = itBNA.next();
+			resultsDBSearch = data.get(bna);
+			for (int i = 0; i < resultsDBSearch.size(); i++) {
+				column = resultsDBSearch.get(i).getColumn();
+				if (bnas.containsKey(column[0])) {
+					tmp = bnas.get(column[0]);
+				} else {
+					tmp = new DNA(column[0], column[0]);
+					// p = new
+					// Point2D.Double(myGraph.getVertexLocation(bna).getX(),
+					// myGraph.getVertexLocation(bna).getY());
+					// .findNearestFreeVertexPosition(bna.getKEGGnode()
+					// .getXPos(), bna.getKEGGnode().getYPos(),
+					// 100);
+					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20, 2.0 * ((double) (Math.random() % (Math.PI))));
+					pw.addVertex(tmp, p);
+					bnas.put(column[0], tmp);
+					// srnaParents.put(srna.getID(),
+					// bna.getID());
+					counterNodes++;
+				}
+				if (!pw.existEdge(bna, tmp)) {
+					exp = new Expression("", "", bna, tmp);
 					exp.setDirected(true);
 					pw.addEdge(exp);
 					pw.addEdgeToView(exp, true);
