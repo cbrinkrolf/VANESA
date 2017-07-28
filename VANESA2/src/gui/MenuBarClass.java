@@ -134,15 +134,15 @@ public class MenuBarClass {
 		mirnaTest.addActionListener(MenuListener.getInstance());
 		mirnaTest.setActionCommand("mirnaTest");
 		
-		JMenuItem mirnaSources = new JMenuItem("Enrich miRNA sources");
-		mirnaSources.setToolTipText("enriches (selected) genes which are source gene for miRNAs");
-		mirnaSources.addActionListener(MenuListener.getInstance());
-		mirnaSources.setActionCommand("mirnaSources");
+		JMenuItem enrichGene = new JMenuItem("Enrich genes with miRNA");
+		enrichGene.setToolTipText("enriches (selected) genes with miRNA information");
+		enrichGene.addActionListener(MenuListener.getInstance());
+		enrichGene.setActionCommand("enrichGene");
 		
-		JMenuItem mirnaTargets = new JMenuItem("Enrich miRNA targets");
-		mirnaTargets.setToolTipText("enriches (selected) genes with targeting miRNA(s)"); 
-		mirnaTargets.addActionListener(MenuListener.getInstance());
-		mirnaTargets.setActionCommand("mirnaTargets");
+		JMenuItem enrichMirna = new JMenuItem("Enrich miRNA with genes");
+		enrichMirna.setToolTipText("enriches (selected) miRNA gene information"); 
+		enrichMirna.addActionListener(MenuListener.getInstance());
+		enrichMirna.setActionCommand("enrichMirna");
 
 		JMenuItem shake = new JMenuItem("Shake Enzymes!");
 		shake.addActionListener(MenuListener.getInstance());
@@ -388,8 +388,8 @@ public class MenuBarClass {
 
 		if (MainWindow.developer) {
 			graph.add(mirnaTest);
-			graph.add(mirnaSources);
-			graph.add(mirnaTargets);
+			graph.add(enrichGene);
+			graph.add(enrichMirna);
 			graph.add(shake);
 		}
 		// math.add(visualAnalysis);
