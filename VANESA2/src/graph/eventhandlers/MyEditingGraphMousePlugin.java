@@ -30,6 +30,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
@@ -354,6 +355,9 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 							parentBNAs.addAll(nodes[0].getAllParentNodes());
 							parentBNAs.addAll(nodes[1].getAllParentNodes());
 							BiologicalEdgeAbstract bea = pw.addEdge(label, name, nodes[0], nodes[1], element, directed);
+							if(bea instanceof PNEdge){
+								((PNEdge)bea).setFunction(label);
+							}
 							if(nodes[0]==startVertex && nodes[1]==vertex){
 								pw.addEdgeToView(bea, false);
 							}
