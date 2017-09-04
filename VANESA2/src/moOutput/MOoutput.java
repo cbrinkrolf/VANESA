@@ -23,8 +23,10 @@ import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
+import biologicalObjects.nodes.petriNet.Transition;
 
 /**
  * @author Rafael, cbrinkro
@@ -212,7 +214,7 @@ public class MOoutput {
 		it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		while (it.hasNext()) {
 			bna = it.next();
-			if (!bna.hasRef()) {
+			if (!bna.hasRef() && bna instanceof PNNode) {
 				String biologicalElement = bna.getBiologicalElement();
 				// double km = Double.NaN, kcat = Double.NaN;
 				// String ec = "";
@@ -231,13 +233,16 @@ public class MOoutput {
 
 				}
 				names.add(bna.getName());
+				String atr = "";
 				if (biologicalElement.equals(Elementdeclerations.place)) {
 
 					Place place = (Place) bna;
 
-					String atr = "startTokens=" + (int) place.getTokenStart() + ",minTokens=" + (int) place.getTokenMin() + ",maxTokens="
+					atr = "startTokens=" + (int) place.getTokenStart() + ",minTokens=" + (int) place.getTokenMin() + ",maxTokens="
 							+ (int) place.getTokenMax();
-					places = places.concat(getPlaceString(getModelicaString(place), bna, atr, in, out));
+					// places =
+					// places.concat(getPlaceString(getModelicaString(place),
+					// bna, atr, in, out));
 
 				} else if (biologicalElement.equals(Elementdeclerations.s_place)) {
 
@@ -256,36 +261,53 @@ public class MOoutput {
 						max = place.getTokenMax() + "";
 					}
 
-					String atr = "startMarks=" + start + ",minMarks=" + min + ",maxMarks=" + max + ",t(final unit=\"mmol\")";
-					places = places.concat(getPlaceString(getModelicaString(place), bna, atr, in, out));
+					atr = "startMarks=" + start + ",minMarks=" + min + ",maxMarks=" + max + ",t(final unit=\"mmol\")";
+					// places =
+					// places.concat(getPlaceString(getModelicaString(place),
+					// bna, atr, in, out));
 
 				} else if (biologicalElement.equals(Elementdeclerations.stochasticTransition)) {
 
 					StochasticTransition t = (StochasticTransition) bna;
 					// String atr = "h=" + t.getDistribution();
-					String atr = "h=1.0";
-					places = places.concat(getTransitionString(bna, getModelicaString(t), bna.getName(), atr, in, out));
+					atr = "h=1.0";
+					// places = places.concat(getTransitionString(bna,
+					// getModelicaString(t), bna.getName(), atr, in, out));
 
 				} else if (biologicalElement.equals(Elementdeclerations.discreteTransition)) {
 
 					DiscreteTransition t = (DiscreteTransition) bna;
-					String atr = "delay=" + t.getDelay();
-					places = places.concat(getTransitionString(bna, getModelicaString(t), bna.getName(), atr, in, out));
+					atr = "delay=" + t.getDelay();
+					// places = places.concat(getTransitionString(bna,
+					// getModelicaString(t), bna.getName(), atr, in, out));
 
 				} else if (biologicalElement.equals(Elementdeclerations.continuousTransition)) {
 
 					ContinuousTransition t = (ContinuousTransition) bna;
 					// String atr = "maximumSpeed="+t.getMaximumSpeed();
-					String atr;
 					String speed = this.replaceAll(t.getMaximumSpeed(), t.getParameters(), t);
 					if (t.isKnockedOut()) {
 						atr = "maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/";
 					} else {
 						atr = "maximumSpeed(final unit=\"mmol/min\")=" + speed;
 					}
+
 					// System.out.println("atr");
-					places = places.concat(getTransitionString(bna, getModelicaString(t), bna.getName(), atr, in, out));
+					// places = places.concat(getTransitionString(bna,
+					// getModelicaString(t), bna.getName(), atr, in, out));
 				}
+
+				if (bna instanceof Place) {
+
+				}
+
+				if (bna instanceof Transition) {
+					Transition t = (Transition) bna;
+					if (t.getFiringCondition().length() > 0) {
+						atr += ", firingCon=" + t.getFiringCondition();
+					}
+				}
+				places = places.concat(getTransitionString(bna, getModelicaString(bna), bna.getName(), atr, in, out));
 			}
 		}
 	}
@@ -327,7 +349,7 @@ public class MOoutput {
 			String weight;
 			if (bea instanceof PNEdge) {
 				e = (PNEdge) bea;
-				//System.out.println("edge");
+				// System.out.println("edge");
 				// Edge Place -> Transition
 				if (e.getFrom() instanceof Place) {
 
@@ -856,16 +878,17 @@ public class MOoutput {
 	}
 
 	private String getgFunctions() {
-		String f = "function g1" + ENDL +"    input Real[2] inColors;" + ENDL +"    output Real[2] outWeights;" + ENDL +"  algorithm" + ENDL
-				+ "    if sum(inColors) < 1e-12 then" + ENDL +"      outWeights := fill(1, 2);" + ENDL +"    else" + ENDL
-				+ "      outWeights[1] := inColors[1] / sum(inColors);" + ENDL +"      outWeights[2] := inColors[2] / sum(inColors);" + ENDL +"    end if;"+ENDL
-				+ "  end g1;" + ENDL +"  function g2" + ENDL +"    input Real[2] inColors1;" + ENDL +"    input Real[2] inColors2;" + ENDL +"    output Real[2] outWeights;"+ENDL
-				+ "  algorithm" + ENDL +"    if sum(inColors1) < 1e-12 then" + ENDL +"      outWeights := fill(0.5, 2);" + ENDL +"    else" + ENDL
-				+ "      outWeights[1] := inColors1[1] / sum(inColors1) / 2;" + ENDL +"      outWeights[2] := inColors1[2] / sum(inColors1) / 2;"+ ENDL
-				+ "    end if;" + ENDL +"" + ENDL +"    if sum(inColors2) < 1e-12 then" + ENDL +"      outWeights[1] := outWeights[1] + 0.5;"+ ENDL
-				+ "      outWeights[2] := outWeights[2] + 0.5;" + ENDL +"    else"+ ENDL
-				+ "      outWeights[1] := outWeights[1] + inColors2[1] / sum(inColors2) / 2;"+ ENDL
-				+ "      outWeights[2] := outWeights[2] + inColors2[2] / sum(inColors2) / 2;" + ENDL +"    end if;" + ENDL +"  end g2;"+ ENDL;
+		String f = "function g1" + ENDL + "    input Real[2] inColors;" + ENDL + "    output Real[2] outWeights;" + ENDL + "  algorithm" + ENDL
+				+ "    if sum(inColors) < 1e-12 then" + ENDL + "      outWeights := fill(1, 2);" + ENDL + "    else" + ENDL
+				+ "      outWeights[1] := inColors[1] / sum(inColors);" + ENDL + "      outWeights[2] := inColors[2] / sum(inColors);" + ENDL
+				+ "    end if;" + ENDL + "  end g1;" + ENDL + "  function g2" + ENDL + "    input Real[2] inColors1;" + ENDL
+				+ "    input Real[2] inColors2;" + ENDL + "    output Real[2] outWeights;" + ENDL + "  algorithm" + ENDL
+				+ "    if sum(inColors1) < 1e-12 then" + ENDL + "      outWeights := fill(0.5, 2);" + ENDL + "    else" + ENDL
+				+ "      outWeights[1] := inColors1[1] / sum(inColors1) / 2;" + ENDL + "      outWeights[2] := inColors1[2] / sum(inColors1) / 2;"
+				+ ENDL + "    end if;" + ENDL + "" + ENDL + "    if sum(inColors2) < 1e-12 then" + ENDL
+				+ "      outWeights[1] := outWeights[1] + 0.5;" + ENDL + "      outWeights[2] := outWeights[2] + 0.5;" + ENDL + "    else" + ENDL
+				+ "      outWeights[1] := outWeights[1] + inColors2[1] / sum(inColors2) / 2;" + ENDL
+				+ "      outWeights[2] := outWeights[2] + inColors2[2] / sum(inColors2) / 2;" + ENDL + "    end if;" + ENDL + "  end g2;" + ENDL;
 		return f;
 	}
 }

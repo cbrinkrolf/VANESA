@@ -44,10 +44,8 @@ public class PropertyWindowListener implements FocusListener {
 	// Object element;
 
 	public PropertyWindowListener(GraphElementAbstract element) {
-		if (element instanceof BiologicalNodeAbstract
-				&& ((BiologicalNodeAbstract) element).hasRef()) {
-			geb = ((BiologicalNodeAbstract) graphInstance.getSelectedObject())
-					.getRef();
+		if (element instanceof BiologicalNodeAbstract && ((BiologicalNodeAbstract) element).hasRef()) {
+			geb = ((BiologicalNodeAbstract) graphInstance.getSelectedObject()).getRef();
 		} else {
 			geb = element;// graphInstance.getPathwayElement(element);
 			// this.element = element;
@@ -119,26 +117,23 @@ public class PropertyWindowListener implements FocusListener {
 			if (!text.equals("") && !text.equals(rna.getNtSequence())) {
 				rna.setNtSequence(text);
 			}
-		}else if (source.equals("concentration")) {
-			Number n = (Number) ((JFormattedTextField) event.getSource())
-					.getValue();
+		} else if (source.equals("concentration")) {
+			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
 			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
 				double conc = n.doubleValue();
 				bna.setConcentration(conc);
 			}
 
-		}else if (source.equals("concentrationMin")) {
-			Number n = (Number) ((JFormattedTextField) event.getSource())
-					.getValue();
+		} else if (source.equals("concentrationMin")) {
+			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
 			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
 				double concentrationMin = n.doubleValue();
 				bna.setConcentrationMin(concentrationMin);
 			}
 		} else if (source.equals("concentrationStart")) {
-			Number n = (Number) ((JFormattedTextField) event.getSource())
-					.getValue();
+			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
 			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
 				double concentrationStart = n.doubleValue();
@@ -146,8 +141,7 @@ public class PropertyWindowListener implements FocusListener {
 				bna.setConcentration(bna.getConcentrationStart());
 			}
 		} else if (source.equals("concentrationMax")) {
-			Number n = (Number) ((JFormattedTextField) event.getSource())
-					.getValue();
+			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
 			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
 				double concentrationMax = n.doubleValue();
@@ -156,8 +150,7 @@ public class PropertyWindowListener implements FocusListener {
 		}
 		// for Places
 		else if (source.equals("token")) {
-			Number n = (Number) ((JFormattedTextField) event.getSource())
-					.getValue();
+			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
 			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
 				double tokens = n.doubleValue();
@@ -165,17 +158,16 @@ public class PropertyWindowListener implements FocusListener {
 			}
 
 		} else if (source.equals("tokenMin")) {
-			Number n = (Number) ((JFormattedTextField) event.getSource())
-					.getValue();
+			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
 			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
 				double tokenMin = n.doubleValue();
 				p.setTokenMin(tokenMin);
 				pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
 				Boundary b;
-				if(pw.getChangedBoundaries().containsKey(p)){
+				if (pw.getChangedBoundaries().containsKey(p)) {
 					b = pw.getChangedBoundaries().get(p);
-				}else{
+				} else {
 					b = new Boundary();
 					pw.getChangedBoundaries().put(p, b);
 				}
@@ -183,8 +175,7 @@ public class PropertyWindowListener implements FocusListener {
 
 			}
 		} else if (source.equals("tokenStart")) {
-			Number n = (Number) ((JFormattedTextField) event.getSource())
-					.getValue();
+			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
 			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
 
@@ -196,17 +187,16 @@ public class PropertyWindowListener implements FocusListener {
 				pw.getChangedInitialValues().put(p, tokenStart);
 			}
 		} else if (source.equals("tokenMax")) {
-			Number n = (Number) ((JFormattedTextField) event.getSource())
-					.getValue();
+			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
 			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
 				double tokenMax = n.doubleValue();
 				p.setTokenMax(tokenMax);
 				pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
 				Boundary b;
-				if(pw.getChangedBoundaries().containsKey(p)){
+				if (pw.getChangedBoundaries().containsKey(p)) {
 					b = pw.getChangedBoundaries().get(p);
-				}else{
+				} else {
 					b = new Boundary();
 					pw.getChangedBoundaries().put(p, b);
 				}
@@ -226,11 +216,22 @@ public class PropertyWindowListener implements FocusListener {
 				}
 			}
 
+		} else if (source.equals("firingCondition")) {
+			if (geb instanceof Transition) {
+				Transition t = (Transition) geb;
+				text = ((JTextField) event.getSource()).getText().trim();
+				if (!text.equals("") && !text.equals(t.getFiringCondition())) {
+
+					((Transition) geb).setFiringCondition(text.trim());
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}
+			}
+
 		} else if (source.equals("maximumSpeed")) {
 			if (geb instanceof DynamicNode) {
 				DynamicNode dn = (DynamicNode) geb;
-			text = ((JTextField) event.getSource()).getText().trim();
-			if (!text.equals("") && !text.equals(dn.getMaximumSpeed())) {
+				text = ((JTextField) event.getSource()).getText().trim();
+				if (!text.equals("") && !text.equals(dn.getMaximumSpeed())) {
 					dn.setMaximumSpeed(text);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
@@ -240,43 +241,30 @@ public class PropertyWindowListener implements FocusListener {
 			// System.out.println("translist");
 			Transition t = (Transition) geb;
 			Transition newT = null;
-			Iterator<BiologicalNodeAbstract> k = pw.getGraph().getJungGraph()
-					.getNeighbors(t).iterator();
+			Iterator<BiologicalNodeAbstract> k = pw.getGraph().getJungGraph().getNeighbors(t).iterator();
 			BiologicalNodeAbstract neighbour;
 			BiologicalNodeAbstract node;
 			while (k.hasNext()) {
 				neighbour = k.next();
-				Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes()
-						.iterator();
+				Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes().iterator();
 				while (j.hasNext()) {
 					node = j.next();
-					if (node.equals(neighbour)
-							&& (((JComboBox) event.getSource())
-									.getSelectedItem().equals(
-											ContinuousTransition.class
-													.getName()) && node
-									.getBiologicalElement().equals(
-											Elementdeclerations.place))) {
+					if (node.equals(neighbour) && (((JComboBox) event.getSource()).getSelectedItem().equals(ContinuousTransition.class.getName())
+							&& node.getBiologicalElement().equals(Elementdeclerations.place))) {
 
-						JOptionPane
-								.showMessageDialog(
-										MainWindow.getInstance(),
-										"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
-										"Unallowed Operation...",
-										JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(MainWindow.getInstance(),
+								"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
+								"Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
 			}
 
-			if (((JComboBox) event.getSource()).getSelectedItem().equals(
-					DiscreteTransition.class.getName()))
+			if (((JComboBox) event.getSource()).getSelectedItem().equals(DiscreteTransition.class.getName()))
 				newT = new DiscreteTransition(t.getLabel(), t.getName());
-			else if (((JComboBox) event.getSource()).getSelectedItem().equals(
-					ContinuousTransition.class.getName()))
+			else if (((JComboBox) event.getSource()).getSelectedItem().equals(ContinuousTransition.class.getName()))
 				newT = new ContinuousTransition(t.getLabel(), t.getName());
-			else if (((JComboBox) event.getSource()).getSelectedItem().equals(
-					StochasticTransition.class.getName()))
+			else if (((JComboBox) event.getSource()).getSelectedItem().equals(StochasticTransition.class.getName()))
 				newT = new StochasticTransition(t.getLabel(), t.getName());
 			if (newT != null) {
 				newT.rebuildShape(new VertexShapes());
@@ -285,45 +273,35 @@ public class PropertyWindowListener implements FocusListener {
 			}
 		} else if (source.equals("placeList")) {
 			Place p = (Place) geb;
-			Iterator<BiologicalNodeAbstract> k = pw.getGraph().getJungGraph()
-					.getNeighbors(p).iterator();
+			Iterator<BiologicalNodeAbstract> k = pw.getGraph().getJungGraph().getNeighbors(p).iterator();
 			BiologicalNodeAbstract neighbour;
 
 			BiologicalNodeAbstract node;
 			while (k.hasNext()) {
 				neighbour = k.next();
-				for (Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes()
-						.iterator(); j.hasNext();) {
+				for (Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes().iterator(); j.hasNext();) {
 					node = j.next();
-					if (node.equals(neighbour)
-							&& (((JComboBox) event.getSource())
-									.getSelectedItem().equals("discrete") && node
-									.getBiologicalElement()
-									.equals(Elementdeclerations.continuousTransition))) {
+					if (node.equals(neighbour) && (((JComboBox) event.getSource()).getSelectedItem().equals("discrete")
+							&& node.getBiologicalElement().equals(Elementdeclerations.continuousTransition))) {
 
-						JOptionPane
-								.showMessageDialog(
-										MainWindow.getInstance(),
-										"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
-										"Unallowed Operation...",
-										JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(MainWindow.getInstance(),
+								"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
+								"Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
 			}
 
-			Place newP = new Place(p.getLabel(), p.getName(), 0,
-					((JComboBox) event.getSource()).getSelectedItem().equals(
-							"discrete"));
+			Place newP = new Place(p.getLabel(), p.getName(), 0, ((JComboBox) event.getSource()).getSelectedItem().equals("discrete"));
 			graphInstance.getPathway().addVertex(newP, new Point());
 			newP.setToken(p.getToken());
 			newP.setTokenMax(p.getTokenMax());
 			newP.setTokenMin(p.getTokenMin());
 			newP.setTokenStart(p.getTokenStart());
 			newP.setCompartment(p.getCompartment());
-			try{
-			newP.setID(p.getID());
-			} catch(IDAlreadyExistException ex){
+			try {
+				newP.setID(p.getID());
+			} catch (IDAlreadyExistException ex) {
 				newP.setID();
 			}
 			newP.rebuildShape(new VertexShapes());

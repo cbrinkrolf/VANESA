@@ -25,7 +25,7 @@ public class Transition extends PNNode {
 	}
 
 	public void setFiringCondition(String firingCondition) {
-		this.firingCondition = firingCondition;
+		this.firingCondition = firingCondition.trim();
 	}
 
 //	public boolean isFireTransition() {
