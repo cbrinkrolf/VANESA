@@ -629,6 +629,8 @@ public class JSBMLoutput {
 				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getTokenStart());
 				el.addChild(createElSub(attr, "tokenStart"));
 			} else if (oneNode instanceof Transition) {
+				attr = String.valueOf(((Transition)oneNode).getFiringCondition());
+				el.addChild(createElSub(attr, "firingCondition"));
 				if (oneNode instanceof DiscreteTransition) {
 					attr = String.valueOf(((DiscreteTransition) oneNode).getDelay());
 					el.addChild(createElSub(attr, "delay"));

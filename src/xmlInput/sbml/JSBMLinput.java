@@ -69,7 +69,7 @@ public class JSBMLinput {
 	private Hashtable<BiologicalNodeAbstract, Integer> bna2Ref = new Hashtable<BiologicalNodeAbstract, Integer>();
 
 	private boolean reverseEngineering = false;
-	
+
 	public JSBMLinput() {
 
 	}
@@ -161,7 +161,7 @@ public class JSBMLinput {
 		if (modelNode != null) {
 			Element isPetriNetNode = modelNode.getChild("isPetriNet", null);
 			isPetri = Boolean.parseBoolean(isPetriNetNode.getAttributeValue("isPetriNet"));
-			if(reverseEngineering){
+			if (reverseEngineering) {
 				isPetri = false;
 			}
 			// get the ranges if present
@@ -356,10 +356,10 @@ public class JSBMLinput {
 					String attr;
 
 					bna = BiologicalNodeAbstractFactory.create(biologicalElement, null);
-					if(reverseEngineering){
-						if (bna instanceof Place){
+					if (reverseEngineering) {
+						if (bna instanceof Place) {
 							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.smallMolecule, null);
-						}else if(bna instanceof Transition){
+						} else if (bna instanceof Transition) {
 							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.enzyme, null);
 						}
 					}
@@ -673,13 +673,13 @@ public class JSBMLinput {
 	private void handleNodeInformation(String attrtmp, Element child) {
 		// System.out.println("child: "+child);
 		String value = child.getAttributeValue(attrtmp);
-		if(reverseEngineering){
+		if (reverseEngineering) {
 			attrtmp = attrtmp.replace("token", "concentration");
 		}
 		switch (attrtmp) {
 		// standard cases
 		case "Nodesize":
-			if(reverseEngineering){
+			if (reverseEngineering) {
 				break;
 			}
 			Double d = Double.parseDouble(value);
@@ -706,7 +706,7 @@ public class JSBMLinput {
 			addKEGGNode(child);
 			break;
 		case "Color":
-			if(reverseEngineering){
+			if (reverseEngineering) {
 				break;
 			}
 			Element elSub = child.getChild("RGB", null);
@@ -754,6 +754,10 @@ public class JSBMLinput {
 
 		// special cases
 
+		case "firingCondition":
+			if (bna instanceof Transition) {
+				((biologicalObjects.nodes.petriNet.Transition) bna).setFiringCondition(value);
+			}
 		case "maximumSpeed":
 			if (bna instanceof DynamicNode) {
 				String speed = value;
