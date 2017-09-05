@@ -758,6 +758,7 @@ public class JSBMLinput {
 			if (bna instanceof Transition) {
 				((biologicalObjects.nodes.petriNet.Transition) bna).setFiringCondition(value);
 			}
+			break;
 		case "maximumSpeed":
 			if (bna instanceof DynamicNode) {
 				String speed = value;
