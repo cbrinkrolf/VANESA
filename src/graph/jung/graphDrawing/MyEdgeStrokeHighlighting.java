@@ -5,6 +5,7 @@ import java.awt.Stroke;
 
 import org.apache.commons.collections15.Transformer;
 
+import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -33,7 +34,11 @@ public class MyEdgeStrokeHighlighting implements
             BasicStroke.CAP_BUTT,
             BasicStroke.JOIN_MITER,
             10.0f, dash1, 0.0f);;//PluggableRenderContext.DOTTED;
-
+    protected static final Stroke dottedPicked =new BasicStroke(2.0f * pickedFactor,
+                    BasicStroke.CAP_BUTT,
+                    BasicStroke.JOIN_MITER,
+                    10.0f, dash1, 0.0f);
+            
 	protected PickedState<BiologicalNodeAbstract> psV;
 	protected PickedState<BiologicalEdgeAbstract> psE;
 
@@ -60,11 +65,17 @@ public class MyEdgeStrokeHighlighting implements
 		Stroke picked = new BasicStroke(pickedFactor*strength);
 		if (psV.getPicked().isEmpty()) {
 			if (psE.getPicked().isEmpty()) {
+				if(bea.getBiologicalElement().equals(Elementdeclerations.pnTestEdge)){
+					return dotted;
+				}
 //				return basic;
 				return hierarchical;
 			} else {
 				if (psE.isPicked(bea)) {
 //					return heavy;
+					if(bea.getBiologicalElement().equals(Elementdeclerations.pnTestEdge)){
+						return dottedPicked;
+					}
 					return picked;
 				} else {
 					return dotted;
@@ -74,6 +85,9 @@ public class MyEdgeStrokeHighlighting implements
 
 			if (psV.isPicked(bea.getFrom()) || psV.isPicked(bea.getTo())) {
 //				return heavy;
+				if(bea.getBiologicalElement().equals(Elementdeclerations.pnTestEdge)){
+					return dottedPicked;
+				}
 				return picked;
 			} else {
 				return dotted;

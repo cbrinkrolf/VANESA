@@ -7,15 +7,13 @@ import petriNet.FunctionParser;
 public class PNEdge extends BiologicalEdgeAbstract {
 
 	// Wahrscheinlichkeit, dass diese Kante aktiviert wird
-	private double activationProbability;
+	private double activationProbability = 1.0;
+	private int activationPriority = 1;
 
 	private double lowerBoundary;
 	private double upperBoundary;
 
-	// hier gibt es bestimmt einen besseren Datentyp. Dieser ist erstmal ein
-	// Platzhalter!
-	// TODO vllt besser boolean, inhibition true/false?
-	private String condition;
+	// type could be "normal", test or inhibition arc
 	private String type;
 	private String function;
 
@@ -39,6 +37,8 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		if (type.equals(biologicalElements.Elementdeclerations.inhibitionEdge)
 				|| type.equals(biologicalElements.Elementdeclerations.inhibitor) || type.equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
 			setBiologicalElement(biologicalElements.Elementdeclerations.pnInhibitionEdge);
+		} else if(type.equals(biologicalElements.Elementdeclerations.pnTestEdge)) {
+			setBiologicalElement(biologicalElements.Elementdeclerations.pnTestEdge);
 		} else {
 			setBiologicalElement(biologicalElements.Elementdeclerations.pnEdge);
 		}

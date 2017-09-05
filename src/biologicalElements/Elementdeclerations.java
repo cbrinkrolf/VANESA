@@ -149,6 +149,8 @@ public class Elementdeclerations {
 	// public static String edge = "Petri Net Edge";
 
 	public static final String pnEdge = "PN Edge";
+	
+	public static final String pnTestEdge = "PN Test Edge";
 
 	public static final String pnInhibitionEdge = "PN Inhibition Edge";
 
@@ -256,8 +258,7 @@ public class Elementdeclerations {
 	public List<String> getPNEdgeDeclarations() {
 		List<String> l = new ArrayList<String>();
 		l.add(pnEdge);
-		// TODO disabled cont. PN Edge
-		// l.add(pnContinuousEdge);
+		l.add(pnTestEdge);
 		l.add(pnInhibitionEdge);
 		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
 		return l;
@@ -309,6 +310,7 @@ public class Elementdeclerations {
 		l.add(reactionEdge);
 		l.add(reactionPair);
 		l.add(pnEdge);
+		l.add(pnTestEdge);
 		l.add(pnInhibitionEdge);
 		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
 
