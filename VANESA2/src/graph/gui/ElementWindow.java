@@ -582,7 +582,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				p.add(new JLabel("Edge Type"), "gap 5 ");
 				p.add(new JLabel(e.getType()), "wrap");
-
 				JButton dirChanger = new JButton("Change Direction");
 				dirChanger.setActionCommand("dirChanger");
 				dirChanger.addActionListener(this);

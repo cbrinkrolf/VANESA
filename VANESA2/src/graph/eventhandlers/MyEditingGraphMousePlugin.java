@@ -331,12 +331,12 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 
 					if (answers != null) {
 						if (answers[2] != null
-								&& answers[2].toLowerCase().contains("inhibi")
+								&& (answers[2].toLowerCase().contains("inhibi") || answers[2].toLowerCase().contains("test"))
 								&& !(startVertex instanceof Place && vertex instanceof Transition))
 							JOptionPane
 									.showMessageDialog(
 											MainWindow.getInstance(),
-											"Inhibitory Edges are only possible from Place to Transition!",
+											"Inhibitory / Test Edges are only possible from Place to Transition!",
 											"Unallowed Operation...",
 											JOptionPane.ERROR_MESSAGE);
 						else {

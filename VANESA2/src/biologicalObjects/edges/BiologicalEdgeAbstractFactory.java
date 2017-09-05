@@ -82,6 +82,10 @@ public class BiologicalEdgeAbstractFactory {
 			newBea = new PNEdge(from, to, label, name, Elementdeclerations.pnEdge, "1");
 			fillPNEdge(newBea, newBea);
 			break;
+		case Elementdeclerations.pnTestEdge:
+			newBea = new PNEdge(from, to, label, name, Elementdeclerations.pnTestEdge, "1");
+			fillPNEdge(newBea, newBea);
+			break;
 		case Elementdeclerations.pnInhibitionEdge:
 			newBea = new PNEdge(from, to, label, name, Elementdeclerations.pnInhibitionEdge, "1");
 			fillPNEdge(newBea, newBea);
