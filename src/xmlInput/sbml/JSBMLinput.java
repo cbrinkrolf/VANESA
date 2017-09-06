@@ -252,12 +252,6 @@ public class JSBMLinput {
 
 						// switch (biologicalElement) {
 						// case Elementdeclerations.pnEdge:
-						elSub = reacAnnotation.getChild("Function", null);
-						attr = "";
-						if (elSub != null) {
-							attr = elSub.getAttributeValue("Function");
-							((PNEdge) bea).setFunction(attr);
-						}
 
 						elSub = reacAnnotation.getChild("ActivationProbability", null);
 						if (elSub != null) {
@@ -620,10 +614,14 @@ public class JSBMLinput {
 		switch (attrtmp) {
 		// standard cases
 		case "IsWeighted":
-			bea.setWeighted(Boolean.parseBoolean(value));
+			//bea.setWeighted(Boolean.parseBoolean(value));
 			break;
 		case "Weight":
-			bea.setWeight(Integer.parseInt(value));
+			// old cases when there was "weight" and "function" for edges
+			bea.setFunction(value);
+			break;
+		case "Function":
+			bea.setFunction(value);
 			break;
 		case "Color":
 			Element elSub = child.getChild("RGB", null);
@@ -640,13 +638,13 @@ public class JSBMLinput {
 			bea.setComments(value);
 			break;
 		case "HasFeatureEdge":
-			bea.hasFeatureEdge(Boolean.parseBoolean(value));
+			//bea.hasFeatureEdge(Boolean.parseBoolean(value));
 			break;
 		case "HasKEGGEdge":
-			bea.hasKEGGEdge(Boolean.parseBoolean(value));
+			//bea.hasKEGGEdge(Boolean.parseBoolean(value));
 			break;
 		case "HasReactionPairEdge":
-			bea.hasReactionPairEdge(Boolean.parseBoolean(value));
+			//bea.hasReactionPairEdge(Boolean.parseBoolean(value));
 			break;
 		case "ReactionPairEdge":
 			bea.setReactionPairEdge(new ReactionPairEdge());

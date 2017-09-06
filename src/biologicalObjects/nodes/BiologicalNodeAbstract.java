@@ -58,9 +58,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private Shape shape = new VertexShapes().getEllipse();
 	private Shape defaultShape = new VertexShapes().getEllipse();
 	private boolean hasKEGGNode = false;
-	private boolean hasKEGGEdge = false;
-	private boolean hasFeatureEdge = false;
-	private boolean hasReactionPairEdge = false;
 	private boolean hasBrendaNode = false;
 	private HashSet<String> labelSet = new HashSet<String>();
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
@@ -73,7 +70,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private boolean markedAsEnvironment = false;
 	private boolean markedAsCoarseNode = false;
 	private Point2D parentNodeDistance = new Point2D.Double(0,0);
-	private MainWindow mainWindow = MainWindow.getInstance();
 	private boolean deleted = false;
 	
 	// BNA has constant value
@@ -162,7 +158,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	 */
 
 	public void attributeSetter(String className, BiologicalNodeAbstract bna){
-		mainWindow.nodeAttributeChanger(bna, false);
+		MainWindow.getInstance().nodeAttributeChanger(bna, false);
 	}
 	
 	private String getCorrectLabel(Integer type) {
@@ -925,15 +921,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		this.ref = null;
 	}
 
-	/*
-	 * public int getOriginal_graph() { return original_graph; }
-	 */
-
-	/*
-	 * public void setOriginal_graph(int originalGraph) { original_graph =
-	 * originalGraph; }
-	 */
-
 	public int getID() {
 		return ID;
 	}
@@ -963,15 +950,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			}
 			// System.out.println("size: " + set.size());
 		}
-
-		/*
-		 * System.out.println("id: "+id); // //System.out.println("size: " +
-		 * ids.size()); if (ids.contains(id)) { System.err.println("Error: Id "
-		 * + id + " is already existing!"); ID = counter++; } else { if (id <
-		 * counter) { ID = id; } else { counter = id; this.ID = counter++; }
-		 * 
-		 * } //System.out.println("added: " + ID); ids.add(ID);
-		 */
 	}
 	
 	public void setID(){
@@ -1008,30 +986,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	public String getNetworklabel() {
 		return getCorrectLabel(settings.getNodeLabel());
-	}
-
-	public boolean hasFeatureEdge() {
-		return hasFeatureEdge;
-	}
-
-	public void hasFeatureEdge(boolean hasFeatureEdge) {
-		this.hasFeatureEdge = hasFeatureEdge;
-	}
-
-	public boolean hasKEGGEdge() {
-		return hasKEGGEdge;
-	}
-
-	public void hasKEGGEdge(boolean hasKEGGEdge) {
-		this.hasKEGGEdge = hasKEGGEdge;
-	}
-
-	public boolean hasReactionPairEdge() {
-		return hasReactionPairEdge;
-	}
-
-	public void hasReactionPairEdge(boolean hasReactionPEdge) {
-		this.hasReactionPairEdge = hasReactionPEdge;
 	}
 
 	public boolean hasKEGGNode() {

@@ -33,8 +33,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	private String label = "???";
 
-	// private String networklabel = "";
-
 	private int ID = 0;
 
 	private SortedSet<Integer> set;
@@ -49,19 +47,13 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	private Color color = Color.GRAY;
 
-	private String BiologicalElement = "";
+	private String biologicalElement = "";
 
 	private Shape shape;
 
 	private boolean hasKEGGNode = false;
 
-	private boolean hasKEGGEdge = false;
-
-	private boolean hasFeatureEdge = false;
-
 	private boolean hasDAWISNode = false;
-
-	private boolean hasReactionPairEdge = false;
 
 	private boolean hasBrendaNode = false;
 
@@ -69,9 +61,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 
-	private boolean isWeighted = false;
-
-	private int weight = 0;
+	private String function = "1";
 
 	private BiologicalNodeAbstract from;
 
@@ -89,15 +79,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		// setLabel(label.toLowerCase());
 		this.from = from;
 		this.to = to;
-
-		/*
-		 * sbml.setName(name.toLowerCase()); //sbml.setEdge(edge.toString());
-		 * sbml.setLabel(label.toLowerCase()); sbml.setIsAbstract("false");
-		 * sbml.setIsDirected("false");
-		 * sbml.setFrom(from.getName().toLowerCase());
-		 * sbml.setTo(to.getName().toLowerCase());
-		 */
-
 	}
 
 	@Override
@@ -190,20 +171,13 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	// ---Getter/Setter---
 
-	public boolean isWeighted() {
-		return isWeighted;
+	public String getFunction() {
+		return function;
 	}
 
-	public void setWeighted(boolean isWeighted) {
-		this.isWeighted = isWeighted;
-	}
-
-	public int getWeight() {
-		return weight;
-	}
-
-	public void setWeight(int weight) {
-		this.weight = weight;
+	public void setFunction(String function) {
+		this.function = function;
+		setLabel(this.function);
 	}
 
 	public BiologicalNodeAbstract getFrom() {
@@ -221,14 +195,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	public void setTo(BiologicalNodeAbstract to) {
 		this.to = to;
 	}
-
-	/*
-	 * public Edge getEdge() { return edge; }
-	 */
-
-	/*
-	 * public void setEdge(Edge edge) { this.edge = edge; }
-	 */
 
 	public boolean isDirected() {
 		return isDirected;
@@ -317,30 +283,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		return getCorrectLabel(settings.getEdgeLabel());
 	}
 
-	public boolean hasFeatureEdge() {
-		return hasFeatureEdge;
-	}
-
-	public void hasFeatureEdge(boolean hasFeatureEdge) {
-		this.hasFeatureEdge = hasFeatureEdge;
-	}
-
-	public boolean hasKEGGEdge() {
-		return hasKEGGEdge;
-	}
-
-	public void hasKEGGEdge(boolean hasKEGGEdge) {
-		this.hasKEGGEdge = hasKEGGEdge;
-	}
-
-	public boolean hasReactionPairEdge() {
-		return hasReactionPairEdge;
-	}
-
-	public void hasReactionPairEdge(boolean hasReactionPEdge) {
-		this.hasReactionPairEdge = hasReactionPEdge;
-	}
-
 	public boolean hasKEGGNode() {
 		return hasKEGGNode;
 	}
@@ -398,11 +340,11 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	public String getBiologicalElement() {
-		return BiologicalElement;
+		return biologicalElement;
 	}
 
 	public void setBiologicalElement(String biologicalElement) {
-		BiologicalElement = biologicalElement;
+		biologicalElement = biologicalElement;
 	}
 
 	public Shape getShape() {
@@ -485,5 +427,4 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	public void setDefaultColor(Color defaultColor) {
 		this.defaultColor = defaultColor;
 	}
-
 }

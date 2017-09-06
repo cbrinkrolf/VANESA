@@ -581,7 +581,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				// JLabel typeList = new JComboBox(types);
 
 				p.add(new JLabel("Edge Type"), "gap 5 ");
-				p.add(new JLabel(e.getType()), "wrap");
+				p.add(new JLabel(e.getBiologicalElement()), "wrap");
 				JButton dirChanger = new JButton("Change Direction");
 				dirChanger.setActionCommand("dirChanger");
 				dirChanger.addActionListener(this);

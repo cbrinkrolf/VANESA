@@ -18,18 +18,6 @@ public interface GraphElementAbstract{
 
 	public String getNetworklabel();
 
-	public boolean hasFeatureEdge();
-
-	public void hasFeatureEdge(boolean hasFeatureEdge);
-
-	public boolean hasKEGGEdge();
-
-	public void hasKEGGEdge(boolean hasKEGGEdge);
-
-	public boolean hasReactionPairEdge();
-
-	public void hasReactionPairEdge(boolean hasReactionPEdge);
-
 	public boolean hasKEGGNode();
 
 	public void hasKEGGNode(boolean hasKEGGNode);

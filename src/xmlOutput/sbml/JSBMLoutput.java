@@ -656,10 +656,10 @@ public class JSBMLoutput {
 		XMLNode elSub;
 		String attr = oneEdge.getLabel();
 		el.addChild(createElSub(attr, "label"));
-		attr = String.valueOf(oneEdge.isWeighted());
-		el.addChild(createElSub(attr, "IsWeighted"));
-		attr = String.valueOf(oneEdge.getWeight());
-		el.addChild(createElSub(attr, "Weight"));
+		//attr = String.valueOf(oneEdge.isWeighted());
+		//el.addChild(createElSub(attr, "IsWeighted"));
+		attr = oneEdge.getFunction();
+		el.addChild(createElSub(attr, "Function"));
 		Color col = oneEdge.getColor();
 		if (col != null) {
 			elSub = new XMLNode(new XMLNode(new XMLTriple("Color", "", ""), new XMLAttributes()));
@@ -681,12 +681,12 @@ public class JSBMLoutput {
 		el.addChild(createElSub(attr, "Description"));
 		attr = oneEdge.getComments();
 		el.addChild(createElSub(attr, "Comments"));
-		attr = String.valueOf(oneEdge.hasFeatureEdge());
-		el.addChild(createElSub(attr, "HasFeatureEdge"));
+		//attr = String.valueOf(oneEdge.hasFeatureEdge());
+		//el.addChild(createElSub(attr, "HasFeatureEdge"));
 
-		boolean attrb = oneEdge.hasKEGGEdge();
-		attr = String.valueOf(attrb);
-		el.addChild(createElSub(attr, "HasKEGGEdge"));
+		boolean attrb; // = oneEdge.hasKEGGEdge();
+		//attr = String.valueOf(attrb);
+		//el.addChild(createElSub(attr, "HasKEGGEdge"));
 
 		// Save additional data
 		if (oneEdge instanceof biologicalObjects.edges.ReactionPair) {
@@ -705,7 +705,7 @@ public class JSBMLoutput {
 				// if not, no node has to be created
 				boolean kegg = false;
 				for (int i = 0; i < 3; i++) {
-					if (attrs[i] != "" && attrs[i] != null) {
+					if (attrs[i] != null && attrs[i].length() > 0) {
 						kegg = true;
 						break;
 					}
@@ -721,8 +721,6 @@ public class JSBMLoutput {
 				}
 			}
 		} else if (oneEdge instanceof biologicalObjects.edges.petriNet.PNEdge) {
-			attr = ((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getFunction();
-			el.addChild(createElSub(attr, "Function"));
 			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getActivationProbability());
 			el.addChild(createElSub(attr, "ActivationProbability"));
 			// TODO !!!

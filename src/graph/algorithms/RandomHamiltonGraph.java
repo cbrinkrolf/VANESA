@@ -99,8 +99,8 @@ public class RandomHamiltonGraph {
 					r.setVisible(true);
 
 					if (weightedGraph) {
-						r.setWeighted(true);
-						r.setWeight(weight[k]);
+						//r.setWeighted(true);
+						r.setFunction(weight[k]+"");
 					}
 
 					pw.addEdge(r);
@@ -113,8 +113,8 @@ public class RandomHamiltonGraph {
 					r.setVisible(true);
 
 					if (weightedGraph) {
-						r.setWeighted(true);
-						r.setWeight(weight[k]);
+						//r.setWeighted(true);
+						r.setFunction(weight[k]+"");
 					}
 
 					pw.addEdge(r);
