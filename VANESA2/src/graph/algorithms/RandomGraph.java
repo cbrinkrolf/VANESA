@@ -105,8 +105,8 @@ public class RandomGraph {
 					r.setVisible(true);
 
 					if (weightedGraph) {
-						r.setWeighted(true);
-						r.setWeight(weight[k]);
+						//r.setWeighted(true);
+						r.setFunction(weight[k]+"");
 					}
 
 					pw.addEdge(r);
@@ -124,8 +124,8 @@ public class RandomGraph {
 					r.setVisible(true);
 
 					if (weightedGraph) {
-						r.setWeighted(true);
-						r.setWeight(weight[k]);
+						//r.setWeighted(true);
+						r.setFunction(weight[k]+"");
 					}
 
 					pw.addEdge(r);

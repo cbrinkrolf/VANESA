@@ -6,16 +6,13 @@ import petriNet.FunctionParser;
 
 public class PNEdge extends BiologicalEdgeAbstract {
 
-	// Wahrscheinlichkeit, dass diese Kante aktiviert wird
+	// probability that edge is active
 	private double activationProbability = 1.0;
+	// priority that edge is active, 1=highest, n=lowest priority
 	private int activationPriority = 1;
 
 	private double lowerBoundary;
 	private double upperBoundary;
-
-	// type could be "normal", test or inhibition arc
-	private String type;
-	private String function;
 
 	private boolean wasUndirected = false;
 
@@ -33,7 +30,6 @@ public class PNEdge extends BiologicalEdgeAbstract {
 			String edgeFunction) {
 		super(edgeFunction, name, from, to);
 		super.setDirected(true);
-		this.type = type;
 		if (type.equals(biologicalElements.Elementdeclerations.inhibitionEdge)
 				|| type.equals(biologicalElements.Elementdeclerations.inhibitor) || type.equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
 			setBiologicalElement(biologicalElements.Elementdeclerations.pnInhibitionEdge);
@@ -42,25 +38,7 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		} else {
 			setBiologicalElement(biologicalElements.Elementdeclerations.pnEdge);
 		}
-		this.function = edgeFunction;
-	}
-
-	public String getFunction() {
-		return function;
-	}
-
-	public void setFunction(String function) {
-		this.function = function;
-		super.setLabel(this.function);
-		// this.validateFunction();
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
+		setFunction(edgeFunction);
 	}
 
 	public double getActivationProbability() {
@@ -72,7 +50,7 @@ public class PNEdge extends BiologicalEdgeAbstract {
 	}
 
 	public double getPassingTokens() {
-		return fp.parse(this.function);
+		return fp.parse(getFunction());
 	}
 
 	public double getLowerBoundary() {
@@ -91,7 +69,11 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		this.upperBoundary = upperBoundary;
 	}
 
-	public boolean isConditionFulfilled() {
-		return true;
+	public int getActivationPriority() {
+		return activationPriority;
+	}
+
+	public void setActivationPriority(int activationPriority) {
+		this.activationPriority = activationPriority;
 	}
 }

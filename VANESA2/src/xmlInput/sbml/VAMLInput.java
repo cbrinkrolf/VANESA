@@ -402,7 +402,7 @@ public class VAMLInput {
 
 			if (rpEdge != null) {
 				bea.setReactionPairEdge(rpEdge);
-				bea.hasReactionPairEdge(true);
+				//bea.hasReactionPairEdge(true);
 			}
 
 			// System.out.println("vor: "+bea.getID());

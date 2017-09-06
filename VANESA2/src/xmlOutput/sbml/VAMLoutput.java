@@ -26,7 +26,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.ReactionPairEdge;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.PathwayMap;
@@ -211,24 +210,6 @@ public class VAMLoutput {
 				writer.writeEndElement();
 			}
 
-			if (bea.hasReactionPairEdge()) {
-				writer.writeStartElement("ReactionPairEdge");
-				ReactionPairEdge edge = bea.getReactionPairEdge();
-
-				writer.writeStartElement("name");
-				writer.writeCData(edge.getName());
-				writer.writeEndElement();
-
-				writer.writeStartElement("id");
-				writer.writeCData(edge.getReactionPairID());
-				writer.writeEndElement();
-
-				writer.writeStartElement("type");
-				writer.writeCData(edge.getType());
-				writer.writeEndElement();
-
-				writer.writeEndElement();
-			}
 			writer.writeEndElement();
 		}
 	}
