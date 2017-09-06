@@ -43,6 +43,11 @@ public class MOoutput {
 
 	private String places = "";
 	private String edgesString = "";
+	// string for inhibitory arcs
+	private String IAString = "";
+	// string for test arcs
+	private String TAString = "";
+
 	private final Hashtable<String, ArrayList<BiologicalNodeAbstract>> actualInEdges = new Hashtable<String, ArrayList<BiologicalNodeAbstract>>();
 	private final Hashtable<String, ArrayList<BiologicalNodeAbstract>> actualOutEdges = new Hashtable<String, ArrayList<BiologicalNodeAbstract>>();
 	private final Hashtable<BiologicalNodeAbstract, String> nodeType = new Hashtable<BiologicalNodeAbstract, String>();
@@ -188,8 +193,11 @@ public class MOoutput {
 	}
 
 	private void buildNodes() {
-		for (int i = 1; i <= inhibitCount; i++)
-			places += "PNlib.IA inhibitorArc" + i + ";" + ENDL;
+
+		places += IAString;
+
+		// for (int i = 1; i <= inhibitCount; i++)
+
 		BiologicalNodeAbstract bna;
 		ArrayList<String> names = new ArrayList<String>();
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSortedAlphabetically().iterator();
@@ -312,8 +320,6 @@ public class MOoutput {
 		}
 	}
 
-	private int inhibitCount = 0;
-
 	private void buildConnections() {
 
 		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdgesSorted().iterator();
@@ -321,6 +327,10 @@ public class MOoutput {
 		BiologicalEdgeAbstract bea;
 		PNEdge e;
 		Set<BiologicalNodeAbstract> markedOut;
+
+		int inhibitCount = 0;
+		int testArcCount = 0;
+
 		while (it.hasNext()) {
 
 			bea = it.next();
@@ -355,8 +365,8 @@ public class MOoutput {
 
 					weight = "";
 					if (colored) {
-						if (marked.contains(bea.getFrom())) {
-							weight += "g1('" + resolveReference(bea.getFrom()).getName() + "'.color)";
+						if (marked.contains(e.getFrom())) {
+							weight += "g1('" + resolveReference(e.getFrom()).getName() + "'.color)";
 						} else {
 							weight += "{0," + this.getModelicaEdgeFunction(e) + "}/*" + fromString + "*/";
 						}
@@ -376,7 +386,7 @@ public class MOoutput {
 					// System.out.println("kante");
 					weight = "";
 					if (colored) {
-						markedOut = this.getMarkedNeighborsIn(bea.getFrom());
+						markedOut = this.getMarkedNeighborsIn(e.getFrom());
 						String tmp = "g";
 						if (markedOut.size() == 0) {
 							tmp = "{0," + this.getModelicaEdgeFunction(e) + "}/*" + toString + "*/";
@@ -411,38 +421,39 @@ public class MOoutput {
 
 				}
 
-			}
+				if (!actualInEdges.containsKey(toString)) {
+					actualInEdges.put(toString, new ArrayList<BiologicalNodeAbstract>());
+				}
+				actualInEdges.get(toString).add(e.getFrom());
 
-			if (!actualInEdges.containsKey(toString)) {
-				actualInEdges.put(toString, new ArrayList<BiologicalNodeAbstract>());
-			}
-			actualInEdges.get(toString).add(bea.getFrom());
-
-			if (!actualOutEdges.containsKey(fromString)) {
-				actualOutEdges.put(fromString, new ArrayList<BiologicalNodeAbstract>());
-			}
-
-			actualOutEdges.get(fromString).add(bea.getTo());
-
-			if (bea instanceof PNEdge && bea.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
-				inhibitCount++;
-				if (fromType.equals(Elementdeclerations.s_place) || fromType.equals(Elementdeclerations.place)) {
-					edgesString += INDENT + "connect('" + fromString + "'.outTransition[" + (actualOutEdges.get(fromString).size() + 1) + "],"
-							+ "inhibitorArc" + inhibitCount + ".inPlace);" + ENDL;
-					edgesString += INDENT + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString + "'.inPlaces["
-							+ (actualInEdges.get(toString).size() + 1) + "]) " + this.getFromToAnnotation(bea.getFrom(), bea.getTo()) + ";" + ENDL;
-					actualOutEdges.get(fromString).add(bea.getFrom());
-					actualInEdges.get(toString).add(bea.getTo());
+				if (!actualOutEdges.containsKey(fromString)) {
+					actualOutEdges.put(fromString, new ArrayList<BiologicalNodeAbstract>());
 				}
 
-			} else if (fromType.equals(Elementdeclerations.s_place)) {
-				edgesString = edgesString.concat(getConnectionStringPT(fromString, toString, bea));
-			} else if (fromType.equals(Elementdeclerations.place)) {
-				edgesString = edgesString.concat(getConnectionStringPT(fromString, toString, bea));
-			} else {
-				edgesString = edgesString.concat(getConnectionStringTP(fromString, toString, bea));
-			}
+				actualOutEdges.get(fromString).add(e.getTo());
 
+				if (e.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
+					inhibitCount++;
+					IAString += "PNlib.IA inhibitorArc" + inhibitCount + "(testValue=" + this.getModelicaEdgeFunction(e) + ");" + ENDL;
+					if (fromType.equals(Elementdeclerations.s_place) || fromType.equals(Elementdeclerations.place)) {
+						edgesString += INDENT + "connect('" + fromString + "'.outTransition["
+								+ (actualOutEdges.get(fromString).indexOf(e.getTo()) + 1) + "]," + "inhibitorArc" + inhibitCount + ".inPlace);"
+								+ ENDL;
+						edgesString += INDENT + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString + "'.inPlaces["
+								+ (actualInEdges.get(toString).indexOf(bea.getFrom()) + 1) + "]) " + this.getFromToAnnotation(e.getFrom(), e.getTo())
+								+ ";" + ENDL;
+						// actualOutEdges.get(fromString).add(bea.getFrom());
+						// actualInEdges.get(toString).add(bea.getTo());
+					}
+
+				} else if (fromType.equals(Elementdeclerations.s_place)) {
+					edgesString = edgesString.concat(getConnectionStringPT(fromString, toString, e));
+				} else if (fromType.equals(Elementdeclerations.place)) {
+					edgesString = edgesString.concat(getConnectionStringPT(fromString, toString, e));
+				} else {
+					edgesString = edgesString.concat(getConnectionStringTP(fromString, toString, e));
+				}
+			}
 		}
 	}
 
@@ -668,7 +679,6 @@ public class MOoutput {
 		if (bea.getTo().hasRef() && bea.getTo().getRef().isConstant()) {
 			return "0";
 		}
-
 		return replaceNames(bea.getFunction());
 
 	}
