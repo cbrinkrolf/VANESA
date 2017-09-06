@@ -250,33 +250,38 @@ public class JSBMLinput {
 						bea.setLabel(label);
 						bea.setName(name);
 
-						switch (biologicalElement) {
-						case Elementdeclerations.pnEdge:
-							elSub = reacAnnotation.getChild("Function", null);
-							attr = "";
-							if (elSub != null) {
-								attr = elSub.getAttributeValue("Function");
-							}
-
-							elSub = reacAnnotation.getChild("ActivationProbability", null);
-							if (elSub != null) {
-								attr = elSub.getAttributeValue("ActivationProbability");
-							}
-							((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
-							break;
-						case Elementdeclerations.pnInhibitionEdge:
-							elSub = reacAnnotation.getChild("Function", null);
-							attr = "";
-							if (elSub != null) {
-								attr = elSub.getAttributeValue("Function");
-							}
-							bea = new PNEdge(from, to, label, name, biologicalElements.Elementdeclerations.pnInhibitionEdge, attr);
-							((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
-							break;
-						default:
-							// System.out.println(biologicalElement);
-							break;
+						// switch (biologicalElement) {
+						// case Elementdeclerations.pnEdge:
+						elSub = reacAnnotation.getChild("Function", null);
+						attr = "";
+						if (elSub != null) {
+							attr = elSub.getAttributeValue("Function");
+							((PNEdge) bea).setFunction(attr);
 						}
+
+						elSub = reacAnnotation.getChild("ActivationProbability", null);
+						if (elSub != null) {
+							attr = elSub.getAttributeValue("ActivationProbability");
+							((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
+						}
+
+						// break;
+						// case Elementdeclerations.pnInhibitionEdge:
+						// elSub = reacAnnotation.getChild("Function", null);
+						// attr = "";
+						// if (elSub != null) {
+						// attr = elSub.getAttributeValue("Function");
+						// }
+						// bea = new PNEdge(from, to, label, name,
+						// biologicalElements.Elementdeclerations.pnInhibitionEdge,
+						// attr);
+						// ((PNEdge)
+						// bea).setActivationProbability(Double.parseDouble(attr));
+						// break;
+						// default:
+						// System.out.println(biologicalElement);
+						// break;
+						// }
 						// get additional information
 						List<Element> reacAnnotationChildren = reacAnnotation.getChildren();
 						for (int j = 0; j < reacAnnotationChildren.size(); j++) {
