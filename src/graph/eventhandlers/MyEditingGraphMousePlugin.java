@@ -330,22 +330,20 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 					BiologicalNodeAbstract[] nodes = answer.getRight();
 
 					if (answers != null) {
-						if (answers[2] != null
+						if (answers[2] != null && pw.isPetriNet()
 								&& (answers[2].toLowerCase().contains("inhibi") || answers[2].toLowerCase().contains("test"))
-								&& !(startVertex instanceof Place && vertex instanceof Transition))
+								&& !(startVertex instanceof Place && vertex instanceof Transition)){
 							JOptionPane
 									.showMessageDialog(
 											MainWindow.getInstance(),
 											"Inhibitory / Test Edges are only possible from Place to Transition!",
 											"Unallowed Operation...",
 											JOptionPane.ERROR_MESSAGE);
-						else {
+						} else {
 							String name = answers[0];
 							String label = answers[0];
 							String element = answers[2];
-							if(answers[2].toLowerCase().contains("inhibi")){
-								element = Elementdeclerations.pnInhibitionEdge;
-							}
+							
 							boolean directed = false;
 							if (answers[1].equals("directed_edge")) {
 								directed = true;
