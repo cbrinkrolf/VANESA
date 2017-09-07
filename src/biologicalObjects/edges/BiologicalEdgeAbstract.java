@@ -344,7 +344,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	public void setBiologicalElement(String biologicalElement) {
-		biologicalElement = biologicalElement;
+		this.biologicalElement = biologicalElement;
 	}
 
 	public Shape getShape() {
