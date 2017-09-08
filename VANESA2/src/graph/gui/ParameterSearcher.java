@@ -690,7 +690,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		}
 		valuesPanel.add(new JLabel(), "wrap");
 		valuesPanel.add(new JLabel("Values:"));
-		p = bna.getParameter("v_f");
+		p = bna.getParameter("v_r");
 		valuesPanel.add(new JLabel(p.getValue() + ""));
 		it = GraphInstance.getMyGraph().getJungGraph().getOutEdges(bna).iterator();
 		while (it.hasNext()) {
