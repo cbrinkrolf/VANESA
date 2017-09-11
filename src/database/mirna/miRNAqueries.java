@@ -27,13 +27,13 @@ public class miRNAqueries {
 	public static final String miRNA_get_TargetGenes = "SELECT distinct TargetGene.Accession, TargetGene.DB FROM Matures Matures inner join TargetGenes TargetGenes on Matures.ID=TargetGenes.mID inner join TargetGene TargetGene on TargetGenes.ID=TargetGene.tgsID where NOT DB = 'ensemble' AND Matures.Name = ? ;";//AND TargetGenes.SpeciesID=54;";
 
 	// genes which are source for given miRNA
-	public static final String miRNA_get_SourceGenes = "SELECT distinct OverlappingTranscripts.Name FROM OverlappingTranscripts join Matures on OverlappingTranscripts.hpID = Matures.hpID WHERE OverlappingTranscripts.Name = OverlappingTranscripts.Accession AND Matures.Name = ?;";
+	public static final String miRNA_get_SourceGenes = "SELECT distinct OverlappingTranscripts.Name FROM OverlappingTranscripts join Hairpins on OverlappingTranscripts.hpID = Hairpins.ID join Matures on Hairpins.ID = Matures.hpID WHERE OverlappingTranscripts.Name = OverlappingTranscripts.Accession AND Matures.Name = ? ;";//AND Hairpins.SpeciesID=54;";
 	
 	// miRNAs which target given gene
 	public static final String miRNA_get_TargetingMirnas = "SELECT distinct Matures.Name FROM Matures Matures inner join TargetGenes TargetGenes on Matures.ID=TargetGenes.mID inner join TargetGene TargetGene on TargetGenes.ID=TargetGene.tgsID WHERE NOT DB='ensemble' AND TargetGene.Accession = ? ;";//AND TargetGenes.SpeciesID=54;";
 	
 	// miRNAs are produced by given gene (where given gene is origin for)
-	public static final String miRNA_get_SourcingMirnas = "SELECT distinct Matures.Name FROM Matures join OverlappingTranscripts on Matures.hpID = OverlappingTranscripts.hpID WHERE OverlappingTranscripts.Name = OverlappingTranscripts.Accession AND OverlappingTranscripts.Name = ? ;";//AND speciesID=54;";
+	public static final String miRNA_get_SourcingMirnas = "SELECT distinct Matures.Name FROM Matures join Hairpins on Matures.hpID = Hairpins.ID inner join OverlappingTranscripts on Matures.hpID = OverlappingTranscripts.hpID WHERE OverlappingTranscripts.Name = OverlappingTranscripts.Accession AND OverlappingTranscripts.Name = ? ;";//AND Hairpins.SpeciesID=54;";
 	
 	
 	public static final String miRNA_get_Pathways = "SELECT kegg_genes_pathway.name,kegg_genes_pathway.name,"
