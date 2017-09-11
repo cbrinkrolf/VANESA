@@ -23,24 +23,35 @@ import gui.MyPopUp;
 import pojos.DBColumn;
 
 public class MirnaStatistics {
-	
+
 	private Pathway pw;
-	
-	public MirnaStatistics(Pathway pw){
+	private boolean hsaOnly = false;
+
+	public MirnaStatistics(Pathway pw) {
 		this.pw = pw;
 	}
-	
-	public void enrichGenes(){
-		this.enrichGeneSources();
-		this.enrichGeneTargets();
+
+	public void enrichGenes(boolean sources, boolean targets, boolean hsaOnly) {
+		this.hsaOnly = hsaOnly;
+		if (sources) {
+			this.enrichGeneSources();
+		}
+		if (targets) {
+			this.enrichGeneTargets();
+		}
 	}
-	
-	public void enrichMirna(){
-		this.enrichMiRNASources();
-		this.enrichMiRNATargets();
+
+	public void enrichMirnas(boolean sources, boolean targets, boolean hsaOnly) {
+		this.hsaOnly = hsaOnly;
+		if (sources) {
+			this.enrichMiRNASources();
+		}
+		if (targets) {
+			this.enrichMiRNATargets();
+		}
 	}
-	
-	private void enrichGeneSources(){
+
+	private void enrichGeneSources() {
 		int counterEdges = 0;
 		int counterNodes = 0;
 
@@ -57,16 +68,22 @@ public class MirnaStatistics {
 			bna = it.next();
 			bnas.put(bna.getLabel(), bna);
 		}
-		
+
 		if (pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().size() > 0) {
 			it = pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator();
 		} else {
 			it = pw.getAllGraphNodes().iterator();
 		}
-		
+
 		while (it.hasNext()) {
 			bna = it.next();
-			String finalQueryString = miRNAqueries.miRNA_get_TargetingMirnas.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			String finalQueryString = miRNAqueries.miRNA_get_TargetingMirnas.replaceFirst(QUESTION_MARK,
+					"'" + bna.getLabel() + "'");
+
+			if (hsaOnly) {
+				finalQueryString = finalQueryString.substring(0, finalQueryString.length() - 2);
+				finalQueryString += "AND SpeciesID=54;";
+			}
 			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
 			if (resultsDBSearch.size() > 0) {
 				data.put(bna, resultsDBSearch);
@@ -92,7 +109,8 @@ public class MirnaStatistics {
 					// .findNearestFreeVertexPosition(bna.getKEGGnode()
 					// .getXPos(), bna.getKEGGnode().getYPos(),
 					// 100);
-					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20, 2.0 * ((double) (Math.random() % (Math.PI))));
+					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20,
+							2.0 * ((double) (Math.random() % (Math.PI))));
 					pw.addVertex(tmp, p);
 					bnas.put(column[0], tmp);
 					// srnaParents.put(srna.getID(),
@@ -110,11 +128,12 @@ public class MirnaStatistics {
 		}
 		pw.getGraph().updateGraph();
 		pw.getGraph().updateLayout();
-		MyPopUp.getInstance().show("miRNA target enrichment", counterNodes + " nodes and " + counterEdges + " edges have been added!");
-		
+		MyPopUp.getInstance().show("miRNA target enrichment",
+				counterNodes + " nodes and " + counterEdges + " edges have been added!");
+
 	}
-	
-	private void enrichGeneTargets(){
+
+	private void enrichGeneTargets() {
 		int counterEdges = 0;
 		int counterNodes = 0;
 
@@ -137,16 +156,20 @@ public class MirnaStatistics {
 		} else {
 			it = pw.getAllGraphNodes().iterator();
 		}
-		
+
 		while (it.hasNext()) {
 			bna = it.next();
-			String finalQueryString = miRNAqueries.miRNA_get_SourcingMirnas.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			String finalQueryString = miRNAqueries.miRNA_get_SourcingMirnas.replaceFirst(QUESTION_MARK,
+					"'" + bna.getLabel() + "'");
+			if (hsaOnly) {
+				finalQueryString = finalQueryString.substring(0, finalQueryString.length() - 2);
+				finalQueryString += "AND Hairpins.SpeciesID=54;";
+			}
 			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
 			if (resultsDBSearch.size() > 0) {
 				data.put(bna, resultsDBSearch);
 			}
 		}
-		
 
 		String[] column;
 
@@ -167,13 +190,14 @@ public class MirnaStatistics {
 					// .findNearestFreeVertexPosition(bna.getKEGGnode()
 					// .getXPos(), bna.getKEGGnode().getYPos(),
 					// 100);
-					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20, 2.0 * ((double) (Math.random() % (Math.PI))));
+					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20,
+							2.0 * ((double) (Math.random() % (Math.PI))));
 					pw.addVertex(tmp, p);
 					bnas.put(column[0], tmp);
 					counterNodes++;
 					// srnaParents.put(srna.getID(),
 					// bna.getID());
-					System.out.println(tmp.getName());
+					//System.out.println(tmp.getName());
 				}
 				if (!pw.existEdge(bna, tmp)) {
 					exp = new Expression("", "", bna, tmp);
@@ -186,10 +210,11 @@ public class MirnaStatistics {
 		}
 		pw.getGraph().updateGraph();
 		pw.getGraph().updateLayout();
-		MyPopUp.getInstance().show("miRNA source enrichment", counterNodes + " nodes and " + counterEdges + " edges have been added!");
+		MyPopUp.getInstance().show("miRNA source enrichment",
+				counterNodes + " nodes and " + counterEdges + " edges have been added!");
 	}
-	
-	private void enrichMiRNASources(){
+
+	private void enrichMiRNASources() {
 		int counterEdges = 0;
 		int counterNodes = 0;
 
@@ -206,16 +231,21 @@ public class MirnaStatistics {
 			bna = it.next();
 			bnas.put(bna.getLabel(), bna);
 		}
-		
+
 		if (pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().size() > 0) {
 			it = pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator();
 		} else {
 			it = pw.getAllGraphNodes().iterator();
 		}
-		
+
 		while (it.hasNext()) {
 			bna = it.next();
-			String finalQueryString = miRNAqueries.miRNA_get_SourceGenes.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			String finalQueryString = miRNAqueries.miRNA_get_SourceGenes.replaceFirst(QUESTION_MARK,
+					"'" + bna.getLabel() + "'");
+			if (hsaOnly) {
+				finalQueryString = finalQueryString.substring(0, finalQueryString.length() - 2);
+				finalQueryString += "AND Hairpins.SpeciesID=54;";
+			}
 			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
 			if (resultsDBSearch.size() > 0) {
 				data.put(bna, resultsDBSearch);
@@ -241,7 +271,8 @@ public class MirnaStatistics {
 					// .findNearestFreeVertexPosition(bna.getKEGGnode()
 					// .getXPos(), bna.getKEGGnode().getYPos(),
 					// 100);
-					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20, 2.0 * ((double) (Math.random() % (Math.PI))));
+					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20,
+							2.0 * ((double) (Math.random() % (Math.PI))));
 					pw.addVertex(tmp, p);
 					bnas.put(column[0], tmp);
 					// srnaParents.put(srna.getID(),
@@ -259,10 +290,11 @@ public class MirnaStatistics {
 		}
 		pw.getGraph().updateGraph();
 		pw.getGraph().updateLayout();
-		MyPopUp.getInstance().show("miRNA target enrichment", counterNodes + " nodes and " + counterEdges + " edges have been added!");
+		MyPopUp.getInstance().show("miRNA target enrichment",
+				counterNodes + " nodes and " + counterEdges + " edges have been added!");
 	}
-	
-	private void enrichMiRNATargets(){
+
+	private void enrichMiRNATargets() {
 		int counterEdges = 0;
 		int counterNodes = 0;
 
@@ -279,16 +311,22 @@ public class MirnaStatistics {
 			bna = it.next();
 			bnas.put(bna.getLabel(), bna);
 		}
-		
+
 		if (pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().size() > 0) {
 			it = pw.getGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator();
 		} else {
 			it = pw.getAllGraphNodes().iterator();
 		}
-		
+
 		while (it.hasNext()) {
 			bna = it.next();
-			String finalQueryString = miRNAqueries.miRNA_get_TargetGenes.replaceFirst(QUESTION_MARK, "'" + bna.getLabel() + "'");
+			String finalQueryString = miRNAqueries.miRNA_get_TargetGenes.replaceFirst(QUESTION_MARK,
+					"'" + bna.getLabel() + "'");
+
+			if (hsaOnly) {
+				finalQueryString = finalQueryString.substring(0, finalQueryString.length() - 2);
+				finalQueryString += "AND TargetGenes.SpeciesID=54;";
+			}
 			resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
 			if (resultsDBSearch.size() > 0) {
 				data.put(bna, resultsDBSearch);
@@ -314,7 +352,8 @@ public class MirnaStatistics {
 					// .findNearestFreeVertexPosition(bna.getKEGGnode()
 					// .getXPos(), bna.getKEGGnode().getYPos(),
 					// 100);
-					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20, 2.0 * ((double) (Math.random() % (Math.PI))));
+					p = Circle.getPointOnCircle(pw.getGraph().getVertexLocation(bna), 20,
+							2.0 * ((double) (Math.random() % (Math.PI))));
 					pw.addVertex(tmp, p);
 					bnas.put(column[0], tmp);
 					// srnaParents.put(srna.getID(),
@@ -332,7 +371,8 @@ public class MirnaStatistics {
 		}
 		pw.getGraph().updateGraph();
 		pw.getGraph().updateLayout();
-		MyPopUp.getInstance().show("miRNA target enrichment", counterNodes + " nodes and " + counterEdges + " edges have been added!");
+		MyPopUp.getInstance().show("miRNA target enrichment",
+				counterNodes + " nodes and " + counterEdges + " edges have been added!");
 	}
 
 	public void createKeggStatistics(boolean sources, boolean targets, boolean hsaOnly) {
@@ -536,8 +576,8 @@ public class MirnaStatistics {
 				cleanMirnaST.addAll(cleanMirnaT);
 
 			}
-			System.out.println("PW: " + key + " genes: " + pw2genes.get(key).size() + " Sources: " + cleanMirnaS.size() + " Targets: "
-					+ cleanMirnaT.size() + " Union_S+T: " + cleanMirnaST.size() + " Intersect_S+T: "
+			System.out.println("PW: " + key + " genes: " + pw2genes.get(key).size() + " Sources: " + cleanMirnaS.size()
+					+ " Targets: " + cleanMirnaT.size() + " Union_S+T: " + cleanMirnaST.size() + " Intersect_S+T: "
 					+ (cleanMirnaS.size() + cleanMirnaT.size() - cleanMirnaST.size()));
 
 		}

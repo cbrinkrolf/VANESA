@@ -1061,7 +1061,7 @@ public class MenuListener implements ActionListener {
 				if (pw.hasGotAtLeastOneElement()) {
 					
 					MirnaStatistics mirna = new MirnaStatistics(pw);
-					mirna.enrichMirna();
+					mirna.enrichMirnas(true, true, false);
 				} else {
 					JOptionPane.showMessageDialog(w, "Please create a network before.");
 				}
@@ -1075,7 +1075,7 @@ public class MenuListener implements ActionListener {
 				Pathway pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
 					MirnaStatistics mirna = new MirnaStatistics(pw);
-					mirna.enrichGenes();
+					mirna.enrichGenes(true, true, false);
 				} else {
 					JOptionPane.showMessageDialog(w, "Please create a network before.");
 				}
