@@ -253,10 +253,22 @@ public class JSBMLinput {
 						// switch (biologicalElement) {
 						// case Elementdeclerations.pnEdge:
 
-						elSub = reacAnnotation.getChild("ActivationProbability", null);
+						elSub = reacAnnotation.getChild("ConflictStrategy", null);
 						if (elSub != null) {
-							attr = elSub.getAttributeValue("ActivationProbability");
-							((PNEdge) bea).setActivationProbability(Double.parseDouble(attr));
+							attr = elSub.getAttributeValue("ConflictStrategy");
+							((PNEdge) bea).setConflictStrategy(Integer.parseInt(attr));
+						}
+						
+						elSub = reacAnnotation.getChild("Probability", null);
+						if (elSub != null) {
+							attr = elSub.getAttributeValue("Probability");
+							((PNEdge) bea).setProbability(Double.parseDouble(attr));
+						}
+						
+						elSub = reacAnnotation.getChild("Priority", null);
+						if (elSub != null) {
+							attr = elSub.getAttributeValue("Priority");
+							((PNEdge) bea).setPriority(Integer.parseInt(attr));
 						}
 
 						// break;

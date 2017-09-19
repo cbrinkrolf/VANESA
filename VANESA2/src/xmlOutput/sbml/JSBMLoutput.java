@@ -721,9 +721,14 @@ public class JSBMLoutput {
 				}
 			}
 		} else if (oneEdge instanceof biologicalObjects.edges.petriNet.PNEdge) {
-			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getActivationProbability());
-			el.addChild(createElSub(attr, "ActivationProbability"));
-			// TODO !!!
+			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getConflictStrategy());
+			el.addChild(createElSub(attr, "ConflictStrategy"));
+			
+			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getProbability());
+			el.addChild(createElSub(attr, "Probability"));
+			
+			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getPriority());
+			el.addChild(createElSub(attr, "Priority"));
 		}
 		a.appendNonRDFAnnotation(el);
 		return a;

@@ -5,11 +5,18 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import petriNet.FunctionParser;
 
 public class PNEdge extends BiologicalEdgeAbstract {
+	
+	public static final int CONFLICTHANDLING_NONE = 0;
+	public static final int CONFLICTHANDLING_PRIO = 1;
+	public static final int CONFLICTHANDLING_PROB = 2;
 
-	// probability that edge is active
-	private double activationProbability = 1.0;
-	// priority that edge is active, 1=highest, n=lowest priority
-	private int activationPriority = 1;
+	private int conflictStrategy = 0;
+	
+	// conflict sovling: priority that edge is active, 1=highest, n=lowest priority
+	private int priority = 1;
+	
+	// conflict sovling: probability that edge is active
+	private double probability = 1.0;
 
 	private double lowerBoundary;
 	private double upperBoundary;
@@ -41,14 +48,6 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		setFunction(edgeFunction);
 	}
 
-	public double getActivationProbability() {
-		return activationProbability;
-	}
-
-	public void setActivationProbability(double activationProbability) {
-		this.activationProbability = activationProbability;
-	}
-
 	public double getPassingTokens() {
 		return fp.parse(getFunction());
 	}
@@ -69,11 +68,27 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		this.upperBoundary = upperBoundary;
 	}
 
-	public int getActivationPriority() {
-		return activationPriority;
+	public int getPriority() {
+		return priority;
 	}
 
-	public void setActivationPriority(int activationPriority) {
-		this.activationPriority = activationPriority;
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	public int getConflictStrategy() {
+		return conflictStrategy;
+	}
+
+	public void setConflictStrategy(int conflictStrategy) {
+		this.conflictStrategy = conflictStrategy;
+	}
+
+	public double getProbability() {
+		return probability;
+	}
+
+	public void setProbability(double probability) {
+		this.probability = probability;
 	}
 }

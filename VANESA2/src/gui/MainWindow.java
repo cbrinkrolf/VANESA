@@ -77,20 +77,16 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	private YamlToObjectParser yamlToObject;
 	private List<Bean> beansList = new ArrayList<Bean>();
 	private String loadedYaml = null;
-	
+
 	// global constants
 	public static boolean developer;
 	public static String pathWorkingDirectory;
-	
-	
-	
 
 	private JXLayer<JComponent> layer;
-	private LockableUI blurUI = new LockableUI(new BufferedImageOpEffect(
-			new BlurFilter()));
+	private LockableUI blurUI = new LockableUI(new BufferedImageOpEffect(new BlurFilter()));
 	private JSplitPane split_pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-	//private TabbedPanel tabbedPanel;
+	// private TabbedPanel tabbedPanel;
 	private HashMap<Integer, TabbedPanel> tabbedPanels = new HashMap<Integer, TabbedPanel>();
 	// private TabbedPanel tabbedPanelProperties;
 	private final GraphContainer con = GraphContainer.getInstance();
@@ -106,17 +102,17 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	// private boolean fullScreen = false;
 
 	private Application macOsxHandler;
-	
-	public static ProgressBar progressbar;
+
+	public static ProgressBar progressbar = null;
 
 	private static MainWindow instance;
-	
+
 	private MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		
+
 		// Set developer status
 		developer = Boolean.parseBoolean(ResourceLibrary.getSettingsResource("settings.default.developer"));
-//		System.out.println("main: "+developer);
+		// System.out.println("main: "+developer);
 		// try {
 		//
 		// //SubstanceBusinessBlueSteelLookAndFeel lf = new
@@ -153,8 +149,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// load dock icon on mac osx
 		ImagePath imagePath = ImagePath.getInstance();
 		ImageIcon ii = new ImageIcon(imagePath.getPath("graph2.png"));
-		BufferedImage b = new BufferedImage(ii.getIconWidth(),
-				ii.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+		BufferedImage b = new BufferedImage(ii.getIconWidth(), ii.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 		ii.paintIcon(this, b.createGraphics(), 0, 0);
 		application.setApplicationIconImage(b);
 
@@ -214,16 +209,15 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		addView();
 		split_pane.setOneTouchExpandable(true);
 		split_pane.addPropertyChangeListener(new PropertyChangeListener() {
-//			private final int SP_DIVIDER_MAX_LOCATION = split_pane
-//					.getLeftComponent().getPreferredSize().width;
+			// private final int SP_DIVIDER_MAX_LOCATION = split_pane
+			// .getLeftComponent().getPreferredSize().width;
 			private final int SP_DIVIDER_MAX_LOCATION = split_pane.getLeftComponent().getMaximumSize().width;
+
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				final String prop_name = evt.getPropertyName();
 
-				if (prop_name.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY)
-						|| prop_name
-								.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
+				if (prop_name.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY) || prop_name.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
 					if (split_pane.getDividerLocation() > SP_DIVIDER_MAX_LOCATION)
 						split_pane.setDividerLocation(SP_DIVIDER_MAX_LOCATION);
 				}
@@ -237,14 +231,14 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		this.setContentPane(layer);
 
 		setVisible(true);
-		
+
 		try {
 			askForYaml();
 		} catch (FileNotFoundException e1) {
 			System.out.println("askForYaml Method Error");
 			e1.printStackTrace();
 		}
-		
+
 		Map<String, String> env = System.getenv();
 		if (SystemUtils.IS_OS_WINDOWS) {
 			pathWorkingDirectory = env.get("APPDATA");
@@ -265,18 +259,18 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		}
 	}
 
-	public static synchronized MainWindow getInstance(){
-		if(MainWindow.instance == null){
+	public static synchronized MainWindow getInstance() {
+		if (MainWindow.instance == null) {
 			MainWindow.instance = new MainWindow();
 		}
 		return MainWindow.instance;
 	}
-	
-	public void nodeAttributeChanger(BiologicalNodeAbstract bna, boolean doResetAppearance){
-		for(Bean bean : beansList){
+
+	public void nodeAttributeChanger(BiologicalNodeAbstract bna, boolean doResetAppearance) {
+		for (Bean bean : beansList) {
 			String shapeBean = bean.getShape();
-			if(bean.getName().equals(bna.getBiologicalElement())){
-				switch(shapeBean){
+			if (bean.getName().equals(bna.getBiologicalElement())) {
+				switch (shapeBean) {
 				case "ellipse":
 					bna.setDefaultShape(bna.shapes.getEllipse());
 					break;
@@ -311,27 +305,26 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					bna.setDefaultShape(bna.shapes.getRegularStar(8));
 					break;
 				default:
-					System.out.println(bna.getName()+": No shape defined! Default shape used!");
+					System.out.println(bna.getName() + ": No shape defined! Default shape used!");
 					bna.setDefaultShape(bna.shapes.getEllipse());
-				}		
+				}
 				Color colorBean = new Color(bean.getColorRed(), bean.getColorGreen(), bean.getColorBlue());
 				bna.setDefaultColor(colorBean);
 				double nodeSizeBean = bean.getSizefactor();
 				bna.setDefaultNodesize(nodeSizeBean);
 			}
 		}
-		if(doResetAppearance == true){
+		if (doResetAppearance == true) {
 			bna.resetAppearance();
 		}
 	}
-	
-	
-	public void askForYaml() throws FileNotFoundException{
+
+	public void askForYaml() throws FileNotFoundException {
 		String yamlSourceFile = new File("YamlSourceFile.txt").getAbsolutePath();
 		File file = new File(yamlSourceFile);
 		BufferedReader buffReader = null;
 		System.out.println(yamlSourceFile);
-		if(file.exists()){
+		if (file.exists()) {
 			try {
 				buffReader = new BufferedReader(new FileReader(yamlSourceFile));
 				loadedYaml = buffReader.readLine();
@@ -340,24 +333,21 @@ public class MainWindow extends JFrame implements ApplicationListener {
 				e.printStackTrace();
 			}
 			File yamlFile = new File(loadedYaml);
-			if(yamlFile.exists()){
+			if (yamlFile.exists()) {
 				yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
 				beansList = yamlToObject.startConfig();
-			}else{
+			} else {
 				loadedYaml = VisualizationDialog.DEFAULTYAML;
 				yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
 				beansList = yamlToObject.startConfig();
 			}
-		}else{
+		} else {
 			loadedYaml = VisualizationDialog.DEFAULTYAML;
 			yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
 			beansList = yamlToObject.startConfig();
 		}
 	}
 
-	
-	
-	
 	/*
 	 * private DockingWindow setWindowLayout() {
 	 * 
@@ -372,95 +362,95 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		views.get(viewID).getWindowProperties().setDragEnabled(true);
 		views.get(viewID).getWindowProperties().setMaximizeEnabled(false);
 		views.get(viewID).getWindowProperties().setMinimizeEnabled(false);
-		
+
 		PanelListener lis = new PanelListener();
 		views.get(viewID).addListener(lis);
 	}
 
-//	private RootWindow getRootWindow() {
-//
-//		TabbedPanel tp = new TabbedPanel();
-//		tp.getProperties().setTabAreaOrientation(Direction.DOWN);
-//		tp.getProperties().setEnsureSelectedTabVisible(true);
-//		tp.getProperties().setHighlightPressedTab(true);
-//		tp.addTabListener(new GraphTabListener(this));
-//		tp.getProperties().setTabReorderEnabled(true);
-//		tp.getProperties().setTabDropDownListVisiblePolicy(
-//				TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
-//		tp.setBackground(Color.BLACK);
-//		View view = new View("Network Modelling", null, tp);
-//		view.addListener(new GraphWindowListener());
-//		views.put(viewMap.getViewCount(), view);
-//
-//		viewMap.addView(0, view);
-//
-//		setWindowProperties(0);
-//
-//		rootWindow = DockingUtil.createRootWindow(viewMap, true);
-//		rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
-//
-//		return rootWindow;
-//
-//	}
-	
-	
+	// private RootWindow getRootWindow() {
+	//
+	// TabbedPanel tp = new TabbedPanel();
+	// tp.getProperties().setTabAreaOrientation(Direction.DOWN);
+	// tp.getProperties().setEnsureSelectedTabVisible(true);
+	// tp.getProperties().setHighlightPressedTab(true);
+	// tp.addTabListener(new GraphTabListener(this));
+	// tp.getProperties().setTabReorderEnabled(true);
+	// tp.getProperties().setTabDropDownListVisiblePolicy(
+	// TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
+	// tp.setBackground(Color.BLACK);
+	// View view = new View("Network Modelling", null, tp);
+	// view.addListener(new GraphWindowListener());
+	// views.put(viewMap.getViewCount(), view);
+	//
+	// viewMap.addView(0, view);
+	//
+	// setWindowProperties(0);
+	//
+	// rootWindow = DockingUtil.createRootWindow(viewMap, true);
+	// rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
+	//
+	// return rootWindow;
+	//
+	// }
+
 	/**
 	 * Adds a view (panel) to the existing window.
+	 * 
 	 * @author tloka
 	 */
-	public void addView(){
-		
-		//remove rootWindow if exists
-		if(rootWindow!=null){
+	public void addView() {
+
+		// remove rootWindow if exists
+		if (rootWindow != null) {
 			split_pane.remove(rootWindow);
 		}
-		
-		//create new tabbedPanel
+
+		// create new tabbedPanel
 		TabbedPanel tp = new TabbedPanel();
 		tp.getProperties().setTabAreaOrientation(Direction.DOWN);
 		tp.getProperties().setEnsureSelectedTabVisible(true);
 		tp.getProperties().setHighlightPressedTab(true);
 		tp.addTabListener(new GraphTabListener(this));
 		tp.getProperties().setTabReorderEnabled(true);
-		tp.getProperties().setTabDropDownListVisiblePolicy(
-				TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
+		tp.getProperties().setTabDropDownListVisiblePolicy(TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
 		tp.setBackground(Color.BLACK);
-		
+
 		maxPanelID += 1;
 		int id = maxPanelID;
 		tabbedPanels.put(id, tp);
-		
+
 		View view = new View("Network Modelling", null, tp);
 		view.addListener(new GraphWindowListener());
 		views.put(id, view);
-		
+
 		// set the window properties (close, undock, ...)
 		setWindowProperties(id);
-		
+
 		viewMap.addView(id, view);
-		
+
 		rootWindow = DockingUtil.createRootWindow(viewMap, true);
 		rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
-		
+
 		split_pane.add(rootWindow);
 	}
-	
+
 	/**
 	 * Removes a view (panel) from the existing window.
+	 * 
 	 * @author tloka
 	 */
-	public void removeView(DockingWindow dw){
-		
-		//remove rootWindow if exists
-//		if(rootWindow!=null){
-//			split_pane.remove(rootWindow);
-//		}
-		
-		if(dw instanceof View){
+	public void removeView(DockingWindow dw) {
+
+		// remove rootWindow if exists
+		// if(rootWindow!=null){
+		// split_pane.remove(rootWindow);
+		// }
+
+		if (dw instanceof View) {
 			View view = (View) dw;
 			int id = -1;
-			for(int key : views.keySet()){
-				if(views.get(key).equals(view)){
+			for (int key : views.keySet()) {
+				if (views.get(key).equals(view)) {
 					id = key;
 					break;
 				}
@@ -468,15 +458,14 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			views.remove(id);
 			tabbedPanels.remove(id);
 			viewMap.removeView(id);
-			if(views.keySet().iterator().hasNext()){
+			if (views.keySet().iterator().hasNext()) {
 				setSelectedView(views.get(views.keySet().iterator().next()));
 			}
 		}
-		
 
-//		rootWindow = DockingUtil.createRootWindow(viewMap, true);
-//		
-//		split_pane.add(rootWindow);
+		// rootWindow = DockingUtil.createRootWindow(viewMap, true);
+		//
+		// split_pane.add(rootWindow);
 	}
 
 	public void addTab(TitledTab tab) {
@@ -494,21 +483,21 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		boolean reallyAsk = ask;
 		TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();
 		Pathway pw = con.getPathway(removed.getText());
-		if(pw.isBNA()){
-			if(((BiologicalNodeAbstract) pw).isCoarseNode()){
+		if (pw.isBNA()) {
+			if (((BiologicalNodeAbstract) pw).isCoarseNode()) {
 				reallyAsk = false;
 			}
 		}
 		removeTab(reallyAsk, removed, pw);
 	}
-	
+
 	public void removeTab(int index) {
 
 		boolean ask = true;
 		TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getTabAt(index);
 		Pathway pw = con.getPathway(removed.getText());
-		if(pw.isBNA()){
-			if(((BiologicalNodeAbstract) pw).isCoarseNode()){
+		if (pw.isBNA()) {
+			if (((BiologicalNodeAbstract) pw).isCoarseNode()) {
 				ask = false;
 			}
 		}
@@ -528,8 +517,8 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		con.removeAllPathways();
 		optionPanel.removeAllElements();
 	}
-	
-	public void removeTab(boolean ask, TitledTab remove, Pathway pw){
+
+	public void removeTab(boolean ask, TitledTab remove, Pathway pw) {
 		if (tabbedPanels.get(getSelectedView()).getTabCount() == 1 && con.getAllPathways().contains(pw)) {
 			addedtabs = 0;
 			myMenu.disableCloseAndSaveFunctions();
@@ -539,10 +528,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		if (pw.hasGotAtLeastOneElement() && ask) {
 
 			// 0: yes, 1: no, 2: cancel, -1: x
-			int n = JOptionPane.showConfirmDialog(MainWindow.getInstance(),
-					"Would you like to save your network-model?",
-					"Save Question", JOptionPane.YES_NO_CANCEL_OPTION);
-			//System.out.println(n);
+			int n = JOptionPane.showConfirmDialog(MainWindow.getInstance(), "Would you like to save your network-model?", "Save Question",
+					JOptionPane.YES_NO_CANCEL_OPTION);
+			// System.out.println(n);
 			if (n == 0) {
 				if (pw.getFilename() != null) {
 					try {
@@ -561,10 +549,10 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		}
 		con.removePathway(remove.getText());
 		tabbedPanels.get(getSelectedView()).removeTab(remove);
-		Set<Pathway> subPathways = new HashSet<Pathway>(); 
+		Set<Pathway> subPathways = new HashSet<Pathway>();
 		subPathways.addAll(con.getAllPathways());
-		for(Pathway subPathway : subPathways){
-			if(subPathway.getRootPathway()==pw){
+		for (Pathway subPathway : subPathways) {
+			if (subPathway.getRootPathway() == pw) {
 				removeTab(false, subPathway.getTab().getTitelTab(), subPathway);
 			}
 		}
@@ -580,7 +568,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	public void renameSelectedTab(String name) {
 		tabbedPanels.get(getSelectedView()).getSelectedTab().setName(name);
-	}	
+	}
 
 	public synchronized void showProgressBar(String text) {
 		progressbar = new ProgressBar();
@@ -588,27 +576,29 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		progressbar.setProgressBarString(text);
 		blurUI.setLocked(true);
 	}
-	
-	public synchronized void closeProgressBar(){
-		progressbar.closeWindow();
+
+	public synchronized void closeProgressBar() {
+		if (progressbar != null) {
+			progressbar.closeWindow();
+		}
 		blurUI.setLocked(false);
 	}
-	
-	public synchronized void blurrUI(){
+
+	public synchronized void blurrUI() {
 		blurUI.setLocked(true);
 	}
-	
-	public synchronized void unBlurrUI(){
+
+	public synchronized void unBlurrUI() {
 		blurUI.setLocked(false);
 	}
-		
+
 	public String getCurrentPathway() {
 		TitledTab t = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();
-		if(t != null){
-		return t.getText();
-		}else{
+		if (t != null) {
+			return t.getText();
+		} else {
 			return null;
-			}
+		}
 	}
 
 	public JFrame returnFrame() {
@@ -662,7 +652,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void updatePathwayTree() {
 		optionPanel.updatePanel("pathwayTree");
 	}
-	
+
 	public void updateBuildingBlocks() {
 		optionPanel.updatePanel("bb");
 	}
@@ -676,7 +666,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 
 	public void updateOptionPanel() {
-		//System.out.println(" udate option");
+		// System.out.println(" udate option");
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
@@ -688,7 +678,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 
 	public void updateAllGuiElements() {
-		//System.out.println("update all");
+		// System.out.println("update all");
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
@@ -726,12 +716,12 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public void checkForAlignmentOptionTab(String oldName, String newName) {
 		optionPanel.tryUpdateAlignmentOptionTab(oldName, newName);
 	}
-	
-	public void redrawGraphs(){
+
+	public void redrawGraphs() {
 		optionPanel.redrawGraphs();
 	}
-	
-	public void initPCPGraphs(){
+
+	public void initPCPGraphs() {
 		optionPanel.initPCPGraphs();
 	}
 
@@ -794,6 +784,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	public Application getMacOsxHandler() {
 		return macOsxHandler;
 	}
+
 	public List<Bean> getBeansList() {
 		return beansList;
 	}
@@ -802,35 +793,31 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		this.beansList = beansList;
 	}
 
-	
-
 	public String getLoadedYaml() {
 		return loadedYaml;
 	}
-
 
 	public void setLoadedYaml(String loadedYaml) {
 		this.loadedYaml = loadedYaml;
 	}
 
+	public void setSelectedView(View v) {
+		for (int key : views.keySet()) {
+			if (views.get(key).equals(v)) {
+				selectedView = key;
+			}
+		}
+	}
 
-	public void setSelectedView(View v){
-		for(int key : views.keySet()){
-			if(views.get(key).equals(v)){
+	public void setSelectedView(TabbedPanel t) {
+		for (int key : tabbedPanels.keySet()) {
+			if (tabbedPanels.get(key).equals(t)) {
 				selectedView = key;
 			}
 		}
 	}
-	
-	public void setSelectedView(TabbedPanel t){
-		for(int key : tabbedPanels.keySet()){
-			if(tabbedPanels.get(key).equals(t)){
-				selectedView = key;
-			}
-		}
-	}
-	
-	public int getSelectedView(){
+
+	public int getSelectedView() {
 		return selectedView;
 	}
 

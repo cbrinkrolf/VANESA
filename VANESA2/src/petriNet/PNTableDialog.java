@@ -129,7 +129,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			rows2[i][4] = edge.getFunction();
 			rows2[i][5] = edge.getLowerBoundary();
 			rows2[i][6] = edge.getUpperBoundary();
-			rows2[i][7] = edge.getActivationProbability();
+			rows2[i][7] = edge.getProbability();
 			i++;
 
 		}

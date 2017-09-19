@@ -163,8 +163,18 @@ public class OpenDialog extends SwingWorker {
 						}
 						
 					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						try {
+							file = new File(file.getAbsolutePath()+".sbml");
+							result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file.getName());
+							if(result.length() > 0){
+								JOptionPane.showMessageDialog(MainWindow.getInstance(),
+										result);
+							}
+							
+						} catch (FileNotFoundException ex) {
+							// TODO Auto-generated catch block
+							ex.printStackTrace();
+						}
 					}
 			} else if (fileFormat.equals(txtDescription)) {
 				try {

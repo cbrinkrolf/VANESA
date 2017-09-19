@@ -215,7 +215,7 @@ public class Pathway implements Cloneable {
 			((PNEdge) bea).wasUndirected(wasUndirected);
 			((PNEdge) bea).setLowerBoundary(LowerBoundary);
 			((PNEdge) bea).setUpperBoundary(UpperBoundary);
-			((PNEdge) bea).setActivationProbability(ActivationProbability);
+			((PNEdge) bea).setProbability(ActivationProbability);
 
 		} else if (element.equals(Elementdeclerations.pnInhibitionEdge)) {
 			boolean wasUndirected = false;
@@ -225,7 +225,7 @@ public class Pathway implements Cloneable {
 			((PNEdge) bea).wasUndirected(wasUndirected);
 			((PNEdge) bea).setLowerBoundary(LowerBoundary);
 			((PNEdge) bea).setUpperBoundary(UpperBoundary);
-			((PNEdge) bea).setActivationProbability(ActivationProbability);
+			((PNEdge) bea).setProbability(ActivationProbability);
 		}
 		return addEdge(bea);
 	}

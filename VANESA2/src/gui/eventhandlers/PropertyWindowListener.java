@@ -315,9 +315,17 @@ public class PropertyWindowListener implements FocusListener {
 		else if (source.equals("activationProb")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getActivationProbability())) {
+			if (!text.equals("") && !text.equals(e.getProbability())) {
 				double prob = Double.parseDouble(text);
-				e.setActivationProbability(prob);
+				e.setProbability(prob);
+				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+			}
+		} else if (source.equals("activationPrio")) {
+			text = ((JTextField) event.getSource()).getText().trim();
+			PNEdge e = (PNEdge) geb;
+			if (!text.equals("") && !text.equals(e.getPriority())) {
+				int prob = Integer.parseInt(text);
+				e.setPriority(prob);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 			}
 		} else if (source.equals("function")) {

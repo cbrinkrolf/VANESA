@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -20,6 +21,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -555,22 +557,18 @@ public class ElementWindow implements ActionListener, ItemListener {
 			if (ab instanceof PNEdge) {
 
 				PNEdge e = (PNEdge) ab;
-				JTextField prob = new JTextField(4);
-				prob.setText(e.getActivationProbability() + "");
-				prob.setName("activationProb");
-				prob.addFocusListener(pwl);
-				JLabel lblProb = new JLabel("activation Probability");
+
 				JTextField function = new JTextField(5);
 				function.setText(e.getFunction());
 				function.setName("function");
 				function.addFocusListener(pwl);
 				JLabel lblpassingTokens = new JLabel("Edge Function");
-				JTextField lowBoundary = new JTextField(5);
+				MyJFormattedTextField lowBoundary = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				lowBoundary.setText(e.getLowerBoundary() + "");
 				lowBoundary.setName("lowBoundary");
 				lowBoundary.addFocusListener(pwl);
 				JLabel lblLow = new JLabel("lower Boundary");
-				JTextField upBoundary = new JTextField(5);
+				MyJFormattedTextField upBoundary = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				upBoundary.setText(e.getUpperBoundary() + "");
 				upBoundary.setName("upBoundary");
 				upBoundary.addFocusListener(pwl);
@@ -588,14 +586,57 @@ public class ElementWindow implements ActionListener, ItemListener {
 				dirChanger.addActionListener(this);
 				p.add(dirChanger, "wrap");
 
-				p.add(lblProb, "gap 5");
-				p.add(prob, "wrap");
+				MyJFormattedTextField activationProb = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+				activationProb.setText(e.getProbability() + "");
+				activationProb.setName("activationProb");
+				activationProb.addFocusListener(pwl);
+				JLabel lblProb = new JLabel("activation Probability");
+
+				MyJFormattedTextField activationPrio = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+				activationPrio.setText(e.getPriority() + "");
+				activationPrio.setName("activationPrio");
+				activationPrio.addFocusListener(pwl);
+				JLabel lblPrio = new JLabel("activation Priority");
+
 				p.add(lblpassingTokens, "gap 5");
 				p.add(function, "wrap");
 				p.add(lblLow, "gap 5");
 				p.add(lowBoundary, "wrap");
 				p.add(lblUp, "gap 5");
 				p.add(upBoundary, "wrap");
+
+				p.add(new JLabel("conflict solving:"), "gap 5 ");
+
+				ButtonGroup group = new ButtonGroup();
+				JRadioButton none = new JRadioButton("none");
+				none.setActionCommand("conflict_none");
+				none.addActionListener(this);
+				JRadioButton prio = new JRadioButton("prio");
+				prio.setActionCommand("conflict_prio");
+				prio.addActionListener(this);
+				JRadioButton prob = new JRadioButton("prob");
+				prob.setActionCommand("conflict_prob");
+				prob.addActionListener(this);
+
+				group.add(none);
+				group.add(prio);
+				group.add(prob);
+
+				p.add(none, "flowx, split 3");
+				p.add(prio);
+				p.add(prob, "wrap");
+
+				if (e.getConflictStrategy() == PNEdge.CONFLICTHANDLING_NONE) {
+					none.setSelected(true);
+				} else if (e.getConflictStrategy() == PNEdge.CONFLICTHANDLING_PRIO) {
+					prio.setSelected(true);
+					p.add(lblPrio, "gap 5");
+					p.add(activationPrio, "wrap");
+				} else if (e.getConflictStrategy() == PNEdge.CONFLICTHANDLING_PROB) {
+					prob.setSelected(true);
+					p.add(lblProb, "gap 5");
+					p.add(activationProb, "wrap");
+				}
 
 			} else {
 
@@ -714,7 +755,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 		if ("colour".equals(event)) {
 
-			// TODO fail due to old substance API / Bug in API
 			Color newColor = JColorChooser.showDialog(w, "Choose Element Colour", getElementColor());
 			JButton b = ((JButton) e.getSource());
 			b.setBackground(newColor);
@@ -768,14 +808,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 					edge.getFunction());
 			newEdge.setUpperBoundary(edge.getUpperBoundary());
 			newEdge.setLowerBoundary(edge.getLowerBoundary());
-			newEdge.setActivationProbability(edge.getActivationProbability());
+			newEdge.setProbability(edge.getProbability());
 			newEdge.setDirected(true);
 			// pw = graphInstance.getPathway();
-			//MyGraph g = pw.getGraph();
-			//g.getJungGraph().removeEdge(edge);
+			// MyGraph g = pw.getGraph();
+			// g.getJungGraph().removeEdge(edge);
 			// g.getEdgeStringer().removeEdge(edge.getEdge());
 			pw.removeElement(edge);
-			
+
 			pw.addEdge(newEdge);
 			pw.updateMyGraph();
 			// g.getVisualizationViewer().getPickedState().clearPickedEdges();
@@ -882,6 +922,32 @@ public class ElementWindow implements ActionListener, ItemListener {
 				pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
 			}
 			// System.out.println(this.constCheck.isSelected());
+		} else if ("conflict_none".equals(event)) {
+			if (ab instanceof PNEdge) {
+				PNEdge edge = (PNEdge) ab;
+				if (edge.getConflictStrategy() != PNEdge.CONFLICTHANDLING_NONE) {
+					edge.setConflictStrategy(PNEdge.CONFLICTHANDLING_NONE);
+					this.revalidateView();
+				}
+			}
+		} else if ("conflict_prio".equals(event)) {
+			if (ab instanceof PNEdge) {
+				PNEdge edge = (PNEdge) ab;
+				if (edge.getConflictStrategy() != PNEdge.CONFLICTHANDLING_PRIO) {
+					edge.setConflictStrategy(PNEdge.CONFLICTHANDLING_PRIO);
+					this.revalidateView();
+				}
+			}
+		} else if ("conflict_prob".equals(event)) {
+			if (ab instanceof PNEdge) {
+				PNEdge edge = (PNEdge) ab;
+				if (edge.getConflictStrategy() != PNEdge.CONFLICTHANDLING_PROB) {
+					edge.setConflictStrategy(PNEdge.CONFLICTHANDLING_PROB);
+					this.revalidateView();
+					// p.repaint();
+					// System.out.println("durch");
+				}
+			}
 		}
 		GraphInstance.getMyGraph().updateGraph();
 	}
