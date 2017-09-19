@@ -1,20 +1,17 @@
 package gui;
 
-import graph.gui.ElementWindow;
-import graph.gui.HeatgraphPropertiesWindow;
-
 import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-
-import net.miginfocom.swing.MigLayout;
 
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
 import biologicalElements.Pathway;
 import database.gui.DatabaseWindow;
+import graph.gui.ElementWindow;
+import net.miginfocom.swing.MigLayout;
 
 public class OptionPanel {
 
@@ -77,10 +74,6 @@ public class OptionPanel {
 	// private JXTaskPane alignment;
 	// private HashMap<String, GraphAlignmentOptionTab> alignmentTabs = new
 	// HashMap<String, GraphAlignmentOptionTab>();
-
-	private HeatgraphPropertiesWindow heatgraphPropertiesWindow;
-
-	private JXTaskPane heatgraphProperties;
 
 	private JXTaskPane bbProperties;
 
@@ -159,13 +152,6 @@ public class OptionPanel {
 		bb = new BuildingBlocks();
 		bbProperties.add(bb);
 		bbProperties.setCollapsed(true);
-
-
-		heatgraphProperties = new JXTaskPane();
-		heatgraphProperties.setTitle("Heatgraph Properties");
-		heatgraphPropertiesWindow = new HeatgraphPropertiesWindow();
-		heatgraphProperties.add(heatgraphPropertiesWindow.getPanel());
-		heatgraphProperties.setCollapsed(true);
 
 		project = new JXTaskPane();
 		project.setTitle("Project Description");

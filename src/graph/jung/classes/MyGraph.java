@@ -72,7 +72,6 @@ import graph.layouts.GraphCenter;
 import graph.layouts.gemLayout.GEMLayout;
 import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
-import gui.HeatgraphLayer;
 import gui.MainWindow;
 import gui.MyAnnotationManager;
 import gui.RangeSelector;
@@ -234,7 +233,7 @@ public class MyGraph {
 		vv.addPreRenderPaintable(RangeSelector.getInstance());
 
 		// set the heatmap-layer to be painted before the actual graph
-		vv.addPreRenderPaintable(HeatgraphLayer.getInstance());
+		//vv.addPreRenderPaintable(HeatgraphLayer.getInstance());
 
 		// set the Ranges-Layer to get notified of mouse movements and clicks
 		vv.addMouseListener(RangeSelector.getInstance());

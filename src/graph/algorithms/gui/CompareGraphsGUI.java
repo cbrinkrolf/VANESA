@@ -21,7 +21,6 @@ import biologicalElements.Pathway;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import graph.GraphContainer;
 import graph.algorithms.CompareGraphs;
-import graph.algorithms.HeatmapGraphs;
 import graph.algorithms.MergeGraphs;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
@@ -75,12 +74,11 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		JButton reset = new JButton("reset");
 		JButton merge = new JButton("merge");
 		JButton align = new JButton("align");
-		JButton heatmap = new JButton("heatmap");
-		JButton compare3d = new JButton("compare 3D");
+		//JButton heatmap = new JButton("heatmap");
+		//JButton compare3d = new JButton("compare 3D");
 
 		if (MainWindow.developer) {
-			buttons = new JButton[] { newButton, compare, merge, heatmap,
-					compare3d, align, reset };
+			buttons = new JButton[] { newButton, compare, merge, align, reset };
 		} else {
 			buttons = new JButton[] { newButton, compare, merge, reset };
 		}
@@ -97,14 +95,14 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		merge.addActionListener(this);
 		merge.setActionCommand("merge");
 
-		heatmap.addActionListener(this);
-		heatmap.setActionCommand("heatmap");
+		//heatmap.addActionListener(this);
+		//heatmap.setActionCommand("heatmap");
 
 		align.addActionListener(this);
 		align.setActionCommand("align");
 
-		compare3d.addActionListener(this);
-		compare3d.setActionCommand("compare3d");
+		//compare3d.addActionListener(this);
+		//compare3d.setActionCommand("compare3d");
 
 		optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
@@ -259,12 +257,6 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 					.toString()), true);
 			this.closeDialog();
 
-		} else if ("heatmap".equals(event)) {
-
-			new HeatmapGraphs(con.getPathway(firstBox.getSelectedItem()
-					.toString()), con.getPathway(secondBox.getSelectedItem()
-					.toString()));
-			this.closeDialog();
 		} else if ("align".equals(event)) {
 
 			closeDialog();
@@ -272,10 +264,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 					con.getPathway(firstBox.getSelectedItem().toString()),
 					con.getPathway(secondBox.getSelectedItem().toString()));
 
-		} //else if ("compare3d".equals(event)) {
-			//this.dispose();
-			//new Compare3dChooseGraphsWindow();
-		//}
+		}
 	}
 
 	private void resetPanels() {
@@ -315,5 +304,4 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 	public void closeDialog() {
 		dialog.setVisible(false);
 	}
-
 }
