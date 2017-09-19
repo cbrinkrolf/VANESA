@@ -206,7 +206,7 @@ public class VAMLoutput {
 				writer.writeEndElement();
 
 				writer.writeStartElement("activationProbability");
-				writer.writeCData(e.getActivationProbability() + "");
+				writer.writeCData(e.getProbability() + "");
 				writer.writeEndElement();
 			}
 
