@@ -39,7 +39,7 @@ public class ToolBar {
 		JButton modelling = null;
 		// JButton petriNet = null;
 		JButton covGraph = null;
-		JButton heatmap = null;
+		//JButton heatmap = null;
 		JButton edit = null;
 		JButton convertIntoPetriNet = null;
 		JButton parallelview = null;
@@ -243,10 +243,10 @@ public class ToolBar {
 		modelling.addActionListener(ToolBarListener.getInstance());
 		modelling.setToolTipText("Change to Modelling View");
 
-		heatmap = new ToolBarButton(new ImageIcon(imagePath.getPath("heatmapGraph.png")));
-		heatmap.setToolTipText("Create heatgraph");
-		heatmap.setActionCommand("heatmap");
-		heatmap.addActionListener(ToolBarListener.getInstance());
+		//heatmap = new ToolBarButton(new ImageIcon(imagePath.getPath("heatmapGraph.png")));
+		//heatmap.setToolTipText("Create heatgraph");
+		//heatmap.setActionCommand("heatmap");
+		//heatmap.addActionListener(ToolBarListener.getInstance());
 
 		edit = new ToolBarButton(new ImageIcon(imagePath.getPath("TitleGraph.png")));
 		edit.setSelectedIcon(new ImageIcon(imagePath.getPath("editSelected.png")));
@@ -299,7 +299,7 @@ public class ToolBar {
 			featureControls.setLayout(new GridLayout(2, 2));
 			featureControls.add(merge);
 			if (MainWindow.developer) {
-				featureControls.add(heatmap);
+				//featureControls.add(heatmap);
 				featureControls.add(parallelview);
 			}
 			featureControls.add(chooser);

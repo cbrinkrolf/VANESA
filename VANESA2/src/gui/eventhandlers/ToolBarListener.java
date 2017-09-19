@@ -24,7 +24,6 @@ import graph.GraphInstance;
 import graph.algorithms.gui.CompareGraphsGUI;
 import graph.hierarchies.AutoCoarse;
 import graph.jung.classes.MyGraph;
-import gui.HeatmapChooseGraphsWindow;
 import gui.InfoWindow;
 import gui.MainWindow;
 import gui.ParallelChooseGraphsWindow;
@@ -161,12 +160,6 @@ public class ToolBarListener implements ActionListener {
 			new InfoWindow(false);
 		} else if ("infoextended".equals(event)) {
 			new InfoWindow(true);
-		} else if ("heatmap".equals(event)) {
-			if (con.getPathwayNumbers() > 1) {
-				new HeatmapChooseGraphsWindow();
-			} else {
-				this.showCreate2NetworksMessage();
-			}
 		} else if ("modelling".equals(event)) {
 
 			con.setPetriView(false);
