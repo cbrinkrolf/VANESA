@@ -200,7 +200,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			addCompartmentItems(compartment);
 			AutoCompleteDecorator.decorate(compartment);
 
-			compartment.setSelectedItem(((BiologicalNodeAbstract)ab).getCompartment());
+			compartment.setSelectedItem(((BiologicalNodeAbstract) ab).getCompartment());
 			compartment.addItemListener(this);
 
 			p.add(new JLabel("Compartment"), "gap 5 ");
@@ -250,7 +250,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			constCheck = new JCheckBox("constant");
 			constCheck.setActionCommand("constCheck");
 			constCheck.addActionListener(this);
-			constCheck.setSelected(((BiologicalNodeAbstract)ab).isConstant());
+			constCheck.setSelected(((BiologicalNodeAbstract) ab).isConstant());
 
 			// JTextField aaSequence = new JTextField(20);
 			// aaSequence.setText(protein.getAaSequence());
@@ -323,10 +323,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 				concentrationStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				concentrationMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				concentrationMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-				concentration.setText(((BiologicalNodeAbstract)ab).getConcentration() + "");
-				concentrationStart.setText(((BiologicalNodeAbstract)ab).getConcentrationStart() + "");
-				concentrationMin.setText(((BiologicalNodeAbstract)ab).getConcentrationMin() + "");
-				concentrationMax.setText(((BiologicalNodeAbstract)ab).getConcentrationMax() + "");
+				concentration.setText(((BiologicalNodeAbstract) ab).getConcentration() + "");
+				concentrationStart.setText(((BiologicalNodeAbstract) ab).getConcentrationStart() + "");
+				concentrationMin.setText(((BiologicalNodeAbstract) ab).getConcentrationMin() + "");
+				concentrationMax.setText(((BiologicalNodeAbstract) ab).getConcentrationMax() + "");
 
 				JLabel lblConcentration = new JLabel("Concentration");
 
@@ -543,7 +543,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 				if (tokenMin != null && tokenMax != null) {
 					tokenMin.setEnabled(false);
 					tokenMax.setEnabled(false);
-				}if(concentrationMin != null && concentrationMax != null){
+				}
+				if (concentrationMin != null && concentrationMax != null) {
 					concentrationMin.setEnabled(false);
 					concentrationMax.setEnabled(false);
 				}
@@ -596,15 +597,16 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(lblUp, "gap 5");
 				p.add(upBoundary, "wrap");
 
+			} else {
+
+				isDirected.setSelected(((BiologicalEdgeAbstract) ab).isDirected());
+				isDirected.setToolTipText("is directed");
+				isDirected.setActionCommand("isDirected");
+				isDirected.addActionListener(this);
+				p.add(new JLabel("is directed"), "gap 5 ");
+				p.add(isDirected, "wrap ,span 1");
 			}
-			
-			isDirected.setSelected(((BiologicalEdgeAbstract) ab).isDirected());
-			isDirected.setToolTipText("is directed");
-			isDirected.setActionCommand("isDirected");
-			isDirected.addActionListener(this);
-			p.add(new JLabel("is directed"), "gap 5 ");
-			p.add(isDirected, "wrap ,span 1");
-			
+
 		}
 
 		if (ab instanceof DynamicNode) {
@@ -769,11 +771,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 			newEdge.setActivationProbability(edge.getActivationProbability());
 			newEdge.setDirected(true);
 			// pw = graphInstance.getPathway();
-			MyGraph g = pw.getGraph();
-			g.getJungGraph().removeEdge(edge);
+			//MyGraph g = pw.getGraph();
+			//g.getJungGraph().removeEdge(edge);
 			// g.getEdgeStringer().removeEdge(edge.getEdge());
 			pw.removeElement(edge);
+			
 			pw.addEdge(newEdge);
+			pw.updateMyGraph();
 			// g.getVisualizationViewer().getPickedState().clearPickedEdges();
 			graphInstance.setSelectedObject(newEdge);
 
@@ -844,9 +848,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 			pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 
 			// System.out.println("knocked out");
-		} else if ("isDirected".equals(event)){ 
-			if(ab instanceof BiologicalEdgeAbstract){
-				((BiologicalEdgeAbstract)ab).setDirected(isDirected.isSelected());
+		} else if ("isDirected".equals(event)) {
+			if (ab instanceof BiologicalEdgeAbstract) {
+				((BiologicalEdgeAbstract) ab).setDirected(isDirected.isSelected());
 				Pathway pw = new GraphInstance().getPathway();
 				pw.updateMyGraph();
 			}
@@ -857,8 +861,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 					if (tokenMin != null && tokenMax != null) {
 						this.tokenMin.setEnabled(false);
 						this.tokenMax.setEnabled(false);
-					} 
-					if(concentrationMin != null && concentrationMax != null){
+					}
+					if (concentrationMin != null && concentrationMax != null) {
 						this.concentrationMin.setEnabled(false);
 						this.concentrationMax.setEnabled(false);
 					}
@@ -867,7 +871,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 					if (tokenMin != null && tokenMax != null) {
 						this.tokenMin.setEnabled(true);
 						this.tokenMax.setEnabled(true);
-					} if(concentrationMin != null && concentrationMax != null){
+					}
+					if (concentrationMin != null && concentrationMax != null) {
 						this.concentrationMin.setEnabled(true);
 						this.concentrationMax.setEnabled(true);
 					}
