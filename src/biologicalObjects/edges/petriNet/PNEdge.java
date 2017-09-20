@@ -6,11 +6,7 @@ import petriNet.FunctionParser;
 
 public class PNEdge extends BiologicalEdgeAbstract {
 	
-	public static final int CONFLICTHANDLING_NONE = 0;
-	public static final int CONFLICTHANDLING_PRIO = 1;
-	public static final int CONFLICTHANDLING_PROB = 2;
-
-	private int conflictStrategy = 0;
+	
 	
 	// conflict sovling: priority that edge is active, 1=highest, n=lowest priority
 	private int priority = 1;
@@ -74,14 +70,6 @@ public class PNEdge extends BiologicalEdgeAbstract {
 
 	public void setPriority(int priority) {
 		this.priority = priority;
-	}
-
-	public int getConflictStrategy() {
-		return conflictStrategy;
-	}
-
-	public void setConflictStrategy(int conflictStrategy) {
-		this.conflictStrategy = conflictStrategy;
 	}
 
 	public double getProbability() {

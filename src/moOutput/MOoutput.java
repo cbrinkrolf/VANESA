@@ -54,6 +54,8 @@ public class MOoutput {
 	private final HashMap<BiologicalNodeAbstract, String> vertex2name = new HashMap<BiologicalNodeAbstract, String>();
 	private HashMap<String, String> inWeights = new HashMap<String, String>();
 	private HashMap<String, String> outWeights = new HashMap<String, String>();
+	private HashMap<String, String> outPrio = new HashMap<String, String>();
+	private HashMap<String, String> outProb = new HashMap<String, String>();
 
 	private HashMap<BiologicalEdgeAbstract, String> bea2resultkey = new HashMap<BiologicalEdgeAbstract, String>();
 
@@ -140,8 +142,11 @@ public class MOoutput {
 		// if (this.packageInfo == null) {
 		// sb.append(this.indentation + "inner PNlib.Settings settings1();" +
 		// this.endl);
-		sb.append(INDENT + "inner PNlib.Settings settings(showTokenFlow = true) annotation(Placement(visible=true, transformation(origin={"
-				+ (minX - 30) + "," + (maxY + 30) + "}, extent={{-20,-20}, {20,20}}, rotation=0)));" + ENDL);
+		
+		// globalSeed influences stochastic transitions and conflict solving strategy: probability
+		sb.append(
+				INDENT + "inner PNlib.Settings settings(showTokenFlow = true, globalSeed=42) annotation(Placement(visible=true, transformation(origin={"
+						+ (minX - 30) + "," + (maxY + 30) + "}, extent={{-20,-20}, {20,20}}, rotation=0)));" + ENDL);
 		// }
 
 		sb.append(places);
@@ -270,10 +275,21 @@ public class MOoutput {
 					}
 
 					atr = "startMarks=" + start + ",minMarks=" + min + ",maxMarks=" + max + ",t(final unit=\"mmol\")";
+					if (place.getConflictingOutEdges().size() > 1) {
+
+						// priority is default
+						if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PROB) {
+							atr += ", enablingType=PNlib.Types.EnablingType.Probability";
+							atr += ", enablingProbOut={" + this.outProb.get(place.getName()) + "}";
+						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO){
+							atr += ", enablingPrioOut={" + this.outPrio.get(place.getName()) + "}";
+						}
+						//System.out.println(atr);
+					}
 					// places =
 					// places.concat(getPlaceString(getModelicaString(place),
 					// bna, atr, in, out));
-
+					//System.out.println(place.getName() + " conflicting edges: " + place.getConflictingOutEdges().size());
 				} else if (biologicalElement.equals(Elementdeclerations.stochasticTransition)) {
 
 					StochasticTransition t = (StochasticTransition) bna;
@@ -357,6 +373,8 @@ public class MOoutput {
 
 			// TODO funktionen werden zulassen
 			String weight;
+			int prio = 1;
+			double prob = 1.0;
 			if (bea instanceof PNEdge) {
 				e = (PNEdge) bea;
 				// System.out.println("edge");
@@ -379,6 +397,22 @@ public class MOoutput {
 						this.inWeights.put(toString, inWeights.get(toString) + "," + weight);
 					} else {
 						this.inWeights.put(toString, weight);
+					}
+
+					if (!(e.getTo() instanceof ContinuousTransition)) {
+						prio = e.getPriority();
+						if (this.outPrio.containsKey(fromString)) {
+							this.outPrio.put(fromString, outPrio.get(fromString) + "," + prio);
+						} else {
+							this.outPrio.put(fromString, prio + "");
+						}
+
+						prob = e.getProbability();
+						if (this.outProb.containsKey(fromString)) {
+							this.outProb.put(fromString, outProb.get(fromString) + "," + prob);
+						} else {
+							this.outProb.put(fromString, prob + "");
+						}
 					}
 
 					// Edge Transition -> Place

@@ -253,12 +253,6 @@ public class JSBMLinput {
 						// switch (biologicalElement) {
 						// case Elementdeclerations.pnEdge:
 
-						elSub = reacAnnotation.getChild("ConflictStrategy", null);
-						if (elSub != null) {
-							attr = elSub.getAttributeValue("ConflictStrategy");
-							((PNEdge) bea).setConflictStrategy(Integer.parseInt(attr));
-						}
-						
 						elSub = reacAnnotation.getChild("Probability", null);
 						if (elSub != null) {
 							attr = elSub.getAttributeValue("Probability");
@@ -412,6 +406,12 @@ public class JSBMLinput {
 						attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
 						((biologicalObjects.nodes.petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
 						((biologicalObjects.nodes.petriNet.Place) bna).setDiscrete(true);
+						
+						elSub = specAnnotation.getChild("ConflictStrategy", null);
+						if (elSub != null) {
+							attr = elSub.getAttributeValue("ConflictStrategy");
+							((Place) bna).setConflictStrategy(Integer.parseInt(attr));
+						}
 						break;
 					case Elementdeclerations.s_place:
 						elSub = specAnnotation.getChild("token", null);
@@ -428,6 +428,12 @@ public class JSBMLinput {
 						attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
 						((biologicalObjects.nodes.petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
 						((biologicalObjects.nodes.petriNet.Place) bna).setDiscrete(false);
+						
+						elSub = specAnnotation.getChild("ConflictStrategy", null);
+						if (elSub != null) {
+							attr = elSub.getAttributeValue("ConflictStrategy");
+							((Place) bna).setConflictStrategy(Integer.parseInt(attr));
+						}
 						break;
 					case Elementdeclerations.discreteTransition:
 						elSub = specAnnotation.getChild("delay", null);
