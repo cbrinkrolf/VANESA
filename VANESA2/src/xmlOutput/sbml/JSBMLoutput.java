@@ -628,6 +628,9 @@ public class JSBMLoutput {
 				el.addChild(createElSub(attr, "tokenMax"));
 				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getTokenStart());
 				el.addChild(createElSub(attr, "tokenStart"));
+				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getConflictStrategy());
+				el.addChild(createElSub(attr, "ConflictStrategy"));
+				
 			} else if (oneNode instanceof Transition) {
 				attr = String.valueOf(((Transition)oneNode).getFiringCondition());
 				el.addChild(createElSub(attr, "firingCondition"));
@@ -721,8 +724,6 @@ public class JSBMLoutput {
 				}
 			}
 		} else if (oneEdge instanceof biologicalObjects.edges.petriNet.PNEdge) {
-			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getConflictStrategy());
-			el.addChild(createElSub(attr, "ConflictStrategy"));
 			
 			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getProbability());
 			el.addChild(createElSub(attr, "Probability"));

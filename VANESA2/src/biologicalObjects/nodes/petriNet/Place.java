@@ -1,13 +1,26 @@
 package biologicalObjects.nodes.petriNet;
 
 import java.awt.Color;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import biologicalElements.Elementdeclerations;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
 import graph.jung.graphDrawing.VertexShapes;
 
 public class Place extends PNNode {
+
+	public static final int CONFLICTHANDLING_NONE = 0;
+	public static final int CONFLICTHANDLING_PRIO = 1;
+	public static final int CONFLICTHANDLING_PROB = 2;
+
+	private int conflictStrategy = 0;
 
 	private double token = 0;
 	private double tokenMin = 0.0;
@@ -41,18 +54,17 @@ public class Place extends PNNode {
 			token = tokenStart;
 	}
 
-
 	// private int r;
 	// private int b;
 	// private int g;
-	public Place(String label, String name, double token, boolean discrete){
-		super(label,name);
+	public Place(String label, String name, double token, boolean discrete) {
+		super(label, name);
 		if (label.equals(""))
 			setLabel(name);
 		if (name.equals(""))
 			setName(label);
 		shapes = new VertexShapes();
-		//System.out.println("new place");
+		// System.out.println("new place");
 		this.discrete = discrete;
 
 		if (discrete) {
@@ -92,21 +104,17 @@ public class Place extends PNNode {
 	@Override
 	public void rebuildShape(VertexShapes vs) {
 		/*
-		// this.setColor(new Color(255-token,255-token,255-token));
-		Shape s = null;
-		// if (!discrete)s = vs.getDoubleEllipse(getVertex());
-		// else s=vs.getEllipse(getVertex());
-
-		// Rectangle bounds = s.getBounds();
-		// AffineTransform transform = new AffineTransform();
-		// transform.translate(1,1);
-		// transform.scale(1, 2);
-		// this.setColor(new Color(token,0,0));
-
-		AffineTransform transform = new AffineTransform();
-		transform.scale(2, 2);
-		setShape(transform.createTransformedShape(s));
-		// setShape(s);*/
+		 * // this.setColor(new Color(255-token,255-token,255-token)); Shape s =
+		 * null; // if (!discrete)s = vs.getDoubleEllipse(getVertex()); // else
+		 * s=vs.getEllipse(getVertex());
+		 * 
+		 * // Rectangle bounds = s.getBounds(); // AffineTransform transform =
+		 * new AffineTransform(); // transform.translate(1,1); //
+		 * transform.scale(1, 2); // this.setColor(new Color(token,0,0));
+		 * 
+		 * AffineTransform transform = new AffineTransform(); transform.scale(2,
+		 * 2); setShape(transform.createTransformedShape(s)); // setShape(s);
+		 */
 	}
 
 	public double getToken() {
@@ -114,7 +122,7 @@ public class Place extends PNNode {
 	}
 
 	public double getTokenMin() {
-		if(this.isConstant()){
+		if (this.isConstant()) {
 			return 0;
 		}
 		return tokenMin;
@@ -125,7 +133,7 @@ public class Place extends PNNode {
 	}
 
 	public double getTokenMax() {
-		if(this.isConstant()){
+		if (this.isConstant()) {
 			return Double.MAX_VALUE;
 		}
 		return tokenMax;
@@ -152,4 +160,59 @@ public class Place extends PNNode {
 		return plotColor;
 	}
 
+	public int getConflictStrategy() {
+		return conflictStrategy;
+	}
+
+	public void setConflictStrategy(int conflictStrategy) {
+		this.conflictStrategy = conflictStrategy;
+	}
+
+	public Set<PNEdge> getConflictingOutEdges() {
+		Collection<BiologicalEdgeAbstract> coll = GraphInstance.getMyGraph().getJungGraph().getOutEdges(this);
+		Set<PNEdge> result = new HashSet<PNEdge>();
+		if (coll.size() > 0) {
+			Iterator<BiologicalEdgeAbstract> it = coll.iterator();
+			BiologicalEdgeAbstract bea;
+			while (it.hasNext()) {
+				bea = it.next();
+				if (bea instanceof PNEdge && !(bea.getTo() instanceof ContinuousTransition)) {
+					result.add((PNEdge)bea);
+				}
+			}
+		}
+		return result;
+	}
+
+	public void solvePriorityConflicts() {
+
+	}
+
+	public void solveProbabilityConflicts() {
+		Collection<PNEdge> edges = this.getConflictingOutEdges();
+		if(edges.size() > 1){
+			double sum = 0;
+			Iterator<PNEdge> it = edges.iterator();
+			PNEdge bea;
+			while(it.hasNext()){
+				bea = it.next();
+				sum+=bea.getProbability();
+			}
+			
+			if(sum != 1){
+				
+			}
+			
+		}
+		
+
+	}
+
+	public void solveConflictProperties() {
+		if (this.conflictStrategy == Place.CONFLICTHANDLING_PRIO) {
+			this.solvePriorityConflicts();
+		} else if (this.conflictStrategy == Place.CONFLICTHANDLING_PROB) {
+			this.solveProbabilityConflicts();
+		}
+	}
 }
