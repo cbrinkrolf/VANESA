@@ -56,6 +56,7 @@ import graph.GraphInstance;
 import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
+import gui.MyPopUp;
 import gui.eventhandlers.PropertyWindowListener;
 import net.miginfocom.swing.MigLayout;
 import util.MyJFormattedTextField;
@@ -264,8 +265,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			String atname, atsvalue;
 			double atdvalue;
 
-			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries = new ArrayList<>(), annotationentries = new ArrayList<>(),
-					graphpropertiesentries = new ArrayList<>();
+			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries = new ArrayList<>(),
+					annotationentries = new ArrayList<>(), graphpropertiesentries = new ArrayList<>();
 
 			for (NodeAttribute att : bna.getNodeAttributes()) {
 				atname = att.getName();
@@ -367,7 +368,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(new JLabel("Linked to Pathway"), "gap 5 ");
 				boolean b = ((PathwayMap) ab).getPathwayLink() == null;
 				JCheckBox linked = new JCheckBox("", !b);
-				linked.setToolTipText("Shows whether there is a connected Pathway in Memory to this Map (uncheck the Box to delete that Pathway)");
+				linked.setToolTipText(
+						"Shows whether there is a connected Pathway in Memory to this Map (uncheck the Box to delete that Pathway)");
 				linked.setActionCommand("pathwayLink");
 				linked.addActionListener(this);
 				linked.setEnabled(!b);
@@ -498,32 +500,40 @@ public class ElementWindow implements ActionListener, ItemListener {
 					group.add(none);
 					group.add(prio);
 					group.add(prob);
-					
+
 					JButton solve = new JButton("solve conflict properties");
 					solve.setToolTipText("solve priorities and normalize probabilites");
 					solve.setActionCommand("solve");
 					solve.addActionListener(this);
-					
+
+					JButton check = new JButton("check all");
+					check.setToolTipText("check all conflict properties");
+					check.setActionCommand("check");
+					check.addActionListener(this);
+
 					p.add(new JLabel("conflict solving:"), "gap 5 ");
 					p.add(none, "flowx, split 3");
 					p.add(prio);
 					p.add(prob, "wrap");
-					
+
 					if (place.getConflictStrategy() == Place.CONFLICTHANDLING_NONE) {
 						none.setSelected(true);
 					} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
 						prio.setSelected(true);
-						p.add(solve, "skip, wrap");
+						p.add(check, "skip,split 2");
+						p.add(solve, "wrap");
 					} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PROB) {
 						prob.setSelected(true);
-						p.add(solve, "skip, wrap");
+						p.add(check, "skip,split 2");
+						p.add(solve, "wrap");
 					}
 				}
 
 			} else if (ab instanceof Transition) {
 				JLabel lswitchTrans = new JLabel("Transition Type");
-				JComboBox<String> transList = new JComboBox<String>(new String[] { DiscreteTransition.class.getSimpleName(),
-						ContinuousTransition.class.getSimpleName(), StochasticTransition.class.getSimpleName() });
+				JComboBox<String> transList = new JComboBox<String>(new String[] {
+						DiscreteTransition.class.getSimpleName(), ContinuousTransition.class.getSimpleName(),
+						StochasticTransition.class.getSimpleName() });
 				transList.setSelectedItem(ab.getClass().getCanonicalName());
 				transList.setName("transList");
 				transList.addFocusListener(pwl);
@@ -648,7 +658,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					Place place = (Place) e.getFrom();
 					if (place.getConflictingOutEdges().size() > 0) {
 						p.add(new JLabel("Conflict solving strategy:"), "gap 5");
-						if(place.getConflictStrategy() == Place.CONFLICTHANDLING_NONE){
+						if (place.getConflictStrategy() == Place.CONFLICTHANDLING_NONE) {
 							p.add(new JLabel("none"), "gap 5, wrap");
 						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
 							p.add(new JLabel("priorities"), "gap 5, wrap");
@@ -790,15 +800,16 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("pathwayLink".equals(event)) {
 			if (JOptionPane.showConfirmDialog(w,
 					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
-					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION
-					&& ab instanceof PathwayMap) {
+					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION && ab instanceof PathwayMap) {
 				((PathwayMap) ab).setPathwayLink(null);
 				w.updateElementTree();
 				w.updatePathwayTree();
 				ab.setColor(Color.white);
 			}
 			w.updateElementProperties();
-		} else if (("hideNeighbours".equals(event) || ("showNeighbours".equals(event))) && ab instanceof BiologicalNodeAbstract) {
+		} else if (("hideNeighbours".equals(event) || ("showNeighbours".equals(event)))
+				&& ab instanceof BiologicalNodeAbstract) {
 			// TODO visible wird noch nicht gehandelt in transformators
 			Pathway pw = graphInstance.getPathway();
 			boolean hide = "hideNeighbours".equals(event);
@@ -827,8 +838,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			Pathway pw = graphInstance.getPathway();
 			PNEdge edge = (PNEdge) ab;
 
-			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(), edge.getBiologicalElement(),
-					edge.getFunction());
+			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(),
+					edge.getBiologicalElement(), edge.getFunction());
 			newEdge.setUpperBoundary(edge.getUpperBoundary());
 			newEdge.setLowerBoundary(edge.getLowerBoundary());
 			newEdge.setProbability(edge.getProbability());
@@ -971,11 +982,30 @@ public class ElementWindow implements ActionListener, ItemListener {
 					// System.out.println("durch");
 				}
 			}
-		}else if ("solve".equals(event)) {
+		} else if ("solve".equals(event)) {
 			if (ab instanceof Place) {
 				Place place = (Place) ab;
 				place.solveConflictProperties();
 			}
+		} else if ("check".equals(event)) {
+			Iterator<BiologicalNodeAbstract> it = GraphInstance.getMyGraph().getAllVertices().iterator();
+			String result = "";
+			while (it.hasNext()) {
+				BiologicalNodeAbstract bna = it.next();
+				
+				if (bna instanceof Place) {
+					Place place = (Place) bna;
+					if(place.hasConflictProperties()){
+						result += place.getName() + "\n";
+					}
+					//place.solveConflictProperties();
+				}
+			}
+			String message = "No conflicts found!";
+			if(result.length() > 0){
+				message = "Following conflicting places found: "+result;
+			}
+			MyPopUp.getInstance().show("Checking conflicts", message);
 		}
 		GraphInstance.getMyGraph().updateGraph();
 	}

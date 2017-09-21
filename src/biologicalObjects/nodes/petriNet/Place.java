@@ -176,43 +176,119 @@ public class Place extends PNNode {
 			while (it.hasNext()) {
 				bea = it.next();
 				if (bea instanceof PNEdge && !(bea.getTo() instanceof ContinuousTransition)) {
-					result.add((PNEdge)bea);
+					result.add((PNEdge) bea);
 				}
 			}
 		}
 		return result;
 	}
 
-	public void solvePriorityConflicts() {
-
+	public boolean hasConflictProperties() {
+		if (this.conflictStrategy == Place.CONFLICTHANDLING_PRIO) {
+			return this.hasPriorityConflicts();
+		} else if (this.conflictStrategy == Place.CONFLICTHANDLING_PROB) {
+			return this.hasProbabilityConflicts();
+		}
+		return false;
 	}
 
-	public void solveProbabilityConflicts() {
+	public boolean hasPriorityConflicts() {
 		Collection<PNEdge> edges = this.getConflictingOutEdges();
-		if(edges.size() > 1){
-			double sum = 1;
+		if (edges.size() > 1) {
 			Iterator<PNEdge> it = edges.iterator();
 			PNEdge bea;
-			while(it.hasNext()){
+			Set<Integer> set = new HashSet<Integer>();
+			while (it.hasNext()) {
 				bea = it.next();
-				sum+=bea.getProbability();
+				if (set.contains(bea.getPriority())) {
+					return true;
+				} else {
+					if (bea.getPriority() > 0 && bea.getPriority() <= edges.size()) {
+						set.add(bea.getPriority());
+					} else {
+						return true;
+					}
+				}
 			}
-			
-			if(sum != 1){
-				it = edges.iterator();
-				while(it.hasNext()){
+		}
+		return false;
+	}
+
+	public boolean hasProbabilityConflicts() {
+		Collection<PNEdge> edges = this.getConflictingOutEdges();
+		if (edges.size() > 1) {
+			double sum = 0;
+			Iterator<PNEdge> it = edges.iterator();
+			PNEdge bea;
+			while (it.hasNext()) {
+				bea = it.next();
+				sum += bea.getProbability();
+			}
+			if (sum != 1.0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void solveConflictProperties() {
+		if (this.conflictStrategy == Place.CONFLICTHANDLING_PRIO && this.hasPriorityConflicts()) {
+			this.solvePriorityConflicts();
+		} else if (this.conflictStrategy == Place.CONFLICTHANDLING_PROB && hasProbabilityConflicts()) {
+			this.solveProbabilityConflicts();
+		}
+	}
+
+	public void solvePriorityConflicts() {
+		Collection<PNEdge> edges = this.getConflictingOutEdges();
+		if (edges.size() > 1) {
+			Iterator<PNEdge> it = edges.iterator();
+			PNEdge bea;
+
+			Set<Integer> goodSet = new HashSet<Integer>();
+			for (int i = 1; i <= edges.size(); i++) {
+				goodSet.add(i);
+			}
+
+			Set<PNEdge> set = new HashSet<PNEdge>();
+			while (it.hasNext()) {
+				bea = it.next();
+				if (goodSet.contains(bea.getPriority())) {
+					goodSet.remove(bea.getPriority());
+				} else {
+					set.add(bea);
+				}
+			}
+			it = set.iterator();
+			if (set.size() == goodSet.size()) {
+				int prio = 1;
+				while (it.hasNext()) {
 					bea = it.next();
-					bea.setProbability(bea.getProbability()/sum);
+					prio = goodSet.iterator().next();
+					bea.setPriority(prio);
+					goodSet.remove(prio);
 				}
 			}
 		}
 	}
 
-	public void solveConflictProperties() {
-		if (this.conflictStrategy == Place.CONFLICTHANDLING_PRIO) {
-			this.solvePriorityConflicts();
-		} else if (this.conflictStrategy == Place.CONFLICTHANDLING_PROB) {
-			this.solveProbabilityConflicts();
+	public void solveProbabilityConflicts() {
+		Collection<PNEdge> edges = this.getConflictingOutEdges();
+		if (edges.size() > 1) {
+			double sum = 0;
+			Iterator<PNEdge> it = edges.iterator();
+			PNEdge bea;
+			while (it.hasNext()) {
+				bea = it.next();
+				sum += bea.getProbability();
+			}
+			if (sum != 1.0) {
+				it = edges.iterator();
+				while (it.hasNext()) {
+					bea = it.next();
+					bea.setProbability(bea.getProbability() / sum);
+				}
+			}
 		}
 	}
 }

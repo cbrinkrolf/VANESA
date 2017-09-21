@@ -5,12 +5,11 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import petriNet.FunctionParser;
 
 public class PNEdge extends BiologicalEdgeAbstract {
-	
-	
-	
-	// conflict sovling: priority that edge is active, 1=highest, n=lowest priority
+
+	// conflict sovling: priority that edge is active, 1=highest, n=lowest
+	// priority
 	private int priority = 1;
-	
+
 	// conflict sovling: probability that edge is active
 	private double probability = 1.0;
 
@@ -34,9 +33,10 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		super(edgeFunction, name, from, to);
 		super.setDirected(true);
 		if (type.equals(biologicalElements.Elementdeclerations.inhibitionEdge)
-				|| type.equals(biologicalElements.Elementdeclerations.inhibitor) || type.equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
+				|| type.equals(biologicalElements.Elementdeclerations.inhibitor)
+				|| type.equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
 			setBiologicalElement(biologicalElements.Elementdeclerations.pnInhibitionEdge);
-		} else if(type.equals(biologicalElements.Elementdeclerations.pnTestEdge)) {
+		} else if (type.equals(biologicalElements.Elementdeclerations.pnTestEdge)) {
 			setBiologicalElement(biologicalElements.Elementdeclerations.pnTestEdge);
 		} else {
 			setBiologicalElement(biologicalElements.Elementdeclerations.pnEdge);
@@ -69,7 +69,9 @@ public class PNEdge extends BiologicalEdgeAbstract {
 	}
 
 	public void setPriority(int priority) {
-		this.priority = priority;
+		if (priority > 0) {
+			this.priority = priority;
+		}
 	}
 
 	public double getProbability() {
@@ -77,6 +79,8 @@ public class PNEdge extends BiologicalEdgeAbstract {
 	}
 
 	public void setProbability(double probability) {
-		this.probability = probability;
+		if (probability >= 0) {
+			this.probability = probability;
+		}
 	}
 }
