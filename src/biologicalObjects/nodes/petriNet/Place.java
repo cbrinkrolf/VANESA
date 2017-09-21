@@ -9,7 +9,6 @@ import java.util.Set;
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
 import graph.jung.graphDrawing.VertexShapes;
@@ -191,7 +190,7 @@ public class Place extends PNNode {
 	public void solveProbabilityConflicts() {
 		Collection<PNEdge> edges = this.getConflictingOutEdges();
 		if(edges.size() > 1){
-			double sum = 0;
+			double sum = 1;
 			Iterator<PNEdge> it = edges.iterator();
 			PNEdge bea;
 			while(it.hasNext()){
@@ -200,12 +199,13 @@ public class Place extends PNNode {
 			}
 			
 			if(sum != 1){
-				
+				it = edges.iterator();
+				while(it.hasNext()){
+					bea = it.next();
+					bea.setProbability(bea.getProbability()/sum);
+				}
 			}
-			
 		}
-		
-
 	}
 
 	public void solveConflictProperties() {
