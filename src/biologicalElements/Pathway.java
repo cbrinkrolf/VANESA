@@ -548,6 +548,10 @@ public class Pathway implements Cloneable {
 		return getGraph().getVisualizationViewer().getPickedVertexState()
 				.getPicked();
 	}
+	
+	public Set<BiologicalEdgeAbstract> getSelectedEdges(){
+		return getGraph().getVisualizationViewer().getPickedEdgeState().getPicked();
+	}
 
 	public int countNodes() {
 		return getGraph().getAllVertices().size();

@@ -10,6 +10,7 @@ import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
 import edu.uci.ics.jung.visualization.annotations.AnnotationManager;
 import edu.uci.ics.jung.visualization.annotations.AnnotationPaintable;
+import graph.GraphInstance;
 
 public class MyAnnotationManager extends AnnotationManager {
 
@@ -30,27 +31,19 @@ public class MyAnnotationManager extends AnnotationManager {
 	}
 
 	public void add(Annotation.Layer layer, MyAnnotation annotation) {
-		// System.out.println("added");
-		// System.out.println("added");
-		// System.out.println(annotation.getAnnotation());
-
-		// System.out.println(annotation.getPaint());
-		// super.add(layer, annotation);
-		// Annotation a2 = new Annotation(new Rectangle(60,60), layer, new
-		// Color(255,0,0), true, new Point2D.Double(0,0));
-		// super.add(Annotation.Layer.UPPER, a2);
-		// this.annotations.add(annotation);
 		super.add(layer, annotation.getAnnotation());
 
 		annotations.add(annotation);
 		annotationMap.put(annotation.getAnnotation(), annotation);
 		// System.out.println("shape: "+annotation.getShape());
 		// System.out.println("anzahl: " + this.annotations.size());
+		//System.out.println("add, count: " + this.annotationMap.size());
 
 	}
 
 	@Override
 	public void remove(Annotation<?> annotation) {
+		//System.out.println("remove annotation");
 		super.remove(annotation);
 		annotations.remove(annotationMap.get(annotation));
 		annotationMap.remove(annotation);
@@ -58,11 +51,12 @@ public class MyAnnotationManager extends AnnotationManager {
 
 	public void remove(MyAnnotation annotation) {
 		// this.annotations.remove(annotation);
-
-		super.remove(annotation.getAnnotation());
-		annotations.remove(annotation);
-		annotationMap.remove(annotation.getAnnotation());
-		// System.out.println("anzahl: " + this.mapping.size());
+		if (annotationMap.containsValue(annotation)) {
+			super.remove(annotation.getAnnotation());
+			annotations.remove(annotation);
+			annotationMap.remove(annotation.getAnnotation());
+		}
+		//System.out.println("remove, count: " + this.annotationMap.size());
 	}
 
 	public AnnotationPaintable getLowerAnnotationPaintable() {
@@ -89,34 +83,53 @@ public class MyAnnotationManager extends AnnotationManager {
 
 		return super.getLowerAnnotationPaintable().getAnnotations().contains(ma.getAnnotation());
 	}
-
-	public void moveAllAnnotation(double xOffset, double yOffset) {
-		
-		List<MyAnnotation> list = new ArrayList<MyAnnotation>(this.annotations);
-		
-		MyAnnotation ma;
-		for(int i = 0; i<list.size(); i++){
-			ma = list.get(i);
-		
+	
+	public void moveAnnotation(MyAnnotation ma, double xOffset, double yOffset){
 		this.remove(ma);
-
 		Annotation<Annotation.Layer> a2;
 		RectangularShape s = ma.getShape();
-		s.setFrameFromDiagonal(s.getMinX()+xOffset, s.getMinY()+yOffset, s.getMaxX()+xOffset, s.getMaxY()+yOffset);
-		
+		s.setFrameFromDiagonal(s.getMinX() + xOffset, s.getMinY() + yOffset, s.getMaxX() + xOffset, s.getMaxY() + yOffset);
+
 		if (ma.getText().length() > 0) {
-			// System.out.println(r.shape);
-			// System.out.println(r.shape.getMinX());
-			// System.out.println(r.shape.getMinY());
-			//ma.getShape().setFrameFromDiagonal(x, y, 100, 100);
-			
 			a2 = new Annotation(ma.getText(), Annotation.Layer.LOWER, ma.getAnnotation().getPaint(), false,
 					new Point2D.Double(s.getMinX(), s.getMinY()));
 		} else {
 			a2 = new Annotation(s, Annotation.Layer.LOWER, ma.getAnnotation().getPaint(), true, new Point2D.Double(0, 0));
 		}
-		add(Annotation.Layer.LOWER, new MyAnnotation(a2, s, ma.getText()));
+		ma.setAnnotation(a2);
+		add(Annotation.Layer.LOWER, ma);
+	}
 
+	public void moveAllAnnotation(double xOffset, double yOffset) {
+
+		List<MyAnnotation> list = new ArrayList<MyAnnotation>(this.annotations);
+		MyAnnotation ma;
+		for (int i = 0; i < list.size(); i++) {
+			ma = list.get(i);
+			this.moveAnnotation(ma, xOffset, yOffset);
 		}
+	}
+
+	public MyAnnotation getMyAnnotations(Point2D p) {
+		Annotation<?> an = super.getAnnotation(p);
+		if (this.annotationMap.containsKey(an)) {
+			return annotationMap.get(an);
+		}
+		return null;
+	}
+
+	public void updateMyAnnotation(MyAnnotation ma) {
+		this.remove(ma);
+		Annotation<Annotation.Layer> a2;
+		RectangularShape s = ma.getShape();
+		if (ma.getText().length() > 0) {
+			a2 = new Annotation(ma.getText(), Annotation.Layer.LOWER, ma.getAnnotation().getPaint(), false,
+					new Point2D.Double(ma.getShape().getMinX(), ma.getShape().getMinY()));
+		} else {
+			a2 = new Annotation(ma.getShape(), Annotation.Layer.LOWER, ma.getAnnotation().getPaint(), true, new Point2D.Double(0, 0));
+		}
+		ma.setAnnotation(a2);
+		add(Annotation.Layer.LOWER, ma);
+		GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 	}
 }

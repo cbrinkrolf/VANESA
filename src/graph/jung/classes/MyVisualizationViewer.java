@@ -72,7 +72,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	// protected List<Paintable> postRenderers = new ArrayList<Paintable>();
 
 	protected void renderGraph(Graphics2D g2d) {
-
 		//this.prepareCompartments();
 
 		super.renderGraph(g2d);

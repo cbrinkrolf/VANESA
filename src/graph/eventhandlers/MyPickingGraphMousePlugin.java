@@ -1,11 +1,13 @@
 package graph.eventhandlers;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.RectangularShape;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,6 +24,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.annotations.Annotation;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 import graph.GraphInstance;
@@ -29,30 +32,45 @@ import graph.jung.classes.MyGraph;
 import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
 import gui.MainWindow;
+import gui.MyAnnotation;
+import gui.MyAnnotationManager;
 import miscalleanous.internet.FollowLink;
 
 public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 
-	private GraphInstance graphInstance = new GraphInstance();
 	private HashMap<BiologicalNodeAbstract, Point2D> oldVertexPositions = new HashMap<BiologicalNodeAbstract, Point2D>();
 	private Set<BiologicalNodeAbstract> originalSelection = new HashSet<BiologicalNodeAbstract>();
 	private boolean inwindow = false;
 
 	private boolean dragging = false;
 
+	private Pathway pw;
+	private VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
+
+	// for annotations
+	private MyAnnotation currentAnnotation = null;
+	private MyAnnotation highlight = null;
+	private Point2D pressed = null;
+	private Point2D released = null;
+
+	public MyPickingGraphMousePlugin() {
+
+	}
+
 	public void mouseReleased(MouseEvent e) {
-		//System.out.println("released");
+		// System.out.println("released");
 		if (inwindow) {
+			this.mouseReleasedAnnotation(e);
 			// If mouse was released to change the selection, save vertex
 			// positions and return.
-			if (!oldVertexPositions.keySet().containsAll(graphInstance.getPathway().getSelectedNodes())
-					|| oldVertexPositions.keySet().size() != graphInstance.getPathway().getSelectedNodes().size()) {
+			if (!oldVertexPositions.keySet().containsAll(pw.getSelectedNodes())
+					|| oldVertexPositions.keySet().size() != pw.getSelectedNodes().size()) {
 				saveOldVertexPositions();
 				super.mouseReleased(e);
 				return;
 			}
 
-			Collection<BiologicalNodeAbstract> selectedNodes = graphInstance.getPathway().getSelectedNodes();
+			Collection<BiologicalNodeAbstract> selectedNodes = pw.getSelectedNodes();
 
 			// If no nodes were selected, return.
 			if (selectedNodes.isEmpty()) {
@@ -60,15 +78,13 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				return;
 			}
 
-			if (graphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout) {
-				HierarchicalCircleLayout hclayout = (HierarchicalCircleLayout) graphInstance.getMyGraph().getLayout();
+			if (pw.getGraph().getLayout() instanceof HierarchicalCircleLayout) {
+				HierarchicalCircleLayout hclayout = (HierarchicalCircleLayout) pw.getGraph().getLayout();
 				hclayout.saveCurrentOrder();
 			}
 
 			// Find coarse nodes in specified environment of the final mouse
 			// position.
-			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-					.getSource();
 			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv.getPickSupport();
 			float width = selectedNodes.iterator().next().getShape().getBounds().width;
 			float height = selectedNodes.iterator().next().getShape().getBounds().height;
@@ -83,8 +99,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			} else {
 				super.mouseReleased(e);
 				Point2D movement = new Point2D.Double();
-				MyGraph graph = graphInstance.getMyGraph();
-				Pathway pw = graphInstance.getPathwayStatic();
+				MyGraph graph = pw.getGraph();
 				for (BiologicalNodeAbstract selectedNode : selectedNodes) {
 					if (selectedNode.isCoarseNode()) {
 						movement.setLocation(graph.getVertexLocation(selectedNode).getX() - oldVertexPositions.get(selectedNode).getX(),
@@ -105,8 +120,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			// the selection to the coarse node.
 			if (vertex.isCoarseNode() && !selectedNodes.contains(vertex)) {
 				// Disallow to add selection to environment coarse nodes.
-				if (graphInstance.getPathway().isBNA()) {
-					if (((BiologicalNodeAbstract) graphInstance.getPathway()).getEnvironment().contains(vertices)) {
+				if (pw.isBNA()) {
+					if (((BiologicalNodeAbstract) pw).getEnvironment().contains(vertices)) {
 						JOptionPane.showMessageDialog(MainWindow.getInstance(), "Not possible to add nodes to environment nodes.",
 								"Coarse node integration Error!", JOptionPane.ERROR_MESSAGE);
 						oldVertexPositions.clear();
@@ -124,86 +139,69 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	private void coarseNodeFusion(BiologicalNodeAbstract vertex) {
 		Set<BiologicalNodeAbstract> selection = new HashSet<BiologicalNodeAbstract>();
-		selection.addAll(graphInstance.getPathway().getSelectedNodes());
+		selection.addAll(pw.getSelectedNodes());
 		if (!vertex.addToCoarseNode(selection, oldVertexPositions)) {
 			for (BiologicalNodeAbstract node : selection) {
-				graphInstance.getPathway().getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), oldVertexPositions.get(node).getY());
+				pw.getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), oldVertexPositions.get(node).getY());
 			}
 		} else {
-			graphInstance.getPathway().updateMyGraph();
+			pw.updateMyGraph();
 		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		//System.out.println("pressed");
+		// System.out.println("pressed");
+		pw = GraphInstance.getPathwayStatic();
+		vv = pw.getGraph().getVisualizationViewer();
 		if (inwindow) {
-
 			super.mousePressed(e);
 			originalSelection.clear();
-			originalSelection.addAll(graphInstance.getPathway().getSelectedNodes());
-			if (graphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout) {
-				HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) graphInstance.getMyGraph().getLayout();
+			originalSelection.addAll(pw.getSelectedNodes());
+			if (pw.getGraph().getLayout() instanceof HierarchicalCircleLayout) {
+				HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) pw.getGraph().getLayout();
 				if (hcLayout.getConfig().getMoveInGroups()) {
-					for (BiologicalNodeAbstract selectedNode : graphInstance.getPathway().getSelectedNodes()) {
+					for (BiologicalNodeAbstract selectedNode : pw.getSelectedNodes()) {
 						for (BiologicalNodeAbstract node : hcLayout.getNodesGroup(selectedNode)) {
-							graphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().pick(node, true);
+							pw.getGraph().getVisualizationViewer().getPickedVertexState().pick(node, true);
 						}
 					}
 				}
 			}
 			saveOldVertexPositions();
+			if (pw.getSelectedNodes().size() == 0 && pw.getSelectedEdges().size() == 0) {
+				this.mousePressedAnnotation(e);
+			}
 		}
 	}
 
 	private void saveOldVertexPositions() {
 		oldVertexPositions.clear();
-		for (BiologicalNodeAbstract vertex : graphInstance.getPathway().getSelectedNodes()) {
-			oldVertexPositions.put(vertex, graphInstance.getPathway().getGraph().getVertexLocation(vertex));
+		for (BiologicalNodeAbstract vertex : pw.getSelectedNodes()) {
+			oldVertexPositions.put(vertex, pw.getGraph().getVertexLocation(vertex));
 		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		//System.out.println("clicked");
-		
+		// System.out.println("clicked");
+
 		if (inwindow) {
 			if (dragging) {// && SwingUtilities.isRightMouseButton(e)){
 				this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-				//System.out.println("dragging false");
+				// System.out.println("dragging false");
 				dragging = false;
-				VisualizationViewer vv = (VisualizationViewer) e.getSource();
 				// vv.setComponentPopupMenu(new GraphPopUp().returnPopUp());
 				MainWindow.getInstance().setCursor(cursor);
 				vv.setCursor(cursor);
 				vv.getComponentPopupMenu().show();
-				//System.out.println("durch");
-				// this.mouseClicked(e);
-				// this.mouseClicked(e);
-				// vv.getComponentPopupMenu().setEnabled(true);
-
-				//this.mouseClicked(e);
 			}
-			// System.out.println("Picked E:
-			// "+graphInstance.getMyGraph().getVisualizationViewer().getPickedEdgeState().getPicked().size());
-			// System.out.println("Picked V:
-			// "+graphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size());
+
 			if (e.getClickCount() == 1) {
 				super.mouseClicked(e);
-				// System.out.println("v: "+this.vertex);
-
-				// Vector<BiologicalNodeAbstract> v = graphInstance.getPathway()
-				// .getSelectedNodes();
-				//
-				// Iterator<BiologicalNodeAbstract> it = v.iterator();
-				// while (it.hasNext()) {
-				// BiologicalNodeAbstract bna = it.next();
-				// bna.printAllHierarchicalAttributes();
-				// }
-
 			} else {
 
-				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getSelectedNodes().iterator();
+				Iterator<BiologicalNodeAbstract> it = pw.getSelectedNodes().iterator();
 				BiologicalNodeAbstract bna;
 				String urlString;
 
@@ -222,101 +220,95 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 					} else if (bna.getBiologicalElement().equals(Elementdeclerations.enzyme)) {
 						urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/enzyme_result.jsp?Enzyme_Id=" + bna.getLabel();
 						new FollowLink().openURL(urlString);
-
 					}
 				}
 			}
-
 		}
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (inwindow) {
-			// System.out.println("d");
-			if (!(graphInstance.getMyGraph().getLayout() instanceof HierarchicalCircleLayout)) {
 
-				if (SwingUtilities.isRightMouseButton(e)) {
-					VisualizationViewer vv = (VisualizationViewer) e.getSource();
-					if (!dragging) {
-						dragging = true;
-						//System.out.println("dragged");
-
-						vv.getComponentPopupMenu().hide();
-						//System.out.println("paintes");
-						 this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
-						 MainWindow.getInstance().setCursor(cursor);
-						 vv.setCursor(cursor);
-						//this.mouseClicked(e);
-					}
-					// vv.getComponentPopupMenu();
-					// vv.getComponentPopupMenu().removeAll();
-					MutableTransformer modelTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-					
-					
-					try {
-						Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
-						Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-						float dx = (float) (p.getX() - q.getX());
-						float dy = (float) (p.getY() - q.getY());
-
-						modelTransformer.translate(dx, dy);
-						down.x = e.getX();
-						down.y = e.getY();
-					} catch (RuntimeException ex) {
-						System.err.println("down = " + down + ", e = " + e);
-						throw ex;
-					}
-
-					e.consume();
-					vv.repaint();
-					// }
-
-					// graphInstance.getMyGraph().setMouseModeTransform();
-
-					//
-				} else {
-					// System.out.println("stop");
-					super.mouseDragged(e);
-				}
+			if (this.currentAnnotation != null) {
+				this.mouseDraggedAnnotation(e);
 			} else {
-				if (locked == false) {
-					VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer) e.getSource();
-					if (vertex != null) {
-						HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) graphInstance.getMyGraph().getLayout();
-						// mouse position
-						Point p = e.getPoint();
+				// System.out.println("d");
+				if (!(pw.getGraph().getLayout() instanceof HierarchicalCircleLayout)) {
 
-						// move nodes in layout
-						hcLayout.moveOnCircle(p, down, vv);
+					if (SwingUtilities.isRightMouseButton(e)) {
+						if (!dragging) {
+							dragging = true;
+							// System.out.println("dragged");
 
-						down = p;
-
-					} else {
-						Point2D out = e.getPoint();
-						if (e.getModifiers() == this.addToSelectionModifiers || e.getModifiers() == modifiers) {
-							rect.setFrameFromDiagonal(down, out);
+							vv.getComponentPopupMenu().hide();
+							// System.out.println("paintes");
+							this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+							MainWindow.getInstance().setCursor(cursor);
+							vv.setCursor(cursor);
+							// this.mouseClicked(e);
 						}
-					}
-					if (vertex != null)
+						// vv.getComponentPopupMenu();
+						// vv.getComponentPopupMenu().removeAll();
+						MutableTransformer modelTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+
+						try {
+							Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
+							Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
+							float dx = (float) (p.getX() - q.getX());
+							float dy = (float) (p.getY() - q.getY());
+
+							modelTransformer.translate(dx, dy);
+							down.x = e.getX();
+							down.y = e.getY();
+						} catch (RuntimeException ex) {
+							System.err.println("down = " + down + ", e = " + e);
+							throw ex;
+						}
+
 						e.consume();
-					vv.repaint();
+						vv.repaint();
+					} else {
+						// System.out.println("stop");
+						super.mouseDragged(e);
+					}
+				} else {
+					if (locked == false) {
+						if (vertex != null) {
+							HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) pw.getGraph().getLayout();
+							// mouse position
+							Point p = e.getPoint();
+
+							// move nodes in layout
+							hcLayout.moveOnCircle(p, down, vv);
+							down = p;
+						} else {
+							Point2D out = e.getPoint();
+							if (e.getModifiers() == this.addToSelectionModifiers || e.getModifiers() == modifiers) {
+								rect.setFrameFromDiagonal(down, out);
+							}
+						}
+						if (vertex != null)
+							e.consume();
+						vv.repaint();
+					}
 				}
 			}
 		}
 	}
 
 	public void mouseEntered(MouseEvent e) {
+		pw = GraphInstance.getPathwayStatic();
+		vv = pw.getGraph().getVisualizationViewer();
 		if (e.getComponent().toString().contains("MyVisualizationViewer")) {
-			
+
 			inwindow = true;
-			VisualizationViewer vv = (VisualizationViewer) e.getSource();
-			//this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+			// this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 			vv.setCursor(cursor);
 			MainWindow.getInstance().setCursor(cursor);
 			vv.revalidate();
 			vv.repaint();
-			//System.out.println("entered");
+			// System.out.println("entered");
 		}
 	}
 
@@ -324,11 +316,84 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		if (e.getComponent().toString().contains("MyVisualizationViewer")) {
 			inwindow = false;
 			MainWindow.getInstance().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-			// System.out.println("left");
 		}
 	}
 
 	public void mouseMoved(MouseEvent e) {
 	}
 
+	private void mousePressedAnnotation(MouseEvent e) {
+		pressed = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
+		MyAnnotationManager am = pw.getGraph().getAnnotationManager();
+		MyAnnotation ma = am.getMyAnnotations(e.getPoint());
+		if (ma != null) {
+			if (ma == currentAnnotation) {
+				this.removeHighlight();
+				this.currentAnnotation = null;
+				return;
+			}
+			this.currentAnnotation = ma;
+			Annotation<?> a2;
+			RectangularShape s = new Rectangle();
+			RectangularShape shape = ma.getShape();
+			if (ma.getText().length() > 0) {
+				a2 = new Annotation(ma.getText(), Annotation.Layer.LOWER, ma.getAnnotation().getPaint(), false,
+						new Point2D.Double(ma.getShape().getMinX(), ma.getShape().getMinY()));
+			} else {
+				// System.out.println("in");
+				int offset = 5;
+				s.setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset, shape.getMaxX() + offset, shape.getMaxY() + offset);
+				a2 = new Annotation(s, Annotation.Layer.LOWER, Color.BLUE, true, new Point2D.Double(0, 0));
+			}
+			// System.out.println(s.getMinX());
+			highlight = new MyAnnotation(a2, s, ma.getText());
+			highlight.setAnnotation(a2);
+
+			am.add(Annotation.Layer.LOWER, highlight);
+
+			am.updateMyAnnotation(ma);
+		} else {
+			this.currentAnnotation = null;
+			this.removeHighlight();
+		}
+		vv.repaint();
+	}
+
+	private void mouseDraggedAnnotation(MouseEvent e) {
+		if (highlight == null) {
+			//super.mouseDragged(e);
+		}else{
+			MyAnnotationManager am = pw.getGraph().getAnnotationManager();
+			Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
+			double xOffset = p.getX()-pressed.getX();
+			double yOffset = p.getY()-pressed.getY();
+			pressed.setLocation(p.getX(), p.getY());
+			am.moveAnnotation(highlight, xOffset, yOffset);
+			am.moveAnnotation(currentAnnotation, xOffset, yOffset);
+			vv.repaint();
+		}
+	}
+
+	private void mouseReleasedAnnotation(MouseEvent e) {
+		released = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
+		if (highlight != null) {
+			if (pressed.getX() != released.getX() || pressed.getY() != released.getY()) {
+				double xOffset = released.getX() - pressed.getX();
+				double yOffset = released.getY() - pressed.getY();
+				pw.getGraph().getAnnotationManager().moveAnnotation(currentAnnotation, xOffset, yOffset);
+			}
+		}
+		this.currentAnnotation = null;
+		this.removeHighlight();
+		vv.repaint();
+	}
+
+	private void removeHighlight() {
+		if (this.highlight != null) {
+			MyAnnotationManager am = pw.getGraph().getAnnotationManager();
+			am.remove(highlight);
+			this.highlight = null;
+			vv.repaint();
+		}
+	}
 }
