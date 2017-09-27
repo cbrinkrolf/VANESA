@@ -27,7 +27,6 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;

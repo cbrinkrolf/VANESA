@@ -26,6 +26,10 @@ public class MyAnnotation{
 		return this.a;
 	}
 	
+	public void setAnnotation(Annotation<?> a){
+		this.a = a;
+	}
+	
 	public String getText(){
 		return this.text;
 	}
@@ -37,7 +41,4 @@ public class MyAnnotation{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
-
 }

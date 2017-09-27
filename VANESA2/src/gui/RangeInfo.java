@@ -7,8 +7,6 @@ import java.awt.geom.RectangularShape;
 import java.util.HashMap;
 import java.util.Map;
 
-import graph.GraphInstance;
-
 public class RangeInfo {
 
     public String text;
@@ -56,7 +54,7 @@ public class RangeInfo {
     }
 
     public Map<String, String> getProperties() {
-        Map<String, String> properties = new HashMap();
+        Map<String, String> properties = new HashMap<String, String>();
         //this.text+="blaaaaa";
         //System.out.println("drin");
         properties.put("title", this.text);
@@ -68,7 +66,6 @@ public class RangeInfo {
         properties.put("outlineType", outlineType + "");
         boolean ellipse = this.shape instanceof Ellipse2D;
         properties.put("isEllipse", ellipse + "");
-        GraphInstance i = new GraphInstance();
        
         double minX = this.shape.getMinX();
         //System.out.println("minx"+shape.getMinX());

@@ -200,16 +200,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 				a2 = new Annotation(r.shape, Annotation.Layer.LOWER,
 						r.fillColor, true, new Point2D.Double(0, 0));
 			}
-			// Annotation a3 = new Annotation(new Rectangle(60,60),
-			// Annotation.Layer.UPPER, new Color(0,255,0), true, new
-			// Point2D.Double(0,0));
-
-			// MyAnnotationManager m = new
-			// MyAnnotationManager(GraphInstance.getMyGraph().getVisualizationViewer().getRenderContext());
-			//am.add(Annotation.Layer.LOWER, a2);
 			am.add(Annotation.Layer.LOWER, new MyAnnotation(a2, r.shape, r.text));
-			// System.out.println("drin");
-			// System.out.println("am: "+am);
 			GraphInstance.getMyGraph().getVisualizationViewer()
 					.addPreRenderPaintable(am.getLowerAnnotationPaintable());
 			GraphInstance.getMyGraph().getVisualizationViewer()
