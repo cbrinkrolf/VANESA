@@ -184,7 +184,7 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
 	public void done() {
 		MainWindow.getInstance().closeProgressBar();
 		
-		if (results == null && results.length <1) {
+		if (results == null || results.length <1) {
 			JOptionPane.showMessageDialog(MainWindow.getInstance(), "Sorry, no entries have been found.");
 		}
 	}

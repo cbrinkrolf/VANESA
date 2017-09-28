@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 
 public class FollowLink {
 
-	private static final String errMsg = "Error attempting to launch web browser";
+	//private static final String errMsg = "Error attempting to launch web browser";
 
 	static Desktop desktop = null;
 

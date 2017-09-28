@@ -132,7 +132,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				coarseNodeFusion(vertex);
 			}
 			oldVertexPositions.clear();
-
 			super.mouseReleased(e);
 		}
 	}
@@ -169,7 +168,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				}
 			}
 			saveOldVertexPositions();
-			if (pw.getSelectedNodes().size() == 0 && pw.getSelectedEdges().size() == 0) {
+			if (pw.getSelectedNodes().size() == 0 && pw.getSelectedEdges().size() == 0 && SwingUtilities.isLeftMouseButton(e)) {
 				this.mousePressedAnnotation(e);
 			}
 		}
@@ -206,20 +205,16 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				String urlString;
 
 				while (it.hasNext()) {
-					// BiologicalNodeAbstract vertex = (BiologicalNodeAbstract)
-					// it.next();
-					bna = it.next();// (BiologicalNodeAbstract)
-									// graphInstance
-					// .getPathway().getNodeByVertexID(vertex.toString());
+					bna = it.next();
 					if (bna.getBiologicalElement().equals(Elementdeclerations.protein)
 							|| bna.getBiologicalElement().equals(Elementdeclerations.inhibitor)
 							|| bna.getBiologicalElement().equals(Elementdeclerations.factor)
 							|| bna.getBiologicalElement().equals(Elementdeclerations.smallMolecule)) {
 						urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/protein_result.jsp?Protein_Id=" + bna.getLabel();
-						new FollowLink().openURL(urlString);
+						FollowLink.openURL(urlString);
 					} else if (bna.getBiologicalElement().equals(Elementdeclerations.enzyme)) {
 						urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/enzyme_result.jsp?Enzyme_Id=" + bna.getLabel();
-						new FollowLink().openURL(urlString);
+						FollowLink.openURL(urlString);
 					}
 				}
 			}
@@ -230,7 +225,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	public void mouseDragged(MouseEvent e) {
 		if (inwindow) {
 
-			if (this.currentAnnotation != null) {
+			if (this.currentAnnotation != null && SwingUtilities.isLeftMouseButton(e)) {
 				this.mouseDraggedAnnotation(e);
 			} else {
 				// System.out.println("d");
@@ -269,7 +264,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 						e.consume();
 						vv.repaint();
 					} else {
-						// System.out.println("stop");
 						super.mouseDragged(e);
 					}
 				} else {
@@ -308,7 +302,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			MainWindow.getInstance().setCursor(cursor);
 			vv.revalidate();
 			vv.repaint();
-			// System.out.println("entered");
 		}
 	}
 
@@ -336,22 +329,18 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			Annotation<?> a2;
 			RectangularShape s = new Rectangle();
 			RectangularShape shape = ma.getShape();
-			if (ma.getText().length() > 0) {
-				a2 = new Annotation(ma.getText(), Annotation.Layer.LOWER, ma.getAnnotation().getPaint(), false,
-						new Point2D.Double(ma.getShape().getMinX(), ma.getShape().getMinY()));
-			} else {
+			if (ma.getText().length() == 0) {
 				// System.out.println("in");
 				int offset = 5;
 				s.setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset, shape.getMaxX() + offset, shape.getMaxY() + offset);
 				a2 = new Annotation(s, Annotation.Layer.LOWER, Color.BLUE, true, new Point2D.Double(0, 0));
+				highlight = new MyAnnotation(a2, s, ma.getText());
+				highlight.setAnnotation(a2);
+
+				am.add(Annotation.Layer.LOWER, highlight);
+
+				am.updateMyAnnotation(ma);
 			}
-			// System.out.println(s.getMinX());
-			highlight = new MyAnnotation(a2, s, ma.getText());
-			highlight.setAnnotation(a2);
-
-			am.add(Annotation.Layer.LOWER, highlight);
-
-			am.updateMyAnnotation(ma);
 		} else {
 			this.currentAnnotation = null;
 			this.removeHighlight();
@@ -360,15 +349,15 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	}
 
 	private void mouseDraggedAnnotation(MouseEvent e) {
-		if (highlight == null) {
-			//super.mouseDragged(e);
-		}else{
+		if (currentAnnotation != null) {
 			MyAnnotationManager am = pw.getGraph().getAnnotationManager();
 			Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-			double xOffset = p.getX()-pressed.getX();
-			double yOffset = p.getY()-pressed.getY();
+			double xOffset = p.getX() - pressed.getX();
+			double yOffset = p.getY() - pressed.getY();
 			pressed.setLocation(p.getX(), p.getY());
-			am.moveAnnotation(highlight, xOffset, yOffset);
+			if (highlight != null) {
+				am.moveAnnotation(highlight, xOffset, yOffset);
+			}
 			am.moveAnnotation(currentAnnotation, xOffset, yOffset);
 			vv.repaint();
 		}
@@ -376,7 +365,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	private void mouseReleasedAnnotation(MouseEvent e) {
 		released = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
-		if (highlight != null) {
+		if (currentAnnotation != null) {
 			if (pressed.getX() != released.getX() || pressed.getY() != released.getY()) {
 				double xOffset = released.getX() - pressed.getX();
 				double yOffset = released.getY() - pressed.getY();

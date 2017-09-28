@@ -120,7 +120,7 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("concentration")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
-			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
+			if (n != null && !n.equals(bna.getConcentrationStart())) {
 				double conc = n.doubleValue();
 				bna.setConcentration(conc);
 			}
@@ -128,14 +128,14 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("concentrationMin")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
-			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
+			if (n != null && !n.equals(bna.getConcentrationStart())) {
 				double concentrationMin = n.doubleValue();
 				bna.setConcentrationMin(concentrationMin);
 			}
 		} else if (source.equals("concentrationStart")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
-			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
+			if (n != null && !n.equals(bna.getConcentrationStart())) {
 				double concentrationStart = n.doubleValue();
 				bna.setConcentrationStart(concentrationStart);
 				bna.setConcentration(bna.getConcentrationStart());
@@ -143,7 +143,7 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("concentrationMax")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
-			if (n != null && !n.equals("") && !n.equals(bna.getConcentrationStart())) {
+			if (n != null && !n.equals(bna.getConcentrationStart())) {
 				double concentrationMax = n.doubleValue();
 				bna.setConcentrationMax(concentrationMax);
 			}
@@ -152,7 +152,7 @@ public class PropertyWindowListener implements FocusListener {
 		else if (source.equals("token")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
-			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
+			if (n != null && !n.equals(p.getTokenStart())) {
 				double tokens = n.doubleValue();
 				p.setToken(tokens);
 			}
@@ -160,7 +160,7 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("tokenMin")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
-			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
+			if (n != null &&  !n.equals(p.getTokenStart())) {
 				double tokenMin = n.doubleValue();
 				p.setTokenMin(tokenMin);
 				pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
@@ -177,7 +177,7 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("tokenStart")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
-			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
+			if (n != null && !n.equals(p.getTokenStart())) {
 
 				double tokenStart = n.doubleValue();// Double.parseDouble(((JFormattedTextField)
 				// .getSource()).getValue()+"");
@@ -189,7 +189,7 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("tokenMax")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
-			if (n != null && !n.equals("") && !n.equals(p.getTokenStart())) {
+			if (n != null && !n.equals(p.getTokenStart())) {
 				double tokenMax = n.doubleValue();
 				p.setTokenMax(tokenMax);
 				pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
@@ -209,7 +209,7 @@ public class PropertyWindowListener implements FocusListener {
 			if (geb instanceof DiscreteTransition) {
 				DiscreteTransition p = (DiscreteTransition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!text.equals("") && !text.equals(p.getDelay())) {
+				if (!text.equals("") && !text.equals(p.getDelay()+"")) {
 					double delay = Double.parseDouble(text);
 					p.setDelay(delay);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -315,7 +315,7 @@ public class PropertyWindowListener implements FocusListener {
 		else if (source.equals("activationProb")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getProbability())) {
+			if (!text.equals("") && !text.equals(e.getProbability()+"")) {
 				double prob = Double.parseDouble(text);
 				e.setProbability(prob);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -323,7 +323,7 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("activationPrio")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getPriority())) {
+			if (!text.equals("") && !text.equals(e.getPriority()+"")) {
 				int prob = Integer.parseInt(text);
 				e.setPriority(prob);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -338,7 +338,7 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("lowBoundary")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getLowerBoundary())) {
+			if (!text.equals("") && !text.equals(e.getLowerBoundary()+"")) {
 				double lowBoundary = Double.parseDouble(text);
 				e.setLowerBoundary(lowBoundary);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -346,7 +346,7 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("upBoundary")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getUpperBoundary())) {
+			if (!text.equals("") && !text.equals(e.getUpperBoundary()+"")) {
 				double upperBoundary = Double.parseDouble(text);
 				e.setUpperBoundary(upperBoundary);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
