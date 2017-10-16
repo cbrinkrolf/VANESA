@@ -1,10 +1,11 @@
 package graph.gui;
 
+import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
@@ -149,7 +150,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			}
 			@Override
 			public void windowDeactivated(WindowEvent e) {
-				System.out.println("deactivated");
+				//System.out.println("deactivated");
 				//System.out.println("value: "+pane.getValue());
 				if (pane.getValue() != null && !pane.getValue().equals("uninitializedValue") && (int) pane.getValue() == JOptionPane.OK_OPTION) {
 					//System.out.println("ok");
@@ -419,7 +420,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 				}
 				sb.append(bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
 				if (bna.getParameter("km_"+bea.getFrom().getName()) == null){
-					bna.getParameters().add(new Parameter("km_"+bea.getFrom().getName(), 1, "1/mmol"));
+					bna.getParameters().add(new Parameter("km_"+bea.getFrom().getName(), 1, "mmol"));
 				}
 				if (weight > 1) {
 					sb.append(")^" + weight);
@@ -446,7 +447,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 				}
 				sb.append(bea.getTo().getName() + " / km_" + bea.getTo().getName());
 				if (bna.getParameter("km_"+bea.getTo().getName()) == null){
-					bna.getParameters().add(new Parameter("km_" + bea.getTo().getName(), 1, "1/mmol"));
+					bna.getParameters().add(new Parameter("km_" + bea.getTo().getName(), 1, "mmol"));
 				}
 				if (weight > 1) {
 					sb.append(")^" + weight);
@@ -514,7 +515,16 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 
 			sb.append(")");
 			formular.setText(sb.toString());
-
+			formular.requestFocus();
+			Robot robot;
+			try {
+				robot = new Robot();
+				robot.keyPress(KeyEvent.VK_SPACE);
+				robot.keyRelease(KeyEvent.VK_SPACE);
+			} catch (AWTException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }

@@ -36,6 +36,7 @@ import graph.GraphInstance;
 import graph.gui.Boundary;
 import graph.gui.Parameter;
 import gui.MainWindow;
+import gui.MyPopUp;
 import gui.SimMenue;
 import moOutput.MOoutput;
 
@@ -346,7 +347,7 @@ public class PetriNetSimulation implements ActionListener {
 
 							setReader(new InputStreamReader(process.getInputStream()));
 						} catch (IOException e1) {
-							// TODO Auto-generated catch block
+							MyPopUp.getInstance().show("Simulation error:", e1.getMessage());
 							e1.printStackTrace();
 						}
 					}
@@ -378,7 +379,7 @@ public class PetriNetSimulation implements ActionListener {
 							try {
 								sleep(100);
 							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
+								MyPopUp.getInstance().show("Simulation error:", e.getMessage());
 								e.printStackTrace();
 							}
 						}
@@ -409,14 +410,14 @@ public class PetriNetSimulation implements ActionListener {
 										System.out.println(line);
 									}
 								} catch (IOException e) {
-									// TODO Auto-generated catch block
+									MyPopUp.getInstance().show("Simulation error:", e.getMessage());
 									e.printStackTrace();
 								}
 							}
 							try {
 								sleep(100);
 							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
+								MyPopUp.getInstance().show("Simulation error:", e.getMessage());
 								e.printStackTrace();
 							}
 						}
@@ -511,6 +512,7 @@ public class PetriNetSimulation implements ActionListener {
 				} else
 					throw new Exception();
 			} catch (Exception e) {
+				MyPopUp.getInstance().show("Simulation error:", e.getMessage());
 				e.printStackTrace();
 				JOptionPane.showMessageDialog(MainWindow.getInstance(), "Something went wrong. The model couldn't be simulated!",
 						"Error occured...", JOptionPane.ERROR_MESSAGE);
@@ -617,7 +619,6 @@ public class PetriNetSimulation implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		// TODO Auto-generated method stub
 		if (event.getActionCommand().equals("start")) {
 			this.menue.started();
 			boolean omc = true;
