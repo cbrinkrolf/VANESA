@@ -2,8 +2,8 @@ package petriNet;
 
 import java.util.List;
 
-import util.DoubleHashMap;
 import biologicalElements.GraphElementAbstract;
+import util.DoubleHashMap;
 
 public class SimulationResult {
 

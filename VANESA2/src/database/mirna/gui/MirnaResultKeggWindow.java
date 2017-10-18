@@ -13,12 +13,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListSelectionModel;
 
+import org.jdesktop.swingx.decorator.ColorHighlighter;
+
 import miscalleanous.tables.MyTable;
 import miscalleanous.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
-
-import org.jdesktop.swingx.decorator.ColorHighlighter;
-
 import pojos.DBColumn;
 
 public class MirnaResultKeggWindow extends JFrame {

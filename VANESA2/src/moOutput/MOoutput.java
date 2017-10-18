@@ -1,9 +1,5 @@
 package moOutput;
 
-import graph.GraphInstance;
-import graph.gui.Parameter;
-import gui.MainWindow;
-
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,6 +23,9 @@ import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
+import graph.GraphInstance;
+import graph.gui.Parameter;
+import gui.MainWindow;
 
 /**
  * @author Rafael, cbrinkro
@@ -251,7 +250,7 @@ public class MOoutput {
 
 					Place place = (Place) bna;
 
-					atr = "startTokens=" + (int) place.getTokenStart() + ",minTokens=" + (int) place.getTokenMin() + ",maxTokens="
+					atr = "startTokens(final unit=\"mmol\")=" + (int) place.getTokenStart() + ",minTokens(final unit=\"mmol\")=" + (int) place.getTokenMin() + ",maxTokens(final unit=\"mmol\")="
 							+ (int) place.getTokenMax();
 					// places =
 					// places.concat(getPlaceString(getModelicaString(place),
@@ -274,7 +273,7 @@ public class MOoutput {
 						max = place.getTokenMax() + "";
 					}
 
-					atr = "startMarks=" + start + ",minMarks=" + min + ",maxMarks=" + max + ",t(final unit=\"mmol\")";
+					atr = "startMarks(final unit=\"mmol\")=" + start + ",minMarks(final unit=\"mmol\")=" + min + ",maxMarks(final unit=\"mmol\")=" + max + ",t(final unit=\"mmol\")";
 					if (place.getConflictingOutEdges().size() > 1) {
 
 						// priority is default
@@ -313,7 +312,7 @@ public class MOoutput {
 					if (t.isKnockedOut()) {
 						atr = "maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/";
 					} else {
-						atr = "maximumSpeed(final unit=\"mmol/min\")=" + speed;
+						atr = "maximumSpeed=" + speed;
 					}
 
 					// System.out.println("atr");

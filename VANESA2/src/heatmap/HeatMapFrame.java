@@ -1,7 +1,9 @@
 package heatmap;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 /**
  * <p>This class is a very simple example of how to use the HeatMap class.</p>

@@ -1,9 +1,9 @@
 package biologicalObjects.nodes;
 
-//import edu.uci.ics.jung.graph.Vertex;
-import graph.jung.graphDrawing.VertexShapes;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
+//import edu.uci.ics.jung.graph.Vertex;
+import graph.jung.graphDrawing.VertexShapes;
 
 public class PathwayMap extends BiologicalNodeAbstract {
 

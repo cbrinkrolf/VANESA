@@ -1,10 +1,9 @@
 package biologicalObjects.nodes;
 
-import graph.jung.graphDrawing.VertexShapes;
-
 import java.util.Vector;
 
 import biologicalElements.Elementdeclerations;
+import graph.jung.graphDrawing.VertexShapes;
 
 public class Gene extends BiologicalNodeAbstract {
 

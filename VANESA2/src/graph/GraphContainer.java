@@ -1,8 +1,5 @@
 package graph;
 
-import graph.jung.classes.MyGraph;
-import gui.MainWindow;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +9,7 @@ import java.util.Set;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
+import graph.jung.classes.MyGraph;
 
 
 public class GraphContainer {

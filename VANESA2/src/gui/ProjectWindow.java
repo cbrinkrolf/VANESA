@@ -1,16 +1,15 @@
 package gui;
 
-import graph.GraphInstance;
-import gui.eventhandlers.ProjectWindowListener;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import net.miginfocom.swing.MigLayout;
 import biologicalElements.Pathway;
+import graph.GraphInstance;
+import gui.eventhandlers.ProjectWindowListener;
+import net.miginfocom.swing.MigLayout;
 
 public class ProjectWindow {
 

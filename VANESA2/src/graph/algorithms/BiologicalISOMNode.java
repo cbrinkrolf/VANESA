@@ -1,6 +1,7 @@
 package graph.algorithms;
 
 import javax.vecmath.Vector3f;
+
 //import edu.uci.ics.jung.graph.Vertex;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 

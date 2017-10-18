@@ -7,9 +7,9 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import net.miginfocom.swing.MigLayout;
 import configurations.ConnectionSettings;
 import configurations.ResourceLibrary;
+import net.miginfocom.swing.MigLayout;
 
 
 

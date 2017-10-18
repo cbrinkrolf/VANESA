@@ -7,10 +7,11 @@
  */
 package graph.algorithms.gui.smacof.algorithms;
 
-import graph.algorithms.gui.smacof.datastructures.TriMat;
-import graph.algorithms.gui.smacof.datastructures.Mat;
-import graph.algorithms.gui.smacof.datastructures.Vector;
 import java.util.Map;
+
+import graph.algorithms.gui.smacof.datastructures.Mat;
+import graph.algorithms.gui.smacof.datastructures.TriMat;
+import graph.algorithms.gui.smacof.datastructures.Vector;
 
 /**
  * This class contains the functions for the minkowski distances, it also has

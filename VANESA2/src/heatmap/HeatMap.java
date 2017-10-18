@@ -1,11 +1,14 @@
 package heatmap;
 
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 /**
  *

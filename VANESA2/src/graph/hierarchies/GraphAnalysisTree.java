@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.uci.ics.jung.graph.util.Pair;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import edu.uci.ics.jung.graph.util.Pair;
 
 /**
  * GAT for the computation of the splitting nodes subgraphs.

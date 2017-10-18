@@ -8,8 +8,6 @@ package configurations.asyncWebservice;
 import java.util.UUID;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.client.async.AxisCallback;
-import org.apache.axis2.context.MessageContext;
 
 /**
  *

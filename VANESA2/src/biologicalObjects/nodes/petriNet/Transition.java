@@ -1,11 +1,10 @@
 package biologicalObjects.nodes.petriNet;
 
-import graph.jung.graphDrawing.VertexShapes;
-
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 
 import biologicalElements.Elementdeclerations;
+import graph.jung.graphDrawing.VertexShapes;
 
 public class Transition extends PNNode {
 

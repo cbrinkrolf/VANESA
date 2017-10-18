@@ -1,8 +1,5 @@
 package petriNet;
 
-import graph.GraphInstance;
-import io.SaveDialog;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -34,6 +31,8 @@ import org.jfree.data.xy.XYSeriesCollection;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
+import graph.GraphInstance;
+import io.SaveDialog;
 
 public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 

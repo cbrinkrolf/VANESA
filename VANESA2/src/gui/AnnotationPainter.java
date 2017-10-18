@@ -1,12 +1,5 @@
 package gui;
 
-import edu.uci.ics.jung.visualization.RenderContext;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.annotations.AnnotatingModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
-import graph.GraphInstance;
-import gui.images.ImagePath;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -20,6 +13,12 @@ import javax.swing.JColorChooser;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import edu.uci.ics.jung.visualization.RenderContext;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.annotations.AnnotatingModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
+import graph.GraphInstance;
+import gui.images.ImagePath;
 
 public class AnnotationPainter {
 

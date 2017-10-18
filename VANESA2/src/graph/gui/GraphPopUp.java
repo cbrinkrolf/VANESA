@@ -1,7 +1,5 @@
 package graph.gui;
 
-import gui.eventhandlers.PopUpListener;
-
 import java.awt.Color;
 
 import javax.swing.JLabel;
@@ -10,6 +8,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+
+import gui.eventhandlers.PopUpListener;
 
 public class GraphPopUp {
 

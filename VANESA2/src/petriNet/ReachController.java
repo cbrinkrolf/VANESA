@@ -1,13 +1,12 @@
 package petriNet;
 
-import graph.GraphInstance;
-
 import java.util.Collection;
 import java.util.Iterator;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
+import graph.GraphInstance;
 
 public class ReachController {
 

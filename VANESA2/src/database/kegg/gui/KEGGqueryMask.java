@@ -1,8 +1,5 @@
 package database.kegg.gui;
 
-import gui.eventhandlers.TextfeldColorChanger;
-import gui.images.ImagePath;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -10,10 +7,12 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
 import database.gui.DatabaseWindow;
 import database.gui.QueryMask;
+import gui.eventhandlers.TextfeldColorChanger;
+import gui.images.ImagePath;
+import net.miginfocom.swing.MigLayout;
 
 public class KEGGqueryMask extends QueryMask {
 	

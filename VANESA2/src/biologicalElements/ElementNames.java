@@ -20,9 +20,9 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import pojos.DBColumn;
 import configurations.Wrapper;
 import database.brenda.BRENDAQueries;
+import pojos.DBColumn;
 
 
 public class ElementNames {

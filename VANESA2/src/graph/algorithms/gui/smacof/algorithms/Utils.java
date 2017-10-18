@@ -7,13 +7,14 @@
  */
 package graph.algorithms.gui.smacof.algorithms;
 
-import graph.algorithms.gui.smacof.datastructures.TriMat;
-import graph.algorithms.gui.smacof.datastructures.Mat;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import graph.algorithms.gui.smacof.datastructures.Mat;
+import graph.algorithms.gui.smacof.datastructures.TriMat;
 
 
 /**

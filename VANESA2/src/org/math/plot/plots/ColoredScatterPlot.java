@@ -9,7 +9,6 @@ import java.util.Random;
 
 import org.math.plot.PlotPanel;
 import org.math.plot.render.AbstractDrawer;
-import org.math.plot.plots.ScatterPlot;
 
 public class ColoredScatterPlot extends ScatterPlot {
 

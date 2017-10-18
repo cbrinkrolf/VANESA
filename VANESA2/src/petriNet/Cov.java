@@ -1,10 +1,5 @@
 package petriNet;
 
-//import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
-//import edu.uci.ics.jung.utils.Pair;
-import graph.CreatePathway;
-import graph.GraphInstance;
-
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -17,6 +12,10 @@ import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
+//import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
+//import edu.uci.ics.jung.utils.Pair;
+import graph.CreatePathway;
+import graph.GraphInstance;
 
 public class Cov {
 

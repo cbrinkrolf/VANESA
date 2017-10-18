@@ -1,12 +1,10 @@
 package graph.algorithms.gui.clusters;
 
-import javax.swing.BorderFactory;
+import java.awt.Component;
+
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-
-import java.awt.Color;
-import java.awt.Component;
 
 /**
  * 
