@@ -1,9 +1,5 @@
 package graph.layouts.gemLayout;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntArrayPriorityQueue;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-
 import java.awt.GridLayout;
 import java.util.Random;
 
@@ -17,6 +13,9 @@ import javax.swing.event.ChangeListener;
 import cern.colt.list.IntArrayList;
 import configurations.gui.ConfigPanel;
 //import edu.uci.ics.jung.graph.Vertex;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayPriorityQueue;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 public class GEMLayoutConfig<V> extends ConfigPanel implements ChangeListener{
 

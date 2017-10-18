@@ -1,21 +1,17 @@
 package graph.algorithms.gui;
 
-import gui.images.ImagePath;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import gui.images.ImagePath;
 /**
  * 
  * @author mlewinsk

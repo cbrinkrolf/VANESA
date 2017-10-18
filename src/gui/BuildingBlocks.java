@@ -1,7 +1,5 @@
 package gui;
 
-import graph.GraphInstance;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -29,11 +27,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 
+import graph.GraphInstance;
+import net.miginfocom.swing.MigLayout;
 import xmlInput.sbml.JSBMLinput;
 
 public class BuildingBlocks extends JPanel implements TreeSelectionListener{

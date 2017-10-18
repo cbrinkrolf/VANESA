@@ -1,11 +1,11 @@
 package biologicalElements;
 
-import graph.gui.Parameter;
-
 import java.awt.Color;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import graph.gui.Parameter;
 
 public interface GraphElementAbstract{
 	

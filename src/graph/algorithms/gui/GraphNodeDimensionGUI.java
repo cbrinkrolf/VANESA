@@ -1,14 +1,7 @@
 package graph.algorithms.gui;
 
-import graph.GraphInstance;
-import graph.algorithms.NetworkProperties;
-import graph.algorithms.centralities.betweenness.Betweennesscentralitiy;
-import graph.algorithms.centralities.betweenness.Betweennesscentralitiy.GraphCentrality;
-import graph.algorithms.centralities.betweenness.Vertex;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,9 +14,14 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import net.miginfocom.swing.MigLayout;
 import biologicalElements.GraphElementAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import graph.GraphInstance;
+import graph.algorithms.NetworkProperties;
+import graph.algorithms.centralities.betweenness.Betweennesscentralitiy;
+import graph.algorithms.centralities.betweenness.Betweennesscentralitiy.GraphCentrality;
+import graph.algorithms.centralities.betweenness.Vertex;
+import net.miginfocom.swing.MigLayout;
 
 public class GraphNodeDimensionGUI implements ActionListener {
 

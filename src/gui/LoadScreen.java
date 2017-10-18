@@ -1,8 +1,6 @@
 package gui;
 
 
-import gui.algorithms.CenterWindow;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,6 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
+
+import gui.algorithms.CenterWindow;
 
 public class LoadScreen extends JFrame {
 

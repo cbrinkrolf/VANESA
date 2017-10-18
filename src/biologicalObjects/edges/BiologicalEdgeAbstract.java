@@ -1,8 +1,5 @@
 package biologicalObjects.edges;
 
-import graph.GraphInstance;
-import graph.gui.Parameter;
-
 import java.awt.Color;
 import java.awt.Shape;
 import java.util.ArrayList;
@@ -14,6 +11,8 @@ import biologicalElements.IDAlreadyExistException;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
+import graph.GraphInstance;
+import graph.gui.Parameter;
 
 public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cloneable {
 

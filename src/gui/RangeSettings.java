@@ -4,8 +4,6 @@
  */
 package gui;
 
-import graph.GraphInstance;
-
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,8 +18,9 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
-import net.miginfocom.swing.MigLayout;
 import configurations.gui.LayoutConfig;
+import graph.GraphInstance;
+import net.miginfocom.swing.MigLayout;
 
 /**
  *

@@ -1,8 +1,5 @@
 package graph.algorithms;
 
-//import edu.uci.ics.jung.graph.Vertex;
-import graph.GraphInstance;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,6 +8,8 @@ import java.util.Vector;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+//import edu.uci.ics.jung.graph.Vertex;
+import graph.GraphInstance;
 
 public class ShortestPath {
 

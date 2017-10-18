@@ -1,9 +1,5 @@
 package graph.algorithms.gui;
 
-//import edu.uci.ics.jung.graph.Vertex;
-import graph.GraphInstance;
-import graph.algorithms.ShortestPath;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,12 +15,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+//import edu.uci.ics.jung.graph.Vertex;
+import graph.GraphInstance;
+import graph.algorithms.ShortestPath;
+import net.miginfocom.swing.MigLayout;
 
 public class ShortestPathGui implements ActionListener {
 

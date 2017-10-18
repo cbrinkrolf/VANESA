@@ -1,11 +1,5 @@
 package gui;
 
-//import edu.uci.ics.jung.graph.Vertex;
-import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.visualization.Layer;
-import graph.GraphInstance;
-import graph.jung.classes.MyVisualizationViewer;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,14 +20,18 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+//import edu.uci.ics.jung.graph.Vertex;
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.visualization.Layer;
+import graph.GraphInstance;
+import graph.jung.classes.MyVisualizationViewer;
+import net.miginfocom.swing.MigLayout;
 
 public class ElementTree implements TreeSelectionListener, ActionListener {
 

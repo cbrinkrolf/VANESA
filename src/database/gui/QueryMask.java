@@ -1,7 +1,5 @@
 package database.gui;
 
-import gui.images.ImagePath;
-
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -13,8 +11,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import net.miginfocom.swing.MigLayout;
 import database.eventhandlers.DatabaseSearchListener;
+import gui.images.ImagePath;
+import net.miginfocom.swing.MigLayout;
 
 public class QueryMask implements ItemListener {
 	private DatabaseWindow dw;

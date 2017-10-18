@@ -1,13 +1,13 @@
 package gui.visualization;
 
-import graph.GraphInstance;
-import gui.LocalBackboardPaintable;
-import gui.MyAnnotation;
-
 import java.awt.Color;
 import java.util.HashMap;
 
 import javax.swing.table.DefaultTableModel;
+
+import graph.GraphInstance;
+import gui.LocalBackboardPaintable;
+import gui.MyAnnotation;
 
 public class PreRenderManagerTablemodel extends DefaultTableModel{
 

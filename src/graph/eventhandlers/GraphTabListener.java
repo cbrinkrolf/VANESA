@@ -1,9 +1,8 @@
 package graph.eventhandlers;
 
-import gui.MainWindow;
-
 import java.awt.Cursor;
 
+import gui.MainWindow;
 import net.infonode.tabbedpanel.TabDragEvent;
 import net.infonode.tabbedpanel.TabEvent;
 import net.infonode.tabbedpanel.TabListener;

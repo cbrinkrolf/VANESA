@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import graph.algorithms.NetworkProperties;
-
 import javax.swing.JFrame;
 
 import org.jfree.chart.ChartFactory;
@@ -15,6 +13,8 @@ import org.jfree.chart.plot.PiePlot3D;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.util.Rotation;
+
+import graph.algorithms.NetworkProperties;
 
 public class NodeAttributePieChart extends JFrame {
 

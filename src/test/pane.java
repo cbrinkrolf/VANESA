@@ -1,7 +1,5 @@
 package test;
 
-import gui.algorithms.ScreenSize;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,11 +19,12 @@ import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import miscalleanous.tables.MyTable;
-import net.miginfocom.swing.MigLayout;
-
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
+
+import gui.algorithms.ScreenSize;
+import miscalleanous.tables.MyTable;
+import net.miginfocom.swing.MigLayout;
 
 
 

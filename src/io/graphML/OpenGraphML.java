@@ -1,8 +1,8 @@
 package io.graphML;
 
-import graph.jung.classes.MyGraph;
-
 import java.io.File;
+
+import graph.jung.classes.MyGraph;
 
 public class OpenGraphML {
 

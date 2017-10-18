@@ -1,20 +1,19 @@
 package biologicalElements;
 
-import graph.GraphInstance;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import petriNet.PNResultInputReader;
-import petriNet.SimulationResult;
-import petriNet.SimulationResultController;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
+import graph.GraphInstance;
+import petriNet.PNResultInputReader;
+import petriNet.SimulationResult;
+import petriNet.SimulationResultController;
 
 public class PetriNet {
 	private GraphInstance graphInstance = null;

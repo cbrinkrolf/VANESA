@@ -1,5 +1,13 @@
 package graph.layouts.gemLayout;
 
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import cern.colt.list.IntArrayList;
+import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
+import edu.uci.ics.jung.graph.Graph;
 /*import edu.uci.ics.jung.graph.DirectedEdge;
  import edu.uci.ics.jung.graph.Edge;
  import edu.uci.ics.jung.graph.Graph;
@@ -11,15 +19,6 @@ import it.unimi.dsi.fastutil.ints.IntArrayPriorityQueue;
 import it.unimi.dsi.fastutil.ints.IntIterator;
 import it.unimi.dsi.fastutil.ints.IntIterators;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
-import cern.colt.list.IntArrayList;
-import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
-import edu.uci.ics.jung.graph.Graph;
 
 /**
  * Java implementation of the gem 2D layout. <br>

@@ -2,8 +2,8 @@ package database.kegg;
 
 import java.util.ArrayList;
 
-import pojos.DBColumn;
 import configurations.Wrapper;
+import pojos.DBColumn;
 
 public class KEGGQueries {
 

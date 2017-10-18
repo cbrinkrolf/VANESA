@@ -1,7 +1,7 @@
 package gui;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
+import net.infonode.tabbedpanel.titledtab.TitledTab;
 
 public class GraphTab {
 

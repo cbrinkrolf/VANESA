@@ -1,7 +1,7 @@
 package biologicalObjects.nodes;
 
-import graph.jung.graphDrawing.VertexShapes;
 import biologicalElements.Elementdeclerations;
+import graph.jung.graphDrawing.VertexShapes;
 
 public class Complex extends BiologicalNodeAbstract{
 	
