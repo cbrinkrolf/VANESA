@@ -170,7 +170,7 @@ public class Place extends PNNode {
 	public Set<PNEdge> getConflictingOutEdges() {
 		Collection<BiologicalEdgeAbstract> coll = GraphInstance.getMyGraph().getJungGraph().getOutEdges(this);
 		Set<PNEdge> result = new HashSet<PNEdge>();
-		if (coll.size() > 0) {
+		if (coll != null && coll.size() > 0) {
 			Iterator<BiologicalEdgeAbstract> it = coll.iterator();
 			BiologicalEdgeAbstract bea;
 			while (it.hasNext()) {

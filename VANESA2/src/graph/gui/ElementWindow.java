@@ -484,7 +484,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(lblTokenMax, "gap 5");
 				p.add(tokenMax, "span 1, wrap");
 
-				if (place.getConflictingOutEdges().size() > 0) {
+				if (place.getConflictingOutEdges().size() > 1) {
 
 					ButtonGroup group = new ButtonGroup();
 					JRadioButton none = new JRadioButton("none");

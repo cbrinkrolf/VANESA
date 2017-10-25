@@ -30,6 +30,7 @@ import graph.jung.classes.MyGraph;
 import graph.jung.graphDrawing.VertexShapes;
 import graph.layouts.Circle;
 import gui.MainWindow;
+import util.FormularSafety;
 
 public abstract class BiologicalNodeAbstract extends Pathway implements
 		GraphElementAbstract {
@@ -85,7 +86,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	public BiologicalNodeAbstract(String label, String name) {
 		super(name, new GraphInstance().getPathway());
 		super.setName(name);
-		this.label = label;
+		this.setLabel(label);
 		this.labelSet.add(label);
 		//
 		// setLabel(label.toLowerCase());
@@ -1001,9 +1002,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	}
 
 	public void setLabel(String label) {
-		labelSet.remove(this.label);
+		// TODO just for testing
+		//this.label = FormularSafety.replace(label);
 		this.label = label;
-		labelSet.add(label);
+		labelSet.remove(this.label);
+		//this.label = label;
+		labelSet.add(this.label);
 		// this.networklabel = label;
 		// System.out.println("gestezt");
 	}
