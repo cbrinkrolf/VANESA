@@ -11,6 +11,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -42,7 +44,6 @@ import javax.swing.table.TableRowSorter;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
-import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import database.brenda2.BRENDA2Search;
 import graph.GraphInstance;
@@ -92,9 +93,12 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
 	private MyTable enzymeTable;
 	private String[] enzymeColumnNames = { "ID", "Ec number", "Recommended name" };
+	private JScrollPane enzymeTableScrollPane;
 
 	private MyTable valueTable = null;
 	private String[] valueColumnNames = { "Ec number", "Organism", "Metabolite", "Value" };
+	JScrollPane valueTableScrollPane;
+	
 	private NodePropertyTableModel valueModel;
 	private JLabel valueStatistics = new JLabel();
 	private Parameter currentParameter = null;
@@ -116,11 +120,11 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
 	private RangeSlider slider = new RangeSlider();
 
-	public ParameterSearcher(BiologicalNodeAbstract bna) {
+	public ParameterSearcher(BiologicalNodeAbstract bna, boolean initialSearch) {
 		super("Brenda 2 Parameter");
 		this.bna = bna;
 
-		btnUpdateEnzyme = new JButton("Update possible Enzymes");
+		btnUpdateEnzyme = new JButton("Update enzymes");
 		btnUpdateEnzyme.setActionCommand("updateEnzymes");
 		btnUpdateEnzyme.addActionListener(this);
 
@@ -142,8 +146,8 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
 		initTable(null);
 
-		JScrollPane sp = new JScrollPane(enzymeTable);
-		sp.setMinimumSize(new Dimension(100, 100));
+		enzymeTableScrollPane = new JScrollPane(enzymeTable);
+		enzymeTableScrollPane.setMinimumSize(new Dimension(100, 100));
 
 		MigLayout layout = new MigLayout();
 		mainPanel = new JPanel(layout);
@@ -188,14 +192,15 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		mainPanel.add(new JLabel("Metabolite:"), "span 1, gaptop 2 ");
 		mainPanel.add(this.metabolite, "span 1,wrap,gaptop 2");
 		mainPanel.add(new JLabel("Organism:"), "span 1, gaptop 2 ");
-		mainPanel.add(this.org, "span 1,gaptop 2");
-		mainPanel.add(this.btnUpdateEnzyme, "span 1,wrap,gaptop 2");
+		mainPanel.add(this.org, "span 1,gaptop 2, wrap");
+		mainPanel.add(this.btnUpdateEnzyme, "span 1, gaptop 2");
+		mainPanel.add(btnUpdateValues, "span 1,wrap,gaptop 2");
 		mainPanel.add(new JLabel("Type:"));
 		mainPanel.add(kmRadio);
 		mainPanel.add(turnoverRadio, "span ,wrap,gaptop 2");
 		mainPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
 
-		mainPanel.add(sp, "span 4, growx, wrap");
+		mainPanel.add(enzymeTableScrollPane, "span 4, growx, wrap");
 		mainPanel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
 
 		metabolite.getDocument().addDocumentListener(new DocumentListener() {
@@ -252,7 +257,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			public void keyPressed(KeyEvent e) {
 			}
 		});
-		mainPanel.add(btnUpdateValues, "gaptop 2");
+		
 		mainPanel.add(new JLabel("Filter enzymes:"), "gaptop 2");
 		mainPanel.add(enzymeFilter, "wrap");
 
@@ -275,6 +280,9 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		this.setLocationRelativeTo(MainWindow.getInstance());
 		this.requestFocus();
 		this.setVisible(true);
+		if(initialSearch){
+			this.updateEnzymes();
+		}
 	}
 
 	private void initTable(Object[][] rows) {
@@ -295,8 +303,28 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		enzymeTable.setHorizontalScrollEnabled(true);
 		enzymeTable.getTableHeader().setReorderingAllowed(false);
 		enzymeTable.getTableHeader().setResizingAllowed(true);
-		// enzymeTable.setRowSelectionInterval(0, 0);
-
+		enzymeTable.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (enzymeTable.getSelectedRowCount() > 0) {
+					ecNumber.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 1));
+					name.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 2));
+				}
+			}
+		});
 	}
 
 	public void updateEnzymeTable(Object[][] rows) {
@@ -409,9 +437,9 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
 			// mainPanel.add(kmStatistics, "span 12, wrap");
 
-			JScrollPane sp = new JScrollPane(valueTable);
-			sp.setPreferredSize(new Dimension(100, 400));
-			mainPanel.add(sp, "growx, span 4");
+			valueTableScrollPane = new JScrollPane(valueTable);
+			valueTableScrollPane.setPreferredSize(new Dimension(100, 400));
+			mainPanel.add(valueTableScrollPane, "growx, span 4");
 			// mainPanel.repaint();
 			this.updateValueStatistics();
 			mainPanel.revalidate();
@@ -429,13 +457,15 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		}
 	}
 
-	private void updateValues(String searchType) {
-		MainWindow.getInstance().showProgressBar("update values");
-		this.ecNumber.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 1));
+	private void updateEnzymes(){
 		MainWindow.getInstance().showProgressBar("BRENDA 2 query");
-		BRENDA2Search brenda2Search = new BRENDA2Search(searchType);
+		// BRENDA2Search brenda2Search = new BRENDA2Search(this,
+		// BRENDA2Search.enzymeSearch);
+
+		MainWindow.getInstance().showProgressBar("BRENDA 2 query");
+		BRENDA2Search brenda2Search = new BRENDA2Search(BRENDA2Search.enzymeSearch);
 		brenda2Search.setEcNumber(this.getEcNumber());
-		brenda2Search.setName(this.getName());
+		brenda2Search.setName(this.getEcName());
 		brenda2Search.setMetabolite(this.getMetabolite());
 		brenda2Search.setOrg(this.getOrganism());
 		brenda2Search.setSyn(this.getSynonym());
@@ -443,7 +473,34 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getNewValue().toString().equals("DONE")) {
+					if (brenda2Search.getResults().length > 0) {
+						updateEnzymeTable(brenda2Search.getResults());
+					} else {
+						// System.out.println("clear");
+						// enzymeModel;
+					}
+				}
+			}
+		});
+		brenda2Search.execute();
+	}
+	private void updateValues(String searchType) {
+		MainWindow.getInstance().showProgressBar("update values");
+		MainWindow.getInstance().showProgressBar("BRENDA 2 query");
+		BRENDA2Search brenda2Search = new BRENDA2Search(searchType);
+		brenda2Search.setEcNumber(this.getEcNumber());
+		brenda2Search.setName(this.getEcName());
+		brenda2Search.setMetabolite(this.getMetabolite());
+		brenda2Search.setOrg(this.getOrganism());
+		brenda2Search.setSyn(this.getSynonym());
+		brenda2Search.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getNewValue().toString().equals("DONE")) {
+					//enzymeTableScrollPane.setVisible(false);
+					//mainPanel.remove(enzymeTableScrollPane);
 					updateValueTable(brenda2Search.getResults());
+					
 				}
 			}
 		});
@@ -470,33 +527,17 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 				this.setVisible(false);
 			}
 		} else if (event.equals("updateEnzymes")) {
-			MainWindow.getInstance().showProgressBar("BRENDA 2 query");
-			// BRENDA2Search brenda2Search = new BRENDA2Search(this,
-			// BRENDA2Search.enzymeSearch);
-
-			MainWindow.getInstance().showProgressBar("BRENDA 2 query");
-			BRENDA2Search brenda2Search = new BRENDA2Search(BRENDA2Search.enzymeSearch);
-			brenda2Search.setEcNumber(this.getEcNumber());
-			brenda2Search.setName(this.getName());
-			brenda2Search.setMetabolite(this.getMetabolite());
-			brenda2Search.setOrg(this.getOrganism());
-			brenda2Search.setSyn(this.getSynonym());
-			brenda2Search.addPropertyChangeListener(new PropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent evt) {
-					if (evt.getNewValue().toString().equals("DONE")) {
-						updateEnzymeTable(brenda2Search.getResults());
-					}
-				}
-			});
-			brenda2Search.execute();
-
-			// brenda2Search.execute();
+			this.enzymeTableScrollPane.setVisible(true);
+			this.updateEnzymes();
 		} else if (event.equals("updateValues")) {
 			// System.out.println(enzymeTable.getSelectedColumn());
 
 			if (enzymeTable.getSelectedRowCount() > 0) {
+				if(enzymeTable.getSelectedRowCount() > 1){
+					MyPopUp.getInstance().show("Multiple enzymes", "Multiselect on enzymes is not supported!");
+				}
 				if (kmRadio.isSelected()) {
+					
 					this.updateValues(BRENDA2Search.kmSearch);
 				} else {
 					this.updateValues(BRENDA2Search.turnoverSearch);
@@ -527,7 +568,6 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 					this.metabolite.setText(b.getText());
 				}
 				kmRadio.setSelected(true);
-
 			}
 		} else if (event.equals("setValue")) {
 
@@ -593,7 +633,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		return this.ecNumber.getText().trim();
 	}
 
-	public String getName() {
+	public String getEcName() {
 		return this.name.getText().trim();
 	}
 
@@ -640,67 +680,92 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
 	private void updateValuesPanel() {
 		valuesPanel.removeAll();
-		valuesPanel.add(new JLabel("Substrates:"));
+		valuesPanel.add(new JLabel("Parameters:"));
 		JButton button;
 
-		button = new JButton("v_f");
-		button.addActionListener(this);
-		button.setActionCommand("btn_" + "v_f");
-		valuesPanel.add(button);
-
-		Iterator<BiologicalEdgeAbstract> it = GraphInstance.getMyGraph().getJungGraph().getInEdges(bna).iterator();
-		BiologicalEdgeAbstract bea;
+		Iterator<Parameter> it = bna.getParameters().iterator();
 		Parameter p;
 		String name;
 
 		while (it.hasNext()) {
-			bea = it.next();
-			button = new JButton(bea.getFrom().getLabel());
+			p = it.next();
+
+			name = p.getName();
+			if (name.startsWith("km_")) {
+				name = name.substring(3, name.length());
+			}
+
+			BiologicalNodeAbstract tmp;
+			String lbl;
+			Iterator<BiologicalNodeAbstract> it2 = GraphInstance.getMyGraph().getJungGraph().getNeighbors(bna).iterator();
+			while (it2.hasNext()) {
+				tmp = it2.next();
+				lbl = tmp.getLabel();
+				if(FormularSafety.replace(lbl).equals(name)){
+					name = lbl;
+				}
+			}
+
+			button = new JButton(name);
 			button.addActionListener(this);
-			button.setActionCommand("btn_" + "km_" + FormularSafety.replace(bea.getFrom().getName()));
+			button.setActionCommand("btn_" + p.getName());
 			valuesPanel.add(button);
+
 		}
 		valuesPanel.add(new JLabel(), "wrap");
 		valuesPanel.add(new JLabel("Values:"));
-		p = bna.getParameter("v_f");
-		valuesPanel.add(new JLabel(p.getValue() + ""));
-		it = GraphInstance.getMyGraph().getJungGraph().getInEdges(bna).iterator();
+		
+		 it = bna.getParameters().iterator();
 		while (it.hasNext()) {
-			bea = it.next();
-			name = bea.getFrom().getName();
-			name = FormularSafety.replace(name);
-			p = bna.getParameter("km_" + name);
+			p = it.next();
 			valuesPanel.add(new JLabel(p.getValue() + ""));
 		}
 		valuesPanel.add(new JLabel(), "wrap");
 		valuesPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
-		valuesPanel.add(new JLabel("Products:"));
-		button = new JButton("v_r");
-		button.addActionListener(this);
-		button.setActionCommand("btn_" + "v_r");
-		valuesPanel.add(button);
-		
-		it = GraphInstance.getMyGraph().getJungGraph().getOutEdges(bna).iterator();
-		while (it.hasNext()) {
-			bea = it.next();
-			button = new JButton(bea.getTo().getLabel());
-			button.addActionListener(this);
-			button.setActionCommand("btn_" + "km_" + FormularSafety.replace(bea.getTo().getName()));
-			valuesPanel.add(button);
-		}
-		valuesPanel.add(new JLabel(), "wrap");
-		valuesPanel.add(new JLabel("Values:"));
-		p = bna.getParameter("v_r");
-		valuesPanel.add(new JLabel(p.getValue() + ""));
-		it = GraphInstance.getMyGraph().getJungGraph().getOutEdges(bna).iterator();
-		while (it.hasNext()) {
-			bea = it.next();
-			name = bea.getTo().getName();
-			name = FormularSafety.replace(name);
-			p = bna.getParameter("km_" + name);
-			valuesPanel.add(new JLabel(p.getValue() + ""));
-		}
-		
+		/*
+		 * button = new JButton("v_f"); button.addActionListener(this);
+		 * button.setActionCommand("btn_" + "v_f"); valuesPanel.add(button);
+		 * 
+		 * Iterator<BiologicalEdgeAbstract> it =
+		 * GraphInstance.getMyGraph().getJungGraph().getInEdges(bna).iterator();
+		 * BiologicalEdgeAbstract bea;
+		 * 
+		 * 
+		 * while (it.hasNext()) { bea = it.next(); button = new
+		 * JButton(bea.getFrom().getLabel()); button.addActionListener(this);
+		 * button.setActionCommand("btn_" + "km_" +
+		 * FormularSafety.replace(bea.getFrom().getName()));
+		 * valuesPanel.add(button); } valuesPanel.add(new JLabel(), "wrap");
+		 * valuesPanel.add(new JLabel("Values:")); p = bna.getParameter("v_f");
+		 * // TODO possible NPE in following line if (p != null) {
+		 * valuesPanel.add(new JLabel(p.getValue() + "")); } it =
+		 * GraphInstance.getMyGraph().getJungGraph().getInEdges(bna).iterator();
+		 * while (it.hasNext()) { bea = it.next(); name =
+		 * bea.getFrom().getName(); name = FormularSafety.replace(name); p =
+		 * bna.getParameter("km_" + name); valuesPanel.add(new
+		 * JLabel(p.getValue() + "")); } valuesPanel.add(new JLabel(), "wrap");
+		 * valuesPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
+		 * valuesPanel.add(new JLabel("Products:")); button = new
+		 * JButton("v_r"); button.addActionListener(this);
+		 * button.setActionCommand("btn_" + "v_r"); valuesPanel.add(button);
+		 * 
+		 * it =
+		 * GraphInstance.getMyGraph().getJungGraph().getOutEdges(bna).iterator()
+		 * ; while (it.hasNext()) { bea = it.next(); button = new
+		 * JButton(bea.getTo().getLabel()); button.addActionListener(this);
+		 * button.setActionCommand("btn_" + "km_" +
+		 * FormularSafety.replace(bea.getTo().getName()));
+		 * valuesPanel.add(button); } valuesPanel.add(new JLabel(), "wrap");
+		 * valuesPanel.add(new JLabel("Values:")); p = bna.getParameter("v_r");
+		 * if (p != null) { valuesPanel.add(new JLabel(p.getValue() + "")); } it
+		 * =
+		 * GraphInstance.getMyGraph().getJungGraph().getOutEdges(bna).iterator()
+		 * ; while (it.hasNext()) { bea = it.next(); name =
+		 * bea.getTo().getName(); name = FormularSafety.replace(name); p =
+		 * bna.getParameter("km_" + name); valuesPanel.add(new
+		 * JLabel(p.getValue() + "")); }
+		 */
+
 		valuesPanel.revalidate();
 	}
 

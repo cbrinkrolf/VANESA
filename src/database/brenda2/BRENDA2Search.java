@@ -3,13 +3,13 @@ package database.brenda2;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import biologicalElements.Pathway;
 import configurations.Wrapper;
 import database.Connection.DatabaseQueryValidator;
 import gui.MainWindow;
+import gui.MyPopUp;
 import pojos.DBColumn;
 
 public class BRENDA2Search extends SwingWorker<Object, Object> {
@@ -55,7 +55,8 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
 			}
 		}
 
-		if (!name.equals("")) {
+		// only use the name if ecNumber is not given
+		if (!name.equals("") && ecNumber.length() < 7) {
 			String temp = dqv.replaceAndValidateString(name);
 			if (temp.length() > 0) {
 				if (firstCriteria) {
@@ -185,7 +186,8 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
 		MainWindow.getInstance().closeProgressBar();
 		
 		if (results == null || results.length <1) {
-			JOptionPane.showMessageDialog(MainWindow.getInstance(), "Sorry, no entries have been found.");
+			MyPopUp.getInstance().show("Brenda search", "Sorry, no entries have been found.");
+			//JOptionPane.showMessageDialog(MainWindow.getInstance(), "Sorry, no entries have been found.");
 		}
 	}
 
