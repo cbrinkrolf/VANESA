@@ -63,8 +63,8 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 	private JButton btnUpdateKm;
 
 	private JButton cancel = new JButton("cancel");
-	private JButton newButton = new JButton("ok");
-	private JButton[] buttons = { newButton, cancel };
+	private JButton okButton = new JButton("ok");
+	private JButton[] buttons = { okButton, cancel };
 	private boolean ok = false;
 	private JOptionPane optionPane;
 	private JDialog dialog;
@@ -170,8 +170,8 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 		cancel.addActionListener(this);
 		cancel.setActionCommand("cancel");
 
-		newButton.addActionListener(this);
-		newButton.setActionCommand("new");
+		okButton.addActionListener(this);
+		okButton.setActionCommand("okButton");
 
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
@@ -316,7 +316,7 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 		if ("cancel".equals(event)) {
 			dialog.setVisible(false);
 			MainWindow.getInstance().closeProgressBar();
-		} else if ("new".equals(event)) {
+		} else if ("okButton".equals(event)) {
 			if (enzymeTable.getSelectedRows().length == 0) {
 				JOptionPane.showMessageDialog(this, "Please choose an enzyme.", "Message", 1);
 			} else {

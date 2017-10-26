@@ -1,26 +1,25 @@
 package graph.gui;
 
-import java.awt.AWTException;
 import java.awt.Color;
-import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.awt.event.WindowListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -37,8 +36,11 @@ import net.miginfocom.swing.MigLayout;
 
 public class ParameterWindow implements ActionListener, DocumentListener {
 
+	/**
+	 * 
+	 */
+	private JFrame frame;
 	private JPanel panel;
-	private JOptionPane pane;
 	private JTextField name = new JTextField("");
 	private GraphInstance graphInstance = new GraphInstance();
 	private Pathway pw = graphInstance.getPathway();
@@ -48,15 +50,21 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 	private GraphElementAbstract gea;
 	private FormularPanel fp;
 	private JTextPane formular;
+	
+	private JButton cancel = new JButton("cancel");
+	private JButton okButton = new JButton("ok");
+	private JButton[] buttons = { okButton, cancel };
+	private JOptionPane optionPane;
 
 	private boolean editMode = false;
 
-	private JDialog dialog;
+	//private JDialog dialog;
 
 	// private HashMap<JButton, Parameter> parameters = new HashMap<JButton,
 	// Parameter>();
 
 	public ParameterWindow(GraphElementAbstract gea) {
+		frame = new JFrame("Parameters");
 		this.gea = gea;
 		// System.out.println("constr.");
 
@@ -77,7 +85,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				AutoSuggestor autoSuggestor = new AutoSuggestor(formular, dialog, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
+				AutoSuggestor autoSuggestor = new AutoSuggestor(formular, frame, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
 					@Override
 					boolean wordTyped(String typedWord) {
 
@@ -115,7 +123,13 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		});
 
 		if (gea instanceof DynamicNode) {
-			fp = new FormularPanel(formular, ((DynamicNode) gea).getMaximumSpeed());
+			PropertyChangeListener pcListener = new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					frame.pack();
+				}
+			};
+			fp = new FormularPanel(formular, ((DynamicNode) gea).getMaximumSpeed(), pcListener);
 			fp.setVisible(true);
 			panel.add(fp);
 		}
@@ -125,61 +139,31 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		add.setActionCommand("add");
 		add.addActionListener(this);
 
-		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
+		//pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
-		dialog = pane.createDialog(null, "Parameters");
-		this.repaint();
-		dialog.setResizable(true);
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
-		dialog.pack();
-		dialog.setAlwaysOnTop(false);
-		dialog.setModal(false);
-		// dialog.show();
-		dialog.setVisible(true);
+		cancel.addActionListener(this);
+		cancel.setActionCommand("cancel");
 
-		dialog.addWindowListener(new WindowListener() {
-			
-			@Override
-			public void windowOpened(WindowEvent e) {
-			}
-			@Override
-			public void windowIconified(WindowEvent e) {
-			}
-			@Override
-			public void windowDeiconified(WindowEvent e) {
-			}
-			@Override
-			public void windowDeactivated(WindowEvent e) {
-				//System.out.println("deactivated");
-				//System.out.println("value: "+pane.getValue());
-				if (pane.getValue() != null && !pane.getValue().equals("uninitializedValue") && (int) pane.getValue() == JOptionPane.OK_OPTION) {
-					//System.out.println("ok");
-					if (gea instanceof DynamicNode) {
-						//System.out.println("clicked ok");
-						DynamicNode dn = (DynamicNode) gea;
-						String formular = fp.getFormular();
-						String formularClean = formular.replaceAll("\\s", "");
-						// System.out.println(":"+formularClean+":");
-						String orgClean = dn.getMaximumSpeed().replaceAll("\\s", "");
-						if (!orgClean.equals(formularClean)) {
-							dn.setMaximumSpeed(formular);
-							pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
-						}
-					}
-				}
-			}
-			@Override
-			public void windowClosing(WindowEvent e) {
-			}
-			@Override
-			public void windowClosed(WindowEvent e) {
-			}
-			@Override
-			public void windowActivated(WindowEvent e) {
-			}
-		});
+		okButton.addActionListener(this);
+		okButton.setActionCommand("okButton");
+
+		this.repaintPanel();
 		
-		dialog.addWindowFocusListener(new WindowFocusListener() {
+		optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
+		optionPane.setOptions(buttons);
+		
+		frame.setAlwaysOnTop(false);
+		frame.setContentPane(optionPane);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.revalidate();
+		
+		frame.pack();
+		
+		frame.setLocationRelativeTo(MainWindow.getInstance());
+		frame.requestFocus();
+		frame.setVisible(true);
+
+		frame.addWindowFocusListener(new WindowFocusListener() {
 			
 			@Override
 			public void windowLostFocus(WindowEvent e) {
@@ -187,7 +171,11 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			
 			@Override
 			public void windowGainedFocus(WindowEvent e) {
-				repaint();
+				//repaintPanel();
+				frame.pack();
+				//revalidate();
+				//pack();
+				//repaint();
 			}
 		});
 	}
@@ -268,14 +256,13 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 							pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
 							this.editMode = false;
 							this.add.setText("add");
-							this.repaint();
+							this.repaintPanel();
 						} catch (NumberFormatException nfe) {
 							MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
 						}
 					} else {
 						// System.out.println("schon vorhanden");
-						JOptionPane.showMessageDialog(dialog, "Parameter with same name already exists! Use edit button to edit parameter",
-								"Parameter warning", JOptionPane.WARNING_MESSAGE);
+						MyPopUp.getInstance().show("Parameter", "Parameter with same name already exists! Use edit button to edit parameter");
 					}
 					return;
 				}
@@ -289,7 +276,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 					panel.add(new JLabel(name.getText()), "span 1, gaptop 2 ");
 					panel.add(new JLabel(value.getText()), "span 1, gapright 4");
 					panel.add(new JLabel(unit.getText()), "span 1, gapright 4, wrap");
-					this.repaint();
+					this.repaintPanel();
 				} catch (NumberFormatException nfx) {
 					MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
 				}
@@ -302,19 +289,19 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			int idx = Integer.parseInt(e.getActionCommand().substring(3));
 			pw.getChangedParameters().remove(gea.getParameters().get(idx));
 			this.gea.getParameters().remove(idx);
-			this.repaint();
+			this.repaintPanel();
 		} else if (e.getActionCommand().startsWith("down")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
 			Parameter p = gea.getParameters().get(idx);
 			gea.getParameters().set(idx, gea.getParameters().get(idx + 1));
 			gea.getParameters().set(idx + 1, p);
-			this.repaint();
+			this.repaintPanel();
 		} else if (e.getActionCommand().startsWith("up")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(2));
 			Parameter p = gea.getParameters().get(idx);
 			gea.getParameters().set(idx, gea.getParameters().get(idx - 1));
 			gea.getParameters().set(idx - 1, p);
-			this.repaint();
+			this.repaintPanel();
 		} else if (e.getActionCommand().startsWith("edit")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
 			Parameter p = gea.getParameters().get(idx);
@@ -323,18 +310,34 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			this.unit.setText(p.getUnit());
 			this.add.setText("Override");
 			this.editMode = true;
-			this.repaint();
+			this.repaintPanel();
 		} else if (e.getActionCommand().equals("guessKinetic")) {
 			this.guessKinetic();
-			this.repaint();
-		}else if (e.getActionCommand().equals("setValues")) {
+			this.repaintPanel();
+		} else if (e.getActionCommand().equals("setValues")) {
 			if(gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract){
-			new ParameterSearcher((BiologicalNodeAbstract)gea);
+			new ParameterSearcher((BiologicalNodeAbstract)gea, true);
 			}
+		} else if(e.getActionCommand().equals("okButton")){
+			if (gea instanceof DynamicNode) {
+				//System.out.println("clicked ok");
+				DynamicNode dn = (DynamicNode) gea;
+				String formular = fp.getFormular();
+				String formularClean = formular.replaceAll("\\s", "");
+				// System.out.println(":"+formularClean+":");
+				String orgClean = dn.getMaximumSpeed().replaceAll("\\s", "");
+				if (!orgClean.equals(formularClean)) {
+					dn.setMaximumSpeed(formular);
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}
+			}
+			frame.setVisible(false);
+		} else if(e.getActionCommand().equals("cancel")){
+			frame.setVisible(false);
 		}
 	}
 
-	private void repaint() {
+	private void repaintPanel() {
 		panel.removeAll();
 		if (gea instanceof DynamicNode) {
 			panel.add(fp, "span 20, wrap");
@@ -362,7 +365,8 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		panel.add(add, "wrap");
 		this.listParameters();
 		panel.repaint();
-		dialog.pack();
+		frame.pack();
+		//dialog.pack();
 	}
 
 	@Override
@@ -516,15 +520,6 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			sb.append(")");
 			formular.setText(sb.toString());
 			formular.requestFocus();
-			Robot robot;
-			try {
-				robot = new Robot();
-				robot.keyPress(KeyEvent.VK_SPACE);
-				robot.keyRelease(KeyEvent.VK_SPACE);
-			} catch (AWTException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 }
