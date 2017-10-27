@@ -148,6 +148,10 @@ public class MenuBarClass {
 		shake.addActionListener(MenuListener.getInstance());
 		shake.setActionCommand("shake");
 
+		JMenuItem wuff = new JMenuItem("Wuff!");
+		wuff.addActionListener(MenuListener.getInstance());
+		wuff.setActionCommand("wuff");
+		
 		JMenuItem newNetwork = new JMenuItem("New", KeyEvent.VK_N);
 		newNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, MENUSHORTCUT));
 		newNetwork.addActionListener(MenuListener.getInstance());
@@ -391,6 +395,7 @@ public class MenuBarClass {
 			graph.add(enrichGene);
 			graph.add(enrichMirna);
 			graph.add(shake);
+			graph.add(wuff);
 		}
 		// math.add(visualAnalysis);
 
