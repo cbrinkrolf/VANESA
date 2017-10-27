@@ -30,6 +30,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
@@ -89,6 +90,7 @@ import petriNet.PNTableDialog;
 import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 import petriNet.SimpleMatrixDouble;
+import util.KineticBuilder;
 
 public class MenuListener implements ActionListener {
 
@@ -1059,7 +1061,7 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				Pathway pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
-					
+
 					MirnaStatistics mirna = new MirnaStatistics(pw);
 					mirna.enrichMirnas(true, true, false);
 				} else {
@@ -1155,6 +1157,27 @@ public class MenuListener implements ActionListener {
 			// export.setInitialSelectionValue(5);
 
 			export.showExportDialog(MainWindow.getInstance(), "Export graph as ...", wvv, "export");
+		} else if ("wuff".equals(event)) {
+			//System.out.println("clicked");
+			if (con.containsPathway()) {
+				Pathway pw = graphInstance.getPathway();
+				if (pw.hasGotAtLeastOneElement()) {
+					
+					Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
+					BiologicalNodeAbstract bna;
+					DynamicNode dn;
+					String maximumSpeed;
+					while(it.hasNext()){
+						bna = it.next();
+						if(bna instanceof DynamicNode){
+							dn = (DynamicNode)bna;
+							maximumSpeed = KineticBuilder.createConvenienceKinetic(bna);
+							System.out.println(maximumSpeed);
+							dn.setMaximumSpeed(maximumSpeed);
+						}
+					}
+				}
+			}
 		}
 
 	}
