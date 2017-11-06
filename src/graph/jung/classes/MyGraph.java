@@ -387,7 +387,15 @@ public class MyGraph {
 
 			@Override
 			public void paint(Graphics g) {
-
+				if(graphInstance.getPathway() == null){
+					// System.out.println("pw null");
+					return;
+				}
+				//System.out.println(graphInstance.getPathway().getAllGraphNodes());
+				if(graphInstance.getPathway().getAllGraphNodes().isEmpty()){
+					//System.out.println("empty");
+					return;
+				}
 				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
 
 				Place p;
