@@ -417,6 +417,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 		maxPanelID += 1;
 		int id = maxPanelID;
+		//System.out.println("put:"+id);
 		tabbedPanels.put(id, tp);
 
 		View view = new View("Network Modelling", null, tp);
@@ -432,6 +433,8 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
 
 		split_pane.add(rootWindow);
+		view.makeVisible();
+		setSelectedView(view);
 	}
 
 	/**
@@ -440,7 +443,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	 * @author tloka
 	 */
 	public void removeView(DockingWindow dw) {
-
 		// remove rootWindow if exists
 		// if(rootWindow!=null){
 		// split_pane.remove(rootWindow);
@@ -459,6 +461,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			tabbedPanels.remove(id);
 			viewMap.removeView(id);
 			if (views.keySet().iterator().hasNext()) {
+				//System.out.println("set:"+views.get(views.keySet().iterator().next()));
 				setSelectedView(views.get(views.keySet().iterator().next()));
 			}
 		}
@@ -470,6 +473,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	public void addTab(TitledTab tab) {
 		addedtabs++;
+		//System.out.println(getSelectedView());
 		tabbedPanels.get(getSelectedView()).addTab(tab);
 		setSelectedTab(tab);
 		myMenu.enableCloseAndSaveFunctions();
