@@ -35,6 +35,7 @@ import graph.GraphInstance;
 import graph.gui.Boundary;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindow;
+import gui.MyPopUp;
 
 public class PropertyWindowListener implements FocusListener {
 
@@ -160,8 +161,9 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("tokenMin")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
-			if (n != null &&  !n.equals(p.getTokenStart())) {
+			if (n != null){ 
 				double tokenMin = n.doubleValue();
+				if(tokenMin <= p.getTokenStart()) {
 				p.setTokenMin(tokenMin);
 				pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
 				Boundary b;
@@ -172,6 +174,9 @@ public class PropertyWindowListener implements FocusListener {
 					pw.getChangedBoundaries().put(p, b);
 				}
 				b.setLowerBoundary(tokenMin);
+				}else{
+					MyPopUp.getInstance().show("Violation", "Minimum < start");
+				}
 
 			}
 		} else if (source.equals("tokenStart")) {
