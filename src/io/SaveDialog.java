@@ -143,12 +143,12 @@ public class SaveDialog {
 			String path = "";
 
 			try {
-				XMLConfiguration xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+				XMLConfiguration xmlSettings = new XMLConfiguration(
+						pathWorkingDirectory + File.separator + "settings.xml");
 				path = xmlSettings.getString("SaveDialog-Path");
-			}
-			catch(ConfigurationException e)
-			{
-				System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
+			} catch (ConfigurationException e) {
+				System.out
+						.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
 			}
 			chooser = new JFileChooser(path);
 		}
@@ -156,8 +156,7 @@ public class SaveDialog {
 		chooser.setAcceptAllFileFilterUsed(false);
 
 		if (sbmlBool)
-			chooser.addChoosableFileFilter(new MyFileFilter(sbml,
-					sbmlDescription));
+			chooser.addChoosableFileFilter(new MyFileFilter(sbml, sbmlDescription));
 
 		/*
 		 * if (itxtBool) chooser.addChoosableFileFilter(new
@@ -165,27 +164,23 @@ public class SaveDialog {
 		 */
 		if (moBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(mo, moDescription));
-		
+
 		if (graphMLBool)
-			chooser.addChoosableFileFilter(new MyFileFilter(graphMl,
-					graphMlDescription));
+			chooser.addChoosableFileFilter(new MyFileFilter(graphMl, graphMlDescription));
 
 		if (gonBool)
-			chooser.addChoosableFileFilter(new MyFileFilter(csml,
-					csmlDescription));
+			chooser.addChoosableFileFilter(new MyFileFilter(csml, csmlDescription));
 		if (pnmlBool)
-			chooser.addChoosableFileFilter(new MyFileFilter(pnml,
-					pnmlDescription));
+			chooser.addChoosableFileFilter(new MyFileFilter(pnml, pnmlDescription));
 		if (vaBool)
-			chooser.addChoosableFileFilter(new MyFileFilter(vaml,
-					vamlDescription));
+			chooser.addChoosableFileFilter(new MyFileFilter(vaml, vamlDescription));
 		if (txtBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(txt, txtDescription));
 		if (csvBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(csv, csvDescription));
 		if (pngBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(png, pngDescription));
-		if(yamlBool)
+		if (yamlBool)
 			chooser.addChoosableFileFilter(new MyFileFilter(yaml, yamlDescription));
 
 		int option = chooser.showSaveDialog(MainWindow.getInstance());
@@ -195,17 +190,15 @@ public class SaveDialog {
 			XMLConfiguration xmlSettings = null;
 			File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
 			try {
-				if(f.exists()){
+				if (f.exists()) {
 					xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-				}else{
+				} else {
 					xmlSettings = new XMLConfiguration();
 					xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
 				}
 				xmlSettings.setProperty("SaveDialog-Path", fileDir.getAbsolutePath());
 				xmlSettings.save();
-			}
-			catch(ConfigurationException e)
-			{
+			} catch (ConfigurationException e) {
 				e.printStackTrace();
 			}
 
@@ -213,11 +206,8 @@ public class SaveDialog {
 			file = chooser.getSelectedFile();
 			boolean overwrite = true;
 			if (file.exists()) {
-				int response = JOptionPane.showConfirmDialog(
-						MainWindow.getInstance(),
-						"Overwrite existing file?", "Confirm Overwrite",
-						JOptionPane.OK_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE);
+				int response = JOptionPane.showConfirmDialog(MainWindow.getInstance(), "Overwrite existing file?",
+						"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (response == JOptionPane.CANCEL_OPTION) {
 					overwrite = false;
 				}
@@ -262,15 +252,12 @@ public class SaveDialog {
 			// JOptionPane.showMessageDialog(
 			// MainWindowSingelton.getInstance(), sbmlDescription
 			// + sbmlOutput.generateSBMLDocument());
-			JSBMLoutput jsbmlOutput = new JSBMLoutput(
-					new FileOutputStream(file),
-					new GraphInstance().getPathway());
-			
+			JSBMLoutput jsbmlOutput = new JSBMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
+
 			String out = jsbmlOutput.generateSBMLDocument();
-			if(out.length() > 0){
-			JOptionPane.showMessageDialog(MainWindow.getInstance(),
-					sbmlDescription + out);
-			}else{
+			if (out.length() > 0) {
+				MyPopUp.getInstance().show("Error", out);
+			} else {
 				MyPopUp.getInstance().show("JSbml export", "Saving was successful!");
 			}
 
@@ -281,47 +268,37 @@ public class SaveDialog {
 		} else if (fileFormat.equals(graphMlDescription)) {
 			getCorrectFile(graphMl);
 			new SaveGraphML(new FileOutputStream(file));
-			JOptionPane.showMessageDialog(MainWindow.getInstance(),
-					graphMlDescription + " File saved");
+			MyPopUp.getInstance().show("Information", graphMlDescription + " File saved");
 		} else if (fileFormat.equals(irinaDescription)) {
 			getCorrectFile(irinaTxt);
-			new IrinaGraphTextWriter(new FileOutputStream(file),
-					new GraphInstance().getPathway());
-			JOptionPane.showMessageDialog(MainWindow.getInstance(),
-					irinaDescription + " File saved");
-
+			new IrinaGraphTextWriter(new FileOutputStream(file), new GraphInstance().getPathway());
+			MyPopUp.getInstance().show("Information", irinaDescription + " File saved");
 		} else if (fileFormat.equals(moDescription)) {
 			getCorrectFile(mo);
-			new MOoutput(new FileOutputStream(file),
-					new GraphInstance().getPathway(), false);
+			new MOoutput(new FileOutputStream(file), new GraphInstance().getPathway(), false);
 			String path_colored = file.getAbsolutePath();
 			if (path_colored.endsWith(".mo")) {
-				path_colored = path_colored.substring(0, path_colored.length()-3);
+				path_colored = path_colored.substring(0, path_colored.length() - 3);
 			}
-	
-			new MOoutput(new FileOutputStream(new File(path_colored+"_colored.mo")),
-					new GraphInstance().getPathway(), true);
-			
+
+			new MOoutput(new FileOutputStream(new File(path_colored + "_colored.mo")), new GraphInstance().getPathway(),
+					true);
+
 			MyPopUp.getInstance().show("Modelica export", moDescription + " File saved");
-			//JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
-				//	moDescription + " File saved");
+			// JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
+			// moDescription + " File saved");
 
 		} else if (fileFormat.equals(txtDescription)) {
 			getCorrectFile(txt);
-			new GraphTextWriter(new FileOutputStream(file),
-					new GraphInstance().getPathway());
-			JOptionPane.showMessageDialog(MainWindow.getInstance(),
-					txtDescription + " File saved");
-
+			new GraphTextWriter(new FileOutputStream(file), new GraphInstance().getPathway());
+			MyPopUp.getInstance().show("Information", txtDescription + " File saved");
 		} else if (fileFormat.equals(csvDescription)) {
 			getCorrectFile(csv);
-			String result = new CSVWriter().write(new FileOutputStream(file),
-					new GraphInstance().getPathway());
-			
-			if(result.length() > 0){
-			JOptionPane.showMessageDialog(MainWindow.getInstance(),
-					csvDescription + result);
-			}else{
+			String result = new CSVWriter().write(new FileOutputStream(file), new GraphInstance().getPathway());
+
+			if (result.length() > 0) {
+				MyPopUp.getInstance().show("Error", csvDescription + result);
+			} else {
 				MyPopUp.getInstance().show("csv", "Saving was successful!");
 			}
 
@@ -351,8 +328,7 @@ public class SaveDialog {
 				getCorrectFile(pnml);
 				BiologicalEdgeAbstract bea;
 				ArrayList<PNEdge> edgeList = new ArrayList<PNEdge>();
-				Iterator<BiologicalEdgeAbstract> itEdge = con
-						.getPathway(w.getCurrentPathway()).getAllEdges()
+				Iterator<BiologicalEdgeAbstract> itEdge = con.getPathway(w.getCurrentPathway()).getAllEdges()
 						.iterator();
 				while (itEdge.hasNext()) {
 					bea = itEdge.next();
@@ -364,8 +340,7 @@ public class SaveDialog {
 				BiologicalNodeAbstract bna;
 				ArrayList<Place> nodeList = new ArrayList<Place>();
 				ArrayList<Transition> transitionList = new ArrayList<Transition>();
-				Iterator<BiologicalNodeAbstract> itNode = con
-						.getPathway(w.getCurrentPathway()).getAllGraphNodes()
+				Iterator<BiologicalNodeAbstract> itNode = con.getPathway(w.getCurrentPathway()).getAllGraphNodes()
 						.iterator();
 
 				while (itNode.hasNext()) {
@@ -377,17 +352,14 @@ public class SaveDialog {
 					}
 				}
 				// only output on file system possible
-				PNMLOutput pnmlOutput = new PNMLOutput(file, edgeList,
-						nodeList, transitionList);
+				PNMLOutput pnmlOutput = new PNMLOutput(file, edgeList, nodeList, transitionList);
 
 				try {
 					String result = pnmlOutput.generatePNMLDocument();
-					
-					if(result.length() > 0){
-						JOptionPane.showMessageDialog(
-								MainWindow.getInstance(), pnmlDescription
-										+ "an error occured: "+ result);
-					}else{
+
+					if (result.length() > 0) {
+						MyPopUp.getInstance().show("Error", pnmlDescription + "an error occured: " + result);
+					} else {
 						MyPopUp.getInstance().show("PNML export", "Saving was successful!");
 					}
 				} catch (HeadlessException e) {
@@ -404,19 +376,13 @@ public class SaveDialog {
 			}
 		} else if (fileFormat.equals(csmlDescription)) {
 			getCorrectFile(csml);
-			new GONoutput(new FileOutputStream(file),
-					new GraphInstance().getPathway());
-			JOptionPane.showMessageDialog(MainWindow.getInstance(),
-					csmlDescription + " File saved");
-
+			new GONoutput(new FileOutputStream(file), new GraphInstance().getPathway());
+			MyPopUp.getInstance().show("Information", csmlDescription + " File saved");
 		} else if (fileFormat.equals(vamlDescription)) {
 			getCorrectFile(vaml);
 			try {
-				new VAMLoutput(new FileOutputStream(file),
-						new GraphInstance().getPathway());
-				JOptionPane.showMessageDialog(
-						MainWindow.getInstance(), vamlDescription
-								+ " File saved");
+				new VAMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
+				MyPopUp.getInstance().show("Information", vamlDescription + " File saved");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -425,8 +391,7 @@ public class SaveDialog {
 			getCorrectFile(png);
 			if (p != null) {
 				try {
-					BufferedImage bi = new BufferedImage(p.getWidth(),
-							p.getHeight(), BufferedImage.TYPE_INT_BGR);
+					BufferedImage bi = new BufferedImage(p.getWidth(), p.getHeight(), BufferedImage.TYPE_INT_BGR);
 					Graphics2D graphics = bi.createGraphics();
 					p.paint(graphics);
 					graphics.dispose();
@@ -437,33 +402,33 @@ public class SaveDialog {
 					e.printStackTrace();
 				}
 			}
-		} else if(fileFormat.equals(yamlDescription)){
+		} else if (fileFormat.equals(yamlDescription)) {
 			getCorrectFile(yaml);
-			try{
+			try {
 				String exportPath = chooser.getSelectedFile().getPath();
 
-				if(exportPath.contains(".yaml") == false){
+				if (exportPath.contains(".yaml") == false) {
 					exportPath = exportPath + ".yaml";
 				}
 
-				InputStream internYaml = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
+				InputStream internYaml = getClass().getClassLoader()
+						.getResourceAsStream("resource/NodeProperties.yaml");
 				FileOutputStream exportYaml = null;
 				File exportFile = new File(exportPath);
 				exportYaml = new FileOutputStream(exportFile);
-				byte [] buffer = new byte[4096];
+				byte[] buffer = new byte[4096];
 				int bytesRead = -1;
 				bytesRead = internYaml.read(buffer);
-				while(bytesRead != -1){
-					exportYaml.write(buffer, 0 ,bytesRead);
+				while (bytesRead != -1) {
+					exportYaml.write(buffer, 0, bytesRead);
 					bytesRead = internYaml.read(buffer);
-				};
-					internYaml.close();
-					exportYaml.close();
-				JOptionPane.showMessageDialog(
-						MainWindow.getInstance(), yamlDescription
-									+ " File exported");
+				}
+				;
+				internYaml.close();
+				exportYaml.close();
+				MyPopUp.getInstance().show("Information", yamlDescription + " File exported");
 				MainWindow.getInstance().setLoadedYaml(exportPath);
-			} catch (IOException e){
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

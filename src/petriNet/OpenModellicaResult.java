@@ -3,7 +3,6 @@ package petriNet;
 import java.io.File;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
@@ -13,6 +12,7 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
+import gui.MyPopUp;
 import gui.ProgressBar;
 import io.MyFileFilter;
 
@@ -43,7 +43,8 @@ public class OpenModellicaResult extends SwingWorker {
 		}
 
 		chooser.setAcceptAllFileFilterUsed(false);
-		//chooser.addChoosableFileFilter(new MyFileFilter(modelicaSimulation, modelicaResultDescription));
+		// chooser.addChoosableFileFilter(new MyFileFilter(modelicaSimulation,
+		// modelicaResultDescription));
 		chooser.addChoosableFileFilter(new MyFileFilter(vanesaSimulation, vanesaResultDescription));
 
 		option = chooser.showOpenDialog(null);
@@ -62,10 +63,10 @@ public class OpenModellicaResult extends SwingWorker {
 						petrinet.loadVanesaSimulationResult(file);
 
 					} else {
-						JOptionPane.showMessageDialog(MainWindow.getInstance(), "Please load or create a network first!");
+						MyPopUp.getInstance().show("Error", "Please create a network before.");
 					}
 				} else {
-					JOptionPane.showMessageDialog(MainWindow.getInstance(), "Please load or create a network first!");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 
 			} else if (fileFormat.equals(modelicaResultDescription)) {
@@ -77,10 +78,10 @@ public class OpenModellicaResult extends SwingWorker {
 						petrinet.setPetriNetSimulationFile(file.getAbsolutePath());
 
 					} else {
-						JOptionPane.showMessageDialog(MainWindow.getInstance(), "Please load or create a network first!");
+						MyPopUp.getInstance().show("Error", "Please create a network before.");
 					}
 				} else {
-					JOptionPane.showMessageDialog(MainWindow.getInstance(), "Please load or create a network first!");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			}
 		}

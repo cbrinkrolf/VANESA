@@ -6,13 +6,13 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import cluster.graphdb.GraphDBTransportNode;
 import cluster.slave.ISearchCallback;
 import database.unid.UNIDSearch;
 import gui.MainWindow;
+import gui.MyPopUp;
 
 public class SearchCallback extends UnicastRemoteObject implements ISearchCallback, Serializable {
 
@@ -33,8 +33,7 @@ public class SearchCallback extends UnicastRemoteObject implements ISearchCallba
 		if(adjacencylist.size() <1){
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(
-							MainWindow.getInstance(), "No elements could be found");
+					MyPopUp.getInstance().show("Error", "No elements could be found.");
 					usearch.reactivateUI();
 				}
 			});

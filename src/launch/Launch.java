@@ -32,6 +32,7 @@ import database.brenda.MostWantedMolecules;
 import graph.GraphContainer;
 import gui.IntroScreen;
 import gui.MainWindow;
+import gui.MyPopUp;
 
 public class Launch {
 
@@ -52,8 +53,7 @@ public class Launch {
 		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
 		// set app name for mac osx
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
-		System.setProperty("com.apple.mrj.application.apple.menu.about.name",
-				"VANESA");
+		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "VANESA");
 
 		final IntroScreen intro = new IntroScreen();
 		intro.openWindow();
@@ -61,13 +61,9 @@ public class Launch {
 		if (!ProgramFileLock.writeLock())
 
 		{
-			JOptionPane
-					.showMessageDialog(
-							intro,
-							"Another instance of the program is already running!\nExit program.",
-							"Exit", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(intro, "Another instance of the program is already running!\nExit program.",
+					"Exit", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
-
 		}
 
 		try {
@@ -82,14 +78,12 @@ public class Launch {
 			// osx
 			// @see http://www.pushing-pixels.org/?p=366
 			if (System.getProperty("os.name").startsWith("Mac")) {
-				UIManager.setLookAndFeel(UIManager
-						.getSystemLookAndFeelClassName());
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				Object MenuBarUI = UIManager.get("MenuBarUI");
 				Object MenuUI = UIManager.get("MenuUI");
 				Object MenuItemUI = UIManager.get("MenuItemUI");
 				Object CheckBoxMenuItemUI = UIManager.get("CheckBoxMenuItemUI");
-				Object RadioButtonMenuItemUI = UIManager
-						.get("RadioButtonMenuItemUI");
+				Object RadioButtonMenuItemUI = UIManager.get("RadioButtonMenuItemUI");
 				Object PopupMenuUI = UIManager.get("PopupMenuUI");
 
 				UIManager.setLookAndFeel(new AluminiumLookAndFeel());
@@ -121,9 +115,8 @@ public class Launch {
 		Options options = new Options();
 		OptionBuilder.withArgName("value");
 		OptionBuilder.hasArg();
-		OptionBuilder
-				.withDescription("use given sessionid to get data from the "
-						+ "dawis remote control (used by webstart)");
+		OptionBuilder.withDescription(
+				"use given sessionid to get data from the " + "dawis remote control (used by webstart)");
 		Option dawis_sessionid_option = OptionBuilder.create("dawis_sessionid");
 		Option help = new Option("help", "print this message");
 		options.addOption(dawis_sessionid_option);
@@ -151,13 +144,12 @@ public class Launch {
 			}
 		} catch (ParseException exp) {
 			// oops, something went wrong
-			System.err.println("CLI-Parsing failed.  Reason: "
-					+ exp.getMessage());
+			System.err.println("CLI-Parsing failed.  Reason: " + exp.getMessage());
 		}
 
 		// go on with creating the editor window
 
-		//boolean loaded = false;
+		// boolean loaded = false;
 
 		// create 3 Runable instances to run them in separate
 		// threads simulanously
@@ -194,28 +186,19 @@ public class Launch {
 		Runnable dbStart = new Runnable() {
 			public void run() {
 				// -- default database settings --
-				String user = ResourceLibrary
-						.getSettingsResource("settings.default.user");
-				String password = ResourceLibrary
-						.getSettingsResource("settings.default.password");
-				String database = ResourceLibrary
-						.getSettingsResource("settings.default.database.DAWIS");
-				String database_ppi = ResourceLibrary
-						.getSettingsResource("settings.default.database.PPI");
-				String database_mirna = ResourceLibrary
-						.getSettingsResource("settings.default.database.mirna");
+				String user = ResourceLibrary.getSettingsResource("settings.default.user");
+				String password = ResourceLibrary.getSettingsResource("settings.default.password");
+				String database = ResourceLibrary.getSettingsResource("settings.default.database.DAWIS");
+				String database_ppi = ResourceLibrary.getSettingsResource("settings.default.database.PPI");
+				String database_mirna = ResourceLibrary.getSettingsResource("settings.default.database.mirna");
 
-				String server = ResourceLibrary
-						.getSettingsResource("settings.default.server");
-				String webservice = ResourceLibrary
-						.getSettingsResource("settings.default.webservice.url");
+				String server = ResourceLibrary.getSettingsResource("settings.default.server");
+				String webservice = ResourceLibrary.getSettingsResource("settings.default.webservice.url");
 
-				ConnectionSettings.setDBConnection(new DBconnection(user,
-						password, database, server));
+				ConnectionSettings.setDBConnection(new DBconnection(user, password, database, server));
 				ConnectionSettings.getDBConnection().setDawisDBName(database);
 				ConnectionSettings.getDBConnection().setPpiDBName(database_ppi);
-				ConnectionSettings.getDBConnection().setmirnaDBName(
-						database_mirna);
+				ConnectionSettings.getDBConnection().setmirnaDBName(database_mirna);
 
 				ConnectionSettings.setWebServiceUrl(webservice);
 
@@ -244,30 +227,26 @@ public class Launch {
 				// else {
 				catch (Exception e) {
 					if (dawis_sessionid != null) {
-						JOptionPane
-								.showMessageDialog(
-										MainWindow.getInstance(),
-										"No internet connection available, can not load data from the remote control!"
-												+ " Please check the connection settings and restart the program!");
+						MyPopUp.getInstance().show("Error",
+								"No internet connection available, can not load data from the remote control!"
+										+ " Please check the connection settings and restart the program!");
 					}
 				}
 			}
 		};
 
-		//run executor
+		// run executor
 		ExecutorService executorService = Executors.newFixedThreadPool(4);
 
 		executorService.execute(programStart);
 		executorService.execute(dbStart);
 		executorService.execute(containerStart);
 
-		
-		
 		executorService.shutdown();
-//		
-//		new Thread(programStart).start();
-//		new Thread(dbStart).start();
-//		new Thread(containerStart).start();
+		//
+		// new Thread(programStart).start();
+		// new Thread(dbStart).start();
+		// new Thread(containerStart).start();
 
 	}
 
@@ -285,7 +264,6 @@ public class Launch {
 
 		Logger logger = Logger.getRootLogger();
 
-		logger.info("Network editor started by "
-				+ System.getProperty("user.name"));
+		logger.info("Network editor started by " + System.getProperty("user.name"));
 	}
 }

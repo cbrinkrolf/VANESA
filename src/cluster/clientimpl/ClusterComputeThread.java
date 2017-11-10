@@ -7,11 +7,11 @@ import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Hashtable;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import cluster.master.IClusterJobs;
 import gui.MainWindow;
+import gui.MyPopUp;
 
 public class ClusterComputeThread extends Thread {
 
@@ -54,10 +54,7 @@ public class ClusterComputeThread extends Thread {
 		}catch (NotBoundException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindow
-							.getInstance().returnFrame(),
-							"RMI Interface could not be established.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					MyPopUp.getInstance().show("Error", "RMI Interface could not be established.");
 				}
 			});
 
@@ -67,10 +64,7 @@ public class ClusterComputeThread extends Thread {
 		} catch (RemoteException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindow
-							.getInstance().returnFrame(),
-							"Cluster not reachable.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					MyPopUp.getInstance().show("Error", "Cluster not reachable.");
 				}
 			});
 
@@ -80,10 +74,7 @@ public class ClusterComputeThread extends Thread {
 		} catch (MalformedURLException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(MainWindow
-							.getInstance().returnFrame(),
-							"Clusteradress could not be resolved.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					MyPopUp.getInstance().show("Error", "Clusteradress could not be resolved.");
 				}
 			});
 
@@ -96,8 +87,7 @@ public class ClusterComputeThread extends Thread {
 	private void displayNotice(String string) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				JOptionPane.showMessageDialog(
-						MainWindow.getInstance(), string);
+				MyPopUp.getInstance().show("Information", string);
 			}
 		});		
 	}

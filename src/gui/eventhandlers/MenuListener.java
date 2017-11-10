@@ -76,6 +76,7 @@ import gui.InfoWindow;
 import gui.LabelToDataMappingWindow;
 import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
+import gui.MyPopUp;
 import gui.visualization.PreRenderManager;
 import io.EdalSaveDialog;
 import io.OpenDialog;
@@ -255,20 +256,20 @@ public class MenuListener implements ActionListener {
 									+ SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_ITXT + SaveDialog.FORMAT_TXT);
 					// +SaveDialog.FORMAT_SBML);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("save as".equals(event)) {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog(SaveDialog.FORMAT_SBML);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("saveEdal".equals(event)) {
 			if (con.containsPathway()) {
@@ -277,10 +278,10 @@ public class MenuListener implements ActionListener {
 					new EdalSaveDialog();
 					// new SaveDialog(SaveDialog.FORMAT_SBML);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("save".equals(event)) {
 			if (con.containsPathway()) {
@@ -292,10 +293,10 @@ public class MenuListener implements ActionListener {
 						new SaveDialog(SaveDialog.FORMAT_SBML);
 					}
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("exit".equals(event)) {
 			ProgramFileLock.releaseLock();
@@ -308,10 +309,10 @@ public class MenuListener implements ActionListener {
 					// graphInstance.getMyGraph().changeToSpringLayout();
 					LayoutConfig.changeToLayout(SpringLayout.class);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("kkLayout".equals(event)) {
 			if (con.containsPathway()) {
@@ -320,10 +321,10 @@ public class MenuListener implements ActionListener {
 					// graphInstance.getMyGraph().changeToKKLayout();
 					LayoutConfig.changeToLayout(KKLayout.class);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("frLayout".equals(event)) {
 			if (con.containsPathway()) {
@@ -332,10 +333,10 @@ public class MenuListener implements ActionListener {
 					// graphInstance.getMyGraph().changeToFRLayout();
 					LayoutConfig.changeToLayout(FRLayout.class);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("circleLayout".equals(event)) {
 			if (con.containsPathway()) {
@@ -345,30 +346,30 @@ public class MenuListener implements ActionListener {
 					// graphInstance.getMyGraph().changeGraphLayout(4);
 
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("hebLayout".equals(event)) {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					LayoutConfig.changeToLayout(HEBLayout.class);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("hctLayout".equals(event)) {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					LayoutConfig.changeToLayout(HCTLayout.class);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("gemLayout".equals(event)) {
 			if (con.containsPathway()) {
@@ -378,10 +379,10 @@ public class MenuListener implements ActionListener {
 					// graphInstance.getMyGraph().changeGraphLayout(4);
 
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("isomLayout".equals(event)) {
 			if (con.containsPathway()) {
@@ -390,10 +391,10 @@ public class MenuListener implements ActionListener {
 					// graphInstance.getMyGraph().changeToISOMLayout();
 					LayoutConfig.changeToLayout(ISOMLayout.class);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("MDLayout".equals(event)) {
 			if (con.containsPathway()) {
@@ -401,10 +402,10 @@ public class MenuListener implements ActionListener {
 					// graphInstance.getMyGraph().changeGraphLayout(5);
 					// LayoutConfig.changeToLayout(MDForceLayout.class);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("database settings".equals(event)) {
 			new Settings(0);
@@ -910,19 +911,19 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				new ClusterDataUploadWindow();
 			} else
-				JOptionPane.showMessageDialog(null, "please load a network first.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 
 		} else if ("datamining".equals(event)) {
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				new SmacofView();
 			} else
-				JOptionPane.showMessageDialog(null, "please load a network first.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 
 		} else if ("rendererSettings".equals(event)) {
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				PreRenderManager.getInstance();
 			} else
-				JOptionPane.showMessageDialog(null, "please load a network first.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 
 		} else if ("resolveReferences".equals(event)) {
 
@@ -1048,10 +1049,11 @@ public class MenuListener implements ActionListener {
 				} catch (IOException ioe) {
 					ioe.printStackTrace();
 				} catch (InputFormatException ife) {
-					JOptionPane.showMessageDialog(w, ife.getMessage(), "Inputfile error", JOptionPane.ERROR_MESSAGE);
+					MyPopUp.getInstance().show("Inputfile error", ife.getMessage());
+					//JOptionPane.showMessageDialog(w, ife.getMessage(), "Inputfile error", JOptionPane.ERROR_MESSAGE);
 				}
 			} else
-				JOptionPane.showMessageDialog(null, "please load a network first.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 
 		} else if ("mirnaTest".equals(event)) {
 			System.out.println("mirnatest");
@@ -1065,10 +1067,10 @@ public class MenuListener implements ActionListener {
 					MirnaStatistics mirna = new MirnaStatistics(pw);
 					mirna.enrichMirnas(true, true, false);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 
 		} else if ("enrichGene".equals(event)) {
@@ -1079,10 +1081,10 @@ public class MenuListener implements ActionListener {
 					MirnaStatistics mirna = new MirnaStatistics(pw);
 					mirna.enrichGenes(true, true, false);
 				} else {
-					JOptionPane.showMessageDialog(w, "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
-				JOptionPane.showMessageDialog(w, "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 
 		} else if ("shake".equals(event)) {

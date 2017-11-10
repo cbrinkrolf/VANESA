@@ -9,14 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import cluster.clientimpl.MappingCallback;
 import cluster.master.IClusterJobs;
 import cluster.slave.JobTypes;
-import gui.MainWindow;
+import gui.MyPopUp;
 
 /**
  * @author Britta Niemann
@@ -87,23 +86,15 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						DataMappingModelController.reactivateUI();
-						JOptionPane.showMessageDialog(
-								MainWindow.getInstance(), "Queue is at maximum capacity!");
+						MyPopUp.getInstance().show("Error", "Queue is at maximum capacity!");
 					}
-					
 				});
 			}
-
-			
-			
 		}catch (NotBoundException e) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					DataMappingModelController.reactivateUI();
-					JOptionPane.showMessageDialog(MainWindow
-							.getInstance().returnFrame(),
-							"RMI Interface could not be established.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					MyPopUp.getInstance().show("Error", "RMI Interface could not be established.");
 				}
 			});
 			e.printStackTrace();
@@ -112,10 +103,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					DataMappingModelController.reactivateUI();
-					JOptionPane.showMessageDialog(MainWindow
-							.getInstance().returnFrame(),
-							"Cluster not reachable.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					MyPopUp.getInstance().show("Error", "Cluster not reachable.");
 				}
 			});
 			e.printStackTrace();
@@ -124,10 +112,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					DataMappingModelController.reactivateUI();
-					JOptionPane.showMessageDialog(MainWindow
-							.getInstance().returnFrame(),
-							"Clusteradress could not be resolved.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					MyPopUp.getInstance().show("Error", "Clusteradress could not be resolved.");
 				}
 			});
 			e.printStackTrace();
@@ -136,9 +121,7 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					DataMappingModelController.reactivateUI();
-					JOptionPane.showMessageDialog(
-							MainWindow.getInstance(), "Data export could not be executed.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					MyPopUp.getInstance().show("Error", "Data export could not be executed.");
 				}
 				
 			});
@@ -148,5 +131,4 @@ public class ExportThread extends SwingWorker<Integer, Void>{
 //		DataMappingModelController.progressBarExport.closeWindow();
 		return null;
 	}
-
 }

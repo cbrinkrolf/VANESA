@@ -13,39 +13,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JOptionPane;
-
 import org.yaml.snakeyaml.Yaml;
 
 import configurations.gui.VisualizationDialog;
+import gui.MyPopUp;
 import gui.visualization.VisualizationConfigBeans.Bean;
 
 public class YamlToObjectParser {
-	
+
 	private List<Bean> beansList = new ArrayList<Bean>();
 	private String loadedYaml;
 	private Yaml yaml;
 	private VisualizationConfigBeans bean;
-	private Component panelOrPane;
-	
-	public YamlToObjectParser(Component panelOrPane, String loadedYaml){
+
+	public YamlToObjectParser(String loadedYaml) {
 		this.loadedYaml = loadedYaml;
-		this.panelOrPane = panelOrPane;
 	}
-	
-	public void defaultCase(){
+
+	public void defaultCase() {
 		InputStream input = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-		HashMap<String, Map<String,Object>> mapForBeans = new HashMap<String, Map<String,Object>>();
-		for(Object data : yaml.loadAll(reader)){
+		HashMap<String, Map<String, Object>> mapForBeans = new HashMap<String, Map<String, Object>>();
+		for (Object data : yaml.loadAll(reader)) {
 			HashMap<String, Map<String, Object>> object;
-			object = (HashMap<String, Map<String,Object>>) data;
+			object = (HashMap<String, Map<String, Object>>) data;
 			mapForBeans.put(object.keySet().toString().substring(1, object.keySet().toString().length() - 1),
 					object.get(object.keySet().toString().substring(1, object.keySet().toString().length() - 1)));
 		}
 		bean = new VisualizationConfigBeans();
 		beansList = bean.parseAndAdjust(mapForBeans, false);
-		
+
 		try {
 			reader.close();
 			input.close();
@@ -54,74 +51,78 @@ public class YamlToObjectParser {
 			e1.printStackTrace();
 		}
 	}
-		
-	public List<Bean> startConfig(){
+
+	public List<Bean> startConfig() {
 		yaml = new Yaml();
-		if(loadedYaml.equals(VisualizationDialog.DEFAULTYAML)){
+		if (loadedYaml.equals(VisualizationDialog.DEFAULTYAML)) {
 			defaultCase();
-		}else{
+		} else {
 			File file = new File(loadedYaml);
-			if(file.exists()){
+			if (file.exists()) {
 				System.out.println("Found YamlSource. Default inactive.");
 				InputStream input = null;
 				try {
 					input = new FileInputStream(loadedYaml);
-				} catch (FileNotFoundException e) {
+
+					BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+					HashMap<String, Map<String, Object>> mapForBeans = new HashMap<String, Map<String, Object>>();
+					for (Object data : yaml.loadAll(reader)) {
+						HashMap<String, Map<String, Object>> object;
+						object = (HashMap<String, Map<String, Object>>) data;
+						mapForBeans.put(
+								object.keySet().toString().substring(1, object.keySet().toString().length() - 1),
+								object.get(object.keySet().toString().substring(1,
+										object.keySet().toString().length() - 1)));
+					}
+					bean = new VisualizationConfigBeans();
+					beansList = bean.parseAndAdjust(mapForBeans, false);
+
+					try {
+						reader.close();
+						input.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				} catch (Exception e) {
 					System.out.println("Yaml reading error in YamlToObjectParser");
 					e.printStackTrace();
+					defaultCase();
 				}
-				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-				HashMap<String, Map<String,Object>> mapForBeans = new HashMap<String, Map<String,Object>>();
-				for(Object data : yaml.loadAll(reader)){
-					HashMap<String, Map<String, Object>> object;
-					object = (HashMap<String, Map<String,Object>>) data;
-					mapForBeans.put(object.keySet().toString().substring(1, object.keySet().toString().length() - 1),
-							object.get(object.keySet().toString().substring(1, object.keySet().toString().length() - 1)));
-			}
-			bean = new VisualizationConfigBeans();
-			beansList = bean.parseAndAdjust(mapForBeans, false);
-			
-			try {
-				reader.close();
-				input.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			
-			}else{
+			} else {
 				loadedYaml = VisualizationDialog.DEFAULTYAML;
 				defaultCase();
 			}
 		}
 		return beansList;
 	}
-			
-	public void acceptConfig(){
+
+	public void acceptConfig() {
 		yaml = new Yaml();
 		InputStream input = null;
-		if(loadedYaml != null){
-			if(loadedYaml.equals(VisualizationDialog.DEFAULTYAML)){
+		if (loadedYaml != null) {
+			if (loadedYaml.equals(VisualizationDialog.DEFAULTYAML)) {
 				input = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
-			}else{
+			} else {
 				try {
 					input = new FileInputStream(new File(loadedYaml));
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					}
-				HashMap<String, Map<String,Object>> mapForBeans = new HashMap<String, Map<String,Object>>();
-				for(Object data : yaml.loadAll(input)){
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				HashMap<String, Map<String, Object>> mapForBeans = new HashMap<String, Map<String, Object>>();
+				for (Object data : yaml.loadAll(input)) {
 					HashMap<String, Map<String, Object>> object;
-					object = (HashMap<String, Map<String,Object>>) data;
+					object = (HashMap<String, Map<String, Object>>) data;
 					mapForBeans.put(object.keySet().toString().substring(1, object.keySet().toString().length() - 1),
-					object.get(object.keySet().toString().substring(1, object.keySet().toString().length() - 1)));
+							object.get(
+									object.keySet().toString().substring(1, object.keySet().toString().length() - 1)));
 				}
 				bean = new VisualizationConfigBeans();
 				bean.parseAndAdjust(mapForBeans, true);
 			}
-		}else {
-			JOptionPane.showMessageDialog(panelOrPane, "YtOpACCEPT: No configuration file is loaded!");
+		} else {
+			MyPopUp.getInstance().show("Error", "YtOpACCEPT: No configuration file is loaded!");
+			// JOptionPane.showMessageDialog(panelOrPane, "YtOpACCEPT: No
+			// configuration file is loaded!");
 		}
 	}
 }
-	
-
