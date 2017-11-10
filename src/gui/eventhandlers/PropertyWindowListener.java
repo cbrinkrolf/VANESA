@@ -121,7 +121,7 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("concentration")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
-			if (n != null && !n.equals(bna.getConcentrationStart())) {
+			if (n != null && !n.equals(bna.getConcentration())) {
 				double conc = n.doubleValue();
 				bna.setConcentration(conc);
 			}
@@ -129,31 +129,44 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("concentrationMin")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
-			if (n != null && !n.equals(bna.getConcentrationStart())) {
+			if (n != null && !n.equals(bna.getConcentrationMin())) {
 				double concentrationMin = n.doubleValue();
-				bna.setConcentrationMin(concentrationMin);
+				if (concentrationMin <= bna.getConcentrationStart()) {
+					bna.setConcentrationMin(concentrationMin);
+				} else {
+					MyPopUp.getInstance().show("Violation", "Minimum > start");
+				}
 			}
 		} else if (source.equals("concentrationStart")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
 			if (n != null && !n.equals(bna.getConcentrationStart())) {
 				double concentrationStart = n.doubleValue();
-				bna.setConcentrationStart(concentrationStart);
-				bna.setConcentration(bna.getConcentrationStart());
+				if (concentrationStart >= bna.getConcentrationMin()
+						&& concentrationStart <= bna.getConcentrationMax()) {
+					bna.setConcentrationStart(concentrationStart);
+					bna.setConcentration(bna.getConcentrationStart());
+				} else {
+					MyPopUp.getInstance().show("Violation", "Start > minimum or start < maximum");
+				}
 			}
 		} else if (source.equals("concentrationMax")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
-			if (n != null && !n.equals(bna.getConcentrationStart())) {
+			if (n != null && !n.equals(bna.getConcentrationMax())) {
 				double concentrationMax = n.doubleValue();
-				bna.setConcentrationMax(concentrationMax);
+				if (concentrationMax >= bna.getConcentrationStart()) {
+					bna.setConcentrationMax(concentrationMax);
+				} else {
+					MyPopUp.getInstance().show("Violation", "Maximum < start");
+				}
 			}
 		}
 		// for Places
 		else if (source.equals("token")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
-			if (n != null && !n.equals(p.getTokenStart())) {
+			if (n != null && !n.equals(p.getToken())) {
 				double tokens = n.doubleValue();
 				p.setToken(tokens);
 			}
@@ -161,51 +174,56 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("tokenMin")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
-			if (n != null){ 
+			if (n != null && !n.equals(p.getTokenMin())) {
 				double tokenMin = n.doubleValue();
-				if(tokenMin <= p.getTokenStart()) {
-				p.setTokenMin(tokenMin);
-				pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
-				Boundary b;
-				if (pw.getChangedBoundaries().containsKey(p)) {
-					b = pw.getChangedBoundaries().get(p);
+				if (tokenMin <= p.getTokenStart()) {
+					p.setTokenMin(tokenMin);
+					pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
+					Boundary b;
+					if (pw.getChangedBoundaries().containsKey(p)) {
+						b = pw.getChangedBoundaries().get(p);
+					} else {
+						b = new Boundary();
+						pw.getChangedBoundaries().put(p, b);
+					}
+					b.setLowerBoundary(tokenMin);
 				} else {
-					b = new Boundary();
-					pw.getChangedBoundaries().put(p, b);
+					MyPopUp.getInstance().show("Violation", "Minimum > start");
 				}
-				b.setLowerBoundary(tokenMin);
-				}else{
-					MyPopUp.getInstance().show("Violation", "Minimum < start");
-				}
-
 			}
 		} else if (source.equals("tokenStart")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
 			if (n != null && !n.equals(p.getTokenStart())) {
-
-				double tokenStart = n.doubleValue();// Double.parseDouble(((JFormattedTextField)
-				// .getSource()).getValue()+"");
-				p.setTokenStart(tokenStart);
-				p.setToken(p.getTokenStart());
-				pw.handleChangeFlags(ChangedFlags.INITIALVALUE_CHANGED);
-				pw.getChangedInitialValues().put(p, tokenStart);
+				double tokenStart = n.doubleValue();
+				if (tokenStart >= p.getTokenMin() && tokenStart <= p.getTokenMax()) {
+					p.setTokenStart(tokenStart);
+					p.setToken(p.getTokenStart());
+					pw.handleChangeFlags(ChangedFlags.INITIALVALUE_CHANGED);
+					pw.getChangedInitialValues().put(p, tokenStart);
+				} else {
+					MyPopUp.getInstance().show("Violation", "Start > minimum or start < maximum");
+				}
 			}
 		} else if (source.equals("tokenMax")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			Place p = (Place) geb;
-			if (n != null && !n.equals(p.getTokenStart())) {
+			if (n != null && !n.equals(p.getTokenMax())) {
 				double tokenMax = n.doubleValue();
-				p.setTokenMax(tokenMax);
-				pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
-				Boundary b;
-				if (pw.getChangedBoundaries().containsKey(p)) {
-					b = pw.getChangedBoundaries().get(p);
+				if (tokenMax >= p.getTokenStart()) {
+					p.setTokenMax(tokenMax);
+					pw.handleChangeFlags(ChangedFlags.BOUNDARIES_CHANGED);
+					Boundary b;
+					if (pw.getChangedBoundaries().containsKey(p)) {
+						b = pw.getChangedBoundaries().get(p);
+					} else {
+						b = new Boundary();
+						pw.getChangedBoundaries().put(p, b);
+					}
+					b.setUpperBoundary(tokenMax);
 				} else {
-					b = new Boundary();
-					pw.getChangedBoundaries().put(p, b);
+					MyPopUp.getInstance().show("Violation", "Maximum < start");
 				}
-				b.setUpperBoundary(tokenMax);
 			}
 		}
 		// for Transitions
@@ -214,7 +232,7 @@ public class PropertyWindowListener implements FocusListener {
 			if (geb instanceof DiscreteTransition) {
 				DiscreteTransition p = (DiscreteTransition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!text.equals("") && !text.equals(p.getDelay()+"")) {
+				if (!text.equals("") && !text.equals(p.getDelay() + "")) {
 					double delay = Double.parseDouble(text);
 					p.setDelay(delay);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -226,7 +244,6 @@ public class PropertyWindowListener implements FocusListener {
 				Transition t = (Transition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
 				if (!text.equals("") && !text.equals(t.getFiringCondition())) {
-
 					((Transition) geb).setFiringCondition(text.trim());
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
@@ -254,9 +271,9 @@ public class PropertyWindowListener implements FocusListener {
 				Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes().iterator();
 				while (j.hasNext()) {
 					node = j.next();
-					if (node.equals(neighbour) && (((JComboBox) event.getSource()).getSelectedItem().equals(ContinuousTransition.class.getName())
+					if (node.equals(neighbour) && (((JComboBox) event.getSource()).getSelectedItem()
+							.equals(ContinuousTransition.class.getName())
 							&& node.getBiologicalElement().equals(Elementdeclerations.place))) {
-
 						JOptionPane.showMessageDialog(MainWindow.getInstance(),
 								"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
 								"Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
@@ -297,7 +314,8 @@ public class PropertyWindowListener implements FocusListener {
 				}
 			}
 
-			Place newP = new Place(p.getLabel(), p.getName(), 0, ((JComboBox) event.getSource()).getSelectedItem().equals("discrete"));
+			Place newP = new Place(p.getLabel(), p.getName(), 0,
+					((JComboBox) event.getSource()).getSelectedItem().equals("discrete"));
 			graphInstance.getPathway().addVertex(newP, new Point());
 			newP.setToken(p.getToken());
 			newP.setTokenMax(p.getTokenMax());
@@ -320,7 +338,7 @@ public class PropertyWindowListener implements FocusListener {
 		else if (source.equals("activationProb")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getProbability()+"")) {
+			if (!text.equals("") && !text.equals(e.getProbability() + "")) {
 				double prob = Double.parseDouble(text);
 				e.setProbability(prob);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -328,7 +346,7 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("activationPrio")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getPriority()+"")) {
+			if (!text.equals("") && !text.equals(e.getPriority() + "")) {
 				int prob = Integer.parseInt(text);
 				e.setPriority(prob);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -343,18 +361,26 @@ public class PropertyWindowListener implements FocusListener {
 		} else if (source.equals("lowBoundary")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getLowerBoundary()+"")) {
+			if (!text.equals("") && !text.equals(e.getLowerBoundary() + "")) {
 				double lowBoundary = Double.parseDouble(text);
-				e.setLowerBoundary(lowBoundary);
-				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				if (lowBoundary <= e.getUpperBoundary() || e.getUpperBoundary() == 0) {
+					e.setLowerBoundary(lowBoundary);
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}else{
+					MyPopUp.getInstance().show("Violation", "lower boundary > upper boundary");
+				}
 			}
 		} else if (source.equals("upBoundary")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getUpperBoundary()+"")) {
+			if (!text.equals("") && !text.equals(e.getUpperBoundary() + "")) {
 				double upperBoundary = Double.parseDouble(text);
+				if(upperBoundary >= e.getLowerBoundary()){
 				e.setUpperBoundary(upperBoundary);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}else{
+					MyPopUp.getInstance().show("Violation", "upper boundary < lower boundary");
+				}
 			}
 		}
 		// ContainerSingelton.getInstance().changeMouseFunction("edit");
