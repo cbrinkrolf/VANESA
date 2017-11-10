@@ -988,7 +988,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		if (!pw.isPetriNet() || !pw.hasGotAtLeastOneElement()) {
 			return;
 		}
-		System.out.println("init Graphs");
+		//System.out.println("init Graphs");
 		// pane.removeAll();
 
 		renderer = new XYLineAndShapeRenderer();
@@ -1047,7 +1047,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				if (pickedV == 0 && pickedE == 1) {
 					return idx2simR1.get(seriesIdx).getName()+"("+labelsR1.get(seriesIdx)+")";
 				}
-				return labelsR1.get(seriesIdx);
+				if(labelsR1.size() > seriesIdx){
+					return labelsR1.get(seriesIdx);
+				}
+				return "";
 			}
 		});
 

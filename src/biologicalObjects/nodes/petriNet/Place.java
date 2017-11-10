@@ -26,21 +26,22 @@ public class Place extends PNNode {
 	private double tokenMax = Double.MAX_VALUE;
 	private double tokenStart = 0;
 
-	private boolean discrete = true;
+	//private boolean discrete = true;
 
 	private Color plotColor;
 
-	public boolean isDiscrete() {
-		return discrete;
-	}
+	//public boolean isDiscrete() {
+		//return discrete;
+	//}
 
 	public void setDiscrete(boolean discrete) {
+		super.setDiscrete(discrete);
 		if (discrete) {
 			setBiologicalElement(Elementdeclerations.place);
 		} else {
 			setBiologicalElement(Elementdeclerations.s_place);
 		}
-		this.discrete = discrete;
+		//this.discrete = discrete;
 	}
 
 	public double getTokenStart() {
@@ -64,8 +65,8 @@ public class Place extends PNNode {
 			setName(label);
 		shapes = new VertexShapes();
 		// System.out.println("new place");
-		this.discrete = discrete;
-
+		//this.discrete = discrete;
+		setDiscrete(discrete);
 		if (discrete) {
 			setDefaultShape(shapes.getEllipse());
 		} else {

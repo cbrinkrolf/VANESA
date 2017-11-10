@@ -265,8 +265,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			String atname, atsvalue;
 			double atdvalue;
 
-			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries = new ArrayList<>(),
-					annotationentries = new ArrayList<>(), graphpropertiesentries = new ArrayList<>();
+			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries = new ArrayList<>(), annotationentries = new ArrayList<>(),
+					graphpropertiesentries = new ArrayList<>();
 
 			for (NodeAttribute att : bna.getNodeAttributes()) {
 				atname = att.getName();
@@ -368,8 +368,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(new JLabel("Linked to Pathway"), "gap 5 ");
 				boolean b = ((PathwayMap) ab).getPathwayLink() == null;
 				JCheckBox linked = new JCheckBox("", !b);
-				linked.setToolTipText(
-						"Shows whether there is a connected Pathway in Memory to this Map (uncheck the Box to delete that Pathway)");
+				linked.setToolTipText("Shows whether there is a connected Pathway in Memory to this Map (uncheck the Box to delete that Pathway)");
 				linked.setActionCommand("pathwayLink");
 				linked.addActionListener(this);
 				linked.setEnabled(!b);
@@ -531,9 +530,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			} else if (ab instanceof Transition) {
 				JLabel lswitchTrans = new JLabel("Transition Type");
-				JComboBox<String> transList = new JComboBox<String>(new String[] {
-						DiscreteTransition.class.getSimpleName(), ContinuousTransition.class.getSimpleName(),
-						StochasticTransition.class.getSimpleName() });
+				JComboBox<String> transList = new JComboBox<String>(new String[] { DiscreteTransition.class.getSimpleName(),
+						ContinuousTransition.class.getSimpleName(), StochasticTransition.class.getSimpleName() });
 				transList.setSelectedItem(ab.getClass().getCanonicalName());
 				transList.setName("transList");
 				transList.addFocusListener(pwl);
@@ -733,24 +731,32 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else {
 			this.ref = null;
 		}
+		// dirty hack that pane is always empty
+		this.removeAllElements();
 
 		if (emptyPane) {
+			// System.out.println("empty");
 			updateWindow(graphInstance.getSelectedObject());
 			p.setVisible(true);
 			p.repaint();
 			p.revalidate();
 			emptyPane = false;
+			// System.out.println("done");
 		} else {
-			// try{
-
+			// System.out.println("else");
+			// System.out.println("begin");
 			Thread worker = new Thread() {
 				public void run() {
 					// dirty hack
 					try {
 						p.removeAll();
+						// removeAllElements();
+						// System.out.println("begin");
 					} catch (Exception e) {
+						e.printStackTrace();
 						revalidateView();
 					}
+					// System.out.println("swing");
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							updateWindow(graphInstance.getSelectedObject());
@@ -800,16 +806,15 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("pathwayLink".equals(event)) {
 			if (JOptionPane.showConfirmDialog(w,
 					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
-					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION && ab instanceof PathwayMap) {
+					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION
+					&& ab instanceof PathwayMap) {
 				((PathwayMap) ab).setPathwayLink(null);
 				w.updateElementTree();
 				w.updatePathwayTree();
 				ab.setColor(Color.white);
 			}
 			w.updateElementProperties();
-		} else if (("hideNeighbours".equals(event) || ("showNeighbours".equals(event)))
-				&& ab instanceof BiologicalNodeAbstract) {
+		} else if (("hideNeighbours".equals(event) || ("showNeighbours".equals(event))) && ab instanceof BiologicalNodeAbstract) {
 			// TODO visible wird noch nicht gehandelt in transformators
 			Pathway pw = graphInstance.getPathway();
 			boolean hide = "hideNeighbours".equals(event);
@@ -838,8 +843,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			Pathway pw = graphInstance.getPathway();
 			PNEdge edge = (PNEdge) ab;
 
-			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(),
-					edge.getBiologicalElement(), edge.getFunction());
+			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(), edge.getBiologicalElement(),
+					edge.getFunction());
 			newEdge.setUpperBoundary(edge.getUpperBoundary());
 			newEdge.setLowerBoundary(edge.getLowerBoundary());
 			newEdge.setProbability(edge.getProbability());
@@ -992,18 +997,18 @@ public class ElementWindow implements ActionListener, ItemListener {
 			String result = "";
 			while (it.hasNext()) {
 				BiologicalNodeAbstract bna = it.next();
-				
+
 				if (bna instanceof Place) {
 					Place place = (Place) bna;
-					if(place.hasConflictProperties()){
+					if (place.hasConflictProperties()) {
 						result += place.getName() + "\n";
 					}
-					//place.solveConflictProperties();
+					// place.solveConflictProperties();
 				}
 			}
 			String message = "No conflicts found!";
-			if(result.length() > 0){
-				message = "Following conflicting places found: "+result;
+			if (result.length() > 0) {
+				message = "Following conflicting places found: " + result;
 			}
 			MyPopUp.getInstance().show("Checking conflicts", message);
 		}

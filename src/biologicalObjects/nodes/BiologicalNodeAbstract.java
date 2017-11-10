@@ -73,9 +73,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private Point2D parentNodeDistance = new Point2D.Double(0,0);
 	private boolean deleted = false;
 	
+	//TODO in GUI
+	private boolean discrete = false;
+	
 	// BNA has constant value
 	private boolean constant = false;
 	
+	//TODO in GUI
 	private double concentration = 1;
 	private double concentrationMin = 0.0;
 	private double concentrationMax = Double.MAX_VALUE;
@@ -1501,5 +1505,15 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 
 	public void setConcentrationStart(double concentrationStart) {
 		this.concentrationStart = concentrationStart;
+	}
+
+
+	public boolean isDiscrete() {
+		return discrete;
+	}
+
+
+	public void setDiscrete(boolean discrete) {
+		this.discrete = discrete;
 	}
 }
