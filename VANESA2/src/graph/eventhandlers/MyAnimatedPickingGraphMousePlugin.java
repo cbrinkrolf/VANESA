@@ -23,7 +23,8 @@ public class MyAnimatedPickingGraphMousePlugin extends PickingGraphMousePlugin<B
 		super.mouseReleased(e);
 		//System.out.println("drin");
 		//System.out.println("v: "+vertex);
-		final VisualizationViewer<BiologicalNodeAbstract,BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract >) e.getSource();
+		
+		final VisualizationViewer<BiologicalNodeAbstract,BiologicalEdgeAbstract> vv = graphInstance.getPathway().getGraph().getVisualizationViewer();
 	    vv.getPickedVertexState().getPicked().size() ; 
 		if (vv.getPickedVertexState().getPicked().size()  == 1) {
 	    	  //System.out.println("drin2");

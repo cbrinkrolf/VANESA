@@ -10,6 +10,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
 import gui.MainWindow;
+import gui.MyPopUp;
 
 public class Settings extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -4497946706066898835L;
@@ -119,8 +120,7 @@ public class Settings extends JDialog implements ActionListener {
 			if (apply_all) {
 				this.setVisible(false);
 			} else {
-				JOptionPane.showMessageDialog(this,
-						"Error found - please change settings!");
+				MyPopUp.getInstance().show("Error", "Error found - please change settings!");
 			}
 		}
 	}

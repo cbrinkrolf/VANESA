@@ -334,16 +334,16 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			}
 			File yamlFile = new File(loadedYaml);
 			if (yamlFile.exists()) {
-				yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
+				yamlToObject = new YamlToObjectParser(loadedYaml);
 				beansList = yamlToObject.startConfig();
 			} else {
 				loadedYaml = VisualizationDialog.DEFAULTYAML;
-				yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
+				yamlToObject = new YamlToObjectParser(loadedYaml);
 				beansList = yamlToObject.startConfig();
 			}
 		} else {
 			loadedYaml = VisualizationDialog.DEFAULTYAML;
-			yamlToObject = new YamlToObjectParser(this.getContentPane(), loadedYaml);
+			yamlToObject = new YamlToObjectParser(loadedYaml);
 			beansList = yamlToObject.startConfig();
 		}
 	}

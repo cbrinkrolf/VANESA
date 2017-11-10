@@ -47,9 +47,7 @@ public class LabelToDataMappingWindow {
 	public LabelToDataMappingWindow() throws IOException, InputFormatException {
 		// Check for open pathways, if not shoe message
 		if (GraphContainer.getInstance().getPathwayNumbers() == 0) {
-			JOptionPane.showMessageDialog(MainWindow.getInstance(),
-					"Please load or create a network first.",
-					"no network found", JOptionPane.WARNING_MESSAGE);
+			MyPopUp.getInstance().show("Error", "Please create a network before.");
 			return;
 		}
 
@@ -66,8 +64,7 @@ public class LabelToDataMappingWindow {
 		case JFileChooser.CANCEL_OPTION:
 			break;
 		case JFileChooser.ERROR_OPTION:
-			JOptionPane.showMessageDialog(MainWindow.getInstance(),
-					"Error while loading file.");
+			MyPopUp.getInstance().show("Error", "Error while loading file.");
 			break;
 
 		default:
@@ -107,8 +104,7 @@ public class LabelToDataMappingWindow {
 			// Close the input stream
 			br.close();
 		} catch (FileNotFoundException fnfe) {
-			JOptionPane.showMessageDialog(MainWindow.getInstance(),
-					"Error while loading file.");
+			MyPopUp.getInstance().show("Error", "Error while loading file, file not found.");
 			return false;
 		}
 
@@ -137,14 +133,11 @@ public class LabelToDataMappingWindow {
 		// lines.forEach(line -> processLine(line));
 		// }
 
-		JOptionPane.showMessageDialog(MainWindow.getInstance(),
-				successfulmappings + " of " + datamapping.size()
+		MyPopUp.getInstance().show("Information", successfulmappings + " of " + datamapping.size()
 						+ " entries \nhave been mapped and updated.\n\n("
 						+ MainWindow.getInstance().getCurrentPathway()
 						+ ")");
-
 		return true;
-
 	}
 
 	/**

@@ -15,7 +15,6 @@ import java.util.TreeSet;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -35,6 +34,7 @@ import graph.algorithms.NodeAttributeNames;
 import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
+import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -81,7 +81,7 @@ public class ClusterDataUploadWindow extends JFrame {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			// setResizable(false);
 		}else
-			JOptionPane.showMessageDialog(null, "please load or create a network");
+			MyPopUp.getInstance().show("Error", "Please create a network before.");
 
 	}
 
@@ -307,10 +307,7 @@ public class ClusterDataUploadWindow extends JFrame {
 									experimentArray, mappingsarray, helper)) {
 								SwingUtilities.invokeLater(new Runnable() {
 									public void run() {
-										JOptionPane.showMessageDialog(
-												MainWindow
-														.getInstance(),
-												"Queue is at maximum capacity!");
+										MyPopUp.getInstance().show("Error", "Queue is at maximum capacity!");
 									}
 								});
 							}
@@ -318,14 +315,7 @@ public class ClusterDataUploadWindow extends JFrame {
 						} catch (NotBoundException nbe) {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
-									JOptionPane
-											.showMessageDialog(
-													MainWindow
-															.getInstance()
-															.returnFrame(),
-													"RMI Interface could not be established.",
-													"Error",
-													JOptionPane.ERROR_MESSAGE);
+									MyPopUp.getInstance().show("Error", "RMI Interface could not be established.");
 								}
 							});
 							nbe.printStackTrace();
@@ -333,11 +323,7 @@ public class ClusterDataUploadWindow extends JFrame {
 						} catch (RemoteException re) {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
-									JOptionPane.showMessageDialog(
-											MainWindow.getInstance()
-													.returnFrame(),
-											"Cluster not reachable.", "Error",
-											JOptionPane.ERROR_MESSAGE);
+									MyPopUp.getInstance().show("Error", "Cluster not reachable.");
 								}
 							});
 							re.printStackTrace();
@@ -345,22 +331,12 @@ public class ClusterDataUploadWindow extends JFrame {
 						} catch (MalformedURLException mue) {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
-									JOptionPane
-											.showMessageDialog(
-													MainWindow
-															.getInstance()
-															.returnFrame(),
-													"Clusteradress could not be resolved.",
-													"Error",
-													JOptionPane.ERROR_MESSAGE);
+									MyPopUp.getInstance().show("Error", "Clusteradress could not be resolved.");
 								}
 							});
 							mue.printStackTrace();
-
 						}
-
 					}
-
 				}
 			});
 

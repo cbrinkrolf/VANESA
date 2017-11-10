@@ -23,15 +23,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.swing.JOptionPane;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
@@ -47,6 +44,7 @@ import graph.gui.EdgeDialog;
 import graph.gui.PetriNetVertexDialog;
 import graph.gui.VertexDialog;
 import gui.MainWindow;
+import gui.MyPopUp;
 
 /**
  * A plugin that can create vertices, undirected edges, and directed edges using
@@ -118,8 +116,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 		pw = graphInstance.getPathway();
 		if (checkModifiers(e)) {
 			
-			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-					.getSource();
+			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph().getVisualizationViewer();
 			// final Point2D p = vv.inverseViewTransform(e.getPoint());
 			// System.out.println("Points: "+e.getPoint().getX()+", "+e.getPoint().getY());
 			final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
@@ -277,8 +274,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 	public void mouseReleased(MouseEvent e) {
 		pw = graphInstance.getPathway();
 		if (checkModifiers(e)) {
-			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer) e
-					.getSource();
+			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph().getVisualizationViewer();
 			//final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
 			//		.inverseTransform(e.getPoint());
 			//int v = vv.getPickedVertexState().getPicked().size();
@@ -302,26 +298,9 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 				// .getNodeByVertexID(vertex.toString());
 
 				if (pw.isPetriNet()
-						&& !((start instanceof Place && end instanceof Transition) || (start instanceof Transition && end instanceof Place)))
-					JOptionPane
-							.showMessageDialog(
-									MainWindow.getInstance(),
-									"In a petri net only Transition->Place and Place->Transition Relations are allowed!",
-									"Unallowed Operation...",
-									JOptionPane.ERROR_MESSAGE);
-
-				else if ((start instanceof ContinuousTransition
-						&& end instanceof Place && ((Place) end).isDiscrete())
-						|| (end instanceof ContinuousTransition
-								&& start instanceof Place && ((Place) start)
-									.isDiscrete()))
-					JOptionPane
-							.showMessageDialog(
-									MainWindow.getInstance(),
-									"Relations between discrete Places and Continoues Transitions are not possible!",
-									"Unallowed Operation...",
-									JOptionPane.ERROR_MESSAGE);
-				else {
+						&& !((start instanceof Place && end instanceof Transition) || (start instanceof Transition && end instanceof Place))){
+					MyPopUp.getInstance().show("Operation not allowed", "In a petri net only Transition->Place and Place->Transition Relations are allowed!");
+				} else {
 					// Graph graph = vv.getGraphLayout().getGraph();
 					EdgeDialog dialog = new EdgeDialog(startVertex, vertex);
 					Pair<String[], BiologicalNodeAbstract[]> answer = dialog.getAnswer();
@@ -332,12 +311,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						if (answers[2] != null && pw.isPetriNet()
 								&& (answers[2].toLowerCase().contains("inhibi") || answers[2].toLowerCase().contains("test"))
 								&& !(startVertex instanceof Place && vertex instanceof Transition)){
-							JOptionPane
-									.showMessageDialog(
-											MainWindow.getInstance(),
-											"Inhibitory / Test Edges are only possible from Place to Transition!",
-											"Unallowed Operation...",
-											JOptionPane.ERROR_MESSAGE);
+							MyPopUp.getInstance().show("Operation not allowed", "Inhibitory / Test Edges are only possible from Place to Transition!");
 						} else {
 							String name = answers[0];
 							String label = answers[0];
@@ -389,8 +363,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 					transformArrowShape(down, e.getPoint());
 				}
 			}
-			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-					.getSource();
+			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph().getVisualizationViewer();
 			vv.repaint();
 		}
 	}

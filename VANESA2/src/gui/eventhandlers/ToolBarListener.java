@@ -26,6 +26,7 @@ import graph.hierarchies.AutoCoarse;
 import graph.jung.classes.MyGraph;
 import gui.InfoWindow;
 import gui.MainWindow;
+import gui.MyPopUp;
 import gui.ParallelChooseGraphsWindow;
 import petriNet.ConvertToPetriNet;
 import petriNet.OpenModellicaResult;
@@ -49,13 +50,11 @@ public class ToolBarListener implements ActionListener {
 	}
 	
 	public void showCreateBeforeMessage() {
-		JOptionPane.showMessageDialog(MainWindow.getInstance(),
-				"Please create a network first!");
+		MyPopUp.getInstance().show("Error", "Please create a network first!");
 	}
 
 	public void showCreate2NetworksMessage() {
-		JOptionPane.showMessageDialog(MainWindow.getInstance(),
-				"Please create two networks first!");
+		MyPopUp.getInstance().show("Error", "Please create a network first!");
 	}
 	
 	@Override

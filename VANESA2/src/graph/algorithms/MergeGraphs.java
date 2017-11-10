@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import biologicalElements.Pathway;
 import graph.CreatePathway;
 import gui.MainWindow;
+import gui.MyPopUp;
 import xmlInput.sbml.VAMLInput;
 import xmlOutput.sbml.VAMLoutput;
 
@@ -56,9 +56,9 @@ public class MergeGraphs {
 		MainWindow.getInstance().updateProjectProperties();
 		MainWindow.getInstance().updateOptionPanel();
 
-		if (showMessage) JOptionPane.showMessageDialog(null,
-				"The graphs have been merged and are visualized in a new tab.");
-		
+		if (showMessage){
+			MyPopUp.getInstance().show("Finished", "The graphs have been merged and are visualized in a new tab.");
+		}
 		
 		
 //		pw_new.getGraph().changeToGEMLayout();

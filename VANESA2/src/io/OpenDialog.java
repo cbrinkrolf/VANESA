@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.xml.stream.XMLStreamException;
@@ -21,6 +20,7 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
+import gui.MyPopUp;
 import gui.ProgressBar;
 import xmlInput.sbml.JSBMLinput;
 import xmlInput.sbml.VAMLInput;
@@ -141,10 +141,8 @@ public class OpenDialog extends SwingWorker {
 					try {
 						new VAMLInput(file);
 					} catch (XMLStreamException e) {
-						JOptionPane.showMessageDialog(MainWindow.getInstance(),
-								"An error occured during the loading. "
-										+ "The VAML file is not valid.",
-								"VAML read error", JOptionPane.ERROR_MESSAGE);
+						MyPopUp.getInstance().show("VAML read error.", "An error occured during the loading. "
+								+ "The VAML file is not valid.");
 						e.printStackTrace();
 					}
 				} catch (IOException e) {
@@ -158,8 +156,7 @@ public class OpenDialog extends SwingWorker {
 					try {
 						result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file.getName());
 						if(result.length() > 0){
-							JOptionPane.showMessageDialog(MainWindow.getInstance(),
-									result);
+							MyPopUp.getInstance().show("Information", result);
 						}
 						
 					} catch (FileNotFoundException e) {
@@ -167,8 +164,7 @@ public class OpenDialog extends SwingWorker {
 							file = new File(file.getAbsolutePath()+".sbml");
 							result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file.getName());
 							if(result.length() > 0){
-								JOptionPane.showMessageDialog(MainWindow.getInstance(),
-										result);
+								MyPopUp.getInstance().show("Information", result);
 							}
 							
 						} catch (FileNotFoundException ex) {

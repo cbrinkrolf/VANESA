@@ -89,8 +89,7 @@ public abstract class ChooseGraphsWindow extends JFrame implements ActionListene
 			}
 			
 			if (chosen_pathways.size()<2) {
-				JOptionPane.showMessageDialog(MainWindow.getInstance(),
-				"Please select at least 2 graphs!");
+				MyPopUp.getInstance().show("Error", "Please select at least 2 graphs!");
 			}
 			else {		
 				dialog.setVisible(false);

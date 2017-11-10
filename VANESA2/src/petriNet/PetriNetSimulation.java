@@ -225,9 +225,7 @@ public class PetriNetSimulation implements ActionListener {
 								message += split[i] + "\r\n";
 							}
 						}
-
-						JOptionPane.showMessageDialog(w, message, "Warning: " + number + " expression(s) are inconsistent:",
-								JOptionPane.WARNING_MESSAGE);
+						MyPopUp.getInstance().show("Warning: " + number + " expression(s) are inconsistent:", message);
 					}
 
 					StringTokenizer tokenizer = new StringTokenizer(buildOutput, ",");
@@ -454,7 +452,7 @@ public class PetriNetSimulation implements ActionListener {
 					t1.start();
 				} else {
 					// System.out.println("something wet wrong");
-					JOptionPane.showMessageDialog(MainWindow.getInstance(), "Something wet wrong! Simulation could not be built!");
+					MyPopUp.getInstance().show("Something went wrong!", "Simulation could not be built!");
 					this.stopAction();
 				}
 
@@ -514,8 +512,7 @@ public class PetriNetSimulation implements ActionListener {
 			} catch (Exception e) {
 				MyPopUp.getInstance().show("Simulation error:", e.getMessage());
 				e.printStackTrace();
-				JOptionPane.showMessageDialog(MainWindow.getInstance(), "Something went wrong. The model couldn't be simulated!",
-						"Error occured...", JOptionPane.ERROR_MESSAGE);
+				MyPopUp.getInstance().show("Something went wrong", "The model couldn't be simulated!");
 				w.unBlurrUI();
 				this.menue.stopped();
 				this.process.destroy();
@@ -676,5 +673,4 @@ public class PetriNetSimulation implements ActionListener {
 		}
 		return libs;
 	}
-
 }

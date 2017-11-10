@@ -5,8 +5,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.JOptionPane;
-
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import database.brenda.BRENDASearch;
@@ -25,6 +23,7 @@ import database.unid.UNIDSearch;
 import graph.GraphContainer;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
+import gui.MyPopUp;
 
 public class DatabaseSearchListener implements ActionListener {
 	private DatabaseWindow dw;
@@ -119,8 +118,7 @@ public class DatabaseSearchListener implements ActionListener {
 					this.requestBrenda2Content();
 				}
 			} else {
-				JOptionPane.showConfirmDialog(MainWindow.getInstance(),
-						"Please type something into the search form.");
+				MyPopUp.getInstance().show("Error", "Please type something into the search form.");
 			}
 		} else if ("pickcommons".equals(event)) {
 			pickCommons();			
@@ -146,8 +144,7 @@ public class DatabaseSearchListener implements ActionListener {
 				}
 			}
 		} else
-			JOptionPane.showMessageDialog(null, "please load a network first.");
-
+			MyPopUp.getInstance().show("Error", "Please create a network before.");
 	}
 
 	private void pickNeighbors() {
@@ -175,6 +172,6 @@ public class DatabaseSearchListener implements ActionListener {
 				}
 			}
 		} else
-			JOptionPane.showMessageDialog(null, "please load a network first.");
+			MyPopUp.getInstance().show("Error", "Please create a network before.");
 	}
 }

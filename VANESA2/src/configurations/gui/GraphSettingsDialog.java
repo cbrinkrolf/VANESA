@@ -17,6 +17,7 @@ import configurations.NetworkSettingsSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
+import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -251,12 +252,11 @@ public class GraphSettingsDialog extends JFrame {
 				yes.setSelected(true);
 
 			} else {
-				JOptionPane.showMessageDialog(w,
-						"Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 				return false;
 			}
 		} else {
-			JOptionPane.showMessageDialog(w, "Please create a network before.");
+			MyPopUp.getInstance().show("Error", "Please create a network before.");
 			return false;
 		}
 		return true;
@@ -309,12 +309,11 @@ public class GraphSettingsDialog extends JFrame {
 				
 
 			} else {
-				JOptionPane.showMessageDialog(w,
-						"Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 				return false;
 			}
 		} else {
-			JOptionPane.showMessageDialog(w, "Please create a network before.");
+			MyPopUp.getInstance().show("Error", "Please create a network before.");
 			return false;
 		}
 		return true;
