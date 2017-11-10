@@ -43,7 +43,7 @@ public class ConvertMetabolicNet {
 	}
 
 	public ConvertMetabolicNet() {
-		int answer = JOptionPane.YES_NO_OPTION;
+		/*int answer = JOptionPane.YES_NO_OPTION;
 		if (!graphInstance.getPathway().getAllGraphNodes().isEmpty())
 			answer = JOptionPane.showOptionDialog(
 					MainWindow.getInstance(),
@@ -56,7 +56,7 @@ public class ConvertMetabolicNet {
 			GraphContainer.getInstance().setPetriView(false);
 			return;
 		}
-
+	*/
 		GraphContainer.getInstance().setPetriView(true);
 		prop = new petriNetProperties();
 		// System.out.println("alle knoten: "+GraphInstance.getMyGraph().getAllvertices());
@@ -77,7 +77,7 @@ public class ConvertMetabolicNet {
 		BiologicalNodeAbstract bna;
 		BiologicalNodeAbstract bna2;
 		Place p;
-		Transition t;
+		ContinuousTransition ct;
 		while (it.hasNext()) {
 
 			bna = it.next();
@@ -87,7 +87,7 @@ public class ConvertMetabolicNet {
 			// System.out.println("Label: "+bna.getLabel());
 			// System.out.println("V-name: "+bna.getVertex().toString());
 			p = new Place(bna.getLabel(), bna.getName(), this.initialTokens,
-					answer == JOptionPane.YES_OPTION);
+					bna.isDiscrete());
 			p.setTokenStart(this.initialTokens);
 			//p.setTokenMax(1000);
 
@@ -99,14 +99,14 @@ public class ConvertMetabolicNet {
 			// System.out.println("x: "+x+" y: "+y);
 			// pw.getGraph().moveVertex(p.getVertex(), scaleFactor*
 			// x,scaleFactor* y);
-			pw.addVertex(p,
-					new Point2D.Double(scaleFactor * x, scaleFactor * y));
+			pw.addVertex(p, new Point2D.Double(scaleFactor * x, scaleFactor * y));
 			
 			// this.graphRepresentation.getAllVertices();
 			node2place.put(bna, p);
 			}else if(bna instanceof Enzyme){
-				t = new ContinuousTransition(bna.getLabel(), bna.getName());
-				t.setColor(bna.getColor());
+				ct = new ContinuousTransition(bna.getLabel(), bna.getName());
+				ct.setColor(bna.getColor());
+				ct.setMaximumSpeed(((Enzyme) bna).getMaximumSpeed());
 				// System.out.println("Vertex: "+p.getName());
 				// System.out.println("x: "+locations.getLocation(bna.getVertex()).getX());
 				double x = pwOld.getGraph().getVertexLocation(bna).getX();// locations.getLocation(bna.getVertex()).getX();
@@ -114,9 +114,9 @@ public class ConvertMetabolicNet {
 				// System.out.println("x: "+x+" y: "+y);
 				// pw.getGraph().moveVertex(p.getVertex(), scaleFactor*
 				// x,scaleFactor* y);
-				pw.addVertex(t,
+				pw.addVertex(ct,
 						new Point2D.Double(scaleFactor * x, scaleFactor * y));
-				node2place.put(bna, t);
+				node2place.put(bna, ct);
 			}
 
 		}
@@ -226,7 +226,7 @@ public class ConvertMetabolicNet {
 			}
 		}
 		if (pw.countNodes() > 0){
-			new PNTableDialog().setVisible(true);
+			//new PNTableDialog().setVisible(true);
 		}
 		pw.getGraph().normalCentering();
 		
