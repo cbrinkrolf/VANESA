@@ -32,4 +32,9 @@ public class Parameter {
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
+	
+	@Override
+	public Parameter clone(){
+		return new Parameter(this.name, this.value, this.unit);
+	}
 }
