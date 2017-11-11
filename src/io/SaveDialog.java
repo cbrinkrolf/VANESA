@@ -258,6 +258,11 @@ public class SaveDialog {
 			if (out.length() > 0) {
 				MyPopUp.getInstance().show("Error", out);
 			} else {
+				//System.out.println(file.getName());
+				GraphContainer.getInstance().renamePathway(GraphInstance.getPathwayStatic(), file.getName());
+				GraphInstance.getPathwayStatic().setName(file.getName());
+				GraphInstance.getPathwayStatic().setTitle(file.getName());
+				MainWindow.getInstance().renameSelectedTab(file.getName());
 				MyPopUp.getInstance().show("JSbml export", "Saving was successful!");
 			}
 

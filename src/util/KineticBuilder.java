@@ -26,59 +26,65 @@ public class KineticBuilder {
 		if (bna.getParameter("v_f") == null) {
 			bna.getParameters().add(new Parameter("v_f", 1, "mmol/s"));
 		}
-		Iterator<BiologicalEdgeAbstract> itBea = substrateEdges.iterator();
+		Iterator<BiologicalEdgeAbstract> itBea = null;
 		int weight;
 		int substrates = 0;
 		int products = 0;
-		while (itBea.hasNext()) {
-			weight = 1;
-			substrates++;
-			bea = itBea.next();
-			if (bea.getLabel().length() > 0) {
-				try {
-					weight = Integer.parseInt(bea.getLabel());
-				} catch (Exception e) {
-					e.printStackTrace();
+		if (substrateEdges != null) {
+			itBea = substrateEdges.iterator();
+
+			while (itBea.hasNext()) {
+				weight = 1;
+				substrates++;
+				bea = itBea.next();
+				if (bea.getLabel().length() > 0) {
+					try {
+						weight = Integer.parseInt(bea.getLabel());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-			}
-			sb.append(" * ");
-			if (weight > 1) {
-				sb.append("(");
-			}
-			sb.append(bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
-			if (bna.getParameter("km_" + bea.getFrom().getName()) == null) {
-				bna.getParameters().add(new Parameter("km_" + bea.getFrom().getName(), 1, "mmol"));
-			}
-			if (weight > 1) {
-				sb.append(")^" + weight);
+				sb.append(" * ");
+				if (weight > 1) {
+					sb.append("(");
+				}
+				sb.append(bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
+				if (bna.getParameter("km_" + bea.getFrom().getName()) == null) {
+					bna.getParameters().add(new Parameter("km_" + bea.getFrom().getName(), 1, "mmol"));
+				}
+				if (weight > 1) {
+					sb.append(")^" + weight);
+				}
 			}
 		}
 		sb.append(" - v_r ");
 		if (bna.getParameter("v_r") == null) {
 			bna.getParameters().add(new Parameter("v_r", 1, "mmol/s"));
 		}
-		itBea = productEdges.iterator();
-		while (itBea.hasNext()) {
-			weight = 1;
-			products++;
-			bea = itBea.next();
-			if (bea.getLabel().length() > 0) {
-				try {
-					weight = Integer.parseInt(bea.getLabel());
-				} catch (Exception e) {
-					e.printStackTrace();
+		if (productEdges != null) {
+			itBea = productEdges.iterator();
+			while (itBea.hasNext()) {
+				weight = 1;
+				products++;
+				bea = itBea.next();
+				if (bea.getLabel().length() > 0) {
+					try {
+						weight = Integer.parseInt(bea.getLabel());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-			}
-			sb.append(" * ");
-			if (weight > 1) {
-				sb.append("(");
-			}
-			sb.append(bea.getTo().getName() + " / km_" + bea.getTo().getName());
-			if (bna.getParameter("km_" + bea.getTo().getName()) == null) {
-				bna.getParameters().add(new Parameter("km_" + bea.getTo().getName(), 1, "mmol"));
-			}
-			if (weight > 1) {
-				sb.append(")^" + weight);
+				sb.append(" * ");
+				if (weight > 1) {
+					sb.append("(");
+				}
+				sb.append(bea.getTo().getName() + " / km_" + bea.getTo().getName());
+				if (bna.getParameter("km_" + bea.getTo().getName()) == null) {
+					bna.getParameters().add(new Parameter("km_" + bea.getTo().getName(), 1, "mmol"));
+				}
+				if (weight > 1) {
+					sb.append(")^" + weight);
+				}
 			}
 		}
 		sb.append(") ");
@@ -106,7 +112,8 @@ public class KineticBuilder {
 					} else if (i == 1) {
 						sb.append(" + " + bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
 					} else {
-						sb.append(" + (" + bea.getFrom().getName() + " / km_" + bea.getFrom().getName() + ")^" + weight);
+						sb.append(
+								" + (" + bea.getFrom().getName() + " / km_" + bea.getFrom().getName() + ")^" + weight);
 					}
 				}
 				sb.append(")");

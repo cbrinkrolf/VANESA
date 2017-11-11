@@ -86,9 +86,9 @@ public class ConvertMetabolicNet {
 			// System.out.println("Name: "+bna.getName());
 			// System.out.println("Label: "+bna.getLabel());
 			// System.out.println("V-name: "+bna.getVertex().toString());
-			p = new Place(bna.getLabel(), bna.getName(), this.initialTokens,
+			p = new Place(bna.getLabel(), bna.getName(), bna.getConcentration(),
 					bna.isDiscrete());
-			p.setTokenStart(this.initialTokens);
+			p.setTokenStart(bna.getConcentrationStart());
 			//p.setTokenMax(1000);
 
 			p.setColor(bna.getColor());
@@ -104,9 +104,17 @@ public class ConvertMetabolicNet {
 			// this.graphRepresentation.getAllVertices();
 			node2place.put(bna, p);
 			}else if(bna instanceof Enzyme){
-				ct = new ContinuousTransition(bna.getLabel(), bna.getName());
-				ct.setColor(bna.getColor());
+				// reaction
+				ct = new ContinuousTransition(bna.getLabel(), bna.getLabel());
+				//ct.setColor(bna.getColor());
 				ct.setMaximumSpeed(((Enzyme) bna).getMaximumSpeed());
+				
+
+				for(int i = 0; i< bna.getParameters().size(); i++){
+					ct.getParameters().add(bna.getParameters().get(i).clone());
+				}
+				//ct.setParameters(bna.getParameters());
+				
 				// System.out.println("Vertex: "+p.getName());
 				// System.out.println("x: "+locations.getLocation(bna.getVertex()).getX());
 				double x = pwOld.getGraph().getVertexLocation(bna).getX();// locations.getLocation(bna.getVertex()).getX();
@@ -114,9 +122,31 @@ public class ConvertMetabolicNet {
 				// System.out.println("x: "+x+" y: "+y);
 				// pw.getGraph().moveVertex(p.getVertex(), scaleFactor*
 				// x,scaleFactor* y);
-				pw.addVertex(ct,
-						new Point2D.Double(scaleFactor * x, scaleFactor * y));
+				pw.addVertex(ct, new Point2D.Double(scaleFactor * x, scaleFactor * y));
 				node2place.put(bna, ct);
+				
+				p = new Place(bna.getName(), bna.getName(), bna.getConcentration(),
+						bna.isDiscrete());
+				p.setTokenStart(bna.getConcentrationStart());
+				//p.setTokenMax(1000);
+
+				p.setColor(bna.getColor());
+				// System.out.println("Vertex: "+p.getName());
+				// System.out.println("x: "+locations.getLocation(bna.getVertex()).getX());
+				x = pwOld.getGraph().getVertexLocation(bna).getX();// locations.getLocation(bna.getVertex()).getX();
+				y = pwOld.getGraph().getVertexLocation(bna).getY()-100;// locations.getLocation(bna.getVertex()).getY();
+				// System.out.println("x: "+x+" y: "+y);
+				// pw.getGraph().moveVertex(p.getVertex(), scaleFactor*
+				// x,scaleFactor* y);
+				pw.addVertex(p, new Point2D.Double(scaleFactor * x, scaleFactor * y));
+				
+				
+				PNEdge edge1 = new PNEdge(p, ct, "1", "1", "discrete", "1");
+				edge1.setDirected(true);
+				pw.addEdge(edge1);
+				PNEdge edge2 = new PNEdge(ct, p, "1", "1", "discrete", "1");
+				edge2.setDirected(true);
+				pw.addEdge(edge2);
 			}
 
 		}
@@ -167,7 +197,7 @@ public class ConvertMetabolicNet {
 			// System.out.println(edge1.isDirected());
 			// System.out.println(edge1.getEdge().getClass());
 			
-			edge1.setDirected(true);
+			//edge1.setDirected(true);
 
 			pw.addEdge(edge1);
 
