@@ -1,10 +1,14 @@
 package util;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import biologicalElements.Pathway;
+import biologicalObjects.edges.Activation;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.Inhibition;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
 import graph.gui.Parameter;
@@ -15,76 +19,113 @@ public class KineticBuilder {
 		StringBuilder sb = new StringBuilder();
 		Pathway pw = GraphInstance.getPathwayStatic();
 
-		Collection<BiologicalEdgeAbstract> substrateEdges = pw.getGraph().getJungGraph().getInEdges(bna);
+		Collection<BiologicalEdgeAbstract> inEdges = pw.getGraph().getJungGraph().getInEdges(bna);
 
-		Collection<BiologicalEdgeAbstract> productEdges = pw.getGraph().getJungGraph().getOutEdges(bna);
+		Collection<BiologicalEdgeAbstract> outEdges = pw.getGraph().getJungGraph().getOutEdges(bna);
+
+		Set<BiologicalEdgeAbstract> substrateEdges = new HashSet<BiologicalEdgeAbstract>();
+		Set<BiologicalEdgeAbstract> activatorEdges = new HashSet<BiologicalEdgeAbstract>();
+		Set<BiologicalEdgeAbstract> inhibRelativeEdges = new HashSet<BiologicalEdgeAbstract>();
+		Set<BiologicalEdgeAbstract> productEdges = new HashSet<BiologicalEdgeAbstract>();
 
 		BiologicalEdgeAbstract bea;
-
-		// numerator
-		sb.append(bna.getName() + " * ( v_f");
-		if (bna.getParameter("v_f") == null) {
-			bna.getParameters().add(new Parameter("v_f", 1, "mmol/s"));
-		}
 		Iterator<BiologicalEdgeAbstract> itBea = null;
-		int weight;
-		int substrates = 0;
-		int products = 0;
-		if (substrateEdges != null) {
-			itBea = substrateEdges.iterator();
-
+		// manage inEdges
+		if (inEdges != null) {
+			itBea = inEdges.iterator();
 			while (itBea.hasNext()) {
-				weight = 1;
-				substrates++;
 				bea = itBea.next();
-				if (bea.getLabel().length() > 0) {
-					try {
-						weight = Integer.parseInt(bea.getLabel());
-					} catch (Exception e) {
-						e.printStackTrace();
+
+				if (bea instanceof Activation) {
+					activatorEdges.add(bea);
+				} else if (bea instanceof Inhibition) {
+					if (!((Inhibition) bea).isAbsoluteInhibition()) {
+						inhibRelativeEdges.add(bea);
 					}
-				}
-				sb.append(" * ");
-				if (weight > 1) {
-					sb.append("(");
-				}
-				sb.append(bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
-				if (bna.getParameter("km_" + bea.getFrom().getName()) == null) {
-					bna.getParameters().add(new Parameter("km_" + bea.getFrom().getName(), 1, "mmol"));
-				}
-				if (weight > 1) {
-					sb.append(")^" + weight);
+				} else {
+					substrateEdges.add(bea);
 				}
 			}
 		}
-		sb.append(" - v_r ");
-		if (bna.getParameter("v_r") == null) {
-			bna.getParameters().add(new Parameter("v_r", 1, "mmol/s"));
-		}
-		if (productEdges != null) {
-			itBea = productEdges.iterator();
+		// manage outEdges
+		if (outEdges != null) {
+			itBea = outEdges.iterator();
 			while (itBea.hasNext()) {
-				weight = 1;
-				products++;
 				bea = itBea.next();
-				if (bea.getLabel().length() > 0) {
-					try {
-						weight = Integer.parseInt(bea.getLabel());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				productEdges.add(bea);
+			}
+		}
+
+		// reaction concentration;
+		sb.append(bna.getName() + " ");
+		// activators
+		itBea = activatorEdges.iterator();
+		while (itBea.hasNext()) {
+			bea = itBea.next();
+			sb.append("* (1 + (" + bea.getFrom().getName() + " / kA_" + bea.getFrom().getName() + "))");
+			addParameter(bna, "kA_" + bea.getFrom().getName(), 1, "mmol");
+		}
+
+		// relative inhibitors
+		itBea = inhibRelativeEdges.iterator();
+		while (itBea.hasNext()) {
+			bea = itBea.next();
+			sb.append("* (kI_" + bea.getFrom().getName() + " / (kI_" + bea.getFrom().getName() + " + " + bea.getFrom().getName() + "))");
+			addParameter(bna, "kI_" + bea.getFrom().getName(), 1, "mmol");
+		}
+
+		// numerator
+		sb.append(" * ( v_f");
+		addParameter(bna, "v_f", 1, "mmol/s");
+		int weight;
+		int substrates = 0;
+		int products = 0;
+		itBea = substrateEdges.iterator();
+
+		while (itBea.hasNext()) {
+			weight = 1;
+			substrates++;
+			bea = itBea.next();
+			if (bea.getLabel().length() > 0) {
+				try {
+					weight = Integer.parseInt(bea.getLabel());
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				sb.append(" * ");
-				if (weight > 1) {
-					sb.append("(");
+			}
+			sb.append(" * ");
+			if (weight > 1) {
+				sb.append("(");
+			}
+			sb.append(bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
+			addParameter(bna, "km_" + bea.getFrom().getName(), 1, "mmol");
+			if (weight > 1) {
+				sb.append(")^" + weight);
+			}
+		}
+		sb.append(" - v_r ");
+		addParameter(bna, "v_r", 1, "mmol/s");
+
+		itBea = productEdges.iterator();
+		while (itBea.hasNext()) {
+			weight = 1;
+			products++;
+			bea = itBea.next();
+			if (bea.getLabel().length() > 0) {
+				try {
+					weight = Integer.parseInt(bea.getLabel());
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				sb.append(bea.getTo().getName() + " / km_" + bea.getTo().getName());
-				if (bna.getParameter("km_" + bea.getTo().getName()) == null) {
-					bna.getParameters().add(new Parameter("km_" + bea.getTo().getName(), 1, "mmol"));
-				}
-				if (weight > 1) {
-					sb.append(")^" + weight);
-				}
+			}
+			sb.append(" * ");
+			if (weight > 1) {
+				sb.append("(");
+			}
+			sb.append(bea.getTo().getName() + " / km_" + bea.getTo().getName());
+			addParameter(bna, "km_" + bea.getTo().getName(), 1, "mmol");
+			if (weight > 1) {
+				sb.append(")^" + weight);
 			}
 		}
 		sb.append(") ");
@@ -112,8 +153,7 @@ public class KineticBuilder {
 					} else if (i == 1) {
 						sb.append(" + " + bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
 					} else {
-						sb.append(
-								" + (" + bea.getFrom().getName() + " / km_" + bea.getFrom().getName() + ")^" + weight);
+						sb.append(" + (" + bea.getFrom().getName() + " / km_" + bea.getFrom().getName() + ")^" + weight);
 					}
 				}
 				sb.append(")");
@@ -155,5 +195,11 @@ public class KineticBuilder {
 			sb.append(")");
 		}
 		return sb.toString();
+	}
+
+	private static void addParameter(BiologicalNodeAbstract bna, String name, double value, String unit) {
+		if (bna.getParameter(name) == null) {
+			bna.getParameters().add(new Parameter(name, value, unit));
+		}
 	}
 }

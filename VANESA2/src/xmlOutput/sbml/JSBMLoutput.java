@@ -238,7 +238,6 @@ public class JSBMLoutput {
 			e.printStackTrace();
 			message = "\nWriting SBML file was not successful.";
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return message;
@@ -565,7 +564,7 @@ public class JSBMLoutput {
 			el.addChild(createElSub(attr, "concentrationMin"));
 			attr = oneNode.getConcentrationMax() + "";
 			el.addChild(createElSub(attr, "concentrationMax"));
-			attr = oneNode.isDiscrete()+"";
+			attr = oneNode.isDiscrete() + "";
 			el.addChild(createElSub(attr, "isDiscrete"));
 		}
 		// test which type the node is to save additional data
@@ -613,8 +612,8 @@ public class JSBMLoutput {
 			attr = ((biologicalObjects.nodes.SRNA) oneNode).getTarbase_IS();
 			el.addChild(createElSub(attr, "Tarbase_IS"));
 		}
-		
-		if(oneNode instanceof DynamicNode){
+
+		if (oneNode instanceof DynamicNode) {
 			attr = String.valueOf(((DynamicNode) oneNode).getMaximumSpeed());
 			el.addChild(createElSub(attr, "maximumSpeed"));
 			attr = String.valueOf(((DynamicNode) oneNode).isKnockedOut());
@@ -633,15 +632,14 @@ public class JSBMLoutput {
 				el.addChild(createElSub(attr, "tokenStart"));
 				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getConflictStrategy());
 				el.addChild(createElSub(attr, "ConflictStrategy"));
-				
+
 			} else if (oneNode instanceof Transition) {
-				attr = String.valueOf(((Transition)oneNode).getFiringCondition());
+				attr = String.valueOf(((Transition) oneNode).getFiringCondition());
 				el.addChild(createElSub(attr, "firingCondition"));
 				if (oneNode instanceof DiscreteTransition) {
 					attr = String.valueOf(((DiscreteTransition) oneNode).getDelay());
 					el.addChild(createElSub(attr, "delay"));
 				} else if (oneNode instanceof ContinuousTransition) {
-					
 
 				} else if (oneNode instanceof StochasticTransition) {
 					attr = ((StochasticTransition) oneNode).getDistribution();
@@ -662,8 +660,8 @@ public class JSBMLoutput {
 		XMLNode elSub;
 		String attr = oneEdge.getLabel();
 		el.addChild(createElSub(attr, "label"));
-		//attr = String.valueOf(oneEdge.isWeighted());
-		//el.addChild(createElSub(attr, "IsWeighted"));
+		// attr = String.valueOf(oneEdge.isWeighted());
+		// el.addChild(createElSub(attr, "IsWeighted"));
 		attr = oneEdge.getFunction();
 		el.addChild(createElSub(attr, "Function"));
 		Color col = oneEdge.getColor();
@@ -687,12 +685,12 @@ public class JSBMLoutput {
 		el.addChild(createElSub(attr, "Description"));
 		attr = oneEdge.getComments();
 		el.addChild(createElSub(attr, "Comments"));
-		//attr = String.valueOf(oneEdge.hasFeatureEdge());
-		//el.addChild(createElSub(attr, "HasFeatureEdge"));
+		// attr = String.valueOf(oneEdge.hasFeatureEdge());
+		// el.addChild(createElSub(attr, "HasFeatureEdge"));
 
 		boolean attrb; // = oneEdge.hasKEGGEdge();
-		//attr = String.valueOf(attrb);
-		//el.addChild(createElSub(attr, "HasKEGGEdge"));
+		// attr = String.valueOf(attrb);
+		// el.addChild(createElSub(attr, "HasKEGGEdge"));
 
 		// Save additional data
 		if (oneEdge instanceof biologicalObjects.edges.ReactionPair) {
@@ -727,14 +725,14 @@ public class JSBMLoutput {
 				}
 			}
 		} else if (oneEdge instanceof biologicalObjects.edges.petriNet.PNEdge) {
-			
+
 			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getProbability());
 			el.addChild(createElSub(attr, "Probability"));
-			
+
 			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getPriority());
 			el.addChild(createElSub(attr, "Priority"));
-		} else if(oneEdge instanceof Inhibition){
-			attr = String.valueOf(((Inhibition)oneEdge).isAbsoluteInhibition());
+		} else if (oneEdge instanceof Inhibition) {
+			attr = String.valueOf(((Inhibition) oneEdge).isAbsoluteInhibition());
 			el.addChild(createElSub(attr, "absoluteInhibition"));
 		}
 		a.appendNonRDFAnnotation(el);
