@@ -25,6 +25,7 @@ import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
+import biologicalObjects.edges.Inhibition;
 import biologicalObjects.edges.ReactionPairEdge;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -683,6 +684,11 @@ public class JSBMLinput {
 				}
 			}
 			break;
+		case "absoluteInhibition":
+			if(bea instanceof Inhibition){
+				((Inhibition)bea).setAbsoluteInhibition(Boolean.parseBoolean(value));
+			}
+			break;
 		}
 	}
 
@@ -771,6 +777,9 @@ public class JSBMLinput {
 			break;
 		case "concentrationMax":
 			bna.setConcentrationMax(Double.parseDouble(value));
+			break;
+		case "isDiscrete":
+			bna.setDiscrete(Boolean.parseBoolean(value));
 			break;
 
 		// special cases

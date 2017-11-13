@@ -33,6 +33,7 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.Inhibition;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
@@ -362,6 +363,28 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(concentrationMin, "wrap");
 				p.add(lblTokenMax, "gap 5");
 				p.add(concentrationMax, "wrap");
+
+				// TODO
+				bna = (BiologicalNodeAbstract) ab;
+				ButtonGroup group = new ButtonGroup();
+				JRadioButton discrete = new JRadioButton("discrete");
+				discrete.setActionCommand("nodeDiscrete");
+				discrete.addActionListener(this);
+				JRadioButton cont = new JRadioButton("continuous");
+				cont.setActionCommand("nodeCont");
+				cont.addActionListener(this);
+				group.add(discrete);
+				group.add(cont);
+
+				if (bna.isDiscrete()) {
+					discrete.setSelected(true);
+				} else {
+					cont.setSelected(true);
+				}
+
+				p.add(new JLabel("Type"), "flowx, gap 5");
+				p.add(discrete, "flowx, split 2, gap 5");
+				p.add(cont, "gap 5, wrap");
 			}
 
 			if (ab instanceof PathwayMap) {
@@ -671,6 +694,29 @@ public class ElementWindow implements ActionListener, ItemListener {
 				}
 
 			} else {
+
+				if (ab instanceof Inhibition) {
+					Inhibition inhib = (Inhibition) ab;
+					ButtonGroup group = new ButtonGroup();
+					JRadioButton absolute = new JRadioButton("absolute");
+					absolute.setActionCommand("inhibition_absolute");
+					absolute.addActionListener(this);
+					JRadioButton relative = new JRadioButton("relative");
+					relative.setActionCommand("inhibition_relative");
+					relative.addActionListener(this);
+					group.add(absolute);
+					group.add(relative);
+
+					if (inhib.isAbsoluteInhibition()) {
+						absolute.setSelected(true);
+					} else {
+						relative.setSelected(true);
+					}
+
+					p.add(new JLabel("Inhib. behaviour"), "flowx, gap 5");
+					p.add(absolute, "flowx, split 2, gap 5");
+					p.add(relative, "gap 5, wrap");
+				}
 
 				isDirected.setSelected(((BiologicalEdgeAbstract) ab).isDirected());
 				isDirected.setToolTipText("is directed");
@@ -1011,6 +1057,24 @@ public class ElementWindow implements ActionListener, ItemListener {
 				message = "Following conflicting places found: " + result;
 			}
 			MyPopUp.getInstance().show("Checking conflicts", message);
+		} else if ("inhibition_absolute".equals(event)) {
+			if (ab instanceof Inhibition) {
+				((Inhibition) ab).setAbsoluteInhibition(true);
+			}
+		} else if ("inhibition_relative".equals(event)) {
+			if (ab instanceof Inhibition) {
+				((Inhibition) ab).setAbsoluteInhibition(false);
+			}
+		} else if ("nodeDiscrete".equals(event)) {
+			if(!(ab instanceof PNNode) && ab instanceof BiologicalNodeAbstract){
+				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
+				bna.setDiscrete(true);
+			}
+		} else if ("nodeCont".equals(event)) {
+			if(!(ab instanceof PNNode) && ab instanceof BiologicalNodeAbstract){
+				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
+				bna.setDiscrete(false);
+			}
 		}
 		GraphInstance.getMyGraph().updateGraph();
 	}

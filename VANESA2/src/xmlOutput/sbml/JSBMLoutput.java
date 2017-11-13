@@ -31,6 +31,7 @@ import org.sbml.jsbml.xml.XMLTriple;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.Inhibition;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
@@ -564,6 +565,8 @@ public class JSBMLoutput {
 			el.addChild(createElSub(attr, "concentrationMin"));
 			attr = oneNode.getConcentrationMax() + "";
 			el.addChild(createElSub(attr, "concentrationMax"));
+			attr = oneNode.isDiscrete()+"";
+			el.addChild(createElSub(attr, "isDiscrete"));
 		}
 		// test which type the node is to save additional data
 		if (oneNode instanceof biologicalObjects.nodes.DNA) {
@@ -730,6 +733,9 @@ public class JSBMLoutput {
 			
 			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getPriority());
 			el.addChild(createElSub(attr, "Priority"));
+		} else if(oneEdge instanceof Inhibition){
+			attr = String.valueOf(((Inhibition)oneEdge).isAbsoluteInhibition());
+			el.addChild(createElSub(attr, "absoluteInhibition"));
 		}
 		a.appendNonRDFAnnotation(el);
 		return a;
