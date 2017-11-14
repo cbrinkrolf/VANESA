@@ -42,7 +42,7 @@ public class Server {
 	// size of modelica int;
 	private final int sizeOfInt;
 
-	public Server(Pathway pw, HashMap<BiologicalEdgeAbstract, String> bea2key) {
+	public Server(Pathway pw, HashMap<BiologicalEdgeAbstract, String> bea2key, String simId) {
 
 		if (SystemUtils.IS_OS_WINDOWS) {
 			sizeOfInt = 4;
@@ -52,6 +52,7 @@ public class Server {
 
 		this.pw = pw;
 		this.bea2key = bea2key;
+		this.simId = simId;
 		this.init();
 	}
 
@@ -63,7 +64,6 @@ public class Server {
 				try {
 					int port = 11111;
 					serverSocket = new java.net.ServerSocket(port);
-					simId = "simulation_" + pw.getPetriNet().getSimResController().size() + "_" + System.nanoTime();
 					simResult = pw.getPetriNet().getSimResController().get(simId);
 					System.out.println(simId);
 					MainWindow.getInstance().initPCPGraphs();
