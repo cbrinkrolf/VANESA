@@ -61,6 +61,8 @@ public class PetriNetSimulation implements ActionListener {
 	private List<File> simLibs;
 	private Pathway pw;
 
+	private String simId;
+
 	public PetriNetSimulation() {
 
 		MainWindow.getInstance();
@@ -75,6 +77,9 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	public void showMenue() {
+		//this.simLibs = this.getLibs(new File(pathWorkingDirectory));
+		//menue = new SimMenue(this, this.simLibs);
+
 		if (this.menue == null) {
 			this.simLibs = this.getLibs(new File(pathWorkingDirectory));
 			menue = new SimMenue(this, this.simLibs);
@@ -253,15 +258,16 @@ public class PetriNetSimulation implements ActionListener {
 					}
 
 				}
-				s = new Server(pw, bea2key);
+
+				s = new Server(pw, bea2key, simId);
 
 				s.start();
 				System.out.println("building ended");
 				pw.getPetriNet().setPetriNetSimulation(true);
-				
 
 				System.out.println("stop: " + stopTime);
 				Thread t1 = new Thread() {
+
 					public void run() {
 
 						try {
@@ -337,10 +343,10 @@ public class PetriNetSimulation implements ActionListener {
 							pb.directory(new File(pathSim));
 							Map<String, String> env = pb.environment();
 							String envPath = env.get("PATH");
-							envPath+=pathCompiler+"bin;";
+							envPath += pathCompiler + "bin;";
 							env.put("PATH", envPath);
-							System.out.println("working path:"+env.get("PATH"));
-							
+							System.out.println("working path:" + env.get("PATH"));
+
 							process = pb.start();
 
 							setReader(new InputStreamReader(process.getInputStream()));
@@ -355,11 +361,11 @@ public class PetriNetSimulation implements ActionListener {
 					public void run() {
 						pw.getGraph().getVisualizationViewer().requestFocus();
 						w.redrawGraphs();
-						//System.out.println(pw.getPetriNet().getSimResController().get().getTime());
-						List<Double> v = null;//pw.getPetriNet().getSimResController().get().getTime().getAll();
+						// System.out.println(pw.getPetriNet().getSimResController().get().getTime());
+						List<Double> v = null;// pw.getPetriNet().getSimResController().get().getTime().getAll();
 						// System.out.println("running");
 						while (s.isRunning()) {
-							if(v == null && pw.getPetriNet().getSimResController().getLastActive() != null){
+							if (v == null && pw.getPetriNet().getSimResController().getLastActive() != null) {
 								v = pw.getPetriNet().getSimResController().getLastActive().getTime().getAll();
 							}
 							// System.out.println("im thread");
@@ -477,7 +483,8 @@ public class PetriNetSimulation implements ActionListener {
 				System.out.println("drin");
 
 				zstNachher = System.currentTimeMillis();
-				//System.out.println("Zeit benoetigt: " + ((zstNachher - zstVorher) / 1000) + " sec");
+				// System.out.println("Zeit benoetigt: " + ((zstNachher -
+				// zstVorher) / 1000) + " sec");
 				System.out.println("Time for compiling: " + ((zstNachher - zstVorher)) + " millisec");
 
 				/*
@@ -584,7 +591,7 @@ public class PetriNetSimulation implements ActionListener {
 		out.write("getErrorString();\r\n");
 		if (simLib != null) {
 			out.write("loadFile(\"" + simLib.getPath().replace("\\", "/") + "/package.mo\"); ");
-		}else{
+		} else {
 			out.write("loadModel(PNlib);");
 		}
 		out.write("getErrorString();\r\n");
@@ -618,15 +625,64 @@ public class PetriNetSimulation implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		if (event.getActionCommand().equals("start")) {
 			this.menue.started();
-			boolean omc = true;
-
-			if (omc) {
-				// this.runOMC();
+			this.pw = new GraphInstance().getPathway();
+			// this.runOMC();
+			if (!menue.isParameterized()) {
+				simId = "simulation_" + pw.getPetriNet().getSimResController().size() + "_" + System.nanoTime();
 				this.runOMCIA();
 			} else {
-				// this.runDymola();
+				flags = pw.getChangedFlags("petriNetSim");
+				BiologicalNodeAbstract bna = menue.getSelectedNode();
+				String param = menue.getParameterName();
+				List<Double> list = menue.getParameterValues();
+				double value;
+				Boundary b;
+				for (int i = 0; i < list.size(); i++) {
+					simId = "simulation_" + pw.getPetriNet().getSimResController().size() + "_" + System.nanoTime();
+					value = list.get(i);
+					System.out.println(value);
+					if (bna instanceof Place) {
+						switch (param) {
+						case "token min":
+							flags.setBoundariesChanged(true);
+							b = new Boundary();
+							b.setLowerBoundary(value);
+							pw.getChangedBoundaries().put((Place) bna, b);
+							break;
+						case "token max":
+							flags.setBoundariesChanged(true);
+							b = new Boundary();
+							b.setUpperBoundary(value);
+							pw.getChangedBoundaries().put((Place) bna, b);
+							break;
+						case "token start":
+							flags.setInitialValueChanged(true);
+							pw.getChangedInitialValues().put((Place) bna, value);
+							break;
+						}
+					} else if (bna instanceof Transition) {
+						if (bna.getParameter(param) != null) {
+							// TODO
+						} else {
+							// TODO
+
+						}
+					}
+
+					pw.getPetriNet().getSimResController().get(simId).setName(Math.round(value * 1000) / 1000.0 + "");
+					this.runOMCIA();
+
+					while (s.isRunning()) {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					// System.out.println("durchdurchdurch");
+				}
 			}
-			// System.out.println("start");
+
 		} else if (event.getActionCommand().equals("stop")) {
 			this.stopAction();
 		}
