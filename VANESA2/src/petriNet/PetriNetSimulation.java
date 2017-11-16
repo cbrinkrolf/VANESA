@@ -662,13 +662,16 @@ public class PetriNetSimulation implements ActionListener {
 						}
 					} else if (bna instanceof Transition) {
 						if (bna.getParameter(param) != null) {
-							// TODO
+							Parameter p = bna.getParameter(param);
+							flags.setParameterChanged(true);
+							pw.getChangedParameters().put(new Parameter(param,value,p.getUnit()), bna);
 						} else {
-							// TODO
-
+							MyPopUp.getInstance().show("Error", "The parameter for parameterized simulation could not be found: "+param);
+							i = list.size();
+							break;
 						}
 					}
-
+					// roudning name up to 4 decimals
 					pw.getPetriNet().getSimResController().get(simId).setName(Math.round(value * 1000) / 1000.0 + "");
 					this.runOMCIA();
 
@@ -686,7 +689,6 @@ public class PetriNetSimulation implements ActionListener {
 		} else if (event.getActionCommand().equals("stop")) {
 			this.stopAction();
 		}
-
 	}
 
 	private void setReader(InputStreamReader reader) {
