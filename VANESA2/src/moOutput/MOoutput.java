@@ -666,7 +666,7 @@ public class MOoutput {
 		} else if (bna instanceof DiscreteTransition) {
 			return "PNlib.TD";
 		} else if (bna instanceof StochasticTransition) {
-			return "PNlib.TS";
+			return "PNlib.TDS";
 		} else if (bna instanceof Place) {
 			if (((Place) bna).isDiscrete()) {
 				return "PNlib.PD";
