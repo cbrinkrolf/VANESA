@@ -39,7 +39,7 @@ public class ToolBar {
 		JButton modelling = null;
 		// JButton petriNet = null;
 		JButton covGraph = null;
-		//JButton heatmap = null;
+		// JButton heatmap = null;
 		JButton edit = null;
 		JButton convertIntoPetriNet = null;
 		JButton parallelview = null;
@@ -171,12 +171,12 @@ public class ToolBar {
 
 		infopanel.add(info);
 		infopanel.add(infoextended);
-		
-		if (MainWindow.developer) {
-			infopanel.add(mergeSelectedNodes);
-			infopanel.add(splitNode);
-		}
-		
+
+		// if (MainWindow.developer) {
+		infopanel.add(mergeSelectedNodes);
+		infopanel.add(splitNode);
+		// }
+
 		infopanel.add(coarseSelectedNodes);
 		infopanel.add(flatSelectedNodes);
 		infopanel.add(enterSelectedNode);
@@ -243,10 +243,11 @@ public class ToolBar {
 		modelling.addActionListener(ToolBarListener.getInstance());
 		modelling.setToolTipText("Change to Modelling View");
 
-		//heatmap = new ToolBarButton(new ImageIcon(imagePath.getPath("heatmapGraph.png")));
-		//heatmap.setToolTipText("Create heatgraph");
-		//heatmap.setActionCommand("heatmap");
-		//heatmap.addActionListener(ToolBarListener.getInstance());
+		// heatmap = new ToolBarButton(new
+		// ImageIcon(imagePath.getPath("heatmapGraph.png")));
+		// heatmap.setToolTipText("Create heatgraph");
+		// heatmap.setActionCommand("heatmap");
+		// heatmap.addActionListener(ToolBarListener.getInstance());
 
 		edit = new ToolBarButton(new ImageIcon(imagePath.getPath("TitleGraph.png")));
 		edit.setSelectedIcon(new ImageIcon(imagePath.getPath("editSelected.png")));
@@ -299,7 +300,7 @@ public class ToolBar {
 			featureControls.setLayout(new GridLayout(2, 2));
 			featureControls.add(merge);
 			if (MainWindow.developer) {
-				//featureControls.add(heatmap);
+				// featureControls.add(heatmap);
 				featureControls.add(parallelview);
 			}
 			featureControls.add(chooser);
@@ -355,62 +356,45 @@ public class ToolBar {
 		nodeAdjustment.add(adjustVerticalSpace);
 		nodeAdjustment.add(adjustHorizontalSpace);
 
-		if (MainWindow.developer) {
-			if (petriNetView) {
-				// bar.add(toolBarControlControls);
-				// toolBarControlControls.add(covGraph);
-				// toolBarControlControls.add(editNodes);
-				// toolBarControlControls.add(loadModResult);
-				// toolBarControlControls.add(simulate);
-				// bar.add(new JSeparator());
-				bar.add(printControls);
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-				bar.add(editControls);
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-				bar.add(petriNetcontrols);
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-				bar.add(featureControls);
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-				bar.add(viewPortControls);
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-				bar.add(nodeAdjustment);
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-
-				bar.add(infopanel);
-			} else {
-				// bar.add(toolBarControlControls);
-				// bar.add(new JSeparator());
-				bar.add(printControls, "wrap");
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-				bar.add(editControls, "wrap");
-
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-
-				//
-				// bar.add(new JSeparator());
-				bar.add(featureControls, "wrap");
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-				bar.add(viewPortControls, "wrap");
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-				bar.add(nodeAdjustment);
-				bar.add(new ToolBarSeperator(), "growx, wrap");
-				bar.add(infopanel, "wrap");
-			}
-		} else {
-
+		if (petriNetView) {
+			// bar.add(toolBarControlControls);
+			// toolBarControlControls.add(covGraph);
+			// toolBarControlControls.add(editNodes);
+			// toolBarControlControls.add(loadModResult);
+			// toolBarControlControls.add(simulate);
+			// bar.add(new JSeparator());
 			bar.add(printControls);
-			bar.add(new JSeparator());
+			bar.add(new ToolBarSeperator(), "growx, wrap");
 			bar.add(editControls);
-
-			bar.add(new JSeparator());
+			bar.add(new ToolBarSeperator(), "growx, wrap");
+			bar.add(petriNetcontrols);
+			bar.add(new ToolBarSeperator(), "growx, wrap");
 			bar.add(featureControls);
-			bar.add(new JSeparator());
+			bar.add(new ToolBarSeperator(), "growx, wrap");
 			bar.add(viewPortControls);
-			bar.add(new JSeparator());
+			bar.add(new ToolBarSeperator(), "growx, wrap");
 			bar.add(nodeAdjustment);
-			bar.add(new JSeparator());
-			bar.add(infopanel);
+			bar.add(new ToolBarSeperator(), "growx, wrap");
 
+			bar.add(infopanel);
+		} else {
+			// bar.add(toolBarControlControls);
+			// bar.add(new JSeparator());
+			bar.add(printControls, "wrap");
+			bar.add(new ToolBarSeperator(), "growx, wrap");
+			bar.add(editControls, "wrap");
+
+			bar.add(new ToolBarSeperator(), "growx, wrap");
+
+			//
+			// bar.add(new JSeparator());
+			bar.add(featureControls, "wrap");
+			bar.add(new ToolBarSeperator(), "growx, wrap");
+			bar.add(viewPortControls, "wrap");
+			bar.add(new ToolBarSeperator(), "growx, wrap");
+			bar.add(nodeAdjustment);
+			bar.add(new ToolBarSeperator(), "growx, wrap");
+			bar.add(infopanel, "wrap");
 		}
 
 		bar.revalidate();
