@@ -1,6 +1,7 @@
 package moOutput;
 
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import biologicalElements.Elementdeclerations;
@@ -72,6 +74,16 @@ public class MOoutput {
 	double maxY = -Double.MAX_VALUE;
 
 	private Set<Character> chars = new HashSet<Character>();
+	
+	private String PNlibSettings = "";
+	private String PNlibPlaceDisc = "";
+	private String PNlibPlaceCont = "";
+	private String PNlibPlaceBiColor = "";
+	private String PNlibTransitionDisc = "";
+	private String PNlibTransitionCont = "";
+	private String PNlibtransitionStoch = "";
+	private String PNlibTransitionBiColor = "";
+	
 
 	public MOoutput(OutputStream os, Pathway pathway, boolean colored) {
 		this(os, pathway, null, colored);
@@ -110,6 +122,42 @@ public class MOoutput {
 		chars.add('(');
 		chars.add(')');
 		chars.add(' ');
+		
+		// set correct PNlib names, they might change from OM version
+		
+		Map<String, String> env = System.getenv();
+
+		int version = 13;
+		
+		if (env.containsKey("OPENMODELICAHOME") && new File(env.get("OPENMODELICAHOME")).isDirectory()) {
+			String pathCompiler = env.get("OPENMODELICAHOME");
+			if(pathCompiler.contains(".12.")){
+				version = 12;
+			}
+		}
+		
+		switch(version){
+		case 12:
+			PNlibSettings = "PNlib.Settings";
+			PNlibPlaceDisc = "PNlib.PD";
+			PNlibPlaceCont = "PNlib.PC";
+			PNlibPlaceBiColor = "PNlib.Examples.Models.BicoloredPlaces.CPC";
+			PNlibTransitionDisc = "PNlib.TD";
+			PNlibTransitionCont = "PNlib.TC";
+			PNlibtransitionStoch = "PNlib.TDS";
+			 PNlibTransitionBiColor = "PNlib.Examples.Models.BicoloredPlaces.CTC";
+			break;
+		case 13:
+			PNlibSettings = "PNlib.Components.Settings";
+			PNlibPlaceDisc = "PNlib.Components.PD";
+			PNlibPlaceCont = "PNlib.Components.PC";
+			PNlibPlaceBiColor = "";
+			PNlibTransitionDisc = "PNlib.Components.TD";
+			PNlibTransitionCont = "PNlib.Components.TC";
+			PNlibtransitionStoch = "PNlib.Components.TDS";
+			 PNlibTransitionBiColor = "";
+			break;
+		}
 	}
 
 	private void write() throws IOException {
@@ -144,7 +192,7 @@ public class MOoutput {
 		
 		// globalSeed influences stochastic transitions and conflict solving strategy: probability
 		sb.append(
-				INDENT + "inner PNlib.Settings settings(showTokenFlow = true, globalSeed=42) annotation(Placement(visible=true, transformation(origin={"
+				INDENT + "inner "+PNlibSettings+" settings(showTokenFlow = true, globalSeed=42) annotation(Placement(visible=true, transformation(origin={"
 						+ (minX - 30) + "," + (maxY + 30) + "}, extent={{-20,-20}, {20,20}}, rotation=0)));" + ENDL);
 		// }
 
@@ -660,21 +708,21 @@ public class MOoutput {
 
 		if (bna instanceof ContinuousTransition) {
 			if (colored) {
-				return "PNlib.Examples.Models.BicoloredPlaces.CTC";
+				return PNlibTransitionBiColor; //"PNlib.Examples.Models.BicoloredPlaces.CTC";
 			}
-			return "PNlib.TC";
+			return PNlibTransitionCont; //"PNlib.Components.TC";
 		} else if (bna instanceof DiscreteTransition) {
-			return "PNlib.TD";
+			return PNlibTransitionDisc; //"PNlib.Components.TD";
 		} else if (bna instanceof StochasticTransition) {
-			return "PNlib.TDS";
+			return PNlibtransitionStoch; //"PNlib.Components.TDS";
 		} else if (bna instanceof Place) {
 			if (((Place) bna).isDiscrete()) {
-				return "PNlib.PD";
+				return PNlibPlaceDisc; //"PNlib.Components.PD";
 			} else {
 				if (colored) {
-					return "PNlib.Examples.Models.BicoloredPlaces.CPC";
+					return PNlibPlaceBiColor; //"PNlib.Examples.Models.BicoloredPlaces.CPC";
 				}
-				return "PNlib.PC";
+				return PNlibPlaceCont; //"PNlib.Components.PC";
 			}
 		}
 		return null;
