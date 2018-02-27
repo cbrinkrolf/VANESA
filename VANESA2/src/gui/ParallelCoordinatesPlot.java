@@ -1042,9 +1042,17 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				int pickedE = GraphInstance.getMyGraph().getVisualizationViewer().getPickedEdgeState().getPicked().size();
 
 				if (pickedV == 1 && pickedE == 0) {
+					BiologicalNodeAbstract bna = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator().next();
+					if(pw.getPetriNet().getSimResController().getAllActiveWithData(bna, TOKEN).size() <=1){
+						return bna.getName();
+					}
 					return idx2simR1.get(seriesIdx).getName();
 				}
 				if (pickedV == 0 && pickedE == 1) {
+					BiologicalEdgeAbstract bea = GraphInstance.getMyGraph().getVisualizationViewer().getPickedEdgeState().getPicked().iterator().next();
+					if(pw.getPetriNet().getSimResController().getAllActiveWithData(bea, SUM_OF_TOKEN).size() <=1){
+						return labelsR1.get(seriesIdx);
+					}
 					return idx2simR1.get(seriesIdx).getName()+"("+labelsR1.get(seriesIdx)+")";
 				}
 				if(labelsR1.size() > seriesIdx){
@@ -1061,6 +1069,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 				int pickedV = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().size();
 				int pickedE = GraphInstance.getMyGraph().getVisualizationViewer().getPickedEdgeState().getPicked().size();
 				if (pickedV == 0 && pickedE == 1) {
+					BiologicalEdgeAbstract bea = GraphInstance.getMyGraph().getVisualizationViewer().getPickedEdgeState().getPicked().iterator().next();
+					if(pw.getPetriNet().getSimResController().getAllActiveWithData(bea, SUM_OF_TOKEN).size() <=1){
+						return "Sum";
+					}
 					return idx2simR2.get(seriesIdx).getName() + "(Sum)";
 				}
 				return "";
@@ -1245,7 +1257,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		while (it.hasNext()) {
 			bna = it.next();
 			if (bna instanceof Place) {
-				rows[i][0] = bna.getLabel();
+				rows[i][0] = bna.getName();
 				for (int j = 1; j <= rowsDim; j++) {
 					if (simRes.contains(bna, TOKEN) && simRes.get(bna, TOKEN).size() > j - 1) {
 						rows[i][j] = Math.max(0, simRes.get(bna, TOKEN).get(j - 1));
