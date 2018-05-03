@@ -744,7 +744,7 @@ public class Pathway implements Cloneable {
 				edges.addAll(bna.getConnectingEdges());
 				itEdges = edges.iterator();
 				// System.out.println(graph.getJungGraph().getInEdges(bna).size());
-
+				int count = 1;
 				while (itEdges.hasNext()
 						&& this.graph.getJungGraph().getNeighborCount(bna) > 1) {
 					// System.out.println("while: "+bna.getName()+" "+this.graph.getJungGraph().getNeighborCount(bna));
@@ -768,6 +768,11 @@ public class Pathway implements Cloneable {
 					newBNA.setID();
 					newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
 					newBNA.setRef(bna);
+					while(this.getAllNodeLabels().contains(bna.getName()+"_"+count)){
+						count++;
+					}
+					newBNA.setName(bna.getName()+"_"+count);
+					newBNA.setLabel(newBNA.getName());
 					if (bea.getTo() == bna) {
 						bea.setTo(newBNA);
 						p = this.getGraph().getVertexLocation(bea.getFrom());
