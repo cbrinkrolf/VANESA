@@ -554,9 +554,11 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			while (itBna.hasNext()) {
 				bna = itBna.next();
 				// System.out.println(series.getItemCount());
-				if (bna instanceof Place) {
+				if (bna instanceof Place && !bna.hasRef()) {
 					place = (Place) bna;
+					//System.out.println(simRes.contains(place, TOKEN));
 					if (simRes.contains(place, TOKEN) && simRes.get(place, TOKEN).size() > 0) {
+						//System.out.println(place + " " + TOKEN + " " + simRes.getId());
 						series = this.seriesListR1.get(series2idx.get(place, TOKEN, simRes.getId()));
 						stop = Math.min(simRes.get(place, TOKEN).size(), time.size());
 						steps = stop - Math.min(series.getItemCount(), series.getItemCount());
@@ -1107,7 +1109,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					if (pickedE == 0 && pickedV == 0) {
 
 						XYItemEntity entity = (XYItemEntity) event.getEntity();
-						System.out.println(entity.getSeriesIndex());
+						//System.out.println(entity.getSeriesIndex());
 						BiologicalNodeAbstract p = places.get(entity.getSeriesIndex());
 						PickedState<BiologicalNodeAbstract> ps = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState();
 						// ps.clearPickedVertices();
@@ -1159,6 +1161,7 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					// if (place.getPetriNetSimulationData().size() > 0) {
 					places.add(place);
 					s = new XYSeries(r1Count);
+					//System.out.println("put: " + place +" "+simId+" "+r1Count);
 					series2idx.put(place, TOKEN, simId, r1Count);
 					idx2simR1.put(r1Count, simResController.get(simId));
 					// System.out.println(r1Count+" "+place.getName()+" ");
