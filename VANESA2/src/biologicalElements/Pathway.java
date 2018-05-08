@@ -527,10 +527,18 @@ public class Pathway implements Cloneable {
 
 	public List<BiologicalNodeAbstract> getAllGraphNodesSortedAlphabetically() {
 
-		HashMap<String, BiologicalNodeAbstract> map = new HashMap<String, BiologicalNodeAbstract>();
-
+		HashMap<String, ArrayList<BiologicalNodeAbstract>> map = new HashMap<String, ArrayList<BiologicalNodeAbstract>>();
+		String name;
+		ArrayList<BiologicalNodeAbstract> list;
+		
 		for (BiologicalNodeAbstract bna : this.getAllGraphNodes()) {
-			map.put(bna.getName().toLowerCase(), bna);
+			name = bna.getName().toLowerCase();
+			
+			if(!map.containsKey(name)){
+				map.put(name, new ArrayList<BiologicalNodeAbstract>());
+			}
+			
+			map.get(name).add(bna);
 		}
 
 		ArrayList<String> ids = new ArrayList<String>(map.keySet());
@@ -538,9 +546,13 @@ public class Pathway implements Cloneable {
 
 		List<BiologicalNodeAbstract> sortedList = new ArrayList<BiologicalNodeAbstract>();
 		for (int i = 0; i < ids.size(); i++) {
-			sortedList.add(map.get(ids.get(i)));
+			list = map.get(ids.get(i));
+			for(int j = 0; j< list.size(); j++){
+				sortedList.add(list.get(j));
+			}
+			
+			//sortedList.add(map.get(ids.get(i)));
 		}
-
 		return sortedList;
 	}
 
