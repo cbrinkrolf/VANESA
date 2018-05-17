@@ -91,6 +91,7 @@ import petriNet.PNTableDialog;
 import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 import petriNet.SimpleMatrixDouble;
+import transformation.Transformator;
 import util.KineticBuilder;
 
 public class MenuListener implements ActionListener {
@@ -1050,7 +1051,8 @@ public class MenuListener implements ActionListener {
 					ioe.printStackTrace();
 				} catch (InputFormatException ife) {
 					MyPopUp.getInstance().show("Inputfile error", ife.getMessage());
-					//JOptionPane.showMessageDialog(w, ife.getMessage(), "Inputfile error", JOptionPane.ERROR_MESSAGE);
+					// JOptionPane.showMessageDialog(w, ife.getMessage(),
+					// "Inputfile error", JOptionPane.ERROR_MESSAGE);
 				}
 			} else
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
@@ -1160,28 +1162,42 @@ public class MenuListener implements ActionListener {
 
 			export.showExportDialog(MainWindow.getInstance(), "Export graph as ...", wvv, "export");
 		} else if ("wuff".equals(event)) {
-			//System.out.println("clicked");
+			// System.out.println("clicked");
 			if (con.containsPathway()) {
 				Pathway pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
-					
+
 					Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 					BiologicalNodeAbstract bna;
 					DynamicNode dn;
 					String maximumSpeed;
-					while(it.hasNext()){
+					while (it.hasNext()) {
 						bna = it.next();
-						if(bna instanceof DynamicNode){
-							dn = (DynamicNode)bna;
+						if (bna instanceof DynamicNode) {
+							dn = (DynamicNode) bna;
 							maximumSpeed = KineticBuilder.createConvenienceKinetic(bna);
 							System.out.println(maximumSpeed);
 							dn.setMaximumSpeed(maximumSpeed);
 						}
 					}
+				} else {
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
+			} else {
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
+			}
+		} else if ("transform".equals(event)) {
+			if (con.containsPathway()) {
+				Pathway pw = graphInstance.getPathway();
+				if (pw.hasGotAtLeastOneElement()) {
+					new Transformator().transform(pw);
+				}else{
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
+				}
+			}else{
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		}
-
 	}
 
 	private VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> prepareGraphToPrint() {
