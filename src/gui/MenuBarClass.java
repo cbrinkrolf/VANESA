@@ -110,7 +110,7 @@ public class MenuBarClass {
 		JMenuItem dataMappingDb = new JMenuItem("Data Mapping (DB)");
 		dataMappingDb.addActionListener(MenuListener.getInstance());
 		dataMappingDb.setActionCommand("dataMappingDB");
-		if(MainWindow.developer)
+		if (MainWindow.developer)
 			tools.add(dataMappingDb);
 
 		// items for datamining, including smacof
@@ -133,14 +133,14 @@ public class MenuBarClass {
 		JMenuItem mirnaTest = new JMenuItem("MirnaTest");
 		mirnaTest.addActionListener(MenuListener.getInstance());
 		mirnaTest.setActionCommand("mirnaTest");
-		
+
 		JMenuItem enrichGene = new JMenuItem("Enrich genes with miRNA");
 		enrichGene.setToolTipText("enriches (selected) genes with miRNA information");
 		enrichGene.addActionListener(MenuListener.getInstance());
 		enrichGene.setActionCommand("enrichGene");
-		
+
 		JMenuItem enrichMirna = new JMenuItem("Enrich miRNA with genes");
-		enrichMirna.setToolTipText("enriches (selected) miRNA gene information"); 
+		enrichMirna.setToolTipText("enriches (selected) miRNA gene information");
 		enrichMirna.addActionListener(MenuListener.getInstance());
 		enrichMirna.setActionCommand("enrichMirna");
 
@@ -151,7 +151,7 @@ public class MenuBarClass {
 		JMenuItem wuff = new JMenuItem("Wuff!");
 		wuff.addActionListener(MenuListener.getInstance());
 		wuff.setActionCommand("wuff");
-		
+
 		JMenuItem newNetwork = new JMenuItem("New", KeyEvent.VK_N);
 		newNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, MENUSHORTCUT));
 		newNetwork.addActionListener(MenuListener.getInstance());
@@ -326,6 +326,10 @@ public class MenuBarClass {
 		resolveReferences.addActionListener(MenuListener.getInstance());
 		resolveReferences.setActionCommand("resolveReferences");
 
+		JMenuItem transform = new JMenuItem("Transform to Petri net");
+		transform.addActionListener(MenuListener.getInstance());
+		transform.setActionCommand("transform");
+
 		help.add(interaction);
 
 		// about item is allready present on mac osx
@@ -463,6 +467,9 @@ public class MenuBarClass {
 		petriNets.add(createDoc);
 
 		transformation.add(resolveReferences);
+		if (MainWindow.developer) {
+			transformation.add(transform);
+		}
 
 		bar.add(file);
 		// bar.add(graph);

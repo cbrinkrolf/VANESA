@@ -38,7 +38,7 @@ public class PNDoc {
 		int i = 0;
 		while (it.hasNext() && i < 3) {
 			bna = it.next();
-
+			// System.out.println(bna.getName());
 			if (bna instanceof ContinuousTransition) {
 				// i++;
 				this.createReaction((ContinuousTransition) bna);
