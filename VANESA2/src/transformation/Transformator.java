@@ -76,10 +76,13 @@ public class Transformator {
 		BiologicalEdgeAbstract bea;
 		while (itList.hasNext()) {
 			perm = itList.next();
-
+			//System.out.println("new perm");
+			boolean test = true;
+			
 			for (int i = 0; i < r.getEdgeFrom().size(); i++) {
 				Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
-				while (it.hasNext()) {
+				boolean test1 = false;
+				while (it.hasNext() && !test1) {
 					bea = it.next();
 					int id1 = perm.get(r.getNodeNames().indexOf(r.getEdgeFrom().get(i)));
 					
@@ -87,14 +90,26 @@ public class Transformator {
 					BiologicalNodeAbstract n1 = id2bna.get(id1);
 					BiologicalNodeAbstract n2 = id2bna.get(id2);
 					if(bea.getFrom() == n1 && bea.getTo() == n2){
-						System.out.println(r.getNodeNames().indexOf(r.getEdgeFrom().get(i)));
+						test1=true;
+						//System.out.println(r.getNodeNames().indexOf(r.getEdgeFrom().get(i)));
 						
-						System.out.println(n1.getLabel() + "->" + n2.getLabel());
-						System.out.println(perm);
+						//System.out.println(n1.getLabel() + "->" + n2.getLabel());
+						//if(test){
+						//System.out.println(perm);
+						//}
+					}else{
+						//test = false;
 					}
 
 				}
-
+				test = test && test1;
+				
+			}
+			if(test){
+				for( int i = 0; i<perm.size(); i++){
+					System.out.print(" "+id2bna.get(perm.get(i)).getLabel() +" ");
+				}
+				System.out.println();
 			}
 
 		}
