@@ -401,24 +401,10 @@ public class MOoutput {
 			String toString;
 			// String fromType;
 
-			if (bea.getFrom().hasRef()) {
-				fromString = vertex2name.get(bea.getFrom().getRef());
-				// fromType = nodeType.get(bea.getFrom().getRef());
-			} else {
-				fromString = vertex2name.get(bea.getFrom());
-				// fromType = nodeType.get(bea.getFrom());
-			}
-			if (bea.getTo().hasRef()) {
-				toString = vertex2name.get(bea.getTo().getRef());
-			} else {
-				toString = vertex2name.get(bea.getTo());
-			}
-			// String fromString = vertex2name.get(bea.getFrom());
-			// String toString = vertex2name.get(bea.getTo());
-			// String fromType = nodeType.get(fromString);
-			// String toType = nodeType.get(toString);
-
-			// TODO funktionen werden zulassen
+			fromString = vertex2name.get(this.resolveReference(bea.getFrom()));
+			toString = vertex2name.get(this.resolveReference(bea.getTo()));
+			
+			
 			String weight;
 			int prio = 1;
 			double prob = 1.0;
@@ -671,17 +657,9 @@ public class MOoutput {
 		double shiftFrom;
 		double shiftTo;
 
-		if (from.hasRef()) {
-			p1 = pw.getGraph().getVertexLocation(from.getRef());
-		} else {
-			p1 = pw.getGraph().getVertexLocation(from);
-		}
-		if (to.hasRef()) {
-			p2 = pw.getGraph().getVertexLocation(to.getRef());
-		} else {
-			p2 = pw.getGraph().getVertexLocation(to);
-		}
-
+		p1 = pw.getGraph().getVertexLocation(this.resolveReference(from));
+		p2 = pw.getGraph().getVertexLocation(this.resolveReference(to));
+		
 		if (from.hasRef() || to.hasRef()) {
 			color = "{180, 180, 180}";
 		} else {
@@ -772,12 +750,8 @@ public class MOoutput {
 				p = (Place) bna;
 				// names.add("P"+p.getID());
 				names.add(p.getName());
-				if (p.hasRef()) {
-					referenceMapping.put(p.getName(), p.getRef().getName());
-				} else {
-					referenceMapping.put(p.getName(), p.getName());
-				}
-				// mNames.put("P"+p.getID(), "P"+p.getID() + ".t");
+				referenceMapping.put(p.getName(), this.resolveReference(p).getName());
+				
 			}
 		}
 

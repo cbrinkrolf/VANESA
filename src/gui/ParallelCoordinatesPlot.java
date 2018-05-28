@@ -374,10 +374,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			//System.out.println("one picked");
 			SimulationResult result;
 			List<SimulationResult> listActive = null;
+			bna = resolveReference(bna);
 			if(bna instanceof Place){
-				if(bna.hasRef() && bna.getRef() instanceof Place){
-					bna = bna.getRef();
-				}
+				
 				listActive = pw.getPetriNet().getSimResController().getAllActiveWithData(bna, TOKEN);
 				//System.out.println(listActive.size());
 			}else if (bna instanceof Transition){
@@ -428,13 +427,10 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 			// int j = 0;
 			while (iterator.hasNext()) {
 				bna = iterator.next();
-
+				bna = resolveReference(bna);
 				if (bna instanceof Place) {
 					place = (Place) bna;
 					// System.out.println(place.getPetriNetSimulationData().size());
-					if (place.hasRef() && place.getRef() instanceof Place) {
-						place = (Place) place.getRef();
-					}
 					if (this.series2idx.contains(place, TOKEN)) {
 						// System.out.println("set stroke back");
 						renderer.setSeriesStroke(series2idx.get(place, TOKEN, simRes.getId()), new BasicStroke(1));
@@ -443,9 +439,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 					}
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
-					if (transition.hasRef() && transition.getRef() instanceof Transition) {
-						transition = (Transition) transition.getRef();
-					}
 					if (series2idx.contains(transition, ACTUAL_FIRING_SPEED)) {
 						renderer.setSeriesVisible((int) series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()), true);
 					}
@@ -1045,7 +1038,9 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 				if (pickedV == 1 && pickedE == 0) {
 					BiologicalNodeAbstract bna = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked().iterator().next();
+					bna = resolveReference(bna);
 					if(pw.getPetriNet().getSimResController().getAllActiveWithData(bna, TOKEN).size() <=1){
+						
 						return bna.getName();
 					}
 					return idx2simR1.get(seriesIdx).getName();
@@ -1280,4 +1275,12 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 		}
 		return new RegulationTabelModel(rows, columNames);
 	}
+	
+	private BiologicalNodeAbstract resolveReference(BiologicalNodeAbstract bna) {
+		if (bna.hasRef()) {
+			return this.resolveReference(bna.getRef());
+		}
+		return bna;
+	}
+	
 }
