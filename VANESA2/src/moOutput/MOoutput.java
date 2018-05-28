@@ -74,7 +74,7 @@ public class MOoutput {
 	double maxY = -Double.MAX_VALUE;
 
 	private Set<Character> chars = new HashSet<Character>();
-	
+
 	private String PNlibSettings = "";
 	private String PNlibPlaceDisc = "";
 	private String PNlibPlaceCont = "";
@@ -83,7 +83,9 @@ public class MOoutput {
 	private String PNlibTransitionCont = "";
 	private String PNlibtransitionStoch = "";
 	private String PNlibTransitionBiColor = "";
-	
+
+	private int inhibitCount = 0;
+	private int testArcCount = 0;
 
 	public MOoutput(OutputStream os, Pathway pathway, boolean colored) {
 		this(os, pathway, null, colored);
@@ -122,21 +124,21 @@ public class MOoutput {
 		chars.add('(');
 		chars.add(')');
 		chars.add(' ');
-		
+
 		// set correct PNlib names, they might change from OM version
-		
+
 		Map<String, String> env = System.getenv();
 
 		int version = 13;
-		
+
 		if (env.containsKey("OPENMODELICAHOME") && new File(env.get("OPENMODELICAHOME")).isDirectory()) {
 			String pathCompiler = env.get("OPENMODELICAHOME");
-			if(pathCompiler.contains(".12.")){
+			if (pathCompiler.contains(".12.")) {
 				version = 12;
 			}
 		}
-		
-		switch(version){
+
+		switch (version) {
 		case 12:
 			PNlibSettings = "PNlib.Settings";
 			PNlibPlaceDisc = "PNlib.PD";
@@ -145,7 +147,7 @@ public class MOoutput {
 			PNlibTransitionDisc = "PNlib.TD";
 			PNlibTransitionCont = "PNlib.TC";
 			PNlibtransitionStoch = "PNlib.TDS";
-			 PNlibTransitionBiColor = "PNlib.Examples.Models.BicoloredPlaces.CTC";
+			PNlibTransitionBiColor = "PNlib.Examples.Models.BicoloredPlaces.CTC";
 			break;
 		case 13:
 			PNlibSettings = "PNlib.Components.Settings";
@@ -155,7 +157,7 @@ public class MOoutput {
 			PNlibTransitionDisc = "PNlib.Components.TD";
 			PNlibTransitionCont = "PNlib.Components.TC";
 			PNlibtransitionStoch = "PNlib.Components.TDS";
-			 PNlibTransitionBiColor = "";
+			PNlibTransitionBiColor = "";
 			break;
 		}
 	}
@@ -189,11 +191,12 @@ public class MOoutput {
 		// if (this.packageInfo == null) {
 		// sb.append(this.indentation + "inner PNlib.Settings settings1();" +
 		// this.endl);
-		
-		// globalSeed influences stochastic transitions and conflict solving strategy: probability
-		sb.append(
-				INDENT + "inner "+PNlibSettings+" settings(showTokenFlow = true, globalSeed=42) annotation(Placement(visible=true, transformation(origin={"
-						+ (minX - 30) + "," + (maxY + 30) + "}, extent={{-20,-20}, {20,20}}, rotation=0)));" + ENDL);
+
+		// globalSeed influences stochastic transitions and conflict solving
+		// strategy: probability
+		sb.append(INDENT + "inner " + PNlibSettings
+				+ " settings(showTokenFlow = true, globalSeed=42) annotation(Placement(visible=true, transformation(origin={" + (minX - 30) + ","
+				+ (maxY + 30) + "}, extent={{-20,-20}, {20,20}}, rotation=0)));" + ENDL);
 		// }
 
 		sb.append(places);
@@ -298,8 +301,8 @@ public class MOoutput {
 
 					Place place = (Place) bna;
 
-					atr = "startTokens(final unit=\"mmol\")=" + (int) place.getTokenStart() + ",minTokens(final unit=\"mmol\")=" + (int) place.getTokenMin() + ",maxTokens(final unit=\"mmol\")="
-							+ (int) place.getTokenMax();
+					atr = "startTokens(final unit=\"mmol\")=" + (int) place.getTokenStart() + ",minTokens(final unit=\"mmol\")="
+							+ (int) place.getTokenMin() + ",maxTokens(final unit=\"mmol\")=" + (int) place.getTokenMax();
 					// places =
 					// places.concat(getPlaceString(getModelicaString(place),
 					// bna, atr, in, out));
@@ -321,22 +324,24 @@ public class MOoutput {
 						max = place.getTokenMax() + "";
 					}
 
-					atr = "startMarks(final unit=\"mmol\")=" + start + ",minMarks(final unit=\"mmol\")=" + min + ",maxMarks(final unit=\"mmol\")=" + max + ",t(final unit=\"mmol\")";
+					atr = "startMarks(final unit=\"mmol\")=" + start + ",minMarks(final unit=\"mmol\")=" + min + ",maxMarks(final unit=\"mmol\")="
+							+ max + ",t(final unit=\"mmol\")";
 					if (place.getConflictingOutEdges().size() > 1) {
 
 						// priority is default
 						if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PROB) {
 							atr += ", enablingType=PNlib.Types.EnablingType.Probability";
 							atr += ", enablingProbOut={" + this.outProb.get(place.getName()) + "}";
-						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO){
+						} else if (place.getConflictStrategy() == Place.CONFLICTHANDLING_PRIO) {
 							atr += ", enablingPrioOut={" + this.outPrio.get(place.getName()) + "}";
 						}
-						//System.out.println(atr);
+						// System.out.println(atr);
 					}
 					// places =
 					// places.concat(getPlaceString(getModelicaString(place),
 					// bna, atr, in, out));
-					//System.out.println(place.getName() + " conflicting edges: " + place.getConflictingOutEdges().size());
+					// System.out.println(place.getName() + " conflicting edges:
+					// " + place.getConflictingOutEdges().size());
 				} else if (biologicalElement.equals(Elementdeclerations.stochasticTransition)) {
 
 					StochasticTransition t = (StochasticTransition) bna;
@@ -391,8 +396,8 @@ public class MOoutput {
 		PNEdge e;
 		Set<BiologicalNodeAbstract> markedOut;
 
-		int inhibitCount = 0;
-		int testArcCount = 0;
+		inhibitCount = 0;
+		testArcCount = 0;
 
 		while (it.hasNext()) {
 
@@ -403,8 +408,7 @@ public class MOoutput {
 
 			fromString = vertex2name.get(this.resolveReference(bea.getFrom()));
 			toString = vertex2name.get(this.resolveReference(bea.getTo()));
-			
-			
+
 			String weight;
 			int prio = 1;
 			double prob = 1.0;
@@ -500,32 +504,43 @@ public class MOoutput {
 
 				if (e.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
 					if (e.getFrom() instanceof Place) {
-						inhibitCount++;
-						IAString += INDENT + "PNlib.IA inhibitorArc" + inhibitCount + "(testValue=" + this.getModelicaEdgeFunction(e) + ");" + ENDL;
-						edgesString += INDENT + "connect('" + fromString + "'.outTransition["
-								+ (actualOutEdges.get(fromString).indexOf(e.getTo()) + 1) + "]," + "inhibitorArc" + inhibitCount + ".inPlace);"
-								+ ENDL;
-						edgesString += INDENT + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString + "'.inPlaces["
-								+ (actualInEdges.get(toString).indexOf(e.getFrom()) + 1) + "]) " + this.getFromToAnnotation(e.getFrom(), e.getTo())
-								+ ";" + ENDL;
+						IAString += this.createInhibitoryArc(fromString, toString, e);
 					}
 				} else if (e.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnTestEdge)) {
 					if (e.getFrom() instanceof Place) {
-						testArcCount++;
-						TAString += INDENT + "PNlib.TA testArc" + testArcCount + "(testValue=" + this.getModelicaEdgeFunction(e) + ");" + ENDL;
-						edgesString += INDENT + "connect('" + fromString + "'.outTransition["
-								+ (actualOutEdges.get(fromString).indexOf(e.getTo()) + 1) + "]," + "testArc" + testArcCount + ".inPlace);" + ENDL;
-						edgesString += INDENT + "connect(" + "testArc" + testArcCount + ".outTransition,'" + toString + "'.inPlaces["
-								+ (actualInEdges.get(toString).indexOf(e.getFrom()) + 1) + "]) " + this.getFromToAnnotation(e.getFrom(), e.getTo())
-								+ ";" + ENDL;
+						TAString += this.createTestArc(fromString, toString, e);
 					}
 				} else if (e.getFrom() instanceof Place) {
-					edgesString = edgesString.concat(getConnectionStringPT(fromString, toString, e));
+					if (e.getFrom().isConstant()) {
+						TAString += this.createTestArc(fromString, toString, e);
+					} else {
+						edgesString = edgesString.concat(getConnectionStringPT(fromString, toString, e));
+					}
 				} else {
 					edgesString = edgesString.concat(getConnectionStringTP(fromString, toString, e));
 				}
 			}
 		}
+	}
+
+	private String createInhibitoryArc(String fromString, String toString, PNEdge e) {
+		inhibitCount++;
+		String result = INDENT + "PNlib.IA inhibitorArc" + inhibitCount + "(testValue=" + this.getModelicaEdgeFunction(e) + ");" + ENDL;
+		edgesString += INDENT + "connect('" + fromString + "'.outTransition[" + (actualOutEdges.get(fromString).indexOf(e.getTo()) + 1) + "],"
+				+ "inhibitorArc" + inhibitCount + ".inPlace);" + ENDL;
+		edgesString += INDENT + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString + "'.inPlaces["
+				+ (actualInEdges.get(toString).indexOf(e.getFrom()) + 1) + "]) " + this.getFromToAnnotation(e.getFrom(), e.getTo()) + ";" + ENDL;
+		return result;
+	}
+
+	private String createTestArc(String fromString, String toString, PNEdge e) {
+		testArcCount++;
+		String result = INDENT + "PNlib.TA testArc" + testArcCount + "(testValue=" + this.getModelicaEdgeFunction(e) + ");" + ENDL;
+		edgesString += INDENT + "connect('" + fromString + "'.outTransition[" + (actualOutEdges.get(fromString).indexOf(e.getTo()) + 1) + "],"
+				+ "testArc" + testArcCount + ".inPlace);" + ENDL;
+		edgesString += INDENT + "connect(" + "testArc" + testArcCount + ".outTransition,'" + toString + "'.inPlaces["
+				+ (actualInEdges.get(toString).indexOf(e.getFrom()) + 1) + "]) " + this.getFromToAnnotation(e.getFrom(), e.getTo()) + ";" + ENDL;
+		return result;
 	}
 
 	private String getTransitionString(BiologicalNodeAbstract bna, String element, String name, String atr, int inEdges, int outEdges) {
@@ -659,7 +674,7 @@ public class MOoutput {
 
 		p1 = pw.getGraph().getVertexLocation(this.resolveReference(from));
 		p2 = pw.getGraph().getVertexLocation(this.resolveReference(to));
-		
+
 		if (from.hasRef() || to.hasRef()) {
 			color = "{180, 180, 180}";
 		} else {
@@ -686,21 +701,21 @@ public class MOoutput {
 
 		if (bna instanceof ContinuousTransition) {
 			if (colored) {
-				return PNlibTransitionBiColor; //"PNlib.Examples.Models.BicoloredPlaces.CTC";
+				return PNlibTransitionBiColor; // "PNlib.Examples.Models.BicoloredPlaces.CTC";
 			}
-			return PNlibTransitionCont; //"PNlib.Components.TC";
+			return PNlibTransitionCont; // "PNlib.Components.TC";
 		} else if (bna instanceof DiscreteTransition) {
-			return PNlibTransitionDisc; //"PNlib.Components.TD";
+			return PNlibTransitionDisc; // "PNlib.Components.TD";
 		} else if (bna instanceof StochasticTransition) {
-			return PNlibtransitionStoch; //"PNlib.Components.TDS";
+			return PNlibtransitionStoch; // "PNlib.Components.TDS";
 		} else if (bna instanceof Place) {
 			if (((Place) bna).isDiscrete()) {
-				return PNlibPlaceDisc; //"PNlib.Components.PD";
+				return PNlibPlaceDisc; // "PNlib.Components.PD";
 			} else {
 				if (colored) {
-					return PNlibPlaceBiColor; //"PNlib.Examples.Models.BicoloredPlaces.CPC";
+					return PNlibPlaceBiColor; // "PNlib.Examples.Models.BicoloredPlaces.CPC";
 				}
-				return PNlibPlaceCont; //"PNlib.Components.PC";
+				return PNlibPlaceCont; // "PNlib.Components.PC";
 			}
 		}
 		return null;
@@ -751,7 +766,7 @@ public class MOoutput {
 				// names.add("P"+p.getID());
 				names.add(p.getName());
 				referenceMapping.put(p.getName(), this.resolveReference(p).getName());
-				
+
 			}
 		}
 
