@@ -448,6 +448,18 @@ public class Pathway implements Cloneable {
 		}
 		return set;
 	}
+	
+	public HashSet<String> getAllNodeNames() {
+
+		HashSet<String> set = new HashSet<String>();
+		Iterator<BiologicalNodeAbstract> it = this.getAllGraphNodes()
+				.iterator();// biologicalElements.values().iterator();
+
+		while (it.hasNext()) {
+			set.add(it.next().getName());
+		}
+		return set;
+	}
 
 	public boolean hasGotAtLeastOneElement() {
 		if (!this.getAllGraphNodes().isEmpty())
@@ -465,6 +477,21 @@ public class Pathway implements Cloneable {
 		while (it.hasNext()) {
 			bna = it.next();
 			if (bna.getLabel().equals(label)) {
+				return bna;
+			}
+		}
+		return null;
+	}
+	
+	public BiologicalNodeAbstract getNodeByName(String name) {
+
+		Iterator<BiologicalNodeAbstract> it = this.getAllGraphNodes()
+				.iterator();
+
+		BiologicalNodeAbstract bna;
+		while (it.hasNext()) {
+			bna = it.next();
+			if (bna.getName().equals(name)) {
 				return bna;
 			}
 		}
@@ -780,7 +807,7 @@ public class Pathway implements Cloneable {
 					newBNA.setID();
 					newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
 					newBNA.setRef(bna);
-					while(this.getAllNodeLabels().contains(bna.getName()+"_"+count)){
+					while(this.getAllNodeNames().contains(bna.getName()+"_"+count)){
 						count++;
 					}
 					newBNA.setName(bna.getName()+"_"+count);
