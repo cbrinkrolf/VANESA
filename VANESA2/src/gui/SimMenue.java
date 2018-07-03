@@ -495,7 +495,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 			// System.out.println(e.getSource());
 			// System.out.println("select");
 			// System.out.println(this.selectedNodeBox.getSelectedItem());
-			this.selectedNode = GraphInstance.getPathwayStatic().getNodeByLabel(this.selectedNodeBox.getSelectedItem() + "");
+			this.selectedNode = GraphInstance.getPathwayStatic().getNodeByName(this.selectedNodeBox.getSelectedItem() + "");
 			this.fillParameterComboBox();
 		} else if (e.getSource() == this.parameterBox) {
 			this.fillTextFields();

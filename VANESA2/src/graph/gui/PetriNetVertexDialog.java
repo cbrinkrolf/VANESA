@@ -276,6 +276,7 @@ public class PetriNetVertexDialog {
 					BiologicalNodeAbstract bna;
 
 					boolean createdRef = false;
+					
 					while (it.hasNext()) {
 						bna = it.next();
 						if (bna.getName().equals(name.getText().trim())) {
@@ -286,8 +287,9 @@ public class PetriNetVertexDialog {
 					int i = 1;
 					if (createdRef) {
 						while (true) {
-							if (!pw.getAllNodeLabels().contains((name.getText().trim()+i))) {
-								createdNode.setName(name.getText().trim()+i);
+							if (!pw.getAllNodeNames().contains((name.getText().trim()+"_"+i))) {
+								createdNode.setName(name.getText().trim()+"_"+i);
+								createdNode.setLabel(name.getText().trim());
 								break;
 							}
 							i++;
