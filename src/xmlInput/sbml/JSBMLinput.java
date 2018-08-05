@@ -26,6 +26,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
 import biologicalObjects.edges.Inhibition;
+import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.edges.ReactionPairEdge;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -35,6 +36,7 @@ import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.RNA;
+import biologicalObjects.nodes.Reaction;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.CreatePathway;
@@ -233,6 +235,13 @@ public class JSBMLinput {
 				String attr = "";
 				String label = name;
 
+				bea = new ReactionEdge(label, name, from, to);
+				bea.setDirected(true);
+				bea.setFrom(from);
+				bea.setTo(to);
+				bea.setLabel(label);
+				bea.setName(name);
+				
 				Element annotation = reaction.getChild("annotation", null);
 				if (annotation != null) {
 					Element reacAnnotation = annotation.getChild("reac", null);
