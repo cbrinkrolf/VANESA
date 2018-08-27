@@ -1,6 +1,5 @@
 package configurations;
 
-
 public class NetworkSettings {
 
 	private Integer nodeLabel;
@@ -21,10 +20,10 @@ public class NetworkSettings {
 		return nodeLabel;
 	}
 
-	/*public void setNodeLabel(Integer nodeLabel) {
+	public void setNodeLabel(Integer nodeLabel) {
 		this.nodeLabel = nodeLabel;
-		GraphInstance.getMyGraph().updateAllNodeLabels();
-	}*/
+		//GraphInstance.getMyGraph().updateAllNodeLabels();
+	}
 
 	public Integer getEdgeLabel() {
 		return edgeLabel;
@@ -46,10 +45,10 @@ public class NetworkSettings {
 		this.edgeopacity = newopacity;
 	}
 
-	/*public void setEdgeLabel(Integer edgeLabel) {
+	public void setEdgeLabel(Integer edgeLabel) {
 		this.edgeLabel = edgeLabel;
-		GraphInstance.getMyGraph().updateAllEdgeLabels();
-	}*/
+		//GraphInstance.getMyGraph().updateAllEdgeLabels();
+	}
 
 	public NetworkSettings() {
 		nodeLabel = 1;

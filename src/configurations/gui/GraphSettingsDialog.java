@@ -204,11 +204,6 @@ public class GraphSettingsDialog extends JFrame {
 		
 		panel.add(edgeopacitypanel, "wrap,align left, gap 10, gaptop 2");
 		
-		
-		
-		
-		
-
 	}
 
 	public JPanel getPanel() {
@@ -268,23 +263,24 @@ public class GraphSettingsDialog extends JFrame {
 			if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 
 				if (only_label.isSelected()) {
-					//settings.setNodeLabel(1);
+					settings.setNodeLabel(1);
 				} else if (only_name.isSelected()) {
-					//settings.setNodeLabel(2);
+					settings.setNodeLabel(2);
 				} else if (name_label.isSelected()) {
-					//settings.setNodeLabel(3);
+					settings.setNodeLabel(3);
 				} else if (nothing.isSelected()) {
-					//settings.setNodeLabel(4);
+					settings.setNodeLabel(4);
 				}
 
 				if (only_label_e.isSelected()) {
-					//settings.setEdgeLabel(1);
+					settings.setEdgeLabel(1);
 				} else if (only_name_e.isSelected()) {
-					//settings.setEdgeLabel(2);
+					System.out.println("selected");
+					settings.setEdgeLabel(2);
 				} else if (name_label_e.isSelected()) {
-					//settings.setEdgeLabel(3);
+					settings.setEdgeLabel(3);
 				} else if (nothing_e.isSelected()) {
-					//settings.setEdgeLabel(4);
+					settings.setEdgeLabel(4);
 				}
 
 				if (black.isSelected()) {
@@ -305,9 +301,6 @@ public class GraphSettingsDialog extends JFrame {
 				settings.setEdgeOpacity(opacityslider.getValue());
 				con.getPathway(w.getCurrentPathway()).getGraph().getEdgeDrawPaintFunction().updateEdgeAlphaValue();
 				
-				
-				
-
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 				return false;
