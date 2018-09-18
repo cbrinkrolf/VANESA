@@ -9,6 +9,7 @@ import java.util.List;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.PNNode;
 import gui.visualization.VisualizationConfigBeans.Bean;
 
 public class Transformator {
@@ -24,6 +25,8 @@ public class Transformator {
 
 	private HashMap<String, ArrayList<BiologicalNodeAbstract>> nodeType2bna = new HashMap<String, ArrayList<BiologicalNodeAbstract>>();
 	private HashMap<String, ArrayList<BiologicalEdgeAbstract>> edgeType2bea = new HashMap<String, ArrayList<BiologicalEdgeAbstract>>();
+	
+	private HashMap<BiologicalNodeAbstract, PNNode> nodeReplace = new HashMap<BiologicalNodeAbstract, PNNode>();
 
 	public void transform(Pathway pw) {
 		this.pw = pw;
@@ -159,6 +162,7 @@ public class Transformator {
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		while (it.hasNext()) {
 			bna = it.next();
+			bna = this.getNodeReplace(bna);
 			c = bna.getClass();
 			name = bna.getClass().getSimpleName();
 
@@ -192,6 +196,14 @@ public class Transformator {
 				c = c.getSuperclass();
 				name = c.getSimpleName();
 			}
+		}
+	}
+	
+	private BiologicalNodeAbstract getNodeReplace(BiologicalNodeAbstract bna){
+		if(this.nodeReplace.containsKey(bna)){
+			return this.nodeReplace.get(bna);
+		} else{
+			return bna;
 		}
 	}
 
