@@ -76,9 +76,8 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		String id;
 		String[] infos;
 		Protein protein;
-
+		System.out.println("nodes: "+entries2infos.size());
 		while (i.hasNext()) {
-
 			id = i.next();
 			infos = entries2infos.get(id);
 
@@ -126,6 +125,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 	private void drawEdges() {
 
+		System.out.println("edges: "+connections.size());
 		Iterator<String[]> it = connections.iterator();
 		String[] entry;
 		BiologicalNodeAbstract first;
@@ -428,6 +428,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		startVisualizationModel();
 
 		if (!headless) {
+			
 			myGraph.changeToGEMLayout();
 			myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
 			myGraph.normalCentering();
