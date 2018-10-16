@@ -66,10 +66,12 @@ public class DatabaseSearchListener implements ActionListener {
 
 
 	private void requestPPIcontent() {
+		
 		MainWindow.getInstance().showProgressBar("PPI query");
 		PPISearch ppiSearch = new PPISearch(dw.getInput(),
 				MainWindow.getInstance(),dw.isHeadless());
 		ppiSearch.execute();
+		
 
 	}
 	

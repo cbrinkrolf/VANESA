@@ -1,5 +1,6 @@
 package gui;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
@@ -22,44 +23,16 @@ public class GraphAlgorithmsWindow {
 //	private DenselyConnectedBiclusteringGUI denselyConnected = new DenselyConnectedBiclusteringGUI();
 
 	public GraphAlgorithmsWindow() {
-
-		
-		tabbedPanel = new JTabbedPane();
-		//tabbedPanel.getProperties().setTabAreaOrientation(Direction.UP);
-		//tabbedPanel.getProperties().setEnsureSelectedTabVisible(true);
-		//tabbedPanel.getProperties().setHighlightPressedTab(true);
-		//tabbedPanel.getProperties().setTabReorderEnabled(false);
-		//tabbedPanel.getProperties().setTabDropDownListVisiblePolicy(
-		//		TabDropDownListVisiblePolicy.TABS_NOT_VISIBLE);
-		
-		//Martin
-		tabbedPanel.addTab("Coloring", coloredgraph.getPanel());
-		//JPanel p = new JPanel(new MigLayout("ins 0"));
-		//p.add(new JLabel("Coloring"));
-		//tabbedPanel.setTabComponentAt(0, p);
-		
-		tabbedPanel.addTab("Node Weighting", nodeweight.getPanel());
-		//JPanel p1 = new JPanel(new MigLayout("ins 0"));
-		//p1.add(new JLabel("Node Weighting"));
-		//tabbedPanel.setTabComponentAt(1, p1);
-		
-		tabbedPanel.addTab("Node Removal", noderemoval.getPanel());
-		//JPanel p2 = new JPanel(new MigLayout("ins 0"));
-		//p2.add(new JLabel("Node Removal"));
-		//tabbedPanel.setTabComponentAt(2, p2);
-		
-		tabbedPanel.addTab("Shortest Path", shortestPath.getPanel());
-		//JPanel p3 = new JPanel(new MigLayout("ins 0"));
-		//p3.add(new JLabel("Shortest Path"));
-		//tabbedPanel.setTabComponentAt(3, p3);
-		
-//		tabbedPanel.addTab("DCB", denselyConnected.getPanel());
-
+		init();
 	}
 
 	public void revalidateView() {
-
+		//System.out.println("revalidate");
+		int index = tabbedPanel.getSelectedIndex();
+		removeAllElements();
 		if (emptyPane) {
+			//System.out.println("pane empty");
+			init();
 			p.add(tabbedPanel);//, BorderLayout.CENTER);
 			emptyPane = false;
 		}
@@ -68,9 +41,10 @@ public class GraphAlgorithmsWindow {
 		noderemoval.revalidateView();
 		shortestPath.revalidateView();
 //		denselyConnected.revalidateView();
-
+		//tabbedPanel.revalidate();
 		p.setVisible(true);
 		p.repaint();
+		tabbedPanel.setSelectedIndex(index);
 
 	}
 
@@ -78,11 +52,33 @@ public class GraphAlgorithmsWindow {
 		emptyPane = true;
 		p.removeAll();
 		p.setVisible(false);
+		p.repaint();
 	}
 
 	public JPanel getTheoryPane() {
 		p.setVisible(false);
 		return p;
 	}
+	
+	private void init(){
+		
+		shortestPath = new ShortestPathGui();
+		coloredgraph = new GraphColoringGUI();
+		noderemoval = new GraphNodeRemovalGUI();
+		nodeweight = new GraphNodeDimensionGUI();
+		
+		tabbedPanel = new JTabbedPane();
+		tabbedPanel.addTab("Coloring", coloredgraph.getPanel());
+		tabbedPanel.setTabComponentAt(0, new JPanel().add(new JLabel("Coloring")));
+		
+		tabbedPanel.addTab("Node Weighting", nodeweight.getPanel());
+		tabbedPanel.setTabComponentAt(1, new JPanel().add(new JLabel("Node Weighting")));
+		
+		tabbedPanel.addTab("Node Removal", noderemoval.getPanel());
+		tabbedPanel.setTabComponentAt(2, new JPanel().add(new JLabel("Node Removal")));
 
+		tabbedPanel.addTab("Shortest Path", shortestPath.getPanel());
+		tabbedPanel.setTabComponentAt(3, new JPanel().add(new JLabel("Shortest Path")));
+		
+	}
 }
