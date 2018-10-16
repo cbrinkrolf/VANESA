@@ -18,6 +18,7 @@ import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.databinding.utils.BeanUtil;
 
 import configurations.ConnectionSettings;
+import gui.MyPopUp;
 
 
 /**
@@ -115,10 +116,12 @@ public class AsynchroneWebServiceWrapper extends AbstractWebServiceObservable {
 		}
 		catch (AxisFault axisFault)
 		{
+			MyPopUp.getInstance().show("Webservice error:", axisFault.getReason()+"!\n"+axisFault.getStackTrace()[0]);
 			axisFault.printStackTrace();
 		}
 		catch (Exception ex)
 		{
+			MyPopUp.getInstance().show("Webservice error:", ex.getMessage()+"!");
 			ex.printStackTrace();
 		}
 
@@ -157,10 +160,12 @@ public class AsynchroneWebServiceWrapper extends AbstractWebServiceObservable {
 		}
 		catch (AxisFault axisFault)
 		{
+			MyPopUp.getInstance().show("Webservice error:", axisFault.getReason()+"!\n"+axisFault.getStackTrace()[0]);
 			axisFault.printStackTrace();
 		}
 		catch (Exception ex)
 		{
+			MyPopUp.getInstance().show("Webservice error:", ex.getMessage()+"!");
 			ex.printStackTrace();
 		}
 		return webserviceIdent;

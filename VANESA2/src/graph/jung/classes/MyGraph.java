@@ -1084,6 +1084,9 @@ public class MyGraph {
 		makeDefaultObjectVisualization();
 		// System.out.println(getAnnotationManager().getAnnotations().size());
 		// System.out.println(vv.getRenderContext());
+		if(this.getAllVertices().size() == 0){
+			return;
+		}
 
 		this.layout = layout;
 		// this.clusteringLayout.removeAllSubLayouts();

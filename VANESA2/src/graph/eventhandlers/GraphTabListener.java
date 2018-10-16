@@ -52,7 +52,7 @@ public class GraphTabListener implements TabListener {
 			window.updateSatelliteView();
 			window.updatePathwayTree();
 			window.updateProjectProperties();
-//			window.updateTheoryProperties();
+			window.updateTheoryProperties();
 			window.updateAlignmentTab();
 			window.initPCPGraphs();
 		}

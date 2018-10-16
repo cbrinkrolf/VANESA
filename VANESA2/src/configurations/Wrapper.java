@@ -26,7 +26,7 @@ public class Wrapper implements WebServiceListener {
 
 	private AsynchroneWebServiceWrapper web_service = null;
 	private ArrayList<UUID> serviceRequestIDs = null;
-	private ArrayList<DBColumn> dbResults = null;
+	private ArrayList<DBColumn> dbResults = new ArrayList<DBColumn>();
 
 	private boolean isSingleRequestFinished = false;
 
@@ -66,7 +66,7 @@ public class Wrapper implements WebServiceListener {
 	private ArrayList<DBColumn> getOnlineRequestDbContent(int database, String query, String[] attributes) {
 		// -- build a query string with attributes --
 		query = buildQueryWithAttributes(query, attributes);
-System.out.println(query);
+		// System.out.println(query);
 		// -- use webservice --
 
 		if (dbtype_PPI == database) {

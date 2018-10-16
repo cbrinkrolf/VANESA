@@ -150,7 +150,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 	@Override
 	public void done() {
-
 		if (dontCreatePathway)
 			pw = new Pathway(title);
 		else if (title != null)
@@ -610,7 +609,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 	private void drawReactions(ArrayList<DBColumn> allReactions,
 			boolean specific) {
 		boolean first = true;
-		// System.out.println("drin"+allReactions.size());
 		for (DBColumn column : allReactions) {
 
 			if (first) {

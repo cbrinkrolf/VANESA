@@ -20,6 +20,7 @@ import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
+import gui.MyPopUp;
 import pojos.DBColumn;
 
 public class PPIConnector extends SwingWorker<Object, Object> {
@@ -76,7 +77,25 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		String id;
 		String[] infos;
 		Protein protein;
-		System.out.println("nodes: "+entries2infos.size());
+		//System.out.println("nodes: "+entries2infos.size());
+		
+		// if no interactions found: draw root node
+		if(entries2infos.size() == 0){
+			MyPopUp.getInstance().show("HPRD search", "No interactions found!");
+			protein = new Protein(root_details[1], root_details[1]);
+			//protein.setAaSequence(root_details[3]);
+			
+			protein.setColor(Color.RED);
+
+			name2Vertex.put(root_details[0], protein);
+			vertex2Name.put(protein, root_details[0]);
+			BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10,10));
+			
+			pw.setRootNode(node);
+			
+			return;
+		}
+		
 		while (i.hasNext()) {
 			id = i.next();
 			infos = entries2infos.get(id);
@@ -125,7 +144,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 	private void drawEdges() {
 
-		System.out.println("edges: "+connections.size());
+		//System.out.println("edges: "+connections.size());
 		Iterator<String[]> it = connections.iterator();
 		String[] entry;
 		BiologicalNodeAbstract first;
@@ -227,6 +246,10 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 					param2[0] = node;
 					param2[1] = node;
 					dbID = 3;
+					//System.out.println("p0: "+param2[0]+" p1: "+param2[1]);
+					//System.out.println(root_details[0]);
+					//System.out.println(root_details[1]);
+					//System.out.println(root_details[2]);
 				}
 
 				results = new Wrapper().requestDbContent(dbID, query, param2);
