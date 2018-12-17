@@ -182,7 +182,7 @@ public class AsynchroneWebServiceWrapper extends AbstractWebServiceObservable {
 		}
 		
 		options.setTo(endpoint);
-		options.setTimeOutInMilliSeconds(10000);
+		options.setTimeOutInMilliSeconds(120000);
 		options.setManageSession(true);
 		options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 		
