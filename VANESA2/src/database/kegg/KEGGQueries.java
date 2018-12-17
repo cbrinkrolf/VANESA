@@ -245,9 +245,9 @@ public class KEGGQueries {
 				if (!enzyme.equals("")) query+= "left join (kegg_kgml_pathway kp inner join kegg_enzyme_pathway ep inner join kegg_enzyme_name en) "
 				+ "on p.entry=kp.name AND kp.number=ep.number AND ep.entry=en.entry ";
 				query+= "where p.name like '%" + pathway + "%' AND p.organism like '%" + organismus + "%' ";
-				if (!gene.equals(""))query+="AND gn.name ='" + gene + "' ";
-				if (!compound.equals(""))query+="AND cn.name ='" + compound + "' ";
-				if (!enzyme.equals("")) query+="AND en.entry='" + enzyme + "' ";
+				if (!gene.equals(""))query+="AND gn.name like '%" + gene + "%' ";
+				if (!compound.equals(""))query+="AND cn.name like '%" + compound + "%' ";
+				if (!enzyme.equals("")) query+="AND en.entry like '%" + enzyme + "%' ";
 				query+="limit 0,1000;";
 				//System.out.println(query);
 		return new Wrapper().requestDbContent(2, query);
