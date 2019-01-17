@@ -709,18 +709,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		optionPanel.setUpdatePanels(enable);
 	}
 
-	public void openAlignmentGUI(Pathway a, Pathway b) {
-		this.optionPanel.openAlignmentPanel(a, b);
-	}
-
-	public void updateAlignmentTab() {
-		optionPanel.updateAlignmentTab();
-	}
-
-	public void checkForAlignmentOptionTab(String oldName, String newName) {
-		optionPanel.tryUpdateAlignmentOptionTab(oldName, newName);
-	}
-
 	public void redrawGraphs() {
 		optionPanel.redrawGraphs();
 	}

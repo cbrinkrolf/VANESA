@@ -55,8 +55,6 @@ public class ProjectWindowListener implements FocusListener {
 			String value = ((JTextField) event.getSource()).getText();
 			String newName = GraphContainer.getInstance().renamePathway(pw,
 					value);
-			MainWindow.getInstance().checkForAlignmentOptionTab(
-					oldName, newName);
 			pw.setTitle(newName);
 			MainWindow.getInstance().renameSelectedTab(pw.getName());
 			((JTextField) event.getSource()).setText(newName);
