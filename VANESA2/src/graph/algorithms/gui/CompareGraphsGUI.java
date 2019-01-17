@@ -69,22 +69,22 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		mouseFunction = con.getMouseFunction();
 		con.changeMouseFunction("move");
 
-		JButton newButton = new JButton("exit");
+		JButton exit = new JButton("exit");
 		JButton compare = new JButton("compare");
 		JButton reset = new JButton("reset");
 		JButton merge = new JButton("merge");
-		JButton align = new JButton("align");
+		//JButton align = new JButton("align");
 		//JButton heatmap = new JButton("heatmap");
 		//JButton compare3d = new JButton("compare 3D");
 
 		if (MainWindow.developer) {
-			buttons = new JButton[] { newButton, compare, merge, align, reset };
+			buttons = new JButton[] { exit, compare, merge, reset };
 		} else {
-			buttons = new JButton[] { newButton, compare, merge, reset };
+			buttons = new JButton[] { exit, compare, merge, reset };
 		}
 
-		newButton.addActionListener(this);
-		newButton.setActionCommand("exit");
+		exit.addActionListener(this);
+		exit.setActionCommand("exit");
 
 		compare.addActionListener(this);
 		compare.setActionCommand("compare");
@@ -98,8 +98,8 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		//heatmap.addActionListener(this);
 		//heatmap.setActionCommand("heatmap");
 
-		align.addActionListener(this);
-		align.setActionCommand("align");
+		//align.addActionListener(this);
+		//align.setActionCommand("align");
 
 		//compare3d.addActionListener(this);
 		//compare3d.setActionCommand("compare3d");
@@ -256,13 +256,6 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 					.toString()), con.getPathway(secondBox.getSelectedItem()
 					.toString()), true);
 			this.closeDialog();
-
-		} else if ("align".equals(event)) {
-
-			closeDialog();
-			MainWindow.getInstance().openAlignmentGUI(
-					con.getPathway(firstBox.getSelectedItem().toString()),
-					con.getPathway(secondBox.getSelectedItem().toString()));
 
 		}
 	}

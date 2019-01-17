@@ -274,59 +274,6 @@ public class OptionPanel {
 		this.updatePanels = updatePanels;
 	}
 
-	public void openAlignmentPanel(Pathway a, Pathway b) {
-
-	//	System.out.println("update option panel - alignmet");
-
-		// elements.setCollapsed(true);
-		// satellite.setCollapsed(true);
-		// pcpview.setCollapsed(true);
-		// filter.setCollapsed(true);
-		// dbProperties.setCollapsed(true);
-		// generalProperties.setCollapsed(true);
-		// databaseSearch.setCollapsed(true);
-		// project.setCollapsed(true);
-		// theory.setCollapsed(true);
-		//
-		// String name = "Alignment of " + a.getName() + " and " + b.getName();
-		// name = ContainerSingelton.getInstance().checkNameDuplicates(name, 1);
-		// alignmentOptions = new GraphAlignmentOptionTab(a, b, name);
-		// alignmentTabs.put(name, alignmentOptions);
-		//
-		// alignment.removeAll();
-		// alignment.add(alignmentOptions.getPanel());
-		// alignment.setCollapsed(false);
-		// alignment.setVisible(true);
-
-	}
-
-	public void updateAlignmentTab() {
-
-	//	System.out.println("update option panel -alignment");
-
-		//String title = MainWindowSingelton.getInstance().getCurrentPathway();
-		// if (alignmentTabs.containsKey(title)) {
-		// alignmentOptions = alignmentTabs.get(title);
-		// alignment.removeAll();
-		// alignmentOptions.updateWindow();
-		// alignment.add(alignmentOptions.getPanel());
-		// alignment.setCollapsed(false);
-		// alignment.setVisible(true);
-		// } else {
-		// alignment.setVisible(false);
-		// }
-	}
-
-	public void tryUpdateAlignmentOptionTab(String oldName, String newName) {
-		// if (alignmentTabs.containsKey(oldName)) {
-		// GraphAlignmentOptionTab aliTab = alignmentTabs.get(oldName);
-		// aliTab.setTabTitle(newName);
-		// alignmentTabs.remove(oldName);
-		// alignmentTabs.put(newName, aliTab);
-		// }
-
-	}
-	
 	public void redrawGraphs(){
 		PCPWindow.updateDateCurrentSimulation();
 	}
