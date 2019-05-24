@@ -83,6 +83,8 @@ public class MOoutput {
 	private String PNlibTransitionCont = "";
 	private String PNlibtransitionStoch = "";
 	private String PNlibTransitionBiColor = "";
+	private String PNlibIA = "";
+	private String PNlibTA = "";
 
 	private int inhibitCount = 0;
 	private int testArcCount = 0;
@@ -148,6 +150,8 @@ public class MOoutput {
 			PNlibTransitionCont = "PNlib.TC";
 			PNlibtransitionStoch = "PNlib.TDS";
 			PNlibTransitionBiColor = "PNlib.Examples.Models.BicoloredPlaces.CTC";
+			PNlibIA = "PNlib.IA";
+			PNlibTA = "PNlib.TA";
 			break;
 		case 13:
 			PNlibSettings = "PNlib.Components.Settings";
@@ -158,6 +162,8 @@ public class MOoutput {
 			PNlibTransitionCont = "PNlib.Components.TC";
 			PNlibtransitionStoch = "PNlib.Components.TDS";
 			PNlibTransitionBiColor = "";
+			PNlibIA = "PNlib.Components.IA";
+			PNlibTA = "PNlib.Components.TA";
 			break;
 		}
 	}
@@ -525,7 +531,7 @@ public class MOoutput {
 
 	private String createInhibitoryArc(String fromString, String toString, PNEdge e) {
 		inhibitCount++;
-		String result = INDENT + "PNlib.IA inhibitorArc" + inhibitCount + "(testValue=" + this.getModelicaEdgeFunction(e) + ");" + ENDL;
+		String result = INDENT + PNlibIA +" inhibitorArc" + inhibitCount + "(testValue=" + this.getModelicaEdgeFunction(e) + ");" + ENDL;
 		edgesString += INDENT + "connect('" + fromString + "'.outTransition[" + (actualOutEdges.get(fromString).indexOf(e.getTo()) + 1) + "],"
 				+ "inhibitorArc" + inhibitCount + ".inPlace);" + ENDL;
 		edgesString += INDENT + "connect(" + "inhibitorArc" + inhibitCount + ".outTransition,'" + toString + "'.inPlaces["
@@ -535,7 +541,7 @@ public class MOoutput {
 
 	private String createTestArc(String fromString, String toString, PNEdge e) {
 		testArcCount++;
-		String result = INDENT + "PNlib.TA testArc" + testArcCount + "(testValue=" + this.getModelicaEdgeFunction(e) + ");" + ENDL;
+		String result = INDENT + PNlibTA + " testArc" + testArcCount + "(testValue=" + this.getModelicaEdgeFunction(e) + ");" + ENDL;
 		edgesString += INDENT + "connect('" + fromString + "'.outTransition[" + (actualOutEdges.get(fromString).indexOf(e.getTo()) + 1) + "],"
 				+ "testArc" + testArcCount + ".inPlace);" + ENDL;
 		edgesString += INDENT + "connect(" + "testArc" + testArcCount + ".outTransition,'" + toString + "'.inPlaces["
