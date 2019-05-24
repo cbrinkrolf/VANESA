@@ -342,11 +342,12 @@ public class PetriNetSimulation implements ActionListener {
 							pb.redirectOutput();
 							pb.directory(new File(pathSim));
 							Map<String, String> env = pb.environment();
-							String envPath = env.get("PATH");
+							//String envPath = env.get("PATH");
+							String envPath = System.getenv("PATH");
 							envPath += pathCompiler + "bin;";
 							env.put("PATH", envPath);
 							System.out.println("working path:" + env.get("PATH"));
-
+							System.out.println(pb.environment().get("PATH"));
 							process = pb.start();
 
 							setReader(new InputStreamReader(process.getInputStream()));
