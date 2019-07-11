@@ -21,6 +21,7 @@ import biologicalElements.IDAlreadyExistException;
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import graph.groups.Group;
 import biologicalObjects.nodes.petriNet.Place;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
@@ -30,7 +31,6 @@ import graph.jung.classes.MyGraph;
 import graph.jung.graphDrawing.VertexShapes;
 import graph.layouts.Circle;
 import gui.MainWindow;
-import util.FormularSafety;
 
 public abstract class BiologicalNodeAbstract extends Pathway implements
 		GraphElementAbstract {
@@ -72,6 +72,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 	private boolean markedAsCoarseNode = false;
 	private Point2D parentNodeDistance = new Point2D.Double(0,0);
 	private boolean deleted = false;
+
+	private boolean isingroup = false;
+	private ArrayList<Group> group = new ArrayList<>();
+	//private Set<Group> group = new HashSet<Group>();
 	
 	//TODO in GUI
 	private boolean discrete = false;
@@ -1372,7 +1376,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 			this.doublevalue = doublevalue;
 			this.stringvalue = "";
 		}
-		
+
 		/**
 		 * @param nodeAttributeType
 		 * @param stringvalue
@@ -1507,11 +1511,30 @@ public abstract class BiologicalNodeAbstract extends Pathway implements
 		this.concentrationStart = concentrationStart;
 	}
 
+	public void setisinGroup(boolean isingroup) { this.isingroup = isingroup;}
+
+	public boolean getisinGroup() { return isingroup;}
+
+	public void setGroup(Group group) { this.group.add(group);}
+
+	public ArrayList<Group> getGroups() { return group;}
+
+	public Group getbiggestGroup() {
+		Group bigG = null;
+		for (Group g:group) {
+			if (bigG == null) {
+				bigG = g;
+			}
+			else if (g.nodes.size() > bigG.nodes.size()){
+				bigG = g;
+			}
+		}
+		return bigG;
+	}
 
 	public boolean isDiscrete() {
 		return discrete;
 	}
-
 
 	public void setDiscrete(boolean discrete) {
 		this.discrete = discrete;

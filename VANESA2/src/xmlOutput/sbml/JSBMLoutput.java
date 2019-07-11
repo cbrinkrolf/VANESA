@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
+import graph.groups.Group;
 import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Model;
@@ -260,8 +261,22 @@ public class JSBMLoutput {
 			}
 			el.addChild(elSub);
 		}
+
+		if (pathway.groupes.size() != 0) {
+			XMLNode groups = new XMLNode( new XMLNode(new XMLTriple("listOfGroups", "", ""), new XMLAttributes()));
+			for (Group group:pathway.groupes) {
+				XMLNode groupSub = new XMLNode(new XMLNode(new XMLTriple("Group", "", ""), new XMLAttributes()));
+				for (BiologicalNodeAbstract node: group.nodes) {
+					groupSub.addChild(createElSub(Integer.toString(node.getID()), "Node"));
+				}
+				groups.addChild(groupSub);
+			}
+			el.addChild(groups);
+		}
+
 		XMLNode hierarchy = new XMLNode(new XMLNode(new XMLTriple("listOfHierarchies", "", ""), new XMLAttributes()));
 		Set<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
+
 
 		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
 		for (BiologicalNodeAbstract node : rootPathway.getAllGraphNodesSorted()) {
@@ -285,6 +300,7 @@ public class JSBMLoutput {
 		String attr = String.valueOf(pathway.isPetriNet());
 		el.addChild(createElSub(attr, "isPetriNet"));
 		a.appendNonRDFAnnotation(el);
+
 		return a;
 	}
 

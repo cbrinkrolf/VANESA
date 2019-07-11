@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
 import biologicalObjects.edges.petriNet.PNEdge;
+import graph.groups.Group;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.PathwayMap;
@@ -33,6 +34,7 @@ import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.Circle;
 import gui.GraphTab;
 import gui.MainWindow;
+import gui.MyPopUp;
 import util.FormularSafety;
 import util.MyIntComparable;
 
@@ -97,6 +99,9 @@ public class Pathway implements Cloneable {
 
 	// private Set<BiologicalEdgeAbstract> edges = new
 	// HashSet<BiologicalEdgeAbstract>();
+
+
+	public ArrayList<Group> groupes = new ArrayList<>();
 
 	public Set<BiologicalNodeAbstract> getClosedSubPathways() {
 		return closedSubPathways;
@@ -1387,6 +1392,92 @@ public class Pathway implements Cloneable {
 		this.getGraph().updateGraph();
 		updateMyGraph();
 
+	}
+
+	/**
+	 * Add all selected Nodes to one Group
+	 *
+	 */
+	public void groupSelectedNodes() {
+		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph()
+				.getVisualizationViewer();
+
+		Set <BiologicalNodeAbstract> nodes = vv.getPickedVertexState().getPicked();
+		if (nodes.size() > 1) {
+			ArrayList<BiologicalNodeAbstract> nodeslist = new ArrayList<BiologicalNodeAbstract>();
+			nodeslist.addAll(nodes);
+			Group group = new Group(nodeslist);
+			groupes.add(group);
+
+			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState()
+					.getPicked().iterator();
+			while (it.hasNext()) {
+				BiologicalNodeAbstract nextNode = it.next();
+				nextNode.setisinGroup(true);
+				nextNode.setGroup(group);
+			}
+		} else {
+			MyPopUp.getInstance().show("Groupingerror","This cannot be grouped.");
+		}
+	}
+
+	/**
+	 * If one node is selected, the group members will be picked too.
+	 *
+	 */
+	public void pickGroup() {
+		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph()
+				.getVisualizationViewer();
+		if (vv.getPickedVertexState()
+				.getPicked().size() != 0) {
+			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState()
+					.getPicked().iterator();
+			BiologicalNodeAbstract nextNode = it.next();
+			if (nextNode.getisinGroup()) {
+				for (BiologicalNodeAbstract  node:nextNode.getbiggestGroup().nodes
+				) {
+					graph.getVisualizationViewer().getPickedVertexState().pick(node, true);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Delete selected group.
+	 *
+	 */
+	public void deleteGroup() {
+		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph()
+				.getVisualizationViewer();
+		Iterator<BiologicalNodeAbstract> iter = vv.getPickedVertexState()
+				.getPicked().iterator();
+		Group groupToDelete = null;
+		Boolean deletegroup = true;
+		BiologicalNodeAbstract firstNode = iter.next();
+		groupToDelete = firstNode.getbiggestGroup();
+
+		// Checks if selected nodes are all of the same group
+		for (BiologicalNodeAbstract bnaNode:vv.getPickedVertexState().getPicked()) {
+			if (!bnaNode.getGroups().contains(groupToDelete)) {
+				deletegroup = false;
+				MyPopUp.getInstance().show("Deletingerror","This cannot be deleted.");
+			}
+		}
+		// if all selected are from same group, delete group
+		Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState()
+				.getPicked().iterator();
+		while (it.hasNext() && deletegroup) {
+			BiologicalNodeAbstract nextNode = it.next();
+			if(nextNode.getGroups().size() == 1) {
+				nextNode.setisinGroup(false);
+			}
+			nextNode.getGroups().remove(groupToDelete);
+		}
+		if (groupToDelete != null && deletegroup) {
+			groupes.remove(groupToDelete);
+		}
+		graph.getVisualizationViewer().getPickedVertexState().clear();
 	}
 
 	private void removeSelectedEdges() {
