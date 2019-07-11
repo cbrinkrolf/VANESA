@@ -13,11 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import graph.groups.Group;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.xml.sax.InputSource;
 
 import biologicalElements.Elementdeclerations;
@@ -36,7 +38,6 @@ import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.RNA;
-import biologicalObjects.nodes.Reaction;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.CreatePathway;
@@ -73,6 +74,8 @@ public class JSBMLinput {
 
 	private boolean reverseEngineering = false;
 
+	private ArrayList<ArrayList<String>> inputgroups = new ArrayList<ArrayList<String>>();
+
 	public JSBMLinput() {
 
 	}
@@ -97,7 +100,12 @@ public class JSBMLinput {
 
 		// siehe http://www.javabeginners.de/XML/XML-Datei_lesen.php
 		// create document
-		SAXBuilder builder = new SAXBuilder();
+
+
+		// changed empty constructor SAXBuilder builder = new SAXBuilder(); to following, cause open JDK got an
+		// error with empty constructor
+		// see: https://stackoverflow.com/questions/11409025/exceptionininitializererror-while-creating-ant-custom-task
+		SAXBuilder builder = new SAXBuilder(new XMLReaderSAX2Factory(false, "org.apache.xerces.parsers.SAXParser"));
 		try {
 			doc = builder.build(in);
 		} catch (JDOMException | IOException e) {
@@ -132,6 +140,10 @@ public class JSBMLinput {
 		createReaction(reactionNode);
 
 		buildUpHierarchy(annotationNode);
+
+		createGroup();
+
+
 		// refresh view
 		try {
 			is.close();
@@ -145,6 +157,59 @@ public class JSBMLinput {
 		}
 		return message;
 	}
+
+	/**
+	 * Groups and their members are saved in list, cause groups cant be created at this point, because
+	 * nodes arent created yet
+	 *
+	 */
+	private void getInputGroups(Element groupNode) {
+		if (groupNode == null) {
+
+			System.out.println("keine gruppen gefunden");
+			return;
+		}
+		List<Element> groupChildren = groupNode.getChildren();
+		int size = groupChildren.size();
+		for (int i = 0; i < size; i++) {
+			Element group = groupChildren.get(i);
+			List<Element> groupmembers = group.getChildren();
+			int groupSize = groupmembers.size();
+
+			ArrayList<String> tmp = new ArrayList<String>();
+			for (int j = 0; j < groupSize; j++) {
+				//add nodes mit ID/label to nodes list
+				Element node = groupmembers.get(j);
+				String label = node.getAttributeValue("Node");
+				tmp.add(label);
+			}
+			inputgroups.add(tmp);
+		}
+
+		//System.out.println("es sind gespeicherte gruppen" + inputgroups.size());
+	}
+
+	/**
+	 * Groups will be created after all nodes are there
+	 *
+	 */
+	private void createGroup() {
+		for (int i = 0; i < inputgroups.size(); i++) {
+
+			ArrayList<BiologicalNodeAbstract> nodeslist = new ArrayList<BiologicalNodeAbstract>();
+			for (int j = 0; j < inputgroups.get(i).size(); j++) {
+				nodeslist.add(nodes.get(Integer.parseInt(inputgroups.get(i).get(j))));
+			}
+			Group tmp = new Group(nodeslist);
+			for (int k = 0; k < nodeslist.size(); k++){
+				nodeslist.get(k).setisinGroup(true);
+				nodeslist.get(k).setGroup(tmp);
+			}
+			pathway.groupes.add(tmp);
+		}
+		inputgroups.clear();
+	}
+
 
 	/**
 	 * creates the annotation of the model
@@ -177,6 +242,8 @@ public class JSBMLinput {
 					addRange(range);
 				}
 			}
+			Element groupNode = modelNode.getChild("listOfGroups", null);
+			getInputGroups(groupNode);
 		}
 		this.pathway.setPetriNet(isPetri);
 	}

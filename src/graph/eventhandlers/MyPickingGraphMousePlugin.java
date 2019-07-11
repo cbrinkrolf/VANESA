@@ -59,6 +59,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	public void mouseReleased(MouseEvent e) {
 		// System.out.println("released");
+		pw.pickGroup();
 		if (inwindow) {
 			this.mouseReleasedAnnotation(e);
 			// If mouse was released to change the selection, save vertex

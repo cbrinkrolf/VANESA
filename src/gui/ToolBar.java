@@ -122,7 +122,7 @@ public class ToolBar {
 		trash.addActionListener(ToolBarListener.getInstance());
 
 		JPanel infopanel = new ToolBarPanel();
-		infopanel.setLayout(new GridLayout(4, 2));
+		infopanel.setLayout(new GridLayout(5, 2));
 
 		JButton info = new ToolBarButton(new ImageIcon(imagePath.getPath("InfoToolBarButton.png")));
 		info.setToolTipText("Info");
@@ -154,6 +154,16 @@ public class ToolBar {
 		flatSelectedNodes.setActionCommand("flatSelectedNodes");
 		flatSelectedNodes.addActionListener(ToolBarListener.getInstance());
 
+		JButton groupSelectedNodes = new ToolBarButton(new ImageIcon(imagePath.getPath("CoarseNodesButton.png")));
+		groupSelectedNodes.setToolTipText("Group selected nodes");
+		groupSelectedNodes.setActionCommand("group");
+		groupSelectedNodes.addActionListener(ToolBarListener.getInstance());
+
+		JButton deleteGroup = new ToolBarButton(new ImageIcon(imagePath.getPath("FlatNodesButton.png")));
+		deleteGroup.setToolTipText("Delete selected group");
+		deleteGroup.setActionCommand("deleteGroup");
+		deleteGroup.addActionListener(ToolBarListener.getInstance());
+
 		JButton enterSelectedNode = new ToolBarButton(new ImageIcon(imagePath.getPath("enterNode.png")));
 		enterSelectedNode.setToolTipText("Enter selected coarse node(s)");
 		enterSelectedNode.setActionCommand("enterNode");
@@ -184,6 +194,9 @@ public class ToolBar {
 		if (MainWindow.developer) {
 			infopanel.add(autoCoarse);
 		}
+
+		infopanel.add(groupSelectedNodes);
+		infopanel.add(deleteGroup);
 
 		JButton fullScreen = new ToolBarButton(new ImageIcon(imagePath.getPath("newFullScreen.png")));
 		fullScreen.setToolTipText("Full screen");

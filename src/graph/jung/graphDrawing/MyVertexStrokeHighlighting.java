@@ -54,6 +54,9 @@ public class MyVertexStrokeHighlighting implements
 	private final float dash1[] = { 6.0f, 3.0f };
 	private final BasicStroke refstroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
 			BasicStroke.JOIN_BEVEL, 5.0f, dash1, 0.0f);
+	private final float dash2[] = { 2.0f, 2.0f };
+	private final BasicStroke groupstroke = new BasicStroke(2.0f, BasicStroke.CAP_BUTT,
+			BasicStroke.JOIN_BEVEL, 5.0f, dash2, 0.0f);
 	
 	public MyVertexStrokeHighlighting(PickedState<BiologicalNodeAbstract> psV,
 			PickedState<BiologicalEdgeAbstract> psE, Pathway pw) {
@@ -124,6 +127,9 @@ public class MyVertexStrokeHighlighting implements
 				if (petriNet && !isContPlace) {
 					return pn_heavy;
 				} else {
+					if (bna.getGroups().size() > 0) {
+						return groupstroke;
+					}
 					return heavy;
 				}
 			} else {

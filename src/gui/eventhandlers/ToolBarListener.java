@@ -271,6 +271,16 @@ public class ToolBarListener implements ActionListener {
 			new OpenModellicaResult().execute();
 		} else if ("simulate".equals(event)) {
 			new PetriNetSimulation();
+		} else if ("group".equals(event)) {
+			if (con.containsPathway()) {
+				con.getPathway(w.getCurrentPathway()).groupSelectedNodes();
+				con.getPathway(w.getCurrentPathway()).updateMyGraph();
+			}
+		} else if ("deleteGroup".equals(event)) {
+			if (con.containsPathway()) {
+				con.getPathway(w.getCurrentPathway()).deleteGroup();
+				con.getPathway(w.getCurrentPathway()).updateMyGraph();
+			}
 		} else if ("coarseSelectedNodes".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
 				// System.out.println("coarse");

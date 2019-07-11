@@ -148,8 +148,10 @@ public class MyVertexDrawPaintFunction implements
 	@Override
 	public Paint transform(BiologicalNodeAbstract v) {
 
+
 		HashSet<BiologicalNodeAbstract> set = pw.getNewLoadedNodes();
 		if (set.contains(v)) {
+
 			return Color.red;
 		} else {
 			if (!graphTheory)
