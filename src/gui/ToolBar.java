@@ -154,12 +154,12 @@ public class ToolBar {
 		flatSelectedNodes.setActionCommand("flatSelectedNodes");
 		flatSelectedNodes.addActionListener(ToolBarListener.getInstance());
 
-		JButton groupSelectedNodes = new ToolBarButton(new ImageIcon(imagePath.getPath("CoarseNodesButton.png")));
+		JButton groupSelectedNodes = new ToolBarButton(new ImageIcon(imagePath.getPath("GroupButton.png")));
 		groupSelectedNodes.setToolTipText("Group selected nodes");
 		groupSelectedNodes.setActionCommand("group");
 		groupSelectedNodes.addActionListener(ToolBarListener.getInstance());
 
-		JButton deleteGroup = new ToolBarButton(new ImageIcon(imagePath.getPath("FlatNodesButton.png")));
+		JButton deleteGroup = new ToolBarButton(new ImageIcon(imagePath.getPath("UngroupButton.png")));
 		deleteGroup.setToolTipText("Delete selected group");
 		deleteGroup.setActionCommand("deleteGroup");
 		deleteGroup.addActionListener(ToolBarListener.getInstance());
