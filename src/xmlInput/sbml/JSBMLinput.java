@@ -166,7 +166,7 @@ public class JSBMLinput {
 	private void getInputGroups(Element groupNode) {
 		if (groupNode == null) {
 
-			System.out.println("keine gruppen gefunden");
+			// System.out.println("keine gruppen gefunden");
 			return;
 		}
 		List<Element> groupChildren = groupNode.getChildren();
