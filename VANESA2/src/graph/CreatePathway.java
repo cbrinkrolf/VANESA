@@ -1,13 +1,16 @@
 package graph;
 
 import java.awt.Cursor;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+
+import javax.xml.stream.XMLStreamException;
 
 import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
 import gui.MainWindow;
+import xmlInput.sbml.JSBMLinput;
+import xmlOutput.sbml.JSBMLoutput;
 
 public class CreatePathway {
 
@@ -15,7 +18,7 @@ public class CreatePathway {
 	GraphContainer con = GraphContainer.getInstance();
 	String pathwayName;
 	Pathway pw;
-	Pathway parent=null;
+	Pathway parent = null;
 
 	public CreatePathway(String title, Pathway parent) {
 		this.parent = parent;
@@ -32,70 +35,50 @@ public class CreatePathway {
 		pathwayName = "Untitled";
 		buildPathway();
 	}
-	
-	public CreatePathway(Pathway pathway){
-		this.pathwayName = pathway.getName();
-		this.buildPathway();
-		
-		HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> nodes = new HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract>();
-		
-		Iterator<BiologicalNodeAbstract> it = pathway.getAllGraphNodes().iterator();
-		BiologicalNodeAbstract bna;
-		BiologicalNodeAbstract clone;
-		while(it.hasNext()){
-			bna = it.next();
-			clone =(BiologicalNodeAbstract) bna.clone();
-			nodes.put(bna, clone);
-			pw.addVertex(clone, pathway.getGraph().getVertexLocation(bna));
+
+	public CreatePathway(Pathway pathway) {
+
+		PipedInputStream in = new PipedInputStream();
+		PipedOutputStream out;
+		try {
+			out = new PipedOutputStream(in);
+			new Thread(new Runnable() {
+				public void run() {
+					try {
+						new JSBMLoutput(out, pathway).generateSBMLDocument();
+					} catch (XMLStreamException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}).start();
+			new JSBMLinput(null).loadSBMLFile(in, pathway.getName());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		
-		it = pw.getAllGraphNodes().iterator();
-		while(it.hasNext()){
-			bna = it.next();
-			if(bna.hasRef()){
-				bna.setRef(nodes.get(bna.getRef()));
-			}
-			//pw.addVertex(clone, pathway.getGraph().getVertexLocation(bna));
-		}
-		
-		
-		Iterator<BiologicalEdgeAbstract> it2 = pathway.getAllEdges().iterator();
-		
-		BiologicalEdgeAbstract bea;
-		BiologicalEdgeAbstract beaClone;
-		while(it2.hasNext()){
-			bea = it2.next();
-			beaClone = bea.clone();
-			beaClone.setFrom(nodes.get(bea.getFrom()));
-			beaClone.setTo(nodes.get(bea.getTo()));
-			pw.addEdge(beaClone);
-		}
-		
-		
 	}
 
 	private void buildPathway() {
 		w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		//Pathway newPW = null;
+		// Pathway newPW = null;
 		if (parent == null) {
 			new Pathway(pathwayName);
 		} else {
 			new Pathway(pathwayName, parent);
 		}
-		String newPathwayName = con.addPathway(pathwayName, new Pathway(
-				pathwayName));
+		String newPathwayName = con.addPathway(pathwayName, new Pathway(pathwayName));
 		pw = con.getPathway(newPathwayName);
 		w.addTab(pw.getTab().getTitelTab());
 		w.returnFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
-	/*public void addVertex(Object node) {
-		pw.getGraph().addVertexLabel(node);
-	}*/
+	/*
+	 * public void addVertex(Object node) { pw.getGraph().addVertexLabel(node); }
+	 */
 
 	public Pathway getPathway() {
 		return pw;
 	}
-	
-	
+
 }
