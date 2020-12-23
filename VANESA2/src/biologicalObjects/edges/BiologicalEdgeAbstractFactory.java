@@ -100,9 +100,8 @@ public class BiologicalEdgeAbstractFactory {
 	private static void fillPNEdge(BiologicalEdgeAbstract newBea, BiologicalEdgeAbstract bea){
 		if(newBea instanceof PNEdge && bea instanceof PNEdge){
 			((PNEdge)newBea).setProbability(((PNEdge)bea).getProbability());
+			((PNEdge)newBea).setPriority(((PNEdge)bea).getPriority());
 			((PNEdge)newBea).setFunction(((PNEdge)bea).getFunction());
-			((PNEdge)newBea).setLowerBoundary(((PNEdge)bea).getLowerBoundary());
-			((PNEdge)newBea).setUpperBoundary(((PNEdge)bea).getUpperBoundary());
 		}
 	}
 }

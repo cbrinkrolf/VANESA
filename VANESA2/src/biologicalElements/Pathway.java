@@ -203,7 +203,6 @@ public class Pathway implements Cloneable {
 	public BiologicalEdgeAbstract addEdge(String label, String name,
 			BiologicalNodeAbstract from, BiologicalNodeAbstract to,
 			String element, boolean directed) {
-
 		BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(element, null);
 		bea.setLabel(label);
 		bea.setName(name);
@@ -213,23 +212,15 @@ public class Pathway implements Cloneable {
 
 		if (element.equals(Elementdeclerations.pnEdge)) {
 			boolean wasUndirected = false;
-			double UpperBoundary = 0.0;
-			double LowerBoundary = 0.0;
 			double ActivationProbability = 1.0;
 			
 			((PNEdge) bea).wasUndirected(wasUndirected);
-			((PNEdge) bea).setLowerBoundary(LowerBoundary);
-			((PNEdge) bea).setUpperBoundary(UpperBoundary);
 			((PNEdge) bea).setProbability(ActivationProbability);
 
 		} else if (element.equals(Elementdeclerations.pnInhibitionEdge)) {
 			boolean wasUndirected = false;
-			double UpperBoundary = 0.0;
-			double LowerBoundary = 0.0;
 			double ActivationProbability = 1.0;
 			((PNEdge) bea).wasUndirected(wasUndirected);
-			((PNEdge) bea).setLowerBoundary(LowerBoundary);
-			((PNEdge) bea).setUpperBoundary(UpperBoundary);
 			((PNEdge) bea).setProbability(ActivationProbability);
 		}
 		return addEdge(bea);

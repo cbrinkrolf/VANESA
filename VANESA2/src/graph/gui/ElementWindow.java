@@ -633,16 +633,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 				function.setName("function");
 				function.addFocusListener(pwl);
 				JLabel lblpassingTokens = new JLabel("Edge Function");
-				MyJFormattedTextField lowBoundary = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-				lowBoundary.setText(e.getLowerBoundary() + "");
-				lowBoundary.setName("lowBoundary");
-				lowBoundary.addFocusListener(pwl);
-				JLabel lblLow = new JLabel("lower Boundary");
-				MyJFormattedTextField upBoundary = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-				upBoundary.setText(e.getUpperBoundary() + "");
-				upBoundary.setName("upBoundary");
-				upBoundary.addFocusListener(pwl);
-				JLabel lblUp = new JLabel("upper Boundary");
 
 				// String[] types = { "discrete", "continuous", "inhibition" };
 				// Create the combo box, select item at index 4.
@@ -670,10 +660,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				p.add(lblpassingTokens, "gap 5");
 				p.add(function, "wrap");
-				p.add(lblLow, "gap 5");
-				p.add(lowBoundary, "wrap");
-				p.add(lblUp, "gap 5");
-				p.add(upBoundary, "wrap");
 
 				if (e.getFrom() instanceof Place) {
 					Place place = (Place) e.getFrom();
@@ -891,8 +877,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(), edge.getBiologicalElement(),
 					edge.getFunction());
-			newEdge.setUpperBoundary(edge.getUpperBoundary());
-			newEdge.setLowerBoundary(edge.getLowerBoundary());
 			newEdge.setProbability(edge.getProbability());
 			newEdge.setDirected(true);
 			// pw = graphInstance.getPathway();
