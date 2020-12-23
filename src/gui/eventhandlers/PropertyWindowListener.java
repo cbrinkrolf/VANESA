@@ -358,30 +358,6 @@ public class PropertyWindowListener implements FocusListener {
 				e.setFunction(text);
 				pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
 			}
-		} else if (source.equals("lowBoundary")) {
-			text = ((JTextField) event.getSource()).getText().trim();
-			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getLowerBoundary() + "")) {
-				double lowBoundary = Double.parseDouble(text);
-				if (lowBoundary <= e.getUpperBoundary() || e.getUpperBoundary() == 0) {
-					e.setLowerBoundary(lowBoundary);
-					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
-				}else{
-					MyPopUp.getInstance().show("Violation", "lower boundary > upper boundary");
-				}
-			}
-		} else if (source.equals("upBoundary")) {
-			text = ((JTextField) event.getSource()).getText().trim();
-			PNEdge e = (PNEdge) geb;
-			if (!text.equals("") && !text.equals(e.getUpperBoundary() + "")) {
-				double upperBoundary = Double.parseDouble(text);
-				if(upperBoundary >= e.getLowerBoundary()){
-				e.setUpperBoundary(upperBoundary);
-				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
-				}else{
-					MyPopUp.getInstance().show("Violation", "upper boundary < lower boundary");
-				}
-			}
 		}
 		// ContainerSingelton.getInstance().changeMouseFunction("edit");
 		event.getComponent().setBackground(Color.WHITE);

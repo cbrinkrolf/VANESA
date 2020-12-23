@@ -13,9 +13,6 @@ public class PNEdge extends BiologicalEdgeAbstract {
 	// conflict sovling: probability that edge is active
 	private double probability = 1.0;
 
-	private double lowerBoundary;
-	private double upperBoundary;
-
 	private boolean wasUndirected = false;
 
 	public boolean wasUndirected() {
@@ -46,22 +43,6 @@ public class PNEdge extends BiologicalEdgeAbstract {
 
 	public double getPassingTokens() {
 		return fp.parse(getFunction());
-	}
-
-	public double getLowerBoundary() {
-		return lowerBoundary;
-	}
-
-	public void setLowerBoundary(double lowerBoundary) {
-		this.lowerBoundary = lowerBoundary;
-	}
-
-	public double getUpperBoundary() {
-		return upperBoundary;
-	}
-
-	public void setUpperBoundary(double upperBoundary) {
-		this.upperBoundary = upperBoundary;
 	}
 
 	public int getPriority() {

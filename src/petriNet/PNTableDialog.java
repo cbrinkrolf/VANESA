@@ -91,6 +91,8 @@ public class PNTableDialog extends JDialog implements ActionListener {
 				i++;
 			}
 		}
+		
+		//CHRIS refactor Table
 		i = 0;
 		Object[][] rows2 = new Object[pw.getAllEdges().toArray().length][9];
 		edges = new PNEdge[pw.getAllEdges().toArray().length];
@@ -127,8 +129,8 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			}
 
 			rows2[i][4] = edge.getFunction();
-			rows2[i][5] = edge.getLowerBoundary();
-			rows2[i][6] = edge.getUpperBoundary();
+			//rows2[i][5] = edge.getLowerBoundary();
+			//rows2[i][6] = edge.getUpperBoundary();
 			rows2[i][7] = edge.getProbability();
 			i++;
 
