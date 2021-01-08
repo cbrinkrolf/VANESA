@@ -139,7 +139,7 @@ public class MenuListener implements ActionListener {
 		String event = e.getActionCommand();
 		final GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = GraphContainer.getInstance();
-
+		//System.out.println(event);
 		if ("new Network".equals(event)) {
 
 			int option = JOptionPane.showOptionDialog(w, "Which type of modeling do you prefer?", "Choose Network Type...", JOptionPane.YES_NO_OPTION,
@@ -937,14 +937,15 @@ public class MenuListener implements ActionListener {
 				// ByteArrayOutputStream bos = new ByteArrayOutputStream();
 				// Serialize it
 
-				Pathway pw = new CreatePathway(old).getPathway();
+				 new CreatePathway(old).getPathway();
+				 Pathway pw = con.getPathway(w.getCurrentPathway());
 				// pw = old.clone()
 
 				Transformation t = new Transformation();
 				t.resolveReferences(pw);
 				// MainWindow.
 				// Tansformation.resolveReferences(pw);
-				// pw = old;
+				 //pw = old;
 			}
 
 		} else if ("createDoc".equals(event)) {

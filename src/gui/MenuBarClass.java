@@ -329,10 +329,10 @@ public class MenuBarClass {
 		JMenuItem transform = new JMenuItem("Transform to Petri net");
 		transform.addActionListener(MenuListener.getInstance());
 		transform.setActionCommand("transform");
-
+		
 		help.add(interaction);
 
-		// about item is allready present on mac osx
+		// about item is already present on mac osx
 		if (!application.isMac()) {
 			about = new JMenuItem("About");
 			about.addActionListener(MenuListener.getInstance());

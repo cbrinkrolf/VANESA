@@ -8,6 +8,8 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class Tester {
 
+	
+	// "binning" of nodes to classes 
 	List<BiologicalNodeAbstract> list = new ArrayList<BiologicalNodeAbstract>();
 	List<BiologicalEdgeAbstract> es = new ArrayList<BiologicalEdgeAbstract>();
 
