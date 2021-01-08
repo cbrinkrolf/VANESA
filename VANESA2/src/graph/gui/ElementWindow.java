@@ -641,10 +641,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				p.add(new JLabel("Edge Type"), "gap 5 ");
 				p.add(new JLabel(e.getBiologicalElement()), "wrap");
-				JButton dirChanger = new JButton("Change Direction");
-				dirChanger.setActionCommand("dirChanger");
-				dirChanger.addActionListener(this);
-				p.add(dirChanger, "wrap");
+				JButton changeEdgeDirection = new JButton("Change Direction");
+				changeEdgeDirection.setActionCommand("changeEdgeDirection");
+				changeEdgeDirection.addActionListener(this);
+				p.add(changeEdgeDirection, "wrap");
 
 				MyJFormattedTextField activationProb = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				activationProb.setText(e.getProbability() + "");
@@ -871,25 +871,23 @@ public class ElementWindow implements ActionListener, ItemListener {
 				node.setVisible(!hide);
 			}
 
-		} else if ("dirChanger".equals(event) && ab.isEdge()) {
+		} else if ("changeEdgeDirection".equals(event) && ab.isEdge()) {
 			Pathway pw = graphInstance.getPathway();
 			PNEdge edge = (PNEdge) ab;
 
 			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(), edge.getBiologicalElement(),
 					edge.getFunction());
+			newEdge.setPriority(edge.getPriority());
 			newEdge.setProbability(edge.getProbability());
 			newEdge.setDirected(true);
-			// pw = graphInstance.getPathway();
-			// MyGraph g = pw.getGraph();
-			// g.getJungGraph().removeEdge(edge);
-			// g.getEdgeStringer().removeEdge(edge.getEdge());
+			
 			pw.removeElement(edge);
-
 			pw.addEdge(newEdge);
 			pw.updateMyGraph();
-			// g.getVisualizationViewer().getPickedState().clearPickedEdges();
+			pw.getGraph().getVisualizationViewer().getPickedEdgeState().clear();
+			pw.getGraph().getVisualizationViewer().getPickedEdgeState().pick(newEdge, true);
 			graphInstance.setSelectedObject(newEdge);
-
+			
 			ab = newEdge;
 		} else if ("chooseRef".equals(event)) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;

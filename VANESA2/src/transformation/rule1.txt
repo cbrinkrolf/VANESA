@@ -1,0 +1,22 @@
+Nodes:
+M1 Metabolite
+M2 Metabolite
+E Enzyme
+
+Edges:
+E1 BEA N1->E
+E2 BEA E->M2
+
+PNNodes:
+P1 Cont. Place
+P2 Cont. Place
+T1 Cont. Transition
+
+Mapping Nodes:
+M1 P1
+M2 P2
+E T1
+
+Creation:
+PNEdge P1->T1
+PNEdge T1->P2
