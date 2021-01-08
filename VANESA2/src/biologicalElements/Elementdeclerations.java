@@ -134,9 +134,9 @@ public class Elementdeclerations {
 
 	public static final String matrix = "Matrix";
 
-	public static final String place = "Discrete Place";
+	public static final String discretePlace = "Discrete Place";
 
-	public static final String s_place = "Continuous Place";
+	public static final String continuousPlace = "Continuous Place";
 
 	public static final String transition = "Transition";
 
@@ -204,8 +204,8 @@ public class Elementdeclerations {
 		l.add(exon);
 		l.add(fragment);
 		l.add(matrix);
-		l.add(place);
-		l.add(s_place);
+		l.add(discretePlace);
+		l.add(continuousPlace);
 		l.add(stochasticTransition);
 		l.add(discreteTransition);
 		l.add(continuousTransition);

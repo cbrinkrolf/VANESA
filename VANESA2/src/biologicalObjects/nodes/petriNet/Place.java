@@ -6,14 +6,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
 import graph.jung.graphDrawing.VertexShapes;
 
-public class Place extends PNNode {
+public abstract class Place extends PNNode {
+
+	private double token = 1;
+	private double tokenMin = 0.0;
+	private double tokenMax = Double.MAX_VALUE;
+	private double tokenStart = 1;
 
 	public static final int CONFLICTHANDLING_NONE = 0;
 	public static final int CONFLICTHANDLING_PRIO = 1;
@@ -21,83 +25,21 @@ public class Place extends PNNode {
 
 	private int conflictStrategy = 0;
 
-	private double token = 0;
-	private double tokenMin = 0.0;
-	private double tokenMax = Double.MAX_VALUE;
-	private double tokenStart = 0;
-
-	//private boolean discrete = true;
-
 	private Color plotColor;
 
-	//public boolean isDiscrete() {
-		//return discrete;
-	//}
-
-	public void setDiscrete(boolean discrete) {
-		super.setDiscrete(discrete);
-		if (discrete) {
-			setBiologicalElement(Elementdeclerations.place);
-		} else {
-			setBiologicalElement(Elementdeclerations.s_place);
-		}
-		//this.discrete = discrete;
-	}
-
-	public double getTokenStart() {
-		return tokenStart;
-	}
-
-	public void setTokenStart(double tokenStart) {
-		this.tokenStart = tokenStart;
-		if (!new GraphInstance().getPathway().getPetriNet().isPetriNetSimulation())
-			token = tokenStart;
-	}
+	
 
 	// private int r;
 	// private int b;
 	// private int g;
-	public Place(String label, String name, double token, boolean discrete) {
+	public Place(String label, String name) {
 		super(label, name);
 		if (label.equals(""))
 			setLabel(name);
 		if (name.equals(""))
 			setName(label);
-		shapes = new VertexShapes();
-		// System.out.println("new place");
-		//this.discrete = discrete;
-		setDiscrete(discrete);
-		if (discrete) {
-			setDefaultShape(shapes.getEllipse());
-		} else {
-			setDefaultShape(shapes.getDoubleEllipse());
-		}
-
-		if (discrete) {
-			setBiologicalElement(Elementdeclerations.place);
-		} else {
-			setBiologicalElement(Elementdeclerations.s_place);
-		}
-		if (discrete) {
-			// super.setColor(new Color(255,255,255));
-			// System.out.println("weiss");
-		} else {
-			// super.setColor(new Color(125,125,125));
-			// System.out.println("grau");
-		}
+		
 		this.setDefaultNodesize(2);
-		// Rectangle bounds = getShape().getBounds();
-		// System.out.println("hoehe: "+bounds.getHeight());
-		// System.out.println("weite: "+bounds.getWidth());
-		// AffineTransform transform = new AffineTransform();
-		// transform.translate(x2, y2 - bounds.getHeight() / 2);
-		// transform.scale(bounds.getWidth()*3, bounds.getHeight());
-		// setShape(transform.createTransformedShape(getShape()));
-		this.token = token;
-
-		// this.setLabel(token+" "+label);
-		// this.setComments("commetnr");
-		// this.set
 		setDefaultColor(Color.WHITE);
 	}
 
@@ -147,11 +89,16 @@ public class Place extends PNNode {
 		this.token = token;
 	}
 
-	/*
-	 * public void setRelativeColor(int r, int g, int b) { this.r = r; this.g =
-	 * g; this.b = b; }
-	 */
+	public double getTokenStart() {
+		return tokenStart;
+	}
 
+	public void setTokenStart(double tokenStart) {
+		this.tokenStart = tokenStart;
+		if (!new GraphInstance().getPathway().getPetriNet().isPetriNetSimulation())
+			token = tokenStart;
+	}
+	
 	public void setPlotColor(Color plotColor) {
 		this.plotColor = plotColor;
 	}
@@ -159,7 +106,7 @@ public class Place extends PNNode {
 	public Color getPlotColor() {
 		return plotColor;
 	}
-
+	
 	public int getConflictStrategy() {
 		return conflictStrategy;
 	}
@@ -185,9 +132,9 @@ public class Place extends PNNode {
 	}
 
 	public boolean hasConflictProperties() {
-		if (this.conflictStrategy == Place.CONFLICTHANDLING_PRIO) {
+		if (this.conflictStrategy == DiscretePlace.CONFLICTHANDLING_PRIO) {
 			return this.hasPriorityConflicts();
-		} else if (this.conflictStrategy == Place.CONFLICTHANDLING_PROB) {
+		} else if (this.conflictStrategy == DiscretePlace.CONFLICTHANDLING_PROB) {
 			return this.hasProbabilityConflicts();
 		}
 		return false;
@@ -233,9 +180,9 @@ public class Place extends PNNode {
 	}
 
 	public void solveConflictProperties() {
-		if (this.conflictStrategy == Place.CONFLICTHANDLING_PRIO && this.hasPriorityConflicts()) {
+		if (this.conflictStrategy == DiscretePlace.CONFLICTHANDLING_PRIO && this.hasPriorityConflicts()) {
 			this.solvePriorityConflicts();
-		} else if (this.conflictStrategy == Place.CONFLICTHANDLING_PROB && hasProbabilityConflicts()) {
+		} else if (this.conflictStrategy == DiscretePlace.CONFLICTHANDLING_PROB && hasProbabilityConflicts()) {
 			this.solveProbabilityConflicts();
 		}
 	}

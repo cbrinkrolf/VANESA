@@ -8,7 +8,6 @@ import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 
 import javax.swing.JButton;
@@ -25,7 +24,6 @@ import javax.swing.event.DocumentListener;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DynamicNode;
 import graph.ChangedFlags;
@@ -330,6 +328,8 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 				if (!orgClean.equals(formularClean)) {
 					dn.setMaximumSpeed(formular);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+					// TODO update propertiesWindow
+					MainWindow.getInstance().updateElementProperties();
 				}
 			}
 			frame.setVisible(false);

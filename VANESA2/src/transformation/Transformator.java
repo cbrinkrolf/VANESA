@@ -11,6 +11,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
@@ -304,7 +305,7 @@ public class Transformator {
 		PNNode pn = null;
 		switch (pnNode.getType()) {
 		case "ContinuousPlace":
-			pn = new Place("", "", 0, false);
+			pn = new ContinuousPlace("", "");
 			break;
 		case "ContinuousTransition":
 			pn = new ContinuousTransition("", "");

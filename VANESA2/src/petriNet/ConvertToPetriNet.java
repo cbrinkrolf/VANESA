@@ -13,7 +13,9 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
@@ -82,8 +84,12 @@ public class ConvertToPetriNet {
 			// System.out.println("Name: "+bna.getName());
 			// System.out.println("Label: "+bna.getLabel());
 			// System.out.println("V-name: "+bna.getVertex().toString());
-			p = new Place(bna.getLabel(), bna.getName(), this.initialTokens,
-					answer == JOptionPane.YES_OPTION);
+			if(answer == JOptionPane.YES_OPTION){
+				p = new DiscretePlace(bna.getLabel(), bna.getName());
+			}else{
+				p = new ContinuousPlace(bna.getLabel(), bna.getName());
+			}
+			
 			p.setTokenStart(this.initialTokens);
 			p.setTokenMax(1000);
 

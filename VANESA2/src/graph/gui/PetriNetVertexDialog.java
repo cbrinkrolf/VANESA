@@ -21,7 +21,9 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
@@ -209,7 +211,7 @@ public class PetriNetVertexDialog {
 					// System.out.println("anfang");
 
 					number = (Number) token.getValue();
-					Place p = new Place(label.getText().trim(), name.getText().trim(), 0, true);
+					DiscretePlace p = new DiscretePlace(label.getText().trim(), name.getText().trim());
 
 					if (number != null) {
 						p.setToken(number.doubleValue());
@@ -229,7 +231,7 @@ public class PetriNetVertexDialog {
 					createdNode = p;
 				} else if (petriElement.equals("continuousPlace")) {
 
-					Place p = new Place(label.getText().trim(), name.getText().trim(), 0.0, false);
+					ContinuousPlace p = new ContinuousPlace(label.getText().trim(), name.getText().trim());
 					number = (Number) token.getValue();
 					if (number != null) {
 						p.setToken(number.doubleValue());

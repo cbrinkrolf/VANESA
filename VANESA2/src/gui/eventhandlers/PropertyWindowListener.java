@@ -22,7 +22,9 @@ import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.Protein;
 import biologicalObjects.nodes.RNA;
+import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
@@ -273,7 +275,7 @@ public class PropertyWindowListener implements FocusListener {
 					node = j.next();
 					if (node.equals(neighbour) && (((JComboBox) event.getSource()).getSelectedItem()
 							.equals(ContinuousTransition.class.getName())
-							&& node.getBiologicalElement().equals(Elementdeclerations.place))) {
+							&& node.getBiologicalElement().equals(Elementdeclerations.discretePlace))) {
 						JOptionPane.showMessageDialog(MainWindow.getInstance(),
 								"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
 								"Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
@@ -314,8 +316,12 @@ public class PropertyWindowListener implements FocusListener {
 				}
 			}
 
-			Place newP = new Place(p.getLabel(), p.getName(), 0,
-					((JComboBox) event.getSource()).getSelectedItem().equals("discrete"));
+			Place newP;
+			if(((JComboBox) event.getSource()).getSelectedItem().equals("discrete")){
+				newP = new DiscretePlace(p.getLabel(), p.getName());
+			}else{
+				newP = new ContinuousPlace(p.getLabel(), p.getName());
+			}
 			graphInstance.getPathway().addVertex(newP, new Point());
 			newP.setToken(p.getToken());
 			newP.setTokenMax(p.getTokenMax());

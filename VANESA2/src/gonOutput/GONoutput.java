@@ -177,9 +177,9 @@ public class GONoutput {
 		Place place = (Place) bna;
 		
 		//System.out.println(this.nodeType.get(name));
-		if(bna.getBiologicalElement().equals(Elementdeclerations.place)){
+		if(bna.getBiologicalElement().equals(Elementdeclerations.discretePlace)){
 			type = "Integer";
-		}else if(bna.getBiologicalElement().equals(Elementdeclerations.s_place)){
+		}else if(bna.getBiologicalElement().equals(Elementdeclerations.continuousPlace)){
 			type = "Double";
 		}
 		String start = place.getTokenStart()+"";

@@ -38,6 +38,7 @@ import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.RNA;
+import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.CreatePathway;
@@ -468,7 +469,7 @@ public class JSBMLinput {
 							((biologicalObjects.nodes.SRNA) bna).setNtSequence(attr);
 						}
 						break;
-					case Elementdeclerations.place:
+					case Elementdeclerations.discretePlace:
 						// System.out.println("plce");
 						elSub = specAnnotation.getChild("token", null);
 						attr = String.valueOf(elSub.getAttributeValue("token"));
@@ -490,7 +491,7 @@ public class JSBMLinput {
 							((Place) bna).setConflictStrategy(Integer.parseInt(attr));
 						}
 						break;
-					case Elementdeclerations.s_place:
+					case Elementdeclerations.continuousPlace:
 						elSub = specAnnotation.getChild("token", null);
 						attr = String.valueOf(elSub.getAttributeValue("token"));
 						// System.out.println(attr);
@@ -511,6 +512,7 @@ public class JSBMLinput {
 							attr = elSub.getAttributeValue("ConflictStrategy");
 							((Place) bna).setConflictStrategy(Integer.parseInt(attr));
 						}
+						
 						break;
 					case Elementdeclerations.discreteTransition:
 						elSub = specAnnotation.getChild("delay", null);
