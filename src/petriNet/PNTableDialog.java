@@ -168,8 +168,8 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 				if (columnIndex == 6) {
 					String s = (String) aValue;
-					if (((s.equals(Elementdeclerations.s_place) || s
-							.equals(Elementdeclerations.place)) && !(bnas[rowIndex] instanceof Place))
+					if (((s.equals(Elementdeclerations.continuousPlace) || s
+							.equals(Elementdeclerations.discretePlace)) && !(bnas[rowIndex] instanceof Place))
 							|| ((s.equals(Elementdeclerations.discreteTransition)
 									|| s.equals(Elementdeclerations.continuousTransition) || s
 										.equals(Elementdeclerations.stochasticTransition)) && !(bnas[rowIndex] instanceof Transition)))
@@ -183,8 +183,8 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		table.setModel(model);
 		TableColumn myColumn = table.getColumnModel().getColumn(6);
 		JComboBox<String> comboEditor = new JComboBox<String>();
-		comboEditor.addItem(Elementdeclerations.place);
-		comboEditor.addItem(Elementdeclerations.s_place);
+		comboEditor.addItem(Elementdeclerations.discretePlace);
+		comboEditor.addItem(Elementdeclerations.continuousPlace);
 		comboEditor.addItem(Elementdeclerations.discreteTransition);
 		comboEditor.addItem(Elementdeclerations.continuousTransition);
 		comboEditor.addItem(Elementdeclerations.stochasticTransition);
@@ -338,7 +338,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 									&& (((String) table.getValueAt(
 											table.convertRowIndexToView(i),
 											table.convertColumnIndexToView(6)))
-											.equals(Elementdeclerations.place) && node instanceof ContinuousTransition))
+											.equals(Elementdeclerations.discretePlace) && node instanceof ContinuousTransition))
 								stateChanged = false;
 						}
 					}
@@ -347,7 +347,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 						p.setDiscrete(((String) table.getValueAt(
 								table.convertRowIndexToView(i),
 								table.convertColumnIndexToView(6)))
-								.equals(Elementdeclerations.place));
+								.equals(Elementdeclerations.discretePlace));
 					else
 						p.setColor(Color.red);
 
@@ -370,7 +370,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 											table.convertColumnIndexToView(6)))
 											.equals(Elementdeclerations.continuousTransition) && node
 											.getBiologicalElement().equals(
-													Elementdeclerations.place)))
+													Elementdeclerations.discretePlace)))
 								stateChanged = false;
 						}
 					}

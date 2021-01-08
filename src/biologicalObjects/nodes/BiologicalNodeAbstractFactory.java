@@ -1,7 +1,9 @@
 package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
+import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
@@ -124,12 +126,12 @@ public class BiologicalNodeAbstractFactory {
 			newBNA = new TranscriptionFactor(label, name);
 			break;
 			
-		case Elementdeclerations.place:
-			newBNA = new Place(label, name, 1.0, true);
+		case Elementdeclerations.discretePlace:
+			newBNA = new DiscretePlace(label, name);
 			fillPlace(newBNA, bna);			
 			break;
-		case Elementdeclerations.s_place:
-			newBNA = new Place(label, name, 1.0, false);
+		case Elementdeclerations.continuousPlace:
+			newBNA = new ContinuousPlace(label, name);
 			fillPlace(newBNA, bna);
 			break;
 		case Elementdeclerations.discreteTransition:

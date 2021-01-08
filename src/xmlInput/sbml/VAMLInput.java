@@ -77,7 +77,9 @@ import biologicalObjects.nodes.Site;
 import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
+import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
@@ -754,7 +756,7 @@ public class VAMLInput {
 			bna = new Site(label, name);
 
 		} else if (biologicalElement.equals("Discrete Place")) {
-			bna = new Place(label, name, 1.0, true);
+			bna = new DiscretePlace(label, name);
 			String token = node.getAttributeValue(new QName("token"));
 			String tokenMin = node.getAttributeValue(new QName("tokenMin"));
 			String tokenMax = node.getAttributeValue(new QName("tokenMax"));
@@ -763,9 +765,8 @@ public class VAMLInput {
 			((Place) bna).setTokenMin(Double.parseDouble(tokenMin));
 			((Place) bna).setTokenMax(Double.parseDouble(tokenMax));
 			((Place) bna).setTokenStart(Double.parseDouble(tokenStart));
-			((Place) bna).setDiscrete(true);
 		} else if (biologicalElement.equals("Continuous Place")) {
-			bna = new Place(label, name, 1.0, false);
+			bna = new ContinuousPlace(label, name);
 			String token = node.getAttributeValue(new QName("token"));
 			String tokenMin = node.getAttributeValue(new QName("tokenMin"));
 			String tokenMax = node.getAttributeValue(new QName("tokenMax"));
@@ -774,7 +775,6 @@ public class VAMLInput {
 			((Place) bna).setTokenMin(Double.parseDouble(tokenMin));
 			((Place) bna).setTokenMax(Double.parseDouble(tokenMax));
 			((Place) bna).setTokenStart(Double.parseDouble(tokenStart));
-			((Place) bna).setDiscrete(false);
 		} else if (biologicalElement.equals("Discrete Transition")) {
 			bna = new DiscreteTransition(label, name);
 			String delay = node.getAttributeValue(new QName("delay"));

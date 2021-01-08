@@ -15,6 +15,7 @@ import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.SmallMolecule;
+import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
@@ -86,9 +87,9 @@ public class ConvertMetabolicNet {
 			// System.out.println("Name: "+bna.getName());
 			// System.out.println("Label: "+bna.getLabel());
 			// System.out.println("V-name: "+bna.getVertex().toString());
-			p = new Place(bna.getLabel(), bna.getName(), bna.getConcentration(),
-					bna.isDiscrete());
+			p = new ContinuousPlace(bna.getLabel(), bna.getName());
 			p.setTokenStart(bna.getConcentrationStart());
+			p.setToken(bna.getConcentration());
 			//p.setTokenMax(1000);
 
 			p.setColor(bna.getColor());
@@ -125,9 +126,9 @@ public class ConvertMetabolicNet {
 				pw.addVertex(ct, new Point2D.Double(scaleFactor * x, scaleFactor * y));
 				node2place.put(bna, ct);
 				
-				p = new Place(bna.getName(), bna.getName(), bna.getConcentration(),
-						bna.isDiscrete());
+				p = new ContinuousPlace(bna.getName(), bna.getName());
 				p.setTokenStart(bna.getConcentrationStart());
+				p.setToken(bna.getConcentration());
 				//p.setTokenMax(1000);
 
 				p.setColor(bna.getColor());

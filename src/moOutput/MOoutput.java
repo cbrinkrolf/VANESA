@@ -237,12 +237,15 @@ public class MOoutput {
 			if (!bna.hasRef()) {
 				String biologicalElement = bna.getBiologicalElement();
 				String name = "";
+				/*
 				if (biologicalElement.equals(biologicalElements.Elementdeclerations.place)
 						|| biologicalElement.equals(biologicalElements.Elementdeclerations.s_place))
 					name = bna.getName();
 				else
 					name = bna.getName();
-
+				*/
+				name = bna.getName();
+				
 				this.vertex2name.put(bna, name);
 				// nodePositions.put(name, p);
 				nodeType.put(bna, biologicalElement);
@@ -303,7 +306,7 @@ public class MOoutput {
 				}
 				names.add(bna.getName());
 				String atr = "";
-				if (biologicalElement.equals(Elementdeclerations.place)) {
+				if (biologicalElement.equals(Elementdeclerations.discretePlace)) {
 
 					Place place = (Place) bna;
 
@@ -313,7 +316,7 @@ public class MOoutput {
 					// places.concat(getPlaceString(getModelicaString(place),
 					// bna, atr, in, out));
 
-				} else if (biologicalElement.equals(Elementdeclerations.s_place)) {
+				} else if (biologicalElement.equals(Elementdeclerations.continuousPlace)) {
 
 					Place place = (Place) bna;
 					String start = "";
@@ -687,13 +690,13 @@ public class MOoutput {
 			color = "{0, 0, 0}";
 		}
 
-		if (from.getBiologicalElement().equals(Elementdeclerations.s_place)) {
+		if (from.getBiologicalElement().equals(Elementdeclerations.continuousPlace)) {
 			shiftFrom = 25;
 		} else {
 			shiftFrom = 10;
 		}
 
-		if (to.getBiologicalElement().equals(Elementdeclerations.s_place)) {
+		if (to.getBiologicalElement().equals(Elementdeclerations.continuousPlace)) {
 			shiftTo = -25;
 		} else {
 			shiftTo = -10;

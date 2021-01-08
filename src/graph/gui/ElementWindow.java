@@ -555,7 +555,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				JLabel lswitchTrans = new JLabel("Transition Type");
 				JComboBox<String> transList = new JComboBox<String>(new String[] { DiscreteTransition.class.getSimpleName(),
 						ContinuousTransition.class.getSimpleName(), StochasticTransition.class.getSimpleName() });
-				transList.setSelectedItem(ab.getClass().getCanonicalName());
+				transList.setSelectedItem(ab.getClass().getSimpleName());
 				transList.setName("transList");
 				transList.addFocusListener(pwl);
 				p.add(lswitchTrans, "gap 5");
