@@ -6,6 +6,8 @@ import java.util.List;
 
 public class Rule {
 
+	private String ruleName = "";
+
 	private List<RuleNode> bNodes = new ArrayList<>();
 	private List<RuleEdge> bEdges = new ArrayList<>();
 
@@ -17,6 +19,14 @@ public class Rule {
 
 	public Rule() {
 
+	}
+
+	public String getRuleName() {
+		return ruleName;
+	}
+
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
 	}
 
 	public void addBiologicalEdge(RuleEdge e) {
@@ -126,8 +136,8 @@ public class Rule {
 		}
 		return e;
 	}
-	
-	public List<RuleEdge> getAllPetriEdges(){
+
+	public List<RuleEdge> getAllPetriEdges() {
 		return this.pEdges;
 	}
 
@@ -149,61 +159,54 @@ public class Rule {
 
 	public RuleNode getMappedPnode(RuleNode bNode) {
 		if (bn2Pn.containsKey(bNode)) {
-		return bn2Pn.get(bNode);
+			return bn2Pn.get(bNode);
 		}
 		return null;
 	}
 
-	/*
-	 * 
-	 * // biological node/edge related private List<String> bNodeNames = new
-	 * ArrayList<String>(); private HashMap<String, String> bNodeToType = new
-	 * HashMap<String, String>();
-	 * 
-	 * private List<String> bEdgeNames = new ArrayList<String>(); private
-	 * HashMap<String, String> bEdgeToType = new HashMap<String, String>(); private
-	 * HashMap<String, String> bEdgeToFrom = new HashMap<String, String>(); private
-	 * HashMap<String, String> bEdgeToTo = new HashMap<String, String>();
-	 * 
-	 * // Petri net node/edge related private List<String> pNodeNames = new
-	 * ArrayList<String>(); private HashMap<String, String> pNodeToType = new
-	 * HashMap<String, String>();
-	 * 
-	 * private List<String> pEdgeNames = new ArrayList<String>(); private
-	 * HashMap<String, String> pNEdgeToType = new HashMap<String, String>(); private
-	 * HashMap<String, String> pNEdgeToFrom = new HashMap<String, String>(); private
-	 * HashMap<String, String> pNEdgeToTo = new HashMap<String, String>();
-	 * 
-	 * private HashMap<String, String> bnToPNnode = new HashMap<String, String>();
-	 * private HashMap<String, String> pNToBNnode = new HashMap<String, String>();
-	 * 
-	 * public List<String> getBNodeNames() { return bNodeNames; }
-	 * 
-	 * public HashMap<String, String> getBNodeToType() { return bNodeToType; }
-	 * 
-	 * public List<String> getBEdgeNames() { return bEdgeNames; }
-	 * 
-	 * public HashMap<String, String> getBEdgeToType() { return bEdgeToType; }
-	 * 
-	 * public HashMap<String, String> getBEdgeToFrom() { return bEdgeToFrom; }
-	 * 
-	 * public HashMap<String, String> getBEdgeToTo() { return bEdgeToTo; }
-	 * 
-	 * public HashMap<String, String> getBnToPNNode() { return bnToPNnode; }
-	 * 
-	 * public HashMap<String, String> getPnToBNNode() { return pNToBNnode; }
-	 * 
-	 * public List<String> getPNodeNames() { return pNodeNames; }
-	 * 
-	 * public HashMap<String, String> getpNodeToType() { return pNodeToType; }
-	 * 
-	 * public List<String> getPEdgeNames() { return pEdgeNames; }
-	 * 
-	 * public HashMap<String, String> getPNEdgeToType() { return pNEdgeToType; }
-	 * 
-	 * public HashMap<String, String> getPNEdgeToFrom() { return pNEdgeToFrom; }
-	 * 
-	 * public HashMap<String, String> getPNEdgeToTo() { return pNEdgeToTo; }
-	 * 
-	 */
+	public boolean isConsistent() {
+		RuleNode node;
+		for (int i = 0; i < this.getAllPetriNodes().size(); i++) {
+			node = this.getAllPetriNodes().get(i);
+			// check if PN node type is matching
+			if (!(Transformator.places.contains(node.getType())
+					|| Transformator.transitions.contains(node.getType()))) {
+				System.out.println("Error in rule: " + this.ruleName);
+				System.out.println("Petri net node " + node.getName()
+						+ " does not match Petri net node type. Given node type: " + node.getType());
+				return false;
+			}
+		}
+
+		RuleEdge e;
+		RuleNode from;
+		RuleNode to;
+		for (int i = 0; i < this.getAllPetriEdges().size(); i++) {
+			e = this.getAllPetriEdges().get(i);
+			from = e.getFrom();
+			to = e.getTo();
+			if (Transformator.places.contains(from.getType()) && Transformator.places.contains(to.getType())) {
+				System.out.println("Error in rule: " + this.ruleName);
+				System.out.println("Nodes of arc " + e.getName() + " have the same type (both are places)!");
+				return false;
+			}
+			if (Transformator.transitions.contains(from.getType())
+					&& Transformator.transitions.contains(to.getType())) {
+				System.out.println("Error in rule: " + this.ruleName);
+				System.out.println("Nodes of arc " + e.getName() + " have the same type (both are transitions)!");
+				return false;
+			}
+			if (e.getType().equals(Transformator.pnInhibitoryArc) || e.getType().equals(Transformator.pnTestArc)) {
+				if (Transformator.transitions.contains(from.getType())) {
+					System.out.println("Error in rule: " + this.ruleName);
+					System.out.println(
+							"Inhibitory and test arcs always have to connect a place with a transtionen (not vice versa)!");
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 }

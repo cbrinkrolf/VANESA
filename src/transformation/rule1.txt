@@ -4,7 +4,7 @@ M2 Metabolite
 E Enzyme
 
 Edges:
-E1 BEA N1->E
+E1 BEA M1->E
 E2 BEA E->M2
 
 PNNodes:
@@ -20,3 +20,14 @@ E T1
 Creation:
 PNEdge P1->T1
 PNEdge T1->P2
+
+
+----
+BiologicalNodes:
+  - name: M1
+   type: Metabolite
+  - name: M2
+    type: Metabolite
+  - name: E
+    type: Enzyme
+    

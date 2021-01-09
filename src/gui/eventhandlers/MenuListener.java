@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -91,7 +92,9 @@ import petriNet.PNTableDialog;
 import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 import petriNet.SimpleMatrixDouble;
+import transformation.Rule;
 import transformation.Transformator;
+import transformation.YmlRuleReader;
 import util.KineticBuilder;
 
 public class MenuListener implements ActionListener {
@@ -1191,7 +1194,9 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				Pathway pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
-					new Transformator().transform(pw);
+					YmlRuleReader reader = new YmlRuleReader();
+					List<Rule> rules = reader.getRules();
+					new Transformator().transform(pw, rules);
 				}else{
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
