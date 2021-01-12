@@ -59,6 +59,8 @@ public class MergeGraphs {
 		if (showMessage){
 			MyPopUp.getInstance().show("Finished", "The graphs have been merged and are visualized in a new tab.");
 		}
+		file1.delete();
+		file2.delete();
 		
 		
 //		pw_new.getGraph().changeToGEMLayout();
