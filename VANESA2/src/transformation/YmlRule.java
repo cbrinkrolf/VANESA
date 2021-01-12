@@ -1,7 +1,9 @@
 package transformation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class YmlRule {
 
@@ -12,7 +14,7 @@ public class YmlRule {
 	private List<RuleNode> petriNodes = new ArrayList<RuleNode>();
 	private List<YmlEdge> petriEdges = new ArrayList<YmlEdge>();
 	
-	private List<String> mappingBNToPN = new ArrayList<String>();
+	private List<Map<String, String>> mappingBNToPN = new ArrayList<>();
 	
 	public String getRuleName() {
 		return ruleName;
@@ -44,10 +46,10 @@ public class YmlRule {
 	public void setPetriEdges(List<YmlEdge> petriEdges) {
 		this.petriEdges = petriEdges;
 	}
-	public List<String> getMappingBNToPN() {
+	public List<Map<String, String>> getMappingBNToPN() {
 		return mappingBNToPN;
 	}
-	public void setMappingBNToPN(List<String> mappingBNToPN) {
+	public void setMappingBNToPN(List<Map<String, String>> mappingBNToPN) {
 		this.mappingBNToPN = mappingBNToPN;
 	}
 	

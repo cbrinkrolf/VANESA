@@ -19,36 +19,41 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.PNNode;
+import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.Transition;
 import graph.CreatePathway;
 import graph.GraphInstance;
 import gui.MainWindow;
 
 // Restrictions / limitations:
+// biological network needs to be directed (each edge)
 // All edges of one applied rule will be "deleted"
 // no parameter mapping, default will be applied
 // will stop if all edges and nodes got replaced/considered
 // if no type is given (discrete / continuous), it is inferred from mapped node, default fall back: continuous
 
-// TODO inhib / test arcs
+// TODO parameter mapping
+// TODO test if mapping node types matches
+// TODO syso -> log file
+// TODO handling references / logical nodes
 public class Transformator {
-	
+
 	public static final String place = "Place";
 	public static final String discretePlace = "DiscretePlace";
 	public static final String continuousPlace = "ContinuousPlace";
-	
+
 	public static final String transition = "Transition";
 	public static final String discreteTransition = "DiscreteTransition";
 	public static final String continuousTransition = "ContinuousTransition";
-		
+
 	public static final String pnArc = "PNArc";
 	public static final String pnTestArc = "PNTestArc";
 	public static final String pnInhibitoryArc = "PNInhibitoryArc";
-				
-	public static final Set<String> places = new HashSet<String>(Arrays.asList(place,discretePlace,continuousPlace));
-	public static final Set<String> transitions = new HashSet<String>(Arrays.asList(transition, discreteTransition, continuousTransition));
-	public static final Set<String> pnArcs = new HashSet<String>(Arrays.asList(pnArc, pnTestArc, pnInhibitoryArc));
-	
 
+	public static final Set<String> places = new HashSet<String>(Arrays.asList(place, discretePlace, continuousPlace));
+	public static final Set<String> transitions = new HashSet<String>(
+			Arrays.asList(transition, discreteTransition, continuousTransition));
+	public static final Set<String> pnArcs = new HashSet<String>(Arrays.asList(pnArc, pnTestArc, pnInhibitoryArc));
 
 	private Pathway pw;
 	private Pathway petriNet;
@@ -69,7 +74,7 @@ public class Transformator {
 	public void transform(Pathway pw, List<Rule> rules) {
 		this.pw = pw;
 		this.rules = rules;
-		
+
 		MainWindow w = MainWindow.getInstance();
 		new CreatePathway();
 		GraphInstance graphInstance = new GraphInstance();
@@ -92,7 +97,7 @@ public class Transformator {
 			availableEdges.add(it2.next());
 		}
 
-		//createRules();
+		// createRules();
 		this.createBuckets();
 		applyRules();
 
@@ -102,7 +107,7 @@ public class Transformator {
 	}
 
 	private void applyRules() {
-		System.out.println("ruleset size: "+rules.size());
+		System.out.println("ruleset size: " + rules.size());
 		for (int i = 0; i < rules.size(); i++) {
 			if (this.done()) {
 				return;
@@ -142,10 +147,11 @@ public class Transformator {
 		}
 
 		List<List<Integer>> permutations = Permutator.permutations(list, false);
+		List<Integer> perm;
 
 		do {
 			executed = false;
-			List<Integer> perm = this.getNextMatchingPermutation(r, permutations);
+			perm = this.getNextMatchingPermutation(r, permutations);
 
 			if (perm != null) {
 				executed = this.executeRule(r, perm);
@@ -166,7 +172,6 @@ public class Transformator {
 
 		BiologicalEdgeAbstract bea;
 
-		String bEName;
 		int id1;
 		int id2;
 		BiologicalNodeAbstract n1;
@@ -175,12 +180,13 @@ public class Transformator {
 		// for each permutation
 		int start = 0;
 		if (ruleToNextPermIndex.containsKey(r)) {
-			start = ruleToNextPermIndex.get(r);
+			start = ruleToNextPermIndex.get(r) + 1;
 		}
 
 		Iterator<BiologicalEdgeAbstract> it;
 		RuleEdge bEdge;
 		for (int i = start; i < permutations.size(); i++) {
+			// System.out.println("Permutation #"+i);
 			perm = permutations.get(i);
 
 			// System.out.println("new perm");
@@ -215,9 +221,9 @@ public class Transformator {
 			}
 			if (test) {
 				for (int k = 0; k < perm.size(); k++) {
-					//System.out.print(" " + id2bna.get(perm.get(k)).getLabel() + " ");
+					// System.out.print(" " + id2bna.get(perm.get(k)).getLabel() + " ");
 				}
-				//System.out.println();
+				// System.out.println();
 				this.ruleToNextPermIndex.put(r, i);
 				return perm;
 			}
@@ -242,6 +248,7 @@ public class Transformator {
 		RuleNode pnNode;
 		RuleNode bNode;
 		BiologicalNodeAbstract bna;
+		PNNode pnBNA;
 		for (int i = 0; i < r.getAllPetriNodes().size(); i++) {
 			pnNode = r.getAllPetriNodes().get(i);
 			// System.out.println(pnNode);
@@ -252,8 +259,27 @@ public class Transformator {
 				bna = ruleBNodeToBNA.get(bNode);
 				// System.out.println(bna);
 				if (nodeReplace.containsKey(bna)) {
-					// node already exists, TODO: check node type
-					rulePNodeToBNA.put(pnNode, nodeReplace.get(bna));
+					// node already exists
+					pnBNA = nodeReplace.get(bna);
+					rulePNodeToBNA.put(pnNode, pnBNA);
+					// check if node types matches
+					if (pnNode.getType().equals(Transformator.transition) && pnBNA instanceof Place) {
+						System.out.println("node type mismatch");
+					} else if (pnNode.getType().equals(Transformator.continuousTransition)
+							&& !(pnBNA instanceof ContinuousTransition)) {
+						System.out.println("node type mismatch");
+					} else if (pnNode.getType().equals(Transformator.discreteTransition)
+							&& !(pnBNA instanceof DiscreteTransition)) {
+						System.out.println("node type mismatch");
+					} else if (pnNode.getType().equals(Transformator.place) && pnBNA instanceof Transition) {
+						System.out.println("node type mismatch");
+					} else if (pnNode.getType().equals(Transformator.continuousPlace)
+							&& !(pnBNA instanceof ContinuousPlace)) {
+						System.out.println("node type mismatch");
+					} else if (pnNode.getType().equals(Transformator.discretePlace)
+							&& !(pnBNA instanceof DiscretePlace)) {
+						System.out.println("node type mismatch");
+					}
 				} else {
 					// node needs to be created
 					rulePNodeToBNA.put(pnNode, createPNNode(r, pnNode, bna));
@@ -269,15 +295,17 @@ public class Transformator {
 
 		// creating Petri net edges
 		RuleEdge pnEdge;
-
+		PNNode from;
+		PNNode to;
+		PNEdge edge;
 		for (int i = 0; i < r.getAllPetriEdges().size(); i++) {
 			executed = true;
 			pnEdge = r.getAllPetriEdges().get(i);
 
-			PNNode from = rulePNodeToBNA.get(pnEdge.getFrom());
-			PNNode to = rulePNodeToBNA.get(pnEdge.getTo());
+			from = rulePNodeToBNA.get(pnEdge.getFrom());
+			to = rulePNodeToBNA.get(pnEdge.getTo());
 
-			PNEdge edge = null;
+			edge = null;
 			switch (pnEdge.getType()) {
 			case "PNArc":
 				edge = new PNEdge(from, to, "1", "1", "PNEdge", "1");
@@ -302,18 +330,18 @@ public class Transformator {
 
 		// remove BEA from set of available edges
 		String edgeName = "";
-		BiologicalNodeAbstract from = null;
-		BiologicalNodeAbstract to = null;
+		BiologicalNodeAbstract fromBNA = null;
+		BiologicalNodeAbstract toBNA = null;
 
 		RuleEdge bEdge;
 		for (int i = 0; i < r.getAllBiologicalEdges().size(); i++) {
 
 			bEdge = r.getAllBiologicalEdges().get(i);
 
-			from = ruleBNodeToBNA.get(bEdge.getFrom());
-			to = ruleBNodeToBNA.get(bEdge.getTo());
-			if (pw.existEdge(from, to)) {
-				this.availableEdges.remove(pw.getEdge(from, to));
+			fromBNA = ruleBNodeToBNA.get(bEdge.getFrom());
+			toBNA = ruleBNodeToBNA.get(bEdge.getTo());
+			if (pw.existEdge(fromBNA, toBNA)) {
+				this.availableEdges.remove(pw.getEdge(fromBNA, toBNA));
 			} else {
 
 				System.out.println("Removing edge failed");
@@ -337,17 +365,17 @@ public class Transformator {
 				} else {
 					type = continuousPlace;
 				}
-			}else{
+			} else {
 				type = continuousPlace;
 			}
-		}else if (type.equals(transition)){
+		} else if (type.equals(transition)) {
 			if (bna != null) {
 				if (bna.isDiscrete()) {
 					type = discreteTransition;
 				} else {
 					type = continuousTransition;
 				}
-			}else{
+			} else {
 				type = continuousTransition;
 			}
 		}
@@ -513,9 +541,9 @@ public class Transformator {
 		simpleNode.addPetriNode(simpleP);
 		simpleNode.addBNtoPNMapping(simpleBNA, simpleP);
 
-		 rules.add(r);
-		 rules.add(r1);
-		//rules.add(r2);
+		rules.add(r);
+		rules.add(r1);
+		// rules.add(r2);
 		rules.add(simpleNode);
 
 	}
@@ -582,7 +610,5 @@ public class Transformator {
 			return true;
 		}
 		return false;
-
 	}
-
 }

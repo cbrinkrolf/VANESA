@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import graph.groups.Group;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -38,10 +37,10 @@ import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.RNA;
-import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.CreatePathway;
+import graph.groups.Group;
 import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.RangeSelector;
@@ -92,18 +91,7 @@ public class JSBMLinput {
 		Document doc = null;
 		InputSource in = new InputSource(is);
 
-		/*
-		 * SBMLReader reader = new SBMLReader(); try { SBMLDocument document =
-		 * reader.readSBMLFromStream(is); document.getNumErrors();
-		 * //document.getModel().get } catch (XMLStreamException e1) { // TODO
-		 * Auto-generated catch block e1.printStackTrace(); }
-		 */
-
-		// siehe http://www.javabeginners.de/XML/XML-Datei_lesen.php
-		// create document
-
-
-		// changed empty constructor SAXBuilder builder = new SAXBuilder(); to following, cause open JDK got an
+		// changed empty constructor SAXBuilder builder = new SAXBuilder(); to following, because open JDK got an
 		// error with empty constructor
 		// see: https://stackoverflow.com/questions/11409025/exceptionininitializererror-while-creating-ant-custom-task
 		SAXBuilder builder = new SAXBuilder(new XMLReaderSAX2Factory(false, "org.apache.xerces.parsers.SAXParser"));

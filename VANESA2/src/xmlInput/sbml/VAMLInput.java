@@ -890,20 +890,26 @@ public class VAMLInput {
 			}
 		}
 
-		Iterator it = pw.getGraph().getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getAllEdges().iterator();
 		while (it.hasNext()) {
-			BiologicalEdgeAbstract b = (BiologicalEdgeAbstract) it.next();
+			BiologicalEdgeAbstract b = it.next();
 			// System.out.println("E: "+b.getID());
 		}
 
-		Iterator it2 = pw.getGraph().getAllVertices().iterator();
+		Iterator<BiologicalNodeAbstract> it2 = pw.getGraph().getAllVertices().iterator();
 		while (it2.hasNext()) {
-			BiologicalNodeAbstract b = (BiologicalNodeAbstract) it2.next();
+			BiologicalNodeAbstract b = it2.next();
 			// System.out.println("V "+b.getID());
 		}
 		pw.getGraph().restartVisualizationModel();
 		MainWindow.getInstance().updateProjectProperties();
 		// MainWindowSingelton.getInstance().updateOptionPanel();
-
+		
+		reader.close();
+		try {
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
