@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import graph.jung.classes.MyGraph;
@@ -20,7 +21,7 @@ public class GraphContainer {
 	private String mouseFunction = "edit";
 	private boolean isPetriView = false; 
 	
-	private String PetriNetEditingMode = "discretePlace";
+	private String PetriNetEditingMode = Elementdeclerations.discretePlace;
 	
 	private static GraphContainer instance;
 	

@@ -3,6 +3,7 @@ package biologicalObjects.edges;
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import transformation.graphElements.ANYBiologicalEdge;
 
 public class BiologicalEdgeAbstractFactory {
 
@@ -75,6 +76,9 @@ public class BiologicalEdgeAbstractFactory {
 			break;
 		case Elementdeclerations.ubiquitinationEdge:
 			newBea = new Ubiquitination(label, name, from, to);
+			break;
+		case Elementdeclerations.anyBEA:
+			newBea = new ANYBiologicalEdge(label, name, from, to);
 			break;
 		case "PN Discrete Edge":
 			//old description

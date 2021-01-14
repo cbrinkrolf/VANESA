@@ -100,6 +100,8 @@ public class Pathway implements Cloneable {
 	// private Set<BiologicalEdgeAbstract> edges = new
 	// HashSet<BiologicalEdgeAbstract>();
 
+	//no graph tab is assigned / created. this is used for rule editing window
+	private boolean headless = false;
 
 	public ArrayList<Group> groupes = new ArrayList<>();
 
@@ -125,6 +127,15 @@ public class Pathway implements Cloneable {
 
 	// ---Functional Methods---
 
+	public Pathway(String name, boolean headless){
+		this.headless = headless;
+		// no graph tab is created, used for editing rules window
+		if(headless){
+			this.title = name;
+			graph = new MyGraph(this);
+		}
+	}
+	
 	public Pathway(String name) {
 		this.title = name;
 		graph = new MyGraph(this);
@@ -1556,5 +1567,9 @@ public class Pathway implements Cloneable {
 				removeElement(bna);
 			}
 		}
+	}
+	
+	public boolean isHeadless(){
+		return this.headless;
 	}
 }

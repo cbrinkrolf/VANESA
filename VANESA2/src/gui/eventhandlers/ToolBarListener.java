@@ -16,6 +16,7 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
+import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.CreatePathway;
@@ -35,20 +36,20 @@ import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 
 public class ToolBarListener implements ActionListener {
-	
-	private static ToolBarListener instance; 
 
-	private ToolBarListener(){
-		
+	private static ToolBarListener instance;
+
+	private ToolBarListener() {
+
 	}
-	
-	public static synchronized ToolBarListener getInstance(){
-		if(ToolBarListener.instance == null){
+
+	public static synchronized ToolBarListener getInstance() {
+		if (ToolBarListener.instance == null) {
 			ToolBarListener.instance = new ToolBarListener();
 		}
 		return ToolBarListener.instance;
 	}
-	
+
 	public void showCreateBeforeMessage() {
 		MyPopUp.getInstance().show("Error", "Please create a network first!");
 	}
@@ -56,7 +57,7 @@ public class ToolBarListener implements ActionListener {
 	public void showCreate2NetworksMessage() {
 		MyPopUp.getInstance().show("Error", "Please create a network first!");
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
@@ -67,17 +68,12 @@ public class ToolBarListener implements ActionListener {
 
 		if ("new Network".equals(event)) {
 
-			int option = JOptionPane.showOptionDialog(
-					MainWindow.getInstance(),
-					"Which type of modeling do you prefer?",
-					"Choose Network Type...", JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE, null, new String[] {
-							"Biological Graph", "Petri Net" },
-					JOptionPane.CANCEL_OPTION);
+			int option = JOptionPane.showOptionDialog(MainWindow.getInstance(), "Which type of modeling do you prefer?",
+					"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
 				new CreatePathway();
-				graphInstance.getPathway().setPetriNet(
-						option == JOptionPane.NO_OPTION);
+				graphInstance.getPathway().setPetriNet(option == JOptionPane.NO_OPTION);
 				w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
 				w.updateAllGuiElements();
 			}
@@ -101,9 +97,11 @@ public class ToolBarListener implements ActionListener {
 			}
 		} else if ("center".equals(event)) {
 			if (con.containsPathway()) {
-				//CENTERING WITH SCALING
-				graphInstance.getPathway().getGraph().normalCentering();
-				//ONLY FOR CENTERING, NOT SCALING
+				// CENTERING WITH SCALING
+				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+					graphInstance.getPathway().getGraph().normalCentering();
+				}
+				// ONLY FOR CENTERING, NOT SCALING
 //				graphInstance.getPathway().getGraph().animatedCentering();
 			}
 		} else if ("zoom in".equals(event)) {
@@ -163,12 +161,10 @@ public class ToolBarListener implements ActionListener {
 
 			con.setPetriView(false);
 
-			Component[] c = MainWindow.getInstance().getContentPane()
-					.getComponents();
+			Component[] c = MainWindow.getInstance().getContentPane().getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindow.getInstance().getBar()
-							.paintToolbar(false);
+					MainWindow.getInstance().getBar().paintToolbar(false);
 					break;
 				}
 
@@ -176,25 +172,18 @@ public class ToolBarListener implements ActionListener {
 		} else if ("discretePlace".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(event);
+			con.setPetriNetEditingMode(Elementdeclerations.discretePlace);
 
-		} else if ("convertIntoPetriNet".equals(event)
-				&& (con.getPathwayNumbers() > 0)) {
+		} else if ("convertIntoPetriNet".equals(event) && (con.getPathwayNumbers() > 0)) {
 			MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			g.disableGraphTheory();
 			// new CompareGraphsGUI();
 			new ConvertToPetriNet();
 
-			Component[] c = MainWindow.getInstance().getContentPane()
-					.getComponents();
+			Component[] c = MainWindow.getInstance().getContentPane().getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindow
-							.getInstance()
-							.getBar()
-							.paintToolbar(
-									con.getPathway(w.getCurrentPathway())
-											.isPetriNet());
+					MainWindow.getInstance().getBar().paintToolbar(con.getPathway(w.getCurrentPathway()).isPetriNet());
 					break;
 				}
 			}
@@ -202,44 +191,41 @@ public class ToolBarListener implements ActionListener {
 
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(event);
+			con.setPetriNetEditingMode(Elementdeclerations.continuousPlace);
 
 		} else if ("discreteTransition".equals(event)) {
 
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(event);
+			con.setPetriNetEditingMode(Elementdeclerations.discreteTransition);
 
 		} else if ("continiousTransition".equals(event)) {
 
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(event);
+			con.setPetriNetEditingMode(Elementdeclerations.continuousTransition);
 
 		} else if ("stochasticTransition".equals(event)) {
 
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
-			con.setPetriNetEditingMode(event);
+			con.setPetriNetEditingMode(Elementdeclerations.stochasticTransition);
 
 		} else if ("createPetriNet".equals(event)) {
 			con.setPetriView(true);
 
-			Component[] c = MainWindow.getInstance().getContentPane()
-					.getComponents();
+			Component[] c = MainWindow.getInstance().getContentPane().getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindow.getInstance().getBar()
-							.paintToolbar(true);
+					MainWindow.getInstance().getBar().paintToolbar(true);
 					break;
 				}
 			}
 
 			/*
 			 * if (con.getPathwayNumbers() > 0) { MyGraph g =
-			 * con.getPathway(w.getCurrentPathway()).getGraph();
-			 * g.disableGraphTheory(); // new CompareGraphsGUI(); new
-			 * ConvertToPetriNet(); }
+			 * con.getPathway(w.getCurrentPathway()).getGraph(); g.disableGraphTheory(); //
+			 * new CompareGraphsGUI(); new ConvertToPetriNet(); }
 			 */
 
 			// if (con.getPathwayNumbers() > 0) {
@@ -253,12 +239,9 @@ public class ToolBarListener implements ActionListener {
 			// System.out.println("cov erstellen");
 			// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			// Cov cov = new Cov();
-			if (JOptionPane
-					.showConfirmDialog(
-							MainWindow.getInstance(),
-							"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
-							"Please Conform your action...",
-							JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+			if (JOptionPane.showConfirmDialog(MainWindow.getInstance(),
+					"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
+					"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 				new ReachController();
 			GraphInstance.getMyGraph().changeToGEMLayout();
 
@@ -285,50 +268,41 @@ public class ToolBarListener implements ActionListener {
 			if (GraphInstance.getMyGraph() != null) {
 				// System.out.println("coarse");
 				Set<BiologicalNodeAbstract> selectedNodes = new HashSet<BiologicalNodeAbstract>();
-				selectedNodes.addAll(graphInstance.getPathway()
-						.getSelectedNodes());
+				selectedNodes.addAll(graphInstance.getPathway().getSelectedNodes());
 				BiologicalNodeAbstract.coarse(selectedNodes);
 				graphInstance.getPathway().updateMyGraph();
-				graphInstance.getPathway().getGraph().getVisualizationViewer()
-						.repaint();
+				graphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			} else {
 				System.out.println("No Graph exists!");
 			}
 		} else if ("flatSelectedNodes".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				for (BiologicalNodeAbstract node : con
-						.getPathway((w.getCurrentPathway())).getGraph()
-						.getVisualizationViewer().getPickedVertexState()
-						.getPicked()) {
+				for (BiologicalNodeAbstract node : con.getPathway((w.getCurrentPathway())).getGraph()
+						.getVisualizationViewer().getPickedVertexState().getPicked()) {
 					node.flat();
 					graphInstance.getPathway().updateMyGraph();
-					MainWindow.getInstance().removeTab(false,
-							node.getTab().getTitelTab(), node);
+					MainWindow.getInstance().removeTab(false, node.getTab().getTitelTab(), node);
 				}
-				new GraphInstance().getPathway().getGraph()
-						.getVisualizationViewer().repaint();
+				new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
 			} else {
 				System.out.println("No Graph exists!");
 			}
 		} else if ("enterNode".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				for (BiologicalNodeAbstract node : graphInstance.getPathway()
-						.getGraph().getVisualizationViewer()
+				for (BiologicalNodeAbstract node : graphInstance.getPathway().getGraph().getVisualizationViewer()
 						.getPickedVertexState().getPicked()) {
 					if (!node.isCoarseNode() && !node.isMarkedAsCoarseNode()) {
 						continue;
 					}
 					w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 					// Pathway newPW = null;
-					for(BiologicalNodeAbstract n : node.getVertices().keySet()){
+					for (BiologicalNodeAbstract n : node.getVertices().keySet()) {
 						node.getVertices().put(n, graphInstance.getPathway().getVertices().get(n));
 					}
-					String newPathwayName = con.addPathway(node.getLabel(),
-							node);
+					String newPathwayName = con.addPathway(node.getLabel(), node);
 					Pathway pw = con.getPathway(newPathwayName);
 					w.addTab(pw.getTab().getTitelTab());
-					w.returnFrame()
-							.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+					w.returnFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					graphInstance.getPathway().setPetriNet(node.isPetriNet());
 					w.getBar().paintToolbar(node.isPetriNet());
 					w.updateAllGuiElements();
@@ -341,8 +315,7 @@ public class ToolBarListener implements ActionListener {
 		} else if ("autocoarse".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
 				AutoCoarse.coarseSeperatedSubgraphs(graphInstance.getPathway());
-				new GraphInstance().getPathway().getGraph()
-						.getVisualizationViewer().repaint();
+				new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
 			} else {
 				System.out.println("No Graph exists!");
 			}
@@ -356,25 +329,20 @@ public class ToolBarListener implements ActionListener {
 			}
 		} else if ("mergeSelectedNodes".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				//System.out.println("merge");
-				graphInstance.getPathway().mergeNodes(
-						graphInstance.getPathway().getGraph()
-								.getVisualizationViewer()
-								.getPickedVertexState().getPicked());
+				// System.out.println("merge");
+				graphInstance.getPathway().mergeNodes(graphInstance.getPathway().getGraph().getVisualizationViewer()
+						.getPickedVertexState().getPicked());
 			} else {
 				System.out.println("No Graph exists!");
 			}
 		} else if ("splitNode".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				graphInstance.getPathway().splitNode(
-						graphInstance.getPathway().getGraph()
-								.getVisualizationViewer()
-								.getPickedVertexState().getPicked());
+				graphInstance.getPathway().splitNode(graphInstance.getPathway().getGraph().getVisualizationViewer()
+						.getPickedVertexState().getPicked());
 			}
 		} else if ("adjustDown".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway()
-						.getSelectedNodes();
+				Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway().getSelectedNodes();
 
 				double maxy = Double.MIN_VALUE;
 				Point2D point;
@@ -383,23 +351,18 @@ public class ToolBarListener implements ActionListener {
 					BiologicalNodeAbstract bna;
 					while (it.hasNext()) {
 						bna = it.next();
-						//r = bna.getShape().getBounds();
+						// r = bna.getShape().getBounds();
 						/*
-						 * VisualizationViewer<BiologicalNodeAbstract,
-						 * BiologicalEdgeAbstract> vv = graphInstance
-						 * .getPathway().getGraph() .getVisualizationViewer();
-						 * double scaleV = vv.getRenderContext()
-						 * .getMultiLayerTransformer()
-						 * .getTransformer(Layer.VIEW).getScale(); double scaleL
-						 * = vv.getRenderContext() .getMultiLayerTransformer()
-						 * .getTransformer(Layer.LAYOUT).getScale(); double
-						 * scale; if (scaleV < 1) { scale = scaleV; } else {
-						 * scale = scaleL; }
+						 * VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv =
+						 * graphInstance .getPathway().getGraph() .getVisualizationViewer(); double
+						 * scaleV = vv.getRenderContext() .getMultiLayerTransformer()
+						 * .getTransformer(Layer.VIEW).getScale(); double scaleL = vv.getRenderContext()
+						 * .getMultiLayerTransformer() .getTransformer(Layer.LAYOUT).getScale(); double
+						 * scale; if (scaleV < 1) { scale = scaleV; } else { scale = scaleL; }
 						 * 
 						 * System.out.println((r.getMaxX()-r.getMinX())/scale);
 						 */
-						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(bna);
+						point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
 						if (point.getY() > maxy) {
 							maxy = point.getY();
 						}
@@ -407,12 +370,10 @@ public class ToolBarListener implements ActionListener {
 					it = nodes.iterator();
 					while (it.hasNext()) {
 						bna = it.next();
-						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(bna);
+						point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
 						point.setLocation(point.getX(), maxy);
-						graphInstance.getPathway().getGraph()
-								.getVisualizationViewer().getModel()
-								.getGraphLayout().setLocation(bna, point);
+						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout()
+								.setLocation(bna, point);
 
 					}
 				}
@@ -421,8 +382,7 @@ public class ToolBarListener implements ActionListener {
 
 		} else if ("adjustLeft".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway()
-						.getSelectedNodes();
+				Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway().getSelectedNodes();
 
 				double minx = Double.MAX_VALUE;
 				Point2D point;
@@ -431,8 +391,7 @@ public class ToolBarListener implements ActionListener {
 					BiologicalNodeAbstract bna;
 					while (it.hasNext()) {
 						bna = it.next();
-						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(bna);
+						point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
 						if (point.getX() < minx) {
 							minx = point.getX();
 						}
@@ -440,13 +399,11 @@ public class ToolBarListener implements ActionListener {
 					it = nodes.iterator();
 					while (it.hasNext()) {
 						bna = it.next();
-						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(bna);
+						point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
 
 						point.setLocation(minx, point.getY());
-						graphInstance.getPathway().getGraph()
-								.getVisualizationViewer().getModel()
-								.getGraphLayout().setLocation(bna, point);
+						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout()
+								.setLocation(bna, point);
 
 					}
 				}
@@ -454,8 +411,7 @@ public class ToolBarListener implements ActionListener {
 			}
 		} else if ("adjustHorizontalSpace".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway()
-						.getSelectedNodes();
+				Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway().getSelectedNodes();
 
 				double minx = Double.MAX_VALUE;
 				double maxx = Double.MIN_VALUE;
@@ -467,8 +423,7 @@ public class ToolBarListener implements ActionListener {
 					BiologicalNodeAbstract bna;
 					while (it.hasNext()) {
 						bna = it.next();
-						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(bna);
+						point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
 						if (point.getX() < minx) {
 							minx = point.getX();
 						}
@@ -491,16 +446,12 @@ public class ToolBarListener implements ActionListener {
 						} else if (d == nodes.size() - 1) {
 							newx = maxx;
 						} else {
-							newx = minx
-									+ d
-									* ((Math.abs(maxx - minx)) / (nodes.size() - 1));
+							newx = minx + d * ((Math.abs(maxx - minx)) / (nodes.size() - 1));
 						}
-						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(bna);
+						point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
 						point.setLocation(newx, point.getY());
-						graphInstance.getPathway().getGraph()
-								.getVisualizationViewer().getModel()
-								.getGraphLayout().setLocation(bna, point);
+						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout()
+								.setLocation(bna, point);
 
 					}
 					graphInstance.getPathway().saveVertexLocations();
@@ -508,8 +459,7 @@ public class ToolBarListener implements ActionListener {
 			}
 		} else if ("adjustVerticalSpace".equals(event)) {
 			if (GraphInstance.getMyGraph() != null) {
-				Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway()
-						.getSelectedNodes();
+				Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway().getSelectedNodes();
 
 				double miny = Double.MAX_VALUE;
 				double maxy = Double.MIN_VALUE;
@@ -521,8 +471,7 @@ public class ToolBarListener implements ActionListener {
 					BiologicalNodeAbstract bna;
 					while (it.hasNext()) {
 						bna = it.next();
-						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(bna);
+						point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
 						if (point.getY() < miny) {
 							miny = point.getY();
 						}
@@ -545,16 +494,12 @@ public class ToolBarListener implements ActionListener {
 						} else if (d == nodes.size() - 1) {
 							newy = maxy;
 						} else {
-							newy = miny
-									+ d
-									* ((Math.abs(maxy - miny)) / (nodes.size() - 1));
+							newy = miny + d * ((Math.abs(maxy - miny)) / (nodes.size() - 1));
 						}
-						point = graphInstance.getPathway().getGraph()
-								.getVertexLocation(bna);
+						point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
 						point.setLocation(point.getX(), newy);
-						graphInstance.getPathway().getGraph()
-								.getVisualizationViewer().getModel()
-								.getGraphLayout().setLocation(bna, point);
+						graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout()
+								.setLocation(bna, point);
 
 					}
 					graphInstance.getPathway().saveVertexLocations();

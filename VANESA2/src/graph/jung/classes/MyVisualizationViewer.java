@@ -113,6 +113,10 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		return super.preRenderers;
 	}
 
+	public Pathway getPathway(){
+		return pw;
+	}
+	
 	private void prepareCompartments() {
 		
 		Iterator<String> comp = this.areas.keySet().iterator();
