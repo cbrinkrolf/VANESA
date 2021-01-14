@@ -95,6 +95,7 @@ import petriNet.SimpleMatrixDouble;
 import transformation.Rule;
 import transformation.Transformator;
 import transformation.YmlRuleReader;
+import transformation.gui.RuleEditingWindow;
 import util.KineticBuilder;
 
 public class MenuListener implements ActionListener {
@@ -1203,6 +1204,8 @@ public class MenuListener implements ActionListener {
 			}else{
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
+		} else if ("editRuleWindow".equals(event)){
+			new RuleEditingWindow();
 		}
 	}
 

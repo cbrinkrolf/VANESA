@@ -330,6 +330,10 @@ public class MenuBarClass {
 		transform.addActionListener(MenuListener.getInstance());
 		transform.setActionCommand("transform");
 		
+		JMenuItem editRuleWindow = new JMenuItem("Open rule editing window");
+		editRuleWindow.addActionListener(MenuListener.getInstance());
+		editRuleWindow.setActionCommand("editRuleWindow");
+		
 		help.add(interaction);
 
 		// about item is already present on mac osx
@@ -469,6 +473,7 @@ public class MenuBarClass {
 		transformation.add(resolveReferences);
 		if (MainWindow.developer) {
 			transformation.add(transform);
+			transformation.add(editRuleWindow);
 		}
 
 		bar.add(file);

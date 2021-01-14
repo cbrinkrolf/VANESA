@@ -27,8 +27,8 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
-import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
+import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
 import gui.MainWindow;
@@ -151,9 +151,11 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// System.out.println("pressed");
-		pw = GraphInstance.getPathwayStatic();
-		vv = pw.getGraph().getVisualizationViewer();
+		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer) e
+				.getSource();
+		pw = vv.getPathway();
+		this.vv = vv;
+		//vv = pw.getGraph().getVisualizationViewer();
 		if (inwindow) {
 			super.mousePressed(e);
 			originalSelection.clear();
@@ -225,7 +227,6 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (inwindow) {
-
 			if (this.currentAnnotation != null && SwingUtilities.isLeftMouseButton(e)) {
 				this.mouseDraggedAnnotation(e);
 			} else {
@@ -293,8 +294,10 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		pw = GraphInstance.getPathwayStatic();
-		vv = pw.getGraph().getVisualizationViewer();
+		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer) e
+				.getSource();
+		pw = vv.getPathway();
+		this.vv = vv;
 		if (e.getComponent().toString().contains("MyVisualizationViewer")) {
 
 			inwindow = true;

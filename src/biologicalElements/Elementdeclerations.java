@@ -153,6 +153,12 @@ public class Elementdeclerations {
 	public static final String pnTestEdge = "PN Test Edge";
 
 	public static final String pnInhibitionEdge = "PN Inhibition Edge";
+	
+	//special edges and nodes not in collections
+	public static final String anyBEA = "ANY Biological Edge";
+	public static final String anyBNA = "ANY Biological Node";
+			
+	
 
 	public Elementdeclerations() {
 

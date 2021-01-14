@@ -6,6 +6,7 @@ package graph.gui;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
@@ -26,7 +27,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import graph.GraphInstance;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
@@ -41,13 +41,11 @@ public class EdgeDialog extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel panel;
-	private String[] details = new String[3];
 	private JOptionPane pane;
 	private JTextField name;
 	private JRadioButton directed, undirected;
 
-	private GraphInstance graphInstance = new GraphInstance();
-	private Pathway pw = graphInstance.getPathway();
+	private Pathway pw;
 	private JComboBox<String> box = new JComboBox<String>();
 	private JComboBox<String> fromBox = new JComboBox<String>();
 	private HashMap<Integer, BiologicalNodeAbstract> fromMap = new HashMap<Integer, BiologicalNodeAbstract>();
@@ -55,15 +53,14 @@ public class EdgeDialog extends JFrame {
 	private HashMap<Integer, BiologicalNodeAbstract> toMap = new HashMap<Integer, BiologicalNodeAbstract>();
 
 	private BiologicalNodeAbstract from;
-	private BiologicalNodeAbstract to;
 
 	/**
 	 * 
 	 */
-	public EdgeDialog(BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
+	public EdgeDialog(BiologicalNodeAbstract from, BiologicalNodeAbstract to, Pathway pw) {
 
 		this.from = from;
-		this.to = to;
+		this.pw = pw;
 		// Container contentPane = getContentPane();
 		MigLayout layout = new MigLayout("", "[left]");
 
@@ -105,15 +102,19 @@ public class EdgeDialog extends JFrame {
 
 		AutoCompleteDecorator.decorate(box);
 		panel.add(box, "span,wrap,growx,gap 10");
-		if (graphInstance.getPathway().isPetriNet()) {
+		if (pw.isPetriNet()) {
 			panel.add(new JLabel("Edge weight / function"), "");
 			name.setText("1");
 		} else {
-			panel.add(new JLabel("Label"), "");
+			if (pw.isHeadless()) {
+				panel.add(new JLabel("Name"), "");
+			} else {
+				panel.add(new JLabel("Label"), "");
+			}
 		}
 
 		panel.add(name, "span,wrap,growx,gap 10");
-		if (!pw.isPetriNet()) {
+		if (!pw.isPetriNet() && !pw.isHeadless()) {
 			panel.add(new JLabel("Edge"), "");
 			panel.add(directed, "gap 10");
 			panel.add(undirected, "span,wrap,growx");
@@ -148,10 +149,14 @@ public class EdgeDialog extends JFrame {
 	private void addEdgeItems(JPanel panel) {
 		List<String> edgeItems = new Elementdeclerations().getAllEdgeDeclarations();
 
-		if (pw.isPetriNet())
+		if (pw.isPetriNet()) {
 			edgeItems = new Elementdeclerations().getPNEdgeDeclarations();
-		else
+		} else {
 			edgeItems = new Elementdeclerations().getNotPNEdgeDeclarations();
+		}
+		if(pw.isHeadless()){
+			box.addItem(Elementdeclerations.anyBEA);
+		}
 		Iterator<String> it = edgeItems.iterator();
 		String element;
 		while (it.hasNext()) {
@@ -167,8 +172,10 @@ public class EdgeDialog extends JFrame {
 		}
 	}
 
-	public Pair<String[], BiologicalNodeAbstract[]> getAnswer() {
+	public Pair<Map<String, String>, BiologicalNodeAbstract[]> getAnswer() {
 
+		// private String[] details = new String[3];
+		Map<String, String> details = new HashMap<String, String>();
 		JDialog dialog = pane.createDialog(EdgeDialog.this, "Create an edge");
 		// dialog.show();
 		dialog.setLocationRelativeTo(MainWindow.getInstance());
@@ -177,21 +184,25 @@ public class EdgeDialog extends JFrame {
 		BiologicalNodeAbstract[] bnas = new BiologicalNodeAbstract[2];
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
-				details[0] = name.getText();
-				details[2] = box.getSelectedItem().toString();
+				details.put("name", name.getText());
+				details.put("element", box.getSelectedItem().toString());
+				// details[0] = name.getText();
+				// details[2] = box.getSelectedItem().toString();
 				bnas[0] = fromMap.get(fromBox.getSelectedIndex());
 				bnas[1] = toMap.get(toBox.getSelectedIndex());
 				if (directed.isSelected()) {
-					details[1] = "directed_edge";
+					details.put("directed", "true");
+					// details[1] = "directed_edge";
 				} else if (undirected.isSelected())
-					details[1] = "undirected_edge";
+					// details[1] = "undirected_edge";
+					details.put("directed", "false");
 			} else {
 				return Pair.of(null, null);
 			}
 		} else {
 			return Pair.of(null, null);
 		}
-		Pair<String[], BiologicalNodeAbstract[]> ret = Pair.of(details, bnas);
+		Pair<Map<String, String>, BiologicalNodeAbstract[]> ret = Pair.of(details, bnas);
 		return ret;
 	}
 }

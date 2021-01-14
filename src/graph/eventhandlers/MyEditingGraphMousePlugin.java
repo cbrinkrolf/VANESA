@@ -21,6 +21,7 @@ import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,6 +44,7 @@ import graph.GraphInstance;
 import graph.gui.EdgeDialog;
 import graph.gui.PetriNetVertexDialog;
 import graph.gui.VertexDialog;
+import graph.jung.classes.MyVisualizationViewer;
 import gui.MainWindow;
 import gui.MyPopUp;
 
@@ -53,12 +55,11 @@ import gui.MyPopUp;
  * @author Tom Nelson - RABA Technologies
  * 
  */
-public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
-		implements MouseListener, MouseMotionListener {
+public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implements MouseListener, MouseMotionListener {
 
 	// HashMap vertexLocations;
 	private BiologicalNodeAbstract startVertex;
-	//private Point2D down;
+	// private Point2D down;
 
 	private CubicCurve2D rawEdge = new CubicCurve2D.Float();
 	private Shape edgeShape;
@@ -69,7 +70,6 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 	private boolean edgeIsDirected;
 	private GraphContainer con = GraphContainer.getInstance();
 
-	private GraphInstance graphInstance = new GraphInstance();
 	private Pathway pw;
 
 	public MyEditingGraphMousePlugin() {
@@ -108,29 +108,29 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 	}
 
 	/**
-	 * If the mouse is pressed in an empty area, create a new vertex there. If
-	 * the mouse is pressed on an existing vertex, prepare to create an edge
-	 * from that vertex to another
+	 * If the mouse is pressed in an empty area, create a new vertex there. If the
+	 * mouse is pressed on an existing vertex, prepare to create an edge from that
+	 * vertex to another
 	 */
 	public void mousePressed(MouseEvent e) {
-		pw = graphInstance.getPathway();
 		if (checkModifiers(e)) {
-			
-			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph().getVisualizationViewer();
+			// pw = graphInstance.getPathway();
+			// System.out.println(e.getSource());
+
+			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer) e
+					.getSource();
+			pw = vv.getPathway();
 			// final Point2D p = vv.inverseViewTransform(e.getPoint());
 			// System.out.println("Points: "+e.getPoint().getX()+", "+e.getPoint().getY());
-			final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
-					.inverseTransform(e.getPoint());
+			final Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
 			// System.out.println(e.getPoint()+ " "+p);
 			// System.out.println("Points: "+p.getX()+", "+p.getY());
 			// final Point2D p = e.getPoint();
-			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv
-					.getPickSupport();
+			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv.getPickSupport();
 			// System.out.println("Click: "+p);
 			// System.out.println("regul: "+e.getPoint());
 
-			Iterator<BiologicalNodeAbstract> it = pw.getGraph()
-					.getAllVertices().iterator();
+			// Iterator<BiologicalNodeAbstract> it = pw.getGraph().getAllVertices().iterator();
 			// while(it.hasNext()){
 			// System.out.println(pw.getGraph().getVertexLocation(it.next()));
 			// }
@@ -139,9 +139,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 
 			BiologicalNodeAbstract vertex = null;
 
-			vertex = (BiologicalNodeAbstract) pickSupport
-					.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e
-							.getPoint().getY());
+			vertex = (BiologicalNodeAbstract) pickSupport.getVertex(vv.getGraphLayout(), e.getPoint().getX(),
+					e.getPoint().getY());
 			// System.out.println(vertex);
 
 			if (vertex != null) { // get ready to make an edge
@@ -156,38 +155,31 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 					vv.addPostRenderPaintable(arrowPaintable);
 				}
 			} else { // make a new vertex
-				Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph = vv
-						.getGraphLayout().getGraph();
+				Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> graph = vv.getGraphLayout().getGraph();
 //				BiologicalNodeAbstract newVertex = new BiologicalNodeAbstract(
 //						"label", "name");
 				// vertexLocations.put(newVertex, p);
 
-				Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout = vv
-						.getGraphLayout();
+				Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout = vv.getGraphLayout();
 
 				// System.out.println("size V: "+layout.getGraph().getVertices().size());
 				// System.out.println("size E: "+layout.getGraph().getEdges().size());
 
 				// graph.addVertex(newVertex);
 				/*
-				 * Object key = (((AggregateLayout)
-				 * layout).getDelegate()).getBaseKey(); Object datum = new
-				 * Coordinates(vv.inverseTransform( e.getPoint()).getX(),
-				 * vv.inverseTransform( e.getPoint()).getY());
-				 * newVertex.setUserDatum(key, datum, new CopyAction.Clone());
+				 * Object key = (((AggregateLayout) layout).getDelegate()).getBaseKey(); Object
+				 * datum = new Coordinates(vv.inverseTransform( e.getPoint()).getX(),
+				 * vv.inverseTransform( e.getPoint()).getY()); newVertex.setUserDatum(key,
+				 * datum, new CopyAction.Clone());
 				 */
 
-				for (Iterator<BiologicalNodeAbstract> iterator = graph
-						.getVertices().iterator(); iterator.hasNext();) {
+				for (Iterator<BiologicalNodeAbstract> iterator = graph.getVertices().iterator(); iterator.hasNext();) {
 					layout.lock(iterator.next(), true);
 
 				}
-								
-				if (con.isPetriView()) {
-					// System.out.println("is petri");
 
-					PetriNetVertexDialog dialog = new PetriNetVertexDialog(
-							con.getPetriNetEditingMode());
+				if (pw.isPetriNet()) {
+					PetriNetVertexDialog dialog = new PetriNetVertexDialog(con.getPetriNetEditingMode(), pw);
 					BiologicalNodeAbstract bna = dialog.getAnswer(p);
 					// System.out.println();
 					if (bna != null) {
@@ -200,14 +192,14 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// graph.addVertex(newVertex);
 
 						// vv.getModel().restart();
-						//System.out.println("update");
-						if(pw instanceof BiologicalNodeAbstract){
-							bna.setParentNode((BiologicalNodeAbstract) pw); 
+						// System.out.println("update");
+						if (pw instanceof BiologicalNodeAbstract) {
+							bna.setParentNode((BiologicalNodeAbstract) pw);
 						}
 						MainWindow.getInstance().updateElementTree();
 						MainWindow.getInstance().updatePathwayTree();
-						//MainWindowSingelton.getInstance().updateAllGuiElements();
-						//MainWindowSingelton.getInstance().updateOptionPanel();
+						// MainWindowSingelton.getInstance().updateAllGuiElements();
+						// MainWindowSingelton.getInstance().updateOptionPanel();
 						// MainWindowSingelton.getInstance()
 						// .updateTheoryProperties();
 
@@ -217,27 +209,28 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 
 				} else {
 					// System.out.println("not petri");
-					VertexDialog dialog = new VertexDialog();
-					String[] answers = dialog.getAnswer();
+					VertexDialog dialog = new VertexDialog(pw);
+					Map<String, String> answers = dialog.getAnswer();
+
 					if (answers != null) {
 
 						// BiologicalNodeAbstract ba = new
 						// BiologicalNodeAbstract(
 						// answers[0], "");
-						String name = answers[0];
-						String label = answers[0];
-						String element = answers[1];
-						String compartment = answers[2];
+						String name = answers.get("name");
+						String label = answers.get("name");
+						String element = answers.get("elementType");
+						String compartment = answers.get("compartment");
 //						newVertex.setBiologicalElement(answers[1]);
 //						newVertex.setCompartment(answers[2]);
 						// graphInstance.getPathway().addElement(newVertex);
 						// graph.addVertex(newVertex);
-						
+
 						BiologicalNodeAbstract newVertex = pw.addVertex(name, label, element, compartment, p);
-						if(pw instanceof BiologicalNodeAbstract){
+						if (pw instanceof BiologicalNodeAbstract) {
 							newVertex.setParentNode((BiologicalNodeAbstract) pw);
 						}
-						//pw.addVertex(newVertex, p);
+						// pw.addVertex(newVertex, p);
 						if (graph.getVertices().size() > 1) {
 							// System.exit(0);
 						}
@@ -245,20 +238,22 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 						// pw.getGraph().setVertexLocation(newVertex, p);
 						// layout.setLocation(newVertex, p);
 						// vv.getModel().restart();
-						MainWindow.getInstance().updateElementTree();
+						if (new GraphInstance().getPathway() != null) {
+							MainWindow.getInstance().updateElementTree();
+						}
 						// MainWindowSingelton.getInstance()
 						// .updateTheoryProperties();
 
-						for (Iterator<BiologicalNodeAbstract> iterator = graph
-								.getVertices().iterator(); iterator.hasNext();) {
+						for (Iterator<BiologicalNodeAbstract> iterator = graph.getVertices().iterator(); iterator
+								.hasNext();) {
 							layout.lock(iterator.next(), false);
 						}
 
 					}
 
 				}
-				if(pw instanceof BiologicalNodeAbstract){
-					
+				if (pw instanceof BiologicalNodeAbstract) {
+
 				}
 			}
 			vv.repaint();
@@ -267,25 +262,24 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 
 	/**
 	 * If startVertex is non-null, and the mouse is released over an existing
-	 * vertex, create an undirected edge from startVertex to the vertex under
-	 * the mouse pointer. If shift was also pressed, create a directed edge
-	 * instead.
+	 * vertex, create an undirected edge from startVertex to the vertex under the
+	 * mouse pointer. If shift was also pressed, create a directed edge instead.
 	 */
 	public void mouseReleased(MouseEvent e) {
-		pw = graphInstance.getPathway();
+		// pw = graphInstance.getPathway();
 		if (checkModifiers(e)) {
-			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph().getVisualizationViewer();
-			//final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
-			//		.inverseTransform(e.getPoint());
-			//int v = vv.getPickedVertexState().getPicked().size();
-			//int edge = vv.getPickedEdgeState().getPicked().size();
-			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv
-					.getPickSupport();
+			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer) e
+					.getSource();
+			pw = vv.getPathway();
+			// final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
+			// .inverseTransform(e.getPoint());
+			// int v = vv.getPickedVertexState().getPicked().size();
+			// int edge = vv.getPickedEdgeState().getPicked().size();
+			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv.getPickSupport();
 			// if (v > 0) {
 			// System.out.println("release");
-			final BiologicalNodeAbstract vertex = (BiologicalNodeAbstract) pickSupport
-					.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e
-							.getPoint().getY());
+			final BiologicalNodeAbstract vertex = (BiologicalNodeAbstract) pickSupport.getVertex(vv.getGraphLayout(),
+					e.getPoint().getX(), e.getPoint().getY());
 			if (vertex != null && startVertex != null) {
 
 				// Pathway pw = graphInstance.getPathway();
@@ -297,28 +291,31 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 													// pw
 				// .getNodeByVertexID(vertex.toString());
 
-				if (pw.isPetriNet()
-						&& !((start instanceof Place && end instanceof Transition) || (start instanceof Transition && end instanceof Place))){
-					MyPopUp.getInstance().show("Operation not allowed", "In a petri net only Transition->Place and Place->Transition Relations are allowed!");
+				if (pw.isPetriNet() && !((start instanceof Place && end instanceof Transition)
+						|| (start instanceof Transition && end instanceof Place))) {
+					MyPopUp.getInstance().show("Operation not allowed",
+							"In a petri net only Transition->Place and Place->Transition Relations are allowed!");
 				} else {
 					// Graph graph = vv.getGraphLayout().getGraph();
-					EdgeDialog dialog = new EdgeDialog(startVertex, vertex);
-					Pair<String[], BiologicalNodeAbstract[]> answer = dialog.getAnswer();
-					String[] answers = answer.getLeft();
+					EdgeDialog dialog = new EdgeDialog(startVertex, vertex, pw);
+					Pair<Map<String, String>, BiologicalNodeAbstract[]> answer = dialog.getAnswer();
+					Map<String, String> details = answer.getLeft();
 					BiologicalNodeAbstract[] nodes = answer.getRight();
 
-					if (answers != null) {
-						if (answers[2] != null && pw.isPetriNet()
-								&& (answers[2].toLowerCase().contains("inhibi") || answers[2].toLowerCase().contains("test"))
-								&& !(startVertex instanceof Place && vertex instanceof Transition)){
-							MyPopUp.getInstance().show("Operation not allowed", "Inhibitory / Test Edges are only possible from Place to Transition!");
+					if (details != null) {
+						if (details.get("element") != null && pw.isPetriNet()
+								&& (details.get("element").toLowerCase().contains("inhibi")
+										|| details.get("element").toLowerCase().contains("test"))
+								&& !(startVertex instanceof Place && vertex instanceof Transition)) {
+							MyPopUp.getInstance().show("Operation not allowed",
+									"Inhibitory / Test Edges are only possible from Place to Transition!");
 						} else {
-							String name = answers[0];
-							String label = answers[0];
-							String element = answers[2];
-							
+							String name = details.get("name");
+							String label = details.get("name");
+							String element = details.get("element");
+
 							boolean directed = false;
-							if (answers[1].equals("directed_edge")) {
+							if (details.get("directed").equals("true")) {
 								directed = true;
 							}
 
@@ -326,13 +323,12 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 							parentBNAs.addAll(nodes[0].getAllParentNodes());
 							parentBNAs.addAll(nodes[1].getAllParentNodes());
 							BiologicalEdgeAbstract bea = pw.addEdge(label, name, nodes[0], nodes[1], element, directed);
-							if(bea instanceof PNEdge){
-								((PNEdge)bea).setFunction(label);
+							if (bea instanceof PNEdge) {
+								((PNEdge) bea).setFunction(label);
 							}
-							if(nodes[0]==startVertex && nodes[1]==vertex){
+							if (nodes[0] == startVertex && nodes[1] == vertex) {
 								pw.addEdgeToView(bea, false);
-							}
-							else{
+							} else {
 								BiologicalEdgeAbstract clone = bea.clone();
 								clone.setFrom(startVertex);
 								clone.setTo(vertex);
@@ -352,8 +348,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 	}
 
 	/**
-	 * If startVertex is non-null, stretch an edge shape between startVertex and
-	 * the mouse pointer to simulate edge creation
+	 * If startVertex is non-null, stretch an edge shape between startVertex and the
+	 * mouse pointer to simulate edge creation
 	 */
 	public void mouseDragged(MouseEvent e) {
 		if (checkModifiers(e)) {
@@ -363,14 +359,15 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin
 					transformArrowShape(down, e.getPoint());
 				}
 			}
-			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph().getVisualizationViewer();
+			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
+					.getVisualizationViewer();
 			vv.repaint();
 		}
 	}
 
 	/**
-	 * code lifted from PluggableRenderer to move an edge shape into an
-	 * arbitrary position
+	 * code lifted from PluggableRenderer to move an edge shape into an arbitrary
+	 * position
 	 */
 	private void transformEdgeShape(Point2D down, Point2D out) {
 		float x1 = (float) down.getX();
