@@ -10,7 +10,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.picking.PickedState;
-import graph.GraphInstance;
 
 public class MyEdgeStrokeHighlighting implements
 		Transformer<BiologicalEdgeAbstract, Stroke> {
@@ -41,25 +40,26 @@ public class MyEdgeStrokeHighlighting implements
             
 	protected PickedState<BiologicalNodeAbstract> psV;
 	protected PickedState<BiologicalEdgeAbstract> psE;
+	protected Pathway pw;
 
 	protected boolean graphTheory = false;
 
 	public MyEdgeStrokeHighlighting(PickedState<BiologicalNodeAbstract> psV,
-			PickedState<BiologicalEdgeAbstract> psE) {
+			PickedState<BiologicalEdgeAbstract> psE, Pathway pw) {
 		this.psV = psV;
 		this.psE = psE;
+		this.pw = pw;
 	}
 
 	private Stroke getStrokeWithoutGraphTheory(BiologicalEdgeAbstract bea) {
-		Pathway p = GraphInstance.getPathwayStatic();
-		if(p.isBNA()){
-			BiologicalNodeAbstract pathway = (BiologicalNodeAbstract) p;
+		if(pw.isBNA()){
+			BiologicalNodeAbstract pathway = (BiologicalNodeAbstract) pw;
 			if(pathway.getEnvironment().contains(bea.getFrom()) || pathway.getEnvironment().contains(bea.getTo())){
 				
 				return nogt;
 			}
 		}
-		float strength = (float) Math.log1p(GraphInstance.getPathwayStatic().edgeGrade(bea))/log;
+		float strength = (float) Math.log1p(pw.edgeGrade(bea))/log;
 		strength = Math.max(strength, 2);
 		hierarchical = new BasicStroke(strength);
 		Stroke picked = new BasicStroke(pickedFactor*strength);

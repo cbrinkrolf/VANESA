@@ -12,8 +12,7 @@ import transformation.graphElements.ANYBiologicalNode;
 public class BiologicalNodeAbstractFactory {
 
 	// creating new object with attributes of given bna (could be null)
-	public static BiologicalNodeAbstract create(String elementDeclaration,
-			BiologicalNodeAbstract bna) {
+	public static BiologicalNodeAbstract create(String elementDeclaration, BiologicalNodeAbstract bna) {
 		BiologicalNodeAbstract newBNA;
 
 		String name = "";
@@ -126,10 +125,10 @@ public class BiologicalNodeAbstractFactory {
 		case Elementdeclerations.transcriptionFactor:
 			newBNA = new TranscriptionFactor(label, name);
 			break;
-			
+
 		case Elementdeclerations.discretePlace:
 			newBNA = new DiscretePlace(label, name);
-			fillPlace(newBNA, bna);			
+			fillPlace(newBNA, bna);
 			break;
 		case Elementdeclerations.continuousPlace:
 			newBNA = new ContinuousPlace(label, name);
@@ -156,58 +155,65 @@ public class BiologicalNodeAbstractFactory {
 		return newBNA;
 	}
 
-	private static void fillMRNA(BiologicalNodeAbstract newBNA,
-			BiologicalNodeAbstract bna) {
-		if (newBNA instanceof MRNA && bna instanceof MRNA) {
-			((MRNA) newBNA).setNtSequence(((MRNA) bna).getNtSequence());
+	private static void fillMRNA(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+		if (bna != null) {
+			if (newBNA instanceof MRNA && bna instanceof MRNA) {
+				((MRNA) newBNA).setNtSequence(((MRNA) bna).getNtSequence());
+			}
 		}
 	}
-	
-	private static void fillPathwayMap(BiologicalNodeAbstract newBNA,
-			BiologicalNodeAbstract bna) {
-		if (newBNA instanceof PathwayMap && bna instanceof PathwayMap) {
-			((PathwayMap) newBNA).setPathwayLink(((PathwayMap) bna).getPathwayLink());
+
+	private static void fillPathwayMap(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+		if (bna != null) {
+			if (newBNA instanceof PathwayMap && bna instanceof PathwayMap) {
+				((PathwayMap) newBNA).setPathwayLink(((PathwayMap) bna).getPathwayLink());
+			}
 		}
 	}
-	
-	private static void fillSRNA(BiologicalNodeAbstract newBNA,
-			BiologicalNodeAbstract bna) {
-		if (newBNA instanceof SRNA && bna instanceof SRNA) {
-			((SRNA) newBNA).setNtSequence(((SRNA) bna).getNtSequence());
+
+	private static void fillSRNA(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+		if (bna != null) {
+			if (newBNA instanceof SRNA && bna instanceof SRNA) {
+				((SRNA) newBNA).setNtSequence(((SRNA) bna).getNtSequence());
+			}
 		}
 	}
-	
-	private static void fillPlace(BiologicalNodeAbstract newBNA,
-			BiologicalNodeAbstract bna) {
-		if (newBNA instanceof Place && bna instanceof Place) {
-			((Place) newBNA).setToken(((Place) bna).getToken());
-			((Place) newBNA).setTokenMin(((Place) bna).getTokenMin());
-			((Place) newBNA).setTokenMax(((Place) bna).getTokenMax());
-			((Place) newBNA).setTokenStart(((Place) bna).getTokenStart());
+
+	private static void fillPlace(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+		if (bna != null) {
+			if (newBNA instanceof Place && bna instanceof Place) {
+				((Place) newBNA).setToken(((Place) bna).getToken());
+				((Place) newBNA).setTokenMin(((Place) bna).getTokenMin());
+				((Place) newBNA).setTokenMax(((Place) bna).getTokenMax());
+				((Place) newBNA).setTokenStart(((Place) bna).getTokenStart());
+			}
 		}
 	}
-	
-	private static void fillDiscreteTransition(BiologicalNodeAbstract newBNA,
-			BiologicalNodeAbstract bna) {
-		if (newBNA instanceof DiscreteTransition && bna instanceof DiscreteTransition) {
-			((DiscreteTransition) newBNA).setDelay(((DiscreteTransition) bna).getDelay());
-			((DiscreteTransition) newBNA).setKnockedOut(((DiscreteTransition) bna).isKnockedOut());
+
+	private static void fillDiscreteTransition(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+		if (bna != null) {
+			if (newBNA instanceof DiscreteTransition && bna instanceof DiscreteTransition) {
+				((DiscreteTransition) newBNA).setDelay(((DiscreteTransition) bna).getDelay());
+				((DiscreteTransition) newBNA).setKnockedOut(((DiscreteTransition) bna).isKnockedOut());
+			}
 		}
 	}
-	
-	private static void fillContinuousTransition(BiologicalNodeAbstract newBNA,
-			BiologicalNodeAbstract bna) {
-		if (newBNA instanceof ContinuousTransition && bna instanceof ContinuousTransition) {
-			((ContinuousTransition) newBNA).setMaximumSpeed(((ContinuousTransition) bna).getMaximumSpeed());
-			((ContinuousTransition) newBNA).setKnockedOut(((ContinuousTransition) bna).isKnockedOut());
+
+	private static void fillContinuousTransition(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+		if (bna != null) {
+			if (newBNA instanceof ContinuousTransition && bna instanceof ContinuousTransition) {
+				((ContinuousTransition) newBNA).setMaximumSpeed(((ContinuousTransition) bna).getMaximumSpeed());
+				((ContinuousTransition) newBNA).setKnockedOut(((ContinuousTransition) bna).isKnockedOut());
+			}
 		}
 	}
-	
-	private static void fillStochasticTransition(BiologicalNodeAbstract newBNA,
-			BiologicalNodeAbstract bna) {
-		if (newBNA instanceof StochasticTransition && bna instanceof StochasticTransition) {
-			((StochasticTransition) newBNA).setDistribution(((StochasticTransition) bna).getDistribution());
-			((StochasticTransition) newBNA).setKnockedOut(((StochasticTransition) bna).isKnockedOut());
+
+	private static void fillStochasticTransition(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+		if (bna != null) {
+			if (newBNA instanceof StochasticTransition && bna instanceof StochasticTransition) {
+				((StochasticTransition) newBNA).setDistribution(((StochasticTransition) bna).getDistribution());
+				((StochasticTransition) newBNA).setKnockedOut(((StochasticTransition) bna).isKnockedOut());
+			}
 		}
 	}
 }

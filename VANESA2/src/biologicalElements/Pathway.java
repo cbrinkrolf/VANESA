@@ -202,7 +202,7 @@ public class Pathway implements Cloneable {
 		// System.out.println("node eingefuegt");
 
 		// System.out.println("new id: "+bna.getID());
-		bna.setID();
+		bna.setID(this);
 		// biologicalElements.put(bna.getID() + "", bna);
 		//
 		// System.out.println(this.graph.getAllVertices().size());
@@ -259,7 +259,7 @@ public class Pathway implements Cloneable {
 				// && !bea.isClone()) {
 				//System.out.println("added edge");
 				BiologicalNodeAbstract.addConnectingEdge(bea);
-				bea.setID();
+				bea.setID(this);
 			}
 			this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
 			return bea;
@@ -285,7 +285,7 @@ public class Pathway implements Cloneable {
 			// System.out.println(biologicalElements.size());
 			// Pair p = bea.getEdge().getEndpoints();
 			getGraph().addEdge(bea);
-			bea.setID();
+			bea.setID(this);
 			// biologicalElements.put(bea.getID() + "", bea);
 		}
 	}
@@ -811,7 +811,7 @@ public class Pathway implements Cloneable {
 					// newBNA = new Other(bna.getName(), bna.getLabel());
 					newBNA = BiologicalNodeAbstractFactory.create(
 							bna.getBiologicalElement(), bna);
-					newBNA.setID();
+					newBNA.setID(this);
 					newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
 					newBNA.setRef(bna);
 					while(this.getAllNodeNames().contains(bna.getName()+"_"+count)){

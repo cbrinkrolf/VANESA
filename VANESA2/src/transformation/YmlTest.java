@@ -18,7 +18,7 @@ public class YmlTest {
 
 	public static void test() {
 
-		Yaml yaml = new Yaml(new Constructor(YmlRule.class));
+		Yaml yaml = new Yaml(new Constructor(YamlRule.class));
 		File initialFile = new File("src/transformation/test.yml");
 		System.out.println(initialFile.getAbsolutePath());
 	    InputStream targetStream;
@@ -27,8 +27,8 @@ public class YmlTest {
 			//InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("test.yaml");
 			Iterator<Object> it= yaml.loadAll(targetStream).iterator();
 			while(it.hasNext()){
-				YmlRule r = (YmlRule) it.next();
-				System.out.println(r.getRuleName());
+				YamlRule r = (YamlRule) it.next();
+				System.out.println(r.getName());
 			}
 			
 			

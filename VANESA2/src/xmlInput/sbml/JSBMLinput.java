@@ -364,12 +364,12 @@ public class JSBMLinput {
 				int idint = this.getID(id);
 				try {
 					if (idint > -1) {
-						bea.setID(idint);
+						bea.setID(idint, pathway);
 					} else {
-						bea.setID();
+						bea.setID(pathway);
 					}
 				} catch (IDAlreadyExistException ex) {
-					bea.setID();
+					bea.setID(pathway);
 				}
 				this.pathway.addEdge(bea);
 				// reset because bea is global defined
@@ -569,12 +569,12 @@ public class JSBMLinput {
 			int intid = this.getID(id);
 			try {
 				if (intid > -1) {
-					bna.setID(intid);
+					bna.setID(intid, pathway);
 				} else {
-					bna.setID();
+					bna.setID(pathway);
 				}
 			} catch (IDAlreadyExistException ex) {
-				bna.setID();
+				bna.setID(pathway);
 			}
 
 			String compartment = species.getAttributeValue("compartment");

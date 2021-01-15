@@ -8,7 +8,6 @@ import javax.swing.JScrollPane;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
-import biologicalElements.Pathway;
 import database.gui.DatabaseWindow;
 import graph.gui.ElementWindow;
 import net.miginfocom.swing.MigLayout;

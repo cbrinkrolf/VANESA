@@ -12,7 +12,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import edu.uci.ics.jung.visualization.picking.PickedState;
-import graph.GraphInstance;
 
 public class MyVertexStrokeHighlighting implements
 		Transformer<BiologicalNodeAbstract, Stroke> {
@@ -66,7 +65,7 @@ public class MyVertexStrokeHighlighting implements
 	}
 
 	public Stroke withGraphTheory(BiologicalNodeAbstract v) {
-		if (GraphInstance.getPathwayStatic().isPetriNet())
+		if (pw.isPetriNet())
 			if (psV.isPicked(v))
 				return pn_heavy;
 			else
@@ -81,7 +80,7 @@ public class MyVertexStrokeHighlighting implements
 
 	public Stroke withoutGraphTheory(BiologicalNodeAbstract bna) {
 
-		boolean petriNet = GraphInstance.getPathwayStatic().isPetriNet();
+		boolean petriNet = pw.isPetriNet();
 		boolean isContPlace = false;
 		
 		// mark Environment nodes in hierarchical Nodes.

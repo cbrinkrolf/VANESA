@@ -93,9 +93,10 @@ import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 import petriNet.SimpleMatrixDouble;
 import transformation.Rule;
+import transformation.RuleManager;
 import transformation.Transformator;
-import transformation.YmlRuleReader;
 import transformation.gui.RuleEditingWindow;
+import transformation.gui.RuleManagementWindow;
 import util.KineticBuilder;
 
 public class MenuListener implements ActionListener {
@@ -143,11 +144,12 @@ public class MenuListener implements ActionListener {
 		String event = e.getActionCommand();
 		final GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = GraphContainer.getInstance();
-		//System.out.println(event);
+		// System.out.println(event);
 		if ("new Network".equals(event)) {
 
-			int option = JOptionPane.showOptionDialog(w, "Which type of modeling do you prefer?", "Choose Network Type...", JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE, null, new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
+			int option = JOptionPane.showOptionDialog(w, "Which type of modeling do you prefer?",
+					"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
 				new CreatePathway();
 				graphInstance.getPathway().setPetriNet(option == JOptionPane.NO_OPTION);
@@ -161,58 +163,48 @@ public class MenuListener implements ActionListener {
 
 		} else if ("openEdal".equals(event)) {
 			/*
-			 * int SERVER_PORT = 2000; String SERVER_ADDRESS =
-			 * "bit-249.ipk-gatersleben.de";
+			 * int SERVER_PORT = 2000; String SERVER_ADDRESS = "bit-249.ipk-gatersleben.de";
 			 * 
-			 * Subject subject = null; try { subject =
-			 * EdalHelpers.authenticateSampleUser(); } catch
-			 * (EdalAuthenticateException e1) { // TODO Auto-generated catch
-			 * block e1.printStackTrace(); }
+			 * Subject subject = null; try { subject = EdalHelpers.authenticateSampleUser();
+			 * } catch (EdalAuthenticateException e1) { // TODO Auto-generated catch block
+			 * e1.printStackTrace(); }
 			 * 
 			 * // alternatively use Google+ login // Subject subject =
 			 * EdalHelpers.authenticateGoogleUser("", 3128);
 			 * 
 			 * // connect to running EDAL server on "bit-249" ClientDataManager
 			 * dataManagerClient = null; try { dataManagerClient = new
-			 * ClientDataManager(SERVER_ADDRESS, SERVER_PORT, new
-			 * Authentication(subject)); } catch (EdalAuthenticateException e1)
-			 * { // TODO Auto-generated catch block e1.printStackTrace(); }
+			 * ClientDataManager(SERVER_ADDRESS, SERVER_PORT, new Authentication(subject));
+			 * } catch (EdalAuthenticateException e1) { // TODO Auto-generated catch block
+			 * e1.printStackTrace(); }
 			 * 
 			 * // JFrame jf = new JFrame();
 			 * 
 			 * EdalFileChooser dialog = new
-			 * EdalFileChooser(MainWindowSingleton.getInstance(),
-			 * dataManagerClient);
+			 * EdalFileChooser(MainWindowSingleton.getInstance(), dataManagerClient);
 			 * dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
-			 * dialog.setFileSelectionMode(EdalFileChooser.FILES_AND_DIRECTORIES
-			 * ); dialog.showConnectionButton(false);
+			 * dialog.setFileSelectionMode(EdalFileChooser.FILES_AND_DIRECTORIES );
+			 * dialog.showConnectionButton(false);
 			 * 
-			 * // dialog.setFileFilter(new EdalFileNameExtensionFilter("sbml",
-			 * // "sbml"));
+			 * // dialog.setFileFilter(new EdalFileNameExtensionFilter("sbml", // "sbml"));
 			 * 
-			 * int result = dialog.showOpenDialog(); //
-			 * System.out.println(result + " " + //
+			 * int result = dialog.showOpenDialog(); // System.out.println(result + " " + //
 			 * EdalFileChooser.APPROVE_OPTION); if (result ==
-			 * EdalFileChooser.APPROVE_OPTION) { ClientPrimaryDataFile df =
-			 * null; ClientPrimaryDataEntity de = dialog.getSelectedFile(); if
-			 * (de instanceof ClientPrimaryDataFile) { df =
-			 * (ClientPrimaryDataFile) de; // File f = new File(df.getName());
-			 * // File f; try { ByteArrayOutputStream os = new
+			 * EdalFileChooser.APPROVE_OPTION) { ClientPrimaryDataFile df = null;
+			 * ClientPrimaryDataEntity de = dialog.getSelectedFile(); if (de instanceof
+			 * ClientPrimaryDataFile) { df = (ClientPrimaryDataFile) de; // File f = new
+			 * File(df.getName()); // File f; try { ByteArrayOutputStream os = new
 			 * ByteArrayOutputStream();
 			 * 
 			 * df.read(os); byte[] b = os.toByteArray(); InputStream is = new
-			 * ByteArrayInputStream(b); JSBMLinput jsbmlInput = new
-			 * JSBMLinput(); // jsbmlInput = pathway==null ? new JSBMLinput() :
-			 * new // JSBMLinput(pathway); String res =
-			 * jsbmlInput.loadSBMLFile(is, df.getName()); if (res.length() > 0)
-			 * {
-			 * JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
-			 * res); } // os. } catch (RemoteException |
-			 * PrimaryDataFileException e1) { // TODO Auto-generated catch block
-			 * e1.printStackTrace(); }
+			 * ByteArrayInputStream(b); JSBMLinput jsbmlInput = new JSBMLinput(); //
+			 * jsbmlInput = pathway==null ? new JSBMLinput() : new // JSBMLinput(pathway);
+			 * String res = jsbmlInput.loadSBMLFile(is, df.getName()); if (res.length() > 0)
+			 * { JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), res); } //
+			 * os. } catch (RemoteException | PrimaryDataFileException e1) { // TODO
+			 * Auto-generated catch block e1.printStackTrace(); }
 			 * 
-			 * } else { System.out.println("please choose a file, not a dir"); }
-			 * }
+			 * } else { System.out.println("please choose a file, not a dir"); } }
 			 */
 
 		} else if ("close Network".equals(event)) {
@@ -434,8 +426,8 @@ public class MenuListener implements ActionListener {
 		} else if ("visualizationSettings".equals(event)) {
 			new Settings(3);
 		} /*
-			 * else if ("animation".equals(event)) { if (con.containsPathway())
-			 * { } //new Regulation(); }
+			 * else if ("animation".equals(event)) { if (con.containsPathway()) { } //new
+			 * Regulation(); }
 			 */
 		else if ("openTestP".equals(event)) {
 			// System.out.println("testP");
@@ -834,35 +826,29 @@ public class MenuListener implements ActionListener {
 
 			/*
 			 * if (nodeList.size() == 0) { this.reachable.setText(
-			 * "Diese Markierung ist weder erreichbar noch wird sie ueberdeckt!."
-			 * ); } else { this.reachable.setText(
-			 * "wird ueberdeckt oder erreicht"); int minDist = nodes.size();
-			 * Vector<Vertex> v = null; Vector<Vertex> vTemp = null;
+			 * "Diese Markierung ist weder erreichbar noch wird sie ueberdeckt!." ); } else
+			 * { this.reachable.setText( "wird ueberdeckt oder erreicht"); int minDist =
+			 * nodes.size(); Vector<Vertex> v = null; Vector<Vertex> vTemp = null;
 			 * ShortestPath sp; for (int i = 0; i < nodeList.size(); i++) { n =
-			 * nodeList.get(i); vTemp = new
-			 * ShortestPath(root.getVertex().toString(), n
+			 * nodeList.get(i); vTemp = new ShortestPath(root.getVertex().toString(), n
 			 * .getVertex().toString(), true) .calculateShortestPath();
 			 * 
-			 * // = sp.calculateShortestPath(); if (vTemp.size() < minDist) { v
-			 * = (Vector<Vertex>) vTemp.clone(); minDist = v.size();
-			 * System.out.println("dist: " + minDist); } }
-			 * System.out.println(v); Set edges; HashSet allEdges =
-			 * pw.getAllEdges(); HashMap<String, String> edgeLabel = new
-			 * HashMap<String, String>(); Iterator allIt = allEdges.iterator();
-			 * // Object o; CovEdge ce; while (allIt.hasNext()) { o =
-			 * allIt.next(); if (o instanceof CovEdge) { ce = (CovEdge) o;
-			 * edgeLabel.put(ce.getEdge().toString(), ce.getLabel()); } }
+			 * // = sp.calculateShortestPath(); if (vTemp.size() < minDist) { v =
+			 * (Vector<Vertex>) vTemp.clone(); minDist = v.size();
+			 * System.out.println("dist: " + minDist); } } System.out.println(v); Set edges;
+			 * HashSet allEdges = pw.getAllEdges(); HashMap<String, String> edgeLabel = new
+			 * HashMap<String, String>(); Iterator allIt = allEdges.iterator(); // Object o;
+			 * CovEdge ce; while (allIt.hasNext()) { o = allIt.next(); if (o instanceof
+			 * CovEdge) { ce = (CovEdge) o; edgeLabel.put(ce.getEdge().toString(),
+			 * ce.getLabel()); } }
 			 * 
-			 * // BiologicalEdgeAbstract edge; // CovEdge ce; Vertex vertex; for
-			 * (int i = 1; i < v.size(); i++) { vertex = v.get(i); //
-			 * System.out.println("v: "+vertex); // System.out.println("v2: "
-			 * +v.get(i-1)); edges = vertex.getOutEdges(); Iterator<Edge> it =
-			 * edges.iterator(); while (it.hasNext()) { Edge edge = it.next();
-			 * //
-			 * System.out.println(edge.getEndpoints().getSecond().toString());
+			 * // BiologicalEdgeAbstract edge; // CovEdge ce; Vertex vertex; for (int i = 1;
+			 * i < v.size(); i++) { vertex = v.get(i); // System.out.println("v: "+vertex);
+			 * // System.out.println("v2: " +v.get(i-1)); edges = vertex.getOutEdges();
+			 * Iterator<Edge> it = edges.iterator(); while (it.hasNext()) { Edge edge =
+			 * it.next(); // System.out.println(edge.getEndpoints().getSecond().toString());
 			 * if (edge.getEndpoints().getSecond().toString().equals( v.get(i -
-			 * 1).toString())) { // System.out.println("Edge: "
-			 * +edge.toString());
+			 * 1).toString())) { // System.out.println("Edge: " +edge.toString());
 			 * System.out.println(edgeLabel.get(edge.toString())); break; }
 			 * 
 			 * } } }
@@ -903,8 +889,7 @@ public class MenuListener implements ActionListener {
 			new ConvertMetabolicNet();
 
 			/*
-			 * Component[] c =
-			 * MainWindowSingleton.getInstance().getContentPane()
+			 * Component[] c = MainWindowSingleton.getInstance().getContentPane()
 			 * .getComponents(); for (int i = 0; i < c.length; i++) { if
 			 * (c[i].getClass().getName().equals("javax.swing.JPanel")) {
 			 * MainWindowSingleton .getInstance() .getBar() .paintToolbar(
@@ -941,15 +926,15 @@ public class MenuListener implements ActionListener {
 				// ByteArrayOutputStream bos = new ByteArrayOutputStream();
 				// Serialize it
 
-				 new CreatePathway(old).getPathway();
-				 Pathway pw = con.getPathway(w.getCurrentPathway());
+				new CreatePathway(old).getPathway();
+				Pathway pw = con.getPathway(w.getCurrentPathway());
 				// pw = old.clone()
 
 				Transformation t = new Transformation();
 				t.resolveReferences(pw);
 				// MainWindow.
 				// Tansformation.resolveReferences(pw);
-				 //pw = old;
+				// pw = old;
 			}
 
 		} else if ("createDoc".equals(event)) {
@@ -971,7 +956,8 @@ public class MenuListener implements ActionListener {
 
 			PDFGraphics2D pdf;
 			try {
-				pdf = new PDFGraphics2D(new File(docDir + "export.pdf"), new Dimension(wvv.getWidth(), wvv.getHeight()));
+				pdf = new PDFGraphics2D(new File(docDir + "export.pdf"),
+						new Dimension(wvv.getWidth(), wvv.getHeight()));
 				pdf.startExport();
 				wvv.print(pdf);
 				pdf.endExport();
@@ -1110,10 +1096,12 @@ public class MenuListener implements ActionListener {
 							if (i % 2 == 0) {
 								offset *= -1;
 							}
-							VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance.getPathway().getGraph()
-									.getVisualizationViewer();
-							double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
-							double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
+							VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance
+									.getPathway().getGraph().getVisualizationViewer();
+							double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)
+									.getScale();
+							double scaleL = vv.getRenderContext().getMultiLayerTransformer()
+									.getTransformer(Layer.LAYOUT).getScale();
 							double scale;
 							if (scaleV < 1) {
 								scale = scaleV;
@@ -1122,24 +1110,26 @@ public class MenuListener implements ActionListener {
 							}
 							offset /= scale;
 
-							Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
+							Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes()
+									.iterator();
 							while (it.hasNext()) {
 								bna = it.next();
 
 								if (bna instanceof Enzyme) {
 									p = graphInstance.getPathway().getGraph().getVertexLocation(bna); //
 									inv = //
-											graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext()
-													.getMultiLayerTransformer().inverseTransform(p); // inv.setLocation(inv.getX()
-																										// +
-																										// offset,
-																										// //
-																										// inv.getY());
+											graphInstance.getPathway().getGraph().getVisualizationViewer()
+													.getRenderContext().getMultiLayerTransformer().inverseTransform(p); // inv.setLocation(inv.getX()
+																														// +
+																														// offset,
+																														// //
+																														// inv.getY());
 
 									// p = //
-									graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
-											.transform(inv);
-									vv.getModel().getGraphLayout().setLocation(bna, new Point2D.Double(p.getX() + offset, p.getY()));
+									graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext()
+											.getMultiLayerTransformer().transform(inv);
+									vv.getModel().getGraphLayout().setLocation(bna,
+											new Point2D.Double(p.getX() + offset, p.getY()));
 								}
 							}
 
@@ -1195,17 +1185,18 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				Pathway pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
-					YmlRuleReader reader = new YmlRuleReader();
-					List<Rule> rules = reader.getRules();
+					List<Rule> rules = RuleManager.getInstance().getRules();
 					new Transformator().transform(pw, rules);
-				}else{
+				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
-			}else{
+			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("editRuleWindow".equals(event)){
-			new RuleEditingWindow();
+		} else if ("ruleManager".equals(event)) {
+			
+			//new RuleEditingWindow(new Rule());
+			new RuleManagementWindow();
 		}
 	}
 
@@ -1217,7 +1208,8 @@ public class MenuListener implements ActionListener {
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
 		MyGraph mg = pw.getGraph();
-		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> v = pw.getGraph().getVisualizationViewer();
+		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> v = pw.getGraph()
+				.getVisualizationViewer();
 		// System.out.println(v.getGraphLayout().getClass());
 		// v.setBackground(Color.white);
 		if (!(mg.getLayout() instanceof StaticLayout)) {
@@ -1376,10 +1368,10 @@ public class MenuListener implements ActionListener {
 		// p.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, "false");
 
 		/*
-		 * try { SVGGraphics2D g; g = new SVGGraphics2D(new File("Output.svg"),
-		 * new Dimension((int)(width), (int)(height))); // g.setProperties(p);
-		 * g.startExport(); wvv.print(g); g.endExport(); } catch (IOException
-		 * e1) { // TODO Auto-generated catch block e1.printStackTrace(); }
+		 * try { SVGGraphics2D g; g = new SVGGraphics2D(new File("Output.svg"), new
+		 * Dimension((int)(width), (int)(height))); // g.setProperties(p);
+		 * g.startExport(); wvv.print(g); g.endExport(); } catch (IOException e1) { //
+		 * TODO Auto-generated catch block e1.printStackTrace(); }
 		 */
 
 		// System.out.println(export.getSelectionValues());
@@ -1389,11 +1381,10 @@ public class MenuListener implements ActionListener {
 
 		/*
 		 * Properties p = new Properties(); p.setProperty("PageSize", "A5");
-		 * VectorGraphics g; try { g = new SVGGraphics2D(new File("Output.svg"),
-		 * new Dimension(400, 300)); g.setBackground(Color.WHITE);
-		 * g.setProperties(p); g.startExport(); //vis.paintAll(g);
-		 * g.endExport(); } catch (IOException e1) { // TODO Auto-generated
-		 * catch block e1.printStackTrace(); }
+		 * VectorGraphics g; try { g = new SVGGraphics2D(new File("Output.svg"), new
+		 * Dimension(400, 300)); g.setBackground(Color.WHITE); g.setProperties(p);
+		 * g.startExport(); //vis.paintAll(g); g.endExport(); } catch (IOException e1) {
+		 * // TODO Auto-generated catch block e1.printStackTrace(); }
 		 */
 		return wvv;
 	}

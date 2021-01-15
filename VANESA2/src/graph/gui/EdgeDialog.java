@@ -103,10 +103,16 @@ public class EdgeDialog extends JFrame {
 		AutoCompleteDecorator.decorate(box);
 		panel.add(box, "span,wrap,growx,gap 10");
 		if (pw.isPetriNet()) {
-			panel.add(new JLabel("Edge weight / function"), "");
-			name.setText("1");
+			if (pw.isHeadless()) {
+				panel.add(new JLabel("Name"), "");
+				name.setText("PNE"+(pw.getAllEdges().size()+1));
+			} else {
+				panel.add(new JLabel("Edge weight / function"), "");
+				name.setText("1");
+			}
 		} else {
 			if (pw.isHeadless()) {
+				name.setText("E"+(pw.getAllEdges().size()+1));
 				panel.add(new JLabel("Name"), "");
 			} else {
 				panel.add(new JLabel("Label"), "");
@@ -154,7 +160,7 @@ public class EdgeDialog extends JFrame {
 		} else {
 			edgeItems = new Elementdeclerations().getNotPNEdgeDeclarations();
 		}
-		if(pw.isHeadless()){
+		if (pw.isHeadless() && !pw.isPetriNet()) {
 			box.addItem(Elementdeclerations.anyBEA);
 		}
 		Iterator<String> it = edgeItems.iterator();

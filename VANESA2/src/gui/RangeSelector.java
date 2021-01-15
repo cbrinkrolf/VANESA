@@ -30,6 +30,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
+import graph.jung.classes.MyVisualizationViewer;
 
 /**
  * 
@@ -61,7 +62,6 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	private JMenuItem moveUpRange;
 	private JMenuItem moveDownRange;
 	private RangeSettings settings = new RangeSettings();
-	private GraphInstance graphInstance;
 	//private ImagePath imagePath = ImagePath.getInstance();
 	private MyAnnotationManager am;
 
@@ -136,10 +136,6 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		return getShapes(GraphInstance.getMyGraph());
 	}
 
-	public void addRangeInfo(RangeInfo r) {
-		this.getShapes().add(r);
-	}
-
 	private List<RangeInfo> getShapes(MyGraph mg) {
 		// return this.ranges.get(mg);
 		//System.out.println(mg.getAnnotationManager().getAnnotations().size());
@@ -179,8 +175,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 			// System.out.println(r.fillColor);
 			// System.out.println(r.shape.getX());
 			// System.out.println(r.shape.getY());
-			graphInstance = new GraphInstance();
-			am = GraphInstance.getMyGraph().getAnnotationManager();
+			am = graph.getAnnotationManager();
 			// am = GraphInstance.getMyGraph().getAnnotationManager();
 
 			if (r.shape instanceof Ellipse2D) {
@@ -201,9 +196,9 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 						r.fillColor, true, new Point2D.Double(0, 0));
 			}
 			am.add(Annotation.Layer.LOWER, new MyAnnotation(a2, r.shape, r.text));
-			GraphInstance.getMyGraph().getVisualizationViewer()
+			graph.getVisualizationViewer()
 					.addPreRenderPaintable(am.getLowerAnnotationPaintable());
-			GraphInstance.getMyGraph().getVisualizationViewer()
+			graph.getVisualizationViewer()
 					.addPostRenderPaintable(am.getUpperAnnotationPaintable());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -656,7 +651,28 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			select(inverseTransform(e));
+			Point2D p = inverseTransform(e);
+			
+			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer) e
+					.getSource();
+			if (enabled) {
+				this.selected = null;
+				if (oldCursor != null) {
+					vv.setCursor(oldCursor);
+				}
+				List<RangeInfo> shapes = getShapes();
+				for (int i = shapes.size() - 1; i > -1; i--) {
+					RangeInfo info = shapes.get(i);
+					int cursor = this.checkAnchor(p, info.shape);
+					// if (info.shape.contains(p)) {
+					if (cursor > -1) {
+						selected = info;
+						oldCursor = vv.getCursor();
+						vv.setCursor(Cursor.getPredefinedCursor(cursor));
+						return;
+					}
+				}
+			}
 		}
 
 		@Override
@@ -677,51 +693,23 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 			}
 
 		}
-
-		private void select(Point2D p) {
-			if (enabled) {
-				this.selected = null;
-				if (oldCursor != null) {
-					GraphInstance.getMyGraph().getVisualizationViewer()
-							.setCursor(oldCursor);
-				}
-				List<RangeInfo> shapes = getShapes();
-				for (int i = shapes.size() - 1; i > -1; i--) {
-					RangeInfo info = shapes.get(i);
-					int cursor = this.checkAnchor(p, info.shape);
-					// if (info.shape.contains(p)) {
-					if (cursor > -1) {
-						selected = info;
-						oldCursor = GraphInstance.getMyGraph()
-								.getVisualizationViewer().getCursor();
-						GraphInstance.getMyGraph().getVisualizationViewer()
-								.setCursor(Cursor.getPredefinedCursor(cursor));
-						return;
-					}
-				}
-			}
-		}
 	}
 
 	@Override
 	public void paint(Graphics g) {
-		//System.out.println("oaint");
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public boolean useTransform() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
 	public void mouseReleased(MouseEvent e){
 		super.mouseReleased(e);
-		graphInstance = new GraphInstance();
-		graphInstance.getPathway().getGraph().getVisualizationViewer().requestFocus();
-		//System.out.println("released");
-		
+		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer) e
+				.getSource();
+		vv.requestFocus();
 	}
 }

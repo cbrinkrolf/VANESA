@@ -329,9 +329,9 @@ public class PropertyWindowListener implements FocusListener {
 			newP.setTokenStart(p.getTokenStart());
 			newP.setCompartment(p.getCompartment());
 			try {
-				newP.setID(p.getID());
+				newP.setID(p.getID(), pw);
 			} catch (IDAlreadyExistException ex) {
-				newP.setID();
+				newP.setID(pw);
 			}
 			newP.rebuildShape(new VertexShapes());
 
