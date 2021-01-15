@@ -1,6 +1,6 @@
 package transformation;
 
-public class YmlEdge {
+public class YamlEdge {
 
 	private String name;
 	private String type;

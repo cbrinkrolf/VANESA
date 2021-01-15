@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
@@ -33,6 +34,7 @@ public class VertexDialog {
 
 	private JPanel panel;
 	private JOptionPane pane;
+	private JTextField name;
 	private JComboBox<String> elementNames = new JComboBox<String>();
 	private JComboBox<String> compartment = new JComboBox<String>();
 	private JComboBox<String> elementType = new JComboBox<String>();
@@ -49,15 +51,14 @@ public class VertexDialog {
 				ElementNamesSingelton.getInstance().getEnzymes());
 		elementNames.setEditable(true);
 
-		if (!pw.isHeadless()) {
-			elementNames.setModel(dcbm);
-		}
+		elementNames.setModel(dcbm);
 
 		elementNames.setMaximumSize(new Dimension(250, 40));
 		elementNames.setSelectedItem("");
 
 		AutoCompleteDecorator.decorate(elementNames);
 
+		name = new JTextField(20);
 		panel = new JPanel(layout);
 
 		panel.add(new JLabel("Element"), "span 4");
@@ -82,12 +83,15 @@ public class VertexDialog {
 			panel.add(compartment, "span,wrap 5,growx ,gaptop 2");
 		}
 
-		String labelName = "Label";
-		if(pw.isHeadless()){
-			labelName = "Name";
+		if (pw.isHeadless()) {
+			panel.add(new JLabel("Name"), "span 2, gaptop 2 ");
+			name.setText("N"+pw.countNodes());
+			panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
+		} else {
+			panel.add(new JLabel("Label"), "span 2, gaptop 2 ");
+			panel.add(elementNames, "span,wrap,growx ,gap 10, gaptop 2");
 		}
-		panel.add(new JLabel(labelName), "span 2, gaptop 2 ");
-		panel.add(elementNames, "span,wrap,growx ,gap 10, gaptop 2");
+
 		panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
 
 		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
@@ -130,11 +134,14 @@ public class VertexDialog {
 
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
-				details.put("name", elementNames.getSelectedItem().toString());
-				details.put("elementType", elementType.getSelectedItem().toString());
-				if (!pw.isHeadless()) {
-					details.put("compartment", compartment.getSelectedItem().toString());
+				if (pw.isHeadless()) {
+					details.put("name", name.getText().toString().trim());
+				} else {
+					details.put("name", elementNames.getSelectedItem().toString().trim());
+					details.put("compartment", compartment.getSelectedItem().toString().trim());
 				}
+				details.put("elementType", elementType.getSelectedItem().toString().trim());
+
 				// details[0] = elementNames.getSelectedItem().toString();
 				// details[1] = elementType.getSelectedItem().toString();
 				// details[2] = compartment.getSelectedItem().toString();

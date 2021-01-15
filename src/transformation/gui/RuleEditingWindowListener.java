@@ -7,9 +7,7 @@ import java.awt.event.ActionListener;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import graph.GraphContainer;
-import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
-import gui.MainWindow;
 import gui.ToolBarButton;
 
 public class RuleEditingWindowListener implements ActionListener {
@@ -34,12 +32,11 @@ public class RuleEditingWindowListener implements ActionListener {
 		}
 
 		String event = e.getActionCommand();
-		MainWindow w = MainWindow.getInstance();
 		GraphContainer con = GraphContainer.getInstance();
 		if ("move".equals(event)) {
 			if (con.containsPathway()) {
 				con.changeMouseFunction("move");
-				MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
+				MyGraph g = activePw.getGraph();
 				g.disableGraphTheory();
 				// g.getVisualizationViewer().resize(20, 20);
 				Dimension d = g.getVisualizationViewer().getPreferredSize();
@@ -50,8 +47,7 @@ public class RuleEditingWindowListener implements ActionListener {
 		} else if ("pick".equals(event)) {
 			if (con.containsPathway()) {
 				con.changeMouseFunction("pick");
-				MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
-				g.disableGraphTheory();
+				activePw.getGraph().disableGraphTheory();
 			}
 		} else if ("center".equals(event)) {
 			if (activePw.hasGotAtLeastOneElement()) {

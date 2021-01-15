@@ -8,6 +8,7 @@ import java.util.SortedSet;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
+import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
@@ -216,11 +217,11 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	// should only be used when loading a file with a network
-	public void setID(int id) throws IDAlreadyExistException {
+	public void setID(int id, Pathway pw) throws IDAlreadyExistException {
 		if (this.ID == id) {
 			return;
 		} else {
-			set = new GraphInstance().getPathway().getIdSet();
+			set = pw.getIdSet();
 			// System.out.println("size: " + set.size());
 			if (set.contains(id)) {
 				// System.err.println("Error: Id " + id + " is already
@@ -250,8 +251,9 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		 */
 	}
 
-	public void setID() {
-		set = new GraphInstance().getPathway().getIdSet();
+	public void setID(Pathway pw) {
+		
+		set = pw.getIdSet();
 		// System.out.println(new GraphInstance().getPathway().getName());
 		// set id to highest current id+1;
 		if (ID <= 0) {
@@ -259,7 +261,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 			if (set.size() > 0) {
 				// System.out.println("last: " + set.last());
 				try {
-					setID(set.last() + 1);
+					setID(set.last() + 1, pw);
 				} catch (IDAlreadyExistException ex) {
 					// cannot occur if program working fine.
 					ex.printStackTrace();
@@ -269,7 +271,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 				// System.out.println("kleinster: " + set.first());
 			} else {
 				try {
-					setID(100);
+					setID(100, pw);
 				} catch (IDAlreadyExistException ex) {
 					// cannot occur if program working fine.
 					ex.printStackTrace();

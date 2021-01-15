@@ -142,8 +142,8 @@ public class MyGraph {
 		// vertexLocations = new HashMap();
 
 		/*
-		 * Transformer<BiologicalNodeAbstract, Point2D> locationTransformer =
-		 * new Transformer<BiologicalNodeAbstract, Point2D>() {
+		 * Transformer<BiologicalNodeAbstract, Point2D> locationTransformer = new
+		 * Transformer<BiologicalNodeAbstract, Point2D>() {
 		 * 
 		 * @Override public Point2D transform(BiologicalNodeAbstract vertex) {
 		 * 
@@ -152,8 +152,8 @@ public class MyGraph {
 		 * vv.getRenderContext().getMultiLayerTransformer()
 		 * .inverseTransform(nodePositions.get(vertex)); // System.out.println(
 		 * "trans: "+p); // return layout.transform(vertex); return p; // return
-		 * nodePositions.get(vertex); // return null; // int value =
-		 * (vertex.intValue() * 40) + 20;
+		 * nodePositions.get(vertex); // return null; // int value = (vertex.intValue()
+		 * * 40) + 20;
 		 * 
 		 * } };
 		 */
@@ -165,13 +165,17 @@ public class MyGraph {
 		// layout.initialize(preferredSize, nodePositions);
 		clusteringLayout = new AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(layout);
 
-		visualizationModel = new DefaultVisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract>(clusteringLayout, preferredSize);
+		visualizationModel = new DefaultVisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+				clusteringLayout, preferredSize);
 		visualizationModel.getRelaxer().setSleepTime(10);
 		// visualizationModel.setRelaxerThreadSleepTime(10);
-		vv = new MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(visualizationModel, preferredSize, pathway);
+		vv = new MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(visualizationModel,
+				preferredSize, pathway);
 
 		vv.setSize(preferredSize);
 		vv.setMinimumSize(preferredSize);
+
+		// vv.setFocusable(false);
 
 		// vv.addKeyListener(new EventListener());
 		vv.addKeyListener(new KeyListener() {
@@ -194,7 +198,6 @@ public class MyGraph {
 								bna.getRef().getRefs().remove(bna);
 							}
 							pathway.removeElement(bna);
-
 						}
 						vv.getPickedVertexState().clear();
 					}
@@ -204,7 +207,6 @@ public class MyGraph {
 							pathway.removeElement(it.next());
 						}
 						vv.getPickedEdgeState().clear();
-
 					}
 					pathway.updateMyGraph();
 					MainWindow mw = MainWindow.getInstance();
@@ -233,7 +235,7 @@ public class MyGraph {
 		vv.addPreRenderPaintable(RangeSelector.getInstance());
 
 		// set the heatmap-layer to be painted before the actual graph
-		//vv.addPreRenderPaintable(HeatgraphLayer.getInstance());
+		// vv.addPreRenderPaintable(HeatgraphLayer.getInstance());
 
 		// set the Ranges-Layer to get notified of mouse movements and clicks
 		vv.addMouseListener(RangeSelector.getInstance());
@@ -255,7 +257,7 @@ public class MyGraph {
 		vfpf = new MyVertexFillPaintFunction(stateV, stateE, pathway);
 		vit = new MyVertexIconTransformer();
 		// vssa = new VertexShapeSize(pathway);
-		esh = new MyEdgeStrokeHighlighting(stateV, stateE);
+		esh = new MyEdgeStrokeHighlighting(stateV, stateE, pathway);
 		edpf = new MyEdgeDrawPaintFunction(stateV, stateE);
 		efpf = new MyEdgeFillPaintFunction(stateV, stateE);
 
@@ -307,17 +309,18 @@ public class MyGraph {
 
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				// TODO Auto-generated method stub
 				// System.out.println("changed");
 				if (stateV.getSelectedObjects().length == 1) {
 					graphInstance.setSelectedObject((BiologicalNodeAbstract) stateV.getSelectedObjects()[0]);
 
-					w.updateElementProperties();
+					if (!pw.isHeadless()) {
+						w.updateElementProperties();
+					}
 				}
 				// System.out.println("vorher");
 
 				// System.out.println("nachher");
-				if (graphInstance.getPathway().getPetriNet().isPetriNetSimulation()) {
+				if (pathway.getPetriNet().isPetriNetSimulation()) {
 					// System.out.println("sim");
 					w.updatePCPView();
 				}
@@ -330,14 +333,15 @@ public class MyGraph {
 
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				// TODO Auto-generated method stub
 				// System.out.println("changed");
 				if (stateE.getSelectedObjects().length == 1) {
 					graphInstance.setSelectedObject((BiologicalEdgeAbstract) stateE.getSelectedObjects()[0]);
-					w.updateElementProperties();
+					if (!pw.isHeadless()) {
+						w.updateElementProperties();
+					}
 				}
 
-				if (graphInstance.getPathway().getPetriNet().isPetriNetSimulation()) {
+				if (pathway.getPetriNet().isPetriNetSimulation()) {
 					// System.out.println("sim");
 					w.updatePCPView();
 				}
@@ -377,27 +381,26 @@ public class MyGraph {
 		pr.setVertexFillPaintTransformer(vfpf);
 
 		pr.setVertexIconTransformer(vit);
-		
+
 		vv.addPostRenderPaintable(new Paintable() {
 
 			@Override
 			public boolean useTransform() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 
 			@Override
 			public void paint(Graphics g) {
-				if(graphInstance.getPathway() == null){
+				if (pathway == null) {
 					// System.out.println("pw null");
 					return;
 				}
-				//System.out.println(graphInstance.getPathway().getAllGraphNodes());
-				if(graphInstance.getPathway().getAllGraphNodes().isEmpty()){
-					//System.out.println("empty");
+				// System.out.println(graphInstance.getPathway().getAllGraphNodes());
+				if (pathway.getAllGraphNodes().isEmpty()) {
+					// System.out.println("empty");
 					return;
 				}
-				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
+				Iterator<BiologicalNodeAbstract> it = pathway.getAllGraphNodes().iterator();
 
 				Place p;
 				BiologicalNodeAbstract bna;
@@ -433,33 +436,31 @@ public class MyGraph {
 						int xpos;
 
 						Point2D point = vv.getGraphLayout().transform(p);
-						
-						//Point2D point = pw.getGraph().getVertexLocation(p);// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
+
+						// Point2D point = pw.getGraph().getVertexLocation(p);//
+						// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
 
 						// g2d.drawString("b",(int)((p.getX())), (int)((p.getY())*scale));
-						Point2D p1inv = vv.getRenderContext().getMultiLayerTransformer()
-								.transform(point);
-						
-						double scaleV = vv.getRenderContext().getMultiLayerTransformer()
-								.getTransformer(Layer.VIEW).getScale();
-						
-						
+						Point2D p1inv = vv.getRenderContext().getMultiLayerTransformer().transform(point);
+
+						double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)
+								.getScale();
+
 						if (discrete) {
 							xpos = new Double(p1inv.getX() - x1 + (19 - 5 * (double) tokens.length() / 2)).intValue();
 						} else {
-							xpos = new Double(p1inv.getX() - x1 + (21 - 5 * (double) tokens.length() / 2)).intValue() ;
+							xpos = new Double(p1inv.getX() - x1 + (21 - 5 * (double) tokens.length() / 2)).intValue();
 						}
 
 						g.setColor(Color.BLACK);
 						int y = (int) p1inv.getY();
 						// g2.draw(AffineTransform.getScaleInstance(p.getNodesize(),
 						// p.getNodesize()).createTransformedShape(s));
-						
-						//g.getFont()
-						
-						
-						double scaleL = vv.getRenderContext().getMultiLayerTransformer()
-								.getTransformer(Layer.LAYOUT).getScale();
+
+						// g.getFont()
+
+						double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)
+								.getScale();
 						double scale;
 						if (scaleV < 1) {
 							scale = scaleV;
@@ -467,14 +468,12 @@ public class MyGraph {
 							scale = scaleL;
 						}
 						scale = ((double) ((int) (scale * 100)) / 100);
-						
-						int fontSize =(int) (14.0 * scaleV);
-						g.setFont(new Font("Arial", Font.PLAIN, fontSize));
-						//g.setFont(new Font);
-						// g2.draw(s);
-						g.drawString(tokens, xpos, (int)(y + 7*scaleV));
-						// TODO Auto-generated method stub
 
+						int fontSize = (int) (14.0 * scaleV);
+						g.setFont(new Font("Arial", Font.PLAIN, fontSize));
+						// g.setFont(new Font);
+						// g2.draw(s);
+						g.drawString(tokens, xpos, (int) (y + 7 * scaleV));
 					}
 				}
 			}
@@ -496,21 +495,6 @@ public class MyGraph {
 		satellitePr.setEdgeLabelRenderer(elr);
 		satellitePr.setEdgeArrowTransformer(eaf);
 	}
-
-	/*
-	 * public HashSet<Vertex> getLoadedElements() { return set; }
-	 */
-
-	/*
-	 * public void changeGraphLayout(int type) { vv.stop(); new
-	 * ClusterLayout(stateV, type, clusteringLayout); vv.restart(); }
-	 */
-
-	// TODO
-	// public AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>
-	// getLayout(){
-	// visualizationModel.getGraphLayout();
-	// }
 
 	public void restartVisualizationModel() {
 		pathway.updateMyGraph();
@@ -582,8 +566,7 @@ public class MyGraph {
 	}
 
 	/*
-	 * public Vertex createNewVertex() { return g.addVertex(new SparseVertex());
-	 * }
+	 * public Vertex createNewVertex() { return g.addVertex(new SparseVertex()); }
 	 */
 
 	public SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> getSatelliteView() {
@@ -709,6 +692,8 @@ public class MyGraph {
 		graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
 		vv.setGraphMouse(graphMouse);
 		// vv.setFocusable(true);
+		// vv.requestFocus();
+		// vv.setFocusable(false);
 
 		// Event e = new MouseEvent(vv, arg1, arg2, arg3, arg4, arg5, arg6,
 		// arg7, arg8, arg9, arg10)
@@ -909,7 +894,8 @@ public class MyGraph {
 	// }
 	// }
 
-	public VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> getVisualizationPaneCopy(Dimension size) {
+	public VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> getVisualizationPaneCopy(
+			Dimension size) {
 
 		AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout2 = new AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				vv.getGraphLayout());
@@ -1013,9 +999,10 @@ public class MyGraph {
 			bna = it.next();
 			this.moveVertex(bna, map.get(bna).getX() + offsetX, map.get(bna).getY() + offsetY);
 		}
-		MyAnnotationManager am = graphInstance.getPathway().getGraph().getAnnotationManager();
+		// MyAnnotationManager am =
+		// graphInstance.getPathway().getGraph().getAnnotationManager();
 
-		am.moveAllAnnotation(offsetX, offsetY);
+		annotationManager.moveAllAnnotation(offsetX, offsetY);
 	}
 
 	public void changeToGEMLayout() {
@@ -1085,7 +1072,7 @@ public class MyGraph {
 		makeDefaultObjectVisualization();
 		// System.out.println(getAnnotationManager().getAnnotations().size());
 		// System.out.println(vv.getRenderContext());
-		if(this.getAllVertices().size() == 0){
+		if (this.getAllVertices().size() == 0) {
 			return;
 		}
 
@@ -1137,10 +1124,11 @@ public class MyGraph {
 		thread.start();
 
 		// this.normalCentering(vv);
-		graphInstance.getPathway().saveVertexLocations();
+		pathway.saveVertexLocations();
 	}
 
-	public Point2D findNearestFreeVertexPosition(double startSearchCoordinatesX, double startSearchCoordinatesY, double minDistance) {
+	public Point2D findNearestFreeVertexPosition(double startSearchCoordinatesX, double startSearchCoordinatesY,
+			double minDistance) {
 		double radiusIncrease = 5;
 		double degreeIncrease = 5;
 
@@ -1152,7 +1140,7 @@ public class MyGraph {
 						startSearchCoordinatesY + radius * Math.cos(Math.toRadians(i)));
 				boolean positionOK = true;
 
-				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
+				Iterator<BiologicalNodeAbstract> it = pathway.getAllGraphNodes().iterator();
 				while (it.hasNext()) {
 					BiologicalNodeAbstract bna = it.next();
 					Point2D p = getVertexLocation(bna);
@@ -1169,8 +1157,10 @@ public class MyGraph {
 
 	public void fitScaleOfViewer(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> viewer) {
 
-		viewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(1, 1, viewer.getCenter());
-		viewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(1, 1, viewer.getCenter());
+		viewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(1, 1,
+				viewer.getCenter());
+		viewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(1, 1,
+				viewer.getCenter());
 
 		GraphCenter gc = new GraphCenter(this);
 

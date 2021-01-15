@@ -6,12 +6,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.util.Iterator;
+import java.awt.geom.Point2D;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,17 +27,19 @@ import javax.swing.event.DocumentListener;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphContainer;
-import graph.algorithms.CompareGraphs;
-import graph.algorithms.MergeGraphs;
-import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.ToolBarButton;
 import gui.images.ImagePath;
 import net.miginfocom.swing.MigLayout;
+import transformation.Rule;
+import transformation.RuleEdge;
+import transformation.RuleNode;
 
 public class RuleEditingWindow extends JFrame implements ActionListener {
 
@@ -55,80 +58,60 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 
 	private JComboBox<String> secondBox = new JComboBox<String>();
 
-	private JOptionPane optionPane;
-
-	private JDialog dialog;
+	private JFrame frame;
 
 	private JSplitPane splitPane;
-
-	private GraphContainer con;
-
-	private String mouseFunction;
 
 	private GraphZoomScrollPane firstGraphPane;
 
 	private GraphZoomScrollPane secondGraphPane;
-	private JButton[] buttons;
 
 	int splitWindowWith = 0;
 	int splitWindowHeight = 0;
+	
+	private JTextField ruleName = new JTextField(50);
 
 	private Pathway bn = null;
 	private Pathway pn = null;
 
 	private JLabel elementTypeBN = new JLabel();
-
 	private JTextField elementNameBN = new JTextField(20);
-
+	private JLabel elementTypePN = new JLabel();
+	private JTextField elementNamePN = new JTextField(20);
+	private GraphElementAbstract gaBN = null;
+	private GraphElementAbstract gaPN = null;
+	
 	private RuleEditingWindowListener listener;
 
-	private GraphElementAbstract gaBN = null;
+	
+	
+	private JButton cancel = new JButton("cancel");
+	private JButton okButton = new JButton("ok");
+	private JButton[] buttons = { okButton, cancel };
+	private JOptionPane optionPane;
+	
 
 	// TODO no empty graph in main window allowed, at least one instance must be
 	// opened
-	public RuleEditingWindow() {
+	private Rule rule;
 
+	public RuleEditingWindow(Rule rule, ActionListener al) {
+		
+		
+		
+		if(rule != null){
+			this.rule = rule;
+		}else{
+			rule = new Rule();
+		}
+		
 		this.createGraphs();
+		populate();
 
 		listener = new RuleEditingWindowListener(bn, pn);
-		// con = GraphContainer.getInstance();
-		// mouseFunction = con.getMouseFunction();
-		// con.changeMouseFunction("move");
 
-		JButton exit = new JButton("exit");
-		JButton compare = new JButton("compare");
-		JButton reset = new JButton("reset");
-		JButton merge = new JButton("merge");
-		// JButton align = new JButton("align");
-		// JButton heatmap = new JButton("heatmap");
-		// JButton compare3d = new JButton("compare 3D");
-
-		if (MainWindow.developer) {
-			buttons = new JButton[] { exit, compare, merge, reset };
-		} else {
-			buttons = new JButton[] { exit, compare, merge, reset };
-		}
-
-		exit.addActionListener(this);
-		exit.setActionCommand("exit");
-
-		compare.addActionListener(this);
-		compare.setActionCommand("compare");
-
-		reset.addActionListener(this);
-		reset.setActionCommand("reset");
-
-		merge.addActionListener(this);
-		merge.setActionCommand("merge");
-
-		// heatmap.addActionListener(this);
-		// heatmap.setActionCommand("heatmap");
-
-		// align.addActionListener(this);
-		// align.setActionCommand("align");
-
-		// compare3d.addActionListener(this);
-		// compare3d.setActionCommand("compare3d");
+		ruleName.setText(rule.getName());
+		
 		elementNameBN.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
@@ -157,14 +140,35 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 				}
 			}
 		});
+		
+		elementNamePN.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				if (gaPN != null) {
+					gaPN.setName(elementNamePN.getText().trim());
+					gaPN.setLabel(elementNamePN.getText().trim());
+					pn.getGraph().getVisualizationViewer().repaint();
+				}
+			}
 
-		optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
-		optionPane.setOptions(buttons);
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				if (gaPN != null) {
+					gaPN.setName(elementNamePN.getText().trim());
+					gaPN.setLabel(elementNamePN.getText().trim());
+					pn.getGraph().getVisualizationViewer().repaint();
+				}
+			}
 
-		dialog = new JDialog(this, "Edit or create a new Rule", true);
-
-		dialog.setContentPane(optionPane);
-		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				if (gaPN != null) {
+					gaPN.setName(elementNamePN.getText().trim());
+					gaPN.setLabel(elementNamePN.getText().trim());
+					pn.getGraph().getVisualizationViewer().repaint();
+				}
+			}
+		});
 
 		firstBox.setEditable(false);
 		secondBox.setEditable(false);
@@ -178,15 +182,22 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 
 		splitPane.setOneTouchExpandable(true);
 
-		fillGraphPane(firstGraph, firstBox);
-		fillGraphPane(secondGraph, secondBox);
+		fillGraphPane(firstGraph, firstBox, new JLabel("Biological graph pattern for matching"));
+		fillGraphPane(secondGraph, secondBox, new JLabel("Petri net pattern"));
 
 		JPanel elementInformationBN = new JPanel();
 		elementInformationBN.setLayout(new MigLayout("fillx", "[grow,fill]", ""));
-		elementInformationBN.add(new JLabel("Element type: "));
+		elementInformationBN.add(new JLabel("Selected element type: "));
 		elementInformationBN.add(elementTypeBN, "wrap");
-		elementInformationBN.add(new JLabel("Element name: "));
+		elementInformationBN.add(new JLabel("Selected element name: "));
 		elementInformationBN.add(elementNameBN);
+		
+		JPanel elementInformationPN = new JPanel();
+		elementInformationPN.setLayout(new MigLayout("fillx", "[grow,fill]", ""));
+		elementInformationPN.add(new JLabel("Selected element type: "));
+		elementInformationPN.add(elementTypePN, "wrap");
+		elementInformationPN.add(new JLabel("Selected element name: "));
+		elementInformationPN.add(elementNamePN);
 
 		JPanel buttonPanelBN = new JPanel();
 		buttonPanelBN.setName("buttonBN");
@@ -236,7 +247,8 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 		// splitWindowHeight - 50)));
 		secondGraph.add(secondGraphPane, "wrap 5");
 		secondGraph.add(buttonPanelPN, "wrap 5");
-
+		secondGraph.add(elementInformationPN, "wrap 5");
+		
 		secondSelectedPathway = pn.getName();
 
 		firstBox.addItem(bn.getName());
@@ -254,75 +266,69 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 
 		MigLayout layout = new MigLayout("", "[grow][grow]", "");
 		panel.setLayout(layout);
+		
+		JPanel ruleNamePanel = new JPanel();
+		ruleNamePanel.setLayout(new MigLayout("fillx", "[grow,fill]", ""));
+		
+		
+		ruleNamePanel.add(new JLabel("Rule name: "));
+		ruleNamePanel.add(ruleName, "align left, span, wrap");
+		
+		panel.add(ruleNamePanel, "wrap 10");
+		panel.add(new JSeparator(), "growx, span");
+		
 		panel.add(splitPane, "growx, span,wrap 10");
 		panel.add(new JSeparator(), "growx, span");
 
-		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
-		splitPane.setDividerLocation(0.5);
-		dialog.setVisible(true);
+		
+		cancel.addActionListener(al);
+		cancel.addActionListener(this);
+		cancel.setActionCommand("cancelRE");
 
+		okButton.addActionListener(al);
+		okButton.addActionListener(this);
+		okButton.setActionCommand("okButtonRE");
+		
+		optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
+		optionPane.setOptions(buttons);
+		
+		frame = new JFrame("Edit or create a new Rule");
+		frame.setAlwaysOnTop(false);
+		frame.setContentPane(optionPane);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.revalidate();
+		
+		frame.pack();
+		
+		frame.setLocationRelativeTo(MainWindow.getInstance());
+		
+		frame.pack();
+		splitPane.setDividerLocation(0.5);
+		frame.setVisible(true);
+		bn.getGraph().normalCentering();
+		pn.getGraph().normalCentering();
 	}
 
-	public void fillGraphPane(JPanel graphPanel, JComboBox<String> box) {
+	public void fillGraphPane(JPanel graphPanel, JComboBox<String> box, JLabel label) {
 		MigLayout layout = new MigLayout("", "[grow]", "");
 		graphPanel.setLayout(layout);
-		graphPanel.add(box, "span, growx, wrap 5, align center");
+		graphPanel.add(label, "wrap 5, align center");
+		//graphPanel.add(box, "span, growx, wrap 5, align center");
 		graphPanel.add(new JSeparator(), "span,growx,wrap 5");
 	}
 
 	public void actionPerformed(ActionEvent e) {
 
-		String event = e.getActionCommand();
-		if ("exit".equals(event)) {
-
-			resetPanels();
-			dialog.setVisible(false);
-			con.changeMouseFunction(mouseFunction);
-
-		} else if ("compare".equals(event)) {
-
-			CompareGraphs.compareGraphs(con.getPathway(firstBox.getSelectedItem().toString()),
-					con.getPathway(secondBox.getSelectedItem().toString()));
-			firstGraph.updateUI();
-			secondGraph.updateUI();
-
-		} else if ("reset".equals(event)) {
-
-			resetPanels();
-
-		} else if ("merge".equals(event)) {
-
-			new MergeGraphs(con.getPathway(firstBox.getSelectedItem().toString()),
-					con.getPathway(secondBox.getSelectedItem().toString()), true);
-			this.closeDialog();
-
+		if(e.getActionCommand().equals("okButtonRE")){
+			convertGraphToRule();
+			frame.setVisible(false);
+		} else if(e.getActionCommand().equals("cancelRE")){
+			frame.setVisible(false);
 		}
-	}
-
-	private void resetPanels() {
-		System.out.println("reset");
-		Iterator<Pathway> it = con.getAllPathways().iterator();
-		MainWindow.getInstance().enableOptionPanelUpdate(false);
-		Pathway p;
-		MyGraph graph;
-
-		while (it.hasNext()) {
-			p = it.next();
-			graph = p.getGraph();
-			graph.disableGraphTheory();
-
-			graph.clearPickedElements();
-
-		}
-
-		firstGraph.updateUI();
-		secondGraph.updateUI();
-		MainWindow.getInstance().enableOptionPanelUpdate(true);
 	}
 
 	public void closeDialog() {
-		dialog.setVisible(false);
+		frame.setVisible(false);
 	}
 
 	private void createButtonPanel(JPanel panel, boolean bn) {
@@ -396,6 +402,7 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 	}
 
 	private void createGraphs() {
+		
 		bn = new Pathway("bn", true);
 		bn.getGraph().setMouseModeEditing();
 		String newPathwayName = GraphContainer.getInstance().addPathway(bn.getName(), bn);
@@ -418,8 +425,11 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 					gaBN = bna;
 					elementTypeBN.setText(bna.getBiologicalElement());
 					elementNameBN.setText(bna.getName());
+				}else{
+					gaBN = null;
+					elementTypeBN.setText("");
+					elementNameBN.setText("");
 				}
-
 			}
 		});
 		edgeStateBN.addItemListener(new ItemListener() {
@@ -431,8 +441,157 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 					gaBN = edge;
 					elementTypeBN.setText(edge.getBiologicalElement());
 					elementNameBN.setText(edge.getName());
+				}else{
+					gaBN = null;
+					elementTypeBN.setText("");
+					elementNameBN.setText("");
 				}
 			}
 		});
+		
+		
+		PickedState<BiologicalNodeAbstract> vertexStatePN = pn.getGraph().getVisualizationViewer()
+				.getPickedVertexState();
+		PickedState<BiologicalEdgeAbstract> edgeStatePN = pn.getGraph().getVisualizationViewer().getPickedEdgeState();
+		vertexStatePN.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (vertexStatePN.getPicked().size() == 1) {
+					BiologicalNodeAbstract bna = vertexStatePN.getPicked().iterator().next();
+					gaPN = bna;
+					elementTypePN.setText(bna.getBiologicalElement());
+					elementNamePN.setText(bna.getName());
+				}else{
+					gaPN = null;
+					elementTypePN.setText("");
+					elementNamePN.setText("");
+				}
+			}
+		});
+		edgeStatePN.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (edgeStatePN.getPicked().size() == 1) {
+					BiologicalEdgeAbstract edge = edgeStatePN.getPicked().iterator().next();
+					gaPN = edge;
+					elementTypePN.setText(edge.getBiologicalElement());
+					elementNamePN.setText(edge.getName());
+				}else{
+					gaPN = null;
+					elementTypePN.setText("");
+					elementNamePN.setText("");
+				}
+			}
+		});
+	}
+	
+	private void populate(){
+		
+		// for BN
+		// put nodes
+		RuleNode rn;
+		BiologicalNodeAbstract bna;
+		Map<String, BiologicalNodeAbstract> nameToBN = new HashMap<String, BiologicalNodeAbstract>();
+		for(int i = 0; i<rule.getAllBiologicalNodes().size(); i++){
+			rn = rule.getAllBiologicalNodes().get(i);
+			bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
+			bna.setName(rn.getName());
+			bna.setLabel(rn.getName());
+			nameToBN.put(bna.getName(), bna);
+			bn.addVertex(bna, new Point2D.Double(rn.getX(), rn.getY()));
+		}
+		
+		// put edges
+		BiologicalEdgeAbstract bea;
+		RuleEdge re;
+		for (int i = 0; i < rule.getAllBiologicalEdges().size(); i++) {
+			re = rule.getAllBiologicalEdges().get(i);
+			bea = BiologicalEdgeAbstractFactory.create(re.getType(), null);
+			bea.setFrom(nameToBN.get(re.getFrom().getName()));
+			bea.setTo(nameToBN.get(re.getTo().getName()));
+			bea.setLabel(re.getName());
+			bea.setName(re.getName());
+			bea.setDirected(true);
+			bn.addEdge(bea);
+		}
+		bn.updateMyGraph();
+		
+		
+		// for PN
+		Map<String, BiologicalNodeAbstract> nameToPN = new HashMap<String, BiologicalNodeAbstract>();
+		for(int i = 0; i<rule.getAllPetriNodes().size(); i++){
+			rn = rule.getAllPetriNodes().get(i);
+			bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
+			bna.setName(rn.getName());
+			bna.setLabel(rn.getName());
+			nameToPN.put(bna.getName(), bna);
+			pn.addVertex(bna, new Point2D.Double(rn.getX(), rn.getY()));
+		}
+		
+		// put edges
+		for (int i = 0; i < rule.getAllPetriEdges().size(); i++) {
+			re = rule.getAllPetriEdges().get(i);
+			bea = BiologicalEdgeAbstractFactory.create(re.getType(), null);
+			bea.setFrom(nameToPN.get(re.getFrom().getName()));
+			bea.setTo(nameToPN.get(re.getTo().getName()));
+			bea.setLabel(re.getName());
+			bea.setName(re.getName());
+			bea.setDirected(true);
+			bn.addEdge(bea);
+		}
+		pn.updateMyGraph();
+	}
+	
+	private void convertGraphToRule(){
+		rule.setName(this.ruleName.getText().trim());
+		rule.getAllBiologicalNodes().clear();
+		rule.getAllBiologicalEdges().clear();
+		rule.getAllPetriNodes().clear();
+		rule.getAllPetriEdges().clear();
+		// forBN
+		BiologicalNodeAbstract bna;
+		RuleNode rn;
+		Map<BiologicalNodeAbstract, RuleNode> bnaToRuleNode = new HashMap<BiologicalNodeAbstract, RuleNode>();
+		for(int i = 0; i<bn.getAllGraphNodesSortedAlphabetically().size(); i++){
+			bna = bn.getAllGraphNodesSortedAlphabetically().get(i);
+			rn = new RuleNode();
+			rn.setName(bna.getName());
+			rn.setType(bna.getBiologicalElement());
+			rn.setX(bn.getGraph().getVertexLocation(bna).getX());
+			rn.setY(bn.getGraph().getVertexLocation(bna).getY());
+			rule.addBiologicalNode(rn);
+			bnaToRuleNode.put(bna, rn);
+		}
+		RuleEdge re;
+		BiologicalEdgeAbstract bea;
+		for(int i = 0; i<bn.getAllEdgesSorted().size(); i++){
+			bea = bn.getAllEdgesSorted().get(i);
+			re = new RuleEdge(bea.getName(), bea.getBiologicalElement(), bnaToRuleNode.get(bea.getFrom()), bnaToRuleNode.get(bea.getTo()));
+			rule.addBiologicalEdge(re);
+		}
+		
+		// for PN
+		bnaToRuleNode = new HashMap<BiologicalNodeAbstract, RuleNode>();
+		for(int i = 0; i<pn.getAllGraphNodesSortedAlphabetically().size(); i++){
+			bna = pn.getAllGraphNodesSortedAlphabetically().get(i);
+			rn = new RuleNode();
+			rn.setName(bna.getName());
+			rn.setType(bna.getBiologicalElement());
+			rn.setX(pn.getGraph().getVertexLocation(bna).getX());
+			rn.setY(pn.getGraph().getVertexLocation(bna).getY());
+			rule.addPetriNode(rn);
+			bnaToRuleNode.put(bna, rn);
+		}
+		for(int i = 0; i<pn.getAllEdgesSorted().size(); i++){
+			bea = pn.getAllEdgesSorted().get(i);
+			re = new RuleEdge(bea.getName(), bea.getBiologicalElement(), bnaToRuleNode.get(bea.getFrom()), bnaToRuleNode.get(bea.getTo()));
+			rule.addPetriEdge(re);
+		}
+	}
+	
+	public Rule getResult(){
+		convertGraphToRule();
+		return rule;
 	}
 }

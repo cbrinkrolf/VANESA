@@ -58,6 +58,10 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	}
 
 	public void mouseReleased(MouseEvent e) {
+		//vv.setFocusable(true);
+		//vv.requestFocus();
+		
+		
 		// System.out.println("released");
 		pw.pickGroup();
 		if (inwindow) {
@@ -194,6 +198,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				// System.out.println("dragging false");
 				dragging = false;
 				// vv.setComponentPopupMenu(new GraphPopUp().returnPopUp());
+				
 				MainWindow.getInstance().setCursor(cursor);
 				vv.setCursor(cursor);
 				vv.getComponentPopupMenu().show();

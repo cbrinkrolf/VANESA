@@ -330,9 +330,9 @@ public class MenuBarClass {
 		transform.addActionListener(MenuListener.getInstance());
 		transform.setActionCommand("transform");
 		
-		JMenuItem editRuleWindow = new JMenuItem("Open rule editing window");
-		editRuleWindow.addActionListener(MenuListener.getInstance());
-		editRuleWindow.setActionCommand("editRuleWindow");
+		JMenuItem ruleManager = new JMenuItem("Rule Management");
+		ruleManager.addActionListener(MenuListener.getInstance());
+		ruleManager.setActionCommand("ruleManager");
 		
 		help.add(interaction);
 
@@ -473,7 +473,7 @@ public class MenuBarClass {
 		transformation.add(resolveReferences);
 		if (MainWindow.developer) {
 			transformation.add(transform);
-			transformation.add(editRuleWindow);
+			transformation.add(ruleManager);
 		}
 
 		bar.add(file);

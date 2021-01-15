@@ -290,7 +290,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			coarseNode.setID(true);
 		} else {
 			try {
-				coarseNode.setID(id);
+				coarseNode.setID(id, null);
 			} catch (IDAlreadyExistException ex) {
 				coarseNode.setID(true);
 			}
@@ -716,7 +716,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		BiologicalNodeAbstract bna = (BiologicalNodeAbstract) super.clone();
 		bna.removeAllConnectionEdges();
 		bna.getRefs().clear();
-		bna.setID();
+		bna.setID(null);
 		return bna;
 	}
 
@@ -953,7 +953,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	// should only be used when loading a file with a network
-	public void setID(int id) throws IDAlreadyExistException {
+	public void setID(int id, Pathway pw) throws IDAlreadyExistException {
 		if (this.ID == id) {
 			System.out.println("return");
 			return;
@@ -979,7 +979,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 	}
 
-	public void setID() {
+	public void setID(Pathway pw) {
 		setID(false);
 	}
 
@@ -992,7 +992,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			if (set.size() > 0) {
 				// System.out.println("last: " + set.last());
 				try {
-					setID(set.last() + 1);
+					setID(set.last() + 1, null);
 				} catch (IDAlreadyExistException ex) {
 					// cannot occur if program working fine.
 					ex.printStackTrace();
@@ -1002,7 +1002,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				// System.out.println("kleinster: " + set.first());
 			} else {
 				try {
-					setID(100);
+					setID(100, null);
 				} catch (IDAlreadyExistException ex) {
 					// cannot occur if program working fine.
 					ex.printStackTrace();

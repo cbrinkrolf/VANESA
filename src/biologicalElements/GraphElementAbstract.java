@@ -12,9 +12,9 @@ public interface GraphElementAbstract{
 	int getID();
 	
 	// should only be used when loading a file with a network
-	void setID(int id) throws IDAlreadyExistException;
+	void setID(int id, Pathway pw) throws IDAlreadyExistException;
 
-	void setID();
+	void setID(Pathway pw);
 
 	public String getNetworklabel();
 

@@ -39,16 +39,16 @@ import gui.MainWindow;
 public class Transformator {
 
 	public static final String place = "Place";
-	public static final String discretePlace = "DiscretePlace";
-	public static final String continuousPlace = "ContinuousPlace";
+	public static final String discretePlace = Elementdeclerations.discretePlace;
+	public static final String continuousPlace = Elementdeclerations.continuousPlace;
 
 	public static final String transition = "Transition";
-	public static final String discreteTransition = "DiscreteTransition";
-	public static final String continuousTransition = "ContinuousTransition";
+	public static final String discreteTransition = Elementdeclerations.discreteTransition;
+	public static final String continuousTransition = Elementdeclerations.continuousTransition;
 
-	public static final String pnArc = "PNArc";
-	public static final String pnTestArc = "PNTestArc";
-	public static final String pnInhibitoryArc = "PNInhibitoryArc";
+	public static final String pnArc =  Elementdeclerations.pnEdge;
+	public static final String pnTestArc = Elementdeclerations.pnTestEdge;
+	public static final String pnInhibitoryArc = Elementdeclerations.pnInhibitionEdge;
 
 	public static final Set<String> places = new HashSet<String>(Arrays.asList(place, discretePlace, continuousPlace));
 	public static final Set<String> transitions = new HashSet<String>(
@@ -131,6 +131,8 @@ public class Transformator {
 
 			type = r.getAllBiologicalNodes().get(i).getType();
 
+			//TODO consider ANY node and ANY BEA
+			
 			// node type of rule does not exist in graph -> skip rule
 			if (nodeType2bna.get(type) == null) {
 				// System.out.println("types do not exist");

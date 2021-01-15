@@ -3,10 +3,13 @@ package transformation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Rule {
 
-	private String ruleName = "";
+	private String name = "";
+	
+	private boolean active = true;
 
 	private List<RuleNode> bNodes = new ArrayList<>();
 	private List<RuleEdge> bEdges = new ArrayList<>();
@@ -21,12 +24,12 @@ public class Rule {
 
 	}
 
-	public String getRuleName() {
-		return ruleName;
+	public String getName() {
+		return name;
 	}
 
-	public void setRuleName(String ruleName) {
-		this.ruleName = ruleName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void addBiologicalEdge(RuleEdge e) {
@@ -149,6 +152,10 @@ public class Rule {
 		this.bn2Pn.put(bNode, pNode);
 		this.pn2Bn.put(pNode, bNode);
 	}
+	
+	public Map<RuleNode, RuleNode> getBNtoPNMapping(){
+		return this.bn2Pn;
+	}
 
 	public RuleNode getMappedBnode(RuleNode pNode) {
 		if (pn2Bn.containsKey(pNode)) {
@@ -171,7 +178,7 @@ public class Rule {
 			// check if PN node type is matching
 			if (!(Transformator.places.contains(node.getType())
 					|| Transformator.transitions.contains(node.getType()))) {
-				System.out.println("Error in rule: " + this.ruleName);
+				System.out.println("Error in rule: " + this.name);
 				System.out.println("Petri net node " + node.getName()
 						+ " does not match Petri net node type. Given node type: " + node.getType());
 				return false;
@@ -186,27 +193,35 @@ public class Rule {
 			from = e.getFrom();
 			to = e.getTo();
 			if (Transformator.places.contains(from.getType()) && Transformator.places.contains(to.getType())) {
-				System.out.println("Error in rule: " + this.ruleName);
+				System.out.println("Error in rule: " + this.name);
 				System.out.println("Nodes of arc " + e.getName() + " have the same type (both are places)!");
 				return false;
 			}
 			if (Transformator.transitions.contains(from.getType())
 					&& Transformator.transitions.contains(to.getType())) {
-				System.out.println("Error in rule: " + this.ruleName);
+				System.out.println("Error in rule: " + this.name);
 				System.out.println("Nodes of arc " + e.getName() + " have the same type (both are transitions)!");
 				return false;
 			}
 			if (e.getType().equals(Transformator.pnInhibitoryArc) || e.getType().equals(Transformator.pnTestArc)) {
 				if (Transformator.transitions.contains(from.getType())) {
-					System.out.println("Error in rule: " + this.ruleName);
+					System.out.println("Error in rule: " + this.name);
 					System.out.println(
 							"Inhibitory and test arcs always have to connect a place with a transtionen (not vice versa)!");
 					return false;
 				}
 			}
 		}
-
 		return true;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+	
+	
 }

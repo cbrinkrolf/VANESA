@@ -394,9 +394,9 @@ public class VAMLInput {
 			}
 			// System.out.println("spech: "+elementSpecification);
 			try{
-				bea.setID(id);
+				bea.setID(id, pw);
 			} catch(IDAlreadyExistException ex){
-				bea.setID();
+				bea.setID(pw);
 			}
 			bea.setDirected(isDirected);
 			bea.setColor(color);
@@ -802,7 +802,7 @@ public class VAMLInput {
 			try {
 				int id = Integer.parseInt(node.getAttributeValue(new QName(
 						"ElementID")));
-				bna.setID(id);
+				bna.setID(id, pw);
 			} catch (Exception e) {
 			}
 
