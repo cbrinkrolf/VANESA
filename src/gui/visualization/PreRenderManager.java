@@ -40,7 +40,6 @@ import net.miginfocom.swing.MigLayout;
 public class PreRenderManager implements ActionListener {
 
 	private static HashMap<String,PreRenderManager> instances = new HashMap<>();
-	private static final long serialVersionUID = -1988094647704411183L;
 
 	private final String BACKBOARD_PAINT = "Backboard Paint", JUNG_ANNOTATION = "JUNG annotation"; 
 	public final int ACTIVE = 0, NAME = 1, TYPE = 2, COLOR = 3, SHAPE = 4, SIZE = 5;  
@@ -64,12 +63,10 @@ public class PreRenderManager implements ActionListener {
 	private JScrollPane sp;
 	
 	private MyTable table;
-	private String pathwayname;
 	
 	private PreRenderManagerTablemodel model;
 
 	private PreRenderManager(String pathwayname) {
-		this.pathwayname = pathwayname;
 		
 		fillTable();	
 

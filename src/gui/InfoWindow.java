@@ -20,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Random;
 
 import javax.swing.JOptionPane;
 
@@ -213,7 +212,7 @@ public class InfoWindow {
 
 		}
 		Color anno = new Color((int) (Math.random() * 0x1000000));
-		Random r = new Random(System.currentTimeMillis());
+		//Random r = new Random(System.currentTimeMillis());
 		anno = new Color(anno.getRed(), anno.getGreen(), anno.getBlue(), 180);
 
 //		Color grey = new Color(192, 192, 192);
@@ -242,7 +241,7 @@ public class InfoWindow {
 //		TSne tsne = new FastTSne();
 		// TSne tsne = new SimpleTSne();
 		// TSne tsne = new MemOptimizedTSne();
-		int iters = 10;
+		//int iters = 10;
 //		System.out.println("Running " + iters + " iterations of TSne on "
 //				+ "Chol dataset");
 		// double [][] X = MatrixUtils.simpleRead2DMatrix(new File(filename),
@@ -323,10 +322,8 @@ public class InfoWindow {
 			data.close();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		//
@@ -382,10 +379,8 @@ public class InfoWindow {
 			data.close();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String[] cells;
@@ -468,10 +463,8 @@ public class InfoWindow {
 			data.close();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -534,10 +527,8 @@ public class InfoWindow {
 			data.close();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

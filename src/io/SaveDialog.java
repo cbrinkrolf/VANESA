@@ -216,7 +216,6 @@ public class SaveDialog {
 				try {
 					write();
 				} catch (FileNotFoundException | HeadlessException | XMLStreamException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -311,23 +310,7 @@ public class SaveDialog {
 			GraphContainer con = GraphContainer.getInstance();
 			MainWindow w = MainWindow.getInstance();
 			if (!con.isPetriView()) {
-				/*
-				 * ConvertToPetriNet convertToPetriNet = new
-				 * ConvertToPetriNet(); getCorrectFile(pnml); PNMLOutput
-				 * pnmlOutput = new PNMLOutput(file,
-				 * convertToPetriNet.getBiologicalEdges
-				 * (),convertToPetriNet.getBiologicalNodes
-				 * (),convertToPetriNet.getBiologicalTransitions());
-				 *
-				 * try { JOptionPane.showMessageDialog(
-				 * MainWindowSingelton.getInstance(),pnmlDescription +
-				 * pnmlOutput.generatePNMLDocument() + " File saved"); } catch
-				 * (HeadlessException e) { // TODO Auto-generated catch block
-				 * e.printStackTrace(); } catch (InvalidIDException e) { // TODO
-				 * Auto-generated catch block e.printStackTrace(); } catch
-				 * (VoidRepositoryException e) { // TODO Auto-generated catch
-				 * block e.printStackTrace(); }
-				 */
+				// maybe translate to PN first
 			} else {
 
 				getCorrectFile(pnml);
@@ -368,13 +351,10 @@ public class SaveDialog {
 						MyPopUp.getInstance().show("PNML export", "Saving was successful!");
 					}
 				} catch (HeadlessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InvalidIDException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (VoidRepositoryException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -389,7 +369,6 @@ public class SaveDialog {
 				new VAMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
 				MyPopUp.getInstance().show("Information", vamlDescription + " File saved");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else if (fileFormat.equals(pngDescription)) {
@@ -403,7 +382,6 @@ public class SaveDialog {
 					ImageIO.write(bi, "png", file);
 					MyPopUp.getInstance().show("PNG", "Picture saved successfully!");
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -434,7 +412,6 @@ public class SaveDialog {
 				MyPopUp.getInstance().show("Information", yamlDescription + " File exported");
 				MainWindow.getInstance().setLoadedYaml(exportPath);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

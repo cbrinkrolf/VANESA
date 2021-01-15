@@ -455,7 +455,6 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
 				@Override
 				public void focusGained(FocusEvent e) {
-					// TODO Auto-generated method stub
 				}
 			});
 			west.add(text, "wrap");
@@ -468,7 +467,6 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
 		if (e.getItem() instanceof JCheckBox) {
 
 			JCheckBox box = (JCheckBox) e.getItem();

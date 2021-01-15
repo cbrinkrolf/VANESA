@@ -76,13 +76,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private ArrayList<Group> group = new ArrayList<>();
 	// private Set<Group> group = new HashSet<Group>();
 
-	// TODO in GUI
 	private boolean discrete = false;
 
 	// BNA has constant value
 	private boolean constant = false;
 
-	// TODO in GUI
 	private double concentration = 1;
 	private double concentrationMin = 0.0;
 	private double concentrationMax = Double.MAX_VALUE;
@@ -1028,7 +1026,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public void setLabel(String label) {
-		// TODO just for testing
 		// this.label = FormularSafety.replace(label);
 		this.label = label;
 		labelSet.remove(this.label);

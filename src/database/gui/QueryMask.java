@@ -51,7 +51,6 @@ public class QueryMask implements ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
 
 		if (e.getSource() instanceof JCheckBox) {
 		

@@ -120,10 +120,6 @@ public class Cov {
 
 		pw.getPetriNet().setCovGraph(pw.getName());
 
-		// MainWindowSingelton.getInstance().updateProjectProperties();
-		// TODO
-		// MainWindowSingelton.getInstance().updateOptionPanel();
-
 	}
 
 	public CovNode getRoot() {
@@ -503,10 +499,6 @@ public class Cov {
 
 		}
 		pwold.getGraph().restartVisualizationModel();
-		// MainWindowSingelton.getInstance().updateProjectProperties();
-		// TODO
-		// MainWindowSingelton.getInstance().updateOptionPanel();
-
 	}
 
 	private boolean isBoundaryHold(CovList list) {

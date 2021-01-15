@@ -24,7 +24,6 @@ public class SaveGraphML {
 			os.close();
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

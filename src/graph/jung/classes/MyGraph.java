@@ -364,12 +364,6 @@ public class MyGraph {
 
 		pr.setEdgeArrowTransformer(eaf);
 
-		// annotationManager = new MyAnnotationManager(pr);
-		// vv.getRenderer().getVertexRenderer().
-		// TODO
-		// System.out.println(pr.getClass().getName());
-		// pr.setVertexStringer(vertexStringer);
-
 		pr.setVertexStrokeTransformer(vsh);
 		pr.setVertexLabelTransformer(vertexStringer);
 
@@ -807,7 +801,6 @@ public class MyGraph {
 	// try {
 	// ve.add(v.clone());
 	// } catch (CloneNotSupportedException e) {
-	// // TODO Auto-generated catch block
 	// e.printStackTrace();
 	// }
 	// }
@@ -816,7 +809,6 @@ public class MyGraph {
 	// try {
 	// ve.add(e.clone());
 	// } catch (CloneNotSupportedException e1) {
-	// // TODO Auto-generated catch block
 	// e1.printStackTrace();
 	// }
 	// }

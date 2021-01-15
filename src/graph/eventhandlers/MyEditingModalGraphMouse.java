@@ -59,7 +59,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	/**
 	 * a JComboBox control available to set the mode
 	 */
-	protected JComboBox modeBox;
+	protected JComboBox<Mode> modeBox;
 	/**
 	 * a menu available to set the mode
 	 */
@@ -269,9 +269,9 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	/**
 	 * @return Returns the modeBox.
 	 */
-	public JComboBox getModeComboBox() {
+	public JComboBox<Mode> getModeComboBox() {
 		if (modeBox == null) {
-			modeBox = new JComboBox(new Mode[] { Mode.TRANSFORMING,
+			modeBox = new JComboBox<Mode>(new Mode[] { Mode.TRANSFORMING,
 					Mode.PICKING, Mode.EDITING });
 			modeBox.addItemListener(getModeListener());
 		}

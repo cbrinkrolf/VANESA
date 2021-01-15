@@ -127,7 +127,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// {
 		//
 		// public void run() {
-		// // TODO Auto-generated method stub
 		// SwingUtilities.updateComponentTreeUI();
 		// }
 		//
@@ -163,7 +162,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// UIManager.setLookAndFeel(new InfoNodeLookAndFeel(theme));
 
 		// } catch (UnsupportedLookAndFeelException e1) {
-		// TODO Auto-generated catch block
 		// e1.printStackTrace();
 		// }
 
@@ -540,7 +538,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					try {
 						new JSBMLoutput(new FileOutputStream(new File(pw.getFilename())), pw);
 					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else {
@@ -726,13 +723,11 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	@Override
 	public void handleOpenApplication(ApplicationEvent arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void handleOpenFile(ApplicationEvent arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -745,7 +740,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	@Override
 	public void handlePrintFile(ApplicationEvent arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -758,8 +752,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	@Override
 	public void handleReopenApplication(ApplicationEvent arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**

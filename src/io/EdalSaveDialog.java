@@ -38,7 +38,6 @@ public class EdalSaveDialog {
 		try {
 			this.openWindow();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

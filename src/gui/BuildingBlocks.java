@@ -65,7 +65,6 @@ public class BuildingBlocks extends JPanel implements TreeSelectionListener{
         	 			try {
 							input.loadSBMLFile(new FileInputStream(map.get(node)), map.get(node).getName());
 						} catch (FileNotFoundException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
         	         }

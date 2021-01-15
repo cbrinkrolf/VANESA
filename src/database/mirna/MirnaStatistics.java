@@ -424,7 +424,6 @@ public class MirnaStatistics {
 			br.close();
 
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -552,7 +551,6 @@ public class MirnaStatistics {
 			out.println(sb.toString());
 			out.close();
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 

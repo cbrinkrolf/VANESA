@@ -18,7 +18,6 @@ import gui.MainWindow;
 public class RandomGraph {
 
 	public RandomGraph() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public static void generateRandomGraph(int numberOfNodes,

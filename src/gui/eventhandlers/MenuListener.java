@@ -95,7 +95,6 @@ import petriNet.SimpleMatrixDouble;
 import transformation.Rule;
 import transformation.RuleManager;
 import transformation.Transformator;
-import transformation.gui.RuleEditingWindow;
 import transformation.gui.RuleManagementWindow;
 import util.KineticBuilder;
 
@@ -166,7 +165,7 @@ public class MenuListener implements ActionListener {
 			 * int SERVER_PORT = 2000; String SERVER_ADDRESS = "bit-249.ipk-gatersleben.de";
 			 * 
 			 * Subject subject = null; try { subject = EdalHelpers.authenticateSampleUser();
-			 * } catch (EdalAuthenticateException e1) { // TODO Auto-generated catch block
+			 * } catch (EdalAuthenticateException e1) { 
 			 * e1.printStackTrace(); }
 			 * 
 			 * // alternatively use Google+ login // Subject subject =
@@ -175,7 +174,7 @@ public class MenuListener implements ActionListener {
 			 * // connect to running EDAL server on "bit-249" ClientDataManager
 			 * dataManagerClient = null; try { dataManagerClient = new
 			 * ClientDataManager(SERVER_ADDRESS, SERVER_PORT, new Authentication(subject));
-			 * } catch (EdalAuthenticateException e1) { // TODO Auto-generated catch block
+			 * } catch (EdalAuthenticateException e1) { 
 			 * e1.printStackTrace(); }
 			 * 
 			 * // JFrame jf = new JFrame();
@@ -201,8 +200,7 @@ public class MenuListener implements ActionListener {
 			 * jsbmlInput = pathway==null ? new JSBMLinput() : new // JSBMLinput(pathway);
 			 * String res = jsbmlInput.loadSBMLFile(is, df.getName()); if (res.length() > 0)
 			 * { JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), res); } //
-			 * os. } catch (RemoteException | PrimaryDataFileException e1) { // TODO
-			 * Auto-generated catch block e1.printStackTrace(); }
+			 * os. } catch (RemoteException | PrimaryDataFileException e1) {  e1.printStackTrace(); }
 			 * 
 			 * } else { System.out.println("please choose a file, not a dir"); } }
 			 */
@@ -948,7 +946,6 @@ public class MenuListener implements ActionListener {
 			try {
 				FileUtils.cleanDirectory(dir);
 			} catch (IOException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 
@@ -962,7 +959,6 @@ public class MenuListener implements ActionListener {
 				wvv.print(pdf);
 				pdf.endExport();
 			} catch (FileNotFoundException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 
@@ -1028,7 +1024,6 @@ public class MenuListener implements ActionListener {
 				};
 				t.start();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				System.err.println("Could not compile latex. Find tex-file at: " + docDir);
 			}
 
@@ -1231,7 +1226,6 @@ public class MenuListener implements ActionListener {
 
 			@Override
 			public boolean useTransform() {
-				// TODO Auto-generated method stub
 				return false;
 			}
 
@@ -1297,8 +1291,6 @@ public class MenuListener implements ActionListener {
 						// g.setFont(new Font("Arial",Font.PLAIN,12));
 						// g2.draw(s);
 						g.drawString(tokens, xpos, y + 7);
-						// TODO Auto-generated method stub
-
 					}
 				}
 			}
@@ -1371,7 +1363,7 @@ public class MenuListener implements ActionListener {
 		 * try { SVGGraphics2D g; g = new SVGGraphics2D(new File("Output.svg"), new
 		 * Dimension((int)(width), (int)(height))); // g.setProperties(p);
 		 * g.startExport(); wvv.print(g); g.endExport(); } catch (IOException e1) { //
-		 * TODO Auto-generated catch block e1.printStackTrace(); }
+		 *  e1.printStackTrace(); }
 		 */
 
 		// System.out.println(export.getSelectionValues());
@@ -1384,7 +1376,7 @@ public class MenuListener implements ActionListener {
 		 * VectorGraphics g; try { g = new SVGGraphics2D(new File("Output.svg"), new
 		 * Dimension(400, 300)); g.setBackground(Color.WHITE); g.setProperties(p);
 		 * g.startExport(); //vis.paintAll(g); g.endExport(); } catch (IOException e1) {
-		 * // TODO Auto-generated catch block e1.printStackTrace(); }
+		 *  e1.printStackTrace(); }
 		 */
 		return wvv;
 	}

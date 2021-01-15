@@ -44,7 +44,6 @@ public class PetriNet {
 	}
 
 	public PetriNet() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getPetriNetSimulationFile() {
@@ -120,7 +119,6 @@ public class PetriNet {
 			this.setPetriNetSimulation(true);
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

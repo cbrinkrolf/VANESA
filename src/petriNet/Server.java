@@ -161,7 +161,6 @@ public class Server {
 		name2index = new HashMap<String, Integer>();
 
 		// running = true;
-		int j = 0;
 		int expected = reals * 8 + ints * sizeOfInt + bools;
 
 		try {
@@ -189,7 +188,6 @@ public class Server {
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				values = new ArrayList<Object>();
@@ -259,7 +257,6 @@ public class Server {
 					// w.redrawGraphs();
 					break;
 				}
-				j++;
 			}
 		} catch (SocketException e) {
 			System.out.println("server destroyed");
@@ -415,7 +412,6 @@ public class Server {
 			serverThread.stop();
 			// serverThread.destroy();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			// e.printStackTrace();
 		}
 	}

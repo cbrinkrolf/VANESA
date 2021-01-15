@@ -25,7 +25,6 @@ public class DCBresultSet implements Comparator<DCBresultSet>{
 
 
 	public DCBresultSet() {
-		// TODO Auto-generated constructor stub
 	}
 
 

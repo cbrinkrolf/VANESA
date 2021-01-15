@@ -1116,8 +1116,6 @@ public class ParallelCoordinatesPlot implements ActionListener, ChangeListener {
 
 			@Override
 			public void chartMouseMoved(ChartMouseEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 		});
 		this.legend = pane.getChart().getLegend();

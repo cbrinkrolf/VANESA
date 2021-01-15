@@ -627,7 +627,6 @@ public class DataMappingModelController extends Observable {
 	 * @param newMergeMap
 	 */
 	private void export(Map<String, List<String>> newMergeMap) {
-		// TODO Auto-generated method stub
 		//ExportThread erzeugen newM �bergeben
 
 		MainWindow.getInstance().showProgressBar("Datamapping");

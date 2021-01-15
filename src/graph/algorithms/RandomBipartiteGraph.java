@@ -16,7 +16,6 @@ import gui.MainWindow;
 public class RandomBipartiteGraph {
 
 	public RandomBipartiteGraph() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public static void generateRandomGraph(int numberOfNodesfirstSet,

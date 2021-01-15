@@ -43,10 +43,8 @@ public class Moleculesoutput {
 			write();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

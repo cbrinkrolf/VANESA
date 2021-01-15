@@ -364,7 +364,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(lblTokenMax, "gap 5");
 				p.add(concentrationMax, "wrap");
 
-				// TODO
 				bna = (BiologicalNodeAbstract) ab;
 				ButtonGroup group = new ButtonGroup();
 				JRadioButton discrete = new JRadioButton("discrete");

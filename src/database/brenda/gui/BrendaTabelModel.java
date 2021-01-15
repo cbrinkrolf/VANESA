@@ -14,7 +14,6 @@ public class BrendaTabelModel extends NodePropertyTableModel{
 	
 	public BrendaTabelModel(Object[][] rows, String[] headers) {
 		super(rows, headers);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override

@@ -132,7 +132,6 @@ public class DataMapping2GUIController implements ActionListener, MouseListener{
 		SwingWorker<Void, Void> swingworker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				//TODO
 				long start = System.currentTimeMillis();
 
 				dataMappingModelController.setMultiValues(valueColumnIndices);
@@ -361,8 +360,6 @@ public class DataMapping2GUIController implements ActionListener, MouseListener{
 	 */
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -370,8 +367,6 @@ public class DataMapping2GUIController implements ActionListener, MouseListener{
 	 */
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -379,8 +374,6 @@ public class DataMapping2GUIController implements ActionListener, MouseListener{
 	 */
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/* (non-Javadoc)
@@ -388,8 +381,5 @@ public class DataMapping2GUIController implements ActionListener, MouseListener{
 	 */
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
 	}
-
 }

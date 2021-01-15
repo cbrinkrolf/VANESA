@@ -144,7 +144,6 @@ public class CovList implements Cloneable {
 			cl.setElements(this.tokens.clone());
 			return cl;
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

@@ -709,13 +709,10 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 	}
 
 	public boolean incrementsAreDone() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public boolean isIncremental() {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 }

@@ -46,7 +46,6 @@ public class MoleculesInput {
 		}
 		catch (XMLStreamException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

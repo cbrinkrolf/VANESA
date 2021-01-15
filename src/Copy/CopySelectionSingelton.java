@@ -4,17 +4,12 @@ import java.util.HashSet;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-//import edu.uci.ics.jung.graph.Edge;
-//import edu.uci.ics.jung.graph.Vertex;
 
 
 public class CopySelectionSingelton extends CopySelection {
 
-
-
 	public CopySelectionSingelton(HashSet<BiologicalNodeAbstract> vertices, HashSet<BiologicalEdgeAbstract> edges) {
 		super(vertices, edges);
-		// TODO Auto-generated constructor stub
 	}
 
 	private static CopySelection instance =null;
@@ -30,8 +25,4 @@ public class CopySelectionSingelton extends CopySelection {
 		instance=submitted;
 	
 	}
-
-
-	
 }
-

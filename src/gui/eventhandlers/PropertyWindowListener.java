@@ -273,7 +273,7 @@ public class PropertyWindowListener implements FocusListener {
 				Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes().iterator();
 				while (j.hasNext()) {
 					node = j.next();
-					if (node.equals(neighbour) && (((JComboBox) event.getSource()).getSelectedItem()
+					if (node.equals(neighbour) && (((JComboBox<?>) event.getSource()).getSelectedItem()
 							.equals(ContinuousTransition.class.getName())
 							&& node.getBiologicalElement().equals(Elementdeclerations.discretePlace))) {
 						JOptionPane.showMessageDialog(MainWindow.getInstance(),
@@ -284,11 +284,11 @@ public class PropertyWindowListener implements FocusListener {
 				}
 			}
 
-			if (((JComboBox) event.getSource()).getSelectedItem().equals(DiscreteTransition.class.getName()))
+			if (((JComboBox<?>) event.getSource()).getSelectedItem().equals(DiscreteTransition.class.getName()))
 				newT = new DiscreteTransition(t.getLabel(), t.getName());
-			else if (((JComboBox) event.getSource()).getSelectedItem().equals(ContinuousTransition.class.getName()))
+			else if (((JComboBox<?>) event.getSource()).getSelectedItem().equals(ContinuousTransition.class.getName()))
 				newT = new ContinuousTransition(t.getLabel(), t.getName());
-			else if (((JComboBox) event.getSource()).getSelectedItem().equals(StochasticTransition.class.getName()))
+			else if (((JComboBox<?>) event.getSource()).getSelectedItem().equals(StochasticTransition.class.getName()))
 				newT = new StochasticTransition(t.getLabel(), t.getName());
 			if (newT != null) {
 				newT.rebuildShape(new VertexShapes());
@@ -305,7 +305,7 @@ public class PropertyWindowListener implements FocusListener {
 				neighbour = k.next();
 				for (Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes().iterator(); j.hasNext();) {
 					node = j.next();
-					if (node.equals(neighbour) && (((JComboBox) event.getSource()).getSelectedItem().equals("discrete")
+					if (node.equals(neighbour) && (((JComboBox<?>) event.getSource()).getSelectedItem().equals("discrete")
 							&& node.getBiologicalElement().equals(Elementdeclerations.continuousTransition))) {
 
 						JOptionPane.showMessageDialog(MainWindow.getInstance(),
@@ -317,7 +317,7 @@ public class PropertyWindowListener implements FocusListener {
 			}
 
 			Place newP;
-			if(((JComboBox) event.getSource()).getSelectedItem().equals("discrete")){
+			if(((JComboBox<?>) event.getSource()).getSelectedItem().equals("discrete")){
 				newP = new DiscretePlace(p.getLabel(), p.getName());
 			}else{
 				newP = new ContinuousPlace(p.getLabel(), p.getName());

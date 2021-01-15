@@ -11,6 +11,4 @@ public class GEMLayoutConfigSingleton {
 		}
 		return (GEMLayoutConfig<V>) config;
 	}
-	
-	
 }

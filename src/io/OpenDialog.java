@@ -25,7 +25,7 @@ import gui.ProgressBar;
 import xmlInput.sbml.JSBMLinput;
 import xmlInput.sbml.VAMLInput;
 
-public class OpenDialog extends SwingWorker {
+public class OpenDialog extends SwingWorker<Object, Object> {
 
 	private String fileFormat;
 	private File file;
@@ -168,7 +168,6 @@ public class OpenDialog extends SwingWorker {
 							}
 							
 						} catch (FileNotFoundException ex) {
-							// TODO Auto-generated catch block
 							ex.printStackTrace();
 						}
 					}
@@ -176,7 +175,6 @@ public class OpenDialog extends SwingWorker {
 				try {
 					new TxtInput(new FileInputStream(file), file.getName());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -184,11 +182,8 @@ public class OpenDialog extends SwingWorker {
 				try {
 					new PhosphoInput(file);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				// System.out.println(file.getAbsolutePath());
-
 			}
 		}
 	}

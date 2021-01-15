@@ -138,13 +138,10 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
 				if (enzymeFilter.getText().trim().length() < 1) {
 					// System.out.println("null");
 					enzymeSorter.setRowFilter(null);
@@ -157,7 +154,6 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
 
 			}
 		});

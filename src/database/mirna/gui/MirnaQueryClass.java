@@ -149,8 +149,6 @@ public class MirnaQueryClass extends QueryMask implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		//System.out.println(e.getActionCommand());
 		if(e.getActionCommand().equals("enrichGenes")){
 			MirnaStatistics mirna = new MirnaStatistics(new GraphInstance().getPathway());
 			mirna.enrichGenes(isSourcesSelected(), isTargetsSelected(), isHsaOnly());
