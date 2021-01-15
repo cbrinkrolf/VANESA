@@ -2,7 +2,6 @@ package petriNet;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,7 +17,6 @@ import biologicalObjects.nodes.SmallMolecule;
 import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
-import biologicalObjects.nodes.petriNet.Transition;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -27,11 +25,9 @@ import gui.MainWindow;
 public class ConvertMetabolicNet {
 	private petriNetProperties prop;
 	private GraphInstance graphInstance = new GraphInstance();
-	private ArrayList<Transition> transitions = new ArrayList<Transition>();
 	private Pathway pw;
 
 	private final int scaleFactor = 1;
-	private final double initialTokens = 10;
 
 	private static ConvertMetabolicNet instance = null;
 
@@ -153,22 +149,7 @@ public class ConvertMetabolicNet {
 		}
 
 		BiologicalEdgeAbstract bea;
-		double x1;
-		double y1;
-		double x2;
-		double y2;
 
-		Place p1;
-		Place p2;
-		// Vertex v1;
-		// Vertex v2;
-
-		// DefaultSettableVertexLocationFunction locationsNew = pw.getGraph()
-		// .getVertexLocations();
-		// Iterator itEdge1 = hsEdge.iterator();
-		// System.out.println("test");
-
-		int countTrainsition = 0;
 		Iterator<BiologicalEdgeAbstract> itEdge = pwOld.getAllEdges()
 				.iterator();
 
@@ -208,7 +189,6 @@ public class ConvertMetabolicNet {
 			// v1orginal = p1orginal.getVertex();
 			// System.out.println("x1: "+x1 +" x2: "+x2+" y1: "+y1+" y2");
 			//this.transitions.add(t);
-			countTrainsition++;
 
 		}
 

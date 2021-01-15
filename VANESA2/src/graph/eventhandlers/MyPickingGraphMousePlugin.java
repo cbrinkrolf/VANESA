@@ -342,7 +342,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				// System.out.println("in");
 				int offset = 5;
 				s.setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset, shape.getMaxX() + offset, shape.getMaxY() + offset);
-				a2 = new Annotation(s, Annotation.Layer.LOWER, Color.BLUE, true, new Point2D.Double(0, 0));
+				a2 = new Annotation<>(s, Annotation.Layer.LOWER, Color.BLUE, true, new Point2D.Double(0, 0));
 				highlight = new MyAnnotation(a2, s, ma.getText());
 				highlight.setAnnotation(a2);
 

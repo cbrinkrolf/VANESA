@@ -146,7 +146,6 @@ public class AnimationThread extends Thread {
 					try {
 						Thread.sleep(40 / animationSpeed);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					w.repaint();

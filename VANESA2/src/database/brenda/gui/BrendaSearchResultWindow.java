@@ -133,13 +133,10 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 			
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
 				if(field.getText().trim().length() < 1){
 					//System.out.println("null");
 					sorter.setRowFilter(null);
@@ -152,8 +149,6 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
 		mainPanel.add(new JLabel("Filter results"), "span 1, gaptop 2 ");

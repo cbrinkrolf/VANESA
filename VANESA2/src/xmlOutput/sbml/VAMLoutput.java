@@ -58,7 +58,6 @@ public class VAMLoutput {
 		try {
 			write();
 		} catch (XMLStreamException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

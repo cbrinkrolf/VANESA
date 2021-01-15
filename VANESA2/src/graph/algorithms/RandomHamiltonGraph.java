@@ -18,7 +18,6 @@ import gui.MainWindow;
 public class RandomHamiltonGraph {
 
 	public RandomHamiltonGraph() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public static void generateRandomGraph(int numberOfNodes,

@@ -36,17 +36,6 @@ public class ElementNames {
 	
 	public ElementNames() {
 		
-//		try {
-//			writeFile();
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (XMLStreamException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-	//	fillEnzymeSet();
 	}
 	
 	public void writeFile() throws FileNotFoundException, XMLStreamException
@@ -80,37 +69,6 @@ public class ElementNames {
 
 	}
 	
-//	public void writeFile() throws FileNotFoundException, XMLStreamException {
-//
-//		OutputStream out = new FileOutputStream(new File("EnzymeNames.xml"));
-//
-//		XMLOutputFactory factory = XMLOutputFactory.newInstance();
-//		writer = factory.createXMLStreamWriter(out);
-//
-//		writer.writeStartDocument();
-//		writer.writeStartElement("Molecules");
-//
-//		Vector v = new Wrapper().requestDbContent(1,
-//				BRENDAQueries.getAllBRENDAenzymeNames);
-//		Iterator it = v.iterator();
-//		
-//		while (it.hasNext()) {
-//			String[] details = (String[]) it.next();
-//			writer.writeStartElement("moleculeProperties");
-//			writer.writeAttribute("name", details[0]);
-//			writer.writeAttribute("ec", details[1]);
-//			writer.writeEndElement();
-//		}
-//
-//		writer.writeEndElement();
-//		writer.writeEndDocument();
-//
-//		writer.flush();
-//		writer.close();
-//	
-//	
-//	}
-
 	public void fillEnzymeSet() {
 		
 			//File file;
@@ -169,10 +127,8 @@ public class ElementNames {
 				}	
 				
 			}  catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (XMLStreamException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			catch (IOException e)
@@ -185,19 +141,4 @@ public class ElementNames {
 	public Vector<String> getEnzymes() {
 		return enzymeVector;
 	}
-
-	/*public Vector<String> getMoleculeValue(String pattern) {
-		Vector<String> v = new Vector<String>();
-		Iterator e = molecules.iterator();
-		String name;
-		while (e.hasNext()) {
-			name = e.next().toString();
-			if (name.contains(pattern)) {
-				v.add(name);
-			}
-		}
-		Collections.sort(v);
-		return v;
-	}*/
-
 }

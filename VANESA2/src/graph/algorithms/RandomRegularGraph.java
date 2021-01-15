@@ -16,7 +16,6 @@ import gui.MainWindow;
 public class RandomRegularGraph {
 
 	public RandomRegularGraph() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public void generateRandomRegularGraph(int numberOfNodes, int degree) {

@@ -430,7 +430,6 @@ public class MenuBarClass {
 		// graph.add(phosphoImport);
 
 		// experiments.add(fabricio);
-		// TODO
 		testPInvariant = new JMenuItem("Test P Invariante");
 		testPInvariant.addActionListener(MenuListener.getInstance());
 		testPInvariant.setActionCommand("openTestP");

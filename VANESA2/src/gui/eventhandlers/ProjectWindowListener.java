@@ -51,7 +51,6 @@ public class ProjectWindowListener implements FocusListener {
 		String source = event.getComponent().getName();
 
 		if (source.equals("pathway")) {
-			String oldName = pw.getName();
 			String value = ((JTextField) event.getSource()).getText();
 			String newName = GraphContainer.getInstance().renamePathway(pw,
 					value);

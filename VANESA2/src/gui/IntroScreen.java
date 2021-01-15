@@ -59,7 +59,6 @@ public class IntroScreen extends JFrame {
 		try {
 			Thread.sleep(0);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		label.setText("<html><p align=\"left\">Loading Module: "+text+"</p></html>");

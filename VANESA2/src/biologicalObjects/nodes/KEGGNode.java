@@ -232,7 +232,6 @@ public class KEGGNode extends KEGGNodeGraphicRepresentation {
 	}
 
 	public KEGGNode() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Object[][] getKeggDeatails(){

@@ -158,7 +158,6 @@ public class Launch {
 				SwingUtilities.invokeLater(new Runnable() {
 
 					public void run() {
-						// TODO Auto-generated method stub
 						intro.setLoadingText("Graphical User Interface");
 						MainWindow w = MainWindow.getInstance();
 						intro.closeWindow();

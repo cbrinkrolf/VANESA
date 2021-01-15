@@ -85,15 +85,15 @@ public class MyAnnotationManager extends AnnotationManager {
 	
 	public void moveAnnotation(MyAnnotation ma, double xOffset, double yOffset){
 		this.remove(ma);
-		Annotation<Annotation.Layer> a2;
+		Annotation<?> a2;
 		RectangularShape s = ma.getShape();
 		s.setFrameFromDiagonal(s.getMinX() + xOffset, s.getMinY() + yOffset, s.getMaxX() + xOffset, s.getMaxY() + yOffset);
 
 		if (ma.getText().length() > 0) {
-			a2 = new Annotation(ma.getText(), Annotation.Layer.UPPER, ma.getAnnotation().getPaint(), false,
+			a2 = new Annotation<>(ma.getText(), Annotation.Layer.UPPER, ma.getAnnotation().getPaint(), false,
 					new Point2D.Double(s.getMinX(), s.getMinY()));
 		} else {
-			a2 = new Annotation(s, Annotation.Layer.LOWER, ma.getAnnotation().getPaint(), true, new Point2D.Double(0, 0));
+			a2 = new Annotation<>(s, Annotation.Layer.LOWER, ma.getAnnotation().getPaint(), true, new Point2D.Double(0, 0));
 		}
 		ma.setAnnotation(a2);
 		add(a2.getLayer(), ma);
@@ -119,12 +119,12 @@ public class MyAnnotationManager extends AnnotationManager {
 
 	public void updateMyAnnotation(MyAnnotation ma) {
 		this.remove(ma);
-		Annotation<Annotation.Layer> a2;
+		Annotation<?> a2;
 		if (ma.getText().length() > 0) {
-			a2 = new Annotation(ma.getText(), Annotation.Layer.UPPER, ma.getAnnotation().getPaint(), false,
+			a2 = new Annotation<>(ma.getText(), Annotation.Layer.UPPER, ma.getAnnotation().getPaint(), false,
 					new Point2D.Double(ma.getShape().getMinX(), ma.getShape().getMinY()));
 		} else {
-			a2 = new Annotation(ma.getShape(), Annotation.Layer.LOWER, ma.getAnnotation().getPaint(), true, new Point2D.Double(0, 0));
+			a2 = new Annotation<>(ma.getShape(), Annotation.Layer.LOWER, ma.getAnnotation().getPaint(), true, new Point2D.Double(0, 0));
 		}
 		ma.setAnnotation(a2);
 		add(a2.getLayer(), ma);

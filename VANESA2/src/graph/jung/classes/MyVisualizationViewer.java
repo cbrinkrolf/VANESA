@@ -46,7 +46,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		areas.put("InsideTheCell", new Area());
 
 		// this.prepareCompartments();
-		// TODO Auto-generated constructor stub
 	}
 
 	private long[] relaxTimes = new long[5];

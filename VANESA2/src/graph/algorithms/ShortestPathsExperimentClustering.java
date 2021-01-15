@@ -24,7 +24,7 @@ public class ShortestPathsExperimentClustering {
 	/* Graph structure container */
 	private NetworkProperties np;
 
-	private short nodeindex, i, iterations;
+	private short i, iterations;
 	private String experimentname;
 
 	public ShortestPathsExperimentClustering(String experimentname) {

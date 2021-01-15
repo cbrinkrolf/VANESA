@@ -118,6 +118,10 @@ public class JSBMLoutput {
 		Iterator<BiologicalNodeAbstract> nodeIterator = flattenedPathwayNodes.iterator();
 
 		BiologicalNodeAbstract oneNode;
+		String nodeCompartment;
+		Compartment testCompartment;
+		String str_id;
+		Species spec;
 		try {
 			while (nodeIterator.hasNext()) {
 				oneNode = nodeIterator.next();
@@ -127,10 +131,10 @@ public class JSBMLoutput {
 					}
 				}
 				// test to what compartment the node belongs
-				String nodeCompartment = COMP + oneNode.getCompartment();
+				nodeCompartment = COMP + oneNode.getCompartment();
 				// System.out.println(nodeCompartment);
 				// test if compartment already exists
-				Compartment testCompartment = model.getCompartment(nodeCompartment);
+				testCompartment = model.getCompartment(nodeCompartment);
 				// System.out.println(testCompartment);
 				if (testCompartment != null) {
 					compartment = testCompartment;
@@ -143,9 +147,9 @@ public class JSBMLoutput {
 				}
 				// The ID of a species has to be a string and could not begin
 				// with a number
-				String str_id = SPEC + String.valueOf(oneNode.getID());
+				str_id = SPEC + String.valueOf(oneNode.getID());
 				// create species from current node
-				Species spec = model.createSpecies(str_id, compartment);
+				spec = model.createSpecies(str_id, compartment);
 				spec.setName(oneNode.getName());
 				spec.setConstant(false);
 				spec.setHasOnlySubstanceUnits(false);
@@ -182,6 +186,10 @@ public class JSBMLoutput {
 		Iterator<BiologicalEdgeAbstract> edgeIterator = sortedEdges.iterator();
 
 		BiologicalEdgeAbstract oneEdge;
+		Reaction reac;
+		BiologicalNodeAbstract from;
+		BiologicalNodeAbstract to;
+		SpeciesReference subs;
 		try {
 			while (edgeIterator.hasNext()) {
 				// go through all edges to get their data
@@ -189,9 +197,9 @@ public class JSBMLoutput {
 				// The ID of a reaction has to be a string and could not begin
 				// with
 				// a number
-				String str_id = REAC + String.valueOf(oneEdge.getID());
+				str_id = REAC + String.valueOf(oneEdge.getID());
 				// create reaction from the current node
-				Reaction reac = model.createReaction(str_id);
+				reac = model.createReaction(str_id);
 				reac.setFast(false);
 				reac.setReversible(false);
 				reac.setName(oneEdge.getName());
@@ -201,17 +209,17 @@ public class JSBMLoutput {
 				reac.setAnnotation(a);
 
 				// search and assign products and reactants
-				BiologicalNodeAbstract from = oneEdge.getFrom();
-				BiologicalNodeAbstract to = oneEdge.getTo();
+				from = oneEdge.getFrom();
+				to = oneEdge.getTo();
 				// treat "to-nodes" (products)
-				Species spec = doc.getModel().getSpecies(SPEC + to.getID());
-				SpeciesReference subs = reac.createProduct(spec);
+				spec = doc.getModel().getSpecies(SPEC + to.getID());
+				subs = reac.createProduct(spec);
 				subs.setConstant(false);
 				// treat "from-nodes" (reactants)
 				spec = doc.getModel().getSpecies(SPEC + from.getID());
 				subs = reac.createReactant(spec);
 				subs.setConstant(false);
-				String nodeCompartment = spec.getCompartment();
+				nodeCompartment = spec.getCompartment();
 				// choose compartment of the "from-nodes" and add the reactant
 				reac.setCompartment(model.getCompartment(nodeCompartment));
 			}
@@ -251,10 +259,12 @@ public class JSBMLoutput {
 		XMLNode el = new XMLNode(new XMLNode(new XMLTriple("model", "", ""), new XMLAttributes()));
 		if (rangeInfos != null) {
 			XMLNode elSub = new XMLNode(new XMLNode(new XMLTriple("listOfRanges", "", ""), new XMLAttributes()));
+			XMLNode elSubSub;
+			String value;
 			for (Map<String, String> range : rangeInfos) {
-				XMLNode elSubSub = new XMLNode(new XMLNode(new XMLTriple("Range", "", ""), new XMLAttributes()));
+				elSubSub = new XMLNode(new XMLNode(new XMLTriple("Range", "", ""), new XMLAttributes()));
 				for (String key : range.keySet()) {
-					String value = range.get(key);
+					value = range.get(key);
 					elSubSub.addChild(createElSub(value, key));
 				}
 				elSub.addChild(elSubSub);
@@ -264,8 +274,9 @@ public class JSBMLoutput {
 
 		if (pathway.groupes.size() != 0) {
 			XMLNode groups = new XMLNode( new XMLNode(new XMLTriple("listOfGroups", "", ""), new XMLAttributes()));
+			XMLNode groupSub;
 			for (Group group:pathway.groupes) {
-				XMLNode groupSub = new XMLNode(new XMLNode(new XMLTriple("Group", "", ""), new XMLAttributes()));
+				groupSub = new XMLNode(new XMLNode(new XMLTriple("Group", "", ""), new XMLAttributes()));
 				for (BiologicalNodeAbstract node: group.nodes) {
 					groupSub.addChild(createElSub(Integer.toString(node.getID()), "Node"));
 				}
@@ -310,8 +321,9 @@ public class JSBMLoutput {
 		hierarchyXMLNode.addAttr("label", node.getLabel());
 		hierarchyXMLNode.addAttr("opened", !rootPathway.getClosedSubPathways().contains(node) ? "true" : "false");
 		hierarchyXMLNode.addAttr("root", node.getRootNode() == null ? "null" : "spec_" + node.getRootNode().getID());
+		XMLNode childXMLNode;
 		for (BiologicalNodeAbstract childNode : node.getChildrenNodes()) {
-			XMLNode childXMLNode = new XMLNode(new XMLNode(new XMLTriple("child", "", ""), new XMLAttributes()));
+			childXMLNode = new XMLNode(new XMLNode(new XMLTriple("child", "", ""), new XMLAttributes()));
 			childXMLNode.addAttr("id", "spec_" + childNode.getID());
 			hierarchyXMLNode.addChild(childXMLNode);
 		}

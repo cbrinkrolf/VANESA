@@ -48,34 +48,26 @@ public class ToolBarButton extends JButton implements MouseListener{
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		this.setContentAreaFilled(true);
 		this.setBorderPainted(true);
-		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		this.setContentAreaFilled(false);
 		this.setBorderPainted(false);
-		
 	}
 
 	/*

@@ -544,8 +544,6 @@ public class DenselyConnectedBiclusteringGUI implements ActionListener, ListSele
 			clusterPane.setPreferredSize(new Dimension(350, 240));
 			clusterpanel = new JPanel(new MigLayout("", "[grow]", ""));
 			
-			//TODO
-			
 			back = new JButton("back");
 			back.setToolTipText("return to previous view");
 			back.setActionCommand("back");

@@ -97,7 +97,6 @@ public abstract class BiomartQueryRetrieval {
 		OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
 		out.write(data);
 		out.close();
-		//TODO
 //		displayResults(conn);//instead of mapResults(), only for testing!
 		mapResults(conn);
 	}

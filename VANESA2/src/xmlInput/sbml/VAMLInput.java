@@ -139,10 +139,10 @@ public class VAMLInput {
 			} else if (element.getLocalName().equals("description")) {
 				pw.setDescription(element.getText());
 			} else if (element.getLocalName().equals("settings")) {
-				Iterator iterator = element.getChildElements();
+				Iterator<OMElement> iterator = element.getChildElements();
 				int i = 0;
 				while (iterator.hasNext()) {
-					OMElement s = (OMElement) iterator.next();
+					OMElement s = iterator.next();
 					if (s.getText().equals("false")) {
 						set[i] = false;
 						i = i + 1;
@@ -159,7 +159,7 @@ public class VAMLInput {
 
 	private void addRange(Pathway pw, OMElement rangeElement) {
 		Map<String, String> attrs = new HashMap<String, String>();
-		for (Iterator it = rangeElement.getAllAttributes(); it.hasNext();) {
+		for (Iterator<OMAttribute> it = rangeElement.getAllAttributes(); it.hasNext();) {
 			OMAttribute attr = (OMAttribute) it.next();
 			attrs.put(attr.getLocalName(), attr.getAttributeValue());
 		}
@@ -181,7 +181,6 @@ public class VAMLInput {
 		Color color = null;
 		BiologicalEdgeAbstract bea = null;
 		ReactionPairEdge rpEdge = null;
-		Double passingTokens = 0.0;
 		String function = "";
 		Double activationProb = 0.0;
 
@@ -235,7 +234,7 @@ public class VAMLInput {
 			} else if (element.getLocalName().equals("ReactionPairEdge")) {
 				rpEdge = new ReactionPairEdge();
 
-				Iterator it3 = element.getChildren();
+				Iterator<OMElement> it3 = element.getChildren();
 
 				while (it3.hasNext()) {
 					OMElement element2 = (OMElement) it3.next();
@@ -597,7 +596,6 @@ public class VAMLInput {
 		Double x_coord = 0.0;
 		Double y_coord = 0.0;
 
-		Boolean isReference = false;
 		BiologicalNodeAbstract bna = null;
 		KEGGNode keggNode = null;
 
@@ -639,10 +637,6 @@ public class VAMLInput {
 				aaSequence = element.getText();
 			}
 
-		}
-
-		if (reference.equals("true")) {
-			isReference = true;
 		}
 
 		if (biologicalElement.equals(Elementdeclerations.enzyme)) {
@@ -850,13 +844,11 @@ public class VAMLInput {
 		if (modelEl != null) {
 			OMElement annotationEL = modelEl.getFirstChildWithName(new QName(
 					"annotation"));
-			boolean ownProgram = false;
 			if (annotationEL != null) {
 				OMElement layoutsEL = annotationEL
 						.getFirstChildWithName(new QName(
 								"NetworkEditorSettings"));
 				if (layoutsEL != null) {
-					ownProgram = true;
 					OMElement projectEL = layoutsEL
 							.getFirstChildWithName(new QName("project"));
 					if (projectEL != null) {
@@ -890,17 +882,6 @@ public class VAMLInput {
 			}
 		}
 
-		Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getAllEdges().iterator();
-		while (it.hasNext()) {
-			BiologicalEdgeAbstract b = it.next();
-			// System.out.println("E: "+b.getID());
-		}
-
-		Iterator<BiologicalNodeAbstract> it2 = pw.getGraph().getAllVertices().iterator();
-		while (it2.hasNext()) {
-			BiologicalNodeAbstract b = it2.next();
-			// System.out.println("V "+b.getID());
-		}
 		pw.getGraph().restartVisualizationModel();
 		MainWindow.getInstance().updateProjectProperties();
 		// MainWindowSingelton.getInstance().updateOptionPanel();

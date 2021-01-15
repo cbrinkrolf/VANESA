@@ -33,7 +33,6 @@ public class MyJFormattedTextField extends JFormattedTextField {
 		try {
 			this.commitEdit();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			// e.printStackTrace();
 		}
 		// this.setValue(((Number) super.getValue()).doubleValue());
