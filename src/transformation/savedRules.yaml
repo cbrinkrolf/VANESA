@@ -1,0 +1,15 @@
+biologicalEdges:
+- {from: '', name: E1, to: E, type: ANY Biological Edge}
+- {from: E, name: E2, to: '', type: ANY Biological Edge}
+biologicalNodes:
+- {name: '', type: ANY Biological Node, x: 293.72071838378906, y: 5.099099099636078}
+- {name: E, type: Enzyme, x: 153.0, y: 0.0}
+mappingBNToPN: []
+name: new Rule
+petriEdges:
+- {from: p1, name: '1', to: t1, type: PN Edge}
+- {from: t1, name: PNE2, to: p2, type: PN Edge}
+petriNodes:
+- {name: p1, type: Continuous Place, x: 22.554126739501953, y: 1.7093544006347656}
+- {name: p2, type: Continuous Place, x: 316.16722869873047, y: 1.6262133121490479}
+- {name: t1, type: Continuous Transition, x: 170.0, y: 0.0}

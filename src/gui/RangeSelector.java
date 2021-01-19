@@ -523,6 +523,7 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 	private Point2D inverseTransform(MouseEvent e) {
 		
+		@SuppressWarnings("unchecked")
 		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
 		// System.out.println(e.getPoint());
 		// System.out.println(vv.getLocation(e.getPoint()));
@@ -653,7 +654,8 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 		public void mouseMoved(MouseEvent e) {
 			Point2D p = inverseTransform(e);
 			
-			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer) e
+			@SuppressWarnings("unchecked")
+			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
 					.getSource();
 			if (enabled) {
 				this.selected = null;
@@ -708,7 +710,8 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	@Override
 	public void mouseReleased(MouseEvent e){
 		super.mouseReleased(e);
-		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer) e
+		@SuppressWarnings("unchecked")
+		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
 				.getSource();
 		vv.requestFocus();
 	}

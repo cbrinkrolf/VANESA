@@ -21,7 +21,6 @@
 	<classpathentry kind="lib" path="packages/parvis.jar"/>
 	<classpathentry kind="lib" path="packages/REngine.jar"/>
 	<classpathentry kind="lib" path="packages/TimingFramework-1.0.jar"/>
-	<classpathentry kind="lib" path="packages/vecmath.jar"/>
 	<classpathentry kind="lib" path="packages/woden-api-1.0M8.jar"/>
 	<classpathentry kind="lib" path="packages/wsdl4j-1.6.2.jar"/>
 	<classpathentry kind="lib" path="packages/XmlSchema-1.4.2.jar"/>
@@ -76,7 +75,6 @@
 	<classpathentry kind="lib" path="packages/smacof/MatrixLib-1.3.1.jar"/>
 	<classpathentry kind="lib" path="packages/jsbml-1.1-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="packages/commons-configuration-1.10.jar"/>
-	<classpathentry kind="lib" path="packages/JTattoo-1.6.11.jar"/>
 	<classpathentry kind="lib" path="packages/freeHEP/freehep-export-2.1.1.jar"/>
 	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphics2d-2.1.1.jar"/>
 	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-2.1.1.jar"/>
@@ -98,6 +96,8 @@
 	<classpathentry kind="lib" path="packages/fr.lip6.pnml.framework.ptnet-2.2.12.jar"/>
 	<classpathentry kind="lib" path="packages/fr.lip6.pnml.framework.utils-2.2.12.jar"/>
 	<classpathentry kind="lib" path="packages/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="packages/JTattoo-1.6.13.jar"/>
+	<classpathentry kind="lib" path="packages/vecmath1.5.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="packages/mdsj.jar"/>
 	<classpathentry kind="lib" path="packages/smacof/core-math-1.3.1.jar"/>

@@ -3,6 +3,7 @@
  */
 package graph.gui;
 
+import java.awt.Component;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
 import java.util.List;
@@ -172,7 +173,7 @@ public class PetriNetVertexDialog {
 		}
 	}
 
-	public BiologicalNodeAbstract getAnswer(Point2D point) {
+	public BiologicalNodeAbstract getAnswer(Point2D point, Component relativeTo) {
 
 		String title = "";
 		if (petriElement.equals(Elementdeclerations.discretePlace)) {
@@ -190,7 +191,11 @@ public class PetriNetVertexDialog {
 		JDialog dialog = pane.createDialog(null, title);
 
 		// dialog.show();
+		if(relativeTo == null){
 		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		}else{
+			dialog.setLocationRelativeTo(relativeTo);
+		}
 		dialog.setVisible(true);
 		Number number;
 		Integer value = (Integer) pane.getValue();

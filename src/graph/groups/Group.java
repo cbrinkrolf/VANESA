@@ -10,6 +10,5 @@ public class Group {
 
     public Group(ArrayList<BiologicalNodeAbstract> nodes ) {
         this.nodes = nodes;
-
     }
 }

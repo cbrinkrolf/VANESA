@@ -6,9 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Shape;
-import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.HashMap;
@@ -48,15 +46,15 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		// this.prepareCompartments();
 	}
 
-	private long[] relaxTimes = new long[5];
+	//private long[] relaxTimes = new long[5];
 
-	private long[] paintTimes = new long[5];
+	//private long[] paintTimes = new long[5];
 
-	private int relaxIndex = 0;
+	//private int relaxIndex = 0;
 
-	private int paintIndex = 0;
+	//private int paintIndex = 0;
 
-	private double paintfps, relaxfps;
+	//private double paintfps, relaxfps;
 
 	/**
 	 * a collection of user-implementable functions to render under the topology
@@ -222,11 +220,11 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			// poly.addPoint((int)(p2inv.getX()-h2), (int)(p2inv.getY()+h2));
 			// poly.addPoint((int)(p1inv.getX()+h1), (int)(p1inv.getY()+h1));
 
-			Line2D.Double l = new Line2D.Double(p1inv.getX(), p1inv.getY(),
-					p2inv.getX(), p2inv.getY());
+			//Line2D.Double l = new Line2D.Double(p1inv.getX(), p1inv.getY(),
+			//		p2inv.getX(), p2inv.getY());
 
-			Arc2D.Double arc = new Arc2D.Double(100, 100, 200, 200, 10, 90,
-					Arc2D.OPEN);
+			//Arc2D.Double arc = new Arc2D.Double(100, 100, 200, 200, 10, 90,
+			//		Arc2D.OPEN);
 
 			// g2d.draw(l);
 			// g2d.drawPolygon(poly1);

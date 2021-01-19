@@ -4,14 +4,15 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import graph.GraphInstance;
 
 public class SatelliteWindow {
 	
-	private SatelliteVisualizationViewer vv;
+	private SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 	private JPanel p = new JPanel();
-	private GraphInstance graphInstance;
 	boolean emptyPane = true;
 	
 	public SatelliteWindow() {
@@ -19,7 +20,6 @@ public class SatelliteWindow {
 	
 	
 	public void revalidateSatelliteView(){
-		graphInstance = new GraphInstance();
 		vv = GraphInstance.getMyGraph().getSatelliteView();
 		if(emptyPane){	
 			p.add(vv,BorderLayout.CENTER);

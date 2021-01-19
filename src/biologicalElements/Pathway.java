@@ -1442,7 +1442,6 @@ public class Pathway implements Cloneable {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -1463,7 +1462,7 @@ public class Pathway implements Cloneable {
 		for (BiologicalNodeAbstract bnaNode:vv.getPickedVertexState().getPicked()) {
 			if (!bnaNode.getGroups().contains(groupToDelete)) {
 				deletegroup = false;
-				MyPopUp.getInstance().show("Deletingerror","This cannot be deleted.");
+				MyPopUp.getInstance().show("Deletion error","This cannot be deleted.");
 			}
 		}
 		// if all selected are from same group, delete group

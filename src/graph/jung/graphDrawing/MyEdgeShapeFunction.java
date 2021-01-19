@@ -9,10 +9,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape.BentLine;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape.CubicCurve;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape.Line;
-import edu.uci.ics.jung.visualization.decorators.EdgeShape.Orthogonal;
 import edu.uci.ics.jung.visualization.decorators.EdgeShape.QuadCurve;
 
 public class MyEdgeShapeFunction
@@ -20,9 +17,9 @@ public class MyEdgeShapeFunction
 
 	private final QuadCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract> quadcurve = new EdgeShape.QuadCurve<>();
 	private final Line<BiologicalNodeAbstract, BiologicalEdgeAbstract> line = new EdgeShape.Line<>();
-	private final BentLine<BiologicalNodeAbstract, BiologicalEdgeAbstract> bentline = new EdgeShape.BentLine<>();
-	private final CubicCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract> cubiccurve = new EdgeShape.CubicCurve<>();
-	private final Orthogonal<BiologicalNodeAbstract, BiologicalEdgeAbstract> orthogonal = new EdgeShape.Orthogonal<>();
+	//private final BentLine<BiologicalNodeAbstract, BiologicalEdgeAbstract> bentline = new EdgeShape.BentLine<>();
+	//private final CubicCurve<BiologicalNodeAbstract, BiologicalEdgeAbstract> cubiccurve = new EdgeShape.CubicCurve<>();
+	//private final Orthogonal<BiologicalNodeAbstract, BiologicalEdgeAbstract> orthogonal = new EdgeShape.Orthogonal<>();
 
 	public MyEdgeShapeFunction() {
 
