@@ -619,7 +619,7 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 			GemP p = layoutConfig.gemProp[i];
 			V n = layoutConfig.invmap[i];
 
-			Point2D coord = transform(n);// getCoordinates(n);
+			Point2D coord = apply(n);// getCoordinates(n);
 			coord.setLocation(p.x, p.y);
 		}
 		// }

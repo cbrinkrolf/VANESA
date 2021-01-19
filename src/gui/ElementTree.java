@@ -295,7 +295,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 				vv.getPickedVertexState().pick(bna, true);
 				Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout = vv
 						.getGraphLayout();
-				Point2D q = layout.transform(vv.getPickedVertexState()
+				Point2D q = layout.apply(vv.getPickedVertexState()
 						.getPicked().iterator().next());
 				Point2D lvc = vv.getRenderContext().getMultiLayerTransformer()
 						.inverseTransform(vv.getCenter());

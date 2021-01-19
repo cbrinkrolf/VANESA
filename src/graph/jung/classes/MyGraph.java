@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
@@ -264,7 +264,7 @@ public class MyGraph {
 		vertexStringer = new MyVertexStringer();
 		vertexShapeTransformer = new MyVertexShapeTransformer();
 		edgeStringer = new MyEdgeStringer(pathway);
-		esf = new MyEdgeShapeFunction();
+		esf = new MyEdgeShapeFunction(this.g);
 
 		eaf = new MyEdgeArrowFunction();
 
@@ -429,7 +429,7 @@ public class MyGraph {
 
 						int xpos;
 
-						Point2D point = vv.getGraphLayout().transform(p);
+						Point2D point = vv.getGraphLayout().apply(p);
 
 						// Point2D point = pw.getGraph().getVertexLocation(p);//
 						// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
@@ -581,7 +581,7 @@ public class MyGraph {
 		// "+visualizationModel.getGraphLayout().transform(vertex));
 
 		// return visualizationModel.getGraphLayout().transform(vertex);
-		return layout.transform(vertex);
+		return layout.apply(vertex);
 		// return (Point2D) nodePositions.get(vertex);
 	}
 
@@ -897,9 +897,9 @@ public class MyGraph {
 		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> copyVV = new VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				copyModel, size);
 		pr_compare = copyVV.getRenderContext();
-		Transformer<BiologicalNodeAbstract, Shape> vertexPaint = new Transformer<BiologicalNodeAbstract, Shape>() {
+		Function<BiologicalNodeAbstract, Shape> vertexPaint = new Function<BiologicalNodeAbstract, Shape>() {
 			@Override
-			public Shape transform(BiologicalNodeAbstract bna) {
+			public Shape apply(BiologicalNodeAbstract bna) {
 				// System.out.println(bna.getClass().getName());
 				// System.out.println(bna.getShape());
 				return bna.getShape();

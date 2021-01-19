@@ -151,7 +151,7 @@ public class GEMLayoutConfig<V> extends ConfigPanel implements ChangeListener{
 	// slider for o_shake
 	public JSlider sliderOShake = null;
 
-	private GEMLayoutConfig<V> instance;
+	//private GEMLayoutConfig<V> instance;
 
 
 	

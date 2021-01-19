@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -17,7 +17,7 @@ import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyVertexDrawPaintFunction implements
-		Transformer<BiologicalNodeAbstract, Paint> {
+		Function<BiologicalNodeAbstract, Paint> {
 
 	protected PickedState<BiologicalNodeAbstract> psV;
 	protected PickedState<BiologicalEdgeAbstract> psE;
@@ -146,7 +146,7 @@ public class MyVertexDrawPaintFunction implements
 	 */
 
 	@Override
-	public Paint transform(BiologicalNodeAbstract v) {
+	public Paint apply(BiologicalNodeAbstract v) {
 
 
 		HashSet<BiologicalNodeAbstract> set = pw.getNewLoadedNodes();

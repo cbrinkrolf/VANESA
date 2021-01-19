@@ -1267,7 +1267,7 @@ public class MenuListener implements ActionListener {
 
 						int xpos;
 
-						Point2D point = v.getGraphLayout().transform(p);
+						Point2D point = v.getGraphLayout().apply(p);
 
 						// Point2D point = pw.getGraph().getVertexLocation(p);//
 						// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);

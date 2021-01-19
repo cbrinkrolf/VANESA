@@ -28,19 +28,13 @@
 	<classpathentry kind="lib" path="packages/poi-3.9.jar"/>
 	<classpathentry kind="lib" path="packages/poi-ooxml-3.9.jar"/>
 	<classpathentry kind="lib" path="packages/poi-ooxml-schemas-3.9.jar"/>
-	<classpathentry kind="lib" path="packages/jung/jung-jai-2.0.1.jar"/>
-	<classpathentry kind="lib" path="packages/jung/jung-io-2.0.1.jar"/>
 	<classpathentry kind="lib" path="packages/laf-plugin-50.jar"/>
 	<classpathentry kind="lib" path="packages/laf-widget.jar"/>
-	<classpathentry kind="lib" path="packages/jung/jung-graph-impl-2.0.1.jar"/>
 	<classpathentry kind="lib" path="packages/ant.jar"/>
 	<classpathentry kind="lib" path="packages/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="packages/commons-lang3-3.2.1.jar"/>
 	<classpathentry kind="lib" path="packages/idw-gpl1.6.1.jar"/>
 	<classpathentry kind="lib" path="packages/jdom-2.0.5.jar"/>
-	<classpathentry kind="lib" path="packages/jung/jung-api-2.0.1.jar"/>
-	<classpathentry kind="lib" path="packages/jung/collections-generic-4.01.jar"/>
-	<classpathentry kind="lib" path="packages/jung/jung-visualization-2.0.1.jar" sourcepath="D:/javaworkspace/Jung2/jung-visualization-2.0.1-sources.jar"/>
 	<classpathentry kind="lib" path="packages/jfreechart-1.0.19.jar"/>
 	<classpathentry kind="lib" path="packages/org.eclipse.emf.ecore_2.9.1.v20130827-0309.jar"/>
 	<classpathentry kind="lib" path="packages/org.eclipse.emf.common_2.9.1.v20130827-0309.jar"/>
@@ -97,6 +91,19 @@
 	<classpathentry kind="lib" path="packages/snakeyaml-1.27.jar"/>
 	<classpathentry kind="lib" path="packages/tsne/jama-1.0.2.jar"/>
 	<classpathentry kind="lib" path="packages/smacof/core-math-1.3.1.jar"/>
+	<classpathentry kind="lib" path="packages/jung/jung-algorithms-2.1.1.jar" sourcepath="packages/jung/jung-sourcecode-2.1.1.zip"/>
+	<classpathentry kind="lib" path="packages/jung/jung-api-2.1.1.jar" sourcepath="packages/jung/jung-sourcecode-2.1.1.zip"/>
+	<classpathentry kind="lib" path="packages/jung/jung-graph-impl-2.1.1.jar" sourcepath="packages/jung/jung-sourcecode-2.1.1.zip"/>
+	<classpathentry kind="lib" path="packages/jung/jung-io-2.1.1.jar" sourcepath="packages/jung/jung-sourcecode-2.1.1.zip"/>
+	<classpathentry kind="lib" path="packages/jung/jung-visualization-2.1.1.jar" sourcepath="packages/jung/jung-sourcecode-2.1.1.zip"/>
+	<classpathentry kind="lib" path="packages/jung/colt-1.2.0.jar"/>
+	<classpathentry kind="lib" path="packages/jung/guava/guava-30.1-jre.jar"/>
+	<classpathentry kind="lib" path="packages/jung/guava/checker-qual-3.5.0.jar"/>
+	<classpathentry kind="lib" path="packages/jung/guava/error_prone_annotations-2.3.4.jar"/>
+	<classpathentry kind="lib" path="packages/jung/guava/failureaccess-1.0.1.jar"/>
+	<classpathentry kind="lib" path="packages/jung/guava/findbugsjsr305-3.0.2.jar"/>
+	<classpathentry kind="lib" path="packages/jung/guava/j2objc-annotations-1.3.jar"/>
+	<classpathentry kind="lib" path="packages/jung/guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="packages/mdsj.jar"/>
 	<classpathentry kind="output" path="bin"/>

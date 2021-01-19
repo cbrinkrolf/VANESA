@@ -1,6 +1,6 @@
 package graph.jung.graphDrawing;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -11,14 +11,14 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
  * 
  */
 public class MyEdgeStringer implements
-		Transformer<BiologicalEdgeAbstract, String> {
+		Function<BiologicalEdgeAbstract, String> {
 
 	public MyEdgeStringer(Pathway pw) {
 
 	}
 
 	@Override
-	public String transform(BiologicalEdgeAbstract bea) {
+	public String apply(BiologicalEdgeAbstract bea) {
 		return bea.getNetworklabel();
 	}
 }

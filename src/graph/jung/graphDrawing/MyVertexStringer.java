@@ -1,6 +1,6 @@
 package graph.jung.graphDrawing;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
@@ -10,13 +10,13 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
  * 
  */
 public class MyVertexStringer implements
-		Transformer<BiologicalNodeAbstract, String> {
+		Function<BiologicalNodeAbstract, String> {
 
 	public MyVertexStringer() {
 	}
 
 	@Override
-	public String transform(BiologicalNodeAbstract bna) {
+	public String apply(BiologicalNodeAbstract bna) {
 		
 		//if(bna instanceof Place){
 		//	return ((Place)bna).getToken() + " | " +bna.getNetworklabel();
