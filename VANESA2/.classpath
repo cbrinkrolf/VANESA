@@ -5,31 +5,21 @@
 	<classpathentry kind="lib" path="packages/axiom-api-1.2.7.jar"/>
 	<classpathentry kind="lib" path="packages/axiom-impl-1.2.7.jar"/>
 	<classpathentry kind="lib" path="packages/axis2-1.4.1.jar"/>
-	<classpathentry kind="lib" path="packages/commons-httpclient-3.1.jar"/>
-	<classpathentry kind="lib" path="packages/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="packages/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="packages/backport-util-concurrent-3.1.jar"/>
 	<classpathentry kind="lib" path="packages/commons-cli-1.1.jar"/>
-	<classpathentry kind="lib" path="packages/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="packages/fastutil-5.1.5.jar"/>
 	<classpathentry kind="lib" path="packages/filters.jar"/>
 	<classpathentry kind="lib" path="packages/jxlayer.jar"/>
 	<classpathentry kind="lib" path="packages/macify-1.3.jar"/>
 	<classpathentry kind="lib" path="packages/miglayout-swing.jar"/>
 	<classpathentry kind="lib" path="packages/mysql-connector-java-5.1.39-bin.jar"/>
-	<classpathentry kind="lib" path="packages/neethi-2.0.4.jar"/>
 	<classpathentry kind="lib" path="packages/parvis.jar"/>
-	<classpathentry kind="lib" path="packages/REngine.jar"/>
-	<classpathentry kind="lib" path="packages/TimingFramework-1.0.jar"/>
-	<classpathentry kind="lib" path="packages/woden-api-1.0M8.jar"/>
 	<classpathentry kind="lib" path="packages/wsdl4j-1.6.2.jar"/>
-	<classpathentry kind="lib" path="packages/XmlSchema-1.4.2.jar"/>
 	<classpathentry kind="lib" path="packages/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="packages/poi-3.9.jar"/>
 	<classpathentry kind="lib" path="packages/poi-ooxml-3.9.jar"/>
 	<classpathentry kind="lib" path="packages/poi-ooxml-schemas-3.9.jar"/>
-	<classpathentry kind="lib" path="packages/laf-plugin-50.jar"/>
-	<classpathentry kind="lib" path="packages/laf-widget.jar"/>
 	<classpathentry kind="lib" path="packages/ant.jar"/>
 	<classpathentry kind="lib" path="packages/commons-io-2.4.jar"/>
 	<classpathentry kind="lib" path="packages/commons-lang3-3.2.1.jar"/>
@@ -38,7 +28,6 @@
 	<classpathentry kind="lib" path="packages/jfreechart-1.0.19.jar"/>
 	<classpathentry kind="lib" path="packages/org.eclipse.emf.ecore_2.9.1.v20130827-0309.jar"/>
 	<classpathentry kind="lib" path="packages/org.eclipse.emf.common_2.9.1.v20130827-0309.jar"/>
-	<classpathentry kind="lib" path="packages/jing.jar"/>
 	<classpathentry kind="lib" path="packages/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="packages/jfreesvg-2.0.jar"/>
 	<classpathentry kind="lib" path="packages/orsonpdf-1.6-eval.jar"/>
@@ -58,31 +47,11 @@
 	<classpathentry kind="lib" path="packages/prettyFormula/jlatexmath-1.0.3.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/pretty-formula.jar"/>
 	<classpathentry kind="lib" path="packages/swingx-all-1.6.4.jar"/>
-	<classpathentry kind="lib" path="packages/jmathplot-1.0.0.jar"/>
 	<classpathentry kind="lib" path="packages/smacof/MatrixLib-1.3.1.jar"/>
 	<classpathentry kind="lib" path="packages/jsbml-1.1-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="packages/commons-configuration-1.10.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-export-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphics2d-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-emf-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-java-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-pdf-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-ps-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-svg-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-swf-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-graphicsio-tests-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-io-2.0.2.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-swing-2.0.3.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-util-2.0.2.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/freehep-xml-2.1.1.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/jas-plotter-2.2.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/jdom-1.0.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/junit-3.8.2.jar"/>
-	<classpathentry kind="lib" path="packages/freeHEP/openide-lookup-1.9-patched-1.0.jar"/>
 	<classpathentry kind="lib" path="packages/fr.lip6.pnml.framework.ptnet-2.2.12.jar"/>
 	<classpathentry kind="lib" path="packages/fr.lip6.pnml.framework.utils-2.2.12.jar"/>
-	<classpathentry kind="lib" path="packages/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="packages/JTattoo-1.6.13.jar"/>
 	<classpathentry kind="lib" path="packages/vecmath1.5.2.jar"/>
 	<classpathentry kind="lib" path="packages/snakeyaml-1.27.jar"/>
@@ -93,7 +62,6 @@
 	<classpathentry kind="lib" path="packages/jung/jung-graph-impl-2.1.1.jar" sourcepath="packages/jung/jung-sourcecode-2.1.1.zip"/>
 	<classpathentry kind="lib" path="packages/jung/jung-io-2.1.1.jar" sourcepath="packages/jung/jung-sourcecode-2.1.1.zip"/>
 	<classpathentry kind="lib" path="packages/jung/jung-visualization-2.1.1.jar" sourcepath="packages/jung/jung-sourcecode-2.1.1.zip"/>
-	<classpathentry kind="lib" path="packages/jung/colt-1.2.0.jar"/>
 	<classpathentry kind="lib" path="packages/jung/guava/guava-30.1-jre.jar"/>
 	<classpathentry kind="lib" path="packages/jung/guava/checker-qual-3.5.0.jar"/>
 	<classpathentry kind="lib" path="packages/jung/guava/error_prone_annotations-2.3.4.jar"/>
@@ -103,6 +71,15 @@
 	<classpathentry kind="lib" path="packages/jung/guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"/>
 	<classpathentry kind="lib" path="packages/javax.activation-api-1.2.0.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/xml-apis-ext.jar"/>
+	<classpathentry kind="lib" path="packages/woden-api-1.0M8.jar"/>
+	<classpathentry kind="lib" path="packages/TimingFramework-1.0.jar"/>
+	<classpathentry kind="lib" path="packages/neethi-2.0.4.jar"/>
+	<classpathentry kind="lib" path="packages/colt-1.2.0.jar"/>
+	<classpathentry kind="lib" path="packages/XmlSchema-1.4.2.jar"/>
+	<classpathentry kind="lib" path="packages/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="packages/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="packages/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="packages/commons-collections-3.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>

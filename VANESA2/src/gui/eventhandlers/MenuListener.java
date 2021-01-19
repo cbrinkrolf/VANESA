@@ -3,18 +3,24 @@ package gui.eventhandlers;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -22,10 +28,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.svggen.SVGGeneratorContext;
+import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.freehep.graphicsio.pdf.PDFGraphics2D;
-import org.freehep.util.export.ExportDialog;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -951,7 +958,7 @@ public class MenuListener implements ActionListener {
 
 			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
 
-			PDFGraphics2D pdf;
+			/*PDFGraphics2D pdf;
 			try {
 				pdf = new PDFGraphics2D(new File(docDir + "export.pdf"),
 						new Dimension(wvv.getWidth(), wvv.getHeight()));
@@ -960,7 +967,7 @@ public class MenuListener implements ActionListener {
 				pdf.endExport();
 			} catch (FileNotFoundException e2) {
 				e2.printStackTrace();
-			}
+			}*/
 
 			Thread thread = new Thread() {
 				public void run() {
@@ -1142,15 +1149,24 @@ public class MenuListener implements ActionListener {
 
 		} else if ("graphPicture".equals(event)) {
 			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
-			ExportDialog export = new ExportDialog();
-
+			//ExportDialog export = new ExportDialog();
+			// TODO reimplement svg/png export
+			try {
+				this.saveToSVG(wvv, new File("test.svg"));
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			// export.setUserProperties(p);
 			// System.out.println(export.getInitialValue());
 
 			// export.setWantsInput(true);
 			// export.setInitialSelectionValue(5);
 
-			export.showExportDialog(MainWindow.getInstance(), "Export graph as ...", wvv, "export");
+			//export.showExportDialog(MainWindow.getInstance(), "Export graph as ...", wvv, "export");
 		} else if ("wuff".equals(event)) {
 			// System.out.println("clicked");
 			if (con.containsPathway()) {
@@ -1448,4 +1464,34 @@ public class MenuListener implements ActionListener {
 
 		c = new DenseDoubleMatrix2D(cMatrix.getData());
 	}
+	
+	private void saveToSVG(VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv, File file) throws FileNotFoundException, IOException
+	            {
+	        // String latexFormula = FormulaParser.parseToLatex(formula);
+	       //  TeXIcon icon = FormulaParser.getTeXIcon(latexFormula);
+	         
+	         SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(SVGDOMImplementation.getDOMImplementation().createDocument(
+	                 SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null));
+	         
+	         SVGGraphics2D g2 = new SVGGraphics2D(ctx, true);
+	         g2.setSVGCanvasSize(new Dimension(wvv.getBounds().width,wvv.getBounds().height));
+	         
+	         Map<Key, Object> map = wvv.getRenderingHints();
+	         map.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT );
+	        // map.put(RenderingHints.KEY_TEXT_ANTIALIASING, map.get(RenderingHints.KEY_ANTIALIASING) );
+	         wvv.setRenderingHints( map );
+	         
+	         
+	        // wvv.setRenderingHints(new HashMap());
+	         wvv.paint(g2);
+	         
+	         
+	         //icon.paintIcon(null, g2, 0, 0);
+
+	         try (FileOutputStream svgs = new FileOutputStream(file)) {
+	            Writer out = new OutputStreamWriter(svgs, "UTF-8");
+	            g2.stream(out, false);
+	            svgs.flush();
+	         }
+	    }
 }
