@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Paint;
 import java.util.Iterator;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -12,13 +12,7 @@ import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
-/*import edu.uci.ics.jung.graph.Edge;
- import edu.uci.ics.jung.graph.Vertex;
- import edu.uci.ics.jung.graph.decorators.EdgePaintFunction;
- import edu.uci.ics.jung.utils.Pair;
- import edu.uci.ics.jung.visualization.PickedState;*/
-
-public class MyEdgeDrawPaintFunction implements Transformer<BiologicalEdgeAbstract, Paint> {
+public class MyEdgeDrawPaintFunction implements Function<BiologicalEdgeAbstract, Paint> {
 
 	protected PickedState<BiologicalNodeAbstract> psV;
 	protected PickedState<BiologicalEdgeAbstract> psE;
@@ -97,7 +91,7 @@ public class MyEdgeDrawPaintFunction implements Transformer<BiologicalEdgeAbstra
 	}
 
 	@Override
-	public Paint transform(BiologicalEdgeAbstract bea) {
+	public Paint apply(BiologicalEdgeAbstract bea) {
 		if (!graphTheory)
 			return getDrawPaintWithoutGraphTheory(bea);
 		else

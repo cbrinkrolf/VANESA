@@ -5,7 +5,7 @@ import java.awt.Paint;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -15,7 +15,7 @@ import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyVertexFillPaintFunction implements
-		Transformer<BiologicalNodeAbstract, Paint> {
+		Function<BiologicalNodeAbstract, Paint> {
 
 	protected PickedState<BiologicalNodeAbstract> psV;
 	protected PickedState<BiologicalEdgeAbstract> psE;
@@ -111,7 +111,7 @@ public class MyVertexFillPaintFunction implements
 	}*/
 
 	@Override
-	public Paint transform(BiologicalNodeAbstract bna) {
+	public Paint apply(BiologicalNodeAbstract bna) {
 		if (!graphTheory) {
 			return getFillPaintWithoutGraphTheory(bna);
 		} else {

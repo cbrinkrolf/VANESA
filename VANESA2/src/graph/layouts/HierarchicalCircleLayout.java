@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -144,7 +144,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
         	nodeAngle = Circle.getAngle(getCenterPoint(),nodePoint);
         	finalAngle = nodeAngle+(movementAngle);
         	
-        	Point2D vp = layout.transform(v);
+        	Point2D vp = layout.apply(v);
 
         	vp.setLocation(getPointOnCircle(finalAngle, circleVertexDataMap.get(v).getCircleNumber()));
         	GraphInstance.getMyGraph().moveVertex(v, vp.getX(), vp.getY());
@@ -188,7 +188,7 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 	 * @return The circle data of the vertex.
 	 * @author tloka
 	 */
-	protected CircleVertexData apply(BiologicalNodeAbstract v){
+	protected CircleVertexData addCircleData(BiologicalNodeAbstract v){
 		CircleVertexData cvData = new CircleVertexData();
 		circleVertexDataMap.put(v, cvData);
 		return cvData;
@@ -395,16 +395,16 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
 		}
 	}
 	
-	protected class ShowEdgeArrowsTransformer<T1, T2> implements Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>{
+	protected class ShowEdgeArrowsTransformer<T1, T2> implements Function<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape>{
 		
 		public ShowEdgeArrowsTransformer() {
 
 		}
 
 		@Override
-		public Shape transform(
+		public Shape apply(
 				Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract> arg0) {
-			return new DirectionalEdgeArrowTransformer<BiologicalNodeAbstract,BiologicalEdgeAbstract>(0,0,0).transform(arg0);
+			return new DirectionalEdgeArrowTransformer<BiologicalNodeAbstract,BiologicalEdgeAbstract>(0,0,0).apply(arg0);
 		}
 
 	}

@@ -3,7 +3,7 @@ package graph.jung.graphDrawing;
 import java.awt.Color;
 import java.awt.Paint;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -11,7 +11,7 @@ import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
-public class MyEdgeFillPaintFunction implements Transformer<BiologicalEdgeAbstract, Paint> {
+public class MyEdgeFillPaintFunction implements Function<BiologicalEdgeAbstract, Paint> {
 
 	protected PickedState<BiologicalNodeAbstract> psV;
 	protected PickedState<BiologicalEdgeAbstract> psE;
@@ -33,7 +33,7 @@ public class MyEdgeFillPaintFunction implements Transformer<BiologicalEdgeAbstra
 	}
 
 	@Override
-	public Paint transform(BiologicalEdgeAbstract bea) {
+	public Paint apply(BiologicalEdgeAbstract bea) {
 			return null;
 	}
 }

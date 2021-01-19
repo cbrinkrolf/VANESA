@@ -2,15 +2,15 @@ package graph.jung.graphDrawing;
 
 import javax.swing.Icon;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 
-public class MyVertexIconTransformer implements Transformer<BiologicalNodeAbstract, Icon> {
+public class MyVertexIconTransformer implements Function<BiologicalNodeAbstract, Icon> {
 
 	@Override
-	public Icon transform(BiologicalNodeAbstract bna) {
+	public Icon apply(BiologicalNodeAbstract bna) {
 		if (bna instanceof Place) {
 			//Icon icon = new DynamicIcon((Place) bna);
 

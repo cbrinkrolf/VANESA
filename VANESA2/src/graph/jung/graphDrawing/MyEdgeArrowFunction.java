@@ -4,7 +4,7 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -19,10 +19,10 @@ import edu.uci.ics.jung.visualization.decorators.DirectionalEdgeArrowTransformer
  * 
  */
 public class MyEdgeArrowFunction
-		implements Transformer<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> {
+		implements Function<Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> {
 
 	@Override
-	public Shape transform(Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract> context) {
+	public Shape apply(Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract> context) {
 		// System.out.println(context.element.getBiologicalElement());
 		// System.out.println("element:
 		// "+context.element.getBiologicalElement());
@@ -34,7 +34,7 @@ public class MyEdgeArrowFunction
 			return this.getInhibitoryArrowHead(3, 30, -3);
 
 		}
-		return new DirectionalEdgeArrowTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(10, 8, 4).transform(context);
+		return new DirectionalEdgeArrowTransformer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(10, 8, 4).apply(context);
 	}
 
 	private Shape getInhibitoryArrowHead(float width, float length, float offset) {

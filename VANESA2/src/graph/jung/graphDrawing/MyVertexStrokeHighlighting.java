@@ -4,7 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Stroke;
 import java.util.Iterator;
 
-import org.apache.commons.collections15.Transformer;
+import com.google.common.base.Function;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -14,7 +14,7 @@ import biologicalObjects.nodes.petriNet.Place;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyVertexStrokeHighlighting implements
-		Transformer<BiologicalNodeAbstract, Stroke> {
+		Function<BiologicalNodeAbstract, Stroke> {
 
 	protected Stroke pn_heavy = new BasicStroke(5);
 
@@ -184,7 +184,7 @@ public class MyVertexStrokeHighlighting implements
 	}
 
 	@Override
-	public Stroke transform(BiologicalNodeAbstract bna) {
+	public Stroke apply(BiologicalNodeAbstract bna) {
 
 		if (bna.hasRef()) {
 
