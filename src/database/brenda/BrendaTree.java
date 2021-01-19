@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
@@ -44,7 +45,7 @@ public class BrendaTree {
 	}
 	
 	public void printTree(){
-		Enumeration<DefaultMutableTreeNode> children = getRoot().children();
+		Enumeration<TreeNode> children = getRoot().children();
 		while(children.hasMoreElements()){
 			printSubTree((DefaultMutableTreeNode) children.nextElement());
 		}
@@ -55,7 +56,7 @@ public class BrendaTree {
 			System.out.println(node2enzyme.get(node.getParent()).getLabel() + "->" + node2enzyme.get(node).getLabel());
 		else
 			System.out.println("root" + "->" + node2enzyme.get(node).getLabel());
-		Enumeration<DefaultMutableTreeNode> children = node.children();
+		Enumeration<TreeNode> children = node.children();
 		while(children.hasMoreElements()){
 			printSubTree((DefaultMutableTreeNode) children.nextElement());
 		}

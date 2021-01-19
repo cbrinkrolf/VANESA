@@ -262,8 +262,9 @@ public class Server {
 			System.out.println("server destroyed");
 			serverSocket.close();
 			running = false;
+			//TODO rewrite stop of sever
 			serverThread.stop();
-			serverThread.destroy();
+			//serverThread.destroy();
 		}
 		// System.out.println(n[1]);
 		// System.out.println(n[2]);
@@ -271,8 +272,9 @@ public class Server {
 		// st.
 		// System.out.println(new String(buffer, 16, buffer.length - 17));
 		this.serverSocket.close();
+		//TODO rewrite stop of sever
 		serverThread.stop();
-		serverThread.destroy();
+		//serverThread.destroy();
 		// String nachricht = new String(buffer, 0, anzahlZeichen);
 		// return nachricht;
 	}
