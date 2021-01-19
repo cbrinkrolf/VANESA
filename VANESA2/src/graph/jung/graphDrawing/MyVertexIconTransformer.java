@@ -12,7 +12,7 @@ public class MyVertexIconTransformer implements Transformer<BiologicalNodeAbstra
 	@Override
 	public Icon transform(BiologicalNodeAbstract bna) {
 		if (bna instanceof Place) {
-			Icon icon = new DynamicIcon((Place) bna);
+			//Icon icon = new DynamicIcon((Place) bna);
 
 			return null;//icon;
 		} else {

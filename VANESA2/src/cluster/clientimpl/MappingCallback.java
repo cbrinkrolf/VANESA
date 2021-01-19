@@ -22,7 +22,7 @@ public class MappingCallback extends UnicastRemoteObject implements
 
 	@Override
 	public void progressNotify(String message) throws RemoteException {
-		MainWindow.getInstance().progressbar.setProgressBarString(message);
+		MainWindow.progressbar.setProgressBarString(message);
 
 	}
 

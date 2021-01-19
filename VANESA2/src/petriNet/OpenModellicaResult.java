@@ -16,7 +16,7 @@ import gui.MyPopUp;
 import gui.ProgressBar;
 import io.MyFileFilter;
 
-public class OpenModellicaResult extends SwingWorker {
+public class OpenModellicaResult extends SwingWorker<Object, Object> {
 	private JFileChooser chooser;
 
 	private String fileFormat;
@@ -128,5 +128,4 @@ public class OpenModellicaResult extends SwingWorker {
 			}
 		}
 	}
-
 }

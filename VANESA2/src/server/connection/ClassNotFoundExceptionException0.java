@@ -12,7 +12,11 @@ package server.connection;
 
 public class ClassNotFoundExceptionException0 extends java.lang.Exception{
     
-    private VerySimpleDBServiceStub.ClassNotFoundException faultMessage;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private VerySimpleDBServiceStub.ClassNotFoundException faultMessage;
     
     public ClassNotFoundExceptionException0() {
         super("ClassNotFoundExceptionException0");

@@ -3,6 +3,7 @@
  */
 package graph.gui;
 
+import java.awt.Component;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -105,14 +106,14 @@ public class EdgeDialog extends JFrame {
 		if (pw.isPetriNet()) {
 			if (pw.isHeadless()) {
 				panel.add(new JLabel("Name"), "");
-				name.setText("PNE"+(pw.getAllEdges().size()+1));
+				name.setText("PNE" + (pw.getAllEdges().size() + 1));
 			} else {
 				panel.add(new JLabel("Edge weight / function"), "");
 				name.setText("1");
 			}
 		} else {
 			if (pw.isHeadless()) {
-				name.setText("E"+(pw.getAllEdges().size()+1));
+				name.setText("E" + (pw.getAllEdges().size() + 1));
 				panel.add(new JLabel("Name"), "");
 			} else {
 				panel.add(new JLabel("Label"), "");
@@ -178,13 +179,17 @@ public class EdgeDialog extends JFrame {
 		}
 	}
 
-	public Pair<Map<String, String>, BiologicalNodeAbstract[]> getAnswer() {
+	public Pair<Map<String, String>, BiologicalNodeAbstract[]> getAnswer(Component relativeTo) {
 
 		// private String[] details = new String[3];
 		Map<String, String> details = new HashMap<String, String>();
 		JDialog dialog = pane.createDialog(EdgeDialog.this, "Create an edge");
 		// dialog.show();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		if (relativeTo == null) {
+			dialog.setLocationRelativeTo(MainWindow.getInstance());
+		} else {
+			dialog.setLocationRelativeTo(relativeTo);
+		}
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 		BiologicalNodeAbstract[] bnas = new BiologicalNodeAbstract[2];

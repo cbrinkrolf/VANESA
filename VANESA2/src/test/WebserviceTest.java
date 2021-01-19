@@ -54,10 +54,10 @@ public class WebserviceTest implements WebServiceListener
 		
 		this.serviceRequestIDs.remove(requestID);
 		
-		for (DBColumn column : dbResults)
-		{
+		//for (DBColumn column : dbResults)
+		//{
 			// System.out.println(column.getColumn()[0]);
-		}
+		//}
 		
 	}
 	

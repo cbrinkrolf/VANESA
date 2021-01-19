@@ -117,7 +117,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 			// pw = graphInstance.getPathway();
 			// System.out.println(e.getSource());
 
-			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer) e
+			@SuppressWarnings("unchecked")
+			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
 					.getSource();
 			pw = vv.getPathway();
 			// final Point2D p = vv.inverseViewTransform(e.getPoint());
@@ -139,7 +140,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 
 			BiologicalNodeAbstract vertex = null;
 
-			vertex = (BiologicalNodeAbstract) pickSupport.getVertex(vv.getGraphLayout(), e.getPoint().getX(),
+			vertex = pickSupport.getVertex(vv.getGraphLayout(), e.getPoint().getX(),
 					e.getPoint().getY());
 			// System.out.println(vertex);
 
@@ -180,7 +181,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 
 				if (pw.isPetriNet()) {
 					PetriNetVertexDialog dialog = new PetriNetVertexDialog(con.getPetriNetEditingMode(), pw);
-					BiologicalNodeAbstract bna = dialog.getAnswer(p);
+					BiologicalNodeAbstract bna = dialog.getAnswer(p, vv);
 					// System.out.println();
 					if (bna != null) {
 						// BiologicalNodeAbstract ba = new
@@ -210,7 +211,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 				} else {
 					// System.out.println("not petri");
 					VertexDialog dialog = new VertexDialog(pw);
-					Map<String, String> answers = dialog.getAnswer();
+					Map<String, String> answers = dialog.getAnswer(vv);
 
 					if (answers != null) {
 
@@ -268,7 +269,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 	public void mouseReleased(MouseEvent e) {
 		// pw = graphInstance.getPathway();
 		if (checkModifiers(e)) {
-			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer) e
+			@SuppressWarnings("unchecked")
+			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
 					.getSource();
 			pw = vv.getPathway();
 			// final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
@@ -278,7 +280,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv.getPickSupport();
 			// if (v > 0) {
 			// System.out.println("release");
-			final BiologicalNodeAbstract vertex = (BiologicalNodeAbstract) pickSupport.getVertex(vv.getGraphLayout(),
+			final BiologicalNodeAbstract vertex = pickSupport.getVertex(vv.getGraphLayout(),
 					e.getPoint().getX(), e.getPoint().getY());
 			if (vertex != null && startVertex != null) {
 
@@ -298,7 +300,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 				} else {
 					// Graph graph = vv.getGraphLayout().getGraph();
 					EdgeDialog dialog = new EdgeDialog(startVertex, vertex, pw);
-					Pair<Map<String, String>, BiologicalNodeAbstract[]> answer = dialog.getAnswer();
+					Pair<Map<String, String>, BiologicalNodeAbstract[]> answer = dialog.getAnswer(vv);
 					Map<String, String> details = answer.getLeft();
 					BiologicalNodeAbstract[] nodes = answer.getRight();
 

@@ -91,7 +91,6 @@ public class Transformator {
 			availableNodes.add(bna);
 		}
 
-		BiologicalEdgeAbstract bea;
 		Iterator<BiologicalEdgeAbstract> it2 = pw.getAllEdges().iterator();
 		while (it2.hasNext()) {
 			availableEdges.add(it2.next());
@@ -331,7 +330,7 @@ public class Transformator {
 		}
 
 		// remove BEA from set of available edges
-		String edgeName = "";
+		//String edgeName = "";
 		BiologicalNodeAbstract fromBNA = null;
 		BiologicalNodeAbstract toBNA = null;
 
@@ -423,133 +422,6 @@ public class Transformator {
 		return pn;
 	}
 
-	private void createRules() {
-
-		// M1+M2->E->M3+M4
-		Rule r = new Rule();
-
-		RuleNode rN1 = new RuleNode("M1", "SmallMolecule");
-		RuleNode rN2 = new RuleNode("M2", "SmallMolecule");
-		RuleNode rN3 = new RuleNode("M3", "SmallMolecule");
-		RuleNode rN4 = new RuleNode("M4", "SmallMolecule");
-		RuleNode rE = new RuleNode("E", "Enzyme");
-
-		RuleEdge rE1 = new RuleEdge("E1", "BiologicalEdgeAbstract", rN1, rE);
-		RuleEdge rE2 = new RuleEdge("E2", "BiologicalEdgeAbstract", rN2, rE);
-		RuleEdge rE3 = new RuleEdge("E3", "BiologicalEdgeAbstract", rE, rN3);
-		RuleEdge rE4 = new RuleEdge("E4", "BiologicalEdgeAbstract", rE, rN4);
-
-		r.addBiologicalEdge(rE1);
-		r.addBiologicalEdge(rE2);
-		r.addBiologicalEdge(rE3);
-		r.addBiologicalEdge(rE4);
-
-		RuleNode rP1 = new RuleNode("P1", "ContinuousPlace");
-		RuleNode rP2 = new RuleNode("P2", "ContinuousPlace");
-		RuleNode rP3 = new RuleNode("P3", "ContinuousPlace");
-		RuleNode rP4 = new RuleNode("P4", "ContinuousPlace");
-		RuleNode rT1 = new RuleNode("T1", "ContinuousTransition");
-
-		RuleEdge rPE1 = new RuleEdge("E1", "PNEdge", rP1, rT1);
-		RuleEdge rPE2 = new RuleEdge("E2", "PNEdge", rP2, rT1);
-		RuleEdge rPE3 = new RuleEdge("E3", "PNEdge", rT1, rP3);
-		RuleEdge rPE4 = new RuleEdge("E4", "PNEdge", rT1, rP4);
-
-		r.addPetriEdge(rPE1);
-		r.addPetriEdge(rPE2);
-		r.addPetriEdge(rPE3);
-		r.addPetriEdge(rPE4);
-
-		r.addBNtoPNMapping(rN1, rP1);
-		r.addBNtoPNMapping(rN2, rP2);
-		r.addBNtoPNMapping(rN3, rP3);
-		r.addBNtoPNMapping(rN4, rP4);
-		r.addBNtoPNMapping(rE, rT1);
-		r.addBNtoPNMapping(rN1, rP1);
-
-		// M1->E->M2
-		Rule r1 = new Rule();
-		RuleNode m1 = new RuleNode("M1", "SmallMolecule");
-		RuleNode m2 = new RuleNode("M2", "SmallMolecule");
-		RuleNode e = new RuleNode("E", "Enzyme");
-		r1.addBiologicalNode(m1);
-		r1.addBiologicalNode(m2);
-		r1.addBiologicalNode(e);
-
-		RuleEdge e1 = new RuleEdge("E1", "BiologicalEdgeAbstract", m1, e);
-		RuleEdge e2 = new RuleEdge("E2", "BiologicalEdgeAbstract", e, m2);
-		r1.addBiologicalEdge(e1);
-		r1.addBiologicalEdge(e2);
-
-		RuleNode p1 = new RuleNode("P1", "Place");
-		RuleNode p2 = new RuleNode("P2", "Place");
-		RuleNode t1 = new RuleNode("T1", "Transition");
-		r1.addPetriNode(p1);
-		r1.addPetriNode(p2);
-		r1.addPetriNode(t1);
-
-		RuleEdge e3 = new RuleEdge("PE1", "PNEdge", p1, t1);
-		RuleEdge e4 = new RuleEdge("PE2", "PNEdge", t1, p2);
-
-		r1.addPetriEdge(e3);
-		r1.addPetriEdge(e4);
-
-		r1.addBNtoPNMapping(m1, p1);
-		r1.addBNtoPNMapping(m2, p2);
-		r1.addBNtoPNMapping(e, t1);
-
-		// M1->R->M2 E->R->E
-		Rule r2 = new Rule();
-		RuleNode r2m1 = new RuleNode("M1", "SmallMolecule");
-		RuleNode r2m2 = new RuleNode("M2", "SmallMolecule");
-		RuleNode r2e = new RuleNode("E", "Enzyme");
-		r2.addBiologicalNode(r2m1);
-		r2.addBiologicalNode(r2m2);
-		r2.addBiologicalNode(r2e);
-
-		RuleEdge r2e1 = new RuleEdge("E1", "BiologicalEdgeAbstract", r2m1, r2e);
-		RuleEdge r2e2 = new RuleEdge("E2", "BiologicalEdgeAbstract", r2e, r2m2);
-		r2.addBiologicalEdge(r2e1);
-		r2.addBiologicalEdge(r2e2);
-
-		RuleNode r2p1 = new RuleNode("P1", "ContinuousPlace");
-		RuleNode r2p2 = new RuleNode("P2", "ContinuousPlace");
-		RuleNode r2p3 = new RuleNode("P3", "ContinuousPlace");
-		RuleNode r2t1 = new RuleNode("T1", "ContinuousTransition");
-		r2.addPetriNode(r2p1);
-		r2.addPetriNode(r2p2);
-		r2.addPetriNode(r2p3);
-		r2.addPetriNode(r2t1);
-
-		RuleEdge r2pe1 = new RuleEdge("PE1", "PNEdge", r2p1, r2t1);
-		RuleEdge r2pe2 = new RuleEdge("PE2", "PNEdge", r2t1, r2p2);
-		RuleEdge r2pe3 = new RuleEdge("PE3", "PNEdge", r2p3, r2t1);
-		RuleEdge r2pe4 = new RuleEdge("PE4", "PNEdge", r2t1, r2p3);
-
-		r2.addPetriEdge(r2pe1);
-		r2.addPetriEdge(r2pe2);
-		r2.addPetriEdge(r2pe3);
-		r2.addPetriEdge(r2pe4);
-
-		r2.addBNtoPNMapping(r2m1, r2p1);
-		r2.addBNtoPNMapping(r2m2, r2p2);
-		r2.addBNtoPNMapping(r2e, r2t1);
-
-		// BNA->P
-		Rule simpleNode = new Rule();
-		RuleNode simpleBNA = new RuleNode("N1", "BiologicalNodeAbstract");
-		RuleNode simpleP = new RuleNode("P1", "ContinuousPlace");
-		simpleNode.addBiologicalNode(simpleBNA);
-		simpleNode.addPetriNode(simpleP);
-		simpleNode.addBNtoPNMapping(simpleBNA, simpleP);
-
-		rules.add(r);
-		rules.add(r1);
-		// rules.add(r2);
-		rules.add(simpleNode);
-
-	}
-
 	private void createBuckets() {
 		nodeType2bna.clear();
 		edgeType2bea.clear();
@@ -557,7 +429,7 @@ public class Transformator {
 		BiologicalNodeAbstract bna;
 		BiologicalEdgeAbstract bea;
 		String name;
-		Class c;
+		Class<?> c;
 		// all nodes
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		while (it.hasNext()) {

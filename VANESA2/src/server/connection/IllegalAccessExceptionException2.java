@@ -12,7 +12,11 @@ package server.connection;
 
 public class IllegalAccessExceptionException2 extends java.lang.Exception{
     
-    private VerySimpleDBServiceStub.IllegalAccessException faultMessage;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private VerySimpleDBServiceStub.IllegalAccessException faultMessage;
     
     public IllegalAccessExceptionException2() {
         super("IllegalAccessExceptionException2");

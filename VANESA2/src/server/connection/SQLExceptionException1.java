@@ -12,7 +12,11 @@ package server.connection;
 
 public class SQLExceptionException1 extends java.lang.Exception{
     
-    private  VerySimpleDBServiceStub.SQLExceptionE faultMessage;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private  VerySimpleDBServiceStub.SQLExceptionE faultMessage;
     
     public SQLExceptionException1() {
         super("SQLExceptionException1");

@@ -870,7 +870,7 @@ public class MenuListener implements ActionListener {
 					"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
 					"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 				new ReachController();
-			graphInstance.getMyGraph().changeToGEMLayout();
+			GraphInstance.getMyGraph().changeToGEMLayout();
 		} else if ("editElements".equals(event))
 			new PNTableDialog().setVisible(true);
 		else if ("loadModResult".equals(event))

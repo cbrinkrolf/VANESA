@@ -12,7 +12,11 @@ package server.connection;
 
 public class InstantiationExceptionException3 extends java.lang.Exception{
     
-    private  VerySimpleDBServiceStub.InstantiationException faultMessage;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private  VerySimpleDBServiceStub.InstantiationException faultMessage;
     
     public InstantiationExceptionException3() {
         super("InstantiationExceptionException3");

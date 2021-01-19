@@ -3,6 +3,7 @@
  */
 package graph.gui;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -85,7 +86,7 @@ public class VertexDialog {
 
 		if (pw.isHeadless()) {
 			panel.add(new JLabel("Name"), "span 2, gaptop 2 ");
-			name.setText("N"+pw.countNodes());
+			name.setText("N" + pw.countNodes());
 			panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
 		} else {
 			panel.add(new JLabel("Label"), "span 2, gaptop 2 ");
@@ -124,11 +125,15 @@ public class VertexDialog {
 		}
 	}
 
-	public Map<String, String> getAnswer() {
+	public Map<String, String> getAnswer(Component relativeTo) {
 		Map<String, String> details = new HashMap<String, String>();
 		JDialog dialog = pane.createDialog(null, "Create an element");
 		// dialog.show();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		if (relativeTo == null) {
+			dialog.setLocationRelativeTo(MainWindow.getInstance());
+		} else {
+			dialog.setLocationRelativeTo(relativeTo);
+		}
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 
