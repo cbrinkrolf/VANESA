@@ -378,7 +378,7 @@ public class DataMapping2View extends JDialog implements Observer{
 		Map<String, List<String>> mergeMap = dmm.getMergeMap();
 		Map<String, List<String>> dups = dmm.getDuplicatedList();
 		// the new data for the table
-		Vector<Object> allData = new Vector<Object>();
+		Vector<Vector> allData = new Vector<Vector>();
 		Vector<String> columnNames = new Vector<String>();
 
 		columnNames.add("UniProt accession");
@@ -448,7 +448,6 @@ public class DataMapping2View extends JDialog implements Observer{
 				allData.add(rowDataV);
 			}
 		}
-		
 		dmModel = new DefaultTableModel(allData, columnNames);
 	}
 

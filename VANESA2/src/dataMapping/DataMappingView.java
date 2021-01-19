@@ -380,7 +380,7 @@ public class DataMappingView extends JDialog implements Observer{
 		Map<String, List<String>> mergeMap = dmm.getMergeMap();
 		Map<String, List<String>> dups = dmm.getDuplicatedList();
 		// the new data for the table
-		Vector<Object> allData = new Vector<Object>();
+		Vector<Vector<Object>> allData = new Vector<Vector<Object>>();
 		Vector<String> columnNames = new Vector<String>();
 
 		columnNames.add("Network Label");
