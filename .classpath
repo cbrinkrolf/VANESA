@@ -36,7 +36,6 @@
 	<classpathentry kind="lib" path="packages/prettyFormula/batik-awt-util.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/batik-css.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/batik-dom.jar"/>
-	<classpathentry kind="lib" path="packages/prettyFormula/batik-ext.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/batik-gui-util.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/batik-gvt.jar"/>
 	<classpathentry kind="lib" path="packages/prettyFormula/batik-parser.jar"/>
@@ -75,11 +74,11 @@
 	<classpathentry kind="lib" path="packages/TimingFramework-1.0.jar"/>
 	<classpathentry kind="lib" path="packages/neethi-2.0.4.jar"/>
 	<classpathentry kind="lib" path="packages/colt-1.2.0.jar"/>
-	<classpathentry kind="lib" path="packages/XmlSchema-1.4.2.jar"/>
 	<classpathentry kind="lib" path="packages/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="packages/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="packages/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="packages/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="packages/XmlSchema-1.4.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
