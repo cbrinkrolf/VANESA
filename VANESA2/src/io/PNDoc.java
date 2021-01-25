@@ -160,7 +160,7 @@ public class PNDoc {
 				+ "\\pagenumbering{arabic}\n"
 				+ "\\begin{figure}[!ht]\n"
 				+ "\\centering\n"
-				+ "\\includegraphics[width=1.0\\textwidth]{export.pdf}\n"
+				+ "\\includegraphics{export}"
 				+ "\\caption{Picture of Network}\n"
 				+ "\\end{figure}\n"
 				+ "\\newpage\n"

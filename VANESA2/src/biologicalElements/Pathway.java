@@ -1,6 +1,9 @@
 package biologicalElements;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -24,7 +28,13 @@ import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
+import edu.uci.ics.jung.algorithms.layout.StaticLayout;
+import edu.uci.ics.jung.visualization.BasicVisualizationServer;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.VisualizationImageServer;
+import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import graph.ChangedFlags;
+import graph.GraphInstance;
 import graph.gui.Boundary;
 import graph.gui.CoarseNodeDeleteDialog;
 import graph.gui.EdgeDeleteDialog;
@@ -32,6 +42,7 @@ import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
 import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.Circle;
+import graph.layouts.GraphCenter;
 import gui.GraphTab;
 import gui.MainWindow;
 import gui.MyPopUp;
@@ -1570,5 +1581,199 @@ public class Pathway implements Cloneable {
 	
 	public boolean isHeadless(){
 		return this.headless;
+	}
+	
+	public VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> prepareGraphToPrint() {
+
+		MyGraph mg =getGraph();
+		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> v = getGraph()
+				.getVisualizationViewer();
+		// System.out.println(v.getGraphLayout().getClass());
+		// v.setBackground(Color.white);
+		if (!(mg.getLayout() instanceof StaticLayout)) {
+			mg.changeToStaticLayout();
+		}
+		BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = new BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+				mg.getLayout());
+		// System.out.println(vv.getGraphLayout().getSize());
+		VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = new VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+				mg.getLayout(), mg.getLayout().getSize());
+		wvv.setBackground(Color.white);
+		for (int i = 0; i < v.getPreRenderers().size(); i++) {
+			wvv.addPreRenderPaintable(v.getPreRenderers().get(i));
+		}
+
+		// wvv.addPostRenderPaintable(paintable);
+
+		wvv.addPostRenderPaintable(new Paintable() {
+
+			@Override
+			public boolean useTransform() {
+				return false;
+			}
+
+			@Override
+			public void paint(Graphics g) {
+
+				Iterator<BiologicalNodeAbstract> it = getAllGraphNodes().iterator();
+
+				Place p;
+				BiologicalNodeAbstract bna;
+				while (it.hasNext()) {
+					bna = it.next();
+					if (bna instanceof Place) {
+						p = (Place) bna;
+						int x1 = (int) (p.getShape().getBounds2D().getMaxX() - p.getShape().getBounds2D().getMinX());
+						// int y1 = (int) (p.getShape().getBounds2D().getMaxY()
+						// - p.getShape()
+						// .getBounds2D().getMinY());
+
+						// double x1 =
+						// c.getBounds().getMaxX()-c.getBounds().getMinX();
+						// double y1 =
+						// c.getBounds().getMaxY()-c.getBounds().getMinY();
+
+						boolean discrete = false;
+						String tokens = p.getToken() + "";
+						if (p.isDiscrete()) {
+							tokens = (int) p.getToken() + "";
+							discrete = true;
+						}
+
+						if (p.hasRef() && p.getRef() instanceof Place) {
+							tokens = ((Place) p.getRef()).getToken() + "";
+							if (((Place) p.getRef()).isDiscrete()) {
+								tokens = (int) ((Place) p.getRef()).getToken() + "";
+								discrete = true;
+							}
+						}
+
+						int xpos;
+
+						Point2D point = v.getGraphLayout().apply(p);
+
+						// Point2D point = pw.getGraph().getVertexLocation(p);//
+						// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
+
+						// g2d.drawString("b",(int)((p.getX())),
+						// (int)((p.getY())*scale));
+						Point2D p1inv = v.getRenderContext().getMultiLayerTransformer().transform(point);
+
+						if (discrete) {
+							xpos = new Double(p1inv.getX() - x1 + 19 - 5 * ((double) tokens.length() / 2)).intValue();
+						} else {
+							xpos = new Double(p1inv.getX() - x1 + 21 - 5 * ((double) tokens.length() / 2)).intValue();
+						}
+
+						g.setColor(Color.BLACK);
+						int y = (int) p1inv.getY();
+						// g2.draw(AffineTransform.getScaleInstance(p.getNodesize(),
+						// p.getNodesize()).createTransformedShape(s));
+
+						// g.getFont()
+						// g.setFont(new Font("Arial",Font.PLAIN,12));
+						// g2.draw(s);
+						g.drawString(tokens, xpos, y + 7);
+					}
+				}
+			}
+		});
+
+		wvv.setBackground(Color.white);
+		// int width = v.getSize().width;
+		// int height = v.getSize().height;
+		// wvv.setDoubleBuffered(false);
+		// v.setDoubleBuffered(false);
+		// vv.setDoubleBuffered(false);
+
+		wvv.setRenderContext(v.getRenderContext());
+
+		double scaleV = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
+		double scaleL = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
+		// wvv.getRenderContext().setLabelOffset(-10);
+		// System.out.println("offset:
+		// "+wvv.getRenderContext().getLabelOffset());
+		double scale;
+		if (scaleV < 1) {
+			scale = scaleV;
+			// System.out.println("kleiner");
+			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
+			// scaleV, wvv.getCenter());
+			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(1,
+			// 1, wvv.getCenter());
+		} else {
+			scale = scaleL;
+			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
+			// scaleV, wvv.getCenter());
+			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(scaleL,
+			// scaleL, wvv.getCenter());
+		}
+		// System.out.println(scaleL);
+		// System.out.println(scale);
+		GraphCenter gc = new GraphCenter(mg);
+		double width = gc.getWidth();
+		double height = gc.getHeight();
+
+		if (width > height) {
+			width = width * scale;
+		} else {
+			height = height * scale;
+		}
+
+		// System.out.println("widht: "+width);
+		// System.out.println("height: "+height);
+		// System.out.println("minx:"+gc.getMinX());
+		// System.out.println("maxX:" + gc.getMaxX());
+		// System.out.println("miny:"+gc.getMinY());
+
+		Point2D p1inv = v.getRenderContext().getMultiLayerTransformer()
+				.transform(new Point2D.Double(gc.getMinX() + gc.getWidth(), gc.getMinY() + gc.getHeight()));
+
+		wvv.setBounds(0, 0, (int) p1inv.getX() + 50, (int) p1inv.getY() + 50);
+		// wvv.setBounds((int) (gc.getMinX()), (int) (gc.getMinY()), (int)
+		// (width)+50, (int) (height)+50);
+		// System.out.println("minx:"+gc.getMinX());
+		// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
+		// scaleV, wvv.getCenter());
+		// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(scaleL,
+		// scaleL, wvv.getCenter());
+
+		// Properties p = new Properties();
+		// p.setProperty("PageSize", "A5");
+		// p.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, "false");
+
+		/*
+		 * try { SVGGraphics2D g; g = new SVGGraphics2D(new File("Output.svg"), new
+		 * Dimension((int)(width), (int)(height))); // g.setProperties(p);
+		 * g.startExport(); wvv.print(g); g.endExport(); } catch (IOException e1) { //
+		 * e1.printStackTrace(); }
+		 */
+
+		// System.out.println(export.getSelectionValues());
+		// wvv.setDoubleBuffered(true);
+		// vv.setDoubleBuffered(true);
+		// v.setDoubleBuffered(true);
+
+		/*
+		 * Properties p = new Properties(); p.setProperty("PageSize", "A5");
+		 * VectorGraphics g; try { g = new SVGGraphics2D(new File("Output.svg"), new
+		 * Dimension(400, 300)); g.setBackground(Color.WHITE); g.setProperties(p);
+		 * g.startExport(); //vis.paintAll(g); g.endExport(); } catch (IOException e1) {
+		 * e1.printStackTrace(); }
+		 */
+
+		Map<Key, Object> map = wvv.getRenderingHints();
+
+		map.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+		map.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		map.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		map.put(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+		map.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+		map.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		map.put(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		map.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+		map.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+
+		return wvv;
 	}
 }

@@ -1,8 +1,8 @@
 package io;
 
-import java.awt.Graphics2D;
+import java.awt.Component;
 import java.awt.HeadlessException;
-import java.awt.image.BufferedImage;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,12 +11,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.batik.transcoder.TranscoderException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang3.SystemUtils;
@@ -37,6 +36,7 @@ import gui.MainWindow;
 import gui.MyPopUp;
 import io.graphML.SaveGraphML;
 import moOutput.MOoutput;
+import util.ImageExport;
 import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.PNMLOutput;
 import xmlOutput.sbml.VAMLoutput;
@@ -55,6 +55,7 @@ public class SaveDialog {
 	private boolean pngBool = true;
 	private boolean yamlBool = true;
 	private boolean ymlBool = true;
+	private boolean svgBool = true;
 
 	private String fileFormat;
 	private File file;
@@ -89,10 +90,13 @@ public class SaveDialog {
 	private String pngDescription = "PNG Image (*.png)";
 	private String png = "png";
 
+	private String svgDescription = "SVG Image (*.svg)";
+	private String svg = "svg";
+
 	private String yamlDescription = "YAML File (*.yaml)";
 	private String yaml = "yaml";
 
-	private JPanel p = null;
+	private Component c = null;
 	private JFileChooser chooser;
 
 	/*
@@ -110,10 +114,11 @@ public class SaveDialog {
 	public static int FORMAT_CSV = 256;
 	public static int FORMAT_PNG = 512;
 	public static int FORMAT_YAML = 1024;
+	public static int FORMAT_SVG = 2048;
 
-	public SaveDialog(int format, JPanel p) {
+	public SaveDialog(int format, Component c) {
 
-		this.p = p;
+		this.c = c;
 
 		// Get working directory
 		String pathWorkingDirectory = null;
@@ -134,6 +139,7 @@ public class SaveDialog {
 		pnmlBool = (format & FORMAT_PNML) == FORMAT_PNML;
 		csvBool = (format & FORMAT_CSV) == FORMAT_CSV;
 		pngBool = (format & FORMAT_PNG) == FORMAT_PNG;
+		svgBool = (format & FORMAT_SVG) == FORMAT_SVG;
 		yamlBool = (format & FORMAT_YAML) == FORMAT_YAML;
 
 		if (ConnectionSettings.getFileDirectory() != null) {
@@ -155,33 +161,43 @@ public class SaveDialog {
 
 		chooser.setAcceptAllFileFilterUsed(false);
 
-		if (sbmlBool)
+		if (sbmlBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(sbml, sbmlDescription));
-
+		}
 		/*
-		 * if (itxtBool) chooser.addChoosableFileFilter(new
-		 * MyFileFilter(irinaTxt, irinaDescription));
+		 * if (itxtBool) chooser.addChoosableFileFilter(new MyFileFilter(irinaTxt,
+		 * irinaDescription));
 		 */
-		if (moBool)
+		if (moBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(mo, moDescription));
-
-		if (graphMLBool)
+		}
+		if (graphMLBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(graphMl, graphMlDescription));
-
-		if (gonBool)
+		}
+		if (gonBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(csml, csmlDescription));
-		if (pnmlBool)
+		}
+		if (pnmlBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(pnml, pnmlDescription));
-		if (vaBool)
+		}
+		if (vaBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(vaml, vamlDescription));
-		if (txtBool)
+		}
+		if (txtBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(txt, txtDescription));
-		if (csvBool)
+		}
+		if (csvBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(csv, csvDescription));
-		if (pngBool)
+		}
+		if (pngBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(png, pngDescription));
-		if (yamlBool)
+		}
+		if (svgBool) {
+			chooser.addChoosableFileFilter(new MyFileFilter(svg, svgDescription));
+		}
+		if (yamlBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(yaml, yamlDescription));
+		}
 
 		int option = chooser.showSaveDialog(MainWindow.getInstance());
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -219,7 +235,6 @@ public class SaveDialog {
 					e.printStackTrace();
 				}
 			}
-
 		}
 	}
 
@@ -257,7 +272,7 @@ public class SaveDialog {
 			if (out.length() > 0) {
 				MyPopUp.getInstance().show("Error", out);
 			} else {
-				//System.out.println(file.getName());
+				// System.out.println(file.getName());
 				GraphContainer.getInstance().renamePathway(GraphInstance.getPathwayStatic(), file.getName());
 				GraphInstance.getPathwayStatic().setName(file.getName());
 				GraphInstance.getPathwayStatic().setTitle(file.getName());
@@ -373,15 +388,25 @@ public class SaveDialog {
 			}
 		} else if (fileFormat.equals(pngDescription)) {
 			getCorrectFile(png);
-			if (p != null) {
+			if (c != null) {
 				try {
-					BufferedImage bi = new BufferedImage(p.getWidth(), p.getHeight(), BufferedImage.TYPE_INT_BGR);
-					Graphics2D graphics = bi.createGraphics();
-					p.paint(graphics);
-					graphics.dispose();
-					ImageIO.write(bi, "png", file);
-					MyPopUp.getInstance().show("PNG", "Picture saved successfully!");
+					ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file,
+							ImageExport.IMAGE_TYPE_PNG);
 				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (TranscoderException e) {
+					e.printStackTrace();
+				}
+			}
+		} else if (fileFormat.equals(svgDescription)) {
+			getCorrectFile(svg);
+			if (c != null) {
+				try {
+					ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file,
+							ImageExport.IMAGE_TYPE_SVG);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (TranscoderException e) {
 					e.printStackTrace();
 				}
 			}
