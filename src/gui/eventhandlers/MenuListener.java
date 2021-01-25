@@ -1,39 +1,96 @@
 package gui.eventhandlers;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.RenderingHints.Key;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PipedWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.apps.rasterizer.SVGConverter;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.DocumentLoader;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.UserAgent;
+import org.apache.batik.bridge.UserAgentAdapter;
+import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
+import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
+import org.apache.batik.ext.awt.image.rendered.BufferedImageCachableRed;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.gvt.ShapeNode;
+import org.apache.batik.svggen.GenericImageHandler;
+import org.apache.batik.svggen.ImageHandler;
+import org.apache.batik.svggen.ImageHandlerPNGEncoder;
 import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.TranscodingHints;
+import org.apache.batik.transcoder.image.ImageTranscoder;
+import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.batik.util.SVGConstants;
+import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.SystemUtils;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.svg.SVGDocument;
+
+import com.orsonpdf.GraphicsStream;
+import com.orsonpdf.PDFDocument;
+import com.orsonpdf.PDFGraphics2D;
+import com.orsonpdf.PDFObject;
+import com.orsonpdf.Page;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -104,6 +161,7 @@ import transformation.Rule;
 import transformation.RuleManager;
 import transformation.Transformator;
 import transformation.gui.RuleManagementWindow;
+import util.ImageExport;
 import util.KineticBuilder;
 
 public class MenuListener implements ActionListener {
@@ -956,19 +1014,38 @@ public class MenuListener implements ActionListener {
 				e2.printStackTrace();
 			}
 
-			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
+			Pathway pw = graphInstance.getPathway();
+			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = pw.prepareGraphToPrint();
 
-			/*
-			 * PDFGraphics2D pdf; try { pdf = new PDFGraphics2D(new File(docDir +
-			 * "export.pdf"), new Dimension(wvv.getWidth(), wvv.getHeight()));
-			 * pdf.startExport(); wvv.print(pdf); pdf.endExport(); } catch
-			 * (FileNotFoundException e2) { e2.printStackTrace(); }
-			 */
+			try {
+
+				Dimension size = wvv.getSize();
+				BufferedImage image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_BYTE_INDEXED);
+				Graphics2D grp = image.createGraphics();
+				wvv.paint(grp);
+
+				File outfile = new File(docDir + "export.png");
+				OutputStream fos = new FileOutputStream(outfile);
+
+				PNGEncodeParam param = PNGEncodeParam.getDefaultEncodeParam(image);
+
+				PNGImageEncoder encoder = new PNGImageEncoder(fos, param);
+				try {
+					encoder.encode(image);
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				} finally {
+					fos.close();
+				}
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 
 			Thread thread = new Thread() {
 				public void run() {
 					try {
-						while (!new File(docDir + "export.pdf").exists()) {
+						while (!new File(docDir + "export.png").exists()) {
 							System.out.println("sleep");
 							sleep(100);
 						}
@@ -1115,22 +1192,14 @@ public class MenuListener implements ActionListener {
 
 								if (bna instanceof Enzyme) {
 									p = graphInstance.getPathway().getGraph().getVertexLocation(bna); //
-									inv = //
-											graphInstance.getPathway().getGraph().getVisualizationViewer()
-													.getRenderContext().getMultiLayerTransformer().inverseTransform(p); // inv.setLocation(inv.getX()
-																														// +
-																														// offset,
-																														// //
-																														// inv.getY());
-
-									// p = //
+									inv = graphInstance.getPathway().getGraph().getVisualizationViewer()
+											.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
 									graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext()
 											.getMultiLayerTransformer().transform(inv);
 									vv.getModel().getGraphLayout().setLocation(bna,
 											new Point2D.Double(p.getX() + offset, p.getY()));
 								}
 							}
-
 							try {
 								Thread.sleep(100);
 							} catch (InterruptedException ex) {
@@ -1144,26 +1213,19 @@ public class MenuListener implements ActionListener {
 			}
 
 		} else if ("graphPicture".equals(event)) {
-			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = this.prepareGraphToPrint();
-			// ExportDialog export = new ExportDialog();
-			// TODO reimplement svg/png export
-			try {
-				this.saveToSVG(wvv, new File("test.svg"));
-			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			Pathway pw = graphInstance.getPathway();
+			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = pw.prepareGraphToPrint();
+			
+			if (con.containsPathway()) {
+				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+					new SaveDialog(SaveDialog.FORMAT_PNG+SaveDialog.FORMAT_SVG, wvv);
+
+				} else {
+					MyPopUp.getInstance().show("Error", "Please create a network before.");
+				}
+			} else {
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-			// export.setUserProperties(p);
-			// System.out.println(export.getInitialValue());
-
-			// export.setWantsInput(true);
-			// export.setInitialSelectionValue(5);
-
-			// export.showExportDialog(MainWindow.getInstance(), "Export graph as ...", wvv,
-			// "export");
 		} else if ("wuff".equals(event)) {
 			// System.out.println("clicked");
 			if (con.containsPathway()) {
@@ -1208,191 +1270,6 @@ public class MenuListener implements ActionListener {
 		}
 	}
 
-	private VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> prepareGraphToPrint() {
-
-		// System.out.println("shake it");
-		// String latexFormula = FormulaParser.parseToLatex(formula);
-		// TeXIcon icon = FormulaParser.getTeXIcon(latexFormula);
-		GraphInstance graphInstance = new GraphInstance();
-		Pathway pw = graphInstance.getPathway();
-		MyGraph mg = pw.getGraph();
-		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> v = pw.getGraph()
-				.getVisualizationViewer();
-		// System.out.println(v.getGraphLayout().getClass());
-		// v.setBackground(Color.white);
-		if (!(mg.getLayout() instanceof StaticLayout)) {
-			graphInstance.getPathway().getGraph().changeToStaticLayout();
-		}
-		BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = new BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
-				pw.getGraph().getLayout());
-		// System.out.println(vv.getGraphLayout().getSize());
-		VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = new VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
-				pw.getGraph().getLayout(), pw.getGraph().getLayout().getSize());
-		wvv.setBackground(Color.white);
-		for (int i = 0; i < v.getPreRenderers().size(); i++) {
-			wvv.addPreRenderPaintable(v.getPreRenderers().get(i));
-		}
-
-		// wvv.addPostRenderPaintable(paintable);
-
-		wvv.addPostRenderPaintable(new Paintable() {
-
-			@Override
-			public boolean useTransform() {
-				return false;
-			}
-
-			@Override
-			public void paint(Graphics g) {
-
-				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
-
-				Place p;
-				BiologicalNodeAbstract bna;
-				while (it.hasNext()) {
-					bna = it.next();
-					if (bna instanceof Place) {
-						p = (Place) bna;
-						int x1 = (int) (p.getShape().getBounds2D().getMaxX() - p.getShape().getBounds2D().getMinX());
-						// int y1 = (int) (p.getShape().getBounds2D().getMaxY()
-						// - p.getShape()
-						// .getBounds2D().getMinY());
-
-						// double x1 =
-						// c.getBounds().getMaxX()-c.getBounds().getMinX();
-						// double y1 =
-						// c.getBounds().getMaxY()-c.getBounds().getMinY();
-
-						boolean discrete = false;
-						String tokens = p.getToken() + "";
-						if (p.isDiscrete()) {
-							tokens = (int) p.getToken() + "";
-							discrete = true;
-						}
-
-						if (p.hasRef() && p.getRef() instanceof Place) {
-							tokens = ((Place) p.getRef()).getToken() + "";
-							if (((Place) p.getRef()).isDiscrete()) {
-								tokens = (int) ((Place) p.getRef()).getToken() + "";
-								discrete = true;
-							}
-						}
-
-						int xpos;
-
-						Point2D point = v.getGraphLayout().apply(p);
-
-						// Point2D point = pw.getGraph().getVertexLocation(p);//
-						// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
-
-						// g2d.drawString("b",(int)((p.getX())),
-						// (int)((p.getY())*scale));
-						Point2D p1inv = v.getRenderContext().getMultiLayerTransformer().transform(point);
-
-						if (discrete) {
-							xpos = new Double(p1inv.getX() - x1 + 19 - 5 * ((double) tokens.length() / 2)).intValue();
-						} else {
-							xpos = new Double(p1inv.getX() - x1 + 21 - 5 * ((double) tokens.length() / 2)).intValue();
-						}
-
-						g.setColor(Color.BLACK);
-						int y = (int) p1inv.getY();
-						// g2.draw(AffineTransform.getScaleInstance(p.getNodesize(),
-						// p.getNodesize()).createTransformedShape(s));
-
-						// g.getFont()
-						// g.setFont(new Font("Arial",Font.PLAIN,12));
-						// g2.draw(s);
-						g.drawString(tokens, xpos, y + 7);
-					}
-				}
-			}
-		});
-
-		wvv.setBackground(Color.white);
-		// int width = v.getSize().width;
-		// int height = v.getSize().height;
-		// wvv.setDoubleBuffered(false);
-		// v.setDoubleBuffered(false);
-		// vv.setDoubleBuffered(false);
-
-		wvv.setRenderContext(v.getRenderContext());
-
-		double scaleV = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
-		double scaleL = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
-		// wvv.getRenderContext().setLabelOffset(-10);
-		// System.out.println("offset:
-		// "+wvv.getRenderContext().getLabelOffset());
-		double scale;
-		if (scaleV < 1) {
-			scale = scaleV;
-			// System.out.println("kleiner");
-			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
-			// scaleV, wvv.getCenter());
-			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(1,
-			// 1, wvv.getCenter());
-		} else {
-			scale = scaleL;
-			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
-			// scaleV, wvv.getCenter());
-			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(scaleL,
-			// scaleL, wvv.getCenter());
-		}
-		// System.out.println(scaleL);
-		// System.out.println(scale);
-		GraphCenter gc = new GraphCenter(mg);
-		double width = gc.getWidth();
-		double height = gc.getHeight();
-
-		if (width > height) {
-			width = width * scale;
-		} else {
-			height = height * scale;
-		}
-
-		// System.out.println("widht: "+width);
-		// System.out.println("height: "+height);
-		// System.out.println("minx:"+gc.getMinX());
-		// System.out.println("maxX:" + gc.getMaxX());
-		// System.out.println("miny:"+gc.getMinY());
-
-		Point2D p1inv = v.getRenderContext().getMultiLayerTransformer()
-				.transform(new Point2D.Double(gc.getMinX() + gc.getWidth(), gc.getMinY() + gc.getHeight()));
-
-		wvv.setBounds(0, 0, (int) p1inv.getX() + 50, (int) p1inv.getY() + 50);
-		// wvv.setBounds((int) (gc.getMinX()), (int) (gc.getMinY()), (int)
-		// (width)+50, (int) (height)+50);
-		// System.out.println("minx:"+gc.getMinX());
-		// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
-		// scaleV, wvv.getCenter());
-		// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(scaleL,
-		// scaleL, wvv.getCenter());
-
-		// Properties p = new Properties();
-		// p.setProperty("PageSize", "A5");
-		// p.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, "false");
-
-		/*
-		 * try { SVGGraphics2D g; g = new SVGGraphics2D(new File("Output.svg"), new
-		 * Dimension((int)(width), (int)(height))); // g.setProperties(p);
-		 * g.startExport(); wvv.print(g); g.endExport(); } catch (IOException e1) { //
-		 * e1.printStackTrace(); }
-		 */
-
-		// System.out.println(export.getSelectionValues());
-		// wvv.setDoubleBuffered(true);
-		// vv.setDoubleBuffered(true);
-		// v.setDoubleBuffered(true);
-
-		/*
-		 * Properties p = new Properties(); p.setProperty("PageSize", "A5");
-		 * VectorGraphics g; try { g = new SVGGraphics2D(new File("Output.svg"), new
-		 * Dimension(400, 300)); g.setBackground(Color.WHITE); g.setProperties(p);
-		 * g.startExport(); //vis.paintAll(g); g.endExport(); } catch (IOException e1) {
-		 * e1.printStackTrace(); }
-		 */
-		return wvv;
-	}
 
 	private double[][] initArray(int m, int n) {
 		double[][] array = new double[m][n];
@@ -1462,34 +1339,4 @@ public class MenuListener implements ActionListener {
 		c = new DenseDoubleMatrix2D(cMatrix.getData());
 	}
 
-	private void saveToSVG(VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv, File file)
-			throws FileNotFoundException, IOException {
-		// String latexFormula = FormulaParser.parseToLatex(formula);
-		// TeXIcon icon = FormulaParser.getTeXIcon(latexFormula);
-
-		Document doc = SVGDOMImplementation.getDOMImplementation()
-				.createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
-
-		SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(doc);
-
-		SVGGraphics2D g2 = new SVGGraphics2D(ctx, true);
-		g2.setSVGCanvasSize(new Dimension(wvv.getBounds().width, wvv.getBounds().height));
-
-		Map<Key, Object> map = wvv.getRenderingHints();
-		map.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
-		// map.put(RenderingHints.KEY_TEXT_ANTIALIASING,
-		// map.get(RenderingHints.KEY_ANTIALIASING) );
-		wvv.setRenderingHints(map);
-
-		// wvv.setRenderingHints(new HashMap());
-		wvv.paint(g2);
-
-		// icon.paintIcon(null, g2, 0, 0);
-
-		try (FileOutputStream svgs = new FileOutputStream(file)) {
-			Writer out = new OutputStreamWriter(svgs, "UTF-8");
-			g2.stream(out, false);
-			svgs.flush();
-		}
-	}
 }
