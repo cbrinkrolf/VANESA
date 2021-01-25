@@ -1593,8 +1593,8 @@ public class Pathway implements Cloneable {
 		if (!(mg.getLayout() instanceof StaticLayout)) {
 			mg.changeToStaticLayout();
 		}
-		BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = new BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
-				mg.getLayout());
+		//BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = new BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+		//		mg.getLayout());
 		// System.out.println(vv.getGraphLayout().getSize());
 		VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = new VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				mg.getLayout(), mg.getLayout().getSize());
@@ -1660,9 +1660,9 @@ public class Pathway implements Cloneable {
 						Point2D p1inv = v.getRenderContext().getMultiLayerTransformer().transform(point);
 
 						if (discrete) {
-							xpos = new Double(p1inv.getX() - x1 + 19 - 5 * ((double) tokens.length() / 2)).intValue();
+							xpos = Double.valueOf(p1inv.getX() - x1 + 19 - 5 * ((double) tokens.length() / 2)).intValue();
 						} else {
-							xpos = new Double(p1inv.getX() - x1 + 21 - 5 * ((double) tokens.length() / 2)).intValue();
+							xpos = Double.valueOf(p1inv.getX() - x1 + 21 - 5 * ((double) tokens.length() / 2)).intValue();
 						}
 
 						g.setColor(Color.BLACK);

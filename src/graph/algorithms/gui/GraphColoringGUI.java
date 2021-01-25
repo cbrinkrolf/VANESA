@@ -66,19 +66,15 @@ public class GraphColoringGUI implements ActionListener {
 	private JButton resetcolorbutton;
 	private JButton degreedistributionbutton;
 
-	private String[] algorithmNamesRemote = { "Node Degree", "Cycles (r)",
-			"Cliques (r)", "FRlayout (r)", "Spectral apsp (r)",
-			"Multilayout (remote)", "MDS forcelayout (r)",
-			"APSP Clustering occ (r)", "APSP Clustering score (r)",
-			"DCB clusters(r)", "DCB grid(r)" };
-	private String[] algorithmNames = {"Node Degree"};
-	
+	private String[] algorithmNamesRemote = { "Node Degree", "Cycles (r)", "Cliques (r)", "FRlayout (r)",
+			"Spectral apsp (r)", "Multilayout (remote)", "MDS forcelayout (r)", "APSP Clustering occ (r)",
+			"APSP Clustering score (r)", "DCB clusters(r)", "DCB grid(r)" };
+	private String[] algorithmNames = { "Node Degree" };
+
 	private int currentalgorithmindex = 0;
 
-	private final int NODE_DEGREE = 0, CYCLES = 1, CLIQUES = 2, FRLAYOUT = 3,
-			SPECTRAL = 4, MULTILAYOUT = 5, MDSFLAYOUT = 6,
-			APSPCLUSTERING_OCC = 7, APSPCLUSTERING_SCORE = 8, DCB_CLUSTERS = 9,
-			DCB_GRID = 10;
+	private final int NODE_DEGREE = 0, CYCLES = 1, CLIQUES = 2, FRLAYOUT = 3, SPECTRAL = 4, MULTILAYOUT = 5,
+			MDSFLAYOUT = 6, APSPCLUSTERING_OCC = 7, APSPCLUSTERING_SCORE = 8, DCB_CLUSTERS = 9, DCB_GRID = 10;
 
 	private ImageIcon[] icons;
 
@@ -118,11 +114,9 @@ public class GraphColoringGUI implements ActionListener {
 	public GraphColoringGUI() {
 		// set icon paths
 		ImagePath imagepath = ImagePath.getInstance();
-		ImageIcon[] tmpset = {
-				new ImageIcon(imagepath.getPath("icon_colorrange_bluesea.png")),
+		ImageIcon[] tmpset = { new ImageIcon(imagepath.getPath("icon_colorrange_bluesea.png")),
 				new ImageIcon(imagepath.getPath("icon_colorrange_skyline.png")),
-				new ImageIcon(
-						imagepath.getPath("icon_colorrange_darkmiddle.png")),
+				new ImageIcon(imagepath.getPath("icon_colorrange_darkmiddle.png")),
 				new ImageIcon(imagepath.getPath("icon_colorrange_dark.png")),
 				new ImageIcon(imagepath.getPath("icon_colorrange_rainbow.png")) };
 		icons = tmpset;
@@ -135,7 +129,7 @@ public class GraphColoringGUI implements ActionListener {
 
 		bg = new ButtonGroup();
 
-		if(mw.developer == true)
+		if (MainWindow.developer == true)
 			chooseAlgorithm = new JComboBox<String>(algorithmNamesRemote);
 		else
 			chooseAlgorithm = new JComboBox<>(algorithmNames);
@@ -190,11 +184,9 @@ public class GraphColoringGUI implements ActionListener {
 			// get current node degree values
 			while (itn.hasNext()) {
 				bna = itn.next();
-				coloring.put(bna,
-						(double) np.getNodeDegree(np.getNodeAssignment(bna)));
+				coloring.put(bna, (double) np.getNodeDegree(np.getNodeAssignment(bna)));
 				// saving
-				bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
-						NodeAttributeNames.NODE_DEGREE,
+				bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY, NodeAttributeNames.NODE_DEGREE,
 						np.getNodeDegree(np.getNodeAssignment(bna)));
 
 			}
@@ -222,8 +214,8 @@ public class GraphColoringGUI implements ActionListener {
 			// compute values over RMI
 			try {
 				helper = new ComputeCallback(this);
-				ClusterComputeThread rmicycles = new ClusterComputeThread(
-						JobTypes.CYCLE_JOB_OCCURRENCE, jobinformation, helper);
+				ClusterComputeThread rmicycles = new ClusterComputeThread(JobTypes.CYCLE_JOB_OCCURRENCE, jobinformation,
+						helper);
 				rmicycles.start();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -255,8 +247,8 @@ public class GraphColoringGUI implements ActionListener {
 			// compute values over RMI
 			try {
 				helper = new ComputeCallback(this);
-				ClusterComputeThread rmicliques = new ClusterComputeThread(
-						JobTypes.CLIQUE_JOB_OCCURRENCE, jobinformation, helper);
+				ClusterComputeThread rmicliques = new ClusterComputeThread(JobTypes.CLIQUE_JOB_OCCURRENCE,
+						jobinformation, helper);
 				rmicliques.start();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -310,8 +302,7 @@ public class GraphColoringGUI implements ActionListener {
 					edgeindex += 2;
 				}
 			}
-			System.out.println("number of real edges: " + edgeindex
-					+ "\n size: " + mg.getAllEdges().size());
+			System.out.println("number of real edges: " + edgeindex + "\n size: " + mg.getAllEdges().size());
 
 			edgearray = new int[edgeindex * 2];
 			edgeindex = 0;
@@ -408,8 +399,8 @@ public class GraphColoringGUI implements ActionListener {
 			// compute values over RMI
 			try {
 				helper = new ComputeCallback(this);
-				ClusterComputeThread rmifrlayout = new ClusterComputeThread(
-						JobTypes.LAYOUT_FR_JOB, jobinformation, helper);
+				ClusterComputeThread rmifrlayout = new ClusterComputeThread(JobTypes.LAYOUT_FR_JOB, jobinformation,
+						helper);
 				rmifrlayout.start();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -490,8 +481,8 @@ public class GraphColoringGUI implements ActionListener {
 			// compute values over RMI
 			try {
 				helper = new ComputeCallback(this);
-				ClusterComputeThread rmimultilayout = new ClusterComputeThread(
-						JobTypes.LAYOUT_MULTILEVEL_JOB, jobinformation, helper);
+				ClusterComputeThread rmimultilayout = new ClusterComputeThread(JobTypes.LAYOUT_MULTILEVEL_JOB,
+						jobinformation, helper);
 				rmimultilayout.start();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -525,8 +516,8 @@ public class GraphColoringGUI implements ActionListener {
 			oos.close();
 			jobinformation = baos.toByteArray();
 
-			ClusterComputeThread rmispectral = new ClusterComputeThread(
-					JobTypes.SPECTRAL_CLUSTERING_JOB, jobinformation, helper);
+			ClusterComputeThread rmispectral = new ClusterComputeThread(JobTypes.SPECTRAL_CLUSTERING_JOB,
+					jobinformation, helper);
 			rmispectral.start();
 
 			oos.close();
@@ -601,8 +592,8 @@ public class GraphColoringGUI implements ActionListener {
 			// compute values over RMI
 			try {
 				helper = new ComputeCallback(this);
-				ClusterComputeThread rmimdsflayout = new ClusterComputeThread(
-						JobTypes.LAYOUT_MDS_FR_JOB, jobinformation, helper);
+				ClusterComputeThread rmimdsflayout = new ClusterComputeThread(JobTypes.LAYOUT_MDS_FR_JOB,
+						jobinformation, helper);
 				rmimdsflayout.start();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -710,14 +701,12 @@ public class GraphColoringGUI implements ActionListener {
 			try {
 				helper = new ComputeCallback(this);
 				if (currentalgorithmindex == DCB_CLUSTERS) {
-					ClusterComputeThread rmiapspclustering = new ClusterComputeThread(
-							JobTypes.DCB_CLUSTERING_CLUSTERS, jobinformation,
-							helper);
+					ClusterComputeThread rmiapspclustering = new ClusterComputeThread(JobTypes.DCB_CLUSTERING_CLUSTERS,
+							jobinformation, helper);
 					rmiapspclustering.start();
 				} else if (currentalgorithmindex == DCB_GRID) {
-					ClusterComputeThread rmiapspclustering = new ClusterComputeThread(
-							JobTypes.DCB_CLUSTERING_GRID, jobinformation,
-							helper);
+					ClusterComputeThread rmiapspclustering = new ClusterComputeThread(JobTypes.DCB_CLUSTERING_GRID,
+							jobinformation, helper);
 					rmiapspclustering.start();
 				}
 			} catch (RemoteException e) {
@@ -799,13 +788,12 @@ public class GraphColoringGUI implements ActionListener {
 			}
 
 			/*
-			 * PrintWriter out = new PrintWriter("GBM.exp","UTF-8");
-			 * out.println(nodes); out.println(6); for (int i = 0; i < nodes;
-			 * i++) { String line = ""; gnode =
-			 * np.getNodeAssignmentbackwards(i); // patient data export for (int
-			 * p = 1; p <= 6; p++) { att = gnode.getNodeAttributeByName("GBM" +
-			 * p); if (att != null) { if(p<6) line+= att.getDoublevalue()+"\t";
-			 * else line+= att.getDoublevalue(); } }
+			 * PrintWriter out = new PrintWriter("GBM.exp","UTF-8"); out.println(nodes);
+			 * out.println(6); for (int i = 0; i < nodes; i++) { String line = ""; gnode =
+			 * np.getNodeAssignmentbackwards(i); // patient data export for (int p = 1; p <=
+			 * 6; p++) { att = gnode.getNodeAttributeByName("GBM" + p); if (att != null) {
+			 * if(p<6) line+= att.getDoublevalue()+"\t"; else line+= att.getDoublevalue(); }
+			 * }
 			 * 
 			 * if(line.length()>0){ out.println(i+"\t"+line); } }
 			 * 
@@ -826,13 +814,11 @@ public class GraphColoringGUI implements ActionListener {
 				helper = new ComputeCallback(this);
 				if (currentalgorithmindex == APSPCLUSTERING_OCC) {
 					ClusterComputeThread rmiapspclustering = new ClusterComputeThread(
-							JobTypes.APSP_CLUSTERING_JOB_OCCURENCE,
-							jobinformation, helper);
+							JobTypes.APSP_CLUSTERING_JOB_OCCURENCE, jobinformation, helper);
 					rmiapspclustering.start();
 				} else if (currentalgorithmindex == APSPCLUSTERING_SCORE) {
 					ClusterComputeThread rmiapspclustering = new ClusterComputeThread(
-							JobTypes.APSP_CLUSTERING_JOB_SCORING,
-							jobinformation, helper);
+							JobTypes.APSP_CLUSTERING_JOB_SCORING, jobinformation, helper);
 					rmiapspclustering.start();
 				}
 			} catch (RemoteException e) {
@@ -867,8 +853,7 @@ public class GraphColoringGUI implements ActionListener {
 
 		// //DEBUG print experimental data
 		try {
-			FileWriter fw = new FileWriter("experiments"
-					+ mw.getCurrentPathway());
+			FileWriter fw = new FileWriter("experiments" + mw.getCurrentPathway());
 			BufferedWriter out = new BufferedWriter(fw);
 
 			BiologicalNodeAbstract gnode;
@@ -948,8 +933,7 @@ public class GraphColoringGUI implements ActionListener {
 
 			break;
 		default:
-			System.out.println("Wrong Job Type: returnComputeData - "
-					+ toString());
+			System.out.println("Wrong Job Type: returnComputeData - " + toString());
 			break;
 		}
 
@@ -961,8 +945,7 @@ public class GraphColoringGUI implements ActionListener {
 		resetcolorbutton.setEnabled(true);
 	}
 
-	public void returnComputeData(HashMap<Double, HashSet<Integer>> map,
-			int jobtype) {
+	public void returnComputeData(HashMap<Double, HashSet<Integer>> map, int jobtype) {
 
 		BiologicalNodeAbstract bna;
 		// Determine jobtype and behaviour
@@ -974,8 +957,7 @@ public class GraphColoringGUI implements ActionListener {
 				TreeSet<String> tmpset;
 
 				// Map ids to BNAs
-				Iterator<Entry<Double, HashSet<Integer>>> it = map.entrySet()
-						.iterator();
+				Iterator<Entry<Double, HashSet<Integer>>> it = map.entrySet().iterator();
 				double key;
 				HashSet<Integer> value;
 				TreeSet<String> clusterlabels;
@@ -1009,8 +991,7 @@ public class GraphColoringGUI implements ActionListener {
 				TreeSet<String> tmpset;
 
 				// Map ids to BNAs
-				Iterator<Entry<Double, HashSet<Integer>>> it = map.entrySet()
-						.iterator();
+				Iterator<Entry<Double, HashSet<Integer>>> it = map.entrySet().iterator();
 				double key;
 				HashSet<Integer> value;
 				TreeSet<String> clusterlabels;
@@ -1037,8 +1018,7 @@ public class GraphColoringGUI implements ActionListener {
 			break;
 
 		default:
-			System.out.println("Wrong Job Type: returnComputeData - "
-					+ toString());
+			System.out.println("Wrong Job Type: returnComputeData - " + toString());
 			break;
 		}
 	}
@@ -1053,8 +1033,7 @@ public class GraphColoringGUI implements ActionListener {
 
 			if (!cycledata.isEmpty()) {
 				// Map ids to BNAs
-				Iterator<Entry<Integer, Double>> it = cycledata.entrySet()
-						.iterator();
+				Iterator<Entry<Integer, Double>> it = cycledata.entrySet().iterator();
 				int key;
 				double value;
 
@@ -1067,8 +1046,7 @@ public class GraphColoringGUI implements ActionListener {
 					bna = np.getNodeAssignmentbackwards(key);
 					coloring.put(bna, value);
 					// saving
-					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
-							NodeAttributeNames.CYCLES, coloring.get(bna));
+					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY, NodeAttributeNames.CYCLES, coloring.get(bna));
 				}
 			}
 
@@ -1079,8 +1057,7 @@ public class GraphColoringGUI implements ActionListener {
 
 			if (!cliquedata.isEmpty()) {
 				// Map ids to BNAs
-				Iterator<Entry<Integer, Double>> it = cliquedata.entrySet()
-						.iterator();
+				Iterator<Entry<Integer, Double>> it = cliquedata.entrySet().iterator();
 				int key;
 				double value;
 
@@ -1093,8 +1070,7 @@ public class GraphColoringGUI implements ActionListener {
 					bna = np.getNodeAssignmentbackwards(key);
 					coloring.put(bna, value);
 					// saving
-					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
-							NodeAttributeNames.CLIQUES, coloring.get(bna));
+					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY, NodeAttributeNames.CLIQUES, coloring.get(bna));
 				}
 			}
 
@@ -1107,8 +1083,7 @@ public class GraphColoringGUI implements ActionListener {
 				TreeSet<String> tmpset;
 
 				// Map ids to BNAs
-				Iterator<Entry<Integer, Double>> it = table.entrySet()
-						.iterator();
+				Iterator<Entry<Integer, Double>> it = table.entrySet().iterator();
 				int key;
 				double value;
 
@@ -1130,8 +1105,8 @@ public class GraphColoringGUI implements ActionListener {
 					}
 
 					// saving
-					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY,
-							NodeAttributeNames.SP_CLUSTERING, coloring.get(bna));
+					bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY, NodeAttributeNames.SP_CLUSTERING,
+							coloring.get(bna));
 				}
 
 				System.out.println(dataset);
@@ -1142,8 +1117,7 @@ public class GraphColoringGUI implements ActionListener {
 			break;
 
 		default:
-			System.out.println("Wrong Job Type: returnComputeData - "
-					+ toString());
+			System.out.println("Wrong Job Type: returnComputeData - " + toString());
 			break;
 		}
 
@@ -1165,8 +1139,7 @@ public class GraphColoringGUI implements ActionListener {
 				recolorGraph();
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 			} else if ("resetcolors".equals(command)) {
-				GraphInstance.getMyGraph().getAllVertices().stream()
-						.forEach(bna -> bna.resetAppearance());
+				GraphInstance.getMyGraph().getAllVertices().stream().forEach(bna -> bna.resetAppearance());
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 
 			} else if ("algorithm".equals(command)) {
@@ -1177,11 +1150,9 @@ public class GraphColoringGUI implements ActionListener {
 				GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 			} else if ("degreedistribution".equals(command)) {
 				NetworkProperties np = new NetworkProperties();
-				TreeMap<String, Integer> sorted_map = new TreeMap<String, Integer>(
-						new NumbersThenWordsComparator());
+				TreeMap<String, Integer> sorted_map = new TreeMap<String, Integer>(new NumbersThenWordsComparator());
 
-				for (Entry<Integer, Integer> entry : np
-						.getNodeDegreeDistribution().entrySet()) {
+				for (Entry<Integer, Integer> entry : np.getNodeDegreeDistribution().entrySet()) {
 					sorted_map.put(entry.getKey() + "", entry.getValue());
 
 				}
@@ -1194,9 +1165,7 @@ public class GraphColoringGUI implements ActionListener {
 
 				// sort by key value
 
-				new NodeAttributeBarChart("Statistics",
-						"Node degree distibution", "Degree", "Count",
-						sorted_map);
+				new NodeAttributeBarChart("Statistics", "Node degree distibution", "Degree", "Count", sorted_map);
 
 			} else if ("colorpalette".equals(command)) {
 				currentimageid = chooseColorPalette.getSelectedIndex();
@@ -1216,10 +1185,8 @@ public class GraphColoringGUI implements ActionListener {
 		for (Entry<Integer, LayoutPoint2D> entry : coords.entrySet()) {
 			// get bna from assignment
 			// tmppoint= new
-			pw.getVertices()
-					.get(nodeassignmentbackward.get(entry.getKey()))
-					.setLocation(entry.getValue().getX(),
-							entry.getValue().getY());
+			pw.getVertices().get(nodeassignmentbackward.get(entry.getKey())).setLocation(entry.getValue().getX(),
+					entry.getValue().getY());
 		}
 
 		pw.updateMyGraph();
@@ -1279,13 +1246,11 @@ public class GraphColoringGUI implements ActionListener {
 				a.setColor(b.getColor());
 				a.setNodeAttributes(b.getNodeAttributes());
 
-				pw.addVertex(a, new Point2D.Float(c.coords[i * 2],
-						c.coords[i * 2 + 1]));
+				pw.addVertex(a, new Point2D.Float(c.coords[i * 2], c.coords[i * 2 + 1]));
 				bnacluster.add(a);
 
 				neighborlabels = new HashSet<String>();
-				for (BiologicalNodeAbstract bn : oldpw.getGraph()
-						.getJungGraph().getNeighbors(b)) {
+				for (BiologicalNodeAbstract bn : oldpw.getGraph().getJungGraph().getNeighbors(b)) {
 					neighborlabels.add(bn.getLabel());
 				}
 
@@ -1297,8 +1262,7 @@ public class GraphColoringGUI implements ActionListener {
 
 		// the edges
 		for (HashSet<BiologicalNodeAbstract> bnac : bnaclusters) {
-			BiologicalNodeAbstract[] bnar = new BiologicalNodeAbstract[bnac
-					.size()];
+			BiologicalNodeAbstract[] bnar = new BiologicalNodeAbstract[bnac.size()];
 			bnac.toArray(bnar);
 
 			for (int i = 0; i < bnar.length; i++) {
@@ -1314,8 +1278,7 @@ public class GraphColoringGUI implements ActionListener {
 		}
 
 		// Highlight same Proteins with edges
-		BiologicalNodeAbstract[] bnar = new BiologicalNodeAbstract[GraphInstance
-				.getMyGraph().getAllVertices().size()];
+		BiologicalNodeAbstract[] bnar = new BiologicalNodeAbstract[GraphInstance.getMyGraph().getAllVertices().size()];
 		GraphInstance.getMyGraph().getAllVertices().toArray(bnar);
 		for (int i = 0; i < bnar.length; i++) {
 			for (int j = i + 1; j < bnar.length; j++) {

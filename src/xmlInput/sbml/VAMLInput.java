@@ -527,9 +527,9 @@ public class VAMLInput {
 			else if (element.getLocalName().equals("graphicLabel")) {
 				node.setNodeLabel(element.getText());
 			} else if (element.getLocalName().equals("graphic_xPos")) {
-				node.setXPos(new Double(element.getText()));
+				node.setXPos(Double.parseDouble(element.getText()));
 			} else if (element.getLocalName().equals("graphic_yPos")) {
-				node.setYPos(new Double(element.getText()));
+				node.setYPos(Double.parseDouble(element.getText()));
 			} else if (element.getLocalName().equals("graphicShape")) {
 				node.setShape(element.getText());
 			} else if (element.getLocalName().equals("graphicWidth")) {
@@ -611,8 +611,8 @@ public class VAMLInput {
 			if (element.getLocalName().equals("pathway"))
 				pathway = element.getText();
 			else if (element.getLocalName().equals("coordinates")) {
-				x_coord = new Double(element.getAttributeValue(new QName("x")));
-				y_coord = new Double(element.getAttributeValue(new QName("y")));
+				x_coord = Double.parseDouble(element.getAttributeValue(new QName("x")));
+				y_coord = Double.parseDouble(element.getAttributeValue(new QName("y")));
 			} else if (element.getLocalName().equals("elementSpecification")) {
 				biologicalElement = element.getText();
 			} else if (element.getLocalName().equals("colour")) {

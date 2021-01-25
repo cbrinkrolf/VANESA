@@ -113,7 +113,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 		pickingPlugin = new MyPickingGraphMousePlugin();
 		animatedPickingPlugin = new MyAnimatedPickingGraphMousePlugin();
 		translatingPlugin = new TranslatingGraphMousePlugin(
-				InputEvent.BUTTON1_MASK);
+				InputEvent.BUTTON1_DOWN_MASK);
 		scalingPlugin = new ScalingGraphMousePlugin(
 				new CrossoverScalingControl(), 0, in, out);
 		rotatingPlugin = new RotatingGraphMousePlugin();

@@ -82,7 +82,7 @@ public class PPISearchResultWindow extends JFrame implements ActionListener {
 			rows[iterator_count][2] = details[2];
 			rows[iterator_count][3] = details[3];
 
-			tableContent.put(new Integer(iterator_count), details);
+			tableContent.put(iterator_count, details);
 
 			iterator_count++;
 		}

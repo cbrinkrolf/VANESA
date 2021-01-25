@@ -73,7 +73,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 	private Pathway pw;
 
 	public MyEditingGraphMousePlugin() {
-		this(InputEvent.BUTTON1_MASK);
+		this(InputEvent.BUTTON1_DOWN_MASK);
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 	 */
 	@Override
 	public boolean checkModifiers(MouseEvent e) {
-		return (e.getModifiers() & modifiers) != 0;
+		return (e.getModifiersEx() & modifiers) != 0;
 	}
 
 	/**
@@ -131,7 +131,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 			// System.out.println("Click: "+p);
 			// System.out.println("regul: "+e.getPoint());
 
-			// Iterator<BiologicalNodeAbstract> it = pw.getGraph().getAllVertices().iterator();
+			// Iterator<BiologicalNodeAbstract> it =
+			// pw.getGraph().getAllVertices().iterator();
 			// while(it.hasNext()){
 			// System.out.println(pw.getGraph().getVertexLocation(it.next()));
 			// }
@@ -140,8 +141,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 
 			BiologicalNodeAbstract vertex = null;
 
-			vertex = pickSupport.getVertex(vv.getGraphLayout(), e.getPoint().getX(),
-					e.getPoint().getY());
+			vertex = pickSupport.getVertex(vv.getGraphLayout(), e.getPoint().getX(), e.getPoint().getY());
 			// System.out.println(vertex);
 
 			if (vertex != null) { // get ready to make an edge
@@ -150,7 +150,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 				super.down = e.getPoint();
 				transformEdgeShape(down, down);
 				vv.addPostRenderPaintable(edgePaintable);
-				if ((e.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
+				if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) {
 					edgeIsDirected = true;
 					transformArrowShape(down, e.getPoint());
 					vv.addPostRenderPaintable(arrowPaintable);
@@ -280,8 +280,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv.getPickSupport();
 			// if (v > 0) {
 			// System.out.println("release");
-			final BiologicalNodeAbstract vertex = pickSupport.getVertex(vv.getGraphLayout(),
-					e.getPoint().getX(), e.getPoint().getY());
+			final BiologicalNodeAbstract vertex = pickSupport.getVertex(vv.getGraphLayout(), e.getPoint().getX(),
+					e.getPoint().getY());
 			if (vertex != null && startVertex != null) {
 
 				// Pathway pw = graphInstance.getPathway();

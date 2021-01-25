@@ -160,7 +160,7 @@ public class SmacofView extends JFrame implements ActionListener {
 							.get(tabledata[line][NAME_STR])
 							+ "/"
 							+ graph.getAllVertices().size();
-					tabledata[line][UPLOAD_BOOL] = new Boolean(true);
+					tabledata[line][UPLOAD_BOOL] = true;
 
 				}
 
@@ -469,7 +469,7 @@ public class SmacofView extends JFrame implements ActionListener {
     		
     		tcparray = new Double[value.length];
     		for(int i = 0; i<value.length; i++){
-    			tcparray[i] = new Double(value[i]);
+    			tcparray[i] = value[i];
     			if(tcparray[i] > max)
     				max = tcparray[i];
     			if(tcparray[i] < min)
@@ -501,34 +501,34 @@ public class SmacofView extends JFrame implements ActionListener {
 		for (int i = 0; i < smacof_data_map.size(); i++) {
 			cells = new Double[11];
 			for (int b = 0; b < cells.length; b++) {
-				cells[b] = new Double(0);
+				cells[b] = 0.0;
 			}
 			bna = mapped_nodes_backwards.get(i);
 			for (NodeAttribute na : bna.getNodeAttributes()) {
 				if (na.getName().equals(NodeAttributeNames.GO_CELLULAR_COMPONENT)) {
 
 					if (na.getStringvalue().equals("Nucleus"))
-						cells[0] = new Double(1);
+						cells[0] = 1.0;
 					else if (na.getStringvalue().equals("Cytoplasm"))
-						cells[1] = new Double(1);
+						cells[1] = 1.0;
 					else if (na.getStringvalue().equals("Plasma membrane"))
-						cells[2] = new Double(1);
+						cells[2] = 1.0;
 					else if (na.getStringvalue().equals("Extracellular"))
-						cells[3] = new Double(1);
+						cells[3] = 1.0;
 					else if (na.getStringvalue().equals("Mitochondrion"))
-						cells[4] = new Double(1);
+						cells[4] = 1.0;
 					else if (na.getStringvalue().equals("Nucleolus"))
-						cells[5] = new Double(1);
+						cells[5] = 1.0;
 					else if (na.getStringvalue().equals("Endoplasmic reticulum"))
-						cells[6] = new Double(1);
+						cells[6] = 1.0;
 					else if (na.getStringvalue().equals("Golgi apparatus"))
-						cells[7] = new Double(1);
+						cells[7] = 1.0;
 					else if (na.getStringvalue().equals("Endosome"))
-						cells[8] = new Double(1);
+						cells[8] =1.0;
 					else if (na.getStringvalue().equals("Cytosol"))
-						cells[9] = new Double(1);
+						cells[9] = 1.0;
 					else if (na.getStringvalue().equals("Integral to membrane"))
-						cells[10] = new Double(1);
+						cells[10] = 1.0;
 				}
 			}
 			
