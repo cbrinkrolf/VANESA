@@ -27,7 +27,7 @@ public class DynamicIcon implements Icon {
 	}
 
 	public void paintIcon(Component c, Graphics g, int x, int y) {
-		
+
 		Graphics2D g2 = (Graphics2D) g;
 		// g.fill3DRect(x, y, getIconWidth(), getIconHeight(), true);
 		// g.setColor(new Color(0,0,0));
@@ -49,10 +49,9 @@ public class DynamicIcon implements Icon {
 		// rendererPane.paintComponent(g, component1, screenDevice, x+h_offset,
 		// y+v_offset,
 		// d1.width, d1.height, true);
-		int x1 = (int) (p.getShape().getBounds2D().getMaxX() - p.getShape()
-				.getBounds2D().getMinX());
-		//int y1 = (int) (p.getShape().getBounds2D().getMaxY() - p.getShape()
-		//		.getBounds2D().getMinY());
+		int x1 = (int) (p.getShape().getBounds2D().getMaxX() - p.getShape().getBounds2D().getMinX());
+		// int y1 = (int) (p.getShape().getBounds2D().getMaxY() - p.getShape()
+		// .getBounds2D().getMinY());
 
 		// double x1 = c.getBounds().getMaxX()-c.getBounds().getMinX();
 		// double y1 = c.getBounds().getMaxY()-c.getBounds().getMinY();
@@ -71,25 +70,24 @@ public class DynamicIcon implements Icon {
 				discrete = true;
 			}
 		}
-		
+
 		int xpos;
-		
-		if(discrete){
-		xpos = new Double(x - x1 + 19 - 5 * ((double) tokens.length() / 2))
-				.intValue();
-		}else{
-			xpos = new Double(x - x1 + 21 - 5 * ((double) tokens.length() / 2))
-			.intValue();
+
+		if (discrete) {
+			xpos = Double.valueOf(x - x1 + 19 - 5 * ((double) tokens.length() / 2)).intValue();
+		} else {
+			xpos = Double.valueOf(x - x1 + 21 - 5 * ((double) tokens.length() / 2)).intValue();
 		}
-		
+
 		g.setColor(Color.BLACK);
-		
+
 		Shape s = p.getShape();
-		s.getBounds2D().setFrame(xpos,y,50, 50);
+		s.getBounds2D().setFrame(xpos, y, 50, 50);
 		g2.draw(s);
-		//g2.draw(AffineTransform.getScaleInstance(p.getNodesize(), p.getNodesize()).createTransformedShape(s));
-   	 	
-   	//g2.draw(s);
+		// g2.draw(AffineTransform.getScaleInstance(p.getNodesize(),
+		// p.getNodesize()).createTransformedShape(s));
+
+		// g2.draw(s);
 		g2.drawString(tokens, xpos, y + 7);
 
 		// }

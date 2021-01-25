@@ -27,8 +27,7 @@ public class MostWantedMolecules {
 
 	public MostWantedMolecules() {
 
-		URL url = this.getClass().getClassLoader()
-				.getResource("resource/MoleculesSBML.xml");
+		URL url = this.getClass().getClassLoader().getResource("resource/MoleculesSBML.xml");
 		System.out.println("DEBUG molecules file: " + url);
 
 		if (url != null) {
@@ -54,12 +53,10 @@ public class MostWantedMolecules {
 	// }
 
 	private void generateFile() {
-		ArrayList<DBColumn> results = new Wrapper().requestDbContent(1,
-				BRENDAQueries.getAllBRENDAenzymeDetails);
+		ArrayList<DBColumn> results = new Wrapper().requestDbContent(1, BRENDAQueries.getAllBRENDAenzymeDetails);
 
 		while (results.size() == 0) {
-			results = new Wrapper().requestDbContent(1,
-					BRENDAQueries.getAllBRENDAenzymeDetails);
+			results = new Wrapper().requestDbContent(1, BRENDAQueries.getAllBRENDAenzymeDetails);
 		}
 
 		for (DBColumn column : results) {
@@ -162,7 +159,7 @@ public class MostWantedMolecules {
 					table.remove(temp);
 					table.put(temp, i + 1);
 				} else {
-					table.put(temp, new Integer(1));
+					table.put(temp, 1);
 				}
 			}
 		}

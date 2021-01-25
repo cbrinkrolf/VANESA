@@ -91,9 +91,11 @@ public class JSBMLinput {
 		Document doc = null;
 		InputSource in = new InputSource(is);
 
-		// changed empty constructor SAXBuilder builder = new SAXBuilder(); to following, because open JDK got an
+		// changed empty constructor SAXBuilder builder = new SAXBuilder(); to
+		// following, because open JDK got an
 		// error with empty constructor
-		// see: https://stackoverflow.com/questions/11409025/exceptionininitializererror-while-creating-ant-custom-task
+		// see:
+		// https://stackoverflow.com/questions/11409025/exceptionininitializererror-while-creating-ant-custom-task
 		SAXBuilder builder = new SAXBuilder(new XMLReaderSAX2Factory(false, "org.apache.xerces.parsers.SAXParser"));
 		try {
 			doc = builder.build(in);
@@ -132,7 +134,6 @@ public class JSBMLinput {
 
 		createGroup();
 
-
 		// refresh view
 		try {
 			is.close();
@@ -148,8 +149,8 @@ public class JSBMLinput {
 	}
 
 	/**
-	 * Groups and their members are saved in list, cause groups cant be created at this point, because
-	 * nodes arent created yet
+	 * Groups and their members are saved in list, cause groups cant be created at
+	 * this point, because nodes arent created yet
 	 *
 	 */
 	private void getInputGroups(Element groupNode) {
@@ -167,7 +168,7 @@ public class JSBMLinput {
 
 			ArrayList<String> tmp = new ArrayList<String>();
 			for (int j = 0; j < groupSize; j++) {
-				//add nodes mit ID/label to nodes list
+				// add nodes mit ID/label to nodes list
 				Element node = groupmembers.get(j);
 				String label = node.getAttributeValue("Node");
 				tmp.add(label);
@@ -175,7 +176,7 @@ public class JSBMLinput {
 			inputgroups.add(tmp);
 		}
 
-		//System.out.println("es sind gespeicherte gruppen" + inputgroups.size());
+		// System.out.println("es sind gespeicherte gruppen" + inputgroups.size());
 	}
 
 	/**
@@ -190,7 +191,7 @@ public class JSBMLinput {
 				nodeslist.add(nodes.get(Integer.parseInt(inputgroups.get(i).get(j))));
 			}
 			Group tmp = new Group(nodeslist);
-			for (int k = 0; k < nodeslist.size(); k++){
+			for (int k = 0; k < nodeslist.size(); k++) {
 				nodeslist.get(k).setisinGroup(true);
 				nodeslist.get(k).setGroup(tmp);
 			}
@@ -198,7 +199,6 @@ public class JSBMLinput {
 		}
 		inputgroups.clear();
 	}
-
 
 	/**
 	 * creates the annotation of the model
@@ -297,7 +297,7 @@ public class JSBMLinput {
 				bea.setTo(to);
 				bea.setLabel(label);
 				bea.setName(name);
-				
+
 				Element annotation = reaction.getChild("annotation", null);
 				if (annotation != null) {
 					Element reacAnnotation = annotation.getChild("reac", null);
@@ -324,7 +324,7 @@ public class JSBMLinput {
 							attr = elSub.getAttributeValue("Probability");
 							((PNEdge) bea).setProbability(Double.parseDouble(attr));
 						}
-						
+
 						elSub = reacAnnotation.getChild("Priority", null);
 						if (elSub != null) {
 							attr = elSub.getAttributeValue("Priority");
@@ -472,7 +472,7 @@ public class JSBMLinput {
 						attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
 						((biologicalObjects.nodes.petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
 						((biologicalObjects.nodes.petriNet.Place) bna).setDiscrete(true);
-						
+
 						elSub = specAnnotation.getChild("ConflictStrategy", null);
 						if (elSub != null) {
 							attr = elSub.getAttributeValue("ConflictStrategy");
@@ -494,13 +494,13 @@ public class JSBMLinput {
 						attr = String.valueOf(elSub.getAttributeValue("tokenStart"));
 						((biologicalObjects.nodes.petriNet.Place) bna).setTokenStart(Double.parseDouble(attr));
 						((biologicalObjects.nodes.petriNet.Place) bna).setDiscrete(false);
-						
+
 						elSub = specAnnotation.getChild("ConflictStrategy", null);
 						if (elSub != null) {
 							attr = elSub.getAttributeValue("ConflictStrategy");
 							((Place) bna).setConflictStrategy(Integer.parseInt(attr));
 						}
-						
+
 						break;
 					case Elementdeclerations.discreteTransition:
 						elSub = specAnnotation.getChild("delay", null);
@@ -526,9 +526,9 @@ public class JSBMLinput {
 					// get the coordinates of the bna
 					elSub = specAnnotation.getChild("Coordinates", null);
 					Element elSubSub = elSub.getChild("x_Coordinate", null);
-					Double xCoord = new Double(elSubSub.getAttributeValue("x_Coordinate"));
+					Double xCoord = Double.parseDouble(elSubSub.getAttributeValue("x_Coordinate"));
 					elSubSub = elSub.getChild("y_Coordinate", null);
-					Double yCoord = new Double(elSubSub.getAttributeValue("y_Coordinate"));
+					Double yCoord = Double.parseDouble(elSubSub.getAttributeValue("y_Coordinate"));
 					p = new Point2D.Double(xCoord, yCoord);
 
 					elSub = specAnnotation.getChild("environmentNode", null);
@@ -598,8 +598,7 @@ public class JSBMLinput {
 	/**
 	 * Coarses the nodes as described in the loaded sbml file.
 	 *
-	 * @param annotationNode
-	 *            Annotation Area of the imported model.
+	 * @param annotationNode Annotation Area of the imported model.
 	 * @author tloka
 	 */
 	private void buildUpHierarchy(Element annotationNode) {
@@ -631,13 +630,15 @@ public class JSBMLinput {
 			}
 
 			Integer id = Integer.parseInt(coarseNode.getAttributeValue("id").split("_")[1]);
-			String rootNode = coarseNode.getAttribute("root", null) == null ? "null" : coarseNode.getAttributeValue("root");
+			String rootNode = coarseNode.getAttribute("root", null) == null ? "null"
+					: coarseNode.getAttributeValue("root");
 			if (!rootNode.equals("null")) {
 				hierarchyRootNodes.put(id, Integer.parseInt(coarseNode.getAttributeValue("root").split("_")[1]));
 			}
 			hierarchyMap.put(id, childrenSet);
 			coarseNodeLabels.put(id, coarseNode.getAttributeValue("label"));
-			if (coarseNode.getAttributeValue("opened") != null && coarseNode.getAttributeValue("opened").equals("true")) {
+			if (coarseNode.getAttributeValue("opened") != null
+					&& coarseNode.getAttributeValue("opened").equals("true")) {
 				openedCoarseNodes.add(id);
 			}
 		}
@@ -699,7 +700,7 @@ public class JSBMLinput {
 		switch (attrtmp) {
 		// standard cases
 		case "IsWeighted":
-			//bea.setWeighted(Boolean.parseBoolean(value));
+			// bea.setWeighted(Boolean.parseBoolean(value));
 			break;
 		case "Weight":
 			// old cases when there was "weight" and "function" for edges
@@ -723,13 +724,13 @@ public class JSBMLinput {
 			bea.setComments(value);
 			break;
 		case "HasFeatureEdge":
-			//bea.hasFeatureEdge(Boolean.parseBoolean(value));
+			// bea.hasFeatureEdge(Boolean.parseBoolean(value));
 			break;
 		case "HasKEGGEdge":
-			//bea.hasKEGGEdge(Boolean.parseBoolean(value));
+			// bea.hasKEGGEdge(Boolean.parseBoolean(value));
 			break;
 		case "HasReactionPairEdge":
-			//bea.hasReactionPairEdge(Boolean.parseBoolean(value));
+			// bea.hasReactionPairEdge(Boolean.parseBoolean(value));
 			break;
 		case "ReactionPairEdge":
 			bea.setReactionPairEdge(new ReactionPairEdge());
@@ -751,8 +752,8 @@ public class JSBMLinput {
 			}
 			break;
 		case "absoluteInhibition":
-			if(bea instanceof Inhibition){
-				((Inhibition)bea).setAbsoluteInhibition(Boolean.parseBoolean(value));
+			if (bea instanceof Inhibition) {
+				((Inhibition) bea).setAbsoluteInhibition(Boolean.parseBoolean(value));
 			}
 			break;
 		}
@@ -1140,8 +1141,8 @@ public class JSBMLinput {
 	private void addRange(Element rangeElement) {
 		Map<String, String> attrs = new HashMap<String, String>();
 		attrs.put("title", "");
-		String[] keys = { "textColor", "outlineType", "fillColor", "alpha", "maxY", "outlineColor", "maxX", "isEllipse", "minX", "minY", "titlePos",
-				"title" };
+		String[] keys = { "textColor", "outlineType", "fillColor", "alpha", "maxY", "outlineColor", "maxX", "isEllipse",
+				"minX", "minY", "titlePos", "title" };
 		for (int i = 0; i < keys.length; i++) {
 			Element tmp = rangeElement.getChild(keys[i], null);
 			if (tmp != null) {

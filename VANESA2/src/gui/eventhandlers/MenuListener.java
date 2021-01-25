@@ -1,96 +1,32 @@
 package gui.eventhandlers;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.RenderingHints.Key;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.PipedWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
-import org.apache.batik.anim.dom.SVGDOMImplementation;
-import org.apache.batik.apps.rasterizer.SVGConverter;
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.DocumentLoader;
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.UserAgent;
-import org.apache.batik.bridge.UserAgentAdapter;
 import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
-import org.apache.batik.ext.awt.image.rendered.BufferedImageCachableRed;
-import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.gvt.ShapeNode;
-import org.apache.batik.svggen.GenericImageHandler;
-import org.apache.batik.svggen.ImageHandler;
-import org.apache.batik.svggen.ImageHandlerPNGEncoder;
-import org.apache.batik.svggen.SVGGeneratorContext;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.batik.swing.JSVGCanvas;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.TranscodingHints;
-import org.apache.batik.transcoder.image.ImageTranscoder;
-import org.apache.batik.transcoder.image.PNGTranscoder;
-import org.apache.batik.util.SVGConstants;
-import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.SystemUtils;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.svg.SVGDocument;
-
-import com.orsonpdf.GraphicsStream;
-import com.orsonpdf.PDFDocument;
-import com.orsonpdf.PDFGraphics2D;
-import com.orsonpdf.PDFObject;
-import com.orsonpdf.Page;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -114,11 +50,8 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
-import edu.uci.ics.jung.algorithms.layout.StaticLayout;
-import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.CreatePathway;
 import graph.GraphContainer;
@@ -131,8 +64,6 @@ import graph.algorithms.gui.RandomHamiltonGraphGui;
 import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.algorithms.gui.smacof.view.SmacofView;
 import graph.jung.classes.MyGraph;
-import graph.jung.classes.MyVisualizationViewer;
-import graph.layouts.GraphCenter;
 import graph.layouts.gemLayout.GEMLayout;
 import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
@@ -161,7 +92,6 @@ import transformation.Rule;
 import transformation.RuleManager;
 import transformation.Transformator;
 import transformation.gui.RuleManagementWindow;
-import util.ImageExport;
 import util.KineticBuilder;
 
 public class MenuListener implements ActionListener {
@@ -1001,7 +931,7 @@ public class MenuListener implements ActionListener {
 			}
 
 		} else if ("createDoc".equals(event)) {
-			String docDir = w.pathWorkingDirectory + "documentation" + File.separator;
+			String docDir = MainWindow.pathWorkingDirectory + "documentation" + File.separator;
 			File dir = new File(docDir);
 
 			if (!dir.isDirectory()) {
@@ -1294,14 +1224,14 @@ public class MenuListener implements ActionListener {
 		while (hsit.hasNext()) {
 			bna = (BiologicalNodeAbstract) hsit.next();
 			if (bna instanceof Transition) {
-				hmtransitions.put(bna, new Integer(numberTransitions));
+				hmtransitions.put(bna, numberTransitions);
 				numberTransitions++;
 			} else if (bna instanceof Place) {
 				p = (Place) bna;
-				hmplaces.put(bna, new Integer(numberPlaces));
+				hmplaces.put(bna, numberPlaces);
 				names.add(p.getName());
 				// System.out.println("name: " + p.getName());
-				this.start.add(new Double(p.getTokenStart()));
+				this.start.add(p.getTokenStart());
 				numberPlaces++;
 			}
 		}

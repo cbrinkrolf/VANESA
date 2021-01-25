@@ -286,7 +286,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 							down = p;
 						} else {
 							Point2D out = e.getPoint();
-							if (e.getModifiers() == this.addToSelectionModifiers || e.getModifiers() == modifiers) {
+							if (e.getModifiersEx() == this.addToSelectionModifiers || e.getModifiersEx() == modifiers) {
 								rect.setFrameFromDiagonal(down, out);
 							}
 						}

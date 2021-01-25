@@ -65,8 +65,7 @@ public class ClusterDataUploadWindow extends JFrame {
 	public Color GREY = new Color(-4144960);
 
 	public ClusterDataUploadWindow() {
-		super("Cluster Upload window: "
-				+ MainWindow.getInstance().getCurrentPathway());
+		super("Cluster Upload window: " + MainWindow.getInstance().getCurrentPathway());
 		// setPreferredSize(new Dimension(X, Y));
 
 		if (MainWindow.getInstance().getCurrentPathway() != null) {
@@ -80,7 +79,7 @@ public class ClusterDataUploadWindow extends JFrame {
 			setVisible(true);
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			// setResizable(false);
-		}else
+		} else
 			MyPopUp.getInstance().show("Error", "Please create a network before.");
 
 	}
@@ -99,22 +98,16 @@ public class ClusterDataUploadWindow extends JFrame {
 			// deterimine experimental datasets on current network
 			attributes = new HashMap<String, Integer>();
 
-			mg = GraphContainer
-					.getInstance()
-					.getPathway(
-							MainWindow.getInstance()
-									.getCurrentPathway()).getGraph();
+			mg = GraphContainer.getInstance().getPathway(MainWindow.getInstance().getCurrentPathway()).getGraph();
 
 			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
-				for (NodeAttribute na : bna
-						.getNodeAttributesByType(NodeAttributeTypes.EXPERIMENT)) {
+				for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.EXPERIMENT)) {
 
 					// count mapped nodes with given attribute
 					if (!attributes.containsKey(na.getName())) {
 						attributes.put(na.getName(), 1);
 					} else {
-						attributes.put(na.getName(),
-								attributes.get(na.getName()) + 1);
+						attributes.put(na.getName(), attributes.get(na.getName()) + 1);
 					}
 				}
 			}
@@ -128,14 +121,12 @@ public class ClusterDataUploadWindow extends JFrame {
 				// hard coded for now, can be dynamically chosen in future
 				data[line][TYPE_STR] = "Experiment";
 				data[line][NAME_STR] = displayset.pollFirst();
-				data[line][COUNT_STR] = attributes.get(data[line][NAME_STR])
-						+ "/" + mg.getAllVertices().size();
-				data[line][UPLOAD_BOOL] = new Boolean(false);
+				data[line][COUNT_STR] = attributes.get(data[line][NAME_STR]) + "/" + mg.getAllVertices().size();
+				data[line][UPLOAD_BOOL] = false;
 
 			}
 
-			ClusterTableModel tablemodel = new ClusterTableModel(columnNames,
-					data);
+			ClusterTableModel tablemodel = new ClusterTableModel(columnNames, data);
 			JTable table = new JXTable(tablemodel);
 			// JTable table = new JTable(data,columnNames);
 			table.setPreferredScrollableViewportSize(new Dimension(600, 180));
@@ -194,9 +185,9 @@ public class ClusterDataUploadWindow extends JFrame {
 		}
 
 		/*
-		 * JTable uses this method to determine the default renderer/ editor for
-		 * each cell. If we didn't implement this method, then the last column
-		 * would contain text ("true"/"false"), rather than a check box.
+		 * JTable uses this method to determine the default renderer/ editor for each
+		 * cell. If we didn't implement this method, then the last column would contain
+		 * text ("true"/"false"), rather than a check box.
 		 */
 		public Class<?> getColumnClass(int c) {
 			return getValueAt(0, c).getClass();
@@ -214,13 +205,11 @@ public class ClusterDataUploadWindow extends JFrame {
 		}
 
 		/*
-		 * Don't need to implement this method unless your table's data can
-		 * change.
+		 * Don't need to implement this method unless your table's data can change.
 		 */
 		public void setValueAt(Object value, int row, int col) {
 			if (DEBUG) {
-				System.out.println("Setting value at " + row + "," + col
-						+ " to " + value + " (an instance of "
+				System.out.println("Setting value at " + row + "," + col + " to " + value + " (an instance of "
 						+ value.getClass() + ")");
 			}
 
@@ -260,8 +249,7 @@ public class ClusterDataUploadWindow extends JFrame {
 					NodeAttribute att, db;
 					String id;
 					for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
-						att = bna
-								.getNodeAttributeByName((String) data[line][NAME_STR]);
+						att = bna.getNodeAttributeByName((String) data[line][NAME_STR]);
 						if (att != null) {
 							db = bna.getNodeAttributeByName(NodeAttributeNames.UNIPROT);
 							if (db != null) {
@@ -287,8 +275,7 @@ public class ClusterDataUploadWindow extends JFrame {
 				experimentArray[i] = attnames.get(i);
 
 			@SuppressWarnings("unchecked")
-			HashMap<String, Double>[] mappingsarray = new HashMap[attnames
-					.size()];
+			HashMap<String, Double>[] mappingsarray = new HashMap[attnames.size()];
 			for (int i = 0; i < attnames.size(); i++)
 				mappingsarray[i] = mappingslist.get(i);
 
@@ -303,8 +290,8 @@ public class ClusterDataUploadWindow extends JFrame {
 
 							server = (IClusterJobs) Naming.lookup(url);
 							helper = new MappingCallback();
-							if (!server.submitMapping(JobTypes.MAPPING_UNIPROT,
-									experimentArray, mappingsarray, helper)) {
+							if (!server.submitMapping(JobTypes.MAPPING_UNIPROT, experimentArray, mappingsarray,
+									helper)) {
 								SwingUtilities.invokeLater(new Runnable() {
 									public void run() {
 										MyPopUp.getInstance().show("Error", "Queue is at maximum capacity!");
@@ -341,13 +328,13 @@ public class ClusterDataUploadWindow extends JFrame {
 			});
 
 			// lock UI
-			MainWindow.getInstance().showProgressBar(
-					"submitting data to cluster");
+			MainWindow.getInstance().showProgressBar("submitting data to cluster");
 
 			// Start export
 			export.start();
-			
-			ClusterDataUploadWindow.this.dispose();;
+
+			ClusterDataUploadWindow.this.dispose();
+			;
 		}
 	}
 }

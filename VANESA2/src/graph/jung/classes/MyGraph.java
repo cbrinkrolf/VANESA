@@ -441,9 +441,9 @@ public class MyGraph {
 								.getScale();
 
 						if (discrete) {
-							xpos = new Double(p1inv.getX() - x1 + (19 - 5 * (double) tokens.length() / 2)).intValue();
+							xpos = Double.valueOf(p1inv.getX() - x1 + (19 - 5 * (double) tokens.length() / 2)).intValue();
 						} else {
-							xpos = new Double(p1inv.getX() - x1 + (21 - 5 * (double) tokens.length() / 2)).intValue();
+							xpos = Double.valueOf(p1inv.getX() - x1 + (21 - 5 * (double) tokens.length() / 2)).intValue();
 						}
 
 						g.setColor(Color.BLACK);

@@ -229,7 +229,7 @@ public class Server {
 							// bb = ByteBuffer.wrap(buffer, b, 1);
 							// bb.order(ByteOrder.LITTLE_ENDIAN);
 							btmp = buffer[reals * 8 + ints * sizeOfInt + b];
-							values.add(new Double(btmp));
+							values.add(btmp);
 							// values.add(buffer[reals * 8 + ints * 4 + b]);
 							// System.out.print(buffer[reals * 8 + ints * 4 + b]
 							// + "\t");

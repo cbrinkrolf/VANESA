@@ -43,7 +43,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	private HierarchyMenu menu;
 
 	public MyZoomThroughHierarchyGraphMousePlugin() {
-		this(InputEvent.BUTTON1_MASK);
+		this(InputEvent.BUTTON1_DOWN_MASK);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	 */
 	@Override
 	public boolean checkModifiers(MouseEvent e) {
-		return (e.getModifiers() & modifiers) != 0;
+		return (e.getModifiersEx() & modifiers) != 0;
 	}
 
 	/**

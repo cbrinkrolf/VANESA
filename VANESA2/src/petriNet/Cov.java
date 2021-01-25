@@ -45,7 +45,7 @@ public class Cov {
 	private HashMap<Integer, String> idToNameTransition = new HashMap<Integer, String>();
 	private HashMap<Integer, Double> idToMax = new HashMap<Integer, Double>();
 
-	//private HashMap<String, CovNode> covnodes = new HashMap<String, CovNode>();
+	// private HashMap<String, CovNode> covnodes = new HashMap<String, CovNode>();
 
 	private HashMap<String, Integer> name2id = new HashMap<String, Integer>();
 
@@ -71,24 +71,24 @@ public class Cov {
 		list.setElements(tmp);
 		root.setTokenList(list);
 		// System.out.println(node.getTokenList());
-		pw.addVertex(root, new Point(10,30));
+		pw.addVertex(root, new Point(10, 30));
 		root.setColor(new Color(255, 0, 0));
 
-		//pw.getGraph().moveVertex(root.getVertex(), 10, 30);
-		//this.covnodes.put(root.getVertex().toString(), root);
+		// pw.getGraph().moveVertex(root.getVertex(), 10, 30);
+		// this.covnodes.put(root.getVertex().toString(), root);
 		// System.out.println(this.covnodes);
 		parents = new ArrayList<CovNode>();
 		this.computeNode(root);
 
 		/*
-		 * Set<CovNode> nodes; nodes = graphInstance.getPathway().getAllNodes();
-		 * // System.out.println("covlist alt: " + cl);
+		 * Set<CovNode> nodes; nodes = graphInstance.getPathway().getAllNodes(); //
+		 * System.out.println("covlist alt: " + cl);
 		 * 
-		 * //tmp.addTokens(this.cMatrix.getColumn(i)); //boolean found = false;
-		 * Iterator it = nodes.iterator(); CovNode cn; while (it.hasNext()) { cn
-		 * = (CovNode) it.next(); System.out.println(cn.getTokenList()); }
+		 * //tmp.addTokens(this.cMatrix.getColumn(i)); //boolean found = false; Iterator
+		 * it = nodes.iterator(); CovNode cn; while (it.hasNext()) { cn = (CovNode)
+		 * it.next(); System.out.println(cn.getTokenList()); }
 		 */
-		//System.out.println("Knoten: " + pw.getGraph().getAllvertices().size());
+		// System.out.println("Knoten: " + pw.getGraph().getAllvertices().size());
 		// pw.getGraph().moveVertex(node.getVertex(), 10, 30);
 		// pw.getGraph().unlockVertices();
 		// pw.getGraph().restartVisualizationModel();
@@ -105,15 +105,15 @@ public class Cov {
 		// n.setColor(new Color(255,0,0));
 		// }
 
-		//System.out.println("------covnodes----");
+		// System.out.println("------covnodes----");
 
 		// System.out.println(this.covnodes);
 
-		//System.out.println("newname: " + pw.getName());
-		//System.out.println("oldname: " + this.oldName);
-		//Pathway p = this.graphInstance.getContainer().getPathway(this.oldName);
+		// System.out.println("newname: " + pw.getName());
+		// System.out.println("oldname: " + this.oldName);
+		// Pathway p = this.graphInstance.getContainer().getPathway(this.oldName);
 
-		//System.out.println(p.getAllNodeLabels());
+		// System.out.println(p.getAllNodeLabels());
 		this.paintCoveredNodes();
 
 		pw.getGraph().restartVisualizationModel();
@@ -154,16 +154,16 @@ public class Cov {
 					while (it.hasNext()) {
 						cn = (CovNode) it.next();
 						if (cn.getTokenList().isEqual(tmp.getElements())
-								&& !cn.getTokenList().equals(
-										parent.getTokenList())) {
+								&& !cn.getTokenList().equals(parent.getTokenList())) {
 
-							CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i), parent, cn);
+							CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i),
+									parent, cn);
 							e.setDirected(true);
 							pw.addEdge(e);
 							// e.setVisible(false);
-							//System.out.println("Kante1 von: "
-							//		+ parent.getTokenList() + "->"
-							//		+ cn.getTokenList());
+							// System.out.println("Kante1 von: "
+							// + parent.getTokenList() + "->"
+							// + cn.getTokenList());
 							found = true;
 							break;
 						}
@@ -185,8 +185,7 @@ public class Cov {
 							if (tmp.isGreater(cn.getTokenList().getElements())) {
 								// System.out.println(tmp + " is greater as "
 								// + cn.getTokenList());
-								indexe = tmp
-										.getGreaterIndexs(cn.getTokenList());
+								indexe = tmp.getGreaterIndexs(cn.getTokenList());
 								for (int k = 0; k < indexe.size(); k++) {
 									if (this.idToMax.get(indexe.get(k)) <= 0) {
 										tmp.setElementAt(indexe.get(k), -1.0);
@@ -194,17 +193,14 @@ public class Cov {
 								}
 
 								// fuer alle Knoten
-								Iterator<BiologicalNodeAbstract> it2 = graphInstance.getPathway().getAllGraphNodes().iterator();
+								Iterator<BiologicalNodeAbstract> it2 = graphInstance.getPathway().getAllGraphNodes()
+										.iterator();
 								boolean cond1;
 								boolean cond2;
 								while (it2.hasNext()) {
 									cn = (CovNode) it2.next();
-									cond1 = cn.getTokenList().isEqual(
-											tmp.getElements());
-									cond2 = cn.getTokenList().toString()
-											.equals(
-													parent.getTokenList()
-															.toString());
+									cond1 = cn.getTokenList().isEqual(tmp.getElements());
+									cond2 = cn.getTokenList().toString().equals(parent.getTokenList().toString());
 									// System.out.println(cond1 + " " + cond2);
 									// System.out.println("cn: " +
 									// cn.getTokenList());
@@ -215,13 +211,14 @@ public class Cov {
 									// System.out.println();
 									// Wenn neue Markierung schon vorhanden ist
 									if (cond1 && !cond2) {
-										CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i), parent, cn);
+										CovEdge e = new CovEdge(this.idToNameTransition.get(i),
+												this.idToNameTransition.get(i), parent, cn);
 										e.setDirected(true);
 										pw.addEdge(e);
 										// e.setVisible(false);
-										//System.out.println("Kante2 von: "
-										//		+ parent.getTokenList() + "->"
-										//		+ cn.getTokenList());
+										// System.out.println("Kante2 von: "
+										// + parent.getTokenList() + "->"
+										// + cn.getTokenList());
 										found = true;
 										break;
 									}
@@ -232,19 +229,19 @@ public class Cov {
 								}
 
 								if (!found) {
-									CovNode n = new CovNode("label2", "name2",
-											this.numberPlaces);
+									CovNode n = new CovNode("label2", "name2", this.numberPlaces);
 									n.setTokenList(tmp.clone());
 
 									pw.addVertex(n, new Point(i * 10, i * i * 30));
 									// n.setVisible(false);
-									CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i), parent, n);
+									CovEdge e = new CovEdge(this.idToNameTransition.get(i),
+											this.idToNameTransition.get(i), parent, n);
 									e.setDirected(true);
 
-									//pw.getGraph().moveVertex(n.getVertex(),
-									//		i * 10, i * i * 30);
-									//this.covnodes.put(n.getVertex().toString(),
-									//		n);
+									// pw.getGraph().moveVertex(n.getVertex(),
+									// i * 10, i * i * 30);
+									// this.covnodes.put(n.getVertex().toString(),
+									// n);
 									pw.addEdge(e);
 									// e.setVisible(false);
 
@@ -260,28 +257,28 @@ public class Cov {
 
 						// wenn Markierung noch nicht im Graph
 						if (!found) {
-							CovNode n = new CovNode("label2", "name2",
-									this.numberPlaces);
+							CovNode n = new CovNode("label2", "name2", this.numberPlaces);
 							n.setTokenList(tmp);
 
 							// System.out.println("1: " +
 							// parent.getTokenList());
 							// System.out.println("2: " + tmp.toString());
 							if (!parent.getTokenList().toString().equals(tmp.toString())) {
-								pw.addVertex(n, new Point(i * 10,i * i * 30));
+								pw.addVertex(n, new Point(i * 10, i * i * 30));
 								// n.setVisible(false);
-								CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i), parent, n);
+								CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i),
+										parent, n);
 								e.setDirected(true);
-								//this.covnodes.put(n.getVertex().toString(), n);
+								// this.covnodes.put(n.getVertex().toString(), n);
 								pw.addEdge(e);
 								// e.setVisible(false);
-							//	System.out.println("Kante3 von: "
-							//			+ parent.getTokenList() + "->"
-							//			+ n.getTokenList());
-								//pw.getGraph().moveVertex(n.getVertex(), i * 10,
-								//		i * i * 30);
-							//	System.out.println("neuer node, nicht gef. "
-							//			+ n.getTokenList());
+								// System.out.println("Kante3 von: "
+								// + parent.getTokenList() + "->"
+								// + n.getTokenList());
+								// pw.getGraph().moveVertex(n.getVertex(), i * 10,
+								// i * i * 30);
+								// System.out.println("neuer node, nicht gef. "
+								// + n.getTokenList());
 								found = false;
 								this.computeNode(n);
 							}
@@ -312,46 +309,42 @@ public class Cov {
 			// System.out.println(bna.getClass());
 			if (bna instanceof Transition) {
 				t = (Transition) bna;
-				this.hmtransitions.put(bna, new Integer(
-						this.numberTransitions));
+				this.hmtransitions.put(bna, this.numberTransitions);
 				this.idToNameTransition.put(this.numberTransitions, t.getName());
-				//System.out.println("name: "+t.getName());
+				// System.out.println("name: "+t.getName());
 				this.numberTransitions++;
 			} else {
 				p = (Place) bna;
 				this.idToName.put(this.numberPlaces, p.getName());
 				this.name2id.put(p.getName(), this.numberPlaces);
 				this.idToMax.put(this.numberPlaces, p.getTokenMax());
-				//System.out.println("id: " + this.numberPlaces + " tokenMax: "
-				//		+ p.getTokenMax());
-				//System.out.println("id: " + this.numberPlaces + " name: "
-				//		+ p.getName());
-				this.hmplaces.put(bna, new Integer(
-						this.numberPlaces));
-				this.start.add(new Double(p.getTokenStart()));
+				// System.out.println("id: " + this.numberPlaces + " tokenMax: "
+				// + p.getTokenMax());
+				// System.out.println("id: " + this.numberPlaces + " name: "
+				// + p.getName());
+				this.hmplaces.put(bna, this.numberPlaces);
+				this.start.add(p.getTokenStart());
 				this.numberPlaces++;
 			}
 		}
 
-		//System.out.println("places: " + this.numberPlaces + " trans: "
-		//		+ this.numberTransitions);
-		double[][] f = this
-				.initArray(this.numberPlaces, this.numberTransitions);
-		double[][] b = this
-				.initArray(this.numberPlaces, this.numberTransitions);
+		// System.out.println("places: " + this.numberPlaces + " trans: "
+		// + this.numberTransitions);
+		double[][] f = this.initArray(this.numberPlaces, this.numberTransitions);
+		double[][] b = this.initArray(this.numberPlaces, this.numberTransitions);
 		// double[][] c = this.initArray(numberPlace, numberTransition);
 
 		// einkommende Kanten (backward matrix)
 		Iterator<BiologicalEdgeAbstract> edgeit = graphInstance.getPathway().getAllEdges().iterator();
 		PNEdge edge;
-		//Pair pair;
+		// Pair pair;
 		while (edgeit.hasNext()) {
 			edge = (PNEdge) edgeit.next();
 			// System.out.println("first: "+edge.getLabel());
 			// System.out.println("first: "+edge.getEdge().getEndpoints().getFirst());
 			// System.out.println("simid: "+edge.getInternalSimulationID());
 			// System.out.println("second: "+edge.getEdge().getEndpoints().getSecond());
-			//pair = edge.getEdge().getEndpoints();
+			// pair = edge.getEdge().getEndpoints();
 			// System.out.println(pair.toString());
 
 			// T->P
@@ -379,22 +372,21 @@ public class Cov {
 		}
 		this.bMatrix = new SimpleMatrixDouble(b);
 		this.fMatrix = new SimpleMatrixDouble(f);
-		this.cMatrix = new SimpleMatrixDouble(this.initArray(this.numberPlaces,
-				this.numberTransitions));
+		this.cMatrix = new SimpleMatrixDouble(this.initArray(this.numberPlaces, this.numberTransitions));
 		this.cMatrix.add(this.bMatrix);
 		this.cMatrix.add(this.fMatrix);
 
-		//System.out.println("------debug output-----------");
-	//	System.out.println("Transitionen: " + numberTransitions);
-	//	System.out.println(hmtransitions);
-	//	System.out.println("Places: " + numberPlaces);
-	//	System.out.println(hmplaces);
-	//	System.out.println("backwardmatrix:");
-	//	System.out.println(bMatrix);
-	//	System.out.println("forwardmatrix:");
-	//	System.out.println(fMatrix);
-	//	System.out.println("cmatrix:");
-	//	System.out.println(cMatrix);
+		// System.out.println("------debug output-----------");
+		// System.out.println("Transitionen: " + numberTransitions);
+		// System.out.println(hmtransitions);
+		// System.out.println("Places: " + numberPlaces);
+		// System.out.println(hmplaces);
+		// System.out.println("backwardmatrix:");
+		// System.out.println(bMatrix);
+		// System.out.println("forwardmatrix:");
+		// System.out.println(fMatrix);
+		// System.out.println("cmatrix:");
+		// System.out.println(cMatrix);
 
 	}
 
@@ -418,7 +410,7 @@ public class Cov {
 			this.parents.add(node);
 		}
 		// System.out.println("Vertex: " + node.getVertex().toString());
-		
+
 		Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getJungGraph().getInEdges(node).iterator();
 		CovEdge e;
 		CovNode n;
@@ -461,9 +453,8 @@ public class Cov {
 
 	private void paintCoveredNodes() {
 
-		Pathway pwold = this.graphInstance.getContainer().getPathway(
-				this.oldName);
-	//	System.out.println("oldname: " + pwold.getName());
+		Pathway pwold = this.graphInstance.getContainer().getPathway(this.oldName);
+		// System.out.println("oldname: " + pwold.getName());
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		// this.graphInstance.getContainer().
 		double[] tokens = null;
@@ -505,10 +496,10 @@ public class Cov {
 
 		// System.out.println("listsize: "+list.getSize());
 		for (int i = 0; i < list.getSize(); i++) {
-			if (list.getElementAt(i) > this.idToMax.get(i)
-					&& this.idToMax.get(i) > 0) {
+			if (list.getElementAt(i) > this.idToMax.get(i) && this.idToMax.get(i) > 0) {
 				// System.out.println("id: "+i);
-				// System.out.println("neu: "+list.getElementAt(i)+" alt: "+this.idToMax.get(i));
+				// System.out.println("neu: "+list.getElementAt(i)+" alt:
+				// "+this.idToMax.get(i));
 				return false;
 			}
 		}

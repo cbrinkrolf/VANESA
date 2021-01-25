@@ -69,7 +69,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlug
 
 				an = new MyAnnotation(annotation, arect, annotationString);
 			}
-		} else if (e.getModifiers() == modifiers) {
+		} else if (e.getModifiersEx() == modifiers) {
 			if (down != null) {
 				Point2D out = e.getPoint();
 				// System.out.println();

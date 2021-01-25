@@ -78,7 +78,7 @@ public class MenuBarClass {
 	private JMenuItem dataLabelMapping;
 
 	public MenuBarClass(Application application) {
-		int MENUSHORTCUT = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+		int MENUSHORTCUT = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
 
 		bar = new JMenuBar();
 		JMenu file = new JMenu("File");
@@ -158,7 +158,8 @@ public class MenuBarClass {
 		newNetwork.setActionCommand("new Network");
 
 		openNetwork = new JMenuItem("Open File", KeyEvent.VK_O);
-		openNetwork.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		openNetwork.setAccelerator(
+				KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
 		openNetwork.addActionListener(MenuListener.getInstance());
 		openNetwork.setActionCommand("open Network");
 
@@ -168,24 +169,21 @@ public class MenuBarClass {
 		export.setActionCommand("export Network");
 
 		/*
-		 * exportGraphMl = new
-		 * JMenuItem("Export Network As GraphML",KeyEvent.VK_E);
+		 * exportGraphMl = new JMenuItem("Export Network As GraphML",KeyEvent.VK_E);
 		 * exportGraphMl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-		 * ActionEvent.CTRL_MASK)); exportGraphMl.addActionListener(new
-		 * MenuListener());
+		 * ActionEvent.CTRL_MASK)); exportGraphMl.addActionListener(new MenuListener());
 		 * exportGraphMl.setActionCommand("export Network Graphml");
 		 * 
-		 * exportMo = new
-		 * JMenuItem("Export Network for Modelica",KeyEvent.VK_M);
+		 * exportMo = new JMenuItem("Export Network for Modelica",KeyEvent.VK_M);
 		 * exportMo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
-		 * ActionEvent.CTRL_MASK)); exportMo.addActionListener(new
-		 * MenuListener()); exportMo.setActionCommand("export Network Mo");
+		 * ActionEvent.CTRL_MASK)); exportMo.addActionListener(new MenuListener());
+		 * exportMo.setActionCommand("export Network Mo");
 		 * 
 		 * exportGon = new
 		 * JMenuItem("Export Network for CellIllustrator",KeyEvent.VK_I);
 		 * exportGon.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
-		 * ActionEvent.CTRL_MASK)); exportGon.addActionListener(new
-		 * MenuListener()); exportGon.setActionCommand("export Network Gon");
+		 * ActionEvent.CTRL_MASK)); exportGon.addActionListener(new MenuListener());
+		 * exportGon.setActionCommand("export Network Gon");
 		 */
 
 		// animations = new JMenuItem("Animation", KeyEvent.VK_O);
@@ -329,11 +327,11 @@ public class MenuBarClass {
 		JMenuItem transform = new JMenuItem("Transform to Petri net");
 		transform.addActionListener(MenuListener.getInstance());
 		transform.setActionCommand("transform");
-		
+
 		JMenuItem ruleManager = new JMenuItem("Rule Management");
 		ruleManager.addActionListener(MenuListener.getInstance());
 		ruleManager.setActionCommand("ruleManager");
-		
+
 		help.add(interaction);
 
 		// about item is already present on mac osx
