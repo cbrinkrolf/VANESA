@@ -12,10 +12,9 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Tag;
 
+import gui.MyPopUp;
+
 public class YamlRuleWriter {
-	
-	
-	
 	
 	public void writeRules(List<Rule> rules){
 		List<YamlRule> yamlRules = new ArrayList<YamlRule>();
@@ -45,7 +44,7 @@ public class YamlRuleWriter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("written");
+		MyPopUp.getInstance().show("YAML Rules", rules.size()+" rules were written to file!");
 	}
 
 	private YamlRule getYamlRuleFromRule(Rule r){
@@ -98,6 +97,10 @@ public class YamlRuleWriter {
 		}
 		
 		rule.setMappingBNToPN(yamlMapping);
+		
+		for(int i = 0; i<r.getConsideredEdges().size(); i++){
+			rule.getConsideredEdges().add(r.getConsideredEdges().get(i).getName());
+		}
 		
 		return rule;
 	}

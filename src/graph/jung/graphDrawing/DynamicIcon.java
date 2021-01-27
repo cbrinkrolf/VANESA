@@ -9,6 +9,7 @@ import java.awt.Shape;
 import javax.swing.Icon;
 
 import biologicalObjects.nodes.petriNet.Place;
+import transformation.graphElements.ANYPlace;
 
 public class DynamicIcon implements Icon {
 
@@ -69,6 +70,11 @@ public class DynamicIcon implements Icon {
 				tokens = (int) ((Place) p.getRef()).getToken() + "";
 				discrete = true;
 			}
+		}
+		
+		if(p instanceof ANYPlace){
+			System.out.println(true);
+			tokens = "";
 		}
 
 		int xpos;

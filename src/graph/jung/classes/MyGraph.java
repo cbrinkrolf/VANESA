@@ -209,9 +209,11 @@ public class MyGraph {
 						vv.getPickedEdgeState().clear();
 					}
 					pathway.updateMyGraph();
-					MainWindow mw = MainWindow.getInstance();
-					mw.updateAllGuiElements();
-					// vv.repaint();
+					if (!vv.getPathway().isHeadless()) {
+						MainWindow mw = MainWindow.getInstance();
+						mw.updateAllGuiElements();
+					}
+					//vv.repaint();
 				}
 			}
 
@@ -427,6 +429,10 @@ public class MyGraph {
 							}
 						}
 
+						if (getVisualizationViewer().getPathway().isHeadless()) {
+							tokens = "";
+						}
+
 						int xpos;
 
 						Point2D point = vv.getGraphLayout().apply(p);
@@ -441,9 +447,11 @@ public class MyGraph {
 								.getScale();
 
 						if (discrete) {
-							xpos = Double.valueOf(p1inv.getX() - x1 + (19 - 5 * (double) tokens.length() / 2)).intValue();
+							xpos = Double.valueOf(p1inv.getX() - x1 + (19 - 5 * (double) tokens.length() / 2))
+									.intValue();
 						} else {
-							xpos = Double.valueOf(p1inv.getX() - x1 + (21 - 5 * (double) tokens.length() / 2)).intValue();
+							xpos = Double.valueOf(p1inv.getX() - x1 + (21 - 5 * (double) tokens.length() / 2))
+									.intValue();
 						}
 
 						g.setColor(Color.BLACK);

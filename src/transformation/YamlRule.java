@@ -15,6 +15,8 @@ public class YamlRule {
 	
 	private List<Map<String, String>> mappingBNToPN = new ArrayList<>();
 	
+	private List<String> consideredEdges = new ArrayList<String>();
+	
 	public String getName() {
 		return name;
 	}
@@ -51,5 +53,12 @@ public class YamlRule {
 	public void setMappingBNToPN(List<Map<String, String>> mappingBNToPN) {
 		this.mappingBNToPN = mappingBNToPN;
 	}
+	public List<String> getConsideredEdges() {
+		return consideredEdges;
+	}
+	public void setConsideredEdges(List<String> consideredEdges) {
+		this.consideredEdges = consideredEdges;
+	}
+	
 	
 }

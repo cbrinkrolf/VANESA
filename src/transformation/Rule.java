@@ -11,14 +11,16 @@ public class Rule {
 	
 	private boolean active = true;
 
-	private List<RuleNode> bNodes = new ArrayList<>();
-	private List<RuleEdge> bEdges = new ArrayList<>();
+	private List<RuleNode> bNodes = new ArrayList<RuleNode>();
+	private List<RuleEdge> bEdges = new ArrayList<RuleEdge>();
 
-	private List<RuleNode> pNodes = new ArrayList<>();
-	private List<RuleEdge> pEdges = new ArrayList<>();
+	private List<RuleNode> pNodes = new ArrayList<RuleNode>();
+	private List<RuleEdge> pEdges = new ArrayList<RuleEdge>();
 
 	private HashMap<RuleNode, RuleNode> bn2Pn = new HashMap<RuleNode, RuleNode>();
 	private HashMap<RuleNode, RuleNode> pn2Bn = new HashMap<RuleNode, RuleNode>();
+	
+	private List<RuleEdge> consideredEdges = new ArrayList<RuleEdge>();
 
 	public Rule() {
 
@@ -221,6 +223,14 @@ public class Rule {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public List<RuleEdge> getConsideredEdges() {
+		return consideredEdges;
+	}
+
+	public void setConsideredEdges(List<RuleEdge> consideredEdges) {
+		this.consideredEdges = consideredEdges;
 	}
 	
 	

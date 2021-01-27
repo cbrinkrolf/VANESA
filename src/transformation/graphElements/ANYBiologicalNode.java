@@ -15,7 +15,6 @@ public class ANYBiologicalNode extends BiologicalNodeAbstract {
 
 	@Override
 	public void rebuildShape(VertexShapes vs) {
-//		setShape(vs.getRegularStar(getVertex(), 8));
 	}
 
 }

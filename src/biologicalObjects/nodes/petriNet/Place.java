@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 //import edu.uci.ics.jung.graph.Vertex;
@@ -34,6 +35,7 @@ public abstract class Place extends PNNode {
 	// private int g;
 	public Place(String label, String name) {
 		super(label, name);
+		setBiologicalElement(Elementdeclerations.place);
 		if (label.equals(""))
 			setLabel(name);
 		if (name.equals(""))
