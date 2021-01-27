@@ -133,6 +133,8 @@ public class Elementdeclerations {
 	public static final String physicalInteraction = "Physical interaction";
 
 	public static final String matrix = "Matrix";
+	
+	public static final String place = "Place";
 
 	public static final String discretePlace = "Discrete Place";
 

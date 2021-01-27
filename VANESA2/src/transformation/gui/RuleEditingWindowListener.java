@@ -60,6 +60,10 @@ public class RuleEditingWindowListener implements ActionListener {
 			}
 		} else if ("del".equals(event)) {
 			activePw.removeSelection();
+		} else if ("place".equals(event)) {
+			con.changeMouseFunction("edit");
+			con.setPetriView(true);
+			con.setPetriNetEditingMode(Elementdeclerations.place);
 		} else if ("discretePlace".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
@@ -68,6 +72,10 @@ public class RuleEditingWindowListener implements ActionListener {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
 			con.setPetriNetEditingMode(Elementdeclerations.continuousPlace);
+		} else if ("transition".equals(event)) {
+			con.changeMouseFunction("edit");
+			con.setPetriView(true);
+			con.setPetriNetEditingMode(Elementdeclerations.transition);
 		} else if ("discreteTransition".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);

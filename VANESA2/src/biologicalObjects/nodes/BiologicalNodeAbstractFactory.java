@@ -8,6 +8,8 @@ import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import transformation.graphElements.ANYBiologicalNode;
+import transformation.graphElements.ANYPlace;
+import transformation.graphElements.ANYTransition;
 
 public class BiologicalNodeAbstractFactory {
 
@@ -148,6 +150,12 @@ public class BiologicalNodeAbstractFactory {
 			break;
 		case Elementdeclerations.anyBNA:
 			newBNA = new ANYBiologicalNode(label, name);
+			break;
+		case Elementdeclerations.place:
+			newBNA = new ANYPlace(label, name);
+			break;
+		case Elementdeclerations.transition:
+			newBNA = new ANYTransition(label, name);
 			break;
 		default:
 			newBNA = new Other(label, name);

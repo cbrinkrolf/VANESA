@@ -36,6 +36,8 @@ import gui.MainWindow;
 // TODO test if mapping node types matches
 // TODO syso -> log file
 // TODO handling references / logical nodes
+// TODO consider considered edges
+// TODO try hierarchical network (maybe first flatten?)
 public class Transformator {
 
 	public static final String place = "Place";

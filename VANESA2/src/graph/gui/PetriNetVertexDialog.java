@@ -31,6 +31,8 @@ import graph.GraphContainer;
 import gui.MainWindow;
 import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
+import transformation.graphElements.ANYPlace;
+import transformation.graphElements.ANYTransition;
 import util.MyNumberFormat;
 
 /**
@@ -186,14 +188,18 @@ public class PetriNetVertexDialog {
 			title = "Create a continious Transition";
 		} else if (petriElement.equals(Elementdeclerations.stochasticTransition)) {
 			title = "Create a stochastic Transition";
+		} else if (petriElement.equals(Elementdeclerations.place)) {
+			title = "Create a generic Place";
+		} else if (petriElement.equals(Elementdeclerations.transition)) {
+			title = "Create a generic Transition";
 		}
 
 		JDialog dialog = pane.createDialog(null, title);
 
 		// dialog.show();
-		if(relativeTo == null){
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
-		}else{
+		if (relativeTo == null) {
+			dialog.setLocationRelativeTo(MainWindow.getInstance());
+		} else {
 			dialog.setLocationRelativeTo(relativeTo);
 		}
 		dialog.setVisible(true);
@@ -252,6 +258,9 @@ public class PetriNetVertexDialog {
 						}
 					}
 					createdNode = p;
+				} else if (petriElement.equals(Elementdeclerations.place)) {
+					ANYPlace p = new ANYPlace(name.getText().trim(), name.getText().trim());
+					createdNode = p;
 				} else if (petriElement.equals(Elementdeclerations.discreteTransition)) {
 					DiscreteTransition t = new DiscreteTransition(name.getText().trim(), name.getText().trim());
 					if (!pw.isHeadless()) {
@@ -272,6 +281,9 @@ public class PetriNetVertexDialog {
 						t.setDistribution(distributionList.getSelectedItem().toString());
 						t.setFiringCondition(firingCondition.getText().trim());
 					}
+					createdNode = t;
+				} else if (petriElement.equals(Elementdeclerations.transition)) {
+					ANYTransition t = new ANYTransition(name.getText().trim(), name.getText().trim());
 					createdNode = t;
 				}
 

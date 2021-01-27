@@ -197,8 +197,10 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 						if (pw instanceof BiologicalNodeAbstract) {
 							bna.setParentNode((BiologicalNodeAbstract) pw);
 						}
-						MainWindow.getInstance().updateElementTree();
-						MainWindow.getInstance().updatePathwayTree();
+						if (new GraphInstance().getPathway() != null) {
+							MainWindow.getInstance().updateElementTree();
+							MainWindow.getInstance().updatePathwayTree();
+						}
 						// MainWindowSingelton.getInstance().updateAllGuiElements();
 						// MainWindowSingelton.getInstance().updateOptionPanel();
 						// MainWindowSingelton.getInstance()
@@ -268,85 +270,86 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 	 */
 	public void mouseReleased(MouseEvent e) {
 		// pw = graphInstance.getPathway();
-		if (checkModifiers(e)) {
-			@SuppressWarnings("unchecked")
-			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-					.getSource();
-			pw = vv.getPathway();
-			// final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
-			// .inverseTransform(e.getPoint());
-			// int v = vv.getPickedVertexState().getPicked().size();
-			// int edge = vv.getPickedEdgeState().getPicked().size();
-			GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv.getPickSupport();
-			// if (v > 0) {
-			// System.out.println("release");
-			final BiologicalNodeAbstract vertex = pickSupport.getVertex(vv.getGraphLayout(), e.getPoint().getX(),
-					e.getPoint().getY());
-			if (vertex != null && startVertex != null) {
+		// if (checkModifiers(e)) {
+		@SuppressWarnings("unchecked")
+		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
+				.getSource();
+		pw = vv.getPathway();
+		// final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
+		// .inverseTransform(e.getPoint());
+		// int v = vv.getPickedVertexState().getPicked().size();
+		// int edge = vv.getPickedEdgeState().getPicked().size();
+		GraphElementAccessor<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport = vv.getPickSupport();
+		// if (v > 0) {
+		// System.out.println("release");
+		final BiologicalNodeAbstract vertex = pickSupport.getVertex(vv.getGraphLayout(), e.getPoint().getX(),
+				e.getPoint().getY());
+		if (vertex != null && startVertex != null) {
 
-				// Pathway pw = graphInstance.getPathway();
+			// Pathway pw = graphInstance.getPathway();
 
-				BiologicalNodeAbstract start = startVertex;// (BiologicalNodeAbstract)
-															// pw
-				// .getNodeByVertexID(startVertex.toString());
-				BiologicalNodeAbstract end = vertex;// (BiologicalNodeAbstract)
-													// pw
-				// .getNodeByVertexID(vertex.toString());
+			BiologicalNodeAbstract start = startVertex;// (BiologicalNodeAbstract)
+														// pw
+			// .getNodeByVertexID(startVertex.toString());
+			BiologicalNodeAbstract end = vertex;// (BiologicalNodeAbstract)
+												// pw
+			// .getNodeByVertexID(vertex.toString());
 
-				if (pw.isPetriNet() && !((start instanceof Place && end instanceof Transition)
-						|| (start instanceof Transition && end instanceof Place))) {
-					MyPopUp.getInstance().show("Operation not allowed",
-							"In a petri net only Transition->Place and Place->Transition Relations are allowed!");
-				} else {
-					// Graph graph = vv.getGraphLayout().getGraph();
-					EdgeDialog dialog = new EdgeDialog(startVertex, vertex, pw);
-					Pair<Map<String, String>, BiologicalNodeAbstract[]> answer = dialog.getAnswer(vv);
-					Map<String, String> details = answer.getLeft();
-					BiologicalNodeAbstract[] nodes = answer.getRight();
+			if (pw.isPetriNet() && !((start instanceof Place && end instanceof Transition)
+					|| (start instanceof Transition && end instanceof Place))) {
+				MyPopUp.getInstance().show("Operation not allowed",
+						"In a petri net only Transition->Place and Place->Transition Relations are allowed!");
+			} else {
+				// Graph graph = vv.getGraphLayout().getGraph();
+				EdgeDialog dialog = new EdgeDialog(startVertex, vertex, pw);
+				Pair<Map<String, String>, BiologicalNodeAbstract[]> answer = dialog.getAnswer(vv);
+				Map<String, String> details = answer.getLeft();
+				BiologicalNodeAbstract[] nodes = answer.getRight();
 
-					if (details != null) {
-						if (details.get("element") != null && pw.isPetriNet()
-								&& (details.get("element").toLowerCase().contains("inhibi")
-										|| details.get("element").toLowerCase().contains("test"))
-								&& !(startVertex instanceof Place && vertex instanceof Transition)) {
-							MyPopUp.getInstance().show("Operation not allowed",
-									"Inhibitory / Test Edges are only possible from Place to Transition!");
+				if (details != null) {
+					if (details.get("element") != null && pw.isPetriNet()
+							&& (details.get("element").toLowerCase().contains("inhibi")
+									|| details.get("element").toLowerCase().contains("test"))
+							&& !(startVertex instanceof Place && vertex instanceof Transition)) {
+						MyPopUp.getInstance().show("Operation not allowed",
+								"Inhibitory / Test Edges are only possible from Place to Transition!");
+					} else {
+						String name = details.get("name");
+						String label = details.get("name");
+						String element = details.get("element");
+
+						boolean directed = false;
+						if (details.get("directed").equals("true")) {
+							directed = true;
+						}
+
+						Set<BiologicalNodeAbstract> parentBNAs = new HashSet<BiologicalNodeAbstract>();
+						parentBNAs.addAll(nodes[0].getAllParentNodes());
+						parentBNAs.addAll(nodes[1].getAllParentNodes());
+						BiologicalEdgeAbstract bea = pw.addEdge(label, name, nodes[0], nodes[1], element, directed);
+						if (bea instanceof PNEdge) {
+							((PNEdge) bea).setFunction(label);
+						}
+						if (nodes[0] == startVertex && nodes[1] == vertex) {
+							pw.addEdgeToView(bea, false);
 						} else {
-							String name = details.get("name");
-							String label = details.get("name");
-							String element = details.get("element");
-
-							boolean directed = false;
-							if (details.get("directed").equals("true")) {
-								directed = true;
-							}
-
-							Set<BiologicalNodeAbstract> parentBNAs = new HashSet<BiologicalNodeAbstract>();
-							parentBNAs.addAll(nodes[0].getAllParentNodes());
-							parentBNAs.addAll(nodes[1].getAllParentNodes());
-							BiologicalEdgeAbstract bea = pw.addEdge(label, name, nodes[0], nodes[1], element, directed);
-							if (bea instanceof PNEdge) {
-								((PNEdge) bea).setFunction(label);
-							}
-							if (nodes[0] == startVertex && nodes[1] == vertex) {
-								pw.addEdgeToView(bea, false);
-							} else {
-								BiologicalEdgeAbstract clone = bea.clone();
-								clone.setFrom(startVertex);
-								clone.setTo(vertex);
-								pw.addEdgeToView(clone, false);
-							}
+							BiologicalEdgeAbstract clone = bea.clone();
+							clone.setFrom(startVertex);
+							clone.setTo(vertex);
+							pw.addEdgeToView(clone, false);
 						}
 					}
 				}
 			}
-			vv.repaint();
-			startVertex = null;
-			down = null;
-			edgeIsDirected = false;
-			vv.removePostRenderPaintable(edgePaintable);
-			vv.removePostRenderPaintable(arrowPaintable);
 		}
+
+		startVertex = null;
+		down = null;
+		edgeIsDirected = false;
+		vv.removePostRenderPaintable(edgePaintable);
+		vv.removePostRenderPaintable(arrowPaintable);
+		vv.repaint();
+		// }
 	}
 
 	/**

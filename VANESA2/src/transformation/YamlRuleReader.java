@@ -5,8 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -42,11 +44,13 @@ public class YamlRuleReader {
 		}
 		YamlEdge edge;
 		RuleEdge e;
+		Map<String, RuleEdge> edgeMap = new HashMap<String, RuleEdge>();
 		for (int i = 0; i < rule.getBiologicalEdges().size(); i++) {
 			edge = rule.getBiologicalEdges().get(i);
 			e = new RuleEdge(edge.getName(), edge.getType(), r.getBiologicaNode(edge.getFrom()),
 					r.getBiologicaNode(edge.getTo()));
 			r.addBiologicalEdge(e);
+			edgeMap.put(edge.getName(), e);
 		}
 
 		// for PN
@@ -71,6 +75,10 @@ public class YamlRuleReader {
 				System.out.println("Mapping error in rule: BN to PN");
 			}
 		}
+		// for considered edges
+		for(int i = 0; i<rule.getConsideredEdges().size(); i++){
+			r.getConsideredEdges().add(edgeMap.get(rule.getConsideredEdges().get(i)));
+		}
 		return r;
 	}
 
@@ -90,11 +98,7 @@ public class YamlRuleReader {
 				rules.add(rule);
 			}
 		}
-
 		//writeRules(ymlList);
 		return rules;
 	}
-
-	
-
 }
