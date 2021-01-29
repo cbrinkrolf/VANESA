@@ -23,10 +23,4 @@ public class ANYPlace extends Place {
 	@Override
 	public void rebuildShape(VertexShapes vs) {
 	}
-	
-	@Override
-	public String getNetworklabel() {
-		return "";
-	}
-
 }

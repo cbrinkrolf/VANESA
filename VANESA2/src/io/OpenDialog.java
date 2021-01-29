@@ -222,7 +222,6 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 
 					//GraphInstance.getMyGraph().getVisualizationViewer()
 					//		.restart();
-					
 					MainWindow.getInstance().updateAllGuiElements();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();

@@ -1,4 +1,30 @@
 biologicalEdges:
+- {from: N1, name: E1, to: N3, type: ANY Biological Edge}
+- {from: N3, name: E2, to: N2, type: ANY Biological Edge}
+- {from: N2, name: E3, to: N4, type: ANY Biological Edge}
+biologicalNodes:
+- {name: N1, type: ANY Biological Node, x: 63.0, y: 138.0}
+- {name: N2, type: ANY Biological Node, x: 282.0, y: 133.0}
+- {name: N3, type: Enzyme, x: 173.0, y: 139.0}
+- {name: N4, type: Enzyme, x: 268.2598571777344, y: 189.8649139404297}
+consideredEdges: [E1, E2, E3]
+mappingBNToPN:
+- {from: N3, to: t1}
+- {from: N4, to: t2}
+- {from: N1, to: p1}
+- {from: N2, to: p2}
+name: Any->Enzyme->Any
+petriEdges:
+- {from: p2, name: PNE3, to: t2, type: PN Edge}
+- {from: p1, name: PNE1, to: t1, type: PN Edge}
+- {from: t1, name: PNE2, to: p2, type: PN Edge}
+petriNodes:
+- {name: p1, type: Place, x: 99.0, y: 159.0}
+- {name: p2, type: Place, x: 344.0, y: 159.0}
+- {name: t1, type: Transition, x: 211.0, y: 145.0}
+- {name: t2, type: Transition, x: 301.7626647949219, y: 216.08067321777344}
+---
+biologicalEdges:
 - {from: any_biological_node, name: E1, to: Enzyme, type: ANY Biological Edge}
 - {from: Enzyme, name: E2, to: any_biological_node, type: ANY Biological Edge}
 biologicalNodes:
@@ -6,8 +32,8 @@ biologicalNodes:
 - {name: Enzyme, type: Enzyme, x: 153.0, y: 0.0}
 consideredEdges: []
 mappingBNToPN:
-- {from: any_biological_node, to: p1}
 - {from: Enzyme, to: p2}
+- {from: any_biological_node, to: p1}
 name: new Rule
 petriEdges:
 - {from: p1, name: '1', to: t1, type: PN Edge}
@@ -21,19 +47,19 @@ biologicalEdges:
 - {from: N1, name: E1, to: N3, type: ANY Biological Edge}
 - {from: N3, name: E2, to: N2, type: ANY Biological Edge}
 biologicalNodes:
-- {name: N1, type: ANY Biological Node, x: 63.0, y: 138.0}
-- {name: N2, type: ANY Biological Node, x: 282.0, y: 133.0}
-- {name: N3, type: Enzyme, x: 173.0, y: 139.0}
+- {name: N1, type: ANY Biological Node, x: 82.0, y: 158.0}
+- {name: N2, type: ANY Biological Node, x: 340.0, y: 158.0}
+- {name: N3, type: Enzyme, x: 214.0, y: 152.0}
 consideredEdges: [E1, E2]
 mappingBNToPN:
+- {from: N2, to: p2}
 - {from: N3, to: t1}
 - {from: N1, to: p1}
-- {from: N2, to: p2}
-name: Any->Enzyme->Any
+name: N->E->N cont
 petriEdges:
 - {from: p1, name: PNE1, to: t1, type: PN Edge}
 - {from: t1, name: PNE2, to: p2, type: PN Edge}
 petriNodes:
-- {name: p1, type: Place, x: 99.0, y: 159.0}
-- {name: p2, type: Place, x: 344.0, y: 159.0}
-- {name: t1, type: Transition, x: 211.0, y: 145.0}
+- {name: p1, type: Continuous Place, x: 91.0, y: 156.0}
+- {name: p2, type: Continuous Place, x: 344.0, y: 153.0}
+- {name: t1, type: Continuous Transition, x: 202.0, y: 152.0}

@@ -26,10 +26,4 @@ public class ANYTransition extends Transition {
 	@Override
 	public void rebuildShape(VertexShapes vs) {
 	}
-
-	@Override
-	public String getNetworklabel() {
-		return "";
-	}
-
 }
