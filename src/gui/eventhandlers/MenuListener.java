@@ -1185,7 +1185,7 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				Pathway pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
-					List<Rule> rules = RuleManager.getInstance().getRules();
+					List<Rule> rules = RuleManager.getInstance().getActiveRules();
 					new Transformator().transform(pw, rules);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");

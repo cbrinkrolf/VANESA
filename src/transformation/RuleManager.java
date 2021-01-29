@@ -32,8 +32,19 @@ public class RuleManager {
 		rules.clear();
 	}
 	
-	public List<Rule> getRules(){
+	public List<Rule> getAllRules(){
 		return this.rules;
+	}
+	
+	public List<Rule> getActiveRules(){
+		List<Rule> activeRules = new ArrayList<Rule>();
+		
+		for(int i = 0; i<this.rules.size(); i++){
+			if(rules.get(i).isActive()){
+				activeRules.add(this.rules.get(i));
+			}
+		}
+		return activeRules;
 	}
 
 }

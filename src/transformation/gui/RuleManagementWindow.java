@@ -51,7 +51,7 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 		frame = new JFrame("Overview of transformation rules");
 		// System.out.println("constr.");
 		rm = RuleManager.getInstance();
-		rules = rm.getRules();
+		rules = rm.getAllRules();
 
 		MigLayout layout = new MigLayout("", "[left]");
 

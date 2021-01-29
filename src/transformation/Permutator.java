@@ -1,8 +1,8 @@
 package transformation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 // die permutaions funktionen Klasse
@@ -27,9 +27,9 @@ public class Permutator {
 		if (collections == null || collections.isEmpty()) {
 			return Collections.emptyList();
 		} else {
-			List<List<T>> res = new LinkedList<List<T>>();
+			List<List<T>> res = new ArrayList<List<T>>();
 
-			permutationsImpl(collections, res, 0, new LinkedList<T>(), allowDuplicates);
+			permutationsImpl(collections, res, 0, new ArrayList<T>(), allowDuplicates);
 			return res;
 		}
 	}
@@ -52,7 +52,7 @@ public class Permutator {
 		List<T> currentCollection = ori.get(d);
 		for (T element : currentCollection) {
 			// List<T> copy = Lists.newLinkedList(current);
-			List<T> copy = new LinkedList<T>(current);
+			List<T> copy = new ArrayList<T>(current);
 			if (allowDuplicates) {
 				copy.add(element);
 				permutationsImpl(ori, res, d + 1, copy, true);
@@ -63,5 +63,15 @@ public class Permutator {
 				}
 			}
 		}
+	}
+	
+	public static <T> List<List<T>> removePermsByElement(List<List<T>> perms, int start, int id){
+		
+		for (int i =perms.size()-1;i>start ; i--) {
+			if(perms.get(i).contains(id)){
+				perms.remove(i);
+			}
+		}
+		return perms;
 	}
 }
