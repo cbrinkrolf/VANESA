@@ -585,6 +585,9 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 						if (bnToPn.containsKey(bna)) {
 							vertexStatePN.clear();
 							vertexStatePN.pick(bnToPn.get(bna), true);
+							gaPN = bnToPn.get(bna);
+							elementTypePN.setText(bnToPn.get(bna).getBiologicalElement());
+							elementNamePN.setText(bnToPn.get(bna).getName());
 						}
 						pickLock = false;
 						gaBN = bna;
@@ -636,6 +639,10 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 							for(BiologicalNodeAbstract b : bnToPn.keySet()){
 								if(bnToPn.get(b) == bna){
 									vertexStateBN.pick(b, true);
+									gaBN = b;
+									elementTypeBN.setText(b.getBiologicalElement());
+									elementNameBN.setText(b.getName());
+									break;
 								}
 							}
 						}
