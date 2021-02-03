@@ -50,9 +50,7 @@ public class RuleEditingWindowListener implements ActionListener {
 				activePw.getGraph().disableGraphTheory();
 			}
 		} else if ("center".equals(event)) {
-			if (activePw.hasGotAtLeastOneElement()) {
 				activePw.getGraph().normalCentering();
-			}
 		} else if ("edit".equals(event)) {
 			if (con.containsPathway()) {
 				con.changeMouseFunction("edit");

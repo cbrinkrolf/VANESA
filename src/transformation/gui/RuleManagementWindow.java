@@ -40,7 +40,6 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 	private List<Rule> rules;
 
 	private Rule newRule = null;
-	private Rule editingRule = null;
 
 	// private JDialog dialog;
 
