@@ -98,9 +98,7 @@ public class ToolBarListener implements ActionListener {
 		} else if ("center".equals(event)) {
 			if (con.containsPathway()) {
 				// CENTERING WITH SCALING
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					graphInstance.getPathway().getGraph().normalCentering();
-				}
+				graphInstance.getPathway().getGraph().normalCentering();
 				// ONLY FOR CENTERING, NOT SCALING
 //				graphInstance.getPathway().getGraph().animatedCentering();
 			}

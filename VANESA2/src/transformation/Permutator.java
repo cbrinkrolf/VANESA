@@ -51,6 +51,7 @@ public class Permutator {
 		// each element
 		List<T> currentCollection = ori.get(d);
 		for (T element : currentCollection) {
+			//System.out.println(element);
 			// List<T> copy = Lists.newLinkedList(current);
 			List<T> copy = new ArrayList<T>(current);
 			if (allowDuplicates) {

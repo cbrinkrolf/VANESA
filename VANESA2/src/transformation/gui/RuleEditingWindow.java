@@ -100,6 +100,7 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 
 	private JCheckBox chkAllEdgesSelected = new JCheckBox("all edges");
 	private boolean newRule = false;
+	private boolean pickLock = false;
 
 	public RuleEditingWindow(Rule rule, ActionListener al) {
 
@@ -345,12 +346,8 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 		frame.pack();
 		splitPane.setDividerLocation(0.5);
 		frame.setVisible(true);
-		if (bn.hasGotAtLeastOneElement()) {
-			bn.getGraph().normalCentering();
-		}
-		if (pn.hasGotAtLeastOneElement()) {
-			pn.getGraph().normalCentering();
-		}
+		bn.getGraph().normalCentering();
+		pn.getGraph().normalCentering();
 	}
 
 	public void fillGraphPane(JPanel graphPanel, JLabel label) {
@@ -422,6 +419,20 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 				}
 			}
 			this.revalidateSelectedEdges();
+		} else if (e.getActionCommand().startsWith("del_")) {
+			int idx = Integer.parseInt(e.getActionCommand().substring(4));
+			Iterator<BiologicalNodeAbstract> it = bnToPn.keySet().iterator();
+			BiologicalNodeAbstract bna = null;
+			while (it.hasNext()) {
+				bna = it.next();
+				if (bna.getID() == idx) {
+					break;
+				}
+			}
+			if (bna != null) {
+				bnToPn.remove(bna);
+				this.populateNodeMapping();
+			}
 		}
 	}
 
@@ -557,20 +568,33 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 		vertexStateBN.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (vertexStateBN.getPicked().size() == 1 && vertexStatePN.getPicked().size() == 1) {
-					btnAddMapping.setEnabled(true);
-				} else {
-					btnAddMapping.setEnabled(false);
-				}
-				if (vertexStateBN.getPicked().size() == 1) {
-					BiologicalNodeAbstract bna = vertexStateBN.getPicked().iterator().next();
-					gaBN = bna;
-					elementTypeBN.setText(bna.getBiologicalElement());
-					elementNameBN.setText(bna.getName());
-				} else {
-					gaBN = null;
-					elementTypeBN.setText("");
-					elementNameBN.setText("");
+				if (!pickLock) {
+					if (vertexStateBN.getPicked().size() == 1 && vertexStatePN.getPicked().size() == 1) {
+						if (!bnToPn.containsKey(vertexStateBN.getPicked().iterator().next())
+								&& !bnToPn.containsValue(vertexStatePN.getPicked().iterator().next())) {
+							btnAddMapping.setEnabled(true);
+						} else {
+							btnAddMapping.setEnabled(false);
+						}
+					} else {
+						btnAddMapping.setEnabled(false);
+					}
+					if (vertexStateBN.getPicked().size() == 1) {
+						pickLock = true;
+						BiologicalNodeAbstract bna = vertexStateBN.getPicked().iterator().next();
+						if (bnToPn.containsKey(bna)) {
+							vertexStatePN.clear();
+							vertexStatePN.pick(bnToPn.get(bna), true);
+						}
+						pickLock = false;
+						gaBN = bna;
+						elementTypeBN.setText(bna.getBiologicalElement());
+						elementNameBN.setText(bna.getName());
+					} else {
+						gaBN = null;
+						elementTypeBN.setText("");
+						elementNameBN.setText("");
+					}
 				}
 			}
 		});
@@ -593,20 +617,37 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 		vertexStatePN.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (vertexStateBN.getPicked().size() == 1 && vertexStatePN.getPicked().size() == 1) {
-					btnAddMapping.setEnabled(true);
-				} else {
-					btnAddMapping.setEnabled(false);
-				}
-				if (vertexStatePN.getPicked().size() == 1) {
-					BiologicalNodeAbstract bna = vertexStatePN.getPicked().iterator().next();
-					gaPN = bna;
-					elementTypePN.setText(bna.getBiologicalElement());
-					elementNamePN.setText(bna.getName());
-				} else {
-					gaPN = null;
-					elementTypePN.setText("");
-					elementNamePN.setText("");
+				if (!pickLock) {
+					if (vertexStateBN.getPicked().size() == 1 && vertexStatePN.getPicked().size() == 1) {
+						if (!bnToPn.containsKey(vertexStateBN.getPicked().iterator().next())
+								&& !bnToPn.containsValue(vertexStatePN.getPicked().iterator().next())) {
+							btnAddMapping.setEnabled(true);
+						} else {
+							btnAddMapping.setEnabled(false);
+						}
+					} else {
+						btnAddMapping.setEnabled(false);
+					}
+					if (vertexStatePN.getPicked().size() == 1) {
+						pickLock = true;
+						BiologicalNodeAbstract bna = vertexStatePN.getPicked().iterator().next();
+						if (bnToPn.containsValue(bna)) {
+							vertexStateBN.clear();
+							for(BiologicalNodeAbstract b : bnToPn.keySet()){
+								if(bnToPn.get(b) == bna){
+									vertexStateBN.pick(b, true);
+								}
+							}
+						}
+						pickLock = false;
+						gaPN = bna;
+						elementTypePN.setText(bna.getBiologicalElement());
+						elementNamePN.setText(bna.getName());
+					} else {
+						gaPN = null;
+						elementTypePN.setText("");
+						elementNamePN.setText("");
+					}
 				}
 			}
 		});
@@ -738,21 +779,26 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 		Iterator<BiologicalNodeAbstract> it = bnToPn.keySet().iterator();
 		BiologicalNodeAbstract bna;
 		Set<BiologicalNodeAbstract> toDelete = new HashSet<BiologicalNodeAbstract>();
+		JButton btnDelete;
 		while (it.hasNext()) {
 			bna = it.next();
 			if (bn.containsVertex(bna) && pn.containsVertex(bnToPn.get(bna))) {
 				nodeMappingPanel.add(new JLabel(bna.getName()));
-				nodeMappingPanel.add(new JLabel(bnToPn.get(bna).getName()), "wrap");
+				nodeMappingPanel.add(new JLabel(bnToPn.get(bna).getName()));
+				btnDelete = new JButton("delete");
+				btnDelete.addActionListener(this);
+				btnDelete.setActionCommand("del_" + bna.getID());
+				nodeMappingPanel.add(btnDelete, "wrap");
 			} else {
 				toDelete.add(bna);
 			}
 		}
 		// two steps, otherwise concurrent transaction of iteration and deletion
 		it = toDelete.iterator();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			bnToPn.remove(it.next());
 		}
-		
+
 		nodeMappingPanel.add(new JSeparator(), "span,growx,wrap 5");
 		nodeMappingPanel.add(new JLabel("Considered Edges:"), "grow");
 		nodeMappingPanel.add(chkAllEdgesSelected, "grow");

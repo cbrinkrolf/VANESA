@@ -213,7 +213,7 @@ public class MyGraph {
 						MainWindow mw = MainWindow.getInstance();
 						mw.updateAllGuiElements();
 					}
-					//vv.repaint();
+					// vv.repaint();
 				}
 			}
 
@@ -1218,16 +1218,18 @@ public class MyGraph {
 
 	public void normalCentering() {
 
-		fitScaleOfViewer(this.vv);
-		fitScaleOfViewer(this.vv2);
-		normalCentering(this.vv);
-		normalCentering(this.vv2);
+		if (!getAllVertices().isEmpty()) {
+			fitScaleOfViewer(this.vv);
+			fitScaleOfViewer(this.vv2);
+			normalCentering(this.vv);
+			normalCentering(this.vv2);
 
-		// vv.repaint();
-		// vv.restart();
+			// vv.repaint();
+			// vv.restart();
 
-		// vv2.repaint();
-		// vv2.restart();
+			// vv2.repaint();
+			// vv2.restart();
+		}
 
 	}
 
