@@ -5,6 +5,8 @@ package graph.gui;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,16 +42,19 @@ public class VertexDialog {
 	private JComboBox<String> compartment = new JComboBox<String>();
 	private JComboBox<String> elementType = new JComboBox<String>();
 	private Pathway pw;
+	private int lastTypeIdx = -1;
+	private DefaultComboBoxModel<String> dcbm;
+	private DefaultComboBoxModel<String> dcbmEmpty;
 
 	/**
 	 * 
 	 */
-	public VertexDialog(Pathway pw) {
+	public VertexDialog(Pathway pw, int lastTypeidx) {
 		this.pw = pw;
 		MigLayout layout = new MigLayout("", "[left]");
 
-		DefaultComboBoxModel<String> dcbm = new DefaultComboBoxModel<String>(
-				ElementNamesSingelton.getInstance().getEnzymes());
+		dcbm = new DefaultComboBoxModel<String>(ElementNamesSingelton.getInstance().getEnzymes());
+		dcbmEmpty = new DefaultComboBoxModel<String>();
 		elementNames.setEditable(true);
 
 		elementNames.setModel(dcbm);
@@ -64,13 +69,34 @@ public class VertexDialog {
 
 		panel.add(new JLabel("Element"), "span 4");
 
+		elementType.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (elementType.getSelectedItem().equals(Elementdeclerations.enzyme)) {
+					elementNames.setModel(dcbm);
+					AutoCompleteDecorator.decorate(elementNames);
+				} else {
+					elementNames.setModel(dcbmEmpty);
+					AutoCompleteDecorator.decorate(elementNames);
+				}
+			}
+		});
 		addNodeItems();
 		AutoCompleteDecorator.decorate(elementType);
 		if (pw.isHeadless()) {
-			elementType.setSelectedItem(Elementdeclerations.anyBNA);
+			if (lastTypeidx < 0) {
+				elementType.setSelectedItem(Elementdeclerations.anyBNA);
+			} else {
+				elementType.setSelectedIndex(lastTypeidx);
+			}
 
 		} else {
-			elementType.setSelectedItem(Elementdeclerations.enzyme);
+			if (lastTypeidx < 0) {
+				elementType.setSelectedItem(Elementdeclerations.enzyme);
+			} else {
+				elementType.setSelectedIndex(lastTypeidx);
+			}
 		}
 		elementType.setMaximumSize(new Dimension(250, 300));
 		panel.add(elementType, "span,wrap 5,growx ,gaptop 2");
@@ -86,7 +112,7 @@ public class VertexDialog {
 
 		if (pw.isHeadless()) {
 			panel.add(new JLabel("Name"), "span 2, gaptop 2 ");
-			name.setText("N" + (pw.countNodes()+1));
+			name.setText("N" + (pw.countNodes() + 1));
 			panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
 		} else {
 			panel.add(new JLabel("Label"), "span 2, gaptop 2 ");
@@ -146,6 +172,7 @@ public class VertexDialog {
 					details.put("compartment", compartment.getSelectedItem().toString().trim());
 				}
 				details.put("elementType", elementType.getSelectedItem().toString().trim());
+				this.lastTypeIdx = elementType.getSelectedIndex();
 
 				// details[0] = elementNames.getSelectedItem().toString();
 				// details[1] = elementType.getSelectedItem().toString();
@@ -157,5 +184,9 @@ public class VertexDialog {
 			return null;
 		}
 		return details;
+	}
+
+	public int getLastTypeIdx() {
+		return this.lastTypeIdx;
 	}
 }
