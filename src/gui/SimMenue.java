@@ -429,7 +429,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
 		Pathway pw = new GraphInstance().getPathway();
 
-		List<SimulationResult> results = pw.getPetriNet().getSimResController().getAll();
+		List<SimulationResult> results = pw.getPetriPropertiesNet().getSimResController().getAll();
 
 		for (int i = 0; i < results.size(); i++) {
 			JCheckBox box = new JCheckBox();
@@ -474,7 +474,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 			// System.out.println(i);
 			if (i >= 0) {
 				Pathway pw = new GraphInstance().getPathway();
-				pw.getPetriNet().getSimResController().getAll().get(i).setActive(box.isSelected());
+				pw.getPetriPropertiesNet().getSimResController().getAll().get(i).setActive(box.isSelected());
 			} else {
 				Component[] components = west.getComponents();
 				for (int j = 0; j < components.length; j++) {
@@ -482,7 +482,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 						((JCheckBox) components[j]).setSelected(box.isSelected());
 					}
 				}
-				List<SimulationResult> resList = new GraphInstance().getPathway().getPetriNet().getSimResController().getAll();
+				List<SimulationResult> resList = new GraphInstance().getPathway().getPetriPropertiesNet().getSimResController().getAll();
 				for (int j = 0; j < resList.size(); j++) {
 					resList.get(j).setActive(box.isSelected());
 				}
@@ -508,7 +508,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		// System.out.println(e);
 		if (e.getSource() instanceof JButton) {
 			int i = Integer.parseInt(e.getActionCommand());
-			new GraphInstance().getPathway().getPetriNet().getSimResController().remove(i);
+			new GraphInstance().getPathway().getPetriPropertiesNet().getSimResController().remove(i);
 			this.updateSimulationResults();
 		} else if ("parameterized".equals(e.getActionCommand())) {
 			revalidateParametrizedPanel();

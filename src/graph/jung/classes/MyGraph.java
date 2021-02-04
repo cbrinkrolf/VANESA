@@ -322,7 +322,7 @@ public class MyGraph {
 				// System.out.println("vorher");
 
 				// System.out.println("nachher");
-				if (pathway.getPetriNet().isPetriNetSimulation()) {
+				if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
 					// System.out.println("sim");
 					w.updatePCPView();
 				}
@@ -343,7 +343,7 @@ public class MyGraph {
 					}
 				}
 
-				if (pathway.getPetriNet().isPetriNetSimulation()) {
+				if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
 					// System.out.println("sim");
 					w.updatePCPView();
 				}

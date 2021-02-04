@@ -49,91 +49,43 @@ import util.MyIntComparable;
 
 public class Pathway implements Cloneable {
 
-	// ---Fields---
-
 	private String filename = null;
-
 	private String name = "";
-
 	private String version = "";
-
 	private String date = "";
-
 	private String title = "";
-
 	private String author = "";
-
 	private String referenceNumber = "";
-
 	private String link = "";
-
 	private String organism = "";
-
 	private boolean orgSpecification;
-
 	private String description = "";
-
 	private boolean[] settings = new boolean[11];
 
 	private boolean isPetriNet = false;
-
-	private final PetriNet petriNet = new PetriNet();
-
-	// private final HashMap<String, GraphElementAbstract> biologicalElements =
-	// new HashMap<String, GraphElementAbstract>();
+	private PetriNetProperties petriNetProperties = null;
 
 	private HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
-
 	private MyGraph graph;
-
 	private GraphTab tab;
-
 	private Pathway parent;
-
 	private SortedSet<Integer> ids = new TreeSet<Integer>();
-
 	private Set<BiologicalNodeAbstract> closedSubPathways = new HashSet<BiologicalNodeAbstract>();
 
 	private HashMap<String, ChangedFlags> changedFlags = new HashMap<String, ChangedFlags>();
-
 	private HashMap<Parameter, GraphElementAbstract> changedParameters = new HashMap<Parameter, GraphElementAbstract>();
-
 	private HashMap<Place, Double> changedInitialValues = new HashMap<Place, Double>();
-
 	private HashMap<Place, Boundary> changedBoundaries = new HashMap<Place, Boundary>();
 
 	private BiologicalNodeAbstract rootNode;
-
 	private HashMap<BiologicalNodeAbstract, Point2D> vertices = new HashMap<BiologicalNodeAbstract, Point2D>();
-
-	// private Set<BiologicalEdgeAbstract> edges = new
-	// HashSet<BiologicalEdgeAbstract>();
 
 	// no graph tab is assigned / created. this is used for rule editing window
 	private boolean headless = false;
 
-	public ArrayList<Group> groupes = new ArrayList<>();
+	private ArrayList<Group> groupes = new ArrayList<>();
 
-	public Set<BiologicalNodeAbstract> getClosedSubPathways() {
-		return closedSubPathways;
-	}
-
-	public HashMap<BiologicalNodeAbstract, Point2D> getVertices() {
-		return vertices;
-	}
-
-	protected void cleanVertices() {
-		vertices = new HashMap<BiologicalNodeAbstract, Point2D>();
-	}
-
-	public Set<BiologicalEdgeAbstract> getEdges() {
-		Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
-		for (BiologicalNodeAbstract n : getVertices().keySet()) {
-			edges.addAll(n.getConnectingEdges());
-		}
-		return edges;
-	}
-
+	private Pathway petriNet = null;
 	// ---Functional Methods---
 
 	public Pathway(String name, boolean headless) {
@@ -155,6 +107,26 @@ public class Pathway implements Cloneable {
 		// this(name);
 		this.title = name;
 		this.parent = parent;
+	}
+
+	public Set<BiologicalNodeAbstract> getClosedSubPathways() {
+		return closedSubPathways;
+	}
+
+	public HashMap<BiologicalNodeAbstract, Point2D> getVertices() {
+		return vertices;
+	}
+
+	protected void cleanVertices() {
+		vertices = new HashMap<BiologicalNodeAbstract, Point2D>();
+	}
+
+	public Set<BiologicalEdgeAbstract> getEdges() {
+		Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
+		for (BiologicalNodeAbstract n : getVertices().keySet()) {
+			edges.addAll(n.getConnectingEdges());
+		}
+		return edges;
 	}
 
 	public void changeBackground(String color) {
@@ -208,8 +180,11 @@ public class Pathway implements Cloneable {
 						bna.setRef(node);
 						createdRef = true;
 					} else {
-						MyPopUp.getInstance().show("Type mismatch", "Cannot create logical node with the name: "+bna.getName()+". Type mismatch of "+bna.getClass()+" and "+node.getClass()+"!");
-						System.err.println("Cannot create logical node with the name: "+bna.getName()+". Type mismatch of "+bna.getClass()+" and "+node.getClass()+"!"); 
+						MyPopUp.getInstance().show("Type mismatch",
+								"Cannot create logical node with the name: " + bna.getName() + ". Type mismatch of "
+										+ bna.getClass() + " and " + node.getClass() + "!");
+						System.err.println("Cannot create logical node with the name: " + bna.getName()
+								+ ". Type mismatch of " + bna.getClass() + " and " + node.getClass() + "!");
 						return null;
 					}
 				}
@@ -231,10 +206,10 @@ public class Pathway implements Cloneable {
 		vertices.put(bna, p);
 		addVertexToView(bna, p);
 		if (bna instanceof Place) {
-			this.petriNet.setPlaces(this.petriNet.getPlaces() + 1);
+			this.petriNetProperties.setPlaces(this.petriNetProperties.getPlaces() + 1);
 		}
 		if (bna instanceof Transition) {
-			this.petriNet.setTransitions(this.petriNet.getTransitions() + 1);
+			this.petriNetProperties.setTransitions(this.petriNetProperties.getTransitions() + 1);
 		}
 		// System.out.println("node eingefuegt");
 
@@ -390,10 +365,10 @@ public class Pathway implements Cloneable {
 					parent.getVertices().remove(bna);
 				}
 				if (bna instanceof Place) {
-					this.petriNet.setPlaces(this.petriNet.getPlaces() - 1);
+					this.petriNetProperties.setPlaces(this.petriNetProperties.getPlaces() - 1);
 				}
 				if (bna instanceof Transition) {
-					this.petriNet.setTransitions(this.petriNet.getTransitions() - 1);
+					this.petriNetProperties.setTransitions(this.petriNetProperties.getTransitions() - 1);
 				}
 				bna.delete();
 
@@ -890,8 +865,8 @@ public class Pathway implements Cloneable {
 
 	// ---Getter/Setter---
 
-	public PetriNet getPetriNet() {
-		return petriNet;
+	public PetriNetProperties getPetriPropertiesNet() {
+		return petriNetProperties;
 	}
 
 	public boolean isPetriNet() {
@@ -900,6 +875,9 @@ public class Pathway implements Cloneable {
 
 	public void setPetriNet(boolean isPetriNet) {
 		this.isPetriNet = isPetriNet;
+		if (isPetriNet) {
+			petriNetProperties = new PetriNetProperties();
+		}
 	}
 
 	public void setGraph(MyGraph graph) {
@@ -1740,5 +1718,13 @@ public class Pathway implements Cloneable {
 		map.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
 
 		return wvv;
+	}
+
+	public ArrayList<Group> getGroupes() {
+		return groupes;
+	}
+
+	public void setGroupes(ArrayList<Group> groupes) {
+		this.groupes = groupes;
 	}
 }

@@ -6,7 +6,7 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import biologicalElements.PetriNet;
+import biologicalElements.PetriNetProperties;
 import configurations.ConnectionSettings;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -16,7 +16,7 @@ import gui.MyPopUp;
 import gui.ProgressBar;
 import io.MyFileFilter;
 
-public class OpenModellicaResult extends SwingWorker<Object, Object> {
+public class OpenModelicaResult extends SwingWorker<Object, Object> {
 	private JFileChooser chooser;
 
 	private String fileFormat;
@@ -25,8 +25,8 @@ public class OpenModellicaResult extends SwingWorker<Object, Object> {
 	private final String vanesaResultDescription = "VANESA Simulation Result File (*.csv)";
 	private final String vanesaSimulation = "csv";
 
-	private final String modelicaResultDescription = "New Modelica Simulation Result File (*.csv)";
-	private final String modelicaSimulation = "csv";
+	//private final String modelicaResultDescription = "New Modelica Simulation Result File (*.csv)";
+	//private final String modelicaSimulation = "csv";
 
 	private final int option;
 	private final ProgressBar bar = new ProgressBar();
@@ -34,7 +34,7 @@ public class OpenModellicaResult extends SwingWorker<Object, Object> {
 	private GraphContainer con = GraphContainer.getInstance();
 	private GraphInstance graphInstance = new GraphInstance();
 
-	public OpenModellicaResult() {
+	public OpenModelicaResult() {
 
 		if (ConnectionSettings.getFileDirectory() != null) {
 			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
@@ -59,23 +59,8 @@ public class OpenModellicaResult extends SwingWorker<Object, Object> {
 				if (con.containsPathway()) {
 					if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 						graphInstance.getPathway().setPetriNet(true);
-						PetriNet petrinet = graphInstance.getPathway().getPetriNet();
+						PetriNetProperties petrinet = graphInstance.getPathway().getPetriPropertiesNet();
 						petrinet.loadVanesaSimulationResult(file);
-
-					} else {
-						MyPopUp.getInstance().show("Error", "Please create a network before.");
-					}
-				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
-				}
-
-			} else if (fileFormat.equals(modelicaResultDescription)) {
-				if (con.containsPathway()) {
-					if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-
-						graphInstance.getPathway().setPetriNet(true);
-						PetriNet petrinet = graphInstance.getPathway().getPetriNet();
-						petrinet.setPetriNetSimulationFile(file.getAbsolutePath());
 
 					} else {
 						MyPopUp.getInstance().show("Error", "Please create a network before.");
