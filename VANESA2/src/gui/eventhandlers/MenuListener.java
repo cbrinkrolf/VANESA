@@ -56,7 +56,6 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
-import graph.algorithms.Transformation;
 import graph.algorithms.gui.RandomBipartiteGraphGui;
 import graph.algorithms.gui.RandomConnectedGraphGui;
 import graph.algorithms.gui.RandomGraphGui;
@@ -908,28 +907,6 @@ public class MenuListener implements ActionListener {
 			} else
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 
-		} else if ("resolveReferences".equals(event)) {
-
-			if (con.containsPathway()) {
-				// System.out.println("resolve");
-				Pathway old = con.getPathway(w.getCurrentPathway());
-				//
-				// Pathway new =
-
-				// ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				// Serialize it
-
-				new CreatePathway(old).getPathway();
-				Pathway pw = con.getPathway(w.getCurrentPathway());
-				// pw = old.clone()
-
-				Transformation t = new Transformation();
-				t.resolveReferences(pw);
-				// MainWindow.
-				// Tansformation.resolveReferences(pw);
-				// pw = old;
-			}
-
 		} else if ("createDoc".equals(event)) {
 			String docDir = MainWindow.pathWorkingDirectory + "documentation" + File.separator;
 			File dir = new File(docDir);
@@ -1145,10 +1122,10 @@ public class MenuListener implements ActionListener {
 		} else if ("graphPicture".equals(event)) {
 			Pathway pw = graphInstance.getPathway();
 			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = pw.prepareGraphToPrint();
-			
+
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_PNG+SaveDialog.FORMAT_SVG, wvv);
+					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv);
 
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
@@ -1199,7 +1176,6 @@ public class MenuListener implements ActionListener {
 			new RuleManagementWindow();
 		}
 	}
-
 
 	private double[][] initArray(int m, int n) {
 		double[][] array = new double[m][n];

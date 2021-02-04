@@ -300,17 +300,6 @@ public class PetriNetVertexDialog {
 							createdRef = true;
 						}
 					}
-					int i = 1;
-					if (createdRef) {
-						while (true) {
-							if (!pw.getAllNodeNames().contains((name.getText().trim() + "_" + i))) {
-								createdNode.setName(name.getText().trim() + "_" + i);
-								createdNode.setLabel(name.getText().trim());
-								break;
-							}
-							i++;
-						}
-					}
 
 					pw.addVertex(createdNode, point);
 					if (createdRef) {
