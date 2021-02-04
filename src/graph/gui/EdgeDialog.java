@@ -47,19 +47,21 @@ public class EdgeDialog extends JFrame {
 	private JRadioButton directed, undirected;
 
 	private Pathway pw;
-	private JComboBox<String> box = new JComboBox<String>();
+	private JComboBox<String> elementType = new JComboBox<String>();
 	private JComboBox<String> fromBox = new JComboBox<String>();
 	private HashMap<Integer, BiologicalNodeAbstract> fromMap = new HashMap<Integer, BiologicalNodeAbstract>();
 	private JComboBox<String> toBox = new JComboBox<String>();
 	private HashMap<Integer, BiologicalNodeAbstract> toMap = new HashMap<Integer, BiologicalNodeAbstract>();
 
 	private BiologicalNodeAbstract from;
+	private int lastTypeIdx = -1;
+	private boolean lastDirected = true;
 
 	/**
 	 * 
 	 */
-	public EdgeDialog(BiologicalNodeAbstract from, BiologicalNodeAbstract to, Pathway pw) {
-
+	public EdgeDialog(BiologicalNodeAbstract from, BiologicalNodeAbstract to, Pathway pw, int lastTypeIdx,
+			boolean lastDirected) {
 		this.from = from;
 		this.pw = pw;
 		// Container contentPane = getContentPane();
@@ -68,7 +70,8 @@ public class EdgeDialog extends JFrame {
 		ButtonGroup group = new ButtonGroup();
 		directed = new JRadioButton("directed");
 		undirected = new JRadioButton("undirected");
-		directed.setSelected(true);
+		directed.setSelected(lastDirected);
+		undirected.setSelected(!lastDirected);
 
 		group.add(directed);
 		group.add(undirected);
@@ -101,8 +104,8 @@ public class EdgeDialog extends JFrame {
 
 		addEdgeItems(panel);
 
-		AutoCompleteDecorator.decorate(box);
-		panel.add(box, "span,wrap,growx,gap 10");
+		AutoCompleteDecorator.decorate(elementType);
+		panel.add(elementType, "span,wrap,growx,gap 10");
 		if (pw.isPetriNet()) {
 			if (pw.isHeadless()) {
 				panel.add(new JLabel("Name"), "");
@@ -118,6 +121,16 @@ public class EdgeDialog extends JFrame {
 			} else {
 				panel.add(new JLabel("Label"), "");
 			}
+		}
+
+		if (lastTypeIdx < 0) {
+			if (pw.isPetriNet()) {
+				elementType.setSelectedItem(Elementdeclerations.pnEdge);
+			} else {
+				elementType.setSelectedItem(Elementdeclerations.reactionEdge);
+			}
+		} else {
+			elementType.setSelectedIndex(lastTypeIdx);
 		}
 
 		panel.add(name, "span,wrap,growx,gap 10");
@@ -162,7 +175,7 @@ public class EdgeDialog extends JFrame {
 			edgeItems = new Elementdeclerations().getNotPNEdgeDeclarations();
 		}
 		if (pw.isHeadless() && !pw.isPetriNet()) {
-			box.addItem(Elementdeclerations.anyBEA);
+			elementType.addItem(Elementdeclerations.anyBEA);
 		}
 		Iterator<String> it = edgeItems.iterator();
 		String element;
@@ -171,10 +184,10 @@ public class EdgeDialog extends JFrame {
 			// only add special arcs, if arc connects Place->Transition
 			if (from instanceof Transition) {
 				if (element.equals(Elementdeclerations.pnEdge)) {
-					box.addItem(element);
+					elementType.addItem(element);
 				}
 			} else {
-				box.addItem(element);
+				elementType.addItem(element);
 			}
 		}
 	}
@@ -196,7 +209,9 @@ public class EdgeDialog extends JFrame {
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
 				details.put("name", name.getText());
-				details.put("element", box.getSelectedItem().toString());
+				details.put("element", elementType.getSelectedItem().toString());
+				lastTypeIdx = elementType.getSelectedIndex();
+				lastDirected = directed.isSelected();
 				// details[0] = name.getText();
 				// details[2] = box.getSelectedItem().toString();
 				bnas[0] = fromMap.get(fromBox.getSelectedIndex());
@@ -215,5 +230,13 @@ public class EdgeDialog extends JFrame {
 		}
 		Pair<Map<String, String>, BiologicalNodeAbstract[]> ret = Pair.of(details, bnas);
 		return ret;
+	}
+
+	public int getLastTypeIdx() {
+		return this.lastTypeIdx;
+	}
+
+	public boolean isLastDirected() {
+		return this.lastDirected;
 	}
 }

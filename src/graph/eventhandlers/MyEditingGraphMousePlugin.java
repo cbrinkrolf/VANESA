@@ -72,6 +72,10 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 
 	private Pathway pw;
 
+	private int lastVertexTypeIdx = -1;
+	private int lastEdgeTypeIdx = -1;
+	private boolean lastDirected = true;
+	
 	public MyEditingGraphMousePlugin() {
 		this(InputEvent.BUTTON1_DOWN_MASK);
 	}
@@ -212,8 +216,9 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 
 				} else {
 					// System.out.println("not petri");
-					VertexDialog dialog = new VertexDialog(pw);
+					VertexDialog dialog = new VertexDialog(pw, this.lastVertexTypeIdx);
 					Map<String, String> answers = dialog.getAnswer(vv);
+					lastVertexTypeIdx = dialog.getLastTypeIdx();
 
 					if (answers != null) {
 
@@ -301,8 +306,10 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 						"In a petri net only Transition->Place and Place->Transition Relations are allowed!");
 			} else {
 				// Graph graph = vv.getGraphLayout().getGraph();
-				EdgeDialog dialog = new EdgeDialog(startVertex, vertex, pw);
+				EdgeDialog dialog = new EdgeDialog(startVertex, vertex, pw, lastEdgeTypeIdx, lastDirected);
 				Pair<Map<String, String>, BiologicalNodeAbstract[]> answer = dialog.getAnswer(vv);
+				this.lastEdgeTypeIdx = dialog.getLastTypeIdx();
+				this.lastDirected = dialog.isLastDirected();
 				Map<String, String> details = answer.getLeft();
 				BiologicalNodeAbstract[] nodes = answer.getRight();
 
