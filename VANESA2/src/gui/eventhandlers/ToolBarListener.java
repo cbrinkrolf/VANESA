@@ -30,7 +30,7 @@ import gui.MainWindow;
 import gui.MyPopUp;
 import gui.ParallelChooseGraphsWindow;
 import petriNet.ConvertToPetriNet;
-import petriNet.OpenModellicaResult;
+import petriNet.OpenModelicaResult;
 import petriNet.PNTableDialog;
 import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
@@ -249,7 +249,7 @@ public class ToolBarListener implements ActionListener {
 			// create a graph choosing popup and calculate network properties
 			new ParallelChooseGraphsWindow();
 		} else if ("loadModResult".equals(event)) {
-			new OpenModellicaResult().execute();
+			new OpenModelicaResult().execute();
 		} else if ("simulate".equals(event)) {
 			new PetriNetSimulation();
 		} else if ("group".equals(event)) {

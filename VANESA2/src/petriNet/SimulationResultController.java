@@ -102,7 +102,7 @@ public class SimulationResultController {
 		this.simIds.remove(i);
 		if(simIds.size() < 1){
 			GraphInstance graphInstance = new GraphInstance();
-			graphInstance.getPathway().getPetriNet().setPetriNetSimulation(false);
+			graphInstance.getPathway().getPetriPropertiesNet().setPetriNetSimulation(false);
 			MainWindow w = MainWindow.getInstance();
 			w.updateAllGuiElements();
 		}

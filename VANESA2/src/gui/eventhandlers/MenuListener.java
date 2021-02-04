@@ -82,7 +82,7 @@ import miscalleanous.tables.MyTable;
 import petriNet.ConvertMetabolicNet;
 import petriNet.Cov;
 import petriNet.CovNode;
-import petriNet.OpenModellicaResult;
+import petriNet.OpenModelicaResult;
 import petriNet.PNTableDialog;
 import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
@@ -868,7 +868,7 @@ public class MenuListener implements ActionListener {
 		} else if ("editElements".equals(event))
 			new PNTableDialog().setVisible(true);
 		else if ("loadModResult".equals(event))
-			new OpenModellicaResult().execute();
+			new OpenModelicaResult().execute();
 		else if ("simulate".equals(event)) {
 			if (simulation == null) {
 				simulation = new PetriNetSimulation();

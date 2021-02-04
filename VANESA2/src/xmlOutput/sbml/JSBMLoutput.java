@@ -272,10 +272,10 @@ public class JSBMLoutput {
 			el.addChild(elSub);
 		}
 
-		if (pathway.groupes.size() != 0) {
+		if (pathway.getGroupes().size() != 0) {
 			XMLNode groups = new XMLNode( new XMLNode(new XMLTriple("listOfGroups", "", ""), new XMLAttributes()));
 			XMLNode groupSub;
-			for (Group group:pathway.groupes) {
+			for (Group group:pathway.getGroupes()) {
 				groupSub = new XMLNode(new XMLNode(new XMLTriple("Group", "", ""), new XMLAttributes()));
 				for (BiologicalNodeAbstract node: group.nodes) {
 					groupSub.addChild(createElSub(Integer.toString(node.getID()), "Node"));

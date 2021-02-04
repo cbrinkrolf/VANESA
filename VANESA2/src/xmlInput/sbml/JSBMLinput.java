@@ -195,7 +195,7 @@ public class JSBMLinput {
 				nodeslist.get(k).setisinGroup(true);
 				nodeslist.get(k).setGroup(tmp);
 			}
-			pathway.groupes.add(tmp);
+			pathway.getGroupes().add(tmp);
 		}
 		inputgroups.clear();
 	}

@@ -263,7 +263,7 @@ public class PetriNetSimulation implements ActionListener {
 
 				s.start();
 				System.out.println("building ended");
-				pw.getPetriNet().setPetriNetSimulation(true);
+				pw.getPetriPropertiesNet().setPetriNetSimulation(true);
 
 				System.out.println("stop: " + stopTime);
 				Thread t1 = new Thread() {
@@ -366,8 +366,8 @@ public class PetriNetSimulation implements ActionListener {
 						List<Double> v = null;// pw.getPetriNet().getSimResController().get().getTime().getAll();
 						// System.out.println("running");
 						while (s.isRunning()) {
-							if (v == null && pw.getPetriNet().getSimResController().getLastActive() != null) {
-								v = pw.getPetriNet().getSimResController().getLastActive().getTime().getAll();
+							if (v == null && pw.getPetriPropertiesNet().getSimResController().getLastActive() != null) {
+								v = pw.getPetriPropertiesNet().getSimResController().getLastActive().getTime().getAll();
 							}
 							// System.out.println("im thread");
 							w.redrawGraphs();
@@ -629,7 +629,7 @@ public class PetriNetSimulation implements ActionListener {
 			this.pw = new GraphInstance().getPathway();
 			// this.runOMC();
 			if (!menue.isParameterized()) {
-				simId = "simulation_" + pw.getPetriNet().getSimResController().size() + "_" + System.nanoTime();
+				simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_" + System.nanoTime();
 				this.runOMCIA();
 			} else {
 				flags = pw.getChangedFlags("petriNetSim");
@@ -639,7 +639,7 @@ public class PetriNetSimulation implements ActionListener {
 				double value;
 				Boundary b;
 				for (int i = 0; i < list.size(); i++) {
-					simId = "simulation_" + pw.getPetriNet().getSimResController().size() + "_" + System.nanoTime();
+					simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_" + System.nanoTime();
 					value = list.get(i);
 					System.out.println(value);
 					if (bna instanceof Place) {
@@ -673,7 +673,7 @@ public class PetriNetSimulation implements ActionListener {
 						}
 					}
 					// roudning name up to 4 decimals
-					pw.getPetriNet().getSimResController().get(simId).setName(Math.round(value * 1000) / 1000.0 + "");
+					pw.getPetriPropertiesNet().getSimResController().get(simId).setName(Math.round(value * 1000) / 1000.0 + "");
 					this.runOMCIA();
 
 					while (s.isRunning()) {

@@ -15,10 +15,9 @@ import petriNet.PNResultInputReader;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 
-public class PetriNet {
+public class PetriNetProperties {
 	private GraphInstance graphInstance = null;
 	private Pathway pw;
-	private String petriNetSimulationFile = null;
 	private PNResultInputReader pnrir = new PNResultInputReader();
 	private int places = 0;
 	private int transitions = 0;
@@ -43,27 +42,13 @@ public class PetriNet {
 		this.currentTimeStep = currentTimeStep;
 	}
 
-	public PetriNet() {
+	public PetriNetProperties() {
 	}
-
-	public String getPetriNetSimulationFile() {
-		return petriNetSimulationFile;
-	}
-
-	public void setPetriNetSimulationFile(String petriNetSimulationFile) {
-		this.petriNetSimulationFile = petriNetSimulationFile;
-	}
-
 
 	public void loadVanesaSimulationResult(File resFile){
 		
 		try {
-			
 			HashMap<String, List<Double>> result = pnrir.readResult(resFile);
-			
-			
-			//System.out.println(result.keySet());
-			
 			graphInstance = new GraphInstance();
 			pw = graphInstance.getPathway();
 			
@@ -114,10 +99,8 @@ public class PetriNet {
 						simRes.addValue(bea, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, result.get(name+"-token").get(i));
 					}
 				}
-				
 			}
 			this.setPetriNetSimulation(true);
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -158,5 +141,4 @@ public class PetriNet {
 		}
 		return simResController;
 	}
-
 }

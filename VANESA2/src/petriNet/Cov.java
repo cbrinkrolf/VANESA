@@ -118,7 +118,7 @@ public class Cov {
 
 		pw.getGraph().restartVisualizationModel();
 
-		pw.getPetriNet().setCovGraph(pw.getName());
+		pw.getPetriPropertiesNet().setCovGraph(pw.getName());
 
 	}
 

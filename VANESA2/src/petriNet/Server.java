@@ -64,7 +64,7 @@ public class Server {
 				try {
 					int port = 11111;
 					serverSocket = new java.net.ServerSocket(port);
-					simResult = pw.getPetriNet().getSimResController().get(simId);
+					simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
 					System.out.println(simId);
 					MainWindow.getInstance().initPCPGraphs();
 					while (true) {
