@@ -197,6 +197,36 @@ public class Pathway implements Cloneable {
 		bna.setLabel(bna.getLabel().trim());
 		bna.setName(bna.getName().trim());
 
+		if (isPetriNet) {
+			boolean createdRef = false;
+			Iterator<BiologicalNodeAbstract> it = getAllGraphNodes().iterator();
+			BiologicalNodeAbstract node;
+			while (it.hasNext()) {
+				node = it.next();
+				if (node.getName().equals(bna.getName())) {
+					if (node.getClass().equals(bna.getClass())) {
+						bna.setRef(node);
+						createdRef = true;
+					} else {
+						MyPopUp.getInstance().show("Type mismatch", "Cannot create logical node with the name: "+bna.getName()+". Type mismatch of "+bna.getClass()+" and "+node.getClass()+"!");
+						System.err.println("Cannot create logical node with the name: "+bna.getName()+". Type mismatch of "+bna.getClass()+" and "+node.getClass()+"!"); 
+						return null;
+					}
+				}
+			}
+			int i = 1;
+			if (createdRef) {
+				while (true) {
+					if (!getAllNodeNames().contains(bna.getName() + "_" + i)) {
+						bna.setName(bna.getName() + "_" + i);
+						bna.setLabel(bna.getName());
+						break;
+					}
+					i++;
+				}
+			}
+		}
+
 		// System.out.println(biologicalElements.size());
 		vertices.put(bna, p);
 		addVertexToView(bna, p);

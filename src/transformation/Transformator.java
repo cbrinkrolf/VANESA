@@ -40,7 +40,6 @@ import util.MyIntComparable;
 
 // TODO parameter mapping
 // TODO syso -> log file
-// TODO handling references / logical nodes
 // TODO try hierarchical network (maybe first flatten?)
 // TODO interactive GUI while transforming (ability to abort)
 public class Transformator {
@@ -65,7 +64,7 @@ public class Transformator {
 	private Pathway pw;
 	private Pathway petriNet;
 
-	private List<Rule> rules = new ArrayList<Rule>();
+	private List<Rule> rules;
 	private HashMap<Rule, Integer> ruleToNextPermIndex = new HashMap<Rule, Integer>();
 
 	private HashMap<Integer, BiologicalNodeAbstract> id2bna = new HashMap<>();
@@ -73,9 +72,10 @@ public class Transformator {
 	private HashMap<String, ArrayList<BiologicalNodeAbstract>> nodeType2bna = new HashMap<String, ArrayList<BiologicalNodeAbstract>>();
 	private HashMap<String, ArrayList<BiologicalEdgeAbstract>> edgeType2bea = new HashMap<String, ArrayList<BiologicalEdgeAbstract>>();
 
-	private HashMap<BiologicalNodeAbstract, PNNode> nodeReplace = new HashMap<BiologicalNodeAbstract, PNNode>();
+	private HashMap<BiologicalNodeAbstract, PNNode> bn2pnMap = new HashMap<BiologicalNodeAbstract, PNNode>();
 
-	private HashSet<BiologicalEdgeAbstract> availableEdges = new HashSet<BiologicalEdgeAbstract>();
+	private HashSet<BiologicalEdgeAbstract> remainingEdges = new HashSet<BiologicalEdgeAbstract>();
+	private Map<Integer, BiologicalEdgeAbstract> id2Edge = new HashMap<Integer, BiologicalEdgeAbstract>();
 
 	private int evaluatedPerms = 0;
 	private int evaluatedEdges = 0;
@@ -105,16 +105,21 @@ public class Transformator {
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		while (it.hasNext()) {
 			bna = it.next();
-			id2bna.put(bna.getID(), bna);
-			tmpGraph.addVertex(bna.getID());
+			if (!bna.hasRef()) {
+				id2bna.put(bna.getID(), bna);
+				tmpGraph.addVertex(bna.getID());
+			}
 		}
 
 		Iterator<BiologicalEdgeAbstract> it2 = pw.getAllEdges().iterator();
 		BiologicalEdgeAbstract bea;
+		//System.out.println("tmpgraph edges:");
 		while (it2.hasNext()) {
 			bea = it2.next();
-			availableEdges.add(bea);
-			tmpGraph.addEdge(bea.getID(), bea.getFrom().getID(), bea.getTo().getID());
+			remainingEdges.add(bea);
+			tmpGraph.addEdge(bea.getID(), this.getBNARef(bea.getFrom()).getID(), this.getBNARef(bea.getTo()).getID());
+			id2Edge.put(bea.getID(), bea);
+			//System.out.println(getBNARef(bea.getFrom()).getName()+" -> "+getBNARef(bea.getTo()).getName());
 		}
 		System.out.println(this.maxAllShortestPath(pw.getGraph().getJungGraph()));
 		System.out.println(this.maxAllShortestPath(tmpGraph));
@@ -132,7 +137,8 @@ public class Transformator {
 		long tic = System.currentTimeMillis();
 		for (int i = 0; i < rules.size(); i++) {
 			if (this.done()) {
-				return;
+				System.out.println("done, skipping rule #"+i+" and further rules");
+				break;
 			}
 			System.out.println("apply rule #" + i);
 			this.applyRule(rules.get(i), true);
@@ -175,13 +181,13 @@ public class Transformator {
 		BiologicalNodeAbstract startNode;
 
 		// heuristic to start with the nodes having the smallest edge count
-		List<BiologicalNodeAbstract> sortedList = getAllGraphNodesSortedByEdgeCount(pw);
+		List<Integer> sortedList = getAllGraphNodesSortedByEdgeCount(tmpGraph);
 		System.out.println("sorted nodes of pathway: " + sortedList.size());
+		List<Integer> perm;
 		for (int i = 0; i < sortedList.size(); i++) {
 			// System.out.println("nodeIdx: " + i);
 			ruleToNextPermIndex.clear();
-			startNode = sortedList.get(i);
-
+			startNode = id2bna.get(sortedList.get(i));
 			if (!tmpGraph.containsVertex(startNode.getID())) {
 				// node was already handled
 				continue;
@@ -203,7 +209,6 @@ public class Transformator {
 				continue;
 			}
 			System.out.println("size of permutation set: " + permutations.size());
-			List<Integer> perm;
 
 			do {
 				executed = false;
@@ -267,7 +272,7 @@ public class Transformator {
 	private List<Integer> getNextMatchingPermutation(Rule r, List<List<Integer>> permutations) {
 
 		// test each permutation
-		System.out.println("available edges: " + availableEdges.size() + " and nodes: " + tmpGraph.getVertexCount());
+		System.out.println("available edges: " + remainingEdges.size() + " and nodes: " + tmpGraph.getVertexCount());
 
 		List<Integer> perm;
 
@@ -308,12 +313,9 @@ public class Transformator {
 					n1 = id2bna.get(id1);
 					n2 = id2bna.get(id2);
 
-					if (pw.existEdge(n1, n2)) {
-						bea = pw.getEdge(n1, n2);
-					} else {
-						continue nextPerm;
-					}
-					if (tmpGraph.containsEdge(bea.getID())) {
+					
+					if (tmpGraph.findEdge(id1, id2) != null) {
+						bea = id2Edge.get(tmpGraph.findEdge(id1, id2));
 						edgeType = bEdge.getType();
 						if (edgeType.equals(Elementdeclerations.anyBEA)) {
 							edgeType = BiologicalEdgeAbstract.class.getSimpleName();
@@ -321,7 +323,8 @@ public class Transformator {
 						// System.out.println("eType="+edgeType);
 						// System.out.println(edgeType2bea.get(edgeType).size());
 						// System.out.println(n1.getName() + " -> "+n2.getName());
-						if (bea.getFrom() == n1 && bea.getTo() == n2 && edgeType2bea.get(edgeType).contains(bea)) {
+						if (getBNARef(bea.getFrom()) == n1 && getBNARef(bea.getTo()) == n2 && edgeType2bea.get(edgeType).contains(bea)) {
+							//System.out.println("true");
 							test1 = true;
 						} else {
 							continue nextPerm;
@@ -373,9 +376,9 @@ public class Transformator {
 				bNode = r.getMappedBnode(pnNode);
 				bna = ruleBNodeToBNA.get(bNode);
 				// System.out.println(bna);
-				if (nodeReplace.containsKey(bna)) {
+				if (bn2pnMap.containsKey(bna)) {
 					// node already exists
-					pnBNA = nodeReplace.get(bna);
+					pnBNA = bn2pnMap.get(bna);
 					rulePNodeToBNA.put(pnNode, pnBNA);
 					// check if node types matches
 					if (pnNode.getType().equals(Transformator.transition) && pnBNA instanceof Place) {
@@ -450,18 +453,19 @@ public class Transformator {
 		BiologicalNodeAbstract toBNA = null;
 
 		RuleEdge bEdge;
+		BiologicalEdgeAbstract bea;
 		for (int i = 0; i < r.getConsideredEdges().size(); i++) {
 
 			bEdge = r.getConsideredEdges().get(i);
 
 			fromBNA = ruleBNodeToBNA.get(bEdge.getFrom());
 			toBNA = ruleBNodeToBNA.get(bEdge.getTo());
-			if (pw.existEdge(fromBNA, toBNA)) {
-				this.availableEdges.remove(pw.getEdge(fromBNA, toBNA));
-				this.tmpGraph.removeEdge(pw.getEdge(fromBNA, toBNA).getID());
-				subGraphEdges.remove(pw.getEdge(fromBNA, toBNA));
-				System.out.println(pw.getEdge(fromBNA, toBNA).getID());
-				this.usedEdges.add(pw.getEdge(fromBNA, toBNA));
+			if (tmpGraph.findEdge(fromBNA.getID(), toBNA.getID()) != null) {
+				bea = id2Edge.get(tmpGraph.findEdge(fromBNA.getID(), toBNA.getID()));
+				this.remainingEdges.remove(bea);
+				this.tmpGraph.removeEdge(bea.getID());
+				subGraphEdges.remove(bea);
+				this.usedEdges.add(bea);
 			} else {
 				System.out.println("Removing edge failed");
 				executed = false;
@@ -544,7 +548,7 @@ public class Transformator {
 				// System.out.println("x: "+x+" y: "+y);
 				// pw.getGraph().moveVertex(p.getVertex(), scaleFactor*
 				// x,scaleFactor* y);
-				nodeReplace.put(bna, pn);
+				bn2pnMap.put(bna, pn);
 			}
 			petriNet.addVertex(pn, new Point2D.Double(x, y));
 
@@ -603,25 +607,17 @@ public class Transformator {
 	}
 
 	private BiologicalNodeAbstract getNodeReplace(BiologicalNodeAbstract bna) {
-		if (this.nodeReplace.containsKey(bna)) {
-			return this.nodeReplace.get(bna);
+		if (this.bn2pnMap.containsKey(bna)) {
+			return this.bn2pnMap.get(bna);
 		} else {
 			return bna;
 		}
 	}
 
-	private boolean checkAndDelete(BiologicalNodeAbstract bna) {
-		Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getJungGraph().getIncidentEdges(bna).iterator();
-		while (it.hasNext()) {
-			if (availableEdges.contains(it.next())) {
-				return false;
-			}
-		}
-		// System.out.println("node removed from set: " + bna.getName());
-		// System.out.println("inscident edges:
-		// "+pw.getGraph().getJungGraph().getIncidentEdges(bna).size());
+	private void checkAndDelete(BiologicalNodeAbstract bna) {
+		if(tmpGraph.getIncidentEdges(bna.getID()).isEmpty()){
 		tmpGraph.removeVertex(bna.getID());
-		return true;
+		}
 	}
 
 	private boolean done() {
@@ -636,25 +632,21 @@ public class Transformator {
 
 	private <V, E> int maxAllShortestPath(Graph<V, E> g) {
 		int max = 0;
-
 		Iterator<V> it = g.getVertices().iterator();
-		// Iterator<?> it2 = g.getVertices().iterator();
 		V n1;
 		V n2;
 		int d;
 		UnweightedShortestPath<V, E> sp = new UnweightedShortestPath<V, E>(g);
 		Number dist;
+		Iterator<V> it2;
 		while (it.hasNext()) {
 			n1 = it.next();
-			Iterator<V> it2 = g.getVertices().iterator();
+			it2 = g.getVertices().iterator();
 			while (it2.hasNext()) {
-
 				n2 = it2.next();
-				// System.out.println(n1 + " " + n2);
 				dist = sp.getDistance(n1, n2);
 				if (dist != null) {
 					d = dist.intValue();
-					// System.out.println(sp.getDistance(n1, n2));
 					if (d > max) {
 						max = d;
 					}
@@ -679,24 +671,24 @@ public class Transformator {
 				subGraphNodes.add(id2bna.get(k));
 			}
 		}
-		Iterator<BiologicalEdgeAbstract> it2 = availableEdges.iterator();
+		Iterator<BiologicalEdgeAbstract> it2 = remainingEdges.iterator();
 		BiologicalEdgeAbstract bea;
 		while (it2.hasNext()) {
 			bea = it2.next();
-			if (subGraphNodes.contains(bea.getFrom()) && subGraphNodes.contains(bea.getTo())) {
+			if (subGraphNodes.contains(getBNARef(bea.getFrom())) && subGraphNodes.contains(getBNARef(bea.getTo()))) {
 				subGraphEdges.add(bea);
 			}
 		}
 	}
 
-	private List<BiologicalNodeAbstract> getAllGraphNodesSortedByEdgeCount(Pathway pw) {
+	private <V, E> List<V> getAllGraphNodesSortedByEdgeCount(Graph<V, E> g) {
 
-		HashMap<Integer, Collection<BiologicalNodeAbstract>> map = new HashMap<Integer, Collection<BiologicalNodeAbstract>>();
+		HashMap<Integer, Collection<V>> map = new HashMap<Integer, Collection<V>>();
 		int size;
-		for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
-			size = pw.getGraph().getJungGraph().getInEdges(bna).size();
+		for (V bna : g.getVertices()) {
+			size = g.getInEdges(bna).size();
 			if (!map.containsKey(size)) {
-				map.put(size, new ArrayList<BiologicalNodeAbstract>());
+				map.put(size, new ArrayList<V>());
 			}
 			map.get(size).add(bna);
 		}
@@ -704,10 +696,17 @@ public class Transformator {
 		ArrayList<Integer> ids = new ArrayList<Integer>(map.keySet());
 		Collections.sort(ids, new MyIntComparable());
 
-		List<BiologicalNodeAbstract> sortedList = new ArrayList<BiologicalNodeAbstract>();
+		List<V> sortedList = new ArrayList<V>();
 		for (int i = 0; i < ids.size(); i++) {
 			sortedList.addAll(map.get(ids.get(i)));
 		}
 		return sortedList;
+	}
+
+	private BiologicalNodeAbstract getBNARef(BiologicalNodeAbstract bna) {
+		if (bna.hasRef()) {
+			return bna.getRef();
+		}
+		return bna;
 	}
 }

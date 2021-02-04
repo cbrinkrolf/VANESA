@@ -73,7 +73,6 @@ public class MenuBarClass {
 
 	private JMenuItem convertPetriNet;
 
-	private JMenuItem resolveReferences;
 	private JMenuItem rendererSettings;
 	private JMenuItem dataLabelMapping;
 
@@ -320,10 +319,6 @@ public class MenuBarClass {
 		graphSettings.addActionListener(MenuListener.getInstance());
 		graphSettings.setActionCommand("graphSettings");
 
-		resolveReferences = new JMenuItem("Resolve Reverences");
-		resolveReferences.addActionListener(MenuListener.getInstance());
-		resolveReferences.setActionCommand("resolveReferences");
-
 		JMenuItem transform = new JMenuItem("Transform to Petri net");
 		transform.addActionListener(MenuListener.getInstance());
 		transform.setActionCommand("transform");
@@ -467,7 +462,6 @@ public class MenuBarClass {
 		petriNets.add(covreach);
 		petriNets.add(createDoc);
 
-		transformation.add(resolveReferences);
 		if (MainWindow.developer) {
 			transformation.add(transform);
 			transformation.add(ruleManager);
