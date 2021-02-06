@@ -95,20 +95,19 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 
 	@Override
 	public void done() {
-
+		// TODO if BN holds PN
 		open();
 		if (fileFormat != null) {
 			bar.closeWindow();
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-
 					// GraphInstance.getMyGraph().getVisualizationViewer()
 					// .restart();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();
+					MainWindow.getInstance().initSimResGraphs();
 					MainWindow.getInstance().updateAllGuiElements();
-
 				}
 			}
 		}

@@ -29,10 +29,8 @@ import gui.InfoWindow;
 import gui.MainWindow;
 import gui.MyPopUp;
 import gui.ParallelChooseGraphsWindow;
-import petriNet.ConvertToPetriNet;
 import petriNet.OpenModelicaResult;
 import petriNet.PNTableDialog;
-import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 
 public class ToolBarListener implements ActionListener {
@@ -172,19 +170,6 @@ public class ToolBarListener implements ActionListener {
 			con.setPetriView(true);
 			con.setPetriNetEditingMode(Elementdeclerations.discretePlace);
 
-		} else if ("convertIntoPetriNet".equals(event) && (con.getPathwayNumbers() > 0)) {
-			MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
-			g.disableGraphTheory();
-			// new CompareGraphsGUI();
-			new ConvertToPetriNet();
-
-			Component[] c = MainWindow.getInstance().getContentPane().getComponents();
-			for (int i = 0; i < c.length; i++) {
-				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-					MainWindow.getInstance().getBar().paintToolbar(con.getPathway(w.getCurrentPathway()).isPetriNet());
-					break;
-				}
-			}
 		} else if ("continuousPlace".equals(event)) {
 
 			con.changeMouseFunction("edit");
@@ -250,8 +235,6 @@ public class ToolBarListener implements ActionListener {
 			new ParallelChooseGraphsWindow();
 		} else if ("loadModResult".equals(event)) {
 			new OpenModelicaResult().execute();
-		} else if ("simulate".equals(event)) {
-			new PetriNetSimulation();
 		} else if ("group".equals(event)) {
 			if (con.containsPathway()) {
 				con.getPathway(w.getCurrentPathway()).groupSelectedNodes();

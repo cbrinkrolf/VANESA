@@ -25,6 +25,7 @@ import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.PathwayMap;
+import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
@@ -44,6 +45,7 @@ import graph.layouts.GraphCenter;
 import gui.GraphTab;
 import gui.MainWindow;
 import gui.MyPopUp;
+import petriNet.PetriNetSimulation;
 import util.FormularSafety;
 import util.MyIntComparable;
 
@@ -60,10 +62,10 @@ public class Pathway implements Cloneable {
 	private String organism = "";
 	private boolean orgSpecification;
 	private String description = "";
-	private boolean[] settings = new boolean[11];
 
 	private boolean isPetriNet = false;
 	private PetriNetProperties petriNetProperties = null;
+	private PetriNetSimulation petriNetSimulation = null;
 
 	private HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
 	private MyGraph graph;
@@ -82,14 +84,13 @@ public class Pathway implements Cloneable {
 
 	// no graph tab is assigned / created. this is used for rule editing window
 	private boolean headless = false;
-
 	private ArrayList<Group> groupes = new ArrayList<>();
-
 	private Pathway petriNet = null;
-	// ---Functional Methods---
+	private HashMap<BiologicalNodeAbstract, PNNode> bnToPN = null;
 
 	public Pathway(String name, boolean headless) {
 		this.headless = headless;
+		this.name = name;
 		// no graph tab is created, used for editing rules window
 		if (headless) {
 			this.title = name;
@@ -98,6 +99,7 @@ public class Pathway implements Cloneable {
 	}
 
 	public Pathway(String name) {
+		this.name = name;
 		this.title = name;
 		graph = new MyGraph(this);
 		tab = new GraphTab(name, graph.getGraphVisualization());
@@ -105,6 +107,7 @@ public class Pathway implements Cloneable {
 
 	public Pathway(String name, Pathway parent) {
 		// this(name);
+		this.name = name;
 		this.title = name;
 		this.parent = parent;
 	}
@@ -201,8 +204,6 @@ public class Pathway implements Cloneable {
 				}
 			}
 		}
-
-		// System.out.println(biologicalElements.size());
 		vertices.put(bna, p);
 		addVertexToView(bna, p);
 		if (bna instanceof Place) {
@@ -211,15 +212,7 @@ public class Pathway implements Cloneable {
 		if (bna instanceof Transition) {
 			this.petriNetProperties.setTransitions(this.petriNetProperties.getTransitions() + 1);
 		}
-		// System.out.println("node eingefuegt");
-
-		// System.out.println("new id: "+bna.getID());
 		bna.setID(this);
-		// System.out.println("new id: "+bna.getID());
-		// biologicalElements.put(bna.getID() + "", bna);
-		//
-		// System.out.println(this.graph.getAllVertices().size());
-		// bna.setNodesize(this.graph.getAllVertices().size());
 		this.handleChangeFlags(ChangedFlags.NODE_CHANGED);
 		return bna;
 	}
@@ -252,24 +245,8 @@ public class Pathway implements Cloneable {
 	public BiologicalEdgeAbstract addEdge(BiologicalEdgeAbstract bea) {
 
 		// System.out.println("edge hinzugefuegt");
-
 		if (bea != null) {
-			// edges.put(
-			// new Pair<BiologicalNodeAbstract>(bea.getFrom(), bea.getTo()),
-			// bea);
-			// // System.out.println(biologicalElements.size());
-			// // Pair p = bea.getEdge().getEndpoints();
-			// graphRepresentation.addEdge(bea);
-			// getGraph().addEdge(bea);
-			// bea.setID();
-			// biologicalElements.put(bea.getID() + "", bea);
-			// if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()
-			// && bea.getFrom().getParentNode() == null
-			// && bea.getTo().getParentNode() == null && !bea.isClone()) {
-			// System.out.println("edge:");
 			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()) {
-				// && !bea.isClone()) {
-				// System.out.println("added edge");
 				BiologicalNodeAbstract.addConnectingEdge(bea);
 				bea.setID(this);
 			}
@@ -294,33 +271,10 @@ public class Pathway implements Cloneable {
 			}
 		}
 		if (add) {
-			// System.out.println(biologicalElements.size());
-			// Pair p = bea.getEdge().getEndpoints();
 			getGraph().addEdge(bea);
 			bea.setID(this);
-			// biologicalElements.put(bea.getID() + "", bea);
 		}
 	}
-
-	/**
-	 * Remove an element from the current view (MyGraph)
-	 * 
-	 * @param element
-	 */
-	/*
-	 * public void removeElementFromView(GraphElementAbstract element) { if (element
-	 * != null) { if (element.isVertex()) {
-	 * 
-	 * BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
-	 * getGraph().removeVertex(bna);
-	 * 
-	 * if (bna instanceof Place) { this.petriNet.setPlaces(this.petriNet.getPlaces()
-	 * - 1); } if (bna instanceof Transition) { this.petriNet
-	 * .setTransitions(this.petriNet.getTransitions() - 1); }
-	 * 
-	 * } else { BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) element;
-	 * getGraph().removeEdge(bea); } } }
-	 */
 
 	/**
 	 * Add a vertex to the current view (MyGraph)
@@ -341,9 +295,6 @@ public class Pathway implements Cloneable {
 	 *              edge will be added
 	 */
 	public void addEdgeToView(BiologicalEdgeAbstract bea, boolean force) {
-		// System.out.println("f: "+bea.getFrom());
-		// System.out.println("t: "+bea.getTo());
-		// System.out.println(getGraph().getAllVertices().iterator().next());
 		if (getGraph().getAllVertices().contains(bea.getFrom()) && getGraph().getAllVertices().contains(bea.getTo())) {
 			getGraph().addEdge(bea);
 		} else if (force) {
@@ -357,8 +308,6 @@ public class Pathway implements Cloneable {
 		if (element != null) {
 			// removeElementFromView(element);
 			if (element.isVertex()) {
-				// System.out.println(biologicalElements.size());
-				// System.out.println("drin");
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) element;
 				getRootPathway().getVertices().remove(bna);
 				for (BiologicalNodeAbstract parent : bna.getAllParentNodes()) {
@@ -375,8 +324,6 @@ public class Pathway implements Cloneable {
 				this.handleChangeFlags(ChangedFlags.NODE_CHANGED);
 			} else {
 				BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) element;
-				// Pair p = bea.getEdge().getEndpoints();
-				// System.out.println(edges.size());
 				if (bea.getTo().isCoarseNode() || bea.getFrom().isCoarseNode()) {
 					EdgeDeleteDialog dialog = new EdgeDeleteDialog(bea);
 					Set<BiologicalEdgeAbstract> delBeas = dialog.getAnswer();
@@ -394,11 +341,6 @@ public class Pathway implements Cloneable {
 				this.handleChangeFlags(ChangedFlags.EDGE_CHANGED);
 				return;
 			}
-			// ids.remove(element.getID());
-			// System.out.println(biologicalElements.size());
-			// biologicalElements.remove(element.getID() + "");
-
-			// System.out.println(biologicalElements.size());
 		}
 	}
 
@@ -428,12 +370,10 @@ public class Pathway implements Cloneable {
 
 	public boolean existEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 		return null != this.graph.getJungGraph().findEdge(from, to);
-		// return edges.containsKey(new Pair<BiologicalNodeAbstract>(from, to));
 	}
 
 	public BiologicalEdgeAbstract getEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 		return this.graph.getJungGraph().findEdge(from, to);
-		// return edges.get(new Pair<BiologicalNodeAbstract>(from, to));
 	}
 
 	public boolean containsVertex(BiologicalNodeAbstract bna) {
@@ -488,9 +428,7 @@ public class Pathway implements Cloneable {
 	}
 
 	public BiologicalNodeAbstract getNodeByName(String name) {
-
 		Iterator<BiologicalNodeAbstract> it = this.getAllGraphNodes().iterator();
-
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
@@ -529,7 +467,6 @@ public class Pathway implements Cloneable {
 	}
 
 	public Collection<BiologicalNodeAbstract> getAllGraphNodes() {
-
 		if (getGraph(false) == null) {
 			return Collections.emptyList();
 		}
@@ -580,8 +517,6 @@ public class Pathway implements Cloneable {
 			for (int j = 0; j < list.size(); j++) {
 				sortedList.add(list.get(j));
 			}
-
-			// sortedList.add(map.get(ids.get(i)));
 		}
 		return sortedList;
 	}
@@ -866,7 +801,12 @@ public class Pathway implements Cloneable {
 	// ---Getter/Setter---
 
 	public PetriNetProperties getPetriPropertiesNet() {
-		return petriNetProperties;
+		if (isPetriNet) {
+			return petriNetProperties;
+		} else if (petriNet != null) {
+			return petriNet.getPetriPropertiesNet();
+		}
+		return null;
 	}
 
 	public boolean isPetriNet() {
@@ -989,22 +929,6 @@ public class Pathway implements Cloneable {
 
 	public void setDate(String date) {
 		this.date = date;
-	}
-
-	public void setSettings(boolean[] set) {
-		settings = set;
-	}
-
-	public String[] getSettingsAsString() {
-		String[] set = new String[11];
-		for (int i = 0; i < 11; i++) {
-			set[i] = settings[i] + "";
-		}
-		return set;
-	}
-
-	public boolean[] getSettings() {
-		return settings;
 	}
 
 	public void setNewLoadedNodes(HashSet<BiologicalNodeAbstract> loadedElements) {
@@ -1287,7 +1211,6 @@ public class Pathway implements Cloneable {
 				cf.setBoundariesChanged(true);
 				break;
 			}
-
 		}
 	}
 
@@ -1335,24 +1258,8 @@ public class Pathway implements Cloneable {
 				}
 			} else {
 				p = vertices.get(bna);
-				// System.out.println(bna.getLabel() + ": " +
-				// vertices.get(bna).getX() + "," + vertices.get(bna).getY());
 				p.setLocation(p.getX() * factor, p.getY() * factor);
-				// System.out.println(bna.getLabel() + ": " +
-				// vertices.get(bna).getX() + "," + vertices.get(bna).getY());
-
 			}
-			/*
-			 * graph.getVisualizationViewer() .getModel() .getGraphLayout() .setLocation(
-			 * bna, new Point2D.Double(p.getX() * factor, p.getY() factor));
-			 */
-
-			// System.out.println(graph.getVisualizationViewer().getModel().getGraphLayout().transform(bna));
-
-			// System.out.println(vertices.get(bna));
-			// vertices.put(bna, p);
-			// System.out.println("---");
-
 		}
 		graph.getVisualizationViewer().repaint();
 	}
@@ -1364,7 +1271,6 @@ public class Pathway implements Cloneable {
 		this.getGraph().getVisualizationViewer().getPickedVertexState().clear();
 		this.getGraph().updateGraph();
 		updateMyGraph();
-
 	}
 
 	/**
@@ -1444,7 +1350,6 @@ public class Pathway implements Cloneable {
 	}
 
 	private void removeSelectedEdges() {
-
 		if (getGraph().getAllEdges().size() > 0) {
 			// System.out.println("e:
 			// "+vv.getPickedEdgeState().getSelectedObjects().length);
@@ -1528,15 +1433,9 @@ public class Pathway implements Cloneable {
 
 		MyGraph mg = getGraph();
 		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> v = getGraph().getVisualizationViewer();
-		// System.out.println(v.getGraphLayout().getClass());
-		// v.setBackground(Color.white);
 		if (!(mg.getLayout() instanceof StaticLayout)) {
 			mg.changeToStaticLayout();
 		}
-		// BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv =
-		// new BasicVisualizationServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
-		// mg.getLayout());
-		// System.out.println(vv.getGraphLayout().getSize());
 		VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = new VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
 				mg.getLayout(), mg.getLayout().getSize());
 		wvv.setBackground(Color.white);
@@ -1544,10 +1443,7 @@ public class Pathway implements Cloneable {
 			wvv.addPreRenderPaintable(v.getPreRenderers().get(i));
 		}
 
-		// wvv.addPostRenderPaintable(paintable);
-
 		wvv.addPostRenderPaintable(new Paintable() {
-
 			@Override
 			public boolean useTransform() {
 				return false;
@@ -1555,9 +1451,7 @@ public class Pathway implements Cloneable {
 
 			@Override
 			public void paint(Graphics g) {
-
 				Iterator<BiologicalNodeAbstract> it = getAllGraphNodes().iterator();
-
 				Place p;
 				BiologicalNodeAbstract bna;
 				while (it.hasNext()) {
@@ -1565,14 +1459,6 @@ public class Pathway implements Cloneable {
 					if (bna instanceof Place) {
 						p = (Place) bna;
 						int x1 = (int) (p.getShape().getBounds2D().getMaxX() - p.getShape().getBounds2D().getMinX());
-						// int y1 = (int) (p.getShape().getBounds2D().getMaxY()
-						// - p.getShape()
-						// .getBounds2D().getMinY());
-
-						// double x1 =
-						// c.getBounds().getMaxX()-c.getBounds().getMinX();
-						// double y1 =
-						// c.getBounds().getMaxY()-c.getBounds().getMinY();
 
 						boolean discrete = false;
 						String tokens = p.getToken() + "";
@@ -1590,16 +1476,8 @@ public class Pathway implements Cloneable {
 						}
 
 						int xpos;
-
 						Point2D point = v.getGraphLayout().apply(p);
-
-						// Point2D point = pw.getGraph().getVertexLocation(p);//
-						// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
-
-						// g2d.drawString("b",(int)((p.getX())),
-						// (int)((p.getY())*scale));
 						Point2D p1inv = v.getRenderContext().getMultiLayerTransformer().transform(point);
-
 						if (discrete) {
 							xpos = Double.valueOf(p1inv.getX() - x1 + 19 - 5 * ((double) tokens.length() / 2))
 									.intValue();
@@ -1607,15 +1485,8 @@ public class Pathway implements Cloneable {
 							xpos = Double.valueOf(p1inv.getX() - x1 + 21 - 5 * ((double) tokens.length() / 2))
 									.intValue();
 						}
-
 						g.setColor(Color.BLACK);
 						int y = (int) p1inv.getY();
-						// g2.draw(AffineTransform.getScaleInstance(p.getNodesize(),
-						// p.getNodesize()).createTransformedShape(s));
-
-						// g.getFont()
-						// g.setFont(new Font("Arial",Font.PLAIN,12));
-						// g2.draw(s);
 						g.drawString(tokens, xpos, y + 7);
 					}
 				}
@@ -1623,36 +1494,16 @@ public class Pathway implements Cloneable {
 		});
 
 		wvv.setBackground(Color.white);
-		// int width = v.getSize().width;
-		// int height = v.getSize().height;
-		// wvv.setDoubleBuffered(false);
-		// v.setDoubleBuffered(false);
-		// vv.setDoubleBuffered(false);
-
 		wvv.setRenderContext(v.getRenderContext());
 
 		double scaleV = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
 		double scaleL = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
-		// wvv.getRenderContext().setLabelOffset(-10);
-		// System.out.println("offset:
-		// "+wvv.getRenderContext().getLabelOffset());
 		double scale;
 		if (scaleV < 1) {
 			scale = scaleV;
-			// System.out.println("kleiner");
-			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
-			// scaleV, wvv.getCenter());
-			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(1,
-			// 1, wvv.getCenter());
 		} else {
 			scale = scaleL;
-			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
-			// scaleV, wvv.getCenter());
-			// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(scaleL,
-			// scaleL, wvv.getCenter());
 		}
-		// System.out.println(scaleL);
-		// System.out.println(scale);
 		GraphCenter gc = new GraphCenter(mg);
 		double width = gc.getWidth();
 		double height = gc.getHeight();
@@ -1663,47 +1514,10 @@ public class Pathway implements Cloneable {
 			height = height * scale;
 		}
 
-		// System.out.println("widht: "+width);
-		// System.out.println("height: "+height);
-		// System.out.println("minx:"+gc.getMinX());
-		// System.out.println("maxX:" + gc.getMaxX());
-		// System.out.println("miny:"+gc.getMinY());
-
 		Point2D p1inv = v.getRenderContext().getMultiLayerTransformer()
 				.transform(new Point2D.Double(gc.getMinX() + gc.getWidth(), gc.getMinY() + gc.getHeight()));
 
 		wvv.setBounds(0, 0, (int) p1inv.getX() + 50, (int) p1inv.getY() + 50);
-		// wvv.setBounds((int) (gc.getMinX()), (int) (gc.getMinY()), (int)
-		// (width)+50, (int) (height)+50);
-		// System.out.println("minx:"+gc.getMinX());
-		// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).setScale(scaleV,
-		// scaleV, wvv.getCenter());
-		// wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).setScale(scaleL,
-		// scaleL, wvv.getCenter());
-
-		// Properties p = new Properties();
-		// p.setProperty("PageSize", "A5");
-		// p.setProperty(SVGGraphics2D.TEXT_AS_SHAPES, "false");
-
-		/*
-		 * try { SVGGraphics2D g; g = new SVGGraphics2D(new File("Output.svg"), new
-		 * Dimension((int)(width), (int)(height))); // g.setProperties(p);
-		 * g.startExport(); wvv.print(g); g.endExport(); } catch (IOException e1) { //
-		 * e1.printStackTrace(); }
-		 */
-
-		// System.out.println(export.getSelectionValues());
-		// wvv.setDoubleBuffered(true);
-		// vv.setDoubleBuffered(true);
-		// v.setDoubleBuffered(true);
-
-		/*
-		 * Properties p = new Properties(); p.setProperty("PageSize", "A5");
-		 * VectorGraphics g; try { g = new SVGGraphics2D(new File("Output.svg"), new
-		 * Dimension(400, 300)); g.setBackground(Color.WHITE); g.setProperties(p);
-		 * g.startExport(); //vis.paintAll(g); g.endExport(); } catch (IOException e1) {
-		 * e1.printStackTrace(); }
-		 */
 
 		Map<Key, Object> map = wvv.getRenderingHints();
 
@@ -1726,5 +1540,32 @@ public class Pathway implements Cloneable {
 
 	public void setGroupes(ArrayList<Group> groupes) {
 		this.groupes = groupes;
+	}
+
+	public Pathway getPetriNet() {
+		return petriNet;
+	}
+
+	public void setPetriNet(Pathway petriNet) {
+		this.petriNet = petriNet;
+	}
+
+	public PetriNetSimulation getPetriNetSimulation() {
+		if (this.isPetriNet) {
+			if (this.petriNetSimulation == null) {
+				this.petriNetSimulation = new PetriNetSimulation(this);
+			}
+			return petriNetSimulation;
+		}else{
+			return this.petriNet.getPetriNetSimulation();
+		}
+	}
+
+	public HashMap<BiologicalNodeAbstract, PNNode> getBnToPN() {
+		return bnToPN;
+	}
+
+	public void setBnToPN(HashMap<BiologicalNodeAbstract, PNNode> bnToPN) {
+		this.bnToPN = bnToPN;
 	}
 }

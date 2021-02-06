@@ -78,5 +78,14 @@ public class CreatePathway {
 	public Pathway getPathway() {
 		return pw;
 	}
-
+	
+	public static void showPathway(Pathway pw){
+		GraphContainer con = GraphContainer.getInstance();
+		MainWindow w = MainWindow.getInstance();
+		String newPathwayName = con.addPathway(pw.getName(), pw);
+		pw = con.getPathway(newPathwayName);
+		w.addTab(pw.getTab().getTitelTab());
+		w.returnFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		//pw.updateMyGraph();
+	}
 }

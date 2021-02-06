@@ -48,6 +48,7 @@ public class PetriNetProperties {
 	public void loadVanesaSimulationResult(File resFile){
 		
 		try {
+			// TODO adjust if BN holds PN
 			HashMap<String, List<Double>> result = pnrir.readResult(resFile);
 			graphInstance = new GraphInstance();
 			pw = graphInstance.getPathway();

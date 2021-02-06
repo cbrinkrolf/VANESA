@@ -152,7 +152,7 @@ public class VAMLInput {
 						i = i + 1;
 					}
 				}
-				pw.setSettings(set);
+				//pw.setSettings(set);
 			}
 		}
 	}

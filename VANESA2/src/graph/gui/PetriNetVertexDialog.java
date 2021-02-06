@@ -6,7 +6,6 @@ package graph.gui;
 import java.awt.Component;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -16,8 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
@@ -46,7 +43,6 @@ public class PetriNetVertexDialog {
 
 	private JTextField name = new JTextField(20);
 
-	private JComboBox<String> compartment = new JComboBox<String>();
 	private Pathway pw;
 	// JComboBox box = new JComboBox();
 	// JSpinner petriValue = new JSpinner();
@@ -93,10 +89,6 @@ public class PetriNetVertexDialog {
 		}
 
 		if (!pw.isHeadless()) {
-			panel.add(new JLabel("Compartment"), "span 4, gapright 4");
-			AutoCompleteDecorator.decorate(compartment);
-			compartment.setSelectedItem("Cytoplasma");
-			panel.add(compartment, "span,wrap 5,growx ,gaptop 2");
 			panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
 			if (this.petriElement.equals(Elementdeclerations.discretePlace)) {
 				name.setText("p" + (pw.getPetriPropertiesNet().getPlaces() + 1));
@@ -153,26 +145,10 @@ public class PetriNetVertexDialog {
 				panel.add(new JLabel("Distribution"), "span 2, gaptop 2");
 				panel.add(distributionList, "span,wrap,growx ,gap 10, gaptop 2");
 			}
-			addNodeItems();
 		}
 		// panel.add(new JLabel("Element"), "span 4");
 
 		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-	}
-
-	private void addNodeItems() {
-
-		// box.addItem("Discrete Place");
-		// box.addItem("Continues Place");
-
-		List<String> compartmentList = new Elementdeclerations().getAllCompartmentDeclaration();
-		Iterator<String> it2 = compartmentList.iterator();
-
-		String element;
-		while (it2.hasNext()) {
-			element = it2.next();
-			compartment.addItem(element);
-		}
 	}
 
 	public BiologicalNodeAbstract getAnswer(Point2D point, Component relativeTo) {

@@ -313,6 +313,7 @@ public class SaveDialog {
 			MyPopUp.getInstance().show("Information", txtDescription + " File saved");
 		} else if (fileFormat.equals(csvDescription)) {
 			getCorrectFile(csv);
+			// TODO adjust if BN holds PN
 			String result = new CSVWriter().write(new FileOutputStream(file), new GraphInstance().getPathway());
 
 			if (result.length() > 0) {
