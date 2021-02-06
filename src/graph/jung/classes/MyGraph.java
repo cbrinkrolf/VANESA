@@ -319,14 +319,12 @@ public class MyGraph {
 						w.updateElementProperties();
 					}
 				}
-				// System.out.println("vorher");
-
-				// System.out.println("nachher");
-				if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
-					// System.out.println("sim");
-					w.updatePCPView();
+				if (pathway.isPetriNet() || pathway.getPetriNet() != null) {
+					if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
+						// System.out.println("sim");
+						w.updatePCPView();
+					}
 				}
-
 			}
 		});
 

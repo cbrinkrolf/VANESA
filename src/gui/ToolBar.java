@@ -245,11 +245,6 @@ public class ToolBar {
 		loadModResult.setToolTipText("Load Modellica Result");
 		loadModResult.addActionListener(ToolBarListener.getInstance());
 
-		JButton simulate = new ToolBarButton("Simulate Petri Net");
-		simulate.setActionCommand("simulate");
-		simulate.setToolTipText("Simulate Petri Net");
-		simulate.addActionListener(ToolBarListener.getInstance());
-
 		modelling = new ToolBarButton(ModellingViewString);
 		modelling.setActionCommand("modelling");
 		modelling.addActionListener(ToolBarListener.getInstance());

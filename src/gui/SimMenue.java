@@ -36,7 +36,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import graph.GraphInstance;
 import graph.gui.Parameter;
 import net.miginfocom.swing.MigLayout;
 import petriNet.SimulationResult;
@@ -87,18 +86,21 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	private MyJFormattedTextField to;
 	private MyJFormattedTextField intervalSize;
 	private JTextField numbers;
-	
+
 	private String parameterName;
 	private String parameterNameShort;
 	private List<Double> parameterValues;
-	
+
 	private HashMap<JTextField, SimulationResult> text2sim;
 
 	// private ActionListener listener;
 
 	private List<File> libs;
 
-	public SimMenue(ActionListener listener, List<File> libs) {
+	private Pathway pw;
+
+	public SimMenue(Pathway pw, ActionListener listener, List<File> libs) {
+		this.pw = pw;
 		this.setTitle("VANESA - simulation setup");
 		this.libs = libs;
 		// this.listener = listener;
@@ -166,25 +168,25 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
 		selectedNodeBox.addItemListener(this);
 		parameterBox.addItemListener(this);
-		
+
 		from = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 		from.setText("0.0");
 		from.setColumns(5);
 		from.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		from.setEnabled(true);
-		
+
 		to = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 		to.setText("0.0");
 		to.setColumns(5);
 		to.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		to.setEnabled(true);
-		
+
 		intervalSize = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 		intervalSize.setText("0.1");
 		intervalSize.setColumns(5);
 		intervalSize.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		intervalSize.setEnabled(true);
-		
+
 		numbers = new JTextField();
 		numbers.setColumns(5);
 
@@ -267,7 +269,6 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	private void fillNodeComboBox() {
 
 		selectedNodeBox.removeAllItems();
-		Pathway pw = GraphInstance.getPathwayStatic();
 		List<BiologicalNodeAbstract> l = pw.getAllGraphNodesSortedAlphabetically();
 		BiologicalNodeAbstract bna;
 		for (int i = 0; i < l.size(); i++) {
@@ -283,7 +284,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	}
 
 	private void fillParameterComboBox() {
-		if(selectedNode == null){
+		if (selectedNode == null) {
 			return;
 		}
 		this.parameterBox.removeAllItems();
@@ -292,23 +293,23 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 			parameterBox.addItem("token start");
 			parameterBox.addItem("token min");
 			parameterBox.addItem("token max");
-			
+
 		} else if (selectedNode instanceof Transition) {
 			System.out.println(selectedNode.getParameters().size());
-			if(selectedNode.getParameters().size() < 1){
+			if (selectedNode.getParameters().size() < 1) {
 				System.out.println("return");
 				return;
 			}
 			parameterBox.addItem("speed");
-			for(int i = 0; i<selectedNode.getParameters().size(); i++){
+			for (int i = 0; i < selectedNode.getParameters().size(); i++) {
 				parameterBox.addItem(selectedNode.getParameters().get(i).getName());
 			}
 		}
 		this.parameterBox.setSelectedIndex(0);
 	}
-	
-	private void fillTextFields(){
-		if(parameterBox.getItemCount() <1){
+
+	private void fillTextFields() {
+		if (parameterBox.getItemCount() < 1) {
 			from.setEnabled(false);
 			to.setEnabled(false);
 			intervalSize.setEnabled(false);
@@ -319,31 +320,31 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		to.setEnabled(true);
 		intervalSize.setEnabled(true);
 		numbers.setEnabled(true);
-		String param = parameterBox.getSelectedItem()+"";
-		
-		if(selectedNode.getParameter(param)!= null){
+		String param = parameterBox.getSelectedItem() + "";
+
+		if (selectedNode.getParameter(param) != null) {
 			Parameter p = selectedNode.getParameter(param);
-			from.setText(p.getValue()+"");
-		}else{
-			if(selectedNode instanceof Place){
-				Place p = (Place)selectedNode;
-				switch (param){
+			from.setText(p.getValue() + "");
+		} else {
+			if (selectedNode instanceof Place) {
+				Place p = (Place) selectedNode;
+				switch (param) {
 				case "token start":
-					from.setText(p.getTokenStart()+"");
+					from.setText(p.getTokenStart() + "");
 					break;
 				case "token min":
-					from.setText(p.getTokenMin()+"");
+					from.setText(p.getTokenMin() + "");
 					break;
 				case "token max":
-					from.setText(p.getTokenMax()+"");
+					from.setText(p.getTokenMax() + "");
 					break;
 				}
-				
-			} else if (selectedNode instanceof Transition){
-				//if (param.equals(speed))
+
+			} else if (selectedNode instanceof Transition) {
+				// if (param.equals(speed))
 			}
 		}
-		
+
 	}
 
 	public void started() {
@@ -427,8 +428,6 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		// west.add(new JButton("click"), "wrap");
 		// west.add(new JButton("click"), "wrap");
 
-		Pathway pw = new GraphInstance().getPathway();
-
 		List<SimulationResult> results = pw.getPetriPropertiesNet().getSimResController().getAll();
 
 		for (int i = 0; i < results.size(); i++) {
@@ -473,7 +472,6 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 			int i = Integer.parseInt(box.getActionCommand());
 			// System.out.println(i);
 			if (i >= 0) {
-				Pathway pw = new GraphInstance().getPathway();
 				pw.getPetriPropertiesNet().getSimResController().getAll().get(i).setActive(box.isSelected());
 			} else {
 				Component[] components = west.getComponents();
@@ -482,7 +480,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 						((JCheckBox) components[j]).setSelected(box.isSelected());
 					}
 				}
-				List<SimulationResult> resList = new GraphInstance().getPathway().getPetriPropertiesNet().getSimResController().getAll();
+				List<SimulationResult> resList = pw.getPetriPropertiesNet().getSimResController().getAll();
 				for (int j = 0; j < resList.size(); j++) {
 					resList.get(j).setActive(box.isSelected());
 				}
@@ -493,11 +491,11 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 			// System.out.println(e.getSource());
 			// System.out.println("select");
 			// System.out.println(this.selectedNodeBox.getSelectedItem());
-			this.selectedNode = GraphInstance.getPathwayStatic().getNodeByName(this.selectedNodeBox.getSelectedItem() + "");
+			this.selectedNode = pw.getNodeByName(this.selectedNodeBox.getSelectedItem() + "");
 			this.fillParameterComboBox();
 		} else if (e.getSource() == this.parameterBox) {
 			this.fillTextFields();
-			this.parameterName = parameterBox.getSelectedItem()+"";
+			this.parameterName = parameterBox.getSelectedItem() + "";
 		}
 		// System.out.println(((JCheckBox)e.getItem()).getActionCommand());
 
@@ -508,7 +506,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		// System.out.println(e);
 		if (e.getSource() instanceof JButton) {
 			int i = Integer.parseInt(e.getActionCommand());
-			new GraphInstance().getPathway().getPetriPropertiesNet().getSimResController().remove(i);
+			pw.getPetriPropertiesNet().getSimResController().remove(i);
 			this.updateSimulationResults();
 		} else if ("parameterized".equals(e.getActionCommand())) {
 			revalidateParametrizedPanel();
@@ -520,43 +518,42 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	public boolean isForceRebuild() {
 		return forceRebuild.isSelected();
 	}
-	
-	public boolean isParameterized(){
+
+	public boolean isParameterized() {
 		return this.parameterized.isSelected();
 	}
-	
-	public String getParameterName(){
+
+	public String getParameterName() {
 		return this.parameterName;
 	}
-	
-	public String getParameterNameShort(){
+
+	public String getParameterNameShort() {
 		return this.parameterNameShort;
 	}
-	
-	public List<Double> getParameterValues(){
-		//TODO compute values
+
+	public List<Double> getParameterValues() {
+		// TODO compute values
 		this.parameterValues = new ArrayList<Double>();
-		if(numbers.getText().trim().length() > 0){
-			
-		}else{
+		if (numbers.getText().trim().length() > 0) {
+
+		} else {
 			double start = Double.parseDouble(from.getText().trim());
 			double stop = Double.parseDouble(to.getText().trim());
 			double stepsize = Double.parseDouble(intervalSize.getText().trim());
-			
-			
+
 			parameterValues.add(start);
-			
+
 			double sum = start;
-			while(sum+stepsize < stop){
-				sum+=stepsize;
+			while (sum + stepsize < stop) {
+				sum += stepsize;
 				parameterValues.add(sum);
 			}
 			parameterValues.add(stop);
 		}
 		return this.parameterValues;
 	}
-	
-	public BiologicalNodeAbstract getSelectedNode(){
+
+	public BiologicalNodeAbstract getSelectedNode() {
 		return this.selectedNode;
 	}
 }

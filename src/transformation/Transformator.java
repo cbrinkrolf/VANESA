@@ -27,9 +27,6 @@ import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import graph.CreatePathway;
-import graph.GraphInstance;
-import gui.MainWindow;
 import util.MyIntComparable;
 
 // Restrictions / limitations:
@@ -38,6 +35,7 @@ import util.MyIntComparable;
 // will stop if all edges and nodes got replaced/considered
 // if no type is given (discrete / continuous), it is inferred from mapped node, default fall back: continuous
 
+// TODO check undirected edges
 // TODO parameter mapping
 // TODO syso -> log file
 // TODO try hierarchical network (maybe first flatten?)
@@ -88,18 +86,15 @@ public class Transformator {
 
 	private List<BiologicalEdgeAbstract> usedEdges = new ArrayList<>();
 
-	public void transform(Pathway pw, List<Rule> rules) {
+	public Pathway transform(Pathway pw, List<Rule> rules) {
 		this.pw = pw;
 		this.rules = rules;
 		tmpGraph = new UndirectedSparseGraph<>();
 
-		MainWindow w = MainWindow.getInstance();
-		new CreatePathway();
-		GraphInstance graphInstance = new GraphInstance();
-		graphInstance.getPathway().setPetriNet(true);
-		// w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
-		w.updateAllGuiElements();
-		petriNet = graphInstance.getPathway();
+		
+		
+		petriNet = new Pathway("PN_"+pw.getName());
+		petriNet.setPetriNet(true);
 
 		BiologicalNodeAbstract bna;
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
@@ -127,9 +122,11 @@ public class Transformator {
 		// createRules();
 		applyRules();
 
-		petriNet.getGraph().restartVisualizationModel();
-		MainWindow.getInstance().updateProjectProperties();
-		MainWindow.getInstance().updateOptionPanel();
+		//petriNet.getGraph().restartVisualizationModel();
+		//MainWindow.getInstance().updateProjectProperties();
+		//MainWindow.getInstance().updateOptionPanel();
+		petriNet.updateMyGraph();
+		return petriNet;
 	}
 
 	private void applyRules() {
@@ -708,5 +705,9 @@ public class Transformator {
 			return bna.getRef();
 		}
 		return bna;
+	}
+	
+	public HashMap<BiologicalNodeAbstract, PNNode> getBnToPN(){
+		return this.bn2pnMap;
 	}
 }

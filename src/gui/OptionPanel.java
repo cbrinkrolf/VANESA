@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
+import biologicalElements.Pathway;
 import database.gui.DatabaseWindow;
 import graph.gui.ElementWindow;
 import net.miginfocom.swing.MigLayout;
@@ -20,12 +21,12 @@ public class OptionPanel {
 
 	private DatabaseWindow dw;
 
-	 private ElementTree tree;
-	 
-	 private BuildingBlocks bb;
+	private ElementTree tree;
+
+	private BuildingBlocks bb;
 
 	private SatelliteWindow satelliteWindow;
-	
+
 	// private ElementInformationWindow information;
 
 	private ElementWindow elementWindow;
@@ -35,15 +36,14 @@ public class OptionPanel {
 	private JXTaskPane elements;
 
 	private JXTaskPane satellite;
-	
-	//private PetriNetProperties petriNetProperties;
 
+	// private PetriNetProperties petriNetProperties;
 
 	// Taskpane for the microarray data visualization component
-	private JXTaskPane pcpview;
+	private JXTaskPane simResView;
 
 	// GUI component used for rendering the parallel coordinates plot
-	private ParallelCoordinatesPlot PCPWindow;
+	private SimulationResultsPlot simResWindow;
 
 	// private JXTaskPane dbProperties;
 
@@ -57,12 +57,12 @@ public class OptionPanel {
 
 	private JXTaskPane theory;
 
-	//private JXTaskPane petriNet;
+	// private JXTaskPane petriNet;
 
 	private JXTaskPane pathways;
-	
+
 	private PathwayTree pathwayTree;
-	
+
 	private boolean updatePanels = true;
 
 	private GraphAlgorithmsWindow graphAlgorithms;
@@ -81,7 +81,7 @@ public class OptionPanel {
 	}
 
 	public OptionPanel() {
-		
+
 		taskPaneContainer.setLayout(new MigLayout("insets 0, wrap 1"));
 
 		databaseSearch = new JXTaskPane();
@@ -93,17 +93,17 @@ public class OptionPanel {
 		dw = new DatabaseWindow();
 		databaseSearch.add(dw.getPanel());
 
-		 elements = new JXTaskPane();
-		 elements.setTitle("Graph Elements");
-		 tree = new ElementTree();
-		 elements.add(tree.getScrollTree());
+		elements = new JXTaskPane();
+		elements.setTitle("Graph Elements");
+		tree = new ElementTree();
+		elements.add(tree.getScrollTree());
 
-		 pathways =new JXTaskPane();
-		 pathways.setTitle("Pathway Tree");
-		 pathwayTree = new PathwayTree();
-		 pathways.add(pathwayTree);
-		 pathways.setCollapsed(true);
-		 
+		pathways = new JXTaskPane();
+		pathways.setTitle("Pathway Tree");
+		pathwayTree = new PathwayTree();
+		pathways.add(pathwayTree);
+		pathways.setCollapsed(true);
+
 		theory = new JXTaskPane();
 		theory.setTitle("Graph Analysis");
 		graphAlgorithms = new GraphAlgorithmsWindow();
@@ -115,16 +115,17 @@ public class OptionPanel {
 		satelliteWindow = new SatelliteWindow();
 		satellite.add(satelliteWindow.getSatellitePane());
 		satellite.setCollapsed(true);
-		
+
 		//
 		// // init task pane and viz-component
-		pcpview = new JXTaskPane();
-		pcpview.setTitle("Petri Net Simulation");
-		pcpview.setCollapsed(true);
-		PCPWindow = new ParallelCoordinatesPlot();
-		pcpview.add(PCPWindow.getPanel());
+		simResView = new JXTaskPane();
+		simResView.setTitle("Petri Net Simulation");
+		simResView.setCollapsed(true);
+		//simResView.setAnimated(false);
+		simResWindow = new SimulationResultsPlot();
+		simResView.add(simResWindow.getPanel());
 
-		 elements.setCollapsed(true);
+		elements.setCollapsed(true);
 		// databaseSearch.setCollapsed(false);
 		// satellite.setCollapsed(true);
 		//
@@ -145,7 +146,7 @@ public class OptionPanel {
 		elementWindow = new ElementWindow();
 		generalProperties.add(elementWindow.getPanel());
 		generalProperties.setCollapsed(true);
-		
+
 		bbProperties = new JXTaskPane();
 		bbProperties.setTitle("Building Blocks");
 		bb = new BuildingBlocks();
@@ -163,17 +164,16 @@ public class OptionPanel {
 		// alignment.setCollapsed(false);
 		// alignment.setVisible(false);
 
-		/*petriNet = new JXTaskPane();
-		petriNet.setTitle("PetriNetProperties");
-		petriNet.setCollapsed(false);
-		petriNet.setVisible(true);
-		petriNetProperties = new PetriNetProperties();
-		petriNet.add(petriNetProperties.getPanel());
-		taskPaneContainer.add(petriNet);*/
+		/*
+		 * petriNet = new JXTaskPane(); petriNet.setTitle("PetriNetProperties");
+		 * petriNet.setCollapsed(false); petriNet.setVisible(true); petriNetProperties =
+		 * new PetriNetProperties(); petriNet.add(petriNetProperties.getPanel());
+		 * taskPaneContainer.add(petriNet);
+		 */
 
 		if (MainWindow.developer) {
 			taskPaneContainer.add(databaseSearch, "growx");
-			taskPaneContainer.add(pcpview, "growx");
+			taskPaneContainer.add(simResView, "growx");
 			taskPaneContainer.add(theory, "growx");
 			taskPaneContainer.add(generalProperties, "growx");
 			taskPaneContainer.add(satellite, "growx");
@@ -186,7 +186,7 @@ public class OptionPanel {
 			// taskPaneContainer.add(alignment);
 		} else {
 			taskPaneContainer.add(databaseSearch, "growx");
-			taskPaneContainer.add(pcpview, "growx");
+			taskPaneContainer.add(simResView, "growx");
 			taskPaneContainer.add(theory, "growx");
 			taskPaneContainer.add(generalProperties, "growx");
 			taskPaneContainer.add(satellite, "growx");
@@ -195,8 +195,7 @@ public class OptionPanel {
 			taskPaneContainer.add(pathways, "growx");
 			// taskPaneContainer.add(dbProperties);
 			taskPaneContainer.add(project, "growx");
-			//taskPaneContainer.add(pcpview);
-			
+			// taskPaneContainer.add(pcpview);
 
 		}
 
@@ -217,7 +216,7 @@ public class OptionPanel {
 		bb.removeTree();
 		pathwayTree.removeTree();
 		satelliteWindow.removeAllElements();
-		PCPWindow.removeAllElements();
+		simResWindow.removeAllElements();
 		elementWindow.removeAllElements();
 		// information.removeAllElements();
 		projectWindow.removeAllElements();
@@ -230,36 +229,36 @@ public class OptionPanel {
 	}
 
 	public void updatePanel(String element) {
-		//System.out.println(element);
+		// System.out.println(element);
 		if (updatePanels) {
 			if (element.equals("GraphTree")) {
-				 tree.revalidateTree();
+				tree.revalidateTree();
 			} else if (element.equals("Satellite")) {
 				satelliteWindow.revalidateSatelliteView();
 			} else if (element.equals("pcp")) {
-				//PCPWindow.initGraphs();
-				PCPWindow.revalidateView();
+				// PCPWindow.initGraphs();
+				simResWindow.revalidateView();
 			} else if (element.equals("element")) {
 				elementWindow.revalidateView();
-				//System.out.println("bla");
+				// System.out.println("bla");
 			} else if (element.equals("project")) {
 				projectWindow.revalidateView();
 				// } // else if (element.equals("Database")) {
 				// System.out.println("updatePanelDatabase");
 				// information.revalidateView();
 			} else if (element.equals("theory")) {
-			//	System.out.println("update graph thoery");
+				// System.out.println("update graph thoery");
 				graphAlgorithms.revalidateView();
-			}// else if (element.equals("DAWISVertexWindow")) {
+			} // else if (element.equals("DAWISVertexWindow")) {
 				// information.revalidateDAWISVertexWindow();
 				// } else if (element.equals("DAWISVertexWindow")) {
 				// //
 				// }
-			else if (element.equals("pathwayTree")){
+			else if (element.equals("pathwayTree")) {
 				pathwayTree.revalidateView();
-			}else if (element.equals("initPCP")){
-				PCPWindow.initGraphs();
-			} else if (element.equals("bb")){
+			} else if (element.equals("initPCP")) {
+				simResWindow.initGraphs();
+			} else if (element.equals("bb")) {
 //				bb.revalidateView();
 			}
 		}
@@ -273,11 +272,16 @@ public class OptionPanel {
 		this.updatePanels = updatePanels;
 	}
 
-	public void redrawGraphs(){
-		PCPWindow.updateDateCurrentSimulation();
+	public void redrawGraphs() {
+		if (simResView.isCollapsed()) {
+			simResView.setAnimated(false);
+			simResView.setCollapsed(false);
+			simResView.setAnimated(true);
+		}
+		simResWindow.updateDateCurrentSimulation();
 	}
-	
-	public void initPCPGraphs(){
-		PCPWindow.initGraphs();
+
+	public void initSimResGraphs() {
+		simResWindow.initGraphs();
 	}
 }

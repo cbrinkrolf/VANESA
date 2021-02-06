@@ -23,8 +23,6 @@ import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-// import java.net.ServerSocket;
-// import java.net.Socket;
 import gui.MainWindow;
 
 public class Server {
@@ -66,7 +64,7 @@ public class Server {
 					serverSocket = new java.net.ServerSocket(port);
 					simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
 					System.out.println(simId);
-					MainWindow.getInstance().initPCPGraphs();
+					MainWindow.getInstance().initSimResGraphs();
 					while (true) {
 						java.net.Socket client = waitForClient(serverSocket);
 						// leseNachricht(client);
@@ -91,7 +89,7 @@ public class Server {
 	}
 
 	java.net.Socket waitForClient(java.net.ServerSocket serverSocket) throws IOException {
-		java.net.Socket socket = serverSocket.accept(); 
+		java.net.Socket socket = serverSocket.accept();
 		return socket;
 	}
 
@@ -254,7 +252,7 @@ public class Server {
 					running = false;
 					System.out.println("server shut down");
 					MainWindow w = MainWindow.getInstance();
-					// w.redrawGraphs();
+					w.redrawGraphs();
 					break;
 				}
 			}
@@ -262,9 +260,9 @@ public class Server {
 			System.out.println("server destroyed");
 			serverSocket.close();
 			running = false;
-			//TODO rewrite stop of sever
+			// TODO rewrite stop of sever
 			serverThread.stop();
-			//serverThread.destroy();
+			// serverThread.destroy();
 		}
 		// System.out.println(n[1]);
 		// System.out.println(n[2]);
@@ -272,9 +270,9 @@ public class Server {
 		// st.
 		// System.out.println(new String(buffer, 16, buffer.length - 17));
 		this.serverSocket.close();
-		//TODO rewrite stop of sever
+		// TODO rewrite stop of sever
 		serverThread.stop();
-		//serverThread.destroy();
+		// serverThread.destroy();
 		// String nachricht = new String(buffer, 0, anzahlZeichen);
 		// return nachricht;
 	}
@@ -370,6 +368,7 @@ public class Server {
 				} else if (bna instanceof Transition) {
 					if (name2index.get("'" + bna.getName() + "'.fire") != null) {
 						o = values.get(name2index.get("'" + bna.getName() + "'.fire"));
+
 						this.checkAndAddValue(bna, SimulationResultController.SIM_FIRE, o);
 					}
 					if (name2index.get("'" + bna.getName() + "'.actualSpeed") != null) {
@@ -391,13 +390,21 @@ public class Server {
 		// this.time = pnResult.get("time");
 		// pw.setPetriNetSimulation(true);
 	}
-	
-	private void checkAndAddValue(GraphElementAbstract gea, int type, Object o){
+
+	private void checkAndAddValue(GraphElementAbstract gea, int type, Object o) {
 		double value;
+		//System.out.println(o.getClass());
+		//System.out.println(gea.getName() + " type: " + type + " object: " + o);
 		if (o instanceof Integer) {
+			System.out.println("integer value");
 			value = (double) ((int) o);
+		} else if (o instanceof Double) {
+			value = (Double) o;
+		} else if (o instanceof Byte) {
+			value = (Byte)o;
 		} else {
-			value = (double) o;
+			value = 0;
+			System.out.println("unsupported data type!!!");
 		}
 		this.simResult.addValue(gea, type, value);
 	}

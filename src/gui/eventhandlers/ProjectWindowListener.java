@@ -39,7 +39,7 @@ public class ProjectWindowListener implements FocusListener {
 			if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
 				MainWindow.getInstance().getBar()
 						.paintToolbar(pw.isPetriNet());
-				MainWindow.getInstance().getmyMenu().setPetriView(pw.isPetriNet());
+				MainWindow.getInstance().getmyMenu().setPetriView(pw.isPetriNet() || pw.getPetriNet() != null);
 				break;
 			}
 		}

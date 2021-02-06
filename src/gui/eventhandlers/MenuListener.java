@@ -62,11 +62,9 @@ import graph.algorithms.gui.RandomGraphGui;
 import graph.algorithms.gui.RandomHamiltonGraphGui;
 import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.algorithms.gui.smacof.view.SmacofView;
-import graph.jung.classes.MyGraph;
 import graph.layouts.gemLayout.GEMLayout;
 import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
-//import graph.layouts.modularLayout.MDForceLayout;
 import gui.AboutWindow;
 import gui.InfoWindow;
 import gui.LabelToDataMappingWindow;
@@ -79,12 +77,10 @@ import io.OpenDialog;
 import io.PNDoc;
 import io.SaveDialog;
 import miscalleanous.tables.MyTable;
-import petriNet.ConvertMetabolicNet;
 import petriNet.Cov;
 import petriNet.CovNode;
 import petriNet.OpenModelicaResult;
 import petriNet.PNTableDialog;
-import petriNet.PetriNetSimulation;
 import petriNet.ReachController;
 import petriNet.SimpleMatrixDouble;
 import transformation.Rule;
@@ -116,9 +112,6 @@ public class MenuListener implements ActionListener {
 	private MainWindow w;
 
 	private Cov cov;
-
-	private PetriNetSimulation simulation = null;
-
 	private static MenuListener instance;
 
 	private MenuListener() {
@@ -870,23 +863,11 @@ public class MenuListener implements ActionListener {
 		else if ("loadModResult".equals(event))
 			new OpenModelicaResult().execute();
 		else if ("simulate".equals(event)) {
-			if (simulation == null) {
-				simulation = new PetriNetSimulation();
+			if (con.containsPathway()) {
+				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+					graphInstance.getPathway().getPetriNetSimulation().showMenue();
+				}
 			}
-			simulation.showMenue();
-		} else if ("convertIntoPetriNet".equals(event) && (con.getPathwayNumbers() > 0)) {
-			MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
-			g.disableGraphTheory();
-			// new CompareGraphsGUI();
-			new ConvertMetabolicNet();
-
-			/*
-			 * Component[] c = MainWindowSingleton.getInstance().getContentPane()
-			 * .getComponents(); for (int i = 0; i < c.length; i++) { if
-			 * (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-			 * MainWindowSingleton .getInstance() .getBar() .paintToolbar(
-			 * con.getPathway(w.getCurrentPathway()) .isPetriNet()); break; } }
-			 */
 		} else if ("dataMappingColor".equals(event)) {
 			DataMappingColorMVC.createDataMapping();
 		} else if ("dataMappingDB".equals(event)) {
@@ -1161,11 +1142,24 @@ public class MenuListener implements ActionListener {
 		} else if ("transform".equals(event)) {
 			if (con.containsPathway()) {
 				Pathway pw = graphInstance.getPathway();
-				if (pw.hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement() && !pw.isPetriNet()) {
 					List<Rule> rules = RuleManager.getInstance().getActiveRules();
-					new Transformator().transform(pw, rules);
+					
+					//MainWindow w = MainWindow.getInstance();
+					//new CreatePathway();
+					//graphInstance.getPathway().setPetriNet(true);
+					// w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
+					//w.updateAllGuiElements();
+					//petriNet = graphInstance.getPathway();
+					Transformator t = new Transformator();
+					Pathway petriNet = t.transform(pw, rules);
+					pw.setPetriNet(petriNet);
+					pw.setBnToPN(t.getBnToPN());
+					w.updateProjectProperties();
+					//CreatePathway.showPathway(petriNet);
+					
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a biologial network first. A Petri net cannot be transformed!.");
 				}
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");

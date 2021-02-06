@@ -62,16 +62,16 @@ public class MenuBarClass {
 	private JMenuBar bar;
 	private JMenuItem regularGraph;
 
+	private JMenuItem transform;
+
 	private JMenuItem testPInvariant;
 	private JMenuItem testTInvariant;
 	private JMenuItem cov;
 	private JMenuItem covreach;
-	private JMenuItem modellicaResult;
+	private JMenuItem modelicaResult;
 	private JMenuItem editPNelements;
 	private JMenuItem simulate;
 	private JMenuItem createDoc;
-
-	private JMenuItem convertPetriNet;
 
 	private JMenuItem rendererSettings;
 	private JMenuItem dataLabelMapping;
@@ -319,7 +319,7 @@ public class MenuBarClass {
 		graphSettings.addActionListener(MenuListener.getInstance());
 		graphSettings.setActionCommand("graphSettings");
 
-		JMenuItem transform = new JMenuItem("Transform to Petri net");
+		transform = new JMenuItem("Transform to Petri net");
 		transform.addActionListener(MenuListener.getInstance());
 		transform.setActionCommand("transform");
 
@@ -435,9 +435,9 @@ public class MenuBarClass {
 		covreach = new JMenuItem("Cov/Reach Graph");
 		covreach.addActionListener(MenuListener.getInstance());
 		covreach.setActionCommand("createCov");
-		modellicaResult = new JMenuItem("Load Simulation Result");
-		modellicaResult.addActionListener(MenuListener.getInstance());
-		modellicaResult.setActionCommand("loadModResult");
+		modelicaResult = new JMenuItem("Load Simulation Result");
+		modelicaResult.addActionListener(MenuListener.getInstance());
+		modelicaResult.setActionCommand("loadModResult");
 		simulate = new JMenuItem("Simulate");
 		simulate.addActionListener(MenuListener.getInstance());
 		simulate.setActionCommand("simulate");
@@ -449,13 +449,10 @@ public class MenuBarClass {
 		editPNelements = new JMenuItem("Edit PN-Elements");
 		editPNelements.addActionListener(MenuListener.getInstance());
 		editPNelements.setActionCommand("editElements");
-		convertPetriNet = new JMenuItem("Convert Graph into Petri-Net");
-		convertPetriNet.addActionListener(MenuListener.getInstance());
-		convertPetriNet.setActionCommand("convertIntoPetriNet");
-		petriNets.add(convertPetriNet);
+
 		petriNets.add(editPNelements);
 		petriNets.add(simulate);
-		petriNets.add(modellicaResult);
+		petriNets.add(modelicaResult);
 		petriNets.add(testPInvariant);
 		petriNets.add(testTInvariant);
 		petriNets.add(cov);
@@ -513,29 +510,32 @@ public class MenuBarClass {
 		 * exportGon.setEnabled(true);
 		 */
 		mdLayout.setEnabled(true);
-
+		transform.setEnabled(true);
 		if (new GraphInstance().getPathway().isPetriNet()) {
+			transform.setEnabled(false);
+
 			testPInvariant.setEnabled(true);
 			testTInvariant.setEnabled(true);
 			cov.setEnabled(true);
 			simulate.setEnabled(true);
 			covreach.setEnabled(true);
-			modellicaResult.setEnabled(true);
+			modelicaResult.setEnabled(true);
 			editPNelements.setEnabled(true);
 			createDoc.setEnabled(true);
-		} else
-			convertPetriNet.setEnabled(true);
+		}
 	}
 
 	public void setPetriView(boolean isPetriNet) {
+		if (new GraphInstance().getPathway().isPetriNet()) {
+			transform.setEnabled(false);
+		}
 		testPInvariant.setEnabled(isPetriNet);
 		testTInvariant.setEnabled(isPetriNet);
 		cov.setEnabled(isPetriNet);
 		simulate.setEnabled(isPetriNet);
 		covreach.setEnabled(isPetriNet);
-		modellicaResult.setEnabled(isPetriNet);
+		modelicaResult.setEnabled(isPetriNet);
 		editPNelements.setEnabled(isPetriNet);
-		convertPetriNet.setEnabled(!isPetriNet);
 		createDoc.setEnabled(isPetriNet);
 	}
 
@@ -568,8 +568,7 @@ public class MenuBarClass {
 		cov.setEnabled(false);
 		simulate.setEnabled(false);
 		covreach.setEnabled(false);
-		convertPetriNet.setEnabled(false);
-		modellicaResult.setEnabled(false);
+		modelicaResult.setEnabled(false);
 		editPNelements.setEnabled(false);
 		createDoc.setEnabled(false);
 	}
