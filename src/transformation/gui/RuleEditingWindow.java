@@ -16,7 +16,6 @@ import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -98,7 +97,7 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 	private Rule rule = null;
 	private Set<BiologicalEdgeAbstract> consideredEdges = new HashSet<BiologicalEdgeAbstract>();
 
-	private JCheckBox chkAllEdgesSelected = new JCheckBox("all edges");
+	private JButton chkAllEdgesSelected = new JButton("set all edges");
 	private boolean newRule = false;
 	private boolean pickLock = false;
 
@@ -278,31 +277,8 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 		btnAddMapping.setToolTipText("Select one biological node and one node from the Petri net!");
 
 		chkAllEdgesSelected.setActionCommand("setAllEdges");
-		chkAllEdgesSelected.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getItem() instanceof JCheckBox) {
-					JCheckBox box = (JCheckBox) e.getItem();
-					if (box.isSelected()) {
-						Iterator<BiologicalEdgeAbstract> it = bn.getAllEdges().iterator();
-						BiologicalEdgeAbstract bea;
-						while (it.hasNext()) {
-							bea = it.next();
-							consideredEdges.add(bea);
-							bn.getGraph().getVisualizationViewer().getPickedEdgeState().pick(bea, true);
-						}
-					} else {
-						consideredEdges.clear();
-						bn.getGraph().getVisualizationViewer().getPickedEdgeState().clear();
-					}
-					// nodeMappingPanel.repaint();
-					revalidateSelectedEdges();
-				}
-			}
-		});
-		chkAllEdgesSelected.setToolTipText("select all edges");
-		chkAllEdgesSelected.setSelected(true);
+		chkAllEdgesSelected.addActionListener(this);
+		chkAllEdgesSelected.setToolTipText("set all edges");
 
 		btnSetEdges.setActionCommand("setEdges");
 		btnSetEdges.addActionListener(this);
@@ -419,6 +395,15 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 				}
 			}
 			this.revalidateSelectedEdges();
+		} else if (e.getActionCommand().equals("setAllEdges")) {
+			Iterator<BiologicalEdgeAbstract> it = bn.getAllEdges().iterator();
+			BiologicalEdgeAbstract bea;
+			while (it.hasNext()) {
+				bea = it.next();
+				consideredEdges.add(bea);
+				bn.getGraph().getVisualizationViewer().getPickedEdgeState().pick(bea, true);
+			}
+			revalidateSelectedEdges();
 		} else if (e.getActionCommand().startsWith("del_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
 			Iterator<BiologicalNodeAbstract> it = bnToPn.keySet().iterator();
@@ -636,8 +621,8 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 						BiologicalNodeAbstract bna = vertexStatePN.getPicked().iterator().next();
 						if (bnToPn.containsValue(bna)) {
 							vertexStateBN.clear();
-							for(BiologicalNodeAbstract b : bnToPn.keySet()){
-								if(bnToPn.get(b) == bna){
+							for (BiologicalNodeAbstract b : bnToPn.keySet()) {
+								if (bnToPn.get(b) == bna) {
 									vertexStateBN.pick(b, true);
 									gaBN = b;
 									elementTypeBN.setText(b.getBiologicalElement());
@@ -687,17 +672,18 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 			}
 			text += bea.getName();
 		}
-
 		text += "]";
-		if (chkAllEdgesSelected.isSelected() || consideredEdges.size() == bn.getAllEdges().size()) {
+		if (consideredEdges.size() == bn.getAllEdges().size()) {
 			lblSetEdges.setText("[all edges]");
+			chkAllEdgesSelected.setEnabled(false);
 		} else if (consideredEdges.size() == 0) {
 			lblSetEdges.setText("[none]");
+			chkAllEdgesSelected.setEnabled(true);
 		} else {
 			lblSetEdges.setText(text);
+			chkAllEdgesSelected.setEnabled(true);
 		}
 		lblSetEdges.repaint();
-
 	}
 
 	private void populateGraph() {
