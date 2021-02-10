@@ -6,7 +6,6 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import biologicalElements.PetriNetProperties;
 import configurations.ConnectionSettings;
 import graph.GraphContainer;
 import graph.GraphInstance;

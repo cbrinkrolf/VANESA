@@ -1156,7 +1156,7 @@ public class MenuListener implements ActionListener {
 					pw.setPetriNet(petriNet);
 					pw.setBnToPN(t.getBnToPN());
 					w.updateProjectProperties();
-					//CreatePathway.showPathway(petriNet);
+					CreatePathway.showPathway(petriNet);
 					
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a biologial network first. A Petri net cannot be transformed!.");

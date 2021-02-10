@@ -45,6 +45,7 @@ import graph.layouts.GraphCenter;
 import gui.GraphTab;
 import gui.MainWindow;
 import gui.MyPopUp;
+import petriNet.PetriNetProperties;
 import petriNet.PetriNetSimulation;
 import util.FormularSafety;
 import util.MyIntComparable;

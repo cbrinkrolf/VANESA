@@ -315,7 +315,7 @@ public class MyGraph {
 				if (stateV.getSelectedObjects().length == 1) {
 					graphInstance.setSelectedObject((BiologicalNodeAbstract) stateV.getSelectedObjects()[0]);
 
-					if (!pw.isHeadless()) {
+					if (!pathway.isHeadless()) {
 						w.updateElementProperties();
 					}
 				}
@@ -340,10 +340,11 @@ public class MyGraph {
 						w.updateElementProperties();
 					}
 				}
-
-				if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
-					// System.out.println("sim");
-					w.updatePCPView();
+				if (!pathway.isHeadless()) {
+					if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
+						// System.out.println("sim");
+						w.updatePCPView();
+					}
 				}
 			}
 		});
