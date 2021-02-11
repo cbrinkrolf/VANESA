@@ -1,6 +1,7 @@
 package petriNet;
 
 import java.awt.Desktop;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -70,21 +71,16 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	public void showMenue() {
-		// this.simLibs = this.getLibs(new File(pathWorkingDirectory));
-		// menue = new SimMenue(this, this.simLibs);
-
 		if (this.menue == null) {
 			this.simLibs = this.getLibs(new File(pathWorkingDirectory));
 			menue = new SimMenue(pw, this, this.simLibs);
 		} else {
-			if (!menue.isVisible()) {
-				this.simLibs = this.getLibs(new File(pathWorkingDirectory));
-				this.menue.setLibs(this.simLibs);
-				this.menue.updateSimulationResults();
-				menue.setVisible(true);
-			} else {
-				this.menue.requestFocus();
-			}
+			this.simLibs = this.getLibs(new File(pathWorkingDirectory));
+			this.menue.setLibs(this.simLibs);
+			this.menue.updateSimulationResults();
+			this.menue.setState(Frame.NORMAL);
+			this.menue.requestFocus();
+			menue.setVisible(true);
 		}
 	}
 
@@ -351,7 +347,7 @@ public class PetriNetSimulation implements ActionListener {
 				Thread t2 = new Thread() {
 					public void run() {
 						pw.getGraph().getVisualizationViewer().requestFocus();
-						//w.redrawGraphs();
+						// w.redrawGraphs();
 						// System.out.println(pw.getPetriNet().getSimResController().get().getTime());
 						List<Double> v = null;// pw.getPetriNet().getSimResController().get().getTime().getAll();
 						// System.out.println("running");
