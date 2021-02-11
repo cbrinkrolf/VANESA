@@ -123,7 +123,7 @@ public class EdgeDialog extends JFrame {
 			}
 		}
 
-		if (lastTypeIdx < 0) {
+		if (lastTypeIdx < 0 || lastTypeIdx > elementType.getItemCount()-1) {
 			if (pw.isPetriNet()) {
 				elementType.setSelectedItem(Elementdeclerations.pnEdge);
 			} else {
