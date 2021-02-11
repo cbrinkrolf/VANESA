@@ -91,25 +91,25 @@ public class Pathway implements Cloneable {
 
 	public Pathway(String name, boolean headless) {
 		this.headless = headless;
-		this.name = name;
+		this.name = name.trim();
 		// no graph tab is created, used for editing rules window
 		if (headless) {
-			this.title = name;
+			this.title = this.name;
 			graph = new MyGraph(this);
 		}
 	}
 
 	public Pathway(String name) {
-		this.name = name;
-		this.title = name;
+		this.name = name.trim();
+		this.title = this.name;
 		graph = new MyGraph(this);
-		tab = new GraphTab(name, graph.getGraphVisualization());
+		tab = new GraphTab(this.name, graph.getGraphVisualization());
 	}
 
 	public Pathway(String name, Pathway parent) {
 		// this(name);
-		this.name = name;
-		this.title = name;
+		this.name = name.trim();
+		this.title = this.name;
 		this.parent = parent;
 	}
 
@@ -848,10 +848,10 @@ public class Pathway implements Cloneable {
 
 	public void setName(String name) {
 		// if PW is BNA
-		this.name = FormularSafety.replace(name);
+		this.name = FormularSafety.replace(name.trim());
 		if (tab != null) {
-			this.name = name;
-			tab.setTitle(name);
+			this.name = name.trim();
+			tab.setTitle(this.name);
 		}
 	}
 
