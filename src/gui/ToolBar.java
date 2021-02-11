@@ -15,9 +15,31 @@ import net.miginfocom.swing.MigLayout;
 
 public class ToolBar {
 
-	private JToolBar bar = new JToolBar();
+	private JToolBar bar = null;
+
+	private boolean isPetri = false;
+
+	public ToolBar(Boolean petriNetView) {
+		paintToolbar(petriNetView);
+	}
+
+	public JToolBar getToolBar() {
+		return bar;
+	}
 
 	public void paintToolbar(Boolean petriNetView) {
+		// only repaint if necessary
+		if (bar != null && isPetri && petriNetView) {
+			return;
+		}
+		if (bar != null && !isPetri && !petriNetView) {
+			return;
+		}
+
+		if (bar == null) {
+			bar = new JToolBar();
+		}
+		isPetri = petriNetView;
 
 		bar.removeAll();
 
@@ -31,8 +53,8 @@ public class ToolBar {
 		String ModellingViewString = "<html>" + "<b>Change View</b> <br>" + "to Modelling" + "</html>";
 
 		/*
-		 * String PetriViewString = "<html>" + "<b>Change View</b><br>" +
-		 * "to PetriNet" + "</html>";
+		 * String PetriViewString = "<html>" + "<b>Change View</b><br>" + "to PetriNet"
+		 * + "</html>";
 		 */
 
 		JButton modelling = null;
@@ -352,7 +374,8 @@ public class ToolBar {
 		adjustVerticalSpace.addActionListener(ToolBarListener.getInstance());
 		adjustVerticalSpace.setToolTipText("Adjust vertical space of selected nodes");
 
-		JButton adjustHorizontalSpace = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustHorizontalSpace.png")));
+		JButton adjustHorizontalSpace = new ToolBarButton(
+				new ImageIcon(imagePath.getPath("adjustHorizontalSpace.png")));
 		adjustHorizontalSpace.setActionCommand("adjustHorizontalSpace");
 		adjustHorizontalSpace.addActionListener(ToolBarListener.getInstance());
 		adjustHorizontalSpace.setToolTipText("Adjust horizontal space of selected nodes");
@@ -404,17 +427,9 @@ public class ToolBar {
 			bar.add(infopanel, "wrap");
 		}
 
-		bar.revalidate();
+		// bar.revalidate();
+		bar.validate();
 		bar.repaint();
 		bar.setVisible(true);
-
-	}
-
-	public ToolBar(Boolean petriNetView) {
-		paintToolbar(petriNetView);
-	}
-
-	public JToolBar getToolBar() {
-		return bar;
 	}
 }

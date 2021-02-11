@@ -48,12 +48,13 @@ public class GraphTabListener implements TabListener {
 	public void tabSelected(TabStateChangedEvent event) {
 		
 		if(window.getTabCount() > 0){
-			window.updateElementTree();
+			window.updateAllGuiElements();
+			/*window.updateElementTree();
 			window.updateSatelliteView();
 			window.updatePathwayTree();
 			window.updateProjectProperties();
 			window.updateTheoryProperties();
-			//window.initPCPGraphs();
+			window.initSimResGraphs();*/
 		}
 	}
 

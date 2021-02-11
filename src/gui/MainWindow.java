@@ -809,10 +809,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		return bar;
 	}
 
-	public void setBar(ToolBar bar) {
-		this.bar = bar;
-	}
-
 	private JComponent root;
 
 	public JComponent getRoot() {

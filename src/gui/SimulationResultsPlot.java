@@ -198,6 +198,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		if (pw == null) {
 			return;
 		}
+		if(simResController == null){
+			return;
+		}
 		if (pw.isPetriNet() || pw.getPetriNet() != null) {
 			SimulationResult simRes = simResController.getLastActive();
 			if (pw.getPetriPropertiesNet().isPetriNetSimulation() && simRes != null) {
