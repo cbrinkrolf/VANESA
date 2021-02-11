@@ -43,7 +43,6 @@ public class ProjectWindowListener implements FocusListener {
 				break;
 			}
 		}
-
 	}
 
 	public void focusLost(FocusEvent event) {
