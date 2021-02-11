@@ -43,7 +43,7 @@ public class Server {
 	public Server(Pathway pw, HashMap<BiologicalEdgeAbstract, String> bea2key, String simId) {
 
 		if (SystemUtils.IS_OS_WINDOWS) {
-			sizeOfInt = 4;
+			sizeOfInt = 8;
 		} else {
 			sizeOfInt = 8;
 		}
@@ -221,7 +221,7 @@ public class Server {
 							bb = ByteBuffer.wrap(buffer, reals * 8 + i * sizeOfInt, sizeOfInt);
 							bb.order(ByteOrder.LITTLE_ENDIAN);
 							values.add(bb.getInt());
-							// System.out.print(bb.getInt() + "\t");
+							//System.out.print(integ + "\t");
 						}
 						for (int b = 0; b < bools; b++) {
 							// bb = ByteBuffer.wrap(buffer, b, 1);
@@ -364,6 +364,8 @@ public class Server {
 					if (name2index.get("'" + bna.getName() + "'.t") != null) {
 						o = values.get(name2index.get("'" + bna.getName() + "'.t"));
 						this.checkAndAddValue(bna, SimulationResultController.SIM_TOKEN, o);
+					}else{
+						System.out.println(bna.getName()+" does not exist. Cannot set simulation result");
 					}
 				} else if (bna instanceof Transition) {
 					if (name2index.get("'" + bna.getName() + "'.fire") != null) {
@@ -396,7 +398,7 @@ public class Server {
 		//System.out.println(o.getClass());
 		//System.out.println(gea.getName() + " type: " + type + " object: " + o);
 		if (o instanceof Integer) {
-			System.out.println("integer value");
+			//System.out.println("integer value");
 			value = (double) ((int) o);
 		} else if (o instanceof Double) {
 			value = (Double) o;
@@ -406,6 +408,7 @@ public class Server {
 			value = 0;
 			System.out.println("unsupported data type!!!");
 		}
+		//System.out.println(gea.getName()+" :"+value + " org:"+o );
 		this.simResult.addValue(gea, type, value);
 	}
 

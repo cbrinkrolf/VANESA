@@ -21,11 +21,11 @@ import biologicalElements.IDAlreadyExistException;
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import graph.groups.Group;
 import biologicalObjects.nodes.petriNet.Place;
 import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import graph.GraphInstance;
+import graph.groups.Group;
 import graph.gui.Parameter;
 import graph.jung.classes.MyGraph;
 import graph.jung.graphDrawing.VertexShapes;
@@ -1030,10 +1030,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	public void setLabel(String label) {
 		// this.label = FormularSafety.replace(label);
-		this.label = label;
+		this.label = label.trim();
 		labelSet.remove(this.label);
 		// this.label = label;
 		labelSet.add(this.label);
+		if(getName().length() == 0){
+			setName(this.label);
+		}
 		// this.networklabel = label;
 		// System.out.println("gestezt");
 	}

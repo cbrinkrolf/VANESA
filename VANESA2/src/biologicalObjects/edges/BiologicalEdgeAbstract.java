@@ -69,10 +69,15 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	// ---Functional Methods---
 
 	public BiologicalEdgeAbstract(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-
 		// this.edge=edge;
 		this.label = label;
 		this.name = name;
+		if (label.trim().length() == 0) {
+			this.label = name;
+		}
+		if (name.trim().length() == 0) {
+			this.name = label;
+		}
 		this.labelSet.add(label);
 		// setName(name.toLowerCase());
 		// setLabel(label.toLowerCase());
@@ -112,8 +117,8 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	/**
 	 * checks if the given BiologicalNodeAbstract is equal to this one nodes are
-	 * equal if name OR label match (also when name matches the label of the
-	 * other node)
+	 * equal if name OR label match (also when name matches the label of the other
+	 * node)
 	 */
 	/*
 	 * public boolean equals(Object o) {
@@ -134,7 +139,8 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	private String getCorrectLabel(Integer type) {
 
-		if ((getLabel().length() == 0 || getLabel().equals(" ")) && (getName().length() == 0 || getName().equals(" "))) {
+		if ((getLabel().length() == 0 || getLabel().equals(" "))
+				&& (getName().length() == 0 || getName().equals(" "))) {
 			return "";
 		} else {
 
@@ -242,16 +248,16 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 		/*
 		 * System.out.println("id: "+id); // //System.out.println("size: " +
-		 * ids.size()); if (ids.contains(id)) { System.err.println("Error: Id "
-		 * + id + " is already existing!"); ID = counter++; } else { if (id <
-		 * counter) { ID = id; } else { counter = id; this.ID = counter++; }
+		 * ids.size()); if (ids.contains(id)) { System.err.println("Error: Id " + id +
+		 * " is already existing!"); ID = counter++; } else { if (id < counter) { ID =
+		 * id; } else { counter = id; this.ID = counter++; }
 		 * 
 		 * } //System.out.println("added: " + ID); ids.add(ID);
 		 */
 	}
 
 	public void setID(Pathway pw) {
-		
+
 		set = pw.getIdSet();
 		// System.out.println(new GraphInstance().getPathway().getName());
 		// set id to highest current id+1;
@@ -296,7 +302,10 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
+		if(label.length() == 0){
+			label = name;
+		}
 	}
 
 	public String getLabel() {
@@ -305,8 +314,11 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	public void setLabel(String label) {
 		labelSet.remove(this.label);
-		this.label = label;
-		labelSet.add(label);
+		this.label = label.trim();
+		labelSet.add(this.label);
+		if(name.length() == 0){
+			name = label;
+		}
 		// this.networklabel = label;
 		// System.out.println("gestezt");
 	}

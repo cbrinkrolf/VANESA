@@ -336,11 +336,11 @@ public class MyGraph {
 				// System.out.println("changed");
 				if (stateE.getSelectedObjects().length == 1) {
 					graphInstance.setSelectedObject((BiologicalEdgeAbstract) stateE.getSelectedObjects()[0]);
-					if (!pw.isHeadless()) {
+					if (!pathway.isHeadless()) {
 						w.updateElementProperties();
 					}
 				}
-				if (!pathway.isHeadless()) {
+				if (pathway.isPetriNet() || pathway.getPetriNet() != null) {
 					if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
 						// System.out.println("sim");
 						w.updatePCPView();

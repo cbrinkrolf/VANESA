@@ -150,11 +150,19 @@ public class ElementWindow implements ActionListener, ItemListener {
 		p.setLayout(layout);
 		p.add(new JLabel("Element"), "gap 5 ");
 		p.add(new JLabel(ab.getBiologicalElement()), "wrap,span 1");
-		p.add(new JLabel("Label"), "gap 5 ");
-		p.add(label, "span 1, wrap");
-		p.add(new JLabel("Name"), "gap 5 ");
-		p.add(name, "span 1, wrap");
 
+		if (MainWindow.developer) {
+			p.add(new JLabel("ID"), "gap 5 ");
+			JLabel id = new JLabel(ab.getID() + "");
+			p.add(id, "wrap ,span 1");
+		}
+
+		if (!(ab instanceof PNEdge)) {
+			p.add(new JLabel("Label"), "gap 5 ");
+			p.add(label, "span 1, wrap");
+			p.add(new JLabel("Name"), "gap 5 ");
+			p.add(name, "span 1, wrap");
+		}
 		// JCheckBox transitionfire = new JCheckBox("Should transition fire:",
 		// true);
 		// JTextField transitionStatement = new JTextField("true");
@@ -266,8 +274,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 			String atname, atsvalue;
 			double atdvalue;
 
-			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries = new ArrayList<>(), annotationentries = new ArrayList<>(),
-					graphpropertiesentries = new ArrayList<>();
+			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries = new ArrayList<>(),
+					annotationentries = new ArrayList<>(), graphpropertiesentries = new ArrayList<>();
 
 			for (NodeAttribute att : bna.getNodeAttributes()) {
 				atname = att.getName();
@@ -390,7 +398,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(new JLabel("Linked to Pathway"), "gap 5 ");
 				boolean b = ((PathwayMap) ab).getPathwayLink() == null;
 				JCheckBox linked = new JCheckBox("", !b);
-				linked.setToolTipText("Shows whether there is a connected Pathway in Memory to this Map (uncheck the Box to delete that Pathway)");
+				linked.setToolTipText(
+						"Shows whether there is a connected Pathway in Memory to this Map (uncheck the Box to delete that Pathway)");
 				linked.setActionCommand("pathwayLink");
 				linked.addActionListener(this);
 				linked.setEnabled(!b);
@@ -432,19 +441,15 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(new JLabel("NT-Sequence"), "gap 5 ");
 				p.add(ntSequence, "wrap, span 3");
 			} else if (ab instanceof Place) {
-				p.add(new JLabel("ID"), "gap 5 ");
-				JTextField id = new JTextField(20);
-				id.setText("P" + Integer.toString(ab.getID()));
-				id.setEditable(false);
-				p.add(id, "wrap ,span 1");
 				Place place = (Place) ab;
 
 				JLabel lswitchPlace = new JLabel("Place Type");
 				JComboBox<String> placeList = new JComboBox<String>(new String[] { "discrete", "continuous" });
-				if (place.isDiscrete())
+				if (place.isDiscrete()) {
 					placeList.setSelectedItem("discrete");
-				else
+				} else {
 					placeList.setSelectedItem("continuous");
+				}
 				placeList.setName("placeList");
 				placeList.addFocusListener(pwl);
 				p.add(lswitchPlace, "gap 5 ");
@@ -552,8 +557,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			} else if (ab instanceof Transition) {
 				JLabel lswitchTrans = new JLabel("Transition Type");
-				JComboBox<String> transList = new JComboBox<String>(new String[] { DiscreteTransition.class.getSimpleName(),
-						ContinuousTransition.class.getSimpleName(), StochasticTransition.class.getSimpleName() });
+				JComboBox<String> transList = new JComboBox<String>(new String[] {
+						DiscreteTransition.class.getSimpleName(), ContinuousTransition.class.getSimpleName(),
+						StochasticTransition.class.getSimpleName() });
 				transList.setSelectedItem(ab.getClass().getSimpleName());
 				transList.setName("transList");
 				transList.addFocusListener(pwl);
@@ -638,8 +644,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 				// Indices start at 0, so 4 specifies the pig.
 				// JLabel typeList = new JComboBox(types);
 
-				p.add(new JLabel("Edge Type"), "gap 5 ");
-				p.add(new JLabel(e.getBiologicalElement()), "wrap");
 				JButton changeEdgeDirection = new JButton("Change Direction");
 				changeEdgeDirection.setActionCommand("changeEdgeDirection");
 				changeEdgeDirection.addActionListener(this);
@@ -837,15 +841,16 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("pathwayLink".equals(event)) {
 			if (JOptionPane.showConfirmDialog(w,
 					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
-					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION
-					&& ab instanceof PathwayMap) {
+					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION && ab instanceof PathwayMap) {
 				((PathwayMap) ab).setPathwayLink(null);
 				w.updateElementTree();
 				w.updatePathwayTree();
 				ab.setColor(Color.white);
 			}
 			w.updateElementProperties();
-		} else if (("hideNeighbours".equals(event) || ("showNeighbours".equals(event))) && ab instanceof BiologicalNodeAbstract) {
+		} else if (("hideNeighbours".equals(event) || ("showNeighbours".equals(event)))
+				&& ab instanceof BiologicalNodeAbstract) {
 			// TODO visible wird noch nicht gehandelt in transformators
 			Pathway pw = graphInstance.getPathway();
 			boolean hide = "hideNeighbours".equals(event);
@@ -874,19 +879,19 @@ public class ElementWindow implements ActionListener, ItemListener {
 			Pathway pw = graphInstance.getPathway();
 			PNEdge edge = (PNEdge) ab;
 
-			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(), edge.getBiologicalElement(),
-					edge.getFunction());
+			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(),
+					edge.getBiologicalElement(), edge.getFunction());
 			newEdge.setPriority(edge.getPriority());
 			newEdge.setProbability(edge.getProbability());
 			newEdge.setDirected(true);
-			
+
 			pw.removeElement(edge);
 			pw.addEdge(newEdge);
 			pw.updateMyGraph();
 			pw.getGraph().getVisualizationViewer().getPickedEdgeState().clear();
 			pw.getGraph().getVisualizationViewer().getPickedEdgeState().pick(newEdge, true);
 			graphInstance.setSelectedObject(newEdge);
-			
+
 			ab = newEdge;
 		} else if ("chooseRef".equals(event)) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
@@ -1047,12 +1052,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 				((Inhibition) ab).setAbsoluteInhibition(false);
 			}
 		} else if ("nodeDiscrete".equals(event)) {
-			if(!(ab instanceof PNNode) && ab instanceof BiologicalNodeAbstract){
+			if (!(ab instanceof PNNode) && ab instanceof BiologicalNodeAbstract) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
 				bna.setDiscrete(true);
 			}
 		} else if ("nodeCont".equals(event)) {
-			if(!(ab instanceof PNNode) && ab instanceof BiologicalNodeAbstract){
+			if (!(ab instanceof PNNode) && ab instanceof BiologicalNodeAbstract) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
 				bna.setDiscrete(false);
 			}
