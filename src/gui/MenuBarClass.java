@@ -348,13 +348,13 @@ public class MenuBarClass {
 		file.add(openNetwork);
 		// file.add(sessionID);
 		if (MainWindow.developer) {
-			file.add(openEdal);
+			//file.add(openEdal);
 		}
 		file.add(new JSeparator());
 		file.add(saveNetwork);
 		file.add(saveNetworkAs);
 		if (MainWindow.developer) {
-			file.add(saveEdal);
+			//file.add(saveEdal);
 		}
 		file.add(savePicture);
 		file.add(export);

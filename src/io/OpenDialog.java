@@ -154,7 +154,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 					jsbmlInput = pathway==null ? new JSBMLinput() : new JSBMLinput(pathway);
 					String result;
 					try {
-						result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file.getName());
+						result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
 						if(result.length() > 0){
 							MyPopUp.getInstance().show("Information", result);
 						}
@@ -162,7 +162,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 					} catch (FileNotFoundException e) {
 						try {
 							file = new File(file.getAbsolutePath()+".sbml");
-							result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file.getName());
+							result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
 							if(result.length() > 0){
 								MyPopUp.getInstance().show("Information", result);
 							}
@@ -173,7 +173,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 					}
 			} else if (fileFormat.equals(txtDescription)) {
 				try {
-					new TxtInput(new FileInputStream(file), file.getName());
+					new TxtInput(new FileInputStream(file), file);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

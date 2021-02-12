@@ -128,7 +128,6 @@ public class GraphContainer {
 			entry = it.next();
 			Pathway p = (Pathway)entry.getValue();
 			MyGraph g = p.getGraph();
-			
 			if (function.equals("move")){
 				g.setMouseModeTransform();
 			}else if (function.equals("pick")){

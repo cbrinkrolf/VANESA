@@ -77,8 +77,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		g2d.setColor(Color.red);
 
 		if (GraphContainer.getInstance().isPetriView()) {
-			g2d.drawString("P: " + pw.getPetriPropertiesNet().getPlaces() + " T: "
-					+ pw.getPetriPropertiesNet().getTransitions() + " Edges: "
+			g2d.drawString("P: " + pw.getPlaceCount() + " T: "
+					+ pw.getTransitionCount() + " Edges: "
 					+ pw.getGraph().getAllEdges().size(), 1, 11);
 		} else {
 

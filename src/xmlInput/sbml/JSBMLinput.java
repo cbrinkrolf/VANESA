@@ -2,6 +2,7 @@ package xmlInput.sbml;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ public class JSBMLinput {
 		pathway = pw;
 	}
 
-	public String loadSBMLFile(InputStream is, String name) {
+	public String loadSBMLFile(InputStream is, File file) {
 		// System.out.println("neu");
 
 		String message = "";
@@ -104,12 +105,12 @@ public class JSBMLinput {
 			message = "An error occured";
 		}
 		if (pathway == null) {
-			pathway = new CreatePathway(name).getPathway();
+			pathway = new CreatePathway(file.getName()).getPathway();
 		} else {
 			coarsePathway = true;
 		}
-		if (pathway.getFilename() == null) {
-			pathway.setFilename(name);
+		if (pathway.getFile() == null) {
+			pathway.setFile(file);
 		}
 		// get root-element
 		Element sbmlNode = doc.getRootElement();

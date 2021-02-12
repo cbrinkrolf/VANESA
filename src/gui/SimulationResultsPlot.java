@@ -710,7 +710,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 			PlotsPanel pp = new PlotsPanel();
 			dialogPanel.add(pp, "wrap");
-			JButton button = new JButton("Save Results");
+			JButton button = new JButton("Save results to folder");
 			button.addActionListener(pp);
 
 			dialogPanel.add(button);
@@ -1285,12 +1285,13 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		BiologicalNodeAbstract bna;
 		SimulationResult simRes = simResController.getLastActive();
 
-		rowsSize = pw.getPetriPropertiesNet().getPlaces();
+		rowsSize = pw.getPlaceCount();
 
 		rowsDim = simRes.getTime().size();
 		// get Data from all Places
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		rows = new Object[rowsSize][rowsDim + 1];
+		
 		int i = 0;
 
 		while (it.hasNext()) {

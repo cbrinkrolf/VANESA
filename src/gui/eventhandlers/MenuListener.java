@@ -8,6 +8,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +23,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
@@ -88,6 +90,7 @@ import transformation.RuleManager;
 import transformation.Transformator;
 import transformation.gui.RuleManagementWindow;
 import util.KineticBuilder;
+import xmlOutput.sbml.JSBMLoutput;
 
 public class MenuListener implements ActionListener {
 
@@ -266,11 +269,28 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("save".equals(event)) {
+
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					if (graphInstance.getPathway().getFilename() != null) {
-						// new JSBMLoutput(graphInstance.getPathway()
-						// .getFilename(), graphInstance.getPathway());
+					if (graphInstance.getPathway().getFile() != null) {
+						JSBMLoutput jsbmlOutput;
+						File file = graphInstance.getPathway().getFile();
+						try {
+							jsbmlOutput = new JSBMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
+							String out = jsbmlOutput.generateSBMLDocument();
+							if (out.length() > 0) {
+								MyPopUp.getInstance().show("Error", out);
+							} else {
+								GraphContainer.getInstance().renamePathway(GraphInstance.getPathwayStatic(),
+										file.getName());
+								GraphInstance.getPathwayStatic().setName(file.getName());
+								GraphInstance.getPathwayStatic().setTitle(file.getName());
+								MainWindow.getInstance().renameSelectedTab(file.getName());
+								MyPopUp.getInstance().show("JSbml export", "Saving was successful!");
+							}
+						} catch (FileNotFoundException | XMLStreamException e1) {
+							e1.printStackTrace();
+						}
 					} else {
 						new SaveDialog(SaveDialog.FORMAT_SBML);
 					}
@@ -1106,7 +1126,7 @@ public class MenuListener implements ActionListener {
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv);
+					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv, MainWindow.getInstance());
 
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
@@ -1144,22 +1164,23 @@ public class MenuListener implements ActionListener {
 				Pathway pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement() && !pw.isPetriNet()) {
 					List<Rule> rules = RuleManager.getInstance().getActiveRules();
-					
-					//MainWindow w = MainWindow.getInstance();
-					//new CreatePathway();
-					//graphInstance.getPathway().setPetriNet(true);
+
+					// MainWindow w = MainWindow.getInstance();
+					// new CreatePathway();
+					// graphInstance.getPathway().setPetriNet(true);
 					// w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
-					//w.updateAllGuiElements();
-					//petriNet = graphInstance.getPathway();
+					// w.updateAllGuiElements();
+					// petriNet = graphInstance.getPathway();
 					Transformator t = new Transformator();
 					Pathway petriNet = t.transform(pw, rules);
 					pw.setPetriNet(petriNet);
 					pw.setBnToPN(t.getBnToPN());
 					w.updateProjectProperties();
 					CreatePathway.showPathway(petriNet);
-					
+
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a biologial network first. A Petri net cannot be transformed!.");
+					MyPopUp.getInstance().show("Error",
+							"Please create a biologial network first. A Petri net cannot be transformed!.");
 				}
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");

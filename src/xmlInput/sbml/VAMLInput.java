@@ -833,7 +833,7 @@ public class VAMLInput {
 		if (pw == null) {
 			pw = new CreatePathway(file.getName()).getPathway();
 		}
-		pw.setFilename(file.getName());
+		pw.setFile(file);
 
 		StAXOMBuilder builder = new StAXOMBuilder(reader);
 

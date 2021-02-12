@@ -75,20 +75,33 @@ public class CSVWriter {
 					}
 					for (int i = 0; i < transitions.size(); i++) {
 						buff.append(simRes.get(transitions.get(i), SimulationResultController.SIM_FIRE).get(t) + ";");
-						buff.append(simRes.get(transitions.get(i), SimulationResultController.SIM_ACTUAL_FIRING_SPEED)
-								.get(t) + ";");
+						if (simRes.contains(transitions.get(i), SimulationResultController.SIM_ACTUAL_FIRING_SPEED)) {
+							buff.append(
+									simRes.get(transitions.get(i), SimulationResultController.SIM_ACTUAL_FIRING_SPEED)
+											.get(t) + ";");
+						} else {
+							buff.append(";");
+						}
 					}
 					for (int i = 0; i < edges.size(); i++) {
-						buff.append(simRes.get(edges.get(i), SimulationResultController.SIM_ACTUAL_TOKEN_FLOW).get(t)
-								+ ";");
-						buff.append(simRes.get(edges.get(i), SimulationResultController.SIM_SUM_OF_TOKEN).get(t) + ";");
+						if (simRes.contains(edges.get(i), SimulationResultController.SIM_ACTUAL_TOKEN_FLOW)) {
+							buff.append(
+									simRes.get(edges.get(i), SimulationResultController.SIM_ACTUAL_TOKEN_FLOW).get(t)
+											+ ";");
+						} else {
+							buff.append(";");
+						}
+						if (simRes.contains(edges.get(i), SimulationResultController.SIM_SUM_OF_TOKEN)) {
+							buff.append(
+									simRes.get(edges.get(i), SimulationResultController.SIM_SUM_OF_TOKEN).get(t) + ";");
+						} else {
+							buff.append(";");
+						}
 					}
-
 					buff.append("\r\n");
 				}
 
 				os.write(buff.toString().getBytes());
-
 				os.close();
 			}
 		} catch (IOException e) {

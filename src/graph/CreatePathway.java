@@ -51,7 +51,7 @@ public class CreatePathway {
 					}
 				}
 			}).start();
-			new JSBMLinput(null).loadSBMLFile(in, pathway.getName());
+			new JSBMLinput(null).loadSBMLFile(in, pathway.getFile());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

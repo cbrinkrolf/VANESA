@@ -42,8 +42,8 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	private static final long serialVersionUID = 1L;
 
 	private Pathway pw = new GraphInstance().getPathway();
-	private int rows = 0; //pw.getPetriNet().getNumberOfPlaces();
-	private int cols = 0;//pw.getPetriNet().getResultDimension();
+	private int rows = 0; // pw.getPetriNet().getNumberOfPlaces();
+	private int cols = 0;// pw.getPetriNet().getResultDimension();
 	private ArrayList<String> labels = new ArrayList<String>();
 	private JPanel p = new JPanel();
 	private double min = Double.MAX_VALUE;
@@ -90,26 +90,24 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			Collections.sort(labels, String.CASE_INSENSITIVE_ORDER);
 
 			/*
-			 * for (int i = 0; i < bnas.length - 1; i++) { int smallest = i; for
-			 * (int j = i + 1; j < bnas.length; j++) if
-			 * (bnas[smallest].getLabel().compareTo(bnas[j].getLabel()) > 0)
-			 * smallest = j; BiologicalNodeAbstract help = bnas[smallest];
-			 * bnas[smallest] = bnas[i]; bnas[i] = help; }
+			 * for (int i = 0; i < bnas.length - 1; i++) { int smallest = i; for (int j = i
+			 * + 1; j < bnas.length; j++) if
+			 * (bnas[smallest].getLabel().compareTo(bnas[j].getLabel()) > 0) smallest = j;
+			 * BiologicalNodeAbstract help = bnas[smallest]; bnas[smallest] = bnas[i];
+			 * bnas[i] = help; }
 			 */
 
 			// Vector<Double> MAData;
 			/*
 			 * int k = 0; for (int i = 0; i < rows && k < bnas.length; k++) {
 			 * 
-			 * bna = places.get(labels.get(k));// bnas[k]; if (bna instanceof
-			 * Place) { if (pw.getPetriNet().getPnResult() .containsKey("'" +
-			 * bna.getName() + "'.t")) { // System.out.println("drin "+i);
-			 * MAData = bna.getPetriNetSimulationData(); table[i][0] =
-			 * bna.getLabel(); for (int j = 1; j <= MAData.size(); j++) {
+			 * bna = places.get(labels.get(k));// bnas[k]; if (bna instanceof Place) { if
+			 * (pw.getPetriNet().getPnResult() .containsKey("'" + bna.getName() + "'.t")) {
+			 * // System.out.println("drin "+i); MAData = bna.getPetriNetSimulationData();
+			 * table[i][0] = bna.getLabel(); for (int j = 1; j <= MAData.size(); j++) {
 			 * table[i][j] = MAData.get(j - 1); } i++; } else { //
-			 * System.out.println("name: "+bna.getName()); table[i][0] =
-			 * bna.getLabel(); for (int j = 1; j < cols + 1; j++) { table[i][j]
-			 * = -1; } } } }
+			 * System.out.println("name: "+bna.getName()); table[i][0] = bna.getLabel(); for
+			 * (int j = 1; j < cols + 1; j++) { table[i][j] = -1; } } } }
 			 */
 
 			// double min = Double.MAX_VALUE;
@@ -122,14 +120,13 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 					// final XYSeriesCollection dataset = new
 					// XYSeriesCollection();
 					// XYSeries series = new XYSeries(1);
-					//System.out.println(place.getName());
+					// System.out.println(place.getName());
 					min = Math.min(min, (double) Collections.min(simRes.get(place, TOKEN).getAll()));
 					max = Math.max(max, (double) Collections.max(simRes.get(place, TOKEN).getAll()));
 				}
 			}
 
-			checkbox = new JCheckBox(
-					"Use same scaling for each simulation plot of each place.");
+			checkbox = new JCheckBox("Use same scaling for each simulation plot of each place.");
 			// this.drawPlots();
 
 			p.removeAll();
@@ -144,36 +141,30 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 					seriesList.add(new XYSeries(j));
 					XYSeries series = seriesList.get(j);
 					/*
-					 * for (int i = 0; i < cols; i++) { // System.out.println(j
-					 * + " " + i); // System.out.println("test: " + table[j][i +
-					 * 1]); // value = place.getPetriNetSimulationData().get(i);
+					 * for (int i = 0; i < cols; i++) { // System.out.println(j + " " + i); //
+					 * System.out.println("test: " + table[j][i + 1]); // value =
+					 * place.getPetriNetSimulationData().get(i);
 					 * 
-					 * if (place.getPetriNetSimulationData().size() > i) { value
-					 * = place.getPetriNetSimulationData().get(i); } else {
-					 * value = 0.0; }
+					 * if (place.getPetriNetSimulationData().size() > i) { value =
+					 * place.getPetriNetSimulationData().get(i); } else { value = 0.0; }
 					 * 
-					 * // value = Double.parseDouble(table[j][i + //
-					 * 1].toString());
-					 * series.add(pw.getPetriNet().getPnResult().get("time")
-					 * .get(i), value); }
+					 * // value = Double.parseDouble(table[j][i + // 1].toString());
+					 * series.add(pw.getPetriNet().getPnResult().get("time") .get(i), value); }
 					 */
 
 					dataset.addSeries(series);
-					JFreeChart chart = ChartFactory.createXYLineChart(
-							labels.get(j), "Timestep", "Token", dataset,
+					JFreeChart chart = ChartFactory.createXYLineChart(labels.get(j), "Timestep", "Token", dataset,
 							PlotOrientation.VERTICAL, false, true, false);
 
 					final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-					chart.addSubtitle(new TextTitle("StartToken="
-							+ simRes.get(place, TOKEN).get(0).toString()));
+					chart.addSubtitle(new TextTitle("StartToken=" + simRes.get(place, TOKEN).get(0).toString()));
 					// NumberAxis yAxis = new NumberAxis();
 					// xAxis.setTickUnit(new NumberTickUnit(2));
 					// xAxis.setRange(0, 50);
 					// Assign it to the chart
 					if (checkbox.isSelected()) {
 						// System.out.println("checked");
-						NumberAxis range = (NumberAxis) chart.getXYPlot()
-								.getRangeAxis();
+						NumberAxis range = (NumberAxis) chart.getXYPlot().getRangeAxis();
 						range.setRange(min, max * 1.05);
 					}
 					ChartPanel pane = new ChartPanel(chart);
@@ -186,7 +177,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			this.updateData();
 
 			for (int j = rows; j % 3 != 0; j++) {
-				//final XYSeriesCollection dataset = new XYSeriesCollection();
+				// final XYSeriesCollection dataset = new XYSeriesCollection();
 
 				JPanel pane = new JPanel() {
 					/**
@@ -221,7 +212,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 	private void updateData() {
 		SimulationResult simRes = pw.getPetriPropertiesNet().getSimResController().getLastActive();
-		//System.out.println("update");
+		// System.out.println("update");
 		Place place;
 		for (int j = 0; j < rows; j++) {
 			place = places.get(labels.get(j));
@@ -241,55 +232,42 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 				}
 				min = Math.min(min, (double) Collections.min(simRes.get(place, TOKEN).getAll()));
 				max = Math.max(max, (double) Collections.max(simRes.get(place, TOKEN).getAll()));
-			
+
 			}
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
-		new SaveDialog(SaveDialog.FORMAT_PNG, p);
-		
-		
-		/*BufferedImage bi = new BufferedImage(p.getWidth(), p.getHeight(),
-				BufferedImage.TYPE_INT_BGR);
-		Graphics2D graphics = bi.createGraphics();
-		p.paint(graphics);
-		graphics.dispose();
-		graphics.dispose();
 
-		JFileChooser chooser = new JFileChooser();
-		chooser.setAcceptAllFileFilterUsed(false);
-		PngFilter filter = new PngFilter();
-		chooser.addChoosableFileFilter(filter);
-		chooser.setFileFilter(filter);
-		int option = chooser.showSaveDialog(MainWindowSingleton.getInstance());
-		if (option == JFileChooser.APPROVE_OPTION) {
-			File file = chooser.getSelectedFile();
-			if (!file.getAbsolutePath().endsWith(".png"))
-				file = new File(file.getAbsolutePath() + ".png");
-			boolean overwrite = true;
-			if (file.exists()) {
-				int response = JOptionPane.showConfirmDialog(MainWindowSingleton.getInstance(),
-						"Overwrite existing file?", "Confirm Overwrite",
-						JOptionPane.OK_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE);
-				if (response == JOptionPane.CANCEL_OPTION) {
-					overwrite = false;
-				}
-			}
+		new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG + SaveDialog.FORMAT_PDF, charts, true, this);
 
-			if (overwrite) {
-
-				try {
-					ImageIO.write(bi, "png", file);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-
-			}
-		}*/
+		/*
+		 * BufferedImage bi = new BufferedImage(p.getWidth(), p.getHeight(),
+		 * BufferedImage.TYPE_INT_BGR); Graphics2D graphics = bi.createGraphics();
+		 * p.paint(graphics); graphics.dispose(); graphics.dispose();
+		 * 
+		 * JFileChooser chooser = new JFileChooser();
+		 * chooser.setAcceptAllFileFilterUsed(false); PngFilter filter = new
+		 * PngFilter(); chooser.addChoosableFileFilter(filter);
+		 * chooser.setFileFilter(filter); int option =
+		 * chooser.showSaveDialog(MainWindowSingleton.getInstance()); if (option ==
+		 * JFileChooser.APPROVE_OPTION) { File file = chooser.getSelectedFile(); if
+		 * (!file.getAbsolutePath().endsWith(".png")) file = new
+		 * File(file.getAbsolutePath() + ".png"); boolean overwrite = true; if
+		 * (file.exists()) { int response =
+		 * JOptionPane.showConfirmDialog(MainWindowSingleton.getInstance(),
+		 * "Overwrite existing file?", "Confirm Overwrite",
+		 * JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE); if (response ==
+		 * JOptionPane.CANCEL_OPTION) { overwrite = false; } }
+		 * 
+		 * if (overwrite) {
+		 * 
+		 * try { ImageIO.write(bi, "png", file); } catch (Exception ex) {
+		 * ex.printStackTrace(); }
+		 * 
+		 * } }
+		 */
 	}
 
 	@Override
@@ -298,13 +276,13 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 		// System.out.println(e.getSource());
 		this.updateData();
 
-		//System.out.println("checked");
-		//System.out.println(min);
-		//System.out.println(max);
-		//System.out.println(charts.get(0).getXYPlot().getDataset().getItemCount(0));
+		// System.out.println("checked");
+		// System.out.println(min);
+		// System.out.println(max);
+		// System.out.println(charts.get(0).getXYPlot().getDataset().getItemCount(0));
 		JFreeChart chart;
 		for (int i = 0; i < charts.size(); i++) {
-			//System.out.println(i);
+			// System.out.println(i);
 			chart = charts.get(i);
 			NumberAxis range = (NumberAxis) chart.getXYPlot().getRangeAxis();
 			if (checkbox.isSelected()) {
