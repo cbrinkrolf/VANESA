@@ -1517,11 +1517,11 @@ public class Pathway implements Cloneable {
 			height = height * scale;
 		}
 
-		Point2D p1inv = v.getRenderContext().getMultiLayerTransformer()
-				.transform(new Point2D.Double(gc.getMinX() + gc.getWidth(), gc.getMinY() + gc.getHeight()));
+		//Point2D p1inv = v.getRenderContext().getMultiLayerTransformer().transform(new Point2D.Double(gc.getMinX() + gc.getWidth(), gc.getMinY() + gc.getHeight()));
 
-		wvv.setBounds(0, 0, (int) p1inv.getX() + 50, (int) p1inv.getY() + 50);
-
+		//wvv.setBounds(0, 0, (int) p1inv.getX() + 150, (int) p1inv.getY() + 50);
+		wvv.setBounds(v.getVisibleRect());
+		
 		Map<Key, Object> map = wvv.getRenderingHints();
 
 		map.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);

@@ -227,6 +227,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 					g.normalCentering();
 				}
 			}
+			MainWindow.getInstance().repaint();
 		}
 	}
 }

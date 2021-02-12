@@ -82,6 +82,10 @@ public class CreatePathway {
 	public static void showPathway(Pathway pw){
 		GraphContainer con = GraphContainer.getInstance();
 		MainWindow w = MainWindow.getInstance();
+		if(con.getAllPathways().contains(pw)){
+			w.setSelectedTab(pw.getTab().getTitelTab());
+			return;
+		}
 		String newPathwayName = con.addPathway(pw.getName(), pw);
 		pw = con.getPathway(newPathwayName);
 		w.addTab(pw.getTab().getTitelTab());
