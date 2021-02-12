@@ -17,8 +17,6 @@ public class PetriNetProperties {
 	private GraphInstance graphInstance = null;
 	private Pathway pw;
 	private PNResultInputReader pnrir = new PNResultInputReader();
-	private int places = 0;
-	private int transitions = 0;
 	private int currentTimeStep = 0;
 	private String covGraph;
 	private boolean isPetriNetSimulation = false;
@@ -53,7 +51,7 @@ public class PetriNetProperties {
 			
 			BiologicalNodeAbstract bna;
 			Iterator<BiologicalNodeAbstract> it = this.pw.getAllGraphNodes().iterator();
-			SimulationResult simRes = this.simResController.get("test");
+			SimulationResult simRes = this.getSimResController().get("test");
 			
 			for(int i = 0; i<result.get("Time").size(); i++){
 				simRes.addTime(result.get("Time").get(i));
@@ -103,27 +101,6 @@ public class PetriNetProperties {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-
-	public int getNumberOfPlaces() {
-		return this.places;
-	}
-
-	public int getPlaces() {
-		return places;
-	}
-
-	public void setPlaces(int places) {
-		this.places = places;
-	}
-
-	public int getTransitions() {
-		return transitions;
-	}
-
-	public void setTransitions(int transitions) {
-		this.transitions = transitions;
 	}
 	
 	public void setPetriNetSimulation(boolean isPetriNetSimulation) {

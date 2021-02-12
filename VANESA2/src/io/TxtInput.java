@@ -2,6 +2,7 @@ package io;
 
 import java.awt.geom.Point2D;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,10 +25,10 @@ public class TxtInput {
 	private Hashtable<String, BiologicalNodeAbstract> mapping = new Hashtable<String, BiologicalNodeAbstract>();
 	private Pathway pw = new CreatePathway().getPathway();
 
-	public TxtInput(InputStream is, String name) throws IOException {
+	public TxtInput(InputStream is, File file) throws IOException {
 		//BufferedReader in = new BufferedReader(new FileReader(file));
 		BufferedReader in = new BufferedReader(new InputStreamReader(is));
-		pw.setFilename(name);
+		pw.setFile(file);
 
 		while ((line = in.readLine()) != null) {
 			if (!firstNode) { 

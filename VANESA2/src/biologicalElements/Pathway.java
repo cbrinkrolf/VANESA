@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.RenderingHints;
 import java.awt.RenderingHints.Key;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,7 +53,7 @@ import util.MyIntComparable;
 
 public class Pathway implements Cloneable {
 
-	private String filename = null;
+	private File file = null;
 	private String name = "";
 	private String version = "";
 	private String date = "";
@@ -88,6 +89,9 @@ public class Pathway implements Cloneable {
 	private ArrayList<Group> groupes = new ArrayList<>();
 	private Pathway petriNet = null;
 	private HashMap<BiologicalNodeAbstract, PNNode> bnToPN = null;
+	
+	private int placeCount = 0;
+	private int transitionCount = 0;
 
 	public Pathway(String name, boolean headless) {
 		this.headless = headless;
@@ -208,10 +212,9 @@ public class Pathway implements Cloneable {
 		vertices.put(bna, p);
 		addVertexToView(bna, p);
 		if (bna instanceof Place) {
-			this.petriNetProperties.setPlaces(this.petriNetProperties.getPlaces() + 1);
-		}
-		if (bna instanceof Transition) {
-			this.petriNetProperties.setTransitions(this.petriNetProperties.getTransitions() + 1);
+			this.placeCount++;
+		}else if (bna instanceof Transition) {
+			this.transitionCount++;
 		}
 		bna.setID(this);
 		this.handleChangeFlags(ChangedFlags.NODE_CHANGED);
@@ -315,10 +318,9 @@ public class Pathway implements Cloneable {
 					parent.getVertices().remove(bna);
 				}
 				if (bna instanceof Place) {
-					this.petriNetProperties.setPlaces(this.petriNetProperties.getPlaces() - 1);
-				}
-				if (bna instanceof Transition) {
-					this.petriNetProperties.setTransitions(this.petriNetProperties.getTransitions() - 1);
+					this.placeCount--;
+				}else if (bna instanceof Transition) {
+					this.transitionCount--;
 				}
 				bna.delete();
 
@@ -825,12 +827,12 @@ public class Pathway implements Cloneable {
 		this.graph = graph;
 	}
 
-	public String getFilename() {
-		return filename;
+	public File getFile() {
+		return file;
 	}
 
-	public void setFilename(String filename) {
-		this.filename = filename;
+	public void setFile(File f) {
+		this.file = f;
 		// System.out.println(filename);
 	}
 
@@ -1568,5 +1570,13 @@ public class Pathway implements Cloneable {
 
 	public void setBnToPN(HashMap<BiologicalNodeAbstract, PNNode> bnToPN) {
 		this.bnToPN = bnToPN;
+	}
+	
+	public int getPlaceCount(){
+		return this.placeCount;
+	}
+	
+	public int getTransitionCount(){
+		return this.transitionCount;
 	}
 }

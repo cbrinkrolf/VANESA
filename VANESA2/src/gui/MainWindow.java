@@ -534,9 +534,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
 					JOptionPane.YES_NO_CANCEL_OPTION);
 			// System.out.println(n);
 			if (n == 0) {
-				if (pw.getFilename() != null) {
+				if (pw.getFile() != null) {
 					try {
-						new JSBMLoutput(new FileOutputStream(new File(pw.getFilename())), pw);
+						new JSBMLoutput(new FileOutputStream(pw.getFile()), pw);
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
 					}

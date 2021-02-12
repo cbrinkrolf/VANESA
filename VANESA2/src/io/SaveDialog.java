@@ -1,6 +1,7 @@
 package io;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
 import java.io.File;
@@ -8,17 +9,30 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang3.SystemUtils;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+
+import com.orsonpdf.PDFDocument;
+import com.orsonpdf.PDFGraphics2D;
+import com.orsonpdf.Page;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
@@ -56,6 +70,7 @@ public class SaveDialog {
 	private boolean yamlBool = true;
 	private boolean ymlBool = true;
 	private boolean svgBool = true;
+	private boolean pdfBool = true;
 
 	private String fileFormat;
 	private File file;
@@ -96,8 +111,14 @@ public class SaveDialog {
 	private String yamlDescription = "YAML File (*.yaml)";
 	private String yaml = "yaml";
 
+	private String pdfDescription = "PDF File (*.pdf)";
+	private String pdf = "pdf";
+
 	private Component c = null;
 	private JFileChooser chooser;
+	private Component relativeTo;
+
+	private String pathWorkingDirectory;
 
 	/*
 	 * public SaveDialog(boolean sbml) { this(sbml?1:1); }//
@@ -115,20 +136,194 @@ public class SaveDialog {
 	public static int FORMAT_PNG = 512;
 	public static int FORMAT_YAML = 1024;
 	public static int FORMAT_SVG = 2048;
+	public static int FORMAT_PDF = 4096;
 
-	public SaveDialog(int format, Component c) {
+	public SaveDialog(int format, Component c, Component relativeTo) {
 
+		if (relativeTo == null) {
+			this.relativeTo = MainWindow.getInstance();
+		}
+		this.prerapre(format);
 		this.c = c;
 
+		int option = chooser.showSaveDialog(relativeTo);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			// Save path to settings.xml
+			File fileDir = chooser.getCurrentDirectory();
+			XMLConfiguration xmlSettings = null;
+			File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
+			try {
+				if (f.exists()) {
+					xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+				} else {
+					xmlSettings = new XMLConfiguration();
+					xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
+				}
+				xmlSettings.setProperty("SaveDialog-Path", fileDir.getAbsolutePath());
+				xmlSettings.save();
+			} catch (ConfigurationException e) {
+				e.printStackTrace();
+			}
+
+			fileFormat = chooser.getFileFilter().getDescription();
+			file = chooser.getSelectedFile();
+			boolean overwrite = true;
+			if (file.exists()) {
+				int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite existing file?",
+						"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (response == JOptionPane.CANCEL_OPTION) {
+					overwrite = false;
+				}
+			}
+			if (overwrite) {
+				try {
+					write();
+				} catch (FileNotFoundException | HeadlessException | XMLStreamException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public SaveDialog(int format, List<JFreeChart> charts, boolean directoryOnly, Component relativeTo) {
+		if (relativeTo == null) {
+			this.relativeTo = MainWindow.getInstance();
+		} else {
+			this.relativeTo = relativeTo;
+		}
+		this.prerapre(format);
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int option = chooser.showSaveDialog(relativeTo);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			// Save path to settings.xml
+			File fileDir = chooser.getCurrentDirectory();
+			XMLConfiguration xmlSettings = null;
+			File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
+			try {
+				if (f.exists()) {
+					xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+				} else {
+					xmlSettings = new XMLConfiguration();
+					xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
+				}
+				xmlSettings.setProperty("SaveDialog-Path", fileDir.getAbsolutePath());
+				System.out.println(fileDir.getAbsolutePath());
+				xmlSettings.save();
+			} catch (ConfigurationException e) {
+				e.printStackTrace();
+			}
+
+			fileFormat = chooser.getFileFilter().getDescription();
+
+			file = chooser.getSelectedFile();
+			ConnectionSettings.setFileDirectory(file.getAbsolutePath());
+			// System.out.println(file.getAbsolutePath());
+
+			String pathSim;
+			pathSim = file.getAbsolutePath() + File.separator;
+			File dirSim = new File(pathSim);
+			if (dirSim.isDirectory()) {
+			} else {
+			}
+
+			int width = 320;
+			int height = 200;
+			boolean overwrite = false;
+			boolean stop = false;
+			for (JFreeChart chart : charts) {
+				String name = chart.getTitle().getText();
+
+				// PDF
+				if (fileFormat.equals(pdfDescription)) {
+					PDFDocument pdfDoc = new PDFDocument();
+					// pdfDoc.setTitle("PDFBarChartDemo1");
+					pdfDoc.setAuthor("VANESA");
+					Page page = pdfDoc.createPage(new Rectangle(width, height));
+					PDFGraphics2D g2 = page.getGraphics2D();
+					chart.draw(g2, new Rectangle(0, 0, width, height));
+
+					if (new File(pathSim + name + ".pdf").exists() && !overwrite && !stop) {
+						int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite all existing files?",
+								"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if (!(response == JOptionPane.OK_OPTION)) {
+							stop = true;
+						} else {
+							overwrite = true;
+						}
+					}
+					if (!stop) {
+						pdfDoc.writeToFile(new File(pathSim + name + ".pdf"));
+					}
+
+				} else if (fileFormat.equals(pngDescription)) {
+					// PNG
+					if (new File(pathSim + name + ".png").exists() && !overwrite) {
+						int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite all existing files?",
+								"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if (!(response == JOptionPane.OK_OPTION)) {
+							stop = true;
+						} else {
+							overwrite = true;
+						}
+					}
+					if (!stop) {
+						try {
+							ChartUtilities.saveChartAsPNG(new File(pathSim + name + ".png"), chart, width * 2,
+									height * 2);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+
+				} else if (fileFormat.equals(svgDescription)) {
+					// SVG
+					if (new File(pathSim + name + ".svg").exists() && !overwrite) {
+						int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite all existing files?",
+								"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+						if (!(response == JOptionPane.OK_OPTION)) {
+							stop = true;
+						} else {
+							overwrite = true;
+						}
+					}
+					if (!stop) {
+
+						DOMImplementation domImpl = SVGDOMImplementation.getDOMImplementation();
+						Document document = domImpl.createDocument(null, "svg", null);
+						SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+						svgGenerator.setSVGCanvasSize(new Dimension(width, height));
+						chart.draw(svgGenerator, new Rectangle(width, height));
+
+						boolean useCSS = true; // we want to use CSS style attribute
+
+						Writer out;
+						try {
+							out = new OutputStreamWriter(new FileOutputStream(new File(pathSim + name + ".svg")),
+									"UTF-8");
+							svgGenerator.stream(out, useCSS);
+							out.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public SaveDialog(int format) {
+		this(format, null, MainWindow.getInstance());
+	}
+
+	private void prerapre(int format) {
+
 		// Get working directory
-		String pathWorkingDirectory = null;
 		if (SystemUtils.IS_OS_WINDOWS) {
 			pathWorkingDirectory = System.getenv("APPDATA");
 		} else {
 			pathWorkingDirectory = System.getenv("HOME");
 		}
 		pathWorkingDirectory += File.separator + "vanesa";
-
 		sbmlBool = (format & FORMAT_SBML) == FORMAT_SBML;
 		moBool = (format & FORMAT_MO) == FORMAT_MO;
 		graphMLBool = (format & FORMAT_GRAPHML) == FORMAT_GRAPHML;
@@ -141,6 +336,7 @@ public class SaveDialog {
 		pngBool = (format & FORMAT_PNG) == FORMAT_PNG;
 		svgBool = (format & FORMAT_SVG) == FORMAT_SVG;
 		yamlBool = (format & FORMAT_YAML) == FORMAT_YAML;
+		pdfBool = (format & FORMAT_PDF) == FORMAT_PDF;
 
 		if (ConnectionSettings.getFileDirectory() != null) {
 			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
@@ -198,48 +394,9 @@ public class SaveDialog {
 		if (yamlBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(yaml, yamlDescription));
 		}
-
-		int option = chooser.showSaveDialog(MainWindow.getInstance());
-		if (option == JFileChooser.APPROVE_OPTION) {
-			// Save path to settings.xml
-			File fileDir = chooser.getCurrentDirectory();
-			XMLConfiguration xmlSettings = null;
-			File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
-			try {
-				if (f.exists()) {
-					xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-				} else {
-					xmlSettings = new XMLConfiguration();
-					xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
-				}
-				xmlSettings.setProperty("SaveDialog-Path", fileDir.getAbsolutePath());
-				xmlSettings.save();
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-			}
-
-			fileFormat = chooser.getFileFilter().getDescription();
-			file = chooser.getSelectedFile();
-			boolean overwrite = true;
-			if (file.exists()) {
-				int response = JOptionPane.showConfirmDialog(MainWindow.getInstance(), "Overwrite existing file?",
-						"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-				if (response == JOptionPane.CANCEL_OPTION) {
-					overwrite = false;
-				}
-			}
-			if (overwrite) {
-				try {
-					write();
-				} catch (FileNotFoundException | HeadlessException | XMLStreamException e) {
-					e.printStackTrace();
-				}
-			}
+		if (pdfBool) {
+			chooser.addChoosableFileFilter(new MyFileFilter(pdf, pdfDescription));
 		}
-	}
-
-	public SaveDialog(int format) {
-		this(format, null);
 	}
 
 	private void getCorrectFile(String ending) {

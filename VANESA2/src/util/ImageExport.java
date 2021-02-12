@@ -76,11 +76,11 @@ public class ImageExport {
 
         SVGGraphics2D svgGraphics2D = new SVGGraphics2D(svgDocument);
         svgGraphics2D.setSVGCanvasSize(bounds.getSize());
-
+        
         component.paintAll(svgGraphics2D);
 
         if (new File(exportFile.getAbsolutePath() + ".temp").exists()) {
-            new File(exportFile.getAbsolutePath() + ".temp").delete();
+            //new File(exportFile.getAbsolutePath() + ".temp").delete();
         }
 
         OutputStream outputStream = new FileOutputStream(exportFile);

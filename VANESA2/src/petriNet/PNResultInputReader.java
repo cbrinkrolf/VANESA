@@ -54,7 +54,11 @@ public class PNResultInputReader {
 			//System.out.println(name);
 				for (int j = 1; j < lines; j++) {
 					//System.out.println(j);
+					if(content[j][i].isEmpty()){
+						
+					}else{
 					result.get(name).add(Double.parseDouble(content[j][i]));
+					}
 					//System.out.print(content[j][i]+" ");
 				}
 				//System.out.println();
