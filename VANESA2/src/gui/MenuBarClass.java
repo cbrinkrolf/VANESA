@@ -63,6 +63,7 @@ public class MenuBarClass {
 	private JMenuItem regularGraph;
 
 	private JMenuItem transform;
+	private JMenuItem showPN;
 
 	private JMenuItem testPInvariant;
 	private JMenuItem testTInvariant;
@@ -322,6 +323,12 @@ public class MenuBarClass {
 		transform = new JMenuItem("Transform to Petri net");
 		transform.addActionListener(MenuListener.getInstance());
 		transform.setActionCommand("transform");
+		// transform.setEnabled(false);
+
+		showPN = new JMenuItem("Show Petri net");
+		showPN.addActionListener(MenuListener.getInstance());
+		showPN.setActionCommand("showPN");
+		// showPN.setEnabled(false);
 
 		JMenuItem ruleManager = new JMenuItem("Rule Management");
 		ruleManager.addActionListener(MenuListener.getInstance());
@@ -348,13 +355,13 @@ public class MenuBarClass {
 		file.add(openNetwork);
 		// file.add(sessionID);
 		if (MainWindow.developer) {
-			//file.add(openEdal);
+			// file.add(openEdal);
 		}
 		file.add(new JSeparator());
 		file.add(saveNetwork);
 		file.add(saveNetworkAs);
 		if (MainWindow.developer) {
-			//file.add(saveEdal);
+			// file.add(saveEdal);
 		}
 		file.add(savePicture);
 		file.add(export);
@@ -461,6 +468,7 @@ public class MenuBarClass {
 
 		if (MainWindow.developer) {
 			transformation.add(transform);
+			transformation.add(showPN);
 			transformation.add(ruleManager);
 		}
 
@@ -511,8 +519,10 @@ public class MenuBarClass {
 		 */
 		mdLayout.setEnabled(true);
 		transform.setEnabled(true);
+		showPN.setEnabled(true);
 		if (new GraphInstance().getPathway().isPetriNet()) {
 			transform.setEnabled(false);
+			showPN.setEnabled(false);
 
 			testPInvariant.setEnabled(true);
 			testTInvariant.setEnabled(true);
@@ -528,7 +538,12 @@ public class MenuBarClass {
 	public void setPetriView(boolean isPetriNet) {
 		if (new GraphInstance().getPathway().isPetriNet()) {
 			transform.setEnabled(false);
+			showPN.setEnabled(false);
+		}else{
+			transform.setEnabled(true);
+			showPN.setEnabled(true);
 		}
+
 		testPInvariant.setEnabled(isPetriNet);
 		testTInvariant.setEnabled(isPetriNet);
 		cov.setEnabled(isPetriNet);

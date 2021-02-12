@@ -583,6 +583,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			progressbar.closeWindow();
 		}
 		blurUI.setLocked(false);
+		this.repaint();
 	}
 
 	public synchronized void blurrUI() {

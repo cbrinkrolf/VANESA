@@ -2,6 +2,7 @@ package util;
 
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -118,10 +119,10 @@ public class ImageExport {
 	 */
 	private static void exportPNG(Component component, Rectangle bounds, File exportFile) throws IOException {
 
-		BufferedImage bufferedImage = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_RGB);
+		BufferedImage bufferedImage = new BufferedImage(bounds.width*2, bounds.height*2, BufferedImage.TYPE_INT_RGB);
 
-		Graphics g = bufferedImage.getGraphics();
-
+		Graphics2D g = (Graphics2D) bufferedImage.getGraphics();
+		g.scale(2, 2);
 		component.paint(g);
 
 		for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName("png"); iw.hasNext();) {

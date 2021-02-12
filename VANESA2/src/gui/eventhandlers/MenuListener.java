@@ -1176,8 +1176,7 @@ public class MenuListener implements ActionListener {
 					pw.setPetriNet(petriNet);
 					pw.setBnToPN(t.getBnToPN());
 					w.updateProjectProperties();
-					CreatePathway.showPathway(petriNet);
-
+					//CreatePathway.showPathway(petriNet);
 				} else {
 					MyPopUp.getInstance().show("Error",
 							"Please create a biologial network first. A Petri net cannot be transformed!.");
@@ -1186,9 +1185,19 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("ruleManager".equals(event)) {
-
-			// new RuleEditingWindow(new Rule());
 			new RuleManagementWindow();
+		} else if ("showPN".equals(event)) {
+			if (con.containsPathway()) {
+				Pathway pw = graphInstance.getPathway();
+				if (pw.getPetriNet() != null && !pw.isPetriNet()) {
+					CreatePathway.showPathway(pw.getPetriNet());
+				} else {
+					MyPopUp.getInstance().show("Error",
+							"Please transform the biological network into a Petri net first!.");
+				}
+			} else {
+				MyPopUp.getInstance().show("Error", "Please create a network before.");
+			}
 		}
 	}
 

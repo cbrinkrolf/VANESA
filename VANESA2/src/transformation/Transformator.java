@@ -27,6 +27,7 @@ import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
+import gui.MyPopUp;
 import util.MyIntComparable;
 
 // Restrictions / limitations:
@@ -126,6 +127,7 @@ public class Transformator {
 		//MainWindow.getInstance().updateProjectProperties();
 		//MainWindow.getInstance().updateOptionPanel();
 		petriNet.updateMyGraph();
+		MyPopUp.getInstance().show("Transformation", "Biological network transformed without errors!");
 		return petriNet;
 	}
 
