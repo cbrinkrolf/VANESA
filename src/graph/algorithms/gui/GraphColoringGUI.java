@@ -49,7 +49,6 @@ import graph.algorithms.NodeAttributeTypes;
 import graph.algorithms.gui.clusters.GraphClusterDyer;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.ProgressBar;
 import gui.images.ImagePath;
 import net.miginfocom.swing.MigLayout;
 
@@ -234,9 +233,7 @@ public class GraphColoringGUI implements ActionListener {
 			oos = new ObjectOutputStream(baos);
 			// Lock UI and initiate Progress Bar
 			mw = MainWindow.getInstance();
-			MainWindow.progressbar = new ProgressBar();
-			MainWindow.progressbar.init(100, "Computing", true);
-			MainWindow.progressbar.setProgressBarString("Setting up data.");
+			MainWindow.getInstance().showProgressBar("Computing", "Setting up data.");
 
 			oos.writeObject(np.getAdjacencyMatrix());
 			oos.writeObject(parameters);

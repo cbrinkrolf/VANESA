@@ -427,7 +427,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 	public void done() {
 
 		// System.out.println("querytime :"+(System.currentTimeMillis()-starttime)+"ms");
-		MainWindow.progressbar.setProgressBarString("Drawing network");
+		MainWindow.getInstance().showProgressBar("Drawing network");
 
 		String rootName = "";
 		if (database.equals("HPRD")) {

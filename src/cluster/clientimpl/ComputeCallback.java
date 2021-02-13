@@ -34,9 +34,7 @@ public class ComputeCallback extends UnicastRemoteObject implements Serializable
 
 	@Override
 	public void progressNotify(String message) throws RemoteException {
-		if (MainWindow.progressbar != null) {
-			MainWindow.progressbar.setProgressBarString(message);
-		}
+		MainWindow.getInstance().showProgressBar(message);
 	}
 
 	@Override
