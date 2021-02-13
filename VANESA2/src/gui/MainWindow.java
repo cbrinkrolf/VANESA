@@ -103,7 +103,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 	private Application macOsxHandler;
 
-	public static ProgressBar progressbar = null;
+	private static ProgressBar progressbar = null;
 
 	private static MainWindow instance;
 
@@ -572,8 +572,15 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	}
 
 	public synchronized void showProgressBar(String text) {
+		showProgressBar( "Please Wait.", text);
+	}
+	
+	public synchronized void showProgressBar(String title, String text) {
 		progressbar = new ProgressBar();
-		progressbar.init(100, "Please Wait.", true);
+		if(title == null || title.trim().isEmpty()){
+			title = "Please Wait.";
+		}
+		progressbar.init(100, title, true);
 		progressbar.setProgressBarString(text);
 		blurUI.setLocked(true);
 	}

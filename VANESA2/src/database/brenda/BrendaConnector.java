@@ -836,16 +836,16 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
 			// System.out.println(enzymeList);
 			if (CoFactors) {
-				MainWindow.progressbar.setProgressBarString("Getting Cofactors");
+				MainWindow.getInstance().showProgressBar("Getting Cofactors");
 				getCofactors(enzymeList);
 			}
 
 			if (Inhibitors) {
-				MainWindow.progressbar.setProgressBarString("Getting Inhibitors");
+				MainWindow.getInstance().showProgressBar("Getting Inhibitors");
 				getInhibitors(enzymeList);
 			}
 
-			MainWindow.progressbar.setProgressBarString("Drawing network");
+			MainWindow.getInstance().showProgressBar("Drawing network");
 
 			myGraph = pw.getGraph();
 

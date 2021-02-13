@@ -680,7 +680,7 @@ public class SmacofView extends JFrame implements ActionListener {
 		
 //		System.out.printf("X:%f ~ %f\tY:%f ~ %f\t xdiff:%f\t ydiff:%f\n",minX,maxX,minY,maxY,Math.abs(minX)+maxX,Math.abs(minY)+maxY);
 		
-		w.progressbar.setProgressBarString("updating graph structure");
+		MainWindow.getInstance().showProgressBar("updating graph structure");
 		pw.saveVertexLocations();
 		
 		//center automatically
@@ -690,13 +690,7 @@ public class SmacofView extends JFrame implements ActionListener {
 		
 		w.closeProgressBar();
 		returned();
-
 	}
-
-    
-    
-    
-	
 	
 	class SmacofTablePanel extends JPanel {
 
