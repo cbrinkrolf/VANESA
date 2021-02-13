@@ -117,7 +117,7 @@ public class MOoutput {
 
 	private void init() {
 		marked = GraphInstance.getMyGraph().getVisualizationViewer().getPickedVertexState().getPicked();
-		System.out.println(marked.size());
+		//System.out.println(marked.size());
 		chars.add('*');
 		chars.add('+');
 		chars.add('/');
@@ -125,6 +125,7 @@ public class MOoutput {
 		chars.add('^');
 		chars.add('(');
 		chars.add(')');
+		chars.add(',');
 		chars.add(' ');
 
 		// set correct PNlib names, they might change from OM version
@@ -369,7 +370,7 @@ public class MOoutput {
 				} else if (biologicalElement.equals(Elementdeclerations.continuousTransition)) {
 
 					ContinuousTransition t = (ContinuousTransition) bna;
-					// String atr = "maximumSpeed="+t.getMaximumSpeed();
+					
 					String speed = this.replaceAll(t.getMaximumSpeed(), t.getParameters(), t);
 					if (t.isKnockedOut()) {
 						atr = "maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/";
@@ -775,7 +776,6 @@ public class MOoutput {
 				// names.add("P"+p.getID());
 				names.add(p.getName());
 				referenceMapping.put(p.getName(), this.resolveReference(p).getName());
-
 			}
 		}
 
@@ -792,7 +792,7 @@ public class MOoutput {
 
 			// System.out.println("name: "+name );
 			// System.out.println("fkt: "+mFunction);
-			// System.out.println("n: "+name);
+			//System.out.println("n: "+name);
 			while (mFunction.indexOf(name, index) >= 0) {
 				check = false;
 				idxNew = mFunction.indexOf(name, index);
@@ -807,8 +807,8 @@ public class MOoutput {
 						// System.out.println("else");
 						r = ' ';
 					}
-					// System.out.println("c: "+c);
-					// System.out.println(mFunction.charAt(idxNew));
+					 //System.out.println("c: "+c);
+					 //System.out.println(mFunction.charAt(idxNew));
 
 					if (idxNew == 0) {
 						check = true;
@@ -821,7 +821,7 @@ public class MOoutput {
 					 * (chars.contains(mFunction.charAt(idxNew - 1))) { check =
 					 * true; } } else { check = true; }
 					 */
-					// System.out.println("r: "+r);
+					//System.out.println("r: "+r);
 					if (check && chars.contains(r)) {
 						// mFunction = mFunction.replaceFirst(name, mNames
 						// .get(name));
@@ -834,7 +834,6 @@ public class MOoutput {
 						// "+mNames.get(name));
 					} else {
 						index = idxNew + name.length();
-						// System.out.println("Error");
 						// break;
 					}
 				} else {

@@ -4,7 +4,9 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -16,6 +18,8 @@ public class MyPopUp {
 	private int time = 5000;
 
 	private ArrayList<Integer> list;
+	
+	private StringBuilder sb = new StringBuilder();
 
 	private static MyPopUp instance;
 
@@ -35,6 +39,9 @@ public class MyPopUp {
 	}
 
 	public void show(String title, String message) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String timeStemp = sdf.format(new Date());
+		sb.append(timeStemp+" "+title+"\r\n"+message+"\r\n\r\n");
 
 		JOptionPane pane = new JOptionPane(message, JOptionPane.NO_OPTION);
 		JDialog dialog = pane.createDialog(null, title);
@@ -128,5 +135,9 @@ public class MyPopUp {
 
 	private void freePosition(int pos) {
 		list.set(pos, 0);
+	}
+	
+	public String getAll(){
+		return sb.toString();
 	}
 }

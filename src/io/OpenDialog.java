@@ -21,7 +21,6 @@ import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MyPopUp;
-import gui.ProgressBar;
 import xmlInput.sbml.JSBMLinput;
 import xmlInput.sbml.VAMLInput;
 
@@ -52,7 +51,6 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 	private String txt = "txt";
 
 	private final int option;
-	final ProgressBar bar = new ProgressBar();
 
 	private final String mo = "mo";
 
@@ -199,9 +197,10 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 			Runnable run = new Runnable() {
 				@Override
 				public void run() {
-					bar.init(100, "  Open ", true);
-					bar
-							.setProgressBarString("Loading data from file. Please wait a second");
+					MainWindow.getInstance().showProgressBar("Loading data from file. Please wait a second");
+					//bar.init(100, "  Open ", true);
+					//bar
+					//		.setProgressBarString("Loading data from file. Please wait a second");
 				}
 			};
 			SwingUtilities.invokeLater(run);
@@ -215,7 +214,8 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 
 		open();
 		if (fileFormat != null) {
-			bar.closeWindow();
+			//bar.closeWindow();
+			MainWindow.getInstance().closeProgressBar();
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {

@@ -378,8 +378,8 @@ public class PetriNetSimulation implements ActionListener {
 						System.out.println("end of simulation");
 						w.updatePCPView();
 						w.redrawGraphs();
-
-						w.repaint();
+						w.revalidate();
+						//w.repaint();
 						if (v.size() > 0) {
 							menue.setTime((v.get(v.size() - 1)).toString());
 						}
@@ -398,6 +398,7 @@ public class PetriNetSimulation implements ActionListener {
 									line = outputReader.readLine();
 									if (line != null && line.length() > 0) {
 										menue.addText(line + "\r\n");
+										pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage().append(line + "\r\n");
 										System.out.println(line);
 									}
 								} catch (IOException e) {
@@ -417,6 +418,7 @@ public class PetriNetSimulation implements ActionListener {
 							line = outputReader.readLine();
 							while (line != null && line.length() > 0) {
 								menue.addText(line + "\r\n");
+								pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage().append(line + "\r\n");
 								System.out.println(line);
 								line = outputReader.readLine();
 

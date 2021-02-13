@@ -12,7 +12,6 @@ import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MyPopUp;
-import gui.ProgressBar;
 import io.MyFileFilter;
 
 public class OpenModelicaResult extends SwingWorker<Object, Object> {
@@ -28,7 +27,6 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 	//private final String modelicaSimulation = "csv";
 
 	private final int option;
-	private final ProgressBar bar = new ProgressBar();
 
 	private GraphContainer con = GraphContainer.getInstance();
 	private GraphInstance graphInstance = new GraphInstance();
@@ -82,8 +80,9 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 			Runnable run = new Runnable() {
 				@Override
 				public void run() {
-					bar.init(100, "  Open ", true);
-					bar.setProgressBarString("Loading data from file. Please wait a second");
+					MainWindow.getInstance().showProgressBar("Loading data from file. Please wait a second");
+					//bar.init(100, "  Open ", true);
+					//bar.setProgressBarString("Loading data from file. Please wait a second");
 				}
 			};
 			SwingUtilities.invokeLater(run);
@@ -97,7 +96,8 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 		// TODO if BN holds PN
 		open();
 		if (fileFormat != null) {
-			bar.closeWindow();
+			MainWindow.getInstance().closeProgressBar();
+			//bar.closeWindow();
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
