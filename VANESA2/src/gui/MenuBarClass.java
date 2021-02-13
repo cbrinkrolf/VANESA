@@ -287,6 +287,10 @@ public class MenuBarClass {
 		interaction = new JMenuItem("User interaction");
 		interaction.addActionListener(MenuListener.getInstance());
 		interaction.setActionCommand("interaction");
+		
+		JMenuItem allPopUps = new JMenuItem("Show all Messages");
+		allPopUps.addActionListener(MenuListener.getInstance());
+		allPopUps.setActionCommand("allPopUps");
 
 		internet = new JMenuItem("Internet Connection");
 		internet.addActionListener(MenuListener.getInstance());
@@ -334,6 +338,7 @@ public class MenuBarClass {
 		ruleManager.addActionListener(MenuListener.getInstance());
 		ruleManager.setActionCommand("ruleManager");
 
+		help.add(allPopUps);
 		help.add(interaction);
 
 		// about item is already present on mac osx

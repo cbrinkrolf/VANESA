@@ -423,6 +423,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
 		west.add(all);
 		west.add(new JLabel("delete"));
+		west.add(new JLabel("show log"));
 		west.add(new JLabel("Name"), "wrap");
 		// west.add(new JButton("click"), "wrap");
 		// west.add(new JButton("click"), "wrap");
@@ -438,9 +439,14 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 			west.add(box);
 			JButton button = new JButton("del");
 			button.addActionListener(this);
-			button.setActionCommand(i + "");
+			button.setActionCommand("del_"+i);
+			
+			JButton log = new JButton("log");
+			log.addActionListener(this);
+			log.setActionCommand("log_"+i);
 			// System.out.println("name: "+results.get(i).getName());
 			west.add(button);
+			west.add(log);
 			JTextField text = new JTextField(10);
 			text.setText(results.get(i).getName());
 			text2sim.put(text, results.get(i));
@@ -504,11 +510,14 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// System.out.println(e);
-		if (e.getSource() instanceof JButton) {
-			int i = Integer.parseInt(e.getActionCommand());
-			pw.getPetriPropertiesNet().getSimResController().remove(i);
+			if(e.getActionCommand().startsWith("del_")){
+			int idx = Integer.parseInt(e.getActionCommand().substring(4));
+			pw.getPetriPropertiesNet().getSimResController().remove(idx);
 			this.updateSimulationResults();
-		} else if ("parameterized".equals(e.getActionCommand())) {
+		} else if (e.getActionCommand().startsWith("log_")){
+			int idx = Integer.parseInt(e.getActionCommand().substring(4));
+			this.textArea.setText(pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getLogMessage().toString());
+		}else if ("parameterized".equals(e.getActionCommand())) {
 			revalidateParametrizedPanel();
 		} else if ("nodeSelected".equals(e.getActionCommand())) {
 			this.fillNodeComboBox();

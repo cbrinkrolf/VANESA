@@ -68,6 +68,7 @@ import graph.layouts.gemLayout.GEMLayout;
 import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.AboutWindow;
+import gui.AllPopUpsWindow;
 import gui.InfoWindow;
 import gui.LabelToDataMappingWindow;
 import gui.LabelToDataMappingWindow.InputFormatException;
@@ -1198,6 +1199,9 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
+		} else if ("allPopUps".equals(event)){
+			System.out.println(MyPopUp.getInstance().getAll());
+			new AllPopUpsWindow();
 		}
 	}
 

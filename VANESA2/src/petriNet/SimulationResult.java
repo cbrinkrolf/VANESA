@@ -15,6 +15,8 @@ public class SimulationResult {
 	private boolean active = true;
 	private String name;
 	private String id;
+	
+	private StringBuilder logMessage = new StringBuilder();
 
 	public SimulationResult(String id, String name, boolean filtered) {
 		this.id = id;
@@ -108,6 +110,10 @@ public class SimulationResult {
 	
 	public int size(){
 		return this.result.size();
+	}
+
+	public StringBuilder getLogMessage() {
+		return logMessage;
 	}
 
 }
