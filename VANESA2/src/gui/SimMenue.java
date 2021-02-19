@@ -360,7 +360,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	}
 
 	public void setTime(String time) {
-		this.time.setText("Time: " + time);
+		this.time.setText(time);
 		this.time.repaint();
 	}
 

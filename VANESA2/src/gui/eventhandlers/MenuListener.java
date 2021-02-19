@@ -1200,7 +1200,6 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 		} else if ("allPopUps".equals(event)){
-			System.out.println(MyPopUp.getInstance().getAll());
 			new AllPopUpsWindow();
 		}
 	}

@@ -46,7 +46,11 @@ public class PetriNetSimulation implements ActionListener {
 	private static String pathSim = null;
 	private boolean stopped = false;
 	private SimMenue menue = null;
-	private Process process;
+	private Process simProcess = null;
+	Thread compilingThread = null;
+	private Process compileProcess = null;
+	private boolean buildSuccess = false;
+	private Thread allThread = null;
 
 	private BufferedReader outputReader;
 	private HashMap<BiologicalEdgeAbstract, String> bea2key;
@@ -61,7 +65,11 @@ public class PetriNetSimulation implements ActionListener {
 	private Pathway pw;
 
 	private String simId;
+	boolean simExePresent;
+	boolean compilingDone = false;
 
+	// TODO refactored version of threads for simulation needs to be tested and evaluated. maybe show more hints / error messages
+	// TODO log also simulation properties (start / number of intervals, duration etc)
 	public PetriNetSimulation(Pathway pw) {
 		this.pw = pw;
 		MainWindow.getInstance();
@@ -85,438 +93,307 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void runOMCIA() {
+		stopped = false;
 		System.out.println("simNameOld: " + simName);
 		MainWindow w = MainWindow.getInstance();
-		w.blurrUI();
 
 		flags = pw.getChangedFlags("petriNetSim");
 
-		Map<String, String> env = System.getenv();
+		if (!this.checkInstallation()) {
+			return;
+		} else {
+			w.blurrUI();
 
-		if (env.containsKey("OPENMODELICAHOME") && new File(env.get("OPENMODELICAHOME")).isDirectory()) {
-			pathCompiler = env.get("OPENMODELICAHOME");
+			long zstVorher;
+			long zstNachher;
+			Double stopTime = menue.getStopValue();
+			int intervals = menue.getIntervals();
+			zstVorher = System.currentTimeMillis();
 
-			try {
+			boolean simLibChanged = false;
+			if (this.simLib != null && !menue.getSimLib().getAbsolutePath().equals(this.simLib.getAbsolutePath())) {
+				System.out.println("lib changed");
+				simLibChanged = true;
+			}
 
-				// String stopTime = JOptionPane
-				// .showInputDialog("Stop Time", "20");
-				// String intervals = JOptionPane.showInputDialog("Intervals",
-				// "20");
-				long zstVorher;
-				long zstNachher;
-				Double stopTime = menue.getStopValue();
-				int intervals = menue.getIntervals();
-				// this.path = "C:\\OpenModelica1.9.1Nightly\\";
-				zstVorher = System.currentTimeMillis();
+			simExePresent = false;
 
-				boolean simLibChanged = false;
-				if (this.simLib != null && !menue.getSimLib().getAbsolutePath().equals(this.simLib.getAbsolutePath())) {
-					System.out.println("lib changed");
-					simLibChanged = true;
+			if (simName != null && new File(simName).exists()) {
+				simExePresent = true;
+			}
+
+			if (flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged()
+					|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menue.isForceRebuild()) {
+				try {
+					this.compile();
+				} catch (IOException e) {
+					w.unBlurrUI();
+					buildSuccess = false;
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					w.unBlurrUI();
+					buildSuccess = false;
+					e.printStackTrace();
 				}
+			} else {
+				allThread.start();
+			}
 
-				boolean simExePresent = false;
+			allThread = new Thread() {
 
-				if (simName != null && new File(simName).exists()) {
-					simExePresent = true;
-				}
-
-				if (flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged()
-						|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menue.isForceRebuild()) {
-					System.out.println("edges changed: " + flags.isEdgeChanged());
-					System.out.println("nodes changed: " + flags.isNodeChanged());
-					System.out.println("edge weight changed: " + flags.isEdgeWeightChanged());
-					System.out.println("pn prop changed " + flags.isPnPropertiesChanged());
-
-					System.out.println("Building new executable");
-					if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
-						pathCompiler += File.separator;
-					}
-
-					pathSim = pathWorkingDirectory + "simulation" + File.separator;
-					File dirSim = new File(pathSim);
-					if (dirSim.isDirectory()) {
-						FileUtils.cleanDirectory(dirSim);
-					} else {
-						new File(pathSim).mkdir();
-					}
-
-					/*
-					 * if (simLibs.size() < 1) { if(JOptionPane.YES_OPTION ==
-					 * JOptionPane.showConfirmDialog(w,
-					 * "Cannot find any Modelica Petri net library in the working directory.\n\n" +
-					 * "Please put a Modelica Petri net library into \"" + pathWorkingDirectory +
-					 * "\".\n" +
-					 * "You can download the latest version of PNlib on GitHub (\"https://github.com/modelica-3rdparty/PNlib\")\n\n"
-					 * + "Do you want to open the download page in your default web browser?" ,
-					 * "Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
-					 * if(Desktop.isDesktopSupported()) { Desktop.getDesktop().browse(new
-					 * URI("https://github.com/modelica-3rdparty/PNlib/releases" )); } }
-					 * w.unBlurrUI(); return; }
-					 */
-					simLib = menue.getSimLib();
-					System.out.println("simulation lib: " + simLib);
-					String packageInfo = "";
-					if (simLib == null || simLib.getName().equals("PNlib")) {
-						// packageInfo = "inner PNlib.Settings settings1;";
-					} else {
-						packageInfo = "import PNlib = " + simLib.getName() + ";";
-					}
-					MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim + "simulation.mo")), pw,
-							packageInfo, false);
-					bea2key = mo.getBea2resultkey();
-					//
-
-					this.writeMosFile();
-
-					stopped = false;
-
-					// simT.run();
-
-					String bin = pathCompiler + "bin" + File.separator + "omc";
-
-					if (SystemUtils.IS_OS_WINDOWS) {
-						bin += ".exe";
-					}
-
-					final Process p = new ProcessBuilder(bin, pathSim + "simulation.mos").start();
-					InputStream os = p.getInputStream();
-
-					// System.out.println(s);
-					boolean buildSuccess = true;
-
-					Thread t = new Thread() {
-						public void run() {
-							long totalTime = 1200000;
-							try {
-								for (long t = 0; t < totalTime; t += 1000) {
-									sleep(1000);
-								}
-								p.destroy();
-								// stopped = true;
-							} catch (Exception e) {
-							}
-						}
-					};
-					t.start();
-					p.waitFor();
-					// System.out.println("av: " +os.available());
-					byte[] bytes = new byte[os.available()];
-					os.read(bytes);
-					String buildOutput = new String(bytes);
-					System.out.println(buildOutput);
-
-					if (buildOutput.contains(
-							"Warning: The following equation is INCONSISTENT due to specified unit information:")) {
-						String message = "";
-						int number = 0;
-						String[] split = buildOutput.split("Warning: ");
-						for (int i = 1; i < split.length; i++) {
-							if (split[i].startsWith(
-									"The following equation is INCONSISTENT due to specified unit information:")) {
-								number++;
-								message += split[i] + "\r\n";
-							}
-						}
-						MyPopUp.getInstance().show("Warning: " + number + " expression(s) are inconsistent:", message);
-					}
-
-					StringTokenizer tokenizer = new StringTokenizer(buildOutput, ",");
-					String tmp = tokenizer.nextToken();
-					// tmp.indexOf("{");
-					simName = tmp.substring(tmp.indexOf("{") + 2, tmp.length() - 1);
-					System.out.println("simName: " + simName);
-
-					if (SystemUtils.IS_OS_WINDOWS) {
-						simName += ".exe";
-					}
-
+				public void run() {
 					try {
-						t.stop();
-					} catch (Exception e) {
-						buildSuccess = false;
-					}
+						s = new Server(pw, bea2key, simId);
 
-					if (buildSuccess) {
+						s.start();
+						System.out.println("building ended");
+						pw.getPetriPropertiesNet().setPetriNetSimulation(true);
 
-						this.flags.reset();
-						pw.getChangedInitialValues().clear();
-						pw.getChangedParameters().clear();
-						pw.getChangedBoundaries().clear();
-					}
-				}
+						System.out.println("stop: " + stopTime);
+						Thread simulationThread = new Thread() {
 
-				s = new Server(pw, bea2key, simId);
-
-				s.start();
-				System.out.println("building ended");
-				pw.getPetriPropertiesNet().setPetriNetSimulation(true);
-
-				System.out.println("stop: " + stopTime);
-				Thread t1 = new Thread() {
-					public void run() {
-						try {
-							ProcessBuilder pb = new ProcessBuilder();
-							boolean noEmmit = !true;
-
-							String override = "";
-							if (SystemUtils.IS_OS_WINDOWS) {
-								override += "\"";
-							}
-
-							override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize="
-									+ stopTime / intervals + ",tolerance=0.0001";
-							if (flags.isParameterChanged()) {
-
-								Iterator<Parameter> it = pw.getChangedParameters().keySet().iterator();
-								GraphElementAbstract gea;
-								Parameter param;
-
-								while (it.hasNext()) {
-									param = it.next();
-									gea = pw.getChangedParameters().get(param);
-									BiologicalNodeAbstract bna;
-									if (gea instanceof BiologicalNodeAbstract) {
-										bna = (BiologicalNodeAbstract) gea;
-										override += ",'_" + bna.getName() + "_" + param.getName() + "'="
-												+ param.getValue();
-									}
-								}
-							}
-
-							if (flags.isInitialValueChanged()) {
-								Iterator<Place> it = pw.getChangedInitialValues().keySet().iterator();
-								Place p;
-								Double d;
-								while (it.hasNext()) {
-									p = it.next();
-									d = pw.getChangedInitialValues().get(p);
-									override += ",'" + p.getName() + "'.startMarks=" + d;
-								}
-							}
-
-							if (flags.isBoundariesChanged()) {
-								// System.out.println("chaaaaanged");
-								Iterator<Place> it = pw.getChangedBoundaries().keySet().iterator();
-								Place p;
-								Boundary b;
-								while (it.hasNext()) {
-									p = it.next();
-									b = pw.getChangedBoundaries().get(p);
-									if (b.isLowerBoundarySet()) {
-										override += ",'" + p.getName() + "'.minMarks=" + b.getLowerBoundary();
-									}
-									if (b.isUpperBoundarySet()) {
-										override += ",'" + p.getName() + "'.maxMarks=" + b.getUpperBoundary();
-									}
-								}
-							}
-
-							if (SystemUtils.IS_OS_WINDOWS) {
-								override += "\"";
-							}
-							System.out.println("override: " + override);
-
-							// String program = "_omcQuot_556E7469746C6564";
-							if (noEmmit) {
-								pb.command(simName, "-s=" + menue.getIntegrator(), override, "-port=11111",
-										"-noEventEmit", "-lv=LOG_STATS");
-							} else {
-								pb.command(simName, "-s=" + menue.getIntegrator(), override, "-port=11111",
-										"-lv=LOG_STATS");
-							}
-							pb.redirectOutput();
-							pb.directory(new File(pathSim));
-							Map<String, String> env = pb.environment();
-							// String envPath = env.get("PATH");
-							String envPath = System.getenv("PATH");
-							envPath += pathCompiler + "bin;";
-							env.put("PATH", envPath);
-							System.out.println("working path:" + env.get("PATH"));
-							System.out.println(pb.environment().get("PATH"));
-							process = pb.start();
-
-							setReader(new InputStreamReader(process.getInputStream()));
-						} catch (IOException e1) {
-							MyPopUp.getInstance().show("Simulation error:", e1.getMessage());
-							e1.printStackTrace();
-						}
-					}
-				};
-
-				Thread t2 = new Thread() {
-					public void run() {
-						pw.getGraph().getVisualizationViewer().requestFocus();
-						// w.redrawGraphs();
-						// System.out.println(pw.getPetriNet().getSimResController().get().getTime());
-						List<Double> v = null;// pw.getPetriNet().getSimResController().get().getTime().getAll();
-						// System.out.println("running");
-						while (s.isRunning()) {
-							if (v == null && pw.getPetriPropertiesNet().getSimResController().getLastActive() != null) {
-								v = pw.getPetriPropertiesNet().getSimResController().getLastActive().getTime().getAll();
-							}
-							// System.out.println("im thread");
-							w.redrawGraphs();
-							// GraphInstance graphInstance = new
-							// GraphInstance();
-							// GraphContainer con =
-							// ContainerSingelton.getInstance();
-							// MainWindow w = MainWindowSingelton.getInstance();
-
-							// double time =
-							if (v != null && v.size() > 0) {
-								menue.setTime((v.get(v.size() - 1)).toString());
-							}
-							try {
-								sleep(100);
-							} catch (InterruptedException e) {
-								MyPopUp.getInstance().show("Simulation error:", e.getMessage());
-								e.printStackTrace();
-							}
-						}
-						menue.stopped();
-						System.out.println("end of simulation");
-						w.updatePCPView();
-						w.redrawGraphs();
-						w.revalidate();
-						//w.repaint();
-						if (v.size() > 0) {
-							menue.setTime((v.get(v.size() - 1)).toString());
-						}
-						// w.updatePCPView();
-					}
-				};
-
-				Thread t3 = new Thread() {
-					public void run() {
-						// System.out.println("running");
-						String line;
-						while (s.isRunning()) {
-							// System.out.println("im thread");
-							if (outputReader != null) {
+							public void run() {
 								try {
-									line = outputReader.readLine();
-									if (line != null && line.length() > 0) {
-										menue.addText(line + "\r\n");
-										pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage().append(line + "\r\n");
-										System.out.println(line);
+									ProcessBuilder pb = new ProcessBuilder();
+									boolean noEmmit = !true;
+
+									String override = "";
+									if (SystemUtils.IS_OS_WINDOWS) {
+										override += "\"";
 									}
+
+									override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize="
+											+ stopTime / intervals + ",tolerance=0.0001";
+									if (flags.isParameterChanged()) {
+
+										Iterator<Parameter> it = pw.getChangedParameters().keySet().iterator();
+										GraphElementAbstract gea;
+										Parameter param;
+
+										while (it.hasNext()) {
+											param = it.next();
+											gea = pw.getChangedParameters().get(param);
+											BiologicalNodeAbstract bna;
+											if (gea instanceof BiologicalNodeAbstract) {
+												bna = (BiologicalNodeAbstract) gea;
+												override += ",'_" + bna.getName() + "_" + param.getName() + "'="
+														+ param.getValue();
+											}
+										}
+									}
+
+									if (flags.isInitialValueChanged()) {
+										Iterator<Place> it = pw.getChangedInitialValues().keySet().iterator();
+										Place p;
+										Double d;
+										while (it.hasNext()) {
+											p = it.next();
+											d = pw.getChangedInitialValues().get(p);
+											override += ",'" + p.getName() + "'.startMarks=" + d;
+										}
+									}
+
+									if (flags.isBoundariesChanged()) {
+										// System.out.println("chaaaaanged");
+										Iterator<Place> it = pw.getChangedBoundaries().keySet().iterator();
+										Place p;
+										Boundary b;
+										while (it.hasNext()) {
+											p = it.next();
+											b = pw.getChangedBoundaries().get(p);
+											if (b.isLowerBoundarySet()) {
+												override += ",'" + p.getName() + "'.minMarks=" + b.getLowerBoundary();
+											}
+											if (b.isUpperBoundarySet()) {
+												override += ",'" + p.getName() + "'.maxMarks=" + b.getUpperBoundary();
+											}
+										}
+									}
+
+									if (SystemUtils.IS_OS_WINDOWS) {
+										override += "\"";
+									}
+									System.out.println("override: " + override);
+
+									// String program = "_omcQuot_556E7469746C6564";
+									if (noEmmit) {
+										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-port=11111",
+												"-noEventEmit", "-lv=LOG_STATS");
+									} else {
+										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-port=11111",
+												"-lv=LOG_STATS");
+									}
+									pb.redirectOutput();
+									pb.directory(new File(pathSim));
+									Map<String, String> env = pb.environment();
+									// String envPath = env.get("PATH");
+									String envPath = System.getenv("PATH");
+									envPath += pathCompiler + "bin;";
+									env.put("PATH", envPath);
+									System.out.println("working path:" + env.get("PATH"));
+									System.out.println(pb.environment().get("PATH"));
+									simProcess = pb.start();
+
+									setReader(new InputStreamReader(simProcess.getInputStream()));
+								} catch (IOException e1) {
+									simProcess.destroy();
+									MyPopUp.getInstance().show("Simulation error:", e1.getMessage());
+									e1.printStackTrace();
+								}
+							}
+						};
+
+						Thread redrawGraphThread = new Thread() {
+							public void run() {
+								pw.getGraph().getVisualizationViewer().requestFocus();
+								// w.redrawGraphs();
+								// System.out.println(pw.getPetriNet().getSimResController().get().getTime());
+								List<Double> v = null;// pw.getPetriNet().getSimResController().get().getTime().getAll();
+								// System.out.println("running");
+								while (s.isRunning()) {
+									if (v == null && pw.getPetriPropertiesNet().getSimResController()
+											.getLastActive() != null) {
+										v = pw.getPetriPropertiesNet().getSimResController().getLastActive().getTime()
+												.getAll();
+									}
+									// System.out.println("im thread");
+									w.redrawGraphs();
+									// GraphInstance graphInstance = new
+									// GraphInstance();
+									// GraphContainer con =
+									// ContainerSingelton.getInstance();
+									// MainWindow w = MainWindowSingelton.getInstance();
+
+									// double time =
+									if (v != null && v.size() > 0) {
+										menue.setTime("Time: " + (v.get(v.size() - 1)).toString());
+									}
+									try {
+										sleep(100);
+									} catch (InterruptedException e) {
+										MyPopUp.getInstance().show("Simulation error:", e.getMessage());
+										e.printStackTrace();
+									}
+								}
+								menue.stopped();
+								System.out.println("end of simulation");
+								w.updatePCPView();
+								w.redrawGraphs();
+								w.revalidate();
+								// w.repaint();
+								if (v.size() > 0) {
+									menue.setTime((v.get(v.size() - 1)).toString());
+								}
+							}
+						};
+
+						Thread outputThread = new Thread() {
+							public void run() {
+								// System.out.println("running");
+								String line;
+								while (s.isRunning()) {
+									// System.out.println("im thread");
+									if (outputReader != null) {
+										try {
+											line = outputReader.readLine();
+											if (line != null && line.length() > 0) {
+												menue.addText(line + "\r\n");
+												pw.getPetriPropertiesNet().getSimResController().get(simId)
+														.getLogMessage().append(line + "\r\n");
+												System.out.println(line);
+											}
+										} catch (IOException e) {
+											MyPopUp.getInstance().show("Simulation error:", e.getMessage());
+											e.printStackTrace();
+										}
+									}
+									try {
+										sleep(100);
+									} catch (InterruptedException e) {
+										MyPopUp.getInstance().show("Simulation error:", e.getMessage());
+										e.printStackTrace();
+									}
+								}
+								try {
+									System.out.println("outputReader server stopped");
+									line = outputReader.readLine();
+									while (line != null && line.length() > 0) {
+										menue.addText(line + "\r\n");
+										pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage()
+												.append(line + "\r\n");
+										System.out.println(line);
+										line = outputReader.readLine();
+									}
+									outputReader.close();
+									outputReader = null;
 								} catch (IOException e) {
-									MyPopUp.getInstance().show("Simulation error:", e.getMessage());
 									e.printStackTrace();
 								}
 							}
-							try {
-								sleep(100);
-							} catch (InterruptedException e) {
-								MyPopUp.getInstance().show("Simulation error:", e.getMessage());
-								e.printStackTrace();
-							}
-						}
-						try {
-							System.out.println("outputReader server stopped");
-							line = outputReader.readLine();
-							while (line != null && line.length() > 0) {
-								menue.addText(line + "\r\n");
-								pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage().append(line + "\r\n");
-								System.out.println(line);
-								line = outputReader.readLine();
+						};
 
-							}
-							outputReader.close();
-							outputReader = null;
-						} catch (IOException e) {
-							e.printStackTrace();
+						simExePresent = false;
+
+						System.out.println(simName);
+						if (simName != null && new File(simName).exists()) {
+							System.out.println("sim exists");
+							simExePresent = true;
 						}
-						// w.updatePCPView();
+
+						if (simExePresent) {
+							redrawGraphThread.start();
+							outputThread.start();
+
+							simulationThread.start();
+						} else {
+							// System.out.println("something wet wrong");
+							MyPopUp.getInstance().show("Something went wrong!", "Simulation could not be built!");
+							stopAction();
+						}
+
+						long zstNachher = System.currentTimeMillis();
+						// System.out.println("Zeit benoetigt: " + ((zstNachher -
+						// zstVorher) / 1000) + " sec");
+						System.out.println("Time for compiling: " + ((zstNachher - zstVorher)) + " millisec");
+
+						if (pw.hasGotAtLeastOneElement() && !stopped) {
+							// graphInstance.getPathway().setPetriNet(true);
+							// PetriNet petrinet = graphInstance.getPathway()
+							// .getPetriNet();
+							// petrinet.setPetriNetSimulationFile(pathSim
+							// + "simulation_res.csv", true);
+							// petrinet.initializePetriNet(bea2key);
+						} else {
+							// throw new Exception();
+						}
+
+					} catch (Exception e) {
+						MyPopUp.getInstance().show("Simulation error:", e.getMessage());
+						e.printStackTrace();
+						MyPopUp.getInstance().show("Something went wrong", "The model couldn't be simulated!");
+						w.unBlurrUI();
+						menue.stopped();
+						if (simProcess != null) {
+							simProcess.destroy();
+						}
+						return;
 					}
-				};
-
-				simExePresent = false;
-
-				System.out.println(simName);
-				if (new File(simName).exists()) {
-					System.out.println("sim exists");
-					simExePresent = true;
 				}
+			};
 
-				if (simExePresent) {
-					t2.start();
-					t3.start();
+			// allThread.start();
 
-					t1.start();
-				} else {
-					// System.out.println("something wet wrong");
-					MyPopUp.getInstance().show("Something went wrong!", "Simulation could not be built!");
-					this.stopAction();
-				}
-
-				// System.out.println("before sim");
-				// w.updatePCPView();
-				// System.out.println("ps:" + pathSim);
-
-				// final Process pSim = new
-				// ProcessBuilder("cmd.exe","/c",pathSim+"simulation.bat").start();
-				// ProcessBuilder pb = new
-				// ProcessBuilder(pathSim+"simulation.exe","-override=outputFormat=ia","-port=11111","-lv=LOG_STATS");
-
-				// Process process = pb.start();
-				// System.out.println(pb.command());
-
-				// Runtime.getRuntime().exec(new
-				// String[]{pathSim+"simulation.exe","-override=outputFormat=ia","-port=11111","-lv=LOG_STATS"});
-				/*
-				 * Runtime.getRuntime().exec( "cmd /q/c start " + pathSim + "simulation.bat");
-				 */
-				System.out.println("drin");
-
-				zstNachher = System.currentTimeMillis();
-				// System.out.println("Zeit benoetigt: " + ((zstNachher -
-				// zstVorher) / 1000) + " sec");
-				System.out.println("Time for compiling: " + ((zstNachher - zstVorher)) + " millisec");
-
-				/*
-				 * Thread t3 = new Thread() { public void run() { long totalTime = 60000; try {
-				 * sleep(2000); for (long t = 0; t < totalTime; t += 200) {
-				 *
-				 * sleep(200); Iterator<BiologicalNodeAbstract> it =
-				 * graphInstance.getPathway().getAllNodes().iterator(); BiologicalNodeAbstract
-				 * bna; Place p; graphInstance.getPathway().getPetriNet().addTime(new
-				 * Double(graphInstance .getPathway().getPetriNet().getTime().size()+1));
-				 * while(it.hasNext()){ bna = it.next(); if(bna instanceof Place){ p = (Place)
-				 * bna; p.getPetriNetSimulationData().add(Math.random());
-				 * //System.out.println(Math.random()); } }
-				 *
-				 * } System.out.println("endeeeeee"); stopped = true; } catch (Exception e) {
-				 * e.printStackTrace(); } } }; t3.start();
-				 */
-
-				if (pw.hasGotAtLeastOneElement() && !stopped) {
-					// graphInstance.getPathway().setPetriNet(true);
-					// PetriNet petrinet = graphInstance.getPathway()
-					// .getPetriNet();
-					// petrinet.setPetriNetSimulationFile(pathSim
-					// + "simulation_res.csv", true);
-					// petrinet.initializePetriNet(bea2key);
-				} else
-					throw new Exception();
-			} catch (Exception e) {
-				MyPopUp.getInstance().show("Simulation error:", e.getMessage());
-				e.printStackTrace();
-				MyPopUp.getInstance().show("Something went wrong", "The model couldn't be simulated!");
-				w.unBlurrUI();
-				this.menue.stopped();
-				this.process.destroy();
-				return;
-			}
 			w.unBlurrUI();
-			/*
-			 * JOptionPane .showMessageDialog( w,
-			 * "Simulation is completed. Select one or more places and click on Petri Net Simulation in the left toolbar to visualize and animate the results!"
-			 * , "Simulation done...", JOptionPane.INFORMATION_MESSAGE);
-			 */
+		}
+	}
+
+	private boolean checkInstallation() {
+		Map<String, String> env = System.getenv();
+		if (env.containsKey("OPENMODELICAHOME") && new File(env.get("OPENMODELICAHOME")).isDirectory()) {
+			pathCompiler = env.get("OPENMODELICAHOME");
+			return true;
 		} else {
-			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(w,
+			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(MainWindow.getInstance(),
 					"Cannot find OpenModelica installation.\n\n"
 							+ "Please install OpenModelica from \"https://openmodelica.org\".\n"
 							+ "If OpenModelica is already installed, please set\n"
@@ -531,8 +408,8 @@ public class PetriNetSimulation implements ActionListener {
 					e.printStackTrace();
 				}
 			}
-			w.unBlurrUI();
 		}
+		return false;
 	}
 
 	private void writeMosFile() throws IOException {
@@ -591,19 +468,133 @@ public class PetriNetSimulation implements ActionListener {
 
 		// CHRIS improve / correct filter
 		out.write("buildModel('" + pw.getName() + "', " + filter + "); ");
-		// out.write("buildModel('" + pw.getName() + "'); ");
 		out.write("getErrorString();\r\n");
-
-		// out.write("fileName=\"simulate.mat\";\r\n");
-		// out.write("CSVfile=\"simulate.csv\";\r\n");
-		// out.write("n=readTrajectorySize(fileName);\r\n");
-		// out.write("names = readTrajectoryNames(fileName);\r\n");
-		// out.write("traj=readTrajectory(fileName,names,n);\r\n");
-		// out.write("traj_transposed=transpose(traj);\r\n");
-		// out.write("DataFiles.writeCSVmatrix(CSVfile, names,
-		// traj_transposed);\r\n");
-		// out.write("exit();\r\n");
 		out.close();
+	}
+
+	private void compile() throws IOException, InterruptedException {
+
+		compilingThread = new Thread() {
+			public void run() {
+				menue.setTime("Compiling ...");
+				try {
+					System.out.println("edges changed: " + flags.isEdgeChanged());
+					System.out.println("nodes changed: " + flags.isNodeChanged());
+					System.out.println("edge weight changed: " + flags.isEdgeWeightChanged());
+					System.out.println("pn prop changed " + flags.isPnPropertiesChanged());
+
+					System.out.println("Building new executable");
+					if (pathCompiler.charAt(pathCompiler.length() - 1) != File.separatorChar) {
+						pathCompiler += File.separator;
+					}
+
+					pathSim = pathWorkingDirectory + "simulation" + File.separator;
+					File dirSim = new File(pathSim);
+					if (dirSim.isDirectory()) {
+						FileUtils.cleanDirectory(dirSim);
+					} else {
+						new File(pathSim).mkdir();
+					}
+
+					simLib = menue.getSimLib();
+					System.out.println("simulation lib: " + simLib);
+					String packageInfo = "";
+					if (simLib == null || simLib.getName().equals("PNlib")) {
+						// packageInfo = "inner PNlib.Settings settings1;";
+					} else {
+						packageInfo = "import PNlib = " + simLib.getName() + ";";
+					}
+					MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim + "simulation.mo")), pw,
+							packageInfo, false);
+					bea2key = mo.getBea2resultkey();
+					//
+
+					writeMosFile();
+
+					String bin = pathCompiler + "bin" + File.separator + "omc";
+
+					if (SystemUtils.IS_OS_WINDOWS) {
+						bin += ".exe";
+					}
+
+					compileProcess = new ProcessBuilder(bin, pathSim + "simulation.mos").start();
+					InputStream os = compileProcess.getInputStream();
+
+					// System.out.println(s);
+					// boolean buildSuccess = true;
+					System.out.println(stopped + " " + compileProcess.isAlive());
+					while (stopped) {
+						long totalTime = 1200000;
+						try {
+							for (long t = 0; t < totalTime; t += 1000) {
+								// sleep(1000);
+								// System.out.println("sleep");
+							}
+
+							// compileProcess.destroy();
+							// System.out.println("compiling stopped");
+							// buildSuccess = false;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					compileProcess.waitFor();
+					byte[] bytes = new byte[os.available()];
+					os.read(bytes);
+					String buildOutput = new String(bytes);
+					System.out.println("build output: " + buildOutput);
+
+					if (buildOutput.contains(
+							"Warning: The following equation is INCONSISTENT due to specified unit information:")) {
+						String message = "";
+						int number = 0;
+						String[] split = buildOutput.split("Warning: ");
+						for (int i = 1; i < split.length; i++) {
+							if (split[i].startsWith(
+									"The following equation is INCONSISTENT due to specified unit information:")) {
+								number++;
+								message += split[i] + "\r\n";
+							}
+						}
+						MyPopUp.getInstance().show("Warning: " + number + " expression(s) are inconsistent:", message);
+					}
+
+					StringTokenizer tokenizer = new StringTokenizer(buildOutput, ",");
+					if (tokenizer.hasMoreTokens()) {
+						String tmp = tokenizer.nextToken();
+						// tmp.indexOf("{");
+						simName = tmp.substring(tmp.indexOf("{") + 2, tmp.length() - 1);
+						System.out.println("simName: " + simName);
+
+						if (SystemUtils.IS_OS_WINDOWS) {
+							simName += ".exe";
+						}
+
+						if (new File(simName).exists()) {
+							buildSuccess = true;
+						}
+					}
+					if (buildSuccess) {
+						System.out.println("build success");
+						flags.reset();
+						pw.getChangedInitialValues().clear();
+						pw.getChangedParameters().clear();
+						pw.getChangedBoundaries().clear();
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				compilingDone = true;
+				allThread.start();
+			}
+		};
+
+		compilingThread.start();
+		// compileProcess.waitFor();
+		// stopped = true;
+		// System.out.println("av: " +os.available());
+
 	}
 
 	@Override
@@ -662,19 +653,11 @@ public class PetriNetSimulation implements ActionListener {
 					pw.getPetriPropertiesNet().getSimResController().get(simId)
 							.setName(Math.round(value * 1000) / 1000.0 + "");
 					this.runOMCIA();
-
-					while (s.isRunning()) {
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-					// System.out.println("durchdurchdurch");
 				}
 			}
 
 		} else if (event.getActionCommand().equals("stop")) {
+			System.out.println("stopped by clicking stop");
 			this.stopAction();
 		}
 	}
@@ -685,13 +668,20 @@ public class PetriNetSimulation implements ActionListener {
 
 	private void stopAction() {
 		System.out.println("stop");
+		this.buildSuccess = false;
+		this.stopped = true;
 		this.menue.stopped();
 		if (s != null && s.isRunning()) {
 			s.stop();
 		}
-		if (process != null) {
-			this.process.destroy();
+		if (compileProcess != null) {
+			compileProcess.destroy();
+			menue.setTime("compiling stopped!");
 		}
+		if (simProcess != null) {
+			this.simProcess.destroy();
+		}
+
 	}
 
 	private List<File> getLibs(File directory) {
