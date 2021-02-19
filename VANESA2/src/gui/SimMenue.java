@@ -344,7 +344,6 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 				// if (param.equals(speed))
 			}
 		}
-
 	}
 
 	public void started() {
@@ -362,10 +361,6 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	public void setTime(String time) {
 		this.time.setText(time);
 		this.time.repaint();
-	}
-
-	public void setStatus() {
-
 	}
 
 	public void addText(String text) {

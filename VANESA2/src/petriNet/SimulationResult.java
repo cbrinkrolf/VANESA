@@ -109,7 +109,7 @@ public class SimulationResult {
 	}
 	
 	public int size(){
-		return this.result.size();
+		return this.time.size();
 	}
 
 	public StringBuilder getLogMessage() {
