@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -133,6 +135,11 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			p.setLayout(new GridLayout(0, 3));
 			// Place place;
 			// Double value;
+			
+			DecimalFormat df = new DecimalFormat("#.#####");
+			df.setRoundingMode(RoundingMode.HALF_UP);
+			
+			
 			for (int j = 0; j < rows; j++) {
 				place = places.get(labels.get(j));
 				if (simRes.contains(place, TOKEN) && simRes.get(place, TOKEN).size() > 0) {
@@ -153,11 +160,13 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 					 */
 
 					dataset.addSeries(series);
-					JFreeChart chart = ChartFactory.createXYLineChart(labels.get(j), "Timestep", "Token", dataset,
+					JFreeChart chart = ChartFactory.createXYLineChart(labels.get(j), "Time step", "Token", dataset,
 							PlotOrientation.VERTICAL, false, true, false);
 
 					final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-					chart.addSubtitle(new TextTitle("StartToken=" + simRes.get(place, TOKEN).get(0).toString()));
+					String start = "Start=" + simRes.get(place, TOKEN).get(0).toString();
+					String end = "end="+df.format(simRes.get(place, TOKEN).get(simRes.size()-1));
+					chart.addSubtitle(new TextTitle(start+" "+end));
 					// NumberAxis yAxis = new NumberAxis();
 					// xAxis.setTickUnit(new NumberTickUnit(2));
 					// xAxis.setRange(0, 50);
