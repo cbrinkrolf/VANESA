@@ -59,33 +59,35 @@ public class Server {
 		Runnable serverTask = new Runnable() {
 			@Override
 			public void run() {
-				try {
-					int port = 11111;
-					serverSocket = new java.net.ServerSocket(port);
-					simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
-					System.out.println(simId);
-					MainWindow.getInstance().initSimResGraphs();
-					while (true) {
-						java.net.Socket client = waitForClient(serverSocket);
-						// leseNachricht(client);
+				while (running) {
+					try {
+						int port = 11111;
+						serverSocket = new java.net.ServerSocket(port);
+						simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
+						System.out.println(simId);
+						MainWindow.getInstance().initSimResGraphs();
+						while (true) {
+							java.net.Socket client = waitForClient(serverSocket);
+							// leseNachricht(client);
 
-						// InputStream is = new
-						// BufferedInputStream(client.getInputStream());
-						DataInputStream is = new DataInputStream(client.getInputStream());
-						readData(is);
-						// System.out.println("server: " + nachricht);
-						// schreibeNachricht(client, nachricht);
+							// InputStream is = new
+							// BufferedInputStream(client.getInputStream());
+							DataInputStream is = new DataInputStream(client.getInputStream());
+							readData(is);
+							// System.out.println("server: " + nachricht);
+							// schreibeNachricht(client, nachricht);
 
+						}
+					} catch (IOException e) {
+						running = false;
+						//System.err.println("Unable to process client request");
+						//e.printStackTrace();
 					}
-				} catch (IOException e) {
-					System.err.println("Unable to process client request");
-					e.printStackTrace();
 				}
 			}
 		};
 		serverThread = new Thread(serverTask);
 		serverThread.start();
-
 	}
 
 	java.net.Socket waitForClient(java.net.ServerSocket serverSocket) throws IOException {
@@ -184,17 +186,14 @@ public class Server {
 		try {
 			while (running) {
 				try {
-					Thread.sleep(1);
+					Thread.sleep(10);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				values = new ArrayList<Object>();
 
 				// System.out.println("av: "+socket.available());
-				socket.readFully(buffer, 0, 5); // blockiert
-				// bis
-				// Nachricht
-				// empfangen
+				socket.readFully(buffer, 0, 5);
 				id = (int) buffer[0];
 				// System.out.println("id: " + (int) buffer[0]);
 				// socket.getInputStream().read(buffer, 0, 4);
@@ -221,7 +220,7 @@ public class Server {
 							bb = ByteBuffer.wrap(buffer, reals * 8 + i * sizeOfInt, sizeOfInt);
 							bb.order(ByteOrder.LITTLE_ENDIAN);
 							values.add(bb.getInt());
-							//System.out.print(integ + "\t");
+							// System.out.print(integ + "\t");
 						}
 						for (int b = 0; b < bools; b++) {
 							// bb = ByteBuffer.wrap(buffer, b, 1);
@@ -244,10 +243,8 @@ public class Server {
 						}
 						this.setData(values);
 						// System.out.println("nach dem set");
-
 					}
 					break;
-
 				case 6:
 					running = false;
 					System.out.println("server shut down");
@@ -260,8 +257,7 @@ public class Server {
 			System.out.println("server destroyed");
 			serverSocket.close();
 			running = false;
-			// TODO rewrite stop of sever
-			serverThread.stop();
+			//serverThread.stop();
 			// serverThread.destroy();
 		}
 		// System.out.println(n[1]);
@@ -270,11 +266,12 @@ public class Server {
 		// st.
 		// System.out.println(new String(buffer, 16, buffer.length - 17));
 		this.serverSocket.close();
-		// TODO rewrite stop of sever
-		serverThread.stop();
-		// serverThread.destroy();
-		// String nachricht = new String(buffer, 0, anzahlZeichen);
-		// return nachricht;
+		try {
+			running = false;
+			//serverThread.stop();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void init() {
@@ -364,8 +361,8 @@ public class Server {
 					if (name2index.get("'" + bna.getName() + "'.t") != null) {
 						o = values.get(name2index.get("'" + bna.getName() + "'.t"));
 						this.checkAndAddValue(bna, SimulationResultController.SIM_TOKEN, o);
-					}else{
-						System.out.println(bna.getName()+" does not exist. Cannot set simulation result");
+					} else {
+						System.out.println(bna.getName() + " does not exist. Cannot set simulation result");
 					}
 				} else if (bna instanceof Transition) {
 					if (name2index.get("'" + bna.getName() + "'.fire") != null) {
@@ -395,20 +392,20 @@ public class Server {
 
 	private void checkAndAddValue(GraphElementAbstract gea, int type, Object o) {
 		double value;
-		//System.out.println(o.getClass());
-		//System.out.println(gea.getName() + " type: " + type + " object: " + o);
+		// System.out.println(o.getClass());
+		// System.out.println(gea.getName() + " type: " + type + " object: " + o);
 		if (o instanceof Integer) {
-			//System.out.println("integer value");
+			// System.out.println("integer value");
 			value = (double) ((int) o);
 		} else if (o instanceof Double) {
 			value = (Double) o;
 		} else if (o instanceof Byte) {
-			value = (Byte)o;
+			value = (Byte) o;
 		} else {
 			value = 0;
 			System.out.println("unsupported data type!!!");
 		}
-		//System.out.println(gea.getName()+" :"+value + " org:"+o );
+		// System.out.println(gea.getName()+" :"+value + " org:"+o );
 		this.simResult.addValue(gea, type, value);
 	}
 
@@ -419,12 +416,12 @@ public class Server {
 	public void stop() {
 		System.out.println("server destroyed");
 		try {
-			serverSocket.close();
 			running = false;
-			serverThread.stop();
+			serverSocket.close();
+			//serverThread.stop();
 			// serverThread.destroy();
 		} catch (IOException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 }
