@@ -31,12 +31,6 @@ import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
-/*import edu.uci.ics.jung.visualization.FRLayout;
-import edu.uci.ics.jung.visualization.ISOMLayout;
-import edu.uci.ics.jung.visualization.Layout;
-import edu.uci.ics.jung.visualization.SpringLayout;
-import edu.uci.ics.jung.visualization.contrib.CircleLayout;
-import edu.uci.ics.jung.visualization.contrib.KKLayout;*/
 import graph.GraphInstance;
 import graph.layouts.gemLayout.GEMLayoutConfigSingleton;
 import graph.layouts.hctLayout.HCTLayoutConfig;

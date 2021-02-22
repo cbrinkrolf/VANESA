@@ -136,8 +136,9 @@ public class MenuListener implements ActionListener {
 		final GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = GraphContainer.getInstance();
 		// System.out.println(event);
-		if ("new Network".equals(event)) {
 
+		switch (event) {
+		case "new Network":
 			int option = JOptionPane.showOptionDialog(w, "Which type of modeling do you prefer?",
 					"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
@@ -147,12 +148,12 @@ public class MenuListener implements ActionListener {
 				w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
 				w.updateAllGuiElements();
 			}
-		} else if ("open Network".equals(event)) {
-
+			break;
+		case "open Network":
 			OpenDialog op = new OpenDialog();
 			op.execute();
-
-		} else if ("openEdal".equals(event)) {
+			break;
+		case "openEdal":
 			/*
 			 * int SERVER_PORT = 2000; String SERVER_ADDRESS = "bit-249.ipk-gatersleben.de";
 			 * 
@@ -195,41 +196,33 @@ public class MenuListener implements ActionListener {
 			 * 
 			 * } else { System.out.println("please choose a file, not a dir"); } }
 			 */
-
-		} else if ("close Network".equals(event)) {
-
+			break;
+		case "close Network":
 			w.removeTab(true);
-
-		} else if ("close All Networks".equals(event)) {
-
+			break;
+		case "close All Networks":
 			w.removeAllTabs();
-
-		} else if ("mathGraph".equals(event)) {
-
+			break;
+		case "mathGraph":
 			new RandomGraphGui();
-
-		} else if ("biGraph".equals(event)) {
-
+			break;
+		case "biGraph":
 			new RandomBipartiteGraphGui();
-
-		} else if ("regularGraph".equals(event)) {
-
+			break;
+		case "regularGraph":
 			new RandomRegularGraphGui();
-
-		} else if ("phospho".equals(event)) {
-
-			OpenDialog op = new OpenDialog();
+			break;
+		case "phospho":
+			op = new OpenDialog();
 			op.execute();
-
-		} else if ("connectedGraph".equals(event)) {
-
+			break;
+		case "connectedGraph":
 			new RandomConnectedGraphGui();
-
-		} else if ("hamiltonGraph".equals(event)) {
-
+			break;
+		case "hamiltonGraph":
 			new RandomHamiltonGraphGui();
-
-		} else if ("export Network".equals(event)) {
+			break;
+		case "export Network":
 			// System.out.println("Nodes:
 			// "+graphInstance.getMyGraph().getAllVertices().size());
 			// System.out.println("Edges:
@@ -247,7 +240,8 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("save as".equals(event)) {
+			break;
+		case "save as":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog(SaveDialog.FORMAT_SBML);
@@ -257,7 +251,8 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("saveEdal".equals(event)) {
+			break;
+		case "saveEdal":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// System.out.println("click");
@@ -269,8 +264,8 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("save".equals(event)) {
-
+			break;
+		case "save":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					if (graphInstance.getPathway().getFile() != null) {
@@ -301,14 +296,14 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("exit".equals(event)) {
+			break;
+		case "exit":
 			ProgramFileLock.releaseLock();
 			System.exit(0);
-			// TODO delete
-		} else if ("springLayout".equals(event)) {
+			break;
+		case "springLayout":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					// graphInstance.getMyGraph().changeGraphLayout(1);
 					// graphInstance.getMyGraph().changeToSpringLayout();
 					LayoutConfig.changeToLayout(SpringLayout.class);
 				} else {
@@ -317,10 +312,10 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("kkLayout".equals(event)) {
+			break;
+		case "kkLayout":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					// graphInstance.getMyGraph().changeGraphLayout(2);
 					// graphInstance.getMyGraph().changeToKKLayout();
 					LayoutConfig.changeToLayout(KKLayout.class);
 				} else {
@@ -329,10 +324,10 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("frLayout".equals(event)) {
+			break;
+		case "frLayout":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					// graphInstance.getMyGraph().changeGraphLayout(3);
 					// graphInstance.getMyGraph().changeToFRLayout();
 					LayoutConfig.changeToLayout(FRLayout.class);
 				} else {
@@ -341,20 +336,20 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("circleLayout".equals(event)) {
+			break;
+		case "circleLayout":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToCircleLayout();
 					LayoutConfig.changeToLayout(CircleLayout.class);
-					// graphInstance.getMyGraph().changeGraphLayout(4);
-
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("hebLayout".equals(event)) {
+			break;
+		case "hebLayout":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					LayoutConfig.changeToLayout(HEBLayout.class);
@@ -364,7 +359,8 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("hctLayout".equals(event)) {
+			break;
+		case "hctLayout":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					LayoutConfig.changeToLayout(HCTLayout.class);
@@ -374,7 +370,8 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("gemLayout".equals(event)) {
+			break;
+		case "gemLayout":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToCircleLayout();
@@ -387,10 +384,10 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("isomLayout".equals(event)) {
+			break;
+		case "isomLayout":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					// graphInstance.getMyGraph().changeGraphLayout(5);
 					// graphInstance.getMyGraph().changeToISOMLayout();
 					LayoutConfig.changeToLayout(ISOMLayout.class);
 				} else {
@@ -399,43 +396,28 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("MDLayout".equals(event)) {
-			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					// graphInstance.getMyGraph().changeGraphLayout(5);
-					// LayoutConfig.changeToLayout(MDForceLayout.class);
-				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
-				}
-			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
-			}
-		} else if ("database settings".equals(event)) {
+			break;
+		case "database settings":
 			new Settings(0);
-		} else if ("internet".equals(event)) {
-
+			break;
+		case "internet":
 			new Settings(1);
-
-		} else if ("interaction".equals(event)) {
+			break;
+		case "interaction":
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				new InfoWindow(false);
 			}
-
-		} else if ("about".equals(event)) {
-
+			break;
+		case "about":
 			new AboutWindow();
-
-		} else if ("graphSettings".equals(event)) {
-
+			break;
+		case "graphSettings":
 			new Settings(2);
-
-		} else if ("visualizationSettings".equals(event)) {
+			break;
+		case "visualizationSettings":
 			new Settings(3);
-		} /*
-			 * else if ("animation".equals(event)) { if (con.containsPathway()) { } //new
-			 * Regulation(); }
-			 */
-		else if ("openTestP".equals(event)) {
+			break;
+		case "openTestP":
 			// System.out.println("testP");
 			Pathway pw = graphInstance.getPathway();
 			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
@@ -495,11 +477,11 @@ public class MenuListener implements ActionListener {
 			d.setLocationRelativeTo(w);
 			d.setVisible(true);
 
-		} else if ("openTestT".equals(event)) {
+			break;
+		case "openTestT":
 
-			Pathway pw = graphInstance.getPathway();
-			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-			BiologicalNodeAbstract bna;
+			pw = graphInstance.getPathway();
+			it = pw.getAllGraphNodes().iterator();
 
 			transitions = 0;
 			places = 0;
@@ -515,9 +497,9 @@ public class MenuListener implements ActionListener {
 
 			rT = new Object[transitions][2];
 
-			int i = 0;
+			i = 0;
 
-			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes().iterator();
+			it2 = pw.getAllGraphNodes().iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Transition) {
@@ -526,7 +508,7 @@ public class MenuListener implements ActionListener {
 					i++;
 				}
 			}
-			String[] cNames = new String[2];
+			cNames = new String[2];
 			cNames[0] = "Transition";
 			cNames[1] = "Value";
 
@@ -554,7 +536,8 @@ public class MenuListener implements ActionListener {
 			d.setVisible(true);
 
 			// System.out.println("testT");
-		} else if ("testP".equals(event)) {
+			break;
+		case "testP":
 
 			if (c == null) {
 				this.createCMatrix();
@@ -564,7 +547,7 @@ public class MenuListener implements ActionListener {
 			HashMap<String, Double> values = new HashMap<String, Double>();
 
 			// System.out.println(names.size());
-			for (int i = 0; i < places; i++) {
+			for (i = 0; i < places; i++) {
 
 				values.put(rP[i][0].toString(), Double.parseDouble(rP[i][1].toString()));
 				vd[i] = Double.parseDouble(rP[i][1].toString());
@@ -591,28 +574,29 @@ public class MenuListener implements ActionListener {
 				d.setLocationRelativeTo(w);
 				d.setVisible(true);
 			}
-		} else if ("testT".equals(event)) {
+			break;
+		case "testT":
 			if (c == null) {
 				this.createCMatrix();
 			}
-			double[] vd = new double[this.transitions];
-			HashMap<String, Double> values = new HashMap<String, Double>();
+			vd = new double[this.transitions];
+			values = new HashMap<String, Double>();
 
 			// System.out.println(names.size());
-			for (int i = 0; i < transitions; i++) {
+			for (i = 0; i < transitions; i++) {
 
 				values.put(rT[i][0].toString(), Double.parseDouble(rT[i][1].toString()));
 				vd[i] = Double.parseDouble(rT[i][1].toString());
 			}
-			DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
-			DenseDoubleMatrix1D x = new DenseDoubleMatrix1D(c.rows());
+			v = new DenseDoubleMatrix1D(vd);
+			x = new DenseDoubleMatrix1D(c.rows());
 			/*
 			 * System.out.println(v.size()); System.out.println(x.size());
 			 * System.out.println(c.size());
 			 */
 			c.zMult(v, x, 1, 0, false);
 			// System.out.println(x);
-			IntArrayList l = new IntArrayList();
+			l = new IntArrayList();
 			x.getNonZeros(l, null);
 			// System.out.println(l.size());
 			if (l.size() == 0) {
@@ -628,11 +612,10 @@ public class MenuListener implements ActionListener {
 				d.setLocationRelativeTo(w);
 				d.setVisible(true);
 			}
-
-		} else if ("openCov".equals(event)) {
-			Pathway pw = graphInstance.getPathway();
-			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-			BiologicalNodeAbstract bna;
+			break;
+		case "openCov":
+			pw = graphInstance.getPathway();
+			it = pw.getAllGraphNodes().iterator();
 
 			places = 0;
 			transitions = 0;
@@ -648,13 +631,13 @@ public class MenuListener implements ActionListener {
 			rP = new Object[places + 1][2];
 			rI = new Object[places + 1][2];
 
-			int i = 0;
+			i = 0;
 			rP[0][0] = "Places";
 			rP[0][1] = "Marking";
 			rI[0][0] = "Places";
 			rI[0][1] = "P-Invariants";
 
-			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes().iterator();
+			it2 = pw.getAllGraphNodes().iterator();
 			while (it2.hasNext()) {
 				bna = it2.next();
 				if (bna instanceof Place) {
@@ -665,7 +648,7 @@ public class MenuListener implements ActionListener {
 					i++;
 				}
 			}
-			String[] cNames = new String[2];
+			cNames = new String[2];
 			cNames[0] = "Node";
 			cNames[1] = "Value";
 
@@ -691,18 +674,19 @@ public class MenuListener implements ActionListener {
 
 			// Pathway pw = graphInstance.getContainer().getPathway(name);
 			// System.out.println(pw.getAllNodes().size());
-		} else if ("cov".equals(event)) {
+			break;
+		case "cov":
 
 			// Teste ob Invariante:
 			if (c == null) {
 				this.createCMatrix();
 			}
 
-			double[] vd = new double[this.places];
+			vd = new double[this.places];
 			// HashMap<String, Double> values = new HashMap<String, Double>();
 
 			// System.out.println(names.size());
-			for (int i = 0; i < places; i++) {
+			for (i = 0; i < places; i++) {
 
 				// values.put(rI[i+1][0].toString(),
 				// Double.parseDouble(rI[i+1][1]
@@ -710,15 +694,15 @@ public class MenuListener implements ActionListener {
 				vd[i] = Double.parseDouble(rI[i + 1][1].toString());
 			}
 			// System.out.println(vd);
-			DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
-			DenseDoubleMatrix1D x = new DenseDoubleMatrix1D(c.columns());
+			v = new DenseDoubleMatrix1D(vd);
+			x = new DenseDoubleMatrix1D(c.columns());
 			// System.out.println(v.size());
 			// System.out.println("groesse: "+v);
 			// System.out.println("groesse: "+x);
 			// System.out.println("groesse: "+c);
 			c.zMult(v, x, 1, 0, true);
 			// System.out.println(x);
-			IntArrayList l = new IntArrayList();
+			l = new IntArrayList();
 			x.getNonZeros(l, null);
 			// System.out.println(l.size());
 			boolean validInvariant = false;
@@ -741,13 +725,13 @@ public class MenuListener implements ActionListener {
 			if (validInvariant) {
 				double[] s = new double[start.size()];
 				// System.out.println("Start:");
-				for (int i = 0; i < start.size(); i++) {
+				for (i = 0; i < start.size(); i++) {
 					s[i] = this.start.get(i);
 					// System.out.print(this.start.get(i));
 				}
 
 				double[] target = new double[this.places];
-				for (int i = 0; i < places; i++) {
+				for (i = 0; i < places; i++) {
 
 					// values.put(rP[i+1][0].toString(),
 					// Double.parseDouble(rP[i+1][1]
@@ -776,7 +760,7 @@ public class MenuListener implements ActionListener {
 					String name;
 					String value;
 					int index = 0;
-					for (int i = 1; i <= places; i++) {
+					for (i = 1; i <= places; i++) {
 						name = rP[i][0].toString();
 						value = rP[i][1].toString();
 						index = name2id.get(name);
@@ -786,7 +770,7 @@ public class MenuListener implements ActionListener {
 						// System.out.println(markierung[j]);
 					}
 					// System.out.println(name2id);
-					Pathway pw = graphInstance.getContainer().getPathway(pwName);
+					pw = graphInstance.getContainer().getPathway(pwName);
 					Iterator<BiologicalNodeAbstract> iter = pw.getAllGraphNodes().iterator();
 					CovNode n = null;
 					Object o;
@@ -864,13 +848,8 @@ public class MenuListener implements ActionListener {
 			d.setLocationRelativeTo(w);
 			d.setVisible(true);
 			// w.updateTheoryProperties();
-
-			// graphInstance.g
-			// pw.getTab().getTitelTab().setVisible(false);
-			// graphInstance.getContainer().getPathway(cov.getOldName()).getTab().getTitelTab().repaint();
-
-			// System.out.println("klick");
-		} else if ("createCov".equals(event)) {
+			break;
+		case "createCov":
 			// System.out.println("cov erstellen");
 			// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			// Cov cov = new Cov();
@@ -879,37 +858,42 @@ public class MenuListener implements ActionListener {
 					"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 				new ReachController();
 			GraphInstance.getMyGraph().changeToGEMLayout();
-		} else if ("editElements".equals(event))
+			break;
+		case "editElements":
 			new PNTableDialog().setVisible(true);
-		else if ("loadModResult".equals(event))
+			break;
+		case "loadModResult":
 			new OpenModelicaResult().execute();
-		else if ("simulate".equals(event)) {
+			break;
+		case "simulate":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					graphInstance.getPathway().getPetriNetSimulation().showMenue();
 				}
 			}
-		} else if ("dataMappingColor".equals(event)) {
+			break;
+		case "dataMappingColor":
 			DataMappingColorMVC.createDataMapping();
-		} else if ("dataMappingDB".equals(event)) {
+			break;
+		case "dataMappingDB":
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				new ClusterDataUploadWindow();
 			} else
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
-
-		} else if ("datamining".equals(event)) {
+			break;
+		case "datamining":
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				new SmacofView();
 			} else
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
-
-		} else if ("rendererSettings".equals(event)) {
+			break;
+		case "rendererSettings":
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				PreRenderManager.getInstance();
 			} else
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
-
-		} else if ("createDoc".equals(event)) {
+			break;
+		case "createDoc":
 			String docDir = MainWindow.pathWorkingDirectory + "documentation" + File.separator;
 			File dir = new File(docDir);
 
@@ -923,7 +907,7 @@ public class MenuListener implements ActionListener {
 				e2.printStackTrace();
 			}
 
-			Pathway pw = graphInstance.getPathway();
+			pw = graphInstance.getPathway();
 			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = pw.prepareGraphToPrint();
 
 			try {
@@ -1015,8 +999,8 @@ public class MenuListener implements ActionListener {
 			} catch (IOException e1) {
 				System.err.println("Could not compile latex. Find tex-file at: " + docDir);
 			}
-
-		} else if ("dataLabelMapping".equals(event)) {
+			break;
+		case "dataLabelMapping":
 
 			// Open new window for file input
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
@@ -1029,19 +1013,21 @@ public class MenuListener implements ActionListener {
 					// JOptionPane.showMessageDialog(w, ife.getMessage(),
 					// "Inputfile error", JOptionPane.ERROR_MESSAGE);
 				}
-			} else
+			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
-
-		} else if ("mirnaTest".equals(event)) {
+			}
+			break;
+		case "mirnaTest":
 			System.out.println("mirnatest");
 			MirnaStatistics mirna = new MirnaStatistics(null);
 			mirna.createKeggStatistics(true, true, !true);
-		} else if ("enrichMirna".equals(event)) {
+			break;
+		case "enrichMirna":
 			if (con.containsPathway()) {
-				Pathway pw = graphInstance.getPathway();
+				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
 
-					MirnaStatistics mirna = new MirnaStatistics(pw);
+					mirna = new MirnaStatistics(pw);
 					mirna.enrichMirnas(true, true, false);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
@@ -1049,13 +1035,13 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-
-		} else if ("enrichGene".equals(event)) {
+			break;
+		case "enrichGene":
 			// System.out.println("targets: ");
 			if (con.containsPathway()) {
-				Pathway pw = graphInstance.getPathway();
+				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
-					MirnaStatistics mirna = new MirnaStatistics(pw);
+					mirna = new MirnaStatistics(pw);
 					mirna.enrichGenes(true, true, false);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
@@ -1063,9 +1049,8 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-
-		} else if ("shake".equals(event)) {
-
+			break;
+		case "shake":
 			if (con.containsPathway()) {
 				Runnable animator = new Runnable() {
 
@@ -1117,13 +1102,13 @@ public class MenuListener implements ActionListener {
 					}
 				};
 
-				Thread thread = new Thread(animator);
+				thread = new Thread(animator);
 				thread.start();
 			}
-
-		} else if ("graphPicture".equals(event)) {
-			Pathway pw = graphInstance.getPathway();
-			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = pw.prepareGraphToPrint();
+			break;
+		case "graphPicture":
+			pw = graphInstance.getPathway();
+			wvv = pw.prepareGraphToPrint();
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
@@ -1135,14 +1120,14 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("wuff".equals(event)) {
+			break;
+		case "wuff":
 			// System.out.println("clicked");
 			if (con.containsPathway()) {
-				Pathway pw = graphInstance.getPathway();
+				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
 
-					Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-					BiologicalNodeAbstract bna;
+					it = pw.getAllGraphNodes().iterator();
 					DynamicNode dn;
 					String maximumSpeed;
 					while (it.hasNext()) {
@@ -1160,9 +1145,10 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("transform".equals(event)) {
+			break;
+		case "transform":
 			if (con.containsPathway()) {
-				Pathway pw = graphInstance.getPathway();
+				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement() && !pw.isPetriNet()) {
 					List<Rule> rules = RuleManager.getInstance().getActiveRules();
 
@@ -1177,7 +1163,7 @@ public class MenuListener implements ActionListener {
 					pw.setPetriNet(petriNet);
 					pw.setBnToPN(t.getBnToPN());
 					w.updateProjectProperties();
-					//CreatePathway.showPathway(petriNet);
+					// CreatePathway.showPathway(petriNet);
 				} else {
 					MyPopUp.getInstance().show("Error",
 							"Please create a biologial network first. A Petri net cannot be transformed!.");
@@ -1185,11 +1171,13 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("ruleManager".equals(event)) {
+			break;
+		case "ruleManager":
 			new RuleManagementWindow();
-		} else if ("showPN".equals(event)) {
+			break;
+		case "showPN":
 			if (con.containsPathway()) {
-				Pathway pw = graphInstance.getPathway();
+				pw = graphInstance.getPathway();
 				if (pw.getPetriNet() != null && !pw.isPetriNet()) {
 					CreatePathway.showPathway(pw.getPetriNet());
 				} else {
@@ -1199,8 +1187,10 @@ public class MenuListener implements ActionListener {
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
-		} else if ("allPopUps".equals(event)){
+			break;
+		case "allPopUps":
 			new AllPopUpsWindow();
+			break;
 		}
 	}
 

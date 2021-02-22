@@ -935,22 +935,6 @@ public class MyGraph {
 		return copyVV;
 	}
 
-	public void changeToKKLayout() {// vv.stop();
-		changeToLayout(new KKLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
-	}
-
-	public void changeToFRLayout() {
-		changeToLayout(new FRLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
-	}
-
-	public void changeToISOMLayout() {
-		changeToLayout(new ISOMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
-	}
-
-	public void changeToSpringLayout() {
-		changeToLayout(new SpringLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
-	}
-
 	public void changeToCircleLayout() {
 
 		if (stateV.getPicked().isEmpty() || stateV.getPicked().size() == 0) {
@@ -1025,20 +1009,22 @@ public class MyGraph {
 		changeToLayout(new HCTLayout(g, pathway.getRootNode()));
 	}
 
-	// public void changeToMDForceLayout() {
-	// if (stateV.getPickedVertices() == null
-	// || stateV.getPickedVertices().size() == 0) {
-	// MDRenderer.render(g, pathway);
-	// changeToLayout(new MDForceLayout(g, this.pathway,
-	// pr.getVertexFontFunction(), vv.getGraphics()));
-	// } else {
-	// MDForceLayout sub = new MDForceLayout(g,
-	// stateV.getPickedVertices(), this.clusteringLayout,
-	// this.pathway, pr.getVertexFontFunction(), vv.getGraphics());
-	// this.clusteringLayout.addSubLayout(sub);
-	// }
-	// }
-
+	public void changeToISOMLayout(){
+		changeToLayout(new ISOMLayout<>(g));
+	}
+	
+	public void changeToFRLayout(){
+		changeToLayout(new FRLayout<>(g));
+	}
+	
+	public void changeToKKLayout(){
+		changeToLayout(new KKLayout<>(g));
+	}
+	
+	public void changeToSpringLayout(){
+		changeToLayout(new SpringLayout<>(g));
+	}
+	
 	public void updateLayout() {
 		if (layout instanceof HEBLayout) {
 			changeToHEBLayout();
