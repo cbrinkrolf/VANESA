@@ -52,7 +52,7 @@ public class MenuBarClass {
 	private JMenuItem hamiltonGraph;
 	// JMenuItem animations;
 	private JMenuItem about;
-	private JMenuItem mdLayout;
+	//private JMenuItem mdLayout;
 	// private JMenuItem dbInformation;
 	private JMenuItem export;
 
@@ -251,10 +251,6 @@ public class MenuBarClass {
 		isomLayout = new JMenuItem("ISOMLayout", KeyEvent.VK_S);
 		isomLayout.addActionListener(MenuListener.getInstance());
 		isomLayout.setActionCommand("isomLayout");
-
-		mdLayout = new JMenuItem("MDLayout");
-		mdLayout.addActionListener(MenuListener.getInstance());
-		mdLayout.setActionCommand("MDLayout");
 
 		gemLayout = new JMenuItem("GEMLayout");
 		gemLayout.addActionListener(MenuListener.getInstance());
@@ -522,7 +518,7 @@ public class MenuBarClass {
 		 * exportGraphMl.setEnabled(true); exportMo.setEnabled(true);
 		 * exportGon.setEnabled(true);
 		 */
-		mdLayout.setEnabled(true);
+		//mdLayout.setEnabled(true);
 		transform.setEnabled(true);
 		showPN.setEnabled(true);
 		if (new GraphInstance().getPathway().isPetriNet()) {
@@ -581,7 +577,7 @@ public class MenuBarClass {
 		 * exportGraphMl.setEnabled(false); exportMo.setEnabled(false);
 		 * exportGon.setEnabled(false);
 		 */
-		mdLayout.setEnabled(false);
+		//mdLayout.setEnabled(false);
 
 		testPInvariant.setEnabled(false);
 		testTInvariant.setEnabled(false);
