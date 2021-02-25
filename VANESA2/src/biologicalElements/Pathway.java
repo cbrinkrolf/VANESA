@@ -89,7 +89,7 @@ public class Pathway implements Cloneable {
 	private ArrayList<Group> groupes = new ArrayList<>();
 	private Pathway petriNet = null;
 	private HashMap<BiologicalNodeAbstract, PNNode> bnToPN = null;
-	
+
 	private int placeCount = 0;
 	private int transitionCount = 0;
 
@@ -213,7 +213,7 @@ public class Pathway implements Cloneable {
 		addVertexToView(bna, p);
 		if (bna instanceof Place) {
 			this.placeCount++;
-		}else if (bna instanceof Transition) {
+		} else if (bna instanceof Transition) {
 			this.transitionCount++;
 		}
 		bna.setID(this);
@@ -319,7 +319,7 @@ public class Pathway implements Cloneable {
 				}
 				if (bna instanceof Place) {
 					this.placeCount--;
-				}else if (bna instanceof Transition) {
+				} else if (bna instanceof Transition) {
 					this.transitionCount--;
 				}
 				bna.delete();
@@ -1517,11 +1517,12 @@ public class Pathway implements Cloneable {
 			height = height * scale;
 		}
 
-		//Point2D p1inv = v.getRenderContext().getMultiLayerTransformer().transform(new Point2D.Double(gc.getMinX() + gc.getWidth(), gc.getMinY() + gc.getHeight()));
+		// Point2D p1inv = v.getRenderContext().getMultiLayerTransformer().transform(new
+		// Point2D.Double(gc.getMinX() + gc.getWidth(), gc.getMinY() + gc.getHeight()));
 
-		//wvv.setBounds(0, 0, (int) p1inv.getX() + 150, (int) p1inv.getY() + 50);
+		// wvv.setBounds(0, 0, (int) p1inv.getX() + 150, (int) p1inv.getY() + 50);
 		wvv.setBounds(v.getVisibleRect());
-		
+
 		Map<Key, Object> map = wvv.getRenderingHints();
 
 		map.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
@@ -1559,7 +1560,7 @@ public class Pathway implements Cloneable {
 				this.petriNetSimulation = new PetriNetSimulation(this);
 			}
 			return petriNetSimulation;
-		}else{
+		} else {
 			return this.petriNet.getPetriNetSimulation();
 		}
 	}
@@ -1571,12 +1572,50 @@ public class Pathway implements Cloneable {
 	public void setBnToPN(HashMap<BiologicalNodeAbstract, PNNode> bnToPN) {
 		this.bnToPN = bnToPN;
 	}
-	
-	public int getPlaceCount(){
+
+	public int getPlaceCount() {
 		return this.placeCount;
 	}
-	
-	public int getTransitionCount(){
+
+	public int getTransitionCount() {
 		return this.transitionCount;
+	}
+
+	public void setPlotColorPlacesTransitions(boolean override) {
+
+		Iterator<BiologicalNodeAbstract> it = getAllGraphNodesSortedAlphabetically().iterator();
+		BiologicalNodeAbstract bna;
+
+		int i = 0;
+		int j = 0;
+		Color c;
+		Place p;
+		Transition t;
+		while (it.hasNext()) {
+			bna = it.next();
+			if (bna instanceof Place) {
+				p = (Place) bna;
+				c = Color.getHSBColor(i * 1.0f / (getPlaceCount()), 1, 1);
+				if (override) {
+					p.setPlotColor(c);
+				} else {
+					if (p.getPlotColor() == null) {
+						p.setPlotColor(c);
+					}
+				}
+				i++;
+			} else if (bna instanceof Transition) {
+				t = (Transition) bna;
+				c = Color.getHSBColor(j * 1.0f / (getTransitionCount()), 1, 1);
+				if (override) {
+					t.setPlotColor(c);
+				} else {
+					if (t.getPlotColor() == null) {
+						t.setPlotColor(c);
+					}
+				}
+				j++;
+			}
+		}
 	}
 }

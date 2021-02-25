@@ -15,7 +15,6 @@ public class Transition extends PNNode {
 	private String firingCondition = "true";//"time>9.8";
 	
 	//private Vector<Double> simActualSpeed = new Vector<Double>();
-	private Color plotColor;
 	
 	private boolean knockedOut = false;
 	
@@ -85,14 +84,6 @@ public class Transition extends PNNode {
 		this.simulationActive = simulationActive;
 	}
 
-	public void setPlotColor(Color plotColor) {
-		this.plotColor = plotColor;
-	}
-
-	public Color getPlotColor() {
-		return plotColor;
-	}
-
 	public boolean isKnockedOut() {
 		return knockedOut;
 	}
@@ -100,5 +91,4 @@ public class Transition extends PNNode {
 	public void setKnockedOut(boolean knockedOut) {
 		this.knockedOut = knockedOut;
 	}
-
 }

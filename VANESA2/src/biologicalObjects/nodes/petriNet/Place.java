@@ -26,9 +26,6 @@ public abstract class Place extends PNNode {
 
 	private int conflictStrategy = 0;
 
-	private Color plotColor;
-
-	
 
 	// private int r;
 	// private int b;
@@ -99,14 +96,6 @@ public abstract class Place extends PNNode {
 		this.tokenStart = tokenStart;
 		if (!new GraphInstance().getPathway().getPetriPropertiesNet().isPetriNetSimulation())
 			token = tokenStart;
-	}
-	
-	public void setPlotColor(Color plotColor) {
-		this.plotColor = plotColor;
-	}
-
-	public Color getPlotColor() {
-		return plotColor;
 	}
 	
 	public int getConflictStrategy() {

@@ -36,7 +36,7 @@ public class CSVWriter {
 				StringBuffer buff = new StringBuffer();
 				Iterator<BiologicalNodeAbstract> it = nodes.iterator();
 				BiologicalNodeAbstract bna;
-				buff.append("Time;");
+				buff.append("\"Time\";");
 				while (it.hasNext()) {
 					bna = it.next();
 					if (bna instanceof Place && !bna.hasRef()) {
@@ -53,49 +53,49 @@ public class CSVWriter {
 				}
 
 				for (int i = 0; i < places.size(); i++) {
-					buff.append(places.get(i).getName() + ";");
+					buff.append("\""+places.get(i).getName() + "\";");
 				}
 				for (int i = 0; i < transitions.size(); i++) {
-					buff.append(transitions.get(i).getName() + "-fire;");
-					buff.append(transitions.get(i).getName() + "-speed;");
+					buff.append("\""+transitions.get(i).getName() + "-fire\";");
+					buff.append("\""+transitions.get(i).getName() + "-speed\";");
 				}
 				for (int i = 0; i < edges.size(); i++) {
 					bea = edges.get(i);
-					buff.append((bea.getFrom().getName() + "-" + bea.getTo().getName() + "-token;"));
-					buff.append((bea.getFrom().getName() + "-" + bea.getTo().getName() + "-tokenSum;"));
+					buff.append("\""+bea.getFrom().getName() + "-" + bea.getTo().getName() + "-token\";");
+					buff.append("\""+bea.getFrom().getName() + "-" + bea.getTo().getName() + "-tokenSum\";");
 				}
 				buff.append("\r\n");
 
 				for (int t = 0; t < simRes.getTime().size(); t++) {
-					buff.append(simRes.getTime().get(t) + ";");
+					buff.append("\""+simRes.getTime().get(t) + "\";");
 
 					for (int i = 0; i < places.size(); i++) {
 						// buff.append(places.get(i).getName() + ";");
-						buff.append(simRes.get(places.get(i), SimulationResultController.SIM_TOKEN).get(t) + ";");
+						buff.append("\""+simRes.get(places.get(i), SimulationResultController.SIM_TOKEN).get(t) + "\";");
 					}
 					for (int i = 0; i < transitions.size(); i++) {
-						buff.append(simRes.get(transitions.get(i), SimulationResultController.SIM_FIRE).get(t) + ";");
+						buff.append("\""+simRes.get(transitions.get(i), SimulationResultController.SIM_FIRE).get(t) + "\";");
 						if (simRes.contains(transitions.get(i), SimulationResultController.SIM_ACTUAL_FIRING_SPEED)) {
-							buff.append(
+							buff.append("\""+
 									simRes.get(transitions.get(i), SimulationResultController.SIM_ACTUAL_FIRING_SPEED)
-											.get(t) + ";");
+											.get(t) + "\";");
 						} else {
-							buff.append(";");
+							buff.append("\"\";");
 						}
 					}
 					for (int i = 0; i < edges.size(); i++) {
 						if (simRes.contains(edges.get(i), SimulationResultController.SIM_ACTUAL_TOKEN_FLOW)) {
-							buff.append(
+							buff.append("\""+
 									simRes.get(edges.get(i), SimulationResultController.SIM_ACTUAL_TOKEN_FLOW).get(t)
-											+ ";");
+											+ "\";");
 						} else {
-							buff.append(";");
+							buff.append("\"\";");
 						}
 						if (simRes.contains(edges.get(i), SimulationResultController.SIM_SUM_OF_TOKEN)) {
-							buff.append(
-									simRes.get(edges.get(i), SimulationResultController.SIM_SUM_OF_TOKEN).get(t) + ";");
+							buff.append("\""+
+									simRes.get(edges.get(i), SimulationResultController.SIM_SUM_OF_TOKEN).get(t) + "\";");
 						} else {
-							buff.append(";");
+							buff.append("\"\";");
 						}
 					}
 					buff.append("\r\n");

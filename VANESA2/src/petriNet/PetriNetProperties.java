@@ -97,6 +97,7 @@ public class PetriNetProperties {
 					}
 				}
 			}
+			pw.setPlotColorPlacesTransitions(false);
 			this.setPetriNetSimulation(true);
 		} catch (IOException e) {
 			e.printStackTrace();

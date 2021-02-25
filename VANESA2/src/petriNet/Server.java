@@ -1,6 +1,5 @@
 package petriNet;
 
-import java.awt.Color;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.SocketException;
@@ -51,7 +50,7 @@ public class Server {
 		this.pw = pw;
 		this.bea2key = bea2key;
 		this.simId = simId;
-		this.init();
+		this.pw.setPlotColorPlacesTransitions(false);
 	}
 
 	public void start() throws IOException {
@@ -271,49 +270,6 @@ public class Server {
 			//serverThread.stop();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	private void init() {
-
-		Collection<BiologicalNodeAbstract> hs = pw.getAllGraphNodes();
-		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-		BiologicalNodeAbstract bna;
-		int places = 0;
-		int transitions = 0;
-
-		while (it.hasNext()) {
-			bna = it.next();
-			if (bna instanceof Place) {
-				places++;
-				// pw.getGraph().getVisualizationViewer().getPickedVertexState().pick(bna,
-				// true);
-			} else if (bna instanceof Transition) {
-				transitions++;
-			}
-		}
-		it = hs.iterator();
-		int i = 0;
-		int j = 0;
-		while (it.hasNext()) {
-			bna = it.next();
-			if (bna instanceof Place) {
-				((Place) bna).setPlotColor(Color.getHSBColor(i * 1.0f / (places), 1, 1));
-				i++;
-			} else if (bna instanceof Transition) {
-				((Transition) bna).setPlotColor(Color.getHSBColor(j * 1.0f / (transitions), 1, 1));
-				j++;
-			}
-		}
-
-		Iterator<BiologicalEdgeAbstract> it2 = pw.getAllEdges().iterator();
-		BiologicalEdgeAbstract bea;
-		PNEdge e;
-		while (it2.hasNext()) {
-			bea = it2.next();
-			if (bea instanceof PNEdge) {
-				e = (PNEdge) bea;
-			}
 		}
 	}
 

@@ -191,6 +191,7 @@ public class SaveDialog {
 		} else {
 			this.relativeTo = relativeTo;
 		}
+		String error = "";
 		this.prerapre(format);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int option = chooser.showSaveDialog(relativeTo);
@@ -207,7 +208,7 @@ public class SaveDialog {
 					xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
 				}
 				xmlSettings.setProperty("SaveDialog-Path", fileDir.getAbsolutePath());
-				System.out.println(fileDir.getAbsolutePath());
+				// System.out.println(fileDir.getAbsolutePath());
 				xmlSettings.save();
 			} catch (ConfigurationException e) {
 				e.printStackTrace();
@@ -271,6 +272,7 @@ public class SaveDialog {
 							ChartUtilities.saveChartAsPNG(new File(pathSim + name + ".png"), chart, width * 2,
 									height * 2);
 						} catch (IOException e) {
+							error+=e.getMessage();
 							e.printStackTrace();
 						}
 					}
@@ -303,10 +305,16 @@ public class SaveDialog {
 							svgGenerator.stream(out, useCSS);
 							out.close();
 						} catch (IOException e) {
+							error+=e.getMessage();
 							e.printStackTrace();
 						}
 					}
 				}
+			}
+			if(error.trim().length() == 0){
+				MyPopUp.getInstance().show("Image export", "Exports of images was successful!");
+			}else{
+				MyPopUp.getInstance().show("Error during image export", error);
 			}
 		}
 	}
@@ -373,6 +381,12 @@ public class SaveDialog {
 		if (gonBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(csml, csmlDescription));
 		}
+		if (pdfBool) {
+			chooser.addChoosableFileFilter(new MyFileFilter(pdf, pdfDescription));
+		}
+		if (svgBool) {
+			chooser.addChoosableFileFilter(new MyFileFilter(svg, svgDescription));
+		}
 		if (pnmlBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(pnml, pnmlDescription));
 		}
@@ -388,14 +402,8 @@ public class SaveDialog {
 		if (pngBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(png, pngDescription));
 		}
-		if (svgBool) {
-			chooser.addChoosableFileFilter(new MyFileFilter(svg, svgDescription));
-		}
 		if (yamlBool) {
 			chooser.addChoosableFileFilter(new MyFileFilter(yaml, yamlDescription));
-		}
-		if (pdfBool) {
-			chooser.addChoosableFileFilter(new MyFileFilter(pdf, pdfDescription));
 		}
 	}
 
