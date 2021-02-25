@@ -32,6 +32,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.Place;
 import graph.GraphInstance;
 import io.SaveDialog;
@@ -135,11 +136,10 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			p.setLayout(new GridLayout(0, 3));
 			// Place place;
 			// Double value;
-			
+
 			DecimalFormat df = new DecimalFormat("#.#####");
 			df.setRoundingMode(RoundingMode.HALF_UP);
-			
-			
+
 			for (int j = 0; j < rows; j++) {
 				place = places.get(labels.get(j));
 				if (simRes.contains(place, TOKEN) && simRes.get(place, TOKEN).size() > 0) {
@@ -164,9 +164,14 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 							PlotOrientation.VERTICAL, false, true, false);
 
 					final XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-					String start = "Start=" + simRes.get(place, TOKEN).get(0).toString();
-					String end = "end="+df.format(simRes.get(place, TOKEN).get(simRes.size()-1));
-					chart.addSubtitle(new TextTitle(start+" "+end));
+					String start = "Start=";
+					if (place instanceof ContinuousPlace) {
+						start += simRes.get(place, TOKEN).get(0).toString();
+					} else {
+						start += df.format(simRes.get(place, TOKEN).get(0));
+					}
+					String end = "end=" + df.format(simRes.get(place, TOKEN).get(simRes.size() - 1));
+					chart.addSubtitle(new TextTitle(start + " " + end));
 					// NumberAxis yAxis = new NumberAxis();
 					// xAxis.setTickUnit(new NumberTickUnit(2));
 					// xAxis.setRange(0, 50);
@@ -249,7 +254,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-		new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG + SaveDialog.FORMAT_PDF, charts, true, this);
+		new SaveDialog(SaveDialog.FORMAT_PDF + SaveDialog.FORMAT_SVG +  SaveDialog.FORMAT_PNG, charts, true, this);
 
 		/*
 		 * BufferedImage bi = new BufferedImage(p.getWidth(), p.getHeight(),

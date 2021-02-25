@@ -56,6 +56,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.visualization.picking.PickedState;
@@ -198,13 +199,12 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		if (pw == null) {
 			return;
 		}
-		if(simResController == null){
+		if (simResController == null) {
 			return;
 		}
 		if (pw.isPetriNet() || pw.getPetriNet() != null) {
 			SimulationResult simRes = simResController.getLastActive();
 			if (pw.getPetriPropertiesNet().isPetriNetSimulation() && simRes != null) {
-				
 
 				// System.out.println(main.getComponentCount());
 				// most of the time unnecessary to remove all
@@ -302,8 +302,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				main.setVisible(true);
 
 				drawPlot();
-			}
-			else{
+			} else {
 				removeAllElements();
 			}
 		} else {
@@ -376,28 +375,35 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			bna = resolveReference(bna);
 			bna = resolveHidden(bna);
 
-			if (bna instanceof Place) {
-				listActive = simResController.getAllActiveWithData(bna, TOKEN);
-			} else if (bna instanceof Transition) {
-				listActive = simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED);
-			}
-			for (int i = 0; i < listActive.size(); i++) {
-				result = listActive.get(i);
-				int idx = 0;
+			if (bna instanceof PNNode) {
+				PNNode pn = (PNNode) bna;
 				if (bna instanceof Place) {
-					idx = series2idx.get(bna, TOKEN, result.getId());
+					listActive = simResController.getAllActiveWithData(bna, TOKEN);
 				} else if (bna instanceof Transition) {
-					idx = series2idx.get(bna, ACTUAL_FIRING_SPEED, result.getId());
+					listActive = simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED);
 				}
+				for (int i = 0; i < listActive.size(); i++) {
+					result = listActive.get(i);
+					int idx = 0;
+					if (bna instanceof Place) {
+						idx = series2idx.get(bna, TOKEN, result.getId());
+					} else if (bna instanceof Transition) {
+						idx = series2idx.get(bna, ACTUAL_FIRING_SPEED, result.getId());
+					}
 
-				renderer.setSeriesVisible(idx, true);
-				// Stroke dash1 = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE,
-				// BasicStroke.JOIN_MITER, 1.0f, new float[] { 2.0f, i * 2 },
-				// 0.0f);
-				// renderer.setSeriesStroke(idx, dash1);
-				// System.out.println("stroke set");
-				Color c = Color.getHSBColor(i * 1.0f / (listActive.size()), 1, 1);
-				renderer.setSeriesPaint(idx, c);
+					renderer.setSeriesVisible(idx, true);
+					// Stroke dash1 = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE,
+					// BasicStroke.JOIN_MITER, 1.0f, new float[] { 2.0f, i * 2 },
+					// 0.0f);
+					// renderer.setSeriesStroke(idx, dash1);
+					// System.out.println("stroke set");
+					Color c = Color.getHSBColor(i * 1.0f / (listActive.size()), 1, 1);
+					if (listActive.size() == 1) {
+						renderer.setSeriesPaint(idx, pn.getPlotColor());
+					} else {
+						renderer.setSeriesPaint(idx, c);
+					}
+				}
 			}
 		} else {
 			boolean onlyT = true;
@@ -1044,7 +1050,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				if (pickedV == 0 && pickedE == 1) {
 					BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
 					if (hiddenPN) {
-						bea = pw.getPetriNet().getEdge(pw.getBnToPN().get(bea.getFrom()), pw.getBnToPN().get(bea.getTo()));
+						bea = pw.getPetriNet().getEdge(pw.getBnToPN().get(bea.getFrom()),
+								pw.getBnToPN().get(bea.getTo()));
 					}
 					if (simResController.getAllActiveWithData(bea, SUM_OF_TOKEN).size() <= 1) {
 						return labelsR1.get(seriesIdx);
@@ -1067,7 +1074,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				if (pickedV == 0 && pickedE == 1) {
 					BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
 					if (hiddenPN) {
-						bea = pw.getPetriNet().getEdge(pw.getBnToPN().get(bea.getFrom()), pw.getBnToPN().get(bea.getTo()));
+						bea = pw.getPetriNet().getEdge(pw.getBnToPN().get(bea.getFrom()),
+								pw.getBnToPN().get(bea.getTo()));
 					}
 					if (simResController.getAllActiveWithData(bea, SUM_OF_TOKEN).size() <= 1) {
 						return "Sum";
@@ -1291,7 +1299,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		// get Data from all Places
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		rows = new Object[rowsSize][rowsDim + 1];
-		
+
 		int i = 0;
 
 		while (it.hasNext()) {

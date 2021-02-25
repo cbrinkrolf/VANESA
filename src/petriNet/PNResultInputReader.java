@@ -18,7 +18,7 @@ public class PNResultInputReader {
 		BufferedReader in = new BufferedReader(new FileReader(file));
 		ArrayList<String> text = new ArrayList<String>();
 		ArrayList<String> columnName = new ArrayList<String>();
-		
+
 		String line = null;
 		while ((line = in.readLine()) != null) {
 			text.add(line);
@@ -31,12 +31,12 @@ public class PNResultInputReader {
 
 		// "\" added, because names / labels may contain ","
 		String[] headNames = head.split(";");
-		
+
 		int lines = text.size();
 		int cols = headNames.length;
 		String name;
 		for (int i = 0; i < cols; i++) {
-			name = headNames[i];
+			name = headNames[i].replaceAll("\"", "");
 			result.put(name, new ArrayList<Double>());
 			columnName.add(name);
 		}
@@ -52,17 +52,17 @@ public class PNResultInputReader {
 		for (int i = 0; i < cols; i++) {
 			name = columnName.get(i);
 			//System.out.println(name);
-				for (int j = 1; j < lines; j++) {
-					//System.out.println(j);
-					if(content[j][i].isEmpty()){
-						
-					}else{
-					result.get(name).add(Double.parseDouble(content[j][i]));
-					}
-					//System.out.print(content[j][i]+" ");
+			for (int j = 1; j < lines; j++) {
+				// System.out.println(content[j][i]);
+				if (content[j][i].replaceAll("\"", "").isEmpty()) {
+					// System.out.println("is empty");
+				} else {
+					result.get(name).add(Double.parseDouble(content[j][i].replaceAll("\"", "")));
 				}
-				//System.out.println();
-				// System.out.println(columns.get(i) + " " +v.size());
+				// System.out.print(content[j][i]+" ");
+			}
+			// System.out.println();
+			// System.out.println(columns.get(i) + " " +v.size());
 			// System.out.println(k+" nicht enthalten");
 		}
 		// System.out.println(node);
