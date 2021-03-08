@@ -257,9 +257,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				slider.setMajorTickSpacing(1);
 				slider.addChangeListener(this);
 				slider.setToolTipText("Time: 0");
+				slider.setValue(0);
 
 				controlPanel = new JPanel(new MigLayout());
-				JPanel controlPanel2 = new JPanel(new MigLayout());
 
 				petriNetAnimationButton.setBackground(Color.GREEN);
 				petriNetStopAnimationButton.setBackground(Color.RED);
@@ -272,23 +272,24 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 				controlPanel.add(new JSeparator(), "span, wrap 10, growx");
 
-				controlPanel.add(new JLabel("Animation Start:"), "align left");
-				controlPanel.add(animationStart, "align left,wrap 10, growx");
+				// JPanel controlPanel2 = new JPanel(new MigLayout());
+				// controlPanel.add(new JLabel("Animation Start:"), "align left");
+				// controlPanel.add(animationStart, "align left,wrap 10, growx");
 
-				controlPanel.add(new JLabel("Animation Stop:"), "align left");
-				controlPanel.add(animationStop, "align left,wrap 10, growx");
+				// controlPanel.add(new JLabel("Animation Stop:"), "align left");
+				// controlPanel.add(animationStop, "align left,wrap 10, growx");
 
-				controlPanel.add(new JLabel("Animation Speed x:"), "align left");
-				controlPanel.add(animationSpeed, "align left,wrap 10, growx");
+				// controlPanel.add(new JLabel("Animation Speed x:"), "align left");
+				// controlPanel.add(animationSpeed, "align left,wrap 10, growx");
 
-				controlPanel.add(new JLabel("Animation Colour:"), "align left");
-				controlPanel.add(animationColour, "align left,wrap 10, growx");
+				// controlPanel.add(new JLabel("Animation Colour:"), "align left");
+				// controlPanel.add(animationColour, "align left,wrap 10, growx");
 
-				controlPanel2.add(petriNetAnimationButton, "align left");
-				controlPanel2.add(petriNetStopAnimationButton, "align left");
-				controlPanel2.add(resetPetriNet, "align left");
+				// controlPanel2.add(petriNetAnimationButton, "align left");
+				// controlPanel2.add(petriNetStopAnimationButton, "align left");
+				// controlPanel2.add(resetPetriNet, "align left");
 
-				controlPanel.add(controlPanel2, "span, wrap,growx");
+				// controlPanel.add(controlPanel2, "span, wrap,growx");
 
 				controlPanel.add(slider, "span");
 				controlPanel.add(stepLabel, "align left,wrap, growx");
@@ -344,7 +345,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			if (bea instanceof PNEdge) {
 				secondAxis = true;
 				PNEdge edge = (PNEdge) bea;
-				List<SimulationResult> listActive = simResController.getAllActiveWithData(edge, ACTUAL_TOKEN_FLOW);
+				List<SimulationResult> listActive = simResController.getAllActiveWithData(edge, SUM_OF_TOKEN);
 				SimulationResult result;
 
 				// System.out.println(edge.getID());
@@ -353,6 +354,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				// SUM_OF_TOKEN).size() > 0) {
 				for (int i = 0; i < listActive.size(); i++) {
 					result = listActive.get(i);
+					
 					int idxFlow = series2idx.get(edge, ACTUAL_TOKEN_FLOW, result.getId());
 					int idxSum = series2idx.get(edge, SUM_OF_TOKEN, result.getId());
 
@@ -618,25 +620,37 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					if (simRes.contains(edge)) {
 						series = this.seriesListR1.get(series2idx.get(edge, ACTUAL_TOKEN_FLOW, simRes.getId()));
 						series2 = this.seriesListR2.get(series2idx.get(edge, SUM_OF_TOKEN, simRes.getId()));
-						if (simRes.contains(edge, SUM_OF_TOKEN) && simRes.get(edge, SUM_OF_TOKEN).size() > 0
+						//System.out.println(series.getItemCount() + " " + series2.getItemCount());
+						if (simRes.contains(edge, ACTUAL_TOKEN_FLOW )
 								&& simRes.get(edge, ACTUAL_TOKEN_FLOW).size() > 0) {
-							stop = Math.min(Math.min(simRes.get(edge, ACTUAL_TOKEN_FLOW).size(),
-									simRes.get(edge, SUM_OF_TOKEN).size()), time.size());
-							steps = stop - Math.min(series.getItemCount(), series2.getItemCount());
+							//System.out.println("drin");
+							stop = Math.min(simRes.get(edge, ACTUAL_TOKEN_FLOW).size(), time.size());
+							steps = stop - series.getItemCount();
 							if (steps > 0) {
-								for (int i = Math.min(series.getItemCount(), series2.getItemCount()); i < stop; i++) {
+								for (int i = series.getItemCount(); i < stop; i++) {
 									value = simRes.get(edge, ACTUAL_TOKEN_FLOW).get(i);
 									if (series == null) {
 										System.out.println(edge.getFrom().getName() + " => " + edge.getTo().getName());
 									}
+									series.add(simRes.getTime().get(i), value, false);
+								}
+								series.fireSeriesChanged();
+							}
+						}
+
+						if (simRes.contains(edge, SUM_OF_TOKEN) && simRes.get(edge, SUM_OF_TOKEN).size() > 0) {
+							
+							stop = Math.min(simRes.get(edge, SUM_OF_TOKEN).size(), time.size());
+							steps = stop - series2.getItemCount();
+							if (steps > 0) {
+								for (int i = series2.getItemCount(); i < stop; i++) {
+									value = simRes.get(edge, SUM_OF_TOKEN).get(i);
 									if (series2 == null) {
 										System.out.println(
 												"null: " + edge.getFrom().getName() + " -> " + edge.getTo().getName());
 									}
-									series.add(simRes.getTime().get(i), value, false);
-									series2.add(simRes.getTime().get(i), simRes.get(edge, SUM_OF_TOKEN).get(i), false);
+									series2.add(simRes.getTime().get(i), value, false);
 								}
-								series.fireSeriesChanged();
 								series2.fireSeriesChanged();
 							}
 						}

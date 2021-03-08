@@ -205,7 +205,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 		split_pane.add(optionPanel.getPanel());
 		addView();
-		split_pane.setOneTouchExpandable(true);
+		split_pane.setOneTouchExpandable(false);
 		split_pane.addPropertyChangeListener(new PropertyChangeListener() {
 			// private final int SP_DIVIDER_MAX_LOCATION = split_pane
 			// .getLeftComponent().getPreferredSize().width;
@@ -214,7 +214,6 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				final String prop_name = evt.getPropertyName();
-
 				if (prop_name.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY) || prop_name.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
 					if (split_pane.getDividerLocation() > SP_DIVIDER_MAX_LOCATION)
 						split_pane.setDividerLocation(SP_DIVIDER_MAX_LOCATION);

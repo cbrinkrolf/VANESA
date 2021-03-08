@@ -303,7 +303,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 			if (pw.isPetriNet() && !((start instanceof Place && end instanceof Transition)
 					|| (start instanceof Transition && end instanceof Place))) {
 				MyPopUp.getInstance().show("Operation not allowed",
-						"In a petri net only Transition->Place and Place->Transition Relations are allowed!");
+						"In a Petri net only Transition->Place and Place->Transition arcs are allowed!");
 			} else {
 				// Graph graph = vv.getGraphLayout().getGraph();
 				EdgeDialog dialog = new EdgeDialog(startVertex, vertex, pw, lastEdgeTypeIdx, lastDirected);
@@ -319,7 +319,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 									|| details.get("element").toLowerCase().contains("test"))
 							&& !(startVertex instanceof Place && vertex instanceof Transition)) {
 						MyPopUp.getInstance().show("Operation not allowed",
-								"Inhibitory / Test Edges are only possible from Place to Transition!");
+								"Inhibitory / Test arcs are only possible from Place to Transition!");
 					} else {
 						String name = details.get("name");
 						String label = details.get("name");

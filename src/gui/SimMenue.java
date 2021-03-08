@@ -131,7 +131,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		// northUp.setLayout(new GridLayout(1,5));
 		// northDown.setLayout();
 		integrators = new JComboBox<String>();
-		integrators.setSelectedItem("dassl");
+		integrators.setSelectedItem("rungekutta");
 		AutoCompleteDecorator.decorate(integrators);
 		integrators.addItem("dassl");
 		integrators.addItem("euler");
@@ -365,6 +365,11 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
 	public void addText(String text) {
 		this.textArea.setText(textArea.getText() + text);
+		this.pack();
+	}
+	
+	public void clearText(){
+		this.textArea.setText("");
 		this.pack();
 	}
 
