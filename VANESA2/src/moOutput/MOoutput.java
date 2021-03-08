@@ -311,8 +311,8 @@ public class MOoutput {
 
 					Place place = (Place) bna;
 
-					atr = "startTokens(final unit=\"mmol\")=" + (int) place.getTokenStart() + ",minTokens(final unit=\"mmol\")="
-							+ (int) place.getTokenMin() + ",maxTokens(final unit=\"mmol\")=" + (int) place.getTokenMax();
+					atr = "startTokens=" + (int) place.getTokenStart() + ",minTokens="
+							+ (int) place.getTokenMin() + ",maxTokens=" + (int) place.getTokenMax();
 					// places =
 					// places.concat(getPlaceString(getModelicaString(place),
 					// bna, atr, in, out));
@@ -334,6 +334,7 @@ public class MOoutput {
 						max = place.getTokenMax() + "";
 					}
 
+					// TODO units
 					atr = "startMarks(final unit=\"mmol\")=" + start + ",minMarks(final unit=\"mmol\")=" + min + ",maxMarks(final unit=\"mmol\")="
 							+ max + ",t(final unit=\"mmol\")";
 					if (place.getConflictingOutEdges().size() > 1) {
@@ -354,6 +355,7 @@ public class MOoutput {
 					// " + place.getConflictingOutEdges().size());
 				} else if (biologicalElement.equals(Elementdeclerations.stochasticTransition)) {
 
+					//TODO hazard function missing
 					StochasticTransition t = (StochasticTransition) bna;
 					// String atr = "h=" + t.getDistribution();
 					atr = "h=1.0";

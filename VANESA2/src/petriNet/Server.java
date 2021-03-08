@@ -2,6 +2,8 @@ package petriNet;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -11,7 +13,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.commons.lang3.SystemUtils;
 
@@ -35,6 +39,8 @@ public class Server {
 	private Pathway pw;
 	private String simId;
 	private SimulationResult simResult;
+	
+	private Set<PNEdge> toRefineEdges =  new HashSet<PNEdge>();
 
 	// size of modelica int;
 	private final int sizeOfInt;
@@ -58,6 +64,8 @@ public class Server {
 		Runnable serverTask = new Runnable() {
 			@Override
 			public void run() {
+				Socket client;
+				DataInputStream is;
 				while (running) {
 					try {
 						int port = 11111;
@@ -65,13 +73,13 @@ public class Server {
 						simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
 						System.out.println(simId);
 						MainWindow.getInstance().initSimResGraphs();
-						while (true) {
-							java.net.Socket client = waitForClient(serverSocket);
+						while (true && !serverSocket.isClosed()) {
+							client = waitForClient(serverSocket);
 							// leseNachricht(client);
 
 							// InputStream is = new
 							// BufferedInputStream(client.getInputStream());
-							DataInputStream is = new DataInputStream(client.getInputStream());
+							is = new DataInputStream(client.getInputStream());
 							readData(is);
 							// System.out.println("server: " + nachricht);
 							// schreibeNachricht(client, nachricht);
@@ -79,18 +87,19 @@ public class Server {
 						}
 					} catch (IOException e) {
 						running = false;
-						//System.err.println("Unable to process client request");
-						//e.printStackTrace();
+						// System.err.println("Unable to process client request");
+						 e.printStackTrace();
 					}
 				}
+				simResult.refineEdgeFlow(toRefineEdges);
 			}
 		};
 		serverThread = new Thread(serverTask);
 		serverThread.start();
 	}
 
-	java.net.Socket waitForClient(java.net.ServerSocket serverSocket) throws IOException {
-		java.net.Socket socket = serverSocket.accept();
+	private Socket waitForClient(ServerSocket serverSocket) throws IOException {
+		Socket socket = serverSocket.accept();
 		return socket;
 	}
 
@@ -256,7 +265,7 @@ public class Server {
 			System.out.println("server destroyed");
 			serverSocket.close();
 			running = false;
-			//serverThread.stop();
+			// serverThread.stop();
 			// serverThread.destroy();
 		}
 		// System.out.println(n[1]);
@@ -267,7 +276,7 @@ public class Server {
 		this.serverSocket.close();
 		try {
 			running = false;
-			//serverThread.stop();
+			// serverThread.stop();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -299,6 +308,10 @@ public class Server {
 				if (name2index.get("der(" + bea2key.get(bea) + ")") != null) {
 					o = values.get(name2index.get("der(" + bea2key.get(bea) + ")"));
 					this.checkAndAddValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, o);
+				}else{
+					if(!toRefineEdges.contains(e)){
+						toRefineEdges.add(e);
+					}
 				}
 				if (name2index.get(bea2key.get(bea)) != null) {
 					o = values.get(name2index.get(bea2key.get(bea)));
@@ -361,7 +374,9 @@ public class Server {
 			value = 0;
 			System.out.println("unsupported data type!!!");
 		}
-		// System.out.println(gea.getName()+" :"+value + " org:"+o );
+		if (gea instanceof PNEdge) {
+			//System.out.println(gea.getName() + " :" + value + " org:" + o);
+		}
 		this.simResult.addValue(gea, type, value);
 	}
 
@@ -374,7 +389,7 @@ public class Server {
 		try {
 			running = false;
 			serverSocket.close();
-			//serverThread.stop();
+			// serverThread.stop();
 			// serverThread.destroy();
 		} catch (IOException e) {
 			e.printStackTrace();

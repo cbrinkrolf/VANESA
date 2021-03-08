@@ -12,7 +12,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.RoundingMode;
 import java.net.URI;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -194,10 +196,10 @@ public class PetriNetSimulation implements ActionListener {
 									// String program = "_omcQuot_556E7469746C6564";
 									logAndShow("override statement: " + override);
 									if (noEmmit) {
-										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-port=11111",
-												"-noEventEmit", "-lv=LOG_STATS");
+										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-nls=newton",
+												"-port=11111", "-noEventEmit", "-lv=LOG_STATS");
 									} else {
-										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-port=11111",
+										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-nls=newton", "-port=11111",
 												"-lv=LOG_STATS");
 									}
 									pb.redirectOutput();
@@ -205,7 +207,7 @@ public class PetriNetSimulation implements ActionListener {
 									Map<String, String> env = pb.environment();
 									// String envPath = env.get("PATH");
 									String envPath = System.getenv("PATH");
-									envPath += pathCompiler + "bin;";
+									envPath = pathCompiler + "bin;" + envPath;
 									env.put("PATH", envPath);
 									System.out.println("working path:" + env.get("PATH"));
 									System.out.println(pb.environment().get("PATH"));
@@ -228,6 +230,8 @@ public class PetriNetSimulation implements ActionListener {
 								// System.out.println(pw.getPetriNet().getSimResController().get().getTime());
 								List<Double> v = null;// pw.getPetriNet().getSimResController().get().getTime().getAll();
 								// System.out.println("running");
+								DecimalFormat df = new DecimalFormat("#.#####");
+								df.setRoundingMode(RoundingMode.HALF_UP);
 								while (s.isRunning()) {
 									if (v == null && pw.getPetriPropertiesNet().getSimResController()
 											.getLastActive() != null) {
@@ -244,7 +248,7 @@ public class PetriNetSimulation implements ActionListener {
 
 									// double time =
 									if (v != null && v.size() > 0) {
-										menue.setTime("Time: " + (v.get(v.size() - 1)).toString());
+										menue.setTime("Time: " + df.format((v.get(v.size() - 1))));
 									}
 									try {
 										sleep(100);
@@ -296,9 +300,10 @@ public class PetriNetSimulation implements ActionListener {
 									System.out.println("outputReader server stopped");
 									line = outputReader.readLine();
 									while (line != null && line.length() > 0) {
-										menue.addText(line + "\r\n");
-										pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage()
-												.append(line + "\r\n");
+										//menue.addText(line + "\r\n");
+										//pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage()
+										//		.append(line + "\r\n");
+										logAndShow(line);
 										System.out.println(line);
 										line = outputReader.readLine();
 									}
@@ -477,7 +482,7 @@ public class PetriNetSimulation implements ActionListener {
 		out.write("getErrorString();\r\n");
 		// out.write("setDebugFlags(\"disableComSubExp\"); ");
 		// out.write("getErrorString();\r\n");
-		out.write("setCommandLineOptions(\"--preOptModules+=unitChecking\");");
+		out.write("setCommandLineOptions(\"--unitChecking\");");
 		// out.write("setCommandLineOptions(\"+d=disableComSubExp
 		// +unitChecking\");");
 		out.write("getErrorString();\r\n");
@@ -586,6 +591,7 @@ public class PetriNetSimulation implements ActionListener {
 
 				} catch (Exception e) {
 					e.printStackTrace();
+					logAndShow(e.getMessage());
 				}
 				allThread.start();
 			}
@@ -602,8 +608,8 @@ public class PetriNetSimulation implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		if (event.getActionCommand().equals("start")) {
 			if (allThread != null) {
-				//allThread.interrupt();
-				//allThread = null;
+				// allThread.interrupt();
+				// allThread = null;
 			}
 			this.menue.started();
 			// this.runOMC();
@@ -611,6 +617,7 @@ public class PetriNetSimulation implements ActionListener {
 				simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
 						+ System.nanoTime();
 				this.logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
+				menue.clearText();
 				menue.addText(logMessage.toString());
 				this.runOMCIA();
 			} else {
@@ -685,7 +692,7 @@ public class PetriNetSimulation implements ActionListener {
 		}
 		if (compileProcess != null) {
 			compileProcess.destroy();
-			menue.setTime("compiling stopped!");
+			menue.setTime("compiling / simulation aborted!");
 		}
 		if (simProcess != null) {
 			this.simProcess.destroy();

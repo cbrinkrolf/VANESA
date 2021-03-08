@@ -8,7 +8,6 @@ import javax.swing.JScrollPane;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
-import biologicalElements.Pathway;
 import database.gui.DatabaseWindow;
 import graph.gui.ElementWindow;
 import net.miginfocom.swing.MigLayout;
@@ -174,8 +173,8 @@ public class OptionPanel {
 		if (MainWindow.developer) {
 			taskPaneContainer.add(databaseSearch, "growx");
 			taskPaneContainer.add(simResView, "growx");
-			taskPaneContainer.add(theory, "growx");
 			taskPaneContainer.add(generalProperties, "growx");
+			taskPaneContainer.add(theory, "growx");
 			taskPaneContainer.add(satellite, "growx");
 			taskPaneContainer.add(elements, "growx");
 			taskPaneContainer.add(bbProperties, "growx");
@@ -187,8 +186,8 @@ public class OptionPanel {
 		} else {
 			taskPaneContainer.add(databaseSearch, "growx");
 			taskPaneContainer.add(simResView, "growx");
-			taskPaneContainer.add(theory, "growx");
 			taskPaneContainer.add(generalProperties, "growx");
+			taskPaneContainer.add(theory, "growx");
 			taskPaneContainer.add(satellite, "growx");
 			taskPaneContainer.add(elements, "growx");
 			taskPaneContainer.add(bbProperties, "growx");
