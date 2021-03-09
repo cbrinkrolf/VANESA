@@ -52,16 +52,18 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	private MyAnnotation highlight = null;
 	private Point2D pressed = null;
 	private Point2D released = null;
+	private boolean moved = false;
+	private boolean sticky = true;
 
 	public MyPickingGraphMousePlugin() {
 
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		//vv.setFocusable(true);
-		//vv.requestFocus();
-		
-		
+		moved = false;
+		// vv.setFocusable(true);
+		// vv.requestFocus();
+
 		// System.out.println("released");
 		pw.pickGroup();
 		if (inwindow) {
@@ -107,10 +109,14 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				MyGraph graph = pw.getGraph();
 				for (BiologicalNodeAbstract selectedNode : selectedNodes) {
 					if (selectedNode.isCoarseNode()) {
-						movement.setLocation(graph.getVertexLocation(selectedNode).getX() - oldVertexPositions.get(selectedNode).getX(),
-								graph.getVertexLocation(selectedNode).getY() - oldVertexPositions.get(selectedNode).getY());
+						movement.setLocation(
+								graph.getVertexLocation(selectedNode).getX()
+										- oldVertexPositions.get(selectedNode).getX(),
+								graph.getVertexLocation(selectedNode).getY()
+										- oldVertexPositions.get(selectedNode).getY());
 						for (BiologicalNodeAbstract child : selectedNode.getVertices().keySet()) {
-							pw.getVertices().get(child).setLocation(Circle.addPoints(pw.getVertices().get(child), movement));
+							pw.getVertices().get(child)
+									.setLocation(Circle.addPoints(pw.getVertices().get(child), movement));
 						}
 					} else {
 						if (pw.getVertices().keySet().contains(selectedNode)) {
@@ -127,8 +133,9 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				// Disallow to add selection to environment coarse nodes.
 				if (pw.isBNA()) {
 					if (((BiologicalNodeAbstract) pw).getEnvironment().contains(vertices)) {
-						JOptionPane.showMessageDialog(MainWindow.getInstance(), "Not possible to add nodes to environment nodes.",
-								"Coarse node integration Error!", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(MainWindow.getInstance(),
+								"Not possible to add nodes to environment nodes.", "Coarse node integration Error!",
+								JOptionPane.ERROR_MESSAGE);
 						oldVertexPositions.clear();
 						super.mouseReleased(e);
 						return;
@@ -146,7 +153,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		selection.addAll(pw.getSelectedNodes());
 		if (!vertex.addToCoarseNode(selection, oldVertexPositions)) {
 			for (BiologicalNodeAbstract node : selection) {
-				pw.getGraph().moveVertex(node, oldVertexPositions.get(node).getX(), oldVertexPositions.get(node).getY());
+				pw.getGraph().moveVertex(node, oldVertexPositions.get(node).getX(),
+						oldVertexPositions.get(node).getY());
 			}
 		} else {
 			pw.updateMyGraph();
@@ -160,7 +168,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				.getSource();
 		pw = vv.getPathway();
 		this.vv = vv;
-		//vv = pw.getGraph().getVisualizationViewer();
+		// vv = pw.getGraph().getVisualizationViewer();
 		if (inwindow) {
 			super.mousePressed(e);
 			originalSelection.clear();
@@ -176,7 +184,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				}
 			}
 			saveOldVertexPositions();
-			if (pw.getSelectedNodes().size() == 0 && pw.getSelectedEdges().size() == 0 && SwingUtilities.isLeftMouseButton(e)) {
+			if (pw.getSelectedNodes().size() == 0 && pw.getSelectedEdges().size() == 0
+					&& SwingUtilities.isLeftMouseButton(e)) {
 				this.mousePressedAnnotation(e);
 			}
 		}
@@ -199,7 +208,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				// System.out.println("dragging false");
 				dragging = false;
 				// vv.setComponentPopupMenu(new GraphPopUp().returnPopUp());
-				
+
 				MainWindow.getInstance().setCursor(cursor);
 				vv.setCursor(cursor);
 				vv.getComponentPopupMenu().show();
@@ -219,10 +228,12 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 							|| bna.getBiologicalElement().equals(Elementdeclerations.inhibitor)
 							|| bna.getBiologicalElement().equals(Elementdeclerations.factor)
 							|| bna.getBiologicalElement().equals(Elementdeclerations.smallMolecule)) {
-						urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/protein_result.jsp?Protein_Id=" + bna.getLabel();
+						urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/protein_result.jsp?Protein_Id="
+								+ bna.getLabel();
 						FollowLink.openURL(urlString);
 					} else if (bna.getBiologicalElement().equals(Elementdeclerations.enzyme)) {
-						urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/enzyme_result.jsp?Enzyme_Id=" + bna.getLabel();
+						urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/enzyme_result.jsp?Enzyme_Id="
+								+ bna.getLabel();
 						FollowLink.openURL(urlString);
 					}
 				}
@@ -253,7 +264,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 						}
 						// vv.getComponentPopupMenu();
 						// vv.getComponentPopupMenu().removeAll();
-						MutableTransformer modelTransformer = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+						MutableTransformer modelTransformer = vv.getRenderContext().getMultiLayerTransformer()
+								.getTransformer(Layer.LAYOUT);
 
 						try {
 							Point2D q = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
@@ -272,7 +284,16 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 						e.consume();
 						vv.repaint();
 					} else {
-						super.mouseDragged(e);
+						if (!moved) {
+							float dx = Math.abs((float) (e.getX() - down.getX()));
+							float dy = Math.abs((float) (e.getY() - down.getY()));
+							if (Math.max(dx, dy) > 10) {
+								moved = true;
+							}
+						}
+						if (moved || !sticky) {
+							super.mouseDragged(e);
+						}
 					}
 				} else {
 					if (locked == false) {
@@ -343,7 +364,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			if (ma.getText().length() == 0) {
 				// System.out.println("in");
 				int offset = 5;
-				s.setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset, shape.getMaxX() + offset, shape.getMaxY() + offset);
+				s.setFrameFromDiagonal(shape.getMinX() - offset, shape.getMinY() - offset, shape.getMaxX() + offset,
+						shape.getMaxY() + offset);
 				a2 = new Annotation<>(s, Annotation.Layer.LOWER, Color.BLUE, true, new Point2D.Double(0, 0));
 				highlight = new MyAnnotation(a2, s, ma.getText());
 				highlight.setAnnotation(a2);
