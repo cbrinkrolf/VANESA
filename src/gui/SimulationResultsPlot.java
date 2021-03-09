@@ -448,7 +448,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						renderer.setSeriesPaint(series2idx.get(place, TOKEN, simRes.getId()), place.getPlotColor());
 						renderer.setSeriesVisible((int) series2idx.get(place, TOKEN, simRes.getId()), true);
 					} else {
-						System.out.println("does not contain");
+						//System.out.println("does not contain");
 					}
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
