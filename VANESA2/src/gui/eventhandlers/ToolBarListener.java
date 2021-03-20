@@ -150,9 +150,17 @@ public class ToolBarListener implements ActionListener {
 				// g.restartVisualizationModel();
 			}
 		} else if ("info".equals(event)) {
-			new InfoWindow(false);
+			if (con.containsPathway()) {
+				if (con.getPathway(w.getCurrentPathway()).hasGotAtLeastOneElement()) {
+					new InfoWindow(false);
+				}
+			}
 		} else if ("infoextended".equals(event)) {
-			new InfoWindow(true);
+			if (con.containsPathway()) {
+				if (con.getPathway(w.getCurrentPathway()).hasGotAtLeastOneElement()) {
+					new InfoWindow(true);
+				}
+			}
 		} else if ("modelling".equals(event)) {
 
 			con.setPetriView(false);

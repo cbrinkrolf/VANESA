@@ -54,7 +54,7 @@ public class VertexDialog {
 		MigLayout layout = new MigLayout("", "[left]");
 
 		dcbm = new DefaultComboBoxModel<String>(ElementNamesSingelton.getInstance().getEnzymes());
-		dcbmEmpty = new DefaultComboBoxModel<String>();
+		dcbmEmpty = new DefaultComboBoxModel<String>(new String[]{""});
 		elementNames.setEditable(true);
 
 		elementNames.setModel(dcbm);
@@ -168,15 +168,12 @@ public class VertexDialog {
 				if (pw.isHeadless()) {
 					details.put("name", name.getText().toString().trim());
 				} else {
+					//System.out.println(elementNames.getSelectedIndex());
 					details.put("name", elementNames.getSelectedItem().toString().trim());
 					details.put("compartment", compartment.getSelectedItem().toString().trim());
 				}
 				details.put("elementType", elementType.getSelectedItem().toString().trim());
 				this.lastTypeIdx = elementType.getSelectedIndex();
-
-				// details[0] = elementNames.getSelectedItem().toString();
-				// details[1] = elementType.getSelectedItem().toString();
-				// details[2] = compartment.getSelectedItem().toString();
 			} else {
 				return null;
 			}

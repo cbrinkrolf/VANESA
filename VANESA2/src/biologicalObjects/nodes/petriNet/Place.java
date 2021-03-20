@@ -15,10 +15,10 @@ import graph.jung.graphDrawing.VertexShapes;
 
 public abstract class Place extends PNNode {
 
-	private double token = 1;
+	private double token = 0;
 	private double tokenMin = 0.0;
 	private double tokenMax = Double.MAX_VALUE;
-	private double tokenStart = 1;
+	private double tokenStart = 0;
 
 	public static final int CONFLICTHANDLING_NONE = 0;
 	public static final int CONFLICTHANDLING_PRIO = 1;

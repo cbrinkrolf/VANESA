@@ -131,7 +131,6 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		// northUp.setLayout(new GridLayout(1,5));
 		// northDown.setLayout();
 		integrators = new JComboBox<String>();
-		integrators.setSelectedItem("rungekutta");
 		AutoCompleteDecorator.decorate(integrators);
 		integrators.addItem("dassl");
 		integrators.addItem("euler");
@@ -142,6 +141,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		integrators.addItem("radau3");
 		integrators.addItem("radau1");
 		integrators.addItem("rungekutta");
+		integrators.setSelectedItem("rungekutta");
 
 		simLibs = new JComboBox<String>();
 		simLibs.addItem("PNlib (default)");
