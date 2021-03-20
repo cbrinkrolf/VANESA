@@ -48,7 +48,7 @@ public class PetriNetVertexDialog {
 	// JSpinner petriValue = new JSpinner();
 
 	// for places
-	private JFormattedTextField token;
+	//private JFormattedTextField token;
 	private JFormattedTextField tokenStart;
 	private JFormattedTextField tokenMin;
 	private JFormattedTextField tokenMax;
@@ -92,35 +92,40 @@ public class PetriNetVertexDialog {
 			panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
 			if (this.petriElement.equals(Elementdeclerations.discretePlace)) {
 				name.setText("p" + (pw.getPlaceCount() + 1));
-				panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
-				token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
-				token.setText("0");
-				panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
+				//panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
+				//token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+				//token.setText("0");
+				//panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(new JLabel("Token Start"), "span 2, gaptop 2 ");
 				tokenStart = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
 				tokenStart.setText("0");
+				tokenStart.setValue(0);
 				panel.add(tokenStart, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(new JLabel("TokenMin"), "span 2, gaptop 2 ");
 				tokenMin = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
 				tokenMin.setText("0");
+				tokenMin.setValue(0);
 				panel.add(tokenMin, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(new JLabel("TokenMax"), "span 2, gaptop 2 ");
 				tokenMax = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
 				tokenMax.setText(Integer.MAX_VALUE + "");
+				tokenMax.setValue(Integer.MAX_VALUE);
 				panel.add(tokenMax, "span,wrap,growx ,gap 10, gaptop 2");
 			} else if (this.petriElement.equals(Elementdeclerations.continuousPlace)) {
 				name.setText("p" + (pw.getPlaceCount() + 1));
-				panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
-				token = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
-				token.setText("0.0");
-				panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
+				// panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
+				//token = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+				//token.setText("0.0");
+				//panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(new JLabel("Token Start"), "span 2, gaptop 2 ");
 				tokenStart = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
 				tokenStart.setText("0.0");
+				tokenStart.setValue(0.0);
 				panel.add(tokenStart, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(new JLabel("TokenMin"), "span 2, gaptop 2 ");
 				tokenMin = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
 				tokenMin.setText("0.0");
+				tokenMin.setValue(0.0);
 				panel.add(tokenMin, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(new JLabel("TokenMax"), "span 2, gaptop 2 ");
 				tokenMax = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
@@ -194,10 +199,10 @@ public class PetriNetVertexDialog {
 				if (petriElement.equals(Elementdeclerations.discretePlace)) {
 					DiscretePlace p = new DiscretePlace(name.getText().trim(), name.getText().trim());
 					if (!pw.isHeadless()) {
-						number = (Number) token.getValue();
-						if (number != null) {
-							p.setToken(number.doubleValue());
-						}
+						//number = (Number) token.getValue();
+						//if (number != null) {
+						//	p.setToken(number.doubleValue());
+						//}
 						number = (Number) tokenStart.getValue();
 						if (number != null) {
 							p.setTokenStart(number.doubleValue());
@@ -206,7 +211,7 @@ public class PetriNetVertexDialog {
 						if (number != null) {
 							p.setTokenMin(number.doubleValue());
 						}
-						number = (Number) tokenMin.getValue();
+						number = (Number) tokenMax.getValue();
 						if (number != null) {
 							p.setTokenMax(number.doubleValue());
 						}
@@ -215,10 +220,10 @@ public class PetriNetVertexDialog {
 				} else if (petriElement.equals(Elementdeclerations.continuousPlace)) {
 					ContinuousPlace p = new ContinuousPlace(name.getText().trim(), name.getText().trim());
 					if (!pw.isHeadless()) {
-						number = (Number) token.getValue();
-						if (number != null) {
-							p.setToken(number.doubleValue());
-						}
+						//number = (Number) token.getValue();
+						//if (number != null) {
+						//	p.setToken(number.doubleValue());
+						//}
 						number = (Number) tokenStart.getValue();
 						if (number != null) {
 							p.setTokenStart(number.doubleValue());
@@ -228,7 +233,7 @@ public class PetriNetVertexDialog {
 						if (number != null) {
 							p.setTokenMin(number.doubleValue());
 						}
-						number = (Number) tokenMin.getValue();
+						number = (Number) tokenMax.getValue();
 						if (number != null) {
 							p.setTokenMax(number.doubleValue());
 						}
