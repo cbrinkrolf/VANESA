@@ -384,6 +384,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				} else if (bna instanceof Transition) {
 					listActive = simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED);
 				}
+				Color c;
 				for (int i = 0; i < listActive.size(); i++) {
 					result = listActive.get(i);
 					int idx = 0;
@@ -399,7 +400,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					// 0.0f);
 					// renderer.setSeriesStroke(idx, dash1);
 					// System.out.println("stroke set");
-					Color c = Color.getHSBColor(i * 1.0f / (listActive.size()), 1, 1);
+					c = Color.getHSBColor(i * 1.0f / (listActive.size()), 1, 1);
 					if (listActive.size() == 1) {
 						renderer.setSeriesPaint(idx, pn.getPlotColor());
 					} else {
@@ -453,6 +454,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
 					if (series2idx.contains(transition, ACTUAL_FIRING_SPEED)) {
+						renderer.setSeriesPaint(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()), transition.getPlotColor());
 						renderer.setSeriesVisible((int) series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
 								true);
 					}
@@ -981,7 +983,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	public void initGraphs() {
 		GraphInstance graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
-
 		if (!pw.isPetriNet() && pw.getPetriNet() == null) {
 			return;
 		}
@@ -991,6 +992,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 		if (!pw.isPetriNet() && pw.getPetriNet() != null) {
 			hiddenPN = true;
+		}else{
+			hiddenPN = false;
 		}
 
 		vState = pw.getGraph().getVisualizationViewer().getPickedVertexState();
@@ -1056,7 +1059,10 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					} else {
 						bna = graphElement;
 					}
-					if (simResController.getAllActiveWithData(bna, TOKEN).size() <= 1) {
+					if (bna instanceof Place && simResController.getAllActiveWithData(bna, TOKEN).size() <= 1) {
+						return graphElement.getName();
+					}
+					if (bna instanceof Transition && simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED).size() <= 1) {
 						return graphElement.getName();
 					}
 					return idx2simR1.get(seriesIdx).getName();
@@ -1308,7 +1314,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		SimulationResult simRes = simResController.getLastActive();
 
 		rowsSize = pw.getPlaceCount();
-
 		rowsDim = simRes.getTime().size();
 		// get Data from all Places
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
@@ -1318,7 +1323,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 		while (it.hasNext()) {
 			bna = it.next();
-			if (bna instanceof Place) {
+			if (bna instanceof Place && !bna.hasRef()) {
 				rows[i][0] = bna.getName();
 				for (int j = 1; j <= rowsDim; j++) {
 					if (simRes.contains(bna, TOKEN) && simRes.get(bna, TOKEN).size() > j - 1) {

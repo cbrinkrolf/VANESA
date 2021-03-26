@@ -90,9 +90,6 @@ public class Pathway implements Cloneable {
 	private Pathway petriNet = null;
 	private HashMap<BiologicalNodeAbstract, PNNode> bnToPN = null;
 
-	private int placeCount = 0;
-	private int transitionCount = 0;
-
 	public Pathway(String name, boolean headless) {
 		this.headless = headless;
 		this.name = name.trim();
@@ -211,11 +208,7 @@ public class Pathway implements Cloneable {
 		}
 		vertices.put(bna, p);
 		addVertexToView(bna, p);
-		if (bna instanceof Place) {
-			this.placeCount++;
-		} else if (bna instanceof Transition) {
-			this.transitionCount++;
-		}
+
 		bna.setID(this);
 		this.handleChangeFlags(ChangedFlags.NODE_CHANGED);
 		return bna;
@@ -316,11 +309,6 @@ public class Pathway implements Cloneable {
 				getRootPathway().getVertices().remove(bna);
 				for (BiologicalNodeAbstract parent : bna.getAllParentNodes()) {
 					parent.getVertices().remove(bna);
-				}
-				if (bna instanceof Place) {
-					this.placeCount--;
-				} else if (bna instanceof Transition) {
-					this.transitionCount--;
 				}
 				bna.delete();
 
@@ -1574,11 +1562,29 @@ public class Pathway implements Cloneable {
 	}
 
 	public int getPlaceCount() {
-		return this.placeCount;
+		int count = 0;
+		Iterator<BiologicalNodeAbstract> it = getAllGraphNodes().iterator();
+		BiologicalNodeAbstract bna;
+		while (it.hasNext()) {
+			bna = it.next();
+			if (bna instanceof Place && !bna.hasRef()) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public int getTransitionCount() {
-		return this.transitionCount;
+		int count = 0;
+		Iterator<BiologicalNodeAbstract> it = getAllGraphNodes().iterator();
+		BiologicalNodeAbstract bna;
+		while (it.hasNext()) {
+			bna = it.next();
+			if (bna instanceof Transition && !bna.hasRef()) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public void setPlotColorPlacesTransitions(boolean override) {
@@ -1593,9 +1599,13 @@ public class Pathway implements Cloneable {
 		Transition t;
 		while (it.hasNext()) {
 			bna = it.next();
-			if (bna instanceof Place) {
+			//System.out.println(bna.getName());
+			if (bna instanceof Place && !bna.hasRef()) {
 				p = (Place) bna;
 				c = Color.getHSBColor(i * 1.0f / (getPlaceCount()), 1, 1);
+				//System.out.println(bna.getName());
+				//System.out.println(i * 1.0f / (getPlaceCount()));
+				//System.out.println(c);
 				if (override) {
 					p.setPlotColor(c);
 				} else {
@@ -1604,9 +1614,12 @@ public class Pathway implements Cloneable {
 					}
 				}
 				i++;
-			} else if (bna instanceof Transition) {
+				//System.out.println("i: " + i);
+			} else if (bna instanceof Transition && !bna.hasRef()) {
 				t = (Transition) bna;
 				c = Color.getHSBColor(j * 1.0f / (getTransitionCount()), 1, 1);
+				// System.out.println(j * 1.0f / (getTransitionCount()));
+				// System.out.println(c);
 				if (override) {
 					t.setPlotColor(c);
 				} else {
@@ -1615,6 +1628,7 @@ public class Pathway implements Cloneable {
 					}
 				}
 				j++;
+				// System.out.println("j:"+j);
 			}
 		}
 	}

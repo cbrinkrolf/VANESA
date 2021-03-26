@@ -540,6 +540,7 @@ public class Transformator {
 				pn.setLabel(bna.getLabel());
 				pn.setName(bna.getName());
 				pn.setColor(bna.getColor());
+				pn.setPlotColor(bna.getPlotColor());
 				// System.out.println("Vertex: "+p.getName());
 				// System.out.println("x: "+locations.getLocation(bna.getVertex()).getX());
 				x = pw.getGraph().getVertexLocation(bna).getX();// locations.getLocation(bna.getVertex()).getX();

@@ -621,6 +621,7 @@ public class PetriNetSimulation implements ActionListener {
 				menue.addText(logMessage.toString());
 				this.runOMCIA();
 			} else {
+				//TODO needs to be checked again
 				flags = pw.getChangedFlags("petriNetSim");
 				BiologicalNodeAbstract bna = menue.getSelectedNode();
 				String param = menue.getParameterName();
@@ -668,6 +669,14 @@ public class PetriNetSimulation implements ActionListener {
 							.setName(Math.round(value * 1000) / 1000.0 + "");
 					this.logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
 					this.runOMCIA();
+					try {
+						Thread.sleep(100);
+						while(!stopped){
+							Thread.sleep(100);
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 
