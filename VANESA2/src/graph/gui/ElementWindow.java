@@ -122,7 +122,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 		knockedOut = new JCheckBox();
 		isDirected = new JCheckBox();
-		
+
 		hideNeighbours = new JButton("Hide all Neighbours");
 		showNeighbours = new JButton("Show all Neighbours");
 		parametersButton = new JButton("Parameters");
@@ -133,9 +133,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 		fillColorButton.setToolTipText("Select fill color");
 		fillColorButton.setActionCommand("colour");
 		fillColorButton.addActionListener(this);
-		
+
 		plotColorButton = new JButton("Plot color");
-		plotColorButton.setBackground(ab.getColor());
+		if (ab instanceof BiologicalNodeAbstract) {
+			plotColorButton.setBackground(((BiologicalNodeAbstract) ab).getPlotColor());
+		}
 		plotColorButton.setToolTipText("Select plot color");
 		plotColorButton.setActionCommand("plotColour");
 		plotColorButton.addActionListener(this);
@@ -749,8 +751,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 		parametersButton.setToolTipText("Show all Parameters");
 		parametersButton.setActionCommand("showParameters");
 		parametersButton.addActionListener(this);
-		p.add(parametersButton);
+		p.add(parametersButton, "wrap");
 
+		if (ab instanceof BiologicalNodeAbstract) {
+			p.add(plotColorButton, "gap 5");
+		}
 		p.add(fillColorButton, "gap 5, wrap");
 
 	}
@@ -833,7 +838,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		String event = e.getActionCommand();
 
 		if ("colour".equals(event)) {
-			Color newColor = JColorChooser.showDialog(w, "Choose Element Colour", ab.getColor());
+			Color newColor = JColorChooser.showDialog(w, "Choose fill colour", ab.getColor());
 			JButton b = ((JButton) e.getSource());
 			b.setBackground(newColor);
 
@@ -842,15 +847,15 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// reference.setSelected(false);
 			// updateReferences(false);
 
-		} else if("plotColour".equals(event)){
-			Color newColor = JColorChooser.showDialog(w, "Choose Element Colour", ab.getColor());
-			JButton b = ((JButton) e.getSource());
-			b.setBackground(newColor);
-
-			ab.setColor(newColor);
-			ab.setVisible(true);
+		} else if ("plotColour".equals(event)) {
+			if (ab instanceof BiologicalNodeAbstract) {
+				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
+				Color newColor = JColorChooser.showDialog(w, "Choose plot colour", bna.getPlotColor());
+				JButton b = ((JButton) e.getSource());
+				b.setBackground(newColor);
+				bna.setPlotColor(newColor);
+			}
 		}
-		
 		else if ("pathwayLink".equals(event)) {
 			if (JOptionPane.showConfirmDialog(w,
 					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
