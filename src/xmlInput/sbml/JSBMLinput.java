@@ -820,6 +820,16 @@ public class JSBMLinput {
 			// System.out.println(bna.isHidden() ? "hidden" : "not hidden");
 			// System.out.println(bna.getColor().getRGB());
 			break;
+		case "plotColor":
+			elSub = child.getChild("RGB", null);
+			if (elSub != null) {
+				int rgb = Integer.parseInt(elSub.getAttributeValue("RGB"));
+				Color col = new Color(rgb);
+				bna.setPlotColor(col);
+			} else {
+				// System.out.println("skipped");
+			}
+			break;
 		case "NodeReference":
 			elSub = child.getChild("hasRef", null);
 			if (elSub.getAttributeValue("hasRef").equals("true")) {

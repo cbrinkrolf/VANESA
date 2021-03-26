@@ -561,6 +561,20 @@ public class JSBMLoutput {
 			elSub.addChild(createElSub(attr, "Red"));
 			el.addChild(elSub);
 		}
+		
+		col = oneNode.getPlotColor();
+		if (col != null) {
+			elSub = new XMLNode(new XMLNode(new XMLTriple("plotColor", "", ""), new XMLAttributes()));
+			attr = String.valueOf(col.getRGB());
+			elSub.addChild(createElSub(attr, "RGB"));
+			attr = String.valueOf(col.getBlue());
+			elSub.addChild(createElSub(attr, "Blue"));
+			attr = String.valueOf(col.getGreen());
+			elSub.addChild(createElSub(attr, "Green"));
+			attr = String.valueOf(col.getRed());
+			elSub.addChild(createElSub(attr, "Red"));
+			el.addChild(elSub);
+		}
 
 		elSub = new XMLNode(new XMLNode(new XMLTriple("NodeReference", "", ""), new XMLAttributes()));
 		if (oneNode.hasRef()) {
