@@ -75,6 +75,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private boolean isingroup = false;
 	private ArrayList<Group> group = new ArrayList<>();
 	// private Set<Group> group = new HashSet<Group>();
+	
+	private Color plotColor = null;
 
 	private boolean discrete = false;
 
@@ -1556,5 +1558,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	public void setDiscrete(boolean discrete) {
 		this.discrete = discrete;
+	}
+	
+	public void setPlotColor(Color plotColor) {
+		this.plotColor = plotColor;
+	}
+
+	public Color getPlotColor() {
+		return plotColor;
 	}
 }

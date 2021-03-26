@@ -141,7 +141,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		integrators.addItem("radau3");
 		integrators.addItem("radau1");
 		integrators.addItem("rungekutta");
-		integrators.setSelectedItem("rungekutta");
+		integrators.setSelectedItem("dassl");
 
 		simLibs = new JComboBox<String>();
 		simLibs.addItem("PNlib (default)");
@@ -417,14 +417,16 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		text2sim = new HashMap<JTextField, SimulationResult>();
 		west.add(new JSeparator(), "growx, span, wrap");
 
-		JCheckBox all = new JCheckBox();
+		JCheckBox all = new JCheckBox("active");
+		all.setToolTipText("de/select all");
 		all.setActionCommand("-1");
 		all.addItemListener(this);
 
 		west.add(all);
-		west.add(new JLabel("delete"));
+		//TODO implement delete all action
+		west.add(new JLabel("delete all"));
 		west.add(new JLabel("show log"));
-		west.add(new JLabel("Name"), "wrap");
+		west.add(new JLabel("name"), "wrap");
 		// west.add(new JButton("click"), "wrap");
 		// west.add(new JButton("click"), "wrap");
 		// west.add(new JButton("click"), "wrap");

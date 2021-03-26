@@ -74,7 +74,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private JButton deleteRef;
 	private JButton pickOrigin;
 	private JButton pickRefs;
-	private JButton colorButton;
+	private JButton fillColorButton;
+	private JButton plotColorButton;
 	private JButton hideNeighbours;
 	private JButton showNeighbours;
 	private JButton parametersButton;
@@ -121,16 +122,23 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 		knockedOut = new JCheckBox();
 		isDirected = new JCheckBox();
-		colorButton = new JButton("Colour");
+		
 		hideNeighbours = new JButton("Hide all Neighbours");
 		showNeighbours = new JButton("Show all Neighbours");
 		parametersButton = new JButton("Parameters");
 		showLabels = new JButton("Show Labels");
 
-		colorButton.setBackground(ab.getColor());
-		colorButton.setToolTipText("Colour");
-		colorButton.setActionCommand("colour");
-		colorButton.addActionListener(this);
+		fillColorButton = new JButton("Fill color");
+		fillColorButton.setBackground(ab.getColor());
+		fillColorButton.setToolTipText("Select fill color");
+		fillColorButton.setActionCommand("colour");
+		fillColorButton.addActionListener(this);
+		
+		plotColorButton = new JButton("Plot color");
+		plotColorButton.setBackground(ab.getColor());
+		plotColorButton.setToolTipText("Select plot color");
+		plotColorButton.setActionCommand("plotColour");
+		plotColorButton.addActionListener(this);
 
 		// System.out.println("label: "+ab.getLabel());
 		// System.out.println("name: "+ab.getName());
@@ -743,12 +751,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 		parametersButton.addActionListener(this);
 		p.add(parametersButton);
 
-		p.add(colorButton, "gap 5, wrap");
+		p.add(fillColorButton, "gap 5, wrap");
 
-	}
-
-	public Color getElementColor() {
-		return ab.getColor();
 	}
 
 	public JPanel getPanel() {
@@ -829,7 +833,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		String event = e.getActionCommand();
 
 		if ("colour".equals(event)) {
-			Color newColor = JColorChooser.showDialog(w, "Choose Element Colour", getElementColor());
+			Color newColor = JColorChooser.showDialog(w, "Choose Element Colour", ab.getColor());
 			JButton b = ((JButton) e.getSource());
 			b.setBackground(newColor);
 
@@ -838,7 +842,16 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// reference.setSelected(false);
 			// updateReferences(false);
 
-		} else if ("pathwayLink".equals(event)) {
+		} else if("plotColour".equals(event)){
+			Color newColor = JColorChooser.showDialog(w, "Choose Element Colour", ab.getColor());
+			JButton b = ((JButton) e.getSource());
+			b.setBackground(newColor);
+
+			ab.setColor(newColor);
+			ab.setVisible(true);
+		}
+		
+		else if ("pathwayLink".equals(event)) {
 			if (JOptionPane.showConfirmDialog(w,
 					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
 					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION,

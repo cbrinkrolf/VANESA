@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
@@ -344,15 +345,18 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			panel.add(fp, "span 20, wrap");
 		}
 
-		JButton guessKinetic = new JButton("guess kinetics");
+		JButton guessKinetic = new JButton("apply kinetic");
+		guessKinetic.setToolTipText("Applies convenience kinetic");
 		guessKinetic.addActionListener(this);
 		guessKinetic.setActionCommand("guessKinetic");
-		panel.add(guessKinetic);
+		panel.add(guessKinetic, "");
 		
-		JButton setValues = new JButton("set values");
+		JButton setValues = new JButton("BRENDA kinetic parameters");
+		setValues.setToolTipText("Browse BRENDA for kinetic parameters (km and kcat)");
 		setValues.addActionListener(this);
 		setValues.setActionCommand("setValues");
-		panel.add(setValues, "wrap");
+		panel.add(setValues, "span 2, wrap");
+		panel.add(new JSeparator(), "span, growx, gaptop 7 ");
 
 		panel.add(new JLabel("Name"), "span 1, gaptop 2 ");
 		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
@@ -364,6 +368,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		panel.add(unit, "span,wrap,growx ,gap 10, gaptop 2");
 
 		panel.add(add, "wrap");
+		panel.add(new JSeparator(), "span, growx, gaptop 7 ");
 		this.listParameters();
 		panel.repaint();
 		frame.pack();

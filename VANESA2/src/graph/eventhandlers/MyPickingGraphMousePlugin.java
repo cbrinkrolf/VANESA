@@ -173,6 +173,41 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			super.mousePressed(e);
 			originalSelection.clear();
 			originalSelection.addAll(pw.getSelectedNodes());
+			
+			Iterator<BiologicalNodeAbstract> it = originalSelection.iterator();
+			BiologicalNodeAbstract bna;
+			BiologicalNodeAbstract pick;
+			MyGraph g = pw.getGraph();
+			while(it.hasNext()){
+				bna = it.next();
+
+				if(bna.hasRef()){
+					g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
+					Iterator<BiologicalNodeAbstract> it2 = bna.getRef().getRefs().iterator();
+					while (it2.hasNext()) {
+						pick = it2.next();
+						// System.out.println(pick.getLabel());
+						// System.out.println(pick);
+						g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
+					}
+				}else{
+
+				
+				
+				// System.out.println("c: "+g.getJungGraph().getVertexCount());
+				
+				Iterator<BiologicalNodeAbstract> it2 = bna.getRefs().iterator();
+				// System.out.println("size: "+bna.getRefs().size());
+				while (it2.hasNext()) {
+					pick = it2.next();
+					// System.out.println(pick.getLabel());
+					// System.out.println(pick);
+					g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
+
+				}
+				}
+			}
+			
 			if (pw.getGraph().getLayout() instanceof HierarchicalCircleLayout) {
 				HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) pw.getGraph().getLayout();
 				if (hcLayout.getConfig().getMoveInGroups()) {
