@@ -20,10 +20,11 @@ TBA
 
 ## Citation
 If you used VANESA as part of your scientific work, please cite the following article:
+
 C. Brinkrolf, C., S. J. Janowski, B. Kormeier, M. Lewinski, K. Hippe, D. Borck, R. Hofestädt
 VANESA - A Software Application for the Visualization and Analysis of Networks in Systems Biology Applications.
 Journal of Integrative Bioinformatics 11(2):239, 2014.
-<DOI: 10.2390/biecoll-jib-2014-239>
+[DOI: 10.2390/biecoll-jib-2014-239](10.2390/biecoll-jib-2014-239)
 
 ## About
 VANESA is an academic software project of the [Bioinformatics / Medical Informatics Department](https://www.techfak.uni-bielefeld.de/ags/bi/) of [Faculty of Technology](https://www.uni-bielefeld.de/(en)/technische-fakultaet/) at [Bielefeld University](https://www.uni-bielefeld.de/%3C-de,en%3E/) in Germany and its development started more than 10 years ago. 
