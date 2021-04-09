@@ -1,47 +1,23 @@
-Current pre-release of VANESA is available at:
+## Overview
+VANESA is an open-source software project which aims to support scientist in the workflow of systems biology application cases. It provides a graphical user interface (GUI) and the general modeling approach is based on graphs. For **Modeling**, either biological networks or Petri nets can be chosen. Beside start modeling from scratch, a biological network can be retrieved from an data warehouse via web service. 
 
-[https://github.com/cbrinkrolf/VANESA/releases/tag/untagged-5342dbc5f8f1db6a8798](https://github.com/cbrinkrolf/VANESA/releases/tag/untagged-5342dbc5f8f1db6a8798)
+Petri nets can be simulated with the help of an [OpenModelica](https://www.openmodelica.org/) installation. Simulation results are made available for further investigation during process of **simulation**.
 
-Further information will be added soon!
+Both, biologica networks as well as Petri nets, can be analyzed by general graph algorithms. Models are saved as SBML file, simulation results can be exported as CSV files, and graph pictures and charts can be saved as SVG, PNG and PDF files. 
+
+## Releases
+The latest release is [pre-v.0.4](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) which requires a [Java SE 11 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html) installation. It is compatible with OpenModelica 1.17.0 stable release, in case Petri net simulation is desired.
+
+## Installation
+Unless simulation is desired, installation of Java SE 11+ and executing the provided jar file is sufficient. Simulation of Petri nets is based on OpenModelica. The latest compatible stable release should be used instead of nightly builds. The installation path must not contain any whitespaces! During installation process, make sure that you select PNlib as library to install. By default, all third party libraries will be installed. The installation process will also set some environment variables which are needed for VANESA to detect the OpenModelica installation.
+
+## Further project information
+TBA
+### Publications
+TBA
+### Links
+TBA
 
 
-
-
-
-## Welcome to GitHub Pages
-
-You can use the [editor on GitHub](https://github.com/cbrinkrolf/VANESA/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/cbrinkrolf/VANESA/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+## About
+VANESA is an academic software project of the [Bioinformatics / Medical Informatics Department](https://www.techfak.uni-bielefeld.de/ags/bi/) of [Faculty of Technology](https://www.uni-bielefeld.de/(en)/technische-fakultaet/) at [Bielefeld University](https://www.uni-bielefeld.de/%3C-de,en%3E/) in Germany and its development started more than 10 years ago. 
