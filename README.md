@@ -1,6 +1,7 @@
-# Current pre-Releast
-yet untagged:
-https://github.com/cbrinkrolf/VANESA/releases/tag/untagged-5342dbc5f8f1db6a8798
+# Current Releases
+
+- [latest pre release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) (v.0.4-pre from 2021-03-31)
+- [latest stable release](https://github.com/cbrinkrolf/VANESA/releases/latest) (v.0.3.3 from 2019-05-24)
 
 # VANESA2
 To build VANESA2 run `$ ant build`.  
