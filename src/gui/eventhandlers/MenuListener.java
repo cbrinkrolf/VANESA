@@ -74,7 +74,6 @@ import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
 import gui.MyPopUp;
 import gui.visualization.PreRenderManager;
-import io.EdalSaveDialog;
 import io.OpenDialog;
 import io.PNDoc;
 import io.SaveDialog;
@@ -152,50 +151,6 @@ public class MenuListener implements ActionListener {
 			OpenDialog op = new OpenDialog();
 			op.execute();
 			break;
-		case "openEdal":
-			/*
-			 * int SERVER_PORT = 2000; String SERVER_ADDRESS = "bit-249.ipk-gatersleben.de";
-			 * 
-			 * Subject subject = null; try { subject = EdalHelpers.authenticateSampleUser();
-			 * } catch (EdalAuthenticateException e1) { e1.printStackTrace(); }
-			 * 
-			 * // alternatively use Google+ login // Subject subject =
-			 * EdalHelpers.authenticateGoogleUser("", 3128);
-			 * 
-			 * // connect to running EDAL server on "bit-249" ClientDataManager
-			 * dataManagerClient = null; try { dataManagerClient = new
-			 * ClientDataManager(SERVER_ADDRESS, SERVER_PORT, new Authentication(subject));
-			 * } catch (EdalAuthenticateException e1) { e1.printStackTrace(); }
-			 * 
-			 * // JFrame jf = new JFrame();
-			 * 
-			 * EdalFileChooser dialog = new
-			 * EdalFileChooser(MainWindowSingleton.getInstance(), dataManagerClient);
-			 * dialog.setLocationRelativeTo(MainWindowSingleton.getInstance());
-			 * dialog.setFileSelectionMode(EdalFileChooser.FILES_AND_DIRECTORIES );
-			 * dialog.showConnectionButton(false);
-			 * 
-			 * // dialog.setFileFilter(new EdalFileNameExtensionFilter("sbml", // "sbml"));
-			 * 
-			 * int result = dialog.showOpenDialog(); // System.out.println(result + " " + //
-			 * EdalFileChooser.APPROVE_OPTION); if (result ==
-			 * EdalFileChooser.APPROVE_OPTION) { ClientPrimaryDataFile df = null;
-			 * ClientPrimaryDataEntity de = dialog.getSelectedFile(); if (de instanceof
-			 * ClientPrimaryDataFile) { df = (ClientPrimaryDataFile) de; // File f = new
-			 * File(df.getName()); // File f; try { ByteArrayOutputStream os = new
-			 * ByteArrayOutputStream();
-			 * 
-			 * df.read(os); byte[] b = os.toByteArray(); InputStream is = new
-			 * ByteArrayInputStream(b); JSBMLinput jsbmlInput = new JSBMLinput(); //
-			 * jsbmlInput = pathway==null ? new JSBMLinput() : new // JSBMLinput(pathway);
-			 * String res = jsbmlInput.loadSBMLFile(is, df.getName()); if (res.length() > 0)
-			 * { JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), res); } //
-			 * os. } catch (RemoteException | PrimaryDataFileException e1) {
-			 * e1.printStackTrace(); }
-			 * 
-			 * } else { System.out.println("please choose a file, not a dir"); } }
-			 */
-			break;
 		case "close Network":
 			w.removeTab(true);
 			break;
@@ -244,19 +199,6 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog(SaveDialog.FORMAT_SBML);
-				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
-				}
-			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
-			}
-			break;
-		case "saveEdal":
-			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					// System.out.println("click");
-					new EdalSaveDialog();
-					// new SaveDialog(SaveDialog.FORMAT_SBML);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
