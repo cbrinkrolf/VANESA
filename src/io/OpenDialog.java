@@ -32,27 +32,24 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 	private final String sbmlDescription = "System Biology Markup Language (*.sbml)";
 	private final String sbml = "sbml";
 
-	private final String modellicaResultDescription = "Modellica Simulation Result File (*.plt)";
-	private final String modellicaSimulation = "plt";
+	//private final String modellicaResultDescription = "Modellica Simulation Result File (*.plt)";
+	//private final String modellicaSimulation = "plt";
 
-	private final String modellicaResultDescriptionNew = "New Modelica Simulation Result File (*.csv)";
-	private final String modellicaSimulationNew = "csv";
+	//private final String modellicaResultDescriptionNew = "New Modelica Simulation Result File (*.csv)";
+	//private final String modellicaSimulationNew = "csv";
 
 	private final String vamlDescription = "VANESA Markup Language (*.vaml)";
 	private final String vaml = "vaml";
 
-	private final String graphMlDescription = "Graph Markup Language (*.gml)";
-	private final String moDescription = "Modelica File (*.mo)";
-
-	private final String phosphoMlDescription = "PhosphoGrid Text File (*.txt)";
-	private final String poDescription = "txt";
+	//private final String graphMlDescription = "Graph Markup Language (*.gml)";
+	//private final String moDescription = "Modelica File (*.mo)";
 
 	private String txtDescription = "Graph Text File (*.txt)";
 	private String txt = "txt";
 
 	private final int option;
 
-	private final String mo = "mo";
+	//private final String mo = "mo";
 
 	private JFileChooser chooser;
 
@@ -101,8 +98,6 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 //		chooser.addChoosableFileFilter(new MyFileFilter(modellicaSimulationNew,
 //				modellicaResultDescriptionNew));
 
-		chooser.addChoosableFileFilter(new MyFileFilter(poDescription,
-				phosphoMlDescription));
 		chooser.addChoosableFileFilter(new MyFileFilter(txt, txtDescription));
 
 		option = chooser.showOpenDialog(MainWindow.getInstance());
@@ -172,13 +167,6 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 			} else if (fileFormat.equals(txtDescription)) {
 				try {
 					new TxtInput(new FileInputStream(file), file);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			} else if (fileFormat.equals(phosphoMlDescription)) {
-				try {
-					new PhosphoInput(file);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

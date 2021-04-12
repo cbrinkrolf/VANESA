@@ -193,15 +193,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 				tospinner.setValue(maxvalue);
 
 				break;
-			case 2:
-				System.out.println("Node Removal 2: Neighbor Degree");
-				// TODO: Neighbor Degree rating
-				break;
-			case 3:
-				System.out.println("Node Removal 3: Clique");
-				// TODO: Clique rating
-				break;
-
 			default:
 				break;
 			}
@@ -306,9 +297,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 				// TODO BEHANDLUNG von Eingabe, bzw. Formatted text imput
 				System.out.println("Input format not allowed");
 			}
-
 		}
-
 	}
-
 }

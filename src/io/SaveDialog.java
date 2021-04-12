@@ -95,8 +95,8 @@ public class SaveDialog {
 	private String txtDescription = "Graph Text File (*.txt)";
 	private String txt = "txt";
 
-	private String irinaDescription = "Irina Export File (*.itxt)";
-	private String irinaTxt = "itxt";
+	//private String irinaDescription = "Irina Export File (*.itxt)";
+	//private String irinaTxt = "itxt";
 
 	private String csvDescription = "CSV Result Export (*.csv)";
 	private String csv = "csv";
@@ -452,10 +452,6 @@ public class SaveDialog {
 			getCorrectFile(graphMl);
 			new SaveGraphML(new FileOutputStream(file));
 			MyPopUp.getInstance().show("Information", graphMlDescription + " File saved");
-		} else if (fileFormat.equals(irinaDescription)) {
-			getCorrectFile(irinaTxt);
-			new IrinaGraphTextWriter(new FileOutputStream(file), new GraphInstance().getPathway());
-			MyPopUp.getInstance().show("Information", irinaDescription + " File saved");
 		} else if (fileFormat.equals(moDescription)) {
 			getCorrectFile(mo);
 			new MOoutput(new FileOutputStream(file), new GraphInstance().getPathway(), false);

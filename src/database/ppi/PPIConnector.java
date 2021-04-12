@@ -29,7 +29,6 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 	private HashMap<String, HashSet<String>> childNodes = new HashMap<String, HashSet<String>>();
 	private HashMap<String, String> parentNodes = new HashMap<String, String>();
 	private ArrayList<String[]> connections = new ArrayList<String[]>();
-	private HashSet<String> conSet = new HashSet<String>();
 	private HashSet<String> newNodes = new HashSet<String>();
 	private HashMap<String, BiologicalNodeAbstract> name2Vertex = new HashMap<String, BiologicalNodeAbstract>();
 	private HashMap<BiologicalNodeAbstract, String> vertex2Name = new HashMap<BiologicalNodeAbstract, String>();
@@ -55,8 +54,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 	// private long starttime;
 
-	public PPIConnector(String[] details, String db,
-			boolean headless) {
+	public PPIConnector(String[] details, String db, boolean headless) {
 
 		// System.out.println("Starting measurement");
 		// starttime = System.currentTimeMillis();
@@ -77,25 +75,25 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		String id;
 		String[] infos;
 		Protein protein;
-		//System.out.println("nodes: "+entries2infos.size());
-		
+		// System.out.println("nodes: "+entries2infos.size());
+
 		// if no interactions found: draw root node
-		if(entries2infos.size() == 0){
+		if (entries2infos.size() == 0) {
 			MyPopUp.getInstance().show("HPRD search", "No interactions found!");
 			protein = new Protein(root_details[1], root_details[1]);
-			//protein.setAaSequence(root_details[3]);
-			
+			// protein.setAaSequence(root_details[3]);
+
 			protein.setColor(Color.RED);
 
 			name2Vertex.put(root_details[0], protein);
 			vertex2Name.put(protein, root_details[0]);
-			BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10,10));
-			
+			BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10, 10));
+
 			pw.setRootNode(node);
-			
+
 			return;
 		}
-		
+
 		while (i.hasNext()) {
 			id = i.next();
 			infos = entries2infos.get(id);
@@ -108,7 +106,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 			name2Vertex.put(id, protein);
 			vertex2Name.put(protein, id);
-			BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10,10));
+			BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10, 10));
 			if (id.equals(root_id)) {
 				pw.setRootNode(node);
 			}
@@ -144,7 +142,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 	private void drawEdges() {
 
-		//System.out.println("edges: "+connections.size());
+		// System.out.println("edges: "+connections.size());
 		Iterator<String[]> it = connections.iterator();
 		String[] entry;
 		BiologicalNodeAbstract first;
@@ -154,10 +152,9 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 			first = (name2Vertex.get(entry[0]));
 			second = (name2Vertex.get(entry[1]));
 
-			// System.out.println(entry[0] + " " + first+ "   ---   " + entry[1]
+			// System.out.println(entry[0] + " " + first+ " --- " + entry[1]
 			// + " " +second);
-			if (myGraph.getJungGraph().findEdge(first, second) == null
-					&& (first != second)) {
+			if (myGraph.getJungGraph().findEdge(first, second) == null && (first != second)) {
 				// if (!adjazenzList.doesEdgeExist(first, second) && (first !=
 				// second)) {
 				buildEdge(first, second, false);
@@ -165,8 +162,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		}
 	}
 
-	private void buildEdge(BiologicalNodeAbstract one,
-			BiologicalNodeAbstract two, boolean directed) {
+	private void buildEdge(BiologicalNodeAbstract one, BiologicalNodeAbstract two, boolean directed) {
 
 		PhysicalInteraction r = new PhysicalInteraction("", "", one, two);
 
@@ -207,7 +203,6 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 	private void buildInterations(boolean binary) {
 
-
 		if (database.equals("HPRD")) {
 			query = PPIqueries.hprd_interactionsForID;
 
@@ -246,10 +241,10 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 					param2[0] = node;
 					param2[1] = node;
 					dbID = 3;
-					//System.out.println("p0: "+param2[0]+" p1: "+param2[1]);
-					//System.out.println(root_details[0]);
-					//System.out.println(root_details[1]);
-					//System.out.println(root_details[2]);
+					// System.out.println("p0: "+param2[0]+" p1: "+param2[1]);
+					// System.out.println(root_details[0]);
+					// System.out.println(root_details[1]);
+					// System.out.println(root_details[2]);
 				}
 
 				results = new Wrapper().requestDbContent(dbID, query, param2);
@@ -271,24 +266,13 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 					// connect leafs
 					if (i == buildingDepth) {
-						if (entries2infos.containsKey(idA)
-								&& entries2infos.containsKey(idB)) {
+						if (entries2infos.containsKey(idA) && entries2infos.containsKey(idB)) {
 							String[] connection = { idA, idB };
-							String key1 = idA + "-" + idB;
-							String key2 = idB + "-" + idA;
-
-							if (conSet.contains(key1) || conSet.contains(key2)) {
-								// TODO was soll das? -by Benny -
-							} else {
-								connections.add(connection);
-								conSet.add(key1);
-								// conSet.add(key2);
-							}
+							connections.add(connection);
 						}
 					} else {
 						if (!entries2infos.containsKey(idA)) {
-							String[] infos_A = { shortLabel_A, fullName_A,
-									sequence_A };
+							String[] infos_A = { shortLabel_A, fullName_A, sequence_A };
 							entries2infos.put(idA, infos_A);
 							newNodes.add(idA);
 							if (!idA.equals(node)) {
@@ -298,8 +282,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 							}
 						}
 						if (!entries2infos.containsKey(idB)) {
-							String[] infos_B = { shortLabel_B, fullName_B,
-									sequence_B };
+							String[] infos_B = { shortLabel_B, fullName_B, sequence_B };
 							entries2infos.put(idB, infos_B);
 							newNodes.add(idB);
 							if (!idB.equals(node)) {
@@ -310,15 +293,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 						}
 
 						String[] connection = { idA, idB };
-						String key1 = idA + "-" + idB;
-						String key2 = idB + "-" + idA;
-						if (conSet.contains(key1) || conSet.contains(key2)) {
-
-						} else {
-							connections.add(connection);
-							conSet.add(key1);
-							// conSet.add(key2);
-						}
+						connections.add(connection);
 					}
 				}
 			}
@@ -426,7 +401,8 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 	@Override
 	public void done() {
 
-		// System.out.println("querytime :"+(System.currentTimeMillis()-starttime)+"ms");
+		// System.out.println("querytime
+		// :"+(System.currentTimeMillis()-starttime)+"ms");
 		MainWindow.getInstance().showProgressBar("Drawing network");
 
 		String rootName = "";
@@ -437,8 +413,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		}
 		// System.out.println(root_details[0] + ", " + root_details[1] + ", " +
 		// root_details[2] );
-		pw = new CreatePathway(database + " network for " + rootName
-				+ " (depth=" + buildingDepth + ")").getPathway();
+		pw = new CreatePathway(database + " network for " + rootName + " (depth=" + buildingDepth + ")").getPathway();
 
 		// pw.setOrganism(organism);
 		// pw.setLink(pathwayLink);
@@ -451,7 +426,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 		startVisualizationModel();
 
 		if (!headless) {
-			
+
 			myGraph.changeToGEMLayout();
 			myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
 			myGraph.normalCentering();
