@@ -16,7 +16,8 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.RefineryUtilities;
+
+import gui.MainWindow;
 
 /**
  * Barchart for Nodeattribute visualisation
@@ -67,7 +68,7 @@ public class NodeAttributeBarChart extends JFrame {
 		setContentPane(chartPanel);
 
 		pack();
-		RefineryUtilities.centerFrameOnScreen(this);
+		this.setLocationRelativeTo(MainWindow.getInstance());
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

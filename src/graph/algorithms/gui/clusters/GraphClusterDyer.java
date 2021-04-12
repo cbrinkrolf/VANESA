@@ -17,7 +17,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
 import org.jdesktop.swingx.JXTable;
-import org.jfree.ui.RefineryUtilities;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
@@ -96,15 +95,12 @@ public class GraphClusterDyer extends JFrame {
 		}
 		
 		
-		
-		
-				
 		TablePanel newContentPane = new TablePanel(dataset,values);
 		newContentPane.setOpaque(true); // content panes must be opaque
 		setContentPane(newContentPane);
 
 		pack();
-		RefineryUtilities.centerFrameOnScreen(this);
+		this.setLocationRelativeTo(MainWindow.getInstance());
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		// setResizable(false);

@@ -1030,20 +1030,35 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			updateData(simId);
 		}
 
-		renderer.setToolTipGenerator(new XYToolTipGenerator() {
+		renderer.setDefaultToolTipGenerator(new XYToolTipGenerator() {
 
 			@Override
 			public String generateToolTip(XYDataset arg0, int seriesIdx, int arg2) {
 				int pickedV = vState.getPicked().size();
 				int pickedE = eState.getPicked().size();
 				if (pickedV == 1 && pickedE == 0) {
+					BiologicalNodeAbstract graphElement = vState.getPicked().iterator().next();
+					graphElement = resolveReference(graphElement);
+					BiologicalNodeAbstract bna;
+					if (hiddenPN) {
+						bna = resolveHidden(graphElement);
+					} else {
+						bna = graphElement;
+					}
+					if (bna instanceof Place && simResController.getAllActiveWithData(bna, TOKEN).size() <= 1) {
+						return labelsR1.get(seriesIdx);
+					}
+					if (bna instanceof Transition && simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED).size() <= 1) {
+						return labelsR1.get(seriesIdx);
+					}
+					
 					return labelsR1.get(seriesIdx) + "(" + idx2simR1.get(seriesIdx).getName() + ")";
 				}
 				return labelsR1.get(seriesIdx);
 			}
 		});
 
-		renderer.setBaseItemLabelsVisible(true);
+		//renderer.setBaseItemLabelsVisible(true);
 		renderer.setLegendItemLabelGenerator(new XYSeriesLabelGenerator() {
 
 			@Override

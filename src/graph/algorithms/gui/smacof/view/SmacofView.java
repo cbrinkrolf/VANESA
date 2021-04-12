@@ -23,7 +23,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
 import org.jdesktop.swingx.JXTable;
-import org.jfree.ui.RefineryUtilities;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
@@ -128,7 +127,7 @@ public class SmacofView extends JFrame implements ActionListener {
 				tablepanel.setOpaque(true);
 				this.add(tablepanel, BorderLayout.SOUTH);
 				pack();
-				RefineryUtilities.centerFrameOnScreen(this);
+				this.setLocationRelativeTo(MainWindow.getInstance());
 				setVisible(true);
 				setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				// setResizable(false);

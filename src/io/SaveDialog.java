@@ -25,7 +25,7 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang3.SystemUtils;
-import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -39,7 +39,6 @@ import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-//import ch.qos.logback.classic.LoggerContext;
 import configurations.ConnectionSettings;
 import fr.lip6.move.pnml.framework.utils.exception.InvalidIDException;
 import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
@@ -269,7 +268,7 @@ public class SaveDialog {
 					}
 					if (!stop) {
 						try {
-							ChartUtilities.saveChartAsPNG(new File(pathSim + name + ".png"), chart, width * 2,
+							ChartUtils.saveChartAsPNG(new File(pathSim + name + ".png"), chart, width * 2,
 									height * 2);
 						} catch (IOException e) {
 							error+=e.getMessage();
