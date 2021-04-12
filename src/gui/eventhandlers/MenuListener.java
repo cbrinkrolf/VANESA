@@ -41,7 +41,6 @@ import biologicalObjects.nodes.petriNet.Transition;
 import cern.colt.list.IntArrayList;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
-import cluster.clientimpl.ClusterDataUploadWindow;
 import configurations.ProgramFileLock;
 import configurations.gui.LayoutConfig;
 import configurations.gui.Settings;
@@ -874,12 +873,6 @@ public class MenuListener implements ActionListener {
 			break;
 		case "dataMappingColor":
 			DataMappingColorMVC.createDataMapping();
-			break;
-		case "dataMappingDB":
-			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
-				new ClusterDataUploadWindow();
-			} else
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			break;
 		case "datamining":
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {

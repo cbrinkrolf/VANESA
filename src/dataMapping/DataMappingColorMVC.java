@@ -17,7 +17,7 @@ public class DataMappingColorMVC {
 	 * @return - the GUI controller (DataMappingGUIController)
 	 */
 	public static DataMappingGUIController createDataMapping() {
-		DataMappingModelController dataMappingM = new DataMappingModelController(true);
+		DataMappingModelController dataMappingM = new DataMappingModelController();
 		DataMappingView dataMappingV = new DataMappingView();
 	
 		dataMappingM.addObserver(dataMappingV);
@@ -30,12 +30,6 @@ public class DataMappingColorMVC {
 		
 		return dataMappingC;
 
-	}
-	
-	// only for testing
-	public static void main(String[] args) {
-		
-		DataMappingColorMVC.createDataMapping();
 	}
 	
 }

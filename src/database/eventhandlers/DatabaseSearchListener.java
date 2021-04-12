@@ -18,8 +18,6 @@ import database.mirna.mirnaSearch;
 import database.mirna.gui.MIRNAInfoWindow;
 import database.ppi.PPISearch;
 import database.ppi.gui.PPIInfoWindow;
-import database.unid.UNIDInfoWindow;
-import database.unid.UNIDSearch;
 import graph.GraphContainer;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
@@ -34,26 +32,26 @@ public class DatabaseSearchListener implements ActionListener {
 
 	private void requestKEGGcontent() {
 		MainWindow.getInstance().showProgressBar("KEGG query");
-		KeggSearch keggSearch = new KeggSearch(dw.getInput(),
-				MainWindow.getInstance(),null);
+		KeggSearch keggSearch = new KeggSearch(dw.getInput(), MainWindow.getInstance(), null);
 		keggSearch.execute();
 	}
 
 	private void requestBrendaContent() {
 		MainWindow.getInstance().showProgressBar("BRENDA query");
-		BRENDASearch brendaSearch = new BRENDASearch(dw.getInput(),
-				MainWindow.getInstance(), null, dw.isHeadless());
+		BRENDASearch brendaSearch = new BRENDASearch(dw.getInput(), MainWindow.getInstance(), null, dw.isHeadless());
 		brendaSearch.execute();
 	}
-	
+
 	private void requestBrenda2Content() {
 		MainWindow.getInstance().showProgressBar("BRENDA 2 query");
 		BRENDA2Search brenda2Search = new BRENDA2Search(dw.getInput(), null, dw.isHeadless());
 		brenda2Search.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if(evt.getNewValue().toString().equals("DONE")){
-					new Brenda2SearchResultWindow(brenda2Search.getResults(), brenda2Search.getEcNumber(), brenda2Search.getName(), brenda2Search.getSyn(), brenda2Search.getMetabolite(), brenda2Search.getOrg());
+				if (evt.getNewValue().toString().equals("DONE")) {
+					new Brenda2SearchResultWindow(brenda2Search.getResults(), brenda2Search.getEcNumber(),
+							brenda2Search.getName(), brenda2Search.getSyn(), brenda2Search.getMetabolite(),
+							brenda2Search.getOrg());
 				}
 			}
 		});
@@ -64,29 +62,18 @@ public class DatabaseSearchListener implements ActionListener {
 	 * Requests a database to get some content.
 	 */
 
-
 	private void requestPPIcontent() {
-		
+
 		MainWindow.getInstance().showProgressBar("PPI query");
-		PPISearch ppiSearch = new PPISearch(dw.getInput(),
-				MainWindow.getInstance(),dw.isHeadless());
+		PPISearch ppiSearch = new PPISearch(dw.getInput(), MainWindow.getInstance(), dw.isHeadless());
 		ppiSearch.execute();
-		
 
 	}
-	
+
 	private void requestMIRNAcontent() {
-		MainWindow.getInstance().showProgressBar("miRNA query");		
-		mirnaSearch mirnaS = new mirnaSearch(dw.getInput(), dw.isHsaOnlyMirna(),
-				dw.isHeadless());
-		mirnaS.execute();   
-	}
-	
-	private void requestUNIDContent(){
-		MainWindow.getInstance().showProgressBar("UNID query.");
-		UNIDSearch unidS = new UNIDSearch(dw.getInput(), dw.isHeadless());
-		unidS.execute();
-		
+		MainWindow.getInstance().showProgressBar("miRNA query");
+		mirnaSearch mirnaS = new mirnaSearch(dw.getInput(), dw.isHsaOnlyMirna(), dw.isHeadless());
+		mirnaS.execute();
 	}
 
 	@Override
@@ -102,9 +89,7 @@ public class DatabaseSearchListener implements ActionListener {
 			new BrendaInfoWindow();
 		} else if ("miRNAinfo".equals(event)) {
 			new MIRNAInfoWindow();
-		} else if ("UNIDinfo".equals(event)) {
-			new UNIDInfoWindow();
-		}else if ("searchDatabase".equals(event)) {
+		} else if ("searchDatabase".equals(event)) {
 			if (dw.somethingTypedIn()) {
 				if (dw.selectedDatabase().equals("KEGG")) {
 					this.requestKEGGcontent();
@@ -112,23 +97,21 @@ public class DatabaseSearchListener implements ActionListener {
 					this.requestBrendaContent();
 				} else if (dw.selectedDatabase().equals("PPI")) {
 					this.requestPPIcontent();
-				}else if (dw.selectedDatabase().equals("miRNA")) {
+				} else if (dw.selectedDatabase().equals("miRNA")) {
 					this.requestMIRNAcontent();
-				}else if (dw.selectedDatabase().equals("UNID")) {
-					this.requestUNIDContent();
-				}else if(dw.selectedDatabase().equals("BRENDA2")){
+				} else if (dw.selectedDatabase().equals("BRENDA2")) {
 					this.requestBrenda2Content();
 				}
 			} else {
 				MyPopUp.getInstance().show("Error", "Please type something into the search form.");
 			}
 		} else if ("pickcommons".equals(event)) {
-			pickCommons();			
-		} else if("pickneighbors".equals(event)){
+			pickCommons();
+		} else if ("pickneighbors".equals(event)) {
 			pickNeighbors();
 		}
 	}
-	
+
 	private void pickCommons() {
 		if (GraphContainer.getInstance().containsPathway()) {
 			String commonNames[] = dw.getInput()[2].split(",");
@@ -140,8 +123,7 @@ public class DatabaseSearchListener implements ActionListener {
 			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
 				for (int i = 0; i < commonNames.length; i++) {
 					if (bna.getLabel().equals(commonNames[i])) {
-						mg.getVisualizationViewer().getPickedVertexState()
-								.pick(bna, true);
+						mg.getVisualizationViewer().getPickedVertexState().pick(bna, true);
 					}
 				}
 			}
@@ -156,20 +138,15 @@ public class DatabaseSearchListener implements ActionListener {
 			Pathway pw = con.getPathway(w.getCurrentPathway());
 			MyGraph mg = pw.getGraph();
 
-			int amount_picked = mg.getVisualizationViewer()
-					.getPickedVertexState().getPicked().size();
+			int amount_picked = mg.getVisualizationViewer().getPickedVertexState().getPicked().size();
 			BiologicalNodeAbstract picked[] = new BiologicalNodeAbstract[amount_picked];
 
-			mg.getVisualizationViewer().getPickedVertexState().getPicked()
-					.toArray(picked);
+			mg.getVisualizationViewer().getPickedVertexState().getPicked().toArray(picked);
 
 			for (BiologicalNodeAbstract source : picked) {
-				for (BiologicalNodeAbstract neighbor : mg.getJungGraph()
-						.getNeighbors(source)) {
-					if (!mg.getVisualizationViewer().getPickedVertexState()
-							.isPicked(neighbor)) {
-						mg.getVisualizationViewer().getPickedVertexState()
-								.pick(neighbor, true);
+				for (BiologicalNodeAbstract neighbor : mg.getJungGraph().getNeighbors(source)) {
+					if (!mg.getVisualizationViewer().getPickedVertexState().isPicked(neighbor)) {
+						mg.getVisualizationViewer().getPickedVertexState().pick(neighbor, true);
 					}
 				}
 			}

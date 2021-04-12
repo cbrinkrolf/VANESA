@@ -106,13 +106,6 @@ public class MenuBarClass {
 		dataMapping.setActionCommand("dataMappingColor");
 		tools.add(dataMapping);
 
-		// items for the dataMapping
-		JMenuItem dataMappingDb = new JMenuItem("Data Mapping (DB)");
-		dataMappingDb.addActionListener(MenuListener.getInstance());
-		dataMappingDb.setActionCommand("dataMappingDB");
-		if (MainWindow.developer)
-			tools.add(dataMappingDb);
-
 		// items for datamining, including smacof
 		JMenuItem datamining = new JMenuItem("Data Mining (SMACOF)");
 		datamining.addActionListener(MenuListener.getInstance());
