@@ -1,4 +1,4 @@
-package gui;
+package gui.optionPanelWindows;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -63,6 +63,7 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
 import graph.animations.RegulationTabelModel;
 import graph.jung.graphDrawing.VertexShapes;
+import gui.MainWindow;
 import gui.algorithms.ScreenSize;
 import io.SaveDialog;
 import miscalleanous.tables.MyTable;

@@ -9,7 +9,14 @@ import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
 import database.gui.DatabaseWindow;
-import graph.gui.ElementWindow;
+import gui.optionPanelWindows.BuildingBlocks;
+import gui.optionPanelWindows.ElementTree;
+import gui.optionPanelWindows.ElementWindow;
+import gui.optionPanelWindows.GraphAlgorithmsWindow;
+import gui.optionPanelWindows.PathwayTree;
+import gui.optionPanelWindows.ProjectWindow;
+import gui.optionPanelWindows.SatelliteWindow;
+import gui.optionPanelWindows.SimulationResultsPlot;
 import net.miginfocom.swing.MigLayout;
 
 public class OptionPanel {
@@ -96,11 +103,12 @@ public class OptionPanel {
 		elements.setTitle("Graph Elements");
 		tree = new ElementTree();
 		elements.add(tree.getScrollTree());
+		elements.setCollapsed(true);
 
 		pathways = new JXTaskPane();
 		pathways.setTitle("Pathway Tree");
 		pathwayTree = new PathwayTree();
-		pathways.add(pathwayTree);
+		pathways.add(pathwayTree.getPanel());
 		pathways.setCollapsed(true);
 
 		theory = new JXTaskPane();
@@ -124,7 +132,7 @@ public class OptionPanel {
 		simResWindow = new SimulationResultsPlot();
 		simResView.add(simResWindow.getPanel());
 
-		elements.setCollapsed(true);
+		
 		// databaseSearch.setCollapsed(false);
 		// satellite.setCollapsed(true);
 		//
@@ -149,7 +157,7 @@ public class OptionPanel {
 		bbProperties = new JXTaskPane();
 		bbProperties.setTitle("Building Blocks");
 		bb = new BuildingBlocks();
-		bbProperties.add(bb);
+		bbProperties.add(bb.getPanel());
 		bbProperties.setCollapsed(true);
 
 		project = new JXTaskPane();

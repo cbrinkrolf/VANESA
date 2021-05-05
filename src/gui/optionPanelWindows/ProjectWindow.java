@@ -1,4 +1,4 @@
-package gui;
+package gui.optionPanelWindows;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;

@@ -1,4 +1,4 @@
-package gui;
+package gui.optionPanelWindows;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -20,20 +20,21 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import biologicalElements.Pathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
+import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
-public class PathwayTree extends JPanel implements TreeSelectionListener {
+public class PathwayTree implements TreeSelectionListener {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private JXTree tree = new JXTree(new DefaultMutableTreeNode());
 	private JScrollPane scrollTree = new JScrollPane();
 	private DefaultTreeModel model;
 	private HashMap<DefaultMutableTreeNode, Pathway> map = new HashMap<DefaultMutableTreeNode, Pathway>();
 	private DefaultMutableTreeNode actualNode;
-
+	private JPanel p = new JPanel();
+			
 	public PathwayTree() {
 		tree.setEditable(false);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -41,11 +42,11 @@ public class PathwayTree extends JPanel implements TreeSelectionListener {
 		tree.addTreeSelectionListener(this);
 		tree.addHighlighter(new ColorHighlighter());
 		tree.expandAll();
-		setLayout(new MigLayout("", "[grow]", ""));
+		p.setLayout(new MigLayout("", "[grow]", ""));
 		scrollTree.setPreferredSize(new Dimension(300, 200));
 		scrollTree.setViewportView(tree);
-		add(scrollTree, "wrap 10, align center");
-		setVisible(true);
+		p.add(scrollTree, "wrap 10, align center");
+		p.setVisible(true);
 		scrollTree.setVisible(true);
 		tree.setVisible(true);
 	}
@@ -86,6 +87,7 @@ public class PathwayTree extends JPanel implements TreeSelectionListener {
 		tree.removeTreeSelectionListener(this);
 		tree.setSelectionPath(new TreePath(actualNode.getPath()));
 		tree.addTreeSelectionListener(this);
+		p.setVisible(true);
 	}
 
 	@Override
@@ -108,5 +110,11 @@ public class PathwayTree extends JPanel implements TreeSelectionListener {
 
 	public void removeTree() {
 		tree.removeAll();
+		p.setVisible(false);
+	}
+
+	public JPanel getPanel() {
+		p.setVisible(false);
+		return p;
 	}
 }

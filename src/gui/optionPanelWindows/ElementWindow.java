@@ -1,4 +1,4 @@
-package graph.gui;
+package gui.optionPanelWindows;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -55,6 +55,9 @@ import biologicalObjects.nodes.petriNet.Transition;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import graph.algorithms.NodeAttributeTypes;
+import graph.gui.LabelsWindow;
+import graph.gui.ParameterWindow;
+import graph.gui.ReferenceDialog;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MyPopUp;

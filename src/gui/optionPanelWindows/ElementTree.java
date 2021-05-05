@@ -1,4 +1,4 @@
-package gui;
+package gui.optionPanelWindows;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

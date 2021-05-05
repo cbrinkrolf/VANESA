@@ -1,4 +1,4 @@
-package gui;
+package gui.optionPanelWindows;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -34,17 +34,17 @@ import graph.GraphInstance;
 import net.miginfocom.swing.MigLayout;
 import xmlInput.sbml.JSBMLinput;
 
-public class BuildingBlocks extends JPanel implements TreeSelectionListener{
+public class BuildingBlocks implements TreeSelectionListener{
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private JXTree tree = new JXTree(new DefaultMutableTreeNode() );
 	private JScrollPane scrollTree=new JScrollPane();
 	private DefaultTreeModel model;
 	private HashMap<DefaultMutableTreeNode, File> map = new HashMap<DefaultMutableTreeNode, File>();
 	private JButton reload;
+	private JPanel p = new JPanel();
 	
 	public BuildingBlocks(){				
 		tree.setEditable(false);
@@ -71,7 +71,7 @@ public class BuildingBlocks extends JPanel implements TreeSelectionListener{
         	      }
         	   }
         	});
-		setLayout(new MigLayout("", "[grow]", ""));
+		p.setLayout(new MigLayout("", "[grow]", ""));
 		scrollTree.setPreferredSize(new Dimension(300, 200));
 		scrollTree.setViewportView(tree);
 		reload = new JButton("reload");
@@ -84,9 +84,9 @@ public class BuildingBlocks extends JPanel implements TreeSelectionListener{
 			}
 			
 		});
-		add(scrollTree, "wrap 10, align left");
-		add(reload, "wrap 10, align left");
-		setVisible(true);
+		p.add(scrollTree, "wrap 10, align left");
+		p.add(reload, "wrap 10, align left");
+		p.setVisible(true);
 		scrollTree.setVisible(true);
 		tree.setVisible(true);
 	}
@@ -110,6 +110,7 @@ public class BuildingBlocks extends JPanel implements TreeSelectionListener{
 		tree.removeTreeSelectionListener(this);
 		tree.setSelectionPath(new TreePath(root.getPath()));
 		tree.addTreeSelectionListener(this);
+		p.setVisible(true);
 	}
 
 
@@ -146,6 +147,7 @@ public class BuildingBlocks extends JPanel implements TreeSelectionListener{
 
 	public void removeTree() {
 		tree.removeAll();
+		p.setVisible(false);
 	}
 	
 	 // this is what you want
@@ -172,10 +174,8 @@ public class BuildingBlocks extends JPanel implements TreeSelectionListener{
                         setIcon(UIManager.getIcon("FileView.fileIcon"));
                 }
             }
-
             return this;
         }
-
     }
     
     private class FileSortComparator implements Comparator<File>{
@@ -188,7 +188,10 @@ public class BuildingBlocks extends JPanel implements TreeSelectionListener{
 				return -1;
 			return String.CASE_INSENSITIVE_ORDER.compare(arg0.getName(), arg1.getName());
 		}
-    	
     }
-	
+    
+	public JPanel getPanel() {
+		p.setVisible(false);
+		return p;
+	}
 }
