@@ -3,7 +3,6 @@ package biologicalObjects.nodes;
 import java.util.Vector;
 
 import biologicalElements.Elementdeclerations;
-import graph.jung.graphDrawing.VertexShapes;
 
 public class Gene extends BiologicalNodeAbstract {
 
@@ -18,7 +17,6 @@ public class Gene extends BiologicalNodeAbstract {
 	public Gene(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.gene);
-		shapes = new VertexShapes();
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 	
@@ -137,11 +135,6 @@ public class Gene extends BiologicalNodeAbstract {
 		return enzymes;
 	}
 
-	@Override
-	public void rebuildShape(VertexShapes vs) {
-//		setShape(vs.getEllipse(getVertex()));
-	}
-
 	public String getNtSequence() {
 		return ntSequence;
 	}
@@ -149,5 +142,4 @@ public class Gene extends BiologicalNodeAbstract {
 	public void setNtSequence(String ntSequence) {
 		this.ntSequence = ntSequence;
 	}
-
 }

@@ -291,7 +291,6 @@ public class PropertyWindowListener implements FocusListener {
 			else if (((JComboBox<?>) event.getSource()).getSelectedItem().equals(StochasticTransition.class.getName()))
 				newT = new StochasticTransition(t.getLabel(), t.getName());
 			if (newT != null) {
-				newT.rebuildShape(new VertexShapes());
 				newT.setCompartment(t.getCompartment());
 				graphInstance.getPathway().addVertex(newT, new Point());
 			}
@@ -333,7 +332,6 @@ public class PropertyWindowListener implements FocusListener {
 			} catch (IDAlreadyExistException ex) {
 				newP.setID(pw);
 			}
-			newP.rebuildShape(new VertexShapes());
 
 		} else if (source.equals("disList")) {
 			StochasticTransition p = (StochasticTransition) geb;

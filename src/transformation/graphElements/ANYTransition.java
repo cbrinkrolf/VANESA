@@ -12,7 +12,7 @@ public class ANYTransition extends Transition {
 	public ANYTransition(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.transition);
-		shapes = new VertexShapes();
+		VertexShapes shapes = new VertexShapes();
 		attributeSetter(this.getClass().getSimpleName(), this);
 
 		AffineTransform transform2 = new AffineTransform();
@@ -21,9 +21,5 @@ public class ANYTransition extends Transition {
 		transform2.scale(1, 2);
 		setDefaultShape(shapes.makeCoarse(transform2.createTransformedShape(shapes.getRectangle())));
 		setDefaultColor(Color.white);
-	}
-
-	@Override
-	public void rebuildShape(VertexShapes vs) {
 	}
 }

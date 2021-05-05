@@ -11,7 +11,6 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
-import graph.jung.graphDrawing.VertexShapes;
 
 public abstract class Place extends PNNode {
 
@@ -40,22 +39,6 @@ public abstract class Place extends PNNode {
 		
 		this.setDefaultNodesize(2);
 		setDefaultColor(Color.WHITE);
-	}
-
-	@Override
-	public void rebuildShape(VertexShapes vs) {
-		/*
-		 * // this.setColor(new Color(255-token,255-token,255-token)); Shape s =
-		 * null; // if (!discrete)s = vs.getDoubleEllipse(getVertex()); // else
-		 * s=vs.getEllipse(getVertex());
-		 * 
-		 * // Rectangle bounds = s.getBounds(); // AffineTransform transform =
-		 * new AffineTransform(); // transform.translate(1,1); //
-		 * transform.scale(1, 2); // this.setColor(new Color(token,0,0));
-		 * 
-		 * AffineTransform transform = new AffineTransform(); transform.scale(2,
-		 * 2); setShape(transform.createTransformedShape(s)); // setShape(s);
-		 */
 	}
 
 	public double getToken() {

@@ -405,7 +405,6 @@ public class PNTableDialog extends JDialog implements ActionListener {
 						System.out.println("neu ct");
 					}
 					if (newT != null) {
-						newT.rebuildShape(new VertexShapes());
 						newT.setCompartment(t.getCompartment());
 						pw.addVertex(newT, new Point(0, 0));
 						t = newT;
@@ -426,7 +425,6 @@ public class PNTableDialog extends JDialog implements ActionListener {
 
 				}
 
-				bnas[i].rebuildShape(new VertexShapes());
 				// System.out.println("i ende: "+i);
 			}
 

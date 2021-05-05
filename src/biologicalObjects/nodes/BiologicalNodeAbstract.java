@@ -41,7 +41,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private double nodesize = 1;
 	private double defaultNodesize = 1;
 	private BiologicalNodeAbstract parentNode;
-	public VertexShapes shapes;
 	private String organism = "";
 	private DefaultMutableTreeNode treeNode;
 	private BiologicalNodeAbstract ref = null;
@@ -101,7 +100,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			setPetriNet(new GraphInstance().getPathway().isPetriNet());
 		}
 		// values.put(1, 0);
-		shapes = new VertexShapes();
 		// setShape(shapes.getEllipse());
 
 	}
@@ -476,7 +474,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			coarseShape = shape;
 		else
 			coarseShape = getRootNode().getShape();
-		coarseShape = shapes.makeCoarse(coarseShape);
+		coarseShape = new VertexShapes().makeCoarse(coarseShape);
 		setDefaultShape(coarseShape);
 		setShape(coarseShape);
 	}
@@ -765,14 +763,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	 * 
 	 * public int getAnimationSteps() { return values.size(); }
 	 */
-
-	public static void setShapes(VertexShapes s) {
-		// shapes = s;
-	}
-
-	public void rebuildShape(VertexShapes vs) {
-		// setShape(vs.getEllipse(getVertex()));
-	}
 
 	public double getNodesize() {
 		return nodesize;

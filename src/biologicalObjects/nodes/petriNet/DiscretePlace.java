@@ -8,8 +8,7 @@ public class DiscretePlace extends Place {
 	public DiscretePlace(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.discretePlace);
-		shapes = new VertexShapes();
-		setDefaultShape(shapes.getEllipse());
+		setDefaultShape(new VertexShapes().getEllipse());
 		setDiscrete(true);
 	}
 }

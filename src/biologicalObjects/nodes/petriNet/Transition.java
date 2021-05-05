@@ -39,7 +39,6 @@ public class Transition extends PNNode {
 		super(label, name);
 		if (label.equals("")) setLabel(name);
 		if (name.equals("")) setName(label);
-		shapes = new VertexShapes();
 		/*setShape(shapes.getRectangle());
 		Rectangle bounds = getShape().getBounds();
 		// System.out.println("hoehe: "+bounds.getHeight());
@@ -58,23 +57,12 @@ public class Transition extends PNNode {
 		
 		transform2.translate(1, 1);
 		transform2.scale(1, 2);
-		setDefaultShape(transform2.createTransformedShape(shapes.getRectangle()));
+		setDefaultShape(transform2.createTransformedShape(new VertexShapes().getRectangle()));
 		setDefaultColor(Color.white);
 		
 		setBiologicalElement(Elementdeclerations.transition);
 	}
 
-	@Override
-	public void rebuildShape(VertexShapes vs) {
-		/*Shape s = vs.getRectangle();
-		// s.
-		// Rectangle bounds = s.getBounds();
-		AffineTransform transform = new AffineTransform();
-		transform.translate(1, 1);
-		transform.scale(1, 2);
-		setShape(transform.createTransformedShape(s));*/
-		// setShape(s);
-	}
 
 	public boolean isSimulationActive() {
 		return simulationActive;

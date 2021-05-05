@@ -13,6 +13,7 @@ import gui.optionPanelWindows.BuildingBlocks;
 import gui.optionPanelWindows.ElementTree;
 import gui.optionPanelWindows.ElementWindow;
 import gui.optionPanelWindows.GraphAlgorithmsWindow;
+import gui.optionPanelWindows.PathwayPropertiesWindow;
 import gui.optionPanelWindows.PathwayTree;
 import gui.optionPanelWindows.ProjectWindow;
 import gui.optionPanelWindows.SatelliteWindow;
@@ -24,54 +25,29 @@ public class OptionPanel {
 	private JPanel p = new JPanel(new MigLayout("insets 0"));
 
 	private JScrollPane scrollPane;
-
 	private DatabaseWindow dw;
-
 	private ElementTree tree;
-
+	private SimulationResultsPlot simResWindow;
 	private BuildingBlocks bb;
-
 	private SatelliteWindow satelliteWindow;
-
-	// private ElementInformationWindow information;
-
 	private ElementWindow elementWindow;
-
 	private ProjectWindow projectWindow;
+	private PathwayTree pathwayTree;
+	private GraphAlgorithmsWindow graphAlgorithms;
+	private PathwayPropertiesWindow pathwayPropertiesWindow;
 
 	private JXTaskPane elements;
-
 	private JXTaskPane satellite;
-
-	// private PetriNetProperties petriNetProperties;
-
-	// Taskpane for the microarray data visualization component
 	private JXTaskPane simResView;
-
-	// GUI component used for rendering the parallel coordinates plot
-	private SimulationResultsPlot simResWindow;
-
-	// private JXTaskPane dbProperties;
-
 	private JXTaskPane generalProperties;
-
 	private JXTaskPane databaseSearch;
-
 	private JXTaskPane project;
-
-	// private JXTaskPane edges;
-
 	private JXTaskPane theory;
-
-	// private JXTaskPane petriNet;
-
 	private JXTaskPane pathways;
-
-	private PathwayTree pathwayTree;
+	private JXTaskPane bbProperties;
+	private JXTaskPane pathwayProperties;
 
 	private boolean updatePanels = true;
-
-	private GraphAlgorithmsWindow graphAlgorithms;
 
 	private JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
 
@@ -80,7 +56,7 @@ public class OptionPanel {
 	// private HashMap<String, GraphAlignmentOptionTab> alignmentTabs = new
 	// HashMap<String, GraphAlignmentOptionTab>();
 
-	private JXTaskPane bbProperties;
+
 
 	public JXTaskPaneContainer getTaskPaneContainer() {
 		return taskPaneContainer;
@@ -133,26 +109,17 @@ public class OptionPanel {
 		simResView.add(simResWindow.getPanel());
 
 		
-		// databaseSearch.setCollapsed(false);
-		// satellite.setCollapsed(true);
-		//
-		// // edges = new JXTaskPane();
-		// // edges.setTitle("Show/Hide Edges");
-		// // graphProperties = new GraphProperties();
-		// // edges.add(graphProperties.getPanel());
-		// // edges.setCollapsed(true);
-		//
-		// dbProperties = new JXTaskPane();
-		// dbProperties.setTitle("Element Information");
-		// information = new ElementInformationWindow();
-		// dbProperties.add(information.getPanel());
-		// dbProperties.setCollapsed(true);
-
 		generalProperties = new JXTaskPane();
 		generalProperties.setTitle("Element Properties");
 		elementWindow = new ElementWindow();
 		generalProperties.add(elementWindow.getPanel());
 		generalProperties.setCollapsed(true);
+		
+		pathwayProperties = new JXTaskPane();
+		pathwayProperties.setTitle("Pathway Properties");
+		pathwayPropertiesWindow = new PathwayPropertiesWindow();
+		pathwayProperties.add(pathwayPropertiesWindow.getPanel());
+		pathwayProperties.setCollapsed(true);
 
 		bbProperties = new JXTaskPane();
 		bbProperties.setTitle("Building Blocks");
@@ -182,6 +149,7 @@ public class OptionPanel {
 			taskPaneContainer.add(databaseSearch, "growx");
 			taskPaneContainer.add(simResView, "growx");
 			taskPaneContainer.add(generalProperties, "growx");
+			taskPaneContainer.add(pathwayProperties, "growx");
 			taskPaneContainer.add(theory, "growx");
 			taskPaneContainer.add(satellite, "growx");
 			taskPaneContainer.add(elements, "growx");
@@ -195,6 +163,7 @@ public class OptionPanel {
 			taskPaneContainer.add(databaseSearch, "growx");
 			taskPaneContainer.add(simResView, "growx");
 			taskPaneContainer.add(generalProperties, "growx");
+			taskPaneContainer.add(pathwayProperties, "growx");
 			taskPaneContainer.add(theory, "growx");
 			taskPaneContainer.add(satellite, "growx");
 			taskPaneContainer.add(elements, "growx");
@@ -225,7 +194,7 @@ public class OptionPanel {
 		satelliteWindow.removeAllElements();
 		simResWindow.removeAllElements();
 		elementWindow.removeAllElements();
-		// information.removeAllElements();
+		pathwayPropertiesWindow.removeAllElements();
 		projectWindow.removeAllElements();
 		graphAlgorithms.removeAllElements();
 
@@ -247,14 +216,9 @@ public class OptionPanel {
 				simResWindow.revalidateView();
 			} else if (element.equals("element")) {
 				elementWindow.revalidateView();
-				// System.out.println("bla");
 			} else if (element.equals("project")) {
 				projectWindow.revalidateView();
-				// } // else if (element.equals("Database")) {
-				// System.out.println("updatePanelDatabase");
-				// information.revalidateView();
 			} else if (element.equals("theory")) {
-				// System.out.println("update graph thoery");
 				graphAlgorithms.revalidateView();
 			} // else if (element.equals("DAWISVertexWindow")) {
 				// information.revalidateDAWISVertexWindow();
@@ -267,6 +231,8 @@ public class OptionPanel {
 				simResWindow.initGraphs();
 			} else if (element.equals("bb")) {
 //				bb.revalidateView();
+			} else if(element.equals("pathwayProperties")){
+				pathwayPropertiesWindow.revalidateView();
 			}
 		}
 	}

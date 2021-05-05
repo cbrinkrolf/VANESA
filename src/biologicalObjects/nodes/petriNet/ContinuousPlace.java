@@ -9,10 +9,7 @@ public class ContinuousPlace extends Place {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.continuousPlace);
 
-		shapes = new VertexShapes();
-
-		setDefaultShape(shapes.getDoubleEllipse());
+		setDefaultShape(new VertexShapes().getDoubleEllipse());
 		setDiscrete(false);
-
 	}
 }

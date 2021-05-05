@@ -1,7 +1,6 @@
 package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
-import graph.jung.graphDrawing.VertexShapes;
 
 public class Protein extends BiologicalNodeAbstract {
 
@@ -11,13 +10,7 @@ public class Protein extends BiologicalNodeAbstract {
 	public Protein(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.protein);
-		shapes = new VertexShapes();
 		attributeSetter(this.getClass().getSimpleName(), this);
-	}
-
-	@Override
-	public void rebuildShape(VertexShapes vs) {
-		//setShape(vs.getEllipse(getVertex()));
 	}
 
 	public String getAaSequence() {

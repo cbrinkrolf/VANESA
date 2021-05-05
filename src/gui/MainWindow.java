@@ -46,6 +46,7 @@ import configurations.gui.VisualizationDialog;
 import graph.GraphContainer;
 import graph.eventhandlers.GraphTabListener;
 import graph.eventhandlers.GraphWindowListener;
+import graph.jung.graphDrawing.VertexShapes;
 import gui.algorithms.CenterWindow;
 import gui.algorithms.ScreenSize;
 import gui.eventhandlers.PanelListener;
@@ -77,6 +78,7 @@ public class MainWindow implements ApplicationListener {
 	private YamlToObjectParser yamlToObject;
 	private List<Bean> beansList = new ArrayList<Bean>();
 	private String loadedYaml = null;
+	private VertexShapes vs = new VertexShapes();
 
 	// global constants
 	public static boolean developer;
@@ -266,44 +268,45 @@ public class MainWindow implements ApplicationListener {
 	public void nodeAttributeChanger(BiologicalNodeAbstract bna, boolean doResetAppearance) {
 		for (Bean bean : beansList) {
 			String shapeBean = bean.getShape();
+			
 			if (bean.getName().equals(bna.getBiologicalElement())) {
 				switch (shapeBean) {
 				case "ellipse":
-					bna.setDefaultShape(bna.shapes.getEllipse());
+					bna.setDefaultShape(vs.getEllipse());
 					break;
 				case "rectangle":
-					bna.setDefaultShape(bna.shapes.getRectangle());
+					bna.setDefaultShape(vs.getRectangle());
 					break;
 				case "rounded rectangle":
-					bna.setDefaultShape(bna.shapes.getRoundRectangle());
+					bna.setDefaultShape(vs.getRoundRectangle());
 					break;
 				case "triangle":
-					bna.setDefaultShape(bna.shapes.getRegularPolygon(3));
+					bna.setDefaultShape(vs.getRegularPolygon(3));
 					break;
 				case "pentagon":
-					bna.setDefaultShape(bna.shapes.getRegularPolygon(5));
+					bna.setDefaultShape(vs.getRegularPolygon(5));
 					break;
 				case "hexagon":
-					bna.setDefaultShape(bna.shapes.getRegularPolygon(6));
+					bna.setDefaultShape(vs.getRegularPolygon(6));
 					break;
 				case "octagon":
-					bna.setDefaultShape(bna.shapes.getRegularPolygon(8));
+					bna.setDefaultShape(vs.getRegularPolygon(8));
 					break;
 				case "5 star":
-					bna.setDefaultShape(bna.shapes.getRegularStar(5));
+					bna.setDefaultShape(vs.getRegularStar(5));
 					break;
 				case "6 star":
-					bna.setDefaultShape(bna.shapes.getRegularStar(6));
+					bna.setDefaultShape(vs.getRegularStar(6));
 					break;
 				case "7 star":
-					bna.setDefaultShape(bna.shapes.getRegularStar(7));
+					bna.setDefaultShape(vs.getRegularStar(7));
 					break;
 				case "8 star":
-					bna.setDefaultShape(bna.shapes.getRegularStar(8));
+					bna.setDefaultShape(vs.getRegularStar(8));
 					break;
 				default:
 					System.out.println(bna.getName() + ": No shape defined! Default shape used!");
-					bna.setDefaultShape(bna.shapes.getEllipse());
+					bna.setDefaultShape(vs.getEllipse());
 				}
 				Color colorBean = new Color(bean.getColorRed(), bean.getColorGreen(), bean.getColorBlue());
 				bna.setDefaultColor(colorBean);
@@ -698,6 +701,7 @@ public class MainWindow implements ApplicationListener {
 		optionPanel.updatePanel("pathwayTree");
 		optionPanel.updatePanel("initPCP");
 		optionPanel.updatePanel("bb");
+		optionPanel.updatePanel("pathwayProperties");
 	}
 
 	public void updateDAWISVertexWindow() {

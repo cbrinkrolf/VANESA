@@ -691,7 +691,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			for (Iterator<BiologicalNodeAbstract> i = pw.getAllGraphNodes().iterator(); i.hasNext();) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) i.next();
 				if (bna instanceof Place) {
-					bna.rebuildShape(new VertexShapes());
 					bna.setColor(Color.WHITE);
 				}
 			}
@@ -963,7 +962,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 									if (ref2 > 3.0)
 										ref2 = 3.0f;
 									VertexShapes vs = new VertexShapes(ref2, 1.0f);
-									bna.rebuildShape(vs);
 									if (animationColour.isSelected()) {
 										bna.setColor(new Color(colors.get(take)));
 									}

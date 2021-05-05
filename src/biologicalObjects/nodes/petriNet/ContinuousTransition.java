@@ -20,7 +20,6 @@ public class ContinuousTransition extends Transition implements DynamicNode{
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.continuousTransition);
 		setColor(Color.WHITE);
-		shapes = new VertexShapes();
 		/*Shape s = shapes.getDoubleRectangle();
 		Rectangle bounds = s.getBounds();
 		// System.out.println("hoehe: "+bounds.getHeight());
@@ -34,7 +33,7 @@ public class ContinuousTransition extends Transition implements DynamicNode{
 		
 //		/transform2.translate(1, 1);
 		transform2.scale(1, 2);
-		setDefaultShape(transform2.createTransformedShape(shapes.getDoubleRectangle()));
+		setDefaultShape(transform2.createTransformedShape(new VertexShapes().getDoubleRectangle()));
 
 	}
 
@@ -52,16 +51,5 @@ public class ContinuousTransition extends Transition implements DynamicNode{
 	@Override
 	public void setKnockedOut(Boolean knockedOut) {
 		super.setKnockedOut(knockedOut);
-	}
-	
-	public void rebuildShape(VertexShapes vs) {
-		/*
-		 * System.out.println("rebuild"); Shape s = null; //
-		 * vs.getDoubleRectangle(getVertex()); // s. // Rectangle bounds =
-		 * s.getBounds(); AffineTransform transform = new AffineTransform();
-		 * transform.translate(1, 1); transform.scale(1, 2);
-		 * setShape(transform.createTransformedShape(s));
-		 */
-		// setShape(s);
 	}
 }

@@ -18,5 +18,4 @@ public class DiscreteTransition extends Transition{
 	public void setDelay(double delay) {
 		this.delay = delay;
 	}
-
 }

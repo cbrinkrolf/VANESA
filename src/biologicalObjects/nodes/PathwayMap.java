@@ -2,8 +2,6 @@ package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
-//import edu.uci.ics.jung.graph.Vertex;
-import graph.jung.graphDrawing.VertexShapes;
 
 public class PathwayMap extends BiologicalNodeAbstract {
 
@@ -15,15 +13,9 @@ public class PathwayMap extends BiologicalNodeAbstract {
 	public PathwayMap(String label, String name){		
 		super(label,name);
 		setBiologicalElement(Elementdeclerations.pathwayMap);
-		shapes = new VertexShapes();	
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
-	
-	@Override
-	public void rebuildShape(VertexShapes vs){
-		//setShape(vs.getRectangle(getVertex()));
-	}
-	
+
 	public void setSpecification(boolean organismSpecific) {
 		specification = organismSpecific;
 	}
