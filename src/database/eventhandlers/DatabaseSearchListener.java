@@ -32,13 +32,13 @@ public class DatabaseSearchListener implements ActionListener {
 
 	private void requestKEGGcontent() {
 		MainWindow.getInstance().showProgressBar("KEGG query");
-		KeggSearch keggSearch = new KeggSearch(dw.getInput(), MainWindow.getInstance(), null);
+		KeggSearch keggSearch = new KeggSearch(dw.getInput(), null);
 		keggSearch.execute();
 	}
 
 	private void requestBrendaContent() {
 		MainWindow.getInstance().showProgressBar("BRENDA query");
-		BRENDASearch brendaSearch = new BRENDASearch(dw.getInput(), MainWindow.getInstance(), null, dw.isHeadless());
+		BRENDASearch brendaSearch = new BRENDASearch(dw.getInput(), null, dw.isHeadless());
 		brendaSearch.execute();
 	}
 
@@ -65,7 +65,7 @@ public class DatabaseSearchListener implements ActionListener {
 	private void requestPPIcontent() {
 
 		MainWindow.getInstance().showProgressBar("PPI query");
-		PPISearch ppiSearch = new PPISearch(dw.getInput(), MainWindow.getInstance(), dw.isHeadless());
+		PPISearch ppiSearch = new PPISearch(dw.getInput(), dw.isHeadless());
 		ppiSearch.execute();
 
 	}
@@ -115,9 +115,8 @@ public class DatabaseSearchListener implements ActionListener {
 	private void pickCommons() {
 		if (GraphContainer.getInstance().containsPathway()) {
 			String commonNames[] = dw.getInput()[2].split(",");
-			MainWindow w = MainWindow.getInstance();
 			GraphContainer con = GraphContainer.getInstance();
-			Pathway pw = con.getPathway(w.getCurrentPathway());
+			Pathway pw = con.getPathway(MainWindow.getInstance().getCurrentPathway());
 			MyGraph mg = pw.getGraph();
 
 			for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
@@ -133,9 +132,8 @@ public class DatabaseSearchListener implements ActionListener {
 
 	private void pickNeighbors() {
 		if (GraphContainer.getInstance().containsPathway()) {
-			MainWindow w = MainWindow.getInstance();
 			GraphContainer con = GraphContainer.getInstance();
-			Pathway pw = con.getPathway(w.getCurrentPathway());
+			Pathway pw = con.getPathway(MainWindow.getInstance().getCurrentPathway());
 			MyGraph mg = pw.getGraph();
 
 			int amount_picked = mg.getVisualizationViewer().getPickedVertexState().getPicked().size();

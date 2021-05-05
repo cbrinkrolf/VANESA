@@ -125,7 +125,7 @@ public class PreRenderManager implements ActionListener {
 
 		// show
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		dialog.setVisible(true);
 		dialog.setResizable(false);
 

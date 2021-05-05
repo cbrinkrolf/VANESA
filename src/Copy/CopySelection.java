@@ -43,7 +43,7 @@ public class CopySelection {
 		if (petriNet ^ pw.isPetriNet()) {
 			JOptionPane
 					.showMessageDialog(
-							MainWindow.getInstance(),
+							MainWindow.getInstance().getFrame(),
 							"Copy-Paste is not possible from biological graph to petri net and vice versa!",
 							"Operation not possible...",
 							JOptionPane.ERROR_MESSAGE);

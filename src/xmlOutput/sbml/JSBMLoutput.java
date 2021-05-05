@@ -87,7 +87,7 @@ public class JSBMLoutput {
 		int answer = JOptionPane.YES_OPTION;
 		if (pathway instanceof BiologicalNodeAbstract) {
 			Object[] options = { "Save subpathway", "Save complete pathway" };
-			answer = JOptionPane.showOptionDialog(MainWindow.getInstance(),
+			answer = JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(),
 					"You try to save a opened subpathway. Do you want to save this subpathway?", "Save subpathway", JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		}

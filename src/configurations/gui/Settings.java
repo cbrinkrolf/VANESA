@@ -59,7 +59,7 @@ public class Settings extends JDialog implements ActionListener {
 		enableSettings(true);
 
 		this.setSize(300, 300);
-		this.setLocationRelativeTo(MainWindow.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		this.pack();
 		this.setResizable(false);
 		this.setVisible(true);

@@ -137,7 +137,7 @@ public class MenuListener implements ActionListener {
 
 		switch (event) {
 		case "new Network":
-			int option = JOptionPane.showOptionDialog(w, "Which type of modeling do you prefer?",
+			int option = JOptionPane.showOptionDialog(w.getFrame(), "Which type of modeling do you prefer?",
 					"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
@@ -415,7 +415,7 @@ public class MenuListener implements ActionListener {
 			pane.add(testP);
 			pane.add(invariant);
 			d.pack();
-			d.setLocationRelativeTo(w);
+			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
 
 			break;
@@ -473,7 +473,7 @@ public class MenuListener implements ActionListener {
 			pane.add(testT);
 			pane.add(invariant);
 			d.pack();
-			d.setLocationRelativeTo(w);
+			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
 
 			// System.out.println("testT");
@@ -505,16 +505,13 @@ public class MenuListener implements ActionListener {
 			if (l.size() == 0) {
 				// System.out.println("ist Invariante");
 				this.invariant.setText("This vector is a valid invariant");
-				d.pack();
-				d.setLocationRelativeTo(w);
-				d.setVisible(true);
 			} else {
 				// System.out.println("ist keine Invariante");
 				this.invariant.setText("This vector is not a valid invariant");
-				d.pack();
-				d.setLocationRelativeTo(w);
-				d.setVisible(true);
 			}
+			d.pack();
+			d.setLocationRelativeTo(w.getFrame());
+			d.setVisible(true);
 			break;
 		case "testT":
 			if (c == null) {
@@ -543,16 +540,13 @@ public class MenuListener implements ActionListener {
 			if (l.size() == 0) {
 				// System.out.println("ist Invariante");
 				this.invariant.setText("This vector is a valid invariant");
-				d.pack();
-				d.setLocationRelativeTo(w);
-				d.setVisible(true);
 			} else {
 				// System.out.println("ist keine Invariante");
 				this.invariant.setText("This vector is not a valid invariant");
-				d.pack();
-				d.setLocationRelativeTo(w);
-				d.setVisible(true);
 			}
+			d.pack();
+			d.setLocationRelativeTo(w.getFrame());
+			d.setVisible(true);
 			break;
 		case "openCov":
 			pw = graphInstance.getPathway();
@@ -607,7 +601,7 @@ public class MenuListener implements ActionListener {
 			pane.add(testCov);
 			pane.add(reachable);
 			d.pack();
-			d.setLocationRelativeTo(w);
+			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
 			// String name = graphInstance.getPathway().getPetriNet()
 			// .getCovGraph();
@@ -652,17 +646,13 @@ public class MenuListener implements ActionListener {
 				// System.out.println("ist Invariante");
 				// this.reachable.setText("This vector is a valid Invariante");
 				validInvariant = true;
-				d.pack();
-				d.setLocationRelativeTo(w);
-				d.setVisible(true);
 			} else {
 				// System.out.println("ist keine Invariante");
 				this.reachable.setText("no valid p-invariant");
-				d.pack();
-				d.setLocationRelativeTo(w);
-				d.setVisible(true);
 			}
-
+			d.pack();
+			d.setLocationRelativeTo(w.getFrame());
+			d.setVisible(true);
 			if (validInvariant) {
 				double[] s = new double[start.size()];
 				// System.out.println("Start:");
@@ -786,7 +776,7 @@ public class MenuListener implements ActionListener {
 			 */
 
 			d.pack();
-			d.setLocationRelativeTo(w);
+			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
 			// w.updateTheoryProperties();
 			break;
@@ -794,7 +784,7 @@ public class MenuListener implements ActionListener {
 			// System.out.println("cov erstellen");
 			// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			// Cov cov = new Cov();
-			if (JOptionPane.showConfirmDialog(w,
+			if (JOptionPane.showConfirmDialog(w.getFrame(),
 					"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
 					"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 				new ReachController();
@@ -1047,8 +1037,7 @@ public class MenuListener implements ActionListener {
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv, MainWindow.getInstance());
-
+					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv, MainWindow.getInstance().getFrame());
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}
@@ -1127,6 +1116,7 @@ public class MenuListener implements ActionListener {
 			new AllPopUpsWindow();
 			break;
 		}
+
 	}
 
 	private double[][] initArray(int m, int n) {

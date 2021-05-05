@@ -33,7 +33,7 @@ public class ProjectWindowListener implements FocusListener {
 		MainWindow.getInstance().renameSelectedTab(pw.getName());
 
 		GraphContainer.getInstance().setPetriView(pw.isPetriNet());
-		Component[] c = MainWindow.getInstance().getContentPane()
+		Component[] c = MainWindow.getInstance().getFrame().getContentPane()
 				.getComponents();
 		for (int i = 0; i < c.length; i++) {
 			if (c[i].getClass().getName().equals("javax.swing.JPanel")) {

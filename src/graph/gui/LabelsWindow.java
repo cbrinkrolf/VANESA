@@ -60,7 +60,7 @@ public class LabelsWindow implements ActionListener{
 		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
 				JOptionPane.OK_CANCEL_OPTION);
 		
-		dialog = pane.createDialog(MainWindow.getInstance(), "Labels");
+		dialog = pane.createDialog(MainWindow.getInstance().getFrame(), "Labels");
 		this.repaint();
 		dialog.pack();
 		//dialog.show();

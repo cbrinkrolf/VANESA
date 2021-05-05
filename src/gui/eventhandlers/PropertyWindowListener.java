@@ -276,7 +276,7 @@ public class PropertyWindowListener implements FocusListener {
 					if (node.equals(neighbour) && (((JComboBox<?>) event.getSource()).getSelectedItem()
 							.equals(ContinuousTransition.class.getName())
 							&& node.getBiologicalElement().equals(Elementdeclerations.discretePlace))) {
-						JOptionPane.showMessageDialog(MainWindow.getInstance(),
+						JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
 								"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
 								"Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
 						return;
@@ -308,7 +308,7 @@ public class PropertyWindowListener implements FocusListener {
 					if (node.equals(neighbour) && (((JComboBox<?>) event.getSource()).getSelectedItem().equals("discrete")
 							&& node.getBiologicalElement().equals(Elementdeclerations.continuousTransition))) {
 
-						JOptionPane.showMessageDialog(MainWindow.getInstance(),
+						JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
 								"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
 								"Unallowed Operation...", JOptionPane.ERROR_MESSAGE);
 						return;

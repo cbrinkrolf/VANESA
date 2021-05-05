@@ -317,7 +317,7 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 
 		frame.pack();
 
-		frame.setLocationRelativeTo(MainWindow.getInstance());
+		frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 
 		frame.pack();
 		splitPane.setDividerLocation(0.5);

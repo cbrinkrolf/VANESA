@@ -100,7 +100,7 @@ public class InfoWindow {
 		instructions += tableEnd + "</html>";
 
 		// REENABLE
-		 JOptionPane.showMessageDialog(w.returnFrame(), instructions,
+		 JOptionPane.showMessageDialog(w.getFrame(), instructions,
 		 "Network Properties", JOptionPane.DEFAULT_OPTION);
 		
 		

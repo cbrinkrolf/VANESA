@@ -117,7 +117,7 @@ public class RandomGraphGui extends JFrame implements ActionListener {
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		dialog.setVisible(true);
 	}
 
@@ -135,9 +135,6 @@ public class RandomGraphGui extends JFrame implements ActionListener {
 					directed.isSelected(), acyclic.isSelected(),
 					weighted.isSelected(), (Integer) minWeight.getValue(),
 					(Integer) maxWeight.getValue());
-
 		}
-
 	}
-
 }

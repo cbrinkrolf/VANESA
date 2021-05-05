@@ -100,7 +100,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 
 		chooser.addChoosableFileFilter(new MyFileFilter(txt, txtDescription));
 
-		option = chooser.showOpenDialog(MainWindow.getInstance());
+		option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
 
 		if (option == JFileChooser.APPROVE_OPTION)
 		{
@@ -215,7 +215,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 					g.normalCentering();
 				}
 			}
-			MainWindow.getInstance().repaint();
+			MainWindow.getInstance().getFrame().repaint();
 		}
 	}
 }

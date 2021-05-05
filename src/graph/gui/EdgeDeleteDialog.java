@@ -100,7 +100,7 @@ public class EdgeDeleteDialog extends JFrame {
 
 		JDialog dialog = pane.createDialog(EdgeDeleteDialog.this, "Delete a hierarchical edge");
 		//dialog.show();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 		Set<BiologicalEdgeAbstract> ret = new HashSet<BiologicalEdgeAbstract>();

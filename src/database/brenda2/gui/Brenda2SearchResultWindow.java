@@ -177,7 +177,7 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		dialog.setVisible(true);
 		
 	}

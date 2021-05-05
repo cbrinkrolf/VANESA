@@ -59,7 +59,7 @@ public abstract class ChooseGraphsWindow extends JFrame implements ActionListene
 			this.setLayout(layout);
 			
 			dialog.pack();
-			dialog.setLocationRelativeTo(MainWindow.getInstance());
+			dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 			dialog.setVisible(true);
 	}
 

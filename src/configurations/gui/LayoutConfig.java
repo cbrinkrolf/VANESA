@@ -119,7 +119,7 @@ public class LayoutConfig extends JPanel implements ActionListener {
 	}
 
 	private void showSettings() {
-		int option = JOptionPane.showOptionDialog(MainWindow.getInstance(), this,
+		int option = JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(), this,
 				"Layout settings", JOptionPane.DEFAULT_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, buttons, applyButton);
 	}

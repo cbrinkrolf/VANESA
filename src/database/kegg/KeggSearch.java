@@ -41,7 +41,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 
 	private boolean continueProgress = false;
 	private KEGGResultWindow dsrw = null;
-	private MainWindow w = null;
+	private MainWindow w = MainWindow.getInstance();
 	private Pathway mergePW = null;
 
 	public KeggSearch(String[] input) {
@@ -52,13 +52,12 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 		compound = input[4];
 	}
 
-	public KeggSearch(String[] input, MainWindow w, Pathway mergePW) {
+	public KeggSearch(String[] input, Pathway mergePW) {
 		pathway = input[0];
 		organismus = input[1];
 		enzyme = input[2];
 		gene = input[3];
 		compound = input[4];
-		this.w = w;
 		this.mergePW = mergePW;
 	}
 
@@ -215,7 +214,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 			dsrw = new KEGGResultWindow(results);
 
 		} else {
-			JOptionPane.showMessageDialog(w,
+			JOptionPane.showMessageDialog(w.getFrame(),
 					"Sorry, no entries have been found.");
 		}
 
@@ -227,7 +226,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 				if (results.size() > 1 || mergePW != null)
 					answer = JOptionPane
 							.showOptionDialog(
-									w,
+									w.getFrame(),
 									"Shall the selected Pathways be loaded each into a separate tab, be combined into an overview Pathway or merged?",
 									"Several Pathways selected...",
 									JOptionPane.YES_NO_CANCEL_OPTION,

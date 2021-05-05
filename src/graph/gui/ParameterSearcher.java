@@ -277,7 +277,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 		this.setContentPane(optionPane);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.pack();
-		this.setLocationRelativeTo(MainWindow.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		this.requestFocus();
 		this.setVisible(true);
 		if(initialSearch){

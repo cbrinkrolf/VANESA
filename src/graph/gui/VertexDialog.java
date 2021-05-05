@@ -156,7 +156,7 @@ public class VertexDialog {
 		JDialog dialog = pane.createDialog(null, "Create an element");
 		// dialog.show();
 		if (relativeTo == null) {
-			dialog.setLocationRelativeTo(MainWindow.getInstance());
+			dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		} else {
 			dialog.setLocationRelativeTo(relativeTo);
 		}

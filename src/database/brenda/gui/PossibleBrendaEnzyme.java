@@ -118,7 +118,7 @@ public class PossibleBrendaEnzyme extends JFrame implements ActionListener, Tabl
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		dialog.setVisible(true);
 	}
 	

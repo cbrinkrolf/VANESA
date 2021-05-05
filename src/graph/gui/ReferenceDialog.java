@@ -112,7 +112,7 @@ public class ReferenceDialog {
 
 		JDialog dialog = pane.createDialog(null, "Select a reference");
 		// dialog.show();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
 
@@ -129,5 +129,4 @@ public class ReferenceDialog {
 			return null;
 		}
 	}
-
 }

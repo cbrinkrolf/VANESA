@@ -140,7 +140,7 @@ public class SaveDialog {
 	public SaveDialog(int format, Component c, Component relativeTo) {
 
 		if (relativeTo == null) {
-			this.relativeTo = MainWindow.getInstance();
+			this.relativeTo = MainWindow.getInstance().getFrame();
 		}
 		this.prerapre(format);
 		this.c = c;
@@ -186,7 +186,7 @@ public class SaveDialog {
 
 	public SaveDialog(int format, List<JFreeChart> charts, boolean directoryOnly, Component relativeTo) {
 		if (relativeTo == null) {
-			this.relativeTo = MainWindow.getInstance();
+			this.relativeTo = MainWindow.getInstance().getFrame();
 		} else {
 			this.relativeTo = relativeTo;
 		}
@@ -319,7 +319,7 @@ public class SaveDialog {
 	}
 
 	public SaveDialog(int format) {
-		this(format, null, MainWindow.getInstance());
+		this(format, null, MainWindow.getInstance().getFrame());
 	}
 
 	private void prerapre(int format) {

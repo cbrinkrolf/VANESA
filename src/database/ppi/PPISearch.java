@@ -18,20 +18,18 @@ public class PPISearch extends SwingWorker<Object, Object>{
 
 //	private DatabaseQueryValidator dqv = new DatabaseQueryValidator();
 	
-	private MainWindow w;
+	private MainWindow w = MainWindow.getInstance();
 	private ArrayList<DBColumn> results;
 	private PPISearchResultWindow ppiSearchResultWindow;
 	private boolean headless;
 	
 	
-	public PPISearch(String[] input,MainWindow w, boolean headless) {
+	public PPISearch(String[] input, boolean headless) {
 
 		database = input[0];
 		fullName = input[1];
 		alias = input[2];
 		acNumber = input[3];
-		
-		this.w =w;
 		
 		this.headless = headless;
 
@@ -204,7 +202,7 @@ public class PPISearch extends SwingWorker<Object, Object>{
 			continueProgress = true;	
 			ppiSearchResultWindow = new PPISearchResultWindow(results, database);		
 		} else {
-			JOptionPane.showMessageDialog(w,
+			JOptionPane.showMessageDialog(w.getFrame(),
 					"Sorry, no entries have been found.");
 		}
 		

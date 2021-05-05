@@ -65,9 +65,9 @@ import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.infonode.util.Direction;
 import xmlOutput.sbml.JSBMLoutput;
 
-public class MainWindow extends JFrame implements ApplicationListener {
-	private static final long serialVersionUID = -8328247684408223577L;
+public class MainWindow implements ApplicationListener {
 
+	private JFrame frame = new JFrame();
 	private HashMap<Integer, View> views = new HashMap<Integer, View>();
 	private ViewMap viewMap = new ViewMap();
 	private RootWindow rootWindow;
@@ -133,8 +133,8 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		// });
 		// SwingUtilities.updateComponentTreeUI(this);
 
-		setTitle("VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications");
-		setVisible(false);
+		frame.setTitle("VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications");
+		frame.setVisible(false);
 
 		// MacOSX-Look and Feel with http://simplericity.org/macify/
 		Application application = new DefaultApplication();
@@ -149,7 +149,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		ImagePath imagePath = ImagePath.getInstance();
 		ImageIcon ii = new ImageIcon(imagePath.getPath("graph2.png"));
 		BufferedImage b = new BufferedImage(ii.getIconWidth(), ii.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-		ii.paintIcon(this, b.createGraphics(), 0, 0);
+		ii.paintIcon(frame, b.createGraphics(), 0, 0);
 		application.setApplicationIconImage(b);
 
 		// react to special application menu items on mac osx
@@ -174,12 +174,12 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			windowHeight = windowWidth * 2 / 3;
 		}
 
-		setEnabled(false);
-		setSize(windowWidth, windowHeight);
-		new CenterWindow(this).centerWindow(windowWidth, windowHeight);
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.setEnabled(false);
+		frame.setSize(windowWidth, windowHeight);
+		new CenterWindow(frame).centerWindow(windowWidth, windowHeight);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-		addWindowListener(new WindowAdapter() {
+		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
 				System.exit(0);
@@ -188,9 +188,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		});
 		bar = new ToolBar(false);
 		// create menu
-		setJMenuBar(myMenu.returnMenu());
+		frame.setJMenuBar(myMenu.returnMenu());
 		// toolbar with the buttons on the right
-		root = (JComponent) getContentPane();
+		root = (JComponent) frame.getContentPane();
 		// getContentPane().add(new ToolBar(false).getToolBar(),
 		// BorderLayout.EAST);
 		root.add(bar.getToolBar(), BorderLayout.EAST);
@@ -225,9 +225,9 @@ public class MainWindow extends JFrame implements ApplicationListener {
 
 		layer = new JXLayer<JComponent>(root);
 		layer.setUI(blurUI);
-		this.setContentPane(layer);
+		frame.setContentPane(layer);
 
-		setVisible(true);
+		frame.setVisible(true);
 
 		try {
 			askForYaml();
@@ -529,7 +529,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		if (pw.hasGotAtLeastOneElement() && ask) {
 
 			// 0: yes, 1: no, 2: cancel, -1: x
-			int n = JOptionPane.showConfirmDialog(MainWindow.getInstance(), "Would you like to save your network-model?", "Save Question",
+			int n = JOptionPane.showConfirmDialog(frame, "Would you like to save your network-model?", "Save Question",
 					JOptionPane.YES_NO_CANCEL_OPTION);
 			// System.out.println(n);
 			if (n == 0) {
@@ -589,7 +589,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 			progressbar.closeWindow();
 		}
 		blurUI.setLocked(false);
-		this.repaint();
+		frame.repaint();
 	}
 
 	public synchronized void blurrUI() {
@@ -609,8 +609,8 @@ public class MainWindow extends JFrame implements ApplicationListener {
 		}
 	}
 
-	public JFrame returnFrame() {
-		return this;
+	public JFrame getFrame() {
+		return this.frame;
 	}
 
 	public void setFullScreen() {
@@ -753,7 +753,7 @@ public class MainWindow extends JFrame implements ApplicationListener {
 	@Override
 	public void handleQuit(ApplicationEvent arg0) {
 		// close application
-		this.dispose();
+		frame.dispose();
 		System.exit(0);
 	}
 

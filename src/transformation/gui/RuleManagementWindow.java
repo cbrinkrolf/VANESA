@@ -94,7 +94,7 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 
 		frame.pack();
 
-		frame.setLocationRelativeTo(MainWindow.getInstance());
+		frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		frame.requestFocus();
 		frame.setVisible(true);
 

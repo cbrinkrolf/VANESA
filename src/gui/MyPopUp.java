@@ -50,8 +50,8 @@ public class MyPopUp {
 		dialog.setAlwaysOnTop(true);
 		dialog.setOpacity(opacity);
 
-		int x = w.getBounds().x + w.getBounds().width;
-		int y = w.getBounds().y + w.getBounds().height;
+		int x = w.getFrame().getBounds().x + w.getFrame().getBounds().width;
+		int y = w.getFrame().getBounds().y + w.getFrame().getBounds().height;
 		int pos = this.requestPosition();
 		dialog.setLocation(x - dialog.getWidth() - 10, y - ((pos + 1) * dialog.getHeight()) - 10);
 		dialog.setVisible(true);

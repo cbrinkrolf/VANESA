@@ -261,7 +261,7 @@ public class PetriNetSimulation implements ActionListener {
 								System.out.println("end of simulation");
 								w.updatePCPView();
 								w.redrawGraphs();
-								w.revalidate();
+								w.getFrame().revalidate();
 								// w.repaint();
 								if (v.size() > 0) {
 									menue.setTime((v.get(v.size() - 1)).toString());
@@ -414,7 +414,7 @@ public class PetriNetSimulation implements ActionListener {
 			pathCompiler = env.get("OPENMODELICAHOME");
 			return true;
 		} else {
-			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(MainWindow.getInstance(),
+			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(MainWindow.getInstance().getFrame(),
 					"Cannot find OpenModelica installation.\n\n"
 							+ "Please install OpenModelica from \"https://openmodelica.org\".\n"
 							+ "If OpenModelica is already installed, please set\n"

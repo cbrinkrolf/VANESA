@@ -841,7 +841,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		String event = e.getActionCommand();
 
 		if ("colour".equals(event)) {
-			Color newColor = JColorChooser.showDialog(w, "Choose fill colour", ab.getColor());
+			Color newColor = JColorChooser.showDialog(w.getFrame(), "Choose fill colour", ab.getColor());
 			JButton b = ((JButton) e.getSource());
 			b.setBackground(newColor);
 
@@ -853,14 +853,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 		} else if ("plotColour".equals(event)) {
 			if (ab instanceof BiologicalNodeAbstract) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
-				Color newColor = JColorChooser.showDialog(w, "Choose plot colour", bna.getPlotColor());
+				Color newColor = JColorChooser.showDialog(w.getFrame(), "Choose plot colour", bna.getPlotColor());
 				JButton b = ((JButton) e.getSource());
 				b.setBackground(newColor);
 				bna.setPlotColor(newColor);
 			}
 		}
 		else if ("pathwayLink".equals(event)) {
-			if (JOptionPane.showConfirmDialog(w,
+			if (JOptionPane.showConfirmDialog(w.getFrame(),
 					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
 					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION && ab instanceof PathwayMap) {

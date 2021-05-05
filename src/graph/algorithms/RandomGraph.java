@@ -142,7 +142,7 @@ public class RandomGraph {
 			pw.getGraph().normalCentering();
 			
 			MainWindow.getInstance().updateAllGuiElements();
-			MainWindow.getInstance().setEnabled(true);
+			MainWindow.getInstance().getFrame().setEnabled(true);
 			//myGraph.getVisualizationViewer().repaint();
 		}
 	}

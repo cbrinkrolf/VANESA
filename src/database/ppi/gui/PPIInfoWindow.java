@@ -21,6 +21,6 @@ public class PPIInfoWindow {
 	        "</html>";
 		
 		MainWindow w = MainWindow.getInstance();
-		JOptionPane.showMessageDialog(w.returnFrame(), instructions,"PPI Information",1);
+		JOptionPane.showMessageDialog(w.getFrame(), instructions,"PPI Information",1);
 	}
 }

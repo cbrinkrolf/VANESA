@@ -257,7 +257,7 @@ public class PPISearchResultWindow extends JFrame implements ActionListener {
 	public Vector<String[]> getAnswer() {
 
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		dialog.setVisible(true);
 
 		Vector<String[]> v = new Vector<String[]>();

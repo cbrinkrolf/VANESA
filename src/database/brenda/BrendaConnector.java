@@ -804,7 +804,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		if (mergePW != null)
 			answer = JOptionPane
 					.showOptionDialog(
-							MainWindow.getInstance(),
+							MainWindow.getInstance().getFrame(),
 							"A new tab will be created with the pathway you selected. Shall this tab be a merge between the current pathway and the selected or contain only the selected pathway?",
 							"", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null,

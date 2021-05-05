@@ -23,7 +23,7 @@ public class AllPopUpsWindow extends JFrame{
 		this.add(scrollPane, BorderLayout.CENTER);
 		this.pack();
 		// this.setLocation(w.getLocation());
-		this.setLocationRelativeTo(MainWindow.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		// this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		//this.setDefaultCloseOperation(EXIT_ON_CLOSE);

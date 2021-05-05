@@ -58,7 +58,7 @@ public class CreatePathway {
 	}
 
 	private void buildPathway() {
-		w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+		w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		// Pathway newPW = null;
 		if (parent == null) {
 			new Pathway(pathwayName);
@@ -68,7 +68,7 @@ public class CreatePathway {
 		String newPathwayName = con.addPathway(pathwayName, new Pathway(pathwayName));
 		pw = con.getPathway(newPathwayName);
 		w.addTab(pw.getTab().getTitelTab());
-		w.returnFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
 	/*
@@ -89,7 +89,7 @@ public class CreatePathway {
 		String newPathwayName = con.addPathway(pw.getName(), pw);
 		pw = con.getPathway(newPathwayName);
 		w.addTab(pw.getTab().getTitelTab());
-		w.returnFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		//pw.updateMyGraph();
 	}
 }

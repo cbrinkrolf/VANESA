@@ -199,7 +199,7 @@ public class EdgeDialog extends JFrame {
 		JDialog dialog = pane.createDialog(EdgeDialog.this, "Create an edge");
 		// dialog.show();
 		if (relativeTo == null) {
-			dialog.setLocationRelativeTo(MainWindow.getInstance());
+			dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		} else {
 			dialog.setLocationRelativeTo(relativeTo);
 		}

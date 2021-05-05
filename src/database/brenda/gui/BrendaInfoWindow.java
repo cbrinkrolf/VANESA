@@ -47,7 +47,7 @@ public class BrendaInfoWindow {
 	        "</html>";
 		
 		MainWindow w = MainWindow.getInstance();
-		JOptionPane.showMessageDialog(w.returnFrame(), instructions,"BRENDA Informations",1);
+		JOptionPane.showMessageDialog(w.getFrame(), instructions,"BRENDA Informations",1);
 		
 	}
 	

@@ -179,7 +179,7 @@ public class PetriNetVertexDialog {
 
 		// dialog.show();
 		if (relativeTo == null) {
-			dialog.setLocationRelativeTo(MainWindow.getInstance());
+			dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		} else {
 			dialog.setLocationRelativeTo(relativeTo);
 		}

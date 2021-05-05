@@ -133,7 +133,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				// Disallow to add selection to environment coarse nodes.
 				if (pw.isBNA()) {
 					if (((BiologicalNodeAbstract) pw).getEnvironment().contains(vertices)) {
-						JOptionPane.showMessageDialog(MainWindow.getInstance(),
+						JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
 								"Not possible to add nodes to environment nodes.", "Coarse node integration Error!",
 								JOptionPane.ERROR_MESSAGE);
 						oldVertexPositions.clear();
@@ -244,7 +244,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				dragging = false;
 				// vv.setComponentPopupMenu(new GraphPopUp().returnPopUp());
 
-				MainWindow.getInstance().setCursor(cursor);
+				MainWindow.getInstance().getFrame().setCursor(cursor);
 				vv.setCursor(cursor);
 				vv.getComponentPopupMenu().show();
 			}
@@ -293,7 +293,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 							vv.getComponentPopupMenu().hide();
 							// System.out.println("paintes");
 							this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
-							MainWindow.getInstance().setCursor(cursor);
+							MainWindow.getInstance().getFrame().setCursor(cursor);
 							vv.setCursor(cursor);
 							// this.mouseClicked(e);
 						}
@@ -366,7 +366,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			inwindow = true;
 			// this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 			vv.setCursor(cursor);
-			MainWindow.getInstance().setCursor(cursor);
+			MainWindow.getInstance().getFrame().setCursor(cursor);
 			vv.revalidate();
 			vv.repaint();
 		}
@@ -375,7 +375,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	public void mouseExited(MouseEvent e) {
 		if (e.getComponent().toString().contains("MyVisualizationViewer")) {
 			inwindow = false;
-			MainWindow.getInstance().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			MainWindow.getInstance().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 

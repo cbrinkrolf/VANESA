@@ -56,7 +56,7 @@ public class LabelToDataMappingWindow {
 				.setDialogTitle("please choose your mapping file (label->data)");
 
 		int status = filechooser.showOpenDialog(MainWindow
-				.getInstance());
+				.getInstance().getFrame());
 
 		switch (status) {
 		case JFileChooser.APPROVE_OPTION:
@@ -109,7 +109,7 @@ public class LabelToDataMappingWindow {
 		}
 
 		String attributename = JOptionPane.showInputDialog(
-				MainWindow.getInstance(),
+				MainWindow.getInstance().getFrame(),
 				"file accepted.\n please enter a name for the dataset:\n",
 				datafile.getName() + "");
 

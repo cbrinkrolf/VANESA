@@ -21,7 +21,6 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 
 	private DatabaseQueryValidator dqv = new DatabaseQueryValidator();
 
-	private MainWindow w;
 	private String[][] results = null;
 
 	private BrendaSearchResultWindow bsrw;
@@ -30,7 +29,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 
 	private boolean headless;
 
-	public BRENDASearch(String[] input, MainWindow w,Pathway mergePW, boolean headless) {
+	public BRENDASearch(String[] input, Pathway mergePW, boolean headless) {
 
 		ec_number = input[0];
 		name = input[1];
@@ -38,7 +37,6 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 		product = input[3];
 		organism = input[4];
 
-		this.w = w;
 		this.mergePW = mergePW;
 		this.headless = headless;
 
@@ -54,8 +52,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 		if (!ec_number.equals("")) {
 			String temp = dqv.replaceAndValidateString(ec_number);
 			if (temp.length() > 0) {
-				queryStart = queryStart
-						+ dqv.prepareString(ec_number, "e.ec_number", null);
+				queryStart = queryStart + dqv.prepareString(ec_number, "e.ec_number", null);
 				firstCriteria = true;
 			}
 		}
@@ -64,11 +61,9 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 			String temp = dqv.replaceAndValidateString(name);
 			if (temp.length() > 0) {
 				if (firstCriteria) {
-					queryStart = queryStart + " AND "
-							+ dqv.prepareString(name, "e.recomment_name", null);
+					queryStart = queryStart + " AND " + dqv.prepareString(name, "e.recomment_name", null);
 				} else {
-					queryStart = queryStart
-							+ dqv.prepareString(name, "e.recomment_name", null);
+					queryStart = queryStart + dqv.prepareString(name, "e.recomment_name", null);
 				}
 				firstCriteria = true;
 			}
@@ -79,11 +74,9 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 			if (temp.length() > 0) {
 
 				if (firstCriteria) {
-					queryStart = queryStart + " AND "
-							+ dqv.prepareString(organism, "org.org_name", null);
+					queryStart = queryStart + " AND " + dqv.prepareString(organism, "org.org_name", null);
 				} else {
-					queryStart = queryStart
-							+ dqv.prepareString(organism, "org.org_name", null);
+					queryStart = queryStart + dqv.prepareString(organism, "org.org_name", null);
 				}
 				firstCriteria = true;
 			}
@@ -95,11 +88,9 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 			if (temp.length() > 0) {
 
 				if (firstCriteria) {
-					queryStart = queryStart + " AND "
-							+ dqv.prepareString(product, "r.reaction", null);
+					queryStart = queryStart + " AND " + dqv.prepareString(product, "r.reaction", null);
 				} else {
-					queryStart = queryStart
-							+ dqv.prepareString(product, "r.reaction", null);
+					queryStart = queryStart + dqv.prepareString(product, "r.reaction", null);
 				}
 				firstCriteria = true;
 			}
@@ -110,11 +101,9 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 			if (temp.length() > 0) {
 
 				if (firstCriteria) {
-					queryStart = queryStart + " AND "
-							+ dqv.prepareString(substrat, "r.reaction", null);
+					queryStart = queryStart + " AND " + dqv.prepareString(substrat, "r.reaction", null);
 				} else {
-					queryStart = queryStart
-							+ dqv.prepareString(substrat, "r.reaction", null);
+					queryStart = queryStart + dqv.prepareString(substrat, "r.reaction", null);
 				}
 				firstCriteria = true;
 			}
@@ -126,8 +115,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	 * private Vector<String> preparePattern(String patterns) {
 	 * 
 	 * Vector<String> v = new Vector<String>(); StringTokenizer st = new
-	 * StringTokenizer(patterns); String t; String sub; while
-	 * (st.hasMoreTokens()) {
+	 * StringTokenizer(patterns); String t; String sub; while (st.hasMoreTokens()) {
 	 * 
 	 * t = st.nextToken();
 	 * 
@@ -157,8 +145,8 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	 * 
 	 * if (not) v.add("!" + t); else v.add("=" + t);
 	 * 
-	 * } else if (t.startsWith("&")) { } else if (t.startsWith("|")) {
-	 * v.add("|"); } else {
+	 * } else if (t.startsWith("&")) { } else if (t.startsWith("|")) { v.add("|"); }
+	 * else {
 	 * 
 	 * if (not) v.add("!" + t); else v.add("=" + t);
 	 * 
@@ -170,8 +158,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	 * 
 	 * if (product.equals("") || products.equals("")) return true;
 	 * 
-	 * Vector v = preparePattern(product.toUpperCase()); Iterator it =
-	 * v.iterator();
+	 * Vector v = preparePattern(product.toUpperCase()); Iterator it = v.iterator();
 	 * 
 	 * boolean b = true; boolean connection = false;
 	 * 
@@ -187,8 +174,8 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	 * 
 	 * } else {
 	 * 
-	 * if (connection && b) { b = true; connection = false; } else { b = false;
-	 * } } }
+	 * if (connection && b) { b = true; connection = false; } else { b = false; } }
+	 * }
 	 * 
 	 * return b; }
 	 */
@@ -215,8 +202,8 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	 * 
 	 * } else {
 	 * 
-	 * if (connection && b) { b = true; connection = false; } else { b = false;
-	 * } } }
+	 * if (connection && b) { b = true; connection = false; } else { b = false; } }
+	 * }
 	 * 
 	 * return b; }
 	 */
@@ -236,16 +223,14 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 	 * st.nextToken().toUpperCase(); } else { product =
 	 * st.nextToken().toUpperCase(); } }
 	 * 
-	 * if (containsSubstrates(substrate) && containsProduct(product)) return
-	 * true;
+	 * if (containsSubstrates(substrate) && containsProduct(product)) return true;
 	 * 
 	 * return false; }
 	 */
 
 	public String[][] getResults() throws SQLException {
 
-		ArrayList<DBColumn> results = new Wrapper().requestDbContent(1,
-				getQuery());
+		ArrayList<DBColumn> results = new Wrapper().requestDbContent(1, getQuery());
 		String[][] container = new String[results.size()][4];
 
 		for (int i = 0; i < results.size(); i++) {
@@ -275,8 +260,7 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 			continueProgress = true;
 			bsrw = new BrendaSearchResultWindow(results);
 		} else {
-			JOptionPane.showMessageDialog(w,
-					"Sorry, no entries have been found.");
+			JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Sorry, no entries have been found.");
 		}
 
 		if (continueProgress) {
@@ -285,12 +269,10 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
 				MainWindow.getInstance().showProgressBar("Fetching Network.");
 				final Iterator<String[]> it = results.iterator();
 				String[] res;
-		
 
 				while (it.hasNext()) {
 					res = it.next();
-					BrendaConnector bc = new BrendaConnector(res, mergePW,
-							headless);
+					BrendaConnector bc = new BrendaConnector(res, mergePW, headless);
 					bc.setDisregarded(bsrw.getDisregarded());
 					bc.setOrganism_specific(bsrw.getOrganismSpecificDecision());
 					bc.setSearchDepth(bsrw.getSerchDeapth());

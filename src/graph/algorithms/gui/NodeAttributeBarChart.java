@@ -68,7 +68,7 @@ public class NodeAttributeBarChart extends JFrame {
 		setContentPane(chartPanel);
 
 		pack();
-		this.setLocationRelativeTo(MainWindow.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

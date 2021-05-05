@@ -239,7 +239,7 @@ public class GraphNodeRemovalGUI implements ActionListener {
 
 				if (removals.size() > 0) {
 					JOptionPane.showMessageDialog(MainWindow
-							.getInstance().returnFrame(),
+							.getInstance().getFrame(),
 							"Nodes removed from network: " + removals.size(),
 							"Remove Success", JOptionPane.INFORMATION_MESSAGE);
 				}

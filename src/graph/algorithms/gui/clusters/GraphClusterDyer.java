@@ -100,7 +100,7 @@ public class GraphClusterDyer extends JFrame {
 		setContentPane(newContentPane);
 
 		pack();
-		this.setLocationRelativeTo(MainWindow.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		// setResizable(false);

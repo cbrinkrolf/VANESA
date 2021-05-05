@@ -127,7 +127,7 @@ public class SmacofView extends JFrame implements ActionListener {
 				tablepanel.setOpaque(true);
 				this.add(tablepanel, BorderLayout.SOUTH);
 				pack();
-				this.setLocationRelativeTo(MainWindow.getInstance());
+				this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 				setVisible(true);
 				setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				// setResizable(false);

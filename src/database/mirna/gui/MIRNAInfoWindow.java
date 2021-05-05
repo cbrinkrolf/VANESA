@@ -43,7 +43,7 @@ public class MIRNAInfoWindow {
 	        "</html>";
 		
 		MainWindow w = MainWindow.getInstance();
-		JOptionPane.showMessageDialog(w.returnFrame(), instructions,"KEGG Information",1);
+		JOptionPane.showMessageDialog(w.getFrame(), instructions,"KEGG Information",1);
 		
 	}
 

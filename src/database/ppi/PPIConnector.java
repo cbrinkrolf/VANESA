@@ -440,7 +440,7 @@ public class PPIConnector extends SwingWorker<Object, Object> {
 
 		MainWindow window = MainWindow.getInstance();
 		window.updateOptionPanel();
-		window.setVisible(true);
+		window.getFrame().setVisible(true);
 
 	}
 

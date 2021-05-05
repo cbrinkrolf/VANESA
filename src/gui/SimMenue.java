@@ -223,7 +223,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		this.add(west, BorderLayout.WEST);
 		this.pack();
 		// this.setLocation(w.getLocation());
-		this.setLocationRelativeTo(MainWindow.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		// this.setLocationRelativeTo(null);
 		this.setVisible(true);
 

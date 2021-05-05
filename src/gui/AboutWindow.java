@@ -29,7 +29,7 @@ public class AboutWindow {
 	        "</html>";
 		
 		MainWindow w = MainWindow.getInstance();
-		JOptionPane.showMessageDialog(w.returnFrame(), instructions,"About",1);
+		JOptionPane.showMessageDialog(w.getFrame(), instructions,"About",1);
 		
 	}
 	

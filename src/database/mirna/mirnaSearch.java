@@ -166,7 +166,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 							MainWindow window = MainWindow.getInstance();
 							window.updateOptionPanel();
-							window.setVisible(true);
+							window.getFrame().setVisible(true);
 
 							// class HLC implements
 							// HierarchyListComparator<String>{
@@ -247,7 +247,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 							MainWindow window = MainWindow.getInstance();
 							window.updateOptionPanel();
-							window.setVisible(true);
+							window.getFrame().setVisible(true);
 
 						}
 

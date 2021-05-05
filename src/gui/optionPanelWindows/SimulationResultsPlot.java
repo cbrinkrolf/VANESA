@@ -80,8 +80,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	// private Hashtable<Integer, BiologicalNodeAbstract> nodeTabel = new
 	// Hashtable<Integer, BiologicalNodeAbstract>();
 	// instance of main window
-	private MainWindow w;
-
 	// create GUI components
 	private JButton showTable = new JButton("show detailed simulation results");
 	// private JButton drawPlots = new
@@ -211,7 +209,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				// most of the time unnecessary to remove all
 				main.removeAll();
 				// System.out.println(main.getComponentCount());
-				w = MainWindow.getInstance();
 
 				rowsDim = simRes.getTime().size();
 				SpinnerModel modelStart = new SpinnerNumberModel(
@@ -754,7 +751,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			// 2,
 			// (screenHeight / 2) - dialog.getSize().height / 2);
 			dialog.setVisible(true);
-			dialog.setLocationRelativeTo(w);
+			dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		} else if (event.equals("animatePetriNet")) {
 			// redraw plot and set new colors/sizes
 

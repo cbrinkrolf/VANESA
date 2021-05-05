@@ -159,7 +159,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		
 		frame.pack();
 		
-		frame.setLocationRelativeTo(MainWindow.getInstance());
+		frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		frame.requestFocus();
 		frame.setVisible(true);
 

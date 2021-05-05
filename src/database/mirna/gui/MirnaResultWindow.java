@@ -97,7 +97,7 @@ public class MirnaResultWindow extends JFrame {
 
 		public Vector<String[]> getAnswer() {
 
-			JDialog dialog = pane.createDialog(MainWindow.getInstance(), "");
+			JDialog dialog = pane.createDialog(MainWindow.getInstance().getFrame(), "");
 			dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 			

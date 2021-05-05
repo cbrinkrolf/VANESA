@@ -66,7 +66,7 @@ public class ToolBarListener implements ActionListener {
 
 		if ("new Network".equals(event)) {
 
-			int option = JOptionPane.showOptionDialog(MainWindow.getInstance(), "Which type of modeling do you prefer?",
+			int option = JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(), "Which type of modeling do you prefer?",
 					"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
@@ -165,7 +165,7 @@ public class ToolBarListener implements ActionListener {
 
 			con.setPetriView(false);
 
-			Component[] c = MainWindow.getInstance().getContentPane().getComponents();
+			Component[] c = MainWindow.getInstance().getFrame().getContentPane().getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
 					MainWindow.getInstance().getBar().paintToolbar(false);
@@ -205,7 +205,7 @@ public class ToolBarListener implements ActionListener {
 		} else if ("createPetriNet".equals(event)) {
 			con.setPetriView(true);
 
-			Component[] c = MainWindow.getInstance().getContentPane().getComponents();
+			Component[] c = MainWindow.getInstance().getFrame().getContentPane().getComponents();
 			for (int i = 0; i < c.length; i++) {
 				if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
 					MainWindow.getInstance().getBar().paintToolbar(true);
@@ -230,7 +230,7 @@ public class ToolBarListener implements ActionListener {
 			// System.out.println("cov erstellen");
 			// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			// Cov cov = new Cov();
-			if (JOptionPane.showConfirmDialog(MainWindow.getInstance(),
+			if (JOptionPane.showConfirmDialog(MainWindow.getInstance().getFrame(),
 					"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
 					"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 				new ReachController();
@@ -283,7 +283,7 @@ public class ToolBarListener implements ActionListener {
 					if (!node.isCoarseNode() && !node.isMarkedAsCoarseNode()) {
 						continue;
 					}
-					w.returnFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+					w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
 					// Pathway newPW = null;
 					for (BiologicalNodeAbstract n : node.getVertices().keySet()) {
 						node.getVertices().put(n, graphInstance.getPathway().getVertices().get(n));
@@ -291,7 +291,7 @@ public class ToolBarListener implements ActionListener {
 					String newPathwayName = con.addPathway(node.getLabel(), node);
 					Pathway pw = con.getPathway(newPathwayName);
 					w.addTab(pw.getTab().getTitelTab());
-					w.returnFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+					w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					graphInstance.getPathway().setPetriNet(node.isPetriNet());
 					w.getBar().paintToolbar(node.isPetriNet());
 					w.updateAllGuiElements();

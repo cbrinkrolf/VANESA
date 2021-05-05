@@ -57,7 +57,7 @@ public class CallbackHandler implements AxisCallback {
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				JOptionPane.showMessageDialog(window, error, "Fault",
+				JOptionPane.showMessageDialog(window.getFrame(), error, "Fault",
 						JOptionPane.ERROR_MESSAGE);
 				window.closeProgressBar();
 			}
@@ -71,7 +71,7 @@ public class CallbackHandler implements AxisCallback {
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				JOptionPane.showMessageDialog(window, message, "Error",
+				JOptionPane.showMessageDialog(window.getFrame(), message, "Error",
 						JOptionPane.ERROR_MESSAGE);
 				window.closeProgressBar();
 			}

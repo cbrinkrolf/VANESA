@@ -107,7 +107,7 @@ public class RandomHamiltonGraphGui extends JFrame implements ActionListener {
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		dialog.pack();
-		dialog.setLocationRelativeTo(MainWindow.getInstance());
+		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		dialog.setVisible(true);
 	}
 
@@ -124,9 +124,6 @@ public class RandomHamiltonGraphGui extends JFrame implements ActionListener {
 					(Integer) edges.getValue(), directed.isSelected(),
 					weighted.isSelected(), (Integer) minWeight.getValue(),
 					(Integer) maxWeight.getValue());
-
 		}
-
 	}
-
 }

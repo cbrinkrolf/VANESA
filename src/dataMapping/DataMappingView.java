@@ -64,7 +64,7 @@ import net.miginfocom.swing.MigLayout;
 public class DataMappingView extends JDialog implements Observer{
 
 	private static final long serialVersionUID = 1L;
-	public static MainWindow w = MainWindow.getInstance();
+	private MainWindow w = MainWindow.getInstance();
 	private GraphContainer con = GraphContainer.getInstance();
 
 	private JTabbedPane tabbedPane = new JTabbedPane();
@@ -126,7 +126,7 @@ public class DataMappingView extends JDialog implements Observer{
 	 * constructs a new view as a JDialogPanel 
 	 */
 	public DataMappingView() {
-		super(w,"Data Mapping");
+		super(MainWindow.getInstance().getFrame(),"Data Mapping");
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		mainPanel = new JPanel();
@@ -246,7 +246,7 @@ public class DataMappingView extends JDialog implements Observer{
 
 		this.add(tabbedPane);
 		this.setMinimumSize(new Dimension(700, 700));
-		this.setLocationRelativeTo(MainWindow.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		this.setResizable(false);
 		this.setVisible(true);
 	}
@@ -364,7 +364,7 @@ public class DataMappingView extends JDialog implements Observer{
 					setGradientSlider(dmm);
 					setDataMappingTableModel(dmm);
 					addAdjustmentComponents();
-					w.repaint();
+					w.getFrame().repaint();
 				}
 			});
 		}

@@ -302,7 +302,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		// Set label, name and title
 		String answer = label;
 		if (label == null) {
-			answer = JOptionPane.showInputDialog(MainWindow.getInstance(), null, "Name of the coarse Node",
+			answer = JOptionPane.showInputDialog(MainWindow.getInstance().getFrame(), null, "Name of the coarse Node",
 					JOptionPane.QUESTION_MESSAGE);
 			if (answer == null) {
 				return null;
@@ -488,7 +488,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	 * @author tloka
 	 */
 	private static void showCoarsingErrorMessage() {
-		JOptionPane.showMessageDialog(MainWindow.getInstance(), "No coarsing possible with the given set of nodes.",
+		JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "No coarsing possible with the given set of nodes.",
 				"Coarsing Error!", JOptionPane.ERROR_MESSAGE);
 	}
 

@@ -51,7 +51,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 	private PNEdge[] edges;
 
 	public PNTableDialog() {
-		super(MainWindow.getInstance(), true);
+		super(MainWindow.getInstance().getFrame(), true);
 
 		int i = 0;
 		final Pathway pw = GraphContainer.getInstance().getPathway(
@@ -287,7 +287,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		pack();
-		this.setLocationRelativeTo(MainWindow.getInstance());
+		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 	}
 
 	@Override
@@ -458,7 +458,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			if (!changedAllStates)
 				JOptionPane
 						.showMessageDialog(
-								MainWindow.getInstance(),
+								MainWindow.getInstance().getFrame(),
 								"You tried to change the type of your transitions or places in a way, such that there were a relation between a continious transition and a discrete place! The objects which type was not changed are marked red.",
 								"Action could not be fully performed...",
 								JOptionPane.ERROR_MESSAGE);

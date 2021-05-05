@@ -161,8 +161,8 @@ public class Launch {
 						intro.setLoadingText("Graphical User Interface");
 						MainWindow w = MainWindow.getInstance();
 						intro.closeWindow();
-						w.setEnabled(true);
-						SwingUtilities.updateComponentTreeUI(w);
+						w.getFrame().setEnabled(true);
+						SwingUtilities.updateComponentTreeUI(w.getFrame());
 					}
 
 				});
