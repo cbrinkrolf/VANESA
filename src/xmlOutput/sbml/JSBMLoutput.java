@@ -88,8 +88,8 @@ public class JSBMLoutput {
 		if (pathway instanceof BiologicalNodeAbstract) {
 			Object[] options = { "Save subpathway", "Save complete pathway" };
 			answer = JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(),
-					"You try to save a opened subpathway. Do you want to save this subpathway?", "Save subpathway", JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+					"You try to save a opened subpathway. Do you want to save this subpathway?", "Save subpathway",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		}
 		if (answer == JOptionPane.YES_OPTION) {
 			rootPathway = pathway;
@@ -120,18 +120,22 @@ public class JSBMLoutput {
 		BiologicalNodeAbstract oneNode;
 		String nodeCompartment;
 		Compartment testCompartment;
+
 		String str_id;
 		Species spec;
 		try {
 			while (nodeIterator.hasNext()) {
 				oneNode = nodeIterator.next();
 				for (BiologicalEdgeAbstract conEdge : oneNode.getConnectingEdges()) {
-					if (!(conEdge.getFrom().isEnvironmentNodeOf(rootPathway) && conEdge.getTo().isEnvironmentNodeOf(rootPathway))) {
+					if (!(conEdge.getFrom().isEnvironmentNodeOf(rootPathway)
+							&& conEdge.getTo().isEnvironmentNodeOf(rootPathway))) {
 						flattenedPathwayEdges.add(conEdge);
 					}
 				}
 				// test to what compartment the node belongs
-				nodeCompartment = COMP + oneNode.getCompartment();
+				String compName = pathway.getCompartmentManager().getCompartment(oneNode);
+				graph.Compartment.Compartment c = pathway.getCompartmentManager().getCompartment(compName);
+				nodeCompartment = COMP + compName;
 				// System.out.println(nodeCompartment);
 				// test if compartment already exists
 				testCompartment = model.getCompartment(nodeCompartment);
@@ -143,6 +147,33 @@ public class JSBMLoutput {
 					compartment = model.createCompartment();
 					compartment.setId(nodeCompartment);
 					compartment.setConstant(false);
+
+					if (c != null) {
+						Annotation annotation = new Annotation();
+						// Save attributes that every node has
+						XMLNode el = new XMLNode(new XMLNode(new XMLTriple("spec", "", ""), new XMLAttributes()));
+						XMLNode elSub;
+
+						String attr;
+
+						Color col = c.getColor();
+						if (col != null) {
+							elSub = new XMLNode(new XMLNode(new XMLTriple("Color", "", ""), new XMLAttributes()));
+							attr = String.valueOf(col.getRGB());
+							elSub.addChild(createElSub(attr, "RGB"));
+							attr = String.valueOf(col.getBlue());
+							elSub.addChild(createElSub(attr, "Blue"));
+							attr = String.valueOf(col.getGreen());
+							elSub.addChild(createElSub(attr, "Green"));
+							attr = String.valueOf(col.getRed());
+							elSub.addChild(createElSub(attr, "Red"));
+							el.addChild(elSub);
+						}
+
+						annotation.appendNonRDFAnnotation(el);
+						compartment.setAnnotation(annotation);
+					}
+
 					// System.out.println("durch");
 				}
 				// The ID of a species has to be a string and could not begin
@@ -273,11 +304,11 @@ public class JSBMLoutput {
 		}
 
 		if (pathway.getGroupes().size() != 0) {
-			XMLNode groups = new XMLNode( new XMLNode(new XMLTriple("listOfGroups", "", ""), new XMLAttributes()));
+			XMLNode groups = new XMLNode(new XMLNode(new XMLTriple("listOfGroups", "", ""), new XMLAttributes()));
 			XMLNode groupSub;
-			for (Group group:pathway.getGroupes()) {
+			for (Group group : pathway.getGroupes()) {
 				groupSub = new XMLNode(new XMLNode(new XMLTriple("Group", "", ""), new XMLAttributes()));
-				for (BiologicalNodeAbstract node: group.nodes) {
+				for (BiologicalNodeAbstract node : group.nodes) {
 					groupSub.addChild(createElSub(Integer.toString(node.getID()), "Node"));
 				}
 				groups.addChild(groupSub);
@@ -287,7 +318,6 @@ public class JSBMLoutput {
 
 		XMLNode hierarchy = new XMLNode(new XMLNode(new XMLTriple("listOfHierarchies", "", ""), new XMLAttributes()));
 		Set<BiologicalNodeAbstract> hierarchyNodes = new HashSet<BiologicalNodeAbstract>();
-
 
 		Set<BiologicalNodeAbstract> flattenedPathwayNodes = new HashSet<BiologicalNodeAbstract>();
 		for (BiologicalNodeAbstract node : rootPathway.getAllGraphNodesSorted()) {
@@ -561,7 +591,7 @@ public class JSBMLoutput {
 			elSub.addChild(createElSub(attr, "Red"));
 			el.addChild(elSub);
 		}
-		
+
 		col = oneNode.getPlotColor();
 		if (col != null) {
 			elSub = new XMLNode(new XMLNode(new XMLTriple("plotColor", "", ""), new XMLAttributes()));

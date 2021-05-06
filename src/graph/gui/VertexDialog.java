@@ -26,6 +26,7 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import biologicalElements.ElementNamesSingelton;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
+import graph.Compartment.Compartment;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
@@ -141,12 +142,13 @@ public class VertexDialog {
 		}
 
 		if (!pw.isHeadless()) {
-			List<String> compartmentList = new Elementdeclerations().getAllCompartmentDeclaration();
-			Iterator<String> it2 = compartmentList.iterator();
-
+			List<Compartment> compartmentList = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
+			Iterator<Compartment> it2 = compartmentList.iterator();
+			compartment.addItem("");
+			Compartment c;
 			while (it2.hasNext()) {
-				element = it2.next();
-				compartment.addItem(element);
+				c = it2.next();
+				compartment.addItem(c.getName());
 			}
 		}
 	}

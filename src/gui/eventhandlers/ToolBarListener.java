@@ -48,14 +48,6 @@ public class ToolBarListener implements ActionListener {
 		return ToolBarListener.instance;
 	}
 
-	public void showCreateBeforeMessage() {
-		MyPopUp.getInstance().show("Error", "Please create a network first!");
-	}
-
-	public void showCreate2NetworksMessage() {
-		MyPopUp.getInstance().show("Error", "Please create a network first!");
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
@@ -137,7 +129,7 @@ public class ToolBarListener implements ActionListener {
 				g.disableGraphTheory();
 				new CompareGraphsGUI();
 			} else {
-				this.showCreate2NetworksMessage();
+				MyPopUp.getInstance().show("Error", "Please create a network first!");
 			}
 		} else if ("del".equals(event)) {
 			if (con.containsPathway()) {

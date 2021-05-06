@@ -37,7 +37,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	// ---Fields---
 
 	private KEGGNode KEGGnode;
-	private String compartment = Elementdeclerations.cytoplasma;
 	private double nodesize = 1;
 	private double defaultNodesize = 1;
 	private BiologicalNodeAbstract parentNode;
@@ -743,14 +742,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 //		if (isReference() || isHidden()) {
 		return color;
-	}
-
-	public String getCompartment() {
-		return compartment;
-	}
-
-	public void setCompartment(String compartment) {
-		this.compartment = compartment;
 	}
 
 	/*

@@ -22,6 +22,7 @@ import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphContainer;
+import graph.Compartment.Compartment;
 
 public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
@@ -34,27 +35,23 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
 	private HashMap<String, Area> areas = new HashMap<String, Area>();
 
-	public MyVisualizationViewer(VisualizationModel<V, E> arg0, Dimension arg2,
-			Pathway pw) {
+	private boolean drawCompartments = false;
+
+	public MyVisualizationViewer(VisualizationModel<V, E> arg0, Dimension arg2, Pathway pw) {
 		super(arg0, arg2);
 		this.pw = pw;
-		areas.put("Cytoplasma", new Area());
-		areas.put("Nucleus", new Area());
-		areas.put("Membrane", new Area());
-		areas.put("InsideTheCell", new Area());
 
-		// this.prepareCompartments();
 	}
 
-	//private long[] relaxTimes = new long[5];
+	// private long[] relaxTimes = new long[5];
 
-	//private long[] paintTimes = new long[5];
+	// private long[] paintTimes = new long[5];
 
-	//private int relaxIndex = 0;
+	// private int relaxIndex = 0;
 
-	//private int paintIndex = 0;
+	// private int paintIndex = 0;
 
-	//private double paintfps, relaxfps;
+	// private double paintfps, relaxfps;
 
 	/**
 	 * a collection of user-implementable functions to render under the topology
@@ -69,35 +66,31 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	// protected List<Paintable> postRenderers = new ArrayList<Paintable>();
 
 	protected void renderGraph(Graphics2D g2d) {
-		//this.prepareCompartments();
+		if (drawCompartments) {
+			this.prepareCompartments();
+			
+			super.renderGraph(g2d);
+			this.drawCompartemnts(g2d);
+		} else {
+			super.renderGraph(g2d);
+		}
 
-		super.renderGraph(g2d);
-		//this.drawCompartemnts(g2d);
 		g2d.setFont(new Font("default", Font.BOLD, 12));
 		g2d.setColor(Color.red);
 
 		if (GraphContainer.getInstance().isPetriView()) {
-			g2d.drawString("P: " + pw.getPlaceCount() + " T: "
-					+ pw.getTransitionCount() + " Edges: "
+			g2d.drawString("P: " + pw.getPlaceCount() + " T: " + pw.getTransitionCount() + " Edges: "
 					+ pw.getGraph().getAllEdges().size(), 1, 11);
 		} else {
 
-			g2d.drawString("Nodes: " + pw.getGraph().getAllVertices().size()
-					+ " Edges: " + pw.getGraph().getAllEdges().size(), 1, 11);
+			g2d.drawString(
+					"Nodes: " + pw.getGraph().getAllVertices().size() + " Edges: " + pw.getGraph().getAllEdges().size(),
+					1, 11);
 		}
-		g2d.drawString("Picked nodes: "
-				+ this.getPickedVertexState().getPicked().size(), 1, 23);
-		double scaleV = this.getRenderContext().getMultiLayerTransformer()
-				.getTransformer(Layer.VIEW).getScale();
-		double scaleL = this.getRenderContext().getMultiLayerTransformer()
-				.getTransformer(Layer.LAYOUT).getScale();
+		g2d.drawString("Picked nodes: " + this.getPickedVertexState().getPicked().size(), 1, 23);
+		
 		double scale;
-		if (scaleV < 1) {
-			scale = scaleV;
-		} else {
-			scale = scaleL;
-		}
-		scale = ((double) ((int) (scale * 100)) / 100);
+		scale = ((double) ((int) (this.getScale() * 100)) / 100);
 		g2d.drawString("Zoom: " + scale + "x", this.getWidth() - 75, 11);
 
 		// g2d.drawString("x", 580, 533);
@@ -110,18 +103,21 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		return super.preRenderers;
 	}
 
-	public Pathway getPathway(){
+	public Pathway getPathway() {
 		return pw;
 	}
-	
+
 	private void prepareCompartments() {
-		
-		Iterator<String> comp = this.areas.keySet().iterator();
-		
-		while(comp.hasNext()){
-			this.areas.put(comp.next(), new Area());
+
+		areas = new HashMap<String, Area>();
+
+		Iterator<Compartment> comp = pw.getCompartmentManager().getAllCompartmentsAlphabetically().iterator();
+		Compartment c;
+		while (comp.hasNext()) {
+			c = comp.next();
+			this.areas.put(c.getName(), new Area());
 		}
-		
+
 		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdges().iterator();
 
 		long l1 = System.nanoTime();
@@ -130,8 +126,26 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		BiologicalNodeAbstract bna2;
 		BiologicalEdgeAbstract bea;
 
+		Area a;
+		Point2D p1;
+		Point2D p2;
+		Point2D p1inv;
+		Point2D p2inv;
+		Shape s1;
+		Shape s2;
+		int h1;
+		int h2;
+		Polygon poly1;
+		Polygon poly2;
+		RoundRectangle2D r1;
+		RoundRectangle2D r2;
+		Area a1;
+		Area a2;
+		Area a3;
+		Area a4;
+		
 		while (it.hasNext()) {
-			Area a;
+			
 			bea = it.next();
 			bna1 = bea.getFrom();
 			bna2 = bea.getTo();
@@ -139,74 +153,68 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			// if(bna1.getCompartment().equals(bna2.getCompartment())){
 			// System.out.println(bna.getName());
 			// System.out.println(pw.getGraph().getVertexLocation(bna));
-			Point2D p1 = pw.getGraph().getVertexLocation(bna1);// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
-			Point2D p2 = pw.getGraph().getVertexLocation(bna2);
+			p1 = pw.getGraph().getVertexLocation(bna1);// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
+			p2 = pw.getGraph().getVertexLocation(bna2);
 
 			// g2d.drawString("b",(int)((p.getX())), (int)((p.getY())*scale));
-			Point2D p1inv = this.getRenderContext().getMultiLayerTransformer()
-					.transform(p1);
-			Point2D p2inv = this.getRenderContext().getMultiLayerTransformer()
-					.transform(p2);
+			p1inv = this.getRenderContext().getMultiLayerTransformer().transform(p1);
+			p2inv = this.getRenderContext().getMultiLayerTransformer().transform(p2);
 
-			Shape s1 = this.getRenderContext().getMultiLayerTransformer()
-					.getTransformer(Layer.VIEW)
+			s1 = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)
 					.transform(bna1.getShape().getBounds2D());
-			Shape s2 = this.getRenderContext().getMultiLayerTransformer()
-					.getTransformer(Layer.VIEW)
+			s2 = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)
 					.transform(bna2.getShape().getBounds2D());
 
 			// Shape s3 = this.getRenderContext().getMultiLayerTransformer()
 			// .getTransformer(Layer.VIEW).transform(bea.getShape().getBounds2D());
 			// System.out.println(loc);
-			int h1 = (int) s1.getBounds2D().getHeight();
-			int h2 = (int) s2.getBounds2D().getHeight();
+			h1 = (int) s1.getBounds2D().getHeight();
+			h2 = (int) s2.getBounds2D().getHeight();
 
 			if (bna1 instanceof Transition) {
 				h1 = h1 / 2;
-				//System.out.println(bna1.getCompartment());
-				a = areas.get(bna1.getCompartment());
+				// System.out.println(bna1.getCompartment());
+				a = areas.get(pw.getCompartmentManager().getCompartment(bna1));
 			} else {
 				h2 = h2 / 2;
-				a = areas.get(bna2.getCompartment());
+				// System.out.println("comp: "+pw.getCompartmentManager().getCompartment(bna2));
+				if (pw.getCompartmentManager().getCompartment(bna2).length() == 0) {
+					continue;
+				}
+
+				a = areas.get(pw.getCompartmentManager().getCompartment(bna2));
 			}
 
-			int c1x = (int) s1.getBounds2D().getMaxX();
-			int c1y = (int) s1.getBounds2D().getMaxY();
+			//int c1x = (int) s1.getBounds2D().getMaxX();
+			//int c1y = (int) s1.getBounds2D().getMaxY();
 			// System.out.println(s.getBounds2D().getHeight());
 			// System.out.println(this.getRenderContext().);
 			// poly.addPoint(0, 0);
 
-			double m = (p2inv.getX() - p1inv.getX())
-					/ (p2inv.getY() - p1inv.getY());
+			//double m = (p2inv.getX() - p1inv.getX()) / (p2inv.getY() - p1inv.getY());
 			// System.out.println(m);
-			double dist = Math.sqrt(Math.pow((p2inv.getX() - p1inv.getX()), 2)
-					+ Math.pow((p2inv.getY() - p1inv.getY()), 2));
+			//double dist = Math.sqrt(Math.pow((p2inv.getX() - p1inv.getX()), 2) + Math.pow((p2inv.getY() - p1inv.getY()), 2));
 
-			Point2D pp1 = new Point2D.Double(s1.getBounds2D().getMaxX(), s1
-					.getBounds2D().getMaxY());
-			Point2D pp1inv = getRenderContext().getMultiLayerTransformer()
-					.transform(pp1);
+			//Point2D pp1 = new Point2D.Double(s1.getBounds2D().getMaxX(), s1.getBounds2D().getMaxY());
+			//Point2D pp1inv = getRenderContext().getMultiLayerTransformer().transform(pp1);
 
+			//System.out.println(this.getScale());
 			double width = 12;
-			Polygon poly1 = new Polygon();
-			poly1.addPoint((int) (p1inv.getX() + width),
-					(int) (p1inv.getY() + width));
-			poly1.addPoint((int) (p1inv.getX() - width),
-					(int) (p1inv.getY() - width));
-			poly1.addPoint((int) (p2inv.getX() - width),
-					(int) (p2inv.getY() - width));
-			poly1.addPoint((int) (p2inv.getX() + width),
-					(int) (p2inv.getY() + width));
+			if(this.getScale() < 1){
+				width = width*this.getScale();
+			}
+			
+			poly1 = new Polygon();
+			poly1.addPoint((int) (p1inv.getX() + width), (int) (p1inv.getY() + width));
+			poly1.addPoint((int) (p1inv.getX() - width), (int) (p1inv.getY() - width));
+			poly1.addPoint((int) (p2inv.getX() - width), (int) (p2inv.getY() - width));
+			poly1.addPoint((int) (p2inv.getX() + width), (int) (p2inv.getY() + width));
 
-			Polygon poly2 = new Polygon();
-			poly2.addPoint((int) (p1inv.getX() + width),
-					(int) (p1inv.getY() - width));
-			poly2.addPoint((int) (p1inv.getX() - width),
-					(int) (p1inv.getY() + width));
-			poly2.addPoint((int) (p2inv.getX() - width),
-					(int) (p2inv.getY() + width));
-			poly2.addPoint((int) (p2inv.getX() + width),
-					(int) (p2inv.getY() - width));
+			poly2 = new Polygon();
+			poly2.addPoint((int) (p1inv.getX() + width), (int) (p1inv.getY() - width));
+			poly2.addPoint((int) (p1inv.getX() - width), (int) (p1inv.getY() + width));
+			poly2.addPoint((int) (p2inv.getX() - width), (int) (p2inv.getY() + width));
+			poly2.addPoint((int) (p2inv.getX() + width), (int) (p2inv.getY() - width));
 
 			// poly.addPoint((int)(s1.getBounds2D().getMinX()),
 			// (int)(s1.getBounds2D().getMinY()));
@@ -220,11 +228,11 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			// poly.addPoint((int)(p2inv.getX()-h2), (int)(p2inv.getY()+h2));
 			// poly.addPoint((int)(p1inv.getX()+h1), (int)(p1inv.getY()+h1));
 
-			//Line2D.Double l = new Line2D.Double(p1inv.getX(), p1inv.getY(),
-			//		p2inv.getX(), p2inv.getY());
+			// Line2D.Double l = new Line2D.Double(p1inv.getX(), p1inv.getY(),
+			// p2inv.getX(), p2inv.getY());
 
-			//Arc2D.Double arc = new Arc2D.Double(100, 100, 200, 200, 10, 90,
-			//		Arc2D.OPEN);
+			// Arc2D.Double arc = new Arc2D.Double(100, 100, 200, 200, 10, 90,
+			// Arc2D.OPEN);
 
 			// g2d.draw(l);
 			// g2d.drawPolygon(poly1);
@@ -232,19 +240,17 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			// g2d.fillPolygon(poly);
 			// RoundRectangle2D r1 = new
 
-			RoundRectangle2D r1 = new RoundRectangle2D.Double(
-					(int) (p1inv.getX() - h1 * 1.5),
+			r1 = new RoundRectangle2D.Double((int) (p1inv.getX() - h1 * 1.5),
 					(int) (p1inv.getY() - h1 * 1.5), 3 * h1, 3 * h1, 15, 15);
-			Area a1 = new Area(r1);
-			RoundRectangle2D r2 = new RoundRectangle2D.Double(
-					(int) (p2inv.getX() - h2 * 1.5),
+			a1 = new Area(r1);
+			r2 = new RoundRectangle2D.Double((int) (p2inv.getX() - h2 * 1.5),
 					(int) (p2inv.getY() - h2 * 1.5), 3 * h2, 3 * h2, 15, 15);
-			Area a2 = new Area(r2);
+			a2 = new Area(r2);
 
-			Area a3 = new Area(poly1);
-			Area a4 = new Area(poly2);
+			a3 = new Area(poly1);
+			a4 = new Area(poly2);
 
-			//System.out.println(bna1.getName()+" "+bna2.getName());
+			// System.out.println(bna1.getName()+" "+bna2.getName());
 			a.add(a3);
 			a.add(a1);
 			a.add(a2);
@@ -274,46 +280,25 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		}
 		long l2 = System.nanoTime();
 
-		//System.out.println("adding: " + (l2 - l1) / 1000);
+		 System.out.println("adding: " + (l2 - l1) / 1000);
 		// }
 
-		//System.out.println("painting " + (System.nanoTime() - l2) / 1000);
+		
 	}
 
 	private void drawCompartemnts(Graphics2D g2d) {
 
+		long l1 = System.nanoTime();
 		Iterator<String> it = this.areas.keySet().iterator();
 		String comp;
 		while (it.hasNext()) {
 			comp = it.next();
-
-			switch (comp) {
-			case "Cytoplasma":
-				g2d.setColor(new Color(0, 255, 0, 50));
-				g2d.fill(areas.get(comp));
-				break;
-
-			case "Nucleus":
-				g2d.setColor(new Color(0, 0, 255, 50));
-				g2d.fill(areas.get(comp));
-				break;
-
-			case "Membrane":
-				g2d.setColor(new Color(255, 128, 0, 50));
-				g2d.fill(areas.get(comp));
-				break;
-
-			case "InsideTheCell":
-				g2d.setColor(new Color(127, 0, 255, 50));
-				g2d.fill(areas.get(comp));
-				break;
-			}
-			
-			
+			g2d.setColor(pw.getCompartmentManager().getCompartment(comp).getColor());
+			g2d.fill(areas.get(comp));
 		}
-		//g2d.setColor(new Color(255, 0, 0, 30));
+		// g2d.setColor(new Color(255, 0, 0, 30));
 		// a.transform(new AffineTransform(0.5, 0.5,0.5,0.5,0.5,0.5));
-		
+		//System.out.println("painting " + (System.nanoTime() - l1) / 1000);
 	}
 
 	/*
@@ -323,8 +308,7 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	 * if(renderContext.getGraphicsContext() == null) {
 	 * renderContext.setGraphicsContext(new GraphicsDecorator(g2d)); } else {
 	 * renderContext.getGraphicsContext().setDelegate(g2d); }
-	 * renderContext.setScreenDevice(this); Layout layout =
-	 * model.getGraphLayout();
+	 * renderContext.setScreenDevice(this); Layout layout = model.getGraphLayout();
 	 * 
 	 * g2d.setRenderingHints(renderingHints);
 	 * 
@@ -333,8 +317,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	 * // clear the offscreen image g2d.setColor(getBackground());
 	 * g2d.fillRect(0,0,d.width,d.height);
 	 * 
-	 * AffineTransform oldXform = g2d.getTransform(); AffineTransform newXform =
-	 * new AffineTransform(oldXform); newXform.concatenate(
+	 * AffineTransform oldXform = g2d.getTransform(); AffineTransform newXform = new
+	 * AffineTransform(oldXform); newXform.concatenate(
 	 * renderContext.getMultiLayerTransformer
 	 * ().getTransformer(Layer.VIEW).getTransform()); //
 	 * viewTransformer.getTransform());
@@ -345,8 +329,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	 * preRenderers) {
 	 * 
 	 * if(paintable.useTransform()) { paintable.paint(g2d); } else {
-	 * g2d.setTransform(oldXform); paintable.paint(g2d);
-	 * g2d.setTransform(newXform); } }
+	 * g2d.setTransform(oldXform); paintable.paint(g2d); g2d.setTransform(newXform);
+	 * } }
 	 * 
 	 * if(layout instanceof Caching) { ((Caching)layout).clear(); }
 	 * 
@@ -358,19 +342,18 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	 * postRenderers) {
 	 * 
 	 * if(paintable.useTransform()) { paintable.paint(g2d); } else {
-	 * g2d.setTransform(oldXform); paintable.paint(g2d);
-	 * g2d.setTransform(newXform); } } g2d.setTransform(oldXform); /*Layout
-	 * layout = model.getGraphLayout();
+	 * g2d.setTransform(oldXform); paintable.paint(g2d); g2d.setTransform(newXform);
+	 * } } g2d.setTransform(oldXform); /*Layout layout = model.getGraphLayout();
 	 * 
 	 * g2d.setRenderingHints(renderingHints); long start =
-	 * System.currentTimeMillis(); // the size of the VisualizationViewer
-	 * Dimension d = getSize();
+	 * System.currentTimeMillis(); // the size of the VisualizationViewer Dimension
+	 * d = getSize();
 	 * 
-	 * // clear the offscreen image g2d.setColor(getBackground());
-	 * g2d.fillRect(0, 0, d.width, d.height);
+	 * // clear the offscreen image g2d.setColor(getBackground()); g2d.fillRect(0,
+	 * 0, d.width, d.height);
 	 * 
-	 * AffineTransform oldXform = g2d.getTransform(); AffineTransform newXform =
-	 * new AffineTransform(oldXform); //
+	 * AffineTransform oldXform = g2d.getTransform(); AffineTransform newXform = new
+	 * AffineTransform(oldXform); //
 	 * newXform.concatenate(viewTransformer.getTransform());
 	 * 
 	 * 
@@ -385,8 +368,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	 * locationMap.clear();
 	 * 
 	 * // paint all the edges try { for (Iterator iter =
-	 * layout.getGraph().getEdges().iterator(); iter .hasNext();) { Edge e =
-	 * (Edge) iter.next();
+	 * layout.getGraph().getEdges().iterator(); iter .hasNext();) { Edge e = (Edge)
+	 * iter.next();
 	 * 
 	 * Vertex v1 = (Vertex) e.getEndpoints().getFirst(); Vertex v2 = (Vertex)
 	 * e.getEndpoints().getSecond();
@@ -395,13 +378,13 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	 * 
 	 * GraphElementAbstract gea = (GraphElementAbstract) pw .getElement(e);
 	 * 
-	 * if (gea.isVisible()) { Point2D p = (Point2D) locationMap.get(v1); if (p
-	 * == null) {
+	 * if (gea.isVisible()) { Point2D p = (Point2D) locationMap.get(v1); if (p ==
+	 * null) {
 	 * 
 	 * p = layout.getLocation(v1); p = layoutTransformer.transform(p);
-	 * locationMap.put(v1, p); } Point2D q = (Point2D) locationMap.get(v2); if
-	 * (q == null) { q = layout.getLocation(v2); q =
-	 * layoutTransformer.transform(q); locationMap.put(v2, q); }
+	 * locationMap.put(v1, p); } Point2D q = (Point2D) locationMap.get(v2); if (q ==
+	 * null) { q = layout.getLocation(v2); q = layoutTransformer.transform(q);
+	 * locationMap.put(v2, q); }
 	 * 
 	 * if (p != null && q != null) { renderer.paintEdge(g2d, e, (int) p.getX(),
 	 * (int) p .getY(), (int) q.getX(), (int) q.getY());
@@ -413,9 +396,9 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	 * Point2D p = (Point2D) locationMap.get(v1); if (p == null) {
 	 * 
 	 * p = layout.getLocation(v1); p = layoutTransformer.transform(p);
-	 * locationMap.put(v1, p); } Point2D q = (Point2D) locationMap.get(v2); if
-	 * (q == null) { q = layout.getLocation(v2); q =
-	 * layoutTransformer.transform(q); locationMap.put(v2, q); }
+	 * locationMap.put(v1, p); } Point2D q = (Point2D) locationMap.get(v2); if (q ==
+	 * null) { q = layout.getLocation(v2); q = layoutTransformer.transform(q);
+	 * locationMap.put(v2, q); }
 	 * 
 	 * if (p != null && q != null) { renderer.paintEdge(g2d, e, (int) p.getX(),
 	 * (int) p .getY(), (int) q.getX(), (int) q.getY());
@@ -431,21 +414,19 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	 * 
 	 * BiologicalNodeAbstract v = (BiologicalNodeAbstract) iter.next();
 	 * 
-	 * if (pw.containsElement(v)){ GraphElementAbstract gea =
-	 * (GraphElementAbstract) pw .getElement(v); if (gea.isVisible()) { Point2D
-	 * p = (Point2D) locationMap.get(v); if (p == null) { p =
-	 * layout.getLocation(v); p = layoutTransformer.transform(p);
-	 * locationMap.put(v, p); } if (p != null) { renderer.paintVertex(g2d, v,
-	 * (int) p.getX(), (int) p .getY()); } }
+	 * if (pw.containsElement(v)){ GraphElementAbstract gea = (GraphElementAbstract)
+	 * pw .getElement(v); if (gea.isVisible()) { Point2D p = (Point2D)
+	 * locationMap.get(v); if (p == null) { p = layout.getLocation(v); p =
+	 * layoutTransformer.transform(p); locationMap.put(v, p); } if (p != null) {
+	 * renderer.paintVertex(g2d, v, (int) p.getX(), (int) p .getY()); } }
 	 * 
 	 * }else{ Point2D p = (Point2D) locationMap.get(v); if (p == null) { p =
-	 * layout.getLocation(v); p = layoutTransformer.transform(p);
-	 * locationMap.put(v, p); } if (p != null) { renderer.paintVertex(g2d, v,
-	 * (int) p.getX(), (int) p .getY()); } } } } catch
-	 * (ConcurrentModificationException cme) { repaint(); }
+	 * layout.getLocation(v); p = layoutTransformer.transform(p); locationMap.put(v,
+	 * p); } if (p != null) { renderer.paintVertex(g2d, v, (int) p.getX(), (int) p
+	 * .getY()); } } } } catch (ConcurrentModificationException cme) { repaint(); }
 	 * 
-	 * long delta = System.currentTimeMillis() - start; paintTimes[paintIndex++]
-	 * = delta; paintIndex = paintIndex % paintTimes.length; paintfps =
+	 * long delta = System.currentTimeMillis() - start; paintTimes[paintIndex++] =
+	 * delta; paintIndex = paintIndex % paintTimes.length; paintfps =
 	 * average(paintTimes);
 	 * 
 	 * // if there are postRenderers set, do it for (Iterator iterator =
@@ -458,10 +439,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	// }
 
 	public double getScale() {
-		double scaleV = this.getRenderContext().getMultiLayerTransformer()
-				.getTransformer(Layer.VIEW).getScale();
-		double scaleL = this.getRenderContext().getMultiLayerTransformer()
-				.getTransformer(Layer.LAYOUT).getScale();
+		double scaleV = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
+		double scaleL = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
 		double scale;
 		if (scaleV < 1) {
 			scale = scaleV;
@@ -471,4 +450,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		return scale;
 	}
 
+	public void setDrawCompartments(boolean drawCompartments) {
+		this.drawCompartments = drawCompartments;
+		this.repaint();
+	}
 }

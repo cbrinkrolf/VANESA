@@ -96,16 +96,6 @@ public class Elementdeclerations {
 
 	// public static final String interaction = "Interaction";
 
-	public static final String membrane = "Membrane";
-
-	public static final String cellInside = "InsideTheCell";
-
-	public static final String cellOutside = "OutsideTheCell";
-
-	public static final String cytoplasma = "Cytoplasma";
-
-	public static final String nucleus = "Nucleus";
-
 	public static final String feature = "Feature";
 
 	public static final String gene = "Gene";
@@ -164,18 +154,6 @@ public class Elementdeclerations {
 
 	public Elementdeclerations() {
 
-	}
-
-	public List<String> getAllCompartmentDeclaration() {
-
-		List<String> l = new ArrayList<String>();
-		l.add(membrane);
-		l.add(cytoplasma);
-		l.add(cellInside);
-		l.add(cellOutside);
-		l.add(nucleus);
-		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
-		return l;
 	}
 
 	public List<String> getAllNodeDeclarations() {

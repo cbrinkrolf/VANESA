@@ -41,6 +41,7 @@ import biologicalObjects.nodes.RNA;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.CreatePathway;
+import graph.Compartment.Compartment;
 import graph.groups.Group;
 import graph.gui.Parameter;
 import gui.MainWindow;
@@ -121,9 +122,8 @@ public class JSBMLinput {
 		createAnnotation(annotationNode);
 
 		// not needed yet
-		// Element compartmentNode = modelNode
-		// .getChild("listOfCompartments", null);
-		// createCompartment(compartmentNode);
+		Element compartmentNode = modelNode.getChild("listOfCompartments", null);
+		createCompartment(compartmentNode);
 
 		Element speciesNode = modelNode.getChild("listOfSpecies", null);
 		createSpecies(speciesNode);
@@ -244,12 +244,41 @@ public class JSBMLinput {
 	 * @param compartmentNode
 	 */
 	private void createCompartment(Element compartmentNode) {
-		// if(compartmentNode==null){
-		// return;
-		// }
-		// List<Element> compartmentNodeChildren =
-		// compartmentNode.getChildren();
-		// int size = compartmentNodeChildren.size();
+		if (compartmentNode == null) {
+			return;
+		}
+		List<Element> compartmentNodeChildren = compartmentNode.getChildren();
+		int size = compartmentNodeChildren.size();
+
+		graph.Compartment.Compartment c;
+		Color color = Color.GRAY;
+		for (int i = 0; i < size; i++) {
+			Element comp = compartmentNodeChildren.get(i);
+			String name = comp.getAttributeValue("id");
+			if (name == null || name.equals("comp_") || name.length() == 0) {
+				continue;
+			}
+
+			Element annotation = comp.getChild("annotation", null);
+			if (annotation != null) {
+				Element compAnnotation = annotation.getChild("spec", null);
+				if (compAnnotation != null) {
+					Element elColor = compAnnotation.getChild("Color", null);
+					if (elColor != null) {
+
+						Element elSub = elColor.getChild("RGB", null);
+						if (elSub != null) {
+							color = new Color(Integer.parseInt(elSub.getAttributeValue("RGB")));
+						}
+					}
+				}
+			}
+			if (name.startsWith("comp_")) {
+				name = name.substring(5);
+			}
+			c = new Compartment(name, color);
+			pathway.getCompartmentManager().add(c);
+		}
 	}
 
 	/**
@@ -579,11 +608,13 @@ public class JSBMLinput {
 			}
 
 			String compartment = species.getAttributeValue("compartment");
-			if (compartment.contains("comp_")) {
-				String[] comp = compartment.split("_");
-				bna.setCompartment(comp[1]);
+
+			if (compartment.startsWith("comp_")) {
+				pathway.getCompartmentManager().setCompartment(bna,
+						pathway.getCompartmentManager().getCompartment(compartment.substring(5)));
 			} else {
-				bna.setCompartment(compartment);
+				pathway.getCompartmentManager().setCompartment(bna,
+						pathway.getCompartmentManager().getCompartment(compartment));
 			}
 
 			// add bna to the graph

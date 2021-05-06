@@ -29,7 +29,6 @@ import javax.swing.SwingUtilities;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -54,6 +53,7 @@ import biologicalObjects.nodes.petriNet.Transition;
  import edu.uci.ics.jung.utils.Pair;*/
 import graph.ChangedFlags;
 import graph.GraphInstance;
+import graph.Compartment.Compartment;
 import graph.algorithms.NodeAttributeTypes;
 import graph.gui.LabelsWindow;
 import graph.gui.ParameterWindow;
@@ -225,7 +225,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 			addCompartmentItems(compartment);
 			AutoCompleteDecorator.decorate(compartment);
 
-			compartment.setSelectedItem(((BiologicalNodeAbstract) ab).getCompartment());
+			Pathway pw = graphInstance.getPathway();
+
+			compartment.setSelectedItem(pw.getCompartmentManager().getCompartment(((BiologicalNodeAbstract) ab)));
 			compartment.addItemListener(this);
 
 			p.add(new JLabel("Compartment"), "gap 5 ");
@@ -819,12 +821,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 	}
 
 	private void addCompartmentItems(JComboBox<String> compartment) {
+		Pathway pw = graphInstance.getPathway();
+		List<Compartment> compartmentList = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
 
-		List<String> compartmentList = new Elementdeclerations().getAllCompartmentDeclaration();
-		Iterator<String> it = compartmentList.iterator();
+		compartment.addItem(" ");
 
+		Iterator<Compartment> it = compartmentList.iterator();
 		while (it.hasNext()) {
-			String element = it.next().toString();
+			String element = it.next().getName();
 			compartment.addItem(element);
 		}
 	}
@@ -858,8 +862,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				b.setBackground(newColor);
 				bna.setPlotColor(newColor);
 			}
-		}
-		else if ("pathwayLink".equals(event)) {
+		} else if ("pathwayLink".equals(event)) {
 			if (JOptionPane.showConfirmDialog(w.getFrame(),
 					"If you delete the PathwayLink the Sub-Pathway (with all eventually made changes within it) will be lost. Do you want to do this?",
 					"Delete the Sub-Pathway...", JOptionPane.YES_NO_OPTION,
@@ -1088,9 +1091,15 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent event) {
-		String item = (String) event.getItem();
+		// String item = (String) event.getItem();
 		if (ab.isVertex()) {
-			((BiologicalNodeAbstract) ab).setCompartment(item);
+
+			JComboBox<String> compartment = (JComboBox<String>) event.getSource();
+			// System.out.println("new: "+compartment.getSelectedItem());
+			Pathway pw = graphInstance.getPathway();
+			// System.out.println(pw.getCompartmentManager().getCompartment(compartment.getSelectedItem().toString()));
+			pw.getCompartmentManager().setCompartment((BiologicalNodeAbstract) ab,
+					pw.getCompartmentManager().getCompartment(compartment.getSelectedItem().toString()));
 		}
 	}
 }

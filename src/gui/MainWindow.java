@@ -95,10 +95,6 @@ public class MainWindow implements ApplicationListener {
 	private int addedtabs = 0;
 	private final MenuBarClass myMenu;
 
-	public MenuBarClass getmyMenu() {
-		return myMenu;
-	}
-
 	private OptionPanel optionPanel;
 
 	// private boolean fullScreen = false;
@@ -614,6 +610,10 @@ public class MainWindow implements ApplicationListener {
 
 	public JFrame getFrame() {
 		return this.frame;
+	}
+	
+	public MenuBarClass getmyMenu() {
+		return myMenu;
 	}
 
 	public void setFullScreen() {

@@ -34,6 +34,7 @@ import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import graph.ChangedFlags;
+import graph.Compartment.CompartmentManager;
 import graph.groups.Group;
 import graph.gui.Boundary;
 import graph.gui.CoarseNodeDeleteDialog;
@@ -89,6 +90,8 @@ public class Pathway implements Cloneable {
 	private ArrayList<Group> groupes = new ArrayList<>();
 	private Pathway petriNet = null;
 	private HashMap<BiologicalNodeAbstract, PNNode> bnToPN = null;
+	
+	private CompartmentManager compManager;
 
 	public Pathway(String name, boolean headless) {
 		this.headless = headless;
@@ -98,6 +101,7 @@ public class Pathway implements Cloneable {
 			this.title = this.name;
 			graph = new MyGraph(this);
 		}
+		compManager = new CompartmentManager();
 	}
 
 	public Pathway(String name) {
@@ -105,6 +109,7 @@ public class Pathway implements Cloneable {
 		this.title = this.name;
 		graph = new MyGraph(this);
 		tab = new GraphTab(this.name, graph.getGraphVisualization());
+		compManager = new CompartmentManager();
 	}
 
 	public Pathway(String name, Pathway parent) {
@@ -112,6 +117,7 @@ public class Pathway implements Cloneable {
 		this.name = name.trim();
 		this.title = this.name;
 		this.parent = parent;
+		compManager = new CompartmentManager();
 	}
 
 	public Set<BiologicalNodeAbstract> getClosedSubPathways() {
@@ -157,7 +163,7 @@ public class Pathway implements Cloneable {
 		BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(elementDeclaration, null);
 		bna.setName(name);
 		bna.setLabel(label);
-		bna.setCompartment(compartment);
+		this.getCompartmentManager().setCompartment(bna, this.getCompartmentManager().getCompartment(compartment));
 		if (isBNA()) {
 			Pathway parent = ((BiologicalNodeAbstract) this).getParentNode() == null ? getRootPathway()
 					: ((BiologicalNodeAbstract) this).getParentNode();
@@ -1631,5 +1637,9 @@ public class Pathway implements Cloneable {
 				// System.out.println("j:"+j);
 			}
 		}
+	}
+	
+	public CompartmentManager getCompartmentManager(){
+		return this.compManager;
 	}
 }

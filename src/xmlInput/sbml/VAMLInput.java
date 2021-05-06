@@ -790,7 +790,8 @@ public class VAMLInput {
 		}
 
 		if (bna != null) {
-			bna.setCompartment(location);
+			//bna.setCompartment(location);
+			pw.getCompartmentManager().setCompartment(bna, pw.getCompartmentManager().getCompartment(location));
 			bna.setComments(comment);
 			bna.setColor(color);
 			try {

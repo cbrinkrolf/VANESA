@@ -405,7 +405,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 						System.out.println("neu ct");
 					}
 					if (newT != null) {
-						newT.setCompartment(t.getCompartment());
+						//newT.setCompartment(t.getCompartment());
 						pw.addVertex(newT, new Point(0, 0));
 						t = newT;
 					}

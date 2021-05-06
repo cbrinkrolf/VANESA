@@ -304,7 +304,7 @@ public class VAMLoutput {
 			writer.writeEndElement();
 
 			writer.writeStartElement("location");
-			writer.writeCData(bna.getCompartment() + "");
+			writer.writeCData(pw.getCompartmentManager().getCompartment(bna) + "");
 			writer.writeEndElement();
 
 			writer.writeStartElement("comment");

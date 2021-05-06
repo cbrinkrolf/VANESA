@@ -35,7 +35,6 @@ import biologicalObjects.nodes.petriNet.Transition;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import graph.gui.Boundary;
-import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindow;
 import gui.MyPopUp;
 
@@ -291,7 +290,7 @@ public class PropertyWindowListener implements FocusListener {
 			else if (((JComboBox<?>) event.getSource()).getSelectedItem().equals(StochasticTransition.class.getName()))
 				newT = new StochasticTransition(t.getLabel(), t.getName());
 			if (newT != null) {
-				newT.setCompartment(t.getCompartment());
+				//newT.setCompartment(pw.getCompartmentManager().getCompartment(t));
 				graphInstance.getPathway().addVertex(newT, new Point());
 			}
 		} else if (source.equals("placeList")) {
@@ -326,7 +325,7 @@ public class PropertyWindowListener implements FocusListener {
 			newP.setTokenMax(p.getTokenMax());
 			newP.setTokenMin(p.getTokenMin());
 			newP.setTokenStart(p.getTokenStart());
-			newP.setCompartment(p.getCompartment());
+			//newP.setCompartment(p.getCompartment());
 			try {
 				newP.setID(p.getID(), pw);
 			} catch (IDAlreadyExistException ex) {
