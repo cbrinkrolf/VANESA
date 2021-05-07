@@ -29,9 +29,11 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 
 	private JPanel p = new JPanel();
 	private JCheckBox drawCompartments;
+	private JCheckBox drawCompartmentsExperimental;
 	private JButton createDefault;
 	private JTextField name;
 	private JButton color;
+	private Pathway pw;
 
 	public PathwayPropertiesWindow() {
 
@@ -49,12 +51,23 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 
 	public void revalidateView() {
 		p.removeAll();
+		this.pw = new GraphInstance().getPathway();
 		MigLayout layout = new MigLayout("fillx", "[grow,fill]", "");
 		p.setLayout(layout);
 		drawCompartments = new JCheckBox("draw compartments");
+		if(pw.getCompartmentManager().isDrawCompartments()){
+			drawCompartments.setSelected(true);
+		}
 		drawCompartments.setActionCommand("drawCompartments");
 		drawCompartments.addItemListener(this);
 		p.add(drawCompartments, "wrap");
+		
+		
+		drawCompartmentsExperimental = new JCheckBox("draw experimental");
+		drawCompartmentsExperimental.setActionCommand("drawCompartmentsExperimental");
+		drawCompartmentsExperimental.addItemListener(this);
+		drawCompartmentsExperimental.setEnabled(false);
+		p.add(drawCompartmentsExperimental, "wrap");
 		// p.add(new JLabel("draw compartments"));
 
 		createDefault = new JButton("create default");
@@ -87,7 +100,6 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 	}
 
 	private void drawList() {
-		Pathway pw = new GraphInstance().getPathway();
 		List<Compartment> compartments = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
 
 		for (Compartment c : compartments) {
@@ -109,7 +121,6 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
-		Pathway pw = new GraphInstance().getPathway();
 
 		if (command.equals("createDefault")) {
 			pw.getCompartmentManager().addDefaultCompartments();
@@ -155,15 +166,22 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		// TODO Auto-generated method stub
-		Pathway pw = new GraphInstance().getPathway();
 		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
 				.getVisualizationViewer();
-		if (e.getStateChange() == 1) {
-			vv.setDrawCompartments(true);
-		} else {
-			vv.setDrawCompartments(false);
+		if (e.getSource().equals(drawCompartments)) {
+			if (e.getStateChange() == 1) {
+				vv.setDrawCompartments(true);
+				pw.getCompartmentManager().setDrawCompartments(true);
+			} else {
+				vv.setDrawCompartments(false);
+				pw.getCompartmentManager().setDrawCompartments(false);
+			}
+		} else if (e.getSource().equals(drawCompartmentsExperimental)) {
+			if (e.getStateChange() == 1) {
+				vv.setEsperimentalCompartments(true);
+			} else {
+				vv.setEsperimentalCompartments(false);
+			}
 		}
-
 	}
 }

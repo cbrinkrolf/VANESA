@@ -1418,10 +1418,4 @@ public class MyGraph {
 	public MyEdgeDrawPaintFunction getEdgeDrawPaintFunction() {
 		return edpf;
 	}
-
-	public Point2D getGraphCenter() {
-
-		return null;
-	}
-
 }

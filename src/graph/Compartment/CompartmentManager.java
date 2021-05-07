@@ -13,9 +13,10 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 
 public class CompartmentManager {
 
-	Set<Compartment> compartments = new HashSet<>();
-	Map<BiologicalNodeAbstract, Compartment> bnaToCompartment = new HashMap<>();
-	Map<Compartment, HashSet<BiologicalNodeAbstract>> compartmentToBNA = new HashMap<Compartment, HashSet<BiologicalNodeAbstract>>();
+	private Set<Compartment> compartments = new HashSet<>();
+	private Map<BiologicalNodeAbstract, Compartment> bnaToCompartment = new HashMap<>();
+	private Map<Compartment, HashSet<BiologicalNodeAbstract>> compartmentToBNA = new HashMap<Compartment, HashSet<BiologicalNodeAbstract>>();
+	private boolean drawCompartments = false;
 
 	public CompartmentManager() {
 
@@ -90,11 +91,18 @@ public class CompartmentManager {
 		return compartmentToBNA.get(c);
 	}
 
+	public boolean isDrawCompartments() {
+		return drawCompartments;
+	}
+
+	public void setDrawCompartments(boolean drawCompartments) {
+		this.drawCompartments = drawCompartments;
+	}
+
 	public void addDefaultCompartments() {
 		this.add(new Compartment("Cytoplasma", new Color(0, 255, 0, 50)));
 		this.add(new Compartment("Nucleus", new Color(00, 0, 255, 50)));
 		this.add(new Compartment("Membrane", new Color(255, 128, 0, 50)));
 		this.add(new Compartment("InsideTheCell", new Color(127, 0, 255, 50)));
-
 	}
 }
