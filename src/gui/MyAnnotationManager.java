@@ -36,7 +36,7 @@ public class MyAnnotationManager extends AnnotationManager {
 		annotationMap.put(annotation.getAnnotation(), annotation);
 		// System.out.println("shape: "+annotation.getShape());
 		// System.out.println("anzahl: " + this.annotations.size());
-		//System.out.println("add, count: " + this.annotationMap.size());
+	//	System.out.println("add, count: " + this.annotationMap.size());
 
 	}
 

@@ -69,7 +69,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlug
 
 				an = new MyAnnotation(annotation, arect, annotationString);
 			}
-		} else if (e.getModifiersEx() == modifiers) {
+		} else if (e.getModifiers() == modifiers) {
 			if (down != null) {
 				Point2D out = e.getPoint();
 				// System.out.println();
@@ -104,7 +104,7 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlug
 		vv.removePostRenderPaintable(lensPaintable);
 		// vv.repaint();
 
-		// System.out.println("shape: "+s);
+		//System.out.println("shape: ");
 		if (an != null) {
 			if (this.currentType == AnnotationPainter.TEXT || (arect.getWidth() > 5 && arect.getHeight() > 5)) {
 				// ((MyAnnotationManager)this.annotationManager).remove(an);
