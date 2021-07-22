@@ -407,6 +407,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				}
 			}
 		} else {
+			// System.out.println("else picked");
 			boolean onlyT = true;
 			if (vState.getPicked().size() > 0) {
 				Iterator<BiologicalNodeAbstract> it = vState.getPicked().iterator();

@@ -51,8 +51,23 @@ public class PetriNetProperties {
 			
 			BiologicalNodeAbstract bna;
 			Iterator<BiologicalNodeAbstract> it = this.pw.getAllGraphNodes().iterator();
-			SimulationResult simRes = this.getSimResController().get("test");
 			
+			String fileName = resFile.getName();
+			//System.out.println(fileName);
+			//System.out.println(this.pw.getPetriPropertiesNet().getSimResController().getSimIds().size());
+			//System.out.println(this.getSimResController().getSimIds().size());
+			//System.out.println("n: "+this.getSimResController().getSimIds().get(0));
+			if(this.getSimResController().getSimIds().contains(fileName)){
+				int i = 1;
+				while(this.getSimResController().getSimIds().contains(fileName+"("+i+")")){
+					i++;
+				}
+				fileName+="("+i+")";
+				//System.out.println("contains");
+			}
+			SimulationResult simRes = this.getSimResController().get(fileName);
+			simRes.setName(fileName);
+			//System.out.println(fileName);
 			for(int i = 0; i<result.get("Time").size(); i++){
 				simRes.addTime(result.get("Time").get(i));
 			}

@@ -23,8 +23,9 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 	private final String vanesaResultDescription = "VANESA Simulation Result File (*.csv)";
 	private final String vanesaSimulation = "csv";
 
-	//private final String modelicaResultDescription = "New Modelica Simulation Result File (*.csv)";
-	//private final String modelicaSimulation = "csv";
+	// private final String modelicaResultDescription = "New Modelica Simulation
+	// Result File (*.csv)";
+	// private final String modelicaSimulation = "csv";
 
 	private final int option;
 
@@ -54,13 +55,14 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 
 			if (fileFormat.equals(vanesaResultDescription)) {
 				if (con.containsPathway()) {
-					if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-						graphInstance.getPathway().setPetriNet(true);
+					if (graphInstance.getPathway().hasGotAtLeastOneElement()
+							&& graphInstance.getPathway().isPetriNet()) {
+						// graphInstance.getPathway().setPetriNet(true);
 						PetriNetProperties petrinet = graphInstance.getPathway().getPetriPropertiesNet();
 						petrinet.loadVanesaSimulationResult(file);
 
 					} else {
-						MyPopUp.getInstance().show("Error", "Please create a network before.");
+						MyPopUp.getInstance().show("Error", "Please create a Petri net first.");
 					}
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
@@ -81,8 +83,8 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 				@Override
 				public void run() {
 					MainWindow.getInstance().showProgressBar("Loading data from file. Please wait a second");
-					//bar.init(100, "  Open ", true);
-					//bar.setProgressBarString("Loading data from file. Please wait a second");
+					// bar.init(100, " Open ", true);
+					// bar.setProgressBarString("Loading data from file. Please wait a second");
 				}
 			};
 			SwingUtilities.invokeLater(run);
@@ -97,7 +99,7 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 		open();
 		if (fileFormat != null) {
 			MainWindow.getInstance().closeProgressBar();
-			//bar.closeWindow();
+			// bar.closeWindow();
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
@@ -105,8 +107,10 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 					// .restart();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();
+					// TODO possible improvement for additionally loaded simulation results
 					MainWindow.getInstance().initSimResGraphs();
 					MainWindow.getInstance().updateAllGuiElements();
+
 				}
 			}
 		}
