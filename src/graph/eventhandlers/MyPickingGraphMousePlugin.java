@@ -182,13 +182,13 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				bna = it.next();
 
 				if(bna.hasRef()){
-					g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
+					//g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
 					Iterator<BiologicalNodeAbstract> it2 = bna.getRef().getRefs().iterator();
 					while (it2.hasNext()) {
 						pick = it2.next();
 						// System.out.println(pick.getLabel());
 						// System.out.println(pick);
-						g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
+						// g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
 					}
 				}else{
 
@@ -202,7 +202,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 					pick = it2.next();
 					// System.out.println(pick.getLabel());
 					// System.out.println(pick);
-					g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
+					//g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
 
 				}
 				}
