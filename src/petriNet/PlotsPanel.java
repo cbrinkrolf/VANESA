@@ -59,18 +59,25 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 	// ArrayList<String> labels = new ArrayList<String>();
 	private static int TOKEN = SimulationResultController.SIM_TOKEN;
-	private static int ACTUAL_FIRING_SPEED = SimulationResultController.SIM_ACTUAL_FIRING_SPEED;
+	//private static int ACTUAL_FIRING_SPEED = SimulationResultController.SIM_ACTUAL_FIRING_SPEED;
 	public static int FIRE = SimulationResultController.SIM_FIRE;
 	public static int SUM_OF_TOKEN = SimulationResultController.SIM_SUM_OF_TOKEN;
 	public static int ACTUAL_TOKEN_FLOW = SimulationResultController.SIM_ACTUAL_TOKEN_FLOW;
+	
+	private String simId;
 
-	public PlotsPanel() {
+	public PlotsPanel(String simId) {
 		// System.out.println("cols: "+cols);
+		this.simId = simId;
 		BiologicalNodeAbstract bna;
 
 		Place place;
 
 		if (pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation()) {
+			
+			if(simId == null){
+				simId = pw.getPetriPropertiesNet().getSimResController().getLastActive().getId();
+			}
 			// table = new Object[rows][cols + 1];
 			// System.out.println("rowsSize: " + rowsSize);
 			// System.out.println("rowsDim: " + rowsDim);
@@ -92,7 +99,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 			Collections.sort(labels, String.CASE_INSENSITIVE_ORDER);
 
-			SimulationResult simRes = pw.getPetriPropertiesNet().getSimResController().getLastActive();
+			SimulationResult simRes = pw.getPetriPropertiesNet().getSimResController().get(simId);
 			cols = simRes.getTime().size();
 			for (int j = 0; j < rows; j++) {
 				place = places.get(labels.get(j));
@@ -200,7 +207,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	}
 
 	private void updateData() {
-		SimulationResult simRes = pw.getPetriPropertiesNet().getSimResController().getLastActive();
+		SimulationResult simRes = pw.getPetriPropertiesNet().getSimResController().get(simId);
 		// System.out.println("update");
 		Place place;
 		for (int j = 0; j < rows; j++) {

@@ -22,6 +22,8 @@ import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationModel;
 import edu.uci.ics.jung.visualization.VisualizationServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.transform.AffineTransformer;
+import edu.uci.ics.jung.visualization.transform.LensTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 import graph.GraphContainer;
 import graph.Compartment.Compartment;
@@ -257,7 +259,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
 		s1 = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)
 				.transform(bna.getShape().getBounds2D());
-
+		//System.out.println(p1);
+		//System.out.println(p1inv);
 		// Shape s3 = this.getRenderContext().getMultiLayerTransformer()
 		// .getTransformer(Layer.VIEW).transform(bea.getShape().getBounds2D());
 		// System.out.println(loc);
@@ -303,15 +306,28 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			MutableTransformer mt;
 			double scaleV = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
 			if (scaleV < 1) {
-				mt = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+				//mt = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+				mt = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+				//System.out.println("smaller");
 			} else {
 				// mt=
-				// this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-				mt = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+				mt = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
+				//mt = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
 			}
 
+			AffineTransformer transformer = null;
+			
+				if(mt instanceof AffineTransformer) {
+					transformer = (AffineTransformer)mt;
+					//System.out.println("aff");
+				} else if(mt instanceof LensTransformer) {
+					//System.out.println("lens");
+					transformer = (AffineTransformer)((LensTransformer)mt).getDelegate();
+				}
+				
 			// this.getRenderContext()
 
+			//AffineTransformer at = (AffineTransformer)((LensTransformer)mt).getDelegate();
 			Area a = areas.get(comp);
 
 			// at.setrot
@@ -330,26 +346,28 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			Point2D lvc = getRenderContext().getMultiLayerTransformer().inverseTransform(getCenter());
 			Point2D q1 = getRenderContext().getMultiLayerTransformer().inverseTransform(q);
 			// System.out.println("q: "+viewer.getCenter());
-			System.out.println("lvc: " + lvc);
+			//System.out.println("lvc: " + lvc);
 			// System.out.println(lvc);
 			final double dx = (lvc.getX() - q.getX());
 			final double dy = (lvc.getY() - q.getY());
 			// System.out.println(viewer.getClass()+" "+dx+" "+dy);
 
-			System.out.println(" " + dx + " " + dy);
-			System.out.println("center:" + q);
-			System.out.println("center2:" + getCenter());
-			System.out.println("center3:" + q1);
+			//System.out.println(" " + dx + " " + dy);
+			//System.out.println("center:" + q);
+			//System.out.println("center2:" + getCenter());
+			//System.out.println("center3:" + q1);
 			// viewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx,
 			// dy);
 			AffineTransform at = new AffineTransform();
-			at.translate(-dx, 0);
+			//at.translate(-dx, 0);
 			// at.translate((lvc.getX()), (lvc.getY()));
 
+			at.scale(dx, dy);
 			// mt.setTranslate(tX, tY);
 			// mt.setTranslate(mt.getTranslateX(), mt.getTranslateY());
-			Area area = a.createTransformedArea(mt.getTransform());
-
+			//Area area = a.createTransformedArea(mt.getTransform());
+			Area area = a.createTransformedArea(transformer.getTransform());
+			
 			area.transform(at);
 //Area area = a.createTransformedArea(new AffineTransform(dx, dy,0,0,0,0));
 

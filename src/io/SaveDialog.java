@@ -115,7 +115,6 @@ public class SaveDialog {
 
 	private Component c = null;
 	private JFileChooser chooser;
-	private Component relativeTo;
 
 	private String pathWorkingDirectory;
 
@@ -137,10 +136,10 @@ public class SaveDialog {
 	public static int FORMAT_SVG = 2048;
 	public static int FORMAT_PDF = 4096;
 
-	public SaveDialog(int format, Component c, Component relativeTo) {
+	public SaveDialog(int format, Component c, Component relativeTo, String simId) {
 
 		if (relativeTo == null) {
-			this.relativeTo = MainWindow.getInstance().getFrame();
+			relativeTo = MainWindow.getInstance().getFrame();
 		}
 		this.prerapre(format);
 		this.c = c;
@@ -176,7 +175,7 @@ public class SaveDialog {
 			}
 			if (overwrite) {
 				try {
-					write();
+					write(simId);
 				} catch (FileNotFoundException | HeadlessException | XMLStreamException e) {
 					e.printStackTrace();
 				}
@@ -186,9 +185,7 @@ public class SaveDialog {
 
 	public SaveDialog(int format, List<JFreeChart> charts, boolean directoryOnly, Component relativeTo) {
 		if (relativeTo == null) {
-			this.relativeTo = MainWindow.getInstance().getFrame();
-		} else {
-			this.relativeTo = relativeTo;
+			relativeTo = MainWindow.getInstance().getFrame();
 		}
 		String error = "";
 		this.prerapre(format);
@@ -319,9 +316,9 @@ public class SaveDialog {
 	}
 
 	public SaveDialog(int format) {
-		this(format, null, MainWindow.getInstance().getFrame());
+		this(format, null, MainWindow.getInstance().getFrame(), null);
 	}
-
+	
 	private void prerapre(int format) {
 
 		// Get working directory
@@ -414,10 +411,10 @@ public class SaveDialog {
 		} else {
 			file = new File(file.getAbsolutePath() + "." + ending);
 		}
-
 	}
 
-	private void write() throws FileNotFoundException, HeadlessException, XMLStreamException {
+
+	private void write(String simId) throws FileNotFoundException, HeadlessException, XMLStreamException {
 
 		ConnectionSettings.setFileDirectory(file.getAbsolutePath());
 		if (fileFormat.equals(sbmlDescription)) {
@@ -474,7 +471,7 @@ public class SaveDialog {
 		} else if (fileFormat.equals(csvDescription)) {
 			getCorrectFile(csv);
 			// TODO adjust if BN holds PN
-			String result = new CSVWriter().write(new FileOutputStream(file), new GraphInstance().getPathway());
+			String result = new CSVWriter().write(new FileOutputStream(file), new GraphInstance().getPathway(), simId);
 
 			if (result.length() > 0) {
 				MyPopUp.getInstance().show("Error", csvDescription + result);

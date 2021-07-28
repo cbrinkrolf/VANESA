@@ -19,20 +19,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.jdesktop.swingx.decorator.ColorHighlighter;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -61,15 +55,12 @@ import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
-import graph.animations.RegulationTabelModel;
 import graph.jung.graphDrawing.VertexShapes;
+import gui.DetailedSimRes;
 import gui.MainWindow;
-import gui.algorithms.ScreenSize;
 import io.SaveDialog;
-import miscalleanous.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 import petriNet.AnimationThread;
-import petriNet.PlotsPanel;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 import util.TripleHashMap;
@@ -87,20 +78,15 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 	private JLabel stepLabel = new JLabel("Step 0");
 	private JSlider slider = new JSlider();
-	private JPanel dialogPanel;
 	private JPanel main;
 	private JPanel controlPanel;
 	private JFreeChart chart;
 	private ValueMarker marker;
-	private JFrame dialog;
 	private Pathway pw = null;
 	private PickedState<BiologicalNodeAbstract> vState;
 	private PickedState<BiologicalEdgeAbstract> eState;
 	private SimulationResultController simResController;
 	private boolean hiddenPN = false;
-	// private RegulationTabelModel model;
-	private MyTable table;
-	// private boolean first = true;
 	private JButton petriNetAnimationButton = new JButton("Start Animation");
 	private JButton petriNetStopAnimationButton = new JButton("Stop");
 	private JButton resetPetriNet = new JButton("Reset");
@@ -113,15 +99,14 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	private Thread thread;
 	private ChartPanel pane;
 
-	private JButton exportSimResult;
 	private JButton zoomGraph;
 
 	// private JPanel invariants = new JPanel();
 
 	// An Object to store microarray data
-	private Object[][] rows;
+	//private Object[][] rows;
 	// number of Places
-	private int rowsSize;
+	//private int rowsSize;
 	// size of Vector in each Place
 	private int rowsDim;
 
@@ -352,7 +337,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				// SUM_OF_TOKEN).size() > 0) {
 				for (int i = 0; i < listActive.size(); i++) {
 					result = listActive.get(i);
-					
+
 					int idxFlow = series2idx.get(edge, ACTUAL_TOKEN_FLOW, result.getId());
 					int idxSum = series2idx.get(edge, SUM_OF_TOKEN, result.getId());
 
@@ -443,17 +428,19 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				if (bna instanceof Place) {
 					place = (Place) bna;
 					// System.out.println(place.getPetriNetSimulationData().size());
-					if (this.series2idx.contains(place, TOKEN)) {
+					if (this.series2idx.contains(place, TOKEN)
+							&& series2idx.get(place, TOKEN, simRes.getId()) != null) {
 						renderer.setSeriesStroke(series2idx.get(place, TOKEN, simRes.getId()), new BasicStroke(1));
 						renderer.setSeriesPaint(series2idx.get(place, TOKEN, simRes.getId()), place.getPlotColor());
 						renderer.setSeriesVisible((int) series2idx.get(place, TOKEN, simRes.getId()), true);
 					} else {
-						//System.out.println("does not contain");
+						// System.out.println("does not contain");
 					}
 				} else if (bna instanceof Transition && onlyT) {
 					transition = (Transition) bna;
 					if (series2idx.contains(transition, ACTUAL_FIRING_SPEED)) {
-						renderer.setSeriesPaint(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()), transition.getPlotColor());
+						renderer.setSeriesPaint(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
+								transition.getPlotColor());
 						renderer.setSeriesVisible((int) series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
 								true);
 					}
@@ -621,10 +608,10 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					if (simRes.contains(edge)) {
 						series = this.seriesListR1.get(series2idx.get(edge, ACTUAL_TOKEN_FLOW, simRes.getId()));
 						series2 = this.seriesListR2.get(series2idx.get(edge, SUM_OF_TOKEN, simRes.getId()));
-						//System.out.println(series.getItemCount() + " " + series2.getItemCount());
-						if (simRes.contains(edge, ACTUAL_TOKEN_FLOW )
+						// System.out.println(series.getItemCount() + " " + series2.getItemCount());
+						if (simRes.contains(edge, ACTUAL_TOKEN_FLOW)
 								&& simRes.get(edge, ACTUAL_TOKEN_FLOW).size() > 0) {
-							//System.out.println("drin");
+							// System.out.println("drin");
 							stop = Math.min(simRes.get(edge, ACTUAL_TOKEN_FLOW).size(), time.size());
 							steps = stop - series.getItemCount();
 							if (steps > 0) {
@@ -640,7 +627,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						}
 
 						if (simRes.contains(edge, SUM_OF_TOKEN) && simRes.get(edge, SUM_OF_TOKEN).size() > 0) {
-							
+
 							stop = Math.min(simRes.get(edge, SUM_OF_TOKEN).size(), time.size());
 							steps = stop - series2.getItemCount();
 							if (steps > 0) {
@@ -696,62 +683,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				}
 			}
 		} else if ("show".equals(event)) {
-			table = new MyTable();
-			table.setModel(this.getTableModel());
-			table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			table.setColumnControlVisible(false);
-			table.setHighlighters(HighlighterFactory.createSimpleStriping());
-			table.setFillsViewportHeight(true);
-			table.addHighlighter(new ColorHighlighter(new Color(192, 215, 227), Color.BLACK));
-			table.setHorizontalScrollEnabled(true);
-			table.getTableHeader().setReorderingAllowed(true);
-			table.getTableHeader().setResizingAllowed(true);
-			table.getColumn("Label").setPreferredWidth(100);
-			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-			JScrollPane sp = new JScrollPane(table);
-			sp.setPreferredSize(new Dimension(600, 200));
-
-			MigLayout layout2 = new MigLayout();
-			dialogPanel = new JPanel(layout2);
-			dialogPanel.add(new JLabel("Results for each Timestep t and for all Places:"), "span 2");
-			dialogPanel.add(new JSeparator(), "gap 10, wrap 15, growx");
-			dialogPanel.add(sp, "span 4, growx, wrap");
-
-			exportSimResult = new JButton("Export Simulation Result");
-			exportSimResult.setActionCommand("exportSimResult");
-			exportSimResult.addActionListener(this);
-
-			dialogPanel.add(exportSimResult, "wrap");
-
-			dialogPanel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
-
-			// draw a new plot according to the current time step selection
-
-			PlotsPanel pp = new PlotsPanel();
-			dialogPanel.add(pp, "wrap");
-			JButton button = new JButton("Save results to folder");
-			button.addActionListener(pp);
-
-			dialogPanel.add(button);
-
-			// System.out.println("show");
-			// show table containing all data
-			dialog = new JFrame("Simulation results");
-			dialog.setTitle("Simulation Results");
-			dialog.setResizable(true);
-			dialog.setContentPane(dialogPanel);
-			dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			ScreenSize screen = new ScreenSize();
-			int screenHeight = (int) screen.getheight();
-			int screenWidth = (int) screen.getwidth();
-			// dialog.setAlwaysOnTop(false);
-			dialog.pack();
-			// dialog.setLocation((screenWidth / 2) - dialog.getSize().width /
-			// 2,
-			// (screenHeight / 2) - dialog.getSize().height / 2);
-			dialog.setVisible(true);
-			dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
+			new DetailedSimRes(pw, null);
 		} else if (event.equals("animatePetriNet")) {
 			// redraw plot and set new colors/sizes
 
@@ -989,7 +921,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 		if (!pw.isPetriNet() && pw.getPetriNet() != null) {
 			hiddenPN = true;
-		}else{
+		} else {
 			hiddenPN = false;
 		}
 
@@ -1045,17 +977,18 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					if (bna instanceof Place && simResController.getAllActiveWithData(bna, TOKEN).size() <= 1) {
 						return labelsR1.get(seriesIdx);
 					}
-					if (bna instanceof Transition && simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED).size() <= 1) {
+					if (bna instanceof Transition
+							&& simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED).size() <= 1) {
 						return labelsR1.get(seriesIdx);
 					}
-					
+
 					return labelsR1.get(seriesIdx) + "(" + idx2simR1.get(seriesIdx).getName() + ")";
 				}
 				return labelsR1.get(seriesIdx);
 			}
 		});
 
-		//renderer.setBaseItemLabelsVisible(true);
+		// renderer.setBaseItemLabelsVisible(true);
 		renderer.setLegendItemLabelGenerator(new XYSeriesLabelGenerator() {
 
 			@Override
@@ -1074,7 +1007,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					if (bna instanceof Place && simResController.getAllActiveWithData(bna, TOKEN).size() <= 1) {
 						return graphElement.getName();
 					}
-					if (bna instanceof Transition && simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED).size() <= 1) {
+					if (bna instanceof Transition
+							&& simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED).size() <= 1) {
 						return graphElement.getName();
 					}
 					return idx2simR1.get(seriesIdx).getName();
@@ -1318,43 +1252,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				r2Count++;
 			}
 		}
-	}
-
-	private RegulationTabelModel getTableModel() {
-
-		BiologicalNodeAbstract bna;
-		SimulationResult simRes = simResController.getLastActive();
-
-		rowsSize = pw.getPlaceCount();
-		rowsDim = simRes.getTime().size();
-		// get Data from all Places
-		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-		rows = new Object[rowsSize][rowsDim + 1];
-
-		int i = 0;
-
-		while (it.hasNext()) {
-			bna = it.next();
-			if (bna instanceof Place && !bna.hasRef()) {
-				rows[i][0] = bna.getName();
-				for (int j = 1; j <= rowsDim; j++) {
-					if (simRes.contains(bna, TOKEN) && simRes.get(bna, TOKEN).size() > j - 1) {
-						rows[i][j] = Math.max(0, simRes.get(bna, TOKEN).get(j - 1));
-					} else {
-						rows[i][j] = "-";
-					}
-				}
-				i++;
-			}
-		}
-		// create column labels for table view
-		String columNames[] = new String[rowsDim + 1];
-		// String selectorValues[] = new String[rowsSize];
-		columNames[0] = "Label";
-		for (i = 0; i < rowsDim; i++) {
-			columNames[i + 1] = "t=" + simRes.getTime().get(i);
-		}
-		return new RegulationTabelModel(rows, columNames);
 	}
 
 	private BiologicalNodeAbstract resolveReference(BiologicalNodeAbstract bna) {

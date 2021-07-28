@@ -95,8 +95,12 @@ public class PetriNetSimulation implements ActionListener {
 			menue.setVisible(true);
 		}
 	}
+	
+	private void runOMCIA(int port){
+		this.runOMCIA(port, "");
+	}
 
-	private void runOMCIA() {
+	private void runOMCIA(int port, String overrideParameterized) {
 		stopped = false;
 		long zstVorher;
 		long zstNachher;
@@ -104,6 +108,7 @@ public class PetriNetSimulation implements ActionListener {
 		int intervals = menue.getIntervals();
 
 		System.out.println("simNameOld: " + simName);
+		System.out.println("port: "+port);
 		MainWindow w = MainWindow.getInstance();
 		flags = pw.getChangedFlags("petriNetSim");
 		logAndShow("Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
@@ -120,10 +125,10 @@ public class PetriNetSimulation implements ActionListener {
 				public void run() {
 					// while (!stopped) {
 					try {
-						s = new Server(pw, bea2key, simId);
+						s = new Server(pw, bea2key, simId, port);
 
 						s.start();
-
+						
 						System.out.println("building ended");
 						pw.getPetriPropertiesNet().setPetriNetSimulation(true);
 
@@ -187,6 +192,8 @@ public class PetriNetSimulation implements ActionListener {
 											}
 										}
 									}
+									
+									override+=overrideParameterized;
 
 									if (SystemUtils.IS_OS_WINDOWS) {
 										override += "\"";
@@ -197,9 +204,9 @@ public class PetriNetSimulation implements ActionListener {
 									logAndShow("override statement: " + override);
 									if (noEmmit) {
 										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-nls=newton",
-												"-port=11111", "-noEventEmit", "-lv=LOG_STATS");
+												"-port="+port, "-noEventEmit", "-lv=LOG_STATS");
 									} else {
-										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-nls=newton", "-port=11111",
+										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-nls=newton", "-port="+port,
 												"-lv=LOG_STATS");
 									}
 									pb.redirectOutput();
@@ -607,11 +614,12 @@ public class PetriNetSimulation implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if (event.getActionCommand().equals("start")) {
+			int port = 11111;
 			if (allThread != null) {
 				// allThread.interrupt();
 				// allThread = null;
 			}
-			this.menue.started();
+			
 			// this.runOMC();
 			if (!menue.isParameterized()) {
 				simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
@@ -619,7 +627,8 @@ public class PetriNetSimulation implements ActionListener {
 				this.logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
 				menue.clearText();
 				menue.addText(logMessage.toString());
-				this.runOMCIA();
+				this.menue.started();
+				this.runOMCIA(port);
 			} else {
 				//TODO needs to be checked again
 				flags = pw.getChangedFlags("petriNetSim");
@@ -627,36 +636,65 @@ public class PetriNetSimulation implements ActionListener {
 				String param = menue.getParameterName();
 				List<Double> list = menue.getParameterValues();
 				double value;
-				Boundary b;
+				MyPopUp.getInstance().show("Parameterized simulation", "Parameters to be simulated:" + list.size());
+				if(list.size() < 1){
+					return;
+				}
+				//HashMap<Place, Boundary> boundaries = (HashMap<Place, Boundary>) DeepObjectCopy.clone(pw.getChangedBoundaries()); //(HashMap<Place, Boundary>) pw.getChangedBoundaries().clone();
+				//HashMap<Place, Double> initialValues = (HashMap<Place, Double>) DeepObjectCopy.clone(pw.getChangedInitialValues());
+				//pw.getChangedFlags(param);
+				//HashMap<Parameter, GraphElementAbstract> parameters = new HashMap<Parameter, GraphElementAbstract>();
+					//	for(Parameter p :pw.getChangedParameters().keySet() ){
+					//		parameters.put(p, pw.getChangedParameters().get(p));
+					//	}
+						//(HashMap<Parameter, GraphElementAbstract>) DeepObjectCopy.clone(pw.getChangedParameters());
+			//	System.out.println("parmameter size org: "+parameters.size());
+				String override;
+				Place p;
+				this.menue.started();
 				for (int i = 0; i < list.size(); i++) {
-					simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
-							+ System.nanoTime();
+					override = "";
+					//pw.setChangedBoundaries(boundaries);
+					//pw.setChangedInitialValues(initialValues);
+					//pw.setChangedParameters(parameters);
+					//System.out.println("--------------parameter size: "+parameters.size());
+					
 					value = list.get(i);
+					simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
+							+ System.nanoTime()+"_"+value;
+					
 					System.out.println(value);
+							
 					if (bna instanceof Place) {
+						p = (Place) bna;
 						switch (param) {
 						case "token min":
-							flags.setBoundariesChanged(true);
-							b = new Boundary();
-							b.setLowerBoundary(value);
-							pw.getChangedBoundaries().put((Place) bna, b);
+							//flags.setBoundariesChanged(true);
+							//b = new Boundary();
+							//b.setLowerBoundary(value);
+							//pw.getChangedBoundaries().put((Place) bna, b);
+							override += ",'" + p.getName() + "'.minMarks=" + value;
 							break;
 						case "token max":
-							flags.setBoundariesChanged(true);
-							b = new Boundary();
-							b.setUpperBoundary(value);
-							pw.getChangedBoundaries().put((Place) bna, b);
+							//flags.setBoundariesChanged(true);
+							//b = new Boundary();
+							//b.setUpperBoundary(value);
+							//pw.getChangedBoundaries().put((Place) bna, b);
+							override += ",'" + p.getName() + "'.maxMarks=" + value;
 							break;
 						case "token start":
-							flags.setInitialValueChanged(true);
-							pw.getChangedInitialValues().put((Place) bna, value);
+							//flags.setInitialValueChanged(true);
+							//pw.getChangedInitialValues().put((Place) bna, value);
+							override += ",'" + p.getName() + "'.startMarks=" + value;
 							break;
 						}
 					} else if (bna instanceof Transition) {
 						if (bna.getParameter(param) != null) {
-							Parameter p = bna.getParameter(param);
-							flags.setParameterChanged(true);
-							pw.getChangedParameters().put(new Parameter(param, value, p.getUnit()), bna);
+							//Parameter p = bna.getParameter(param);
+							//flags.setParameterChanged(true);
+							//pw.getChangedParameters().put(new Parameter(param, value, p.getUnit()), bna);
+							override += ",'_" + bna.getName() + "_" + param + "'="
+									+ value;
 						} else {
 							MyPopUp.getInstance().show("Error",
 									"The parameter for parameterized simulation could not be found: " + param);
@@ -666,9 +704,12 @@ public class PetriNetSimulation implements ActionListener {
 					}
 					// rounding name up to 4 decimals
 					pw.getPetriPropertiesNet().getSimResController().get(simId)
-							.setName(Math.round(value * 1000) / 1000.0 + "");
+							.setName(bna.getName()+"_"+param+"="+Math.round(value * 1000) / 1000.0 + "");
 					this.logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
-					this.runOMCIA();
+					menue.clearText();
+					menue.addText(logMessage.toString());
+					this.runOMCIA(port++, override);
+					
 					try {
 						Thread.sleep(100);
 						while(!stopped){
@@ -678,6 +719,7 @@ public class PetriNetSimulation implements ActionListener {
 						e.printStackTrace();
 					}
 				}
+				System.out.println("eeeeeeend of param sim");
 			}
 
 		} else if (event.getActionCommand().equals("stop")) {

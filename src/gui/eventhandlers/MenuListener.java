@@ -1037,7 +1037,7 @@ public class MenuListener implements ActionListener {
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv, MainWindow.getInstance().getFrame());
+					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv, MainWindow.getInstance().getFrame(), null);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network before.");
 				}

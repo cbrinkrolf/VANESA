@@ -38,14 +38,15 @@ public class Server {
 	private boolean running = true;
 	private Pathway pw;
 	private String simId;
+	private int port;
 	private SimulationResult simResult;
-	
-	private Set<PNEdge> toRefineEdges =  new HashSet<PNEdge>();
+
+	private Set<PNEdge> toRefineEdges = new HashSet<PNEdge>();
 
 	// size of modelica int;
 	private final int sizeOfInt;
 
-	public Server(Pathway pw, HashMap<BiologicalEdgeAbstract, String> bea2key, String simId) {
+	public Server(Pathway pw, HashMap<BiologicalEdgeAbstract, String> bea2key, String simId, int port) {
 
 		if (SystemUtils.IS_OS_WINDOWS) {
 			sizeOfInt = 8;
@@ -56,6 +57,7 @@ public class Server {
 		this.pw = pw;
 		this.bea2key = bea2key;
 		this.simId = simId;
+		this.port = port;
 		this.pw.setPlotColorPlacesTransitions(false);
 	}
 
@@ -68,8 +70,19 @@ public class Server {
 				DataInputStream is;
 				while (running) {
 					try {
-						int port = 11111;
-						serverSocket = new java.net.ServerSocket(port);
+						boolean boundCorrectly = false;
+						while (!boundCorrectly) {
+							try {
+								serverSocket = new java.net.ServerSocket(port);
+								boundCorrectly = true;
+							} catch (Exception e) {
+								boundCorrectly = false;
+								e.printStackTrace();
+								running = false;
+								//port++;
+							}
+						}
+
 						simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
 						System.out.println(simId);
 						MainWindow.getInstance().initSimResGraphs();
@@ -88,7 +101,7 @@ public class Server {
 					} catch (IOException e) {
 						running = false;
 						// System.err.println("Unable to process client request");
-						 e.printStackTrace();
+						e.printStackTrace();
 					}
 				}
 				simResult.refineEdgeFlow(toRefineEdges);
@@ -308,8 +321,8 @@ public class Server {
 				if (name2index.get("der(" + bea2key.get(bea) + ")") != null) {
 					o = values.get(name2index.get("der(" + bea2key.get(bea) + ")"));
 					this.checkAndAddValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, o);
-				}else{
-					if(!toRefineEdges.contains(e)){
+				} else {
+					if (!toRefineEdges.contains(e)) {
 						toRefineEdges.add(e);
 					}
 				}
@@ -375,7 +388,7 @@ public class Server {
 			System.out.println("unsupported data type!!!");
 		}
 		if (gea instanceof PNEdge) {
-			//System.out.println(gea.getName() + " :" + value + " org:" + o);
+			// System.out.println(gea.getName() + " :" + value + " org:" + o);
 		}
 		this.simResult.addValue(gea, type, value);
 	}

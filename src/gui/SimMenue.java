@@ -37,6 +37,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.gui.Parameter;
+import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
 import petriNet.SimulationResult;
 import util.MyJFormattedTextField;
@@ -367,8 +368,8 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		this.textArea.setText(textArea.getText() + text);
 		this.pack();
 	}
-	
-	public void clearText(){
+
+	public void clearText() {
 		this.textArea.setText("");
 		this.pack();
 	}
@@ -423,13 +424,13 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		all.addItemListener(this);
 
 		west.add(all);
-		//TODO implement delete all action
-		west.add(new JLabel("delete all"));
-		west.add(new JLabel("show log"));
-		west.add(new JLabel("name"), "wrap");
-		// west.add(new JButton("click"), "wrap");
-		// west.add(new JButton("click"), "wrap");
-		// west.add(new JButton("click"), "wrap");
+		// TODO implement delete all action
+		west.add(new JLabel("simulation name"));
+		west.add(new JLabel(""));
+		west.add(new JLabel(""));
+		west.add(new JLabel(""));
+		west.add(new JLabel(""));
+		west.add(new JLabel(""), "wrap");
 
 		List<SimulationResult> results = pw.getPetriPropertiesNet().getSimResController().getAll();
 
@@ -439,24 +440,35 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 			box.addItemListener(this);
 			box.setSelected(results.get(i).isActive());
 			west.add(box);
-			JButton button = new JButton("del");
-			button.addActionListener(this);
-			button.setActionCommand("del_"+i);
-			
+			JButton del = new JButton("del");
+			del.setToolTipText("delete result");
+			del.addActionListener(this);
+			del.setActionCommand("del_" + i);
+
 			JButton log = new JButton("log");
+			log.setToolTipText("show log");
 			log.addActionListener(this);
-			log.setActionCommand("log_"+i);
+			log.setActionCommand("log_" + i);
+
+			JButton detail = new JButton("detailed");
+			detail.setToolTipText("show detailed result");
+			detail.addActionListener(this);
+			detail.setActionCommand("detail_" + i);
+
+			JButton export = new JButton("export");
+			export.setToolTipText("export result");
+			export.addActionListener(this);
+			export.setActionCommand("export_" + i);
 			// System.out.println("name: "+results.get(i).getName());
-			west.add(button);
-			west.add(log);
-			JTextField text = new JTextField(10);
-			text.setText(results.get(i).getName());
-			text2sim.put(text, results.get(i));
-			text.addFocusListener(new FocusListener() {
+
+			JTextField simName = new JTextField(10);
+			simName.setText(results.get(i).getName());
+			text2sim.put(simName, results.get(i));
+			simName.addFocusListener(new FocusListener() {
 				@Override
 				public void focusLost(FocusEvent e) {
-					if (!text.getText().trim().equals(text2sim.get(e.getSource()).getName())) {
-						text2sim.get(e.getSource()).setName(text.getText().trim());
+					if (!simName.getText().trim().equals(text2sim.get(e.getSource()).getName())) {
+						text2sim.get(e.getSource()).setName(simName.getText().trim());
 					}
 				}
 
@@ -464,7 +476,11 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 				public void focusGained(FocusEvent e) {
 				}
 			});
-			west.add(text, "wrap");
+			west.add(simName);
+			west.add(log);
+			west.add(detail);
+			west.add(export);
+			west.add(del, "wrap");
 		}
 		this.pack();
 		west.repaint();
@@ -512,14 +528,23 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// System.out.println(e);
-			if(e.getActionCommand().startsWith("del_")){
+		if (e.getActionCommand().startsWith("del_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
 			pw.getPetriPropertiesNet().getSimResController().remove(idx);
 			this.updateSimulationResults();
-		} else if (e.getActionCommand().startsWith("log_")){
+		} else if (e.getActionCommand().startsWith("log_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
-			this.textArea.setText(pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getLogMessage().toString());
-		}else if ("parameterized".equals(e.getActionCommand())) {
+			this.textArea.setText(
+					pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getLogMessage().toString());
+		} else if (e.getActionCommand().startsWith("detail_")) {
+			int idx = Integer.parseInt(e.getActionCommand().substring(7));
+			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
+			new DetailedSimRes(pw, simId);
+		} else if (e.getActionCommand().startsWith("export_")) {
+			int idx = Integer.parseInt(e.getActionCommand().substring(7));
+			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
+			new SaveDialog(SaveDialog.FORMAT_CSV,null,this,simId);
+		} else if ("parameterized".equals(e.getActionCommand())) {
 			revalidateParametrizedPanel();
 		} else if ("nodeSelected".equals(e.getActionCommand())) {
 			this.fillNodeComboBox();
@@ -546,12 +571,25 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 		// TODO compute values
 		this.parameterValues = new ArrayList<Double>();
 		if (numbers.getText().trim().length() > 0) {
-
+			String[] num = numbers.getText().split(";");
+			if (num.length > 0) {
+				for (int i = 0; i < num.length; i++) {
+					try {
+						// System.out.println(num[i]);
+						parameterValues.add(Double.parseDouble(num[i]));
+					} catch (Exception e) {
+						MyPopUp.getInstance().show("Number error", "Given number is not valid: " + num[i]);
+					}
+				}
+			}
 		} else {
 			double start = Double.parseDouble(from.getText().trim());
 			double stop = Double.parseDouble(to.getText().trim());
 			double stepsize = Double.parseDouble(intervalSize.getText().trim());
 
+			if (stop < start) {
+				return parameterValues;
+			}
 			parameterValues.add(start);
 
 			double sum = start;
