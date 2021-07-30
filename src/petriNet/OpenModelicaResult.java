@@ -108,9 +108,11 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();
 					// TODO possible improvement for additionally loaded simulation results
-					MainWindow.getInstance().initSimResGraphs();
+					//System.out.println("start");
+					//MainWindow.getInstance().initSimResGraphs();
+					//System.out.println("finshed init");
 					MainWindow.getInstance().updateAllGuiElements();
-
+					//System.out.println("finished gui update");
 				}
 			}
 		}

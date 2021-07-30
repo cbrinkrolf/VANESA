@@ -405,10 +405,11 @@ public class SaveDialog {
 
 	private void getCorrectFile(String ending) {
 
-		String extension = file.getPath();
-		int i = extension.lastIndexOf('.');
-		if (i > 0 && i < extension.length() - 1) {
-		} else {
+		//String extension = file.getPath();
+		//int i = extension.lastIndexOf('.');
+		//if (i > 0 && i < extension.length() - 1) {
+		String filePath = file.getPath();
+		if(!filePath.endsWith("."+ending)){
 			file = new File(file.getAbsolutePath() + "." + ending);
 		}
 	}

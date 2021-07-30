@@ -147,7 +147,7 @@ public class PNDoc {
 		String name = pw.getName();
 		name = name.replace("_", "\\_");
 		sb.append("" + "\\documentclass{article}\n"
-				+ "\\usepackage{amsmath,verbatim,booktabs,longtable,cprotect,graphicx}\n"
+				+ "\\usepackage{amsmath,verbatim,booktabs,longtable,cprotect,graphicx,a4wide}\n"
 				+ "\\begin{document}\n"
 				+ "\\pagenumbering{gobble}\n"
 				+ "\\begin{titlepage}"
@@ -160,7 +160,7 @@ public class PNDoc {
 				+ "\\pagenumbering{arabic}\n"
 				+ "\\begin{figure}[!ht]\n"
 				+ "\\centering\n"
-				+ "\\includegraphics{export}"
+				+ "\\includegraphics[width=1.2\\textwidth]{export}"
 				+ "\\caption{Picture of Network}\n"
 				+ "\\end{figure}\n"
 				+ "\\newpage\n"

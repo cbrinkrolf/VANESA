@@ -239,6 +239,7 @@ public class PetriNetSimulation implements ActionListener {
 								// System.out.println("running");
 								DecimalFormat df = new DecimalFormat("#.#####");
 								df.setRoundingMode(RoundingMode.HALF_UP);
+								boolean simAddedToMenu = false;
 								while (s.isRunning()) {
 									if (v == null && pw.getPetriPropertiesNet().getSimResController()
 											.getLastActive() != null) {
@@ -255,6 +256,10 @@ public class PetriNetSimulation implements ActionListener {
 
 									// double time =
 									if (v != null && v.size() > 0) {
+										if(!simAddedToMenu){
+											menue.updateSimulationResults();
+											simAddedToMenu = true;
+										}
 										menue.setTime("Time: " + df.format((v.get(v.size() - 1))));
 									}
 									try {
@@ -271,7 +276,7 @@ public class PetriNetSimulation implements ActionListener {
 								w.getFrame().revalidate();
 								// w.repaint();
 								if (v.size() > 0) {
-									menue.setTime((v.get(v.size() - 1)).toString());
+									menue.setTime("Time: " + (v.get(v.size() - 1)).toString());
 								}
 								System.out.println("redraw thread finished");
 							}
@@ -390,7 +395,7 @@ public class PetriNetSimulation implements ActionListener {
 			} else {
 				logAndShow("executable needs to be compiled");
 			}
-
+			
 			if (flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged()
 					|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menue.isForceRebuild()) {
 				try {

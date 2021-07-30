@@ -71,7 +71,6 @@ public class PetriNetProperties {
 			for(int i = 0; i<result.get("Time").size(); i++){
 				simRes.addTime(result.get("Time").get(i));
 			}
-			
 			while(it.hasNext()){
 				bna = it.next();
 				if(bna instanceof Place){
@@ -93,7 +92,6 @@ public class PetriNetProperties {
 					}
 				}
 			}
-			
 			Iterator<BiologicalEdgeAbstract> it2 = this.pw.getAllEdges().iterator();
 			BiologicalEdgeAbstract bea;
 			String name;

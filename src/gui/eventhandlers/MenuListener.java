@@ -868,9 +868,10 @@ public class MenuListener implements ActionListener {
 							sleep(100);
 						}
 						System.out.println("file found");
-						stop();
+						//stop();
 						// System.out.println("restart");
 					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			};
@@ -915,6 +916,7 @@ public class MenuListener implements ActionListener {
 							}
 							System.out.println("pdf ended");
 							// System.out.println("restart");
+							//stop();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
