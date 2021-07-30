@@ -43,7 +43,7 @@ import petriNet.SimulationResult;
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
 
-public class SimMenue extends JFrame implements ActionListener, ItemListener {
+public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	/**
 	 * 
@@ -100,7 +100,7 @@ public class SimMenue extends JFrame implements ActionListener, ItemListener {
 
 	private Pathway pw;
 
-	public SimMenue(Pathway pw, ActionListener listener, List<File> libs) {
+	public SimMenu(Pathway pw, ActionListener listener, List<File> libs) {
 		this.pw = pw;
 		this.setTitle("VANESA - simulation setup");
 		this.libs = libs;

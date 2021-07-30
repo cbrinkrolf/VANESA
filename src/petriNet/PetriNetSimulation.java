@@ -38,7 +38,7 @@ import graph.gui.Boundary;
 import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.MyPopUp;
-import gui.SimMenue;
+import gui.SimMenu;
 import moOutput.MOoutput;
 
 public class PetriNetSimulation implements ActionListener {
@@ -47,7 +47,7 @@ public class PetriNetSimulation implements ActionListener {
 	private static String pathWorkingDirectory = null;
 	private static String pathSim = null;
 	private boolean stopped = false;
-	private SimMenue menue = null;
+	private SimMenu menu = null;
 	private Process simProcess = null;
 	Thread compilingThread = null;
 	private Process compileProcess = null;
@@ -82,17 +82,17 @@ public class PetriNetSimulation implements ActionListener {
 		this.simLibs = this.getLibs(dir);
 	}
 
-	public void showMenue() {
-		if (this.menue == null) {
+	public void showMenu() {
+		if (this.menu == null) {
 			this.simLibs = this.getLibs(new File(pathWorkingDirectory));
-			menue = new SimMenue(pw, this, this.simLibs);
+			menu = new SimMenu(pw, this, this.simLibs);
 		} else {
 			this.simLibs = this.getLibs(new File(pathWorkingDirectory));
-			this.menue.setLibs(this.simLibs);
-			this.menue.updateSimulationResults();
-			this.menue.setState(Frame.NORMAL);
-			this.menue.requestFocus();
-			menue.setVisible(true);
+			this.menu.setLibs(this.simLibs);
+			this.menu.updateSimulationResults();
+			this.menu.setState(Frame.NORMAL);
+			this.menu.requestFocus();
+			menu.setVisible(true);
 		}
 	}
 	
@@ -104,15 +104,15 @@ public class PetriNetSimulation implements ActionListener {
 		stopped = false;
 		long zstVorher;
 		long zstNachher;
-		Double stopTime = menue.getStopValue();
-		int intervals = menue.getIntervals();
+		Double stopTime = menu.getStopValue();
+		int intervals = menu.getIntervals();
 
 		System.out.println("simNameOld: " + simName);
 		System.out.println("port: "+port);
 		MainWindow w = MainWindow.getInstance();
 		flags = pw.getChangedFlags("petriNetSim");
 		logAndShow("Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
-				+ menue.getIntegrator() + ", forced rebuild=" + menue.isForceRebuild());
+				+ menu.getIntegrator() + ", forced rebuild=" + menu.isForceRebuild());
 		if (!this.checkInstallation()) {
 			logAndShow("Installation error. Simulation stopped");
 			return;
@@ -203,10 +203,10 @@ public class PetriNetSimulation implements ActionListener {
 									// String program = "_omcQuot_556E7469746C6564";
 									logAndShow("override statement: " + override);
 									if (noEmmit) {
-										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-nls=newton",
+										pb.command(simName, "-s=" + menu.getIntegrator(), override, "-nls=newton",
 												"-port="+port, "-noEventEmit", "-lv=LOG_STATS");
 									} else {
-										pb.command(simName, "-s=" + menue.getIntegrator(), override, "-nls=newton", "-port="+port,
+										pb.command(simName, "-s=" + menu.getIntegrator(), override, "-nls=newton", "-port="+port,
 												"-lv=LOG_STATS");
 									}
 									pb.redirectOutput();
@@ -257,10 +257,10 @@ public class PetriNetSimulation implements ActionListener {
 									// double time =
 									if (v != null && v.size() > 0) {
 										if(!simAddedToMenu){
-											menue.updateSimulationResults();
+											menu.updateSimulationResults();
 											simAddedToMenu = true;
 										}
-										menue.setTime("Time: " + df.format((v.get(v.size() - 1))));
+										menu.setTime("Time: " + df.format((v.get(v.size() - 1))));
 									}
 									try {
 										sleep(100);
@@ -269,14 +269,14 @@ public class PetriNetSimulation implements ActionListener {
 										e.printStackTrace();
 									}
 								}
-								menue.stopped();
+								menu.stopped();
 								System.out.println("end of simulation");
 								w.updatePCPView();
 								w.redrawGraphs();
 								w.getFrame().revalidate();
 								// w.repaint();
 								if (v.size() > 0) {
-									menue.setTime("Time: " + (v.get(v.size() - 1)).toString());
+									menu.setTime("Time: " + (v.get(v.size() - 1)).toString());
 								}
 								System.out.println("redraw thread finished");
 							}
@@ -369,7 +369,7 @@ public class PetriNetSimulation implements ActionListener {
 						e.printStackTrace();
 						MyPopUp.getInstance().show("Something went wrong", "The model couldn't be simulated!");
 						w.unBlurrUI();
-						menue.stopped();
+						menu.stopped();
 						if (simProcess != null) {
 							simProcess.destroy();
 						}
@@ -382,7 +382,7 @@ public class PetriNetSimulation implements ActionListener {
 			};// --------end all thread
 
 			boolean simLibChanged = false;
-			if (this.simLib != null && !menue.getSimLib().getAbsolutePath().equals(this.simLib.getAbsolutePath())) {
+			if (this.simLib != null && !menu.getSimLib().getAbsolutePath().equals(this.simLib.getAbsolutePath())) {
 				System.out.println("lib changed");
 				simLibChanged = true;
 			}
@@ -397,7 +397,7 @@ public class PetriNetSimulation implements ActionListener {
 			}
 			
 			if (flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged()
-					|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menue.isForceRebuild()) {
+					|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menu.isForceRebuild()) {
 				try {
 					logAndShow("(re) compilation due to changed properties");
 					this.compile();
@@ -509,7 +509,7 @@ public class PetriNetSimulation implements ActionListener {
 
 		compilingThread = new Thread() {
 			public void run() {
-				menue.setTime("Compiling ...");
+				menu.setTime("Compiling ...");
 				try {
 					System.out.println("edges changed: " + flags.isEdgeChanged());
 					System.out.println("nodes changed: " + flags.isNodeChanged());
@@ -529,7 +529,7 @@ public class PetriNetSimulation implements ActionListener {
 						new File(pathSim).mkdir();
 					}
 
-					simLib = menue.getSimLib();
+					simLib = menu.getSimLib();
 					System.out.println("simulation lib: " + simLib);
 					String packageInfo = "";
 					if (simLib == null || simLib.getName().equals("PNlib")) {
@@ -626,20 +626,20 @@ public class PetriNetSimulation implements ActionListener {
 			}
 			
 			// this.runOMC();
-			if (!menue.isParameterized()) {
+			if (!menu.isParameterized()) {
 				simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
 						+ System.nanoTime();
 				this.logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
-				menue.clearText();
-				menue.addText(logMessage.toString());
-				this.menue.started();
+				menu.clearText();
+				menu.addText(logMessage.toString());
+				this.menu.started();
 				this.runOMCIA(port);
 			} else {
 				//TODO needs to be checked again
 				flags = pw.getChangedFlags("petriNetSim");
-				BiologicalNodeAbstract bna = menue.getSelectedNode();
-				String param = menue.getParameterName();
-				List<Double> list = menue.getParameterValues();
+				BiologicalNodeAbstract bna = menu.getSelectedNode();
+				String param = menu.getParameterName();
+				List<Double> list = menu.getParameterValues();
 				double value;
 				MyPopUp.getInstance().show("Parameterized simulation", "Parameters to be simulated:" + list.size());
 				if(list.size() < 1){
@@ -656,7 +656,7 @@ public class PetriNetSimulation implements ActionListener {
 			//	System.out.println("parmameter size org: "+parameters.size());
 				String override;
 				Place p;
-				this.menue.started();
+				this.menu.started();
 				for (int i = 0; i < list.size(); i++) {
 					override = "";
 					//pw.setChangedBoundaries(boundaries);
@@ -711,8 +711,8 @@ public class PetriNetSimulation implements ActionListener {
 					pw.getPetriPropertiesNet().getSimResController().get(simId)
 							.setName(bna.getName()+"_"+param+"="+Math.round(value * 1000) / 1000.0 + "");
 					this.logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
-					menue.clearText();
-					menue.addText(logMessage.toString());
+					menu.clearText();
+					menu.addText(logMessage.toString());
 					this.runOMCIA(port++, override);
 					
 					try {
@@ -742,13 +742,13 @@ public class PetriNetSimulation implements ActionListener {
 		System.out.println("stop");
 		this.buildSuccess = false;
 		this.stopped = true;
-		this.menue.stopped();
+		this.menu.stopped();
 		if (s != null && s.isRunning()) {
 			s.stop();
 		}
 		if (compileProcess != null) {
 			compileProcess.destroy();
-			menue.setTime("compiling / simulation aborted!");
+			menu.setTime("compiling / simulation aborted!");
 		}
 		if (simProcess != null) {
 			this.simProcess.destroy();
@@ -784,6 +784,6 @@ public class PetriNetSimulation implements ActionListener {
 
 	private void logAndShow(String text) {
 		this.logMessage.append(text + "\r\n");
-		this.menue.addText(text + "\r\n");
+		this.menu.addText(text + "\r\n");
 	}
 }

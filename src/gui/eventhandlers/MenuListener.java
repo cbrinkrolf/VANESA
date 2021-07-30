@@ -799,7 +799,7 @@ public class MenuListener implements ActionListener {
 		case "simulate":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					graphInstance.getPathway().getPetriNetSimulation().showMenue();
+					graphInstance.getPathway().getPetriNetSimulation().showMenu();
 				}
 			}
 			break;
