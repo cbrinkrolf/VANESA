@@ -819,6 +819,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			break;
 		case "createDoc":
+			MyPopUp.getInstance().show("Latex generation", "Generation in progress, it will take a short moment!");
 			String docDir = MainWindow.pathWorkingDirectory + "documentation" + File.separator;
 			File dir = new File(docDir);
 
@@ -915,6 +916,7 @@ public class MenuListener implements ActionListener {
 								// System.out.println("alive2");
 							}
 							System.out.println("pdf ended");
+							MyPopUp.getInstance().show("Latex compiltion successful!", "PDF can be found at:\n" + docDir);
 							// System.out.println("restart");
 							//stop();
 						} catch (Exception e) {
@@ -924,6 +926,7 @@ public class MenuListener implements ActionListener {
 				};
 				t.start();
 			} catch (IOException e1) {
+				MyPopUp.getInstance().show("Compilation of latex failed!", "pdflatex executable could not be found!\n Generated Latex file can be found at:\n"+docDir);
 				System.err.println("Could not compile latex. Find tex-file at: " + docDir);
 			}
 			break;

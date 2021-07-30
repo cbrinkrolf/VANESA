@@ -156,6 +156,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		this.stop.setEnabled(false);
 
 		parameterized.setActionCommand("parameterized");
+		parameterized.setToolTipText("Experimental parameterized simulation. Runs in single thread so far!");
 		parameterized.addActionListener(this);
 
 		selectedNodeGroup.add(radioPlace);

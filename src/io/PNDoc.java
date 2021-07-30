@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
+import com.jtattoo.plaf.BasePopupMenuUI.MyPopupMenuListener;
+
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
@@ -14,6 +16,7 @@ import de.uni_bielefeld.cebitec.mzurowie.pretty_formula.main.FormulaParser;
 import graph.GraphContainer;
 import graph.gui.Parameter;
 import gui.MainWindow;
+import gui.MyPopUp;
 
 public class PNDoc {
 
@@ -179,7 +182,9 @@ public class PNDoc {
 			out = new PrintWriter(file);
 			out.println(sb.toString());
 			out.close();
+			//MyPopUp.getInstance().show("Latex export successful!", "Latex file was written to:\n"+file);
 		} catch (FileNotFoundException e) {
+			MyPopUp.getInstance().show("Latex export error!", "Something went wrong!");
 			e.printStackTrace();
 		}
 
