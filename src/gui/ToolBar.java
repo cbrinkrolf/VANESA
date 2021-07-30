@@ -50,7 +50,7 @@ public class ToolBar {
 		MigLayout bl = new MigLayout("insets 0, wrap 1");
 		bar.setLayout(bl);
 
-		String ModellingViewString = "<html>" + "<b>Change View</b> <br>" + "to Modelling" + "</html>";
+		String modelingViewString = "<html>" + "<b>Change View</b> <br>" + "to Modeling" + "</html>";
 
 		/*
 		 * String PetriViewString = "<html>" + "<b>Change View</b><br>" + "to PetriNet"
@@ -267,10 +267,10 @@ public class ToolBar {
 		loadModResult.setToolTipText("Load Modellica Result");
 		loadModResult.addActionListener(ToolBarListener.getInstance());
 
-		modelling = new ToolBarButton(ModellingViewString);
+		modelling = new ToolBarButton(modelingViewString);
 		modelling.setActionCommand("modelling");
 		modelling.addActionListener(ToolBarListener.getInstance());
-		modelling.setToolTipText("Change to Modelling View");
+		modelling.setToolTipText("Change to Modeling View");
 
 		// heatmap = new ToolBarButton(new
 		// ImageIcon(imagePath.getPath("heatmapGraph.png")));
@@ -383,8 +383,8 @@ public class ToolBar {
 		nodeAdjustment.add(adjustDown);
 		nodeAdjustment.add(adjustLeft);
 
-		nodeAdjustment.add(adjustVerticalSpace);
 		nodeAdjustment.add(adjustHorizontalSpace);
+		nodeAdjustment.add(adjustVerticalSpace);
 
 		if (petriNetView) {
 			// bar.add(toolBarControlControls);
