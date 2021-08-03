@@ -65,6 +65,7 @@ import gui.eventhandlers.PropertyWindowListener;
 import net.miginfocom.swing.MigLayout;
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
+import util.StochasticDistribution;
 
 public class ElementWindow implements ActionListener, ItemListener {
 
@@ -360,19 +361,19 @@ public class ElementWindow implements ActionListener, ItemListener {
 				concentration.setName("concentration");
 				// token.addFocusListener(pwl);
 				concentration.setEditable(false);
-				concentration.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+				concentration.setFocusLostBehavior(JFormattedTextField.COMMIT);
 
 				concentrationStart.setName("concentrationStart");
 				concentrationStart.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				concentrationStart.addFocusListener(pwl);
 
 				concentrationMin.setName("concentrationMin");
-				concentrationMin.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+				concentrationMin.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				concentrationMin.addFocusListener(pwl);
 				JLabel lblTokenMin = new JLabel("min Conc.");
 
 				concentrationMax.setName("concentrationMax");
-				concentrationMax.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+				concentrationMax.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				concentrationMax.addFocusListener(pwl);
 				JLabel lblTokenMax = new JLabel("max Conc.");
 				p.add(lblConcentration, "gap 5 ");
@@ -498,19 +499,19 @@ public class ElementWindow implements ActionListener, ItemListener {
 				token.setName("token");
 				// token.addFocusListener(pwl);
 				token.setEditable(false);
-				token.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+				token.setFocusLostBehavior(JFormattedTextField.COMMIT);
 
 				tokenStart.setName("tokenStart");
 				tokenStart.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				tokenStart.addFocusListener(pwl);
 
 				tokenMin.setName("tokenMin");
-				tokenMin.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+				tokenMin.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				tokenMin.addFocusListener(pwl);
 				JLabel lblTokenMin = new JLabel("min Tokens");
 
 				tokenMax.setName("tokenMax");
-				tokenMax.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+				tokenMax.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				tokenMax.addFocusListener(pwl);
 				JLabel lblTokenMax = new JLabel("max Tokens");
 				p.add(lblToken, "gap 5 ");
@@ -604,18 +605,116 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				else if (ab instanceof StochasticTransition) {
 					StochasticTransition trans = (StochasticTransition) ab;
-					String[] disStrings = { "norm", "exp" };
 					// Create the combo box, select item at index 4.
 					// Indices start at 0, so 4 specifies the pig.
-					JComboBox<String> distributionList = new JComboBox<String>(disStrings);
+					JComboBox<String> distributionList = new JComboBox<String>(StochasticDistribution.distributionList.toArray(new String[0]));
 					distributionList.setSelectedItem(trans.getDistribution());
-					distributionList.setName("disList");
-					distributionList.addFocusListener(pwl);
+					distributionList.setName("distributionList");
+					distributionList.addItemListener(pwl);
+					// distributionList.addFocusListener(pwl);
 					p.add(new JLabel("Distribution"), "gap 5");
 					p.add(distributionList, "wrap");
+
+					p.add(new JLabel("Distribution properties"), "gap 5");
+					p.add(new JSeparator(), "span, growx, gaptop 7 ");
+					MyJFormattedTextField h = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					JLabel lblH = new JLabel("h: probability density");
+					// lblH.setToolTipText("probability density");
+					h.setText(trans.getH() + "");
+					h.addFocusListener(pwl);
+					h.setFocusLostBehavior(JFormattedTextField.COMMIT);
+					h.setName("h");
+
+					MyJFormattedTextField a = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					JLabel lblA = new JLabel("a: minimum value");
+					a.setText(trans.getA() + "");
+					a.addFocusListener(pwl);
+					a.setFocusLostBehavior(JFormattedTextField.COMMIT);
+					a.setName("a");
+
+					MyJFormattedTextField b = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					JLabel lblB = new JLabel("b: maximum value");
+					b.setText(trans.getB() + "");
+					b.addFocusListener(pwl);
+					b.setFocusLostBehavior(JFormattedTextField.COMMIT);
+					b.setName("b");
+
+					MyJFormattedTextField c = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					JLabel lblC = new JLabel("c: most likely value");
+					c.setText(trans.getC() + "");
+					c.addFocusListener(pwl);
+					c.setFocusLostBehavior(JFormattedTextField.COMMIT);
+					c.setName("c");
+
+					MyJFormattedTextField mu = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					JLabel lblMu = new JLabel("mu: expected value");
+					mu.setText(trans.getMu() + "");
+					mu.addFocusListener(pwl);
+					mu.setFocusLostBehavior(JFormattedTextField.COMMIT);
+					mu.setName("mu");
+
+					MyJFormattedTextField sigma = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					JLabel lblSigma = new JLabel("sigma: standard deviation");
+					sigma.setText(trans.getSigma() + "");
+					sigma.addFocusListener(pwl);
+					sigma.setFocusLostBehavior(JFormattedTextField.COMMIT);
+					sigma.setName("sigma");
+					
+					JTextField events = new JTextField(4);
+					JLabel lblEvents = new JLabel("discrete events");
+					events.setText(trans.getEvents() + "");
+					events.setToolTipText("List of discrete events [1,2,...,n]");
+					events.addFocusListener(pwl);
+					events.setName("events");
+					
+					JTextField probabilities = new JTextField(4);
+					JLabel lblProbabilities = new JLabel("probabilities");
+					probabilities.setText(trans.getProbabilities() + "");
+					probabilities.setToolTipText("List of probabilities [1/n,1/n,...,1/n]");
+					probabilities.addFocusListener(pwl);
+					probabilities.setName("probabilities");
+
+					//System.out.println("distr: "+trans.getDistribution());
+					switch (trans.getDistribution()) {
+					case StochasticDistribution.distributionExponential:
+						p.add(lblH, "gap 5");
+						p.add(h, "wrap");
+						break;
+					case StochasticDistribution.distributionTriangular:
+						p.add(lblA, "gap 5");
+						p.add(a, "wrap");
+						p.add(lblB, "gap 5");
+						p.add(b, "wrap");
+						p.add(lblC, "gap 5");
+						p.add(c, "wrap");
+						break;
+					case StochasticDistribution.distributionTruncatedNormal:
+						p.add(lblA, "gap 5");
+						p.add(a, "wrap");
+						p.add(lblB, "gap 5");
+						p.add(b, "wrap");
+						p.add(lblMu, "gap 5");
+						p.add(mu, "wrap");
+						p.add(lblSigma, "gap 5");
+						p.add(sigma, "wrap");
+						break;
+					case StochasticDistribution.distributionUniform:
+						p.add(lblA, "gap 5");
+						p.add(a, "wrap");
+						p.add(lblB, "gap 5");
+						p.add(b, "wrap");
+						break;
+					case StochasticDistribution.distributionDiscreteProbability:
+						p.add(lblEvents, "gap 5");
+						p.add(events, "wrap");
+						p.add(lblProbabilities, "gap 5");
+						p.add(probabilities, "wrap");
+						break;
+					}
 				}
 
 				else if (ab instanceof DynamicNode) {
+
 					DynamicNode trans = (DynamicNode) ab;
 					JTextField maxSpeed = new JTextField(4);
 					JLabel lblMaxSpeed = new JLabel("Maximum Speed");

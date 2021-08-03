@@ -31,6 +31,7 @@ import net.miginfocom.swing.MigLayout;
 import transformation.graphElements.ANYPlace;
 import transformation.graphElements.ANYTransition;
 import util.MyNumberFormat;
+import util.StochasticDistribution;
 
 /**
  * @author Sebastian
@@ -55,8 +56,7 @@ public class PetriNetVertexDialog {
 
 	// for Transitions
 	private JTextField delay = new JTextField("1");
-	private String[] disStrings = { "norm", "exp" };
-	private JComboBox<String> distributionList = new JComboBox<String>(disStrings);
+	private JComboBox<String> distributionList;
 	// JCheckBox transitionfire = new JCheckBox("Should transition fire:",
 	// true);
 	private JTextField firingCondition = new JTextField("true");
@@ -73,6 +73,10 @@ public class PetriNetVertexDialog {
 	public PetriNetVertexDialog(String petriElement, Pathway pw) {
 		this.pw = pw;
 		this.petriElement = petriElement;
+		
+		distributionList = new JComboBox<String>(StochasticDistribution.distributionList.toArray(new String[0]));
+		
+		
 		MigLayout layout = new MigLayout("", "[left]");
 
 		panel = new JPanel(layout);

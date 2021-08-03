@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.JComboBox;
@@ -38,7 +41,7 @@ import graph.gui.Boundary;
 import gui.MainWindow;
 import gui.MyPopUp;
 
-public class PropertyWindowListener implements FocusListener {
+public class PropertyWindowListener implements FocusListener, ItemListener {
 
 	private GraphElementAbstract geb;
 	private GraphInstance graphInstance = new GraphInstance();
@@ -229,7 +232,6 @@ public class PropertyWindowListener implements FocusListener {
 		}
 		// for Transitions
 		else if (source.equals("delay")) {
-
 			if (geb instanceof DiscreteTransition) {
 				DiscreteTransition p = (DiscreteTransition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
@@ -290,7 +292,7 @@ public class PropertyWindowListener implements FocusListener {
 			else if (((JComboBox<?>) event.getSource()).getSelectedItem().equals(StochasticTransition.class.getName()))
 				newT = new StochasticTransition(t.getLabel(), t.getName());
 			if (newT != null) {
-				//newT.setCompartment(pw.getCompartmentManager().getCompartment(t));
+				// newT.setCompartment(pw.getCompartmentManager().getCompartment(t));
 				graphInstance.getPathway().addVertex(newT, new Point());
 			}
 		} else if (source.equals("placeList")) {
@@ -303,8 +305,9 @@ public class PropertyWindowListener implements FocusListener {
 				neighbour = k.next();
 				for (Iterator<BiologicalNodeAbstract> j = pw.getAllGraphNodes().iterator(); j.hasNext();) {
 					node = j.next();
-					if (node.equals(neighbour) && (((JComboBox<?>) event.getSource()).getSelectedItem().equals("discrete")
-							&& node.getBiologicalElement().equals(Elementdeclerations.continuousTransition))) {
+					if (node.equals(neighbour)
+							&& (((JComboBox<?>) event.getSource()).getSelectedItem().equals("discrete")
+									&& node.getBiologicalElement().equals(Elementdeclerations.continuousTransition))) {
 
 						JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
 								"Your action would lead to a relation between a discrete place and a continious transition. That is not possible!",
@@ -315,9 +318,9 @@ public class PropertyWindowListener implements FocusListener {
 			}
 
 			Place newP;
-			if(((JComboBox<?>) event.getSource()).getSelectedItem().equals("discrete")){
+			if (((JComboBox<?>) event.getSource()).getSelectedItem().equals("discrete")) {
 				newP = new DiscretePlace(p.getLabel(), p.getName());
-			}else{
+			} else {
 				newP = new ContinuousPlace(p.getLabel(), p.getName());
 			}
 			graphInstance.getPathway().addVertex(newP, new Point());
@@ -325,16 +328,132 @@ public class PropertyWindowListener implements FocusListener {
 			newP.setTokenMax(p.getTokenMax());
 			newP.setTokenMin(p.getTokenMin());
 			newP.setTokenStart(p.getTokenStart());
-			//newP.setCompartment(p.getCompartment());
+			// newP.setCompartment(p.getCompartment());
 			try {
 				newP.setID(p.getID(), pw);
 			} catch (IDAlreadyExistException ex) {
 				newP.setID(pw);
 			}
 
-		} else if (source.equals("disList")) {
-			StochasticTransition p = (StochasticTransition) geb;
-			p.changeDistribution();
+		} else if (source.equals("h")) {
+			JFormattedTextField tf = (JFormattedTextField) event.getSource();
+			Number n = (Number) tf.getValue();
+			StochasticTransition st = (StochasticTransition) geb;
+			if (n != null) {
+				if (!n.equals(st.getH())) {
+					st.setH(n.doubleValue());
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}
+			} else {
+				MyPopUp.getInstance().show("Violation", "h: \"" + tf.getText() + "\" is not a valid decimal number");
+			}
+		} else if (source.equals("a")) {
+			JFormattedTextField tf = (JFormattedTextField) event.getSource();
+			Number n = (Number) tf.getValue();
+			StochasticTransition st = (StochasticTransition) geb;
+			if (n != null) {
+				if (!n.equals(st.getA())) {
+					st.setA(n.doubleValue());
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}
+			} else {
+				MyPopUp.getInstance().show("Violation", "a: \"" + tf.getText() + "\" is not a valid decimal number");
+			}
+		} else if (source.equals("b")) {
+			JFormattedTextField tf = (JFormattedTextField) event.getSource();
+			Number n = (Number) tf.getValue();
+			StochasticTransition st = (StochasticTransition) geb;
+			if (n != null) {
+				if (!n.equals(st.getB())) {
+					st.setB(n.doubleValue());
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}
+			} else {
+				MyPopUp.getInstance().show("Violation", "b: \"" + tf.getText() + "\" is not a valid decimal number");
+			}
+		} else if (source.equals("c")) {
+			JFormattedTextField tf = (JFormattedTextField) event.getSource();
+			Number n = (Number) tf.getValue();
+			StochasticTransition st = (StochasticTransition) geb;
+			if (n != null) {
+				if (!n.equals(st.getA())) {
+					st.setC(n.doubleValue());
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}
+			} else {
+				MyPopUp.getInstance().show("Violation", "c: \"" + tf.getText() + "\" is not a valid decimal number");
+			}
+		} else if (source.equals("mu")) {
+			JFormattedTextField tf = (JFormattedTextField) event.getSource();
+			Number n = (Number) tf.getValue();
+			StochasticTransition st = (StochasticTransition) geb;
+			if (n != null) {
+				if (!n.equals(st.getMu())) {
+					st.setMu(n.doubleValue());
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}
+			} else {
+				MyPopUp.getInstance().show("Violation", "mu: \"" + tf.getText() + "\" is not a valid decimal number");
+			}
+		} else if (source.equals("sigma")) {
+			JFormattedTextField tf = (JFormattedTextField) event.getSource();
+			Number n = (Number) tf.getValue();
+			StochasticTransition st = (StochasticTransition) geb;
+			if (n != null) {
+				if (!n.equals(st.getSigma())) {
+					st.setSigma(n.doubleValue());
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}
+			} else {
+				MyPopUp.getInstance().show("Violation", "sigma: \"" + tf.getText() + "\" is not a valid number");
+			}
+		} else if (source.equals("events")) {
+			JTextField tf = (JTextField) event.getSource();
+			StochasticTransition st = (StochasticTransition) geb;
+			String str = tf.getText();
+			str = str.replaceAll("\\[", "").replaceAll("\\]", "");
+			String[] tokens = str.split(",");
+			ArrayList<Integer> list = new ArrayList<Integer>();
+			for (int i = 0; i < tokens.length; i++) {
+				try {
+					list.add(Integer.parseInt(tokens[i].trim()));
+				} catch (Exception e) {
+					MyPopUp.getInstance().show("Violation",
+							"event item with indes " + i + ": \"" + tokens[i] + "\" is not a valid integer number!");
+				}
+			}
+			st.setEvents(list);
+			if (st.getEvents().size() != st.getProbabilities().size()) {
+				MyPopUp.getInstance().show("Warning", "Number of given events (" + st.getEvents().size()
+						+ ") is not equal to number of given probabilities(" + st.getProbabilities().size() + ")!");
+			}
+		} else if (source.equals("probabilities")) {
+			JTextField tf = (JTextField) event.getSource();
+			StochasticTransition st = (StochasticTransition) geb;
+			String str = tf.getText();
+			str = str.replaceAll("\\[", "").replaceAll("\\]", "");
+			String[] tokens = str.split(",");
+			ArrayList<Double> list = new ArrayList<Double>();
+			for (int i = 0; i < tokens.length; i++) {
+				try {
+					list.add(Double.parseDouble(tokens[i].trim()));
+				} catch (Exception e) {
+					MyPopUp.getInstance().show("Violation",
+							"event item with indes " + i + ": \"" + tokens[i] + "\" is not a valid decimal number!");
+				}
+			}
+			st.setProbabilities(list);
+			if (st.getEvents().size() != st.getProbabilities().size()) {
+				MyPopUp.getInstance().show("Warning", "Number of given events (" + st.getEvents().size()
+						+ ") is not equal to number of given probabilities(" + st.getProbabilities().size() + ")!");
+			}
+			double sum = 0;
+			for (int i = 0; i < list.size(); i++) {
+				sum += list.get(i);
+			}
+			if (sum != 1.0) {
+				MyPopUp.getInstance().show("Warning", "Sum of given probabilities (" + sum + ") is not equal to 1.0!");
+			}
 		}
 
 		// for PetriNet Edges
@@ -366,5 +485,21 @@ public class PropertyWindowListener implements FocusListener {
 		event.getComponent().setBackground(Color.WHITE);
 		// GraphInstance.getMyGraph().updateElementLabel(element);
 		GraphInstance.getMyGraph().updateGraph();
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		Pathway pw = new GraphInstance().getPathway();
+		if (e.getSource() instanceof JComboBox) {
+			JComboBox<?> box = (JComboBox<?>) e.getSource();
+			if (box.getName().equals("distributionList") && e.getStateChange() == ItemEvent.SELECTED) {
+				// System.out.println(e.getItem());
+				// System.out.println(box.getSelectedItem());
+				StochasticTransition st = (StochasticTransition) geb;
+				st.setDistribution(box.getSelectedItem().toString());
+				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				MainWindow.getInstance().updateElementProperties();
+			}
+		}
 	}
 }
