@@ -24,7 +24,7 @@ public class StochasticDistribution {
 		add(distributionUniform);
 		add(distributionTriangular);
 		add(distributionTruncatedNormal);
-		add(distributionDiscreteProbability);
+		// add(distributionDiscreteProbability); // implemented in PNlib, but not considered for simulation, yet (08.2021)
 	}};
 	
 	public static final Set<String> distributionSet = new HashSet<String>(distributionList);

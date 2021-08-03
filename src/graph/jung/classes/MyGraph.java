@@ -322,7 +322,7 @@ public class MyGraph {
 				if (pathway.isPetriNet() || pathway.getPetriNet() != null) {
 					if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
 						// System.out.println("sim");
-						w.updatePCPView();
+						w.updateSimulationResultView();
 					}
 				}
 			}
@@ -343,7 +343,7 @@ public class MyGraph {
 				if (pathway.isPetriNet() || pathway.getPetriNet() != null) {
 					if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
 						// System.out.println("sim");
-						w.updatePCPView();
+						w.updateSimulationResultView();
 					}
 				}
 			}
