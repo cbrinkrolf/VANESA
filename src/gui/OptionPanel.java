@@ -211,7 +211,7 @@ public class OptionPanel {
 				tree.revalidateTree();
 			} else if (element.equals("Satellite")) {
 				satelliteWindow.revalidateSatelliteView();
-			} else if (element.equals("pcp")) {
+			} else if (element.equals("simulation")) {
 				// PCPWindow.initGraphs();
 				simResWindow.revalidateView();
 			} else if (element.equals("element")) {
@@ -227,7 +227,7 @@ public class OptionPanel {
 				// }
 			else if (element.equals("pathwayTree")) {
 				pathwayTree.revalidateView();
-			} else if (element.equals("initPCP")) {
+			} else if (element.equals("initSimulation")) {
 				simResWindow.initGraphs();
 			} else if (element.equals("bb")) {
 //				bb.revalidateView();

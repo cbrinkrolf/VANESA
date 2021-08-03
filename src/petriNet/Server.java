@@ -43,6 +43,8 @@ public class Server {
 
 	private Set<PNEdge> toRefineEdges = new HashSet<PNEdge>();
 
+	private long lastSyso = 0;
+
 	// size of modelica int;
 	private final int sizeOfInt;
 
@@ -79,7 +81,7 @@ public class Server {
 								boundCorrectly = false;
 								e.printStackTrace();
 								running = false;
-								//port++;
+								// port++;
 							}
 						}
 
@@ -206,11 +208,11 @@ public class Server {
 
 		try {
 			while (running) {
-				try {
-					Thread.sleep(10);
+				/*try {
+					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-				}
+				}*/
 				values = new ArrayList<Object>();
 
 				// System.out.println("av: "+socket.available());
@@ -359,10 +361,14 @@ public class Server {
 				}
 			}
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		String time = sdf.format(new Date());
 
-		System.out.println(time + ": " + values.get(name2index.get("time")));
+		long now = System.currentTimeMillis();
+		if ((now - lastSyso) > 1000) {
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			String time = sdf.format(new Date());
+			System.out.println(time + ": " + values.get(name2index.get("time")));
+			lastSyso = now;
+		}
 		value = (Double) values.get(name2index.get("time"));
 
 		this.simResult.addTime(value);

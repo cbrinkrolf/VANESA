@@ -15,7 +15,9 @@ import java.io.InputStreamReader;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -49,10 +51,11 @@ public class PetriNetSimulation implements ActionListener {
 	private boolean stopped = false;
 	private SimMenu menu = null;
 	private Process simProcess = null;
-	Thread compilingThread = null;
+	private Thread compilingThread = null;
 	private Process compileProcess = null;
 	private boolean buildSuccess = false;
 	private Thread allThread = null;
+	private boolean compiling = false;
 
 	private BufferedReader outputReader;
 	private HashMap<BiologicalEdgeAbstract, String> bea2key;
@@ -271,7 +274,7 @@ public class PetriNetSimulation implements ActionListener {
 								}
 								menu.stopped();
 								System.out.println("end of simulation");
-								w.updatePCPView();
+								w.updateSimulationResultView();
 								w.redrawGraphs();
 								w.getFrame().revalidate();
 								// w.repaint();
@@ -506,10 +509,10 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void compile() throws IOException, InterruptedException {
-
+		compiling = true;
 		compilingThread = new Thread() {
 			public void run() {
-				menu.setTime("Compiling ...");
+				//menu.setTime("Compiling ...");
 				try {
 					System.out.println("edges changed: " + flags.isEdgeChanged());
 					System.out.println("nodes changed: " + flags.isNodeChanged());
@@ -599,16 +602,38 @@ public class PetriNetSimulation implements ActionListener {
 						pw.getChangedInitialValues().clear();
 						pw.getChangedParameters().clear();
 						pw.getChangedBoundaries().clear();
+						compiling = false;
 					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
 					logAndShow(e.getMessage());
+					compiling = false;
 				}
+				compiling = false;
 				allThread.start();
 			}
 		};
 
+		Thread compileGUI = new Thread(){
+			public void run() {
+				long start = System.currentTimeMillis();
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+				String time = sdf.format(new Date());
+				long seconds = 0;
+				while(compiling){
+					seconds = (System.currentTimeMillis() - start) / 1000;
+					menu.setTime("Compiling since "+time + " for: "+seconds+" seconds.");
+					try {
+						sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		
+		compileGUI.start();
 		compilingThread.start();
 		// compileProcess.waitFor();
 		// stopped = true;

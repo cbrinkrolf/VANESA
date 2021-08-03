@@ -492,12 +492,12 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getItem() instanceof JCheckBox) {
-
 			JCheckBox box = (JCheckBox) e.getItem();
 			int i = Integer.parseInt(box.getActionCommand());
 			// System.out.println(i);
 			if (i >= 0) {
 				pw.getPetriPropertiesNet().getSimResController().getAll().get(i).setActive(box.isSelected());
+				MainWindow.getInstance().updateSimulationResultView();
 			} else {
 				Component[] components = west.getComponents();
 				for (int j = 0; j < components.length; j++) {
@@ -544,7 +544,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		} else if (e.getActionCommand().startsWith("export_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(7));
 			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
-			new SaveDialog(SaveDialog.FORMAT_CSV,null,this,simId);
+			new SaveDialog(SaveDialog.FORMAT_CSV, null, this, simId);
 		} else if ("parameterized".equals(e.getActionCommand())) {
 			revalidateParametrizedPanel();
 		} else if ("nodeSelected".equals(e.getActionCommand())) {

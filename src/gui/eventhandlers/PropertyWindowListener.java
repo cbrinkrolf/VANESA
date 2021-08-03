@@ -422,7 +422,19 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 							"event item with indes " + i + ": \"" + tokens[i] + "\" is not a valid integer number!");
 				}
 			}
-			st.setEvents(list);
+			if (st.getEvents().size() != list.size()) {
+				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				st.setEvents(list);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					if (st.getEvents().get(i) != list.get(i)) {
+						pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+						st.setEvents(list);
+						break;
+					}
+				}
+			}
+
 			if (st.getEvents().size() != st.getProbabilities().size()) {
 				MyPopUp.getInstance().show("Warning", "Number of given events (" + st.getEvents().size()
 						+ ") is not equal to number of given probabilities(" + st.getProbabilities().size() + ")!");
@@ -442,6 +454,20 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 							"event item with indes " + i + ": \"" + tokens[i] + "\" is not a valid decimal number!");
 				}
 			}
+			
+			if (st.getProbabilities().size() != list.size()) {
+				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				st.setProbabilities(list);
+			} else {
+				for (int i = 0; i < list.size(); i++) {
+					if (st.getProbabilities().get(i) != list.get(i)) {
+						pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+						st.setProbabilities(list);
+						break;
+					}
+				}
+			}
+			
 			st.setProbabilities(list);
 			if (st.getEvents().size() != st.getProbabilities().size()) {
 				MyPopUp.getInstance().show("Warning", "Number of given events (" + st.getEvents().size()
