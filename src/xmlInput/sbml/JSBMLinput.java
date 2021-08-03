@@ -39,6 +39,7 @@ import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.RNA;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.CreatePathway;
 import graph.Compartment.Compartment;
@@ -540,9 +541,47 @@ public class JSBMLinput {
 					case Elementdeclerations.continuousTransition:
 						break;
 					case Elementdeclerations.stochasticTransition:
-						elSub = specAnnotation.getChild("distribution", null);
-						attr = String.valueOf(elSub.getAttributeValue("distribution"));
-						((biologicalObjects.nodes.petriNet.StochasticTransition) bna).setDistribution(attr);
+						StochasticTransition st = (StochasticTransition)bna;
+						elSub = specAnnotation.getChild("distributionProperties", null);
+						Element elSubSub = elSub.getChild("distribution", null);
+						attr = String.valueOf(elSubSub.getAttributeValue("distribution"));
+						st.setDistribution(attr);
+						elSubSub = elSub.getChild("h", null);
+						attr = String.valueOf(elSubSub.getAttributeValue("h"));
+						st.setH(Double.parseDouble(attr));
+						elSubSub = elSub.getChild("a", null);
+						attr = String.valueOf(elSubSub.getAttributeValue("a"));
+						st.setA(Double.parseDouble(attr));
+						elSubSub = elSub.getChild("b", null);
+						attr = String.valueOf(elSubSub.getAttributeValue("b"));
+						st.setB(Double.parseDouble(attr));
+						elSubSub = elSub.getChild("c", null);
+						attr = String.valueOf(elSubSub.getAttributeValue("c"));
+						st.setC(Double.parseDouble(attr));
+						elSubSub = elSub.getChild("mu", null);
+						attr = String.valueOf(elSubSub.getAttributeValue("mu"));
+						st.setMu(Double.parseDouble(attr));
+						elSubSub = elSub.getChild("sigma", null);
+						attr = String.valueOf(elSubSub.getAttributeValue("sigma"));
+						st.setSigma(Double.parseDouble(attr));
+						elSubSub = elSub.getChild("discreteEvents", null);
+						attr = String.valueOf(elSubSub.getAttributeValue("discreteEvents"));
+						
+						ArrayList<Integer> events = new ArrayList<Integer>();
+						String[] eventTokens = attr.split(",");
+						for(int idx = 0; idx< eventTokens.length; idx++){
+							events.add(Integer.parseInt(eventTokens[idx].trim()));
+						}
+						st.setEvents(events);
+						
+						elSubSub = elSub.getChild("discreteEventProbabilities", null);
+						attr = String.valueOf(elSubSub.getAttributeValue("discreteEventProbabilities"));
+						ArrayList<Double> probs = new ArrayList<Double>();
+						String[] probTokens = attr.split(",");
+						for(int idx = 0; idx< probTokens.length; idx++){
+							probs.add(Double.parseDouble(probTokens[idx].trim()));
+						}
+						st.setProbabilities(probs);
 						break;
 					}
 

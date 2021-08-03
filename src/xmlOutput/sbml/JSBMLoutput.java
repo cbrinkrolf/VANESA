@@ -38,6 +38,7 @@ import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.PNNode;
+import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.gui.Parameter;
@@ -693,16 +694,17 @@ public class JSBMLoutput {
 		}
 		// if Net is a petri Net
 		if (pathway.isPetriNet()) {
-			if (oneNode instanceof biologicalObjects.nodes.petriNet.Place) {
-				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getToken());
+			if (oneNode instanceof Place) {
+				Place place = (Place) oneNode;
+				attr = String.valueOf(place.getToken());
 				el.addChild(createElSub(attr, "token"));
-				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getTokenMin());
+				attr = String.valueOf(place.getTokenMin());
 				el.addChild(createElSub(attr, "tokenMin"));
-				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getTokenMax());
+				attr = String.valueOf(place.getTokenMax());
 				el.addChild(createElSub(attr, "tokenMax"));
-				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getTokenStart());
+				attr = String.valueOf(place.getTokenStart());
 				el.addChild(createElSub(attr, "tokenStart"));
-				attr = String.valueOf(((biologicalObjects.nodes.petriNet.Place) oneNode).getConflictStrategy());
+				attr = String.valueOf(place.getConflictStrategy());
 				el.addChild(createElSub(attr, "ConflictStrategy"));
 
 			} else if (oneNode instanceof Transition) {
@@ -714,8 +716,44 @@ public class JSBMLoutput {
 				} else if (oneNode instanceof ContinuousTransition) {
 
 				} else if (oneNode instanceof StochasticTransition) {
-					attr = ((StochasticTransition) oneNode).getDistribution();
-					el.addChild(createElSub(attr, "distribution"));
+					elSub = new XMLNode(new XMLNode(new XMLTriple("distributionProperties", "", ""), new XMLAttributes()));
+					
+					StochasticTransition st = (StochasticTransition) oneNode;
+					attr = st.getDistribution();
+					elSub.addChild(createElSub(attr, "distribution"));
+					attr = st.getH() + "";
+					elSub.addChild(createElSub(attr, "h"));
+					attr = st.getA() + "";
+					elSub.addChild(createElSub(attr, "a"));
+					attr = st.getB() + "";
+					elSub.addChild(createElSub(attr, "b"));
+					attr = st.getC() + "";
+					elSub.addChild(createElSub(attr, "c"));
+					attr = st.getMu() + "";
+					elSub.addChild(createElSub(attr, "mu"));
+					attr = st.getSigma() + "";
+					elSub.addChild(createElSub(attr, "sigma"));
+
+					ArrayList<Integer> events = st.getEvents();
+					String eventsString = "";
+					for (int i = 0; i < events.size(); i++) {
+						if (i > 0) {
+							eventsString += ",";
+						}
+						eventsString += events.get(i);
+					}
+					elSub.addChild(createElSub(eventsString, "discreteEvents"));
+
+					ArrayList<Double> probs = st.getProbabilities();
+					String probsString = "";
+					for (int i = 0; i < probs.size(); i++) {
+						if (i > 0) {
+							probsString += ",";
+						}
+						probsString += probs.get(i);
+					}
+					elSub.addChild(createElSub(probsString, "discreteEventProbabilities"));
+					el.addChild(elSub);
 				}
 			}
 		}
