@@ -648,8 +648,8 @@ public class MainWindow implements ApplicationListener {
 		optionPanel.updatePanel("Satellite");
 	}
 
-	public void updatePCPView() {
-		optionPanel.updatePanel("pcp");
+	public void updateSimulationResultView() {
+		optionPanel.updatePanel("simulation");
 	}
 
 	public void updateDatabaseProperties() {
@@ -683,7 +683,7 @@ public class MainWindow implements ApplicationListener {
 		optionPanel.updatePanel("Filter");
 		optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
-		optionPanel.updatePanel("pcp");
+		optionPanel.updatePanel("simulation");
 		optionPanel.updatePanel("pathwayTree");
 		optionPanel.updatePanel("bb");
 	}
@@ -695,11 +695,11 @@ public class MainWindow implements ApplicationListener {
 		optionPanel.updatePanel("Filter");
 		optionPanel.updatePanel("theory");
 		optionPanel.updatePanel("alignment");
-		optionPanel.updatePanel("pcp");
 		optionPanel.updatePanel("project");
 		optionPanel.updatePanel("Database");
 		optionPanel.updatePanel("pathwayTree");
-		optionPanel.updatePanel("initPCP");
+		optionPanel.updatePanel("initSimulation");
+		//optionPanel.updatePanel("simulation"); seems not necessary
 		optionPanel.updatePanel("bb");
 		optionPanel.updatePanel("pathwayProperties");
 	}

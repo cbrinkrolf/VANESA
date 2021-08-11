@@ -10,7 +10,6 @@ import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,7 +40,12 @@ public class Server {
 	private int port;
 	private SimulationResult simResult;
 
-	private Set<PNEdge> toRefineEdges = new HashSet<PNEdge>();
+	private Set<PNEdge> toRefineEdges;
+	private Set<PNEdge> edgesFlow;
+	private Set<PNEdge> edgeSum;
+	private Set<Transition> transitionSpeed;
+	private Set<Transition> transitionFire;
+	private Set<Place> placeToken;
 
 	private long lastSyso = 0;
 
@@ -88,7 +92,7 @@ public class Server {
 						simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
 						System.out.println(simId);
 						MainWindow.getInstance().initSimResGraphs();
-						while (true && !serverSocket.isClosed()) {
+						while (!serverSocket.isClosed()) {
 							client = waitForClient(serverSocket);
 							// leseNachricht(client);
 
@@ -197,6 +201,7 @@ public class Server {
 				counter += names.get(i).length();
 				name2index.put(names.get(i), i);
 			}
+			this.createSets();
 			System.out.println();
 			System.out.println("sum: " + counter);
 		} catch (Exception e) {
@@ -205,14 +210,15 @@ public class Server {
 		System.out.println("ende");
 		byte btmp;
 		ArrayList<Object> values;
+		String[] sValues;
 
 		try {
+			long startDigest = System.currentTimeMillis();
 			while (running) {
-				/*try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}*/
+				/*
+				 * try { Thread.sleep(1); } catch (InterruptedException e) {
+				 * e.printStackTrace(); }
+				 */
 				values = new ArrayList<Object>();
 
 				// System.out.println("av: "+socket.available());
@@ -258,7 +264,7 @@ public class Server {
 						bb = ByteBuffer.wrap(buffer, expected, length - expected);
 						bb.order(ByteOrder.LITTLE_ENDIAN);
 
-						String[] sValues = (new String(buffer, expected, length - expected)).split("\u0000");
+						sValues = (new String(buffer, expected, length - expected)).split("\u0000");
 
 						for (int i = 0; i < sValues.length; i++) {
 							values.add(sValues[i]);
@@ -269,6 +275,7 @@ public class Server {
 					}
 					break;
 				case 6:
+					System.out.println("data handling: " + (System.currentTimeMillis() - startDigest) + "ms");
 					running = false;
 					System.out.println("server shut down");
 					MainWindow w = MainWindow.getInstance();
@@ -297,70 +304,85 @@ public class Server {
 		}
 	}
 
-	private void setData(ArrayList<Object> values) {
+	private void createSets() {
+		toRefineEdges = new HashSet<>();
+		edgesFlow = new HashSet<>();
+		edgeSum = new HashSet<>();
+		transitionSpeed = new HashSet<>();
+		transitionFire = new HashSet<>();
+		placeToken = new HashSet<>();
 
-		// System.out.println("set Data");
-		Collection<BiologicalNodeAbstract> hs = pw.getAllGraphNodes();
-		// pnResult = pw.getPetriNet().getPnResult();
-		// rowsSize = 0;
-		// System.out.println("size: "+ pnResult.size());
 		Iterator<BiologicalEdgeAbstract> itBea = pw.getAllEdges().iterator();
 		BiologicalEdgeAbstract bea;
 		PNEdge e;
 
-		// System.out.println("hashmap size: "+bea2key.size());
-		// Iterator<String> it5 = bea2key.values().iterator();
-		// while(it5.hasNext()){
-		// System.out.print(it5.next()+"\t");
-		// }
-		// System.out.println();
-		double value;
-		Object o;
 		while (itBea.hasNext()) {
 			bea = itBea.next();
 			if (bea instanceof PNEdge) {
 				e = (PNEdge) bea;
 				if (name2index.get("der(" + bea2key.get(bea) + ")") != null) {
-					o = values.get(name2index.get("der(" + bea2key.get(bea) + ")"));
-					this.checkAndAddValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, o);
+					this.edgesFlow.add(e);
 				} else {
 					if (!toRefineEdges.contains(e)) {
 						toRefineEdges.add(e);
 					}
 				}
 				if (name2index.get(bea2key.get(bea)) != null) {
-					o = values.get(name2index.get(bea2key.get(bea)));
-					this.checkAndAddValue(e, SimulationResultController.SIM_SUM_OF_TOKEN, o);
+					this.edgeSum.add(e);
 				}
 			}
 		}
 
-		Iterator<BiologicalNodeAbstract> it = hs.iterator();
+		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
-			// System.out.println(bna.getName());
 			if (!bna.hasRef()) {
 				if (bna instanceof Place) {
 					if (name2index.get("'" + bna.getName() + "'.t") != null) {
-						o = values.get(name2index.get("'" + bna.getName() + "'.t"));
-						this.checkAndAddValue(bna, SimulationResultController.SIM_TOKEN, o);
+						placeToken.add((Place)bna);
 					} else {
 						System.out.println(bna.getName() + " does not exist. Cannot set simulation result");
 					}
 				} else if (bna instanceof Transition) {
 					if (name2index.get("'" + bna.getName() + "'.fire") != null) {
-						o = values.get(name2index.get("'" + bna.getName() + "'.fire"));
-
-						this.checkAndAddValue(bna, SimulationResultController.SIM_FIRE, o);
+						this.transitionFire.add((Transition)bna);
 					}
 					if (name2index.get("'" + bna.getName() + "'.actualSpeed") != null) {
-						o = values.get(name2index.get("'" + bna.getName() + "'.actualSpeed"));
-						this.checkAndAddValue(bna, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, o);
+						this.transitionSpeed.add((Transition)bna);
 					}
 				}
 			}
 		}
+	}
+
+	private void setData(ArrayList<Object> values) {
+		Object o;
+		for(PNEdge e : this.edgesFlow){
+			o = values.get(name2index.get("der(" + bea2key.get(e) + ")"));
+			this.checkAndAddValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, o);
+		}
+		
+		for(PNEdge e: this.edgeSum){
+			o = values.get(name2index.get(bea2key.get(e)));
+			this.checkAndAddValue(e, SimulationResultController.SIM_SUM_OF_TOKEN, o);
+		}
+		
+		for(Place p : this.placeToken){
+			o = values.get(name2index.get("'" + p.getName() + "'.t"));
+			this.checkAndAddValue(p, SimulationResultController.SIM_TOKEN, o);
+		}
+		
+		for(Transition t : this.transitionFire){
+			o = values.get(name2index.get("'" + t.getName() + "'.fire"));
+			this.checkAndAddValue(t, SimulationResultController.SIM_FIRE, o);
+		}
+		
+		for(Transition t: this.transitionSpeed){
+			o = values.get(name2index.get("'" + t.getName() + "'.actualSpeed"));
+			this.checkAndAddValue(t, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, o);
+		}
+
 
 		long now = System.currentTimeMillis();
 		if ((now - lastSyso) > 1000) {
@@ -369,9 +391,8 @@ public class Server {
 			System.out.println(time + ": " + values.get(name2index.get("time")));
 			lastSyso = now;
 		}
-		value = (Double) values.get(name2index.get("time"));
 
-		this.simResult.addTime(value);
+		this.simResult.addTime((Double) values.get(name2index.get("time")));
 		// System.out.println("Time size: " + simResult.getTime().getSize());
 		// System.out.println("old size: " + pw.getPetriNet().getTime().size());
 		// this.time = pnResult.get("time");

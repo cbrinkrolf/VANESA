@@ -244,9 +244,8 @@ public class PetriNetSimulation implements ActionListener {
 								df.setRoundingMode(RoundingMode.HALF_UP);
 								boolean simAddedToMenu = false;
 								while (s.isRunning()) {
-									if (v == null && pw.getPetriPropertiesNet().getSimResController()
-											.getLastActive() != null) {
-										v = pw.getPetriPropertiesNet().getSimResController().getLastActive().getTime()
+									if (v == null && pw.getPetriPropertiesNet().getSimResController().get(simId) != null) {
+										v = pw.getPetriPropertiesNet().getSimResController().get(simId).getTime()
 												.getAll();
 									}
 									// System.out.println("im thread");
