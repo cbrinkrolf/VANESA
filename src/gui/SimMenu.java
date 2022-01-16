@@ -221,6 +221,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		// textArea.setAutoscrolls(true);
 		this.add(scrollPane, BorderLayout.CENTER);
+		this.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		// this.add(textArea, BorderLayout.SOUTH);
 		this.add(west, BorderLayout.WEST);
 		this.pack();

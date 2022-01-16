@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,7 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JSpinner;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 
@@ -37,32 +35,17 @@ import net.miginfocom.swing.MigLayout;
  * @author Sebastian
  * 
  */
-public class BrendaPatternListWindow extends JFrame implements ActionListener {
+public class BrendaPatternListWindow implements ActionListener {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	JPanel panel;
-
-	JOptionPane pane;
-
-	JPanel panel2;
-
-	JSpinner serchDeapth;
-
-	JCheckBox include = new JCheckBox();
-	JButton newButton = new JButton("ok");
+	private JButton newButton = new JButton("ok");
 	
-	JButton select = new JButton("select");
-	JButton deselect = new JButton("deselect");
-	JButton deselectAll = new JButton("deselect all");
+	private JButton select = new JButton("select");
+	private JButton deselect = new JButton("deselect");
+	private JButton deselectAll = new JButton("deselect all");
 	
-	JButton[] buttons = { newButton};
-	boolean ok = false;
-	JOptionPane optionPane;
-	JDialog dialog;
+	private JButton[] buttons = { newButton};
+	private JOptionPane optionPane;
+	private JDialog dialog;
 
 	private MyTable table;
 
@@ -135,7 +118,7 @@ public class BrendaPatternListWindow extends JFrame implements ActionListener {
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog = new JDialog(this, "Calculation Settings", true);
+		dialog = new JDialog(new JFrame(), "Calculation Settings", true);
 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -191,7 +174,5 @@ public class BrendaPatternListWindow extends JFrame implements ActionListener {
 				table.setValueAt(false,i, 2);			
 			}
 		}
-
 	}
-
 }

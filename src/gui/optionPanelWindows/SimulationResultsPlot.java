@@ -688,6 +688,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 			ChartPanel panel = new ChartPanel(chart);
 			f.setPreferredSize(panel.getPreferredSize());
+			f.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 			// System.out.println(panel.getPreferredSize());
 			f.add(panel);
 			f.pack();
@@ -971,7 +972,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		places = new ArrayList<BiologicalNodeAbstract>();
 		// get Selected Places and their index+label
 
-		//System.out.println("process");
+		// System.out.println("process");
 		Iterator<String> it = simResController.getSimIds().iterator();
 		String simId;
 		while (it.hasNext()) {
@@ -985,7 +986,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				e.printStackTrace();
 			}
 		}
-		//System.out.println("done processing");
+		// System.out.println("done processing");
 		renderer.setDefaultToolTipGenerator(new XYToolTipGenerator() {
 
 			@Override

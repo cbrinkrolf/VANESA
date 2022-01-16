@@ -19,39 +19,30 @@ import graph.algorithms.RandomConnectedGraph;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
-public class RandomConnectedGraphGui extends JFrame implements ActionListener {
+public class RandomConnectedGraphGui implements ActionListener {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	// Variables declaration
-	JButton cancel = new JButton("cancel");
-	JButton applyButton = new JButton("generate Random Graph");
-	JButton[] buttons = { applyButton, cancel };
+	private JButton cancel = new JButton("cancel");
+	private JButton applyButton = new JButton("generate Random Graph");
+	private JButton[] buttons = { applyButton, cancel };
 
-	JPanel panel;
-	JOptionPane pane;
+	private JSpinner nodes;
+	private JSpinner edges;
 
-	JSpinner nodes;
-	JSpinner edges;
+	private JOptionPane optionPane;
+	private JDialog dialog;
 
-	JOptionPane optionPane;
-	JDialog dialog;
+	private JCheckBox weighted = new JCheckBox();
 
-	JCheckBox weighted = new JCheckBox();
-
-	JSpinner minWeight;
-	JSpinner maxWeight;
+	private JSpinner minWeight;
+	private JSpinner maxWeight;
 
 	public RandomConnectedGraphGui() {
 
 		MigLayout layout = new MigLayout();
 		JPanel mainPanel = new JPanel(layout);
 
-		mainPanel.add(new JLabel(
-				"What kind of graph do you wish to be generated?"),
-				"span 2, wrap 15 ");
+		mainPanel.add(new JLabel("What kind of graph do you wish to be generated?"), "span 2, wrap 15 ");
 		mainPanel.add(new JSeparator(), "gap 10, wrap 15, growx, span 2");
 
 		SpinnerNumberModel model1 = new SpinnerNumberModel(10, 1, 10000, 1);
@@ -60,8 +51,7 @@ public class RandomConnectedGraphGui extends JFrame implements ActionListener {
 		mainPanel.add(new JLabel("Number of nodes"), "span 1, gaptop 2 ");
 		mainPanel.add(nodes, "span 1,wrap,gaptop 2");
 
-		SpinnerNumberModel model2 = new SpinnerNumberModel(10, 1,
-				(10000 * (10000 - 1)) / 2, 1);
+		SpinnerNumberModel model2 = new SpinnerNumberModel(10, 1, (10000 * (10000 - 1)) / 2, 1);
 		edges = new JSpinner(model2);
 
 		mainPanel.add(new JLabel("Number of edges"), "span 1, gaptop 2 ");
@@ -74,15 +64,13 @@ public class RandomConnectedGraphGui extends JFrame implements ActionListener {
 		SpinnerNumberModel model3 = new SpinnerNumberModel(1, 1, 100, 1);
 		minWeight = new JSpinner(model3);
 
-		mainPanel.add(new JLabel("Minimum weight of edges"),
-				"span 1, gaptop 2 ");
+		mainPanel.add(new JLabel("Minimum weight of edges"), "span 1, gaptop 2 ");
 		mainPanel.add(minWeight, "span 1,wrap,gaptop 2");
 
 		SpinnerNumberModel model4 = new SpinnerNumberModel(100, 1, 100, 1);
 		maxWeight = new JSpinner(model4);
 
-		mainPanel.add(new JLabel("Maximum weight of edges"),
-				"span 1, gaptop 2 ");
+		mainPanel.add(new JLabel("Maximum weight of edges"), "span 1, gaptop 2 ");
 		mainPanel.add(maxWeight, "span 1,wrap,gaptop 2");
 
 		mainPanel.add(new JSeparator(), "gap 10, wrap, growx, span 2");
@@ -96,7 +84,7 @@ public class RandomConnectedGraphGui extends JFrame implements ActionListener {
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog = new JDialog(this, "Random Graph Generation", true);
+		dialog = new JDialog(new JFrame(), "Random Graph Generation", true);
 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -115,13 +103,8 @@ public class RandomConnectedGraphGui extends JFrame implements ActionListener {
 		} else if ("new".equals(event)) {
 			dialog.setVisible(false);
 
-			RandomConnectedGraph.generateRandomGraph((Integer) nodes.getValue(),
-					(Integer) edges.getValue(), weighted.isSelected(),
-					(Integer) minWeight.getValue(),
-					(Integer) maxWeight.getValue());
-
+			RandomConnectedGraph.generateRandomGraph((Integer) nodes.getValue(), (Integer) edges.getValue(),
+					weighted.isSelected(), (Integer) minWeight.getValue(), (Integer) maxWeight.getValue());
 		}
-
 	}
-
 }

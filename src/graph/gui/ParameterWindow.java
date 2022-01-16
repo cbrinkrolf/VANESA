@@ -50,7 +50,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 	private GraphElementAbstract gea;
 	private FormularPanel fp;
 	private JTextPane formular;
-	
+
 	private JButton cancel = new JButton("cancel");
 	private JButton okButton = new JButton("ok");
 	private JButton[] buttons = { okButton, cancel };
@@ -58,7 +58,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 
 	private boolean editMode = false;
 
-	//private JDialog dialog;
+	// private JDialog dialog;
 
 	// private HashMap<JButton, Parameter> parameters = new HashMap<JButton,
 	// Parameter>();
@@ -85,7 +85,8 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				AutoSuggestor autoSuggestor = new AutoSuggestor(formular, frame, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
+				AutoSuggestor autoSuggestor = new AutoSuggestor(formular, frame, null, Color.WHITE.brighter(),
+						Color.BLUE, Color.RED, 0.75f) {
 					@Override
 					boolean wordTyped(String typedWord) {
 
@@ -139,7 +140,8 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		add.setActionCommand("add");
 		add.addActionListener(this);
 
-		//pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
+		// pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
+		// JOptionPane.DEFAULT_OPTION);
 
 		cancel.addActionListener(this);
 		cancel.setActionCommand("cancel");
@@ -148,34 +150,35 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		okButton.setActionCommand("okButton");
 
 		this.repaintPanel();
-		
+
 		optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
-		
+
 		frame.setAlwaysOnTop(false);
 		frame.setContentPane(optionPane);
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		frame.revalidate();
-		
+
 		frame.pack();
-		
+
 		frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		frame.requestFocus();
 		frame.setVisible(true);
 
 		frame.addWindowFocusListener(new WindowFocusListener() {
-			
+
 			@Override
 			public void windowLostFocus(WindowEvent e) {
 			}
-			
+
 			@Override
 			public void windowGainedFocus(WindowEvent e) {
-				//repaintPanel();
+				// repaintPanel();
 				frame.pack();
-				//revalidate();
-				//pack();
-				//repaint();
+				// revalidate();
+				// pack();
+				// repaint();
 			}
 		});
 	}
@@ -258,11 +261,13 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 							this.add.setText("add");
 							this.repaintPanel();
 						} catch (NumberFormatException nfe) {
-							MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+							MyPopUp.getInstance().show("Parameter",
+									"Parameter not correct. Value not a number or empty?");
 						}
 					} else {
 						// System.out.println("schon vorhanden");
-						MyPopUp.getInstance().show("Parameter", "Parameter with same name already exists! Use edit button to edit parameter");
+						MyPopUp.getInstance().show("Parameter",
+								"Parameter with same name already exists! Use edit button to edit parameter");
 					}
 					return;
 				}
@@ -315,12 +320,12 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			this.guessKinetic();
 			this.repaintPanel();
 		} else if (e.getActionCommand().equals("setValues")) {
-			if(gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract){
-			new ParameterSearcher((BiologicalNodeAbstract)gea, true);
+			if (gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract) {
+				new ParameterSearcher((BiologicalNodeAbstract) gea, true);
 			}
-		} else if(e.getActionCommand().equals("okButton")){
+		} else if (e.getActionCommand().equals("okButton")) {
 			if (gea instanceof DynamicNode) {
-				//System.out.println("clicked ok");
+				// System.out.println("clicked ok");
 				DynamicNode dn = (DynamicNode) gea;
 				String formular = fp.getFormular();
 				String formularClean = formular.replaceAll("\\s", "");
@@ -334,7 +339,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 				}
 			}
 			frame.setVisible(false);
-		} else if(e.getActionCommand().equals("cancel")){
+		} else if (e.getActionCommand().equals("cancel")) {
 			frame.setVisible(false);
 		}
 	}
@@ -350,7 +355,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		guessKinetic.addActionListener(this);
 		guessKinetic.setActionCommand("guessKinetic");
 		panel.add(guessKinetic, "");
-		
+
 		JButton setValues = new JButton("BRENDA kinetic parameters");
 		setValues.setToolTipText("Browse BRENDA for kinetic parameters (km and kcat)");
 		setValues.addActionListener(this);
@@ -372,7 +377,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		this.listParameters();
 		panel.repaint();
 		frame.pack();
-		//dialog.pack();
+		// dialog.pack();
 	}
 
 	@Override

@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -37,25 +36,14 @@ import pojos.DBColumn;
  * @author Sebastian
  * 
  */
-public class PossibleBrendaEnzyme extends JFrame implements ActionListener, TableModelListener 
+public class PossibleBrendaEnzyme implements ActionListener, TableModelListener 
 {
-	private static final long serialVersionUID=5817431890806360999L;
-
-	JPanel panel;
-
-	JOptionPane pane;
-
-	JPanel panel2;
-
-	JCheckBox include = new JCheckBox();
-	JButton newButton = new JButton("ok");
-	JButton skip = new JButton("skip");
+	private JButton newButton = new JButton("ok");
+	private JButton skip = new JButton("skip");
 	
-	
-	JButton[] buttons = { newButton,skip };
-	boolean ok = false;
-	JOptionPane optionPane;
-	JDialog dialog;
+	private JButton[] buttons = { newButton,skip };
+	private JOptionPane optionPane;
+	private JDialog dialog;
 	
 	private String selectedEnzyme;
 	private TabelModel model;
@@ -112,7 +100,7 @@ public class PossibleBrendaEnzyme extends JFrame implements ActionListener, Tabl
 		optionPane=new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog=new JDialog(this, "Found enzymes out of BRENDA", true);
+		dialog=new JDialog(new JFrame(), "Found enzymes out of BRENDA", true);
 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

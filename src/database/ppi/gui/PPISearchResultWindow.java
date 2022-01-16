@@ -34,33 +34,22 @@ import miscalleanous.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
 import pojos.DBColumn;
 
-public class PPISearchResultWindow extends JFrame implements ActionListener {
+public class PPISearchResultWindow implements ActionListener {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private JSpinner serchDeapth;
 
-	JPanel panel;
+	private JCheckBox finaliseGraph = new JCheckBox();
+	private JCheckBox autoCoarse = new JCheckBox();
 
-	JOptionPane pane;
+	private JCheckBox binaryInteractions = new JCheckBox();
+	private JCheckBox complexInteractions = new JCheckBox();
 
-	JPanel panel2;
-
-	JSpinner serchDeapth;
-
-	JCheckBox finaliseGraph = new JCheckBox();
-	JCheckBox autoCoarse = new JCheckBox();
-
-	JCheckBox binaryInteractions = new JCheckBox();
-	JCheckBox complexInteractions = new JCheckBox();
-
-	JButton cancel = new JButton("cancel");
-	JButton newButton = new JButton("ok");
-	JButton[] buttons = { newButton, cancel };
-	boolean ok = false;
-	JOptionPane optionPane;
-	JDialog dialog;
+	private JButton cancel = new JButton("cancel");
+	private JButton newButton = new JButton("ok");
+	private JButton[] buttons = { newButton, cancel };
+	private boolean ok = false;
+	private JOptionPane optionPane;
+	private JDialog dialog;
 	//JCheckBox disregard = new JCheckBox();
 
 	private MyTable table;
@@ -155,7 +144,7 @@ public class PPISearchResultWindow extends JFrame implements ActionListener {
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog = new JDialog(this, "Settings", true);
+		dialog = new JDialog(new JFrame(), "Settings", true);
 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -331,11 +320,11 @@ public class PPISearchResultWindow extends JFrame implements ActionListener {
 			dialog.setVisible(false);
 		} else if ("new".equals(event)) {
 			if (table.getSelectedRows().length == 0) {
-				JOptionPane.showMessageDialog(this, "Please choose an enzyme.",
+				JOptionPane.showMessageDialog(null, "Please choose an enzyme.",
 						"Message", 1);
 			} else if (!binaryInteractions.isSelected()
 					&& !complexInteractions.isSelected()) {
-				JOptionPane.showMessageDialog(this,
+				JOptionPane.showMessageDialog(null,
 						"Please include at least one type of interaction.",
 						"Message", 1);
 			} else {
@@ -349,5 +338,4 @@ public class PPISearchResultWindow extends JFrame implements ActionListener {
 		// }
 		// }
 	}
-
 }

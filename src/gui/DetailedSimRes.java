@@ -90,6 +90,7 @@ public class DetailedSimRes implements ActionListener {
 		dialog.setResizable(true);
 		dialog.setContentPane(dialogPanel);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		dialog.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		// ScreenSize screen = new ScreenSize();
 		// int screenHeight = (int) screen.getheight();
 		// int screenWidth = (int) screen.getwidth();
@@ -144,7 +145,7 @@ public class DetailedSimRes implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String event = e.getActionCommand();
 		if (event.equals("exportSimResult")) {
-			new SaveDialog(SaveDialog.FORMAT_CSV,null, dialog, this.simId);
+			new SaveDialog(SaveDialog.FORMAT_CSV, null, dialog, this.simId);
 		}
 	}
 }

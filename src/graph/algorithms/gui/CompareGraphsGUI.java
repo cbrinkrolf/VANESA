@@ -27,36 +27,19 @@ import gui.MainWindow;
 import gui.algorithms.ScreenSize;
 import net.miginfocom.swing.MigLayout;
 
-public class CompareGraphsGUI extends JFrame implements ActionListener,
-		ItemListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class CompareGraphsGUI implements ActionListener, ItemListener {
 
 	private JPanel panel = new JPanel();
-
 	private JPanel firstGraph = new JPanel();
-
 	private JPanel secondGraph = new JPanel();
-
 	private JComboBox<String> firstBox = new JComboBox<String>();
-
 	private JComboBox<String> secondBox = new JComboBox<String>();
-
 	private JOptionPane optionPane;
-
 	private JDialog dialog;
-
 	private JSplitPane splitPane;
-
 	private GraphContainer con;
-
 	private String mouseFunction;
-
 	private GraphZoomScrollPane firstGraphPane;
-
 	private GraphZoomScrollPane secondGraphPane;
 	private JButton[] buttons;
 
@@ -73,9 +56,9 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		JButton compare = new JButton("compare");
 		JButton reset = new JButton("reset");
 		JButton merge = new JButton("merge");
-		//JButton align = new JButton("align");
-		//JButton heatmap = new JButton("heatmap");
-		//JButton compare3d = new JButton("compare 3D");
+		// JButton align = new JButton("align");
+		// JButton heatmap = new JButton("heatmap");
+		// JButton compare3d = new JButton("compare 3D");
 
 		if (MainWindow.developer) {
 			buttons = new JButton[] { exit, compare, merge, reset };
@@ -95,19 +78,19 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		merge.addActionListener(this);
 		merge.setActionCommand("merge");
 
-		//heatmap.addActionListener(this);
-		//heatmap.setActionCommand("heatmap");
+		// heatmap.addActionListener(this);
+		// heatmap.setActionCommand("heatmap");
 
-		//align.addActionListener(this);
-		//align.setActionCommand("align");
+		// align.addActionListener(this);
+		// align.setActionCommand("align");
 
-		//compare3d.addActionListener(this);
-		//compare3d.setActionCommand("compare3d");
+		// compare3d.addActionListener(this);
+		// compare3d.setActionCommand("compare3d");
 
 		optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog = new JDialog(this, "Graph comparison", true);
+		dialog = new JDialog(new JFrame(), "Graph comparison", true);
 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -119,14 +102,12 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		firstBox.setEditable(false);
 		secondBox.setEditable(false);
 
-		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, firstGraph,
-				secondGraph);
+		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, firstGraph, secondGraph);
 
 		splitWindowWith = screenWidth - 150;
 		splitWindowHeight = screenHeight - 200;
 
-		splitPane.setPreferredSize(new Dimension(splitWindowWith,
-				splitWindowHeight));
+		splitPane.setPreferredSize(new Dimension(splitWindowWith, splitWindowHeight));
 
 		splitPane.setOneTouchExpandable(true);
 
@@ -140,7 +121,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		int i = 0;
 		Pathway p;
 		String pathwayName;
-		
+
 		while (it.hasNext()) {
 
 			p = it.next();
@@ -149,26 +130,20 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 			if (i == 0) {
 
 				firstGraphPane = new GraphZoomScrollPane(p.getGraph()
-						.getVisualizationPaneCopy(
-								new Dimension(splitWindowWith - 50,
-										splitWindowHeight - 50)));
+						.getVisualizationPaneCopy(new Dimension(splitWindowWith - 50, splitWindowHeight - 50)));
 				firstGraphPane.removeAll();
-				firstGraphPane.add(p.getGraph().getVisualizationPaneCopy(
-						new Dimension(splitWindowWith - 50,
-								splitWindowHeight - 50)));
+				firstGraphPane.add(p.getGraph()
+						.getVisualizationPaneCopy(new Dimension(splitWindowWith - 50, splitWindowHeight - 50)));
 				firstGraph.add(firstGraphPane, "wrap 5");
 				firstSelectedPathway = pathwayName;
 
 			} else if (i == 1) {
 
 				secondGraphPane = new GraphZoomScrollPane(p.getGraph()
-						.getVisualizationPaneCopy(
-								new Dimension(splitWindowWith - 50,
-										splitWindowHeight - 50)));
+						.getVisualizationPaneCopy(new Dimension(splitWindowWith - 50, splitWindowHeight - 50)));
 				secondGraphPane.removeAll();
-				secondGraphPane.add(p.getGraph().getVisualizationPaneCopy(
-						new Dimension(splitWindowWith - 50,
-								splitWindowHeight - 50)));
+				secondGraphPane.add(p.getGraph()
+						.getVisualizationPaneCopy(new Dimension(splitWindowWith - 50, splitWindowHeight - 50)));
 				secondGraph.add(secondGraphPane, "wrap 5");
 				secondSelectedPathway = pathwayName;
 			}
@@ -207,17 +182,13 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 
 			firstGraphPane.removeAll();
 			firstGraphPane.add(newPathway.getGraph()
-					.getVisualizationPaneCopy(
-							new Dimension(splitWindowWith - 50,
-									splitWindowHeight - 50)));
+					.getVisualizationPaneCopy(new Dimension(splitWindowWith - 50, splitWindowHeight - 50)));
 
 		} else {
 
 			secondGraphPane.removeAll();
 			secondGraphPane.add(newPathway.getGraph()
-					.getVisualizationPaneCopy(
-							new Dimension(splitWindowWith - 50,
-									splitWindowHeight - 50)));
+					.getVisualizationPaneCopy(new Dimension(splitWindowWith - 50, splitWindowHeight - 50)));
 
 		}
 	}
@@ -240,8 +211,7 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 
 		} else if ("compare".equals(event)) {
 
-			CompareGraphs.compareGraphs(
-					con.getPathway(firstBox.getSelectedItem().toString()),
+			CompareGraphs.compareGraphs(con.getPathway(firstBox.getSelectedItem().toString()),
 					con.getPathway(secondBox.getSelectedItem().toString()));
 			firstGraph.updateUI();
 			secondGraph.updateUI();
@@ -252,9 +222,8 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 
 		} else if ("merge".equals(event)) {
 
-			new MergeGraphs(con.getPathway(firstBox.getSelectedItem()
-					.toString()), con.getPathway(secondBox.getSelectedItem()
-					.toString()), true);
+			new MergeGraphs(con.getPathway(firstBox.getSelectedItem().toString()),
+					con.getPathway(secondBox.getSelectedItem().toString()), true);
 			this.closeDialog();
 
 		}
@@ -266,12 +235,12 @@ public class CompareGraphsGUI extends JFrame implements ActionListener,
 		MainWindow.getInstance().enableOptionPanelUpdate(false);
 		Pathway p;
 		MyGraph graph;
-		
+
 		while (it.hasNext()) {
 			p = it.next();
 			graph = p.getGraph();
 			graph.disableGraphTheory();
-			
+
 			graph.clearPickedElements();
 
 		}

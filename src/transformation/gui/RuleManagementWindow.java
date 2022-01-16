@@ -48,6 +48,7 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 
 	public RuleManagementWindow() {
 		frame = new JFrame("Overview of transformation rules");
+		frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		// System.out.println("constr.");
 		rm = RuleManager.getInstance();
 		rules = rm.getAllRules();
@@ -90,6 +91,7 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 		frame.setAlwaysOnTop(false);
 		frame.setContentPane(optionPane);
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		frame.revalidate();
 
 		frame.pack();

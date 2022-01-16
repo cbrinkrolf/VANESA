@@ -4,7 +4,6 @@
 package configurations.gui;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -24,12 +23,8 @@ import net.miginfocom.swing.MigLayout;
  * @author Sebastian
  * 
  */
-public class GraphSettingsDialog extends JFrame {
+public class GraphSettingsDialog {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	JPanel panel;
 	JOptionPane pane;
 	NetworkSettings settings = NetworkSettingsSingelton.getInstance();

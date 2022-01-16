@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -153,6 +155,15 @@ public class MainWindow implements ApplicationListener {
 		// react to special application menu items on mac osx
 		application.addApplicationListener(this);
 
+		List<Image> iconList = new ArrayList<>();
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		
+		iconList.add(kit.createImage(imagePath.getPath("logo16.png")));
+		iconList.add(kit.createImage(imagePath.getPath("logo32.png")));
+		iconList.add(kit.createImage(imagePath.getPath("logo64.png")));
+		iconList.add(kit.createImage(imagePath.getPath("logo128.png")));
+		frame.setIconImages(iconList);
+		
 		//
 		// try {
 		// InfoNodeLookAndFeelTheme theme =

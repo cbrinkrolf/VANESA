@@ -36,12 +36,12 @@ import graph.jung.classes.MyVisualizationViewer;
 
 public class InfoWindow {
 
-	int nodes, edges, nodedegrees, maxpath, mindegree, maxdegree, cutnodes,
+	private int nodes, edges, nodedegrees, maxpath, mindegree, maxdegree, cutnodes,
 			cliques;
-	float avgsp, avgneighbordegree;
-	double density, centralization, avgnodedegree, matchingindex;
-	boolean connected;
-	long time;
+	private float avgsp, avgneighbordegree;
+	private double density, centralization, avgnodedegree, matchingindex;
+	private boolean connected;
+	private long time;
 
 	public InfoWindow(boolean extended) {
 

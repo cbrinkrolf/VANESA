@@ -47,12 +47,7 @@ import transformation.RuleEdge;
 import transformation.RuleNode;
 
 // TODO handle parameter matching
-public class RuleEditingWindow extends JFrame implements ActionListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class RuleEditingWindow implements ActionListener {
 
 	private JScrollPane scrollPane = new JScrollPane();
 	private JPanel panel = new JPanel();
@@ -405,6 +400,7 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 			}
 			revalidateSelectedEdges();
 		} else if (e.getActionCommand().startsWith("del_")) {
+			System.out.println("del");
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
 			Iterator<BiologicalNodeAbstract> it = bnToPn.keySet().iterator();
 			BiologicalNodeAbstract bna = null;
@@ -418,6 +414,24 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 				bnToPn.remove(bna);
 				this.populateNodeMapping();
 			}
+			revalidateSelectedEdges();
+		} else if (e.getActionCommand().equals("del")) {
+			// TODO delete nodes, edges and references BN->PN of deleted nodes
+			System.out.println("del");
+			int idx = Integer.parseInt(e.getActionCommand().substring(4));
+			Iterator<BiologicalNodeAbstract> it = bnToPn.keySet().iterator();
+			BiologicalNodeAbstract bna = null;
+			while (it.hasNext()) {
+				bna = it.next();
+				if (bna.getID() == idx) {
+					break;
+				}
+			}
+			if (bna != null) {
+				bnToPn.remove(bna);
+				this.populateNodeMapping();
+			}
+			revalidateSelectedEdges();
 		}
 	}
 
@@ -445,6 +459,7 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 		trash.setMnemonic(KeyEvent.VK_DELETE);
 		trash.setActionCommand("del");
 		trash.addActionListener(listener);
+		trash.addActionListener(this);
 		panel.add(trash);
 
 		JButton center = new ToolBarButton(new ImageIcon(imagePath.getPath("centerGraph.png")));
@@ -683,6 +698,7 @@ public class RuleEditingWindow extends JFrame implements ActionListener {
 			lblSetEdges.setText(text);
 			chkAllEdgesSelected.setEnabled(true);
 		}
+		System.out.println("considered edges: " + consideredEdges.size());
 		lblSetEdges.repaint();
 	}
 

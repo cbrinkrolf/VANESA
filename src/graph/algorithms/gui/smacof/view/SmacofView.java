@@ -79,7 +79,7 @@ public class SmacofView extends JFrame implements ActionListener {
 	public SmacofView() {
 		super("SMACOF: " + MainWindow.getInstance().getCurrentPathway());
 		setPreferredSize(new Dimension(X, Y));
-
+		this.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		graph = GraphInstance.getMyGraph();
 
 		if (graph != null) {

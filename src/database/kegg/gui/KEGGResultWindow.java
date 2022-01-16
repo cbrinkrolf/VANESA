@@ -31,12 +31,8 @@ import pojos.DBColumn;
  * @author Sebastian
  * 
  */
-public class KEGGResultWindow extends JFrame {
-	private static final long serialVersionUID = -4080155502963037035L;
-
-	JPanel panel;
-
-	JOptionPane pane;
+public class KEGGResultWindow {
+	private JOptionPane pane;
 
 	private ArrayList<String[]> map = new ArrayList<String[]>();
 
@@ -58,7 +54,7 @@ public class KEGGResultWindow extends JFrame {
 	 * 
 	 */
 
-	int values_count = 0;
+	private int values_count = 0;
 
 	public KEGGResultWindow(ArrayList<DBColumn> result) {
 
@@ -197,7 +193,7 @@ public class KEGGResultWindow extends JFrame {
 	public Vector<String[]> getAnswer() {
 
 		JDialog dialog = pane.createDialog(MainWindow.getInstance().getFrame(), "");
-		dialog.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);
 
 		Integer value = (Integer) pane.getValue();

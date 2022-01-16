@@ -18,27 +18,20 @@ import graph.algorithms.RandomBipartiteGraph;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
-public class RandomBipartiteGraphGui extends JFrame implements ActionListener {
+public class RandomBipartiteGraphGui implements ActionListener {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	// Variables declaration
-	JButton cancel = new JButton("cancel");
-	JButton applyButton = new JButton("generate Random Bipartite Graph");
-	JButton[] buttons = { applyButton, cancel };
+	private JButton cancel = new JButton("cancel");
+	private JButton applyButton = new JButton("generate Random Bipartite Graph");
+	private JButton[] buttons = { applyButton, cancel };
 	
-	JPanel panel;
-	JOptionPane pane;
+	private JSpinner nodes;
+	private JSpinner nodes2;
 	
-	JSpinner nodes;
-	JSpinner nodes2;
+	private JSpinner edges;
 	
-	JSpinner edges;
-	
-	JOptionPane optionPane;
-	JDialog dialog;
+	private JOptionPane optionPane;
+	private JDialog dialog;
 	
 	public RandomBipartiteGraphGui(){
 		
@@ -79,7 +72,7 @@ public class RandomBipartiteGraphGui extends JFrame implements ActionListener {
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog = new JDialog(this, "Random Bipartite Graph Generation", true);
+		dialog = new JDialog(new JFrame(), "Random Bipartite Graph Generation", true);
 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -101,7 +94,5 @@ public class RandomBipartiteGraphGui extends JFrame implements ActionListener {
 			
 			RandomBipartiteGraph.generateRandomGraph((Integer) nodes.getValue(), (Integer) nodes2.getValue(), (Integer) edges.getValue());
 		}
-		
 	} 
-
 }

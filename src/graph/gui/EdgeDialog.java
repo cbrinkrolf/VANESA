@@ -196,7 +196,7 @@ public class EdgeDialog extends JFrame {
 
 		// private String[] details = new String[3];
 		Map<String, String> details = new HashMap<String, String>();
-		JDialog dialog = pane.createDialog(EdgeDialog.this, "Create an edge");
+		JDialog dialog = pane.createDialog(null, "Create an edge");
 		// dialog.show();
 		if (relativeTo == null) {
 			dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());

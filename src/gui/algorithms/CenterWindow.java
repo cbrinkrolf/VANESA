@@ -6,8 +6,8 @@ import javax.swing.JWindow;
 
 public class CenterWindow {
 	
-	JWindow window; 
-	JFrame frame; 
+	private JWindow window; 
+	private JFrame frame; 
 	
 	
 	public CenterWindow(JWindow window){		

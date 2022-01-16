@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,26 +27,22 @@ import net.miginfocom.swing.MigLayout;
  * @author tloka
  * 
  */
-public class EdgeDeleteDialog extends JFrame {
+public class EdgeDeleteDialog {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private JPanel panel;
 	private JOptionPane pane;
 	private JRadioButton selectedEdge, allEdges;
 
 	private GraphInstance graphInstance = new GraphInstance();
 	private JComboBox<String> edges = new JComboBox<String>();
-	private HashMap<Integer,BiologicalEdgeAbstract> edgeMap = new HashMap<Integer, BiologicalEdgeAbstract>();
+	private HashMap<Integer, BiologicalEdgeAbstract> edgeMap = new HashMap<Integer, BiologicalEdgeAbstract>();
 
 	/**
 	 * 
 	 */
 	public EdgeDeleteDialog(BiologicalEdgeAbstract edge) {
 
-		//Container contentPane = getContentPane();
+		// Container contentPane = getContentPane();
 		MigLayout layout = new MigLayout("", "[left]");
 
 		ButtonGroup group = new ButtonGroup();
@@ -59,47 +54,47 @@ public class EdgeDeleteDialog extends JFrame {
 		group.add(allEdges);
 
 		panel = new JPanel(layout);
-		
+
 		panel.add(new JLabel("Select Start Node"), "");
 		addAllConnectingEdges(edge, edges, edgeMap);
 		AutoCompleteDecorator.decorate(edges);
 		panel.add(edges, "span,wrap,growx,gap 10");
-		
+
 		// panel.add(new JSeparator(), "span, growx, wrap 10");
 
 		panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
-		
+
 		panel.add(new JLabel("Edge(s) to delete:"), "");
 		panel.add(selectedEdge, "gap 10");
 		panel.add(allEdges, "span,wrap,growx");
 
-		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
-				JOptionPane.OK_CANCEL_OPTION);
+		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 	}
-	
-	private void addAllConnectingEdges(BiologicalEdgeAbstract edge, JComboBox<String> edgeBox, HashMap<Integer, BiologicalEdgeAbstract> map){
-		for(BiologicalEdgeAbstract childEdge : edge.getTo().getConnectingEdges()){
-			if(childEdge.getFrom().getCurrentShownParentNode(graphInstance.getPathway().getGraph())==edge.getFrom() | 
-					childEdge.getTo().getCurrentShownParentNode(graphInstance.getPathway().getGraph())==edge.getFrom()){
-				if(childEdge.isDirected()){
+
+	private void addAllConnectingEdges(BiologicalEdgeAbstract edge, JComboBox<String> edgeBox,
+			HashMap<Integer, BiologicalEdgeAbstract> map) {
+		for (BiologicalEdgeAbstract childEdge : edge.getTo().getConnectingEdges()) {
+			if (childEdge.getFrom().getCurrentShownParentNode(graphInstance.getPathway().getGraph()) == edge.getFrom()
+					| childEdge.getTo().getCurrentShownParentNode(graphInstance.getPathway().getGraph()) == edge
+							.getFrom()) {
+				if (childEdge.isDirected()) {
 					edgeBox.addItem(childEdge.getFrom().getLabel() + " --> " + childEdge.getTo().getLabel());
 				} else {
 					edgeBox.addItem(childEdge.getFrom().getLabel() + " --- " + childEdge.getTo().getLabel());
 				}
-				edgeMap.put(edgeBox.getItemCount()-1, childEdge);
+				edgeMap.put(edgeBox.getItemCount() - 1, childEdge);
 			}
 		}
 	}
 
-
 	/**
-	 * @return The original, hierarchical edge to delete all sub-Edges. One single sub-Edge to be deleted.
-	 * Null if nothing selected or aborted.
+	 * @return The original, hierarchical edge to delete all sub-Edges. One single
+	 *         sub-Edge to be deleted. Null if nothing selected or aborted.
 	 */
 	public Set<BiologicalEdgeAbstract> getAnswer() {
 
-		JDialog dialog = pane.createDialog(EdgeDeleteDialog.this, "Delete a hierarchical edge");
-		//dialog.show();
+		JDialog dialog = pane.createDialog(null, "Delete a hierarchical edge");
+		// dialog.show();
 		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		dialog.setVisible(true);
 		Integer value = (Integer) pane.getValue();
@@ -109,8 +104,8 @@ public class EdgeDeleteDialog extends JFrame {
 				if (selectedEdge.isSelected()) {
 					ret.add(edgeMap.get(edges.getSelectedIndex()));
 					return ret;
-				} else if (allEdges.isSelected()){
-					for(int key : edgeMap.keySet()){
+				} else if (allEdges.isSelected()) {
+					for (int key : edgeMap.keySet()) {
 						ret.add(edgeMap.get(key));
 					}
 					return ret;
@@ -118,7 +113,7 @@ public class EdgeDeleteDialog extends JFrame {
 			} else {
 				return null;
 			}
-		} 
+		}
 		return null;
 	}
 }

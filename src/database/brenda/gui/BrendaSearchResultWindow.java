@@ -40,33 +40,26 @@ import net.miginfocom.swing.MigLayout;
  * @author Sebastian
  * 
  */
-public class BrendaSearchResultWindow extends JFrame implements ActionListener {
-	private static final long serialVersionUID = -3898620112564408544L;
+public class BrendaSearchResultWindow implements ActionListener {
 
-	JPanel panel;
+	private JSpinner serchDeapth;
 
-	JOptionPane pane;
+	private JCheckBox organismSpecificBox = new JCheckBox();
 
-	JPanel panel2;
+	private JButton cancel = new JButton("cancel");
+	private JButton newButton = new JButton("ok");
+	private JButton[] buttons = { newButton, cancel };
+	private boolean ok = false;
+	private JOptionPane optionPane;
+	private JDialog dialog;
+	private JCheckBox disregard = new JCheckBox();
+	private JCheckBox inhibitorBox = new JCheckBox();
+	private JCheckBox coFactorBox = new JCheckBox();
+	private JCheckBox autoCoarseDepth = new JCheckBox();
+	private JCheckBox autoCoarseEnzymeNomenclature = new JCheckBox();
 
-	JSpinner serchDeapth;
-
-	JCheckBox organismSpecificBox = new JCheckBox();
-
-	JButton cancel = new JButton("cancel");
-	JButton newButton = new JButton("ok");
-	JButton[] buttons = { newButton, cancel };
-	boolean ok = false;
-	JOptionPane optionPane;
-	JDialog dialog;
-	JCheckBox disregard = new JCheckBox();
-	JCheckBox inhibitorBox = new JCheckBox();
-	JCheckBox coFactorBox = new JCheckBox();
-	JCheckBox autoCoarseDepth = new JCheckBox();
-	JCheckBox autoCoarseEnzymeNomenclature = new JCheckBox();
-
-	JTextField field = new JTextField(10);
-	TableRowSorter<NodePropertyTableModel> sorter;
+	private JTextField field = new JTextField(10);
+	private TableRowSorter<NodePropertyTableModel> sorter;
 
 	private MyTable table;
 
@@ -190,7 +183,7 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog = new JDialog(this, "Settings", true);
+		dialog = new JDialog(new JFrame(), "Settings", true);
 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -291,7 +284,7 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 			MainWindow.getInstance().closeProgressBar();
 		} else if ("new".equals(event)) {
 			if (table.getSelectedRows().length == 0) {
-				JOptionPane.showMessageDialog(this, "Please choose an enzyme.",
+				JOptionPane.showMessageDialog(null, "Please choose an enzyme.",
 						"Message", 1);
 			} else {
 				ok = true;
@@ -302,8 +295,5 @@ public class BrendaSearchResultWindow extends JFrame implements ActionListener {
 				new BrendaPatternListWindow();
 			}
 		}
-		
-
 	}
-
 }

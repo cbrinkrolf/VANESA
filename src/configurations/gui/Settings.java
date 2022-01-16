@@ -69,7 +69,7 @@ public class Settings extends JDialog implements ActionListener {
 		database.enableDispaly(enable);
 		internet.enableDispaly(enable);
 		defaultButton.setEnabled(enable);
-		gset.setEnabled(enable);
+		gset.getPanel().setEnabled(enable);
 	}
 
 	public void actionPerformed(ActionEvent e) {

@@ -18,34 +18,25 @@ import graph.algorithms.RandomRegularGraph;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
-public class RandomRegularGraphGui extends JFrame implements ActionListener {
+public class RandomRegularGraphGui implements ActionListener {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	// Variables declaration
-	JButton cancel = new JButton("cancel");
-	JButton applyButton = new JButton("Generate Random Regular Graph");
-	JButton[] buttons = { applyButton, cancel };
+	private JButton cancel = new JButton("cancel");
+	private JButton applyButton = new JButton("Generate Random Regular Graph");
+	private JButton[] buttons = { applyButton, cancel };
 
-	JPanel panel;
-	JOptionPane pane;
+	private JSpinner nodes;
+	private JSpinner degree;
 
-	JSpinner nodes;
-	JSpinner degree;
-
-	JOptionPane optionPane;
-	JDialog dialog;
+	private JOptionPane optionPane;
+	private JDialog dialog;
 
 	public RandomRegularGraphGui() {
 
 		MigLayout layout = new MigLayout();
 		JPanel mainPanel = new JPanel(layout);
 
-		mainPanel.add(new JLabel(
-				"What kind of graph do you wish to be generated?"),
-				"span 2, wrap 15 ");
+		mainPanel.add(new JLabel("What kind of graph do you wish to be generated?"), "span 2, wrap 15 ");
 		mainPanel.add(new JSeparator(), "gap 10, wrap 15, growx, span 2");
 
 		SpinnerNumberModel model1 = new SpinnerNumberModel(10, 1, 1000, 1);
@@ -54,8 +45,7 @@ public class RandomRegularGraphGui extends JFrame implements ActionListener {
 		mainPanel.add(new JLabel("Number of nodes"), "span 1, gaptop 2 ");
 		mainPanel.add(nodes, "span 1,wrap,gaptop 2");
 
-		SpinnerNumberModel model2 = new SpinnerNumberModel(4, 1,
-				(1000 * (1000 - 1)) / 2, 1);
+		SpinnerNumberModel model2 = new SpinnerNumberModel(4, 1, (1000 * (1000 - 1)) / 2, 1);
 		degree = new JSpinner(model2);
 
 		mainPanel.add(new JLabel("Degree of each Node"), "span 1, gaptop 2 ");
@@ -72,7 +62,7 @@ public class RandomRegularGraphGui extends JFrame implements ActionListener {
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog = new JDialog(this, "Random Regular Graph Generation", true);
+		dialog = new JDialog(new JFrame(), "Random Regular Graph Generation", true);
 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -92,8 +82,7 @@ public class RandomRegularGraphGui extends JFrame implements ActionListener {
 			dialog.setVisible(false);
 
 			RandomRegularGraph random = new RandomRegularGraph();
-			random.generateRandomRegularGraph((Integer) nodes.getValue(),
-					(Integer) degree.getValue());
+			random.generateRandomRegularGraph((Integer) nodes.getValue(), (Integer) degree.getValue());
 		}
 	}
 }

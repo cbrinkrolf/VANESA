@@ -58,10 +58,8 @@ public class Launch {
 		final IntroScreen intro = new IntroScreen();
 		intro.openWindow();
 
-		if (!ProgramFileLock.writeLock())
-
-		{
-			JOptionPane.showMessageDialog(intro, "Another instance of the program is already running!\nExit program.",
+		if (!ProgramFileLock.writeLock()) {
+			JOptionPane.showMessageDialog(null, "Another instance of the program is already running!\nExit program.",
 					"Exit", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
@@ -164,9 +162,7 @@ public class Launch {
 						w.getFrame().setEnabled(true);
 						SwingUtilities.updateComponentTreeUI(w.getFrame());
 					}
-
 				});
-
 			}
 		};
 
@@ -214,9 +210,8 @@ public class Launch {
 					// TODO uncomment if DAWIS DB integrated
 
 					/*
-					 * if (dawis_sessionid != null) {
-					 * System.out.println("start"); DAWISWebstartConnector dws =
-					 * new DAWISWebstartConnector( dawis_sessionid);
+					 * if (dawis_sessionid != null) { System.out.println("start");
+					 * DAWISWebstartConnector dws = new DAWISWebstartConnector( dawis_sessionid);
 					 * dws.execute();
 					 *
 					 * }
@@ -260,9 +255,7 @@ public class Launch {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		Logger logger = Logger.getRootLogger();
-
 		logger.info("Network editor started by " + System.getProperty("user.name"));
 	}
 }

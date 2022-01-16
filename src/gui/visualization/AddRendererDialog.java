@@ -28,15 +28,13 @@ import gui.LocalBackboardPaintable;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
-public class AddRendererDialog extends JFrame implements ActionListener {
+public class AddRendererDialog implements ActionListener {
 
-	private static final long serialVersionUID = -4314475716107745329L;
-
-	JButton cancelbutton = new JButton("cancel");
-	JButton confirmbutton = new JButton("ok");
-	JButton[] buttons = { confirmbutton, cancelbutton };
-	JOptionPane optionPane;
-	JDialog dialog;
+	private JButton cancelbutton = new JButton("cancel");
+	private JButton confirmbutton = new JButton("ok");
+	private JButton[] buttons = { confirmbutton, cancelbutton };
+	private JOptionPane optionPane;
+	private JDialog dialog;
 
 	private JComboBox<String> rendertypebox;
 	private JComboBox<String> attributetypebox;
@@ -51,29 +49,23 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 
 	private JComboBox<String> shapebox;
 	private JSpinner sizespinner;
-	
+
 	private PreRenderManager manager;
-	
-	
 
 	private final String[] renderertypes = { "", "LocalBackboard" };
-	private final String[] attributetypes = { "", "Annotation", "Color",
-			"Experiment", "Graph property" };
-	private final String[] nodeattributes_GO = {
-			NodeAttributeNames.GO_BIOLOGICAL_PROCESS,
-			NodeAttributeNames.GO_CELLULAR_COMPONENT,
-			NodeAttributeNames.GO_MOLECULAR_FUNCTION };
+	private final String[] attributetypes = { "", "Annotation", "Color", "Experiment", "Graph property" };
+	private final String[] nodeattributes_GO = { NodeAttributeNames.GO_BIOLOGICAL_PROCESS,
+			NodeAttributeNames.GO_CELLULAR_COMPONENT, NodeAttributeNames.GO_MOLECULAR_FUNCTION };
 	private final String[] nodeattributes_COL = { "Nodecolor" };
 	private final String[] nodeattributes_EXP = { NodeAttributeNames.CHOLESTEATOMA };
-	private final String[] nodeattributes_GPROP = {
-			NodeAttributeNames.NODE_DEGREE, NodeAttributeNames.NEIGHBOR_DEGREE };
+	private final String[] nodeattributes_GPROP = { NodeAttributeNames.NODE_DEGREE,
+			NodeAttributeNames.NEIGHBOR_DEGREE };
 	private final String[] shapes = { "oval", "fadeoval", "rect", "roundrect" };
 
 	public AddRendererDialog(PreRenderManager manager) {
 
 		this.manager = manager;
-		MigLayout layout = new MigLayout("", "",
-				"[][]40[][]40[][]40[][][][]40[][][][][][][]");
+		MigLayout layout = new MigLayout("", "", "[][]40[][]40[][]40[][][][]40[][][][][][][]");
 
 		JPanel mainPanel = new JPanel(layout);
 
@@ -133,8 +125,7 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 
 		mainPanel.add(new JSeparator(), " span, growx");
 
-		mainPanel.add(new JLabel("Please specify renderer characterstics:"),
-				"span, wrap");
+		mainPanel.add(new JLabel("Please specify renderer characterstics:"), "span, wrap");
 		mainPanel.add(new JLabel("shape:"));
 		mainPanel.add(shapebox, "wrap");
 
@@ -152,7 +143,7 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog = new JDialog(this, "Add Renderer", true);
+		dialog = new JDialog(new JFrame(), "Add Renderer", true);
 
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -168,27 +159,24 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 		switch (event) {
 		case "cancel":
 
-			this.dispose();
+			dialog.dispose();
 			break;
 
 		case "ok":
 			// check for valid input
 			// get renderer details
-			String shape = null,
-			name = null;
+			String shape = null, name = null;
 			int drawsize = -1;
 			shape = shapebox.getSelectedItem().toString();
 			drawsize = ((Double) sizespinner.getValue()).intValue();
 			HashSet<BiologicalNodeAbstract> bnas = new HashSet<>();
 
 			// STRING variant
-			if (rendertypebox.isEnabled() && attributetypebox.isEnabled()
-					&& nodeattributesbox.isEnabled() && valuesbox.isEnabled()) {
-				
+			if (rendertypebox.isEnabled() && attributetypebox.isEnabled() && nodeattributesbox.isEnabled()
+					&& valuesbox.isEnabled()) {
 
 				name = valuesbox.getSelectedItem().toString();
-				for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph()
-						.getAllVertices()) {
+				for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph().getAllVertices()) {
 					for (NodeAttribute na : bna.getNodeAttributes()) {
 						if (na.getStringvalue().equals(name))
 							bnas.add(bna);
@@ -196,50 +184,37 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 				}
 
 				// DOUBLE FROM TO variant
-			} else if (rendertypebox.isEnabled()
-					&& attributetypebox.isEnabled()
-					&& nodeattributesbox.isEnabled()
-					&& valuefromspinner.isEnabled()
-					&& valuetospinner.isEnabled()) {
+			} else if (rendertypebox.isEnabled() && attributetypebox.isEnabled() && nodeattributesbox.isEnabled()
+					&& valuefromspinner.isEnabled() && valuetospinner.isEnabled()) {
 
-
-				
 				double min, max;
 				min = (double) valuefromspinner.getValue();
 				max = (double) valuetospinner.getValue();
-				name = nodeattributesbox.getSelectedItem().toString()+" ("+min+"/"+max+")";
-				System.out.println(name+" "+min+"/"+max);
-				
+				name = nodeattributesbox.getSelectedItem().toString() + " (" + min + "/" + max + ")";
+				System.out.println(name + " " + min + "/" + max);
 
-				for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph()
-						.getAllVertices()) {
+				for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph().getAllVertices()) {
 					for (NodeAttribute na : bna.getNodeAttributes()) {
 
-						System.out.println(na.getName()+": "+na.getDoublevalue()+" \t"+bna.getLabel());
-						if (na.getName().equals( nodeattributesbox.getSelectedItem().toString()) 
-								&& na.getDoublevalue() >= min
-								&& na.getDoublevalue() <= max){
+						System.out.println(na.getName() + ": " + na.getDoublevalue() + " \t" + bna.getLabel());
+						if (na.getName().equals(nodeattributesbox.getSelectedItem().toString())
+								&& na.getDoublevalue() >= min && na.getDoublevalue() <= max) {
 							bnas.add(bna);
-							System.out.println(na.getName()+": "+na.getDoublevalue()+" \t"+bna.getLabel());
-						}							
+							System.out.println(na.getName() + ": " + na.getDoublevalue() + " \t" + bna.getLabel());
+						}
 					}
 				}
 			}
 
-			LocalBackboardPaintable lp = new LocalBackboardPaintable(bnas, Color.red,
-					drawsize, shape, name);
-			
-			GraphInstance
-					.getMyGraph()
-					.getVisualizationViewer()
-					.addPreRenderPaintable(lp);		
-			
+			LocalBackboardPaintable lp = new LocalBackboardPaintable(bnas, Color.red, drawsize, shape, name);
+
+			GraphInstance.getMyGraph().getVisualizationViewer().addPreRenderPaintable(lp);
+
 			manager.addRow(lp);
-			
-			
+
 			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
 
-			this.dispose();
+			dialog.dispose();
 			break;
 
 		// comboboxes
@@ -274,13 +249,13 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 				nodeattributesbox.removeAllItems();
 				nodeattributesbox.addItem("");
 				TreeSet<String> annstrings = new TreeSet<>();
-				for(BiologicalNodeAbstract bna :GraphInstance.getMyGraph().getAllVertices()){
-					for(NodeAttribute na :bna.getNodeAttributesByType(NodeAttributeTypes.ANNOTATION))
+				for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph().getAllVertices()) {
+					for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.ANNOTATION))
 						annstrings.add(na.getName());
 				}
-				for(String ann : annstrings)
+				for (String ann : annstrings)
 					nodeattributesbox.addItem(ann);
-				
+
 //				for (String ann : nodeattributes_GO)
 //					nodeattributesbox.addItem(ann);
 				nodeattributesbox.setEnabled(true);
@@ -321,8 +296,7 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 
 		case "nodeattributes":
 
-			if (nodeattributesbox.isEnabled()
-					&& nodeattributesbox.getItemCount() > 0) {
+			if (nodeattributesbox.isEnabled() && nodeattributesbox.getItemCount() > 0) {
 
 				switch ((String) nodeattributesbox.getSelectedItem()) {
 				case "":
@@ -333,16 +307,13 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 
 				default:
 
-					if (attributetypebox.getSelectedIndex() == 1
-							|| attributetypebox.getSelectedIndex() == 2) {
-						String val = nodeattributesbox.getSelectedItem()
-								.toString();
+					if (attributetypebox.getSelectedIndex() == 1 || attributetypebox.getSelectedIndex() == 2) {
+						String val = nodeattributesbox.getSelectedItem().toString();
 						TreeSet<String> choices = new TreeSet<>();
 						valuesbox.removeAllItems();
 						valuesbox.addItem("");
 
-						for (BiologicalNodeAbstract bna : GraphInstance
-								.getMyGraph().getAllVertices()) {
+						for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph().getAllVertices()) {
 							NodeAttribute na = bna.getNodeAttributeByName(val);
 							if (na != null)
 								choices.add(na.getStringvalue());
@@ -355,15 +326,12 @@ public class AddRendererDialog extends JFrame implements ActionListener {
 
 						dialog.pack();
 
-					} else if (attributetypebox.getSelectedIndex() == 3
-							|| attributetypebox.getSelectedIndex() == 4) {
-						String val = nodeattributesbox.getSelectedItem()
-								.toString();
+					} else if (attributetypebox.getSelectedIndex() == 3 || attributetypebox.getSelectedIndex() == 4) {
+						String val = nodeattributesbox.getSelectedItem().toString();
 						double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
 						boolean novalues = true;
 
-						for (BiologicalNodeAbstract bna : GraphInstance
-								.getMyGraph().getAllVertices()) {
+						for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph().getAllVertices()) {
 							NodeAttribute na = bna.getNodeAttributeByName(val);
 							if (na != null) {
 								novalues = false;

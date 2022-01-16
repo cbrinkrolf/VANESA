@@ -47,12 +47,11 @@ import util.VanesaUtility;
  * @author cbrinkro
  * 
  */
-public class Brenda2SearchResultWindow extends JFrame implements ActionListener {
+public class Brenda2SearchResultWindow implements ActionListener {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private JTextField ecNumber = new JTextField();
 	private JTextField name = new JTextField();
 	private JTextField syn = new JTextField();
@@ -172,7 +171,7 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 		optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
 		optionPane.setOptions(buttons);
 
-		dialog = new JDialog(this, "Brenda 2 Search", false);
+		dialog = new JDialog(new JFrame(), "Brenda 2 Search", false);
 		dialog.setAlwaysOnTop(false);
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -314,7 +313,7 @@ public class Brenda2SearchResultWindow extends JFrame implements ActionListener 
 			MainWindow.getInstance().closeProgressBar();
 		} else if ("okButton".equals(event)) {
 			if (enzymeTable.getSelectedRows().length == 0) {
-				JOptionPane.showMessageDialog(this, "Please choose an enzyme.", "Message", 1);
+				JOptionPane.showMessageDialog(null, "Please choose an enzyme.", "Message", 1);
 			} else {
 				ok = true;
 				dialog.setVisible(false);
