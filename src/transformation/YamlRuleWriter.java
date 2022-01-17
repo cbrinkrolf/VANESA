@@ -53,11 +53,11 @@ public class YamlRuleWriter {
 		
 		// for BN
 		RuleEdge re;
-		rule.setBiologicalNodes(r.getAllBiologicalNodes());
+		rule.setBiologicalNodes(r.getBiologicalNodes());
 		List<YamlEdge> edges = new ArrayList<YamlEdge>();
 		YamlEdge e;
-		for(int i = 0; i<r.getAllBiologicalEdges().size(); i++){
-			re = r.getAllBiologicalEdges().get(i);
+		for(int i = 0; i<r.getBiologicalEdges().size(); i++){
+			re = r.getBiologicalEdges().get(i);
 			e = new YamlEdge();
 			e.setName(re.getName());
 			e.setType(re.getType());
@@ -70,9 +70,9 @@ public class YamlRuleWriter {
 		
 		// for PN
 		edges = new ArrayList<YamlEdge>();
-		rule.setPetriNodes(r.getAllPetriNodes());
-		for(int i = 0; i<r.getAllPetriEdges().size(); i++){
-			re = r.getAllPetriEdges().get(i);
+		rule.setPetriNodes(r.getPetriNodes());
+		for(int i = 0; i<r.getPetriEdges().size(); i++){
+			re = r.getPetriEdges().get(i);
 			e = new YamlEdge();
 			e.setName(re.getName());
 			e.setType(re.getType());
@@ -83,7 +83,7 @@ public class YamlRuleWriter {
 		rule.setPetriEdges(edges);
 		
 		//mapping
-		Map<RuleNode, RuleNode> map = r.getBNtoPNMapping();
+		Map<RuleNode, RuleNode> map = r.getBnToPnMapping();
 		RuleNode rn;
 		Iterator<RuleNode> it = map.keySet().iterator();
 		List<Map<String, String>> yamlMapping = new ArrayList<>();

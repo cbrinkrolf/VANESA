@@ -18,9 +18,9 @@ public interface GraphElementAbstract{
 
 	public String getNetworklabel();
 
-	public boolean hasKEGGNode();
+	public boolean isHasKEGGNode();
 
-	public void hasKEGGNode(boolean hasKEGGNode);
+	public void setHasKEGGNode(boolean hasKEGGNode);
 
 	public String getName();
 
@@ -58,9 +58,9 @@ public interface GraphElementAbstract{
 
 	public void setVisible(boolean isVisible);
 
-	public boolean hasBrendaNode();
+	public boolean isHasBrendaNode();
 
-	public void hasBrendaNode(boolean hasBrendaNode);
+	public void setHasBrendaNode(boolean hasBrendaNode);
 
 	public ArrayList<Parameter> getParameters();
 

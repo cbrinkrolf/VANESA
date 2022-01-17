@@ -257,7 +257,7 @@ public class PetriNetVertexDialog {
 					ContinuousTransition t = new ContinuousTransition(name.getText().trim(), name.getText().trim());
 					if (!pw.isHeadless()) {
 						t.setFiringCondition(firingCondition.getText().trim());
-						t.setMaximumSpeed(maxSpeed.getText().trim());
+						t.setMaximalSpeed(maxSpeed.getText().trim());
 					}
 					createdNode = t;
 				} else if (petriElement.equals(Elementdeclerations.stochasticTransition)) {

@@ -409,7 +409,7 @@ public class MOoutput {
 
 					ContinuousTransition t = (ContinuousTransition) bna;
 
-					String speed = this.replaceAll(t.getMaximumSpeed(), t.getParameters(), t);
+					String speed = this.replaceAll(t.getMaximalSpeed(), t.getParameters(), t);
 					if (t.isKnockedOut()) {
 						attr = "maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/";
 					} else {

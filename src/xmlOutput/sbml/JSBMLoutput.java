@@ -429,7 +429,7 @@ public class JSBMLoutput {
 		attr = oneNode.getOrganism();
 		el.addChild(createElSub(attr, "Organism"));
 
-		boolean attrb = oneNode.hasKEGGNode();
+		boolean attrb = oneNode.isHasKEGGNode();
 		attr = String.valueOf(attrb);
 		el.addChild(createElSub(attr, "HasKEGGNode"));
 
@@ -486,7 +486,7 @@ public class JSBMLoutput {
 			attrs[47] = oneNode.getKEGGnode().getKeggenzymeClass();
 			attrs[48] = oneNode.getKEGGnode().getKeggorthology();
 			attrs[49] = oneNode.getKEGGnode().getKEGGPathway();
-			attrs[50] = oneNode.getKEGGnode().getKeggprodukt();
+			attrs[50] = oneNode.getKEGGnode().getKeggproduct();
 			attrs[51] = oneNode.getKEGGnode().getKeggreaction();
 			attrs[52] = oneNode.getKEGGnode().getKeggreference();
 			attrs[53] = oneNode.getKEGGnode().getKeggsubstrate();
@@ -655,7 +655,7 @@ public class JSBMLoutput {
 			attr = ((biologicalObjects.nodes.Gene) oneNode).getEnzymes().toString();
 			el.addChild(createElSub(attr, "Enzymes"));
 		} else if (oneNode instanceof biologicalObjects.nodes.PathwayMap) {
-			attr = String.valueOf(((biologicalObjects.nodes.PathwayMap) oneNode).getSpecification());
+			attr = String.valueOf(((biologicalObjects.nodes.PathwayMap) oneNode).isSpecification());
 			el.addChild(createElSub(attr, "Specification"));
 			if (((biologicalObjects.nodes.PathwayMap) oneNode).getPathwayLink() != null) {
 				attr = ((biologicalObjects.nodes.PathwayMap) oneNode).getPathwayLink().toString();
@@ -669,12 +669,6 @@ public class JSBMLoutput {
 			attr = ((biologicalObjects.nodes.RNA) oneNode).getNtSequence();
 			el.addChild(createElSub(attr, "NtSequence"));
 
-		} else if (oneNode instanceof biologicalObjects.nodes.SmallMolecule) {
-			attr = ((biologicalObjects.nodes.SmallMolecule) oneNode).getFormula();
-			el.addChild(createElSub(attr, "Formula"));
-			attr = ((biologicalObjects.nodes.SmallMolecule) oneNode).getMass();
-			el.addChild(createElSub(attr, "Mass"));
-
 		} else if (oneNode instanceof biologicalObjects.nodes.SRNA) {
 			attr = ((biologicalObjects.nodes.SRNA) oneNode).getTarbase_accession();
 			el.addChild(createElSub(attr, "Tarbase_accession"));
@@ -687,7 +681,7 @@ public class JSBMLoutput {
 		}
 
 		if (oneNode instanceof DynamicNode) {
-			attr = String.valueOf(((DynamicNode) oneNode).getMaximumSpeed());
+			attr = String.valueOf(((DynamicNode) oneNode).getMaximalSpeed());
 			el.addChild(createElSub(attr, "maximumSpeed"));
 			attr = String.valueOf(((DynamicNode) oneNode).isKnockedOut());
 			el.addChild(createElSub(attr, "knockedOut"));
@@ -804,7 +798,7 @@ public class JSBMLoutput {
 
 		// Save additional data
 		if (oneEdge instanceof biologicalObjects.edges.ReactionPair) {
-			attrb = ((biologicalObjects.edges.ReactionPair) oneEdge).hasRPairEdge();
+			attrb = ((biologicalObjects.edges.ReactionPair) oneEdge).isHasReactionPairEdge();
 			attr = String.valueOf(attrb);
 			el.addChild(createElSub(attr, "HasReactionPairEdge"));
 			// Test if hasRPairEdge = true

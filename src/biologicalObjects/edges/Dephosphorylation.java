@@ -10,5 +10,4 @@ public class Dephosphorylation extends BiologicalEdgeAbstract {
 		super(label, name, from, to);
 		setBiologicalElement(Elementdeclerations.dephosphorylationEdge);
 	}
-
 }

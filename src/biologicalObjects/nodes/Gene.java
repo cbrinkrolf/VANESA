@@ -3,15 +3,24 @@ package biologicalObjects.nodes;
 import java.util.Vector;
 
 import biologicalElements.Elementdeclerations;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Gene extends BiologicalNodeAbstract {
 
 	private String ntSequence = "";
 
+	@Setter(AccessLevel.NONE)
 	private Vector<String[]> proteins = new Vector<String[]>();
+	@Setter(AccessLevel.NONE)
 	private Vector<String[]> enzymes = new Vector<String[]>();
 
+	@Setter(AccessLevel.NONE)
 	private boolean hasProteins = false;
+	@Setter(AccessLevel.NONE)
 	private boolean hasEnzymes = false;
 
 	public Gene(String label, String name) {
@@ -19,7 +28,7 @@ public class Gene extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.gene);
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
-	
+
 //	@SuppressWarnings("unchecked")
 //	public void lookUpAtAllDatabases() {
 //		DAWISNode node = getDAWISNode();
@@ -104,24 +113,11 @@ public class Gene extends BiologicalNodeAbstract {
 //		}
 //	}
 
-	public boolean hasProteins() {
-		return hasProteins;
-	}
-
-	public boolean hasEnzymes() {
-		return hasEnzymes;
-	}
-
 	public void addProtein(String[] proteinID) {
-
 		if (!proteins.contains(proteinID)) {
 			proteins.add(proteinID);
 		}
 		hasProteins = true;
-	}
-
-	public Vector<String[]> getProteins() {
-		return proteins;
 	}
 
 	public void addEnzyme(String[] enzymeID) {
@@ -129,17 +125,5 @@ public class Gene extends BiologicalNodeAbstract {
 			enzymes.add(enzymeID);
 		}
 		hasEnzymes = true;
-	}
-
-	public Vector<String[]> getEnzymes() {
-		return enzymes;
-	}
-
-	public String getNtSequence() {
-		return ntSequence;
-	}
-
-	public void setNtSequence(String ntSequence) {
-		this.ntSequence = ntSequence;
 	}
 }

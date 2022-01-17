@@ -336,7 +336,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 		if (validElement) {
 			bna.setKEGGnode(node);
-			bna.hasKEGGNode(true);
+			bna.setHasKEGGNode(true);
 			boolean addBNA = true;
 			Iterator<BiologicalNodeAbstract> it = pw.getVertices().keySet().iterator();
 			BiologicalNodeAbstract old_bna;

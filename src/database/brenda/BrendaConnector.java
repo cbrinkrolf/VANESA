@@ -413,7 +413,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 					pw.setRootNode(e);
 
 					// String[] gesplittet = resultDetails[3].split("=");
-					e.hasBrendaNode(true);
+					e.setHasBrendaNode(true);
 
 					newNode = new DefaultMutableTreeNode(e.getLabel());
 

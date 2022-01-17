@@ -142,7 +142,7 @@ public class MenuListener implements ActionListener {
 					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
 				new CreatePathway();
-				graphInstance.getPathway().setPetriNet(option == JOptionPane.NO_OPTION);
+				graphInstance.getPathway().setIsPetriNet(option == JOptionPane.NO_OPTION);
 				w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
 				w.updateAllGuiElements();
 			}
@@ -1065,7 +1065,7 @@ public class MenuListener implements ActionListener {
 							dn = (DynamicNode) bna;
 							maximumSpeed = KineticBuilder.createConvenienceKinetic(bna);
 							System.out.println(maximumSpeed);
-							dn.setMaximumSpeed(maximumSpeed);
+							dn.setMaximalSpeed(maximumSpeed);
 						}
 					}
 				} else {
@@ -1090,7 +1090,7 @@ public class MenuListener implements ActionListener {
 					Transformator t = new Transformator();
 					Pathway petriNet = t.transform(pw, rules);
 					pw.setPetriNet(petriNet);
-					pw.setBnToPN(t.getBnToPN());
+					pw.setBnToPnMapping(t.getBnToPN());
 					w.updateProjectProperties();
 					// CreatePathway.showPathway(petriNet);
 				} else {

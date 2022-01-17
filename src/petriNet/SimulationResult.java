@@ -7,17 +7,29 @@ import java.util.Set;
 import biologicalElements.GraphElementAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import util.DoubleHashMap;
 
+@Getter
+@Setter
 public class SimulationResult {
 
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private DoubleHashMap<GraphElementAbstract, Integer, Series> result;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private DoubleHashMap<GraphElementAbstract, Integer, TimeSeries> resultFiltered;
+	@Setter(AccessLevel.NONE)
 	private Series time;
 	private boolean active = true;
+	@Setter(AccessLevel.NONE)
 	private String name;
+	@Setter(AccessLevel.NONE)
 	private String id;
-
+	@Setter(AccessLevel.NONE)
 	private StringBuilder logMessage = new StringBuilder();
 
 	public SimulationResult(String id, String name, boolean filtered) {
@@ -62,10 +74,6 @@ public class SimulationResult {
 		return resultFiltered.get(gea, type).getValues().get(pos);
 	}
 
-	public Series getTime() {
-		return this.time;
-	}
-
 	public List<Double> getTimeValues() {
 		return this.time.getAll();
 	}
@@ -90,32 +98,12 @@ public class SimulationResult {
 		return result.contains(gea, type);
 	}
 
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-
-	public String getId() {
-		return this.id;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
 	public void setName(String name) {
 		this.name = name.trim();
 	}
 
 	public int size() {
 		return this.time.size();
-	}
-
-	public StringBuilder getLogMessage() {
-		return logMessage;
 	}
 
 	public void refineEdgeFlow(Set<PNEdge> edges) {

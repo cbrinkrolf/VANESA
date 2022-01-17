@@ -2,28 +2,25 @@ package biologicalObjects.edges.petriNet;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import petriNet.FunctionParser;
 
+@Getter
+@Setter
 public class PNEdge extends BiologicalEdgeAbstract {
 
 	// conflict sovling: priority that edge is active, 1=highest, n=lowest
 	// priority
+	@Setter(AccessLevel.NONE)
 	private int priority = 1;
 
 	// conflict sovling: probability that edge is active
+	@Setter(AccessLevel.NONE)
 	private double probability = 1.0;
 
 	private boolean wasUndirected = false;
-
-	public boolean wasUndirected() {
-		return wasUndirected;
-	}
-
-	public void wasUndirected(boolean wasUndirected) {
-		this.wasUndirected = wasUndirected;
-	}
-
-	private FunctionParser fp = new FunctionParser();
 
 	public PNEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to, String label, String name, String type,
 			String edgeFunction) {
@@ -42,21 +39,13 @@ public class PNEdge extends BiologicalEdgeAbstract {
 	}
 
 	public double getPassingTokens() {
-		return fp.parse(getFunction());
-	}
-
-	public int getPriority() {
-		return priority;
+		return new FunctionParser().parse(getFunction());
 	}
 
 	public void setPriority(int priority) {
 		if (priority > 0) {
 			this.priority = priority;
 		}
-	}
-
-	public double getProbability() {
-		return probability;
 	}
 
 	public void setProbability(double probability) {

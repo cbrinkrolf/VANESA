@@ -51,7 +51,7 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 		frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		// System.out.println("constr.");
 		rm = RuleManager.getInstance();
-		rules = rm.getAllRules();
+		rules = rm.getRules();
 
 		MigLayout layout = new MigLayout("", "[left]");
 

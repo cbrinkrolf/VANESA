@@ -1,8 +1,6 @@
 package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
-//import edu.uci.ics.jung.graph.Vertex;
-
 
 public class SolubleReceptor extends Receptor {
 
@@ -11,6 +9,4 @@ public class SolubleReceptor extends Receptor {
 		setBiologicalElement(Elementdeclerations.solubleReceptor);
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
-
-	
 }

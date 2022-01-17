@@ -117,7 +117,7 @@ public class PNDoc {
 		sb.append("\\begin{align*}\n");
 		sb.append("\\scriptstyle\n");
 		// System.out.println(t.getMaximumSpeed());
-		sb.append("f = " + FormulaParser.parseToLatex(t.getMaximumSpeed())
+		sb.append("f = " + FormulaParser.parseToLatex(t.getMaximalSpeed())
 				+ "\n");
 
 		sb.append("\\end{align*}\n");

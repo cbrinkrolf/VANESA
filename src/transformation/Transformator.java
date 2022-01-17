@@ -99,7 +99,7 @@ public class Transformator {
 		tmpGraph = new UndirectedSparseGraph<>();
 
 		petriNet = new Pathway("PN_" + pw.getName());
-		petriNet.setPetriNet(true);
+		petriNet.setIsPetriNet(true);
 
 		BiologicalNodeAbstract bna;
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
@@ -165,12 +165,12 @@ public class Transformator {
 		// List<String> nodeNames = r.getBNodeNames();
 
 		Graph<String, String> ruleGraph = new UndirectedSparseGraph<>();
-		for (int i = 0; i < r.getAllBiologicalNodes().size(); i++) {
-			ruleGraph.addVertex(r.getAllBiologicalNodes().get(i).getName());
+		for (int i = 0; i < r.getBiologicalNodes().size(); i++) {
+			ruleGraph.addVertex(r.getBiologicalNodes().get(i).getName());
 		}
 		RuleEdge re;
-		for (int i = 0; i < r.getAllBiologicalEdges().size(); i++) {
-			re = r.getAllBiologicalEdges().get(i);
+		for (int i = 0; i < r.getBiologicalEdges().size(); i++) {
+			re = r.getBiologicalEdges().get(i);
 			ruleGraph.addEdge(re.getName(), re.getFrom().getName(), re.getTo().getName());
 		}
 
@@ -247,11 +247,11 @@ public class Transformator {
 		BiologicalNodeAbstract bna;
 		String type;
 		Iterator<BiologicalNodeAbstract> it;
-		for (int i = 0; i < r.getAllBiologicalNodes().size(); i++) {
+		for (int i = 0; i < r.getBiologicalNodes().size(); i++) {
 			l = new ArrayList<Integer>();
 
 			if (useBuckets) {
-				type = r.getAllBiologicalNodes().get(i).getType();
+				type = r.getBiologicalNodes().get(i).getType();
 
 				// consider ANY node
 				if (type.equals(Elementdeclerations.anyBNA)) {
@@ -326,13 +326,13 @@ public class Transformator {
 
 			boolean test = true;
 			// check all edges
-			for (int j = 0; j < r.getAllBiologicalEdges().size(); j++) {
+			for (int j = 0; j < r.getBiologicalEdges().size(); j++) {
 				if (test) {
-					bEdge = r.getAllBiologicalEdges().get(j);
+					bEdge = r.getBiologicalEdges().get(j);
 					boolean test1 = false;
-					id1 = perm.get(r.getAllBiologicalNodes().indexOf(bEdge.getFrom()));
+					id1 = perm.get(r.getBiologicalNodes().indexOf(bEdge.getFrom()));
 
-					id2 = perm.get(r.getAllBiologicalNodes().indexOf(bEdge.getTo()));
+					id2 = perm.get(r.getBiologicalNodes().indexOf(bEdge.getTo()));
 					n1 = id2bna.get(id1);
 					n2 = id2bna.get(id2);
 
@@ -379,10 +379,10 @@ public class Transformator {
 		HashMap<RuleNode, PNNode> rulePNodeToBNA = new HashMap<RuleNode, PNNode>();
 		List<BiologicalNodeAbstract> toDeleteBNA = new ArrayList<BiologicalNodeAbstract>();
 
-		for (int i = 0; i < r.getAllBiologicalNodes().size(); i++) {
+		for (int i = 0; i < r.getBiologicalNodes().size(); i++) {
 			// System.out.println(r.getAllBiologicalNodes().get(i) + "->"+
 			// id2bna.get(perm.get(i)));
-			ruleBNodeToBNA.put(r.getAllBiologicalNodes().get(i), id2bna.get(perm.get(i)));
+			ruleBNodeToBNA.put(r.getBiologicalNodes().get(i), id2bna.get(perm.get(i)));
 		}
 
 		// create or fetch nodes
@@ -390,8 +390,8 @@ public class Transformator {
 		RuleNode bNode;
 		BiologicalNodeAbstract bna;
 		PNNode pnBNA;
-		for (int i = 0; i < r.getAllPetriNodes().size(); i++) {
-			pnNode = r.getAllPetriNodes().get(i);
+		for (int i = 0; i < r.getPetriNodes().size(); i++) {
+			pnNode = r.getPetriNodes().get(i);
 			// System.out.println(pnNode);
 			// Petri net node has mapping to biological node
 			if (r.getMappedBnode(pnNode) != null) {
@@ -440,9 +440,9 @@ public class Transformator {
 		PNNode from;
 		PNNode to;
 		PNEdge edge;
-		for (int i = 0; i < r.getAllPetriEdges().size(); i++) {
+		for (int i = 0; i < r.getPetriEdges().size(); i++) {
 			executed = true;
-			pnEdge = r.getAllPetriEdges().get(i);
+			pnEdge = r.getPetriEdges().get(i);
 
 			from = rulePNodeToBNA.get(pnEdge.getFrom());
 			to = rulePNodeToBNA.get(pnEdge.getTo());

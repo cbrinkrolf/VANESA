@@ -194,8 +194,8 @@ public class JSBMLinput {
 			}
 			Group tmp = new Group(nodeslist);
 			for (int k = 0; k < nodeslist.size(); k++) {
-				nodeslist.get(k).setisinGroup(true);
-				nodeslist.get(k).setGroup(tmp);
+				nodeslist.get(k).setInGroup(true);
+				nodeslist.get(k).addGroup(tmp);
 			}
 			pathway.getGroupes().add(tmp);
 		}
@@ -236,7 +236,7 @@ public class JSBMLinput {
 			Element groupNode = modelNode.getChild("listOfGroups", null);
 			getInputGroups(groupNode);
 		}
-		this.pathway.setPetriNet(isPetri);
+		this.pathway.setIsPetriNet(isPetri);
 	}
 
 	/**
@@ -603,7 +603,7 @@ public class JSBMLinput {
 					elSub = specAnnotation.getChild("environmentNode", null);
 					if (elSub != null) {
 						if (String.valueOf(elSub.getAttributeValue("environmentNode")).equals("true")) {
-							bna.markAsEnvironment(true);
+							bna.setMarkedAsEnvironment(true);
 						}
 					}
 
@@ -761,7 +761,7 @@ public class JSBMLinput {
 			roughestAbstractionNodes.removeIf(p -> p.isMarkedAsEnvironment());
 			BiologicalNodeAbstract.coarse(roughestAbstractionNodes);
 			for (BiologicalNodeAbstract node : nodes.values()) {
-				node.markAsEnvironment(false);
+				node.setMarkedAsEnvironment(false);
 			}
 		}
 	}
@@ -864,7 +864,7 @@ public class JSBMLinput {
 			break;
 		case "HasKEGGNode":
 			Boolean b = Boolean.parseBoolean(value);
-			bna.hasKEGGNode(b);
+			bna.setHasKEGGNode(b);
 			break;
 		case "KEGGNode":
 			bna.setKEGGnode(new KEGGNode());
@@ -943,7 +943,7 @@ public class JSBMLinput {
 				if (value == null || value.equals("")) {
 					speed = "1";
 				}
-				((DynamicNode) bna).setMaximumSpeed(speed);
+				((DynamicNode) bna).setMaximalSpeed(speed);
 			}
 			break;
 		case "knockedOut":
@@ -974,12 +974,6 @@ public class JSBMLinput {
 			break;
 		case "AaSequence":
 			((biologicalObjects.nodes.Protein) bna).setAaSequence(value);
-			break;
-		case "Formula":
-			((biologicalObjects.nodes.SmallMolecule) bna).setFormula(value);
-			break;
-		case "Mass":
-			((biologicalObjects.nodes.SmallMolecule) bna).setMass(value);
 			break;
 		case "Tarbase_accession":
 			((biologicalObjects.nodes.SRNA) bna).setTarbase_accession(value);
@@ -1157,7 +1151,7 @@ public class JSBMLinput {
 				kegg.setKEGGPathway(value);
 				break;
 			case "Keggprodukt":
-				kegg.setKeggprodukt(value);
+				kegg.setKeggproduct(value);
 				break;
 			case "Keggreaction":
 				kegg.setKeggreaction(value);

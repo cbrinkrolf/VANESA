@@ -4,7 +4,7 @@ import biologicalElements.Elementdeclerations;
 
 public class Reaction extends BiologicalNodeAbstract implements DynamicNode {
 	
-	private String maximumSpeed = "1";
+	private String maximalSpeed = "1";
 	private boolean knockedOut = false;
 
 	public Reaction(String label, String name) {
@@ -14,13 +14,13 @@ public class Reaction extends BiologicalNodeAbstract implements DynamicNode {
 	}
 
 	@Override
-	public String getMaximumSpeed() {
-		return this.maximumSpeed;
+	public String getMaximalSpeed() {
+		return this.maximalSpeed;
 	}
 
 	@Override
-	public void setMaximumSpeed(String maximumSpeed) {
-		this.maximumSpeed = maximumSpeed;
+	public void setMaximalSpeed(String maximumSpeed) {
+		this.maximalSpeed = maximumSpeed;
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package petriNet;
 
 public class TimeSeries {
 
-	
 	private Series time;
 	private Series values;
 	
@@ -29,6 +28,4 @@ public class TimeSeries {
 	public int size(){
 		return time.size();
 	}
-	
-	
 }

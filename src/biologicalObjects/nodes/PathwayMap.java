@@ -2,29 +2,24 @@ package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class PathwayMap extends BiologicalNodeAbstract {
 
 	private boolean specification;
-	//private String[] databases = { "KEGG", "Transpath" };
-	
-	private Pathway pathwayLink=null;
-	
-	public PathwayMap(String label, String name){		
-		super(label,name);
+	// private String[] databases = { "KEGG", "Transpath" };
+
+	private Pathway pathwayLink = null;
+
+	public PathwayMap(String label, String name) {
+		super(label, name);
 		setBiologicalElement(Elementdeclerations.pathwayMap);
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 
-	public void setSpecification(boolean organismSpecific) {
-		specification = organismSpecific;
-	}
-
-	public boolean getSpecification() {
-		return specification;
-	}
-	
-	
 //	@SuppressWarnings("unchecked")
 //	public void lookUpAtAllDatabases() {
 //
@@ -60,8 +55,7 @@ public class PathwayMap extends BiologicalNodeAbstract {
 //			}
 //		}
 //	}
-	
-	
+
 //	@SuppressWarnings("unchecked")
 //	private String getNumber(String label) {
 //		String number = "";
@@ -74,13 +68,4 @@ public class PathwayMap extends BiologicalNodeAbstract {
 //		}
 //		return number;
 //	}
-
-	public void setPathwayLink(Pathway pathwayChild) {
-		this.pathwayLink = pathwayChild;
-	}
-
-	public Pathway getPathwayLink() {
-		return pathwayLink;
-	}
-
 }

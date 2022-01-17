@@ -256,8 +256,8 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof DynamicNode) {
 				DynamicNode dn = (DynamicNode) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!text.equals("") && !text.equals(dn.getMaximumSpeed())) {
-					dn.setMaximumSpeed(text);
+				if (!text.equals("") && !text.equals(dn.getMaximalSpeed())) {
+					dn.setMaximalSpeed(text);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			}

@@ -210,7 +210,7 @@ public class BiologicalNodeAbstractFactory {
 	private static void fillContinuousTransition(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
 		if (bna != null) {
 			if (newBNA instanceof ContinuousTransition && bna instanceof ContinuousTransition) {
-				((ContinuousTransition) newBNA).setMaximumSpeed(((ContinuousTransition) bna).getMaximumSpeed());
+				((ContinuousTransition) newBNA).setMaximalSpeed(((ContinuousTransition) bna).getMaximalSpeed());
 				((ContinuousTransition) newBNA).setKnockedOut(((ContinuousTransition) bna).isKnockedOut());
 			}
 		}

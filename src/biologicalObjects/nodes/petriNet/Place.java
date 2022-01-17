@@ -11,12 +11,20 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public abstract class Place extends PNNode {
 
 	private double token = 0;
+	@Getter(AccessLevel.NONE)
 	private double tokenMin = 0.0;
+	@Getter(AccessLevel.NONE)
 	private double tokenMax = Double.MAX_VALUE;
+	@Setter(AccessLevel.NONE)
 	private double tokenStart = 0;
 
 	public static final int CONFLICTHANDLING_NONE = 0;
@@ -25,10 +33,6 @@ public abstract class Place extends PNNode {
 
 	private int conflictStrategy = 0;
 
-
-	// private int r;
-	// private int b;
-	// private int g;
 	public Place(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.place);
@@ -36,13 +40,9 @@ public abstract class Place extends PNNode {
 			setLabel(name);
 		if (name.equals(""))
 			setName(label);
-		
+
 		this.setDefaultNodesize(2);
 		setDefaultColor(Color.WHITE);
-	}
-
-	public double getToken() {
-		return this.token;
 	}
 
 	public double getTokenMin() {
@@ -52,10 +52,6 @@ public abstract class Place extends PNNode {
 		return tokenMin;
 	}
 
-	public void setTokenMin(double tokenMin) {
-		this.tokenMin = tokenMin;
-	}
-
 	public double getTokenMax() {
 		if (this.isConstant()) {
 			return Double.MAX_VALUE;
@@ -63,30 +59,10 @@ public abstract class Place extends PNNode {
 		return tokenMax;
 	}
 
-	public void setTokenMax(double tokenMax) {
-		this.tokenMax = tokenMax;
-	}
-
-	public void setToken(double token) {
-		this.token = token;
-	}
-
-	public double getTokenStart() {
-		return tokenStart;
-	}
-
 	public void setTokenStart(double tokenStart) {
 		this.tokenStart = tokenStart;
 		if (!new GraphInstance().getPathway().getPetriPropertiesNet().isPetriNetSimulation())
 			token = tokenStart;
-	}
-	
-	public int getConflictStrategy() {
-		return conflictStrategy;
-	}
-
-	public void setConflictStrategy(int conflictStrategy) {
-		this.conflictStrategy = conflictStrategy;
 	}
 
 	public Set<PNEdge> getConflictingOutEdges() {

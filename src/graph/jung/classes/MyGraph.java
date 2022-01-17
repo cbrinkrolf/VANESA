@@ -823,11 +823,11 @@ public class MyGraph {
 	// }
 
 	private void setVertexStateDeleted(BiologicalNodeAbstract vertex) {
-		vertex.setStateChanged(NodeStateChanged.DELETED);
+		vertex.setNodeStateChanged(NodeStateChanged.DELETED);
 		for (BiologicalNodeAbstract child : vertex.getAllGraphNodes()) {
 			if (!vertex.getEnvironment().contains(child)) {
 				if (child.getAllGraphNodes().isEmpty()) {
-					child.setStateChanged(NodeStateChanged.DELETED);
+					child.setNodeStateChanged(NodeStateChanged.DELETED);
 				} else {
 					setVertexStateDeleted(child);
 				}

@@ -325,7 +325,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		if (pickedV == 0 && pickedE == 1) {
 			BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
 			if (hiddenPN) {
-				bea = pw.getPetriNet().getEdge(pw.getBnToPN().get(bea.getFrom()), pw.getBnToPN().get(bea.getTo()));
+				bea = pw.getPetriNet().getEdge(pw.getBnToPnMapping().get(bea.getFrom()), pw.getBnToPnMapping().get(bea.getTo()));
 			}
 			if (bea instanceof PNEdge) {
 				secondAxis = true;
@@ -1044,8 +1044,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				if (pickedV == 0 && pickedE == 1) {
 					BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
 					if (hiddenPN) {
-						bea = pw.getPetriNet().getEdge(pw.getBnToPN().get(bea.getFrom()),
-								pw.getBnToPN().get(bea.getTo()));
+						bea = pw.getPetriNet().getEdge(pw.getBnToPnMapping().get(bea.getFrom()),
+								pw.getBnToPnMapping().get(bea.getTo()));
 					}
 					if (simResController.getAllActiveWithData(bea, SUM_OF_TOKEN).size() <= 1) {
 						return labelsR1.get(seriesIdx);
@@ -1068,8 +1068,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				if (pickedV == 0 && pickedE == 1) {
 					BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
 					if (hiddenPN) {
-						bea = pw.getPetriNet().getEdge(pw.getBnToPN().get(bea.getFrom()),
-								pw.getBnToPN().get(bea.getTo()));
+						bea = pw.getPetriNet().getEdge(pw.getBnToPnMapping().get(bea.getFrom()),
+								pw.getBnToPnMapping().get(bea.getTo()));
 					}
 					if (simResController.getAllActiveWithData(bea, SUM_OF_TOKEN).size() <= 1) {
 						return "Sum";
@@ -1116,9 +1116,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						// ps.clearPickedVertices();
 						vState.clear();
 						if (hiddenPN) {
-							if (pw.getBnToPN().containsValue(p)) {
-								for (BiologicalNodeAbstract key : pw.getBnToPN().keySet()) {
-									if (pw.getBnToPN().get(key) == p) {
+							if (pw.getBnToPnMapping().containsValue(p)) {
+								for (BiologicalNodeAbstract key : pw.getBnToPnMapping().keySet()) {
+									if (pw.getBnToPnMapping().get(key) == p) {
 										vState.pick(key, true);
 										break;
 									}
@@ -1194,9 +1194,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					dataset.addSeries(s);
 
 					if (hiddenPN) {
-						if (pw.getBnToPN().containsValue(place)) {
-							for (BiologicalNodeAbstract key : pw.getBnToPN().keySet()) {
-								if (pw.getBnToPN().get(key) == place) {
+						if (pw.getBnToPnMapping().containsValue(place)) {
+							for (BiologicalNodeAbstract key : pw.getBnToPnMapping().keySet()) {
+								if (pw.getBnToPnMapping().get(key) == place) {
 									labelsR1.add(key.getName());
 									break;
 								}
@@ -1225,9 +1225,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					dataset.addSeries(s);
 					String label = transition.getName();
 					if (hiddenPN) {
-						if (pw.getBnToPN().containsValue(transition)) {
-							for (BiologicalNodeAbstract key : pw.getBnToPN().keySet()) {
-								if (pw.getBnToPN().get(key) == transition) {
+						if (pw.getBnToPnMapping().containsValue(transition)) {
+							for (BiologicalNodeAbstract key : pw.getBnToPnMapping().keySet()) {
+								if (pw.getBnToPnMapping().get(key) == transition) {
 									label = key.getName();
 									break;
 								}
@@ -1302,7 +1302,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 	private BiologicalNodeAbstract resolveHidden(BiologicalNodeAbstract bna) {
 		if (hiddenPN) {
-			return pw.getBnToPN().get(bna);
+			return pw.getBnToPnMapping().get(bna);
 		}
 		return bna;
 	}

@@ -549,7 +549,7 @@ public class RuleEditingWindow implements ActionListener {
 		bn = GraphContainer.getInstance().getPathway(newPathwayName);
 
 		pn = new Pathway("petriNet", true);
-		pn.setPetriNet(true);
+		pn.setIsPetriNet(true);
 		if (newRule) {
 			pn.getGraph().setMouseModeEditing();
 		} else {
@@ -709,8 +709,8 @@ public class RuleEditingWindow implements ActionListener {
 		RuleNode rn;
 		BiologicalNodeAbstract bna;
 		Map<String, BiologicalNodeAbstract> nameToBN = new HashMap<String, BiologicalNodeAbstract>();
-		for (int i = 0; i < rule.getAllBiologicalNodes().size(); i++) {
-			rn = rule.getAllBiologicalNodes().get(i);
+		for (int i = 0; i < rule.getBiologicalNodes().size(); i++) {
+			rn = rule.getBiologicalNodes().get(i);
 			bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
 			bna.setName(rn.getName());
 			bna.setLabel(rn.getName());
@@ -723,8 +723,8 @@ public class RuleEditingWindow implements ActionListener {
 		BiologicalEdgeAbstract bea;
 		RuleEdge re;
 		Map<RuleEdge, BiologicalEdgeAbstract> edgesMap = new HashMap<RuleEdge, BiologicalEdgeAbstract>();
-		for (int i = 0; i < rule.getAllBiologicalEdges().size(); i++) {
-			re = rule.getAllBiologicalEdges().get(i);
+		for (int i = 0; i < rule.getBiologicalEdges().size(); i++) {
+			re = rule.getBiologicalEdges().get(i);
 			bea = BiologicalEdgeAbstractFactory.create(re.getType(), null);
 			bea.setFrom(nameToBN.get(re.getFrom().getName()));
 			bea.setTo(nameToBN.get(re.getTo().getName()));
@@ -738,8 +738,8 @@ public class RuleEditingWindow implements ActionListener {
 
 		// for PN
 		Map<String, BiologicalNodeAbstract> nameToPN = new HashMap<String, BiologicalNodeAbstract>();
-		for (int i = 0; i < rule.getAllPetriNodes().size(); i++) {
-			rn = rule.getAllPetriNodes().get(i);
+		for (int i = 0; i < rule.getPetriNodes().size(); i++) {
+			rn = rule.getPetriNodes().get(i);
 			bna = BiologicalNodeAbstractFactory.create(rn.getType(), null);
 			bna.setName(rn.getName());
 			bna.setLabel(rn.getName());
@@ -748,8 +748,8 @@ public class RuleEditingWindow implements ActionListener {
 		}
 
 		// put edges
-		for (int i = 0; i < rule.getAllPetriEdges().size(); i++) {
-			re = rule.getAllPetriEdges().get(i);
+		for (int i = 0; i < rule.getPetriEdges().size(); i++) {
+			re = rule.getPetriEdges().get(i);
 			bea = BiologicalEdgeAbstractFactory.create(re.getType(), null);
 			bea.setFrom(nameToPN.get(re.getFrom().getName()));
 			bea.setTo(nameToPN.get(re.getTo().getName()));
@@ -762,11 +762,11 @@ public class RuleEditingWindow implements ActionListener {
 
 		String bn;
 		String pn;
-		Iterator<RuleNode> it = rule.getBNtoPNMapping().keySet().iterator();
+		Iterator<RuleNode> it = rule.getBnToPnMapping().keySet().iterator();
 		while (it.hasNext()) {
 			rn = it.next();
 			bn = rn.getName();
-			pn = rule.getBNtoPNMapping().get(rn).getName();
+			pn = rule.getBnToPnMapping().get(rn).getName();
 			bnToPn.put(nameToBN.get(bn), nameToPN.get(pn));
 		}
 
@@ -823,11 +823,11 @@ public class RuleEditingWindow implements ActionListener {
 
 	private void convertGraphToRule() {
 		rule.setName(this.ruleName.getText().trim());
-		rule.getAllBiologicalNodes().clear();
-		rule.getAllBiologicalEdges().clear();
-		rule.getAllPetriNodes().clear();
-		rule.getAllPetriEdges().clear();
-		rule.getBNtoPNMapping().clear();
+		rule.getBiologicalNodes().clear();
+		rule.getBiologicalEdges().clear();
+		rule.getPetriNodes().clear();
+		rule.getPetriEdges().clear();
+		rule.getBnToPnMapping().clear();
 		rule.getConsideredEdges().clear();
 
 		// forBN

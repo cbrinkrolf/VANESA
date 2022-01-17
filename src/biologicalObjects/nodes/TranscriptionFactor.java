@@ -1,8 +1,6 @@
 package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
-//import edu.uci.ics.jung.graph.Vertex;
-
 
 public class TranscriptionFactor extends Protein {
 
@@ -11,6 +9,4 @@ public class TranscriptionFactor extends Protein {
 		setBiologicalElement(Elementdeclerations.transcriptionFactor);
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
-
-
 }

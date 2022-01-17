@@ -1,5 +1,10 @@
 package graph;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ChangedFlags {
 
 	public static final int NODE_CHANGED = 0;
@@ -38,61 +43,5 @@ public class ChangedFlags {
 		this.edgeWeightChanged = false;
 		this.pnPropertiesChanged = false;
 		this.boundariesChanged = false;
-	}
-
-	public boolean isNodeChanged() {
-		return nodeChanged;
-	}
-
-	public void setNodeChanged(boolean nodeChanged) {
-		this.nodeChanged = nodeChanged;
-	}
-
-	public boolean isEdgeChanged() {
-		return edgeChanged;
-	}
-
-	public void setEdgeChanged(boolean edgeChanged) {
-		this.edgeChanged = edgeChanged;
-	}
-
-	public boolean isParameterChanged() {
-		return parameterChanged;
-	}
-
-	public void setParameterChanged(boolean parameterChanged) {
-		this.parameterChanged = parameterChanged;
-	}
-
-	public boolean isInitialValueChanged() {
-		return initialValueChanged;
-	}
-
-	public void setInitialValueChanged(boolean initialValueChanged) {
-		this.initialValueChanged = initialValueChanged;
-	}
-
-	public boolean isEdgeWeightChanged() {
-		return edgeWeightChanged;
-	}
-
-	public void setEdgeWeightChanged(boolean edgeWeightChanged) {
-		this.edgeWeightChanged = edgeWeightChanged;
-	}
-
-	public boolean isPnPropertiesChanged() {
-		return pnPropertiesChanged;
-	}
-
-	public void setPnPropertiesChanged(boolean pnPropertiesChanged) {
-		this.pnPropertiesChanged = pnPropertiesChanged;
-	}
-
-	public boolean isBoundariesChanged() {
-		return boundariesChanged;
-	}
-
-	public void setBoundariesChanged(boolean boundariesChanged) {
-		this.boundariesChanged = boundariesChanged;
 	}
 }

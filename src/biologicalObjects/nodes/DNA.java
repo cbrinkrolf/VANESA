@@ -2,9 +2,8 @@ package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
 
-
 public class DNA extends BiologicalNodeAbstract {
-	
+
 	private String ntSequence = "";
 
 	public DNA(String label, String name) {
@@ -12,7 +11,7 @@ public class DNA extends BiologicalNodeAbstract {
 		setBiologicalElement(Elementdeclerations.dna);
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
-	
+
 	public String getNtSequence() {
 		return ntSequence;
 	}

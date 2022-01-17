@@ -182,7 +182,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 						} else if(e.getSource()==coarseSelection){
 							BiologicalNodeAbstract.coarse(n);
 						} else if(e.getSource()==environmentSelection){
-							n.markAsEnvironment(!n.isMarkedAsEnvironment());
+							n.setMarkedAsEnvironment(!n.isMarkedAsEnvironment());
 						} else if(e.getSource()==setAsRootNode){
 							if(n.getParentNode()==null){
 								if(n.getRootPathway().getRootNode()==n){

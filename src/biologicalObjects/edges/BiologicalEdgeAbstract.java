@@ -10,60 +10,46 @@ import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.NetworkSettings;
 import configurations.NetworkSettingsSingelton;
 import graph.gui.Parameter;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cloneable {
 
 	// ---Fields---
-
-	// private Edge edge;
-
 	private ReactionPairEdge reactionPairEdge;
 
-	private boolean isDirected;
-
-	private boolean isVisible = true;
-
-	private boolean isClone = false;
-
+	private boolean directed;
+	private boolean visible = true;
+	@Setter(AccessLevel.NONE)
 	private String name = "not mentioned";
-
+	@Setter(AccessLevel.NONE)
 	private String label = "???";
-
+	@Setter(AccessLevel.NONE)
 	private int ID = 0;
-
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private SortedSet<Integer> set;
 
-	private NetworkSettings settings = NetworkSettingsSingelton.getInstance();
-
 	private String description = "";
-
 	private String comments = "";
-
 	private Color defaultColor = Color.GRAY;
-
 	private Color color = Color.GRAY;
-
 	private String biologicalElement = "";
-
 	private Shape shape;
-
 	private boolean hasKEGGNode = false;
-
 	private boolean hasDAWISNode = false;
-
 	private boolean hasBrendaNode = false;
-
 	private HashSet<String> labelSet = new HashSet<String>();
-
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
-
+	@Setter(AccessLevel.NONE)
 	private String function = "1";
 
 	private BiologicalNodeAbstract from;
-
 	private BiologicalNodeAbstract to;
 
 	// ---Functional Methods---
@@ -86,28 +72,14 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	@Override
-	public Color getColor() {
-		return color;
-	}
-
-	@Override
 	public BiologicalEdgeAbstract clone() {
 		try {
 			BiologicalEdgeAbstract cloneEdge = (BiologicalEdgeAbstract) super.clone();
-			cloneEdge.setClone(true);
 			return cloneEdge;
 		} catch (CloneNotSupportedException e) {
 			// Kann eigentlich nicht passieren, da Cloneable
 			throw new InternalError();
 		}
-	}
-
-	private void setClone(boolean c) {
-		isClone = c;
-	}
-
-	public boolean isClone() {
-		return isClone;
 	}
 
 	/*
@@ -176,49 +148,9 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	// ---Getter/Setter---
 
-	public String getFunction() {
-		return function;
-	}
-
 	public void setFunction(String function) {
 		this.function = function;
 		setLabel(this.function);
-	}
-
-	public BiologicalNodeAbstract getFrom() {
-		return from;
-	}
-
-	public void setFrom(BiologicalNodeAbstract from) {
-		this.from = from;
-	}
-
-	public BiologicalNodeAbstract getTo() {
-		return to;
-	}
-
-	public void setTo(BiologicalNodeAbstract to) {
-		this.to = to;
-	}
-
-	public boolean isDirected() {
-		return isDirected;
-	}
-
-	public void setDirected(boolean isDirected) {
-		this.isDirected = isDirected;
-	}
-
-	public void setReactionPairEdge(ReactionPairEdge reactPEdge) {
-		this.reactionPairEdge = reactPEdge;
-	}
-
-	public ReactionPairEdge getReactionPairEdge() {
-		return reactionPairEdge;
-	}
-
-	public int getID() {
-		return ID;
 	}
 
 	// should only be used when loading a file with a network
@@ -286,57 +218,25 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	public String getNetworklabel() {
-		return getCorrectLabel(settings.getEdgeLabel());
-	}
-
-	public boolean hasKEGGNode() {
-		return hasKEGGNode;
-	}
-
-	public void hasKEGGNode(boolean hasKEGGNode) {
-		this.hasKEGGNode = hasKEGGNode;
-	}
-
-	public String getName() {
-		return name;
+		return getCorrectLabel(NetworkSettingsSingelton.getInstance().getEdgeLabel());
 	}
 
 	public void setName(String name) {
 		this.name = name.trim();
-		if(label.length() == 0){
+		if (label.length() == 0) {
 			label = name;
 		}
-	}
-
-	public String getLabel() {
-		return label;
 	}
 
 	public void setLabel(String label) {
 		labelSet.remove(this.label);
 		this.label = label.trim();
 		labelSet.add(this.label);
-		if(name.length() == 0){
+		if (name.length() == 0) {
 			name = label;
 		}
 		// this.networklabel = label;
 		// System.out.println("gestezt");
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getComments() {
-		return comments;
-	}
-
-	public void setComments(String comments) {
-		this.comments = comments;
 	}
 
 	public boolean isEdge() {
@@ -345,67 +245,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	public boolean isVertex() {
 		return false;
-	}
-
-	public void setColor(Color color) {
-		this.color = color;
-	}
-
-	public String getBiologicalElement() {
-		return biologicalElement;
-	}
-
-	public void setBiologicalElement(String biologicalElement) {
-		this.biologicalElement = biologicalElement;
-	}
-
-	public Shape getShape() {
-		return shape;
-	}
-
-	public void setShape(Shape shape) {
-		// System.out.println(shape);
-		this.shape = shape;
-	}
-
-	public boolean isVisible() {
-		return isVisible;
-	}
-
-	public void setVisible(boolean isVisible) {
-		this.isVisible = isVisible;
-	}
-
-	public boolean hasBrendaNode() {
-		return hasBrendaNode;
-	}
-
-	public void hasBrendaNode(boolean hasBrendaNode) {
-		this.hasBrendaNode = hasBrendaNode;
-	}
-
-	public boolean hasDAWISNode() {
-		return hasDAWISNode;
-	}
-
-	public void hasDAWISNode(boolean node) {
-		hasDAWISNode = node;
-	}
-
-	public ArrayList<Parameter> getParameters() {
-		return parameters;
-	}
-
-	public void setParameters(ArrayList<Parameter> parameters) {
-		this.parameters = parameters;
-	}
-
-	public HashSet<String> getLabelSet() {
-		return labelSet;
-	}
-
-	public void setLabelSet(HashSet<String> labelSet) {
-		this.labelSet = labelSet;
 	}
 
 	public void addLabel(String label) {
@@ -430,13 +269,5 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		if (from == to && !allowFromEqualsTo)
 			return false;
 		return true;
-	}
-
-	public Color getDefaultColor() {
-		return defaultColor;
-	}
-
-	public void setDefaultColor(Color defaultColor) {
-		this.defaultColor = defaultColor;
 	}
 }

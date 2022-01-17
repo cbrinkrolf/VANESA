@@ -125,7 +125,7 @@ public class VAMLInput {
 			// }
 			if (element.getLocalName().equals("isPetriNet")) {
 				// System.out.println(element.getText());
-				pw.setPetriNet(Boolean.parseBoolean(element.getText()));
+				pw.setIsPetriNet(Boolean.parseBoolean(element.getText()));
 			} else if (element.getLocalName().equals("organism")) {
 				pw.setOrganism(element.getText());
 			} else if (element.getLocalName().equals("organismSpecification")) {
@@ -451,7 +451,7 @@ public class VAMLInput {
 			} else if (element.getLocalName().equals("enzymeSubstrate")) {
 				node.setKeggsubstrate(element.getText());
 			} else if (element.getLocalName().equals("enzymeProduct")) {
-				node.setKeggprodukt(element.getText());
+				node.setKeggproduct(element.getText());
 			} else if (element.getLocalName().equals("enzymeCoFactor")) {
 				node.setKeggcofactor(element.getText());
 			} else if (element.getLocalName().equals("enzymeReference")) {
@@ -777,11 +777,11 @@ public class VAMLInput {
 			bna = new ContinuousTransition(label, name);
 			String maximumSpeed = node.getAttributeValue(new QName(
 					"maximumSpeed"));
-			((ContinuousTransition) bna).setMaximumSpeed(maximumSpeed);
+			((ContinuousTransition) bna).setMaximalSpeed(maximumSpeed);
 			// System.out.println("s:"+maximumSpeed+"end");
 			if (maximumSpeed == null || maximumSpeed.equals("")) {
 				System.out.println("speed");
-				((ContinuousTransition) bna).setMaximumSpeed("1");
+				((ContinuousTransition) bna).setMaximalSpeed("1");
 			}
 		} else if (biologicalElement.equals("Stochastic Transition")) {
 			bna = new StochasticTransition(label, name);

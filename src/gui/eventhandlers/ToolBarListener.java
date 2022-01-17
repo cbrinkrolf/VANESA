@@ -63,7 +63,7 @@ public class ToolBarListener implements ActionListener {
 					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
 				new CreatePathway();
-				graphInstance.getPathway().setPetriNet(option == JOptionPane.NO_OPTION);
+				graphInstance.getPathway().setIsPetriNet(option == JOptionPane.NO_OPTION);
 				w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
 				w.updateAllGuiElements();
 			}
@@ -284,7 +284,7 @@ public class ToolBarListener implements ActionListener {
 					Pathway pw = con.getPathway(newPathwayName);
 					w.addTab(pw.getTab().getTitelTab());
 					w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-					graphInstance.getPathway().setPetriNet(node.isPetriNet());
+					graphInstance.getPathway().setIsPetriNet(node.isPetriNet());
 					w.getBar().paintToolbar(node.isPetriNet());
 					w.updateAllGuiElements();
 					graphInstance.getPathway().updateMyGraph();

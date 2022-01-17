@@ -1,7 +1,11 @@
 package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Protein extends BiologicalNodeAbstract {
 
 	private String aaSequence = "";
@@ -13,17 +17,6 @@ public class Protein extends BiologicalNodeAbstract {
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 
-	public String getAaSequence() {
-		return aaSequence;
-	}
-
-	public void setAaSequence(String aaSequence)
-	{
-		this.aaSequence=aaSequence;
-	}
-
-	
-	
 //	@SuppressWarnings("unchecked")
 //	private void getAccessionNumbers() {
 //
@@ -39,9 +32,7 @@ public class Protein extends BiologicalNodeAbstract {
 //		}
 //
 //	}
-	
-	
-	
+
 //	@SuppressWarnings("unchecked")
 //	public void lookUpAtAllDatabases() {
 //
@@ -169,9 +160,7 @@ public class Protein extends BiologicalNodeAbstract {
 //			}
 //		}
 //	}
-	
-	
-	
+
 //	@SuppressWarnings("unchecked")
 //	private void getUniProtID() {
 //		DAWISNode node = getDAWISNode();

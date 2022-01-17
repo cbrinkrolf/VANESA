@@ -130,7 +130,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 					frame.pack();
 				}
 			};
-			fp = new FormularPanel(formular, ((DynamicNode) gea).getMaximumSpeed(), pcListener);
+			fp = new FormularPanel(formular, ((DynamicNode) gea).getMaximalSpeed(), pcListener);
 			fp.setVisible(true);
 			panel.add(fp);
 		}
@@ -330,9 +330,9 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 				String formular = fp.getFormular();
 				String formularClean = formular.replaceAll("\\s", "");
 				// System.out.println(":"+formularClean+":");
-				String orgClean = dn.getMaximumSpeed().replaceAll("\\s", "");
+				String orgClean = dn.getMaximalSpeed().replaceAll("\\s", "");
 				if (!orgClean.equals(formularClean)) {
-					dn.setMaximumSpeed(formular);
+					dn.setMaximalSpeed(formular);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 					// TODO update propertiesWindow
 					MainWindow.getInstance().updateElementProperties();

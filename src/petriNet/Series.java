@@ -25,5 +25,4 @@ public class Series {
 	public int size(){
 		return values.size();
 	}
-	
 }

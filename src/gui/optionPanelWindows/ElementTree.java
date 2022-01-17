@@ -155,7 +155,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 				lbl = bna.getLabel();
 			}
 			DefaultMutableTreeNode vertexNode;
-			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
+			if (bna.isHasBrendaNode() || bna.isHasKEGGNode()) {
 				vertexNode = new DefaultMutableTreeNode(lbl + " *");
 			} else {
 				vertexNode = new DefaultMutableTreeNode(lbl);
@@ -238,7 +238,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 				lbl = bna.getLabel();
 			}
 			DefaultMutableTreeNode vertexNode;
-			if (bna.hasBrendaNode() || bna.hasKEGGNode()) {
+			if (bna.isHasBrendaNode() || bna.isHasKEGGNode()) {
 				vertexNode = new DefaultMutableTreeNode(lbl + " *");
 			} else {
 				vertexNode = new DefaultMutableTreeNode(lbl);

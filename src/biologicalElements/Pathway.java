@@ -47,14 +47,20 @@ import graph.layouts.GraphCenter;
 import gui.GraphTab;
 import gui.MainWindow;
 import gui.MyPopUp;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import petriNet.PetriNetProperties;
 import petriNet.PetriNetSimulation;
 import util.FormularSafety;
 import util.MyIntComparable;
 
+@Getter
+@Setter
 public class Pathway implements Cloneable {
 
 	private File file = null;
+	@Setter(AccessLevel.NONE)
 	private String name = "";
 	private String version = "";
 	private String date = "";
@@ -63,35 +69,50 @@ public class Pathway implements Cloneable {
 	private String referenceNumber = "";
 	private String link = "";
 	private String organism = "";
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private boolean orgSpecification;
 	private String description = "";
 
+	@Setter(AccessLevel.NONE)
 	private boolean isPetriNet = false;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PetriNetProperties petriNetProperties = null;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PetriNetSimulation petriNetSimulation = null;
 
-	private HashSet<BiologicalNodeAbstract> set = new HashSet<BiologicalNodeAbstract>();
+	@Getter(AccessLevel.NONE)
 	private MyGraph graph;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private GraphTab tab;
 	private Pathway parent;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private SortedSet<Integer> ids = new TreeSet<Integer>();
+	@Setter(AccessLevel.NONE)
 	private Set<BiologicalNodeAbstract> closedSubPathways = new HashSet<BiologicalNodeAbstract>();
 
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private HashMap<String, ChangedFlags> changedFlags = new HashMap<String, ChangedFlags>();
 	private HashMap<Parameter, GraphElementAbstract> changedParameters = new HashMap<Parameter, GraphElementAbstract>();
 	private HashMap<Place, Double> changedInitialValues = new HashMap<Place, Double>();
 	private HashMap<Place, Boundary> changedBoundaries = new HashMap<Place, Boundary>();
-
 	private BiologicalNodeAbstract rootNode;
+	@Setter(AccessLevel.NONE)
 	private HashMap<BiologicalNodeAbstract, Point2D> vertices = new HashMap<BiologicalNodeAbstract, Point2D>();
 
 	// no graph tab is assigned / created. this is used for rule editing window
+	@Setter(AccessLevel.NONE)
 	private boolean headless = false;
 	private ArrayList<Group> groupes = new ArrayList<>();
 	private Pathway petriNet = null;
-	private HashMap<BiologicalNodeAbstract, PNNode> bnToPN = null;
-	
-	private CompartmentManager compManager;
+	private HashMap<BiologicalNodeAbstract, PNNode> bnToPnMapping = null;
+	@Setter(AccessLevel.NONE)
+	private CompartmentManager compartmentManager;
 
 	public Pathway(String name, boolean headless) {
 		this.headless = headless;
@@ -101,7 +122,7 @@ public class Pathway implements Cloneable {
 			this.title = this.name;
 			graph = new MyGraph(this);
 		}
-		compManager = new CompartmentManager();
+		compartmentManager = new CompartmentManager();
 	}
 
 	public Pathway(String name) {
@@ -109,7 +130,7 @@ public class Pathway implements Cloneable {
 		this.title = this.name;
 		graph = new MyGraph(this);
 		tab = new GraphTab(this.name, graph.getGraphVisualization());
-		compManager = new CompartmentManager();
+		compartmentManager = new CompartmentManager();
 	}
 
 	public Pathway(String name, Pathway parent) {
@@ -117,15 +138,7 @@ public class Pathway implements Cloneable {
 		this.name = name.trim();
 		this.title = this.name;
 		this.parent = parent;
-		compManager = new CompartmentManager();
-	}
-
-	public Set<BiologicalNodeAbstract> getClosedSubPathways() {
-		return closedSubPathways;
-	}
-
-	public HashMap<BiologicalNodeAbstract, Point2D> getVertices() {
-		return vertices;
+		compartmentManager = new CompartmentManager();
 	}
 
 	protected void cleanVertices() {
@@ -233,13 +246,13 @@ public class Pathway implements Cloneable {
 			boolean wasUndirected = false;
 			double ActivationProbability = 1.0;
 
-			((PNEdge) bea).wasUndirected(wasUndirected);
+			((PNEdge) bea).setWasUndirected(wasUndirected);
 			((PNEdge) bea).setProbability(ActivationProbability);
 
 		} else if (element.equals(Elementdeclerations.pnInhibitionEdge)) {
 			boolean wasUndirected = false;
 			double ActivationProbability = 1.0;
-			((PNEdge) bea).wasUndirected(wasUndirected);
+			((PNEdge) bea).setWasUndirected(wasUndirected);
 			((PNEdge) bea).setProbability(ActivationProbability);
 		}
 		return addEdge(bea);
@@ -778,13 +791,6 @@ public class Pathway implements Cloneable {
 		// System.out.println(this.graph.getAllEdges().size());
 	}
 
-	/**
-	 * Reset Element lists.
-	 */
-	public void clearElements() {
-		set.clear();
-	}
-
 	@Override
 	public Pathway clone() {
 		try {
@@ -806,40 +812,11 @@ public class Pathway implements Cloneable {
 		return null;
 	}
 
-	public boolean isPetriNet() {
-		return isPetriNet;
-	}
-
-	public void setPetriNet(boolean isPetriNet) {
+	public void setIsPetriNet(boolean isPetriNet) {
 		this.isPetriNet = isPetriNet;
 		if (isPetriNet) {
 			petriNetProperties = new PetriNetProperties();
 		}
-	}
-
-	public void setGraph(MyGraph graph) {
-		this.graph = graph;
-	}
-
-	public File getFile() {
-		return file;
-	}
-
-	public void setFile(File f) {
-		this.file = f;
-		// System.out.println(filename);
-	}
-
-	public String getLink() {
-		return link;
-	}
-
-	public void setLink(String link) {
-		this.link = link;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public void setName(String name) {
@@ -849,46 +826,6 @@ public class Pathway implements Cloneable {
 			this.name = name.trim();
 			tab.setTitle(this.name);
 		}
-	}
-
-	public String getOrganism() {
-		return organism;
-	}
-
-	public void setOrganism(String organism) {
-		this.organism = organism;
-	}
-
-	public String getReferenceNumber() {
-		return referenceNumber;
-	}
-
-	public void setReferenceNumber(String referenceNumber) {
-		this.referenceNumber = referenceNumber;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String name) {
-		this.title = name;
-	}
-
-	public String getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-
-	public String getDescription() {
-		return description;
 	}
 
 	public MyGraph getGraph() {
@@ -912,38 +849,6 @@ public class Pathway implements Cloneable {
 		return tab;
 	}
 
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	public String getDate() {
-		return date;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-
-	public void setNewLoadedNodes(HashSet<BiologicalNodeAbstract> loadedElements) {
-		set = loadedElements;
-	}
-
-	public HashSet<BiologicalNodeAbstract> getNewLoadedNodes() {
-		return set;
-	}
-
-	public void setSpecification(boolean organismSpecific) {
-		orgSpecification = organismSpecific;
-	}
-
-	public boolean getSpecification() {
-		return orgSpecification;
-	}
-
 	public String getSpecificationAsString() {
 		return orgSpecification + "";
 	}
@@ -954,14 +859,6 @@ public class Pathway implements Cloneable {
 		} else {
 			orgSpecification = false;
 		}
-	}
-
-	public void setParent(Pathway parent) {
-		this.parent = parent;
-	}
-
-	public Pathway getParent() {
-		return parent;
 	}
 
 	public Pathway getRootPathway() {
@@ -1171,14 +1068,6 @@ public class Pathway implements Cloneable {
 		}
 	}
 
-	public BiologicalNodeAbstract getRootNode() {
-		return rootNode;
-	}
-
-	public void setRootNode(BiologicalNodeAbstract node) {
-		rootNode = node;
-	}
-
 	public void handleChangeFlags(int flag) {
 		Iterator<ChangedFlags> it = this.changedFlags.values().iterator();
 		ChangedFlags cf;
@@ -1216,30 +1105,6 @@ public class Pathway implements Cloneable {
 			this.changedFlags.put(key, new ChangedFlags());
 		}
 		return changedFlags.get(key);
-	}
-
-	public HashMap<Parameter, GraphElementAbstract> getChangedParameters() {
-		return changedParameters;
-	}
-
-	public void setChangedParameters(HashMap<Parameter, GraphElementAbstract> changedParameters) {
-		this.changedParameters = changedParameters;
-	}
-
-	public HashMap<Place, Double> getChangedInitialValues() {
-		return changedInitialValues;
-	}
-
-	public void setChangedInitialValues(HashMap<Place, Double> changedInitialValues) {
-		this.changedInitialValues = changedInitialValues;
-	}
-
-	public HashMap<Place, Boundary> getChangedBoundaries() {
-		return changedBoundaries;
-	}
-
-	public void setChangedBoundaries(HashMap<Place, Boundary> changedBoundaries) {
-		this.changedBoundaries = changedBoundaries;
 	}
 
 	public void stretchGraph(double factor) {
@@ -1287,8 +1152,8 @@ public class Pathway implements Cloneable {
 			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState().getPicked().iterator();
 			while (it.hasNext()) {
 				BiologicalNodeAbstract nextNode = it.next();
-				nextNode.setisinGroup(true);
-				nextNode.setGroup(group);
+				nextNode.setInGroup(true);
+				nextNode.addGroup(group);
 			}
 		} else {
 			MyPopUp.getInstance().show("Groupingerror", "This cannot be grouped.");
@@ -1304,7 +1169,7 @@ public class Pathway implements Cloneable {
 		if (vv.getPickedVertexState().getPicked().size() != 0) {
 			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState().getPicked().iterator();
 			BiologicalNodeAbstract nextNode = it.next();
-			if (nextNode.getisinGroup()) {
+			if (nextNode.isInGroup()) {
 				for (BiologicalNodeAbstract node : nextNode.getbiggestGroup().nodes) {
 					graph.getVisualizationViewer().getPickedVertexState().pick(node, true);
 				}
@@ -1336,7 +1201,7 @@ public class Pathway implements Cloneable {
 		while (it.hasNext() && deletegroup) {
 			BiologicalNodeAbstract nextNode = it.next();
 			if (nextNode.getGroups().size() == 1) {
-				nextNode.setisinGroup(false);
+				nextNode.setInGroup(false);
 			}
 			nextNode.getGroups().remove(groupToDelete);
 		}
@@ -1420,10 +1285,6 @@ public class Pathway implements Cloneable {
 				removeElement(bna);
 			}
 		}
-	}
-
-	public boolean isHeadless() {
-		return this.headless;
 	}
 
 	public VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> prepareGraphToPrint() {
@@ -1532,22 +1393,6 @@ public class Pathway implements Cloneable {
 		return wvv;
 	}
 
-	public ArrayList<Group> getGroupes() {
-		return groupes;
-	}
-
-	public void setGroupes(ArrayList<Group> groupes) {
-		this.groupes = groupes;
-	}
-
-	public Pathway getPetriNet() {
-		return petriNet;
-	}
-
-	public void setPetriNet(Pathway petriNet) {
-		this.petriNet = petriNet;
-	}
-
 	public PetriNetSimulation getPetriNetSimulation() {
 		if (this.isPetriNet) {
 			if (this.petriNetSimulation == null) {
@@ -1557,14 +1402,6 @@ public class Pathway implements Cloneable {
 		} else {
 			return this.petriNet.getPetriNetSimulation();
 		}
-	}
-
-	public HashMap<BiologicalNodeAbstract, PNNode> getBnToPN() {
-		return bnToPN;
-	}
-
-	public void setBnToPN(HashMap<BiologicalNodeAbstract, PNNode> bnToPN) {
-		this.bnToPN = bnToPN;
 	}
 
 	public int getPlaceCount() {
@@ -1605,13 +1442,13 @@ public class Pathway implements Cloneable {
 		Transition t;
 		while (it.hasNext()) {
 			bna = it.next();
-			//System.out.println(bna.getName());
+			// System.out.println(bna.getName());
 			if (bna instanceof Place && !bna.hasRef()) {
 				p = (Place) bna;
 				c = Color.getHSBColor(i * 1.0f / (getPlaceCount()), 1, 1);
-				//System.out.println(bna.getName());
-				//System.out.println(i * 1.0f / (getPlaceCount()));
-				//System.out.println(c);
+				// System.out.println(bna.getName());
+				// System.out.println(i * 1.0f / (getPlaceCount()));
+				// System.out.println(c);
 				if (override) {
 					p.setPlotColor(c);
 				} else {
@@ -1620,7 +1457,7 @@ public class Pathway implements Cloneable {
 					}
 				}
 				i++;
-				//System.out.println("i: " + i);
+				// System.out.println("i: " + i);
 			} else if (bna instanceof Transition && !bna.hasRef()) {
 				t = (Transition) bna;
 				c = Color.getHSBColor(j * 1.0f / (getTransitionCount()), 1, 1);
@@ -1637,9 +1474,5 @@ public class Pathway implements Cloneable {
 				// System.out.println("j:"+j);
 			}
 		}
-	}
-	
-	public CompartmentManager getCompartmentManager(){
-		return this.compManager;
 	}
 }
