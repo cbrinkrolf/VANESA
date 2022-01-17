@@ -19,8 +19,8 @@ public class Reaction extends BiologicalNodeAbstract implements DynamicNode {
 	}
 
 	@Override
-	public void setMaximalSpeed(String maximumSpeed) {
-		this.maximalSpeed = maximumSpeed;
+	public void setMaximalSpeed(String maximalSpeed) {
+		this.maximalSpeed = maximalSpeed;
 	}
 
 	@Override

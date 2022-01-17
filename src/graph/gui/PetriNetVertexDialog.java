@@ -62,7 +62,7 @@ public class PetriNetVertexDialog {
 	private JTextField firingCondition = new JTextField("true");
 	private JLabel lblFiringCondition = new JLabel("Firing Condition");
 
-	private JLabel lblMaxSpeed = new JLabel("Maximum Speed");
+	private JLabel lblMaxSpeed = new JLabel("Maximal Speed");
 	private JTextField maxSpeed = new JTextField("1");
 
 	private String petriElement;

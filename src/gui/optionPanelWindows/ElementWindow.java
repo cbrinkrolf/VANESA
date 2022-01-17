@@ -717,9 +717,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 					DynamicNode trans = (DynamicNode) ab;
 					JTextField maxSpeed = new JTextField(4);
-					JLabel lblMaxSpeed = new JLabel("Maximum Speed");
+					JLabel lblMaxSpeed = new JLabel("Maximal Speed");
 					maxSpeed.setText(trans.getMaximalSpeed());
-					maxSpeed.setName("maximumSpeed");
+					maxSpeed.setName("maximalSpeed");
 					maxSpeed.addFocusListener(pwl);
 
 					p.add(lblMaxSpeed, "gap 5");

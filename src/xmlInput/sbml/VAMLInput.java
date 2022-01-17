@@ -723,10 +723,14 @@ public class VAMLInput {
 			((DiscreteTransition) bna).setDelay(Double.parseDouble(delay));
 		} else if (biologicalElement.equals("Continuous Transition")) {
 			bna = new ContinuousTransition(label, name);
-			String maximumSpeed = node.getAttributeValue(new QName("maximumSpeed"));
-			((ContinuousTransition) bna).setMaximalSpeed(maximumSpeed);
+
+			String maximalSpeed = node.getAttributeValue(new QName("maximalSpeed"));
+			if (maximalSpeed == null || maximalSpeed.equals("")) {
+				maximalSpeed = node.getAttributeValue(new QName("maximumSpeed"));
+			}
+			((ContinuousTransition) bna).setMaximalSpeed(maximalSpeed);
 			// System.out.println("s:"+maximumSpeed+"end");
-			if (maximumSpeed == null || maximumSpeed.equals("")) {
+			if (maximalSpeed == null || maximalSpeed.equals("")) {
 				System.out.println("speed");
 				((ContinuousTransition) bna).setMaximalSpeed("1");
 			}

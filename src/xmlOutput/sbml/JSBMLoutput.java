@@ -682,7 +682,7 @@ public class JSBMLoutput {
 
 		if (oneNode instanceof DynamicNode) {
 			attr = String.valueOf(((DynamicNode) oneNode).getMaximalSpeed());
-			el.addChild(createElSub(attr, "maximumSpeed"));
+			el.addChild(createElSub(attr, "maximalSpeed"));
 			attr = String.valueOf(((DynamicNode) oneNode).isKnockedOut());
 			el.addChild(createElSub(attr, "knockedOut"));
 		}

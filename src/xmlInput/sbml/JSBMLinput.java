@@ -937,7 +937,9 @@ public class JSBMLinput {
 				((biologicalObjects.nodes.petriNet.Transition) bna).setFiringCondition(value);
 			}
 			break;
+		// for legacy
 		case "maximumSpeed":
+		case "maximalSpeed":
 			if (bna instanceof DynamicNode) {
 				String speed = value;
 				if (value == null || value.equals("")) {

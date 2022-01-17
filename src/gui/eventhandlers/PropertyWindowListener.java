@@ -252,7 +252,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 				}
 			}
 
-		} else if (source.equals("maximumSpeed")) {
+		} else if (source.equals("maximalSpeed")) {
 			if (geb instanceof DynamicNode) {
 				DynamicNode dn = (DynamicNode) geb;
 				text = ((JTextField) event.getSource()).getText().trim();

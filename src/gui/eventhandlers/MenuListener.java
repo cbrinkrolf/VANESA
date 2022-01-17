@@ -1058,14 +1058,14 @@ public class MenuListener implements ActionListener {
 
 					it = pw.getAllGraphNodes().iterator();
 					DynamicNode dn;
-					String maximumSpeed;
+					String maximalSpeed;
 					while (it.hasNext()) {
 						bna = it.next();
 						if (bna instanceof DynamicNode) {
 							dn = (DynamicNode) bna;
-							maximumSpeed = KineticBuilder.createConvenienceKinetic(bna);
-							System.out.println(maximumSpeed);
-							dn.setMaximalSpeed(maximumSpeed);
+							maximalSpeed = KineticBuilder.createConvenienceKinetic(bna);
+							System.out.println(maximalSpeed);
+							dn.setMaximalSpeed(maximalSpeed);
 						}
 					}
 				} else {
