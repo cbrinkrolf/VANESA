@@ -17,7 +17,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.Gene;
 import biologicalObjects.nodes.PathwayMap;
-import biologicalObjects.nodes.SmallMolecule;
+import biologicalObjects.nodes.Metabolite;
 import configurations.Wrapper;
 import database.Connection.DatabaseQueryValidator;
 import database.kegg.gui.KEGGResultWindow;
@@ -244,7 +244,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 					if (!(gene == null || gene.equals("")))
 						bnas.add(new Gene(gene, gene));
 					if (!(compound == null || compound.equals("")))
-						bnas.add(new SmallMolecule(compound, compound));
+						bnas.add(new Metabolite(compound, compound));
 					for (String[] s : results) {
 						PathwayMap map = new PathwayMap(s[1], s[0]);
 						map = (PathwayMap) newPW.addVertex(map, new Point(0,0));

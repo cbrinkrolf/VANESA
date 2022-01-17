@@ -3,11 +3,11 @@ package biologicalObjects.nodes;
 import biologicalElements.Elementdeclerations;
 
 
-public class SmallMolecule extends BiologicalNodeAbstract{
+public class Metabolite extends BiologicalNodeAbstract{
 	
-	public SmallMolecule(String label, String name){		
+	public Metabolite(String label, String name){		
 		super(label,name);
-		setBiologicalElement(Elementdeclerations.smallMolecule);
+		setBiologicalElement(Elementdeclerations.metabolite);
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 }

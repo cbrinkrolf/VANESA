@@ -262,7 +262,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 					if (bna.getBiologicalElement().equals(Elementdeclerations.protein)
 							|| bna.getBiologicalElement().equals(Elementdeclerations.inhibitor)
 							|| bna.getBiologicalElement().equals(Elementdeclerations.factor)
-							|| bna.getBiologicalElement().equals(Elementdeclerations.smallMolecule)) {
+							|| bna.getBiologicalElement().equals(Elementdeclerations.metabolite)) {
 						urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/protein_result.jsp?Protein_Id="
 								+ bna.getLabel();
 						FollowLink.openURL(urlString);

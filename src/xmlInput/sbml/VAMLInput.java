@@ -74,7 +74,7 @@ import biologicalObjects.nodes.Reaction;
 import biologicalObjects.nodes.Receptor;
 import biologicalObjects.nodes.SRNA;
 import biologicalObjects.nodes.Site;
-import biologicalObjects.nodes.SmallMolecule;
+import biologicalObjects.nodes.Metabolite;
 import biologicalObjects.nodes.SolubleReceptor;
 import biologicalObjects.nodes.TranscriptionFactor;
 import biologicalObjects.nodes.petriNet.ContinuousPlace;
@@ -105,8 +105,7 @@ public class VAMLInput {
 
 	}
 
-	public VAMLInput(File file, Pathway pw) throws IOException,
-			XMLStreamException {
+	public VAMLInput(File file, Pathway pw) throws IOException, XMLStreamException {
 		this.file = file;
 
 		getData(pw);
@@ -152,7 +151,7 @@ public class VAMLInput {
 						i = i + 1;
 					}
 				}
-				//pw.setSettings(set);
+				// pw.setSettings(set);
 			}
 		}
 	}
@@ -224,11 +223,9 @@ public class VAMLInput {
 			} else if (element.getLocalName().equals("name")) {
 				name = element.getText();
 			} else if (element.getLocalName().equals("colour")) {
-				color = new Color(Integer.parseInt(element
-						.getAttributeValue(new QName("r"))),
-						Integer.parseInt(element.getAttributeValue(new QName(
-								"g"))), Integer.parseInt(element
-								.getAttributeValue(new QName("b"))));
+				color = new Color(Integer.parseInt(element.getAttributeValue(new QName("r"))),
+						Integer.parseInt(element.getAttributeValue(new QName("g"))),
+						Integer.parseInt(element.getAttributeValue(new QName("b"))));
 			} else if (element.getLocalName().equals("isDirected")) {
 				directed = element.getText();
 			} else if (element.getLocalName().equals("ReactionPairEdge")) {
@@ -266,135 +263,96 @@ public class VAMLInput {
 
 			if (elementSpecification.equals(Elementdeclerations.compoundEdge)) {
 
-				bea = new Compound(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new Compound(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.physicalInteraction)) {
+			} else if (elementSpecification.equals(Elementdeclerations.physicalInteraction)) {
 
-				bea = new PhysicalInteraction(label, name, mapping.get(from),
-						mapping.get(to));
-			} else if (elementSpecification
-					.equals(Elementdeclerations.hiddenCompoundEdge)) {
+				bea = new PhysicalInteraction(label, name, mapping.get(from), mapping.get(to));
+			} else if (elementSpecification.equals(Elementdeclerations.hiddenCompoundEdge)) {
 
-				bea = new HiddenCompound(label, name, mapping.get(from),
-						mapping.get(to));
-			} else if (elementSpecification
-					.equals(Elementdeclerations.reactionEdge)) {
+				bea = new HiddenCompound(label, name, mapping.get(from), mapping.get(to));
+			} else if (elementSpecification.equals(Elementdeclerations.reactionEdge)) {
 
 				// System.out.println("reaction edge");
-				bea = new ReactionEdge(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new ReactionEdge(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.reactionPair)) {
+			} else if (elementSpecification.equals(Elementdeclerations.reactionPair)) {
 
 				// System.out.println("reaction pair");
-				bea = new ReactionPair(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new ReactionPair(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.activationEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.activationEdge)) {
 
-				bea = new Activation(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new Activation(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.inhibitionEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.inhibitionEdge)) {
 
-				bea = new Inhibition(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new Inhibition(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.expressionEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.expressionEdge)) {
 
-				bea = new Expression(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new Expression(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.repressionEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.repressionEdge)) {
 
-				bea = new Repression(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new Repression(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.indirectEffectEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.indirectEffectEdge)) {
 
-				bea = new IndirectEffect(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new IndirectEffect(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.stateChangeEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.stateChangeEdge)) {
 
-				bea = new StateChange(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new StateChange(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.bindingEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.bindingEdge)) {
 
-				bea = new BindingAssociation(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new BindingAssociation(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.dissociationEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.dissociationEdge)) {
 
-				bea = new Dissociation(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new Dissociation(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.phosphorylationEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.phosphorylationEdge)) {
 
-				bea = new Phosphorylation(label, name, mapping.get(from),
-						mapping.get(to));
-			} else if (elementSpecification
-					.equals(Elementdeclerations.dephosphorylationEdge)) {
+				bea = new Phosphorylation(label, name, mapping.get(from), mapping.get(to));
+			} else if (elementSpecification.equals(Elementdeclerations.dephosphorylationEdge)) {
 
-				bea = new Dephosphorylation(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new Dephosphorylation(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.glycosylationEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.glycosylationEdge)) {
 
-				bea = new Glycosylation(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new Glycosylation(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.ubiquitinationEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.ubiquitinationEdge)) {
 
-				bea = new Ubiquitination(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new Ubiquitination(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.methylationEdge)) {
+			} else if (elementSpecification.equals(Elementdeclerations.methylationEdge)) {
 
-				bea = new Methylation(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new Methylation(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification
-					.equals(Elementdeclerations.pnEdge) || elementSpecification.equals("PN Discrete Edge")) {
-				bea = new PNEdge(mapping.get(from), mapping.get(to), label,
-						name, Elementdeclerations.pnEdge, function);
+			} else if (elementSpecification.equals(Elementdeclerations.pnEdge)
+					|| elementSpecification.equals("PN Discrete Edge")) {
+				bea = new PNEdge(mapping.get(from), mapping.get(to), label, name, Elementdeclerations.pnEdge, function);
 				((PNEdge) bea).setProbability(activationProb);
-			} else if (elementSpecification
-					.equals(Elementdeclerations.pnInhibitionEdge)) {
-				bea = new PNEdge(mapping.get(from), mapping.get(to), label,
-						name, "PN Inhibition Edge", function);
+			} else if (elementSpecification.equals(Elementdeclerations.pnInhibitionEdge)) {
+				bea = new PNEdge(mapping.get(from), mapping.get(to), label, name, "PN Inhibition Edge", function);
 				((PNEdge) bea).setProbability(activationProb);
 			}
 
 			else {
 				System.err.println("Try to instantiate an abstract Edge!!!");
-				bea = new ReactionEdge(label, name, mapping.get(from),
-						mapping.get(to));
+				bea = new ReactionEdge(label, name, mapping.get(from), mapping.get(to));
 
 				// bea = new BiologicalEdgeAbstract(label, name,
 				// mapping.get(from), mapping.get(to));
 
 			}
 			// System.out.println("spech: "+elementSpecification);
-			try{
+			try {
 				bea.setID(id, pw);
-			} catch(IDAlreadyExistException ex){
+			} catch (IDAlreadyExistException ex) {
 				bea.setID(pw);
 			}
 			bea.setDirected(isDirected);
@@ -403,7 +361,7 @@ public class VAMLInput {
 
 			if (rpEdge != null) {
 				bea.setReactionPairEdge(rpEdge);
-				//bea.hasReactionPairEdge(true);
+				// bea.hasReactionPairEdge(true);
 			}
 
 			// System.out.println("vor: "+bea.getID());
@@ -579,11 +537,9 @@ public class VAMLInput {
 		Iterator<OMElement> it = node.getChildren();
 		Integer vertexID = 0;
 		try {
-			vertexID = Integer
-					.parseInt(node.getAttributeValue(new QName("id")));
+			vertexID = Integer.parseInt(node.getAttributeValue(new QName("id")));
 		} catch (NumberFormatException e) {
-			vertexID = Integer.parseInt(node.getAttributeValue(new QName("id"))
-					.substring(1));
+			vertexID = Integer.parseInt(node.getAttributeValue(new QName("id")).substring(1));
 		}
 
 		String biologicalElement = "";
@@ -616,11 +572,9 @@ public class VAMLInput {
 			} else if (element.getLocalName().equals("elementSpecification")) {
 				biologicalElement = element.getText();
 			} else if (element.getLocalName().equals("colour")) {
-				color = new Color(Integer.parseInt(element
-						.getAttributeValue(new QName("r"))),
-						Integer.parseInt(element.getAttributeValue(new QName(
-								"g"))), Integer.parseInt(element
-								.getAttributeValue(new QName("b"))));
+				color = new Color(Integer.parseInt(element.getAttributeValue(new QName("r"))),
+						Integer.parseInt(element.getAttributeValue(new QName("g"))),
+						Integer.parseInt(element.getAttributeValue(new QName("b"))));
 			} else if (element.getLocalName().equals("label")) {
 				label = element.getText();
 			} else if (element.getLocalName().equals("name")) {
@@ -653,25 +607,21 @@ public class VAMLInput {
 		} else if (biologicalElement.equals(Elementdeclerations.dna)) {
 			bna = new DNA(label, name);
 
-		} else if (biologicalElement
-				.equals(Elementdeclerations.homodimerFormation)) {
+		} else if (biologicalElement.equals(Elementdeclerations.homodimerFormation)) {
 			bna = new HomodimerFormation(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.ligandBinding)) {
 			bna = new LigandBinding(label, name);
 
-		} else if (biologicalElement
-				.equals(Elementdeclerations.membraneChannel)) {
+		} else if (biologicalElement.equals(Elementdeclerations.membraneChannel)) {
 			bna = new MembraneChannel(label, name);
 
-		} else if (biologicalElement
-				.equals(Elementdeclerations.membraneReceptor)) {
+		} else if (biologicalElement.equals(Elementdeclerations.membraneReceptor)) {
 			bna = new Receptor(label, name);
 
 		} else if (biologicalElement.equals(Elementdeclerations.mRNA)) {
 			bna = new MRNA(label, name);
-			((MRNA) bna).setNtSequence(node.getAttributeValue(new QName(
-					"NtSequence")));
+			((MRNA) bna).setNtSequence(node.getAttributeValue(new QName("NtSequence")));
 
 		} else if (biologicalElement.equals(Elementdeclerations.orthologGroup)) {
 			bna = new OrthologGroup(label, name);
@@ -705,18 +655,16 @@ public class VAMLInput {
 
 		} else if (biologicalElement.equals(Elementdeclerations.sRNA)) {
 			bna = new SRNA(label, name);
-			((SRNA) bna).setNtSequence(node.getAttributeValue(new QName(
-					"NtSequence")));
+			((SRNA) bna).setNtSequence(node.getAttributeValue(new QName("NtSequence")));
 
+		} else if (biologicalElement.equals(Elementdeclerations.metabolite)) {
+			bna = new Metabolite(label, name);
+			// kept for legacy
 		} else if (biologicalElement.equals(Elementdeclerations.smallMolecule)) {
-			bna = new SmallMolecule(label, name);
-
-		} else if (biologicalElement
-				.equals(Elementdeclerations.solubleReceptor)) {
+			bna = new Metabolite(label, name);
+		} else if (biologicalElement.equals(Elementdeclerations.solubleReceptor)) {
 			bna = new SolubleReceptor(label, name);
-
-		} else if (biologicalElement
-				.equals(Elementdeclerations.transcriptionFactor)) {
+		} else if (biologicalElement.equals(Elementdeclerations.transcriptionFactor)) {
 			bna = new TranscriptionFactor(label, name);
 		} else if (biologicalElement.equals(Elementdeclerations.glycan)) {
 			bna = new Glycan(label, name);
@@ -775,8 +723,7 @@ public class VAMLInput {
 			((DiscreteTransition) bna).setDelay(Double.parseDouble(delay));
 		} else if (biologicalElement.equals("Continuous Transition")) {
 			bna = new ContinuousTransition(label, name);
-			String maximumSpeed = node.getAttributeValue(new QName(
-					"maximumSpeed"));
+			String maximumSpeed = node.getAttributeValue(new QName("maximumSpeed"));
 			((ContinuousTransition) bna).setMaximalSpeed(maximumSpeed);
 			// System.out.println("s:"+maximumSpeed+"end");
 			if (maximumSpeed == null || maximumSpeed.equals("")) {
@@ -785,18 +732,16 @@ public class VAMLInput {
 			}
 		} else if (biologicalElement.equals("Stochastic Transition")) {
 			bna = new StochasticTransition(label, name);
-			((StochasticTransition) bna).setDistribution(node
-					.getAttributeValue(new QName("distribution")));
+			((StochasticTransition) bna).setDistribution(node.getAttributeValue(new QName("distribution")));
 		}
 
 		if (bna != null) {
-			//bna.setCompartment(location);
+			// bna.setCompartment(location);
 			pw.getCompartmentManager().setCompartment(bna, pw.getCompartmentManager().getCompartment(location));
 			bna.setComments(comment);
 			bna.setColor(color);
 			try {
-				int id = Integer.parseInt(node.getAttributeValue(new QName(
-						"ElementID")));
+				int id = Integer.parseInt(node.getAttributeValue(new QName("ElementID")));
 				bna.setID(id, pw);
 			} catch (Exception e) {
 			}
@@ -820,16 +765,14 @@ public class VAMLInput {
 		// pw.getGraph().moveVertex(bna.getVertex(), x_coord, y_coord);
 	}
 
-	private void getData(Pathway pw) throws FileNotFoundException,
-			XMLStreamException {
+	private void getData(Pathway pw) throws FileNotFoundException, XMLStreamException {
 
 		InputStream in = new FileInputStream(file);
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.TRUE);
 		factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.FALSE);
 
-		javax.xml.stream.XMLStreamReader reader = factory
-				.createXMLStreamReader(in);
+		javax.xml.stream.XMLStreamReader reader = factory.createXMLStreamReader(in);
 
 		if (pw == null) {
 			pw = new CreatePathway(file.getName()).getPathway();
@@ -843,21 +786,16 @@ public class VAMLInput {
 
 		OMElement modelEl = docEl.getFirstChildWithName(new QName("model"));
 		if (modelEl != null) {
-			OMElement annotationEL = modelEl.getFirstChildWithName(new QName(
-					"annotation"));
+			OMElement annotationEL = modelEl.getFirstChildWithName(new QName("annotation"));
 			if (annotationEL != null) {
-				OMElement layoutsEL = annotationEL
-						.getFirstChildWithName(new QName(
-								"NetworkEditorSettings"));
+				OMElement layoutsEL = annotationEL.getFirstChildWithName(new QName("NetworkEditorSettings"));
 				if (layoutsEL != null) {
-					OMElement projectEL = layoutsEL
-							.getFirstChildWithName(new QName("project"));
+					OMElement projectEL = layoutsEL.getFirstChildWithName(new QName("project"));
 					if (projectEL != null) {
 						addProjectDetails(pw, projectEL);
 					}
 
-					Iterator it = layoutsEL.getChildrenWithName(new QName(
-							"element"));
+					Iterator it = layoutsEL.getChildrenWithName(new QName("element"));
 					if (it != null) {
 						while (it.hasNext()) {
 							OMElement element = (OMElement) it.next();
@@ -886,7 +824,7 @@ public class VAMLInput {
 		pw.getGraph().restartVisualizationModel();
 		MainWindow.getInstance().updateProjectProperties();
 		// MainWindowSingelton.getInstance().updateOptionPanel();
-		
+
 		reader.close();
 		try {
 			in.close();

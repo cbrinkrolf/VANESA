@@ -22,7 +22,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.Factor;
 import biologicalObjects.nodes.Inhibitor;
-import biologicalObjects.nodes.SmallMolecule;
+import biologicalObjects.nodes.Metabolite;
 import configurations.Wrapper;
 import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import graph.CreatePathway;
@@ -102,7 +102,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		// node = node.toLowerCase();
 		String clean = this.cleanString(node);
 		if (!enzymes.containsKey(clean)) {
-			SmallMolecule sm = new SmallMolecule(clean, clean);
+			Metabolite sm = new Metabolite(clean, clean);
 			enzymes.put(clean, sm);
 			return sm;
 

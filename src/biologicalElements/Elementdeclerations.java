@@ -48,7 +48,10 @@ public class Elementdeclerations {
 
 	public static final String sRNA = "sRNA";
 
+	// kept for legacy
 	public static final String smallMolecule = "Small Molecule";
+	
+	public static final String metabolite = "Metabolite";
 
 	public static final String glycan = "Glycan";
 
@@ -174,7 +177,7 @@ public class Elementdeclerations {
 		l.add(receptor);
 		l.add(domain);
 		l.add(sRNA);
-		l.add(smallMolecule);
+		l.add(metabolite);
 		l.add(solubleReceptor);
 		l.add(transcriptionFactor);
 		l.add(enzyme);
@@ -219,7 +222,7 @@ public class Elementdeclerations {
 		l.add(receptor);
 		l.add(domain);
 		l.add(sRNA);
-		l.add(smallMolecule);
+		l.add(metabolite);
 		l.add(solubleReceptor);
 		l.add(transcriptionFactor);
 		l.add(enzyme);

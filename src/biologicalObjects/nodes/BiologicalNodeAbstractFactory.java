@@ -114,8 +114,12 @@ public class BiologicalNodeAbstractFactory {
 		case Elementdeclerations.site:
 			newBNA = new Site(label, name);
 			break;
+		// kept for legacy
 		case Elementdeclerations.smallMolecule:
-			newBNA = new SmallMolecule(label, name);
+			newBNA = new Metabolite(label, name);
+			break;
+		case Elementdeclerations.metabolite:
+			newBNA = new Metabolite(label, name);
 			break;
 		case Elementdeclerations.solubleReceptor:
 			newBNA = new SolubleReceptor(label, name);

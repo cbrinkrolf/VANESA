@@ -21,7 +21,7 @@ import biologicalObjects.nodes.OrthologGroup;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.SRNA;
-import biologicalObjects.nodes.SmallMolecule;
+import biologicalObjects.nodes.Metabolite;
 import configurations.Wrapper;
 import database.mirna.miRNAqueries;
 import graph.CreatePathway;
@@ -286,7 +286,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 		} else if (set[2].equals("compound")) {
 			node.setNodeLabel(set[10]);
 			validElement = true;
-			SmallMolecule sm = new SmallMolecule(node.getNodeLabel(),
+			Metabolite sm = new Metabolite(node.getNodeLabel(),
 					node.getKEGGentryName());
 
 			bna = sm;
@@ -392,7 +392,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 			return 2;
 		else if (bna instanceof PathwayMap)
 			return 1;
-		else if (bna instanceof SmallMolecule)
+		else if (bna instanceof Metabolite)
 			return 0;
 		else if (bna instanceof Complex)
 			return -1;

@@ -79,7 +79,7 @@ public class MyAnimatedPickingGraphMousePlugin extends PickingGraphMousePlugin<B
 						|| bna.getBiologicalElement().equals(
 								Elementdeclerations.factor)
 						|| bna.getBiologicalElement().equals(
-								Elementdeclerations.smallMolecule)) {
+								Elementdeclerations.metabolite)) {
 					urlString = "https://agbi.techfak.uni-bielefeld.de/DAWISMD/jsp/result/protein_result.jsp?Protein_Id="
 							+ bna.getLabel();
 					FollowLink.openURL(urlString);

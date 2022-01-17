@@ -460,7 +460,7 @@ public class JSBMLinput {
 					bna = BiologicalNodeAbstractFactory.create(biologicalElement, null);
 					if (reverseEngineering) {
 						if (bna instanceof Place) {
-							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.smallMolecule, null);
+							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.metabolite, null);
 						} else if (bna instanceof Transition) {
 							bna = BiologicalNodeAbstractFactory.create(Elementdeclerations.enzyme, null);
 						}

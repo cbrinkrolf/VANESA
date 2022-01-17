@@ -60,7 +60,7 @@ RNA: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Site: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
-Small Molecule: {shape: octagon, sizefactor: 1.0, red: 239, green: 239, blue: 42}
+Metabolite: {shape: octagon, sizefactor: 1.0, red: 239, green: 239, blue: 42}
 ---
 Soluble Receptor: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
