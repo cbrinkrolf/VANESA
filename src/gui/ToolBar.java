@@ -138,7 +138,7 @@ public class ToolBar {
 
 		JButton trash = new ToolBarButton(new ImageIcon(imagePath.getPath("Trash.png")));
 		trash.setToolTipText("Delete selected items");
-		trash.setMnemonic(KeyEvent.VK_DELETE);
+		// trash.setMnemonic(KeyEvent.VK_DELETE);
 		trash.setActionCommand("del");
 		trash.addActionListener(ToolBarListener.getInstance());
 

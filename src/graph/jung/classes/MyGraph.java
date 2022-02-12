@@ -188,32 +188,8 @@ public class MyGraph {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// del-key
-				BiologicalNodeAbstract bna;
-				if (e.getKeyCode() == 127) {
-					if (vv.getPickedVertexState().getPicked().size() > 0) {
-						Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState().getPicked().iterator();
-						while (it.hasNext()) {
-							bna = it.next();
-							if (bna.hasRef()) {
-								bna.getRef().getRefs().remove(bna);
-							}
-							pathway.removeElement(bna);
-						}
-						vv.getPickedVertexState().clear();
-					}
-					if (vv.getPickedEdgeState().getPicked().size() > 0) {
-						Iterator<BiologicalEdgeAbstract> it = vv.getPickedEdgeState().getPicked().iterator();
-						while (it.hasNext()) {
-							pathway.removeElement(it.next());
-						}
-						vv.getPickedEdgeState().clear();
-					}
-					pathway.updateMyGraph();
-					if (!vv.getPathway().isHeadless()) {
-						MainWindow mw = MainWindow.getInstance();
-						mw.updateAllGuiElements();
-					}
-					// vv.repaint();
+				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+					pathway.removeSelection();
 				}
 			}
 
