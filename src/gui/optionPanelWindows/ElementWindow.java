@@ -15,7 +15,6 @@ import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
@@ -63,6 +62,7 @@ import gui.MainWindow;
 import gui.MyPopUp;
 import gui.eventhandlers.PropertyWindowListener;
 import net.miginfocom.swing.MigLayout;
+import util.MyColorChooser;
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
 import util.StochasticDistribution;
@@ -607,7 +607,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 					StochasticTransition trans = (StochasticTransition) ab;
 					// Create the combo box, select item at index 4.
 					// Indices start at 0, so 4 specifies the pig.
-					JComboBox<String> distributionList = new JComboBox<String>(StochasticDistribution.distributionList.toArray(new String[0]));
+					JComboBox<String> distributionList = new JComboBox<String>(
+							StochasticDistribution.distributionList.toArray(new String[0]));
 					distributionList.setSelectedItem(trans.getDistribution());
 					distributionList.setName("distributionList");
 					distributionList.addItemListener(pwl);
@@ -659,14 +660,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 					sigma.addFocusListener(pwl);
 					sigma.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					sigma.setName("sigma");
-					
+
 					JTextField events = new JTextField(4);
 					JLabel lblEvents = new JLabel("discrete events");
 					events.setText(trans.getEvents() + "");
 					events.setToolTipText("List of discrete events [1,2,...,n]");
 					events.addFocusListener(pwl);
 					events.setName("events");
-					
+
 					JTextField probabilities = new JTextField(4);
 					JLabel lblProbabilities = new JLabel("probabilities");
 					probabilities.setText(trans.getProbabilities() + "");
@@ -674,7 +675,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					probabilities.addFocusListener(pwl);
 					probabilities.setName("probabilities");
 
-					//System.out.println("distr: "+trans.getDistribution());
+					// System.out.println("distr: "+trans.getDistribution());
 					switch (trans.getDistribution()) {
 					case StochasticDistribution.distributionExponential:
 						p.add(lblH, "gap 5");
@@ -944,22 +945,41 @@ public class ElementWindow implements ActionListener, ItemListener {
 		String event = e.getActionCommand();
 
 		if ("colour".equals(event)) {
-			Color newColor = JColorChooser.showDialog(w.getFrame(), "Choose fill colour", ab.getColor());
-			JButton b = ((JButton) e.getSource());
-			b.setBackground(newColor);
 
-			ab.setColor(newColor);
-			ab.setVisible(true);
-			// reference.setSelected(false);
-			// updateReferences(false);
+			// JColorChooser cc = new JColorChooser(ab.getColor());
+			// JDialog dialog = JColorChooser.createDialog(w.getFrame(), "Choose fill
+			// color", false, cc, null, null);
+			// dialog.setVisible(true);
+			// Color newColor = cc.getColor();
+			// Color newColor = JColorChooser.showDialog(w.getFrame(), "Choose fill color",
+			// ab.getColor());
+			// JColorChooser cc = new JColorChooser(ab.getColor());
+			MyColorChooser mc = new MyColorChooser(w.getFrame(), "Choose fill color", true, ab.getColor());
+			if (mc.isOkAction()) {
+
+				Color newColor = mc.getColor();
+
+				JButton b = ((JButton) e.getSource());
+				b.setBackground(newColor);
+
+				ab.setColor(newColor);
+				ab.setVisible(true);
+				// reference.setSelected(false);
+				// updateReferences(false);
+			}
 
 		} else if ("plotColour".equals(event)) {
 			if (ab instanceof BiologicalNodeAbstract) {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
-				Color newColor = JColorChooser.showDialog(w.getFrame(), "Choose plot colour", bna.getPlotColor());
-				JButton b = ((JButton) e.getSource());
-				b.setBackground(newColor);
-				bna.setPlotColor(newColor);
+				// Color newColor = JColorChooser.showDialog(w.getFrame(), "Choose plot colour",
+				// bna.getPlotColor());
+				MyColorChooser mc = new MyColorChooser(w.getFrame(), "Choose plot color", true, bna.getPlotColor());
+				if (mc.isOkAction()) {
+					Color newColor = mc.getColor();
+					JButton b = ((JButton) e.getSource());
+					b.setBackground(newColor);
+					bna.setPlotColor(newColor);
+				}
 			}
 		} else if ("pathwayLink".equals(event)) {
 			if (JOptionPane.showConfirmDialog(w.getFrame(),

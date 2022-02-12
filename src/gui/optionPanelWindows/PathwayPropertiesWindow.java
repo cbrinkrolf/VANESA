@@ -24,6 +24,7 @@ import graph.jung.classes.MyVisualizationViewer;
 import gui.MainWindow;
 import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
+import util.MyColorChooser;
 
 public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 
@@ -55,14 +56,13 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 		MigLayout layout = new MigLayout("fillx", "[grow,fill]", "");
 		p.setLayout(layout);
 		drawCompartments = new JCheckBox("draw compartments");
-		if(pw.getCompartmentManager().isDrawCompartments()){
+		if (pw.getCompartmentManager().isDrawCompartments()) {
 			drawCompartments.setSelected(true);
 		}
 		drawCompartments.setActionCommand("drawCompartments");
 		drawCompartments.addItemListener(this);
 		p.add(drawCompartments, "wrap");
-		
-		
+
 		drawCompartmentsExperimental = new JCheckBox("draw experimental");
 		drawCompartmentsExperimental.setActionCommand("drawCompartmentsExperimental");
 		drawCompartmentsExperimental.addItemListener(this);
@@ -140,19 +140,33 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 
 		} else if (command.equals("color")) {
 			JButton b = ((JButton) e.getSource());
-			Color newColor = JColorChooser.showDialog(MainWindow.getInstance().getFrame(), "Choose color",
+			// Color newColor =
+			// JColorChooser.showDialog(MainWindow.getInstance().getFrame(), "Choose color",
+			// b.getBackground());
+
+			MyColorChooser mc = new MyColorChooser(MainWindow.getInstance().getFrame(), "Choose color", true,
 					b.getBackground());
-			b.setBackground(newColor);
+			if (mc.isOkAction()) {
+				b.setBackground(mc.getColor());
+			}
+
 		} else if (command.startsWith("color_")) {
 			String cName = command.substring(6);
 			Compartment c = pw.getCompartmentManager().getCompartment(cName);
 			if (c != null) {
 				JButton b = ((JButton) e.getSource());
-				Color newColor = JColorChooser.showDialog(MainWindow.getInstance().getFrame(), "Choose new color",
-						b.getBackground());
+				// Color newColor =
+				// JColorChooser.showDialog(MainWindow.getInstance().getFrame(), "Choose new
+				// color",
+				// b.getBackground());
 
-				b.setBackground(newColor);
-				c.setColor(newColor);
+				MyColorChooser mc = new MyColorChooser(MainWindow.getInstance().getFrame(), "Choose color", true,
+						b.getBackground());
+				if (mc.isOkAction()) {
+					Color newColor = mc.getColor();
+					b.setBackground(newColor);
+					c.setColor(newColor);
+				}
 			}
 		} else if (command.startsWith("del_")) {
 			String cName = command.substring(4);
