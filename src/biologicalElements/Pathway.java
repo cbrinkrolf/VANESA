@@ -1133,6 +1133,11 @@ public class Pathway implements Cloneable {
 		this.getGraph().getVisualizationViewer().getPickedVertexState().clear();
 		this.getGraph().updateGraph();
 		updateMyGraph();
+		
+		if (!isHeadless()) {
+			MainWindow mw = MainWindow.getInstance();
+			mw.updateAllGuiElements();
+		}
 	}
 
 	/**
@@ -1226,7 +1231,7 @@ public class Pathway implements Cloneable {
 	}
 
 	private void removeSelectedVertices() {
-		// System.out.println(vv.getPickedVertexState().getPicked().size());
+		// System.out.println("bla");
 		if (getGraph().getAllVertices().size() > 0) {
 			MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph()
 					.getVisualizationViewer();
@@ -1281,6 +1286,15 @@ public class Pathway implements Cloneable {
 				for (BiologicalEdgeAbstract bea : conEdges) {
 					bea.getFrom().removeConnectingEdge(bea);
 					bea.getTo().removeConnectingEdge(bea);
+				}
+				// delete refs
+				if (bna.hasRef()) {
+					bna.getRef().getRefs().remove(bna);
+				}
+				// delete incident edges
+				for (BiologicalEdgeAbstract bea : getGraph().getJungGraph().getIncidentEdges(bna)) {
+					removeElement(bea);
+					//System.out.println("edge deleted");
 				}
 				removeElement(bna);
 			}
