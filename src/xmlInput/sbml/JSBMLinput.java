@@ -351,13 +351,13 @@ public class JSBMLinput {
 						// case Elementdeclerations.pnEdge:
 
 						elSub = reacAnnotation.getChild("Probability", null);
-						if (elSub != null) {
+						if (elSub != null && bea instanceof PNEdge) {
 							attr = elSub.getAttributeValue("Probability");
 							((PNEdge) bea).setProbability(Double.parseDouble(attr));
 						}
 
 						elSub = reacAnnotation.getChild("Priority", null);
-						if (elSub != null) {
+						if (elSub != null && bea instanceof PNEdge) {
 							attr = elSub.getAttributeValue("Priority");
 							((PNEdge) bea).setPriority(Integer.parseInt(attr));
 						}
