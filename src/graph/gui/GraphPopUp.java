@@ -37,6 +37,8 @@ public class GraphPopUp {
 		
 		JMenuItem returnToParent =new JMenuItem("Return to Parent-Pathway");
 		
+		JMenuItem graphPicture = new JMenuItem("Save picture");
+		
 		JMenuItem centerGraph = new JMenuItem("center graph");
 		JMenuItem springLayout = new JMenuItem("Spring Layout");
 		JMenuItem kkLayout = new JMenuItem("KK Layout");
@@ -101,6 +103,9 @@ public class GraphPopUp {
 		returnToParent.setActionCommand("returnToParent");
 		returnToParent.addActionListener(new PopUpListener());
 		
+		graphPicture.setActionCommand("graphPicture");
+		graphPicture.addActionListener(new PopUpListener());
+		
 		openPathwayMenu.add(openPathway);
 		openPathwayMenu.add(openPathwayTab);
 		
@@ -119,6 +124,8 @@ public class GraphPopUp {
 
 		popup.add(openPathwayMenu);
 		popup.add(returnToParent);
+		popup.add(new JSeparator());
+		popup.add(graphPicture);
 		popup.add(new JSeparator());
 		popup.add(copySelection);
 		popup.add(cutSelection);
