@@ -36,12 +36,14 @@ import graph.jung.classes.MyVisualizationViewer;
 
 public class InfoWindow {
 
-	private int nodes, edges, nodedegrees, maxpath, mindegree, maxdegree, cutnodes,
-			cliques;
+	private int nodes, edges, nodedegrees, maxpath, mindegree, maxdegree, cutnodes;
 	private float avgsp, avgneighbordegree;
 	private double density, centralization, avgnodedegree, matchingindex;
 	private boolean connected;
 	private long time;
+	
+	
+	private boolean writeFiles = !true;
 
 	public InfoWindow(boolean extended) {
 
@@ -103,6 +105,8 @@ public class InfoWindow {
 		 JOptionPane.showMessageDialog(w.getFrame(), instructions,
 		 "Network Properties", JOptionPane.DEFAULT_OPTION);
 		
+		 
+		 if(writeFiles){
 		
 //		HashSet<String> m = new HashSet<>();
 //		m.add("STARD13");
@@ -633,7 +637,7 @@ public class InfoWindow {
 //		 FrameView plotframe = new FrameView(plot);
 //		 plotframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //		 plotframe.setVisible(true);
-
+		 }
 	}
 
 	private String writeLine(String description, String Attribute) {

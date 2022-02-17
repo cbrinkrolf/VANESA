@@ -73,6 +73,7 @@ import gui.LabelToDataMappingWindow;
 import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
 import gui.MyPopUp;
+import gui.NodesEdgesTypesWindow;
 import gui.visualization.PreRenderManager;
 import io.OpenDialog;
 import io.PNDoc;
@@ -189,10 +190,10 @@ public class MenuListener implements ActionListener {
 									+ SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_ITXT + SaveDialog.FORMAT_TXT);
 					// +SaveDialog.FORMAT_SBML);
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "save as":
@@ -200,10 +201,10 @@ public class MenuListener implements ActionListener {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog(SaveDialog.FORMAT_SBML);
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "save":
@@ -232,10 +233,10 @@ public class MenuListener implements ActionListener {
 						new SaveDialog(SaveDialog.FORMAT_SBML);
 					}
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "exit":
@@ -272,10 +273,10 @@ public class MenuListener implements ActionListener {
 					// graphInstance.getMyGraph().changeToFRLayout();
 					LayoutConfig.changeToLayout(FRLayout.class);
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "circleLayout":
@@ -284,10 +285,10 @@ public class MenuListener implements ActionListener {
 					// graphInstance.getMyGraph().changeToCircleLayout();
 					LayoutConfig.changeToLayout(CircleLayout.class);
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "hebLayout":
@@ -332,10 +333,10 @@ public class MenuListener implements ActionListener {
 					// graphInstance.getMyGraph().changeToISOMLayout();
 					LayoutConfig.changeToLayout(ISOMLayout.class);
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "database settings":
@@ -810,13 +811,13 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				new SmacofView();
 			} else
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			break;
 		case "rendererSettings":
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				PreRenderManager.getInstance();
 			} else
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			break;
 		case "createDoc":
 			MyPopUp.getInstance().show("Latex generation", "Generation in progress, it will take a short moment!");
@@ -869,7 +870,7 @@ public class MenuListener implements ActionListener {
 							sleep(100);
 						}
 						System.out.println("file found");
-						//stop();
+						// stop();
 						// System.out.println("restart");
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -916,9 +917,10 @@ public class MenuListener implements ActionListener {
 								// System.out.println("alive2");
 							}
 							System.out.println("pdf ended");
-							MyPopUp.getInstance().show("Latex compiltion successful!", "PDF can be found at:\n" + docDir);
+							MyPopUp.getInstance().show("Latex compiltion successful!",
+									"PDF can be found at:\n" + docDir);
 							// System.out.println("restart");
-							//stop();
+							// stop();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -926,7 +928,8 @@ public class MenuListener implements ActionListener {
 				};
 				t.start();
 			} catch (IOException e1) {
-				MyPopUp.getInstance().show("Compilation of latex failed!", "pdflatex executable could not be found!\n Generated Latex file can be found at:\n"+docDir);
+				MyPopUp.getInstance().show("Compilation of latex failed!",
+						"pdflatex executable could not be found!\n Generated Latex file can be found at:\n" + docDir);
 				System.err.println("Could not compile latex. Find tex-file at: " + docDir);
 			}
 			break;
@@ -944,7 +947,7 @@ public class MenuListener implements ActionListener {
 					// "Inputfile error", JOptionPane.ERROR_MESSAGE);
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "mirnaTest":
@@ -960,10 +963,10 @@ public class MenuListener implements ActionListener {
 					mirna = new MirnaStatistics(pw);
 					mirna.enrichMirnas(true, true, false);
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "enrichGene":
@@ -974,10 +977,10 @@ public class MenuListener implements ActionListener {
 					mirna = new MirnaStatistics(pw);
 					mirna.enrichGenes(true, true, false);
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "shake":
@@ -1042,12 +1045,13 @@ public class MenuListener implements ActionListener {
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv, MainWindow.getInstance().getFrame(), null);
+					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv,
+							MainWindow.getInstance().getFrame(), null);
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "wuff":
@@ -1069,10 +1073,10 @@ public class MenuListener implements ActionListener {
 						}
 					}
 				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network before.");
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "transform":
@@ -1098,7 +1102,7 @@ public class MenuListener implements ActionListener {
 							"Please create a biologial network first. A Petri net cannot be transformed!.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "ruleManager":
@@ -1114,11 +1118,19 @@ public class MenuListener implements ActionListener {
 							"Please transform the biological network into a Petri net first!.");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "allPopUps":
 			new AllPopUpsWindow();
+			break;
+		case "nodesEdgesTypes":
+			if (con.containsPathway()) {
+				pw = graphInstance.getPathway();
+				new NodesEdgesTypesWindow(pw);
+			} else {
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
+			}
 			break;
 		}
 

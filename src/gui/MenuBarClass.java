@@ -263,13 +263,17 @@ public class MenuBarClass {
 		// ppiItem.addActionListener(MenuListener.getInstance());
 		// ppiItem.setActionCommand("ppi settings");
 
-		interaction = new JMenuItem("User interaction");
+		interaction = new JMenuItem("Show network properties");
 		interaction.addActionListener(MenuListener.getInstance());
 		interaction.setActionCommand("interaction");
 		
 		JMenuItem allPopUps = new JMenuItem("Show all previous PupUp messages");
 		allPopUps.addActionListener(MenuListener.getInstance());
 		allPopUps.setActionCommand("allPopUps");
+		
+		JMenuItem nodesEdgesTypes = new JMenuItem("Show nodes / edges types");
+		nodesEdgesTypes.addActionListener(MenuListener.getInstance());
+		nodesEdgesTypes.setActionCommand("nodesEdgesTypes");
 
 		internet = new JMenuItem("Internet Connection");
 		internet.addActionListener(MenuListener.getInstance());
@@ -318,6 +322,7 @@ public class MenuBarClass {
 		ruleManager.setActionCommand("ruleManager");
 
 		help.add(allPopUps);
+		help.add(nodesEdgesTypes);
 		help.add(interaction);
 
 		// about item is already present on mac osx
