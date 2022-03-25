@@ -28,7 +28,7 @@ public class NodesEdgesTypesWindow {
 		int edges = np.getEdgeCount();
 		int logicalNodes = 0;
 		for (BiologicalNodeAbstract bna : pw.getGraph().getAllVertices()) {
-			if (bna.hasRef()) {
+			if (bna.isLogical()) {
 				logicalNodes++;
 			}
 		}
@@ -82,7 +82,7 @@ public class NodesEdgesTypesWindow {
 		Map<String, Integer> map = new HashMap<>();
 		String type;
 		for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
-			if (bna.hasRef()) {
+			if (bna.isLogical()) {
 				type = bna.getBiologicalElement();
 				if (!map.containsKey(type)) {
 					map.put(type, 0);

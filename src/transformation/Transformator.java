@@ -107,7 +107,7 @@ public class Transformator {
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		while (it.hasNext()) {
 			bna = it.next();
-			if (!bna.hasRef()) {
+			if (!bna.isLogical()) {
 				id2bna.put(bna.getID(), bna);
 				tmpGraph.addVertex(bna.getID());
 			}
@@ -825,8 +825,8 @@ public class Transformator {
 	}
 
 	private BiologicalNodeAbstract getBNARef(BiologicalNodeAbstract bna) {
-		if (bna.hasRef()) {
-			return bna.getRef();
+		if (bna.isLogical()) {
+			return bna.getLogicalReference();
 		}
 		return bna;
 	}

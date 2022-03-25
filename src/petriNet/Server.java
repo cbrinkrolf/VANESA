@@ -337,7 +337,7 @@ public class Server {
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
-			if (!bna.hasRef()) {
+			if (!bna.isLogical()) {
 				if (bna instanceof Place) {
 					if (name2index.get("'" + bna.getName() + "'.t") != null) {
 						placeToken.add((Place)bna);

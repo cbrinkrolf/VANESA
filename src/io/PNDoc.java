@@ -80,8 +80,8 @@ public class PNDoc {
 					weight = edge.getFunction() + " ";
 				}
 			}
-			if (bna.hasRef()) {
-				bna = bea.getFrom().getRef();
+			if (bna.isLogical()) {
+				bna = bea.getFrom().getLogicalReference();
 			}
 			sb.append("\\verb\"" + weight + bna.getName() + "\"");
 			if (it.hasNext()) {
@@ -104,8 +104,8 @@ public class PNDoc {
 				}
 			}
 
-			if (bea.getTo().hasRef()) {
-				bna = bea.getTo().getRef();
+			if (bea.getTo().isLogical()) {
+				bna = bea.getTo().getLogicalReference();
 			}
 			sb.append("\\verb\"" + weight + bna.getName() + "\"");
 			if (it.hasNext()) {
@@ -204,7 +204,7 @@ public class PNDoc {
 		Place p;
 		while (it.hasNext()) {
 			bna = it.next();
-			if(bna instanceof Place && !bna.hasRef()){
+			if(bna instanceof Place && !bna.isLogical()){
 			//System.out.println(bna.getName());
 			p = (Place) bna;
 

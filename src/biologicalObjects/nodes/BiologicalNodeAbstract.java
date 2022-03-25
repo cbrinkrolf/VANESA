@@ -47,7 +47,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private String organism = "";
 	private DefaultMutableTreeNode treeNode;
 	@Setter(AccessLevel.NONE)
-	private BiologicalNodeAbstract ref = null;
+	private BiologicalNodeAbstract logicalReference = null;
 	private Set<BiologicalNodeAbstract> refs = new HashSet<BiologicalNodeAbstract>();
 	private boolean isVisible = true;
 	@Setter(AccessLevel.NONE)
@@ -135,8 +135,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				e.getTo().removeConnectingEdge(e);
 			}
 			setParentNode(null);
-			if (hasRef()) {
-				getRef().getRefs().remove(this);
+			if (isLogical()) {
+				getLogicalReference().getRefs().remove(this);
 			}
 		}
 		deleted = true;
@@ -879,21 +879,21 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		return new GraphInstance().getPathway().getGraph();
 	}
 
-	public boolean hasRef() {
-		if (this.ref != null) {
+	public boolean isLogical() {
+		if (this.logicalReference != null) {
 			return true;
 		}
 		return false;
 	}
 
-	public void setRef(BiologicalNodeAbstract ref) {
-		this.ref = ref;
+	public void setLogicalReference(BiologicalNodeAbstract ref) {
+		this.logicalReference = ref;
 		ref.getRefs().add(this);
 	}
 
-	public void deleteRef() {
-		ref.getRefs().remove(this);
-		this.ref = null;
+	public void deleteLogicalReference() {
+		logicalReference.getRefs().remove(this);
+		this.logicalReference = null;
 	}
 
 	// should only be used when loading a file with a network

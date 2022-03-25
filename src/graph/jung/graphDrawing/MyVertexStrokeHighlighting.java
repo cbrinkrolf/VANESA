@@ -186,7 +186,7 @@ public class MyVertexStrokeHighlighting implements
 	@Override
 	public Stroke apply(BiologicalNodeAbstract bna) {
 
-		if (bna.hasRef()) {
+		if (bna.isLogical()) {
 
 			return refstroke;
 

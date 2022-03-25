@@ -89,7 +89,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 			while (it.hasNext()) {
 				bna = it.next();
-				if (bna instanceof Place && !bna.hasRef()) {
+				if (bna instanceof Place && !bna.isLogical()) {
 					place = (Place) bna;
 					labels.add(place.getName());
 					places.put(place.getName(), place);

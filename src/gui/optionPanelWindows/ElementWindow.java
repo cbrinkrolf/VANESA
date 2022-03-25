@@ -127,10 +127,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 		knockedOut = new JCheckBox();
 		isDirected = new JCheckBox();
 
-		hideNeighbours = new JButton("Hide all Neighbours");
-		showNeighbours = new JButton("Show all Neighbours");
+		hideNeighbours = new JButton("Hide neighbors");
+		showNeighbours = new JButton("Show neighbors");
 		parametersButton = new JButton("Parameters");
-		showLabels = new JButton("Show Labels");
+		showLabels = new JButton("Show labels");
 
 		fillColorButton = new JButton("Fill color");
 		fillColorButton.setBackground(ab.getColor());
@@ -154,20 +154,27 @@ public class ElementWindow implements ActionListener, ItemListener {
 		label.addFocusListener(pwl);
 		name.addFocusListener(pwl);
 
-		MigLayout headerlayout = new MigLayout("fillx", "[right]rel[grow,fill]", "");
-		JPanel headerPanel = new JPanel(headerlayout);
+		// MigLayout headerlayout = new MigLayout("fillx", "[right]rel[grow,fill]", "");
+		// JPanel headerPanel = new JPanel(headerlayout);
 		// headerPanel.setBackground(new Color(192, 215, 227));
-		headerPanel.add(new JLabel(ab.getBiologicalElement()), "");
-		headerPanel.add(new JSeparator(), "gap 10");
+		// headerPanel.add(new JLabel(ab.getBiologicalElement()), "");
+		// headerPanel.add(new JSeparator(), "gap 10");
 
 		MigLayout layout = new MigLayout("fillx", "[grow,fill]", "");
 		p.setLayout(layout);
 		p.add(new JLabel("Element"), "gap 5 ");
-		p.add(new JLabel(ab.getBiologicalElement()), "wrap,span 1");
+		if (ref != null) {
+			p.add(new JLabel(ab.getBiologicalElement() + " (logical node)"), "wrap,span 1");
+		} else {
+			p.add(new JLabel(ab.getBiologicalElement()), "wrap,span 1");
+		}
 
 		if (MainWindow.developer) {
 			p.add(new JLabel("ID"), "gap 5 ");
 			JLabel id = new JLabel(ab.getID() + "");
+			if (ref != null) {
+				id.setText(original.getID()+"");
+			}
 			p.add(id, "wrap ,span 1");
 		}
 
@@ -183,41 +190,41 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 		if (ab.isVertex()) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
-			String lbl = "";
-			if (bna.hasRef()) {
-				lbl = bna.getID() + "_" + bna.getRef().getLabel();
+			String lbl = "-";
+			if (bna.isLogical()) {
+				lbl = "ID: "+ref.getID() + ", label: " + ref.getLabel();
 			}
-			p.add(new JLabel("Reference:"), "gap 5 ");
+			p.add(new JLabel("Reference to:"), "gap 5 ");
 			p.add(new JLabel(lbl), "wrap ,span 3");
 
-			if (bna.hasRef()) {
-				this.deleteRef = new JButton("Delete Reference");
-				deleteRef.setToolTipText("Delete Reference");
+			if (bna.isLogical()) {
+				this.deleteRef = new JButton("Delete reference");
+				deleteRef.setToolTipText("Delete reference (this node will not be a logical node anymore)");
 				deleteRef.setActionCommand("deleteRef");
 				deleteRef.addActionListener(this);
-				p.add(deleteRef);
-				this.pickOrigin = new JButton("Highlight Origin");
-				pickOrigin.setToolTipText("Highlight Origin");
+				p.add(deleteRef, "gap 5");
+				this.pickOrigin = new JButton("Highlight origin");
+				pickOrigin.setToolTipText("Highlight node which this node refers to");
 				pickOrigin.setActionCommand("pickOrigin");
 				pickOrigin.addActionListener(this);
-				p.add(pickOrigin);
+				p.add(pickOrigin, "split 2, gap 5");
 
 			} else {
-				this.chooseRef = new JButton("Choose Reference");
-				chooseRef.setToolTipText("Choose Reference");
+				this.chooseRef = new JButton("Choose reference");
+				chooseRef.setToolTipText("Choose reference node (makes this node a logical node)");
 				chooseRef.setActionCommand("chooseRef");
 				chooseRef.addActionListener(this);
 				p.add(chooseRef);
 				if (bna.getRefs().size() > 0) {
-					this.pickRefs = new JButton("Highlight References");
-					pickRefs.setToolTipText("Highlight References");
+					this.pickRefs = new JButton("Highlight references");
+					pickRefs.setToolTipText("Highlights all logical nodes which refer to this node");
 					pickRefs.setActionCommand("pickRefs");
 					pickRefs.addActionListener(this);
 					p.add(pickRefs);
 				}
 			}
 
-			showLabels.setToolTipText("Show all Labels");
+			showLabels.setToolTipText("Show all labels");
 			showLabels.setActionCommand("showLabels");
 			showLabels.addActionListener(this);
 			p.add(showLabels, "span 1, wrap");
@@ -275,7 +282,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// p.add(new JLabel("Graph properties:"), "gap 5");
 			// p.add(graphproperties, "wrap, span 3");
 
-			constCheck = new JCheckBox("constant");
+			constCheck = new JCheckBox("");
 			constCheck.setActionCommand("constCheck");
 			constCheck.addActionListener(this);
 			constCheck.setSelected(((BiologicalNodeAbstract) ab).isConstant());
@@ -346,7 +353,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				MyJFormattedTextField concentration;
 				MyJFormattedTextField concentrationStart;
 
-				JLabel lblTokenStart = new JLabel("Concentration Start");
+				JLabel lblTokenStart = new JLabel("Start concentration");
 				concentration = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				concentrationStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				concentrationMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
@@ -370,23 +377,24 @@ public class ElementWindow implements ActionListener, ItemListener {
 				concentrationMin.setName("concentrationMin");
 				concentrationMin.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				concentrationMin.addFocusListener(pwl);
-				JLabel lblTokenMin = new JLabel("min Conc.");
+				JLabel lblTokenMin = new JLabel("Min concentration");
 
 				concentrationMax.setName("concentrationMax");
 				concentrationMax.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				concentrationMax.addFocusListener(pwl);
-				JLabel lblTokenMax = new JLabel("max Conc.");
+				JLabel lblTokenMax = new JLabel("Max concentration");
 				p.add(lblConcentration, "gap 5 ");
 				p.add(concentration, "wrap");
 
 				p.add(lblTokenStart, "gap 5 ");
-				p.add(concentrationStart, "");
+				p.add(concentrationStart, "wrap");
 
-				p.add(constCheck, "wrap");
 				p.add(lblTokenMin, "gap 5 ");
 				p.add(concentrationMin, "wrap");
 				p.add(lblTokenMax, "gap 5");
 				p.add(concentrationMax, "wrap");
+				p.add(new JLabel("Constant concentration"), "gap 5");
+				p.add(constCheck, "wrap");
 
 				bna = (BiologicalNodeAbstract) ab;
 				ButtonGroup group = new ButtonGroup();
@@ -459,7 +467,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			} else if (ab instanceof Place) {
 				Place place = (Place) ab;
 
-				JLabel lswitchPlace = new JLabel("Place Type");
+				JLabel lswitchPlace = new JLabel("Place type");
 				JComboBox<String> placeList = new JComboBox<String>(new String[] { "discrete", "continuous" });
 				if (place.isDiscrete()) {
 					placeList.setSelectedItem("discrete");
@@ -474,7 +482,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				MyJFormattedTextField token;
 				MyJFormattedTextField tokenStart;
 
-				JLabel lblTokenStart = new JLabel("Token Start");
+				JLabel lblTokenStart = new JLabel("Start tokens");
 				if (place.isDiscrete()) {
 					token = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 					tokenStart = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
@@ -494,7 +502,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					tokenMin.setText(place.getTokenMin() + "");
 					tokenMax.setText(place.getTokenMax() + "");
 				}
-				JLabel lblToken = new JLabel("Token");
+				JLabel lblToken = new JLabel("Tokens");
 
 				token.setName("token");
 				// token.addFocusListener(pwl);
@@ -508,23 +516,25 @@ public class ElementWindow implements ActionListener, ItemListener {
 				tokenMin.setName("tokenMin");
 				tokenMin.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				tokenMin.addFocusListener(pwl);
-				JLabel lblTokenMin = new JLabel("min Tokens");
+				JLabel lblTokenMin = new JLabel("Min tokens");
 
 				tokenMax.setName("tokenMax");
 				tokenMax.setFocusLostBehavior(JFormattedTextField.COMMIT);
 				tokenMax.addFocusListener(pwl);
-				JLabel lblTokenMax = new JLabel("max Tokens");
+				JLabel lblTokenMax = new JLabel("Max tokens");
 				p.add(lblToken, "gap 5 ");
 				p.add(token, "span 1, wrap");
 
 				p.add(lblTokenStart, "gap 5 ");
-				p.add(tokenStart, "span 1");
+				p.add(tokenStart, "wrap");
 
-				p.add(constCheck, "wrap");
+				//p.add(constCheck, "wrap");
 				p.add(lblTokenMin, "gap 5 ");
 				p.add(tokenMin, "span 1, wrap");
 				p.add(lblTokenMax, "gap 5");
 				p.add(tokenMax, "span 1, wrap");
+				p.add(new JLabel("Constant tokens"), "gap 5");
+				p.add(constCheck, "wrap");
 
 				if (place.getConflictingOutEdges().size() > 1) {
 
@@ -543,17 +553,17 @@ public class ElementWindow implements ActionListener, ItemListener {
 					group.add(prio);
 					group.add(prob);
 
-					JButton solve = new JButton("solve conflict properties");
-					solve.setToolTipText("solve priorities and normalize probabilites");
+					JButton solve = new JButton("Solve conflict properties");
+					solve.setToolTipText("Solve priorities and normalize probabilites");
 					solve.setActionCommand("solve");
 					solve.addActionListener(this);
 
-					JButton check = new JButton("check all");
-					check.setToolTipText("check all conflict properties");
+					JButton check = new JButton("Check all");
+					check.setToolTipText("Check all conflict properties");
 					check.setActionCommand("check");
 					check.addActionListener(this);
 
-					p.add(new JLabel("conflict solving:"), "gap 5 ");
+					p.add(new JLabel("Conflict solving:"), "gap 5 ");
 					p.add(none, "flowx, split 3");
 					p.add(prio);
 					p.add(prob, "wrap");
@@ -572,7 +582,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				}
 
 			} else if (ab instanceof Transition) {
-				JLabel lswitchTrans = new JLabel("Transition Type");
+				JLabel lswitchTrans = new JLabel("Transition type");
 				JComboBox<String> transList = new JComboBox<String>(new String[] {
 						DiscreteTransition.class.getSimpleName(), ContinuousTransition.class.getSimpleName(),
 						StochasticTransition.class.getSimpleName() });
@@ -583,7 +593,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(transList, "wrap");
 
 				JTextField firingCondition = new JTextField(4);
-				JLabel lblFiringCondition = new JLabel("Firing Condition");
+				JLabel lblFiringCondition = new JLabel("Firing condition");
 				firingCondition.setText(((Transition) ab).getFiringCondition());
 				firingCondition.setName("firingCondition");
 				firingCondition.addFocusListener(pwl);
@@ -718,7 +728,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 					DynamicNode trans = (DynamicNode) ab;
 					JTextField maxSpeed = new JTextField(4);
-					JLabel lblMaxSpeed = new JLabel("Maximal Speed");
+					JLabel lblMaxSpeed = new JLabel("Maximal speed");
 					maxSpeed.setText(trans.getMaximalSpeed());
 					maxSpeed.setName("maximalSpeed");
 					maxSpeed.addFocusListener(pwl);
@@ -752,14 +762,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 				function.setText(e.getFunction());
 				function.setName("function");
 				function.addFocusListener(pwl);
-				JLabel lblpassingTokens = new JLabel("Edge Function");
+				JLabel lblpassingTokens = new JLabel("Edge function");
 
 				// String[] types = { "discrete", "continuous", "inhibition" };
 				// Create the combo box, select item at index 4.
 				// Indices start at 0, so 4 specifies the pig.
 				// JLabel typeList = new JComboBox(types);
 
-				JButton changeEdgeDirection = new JButton("Change Direction");
+				JButton changeEdgeDirection = new JButton("Change direction");
 				changeEdgeDirection.setActionCommand("changeEdgeDirection");
 				changeEdgeDirection.addActionListener(this);
 				p.add(changeEdgeDirection, "wrap");
@@ -768,13 +778,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 				activationProb.setText(e.getProbability() + "");
 				activationProb.setName("activationProb");
 				activationProb.addFocusListener(pwl);
-				JLabel lblProb = new JLabel("activation Probability");
+				JLabel lblProb = new JLabel("Activation probability");
 
 				MyJFormattedTextField activationPrio = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 				activationPrio.setText(e.getPriority() + "");
 				activationPrio.setName("activationPrio");
 				activationPrio.addFocusListener(pwl);
-				JLabel lblPrio = new JLabel("activation Priority");
+				JLabel lblPrio = new JLabel("Activation priority");
 
 				p.add(lblpassingTokens, "gap 5");
 				p.add(function, "wrap");
@@ -823,10 +833,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 				}
 
 				isDirected.setSelected(((BiologicalEdgeAbstract) ab).isDirected());
-				isDirected.setToolTipText("is directed");
+				isDirected.setToolTipText("Is directed");
 				isDirected.setActionCommand("isDirected");
 				isDirected.addActionListener(this);
-				p.add(new JLabel("is directed"), "gap 5 ");
+				p.add(new JLabel("Is directed"), "gap 5 ");
 				p.add(isDirected, "wrap ,span 1");
 			}
 
@@ -842,14 +852,16 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}
 
 		if (ab.isVertex()) {
-			hideNeighbours.setToolTipText("Sets all Neighbors of the selected Node to Reference");
+			hideNeighbours.setToolTipText("Hide all neighboring nodes");
 			hideNeighbours.setActionCommand("hideNeighbours");
 			hideNeighbours.addActionListener(this);
 			hideNeighbours.setMaximumSize(new Dimension(120, 30));
-			showNeighbours.setToolTipText("Delete Reference flag of all Neighbours of the current Node");
+			hideNeighbours.setEnabled(false);
+			showNeighbours.setToolTipText("Show all neighboring nodes");
 			showNeighbours.setActionCommand("showNeighbours");
 			showNeighbours.addActionListener(this);
 			showNeighbours.setMaximumSize(new Dimension(120, 30));
+			showNeighbours.setEnabled(false);
 			p.add(showNeighbours, "flowx");
 			p.add(hideNeighbours, "flowx, split 2");
 		}
@@ -859,9 +871,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 		p.add(parametersButton, "wrap");
 
 		if (ab instanceof BiologicalNodeAbstract) {
-			p.add(plotColorButton, "gap 5");
+			p.add(plotColorButton, "");
 		}
-		p.add(fillColorButton, "gap 5, wrap");
+		p.add(fillColorButton, "wrap");
 
 	}
 
@@ -875,8 +887,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 		graphInstance = new GraphInstance();
 
 		if (graphInstance.getSelectedObject() instanceof BiologicalNodeAbstract
-				&& ((BiologicalNodeAbstract) graphInstance.getSelectedObject()).hasRef()) {
-			this.ref = ((BiologicalNodeAbstract) graphInstance.getSelectedObject()).getRef();
+				&& ((BiologicalNodeAbstract) graphInstance.getSelectedObject()).isLogical()) {
+			this.ref = ((BiologicalNodeAbstract) graphInstance.getSelectedObject()).getLogicalReference();
 		} else {
 			this.ref = null;
 		}
@@ -1041,14 +1053,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 			ReferenceDialog dialog = new ReferenceDialog(bna);
 			BiologicalNodeAbstract node = dialog.getAnswer();
 			if (node != null) {
-				bna.setRef(node);
+				bna.setLogicalReference(node);
 				this.revalidateView();
 				w.updateElementTree();
 				// System.out.println("node: "+node.getID());
 			}
 		} else if ("deleteRef".equals(event)) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
-			bna.deleteRef();
+			bna.deleteLogicalReference();
 
 			this.revalidateView();
 			w.updateElementTree();
@@ -1059,7 +1071,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			Pathway pw = graphInstance.getPathway();
 			pw = graphInstance.getPathway();
 			MyGraph g = pw.getGraph();
-			g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
+			g.getVisualizationViewer().getPickedVertexState().pick(bna.getLogicalReference(), true);
 
 			this.revalidateView();
 

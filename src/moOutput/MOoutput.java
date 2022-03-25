@@ -236,7 +236,7 @@ public class MOoutput {
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
-			if (!bna.hasRef()) {
+			if (!bna.isLogical()) {
 				String biologicalElement = bna.getBiologicalElement();
 				String name = "";
 				/*
@@ -268,7 +268,7 @@ public class MOoutput {
 		while (it.hasNext()) {
 			// System.out.println("knoten");
 			bna = it.next();
-			if (!bna.hasRef()) {
+			if (!bna.isLogical()) {
 				for (int i = 0; i < bna.getParameters().size(); i++) {
 					// params += this.indentation + "parameter Real
 					// "+bna.getParameters().get(i).getName()+" =
@@ -287,7 +287,7 @@ public class MOoutput {
 		it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		while (it.hasNext()) {
 			bna = it.next();
-			if (!bna.hasRef() && bna instanceof PNNode) {
+			if (!bna.isLogical() && bna instanceof PNNode) {
 				String biologicalElement = bna.getBiologicalElement();
 				// double km = Double.NaN, kcat = Double.NaN;
 				// String ec = "";
@@ -735,7 +735,7 @@ public class MOoutput {
 		p1 = pw.getGraph().getVertexLocation(this.resolveReference(from));
 		p2 = pw.getGraph().getVertexLocation(this.resolveReference(to));
 
-		if (from.hasRef() || to.hasRef()) {
+		if (from.isLogical() || to.isLogical()) {
 			color = "{180, 180, 180}";
 		} else {
 			color = "{0, 0, 0}";
@@ -786,10 +786,10 @@ public class MOoutput {
 		if (bea.getFrom().isConstant() || bea.getTo().isConstant()) {
 			return "0";
 		}
-		if (bea.getFrom().hasRef() && bea.getFrom().getRef().isConstant()) {
+		if (bea.getFrom().isLogical() && bea.getFrom().getLogicalReference().isConstant()) {
 			return "0";
 		}
-		if (bea.getTo().hasRef() && bea.getTo().getRef().isConstant()) {
+		if (bea.getTo().isLogical() && bea.getTo().getLogicalReference().isConstant()) {
 			return "0";
 		}
 		return replaceNames(bea.getFunction());
@@ -987,8 +987,8 @@ public class MOoutput {
 	}
 
 	private BiologicalNodeAbstract resolveReference(BiologicalNodeAbstract bna) {
-		if (bna.hasRef()) {
-			return this.resolveReference(bna.getRef());
+		if (bna.isLogical()) {
+			return this.resolveReference(bna.getLogicalReference());
 		}
 		return bna;
 	}

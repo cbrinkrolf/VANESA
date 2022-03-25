@@ -181,9 +181,9 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			while(it.hasNext()){
 				bna = it.next();
 
-				if(bna.hasRef()){
+				if(bna.isLogical()){
 					//g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
-					Iterator<BiologicalNodeAbstract> it2 = bna.getRef().getRefs().iterator();
+					Iterator<BiologicalNodeAbstract> it2 = bna.getLogicalReference().getRefs().iterator();
 					while (it2.hasNext()) {
 						pick = it2.next();
 						// System.out.println(pick.getLabel());

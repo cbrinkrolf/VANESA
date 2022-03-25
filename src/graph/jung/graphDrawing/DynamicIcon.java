@@ -64,10 +64,10 @@ public class DynamicIcon implements Icon {
 			discrete = true;
 		}
 
-		if (p.hasRef() && p.getRef() instanceof Place) {
-			tokens = ((Place) p.getRef()).getToken() + "";
-			if (((Place) p.getRef()).isDiscrete()) {
-				tokens = (int) ((Place) p.getRef()).getToken() + "";
+		if (p.isLogical() && p.getLogicalReference() instanceof Place) {
+			tokens = ((Place) p.getLogicalReference()).getToken() + "";
+			if (((Place) p.getLogicalReference()).isDiscrete()) {
+				tokens = (int) ((Place) p.getLogicalReference()).getToken() + "";
 				discrete = true;
 			}
 		}

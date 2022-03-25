@@ -49,8 +49,8 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 	// Object element;
 
 	public PropertyWindowListener(GraphElementAbstract element) {
-		if (element instanceof BiologicalNodeAbstract && ((BiologicalNodeAbstract) element).hasRef()) {
-			geb = ((BiologicalNodeAbstract) graphInstance.getSelectedObject()).getRef();
+		if (element instanceof BiologicalNodeAbstract && ((BiologicalNodeAbstract) element).isLogical()) {
+			geb = ((BiologicalNodeAbstract) graphInstance.getSelectedObject()).getLogicalReference();
 		} else {
 			geb = element;// graphInstance.getPathwayElement(element);
 			// this.element = element;

@@ -201,7 +201,7 @@ public class Pathway implements Cloneable {
 				node = it.next();
 				if (node.getName().equals(bna.getName())) {
 					if (node.getClass().equals(bna.getClass())) {
-						bna.setRef(node);
+						bna.setLogicalReference(node);
 						createdRef = true;
 					} else {
 						MyPopUp.getInstance().show("Type mismatch",
@@ -566,12 +566,12 @@ public class Pathway implements Cloneable {
 
 			while (it.hasNext()) {
 				bna = it.next();
-				if (bna.hasRef()) {
-					if (nodes.contains(bna.getRef())) {
-						if (!node2Refs.containsKey(bna.getRef())) {
-							node2Refs.put(bna.getRef(), new HashSet<BiologicalNodeAbstract>());
+				if (bna.isLogical()) {
+					if (nodes.contains(bna.getLogicalReference())) {
+						if (!node2Refs.containsKey(bna.getLogicalReference())) {
+							node2Refs.put(bna.getLogicalReference(), new HashSet<BiologicalNodeAbstract>());
 						}
-						node2Refs.get(bna.getRef()).add(bna);
+						node2Refs.get(bna.getLogicalReference()).add(bna);
 					}
 				} else {
 					newNodes.add(bna);
@@ -653,7 +653,7 @@ public class Pathway implements Cloneable {
 				}
 				first.addLabel(bna.getLabelSet());
 
-				if (bna.hasRef() && bna.getRef() == first) {
+				if (bna.isLogical() && bna.getLogicalReference() == first) {
 					// System.out.println("ref geloescht");
 					first.getRefs().remove(bna);
 				}
@@ -732,7 +732,7 @@ public class Pathway implements Cloneable {
 					this.removeElement(bea);
 					updateMyGraph();
 					for (BiologicalNodeAbstract node : graph.getJungGraph().getVertices()) {
-						if (!node.hasRef()) {
+						if (!node.isLogical()) {
 							// System.out.println(node.getName() + "v: " +
 							// this.graph.getJungGraph().getNeighborCount(node));
 						}
@@ -743,7 +743,7 @@ public class Pathway implements Cloneable {
 					newBNA = BiologicalNodeAbstractFactory.create(bna.getBiologicalElement(), bna);
 					newBNA.setID(this);
 					newBNA.setRefs(new HashSet<BiologicalNodeAbstract>());
-					newBNA.setRef(bna);
+					newBNA.setLogicalReference(bna);
 					while (this.getAllNodeNames().contains(bna.getName() + "_" + count)) {
 						count++;
 					}
@@ -763,7 +763,7 @@ public class Pathway implements Cloneable {
 					// System.out.println("count: " +
 					// this.graph.getJungGraph().getNeighborCount(bna));
 					for (BiologicalNodeAbstract node : graph.getJungGraph().getVertices()) {
-						if (!node.hasRef()) {
+						if (!node.isLogical()) {
 							// System.out.println(node.getName() + "n: " +
 							// this.graph.getJungGraph().getNeighborCount(node));
 						}
@@ -777,7 +777,7 @@ public class Pathway implements Cloneable {
 		}
 
 		for (BiologicalNodeAbstract node : graph.getJungGraph().getVertices()) {
-			if (!node.hasRef()) {
+			if (!node.isLogical()) {
 				// System.out.println(node.getName() + ": " +
 				// this.graph.getJungGraph().getNeighborCount(node));
 			}
@@ -1288,8 +1288,8 @@ public class Pathway implements Cloneable {
 					bea.getTo().removeConnectingEdge(bea);
 				}
 				// delete refs
-				if (bna.hasRef()) {
-					bna.getRef().getRefs().remove(bna);
+				if (bna.isLogical()) {
+					bna.getLogicalReference().getRefs().remove(bna);
 				}
 				// delete incident edges
 				for (BiologicalEdgeAbstract bea : getGraph().getJungGraph().getIncidentEdges(bna)) {
@@ -1339,10 +1339,10 @@ public class Pathway implements Cloneable {
 							discrete = true;
 						}
 
-						if (p.hasRef() && p.getRef() instanceof Place) {
-							tokens = ((Place) p.getRef()).getToken() + "";
-							if (((Place) p.getRef()).isDiscrete()) {
-								tokens = (int) ((Place) p.getRef()).getToken() + "";
+						if (p.isLogical() && p.getLogicalReference() instanceof Place) {
+							tokens = ((Place) p.getLogicalReference()).getToken() + "";
+							if (((Place) p.getLogicalReference()).isDiscrete()) {
+								tokens = (int) ((Place) p.getLogicalReference()).getToken() + "";
 								discrete = true;
 							}
 						}
@@ -1424,7 +1424,7 @@ public class Pathway implements Cloneable {
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
-			if (bna instanceof Place && !bna.hasRef()) {
+			if (bna instanceof Place && !bna.isLogical()) {
 				count++;
 			}
 		}
@@ -1437,7 +1437,7 @@ public class Pathway implements Cloneable {
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
-			if (bna instanceof Transition && !bna.hasRef()) {
+			if (bna instanceof Transition && !bna.isLogical()) {
 				count++;
 			}
 		}
@@ -1457,7 +1457,7 @@ public class Pathway implements Cloneable {
 		while (it.hasNext()) {
 			bna = it.next();
 			// System.out.println(bna.getName());
-			if (bna instanceof Place && !bna.hasRef()) {
+			if (bna instanceof Place && !bna.isLogical()) {
 				p = (Place) bna;
 				c = Color.getHSBColor(i * 1.0f / (getPlaceCount()), 1, 1);
 				// System.out.println(bna.getName());
@@ -1472,7 +1472,7 @@ public class Pathway implements Cloneable {
 				}
 				i++;
 				// System.out.println("i: " + i);
-			} else if (bna instanceof Transition && !bna.hasRef()) {
+			} else if (bna instanceof Transition && !bna.isLogical()) {
 				t = (Transition) bna;
 				c = Color.getHSBColor(j * 1.0f / (getTransitionCount()), 1, 1);
 				// System.out.println(j * 1.0f / (getTransitionCount()));

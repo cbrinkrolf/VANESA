@@ -75,7 +75,7 @@ public class ReferenceDialog {
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
-			if (bna != self && !bna.hasRef()) {
+			if (bna != self && !bna.isLogical()) {
 				if (self instanceof Place) {
 					if (bna instanceof Place) {
 						map.put(bna.getNetworklabel(), bna);

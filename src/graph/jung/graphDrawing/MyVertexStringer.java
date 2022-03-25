@@ -21,8 +21,8 @@ public class MyVertexStringer implements
 		//if(bna instanceof Place){
 		//	return ((Place)bna).getToken() + " | " +bna.getNetworklabel();
 		//}
-		if ( bna.hasRef()){
-			return bna.getRef().getNetworklabel();
+		if ( bna.isLogical()){
+			return bna.getLogicalReference().getNetworklabel();
 		}
 		return bna.getNetworklabel();
 	}

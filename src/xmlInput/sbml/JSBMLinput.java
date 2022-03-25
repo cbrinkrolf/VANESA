@@ -1235,7 +1235,7 @@ public class JSBMLinput {
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
-			bna.setRef(this.nodes.get(bna2Ref.get(bna)));
+			bna.setLogicalReference(this.nodes.get(bna2Ref.get(bna)));
 		}
 	}
 

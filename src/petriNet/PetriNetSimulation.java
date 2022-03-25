@@ -455,7 +455,7 @@ public class PetriNetSimulation implements ActionListener {
 		int vars = 0;
 		while (it.hasNext()) {
 			bna = it.next();
-			if (bna instanceof Place && !bna.hasRef()) {
+			if (bna instanceof Place && !bna.isLogical()) {
 				filter += "'" + bna.getName() + "'.t|";
 				vars++;
 			} else if (bna instanceof Transition) {

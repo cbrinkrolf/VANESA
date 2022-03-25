@@ -281,7 +281,7 @@ public class PetriNetVertexDialog {
 					while (it.hasNext()) {
 						bna = it.next();
 						if (bna.getName().equals(name.getText().trim())) {
-							createdNode.setRef(bna);
+							createdNode.setLogicalReference(bna);
 							createdRef = true;
 						}
 					}

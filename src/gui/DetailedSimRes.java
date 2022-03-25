@@ -118,7 +118,7 @@ public class DetailedSimRes implements ActionListener {
 
 		while (it.hasNext()) {
 			bna = it.next();
-			if (bna instanceof Place && !bna.hasRef()) {
+			if (bna instanceof Place && !bna.isLogical()) {
 				rows[i][0] = bna.getName();
 				for (int j = 1; j <= rowsDim; j++) {
 					if (simRes.contains(bna, SimulationResultController.SIM_TOKEN)

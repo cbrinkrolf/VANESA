@@ -45,9 +45,9 @@ public class CSVWriter {
 				buff.append("\"Time\";");
 				while (it.hasNext()) {
 					bna = it.next();
-					if (bna instanceof Place && !bna.hasRef()) {
+					if (bna instanceof Place && !bna.isLogical()) {
 						places.add((Place) bna);
-					} else if (bna instanceof Transition && !bna.hasRef()) {
+					} else if (bna instanceof Transition && !bna.isLogical()) {
 						transitions.add((Transition) bna);
 					}
 				}

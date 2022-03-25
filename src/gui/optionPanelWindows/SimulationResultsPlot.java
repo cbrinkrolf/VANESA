@@ -563,7 +563,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			while (itBna.hasNext()) {
 				bna = itBna.next();
 				// System.out.println(series.getItemCount());
-				if (bna instanceof Place && !bna.hasRef()) {
+				if (bna instanceof Place && !bna.isLogical()) {
 					place = (Place) bna;
 					// System.out.println(simRes.contains(place, TOKEN));
 					if (simRes.contains(place, TOKEN) && simRes.get(place, TOKEN).size() > 0) {
@@ -1173,7 +1173,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		}
 		while (itNodes.hasNext()) {
 			bna = itNodes.next();
-			if (!bna.hasRef()) {
+			if (!bna.isLogical()) {
 				if (bna instanceof Place) {
 					place = (Place) bna;
 					// if
@@ -1294,8 +1294,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	}
 
 	private BiologicalNodeAbstract resolveReference(BiologicalNodeAbstract bna) {
-		if (bna.hasRef()) {
-			return bna.getRef();
+		if (bna.isLogical()) {
+			return bna.getLogicalReference();
 		}
 		return bna;
 	}

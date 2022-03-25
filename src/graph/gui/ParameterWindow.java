@@ -101,7 +101,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 						BiologicalNodeAbstract bna;
 						while (it.hasNext()) {
 							bna = it.next();
-							if (!bna.hasRef()) {
+							if (!bna.isLogical()) {
 								// words.add(bna.getRef().getLink());
 								words.add(bna.getLabel());
 							}

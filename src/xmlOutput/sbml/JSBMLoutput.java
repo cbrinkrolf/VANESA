@@ -608,14 +608,14 @@ public class JSBMLoutput {
 		}
 
 		elSub = new XMLNode(new XMLNode(new XMLTriple("NodeReference", "", ""), new XMLAttributes()));
-		if (oneNode.hasRef()) {
+		if (oneNode.isLogical()) {
 			attr = "true";
 		} else {
 			attr = "false";
 		}
 		elSub.addChild(createElSub(attr, "hasRef"));
-		if (oneNode.hasRef()) {
-			attr = oneNode.getRef().getID() + "";
+		if (oneNode.isLogical()) {
+			attr = oneNode.getLogicalReference().getID() + "";
 			elSub.addChild(createElSub(attr, "RefID"));
 		}
 

@@ -127,7 +127,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 		while (it.hasNext()) {
 
 			bna = it.next();
-			if (!bna.hasRef()) {
+			if (!bna.isLogical()) {
 				if (bna.getLabel().length() == 0) {
 					lbl = "id_" + bna.getID();
 				} else {
@@ -212,7 +212,7 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 
 		while (it.hasNext()) {
 			bna = it.next();
-			if (!bna.hasRef()) {
+			if (!bna.isLogical()) {
 				if (bna.getLabel().length() == 0) {
 					lbl = "id_" + bna.getID();
 				} else {
