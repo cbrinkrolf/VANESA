@@ -1,6 +1,7 @@
 package transformation;
 
 import java.awt.geom.Point2D;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,9 +78,10 @@ public class Transformator {
 	private Map<Integer, BiologicalEdgeAbstract> id2Edge = new HashMap<Integer, BiologicalEdgeAbstract>();
 
 	private int evaluatedPerms = 0;
+	private int totalGeneratedPerms = 0;
 	private int evaluatedEdges = 0;
 	private boolean executed = false;
-	private List<List<Integer>> permutations = null;
+	private List<List<Integer>> permutations = Collections.emptyList();
 	private Graph<Integer, Integer> tmpGraph;
 
 	private Set<BiologicalNodeAbstract> subGraphNodes;
@@ -122,8 +124,8 @@ public class Transformator {
 			// System.out.println(getBNARef(bea.getFrom()).getName()+" ->
 			// "+getBNARef(bea.getTo()).getName());
 		}
-		System.out.println(this.maxAllShortestPath(pw.getGraph().getJungGraph()));
-		System.out.println(this.maxAllShortestPath(tmpGraph));
+		// System.out.println(this.maxAllShortestPath(pw.getGraph().getJungGraph()));
+		// System.out.println(this.maxAllShortestPath(tmpGraph));
 
 		// createRules();
 		applyRules();
@@ -151,6 +153,7 @@ public class Transformator {
 		long tac = System.currentTimeMillis();
 		System.out.println("done with all rules: " + (tac - tic) + "millis");
 		System.out.println("evaluated Permutations: " + evaluatedPerms);
+		System.out.println("total generated Permutations: "+totalGeneratedPerms);
 		System.out.println("evaluated Edges: " + evaluatedEdges);
 
 		System.out.println("used edges: " + usedEdges.size());
@@ -178,6 +181,9 @@ public class Transformator {
 
 		System.out.println("max length rule: " + lengthRule);
 
+		int neighborhoodSize = Math.floorDiv(lengthRule + 1, 2);
+		System.out.println("neighborhood size: " + neighborhoodSize);
+
 		// for each node of pathway, create undirected subgraph (based on tempGraph,
 		// containing only edges which are not considered yet)
 		// around that node with max. length of rule length. Then test permutations on
@@ -198,12 +204,18 @@ public class Transformator {
 			// System.out.println("nodeIdx: " + i);
 			ruleToNextPermIndex.clear();
 			startNode = id2bna.get(sortedList.get(i));
+
+			if (!useSubgraph) {
+				// only execute once
+				i = sortedList.size();
+			}
+
 			if (!tmpGraph.containsVertex(startNode.getID())) {
 				// node was already handled
 				continue;
 			}
 
-			this.setSubgraphNodesAndEdges(startNode, lengthRule);
+			this.setSubgraphNodesAndEdges(startNode, neighborhoodSize);
 			if (printLog) {
 				System.out.println(startNode.getName() + " subGraphNodes: " + subGraphNodes.size() + " subGraphEdges, "
 						+ subGraphEdges.size());
@@ -214,15 +226,19 @@ public class Transformator {
 				continue;
 			}
 			this.createBuckets(subGraphNodes);
-
+			// System.out.println("done create buckets");
 			this.createAndSetPermutation(r);
 
-			if (permutations != null && permutations.size() < 1) {
+			// System.out.println(permutations.isEmpty());
+			if (permutations == null || permutations.size() < 1) {
 				// skip
 				continue;
 			}
+			// if(permutations != null)
 			System.out.println("size of permutation set: " + permutations.size());
-
+			if (!useSubgraph && !useBuckets) {
+				return;
+			}
 			do {
 				executed = false;
 				/*
@@ -254,14 +270,14 @@ public class Transformator {
 				type = r.getBiologicalNodes().get(i).getType();
 
 				// consider ANY node
-				if (type.equals(Elementdeclerations.anyBNA)) {
-					type = BiologicalNodeAbstract.class.getSimpleName();
-				}
+				// if (type.equals(Elementdeclerations.anyBNA)) {
+				// type = BiologicalNodeAbstract.class.getSimpleName();
+				// }
 				// System.out.println(type);
 
 				// node type of rule does not exist in graph -> skip rule
 				if (nodeType2bna.get(type) == null) {
-					// System.out.println("types do not exist");
+					System.out.println("types do not exist");
 					return;
 				}
 				it = nodeType2bna.get(type).iterator();
@@ -278,7 +294,7 @@ public class Transformator {
 				}
 				// System.out.println(l.size());
 			} else {
-				for (BiologicalNodeAbstract node : subGraphNodes){
+				for (BiologicalNodeAbstract node : subGraphNodes) {
 					l.add(node.getID());
 				}
 			}
@@ -286,6 +302,7 @@ public class Transformator {
 			// System.out.println(list);
 		}
 		permutations = Permutator.permutations(list, false);
+		totalGeneratedPerms += permutations.size();
 	}
 
 	// tries to find one matching permutation
@@ -311,6 +328,7 @@ public class Transformator {
 		if (ruleToNextPermIndex.containsKey(r)) {
 			start = ruleToNextPermIndex.get(r) + 1;
 		}
+		RuleNode rn;
 
 		RuleEdge bEdge;
 		String edgeType;
@@ -324,9 +342,24 @@ public class Transformator {
 				// System.out.println("new perm");
 			}
 
+			// TODO check all nodes if !useBuckets
 			boolean test = true;
+			if (!useBuckets) {
+				for (int j = 0; j < r.getBiologicalNodes().size(); j++) {
+					rn = r.getBiologicalNodes().get(j);
+					id1 = perm.get(j);
+					n1 = id2bna.get(id1);
+					if (nodeType2bna.get(rn.getType()) != null && nodeType2bna.get(rn.getType()).contains(n1)) {
+
+					} else {
+						continue nextPerm;
+					}
+				}
+			}
+
 			// check all edges
 			for (int j = 0; j < r.getBiologicalEdges().size(); j++) {
+				evaluatedEdges++;
 				if (test) {
 					bEdge = r.getBiologicalEdges().get(j);
 					boolean test1 = false;
@@ -339,14 +372,15 @@ public class Transformator {
 					if (tmpGraph.findEdge(id1, id2) != null) {
 						bea = id2Edge.get(tmpGraph.findEdge(id1, id2));
 						edgeType = bEdge.getType();
+						// TODO check
 						if (edgeType.equals(Elementdeclerations.anyBEA)) {
-							edgeType = BiologicalEdgeAbstract.class.getSimpleName();
+							// edgeType = BiologicalEdgeAbstract.class.getSimpleName();
 						}
 						// System.out.println("eType="+edgeType);
 						// System.out.println(edgeType2bea.get(edgeType).size());
 						// System.out.println(n1.getName() + " -> "+n2.getName());
 						if (getBNARef(bea.getFrom()) == n1 && getBNARef(bea.getTo()) == n2
-								&& edgeType2bea.get(edgeType).contains(bea)) {
+								&& edgeType2bea.get(edgeType) != null && edgeType2bea.get(edgeType).contains(bea)) {
 							// System.out.println("true");
 							test1 = true;
 						} else {
@@ -374,7 +408,7 @@ public class Transformator {
 
 	private void executeRule(Rule r, List<Integer> perm) {
 		executed = false;
-		System.out.println("execute rule");
+		// System.out.println("execute rule");
 		HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA = new HashMap<RuleNode, BiologicalNodeAbstract>();
 		HashMap<RuleNode, PNNode> rulePNodeToBNA = new HashMap<RuleNode, PNNode>();
 		List<BiologicalNodeAbstract> toDeleteBNA = new ArrayList<BiologicalNodeAbstract>();
@@ -382,6 +416,8 @@ public class Transformator {
 		for (int i = 0; i < r.getBiologicalNodes().size(); i++) {
 			// System.out.println(r.getAllBiologicalNodes().get(i) + "->"+
 			// id2bna.get(perm.get(i)));
+			// System.out.println(id2bna.get(perm.get(i)).getName() + " expected type: "+
+			// r.getBiologicalNodes().get(i).getType());
 			ruleBNodeToBNA.put(r.getBiologicalNodes().get(i), id2bna.get(perm.get(i)));
 		}
 
@@ -399,31 +435,35 @@ public class Transformator {
 				bNode = r.getMappedBnode(pnNode);
 				bna = ruleBNodeToBNA.get(bNode);
 				// System.out.println(bna);
+				// System.out.println(bna.getName());
 				if (bn2pnMap.containsKey(bna)) {
 					// node already exists
 					pnBNA = bn2pnMap.get(bna);
 					rulePNodeToBNA.put(pnNode, pnBNA);
 					// check if node types matches
 					if (pnNode.getType().equals(Transformator.transition) && pnBNA instanceof Place) {
-						System.out.println("node type mismatch");
+						System.out.println("node type mismatch 1");
 					} else if (pnNode.getType().equals(Transformator.continuousTransition)
 							&& !(pnBNA instanceof ContinuousTransition)) {
-						System.out.println("node type mismatch");
+						System.out.println("node type mismatch 2");
 					} else if (pnNode.getType().equals(Transformator.discreteTransition)
 							&& !(pnBNA instanceof DiscreteTransition)) {
-						System.out.println("node type mismatch");
+						System.out.println("node type mismatch 3");
 					} else if (pnNode.getType().equals(Transformator.place) && pnBNA instanceof Transition) {
-						System.out.println("node type mismatch");
+						System.out.println("node type mismatch 4");
 					} else if (pnNode.getType().equals(Transformator.continuousPlace)
 							&& !(pnBNA instanceof ContinuousPlace)) {
-						System.out.println("node type mismatch");
+						System.out.println("node type mismatch 5");
 					} else if (pnNode.getType().equals(Transformator.discretePlace)
 							&& !(pnBNA instanceof DiscretePlace)) {
-						System.out.println("node type mismatch");
+						System.out.println("node type mismatch 6");
 					}
 					toDeleteBNA.add(bna);
 				} else {
 					// node needs to be created
+					if (bna.getName().equals("n2_7_1_69")) {
+						// System.out.println("create "+pnNode.getType() +" "+ bna.getName());
+					}
 					rulePNodeToBNA.put(pnNode, createPNNode(r, pnNode, bna));
 					toDeleteBNA.add(bna);
 					executed = true;
@@ -515,6 +555,7 @@ public class Transformator {
 	}
 
 	private PNNode createPNNode(Rule r, RuleNode pnNode, BiologicalNodeAbstract bna) {
+		// TODO consider stochastic transitions
 		PNNode pn = null;
 		String type = pnNode.getType();
 		// no type given
@@ -541,19 +582,20 @@ public class Transformator {
 				type = continuousTransition;
 			}
 		}
-
+		String defaultPName = "p" + petriNet.getPlaceCount() + 1;
+		String defaultTName = "t" + petriNet.getTransitionCount() + 1;
 		switch (type) {
 		case continuousPlace:
-			pn = new ContinuousPlace("", "");
+			pn = new ContinuousPlace(defaultPName, defaultPName);
 			break;
 		case continuousTransition:
-			pn = new ContinuousTransition("", "");
+			pn = new ContinuousTransition(defaultTName, defaultTName);
 			break;
 		case discretePlace:
-			pn = new DiscretePlace("", "");
+			pn = new DiscretePlace(defaultPName, defaultPName);
 			break;
 		case discreteTransition:
-			pn = new DiscreteTransition("", "");
+			pn = new DiscreteTransition(defaultTName, defaultTName);
 			break;
 		}
 		if (pn != null) {
@@ -561,8 +603,12 @@ public class Transformator {
 			double y = 0;
 
 			if (bna != null) {
-				pn.setLabel(bna.getLabel());
-				pn.setName(bna.getName());
+				if (bna.getLabel().trim().length() > 0) {
+					pn.setLabel(bna.getLabel());
+				}
+				if (bna.getName().trim().length() > 0) {
+					pn.setName(bna.getName());
+				}
 				pn.setColor(bna.getColor());
 				pn.setPlotColor(bna.getPlotColor());
 				// System.out.println("Vertex: "+p.getName());
@@ -585,28 +631,47 @@ public class Transformator {
 	}
 
 	private void createBuckets(Collection<BiologicalNodeAbstract> bnas) {
+		// System.out.println("calculate subgraph nodes: "+ bnas.size());
 		nodeType2bna.clear();
 		edgeType2bea.clear();
 
 		BiologicalNodeAbstract bna;
+		BiologicalNodeAbstract bna1;
 		BiologicalEdgeAbstract bea;
+		BiologicalEdgeAbstract bea1;
 		String name;
 		Class<?> c;
+		nodeType2bna.put(Elementdeclerations.anyBNA, new ArrayList<BiologicalNodeAbstract>());
+		edgeType2bea.put(Elementdeclerations.anyBEA, new ArrayList<BiologicalEdgeAbstract>());
+
 		// all nodes
 		Iterator<BiologicalNodeAbstract> it = bnas.iterator();
 		while (it.hasNext()) {
-
 			bna = it.next();
+
 			c = bna.getClass();
 			name = bna.getClass().getSimpleName();
+			// Object o = c.getSuperclass().cast(bna);
+			nodeType2bna.get(Elementdeclerations.anyBNA).add(bna);
 
-			while (!name.equals("Object")) {
+			while (!name.equals("BiologicalNodeAbstract")) {
+				// System.out.println("class: "+c.getSimpleName());
 				// System.out.println(name);
 
-				if (!nodeType2bna.containsKey(name)) {
-					nodeType2bna.put(name, new ArrayList<BiologicalNodeAbstract>());
+				// System.out.println("name: "+name);
+				// bna = (BiologicalNodeAbstract) c.cast(bna);
+				try {
+					bna1 = (BiologicalNodeAbstract) c.getConstructor(String.class, String.class).newInstance("", "");
+					if (!nodeType2bna.containsKey(bna1.getBiologicalElement())) {
+						nodeType2bna.put(bna1.getBiologicalElement(), new ArrayList<BiologicalNodeAbstract>());
+					}
+					nodeType2bna.get(bna1.getBiologicalElement()).add(bna);
+					// System.out.println("type: "+bna1.getBiologicalElement());
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
 				}
-				nodeType2bna.get(name).add(bna);
+
 				c = c.getSuperclass();
 				name = c.getSimpleName();
 			}
@@ -618,12 +683,27 @@ public class Transformator {
 			c = bea.getClass();
 			name = bea.getClass().getSimpleName();
 
-			while (!name.equals("Object")) {
-				if (!edgeType2bea.containsKey(name)) {
-					edgeType2bea.put(name, new ArrayList<BiologicalEdgeAbstract>());
-				}
-				edgeType2bea.get(name).add(bea);
+			edgeType2bea.get(Elementdeclerations.anyBEA).add(bea);
+			while (!name.equals("BiologicalEdgeAbstract")) {
 
+				try {
+					bea1 = (BiologicalEdgeAbstract) c.getConstructor(String.class, String.class,
+							BiologicalNodeAbstract.class, BiologicalNodeAbstract.class).newInstance("", "", null, null);
+					if (!edgeType2bea.containsKey(bea1.getBiologicalElement())) {
+						edgeType2bea.put(bea1.getBiologicalElement(), new ArrayList<BiologicalEdgeAbstract>());
+					}
+					edgeType2bea.get(bea1.getBiologicalElement()).add(bea);
+					// System.out.println("type: "+bna1.getBiologicalElement());
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+				}
+
+				// if (!edgeType2bea.containsKey(name)) {
+				// edgeType2bea.put(name, new ArrayList<BiologicalEdgeAbstract>());
+				// }
+				// edgeType2bea.get(name).add(bea);
+				// System.out.println(name);
 				c = c.getSuperclass();
 				name = c.getSimpleName();
 			}

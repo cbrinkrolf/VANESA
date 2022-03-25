@@ -57,7 +57,7 @@ public class RuleEditingWindowListener implements ActionListener {
 				activePw.getGraph().disableGraphTheory();
 			}
 		} else if ("del".equals(event)) {
-			activePw.removeSelection();
+			//activePw.removeSelection();
 		} else if ("place".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);

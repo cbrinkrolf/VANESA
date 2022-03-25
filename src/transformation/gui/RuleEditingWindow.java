@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -308,6 +309,7 @@ public class RuleEditingWindow implements ActionListener {
 		frame.setAlwaysOnTop(false);
 		frame.setContentPane(optionPane);
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		frame.revalidate();
 
 		frame.pack();
@@ -400,7 +402,7 @@ public class RuleEditingWindow implements ActionListener {
 			}
 			revalidateSelectedEdges();
 		} else if (e.getActionCommand().startsWith("del_")) {
-			System.out.println("del");
+			//System.out.println("del");
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
 			Iterator<BiologicalNodeAbstract> it = bnToPn.keySet().iterator();
 			BiologicalNodeAbstract bna = null;
@@ -416,22 +418,12 @@ public class RuleEditingWindow implements ActionListener {
 			}
 			revalidateSelectedEdges();
 		} else if (e.getActionCommand().equals("del")) {
-			// TODO delete nodes, edges and references BN->PN of deleted nodes
-			System.out.println("del");
-			int idx = Integer.parseInt(e.getActionCommand().substring(4));
-			Iterator<BiologicalNodeAbstract> it = bnToPn.keySet().iterator();
-			BiologicalNodeAbstract bna = null;
-			while (it.hasNext()) {
-				bna = it.next();
-				if (bna.getID() == idx) {
-					break;
-				}
+			String panelName = ((ToolBarButton) e.getSource()).getParent().getName();
+			if (panelName.equals("buttonBN")) {
+				this.deleteBNSelection();
+			} else if (panelName.equals("buttonPN")) {
+				pn.removeSelection();
 			}
-			if (bna != null) {
-				bnToPn.remove(bna);
-				this.populateNodeMapping();
-			}
-			revalidateSelectedEdges();
 		}
 	}
 
@@ -456,9 +448,27 @@ public class RuleEditingWindow implements ActionListener {
 
 		JButton trash = new ToolBarButton(new ImageIcon(imagePath.getPath("Trash.png")));
 		trash.setToolTipText("Delete selected items");
-		trash.setMnemonic(KeyEvent.VK_DELETE);
+		this.bn.getGraph().getVisualizationViewer().addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// nothing to do
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+					deleteBNSelection();
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// nothing to do
+			}
+		});
 		trash.setActionCommand("del");
-		trash.addActionListener(listener);
+		// trash.addActionListener(listener);
 		trash.addActionListener(this);
 		panel.add(trash);
 
@@ -674,6 +684,10 @@ public class RuleEditingWindow implements ActionListener {
 				}
 			}
 		});
+		for(KeyListener k : bn.getGraph().getVisualizationViewer().getKeyListeners()){
+			bn.getGraph().getVisualizationViewer().removeKeyListener(k);
+		}
+		
 	}
 
 	private void revalidateSelectedEdges() {
@@ -698,7 +712,7 @@ public class RuleEditingWindow implements ActionListener {
 			lblSetEdges.setText(text);
 			chkAllEdgesSelected.setEnabled(true);
 		}
-		System.out.println("considered edges: " + consideredEdges.size());
+		//System.out.println("considered edges: " + consideredEdges.size());
 		lblSetEdges.repaint();
 	}
 
@@ -894,6 +908,49 @@ public class RuleEditingWindow implements ActionListener {
 				rule.getConsideredEdges().add(beaToRuleEdge.get(it2.next()));
 			}
 		}
+	}
+
+	private void deleteBNSelection() {
+		// TODO delete nodes, edges and references BN->PN of deleted nodes
+
+		// "+vv.getPickedEdgeState().getSelectedObjects().length);
+
+		Iterator<BiologicalEdgeAbstract> itBea = bn.getGraph().getVisualizationViewer().getPickedEdgeState().getPicked()
+				.iterator();
+		// Iterator it = vv.getPickedState().getPickedEdges().iterator();
+		BiologicalEdgeAbstract bea;
+		while (itBea.hasNext()) {
+			bea = itBea.next();
+			if (consideredEdges.contains(bea)) {
+				consideredEdges.remove(bea);
+				//System.out.println("removed edge");
+			}
+			// removeElement(it.next());
+		}
+
+		Iterator<BiologicalNodeAbstract> itBna = bn.getGraph().getVisualizationViewer().getPickedVertexState()
+				.getPicked().iterator();
+		// Iterator it = vv.getPickedState().getPickedEdges().iterator();
+		BiologicalNodeAbstract bna;
+		while (itBna.hasNext()) {
+			bna = itBna.next();
+			if (bnToPn.containsKey(bna)) {
+				bnToPn.remove(bna);
+			}
+			//System.out.println(bna.getConnectingEdges().size());
+			for (BiologicalEdgeAbstract edge : bn.getGraph().getJungGraph().getIncidentEdges(bna)) {
+				if (consideredEdges.contains(edge)) {
+					consideredEdges.remove(edge);
+					//System.out.println("removed e");
+					//System.out.println(consideredEdges.size());
+				}
+			}
+			// removeElement(it.next());
+		}
+
+		bn.removeSelection();
+		revalidateSelectedEdges();
+		this.populateNodeMapping();
 	}
 
 	public Rule getResult() {
