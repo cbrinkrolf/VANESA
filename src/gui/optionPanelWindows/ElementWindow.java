@@ -723,24 +723,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 						break;
 					}
 				}
-
-				else if (ab instanceof DynamicNode) {
-
-					DynamicNode trans = (DynamicNode) ab;
-					JTextField maxSpeed = new JTextField(4);
-					JLabel lblMaxSpeed = new JLabel("Maximal speed");
-					maxSpeed.setText(trans.getMaximalSpeed());
-					maxSpeed.setName("maximalSpeed");
-					maxSpeed.addFocusListener(pwl);
-
-					p.add(lblMaxSpeed, "gap 5");
-					p.add(maxSpeed, "wrap");
-
-					if (trans.isKnockedOut()) {
-						maxSpeed.setEnabled(false);
-					}
-				}
 			}
+
 			if (constCheck.isSelected()) {
 				if (tokenMin != null && tokenMax != null) {
 					tokenMin.setEnabled(false);
@@ -843,6 +827,20 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}
 
 		if (ab instanceof DynamicNode) {
+			DynamicNode node = (DynamicNode) ab;
+			JTextField maxSpeed = new JTextField(4);
+			JLabel lblMaxSpeed = new JLabel("Maximal speed");
+			maxSpeed.setText(node.getMaximalSpeed());
+			maxSpeed.setName("maximalSpeed");
+			maxSpeed.addFocusListener(pwl);
+
+			p.add(lblMaxSpeed, "gap 5");
+			p.add(maxSpeed, "wrap");
+
+			if (node.isKnockedOut()) {
+				maxSpeed.setEnabled(false);
+			}
+			
 			knockedOut.setSelected(((DynamicNode) ab).isKnockedOut());
 			knockedOut.setToolTipText("Knock out");
 			knockedOut.setActionCommand("knockedOut");
