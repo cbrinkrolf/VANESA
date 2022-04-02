@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,8 +94,8 @@ public class SaveDialog {
 	private String txtDescription = "Graph Text File (*.txt)";
 	private String txt = "txt";
 
-	//private String irinaDescription = "Irina Export File (*.itxt)";
-	//private String irinaTxt = "itxt";
+	// private String irinaDescription = "Irina Export File (*.itxt)";
+	// private String irinaTxt = "itxt";
 
 	private String csvDescription = "CSV Result Export (*.csv)";
 	private String csv = "csv";
@@ -141,6 +140,8 @@ public class SaveDialog {
 		if (relativeTo == null) {
 			relativeTo = MainWindow.getInstance().getFrame();
 		}
+		String error = "";
+
 		this.prerapre(format);
 		this.c = c;
 
@@ -160,6 +161,7 @@ public class SaveDialog {
 				xmlSettings.setProperty("SaveDialog-Path", fileDir.getAbsolutePath());
 				xmlSettings.save();
 			} catch (ConfigurationException e) {
+				error += e.getMessage();
 				e.printStackTrace();
 			}
 
@@ -176,9 +178,16 @@ public class SaveDialog {
 			if (overwrite) {
 				try {
 					write(simId);
-				} catch (FileNotFoundException | HeadlessException | XMLStreamException e) {
+				} catch (IOException | HeadlessException | XMLStreamException | TranscoderException | InvalidIDException
+						| VoidRepositoryException e) {
+					error += e.getMessage();
 					e.printStackTrace();
 				}
+			}
+			if (error.trim().length() == 0) {
+				MyPopUp.getInstance().show("File export", "Exports was successful!");
+			} else {
+				MyPopUp.getInstance().show("Error during file export", error);
 			}
 		}
 	}
@@ -207,6 +216,7 @@ public class SaveDialog {
 				// System.out.println(fileDir.getAbsolutePath());
 				xmlSettings.save();
 			} catch (ConfigurationException e) {
+				error += e.getMessage();
 				e.printStackTrace();
 			}
 
@@ -265,14 +275,12 @@ public class SaveDialog {
 					}
 					if (!stop) {
 						try {
-							ChartUtils.saveChartAsPNG(new File(pathSim + name + ".png"), chart, width * 2,
-									height * 2);
+							ChartUtils.saveChartAsPNG(new File(pathSim + name + ".png"), chart, width * 2, height * 2);
 						} catch (IOException e) {
-							error+=e.getMessage();
+							error += e.getMessage();
 							e.printStackTrace();
 						}
 					}
-
 				} else if (fileFormat.equals(svgDescription)) {
 					// SVG
 					if (new File(pathSim + name + ".svg").exists() && !overwrite) {
@@ -301,15 +309,15 @@ public class SaveDialog {
 							svgGenerator.stream(out, useCSS);
 							out.close();
 						} catch (IOException e) {
-							error+=e.getMessage();
+							error += e.getMessage();
 							e.printStackTrace();
 						}
 					}
 				}
 			}
-			if(error.trim().length() == 0){
+			if (error.trim().length() == 0) {
 				MyPopUp.getInstance().show("Image export", "Exports of images was successful!");
-			}else{
+			} else {
 				MyPopUp.getInstance().show("Error during image export", error);
 			}
 		}
@@ -318,7 +326,7 @@ public class SaveDialog {
 	public SaveDialog(int format) {
 		this(format, null, MainWindow.getInstance().getFrame(), null);
 	}
-	
+
 	private void prerapre(int format) {
 
 		// Get working directory
@@ -355,6 +363,7 @@ public class SaveDialog {
 			} catch (ConfigurationException e) {
 				System.out
 						.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
+				e.printStackTrace();
 			}
 			chooser = new JFileChooser(path);
 		}
@@ -405,17 +414,17 @@ public class SaveDialog {
 
 	private void getCorrectFile(String ending) {
 
-		//String extension = file.getPath();
-		//int i = extension.lastIndexOf('.');
-		//if (i > 0 && i < extension.length() - 1) {
+		// String extension = file.getPath();
+		// int i = extension.lastIndexOf('.');
+		// if (i > 0 && i < extension.length() - 1) {
 		String filePath = file.getPath();
-		if(!filePath.endsWith("."+ending)){
+		if (!filePath.endsWith("." + ending)) {
 			file = new File(file.getAbsolutePath() + "." + ending);
 		}
 	}
 
-
-	private void write(String simId) throws FileNotFoundException, HeadlessException, XMLStreamException {
+	private void write(String simId) throws HeadlessException, XMLStreamException, IOException, TranscoderException,
+			InvalidIDException, VoidRepositoryException {
 
 		ConnectionSettings.setFileDirectory(file.getAbsolutePath());
 		if (fileFormat.equals(sbmlDescription)) {
@@ -516,20 +525,12 @@ public class SaveDialog {
 				// only output on file system possible
 				PNMLOutput pnmlOutput = new PNMLOutput(file, edgeList, nodeList, transitionList);
 
-				try {
-					String result = pnmlOutput.generatePNMLDocument();
+				String result = pnmlOutput.generatePNMLDocument();
 
-					if (result.length() > 0) {
-						MyPopUp.getInstance().show("Error", pnmlDescription + "an error occured: " + result);
-					} else {
-						MyPopUp.getInstance().show("PNML export", "Saving was successful!");
-					}
-				} catch (HeadlessException e) {
-					e.printStackTrace();
-				} catch (InvalidIDException e) {
-					e.printStackTrace();
-				} catch (VoidRepositoryException e) {
-					e.printStackTrace();
+				if (result.length() > 0) {
+					MyPopUp.getInstance().show("Error", pnmlDescription + "an error occured: " + result);
+				} else {
+					MyPopUp.getInstance().show("PNML export", "Saving was successful!");
 				}
 
 			}
@@ -539,65 +540,45 @@ public class SaveDialog {
 			MyPopUp.getInstance().show("Information", csmlDescription + " File saved");
 		} else if (fileFormat.equals(vamlDescription)) {
 			getCorrectFile(vaml);
-			try {
-				new VAMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
-				MyPopUp.getInstance().show("Information", vamlDescription + " File saved");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+
+			new VAMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
+			MyPopUp.getInstance().show("Information", vamlDescription + " File saved");
+
 		} else if (fileFormat.equals(pngDescription)) {
 			getCorrectFile(png);
 			if (c != null) {
-				try {
-					ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file,
-							ImageExport.IMAGE_TYPE_PNG);
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (TranscoderException e) {
-					e.printStackTrace();
-				}
+				ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file, ImageExport.IMAGE_TYPE_PNG);
 			}
 		} else if (fileFormat.equals(svgDescription)) {
 			getCorrectFile(svg);
 			if (c != null) {
-				try {
-					ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file,
-							ImageExport.IMAGE_TYPE_SVG);
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (TranscoderException e) {
-					e.printStackTrace();
-				}
+				ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file, ImageExport.IMAGE_TYPE_SVG);
 			}
 		} else if (fileFormat.equals(yamlDescription)) {
 			getCorrectFile(yaml);
-			try {
-				String exportPath = chooser.getSelectedFile().getPath();
 
-				if (exportPath.contains(".yaml") == false) {
-					exportPath = exportPath + ".yaml";
-				}
+			String exportPath = chooser.getSelectedFile().getPath();
 
-				InputStream internYaml = getClass().getClassLoader()
-						.getResourceAsStream("resource/NodeProperties.yaml");
-				FileOutputStream exportYaml = null;
-				File exportFile = new File(exportPath);
-				exportYaml = new FileOutputStream(exportFile);
-				byte[] buffer = new byte[4096];
-				int bytesRead = -1;
-				bytesRead = internYaml.read(buffer);
-				while (bytesRead != -1) {
-					exportYaml.write(buffer, 0, bytesRead);
-					bytesRead = internYaml.read(buffer);
-				}
-				;
-				internYaml.close();
-				exportYaml.close();
-				MyPopUp.getInstance().show("Information", yamlDescription + " File exported");
-				MainWindow.getInstance().setLoadedYaml(exportPath);
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (exportPath.contains(".yaml") == false) {
+				exportPath = exportPath + ".yaml";
 			}
+
+			InputStream internYaml = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
+			FileOutputStream exportYaml = null;
+			File exportFile = new File(exportPath);
+			exportYaml = new FileOutputStream(exportFile);
+			byte[] buffer = new byte[4096];
+			int bytesRead = -1;
+			bytesRead = internYaml.read(buffer);
+			while (bytesRead != -1) {
+				exportYaml.write(buffer, 0, bytesRead);
+				bytesRead = internYaml.read(buffer);
+			}
+
+			internYaml.close();
+			exportYaml.close();
+			MyPopUp.getInstance().show("Information", yamlDescription + " File exported");
+			MainWindow.getInstance().setLoadedYaml(exportPath);
 		}
 	}
 }

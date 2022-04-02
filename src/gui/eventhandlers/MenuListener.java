@@ -1042,7 +1042,6 @@ public class MenuListener implements ActionListener {
 		case "graphPicture":
 			pw = graphInstance.getPathway();
 			wvv = pw.prepareGraphToPrint();
-
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv,
