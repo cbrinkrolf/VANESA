@@ -75,7 +75,9 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 	private int lastVertexTypeIdx = -1;
 	private int lastEdgeTypeIdx = -1;
 	private boolean lastDirected = true;
-	
+
+	private boolean inWindow = false;
+
 	public MyEditingGraphMousePlugin() {
 		this(InputEvent.BUTTON1_DOWN_MASK);
 	}
@@ -457,11 +459,19 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 	}
 
 	public void mouseEntered(MouseEvent e) {
+		inWindow = true;
 	}
 
 	public void mouseExited(MouseEvent e) {
+		inWindow = false;
 	}
 
 	public void mouseMoved(MouseEvent e) {
+		if (inWindow) {
+			@SuppressWarnings("unchecked")
+			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
+					.getSource();
+			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
+		}
 	}
 }

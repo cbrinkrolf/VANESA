@@ -13,11 +13,13 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 //import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import graph.GraphInstance;
+import graph.jung.classes.MyVisualizationViewer;
 import miscalleanous.internet.FollowLink;
 
 public class MyAnimatedPickingGraphMousePlugin extends PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 
 	private GraphInstance graphInstance = new GraphInstance();
+	private boolean inWindow = false;
 	
 	public void mouseReleased(MouseEvent e){
 		super.mouseReleased(e);
@@ -91,6 +93,23 @@ public class MyAnimatedPickingGraphMousePlugin extends PickingGraphMousePlugin<B
 
 				}
 			}
+		}
+	}
+	
+	public void mouseEntered(MouseEvent e) {
+		inWindow = true;
+	}
+
+	public void mouseExited(MouseEvent e) {
+		inWindow = false;
+	}
+
+	public void mouseMoved(MouseEvent e) {
+		if (inWindow) {
+			@SuppressWarnings("unchecked")
+			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
+					.getSource();
+			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
 		}
 	}
 }

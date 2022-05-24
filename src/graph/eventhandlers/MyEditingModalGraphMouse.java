@@ -32,7 +32,6 @@ import edu.uci.ics.jung.visualization.control.PluggableGraphMouse;
 import edu.uci.ics.jung.visualization.control.RotatingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ScalingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ShearingGraphMousePlugin;
-import edu.uci.ics.jung.visualization.control.TranslatingGraphMousePlugin;
 
 //import edu.uci.ics.jung.visualization.SettableVertexLocationFunction;
 
@@ -41,8 +40,7 @@ import edu.uci.ics.jung.visualization.control.TranslatingGraphMousePlugin;
  * 
  * @author Tom Nelson
  */
-public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
-		ModalGraphMouse, ItemSelectable {
+public class MyEditingModalGraphMouse extends PluggableGraphMouse implements ModalGraphMouse, ItemSelectable {
 
 	/**
 	 * used by the scaling plugins for zoom in
@@ -94,10 +92,8 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	/**
 	 * create an instance with passed values
 	 * 
-	 * @param in
-	 *            override value for scale in
-	 * @param out
-	 *            override value for scale out
+	 * @param in  override value for scale in
+	 * @param out override value for scale out
 	 */
 	public MyEditingModalGraphMouse(float in, float out) {
 		this.in = in;
@@ -112,10 +108,8 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	protected void loadPlugins() {
 		pickingPlugin = new MyPickingGraphMousePlugin();
 		animatedPickingPlugin = new MyAnimatedPickingGraphMousePlugin();
-		translatingPlugin = new MyTranslatingGraphMousePlugin(
-				InputEvent.BUTTON1_DOWN_MASK);
-		scalingPlugin = new ScalingGraphMousePlugin(
-				new CrossoverScalingControl(), 0, in, out);
+		translatingPlugin = new MyTranslatingGraphMousePlugin(InputEvent.BUTTON1_DOWN_MASK);
+		scalingPlugin = new ScalingGraphMousePlugin(new CrossoverScalingControl(), 0, in, out);
 		rotatingPlugin = new RotatingGraphMousePlugin();
 		shearingPlugin = new ShearingGraphMousePlugin();
 		editingPlugin = new MyEditingGraphMousePlugin();
@@ -135,39 +129,35 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	 * setter for the Mode.
 	 */
 	public void setMode(Mode mode) {
-		//if (this.mode != mode) {
-			fireItemStateChanged(new ItemEvent(this,
-					ItemEvent.ITEM_STATE_CHANGED, this.mode,
-					ItemEvent.DESELECTED));
-			this.mode = mode;
-			if (mode == Mode.TRANSFORMING) {
-				setTransformingMode();
-			} else if (mode == Mode.PICKING) {
-				if (animated) {
-					setAnimatedPickingMode();
-				} else {
-					setPickingMode();
-				}
-			} else if (mode == Mode.EDITING) {
-				setEditingMode();
-			} else if (mode == Mode.ANNOTATING) {
-				setHierarchyMode();
+		// if (this.mode != mode) {
+		fireItemStateChanged(new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, this.mode, ItemEvent.DESELECTED));
+		this.mode = mode;
+		if (mode == Mode.TRANSFORMING) {
+			setTransformingMode();
+		} else if (mode == Mode.PICKING) {
+			if (animated) {
+				setAnimatedPickingMode();
+			} else {
+				setPickingMode();
 			}
-			if (modeBox != null) {
-				modeBox.setSelectedItem(mode);
-			}
-			fireItemStateChanged(new ItemEvent(this,
-					ItemEvent.ITEM_STATE_CHANGED, mode, ItemEvent.SELECTED));
-		//}
+		} else if (mode == Mode.EDITING) {
+			setEditingMode();
+		} else if (mode == Mode.ANNOTATING) {
+			setHierarchyMode();
+		}
+		if (modeBox != null) {
+			modeBox.setSelectedItem(mode);
+		}
+		fireItemStateChanged(new ItemEvent(this, ItemEvent.ITEM_STATE_CHANGED, mode, ItemEvent.SELECTED));
+		// }
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * edu.uci.ics.jung.visualization.control.ModalGraphMouse#setPickingMode()
+	 * @see edu.uci.ics.jung.visualization.control.ModalGraphMouse#setPickingMode()
 	 */
-	
+
 	protected void setHierarchyMode() {
 		remove(animatedPickingPlugin);
 		remove(translatingPlugin);
@@ -202,8 +192,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * edu.uci.ics.jung.visualization.control.ModalGraphMouse#setTransformingMode
-	 * ()
+	 * edu.uci.ics.jung.visualization.control.ModalGraphMouse#setTransformingMode ()
 	 */
 	protected void setTransformingMode() {
 		remove(hierarchyPlugin);
@@ -236,8 +225,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	}
 
 	/**
-	 * @param zoomAtMouse
-	 *            The zoomAtMouse to set.
+	 * @param zoomAtMouse The zoomAtMouse to set.
 	 */
 	public void setZoomAtMouse(boolean zoomAtMouse) {
 		((ScalingGraphMousePlugin) scalingPlugin).setZoomAtMouse(zoomAtMouse);
@@ -256,8 +244,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * edu.uci.ics.jung.visualization.control.ModalGraphMouse#getModeListener()
+	 * @see edu.uci.ics.jung.visualization.control.ModalGraphMouse#getModeListener()
 	 */
 	public ItemListener getModeListener() {
 		if (modeListener == null) {
@@ -271,8 +258,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	 */
 	public JComboBox<Mode> getModeComboBox() {
 		if (modeBox == null) {
-			modeBox = new JComboBox<Mode>(new Mode[] { Mode.TRANSFORMING,
-					Mode.PICKING, Mode.EDITING });
+			modeBox = new JComboBox<Mode>(new Mode[] { Mode.TRANSFORMING, Mode.PICKING, Mode.EDITING });
 			modeBox.addItemListener(getModeListener());
 		}
 		modeBox.setSelectedItem(mode);
@@ -289,11 +275,9 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 			modeMenu = new JMenu();// {
 			Icon icon = BasicIconFactory.getMenuArrowIcon();
 			modeMenu.setIcon(BasicIconFactory.getMenuArrowIcon());
-			modeMenu.setPreferredSize(new Dimension(icon.getIconWidth() + 10,
-					icon.getIconHeight() + 10));
+			modeMenu.setPreferredSize(new Dimension(icon.getIconWidth() + 10, icon.getIconHeight() + 10));
 
-			final JRadioButtonMenuItem transformingButton = new JRadioButtonMenuItem(
-					Mode.TRANSFORMING.toString());
+			final JRadioButtonMenuItem transformingButton = new JRadioButtonMenuItem(Mode.TRANSFORMING.toString());
 			transformingButton.addItemListener(new ItemListener() {
 
 				public void itemStateChanged(ItemEvent e) {
@@ -303,8 +287,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 				}
 			});
 
-			final JRadioButtonMenuItem pickingButton = new JRadioButtonMenuItem(
-					Mode.PICKING.toString());
+			final JRadioButtonMenuItem pickingButton = new JRadioButtonMenuItem(Mode.PICKING.toString());
 			pickingButton.addItemListener(new ItemListener() {
 
 				public void itemStateChanged(ItemEvent e) {
@@ -314,8 +297,7 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 				}
 			});
 
-			final JRadioButtonMenuItem editingButton = new JRadioButtonMenuItem(
-					Mode.EDITING.toString());
+			final JRadioButtonMenuItem editingButton = new JRadioButtonMenuItem(Mode.EDITING.toString());
 			editingButton.addItemListener(new ItemListener() {
 
 				public void itemStateChanged(ItemEvent e) {
@@ -370,8 +352,8 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	 * Returns an array of all the <code>ItemListener</code>s added to this
 	 * JComboBox with addItemListener().
 	 * 
-	 * @return all of the <code>ItemListener</code>s added or an empty array if
-	 *         no listeners have been added
+	 * @return all of the <code>ItemListener</code>s added or an empty array if no
+	 *         listeners have been added
 	 * @since 1.4
 	 */
 	public ItemListener[] getItemListeners() {
@@ -389,11 +371,10 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	}
 
 	/**
-	 * Notifies all listeners that have registered interest for notification on
-	 * this event type.
+	 * Notifies all listeners that have registered interest for notification on this
+	 * event type.
 	 * 
-	 * @param e
-	 *            the event of interest
+	 * @param e the event of interest
 	 * 
 	 * @see EventListenerList
 	 */
@@ -416,5 +397,4 @@ public class MyEditingModalGraphMouse extends PluggableGraphMouse implements
 	public void setAnimated(boolean animated) {
 		this.animated = animated;
 	}
-
 }

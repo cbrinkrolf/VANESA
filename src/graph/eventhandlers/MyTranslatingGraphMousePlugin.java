@@ -6,10 +6,13 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractGraphMousePlugin;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
+import graph.jung.classes.MyVisualizationViewer;
 
 /*
  * Copyright (c) 2005, The JUNG Authors 
@@ -33,6 +36,8 @@ import edu.uci.ics.jung.visualization.transform.MutableTransformer;
  */
 public class MyTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
 		implements MouseListener, MouseMotionListener {
+
+	private boolean inWindow = false;
 
 	/**
 	 */
@@ -70,10 +75,10 @@ public class MyTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
 	 * cursor
 	 */
 	public void mouseReleased(MouseEvent e) {
-		
+
 		VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
 		down = null;
-		//vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		// vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		vv.setCursor(cursor);
 	}
 
@@ -111,19 +116,27 @@ public class MyTranslatingGraphMousePlugin extends AbstractGraphMousePlugin
 
 	public void mouseClicked(MouseEvent e) {
 		VisualizationViewer<?, ?> vv = (VisualizationViewer<?, ?>) e.getSource();
-		//vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		// vv.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		vv.setCursor(cursor);
 	}
 
 	public void mouseEntered(MouseEvent e) {
+		inWindow = true;
 	}
 
 	public void mouseExited(MouseEvent e) {
+		inWindow = false;
 	}
 
 	public void mouseMoved(MouseEvent e) {
+		if (inWindow) {
+			@SuppressWarnings("unchecked")
+			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
+					.getSource();
+			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
+		}
 	}
-	
+
 	/**
 	 * overrided to be more flexible, and pass events with key combinations. The
 	 * default responds to both ButtonOne and ButtonOne+Shift

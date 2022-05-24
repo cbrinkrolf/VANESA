@@ -40,6 +40,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
 	private HashMap<String, Area> areas = new HashMap<String, Area>();
 
+	private Point2D mousePoint = new Point2D.Double(0, 0);
+
 	private boolean drawCompartments = false;
 	private boolean experimental = false;
 
@@ -51,6 +53,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
 	private long lastTimeCompartmentRendered = 0;
 	private double scaleLastCompartmentRendered = 0;
+
+	private Graphics2D g2d = null;
 
 	// private long[] relaxTimes = new long[5];
 
@@ -124,9 +128,12 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		scale = ((double) ((int) (this.getScale() * 100)) / 100);
 		g2d.drawString("Zoom: " + scale + "x", this.getWidth() - 75, 11);
 
+		drawMousePoint(g2d);
+
 		// g2d.drawString("x", 580, 533);
 		// System.out.println(this.getWidth());
 		// ContainerSingelton.getInstance().setPetriView(true);
+		// System.out.println(getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
 
 	}
 
@@ -194,7 +201,7 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
 		long l2 = System.nanoTime();
 
-		//System.out.println("adding: " + (l2 - l1) / 1000);
+		// System.out.println("adding: " + (l2 - l1) / 1000);
 		// }
 
 	}
@@ -259,8 +266,8 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
 		s1 = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)
 				.transform(bna.getShape().getBounds2D());
-		//System.out.println(p1);
-		//System.out.println(p1inv);
+		// System.out.println(p1);
+		// System.out.println(p1inv);
 		// Shape s3 = this.getRenderContext().getMultiLayerTransformer()
 		// .getTransformer(Layer.VIEW).transform(bea.getShape().getBounds2D());
 		// System.out.println(loc);
@@ -268,7 +275,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			p1inv = p1;
 			s1 = bna.getShape().getBounds2D();
 		}
-		
 
 		h1 = (int) s1.getBounds2D().getHeight();
 		h1 = h1 / 2;
@@ -306,28 +312,31 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			MutableTransformer mt;
 			double scaleV = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
 			if (scaleV < 1) {
-				//mt = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+				// mt =
+				// this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
 				mt = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-				//System.out.println("smaller");
+				// System.out.println("smaller");
 			} else {
 				// mt=
 				mt = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT);
-				//mt = this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
+				// mt =
+				// this.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW);
 			}
 
 			AffineTransformer transformer = null;
-			
-				if(mt instanceof AffineTransformer) {
-					transformer = (AffineTransformer)mt;
-					//System.out.println("aff");
-				} else if(mt instanceof LensTransformer) {
-					//System.out.println("lens");
-					transformer = (AffineTransformer)((LensTransformer)mt).getDelegate();
-				}
-				
+
+			if (mt instanceof AffineTransformer) {
+				transformer = (AffineTransformer) mt;
+				// System.out.println("aff");
+			} else if (mt instanceof LensTransformer) {
+				// System.out.println("lens");
+				transformer = (AffineTransformer) ((LensTransformer) mt).getDelegate();
+			}
+
 			// this.getRenderContext()
 
-			//AffineTransformer at = (AffineTransformer)((LensTransformer)mt).getDelegate();
+			// AffineTransformer at =
+			// (AffineTransformer)((LensTransformer)mt).getDelegate();
 			Area a = areas.get(comp);
 
 			// at.setrot
@@ -346,28 +355,28 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			Point2D lvc = getRenderContext().getMultiLayerTransformer().inverseTransform(getCenter());
 			Point2D q1 = getRenderContext().getMultiLayerTransformer().inverseTransform(q);
 			// System.out.println("q: "+viewer.getCenter());
-			//System.out.println("lvc: " + lvc);
+			// System.out.println("lvc: " + lvc);
 			// System.out.println(lvc);
 			final double dx = (lvc.getX() - q.getX());
 			final double dy = (lvc.getY() - q.getY());
 			// System.out.println(viewer.getClass()+" "+dx+" "+dy);
 
-			//System.out.println(" " + dx + " " + dy);
-			//System.out.println("center:" + q);
-			//System.out.println("center2:" + getCenter());
-			//System.out.println("center3:" + q1);
+			// System.out.println(" " + dx + " " + dy);
+			// System.out.println("center:" + q);
+			// System.out.println("center2:" + getCenter());
+			// System.out.println("center3:" + q1);
 			// viewer.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx,
 			// dy);
 			AffineTransform at = new AffineTransform();
-			//at.translate(-dx, 0);
+			// at.translate(-dx, 0);
 			// at.translate((lvc.getX()), (lvc.getY()));
 
 			at.scale(dx, dy);
 			// mt.setTranslate(tX, tY);
 			// mt.setTranslate(mt.getTranslateX(), mt.getTranslateY());
-			//Area area = a.createTransformedArea(mt.getTransform());
+			// Area area = a.createTransformedArea(mt.getTransform());
 			Area area = a.createTransformedArea(transformer.getTransform());
-			
+
 			area.transform(at);
 //Area area = a.createTransformedArea(new AffineTransform(dx, dy,0,0,0,0));
 
@@ -401,5 +410,36 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 			prepareCompartments();
 		}
 		this.repaint();
+	}
+
+	public void setMousePoint(Point2D point) {
+		this.mousePoint = point;
+
+		// System.out.println("draw");
+		// drawMousePoint(g2d);
+		this.repaint(this.getWidth() - 75, 0, 75, 40);
+	}
+
+	private void drawMousePoint(Graphics2D g2d) {
+
+		g2d.setFont(new Font("default", Font.PLAIN, 12));
+		g2d.setColor(Color.black);
+
+		/*
+		 * if (GraphContainer.getInstance().isPetriView()) { g2d.drawString("P: " +
+		 * pw.getPlaceCount() + " T: " + pw.getTransitionCount() + " Edges: " +
+		 * pw.getGraph().getAllEdges().size(), 1, 11); } else {
+		 * 
+		 * g2d.drawString( "Nodes: " + pw.getGraph().getAllVertices().size() +
+		 * " Edges: " + pw.getGraph().getAllEdges().size(), 1, 11); }
+		 * g2d.drawString("Picked nodes: " +
+		 * this.getPickedVertexState().getPicked().size(), 1, 23);
+		 */
+		// this.;
+		g2d.drawString("x: " + String.format("%.3f", mousePoint.getX()), this.getWidth() - 75, 22);
+		g2d.drawString("y: " + String.format("%.3f", mousePoint.getY()), this.getWidth() - 75, 35);
+
+		// System.out.println(this.getMousePosition());
+
 	}
 }
