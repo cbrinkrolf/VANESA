@@ -195,7 +195,15 @@ public class MyGraph {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-				// nothing to do
+				if (e.getKeyCode() == KeyEvent.VK_UP) {
+					pathway.moveSelection(0, -1);
+				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+					pathway.moveSelection(0, 1);
+				} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+					pathway.moveSelection(-1, 0);
+				} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+					pathway.moveSelection(1, 0);
+				}
 			}
 		});
 
@@ -985,22 +993,22 @@ public class MyGraph {
 		changeToLayout(new HCTLayout(g, pathway.getRootNode()));
 	}
 
-	public void changeToISOMLayout(){
+	public void changeToISOMLayout() {
 		changeToLayout(new ISOMLayout<>(g));
 	}
-	
-	public void changeToFRLayout(){
+
+	public void changeToFRLayout() {
 		changeToLayout(new FRLayout<>(g));
 	}
-	
-	public void changeToKKLayout(){
+
+	public void changeToKKLayout() {
 		changeToLayout(new KKLayout<>(g));
 	}
-	
-	public void changeToSpringLayout(){
+
+	public void changeToSpringLayout() {
 		changeToLayout(new SpringLayout<>(g));
 	}
-	
+
 	public void updateLayout() {
 		if (layout instanceof HEBLayout) {
 			changeToHEBLayout();

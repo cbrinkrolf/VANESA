@@ -1133,11 +1133,33 @@ public class Pathway implements Cloneable {
 		this.getGraph().getVisualizationViewer().getPickedVertexState().clear();
 		this.getGraph().updateGraph();
 		updateMyGraph();
-		
+
 		if (!isHeadless()) {
 			MainWindow mw = MainWindow.getInstance();
 			mw.updateAllGuiElements();
 		}
+	}
+
+	// moves selected vertices in pixel by given offset
+	public void moveSelection(double x, double y) {
+		Iterator<BiologicalNodeAbstract> it = this.getGraph().getVisualizationViewer().getPickedVertexState()
+				.getPicked().iterator();
+		BiologicalNodeAbstract bna;
+		Point2D pGraph;
+		Point2D pScreen;
+		Point2D pGraphNew;
+		while (it.hasNext()) {
+			bna = it.next();
+			pGraph = getVertexPosition(bna);
+			pScreen = getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
+					.transform(pGraph);
+
+			pScreen.setLocation(pScreen.getX() + x, pScreen.getY() + y);
+			pGraphNew = getGraph().getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
+					.inverseTransform(pScreen);
+			getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, pGraphNew);
+		}
+		saveVertexLocations();
 	}
 
 	/**
@@ -1294,7 +1316,7 @@ public class Pathway implements Cloneable {
 				// delete incident edges
 				for (BiologicalEdgeAbstract bea : getGraph().getJungGraph().getIncidentEdges(bna)) {
 					removeElement(bea);
-					//System.out.println("edge deleted");
+					// System.out.println("edge deleted");
 				}
 				removeElement(bna);
 			}
