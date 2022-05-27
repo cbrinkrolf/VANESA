@@ -499,8 +499,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			legend.setBackgroundPaint(plot.getBackgroundPaint());
 		}
 		// updateData();
-		// System.out.println("almost done drawying");
-		pane.requestFocus();
+		// System.out.println("almost done drawing");
+		// CHRIS maybe enable requestFocus again, but deleting via KeyEvent of graph element wont work, because VV is out of focus
+		//pane.requestFocus();
 		chart.fireChartChanged();
 		// System.out.println("done drawing");
 	}
@@ -1159,9 +1160,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		}
 		Iterator<BiologicalNodeAbstract> itNodes;
 		if (hiddenPN) {
-			itNodes = pw.getPetriNet().getAllGraphNodes().iterator();
+			itNodes = pw.getPetriNet().getAllGraphNodesSortedAlphabetically().iterator();
 		} else {
-			itNodes = pw.getAllGraphNodes().iterator();
+			itNodes = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		}
 
 		XYSeries s;
@@ -1171,6 +1172,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			System.out.println("PCPError, no such simulation name");
 			return;
 		}
+		
 		while (itNodes.hasNext()) {
 			bna = itNodes.next();
 			if (!bna.isLogical()) {
@@ -1223,18 +1225,18 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					// series2id.put(s, count);
 					seriesListR1.add(s);
 					dataset.addSeries(s);
-					String label = transition.getName();
 					if (hiddenPN) {
 						if (pw.getBnToPnMapping().containsValue(transition)) {
 							for (BiologicalNodeAbstract key : pw.getBnToPnMapping().keySet()) {
 								if (pw.getBnToPnMapping().get(key) == transition) {
-									label = key.getName();
+									labelsR1.add(key.getName());
 									break;
 								}
 							}
 						}
+					}else {
+						labelsR1.add(transition.getName());
 					}
-					labelsR1.add(label);
 
 					renderer.setSeriesPaint(r1Count, Color.BLACK);
 
