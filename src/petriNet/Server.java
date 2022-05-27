@@ -21,7 +21,7 @@ import org.apache.commons.lang3.SystemUtils;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
@@ -42,9 +42,9 @@ public class Server {
 	private int port;
 	private SimulationResult simResult;
 
-	private Set<PNEdge> toRefineEdges = new HashSet<>();
-	private Set<PNEdge> edgesFlow;
-	private Set<PNEdge> edgeSum;
+	private Set<PNArc> toRefineEdges = new HashSet<>();
+	private Set<PNArc> edgesFlow;
+	private Set<PNArc> edgeSum;
 	private Set<Transition> transitionSpeed;
 	private Set<Transition> transitionFire;
 	private Set<Place> placeToken;
@@ -316,12 +316,12 @@ public class Server {
 
 		Iterator<BiologicalEdgeAbstract> itBea = pw.getAllEdges().iterator();
 		BiologicalEdgeAbstract bea;
-		PNEdge e;
+		PNArc e;
 
 		while (itBea.hasNext()) {
 			bea = itBea.next();
-			if (bea instanceof PNEdge) {
-				e = (PNEdge) bea;
+			if (bea instanceof PNArc) {
+				e = (PNArc) bea;
 				if (name2index.get("der(" + bea2key.get(bea) + ")") != null) {
 					this.edgesFlow.add(e);
 				} else {
@@ -366,12 +366,12 @@ public class Server {
 
 	private void setData(ArrayList<Object> values) {
 		Object o;
-		for (PNEdge e : this.edgesFlow) {
+		for (PNArc e : this.edgesFlow) {
 			o = values.get(name2index.get("der(" + bea2key.get(e) + ")"));
 			this.checkAndAddValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, o);
 		}
 
-		for (PNEdge e : this.edgeSum) {
+		for (PNArc e : this.edgeSum) {
 			o = values.get(name2index.get(bea2key.get(e)));
 			this.checkAndAddValue(e, SimulationResultController.SIM_SUM_OF_TOKEN, o);
 		}
@@ -425,7 +425,7 @@ public class Server {
 			value = 0;
 			System.out.println("unsupported data type!!!");
 		}
-		if (gea instanceof PNEdge) {
+		if (gea instanceof PNArc) {
 			// System.out.println(gea.getName() + " :" + value + " org:" + o);
 		}
 		this.simResult.addValue(gea, type, value);

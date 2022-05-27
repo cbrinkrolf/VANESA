@@ -10,7 +10,7 @@ import java.util.Set;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
 import gui.MyPopUp;
@@ -69,19 +69,19 @@ public abstract class Place extends PNNode {
 			token = tokenStart;
 	}
 
-	public Set<PNEdge> getConflictingOutEdges() {
+	public Set<PNArc> getConflictingOutEdges() {
 		Collection<BiologicalEdgeAbstract> coll = GraphInstance.getMyGraph().getJungGraph().getOutEdges(this);
-		Set<PNEdge> result = new HashSet<PNEdge>();
+		Set<PNArc> result = new HashSet<PNArc>();
 		if (coll != null && coll.size() > 0) {
 			Iterator<BiologicalEdgeAbstract> it = coll.iterator();
 			BiologicalEdgeAbstract bea;
-			PNEdge arc;
+			PNArc arc;
 			while (it.hasNext()) {
 				bea = it.next();
-				if (bea instanceof PNEdge) {
-					arc = (PNEdge) bea;
-					if (!arc.isInhibitoryArc() && !arc.isTestArc() && !(bea.getTo() instanceof ContinuousTransition)){
-						result.add((PNEdge) bea);
+				if (bea instanceof PNArc) {
+					arc = (PNArc) bea;
+					if (!arc.isInhibitorArc() && !arc.isTestArc() && !(bea.getTo() instanceof ContinuousTransition)){
+						result.add((PNArc) bea);
 					}
 				}
 			}
@@ -99,10 +99,10 @@ public abstract class Place extends PNNode {
 	}
 
 	public boolean hasPriorityConflicts() {
-		Collection<PNEdge> edges = this.getConflictingOutEdges();
+		Collection<PNArc> edges = this.getConflictingOutEdges();
 		if (edges.size() > 1) {
-			Iterator<PNEdge> it = edges.iterator();
-			PNEdge bea;
+			Iterator<PNArc> it = edges.iterator();
+			PNArc bea;
 			Set<Integer> set = new HashSet<Integer>();
 			while (it.hasNext()) {
 				bea = it.next();
@@ -121,11 +121,11 @@ public abstract class Place extends PNNode {
 	}
 
 	public boolean hasProbabilityConflicts() {
-		Collection<PNEdge> edges = this.getConflictingOutEdges();
+		Collection<PNArc> edges = this.getConflictingOutEdges();
 		if (edges.size() > 1) {
 			double sum = 0;
-			Iterator<PNEdge> it = edges.iterator();
-			PNEdge bea;
+			Iterator<PNArc> it = edges.iterator();
+			PNArc bea;
 			while (it.hasNext()) {
 				bea = it.next();
 				sum += bea.getProbability();
@@ -146,17 +146,17 @@ public abstract class Place extends PNNode {
 	}
 
 	public void solvePriorityConflicts() {
-		Collection<PNEdge> edges = this.getConflictingOutEdges();
+		Collection<PNArc> edges = this.getConflictingOutEdges();
 		if (edges.size() > 1) {
-			Iterator<PNEdge> it = edges.iterator();
-			PNEdge bea;
+			Iterator<PNArc> it = edges.iterator();
+			PNArc bea;
 
 			Set<Integer> goodSet = new HashSet<Integer>();
 			for (int i = 1; i <= edges.size(); i++) {
 				goodSet.add(i);
 			}
 
-			Set<PNEdge> set = new HashSet<PNEdge>();
+			Set<PNArc> set = new HashSet<PNArc>();
 			while (it.hasNext()) {
 				bea = it.next();
 				if (goodSet.contains(bea.getPriority())) {
@@ -179,11 +179,11 @@ public abstract class Place extends PNNode {
 	}
 
 	public void solveProbabilityConflicts() {
-		Collection<PNEdge> edges = this.getConflictingOutEdges();
+		Collection<PNArc> edges = this.getConflictingOutEdges();
 		if (edges.size() > 1) {
 			double sum = 0;
-			Iterator<PNEdge> it = edges.iterator();
-			PNEdge bea;
+			Iterator<PNArc> it = edges.iterator();
+			PNArc bea;
 			while (it.hasNext()) {
 				bea = it.next();
 				sum += bea.getProbability();

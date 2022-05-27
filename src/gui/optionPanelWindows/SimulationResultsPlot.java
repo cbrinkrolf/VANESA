@@ -47,7 +47,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
@@ -327,9 +327,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			if (hiddenPN) {
 				bea = pw.getPetriNet().getEdge(pw.getBnToPnMapping().get(bea.getFrom()), pw.getBnToPnMapping().get(bea.getTo()));
 			}
-			if (bea instanceof PNEdge) {
+			if (bea instanceof PNArc) {
 				secondAxis = true;
-				PNEdge edge = (PNEdge) bea;
+				PNArc edge = (PNArc) bea;
 				List<SimulationResult> listActive = simResController.getAllActiveWithData(edge, SUM_OF_TOKEN);
 				SimulationResult result;
 
@@ -543,7 +543,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		if (isValidPN || isValidHiddenPN) {
 			BiologicalNodeAbstract bna;
 			BiologicalEdgeAbstract bea;
-			PNEdge edge;
+			PNArc edge;
 			XYSeries series;
 			XYSeries series2;
 			Place place;
@@ -617,8 +617,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			while (itBea.hasNext()) {
 				bea = itBea.next();
 
-				if (bea instanceof PNEdge) {
-					edge = (PNEdge) bea;
+				if (bea instanceof PNArc) {
+					edge = (PNArc) bea;
 					if (simRes.contains(edge)) {
 						series = this.seriesListR1.get(series2idx.get(edge, ACTUAL_TOKEN_FLOW, simRes.getId()));
 						series2 = this.seriesListR2.get(series2idx.get(edge, SUM_OF_TOKEN, simRes.getId()));
@@ -1257,8 +1257,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		}
 		while (itEdges.hasNext()) {
 			bea = itEdges.next();
-			if (bea instanceof PNEdge) {
-				PNEdge edge = (PNEdge) bea;
+			if (bea instanceof PNArc) {
+				PNArc edge = (PNArc) bea;
 				places.add(edge.getFrom());
 				s = new XYSeries(r1Count);
 				series2idx.put(edge, ACTUAL_TOKEN_FLOW, simId, r1Count);

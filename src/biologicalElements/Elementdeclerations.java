@@ -143,11 +143,11 @@ public class Elementdeclerations {
 
 	// public static String edge = "Petri Net Edge";
 
-	public static final String pnEdge = "PN Edge";
+	public static final String pnArc = "PN Arc";
 	
-	public static final String pnTestEdge = "PN Test Edge";
+	public static final String pnTestArc = "PN Test Arc";
 
-	public static final String pnInhibitionEdge = "PN Inhibition Edge";
+	public static final String pnInhibitorArc = "PN Inhibitor Arc";
 	
 	//special edges and nodes not in collections
 	public static final String anyBEA = "ANY Biological Edge";
@@ -246,9 +246,9 @@ public class Elementdeclerations {
 
 	public List<String> getPNEdgeDeclarations() {
 		List<String> l = new ArrayList<String>();
-		l.add(pnEdge);
-		l.add(pnTestEdge);
-		l.add(pnInhibitionEdge);
+		l.add(pnArc);
+		l.add(pnTestArc);
+		l.add(pnInhibitorArc);
 		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
 		return l;
 	}
@@ -298,9 +298,9 @@ public class Elementdeclerations {
 		l.add(methylationEdge);
 		l.add(reactionEdge);
 		l.add(reactionPair);
-		l.add(pnEdge);
-		l.add(pnTestEdge);
-		l.add(pnInhibitionEdge);
+		l.add(pnArc);
+		l.add(pnTestArc);
+		l.add(pnInhibitorArc);
 		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
 
 		return l;

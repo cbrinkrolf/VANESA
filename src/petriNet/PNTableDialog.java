@@ -30,7 +30,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
@@ -48,7 +48,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 	private JXTable table = new JXTable();
 	private BiologicalNodeAbstract[] bnas;
 	private JXTable table2 = new JXTable();
-	private PNEdge[] edges;
+	private PNArc[] edges;
 
 	public PNTableDialog() {
 		super(MainWindow.getInstance().getFrame(), true);
@@ -95,12 +95,12 @@ public class PNTableDialog extends JDialog implements ActionListener {
 		//CHRIS refactor Table
 		i = 0;
 		Object[][] rows2 = new Object[pw.getAllEdges().toArray().length][9];
-		edges = new PNEdge[pw.getAllEdges().toArray().length];
-		PNEdge edge;
+		edges = new PNArc[pw.getAllEdges().toArray().length];
+		PNArc edge;
 		Iterator<BiologicalEdgeAbstract> itEdge = pw.getAllEdges().iterator();
 		Iterator<BiologicalNodeAbstract> it2;
 		while (it.hasNext()) {
-			edge = (PNEdge) itEdge.next();
+			edge = (PNArc) itEdge.next();
 			edges[i] = edge;
 			rows2[i][0] = edge.getName();
 			rows2[i][1] = edge.getLabel();

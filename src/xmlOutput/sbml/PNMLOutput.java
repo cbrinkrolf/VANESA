@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import fr.lip6.move.pnml.framework.general.PnmlExport;
@@ -43,7 +43,7 @@ public class PNMLOutput {
 	private ArrayList<Transition> btaliste = new ArrayList<Transition>();
 
 	// list with edges from the petri net
-	private ArrayList<PNEdge> bealiste = new ArrayList<PNEdge>();
+	private ArrayList<PNArc> bealiste = new ArrayList<PNArc>();
 
 	// For saving Transitionlabel (key) and TransitionHAPLI (value)
 	private HashMap<String, TransitionHLAPI> transitionPNML = new HashMap<String, TransitionHLAPI>();
@@ -84,7 +84,7 @@ public class PNMLOutput {
 	 * @param BiologicalEdgeAbstract
 	 *            bealiste, the graph information are received from here.
 	 */
-	public PNMLOutput(File file, ArrayList<PNEdge> bealiste,
+	public PNMLOutput(File file, ArrayList<PNArc> bealiste,
 			ArrayList<Place> bnaliste, ArrayList<Transition> btaliste) {
 		this.file = file;
 		this.bealiste = bealiste;
@@ -247,7 +247,7 @@ public class PNMLOutput {
 						+ this.bealiste.get(i).getTo().getLabel()));
 
 			}
-			PNEdge t = (PNEdge) this.bealiste.get(i);
+			PNArc t = (PNArc) this.bealiste.get(i);
 
 			arc.setNameHLAPI(new NameHLAPI(t.getLabel()));
 

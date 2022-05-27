@@ -125,7 +125,7 @@ public class EdgeDialog extends JFrame {
 
 		if (lastTypeIdx < 0 || lastTypeIdx > elementType.getItemCount()-1) {
 			if (pw.isPetriNet()) {
-				elementType.setSelectedItem(Elementdeclerations.pnEdge);
+				elementType.setSelectedItem(Elementdeclerations.pnArc);
 			} else {
 				elementType.setSelectedItem(Elementdeclerations.reactionEdge);
 			}
@@ -183,7 +183,7 @@ public class EdgeDialog extends JFrame {
 			element = it.next();
 			// only add special arcs, if arc connects Place->Transition
 			if (from instanceof Transition) {
-				if (element.equals(Elementdeclerations.pnEdge)) {
+				if (element.equals(Elementdeclerations.pnArc)) {
 					elementType.addItem(element);
 				}
 			} else {

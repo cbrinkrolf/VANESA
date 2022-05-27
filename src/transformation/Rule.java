@@ -178,7 +178,7 @@ public class Rule {
 				System.out.println("Nodes of arc " + e.getName() + " have the same type (both are transitions)!");
 				return false;
 			}
-			if (e.getType().equals(Transformator.pnInhibitoryArc) || e.getType().equals(Transformator.pnTestArc)) {
+			if (e.getType().equals(Transformator.pnInhibitorArc) || e.getType().equals(Transformator.pnTestArc)) {
 				if (Transformator.transitions.contains(from.getType())) {
 					System.out.println("Error in rule: " + this.name);
 					System.out.println(

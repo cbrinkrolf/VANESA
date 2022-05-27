@@ -828,12 +828,12 @@ public class JSBMLoutput {
 					el.addChild(elSub);
 				}
 			}
-		} else if (oneEdge instanceof biologicalObjects.edges.petriNet.PNEdge) {
+		} else if (oneEdge instanceof biologicalObjects.edges.petriNet.PNArc) {
 
-			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getProbability());
+			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNArc) oneEdge).getProbability());
 			el.addChild(createElSub(attr, "Probability"));
 
-			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNEdge) oneEdge).getPriority());
+			attr = String.valueOf(((biologicalObjects.edges.petriNet.PNArc) oneEdge).getPriority());
 			el.addChild(createElSub(attr, "Priority"));
 		} else if (oneEdge instanceof Inhibition) {
 			attr = String.valueOf(((Inhibition) oneEdge).isAbsoluteInhibition());

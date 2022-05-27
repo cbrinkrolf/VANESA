@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import biologicalElements.GraphElementAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -106,11 +106,11 @@ public class SimulationResult {
 		return this.time.size();
 	}
 
-	public void refineEdgeFlow(Set<PNEdge> edges) {
+	public void refineEdgeFlow(Set<PNArc> edges) {
 		// so far only for edges connecting discrete transition (not yet stochastic)
-		Iterator<PNEdge> it = edges.iterator();
+		Iterator<PNArc> it = edges.iterator();
 
-		PNEdge e;
+		PNArc e;
 		double delay;
 		double midTime;
 		double lastToken = 0;

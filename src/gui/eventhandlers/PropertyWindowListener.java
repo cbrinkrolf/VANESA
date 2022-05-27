@@ -18,7 +18,7 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.DynamicNode;
@@ -485,7 +485,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 		// for PetriNet Edges
 		else if (source.equals("activationProb")) {
 			text = ((JTextField) event.getSource()).getText().trim();
-			PNEdge e = (PNEdge) geb;
+			PNArc e = (PNArc) geb;
 			if (!text.equals("") && !text.equals(e.getProbability() + "")) {
 				double prob = Double.parseDouble(text);
 				e.setProbability(prob);
@@ -493,7 +493,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			}
 		} else if (source.equals("activationPrio")) {
 			text = ((JTextField) event.getSource()).getText().trim();
-			PNEdge e = (PNEdge) geb;
+			PNArc e = (PNArc) geb;
 			if (!text.equals("") && !text.equals(e.getPriority() + "")) {
 				int prob = Integer.parseInt(text);
 				e.setPriority(prob);
@@ -501,7 +501,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			}
 		} else if (source.equals("function")) {
 			text = ((JTextField) event.getSource()).getText().trim();
-			PNEdge e = (PNEdge) geb;
+			PNArc e = (PNArc) geb;
 			if (!text.equals("") && !text.equals(e.getFunction())) {
 				e.setFunction(text);
 				pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);

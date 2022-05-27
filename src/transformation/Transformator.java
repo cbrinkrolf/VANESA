@@ -17,7 +17,7 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
@@ -53,14 +53,14 @@ public class Transformator {
 	public static final String discreteTransition = Elementdeclerations.discreteTransition;
 	public static final String continuousTransition = Elementdeclerations.continuousTransition;
 
-	public static final String pnArc = Elementdeclerations.pnEdge;
-	public static final String pnTestArc = Elementdeclerations.pnTestEdge;
-	public static final String pnInhibitoryArc = Elementdeclerations.pnInhibitionEdge;
+	public static final String pnArc = Elementdeclerations.pnArc;
+	public static final String pnTestArc = Elementdeclerations.pnTestArc;
+	public static final String pnInhibitorArc = Elementdeclerations.pnInhibitorArc;
 
 	public static final Set<String> places = new HashSet<String>(Arrays.asList(place, discretePlace, continuousPlace));
 	public static final Set<String> transitions = new HashSet<String>(
 			Arrays.asList(transition, discreteTransition, continuousTransition));
-	public static final Set<String> pnArcs = new HashSet<String>(Arrays.asList(pnArc, pnTestArc, pnInhibitoryArc));
+	public static final Set<String> pnArcs = new HashSet<String>(Arrays.asList(pnArc, pnTestArc, pnInhibitorArc));
 
 	private Pathway pw;
 	private Pathway petriNet;
@@ -484,7 +484,7 @@ public class Transformator {
 		RuleEdge pnEdge;
 		PNNode from;
 		PNNode to;
-		PNEdge edge;
+		PNArc edge;
 		for (int i = 0; i < r.getPetriEdges().size(); i++) {
 			executed = true;
 			pnEdge = r.getPetriEdges().get(i);
@@ -494,25 +494,25 @@ public class Transformator {
 
 			edge = null;
 			switch (pnEdge.getType()) {
-			case Elementdeclerations.pnEdge:
+			case Elementdeclerations.pnArc:
 				// TODO set parameters
-				edge = new PNEdge(from, to, "1", "1", "PNEdge", "1");
+				edge = new PNArc(from, to, "1", "1", Elementdeclerations.pnArc, "1");
 
 				break;
-			case Elementdeclerations.pnTestEdge:
+			case Elementdeclerations.pnTestArc:
 				// TODO set parameters
 
 				break;
-			case Elementdeclerations.pnInhibitionEdge:
+			case Elementdeclerations.pnInhibitorArc:
 				// TODO set parameters
-				edge = new PNEdge(from, to, "1", "1", Elementdeclerations.inhibitor, "1");
+				edge = new PNArc(from, to, "1", "1", Elementdeclerations.inhibitor, "1");
 				break;
 			}
 			if (edge != null) {
 				edge.setDirected(true);
 				petriNet.addEdge(edge);
 			} else {
-				System.out.println("Error: Petri net edge couldnt be created!");
+				System.out.println("Error: Petri net arc couldnt be created!");
 				executed = false;
 				return;
 			}
@@ -865,7 +865,7 @@ public class Transformator {
 		Place p;
 		String value;
 		PNNode petriNode;
-		PNEdge arc;
+		PNArc arc;
 		Double d;
 		String string;
 		// for nodes
@@ -956,9 +956,9 @@ public class Transformator {
 					}
 				}
 			}
-		} else if (gea instanceof PNEdge) {
+		} else if (gea instanceof PNArc) {
 			// for edges
-			arc = (PNEdge) gea;
+			arc = (PNArc) gea;
 			for (String key : pnNode.getParameterMap().keySet()) {
 				value = pnNode.getParameterMap().get(key);
 				if (value == null || value.trim().length() < 1) {

@@ -34,7 +34,7 @@ import com.orsonpdf.PDFGraphics2D;
 import com.orsonpdf.Page;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
@@ -506,13 +506,13 @@ public class SaveDialog {
 
 				getCorrectFile(pnml);
 				BiologicalEdgeAbstract bea;
-				ArrayList<PNEdge> edgeList = new ArrayList<PNEdge>();
+				ArrayList<PNArc> edgeList = new ArrayList<PNArc>();
 				Iterator<BiologicalEdgeAbstract> itEdge = con.getPathway(w.getCurrentPathway()).getAllEdges()
 						.iterator();
 				while (itEdge.hasNext()) {
 					bea = itEdge.next();
-					if (bea instanceof PNEdge) {
-						edgeList.add((PNEdge) bea);
+					if (bea instanceof PNArc) {
+						edgeList.add((PNArc) bea);
 					}
 
 				}

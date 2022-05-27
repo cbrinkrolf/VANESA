@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
@@ -336,10 +336,10 @@ public class Cov {
 
 		// einkommende Kanten (backward matrix)
 		Iterator<BiologicalEdgeAbstract> edgeit = graphInstance.getPathway().getAllEdges().iterator();
-		PNEdge edge;
+		PNArc edge;
 		// Pair pair;
 		while (edgeit.hasNext()) {
-			edge = (PNEdge) edgeit.next();
+			edge = (PNArc) edgeit.next();
 			// System.out.println("first: "+edge.getLabel());
 			// System.out.println("first: "+edge.getEdge().getEndpoints().getFirst());
 			// System.out.println("simid: "+edge.getInternalSimulationID());

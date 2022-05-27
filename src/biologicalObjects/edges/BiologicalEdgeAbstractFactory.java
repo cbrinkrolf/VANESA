@@ -1,7 +1,7 @@
 package biologicalObjects.edges;
 
 import biologicalElements.Elementdeclerations;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import transformation.graphElements.ANYBiologicalEdge;
 
@@ -82,16 +82,22 @@ public class BiologicalEdgeAbstractFactory {
 			break;
 		case "PN Discrete Edge":
 			//old description
-		case Elementdeclerations.pnEdge:
-			newBea = new PNEdge(from, to, label, name, Elementdeclerations.pnEdge, "1");
+		case "PN Edge":
+			//old description
+		case Elementdeclerations.pnArc:
+			newBea = new PNArc(from, to, label, name, Elementdeclerations.pnArc, "1");
 			fillPNEdge(newBea, newBea);
 			break;
-		case Elementdeclerations.pnTestEdge:
-			newBea = new PNEdge(from, to, label, name, Elementdeclerations.pnTestEdge, "1");
+		case "PN Test Edge": 
+			//old description
+		case Elementdeclerations.pnTestArc:
+			newBea = new PNArc(from, to, label, name, Elementdeclerations.pnTestArc, "1");
 			fillPNEdge(newBea, newBea);
 			break;
-		case Elementdeclerations.pnInhibitionEdge:
-			newBea = new PNEdge(from, to, label, name, Elementdeclerations.pnInhibitionEdge, "1");
+		case "PN Inhibition Edge":
+			//old description
+		case Elementdeclerations.pnInhibitorArc:
+			newBea = new PNArc(from, to, label, name, Elementdeclerations.pnInhibitorArc, "1");
 			fillPNEdge(newBea, newBea);
 			break;
 		default:
@@ -102,10 +108,10 @@ public class BiologicalEdgeAbstractFactory {
 	}
 	
 	private static void fillPNEdge(BiologicalEdgeAbstract newBea, BiologicalEdgeAbstract bea){
-		if(newBea instanceof PNEdge && bea instanceof PNEdge){
-			((PNEdge)newBea).setProbability(((PNEdge)bea).getProbability());
-			((PNEdge)newBea).setPriority(((PNEdge)bea).getPriority());
-			((PNEdge)newBea).setFunction(((PNEdge)bea).getFunction());
+		if(newBea instanceof PNArc && bea instanceof PNArc){
+			((PNArc)newBea).setProbability(((PNArc)bea).getProbability());
+			((PNArc)newBea).setPriority(((PNArc)bea).getPriority());
+			((PNArc)newBea).setFunction(((PNArc)bea).getFunction());
 		}
 	}
 }

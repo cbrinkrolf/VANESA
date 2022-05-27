@@ -8,7 +8,7 @@ import com.jtattoo.plaf.BasePopupMenuUI.MyPopupMenuListener;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
@@ -68,14 +68,14 @@ public class PNDoc {
 		sb.append("\\cprotect\\subsection{\\verb\""+t.getName()+"\""+knocked+"}\n"
 				+ "\\noindent\\verb\"" + t.getName() + "\" : $");
 		String weight;
-		PNEdge edge;
+		PNArc edge;
 
 		while (it.hasNext()) {
 			bea = it.next();
 			bna = bea.getFrom();
 			weight = "";
-			if (bea instanceof PNEdge) {
-				edge = (PNEdge) bea;
+			if (bea instanceof PNArc) {
+				edge = (PNArc) bea;
 				if (!edge.getFunction().equals("1")) {
 					weight = edge.getFunction() + " ";
 				}
@@ -97,8 +97,8 @@ public class PNDoc {
 			bna = bea.getTo();
 
 			weight = "";
-			if (bea instanceof PNEdge) {
-				edge = (PNEdge) bea;
+			if (bea instanceof PNArc) {
+				edge = (PNArc) bea;
 				if (!edge.getFunction().equals("1")) {
 					weight = edge.getFunction() + " ";
 				}

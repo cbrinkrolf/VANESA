@@ -45,7 +45,7 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 		// modelicaResultDescription));
 		chooser.addChoosableFileFilter(new MyFileFilter(vanesaSimulation, vanesaResultDescription));
 
-		option = chooser.showOpenDialog(null);
+		option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
 
 	}
 

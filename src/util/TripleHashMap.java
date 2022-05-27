@@ -3,7 +3,7 @@ package util;
 import java.util.HashMap;
 import java.util.Set;
 
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 
 public class TripleHashMap<KEY1, KEY2, KEY3, V> {
 
@@ -33,9 +33,9 @@ public class TripleHashMap<KEY1, KEY2, KEY3, V> {
 		try {
 			return map.get(k1).get(k2).get(k3);
 		} catch (Exception e) {
-			if(k1 instanceof PNEdge){
-				System.out.println(((PNEdge) k1).getFrom().getName());
-				System.out.println(((PNEdge) k1).getTo().getName());
+			if(k1 instanceof PNArc){
+				System.out.println(((PNArc) k1).getFrom().getName());
+				System.out.println(((PNArc) k1).getTo().getName());
 			}
 			System.err.println("k1: " + k1);
 			System.err.println("k2: " + k2);

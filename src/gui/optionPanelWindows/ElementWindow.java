@@ -32,7 +32,7 @@ import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.Inhibition;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import biologicalObjects.nodes.DNA;
@@ -178,7 +178,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			p.add(id, "wrap ,span 1");
 		}
 
-		if (!(ab instanceof PNEdge)) {
+		if (!(ab instanceof PNArc)) {
 			p.add(new JLabel("Label"), "gap 5 ");
 			p.add(label, "span 1, wrap");
 			p.add(new JLabel("Name"), "gap 5 ");
@@ -756,9 +756,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 			changeEdgeDirection.setActionCommand("changeEdgeDirection");
 			changeEdgeDirection.addActionListener(this);
 			if (((BiologicalEdgeAbstract) ab).isDirected()) {
-				if (ab instanceof PNEdge) {
-					PNEdge pnedge = (PNEdge) ab;
-					if(!pnedge.isInhibitoryArc() && !pnedge.isTestArc()){
+				if (ab instanceof PNArc) {
+					PNArc pnedge = (PNArc) ab;
+					if(!pnedge.isInhibitorArc() && !pnedge.isTestArc()){
 						p.add(changeEdgeDirection, "");
 					}
 				} else {
@@ -766,8 +766,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 				}
 			}
 
-			if (ab instanceof PNEdge) {
-				PNEdge e = (PNEdge) ab;
+			if (ab instanceof PNArc) {
+				PNArc e = (PNArc) ab;
 				MyJFormattedTextField activationProb = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				activationProb.setText(e.getProbability() + "");
 				activationProb.setName("activationProb");
@@ -1037,9 +1037,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 		} else if ("changeEdgeDirection".equals(event) && ab.isEdge()) {
 			Pathway pw = graphInstance.getPathway();
-			PNEdge edge = (PNEdge) ab;
+			PNArc edge = (PNArc) ab;
 
-			PNEdge newEdge = new PNEdge(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(),
+			PNArc newEdge = new PNArc(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(),
 					edge.getBiologicalElement(), edge.getFunction());
 			newEdge.setPriority(edge.getPriority());
 			newEdge.setProbability(edge.getProbability());

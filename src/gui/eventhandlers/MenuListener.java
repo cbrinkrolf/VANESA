@@ -32,7 +32,7 @@ import org.apache.commons.lang3.SystemUtils;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.Enzyme;
@@ -1173,12 +1173,12 @@ public class MenuListener implements ActionListener {
 		double[][] b = this.initArray(numberPlaces, numberTransitions);
 		// einkommende Kanten (backward matrix)
 		Iterator<BiologicalEdgeAbstract> edgeit = graphInstance.getPathway().getAllEdges().iterator();
-		PNEdge edge;
+		PNArc edge;
 		Object o;
 		while (edgeit.hasNext()) {
 			o = edgeit.next();
-			if (o instanceof PNEdge) {
-				edge = (PNEdge) o;
+			if (o instanceof PNArc) {
+				edge = (PNArc) o;
 				// pair = edge.getEdge().getEndpoints();
 				// T->P
 				if (hmplaces.containsKey(edge.getTo())) {

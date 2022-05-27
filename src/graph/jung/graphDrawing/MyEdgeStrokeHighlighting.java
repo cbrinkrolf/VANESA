@@ -59,7 +59,7 @@ public class MyEdgeStrokeHighlighting implements Function<BiologicalEdgeAbstract
 		Stroke picked = new BasicStroke(pickedFactor * strength);
 		if (psV.getPicked().isEmpty()) {
 			if (psE.getPicked().isEmpty()) {
-				if (bea.getBiologicalElement().equals(Elementdeclerations.pnTestEdge)) {
+				if (bea.getBiologicalElement().equals(Elementdeclerations.pnTestArc)) {
 					return dotted;
 				}
 //				return basic;
@@ -67,7 +67,7 @@ public class MyEdgeStrokeHighlighting implements Function<BiologicalEdgeAbstract
 			} else {
 				if (psE.isPicked(bea)) {
 //					return heavy;
-					if (bea.getBiologicalElement().equals(Elementdeclerations.pnTestEdge)) {
+					if (bea.getBiologicalElement().equals(Elementdeclerations.pnTestArc)) {
 						return dottedPicked;
 					}
 					return picked;
@@ -79,7 +79,7 @@ public class MyEdgeStrokeHighlighting implements Function<BiologicalEdgeAbstract
 
 			if (psV.isPicked(bea.getFrom()) || psV.isPicked(bea.getTo())) {
 //				return heavy;
-				if (bea.getBiologicalElement().equals(Elementdeclerations.pnTestEdge)) {
+				if (bea.getBiologicalElement().equals(Elementdeclerations.pnTestArc)) {
 					return dottedPicked;
 				}
 				return picked;

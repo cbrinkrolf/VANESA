@@ -45,7 +45,7 @@ import biologicalObjects.edges.ReactionPairEdge;
 import biologicalObjects.edges.Repression;
 import biologicalObjects.edges.StateChange;
 import biologicalObjects.edges.Ubiquitination;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Complex;
 import biologicalObjects.nodes.CompoundNode;
@@ -332,13 +332,13 @@ public class VAMLInput {
 
 				bea = new Methylation(label, name, mapping.get(from), mapping.get(to));
 
-			} else if (elementSpecification.equals(Elementdeclerations.pnEdge)
+			} else if (elementSpecification.equals(Elementdeclerations.pnArc)
 					|| elementSpecification.equals("PN Discrete Edge")) {
-				bea = new PNEdge(mapping.get(from), mapping.get(to), label, name, Elementdeclerations.pnEdge, function);
-				((PNEdge) bea).setProbability(activationProb);
-			} else if (elementSpecification.equals(Elementdeclerations.pnInhibitionEdge)) {
-				bea = new PNEdge(mapping.get(from), mapping.get(to), label, name, "PN Inhibition Edge", function);
-				((PNEdge) bea).setProbability(activationProb);
+				bea = new PNArc(mapping.get(from), mapping.get(to), label, name, Elementdeclerations.pnArc, function);
+				((PNArc) bea).setProbability(activationProb);
+			} else if (elementSpecification.equals(Elementdeclerations.pnInhibitorArc)) {
+				bea = new PNArc(mapping.get(from), mapping.get(to), label, name, Elementdeclerations.pnInhibitorArc, function);
+				((PNArc) bea).setProbability(activationProb);
 			}
 
 			else {

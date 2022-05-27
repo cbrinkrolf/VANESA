@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.PathwayMap;
@@ -242,18 +242,18 @@ public class Pathway implements Cloneable {
 		bea.setTo(to);
 		bea.setDirected(directed);
 
-		if (element.equals(Elementdeclerations.pnEdge)) {
+		if (element.equals(Elementdeclerations.pnArc)) {
 			boolean wasUndirected = false;
 			double ActivationProbability = 1.0;
 
-			((PNEdge) bea).setWasUndirected(wasUndirected);
-			((PNEdge) bea).setProbability(ActivationProbability);
+			((PNArc) bea).setWasUndirected(wasUndirected);
+			((PNArc) bea).setProbability(ActivationProbability);
 
-		} else if (element.equals(Elementdeclerations.pnInhibitionEdge)) {
+		} else if (element.equals(Elementdeclerations.pnInhibitorArc)) {
 			boolean wasUndirected = false;
 			double ActivationProbability = 1.0;
-			((PNEdge) bea).setWasUndirected(wasUndirected);
-			((PNEdge) bea).setProbability(ActivationProbability);
+			((PNArc) bea).setWasUndirected(wasUndirected);
+			((PNArc) bea).setProbability(ActivationProbability);
 		}
 		return addEdge(bea);
 	}

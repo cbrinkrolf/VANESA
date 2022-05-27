@@ -30,7 +30,7 @@ import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
 import biologicalObjects.edges.Inhibition;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.edges.ReactionPairEdge;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.DNA;
@@ -351,15 +351,15 @@ public class JSBMLinput {
 						// case Elementdeclerations.pnEdge:
 
 						elSub = reacAnnotation.getChild("Probability", null);
-						if (elSub != null && bea instanceof PNEdge) {
+						if (elSub != null && bea instanceof PNArc) {
 							attr = elSub.getAttributeValue("Probability");
-							((PNEdge) bea).setProbability(Double.parseDouble(attr));
+							((PNArc) bea).setProbability(Double.parseDouble(attr));
 						}
 
 						elSub = reacAnnotation.getChild("Priority", null);
-						if (elSub != null && bea instanceof PNEdge) {
+						if (elSub != null && bea instanceof PNArc) {
 							attr = elSub.getAttributeValue("Priority");
-							((PNEdge) bea).setPriority(Integer.parseInt(attr));
+							((PNArc) bea).setPriority(Integer.parseInt(attr));
 						}
 
 						// break;

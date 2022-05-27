@@ -13,7 +13,7 @@ import petriNet.FunctionParser;
 
 @Getter
 @Setter
-public class PNEdge extends BiologicalEdgeAbstract {
+public class PNArc extends BiologicalEdgeAbstract {
 
 	// conflict sovling: priority that edge is active, 1=highest, n=lowest
 	// priority
@@ -26,17 +26,17 @@ public class PNEdge extends BiologicalEdgeAbstract {
 
 	private boolean wasUndirected = false;
 
-	public PNEdge(BiologicalNodeAbstract from, BiologicalNodeAbstract to, String label, String name, String type,
+	public PNArc(BiologicalNodeAbstract from, BiologicalNodeAbstract to, String label, String name, String type,
 			String edgeFunction) {
 		super(edgeFunction, name, from, to);
 		super.setDirected(true);
 		if (type.equals(Elementdeclerations.inhibitionEdge) || type.equals(Elementdeclerations.inhibitor)
-				|| type.equals(Elementdeclerations.pnInhibitionEdge)) {
-			setBiologicalElement(Elementdeclerations.pnInhibitionEdge);
-		} else if (type.equals(Elementdeclerations.pnTestEdge)) {
-			setBiologicalElement(Elementdeclerations.pnTestEdge);
+				|| type.equals(Elementdeclerations.pnInhibitorArc)) {
+			setBiologicalElement(Elementdeclerations.pnInhibitorArc);
+		} else if (type.equals(Elementdeclerations.pnTestArc)) {
+			setBiologicalElement(Elementdeclerations.pnTestArc);
 		} else {
-			setBiologicalElement(Elementdeclerations.pnEdge);
+			setBiologicalElement(Elementdeclerations.pnArc);
 		}
 		setFunction(edgeFunction);
 	}
@@ -64,11 +64,11 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		return list;
 	}
 
-	public boolean isInhibitoryArc(){
-		return getBiologicalElement().equals(Elementdeclerations.pnInhibitionEdge);
+	public boolean isInhibitorArc(){
+		return getBiologicalElement().equals(Elementdeclerations.pnInhibitorArc);
 	}
 	
 	public boolean isTestArc(){
-		return getBiologicalElement().equals(Elementdeclerations.pnTestEdge);
+		return getBiologicalElement().equals(Elementdeclerations.pnTestArc);
 	}
 }

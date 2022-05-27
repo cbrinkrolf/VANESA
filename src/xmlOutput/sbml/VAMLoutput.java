@@ -24,7 +24,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.PathwayMap;
 import biologicalObjects.nodes.Protein;
@@ -197,8 +197,8 @@ public class VAMLoutput {
 			// System.out.println("isDirected " + bna.isDirected());
 			writer.writeEndElement();
 
-			if (bea instanceof PNEdge) {
-				PNEdge e = (PNEdge) bea;
+			if (bea instanceof PNArc) {
+				PNArc e = (PNArc) bea;
 				writer.writeStartElement("function");
 				writer.writeCData(e.getFunction());
 				writer.writeEndElement();

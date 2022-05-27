@@ -18,7 +18,7 @@ import java.util.Set;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNEdge;
+import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
@@ -462,7 +462,7 @@ public class MOoutput {
 		Iterator<BiologicalEdgeAbstract> it = pw.getAllEdgesSorted().iterator();
 
 		BiologicalEdgeAbstract bea;
-		PNEdge e;
+		PNArc e;
 		Set<BiologicalNodeAbstract> markedOut;
 
 		inhibitCount = 0;
@@ -477,8 +477,8 @@ public class MOoutput {
 			weight.setLength(0);
 			fromString = vertex2name.get(this.resolveReference(bea.getFrom()));
 			toString = vertex2name.get(this.resolveReference(bea.getTo()));
-			if (bea instanceof PNEdge) {
-				e = (PNEdge) bea;
+			if (bea instanceof PNArc) {
+				e = (PNArc) bea;
 				// System.out.println("edge");
 				// Edge Place -> Transition
 				if (e.getFrom() instanceof Place) {
@@ -564,11 +564,11 @@ public class MOoutput {
 
 				actualOutEdges.get(fromString).add(e.getTo());
 
-				if (e.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
+				if (e.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnInhibitorArc)) {
 					if (e.getFrom() instanceof Place) {
 						componentsSB.append(this.createInhibitoryArc(fromString, toString, e));
 					}
-				} else if (e.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnTestEdge)) {
+				} else if (e.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnTestArc)) {
 					if (e.getFrom() instanceof Place) {
 						componentsSB.append(this.createTestArc(fromString, toString, e));
 					}
@@ -585,7 +585,7 @@ public class MOoutput {
 		}
 	}
 
-	private String createInhibitoryArc(String fromString, String toString, PNEdge e) {
+	private String createInhibitoryArc(String fromString, String toString, PNArc e) {
 		inhibitCount++;
 		String result = INDENT + PNlibIA + " inhibitorArc" + inhibitCount + "(testValue="
 				+ this.getModelicaEdgeFunction(e) + ");" + ENDL;
@@ -598,7 +598,7 @@ public class MOoutput {
 		return result;
 	}
 
-	private String createTestArc(String fromString, String toString, PNEdge e) {
+	private String createTestArc(String fromString, String toString, PNArc e) {
 		testArcCount++;
 		String result = INDENT + PNlibTA + " testArc" + testArcCount + "(testValue=" + this.getModelicaEdgeFunction(e)
 				+ ");" + ENDL;
@@ -795,7 +795,7 @@ public class MOoutput {
 		return null;
 	}
 
-	private String getModelicaEdgeFunction(PNEdge bea) {
+	private String getModelicaEdgeFunction(PNArc bea) {
 
 		if (bea.getFrom().isConstant() || bea.getTo().isConstant()) {
 			return "0";

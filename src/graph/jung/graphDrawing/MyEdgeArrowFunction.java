@@ -26,7 +26,7 @@ public class MyEdgeArrowFunction
 		// System.out.println(context.element.getBiologicalElement());
 		// System.out.println("element:
 		// "+context.element.getBiologicalElement());
-		if (context.element.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
+		if (context.element.getBiologicalElement().equals(biologicalElements.Elementdeclerations.pnInhibitorArc)) {
 
 			return new Ellipse2D.Double(-10, -5, 10, 10);
 		} else if (context.element.getBiologicalElement().equals(biologicalElements.Elementdeclerations.inhibitionEdge)
