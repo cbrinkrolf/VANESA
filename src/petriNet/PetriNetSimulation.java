@@ -33,6 +33,7 @@ import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.ChangedFlags;
@@ -98,8 +99,8 @@ public class PetriNetSimulation implements ActionListener {
 			menu.setVisible(true);
 		}
 	}
-	
-	private void runOMCIA(int port){
+
+	private void runOMCIA(int port) {
 		this.runOMCIA(port, "");
 	}
 
@@ -111,7 +112,7 @@ public class PetriNetSimulation implements ActionListener {
 		int intervals = menu.getIntervals();
 
 		System.out.println("simNameOld: " + simName);
-		System.out.println("port: "+port);
+		System.out.println("port: " + port);
 		MainWindow w = MainWindow.getInstance();
 		flags = pw.getChangedFlags("petriNetSim");
 		logAndShow("Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
@@ -131,7 +132,7 @@ public class PetriNetSimulation implements ActionListener {
 						s = new Server(pw, bea2key, simId, port);
 
 						s.start();
-						
+
 						System.out.println("building ended");
 						pw.getPetriPropertiesNet().setPetriNetSimulation(true);
 
@@ -195,8 +196,8 @@ public class PetriNetSimulation implements ActionListener {
 											}
 										}
 									}
-									
-									override+=overrideParameterized;
+
+									override += overrideParameterized;
 
 									if (SystemUtils.IS_OS_WINDOWS) {
 										override += "\"";
@@ -207,10 +208,10 @@ public class PetriNetSimulation implements ActionListener {
 									logAndShow("override statement: " + override);
 									if (noEmmit) {
 										pb.command(simName, "-s=" + menu.getIntegrator(), override, "-nls=newton",
-												"-port="+port, "-noEventEmit", "-lv=LOG_STATS");
+												"-port=" + port, "-noEventEmit", "-lv=LOG_STATS");
 									} else {
-										pb.command(simName, "-s=" + menu.getIntegrator(), override, "-nls=newton", "-port="+port,
-												"-lv=LOG_STATS");
+										pb.command(simName, "-s=" + menu.getIntegrator(), override, "-nls=newton",
+												"-port=" + port, "-lv=LOG_STATS");
 									}
 									pb.redirectOutput();
 									pb.directory(new File(pathSim));
@@ -244,7 +245,8 @@ public class PetriNetSimulation implements ActionListener {
 								df.setRoundingMode(RoundingMode.HALF_UP);
 								boolean simAddedToMenu = false;
 								while (s.isRunning()) {
-									if (v == null && pw.getPetriPropertiesNet().getSimResController().get(simId) != null) {
+									if (v == null
+											&& pw.getPetriPropertiesNet().getSimResController().get(simId) != null) {
 										v = pw.getPetriPropertiesNet().getSimResController().get(simId).getTime()
 												.getAll();
 									}
@@ -258,7 +260,7 @@ public class PetriNetSimulation implements ActionListener {
 
 									// double time =
 									if (v != null && v.size() > 0) {
-										if(!simAddedToMenu){
+										if (!simAddedToMenu) {
 											menu.updateSimulationResults();
 											simAddedToMenu = true;
 										}
@@ -314,9 +316,9 @@ public class PetriNetSimulation implements ActionListener {
 									System.out.println("outputReader server stopped");
 									line = outputReader.readLine();
 									while (line != null && line.length() > 0) {
-										//menue.addText(line + "\r\n");
-										//pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage()
-										//		.append(line + "\r\n");
+										// menue.addText(line + "\r\n");
+										// pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage()
+										// .append(line + "\r\n");
 										logAndShow(line);
 										System.out.println(line);
 										line = outputReader.readLine();
@@ -397,7 +399,7 @@ public class PetriNetSimulation implements ActionListener {
 			} else {
 				logAndShow("executable needs to be compiled");
 			}
-			
+
 			if (flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged()
 					|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menu.isForceRebuild()) {
 				try {
@@ -459,9 +461,14 @@ public class PetriNetSimulation implements ActionListener {
 				filter += "'" + bna.getName() + "'.t|";
 				vars++;
 			} else if (bna instanceof Transition) {
-				filter += "'" + bna.getName() + "'.fire|";
-				filter += "'" + bna.getName() + "'.actualSpeed|";
-				vars += 2;
+				if (bna instanceof ContinuousTransition) {
+					filter += "'" + bna.getName() + "'.fire|";
+					filter += "'" + bna.getName() + "'.actualSpeed|";
+					vars += 2;
+				} else {
+					filter += "'" + bna.getName() + "'.active|";
+					vars++;
+				}
 			}
 		}
 
@@ -511,7 +518,7 @@ public class PetriNetSimulation implements ActionListener {
 		compiling = true;
 		compilingThread = new Thread() {
 			public void run() {
-				//menu.setTime("Compiling ...");
+				// menu.setTime("Compiling ...");
 				try {
 					System.out.println("edges changed: " + flags.isEdgeChanged());
 					System.out.println("nodes changed: " + flags.isNodeChanged());
@@ -614,15 +621,15 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		};
 
-		Thread compileGUI = new Thread(){
+		Thread compileGUI = new Thread() {
 			public void run() {
 				long start = System.currentTimeMillis();
 				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 				String time = sdf.format(new Date());
 				long seconds = 0;
-				while(compiling){
+				while (compiling) {
 					seconds = (System.currentTimeMillis() - start) / 1000;
-					menu.setTime("Compiling since "+time + " for: "+seconds+" seconds.");
+					menu.setTime("Compiling since " + time + " for: " + seconds + " seconds.");
 					try {
 						sleep(1000);
 					} catch (InterruptedException e) {
@@ -631,7 +638,7 @@ public class PetriNetSimulation implements ActionListener {
 				}
 			}
 		};
-		
+
 		compileGUI.start();
 		compilingThread.start();
 		// compileProcess.waitFor();
@@ -648,7 +655,7 @@ public class PetriNetSimulation implements ActionListener {
 				// allThread.interrupt();
 				// allThread = null;
 			}
-			
+
 			// this.runOMC();
 			if (!menu.isParameterized()) {
 				simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
@@ -659,71 +666,75 @@ public class PetriNetSimulation implements ActionListener {
 				this.menu.started();
 				this.runOMCIA(port);
 			} else {
-				//TODO needs to be checked again
+				// TODO needs to be checked again
 				flags = pw.getChangedFlags("petriNetSim");
 				BiologicalNodeAbstract bna = menu.getSelectedNode();
 				String param = menu.getParameterName();
 				List<Double> list = menu.getParameterValues();
 				double value;
 				MyPopUp.getInstance().show("Parameterized simulation", "Parameters to be simulated:" + list.size());
-				if(list.size() < 1){
+				if (list.size() < 1) {
 					return;
 				}
-				//HashMap<Place, Boundary> boundaries = (HashMap<Place, Boundary>) DeepObjectCopy.clone(pw.getChangedBoundaries()); //(HashMap<Place, Boundary>) pw.getChangedBoundaries().clone();
-				//HashMap<Place, Double> initialValues = (HashMap<Place, Double>) DeepObjectCopy.clone(pw.getChangedInitialValues());
-				//pw.getChangedFlags(param);
-				//HashMap<Parameter, GraphElementAbstract> parameters = new HashMap<Parameter, GraphElementAbstract>();
-					//	for(Parameter p :pw.getChangedParameters().keySet() ){
-					//		parameters.put(p, pw.getChangedParameters().get(p));
-					//	}
-						//(HashMap<Parameter, GraphElementAbstract>) DeepObjectCopy.clone(pw.getChangedParameters());
-			//	System.out.println("parmameter size org: "+parameters.size());
+				// HashMap<Place, Boundary> boundaries = (HashMap<Place, Boundary>)
+				// DeepObjectCopy.clone(pw.getChangedBoundaries()); //(HashMap<Place, Boundary>)
+				// pw.getChangedBoundaries().clone();
+				// HashMap<Place, Double> initialValues = (HashMap<Place, Double>)
+				// DeepObjectCopy.clone(pw.getChangedInitialValues());
+				// pw.getChangedFlags(param);
+				// HashMap<Parameter, GraphElementAbstract> parameters = new HashMap<Parameter,
+				// GraphElementAbstract>();
+				// for(Parameter p :pw.getChangedParameters().keySet() ){
+				// parameters.put(p, pw.getChangedParameters().get(p));
+				// }
+				// (HashMap<Parameter, GraphElementAbstract>)
+				// DeepObjectCopy.clone(pw.getChangedParameters());
+				// System.out.println("parmameter size org: "+parameters.size());
 				String override;
 				Place p;
 				this.menu.started();
 				for (int i = 0; i < list.size(); i++) {
 					override = "";
-					//pw.setChangedBoundaries(boundaries);
-					//pw.setChangedInitialValues(initialValues);
-					//pw.setChangedParameters(parameters);
-					//System.out.println("--------------parameter size: "+parameters.size());
-					
+					// pw.setChangedBoundaries(boundaries);
+					// pw.setChangedInitialValues(initialValues);
+					// pw.setChangedParameters(parameters);
+					// System.out.println("--------------parameter size: "+parameters.size());
+
 					value = list.get(i);
 					simId = "simulation_" + pw.getPetriPropertiesNet().getSimResController().size() + "_"
-							+ System.nanoTime()+"_"+value;
-					
+							+ System.nanoTime() + "_" + value;
+
 					System.out.println(value);
-							
+
 					if (bna instanceof Place) {
 						p = (Place) bna;
 						switch (param) {
 						case "token min":
-							//flags.setBoundariesChanged(true);
-							//b = new Boundary();
-							//b.setLowerBoundary(value);
-							//pw.getChangedBoundaries().put((Place) bna, b);
+							// flags.setBoundariesChanged(true);
+							// b = new Boundary();
+							// b.setLowerBoundary(value);
+							// pw.getChangedBoundaries().put((Place) bna, b);
 							override += ",'" + p.getName() + "'.minMarks=" + value;
 							break;
 						case "token max":
-							//flags.setBoundariesChanged(true);
-							//b = new Boundary();
-							//b.setUpperBoundary(value);
-							//pw.getChangedBoundaries().put((Place) bna, b);
+							// flags.setBoundariesChanged(true);
+							// b = new Boundary();
+							// b.setUpperBoundary(value);
+							// pw.getChangedBoundaries().put((Place) bna, b);
 							override += ",'" + p.getName() + "'.maxMarks=" + value;
 							break;
 						case "token start":
-							//flags.setInitialValueChanged(true);
-							//pw.getChangedInitialValues().put((Place) bna, value);
+							// flags.setInitialValueChanged(true);
+							// pw.getChangedInitialValues().put((Place) bna, value);
 							override += ",'" + p.getName() + "'.startMarks=" + value;
 							break;
 						}
 					} else if (bna instanceof Transition) {
 						if (bna.getParameter(param) != null) {
-							//Parameter p = bna.getParameter(param);
-							//flags.setParameterChanged(true);
-							//pw.getChangedParameters().put(new Parameter(param, value, p.getUnit()), bna);
-							override += ",'_" + bna.getName() + "_" + param + "'="
-									+ value;
+							// Parameter p = bna.getParameter(param);
+							// flags.setParameterChanged(true);
+							// pw.getChangedParameters().put(new Parameter(param, value, p.getUnit()), bna);
+							override += ",'_" + bna.getName() + "_" + param + "'=" + value;
 						} else {
 							MyPopUp.getInstance().show("Error",
 									"The parameter for parameterized simulation could not be found: " + param);
@@ -733,15 +744,15 @@ public class PetriNetSimulation implements ActionListener {
 					}
 					// rounding name up to 4 decimals
 					pw.getPetriPropertiesNet().getSimResController().get(simId)
-							.setName(bna.getName()+"_"+param+"="+Math.round(value * 1000) / 1000.0 + "");
+							.setName(bna.getName() + "_" + param + "=" + Math.round(value * 1000) / 1000.0 + "");
 					this.logMessage = pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage();
 					menu.clearText();
 					menu.addText(logMessage.toString());
 					this.runOMCIA(port++, override);
-					
+
 					try {
 						Thread.sleep(100);
-						while(!stopped){
+						while (!stopped) {
 							Thread.sleep(100);
 						}
 					} catch (InterruptedException e) {

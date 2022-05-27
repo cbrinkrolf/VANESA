@@ -23,6 +23,8 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import gui.MainWindow;
@@ -40,7 +42,7 @@ public class Server {
 	private int port;
 	private SimulationResult simResult;
 
-	private Set<PNEdge> toRefineEdges;
+	private Set<PNEdge> toRefineEdges = new HashSet<>();
 	private Set<PNEdge> edgesFlow;
 	private Set<PNEdge> edgeSum;
 	private Set<Transition> transitionSpeed;
@@ -77,7 +79,7 @@ public class Server {
 				while (running) {
 					try {
 						boolean boundCorrectly = false;
-						while (!boundCorrectly) {
+						while (!boundCorrectly && running) {
 							try {
 								serverSocket = new java.net.ServerSocket(port);
 								boundCorrectly = true;
@@ -118,6 +120,7 @@ public class Server {
 	}
 
 	private Socket waitForClient(ServerSocket serverSocket) throws IOException {
+		System.out.println("waiting for accept ...");
 		Socket socket = serverSocket.accept();
 		return socket;
 	}
@@ -305,7 +308,6 @@ public class Server {
 	}
 
 	private void createSets() {
-		toRefineEdges = new HashSet<>();
 		edgesFlow = new HashSet<>();
 		edgeSum = new HashSet<>();
 		transitionSpeed = new HashSet<>();
@@ -340,16 +342,22 @@ public class Server {
 			if (!bna.isLogical()) {
 				if (bna instanceof Place) {
 					if (name2index.get("'" + bna.getName() + "'.t") != null) {
-						placeToken.add((Place)bna);
+						placeToken.add((Place) bna);
 					} else {
 						System.out.println(bna.getName() + " does not exist. Cannot set simulation result");
 					}
 				} else if (bna instanceof Transition) {
-					if (name2index.get("'" + bna.getName() + "'.fire") != null) {
-						this.transitionFire.add((Transition)bna);
-					}
-					if (name2index.get("'" + bna.getName() + "'.actualSpeed") != null) {
-						this.transitionSpeed.add((Transition)bna);
+					if (bna instanceof ContinuousTransition) {
+						if (name2index.get("'" + bna.getName() + "'.fire") != null) {
+							this.transitionFire.add((Transition) bna);
+						}
+						if (name2index.get("'" + bna.getName() + "'.actualSpeed") != null) {
+							this.transitionSpeed.add((Transition) bna);
+						}
+					} else {
+						if (name2index.get("'" + bna.getName() + "'.active") != null) {
+							this.transitionFire.add((Transition) bna);
+						}
 					}
 				}
 			}
@@ -358,31 +366,34 @@ public class Server {
 
 	private void setData(ArrayList<Object> values) {
 		Object o;
-		for(PNEdge e : this.edgesFlow){
+		for (PNEdge e : this.edgesFlow) {
 			o = values.get(name2index.get("der(" + bea2key.get(e) + ")"));
 			this.checkAndAddValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, o);
 		}
-		
-		for(PNEdge e: this.edgeSum){
+
+		for (PNEdge e : this.edgeSum) {
 			o = values.get(name2index.get(bea2key.get(e)));
 			this.checkAndAddValue(e, SimulationResultController.SIM_SUM_OF_TOKEN, o);
 		}
-		
-		for(Place p : this.placeToken){
+
+		for (Place p : this.placeToken) {
 			o = values.get(name2index.get("'" + p.getName() + "'.t"));
 			this.checkAndAddValue(p, SimulationResultController.SIM_TOKEN, o);
 		}
-		
-		for(Transition t : this.transitionFire){
-			o = values.get(name2index.get("'" + t.getName() + "'.fire"));
+
+		for (Transition t : this.transitionFire) {
+			if (t instanceof ContinuousTransition) {
+				o = values.get(name2index.get("'" + t.getName() + "'.fire"));
+			} else {
+				o = values.get(name2index.get("'" + t.getName() + "'.active"));
+			}
 			this.checkAndAddValue(t, SimulationResultController.SIM_FIRE, o);
 		}
-		
-		for(Transition t: this.transitionSpeed){
+
+		for (Transition t : this.transitionSpeed) {
 			o = values.get(name2index.get("'" + t.getName() + "'.actualSpeed"));
 			this.checkAndAddValue(t, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, o);
 		}
-
 
 		long now = System.currentTimeMillis();
 		if ((now - lastSyso) > 1000) {
