@@ -1,5 +1,7 @@
 package biologicalObjects.nodes;
 
+import java.util.List;
+
 import biologicalElements.Elementdeclerations;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,5 +30,20 @@ public class Enzyme extends Protein implements DynamicNode {
 	@Override
 	public void setKnockedOut(Boolean knockedOut) {
 		this.knockedOut = knockedOut;
+	}
+
+	@Override
+	public List<String> getTransformationParameters() {
+		List<String> list = super.getTransformationParameters();
+		list.add("maximalSpeed");
+		return list;
+	}
+
+	public String getTransformationPaameterValue(String parameter) {
+		switch (parameter) {
+		case "maximalSpeed":
+			return getMaximalSpeed();
+		}
+		return super.getTransformationParameterValue(parameter);
 	}
 }

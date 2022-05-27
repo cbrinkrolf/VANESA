@@ -210,6 +210,7 @@ public class PetriNetVertexDialog {
 						number = (Number) tokenStart.getValue();
 						if (number != null) {
 							p.setTokenStart(number.doubleValue());
+							p.setToken(number.doubleValue());
 						}
 						number = (Number) tokenMin.getValue();
 						if (number != null) {

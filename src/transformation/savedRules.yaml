@@ -2,22 +2,46 @@ biologicalEdges:
 - {from: M1, name: E1, to: E, type: ANY Biological Edge}
 - {from: E, name: E2, to: M2, type: ANY Biological Edge}
 biologicalNodes:
-- {name: E, type: Enzyme, x: 240.0, y: 149.0}
-- {name: M1, type: Metabolite, x: 108.96810150146484, y: 149.934326171875}
-- {name: M2, type: Metabolite, x: 356.0, y: 149.0}
-consideredEdges: [E2, E1]
+- name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- name: M1
+  parameterMap: {}
+  type: Metabolite
+  x: 108.96810150146484
+  y: 149.934326171875
+- name: M2
+  parameterMap: {}
+  type: Metabolite
+  x: 356.0
+  y: 149.0
+consideredEdges: [E1, E2]
 mappingBNToPN:
-- {from: M1, to: p1}
 - {from: M2, to: p2}
+- {from: M1, to: p1}
 - {from: E, to: t1}
 name: M->E->M
 petriEdges:
 - {from: p1, name: PNE1, to: t1, type: PN Edge}
 - {from: t1, name: PNE2, to: p2, type: PN Edge}
 petriNodes:
-- {name: p1, type: Continuous Place, x: 42.0, y: 162.0}
-- {name: p2, type: Continuous Place, x: 337.0, y: 162.0}
-- {name: t1, type: Continuous Transition, x: 184.0, y: 157.0}
+- name: p1
+  parameterMap: {name: '"ein Name"'}
+  type: Continuous Place
+  x: 42.0
+  y: 162.0
+- name: p2
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 337.0
+  y: 162.0
+- name: t1
+  parameterMap: {name: ein toller Name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
 ---
 biologicalEdges:
 - {from: N1, name: E1, to: E, type: reaction}
@@ -25,18 +49,38 @@ biologicalEdges:
 - {from: E, name: E3, to: N3, type: reaction}
 - {from: E, name: E4, to: N4, type: reaction}
 biologicalNodes:
-- {name: E, type: Enzyme, x: 209.0, y: 160.0}
-- {name: N1, type: Metabolite, x: 90.0, y: 108.0}
-- {name: N2, type: Metabolite, x: 81.0, y: 218.0}
-- {name: N3, type: Metabolite, x: 322.0, y: 109.0}
-- {name: N4, type: Metabolite, x: 313.0, y: 225.0}
+- name: E
+  parameterMap: {name: ein toller Name}
+  type: Enzyme
+  x: 209.0
+  y: 160.0
+- name: N1
+  parameterMap: {name: ein toller Name}
+  type: Metabolite
+  x: 90.0
+  y: 108.0
+- name: N2
+  parameterMap: {name: ein toller Name}
+  type: Metabolite
+  x: 81.0
+  y: 218.0
+- name: N3
+  parameterMap: {name: ein toller Name}
+  type: Metabolite
+  x: 322.0
+  y: 109.0
+- name: N4
+  parameterMap: {name: ein toller Name}
+  type: Metabolite
+  x: 313.0
+  y: 225.0
 consideredEdges: [E3, E1, E2, E4]
 mappingBNToPN:
-- {from: N3, to: p3}
-- {from: N1, to: p1}
-- {from: E, to: t1}
-- {from: N2, to: p2}
 - {from: N4, to: p4}
+- {from: N3, to: p3}
+- {from: N2, to: p2}
+- {from: E, to: t1}
+- {from: N1, to: p1}
 name: 2M->E->2M
 petriEdges:
 - {from: p1, name: PNE1, to: t1, type: PN Edge}
@@ -44,11 +88,31 @@ petriEdges:
 - {from: p2, name: PNE3, to: t1, type: PN Edge}
 - {from: t1, name: PNE4, to: p4, type: PN Edge}
 petriNodes:
-- {name: p1, type: Continuous Place, x: 90.0, y: 123.0}
-- {name: p2, type: Continuous Place, x: 104.0, y: 216.0}
-- {name: p3, type: Continuous Place, x: 307.0, y: 122.0}
-- {name: p4, type: Continuous Place, x: 324.0, y: 227.0}
-- {name: t1, type: Continuous Transition, x: 204.0, y: 164.0}
+- name: p1
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 90.0
+  y: 123.0
+- name: p2
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 104.0
+  y: 216.0
+- name: p3
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 307.0
+  y: 122.0
+- name: p4
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 324.0
+  y: 227.0
+- name: t1
+  parameterMap: {name: ein toller Name}
+  type: Continuous Transition
+  x: 204.0
+  y: 164.0
 ---
 biologicalEdges:
 - {from: N1, name: E1, to: E1, type: reaction}
@@ -56,18 +120,38 @@ biologicalEdges:
 - {from: E1, name: E3, to: N4, type: reaction}
 - {from: N4, name: E4, to: E2, type: reaction}
 biologicalNodes:
-- {name: E1, type: Enzyme, x: 168.0, y: 158.0}
-- {name: E2, type: Enzyme, x: 363.0, y: 170.0}
-- {name: N1, type: Metabolite, x: 75.0, y: 120.0}
-- {name: N2, type: Metabolite, x: 77.0, y: 204.0}
-- {name: N4, type: Metabolite, x: 263.0, y: 167.0}
+- name: E1
+  parameterMap: {name: ein toller Name}
+  type: Enzyme
+  x: 168.0
+  y: 158.0
+- name: E2
+  parameterMap: {name: ein toller Name}
+  type: Enzyme
+  x: 363.0
+  y: 170.0
+- name: N1
+  parameterMap: {name: ein toller Name}
+  type: Metabolite
+  x: 75.0
+  y: 120.0
+- name: N2
+  parameterMap: {name: ein toller Name}
+  type: Metabolite
+  x: 77.0
+  y: 204.0
+- name: N4
+  parameterMap: {name: ein toller Name}
+  type: Metabolite
+  x: 263.0
+  y: 167.0
 consideredEdges: [E1, E4, E2, E3]
 mappingBNToPN:
-- {from: N2, to: p2}
-- {from: E1, to: t1}
-- {from: N1, to: p1}
-- {from: N4, to: p3}
 - {from: E2, to: t2}
+- {from: N1, to: p1}
+- {from: N2, to: p2}
+- {from: N4, to: p3}
+- {from: E1, to: t1}
 name: M2->E->M->E
 petriEdges:
 - {from: p1, name: PNE1, to: t1, type: PN Edge}
@@ -75,39 +159,91 @@ petriEdges:
 - {from: t1, name: PNE3, to: p3, type: PN Edge}
 - {from: p3, name: PNE4, to: t2, type: PN Edge}
 petriNodes:
-- {name: p1, type: Continuous Place, x: 114.0, y: 122.0}
-- {name: p2, type: Continuous Place, x: 122.0, y: 214.0}
-- {name: p3, type: Continuous Place, x: 327.0, y: 163.0}
-- {name: t1, type: Continuous Transition, x: 218.0, y: 165.0}
-- {name: t2, type: Continuous Transition, x: 445.0, y: 161.0}
+- name: p1
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 114.0
+  y: 122.0
+- name: p2
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 122.0
+  y: 214.0
+- name: p3
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 327.0
+  y: 163.0
+- name: t1
+  parameterMap: {name: ein toller Name}
+  type: Continuous Transition
+  x: 218.0
+  y: 165.0
+- name: t2
+  parameterMap: {name: ein toller Name}
+  type: Continuous Transition
+  x: 445.0
+  y: 161.0
 ---
 biologicalEdges:
 - {from: N1, name: E1, to: N3, type: ANY Biological Edge}
 - {from: N3, name: E2, to: N2, type: ANY Biological Edge}
 biologicalNodes:
-- {name: N1, type: ANY Biological Node, x: 63.0, y: 138.0}
-- {name: N2, type: ANY Biological Node, x: 282.0, y: 133.0}
-- {name: N3, type: Enzyme, x: 173.0, y: 139.0}
+- name: N1
+  parameterMap: {name: ein toller Name}
+  type: ANY Biological Node
+  x: 63.0
+  y: 138.0
+- name: N2
+  parameterMap: {name: ein toller Name}
+  type: ANY Biological Node
+  x: 282.0
+  y: 133.0
+- name: N3
+  parameterMap: {name: ein toller Name}
+  type: Enzyme
+  x: 173.0
+  y: 139.0
 consideredEdges: [E2, E1]
 mappingBNToPN:
-- {from: N2, to: p2}
-- {from: N3, to: t1}
 - {from: N1, to: p1}
+- {from: N3, to: t1}
+- {from: N2, to: p2}
 name: Any->Enzyme->Any
 petriEdges:
 - {from: p1, name: PNE1, to: t1, type: PN Edge}
 - {from: t1, name: PNE2, to: p2, type: PN Edge}
 petriNodes:
-- {name: p1, type: Place, x: 99.0, y: 159.0}
-- {name: p2, type: Place, x: 344.0, y: 159.0}
-- {name: t1, type: Transition, x: 211.0, y: 145.0}
+- name: p1
+  parameterMap: {name: ein toller Name}
+  type: Place
+  x: 99.0
+  y: 159.0
+- name: p2
+  parameterMap: {name: ein toller Name}
+  type: Place
+  x: 344.0
+  y: 159.0
+- name: t1
+  parameterMap: {name: ein toller Name}
+  type: Transition
+  x: 211.0
+  y: 145.0
 ---
 biologicalEdges:
 - {from: any_biological_node, name: E1, to: Enzyme, type: ANY Biological Edge}
 - {from: Enzyme, name: E2, to: any_biological_node, type: ANY Biological Edge}
 biologicalNodes:
-- {name: any_biological_node, type: ANY Biological Node, x: 293.72071838378906, y: 5.099099099636078}
-- {name: Enzyme, type: Enzyme, x: 153.0, y: 0.0}
+- name: any_biological_node
+  parameterMap: {name: ein toller Name}
+  type: ANY Biological Node
+  x: 293.72071838378906
+  y: 5.099099099636078
+- name: Enzyme
+  parameterMap: {name: ein toller Name}
+  type: Enzyme
+  x: 153.0
+  y: 0.0
 consideredEdges: []
 mappingBNToPN:
 - {from: Enzyme, to: p2}
@@ -117,17 +253,41 @@ petriEdges:
 - {from: p1, name: '1', to: t1, type: PN Edge}
 - {from: t1, name: PNE2, to: p2, type: PN Edge}
 petriNodes:
-- {name: p1, type: Continuous Place, x: 22.554126739501953, y: 1.7093544006347656}
-- {name: p2, type: Continuous Place, x: 316.16722869873047, y: 1.6262133121490479}
-- {name: t1, type: Continuous Transition, x: 170.0, y: 0.0}
+- name: p1
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 22.554126739501953
+  y: 1.7093544006347656
+- name: p2
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 316.16722869873047
+  y: 1.6262133121490479
+- name: t1
+  parameterMap: {name: ein toller Name}
+  type: Continuous Transition
+  x: 170.0
+  y: 0.0
 ---
 biologicalEdges:
 - {from: N1, name: E1, to: N3, type: ANY Biological Edge}
 - {from: N3, name: E2, to: N2, type: ANY Biological Edge}
 biologicalNodes:
-- {name: N1, type: ANY Biological Node, x: 82.0, y: 158.0}
-- {name: N2, type: ANY Biological Node, x: 340.0, y: 158.0}
-- {name: N3, type: Enzyme, x: 214.0, y: 152.0}
+- name: N1
+  parameterMap: {name: ein toller Name}
+  type: ANY Biological Node
+  x: 82.0
+  y: 158.0
+- name: N2
+  parameterMap: {name: ein toller Name}
+  type: ANY Biological Node
+  x: 340.0
+  y: 158.0
+- name: N3
+  parameterMap: {name: ein toller Name}
+  type: Enzyme
+  x: 214.0
+  y: 152.0
 consideredEdges: [E1, E2]
 mappingBNToPN:
 - {from: N2, to: p2}
@@ -138,6 +298,37 @@ petriEdges:
 - {from: p1, name: PNE1, to: t1, type: PN Edge}
 - {from: t1, name: PNE2, to: p2, type: PN Edge}
 petriNodes:
-- {name: p1, type: Continuous Place, x: 91.0, y: 156.0}
-- {name: p2, type: Continuous Place, x: 344.0, y: 153.0}
-- {name: t1, type: Continuous Transition, x: 202.0, y: 152.0}
+- name: p1
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 91.0
+  y: 156.0
+- name: p2
+  parameterMap: {name: ein toller Name}
+  type: Continuous Place
+  x: 344.0
+  y: 153.0
+- name: t1
+  parameterMap: {name: ein toller Name}
+  type: Continuous Transition
+  x: 202.0
+  y: 152.0
+---
+biologicalEdges: []
+biologicalNodes:
+- name: N1
+  parameterMap: {}
+  type: ANY Biological Node
+  x: 204.0
+  y: 238.0
+consideredEdges: []
+mappingBNToPN:
+- {from: N1, to: p1}
+name: node test
+petriEdges: []
+petriNodes:
+- name: p1
+  parameterMap: {name: blabla, tokenStart: '6', tokenMin: '3', tokenMax: '1.7976931348623157E308'}
+  type: Place
+  x: 168.0
+  y: 171.0

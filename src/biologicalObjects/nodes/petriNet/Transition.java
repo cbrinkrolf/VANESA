@@ -2,6 +2,7 @@ package biologicalObjects.nodes.petriNet;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
+import java.util.List;
 
 import biologicalElements.Elementdeclerations;
 import graph.jung.graphDrawing.VertexShapes;
@@ -61,5 +62,12 @@ public class Transition extends PNNode {
 		setDefaultColor(Color.white);
 
 		setBiologicalElement(Elementdeclerations.transition);
+	}
+
+	@Override
+	public List<String> getTransformationParameters() {
+		List<String> list = super.getTransformationParameters();
+		list.add("firingCondition");
+		return list;
 	}
 }

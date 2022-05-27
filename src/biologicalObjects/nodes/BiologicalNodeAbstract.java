@@ -1299,4 +1299,34 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		}
 		return bigG;
 	}
+
+	// defines parameters which are available in during transformation
+	public List<String> getTransformationParameters() {
+		List<String> list = new ArrayList<String>();
+		list.add("name");
+		list.add("label");
+		list.add("concentrationStart");
+		list.add("concentrationMin");
+		list.add("concentrationMax");
+		list.add("ID");
+		return list;
+	}
+
+	public String getTransformationParameterValue(String parameter) {
+		switch (parameter) {
+		case "name":
+			return getName();
+		case "label":
+			return getLabel();
+		case "concentrationStart":
+			return getConcentrationStart()+"";
+		case "concentrationMin":
+			return getConcentrationMin()+"";
+		case "concentrationMax":
+			return getConcentrationMax()+"";
+		case "ID":
+			return getID()+"";
+		}
+		return null;
+	}
 }

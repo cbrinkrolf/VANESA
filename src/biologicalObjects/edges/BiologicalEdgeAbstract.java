@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.SortedSet;
 
 import biologicalElements.GraphElementAbstract;
@@ -269,5 +270,29 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		if (from == to && !allowFromEqualsTo)
 			return false;
 		return true;
+	}
+
+	// defines parameters which are available in during transformation
+	public List<String> getTransformationParameters() {
+		List<String> list = new ArrayList<String>();
+		list.add("name");
+		list.add("label");
+		list.add("function");
+		list.add("ID");
+		return list;
+	}
+
+	public String getTransformationParameterValue(String parameter) {
+		switch (parameter) {
+		case "name":
+			return getName();
+		case "label":
+			return getLabel();
+		case "function":
+			return getFunction();
+		case "ID":
+			return getID() + "";
+		}
+		return null;
 	}
 }

@@ -184,10 +184,11 @@ public class SaveDialog {
 					e.printStackTrace();
 				}
 			}
+			// TODO double popUp
 			if (error.trim().length() == 0) {
-				MyPopUp.getInstance().show("File export", "Exports was successful!");
+				// MyPopUp.getInstance().show("File export", "Exports was successful!");
 			} else {
-				MyPopUp.getInstance().show("Error during file export", error);
+				// MyPopUp.getInstance().show("Error during file export", error);
 			}
 		}
 	}
@@ -426,6 +427,7 @@ public class SaveDialog {
 	private void write(String simId) throws HeadlessException, XMLStreamException, IOException, TranscoderException,
 			InvalidIDException, VoidRepositoryException {
 
+		// TODO double popUp
 		ConnectionSettings.setFileDirectory(file.getAbsolutePath());
 		if (fileFormat.equals(sbmlDescription)) {
 			getCorrectFile(sbml);
@@ -437,13 +439,19 @@ public class SaveDialog {
 			// JOptionPane.showMessageDialog(
 			// MainWindowSingelton.getInstance(), sbmlDescription
 			// + sbmlOutput.generateSBMLDocument());
+			
+			if (GraphInstance.getPathwayStatic().getFile() == null) {
+				GraphInstance.getPathwayStatic().setFile(file);
+			}
+			
 			JSBMLoutput jsbmlOutput = new JSBMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
 
 			String out = jsbmlOutput.generateSBMLDocument();
+			
+			
 			if (out.length() > 0) {
 				MyPopUp.getInstance().show("Error", out);
 			} else {
-				// System.out.println(file.getName());
 				GraphContainer.getInstance().renamePathway(GraphInstance.getPathwayStatic(), file.getName());
 				GraphInstance.getPathwayStatic().setName(file.getName());
 				GraphInstance.getPathwayStatic().setTitle(file.getName());

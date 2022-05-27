@@ -2,6 +2,7 @@ package biologicalObjects.nodes.petriNet;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
+import java.util.List;
 
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.DynamicNode;
@@ -47,5 +48,12 @@ public class ContinuousTransition extends Transition implements DynamicNode {
 	@Override
 	public void setKnockedOut(Boolean knockedOut) {
 		super.setKnockedOut(knockedOut);
+	}
+
+	@Override
+	public List<String> getTransformationParameters() {
+		List<String> list = super.getTransformationParameters();
+		list.add("maximalSpeed");
+		return list;
 	}
 }

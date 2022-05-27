@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
@@ -153,7 +154,7 @@ public class Transformator {
 		long tac = System.currentTimeMillis();
 		System.out.println("done with all rules: " + (tac - tic) + "millis");
 		System.out.println("evaluated Permutations: " + evaluatedPerms);
-		System.out.println("total generated Permutations: "+totalGeneratedPerms);
+		System.out.println("total generated Permutations: " + totalGeneratedPerms);
 		System.out.println("evaluated Edges: " + evaluatedEdges);
 
 		System.out.println("used edges: " + usedEdges.size());
@@ -426,6 +427,7 @@ public class Transformator {
 		RuleNode bNode;
 		BiologicalNodeAbstract bna;
 		PNNode pnBNA;
+		PNNode newPNNode;
 		for (int i = 0; i < r.getPetriNodes().size(); i++) {
 			pnNode = r.getPetriNodes().get(i);
 			// System.out.println(pnNode);
@@ -464,13 +466,16 @@ public class Transformator {
 					if (bna.getName().equals("n2_7_1_69")) {
 						// System.out.println("create "+pnNode.getType() +" "+ bna.getName());
 					}
-					rulePNodeToBNA.put(pnNode, createPNNode(r, pnNode, bna));
+					newPNNode = createPNNode(r, pnNode, bna);
+					rulePNodeToBNA.put(pnNode, newPNNode);
+					setTransformationParameters(newPNNode, pnNode, ruleBNodeToBNA, r);
 					toDeleteBNA.add(bna);
 					executed = true;
 				}
 			} else {
 				// no mapping, PNNode needs to be created
-				rulePNodeToBNA.put(pnNode, createPNNode(r, pnNode, null));
+				newPNNode = createPNNode(r, pnNode, null);
+				rulePNodeToBNA.put(pnNode, newPNNode);
 				executed = true;
 			}
 		}
@@ -490,13 +495,16 @@ public class Transformator {
 			edge = null;
 			switch (pnEdge.getType()) {
 			case Elementdeclerations.pnEdge:
+				// TODO set parameters
 				edge = new PNEdge(from, to, "1", "1", "PNEdge", "1");
 
 				break;
 			case Elementdeclerations.pnTestEdge:
+				// TODO set parameters
 
 				break;
 			case Elementdeclerations.pnInhibitionEdge:
+				// TODO set parameters
 				edge = new PNEdge(from, to, "1", "1", Elementdeclerations.inhibitor, "1");
 				break;
 			}
@@ -555,6 +563,7 @@ public class Transformator {
 	}
 
 	private PNNode createPNNode(Rule r, RuleNode pnNode, BiologicalNodeAbstract bna) {
+		// TODO parameters
 		// TODO consider stochastic transitions
 		PNNode pn = null;
 		String type = pnNode.getType();
@@ -604,10 +613,10 @@ public class Transformator {
 
 			if (bna != null) {
 				if (bna.getLabel().trim().length() > 0) {
-					pn.setLabel(bna.getLabel());
+					// pn.setLabel(bna.getLabel());
 				}
 				if (bna.getName().trim().length() > 0) {
-					pn.setName(bna.getName());
+					// pn.setName(bna.getName());
 				}
 				pn.setColor(bna.getColor());
 				pn.setPlotColor(bna.getPlotColor());
@@ -833,5 +842,171 @@ public class Transformator {
 
 	public HashMap<BiologicalNodeAbstract, PNNode> getBnToPN() {
 		return this.bn2pnMap;
+	}
+
+	// setting parameters to Petri net nodes and edges
+	private void setTransformationParameters(GraphElementAbstract gea, RuleNode pnNode,
+			HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA, Rule r) {
+
+		// generation of possible parameters for current matching
+		Set<String> possibleParams = new HashSet<>();
+		for (RuleNode rn : r.getBiologicalNodes()) {
+			for (String parameter : ruleBNodeToBNA.get(rn).getTransformationParameters()) {
+				possibleParams.add(rn.getName() + "." + parameter);
+				// System.out.println(rn.getName() + "." + parameter);
+			}
+		}
+		for (RuleEdge re : r.getBiologicalEdges()) {
+			possibleParams.add(re.getName() + ".label");
+			possibleParams.add(re.getName() + ".name");
+			possibleParams.add(re.getName() + ".function");
+		}
+
+		Place p;
+		String value;
+		PNNode petriNode;
+		PNEdge arc;
+		Double d;
+		String string;
+		// for nodes
+		if (gea instanceof PNNode) {
+			petriNode = (PNNode) gea;
+			for (String key : pnNode.getParameterMap().keySet()) {
+				value = pnNode.getParameterMap().get(key);
+				if (value == null || value.trim().length() < 1) {
+					continue;
+				}
+				// System.out.println("key: " + key + " value: " + value);
+				switch (key) {
+				case "name":
+					// System.out.println(gea.getName());
+					string = this.evalParameter(possibleParams, value, String.class, ruleBNodeToBNA, r);
+					if (string != null) {
+						if (petriNet.getAllNodeNames().contains(string)) {
+							// System.out.println("new String: " + string);
+							// System.out.println(petriNet.getAllNodeNames());
+							BiologicalNodeAbstract node = petriNet.getNodeByName(string);
+							if (node != petriNode) {
+								if (node.getClass().getName().equals(petriNode.getClass().getName())) {
+									petriNode.setLogicalReference(node);
+									MyPopUp.getInstance().show("Name already exists!",
+											"Name: " + string + " exists already. Created logical node instead!");
+								} else {
+									MyPopUp.getInstance().show("Error: Name already exists!", "Name: " + string
+											+ " exists already. Cannot Created logical node because of type mismatch: "
+											+ petriNet.getClass().getSimpleName() + " versus "
+											+ node.getClass().getSimpleName());
+								}
+								continue;
+							}
+						}
+						gea.setName(string);
+						gea.setLabel(gea.getName());
+					}
+					break;
+				case "tokenStart":
+					if (gea instanceof Place) {
+						p = (Place) gea;
+						d = this.evalParameter(possibleParams, value, Double.class, ruleBNodeToBNA, r);
+						if (d != null) {
+							p.setTokenStart(d);
+						}
+					}
+					break;
+				case "tokenMin":
+					if (gea instanceof Place) {
+						p = (Place) gea;
+						d = this.evalParameter(possibleParams, value, Double.class, ruleBNodeToBNA, r);
+						if (d != null) {
+							p.setTokenMin(d);
+						}
+					}
+					break;
+				case "tokenMax":
+					if (gea instanceof Place) {
+						p = (Place) gea;
+						d = this.evalParameter(possibleParams, value, Double.class, ruleBNodeToBNA, r);
+						if (d != null) {
+							p.setTokenMax(d);
+						}
+					}
+					break;
+				case "firingCondition":
+					if (gea instanceof Transition) {
+						string = this.evalParameter(possibleParams, value, String.class, ruleBNodeToBNA, r);
+						if (string != null) {
+							((Transition) gea).setFiringCondition(string);
+						}
+					}
+					break;
+				case "maximalSpeed":
+					if (gea instanceof ContinuousTransition) {
+						string = this.evalParameter(possibleParams, value, String.class, ruleBNodeToBNA, r);
+						if (string != null) {
+							((ContinuousTransition) gea).setMaximalSpeed(string);
+						}
+					}
+					break;
+				case "delay":
+					if (gea instanceof DiscreteTransition) {
+						d = this.evalParameter(possibleParams, value, Double.class, ruleBNodeToBNA, r);
+						if (d != null) {
+							((DiscreteTransition) gea).setDelay(d);
+						}
+					}
+				}
+			}
+		} else if (gea instanceof PNEdge) {
+			// for edges
+			arc = (PNEdge) gea;
+			for (String key : pnNode.getParameterMap().keySet()) {
+				value = pnNode.getParameterMap().get(key);
+				if (value == null || value.trim().length() < 1) {
+					continue;
+				}
+				// System.out.println("key: " + key + " value: " + value);
+				switch (key) {
+				case "name":
+
+					break;
+					
+				case "function":
+					
+					break;
+				}
+			}
+		}
+	}
+
+	private <T> T evalParameter(Set<String> possibleParameters, String value, Class<T> type,
+			HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA, Rule r) {
+		String[] split;
+		BiologicalNodeAbstract bna;
+		// String v;
+		// System.out.println("type: "+type);
+		// if (type.equals(String.class)) {
+		// System.out.println("type match");
+		if (possibleParameters.contains(value)) {
+			// System.out.println("value: "+value);
+			split = value.split("\\.");
+			// System.out.println("split1: " + split[0]);
+			// System.out.println("split2: " + split[1]);
+			if (split.length == 2) {
+				bna = ruleBNodeToBNA.get(r.getBiologicaNode(split[0]));
+				// System.out.println("return:
+				// "+type.cast(bna.getTransformationParameterValue(split[1])));
+				if (type == String.class) {
+					return type.cast(bna.getTransformationParameterValue(split[1]));
+				} else if (type == Double.class) {
+					return type.cast(Double.valueOf(bna.getTransformationParameterValue(split[1])));
+				}
+			}
+		} else {
+			return type.cast(value);
+		}
+		// } else if (type == Double.class){
+		// return type.cast(value);
+		// }
+		return null;
 	}
 }

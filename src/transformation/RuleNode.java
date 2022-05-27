@@ -1,5 +1,8 @@
 package transformation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,4 +14,8 @@ public class RuleNode {
 	private String type;
 	private double x = 0;
 	private double y = 0;
+	private Map<String, String> parameterMap = new HashMap<>();
+	
+	public RuleNode(){
+	}
 }

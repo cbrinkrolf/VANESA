@@ -2,6 +2,7 @@ package biologicalObjects.nodes.petriNet;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.List;
 
 import biologicalElements.Elementdeclerations;
 import gui.MyPopUp;
@@ -49,5 +50,13 @@ public class StochasticTransition extends Transition {
 			MyPopUp.getInstance().show("Error setting distribuiton", "Setting distribution of transiton: "
 					+ this.getName() + "\n " + "Given distribution: \"" + distribution + "\" is not supported!");
 		}
+	}
+
+	// TODO add parameters for stochastic transition
+	@Override
+	public List<String> getTransformationParameters() {
+		List<String> list = super.getTransformationParameters();
+		list.add("distribution");
+		return list;
 	}
 }

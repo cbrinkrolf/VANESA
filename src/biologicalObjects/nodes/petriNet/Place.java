@@ -4,13 +4,16 @@ import java.awt.Color;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNEdge;
 //import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
+import gui.MyPopUp;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -61,7 +64,8 @@ public abstract class Place extends PNNode {
 
 	public void setTokenStart(double tokenStart) {
 		this.tokenStart = tokenStart;
-		if (!new GraphInstance().getPathway().getPetriPropertiesNet().isPetriNetSimulation())
+		if (new GraphInstance().getPathway().getPetriPropertiesNet() != null
+				&& !new GraphInstance().getPathway().getPetriPropertiesNet().isPetriNetSimulation())
 			token = tokenStart;
 	}
 
@@ -71,10 +75,14 @@ public abstract class Place extends PNNode {
 		if (coll != null && coll.size() > 0) {
 			Iterator<BiologicalEdgeAbstract> it = coll.iterator();
 			BiologicalEdgeAbstract bea;
+			PNEdge arc;
 			while (it.hasNext()) {
 				bea = it.next();
-				if (bea instanceof PNEdge && !(bea.getTo() instanceof ContinuousTransition)) {
-					result.add((PNEdge) bea);
+				if (bea instanceof PNEdge) {
+					arc = (PNEdge) bea;
+					if (!arc.isInhibitoryArc() && !arc.isTestArc() && !(bea.getTo() instanceof ContinuousTransition)){
+						result.add((PNEdge) bea);
+					}
 				}
 			}
 		}
@@ -188,5 +196,14 @@ public abstract class Place extends PNNode {
 				}
 			}
 		}
+	}
+
+	@Override
+	public List<String> getTransformationParameters() {
+		List<String> list = super.getTransformationParameters();
+		list.add("tokenStart");
+		list.add("tokenMin");
+		list.add("tokenMax");
+		return list;
 	}
 }

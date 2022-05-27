@@ -2,6 +2,7 @@ package transformation.graphElements;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
+import java.util.List;
 
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.nodes.petriNet.Transition;
@@ -21,5 +22,13 @@ public class ANYTransition extends Transition {
 		transform2.scale(1, 2);
 		setDefaultShape(shapes.makeCoarse(transform2.createTransformedShape(shapes.getRectangle())));
 		setDefaultColor(Color.white);
+	}
+	
+	@Override
+	public List<String> getTransformationParameters() {
+		List<String> list = super.getTransformationParameters();
+		list.add("maximalSpeed");
+		list.add("delay");
+		return list;
 	}
 }
