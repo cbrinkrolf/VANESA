@@ -173,7 +173,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			p.add(new JLabel("ID"), "gap 5 ");
 			JLabel id = new JLabel(ab.getID() + "");
 			if (ref != null) {
-				id.setText(original.getID()+"");
+				id.setText(original.getID() + "");
 			}
 			p.add(id, "wrap ,span 1");
 		}
@@ -192,7 +192,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
 			String lbl = "-";
 			if (bna.isLogical()) {
-				lbl = "ID: "+ref.getID() + ", label: " + ref.getLabel();
+				lbl = "ID: " + ref.getID() + ", label: " + ref.getLabel();
 			}
 			p.add(new JLabel("Reference to:"), "gap 5 ");
 			p.add(new JLabel(lbl), "wrap ,span 3");
@@ -528,7 +528,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(lblTokenStart, "gap 5 ");
 				p.add(tokenStart, "wrap");
 
-				//p.add(constCheck, "wrap");
+				// p.add(constCheck, "wrap");
 				p.add(lblTokenMin, "gap 5 ");
 				p.add(tokenMin, "span 1, wrap");
 				p.add(lblTokenMax, "gap 5");
@@ -738,26 +738,36 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 		} else if (ab.isEdge()) {
 			// System.out.println("edge");
+
+			JTextField function = new JTextField(5);
+			function.setText(((BiologicalEdgeAbstract) ab).getFunction());
+			function.setName("function");
+			function.addFocusListener(pwl);
+			JLabel lblpassingTokens = new JLabel("Edge function");
+			p.add(lblpassingTokens, "gap 5");
+			p.add(function, "wrap");
+
+			// String[] types = { "discrete", "continuous", "inhibition" };
+			// Create the combo box, select item at index 4.
+			// Indices start at 0, so 4 specifies the pig.
+			// JLabel typeList = new JComboBox(types);
+
+			JButton changeEdgeDirection = new JButton("Change direction");
+			changeEdgeDirection.setActionCommand("changeEdgeDirection");
+			changeEdgeDirection.addActionListener(this);
+			if (((BiologicalEdgeAbstract) ab).isDirected()) {
+				if (ab instanceof PNEdge) {
+					PNEdge pnedge = (PNEdge) ab;
+					if(!pnedge.isInhibitoryArc() && !pnedge.isTestArc()){
+						p.add(changeEdgeDirection, "");
+					}
+				} else {
+					p.add(changeEdgeDirection, "");
+				}
+			}
+
 			if (ab instanceof PNEdge) {
-
 				PNEdge e = (PNEdge) ab;
-
-				JTextField function = new JTextField(5);
-				function.setText(e.getFunction());
-				function.setName("function");
-				function.addFocusListener(pwl);
-				JLabel lblpassingTokens = new JLabel("Edge function");
-
-				// String[] types = { "discrete", "continuous", "inhibition" };
-				// Create the combo box, select item at index 4.
-				// Indices start at 0, so 4 specifies the pig.
-				// JLabel typeList = new JComboBox(types);
-
-				JButton changeEdgeDirection = new JButton("Change direction");
-				changeEdgeDirection.setActionCommand("changeEdgeDirection");
-				changeEdgeDirection.addActionListener(this);
-				p.add(changeEdgeDirection, "wrap");
-
 				MyJFormattedTextField activationProb = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				activationProb.setText(e.getProbability() + "");
 				activationProb.setName("activationProb");
@@ -770,12 +780,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 				activationPrio.addFocusListener(pwl);
 				JLabel lblPrio = new JLabel("Activation priority");
 
-				p.add(lblpassingTokens, "gap 5");
-				p.add(function, "wrap");
-
 				if (e.getFrom() instanceof Place) {
 					Place place = (Place) e.getFrom();
-					if (place.getConflictingOutEdges().size() > 0) {
+					if (place.getConflictingOutEdges().size() > 1) {
 						p.add(new JLabel("Conflict solving strategy:"), "gap 5");
 						if (place.getConflictStrategy() == Place.CONFLICTHANDLING_NONE) {
 							p.add(new JLabel("none"), "gap 5, wrap");
@@ -840,7 +847,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			if (node.isKnockedOut()) {
 				maxSpeed.setEnabled(false);
 			}
-			
+
 			knockedOut.setSelected(((DynamicNode) ab).isKnockedOut());
 			knockedOut.setToolTipText("Knock out");
 			knockedOut.setActionCommand("knockedOut");

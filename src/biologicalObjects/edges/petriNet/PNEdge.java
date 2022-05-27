@@ -1,5 +1,9 @@
 package biologicalObjects.edges.petriNet;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import lombok.AccessLevel;
@@ -26,14 +30,13 @@ public class PNEdge extends BiologicalEdgeAbstract {
 			String edgeFunction) {
 		super(edgeFunction, name, from, to);
 		super.setDirected(true);
-		if (type.equals(biologicalElements.Elementdeclerations.inhibitionEdge)
-				|| type.equals(biologicalElements.Elementdeclerations.inhibitor)
-				|| type.equals(biologicalElements.Elementdeclerations.pnInhibitionEdge)) {
-			setBiologicalElement(biologicalElements.Elementdeclerations.pnInhibitionEdge);
-		} else if (type.equals(biologicalElements.Elementdeclerations.pnTestEdge)) {
-			setBiologicalElement(biologicalElements.Elementdeclerations.pnTestEdge);
+		if (type.equals(Elementdeclerations.inhibitionEdge) || type.equals(Elementdeclerations.inhibitor)
+				|| type.equals(Elementdeclerations.pnInhibitionEdge)) {
+			setBiologicalElement(Elementdeclerations.pnInhibitionEdge);
+		} else if (type.equals(Elementdeclerations.pnTestEdge)) {
+			setBiologicalElement(Elementdeclerations.pnTestEdge);
 		} else {
-			setBiologicalElement(biologicalElements.Elementdeclerations.pnEdge);
+			setBiologicalElement(Elementdeclerations.pnEdge);
 		}
 		setFunction(edgeFunction);
 	}
@@ -52,5 +55,20 @@ public class PNEdge extends BiologicalEdgeAbstract {
 		if (probability >= 0) {
 			this.probability = probability;
 		}
+	}
+
+	// defines parameters which are available in during transformation
+	public List<String> getTransformationParameters() {
+		List<String> list = new ArrayList<String>();
+		list.add("function");
+		return list;
+	}
+
+	public boolean isInhibitoryArc(){
+		return getBiologicalElement().equals(Elementdeclerations.pnInhibitionEdge);
+	}
+	
+	public boolean isTestArc(){
+		return getBiologicalElement().equals(Elementdeclerations.pnTestEdge);
 	}
 }
