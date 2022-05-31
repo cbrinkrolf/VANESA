@@ -43,6 +43,7 @@ import gui.MainWindow;
 import gui.MyPopUp;
 import gui.SimMenu;
 import moOutput.MOoutput;
+import util.VanesaUtility;
 
 public class PetriNetSimulation implements ActionListener {
 	private static String pathCompiler = null;
@@ -80,8 +81,7 @@ public class PetriNetSimulation implements ActionListener {
 	// etc)
 	public PetriNetSimulation(Pathway pw) {
 		this.pw = pw;
-		MainWindow.getInstance();
-		pathWorkingDirectory = MainWindow.pathWorkingDirectory;
+		pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		File dir = new File(pathWorkingDirectory);
 		this.simLibs = this.getLibs(dir);
 	}
@@ -530,7 +530,7 @@ public class PetriNetSimulation implements ActionListener {
 						pathCompiler += File.separator;
 					}
 
-					pathSim = pathWorkingDirectory + "simulation" + File.separator;
+					pathSim = pathWorkingDirectory + File.separator + "simulation" + File.separator;
 					File dirSim = new File(pathSim);
 					if (dirSim.isDirectory()) {
 						FileUtils.cleanDirectory(dirSim);

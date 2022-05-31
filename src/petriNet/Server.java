@@ -403,7 +403,7 @@ public class Server {
 		}
 
 		this.simResult.addTime((Double) values.get(name2index.get("time")));
-		// System.out.println("Time size: " + simResult.getTime().getSize());
+		System.out.println("Time size: " + simResult.getTime().size());
 		// System.out.println("old size: " + pw.getPetriNet().getTime().size());
 		// this.time = pnResult.get("time");
 		// pw.setPetriNetSimulation(true);

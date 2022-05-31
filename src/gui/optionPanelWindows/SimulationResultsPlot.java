@@ -207,6 +207,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				// System.out.println(main.getComponentCount());
 
 				rowsDim = simRes.getTime().size();
+
 				SpinnerModel modelStart = new SpinnerNumberModel(
 
 						animationStartInit, // initial value
@@ -298,17 +299,22 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 				drawPlot();
 				double ref;
-				for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
-					if (node instanceof Transition) {
-						ref = simRes.get(node, FIRE).get(slider.getValue());
-						if (ref == 1) {
-							((Transition) node).setSimulationActive(true);
-						} else {
-							((Transition) node).setSimulationActive(false);
+				if (simRes.getTime().size() > 0) {
+					for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
+						if (node instanceof Transition) {
+							// System.out.println(node.getName());
+							ref = simRes.get(node, FIRE).get(slider.getValue());
+							if (ref == 1) {
+								((Transition) node).setSimulationActive(true);
+							} else {
+								((Transition) node).setSimulationActive(false);
+							}
 						}
 					}
+					pw.getGraph().getVisualizationViewer().repaint();
+				} else {
+					// System.out.println("possible null pointer...............................");
 				}
-				pw.getGraph().getVisualizationViewer().repaint();
 			} else {
 				removeAllElements();
 				pw.getGraph().getVisualizationViewer().repaint();

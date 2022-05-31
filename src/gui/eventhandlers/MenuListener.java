@@ -90,6 +90,7 @@ import transformation.RuleManager;
 import transformation.Transformator;
 import transformation.gui.RuleManagementWindow;
 import util.KineticBuilder;
+import util.VanesaUtility;
 import xmlOutput.sbml.JSBMLoutput;
 
 public class MenuListener implements ActionListener {
@@ -821,7 +822,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case "createDoc":
 			MyPopUp.getInstance().show("Latex generation", "Generation in progress, it will take a short moment!");
-			String docDir = MainWindow.pathWorkingDirectory + "documentation" + File.separator;
+			String docDir = VanesaUtility.getWorkingDirectoryPath()+File.separator + "documentation" + File.separator;
 			File dir = new File(docDir);
 
 			if (!dir.isDirectory()) {
