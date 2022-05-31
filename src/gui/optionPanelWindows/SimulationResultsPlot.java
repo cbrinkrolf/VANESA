@@ -29,7 +29,6 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.lang3.SystemUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -67,6 +66,7 @@ import petriNet.AnimationThread;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 import util.TripleHashMap;
+import util.VanesaUtility;
 
 public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
@@ -1124,13 +1124,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 		pane = new ChartPanel(chart);
 
-		String pathWorkingDirectory;
-		if (SystemUtils.IS_OS_WINDOWS) {
-			pathWorkingDirectory = System.getenv("APPDATA");
-		} else {
-			pathWorkingDirectory = System.getenv("HOME");
-		}
-		pathWorkingDirectory += File.separator + "vanesa";
+		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 
 		String path = "";
 		try {

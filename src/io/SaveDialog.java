@@ -49,6 +49,7 @@ import gui.MyPopUp;
 import io.graphML.SaveGraphML;
 import moOutput.MOoutput;
 import util.ImageExport;
+import util.VanesaUtility;
 import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.PNMLOutput;
 import xmlOutput.sbml.VAMLoutput;
@@ -331,12 +332,7 @@ public class SaveDialog {
 	private void prerapre(int format) {
 
 		// Get working directory
-		if (SystemUtils.IS_OS_WINDOWS) {
-			pathWorkingDirectory = System.getenv("APPDATA");
-		} else {
-			pathWorkingDirectory = System.getenv("HOME");
-		}
-		pathWorkingDirectory += File.separator + "vanesa";
+		pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		sbmlBool = (format & FORMAT_SBML) == FORMAT_SBML;
 		moBool = (format & FORMAT_MO) == FORMAT_MO;
 		graphMLBool = (format & FORMAT_GRAPHML) == FORMAT_GRAPHML;
@@ -439,16 +435,15 @@ public class SaveDialog {
 			// JOptionPane.showMessageDialog(
 			// MainWindowSingelton.getInstance(), sbmlDescription
 			// + sbmlOutput.generateSBMLDocument());
-			
+
 			if (GraphInstance.getPathwayStatic().getFile() == null) {
 				GraphInstance.getPathwayStatic().setFile(file);
 			}
-			
+
 			JSBMLoutput jsbmlOutput = new JSBMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
 
 			String out = jsbmlOutput.generateSBMLDocument();
-			
-			
+
 			if (out.length() > 0) {
 				MyPopUp.getInstance().show("Error", out);
 			} else {

@@ -12,8 +12,8 @@ public class AboutWindow {
 		     
 	        "The network editor is a software to search," 
 	        +"to create and to examine biological pathways.<p>"
-	        +"It was developed by the Univerity of Bielefeld (Germany).<p>"
-	        +"For futher details please visit the website http://vanesa.sourceforge.net/<p>"+
+	        +"It is developed by the Univerity of Bielefeld (Germany).<p>"
+	        +"For further details, please visit the VANESA GitHub website: https://github.com/cbrinkrolf/VANESA/<p>"+
 	        "or get in touch with the Bioinformatics Department.<p><p>"
 	        +"Contact Details<p><p>"
 	        

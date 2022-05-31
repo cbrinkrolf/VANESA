@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
@@ -29,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
 import org.jdesktop.jxlayer.plaf.ext.LockableUI;
@@ -157,13 +155,13 @@ public class MainWindow implements ApplicationListener {
 
 		List<Image> iconList = new ArrayList<>();
 		Toolkit kit = Toolkit.getDefaultToolkit();
-		
+
 		iconList.add(kit.createImage(imagePath.getPath("logo16.png")));
 		iconList.add(kit.createImage(imagePath.getPath("logo32.png")));
 		iconList.add(kit.createImage(imagePath.getPath("logo64.png")));
 		iconList.add(kit.createImage(imagePath.getPath("logo128.png")));
 		frame.setIconImages(iconList);
-		
+
 		//
 		// try {
 		// InfoNodeLookAndFeelTheme theme =
@@ -223,7 +221,8 @@ public class MainWindow implements ApplicationListener {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				final String prop_name = evt.getPropertyName();
-				if (prop_name.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY) || prop_name.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
+				if (prop_name.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY)
+						|| prop_name.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
 					if (split_pane.getDividerLocation() > SP_DIVIDER_MAX_LOCATION)
 						split_pane.setDividerLocation(SP_DIVIDER_MAX_LOCATION);
 				}
@@ -244,25 +243,7 @@ public class MainWindow implements ApplicationListener {
 			System.out.println("askForYaml Method Error");
 			e1.printStackTrace();
 		}
-
-		Map<String, String> env = System.getenv();
-		if (SystemUtils.IS_OS_WINDOWS) {
-			pathWorkingDirectory = env.get("APPDATA");
-		} else {
-			pathWorkingDirectory = env.get("HOME");
-		}
-
-		if (pathWorkingDirectory.charAt(pathWorkingDirectory.length() - 1) != File.separatorChar) {
-			pathWorkingDirectory += File.separator;
-		}
-
-		pathWorkingDirectory += "vanesa" + File.separator;
-
-		File dir = new File(pathWorkingDirectory);
-
-		if (!dir.isDirectory()) {
-			dir.mkdir();
-		}
+		
 	}
 
 	public static synchronized MainWindow getInstance() {
@@ -275,7 +256,7 @@ public class MainWindow implements ApplicationListener {
 	public void nodeAttributeChanger(BiologicalNodeAbstract bna, boolean doResetAppearance) {
 		for (Bean bean : beansList) {
 			String shapeBean = bean.getShape();
-			
+
 			if (bean.getName().equals(bna.getBiologicalElement())) {
 				switch (shapeBean) {
 				case "ellipse":
@@ -424,7 +405,7 @@ public class MainWindow implements ApplicationListener {
 
 		maxPanelID += 1;
 		int id = maxPanelID;
-		//System.out.println("put:"+id);
+		// System.out.println("put:"+id);
 		tabbedPanels.put(id, tp);
 
 		View view = new View("Network Modelling", null, tp);
@@ -468,7 +449,7 @@ public class MainWindow implements ApplicationListener {
 			tabbedPanels.remove(id);
 			viewMap.removeView(id);
 			if (views.keySet().iterator().hasNext()) {
-				//System.out.println("set:"+views.get(views.keySet().iterator().next()));
+				// System.out.println("set:"+views.get(views.keySet().iterator().next()));
 				setSelectedView(views.get(views.keySet().iterator().next()));
 			}
 		}
@@ -480,7 +461,7 @@ public class MainWindow implements ApplicationListener {
 
 	public void addTab(TitledTab tab) {
 		addedtabs++;
-		//System.out.println(getSelectedView());
+		// System.out.println(getSelectedView());
 		tabbedPanels.get(getSelectedView()).addTab(tab);
 		setSelectedTab(tab);
 		myMenu.enableCloseAndSaveFunctions();
@@ -581,12 +562,12 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public synchronized void showProgressBar(String text) {
-		showProgressBar( "Please Wait.", text);
+		showProgressBar("Please Wait.", text);
 	}
-	
+
 	public synchronized void showProgressBar(String title, String text) {
 		progressbar = new ProgressBar();
-		if(title == null || title.trim().isEmpty()){
+		if (title == null || title.trim().isEmpty()) {
 			title = "Please Wait.";
 		}
 		progressbar.init(100, title, true);
@@ -622,7 +603,7 @@ public class MainWindow implements ApplicationListener {
 	public JFrame getFrame() {
 		return this.frame;
 	}
-	
+
 	public MenuBarClass getmyMenu() {
 		return myMenu;
 	}
@@ -710,7 +691,7 @@ public class MainWindow implements ApplicationListener {
 		optionPanel.updatePanel("Database");
 		optionPanel.updatePanel("pathwayTree");
 		optionPanel.updatePanel("initSimulation");
-		//optionPanel.updatePanel("simulation"); seems not necessary
+		// optionPanel.updatePanel("simulation"); seems not necessary
 		optionPanel.updatePanel("bb");
 		optionPanel.updatePanel("pathwayProperties");
 	}
@@ -777,8 +758,7 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	/**
-	 * @param macOsxHandler
-	 *            the macOsxHandler to set
+	 * @param macOsxHandler the macOsxHandler to set
 	 */
 	public void setMacOsxHandler(Application macOsxHandler) {
 		this.macOsxHandler = macOsxHandler;

@@ -12,7 +12,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.lang3.SystemUtils;
 
 import biologicalElements.Pathway;
 import configurations.ConnectionSettings;
@@ -21,6 +20,7 @@ import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MyPopUp;
+import util.VanesaUtility;
 import xmlInput.sbml.JSBMLinput;
 import xmlInput.sbml.VAMLInput;
 
@@ -65,13 +65,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 
 	public OpenDialog() {
 
-		String pathWorkingDirectory = null;
-		if (SystemUtils.IS_OS_WINDOWS) {
-			pathWorkingDirectory = System.getenv("APPDATA");
-		} else {
-			pathWorkingDirectory = System.getenv("HOME");
-		}
-		pathWorkingDirectory += File.separator + "vanesa";
+		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 
 		if (ConnectionSettings.getFileDirectory() != null) {
 			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
