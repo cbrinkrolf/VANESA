@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +27,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.lang3.SystemUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -833,7 +837,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	 * each biological node apparent in the pathway (i.e. not being a reference).
 	 */
 	public void stateChanged(ChangeEvent e) {
-		System.out.println("state changed");
+		// System.out.println("state changed");
 		if (pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation()) {
 			if (e.getSource().equals(animationStart))
 				animationStartInit = (Integer) animationStart.getValue();
@@ -1119,6 +1123,30 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		// add chart to pane and refresh GUI
 
 		pane = new ChartPanel(chart);
+
+		String pathWorkingDirectory;
+		if (SystemUtils.IS_OS_WINDOWS) {
+			pathWorkingDirectory = System.getenv("APPDATA");
+		} else {
+			pathWorkingDirectory = System.getenv("HOME");
+		}
+		pathWorkingDirectory += File.separator + "vanesa";
+
+		String path = "";
+		try {
+			XMLConfiguration xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+			path = xmlSettings.getString("SaveDialog-Path");
+		} catch (ConfigurationException e) {
+			System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
+			e.printStackTrace();
+		}
+		if (path.length() > 0) {
+			File dir = new File(path);
+			if (dir.exists() && dir.isDirectory()) {
+				pane.setDefaultDirectoryForSaveAs(dir);
+			}
+		}
+
 		// pane.setPreferredSize(new java.awt.Dimension(320, 200));
 
 		pane.addChartMouseListener(new ChartMouseListener() {
