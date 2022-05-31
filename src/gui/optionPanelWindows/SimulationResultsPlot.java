@@ -180,10 +180,17 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 	public void revalidateView() {
 		// System.out.println("start revalidating view");
+
 		if (pw == null) {
 			return;
 		}
+		for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+			if (bna instanceof Transition) {
+				((Transition) bna).setSimulationActive(false);
+			}
+		}
 		if (simResController == null) {
+			pw.getGraph().getVisualizationViewer().repaint();
 			return;
 		}
 		if (pw.isPetriNet() || pw.getPetriNet() != null) {
@@ -286,9 +293,21 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				main.setVisible(true);
 
 				drawPlot();
-
+				double ref;
+				for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
+					if (node instanceof Transition) {
+						ref = simRes.get(node, FIRE).get(slider.getValue());
+						if (ref == 1) {
+							((Transition) node).setSimulationActive(true);
+						} else {
+							((Transition) node).setSimulationActive(false);
+						}
+					}
+				}
+				pw.getGraph().getVisualizationViewer().repaint();
 			} else {
 				removeAllElements();
+				pw.getGraph().getVisualizationViewer().repaint();
 			}
 		} else {
 			removeAllElements();
@@ -325,7 +344,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		if (pickedV == 0 && pickedE == 1) {
 			BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
 			if (hiddenPN) {
-				bea = pw.getPetriNet().getEdge(pw.getBnToPnMapping().get(bea.getFrom()), pw.getBnToPnMapping().get(bea.getTo()));
+				bea = pw.getPetriNet().getEdge(pw.getBnToPnMapping().get(bea.getFrom()),
+						pw.getBnToPnMapping().get(bea.getTo()));
 			}
 			if (bea instanceof PNArc) {
 				secondAxis = true;
@@ -500,8 +520,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		}
 		// updateData();
 		// System.out.println("almost done drawing");
-		// CHRIS maybe enable requestFocus again, but deleting via KeyEvent of graph element wont work, because VV is out of focus
-		//pane.requestFocus();
+		// CHRIS maybe enable requestFocus again, but deleting via KeyEvent of graph
+		// element wont work, because VV is out of focus
+		// pane.requestFocus();
 		chart.fireChartChanged();
 		// System.out.println("done drawing");
 	}
@@ -812,7 +833,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	 * each biological node apparent in the pathway (i.e. not being a reference).
 	 */
 	public void stateChanged(ChangeEvent e) {
-		// System.out.println("state changed");
+		System.out.println("state changed");
 		if (pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation()) {
 			if (e.getSource().equals(animationStart))
 				animationStartInit = (Integer) animationStart.getValue();
@@ -1172,7 +1193,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			System.out.println("PCPError, no such simulation name");
 			return;
 		}
-		
+
 		while (itNodes.hasNext()) {
 			bna = itNodes.next();
 			if (!bna.isLogical()) {
@@ -1234,7 +1255,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 								}
 							}
 						}
-					}else {
+					} else {
 						labelsR1.add(transition.getName());
 					}
 
