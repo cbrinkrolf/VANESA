@@ -1134,7 +1134,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
 			e.printStackTrace();
 		}
-		if (path.length() > 0) {
+		if (path != null && path.length() > 0) {
 			File dir = new File(path);
 			if (dir.exists() && dir.isDirectory()) {
 				pane.setDefaultDirectoryForSaveAs(dir);

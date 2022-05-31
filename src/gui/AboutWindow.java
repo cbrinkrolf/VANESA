@@ -30,7 +30,5 @@ public class AboutWindow {
 		
 		MainWindow w = MainWindow.getInstance();
 		JOptionPane.showMessageDialog(w.getFrame(), instructions,"About",1);
-		
 	}
-	
 }
