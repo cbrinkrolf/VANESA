@@ -21,9 +21,6 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.transcoder.TranscoderException;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.lang3.SystemUtils;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.w3c.dom.DOMImplementation;
@@ -49,7 +46,6 @@ import gui.MyPopUp;
 import io.graphML.SaveGraphML;
 import moOutput.MOoutput;
 import util.ImageExport;
-import util.VanesaUtility;
 import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.PNMLOutput;
 import xmlOutput.sbml.VAMLoutput;
@@ -116,8 +112,6 @@ public class SaveDialog {
 	private Component c = null;
 	private JFileChooser chooser;
 
-	private String pathWorkingDirectory;
-
 	/*
 	 * public SaveDialog(boolean sbml) { this(sbml?1:1); }//
 	 */
@@ -142,29 +136,13 @@ public class SaveDialog {
 			relativeTo = MainWindow.getInstance().getFrame();
 		}
 		String error = "";
-
 		this.prerapre(format);
 		this.c = c;
-
 		int option = chooser.showSaveDialog(relativeTo);
+
 		if (option == JFileChooser.APPROVE_OPTION) {
 			// Save path to settings.xml
-			File fileDir = chooser.getCurrentDirectory();
-			XMLConfiguration xmlSettings = null;
-			File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
-			try {
-				if (f.exists()) {
-					xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-				} else {
-					xmlSettings = new XMLConfiguration();
-					xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
-				}
-				xmlSettings.setProperty("SaveDialog-Path", fileDir.getAbsolutePath());
-				xmlSettings.save();
-			} catch (ConfigurationException e) {
-				error += e.getMessage();
-				e.printStackTrace();
-			}
+			ConnectionSettings.setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 
 			fileFormat = chooser.getFileFilter().getDescription();
 			file = chooser.getSelectedFile();
@@ -185,12 +163,6 @@ public class SaveDialog {
 					e.printStackTrace();
 				}
 			}
-			// TODO double popUp
-			if (error.trim().length() == 0) {
-				// MyPopUp.getInstance().show("File export", "Exports was successful!");
-			} else {
-				// MyPopUp.getInstance().show("Error during file export", error);
-			}
 		}
 	}
 
@@ -204,29 +176,11 @@ public class SaveDialog {
 		int option = chooser.showSaveDialog(relativeTo);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			// Save path to settings.xml
-			File fileDir = chooser.getCurrentDirectory();
-			XMLConfiguration xmlSettings = null;
-			File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
-			try {
-				if (f.exists()) {
-					xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-				} else {
-					xmlSettings = new XMLConfiguration();
-					xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
-				}
-				xmlSettings.setProperty("SaveDialog-Path", fileDir.getAbsolutePath());
-				// System.out.println(fileDir.getAbsolutePath());
-				xmlSettings.save();
-			} catch (ConfigurationException e) {
-				error += e.getMessage();
-				e.printStackTrace();
-			}
+			ConnectionSettings.setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 
 			fileFormat = chooser.getFileFilter().getDescription();
 
 			file = chooser.getSelectedFile();
-			ConnectionSettings.setFileDirectory(file.getAbsolutePath());
-			// System.out.println(file.getAbsolutePath());
 
 			String pathSim;
 			pathSim = file.getAbsolutePath() + File.separator;
@@ -332,7 +286,7 @@ public class SaveDialog {
 	private void prerapre(int format) {
 
 		// Get working directory
-		pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
+		// pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		sbmlBool = (format & FORMAT_SBML) == FORMAT_SBML;
 		moBool = (format & FORMAT_MO) == FORMAT_MO;
 		graphMLBool = (format & FORMAT_GRAPHML) == FORMAT_GRAPHML;
@@ -347,23 +301,8 @@ public class SaveDialog {
 		yamlBool = (format & FORMAT_YAML) == FORMAT_YAML;
 		pdfBool = (format & FORMAT_PDF) == FORMAT_PDF;
 
-		if (ConnectionSettings.getFileDirectory() != null) {
-			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
-		} else {
-			// Use the path that was used last time
-			String path = "";
-
-			try {
-				XMLConfiguration xmlSettings = new XMLConfiguration(
-						pathWorkingDirectory + File.separator + "settings.xml");
-				path = xmlSettings.getString("SaveDialog-Path");
-			} catch (ConfigurationException e) {
-				System.out
-						.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
-				e.printStackTrace();
-			}
-			chooser = new JFileChooser(path);
-		}
+		// if (ConnectionSettings.getFileSaveDirectory() != null) {
+		chooser = new JFileChooser(ConnectionSettings.getFileSaveDirectory());
 
 		chooser.setAcceptAllFileFilterUsed(false);
 
@@ -423,8 +362,6 @@ public class SaveDialog {
 	private void write(String simId) throws HeadlessException, XMLStreamException, IOException, TranscoderException,
 			InvalidIDException, VoidRepositoryException {
 
-		// TODO double popUp
-		ConnectionSettings.setFileDirectory(file.getAbsolutePath());
 		if (fileFormat.equals(sbmlDescription)) {
 			getCorrectFile(sbml);
 			// create a sbmlOutput object
@@ -535,7 +472,6 @@ public class SaveDialog {
 				} else {
 					MyPopUp.getInstance().show("PNML export", "Saving was successful!");
 				}
-
 			}
 		} else if (fileFormat.equals(csmlDescription)) {
 			getCorrectFile(csml);

@@ -34,11 +34,7 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 
 	public OpenModelicaResult() {
 
-		if (ConnectionSettings.getFileDirectory() != null) {
-			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
-		} else {
-			chooser = new JFileChooser();
-		}
+		chooser = new JFileChooser(ConnectionSettings.getFileOpenDirectory());
 
 		chooser.setAcceptAllFileFilterUsed(false);
 		// chooser.addChoosableFileFilter(new MyFileFilter(modelicaSimulation,
@@ -51,8 +47,6 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 
 	private void open() {
 		if (fileFormat != null) {
-			ConnectionSettings.setFileDirectory(file.getAbsolutePath());
-
 			if (fileFormat.equals(vanesaResultDescription)) {
 				if (con.containsPathway()) {
 					if (graphInstance.getPathway().hasGotAtLeastOneElement()
@@ -75,6 +69,7 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 	protected Void doInBackground() throws Exception {
 
 		if (option == JFileChooser.APPROVE_OPTION) {
+			ConnectionSettings.setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 
 			fileFormat = chooser.getFileFilter().getDescription();
 			file = chooser.getSelectedFile();
@@ -88,7 +83,6 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 				}
 			};
 			SwingUtilities.invokeLater(run);
-
 		}
 		return null;
 	}
@@ -108,11 +102,11 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();
 					// TODO possible improvement for additionally loaded simulation results
-					//System.out.println("start");
-					//MainWindow.getInstance().initSimResGraphs();
-					//System.out.println("finshed init");
+					// System.out.println("start");
+					// MainWindow.getInstance().initSimResGraphs();
+					// System.out.println("finshed init");
 					MainWindow.getInstance().updateAllGuiElements();
-					//System.out.println("finished gui update");
+					// System.out.println("finished gui update");
 				}
 			}
 		}

@@ -4,121 +4,206 @@
  ***************************************************************/
 package configurations;
 
+import java.io.File;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+
 import database.Connection.DBconnection;
+import util.VanesaUtility;
 
 /**
  * @author Benjamin Kormeier
  * @version 1.0 20.10.2010
  */
-public class ConnectionSettings 
-{
-	private static DBconnection db_connection=null;
-	private static boolean useInternetConnection=true;
-	
+public class ConnectionSettings {
+	private static DBconnection db_connection = null;
+	private static boolean useInternetConnection = true;
+
 	private static boolean localMiRNA = false;
 	private static boolean localKegg = false;
 	private static boolean localHprd = false;
 	private static boolean localMint = false;
 	private static boolean localIntact = false;
 	private static boolean localBrenda = false;
-	
-	private static String web_service_url=new String(); 
-	
-	private static String proxy_host=new String();
-	private static String proxy_port=new String();
 
-	private static String fileDirectory=new String();
+	private static String web_service_url = new String();
 
-	public static String getFileDirectory()
-	{
-		return fileDirectory;
+	private static String proxy_host = new String();
+	private static String proxy_port = new String();
+
+	// directories for opening / saving
+	private static String fileSaveDirectory;
+	private static String fileOpenDirectory;
+
+	public static String getFileSaveDirectory() {
+		if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
+			return fileSaveDirectory;
+		}
+		File f = new File(VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
+		if (!f.exists()) {
+			System.out.println("There is probably no " + VanesaUtility.getWorkingDirectoryPath() + File.separator
+					+ "settings.xml yet.");
+		} else {
+			try {
+				XMLConfiguration xmlSettings = new XMLConfiguration(
+						VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
+				fileSaveDirectory = xmlSettings.getString("SaveDialog-Path");
+				if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
+					return fileSaveDirectory;
+				}
+			} catch (ConfigurationException e) {
+				f.delete();
+				e.printStackTrace();
+			}
+		}
+		if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
+			return fileOpenDirectory;
+		}
+		return "";
 	}
 
-	public static void setFileDirectory(String fileDirectory)
-	{
-		ConnectionSettings.fileDirectory=fileDirectory;
+	public static void setFileSaveDirectory(String fileDir) {
+		fileSaveDirectory = fileDir;
+		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
+		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
+		try {
+			XMLConfiguration xmlSettings;
+			if (f.exists()) {
+				xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+			} else {
+				xmlSettings = new XMLConfiguration();
+				xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
+			}
+			xmlSettings.setProperty("SaveDialog-Path", fileDir);
+			xmlSettings.save();
+		} catch (ConfigurationException e) {
+			if (f.exists()) {
+				f.delete();
+			}
+			e.printStackTrace();
+		}
+	}
+
+	public static String getFileOpenDirectory() {
+		if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
+			return fileOpenDirectory;
+		}
+		File f = new File(VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
+		if (!f.exists()) {
+			System.out.println("There is probably no " + VanesaUtility.getWorkingDirectoryPath() + File.separator
+					+ "settings.xml yet.");
+		} else {
+			try {
+				XMLConfiguration xmlSettings = new XMLConfiguration(
+						VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
+				fileOpenDirectory = xmlSettings.getString("OpenDialog-Path");
+				if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
+					return fileOpenDirectory;
+				}
+			} catch (ConfigurationException e) {
+				f.delete();
+				e.printStackTrace();
+			}
+		}
+		if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
+			return fileSaveDirectory;
+		}
+		return "";
+	}
+
+	public static void setFileOpenDirectory(String fileDir) {
+		fileOpenDirectory = fileDir;
+		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
+		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
+		try {
+			XMLConfiguration xmlSettings;
+			if (f.exists()) {
+				xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+			} else {
+				xmlSettings = new XMLConfiguration();
+				xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
+			}
+			xmlSettings.setProperty("OpenDialog-Path", fileDir);
+			xmlSettings.save();
+		} catch (ConfigurationException e) {
+			if (f.exists()) {
+				f.delete();
+			}
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * @return the db_connection
 	 */
-	public static DBconnection getDBConnection()
-	{
+	public static DBconnection getDBConnection() {
 		return db_connection;
 	}
 
 	/**
 	 * @param db_connection the db_connection to set
 	 */
-	public static void setDBConnection(DBconnection db_connection)
-	{
-		ConnectionSettings.db_connection=db_connection;
+	public static void setDBConnection(DBconnection db_connection) {
+		ConnectionSettings.db_connection = db_connection;
 	}
 
 	/**
 	 * @return the useInternetConnection
 	 */
-	public static boolean useInternetConnection()
-	{
+	public static boolean useInternetConnection() {
 		return useInternetConnection;
 	}
 
 	/**
 	 * @param useInternetConnection the useInternetConnection to set
 	 */
-	public static void setInternetConnection(boolean useInternetConnection)
-	{
-		ConnectionSettings.useInternetConnection=useInternetConnection;
+	public static void setInternetConnection(boolean useInternetConnection) {
+		ConnectionSettings.useInternetConnection = useInternetConnection;
 	}
 
 	/**
 	 * @return the proxy_host
 	 */
-	public static String getProxyHost()
-	{
+	public static String getProxyHost() {
 		return proxy_host;
 	}
 
 	/**
 	 * @param proxy_host the proxy_host to set
 	 */
-	public static void setProxyHost(String proxy_host)
-	{
+	public static void setProxyHost(String proxy_host) {
 		System.setProperty("http.proxyHost", proxy_host);
-		ConnectionSettings.proxy_host=proxy_host;
+		ConnectionSettings.proxy_host = proxy_host;
 	}
 
 	/**
 	 * @return the proxy_port
 	 */
-	public static String getProxyPort()
-	{
+	public static String getProxyPort() {
 		return proxy_port;
 	}
 
 	/**
 	 * @param proxy_port the proxy_port to set
 	 */
-	public static void setProxyPort(String proxy_port)
-	{
+	public static void setProxyPort(String proxy_port) {
 		System.setProperty("http.proxyPort", proxy_port);
-		ConnectionSettings.proxy_port=proxy_port;
+		ConnectionSettings.proxy_port = proxy_port;
 	}
 
 	/**
 	 * @return the web_service_url
 	 */
-	public static String getWebServiceUrl()
-	{
+	public static String getWebServiceUrl() {
 		return web_service_url;
 	}
 
 	/**
 	 * @param web_service_url the web_service_url to set
 	 */
-	public static void setWebServiceUrl(String web_service_url)
-	{
-		ConnectionSettings.web_service_url=web_service_url;
+	public static void setWebServiceUrl(String web_service_url) {
+		ConnectionSettings.web_service_url = web_service_url;
 	}
 
 	public static boolean isLocalKegg() {

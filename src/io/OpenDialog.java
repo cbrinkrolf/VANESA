@@ -10,9 +10,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-
 import biologicalElements.Pathway;
 import configurations.ConnectionSettings;
 import graph.GraphContainer;
@@ -20,7 +17,6 @@ import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MyPopUp;
-import util.VanesaUtility;
 import xmlInput.sbml.JSBMLinput;
 import xmlInput.sbml.VAMLInput;
 
@@ -32,24 +28,26 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 	private final String sbmlDescription = "System Biology Markup Language (*.sbml)";
 	private final String sbml = "sbml";
 
-	//private final String modellicaResultDescription = "Modellica Simulation Result File (*.plt)";
-	//private final String modellicaSimulation = "plt";
+	// private final String modellicaResultDescription = "Modellica Simulation
+	// Result File (*.plt)";
+	// private final String modellicaSimulation = "plt";
 
-	//private final String modellicaResultDescriptionNew = "New Modelica Simulation Result File (*.csv)";
-	//private final String modellicaSimulationNew = "csv";
+	// private final String modellicaResultDescriptionNew = "New Modelica Simulation
+	// Result File (*.csv)";
+	// private final String modellicaSimulationNew = "csv";
 
 	private final String vamlDescription = "VANESA Markup Language (*.vaml)";
 	private final String vaml = "vaml";
 
-	//private final String graphMlDescription = "Graph Markup Language (*.gml)";
-	//private final String moDescription = "Modelica File (*.mo)";
+	// private final String graphMlDescription = "Graph Markup Language (*.gml)";
+	// private final String moDescription = "Modelica File (*.mo)";
 
 	private String txtDescription = "Graph Text File (*.txt)";
 	private String txt = "txt";
 
 	private final int option;
 
-	//private final String mo = "mo";
+	// private final String mo = "mo";
 
 	private JFileChooser chooser;
 
@@ -58,29 +56,14 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 
 	private Pathway pathway = null;
 
-	public OpenDialog(Pathway pw){
+	public OpenDialog(Pathway pw) {
 		this();
 		pathway = pw;
 	}
 
 	public OpenDialog() {
 
-		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
-
-		if (ConnectionSettings.getFileDirectory() != null) {
-			chooser = new JFileChooser(ConnectionSettings.getFileDirectory());
-		} else {
-			String path = "";
-			try {
-				XMLConfiguration xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-				path = xmlSettings.getString("OpenDialog-Path");
-			}
-			catch(ConfigurationException e)
-			{
-				System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
-			}
-			chooser = new JFileChooser(path);
-		}
+		chooser = new JFileChooser(ConnectionSettings.getFileOpenDirectory());
 
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.addChoosableFileFilter(new MyFileFilter(sbml, sbmlDescription));
@@ -96,68 +79,51 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 
 		option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
 
-		if (option == JFileChooser.APPROVE_OPTION)
-		{
-			File fileDir = chooser.getCurrentDirectory();
-			try {
-				XMLConfiguration xmlSettings = null;
-				File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
-				if(f.exists()){
-					xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-				}else{
-					xmlSettings = new XMLConfiguration();
-					xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
-				}
-				xmlSettings.setProperty("OpenDialog-Path", fileDir.getAbsolutePath());
-				xmlSettings.save();
-			}
-			catch(ConfigurationException e)
-			{
-				e.printStackTrace();
-			}
+		if (option == JFileChooser.APPROVE_OPTION) {
+			ConnectionSettings.setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 		}
 	}
 
 	private void open() {
 		if (fileFormat != null) {
-		//	System.out.println(fileFormat);
-			ConnectionSettings.setFileDirectory(file.getAbsolutePath());
+			// System.out.println(fileFormat);
+			// ConnectionSettings.setFileSaveDirectory(file.getAbsolutePath());
 
 			if (fileFormat.equals(vamlDescription)) {
 				try {
 					try {
 						new VAMLInput(file);
 					} catch (XMLStreamException e) {
-						MyPopUp.getInstance().show("VAML read error.", "An error occured during the loading. "
-								+ "The VAML file is not valid.");
+						MyPopUp.getInstance().show("VAML read error.",
+								"An error occured during the loading. " + "The VAML file is not valid.");
 						e.printStackTrace();
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}  else if (fileFormat.equals(sbmlDescription)) {
+			} else if (fileFormat.equals(sbmlDescription)) {
 
-					JSBMLinput jsbmlInput;
-					jsbmlInput = pathway==null ? new JSBMLinput() : new JSBMLinput(pathway);
-					String result;
+				JSBMLinput jsbmlInput;
+				jsbmlInput = pathway == null ? new JSBMLinput() : new JSBMLinput(pathway);
+				String result;
+				try {
+					result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
+					if (result.length() > 0) {
+						MyPopUp.getInstance().show("Information", result);
+					}
+
+				} catch (FileNotFoundException e) {
 					try {
+						file = new File(file.getAbsolutePath() + ".sbml");
 						result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
-						if(result.length() > 0){
+						if (result.length() > 0) {
 							MyPopUp.getInstance().show("Information", result);
 						}
-						
-					} catch (FileNotFoundException e) {
-						try {
-							file = new File(file.getAbsolutePath()+".sbml");
-							result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
-							if(result.length() > 0){
-								MyPopUp.getInstance().show("Information", result);
-							}
-							
-						} catch (FileNotFoundException ex) {
-							ex.printStackTrace();
-						}
+
+					} catch (FileNotFoundException ex) {
+						ex.printStackTrace();
 					}
+				}
 			} else if (fileFormat.equals(txtDescription)) {
 				try {
 					new TxtInput(new FileInputStream(file), file);
@@ -180,30 +146,28 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 				@Override
 				public void run() {
 					MainWindow.getInstance().showProgressBar("Loading data from file. Please wait a second");
-					//bar.init(100, "  Open ", true);
-					//bar
-					//		.setProgressBarString("Loading data from file. Please wait a second");
+					// bar.init(100, " Open ", true);
+					// bar
+					// .setProgressBarString("Loading data from file. Please wait a second");
 				}
 			};
 			SwingUtilities.invokeLater(run);
-
 		}
 		return null;
 	}
 
 	@Override
 	public void done() {
-
 		open();
 		if (fileFormat != null) {
-			//bar.closeWindow();
+			// bar.closeWindow();
 			MainWindow.getInstance().closeProgressBar();
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 
-					//GraphInstance.getMyGraph().getVisualizationViewer()
-					//		.restart();
+					// GraphInstance.getMyGraph().getVisualizationViewer()
+					// .restart();
 					MainWindow.getInstance().updateAllGuiElements();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();

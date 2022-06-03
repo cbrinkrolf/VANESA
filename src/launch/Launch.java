@@ -197,7 +197,7 @@ public class Launch {
 
 				ConnectionSettings.setWebServiceUrl(webservice);
 
-				ConnectionSettings.setFileDirectory(null);
+				ConnectionSettings.setFileSaveDirectory(null);
 
 				// if(ConnectionSettingsSingelton.getInstance().isInternetConnection()){
 				try {

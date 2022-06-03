@@ -105,6 +105,11 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	private void updateWindow(GraphElementAbstract element) {
 		p.removeAll();
+		Pathway pw = graphInstance.getPathway();
+		
+		if(pw == null){
+			return;
+		}
 		// this.element = element;
 		// this.ab = (GraphElementAbstract) graphInstance
 		// .getPathwayElement(element);
@@ -233,7 +238,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			addCompartmentItems(compartment);
 			AutoCompleteDecorator.decorate(compartment);
 
-			Pathway pw = graphInstance.getPathway();
+			
 
 			compartment.setSelectedItem(pw.getCompartmentManager().getCompartment(((BiologicalNodeAbstract) ab)));
 			compartment.addItemListener(this);
@@ -939,6 +944,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	private void addCompartmentItems(JComboBox<String> compartment) {
 		Pathway pw = graphInstance.getPathway();
+		if(pw == null){
+			return;
+		}
+		
 		List<Compartment> compartmentList = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
 
 		compartment.addItem(" ");

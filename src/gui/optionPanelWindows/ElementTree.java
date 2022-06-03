@@ -198,6 +198,9 @@ public class ElementTree implements TreeSelectionListener, ActionListener {
 
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
+		if(pw == null){
+			return;
+		}
 		node = new DefaultMutableTreeNode("Nodes");
 		root.add(node);
 
