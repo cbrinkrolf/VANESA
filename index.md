@@ -3,10 +3,12 @@ VANESA is an open-source software project which aims to support scientist in the
 
 Petri nets can be simulated with the help of an [OpenModelica](https://www.openmodelica.org/) installation. Simulation results are made available for further investigation during process of **simulation**.
 
-Both, biologica networks as well as Petri nets, can be analyzed by general graph algorithms. Models are saved as SBML file, simulation results can be exported as CSV files, and graph pictures and charts can be saved as SVG, PNG and PDF files. 
+Both, biological networks as well as Petri nets, can be analyzed by general graph algorithms. Models are saved as SBML file, simulation results can be exported as CSV files, and graph pictures and charts can be saved as SVG, PNG and PDF files. 
 
 ## Releases
 The latest release is [pre-v.0.4](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) which requires a [Java SE 11 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html) installation. It is compatible with OpenModelica 1.17.0 stable release, in case Petri net simulation is desired.
+
+The last relese of VANESA1 is [v.0.1.9](https://sourceforge.net/projects/vanesa/files/vanesa/0.1/VANESA-0.1.9.jar/download). It is based on the old VANESA branch of the former [SourceForge SVN repository](https://sourceforge.net/p/vanesa/code/HEAD/tree/VANESA/) and requires Java 1.8 runtime. 
 
 ## Installation
 Unless simulation is desired, installation of Java SE 11+ and executing the provided jar file is sufficient. Simulation of Petri nets is based on OpenModelica. The latest compatible stable release should be used instead of nightly builds. The installation path must not contain any whitespaces! During installation process, make sure that you select PNlib as library to install. By default, all third party libraries will be installed. The installation process will also set some environment variables which are needed for VANESA to detect the OpenModelica installation.
