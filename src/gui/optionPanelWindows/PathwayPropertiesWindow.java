@@ -6,10 +6,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -126,13 +127,23 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 			pw.getCompartmentManager().addDefaultCompartments();
 			this.revalidateView();
 		} else if (command.equals("add")) {
+			// TODO check regEx for identifier
 			String cName = name.getText().trim();
 			if (cName.length() > 0) {
-				if (pw.getCompartmentManager().getCompartment(cName) == null) {
-					pw.getCompartmentManager().add(new Compartment(cName, color.getBackground()));
-					this.revalidateView();
+				// compartment name must start with a letter or dash and may only contain
+				// letters, digites, and dash symbol (SBML L3V1, reference section 3.1.7)
+				Pattern pattern = Pattern.compile("^[a-zA-Z-][a-zA-Z\\d-]*$");
+				Matcher matcher = pattern.matcher(cName);
+				if (matcher.find()) {
+					if (pw.getCompartmentManager().getCompartment(cName) == null) {
+						pw.getCompartmentManager().add(new Compartment(cName, color.getBackground()));
+						this.revalidateView();
+					} else {
+						MyPopUp.getInstance().show("Error", "Name of new compartment is already in use!");
+					}
 				} else {
-					MyPopUp.getInstance().show("Error", "Name of new compartment is already in use!");
+					MyPopUp.getInstance().show("Error",
+							"Name of new compartment may only contain the following characters:\r\n [a-z], [A-Z], [0-9], [-], and must start with a letter or the dash symbol!");
 				}
 			} else {
 				MyPopUp.getInstance().show("Error", "Name of new compartment must not be empty!");
