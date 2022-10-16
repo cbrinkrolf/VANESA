@@ -25,6 +25,7 @@ import javax.swing.event.DocumentListener;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DynamicNode;
 import graph.ChangedFlags;
@@ -85,14 +86,12 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				AutoSuggestor autoSuggestor = new AutoSuggestor(formular, frame, null, Color.WHITE.brighter(),
+				new AutoSuggestor(formular, frame, null, Color.WHITE.brighter(),
 						Color.BLUE, Color.RED, 0.75f) {
 					@Override
 					boolean wordTyped(String typedWord) {
 
-						// create list for dictionary this in your case might be
-						// done via calling a method which queries db and
-						// returns results as arraylist
+						// create list for dictionary this in your case might be done via calling a method which queries db and returns results as arraylist
 						ArrayList<String> words = new ArrayList<>();
 
 						// pw.getAllNodeLabels();
@@ -118,23 +117,27 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 						setDictionary(words);
 						// addToDictionary("bye");//adds a single word
 
-						return super.wordTyped(typedWord);// now call super to
-															// check for any
-															// matches against
-															// newest dictionary
+						return super.wordTyped(typedWord);// now call super to check for any matches against newest dictionary
 					}
 				};
 			}
 		});
 
-		if (gea instanceof DynamicNode) {
+		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract) {
 			PropertyChangeListener pcListener = new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
 					frame.pack();
 				}
 			};
-			fp = new FormularPanel(formular, ((DynamicNode) gea).getMaximalSpeed(), pcListener);
+
+			String function = "";
+			if (gea instanceof DynamicNode) {
+				function = ((DynamicNode) gea).getMaximalSpeed();
+			} else if (gea instanceof BiologicalEdgeAbstract) {
+				function = ((BiologicalEdgeAbstract) gea).getFunction();
+			}
+			fp = new FormularPanel(formular, function, pcListener);
 			fp.setVisible(true);
 			panel.add(fp);
 		}
@@ -328,17 +331,29 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 				new ParameterSearcher((BiologicalNodeAbstract) gea, true);
 			}
 		} else if (e.getActionCommand().equals("okButton")) {
-			if (gea instanceof DynamicNode) {
+			if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract) {
 				// System.out.println("clicked ok");
-				DynamicNode dn = (DynamicNode) gea;
 				String formular = fp.getFormular();
 				String formularClean = formular.replaceAll("\\s", "");
 				// System.out.println(":"+formularClean+":");
-				String orgClean = dn.getMaximalSpeed().replaceAll("\\s", "");
-				if (!orgClean.equals(formularClean)) {
-					dn.setMaximalSpeed(formular);
+				boolean changed = false;
+				if (gea instanceof DynamicNode) {
+					DynamicNode dn = (DynamicNode) gea;
+					String orgClean = dn.getMaximalSpeed().replaceAll("\\s", "");
+					if (!orgClean.equals(formularClean)) {
+						dn.setMaximalSpeed(formular);
+						changed = true;
+					}
+				} else if (gea instanceof BiologicalEdgeAbstract) {
+					BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) gea;
+					String orgClean = bea.getFunction().replaceAll("\\s", "");
+					if (!orgClean.equals(formularClean)) {
+						bea.setFunction(formular);
+						changed = true;
+					}
+				}
+				if (changed) {
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
-					// TODO update propertiesWindow
 					MainWindow.getInstance().updateElementProperties();
 				}
 			}
@@ -350,21 +365,24 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 
 	private void repaintPanel() {
 		panel.removeAll();
-		if (gea instanceof DynamicNode) {
+		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract) {
 			panel.add(fp, "span 20, wrap");
 		}
 
-		JButton guessKinetic = new JButton("apply kinetic");
-		guessKinetic.setToolTipText("Applies convenience kinetic");
-		guessKinetic.addActionListener(this);
-		guessKinetic.setActionCommand("guessKinetic");
-		panel.add(guessKinetic, "");
+		if (gea instanceof DynamicNode) {
+			JButton guessKinetic = new JButton("apply kinetic");
+			guessKinetic.setToolTipText("Applies convenience kinetic");
+			guessKinetic.addActionListener(this);
+			guessKinetic.setActionCommand("guessKinetic");
+			panel.add(guessKinetic, "");
 
-		JButton setValues = new JButton("BRENDA kinetic parameters");
-		setValues.setToolTipText("Browse BRENDA for kinetic parameters (km and kcat)");
-		setValues.addActionListener(this);
-		setValues.setActionCommand("setValues");
-		panel.add(setValues, "span 2, wrap");
+			JButton setValues = new JButton("BRENDA kinetic parameters");
+			setValues.setToolTipText("Browse BRENDA for kinetic parameters (km and kcat)");
+			setValues.addActionListener(this);
+			setValues.setActionCommand("setValues");
+
+			panel.add(setValues, "span 2, wrap");
+		}
 		panel.add(new JSeparator(), "span, growx, gaptop 7 ");
 
 		panel.add(new JLabel("Name"), "span 1, gaptop 2 ");
