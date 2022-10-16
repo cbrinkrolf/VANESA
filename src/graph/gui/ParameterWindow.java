@@ -103,12 +103,16 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 							bna = it.next();
 							if (!bna.isLogical()) {
 								// words.add(bna.getRef().getLink());
-								words.add(bna.getLabel());
+								if (!words.contains(bna.getName())) {
+									words.add(bna.getName());
+								}
 							}
 						}
 
 						for (int i = 0; i < gea.getParameters().size(); i++) {
-							words.add(gea.getParameters().get(i).getName());
+							if (!words.contains(gea.getParameters().get(i).getName())) {
+								words.add(gea.getParameters().get(i).getName());
+							}
 						}
 
 						setDictionary(words);
