@@ -711,7 +711,7 @@ public class Pathway implements Cloneable {
 		Iterator<BiologicalEdgeAbstract> itEdges;
 		BiologicalNodeAbstract newBNA;
 		Point2D p = new Point2D.Double(0, 0);
-
+		// TODO do not iterate over HashMapm it breaks if it has more than 1 element (ConcurrentModificationException)
 		while (it.hasNext()) {
 			bna = it.next();
 

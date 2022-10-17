@@ -86,7 +86,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				new AutoSuggestor(formular, frame, null, Color.WHITE.brighter(),
+				new AutoSuggester(formular, frame, null, Color.WHITE.brighter(),
 						Color.BLUE, Color.RED, 0.75f) {
 					@Override
 					boolean wordTyped(String typedWord) {

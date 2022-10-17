@@ -23,10 +23,10 @@ class SuggestionLabel extends JLabel {
 	private boolean focused = false;
     private final JWindow autoSuggestionsPopUpWindow;
     private final JTextPane textField;
-    private final AutoSuggestor autoSuggestor;
+    private final AutoSuggester autoSuggestor;
     private Color suggestionsTextColor, suggestionBorderColor;
 
-    public SuggestionLabel(String string, final Color borderColor, Color suggestionsTextColor, AutoSuggestor autoSuggestor) {
+    public SuggestionLabel(String string, final Color borderColor, Color suggestionsTextColor, AutoSuggester autoSuggestor) {
         super(string);
 
         this.suggestionsTextColor = suggestionsTextColor;

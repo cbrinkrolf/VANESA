@@ -1111,7 +1111,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}
 
 		else if ("showParameters".equals(event)) {
-			// System.out.println("show parameters");
+			//System.out.println("show parameters");
 			new ParameterWindow(ab);
 			this.updateWindow(ab);
 			p.revalidate();

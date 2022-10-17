@@ -18,7 +18,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-class AutoSuggestor {
+class AutoSuggester {
 
     private final JTextPane textField;
     private final Window container;
@@ -46,7 +46,7 @@ class AutoSuggestor {
     private final Color suggestionsTextColor;
     private final Color suggestionFocusedColor;
 
-    public AutoSuggestor(JTextPane textField, Window mainWindow, ArrayList<String> words, Color popUpBackground, Color textColor, Color suggestionFocusedColor, float opacity) {
+    public AutoSuggester(JTextPane textField, Window mainWindow, ArrayList<String> words, Color popUpBackground, Color textColor, Color suggestionFocusedColor, float opacity) {
         this.textField = textField;
         this.suggestionsTextColor = textColor;
         this.container = mainWindow;
