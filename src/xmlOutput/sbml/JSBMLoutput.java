@@ -256,10 +256,22 @@ public class JSBMLoutput {
 				reac.setCompartment(model.getCompartment(nodeCompartment));
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			// if something went wrong, the user get's a notification
 			message = "\nCreating SBML was not successful.";
 		}
 
+		// Do not write the SBML document if error occurred.
+		System.out.println("message lengths: "+message.length());
+		if(message.length() > 0){
+			try {
+				os.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return message;
+		}
+		
 		// Write the SBML document to a file.
 		try {
 			// System.out.println("vor write");

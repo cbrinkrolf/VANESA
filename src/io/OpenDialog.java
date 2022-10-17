@@ -123,11 +123,16 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 					} catch (FileNotFoundException ex) {
 						ex.printStackTrace();
 					}
+				} catch(Exception e){
+					MyPopUp.getInstance().show("Error!", e.getMessage());
+					e.printStackTrace();
 				}
+				
 			} else if (fileFormat.equals(txtDescription)) {
 				try {
 					new TxtInput(new FileInputStream(file), file);
-				} catch (IOException e) {
+				} catch (Exception e) {
+					MyPopUp.getInstance().show("Error!", e.getMessage());
 					e.printStackTrace();
 				}
 			}

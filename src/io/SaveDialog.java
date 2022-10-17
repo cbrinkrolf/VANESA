@@ -160,6 +160,7 @@ public class SaveDialog {
 				} catch (IOException | HeadlessException | XMLStreamException | TranscoderException | InvalidIDException
 						| VoidRepositoryException e) {
 					error += e.getMessage();
+					MyPopUp.getInstance().show("Error!", "An error occured:\r\n"+error);
 					e.printStackTrace();
 				}
 			}
@@ -377,6 +378,8 @@ public class SaveDialog {
 				GraphInstance.getPathwayStatic().setFile(file);
 			}
 
+			// TODO creation of FileOutputStream overrides file already, even without call write() method. Document should be generated first, if no 
+			// errors thrown, then create FOS and write to file.
 			JSBMLoutput jsbmlOutput = new JSBMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
 
 			String out = jsbmlOutput.generateSBMLDocument();
