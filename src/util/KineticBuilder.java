@@ -63,7 +63,7 @@ public class KineticBuilder {
 		while (itBea.hasNext()) {
 			bea = itBea.next();
 			sb.append("* (1 + (" + bea.getFrom().getName() + " / kA_" + bea.getFrom().getName() + "))");
-			addParameter(bna, "kA_" + bea.getFrom().getName(), 1, "mmol");
+			addParameter(bna, "kA_" + bea.getFrom().getName(), 1, "mmol/l");
 		}
 
 		// relative inhibitors
@@ -71,12 +71,12 @@ public class KineticBuilder {
 		while (itBea.hasNext()) {
 			bea = itBea.next();
 			sb.append("* (kI_" + bea.getFrom().getName() + " / (kI_" + bea.getFrom().getName() + " + " + bea.getFrom().getName() + "))");
-			addParameter(bna, "kI_" + bea.getFrom().getName(), 1, "mmol");
+			addParameter(bna, "kI_" + bea.getFrom().getName(), 1, "mmol/l");
 		}
 
 		// numerator
 		sb.append(" * ( v_f");
-		addParameter(bna, "v_f", 1, "mmol/s");
+		addParameter(bna, "v_f", 1, "1/s");
 		int weight;
 		int substrates = 0;
 		int products = 0;
@@ -98,13 +98,13 @@ public class KineticBuilder {
 				sb.append("(");
 			}
 			sb.append(bea.getFrom().getName() + " / km_" + bea.getFrom().getName());
-			addParameter(bna, "km_" + bea.getFrom().getName(), 1, "mmol");
+			addParameter(bna, "km_" + bea.getFrom().getName(), 1, "mmol/l");
 			if (weight > 1) {
 				sb.append(")^" + weight);
 			}
 		}
 		sb.append(" - v_r ");
-		addParameter(bna, "v_r", 1, "mmol/s");
+		addParameter(bna, "v_r", 0.1, "1/s");
 
 		itBea = productEdges.iterator();
 		while (itBea.hasNext()) {
@@ -123,7 +123,7 @@ public class KineticBuilder {
 				sb.append("(");
 			}
 			sb.append(bea.getTo().getName() + " / km_" + bea.getTo().getName());
-			addParameter(bna, "km_" + bea.getTo().getName(), 1, "mmol");
+			addParameter(bna, "km_" + bea.getTo().getName(), 1, "mmol/l");
 			if (weight > 1) {
 				sb.append(")^" + weight);
 			}
@@ -192,7 +192,7 @@ public class KineticBuilder {
 					sb.append(" * ");
 				}
 			}
-			sb.append(")");
+			sb.append(" - 1)");
 		}
 		return sb.toString();
 	}
