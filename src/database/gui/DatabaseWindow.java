@@ -19,7 +19,7 @@ public class DatabaseWindow {
 	// private QueryInfoWindow info;
 	private PPIqueryMask ppi;
 	private MirnaQueryClass mirna;
-	//private UNIDQueryMask unid;
+	// private UNIDQueryMask unid;
 	private BRENDA2queryMask brenda2;
 
 	private boolean headless = false;
@@ -41,7 +41,7 @@ public class DatabaseWindow {
 		// info = new QueryInfoWindow();
 		ppi = new PPIqueryMask(this);
 		mirna = new MirnaQueryClass(this);
-		//unid = new UNIDQueryMask(this);
+		// unid = new UNIDQueryMask(this);
 		brenda2 = new BRENDA2queryMask(this);
 
 		tabbedPanel.addTab("KEGG", kegg.getPanel());
@@ -52,25 +52,24 @@ public class DatabaseWindow {
 		tabbedPanel.addTab("PPI", ppi.getPanel());
 		tabbedPanel.setTabComponentAt(1, ppi.getTitelTab("PPI"));
 		tabs.put(1, "PPI");
-		
+
 		tabbedPanel.addTab("BRENDA", brenda.getPanel());
 		tabbedPanel.setTabComponentAt(2, brenda.getTitelTab("BRENDA"));
 		tabs.put(2, "BRENDA");
-		
+
 		tabbedPanel.addTab("miRNA", mirna.getPanel());
 		tabbedPanel.setTabComponentAt(3, mirna.getTitelTab("miRNA"));
 		tabs.put(3, "miRNA");
 
-		
-		if(MainWindow.developer){
-			//tabbedPanel.addTab("UNID", unid.getPanel());
-			//tabbedPanel.setTabComponentAt(4, unid.getTitelTab("UNID"));
-			//tabs.put(4, "UNID");
+		if (MainWindow.developer) {
+			// tabbedPanel.addTab("UNID", unid.getPanel());
+			// tabbedPanel.setTabComponentAt(4, unid.getTitelTab("UNID"));
+			// tabs.put(4, "UNID");
 			tabbedPanel.addTab("BRENDA2", brenda2.getPanel());
 			tabbedPanel.setTabComponentAt(4, brenda2.getTitelTab("B2"));
 			tabs.put(4, "BRENDA2");
 		}
-		
+
 		// tabbedPanel.addTab(unid.getTitelTab());
 
 		// tabbedPanel.addTab(info.getTab());
@@ -95,8 +94,8 @@ public class DatabaseWindow {
 		} else if (selectedDatabase().equals("miRNA")) {
 			return mirna.doSearchCriteriaExist();
 		} else if (selectedDatabase().equals("UNID")) {
-			//return unid.doSearchCriteriaExist();
-		} else if(selectedDatabase().equals("BRENDA2")){
+			// return unid.doSearchCriteriaExist();
+		} else if (selectedDatabase().equals("BRENDA2")) {
 			return brenda2.doSearchCriteriaExist();
 		}
 		return false;
@@ -112,7 +111,7 @@ public class DatabaseWindow {
 		// TitledTab t = (TitledTab) tabbedPanel.getSelectedTab();
 
 		String db = tabs.get(tabbedPanel.getSelectedIndex());
-		//System.out.println(db);
+		// System.out.println(db);
 		if (db.equals("KEGG")) {
 			return kegg.getKeyword();
 		} else if (db.equals("BRENDA")) {
@@ -122,8 +121,8 @@ public class DatabaseWindow {
 		} else if (db.equals("miRNA")) {
 			return mirna.getKeyword();
 		} else if (db.equals("UNID")) {
-			//return unid.getKeyword();
-		}else if (db.equals("BRENDA2")){
+			// return unid.getKeyword();
+		} else if (db.equals("BRENDA2")) {
 			return brenda2.getKeyword();
 		}
 		return null;
@@ -141,8 +140,8 @@ public class DatabaseWindow {
 		} else if (db.equals("miRNA")) {
 			mirna.reset();
 		} else if (db.equals("UNID")) {
-			//unid.reset();
-		}else if(db.equals("BRENDA2")){
+			// unid.reset();
+		} else if (db.equals("BRENDA2")) {
 			brenda2.reset();
 		}
 	}
@@ -154,8 +153,16 @@ public class DatabaseWindow {
 	public boolean isHeadless() {
 		return this.headless;
 	}
-	
-	public boolean isHsaOnlyMirna(){
+
+	public boolean isHsaOnlyMirna() {
 		return mirna.isHsaOnly();
+	}
+
+	public boolean isTargetsMirna() {
+		return mirna.isTargetsSelected();
+	}
+
+	public boolean isSourcesMirna() {
+		return mirna.isSourcesSelected();
 	}
 }

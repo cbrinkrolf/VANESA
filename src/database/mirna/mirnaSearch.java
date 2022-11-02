@@ -27,8 +27,10 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 	private MirnaResultWindow mirnaResultWindow;
 	private boolean headless;
 	private boolean hsaOnly;
+	private boolean isSources;
+	private boolean isTargets;
 
-	public mirnaSearch(String[] input, boolean hsaOnly, boolean headless) {
+	public mirnaSearch(String[] input, boolean hsaOnly, boolean headless, boolean sources, boolean targets) {
 
 		name = input[0];
 		acc = input[1];
@@ -38,6 +40,8 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 		this.hsaOnly = hsaOnly;
 		this.headless = headless;
+		this.isSources = sources;
+		this.isTargets = targets;
 
 	}
 
@@ -99,7 +103,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 		if (continueProgress) {
 			Vector<String[]> results = mirnaResultWindow.getAnswer();
 			// System.out.println(results.get(0)[0] + " " + results.get(0)[1]);
-			//System.out.println(results.size());
+			// System.out.println(results.size());
 			if (results.size() > 0) {
 				MainWindow.getInstance().showProgressBar("Fetching network.");
 				final Iterator<String[]> it = results.iterator();
@@ -107,18 +111,24 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 				while (it.hasNext()) {
 					String[] details = it.next();
 					String name = details[0];
+					String sequence = "";
+					if (details.length > 2) {
+						sequence = details[2];
+					}
 					// System.out.println("name: "+name);
 					final String QUESTION_MARK = new String("\\?");
 					// System.out.println(name);
 					if (this.name.length() > 0) {
 						// System.out.println("longer");
 
-						String finalQueryString = miRNAqueries.miRNA_get_TargetGenes.replaceFirst(QUESTION_MARK, "'" + name + "'");
-						//System.out.println(finalQueryString);
+						// TODO split serach to search for sources and/or targets, depending on search criterion
+						String finalQueryString = miRNAqueries.miRNA_get_TargetGenes.replaceFirst(QUESTION_MARK,
+								"'" + name + "'");
+						// System.out.println(finalQueryString);
 						if (this.hsaOnly) {
 							finalQueryString = finalQueryString.substring(0, finalQueryString.length() - 2);
 							finalQueryString += "AND TargetGenes.SpeciesID=54;";
-							//System.out.println(finalQueryString);
+							// System.out.println(finalQueryString);
 						}
 
 						resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
@@ -138,6 +148,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 							// stopVisualizationModel();
 
 							SRNA root = new SRNA(name, name);
+							root.setNtSequence(sequence);
 
 							pw.addVertex(root, new Point2D.Double(0, 0));
 
@@ -195,14 +206,15 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 						}
 					} else if (gene.length() > 0) {
-						String finalQueryString = miRNAqueries.miRNA_get_TargetingMirnas.replaceFirst(QUESTION_MARK, "'" + name + "'");
-						//System.out.println(finalQueryString);
+						String finalQueryString = miRNAqueries.miRNA_get_TargetingMirnas.replaceFirst(QUESTION_MARK,
+								"'" + name + "'");
+						// System.out.println(finalQueryString);
 						if (this.hsaOnly) {
 							finalQueryString = finalQueryString.substring(0, finalQueryString.length() - 2);
 							finalQueryString += " AND TargetGenes.SpeciesID=54;";
-							//System.out.println(finalQueryString);
+							// System.out.println(finalQueryString);
 						}
-						
+
 						resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
 						if (resultsDBSearch.size() > 0) {
 							count += resultsDBSearch.size();
@@ -226,8 +238,8 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 							Expression e;
 							while (cols.hasNext()) {
 								dbcol = cols.next().getColumn();
-
 								srna = new SRNA(dbcol[0], dbcol[0]);
+								srna.setNtSequence(dbcol[1]);
 								pw.addVertex(srna, new Point2D.Double(0, 0));
 								e = new Expression("", "", srna, root);
 								e.setDirected(true);
@@ -253,12 +265,12 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 					}
 					MainWindow.getInstance().closeProgressBar();
-					
-					if(count == 0){
+
+					if (count == 0) {
 						MyPopUp.getInstance().show("miRNA Search", "No entries have been found!");
 					}
 				}
-			} 
+			}
 		}
 	}
 }
