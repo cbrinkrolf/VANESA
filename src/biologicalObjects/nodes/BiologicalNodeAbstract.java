@@ -293,16 +293,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 		// Set id
 		if (id == null) {
-			// TODO test if pw=null is correct, replace with:
-			// GraphInstance.getPathwayStatic();
+			// if pw==null, replace with GraphInstance.getPathwayStatic();
 			coarseNode.setID(true, GraphInstance.getPathwayStatic());
 		} else {
 			try {
-				// TODO test if pw=null is correct
-				coarseNode.setID(id, null);
+				coarseNode.setID(id, GraphInstance.getPathwayStatic());
 			} catch (IDAlreadyExistException ex) {
-				// TODO test if pw=null is correct
-				coarseNode.setID(true, null);
+				coarseNode.setID(true, GraphInstance.getPathwayStatic());
 			}
 		}
 
