@@ -252,10 +252,10 @@ public class MOoutput {
 			}
 		}
 	}
-	
-	private void buildParameters(){
+
+	private void buildParameters() {
 		BiologicalNodeAbstract bna;
-		//ArrayList<String> names = new ArrayList<String>();
+		// ArrayList<String> names = new ArrayList<String>();
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		while (it.hasNext()) {
 			// System.out.println("knoten");
@@ -275,17 +275,17 @@ public class MOoutput {
 			}
 		}
 	}
-	
-	private void buildAllNodes(){
+
+	private void buildAllNodes() {
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		BiologicalNodeAbstract bna;
 		List<BiologicalNodeAbstract> places = new ArrayList<>();
 		List<BiologicalNodeAbstract> transitions = new ArrayList<>();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			bna = it.next();
-			if(bna instanceof Place){
+			if (bna instanceof Place) {
 				places.add(bna);
-			}else if(bna instanceof Transition){
+			} else if (bna instanceof Transition) {
 				transitions.add(bna);
 			}
 		}
@@ -301,7 +301,7 @@ public class MOoutput {
 		int out;
 		Iterator<BiologicalNodeAbstract> refIt;
 		BiologicalNodeAbstract node;
-		//String attr;
+		// String attr;
 		Place place;
 		String start;
 		String min;
@@ -317,7 +317,7 @@ public class MOoutput {
 		while (it.hasNext()) {
 			bna = it.next();
 			attr.setLength(0);
-			
+
 			if (!bna.isLogical() && bna instanceof PNNode) {
 				biologicalElement = bna.getBiologicalElement();
 				// double km = Double.NaN, kcat = Double.NaN;
@@ -337,8 +337,8 @@ public class MOoutput {
 				}
 				if (biologicalElement.equals(Elementdeclerations.discretePlace)) {
 					place = (Place) bna;
-					attr.append("startTokens=" + (int) place.getTokenStart() + ", minTokens=" + (int) place.getTokenMin()
-							+ ", maxTokens=" + (int) place.getTokenMax());
+					attr.append("startTokens=" + (int) place.getTokenStart() + ", minTokens="
+							+ (int) place.getTokenMin() + ", maxTokens=" + (int) place.getTokenMax());
 					// places =
 					// places.concat(getPlaceString(getModelicaString(place),
 					// bna, atr, in, out));
@@ -400,8 +400,8 @@ public class MOoutput {
 						attr.append("Discrete");
 						break;
 					}
-					attr.append(", h = " + st.getH() + ", a = " + st.getA() + ", b = " + st.getB() + ", c = " + st.getC()
-							+ ", mu = " + st.getMu() + ", sigma = " + st.getSigma() + ", ");
+					attr.append(", h = " + st.getH() + ", a = " + st.getA() + ", b = " + st.getB() + ", c = "
+							+ st.getC() + ", mu = " + st.getMu() + ", sigma = " + st.getSigma() + ", ");
 					attr.append("E = {");
 					events = st.getEvents();
 					for (int i = 0; i < events.size(); i++) {
@@ -446,7 +446,7 @@ public class MOoutput {
 
 				if (bna instanceof Place) {
 
-				} else	if (bna instanceof Transition) {
+				} else if (bna instanceof Transition) {
 					t = (Transition) bna;
 					if (t.getFiringCondition().length() > 0) {
 						attr.append(", firingCon=" + t.getFiringCondition());
@@ -469,7 +469,8 @@ public class MOoutput {
 		testArcCount = 0;
 		String fromString;
 		String toString;
-		StringBuilder weight = new StringBuilder();;
+		StringBuilder weight = new StringBuilder();
+		;
 		int prio = 1;
 		double prob = 1.0;
 		while (it.hasNext()) {
@@ -611,8 +612,8 @@ public class MOoutput {
 		return result;
 	}
 
-	private String getTransitionString(BiologicalNodeAbstract bna, String element, String name, StringBuilder attr, int inEdges,
-			int outEdges) {
+	private String getTransitionString(BiologicalNodeAbstract bna, String element, String name, StringBuilder attr,
+			int inEdges, int outEdges) {
 		for (int i = 0; i < bna.getParameters().size(); i++) {
 			// params += this.indentation + "parameter Real
 			// "+bna.getParameters().get(i).getName()+" =
@@ -645,8 +646,8 @@ public class MOoutput {
 		// System.out.println("inPropper: " + in);
 		// System.out.println("outPropper: " + out);
 
-		return INDENT + element + " '" + bna.getName() + "'(nIn=" + inEdges + ", nOut=" + outEdges + ", " + attr.toString() + in + out
-				+ ") " + getPlacementAnnotation(bna) + ";" + ENDL;
+		return INDENT + element + " '" + bna.getName() + "'(nIn=" + inEdges + ", nOut=" + outEdges + ", "
+				+ attr.toString() + in + out + ") " + getPlacementAnnotation(bna) + ";" + ENDL;
 	}
 
 	private String getConnectionStringTP(String from, String to, BiologicalEdgeAbstract bea) {
@@ -797,14 +798,16 @@ public class MOoutput {
 
 	private String getModelicaEdgeFunction(PNArc bea) {
 
-		if (bea.getFrom().isConstant() || bea.getTo().isConstant()) {
-			return "0";
-		}
-		if (bea.getFrom().isLogical() && bea.getFrom().getLogicalReference().isConstant()) {
-			return "0";
-		}
-		if (bea.getTo().isLogical() && bea.getTo().getLogicalReference().isConstant()) {
-			return "0";
+		if (bea.isRegularArc()) {
+			if (bea.getFrom().isConstant() || bea.getTo().isConstant()) {
+				return "0";
+			}
+			if (bea.getFrom().isLogical() && bea.getFrom().getLogicalReference().isConstant()) {
+				return "0";
+			}
+			if (bea.getTo().isLogical() && bea.getTo().getLogicalReference().isConstant()) {
+				return "0";
+			}
 		}
 		return replaceNames(bea.getFunction());
 
