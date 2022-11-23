@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import biologicalElements.Elementdeclerations;
-import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 //import edu.uci.ics.jung.graph.Vertex;
@@ -80,7 +79,7 @@ public abstract class Place extends PNNode {
 				bea = it.next();
 				if (bea instanceof PNArc) {
 					arc = (PNArc) bea;
-					if (!arc.isInhibitorArc() && !arc.isTestArc() && !(bea.getTo() instanceof ContinuousTransition)){
+					if (!arc.isInhibitorArc() && !arc.isTestArc() && !(bea.getTo() instanceof ContinuousTransition)) {
 						result.add((PNArc) bea);
 					}
 				}
@@ -128,6 +127,11 @@ public abstract class Place extends PNNode {
 			PNArc bea;
 			while (it.hasNext()) {
 				bea = it.next();
+				if (bea.getProbability() < 0) {
+					MyPopUp.getInstance().show("Probability error", "Negative probability detected: arc connecting "
+							+ bea.getFrom().getName() + " -> " + bea.getTo().getName());
+					return true;
+				}
 				sum += bea.getProbability();
 			}
 			if (sum != 1.0) {
@@ -186,6 +190,9 @@ public abstract class Place extends PNNode {
 			PNArc bea;
 			while (it.hasNext()) {
 				bea = it.next();
+				if(bea.getProbability() < 0){
+					bea.setProbability(bea.getProbability()*-1);
+				}
 				sum += bea.getProbability();
 			}
 			if (sum != 1.0) {

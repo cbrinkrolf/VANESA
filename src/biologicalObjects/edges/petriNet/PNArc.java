@@ -71,4 +71,8 @@ public class PNArc extends BiologicalEdgeAbstract {
 	public boolean isTestArc(){
 		return getBiologicalElement().equals(Elementdeclerations.pnTestArc);
 	}
+	
+	public boolean isRegularArc(){
+		return getBiologicalElement().equals(Elementdeclerations.pnArc);
+	}
 }

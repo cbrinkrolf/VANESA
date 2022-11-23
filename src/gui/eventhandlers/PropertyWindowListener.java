@@ -18,6 +18,7 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DNA;
@@ -454,7 +455,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 							"event item with indes " + i + ": \"" + tokens[i] + "\" is not a valid decimal number!");
 				}
 			}
-			
+
 			if (st.getProbabilities().size() != list.size()) {
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				st.setProbabilities(list);
@@ -467,7 +468,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 					}
 				}
 			}
-			
+
 			st.setProbabilities(list);
 			if (st.getEvents().size() != st.getProbabilities().size()) {
 				MyPopUp.getInstance().show("Warning", "Number of given events (" + st.getEvents().size()
@@ -501,10 +502,14 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			}
 		} else if (source.equals("function")) {
 			text = ((JTextField) event.getSource()).getText().trim();
-			PNArc e = (PNArc) geb;
-			if (!text.equals("") && !text.equals(e.getFunction())) {
-				e.setFunction(text);
-				pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
+			if (geb instanceof BiologicalEdgeAbstract) {
+				BiologicalEdgeAbstract e = (BiologicalEdgeAbstract) geb;
+				if (!text.equals("") && !text.equals(e.getFunction())) {
+					e.setFunction(text);
+					pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
+				}
+			}else{
+				return;
 			}
 		}
 		// ContainerSingelton.getInstance().changeMouseFunction("edit");

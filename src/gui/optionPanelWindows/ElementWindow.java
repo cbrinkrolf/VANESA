@@ -106,8 +106,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private void updateWindow(GraphElementAbstract element) {
 		p.removeAll();
 		Pathway pw = graphInstance.getPathway();
-		
-		if(pw == null){
+
+		if (pw == null) {
 			return;
 		}
 		// this.element = element;
@@ -237,8 +237,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 			JComboBox<String> compartment = new JComboBox<String>();
 			addCompartmentItems(compartment);
 			AutoCompleteDecorator.decorate(compartment);
-
-			
 
 			compartment.setSelectedItem(pw.getCompartmentManager().getCompartment(((BiologicalNodeAbstract) ab)));
 			compartment.addItemListener(this);
@@ -763,7 +761,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			if (((BiologicalEdgeAbstract) ab).isDirected()) {
 				if (ab instanceof PNArc) {
 					PNArc pnedge = (PNArc) ab;
-					if(!pnedge.isInhibitorArc() && !pnedge.isTestArc()){
+					if (!pnedge.isInhibitorArc() && !pnedge.isTestArc()) {
 						p.add(changeEdgeDirection, "");
 					}
 				} else {
@@ -944,10 +942,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 	private void addCompartmentItems(JComboBox<String> compartment) {
 		Pathway pw = graphInstance.getPathway();
-		if(pw == null){
+		if (pw == null) {
 			return;
 		}
-		
+
 		List<Compartment> compartmentList = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
 
 		compartment.addItem(" ");
@@ -1111,7 +1109,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}
 
 		else if ("showParameters".equals(event)) {
-			//System.out.println("show parameters");
+			// System.out.println("show parameters");
 			new ParameterWindow(ab);
 			this.updateWindow(ab);
 			p.revalidate();

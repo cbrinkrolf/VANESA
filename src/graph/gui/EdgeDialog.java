@@ -111,7 +111,7 @@ public class EdgeDialog extends JFrame {
 				panel.add(new JLabel("Name"), "");
 				name.setText("PNE" + (pw.getAllEdges().size() + 1));
 			} else {
-				panel.add(new JLabel("Edge weight / function"), "");
+				panel.add(new JLabel("Arc weight / function"), "");
 				name.setText("1");
 			}
 		} else {
@@ -123,7 +123,7 @@ public class EdgeDialog extends JFrame {
 			}
 		}
 
-		if (lastTypeIdx < 0 || lastTypeIdx > elementType.getItemCount()-1) {
+		if (lastTypeIdx < 0 || lastTypeIdx > elementType.getItemCount() - 1) {
 			if (pw.isPetriNet()) {
 				elementType.setSelectedItem(Elementdeclerations.pnArc);
 			} else {
@@ -196,7 +196,11 @@ public class EdgeDialog extends JFrame {
 
 		// private String[] details = new String[3];
 		Map<String, String> details = new HashMap<String, String>();
-		JDialog dialog = pane.createDialog(null, "Create an edge");
+		String title = "Create an edge";
+		if (this.pw.isPetriNet()) {
+			title = "Create an arc";
+		}
+		JDialog dialog = pane.createDialog(null, title);
 		// dialog.show();
 		if (relativeTo == null) {
 			dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
