@@ -326,7 +326,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 						String name = details.get("name");
 						String label = details.get("name");
 						String element = details.get("element");
-
+						String function = details.get("function");
+						
 						boolean directed = false;
 						if (details.get("directed").equals("true")) {
 							directed = true;
@@ -336,9 +337,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 						parentBNAs.addAll(nodes[0].getAllParentNodes());
 						parentBNAs.addAll(nodes[1].getAllParentNodes());
 						BiologicalEdgeAbstract bea = pw.addEdge(label, name, nodes[0], nodes[1], element, directed);
-						if (bea instanceof PNArc) {
-							((PNArc) bea).setFunction(label);
-						}
+						bea.setFunction(function);
+						
 						if (nodes[0] == startVertex && nodes[1] == vertex) {
 							pw.addEdgeToView(bea, false);
 						} else {

@@ -44,6 +44,7 @@ public class EdgeDialog extends JFrame {
 	private JPanel panel;
 	private JOptionPane pane;
 	private JTextField name;
+	private JTextField function;
 	private JRadioButton directed, undirected;
 
 	private Pathway pw;
@@ -77,6 +78,7 @@ public class EdgeDialog extends JFrame {
 		group.add(undirected);
 
 		name = new JTextField(20);
+		function = new JTextField(20);
 		panel = new JPanel(layout);
 
 		if (!from.getVertices().isEmpty()) {
@@ -110,16 +112,23 @@ public class EdgeDialog extends JFrame {
 			if (pw.isHeadless()) {
 				panel.add(new JLabel("Name"), "");
 				name.setText("PNE" + (pw.getAllEdges().size() + 1));
+				panel.add(name, "span,wrap,growx,gap 10");
 			} else {
 				panel.add(new JLabel("Arc weight / function"), "");
-				name.setText("1");
+				function.setText("1");
+				panel.add(function, "span,wrap,growx,gap 10");
 			}
 		} else {
 			if (pw.isHeadless()) {
 				name.setText("E" + (pw.getAllEdges().size() + 1));
 				panel.add(new JLabel("Name"), "");
+				panel.add(name, "span,wrap,growx,gap 10");
 			} else {
 				panel.add(new JLabel("Label"), "");
+				panel.add(name, "span,wrap,growx,gap 10");
+				panel.add(new JLabel("Edge weight / function"), "");
+				function.setText("1");
+				panel.add(function, "span,wrap,growx,gap 10");
 			}
 		}
 
@@ -133,7 +142,6 @@ public class EdgeDialog extends JFrame {
 			elementType.setSelectedIndex(lastTypeIdx);
 		}
 
-		panel.add(name, "span,wrap,growx,gap 10");
 		if (!pw.isPetriNet() && !pw.isHeadless()) {
 			panel.add(new JLabel("Edge"), "");
 			panel.add(directed, "gap 10");
@@ -213,6 +221,7 @@ public class EdgeDialog extends JFrame {
 		if (value != null) {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
 				details.put("name", name.getText());
+				details.put("function", function.getText());
 				details.put("element", elementType.getSelectedItem().toString());
 				lastTypeIdx = elementType.getSelectedIndex();
 				lastDirected = directed.isSelected();
