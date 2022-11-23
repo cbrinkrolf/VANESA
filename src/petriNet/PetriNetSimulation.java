@@ -605,21 +605,40 @@ public class PetriNetSimulation implements ActionListener {
 
 					compileProcess = new ProcessBuilder(bin, pathSim + "simulation.mos").start();
 					InputStream os = compileProcess.getInputStream();
+					InputStream errs = compileProcess.getErrorStream();
 
+					BufferedReader inputReader = new BufferedReader(new InputStreamReader(os));
+					System.out.println("intput stream");
 					// System.out.println(s);
 					// boolean buildSuccess = true;
 					System.out.println(stopped + " " + compileProcess.isAlive());
+					StringBuilder inputStreamString = new StringBuilder();
+					String line;
+					while (compileProcess.isAlive()) {
+						line = inputReader.readLine();
+						while (line != null && line.length() > 0) {
+							inputStreamString.append(line);
+							line = inputReader.readLine();
+						}
+						sleep(200);
+					}
 					compileProcess.waitFor();
-					byte[] bytes = new byte[os.available()];
-					os.read(bytes);
-					String buildOutput = new String(bytes);
-					System.out.println("build output: " + buildOutput);
 
-					if (buildOutput.contains(
+					line = inputReader.readLine();
+					while (line != null && line.length() > 0) {
+						logAndShow(line);
+						// System.out.println(line);
+						inputStreamString.append(line);
+						line = inputReader.readLine();
+					}
+					inputReader.close();
+					System.out.println(inputStreamString.toString());
+
+					if (inputStreamString.toString().contains(
 							"Warning: The following equation is INCONSISTENT due to specified unit information:")) {
 						String message = "";
 						int number = 0;
-						String[] split = buildOutput.split("Warning: ");
+						String[] split = inputStreamString.toString().split("Warning: ");
 						for (int i = 1; i < split.length; i++) {
 							if (split[i].startsWith(
 									"The following equation is INCONSISTENT due to specified unit information:")) {
@@ -630,7 +649,7 @@ public class PetriNetSimulation implements ActionListener {
 						MyPopUp.getInstance().show("Warning: " + number + " expression(s) are inconsistent:", message);
 					}
 
-					StringTokenizer tokenizer = new StringTokenizer(buildOutput, ",");
+					StringTokenizer tokenizer = new StringTokenizer(inputStreamString.toString(), ",");
 					if (tokenizer.hasMoreTokens()) {
 						String tmp = tokenizer.nextToken();
 						// tmp.indexOf("{");
