@@ -303,11 +303,13 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
 						if (node instanceof Transition) {
 							// System.out.println(node.getName());
-							ref = simRes.get(node, FIRE).get(slider.getValue());
-							if (ref == 1) {
-								((Transition) node).setSimulationActive(true);
-							} else {
-								((Transition) node).setSimulationActive(false);
+							if (simRes.contains(node)) {
+								ref = simRes.get(node, FIRE).get(slider.getValue());
+								if (ref == 1) {
+									((Transition) node).setSimulationActive(true);
+								} else {
+									((Transition) node).setSimulationActive(false);
+								}
 							}
 						}
 					}
