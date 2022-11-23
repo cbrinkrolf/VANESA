@@ -238,7 +238,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 		// if (myGraph.getJungGraph().findEdge(first, second) == null) {
 		if (first != null && second != null) {
 			ReactionEdge r = new ReactionEdge(weight, "", first, second);
-
+			r.setFunction(weight);
 			r.setDirected(directed);
 			r.setVisible(true);
 			this.edges.add(r);
