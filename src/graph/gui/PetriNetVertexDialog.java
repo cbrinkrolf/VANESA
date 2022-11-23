@@ -170,7 +170,7 @@ public class PetriNetVertexDialog {
 		} else if (petriElement.equals(Elementdeclerations.discreteTransition)) {
 			title = "Create a discrete Transition";
 		} else if (petriElement.equals(Elementdeclerations.continuousTransition)) {
-			title = "Create a continious Transition";
+			title = "Create a continuous Transition";
 		} else if (petriElement.equals(Elementdeclerations.stochasticTransition)) {
 			title = "Create a stochastic Transition";
 		} else if (petriElement.equals(Elementdeclerations.place)) {
@@ -194,8 +194,8 @@ public class PetriNetVertexDialog {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
 
 				if (name.getText().trim().length() < 1 || name.getText().trim().charAt(0) == '_') {
-					MyPopUp.getInstance().show("Adding Place",
-							"Cannot add Place! Empty name or name starts with \"_\"");
+					MyPopUp.getInstance().show("Adding Node",
+							"Cannot add node! Empty name or name starts with \"_\"");
 					return null;
 				}
 
@@ -282,6 +282,14 @@ public class PetriNetVertexDialog {
 					while (it.hasNext()) {
 						bna = it.next();
 						if (bna.getName().equals(name.getText().trim())) {
+							if(!bna.getBiologicalElement().equals(petriElement)){
+								MyPopUp.getInstance().show("Adding Element",
+										"Name already exists. Cannot create reference node, because types do not match!\r\n"
+										+ "Given type: "+petriElement+"\r\n"
+												+ "Existing element: "+bna.getBiologicalElement());
+								return null;
+							}
+							
 							createdNode.setLogicalReference(bna);
 							createdRef = true;
 						}
@@ -289,8 +297,8 @@ public class PetriNetVertexDialog {
 
 					pw.addVertex(createdNode, point);
 					if (createdRef) {
-						MyPopUp.getInstance().show("Adding Place",
-								"Name already exists. Created reference place instead.");
+						MyPopUp.getInstance().show("Adding Node",
+								"Name already exists. Created reference node instead.");
 					}
 				}
 				GraphContainer con = GraphContainer.getInstance();
