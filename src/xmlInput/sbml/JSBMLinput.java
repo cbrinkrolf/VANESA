@@ -38,6 +38,7 @@ import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.KEGGNode;
 import biologicalObjects.nodes.Other;
 import biologicalObjects.nodes.RNA;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
@@ -539,9 +540,20 @@ public class JSBMLinput {
 						((biologicalObjects.nodes.petriNet.DiscreteTransition) bna).setDelay(Double.parseDouble(attr));
 						break;
 					case Elementdeclerations.continuousTransition:
+						elSub = specAnnotation.getChild("maximalSpeed", null);
+						if (elSub != null) {
+							attr = String.valueOf(elSub.getAttributeValue("maximalSpeed"));
+							((ContinuousTransition) bna).setMaximalSpeed(attr);
+						}else{
+							elSub = specAnnotation.getChild("maximumSpeed", null);
+							if (elSub != null) {
+								attr = String.valueOf(elSub.getAttributeValue("maximumSpeed"));
+								((ContinuousTransition) bna).setMaximalSpeed(attr);
+							}
+						}
 						break;
 					case Elementdeclerations.stochasticTransition:
-						StochasticTransition st = (StochasticTransition)bna;
+						StochasticTransition st = (StochasticTransition) bna;
 						elSub = specAnnotation.getChild("distributionProperties", null);
 						Element elSubSub = elSub.getChild("distribution", null);
 						attr = String.valueOf(elSubSub.getAttributeValue("distribution"));
@@ -566,19 +578,19 @@ public class JSBMLinput {
 						st.setSigma(Double.parseDouble(attr));
 						elSubSub = elSub.getChild("discreteEvents", null);
 						attr = String.valueOf(elSubSub.getAttributeValue("discreteEvents"));
-						
+
 						ArrayList<Integer> events = new ArrayList<Integer>();
 						String[] eventTokens = attr.split(",");
-						for(int idx = 0; idx< eventTokens.length; idx++){
+						for (int idx = 0; idx < eventTokens.length; idx++) {
 							events.add(Integer.parseInt(eventTokens[idx].trim()));
 						}
 						st.setEvents(events);
-						
+
 						elSubSub = elSub.getChild("discreteEventProbabilities", null);
 						attr = String.valueOf(elSubSub.getAttributeValue("discreteEventProbabilities"));
 						ArrayList<Double> probs = new ArrayList<Double>();
 						String[] probTokens = attr.split(",");
-						for(int idx = 0; idx< probTokens.length; idx++){
+						for (int idx = 0; idx < probTokens.length; idx++) {
 							probs.add(Double.parseDouble(probTokens[idx].trim()));
 						}
 						st.setProbabilities(probs);
@@ -950,9 +962,14 @@ public class JSBMLinput {
 			break;
 		case "knockedOut":
 			if (bna instanceof DynamicNode) {
-				((biologicalObjects.nodes.DynamicNode) bna).setKnockedOut(false);
+				((DynamicNode) bna).setKnockedOut(false);
 				if (value != null && value.equals("true")) {
-					((biologicalObjects.nodes.DynamicNode) bna).setKnockedOut(true);
+					((DynamicNode) bna).setKnockedOut(true);
+				}
+			} else if (bna instanceof Transition) {
+				((Transition) bna).setKnockedOut(false);
+				if (value != null && value.equals("true")) {
+					((Transition) bna).setKnockedOut(true);
 				}
 			}
 			break;

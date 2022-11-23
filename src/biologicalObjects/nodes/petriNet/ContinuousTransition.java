@@ -5,7 +5,6 @@ import java.awt.geom.AffineTransform;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
-import biologicalObjects.nodes.DynamicNode;
 import graph.jung.graphDrawing.VertexShapes;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ContinuousTransition extends Transition implements DynamicNode {
+public class ContinuousTransition extends Transition {
 
 	// private final double delay = 1;
 
@@ -44,11 +43,6 @@ public class ContinuousTransition extends Transition implements DynamicNode {
 	// public double getDelay() {
 	// return delay;
 	// }
-
-	@Override
-	public void setKnockedOut(Boolean knockedOut) {
-		super.setKnockedOut(knockedOut);
-	}
 
 	@Override
 	public List<String> getTransformationParameters() {

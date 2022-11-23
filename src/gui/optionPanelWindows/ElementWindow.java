@@ -611,12 +611,26 @@ public class ElementWindow implements ActionListener, ItemListener {
 					delay.setText(trans.getDelay() + "");
 					delay.setName("delay");
 					delay.addFocusListener(pwl);
-
+					if(trans.isKnockedOut()){
+						delay.setEnabled(false);
+					}
 					p.add(lbldelay, "gap 5");
 					p.add(delay, "wrap");
-				}
+				} else if (ab instanceof ContinuousTransition) {
+					ContinuousTransition node = (ContinuousTransition) ab;
+					JTextField maxSpeed = new JTextField(4);
+					JLabel lblMaxSpeed = new JLabel("Maximal speed");
+					maxSpeed.setText(node.getMaximalSpeed());
+					maxSpeed.setName("maximalSpeed");
+					maxSpeed.addFocusListener(pwl);
+					if(node.isKnockedOut()){
+						maxSpeed.setEnabled(false);
+					}
 
-				else if (ab instanceof StochasticTransition) {
+					p.add(lblMaxSpeed, "gap 5");
+					p.add(maxSpeed, "wrap");
+
+				} else if (ab instanceof StochasticTransition) {
 					StochasticTransition trans = (StochasticTransition) ab;
 					// Create the combo box, select item at index 4.
 					// Indices start at 0, so 4 specifies the pig.
@@ -725,7 +739,28 @@ public class ElementWindow implements ActionListener, ItemListener {
 						p.add(probabilities, "wrap");
 						break;
 					}
+					if(trans.isKnockedOut()){
+						distributionList.setEnabled(false);
+						h.setEnabled(false);
+						a.setEnabled(false);
+						b.setEnabled(false);
+						c.setEnabled(false);
+						mu.setEnabled(false);
+						sigma.setEnabled(false);
+					}
 				}
+				Transition t = (Transition) ab;
+
+				if (t.isKnockedOut()) {
+					firingCondition.setEnabled(false);
+				}
+				
+				knockedOut.setSelected(t.isKnockedOut());
+				knockedOut.setToolTipText("Knock out");
+				knockedOut.setActionCommand("knockedOut");
+				knockedOut.addActionListener(this);
+				p.add(new JLabel("Knocked out"), "gap 5 ");
+				p.add(knockedOut, "wrap ,span 1");
 			}
 
 			if (constCheck.isSelected()) {
@@ -1117,8 +1152,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// System.out.println("click");
 			new LabelsWindow(ab);
 		} else if ("knockedOut".equals(event)) {
+			if (ab instanceof DynamicNode) {
+				((DynamicNode) ab).setKnockedOut(knockedOut.isSelected());
+			} else if (ab instanceof Transition) {
+				((Transition) ab).setKnockedOut(knockedOut.isSelected());
+			}
 
-			((DynamicNode) ab).setKnockedOut(knockedOut.isSelected());
 			this.updateWindow(ab);
 			p.revalidate();
 			// p.repaint();

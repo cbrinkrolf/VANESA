@@ -714,13 +714,16 @@ public class JSBMLoutput {
 				el.addChild(createElSub(attr, "ConflictStrategy"));
 
 			} else if (oneNode instanceof Transition) {
+				attr = String.valueOf(((Transition) oneNode).isKnockedOut());
+				el.addChild(createElSub(attr, "knockedOut"));
 				attr = String.valueOf(((Transition) oneNode).getFiringCondition());
 				el.addChild(createElSub(attr, "firingCondition"));
 				if (oneNode instanceof DiscreteTransition) {
 					attr = String.valueOf(((DiscreteTransition) oneNode).getDelay());
 					el.addChild(createElSub(attr, "delay"));
 				} else if (oneNode instanceof ContinuousTransition) {
-
+					attr = String.valueOf(((ContinuousTransition) oneNode).getMaximalSpeed());
+					el.addChild(createElSub(attr, "maximalSpeed"));
 				} else if (oneNode instanceof StochasticTransition) {
 					elSub = new XMLNode(new XMLNode(new XMLTriple("distributionProperties", "", ""), new XMLAttributes()));
 					
