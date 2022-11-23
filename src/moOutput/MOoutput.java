@@ -433,11 +433,11 @@ public class MOoutput {
 				} else if (biologicalElement.equals(Elementdeclerations.continuousTransition)) {
 					ct = (ContinuousTransition) bna;
 					speed = this.replaceAll(ct.getMaximalSpeed(), ct.getParameters(), ct);
-					if (ct.isKnockedOut()) {
-						attr.append("maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/");
-					} else {
-						attr.append("maximumSpeed=" + speed);
-					}
+					// if (ct.isKnockedOut()) {
+					// attr.append("maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/");
+					// } else {
+					attr.append("maximumSpeed=" + speed);
+					// }
 
 					// System.out.println("atr");
 					// places = places.concat(getTransitionString(bna,
@@ -448,8 +448,12 @@ public class MOoutput {
 
 				} else if (bna instanceof Transition) {
 					t = (Transition) bna;
+					String firingCondition = t.getFiringCondition();
+					if (t.isKnockedOut()) {
+						firingCondition = "false";
+					}
 					if (t.getFiringCondition().length() > 0) {
-						attr.append(", firingCon=" + t.getFiringCondition());
+						attr.append(", firingCon=" + firingCondition);
 					}
 				}
 				componentsSB.append(getTransitionString(bna, getModelicaString(bna), bna.getName(), attr, in, out));
