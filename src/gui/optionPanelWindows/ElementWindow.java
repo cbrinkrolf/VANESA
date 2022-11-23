@@ -611,7 +611,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					delay.setText(trans.getDelay() + "");
 					delay.setName("delay");
 					delay.addFocusListener(pwl);
-					if(trans.isKnockedOut()){
+					if (trans.isKnockedOut()) {
 						delay.setEnabled(false);
 					}
 					p.add(lbldelay, "gap 5");
@@ -623,7 +623,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					maxSpeed.setText(node.getMaximalSpeed());
 					maxSpeed.setName("maximalSpeed");
 					maxSpeed.addFocusListener(pwl);
-					if(node.isKnockedOut()){
+					if (node.isKnockedOut()) {
 						maxSpeed.setEnabled(false);
 					}
 
@@ -739,7 +739,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 						p.add(probabilities, "wrap");
 						break;
 					}
-					if(trans.isKnockedOut()){
+					if (trans.isKnockedOut()) {
 						distributionList.setEnabled(false);
 						h.setEnabled(false);
 						a.setEnabled(false);
@@ -754,7 +754,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				if (t.isKnockedOut()) {
 					firingCondition.setEnabled(false);
 				}
-				
+
 				knockedOut.setSelected(t.isKnockedOut());
 				knockedOut.setToolTipText("Knock out");
 				knockedOut.setActionCommand("knockedOut");
@@ -781,7 +781,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 			function.setText(((BiologicalEdgeAbstract) ab).getFunction());
 			function.setName("function");
 			function.addFocusListener(pwl);
-			JLabel lblpassingTokens = new JLabel("Edge function");
+			String labelText = "Edge weight";
+			if (ab instanceof PNArc) {
+				labelText = "Arc weight";
+			}
+			JLabel lblpassingTokens = new JLabel(labelText);
+			lblpassingTokens.setToolTipText(labelText + " / function");
 			p.add(lblpassingTokens, "gap 5");
 			p.add(function, "wrap");
 
@@ -865,8 +870,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 				isDirected.setToolTipText("Is directed");
 				isDirected.setActionCommand("isDirected");
 				isDirected.addActionListener(this);
-				p.add(new JLabel("Is directed"), "gap 5 ");
-				p.add(isDirected, "wrap ,span 1");
+				p.add(new JLabel("Is directed"), "gap 5, split 2 ");
+				p.add(isDirected, "wrap");
 			}
 
 		}
@@ -908,7 +913,15 @@ public class ElementWindow implements ActionListener, ItemListener {
 			p.add(showNeighbours, "flowx");
 			p.add(hideNeighbours, "flowx, split 2");
 		}
-		parametersButton.setToolTipText("Show all Parameters");
+
+		if (ab instanceof DynamicNode || ab instanceof BiologicalEdgeAbstract || ab instanceof ContinuousTransition) {
+			parametersButton.setText("Function Builder");
+			parametersButton.setToolTipText("Build function and edit parameters");
+		} else {
+			parametersButton.setText("Parameters");
+			parametersButton.setToolTipText("Edit parameters");
+		}
+
 		parametersButton.setActionCommand("showParameters");
 		parametersButton.addActionListener(this);
 		p.add(parametersButton, "wrap");

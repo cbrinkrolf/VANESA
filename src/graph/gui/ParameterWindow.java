@@ -28,6 +28,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DynamicNode;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import gui.MainWindow;
@@ -123,7 +124,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			}
 		});
 
-		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract) {
+		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
 			PropertyChangeListener pcListener = new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
@@ -136,6 +137,8 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 				function = ((DynamicNode) gea).getMaximalSpeed();
 			} else if (gea instanceof BiologicalEdgeAbstract) {
 				function = ((BiologicalEdgeAbstract) gea).getFunction();
+			} else if (gea instanceof ContinuousTransition) {
+				function = ((ContinuousTransition) gea).getMaximalSpeed();
 			}
 			fp = new FormularPanel(formular, function, pcListener);
 			fp.setVisible(true);
@@ -327,11 +330,11 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			this.guessKinetic();
 			this.repaintPanel();
 		} else if (e.getActionCommand().equals("setValues")) {
-			if (gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract) {
+			if (gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract || gea instanceof ContinuousTransition) {
 				new ParameterSearcher((BiologicalNodeAbstract) gea, true);
 			}
 		} else if (e.getActionCommand().equals("okButton")) {
-			if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract) {
+			if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
 				// System.out.println("clicked ok");
 				String formular = fp.getFormular();
 				String formularClean = formular.replaceAll("\\s", "");
@@ -351,6 +354,13 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 						bea.setFunction(formular);
 						changed = true;
 					}
+				} else if (gea instanceof ContinuousTransition) {
+					ContinuousTransition t = (ContinuousTransition) gea;
+					String orgClean = t.getMaximalSpeed().replaceAll("\\s", "");
+					if (!orgClean.equals(formularClean)) {
+						t.setMaximalSpeed(formular);
+						changed = true;
+					}
 				}
 				if (changed) {
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -365,11 +375,11 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 
 	private void repaintPanel() {
 		panel.removeAll();
-		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract) {
+		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
 			panel.add(fp, "span 20, wrap");
 		}
 
-		if (gea instanceof DynamicNode) {
+		if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {
 			JButton guessKinetic = new JButton("apply kinetic");
 			guessKinetic.setToolTipText("Applies convenience kinetic");
 			guessKinetic.addActionListener(this);
@@ -424,7 +434,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 	}
 
 	private void guessKinetic() {
-		if (gea instanceof DynamicNode) {
+		if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
 			String kinetic = KineticBuilder.createConvenienceKinetic(bna);
 			formular.setText(kinetic);
