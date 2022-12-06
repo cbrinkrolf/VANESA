@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -82,6 +83,8 @@ public class RuleEditingWindow implements ActionListener {
 	private JTextField elementNameBN = new JTextField(20);
 	private JLabel elementTypePN = new JLabel();
 	private JTextField elementNamePN = new JTextField(20);
+	private JCheckBox exactIncidenceChk = new JCheckBox();
+
 	private GraphElementAbstract gaBN = null;
 	private GraphElementAbstract gaPN = null;
 
@@ -101,6 +104,7 @@ public class RuleEditingWindow implements ActionListener {
 	private Map<GraphElementAbstract, HashMap<String, String>> parameterMapping = new HashMap<GraphElementAbstract, HashMap<String, String>>();
 	private Rule rule = null;
 	private Set<BiologicalEdgeAbstract> consideredEdges = new HashSet<BiologicalEdgeAbstract>();
+	private Set<BiologicalNodeAbstract> exactIncidence = new HashSet<>();
 
 	private JButton chkAllEdgesSelected = new JButton("set all edges");
 	private boolean newRule = false;
@@ -198,12 +202,18 @@ public class RuleEditingWindow implements ActionListener {
 		fillGraphPane(biologicalPanel, new JLabel("Biological graph pattern for matching"));
 		fillGraphPane(petriPanel, new JLabel("Petri net pattern"));
 
+		exactIncidenceChk.setToolTipText("Match exact number of incoming and outgoing edges");
+		exactIncidenceChk.addActionListener(this);
+		exactIncidenceChk.setActionCommand("exactIncidenceChk");
+
 		JPanel elementInformationBN = new JPanel();
 		elementInformationBN.setLayout(new MigLayout("fillx", "[grow,fill]", ""));
-		elementInformationBN.add(new JLabel("Selected element type: "));
+		elementInformationBN.add(new JLabel("Selected element type:"));
 		elementInformationBN.add(elementTypeBN, "wrap");
-		elementInformationBN.add(new JLabel("Selected element name: "));
-		elementInformationBN.add(elementNameBN);
+		elementInformationBN.add(new JLabel("Selected element name:"));
+		elementInformationBN.add(elementNameBN, "wrap");
+		elementInformationBN.add(new JLabel("Match exact incidence:"));
+		elementInformationBN.add(exactIncidenceChk);
 
 		JPanel elementInformationPN = new JPanel();
 		elementInformationPN.setLayout(new MigLayout("fillx", "[grow,fill]", ""));
@@ -410,6 +420,16 @@ public class RuleEditingWindow implements ActionListener {
 				this.deleteBNSelection();
 			} else if (panelName.equals("buttonPN")) {
 				pn.removeSelection();
+			}
+		} else if (e.getActionCommand().equals("exactIncidenceChk")) {
+			PickedState<BiologicalNodeAbstract> vertexState = bn.getGraph().getVisualizationViewer()
+					.getPickedVertexState();
+			if (vertexState.getPicked().size() == 1) {
+				if (exactIncidenceChk.isSelected()) {
+					exactIncidence.add(vertexState.getPicked().iterator().next());
+				} else {
+					exactIncidence.remove(vertexState.getPicked().iterator().next());
+				}
 			}
 		}
 	}
@@ -625,6 +645,7 @@ public class RuleEditingWindow implements ActionListener {
 				if (!pickLock) {
 					if (vertexStateBN.getPicked().size() == 1) {
 						pickLock = true;
+						exactIncidenceChk.setEnabled(true);
 						BiologicalNodeAbstract bna = vertexStateBN.getPicked().iterator().next();
 						if (bnToPn.containsKey(bna)) {
 							vertexStatePN.clear();
@@ -637,10 +658,13 @@ public class RuleEditingWindow implements ActionListener {
 						gaBN = bna;
 						elementTypeBN.setText(bna.getBiologicalElement());
 						elementNameBN.setText(bna.getName());
+						exactIncidenceChk.setSelected(exactIncidence.contains(bna));
 					} else {
 						gaBN = null;
 						elementTypeBN.setText("");
 						elementNameBN.setText("");
+						exactIncidenceChk.setSelected(false);
+						exactIncidenceChk.setEnabled(false);
 					}
 				}
 			}
@@ -657,6 +681,8 @@ public class RuleEditingWindow implements ActionListener {
 					gaBN = null;
 					elementTypeBN.setText("");
 					elementNameBN.setText("");
+					exactIncidenceChk.setSelected(false);
+					exactIncidenceChk.setEnabled(false);
 				}
 			}
 		});
@@ -771,6 +797,9 @@ public class RuleEditingWindow implements ActionListener {
 			bna.setLabel(rn.getName());
 			nameToBN.put(bna.getName(), bna);
 			bn.addVertex(bna, new Point2D.Double(rn.getX(), rn.getY()));
+			if (rn.isExactIncidence()) {
+				exactIncidence.add(bna);
+			}
 			// biologicalNodeBox.addItem(bna.getName());
 		}
 
@@ -914,12 +943,14 @@ public class RuleEditingWindow implements ActionListener {
 							parameterMapping.get(bna).put(param, field.getText().trim());
 						}
 					}
+
 					@Override
 					public void insertUpdate(DocumentEvent e) {
 						if (bna != null) {
 							parameterMapping.get(bna).put(param, field.getText().trim());
 						}
 					}
+
 					@Override
 					public void changedUpdate(DocumentEvent e) {
 						if (bna != null) {
@@ -955,6 +986,7 @@ public class RuleEditingWindow implements ActionListener {
 							parameterMapping.get(bea).put(param, field.getText().trim());
 						}
 					}
+
 					@Override
 					public void insertUpdate(DocumentEvent e) {
 						if (bea != null) {
@@ -962,6 +994,7 @@ public class RuleEditingWindow implements ActionListener {
 							// System.out.println(parameterMapping.get(bea).get(param));
 						}
 					}
+
 					@Override
 					public void changedUpdate(DocumentEvent e) {
 						if (bea != null) {
@@ -980,7 +1013,7 @@ public class RuleEditingWindow implements ActionListener {
 		if (!checkGraphNames()) {
 			return;
 		}
-		
+
 		rule.setName(this.ruleName.getText().trim());
 		rule.getBiologicalNodes().clear();
 		rule.getBiologicalEdges().clear();
@@ -988,7 +1021,7 @@ public class RuleEditingWindow implements ActionListener {
 		rule.getPetriEdges().clear();
 		rule.getBnToPnMapping().clear();
 		rule.getConsideredEdges().clear();
-		
+
 		// forBN
 		BiologicalNodeAbstract bna;
 		RuleNode rn;
@@ -1000,6 +1033,7 @@ public class RuleEditingWindow implements ActionListener {
 			rn.setType(bna.getBiologicalElement());
 			rn.setX(bn.getGraph().getVertexLocation(bna).getX());
 			rn.setY(bn.getGraph().getVertexLocation(bna).getY());
+			rn.setExactIncidence(exactIncidence.contains(bna));
 			rule.addBiologicalNode(rn);
 			bnaToBNRuleNode.put(bna, rn);
 		}
@@ -1067,6 +1101,11 @@ public class RuleEditingWindow implements ActionListener {
 				rule.getConsideredEdges().add(beaToRuleEdge.get(it2.next()));
 			}
 		}
+
+		//for (RuleNode rn1 : rule.getBiologicalNodes()) {
+			// System.out.println(rn1.getName()+ " In: "+rule.getIncomingEdgeCount(rn1) + "
+			// out: "+rule.getOutgoingEdgeCount(rn1));
+		//}
 		frame.setVisible(false);
 	}
 
@@ -1109,7 +1148,7 @@ public class RuleEditingWindow implements ActionListener {
 				for (String key : bna.getTransformationParameters()) {
 					switch (key) {
 					case "name":
-						parameterMapping.get(bna).put(key, "ID_"+bna.getID());
+						parameterMapping.get(bna).put(key, "ID_" + bna.getID());
 						break;
 					case "tokenStart":
 						parameterMapping.get(bna).put(key, ((Place) bna).getTokenStart() + "");

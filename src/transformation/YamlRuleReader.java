@@ -16,10 +16,10 @@ import org.yaml.snakeyaml.constructor.Constructor;
 public class YamlRuleReader {
 
 	private YamlRule testrule = null;
-	
+
 	private Iterable<Object> readYamlRules(File f) {
 		Yaml yaml = new Yaml(new Constructor(YamlRule.class));
-		//File initialFile = new File("src/transformation/test2.yml");
+		// File initialFile = new File("src/transformation/test2.yml");
 		System.out.println("Path for yml file containing transformation rules: " + f.getAbsolutePath());
 		InputStream is;
 		try {
@@ -76,7 +76,7 @@ public class YamlRuleReader {
 			}
 		}
 		// for considered edges
-		for(int i = 0; i<rule.getConsideredEdges().size(); i++){
+		for (int i = 0; i < rule.getConsideredEdges().size(); i++) {
 			r.getConsideredEdges().add(edgeMap.get(rule.getConsideredEdges().get(i)));
 		}
 		return r;
@@ -98,7 +98,7 @@ public class YamlRuleReader {
 				rules.add(rule);
 			}
 		}
-		//writeRules(ymlList);
+		// writeRules(ymlList);
 		return rules;
 	}
 }

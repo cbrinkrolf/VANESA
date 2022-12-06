@@ -264,11 +264,14 @@ public class Transformator {
 		BiologicalNodeAbstract bna;
 		String type;
 		Iterator<BiologicalNodeAbstract> it;
+		RuleNode rn;
+		Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> jungGraph = pw.getGraph().getJungGraph();
 		for (int i = 0; i < r.getBiologicalNodes().size(); i++) {
+			rn = r.getBiologicalNodes().get(i);
 			l = new ArrayList<Integer>();
 
 			if (useBuckets) {
-				type = r.getBiologicalNodes().get(i).getType();
+				type = rn.getType();
 
 				// consider ANY node
 				// if (type.equals(Elementdeclerations.anyBNA)) {
@@ -288,7 +291,15 @@ public class Transformator {
 					bna = it.next();
 					// System.out.println("bna id: "+bna.getID());
 					// if (availableNodes.contains(bna)) {
-					l.add(bna.getID());
+					// TODO check if incident edges match, if strict match
+					if (rn.isExactIncidence()) {
+						if (r.getIncomingEdgeCount(rn) == jungGraph.getInEdges(bna).size()
+								&& r.getOutgoingEdgeCount(rn) == jungGraph.getOutEdges(bna).size()) {
+							l.add(bna.getID());
+						}
+					} else {
+						l.add(bna.getID());
+					}
 					// System.out.println(bna.getID() + " added to perm");
 					// System.out.println(bna.getName() + " added to perm");
 					// }
@@ -296,7 +307,17 @@ public class Transformator {
 				// System.out.println(l.size());
 			} else {
 				for (BiologicalNodeAbstract node : subGraphNodes) {
-					l.add(node.getID());
+					// check exact incidences
+					if (rn.isExactIncidence()) {
+						if (r.getIncomingEdgeCount(rn) == jungGraph.getInEdges(node).size()
+								&& r.getOutgoingEdgeCount(rn) == jungGraph.getOutEdges(node).size()) {
+							l.add(node.getID());
+						}
+					} else {
+						l.add(node.getID());
+					}
+
+					// l.add(node.getID());
 				}
 			}
 			list.add(l);
@@ -969,9 +990,9 @@ public class Transformator {
 				case "name":
 
 					break;
-					
+
 				case "function":
-					
+
 					break;
 				}
 			}

@@ -1288,13 +1288,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 	public void itemStateChanged(ItemEvent event) {
 		// String item = (String) event.getItem();
 		if (ab.isVertex()) {
-
 			JComboBox<String> compartment = (JComboBox<String>) event.getSource();
 			// System.out.println("new: "+compartment.getSelectedItem());
 			Pathway pw = graphInstance.getPathway();
 			// System.out.println(pw.getCompartmentManager().getCompartment(compartment.getSelectedItem().toString()));
 			pw.getCompartmentManager().setCompartment((BiologicalNodeAbstract) ab,
 					pw.getCompartmentManager().getCompartment(compartment.getSelectedItem().toString()));
+
 		}
 	}
 }

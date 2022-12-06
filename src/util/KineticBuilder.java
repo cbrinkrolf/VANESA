@@ -12,9 +12,11 @@ import biologicalObjects.edges.Inhibition;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
 import graph.gui.Parameter;
+import gui.MyPopUp;
 
 public class KineticBuilder {
 
+	// TODO consider only directed edges
 	public static String createConvenienceKinetic(BiologicalNodeAbstract bna) {
 		StringBuilder sb = new StringBuilder();
 		Pathway pw = GraphInstance.getPathwayStatic();
@@ -116,6 +118,7 @@ public class KineticBuilder {
 					weight = Integer.parseInt(bea.getLabel());
 				} catch (Exception e) {
 					e.printStackTrace();
+					MyPopUp.getInstance().show("Parsing Error", "This label cannot be parsed as an integer: "+bea.getLabel()+"\r\n");
 				}
 			}
 			sb.append(" * ");

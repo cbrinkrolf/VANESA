@@ -14,8 +14,9 @@ public class RuleNode {
 	private String type;
 	private double x = 0;
 	private double y = 0;
+	private boolean isExactIncidence;
 	private Map<String, String> parameterMap = new HashMap<>();
-	
-	public RuleNode(){
+
+	public RuleNode() {
 	}
 }

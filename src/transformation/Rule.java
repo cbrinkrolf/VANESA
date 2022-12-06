@@ -189,4 +189,44 @@ public class Rule {
 		}
 		return true;
 	}
+
+	public int getIncomingEdgeCount(RuleNode rn) {
+		int count = 0;
+		if (biologicalNodes.contains(rn)) {
+			for (RuleEdge re : biologicalEdges) {
+				if (rn == re.getTo()) {
+					count++;
+				}
+			}
+		} else if (petriNodes.contains(rn)) {
+			for (RuleEdge re : petriEdges) {
+				if (rn == re.getTo()) {
+					count++;
+				}
+			}
+		} else {
+			System.err.println("RuleNode " + rn.getName() + " not found! Called method: getIncomingEdgeCount");
+		}
+		return count;
+	}
+
+	public int getOutgoingEdgeCount(RuleNode rn) {
+		int count = 0;
+		if (biologicalNodes.contains(rn)) {
+			for (RuleEdge re : biologicalEdges) {
+				if (rn == re.getFrom()) {
+					count++;
+				}
+			}
+		} else if (petriNodes.contains(rn)) {
+			for (RuleEdge re : petriEdges) {
+				if (rn == re.getFrom()) {
+					count++;
+				}
+			}
+		} else {
+			System.err.println("RuleNode " + rn.getName() + " not found! Called method: getOutgoingEdgeCount");
+		}
+		return count;
+	}
 }
