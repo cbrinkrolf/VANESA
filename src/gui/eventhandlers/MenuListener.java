@@ -1106,7 +1106,7 @@ public class MenuListener implements ActionListener {
 			}
 			break;
 		case "ruleManager":
-			new RuleManagementWindow();
+			RuleManagementWindow.getInstance().show();
 			break;
 		case "showPN":
 			if (con.containsPathway()) {
@@ -1133,7 +1133,6 @@ public class MenuListener implements ActionListener {
 			}
 			break;
 		}
-
 	}
 
 	private double[][] initArray(int m, int n) {

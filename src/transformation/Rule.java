@@ -229,4 +229,12 @@ public class Rule {
 		}
 		return count;
 	}
+
+	public boolean isBNEmpty() {
+		return biologicalNodes.isEmpty();
+	}
+
+	public boolean isPNEmpty() {
+		return petriNodes.isEmpty();
+	}
 }

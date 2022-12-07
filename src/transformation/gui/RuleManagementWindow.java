@@ -7,6 +7,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -19,6 +20,7 @@ import javax.swing.JSeparator;
 import javax.swing.WindowConstants;
 
 import gui.MainWindow;
+import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
 import transformation.Rule;
 import transformation.RuleManager;
@@ -40,13 +42,28 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 	private List<Rule> rules;
 
 	private Rule newRule = null;
+	private Rule modRule = null;
 
+	private HashMap<Rule, RuleEditingWindow> rule2Window = new HashMap<>();
+
+	private static RuleManagementWindow intance = null;
 	// private JDialog dialog;
 
 	// private HashMap<JButton, Parameter> parameters = new HashMap<JButton,
 	// Parameter>();
 
-	public RuleManagementWindow() {
+	private RuleManagementWindow() {
+
+	}
+
+	public static synchronized RuleManagementWindow getInstance() {
+		if (RuleManagementWindow.intance == null) {
+			RuleManagementWindow.intance = new RuleManagementWindow();
+		}
+		return RuleManagementWindow.intance;
+	}
+
+	public void show() {
 		frame = new JFrame("Overview of transformation rules");
 		frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		// System.out.println("constr.");
@@ -69,7 +86,7 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 		add = new JButton("add new Rule");
 		add.setActionCommand("add");
 		add.addActionListener(this);
-		
+
 		write = new JButton("write rules to file");
 		write.setActionCommand("write");
 		write.addActionListener(this);
@@ -188,7 +205,7 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 		// System.out.println(e.getActionCommand());
 		if (e.getActionCommand().equals("add")) {
 			newRule = new Rule();
-			new RuleEditingWindow(newRule, this);
+			new RuleEditingWindow(newRule, null, this);
 		} else if (e.getActionCommand().startsWith("del")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(3));
 			rules.remove(idx);
@@ -208,9 +225,9 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 		} else if (e.getActionCommand().startsWith("edit")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
 			// new RuleEditingWindow(this.rules.get(idx));
-			new RuleEditingWindow(this.rules.get(idx), this);
+			modRule = new Rule();
+			rule2Window.put(modRule, new RuleEditingWindow(this.rules.get(idx), modRule, this));
 		} else if (e.getActionCommand().equals("okButton")) {
-
 			frame.setVisible(false);
 		} else if (e.getActionCommand().equals("cancel")) {
 			frame.setVisible(false);
@@ -219,18 +236,25 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 				rules.add(newRule);
 			}
 			newRule = null;
+			modRule = null;
+			this.repaintPanel();
+		} else if (e.getActionCommand().equals("saveCopy")) {
+			if (modRule != null) {
+				rules.add(modRule);
+				modRule = null;
+			}
+			newRule = null;
 			this.repaintPanel();
 		} else if (e.getActionCommand().equals("cancelRE")) {
 			newRule = null;
-		} else if(e.getActionCommand().equals("write")){
+		} else if (e.getActionCommand().equals("write")) {
 			new YamlRuleWriter().writeRules(rules);
 		}
 	}
 
 	private void repaintPanel() {
 		panel.removeAll();
-		
-		
+
 		panel.add(add, "span");
 		panel.add(write, "span,wrap");
 

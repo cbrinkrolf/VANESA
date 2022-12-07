@@ -91,8 +91,9 @@ public class RuleEditingWindow implements ActionListener {
 	private RuleEditingWindowListener listener;
 
 	private JButton cancel = new JButton("cancel");
-	private JButton okButton = new JButton("ok");
-	private JButton[] buttons = { okButton, cancel };
+	private JButton okButton = new JButton("save");
+	private JButton saveCopy = new JButton("save copy");
+	private JButton[] buttons = { okButton, saveCopy, cancel };
 	private JOptionPane optionPane;
 
 	private JButton btnAddMapping = new JButton("add mapping");
@@ -103,21 +104,18 @@ public class RuleEditingWindow implements ActionListener {
 	private Map<BiologicalNodeAbstract, BiologicalNodeAbstract> bnToPn = new HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract>();
 	private Map<GraphElementAbstract, HashMap<String, String>> parameterMapping = new HashMap<GraphElementAbstract, HashMap<String, String>>();
 	private Rule rule = null;
+	private Rule modRule = null;
 	private Set<BiologicalEdgeAbstract> consideredEdges = new HashSet<BiologicalEdgeAbstract>();
 	private Set<BiologicalNodeAbstract> exactIncidence = new HashSet<>();
 
 	private JButton chkAllEdgesSelected = new JButton("set all edges");
-	private boolean newRule = false;
+
 	private boolean pickLock = false;
 
-	public RuleEditingWindow(Rule rule, ActionListener al) {
+	public RuleEditingWindow(Rule rule, Rule modRule, ActionListener al) {
 
-		if (rule != null) {
-			this.rule = rule;
-		} else {
-			rule = new Rule();
-			newRule = true;
-		}
+		this.rule = rule;
+		this.modRule = modRule;
 
 		this.createGraphs();
 		populateGraph();
@@ -277,7 +275,7 @@ public class RuleEditingWindow implements ActionListener {
 		ruleNamePanel.setLayout(new MigLayout("fillx", "[grow,fill]", ""));
 
 		ruleNamePanel.add(new JLabel("Rule name: "));
-		ruleNamePanel.add(ruleName, "align left, span, wrap");
+		ruleNamePanel.add(ruleName, "align left");
 
 		panel.add(ruleNamePanel, "wrap 10");
 		panel.add(new JSeparator(), "growx, span");
@@ -319,6 +317,10 @@ public class RuleEditingWindow implements ActionListener {
 		okButton.addActionListener(this);
 		okButton.setActionCommand("okButtonRE");
 
+		saveCopy.addActionListener(al);
+		saveCopy.addActionListener(this);
+		saveCopy.setActionCommand("saveCopy");
+
 		scrollPane.add(panel);
 		scrollPane.setPreferredSize(new Dimension(1200, 800));
 		scrollPane.setViewportView(panel);
@@ -354,7 +356,9 @@ public class RuleEditingWindow implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if (e.getActionCommand().equals("okButtonRE")) {
-			convertGraphToRule();
+			convertGraphToRule(false);
+		} else if (e.getActionCommand().equals("saveCopy")) {
+			convertGraphToRule(true);
 		} else if (e.getActionCommand().equals("cancelRE")) {
 			frame.setVisible(false);
 		} else if (e.getActionCommand().equals("addMapping")) {
@@ -602,7 +606,7 @@ public class RuleEditingWindow implements ActionListener {
 	private void createGraphs() {
 
 		bn = new Pathway("bn", true);
-		if (newRule) {
+		if (rule.isBNEmpty()) {
 			bn.getGraph().setMouseModeEditing();
 			lblSetEdges.setText("[all edges]");
 		} else {
@@ -613,7 +617,7 @@ public class RuleEditingWindow implements ActionListener {
 
 		pn = new Pathway("petriNet", true);
 		pn.setIsPetriNet(true);
-		if (newRule) {
+		if (rule.isPNEmpty()) {
 			pn.getGraph().setMouseModeEditing();
 		} else {
 			pn.getGraph().setMouseModePick();
@@ -1009,9 +1013,13 @@ public class RuleEditingWindow implements ActionListener {
 		parametersPanel.revalidate();
 	}
 
-	private void convertGraphToRule() {
+	private void convertGraphToRule(boolean copyRule) {
 		if (!checkGraphNames()) {
 			return;
+		}
+
+		if (copyRule) {
+			rule = modRule;
 		}
 
 		rule.setName(this.ruleName.getText().trim());
@@ -1102,10 +1110,10 @@ public class RuleEditingWindow implements ActionListener {
 			}
 		}
 
-		//for (RuleNode rn1 : rule.getBiologicalNodes()) {
-			// System.out.println(rn1.getName()+ " In: "+rule.getIncomingEdgeCount(rn1) + "
-			// out: "+rule.getOutgoingEdgeCount(rn1));
-		//}
+		// for (RuleNode rn1 : rule.getBiologicalNodes()) {
+		// System.out.println(rn1.getName()+ " In: "+rule.getIncomingEdgeCount(rn1) + "
+		// out: "+rule.getOutgoingEdgeCount(rn1));
+		// }
 		frame.setVisible(false);
 	}
 
@@ -1239,5 +1247,9 @@ public class RuleEditingWindow implements ActionListener {
 				+ errorMessage;
 		MyPopUp.getInstance().show("Error saving rule!", errorMessage);
 		return false;
+	}
+
+	public Rule getRule() {
+		return this.rule;
 	}
 }
