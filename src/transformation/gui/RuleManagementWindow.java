@@ -20,7 +20,6 @@ import javax.swing.JSeparator;
 import javax.swing.WindowConstants;
 
 import gui.MainWindow;
-import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
 import transformation.Rule;
 import transformation.RuleManager;
