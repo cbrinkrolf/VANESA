@@ -261,6 +261,13 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 					dn.setMaximalSpeed(text);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
+			} else if(geb instanceof ContinuousTransition){
+				ContinuousTransition ct = (ContinuousTransition) geb;
+				text = ((JTextField) event.getSource()).getText().trim();
+				if (!text.equals("") && !text.equals(ct.getMaximalSpeed())) {
+					ct.setMaximalSpeed(text);
+					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+				}
 			}
 
 		} else if (source.equals("transList")) {
