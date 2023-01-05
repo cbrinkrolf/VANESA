@@ -186,6 +186,7 @@ public class Launch {
 				String database = ResourceLibrary.getSettingsResource("settings.default.database.DAWIS");
 				String database_ppi = ResourceLibrary.getSettingsResource("settings.default.database.PPI");
 				String database_mirna = ResourceLibrary.getSettingsResource("settings.default.database.mirna");
+				String database_mirnaNew = ResourceLibrary.getSettingsResource("settings.default.database.mirna_New");
 
 				String server = ResourceLibrary.getSettingsResource("settings.default.server");
 				String webservice = ResourceLibrary.getSettingsResource("settings.default.webservice.url");
@@ -193,7 +194,8 @@ public class Launch {
 				ConnectionSettings.setDBConnection(new DBconnection(user, password, database, server));
 				ConnectionSettings.getDBConnection().setDawisDBName(database);
 				ConnectionSettings.getDBConnection().setPpiDBName(database_ppi);
-				ConnectionSettings.getDBConnection().setmirnaDBName(database_mirna);
+				ConnectionSettings.getDBConnection().setMirnaDBName(database_mirna);
+				ConnectionSettings.getDBConnection().setMirnaNewDBName(database_mirnaNew);
 
 				ConnectionSettings.setWebServiceUrl(webservice);
 
@@ -203,7 +205,7 @@ public class Launch {
 				try {
 					ConnectionSettings.getDBConnection().checkConnection();
 
-					intro.setLoadingText("DataWarehouse Connection");
+					intro.setLoadingText("Data Warehouse Connection");
 					;
 					// fill data from the remote control (only if database is
 					// reachable)

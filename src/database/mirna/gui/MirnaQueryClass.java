@@ -33,6 +33,7 @@ public class MirnaQueryClass extends QueryMask implements ActionListener{
 	private JRadioButton sourcesAndTargets;
 	private JButton enrichGenes;
 	private JButton enrichMirnas;
+	private JCheckBox mirnaNew;
 	
 	
 	public MirnaQueryClass(DatabaseWindow dw) {
@@ -48,6 +49,9 @@ public class MirnaQueryClass extends QueryMask implements ActionListener{
 		sequences = new JTextField(20);
 		hsaOnly = new JCheckBox("human only");
 		hsaOnly.setSelected(true);
+		
+		mirnaNew = new JCheckBox("new Data");
+		mirnaNew.setToolTipText("new and experimental data (2022)");
 		
 		typeGroup = new ButtonGroup();
 		sources = new JRadioButton("sources");
@@ -100,6 +104,7 @@ public class MirnaQueryClass extends QueryMask implements ActionListener{
 		p.add(sources, "flowx, span, split 3");
 		p.add(targets);
 		p.add(sourcesAndTargets, "wrap");
+		p.add(mirnaNew, "span 1");
 		p.add(enrichGenes, "flowx, span, split 3");
 		p.add(enrichMirnas, "wrap");
 
@@ -145,6 +150,10 @@ public class MirnaQueryClass extends QueryMask implements ActionListener{
 	
 	public boolean isTargetsSelected(){
 		return (sourcesAndTargets.isSelected() || targets.isSelected());
+	}
+	
+	public boolean isMirnaNew(){
+		return this.mirnaNew.isSelected();
 	}
 
 	@Override

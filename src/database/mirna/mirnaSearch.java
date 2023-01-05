@@ -29,8 +29,9 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 	private boolean hsaOnly;
 	private boolean isSources;
 	private boolean isTargets;
+	private boolean mirnaNew;
 
-	public mirnaSearch(String[] input, boolean hsaOnly, boolean headless, boolean sources, boolean targets) {
+	public mirnaSearch(String[] input, boolean hsaOnly, boolean headless, boolean sources, boolean targets, boolean mirnaNew) {
 
 		name = input[0];
 		acc = input[1];
@@ -42,6 +43,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 		this.headless = headless;
 		this.isSources = sources;
 		this.isTargets = targets;
+		this.mirnaNew = mirnaNew;
 
 	}
 
@@ -49,33 +51,33 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 
 		if (sequence.length() > 0 && acc.length() > 0 && name.length() > 0) {
 			String[] parameters = { "%" + sequence + "%", "%" + acc + "%", "%" + name + "%" };
-			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_all, parameters);
+			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_all, parameters, mirnaNew);
 		} else if (sequence.length() > 0 && acc.length() > 0) {
 			String[] parameters = { "%" + sequence + "%", "%" + acc + "%" };
-			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_sequence_acc, parameters);
+			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_sequence_acc, parameters, mirnaNew);
 		} else if (sequence.length() > 0 && name.length() > 0) {
 			String[] parameters = { "%" + sequence + "%", "%" + name + "%" };
-			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_sequence_name, parameters);
+			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_sequence_name, parameters, mirnaNew);
 		} else if (acc.length() > 0 && name.length() > 0) {
 			String[] parameters = { "%" + acc + "%", "%" + name + "%" };
-			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_acc_name, parameters);
+			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_acc_name, parameters, mirnaNew);
 		} else if (sequence.length() > 0) {
 
 			String[] parameters = { "%" + sequence + "%" };
-			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_onlySequence, parameters);
+			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_onlySequence, parameters, mirnaNew);
 
 		} else if (acc.length() > 0) {
 
 			String[] parameters = { "%" + acc + "%" };
-			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_onlyAccession, parameters);
+			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_onlyAccession, parameters, mirnaNew);
 
 		} else if (name.length() > 0) {
 			String[] parameters = { "%" + name + "%" };
-			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_onlyName, parameters);
+			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_onlyName, parameters, mirnaNew);
 
 		} else if (gene.length() > 0) {
 			String[] parameters = { "%" + gene + "%" };
-			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_onlyGene, parameters);
+			return new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, miRNAqueries.miRNA_onlyGene, parameters, mirnaNew);
 
 		}
 
@@ -131,7 +133,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 							// System.out.println(finalQueryString);
 						}
 
-						resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
+						resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString, mirnaNew);
 						// System.out.println("s: "+resultsDBSearch.size());
 
 						if (resultsDBSearch.size() > 0) {
@@ -215,7 +217,7 @@ public class mirnaSearch extends SwingWorker<Object, Object> {
 							// System.out.println(finalQueryString);
 						}
 
-						resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
+						resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString, mirnaNew);
 						if (resultsDBSearch.size() > 0) {
 							count += resultsDBSearch.size();
 							Pathway pw = new CreatePathway(database + " network for " + name).getPathway();

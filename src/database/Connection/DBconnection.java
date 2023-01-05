@@ -20,6 +20,7 @@ public class DBconnection {
 	private String dawisDBName = new String();
 	private String ppiDBName = new String();
 	private String mirnaDBName = new String();
+	private String mirnaNewDBName = new String();
 
 	public DBconnection(String user, String password, String database, String server) {
 		this.user = user;
@@ -189,21 +190,23 @@ public class DBconnection {
 		return ppiDBName;
 	}
 
-	/**
-	 * @param ppiDBName the ppiDBName to set
-	 */
 	public void setPpiDBName(String ppiDBName) {
 		this.ppiDBName = ppiDBName;
 	}
 
-	public String getmirnaDBName() {
+	public String getMirnaDBName() {
 		return mirnaDBName;
 	}
 
-	/**
-	 * @param ppiDBName the ppiDBName to set
-	 */
-	public void setmirnaDBName(String mirnaDBName) {
+	public void setMirnaDBName(String mirnaDBName) {
 		this.mirnaDBName = mirnaDBName;
+	}
+
+	public String getMirnaNewDBName() {
+		return mirnaNewDBName;
+	}
+
+	public void setMirnaNewDBName(String mirnaNewDBName) {
+		this.mirnaNewDBName = mirnaNewDBName;
 	}
 }

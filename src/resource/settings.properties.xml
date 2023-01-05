@@ -15,6 +15,7 @@
 	<entry key="settings.default.database.DAWIS">dawismd</entry>
 	<entry key="settings.default.database.PPI">ppi_db</entry>
 	<entry key="settings.default.database.mirna">db_mirna5</entry>
+	<entry key="settings.default.database.mirna_New">db_mirna6</entry>
 	
 <!-- alternativ: http://tunicata.techfak... -->
 	<entry key="settings.default.webservice.url">http://tunicata.techfak.uni-bielefeld.de/webservice/db</entry>

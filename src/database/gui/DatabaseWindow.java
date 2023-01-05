@@ -165,4 +165,8 @@ public class DatabaseWindow {
 	public boolean isSourcesMirna() {
 		return mirna.isSourcesSelected();
 	}
+	
+	public boolean isMirnaNew(){
+		return mirna.isMirnaNew();
+	}
 }
