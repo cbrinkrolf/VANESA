@@ -119,7 +119,7 @@ public class PetriNetSimulation implements ActionListener {
 		MainWindow w = MainWindow.getInstance();
 		flags = pw.getChangedFlags("petriNetSim");
 		logAndShow("Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
-				+ menu.getIntegrator() + ", forced rebuild=" + menu.isForceRebuild());
+				+ menu.getSolver() + ", forced rebuild=" + menu.isForceRebuild());
 		if (!installationChecked) {
 			installationChecked = this.checkInstallation();
 			if (!installationChecked) {
@@ -214,10 +214,10 @@ public class PetriNetSimulation implements ActionListener {
 								// String program = "_omcQuot_556E7469746C6564";
 								logAndShow("override statement: " + override);
 								if (noEmmit) {
-									pb.command(simName, "-s=" + menu.getIntegrator(), override, "-nls=newton",
+									pb.command(simName, "-s=" + menu.getSolver(), override, "-nls=newton",
 											"-port=" + port, "-noEventEmit", "-lv=LOG_STATS");
 								} else {
-									pb.command(simName, "-s=" + menu.getIntegrator(), override, "-nls=newton",
+									pb.command(simName, "-s=" + menu.getSolver(), override, "-nls=newton",
 											"-port=" + port, "-lv=LOG_STATS");
 								}
 								pb.redirectOutput();

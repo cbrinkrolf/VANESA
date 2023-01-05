@@ -67,8 +67,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private MyJFormattedTextField startTxt;
 	private MyJFormattedTextField stopTxt;
 	private MyJFormattedTextField intervalsTxt;
-	private JLabel integratorsLbl = new JLabel("Integartor:");
-	private JComboBox<String> integrators;
+	private JLabel solversLbl = new JLabel("Solver:");
+	private JComboBox<String> solvers;
 	private JLabel simLibLbl = new JLabel("Simlation library");
 	private JComboBox<String> simLibs;
 	private JPanel west = new JPanel();
@@ -133,14 +133,14 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		// northUp.setLayout(new GridLayout(1,5));
 		// northDown.setLayout();
-		integrators = new JComboBox<String>();
+		solvers = new JComboBox<String>();
 		Map<String, String> solverMap = getSolverToolTips();
 		ToolTipListCellRenderer toolTipsRenderer = new ToolTipListCellRenderer(solverMap);
-		integrators.setRenderer(toolTipsRenderer);
-		AutoCompleteDecorator.decorate(integrators);
+		solvers.setRenderer(toolTipsRenderer);
+		AutoCompleteDecorator.decorate(solvers);
 
-		integrators.addItem("dassl");
-		integrators.addItem("cvode");
+		solvers.addItem("dassl");
+		solvers.addItem("cvode");
 		
 		List<String> listSolver = new ArrayList<>();
 		for (String k : solverMap.keySet()) {
@@ -154,10 +154,10 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		}
 		Collections.sort(listSolver);
 		for(String s : listSolver){
-			integrators.addItem(s);
+			solvers.addItem(s);
 		}
 		
-		integrators.setSelectedItem("dassl");
+		solvers.setSelectedItem("dassl");
 
 		simLibs = new JComboBox<String>();
 		simLibs.addItem("PNlib (default)");
@@ -206,6 +206,9 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		numbers = new JTextField();
 		numbers.setColumns(5);
+		
+		solversLbl.setToolTipText("numerical solver");
+		intervalsLbl.setToolTipText("number of returned time steps");
 
 		northUp.add(start);
 		northUp.add(stop);
@@ -217,8 +220,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		northMiddle.add(stopTxt);
 		northMiddle.add(intervalsLbl);
 		northMiddle.add(intervalsTxt);
-		northMiddle.add(integratorsLbl);
-		northMiddle.add(integrators);
+		northMiddle.add(solversLbl);
+		northMiddle.add(solvers);
 		northMiddle.add(simLibLbl);
 		northMiddle.add(simLibs);
 		northMiddle.add(forceRebuild);
@@ -416,8 +419,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		return 100;
 	}
 
-	public String getIntegrator() {
-		return (String) this.integrators.getSelectedItem();
+	public String getSolver() {
+		return (String) this.solvers.getSelectedItem();
 	}
 
 	public void setLibs(List<File> libs) {
