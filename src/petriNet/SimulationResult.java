@@ -108,6 +108,7 @@ public class SimulationResult {
 
 	public void refineEdgeFlow(Set<PNArc> edges) {
 		// so far only for edges connecting discrete transition (not yet stochastic)
+		// TODO proper calculation of delay (based on returned values of delay from simulation, esp. if delay is not a constant value, use .putDelay for stoch. Trans.
 		Iterator<PNArc> it = edges.iterator();
 
 		PNArc e;
@@ -117,7 +118,7 @@ public class SimulationResult {
 		double currentToken = 0;
 		int revisedTime = 0;
 		Series sum;
-
+		//System.out.println("refining edge flow");
 		while (it.hasNext()) {
 			e = it.next();
 			if (e.getFrom() instanceof DiscreteTransition) {
@@ -127,7 +128,7 @@ public class SimulationResult {
 			} else {
 				continue;
 			}
-
+			// System.out.println("refine: "+e.getFrom().getName()+" -> "+e.getTo().getName() );
 			if (result.contains(e, SimulationResultController.SIM_SUM_OF_TOKEN)
 					&& result.get(e, SimulationResultController.SIM_SUM_OF_TOKEN).size() > 0
 					&& !result.contains(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW)) {

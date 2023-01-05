@@ -505,17 +505,19 @@ public class PetriNetSimulation implements ActionListener {
 		int vars = 0;
 		while (it.hasNext()) {
 			bna = it.next();
-			if (bna instanceof Place && !bna.isLogical()) {
-				filter += "'" + bna.getName() + "'.t|";
-				vars++;
-			} else if (bna instanceof Transition) {
-				if (bna instanceof ContinuousTransition) {
-					filter += "'" + bna.getName() + "'.fire|";
-					filter += "'" + bna.getName() + "'.actualSpeed|";
-					vars += 2;
-				} else {
-					filter += "'" + bna.getName() + "'.active|";
+			if (!bna.isLogical()) {
+				if (bna instanceof Place) {
+					filter += "'" + bna.getName() + "'.t|";
 					vars++;
+				} else if (bna instanceof Transition) {
+					if (bna instanceof ContinuousTransition) {
+						filter += "'" + bna.getName() + "'.fire|";
+						filter += "'" + bna.getName() + "'.actualSpeed|";
+						vars += 2;
+					} else {
+						filter += "'" + bna.getName() + "'.active|";
+						vars++;
+					}
 				}
 			}
 		}

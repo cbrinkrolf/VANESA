@@ -76,6 +76,7 @@ public class Server {
 				Socket client;
 				DataInputStream is;
 				while (running) {
+					//System.out.println("ruuuuuuuuuuuuuuuuuunning");
 					try {
 						boolean boundCorrectly = false;
 						while (!boundCorrectly && running) {
@@ -105,12 +106,14 @@ public class Server {
 							// schreibeNachricht(client, nachricht);
 
 						}
+						//System.out.println("hieeeer bin ich");
 					} catch (IOException e) {
 						running = false;
 						// System.err.println("Unable to process client request");
 						e.printStackTrace();
 					}
 				}
+				//System.out.println("ruuuuuuuuuuuuuuuuuunning");
 				simResult.refineEdgeFlow(toRefineEdges);
 			}
 		};
