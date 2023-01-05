@@ -12,9 +12,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -132,16 +134,29 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		// northUp.setLayout(new GridLayout(1,5));
 		// northDown.setLayout();
 		integrators = new JComboBox<String>();
+		Map<String, String> solverMap = getSolverToolTips();
+		ToolTipListCellRenderer toolTipsRenderer = new ToolTipListCellRenderer(solverMap);
+		integrators.setRenderer(toolTipsRenderer);
 		AutoCompleteDecorator.decorate(integrators);
+
 		integrators.addItem("dassl");
-		integrators.addItem("euler");
-		integrators.addItem("lobatto2");
-		integrators.addItem("lobatto4");
-		integrators.addItem("lobatto6");
-		integrators.addItem("radau5");
-		integrators.addItem("radau3");
-		integrators.addItem("radau1");
-		integrators.addItem("rungekutta");
+		integrators.addItem("cvode");
+		
+		List<String> listSolver = new ArrayList<>();
+		for (String k : solverMap.keySet()) {
+			if (k.equals("dassl")) {
+				continue;
+			} else if (k.equals("cvode")) {
+				continue;
+			}
+			listSolver.add(k);
+
+		}
+		Collections.sort(listSolver);
+		for(String s : listSolver){
+			integrators.addItem(s);
+		}
+		
 		integrators.setSelectedItem("dassl");
 
 		simLibs = new JComboBox<String>();
@@ -607,5 +622,29 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	public BiologicalNodeAbstract getSelectedNode() {
 		return this.selectedNode;
+	}
+
+	public Map<String, String> getSolverToolTips() {
+		// Solver for 1.20.0 stable release
+		Map<String, String> map = new HashMap<>();
+		map.put("euler", "euler - Euler - explicit, fixed step size, order 1");
+		map.put("heun", "heun - Heun's method - explicit, fixed step, order 2");
+		map.put("rungekutta", "rungekutta - classical Runge-Kutta - explicit, fixed step, order 4");
+		map.put("impeuler", "impeuler - Euler - implicit, fixed step size, order 1");
+		map.put("trapezoid", "trapezoid - trapezoidal rule - implicit, fixed step size, order 2");
+		map.put("imprungekutta",
+				"imprungekutta - Runge-Kutta methods based on Radau and Lobatto IIA - implicit, fixed step size, order 1-6(selected manually by flag -impRKOrder)");
+		map.put("gbode", "gbode - generic bi-rate ODE solver - implicit, explicit, step size control, arbitrary order");
+		map.put("irksco", "irksco - own developed Runge-Kutta solver - implicit, step size control, order 1-2");
+		map.put("dassl", "dassl - default solver - BDF method - implicit, step size control, order 1-5");
+		map.put("ida",
+				"ida - SUNDIALS IDA solver - BDF method with sparse linear solver - implicit, step size control, order 1-5");
+		map.put("cvode",
+				"cvode - experimental implementation of SUNDIALS CVODE solver - BDF or Adams-Moulton method - step size control, order 1-12");
+		map.put("rungekuttaSsc",
+				"rungekuttaSsc - Runge-Kutta based on Novikov (2016) - explicit, step size control, order 4-5 [experimental]");
+		map.put("qss", "qss - A QSS solver [experimental]");
+		map.put("optimization", "optimization - Special solver for dynamic optimization");
+		return map;
 	}
 }
