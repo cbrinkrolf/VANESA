@@ -802,7 +802,11 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					graphInstance.getPathway().getPetriNetSimulation().showMenu();
+				} else {
+					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
+			} else {
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case "dataMappingColor":
@@ -822,7 +826,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case "createDoc":
 			MyPopUp.getInstance().show("Latex generation", "Generation in progress, it will take a short moment!");
-			String docDir = VanesaUtility.getWorkingDirectoryPath()+File.separator + "documentation" + File.separator;
+			String docDir = VanesaUtility.getWorkingDirectoryPath() + File.separator + "documentation" + File.separator;
 			File dir = new File(docDir);
 
 			if (!dir.isDirectory()) {

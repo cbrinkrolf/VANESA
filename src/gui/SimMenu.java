@@ -57,8 +57,9 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private JLabel time = new JLabel("Time: -");
 	private JTextArea textArea = new JTextArea(20, 80);
 	private JPanel north = new JPanel();
-	private JPanel northUp = new JPanel();
-	private JPanel northMiddle = new JPanel();
+	private JPanel controlsPanel = new JPanel();
+	private JPanel basicOptionsPanel = new JPanel();
+	private JPanel advancedOptionsPanel = new JPanel();
 	private JPanel parametrizedPanel = new JPanel();
 	private JScrollPane scrollPane = new JScrollPane(textArea);
 	private JLabel startLbl = new JLabel("Start:");
@@ -69,10 +70,18 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private MyJFormattedTextField intervalsTxt;
 	private JLabel solversLbl = new JLabel("Solver:");
 	private JComboBox<String> solvers;
-	private JLabel simLibLbl = new JLabel("Simlation library");
+	private JLabel toleranceLbl = new JLabel("Tolerance:");
+	private MyJFormattedTextField tolerance;
+	private JLabel simLibLbl = new JLabel("Simlation library:");
 	private JComboBox<String> simLibs;
 	private JPanel west = new JPanel();
 	private JCheckBox forceRebuild = new JCheckBox("force rebuild");
+
+	private JLabel seedLbl = new JLabel("Global seed:");
+	private MyJFormattedTextField seedTxt;
+	private JCheckBox seedChk = new JCheckBox("random");
+
+	private JCheckBox advancedOptions = new JCheckBox("advanced options");
 	private JCheckBox parameterized = new JCheckBox("parameterized simulation");
 
 	private BiologicalNodeAbstract selectedNode = null;
@@ -124,11 +133,17 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		stopTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 
 		intervalsTxt = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
-		intervalsTxt.setText("100");
+		intervalsTxt.setText("500");
 		intervalsTxt.setColumns(5);
 		intervalsTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		// intervalsTxt.get
 		// nf.parse(source)
+
+		seedTxt = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+		seedTxt.setText("42");
+		seedTxt.setColumns(5);
+		seedTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+
 		textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 
 		// northUp.setLayout(new GridLayout(1,5));
@@ -141,7 +156,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		solvers.addItem("dassl");
 		solvers.addItem("cvode");
-		
+
 		List<String> listSolver = new ArrayList<>();
 		for (String k : solverMap.keySet()) {
 			if (k.equals("dassl")) {
@@ -153,11 +168,19 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		}
 		Collections.sort(listSolver);
-		for(String s : listSolver){
+		for (String s : listSolver) {
 			solvers.addItem(s);
 		}
-		
+
 		solvers.setSelectedItem("dassl");
+
+		toleranceLbl.setToolTipText("numerical tolerance of solver, default: 1E-8");
+
+		tolerance = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+		tolerance.setText("0.00000001");
+		tolerance.setColumns(10);
+		tolerance.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+		tolerance.setEnabled(true);
 
 		simLibs = new JComboBox<String>();
 		simLibs.addItem("PNlib (default)");
@@ -170,9 +193,22 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		this.setLayout(new BorderLayout());
 		this.stop.setEnabled(false);
 
+		advancedOptions.setActionCommand("advancedOptions");
+		advancedOptions.setToolTipText("Show advanced simulation options");
+		advancedOptions.addActionListener(this);
+
+		if (MainWindow.developer) {
+			advancedOptions.setSelected(true);
+		}
+
 		parameterized.setActionCommand("parameterized");
 		parameterized.setToolTipText("Experimental parameterized simulation. Runs in single thread so far!");
 		parameterized.addActionListener(this);
+
+		seedChk.setActionCommand("seed");
+		seedChk.setToolTipText(
+				"Set random global seed, requires force rebuild for each simulation run to be effective!");
+		seedChk.addActionListener(this);
 
 		selectedNodeGroup.add(radioPlace);
 		selectedNodeGroup.add(radioTransition);
@@ -206,34 +242,35 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		numbers = new JTextField();
 		numbers.setColumns(5);
-		
+
 		solversLbl.setToolTipText("numerical solver");
 		intervalsLbl.setToolTipText("number of returned time steps");
 
-		northUp.add(start);
-		northUp.add(stop);
-		northUp.add(time);
-		northUp.add(status);
-		northMiddle.add(startLbl);
-		northMiddle.add(startTxt);
-		northMiddle.add(stopLbl);
-		northMiddle.add(stopTxt);
-		northMiddle.add(intervalsLbl);
-		northMiddle.add(intervalsTxt);
-		northMiddle.add(solversLbl);
-		northMiddle.add(solvers);
-		northMiddle.add(simLibLbl);
-		northMiddle.add(simLibs);
-		northMiddle.add(forceRebuild);
+		controlsPanel.add(start);
+		controlsPanel.add(stop);
+		controlsPanel.add(time);
+		controlsPanel.add(status);
+		basicOptionsPanel.add(startLbl);
+		basicOptionsPanel.add(startTxt);
+		basicOptionsPanel.add(stopLbl);
+		basicOptionsPanel.add(stopTxt);
+		basicOptionsPanel.add(intervalsLbl);
+		basicOptionsPanel.add(intervalsTxt);
 
-		northMiddle.add(parameterized);
+		basicOptionsPanel.add(forceRebuild);
+		basicOptionsPanel.add(advancedOptions);
+
+		// advancedOptionsPanel.add(parametrizedPanel);
 
 		this.add(north, BorderLayout.NORTH);
-		north.setLayout(new GridLayout(3, 1));
-		north.add(northUp);
-		north.add(northMiddle);
-		north.add(parametrizedPanel);
+		north.setLayout(new GridLayout(4, 1));
+		north.add(controlsPanel);
+		north.add(basicOptionsPanel);
+		// north.add(northDown);
+		// north.add(parametrizedPanel);
 		west.setLayout(new MigLayout());
+
+		this.revalidateAdvancedPanel();
 
 		this.updateSimulationResults();
 
@@ -280,12 +317,58 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		parametrizedPanel.revalidate();
 		// north.repaint();
 		// north.revalidate();
+		// north.repaint();
 		// this.revalidate();
 		// this.repaint();
 		// this.revalidate();
-		// this.pack();
+		this.pack();
 		// System.out.println("painted");
+		this.repaint();
+	}
+
+	private void revalidateAdvancedPanel() {
+		advancedOptionsPanel.removeAll();
+
+		if (this.advancedOptions.isSelected()) {
+			north.add(advancedOptionsPanel);
+			advancedOptionsPanel.add(solversLbl);
+			advancedOptionsPanel.add(solvers);
+			advancedOptionsPanel.add(toleranceLbl);
+			advancedOptionsPanel.add(tolerance);
+			advancedOptionsPanel.add(simLibLbl);
+			advancedOptionsPanel.add(simLibs);
+			advancedOptionsPanel.add(seedLbl);
+			advancedOptionsPanel.add(seedTxt);
+			advancedOptionsPanel.add(seedChk);
+			advancedOptionsPanel.add(parameterized);
+			revalidateParametrizedPanel();
+
+		} else {
+			advancedOptionsPanel.setSize(1, 1);
+			north.remove(advancedOptionsPanel);
+			north.remove(parametrizedPanel);
+		}
+		// parametrizedPanel.repaint();
+
+		north.revalidate();
+		advancedOptionsPanel.revalidate();
+		advancedOptionsPanel.repaint();
+		// north.repaint();
+		// north.revalidate();
+		// this.revalidate();
 		// this.repaint();
+		// this.revalidate();
+		this.pack();
+		// System.out.println("painted");
+		this.repaint();
+	}
+
+	private void revalidateSeed() {
+		if (this.seedChk.isSelected()) {
+			seedTxt.setEnabled(false);
+		} else {
+			seedTxt.setEnabled(true);
+		}
 	}
 
 	private void fillNodeComboBox() {
@@ -416,11 +499,19 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		if (number != null) {
 			return number.intValue();
 		}
-		return 100;
+		return 500;
 	}
 
 	public String getSolver() {
 		return (String) this.solvers.getSelectedItem();
+	}
+
+	public double getTolerance() {
+		Number number = (Number) tolerance.getValue();
+		if (number != null) {
+			return number.doubleValue();
+		}
+		return 0.00000001;
 	}
 
 	public void setLibs(List<File> libs) {
@@ -565,8 +656,12 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			int idx = Integer.parseInt(e.getActionCommand().substring(7));
 			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
 			new SaveDialog(SaveDialog.FORMAT_CSV, null, this, simId);
+		} else if ("advancedOptions".equals(e.getActionCommand())) {
+			revalidateAdvancedPanel();
 		} else if ("parameterized".equals(e.getActionCommand())) {
 			revalidateParametrizedPanel();
+		} else if ("seed".equals(e.getActionCommand())) {
+			revalidateSeed();
 		} else if ("nodeSelected".equals(e.getActionCommand())) {
 			this.fillNodeComboBox();
 		}
@@ -625,6 +720,18 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	public BiologicalNodeAbstract getSelectedNode() {
 		return this.selectedNode;
+	}
+
+	public boolean isRandomGlobalSeed() {
+		return seedChk.isSelected();
+	}
+
+	public int getGlobalSeed() {
+		Number number = (Number) seedTxt.getValue();
+		if (number != null) {
+			return number.intValue();
+		}
+		return 42;
 	}
 
 	public Map<String, String> getSolverToolTips() {

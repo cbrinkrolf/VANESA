@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
@@ -90,14 +91,21 @@ public class MOoutput {
 	private int inhibitCount = 0;
 	private int testArcCount = 0;
 
+	private boolean randomGlobalSeed = false;
+	private int globalSeed = 42;
+
 	public MOoutput(OutputStream os, Pathway pathway, boolean colored) {
-		this(os, pathway, null, colored);
+		this(os, pathway, null, colored, false, 0);
 	}
 
-	public MOoutput(OutputStream os, Pathway pathway, String packageInfo, boolean colored) {
+	public MOoutput(OutputStream os, Pathway pathway, String packageInfo, boolean colored, boolean randomGlobalSeed,
+			int globalSeed) {
 		this.init();
 		this.packageInfo = packageInfo;
 		this.colored = colored;
+		this.randomGlobalSeed = randomGlobalSeed;
+		this.globalSeed = globalSeed;
+
 		if (debug) {
 			System.out.println("MOoutput(File " + pathway.getName() + " Pathway " + pathway + ")");
 		}
@@ -203,9 +211,20 @@ public class MOoutput {
 
 		// globalSeed influences stochastic transitions and conflict solving
 		// strategy: probability
-		sb.append(INDENT + "inner " + PNlibSettings
-				+ " settings(showTokenFlow = true, globalSeed=42) annotation(Placement(visible=true, transformation(origin={"
-				+ (minX - 30) + ", " + (maxY + 30) + "}, extent={{-20, -20}, {20, 20}}, rotation=0)));" + ENDL);
+
+		String seed = "";
+
+		if (this.randomGlobalSeed) {
+			seed = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE) + "";
+		}
+
+		else {
+			seed = this.globalSeed + "";
+		}
+
+		sb.append(INDENT + "inner " + PNlibSettings + " settings(showTokenFlow = true, globalSeed=" + seed
+				+ ") annotation(Placement(visible=true, transformation(origin={" + (minX - 30) + ", " + (maxY + 30)
+				+ "}, extent={{-20, -20}, {20, 20}}, rotation=0)));" + ENDL);
 		// }
 		sb.append(parametersSB.toString());
 		sb.append(componentsSB.toString());

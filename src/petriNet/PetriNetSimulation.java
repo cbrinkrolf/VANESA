@@ -113,13 +113,14 @@ public class PetriNetSimulation implements ActionListener {
 		long zstNachher;
 		Double stopTime = menu.getStopValue();
 		int intervals = menu.getIntervals();
+		Double tolerance = menu.getTolerance();
 
 		System.out.println("simNameOld: " + simName);
 		System.out.println("port: " + port);
 		MainWindow w = MainWindow.getInstance();
 		flags = pw.getChangedFlags("petriNetSim");
 		logAndShow("Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
-				+ menu.getSolver() + ", forced rebuild=" + menu.isForceRebuild());
+				+ menu.getSolver() + "tolerance=" + tolerance + ", forced rebuild=" + menu.isForceRebuild());
 		if (!installationChecked) {
 			installationChecked = this.checkInstallation();
 			if (!installationChecked) {
@@ -144,6 +145,7 @@ public class PetriNetSimulation implements ActionListener {
 					pw.getPetriPropertiesNet().setPetriNetSimulation(true);
 
 					System.out.println("stop: " + stopTime);
+					System.out.println("tolerance: " + tolerance);
 					Thread simulationThread = new Thread() {
 
 						public void run() {
@@ -157,7 +159,7 @@ public class PetriNetSimulation implements ActionListener {
 								}
 
 								override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize="
-										+ stopTime / intervals + ",tolerance=0.0001";
+										+ stopTime / intervals + ",tolerance=" + tolerance;
 								if (flags.isParameterChanged()) {
 
 									Iterator<Parameter> it = pw.getChangedParameters().keySet().iterator();
@@ -597,7 +599,7 @@ public class PetriNetSimulation implements ActionListener {
 						packageInfo = "import PNlib = " + simLib.getName() + ";";
 					}
 					MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim + "simulation.mo")), pw,
-							packageInfo, false);
+							packageInfo, false, menu.isRandomGlobalSeed(), menu.getGlobalSeed());
 					bea2key = mo.getBea2resultkey();
 					//
 
