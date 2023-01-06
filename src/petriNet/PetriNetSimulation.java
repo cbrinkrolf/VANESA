@@ -121,8 +121,21 @@ public class PetriNetSimulation implements ActionListener {
 		System.out.println("port: " + port);
 		MainWindow w = MainWindow.getInstance();
 		flags = pw.getChangedFlags("petriNetSim");
+		
+		String seed;
+
+		if (menu.isRandomGlobalSeed()) {
+			seed = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE) + "";
+		}
+
+		else {
+			seed = menu.getGlobalSeed() + "";
+
+		}
+		
+		
 		logAndShow("Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
-				+ menu.getSolver() + "tolerance=" + tolerance + ", forced rebuild=" + menu.isForceRebuild());
+				+ menu.getSolver() + ", tolerance=" + tolerance + ", seed="+seed+", forced rebuild=" + menu.isForceRebuild());
 		if (!installationChecked) {
 			installationChecked = this.checkInstallation();
 			if (!installationChecked) {
@@ -158,17 +171,6 @@ public class PetriNetSimulation implements ActionListener {
 								String override = "";
 								if (SystemUtils.IS_OS_WINDOWS) {
 									override += "\"";
-								}
-
-								String seed = "";
-
-								if (menu.isRandomGlobalSeed()) {
-									seed = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE) + "";
-								}
-
-								else {
-									seed = menu.getGlobalSeed() + "";
-
 								}
 
 								override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize="
