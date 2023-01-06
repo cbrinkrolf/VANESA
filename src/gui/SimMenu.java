@@ -77,7 +77,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private JPanel west = new JPanel();
 	private JCheckBox forceRebuild = new JCheckBox("force rebuild");
 
-	private JLabel seedLbl = new JLabel("Global seed:");
+	private JLabel seedLbl = new JLabel("Seed:");
 	private MyJFormattedTextField seedTxt;
 	private JCheckBox seedChk = new JCheckBox("random");
 
@@ -205,9 +205,10 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		parameterized.setToolTipText("Experimental parameterized simulation. Runs in single thread so far!");
 		parameterized.addActionListener(this);
 
+		seedLbl.setToolTipText("Seed for stochastic processes");
+
 		seedChk.setActionCommand("seed");
-		seedChk.setToolTipText(
-				"Set random global seed, requires force rebuild for each simulation run to be effective!");
+		seedChk.setToolTipText("Set random seed for stochastic processes");
 		seedChk.addActionListener(this);
 
 		selectedNodeGroup.add(radioPlace);

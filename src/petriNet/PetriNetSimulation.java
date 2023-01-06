@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JOptionPane;
 
@@ -34,6 +35,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.ChangedFlags;
@@ -158,8 +160,19 @@ public class PetriNetSimulation implements ActionListener {
 									override += "\"";
 								}
 
+								String seed = "";
+
+								if (menu.isRandomGlobalSeed()) {
+									seed = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE) + "";
+								}
+
+								else {
+									seed = menu.getGlobalSeed() + "";
+
+								}
+
 								override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize="
-										+ stopTime / intervals + ",tolerance=" + tolerance;
+										+ stopTime / intervals + ",tolerance=" + tolerance + ",seed=" + seed;
 								if (flags.isParameterChanged()) {
 
 									Iterator<Parameter> it = pw.getChangedParameters().keySet().iterator();
@@ -185,7 +198,7 @@ public class PetriNetSimulation implements ActionListener {
 									while (it.hasNext()) {
 										p = it.next();
 										d = pw.getChangedInitialValues().get(p);
-										override += ",'" + p.getName() + "'.startMarks=" + d;
+										override += ",'" + p.getName() + "'.start" + getMarksOrTokens(p) + "=" + d;
 									}
 								}
 
@@ -198,10 +211,12 @@ public class PetriNetSimulation implements ActionListener {
 										p = it.next();
 										b = pw.getChangedBoundaries().get(p);
 										if (b.isLowerBoundarySet()) {
-											override += ",'" + p.getName() + "'.minMarks=" + b.getLowerBoundary();
+											override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "="
+													+ b.getLowerBoundary();
 										}
 										if (b.isUpperBoundarySet()) {
-											override += ",'" + p.getName() + "'.maxMarks=" + b.getUpperBoundary();
+											override += ",'" + p.getName() + "'.max" + getMarksOrTokens(p) + "="
+													+ b.getUpperBoundary();
 										}
 									}
 								}
@@ -599,7 +614,7 @@ public class PetriNetSimulation implements ActionListener {
 						packageInfo = "import PNlib = " + simLib.getName() + ";";
 					}
 					MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim + "simulation.mo")), pw,
-							packageInfo, false, menu.isRandomGlobalSeed(), menu.getGlobalSeed());
+							packageInfo, false);
 					bea2key = mo.getBea2resultkey();
 					//
 
@@ -781,19 +796,19 @@ public class PetriNetSimulation implements ActionListener {
 							// b = new Boundary();
 							// b.setLowerBoundary(value);
 							// pw.getChangedBoundaries().put((Place) bna, b);
-							override += ",'" + p.getName() + "'.minMarks=" + value;
+							override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "=" + value;
 							break;
 						case "token max":
 							// flags.setBoundariesChanged(true);
 							// b = new Boundary();
 							// b.setUpperBoundary(value);
 							// pw.getChangedBoundaries().put((Place) bna, b);
-							override += ",'" + p.getName() + "'.maxMarks=" + value;
+							override += ",'" + p.getName() + "'.max" + getMarksOrTokens(p) + "=" + value;
 							break;
 						case "token start":
 							// flags.setInitialValueChanged(true);
 							// pw.getChangedInitialValues().put((Place) bna, value);
-							override += ",'" + p.getName() + "'.startMarks=" + value;
+							override += ",'" + p.getName() + "'.start" + getMarksOrTokens(p) + "=" + value;
 							break;
 						}
 					} else if (bna instanceof Transition) {
@@ -895,5 +910,13 @@ public class PetriNetSimulation implements ActionListener {
 			bin += ".exe";
 		}
 		return bin;
+	}
+
+	private String getMarksOrTokens(Place p) {
+		if (p instanceof DiscretePlace) {
+			return "Tokens";
+		} else {
+			return "Marks";
+		}
 	}
 }
