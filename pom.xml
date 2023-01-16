@@ -64,6 +64,8 @@
             <groupId>net.sf.jung</groupId>
             <artifactId>jung-visualization</artifactId>
             <version>2.1.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/packages/jung/jung-visualization-2.1.1.jar</systemPath>
         </dependency>
         <!-- https://github.com/jrtom/jung -->
         <dependency>
@@ -227,11 +229,6 @@
             <groupId>javax.activation</groupId>
             <artifactId>javax.activation-api</artifactId>
             <version>1.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ant</groupId>
-            <artifactId>ant</artifactId>
-            <version>1.10.12</version>
         </dependency>
         <dependency>
             <groupId>org.swinglabs</groupId>

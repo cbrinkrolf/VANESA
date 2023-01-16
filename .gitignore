@@ -3,6 +3,8 @@
 /.settings/
 /logfiles/*
 
+*.iml
 .idea
 target/
 jsbml.log
+dependency-reduced-pom.xml
