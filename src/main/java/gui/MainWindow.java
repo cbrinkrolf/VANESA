@@ -754,7 +754,7 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	@Override
-	public void handleReopenApplication(ApplicationEvent arg0) {
+	public void handleReOpenApplication(ApplicationEvent arg0) {
 	}
 
 	/**
