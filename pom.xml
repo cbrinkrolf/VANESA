@@ -363,9 +363,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.39</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/packages/mysql-connector-java-5.1.39-bin.jar</systemPath>
+            <version>8.0.30</version>
         </dependency>
         <dependency>
             <groupId>org.simplericity.macify</groupId>

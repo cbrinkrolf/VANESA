@@ -68,20 +68,9 @@ public class DBconnection {
 	 * @param user
 	 * @param password
 	 * @throws SQLException
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws ClassNotFoundException
 	 */
 	private void connect2mysql(String server, String user, String password)
-			throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-		// replaced due to Java 9
-		// Class.forName("com.mysql.jdbc.Driver").newInstance();
-		try {
-			Class.forName("com.mysql.jdbc.Driver").getDeclaredConstructor().newInstance();
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+			throws SQLException {
 
 		String url = "jdbc:mysql://" + server + "/";
 		con = DriverManager.getConnection(url, user, password);
