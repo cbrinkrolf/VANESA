@@ -1,6 +1,5 @@
 package launch;
 
-import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,7 +22,6 @@ import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
 
 import biologicalElements.ElementNames;
 import biologicalElements.ElementNamesSingelton;
-import configurations.ConfigureLog4j;
 import configurations.ConnectionSettings;
 import configurations.ProgramFileLock;
 import configurations.ResourceLibrary;
@@ -252,11 +250,6 @@ public class Launch {
 	 * Configuration method uses programmable configuration class.
 	 */
 	private static void logconfig() {
-		try {
-			ConfigureLog4j.defaultLogging(true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		Logger logger = Logger.getRootLogger();
 		logger.info("Network editor started by " + System.getProperty("user.name"));
 	}
