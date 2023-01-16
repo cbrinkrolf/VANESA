@@ -1,0 +1,1001 @@
+biologicalEdges:
+- {from: M1, name: E1, to: E, type: ANY Biological Edge}
+- {from: E, name: E2, to: M2, type: ANY Biological Edge}
+- {from: N4, name: E3, to: E, type: reaction}
+- {from: N5, name: E4, to: E, type: reaction}
+- {from: N6, name: E5, to: E, type: reaction}
+- {from: E, name: E6, to: N9, type: reaction}
+- {from: E, name: E7, to: N8, type: reaction}
+- {from: E, name: E8, to: N7, type: reaction}
+biologicalNodes:
+- exactIncidence: true
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- exactIncidence: false
+  name: M1
+  parameterMap: {}
+  type: Metabolite
+  x: 108.96810150146484
+  y: 149.934326171875
+- exactIncidence: false
+  name: M2
+  parameterMap: {}
+  type: Metabolite
+  x: 348.8379821777344
+  y: 157.4641876220703
+- exactIncidence: false
+  name: N4
+  parameterMap: {}
+  type: Metabolite
+  x: 126.35609436035156
+  y: 76.54489135742188
+- exactIncidence: false
+  name: N5
+  parameterMap: {}
+  type: Metabolite
+  x: 110.72989654541016
+  y: 203.50778198242188
+- exactIncidence: false
+  name: N6
+  parameterMap: {}
+  type: Metabolite
+  x: 138.07574462890625
+  y: 241.27110290527344
+- exactIncidence: false
+  name: N7
+  parameterMap: {}
+  type: Metabolite
+  x: 335.3565368652344
+  y: 86.31126403808594
+- exactIncidence: false
+  name: N8
+  parameterMap: {}
+  type: Metabolite
+  x: 350.9827575683594
+  y: 120.81912994384766
+- exactIncidence: false
+  name: N9
+  parameterMap: {}
+  type: Metabolite
+  x: 326.24127197265625
+  y: 206.1121368408203
+consideredEdges: [E1, E2, E8, E7, E5, E4, E3, E6]
+mappingBNToPN:
+- {from: M1, to: p4}
+- {from: N5, to: p1}
+- {from: N9, to: p8}
+- {from: E, to: t1}
+- {from: N7, to: p6}
+- {from: N6, to: p5}
+- {from: M2, to: p2}
+- {from: N4, to: p3}
+- {from: N8, to: p7}
+name: 4M->E->4M
+petriEdges:
+- {from: p1, name: PNE1, to: t1, type: PN Arc}
+- {from: t1, name: PNE2, to: p2, type: PN Arc}
+- {from: p5, name: PNE3, to: t1, type: PN Arc}
+- {from: p4, name: PNE4, to: t1, type: PN Arc}
+- {from: p3, name: PNE5, to: t1, type: PN Arc}
+- {from: t1, name: PNE6, to: p6, type: PN Arc}
+- {from: t1, name: PNE7, to: p7, type: PN Arc}
+- {from: t1, name: PNE8, to: p8, type: PN Arc}
+petriNodes:
+- exactIncidence: false
+  name: p1
+  parameterMap: {name: N5.name, tokenStart: N5.concentrationStart, tokenMin: N5.concentrationMin,
+    tokenMax: N5.concentrationMax}
+  type: Continuous Place
+  x: 42.0
+  y: 162.0
+- exactIncidence: false
+  name: p2
+  parameterMap: {name: M2.name, tokenStart: M2.concentrationStart, tokenMin: M2.concentrationMin,
+    tokenMax: M2.concentrationMax}
+  type: Continuous Place
+  x: 337.0
+  y: 162.0
+- exactIncidence: false
+  name: p3
+  parameterMap: {name: N4.name, tokenStart: N4.concentrationStart, tokenMin: N4.concentrationMin,
+    tokenMax: N4.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 77.23921203613281
+- exactIncidence: false
+  name: p4
+  parameterMap: {name: M1.name, tokenStart: M1.concentrationStart, tokenMin: M1.concentrationMin,
+    tokenMax: M1.concentrationMax}
+  type: Continuous Place
+  x: 38.318016052246094
+  y: 119.48123931884766
+- exactIncidence: false
+  name: p5
+  parameterMap: {name: N6.name, tokenStart: N6.concentrationStart, tokenMin: N6.concentrationMin,
+    tokenMax: N6.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 226.93902587890625
+- exactIncidence: false
+  name: p6
+  parameterMap: {name: N7.name, tokenStart: N7.concentrationStart, tokenMin: N7.concentrationMin,
+    tokenMax: N7.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 65.38180541992188
+- exactIncidence: false
+  name: p7
+  parameterMap: {name: N8.name, tokenStart: N8.concentrationStart, tokenMin: N8.concentrationMin,
+    tokenMax: N8.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 103.17729949951172
+- exactIncidence: false
+  name: p8
+  parameterMap: {name: N9.name, tokenStart: N9.concentrationStart, tokenMin: N9.concentrationMin,
+    tokenMax: N9.concentrationMax}
+  type: Continuous Place
+  x: 330.3067626953125
+  y: 225.45684814453125
+- exactIncidence: false
+  name: t1
+  parameterMap: {maximalSpeed: E.maximalSpeed, name: E.name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
+---
+biologicalEdges:
+- {from: M1, name: E1, to: E, type: ANY Biological Edge}
+- {from: E, name: E2, to: M2, type: ANY Biological Edge}
+- {from: N4, name: E3, to: E, type: reaction}
+- {from: N5, name: E4, to: E, type: reaction}
+- {from: E, name: E7, to: N8, type: reaction}
+- {from: E, name: E8, to: N7, type: reaction}
+biologicalNodes:
+- exactIncidence: true
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- exactIncidence: false
+  name: M1
+  parameterMap: {}
+  type: Metabolite
+  x: 108.96810150146484
+  y: 149.934326171875
+- exactIncidence: false
+  name: M2
+  parameterMap: {}
+  type: Metabolite
+  x: 348.8379821777344
+  y: 157.4641876220703
+- exactIncidence: false
+  name: N4
+  parameterMap: {}
+  type: Metabolite
+  x: 126.35609436035156
+  y: 76.54489135742188
+- exactIncidence: false
+  name: N5
+  parameterMap: {}
+  type: Metabolite
+  x: 110.72989654541016
+  y: 203.50778198242188
+- exactIncidence: false
+  name: N7
+  parameterMap: {}
+  type: Metabolite
+  x: 335.3565368652344
+  y: 86.31126403808594
+- exactIncidence: false
+  name: N8
+  parameterMap: {}
+  type: Metabolite
+  x: 350.9827575683594
+  y: 120.81912994384766
+consideredEdges: [E4, E2, E3, E8, E7, E1]
+mappingBNToPN:
+- {from: N8, to: p7}
+- {from: M1, to: p4}
+- {from: N5, to: p1}
+- {from: E, to: t1}
+- {from: N4, to: p3}
+- {from: N7, to: p6}
+- {from: M2, to: p2}
+name: 3M->E->3M
+petriEdges:
+- {from: p1, name: PNE1, to: t1, type: PN Arc}
+- {from: t1, name: PNE2, to: p2, type: PN Arc}
+- {from: p4, name: PNE4, to: t1, type: PN Arc}
+- {from: p3, name: PNE5, to: t1, type: PN Arc}
+- {from: t1, name: PNE6, to: p6, type: PN Arc}
+- {from: t1, name: PNE7, to: p7, type: PN Arc}
+petriNodes:
+- exactIncidence: false
+  name: p1
+  parameterMap: {name: N5.name, tokenStart: N5.concentrationStart, tokenMin: N5.concentrationMin,
+    tokenMax: N5.concentrationMax}
+  type: Continuous Place
+  x: 42.0
+  y: 162.0
+- exactIncidence: false
+  name: p2
+  parameterMap: {name: M2.name, tokenStart: M2.concentrationStart, tokenMin: M2.concentrationMin,
+    tokenMax: M2.concentrationMax}
+  type: Continuous Place
+  x: 337.0
+  y: 162.0
+- exactIncidence: false
+  name: p3
+  parameterMap: {name: N4.name, tokenStart: N4.concentrationStart, tokenMin: N4.concentrationMin,
+    tokenMax: N4.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 77.23921203613281
+- exactIncidence: false
+  name: p4
+  parameterMap: {name: M1.name, tokenStart: M1.concentrationStart, tokenMin: M1.concentrationMin,
+    tokenMax: M1.concentrationMax}
+  type: Continuous Place
+  x: 38.318016052246094
+  y: 119.48123931884766
+- exactIncidence: false
+  name: p6
+  parameterMap: {name: N7.name, tokenStart: N7.concentrationStart, tokenMin: N7.concentrationMin,
+    tokenMax: N7.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 65.38180541992188
+- exactIncidence: false
+  name: p7
+  parameterMap: {name: N8.name, tokenStart: N8.concentrationStart, tokenMin: N8.concentrationMin,
+    tokenMax: N8.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 103.17729949951172
+- exactIncidence: false
+  name: t1
+  parameterMap: {maximalSpeed: E.maximalSpeed, name: E.name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
+---
+biologicalEdges:
+- {from: M1, name: E1, to: E, type: ANY Biological Edge}
+- {from: N4, name: E3, to: E, type: reaction}
+- {from: E, name: E7, to: N8, type: reaction}
+- {from: E, name: E8, to: N7, type: reaction}
+biologicalNodes:
+- exactIncidence: true
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- exactIncidence: false
+  name: M1
+  parameterMap: {}
+  type: Metabolite
+  x: 108.96810150146484
+  y: 149.934326171875
+- exactIncidence: false
+  name: N4
+  parameterMap: {}
+  type: Metabolite
+  x: 126.35609436035156
+  y: 76.54489135742188
+- exactIncidence: false
+  name: N7
+  parameterMap: {}
+  type: Metabolite
+  x: 335.3565368652344
+  y: 86.31126403808594
+- exactIncidence: false
+  name: N8
+  parameterMap: {}
+  type: Metabolite
+  x: 350.9827575683594
+  y: 120.81912994384766
+consideredEdges: [E7, E1, E3, E8]
+mappingBNToPN:
+- {from: N8, to: p7}
+- {from: N4, to: p3}
+- {from: E, to: t1}
+- {from: M1, to: p4}
+- {from: N7, to: p6}
+name: 2M->E->2M
+petriEdges:
+- {from: p4, name: PNE4, to: t1, type: PN Arc}
+- {from: p3, name: PNE5, to: t1, type: PN Arc}
+- {from: t1, name: PNE6, to: p6, type: PN Arc}
+- {from: t1, name: PNE7, to: p7, type: PN Arc}
+petriNodes:
+- exactIncidence: false
+  name: p3
+  parameterMap: {name: N4.name, tokenStart: N4.concentrationStart, tokenMin: N4.concentrationMin,
+    tokenMax: N4.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 77.23921203613281
+- exactIncidence: false
+  name: p4
+  parameterMap: {name: M1.name, tokenStart: M1.concentrationStart, tokenMin: M1.concentrationMin,
+    tokenMax: M1.concentrationMax}
+  type: Continuous Place
+  x: 38.318016052246094
+  y: 119.48123931884766
+- exactIncidence: false
+  name: p6
+  parameterMap: {name: N7.name, tokenStart: N7.concentrationStart, tokenMin: N7.concentrationMin,
+    tokenMax: N7.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 65.38180541992188
+- exactIncidence: false
+  name: p7
+  parameterMap: {name: N8.name, tokenStart: N8.concentrationStart, tokenMin: N8.concentrationMin,
+    tokenMax: N8.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 103.17729949951172
+- exactIncidence: false
+  name: t1
+  parameterMap: {maximalSpeed: E.maximalSpeed, name: E.name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
+---
+biologicalEdges:
+- {from: N4, name: E3, to: E, type: reaction}
+- {from: E, name: E8, to: N7, type: reaction}
+biologicalNodes:
+- exactIncidence: true
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- exactIncidence: false
+  name: N4
+  parameterMap: {}
+  type: Metabolite
+  x: 126.35609436035156
+  y: 76.54489135742188
+- exactIncidence: false
+  name: N7
+  parameterMap: {}
+  type: Metabolite
+  x: 335.3565368652344
+  y: 86.31126403808594
+consideredEdges: [E8, E3]
+mappingBNToPN:
+- {from: N4, to: p3}
+- {from: N7, to: p6}
+- {from: E, to: t1}
+name: M->E->M
+petriEdges:
+- {from: p3, name: PNE5, to: t1, type: PN Arc}
+- {from: t1, name: PNE6, to: p6, type: PN Arc}
+petriNodes:
+- exactIncidence: false
+  name: p3
+  parameterMap: {name: N4.name, tokenStart: N4.concentrationStart, tokenMin: N4.concentrationMin,
+    tokenMax: N4.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 77.23921203613281
+- exactIncidence: false
+  name: p6
+  parameterMap: {name: N7.name, tokenStart: N7.concentrationStart, tokenMin: N7.concentrationMin,
+    tokenMax: N7.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 65.38180541992188
+- exactIncidence: false
+  name: t1
+  parameterMap: {maximalSpeed: E.maximalSpeed, name: E.name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
+---
+biologicalEdges:
+- {from: M1, name: E1, to: E, type: ANY Biological Edge}
+- {from: E, name: E2, to: M2, type: ANY Biological Edge}
+- {from: N4, name: E3, to: E, type: reaction}
+- {from: E, name: E6, to: N9, type: reaction}
+- {from: E, name: E7, to: N8, type: reaction}
+- {from: E, name: E8, to: N7, type: reaction}
+biologicalNodes:
+- exactIncidence: true
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- exactIncidence: false
+  name: M1
+  parameterMap: {}
+  type: Metabolite
+  x: 108.96810150146484
+  y: 149.934326171875
+- exactIncidence: false
+  name: M2
+  parameterMap: {}
+  type: Metabolite
+  x: 348.8379821777344
+  y: 157.4641876220703
+- exactIncidence: false
+  name: N4
+  parameterMap: {}
+  type: Metabolite
+  x: 126.35609436035156
+  y: 76.54489135742188
+- exactIncidence: false
+  name: N7
+  parameterMap: {}
+  type: Metabolite
+  x: 335.3565368652344
+  y: 86.31126403808594
+- exactIncidence: false
+  name: N8
+  parameterMap: {}
+  type: Metabolite
+  x: 350.9827575683594
+  y: 120.81912994384766
+- exactIncidence: false
+  name: N9
+  parameterMap: {}
+  type: Metabolite
+  x: 326.24127197265625
+  y: 206.1121368408203
+consideredEdges: [E6, E8, E3, E7, E1, E2]
+mappingBNToPN:
+- {from: M1, to: p4}
+- {from: N9, to: p8}
+- {from: N8, to: p7}
+- {from: E, to: t1}
+- {from: N7, to: p6}
+- {from: N4, to: p3}
+- {from: M2, to: p2}
+name: 2M->E->4M
+petriEdges:
+- {from: t1, name: PNE2, to: p2, type: PN Arc}
+- {from: p4, name: PNE4, to: t1, type: PN Arc}
+- {from: p3, name: PNE5, to: t1, type: PN Arc}
+- {from: t1, name: PNE6, to: p6, type: PN Arc}
+- {from: t1, name: PNE7, to: p7, type: PN Arc}
+- {from: t1, name: PNE8, to: p8, type: PN Arc}
+petriNodes:
+- exactIncidence: false
+  name: p2
+  parameterMap: {name: M2.name, tokenStart: M2.concentrationStart, tokenMin: M2.concentrationMin,
+    tokenMax: M2.concentrationMax}
+  type: Continuous Place
+  x: 337.0
+  y: 162.0
+- exactIncidence: false
+  name: p3
+  parameterMap: {name: N4.name, tokenStart: N4.concentrationStart, tokenMin: N4.concentrationMin,
+    tokenMax: N4.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 77.23921203613281
+- exactIncidence: false
+  name: p4
+  parameterMap: {name: M1.name, tokenStart: M1.concentrationStart, tokenMin: M1.concentrationMin,
+    tokenMax: M1.concentrationMax}
+  type: Continuous Place
+  x: 38.318016052246094
+  y: 119.48123931884766
+- exactIncidence: false
+  name: p6
+  parameterMap: {name: N7.name, tokenStart: N7.concentrationStart, tokenMin: N7.concentrationMin,
+    tokenMax: N7.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 65.38180541992188
+- exactIncidence: false
+  name: p7
+  parameterMap: {name: N8.name, tokenStart: N8.concentrationStart, tokenMin: N8.concentrationMin,
+    tokenMax: N8.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 103.17729949951172
+- exactIncidence: false
+  name: p8
+  parameterMap: {name: N9.name, tokenStart: N9.concentrationStart, tokenMin: N9.concentrationMin,
+    tokenMax: N9.concentrationMax}
+  type: Continuous Place
+  x: 330.3067626953125
+  y: 225.45684814453125
+- exactIncidence: false
+  name: t1
+  parameterMap: {maximalSpeed: E.maximalSpeed, name: E.name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
+---
+biologicalEdges:
+- {from: N4, name: E3, to: E, type: reaction}
+- {from: E, name: E7, to: N8, type: reaction}
+- {from: E, name: E8, to: N7, type: reaction}
+biologicalNodes:
+- exactIncidence: true
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- exactIncidence: false
+  name: N4
+  parameterMap: {}
+  type: Metabolite
+  x: 126.35609436035156
+  y: 76.54489135742188
+- exactIncidence: false
+  name: N7
+  parameterMap: {}
+  type: Metabolite
+  x: 335.3565368652344
+  y: 86.31126403808594
+- exactIncidence: false
+  name: N8
+  parameterMap: {}
+  type: Metabolite
+  x: 350.9827575683594
+  y: 120.81912994384766
+consideredEdges: [E7, E3, E8]
+mappingBNToPN:
+- {from: N8, to: p7}
+- {from: E, to: t1}
+- {from: N4, to: p3}
+- {from: N7, to: p6}
+name: 1M->E->2M
+petriEdges:
+- {from: p3, name: PNE5, to: t1, type: PN Arc}
+- {from: t1, name: PNE6, to: p6, type: PN Arc}
+- {from: t1, name: PNE7, to: p7, type: PN Arc}
+petriNodes:
+- exactIncidence: false
+  name: p3
+  parameterMap: {name: N4.name, tokenStart: N4.concentrationStart, tokenMin: N4.concentrationMin,
+    tokenMax: N4.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 77.23921203613281
+- exactIncidence: false
+  name: p6
+  parameterMap: {name: N7.name, tokenStart: N7.concentrationStart, tokenMin: N7.concentrationMin,
+    tokenMax: N7.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 65.38180541992188
+- exactIncidence: false
+  name: p7
+  parameterMap: {name: N8.name, tokenStart: N8.concentrationStart, tokenMin: N8.concentrationMin,
+    tokenMax: N8.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 103.17729949951172
+- exactIncidence: false
+  name: t1
+  parameterMap: {maximalSpeed: E.maximalSpeed, name: E.name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
+---
+biologicalEdges:
+- {from: M1, name: E1, to: E, type: ANY Biological Edge}
+- {from: E, name: E2, to: M2, type: ANY Biological Edge}
+- {from: N4, name: E3, to: E, type: reaction}
+- {from: N5, name: E4, to: E, type: reaction}
+- {from: E, name: E6, to: N9, type: reaction}
+- {from: E, name: E7, to: N8, type: reaction}
+- {from: E, name: E8, to: N7, type: reaction}
+biologicalNodes:
+- exactIncidence: true
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- exactIncidence: false
+  name: M1
+  parameterMap: {}
+  type: Metabolite
+  x: 108.96810150146484
+  y: 149.934326171875
+- exactIncidence: false
+  name: M2
+  parameterMap: {}
+  type: Metabolite
+  x: 348.8379821777344
+  y: 157.4641876220703
+- exactIncidence: false
+  name: N4
+  parameterMap: {}
+  type: Metabolite
+  x: 126.35609436035156
+  y: 76.54489135742188
+- exactIncidence: false
+  name: N5
+  parameterMap: {}
+  type: Metabolite
+  x: 110.72989654541016
+  y: 203.50778198242188
+- exactIncidence: false
+  name: N7
+  parameterMap: {}
+  type: Metabolite
+  x: 335.3565368652344
+  y: 86.31126403808594
+- exactIncidence: false
+  name: N8
+  parameterMap: {}
+  type: Metabolite
+  x: 350.9827575683594
+  y: 120.81912994384766
+- exactIncidence: false
+  name: N9
+  parameterMap: {}
+  type: Metabolite
+  x: 326.24127197265625
+  y: 206.1121368408203
+consideredEdges: [E3, E8, E1, E4, E7, E6, E2]
+mappingBNToPN:
+- {from: E, to: t1}
+- {from: N7, to: p6}
+- {from: N5, to: p1}
+- {from: N9, to: p8}
+- {from: M1, to: p4}
+- {from: N8, to: p7}
+- {from: N4, to: p3}
+- {from: M2, to: p2}
+name: 3M->E->4M
+petriEdges:
+- {from: p1, name: PNE1, to: t1, type: PN Arc}
+- {from: t1, name: PNE2, to: p2, type: PN Arc}
+- {from: p4, name: PNE4, to: t1, type: PN Arc}
+- {from: p3, name: PNE5, to: t1, type: PN Arc}
+- {from: t1, name: PNE6, to: p6, type: PN Arc}
+- {from: t1, name: PNE7, to: p7, type: PN Arc}
+- {from: t1, name: PNE8, to: p8, type: PN Arc}
+petriNodes:
+- exactIncidence: false
+  name: p1
+  parameterMap: {name: N5.name, tokenStart: N5.concentrationStart, tokenMin: N5.concentrationMin,
+    tokenMax: N5.concentrationMax}
+  type: Continuous Place
+  x: 42.0
+  y: 162.0
+- exactIncidence: false
+  name: p2
+  parameterMap: {name: M2.name, tokenStart: M2.concentrationStart, tokenMin: M2.concentrationMin,
+    tokenMax: M2.concentrationMax}
+  type: Continuous Place
+  x: 337.0
+  y: 162.0
+- exactIncidence: false
+  name: p3
+  parameterMap: {name: N4.name, tokenStart: N4.concentrationStart, tokenMin: N4.concentrationMin,
+    tokenMax: N4.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 77.23921203613281
+- exactIncidence: false
+  name: p4
+  parameterMap: {name: M1.name, tokenStart: M1.concentrationStart, tokenMin: M1.concentrationMin,
+    tokenMax: M1.concentrationMax}
+  type: Continuous Place
+  x: 38.318016052246094
+  y: 119.48123931884766
+- exactIncidence: false
+  name: p6
+  parameterMap: {name: N7.name, tokenStart: N7.concentrationStart, tokenMin: N7.concentrationMin,
+    tokenMax: N7.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 65.38180541992188
+- exactIncidence: false
+  name: p7
+  parameterMap: {name: N8.name, tokenStart: N8.concentrationStart, tokenMin: N8.concentrationMin,
+    tokenMax: N8.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 103.17729949951172
+- exactIncidence: false
+  name: p8
+  parameterMap: {name: N9.name, tokenStart: N9.concentrationStart, tokenMin: N9.concentrationMin,
+    tokenMax: N9.concentrationMax}
+  type: Continuous Place
+  x: 330.3067626953125
+  y: 225.45684814453125
+- exactIncidence: false
+  name: t1
+  parameterMap: {maximalSpeed: E.maximalSpeed, name: E.name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
+---
+biologicalEdges:
+- {from: M1, name: E1, to: E, type: ANY Biological Edge}
+- {from: N4, name: E3, to: E, type: reaction}
+- {from: E, name: E8, to: N7, type: reaction}
+biologicalNodes:
+- exactIncidence: true
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- exactIncidence: false
+  name: M1
+  parameterMap: {}
+  type: Metabolite
+  x: 108.96810150146484
+  y: 149.934326171875
+- exactIncidence: false
+  name: N4
+  parameterMap: {}
+  type: Metabolite
+  x: 126.35609436035156
+  y: 76.54489135742188
+- exactIncidence: false
+  name: N7
+  parameterMap: {}
+  type: Metabolite
+  x: 335.3565368652344
+  y: 86.31126403808594
+consideredEdges: [E1, E3, E8]
+mappingBNToPN:
+- {from: N4, to: p3}
+- {from: N7, to: p6}
+- {from: E, to: t1}
+- {from: M1, to: p4}
+name: 2M->E->1M
+petriEdges:
+- {from: p4, name: PNE4, to: t1, type: PN Arc}
+- {from: p3, name: PNE5, to: t1, type: PN Arc}
+- {from: t1, name: PNE6, to: p6, type: PN Arc}
+petriNodes:
+- exactIncidence: false
+  name: p3
+  parameterMap: {name: N4.name, tokenStart: N4.concentrationStart, tokenMin: N4.concentrationMin,
+    tokenMax: N4.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 77.23921203613281
+- exactIncidence: false
+  name: p4
+  parameterMap: {name: M1.name, tokenStart: M1.concentrationStart, tokenMin: M1.concentrationMin,
+    tokenMax: M1.concentrationMax}
+  type: Continuous Place
+  x: 38.318016052246094
+  y: 119.48123931884766
+- exactIncidence: false
+  name: p6
+  parameterMap: {name: N7.name, tokenStart: N7.concentrationStart, tokenMin: N7.concentrationMin,
+    tokenMax: N7.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 65.38180541992188
+- exactIncidence: false
+  name: t1
+  parameterMap: {maximalSpeed: E.maximalSpeed, name: E.name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
+---
+biologicalEdges:
+- {from: M1, name: E1, to: E, type: ANY Biological Edge}
+- {from: E, name: E2, to: M2, type: ANY Biological Edge}
+- {from: N4, name: E3, to: E, type: reaction}
+- {from: E, name: E7, to: N8, type: reaction}
+- {from: E, name: E8, to: N7, type: reaction}
+biologicalNodes:
+- exactIncidence: true
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- exactIncidence: false
+  name: M1
+  parameterMap: {}
+  type: Metabolite
+  x: 108.96810150146484
+  y: 149.934326171875
+- exactIncidence: false
+  name: M2
+  parameterMap: {}
+  type: Metabolite
+  x: 348.8379821777344
+  y: 157.4641876220703
+- exactIncidence: false
+  name: N4
+  parameterMap: {}
+  type: Metabolite
+  x: 126.35609436035156
+  y: 76.54489135742188
+- exactIncidence: false
+  name: N7
+  parameterMap: {}
+  type: Metabolite
+  x: 335.3565368652344
+  y: 86.31126403808594
+- exactIncidence: false
+  name: N8
+  parameterMap: {}
+  type: Metabolite
+  x: 350.9827575683594
+  y: 120.81912994384766
+consideredEdges: [E1, E3, E8, E2, E7]
+mappingBNToPN:
+- {from: E, to: t1}
+- {from: N8, to: p7}
+- {from: N7, to: p6}
+- {from: M1, to: p4}
+- {from: M2, to: p2}
+- {from: N4, to: p3}
+name: 2M->E->3M
+petriEdges:
+- {from: t1, name: PNE2, to: p2, type: PN Arc}
+- {from: p4, name: PNE4, to: t1, type: PN Arc}
+- {from: p3, name: PNE5, to: t1, type: PN Arc}
+- {from: t1, name: PNE6, to: p6, type: PN Arc}
+- {from: t1, name: PNE7, to: p7, type: PN Arc}
+petriNodes:
+- exactIncidence: false
+  name: p2
+  parameterMap: {name: M2.name, tokenStart: M2.concentrationStart, tokenMin: M2.concentrationMin,
+    tokenMax: M2.concentrationMax}
+  type: Continuous Place
+  x: 337.0
+  y: 162.0
+- exactIncidence: false
+  name: p3
+  parameterMap: {name: N4.name, tokenStart: N4.concentrationStart, tokenMin: N4.concentrationMin,
+    tokenMax: N4.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 77.23921203613281
+- exactIncidence: false
+  name: p4
+  parameterMap: {name: M1.name, tokenStart: M1.concentrationStart, tokenMin: M1.concentrationMin,
+    tokenMax: M1.concentrationMax}
+  type: Continuous Place
+  x: 38.318016052246094
+  y: 119.48123931884766
+- exactIncidence: false
+  name: p6
+  parameterMap: {name: N7.name, tokenStart: N7.concentrationStart, tokenMin: N7.concentrationMin,
+    tokenMax: N7.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 65.38180541992188
+- exactIncidence: false
+  name: p7
+  parameterMap: {name: N8.name, tokenStart: N8.concentrationStart, tokenMin: N8.concentrationMin,
+    tokenMax: N8.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 103.17729949951172
+- exactIncidence: false
+  name: t1
+  parameterMap: {maximalSpeed: E.maximalSpeed, name: E.name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
+---
+biologicalEdges:
+- {from: M1, name: E1, to: E, type: ANY Biological Edge}
+- {from: E, name: E2, to: M2, type: ANY Biological Edge}
+- {from: N4, name: E3, to: E, type: reaction}
+- {from: E, name: E8, to: N7, type: reaction}
+- {from: M2, name: E61, to: E, type: reaction}
+- {from: E, name: E6, to: M1, type: reaction}
+biologicalNodes:
+- exactIncidence: true
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 240.0
+  y: 149.0
+- exactIncidence: false
+  name: M1
+  parameterMap: {}
+  type: Metabolite
+  x: 108.96810150146484
+  y: 149.934326171875
+- exactIncidence: false
+  name: M2
+  parameterMap: {}
+  type: Metabolite
+  x: 348.8379821777344
+  y: 157.4641876220703
+- exactIncidence: false
+  name: N4
+  parameterMap: {}
+  type: Metabolite
+  x: 126.35609436035156
+  y: 76.54489135742188
+- exactIncidence: false
+  name: N7
+  parameterMap: {}
+  type: Metabolite
+  x: 335.3565368652344
+  y: 86.31126403808594
+consideredEdges: [E6, E61, E3, E1, E2, E8]
+mappingBNToPN:
+- {from: E, to: t1}
+- {from: M2, to: p2}
+- {from: N7, to: p6}
+- {from: M1, to: p4}
+- {from: N4, to: p3}
+name: 3M->E->3MW
+petriEdges:
+- {from: t1, name: PNE2, to: p2, type: PN Arc}
+- {from: p4, name: PNE4, to: t1, type: PN Arc}
+- {from: p3, name: PNE5, to: t1, type: PN Arc}
+- {from: t1, name: PNE6, to: p6, type: PN Arc}
+petriNodes:
+- exactIncidence: false
+  name: p2
+  parameterMap: {name: M2.name, tokenStart: M2.concentrationStart, tokenMin: M2.concentrationMin,
+    tokenMax: M2.concentrationMax}
+  type: Continuous Place
+  x: 337.0
+  y: 162.0
+- exactIncidence: false
+  name: p3
+  parameterMap: {name: N4.name, tokenStart: N4.concentrationStart, tokenMin: N4.concentrationMin,
+    tokenMax: N4.concentrationMax}
+  type: Continuous Place
+  x: 39.059104919433594
+  y: 77.23921203613281
+- exactIncidence: false
+  name: p4
+  parameterMap: {name: M1.name, tokenStart: M1.concentrationStart, tokenMin: M1.concentrationMin,
+    tokenMax: M1.concentrationMax}
+  type: Continuous Place
+  x: 45.11215591430664
+  y: 157.9813461303711
+- exactIncidence: false
+  name: p6
+  parameterMap: {name: N7.name, tokenStart: N7.concentrationStart, tokenMin: N7.concentrationMin,
+    tokenMax: N7.concentrationMax}
+  type: Continuous Place
+  x: 340.6819763183594
+  y: 65.38180541992188
+- exactIncidence: false
+  name: t1
+  parameterMap: {maximalSpeed: E.maximalSpeed, name: E.name}
+  type: Continuous Transition
+  x: 184.0
+  y: 157.0
+---
+biologicalEdges:
+- {from: N1, name: E1, to: E, type: reaction}
+- {from: E, name: E2, to: N1, type: reaction}
+biologicalNodes:
+- exactIncidence: false
+  name: E
+  parameterMap: {}
+  type: Enzyme
+  x: 220.0
+  y: 173.0
+- exactIncidence: false
+  name: N1
+  parameterMap: {}
+  type: Metabolite
+  x: 95.0
+  y: 174.0
+consideredEdges: [E1, E2]
+mappingBNToPN: []
+name: M-E_rev
+petriEdges: []
+petriNodes: []

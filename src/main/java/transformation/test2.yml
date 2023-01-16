@@ -1,0 +1,39 @@
+biologicalEdges:
+- {from: M1, name: E1, to: E, type: Inhibition}
+- {from: E, name: E2, to: M2, type: BiologicalEdgeAbstract}
+biologicalNodes:
+- {name: M1, type: SmallMolecule, x: 0.0, y: 0.0}
+- {name: M2, type: SmallMolecule, x: 0.0, y: 0.0}
+- {name: E, type: Enzyme, x: 0.0, y: 0.0}
+mappingBNToPN:
+- {from: M1, to: P1}
+- {from: M2, to: P2}
+- {from: E, to: T1}
+name: fancy rule name
+petriEdges:
+- {from: P1, name: PE1, to: T1, type: PNInhibitoryArc}
+- {from: T1, name: PE2, to: P2, type: PNArc}
+petriNodes:
+- {name: P1, type: Place, x: 0.0, y: 0.0}
+- {name: P2, type: Place, x: 0.0, y: 0.0}
+- {name: T1, type: Transition, x: 0.0, y: 0.0}
+---
+biologicalEdges:
+- {from: M1, name: E1, to: E, type: BiologicalEdgeAbstract}
+- {from: E, name: E2, to: M2, type: BiologicalEdgeAbstract}
+biologicalNodes:
+- {name: M1, type: SmallMolecule, x: 0.0, y: 0.0}
+- {name: M2, type: SmallMolecule, x: 0.0, y: 0.0}
+- {name: E, type: Enzyme, x: 0.0, y: 0.0}
+mappingBNToPN:
+- {from: M1, to: P1}
+- {from: M2, to: P2}
+- {from: E, to: T1}
+name: fancy rule name
+petriEdges:
+- {from: P1, name: PE1, to: T1, type: PNArc}
+- {from: T1, name: PE2, to: P2, type: PNArc}
+petriNodes:
+- {name: P1, type: Place, x: 0.0, y: 0.0}
+- {name: P2, type: Place, x: 0.0, y: 0.0}
+- {name: T1, type: Transition, x: 0.0, y: 0.0}
