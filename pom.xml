@@ -509,13 +509,6 @@
   <systemPath>${project.basedir}/packages/tsne/core-0.26.jar</systemPath>
 </dependency>
 <dependency>
-  <groupId>AsyncWebservicePojos</groupId>
-  <artifactId>AsyncWebservicePojos</artifactId>
-  <version>1.0</version>
-  <scope>system</scope>
-  <systemPath>${project.basedir}/packages/AsyncWebservicePojos.jar</systemPath>
-</dependency>
-<dependency>
     <groupId>org.apache.xmlbeans</groupId>
     <artifactId>xmlbeans</artifactId>
     <version>4.0.0</version>
