@@ -3,3 +3,5 @@
 /.settings/
 /logfiles/*
 
+.idea
+target/
