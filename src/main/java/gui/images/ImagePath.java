@@ -16,7 +16,7 @@ public class ImagePath {
 	}
 	
 	public java.net.URL getPath(String image){
-		java.net.URL url = this.getClass().getResource(image);
+		java.net.URL url = this.getClass().getClassLoader().getResource("images/" + image);
 		if (url == null)
         {
 			 System.err.println("Couldn't find file: " + image);

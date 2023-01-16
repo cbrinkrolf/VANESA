@@ -10,7 +10,7 @@ package configurations;
  */
 public class ResourceLibrary
 {
-	private static final XMLResourceBundle SETTINGS=new XMLResourceBundle("resource/settings");
+	private static final XMLResourceBundle SETTINGS=new XMLResourceBundle("settings");
 		
 	public static final String getSettingsResource(String key)
 	{

@@ -74,11 +74,11 @@ public class ElementNames {
 			//File file;
 			try {
 //				file = new File(new BrendaDataPath().getPath("EnzymeNames.xml").toURI());
-//				file=new File(this.getClass().getClassLoader().getResource("resource/EnzymeNames.xml").toURI());
+//				file=new File(this.getClass().getClassLoader().getResource("EnzymeNames.xml").toURI());
 //				System.out.println("DEBUG enzyme name file: "+file);
 				
 //				InputStream in = new FileInputStream(file);
-				InputStream in = this.getClass().getClassLoader().getResource("resource/EnzymeNames.xml").openStream();
+				InputStream in = this.getClass().getClassLoader().getResource("EnzymeNames.xml").openStream();
 				XMLInputFactory factory = XMLInputFactory.newInstance();
 				factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.TRUE);
 				factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);

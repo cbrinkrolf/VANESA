@@ -505,7 +505,7 @@ public class SaveDialog {
 				exportPath = exportPath + ".yaml";
 			}
 
-			InputStream internYaml = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
+			InputStream internYaml = getClass().getClassLoader().getResourceAsStream("NodeProperties.yaml");
 			FileOutputStream exportYaml = null;
 			File exportFile = new File(exportPath);
 			exportYaml = new FileOutputStream(exportFile);

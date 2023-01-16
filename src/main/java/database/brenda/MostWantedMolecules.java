@@ -27,7 +27,7 @@ public class MostWantedMolecules {
 
 	public MostWantedMolecules() {
 
-		URL url = this.getClass().getClassLoader().getResource("resource/MoleculesSBML.xml");
+		URL url = this.getClass().getClassLoader().getResource("MoleculesSBML.xml");
 		System.out.println("DEBUG molecules file: " + url);
 
 		if (url != null) {

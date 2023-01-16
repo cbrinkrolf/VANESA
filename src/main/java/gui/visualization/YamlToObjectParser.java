@@ -30,7 +30,7 @@ public class YamlToObjectParser {
 	}
 
 	public void defaultCase() {
-		InputStream input = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
+		InputStream input = getClass().getClassLoader().getResourceAsStream("NodeProperties.yaml");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 		HashMap<String, Map<String, Object>> mapForBeans = new HashMap<String, Map<String, Object>>();
 		for (Object data : yaml.loadAll(reader)) {
@@ -100,7 +100,7 @@ public class YamlToObjectParser {
 		InputStream input = null;
 		if (loadedYaml != null) {
 			if (loadedYaml.equals(VisualizationDialog.DEFAULTYAML)) {
-				input = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
+				input = getClass().getClassLoader().getResourceAsStream("NodeProperties.yaml");
 			} else {
 				try {
 					input = new FileInputStream(new File(loadedYaml));

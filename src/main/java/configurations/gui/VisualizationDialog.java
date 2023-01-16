@@ -216,7 +216,7 @@ public class VisualizationDialog {
 		BufferedReader reader = null;
 		if (loadedYaml != null) {
 			if (loadedYaml.equals(VisualizationDialog.DEFAULTYAML)) {
-				input = getClass().getClassLoader().getResourceAsStream("resource/NodeProperties.yaml");
+				input = getClass().getClassLoader().getResourceAsStream("NodeProperties.yaml");
 				reader = new BufferedReader(new InputStreamReader(input));
 			} else {
 				try {
