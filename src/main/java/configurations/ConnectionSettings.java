@@ -6,8 +6,8 @@ package configurations;
 
 import java.io.File;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.XMLConfiguration;
 
 import database.Connection.DBconnection;
 import util.VanesaUtility;
@@ -46,7 +46,7 @@ public class ConnectionSettings {
 					+ "settings.xml yet.");
 		} else {
 			try {
-				XMLConfiguration xmlSettings = new XMLConfiguration(
+				XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
 						VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
 				fileSaveDirectory = xmlSettings.getString("SaveDialog-Path");
 				if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
@@ -68,15 +68,10 @@ public class ConnectionSettings {
 		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
 		try {
-			XMLConfiguration xmlSettings;
-			if (f.exists()) {
-				xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-			} else {
-				xmlSettings = new XMLConfiguration();
-				xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
-			}
+			XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
+					pathWorkingDirectory + File.separator + "settings.xml");
 			xmlSettings.setProperty("SaveDialog-Path", fileDir);
-			xmlSettings.save();
+			// TODO MF: xmlSettings.save();
 		} catch (ConfigurationException e) {
 			if (f.exists()) {
 				f.delete();
@@ -95,7 +90,7 @@ public class ConnectionSettings {
 					+ "settings.xml yet.");
 		} else {
 			try {
-				XMLConfiguration xmlSettings = new XMLConfiguration(
+				XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
 						VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
 				fileOpenDirectory = xmlSettings.getString("OpenDialog-Path");
 				if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
@@ -117,15 +112,10 @@ public class ConnectionSettings {
 		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
 		try {
-			XMLConfiguration xmlSettings;
-			if (f.exists()) {
-				xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-			} else {
-				xmlSettings = new XMLConfiguration();
-				xmlSettings.setFileName(pathWorkingDirectory + File.separator + "settings.xml");
-			}
+			XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
+					pathWorkingDirectory + File.separator + "settings.xml");
 			xmlSettings.setProperty("OpenDialog-Path", fileDir);
-			xmlSettings.save();
+			// TODO MF: xmlSettings.save();
 		} catch (ConfigurationException e) {
 			if (f.exists()) {
 				f.delete();

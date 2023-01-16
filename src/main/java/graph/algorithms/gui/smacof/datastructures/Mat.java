@@ -9,9 +9,8 @@ package graph.algorithms.gui.smacof.datastructures;
 
 import java.util.Arrays;
 
-import org.openimaj.math.matrix.PseudoInverse;
-
-import Jama.Matrix;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 
 /**
  * Mat is a matrix container with all functions needed to perform the necessary
@@ -294,10 +293,11 @@ public class Mat {
         if (this.getFirstDimSize() != this.getSecondDimSize()) {
             throw new IllegalArgumentException("Watch moorePenroseInverse() function!");
         }
-        Matrix m = new Matrix(this.getLonleyMatrix());
-        Jama.Matrix pim = PseudoInverse.pseudoInverse(m, this.getFirstDimSize() - 1);
+        RealMatrix m = MatrixUtils.createRealMatrix(this.getLonleyMatrix());
+        RealMatrix pim = MatrixUtils.inverse(m); // TODO MF: correct? not returned anyway
+        //Jama.Matrix pim = PseudoInverse.pseudoInverse(m, this.getFirstDimSize() - 1);
         // inverse() returns the inverse of a matrix if possible, pseudo-inverse otherwise!
-        Mat mat = new Mat(pim.getArray());
+        Mat mat = new Mat(pim.getData());
 //        return mat;
         return null;
     }
@@ -308,9 +308,9 @@ public class Mat {
      * @return matrix representing moore-penrose-inverse
      */
     public Mat inverse() {
-        Jama.Matrix m = new Matrix(this.getLonleyMatrix());
+        RealMatrix m = MatrixUtils.createRealMatrix(this.getLonleyMatrix());
         // inverse() returns the inverse of a matrix if possible, pseudo-inverse otherwise!
-        Mat mat = new Mat(m.inverse().getArray());
+        Mat mat = new Mat(MatrixUtils.inverse(m).getData());
         return mat;
     }
 

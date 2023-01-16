@@ -10,6 +10,10 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.ObjectSupplier;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.SystemUtils;
 
 import configurations.asyncWebservice.WebServiceEvent;
@@ -120,5 +124,13 @@ public class VanesaUtility {
 			f.mkdir();
 		}
 		return pathWorkingDirectory;
+	}
+
+	public static XMLConfiguration getFileBasedXMLConfiguration(final String filePath) throws ConfigurationException {
+		Parameters params = new Parameters();
+		FileBasedConfigurationBuilder<XMLConfiguration> builder =
+				new FileBasedConfigurationBuilder<>(XMLConfiguration.class).configure(
+						params.fileBased().setFile(new File(filePath)));
+		return builder.getConfiguration();
 	}
 }

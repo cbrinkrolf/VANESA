@@ -46,7 +46,7 @@ public class ConfigureLog4j
 	private static void configureFileLogging(Logger logger, String logfile, String maxFileSize, Level level) throws IOException
 	{
 		RollingFileAppender appender=new RollingFileAppender(LAYOUT, logfile, true);
-		appender.setMaxFileSize(maxFileSize);
+		// TODO MF: appender.setMaxFileSize(maxFileSize);
 
 		logger.setLevel(level);
 		logger.addAppender(appender);
@@ -59,8 +59,9 @@ public class ConfigureLog4j
 	 */
 	private static void configureConsoleLogging(Logger logger, Level level)
 	{
-		ConsoleAppender appender=new ConsoleAppender(LAYOUT);
-		
+		ConsoleAppender appender=new ConsoleAppender();
+		appender.setLayout(LAYOUT);
+
 		logger.setLevel(level);
 		logger.addAppender(appender);
 	}

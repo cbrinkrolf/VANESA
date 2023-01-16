@@ -95,9 +95,7 @@ public class ImportExcelxData implements ImportData {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		workbook.setMissingCellPolicy(Row.RETURN_BLANK_AS_NULL); // empty rows
-																	// are
-																	// recognized
+		workbook.setMissingCellPolicy(Row.MissingCellPolicy.RETURN_BLANK_AS_NULL); // empty rows are recognized
 		this.fmt = new DataFormatter(Locale.US);
 
 		// selects the first sheet
@@ -132,7 +130,7 @@ public class ImportExcelxData implements ImportData {
 				d.add("\n");
 			} else {
 				for (int cn = 0; cn < row.getLastCellNum(); cn++) {
-					Cell cell = row.getCell(cn, Row.RETURN_BLANK_AS_NULL);
+					Cell cell = row.getCell(cn, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 					if (cell == null) {
 						d.add("\n");
 					} else {
@@ -165,7 +163,7 @@ public class ImportExcelxData implements ImportData {
 		Row headerRow = sheet.getRow(headerRowNumber);
 
 		for (int i = 0; i < maxColumns; i++) {
-			Cell cell = headerRow.getCell(i, Row.RETURN_BLANK_AS_NULL);
+			Cell cell = headerRow.getCell(i, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 			if (cell == null) {
 				myheaders.add("\n");
 			} else {

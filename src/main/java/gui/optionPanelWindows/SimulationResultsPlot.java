@@ -27,8 +27,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.XMLConfiguration;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -1136,7 +1136,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 		String path = "";
 		try {
-			XMLConfiguration xmlSettings = new XMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+			XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
+					pathWorkingDirectory + File.separator + "settings.xml");
 			path = xmlSettings.getString("SaveDialog-Path");
 		} catch (ConfigurationException e) {
 			System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
