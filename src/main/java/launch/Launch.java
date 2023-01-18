@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
 
 import biologicalElements.ElementNames;
-import biologicalElements.ElementNamesSingelton;
+import biologicalElements.ElementNamesSingleton;
 import configurations.ConnectionSettings;
 import configurations.ProgramFileLock;
 import configurations.ResourceLibrary;
@@ -171,7 +171,7 @@ public class Launch {
 
 				intro.setLoadingText("Database Information");
 				new MostWantedMolecules();
-				ElementNames names = ElementNamesSingelton.getInstance();
+				ElementNames names = ElementNamesSingleton.getInstance();
 				names.fillEnzymeSet();
 			}
 		};

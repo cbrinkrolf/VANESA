@@ -3,6 +3,7 @@
 /.settings/
 /logfiles/*
 
+.classpath
 grammars/*.jar
 grammars/*.interp
 grammars/*.tokens
