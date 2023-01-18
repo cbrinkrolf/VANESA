@@ -491,7 +491,7 @@ public class Pathway implements Cloneable {
 		}
 
 		ArrayList<Integer> ids = new ArrayList<Integer>(map.keySet());
-		Collections.sort(ids, new MyIntComparable());
+		ids.sort(Integer::compare);
 
 		List<BiologicalNodeAbstract> sortedList = new ArrayList<BiologicalNodeAbstract>();
 		for (int i = 0; i < ids.size(); i++) {
