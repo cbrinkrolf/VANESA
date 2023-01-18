@@ -1,4 +1,4 @@
-![Java CI](https://github.com/cbrinkrolf/VANESA/workflows/Java%20CI/badge.svg?branch=develop) ![Release](https://img.shields.io/github/v/release/cbrinkrolf/VANESA) ![Downloads](https://img.shields.io/github/downloads/cbrinkrolf/VANESA/total) ![License](https://img.shields.io/github/license/cbrinkrolf/VANESA)
+![Java CI](https://github.com/cbrinkrolf/VANESA/workflows/Java%20CI/badge.svg?branch=develop) ![Release](https://img.shields.io/github/v/release/cbrinkrolf/VANESA) ![Downloads](https://img.shields.io/github/downloads/cbrinkrolf/VANESA/total) ![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue)
 
 # VANESA2
 ## Current Releases
