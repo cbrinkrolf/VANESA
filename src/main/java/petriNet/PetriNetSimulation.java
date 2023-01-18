@@ -144,7 +144,7 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		}
 
-		w.blurrUI();
+		w.blurUI();
 		zstVorher = System.currentTimeMillis();
 
 		allThread = new Thread() {
@@ -396,7 +396,7 @@ public class PetriNetSimulation implements ActionListener {
 					MyPopUp.getInstance().show("Simulation error:", e.getMessage());
 					e.printStackTrace();
 					MyPopUp.getInstance().show("Something went wrong", "The model couldn't be simulated!");
-					w.unBlurrUI();
+					w.unBlurUI();
 					menu.stopped();
 					if (simProcess != null) {
 						simProcess.destroy();
@@ -430,11 +430,11 @@ public class PetriNetSimulation implements ActionListener {
 				logAndShow("(re) compilation due to changed properties");
 				this.compile();
 			} catch (IOException e) {
-				w.unBlurrUI();
+				w.unBlurUI();
 				buildSuccess = false;
 				e.printStackTrace();
 			} catch (InterruptedException e) {
-				w.unBlurrUI();
+				w.unBlurUI();
 				buildSuccess = false;
 				e.printStackTrace();
 			}
@@ -444,7 +444,7 @@ public class PetriNetSimulation implements ActionListener {
 
 		// allThread.start();
 
-		w.unBlurrUI();
+		w.unBlurUI();
 
 	}
 
