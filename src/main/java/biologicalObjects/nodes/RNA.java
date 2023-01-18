@@ -8,6 +8,7 @@ import lombok.Setter;
 public class RNA extends BiologicalNodeAbstract {
 
 	private String ntSequence = "";
+	private Double logFC = 0.0;
 
 	public RNA(String label, String name) {
 		super(label, name);

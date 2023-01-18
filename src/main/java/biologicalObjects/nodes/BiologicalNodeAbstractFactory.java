@@ -87,7 +87,15 @@ public class BiologicalNodeAbstractFactory {
 			break;
 		case Elementdeclerations.mRNA:
 			newBNA = new MRNA(label, name);
-			fillMRNA(newBNA, bna);
+			fillRNA(newBNA, bna);
+			break;
+		case Elementdeclerations.miRNA:
+			newBNA = new MIRNA(label, name);
+			fillRNA(newBNA, bna);
+			break;
+		case Elementdeclerations.lncRNA:
+			newBNA = new LNCRNA(label, name);
+			fillRNA(newBNA, bna);
 			break;
 		case Elementdeclerations.orthologGroup:
 			newBNA = new OrthologGroup(label, name);
@@ -126,7 +134,7 @@ public class BiologicalNodeAbstractFactory {
 			break;
 		case Elementdeclerations.sRNA:
 			newBNA = new SRNA(label, name);
-			fillSRNA(newBNA, bna);
+			fillRNA(newBNA, bna);
 			break;
 		case Elementdeclerations.transcriptionFactor:
 			newBNA = new TranscriptionFactor(label, name);
@@ -167,10 +175,11 @@ public class BiologicalNodeAbstractFactory {
 		return newBNA;
 	}
 
-	private static void fillMRNA(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+	private static void fillRNA(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
 		if (bna != null) {
-			if (newBNA instanceof MRNA && bna instanceof MRNA) {
-				((MRNA) newBNA).setNtSequence(((MRNA) bna).getNtSequence());
+			if (newBNA instanceof RNA && bna instanceof RNA) {
+				((RNA) newBNA).setNtSequence(((RNA) bna).getNtSequence());
+				((RNA) newBNA).setLogFC(((RNA) bna).getLogFC());
 			}
 		}
 	}
@@ -179,14 +188,6 @@ public class BiologicalNodeAbstractFactory {
 		if (bna != null) {
 			if (newBNA instanceof PathwayMap && bna instanceof PathwayMap) {
 				((PathwayMap) newBNA).setPathwayLink(((PathwayMap) bna).getPathwayLink());
-			}
-		}
-	}
-
-	private static void fillSRNA(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
-		if (bna != null) {
-			if (newBNA instanceof SRNA && bna instanceof SRNA) {
-				((SRNA) newBNA).setNtSequence(((SRNA) bna).getNtSequence());
 			}
 		}
 	}

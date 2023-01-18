@@ -44,6 +44,10 @@ Membrane Receptor: {shape: ellipse, sizefactor: 1.0, red: 255, green: 255, blue:
 ---
 mRNA: {shape: 8 star, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
+miRNA: {shape: 8 star, sizefactor: 1.0, red: 255, green: 255, blue: 255}
+---
+lncRNA: {shape: 8 star, sizefactor: 1.0, red: 255, green: 255, blue: 255}
+---
 ortholog group: {shape: regulardecastar, sizefactor: 1.0, red: 255, green: 255, blue: 255}
 ---
 Other: {shape: ellipse, sizefactor: 1.0, red: 106, green: 97, blue: 223}
