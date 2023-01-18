@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
 import gui.MainWindow;
@@ -24,14 +25,15 @@ import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
 import transformation.Rule;
 import transformation.RuleManager;
-import transformation.YamlRuleWriter;
 
 public class RuleManagementWindow implements ActionListener, ItemListener {
 
 	private JFrame frame;
 	private JPanel panel;
 	private JButton add;
-	private JButton write;
+	private JButton save;
+	private JButton load;
+	private JButton removeAll;
 
 	private JButton cancel = new JButton("cancel");
 	private JButton okButton = new JButton("ok");
@@ -87,9 +89,18 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 		add.setActionCommand("add");
 		add.addActionListener(this);
 
-		write = new JButton("Save rules to file");
-		write.setActionCommand("saveRules");
-		write.addActionListener(this);
+		save = new JButton("Save rules to file");
+		save.setActionCommand("saveRules");
+		save.addActionListener(this);
+
+		load = new JButton("Load rules from file");
+		load.setToolTipText("load and add rules from file");
+		load.setActionCommand("loadRules");
+		load.addActionListener(this);
+
+		removeAll = new JButton("Remove all rules");
+		removeAll.setActionCommand("removeAll");
+		removeAll.addActionListener(this);
 
 		// pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
 		// JOptionPane.DEFAULT_OPTION);
@@ -135,17 +146,30 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 	}
 
 	private void listRules() {
-
 		// panel.add(new JLabel("Unit"), "span 1, gapright 4, wrap");
 
 		Rule rule;
+		int maxSpaces = (int) Math.floor(Math.log10(rules.size() + 1));
+		int spacesUsed;
+		String boxLbl;
+		JCheckBox box;
 		for (int i = 0; i < this.rules.size(); i++) {
 			rule = rules.get(i);
 
-			JCheckBox box = new JCheckBox();
+			boxLbl = i + 1 + ".";
+			spacesUsed = (int) Math.floor(Math.log10(i + 1));
+
+			for (int j = 0; j < maxSpaces - spacesUsed; j++) {
+				boxLbl += "  ";
+			}
+
+			//System.out.println(i + 1 + "added spaces: " + (maxSpaces - spacesUsed));
+			box = new JCheckBox();
 			box.setActionCommand(i + "");
 			box.addItemListener(this);
 			box.setSelected(rule.isActive());
+			box.setHorizontalTextPosition(SwingConstants.LEFT);
+			box.setText(boxLbl);
 			panel.add(box, "span 1, gaptop 2");
 
 			panel.add(new JLabel(rule.getName()), "span 1, gaptop 2");
@@ -206,6 +230,12 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 		if (e.getActionCommand().equals("add")) {
 			newRule = new Rule();
 			new RuleEditingWindow(newRule, null, this);
+		} else if (e.getActionCommand().equals("removeAll")) {
+			rules.clear();
+			this.repaintPanel();
+		} else if (e.getActionCommand().equals("loadRules")) {
+			OpenTransformationRules op = new OpenTransformationRules(this);
+			op.execute();
 		} else if (e.getActionCommand().startsWith("del")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(3));
 			rules.remove(idx);
@@ -249,15 +279,16 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 			newRule = null;
 		} else if (e.getActionCommand().equals("saveRules")) {
 			new SaveDialog(SaveDialog.FORMAT_YAML, SaveDialog.DATA_TYPE_TRANSFORMATION_RULES);
-			// new YamlRuleWriter().writeRules(rules);
 		}
 	}
 
-	private void repaintPanel() {
+	public void repaintPanel() {
 		panel.removeAll();
 
+		panel.add(load, "");
+		panel.add(save, "");
+		panel.add(removeAll, "span,wrap");
 		panel.add(add, "span");
-		panel.add(write, "span,wrap");
 
 		panel.add(new JLabel("List of all loaded rules"), "span,wrap");
 		panel.add(new JSeparator(), "span,growx,wrap 5");

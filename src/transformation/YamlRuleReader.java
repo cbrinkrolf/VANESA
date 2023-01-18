@@ -20,7 +20,7 @@ public class YamlRuleReader {
 	private Iterable<Object> readYamlRules(File f) {
 		Yaml yaml = new Yaml(new Constructor(YamlRule.class));
 		// File initialFile = new File("src/transformation/test2.yml");
-		System.out.println("Path for yml file containing transformation rules: " + f.getAbsolutePath());
+		//System.out.println("Path for yml file containing transformation rules: " + f.getAbsolutePath());
 		InputStream is;
 		try {
 			is = new FileInputStream(f);
@@ -98,7 +98,6 @@ public class YamlRuleReader {
 				rules.add(rule);
 			}
 		}
-		// writeRules(ymlList);
 		return rules;
 	}
 }

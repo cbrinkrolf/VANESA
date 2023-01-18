@@ -27,8 +27,8 @@ public class RuleManager {
 		this.rules = new YamlRuleReader().getRules(f);
 	}
 
-	public void importRulesFromFile(File f) {
-		rules.addAll(new YamlRuleReader().getRules(f));
+	public void addRules(List<Rule> rules) {
+		this.rules.addAll(rules);
 	}
 
 	public void clearAllRules() {
