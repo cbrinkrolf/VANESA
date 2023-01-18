@@ -64,7 +64,22 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*</exclude>
+                                        <exclude>README*</exclude>
+                                        <exclude>NOTICE*</exclude>
+                                        <exclude>AUTHORS*</exclude>
+                                        <exclude>LICENSE*</exclude>
+                                        <exclude>about.*</exclude>
+                                        <exclude>.keep</exclude>
+                                        <exclude>*.txt</exclude>
+                                        <exclude>*.xsd</exclude>
+                                        <exclude>*.dtd</exclude>
+                                        <exclude>ASL2.0</exclude>
+                                        <exclude>*.stf</exclude>
+                                        <exclude>*.html</exclude>
+                                        <exclude>XML*VERSION</exclude>
+                                        <exclude>release-timestamp.txt</exclude>
                                         <exclude>logback.xml</exclude>
+                                        <exclude>Log4j2Plugins.dat</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
