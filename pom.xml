@@ -147,6 +147,12 @@
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-all</artifactId>
             <version>1.16</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.orsonpdf</groupId>
@@ -190,13 +196,30 @@
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-kernel</artifactId>
-            <version>1.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
             <version>1.4.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.woden</groupId>
+                    <artifactId>woden-impl-dom</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xmlParserAPIs</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jaxen</groupId>
+                    <artifactId>jaxen</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
@@ -227,6 +250,12 @@
             <groupId>org.sbml.jsbml</groupId>
             <artifactId>jsbml</artifactId>
             <version>1.6.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.w3c.jigsaw</groupId>
+                    <artifactId>jigsaw</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>it.unimi.dsi</groupId>

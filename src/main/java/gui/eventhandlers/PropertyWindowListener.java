@@ -117,18 +117,23 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (!text.equals("") && !text.equals(gene.getNtSequence())) {
 				gene.setNtSequence(text);
 			}
-		} else if (source.equals("rna")) {
+		} else if (source.equals("ntSequence")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			RNA rna = (RNA) geb;
 			if (!text.equals("") && !text.equals(rna.getNtSequence())) {
 				rna.setNtSequence(text);
 			}
+		} else if (source.equals("logFC")) {
+			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
+			RNA rna = (RNA) geb;
+			if (n != null && !n.equals(rna.getLogFC())) {
+				rna.setLogFC(n.doubleValue());
+			}
 		} else if (source.equals("concentration")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) geb;
 			if (n != null && !n.equals(bna.getConcentration())) {
-				double conc = n.doubleValue();
-				bna.setConcentration(conc);
+				bna.setConcentration(n.doubleValue());
 			}
 
 		} else if (source.equals("concentrationMin")) {

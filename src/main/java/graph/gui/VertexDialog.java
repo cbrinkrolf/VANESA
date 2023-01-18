@@ -23,7 +23,7 @@ import javax.swing.JTextField;
 
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-import biologicalElements.ElementNamesSingelton;
+import biologicalElements.ElementNamesSingleton;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import graph.Compartment.Compartment;
@@ -54,7 +54,7 @@ public class VertexDialog {
 		this.pw = pw;
 		MigLayout layout = new MigLayout("", "[left]");
 
-		dcbm = new DefaultComboBoxModel<String>(ElementNamesSingelton.getInstance().getEnzymes());
+		dcbm = new DefaultComboBoxModel<String>(ElementNamesSingleton.getInstance().getEnzymes());
 		dcbmEmpty = new DefaultComboBoxModel<String>(new String[]{""});
 		elementNames.setEditable(true);
 

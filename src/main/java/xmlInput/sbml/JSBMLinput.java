@@ -470,23 +470,20 @@ public class JSBMLinput {
 					bna.setName(name);
 					switch (bna.getBiologicalElement()) {
 					case Elementdeclerations.mRNA:
+					case Elementdeclerations.miRNA:
+					case Elementdeclerations.lncRNA:
+					case Elementdeclerations.sRNA:
+						// TODO
 						elSub = specAnnotation.getChild("NtSequence", null);
 						if (elSub != null) {
 							attr = elSub.getAttributeValue("NtSequence");
-							((biologicalObjects.nodes.MRNA) bna).setNtSequence(attr);
+							((biologicalObjects.nodes.RNA) bna).setNtSequence(attr);
 						}
 						break;
 					case Elementdeclerations.pathwayMap:
 						elSub = specAnnotation.getChild("PathwayLink", null);
 						if (elSub != null) {
 							pathwayLink = String.valueOf(elSub.getAttributeValue("PathwayLink"));
-						}
-						break;
-					case Elementdeclerations.sRNA:
-						elSub = specAnnotation.getChild("NtSequence", null);
-						if (elSub != null) {
-							attr = String.valueOf(elSub.getAttributeValue("NtSequence"));
-							((biologicalObjects.nodes.SRNA) bna).setNtSequence(attr);
 						}
 						break;
 					case Elementdeclerations.discretePlace:

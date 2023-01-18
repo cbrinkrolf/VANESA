@@ -463,15 +463,21 @@ public class ElementWindow implements ActionListener, ItemListener {
 				RNA rna = (RNA) ab;
 				JTextField ntSequence = new JTextField(20);
 				ntSequence.setText(rna.getNtSequence());
-				ntSequence.setName("rna");
+				ntSequence.setName("ntSequence");
 				ntSequence.addFocusListener(pwl);
 				p.add(new JLabel("NT-Sequence"), "gap 5 ");
 				p.add(ntSequence, "wrap, span 3");
+				MyJFormattedTextField logFc = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat(), true);
+				logFc.setName("logFC");
+				logFc.setText(rna.getLogFC() + "");
+				logFc.addFocusListener(pwl);
+				p.add(new JLabel("logFC"), "gap 5 ");
+				p.add(logFc, "wrap, span 3");
 			} else if (ab instanceof Place) {
 				Place place = (Place) ab;
 
 				JLabel lswitchPlace = new JLabel("Place type");
-				JComboBox<String> placeList = new JComboBox<String>(new String[] { "discrete", "continuous" });
+				JComboBox<String> placeList = new JComboBox<>(new String[] { "discrete", "continuous" });
 				if (place.isDiscrete()) {
 					placeList.setSelectedItem("discrete");
 				} else {

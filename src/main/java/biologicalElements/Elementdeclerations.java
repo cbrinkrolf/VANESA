@@ -36,6 +36,10 @@ public class Elementdeclerations {
 
 	public static final String mRNA = "mRNA";
 
+	public static final String miRNA = "miRNA";
+
+	public static final String lncRNA = "lncRNA";
+
 	public static final String orthologGroup = "Ortholog Group";
 
 	public static final String pathwayMap = "Pathway Map";
@@ -171,6 +175,8 @@ public class Elementdeclerations {
 		l.add(membraneChannel);
 		l.add(membraneReceptor);
 		l.add(mRNA);
+		l.add(miRNA);
+		l.add(lncRNA);
 		l.add(orthologGroup);
 		l.add(pathwayMap);
 		l.add(protein);
@@ -216,6 +222,8 @@ public class Elementdeclerations {
 		l.add(membraneChannel);
 		l.add(membraneReceptor);
 		l.add(mRNA);
+		l.add(miRNA);
+		l.add(lncRNA);
 		l.add(orthologGroup);
 		l.add(pathwayMap);
 		l.add(protein);
