@@ -69,14 +69,14 @@ import xmlOutput.sbml.JSBMLoutput;
 public class MainWindow implements ApplicationListener {
 
 	private JFrame frame = new JFrame();
-	private HashMap<Integer, View> views = new HashMap<Integer, View>();
+	private HashMap<Integer, View> views = new HashMap<>();
 	private ViewMap viewMap = new ViewMap();
 	private RootWindow rootWindow;
 	private ToolBar bar;
 	private int maxPanelID = -1;
 	private int selectedView = 0;
 	private YamlToObjectParser yamlToObject;
-	private List<Bean> beansList = new ArrayList<Bean>();
+	private List<Bean> beansList = new ArrayList<>();
 	private String loadedYaml = null;
 	private VertexShapes vs = new VertexShapes();
 
@@ -89,7 +89,7 @@ public class MainWindow implements ApplicationListener {
 	private JSplitPane split_pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 	// private TabbedPanel tabbedPanel;
-	private HashMap<Integer, TabbedPanel> tabbedPanels = new HashMap<Integer, TabbedPanel>();
+	private HashMap<Integer, TabbedPanel> tabbedPanels = new HashMap<>();
 	// private TabbedPanel tabbedPanelProperties;
 	private final GraphContainer con = GraphContainer.getInstance();
 	private int addedtabs = 0;
@@ -231,7 +231,7 @@ public class MainWindow implements ApplicationListener {
 
 		root.add(split_pane, BorderLayout.CENTER);
 
-		layer = new JXLayer<JComponent>(root);
+		layer = new JXLayer<>(root);
 		layer.setUI(blurUI);
 		frame.setContentPane(layer);
 
@@ -302,7 +302,7 @@ public class MainWindow implements ApplicationListener {
 				bna.setDefaultNodesize(nodeSizeBean);
 			}
 		}
-		if (doResetAppearance == true) {
+		if (doResetAppearance) {
 			bna.resetAppearance();
 		}
 	}
@@ -310,7 +310,7 @@ public class MainWindow implements ApplicationListener {
 	public void askForYaml() throws FileNotFoundException {
 		String yamlSourceFile = new File("YamlSourceFile.txt").getAbsolutePath();
 		File file = new File(yamlSourceFile);
-		BufferedReader buffReader = null;
+		BufferedReader buffReader;
 		System.out.println(yamlSourceFile);
 		if (file.exists()) {
 			try {
@@ -321,19 +321,14 @@ public class MainWindow implements ApplicationListener {
 				e.printStackTrace();
 			}
 			File yamlFile = new File(loadedYaml);
-			if (yamlFile.exists()) {
-				yamlToObject = new YamlToObjectParser(loadedYaml);
-				beansList = yamlToObject.startConfig();
-			} else {
+			if (!yamlFile.exists()) {
 				loadedYaml = VisualizationDialog.DEFAULTYAML;
-				yamlToObject = new YamlToObjectParser(loadedYaml);
-				beansList = yamlToObject.startConfig();
 			}
 		} else {
 			loadedYaml = VisualizationDialog.DEFAULTYAML;
-			yamlToObject = new YamlToObjectParser(loadedYaml);
-			beansList = yamlToObject.startConfig();
 		}
+		yamlToObject = new YamlToObjectParser(loadedYaml);
+		beansList = yamlToObject.startConfig();
 	}
 
 	/*
@@ -461,7 +456,9 @@ public class MainWindow implements ApplicationListener {
 
 	public void addTab(TitledTab tab) {
 		addedtabs++;
-		// System.out.println(getSelectedView());
+		if (tabbedPanels.isEmpty()) {
+			addView();
+		}
 		tabbedPanels.get(getSelectedView()).addTab(tab);
 		setSelectedTab(tab);
 		myMenu.enableCloseAndSaveFunctions();
@@ -583,11 +580,11 @@ public class MainWindow implements ApplicationListener {
 		frame.repaint();
 	}
 
-	public synchronized void blurrUI() {
+	public synchronized void blurUI() {
 		blurUI.setLocked(true);
 	}
 
-	public synchronized void unBlurrUI() {
+	public synchronized void unBlurUI() {
 		blurUI.setLocked(false);
 	}
 
