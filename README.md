@@ -2,7 +2,7 @@
 
 # VANESA2
 ## Current Releases
-- [latest pre release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) (v.0.4-pre from 2021-03-31)
+- [latest pre release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4_pre_2) (v.0.4-pre Release 2 from 2021-08-01)
 - [latest stable release](https://github.com/cbrinkrolf/VANESA/releases/latest) (v.0.3.3 from 2019-05-24)
 
 ## Running from source
