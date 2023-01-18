@@ -31,7 +31,6 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
 import gui.MyPopUp;
-import util.MyIntComparable;
 
 // Restrictions / limitations:
 // biological network needs to be directed (each edge)
@@ -928,7 +927,7 @@ public class Transformator {
 		}
 
 		ArrayList<Integer> ids = new ArrayList<Integer>(map.keySet());
-		Collections.sort(ids, new MyIntComparable());
+		ids.sort(Integer::compare);
 
 		List<V> sortedList = new ArrayList<V>();
 		for (int i = 0; i < ids.size(); i++) {

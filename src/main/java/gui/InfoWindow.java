@@ -685,9 +685,7 @@ public class InfoWindow {
 			for (long xa = val; xa > 9 && pad > 0; xa /= 10) {
 				pad--;
 			}
-			for (int xa = 0; xa < pad; xa++) {
-				tgt.append('0');
-			}
+			tgt.append("0".repeat(Math.max(0, pad)));
 		}
 		tgt.append(val);
 	}

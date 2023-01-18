@@ -38,7 +38,6 @@ import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.GraphContainer;
-import graph.jung.graphDrawing.VertexShapes;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 

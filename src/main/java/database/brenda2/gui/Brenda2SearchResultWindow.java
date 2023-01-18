@@ -14,7 +14,6 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -40,7 +39,6 @@ import gui.MainWindow;
 import miscalleanous.tables.MyTable;
 import miscalleanous.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
-import util.MyDoubleComparable;
 import util.VanesaUtility;
 
 /**
@@ -367,7 +365,7 @@ public class Brenda2SearchResultWindow implements ActionListener {
 			}
 		}
 		// System.out.println(list.size());
-		Collections.sort(list, new MyDoubleComparable());
+		list.sort(Double::compare);
 		double mean = VanesaUtility.getMean(list);
 		double median = VanesaUtility.getMedian(list);
 		this.kmStatistics.setText("n: " + list.size() + " min: " + list.get(0) + " max: " + list.get(list.size() - 1) + " mean: "

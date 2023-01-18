@@ -53,7 +53,6 @@ import lombok.Setter;
 import petriNet.PetriNetProperties;
 import petriNet.PetriNetSimulation;
 import util.FormularSafety;
-import util.MyIntComparable;
 
 @Getter
 @Setter
@@ -465,7 +464,7 @@ public class Pathway implements Cloneable {
 		}
 
 		ArrayList<Integer> ids = new ArrayList<Integer>(map.keySet());
-		Collections.sort(ids, new MyIntComparable());
+		ids.sort(Integer::compare);
 
 		List<BiologicalEdgeAbstract> sortedList = new ArrayList<BiologicalEdgeAbstract>();
 		for (int i = 0; i < ids.size(); i++) {

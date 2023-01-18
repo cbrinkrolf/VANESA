@@ -28,7 +28,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;

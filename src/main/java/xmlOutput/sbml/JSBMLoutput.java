@@ -44,7 +44,6 @@ import biologicalObjects.nodes.petriNet.Transition;
 import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.RangeSelector;
-import util.MyIntComparable;
 
 /**
  * This class represents a writer from graph data to a SBML file. The actual
@@ -208,7 +207,7 @@ public class JSBMLoutput {
 		}
 
 		ArrayList<Integer> ids = new ArrayList<Integer>(map.keySet());
-		Collections.sort(ids, new MyIntComparable());
+		ids.sort(Integer::compare);
 
 		List<BiologicalEdgeAbstract> sortedEdges = new ArrayList<BiologicalEdgeAbstract>();
 		for (int i = 0; i < ids.size(); i++) {

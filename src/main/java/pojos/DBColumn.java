@@ -13,7 +13,7 @@ public class DBColumn implements Serializable {
         this.column = column;
     }
 
-    public int getLenght() {
+    public int getLength() {
         return this.column.length;
     }
 

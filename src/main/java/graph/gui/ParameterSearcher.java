@@ -1,8 +1,5 @@
 package graph.gui;
 
-/**
- * 
- */
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -16,7 +13,6 @@ import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,7 +50,6 @@ import miscalleanous.tables.MyTable;
 import miscalleanous.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
 import util.FormularSafety;
-import util.MyDoubleComparable;
 import util.VanesaUtility;
 
 /**
@@ -62,10 +57,6 @@ import util.VanesaUtility;
  * 
  */
 public class ParameterSearcher extends JFrame implements ActionListener {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JTextField ecNumber = new JTextField();
 	private JTextField name = new JTextField();
@@ -611,7 +602,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			}
 		}
 		// System.out.println(list.size());
-		Collections.sort(list, new MyDoubleComparable());
+		list.sort(Double::compare);
 		double mean = VanesaUtility.getMean(list);
 		double median = VanesaUtility.getMedian(list);
 		if (list.size() > 0) {

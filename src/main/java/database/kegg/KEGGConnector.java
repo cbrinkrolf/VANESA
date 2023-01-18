@@ -489,7 +489,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 		for (DBColumn column : allGeneralRelations) {
 			if (first) {
-				for (int i = 0; i < column.getLenght(); i++) {
+				for (int i = 0; i < column.getLength(); i++) {
 					// System.out.println(column.getColumn()[i]);
 				}
 
@@ -612,7 +612,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 		for (DBColumn column : allReactions) {
 
 			if (first) {
-				for (int i = 0; i < column.getLenght(); i++) {
+				for (int i = 0; i < column.getLength(); i++) {
 					// System.out.println(column.getColumn()[i]);
 				}
 

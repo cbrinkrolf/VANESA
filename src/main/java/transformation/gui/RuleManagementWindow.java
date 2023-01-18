@@ -24,7 +24,6 @@ import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
 import transformation.Rule;
 import transformation.RuleManager;
-import transformation.YamlRuleWriter;
 
 public class RuleManagementWindow implements ActionListener, ItemListener {
 
