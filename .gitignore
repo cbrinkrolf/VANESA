@@ -3,3 +3,12 @@
 /.settings/
 /logfiles/*
 
+grammars/*.jar
+grammars/*.interp
+grammars/*.tokens
+grammars/*.java
+*.iml
+.idea
+target/
+jsbml.log
+dependency-reduced-pom.xml

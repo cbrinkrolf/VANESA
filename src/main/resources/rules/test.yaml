@@ -1,0 +1,78 @@
+---
+ruleName: "fancy rule name"
+biologicalNodes:
+ - name: "M1"
+   type: "SmallMolecule"
+ - name: "M2"
+   type: "SmallMolecule"
+ - name: "E"
+   type: "Enzyme"
+biologicalEdges:
+ - name: "E1"
+   type: "Inhibition"
+   from: "M1"
+   to: "E"
+ - name: "E2"
+   type: "BiologicalEdgeAbstract"
+   from: "E"
+   to: "M2"
+petriNodes:
+ - name: "P1"
+   type: "Place"
+ - name: "P2"
+   type: "Place"
+ - name: "T1"
+   type: "Place" 
+petriEdges:
+ - name: "PE1"
+   type: "PNInhibitoryArc"
+   from: "P1"
+   to: "T1"
+ - name: "PE2"
+   type: "PNArc"
+   from: "T1"
+   to: "P2"
+mappingBNToPN:
+ - "M1->P1"
+ - "M2->P2"
+ - "E->T1"
+
+
+---
+ruleName: "fancy rule name"
+biologicalNodes:
+ - name: "M1"
+   type: "SmallMolecule"
+ - name: "M2"
+   type: "SmallMolecule"
+ - name: "E"
+   type: "Enzyme"
+biologicalEdges:
+ - name: "E1"
+   type: "BiologicalEdgeAbstract"
+   from: "M1"
+   to: "E"
+ - name: "E2"
+   type: "BiologicalEdgeAbstract"
+   from: "E"
+   to: "M2"
+petriNodes:
+ - name: "P1"
+   type: "Place"
+ - name: "P2"
+   type: "Place"
+ - name: "T1"
+   type: "Transition" 
+petriEdges:
+ - name: "PE1"
+   type: "PNArc"
+   from: "P1"
+   to: "T1"
+ - name: "PE2"
+   type: "PNArc"
+   from: "T1"
+   to: "P2"
+mappingBNToPN:
+ - "M1->P1"
+ - "M2->P2"
+ - "E->T1"
