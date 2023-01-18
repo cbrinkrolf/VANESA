@@ -851,7 +851,6 @@ public class MyGraph {
 
 	public Collection<BiologicalNodeAbstract> getAllVertices() {
 		return g.getVertices();
-		// return g.getVertices();
 	}
 
 	public Collection<BiologicalEdgeAbstract> getAllEdges() {

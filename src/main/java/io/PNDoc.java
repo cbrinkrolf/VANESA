@@ -10,7 +10,7 @@ import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
-import de.uni_bielefeld.cebitec.mzurowie.pretty_formula.main.FormulaParser;
+import prettyFormula.FormulaParser;
 import graph.GraphContainer;
 import graph.gui.Parameter;
 import gui.MainWindow;

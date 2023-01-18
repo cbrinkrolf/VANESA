@@ -22,8 +22,8 @@ import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 
 import org.scilab.forge.jlatexmath.ParseException;
 
-import de.uni_bielefeld.cebitec.mzurowie.pretty_formula.main.DetailedParseCancellationException;
-import de.uni_bielefeld.cebitec.mzurowie.pretty_formula.main.FormulaParser;
+import prettyFormula.DetailedParseCancellationException;
+import prettyFormula.FormulaParser;
 
 /**
  *
