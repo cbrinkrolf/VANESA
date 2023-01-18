@@ -23,7 +23,7 @@ public class RuleManager {
 
 	private void init() {
 		// File f = new File("src/transformation/test2.yaml");
-		File f = new File("src/transformation/savedRules.yaml");
+		File f = new File("src/main/resources/rules/savedRules.yaml");
 		this.rules = new YamlRuleReader().getRules(f);
 	}
 

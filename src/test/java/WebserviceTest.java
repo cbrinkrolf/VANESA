@@ -2,7 +2,7 @@
  * Copyright (c) Benjamin Kormeier 2006-2009.                  *
  * All rights reserved.                                        *
  ***************************************************************/
-package test;
+//package test;
 
 import java.util.ArrayList;
 import java.util.UUID;
