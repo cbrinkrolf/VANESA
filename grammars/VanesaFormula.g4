@@ -2,18 +2,18 @@ grammar VanesaFormula;
 
 // PARSER RULES
 
-expr				 : term ;
+expr         : term ;
 
-term				 : LPAREN term RPAREN
-					     | atom
-					     | function LPAREN term ( COMMA term )* RPAREN
+term         : LPAREN term RPAREN
+               | atom
+               | function LPAREN term ( COMMA term )* RPAREN
                // ordering is important for correct parsing!
                // pow needs to be right associative for correct parenthesizing
                |<assoc=right> term operator=POW term
                | term operator=DIV term
                | term operator=MULT term
-					     | term operator=( PLUS | MINUS ) term
-					     ;
+               | term operator=( PLUS | MINUS ) term
+               ;
 
 atom         : number
                | neg_number
@@ -21,11 +21,11 @@ atom         : number
                | neg_variable
                ;           
 
-number			 : NUMBER ( DOT NUMBER )? ;
+number       : NUMBER ( DOT NUMBER )? ;
 
 neg_number	 : LPAREN MINUS number RPAREN ;
 
-variable		 : VARIABLE ( INDEX )*;
+variable     : VARIABLE ( INDEX )*;
 
 neg_variable : LPAREN MINUS variable RPAREN ;
 
