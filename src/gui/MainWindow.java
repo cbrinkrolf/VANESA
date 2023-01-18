@@ -531,7 +531,7 @@ public class MainWindow implements ApplicationListener {
 						e.printStackTrace();
 					}
 				} else {
-					new SaveDialog(SaveDialog.FORMAT_SBML);
+					new SaveDialog(SaveDialog.FORMAT_SBML, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				}
 			}
 			if (n == -1 || n == 2) {

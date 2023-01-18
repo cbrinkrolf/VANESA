@@ -188,7 +188,7 @@ public class MenuListener implements ActionListener {
 					new SaveDialog( // GRAPHML+MO+GON=14
 							SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO + SaveDialog.FORMAT_GON
 							// + SaveDialog.FORMAT_SBML
-									+ SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_ITXT + SaveDialog.FORMAT_TXT);
+									+ SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_ITXT + SaveDialog.FORMAT_TXT, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 					// +SaveDialog.FORMAT_SBML);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network first.");
@@ -200,7 +200,7 @@ public class MenuListener implements ActionListener {
 		case "save as":
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_SBML);
+					new SaveDialog(SaveDialog.FORMAT_SBML, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
@@ -231,7 +231,7 @@ public class MenuListener implements ActionListener {
 							e1.printStackTrace();
 						}
 					} else {
-						new SaveDialog(SaveDialog.FORMAT_SBML);
+						new SaveDialog(SaveDialog.FORMAT_SBML, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 					}
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network first.");
@@ -1049,7 +1049,7 @@ public class MenuListener implements ActionListener {
 			wvv = pw.prepareGraphToPrint();
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, wvv,
+					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, SaveDialog.DATA_TYPE_GRAPH_PICTURE, wvv,
 							MainWindow.getInstance().getFrame(), null);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network first.");

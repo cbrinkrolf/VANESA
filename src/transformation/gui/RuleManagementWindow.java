@@ -20,6 +20,7 @@ import javax.swing.JSeparator;
 import javax.swing.WindowConstants;
 
 import gui.MainWindow;
+import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
 import transformation.Rule;
 import transformation.RuleManager;
@@ -86,8 +87,8 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 		add.setActionCommand("add");
 		add.addActionListener(this);
 
-		write = new JButton("write rules to file");
-		write.setActionCommand("write");
+		write = new JButton("Save rules to file");
+		write.setActionCommand("saveRules");
 		write.addActionListener(this);
 
 		// pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
@@ -246,8 +247,9 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 			this.repaintPanel();
 		} else if (e.getActionCommand().equals("cancelRE")) {
 			newRule = null;
-		} else if (e.getActionCommand().equals("write")) {
-			new YamlRuleWriter().writeRules(rules);
+		} else if (e.getActionCommand().equals("saveRules")) {
+			new SaveDialog(SaveDialog.FORMAT_YAML, SaveDialog.DATA_TYPE_TRANSFORMATION_RULES);
+			// new YamlRuleWriter().writeRules(rules);
 		}
 	}
 

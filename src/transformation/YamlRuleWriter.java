@@ -1,8 +1,7 @@
 package transformation;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,20 +11,25 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import gui.MyPopUp;
-
 public class YamlRuleWriter {
 	
-	public void writeRules(List<Rule> rules){
+	public static String writeRules(OutputStream os, List<Rule> rules){
 		List<YamlRule> yamlRules = new ArrayList<YamlRule>();
 		for(int i = 0; i<rules.size(); i++){
-			yamlRules.add(this.getYamlRuleFromRule(rules.get(i)));
+			yamlRules.add(getYamlRuleFromRule(rules.get(i)));
 		}
 		
-		this.writeYamlRules(yamlRules);
+		String result = "";
+		try {
+			writeYamlRules(os, yamlRules);
+		} catch (IOException e) {
+			e.printStackTrace();
+			result = "Error during Yaml rule Export!";
+		}
+		return result;
 	}
 	
-	private void writeYamlRules(List<YamlRule> rules) {
+	private static void writeYamlRules(OutputStream os, List<YamlRule> rules) throws IOException {
 		// Yaml yaml = new Yaml(new Constructor(YmlRule.class));
 		Yaml yaml = new Yaml();
 		StringBuilder sb = new StringBuilder();
@@ -36,18 +40,12 @@ public class YamlRuleWriter {
 			}
 		}
 		//System.out.println(sb);
-		FileWriter fw;
-		try {
-			fw = new FileWriter(new File("src/transformation/savedRules.yaml"));
-			fw.write(sb.toString());
-			fw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		MyPopUp.getInstance().show("YAML Rules", rules.size()+" rules were written to file!");
+		
+		os.write(sb.toString().getBytes());
+		os.close();
 	}
 
-	private YamlRule getYamlRuleFromRule(Rule r){
+	private static YamlRule getYamlRuleFromRule(Rule r){
 		YamlRule rule = new YamlRule();
 		rule.setName(r.getName());
 		

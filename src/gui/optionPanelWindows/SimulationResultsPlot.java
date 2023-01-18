@@ -779,7 +779,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				}
 			}
 		} else if (event.equals("exportSimResult")) {
-			new SaveDialog(SaveDialog.FORMAT_CSV);
+			new SaveDialog(SaveDialog.FORMAT_CSV, SaveDialog.DATA_TYPE_SIMULATION_RESULTS);
 
 			// System.out.println("click");
 		}

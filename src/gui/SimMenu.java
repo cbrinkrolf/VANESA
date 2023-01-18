@@ -3,7 +3,6 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -637,7 +636,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		} else if (e.getActionCommand().startsWith("export_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(7));
 			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
-			new SaveDialog(SaveDialog.FORMAT_CSV, null, this, simId);
+			new SaveDialog(SaveDialog.FORMAT_CSV,SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simId);
 		} else if ("advancedOptions".equals(e.getActionCommand())) {
 			revalidateAdvancedPanel();
 		} else if ("parameterized".equals(e.getActionCommand())) {
