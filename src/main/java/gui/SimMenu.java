@@ -3,7 +3,6 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -18,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -264,7 +264,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		// advancedOptionsPanel.add(parametrizedPanel);
 
 		this.add(north, BorderLayout.NORTH);
-		north.setLayout(new GridLayout(4, 1));
+		// north.setLayout(new GridLayout(4, 1));
+		north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
 		north.add(controlsPanel);
 		north.add(basicOptionsPanel);
 		// north.add(northDown);
@@ -313,18 +314,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			parametrizedPanel.setSize(1, 1);
 			north.remove(parametrizedPanel);
 		}
-		// parametrizedPanel.repaint();
-
-		parametrizedPanel.revalidate();
-		// north.repaint();
-		// north.revalidate();
-		// north.repaint();
-		// this.revalidate();
-		// this.repaint();
-		// this.revalidate();
+		north.revalidate();
 		this.pack();
-		// System.out.println("painted");
-		this.repaint();
 	}
 
 	private void revalidateAdvancedPanel() {
@@ -349,19 +340,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			north.remove(advancedOptionsPanel);
 			north.remove(parametrizedPanel);
 		}
-		// parametrizedPanel.repaint();
-
 		north.revalidate();
-		advancedOptionsPanel.revalidate();
-		advancedOptionsPanel.repaint();
-		// north.repaint();
-		// north.revalidate();
-		// this.revalidate();
-		// this.repaint();
-		// this.revalidate();
 		this.pack();
-		// System.out.println("painted");
-		this.repaint();
 	}
 
 	private void revalidateSeed() {
@@ -656,7 +636,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		} else if (e.getActionCommand().startsWith("export_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(7));
 			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
-			new SaveDialog(SaveDialog.FORMAT_CSV, null, this, simId);
+			new SaveDialog(SaveDialog.FORMAT_CSV,SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simId);
 		} else if ("advancedOptions".equals(e.getActionCommand())) {
 			revalidateAdvancedPanel();
 		} else if ("parameterized".equals(e.getActionCommand())) {

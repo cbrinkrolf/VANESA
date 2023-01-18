@@ -45,12 +45,38 @@ import gui.MainWindow;
 import gui.MyPopUp;
 import io.graphML.SaveGraphML;
 import moOutput.MOoutput;
+import transformation.Rule;
+import transformation.RuleManager;
+import transformation.YamlRuleWriter;
 import util.ImageExport;
 import xmlOutput.sbml.JSBMLoutput;
 import xmlOutput.sbml.PNMLOutput;
 import xmlOutput.sbml.VAMLoutput;
 
 public class SaveDialog {
+	/*
+	 * public SaveDialog(boolean sbml) { this(sbml?1:1); }//
+	 */
+	// use power of 2
+	public static int FORMAT_SBML = 1;
+	public static int FORMAT_GRAPHML = 2;
+	public static int FORMAT_MO = 4;
+	public static int FORMAT_GON = 8;
+	public static int FORMAT_VA = 16;
+	public static int FORMAT_TXT = 32;
+	public static int FORMAT_ITXT = 64;
+	public static int FORMAT_PNML = 128;
+	public static int FORMAT_CSV = 256;
+	public static int FORMAT_PNG = 512;
+	public static int FORMAT_YAML = 1024;
+	public static int FORMAT_SVG = 2048;
+	public static int FORMAT_PDF = 4096;
+
+	public static final int DATA_TYPE_TRANSFORMATION_RULES = 1;
+	public static final int DATA_TYPE_VISUALIZATION_SETTINGS = 2;
+	public static final int DATA_TYPE_GRAPH_PICTURE = 3;
+	public static final int DATA_TYPE_NETWORK_EXPORT = 4;
+	public static final int DATA_TYPE_SIMULATION_RESULTS = 5;
 
 	private boolean sbmlBool = true;
 	private boolean graphMLBool = true;
@@ -68,6 +94,7 @@ public class SaveDialog {
 	private boolean pdfBool = true;
 
 	private String fileFormat;
+	private int dataType;
 	private File file;
 
 	private String sbmlDescription = "System Biology Markup Language (*.sbml)";
@@ -112,25 +139,7 @@ public class SaveDialog {
 	private Component c = null;
 	private JFileChooser chooser;
 
-	/*
-	 * public SaveDialog(boolean sbml) { this(sbml?1:1); }//
-	 */
-	// use power of 2
-	public static int FORMAT_SBML = 1;
-	public static int FORMAT_GRAPHML = 2;
-	public static int FORMAT_MO = 4;
-	public static int FORMAT_GON = 8;
-	public static int FORMAT_VA = 16;
-	public static int FORMAT_TXT = 32;
-	public static int FORMAT_ITXT = 64;
-	public static int FORMAT_PNML = 128;
-	public static int FORMAT_CSV = 256;
-	public static int FORMAT_PNG = 512;
-	public static int FORMAT_YAML = 1024;
-	public static int FORMAT_SVG = 2048;
-	public static int FORMAT_PDF = 4096;
-
-	public SaveDialog(int format, Component c, Component relativeTo, String simId) {
+	public SaveDialog(int format, int dataType, Component c, Component relativeTo, String simId) {
 
 		if (relativeTo == null) {
 			relativeTo = MainWindow.getInstance().getFrame();
@@ -138,6 +147,7 @@ public class SaveDialog {
 		String error = "";
 		this.prerapre(format);
 		this.c = c;
+		this.dataType = dataType;
 		int option = chooser.showSaveDialog(relativeTo);
 
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -160,7 +170,7 @@ public class SaveDialog {
 				} catch (IOException | HeadlessException | XMLStreamException | TranscoderException | InvalidIDException
 						| VoidRepositoryException e) {
 					error += e.getMessage();
-					MyPopUp.getInstance().show("Error!", "An error occured:\r\n"+error);
+					MyPopUp.getInstance().show("Error!", "An error occured:\r\n" + error);
 					e.printStackTrace();
 				}
 			}
@@ -280,8 +290,8 @@ public class SaveDialog {
 		}
 	}
 
-	public SaveDialog(int format) {
-		this(format, null, MainWindow.getInstance().getFrame(), null);
+	public SaveDialog(int format, int dataType) {
+		this(format, dataType, null, MainWindow.getInstance().getFrame(), null);
 	}
 
 	private void prerapre(int format) {
@@ -378,7 +388,8 @@ public class SaveDialog {
 				GraphInstance.getPathwayStatic().setFile(file);
 			}
 
-			// TODO creation of FileOutputStream overrides file already, even without call write() method. Document should be generated first, if no 
+			// TODO creation of FileOutputStream overrides file already, even without call
+			// write() method. Document should be generated first, if no
 			// errors thrown, then create FOS and write to file.
 			JSBMLoutput jsbmlOutput = new JSBMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
 
@@ -505,22 +516,34 @@ public class SaveDialog {
 				exportPath = exportPath + ".yaml";
 			}
 
-			InputStream internYaml = getClass().getClassLoader().getResourceAsStream("NodeProperties.yaml");
-			FileOutputStream exportYaml = null;
-			File exportFile = new File(exportPath);
-			exportYaml = new FileOutputStream(exportFile);
-			byte[] buffer = new byte[4096];
-			int bytesRead = -1;
-			bytesRead = internYaml.read(buffer);
-			while (bytesRead != -1) {
-				exportYaml.write(buffer, 0, bytesRead);
+			if (dataType == DATA_TYPE_VISUALIZATION_SETTINGS) {
+				InputStream internYaml = getClass().getClassLoader()
+						.getResourceAsStream("NodeProperties.yaml");
+				FileOutputStream exportYaml = null;
+				File exportFile = new File(exportPath);
+				exportYaml = new FileOutputStream(exportFile);
+				byte[] buffer = new byte[4096];
+				int bytesRead = -1;
 				bytesRead = internYaml.read(buffer);
-			}
+				while (bytesRead != -1) {
+					exportYaml.write(buffer, 0, bytesRead);
+					bytesRead = internYaml.read(buffer);
+				}
 
-			internYaml.close();
-			exportYaml.close();
-			MyPopUp.getInstance().show("Information", yamlDescription + " File exported");
-			MainWindow.getInstance().setLoadedYaml(exportPath);
+				internYaml.close();
+				exportYaml.close();
+				MyPopUp.getInstance().show("Information", yamlDescription + " File exported");
+				MainWindow.getInstance().setLoadedYaml(exportPath);
+			} else if (dataType == DATA_TYPE_TRANSFORMATION_RULES) {
+
+				List<Rule> rules = RuleManager.getInstance().getRules();
+				String result = YamlRuleWriter.writeRules(new FileOutputStream(file), rules);
+				if (result.length() > 0) {
+					MyPopUp.getInstance().show("Error", yamlDescription + "an error occured: " + result);
+				} else {
+					MyPopUp.getInstance().show("YAML Rules", rules.size()+" rules were written to file!");
+				}
+			}
 		}
 	}
 }

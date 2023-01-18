@@ -145,7 +145,7 @@ public class DetailedSimRes implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String event = e.getActionCommand();
 		if (event.equals("exportSimResult")) {
-			new SaveDialog(SaveDialog.FORMAT_CSV, null, dialog, this.simId);
+			new SaveDialog(SaveDialog.FORMAT_CSV, SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, dialog, this.simId);
 		}
 	}
 }

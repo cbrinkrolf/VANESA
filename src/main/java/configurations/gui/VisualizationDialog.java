@@ -171,7 +171,7 @@ public class VisualizationDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (e.getSource() == exportButton) {
-					new SaveDialog(SaveDialog.FORMAT_YAML);
+					new SaveDialog(SaveDialog.FORMAT_YAML, SaveDialog.DATA_TYPE_VISUALIZATION_SETTINGS);
 					loadedYaml = MainWindow.getInstance().getLoadedYaml();
 					loadedYamlLabel.setText(MainWindow.getInstance().getLoadedYaml());
 					shapeBox.setEnabled(true);
