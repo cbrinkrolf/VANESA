@@ -1,6 +1,7 @@
 package transformation;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class RuleManager {
 	private static RuleManager instance = null;
 
 	@Getter
-	private List<Rule> rules = new ArrayList<Rule>();
+	private List<Rule> rules = new ArrayList<>();
 
 	public static synchronized RuleManager getInstance() {
 		if (RuleManager.instance == null) {
@@ -22,9 +23,11 @@ public class RuleManager {
 	}
 
 	private void init() {
-		// File f = new File("src/transformation/test2.yaml");
-		File f = new File("src/main/resources/rules/savedRules.yaml");
-		this.rules = new YamlRuleReader().getRules(f);
+		try (InputStream is = getClass().getClassLoader().getResourceAsStream("rules/savedRules.yaml")) {
+			rules = new YamlRuleReader().getRules(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void addRules(List<Rule> rules) {
@@ -36,7 +39,7 @@ public class RuleManager {
 	}
 
 	public List<Rule> getActiveRules() {
-		List<Rule> activeRules = new ArrayList<Rule>();
+		List<Rule> activeRules = new ArrayList<>();
 
 		for (int i = 0; i < this.rules.size(); i++) {
 			if (rules.get(i).isActive()) {
