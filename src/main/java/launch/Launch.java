@@ -8,14 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
@@ -33,16 +26,8 @@ import gui.MainWindow;
 import gui.MyPopUp;
 
 public class Launch {
-
-	public static void parseCommandLineOptions(String[] args) {
-
-	}
-
 	public static String dawis_sessionid = null;
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		// avoid strange awt/swing exceptions:
 		// Exception in thread "AWT-EventQueue-0"
@@ -102,24 +87,17 @@ public class Launch {
 		}
 
 		// configure logging
-		logconfig();
+		logConfig();
 
-		// read command line parameter
-		// the cli parses makes use of commons_cli library
-		// refer to http://commons.apache.org/cli/usage.html for the syntax
-		// create Options object
 		Options options = new Options();
-		OptionBuilder.withArgName("value");
-		OptionBuilder.hasArg();
-		OptionBuilder.withDescription(
-				"use given sessionid to get data from the " + "dawis remote control (used by webstart)");
-		Option dawis_sessionid_option = OptionBuilder.create("dawis_sessionid");
+		Option dawis_sessionid_option = Option.builder("dawis_sessionid").argName("value").hasArg(true).desc(
+				"use given sessionid to get data from the dawis remote control (used by webstart)").build();
 		Option help = new Option("help", "print this message");
 		options.addOption(dawis_sessionid_option);
 		options.addOption(help);
 
 		// create the parser
-		CommandLineParser parser = new GnuParser();
+		CommandLineParser parser = new DefaultParser();
 		try {
 			// parse the command line arguments
 			CommandLine line = parser.parse(options, args);
@@ -147,33 +125,22 @@ public class Launch {
 
 		// boolean loaded = false;
 
-		// create 3 Runable instances to run them in separate
-		// threads simulanously
-		Runnable programStart = new Runnable() {
-			public void run() {
-				SwingUtilities.invokeLater(new Runnable() {
+		// create 3 Runnable instances to run them in separate threads simultaneously
+		Runnable programStart = () -> SwingUtilities.invokeLater(() -> {
+			intro.setLoadingText("Graphical User Interface");
+			MainWindow w = MainWindow.getInstance();
+			intro.closeWindow();
+			w.getFrame().setEnabled(true);
+			SwingUtilities.updateComponentTreeUI(w.getFrame());
+		});
 
-					public void run() {
-						intro.setLoadingText("Graphical User Interface");
-						MainWindow w = MainWindow.getInstance();
-						intro.closeWindow();
-						w.getFrame().setEnabled(true);
-						SwingUtilities.updateComponentTreeUI(w.getFrame());
-					}
-				});
-			}
-		};
-
-		Runnable containerStart = new Runnable() {
-			public void run() {
-				intro.setLoadingText("WebConnection");
-				GraphContainer.getInstance();
-
-				intro.setLoadingText("Database Information");
-				new MostWantedMolecules();
-				ElementNames names = ElementNamesSingleton.getInstance();
-				names.fillEnzymeSet();
-			}
+		Runnable containerStart = () -> {
+			intro.setLoadingText("WebConnection");
+			GraphContainer.getInstance();
+			intro.setLoadingText("Database Information");
+			new MostWantedMolecules();
+			ElementNames names = ElementNamesSingleton.getInstance();
+			names.fillEnzymeSet();
 		};
 
 		Runnable dbStart = new Runnable() {
@@ -249,7 +216,7 @@ public class Launch {
 	 * possible.<br>
 	 * Configuration method uses programmable configuration class.
 	 */
-	private static void logconfig() {
+	private static void logConfig() {
 		Logger logger = Logger.getRootLogger();
 		logger.info("Network editor started by " + System.getProperty("user.name"));
 	}

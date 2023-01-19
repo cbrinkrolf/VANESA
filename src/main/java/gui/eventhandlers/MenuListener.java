@@ -101,7 +101,7 @@ public class MenuListener implements ActionListener {
 	private Object[][] rP;
 	private Object[][] rT;
 	private Object[][] rI;
-	private ArrayList<Double> start = new ArrayList<Double>();
+	private ArrayList<Double> start = new ArrayList<>();
 
 	private JLabel invariant = new JLabel();
 	private JPanel pane = new JPanel();
@@ -119,7 +119,6 @@ public class MenuListener implements ActionListener {
 	private static MenuListener instance;
 
 	private MenuListener() {
-
 	}
 
 	public static synchronized MenuListener getInstance() {
@@ -135,10 +134,13 @@ public class MenuListener implements ActionListener {
 		String event = e.getActionCommand();
 		final GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = GraphContainer.getInstance();
-		// System.out.println(event);
+		MenuActionCommands command = MenuActionCommands.get(event);
+		if (command == null) {
+			return;
+		}
 
-		switch (event) {
-		case "new Network":
+		switch (command) {
+		case newNetwork:
 			int option = JOptionPane.showOptionDialog(w.getFrame(), "Which type of modeling do you prefer?",
 					"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
@@ -149,36 +151,36 @@ public class MenuListener implements ActionListener {
 				w.updateAllGuiElements();
 			}
 			break;
-		case "open Network":
+		case openNetwork:
 			OpenDialog op = new OpenDialog();
 			op.execute();
 			break;
-		case "close Network":
+		case closeNetwork:
 			w.removeTab(true);
 			break;
-		case "close All Networks":
+		case closeAllNetworks:
 			w.removeAllTabs();
 			break;
-		case "mathGraph":
+		case mathGraph:
 			new RandomGraphGui();
 			break;
-		case "biGraph":
+		case biGraph:
 			new RandomBipartiteGraphGui();
 			break;
-		case "regularGraph":
+		case regularGraph:
 			new RandomRegularGraphGui();
 			break;
-		case "phospho":
+		case phospho:
 			op = new OpenDialog();
 			op.execute();
 			break;
-		case "connectedGraph":
+		case connectedGraph:
 			new RandomConnectedGraphGui();
 			break;
-		case "hamiltonGraph":
+		case hamiltonGraph:
 			new RandomHamiltonGraphGui();
 			break;
-		case "export Network":
+		case exportNetwork:
 			// System.out.println("Nodes:
 			// "+graphInstance.getMyGraph().getAllVertices().size());
 			// System.out.println("Edges:
@@ -197,7 +199,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "save as":
+		case saveAs:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					new SaveDialog(SaveDialog.FORMAT_SBML, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
@@ -208,7 +210,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "save":
+		case save:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					if (graphInstance.getPathway().getFile() != null) {
@@ -240,11 +242,11 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "exit":
+		case exit:
 			ProgramFileLock.releaseLock();
 			System.exit(0);
 			break;
-		case "springLayout":
+		case springLayout:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToSpringLayout();
@@ -256,7 +258,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 			break;
-		case "kkLayout":
+		case kkLayout:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToKKLayout();
@@ -268,7 +270,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 			break;
-		case "frLayout":
+		case frLayout:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToFRLayout();
@@ -280,7 +282,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "circleLayout":
+		case circleLayout:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToCircleLayout();
@@ -292,7 +294,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "hebLayout":
+		case hebLayout:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					LayoutConfig.changeToLayout(HEBLayout.class);
@@ -303,7 +305,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 			break;
-		case "hctLayout":
+		case hctLayout:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					LayoutConfig.changeToLayout(HCTLayout.class);
@@ -314,7 +316,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 			break;
-		case "gemLayout":
+		case gemLayout:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToCircleLayout();
@@ -328,7 +330,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network before.");
 			}
 			break;
-		case "isomLayout":
+		case isomLayout:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToISOMLayout();
@@ -340,27 +342,27 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "database settings":
+		case databaseSettings:
 			new Settings(0);
 			break;
-		case "internet":
+		case internet:
 			new Settings(1);
 			break;
-		case "interaction":
+		case interaction:
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				new InfoWindow(false);
 			}
 			break;
-		case "about":
+		case about:
 			new AboutWindow();
 			break;
-		case "graphSettings":
+		case graphSettings:
 			new Settings(2);
 			break;
-		case "visualizationSettings":
+		case visualizationSettings:
 			new Settings(3);
 			break;
-		case "openTestP":
+		case openTestP:
 			// System.out.println("testP");
 			Pathway pw = graphInstance.getPathway();
 			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
@@ -397,7 +399,7 @@ public class MenuListener implements ActionListener {
 			tP = new MyTable(rP, cNames);
 
 			JButton testP = new JButton("Test P-invariant");
-			testP.setActionCommand("testP");
+			testP.setActionCommand(MenuActionCommands.testP.value);
 			testP.addActionListener(this);
 
 			if (transitions == 0 || places == 0) {
@@ -421,7 +423,7 @@ public class MenuListener implements ActionListener {
 			d.setVisible(true);
 
 			break;
-		case "openTestT":
+		case openTestT:
 
 			pw = graphInstance.getPathway();
 			it = pw.getAllGraphNodes().iterator();
@@ -458,7 +460,7 @@ public class MenuListener implements ActionListener {
 			tT = new MyTable(rT, cNames);
 
 			JButton testT = new JButton("Test T-invariant");
-			testT.setActionCommand("testT");
+			testT.setActionCommand(MenuActionCommands.testT.value);
 			testT.addActionListener(this);
 
 			if (transitions == 0 || places == 0) {
@@ -480,7 +482,7 @@ public class MenuListener implements ActionListener {
 
 			// System.out.println("testT");
 			break;
-		case "testP":
+		case testP:
 
 			if (c == null) {
 				this.createCMatrix();
@@ -515,7 +517,7 @@ public class MenuListener implements ActionListener {
 			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
 			break;
-		case "testT":
+		case testT:
 			if (c == null) {
 				this.createCMatrix();
 			}
@@ -550,7 +552,7 @@ public class MenuListener implements ActionListener {
 			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
 			break;
-		case "openCov":
+		case openCov:
 			pw = graphInstance.getPathway();
 			it = pw.getAllGraphNodes().iterator();
 
@@ -599,7 +601,7 @@ public class MenuListener implements ActionListener {
 			pane.add(tI);
 			JButton testCov = new JButton("reach");
 			testCov.addActionListener(this);
-			testCov.setActionCommand("cov");
+			testCov.setActionCommand(MenuActionCommands.cov.value);
 			pane.add(testCov);
 			pane.add(reachable);
 			d.pack();
@@ -612,8 +614,7 @@ public class MenuListener implements ActionListener {
 			// Pathway pw = graphInstance.getContainer().getPathway(name);
 			// System.out.println(pw.getAllNodes().size());
 			break;
-		case "cov":
-
+		case cov:
 			// Teste ob Invariante:
 			if (c == null) {
 				this.createCMatrix();
@@ -782,7 +783,7 @@ public class MenuListener implements ActionListener {
 			d.setVisible(true);
 			// w.updateTheoryProperties();
 			break;
-		case "createCov":
+		case createCov:
 			// System.out.println("cov erstellen");
 			// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			// Cov cov = new Cov();
@@ -792,13 +793,13 @@ public class MenuListener implements ActionListener {
 				new ReachController();
 			GraphInstance.getMyGraph().changeToGEMLayout();
 			break;
-		case "editElements":
+		case editElements:
 			new PNTableDialog().setVisible(true);
 			break;
-		case "loadModResult":
+		case loadModResult:
 			new OpenModelicaResult().execute();
 			break;
-		case "simulate":
+		case simulate:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					graphInstance.getPathway().getPetriNetSimulation().showMenu();
@@ -809,22 +810,22 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "dataMappingColor":
+		case dataMappingColor:
 			DataMappingColorMVC.createDataMapping();
 			break;
-		case "datamining":
+		case datamining:
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				new SmacofView();
 			} else
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			break;
-		case "rendererSettings":
+		case rendererSettings:
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				PreRenderManager.getInstance();
 			} else
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			break;
-		case "createDoc":
+		case createDoc:
 			MyPopUp.getInstance().show("Latex generation", "Generation in progress, it will take a short moment!");
 			String docDir = VanesaUtility.getWorkingDirectoryPath() + File.separator + "documentation" + File.separator;
 			File dir = new File(docDir);
@@ -938,7 +939,7 @@ public class MenuListener implements ActionListener {
 				System.err.println("Could not compile latex. Find tex-file at: " + docDir);
 			}
 			break;
-		case "dataLabelMapping":
+		case dataLabelMapping:
 
 			// Open new window for file input
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
@@ -955,12 +956,12 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "mirnaTest":
+		case mirnaTest:
 			System.out.println("mirnatest");
 			MirnaStatistics mirna = new MirnaStatistics(null);
 			mirna.createKeggStatistics(true, true, !true);
 			break;
-		case "enrichMirna":
+		case enrichMirna:
 			if (con.containsPathway()) {
 				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
@@ -974,7 +975,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "enrichGene":
+		case enrichGene:
 			// System.out.println("targets: ");
 			if (con.containsPathway()) {
 				pw = graphInstance.getPathway();
@@ -988,7 +989,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "shake":
+		case shake:
 			if (con.containsPathway()) {
 				Runnable animator = new Runnable() {
 
@@ -1044,7 +1045,7 @@ public class MenuListener implements ActionListener {
 				thread.start();
 			}
 			break;
-		case "graphPicture":
+		case graphPicture:
 			pw = graphInstance.getPathway();
 			wvv = pw.prepareGraphToPrint();
 			if (con.containsPathway()) {
@@ -1058,7 +1059,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "wuff":
+		case wuff:
 			// System.out.println("clicked");
 			if (con.containsPathway()) {
 				pw = graphInstance.getPathway();
@@ -1083,7 +1084,7 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "transform":
+		case transform:
 			if (con.containsPathway()) {
 				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement() && !pw.isPetriNet()) {
@@ -1109,10 +1110,10 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "ruleManager":
+		case ruleManager:
 			RuleManagementWindow.getInstance().show();
 			break;
-		case "showPN":
+		case showPN:
 			if (con.containsPathway()) {
 				pw = graphInstance.getPathway();
 				if (pw.getPetriNet() != null && !pw.isPetriNet()) {
@@ -1125,10 +1126,10 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case "allPopUps":
+		case allPopUps:
 			new AllPopUpsWindow();
 			break;
-		case "nodesEdgesTypes":
+		case nodesEdgesTypes:
 			if (con.containsPathway()) {
 				pw = graphInstance.getPathway();
 				new NodesEdgesTypesWindow(pw);

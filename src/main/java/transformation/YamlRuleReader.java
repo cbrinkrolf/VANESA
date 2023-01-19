@@ -17,19 +17,9 @@ public class YamlRuleReader {
 
 	private YamlRule testrule = null;
 
-	private Iterable<Object> readYamlRules(File f) {
+	private Iterable<Object> readYamlRules(InputStream is) {
 		Yaml yaml = new Yaml(new Constructor(YamlRule.class));
-		// File initialFile = new File("src/transformation/test2.yml");
-		//System.out.println("Path for yml file containing transformation rules: " + f.getAbsolutePath());
-		InputStream is;
-		try {
-			is = new FileInputStream(f);
-			return yaml.loadAll(is);
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return yaml.loadAll(is);
 	}
 
 	private Rule getRuleFromYamlRule(YamlRule rule) {
@@ -44,7 +34,7 @@ public class YamlRuleReader {
 		}
 		YamlEdge edge;
 		RuleEdge e;
-		Map<String, RuleEdge> edgeMap = new HashMap<String, RuleEdge>();
+		Map<String, RuleEdge> edgeMap = new HashMap<>();
 		for (int i = 0; i < rule.getBiologicalEdges().size(); i++) {
 			edge = rule.getBiologicalEdges().get(i);
 			e = new RuleEdge(edge.getName(), edge.getType(), r.getBiologicaNode(edge.getFrom()),
@@ -83,9 +73,18 @@ public class YamlRuleReader {
 	}
 
 	public List<Rule> getRules(File f) {
-		List<Rule> rules = new ArrayList<Rule>();
-		Iterable<Object> ymlRules = this.readYamlRules(f);
-		List<YamlRule> ymlList = new ArrayList<YamlRule>();
+		try {
+			return getRules(new FileInputStream(f));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+	}
+
+	public List<Rule> getRules(InputStream is) {
+		List<Rule> rules = new ArrayList<>();
+		Iterable<Object> ymlRules = readYamlRules(is);
+		List<YamlRule> ymlList = new ArrayList<>();
 		if (ymlRules != null) {
 			Iterator<Object> it = ymlRules.iterator();
 			YamlRule r;
