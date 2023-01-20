@@ -250,12 +250,6 @@
             <groupId>org.sbml.jsbml</groupId>
             <artifactId>jsbml</artifactId>
             <version>1.6.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.w3c.jigsaw</groupId>
-                    <artifactId>jigsaw</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>it.unimi.dsi</groupId>
