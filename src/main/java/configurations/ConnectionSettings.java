@@ -5,6 +5,8 @@
 package configurations;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.XMLConfiguration;
@@ -49,6 +51,7 @@ public class ConnectionSettings {
 				XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
 						VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
 				fileSaveDirectory = xmlSettings.getString("SaveDialog-Path");
+				System.out.println(fileSaveDirectory);
 				if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
 					return fileSaveDirectory;
 				}
@@ -68,11 +71,16 @@ public class ConnectionSettings {
 		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
 		try {
-			XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
-					pathWorkingDirectory + File.separator + "settings.xml");
+			XMLConfiguration xmlSettings = VanesaUtility
+					.getFileBasedXMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
 			xmlSettings.setProperty("SaveDialog-Path", fileDir);
-			// TODO MF: xmlSettings.save();
+			xmlSettings.write(new FileWriter(f));
 		} catch (ConfigurationException e) {
+			if (f.exists()) {
+				f.delete();
+			}
+			e.printStackTrace();
+		} catch (IOException e) {
 			if (f.exists()) {
 				f.delete();
 			}
@@ -112,11 +120,16 @@ public class ConnectionSettings {
 		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
 		try {
-			XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
-					pathWorkingDirectory + File.separator + "settings.xml");
+			XMLConfiguration xmlSettings = VanesaUtility
+					.getFileBasedXMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
 			xmlSettings.setProperty("OpenDialog-Path", fileDir);
-			// TODO MF: xmlSettings.save();
+			xmlSettings.write(new FileWriter(f));
 		} catch (ConfigurationException e) {
+			if (f.exists()) {
+				f.delete();
+			}
+			e.printStackTrace();
+		} catch (IOException e) {
 			if (f.exists()) {
 				f.delete();
 			}
