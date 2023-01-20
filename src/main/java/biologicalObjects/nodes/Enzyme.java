@@ -36,6 +36,7 @@ public class Enzyme extends Protein implements DynamicNode {
 	public List<String> getTransformationParameters() {
 		List<String> list = super.getTransformationParameters();
 		list.add("maximalSpeed");
+		list.add("isKnockedOut");
 		return list;
 	}
 
@@ -43,6 +44,8 @@ public class Enzyme extends Protein implements DynamicNode {
 		switch (parameter) {
 		case "maximalSpeed":
 			return getMaximalSpeed();
+		case "isKnockedOut":
+			return isKnockedOut()+"";
 		}
 		return super.getTransformationParameterValue(parameter);
 	}

@@ -1306,6 +1306,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		list.add("concentrationMin");
 		list.add("concentrationMax");
 		list.add("ID");
+		list.add("isConstant");
 		return list;
 	}
 
@@ -1323,6 +1324,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			return getConcentrationMax()+"";
 		case "ID":
 			return getID()+"";
+		case "isConstant":
+			return isConstant()+"";
 		}
 		return null;
 	}

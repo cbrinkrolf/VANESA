@@ -1013,9 +1013,11 @@ public class Transformator {
 				case "tokenStart":
 					if (gea instanceof Place) {
 						p = (Place) gea;
+						BiologicalNodeAbstract bna = getRuleNodeOfParameter(possibleParams, value, ruleBNodeToBNA, r);
 						d = this.evalParameter(possibleParams, value, Double.class, ruleBNodeToBNA, r);
 						if (d != null) {
 							p.setTokenStart(d);
+							p.setConstant(bna.isConstant());
 						}
 					}
 					break;
@@ -1047,12 +1049,19 @@ public class Transformator {
 					break;
 				case "maximalSpeed":
 					if (gea instanceof ContinuousTransition) {
+						ContinuousTransition ct = (ContinuousTransition) gea;
 						string = this.evalParameter(possibleParams, value, String.class, ruleBNodeToBNA, r);
 						if (string != null) {
 							// System.out.println(string);
-							((ContinuousTransition) gea).setMaximalSpeed(string);
-							BiologicalNodeAbstract bna = getRuleNodeOfParameter(possibleParams, value, ruleBNodeToBNA, r);
-							if(bna != null){
+							ct.setMaximalSpeed(string);
+							BiologicalNodeAbstract bna = getRuleNodeOfParameter(possibleParams, value, ruleBNodeToBNA,
+									r);
+
+							if (bna != null) {
+								if (bna.getTransformationParameters().contains("isKnockedOut")) {
+									ct.setKnockedOut(
+											Boolean.parseBoolean(bna.getTransformationParameterValue("isKnockedOut")));
+								}
 								this.copyParameters(bna, (ContinuousTransition) gea);
 							}
 						}
@@ -1092,7 +1101,7 @@ public class Transformator {
 	private BiologicalNodeAbstract getRuleNodeOfParameter(Set<String> possibleParameters, String value,
 			HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA, Rule r) {
 		String[] split;
-		BiologicalNodeAbstract bna= null;
+		BiologicalNodeAbstract bna = null;
 		// String v;
 		// System.out.println("type: "+type);
 		// if (type.equals(String.class)) {
@@ -1111,7 +1120,7 @@ public class Transformator {
 		}
 		return bna;
 	}
-	
+
 	private <T> T evalParameter(Set<String> possibleParameters, String value, Class<T> type,
 			HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA, Rule r) {
 		String[] split;
@@ -1150,11 +1159,11 @@ public class Transformator {
 		// }
 		return null;
 	}
-	
-	private void copyParameters(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
-		for(Parameter p : from.getParameters()){
+
+	private void copyParameters(BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
+		for (Parameter p : from.getParameters()) {
 			to.getParameters().add(new Parameter(p.getName(), p.getValue(), p.getUnit()));
 		}
-		
+
 	}
 }

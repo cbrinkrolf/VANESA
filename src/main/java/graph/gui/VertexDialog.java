@@ -144,7 +144,7 @@ public class VertexDialog {
 		if (!pw.isHeadless()) {
 			List<Compartment> compartmentList = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
 			Iterator<Compartment> it2 = compartmentList.iterator();
-			compartment.addItem("");
+			//compartment.addItem("");
 			Compartment c;
 			while (it2.hasNext()) {
 				c = it2.next();
