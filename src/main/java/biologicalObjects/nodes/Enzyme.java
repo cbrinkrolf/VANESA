@@ -39,7 +39,7 @@ public class Enzyme extends Protein implements DynamicNode {
 		return list;
 	}
 
-	public String getTransformationPaameterValue(String parameter) {
+	public String getTransformationParameterValue(String parameter) {
 		switch (parameter) {
 		case "maximalSpeed":
 			return getMaximalSpeed();
