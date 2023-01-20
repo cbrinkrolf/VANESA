@@ -436,7 +436,9 @@ public class MOoutput {
 
 				} else if (biologicalElement.equals(Elementdeclerations.continuousTransition)) {
 					ct = (ContinuousTransition) bna;
+					//System.out.println(ct.getMaximalSpeed());
 					speed = this.replaceAll(ct.getMaximalSpeed(), ct.getParameters(), ct);
+					//System.out.println(speed);
 					// if (ct.isKnockedOut()) {
 					// attr.append("maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/");
 					// } else {
@@ -838,6 +840,9 @@ public class MOoutput {
 		// replace places
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
+		if(!pw.isPetriNet() && pw.getPetriNet() != null){
+			pw = pw.getPetriNet();
+		}
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		ArrayList<String> names = new ArrayList<String>();
 		BiologicalNodeAbstract bna;

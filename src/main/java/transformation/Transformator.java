@@ -19,6 +19,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
@@ -30,6 +31,7 @@ import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
+import graph.gui.Parameter;
 import gui.MyPopUp;
 
 // Restrictions / limitations:
@@ -1047,7 +1049,12 @@ public class Transformator {
 					if (gea instanceof ContinuousTransition) {
 						string = this.evalParameter(possibleParams, value, String.class, ruleBNodeToBNA, r);
 						if (string != null) {
+							// System.out.println(string);
 							((ContinuousTransition) gea).setMaximalSpeed(string);
+							BiologicalNodeAbstract bna = getRuleNodeOfParameter(possibleParams, value, ruleBNodeToBNA, r);
+							if(bna != null){
+								this.copyParameters(bna, (ContinuousTransition) gea);
+							}
 						}
 					}
 					break;
@@ -1082,6 +1089,29 @@ public class Transformator {
 		}
 	}
 
+	private BiologicalNodeAbstract getRuleNodeOfParameter(Set<String> possibleParameters, String value,
+			HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA, Rule r) {
+		String[] split;
+		BiologicalNodeAbstract bna= null;
+		// String v;
+		// System.out.println("type: "+type);
+		// if (type.equals(String.class)) {
+		// System.out.println("type match");
+		if (possibleParameters.contains(value)) {
+			// System.out.println("value: " + value);
+			split = value.split("\\.");
+			// System.out.println("split1: " + split[0]);
+			// System.out.println("split2: " + split[1]);
+			if (split.length == 2) {
+				bna = ruleBNodeToBNA.get(r.getBiologicaNode(split[0]));
+				// System.out.println("return:
+				// "+type.cast(bna.getTransformationParameterValue(split[1])));
+
+			}
+		}
+		return bna;
+	}
+	
 	private <T> T evalParameter(Set<String> possibleParameters, String value, Class<T> type,
 			HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA, Rule r) {
 		String[] split;
@@ -1091,7 +1121,7 @@ public class Transformator {
 		// if (type.equals(String.class)) {
 		// System.out.println("type match");
 		if (possibleParameters.contains(value)) {
-			// System.out.println("value: "+value);
+			// System.out.println("value: " + value);
 			split = value.split("\\.");
 			// System.out.println("split1: " + split[0]);
 			// System.out.println("split2: " + split[1]);
@@ -1100,6 +1130,13 @@ public class Transformator {
 				// System.out.println("return:
 				// "+type.cast(bna.getTransformationParameterValue(split[1])));
 				if (type == String.class) {
+					if (bna instanceof Enzyme) {
+						// System.out.println(bna.getTransformationParameters());
+						// System.out.println(split[1]);
+						// System.out.println(bna.getTransformationParameterValue(split[1]));
+						// Enzyme e = (Enzyme) bna;
+						// System.out.println(((Enzyme)bna).getTransformationParameterValue("maximalSpeed"));
+					}
 					return type.cast(bna.getTransformationParameterValue(split[1]));
 				} else if (type == Double.class) {
 					return type.cast(Double.valueOf(bna.getTransformationParameterValue(split[1])));
@@ -1112,5 +1149,12 @@ public class Transformator {
 		// return type.cast(value);
 		// }
 		return null;
+	}
+	
+	private void copyParameters(BiologicalNodeAbstract from, BiologicalNodeAbstract to){
+		for(Parameter p : from.getParameters()){
+			to.getParameters().add(new Parameter(p.getName(), p.getValue(), p.getUnit()));
+		}
+		
 	}
 }
