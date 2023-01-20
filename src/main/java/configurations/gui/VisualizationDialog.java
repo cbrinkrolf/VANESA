@@ -34,6 +34,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.yaml.snakeyaml.Yaml;
 
 import biologicalElements.Elementdeclerations;
+import configurations.ConnectionSettings;
 import gui.MainWindow;
 import gui.MyPopUp;
 import gui.visualization.YamlToObjectParser;
@@ -134,7 +135,8 @@ public class VisualizationDialog {
 						loadedYaml = fileChooser.getSelectedFile().getPath();
 						loadedYamlLabel.setText(loadedYaml);
 						mWindow.setLoadedYaml(loadedYaml);
-						PrintWriter pWriter = null;
+						ConnectionSettings.setYamlVisualizationFile(loadedYaml);
+						/* PrintWriter pWriter = null;
 						try {
 							pWriter = new PrintWriter(new BufferedWriter(
 									new FileWriter(new File("YamlSourceFile.txt").getAbsolutePath())));
@@ -149,7 +151,7 @@ public class VisualizationDialog {
 								pWriter.flush();
 								pWriter.close();
 							}
-						}
+						}*/
 						shapeBox.setEnabled(true);
 						sizeMultiplierBox.setEnabled(true);
 						colorChooser.setEnabled(true);

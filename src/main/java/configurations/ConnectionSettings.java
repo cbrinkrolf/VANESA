@@ -42,24 +42,12 @@ public class ConnectionSettings {
 		if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
 			return fileSaveDirectory;
 		}
-		File f = new File(VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
-		if (!f.exists()) {
-			System.out.println("There is probably no " + VanesaUtility.getWorkingDirectoryPath() + File.separator
-					+ "settings.xml yet.");
-		} else {
-			try {
-				XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
-						VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
-				fileSaveDirectory = xmlSettings.getString("SaveDialog-Path");
-				System.out.println(fileSaveDirectory);
-				if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
-					return fileSaveDirectory;
-				}
-			} catch (ConfigurationException e) {
-				f.delete();
-				e.printStackTrace();
-			}
+		fileSaveDirectory = getProperty("SaveDialog-Path");
+		
+		if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
+			return fileSaveDirectory;
 		}
+		
 		if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
 			return fileOpenDirectory;
 		}
@@ -68,47 +56,19 @@ public class ConnectionSettings {
 
 	public static void setFileSaveDirectory(String fileDir) {
 		fileSaveDirectory = fileDir;
-		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
-		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
-		try {
-			XMLConfiguration xmlSettings = VanesaUtility
-					.getFileBasedXMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-			xmlSettings.setProperty("SaveDialog-Path", fileDir);
-			xmlSettings.write(new FileWriter(f));
-		} catch (ConfigurationException e) {
-			if (f.exists()) {
-				f.delete();
-			}
-			e.printStackTrace();
-		} catch (IOException e) {
-			if (f.exists()) {
-				f.delete();
-			}
-			e.printStackTrace();
-		}
+		setProperty("SaveDialog-Path", fileDir);
 	}
 
 	public static String getFileOpenDirectory() {
 		if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
 			return fileOpenDirectory;
 		}
-		File f = new File(VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
-		if (!f.exists()) {
-			System.out.println("There is probably no " + VanesaUtility.getWorkingDirectoryPath() + File.separator
-					+ "settings.xml yet.");
-		} else {
-			try {
-				XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
-						VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
-				fileOpenDirectory = xmlSettings.getString("OpenDialog-Path");
-				if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
-					return fileOpenDirectory;
-				}
-			} catch (ConfigurationException e) {
-				f.delete();
-				e.printStackTrace();
-			}
+
+		fileOpenDirectory = getProperty("OpenDialog-Path");
+		if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
+			return fileOpenDirectory;
 		}
+		
 		if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
 			return fileSaveDirectory;
 		}
@@ -117,13 +77,49 @@ public class ConnectionSettings {
 
 	public static void setFileOpenDirectory(String fileDir) {
 		fileOpenDirectory = fileDir;
+		setProperty("OpenDialog-Path", fileDir);
+	}
+	
+	public static void setYamlVisualizationFile(String filePath){
+		setProperty("YamlVisualizationPath", filePath);
+	}
+	
+	public static String getYamlVisualizationFile(){
+		return getProperty("YamlVisualizationPath");
+	}
+
+	private static String getProperty(String property) {
+		String value = null;
+		File f = new File(VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
+		if (!f.exists()) {
+			System.out.println("There is probably no " + VanesaUtility.getWorkingDirectoryPath() + File.separator
+					+ "settings.xml yet.");
+		} else {
+			try {
+				XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
+						VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
+				value = xmlSettings.getString(property);
+
+			} catch (ConfigurationException e) {
+				f.delete();
+				e.printStackTrace();
+			}
+		}
+		return value;
+	}
+
+	private static void setProperty(String property, String value) {
 		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
+		FileWriter fw;
 		try {
+			
 			XMLConfiguration xmlSettings = VanesaUtility
 					.getFileBasedXMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
-			xmlSettings.setProperty("OpenDialog-Path", fileDir);
-			xmlSettings.write(new FileWriter(f));
+			xmlSettings.setProperty(property, value);
+			fw = new FileWriter(f);
+			xmlSettings.write(fw);
+			fw.close();
 		} catch (ConfigurationException e) {
 			if (f.exists()) {
 				f.delete();
