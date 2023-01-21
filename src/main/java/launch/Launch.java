@@ -90,8 +90,8 @@ public class Launch {
 		logConfig();
 
 		Options options = new Options();
-		Option dawis_sessionid_option = Option.builder("dawis_sessionid").argName("value").hasArg(true).desc(
-				"use given sessionid to get data from the dawis remote control (used by webstart)").build();
+		Option dawis_sessionid_option = Option.builder("dawis_sessionid").argName("value").hasArg(true)
+				.desc("use given sessionid to get data from the dawis remote control (used by webstart)").build();
 		Option help = new Option("help", "print this message");
 		options.addOption(dawis_sessionid_option);
 		options.addOption(help);
@@ -156,19 +156,19 @@ public class Launch {
 				String server = ResourceLibrary.getSettingsResource("settings.default.server");
 				String webservice = ResourceLibrary.getSettingsResource("settings.default.webservice.url");
 
-				ConnectionSettings.setDBConnection(new DBconnection(user, password, database, server));
-				ConnectionSettings.getDBConnection().setDawisDBName(database);
-				ConnectionSettings.getDBConnection().setPpiDBName(database_ppi);
-				ConnectionSettings.getDBConnection().setMirnaDBName(database_mirna);
-				ConnectionSettings.getDBConnection().setMirnaNewDBName(database_mirnaNew);
+				ConnectionSettings.getInstance().setDBConnection(new DBconnection(user, password, database, server));
+				ConnectionSettings.getInstance().getDBConnection().setDawisDBName(database);
+				ConnectionSettings.getInstance().getDBConnection().setPpiDBName(database_ppi);
+				ConnectionSettings.getInstance().getDBConnection().setMirnaDBName(database_mirna);
+				ConnectionSettings.getInstance().getDBConnection().setMirnaNewDBName(database_mirnaNew);
 
-				ConnectionSettings.setWebServiceUrl(webservice);
+				ConnectionSettings.getInstance().setWebServiceUrl(webservice);
 
-				//ConnectionSettings.setFileSaveDirectory(null);
+				// ConnectionSettings.setFileSaveDirectory(null);
 
 				// if(ConnectionSettingsSingelton.getInstance().isInternetConnection()){
 				try {
-					ConnectionSettings.getDBConnection().checkConnection();
+					ConnectionSettings.getInstance().getDBConnection().checkConnection();
 
 					intro.setLoadingText("Data Warehouse Connection");
 					;

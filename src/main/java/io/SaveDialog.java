@@ -152,7 +152,7 @@ public class SaveDialog {
 
 		if (option == JFileChooser.APPROVE_OPTION) {
 			// Save path to settings.xml
-			ConnectionSettings.setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+			ConnectionSettings.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 
 			fileFormat = chooser.getFileFilter().getDescription();
 			file = chooser.getSelectedFile();
@@ -187,7 +187,7 @@ public class SaveDialog {
 		int option = chooser.showSaveDialog(relativeTo);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			// Save path to settings.xml
-			ConnectionSettings.setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+			ConnectionSettings.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 
 			fileFormat = chooser.getFileFilter().getDescription();
 
@@ -313,7 +313,7 @@ public class SaveDialog {
 		pdfBool = (format & FORMAT_PDF) == FORMAT_PDF;
 
 		// if (ConnectionSettings.getFileSaveDirectory() != null) {
-		chooser = new JFileChooser(ConnectionSettings.getFileSaveDirectory());
+		chooser = new JFileChooser(ConnectionSettings.getInstance().getFileSaveDirectory());
 
 		chooser.setAcceptAllFileFilterUsed(false);
 

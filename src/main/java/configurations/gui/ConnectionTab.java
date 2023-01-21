@@ -50,7 +50,7 @@ public class ConnectionTab extends JPanel {
 	private JCheckBox brendaChk = new JCheckBox("Brenda");
 	private JCheckBox mirnaChk = new JCheckBox("miRNA");
 
-	private DBconnection db_connection = ConnectionSettings.getDBConnection();
+	private DBconnection db_connection = ConnectionSettings.getInstance().getDBConnection();
 
 	private AsynchroneWebServiceWrapper asyn_webservice = AsynchroneWebServiceWrapper.getInstance();
 	private JCheckBox withWSAasynchron = new JCheckBox("", asyn_webservice.isWithAddressing());
@@ -58,7 +58,7 @@ public class ConnectionTab extends JPanel {
 	public ConnectionTab() {
 		MigLayout layout = new MigLayout("", "[left]");
 
-		if (ConnectionSettings.useInternetConnection()) {
+		if (ConnectionSettings.getInstance().useInternetConnection()) {
 			server.setSelected(true);
 		} else {
 			database.setSelected(true);
@@ -79,20 +79,20 @@ public class ConnectionTab extends JPanel {
 		host.setText(db_connection.getServer());
 
 		server_url = new JTextField(20);
-		server_url.setText(ConnectionSettings.getWebServiceUrl());
+		server_url.setText(ConnectionSettings.getInstance().getWebServiceUrl());
 
-		keggChk.setSelected(ConnectionSettings.isLocalKegg());
-		hprdChk.setSelected(ConnectionSettings.isLocalHprd());
-		mintChk.setSelected(ConnectionSettings.isLocalMint());
-		intactChk.setSelected(ConnectionSettings.isLocalIntact());
-		brendaChk.setSelected(ConnectionSettings.isLocalBrenda());
-		mirnaChk.setSelected(ConnectionSettings.isLocalMiRNA());
+		keggChk.setSelected(ConnectionSettings.getInstance().isLocalKegg());
+		hprdChk.setSelected(ConnectionSettings.getInstance().isLocalHprd());
+		mintChk.setSelected(ConnectionSettings.getInstance().isLocalMint());
+		intactChk.setSelected(ConnectionSettings.getInstance().isLocalIntact());
+		brendaChk.setSelected(ConnectionSettings.getInstance().isLocalBrenda());
+		mirnaChk.setSelected(ConnectionSettings.getInstance().isLocalMiRNA());
 		status.setForeground(Color.RED);
 
 		allChk.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (e.getItem() == allChk){
+				if (e.getItem() == allChk) {
 					keggChk.setSelected(allChk.isSelected());
 					hprdChk.setSelected(allChk.isSelected());
 					mintChk.setSelected(allChk.isSelected());
@@ -102,7 +102,7 @@ public class ConnectionTab extends JPanel {
 				}
 			}
 		});
-		
+
 		this.setLayout(layout);
 
 		this.add(new JLabel("Connection Type"), "span 4");
@@ -173,25 +173,25 @@ public class ConnectionTab extends JPanel {
 		db_connection.setDatabase(db.getText());
 		db_connection.setServer(host.getText());
 
-		ConnectionSettings.setDBConnection(db_connection);
+		ConnectionSettings.getInstance().setDBConnection(db_connection);
 
 		if (server.isSelected()) {
-			ConnectionSettings.setInternetConnection(true);
+			ConnectionSettings.getInstance().setInternetConnection(true);
 		} else {
-			//System.out.println("local");
-			ConnectionSettings.setInternetConnection(false);
+			// System.out.println("local");
+			ConnectionSettings.getInstance().setInternetConnection(false);
 		}
 
-		ConnectionSettings.setLocalBrenda(brendaChk.isSelected());
-		ConnectionSettings.setLocalHprd(hprdChk.isSelected());
-		ConnectionSettings.setLocalIntact(intactChk.isSelected());
-		ConnectionSettings.setLocalKegg(keggChk.isSelected());
-		ConnectionSettings.setLocalMint(mintChk.isSelected());
-		ConnectionSettings.setLocalMiRNA(mirnaChk.isSelected());
+		ConnectionSettings.getInstance().setLocalBrenda(brendaChk.isSelected());
+		ConnectionSettings.getInstance().setLocalHprd(hprdChk.isSelected());
+		ConnectionSettings.getInstance().setLocalIntact(intactChk.isSelected());
+		ConnectionSettings.getInstance().setLocalKegg(keggChk.isSelected());
+		ConnectionSettings.getInstance().setLocalMint(mintChk.isSelected());
+		ConnectionSettings.getInstance().setLocalMiRNA(mirnaChk.isSelected());
 
 		asyn_webservice.setAddressing(withWSAasynchron.isSelected());
 
-		ConnectionSettings.setWebServiceUrl(server_url.getText());
+		ConnectionSettings.getInstance().setWebServiceUrl(server_url.getText());
 
 		return checkSettings();
 	}
@@ -208,10 +208,10 @@ public class ConnectionTab extends JPanel {
 		db_connection.setDatabase(def_database);
 		db_connection.setServer(def_server);
 
-		ConnectionSettings.setDBConnection(db_connection);
-		ConnectionSettings.setInternetConnection(true);
-		ConnectionSettings.setLocalMiRNA(false);
-		ConnectionSettings.setWebServiceUrl(def_webservice);
+		ConnectionSettings.getInstance().setDBConnection(db_connection);
+		ConnectionSettings.getInstance().setInternetConnection(true);
+		ConnectionSettings.getInstance().setLocalMiRNA(false);
+		ConnectionSettings.getInstance().setWebServiceUrl(def_webservice);
 
 		asyn_webservice.setAddressing(true);
 
@@ -238,20 +238,21 @@ public class ConnectionTab extends JPanel {
 		// -- check database connection --
 		try {
 			if (database.isSelected()) {
-				//System.out.println("local selected");
+				// System.out.println("local selected");
 				status.setText("Database not reachable - change settings!");
-				ConnectionSettings.getDBConnection().checkConnection();
+				ConnectionSettings.getInstance().getDBConnection().checkConnection();
 			}
 			if (server.isSelected()) {
 				status.setText("Web Server not reachable - change settings!");
-				InetAddress.getByName(new URL(ConnectionSettings.getWebServiceUrl()).getHost()).isReachable(2000);
+				InetAddress.getByName(new URL(ConnectionSettings.getInstance().getWebServiceUrl()).getHost())
+						.isReachable(2000);
 			}
 
 			status.setText("");
 
 			return true;
 		} catch (Exception e) {
-			//System.out.println(e);
+			// System.out.println(e);
 			status.setToolTipText(e.toString());
 			return false;
 		}

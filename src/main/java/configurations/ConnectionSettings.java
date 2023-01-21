@@ -34,14 +34,26 @@ public class ConnectionSettings {
 	private static String proxy_host = new String();
 	private static String proxy_port = new String();
 
-	// never access directly, always use getXMLConfiguration()
 	private static XMLConfiguration xmlConfiguration = null;
 
 	// directories for opening / saving
 	private static String fileSaveDirectory;
 	private static String fileOpenDirectory;
 
-	public static String getFileSaveDirectory() {
+	private static ConnectionSettings instance = null;
+
+	public static synchronized ConnectionSettings getInstance() {
+		if (ConnectionSettings.instance == null) {
+			ConnectionSettings.instance = new ConnectionSettings();
+		}
+		return ConnectionSettings.instance;
+	}
+
+	private ConnectionSettings() {
+		getXMLConfiguration();
+	}
+
+	public String getFileSaveDirectory() {
 		if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
 			return fileSaveDirectory;
 		}
@@ -57,12 +69,12 @@ public class ConnectionSettings {
 		return "";
 	}
 
-	public static void setFileSaveDirectory(String fileDir) {
+	public void setFileSaveDirectory(String fileDir) {
 		fileSaveDirectory = fileDir;
 		setProperty("SaveDialog-Path", fileDir);
 	}
 
-	public static String getFileOpenDirectory() {
+	public String getFileOpenDirectory() {
 		if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
 			return fileOpenDirectory;
 		}
@@ -78,26 +90,26 @@ public class ConnectionSettings {
 		return "";
 	}
 
-	public static void setFileOpenDirectory(String fileDir) {
+	public void setFileOpenDirectory(String fileDir) {
 		fileOpenDirectory = fileDir;
 		setProperty("OpenDialog-Path", fileDir);
 	}
 
-	public static void setYamlVisualizationFile(String filePath) {
+	public void setYamlVisualizationFile(String filePath) {
 		setProperty("YamlVisualizationPath", filePath);
 	}
 
-	public static String getYamlVisualizationFile() {
+	public String getYamlVisualizationFile() {
 		return getProperty("YamlVisualizationPath");
 	}
 
-	private static String getProperty(String property) {
+	private String getProperty(String property) {
 		String value = null;
 		value = getXMLConfiguration().getString(property);
 		return value;
 	}
 
-	private static void setProperty(String property, String value) {
+	private void setProperty(String property, String value) {
 		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
 		try {
@@ -117,42 +129,42 @@ public class ConnectionSettings {
 	/**
 	 * @return the db_connection
 	 */
-	public static DBconnection getDBConnection() {
+	public DBconnection getDBConnection() {
 		return db_connection;
 	}
 
 	/**
 	 * @param db_connection the db_connection to set
 	 */
-	public static void setDBConnection(DBconnection db_connection) {
+	public void setDBConnection(DBconnection db_connection) {
 		ConnectionSettings.db_connection = db_connection;
 	}
 
 	/**
 	 * @return the useInternetConnection
 	 */
-	public static boolean useInternetConnection() {
+	public boolean useInternetConnection() {
 		return useInternetConnection;
 	}
 
 	/**
 	 * @param useInternetConnection the useInternetConnection to set
 	 */
-	public static void setInternetConnection(boolean useInternetConnection) {
+	public void setInternetConnection(boolean useInternetConnection) {
 		ConnectionSettings.useInternetConnection = useInternetConnection;
 	}
 
 	/**
 	 * @return the proxy_host
 	 */
-	public static String getProxyHost() {
+	public String getProxyHost() {
 		return proxy_host;
 	}
 
 	/**
 	 * @param proxy_host the proxy_host to set
 	 */
-	public static void setProxyHost(String proxy_host) {
+	public void setProxyHost(String proxy_host) {
 		System.setProperty("http.proxyHost", proxy_host);
 		ConnectionSettings.proxy_host = proxy_host;
 	}
@@ -160,14 +172,14 @@ public class ConnectionSettings {
 	/**
 	 * @return the proxy_port
 	 */
-	public static String getProxyPort() {
+	public String getProxyPort() {
 		return proxy_port;
 	}
 
 	/**
 	 * @param proxy_port the proxy_port to set
 	 */
-	public static void setProxyPort(String proxy_port) {
+	public void setProxyPort(String proxy_port) {
 		System.setProperty("http.proxyPort", proxy_port);
 		ConnectionSettings.proxy_port = proxy_port;
 	}
@@ -175,66 +187,67 @@ public class ConnectionSettings {
 	/**
 	 * @return the web_service_url
 	 */
-	public static String getWebServiceUrl() {
+	public String getWebServiceUrl() {
+		System.out.println("called: " + web_service_url);
 		return web_service_url;
 	}
 
 	/**
 	 * @param web_service_url the web_service_url to set
 	 */
-	public static void setWebServiceUrl(String web_service_url) {
+	public void setWebServiceUrl(String web_service_url) {
 		ConnectionSettings.web_service_url = web_service_url;
 	}
 
-	public static boolean isLocalKegg() {
+	public boolean isLocalKegg() {
 		return localKegg;
 	}
 
-	public static void setLocalKegg(boolean localKegg) {
+	public void setLocalKegg(boolean localKegg) {
 		ConnectionSettings.localKegg = localKegg;
 	}
 
-	public static boolean isLocalHprd() {
+	public boolean isLocalHprd() {
 		return localHprd;
 	}
 
-	public static void setLocalHprd(boolean localHprd) {
+	public void setLocalHprd(boolean localHprd) {
 		ConnectionSettings.localHprd = localHprd;
 	}
 
-	public static boolean isLocalMint() {
+	public boolean isLocalMint() {
 		return localMint;
 	}
 
-	public static void setLocalMint(boolean localMint) {
+	public void setLocalMint(boolean localMint) {
 		ConnectionSettings.localMint = localMint;
 	}
 
-	public static boolean isLocalIntact() {
+	public boolean isLocalIntact() {
 		return localIntact;
 	}
 
-	public static void setLocalIntact(boolean localIntact) {
+	public void setLocalIntact(boolean localIntact) {
 		ConnectionSettings.localIntact = localIntact;
 	}
 
-	public static boolean isLocalBrenda() {
+	public boolean isLocalBrenda() {
 		return localBrenda;
 	}
 
-	public static void setLocalBrenda(boolean localBrenda) {
+	public void setLocalBrenda(boolean localBrenda) {
 		ConnectionSettings.localBrenda = localBrenda;
 	}
 
-	public static boolean isLocalMiRNA() {
+	public boolean isLocalMiRNA() {
 		return localMiRNA;
 	}
 
-	public static void setLocalMiRNA(boolean localMiRNA) {
+	public void setLocalMiRNA(boolean localMiRNA) {
 		ConnectionSettings.localMiRNA = localMiRNA;
 	}
 
-	private static XMLConfiguration getXMLConfiguration() {
+	private XMLConfiguration getXMLConfiguration() {
 		if (xmlConfiguration == null) {
 			String settingsFilePath = VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml";
 			File f = new File(settingsFilePath);

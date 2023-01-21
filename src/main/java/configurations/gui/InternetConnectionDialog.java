@@ -11,29 +11,25 @@ import configurations.ConnectionSettings;
 import configurations.ResourceLibrary;
 import net.miginfocom.swing.MigLayout;
 
-
-
 /**
  * @author Sebastian
  * 
  */
-public class InternetConnectionDialog extends JPanel
-{
-	private static final long serialVersionUID=1358638152136315177L;
-	
+public class InternetConnectionDialog extends JPanel {
+	private static final long serialVersionUID = 1358638152136315177L;
+
 	private JTextField proxy;
 	private JTextField host;
-	private JLabel status=new JLabel(" ");
+	private JLabel status = new JLabel(" ");
 
 	/**
 	 * 
 	 */
-	public InternetConnectionDialog()
-	{
-		MigLayout layout=new MigLayout("", "[left]");
+	public InternetConnectionDialog() {
+		MigLayout layout = new MigLayout("", "[left]");
 
-		proxy=new JTextField(20);
-		host=new JTextField(20);
+		proxy = new JTextField(20);
+		host = new JTextField(20);
 
 		status.setForeground(Color.RED);
 
@@ -54,60 +50,50 @@ public class InternetConnectionDialog extends JPanel
 
 		this.add(status, "span, growx, gap 10 ,gaptop 15,wrap 15");
 
-		proxy.setText(ConnectionSettings.getProxyPort());
-		host.setText(ConnectionSettings.getProxyHost());
+		proxy.setText(ConnectionSettings.getInstance().getProxyPort());
+		host.setText(ConnectionSettings.getInstance().getProxyHost());
 
 	}
 
-	public void enableDispaly(boolean enabled)
-	{
+	public void enableDispaly(boolean enabled) {
 		proxy.setEnabled(enabled);
 		host.setEnabled(enabled);
 	}
 
-	public boolean applyDefaults()
-	{
-		String def_host=ResourceLibrary.getSettingsResource("settings.default.proxy.host");
-		String def_port=ResourceLibrary.getSettingsResource("settings.default.proxy.port");
+	public boolean applyDefaults() {
+		String def_host = ResourceLibrary.getSettingsResource("settings.default.proxy.host");
+		String def_port = ResourceLibrary.getSettingsResource("settings.default.proxy.port");
 
 		proxy.setText(def_port);
 		host.setText(def_host);
 
-		ConnectionSettings.setProxyPort(def_port);
-		ConnectionSettings.setProxyHost(def_host);
+		ConnectionSettings.getInstance().setProxyPort(def_port);
+		ConnectionSettings.getInstance().setProxyHost(def_host);
 
-		if (checkSettings())
-		{
+		if (checkSettings()) {
 			status.setText(" ");
 			return true;
-		}
-		else
-		{
+		} else {
 			status.setText("Internet Connection Failure - change settings ");
 			return false;
 		}
 	}
 
-	public boolean applyNewSettings()
-	{
+	public boolean applyNewSettings() {
 
-		ConnectionSettings.setProxyHost(host.getText());
-		ConnectionSettings.setProxyPort(proxy.getText());
+		ConnectionSettings.getInstance().setProxyHost(host.getText());
+		ConnectionSettings.getInstance().setProxyPort(proxy.getText());
 
-		if (checkSettings())
-		{
+		if (checkSettings()) {
 			status.setText("");
 			return true;
-		}
-		else
-		{
+		} else {
 			status.setText("Internet Connection Failure - change settings ");
 			return false;
 		}
 	}
 
-	private boolean checkSettings()
-	{
+	private boolean checkSettings() {
 		return true;
 	}
 }

@@ -39,7 +39,7 @@ public class Wrapper implements WebServiceListener {
 		serviceRequestIDs = new ArrayList<UUID>();
 
 		// -- database settings --
-		db = ConnectionSettings.getDBConnection();
+		db = ConnectionSettings.getInstance().getDBConnection();
 	}
 
 	/**
@@ -55,11 +55,11 @@ public class Wrapper implements WebServiceListener {
 
 	public ArrayList<DBColumn> requestDbContent(int database, String query, String[] attributes, boolean mirnaNew) {
 		// System.out.println(database);
-		if (!ConnectionSettings.useInternetConnection()) {
+		if (!ConnectionSettings.getInstance().useInternetConnection()) {
 			// -- use database --
-			if (dbtype_MiRNA == database && ConnectionSettings.isLocalMiRNA()) {
+			if (dbtype_MiRNA == database && ConnectionSettings.getInstance().isLocalMiRNA()) {
 				return getLocalRequestDbContent(database, query, attributes);
-			} else if (dbtype_KEGG == database && ConnectionSettings.isLocalKegg()) {
+			} else if (dbtype_KEGG == database && ConnectionSettings.getInstance().isLocalKegg()) {
 				return getLocalRequestDbContent(database, query, attributes);
 			}
 		}
@@ -75,28 +75,31 @@ public class Wrapper implements WebServiceListener {
 		// -- use webservice --
 
 		if (dbtype_PPI == database) {
-			getWebserviceResult(ConnectionSettings.getDBConnection().getPpiDBName(), query);
+			getWebserviceResult(ConnectionSettings.getInstance().getDBConnection().getPpiDBName(), query);
 		}
 
 		else if (dbtype_MiRNA == database) {
 			if (mirnaNew) {
-				getWebserviceResult(ConnectionSettings.getDBConnection().getMirnaNewDBName(), query);
+				getWebserviceResult(ConnectionSettings.getInstance().getDBConnection().getMirnaNewDBName(), query);
 			} else {
-				getWebserviceResult(ConnectionSettings.getDBConnection().getMirnaDBName(), query);
+				getWebserviceResult(ConnectionSettings.getInstance().getDBConnection().getMirnaDBName(), query);
 			}
 		} else
-			getWebserviceResult(ConnectionSettings.getDBConnection().getDawisDBName(), query);
+			getWebserviceResult(ConnectionSettings.getInstance().getDBConnection().getDawisDBName(), query);
 
 		return dbResults;
 	}
 
 	private ArrayList<DBColumn> getLocalRequestDbContent(int database, String query, String[] attributes) {
 		if (dbtype_PPI == database)
-			ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.getDBConnection().getPpiDBName());
+			ConnectionSettings.getInstance().getDBConnection()
+					.useDatabase(ConnectionSettings.getInstance().getDBConnection().getPpiDBName());
 		else if (dbtype_MiRNA == database) {
-			ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.getDBConnection().getMirnaDBName());
+			ConnectionSettings.getInstance().getDBConnection()
+					.useDatabase(ConnectionSettings.getInstance().getDBConnection().getMirnaDBName());
 		} else
-			ConnectionSettings.getDBConnection().useDatabase(ConnectionSettings.getDBConnection().getDawisDBName());
+			ConnectionSettings.getInstance().getDBConnection()
+					.useDatabase(ConnectionSettings.getInstance().getDBConnection().getDawisDBName());
 		// System.out.println("local");
 		return getDBResult(query, attributes);
 	}

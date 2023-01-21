@@ -34,7 +34,7 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 
 	public OpenModelicaResult() {
 
-		chooser = new JFileChooser(ConnectionSettings.getFileOpenDirectory());
+		chooser = new JFileChooser(ConnectionSettings.getInstance().getFileOpenDirectory());
 
 		chooser.setAcceptAllFileFilterUsed(false);
 		// chooser.addChoosableFileFilter(new MyFileFilter(modelicaSimulation,
@@ -69,7 +69,7 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 	protected Void doInBackground() throws Exception {
 
 		if (option == JFileChooser.APPROVE_OPTION) {
-			ConnectionSettings.setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+			ConnectionSettings.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 
 			fileFormat = chooser.getFileFilter().getDescription();
 			file = chooser.getSelectedFile();

@@ -63,7 +63,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 
 	public OpenDialog() {
 
-		chooser = new JFileChooser(ConnectionSettings.getFileOpenDirectory());
+		chooser = new JFileChooser(ConnectionSettings.getInstance().getFileOpenDirectory());
 
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.addChoosableFileFilter(new MyFileFilter(sbml, sbmlDescription));
@@ -80,7 +80,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 		option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
 
 		if (option == JFileChooser.APPROVE_OPTION) {
-			ConnectionSettings.setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+			ConnectionSettings.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 		}
 	}
 

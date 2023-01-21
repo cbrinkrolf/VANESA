@@ -135,7 +135,7 @@ public class VisualizationDialog {
 						loadedYaml = fileChooser.getSelectedFile().getPath();
 						loadedYamlLabel.setText(loadedYaml);
 						mWindow.setLoadedYaml(loadedYaml);
-						ConnectionSettings.setYamlVisualizationFile(loadedYaml);
+						ConnectionSettings.getInstance().setYamlVisualizationFile(loadedYaml);
 						PrintWriter pWriter = null;
 						try {
 							pWriter = new PrintWriter(new BufferedWriter(
