@@ -10,12 +10,9 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.ObjectSupplier;
-import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.XMLConfiguration;
-import org.apache.commons.configuration2.builder.BasicConfigurationBuilder;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
 import org.apache.commons.lang3.SystemUtils;
@@ -141,6 +138,7 @@ public class VanesaUtility {
 		FileBasedConfigurationBuilder<XMLConfiguration> builder =
 				new FileBasedConfigurationBuilder<>(XMLConfiguration.class).configure(
 						params.fileBased().setFile(new File(filePath)));
+		builder.setAutoSave(true);
 		return builder.getConfiguration();
 	}
 }

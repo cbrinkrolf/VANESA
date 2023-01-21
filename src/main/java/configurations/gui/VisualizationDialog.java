@@ -136,7 +136,7 @@ public class VisualizationDialog {
 						loadedYamlLabel.setText(loadedYaml);
 						mWindow.setLoadedYaml(loadedYaml);
 						ConnectionSettings.setYamlVisualizationFile(loadedYaml);
-						/* PrintWriter pWriter = null;
+						PrintWriter pWriter = null;
 						try {
 							pWriter = new PrintWriter(new BufferedWriter(
 									new FileWriter(new File("YamlSourceFile.txt").getAbsolutePath())));
@@ -151,7 +151,7 @@ public class VisualizationDialog {
 								pWriter.flush();
 								pWriter.close();
 							}
-						}*/
+						}
 						shapeBox.setEnabled(true);
 						sizeMultiplierBox.setEnabled(true);
 						colorChooser.setEnabled(true);

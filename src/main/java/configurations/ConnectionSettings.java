@@ -5,14 +5,13 @@
 package configurations;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
-import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.io.FileHandler;
 
 import database.Connection.DBconnection;
-import org.apache.commons.configuration2.io.FileHandler;
+import gui.MyPopUp;
 import util.VanesaUtility;
 
 /**
@@ -35,6 +34,9 @@ public class ConnectionSettings {
 	private static String proxy_host = new String();
 	private static String proxy_port = new String();
 
+	// never access directly, always use getXMLConfiguration()
+	private static XMLConfiguration xmlConfiguration = null;
+
 	// directories for opening / saving
 	private static String fileSaveDirectory;
 	private static String fileOpenDirectory;
@@ -44,11 +46,11 @@ public class ConnectionSettings {
 			return fileSaveDirectory;
 		}
 		fileSaveDirectory = getProperty("SaveDialog-Path");
-		
+
 		if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
 			return fileSaveDirectory;
 		}
-		
+
 		if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
 			return fileOpenDirectory;
 		}
@@ -69,7 +71,7 @@ public class ConnectionSettings {
 		if (fileOpenDirectory != null && fileOpenDirectory.length() > 0) {
 			return fileOpenDirectory;
 		}
-		
+
 		if (fileSaveDirectory != null && fileSaveDirectory.length() > 0) {
 			return fileSaveDirectory;
 		}
@@ -80,32 +82,18 @@ public class ConnectionSettings {
 		fileOpenDirectory = fileDir;
 		setProperty("OpenDialog-Path", fileDir);
 	}
-	
-	public static void setYamlVisualizationFile(String filePath){
+
+	public static void setYamlVisualizationFile(String filePath) {
 		setProperty("YamlVisualizationPath", filePath);
 	}
-	
-	public static String getYamlVisualizationFile(){
+
+	public static String getYamlVisualizationFile() {
 		return getProperty("YamlVisualizationPath");
 	}
 
 	private static String getProperty(String property) {
 		String value = null;
-		File f = new File(VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
-		if (!f.exists()) {
-			System.out.println("There is probably no " + VanesaUtility.getWorkingDirectoryPath() + File.separator
-					+ "settings.xml yet.");
-		} else {
-			try {
-				XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
-						VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml");
-				value = xmlSettings.getString(property);
-
-			} catch (ConfigurationException e) {
-				f.delete();
-				e.printStackTrace();
-			}
-		}
+		value = getXMLConfiguration().getString(property);
 		return value;
 	}
 
@@ -116,8 +104,8 @@ public class ConnectionSettings {
 			XMLConfiguration xmlSettings = VanesaUtility
 					.getFileBasedXMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
 			xmlSettings.setProperty(property, value);
-			FileHandler handler = new FileHandler(xmlSettings);
-			handler.save(f);
+			// FileHandler handler = new FileHandler(xmlSettings);
+			// handler.save(f);
 		} catch (ConfigurationException e) {
 			if (f.exists()) {
 				f.delete();
@@ -244,5 +232,39 @@ public class ConnectionSettings {
 
 	public static void setLocalMiRNA(boolean localMiRNA) {
 		ConnectionSettings.localMiRNA = localMiRNA;
+	}
+
+	private static XMLConfiguration getXMLConfiguration() {
+		if (xmlConfiguration == null) {
+			String settingsFilePath = VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml";
+			File f = new File(settingsFilePath);
+			if (!f.exists()) {
+				System.out.println("There is probably no " + settingsFilePath + " yet.");
+				MyPopUp.getInstance().show("Error configuration file",
+						"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+				try {
+					xmlConfiguration = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
+					FileHandler handler = new FileHandler(xmlConfiguration);
+					handler.save(f);
+				} catch (ConfigurationException e) {
+					f.delete();
+					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					MyPopUp.getInstance().show("Error configuration file",
+							"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					xmlConfiguration = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
+				} catch (ConfigurationException e) {
+					f.delete();
+					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					MyPopUp.getInstance().show("Error configuration file",
+							"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					e.printStackTrace();
+				}
+			}
+		}
+		return xmlConfiguration;
 	}
 }
