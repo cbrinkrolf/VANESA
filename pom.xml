@@ -77,6 +77,7 @@
                                         <exclude>ASL2.0</exclude>
                                         <exclude>*.stf</exclude>
                                         <exclude>*.html</exclude>
+                                        <exclude>**/*.afdesign</exclude>
                                         <exclude>XML*VERSION</exclude>
                                         <exclude>release-timestamp.txt</exclude>
                                         <exclude>logback.xml</exclude>

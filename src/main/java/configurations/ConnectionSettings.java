@@ -12,6 +12,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.XMLConfiguration;
 
 import database.Connection.DBconnection;
+import org.apache.commons.configuration2.io.FileHandler;
 import util.VanesaUtility;
 
 /**
@@ -111,21 +112,13 @@ public class ConnectionSettings {
 	private static void setProperty(String property, String value) {
 		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
-		FileWriter fw;
 		try {
-			
 			XMLConfiguration xmlSettings = VanesaUtility
 					.getFileBasedXMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
 			xmlSettings.setProperty(property, value);
-			fw = new FileWriter(f);
-			xmlSettings.write(fw);
-			fw.close();
+			FileHandler handler = new FileHandler(xmlSettings);
+			handler.save(f);
 		} catch (ConfigurationException e) {
-			if (f.exists()) {
-				f.delete();
-			}
-			e.printStackTrace();
-		} catch (IOException e) {
 			if (f.exists()) {
 				f.delete();
 			}
