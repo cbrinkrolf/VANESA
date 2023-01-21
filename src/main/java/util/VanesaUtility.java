@@ -17,6 +17,7 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.io.FileHandler;
 import org.apache.commons.lang3.SystemUtils;
 
 import configurations.asyncWebservice.WebServiceEvent;
@@ -34,7 +35,7 @@ public class VanesaUtility {
 	/**
 	 * This utility method creates a vector with results, after an asynchrone web
 	 * service has been called. Because we need a Vector<DBColumn> to
-	 * 
+	 *
 	 * @param event WebServiceEvent, the event which has been given after a
 	 *              Web-Service call.
 	 * @return result ArrayList<DBColumn>, the vector has no elements if no content
@@ -130,12 +131,16 @@ public class VanesaUtility {
 	}
 
 	public static XMLConfiguration getFileBasedXMLConfiguration(final String filePath) throws ConfigurationException {
+		File file = new File(filePath);
+		if (!file.exists()) {
+			XMLConfiguration configuration = new XMLConfiguration();
+			FileHandler handler = new FileHandler(configuration);
+			handler.save(file);
+		}
 		Parameters params = new Parameters();
 		FileBasedConfigurationBuilder<XMLConfiguration> builder =
 				new FileBasedConfigurationBuilder<>(XMLConfiguration.class).configure(
 						params.fileBased().setFile(new File(filePath)));
-		//builder.setAutoSave(true);
-		
 		return builder.getConfiguration();
 	}
 }
