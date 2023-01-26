@@ -111,8 +111,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		return biologicalElement;
 	}
 
-	@Override
-	public void setBiologicalElement(String biologicalElement) {
+	protected void setBiologicalElement(String biologicalElement) {
 		this.biologicalElement = biologicalElement;
 	}
 

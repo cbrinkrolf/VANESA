@@ -774,7 +774,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		return BiologicalElement;
 	}
 
-	public void setBiologicalElement(String biologicalElement) {
+	protected void setBiologicalElement(String biologicalElement) {
 		BiologicalElement = biologicalElement;
 	}
 

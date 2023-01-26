@@ -12,8 +12,7 @@ import javax.swing.SwingWorker;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
-import biologicalObjects.edges.Compound;
-import biologicalObjects.edges.Expression;
+import biologicalObjects.edges.*;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Complex;
 import biologicalObjects.nodes.DNA;
@@ -435,34 +434,35 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 				// && bna2.getBiologicalElement().equals(biologicalElements.Elementdeclerations.dna))
 				{
 					if (!pw.existEdge(bna1, bna2) && (!pw.existEdge(bna2, bna1))) {
-						Compound c = new Compound("", "", bna1, bna2);
-						c.setDirected(true);
-						c.setBiologicalElement(edgeType);
+						BiologicalEdgeAbstract bea;
 						switch (edgeType) {
-							case Elementdeclerations.phosphorylationEdge:
-								c.setLabel("+p");
-								break;
 							case Elementdeclerations.dephosphorylationEdge:
-								c.setLabel("-p");
+								bea = new Dephosphorylation("-p", "", bna1, bna2);
 								break;
-							case Elementdeclerations.ubiquitinationEdge:
-								c.setLabel("+u");
-								break;
-							case Elementdeclerations.glycosylationEdge:
-								c.setLabel("+g");
+							case Elementdeclerations.phosphorylationEdge:
+								bea = new Phosphorylation("+p", "", bna1, bna2);
 								break;
 							case Elementdeclerations.methylationEdge:
-								c.setLabel("+m");
+								bea = new Methylation("+m", "", bna1, bna2);
 								break;
-							case Elementdeclerations.expressionEdge:
-								c.setLabel("e");
+							case Elementdeclerations.ubiquitinationEdge:
+								bea = new Ubiquitination("+u", "", bna1, bna2);
+								break;
+							case Elementdeclerations.glycosylationEdge:
+								bea = new Glycosylation("+g", "", bna1, bna2);
+								break;
+							default:
+								bea = BiologicalEdgeAbstractFactory.create(edgeType, null);
+								bea.setFrom(bna1);
+								bea.setTo(bna2);
 								break;
 						}
-						if (specific)
+						bea.setDirected(true);
+						if (specific) {
 							bna1.setColor(Color.GREEN);
-						pw.addEdge(c);
+						}
+						pw.addEdge(bea);
 						pw.updateMyGraph();
-						System.out.println("type: "+edgeType);
 					}
 				}
 			}

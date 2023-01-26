@@ -47,8 +47,6 @@ public interface GraphElementAbstract {
 
     String getBiologicalElement();
 
-    void setBiologicalElement(String biologicalElement);
-
     Shape getShape();
 
     void setShape(Shape shape);
