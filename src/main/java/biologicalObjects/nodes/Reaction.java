@@ -5,7 +5,6 @@ import java.util.List;
 import biologicalElements.Elementdeclerations;
 
 public class Reaction extends BiologicalNodeAbstract implements DynamicNode {
-
 	private String maximalSpeed = "1";
 	private boolean knockedOut = false;
 
@@ -43,8 +42,7 @@ public class Reaction extends BiologicalNodeAbstract implements DynamicNode {
 	}
 
 	public String getTransformationParameterValue(String parameter) {
-		switch (parameter) {
-		case "maximalSpeed":
+		if (parameter.equals("maximalSpeed")) {
 			return getMaximalSpeed();
 		}
 		return super.getTransformationParameterValue(parameter);

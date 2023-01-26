@@ -7,39 +7,44 @@ import java.util.Set;
 import biologicalElements.GraphElementAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import util.DoubleHashMap;
 
-@Getter
-@Setter
 public class SimulationResult {
-
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private DoubleHashMap<GraphElementAbstract, Integer, Series> result;
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
+	private final DoubleHashMap<GraphElementAbstract, Integer, Series> result = new DoubleHashMap<>();
 	private DoubleHashMap<GraphElementAbstract, Integer, TimeSeries> resultFiltered;
-	@Setter(AccessLevel.NONE)
-	private Series time;
+	private final Series time;
 	private boolean active = true;
-	@Setter(AccessLevel.NONE)
 	private String name;
-	@Setter(AccessLevel.NONE)
-	private String id;
-	@Setter(AccessLevel.NONE)
-	private StringBuilder logMessage = new StringBuilder();
+	private final String id;
+	private final StringBuilder logMessage = new StringBuilder();
 
 	public SimulationResult(String id, String name, boolean filtered) {
 		this.id = id;
 		this.name = name;
-		result = new DoubleHashMap<GraphElementAbstract, Integer, Series>();
 		time = new Series();
 		if (filtered) {
-			resultFiltered = new DoubleHashMap<GraphElementAbstract, Integer, TimeSeries>();
+			resultFiltered = new DoubleHashMap<>();
 		}
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public StringBuilder getLogMessage() {
+		return logMessage;
+	}
+
+	public Series getTime() {
+		return time;
 	}
 
 	public void addTime(double time) {
@@ -96,6 +101,10 @@ public class SimulationResult {
 
 	public boolean contains(GraphElementAbstract gea, int type) {
 		return result.contains(gea, type);
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public void setName(String name) {

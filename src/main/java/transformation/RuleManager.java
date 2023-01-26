@@ -5,13 +5,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Getter;
-
 public class RuleManager {
-
 	private static RuleManager instance = null;
 
-	@Getter
 	private List<Rule> rules = new ArrayList<>();
 
 	public static synchronized RuleManager getInstance() {
@@ -28,6 +24,10 @@ public class RuleManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public List<Rule> getRules() {
+		return rules;
 	}
 
 	public void addRules(List<Rule> rules) {

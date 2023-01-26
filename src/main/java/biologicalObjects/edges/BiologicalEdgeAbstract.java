@@ -13,27 +13,14 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.NetworkSettingsSingelton;
 import graph.gui.Parameter;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
-@Getter
-@Setter
 public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cloneable {
-
-	// ---Fields---
-	private ReactionPairEdge reactionPairEdge;
-
 	private boolean directed;
 	private boolean visible = true;
-	@Setter(AccessLevel.NONE)
 	private String name = "not mentioned";
-	@Setter(AccessLevel.NONE)
 	private String label = "???";
-	@Setter(AccessLevel.NONE)
 	private int ID = 0;
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private SortedSet<Integer> set;
 
 	private String description = "";
@@ -45,40 +32,164 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	private boolean hasKEGGNode = false;
 	private boolean hasDAWISNode = false;
 	private boolean hasBrendaNode = false;
-	private HashSet<String> labelSet = new HashSet<String>();
-	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
-	@Setter(AccessLevel.NONE)
+	private HashSet<String> labelSet = new HashSet<>();
+	private ArrayList<Parameter> parameters = new ArrayList<>();
 	private String function = "1";
 
 	private BiologicalNodeAbstract from;
 	private BiologicalNodeAbstract to;
 
-	// ---Functional Methods---
-
 	public BiologicalEdgeAbstract(String label, String name, BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
-		// this.edge=edge;
 		this.label = label;
 		this.name = name;
-		if (label.trim().length() == 0) {
+		if (StringUtils.isBlank(label)) {
 			this.label = name;
 		}
-		if (name.trim().length() == 0) {
+		if (StringUtils.isBlank(name)) {
 			this.name = label;
 		}
-		this.labelSet.add(label);
+		labelSet.add(label);
 		// setName(name.toLowerCase());
 		// setLabel(label.toLowerCase());
 		this.from = from;
 		this.to = to;
 	}
 
+	public boolean isDirected() {
+		return directed;
+	}
+
+	public void setDirected(boolean directed) {
+		this.directed = directed;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	@Override
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public Color getDefaultColor() {
+		return defaultColor;
+	}
+
+	public void setDefaultColor(Color defaultColor) {
+		this.defaultColor = defaultColor;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	@Override
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public String getBiologicalElement() {
+		return biologicalElement;
+	}
+
+	protected void setBiologicalElement(String biologicalElement) {
+		this.biologicalElement = biologicalElement;
+	}
+
+	public Shape getShape() {
+		return shape;
+	}
+
+	@Override
+	public void setShape(Shape shape) {
+		this.shape = shape;
+	}
+
+	public boolean hasKEGGNode() {
+		return hasKEGGNode;
+	}
+
+	@Override
+	public void setHasKEGGNode(boolean hasKEGGNode) {
+		this.hasKEGGNode = hasKEGGNode;
+	}
+
+	public boolean isHasDAWISNode() {
+		return hasDAWISNode;
+	}
+
+	public void setHasDAWISNode(boolean hasDAWISNode) {
+		this.hasDAWISNode = hasDAWISNode;
+	}
+
+	public boolean hasBrendaNode() {
+		return hasBrendaNode;
+	}
+
+	@Override
+	public void setHasBrendaNode(boolean hasBrendaNode) {
+		this.hasBrendaNode = hasBrendaNode;
+	}
+
+	public HashSet<String> getLabelSet() {
+		return labelSet;
+	}
+
+	@Override
+	public void setLabelSet(HashSet<String> labelSet) {
+		this.labelSet = labelSet;
+	}
+
+	public ArrayList<Parameter> getParameters() {
+		return parameters;
+	}
+
+	@Override
+	public void setParameters(ArrayList<Parameter> parameters) {
+		this.parameters = parameters;
+	}
+
+	public BiologicalNodeAbstract getFrom() {
+		return from;
+	}
+
+	public void setFrom(BiologicalNodeAbstract from) {
+		this.from = from;
+	}
+
+	public BiologicalNodeAbstract getTo() {
+		return to;
+	}
+
+	public void setTo(BiologicalNodeAbstract to) {
+		this.to = to;
+	}
+
 	@Override
 	public BiologicalEdgeAbstract clone() {
 		try {
-			BiologicalEdgeAbstract cloneEdge = (BiologicalEdgeAbstract) super.clone();
-			return cloneEdge;
+			return (BiologicalEdgeAbstract) super.clone();
 		} catch (CloneNotSupportedException e) {
-			// Kann eigentlich nicht passieren, da Cloneable
+			// Should not happen as it's Cloneable
 			throw new InternalError();
 		}
 	}
@@ -147,11 +258,17 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		return "";
 	}
 
-	// ---Getter/Setter---
+	public String getFunction() {
+		return function;
+	}
 
 	public void setFunction(String function) {
 		this.function = function;
 		setLabel(this.function);
+	}
+
+	public int getID() {
+		return ID;
 	}
 
 	// should only be used when loading a file with a network
@@ -190,7 +307,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	public void setID(Pathway pw) {
-
 		set = pw.getIdSet();
 		// System.out.println(new GraphInstance().getPathway().getName());
 		// set id to highest current id+1;
@@ -222,11 +338,19 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		return getCorrectLabel(NetworkSettingsSingelton.getInstance().getEdgeLabel());
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public void setName(String name) {
 		this.name = name.trim();
 		if (label.length() == 0) {
 			label = name;
 		}
+	}
+
+	public String getLabel() {
+		return label;
 	}
 
 	public void setLabel(String label) {
@@ -261,7 +385,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	public void resetAppearance() {
-
 	}
 
 	public boolean isValid(boolean allowFromEqualsTo) {
@@ -274,7 +397,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	// defines parameters which are available in during transformation
 	public List<String> getTransformationParameters() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("name");
 		list.add("label");
 		list.add("function");

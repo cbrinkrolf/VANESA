@@ -1,22 +1,37 @@
 package biologicalObjects.edges;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class ReactionPairEdge {
+    private String reactionPairID = "";
+    private String name = "";
+    private String type = "";
 
-	private String reactionPairID = "";
-	private String name = "";
-	private String type = "";
+    public String getReactionPairID() {
+        return reactionPairID;
+    }
 
-	public Object[][] getRPairDetails() {
+    public void setReactionPairID(String reactionPairID) {
+        this.reactionPairID = reactionPairID;
+    }
 
-		Object[][] values = { { "Name", getName() }, { "Reaction_ID", getReactionPairID() },
-				{ "Reaction Type", getType() },
+    public String getName() {
+        return name;
+    }
 
-		};
-		return values;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Object[][] getRPairDetails() {
+        return new Object[][]{
+                {"Name", getName()}, {"Reaction_ID", getReactionPairID()}, {"Reaction Type", getType()}
+        };
+    }
 }

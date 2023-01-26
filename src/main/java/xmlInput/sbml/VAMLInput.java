@@ -128,7 +128,7 @@ public class VAMLInput {
 			} else if (element.getLocalName().equals("organism")) {
 				pw.setOrganism(element.getText());
 			} else if (element.getLocalName().equals("organismSpecification")) {
-				pw.setSpecification(element.getText());
+				pw.setOrganismSpecification(element.getText());
 			} else if (element.getLocalName().equals("author")) {
 				pw.setAuthor(element.getText());
 			} else if (element.getLocalName().equals("version")) {
@@ -280,6 +280,10 @@ public class VAMLInput {
 
 				// System.out.println("reaction pair");
 				bea = new ReactionPair(label, name, mapping.get(from), mapping.get(to));
+				if (rpEdge != null) {
+					((ReactionPair) bea).setReactionPairEdge(rpEdge);
+					((ReactionPair) bea).setHasReactionPairEdge(true);
+				}
 
 			} else if (elementSpecification.equals(Elementdeclerations.activationEdge)) {
 
@@ -340,14 +344,10 @@ public class VAMLInput {
 				bea = new PNArc(mapping.get(from), mapping.get(to), label, name, Elementdeclerations.pnInhibitorArc, function);
 				((PNArc) bea).setProbability(activationProb);
 			}
-
 			else {
 				System.err.println("Try to instantiate an abstract Edge!!!");
 				bea = new ReactionEdge(label, name, mapping.get(from), mapping.get(to));
-
-				// bea = new BiologicalEdgeAbstract(label, name,
-				// mapping.get(from), mapping.get(to));
-
+				// bea = new BiologicalEdgeAbstract(label, name, mapping.get(from), mapping.get(to));
 			}
 			// System.out.println("spech: "+elementSpecification);
 			try {
@@ -358,11 +358,6 @@ public class VAMLInput {
 			bea.setDirected(isDirected);
 			bea.setColor(color);
 			bea.setComments(comment);
-
-			if (rpEdge != null) {
-				bea.setReactionPairEdge(rpEdge);
-				// bea.hasReactionPairEdge(true);
-			}
 
 			// System.out.println("vor: "+bea.getID());
 			// System.out.println(elementSpecification);

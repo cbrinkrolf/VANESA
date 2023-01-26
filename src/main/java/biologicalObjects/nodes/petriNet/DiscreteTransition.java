@@ -4,25 +4,28 @@ import java.awt.Color;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class DiscreteTransition extends Transition {
+    private double delay = 1;
 
-	private double delay = 1;
+    public DiscreteTransition(String label, String name) {
+        super(label, name);
+        setBiologicalElement(Elementdeclerations.discreteTransition);
+        setColor(Color.WHITE);
+    }
 
-	public DiscreteTransition(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.discreteTransition);
-		setColor(Color.WHITE);
-	}
+    public double getDelay() {
+        return delay;
+    }
 
-	@Override
-	public List<String> getTransformationParameters() {
-		List<String> list = super.getTransformationParameters();
-		list.add("delay");
-		return list;
-	}
+    public void setDelay(double delay) {
+        this.delay = delay;
+    }
+
+    @Override
+    public List<String> getTransformationParameters() {
+        List<String> list = super.getTransformationParameters();
+        list.add("delay");
+        return list;
+    }
 }

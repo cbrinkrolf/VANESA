@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import biologicalObjects.edges.*;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -25,11 +26,6 @@ import org.xml.sax.InputSource;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.BiologicalEdgeAbstractFactory;
-import biologicalObjects.edges.Inhibition;
-import biologicalObjects.edges.ReactionEdge;
-import biologicalObjects.edges.ReactionPairEdge;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
@@ -198,7 +194,7 @@ public class JSBMLinput {
 				nodeslist.get(k).setInGroup(true);
 				nodeslist.get(k).addGroup(tmp);
 			}
-			pathway.getGroupes().add(tmp);
+			pathway.getGroups().add(tmp);
 		}
 		inputgroups.clear();
 	}
@@ -813,21 +809,21 @@ public class JSBMLinput {
 			// bea.hasReactionPairEdge(Boolean.parseBoolean(value));
 			break;
 		case "ReactionPairEdge":
-			bea.setReactionPairEdge(new ReactionPairEdge());
-			List<Element> tmp = child.getChildren();
-			for (int j = 0; j < tmp.size(); j++) {
-				Element tmpi = tmp.get(j);
-				String tmpiName = tmpi.getName();
-				switch (tmpiName) {
-				case "ReactionPairEdgeID":
-					bea.getReactionPairEdge().setReactionPairID(value);
-					break;
-				case "ReactionPairName":
-					bea.getReactionPairEdge().setName(value);
-					break;
-				case "ReactionPairType":
-					bea.getReactionPairEdge().setType(value);
-					break;
+			if (bea instanceof ReactionPair) {
+				ReactionPair reactionPair = (ReactionPair) bea;
+				reactionPair.setReactionPairEdge(new ReactionPairEdge());
+				for (Element subChild : child.getChildren()) {
+					switch (subChild.getName()) {
+						case "ReactionPairEdgeID":
+							reactionPair.getReactionPairEdge().setReactionPairID(value);
+							break;
+						case "ReactionPairName":
+							reactionPair.getReactionPairEdge().setName(value);
+							break;
+						case "ReactionPairType":
+							reactionPair.getReactionPairEdge().setType(value);
+							break;
+					}
 				}
 			}
 			break;
@@ -992,16 +988,16 @@ public class JSBMLinput {
 			((biologicalObjects.nodes.Protein) bna).setAaSequence(value);
 			break;
 		case "Tarbase_accession":
-			((biologicalObjects.nodes.SRNA) bna).setTarbase_accession(value);
+			((biologicalObjects.nodes.SRNA) bna).setTarbaseAccession(value);
 			break;
 		case "Tarbase_DS":
-			((biologicalObjects.nodes.SRNA) bna).setTarbase_DS(value);
+			((biologicalObjects.nodes.SRNA) bna).setTarbaseDS(value);
 			break;
 		case "Tarbase_ensemble":
-			((biologicalObjects.nodes.SRNA) bna).setTarbase_ensemble(value);
+			((biologicalObjects.nodes.SRNA) bna).setTarbaseEnsemble(value);
 			break;
 		case "Tarbase_IS":
-			((biologicalObjects.nodes.SRNA) bna).setTarbase_IS(value);
+			((biologicalObjects.nodes.SRNA) bna).setTarbaseIS(value);
 			break;
 		}
 	}
@@ -1254,12 +1250,12 @@ public class JSBMLinput {
 	}
 
 	private Integer getID(String id) {
-		if (NumberUtils.isNumber(id)) {
+		if (NumberUtils.isCreatable(id)) {
 			return Integer.parseInt(id);
 		}
 		if (id.contains("spec_")) {
 			String[] idSplit = id.split("_");
-			if (NumberUtils.isNumber(idSplit[1])) {
+			if (NumberUtils.isCreatable(idSplit[1])) {
 				return Integer.parseInt(idSplit[1]);
 			}
 		}

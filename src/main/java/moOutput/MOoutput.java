@@ -311,8 +311,8 @@ public class MOoutput {
 		String min;
 		String max;
 		StochasticTransition st;
-		ArrayList<Integer> events;
-		ArrayList<Double> probs;
+		List<Integer> events;
+		List<Double> probs;
 		DiscreteTransition dt;
 		ContinuousTransition ct;
 		String speed;

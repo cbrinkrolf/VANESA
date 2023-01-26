@@ -112,7 +112,7 @@ public class VAMLoutput {
 		writer.writeEndElement();
 
 		writer.writeStartElement("organismSpecification");
-		writer.writeCData(pw.getSpecificationAsString());
+		writer.writeCData(pw.getOrganismSpecificationAsString());
 		writer.writeEndElement();
 
 		writer.writeStartElement("author");

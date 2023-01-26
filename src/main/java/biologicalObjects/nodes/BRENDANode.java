@@ -1,40 +1,24 @@
 package biologicalObjects.nodes;
 
-import java.util.Iterator;
 import java.util.Vector;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class BRENDANode {
-
-	private String name, ec_number, sysName, enzymeClass, reaction;
-
-	@Setter(AccessLevel.NONE)
+	private String name;
+	private String ecNumber;
+	private String sysName;
+	private String enzymeClass;
+	private String reaction;
 	private String kmValue;
-	@Setter(AccessLevel.NONE)
 	private String kcat;
-	private String substrate, product;
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private Vector<String> cofactor = new Vector<String>();
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private Vector<String> inhibitor = new Vector<String>();
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private Vector<String> comment = new Vector<String>();
-
-	public String getLink() {
-		return "http://www.brenda-enzymes.info/php/result_flat.php4?ecno=" + ec_number;
-	}
+	private String substrate;
+	private String product;
+	private Vector<String> cofactor = new Vector<>();
+	private Vector<String> inhibitor = new Vector<>();
+	private Vector<String> comment = new Vector<>();
 
 	public BRENDANode() {
 		name = "";
-		ec_number = "";
+		ecNumber = "";
 		sysName = "";
 		enzymeClass = "";
 		reaction = "";
@@ -44,99 +28,130 @@ public class BRENDANode {
 		product = "";
 	}
 
-	public Object[][] getBrendaDeatails() {
+	public String getName() {
+		return name;
+	}
 
-		Object[][] values = { { "Name", getName() }, { "SysName", getSysName() }, { "EC-Number", getEc_number() },
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEcNumber() {
+		return ecNumber;
+	}
+
+	public void setEcNumber(String ecNumber) {
+		this.ecNumber = ecNumber;
+	}
+
+	public String getSysName() {
+		return sysName;
+	}
+
+	public void setSysName(String sysName) {
+		this.sysName = sysName;
+	}
+
+	public String getEnzymeClass() {
+		return enzymeClass;
+	}
+
+	public void setEnzymeClass(String enzymeClass) {
+		this.enzymeClass = enzymeClass;
+	}
+
+	public String getReaction() {
+		return reaction;
+	}
+
+	public void setReaction(String reaction) {
+		this.reaction = reaction;
+	}
+
+	public String getKmValue() {
+		return kmValue;
+	}
+
+	public void setKmValue(String kmValue) {
+		this.kmValue = kmValue == null ? "" : kmValue;
+	}
+
+	public String getKcat() {
+		return kcat;
+	}
+
+	public void setKcat(String kcat) {
+		this.kcat = kcat == null ? "" : kcat;
+	}
+
+	public String getSubstrate() {
+		return substrate;
+	}
+
+	public void setSubstrate(String substrate) {
+		this.substrate = substrate;
+	}
+
+	public String getProduct() {
+		return product;
+	}
+
+	public void setProduct(String product) {
+		this.product = product;
+	}
+
+	public String getLink() {
+        return "https://www.brenda-enzymes.info/enzyme.php?ecno=" + ecNumber;
+    }
+
+	public Object[][] getBrendaDetails() {
+		return new Object[][]{
+				{"Name", getName() }, {"SysName", getSysName() }, {"EC-Number", getEcNumber() },
 				{ "Reaction", getReaction() }, { "Km Value", getKmValue() }, { "kcat", getKcat() },
 				{ "Substrate", getSubstrate() }, { "Product", getProduct() }, { "Cofactor", getCofactor() },
 				{ "Inhibitor", getInhibitor() }, { "Comment", getComment() }
-
 		};
-		return values;
 	}
 
 	public String getCofactor() {
-
-		String result = "";
-		Iterator<String> it = cofactor.iterator();
-		boolean first = true;
-		while (it.hasNext()) {
-			if (first) {
-				result = result + it.next();
-				first = false;
-			} else {
-				result = result + " ; " + it.next();
-			}
-		}
-		return result;
+		return String.join(" ; ", cofactor);
 	}
 
 	public Vector<String> getCofactorsAsVector() {
 		return cofactor;
 	}
 
-	public void setCofactor(String cofactor_str) {
-		if (!cofactor.contains(cofactor_str)) {
-			cofactor.add(cofactor_str);
+	public void setCofactor(String cofactor) {
+		if (!this.cofactor.contains(cofactor)) {
+			this.cofactor.add(cofactor);
 		}
 	}
 
 	public String getComment() {
-		String result = "";
-		Iterator<String> it = comment.iterator();
-		boolean first = true;
-		while (it.hasNext()) {
-			if (first) {
-				result = result + it.next();
-				first = false;
-			} else {
-				result = result + " ; " + it.next();
-			}
-		}
-		return result;
+		return String.join(" ; ", comment);
 	}
 
 	public Vector<String> getCommentsAsVector() {
 		return comment;
 	}
 
-	public void setComment(String comment_str) {
-		if (!comment.contains(comment_str)) {
-			comment.add(comment_str);
+	public void setComment(String comment) {
+		if (!this.comment.contains(comment)) {
+			this.comment.add(comment);
 		}
-
 	}
 
 	public String getInhibitor() {
-		String result = "";
-		Iterator<String> it = inhibitor.iterator();
-		boolean first = true;
-		while (it.hasNext()) {
-			if (first) {
-				result = result + it.next();
-				first = false;
-			} else {
-				result = result + " ; " + it.next();
-			}
-		}
-		return result;
+		return String.join(" ; ", inhibitor);
 	}
 
 	public Vector<String> getInhibitorAsVector() {
 		return inhibitor;
 	}
 
-	public void setInhibitor(String inhibitor_str) {
-		if (!inhibitor.contains(inhibitor_str)) {
-			inhibitor.add(inhibitor_str);
+	public void setInhibitor(String inhibitor) {
+		if (!this.inhibitor.contains(inhibitor)) {
+			this.inhibitor.add(inhibitor);
 		}
-	}
-
-	public void setKmValue(String kmValue) {
-		this.kmValue = (kmValue == null ? "" : kmValue);
-	}
-
-	public void setKcat(String kcat) {
-		this.kcat = (kcat == null ? "" : kcat);
 	}
 }

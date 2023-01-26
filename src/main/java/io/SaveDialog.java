@@ -18,6 +18,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
+import io.graphML.GraphMLWriter;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.transcoder.TranscoderException;
@@ -43,7 +44,6 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MyPopUp;
-import io.graphML.SaveGraphML;
 import moOutput.MOoutput;
 import transformation.Rule;
 import transformation.RuleManager;
@@ -411,7 +411,7 @@ public class SaveDialog {
 			// + " File not saved");
 		} else if (fileFormat.equals(graphMlDescription)) {
 			getCorrectFile(graphMl);
-			new SaveGraphML(new FileOutputStream(file));
+			new GraphMLWriter(file).write(GraphInstance.getPathwayStatic());
 			MyPopUp.getInstance().show("Information", graphMlDescription + " File saved");
 		} else if (fileFormat.equals(moDescription)) {
 			getCorrectFile(mo);

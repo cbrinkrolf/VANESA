@@ -24,10 +24,6 @@ import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
 public class PathwayTree implements TreeSelectionListener {
-
-	/**
-	 * 
-	 */
 	private JXTree tree = new JXTree(new DefaultMutableTreeNode());
 	private JScrollPane scrollTree = new JScrollPane();
 	private DefaultTreeModel model;
@@ -52,8 +48,8 @@ public class PathwayTree implements TreeSelectionListener {
 	}
 
 	private void buildTree(Pathway rootPW, DefaultMutableTreeNode root) {
-		ArrayList<Pathway> childs = rootPW.getChilds();
-		for (Pathway pw : childs) {
+		ArrayList<Pathway> children = rootPW.getChildren();
+		for (Pathway pw : children) {
 			DefaultMutableTreeNode node = new DefaultMutableTreeNode(pw.getTitle());
 			map.put(node, pw);
 			root.add(node);
@@ -61,7 +57,6 @@ public class PathwayTree implements TreeSelectionListener {
 				actualNode = node;
 			buildTree(pw, node);
 		}
-
 	}
 
 	public void revalidateView() {
