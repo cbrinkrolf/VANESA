@@ -17,6 +17,7 @@ import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import gui.MyPopUp;
+import io.graphML.GraphMLReader;
 import xmlInput.sbml.JSBMLinput;
 import xmlInput.sbml.VAMLInput;
 
@@ -28,31 +29,29 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 	private final String sbmlDescription = "System Biology Markup Language (*.sbml)";
 	private final String sbml = "sbml";
 
-	// private final String modellicaResultDescription = "Modellica Simulation
-	// Result File (*.plt)";
+	// private final String modellicaResultDescription = "Modellica Simulation Result File (*.plt)";
 	// private final String modellicaSimulation = "plt";
 
-	// private final String modellicaResultDescriptionNew = "New Modelica Simulation
-	// Result File (*.csv)";
+	// private final String modellicaResultDescriptionNew = "New Modelica Simulation Result File (*.csv)";
 	// private final String modellicaSimulationNew = "csv";
 
 	private final String vamlDescription = "VANESA Markup Language (*.vaml)";
 	private final String vaml = "vaml";
 
-	// private final String graphMlDescription = "Graph Markup Language (*.gml)";
+	private final String graphMlDescription = "GraphML (*.graphml)";
+	private final String graphml = "graphml";
+
 	// private final String moDescription = "Modelica File (*.mo)";
-
-	private String txtDescription = "Graph Text File (*.txt)";
-	private String txt = "txt";
-
-	private final int option;
-
 	// private final String mo = "mo";
 
-	private JFileChooser chooser;
+	private final String txtDescription = "Graph Text File (*.txt)";
+	private final String txt = "txt";
 
-	private GraphContainer con = GraphContainer.getInstance();
-	private GraphInstance graphInstance = new GraphInstance();
+	private final int option;
+	private final JFileChooser chooser;
+
+	private final GraphContainer con = GraphContainer.getInstance();
+	private final GraphInstance graphInstance = new GraphInstance();
 
 	private Pathway pathway = null;
 
@@ -75,6 +74,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 //		chooser.addChoosableFileFilter(new MyFileFilter(modellicaSimulationNew,
 //				modellicaResultDescriptionNew));
 
+		chooser.addChoosableFileFilter(new MyFileFilter(graphml, graphMlDescription));
 		chooser.addChoosableFileFilter(new MyFileFilter(txt, txtDescription));
 
 		option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
@@ -135,6 +135,14 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 					MyPopUp.getInstance().show("Error!", e.getMessage());
 					e.printStackTrace();
 				}
+			} else if (fileFormat.equals(graphMlDescription)) {
+				final GraphMLReader reader = new GraphMLReader(file);
+				final Pathway pw = reader.read();
+				if (reader.hasErrors() || pw == null) {
+					MyPopUp.getInstance().show("Error!", "Failed to load GraphML file.");
+				} else {
+					pw.setFile(file);
+				}
 			}
 		}
 	}
@@ -152,8 +160,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 				public void run() {
 					MainWindow.getInstance().showProgressBar("Loading data from file. Please wait a second");
 					// bar.init(100, " Open ", true);
-					// bar
-					// .setProgressBarString("Loading data from file. Please wait a second");
+					// bar.setProgressBarString("Loading data from file. Please wait a second");
 				}
 			};
 			SwingUtilities.invokeLater(run);
@@ -170,9 +177,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-
-					// GraphInstance.getMyGraph().getVisualizationViewer()
-					// .restart();
+					// GraphInstance.getMyGraph().getVisualizationViewer().restart();
 					MainWindow.getInstance().updateAllGuiElements();
 					MyGraph g = GraphInstance.getMyGraph();
 					g.normalCentering();

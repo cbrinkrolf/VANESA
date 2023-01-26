@@ -1,15 +1,10 @@
 package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class Protein extends BiologicalNodeAbstract {
-
 	private String aaSequence = "";
-	public static boolean labelIsAccessionNumber = false;
+	// public static boolean labelIsAccessionNumber = false;
 
 	public Protein(String label, String name) {
 		super(label, name);
@@ -17,7 +12,15 @@ public class Protein extends BiologicalNodeAbstract {
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 
-//	@SuppressWarnings("unchecked")
+	public String getAaSequence() {
+		return aaSequence;
+	}
+
+	public void setAaSequence(String aaSequence) {
+		this.aaSequence = aaSequence;
+	}
+
+	//	@SuppressWarnings("unchecked")
 //	private void getAccessionNumbers() {
 //
 //		String[] det = { getLabel() };

@@ -4,32 +4,96 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class Rule {
-
 	private String name = "";
 	private boolean active = true;
 
-	private List<RuleNode> biologicalNodes = new ArrayList<RuleNode>();
-	private List<RuleEdge> biologicalEdges = new ArrayList<RuleEdge>();
+	private List<RuleNode> biologicalNodes = new ArrayList<>();
+	private List<RuleEdge> biologicalEdges = new ArrayList<>();
 
-	private List<RuleNode> petriNodes = new ArrayList<RuleNode>();
-	private List<RuleEdge> petriEdges = new ArrayList<RuleEdge>();
+	private List<RuleNode> petriNodes = new ArrayList<>();
+	private List<RuleEdge> petriEdges = new ArrayList<>();
 
-	private HashMap<RuleNode, RuleNode> bnToPnMapping = new HashMap<RuleNode, RuleNode>();
-	private HashMap<RuleNode, RuleNode> pnToBnMapping = new HashMap<RuleNode, RuleNode>();
+	private HashMap<RuleNode, RuleNode> bnToPnMapping = new HashMap<>();
+	private HashMap<RuleNode, RuleNode> pnToBnMapping = new HashMap<>();
 
-	@Getter
-	@Setter
-	private List<RuleEdge> consideredEdges = new ArrayList<RuleEdge>();
+	private List<RuleEdge> consideredEdges = new ArrayList<>();
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public List<RuleNode> getBiologicalNodes() {
+		return biologicalNodes;
+	}
+
+	public void setBiologicalNodes(List<RuleNode> biologicalNodes) {
+		this.biologicalNodes = biologicalNodes;
+	}
+
+	public List<RuleEdge> getBiologicalEdges() {
+		return biologicalEdges;
+	}
+
+	public void setBiologicalEdges(List<RuleEdge> biologicalEdges) {
+		this.biologicalEdges = biologicalEdges;
+	}
+
+	public List<RuleNode> getPetriNodes() {
+		return petriNodes;
+	}
+
+	public void setPetriNodes(List<RuleNode> petriNodes) {
+		this.petriNodes = petriNodes;
+	}
+
+	public List<RuleEdge> getPetriEdges() {
+		return petriEdges;
+	}
+
+	public void setPetriEdges(List<RuleEdge> petriEdges) {
+		this.petriEdges = petriEdges;
+	}
+
+	public HashMap<RuleNode, RuleNode> getBnToPnMapping() {
+		return bnToPnMapping;
+	}
+
+	public void setBnToPnMapping(HashMap<RuleNode, RuleNode> bnToPnMapping) {
+		this.bnToPnMapping = bnToPnMapping;
+	}
+
+	public HashMap<RuleNode, RuleNode> getPnToBnMapping() {
+		return pnToBnMapping;
+	}
+
+	public void setPnToBnMapping(HashMap<RuleNode, RuleNode> pnToBnMapping) {
+		this.pnToBnMapping = pnToBnMapping;
+	}
+
+	public List<RuleEdge> getConsideredEdges() {
+		return consideredEdges;
+	}
+
+	public void setConsideredEdges(List<RuleEdge> consideredEdges) {
+		this.consideredEdges = consideredEdges;
+	}
 
 	public void addBiologicalEdge(RuleEdge e) {
-		for (int i = 0; i < biologicalEdges.size(); i++) {
-			if (biologicalEdges.get(i).getName().equals(e.getName())) {
+		for (RuleEdge biologicalEdge : biologicalEdges) {
+			if (biologicalEdge.getName().equals(e.getName())) {
 				System.out.println("Edge exists already");
 				return;
 			}
@@ -48,8 +112,8 @@ public class Rule {
 	}
 
 	public void addBiologicalNode(RuleNode n) {
-		for (int i = 0; i < biologicalNodes.size(); i++) {
-			if (n.getName().equals(biologicalNodes.get(i).getName())) {
+		for (RuleNode biologicalNode : biologicalNodes) {
+			if (n.getName().equals(biologicalNode.getName())) {
 				System.out.println("Node exists already");
 				return;
 			}
@@ -59,9 +123,9 @@ public class Rule {
 
 	public RuleNode getBiologicaNode(String name) {
 		RuleNode n = null;
-		for (int i = 0; i < biologicalNodes.size(); i++) {
-			if (name.equals(biologicalNodes.get(i).getName())) {
-				return biologicalNodes.get(i);
+		for (RuleNode biologicalNode : biologicalNodes) {
+			if (name.equals(biologicalNode.getName())) {
+				return biologicalNode;
 			}
 		}
 		return n;
@@ -69,17 +133,17 @@ public class Rule {
 
 	public RuleEdge getBiologicalEdge(String name) {
 		RuleEdge e = null;
-		for (int i = 0; i < biologicalEdges.size(); i++) {
-			if (name.equals(biologicalEdges.get(i).getName())) {
-				return biologicalEdges.get(i);
+		for (RuleEdge biologicalEdge : biologicalEdges) {
+			if (name.equals(biologicalEdge.getName())) {
+				return biologicalEdge;
 			}
 		}
 		return e;
 	}
 
 	public void addPetriEdge(RuleEdge e) {
-		for (int i = 0; i < petriEdges.size(); i++) {
-			if (petriEdges.get(i).getName().equals(e.getName())) {
+		for (RuleEdge petriEdge : petriEdges) {
+			if (petriEdge.getName().equals(e.getName())) {
 				System.out.println("Edge exists already");
 				return;
 			}
@@ -98,8 +162,8 @@ public class Rule {
 	}
 
 	public void addPetriNode(RuleNode n) {
-		for (int i = 0; i < petriNodes.size(); i++) {
-			if (n.getName().equals(petriNodes.get(i).getName())) {
+		for (RuleNode petriNode : petriNodes) {
+			if (n.getName().equals(petriNode.getName())) {
 				System.out.println("Node exists already");
 				return;
 			}
@@ -109,9 +173,9 @@ public class Rule {
 
 	public RuleNode getPetriNode(String name) {
 		RuleNode n = null;
-		for (int i = 0; i < petriNodes.size(); i++) {
-			if (name.equals(petriNodes.get(i).getName())) {
-				return petriNodes.get(i);
+		for (RuleNode petriNode : petriNodes) {
+			if (name.equals(petriNode.getName())) {
+				return petriNode;
 			}
 		}
 		return n;
@@ -119,9 +183,9 @@ public class Rule {
 
 	public RuleEdge getPetriEdge(String name) {
 		RuleEdge e = null;
-		for (int i = 0; i < petriEdges.size(); i++) {
-			if (name.equals(petriEdges.get(i).getName())) {
-				return petriEdges.get(i);
+		for (RuleEdge petriEdge : petriEdges) {
+			if (name.equals(petriEdge.getName())) {
+				return petriEdge;
 			}
 		}
 		return e;
@@ -147,9 +211,7 @@ public class Rule {
 	}
 
 	public boolean isConsistent() {
-		RuleNode node;
-		for (int i = 0; i < this.getPetriNodes().size(); i++) {
-			node = this.getPetriNodes().get(i);
+		for (RuleNode node : getPetriNodes()) {
 			// check if PN node type is matching
 			if (!(Transformator.places.contains(node.getType())
 					|| Transformator.transitions.contains(node.getType()))) {
@@ -159,14 +221,9 @@ public class Rule {
 				return false;
 			}
 		}
-
-		RuleEdge e;
-		RuleNode from;
-		RuleNode to;
-		for (int i = 0; i < this.getPetriEdges().size(); i++) {
-			e = this.getPetriEdges().get(i);
-			from = e.getFrom();
-			to = e.getTo();
+		for (RuleEdge e : getPetriEdges()) {
+			RuleNode from = e.getFrom();
+			RuleNode to = e.getTo();
 			if (Transformator.places.contains(from.getType()) && Transformator.places.contains(to.getType())) {
 				System.out.println("Error in rule: " + this.name);
 				System.out.println("Nodes of arc " + e.getName() + " have the same type (both are places)!");

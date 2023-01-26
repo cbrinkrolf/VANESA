@@ -6,17 +6,9 @@ import java.util.List;
 
 import biologicalElements.Elementdeclerations;
 import graph.jung.graphDrawing.VertexShapes;
-import lombok.Getter;
-import lombok.Setter;
 
-//import edu.uci.ics.jung.graph.Vertex;
-
-@Getter
-@Setter
 public class ContinuousTransition extends Transition {
-
 	// private final double delay = 1;
-
 	// scalar or scalar function for maximum speed
 	private String maximalSpeed = "1";
 
@@ -37,12 +29,15 @@ public class ContinuousTransition extends Transition {
 //		/transform2.translate(1, 1);
 		transform2.scale(1, 2);
 		setDefaultShape(transform2.createTransformedShape(new VertexShapes().getDoubleRectangle()));
-
 	}
 
-	// public double getDelay() {
-	// return delay;
-	// }
+	public String getMaximalSpeed() {
+		return maximalSpeed;
+	}
+
+	public void setMaximalSpeed(String maximalSpeed) {
+		this.maximalSpeed = maximalSpeed;
+	}
 
 	@Override
 	public List<String> getTransformationParameters() {

@@ -6,24 +6,13 @@ import java.util.List;
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import petriNet.FunctionParser;
 
-@Getter
-@Setter
 public class PNArc extends BiologicalEdgeAbstract {
-
-	// conflict sovling: priority that edge is active, 1=highest, n=lowest
-	// priority
-	@Setter(AccessLevel.NONE)
+	// conflict solving: priority that edge is active, 1=highest, n=lowest priority
 	private int priority = 1;
-
-	// conflict sovling: probability that edge is active
-	@Setter(AccessLevel.NONE)
+	// conflict solving: probability that edge is active
 	private double probability = 1.0;
-
 	private boolean wasUndirected = false;
 
 	public PNArc(BiologicalNodeAbstract from, BiologicalNodeAbstract to, String label, String name, String type,
@@ -45,10 +34,26 @@ public class PNArc extends BiologicalEdgeAbstract {
 		return new FunctionParser().parse(getFunction());
 	}
 
+	public boolean isWasUndirected() {
+		return wasUndirected;
+	}
+
+	public void setWasUndirected(boolean wasUndirected) {
+		this.wasUndirected = wasUndirected;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
 	public void setPriority(int priority) {
 		if (priority > 0) {
 			this.priority = priority;
 		}
+	}
+
+	public double getProbability() {
+		return probability;
 	}
 
 	public void setProbability(double probability) {
@@ -59,7 +64,7 @@ public class PNArc extends BiologicalEdgeAbstract {
 
 	// defines parameters which are available in during transformation
 	public List<String> getTransformationParameters() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("function");
 		return list;
 	}

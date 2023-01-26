@@ -7,73 +7,71 @@ import java.util.HashSet;
 
 import graph.gui.Parameter;
 
-public interface GraphElementAbstract{
-	
-	int getID();
-	
-	// should only be used when loading a file with a network
-	void setID(int id, Pathway pw) throws IDAlreadyExistException;
+public interface GraphElementAbstract {
+    int getID();
 
-	void setID(Pathway pw);
+    // should only be used when loading a file with a network
+    void setID(int id, Pathway pw) throws IDAlreadyExistException;
 
-	public String getNetworklabel();
+    void setID(Pathway pw);
 
-	public boolean isHasKEGGNode();
+    String getNetworklabel();
 
-	public void setHasKEGGNode(boolean hasKEGGNode);
+    boolean hasKEGGNode();
 
-	public String getName();
+    void setHasKEGGNode(boolean hasKEGGNode);
 
-	public void setName(String name);
+    String getName();
 
-	public String getLabel();
+    void setName(String name);
 
-	public void setLabel(String label);
+    String getLabel();
 
-	public String getDescription();
+    void setLabel(String label);
 
-	public void setDescription(String description);
+    String getDescription();
 
-	public String getComments();
+    void setDescription(String description);
 
-	public void setComments(String comments);
+    String getComments();
 
-	public boolean isEdge();
+    void setComments(String comments);
 
-	public boolean isVertex();
+    boolean isEdge();
 
-	public Color getColor();
+    boolean isVertex();
 
-	public void setColor(Color color);
+    Color getColor();
 
-	public String getBiologicalElement();
+    void setColor(Color color);
 
-	public void setBiologicalElement(String biologicalElement);
+    String getBiologicalElement();
 
-	public Shape getShape();
+    void setBiologicalElement(String biologicalElement);
 
-	public void setShape(Shape shape);
+    Shape getShape();
 
-	public boolean isVisible();
+    void setShape(Shape shape);
 
-	public void setVisible(boolean isVisible);
+    boolean isVisible();
 
-	public boolean isHasBrendaNode();
+    void setVisible(boolean isVisible);
 
-	public void setHasBrendaNode(boolean hasBrendaNode);
+    boolean hasBrendaNode();
 
-	public ArrayList<Parameter> getParameters();
+    void setHasBrendaNode(boolean hasBrendaNode);
 
-	public void setParameters(ArrayList<Parameter> parameters);
-	
-	public HashSet<String> getLabelSet();
+    ArrayList<Parameter> getParameters();
 
-	public void setLabelSet(HashSet<String> labelSet);
-	
-	public void addLabel(String label);
-	
-	public void addLabel(HashSet<String> labels);
-	
-	public void resetAppearance();
+    void setParameters(ArrayList<Parameter> parameters);
 
+    HashSet<String> getLabelSet();
+
+    void setLabelSet(HashSet<String> labelSet);
+
+    void addLabel(String label);
+
+    void addLabel(HashSet<String> labels);
+
+    void resetAppearance();
 }

@@ -29,66 +29,45 @@ import graph.jung.classes.MyGraph;
 import graph.jung.graphDrawing.VertexShapes;
 import graph.layouts.Circle;
 import gui.MainWindow;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public abstract class BiologicalNodeAbstract extends Pathway implements GraphElementAbstract {
-
-	// ---Fields---
-	@Setter(AccessLevel.NONE)
 	private KEGGNode KEGGnode;
 	private double nodesize = 1;
-	@Setter(AccessLevel.NONE)
 	private double defaultNodesize = 1;
 	private BiologicalNodeAbstract parentNode;
 	private String organism = "";
 	private DefaultMutableTreeNode treeNode;
-	@Setter(AccessLevel.NONE)
 	private BiologicalNodeAbstract logicalReference = null;
-	private Set<BiologicalNodeAbstract> refs = new HashSet<BiologicalNodeAbstract>();
+	private Set<BiologicalNodeAbstract> refs = new HashSet<>();
 	private boolean isVisible = true;
-	@Setter(AccessLevel.NONE)
 	private String label = "???";
-	@Setter(AccessLevel.NONE)
 	private int ID = 0;
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private SortedSet<Integer> set;
 	private String comments = "";
 	private Color color = Color.LIGHT_GRAY;
-	@Setter(AccessLevel.NONE)
 	private Color defaultColor = Color.LIGHT_GRAY;
 	private String BiologicalElement = "";
 	private Shape shape = new VertexShapes().getEllipse();
-	@Setter(AccessLevel.NONE)
 	private Shape defaultShape = new VertexShapes().getEllipse();
 	private boolean hasKEGGNode = false;
 	private boolean hasBrendaNode = false;
-	private HashSet<String> labelSet = new HashSet<String>();
-	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
-//	private Set<BiologicalNodeAbstract> border = new HashSet<BiologicalNodeAbstract>();
-//	private Set<BiologicalNodeAbstract> environment = new HashSet<BiologicalNodeAbstract>();
-	// private Set<BiologicalNodeAbstract> predefinedEnvironment = new
-	// HashSet<BiologicalNodeAbstract>();
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<BiologicalEdgeAbstract>();
+	private HashSet<String> labelSet = new HashSet<>();
+	private ArrayList<Parameter> parameters = new ArrayList<>();
+	// private Set<BiologicalNodeAbstract> border = new HashSet<>();
+	// private Set<BiologicalNodeAbstract> environment = new HashSet<>();
+	// private Set<BiologicalNodeAbstract> predefinedEnvironment = new HashSet<>();
+	private Set<BiologicalEdgeAbstract> connectingEdges = new HashSet<>();
 	private NodeStateChanged nodeStateChanged = NodeStateChanged.UNCHANGED;
-	@Setter(AccessLevel.NONE)
-	private HashSet<NodeAttribute> nodeAttributes = new HashSet<>();
+	private final HashSet<NodeAttribute> nodeAttributes = new HashSet<>();
 	private boolean markedAsEnvironment = false;
 	private boolean markedAsCoarseNode = false;
 	private Point2D parentNodeDistance = new Point2D.Double(0, 0);
-	@Setter(AccessLevel.NONE)
 	private boolean deleted = false;
 
 	private boolean inGroup = false;
 
 	private ArrayList<Group> groups = new ArrayList<>();
-	// private Set<Group> group = new HashSet<Group>();
+	// private Set<Group> group = new HashSet<>();
 
 	private Color plotColor = null;
 	private boolean discrete = false;
@@ -215,7 +194,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	 * Method to coarse a set of nodes to a hierarchical node with automatic
 	 * generated id.
 	 * 
-	 * @param vertices Nodes to coarse.
+	 * @param nodes Nodes to coarse.
 	 * @return The created coarseNode. Null, if coarsing was not successful.
 	 * @author tloka
 	 */
@@ -396,8 +375,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	/**
 	 * Checks if given Set of nodes is a valid border in the given type of graph.
 	 * 
-	 * @param isPetriNet True if Network is a Petri-Net.
-	 * @param vertices   Set of nodes.
+	 * @param isPetriNet  True if Network is a Petri-Net.
+	 * @param borderNodes Set of nodes.
 	 * @return True, if border candidate set is valid.
 	 * @author tloka
 	 */
@@ -727,11 +706,264 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		return bna;
 	}
 
-	// ---Getter/Setter---
+	public double getNodesize() {
+		return nodesize;
+	}
 
-	public void setKEGGnode(KEGGNode gnode) {
+	public void setNodesize(double nodesize) {
+		this.nodesize = nodesize;
+	}
+
+	public BiologicalNodeAbstract getParentNode() {
+		return parentNode;
+	}
+
+	public void setParentNode(BiologicalNodeAbstract parentNode) {
+		this.parentNode = parentNode;
+	}
+
+	public String getOrganism() {
+		return organism;
+	}
+
+	public void setOrganism(String organism) {
+		this.organism = organism;
+	}
+
+	public DefaultMutableTreeNode getTreeNode() {
+		return treeNode;
+	}
+
+	public void setTreeNode(DefaultMutableTreeNode treeNode) {
+		this.treeNode = treeNode;
+	}
+
+	public Set<BiologicalNodeAbstract> getRefs() {
+		return refs;
+	}
+
+	public void setRefs(Set<BiologicalNodeAbstract> refs) {
+		this.refs = refs;
+	}
+
+	public boolean isVisible() {
+		return isVisible;
+	}
+
+	public void setVisible(boolean visible) {
+		isVisible = visible;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public String getBiologicalElement() {
+		return BiologicalElement;
+	}
+
+	public void setBiologicalElement(String biologicalElement) {
+		BiologicalElement = biologicalElement;
+	}
+
+	public Shape getShape() {
+		return shape;
+	}
+
+	public void setShape(Shape shape) {
+		this.shape = shape;
+	}
+
+	public boolean hasKEGGNode() {
+		return hasKEGGNode;
+	}
+
+	public void setHasKEGGNode(boolean hasKEGGNode) {
+		this.hasKEGGNode = hasKEGGNode;
+	}
+
+	public boolean hasBrendaNode() {
+		return hasBrendaNode;
+	}
+
+	public void setHasBrendaNode(boolean hasBrendaNode) {
+		this.hasBrendaNode = hasBrendaNode;
+	}
+
+	public HashSet<String> getLabelSet() {
+		return labelSet;
+	}
+
+	public void setLabelSet(HashSet<String> labelSet) {
+		this.labelSet = labelSet;
+	}
+
+	public ArrayList<Parameter> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(ArrayList<Parameter> parameters) {
+		this.parameters = parameters;
+	}
+
+	public NodeStateChanged getNodeStateChanged() {
+		return nodeStateChanged;
+	}
+
+	public void setNodeStateChanged(NodeStateChanged nodeStateChanged) {
+		this.nodeStateChanged = nodeStateChanged;
+	}
+
+	public boolean isMarkedAsEnvironment() {
+		return markedAsEnvironment;
+	}
+
+	public void setMarkedAsEnvironment(boolean markedAsEnvironment) {
+		this.markedAsEnvironment = markedAsEnvironment;
+	}
+
+	public boolean isMarkedAsCoarseNode() {
+		return markedAsCoarseNode;
+	}
+
+	public void setMarkedAsCoarseNode(boolean markedAsCoarseNode) {
+		this.markedAsCoarseNode = markedAsCoarseNode;
+	}
+
+	public Point2D getParentNodeDistance() {
+		return parentNodeDistance;
+	}
+
+	public void setParentNodeDistance(Point2D parentNodeDistance) {
+		this.parentNodeDistance = parentNodeDistance;
+	}
+
+	public boolean isInGroup() {
+		return inGroup;
+	}
+
+	public void setInGroup(boolean inGroup) {
+		this.inGroup = inGroup;
+	}
+
+	public ArrayList<Group> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(ArrayList<Group> groups) {
+		this.groups = groups;
+	}
+
+	public Color getPlotColor() {
+		return plotColor;
+	}
+
+	public void setPlotColor(Color plotColor) {
+		this.plotColor = plotColor;
+	}
+
+	public boolean isDiscrete() {
+		return discrete;
+	}
+
+	public void setDiscrete(boolean discrete) {
+		this.discrete = discrete;
+	}
+
+	public boolean isConstant() {
+		return constant;
+	}
+
+	public void setConstant(boolean constant) {
+		this.constant = constant;
+	}
+
+	public double getConcentration() {
+		return concentration;
+	}
+
+	public void setConcentration(double concentration) {
+		this.concentration = concentration;
+	}
+
+	public double getConcentrationMin() {
+		return concentrationMin;
+	}
+
+	public void setConcentrationMin(double concentrationMin) {
+		this.concentrationMin = concentrationMin;
+	}
+
+	public double getConcentrationMax() {
+		return concentrationMax;
+	}
+
+	public void setConcentrationMax(double concentrationMax) {
+		this.concentrationMax = concentrationMax;
+	}
+
+	public double getConcentrationStart() {
+		return concentrationStart;
+	}
+
+	public void setConcentrationStart(double concentrationStart) {
+		this.concentrationStart = concentrationStart;
+	}
+
+	public KEGGNode getKEGGnode() {
+		return KEGGnode;
+	}
+
+	public void setKEGGnode(KEGGNode node) {
 		setHasKEGGNode(true);
-		KEGGnode = gnode;
+		KEGGnode = node;
+	}
+
+	public double getDefaultNodesize() {
+		return defaultNodesize;
+	}
+
+	public void setDefaultNodesize(double defaultNodesize) {
+		this.defaultNodesize = defaultNodesize;
+		this.setNodesize(defaultNodesize);
+	}
+
+	public Shape getDefaultShape() {
+		return defaultShape;
+	}
+
+	public void setDefaultShape(Shape defaultShape) {
+		this.defaultShape = defaultShape;
+		this.setShape(defaultShape);
+	}
+
+	public Color getDefaultColor() {
+		return defaultColor;
+	}
+
+	public void setDefaultColor(Color defaultColor) {
+		this.defaultColor = defaultColor;
+		this.setColor(defaultColor);
+	}
+
+	public HashSet<NodeAttribute> getNodeAttributes() {
+		return nodeAttributes;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
 	}
 
 	/*
@@ -808,7 +1040,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	public Set<BiologicalNodeAbstract> getAllParentNodes() {
 		BiologicalNodeAbstract node = this;
-		HashSet<BiologicalNodeAbstract> ret = new HashSet<BiologicalNodeAbstract>();
+		HashSet<BiologicalNodeAbstract> ret = new HashSet<>();
 		if (node.getParentNode() == null) {
 			return ret;
 		}
@@ -821,7 +1053,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	public List<BiologicalNodeAbstract> getAllParentNodesSorted() {
 		BiologicalNodeAbstract node = this;
-		ArrayList<BiologicalNodeAbstract> ret = new ArrayList<BiologicalNodeAbstract>();
+		ArrayList<BiologicalNodeAbstract> ret = new ArrayList<>();
 		if (node.getParentNode() == null) {
 			return ret;
 		}
@@ -877,10 +1109,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public boolean isLogical() {
-		if (this.logicalReference != null) {
-			return true;
-		}
-		return false;
+		return this.logicalReference != null;
+	}
+
+	public BiologicalNodeAbstract getLogicalReference() {
+		return logicalReference;
 	}
 
 	public void setLogicalReference(BiologicalNodeAbstract ref) {
@@ -891,6 +1124,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	public void deleteLogicalReference() {
 		logicalReference.getRefs().remove(this);
 		this.logicalReference = null;
+	}
+
+	public int getID() {
+		return ID;
 	}
 
 	// should only be used when loading a file with a network
@@ -954,6 +1191,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	public String getNetworklabel() {
 		return getCorrectLabel(NetworkSettingsSingelton.getInstance().getNodeLabel());
+	}
+
+	public String getLabel() {
+		return label;
 	}
 
 	public void setLabel(String label) {
@@ -1065,21 +1306,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		} else {
 			return connectingEdges;
 		}
-	}
-
-	public void setDefaultNodesize(double defaultNodesize) {
-		this.defaultNodesize = defaultNodesize;
-		this.setNodesize(defaultNodesize);
-	}
-
-	public void setDefaultColor(Color defaultColor) {
-		this.defaultColor = defaultColor;
-		this.setColor(defaultColor);
-	}
-
-	public void setDefaultShape(Shape defaultShape) {
-		this.defaultShape = defaultShape;
-		this.setShape(defaultShape);
 	}
 
 	public void resetAppearance() {

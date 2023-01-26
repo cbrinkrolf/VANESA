@@ -57,7 +57,7 @@ public class MyVertexDrawPaintFunction implements Function<BiologicalNodeAbstrac
 		if (psV.getPicked().isEmpty()) {
 			if (psE.getPicked().isEmpty()) {
 
-				if (v.isHasBrendaNode() || v.isHasKEGGNode())
+				if (v.hasBrendaNode() || v.hasKEGGNode())
 					return Color.RED;
 				else
 

@@ -3,7 +3,6 @@ package biologicalObjects.nodes;
 import biologicalElements.Elementdeclerations;
 
 public class DNA extends BiologicalNodeAbstract {
-
 	private String ntSequence = "";
 
 	public DNA(String label, String name) {

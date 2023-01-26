@@ -3,24 +3,12 @@ package biologicalObjects.nodes;
 import java.util.Vector;
 
 import biologicalElements.Elementdeclerations;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class Gene extends BiologicalNodeAbstract {
-
 	private String ntSequence = "";
-
-	@Setter(AccessLevel.NONE)
-	private Vector<String[]> proteins = new Vector<String[]>();
-	@Setter(AccessLevel.NONE)
-	private Vector<String[]> enzymes = new Vector<String[]>();
-
-	@Setter(AccessLevel.NONE)
+	private Vector<String[]> proteins = new Vector<>();
+	private Vector<String[]> enzymes = new Vector<>();
 	private boolean hasProteins = false;
-	@Setter(AccessLevel.NONE)
 	private boolean hasEnzymes = false;
 
 	public Gene(String label, String name) {
@@ -29,18 +17,38 @@ public class Gene extends BiologicalNodeAbstract {
 		attributeSetter(this.getClass().getSimpleName(), this);
 	}
 
-//	@SuppressWarnings("unchecked")
+	public String getNtSequence() {
+		return ntSequence;
+	}
+
+	public void setNtSequence(String ntSequence) {
+		this.ntSequence = ntSequence;
+	}
+
+	public Vector<String[]> getProteins() {
+		return proteins;
+	}
+
+	public Vector<String[]> getEnzymes() {
+		return enzymes;
+	}
+
+	public boolean isHasProteins() {
+		return hasProteins;
+	}
+
+	public boolean isHasEnzymes() {
+		return hasEnzymes;
+	}
+
 //	public void lookUpAtAllDatabases() {
 //		DAWISNode node = getDAWISNode();
 //		String db = getDB();
 //		String[] det = { getLabel() };
 //		Vector<String[]> results;
 //		Iterator<String[]> it;
-//
 //		if (db.equalsIgnoreCase("KEGG")) {
-//
-//			results = new Wrapper().requestDbContent(3,
-//					DAWISQueries.getTPGeneFromKEGGGene, det);
+//			results = new Wrapper().requestDbContent(3, DAWISQueries.getTPGeneFromKEGGGene, det);
 //			it = results.iterator();
 //			while (it.hasNext()) {
 //				String[] res = it.next();
@@ -48,35 +56,24 @@ public class Gene extends BiologicalNodeAbstract {
 //				node.addID(id, getLabel());
 //				node.addIDDBRelation("Transpath", id);
 //			}
-//
-//			results = new Wrapper().requestDbContent(3,
-//					DAWISQueries.getTFGeneFromKEGGGene, det);
+//			results = new Wrapper().requestDbContent(3, DAWISQueries.getTFGeneFromKEGGGene, det);
 //			it = results.iterator();
 //			while (it.hasNext()) {
 //				String[] res = it.next();
 //				String id = res[0];
 //				node.addID(id, getLabel());
 //				node.addIDDBRelation("Transfac", id);
-//
 //			}
-//
 //		} else if (db.equalsIgnoreCase("Transpath")) {
-//
-//			results = new Wrapper().requestDbContent(3,
-//					DAWISQueries.getKEGGGeneFromTPGene, det);
+//			results = new Wrapper().requestDbContent(3, DAWISQueries.getKEGGGeneFromTPGene, det);
 //			it = results.iterator();
-//
 //			while (it.hasNext()) {
-//
 //				String[] res = it.next();
 //				String id = res[0];
 //				node.addID(id, getLabel());
 //				node.addIDDBRelation("KEGG", id);
-//
 //			}
-//
-//			results = new Wrapper().requestDbContent(3,
-//					DAWISQueries.getTFGeneFromTPGene, det);
+//			results = new Wrapper().requestDbContent(3, DAWISQueries.getTFGeneFromTPGene, det);
 //			it = results.iterator();
 //			while (it.hasNext()) {
 //				String[] res2 = it.next();
@@ -84,23 +81,17 @@ public class Gene extends BiologicalNodeAbstract {
 //				node.addID(id2, getLabel());
 //				node.addIDDBRelation("Transfac", id2);
 //			}
-//
 //		} else if (db.equalsIgnoreCase("Transfac")) {
-//
-//			results = new Wrapper().requestDbContent(3,
-//					DAWISQueries.getKEGGGeneFromTFGene, det);
+//			results = new Wrapper().requestDbContent(3, DAWISQueries.getKEGGGeneFromTFGene, det);
 //			it = results.iterator();
 //			while (it.hasNext()) {
-//
 //				String[] res = it.next();
 //				String id = res[0];
 //				node.addID(id, getLabel());
 //				node.addIDDBRelation("KEGG", id);
-//
 //				if (!id.equals("")) {
 //					String[] det2 = { id };
-//					results = new Wrapper().requestDbContent(3,
-//							DAWISQueries.getTPGeneFromKEGGGene, det2);
+//					results = new Wrapper().requestDbContent(3, DAWISQueries.getTPGeneFromKEGGGene, det2);
 //					it = results.iterator();
 //					while (it.hasNext()) {
 //						String[] res2 = it.next();

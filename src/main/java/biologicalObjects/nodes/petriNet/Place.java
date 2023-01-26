@@ -3,36 +3,24 @@ package biologicalObjects.nodes.petriNet;
 import java.awt.Color;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
-//import edu.uci.ics.jung.graph.Vertex;
 import graph.GraphInstance;
 import gui.MyPopUp;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public abstract class Place extends PNNode {
-
-	private double token = 0;
-	@Getter(AccessLevel.NONE)
-	private double tokenMin = 0.0;
-	@Getter(AccessLevel.NONE)
-	private double tokenMax = Double.MAX_VALUE;
-	@Setter(AccessLevel.NONE)
-	private double tokenStart = 0;
-
 	public static final int CONFLICTHANDLING_NONE = 0;
 	public static final int CONFLICTHANDLING_PRIO = 1;
 	public static final int CONFLICTHANDLING_PROB = 2;
 
+	private double token = 0;
+	private double tokenMin = 0.0;
+	private double tokenMax = Double.MAX_VALUE;
+	private double tokenStart = 0;
 	private int conflictStrategy = 0;
 
 	public Place(String label, String name) {
@@ -42,43 +30,60 @@ public abstract class Place extends PNNode {
 			setLabel(name);
 		if (name.equals(""))
 			setName(label);
-
-		this.setDefaultNodesize(2);
+		setDefaultNodesize(2);
 		setDefaultColor(Color.WHITE);
 	}
 
-	public double getTokenMin() {
-		if (this.isConstant()) {
-			return 0;
-		}
-		return tokenMin;
+    public double getToken() {
+        return token;
+    }
+
+    public void setToken(double token) {
+        this.token = token;
+    }
+
+    public double getTokenMin() {
+		return this.isConstant() ? 0 : tokenMin;
 	}
+
+    public void setTokenMin(double tokenMin) {
+        this.tokenMin = tokenMin;
+    }
 
 	public double getTokenMax() {
-		if (this.isConstant()) {
-			return Double.MAX_VALUE;
-		}
-		return tokenMax;
+		return this.isConstant() ? Double.MAX_VALUE : tokenMax;
 	}
 
-	public void setTokenStart(double tokenStart) {
-		this.tokenStart = tokenStart;
-		if (new GraphInstance().getPathway().getPetriPropertiesNet() != null
-				&& !new GraphInstance().getPathway().getPetriPropertiesNet().isPetriNetSimulation())
-			token = tokenStart;
-	}
+    public void setTokenMax(double tokenMax) {
+        this.tokenMax = tokenMax;
+    }
+
+    public double getTokenStart() {
+        return tokenStart;
+    }
+
+    public void setTokenStart(double tokenStart) {
+        this.tokenStart = tokenStart;
+        if (new GraphInstance().getPathway().getPetriPropertiesNet() != null
+            && !new GraphInstance().getPathway().getPetriPropertiesNet().isPetriNetSimulation())
+            token = tokenStart;
+    }
+
+    public int getConflictStrategy() {
+        return conflictStrategy;
+    }
+
+    public void setConflictStrategy(int conflictStrategy) {
+        this.conflictStrategy = conflictStrategy;
+    }
 
 	public Set<PNArc> getConflictingOutEdges() {
-		Collection<BiologicalEdgeAbstract> coll = GraphInstance.getMyGraph().getJungGraph().getOutEdges(this);
-		Set<PNArc> result = new HashSet<PNArc>();
-		if (coll != null && coll.size() > 0) {
-			Iterator<BiologicalEdgeAbstract> it = coll.iterator();
-			BiologicalEdgeAbstract bea;
-			PNArc arc;
-			while (it.hasNext()) {
-				bea = it.next();
+		Collection<BiologicalEdgeAbstract> edges = GraphInstance.getMyGraph().getJungGraph().getOutEdges(this);
+		Set<PNArc> result = new HashSet<>();
+		if (edges != null) {
+			for (BiologicalEdgeAbstract bea : edges) {
 				if (bea instanceof PNArc) {
-					arc = (PNArc) bea;
+                    PNArc arc = (PNArc) bea;
 					if (!arc.isInhibitorArc() && !arc.isTestArc() && !(bea.getTo() instanceof ContinuousTransition)) {
 						result.add((PNArc) bea);
 					}
@@ -89,116 +94,94 @@ public abstract class Place extends PNNode {
 	}
 
 	public boolean hasConflictProperties() {
-		if (this.conflictStrategy == DiscretePlace.CONFLICTHANDLING_PRIO) {
-			return this.hasPriorityConflicts();
-		} else if (this.conflictStrategy == DiscretePlace.CONFLICTHANDLING_PROB) {
-			return this.hasProbabilityConflicts();
+		if (conflictStrategy == DiscretePlace.CONFLICTHANDLING_PRIO) {
+			return hasPriorityConflicts();
+		} else if (conflictStrategy == DiscretePlace.CONFLICTHANDLING_PROB) {
+			return hasProbabilityConflicts();
 		}
 		return false;
 	}
 
 	public boolean hasPriorityConflicts() {
-		Collection<PNArc> edges = this.getConflictingOutEdges();
+		Collection<PNArc> edges = getConflictingOutEdges();
 		if (edges.size() > 1) {
-			Iterator<PNArc> it = edges.iterator();
-			PNArc bea;
-			Set<Integer> set = new HashSet<Integer>();
-			while (it.hasNext()) {
-				bea = it.next();
+			Set<Integer> set = new HashSet<>();
+			for (PNArc bea : edges) {
 				if (set.contains(bea.getPriority())) {
 					return true;
-				} else {
-					if (bea.getPriority() > 0 && bea.getPriority() <= edges.size()) {
-						set.add(bea.getPriority());
-					} else {
-						return true;
-					}
 				}
+                if (bea.getPriority() > 0 && bea.getPriority() <= edges.size()) {
+                    set.add(bea.getPriority());
+                } else {
+                    return true;
+                }
 			}
 		}
 		return false;
 	}
 
 	public boolean hasProbabilityConflicts() {
-		Collection<PNArc> edges = this.getConflictingOutEdges();
-		if (edges.size() > 1) {
-			double sum = 0;
-			Iterator<PNArc> it = edges.iterator();
-			PNArc bea;
-			while (it.hasNext()) {
-				bea = it.next();
-				if (bea.getProbability() < 0) {
-					MyPopUp.getInstance().show("Probability error", "Negative probability detected: arc connecting "
-							+ bea.getFrom().getName() + " -> " + bea.getTo().getName());
-					return true;
-				}
-				sum += bea.getProbability();
-			}
-			if (sum != 1.0) {
+		Collection<PNArc> edges = getConflictingOutEdges();
+		if (edges.size() <= 1) {
+			return false;
+		}
+		double sum = 0;
+		for (PNArc bea : edges) {
+			if (bea.getProbability() < 0) {
+				MyPopUp.getInstance().show("Probability error", "Negative probability detected: arc connecting "
+						+ bea.getFrom().getName() + " -> " + bea.getTo().getName());
 				return true;
 			}
+			sum += bea.getProbability();
 		}
-		return false;
+		return sum != 1.0;
 	}
 
 	public void solveConflictProperties() {
-		if (this.conflictStrategy == DiscretePlace.CONFLICTHANDLING_PRIO && this.hasPriorityConflicts()) {
-			this.solvePriorityConflicts();
-		} else if (this.conflictStrategy == DiscretePlace.CONFLICTHANDLING_PROB && hasProbabilityConflicts()) {
-			this.solveProbabilityConflicts();
+		if (conflictStrategy == DiscretePlace.CONFLICTHANDLING_PRIO && hasPriorityConflicts()) {
+			solvePriorityConflicts();
+		} else if (conflictStrategy == DiscretePlace.CONFLICTHANDLING_PROB && hasProbabilityConflicts()) {
+			solveProbabilityConflicts();
 		}
 	}
 
 	public void solvePriorityConflicts() {
-		Collection<PNArc> edges = this.getConflictingOutEdges();
+		Collection<PNArc> edges = getConflictingOutEdges();
 		if (edges.size() > 1) {
-			Iterator<PNArc> it = edges.iterator();
-			PNArc bea;
-
-			Set<Integer> goodSet = new HashSet<Integer>();
+			Set<Integer> goodSet = new HashSet<>();
 			for (int i = 1; i <= edges.size(); i++) {
 				goodSet.add(i);
 			}
-
-			Set<PNArc> set = new HashSet<PNArc>();
-			while (it.hasNext()) {
-				bea = it.next();
+			Set<PNArc> set = new HashSet<>();
+			for (PNArc bea : edges) {
 				if (goodSet.contains(bea.getPriority())) {
 					goodSet.remove(bea.getPriority());
 				} else {
 					set.add(bea);
 				}
 			}
-			it = set.iterator();
 			if (set.size() == goodSet.size()) {
-				int prio = 1;
-				while (it.hasNext()) {
-					bea = it.next();
-					prio = goodSet.iterator().next();
-					bea.setPriority(prio);
-					goodSet.remove(prio);
+				for (PNArc bea : set) {
+					int priority = goodSet.iterator().next();
+					bea.setPriority(priority);
+					goodSet.remove(priority);
 				}
 			}
 		}
 	}
 
 	public void solveProbabilityConflicts() {
-		Collection<PNArc> edges = this.getConflictingOutEdges();
+		Collection<PNArc> edges = getConflictingOutEdges();
 		if (edges.size() > 1) {
 			double sum = 0;
-			Iterator<PNArc> it = edges.iterator();
-			PNArc bea;
-			while (it.hasNext()) {
-				bea = it.next();
-				if(bea.getProbability() < 0){
-					bea.setProbability(bea.getProbability()*-1);
+			for (PNArc bea : edges) {
+				if(bea.getProbability() < 0) {
+					bea.setProbability(bea.getProbability() * -1);
 				}
 				sum += bea.getProbability();
 			}
 			if (sum != 1.0) {
-				it = edges.iterator();
-				while (it.hasNext()) {
-					bea = it.next();
+				for (PNArc bea : edges) {
 					bea.setProbability(bea.getProbability() / sum);
 				}
 			}
