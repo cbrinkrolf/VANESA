@@ -5,6 +5,7 @@ public class YamlEdge {
 	private String type;
 	private String from;
 	private String to;
+	private boolean directed = true;
 
 	public String getName() {
 		return name;
@@ -36,5 +37,13 @@ public class YamlEdge {
 
 	public void setTo(String to) {
 		this.to = to;
+	}
+
+	public boolean isDirected() {
+		return directed;
+	}
+
+	public void setDirected(boolean directed) {
+		this.directed = directed;
 	}
 }

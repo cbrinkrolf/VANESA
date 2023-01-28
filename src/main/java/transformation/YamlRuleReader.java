@@ -39,6 +39,7 @@ public class YamlRuleReader {
 			edge = rule.getBiologicalEdges().get(i);
 			e = new RuleEdge(edge.getName(), edge.getType(), r.getBiologicaNode(edge.getFrom()),
 					r.getBiologicaNode(edge.getTo()));
+			e.setDirected(edge.isDirected());
 			r.addBiologicalEdge(e);
 			edgeMap.put(edge.getName(), e);
 		}

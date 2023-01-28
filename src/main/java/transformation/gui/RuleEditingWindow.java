@@ -85,6 +85,8 @@ public class RuleEditingWindow implements ActionListener {
 	private JTextField elementNamePN = new JTextField(20);
 	private JCheckBox exactIncidenceChk = new JCheckBox();
 
+	private JCheckBox isDirected = new JCheckBox();
+
 	private GraphElementAbstract gaBN = null;
 	private GraphElementAbstract gaPN = null;
 
@@ -204,6 +206,10 @@ public class RuleEditingWindow implements ActionListener {
 		exactIncidenceChk.addActionListener(this);
 		exactIncidenceChk.setActionCommand("exactIncidenceChk");
 
+		isDirected.setToolTipText("directed edge");
+		isDirected.addActionListener(this);
+		isDirected.setActionCommand("isDirected");
+
 		JPanel elementInformationBN = new JPanel();
 		elementInformationBN.setLayout(new MigLayout("fillx", "[grow,fill]", ""));
 		elementInformationBN.add(new JLabel("Selected element type:"));
@@ -211,7 +217,9 @@ public class RuleEditingWindow implements ActionListener {
 		elementInformationBN.add(new JLabel("Selected element name:"));
 		elementInformationBN.add(elementNameBN, "wrap");
 		elementInformationBN.add(new JLabel("Match exact incidence:"));
-		elementInformationBN.add(exactIncidenceChk);
+		elementInformationBN.add(exactIncidenceChk, "split 3");
+		elementInformationBN.add(new JLabel("directed edge: "));
+		elementInformationBN.add(isDirected);
 
 		JPanel elementInformationPN = new JPanel();
 		elementInformationPN.setLayout(new MigLayout("fillx", "[grow,fill]", ""));
@@ -434,6 +442,17 @@ public class RuleEditingWindow implements ActionListener {
 				} else {
 					exactIncidence.remove(vertexState.getPicked().iterator().next());
 				}
+			}
+		} else if (e.getActionCommand().equals("isDirected")) {
+			PickedState<BiologicalEdgeAbstract> edgeState = bn.getGraph().getVisualizationViewer().getPickedEdgeState();
+			if (edgeState.getPicked().size() == 1) {
+				if (isDirected.isSelected()) {
+					edgeState.getPicked().iterator().next().setDirected(true);
+				} else {
+					edgeState.getPicked().iterator().next().setDirected(false);
+				}
+				bn.updateMyGraph();
+				bn.getGraph().getVisualizationViewer().repaint();
 			}
 		}
 	}
@@ -681,12 +700,15 @@ public class RuleEditingWindow implements ActionListener {
 					gaBN = edge;
 					elementTypeBN.setText(edge.getBiologicalElement());
 					elementNameBN.setText(edge.getName());
+					isDirected.setEnabled(true);
+					isDirected.setSelected(edge.isDirected());
 				} else {
 					gaBN = null;
 					elementTypeBN.setText("");
 					elementNameBN.setText("");
 					exactIncidenceChk.setSelected(false);
 					exactIncidenceChk.setEnabled(false);
+					isDirected.setEnabled(false);
 				}
 			}
 		});
@@ -818,7 +840,7 @@ public class RuleEditingWindow implements ActionListener {
 			bea.setTo(nameToBN.get(re.getTo().getName()));
 			bea.setLabel(re.getName());
 			bea.setName(re.getName());
-			bea.setDirected(true);
+			bea.setDirected(re.isDirected());
 			bn.addEdge(bea);
 			edgesMap.put(re, bea);
 		}
@@ -1052,6 +1074,7 @@ public class RuleEditingWindow implements ActionListener {
 			bea = bn.getAllEdgesSorted().get(i);
 			re = new RuleEdge(bea.getName(), bea.getBiologicalElement(), bnaToBNRuleNode.get(bea.getFrom()),
 					bnaToBNRuleNode.get(bea.getTo()));
+			re.setDirected(bea.isDirected());
 			rule.addBiologicalEdge(re);
 			beaToRuleEdge.put(bea, re);
 		}
@@ -1110,9 +1133,10 @@ public class RuleEditingWindow implements ActionListener {
 			}
 		}
 
-		 for (RuleNode rn1 : rule.getBiologicalNodes()) {
-		 System.out.println(rn1.getName()+ " In: "+rule.getIncomingEdgeCount(rn1) + " out: "+rule.getOutgoingEdgeCount(rn1));
-		 }
+		for (RuleNode rn1 : rule.getBiologicalNodes()) {
+			System.out.println(rn1.getName() + " In: " + rule.getIncomingEdgeCount(rn1) + " out: "
+					+ rule.getOutgoingEdgeCount(rn1));
+		}
 		frame.setVisible(false);
 	}
 

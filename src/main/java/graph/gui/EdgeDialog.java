@@ -142,7 +142,7 @@ public class EdgeDialog extends JFrame {
 			elementType.setSelectedIndex(lastTypeIdx);
 		}
 
-		if (!pw.isPetriNet() && !pw.isHeadless()) {
+		if (!pw.isPetriNet()) {
 			panel.add(new JLabel("Edge"), "");
 			panel.add(directed, "gap 10");
 			panel.add(undirected, "span,wrap,growx");
