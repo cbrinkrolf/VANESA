@@ -99,6 +99,7 @@ public class Transformator {
 	private boolean printLog = !true;
 
 	public Pathway transform(Pathway pw, List<Rule> rules) {
+		// System.out.println("new transform");
 		this.pw = pw;
 		this.rules = rules;
 		// multigraph is Necessary for loops
@@ -441,6 +442,15 @@ public class Transformator {
 							bea = id2Edge.get(edgeIt.next());
 							edgeType = bEdge.getType();
 
+							// check directed or undirected
+							if (bea.isDirected() != bEdge.isDirected()) {
+								continue nextPerm;
+							}
+
+							// check biological type
+							if (edgeType2bea.get(edgeType) == null || !edgeType2bea.get(edgeType).contains(bea)) {
+								continue nextPerm;
+							}
 							// System.out.println("eType=" + edgeType);
 							// System.out.println(edgeType2bea.get(edgeType).size());
 							// System.out.println(n1.getName() + " -> " + n2.getName());
@@ -454,10 +464,16 @@ public class Transformator {
 							// System.out.println(edgeType2bea.get(edgeType).contains(bea));
 
 							// System.out.println("end if block");
-							if (getBNARef(bea.getFrom()) == n1 && getBNARef(bea.getTo()) == n2
-									&& edgeType2bea.get(edgeType) != null && edgeType2bea.get(edgeType).contains(bea)) {
-								// System.out.println("true");
+							if (getBNARef(bea.getFrom()) == n1 && getBNARef(bea.getTo()) == n2) {
+								// System.out.println("true1");
 								test1 = true;
+							}
+							// check reverse edge for undirected edge
+							if (!bEdge.isDirected()) {
+								if (getBNARef(bea.getFrom()) == n2 && getBNARef(bea.getTo()) == n1) {
+									// System.out.println("true2");
+									test1 = true;
+								}
 							}
 						}
 						if (!test1) {
@@ -627,8 +643,15 @@ public class Transformator {
 						this.usedEdges.add(bea);
 						deleted = true;
 					} else {
-						// System.out.println("from: "+bea.getFrom().getName()+"expected:
-						// "+fromBNA.getName());
+						if (!bea.isDirected()) {
+							if (getBNARef(bea.getFrom()) == toBNA && getBNARef(bea.getTo()) == fromBNA) {
+								this.remainingEdges.remove(bea);
+								this.tmpGraph.removeEdge(bea.getID());
+								subGraphEdges.remove(bea);
+								this.usedEdges.add(bea);
+								deleted = true;
+							}
+						}
 					}
 				}
 			}
