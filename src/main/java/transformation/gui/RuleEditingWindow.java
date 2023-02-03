@@ -1134,8 +1134,8 @@ public class RuleEditingWindow implements ActionListener {
 		}
 
 		for (RuleNode rn1 : rule.getBiologicalNodes()) {
-			System.out.println(rn1.getName() + " In: " + rule.getIncomingEdgeCount(rn1) + " out: "
-					+ rule.getOutgoingEdgeCount(rn1));
+			System.out.println(rn1.getName() + " In: " + rule.getIncomingDirectedEdgeCount(rn1) + " out: "
+					+ rule.getOutgoingDirectedEdgeCount(rn1));
 		}
 		frame.setVisible(false);
 	}

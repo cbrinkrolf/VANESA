@@ -274,9 +274,17 @@ public class Transformator {
 		String type;
 		Iterator<BiologicalNodeAbstract> it;
 		RuleNode rn;
-		Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> jungGraph = pw.getGraph().getJungGraph();
+		int inCount;
+		int outCount;
+		int unDirCount;
+
 		for (int i = 0; i < r.getBiologicalNodes().size(); i++) {
 			rn = r.getBiologicalNodes().get(i);
+
+			inCount = r.getIncomingDirectedEdgeCount(rn);
+			outCount = r.getOutgoingDirectedEdgeCount(rn);
+			unDirCount = r.getUndirectedEdgeCount(rn);
+
 			l = new ArrayList<Integer>();
 
 			if (useBuckets) {
@@ -301,19 +309,31 @@ public class Transformator {
 					// System.out.println("bna id: "+bna.getID());
 					// if (availableNodes.contains(bna)) {
 					// System.out.println(bna.getName() + " in: " +
-					// jungGraph.getInEdges(bna).size());
+					// pw.getIncomingDirectedEdgeCount(bna));
 					// System.out.println(bna.getName() + " out: " +
-					// jungGraph.getOutEdges(bna).size());
-					// System.out.println(rn.getName() + " in: " + r.getIncomingEdgeCount(rn));
-					// System.out.println(rn.getName() + " out: " + r.getOutgoingEdgeCount(rn));
+					// pw.getOutgoingDirectedEdgeCount(bna));
+					// System.out.println(bna.getName() + " undir: " +
+					// pw.getUndirectedEdgeCount(bna));
+					// System.out.println(rn.getName() + " in: " +
+					// r.getIncomingDirectedEdgeCount(rn));
+					// System.out.println(rn.getName() + " out: " +
+					// r.getOutgoingDirectedEdgeCount(rn));
+					// System.out.println(rn.getName() + " undir.: " +
+					// r.getUndirectedEdgeCount(rn));
+					// check exact incdedences
 					if (rn.isExactIncidence()) {
-						if (r.getIncomingEdgeCount(rn) == jungGraph.getInEdges(bna).size()
-								&& r.getOutgoingEdgeCount(rn) == jungGraph.getOutEdges(bna).size()) {
+						if (inCount == pw.getIncomingDirectedEdgeCount(bna)
+								&& outCount == pw.getOutgoingDirectedEdgeCount(bna)
+								&& unDirCount == pw.getUndirectedEdgeCount(bna)) {
 							l.add(bna.getID());
 							// System.out.println("added: " + bna.getName());
 						}
 					} else {
-						l.add(bna.getID());
+						if (inCount <= pw.getIncomingDirectedEdgeCount(bna)
+								&& outCount <= pw.getOutgoingDirectedEdgeCount(bna)
+								&& unDirCount <= pw.getUndirectedEdgeCount(bna)) {
+							l.add(bna.getID());
+						}
 					}
 					// System.out.println(bna.getID() + " added to perm");
 					// System.out.println(bna.getName() + " added to perm");
@@ -324,14 +344,18 @@ public class Transformator {
 				for (BiologicalNodeAbstract node : subGraphNodes) {
 					// check exact incidences
 					if (rn.isExactIncidence()) {
-						if (r.getIncomingEdgeCount(rn) == jungGraph.getInEdges(node).size()
-								&& r.getOutgoingEdgeCount(rn) == jungGraph.getOutEdges(node).size()) {
+						if (inCount == pw.getIncomingDirectedEdgeCount(node)
+								&& outCount == pw.getOutgoingDirectedEdgeCount(node)
+								&& unDirCount == pw.getUndirectedEdgeCount(node)) {
 							l.add(node.getID());
 						}
 					} else {
-						l.add(node.getID());
+						if (inCount <= pw.getIncomingDirectedEdgeCount(node)
+								&& outCount <= pw.getOutgoingDirectedEdgeCount(node)
+								&& unDirCount <= pw.getUndirectedEdgeCount(node)) {
+							l.add(node.getID());
+						}
 					}
-
 					// l.add(node.getID());
 				}
 			}
@@ -348,6 +372,7 @@ public class Transformator {
 
 	// tries to find one matching permutation
 	private List<Integer> getNextMatchingPermutation(Rule r, List<List<Integer>> permutations) {
+		Match match = new Match(r);
 
 		// test each permutation
 		if (printLog) {

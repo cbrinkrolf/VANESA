@@ -1562,6 +1562,39 @@ public class Pathway implements Cloneable {
 		}
 		return count;
 	}
+	
+	public int getIncomingDirectedEdgeCount(BiologicalNodeAbstract bna) {
+		int count = 0;
+		Collection<BiologicalEdgeAbstract> edges = getGraph().getJungGraph().getIncidentEdges(bna);
+			for (BiologicalEdgeAbstract e : edges) {
+				if (bna == e.getTo() && e.isDirected()) {
+					count++;
+				}
+			}
+		return count;
+	}
+	
+	public int getOutgoingDirectedEdgeCount(BiologicalNodeAbstract bna) {
+		int count = 0;
+		Collection<BiologicalEdgeAbstract> edges = getGraph().getJungGraph().getIncidentEdges(bna);
+			for (BiologicalEdgeAbstract e : edges) {
+				if (bna == e.getFrom() && e.isDirected()) {
+					count++;
+				}
+			}
+		return count;
+	}
+	
+	public int getUndirectedEdgeCount(BiologicalNodeAbstract bna){
+		int count = 0;
+		Collection<BiologicalEdgeAbstract> edges = getGraph().getJungGraph().getIncidentEdges(bna);
+			for (BiologicalEdgeAbstract e : edges) {
+				if (!e.isDirected()) {
+					count++;
+				}
+			}
+		return count;
+	}
 
 	public void setPlotColorPlacesTransitions(boolean override) {
 
