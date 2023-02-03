@@ -6,6 +6,7 @@ import java.util.Map;
 
 public class YamlRule {
 	private String name;
+	private boolean active;
 	private List<RuleNode> biologicalNodes = new ArrayList<>();
 	private List<YamlEdge> biologicalEdges = new ArrayList<>();
 
@@ -70,5 +71,13 @@ public class YamlRule {
 
 	public void setConsideredEdges(List<String> consideredEdges) {
 		this.consideredEdges = consideredEdges;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

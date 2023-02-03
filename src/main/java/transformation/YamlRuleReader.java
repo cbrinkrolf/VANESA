@@ -29,6 +29,7 @@ public class YamlRuleReader {
 		// for BN
 		Rule r = new Rule();
 		r.setName(rule.getName());
+		r.setActive(rule.isActive());
 		for (int i = 0; i < rule.getBiologicalNodes().size(); i++) {
 			r.addBiologicalNode(rule.getBiologicalNodes().get(i));
 		}

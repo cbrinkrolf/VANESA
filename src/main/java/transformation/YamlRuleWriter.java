@@ -48,6 +48,7 @@ public class YamlRuleWriter {
 	private static YamlRule getYamlRuleFromRule(Rule r) {
 		YamlRule rule = new YamlRule();
 		rule.setName(r.getName());
+		rule.setActive(r.isActive());
 
 		// for BN
 		RuleEdge re;
