@@ -1,9 +1,8 @@
 package transformation;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -15,25 +14,17 @@ public class Match {
 	private Map<RuleNode, BiologicalNodeAbstract> nodeMapping;
 	private Map<RuleEdge, BiologicalEdgeAbstract> edgeMapping;
 
-	private Set<BiologicalNodeAbstract> nodes;
-	private Set<BiologicalEdgeAbstract> edges;
 
 	public Match(Rule rule) {
 		this.rule = rule;
-
 		nodeMapping = new HashMap<>();
 		edgeMapping = new HashMap<>();
-		nodes = new HashSet<>();
-		edges = new HashSet<>();
-
 	}
 
 	public void setRule(Rule rule) {
 		this.rule = rule;
 		nodeMapping.clear();
 		edgeMapping.clear();
-		nodes.clear();
-		edges.clear();
 	}
 
 	public Rule getRule() {
@@ -56,18 +47,15 @@ public class Match {
 		return edgeMapping.get(re);
 	}
 
-	public Set<BiologicalNodeAbstract> getMappedNodes() {
-		return this.nodes;
+	public Collection<BiologicalNodeAbstract> getMappedNodes() {
+		return nodeMapping.values();
 	}
 
-	public Set<BiologicalEdgeAbstract> getMappedEdges() {
-		return this.edges;
+	public Collection<BiologicalEdgeAbstract> getMappedEdges() {
+		return edgeMapping.values();
 	}
 
-	public void clearMappings() {
-		nodeMapping.clear();
+	public void clearEdgeMapping() {
 		edgeMapping.clear();
-		nodes.clear();
-		edges.clear();
 	}
 }
