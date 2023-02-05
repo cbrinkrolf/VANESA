@@ -840,8 +840,8 @@ public class MOoutput {
 		// replace places
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		if(!pw.isPetriNet() && pw.getPetriNet() != null){
-			pw = pw.getPetriNet();
+		if(!pw.isPetriNet() && pw.getTransformationInformation() != null && pw.getTransformationInformation().getPetriNet() != null){
+			pw = pw.getTransformationInformation().getPetriNet();
 		}
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		ArrayList<String> names = new ArrayList<String>();

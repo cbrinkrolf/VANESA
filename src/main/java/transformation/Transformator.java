@@ -35,12 +35,10 @@ import graph.gui.Parameter;
 import gui.MyPopUp;
 
 // Restrictions / limitations:
-// biological network needs to be directed (each edge)
 // no parameter mapping, default will be applied
 // will stop if all edges and nodes got replaced/considered
 // if no type is given (discrete / continuous), it is inferred from mapped node, default fall back: continuous
 
-// TODO check undirected edges
 // TODO parameter mapping
 // TODO syso -> log file
 // TODO try hierarchical network (maybe first flatten?)

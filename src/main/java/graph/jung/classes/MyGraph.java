@@ -81,7 +81,7 @@ public class MyGraph {
 
 	private int VisualizationViewerWidth = 1000;
 	private int VisualizationViewerHeigth = 1000;
-	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<BiologicalNodeAbstract, BiologicalEdgeAbstract>();
+	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<>();
 	private final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 	private AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
 	final MyEditingModalGraphMouse graphMouse = new MyEditingModalGraphMouse();
@@ -303,7 +303,8 @@ public class MyGraph {
 						w.updateElementProperties();
 					}
 				}
-				if (pathway.isPetriNet() || pathway.getPetriNet() != null) {
+				if (pathway.isPetriNet() || pathway.getTransformationInformation() != null
+						&& pathway.getTransformationInformation().getPetriNet() != null) {
 					if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
 						// System.out.println("sim");
 						w.updateSimulationResultView();
@@ -324,7 +325,8 @@ public class MyGraph {
 						w.updateElementProperties();
 					}
 				}
-				if (pathway.isPetriNet() || pathway.getPetriNet() != null) {
+				if (pathway.isPetriNet() || pathway.getTransformationInformation() != null
+						&& pathway.getTransformationInformation().getPetriNet() != null) {
 					if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
 						// System.out.println("sim");
 						w.updateSimulationResultView();
@@ -879,15 +881,15 @@ public class MyGraph {
 	public VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> getVisualizationPaneCopy(
 			Dimension size) {
 
-		AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout2 = new AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+		AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout2 = new AggregateLayout<>(
 				vv.getGraphLayout());
 
-		VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> copyModel = new DefaultVisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+		VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> copyModel = new DefaultVisualizationModel<>(
 				clusteringLayout2, size);
-		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> copyVV = new VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
+		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> copyVV = new VisualizationViewer<>(
 				copyModel, size);
 		pr_compare = copyVV.getRenderContext();
-		Function<BiologicalNodeAbstract, Shape> vertexPaint = new Function<BiologicalNodeAbstract, Shape>() {
+		Function<BiologicalNodeAbstract, Shape> vertexPaint = new Function<>() {
 			@Override
 			public Shape apply(BiologicalNodeAbstract bna) {
 				// System.out.println(bna.getClass().getName());

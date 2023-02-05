@@ -48,6 +48,7 @@ public enum MenuActionCommands {
     hamiltonGraph("hamiltonGraph"),
     graphSettings("graphSettings"),
     transform("transform"),
+    showTransformResult("showTransformResult"),
     showPN("showPN"),
     ruleManager("ruleManager"),
     about("about"),
