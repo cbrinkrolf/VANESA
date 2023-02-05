@@ -1093,6 +1093,11 @@ public class MenuListener implements ActionListener {
 				if (pw.hasGotAtLeastOneElement() && !pw.isPetriNet()) {
 					List<Rule> rules = RuleManager.getInstance().getActiveRules();
 
+					if(rules.size() == 0){
+						MyPopUp.getInstance().show("Error",
+								"No active transformation rules found!.");
+						return;
+					}
 					// MainWindow w = MainWindow.getInstance();
 					// new CreatePathway();
 					// graphInstance.getPathway().setPetriNet(true);
@@ -1140,7 +1145,7 @@ public class MenuListener implements ActionListener {
 				pw = graphInstance.getPathway();
 				if (pw.getTransformationInformation() != null && pw.getTransformationInformation().getPetriNet() != null
 						&& !pw.isPetriNet()) {
-					new TransformationInformationWindow(pw.getTransformationInformation().getMatches()).show();
+					new TransformationInformationWindow(pw).show();
 				} else {
 					MyPopUp.getInstance().show("Error",
 							"Please transform the biological network into a Petri net first!.");
