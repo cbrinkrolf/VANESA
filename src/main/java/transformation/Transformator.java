@@ -38,6 +38,7 @@ import gui.MyPopUp;
 // no parameter mapping, default will be applied
 // will stop if all edges and nodes got replaced/considered
 // if no type is given (discrete / continuous), it is inferred from mapped node, default fall back: continuous
+// will not generate logical places/transitions. if there is collision of the same name, name will get altered
 
 // TODO parameter mapping
 // TODO syso -> log file
@@ -57,21 +58,21 @@ public class Transformator {
 	public static final String pnTestArc = Elementdeclerations.pnTestArc;
 	public static final String pnInhibitorArc = Elementdeclerations.pnInhibitorArc;
 
-	public static final Set<String> places = new HashSet<String>(Arrays.asList(place, discretePlace, continuousPlace));
-	public static final Set<String> transitions = new HashSet<String>(
+	public static final Set<String> places = new HashSet<>(Arrays.asList(place, discretePlace, continuousPlace));
+	public static final Set<String> transitions = new HashSet<>(
 			Arrays.asList(transition, discreteTransition, continuousTransition));
-	public static final Set<String> pnArcs = new HashSet<String>(Arrays.asList(pnArc, pnTestArc, pnInhibitorArc));
+	public static final Set<String> pnArcs = new HashSet<>(Arrays.asList(pnArc, pnTestArc, pnInhibitorArc));
 
 	private Pathway pw;
 	private Pathway petriNet;
 
 	private List<Rule> rules;
-	private HashMap<Rule, Integer> ruleToNextPermIndex = new HashMap<Rule, Integer>();
+	private HashMap<Rule, Integer> ruleToNextPermIndex = new HashMap<>();
 
 	private HashMap<Integer, BiologicalNodeAbstract> id2bna = new HashMap<>();
 
-	private HashMap<String, ArrayList<BiologicalNodeAbstract>> nodeType2bna = new HashMap<String, ArrayList<BiologicalNodeAbstract>>();
-	private HashMap<String, ArrayList<BiologicalEdgeAbstract>> edgeType2bea = new HashMap<String, ArrayList<BiologicalEdgeAbstract>>();
+	private HashMap<String, ArrayList<BiologicalNodeAbstract>> nodeType2bna = new HashMap<>();
+	private HashMap<String, ArrayList<BiologicalEdgeAbstract>> edgeType2bea = new HashMap<>();
 
 	private HashMap<BiologicalNodeAbstract, PNNode> bn2pnMap = new HashMap<BiologicalNodeAbstract, PNNode>();
 
@@ -95,6 +96,8 @@ public class Transformator {
 	private boolean useSmallestNodeDegree = true;
 
 	private boolean printLog = !true;
+
+	private Map<PNNode, String> initialPNNodeName = new HashMap<>();
 
 	private List<Match> matches;
 
@@ -607,11 +610,12 @@ public class Transformator {
 				// no mapping, PNNode needs to be created
 				newPNNode = createPNNode(r, pnNode, null);
 				rulePNodeToBNA.put(pnNode, newPNNode);
+				setTransformationParameters(newPNNode, pnNode, match);
 				executed = true;
 			}
 		}
 
-		// creating Petri net edges
+		// creating Petri net arcs
 		RuleEdge pnEdge;
 		PNNode from;
 		PNNode to;
@@ -748,8 +752,19 @@ public class Transformator {
 				type = continuousTransition;
 			}
 		}
-		String defaultPName = "p" + petriNet.getPlaceCount() + 1;
-		String defaultTName = "t" + petriNet.getTransitionCount() + 1;
+
+		// avoiding duplicate names
+		int i = 1;
+		while (pw.getAllNodeNames().contains("p" + i)) {
+			i++;
+		}
+		String defaultPName = "p" + i;
+		i = 1;
+		while (pw.getAllNodeNames().contains("t" + i)) {
+			i++;
+		}
+		String defaultTName = "t" + i;
+
 		switch (type) {
 		case continuousPlace:
 			pn = new ContinuousPlace(defaultPName, defaultPName);
@@ -779,6 +794,7 @@ public class Transformator {
 				pn.setPlotColor(bna.getPlotColor());
 				// System.out.println("Vertex: "+p.getName());
 				// System.out.println("x: "+locations.getLocation(bna.getVertex()).getX());
+				// TODO better location for unmapped nodes
 				x = pw.getGraph().getVertexLocation(bna).getX();// locations.getLocation(bna.getVertex()).getX();
 				y = pw.getGraph().getVertexLocation(bna).getY();// locations.getLocation(bna.getVertex()).getY();
 				// System.out.println("x: "+x+" y: "+y);
@@ -1045,30 +1061,67 @@ public class Transformator {
 				// System.out.println("key: " + key + " value: " + value);
 				switch (key) {
 				case "name":
+					// TODO keep unique names of unmapped PNNodes
 					// System.out.println(gea.getName());
+					String initialName = "";
+					String name = "";
 					string = this.evalParameter(possibleParams, value, String.class, match);
-					if (string != null) {
-						if (petriNet.getAllNodeNames().contains(string)) {
-							// System.out.println("new String: " + string);
-							// System.out.println(petriNet.getAllNodeNames());
-							node = petriNet.getNodeByName(string);
-							if (node != petriNode) {
-								if (node.getClass().getName().equals(petriNode.getClass().getName())) {
-									petriNode.setLogicalReference(node);
-									MyPopUp.getInstance().show("Name already exists!",
-											"Name: " + string + " exists already. Created logical node instead!");
-								} else {
-									MyPopUp.getInstance().show("Error: Name already exists!", "Name: " + string
-											+ " exists already. Cannot Created logical node because of type mismatch: "
-											+ petriNet.getClass().getSimpleName() + " versus "
-											+ node.getClass().getSimpleName());
-								}
-								continue;
+					if (string == null || string.trim().length() == 0) {
+						// avoiding duplicate names
+						int i = 1;
+						if (petriNode instanceof Place) {
+							while (pw.getAllNodeNames().contains("p" + i)) {
+								i++;
 							}
+							name = "p" + i;
+						} else {
+							while (pw.getAllNodeNames().contains("t" + i)) {
+								i++;
+							}
+							name = "t" + i;
 						}
-						gea.setName(string);
-						gea.setLabel(gea.getName());
+					} else {
+						initialName = string;
+						// name exists already in PN
+						if (petriNet.getAllNodeNames().contains(string)) {
+							// node is mapped to a BNA
+							if (bn2pnMap.keySet().contains(petriNode)) {
+								node = petriNet.getNodeByName(string);
+								if (bn2pnMap.keySet().contains(node)) {
+									int i = 1;
+									while (pw.getAllNodeNames().contains(string + i)) {
+										i++;
+									}
+									name = string + i;
+								} else {
+									// node with same name is not mapped
+									int i = 1;
+									String tmpName = initialPNNodeName.get(node) + i;
+									while (pw.getAllNodeNames().contains(tmpName) || tmpName.equals(string)) {
+										i++;
+										tmpName = initialPNNodeName.get(node) + i;
+									}
+									node.setName(tmpName);
+									node.setLabel(tmpName);
+									name = string;
+								}
+							} else {
+								// node is not mapped to a BNA
+								int i = 1;
+								while (pw.getAllNodeNames().contains(string + i)) {
+									i++;
+								}
+								name = string + i;
+							}
+						} else {
+							// name doesnt exist in PN, yet
+							name = string;
+						}
 					}
+					gea.setName(name);
+					gea.setLabel(gea.getName());
+					initialPNNodeName.put(petriNode, initialName);
+
 					break;
 				case "tokenStart":
 					if (gea instanceof Place) {

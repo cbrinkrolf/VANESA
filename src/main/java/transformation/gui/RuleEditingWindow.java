@@ -1179,7 +1179,7 @@ public class RuleEditingWindow implements ActionListener {
 				for (String key : bna.getTransformationParameters()) {
 					switch (key) {
 					case "name":
-						parameterMapping.get(bna).put(key, "ID_" + bna.getID());
+						parameterMapping.get(bna).put(key, "");
 						break;
 					case "tokenStart":
 						parameterMapping.get(bna).put(key, ((Place) bna).getTokenStart() + "");
