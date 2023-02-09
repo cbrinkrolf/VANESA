@@ -960,7 +960,7 @@ public class RuleEditingWindow implements ActionListener {
 				createDefaultParameterMap(bna);
 			}
 			for (String param : params) {
-				JTextField field = new JTextField(10);
+				JTextField field = new JTextField(20);
 				field.setText(parameterMapping.get(bna).get(param));
 				field.getDocument().addDocumentListener(new DocumentListener() {
 					@Override

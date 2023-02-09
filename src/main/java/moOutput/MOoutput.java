@@ -30,6 +30,7 @@ import graph.GraphInstance;
 import graph.gui.Parameter;
 import gui.MainWindow;
 import util.StochasticDistribution;
+import util.StringLengthComparator;
 
 /**
  * @author Rafael, cbrinkro
@@ -717,15 +718,6 @@ public class MOoutput {
 		String mFunction = this.replaceParameters(function, params, node);
 		mFunction = this.replaceNames(mFunction);
 		return mFunction;
-	}
-
-	class StringLengthComparator implements Comparator<String> {
-
-		// compares descending
-		public int compare(String s1, String s2) {
-			int i = s2.length() - s1.length();
-			return i;
-		}
 	}
 
 	private String getPlacementAnnotation(BiologicalNodeAbstract bna) {

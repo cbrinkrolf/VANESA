@@ -34,48 +34,60 @@ public abstract class Place extends PNNode {
 		setDefaultColor(Color.WHITE);
 	}
 
-    public double getToken() {
-        return token;
-    }
+	public double getToken() {
+		return token;
+	}
 
-    public void setToken(double token) {
-        this.token = token;
-    }
+	public void setToken(double token) {
+		if (token < 0) {
+			return;
+		}
+		this.token = token;
+	}
 
-    public double getTokenMin() {
+	public double getTokenMin() {
 		return this.isConstant() ? 0 : tokenMin;
 	}
 
-    public void setTokenMin(double tokenMin) {
-        this.tokenMin = tokenMin;
-    }
+	public void setTokenMin(double tokenMin) {
+		if (tokenMin < 0) {
+			return;
+		}
+		this.tokenMin = tokenMin;
+	}
 
 	public double getTokenMax() {
 		return this.isConstant() ? Double.MAX_VALUE : tokenMax;
 	}
 
-    public void setTokenMax(double tokenMax) {
-        this.tokenMax = tokenMax;
-    }
+	public void setTokenMax(double tokenMax) {
+		if (tokenMax < 0) {
+			return;
+		}
+		this.tokenMax = tokenMax;
+	}
 
-    public double getTokenStart() {
-        return tokenStart;
-    }
+	public double getTokenStart() {
+		return tokenStart;
+	}
 
-    public void setTokenStart(double tokenStart) {
-        this.tokenStart = tokenStart;
-        if (new GraphInstance().getPathway().getPetriPropertiesNet() != null
-            && !new GraphInstance().getPathway().getPetriPropertiesNet().isPetriNetSimulation())
-            token = tokenStart;
-    }
+	public void setTokenStart(double tokenStart) {
+		if (tokenStart < 0) {
+			return;
+		}
+		this.tokenStart = tokenStart;
+		if (new GraphInstance().getPathway().getPetriPropertiesNet() != null
+				&& !new GraphInstance().getPathway().getPetriPropertiesNet().isPetriNetSimulation())
+			token = tokenStart;
+	}
 
-    public int getConflictStrategy() {
-        return conflictStrategy;
-    }
+	public int getConflictStrategy() {
+		return conflictStrategy;
+	}
 
-    public void setConflictStrategy(int conflictStrategy) {
-        this.conflictStrategy = conflictStrategy;
-    }
+	public void setConflictStrategy(int conflictStrategy) {
+		this.conflictStrategy = conflictStrategy;
+	}
 
 	public Set<PNArc> getConflictingOutEdges() {
 		Collection<BiologicalEdgeAbstract> edges = GraphInstance.getMyGraph().getJungGraph().getOutEdges(this);
@@ -83,7 +95,7 @@ public abstract class Place extends PNNode {
 		if (edges != null) {
 			for (BiologicalEdgeAbstract bea : edges) {
 				if (bea instanceof PNArc) {
-                    PNArc arc = (PNArc) bea;
+					PNArc arc = (PNArc) bea;
 					if (!arc.isInhibitorArc() && !arc.isTestArc() && !(bea.getTo() instanceof ContinuousTransition)) {
 						result.add((PNArc) bea);
 					}
@@ -110,11 +122,11 @@ public abstract class Place extends PNNode {
 				if (set.contains(bea.getPriority())) {
 					return true;
 				}
-                if (bea.getPriority() > 0 && bea.getPriority() <= edges.size()) {
-                    set.add(bea.getPriority());
-                } else {
-                    return true;
-                }
+				if (bea.getPriority() > 0 && bea.getPriority() <= edges.size()) {
+					set.add(bea.getPriority());
+				} else {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -175,7 +187,7 @@ public abstract class Place extends PNNode {
 		if (edges.size() > 1) {
 			double sum = 0;
 			for (PNArc bea : edges) {
-				if(bea.getProbability() < 0) {
+				if (bea.getProbability() < 0) {
 					bea.setProbability(bea.getProbability() * -1);
 				}
 				sum += bea.getProbability();
