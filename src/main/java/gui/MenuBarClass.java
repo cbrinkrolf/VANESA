@@ -51,7 +51,7 @@ public class MenuBarClass {
 	private JMenuItem hamiltonGraph;
 	// JMenuItem animations;
 	private JMenuItem about;
-	//private JMenuItem mdLayout;
+	// private JMenuItem mdLayout;
 	// private JMenuItem dbInformation;
 	private JMenuItem export;
 
@@ -62,6 +62,7 @@ public class MenuBarClass {
 	private JMenuItem regularGraph;
 
 	private JMenuItem transform;
+	private JMenuItem showTransformResult;
 	private JMenuItem showPN;
 
 	private JMenuItem testPInvariant;
@@ -164,7 +165,8 @@ public class MenuBarClass {
 		 * exportGraphMl = new JMenuItem("Export Network As GraphML",KeyEvent.VK_E);
 		 * exportGraphMl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
 		 * ActionEvent.CTRL_MASK)); exportGraphMl.addActionListener(new MenuListener());
-		 * exportGraphMl.setActionCommand(MenuActionCommands.exportNetworkGraphml.value);
+		 * exportGraphMl.setActionCommand(MenuActionCommands.exportNetworkGraphml.value)
+		 * ;
 		 * 
 		 * exportMo = new JMenuItem("Export Network for Modelica",KeyEvent.VK_M);
 		 * exportMo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
@@ -266,11 +268,11 @@ public class MenuBarClass {
 		interaction = new JMenuItem("Show network properties");
 		interaction.addActionListener(MenuListener.getInstance());
 		interaction.setActionCommand(MenuActionCommands.interaction.value);
-		
+
 		JMenuItem allPopUps = new JMenuItem("Show all previous PupUp messages");
 		allPopUps.addActionListener(MenuListener.getInstance());
 		allPopUps.setActionCommand(MenuActionCommands.allPopUps.value);
-		
+
 		JMenuItem nodesEdgesTypes = new JMenuItem("Show nodes / edges types");
 		nodesEdgesTypes.addActionListener(MenuListener.getInstance());
 		nodesEdgesTypes.setActionCommand(MenuActionCommands.nodesEdgesTypes.value);
@@ -310,6 +312,11 @@ public class MenuBarClass {
 		transform = new JMenuItem("Transform to Petri net");
 		transform.addActionListener(MenuListener.getInstance());
 		transform.setActionCommand(MenuActionCommands.transform.value);
+		// transform.setEnabled(false);
+
+		showTransformResult = new JMenuItem("Show Transformation Result");
+		showTransformResult.addActionListener(MenuListener.getInstance());
+		showTransformResult.setActionCommand(MenuActionCommands.showTransformResult.value);
 		// transform.setEnabled(false);
 
 		showPN = new JMenuItem("Show Petri net");
@@ -457,6 +464,7 @@ public class MenuBarClass {
 
 		if (MainWindow.developer) {
 			transformation.add(transform);
+			transformation.add(showTransformResult);
 			transformation.add(showPN);
 			transformation.add(ruleManager);
 		}
@@ -504,11 +512,13 @@ public class MenuBarClass {
 		 * exportGraphMl.setEnabled(true); exportMo.setEnabled(true);
 		 * exportGon.setEnabled(true);
 		 */
-		//mdLayout.setEnabled(true);
+		// mdLayout.setEnabled(true);
 		transform.setEnabled(true);
+		showTransformResult.setEnabled(true);
 		showPN.setEnabled(true);
 		if (new GraphInstance().getPathway().isPetriNet()) {
 			transform.setEnabled(false);
+			showTransformResult.setEnabled(false);
 			showPN.setEnabled(false);
 
 			testPInvariant.setEnabled(true);
@@ -525,9 +535,11 @@ public class MenuBarClass {
 	public void setPetriView(boolean isPetriNet) {
 		if (new GraphInstance().getPathway().isPetriNet()) {
 			transform.setEnabled(false);
+			showTransformResult.setEnabled(false);
 			showPN.setEnabled(false);
-		}else{
+		} else {
 			transform.setEnabled(true);
+			showTransformResult.setEnabled(true);
 			showPN.setEnabled(true);
 		}
 
@@ -562,7 +574,7 @@ public class MenuBarClass {
 		 * exportGraphMl.setEnabled(false); exportMo.setEnabled(false);
 		 * exportGon.setEnabled(false);
 		 */
-		//mdLayout.setEnabled(false);
+		// mdLayout.setEnabled(false);
 
 		testPInvariant.setEnabled(false);
 		testTInvariant.setEnabled(false);

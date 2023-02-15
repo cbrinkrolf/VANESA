@@ -188,7 +188,6 @@ public class ConnectionSettings {
 	 * @return the web_service_url
 	 */
 	public String getWebServiceUrl() {
-		System.out.println("called: " + web_service_url);
 		return web_service_url;
 	}
 

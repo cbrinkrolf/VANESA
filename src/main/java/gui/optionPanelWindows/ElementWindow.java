@@ -1189,6 +1189,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				((BiologicalEdgeAbstract) ab).setDirected(isDirected.isSelected());
 				Pathway pw = new GraphInstance().getPathway();
 				pw.updateMyGraph();
+				pw.getGraph().getVisualizationViewer().repaint();
 			}
 		} else if ("constCheck".equals(event)) {
 			if (ab instanceof BiologicalNodeAbstract) {

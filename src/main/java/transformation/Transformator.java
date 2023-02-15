@@ -19,7 +19,6 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.petriNet.ContinuousPlace;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
@@ -33,14 +32,17 @@ import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
 import graph.gui.Parameter;
 import gui.MyPopUp;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
+import net.objecthunter.exp4j.function.Function;
+import util.StringLengthComparator;
 
 // Restrictions / limitations:
-// biological network needs to be directed (each edge)
 // no parameter mapping, default will be applied
 // will stop if all edges and nodes got replaced/considered
 // if no type is given (discrete / continuous), it is inferred from mapped node, default fall back: continuous
+// will not generate logical places/transitions. if there is collision of the same name, name will get altered
 
-// TODO check undirected edges
 // TODO parameter mapping
 // TODO syso -> log file
 // TODO try hierarchical network (maybe first flatten?)
@@ -59,21 +61,21 @@ public class Transformator {
 	public static final String pnTestArc = Elementdeclerations.pnTestArc;
 	public static final String pnInhibitorArc = Elementdeclerations.pnInhibitorArc;
 
-	public static final Set<String> places = new HashSet<String>(Arrays.asList(place, discretePlace, continuousPlace));
-	public static final Set<String> transitions = new HashSet<String>(
+	public static final Set<String> places = new HashSet<>(Arrays.asList(place, discretePlace, continuousPlace));
+	public static final Set<String> transitions = new HashSet<>(
 			Arrays.asList(transition, discreteTransition, continuousTransition));
-	public static final Set<String> pnArcs = new HashSet<String>(Arrays.asList(pnArc, pnTestArc, pnInhibitorArc));
+	public static final Set<String> pnArcs = new HashSet<>(Arrays.asList(pnArc, pnTestArc, pnInhibitorArc));
 
 	private Pathway pw;
 	private Pathway petriNet;
 
 	private List<Rule> rules;
-	private HashMap<Rule, Integer> ruleToNextPermIndex = new HashMap<Rule, Integer>();
+	private HashMap<Rule, Integer> ruleToNextPermIndex = new HashMap<>();
 
 	private HashMap<Integer, BiologicalNodeAbstract> id2bna = new HashMap<>();
 
-	private HashMap<String, ArrayList<BiologicalNodeAbstract>> nodeType2bna = new HashMap<String, ArrayList<BiologicalNodeAbstract>>();
-	private HashMap<String, ArrayList<BiologicalEdgeAbstract>> edgeType2bea = new HashMap<String, ArrayList<BiologicalEdgeAbstract>>();
+	private HashMap<String, ArrayList<BiologicalNodeAbstract>> nodeType2bna = new HashMap<>();
+	private HashMap<String, ArrayList<BiologicalEdgeAbstract>> edgeType2bea = new HashMap<>();
 
 	private HashMap<BiologicalNodeAbstract, PNNode> bn2pnMap = new HashMap<BiologicalNodeAbstract, PNNode>();
 
@@ -98,7 +100,16 @@ public class Transformator {
 
 	private boolean printLog = !true;
 
+	private Map<PNNode, String> initialPNNodeName = new HashMap<>();
+	private Map<Match, Map<String, String>> match2Parameters = new HashMap<>();
+	private Map<Match, Map<String, String>> match2ReplaceParameters = new HashMap<>();
+	private Map<Match, List<String>> match2SortedParameterList = new HashMap<>();
+	private Collection<Function> functions = null;
+
+	private List<Match> matches;
+
 	public Pathway transform(Pathway pw, List<Rule> rules) {
+		// System.out.println("new transform");
 		this.pw = pw;
 		this.rules = rules;
 		// multigraph is Necessary for loops
@@ -107,6 +118,7 @@ public class Transformator {
 		petriNet = new Pathway("PN_" + pw.getName());
 		petriNet.setIsPetriNet(true);
 
+		matches = new ArrayList<>();
 		BiologicalNodeAbstract bna;
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		while (it.hasNext()) {
@@ -207,7 +219,7 @@ public class Transformator {
 
 		System.out.println("sorted nodes of pathway: " + sortedList.size());
 		System.out.println("number of edges in pathway: " + tmpGraph.getEdgeCount());
-		List<Integer> perm;
+		Match match = null;
 		for (int i = 0; i < sortedList.size(); i++) {
 			// System.out.println("nodeIdx: " + i);
 			ruleToNextPermIndex.clear();
@@ -254,10 +266,10 @@ public class Transformator {
 				 * this.ruleToNextPermIndex.remove(r); createAndSetPermutation(r);
 				 * System.out.println("size of permutation set: " + permutations.size()); }
 				 */
-				perm = this.getNextMatchingPermutation(r, permutations);
+				match = this.getNextMatchingPermutation(r, permutations);
 
-				if (perm != null) {
-					this.executeRule(r, perm);
+				if (match != null) {
+					this.executeRule(match);
 				}
 
 			} while (executed && !this.done());
@@ -273,9 +285,17 @@ public class Transformator {
 		String type;
 		Iterator<BiologicalNodeAbstract> it;
 		RuleNode rn;
-		Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> jungGraph = pw.getGraph().getJungGraph();
+		int inCount;
+		int outCount;
+		int unDirCount;
+
 		for (int i = 0; i < r.getBiologicalNodes().size(); i++) {
 			rn = r.getBiologicalNodes().get(i);
+
+			inCount = r.getIncomingDirectedEdgeCount(rn);
+			outCount = r.getOutgoingDirectedEdgeCount(rn);
+			unDirCount = r.getUndirectedEdgeCount(rn);
+
 			l = new ArrayList<Integer>();
 
 			if (useBuckets) {
@@ -300,19 +320,31 @@ public class Transformator {
 					// System.out.println("bna id: "+bna.getID());
 					// if (availableNodes.contains(bna)) {
 					// System.out.println(bna.getName() + " in: " +
-					// jungGraph.getInEdges(bna).size());
+					// pw.getIncomingDirectedEdgeCount(bna));
 					// System.out.println(bna.getName() + " out: " +
-					// jungGraph.getOutEdges(bna).size());
-					// System.out.println(rn.getName() + " in: " + r.getIncomingEdgeCount(rn));
-					// System.out.println(rn.getName() + " out: " + r.getOutgoingEdgeCount(rn));
+					// pw.getOutgoingDirectedEdgeCount(bna));
+					// System.out.println(bna.getName() + " undir: " +
+					// pw.getUndirectedEdgeCount(bna));
+					// System.out.println(rn.getName() + " in: " +
+					// r.getIncomingDirectedEdgeCount(rn));
+					// System.out.println(rn.getName() + " out: " +
+					// r.getOutgoingDirectedEdgeCount(rn));
+					// System.out.println(rn.getName() + " undir.: " +
+					// r.getUndirectedEdgeCount(rn));
+					// check exact incdedences
 					if (rn.isExactIncidence()) {
-						if (r.getIncomingEdgeCount(rn) == jungGraph.getInEdges(bna).size()
-								&& r.getOutgoingEdgeCount(rn) == jungGraph.getOutEdges(bna).size()) {
+						if (inCount == pw.getIncomingDirectedEdgeCount(bna)
+								&& outCount == pw.getOutgoingDirectedEdgeCount(bna)
+								&& unDirCount == pw.getUndirectedEdgeCount(bna)) {
 							l.add(bna.getID());
 							// System.out.println("added: " + bna.getName());
 						}
 					} else {
-						l.add(bna.getID());
+						if (inCount <= pw.getIncomingDirectedEdgeCount(bna)
+								&& outCount <= pw.getOutgoingDirectedEdgeCount(bna)
+								&& unDirCount <= pw.getUndirectedEdgeCount(bna)) {
+							l.add(bna.getID());
+						}
 					}
 					// System.out.println(bna.getID() + " added to perm");
 					// System.out.println(bna.getName() + " added to perm");
@@ -323,14 +355,18 @@ public class Transformator {
 				for (BiologicalNodeAbstract node : subGraphNodes) {
 					// check exact incidences
 					if (rn.isExactIncidence()) {
-						if (r.getIncomingEdgeCount(rn) == jungGraph.getInEdges(node).size()
-								&& r.getOutgoingEdgeCount(rn) == jungGraph.getOutEdges(node).size()) {
+						if (inCount == pw.getIncomingDirectedEdgeCount(node)
+								&& outCount == pw.getOutgoingDirectedEdgeCount(node)
+								&& unDirCount == pw.getUndirectedEdgeCount(node)) {
 							l.add(node.getID());
 						}
 					} else {
-						l.add(node.getID());
+						if (inCount <= pw.getIncomingDirectedEdgeCount(node)
+								&& outCount <= pw.getOutgoingDirectedEdgeCount(node)
+								&& unDirCount <= pw.getUndirectedEdgeCount(node)) {
+							l.add(node.getID());
+						}
 					}
-
 					// l.add(node.getID());
 				}
 			}
@@ -346,7 +382,8 @@ public class Transformator {
 	}
 
 	// tries to find one matching permutation
-	private List<Integer> getNextMatchingPermutation(Rule r, List<List<Integer>> permutations) {
+	private Match getNextMatchingPermutation(Rule r, List<List<Integer>> permutations) {
+		Match match = new Match(r);
 
 		// test each permutation
 		if (printLog) {
@@ -373,6 +410,7 @@ public class Transformator {
 		RuleEdge bEdge;
 		String edgeType;
 		nextPerm: for (int i = start; i < permutations.size(); i++) {
+			match.clearEdgeMapping();
 			evaluatedPerms++;
 			// System.out.println("Permutation #" + i);
 
@@ -441,6 +479,15 @@ public class Transformator {
 							bea = id2Edge.get(edgeIt.next());
 							edgeType = bEdge.getType();
 
+							// check directed or undirected
+							if (bea.isDirected() != bEdge.isDirected()) {
+								continue nextPerm;
+							}
+
+							// check biological type
+							if (edgeType2bea.get(edgeType) == null || !edgeType2bea.get(edgeType).contains(bea)) {
+								continue nextPerm;
+							}
 							// System.out.println("eType=" + edgeType);
 							// System.out.println(edgeType2bea.get(edgeType).size());
 							// System.out.println(n1.getName() + " -> " + n2.getName());
@@ -454,10 +501,18 @@ public class Transformator {
 							// System.out.println(edgeType2bea.get(edgeType).contains(bea));
 
 							// System.out.println("end if block");
-							if (getBNARef(bea.getFrom()) == n1 && getBNARef(bea.getTo()) == n2
-									&& edgeType2bea.get(edgeType) != null && edgeType2bea.get(edgeType).contains(bea)) {
-								// System.out.println("true");
+							if (getBNARef(bea.getFrom()) == n1 && getBNARef(bea.getTo()) == n2) {
+								// System.out.println("true1");
 								test1 = true;
+								match.addMapping(bEdge, bea);
+							}
+							// check reverse edge for undirected edge
+							if (!bEdge.isDirected()) {
+								if (getBNARef(bea.getFrom()) == n2 && getBNARef(bea.getTo()) == n1) {
+									// System.out.println("true2");
+									test1 = true;
+									match.addMapping(bEdge, bea);
+								}
 							}
 						}
 						if (!test1) {
@@ -473,33 +528,40 @@ public class Transformator {
 				}
 			}
 			if (test) {
+				if (r.getBiologicalNodes().size() != perm.size()) {
+					System.err.println(
+							"Size mismatch between permutation and number of biological nodes in the transformation rule!!!");
+					return null;
+				}
 				for (int k = 0; k < perm.size(); k++) {
-					// System.out.print(" " + id2bna.get(perm.get(k)).getLabel() + " ");
+					match.addMapping(r.getBiologicalNodes().get(k), id2bna.get(perm.get(k)));
 				}
 				// System.out.println();
 				this.ruleToNextPermIndex.put(r, i);
-				return perm;
+				return match;
 			}
 		}
 		return null;
 	}
 
-	private void executeRule(Rule r, List<Integer> perm) {
+	private void executeRule(Match match) {
 		executed = false;
+		Rule r = match.getRule();
 		if (printLog) {
 			System.out.println("execute rule: " + r.getName());
 		}
-		HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA = new HashMap<RuleNode, BiologicalNodeAbstract>();
+		// HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA = new
+		// HashMap<RuleNode, BiologicalNodeAbstract>();
 		HashMap<RuleNode, PNNode> rulePNodeToBNA = new HashMap<RuleNode, PNNode>();
 		List<BiologicalNodeAbstract> toDeleteBNA = new ArrayList<BiologicalNodeAbstract>();
 
-		for (int i = 0; i < r.getBiologicalNodes().size(); i++) {
-			// System.out.println(r.getAllBiologicalNodes().get(i) + "->"+
-			// id2bna.get(perm.get(i)));
-			// System.out.println(id2bna.get(perm.get(i)).getName() + " expected type: "+
-			// r.getBiologicalNodes().get(i).getType());
-			ruleBNodeToBNA.put(r.getBiologicalNodes().get(i), id2bna.get(perm.get(i)));
-		}
+		// for (int i = 0; i < r.getBiologicalNodes().size(); i++) {
+		// System.out.println(r.getAllBiologicalNodes().get(i) + "->"+
+		// id2bna.get(perm.get(i)));
+		// System.out.println(id2bna.get(perm.get(i)).getName() + " expected type: "+
+		// r.getBiologicalNodes().get(i).getType());
+		// ruleBNodeToBNA.put(r.getBiologicalNodes().get(i), id2bna.get(perm.get(i)));
+		// }
 
 		// create or fetch nodes
 		RuleNode pnNode;
@@ -514,7 +576,7 @@ public class Transformator {
 			if (r.getMappedBnode(pnNode) != null) {
 				// System.out.println(pnNode);
 				bNode = r.getMappedBnode(pnNode);
-				bna = ruleBNodeToBNA.get(bNode);
+				bna = match.getMapping(bNode);
 				// System.out.println(bna);
 				// System.out.println(bna.getName());
 				if (bn2pnMap.containsKey(bna)) {
@@ -547,7 +609,7 @@ public class Transformator {
 					}
 					newPNNode = createPNNode(r, pnNode, bna);
 					rulePNodeToBNA.put(pnNode, newPNNode);
-					setTransformationParameters(newPNNode, pnNode, ruleBNodeToBNA, r);
+					setTransformationParameters(newPNNode, pnNode, match);
 					toDeleteBNA.add(bna);
 					executed = true;
 				}
@@ -555,11 +617,12 @@ public class Transformator {
 				// no mapping, PNNode needs to be created
 				newPNNode = createPNNode(r, pnNode, null);
 				rulePNodeToBNA.put(pnNode, newPNNode);
+				setTransformationParameters(newPNNode, pnNode, match);
 				executed = true;
 			}
 		}
 
-		// creating Petri net edges
+		// creating Petri net arcs
 		RuleEdge pnEdge;
 		PNNode from;
 		PNNode to;
@@ -611,8 +674,8 @@ public class Transformator {
 			deleted = false;
 			bEdge = r.getConsideredEdges().get(i);
 
-			fromBNA = ruleBNodeToBNA.get(bEdge.getFrom());
-			toBNA = ruleBNodeToBNA.get(bEdge.getTo());
+			fromBNA = match.getMapping(bEdge.getFrom());
+			toBNA = match.getMapping(bEdge.getTo());
 			edgeColl = tmpGraph.findEdgeSet(fromBNA.getID(), toBNA.getID());
 			// System.out.println(edgeColl.size());
 			if (edgeColl != null && edgeColl.size() > 0) {
@@ -627,8 +690,15 @@ public class Transformator {
 						this.usedEdges.add(bea);
 						deleted = true;
 					} else {
-						// System.out.println("from: "+bea.getFrom().getName()+"expected:
-						// "+fromBNA.getName());
+						if (!bea.isDirected()) {
+							if (getBNARef(bea.getFrom()) == toBNA && getBNARef(bea.getTo()) == fromBNA) {
+								this.remainingEdges.remove(bea);
+								this.tmpGraph.removeEdge(bea.getID());
+								subGraphEdges.remove(bea);
+								this.usedEdges.add(bea);
+								deleted = true;
+							}
+						}
 					}
 				}
 			}
@@ -654,6 +724,8 @@ public class Transformator {
 		// this.ruleToNextPermIndex.remove(r);
 		// this.applyRule(r, true);
 		// return;
+		matches.add(match);
+		// System.out.println("matches so far: " + matches.size());
 		return;
 
 	}
@@ -687,8 +759,19 @@ public class Transformator {
 				type = continuousTransition;
 			}
 		}
-		String defaultPName = "p" + petriNet.getPlaceCount() + 1;
-		String defaultTName = "t" + petriNet.getTransitionCount() + 1;
+
+		// avoiding duplicate names
+		int i = 1;
+		while (pw.getAllNodeNames().contains("p" + i)) {
+			i++;
+		}
+		String defaultPName = "p" + i;
+		i = 1;
+		while (pw.getAllNodeNames().contains("t" + i)) {
+			i++;
+		}
+		String defaultTName = "t" + i;
+
 		switch (type) {
 		case continuousPlace:
 			pn = new ContinuousPlace(defaultPName, defaultPName);
@@ -718,6 +801,7 @@ public class Transformator {
 				pn.setPlotColor(bna.getPlotColor());
 				// System.out.println("Vertex: "+p.getName());
 				// System.out.println("x: "+locations.getLocation(bna.getVertex()).getX());
+				// TODO better location for unmapped nodes
 				x = pw.getGraph().getVertexLocation(bna).getX();// locations.getLocation(bna.getVertex()).getX();
 				y = pw.getGraph().getVertexLocation(bna).getY();// locations.getLocation(bna.getVertex()).getY();
 				// System.out.println("x: "+x+" y: "+y);
@@ -912,7 +996,6 @@ public class Transformator {
 					subGraphEdges.add(bea);
 				}
 			}
-
 		}
 	}
 
@@ -950,22 +1033,11 @@ public class Transformator {
 	}
 
 	// setting parameters to Petri net nodes and edges
-	private void setTransformationParameters(GraphElementAbstract gea, RuleNode pnNode,
-			HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA, Rule r) {
+	private void setTransformationParameters(GraphElementAbstract gea, RuleNode pnNode, Match match) {
+		Rule r = match.getRule();
 
 		// generation of possible parameters for current matching
-		Set<String> possibleParams = new HashSet<>();
-		for (RuleNode rn : r.getBiologicalNodes()) {
-			for (String parameter : ruleBNodeToBNA.get(rn).getTransformationParameters()) {
-				possibleParams.add(rn.getName() + "." + parameter);
-				// System.out.println(rn.getName() + "." + parameter);
-			}
-		}
-		for (RuleEdge re : r.getBiologicalEdges()) {
-			possibleParams.add(re.getName() + ".label");
-			possibleParams.add(re.getName() + ".name");
-			possibleParams.add(re.getName() + ".function");
-		}
+		Map<String, String> possibleParams = getPossibleParametersOfMatch(match);
 
 		Place p;
 		String value;
@@ -974,6 +1046,7 @@ public class Transformator {
 		Double d;
 		String string;
 		BiologicalNodeAbstract node;
+		Expression e;
 		// for nodes
 		if (gea instanceof PNNode) {
 			petriNode = (PNNode) gea;
@@ -983,96 +1056,136 @@ public class Transformator {
 					continue;
 				}
 				// System.out.println("key: " + key + " value: " + value);
+				value = replaceParametersToValues(value, match);
 				switch (key) {
 				case "name":
-					// System.out.println(gea.getName());
-					string = this.evalParameter(possibleParams, value, String.class, ruleBNodeToBNA, r);
-					if (string != null) {
-						if (petriNet.getAllNodeNames().contains(string)) {
-							// System.out.println("new String: " + string);
-							// System.out.println(petriNet.getAllNodeNames());
-							node = petriNet.getNodeByName(string);
-							if (node != petriNode) {
-								if (node.getClass().getName().equals(petriNode.getClass().getName())) {
-									petriNode.setLogicalReference(node);
-									MyPopUp.getInstance().show("Name already exists!",
-											"Name: " + string + " exists already. Created logical node instead!");
-								} else {
-									MyPopUp.getInstance().show("Error: Name already exists!", "Name: " + string
-											+ " exists already. Cannot Created logical node because of type mismatch: "
-											+ petriNet.getClass().getSimpleName() + " versus "
-											+ node.getClass().getSimpleName());
-								}
-								continue;
+					String initialName = "";
+					String name = "";
+					// string = this.evalParameter(possibleParams, value, String.class, match);
+					string = value;
+					if (string == null || string.trim().length() == 0) {
+						// avoiding duplicate names
+						int i = 1;
+						if (petriNode instanceof Place) {
+							while (pw.getAllNodeNames().contains("p" + i)) {
+								i++;
 							}
+							name = "p" + i;
+						} else {
+							while (pw.getAllNodeNames().contains("t" + i)) {
+								i++;
+							}
+							name = "t" + i;
 						}
-						gea.setName(string);
-						gea.setLabel(gea.getName());
+					} else {
+						initialName = string;
+						// name exists already in PN
+						if (petriNet.getAllNodeNames().contains(string)) {
+							// node is mapped to a BNA
+							if (bn2pnMap.values().contains(petriNode)) {
+								node = petriNet.getNodeByName(string);
+								if (bn2pnMap.values().contains(node)) {
+									int i = 1;
+									while (pw.getAllNodeNames().contains(string + i)) {
+										i++;
+									}
+									name = string + i;
+								} else {
+									// node with same name is not mapped
+									int i = 1;
+									String tmpName = initialPNNodeName.get(node) + i;
+									while (pw.getAllNodeNames().contains(tmpName) || tmpName.equals(string)) {
+										i++;
+										tmpName = initialPNNodeName.get(node) + i;
+									}
+									node.setName(tmpName);
+									node.setLabel(tmpName);
+									name = string;
+								}
+							} else {
+								// node is not mapped to a BNA
+								int i = 1;
+								while (pw.getAllNodeNames().contains(string + i)) {
+									i++;
+								}
+								name = string + i;
+							}
+						} else {
+							// name doesnt exist in PN, yet
+							name = string;
+						}
 					}
+					gea.setName(name);
+					gea.setLabel(gea.getName());
+					initialPNNodeName.put(petriNode, initialName);
+
 					break;
 				case "tokenStart":
 					if (gea instanceof Place) {
 						p = (Place) gea;
-						BiologicalNodeAbstract bna = getRuleNodeOfParameter(possibleParams, value, ruleBNodeToBNA, r);
-						d = this.evalParameter(possibleParams, value, Double.class, ruleBNodeToBNA, r);
-						if (d != null) {
-							p.setTokenStart(d);
-							p.setConstant(bna.isConstant());
+						e = getExpression(value);
+						d = e.evaluate();
+						if (p instanceof DiscretePlace) {
+							d = Double.valueOf(Math.round(d));
+						}
+						p.setTokenStart(d);
+						if (r.getMappedBnode(pnNode) != null) {
+							p.setConstant(match.getMapping(r.getMappedBnode(pnNode)).isConstant());
 						}
 					}
 					break;
 				case "tokenMin":
 					if (gea instanceof Place) {
-						p = (Place) gea;
-						d = this.evalParameter(possibleParams, value, Double.class, ruleBNodeToBNA, r);
-						if (d != null) {
-							p.setTokenMin(d);
-						}
+						// p = (Place) gea;
+						// d = this.evalParameter(possibleParams, value, Double.class, match);
+						// if (d != null) {
+						/// p.setTokenMin(d);
+						// }
 					}
 					break;
 				case "tokenMax":
 					if (gea instanceof Place) {
-						p = (Place) gea;
-						d = this.evalParameter(possibleParams, value, Double.class, ruleBNodeToBNA, r);
-						if (d != null) {
-							p.setTokenMax(d);
-						}
+						// p = (Place) gea;
+						// d = this.evalParameter(possibleParams, value, Double.class, match);
+						// if (d != null) {
+						// p.setTokenMax(d);
+						// }
 					}
 					break;
 				case "firingCondition":
 					if (gea instanceof Transition) {
-						string = this.evalParameter(possibleParams, value, String.class, ruleBNodeToBNA, r);
-						if (string != null) {
-							((Transition) gea).setFiringCondition(string);
-						}
+						// string = this.evalParameter(possibleParams, value, String.class, match);
+						// if (string != null) {
+						// ((Transition) gea).setFiringCondition(string);
+						// }
 					}
 					break;
 				case "maximalSpeed":
 					if (gea instanceof ContinuousTransition) {
-						ContinuousTransition ct = (ContinuousTransition) gea;
-						string = this.evalParameter(possibleParams, value, String.class, ruleBNodeToBNA, r);
-						if (string != null) {
-							// System.out.println(string);
-							ct.setMaximalSpeed(string);
-							BiologicalNodeAbstract bna = getRuleNodeOfParameter(possibleParams, value, ruleBNodeToBNA,
-									r);
+						// ContinuousTransition ct = (ContinuousTransition) gea;
+						// string = this.evalParameter(possibleParams, value, String.class, match);
+						// if (string != null) {
+						// // System.out.println(string);
+						// ct.setMaximalSpeed(string);
+						// BiologicalNodeAbstract bna = getRuleNodeOfParameter(possibleParams, value,
+						// match);
 
-							if (bna != null) {
-								if (bna.getTransformationParameters().contains("isKnockedOut")) {
-									ct.setKnockedOut(
-											Boolean.parseBoolean(bna.getTransformationParameterValue("isKnockedOut")));
-								}
-								this.copyParameters(bna, (ContinuousTransition) gea);
-							}
-						}
+						// if (bna != null) {
+						// if (bna.getTransformationParameters().contains("isKnockedOut")) {
+						// ct.setKnockedOut(
+						// Boolean.parseBoolean(bna.getTransformationParameterValue("isKnockedOut")));
+						// }
+						// this.copyParameters(bna, (ContinuousTransition) gea);
+						// }
+						// }
 					}
 					break;
 				case "delay":
 					if (gea instanceof DiscreteTransition) {
-						d = this.evalParameter(possibleParams, value, Double.class, ruleBNodeToBNA, r);
-						if (d != null) {
-							((DiscreteTransition) gea).setDelay(d);
-						}
+						// d = this.evalParameter(possibleParams, value, Double.class, match);
+						// if (d != null) {
+						// ((DiscreteTransition) gea).setDelay(d);
+						// }
 					}
 				}
 			}
@@ -1098,72 +1211,122 @@ public class Transformator {
 		}
 	}
 
-	private BiologicalNodeAbstract getRuleNodeOfParameter(Set<String> possibleParameters, String value,
-			HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA, Rule r) {
-		String[] split;
-		BiologicalNodeAbstract bna = null;
-		// String v;
-		// System.out.println("type: "+type);
-		// if (type.equals(String.class)) {
-		// System.out.println("type match");
-		if (possibleParameters.contains(value)) {
-			// System.out.println("value: " + value);
-			split = value.split("\\.");
-			// System.out.println("split1: " + split[0]);
-			// System.out.println("split2: " + split[1]);
-			if (split.length == 2) {
-				bna = ruleBNodeToBNA.get(r.getBiologicaNode(split[0]));
-				// System.out.println("return:
-				// "+type.cast(bna.getTransformationParameterValue(split[1])));
-
-			}
+	private Expression getExpression(String value) {
+		if (this.functions == null) {
+			this.createFunctions();
 		}
-		return bna;
+		ExpressionBuilder eb = new ExpressionBuilder(value);
+		for (Function f : functions) {
+			eb.function(f);
+		}
+		return eb.build();
 	}
 
-	private <T> T evalParameter(Set<String> possibleParameters, String value, Class<T> type,
-			HashMap<RuleNode, BiologicalNodeAbstract> ruleBNodeToBNA, Rule r) {
-		String[] split;
-		BiologicalNodeAbstract bna;
-		// String v;
-		// System.out.println("type: "+type);
-		// if (type.equals(String.class)) {
-		// System.out.println("type match");
-		if (possibleParameters.contains(value)) {
-			// System.out.println("value: " + value);
-			split = value.split("\\.");
-			// System.out.println("split1: " + split[0]);
-			// System.out.println("split2: " + split[1]);
-			if (split.length == 2) {
-				bna = ruleBNodeToBNA.get(r.getBiologicaNode(split[0]));
-				// System.out.println("return:
-				// "+type.cast(bna.getTransformationParameterValue(split[1])));
-				if (type == String.class) {
-					if (bna instanceof Enzyme) {
-						// System.out.println(bna.getTransformationParameters());
-						// System.out.println(split[1]);
-						// System.out.println(bna.getTransformationParameterValue(split[1]));
-						// Enzyme e = (Enzyme) bna;
-						// System.out.println(((Enzyme)bna).getTransformationParameterValue("maximalSpeed"));
-					}
-					return type.cast(bna.getTransformationParameterValue(split[1]));
-				} else if (type == Double.class) {
-					return type.cast(Double.valueOf(bna.getTransformationParameterValue(split[1])));
-				}
-			}
-		} else {
-			return type.cast(value);
+	private Map<String, String> getPossibleParametersOfMatch(Match match) {
+
+		if (match2Parameters.containsKey(match)) {
+			return match2Parameters.get(match);
 		}
-		// } else if (type == Double.class){
-		// return type.cast(value);
-		// }
-		return null;
+		Rule r = match.getRule();
+		Map<String, String> possibleParams = new HashMap<>();
+		Map<String, String> replace = new HashMap<>();
+
+		for (RuleNode rn : r.getBiologicalNodes()) {
+			for (String parameter : match.getMapping(rn).getTransformationParameters()) {
+				possibleParams.put(rn.getName() + "." + parameter,
+						match.getMapping(rn).getTransformationParameterValue(parameter));
+				// replace.put(rn.getName() + "." + parameter, rn.getName() + "_" + parameter);
+				// System.out.println(rn.getName() + "." + parameter);
+			}
+		}
+		for (RuleEdge re : r.getBiologicalEdges()) {
+			// possibleParams.put(re.getName() + ".label");
+			// possibleParams.put(re.getName() + ".name");
+			// possibleParams.put(re.getName() + ".function");
+		}
+
+		List<String> names = new ArrayList<>(possibleParams.keySet());
+		Collections.sort(names, new StringLengthComparator());
+		match2SortedParameterList.put(match, names);
+		// match2ReplaceParameters.put(match, replace);
+		match2Parameters.put(match, possibleParams);
+		return possibleParams;
+
+	}
+
+	private String replaceParametersToValues(String s, Match match) {
+
+		List<String> names = match2SortedParameterList.get(match);
+		Map<String, String> possibleParams = match2Parameters.get(match);
+		for (String name : names) {
+			s = s.replaceAll(name, possibleParams.get(name));
+		}
+		return s;
 	}
 
 	private void copyParameters(BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 		for (Parameter p : from.getParameters()) {
 			to.getParameters().add(new Parameter(p.getName(), p.getValue(), p.getUnit()));
 		}
+	}
 
+	public List<Match> getMatches() {
+		return this.matches;
+	}
+
+	private void createFunctions() {
+		// already built in: 
+	   // abs: absolute value
+	   // acos: arc cosine
+	   // asin: arc sine
+	   // atan: arc tangent
+	   // cbrt: cubic root
+	   // ceil: nearest upper integer
+	   // cos: cosine
+	   // cosh: hyperbolic cosine
+	   // exp: euler's number raised to the power (e^x)
+	   // floor: nearest lower integer
+	   // log: logarithmus naturalis (base e)
+	   // log10: logarithm (base 10)
+	   // log2: logarithm (base 2)
+	   // sin: sine
+	   // sinh: hyperbolic sine
+	   // sqrt: square root
+	   // tan: tangent
+	   // tanh: hyperbolic tangent
+	   // signum: signum function
+	    
+		functions = new HashSet<>();
+		Function min = new Function("min", 2) {
+			@Override
+			public double apply(double... args) {
+				return Math.min(args[0], args[1]);
+			}
+		};
+		functions.add(min);
+		
+		Function max = new Function("max", 2) {
+			@Override
+			public double apply(double... args) {
+				return Math.max(args[0], args[1]);
+			}
+		};
+		functions.add(max);
+		
+		Function random = new Function("random", 2) {
+			@Override
+			public double apply(double... args) {
+				return Math.random() * (args[1]-args[0]) + args[0];
+			}
+		};
+		functions.add(random);
+		
+		Function round = new Function("round", 2) {
+			@Override
+			public double apply(double... args) {
+				return Math.rint(args[0]);
+			}
+		};
+		functions.add(round);
 	}
 }

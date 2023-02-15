@@ -29,6 +29,7 @@ public class YamlRuleReader {
 		// for BN
 		Rule r = new Rule();
 		r.setName(rule.getName());
+		r.setActive(rule.isActive());
 		for (int i = 0; i < rule.getBiologicalNodes().size(); i++) {
 			r.addBiologicalNode(rule.getBiologicalNodes().get(i));
 		}
@@ -39,6 +40,7 @@ public class YamlRuleReader {
 			edge = rule.getBiologicalEdges().get(i);
 			e = new RuleEdge(edge.getName(), edge.getType(), r.getBiologicaNode(edge.getFrom()),
 					r.getBiologicaNode(edge.getTo()));
+			e.setDirected(edge.isDirected());
 			r.addBiologicalEdge(e);
 			edgeMap.put(edge.getName(), e);
 		}

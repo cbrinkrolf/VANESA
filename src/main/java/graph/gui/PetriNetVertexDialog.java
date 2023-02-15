@@ -84,18 +84,30 @@ public class PetriNetVertexDialog {
 		panel.add(new JLabel("Name"), "span 2, gaptop 2 ");
 		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
 
+		// avoiding duplicate suggested names
+		int i = 1;
+		while(pw.getAllNodeNames().contains("p"+i)){
+			i++;
+		}
+		String placeName = "p"+i;
+		i = 1;
+		while(pw.getAllNodeNames().contains("t"+i)){
+			i++;
+		}
+		String transitionName = "t"+i;
+		
 		if (pw.isHeadless()) {
 			if (petriElement.toLowerCase().contains("place")) {
-				name.setText("p" + (pw.getPlaceCount() + 1));
+				name.setText(placeName);
 			} else if (petriElement.toLowerCase().contains("transition")) {
-				name.setText("t" + (pw.getTransitionCount() + 1));
+				name.setText(transitionName);
 			}
 		}
 
 		if (!pw.isHeadless()) {
 			panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
 			if (this.petriElement.equals(Elementdeclerations.discretePlace)) {
-				name.setText("p" + (pw.getPlaceCount() + 1));
+				name.setText(placeName);
 				//panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
 				//token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
 				//token.setText("0");
@@ -116,7 +128,7 @@ public class PetriNetVertexDialog {
 				tokenMax.setValue(Integer.MAX_VALUE);
 				panel.add(tokenMax, "span,wrap,growx ,gap 10, gaptop 2");
 			} else if (this.petriElement.equals(Elementdeclerations.continuousPlace)) {
-				name.setText("p" + (pw.getPlaceCount() + 1));
+				name.setText(placeName);
 				// panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
 				//token = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
 				//token.setText("0.0");
@@ -136,19 +148,19 @@ public class PetriNetVertexDialog {
 				tokenMax.setText(Double.MAX_VALUE + "");
 				panel.add(tokenMax, "span,wrap,growx ,gap 10, gaptop 2");
 			} else if (this.petriElement.equals(Elementdeclerations.discreteTransition)) {
-				name.setText("t" + (pw.getTransitionCount() + 1));
+				name.setText(transitionName);
 				panel.add(lblFiringCondition, "span 2, gaptop 2 ");
 				panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(new JLabel("Delay"), "span 2, gaptop 2 ");
 				panel.add(delay, "span,wrap,growx ,gap 10, gaptop 2");
 			} else if (this.petriElement.equals(Elementdeclerations.continuousTransition)) {
-				name.setText("t" + (pw.getTransitionCount() + 1));
+				name.setText(transitionName);
 				panel.add(lblMaxSpeed, "span 2, gaptop 2 ");
 				panel.add(maxSpeed, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(lblFiringCondition, "span 2, gaptop 2 ");
 				panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 			} else if (this.petriElement.equals(Elementdeclerations.stochasticTransition)) {
-				name.setText("t" + (pw.getTransitionCount() + 1));
+				name.setText(transitionName);
 				panel.add(lblFiringCondition, "span 2, gaptop 2 ");
 				panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(new JLabel("Distribution"), "span 2, gaptop 2");

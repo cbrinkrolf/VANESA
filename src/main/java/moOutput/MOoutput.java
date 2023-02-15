@@ -30,6 +30,7 @@ import graph.GraphInstance;
 import graph.gui.Parameter;
 import gui.MainWindow;
 import util.StochasticDistribution;
+import util.StringLengthComparator;
 
 /**
  * @author Rafael, cbrinkro
@@ -719,15 +720,6 @@ public class MOoutput {
 		return mFunction;
 	}
 
-	class StringLengthComparator implements Comparator<String> {
-
-		// compares descending
-		public int compare(String s1, String s2) {
-			int i = s2.length() - s1.length();
-			return i;
-		}
-	}
-
 	private String getPlacementAnnotation(BiologicalNodeAbstract bna) {
 
 		double x = pw.getGraph().getVertexLocation(bna).getX();
@@ -840,8 +832,8 @@ public class MOoutput {
 		// replace places
 		GraphInstance graphInstance = new GraphInstance();
 		Pathway pw = graphInstance.getPathway();
-		if(!pw.isPetriNet() && pw.getPetriNet() != null){
-			pw = pw.getPetriNet();
+		if(!pw.isPetriNet() && pw.getTransformationInformation() != null && pw.getTransformationInformation().getPetriNet() != null){
+			pw = pw.getTransformationInformation().getPetriNet();
 		}
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		ArrayList<String> names = new ArrayList<String>();

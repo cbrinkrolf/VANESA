@@ -6,14 +6,15 @@ import java.util.Map;
 
 public class YamlRule {
 	private String name;
+	private boolean active;
 	private List<RuleNode> biologicalNodes = new ArrayList<>();
 	private List<YamlEdge> biologicalEdges = new ArrayList<>();
-	
+
 	private List<RuleNode> petriNodes = new ArrayList<>();
 	private List<YamlEdge> petriEdges = new ArrayList<>();
-	
+
 	private List<Map<String, String>> mappingBNToPN = new ArrayList<>();
-	
+
 	private List<String> consideredEdges = new ArrayList<>();
 
 	public String getName() {
@@ -70,5 +71,13 @@ public class YamlRule {
 
 	public void setConsideredEdges(List<String> consideredEdges) {
 		this.consideredEdges = consideredEdges;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

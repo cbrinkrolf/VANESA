@@ -247,11 +247,11 @@ public class Rule {
 		return true;
 	}
 
-	public int getIncomingEdgeCount(RuleNode rn) {
+	public int getIncomingDirectedEdgeCount(RuleNode rn) {
 		int count = 0;
 		if (biologicalNodes.contains(rn)) {
 			for (RuleEdge re : biologicalEdges) {
-				if (rn == re.getTo()) {
+				if (rn == re.getTo() && re.isDirected()) {
 					count++;
 				}
 			}
@@ -267,11 +267,11 @@ public class Rule {
 		return count;
 	}
 
-	public int getOutgoingEdgeCount(RuleNode rn) {
+	public int getOutgoingDirectedEdgeCount(RuleNode rn) {
 		int count = 0;
 		if (biologicalNodes.contains(rn)) {
 			for (RuleEdge re : biologicalEdges) {
-				if (rn == re.getFrom()) {
+				if (rn == re.getFrom() && re.isDirected()) {
 					count++;
 				}
 			}
@@ -283,6 +283,18 @@ public class Rule {
 			}
 		} else {
 			System.err.println("RuleNode " + rn.getName() + " not found! Called method: getOutgoingEdgeCount");
+		}
+		return count;
+	}
+	
+	public int getUndirectedEdgeCount(RuleNode rn){
+		int count = 0;
+		if (biologicalNodes.contains(rn)) {
+			for (RuleEdge re : biologicalEdges) {
+				if ((rn == re.getFrom() || rn == re.getTo()) && !re.isDirected()) {
+					count++;
+				}
+			}
 		}
 		return count;
 	}

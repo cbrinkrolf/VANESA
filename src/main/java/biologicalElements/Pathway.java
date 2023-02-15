@@ -26,7 +26,6 @@ import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstractFactory;
 import biologicalObjects.nodes.PathwayMap;
-import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
@@ -49,6 +48,7 @@ import gui.MainWindow;
 import gui.MyPopUp;
 import petriNet.PetriNetProperties;
 import petriNet.PetriNetSimulation;
+import transformation.TransformationInformation;
 import util.FormularSafety;
 
 public class Pathway implements Cloneable {
@@ -84,8 +84,7 @@ public class Pathway implements Cloneable {
 	// no graph tab is assigned / created. this is used for rule editing window
 	private final boolean headless;
 	private ArrayList<Group> groups = new ArrayList<>();
-	private Pathway petriNet = null;
-	private HashMap<BiologicalNodeAbstract, PNNode> bnToPnMapping = null;
+	private TransformationInformation transformationInformation = null;
 	private final CompartmentManager compartmentManager = new CompartmentManager();
 
 	public Pathway(String name, boolean headless) {
@@ -684,7 +683,8 @@ public class Pathway implements Cloneable {
 		Iterator<BiologicalEdgeAbstract> itEdges;
 		BiologicalNodeAbstract newBNA;
 		Point2D p = new Point2D.Double(0, 0);
-		// TODO do not iterate over HashMapm it breaks if it has more than 1 element (ConcurrentModificationException)
+		// TODO do not iterate over HashMapm it breaks if it has more than 1 element
+		// (ConcurrentModificationException)
 		while (it.hasNext()) {
 			bna = it.next();
 
@@ -930,20 +930,12 @@ public class Pathway implements Cloneable {
 		this.groups = groups;
 	}
 
-	public Pathway getPetriNet() {
-		return petriNet;
+		public TransformationInformation getTransformationInformation() {
+		return transformationInformation;
 	}
 
-	public void setPetriNet(Pathway petriNet) {
-		this.petriNet = petriNet;
-	}
-
-	public HashMap<BiologicalNodeAbstract, PNNode> getBnToPnMapping() {
-		return bnToPnMapping;
-	}
-
-	public void setBnToPnMapping(HashMap<BiologicalNodeAbstract, PNNode> bnToPnMapping) {
-		this.bnToPnMapping = bnToPnMapping;
+	public void setTransformationInformation(TransformationInformation transformationInformation) {
+		this.transformationInformation = transformationInformation;
 	}
 
 	public CompartmentManager getCompartmentManager() {
@@ -953,8 +945,8 @@ public class Pathway implements Cloneable {
 	public PetriNetProperties getPetriPropertiesNet() {
 		if (isPetriNet) {
 			return petriNetProperties;
-		} else if (petriNet != null) {
-			return petriNet.getPetriPropertiesNet();
+		} else if (transformationInformation != null && transformationInformation.getPetriNet() != null) {
+			return transformationInformation.getPetriNet().getPetriPropertiesNet();
 		}
 		return null;
 	}
@@ -1533,7 +1525,7 @@ public class Pathway implements Cloneable {
 			}
 			return petriNetSimulation;
 		} else {
-			return this.petriNet.getPetriNetSimulation();
+			return transformationInformation.getPetriNet().getPetriNetSimulation();
 		}
 	}
 
@@ -1557,6 +1549,39 @@ public class Pathway implements Cloneable {
 		while (it.hasNext()) {
 			bna = it.next();
 			if (bna instanceof Transition && !bna.isLogical()) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public int getIncomingDirectedEdgeCount(BiologicalNodeAbstract bna) {
+		int count = 0;
+		Collection<BiologicalEdgeAbstract> edges = getGraph().getJungGraph().getIncidentEdges(bna);
+		for (BiologicalEdgeAbstract e : edges) {
+			if (bna == e.getTo() && e.isDirected()) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public int getOutgoingDirectedEdgeCount(BiologicalNodeAbstract bna) {
+		int count = 0;
+		Collection<BiologicalEdgeAbstract> edges = getGraph().getJungGraph().getIncidentEdges(bna);
+		for (BiologicalEdgeAbstract e : edges) {
+			if (bna == e.getFrom() && e.isDirected()) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	public int getUndirectedEdgeCount(BiologicalNodeAbstract bna) {
+		int count = 0;
+		Collection<BiologicalEdgeAbstract> edges = getGraph().getJungGraph().getIncidentEdges(bna);
+		for (BiologicalEdgeAbstract e : edges) {
+			if (!e.isDirected()) {
 				count++;
 			}
 		}

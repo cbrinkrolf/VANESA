@@ -27,19 +27,18 @@ public class ProjectWindowListener implements FocusListener {
 	public void updateWindowTab(String name) {
 
 		String value = name;
-		String newName = GraphContainer.getInstance().renamePathway(pw,
-				value);
+		String newName = GraphContainer.getInstance().renamePathway(pw, value);
 		pw.setName(newName);
 		MainWindow.getInstance().renameSelectedTab(pw.getName());
 
 		GraphContainer.getInstance().setPetriView(pw.isPetriNet());
-		Component[] c = MainWindow.getInstance().getFrame().getContentPane()
-				.getComponents();
+		Component[] c = MainWindow.getInstance().getFrame().getContentPane().getComponents();
 		for (int i = 0; i < c.length; i++) {
 			if (c[i].getClass().getName().equals("javax.swing.JPanel")) {
-				MainWindow.getInstance().getBar()
-						.paintToolbar(pw.isPetriNet());
-				MainWindow.getInstance().getmyMenu().setPetriView(pw.isPetriNet() || pw.getPetriNet() != null);
+				MainWindow.getInstance().getBar().paintToolbar(pw.isPetriNet());
+				MainWindow.getInstance().getmyMenu()
+						.setPetriView(pw.isPetriNet() || pw.getTransformationInformation() != null
+								&& pw.getTransformationInformation().getPetriNet() != null);
 				break;
 			}
 		}
@@ -51,8 +50,7 @@ public class ProjectWindowListener implements FocusListener {
 
 		if (source.equals("pathway")) {
 			String value = ((JTextField) event.getSource()).getText();
-			String newName = GraphContainer.getInstance().renamePathway(pw,
-					value);
+			String newName = GraphContainer.getInstance().renamePathway(pw, value);
 			pw.setTitle(newName);
 			MainWindow.getInstance().renameSelectedTab(pw.getName());
 			((JTextField) event.getSource()).setText(newName);

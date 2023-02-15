@@ -197,7 +197,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			pw.getGraph().getVisualizationViewer().repaint();
 			return;
 		}
-		if (pw.isPetriNet() || pw.getPetriNet() != null) {
+		if (pw.isPetriNet() || pw.getTransformationInformation() != null
+				&& pw.getTransformationInformation().getPetriNet() != null) {
 			SimulationResult simRes = simResController.getLastActive();
 			if (pw.getPetriPropertiesNet().isPetriNetSimulation() && simRes != null) {
 
@@ -356,8 +357,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		if (pickedV == 0 && pickedE == 1) {
 			BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
 			if (hiddenPN) {
-				bea = pw.getPetriNet().getEdge(pw.getBnToPnMapping().get(bea.getFrom()),
-						pw.getBnToPnMapping().get(bea.getTo()));
+				bea = pw.getTransformationInformation().getPetriNet().getEdge(
+						pw.getTransformationInformation().getBnToPnMapping().get(bea.getFrom()),
+						pw.getTransformationInformation().getBnToPnMapping().get(bea.getTo()));
 			}
 			if (bea instanceof PNArc) {
 				secondAxis = true;
@@ -571,7 +573,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 		// System.out.println("-----------------------------");
 		boolean isValidPN = pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation() && simRes != null;
-		boolean isValidHiddenPN = !pw.isPetriNet() && pw.getPetriNet() != null
+		boolean isValidHiddenPN = !pw.isPetriNet() && pw.getTransformationInformation() != null
+				&& pw.getTransformationInformation().getPetriNet() != null
 				&& pw.getPetriPropertiesNet().isPetriNetSimulation() && simRes != null;
 		if (isValidPN || isValidHiddenPN) {
 			BiologicalNodeAbstract bna;
@@ -589,7 +592,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 			Iterator<BiologicalNodeAbstract> itBna;
 			if (hiddenPN) {
-				itBna = pw.getPetriNet().getAllGraphNodes().iterator();
+				itBna = pw.getTransformationInformation().getPetriNet().getAllGraphNodes().iterator();
 			} else {
 				itBna = pw.getAllGraphNodes().iterator();
 			}
@@ -643,7 +646,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			}
 			Iterator<BiologicalEdgeAbstract> itBea;
 			if (hiddenPN) {
-				itBea = pw.getPetriNet().getAllEdges().iterator();
+				itBea = pw.getTransformationInformation().getPetriNet().getAllEdges().iterator();
 			} else {
 				itBea = pw.getAllEdges().iterator();
 			}
@@ -967,14 +970,18 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		// System.out.println("start init");
 		GraphInstance graphInstance = new GraphInstance();
 		pw = graphInstance.getPathway();
-		if (!pw.isPetriNet() && pw.getPetriNet() == null) {
+		if (!pw.isPetriNet() && pw.getTransformationInformation() == null) {
 			return;
 		}
-		if ((!pw.isPetriNet() || pw.getPetriNet() != null) && !pw.hasGotAtLeastOneElement()) {
+		if (!pw.isPetriNet() && pw.getTransformationInformation().getPetriNet() == null) {
+			return;
+		}
+		if (!pw.isPetriNet() && pw.getTransformationInformation().getPetriNet() != null
+				&& !pw.hasGotAtLeastOneElement()) {
 			return;
 		}
 
-		if (!pw.isPetriNet() && pw.getPetriNet() != null) {
+		if (!pw.isPetriNet() && pw.getTransformationInformation().getPetriNet() != null) {
 			hiddenPN = true;
 		} else {
 			hiddenPN = false;
@@ -1078,8 +1085,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				if (pickedV == 0 && pickedE == 1) {
 					BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
 					if (hiddenPN) {
-						bea = pw.getPetriNet().getEdge(pw.getBnToPnMapping().get(bea.getFrom()),
-								pw.getBnToPnMapping().get(bea.getTo()));
+						bea = pw.getTransformationInformation().getPetriNet().getEdge(
+								pw.getTransformationInformation().getBnToPnMapping().get(bea.getFrom()),
+								pw.getTransformationInformation().getBnToPnMapping().get(bea.getTo()));
 					}
 					if (simResController.getAllActiveWithData(bea, SUM_OF_TOKEN).size() <= 1) {
 						return labelsR1.get(seriesIdx);
@@ -1102,8 +1110,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				if (pickedV == 0 && pickedE == 1) {
 					BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
 					if (hiddenPN) {
-						bea = pw.getPetriNet().getEdge(pw.getBnToPnMapping().get(bea.getFrom()),
-								pw.getBnToPnMapping().get(bea.getTo()));
+						bea = pw.getTransformationInformation().getPetriNet().getEdge(
+								pw.getTransformationInformation().getBnToPnMapping().get(bea.getFrom()),
+								pw.getTransformationInformation().getBnToPnMapping().get(bea.getTo()));
 					}
 					if (simResController.getAllActiveWithData(bea, SUM_OF_TOKEN).size() <= 1) {
 						return "Sum";
@@ -1136,8 +1145,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 		String path = "";
 		try {
-			XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(
-					pathWorkingDirectory + File.separator + "settings.xml");
+			XMLConfiguration xmlSettings = VanesaUtility
+					.getFileBasedXMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
 			path = xmlSettings.getString("SaveDialog-Path");
 		} catch (ConfigurationException e) {
 			System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
@@ -1169,9 +1178,10 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						// ps.clearPickedVertices();
 						vState.clear();
 						if (hiddenPN) {
-							if (pw.getBnToPnMapping().containsValue(p)) {
-								for (BiologicalNodeAbstract key : pw.getBnToPnMapping().keySet()) {
-									if (pw.getBnToPnMapping().get(key) == p) {
+							if (pw.getTransformationInformation().getBnToPnMapping().containsValue(p)) {
+								for (BiologicalNodeAbstract key : pw.getTransformationInformation().getBnToPnMapping()
+										.keySet()) {
+									if (pw.getTransformationInformation().getBnToPnMapping().get(key) == p) {
 										vState.pick(key, true);
 										break;
 									}
@@ -1212,7 +1222,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		}
 		Iterator<BiologicalNodeAbstract> itNodes;
 		if (hiddenPN) {
-			itNodes = pw.getPetriNet().getAllGraphNodesSortedAlphabetically().iterator();
+			itNodes = pw.getTransformationInformation().getPetriNet().getAllGraphNodesSortedAlphabetically().iterator();
 		} else {
 			itNodes = pw.getAllGraphNodesSortedAlphabetically().iterator();
 		}
@@ -1248,9 +1258,10 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					dataset.addSeries(s);
 
 					if (hiddenPN) {
-						if (pw.getBnToPnMapping().containsValue(place)) {
-							for (BiologicalNodeAbstract key : pw.getBnToPnMapping().keySet()) {
-								if (pw.getBnToPnMapping().get(key) == place) {
+						if (pw.getTransformationInformation().getBnToPnMapping().containsValue(place)) {
+							for (BiologicalNodeAbstract key : pw.getTransformationInformation().getBnToPnMapping()
+									.keySet()) {
+								if (pw.getTransformationInformation().getBnToPnMapping().get(key) == place) {
 									labelsR1.add(key.getName());
 									break;
 								}
@@ -1278,9 +1289,10 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					seriesListR1.add(s);
 					dataset.addSeries(s);
 					if (hiddenPN) {
-						if (pw.getBnToPnMapping().containsValue(transition)) {
-							for (BiologicalNodeAbstract key : pw.getBnToPnMapping().keySet()) {
-								if (pw.getBnToPnMapping().get(key) == transition) {
+						if (pw.getTransformationInformation().getBnToPnMapping().containsValue(transition)) {
+							for (BiologicalNodeAbstract key : pw.getTransformationInformation().getBnToPnMapping()
+									.keySet()) {
+								if (pw.getTransformationInformation().getBnToPnMapping().get(key) == transition) {
 									labelsR1.add(key.getName());
 									break;
 								}
@@ -1303,7 +1315,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		// System.out.println("done nodes");
 		Iterator<BiologicalEdgeAbstract> itEdges;
 		if (hiddenPN) {
-			itEdges = pw.getPetriNet().getAllEdges().iterator();
+			itEdges = pw.getTransformationInformation().getPetriNet().getAllEdges().iterator();
 		} else {
 			itEdges = pw.getAllEdges().iterator();
 		}
@@ -1356,7 +1368,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 	private BiologicalNodeAbstract resolveHidden(BiologicalNodeAbstract bna) {
 		if (hiddenPN) {
-			return pw.getBnToPnMapping().get(bna);
+			return pw.getTransformationInformation().getBnToPnMapping().get(bna);
 		}
 		return bna;
 	}

@@ -8,6 +8,7 @@ public class RuleEdge {
 	private String type;
 	private RuleNode from;
 	private RuleNode to;
+	private boolean directed;
 	private Map<String, String> parameterMap = new HashMap<>();
 
 	public RuleEdge(String name, String type, RuleNode from, RuleNode to) {
@@ -47,6 +48,14 @@ public class RuleEdge {
 
 	public void setTo(RuleNode to) {
 		this.to = to;
+	}
+
+	public boolean isDirected() {
+		return directed;
+	}
+
+	public void setDirected(boolean directed) {
+		this.directed = directed;
 	}
 
 	public Map<String, String> getParameterMap() {

@@ -87,8 +87,10 @@ import petriNet.ReachController;
 import petriNet.SimpleMatrixDouble;
 import transformation.Rule;
 import transformation.RuleManager;
+import transformation.TransformationInformation;
 import transformation.Transformator;
 import transformation.gui.RuleManagementWindow;
+import transformation.gui.TransformationInformationWindow;
 import util.KineticBuilder;
 import util.VanesaUtility;
 import xmlOutput.sbml.JSBMLoutput;
@@ -190,7 +192,8 @@ public class MenuListener implements ActionListener {
 					new SaveDialog( // GRAPHML+MO+GON=14
 							SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO + SaveDialog.FORMAT_GON
 							// + SaveDialog.FORMAT_SBML
-									+ SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_ITXT + SaveDialog.FORMAT_TXT, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+									+ SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_ITXT + SaveDialog.FORMAT_TXT,
+							SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 					// +SaveDialog.FORMAT_SBML);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network first.");
@@ -1050,8 +1053,8 @@ public class MenuListener implements ActionListener {
 			wvv = pw.prepareGraphToPrint();
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, SaveDialog.DATA_TYPE_GRAPH_PICTURE, wvv,
-							MainWindow.getInstance().getFrame(), null);
+					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, SaveDialog.DATA_TYPE_GRAPH_PICTURE,
+							wvv, MainWindow.getInstance().getFrame(), null);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
@@ -1090,6 +1093,11 @@ public class MenuListener implements ActionListener {
 				if (pw.hasGotAtLeastOneElement() && !pw.isPetriNet()) {
 					List<Rule> rules = RuleManager.getInstance().getActiveRules();
 
+					if(rules.size() == 0){
+						MyPopUp.getInstance().show("Error",
+								"No active transformation rules found!.");
+						return;
+					}
 					// MainWindow w = MainWindow.getInstance();
 					// new CreatePathway();
 					// graphInstance.getPathway().setPetriNet(true);
@@ -1098,8 +1106,13 @@ public class MenuListener implements ActionListener {
 					// petriNet = graphInstance.getPathway();
 					Transformator t = new Transformator();
 					Pathway petriNet = t.transform(pw, rules);
-					pw.setPetriNet(petriNet);
-					pw.setBnToPnMapping(t.getBnToPN());
+					TransformationInformation tInfo = new TransformationInformation();
+					tInfo.setPetriNet(petriNet);
+					tInfo.setBnToPnMapping(t.getBnToPN());
+					tInfo.setMatches(t.getMatches());
+					pw.setTransformationInformation(tInfo);
+					// pw.setPetriNet(petriNet);
+					// pw.setBnToPnMapping(t.getBnToPN());
 					w.updateProjectProperties();
 					// CreatePathway.showPathway(petriNet);
 				} else {
@@ -1116,8 +1129,23 @@ public class MenuListener implements ActionListener {
 		case showPN:
 			if (con.containsPathway()) {
 				pw = graphInstance.getPathway();
-				if (pw.getPetriNet() != null && !pw.isPetriNet()) {
-					CreatePathway.showPathway(pw.getPetriNet());
+				if (pw.getTransformationInformation() != null && pw.getTransformationInformation().getPetriNet() != null
+						&& !pw.isPetriNet()) {
+					CreatePathway.showPathway(pw.getTransformationInformation().getPetriNet());
+				} else {
+					MyPopUp.getInstance().show("Error",
+							"Please transform the biological network into a Petri net first!.");
+				}
+			} else {
+				MyPopUp.getInstance().show("Error", "Please create a network first.");
+			}
+			break;
+		case showTransformResult:
+			if (con.containsPathway()) {
+				pw = graphInstance.getPathway();
+				if (pw.getTransformationInformation() != null && pw.getTransformationInformation().getPetriNet() != null
+						&& !pw.isPetriNet()) {
+					new TransformationInformationWindow(pw).show();
 				} else {
 					MyPopUp.getInstance().show("Error",
 							"Please transform the biological network into a Petri net first!.");
