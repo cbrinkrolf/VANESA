@@ -5,7 +5,6 @@ public enum MenuActionCommands {
     datamining("datamining"),
     dataLabelMapping("dataLabelMapping"),
     phospho("phospho"),
-    mirnaTest("mirnaTest"),
     enrichGene("enrichGene"),
     enrichMirna("enrichMirna"),
     shake("shake"),

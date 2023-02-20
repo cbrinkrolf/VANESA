@@ -10,7 +10,7 @@ import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
 
-import database.Connection.DBconnection;
+import database.Connection.DBConnection;
 import gui.MyPopUp;
 import util.VanesaUtility;
 
@@ -19,7 +19,7 @@ import util.VanesaUtility;
  * @version 1.0 20.10.2010
  */
 public class ConnectionSettings {
-	private static DBconnection db_connection = null;
+	private static DBConnection db_connection = null;
 	private static boolean useInternetConnection = true;
 
 	private static boolean localMiRNA = false;
@@ -29,10 +29,11 @@ public class ConnectionSettings {
 	private static boolean localIntact = false;
 	private static boolean localBrenda = false;
 
-	private static String web_service_url = new String();
+	private static String apiUrl = "";
+	private static String webServiceUrl = "";
 
-	private static String proxy_host = new String();
-	private static String proxy_port = new String();
+	private static String proxyHost = "";
+	private static String proxyPort = "";
 
 	private static XMLConfiguration xmlConfiguration = null;
 
@@ -129,14 +130,14 @@ public class ConnectionSettings {
 	/**
 	 * @return the db_connection
 	 */
-	public DBconnection getDBConnection() {
+	public DBConnection getDBConnection() {
 		return db_connection;
 	}
 
 	/**
 	 * @param db_connection the db_connection to set
 	 */
-	public void setDBConnection(DBconnection db_connection) {
+	public void setDBConnection(DBConnection db_connection) {
 		ConnectionSettings.db_connection = db_connection;
 	}
 
@@ -158,7 +159,7 @@ public class ConnectionSettings {
 	 * @return the proxy_host
 	 */
 	public String getProxyHost() {
-		return proxy_host;
+		return proxyHost;
 	}
 
 	/**
@@ -166,14 +167,14 @@ public class ConnectionSettings {
 	 */
 	public void setProxyHost(String proxy_host) {
 		System.setProperty("http.proxyHost", proxy_host);
-		ConnectionSettings.proxy_host = proxy_host;
+		ConnectionSettings.proxyHost = proxy_host;
 	}
 
 	/**
 	 * @return the proxy_port
 	 */
 	public String getProxyPort() {
-		return proxy_port;
+		return proxyPort;
 	}
 
 	/**
@@ -181,21 +182,29 @@ public class ConnectionSettings {
 	 */
 	public void setProxyPort(String proxy_port) {
 		System.setProperty("http.proxyPort", proxy_port);
-		ConnectionSettings.proxy_port = proxy_port;
+		ConnectionSettings.proxyPort = proxy_port;
 	}
 
 	/**
 	 * @return the web_service_url
 	 */
 	public String getWebServiceUrl() {
-		return web_service_url;
+		return webServiceUrl;
 	}
 
 	/**
-	 * @param web_service_url the web_service_url to set
+	 * @param webServiceUrl the web_service_url to set
 	 */
-	public void setWebServiceUrl(String web_service_url) {
-		ConnectionSettings.web_service_url = web_service_url;
+	public void setWebServiceUrl(String webServiceUrl) {
+		ConnectionSettings.webServiceUrl = webServiceUrl;
+	}
+
+	public String getApiUrl() {
+		return apiUrl;
+	}
+
+	public void setApiUrl(String apiUrl) {
+		ConnectionSettings.apiUrl = apiUrl;
 	}
 
 	public boolean isLocalKegg() {

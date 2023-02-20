@@ -14,6 +14,7 @@
 	<entry key="settings.default.database.mirna_New">db_mirna6</entry>
 	
 	<entry key="settings.default.webservice.url">http://tunicata.techfak.uni-bielefeld.de/webservice/db</entry>
+	<entry key="settings.default.api.url">https://vanesa-api.kalis-amts.de</entry>
 	<entry key="settings.default.proxy.host"/>
 	<entry key="settings.default.proxy.port"/>
 </properties>

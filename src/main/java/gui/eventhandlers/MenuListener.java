@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -25,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.xml.stream.XMLStreamException;
 
+import graph.jung.classes.MyGraph;
 import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
 import org.apache.commons.io.FileUtils;
@@ -96,7 +98,6 @@ import util.VanesaUtility;
 import xmlOutput.sbml.JSBMLoutput;
 
 public class MenuListener implements ActionListener {
-
 	private MyTable tP;
 	private MyTable tT;
 	private MyTable tI;
@@ -759,7 +760,7 @@ public class MenuListener implements ActionListener {
 			 * ShortestPath sp; for (int i = 0; i < nodeList.size(); i++) { n =
 			 * nodeList.get(i); vTemp = new ShortestPath(root.getVertex().toString(), n
 			 * .getVertex().toString(), true) .calculateShortestPath();
-			 * 
+			 *
 			 * // = sp.calculateShortestPath(); if (vTemp.size() < minDist) { v =
 			 * (Vector<Vertex>) vTemp.clone(); minDist = v.size();
 			 * System.out.println("dist: " + minDist); } } System.out.println(v); Set edges;
@@ -768,7 +769,7 @@ public class MenuListener implements ActionListener {
 			 * CovEdge ce; while (allIt.hasNext()) { o = allIt.next(); if (o instanceof
 			 * CovEdge) { ce = (CovEdge) o; edgeLabel.put(ce.getEdge().toString(),
 			 * ce.getLabel()); } }
-			 * 
+			 *
 			 * // BiologicalEdgeAbstract edge; // CovEdge ce; Vertex vertex; for (int i = 1;
 			 * i < v.size(); i++) { vertex = v.get(i); // System.out.println("v: "+vertex);
 			 * // System.out.println("v2: " +v.get(i-1)); edges = vertex.getOutEdges();
@@ -777,7 +778,7 @@ public class MenuListener implements ActionListener {
 			 * if (edge.getEndpoints().getSecond().toString().equals( v.get(i -
 			 * 1).toString())) { // System.out.println("Edge: " +edge.toString());
 			 * System.out.println(edgeLabel.get(edge.toString())); break; }
-			 * 
+			 *
 			 * } } }
 			 */
 
@@ -880,7 +881,6 @@ public class MenuListener implements ActionListener {
 						}
 						System.out.println("file found");
 						// stop();
-						// System.out.println("restart");
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -903,7 +903,6 @@ public class MenuListener implements ActionListener {
 				pb = new ProcessBuilder(bin, docDir + "doc.tex");
 				pb.directory(new File(docDir));
 				p = pb.start();
-				// System.out.println(p.isAlive());
 
 				Thread t = new Thread() {
 					public void run() {
@@ -911,7 +910,6 @@ public class MenuListener implements ActionListener {
 							BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 							while (p.isAlive()) {
 								System.out.println(br.readLine());
-								// System.out.println("sleep");
 								sleep(100);
 								System.out.println("alive1");
 							}
@@ -923,12 +921,9 @@ public class MenuListener implements ActionListener {
 							while (p2.isAlive()) {
 								System.out.println(br2.readLine());
 								sleep(100);
-								// System.out.println("alive2");
 							}
 							System.out.println("pdf ended");
-							MyPopUp.getInstance().show("Latex compiltion successful!",
-									"PDF can be found at:\n" + docDir);
-							// System.out.println("restart");
+							MyPopUp.getInstance().show("Latex compilation successful!", "PDF can be found at:\n" + docDir);
 							// stop();
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -943,7 +938,6 @@ public class MenuListener implements ActionListener {
 			}
 			break;
 		case dataLabelMapping:
-
 			// Open new window for file input
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
 				try {
@@ -952,101 +946,30 @@ public class MenuListener implements ActionListener {
 					ioe.printStackTrace();
 				} catch (InputFormatException ife) {
 					MyPopUp.getInstance().show("Inputfile error", ife.getMessage());
-					// JOptionPane.showMessageDialog(w, ife.getMessage(),
-					// "Inputfile error", JOptionPane.ERROR_MESSAGE);
+					// JOptionPane.showMessageDialog(w, ife.getMessage(), "Inputfile error", JOptionPane.ERROR_MESSAGE);
 				}
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case mirnaTest:
-			System.out.println("mirnatest");
-			MirnaStatistics mirna = new MirnaStatistics(null);
-			mirna.createKeggStatistics(true, true, !true);
-			break;
 		case enrichMirna:
-			if (con.containsPathway()) {
-				pw = graphInstance.getPathway();
-				if (pw.hasGotAtLeastOneElement()) {
-
-					mirna = new MirnaStatistics(pw);
-					mirna.enrichMirnas(true, true, false);
-				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network first.");
-				}
+			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				MirnaStatistics mirna = new MirnaStatistics(graphInstance.getPathway());
+				mirna.enrichMirnas(true, true, false);
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case enrichGene:
-			// System.out.println("targets: ");
-			if (con.containsPathway()) {
-				pw = graphInstance.getPathway();
-				if (pw.hasGotAtLeastOneElement()) {
-					mirna = new MirnaStatistics(pw);
-					mirna.enrichGenes(true, true, false);
-				} else {
-					MyPopUp.getInstance().show("Error", "Please create a network first.");
-				}
+			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				MirnaStatistics mirna = new MirnaStatistics(graphInstance.getPathway());
+				mirna.enrichGenes(true, true, false);
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case shake:
-			if (con.containsPathway()) {
-				Runnable animator = new Runnable() {
-
-					@Override
-					public void run() {
-						BiologicalNodeAbstract bna;
-						Point2D p;
-						Point2D inv;
-						GraphInstance graphInstance = new GraphInstance();
-						for (int i = 0; i < 10; i++) { // //
-							double offset = 5;
-							if (i % 2 == 0) {
-								offset *= -1;
-							}
-							VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance
-									.getPathway().getGraph().getVisualizationViewer();
-							double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)
-									.getScale();
-							double scaleL = vv.getRenderContext().getMultiLayerTransformer()
-									.getTransformer(Layer.LAYOUT).getScale();
-							double scale;
-							if (scaleV < 1) {
-								scale = scaleV;
-							} else {
-								scale = scaleL;
-							}
-							offset /= scale;
-
-							Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes()
-									.iterator();
-							while (it.hasNext()) {
-								bna = it.next();
-
-								if (bna instanceof Enzyme) {
-									p = graphInstance.getPathway().getGraph().getVertexLocation(bna); //
-									inv = graphInstance.getPathway().getGraph().getVisualizationViewer()
-											.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
-									graphInstance.getPathway().getGraph().getVisualizationViewer().getRenderContext()
-											.getMultiLayerTransformer().transform(inv);
-									vv.getModel().getGraphLayout().setLocation(bna,
-											new Point2D.Double(p.getX() + offset, p.getY()));
-								}
-							}
-							try {
-								Thread.sleep(100);
-							} catch (InterruptedException ex) {
-							}
-						}
-					}
-				};
-
-				thread = new Thread(animator);
-				thread.start();
-			}
+			shakeEnzymes();
 			break;
 		case graphPicture:
 			pw = graphInstance.getPathway();
@@ -1094,8 +1017,7 @@ public class MenuListener implements ActionListener {
 					List<Rule> rules = RuleManager.getInstance().getActiveRules();
 
 					if(rules.size() == 0){
-						MyPopUp.getInstance().show("Error",
-								"No active transformation rules found!.");
+						MyPopUp.getInstance().show("Error", "No active transformation rules found!.");
 						return;
 					}
 					// MainWindow w = MainWindow.getInstance();
@@ -1117,7 +1039,7 @@ public class MenuListener implements ActionListener {
 					// CreatePathway.showPathway(petriNet);
 				} else {
 					MyPopUp.getInstance().show("Error",
-							"Please create a biologial network first. A Petri net cannot be transformed!.");
+							"Please create a biological network first. A Petri net cannot be transformed!.");
 				}
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
@@ -1168,6 +1090,46 @@ public class MenuListener implements ActionListener {
 		}
 	}
 
+	private void shakeEnzymes() {
+		if (!GraphContainer.getInstance().containsPathway()) {
+			return;
+		}
+		CompletableFuture.runAsync(() -> {
+			GraphInstance graphInstance = new GraphInstance();
+            Pathway pw = graphInstance.getPathway();
+            MyGraph graph = pw.getGraph();
+			for (int i = 0; i < 10; i++) {
+				double offset = 5;
+				if (i % 2 == 0) {
+					offset *= -1;
+				}
+				VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv =
+                        pw.getGraph().getVisualizationViewer();
+				double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
+				double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
+				double scale;
+				if (scaleV < 1) {
+					scale = scaleV;
+				} else {
+					scale = scaleL;
+				}
+				offset /= scale;
+				for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+					if (bna instanceof Enzyme) {
+						Point2D p = graph.getVertexLocation(bna);
+						Point2D inv = graph.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(p);
+                        graph.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().transform(inv);
+						vv.getModel().getGraphLayout().setLocation(bna, new Point2D.Double(p.getX() + offset, p.getY()));
+					}
+				}
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException ignored) {
+				}
+			}
+		});
+	}
+
 	private double[][] initArray(int m, int n) {
 		double[][] array = new double[m][n];
 		for (int i = 0; i < m; i++) {
@@ -1183,11 +1145,11 @@ public class MenuListener implements ActionListener {
 		Iterator<BiologicalNodeAbstract> hsit = graphInstance.getPathway().getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		Place p;
-		HashMap<BiologicalNodeAbstract, Integer> hmplaces = new HashMap<BiologicalNodeAbstract, Integer>();
-		HashMap<BiologicalNodeAbstract, Integer> hmtransitions = new HashMap<BiologicalNodeAbstract, Integer>();
+		HashMap<BiologicalNodeAbstract, Integer> hmplaces = new HashMap<>();
+		HashMap<BiologicalNodeAbstract, Integer> hmtransitions = new HashMap<>();
 		int numberPlaces = 0;
 		int numberTransitions = 0;
-		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<>();
 		while (hsit.hasNext()) {
 			bna = (BiologicalNodeAbstract) hsit.next();
 			if (bna instanceof Transition) {
@@ -1197,7 +1159,6 @@ public class MenuListener implements ActionListener {
 				p = (Place) bna;
 				hmplaces.put(bna, numberPlaces);
 				names.add(p.getName());
-				// System.out.println("name: " + p.getName());
 				this.start.add(p.getTokenStart());
 				numberPlaces++;
 			}
@@ -1235,5 +1196,4 @@ public class MenuListener implements ActionListener {
 
 		c = new DenseDoubleMatrix2D(cMatrix.getData());
 	}
-
 }

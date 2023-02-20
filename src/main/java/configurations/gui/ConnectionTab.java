@@ -22,7 +22,7 @@ import javax.swing.JTextField;
 import configurations.ConnectionSettings;
 import configurations.ResourceLibrary;
 import configurations.asyncWebservice.AsynchroneWebServiceWrapper;
-import database.Connection.DBconnection;
+import database.Connection.DBConnection;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -50,7 +50,7 @@ public class ConnectionTab extends JPanel {
 	private JCheckBox brendaChk = new JCheckBox("Brenda");
 	private JCheckBox mirnaChk = new JCheckBox("miRNA");
 
-	private DBconnection db_connection = ConnectionSettings.getInstance().getDBConnection();
+	private DBConnection db_connection = ConnectionSettings.getInstance().getDBConnection();
 
 	private AsynchroneWebServiceWrapper asyn_webservice = AsynchroneWebServiceWrapper.getInstance();
 	private JCheckBox withWSAasynchron = new JCheckBox("", asyn_webservice.isWithAddressing());

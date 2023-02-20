@@ -1,30 +1,13 @@
 package database.kegg;
 
-import java.awt.Color;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.swing.SwingWorker;
-
+import api.payloads.Response;
+import api.payloads.dbMirna.DBMirnaMature;
+import api.payloads.dbMirna.MaturesTargetingGeneResponsePayload;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.*;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Complex;
-import biologicalObjects.nodes.DNA;
-import biologicalObjects.nodes.Enzyme;
-import biologicalObjects.nodes.KEGGNode;
-import biologicalObjects.nodes.OrthologGroup;
-import biologicalObjects.nodes.Other;
-import biologicalObjects.nodes.PathwayMap;
-import biologicalObjects.nodes.SRNA;
-import biologicalObjects.nodes.Metabolite;
-import configurations.Wrapper;
-import database.mirna.miRNAqueries;
+import biologicalObjects.nodes.*;
+import database.mirna.gui.MirnaQueryMask;
 import graph.CreatePathway;
 import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
@@ -32,6 +15,15 @@ import graph.jung.classes.MyGraph;
 import graph.layouts.Circle;
 import gui.MainWindow;
 import pojos.DBColumn;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class KEGGConnector extends SwingWorker<Object, Object> {
 	private String title;
@@ -65,8 +57,8 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 	private List<DBColumn> allRnReactions = new ArrayList<>();
 	private List<DBColumn> allKoReactions = new ArrayList<>();
 
-	private final HashMap<BiologicalNodeAbstract, List<DBColumn>> allSpecificMicroRNAs = new HashMap<>();
-	private final HashMap<String, SRNA> srnas = new HashMap<>();
+	private final HashMap<BiologicalNodeAbstract, DBMirnaMature[]> allSpecificMicroRNAs = new HashMap<>();
+	private final HashMap<String, MIRNA> mirnas = new HashMap<>();
 	private boolean dontCreatePathway = false;
 	private String pathwayOrg;
 
@@ -168,16 +160,13 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 		// colorMirnas(this.mirnas, this.mirnaName);
 		// }
 		if (isSearchMicroRNAs()) {
-			final String QUESTION_MARK = "\\?";
 			for (BiologicalNodeAbstract bna : pw.getVertices().keySet()) {
 				if (bna instanceof DNA) {
-					String finalQueryString = miRNAqueries.miRNA_get_TargetingMirnas.replaceFirst(QUESTION_MARK,
-																						   "'" + bna.getLabel() + "'");
-					List<DBColumn> dbcol = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
-					//System.out.println(finalQueryString);
-					//System.out.println(dbcol.size());
-					if (dbcol.size() > 0) {
-						allSpecificMicroRNAs.put(bna, dbcol);
+					Response<MaturesTargetingGeneResponsePayload> response =
+							MirnaQueryMask.retrieveMaturesTargetingGene(false, bna.getLabel());
+					if (response.payload != null && response.payload.results != null &&
+							response.payload.results.length > 0) {
+						allSpecificMicroRNAs.put(bna, response.payload.results);
 					}
 				}
 			}
@@ -329,22 +318,18 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
 	private void drawMicroRNAs() {
 		for (BiologicalNodeAbstract bna : allSpecificMicroRNAs.keySet()) {
-			for (DBColumn dbColumn : allSpecificMicroRNAs.get(bna)) {
-				String[] column = dbColumn.getColumn();
-				SRNA srna;
-				if (srnas.containsKey(column[0])) {
-					 srna = srnas.get(column[0]);
+			for (DBMirnaMature mature : allSpecificMicroRNAs.get(bna)) {
+				MIRNA mirna;
+				if (mirnas.containsKey(mature.name)) {
+					 mirna = mirnas.get(mature.name);
 				} else {
-					srna = new SRNA(column[0], column[0]);
-					//p = new Point2D.Double(myGraph.getVertexLocation(bna).getX(), myGraph.getVertexLocation(bna).getY());
-					//.findNearestFreeVertexPosition(bna.getKEGGnode()
-					//.getXPos(), bna.getKEGGnode().getYPos(), 100);
-					Point2D p = Circle.getPointOnCircle(myGraph.getVertexLocation(bna), 20, 2.0*((double) (Math.random()%(Math.PI))));
-					pw.addVertex(srna, p);
-					srnas.put(column[0], srna);
-					srnaParents.put(srna.getID(), bna.getID());
+					mirna = new MIRNA(mature.name, mature.name);
+					Point2D p = Circle.getPointOnCircle(myGraph.getVertexLocation(bna), 20, 2.0*((Math.random()%Math.PI)));
+					pw.addVertex(mirna, p);
+					mirnas.put(mature.name, mirna);
+					srnaParents.put(mirna.getID(), bna.getID());
 				}
-				Expression e = new Expression("", "", srna, bna);
+				Expression e = new Expression("", "", mirna, bna); // TODO: this is not an expression???
 				e.setDirected(true);
 				pw.addEdge(e);
 			}
@@ -528,11 +513,11 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 		this.searchMicroRNAs = searchMicroRNAs;
 	}
 	
-	public void setAutoCoarse(boolean autoCoarse){
+	public void setAutoCoarse(boolean autoCoarse) {
 		this.autoCoarse = autoCoarse;
 	}
 	
-	public boolean isAutoCoarse(){
+	public boolean isAutoCoarse() {
 		return autoCoarse;
 	}
 

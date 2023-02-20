@@ -123,10 +123,6 @@ public class MenuBarClass {
 		phosphoImport.addActionListener(MenuListener.getInstance());
 		phosphoImport.setActionCommand(MenuActionCommands.phospho.value);
 
-		JMenuItem mirnaTest = new JMenuItem("MirnaTest");
-		mirnaTest.addActionListener(MenuListener.getInstance());
-		mirnaTest.setActionCommand(MenuActionCommands.mirnaTest.value);
-
 		JMenuItem enrichGene = new JMenuItem("Enrich genes with miRNA");
 		enrichGene.setToolTipText("enriches (selected) genes with miRNA information");
 		enrichGene.addActionListener(MenuListener.getInstance());
@@ -395,7 +391,6 @@ public class MenuBarClass {
 		graph.add(phosphoImport);
 
 		if (MainWindow.developer) {
-			graph.add(mirnaTest);
 			graph.add(enrichGene);
 			graph.add(enrichMirna);
 			graph.add(shake);
