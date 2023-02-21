@@ -10,19 +10,16 @@ import biologicalObjects.nodes.petriNet.*;
 import graph.CreatePathway;
 import gui.MainWindow;
 import gui.RangeSelector;
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import util.VanesaUtility;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class VAMLInput {
     private final File file;
@@ -34,38 +31,34 @@ public class VAMLInput {
 
     public VAMLInput(File file, Pathway pw) throws IOException {
         this.file = file;
-        try {
-            getData(pw);
-        } catch (ParserConfigurationException | SAXException | XMLStreamException e) {
-            throw new IOException(e);
-        }
+        getData(pw);
     }
 
     private void addProjectDetails(Pathway pw, Element projectEL) {
-        for (Element element : getChildren(projectEL)) {
-            String localName = element.getLocalName();
+        for (Element element : projectEL.getChildren()) {
+            String localName = element.getName();
             boolean[] set = new boolean[11];
             // if (localName.equals("title")) {
             //     pw.setTitle(file.getName());
             // }
             if (localName.equals("isPetriNet")) {
-                pw.setIsPetriNet(Boolean.parseBoolean(element.getTextContent()));
+                pw.setIsPetriNet(Boolean.parseBoolean(element.getText()));
             } else if (localName.equals("organism")) {
-                pw.setOrganism(element.getTextContent());
+                pw.setOrganism(element.getText());
             } else if (localName.equals("organismSpecification")) {
-                pw.setOrganismSpecification(element.getTextContent());
+                pw.setOrganismSpecification(element.getText());
             } else if (localName.equals("author")) {
-                pw.setAuthor(element.getTextContent());
+                pw.setAuthor(element.getText());
             } else if (localName.equals("version")) {
-                pw.setVersion(element.getTextContent());
+                pw.setVersion(element.getText());
             } else if (localName.equals("date")) {
-                pw.setDate(element.getTextContent());
+                pw.setDate(element.getText());
             } else if (localName.equals("description")) {
-                pw.setDescription(element.getTextContent());
+                pw.setDescription(element.getText());
             } else if (localName.equals("settings")) {
                 int i = 0;
-                for (Element s : getChildren(element)) {
-                    set[i] = !s.getTextContent().equals("false");
+                for (Element s : element.getChildren()) {
+                    set[i] = !s.getText().equals("false");
                     i++;
                 }
                 // pw.setSettings(set);
@@ -75,13 +68,8 @@ public class VAMLInput {
 
     private void addRange(Pathway pw, Element rangeElement) {
         Map<String, String> attrs = new HashMap<>();
-        NamedNodeMap attributes = rangeElement.getAttributes();
-        for (int i = 0; i < attributes.getLength(); i++) {
-            Node n = attributes.item(i);
-            if (n instanceof Attr) {
-                Attr attr = (Attr) n;
-                attrs.put(attr.getLocalName(), attr.getNodeValue());
-            }
+        for (Attribute attr : rangeElement.getAttributes()) {
+            attrs.put(attr.getName(), attr.getValue());
         }
         RangeSelector.getInstance().addRangesInMyGraph(pw.getGraph(), attrs);
     }
@@ -100,59 +88,59 @@ public class VAMLInput {
         String function = "";
         double activationProb = 0.0;
         // String sequence = "";
-        for (Element element : getChildren(edgeElement)) {
-            String localName = element.getLocalName();
+        for (Element element : edgeElement.getChildren()) {
+            String localName = element.getName();
             if (localName.equals("elementSpecification")) {
-                elementSpecification = element.getTextContent();
+                elementSpecification = element.getText();
             } else if (localName.equals("id")) {
                 try {
-                    id = Integer.parseInt(element.getTextContent());
+                    id = Integer.parseInt(element.getText());
                 } catch (NumberFormatException e) {
-                    id = Integer.parseInt(element.getTextContent().substring(1));
+                    id = Integer.parseInt(element.getText().substring(1));
                 }
             } else if (localName.equals("from")) {
                 try {
-                    from = Integer.parseInt(element.getTextContent());
+                    from = Integer.parseInt(element.getText());
                 } catch (NumberFormatException e) {
-                    from = Integer.parseInt(element.getTextContent().substring(1));
+                    from = Integer.parseInt(element.getText().substring(1));
                 }
             } else if (localName.equals("to")) {
-                // to = Integer.parseInt(element.getTextContent());
+                // to = Integer.parseInt(element.getText());
                 try {
-                    to = Integer.parseInt(element.getTextContent());
+                    to = Integer.parseInt(element.getText());
                 } catch (NumberFormatException e) {
-                    to = Integer.parseInt(element.getTextContent().substring(1));
+                    to = Integer.parseInt(element.getText().substring(1));
                 }
             } else if (localName.equals("comment")) {
-                comment = element.getTextContent();
+                comment = element.getText();
             } else if (localName.equals("label")) {
-                label = element.getTextContent();
+                label = element.getText();
             } else if (localName.equals("name")) {
-                name = element.getTextContent();
+                name = element.getText();
             } else if (localName.equals("colour")) {
-                color = new Color(Integer.parseInt(element.getAttribute("r")),
-                        Integer.parseInt(element.getAttribute("g")),
-                        Integer.parseInt(element.getAttribute("b")));
+                color = new Color(Integer.parseInt(element.getAttribute("r").getValue()),
+                        Integer.parseInt(element.getAttribute("g").getValue()),
+                        Integer.parseInt(element.getAttribute("b").getValue()));
             } else if (localName.equals("isDirected")) {
-                directed = element.getTextContent();
+                directed = element.getText();
             } else if (localName.equals("ReactionPairEdge")) {
                 rpEdge = new ReactionPairEdge();
-                for (Element element2 : getChildren(element)) {
-                    if (element2.getLocalName().equals("name")) {
-                        String name2 = element2.getTextContent();
+                for (Element element2 : element.getChildren()) {
+                    if (element2.getName().equals("name")) {
+                        String name2 = element2.getText();
                         rpEdge.setName(name2);
-                    } else if (element2.getLocalName().equals("id")) {
-                        rpEdge.setReactionPairID(element2.getTextContent());
-                    } else if (element2.getLocalName().equals("type")) {
-                        rpEdge.setType(element2.getTextContent());
+                    } else if (element2.getName().equals("id")) {
+                        rpEdge.setReactionPairID(element2.getText());
+                    } else if (element2.getName().equals("type")) {
+                        rpEdge.setType(element2.getText());
                     }
                 }
             } else if (localName.equals("passingTokens")) {
-                function = element.getTextContent();
+                function = element.getText();
             } else if (localName.equals("function")) {
-                function = element.getTextContent();
+                function = element.getText();
             } else if (localName.equals("activationProbability"))
-                activationProb = Double.parseDouble(element.getTextContent());
+                activationProb = Double.parseDouble(element.getText());
         }
         if (mapping.containsKey(from) && mapping.containsKey(to)) {
             boolean isDirected = directed.equals("true");
@@ -222,9 +210,9 @@ public class VAMLInput {
 
     private KEGGNode addKeggNode(Element keggElement) {
         KEGGNode node = new KEGGNode();
-        for (Element element : getChildren(keggElement)) {
-            String localName = element.getLocalName();
-            String elementText = element.getTextContent();
+        for (Element element : keggElement.getChildren()) {
+            String localName = element.getName();
+            String elementText = element.getText();
             if (localName.equals("entryID")) {
                 node.setKEGGentryID(elementText);
             } else if (localName.equals("entryMap")) {
@@ -334,20 +322,20 @@ public class VAMLInput {
             } else if (localName.equals("graphicBackgroundColour")) {
                 node.setBackgroundColour(elementText);
             } else if (localName.equals("allDBLinks")) {
-                for (Element temp : getChildren(element)) {
-                    node.addDBLink(temp.getTextContent());
+                for (Element temp : element.getChildren()) {
+                    node.addDBLink(temp.getText());
                 }
             } else if (localName.equals("allPathways")) {
-                for (Element temp : getChildren(element)) {
-                    node.addPathwayLink(temp.getTextContent());
+                for (Element temp : element.getChildren()) {
+                    node.addPathwayLink(temp.getText());
                 }
             } else if (localName.equals("allStructures")) {
-                for (Element temp : getChildren(element)) {
-                    node.addStructure(temp.getTextContent());
+                for (Element temp : element.getChildren()) {
+                    node.addStructure(temp.getText());
                 }
             } else if (localName.equals("allMotifs")) {
-                for (Element temp : getChildren(element)) {
-                    node.addGeneMotif(temp.getTextContent());
+                for (Element temp : element.getChildren()) {
+                    node.addGeneMotif(temp.getText());
                 }
             }
         }
@@ -357,9 +345,9 @@ public class VAMLInput {
     private void addNetworkNode(Pathway pw, Element node) {
         int vertexID;
         try {
-            vertexID = Integer.parseInt(node.getAttribute("id"));
+            vertexID = Integer.parseInt(node.getAttribute("id").getValue());
         } catch (NumberFormatException e) {
-            vertexID = Integer.parseInt(node.getAttribute("id").substring(1));
+            vertexID = Integer.parseInt(node.getAttribute("id").getValue().substring(1));
         }
         String biologicalElement = "";
         String label = "";
@@ -373,20 +361,20 @@ public class VAMLInput {
         KEGGNode keggNode = null;
         String aaSequence = "";
         String pathway = null;
-        for (Element element : getChildren(node)) {
-            String localName = element.getLocalName();
-            String elementText = element.getTextContent();
+        for (Element element : node.getChildren()) {
+            String localName = element.getName();
+            String elementText = element.getText();
             if (localName.equals("pathway"))
                 pathway = elementText;
             else if (localName.equals("coordinates")) {
-                xCoord = Double.parseDouble(element.getAttribute("x"));
-                yCoord = Double.parseDouble(element.getAttribute("y"));
+                xCoord = Double.parseDouble(element.getAttribute("x").getValue());
+                yCoord = Double.parseDouble(element.getAttribute("y").getValue());
             } else if (localName.equals("elementSpecification")) {
                 biologicalElement = elementText;
             } else if (localName.equals("colour")) {
-                color = new Color(Integer.parseInt(element.getAttribute("r")),
-                        Integer.parseInt(element.getAttribute("g")),
-                        Integer.parseInt(element.getAttribute("b")));
+                color = new Color(Integer.parseInt(element.getAttribute("r").getValue()),
+                        Integer.parseInt(element.getAttribute("g").getValue()),
+                        Integer.parseInt(element.getAttribute("b").getValue()));
             } else if (localName.equals("label")) {
                 label = elementText;
             } else if (localName.equals("name")) {
@@ -424,7 +412,7 @@ public class VAMLInput {
             bna = new Receptor(label, name);
         } else if (biologicalElement.equals(Elementdeclerations.mRNA)) {
             bna = new MRNA(label, name);
-            ((MRNA) bna).setNtSequence(node.getAttribute("NtSequence"));
+            ((MRNA) bna).setNtSequence(node.getAttribute("NtSequence").getValue());
         } else if (biologicalElement.equals(Elementdeclerations.orthologGroup)) {
             bna = new OrthologGroup(label, name);
         } else if (biologicalElement.equals(Elementdeclerations.pathwayMap)) {
@@ -453,7 +441,7 @@ public class VAMLInput {
             bna = new Receptor(label, name);
         } else if (biologicalElement.equals(Elementdeclerations.sRNA)) {
             bna = new SRNA(label, name);
-            ((SRNA) bna).setNtSequence(node.getAttribute("NtSequence"));
+            ((SRNA) bna).setNtSequence(node.getAttribute("NtSequence").getValue());
         } else if (biologicalElement.equals(Elementdeclerations.metabolite)) {
             bna = new Metabolite(label, name);
             // kept for legacy
@@ -487,33 +475,33 @@ public class VAMLInput {
             bna = new Site(label, name);
         } else if (biologicalElement.equals("Discrete Place")) {
             bna = new DiscretePlace(label, name);
-            String token = node.getAttribute("token");
-            String tokenMin = node.getAttribute("tokenMin");
-            String tokenMax = node.getAttribute("tokenMax");
-            String tokenStart = node.getAttribute("tokenStart");
+            String token = node.getAttribute("token").getValue();
+            String tokenMin = node.getAttribute("tokenMin").getValue();
+            String tokenMax = node.getAttribute("tokenMax").getValue();
+            String tokenStart = node.getAttribute("tokenStart").getValue();
             ((Place) bna).setToken(Double.parseDouble(token));
             ((Place) bna).setTokenMin(Double.parseDouble(tokenMin));
             ((Place) bna).setTokenMax(Double.parseDouble(tokenMax));
             ((Place) bna).setTokenStart(Double.parseDouble(tokenStart));
         } else if (biologicalElement.equals("Continuous Place")) {
             bna = new ContinuousPlace(label, name);
-            String token = node.getAttribute("token");
-            String tokenMin = node.getAttribute("tokenMin");
-            String tokenMax = node.getAttribute("tokenMax");
-            String tokenStart = node.getAttribute("tokenStart");
+            String token = node.getAttribute("token").getValue();
+            String tokenMin = node.getAttribute("tokenMin").getValue();
+            String tokenMax = node.getAttribute("tokenMax").getValue();
+            String tokenStart = node.getAttribute("tokenStart").getValue();
             ((Place) bna).setToken(Double.parseDouble(token));
             ((Place) bna).setTokenMin(Double.parseDouble(tokenMin));
             ((Place) bna).setTokenMax(Double.parseDouble(tokenMax));
             ((Place) bna).setTokenStart(Double.parseDouble(tokenStart));
         } else if (biologicalElement.equals("Discrete Transition")) {
             bna = new DiscreteTransition(label, name);
-            String delay = node.getAttribute("delay");
+            String delay = node.getAttribute("delay").getValue();
             ((DiscreteTransition) bna).setDelay(Double.parseDouble(delay));
         } else if (biologicalElement.equals("Continuous Transition")) {
             bna = new ContinuousTransition(label, name);
-            String maximalSpeed = node.getAttribute("maximalSpeed");
+            String maximalSpeed = node.getAttribute("maximalSpeed").getValue();
             if (maximalSpeed == null || maximalSpeed.equals("")) {
-                maximalSpeed = node.getAttribute("maximumSpeed");
+                maximalSpeed = node.getAttribute("maximumSpeed").getValue();
             }
             ((ContinuousTransition) bna).setMaximalSpeed(maximalSpeed);
             if (maximalSpeed == null || maximalSpeed.equals("")) {
@@ -522,7 +510,7 @@ public class VAMLInput {
             }
         } else if (biologicalElement.equals("Stochastic Transition")) {
             bna = new StochasticTransition(label, name);
-            ((StochasticTransition) bna).setDistribution(node.getAttribute("distribution"));
+            ((StochasticTransition) bna).setDistribution(node.getAttribute("distribution").getValue());
         }
         if (bna != null) {
             // bna.setCompartment(location);
@@ -530,7 +518,7 @@ public class VAMLInput {
             bna.setComments(comment);
             bna.setColor(color);
             try {
-                int id = Integer.parseInt(node.getAttribute("ElementID"));
+                int id = Integer.parseInt(node.getAttribute("ElementID").getValue());
                 bna.setID(id, pw);
             } catch (Exception e) {
             }
@@ -547,20 +535,17 @@ public class VAMLInput {
         }
     }
 
-    private void getData(Pathway pw) throws IOException, XMLStreamException, ParserConfigurationException, SAXException {
+    private void getData(Pathway pw) throws IOException {
         InputStream in = new FileInputStream(file);
-        XMLInputFactory factory = XMLInputFactory.newInstance();
-        factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.TRUE);
-        factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.FALSE);
-        javax.xml.stream.XMLStreamReader reader = factory.createXMLStreamReader(in);
+        Document doc = VanesaUtility.loadXmlDocument(in);
+        if (doc == null) {
+            throw new IOException("Failed to load XML");
+        }
         if (pw == null) {
             pw = new CreatePathway(file.getName()).getPathway();
         }
         pw.setFile(file);
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(in);
-        Element docEl = doc.getDocumentElement();
+        Element docEl = doc.getRootElement();
         Element modelEl = getFirstChildWithName(docEl, "model");
         if (modelEl != null) {
             Element annotationEL = getFirstChildWithName(modelEl, "annotation");
@@ -571,13 +556,13 @@ public class VAMLInput {
                     if (projectEL != null) {
                         addProjectDetails(pw, projectEL);
                     }
-                    for (Element element : getChildrenWithName(layoutsEL, "element")) {
+                    for (Element element : layoutsEL.getChildren("element")) {
                         addNetworkNode(pw, element);
                     }
-                    for (Element element : getChildrenWithName(layoutsEL, "edge")) {
+                    for (Element element : layoutsEL.getChildren("edge")) {
                         addEdge(pw, element);
                     }
-                    for (Element element : getChildrenWithName(layoutsEL, "rangeInfo")) {
+                    for (Element element : layoutsEL.getChildren("rangeInfo")) {
                         addRange(pw, element);
                     }
                 }
@@ -585,7 +570,6 @@ public class VAMLInput {
         }
         pw.getGraph().restartVisualizationModel();
         MainWindow.getInstance().updateProjectProperties();
-        reader.close();
         try {
             in.close();
         } catch (IOException e) {
@@ -594,23 +578,7 @@ public class VAMLInput {
     }
 
     private Element getFirstChildWithName(Element element, String name) {
-        NodeList children = element.getElementsByTagName(name);
-        return children.getLength() == 0 ? null : (Element) children.item(0);
-    }
-
-    private List<Element> getChildren(Element element) {
-        return getNodeListAsList(element.getChildNodes());
-    }
-
-    private List<Element> getChildrenWithName(Element element, String name) {
-        return getNodeListAsList(element.getElementsByTagName(name));
-    }
-
-    private List<Element> getNodeListAsList(NodeList list) {
-        List<Element> result = new ArrayList<>();
-        for (int i = 0; i < list.getLength(); i++) {
-            result.add((Element) list.item(i));
-        }
-        return result;
+        List<Element> children = element.getChildren(name);
+        return children.size() == 0 ? null : children.get(0);
     }
 }

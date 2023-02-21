@@ -6,8 +6,18 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
 import org.apache.commons.lang3.SystemUtils;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaderSAX2Factory;
+import org.xml.sax.InputSource;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class VanesaUtility {
@@ -69,5 +79,36 @@ public class VanesaUtility {
 						params.fileBased().setFile(new File(filePath)));
 		builder.setAutoSave(true);
 		return builder.getConfiguration();
+	}
+
+	public static void openURLInBrowser(String url) {
+		URI uri = null;
+		try {
+			uri = new URI(url);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		if (Desktop.isDesktopSupported()) {
+			Desktop desktop = Desktop.getDesktop();
+			try {
+				desktop.browse(uri);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static Document loadXmlDocument(InputStream inputStream) {
+		// changed empty constructor SAXBuilder builder = new SAXBuilder();
+		// to following, because open JDK got an error with empty constructor
+		// see: https://stackoverflow.com/questions/11409025/exceptionininitializererror-while-creating-ant-custom-task
+		SAXBuilder builder = new SAXBuilder(new XMLReaderSAX2Factory(false, "org.apache.xerces.parsers.SAXParser"));
+		InputSource in = new InputSource(inputStream);
+		try {
+			return builder.build(in);
+		} catch (JDOMException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

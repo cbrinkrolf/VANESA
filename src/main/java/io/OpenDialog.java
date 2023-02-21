@@ -95,7 +95,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 				}
 			} else if (fileFormat.equals(sbmlDescription)) {
 				JSBMLinput jsbmlInput;
-				jsbmlInput = pathway == null ? new JSBMLinput() : new JSBMLinput(pathway);
+				jsbmlInput = new JSBMLinput(pathway);
 				String result;
 				try {
 					result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
