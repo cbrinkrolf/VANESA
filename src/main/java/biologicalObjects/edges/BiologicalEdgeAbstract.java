@@ -30,7 +30,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	private String biologicalElement = "";
 	private Shape shape;
 	private boolean hasKEGGNode = false;
-	private boolean hasDAWISNode = false;
 	private boolean hasBrendaNode = false;
 	private HashSet<String> labelSet = new HashSet<>();
 	private ArrayList<Parameter> parameters = new ArrayList<>();
@@ -131,14 +130,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	@Override
 	public void setHasKEGGNode(boolean hasKEGGNode) {
 		this.hasKEGGNode = hasKEGGNode;
-	}
-
-	public boolean isHasDAWISNode() {
-		return hasDAWISNode;
-	}
-
-	public void setHasDAWISNode(boolean hasDAWISNode) {
-		this.hasDAWISNode = hasDAWISNode;
 	}
 
 	public boolean hasBrendaNode() {

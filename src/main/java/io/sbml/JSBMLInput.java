@@ -1,4 +1,4 @@
-package xmlInput.sbml;
+package io.sbml;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.IDAlreadyExistException;
@@ -35,7 +35,7 @@ import java.util.*;
  *
  * @author Annika and Sandra
  */
-public class JSBMLinput {
+public class JSBMLInput {
     private Pathway pathway;
     private final Hashtable<Integer, BiologicalNodeAbstract> nodes = new Hashtable<>();
     private final HashMap<String, Integer> string2id = new HashMap<>();
@@ -44,7 +44,7 @@ public class JSBMLinput {
     private final boolean reverseEngineering = false;
     private final ArrayList<ArrayList<String>> inputGroups = new ArrayList<>();
 
-    public JSBMLinput(Pathway pw) {
+    public JSBMLInput(Pathway pw) {
         pathway = pw;
     }
 

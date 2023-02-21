@@ -24,7 +24,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import graph.animations.RegulationTabelModel;
 import io.SaveDialog;
-import miscalleanous.tables.MyTable;
+import gui.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 import petriNet.PlotsPanel;
 import petriNet.SimulationResult;

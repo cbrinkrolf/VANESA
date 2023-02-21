@@ -9,8 +9,8 @@ import javax.xml.stream.XMLStreamException;
 
 import biologicalElements.Pathway;
 import gui.MainWindow;
-import xmlInput.sbml.JSBMLinput;
-import xmlOutput.sbml.JSBMLoutput;
+import io.sbml.JSBMLInput;
+import io.sbml.JSBMLOutput;
 
 public class CreatePathway {
 
@@ -45,13 +45,13 @@ public class CreatePathway {
 			new Thread(new Runnable() {
 				public void run() {
 					try {
-						new JSBMLoutput(out, pathway).generateSBMLDocument();
+						new JSBMLOutput(out, pathway).generateSBMLDocument();
 					} catch (XMLStreamException e) {
 						e.printStackTrace();
 					}
 				}
 			}).start();
-			new JSBMLinput(null).loadSBMLFile(in, pathway.getFile());
+			new JSBMLInput(null).loadSBMLFile(in, pathway.getFile());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

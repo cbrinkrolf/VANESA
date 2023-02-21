@@ -10,7 +10,7 @@ import java.util.Vector;
 
 import configurations.Wrapper;
 import pojos.DBColumn;
-import xmlInput.sbml.MoleculesInput;
+import io.MoleculesInput;
 
 public class MostWantedMolecules {
     private static final String FILENAME = "MoleculesSBML.xml";

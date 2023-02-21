@@ -1,4 +1,4 @@
-package miscalleanous.tables;
+package gui.tables;
 
 import org.jdesktop.swingx.JXTable;
 

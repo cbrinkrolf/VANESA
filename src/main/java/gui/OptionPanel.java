@@ -220,11 +220,7 @@ public class OptionPanel {
 				projectWindow.revalidateView();
 			} else if (element.equals("theory")) {
 				graphAlgorithms.revalidateView();
-			} // else if (element.equals("DAWISVertexWindow")) {
-				// information.revalidateDAWISVertexWindow();
-				// } else if (element.equals("DAWISVertexWindow")) {
-				// //
-				// }
+			}
 			else if (element.equals("pathwayTree")) {
 				pathwayTree.revalidateView();
 			} else if (element.equals("initSimulation")) {

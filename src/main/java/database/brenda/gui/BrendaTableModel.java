@@ -1,7 +1,7 @@
 package database.brenda.gui;
 
 import database.brenda.MoleculeBox;
-import miscalleanous.tables.NodePropertyTableModel;
+import gui.tables.NodePropertyTableModel;
 
 public class BrendaTableModel extends NodePropertyTableModel {
     private static final long serialVersionUID = 1L;

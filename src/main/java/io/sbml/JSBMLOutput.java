@@ -1,4 +1,4 @@
-package xmlOutput.sbml;
+package io.sbml;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -55,7 +55,7 @@ import gui.RangeSelector;
  * @author Annika and Sandra
  *
  */
-public class JSBMLoutput {
+public class JSBMLOutput {
 	/*
 	 * the sbml document which has to be filled
 	 */
@@ -74,7 +74,7 @@ public class JSBMLoutput {
 	private static final String SPEC = "spec_";
 	private static final String REAC = "reac_";
 
-	public JSBMLoutput(OutputStream os, Pathway pathway) {
+	public JSBMLOutput(OutputStream os, Pathway pathway) {
 		this.os = os;
 		this.pathway = pathway;
 	}

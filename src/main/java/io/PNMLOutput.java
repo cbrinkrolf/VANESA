@@ -1,4 +1,4 @@
-package xmlOutput.sbml;
+package io;
 
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -32,26 +32,24 @@ import fr.lip6.move.pnml.ptnet.hlapi.TransitionHLAPI;
 import graph.GraphInstance;
 
 public class PNMLOutput {
-
 	// the pnml document which has to be filled
-	private File file = null;
+	private final File file;
 
 	// list with nodes/places from the petri net
-	private ArrayList<Place> bnaliste = new ArrayList<Place>();
+	private final ArrayList<Place> bnaliste;
 
 	// list with transitions from the petri net
-	private ArrayList<Transition> btaliste = new ArrayList<Transition>();
+	private final ArrayList<Transition> btaliste;
 
 	// list with edges from the petri net
-	private ArrayList<PNArc> bealiste = new ArrayList<PNArc>();
+	private final ArrayList<PNArc> bealiste;
 
 	// For saving Transitionlabel (key) and TransitionHAPLI (value)
-	private HashMap<String, TransitionHLAPI> transitionPNML = new HashMap<String, TransitionHLAPI>();
+	private final HashMap<String, TransitionHLAPI> transitionPNML = new HashMap<>();
 
 	// For saving Placelabel (key) and PlaceHAPLI (value)
-	private HashMap<String, PlaceHLAPI> placePNML = new HashMap<String, PlaceHLAPI>();
+	private final HashMap<String, PlaceHLAPI> placePNML = new HashMap<>();
 
-	private PetriNetHLAPI net;
 	// Transition in pnml
 	private TransitionHLAPI t1;
 
@@ -63,8 +61,6 @@ public class PNMLOutput {
 
 	//private int workspace = 0;
 
-	private int netId = 0;
-
 	private boolean transitionFrom = false;
 
 	private boolean placeFrom = false;
@@ -73,187 +69,109 @@ public class PNMLOutput {
 
 	//private boolean placeTo = false;
 
-	private PetriNetDocHLAPI doc;
-
 	/**
-	 * This constructor needs a file to which the output can be written, a list
-	 * of edges from the petrinet.
-	 * 
-	 * @param file
-	 *            File, the new PNML file.
-	 * @param BiologicalEdgeAbstract
-	 *            bealiste, the graph information are received from here.
+	 * This constructor needs a file to which the output can be written, a list of edges from the petrinet.
 	 */
-	public PNMLOutput(File file, ArrayList<PNArc> bealiste,
-			ArrayList<Place> bnaliste, ArrayList<Transition> btaliste) {
+	public PNMLOutput(File file, ArrayList<PNArc> bealiste, ArrayList<Place> bnaliste, ArrayList<Transition> btaliste) {
 		this.file = file;
 		this.bealiste = bealiste;
 		this.btaliste = btaliste;
 		this.bnaliste = bnaliste;
-
 	}
 
 	/**
 	 * Generates a PNML document with PNML Framework.
 	 * 
-	 * @return boolean true if a document has been written to the specified
-	 *         diretory.
+	 * @return boolean true if a document has been written to the specified directory.
 	 */
-	public String generatePNMLDocument() throws InvalidIDException,
-			VoidRepositoryException {
-
+	public String generatePNMLDocument() throws InvalidIDException, VoidRepositoryException {
 		ModelRepository.getInstance().createDocumentWorkspace("Workspace"+System.currentTimeMillis());
-		doc = new PetriNetDocHLAPI();
-
-		net = new PetriNetHLAPI("net" + netId, PNTypeHLAPI.PTNET, doc);
-
-		PageHLAPI page = new PageHLAPI("toppage",
-				new NameHLAPI(file.getName()), null, net);
-
+		PetriNetDocHLAPI doc = new PetriNetDocHLAPI();
+		int netId = 0;
+		PetriNetHLAPI net = new PetriNetHLAPI("net" + netId, PNTypeHLAPI.PTNET, doc);
+		PageHLAPI page = new PageHLAPI("toppage", new NameHLAPI(file.getName()), null, net);
 		//int labelid = 0;
 		int arcid = 0;
 		String placeLabel;
 		//String placeLabel2;
 		String transitionLabel;
-
 		GraphInstance g = new GraphInstance();
 		Point2D location;
-		//System.out.println("size: "+bnaliste.size());
-		for (int i = 0; i < this.bnaliste.size(); i++) {
-			
-			// if (this.bnaliste.get(i).getBiologicalElement() ==
-			// "Discrete Place" || this.bnaliste.get(i).getBiologicalElement()
-			// == "Continuous Place") {
-			placeLabel = "P_" + this.bnaliste.get(i).getID();
-
+		for (Place place : this.bnaliste) {
+			// if ("Discrete Place".equals(place.getBiologicalElement()) || "Continuous Place".equals(place.getBiologicalElement())) {
+			placeLabel = "P_" + place.getID();
 			if (!placePNML.containsKey(placeLabel)) {
 				p1 = new PlaceHLAPI(placeLabel);
-				p1.setNameHLAPI(new NameHLAPI(this.bnaliste.get(i).getLabel()));
+				p1.setNameHLAPI(new NameHLAPI(place.getLabel()));
 				placePNML.put(placeLabel, p1);
-				/*
-				 * Set the Marking of a place.
-				 */
-				//PTMarkingHLAPI ptMarking = new PTMarkingHLAPI(
-					//	(int) this.bnaliste.get(i).getToken(), p1);
-				/*
-				 * Set the position of a place.
-				 */
-
-				location = g.getPathway().getGraph()
-						.getVertexLocation(this.bnaliste.get(i));
+				// Set the Marking of a place.
+				// PTMarkingHLAPI ptMarking = new PTMarkingHLAPI((int) this.bnaliste.get(i).getToken(), p1);
+				// Set the position of a place.
+				location = g.getPathway().getGraph().getVertexLocation(place);
 				NodeGraphicsHLAPI placeGraphics = new NodeGraphicsHLAPI(
-						new PositionHLAPI((int) location.getX(),
-								(int) location.getY()), null, null, null);
-
+						new PositionHLAPI((int) location.getX(), (int) location.getY()), null, null, null);
 				p1.setNodegraphicsHLAPI(placeGraphics);
-
 				p1.setContainerPageHLAPI(page);
 			}
-
 			// }
-
 		}
-		for (int i = 0; i < this.btaliste.size(); i++) {
-
-			// if (this.btaliste.get(i).getBiologicalElement() ==
-			// "Discrete Transition" ||
-			// this.btaliste.get(i).getBiologicalElement() ==
-			// "Continuous Transition") {
-			if (!transitionPNML
-					.containsKey("T_" + this.btaliste.get(i).getID())) {
-
-				transitionLabel = "T_" + this.btaliste.get(i).getID();
-
+		for (Transition transition : this.btaliste) {
+			// if ("Discrete Transition".equals(transition.getBiologicalElement()) || "Continuous Transition".equals(transition.getBiologicalElement())) {
+			if (!transitionPNML.containsKey("T_" + transition.getID())) {
+				transitionLabel = "T_" + transition.getID();
 				t1 = new TransitionHLAPI(transitionLabel);
-				t1.setNameHLAPI(new NameHLAPI(this.btaliste.get(i).getLabel()));
-
+				t1.setNameHLAPI(new NameHLAPI(transition.getLabel()));
 				transitionPNML.put(transitionLabel, t1);
-
-				/*
-				 * /* Set the position of a place.
-				 */
-				location = g.getPathway().getGraph()
-						.getVertexLocation(this.btaliste.get(i));
+				// Set the position of a place.
+				location = g.getPathway().getGraph().getVertexLocation(transition);
 				NodeGraphicsHLAPI placeGraphics = new NodeGraphicsHLAPI(
-						new PositionHLAPI((int) location.getX(),
-								(int) location.getY()), null, null, null);
-
+						new PositionHLAPI((int) location.getX(), (int) location.getY()), null, null, null);
 				t1.setNodegraphicsHLAPI(placeGraphics);
 				t1.setContainerPageHLAPI(page);
 			} else {
-
-				t1 = (TransitionHLAPI) transitionPNML.get(this.btaliste.get(i)
-						.getID());
-
+				t1 = transitionPNML.get(transition.getID());
 			}
 			// }
-
 		}
-		for (int i = 0; i < this.bealiste.size(); i++) {
-
-			if (this.bealiste.get(i).getFrom() instanceof Place) {
-				p1 = (PlaceHLAPI) placePNML.get("P_"
-						+ this.bealiste.get(i).getFrom().getID());
-				//System.out.println(p1.getId());
+		for (PNArc pnArc : this.bealiste) {
+			if (pnArc.getFrom() instanceof Place) {
+				p1 = placePNML.get("P_" + pnArc.getFrom().getID());
 				placeFrom = true;
-
 			}
-			if (this.bealiste.get(i).getFrom() instanceof Transition) {
-				t1 = (TransitionHLAPI) transitionPNML.get("T_"
-						+ this.bealiste.get(i).getFrom().getID());
+			if (pnArc.getFrom() instanceof Transition) {
+				t1 = transitionPNML.get("T_" + pnArc.getFrom().getID());
 				transitionFrom = true;
 			}
-			if (this.bealiste.get(i).getTo() instanceof Place) {
-				p1 = (PlaceHLAPI) placePNML.get("P_"
-						+ this.bealiste.get(i).getTo().getID());
+			if (pnArc.getTo() instanceof Place) {
+				p1 = placePNML.get("P_" + pnArc.getTo().getID());
 				//placeTo = true;
-
 			}
-			if (this.bealiste.get(i).getTo() instanceof Transition) {
-				t1 = (TransitionHLAPI) transitionPNML.get("T_"
-						+ this.bealiste.get(i).getTo().getID());
+			if (pnArc.getTo() instanceof Transition) {
+				t1 = transitionPNML.get("T_" + pnArc.getTo().getID());
 				//transitionTo = true;
-
 			}
-
 			if (placeFrom) {
 				arc = new ArcHLAPI("arc" + arcid, p1, t1, page);
 			}
 			if (transitionFrom) {
 				arc = new ArcHLAPI("arc" + arcid, t1, p1, page);
-
 			}
 			placeFrom = false;
 			//transitionTo = false;
 			transitionFrom = false;
 			//placeTo = false;
-
-			/*
-			 * Position of arc
-			 */
-			location = g.getPathway().getGraph()
-					.getVertexLocation(this.bealiste.get(i).getFrom());
+			// Position of arc
+			location = g.getPathway().getGraph().getVertexLocation(pnArc.getFrom());
 			final ArcGraphicsHLAPI arcG = new ArcGraphicsHLAPI(arc);
-			PositionHLAPI position = new PositionHLAPI((int) location.getX(),
-					(int) location.getY());
+			PositionHLAPI position = new PositionHLAPI((int) location.getX(), (int) location.getY());
 			arcG.addPositionsHLAPI(position);
-
-			if (this.bealiste.get(i).getBiologicalElement() == "PN Inhibition Edge") {
-
-				t1 = (TransitionHLAPI) transitionPNML.get("T_"
-						+ this.bealiste.get(i).getTo().getID());
-
-				t1.setNameHLAPI(new NameHLAPI("Inhibitor;"
-						+ this.bealiste.get(i).getTo().getLabel()));
-
+			if ("PN Inhibition Edge".equals(pnArc.getBiologicalElement())) {
+				t1 = transitionPNML.get("T_" + pnArc.getTo().getID());
+				t1.setNameHLAPI(new NameHLAPI("Inhibitor;" + pnArc.getTo().getLabel()));
 			}
-			PNArc t = (PNArc) this.bealiste.get(i);
-
-			arc.setNameHLAPI(new NameHLAPI(t.getLabel()));
-
+			arc.setNameHLAPI(new NameHLAPI(pnArc.getLabel()));
 			arcid++;
 		}
-
 		ModelRepository mr = ModelRepository.getInstance();
 		mr.setPrettyPrintStatus(true);
 		PnmlExport pex = new PnmlExport();

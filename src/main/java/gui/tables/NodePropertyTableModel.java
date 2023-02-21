@@ -1,4 +1,4 @@
-package miscalleanous.tables;
+package gui.tables;
 
 import javax.swing.table.AbstractTableModel;
 

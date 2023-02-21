@@ -1,4 +1,4 @@
-package xmlInput.sbml;
+package io.vaml;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.IDAlreadyExistException;

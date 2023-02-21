@@ -80,7 +80,7 @@ import gui.visualization.PreRenderManager;
 import io.OpenDialog;
 import io.PNDoc;
 import io.SaveDialog;
-import miscalleanous.tables.MyTable;
+import gui.tables.MyTable;
 import petriNet.Cov;
 import petriNet.CovNode;
 import petriNet.OpenModelicaResult;
@@ -95,7 +95,7 @@ import transformation.gui.RuleManagementWindow;
 import transformation.gui.TransformationInformationWindow;
 import util.KineticBuilder;
 import util.VanesaUtility;
-import xmlOutput.sbml.JSBMLoutput;
+import io.sbml.JSBMLOutput;
 
 public class MenuListener implements ActionListener {
 	private MyTable tP;
@@ -184,18 +184,10 @@ public class MenuListener implements ActionListener {
 			new RandomHamiltonGraphGui();
 			break;
 		case exportNetwork:
-			// System.out.println("Nodes:
-			// "+graphInstance.getMyGraph().getAllVertices().size());
-			// System.out.println("Edges:
-			// "+graphInstance.getMyGraph().getAllEdges().size());
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog( // GRAPHML+MO+GON=14
-							SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO + SaveDialog.FORMAT_GON
-							// + SaveDialog.FORMAT_SBML
-									+ SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_ITXT + SaveDialog.FORMAT_TXT,
-							SaveDialog.DATA_TYPE_NETWORK_EXPORT);
-					// +SaveDialog.FORMAT_SBML);
+					new SaveDialog(SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO + SaveDialog.FORMAT_CSML +
+							SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_TXT, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				} else {
 					MyPopUp.getInstance().show("Error", "Please create a network first.");
 				}
@@ -218,10 +210,10 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
 					if (graphInstance.getPathway().getFile() != null) {
-						JSBMLoutput jsbmlOutput;
+						JSBMLOutput jsbmlOutput;
 						File file = graphInstance.getPathway().getFile();
 						try {
-							jsbmlOutput = new JSBMLoutput(new FileOutputStream(file), new GraphInstance().getPathway());
+							jsbmlOutput = new JSBMLOutput(new FileOutputStream(file), new GraphInstance().getPathway());
 							String out = jsbmlOutput.generateSBMLDocument();
 							if (out.length() > 0) {
 								MyPopUp.getInstance().show("Error", out);

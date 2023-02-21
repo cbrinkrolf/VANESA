@@ -29,8 +29,8 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import gui.MainWindow;
-import miscalleanous.tables.MyTable;
-import miscalleanous.tables.NodePropertyTableModel;
+import gui.tables.MyTable;
+import gui.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
 
 public class BrendaSearchResultWindow implements ActionListener {

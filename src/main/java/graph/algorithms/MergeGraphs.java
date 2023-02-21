@@ -8,8 +8,8 @@ import biologicalElements.Pathway;
 import graph.CreatePathway;
 import gui.MainWindow;
 import gui.MyPopUp;
-import xmlInput.sbml.VAMLInput;
-import xmlOutput.sbml.VAMLoutput;
+import io.vaml.VAMLInput;
+import io.vaml.VAMLOutput;
 
 public class MergeGraphs {
 	private Pathway pw_one;
@@ -26,7 +26,7 @@ public class MergeGraphs {
 		//CHRIS better deep copy of pathway
 		File file1 = new File("test");
 		try {
-			new VAMLoutput(new FileOutputStream(file1), one);
+			new VAMLOutput(new FileOutputStream(file1), one);
 			new VAMLInput(file1, pw_new);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -34,7 +34,7 @@ public class MergeGraphs {
 
 		File file2 = new File("test2");
 		try {
-			new VAMLoutput(new FileOutputStream(file2), two);
+			new VAMLOutput(new FileOutputStream(file2), two);
 			new VAMLInput(file2, pw_new);
 		} catch (IOException e) {
 			e.printStackTrace();

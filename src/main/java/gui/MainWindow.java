@@ -64,7 +64,7 @@ import net.infonode.tabbedpanel.TabDropDownListVisiblePolicy;
 import net.infonode.tabbedpanel.TabbedPanel;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.infonode.util.Direction;
-import xmlOutput.sbml.JSBMLoutput;
+import io.sbml.JSBMLOutput;
 
 public class MainWindow implements ApplicationListener {
 
@@ -518,7 +518,7 @@ public class MainWindow implements ApplicationListener {
 			if (n == 0) {
 				if (pw.getFile() != null) {
 					try {
-						new JSBMLoutput(new FileOutputStream(pw.getFile()), pw);
+						new JSBMLOutput(new FileOutputStream(pw.getFile()), pw);
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
 					}
@@ -684,15 +684,6 @@ public class MainWindow implements ApplicationListener {
 		// optionPanel.updatePanel("simulation"); seems not necessary
 		optionPanel.updatePanel("bb");
 		optionPanel.updatePanel("pathwayProperties");
-	}
-
-	public void updateDAWISVertexWindow() {
-		optionPanel.updatePanel("DAWISVertexWindow");
-	}
-
-	public void enableDatabaseWindow(boolean enabled) {
-
-		optionPanel.enableDatabaseWindow(enabled);
 	}
 
 	public void enableOptionPanelUpdate(boolean enable) {

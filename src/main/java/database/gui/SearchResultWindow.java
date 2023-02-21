@@ -1,7 +1,7 @@
 package database.gui;
 
 import gui.MainWindow;
-import miscalleanous.tables.MyTable;
+import gui.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;

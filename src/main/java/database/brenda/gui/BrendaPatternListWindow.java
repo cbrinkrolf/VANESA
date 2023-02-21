@@ -27,7 +27,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import database.brenda.MoleculeBox;
 import database.brenda.MoleculesPair;
 import gui.MainWindow;
-import miscalleanous.tables.MyTable;
+import gui.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 
 

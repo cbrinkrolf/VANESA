@@ -32,7 +32,7 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 
 import graph.GraphInstance;
 import net.miginfocom.swing.MigLayout;
-import xmlInput.sbml.JSBMLinput;
+import io.sbml.JSBMLInput;
 
 public class BuildingBlocks implements TreeSelectionListener{
 	
@@ -61,7 +61,7 @@ public class BuildingBlocks implements TreeSelectionListener{
         	      if(e.getClickCount() == 2) {
         	    	  DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         	         if(map.containsKey(node) && map.get(node).isFile()){
-        	        	 JSBMLinput input = new JSBMLinput(GraphInstance.getPathwayStatic());
+        	        	 JSBMLInput input = new JSBMLInput(GraphInstance.getPathwayStatic());
         	 			try {
 							input.loadSBMLFile(new FileInputStream(map.get(node)), map.get(node));
 						} catch (FileNotFoundException e1) {

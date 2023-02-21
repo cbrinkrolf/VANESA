@@ -1,4 +1,4 @@
-package xmlInput.sbml;
+package io;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -27,7 +27,7 @@ import graph.algorithms.gui.clusters.ClusterColorEditor;
 import gui.LocalBackboardPaintable;
 import gui.MainWindow;
 import gui.MyAnnotation;
-import miscalleanous.tables.MyTable;
+import gui.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 
 /**
