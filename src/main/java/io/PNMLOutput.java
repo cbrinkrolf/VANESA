@@ -3,21 +3,19 @@ package io;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import fr.lip6.move.pnml.framework.general.PnmlExport;
 import fr.lip6.move.pnml.framework.utils.ModelRepository;
-import fr.lip6.move.pnml.framework.utils.exception.BadFileFormatException;
-import fr.lip6.move.pnml.framework.utils.exception.InvalidIDException;
-import fr.lip6.move.pnml.framework.utils.exception.OCLValidationFailed;
-import fr.lip6.move.pnml.framework.utils.exception.OtherException;
-import fr.lip6.move.pnml.framework.utils.exception.UnhandledNetType;
-import fr.lip6.move.pnml.framework.utils.exception.ValidationFailedException;
-import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
+import fr.lip6.move.pnml.framework.utils.exception.*;
 import fr.lip6.move.pnml.ptnet.hlapi.ArcGraphicsHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.ArcHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.NameHLAPI;
@@ -31,65 +29,61 @@ import fr.lip6.move.pnml.ptnet.hlapi.PositionHLAPI;
 import fr.lip6.move.pnml.ptnet.hlapi.TransitionHLAPI;
 import graph.GraphInstance;
 
-public class PNMLOutput {
-	// the pnml document which has to be filled
-	private final File file;
-
+public class PNMLOutput extends BaseWriter<Pathway> {
 	// list with nodes/places from the petri net
-	private final ArrayList<Place> bnaliste;
-
+	private final ArrayList<Place> nodeList = new ArrayList<>();
 	// list with transitions from the petri net
-	private final ArrayList<Transition> btaliste;
-
+	private final ArrayList<Transition> transitionList = new ArrayList<>();
 	// list with edges from the petri net
-	private final ArrayList<PNArc> bealiste;
-
+	private final ArrayList<PNArc> edgeList = new ArrayList<>();
 	// For saving Transitionlabel (key) and TransitionHAPLI (value)
 	private final HashMap<String, TransitionHLAPI> transitionPNML = new HashMap<>();
-
 	// For saving Placelabel (key) and PlaceHAPLI (value)
 	private final HashMap<String, PlaceHLAPI> placePNML = new HashMap<>();
-
 	// Transition in pnml
 	private TransitionHLAPI t1;
-
 	// Place in pnml
 	private PlaceHLAPI p1;
-
 	// Arc in pnml
 	private ArcHLAPI arc;
-
 	//private int workspace = 0;
-
 	private boolean transitionFrom = false;
-
 	private boolean placeFrom = false;
-
 	//private boolean transitionTo = false;
-
 	//private boolean placeTo = false;
 
-	/**
-	 * This constructor needs a file to which the output can be written, a list of edges from the petrinet.
-	 */
-	public PNMLOutput(File file, ArrayList<PNArc> bealiste, ArrayList<Place> bnaliste, ArrayList<Transition> btaliste) {
-		this.file = file;
-		this.bealiste = bealiste;
-		this.btaliste = btaliste;
-		this.bnaliste = bnaliste;
+	public PNMLOutput(File file) {
+		super(file);
 	}
 
-	/**
-	 * Generates a PNML document with PNML Framework.
-	 * 
-	 * @return boolean true if a document has been written to the specified directory.
-	 */
-	public String generatePNMLDocument() throws InvalidIDException, VoidRepositoryException {
+	@Override
+	protected void internalWrite(OutputStream outputStream, Pathway pw) throws Exception {
+		if (!pw.isPetriNet()) {
+			// maybe translate to PN first
+			addError("Pathway is not a Petri Net");
+		} else {
+			for (BiologicalEdgeAbstract bea : pw.getAllEdges()) {
+				if (bea instanceof PNArc) {
+					edgeList.add((PNArc) bea);
+				}
+			}
+			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+				if (bna instanceof Place) {
+					nodeList.add((Place) bna);
+				} else if (bna instanceof Transition) {
+					transitionList.add((Transition) bna);
+				}
+			}
+			generatePNMLDocument();
+		}
+	}
+
+	private void generatePNMLDocument() throws InvalidIDException, VoidRepositoryException {
 		ModelRepository.getInstance().createDocumentWorkspace("Workspace"+System.currentTimeMillis());
 		PetriNetDocHLAPI doc = new PetriNetDocHLAPI();
 		int netId = 0;
 		PetriNetHLAPI net = new PetriNetHLAPI("net" + netId, PNTypeHLAPI.PTNET, doc);
-		PageHLAPI page = new PageHLAPI("toppage", new NameHLAPI(file.getName()), null, net);
+		PageHLAPI page = new PageHLAPI("toppage", new NameHLAPI(getFileName()), null, net);
 		//int labelid = 0;
 		int arcid = 0;
 		String placeLabel;
@@ -97,7 +91,7 @@ public class PNMLOutput {
 		String transitionLabel;
 		GraphInstance g = new GraphInstance();
 		Point2D location;
-		for (Place place : this.bnaliste) {
+		for (Place place : this.nodeList) {
 			// if ("Discrete Place".equals(place.getBiologicalElement()) || "Continuous Place".equals(place.getBiologicalElement())) {
 			placeLabel = "P_" + place.getID();
 			if (!placePNML.containsKey(placeLabel)) {
@@ -115,7 +109,7 @@ public class PNMLOutput {
 			}
 			// }
 		}
-		for (Transition transition : this.btaliste) {
+		for (Transition transition : this.transitionList) {
 			// if ("Discrete Transition".equals(transition.getBiologicalElement()) || "Continuous Transition".equals(transition.getBiologicalElement())) {
 			if (!transitionPNML.containsKey("T_" + transition.getID())) {
 				transitionLabel = "T_" + transition.getID();
@@ -133,7 +127,7 @@ public class PNMLOutput {
 			}
 			// }
 		}
-		for (PNArc pnArc : this.bealiste) {
+		for (PNArc pnArc : this.edgeList) {
 			if (pnArc.getFrom() instanceof Place) {
 				p1 = placePNML.get("P_" + pnArc.getFrom().getID());
 				placeFrom = true;
@@ -176,29 +170,12 @@ public class PNMLOutput {
 		mr.setPrettyPrintStatus(true);
 		PnmlExport pex = new PnmlExport();
 		//pex.
-		String result = "";
 		try {
 			pex.exportObject(doc, file.getAbsolutePath());
-		} catch (UnhandledNetType e) {
-			e.printStackTrace();
-			result+="Error: Unhandled Net Type!\r\n";
-		} catch (OCLValidationFailed e) {
-			e.printStackTrace();
-			result+="Error: OCLValidation failed!\r\n";
-		} catch (IOException e) {
-			e.printStackTrace();
-			result+="Error: IO Exception!\r\n";
-		} catch (ValidationFailedException e) {
-			e.printStackTrace();
-			result+="Error: Validation failed!\r\n";
-		} catch (BadFileFormatException e) {
-			e.printStackTrace();
-			result+="Error: Bad file format!\r\n";
-		} catch (OtherException e) {
-			e.printStackTrace();
-			result+="Error: Other exception!\r\n";
+		} catch (UnhandledNetType | OCLValidationFailed | IOException | ValidationFailedException |
+				 BadFileFormatException | OtherException e) {
+			addError(e.getMessage());
 		}
 		ModelRepository.getInstance().destroyCurrentWorkspace();
-		return result;
 	}
 }

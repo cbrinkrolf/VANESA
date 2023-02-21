@@ -1,51 +1,36 @@
 package io;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.awt.Rectangle;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
-import javax.xml.stream.XMLStreamException;
-
-import io.graphML.GraphMLWriter;
-import org.apache.batik.anim.dom.SVGDOMImplementation;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.batik.transcoder.TranscoderException;
-import org.jfree.chart.ChartUtils;
-import org.jfree.chart.JFreeChart;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-
 import com.orsonpdf.PDFDocument;
 import com.orsonpdf.PDFGraphics2D;
 import com.orsonpdf.Page;
-
-import biologicalObjects.edges.BiologicalEdgeAbstract;
-import biologicalObjects.edges.petriNet.PNArc;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.petriNet.Place;
-import biologicalObjects.nodes.petriNet.Transition;
 import configurations.ConnectionSettings;
 import fr.lip6.move.pnml.framework.utils.exception.InvalidIDException;
 import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
-import gonOutput.GONoutput;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
 import gui.MyPopUp;
+import io.graphML.GraphMLWriter;
+import io.sbml.JSBMLOutput;
 import moOutput.MOoutput;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.jfree.chart.ChartUtils;
+import org.jfree.chart.JFreeChart;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 import transformation.Rule;
 import transformation.RuleManager;
 import transformation.YamlRuleWriter;
 import util.ImageExport;
-import io.sbml.JSBMLOutput;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.xml.stream.XMLStreamException;
+import java.awt.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class SaveDialog {
     // use power of 2
@@ -100,8 +85,8 @@ public class SaveDialog {
             if (overwrite) {
                 try {
                     write(simId);
-                } catch (IOException | HeadlessException | XMLStreamException | TranscoderException | InvalidIDException
-                         | VoidRepositoryException e) {
+                } catch (IOException | HeadlessException | XMLStreamException | InvalidIDException |
+                         VoidRepositoryException e) {
                     error += e.getMessage();
                     MyPopUp.getInstance().show("Error!", "An error occurred:\r\n" + error);
                     e.printStackTrace();
@@ -115,7 +100,7 @@ public class SaveDialog {
             relativeTo = MainWindow.getInstance().getFrame();
         }
         String error = "";
-        this.prepare(format);
+        prepare(format);
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         int option = chooser.showSaveDialog(relativeTo);
         if (option == JFileChooser.APPROVE_OPTION) {
@@ -244,14 +229,14 @@ public class SaveDialog {
         }
     }
 
-    private void getCorrectFile(String ending) {
+    private void ensureExtension(SuffixAwareFilter fileFilter) {
         String filePath = file.getPath();
-        if (!filePath.endsWith("." + ending)) {
-            file = new File(file.getAbsolutePath() + "." + ending);
+        if (!filePath.endsWith("." + fileFilter.getExtension())) {
+            file = new File(file.getAbsolutePath() + "." + fileFilter.getExtension());
         }
     }
 
-    private void write(String simId) throws HeadlessException, XMLStreamException, IOException, TranscoderException,
+    private void write(String simId) throws HeadlessException, XMLStreamException, IOException,
             InvalidIDException, VoidRepositoryException {
         if (fileFilter == SuffixAwareFilter.SBML) {
             writeSBML();
@@ -276,8 +261,95 @@ public class SaveDialog {
         }
     }
 
+    private void writeSVG() throws IOException {
+        ensureExtension(SuffixAwareFilter.SVG);
+        if (c != null) {
+            ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file, ImageExport.IMAGE_TYPE_SVG);
+        }
+    }
+
+    private void writePNG() throws IOException {
+        ensureExtension(SuffixAwareFilter.PNG);
+        if (c != null) {
+            ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file, ImageExport.IMAGE_TYPE_PNG);
+        }
+    }
+
+    private void writeCSML() {
+        ensureExtension(SuffixAwareFilter.CSML);
+        write(new CSMLOutput(file), GraphInstance.getPathwayStatic());
+    }
+
+    private <T> void write(BaseWriter<T> writer, T value) {
+        writer.write(value);
+        if (writer.hasErrors()) {
+            MyPopUp.getInstance().show("Error", fileFilter + "\nAn error occurred: " + writer.getErrors());
+        } else {
+            MyPopUp.getInstance().show("Information", fileFilter + "\nFile saved");
+        }
+    }
+
+    private void writePNML() {
+        ensureExtension(SuffixAwareFilter.PNML);
+        write(new PNMLOutput(file), GraphInstance.getPathwayStatic());
+    }
+
+    private void writeCSV(String simId) {
+        ensureExtension(SuffixAwareFilter.CSV_RESULT);
+        // TODO adjust if BN holds PN
+        write(new CSVWriter(file, simId), GraphInstance.getPathwayStatic());
+    }
+
+    private void writeGraphTextFile() {
+        ensureExtension(SuffixAwareFilter.GRAPH_TEXT_FILE);
+        write(new GraphTextWriter(file), GraphInstance.getPathwayStatic());
+    }
+
+    private void writeGraphML() {
+        ensureExtension(SuffixAwareFilter.GRAPH_ML);
+        write(new GraphMLWriter(file), GraphInstance.getPathwayStatic());
+    }
+
+    private void writeMO() throws FileNotFoundException {
+        ensureExtension(SuffixAwareFilter.MO);
+        new MOoutput(new FileOutputStream(file), new GraphInstance().getPathway(), false);
+        String path_colored = file.getAbsolutePath();
+        if (path_colored.endsWith(".mo")) {
+            path_colored = path_colored.substring(0, path_colored.length() - 3);
+        }
+        new MOoutput(new FileOutputStream(path_colored + "_colored.mo"), new GraphInstance().getPathway(), true);
+        MyPopUp.getInstance().show("Modelica export", SuffixAwareFilter.MO + " File saved");
+        // JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), moDescription + " File saved");
+    }
+
+    private void writeSBML() throws FileNotFoundException, XMLStreamException {
+        ensureExtension(SuffixAwareFilter.SBML);
+        // create a sbmlOutput object
+        // SBMLoutputNoWS sbmlOutput = new SBMLoutputNoWS(file, new GraphInstance().getPathway());
+        // //if (sbmlOutput.generateSBMLDocument())
+        // JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), sbmlDescription + sbmlOutput.generateSBMLDocument());
+        if (GraphInstance.getPathwayStatic().getFile() == null) {
+            GraphInstance.getPathwayStatic().setFile(file);
+        }
+        // TODO creation of FileOutputStream overrides file already, even without call
+        // write() method. Document should be generated first, if no errors thrown, then create FOS and write to file.
+        JSBMLOutput jsbmlOutput = new JSBMLOutput(new FileOutputStream(file), new GraphInstance().getPathway());
+        String out = jsbmlOutput.generateSBMLDocument();
+        if (out.length() > 0) {
+            MyPopUp.getInstance().show("Error", out);
+        } else {
+            GraphContainer.getInstance().renamePathway(GraphInstance.getPathwayStatic(), file.getName());
+            GraphInstance.getPathwayStatic().setName(file.getName());
+            GraphInstance.getPathwayStatic().setTitle(file.getName());
+            MainWindow.getInstance().renameSelectedTab(file.getName());
+            MyPopUp.getInstance().show("JSbml export", "Saving was successful!");
+        }
+        // else
+        // JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), sbmlDescription + " File not saved");
+    }
+
     private void writeYAML() throws IOException {
-        getCorrectFile(SuffixAwareFilter.YAML.getExtension());
+        ensureExtension(SuffixAwareFilter.YAML);
         String exportPath = chooser.getSelectedFile().getPath();
         if (!exportPath.contains(".yaml")) {
             exportPath = exportPath + ".yaml";
@@ -305,123 +377,5 @@ public class SaveDialog {
                 MyPopUp.getInstance().show("YAML Rules", rules.size() + " rules were written to file!");
             }
         }
-    }
-
-    private void writeSVG() throws IOException, TranscoderException {
-        getCorrectFile(SuffixAwareFilter.SVG.getExtension());
-        if (c != null) {
-            ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file, ImageExport.IMAGE_TYPE_SVG);
-        }
-    }
-
-    private void writePNG() throws IOException, TranscoderException {
-        getCorrectFile(SuffixAwareFilter.PNG.getExtension());
-        if (c != null) {
-            ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file, ImageExport.IMAGE_TYPE_PNG);
-        }
-    }
-
-    private void writeCSML() throws FileNotFoundException {
-        getCorrectFile(SuffixAwareFilter.CSML.getExtension());
-        new GONoutput(new FileOutputStream(file), new GraphInstance().getPathway());
-        MyPopUp.getInstance().show("Information", SuffixAwareFilter.CSML + " File saved");
-    }
-
-    private void writePNML() throws InvalidIDException, VoidRepositoryException {
-        GraphContainer con = GraphContainer.getInstance();
-        MainWindow w = MainWindow.getInstance();
-        if (!con.isPetriView()) {
-            // maybe translate to PN first
-        } else {
-            getCorrectFile(SuffixAwareFilter.PNML.getExtension());
-            ArrayList<PNArc> edgeList = new ArrayList<>();
-            for (BiologicalEdgeAbstract bea : con.getPathway(w.getCurrentPathway()).getAllEdges()) {
-                if (bea instanceof PNArc) {
-                    edgeList.add((PNArc) bea);
-                }
-            }
-            ArrayList<Place> nodeList = new ArrayList<>();
-            ArrayList<Transition> transitionList = new ArrayList<>();
-            for (BiologicalNodeAbstract bna : con.getPathway(w.getCurrentPathway()).getAllGraphNodes()) {
-                if (bna instanceof Place) {
-                    nodeList.add((Place) bna);
-                } else if (bna instanceof Transition) {
-                    transitionList.add((Transition) bna);
-                }
-            }
-            // only output on file system possible
-            PNMLOutput pnmlOutput = new PNMLOutput(file, edgeList, nodeList, transitionList);
-            String result = pnmlOutput.generatePNMLDocument();
-            if (result.length() > 0) {
-                MyPopUp.getInstance().show("Error", SuffixAwareFilter.PNML + "an error occured: " + result);
-            } else {
-                MyPopUp.getInstance().show("Information", "Saving was successful!");
-            }
-        }
-    }
-
-    private void writeCSV(String simId) throws FileNotFoundException {
-        getCorrectFile(SuffixAwareFilter.CSV_RESULT.getExtension());
-        // TODO adjust if BN holds PN
-        String result = new CSVWriter().write(new FileOutputStream(file), new GraphInstance().getPathway(), simId);
-        if (result.length() > 0) {
-            MyPopUp.getInstance().show("Error", SuffixAwareFilter.CSV_RESULT + result);
-        } else {
-            MyPopUp.getInstance().show("Information", "Saving was successful!");
-        }
-    }
-
-    private void writeGraphTextFile() throws FileNotFoundException {
-        getCorrectFile(SuffixAwareFilter.GRAPH_TEXT_FILE.getExtension());
-        String result = new GraphTextWriter().write(new FileOutputStream(file), new GraphInstance().getPathway());
-        if (result.length() > 0) {
-            MyPopUp.getInstance().show("Error", SuffixAwareFilter.GRAPH_TEXT_FILE + result);
-        } else {
-            MyPopUp.getInstance().show("Information", "Saving was successful!");
-        }
-    }
-
-    private void writeMO() throws FileNotFoundException {
-        getCorrectFile(SuffixAwareFilter.MO.getExtension());
-        new MOoutput(new FileOutputStream(file), new GraphInstance().getPathway(), false);
-        String path_colored = file.getAbsolutePath();
-        if (path_colored.endsWith(".mo")) {
-            path_colored = path_colored.substring(0, path_colored.length() - 3);
-        }
-        new MOoutput(new FileOutputStream(path_colored + "_colored.mo"), new GraphInstance().getPathway(), true);
-        MyPopUp.getInstance().show("Modelica export", SuffixAwareFilter.MO + " File saved");
-        // JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), moDescription + " File saved");
-    }
-
-    private void writeGraphML() {
-        getCorrectFile(SuffixAwareFilter.GRAPH_ML.getExtension());
-        new GraphMLWriter(file).write(GraphInstance.getPathwayStatic());
-        MyPopUp.getInstance().show("Information", SuffixAwareFilter.GRAPH_ML + " File saved");
-    }
-
-    private void writeSBML() throws FileNotFoundException, XMLStreamException {
-        getCorrectFile(SuffixAwareFilter.SBML.getExtension());
-        // create a sbmlOutput object
-        // SBMLoutputNoWS sbmlOutput = new SBMLoutputNoWS(file, new GraphInstance().getPathway());
-        // //if (sbmlOutput.generateSBMLDocument())
-        // JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), sbmlDescription + sbmlOutput.generateSBMLDocument());
-        if (GraphInstance.getPathwayStatic().getFile() == null) {
-            GraphInstance.getPathwayStatic().setFile(file);
-        }
-        // TODO creation of FileOutputStream overrides file already, even without call
-        // write() method. Document should be generated first, if no errors thrown, then create FOS and write to file.
-        JSBMLOutput jsbmlOutput = new JSBMLOutput(new FileOutputStream(file), new GraphInstance().getPathway());
-        String out = jsbmlOutput.generateSBMLDocument();
-        if (out.length() > 0) {
-            MyPopUp.getInstance().show("Error", out);
-        } else {
-            GraphContainer.getInstance().renamePathway(GraphInstance.getPathwayStatic(), file.getName());
-            GraphInstance.getPathwayStatic().setName(file.getName());
-            GraphInstance.getPathwayStatic().setTitle(file.getName());
-            MainWindow.getInstance().renameSelectedTab(file.getName());
-            MyPopUp.getInstance().show("JSbml export", "Saving was successful!");
-        }
-        // else
-        // JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), sbmlDescription + " File not saved");
     }
 }

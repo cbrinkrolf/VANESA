@@ -41,7 +41,7 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
             writer.writeEndElement();
             writer.writeEndDocument();
         } catch (XMLStreamException e) {
-            setHasErrors();
+            addError(e.getMessage());
         }
     }
 

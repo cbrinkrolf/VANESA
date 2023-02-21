@@ -1,6 +1,6 @@
 package io;
 
-import java.io.IOException;
+import java.io.File;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,25 +13,26 @@ import biologicalObjects.nodes.petriNet.Transition;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 
-public class CSVWriter {
-    public String write(OutputStream os, Pathway pw, String simId) {
-        try {
-            SimulationResult simRes;
-            if (simId == null) {
-                simRes = pw.getPetriPropertiesNet().getSimResController().getLastActive();
-            } else {
-                simRes = pw.getPetriPropertiesNet().getSimResController().get(simId);
-            }
-            if (simRes != null) {
-                String content = buildFileContent(pw, simRes);
-                os.write(content.getBytes());
-                os.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "an error occurred!";
+public class CSVWriter extends BaseWriter<Pathway> {
+    private final String simId;
+
+    public CSVWriter(File file, String simId) {
+        super(file);
+        this.simId = simId;
+    }
+
+    @Override
+    protected void internalWrite(OutputStream outputStream, Pathway pw) throws Exception {
+        SimulationResult simRes;
+        if (simId == null) {
+            simRes = pw.getPetriPropertiesNet().getSimResController().getLastActive();
+        } else {
+            simRes = pw.getPetriPropertiesNet().getSimResController().get(simId);
         }
-        return "";
+        if (simRes != null) {
+            String content = buildFileContent(pw, simRes);
+            outputStream.write(content.getBytes());
+        }
     }
 
     private static String buildFileContent(Pathway pw, SimulationResult simRes) {
