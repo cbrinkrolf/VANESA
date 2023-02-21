@@ -16,16 +16,13 @@ import org.apache.commons.lang3.StringUtils;
 import pojos.DBColumn;
 
 public class ElementNames {
-    //private HashSet molecules = new HashSet();
-    private HashSet<String> enzymes = new HashSet<>();
-    //private HashSet genes = new HashSet();
-    private Vector<String> enzymeVector = new Vector<>();
-    private XMLStreamWriter writer;
+    private final HashSet<String> enzymes = new HashSet<>();
+    private final Vector<String> enzymeVector = new Vector<>();
 
     public void writeFile() throws FileNotFoundException, XMLStreamException {
         OutputStream out = new FileOutputStream("EnzymeNames.xml");
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        writer = factory.createXMLStreamWriter(out);
+        XMLStreamWriter writer = factory.createXMLStreamWriter(out);
         writer.writeStartDocument();
         writer.writeStartElement("Molecules");
         ArrayList<DBColumn> results = new Wrapper().requestDbContent(1, BRENDAQueries.getAllBRENDAenzymeNames);

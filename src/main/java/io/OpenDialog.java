@@ -8,7 +8,6 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.xml.stream.XMLStreamException;
 
 import biologicalElements.Pathway;
 import configurations.ConnectionSettings;
@@ -22,7 +21,6 @@ import xmlInput.sbml.JSBMLinput;
 import xmlInput.sbml.VAMLInput;
 
 public class OpenDialog extends SwingWorker<Object, Object> {
-
 	private String fileFormat;
 	private File file;
 
@@ -86,23 +84,16 @@ public class OpenDialog extends SwingWorker<Object, Object> {
 
 	private void open() {
 		if (fileFormat != null) {
-			// System.out.println(fileFormat);
 			// ConnectionSettings.setFileSaveDirectory(file.getAbsolutePath());
-
 			if (fileFormat.equals(vamlDescription)) {
 				try {
-					try {
-						new VAMLInput(file);
-					} catch (XMLStreamException e) {
-						MyPopUp.getInstance().show("VAML read error.",
-								"An error occured during the loading. " + "The VAML file is not valid.");
-						e.printStackTrace();
-					}
+					new VAMLInput(file);
 				} catch (IOException e) {
+					MyPopUp.getInstance().show("VAML read error.",
+							"An error occurred during the loading. The VAML file is not valid.");
 					e.printStackTrace();
 				}
 			} else if (fileFormat.equals(sbmlDescription)) {
-
 				JSBMLinput jsbmlInput;
 				jsbmlInput = pathway == null ? new JSBMLinput() : new JSBMLinput(pathway);
 				String result;

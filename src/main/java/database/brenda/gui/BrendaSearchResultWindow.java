@@ -210,7 +210,7 @@ public class BrendaSearchResultWindow implements ActionListener {
             MainWindow.getInstance().closeProgressBar();
         } else if ("new".equals(event)) {
             if (table.getSelectedRows().length == 0) {
-                JOptionPane.showMessageDialog(null, "Please choose an enzyme.", "Message", 1);
+                JOptionPane.showMessageDialog(null, "Please choose an enzyme.", "Message", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 ok = true;
                 dialog.setVisible(false);

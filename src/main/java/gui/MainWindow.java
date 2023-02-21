@@ -162,12 +162,9 @@ public class MainWindow implements ApplicationListener {
 		iconList.add(kit.createImage(imagePath.getPath("logo128.png")));
 		frame.setIconImages(iconList);
 
-		//
 		// try {
-		// InfoNodeLookAndFeelTheme theme =
-		// InfoNodeLookAndFeelThemes.getSoftGrayTheme();
+		// InfoNodeLookAndFeelTheme theme = InfoNodeLookAndFeelThemes.getSoftGrayTheme();
 		// UIManager.setLookAndFeel(new InfoNodeLookAndFeel(theme));
-
 		// } catch (UnsupportedLookAndFeelException e1) {
 		// e1.printStackTrace();
 		// }
@@ -214,8 +211,7 @@ public class MainWindow implements ApplicationListener {
 		addView();
 		split_pane.setOneTouchExpandable(false);
 		split_pane.addPropertyChangeListener(new PropertyChangeListener() {
-			// private final int SP_DIVIDER_MAX_LOCATION = split_pane
-			// .getLeftComponent().getPreferredSize().width;
+			// private final int SP_DIVIDER_MAX_LOCATION = split_pane.getLeftComponent().getPreferredSize().width;
 			private final int SP_DIVIDER_MAX_LOCATION = split_pane.getLeftComponent().getMaximumSize().width;
 
 			@Override
@@ -256,7 +252,6 @@ public class MainWindow implements ApplicationListener {
 	public void nodeAttributeChanger(BiologicalNodeAbstract bna, boolean doResetAppearance) {
 		for (Bean bean : beansList) {
 			String shapeBean = bean.getShape();
-
 			if (bean.getName().equals(bna.getBiologicalElement())) {
 				switch (shapeBean) {
 				case "ellipse":
@@ -666,7 +661,6 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public void updateOptionPanel() {
-		// System.out.println(" udate option");
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
@@ -678,7 +672,6 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public void updateAllGuiElements() {
-		// System.out.println("update all");
 		optionPanel.updatePanel("GraphTree");
 		optionPanel.updatePanel("Satellite");
 		optionPanel.updatePanel("Filter");
@@ -733,8 +726,7 @@ public class MainWindow implements ApplicationListener {
 
 	@Override
 	public void handlePreferences(ApplicationEvent event) {
-		// new Settings().setSelection(5);
-		new Settings(1);
+		new Settings(0);
 		event.setHandled(true);
 	}
 
@@ -745,7 +737,6 @@ public class MainWindow implements ApplicationListener {
 
 	@Override
 	public void handleQuit(ApplicationEvent arg0) {
-		// close application
 		frame.dispose();
 		System.exit(0);
 	}

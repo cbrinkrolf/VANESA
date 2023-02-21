@@ -346,11 +346,8 @@ public class MenuListener implements ActionListener {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
-		case databaseSettings:
-			new Settings(0);
-			break;
 		case internet:
-			new Settings(1);
+			new Settings(0);
 			break;
 		case interaction:
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
@@ -361,10 +358,10 @@ public class MenuListener implements ActionListener {
 			new AboutWindow();
 			break;
 		case graphSettings:
-			new Settings(2);
+			new Settings(1);
 			break;
 		case visualizationSettings:
-			new Settings(3);
+			new Settings(2);
 			break;
 		case openTestP:
 			// System.out.println("testP");

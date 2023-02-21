@@ -101,7 +101,7 @@ public class JSBMLinput {
 			doc = builder.build(in);
 		} catch (JDOMException | IOException e) {
 			e.printStackTrace();
-			message = "An error occured";
+			message = "An error occurred";
 		}
 		if (pathway == null) {
 			pathway = new CreatePathway(file.getName()).getPathway();

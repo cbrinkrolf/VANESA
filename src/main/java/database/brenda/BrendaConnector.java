@@ -1,28 +1,9 @@
 package database.brenda;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.ReactionEdge;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Enzyme;
-import biologicalObjects.nodes.Factor;
-import biologicalObjects.nodes.Inhibitor;
-import biologicalObjects.nodes.Metabolite;
+import biologicalObjects.nodes.*;
 import configurations.Wrapper;
 import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import graph.CreatePathway;
@@ -34,56 +15,37 @@ import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import pojos.DBColumn;
 
-//import edu.uci.ics.jung.graph.Vertex;
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
+import java.util.*;
 
 public class BrendaConnector extends SwingWorker<Object, Object> {
-
     private MyGraph myGraph;
-
     private boolean CoFactors = false;
-
     private boolean Inhibitors = false;
-
     private Pathway pw = null;
-
     private String title = "";
-
     private String organism = "";
-
     private String pathwayLink = "";
-
     private int searchDepth = 4;
-
-    protected BrendaTree tree = new BrendaTree();
-
+    private final BrendaTree tree = new BrendaTree();
     protected String enzyme_organism = "";
-
     private boolean organism_specific = false;
-
     private boolean disregarded = false;
-
     private final MoleculeBox box = MoleculeBox.getInstance();
-
     private final String[] enzymeToSearch;
-
-    protected Hashtable<String, BiologicalNodeAbstract> enzymes = new Hashtable<String, BiologicalNodeAbstract>();
-
-    private final Set<BiologicalEdgeAbstract> edges = new HashSet<BiologicalEdgeAbstract>();
-
-    private Pathway mergePW = null;
-
+    protected Hashtable<String, BiologicalNodeAbstract> enzymes = new Hashtable<>();
+    private final Set<BiologicalEdgeAbstract> edges = new HashSet<>();
+    private final Pathway mergePW;
     boolean headless;
-
     boolean autoCoarseDepth = false;
-
     boolean autoCoarseEnzymeNomenclature = false;
 
-    public BrendaConnector(String[] details, Pathway mergePW,
-                           boolean headless) {
+    public BrendaConnector(String[] details, Pathway mergePW, boolean headless) {
         enzymeToSearch = details;
         this.mergePW = mergePW;
         this.headless = headless;
-
     }
 
     private void startVisualizationModel() {
@@ -91,29 +53,23 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
     }
 
     private void getPathway() {
-
-        // pathwayID="";
         title = "BRENDA Pathway";
         organism = "";
         pathwayLink = "";
     }
 
     private BiologicalNodeAbstract addReactionNodes(String node) {
-        // node = node.toLowerCase();
         String clean = this.cleanString(node);
         if (!enzymes.containsKey(clean)) {
             Metabolite sm = new Metabolite(clean, clean);
             enzymes.put(clean, sm);
             return sm;
-
         } else {
             return enzymes.get(clean);
         }
     }
 
-    private void searchPossibleEnzyms(BiologicalNodeAbstract node,
-                                      DefaultMutableTreeNode parentNode) {
-        // System.out.println("methode");
+    private void searchPossibleEnzyms(BiologicalNodeAbstract node, DefaultMutableTreeNode parentNode) {
         if (parentNode.getLevel() == 0 || (parentNode.getLevel() / 2) < searchDepth + 1) {
             if (!disregarded || !box.getElementValue(node.getLabel())) {
                 String queryString = node.getLabel().replaceAll("'", "''").replaceAll("\"", "''");
@@ -132,26 +88,16 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
                 String weight = "1";
                 for (DBColumn column : results) {
                     String[] resultDetails = column.getColumn();
-
                     String clean = this.cleanString(resultDetails[0]);
                     if (!enzymes.containsKey(clean)) {
-                        // System.out.println("details: "+resultDetails[3]);
-                        resultDetails[3] = resultDetails[3].replace("\uFFFD",
-                                "'");
-                        // System.out.println(resultDetails[3]);
+                        resultDetails[3] = resultDetails[3].replace("\uFFFD", "'");
                         String[] gesplittet = resultDetails[3].split("=");
                         if (gesplittet.length == 2) {
                             left = gesplittet[0].split("\\s\\+\\s");
                             right = gesplittet[1].split("\\s\\+\\s");
-                        } else {
-                            // System.out.println("No valid reaction: "+resultDetails[3]);
                         }
-
                         Enzyme e = new Enzyme(clean, resultDetails[1]);
-
                         enzymes.put(clean, e);
-
-                        // System.out.println("size: "+left.length);
                         String tmp;
                         String[] split;
                         for (String s : left) {
@@ -191,12 +137,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
     }
 
     private void buildEdge(BiologicalNodeAbstract first, BiologicalNodeAbstract second, boolean directed, String weight) {
-        if (first == null) {
-            System.out.println("first is null");
-        }
-        if (second == null) {
-            System.out.println("second is null");
-        }
         if (first != null && second != null) {
             ReactionEdge r = new ReactionEdge(weight, "", first, second);
             r.setFunction(weight);
@@ -312,10 +252,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
      * For autocoarsing the resulting network.
      */
     private void autoCoarseDepth() {
-        /**
-         * The parent of each node is the neighbor with the shortest path to the root node.
-         * @author tobias
-         */
+        // The parent of each node is the neighbor with the shortest path to the root node.
         class HLC implements HierarchyListComparator<Integer> {
             final Map<BiologicalNodeAbstract, Number> rootDistanceMap;
 
@@ -368,10 +305,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
      */
     private void autoCoarseEnzymeNomenclature() {
         EnzymeNomenclature struc = new EnzymeNomenclature();
-        /**
-         * The parent of each node is the neighbor with the shortest path to the root node.
-         * @author tobias
-         */
+        // The parent of each node is the neighbor with the shortest path to the root node.
         class HLC implements HierarchyListComparator<String> {
             final EnzymeNomenclature struc;
 
@@ -433,10 +367,9 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
     private void getCofactors(String enzyme) {
         ArrayList<DBColumn> results;
         if (organism_specific) {
-            String brendaQuerie = BRENDAQueries.getSpecificCoFactor;
             String QUESTION_MARK = "\\?";
-            brendaQuerie = brendaQuerie.replaceFirst(QUESTION_MARK, "\"" + enzyme_organism + "\"");
-            results = new Wrapper().requestDbContent(1, brendaQuerie + enzyme);
+            String brendaQuery = BRENDAQueries.getSpecificCoFactor.replaceFirst(QUESTION_MARK, "\"" + enzyme_organism + "\"");
+            results = new Wrapper().requestDbContent(1, brendaQuery + enzyme);
         } else {
             results = new Wrapper().requestDbContent(1, BRENDAQueries.getCoFactor + enzyme);
         }
@@ -459,53 +392,28 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
     }
 
     private void getInhibitors(String enzyme) {
-
         ArrayList<DBColumn> results;
-
         if (organism_specific) {
-
-            String brendaQuerie = BRENDAQueries.getInhibitor;
             String QUESTION_MARK = "\\?";
-
-            brendaQuerie = brendaQuerie.replaceFirst(QUESTION_MARK, "\""
-                    + enzyme_organism + "\"");
-            results = new Wrapper().requestDbContent(1, brendaQuerie + enzyme);
+            String brendaQuery = BRENDAQueries.getInhibitor.replaceFirst(QUESTION_MARK, "\"" + enzyme_organism + "\"");
+            results = new Wrapper().requestDbContent(1, brendaQuery + enzyme);
         } else {
-            results = new Wrapper().requestDbContent(1,
-                    BRENDAQueries.getInhibitor + enzyme);
+            results = new Wrapper().requestDbContent(1, BRENDAQueries.getInhibitor + enzyme);
         }
-
-        String[] resultDetails;
-        BiologicalNodeAbstract bna;
-        BiologicalNodeAbstract bna2;
-        Inhibitor f;
-        Enzyme e;
-        String result0;
-        String result1;
         for (DBColumn column : results) {
-            resultDetails = column.getColumn();
-            result0 = this.cleanString(resultDetails[0]);
-            result1 = this.cleanString(resultDetails[1]);
-            System.out.println("found Inhibitor");
+            String[] resultDetails = column.getColumn();
+            String result0 = this.cleanString(resultDetails[0]);
+            String result1 = this.cleanString(resultDetails[1]);
             if (enzymes.containsKey(result1)) {
-                System.out.println("drin2");
-                bna = enzymes.get(result0);
-                bna2 = enzymes.get(result1);
-
+                BiologicalNodeAbstract bna = enzymes.get(result0);
+                BiologicalNodeAbstract bna2 = enzymes.get(result1);
                 bna2.setColor(Color.pink);
-
-                this.buildEdge(bna2, bna, true, "1");
-
+                buildEdge(bna2, bna, true, "1");
             } else {
-
-                f = new Inhibitor(result1, result1);
-
+                Inhibitor f = new Inhibitor(result1, result1);
                 enzymes.put(result1, f);
-
-                e = ((Enzyme) enzymes.get(result0));
-
-                this.buildEdge(f, e, true, "1");
-
+                Enzyme e = ((Enzyme) enzymes.get(result0));
+                buildEdge(f, e, true, "1");
             }
         }
     }
@@ -575,13 +483,9 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
     @Override
     protected Object doInBackground() throws Exception {
-
         getPathway();
-
         box.getDisregardedValues();
-
         title = enzymeToSearch[0];
-
         return null;
     }
 
@@ -595,68 +499,47 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
                             "A new tab will be created with the pathway you selected. Shall this tab be a merge between the current pathway and the selected or contain only the selected pathway?",
                             "", JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE, null,
-                            new String[]{"Selected Pathway Only",
-                                    "Merge Pathways"},
+                            new String[]{"Selected Pathway Only", "Merge Pathways"},
                             JOptionPane.CANCEL_OPTION);
         if (answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION) {
             if (answer == JOptionPane.NO_OPTION) {
-                // System.out.println("drin");
                 pw = new Pathway(title);
             } else if (title != null) {
-                // System.out.println("drin1");
                 pw = new CreatePathway("EC: " + title).getPathway();
             } else {
-                // System.out.println("drin2");
                 pw = new CreatePathway("BRENDA").getPathway();
             }
             pw.setOrganism(organism);
             pw.setLink(pathwayLink);
-            // GraphInstance i = new GraphInstance();
-            // Pathway pw = new CreatePathway().getPathway();
-            // System.out.println("p: "+i.getPathway());
-            // System.out.println(enzymeToSearch[0]);
             getEnzymeDetails(enzymeToSearch);
-
-            // System.out.println("ende");
-            // System.out.println("enz: "+enzymeToSearch);
             String enzymeList = enzymesInPathway();
-
-            // System.out.println(enzymeList);
             if (CoFactors) {
                 MainWindow.getInstance().showProgressBar("Getting Cofactors");
                 getCofactors(enzymeList);
             }
-
             if (Inhibitors) {
                 MainWindow.getInstance().showProgressBar("Getting Inhibitors");
                 getInhibitors(enzymeList);
             }
-
             MainWindow.getInstance().showProgressBar("Drawing network");
-
             myGraph = pw.getGraph();
-
             drawNodes();
             drawEdges();
-
             startVisualizationModel();
             if (!headless) {
-//				myGraph.changeToCircleLayout();
                 myGraph.changeToGEMLayout();
-                // GraphInstance.getMyGraph().getVisualizationViewer().restart();
                 myGraph.normalCentering();
             }
-
             pw.saveVertexLocations();
-
             if (autoCoarseDepth) {
                 autoCoarseDepth();
             }
             if (autoCoarseEnzymeNomenclature) {
                 autoCoarseEnzymeNomenclature();
             }
-            if (answer == JOptionPane.NO_OPTION)
+            if (answer == JOptionPane.NO_OPTION) {
                 new MergeGraphs(pw, mergePW, true);
+            }
             MainWindow.getInstance().closeProgressBar();
         }
         MainWindow.getInstance().updateAllGuiElements();
@@ -666,8 +549,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
         autoCoarseDepth = ac;
     }
 
-    public void setAutoCoarseEnzymeNomenclature(
-            boolean autoCoarseEnzymeNomenclature) {
+    public void setAutoCoarseEnzymeNomenclature(boolean autoCoarseEnzymeNomenclature) {
         this.autoCoarseEnzymeNomenclature = autoCoarseEnzymeNomenclature;
     }
 

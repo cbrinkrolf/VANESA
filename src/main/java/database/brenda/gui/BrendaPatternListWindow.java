@@ -130,7 +130,7 @@ public class BrendaPatternListWindow implements ActionListener {
 
 	private void initTable(Object[][] rows, String[] columNames) {
 
-		BrendaTabelModel model = new BrendaTabelModel(rows,
+		BrendaTableModel model = new BrendaTableModel(rows,
 				columNames);
 
 		table = new MyTable();

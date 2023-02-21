@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package configurations.gui;
 
 import java.lang.reflect.Method;
@@ -15,17 +11,9 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 
-/**
- *
- * @author Besitzer
- */
 public class ConfigPanel extends JPanel {
-
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private final String layoutName;
+    private static final long serialVersionUID = 1L;
+    private final String layoutName;
 
     public ConfigPanel(Class<? extends Layout> layout) {
         layoutName = layout.getSimpleName();
@@ -46,10 +34,9 @@ public class ConfigPanel extends JPanel {
             Method m = MyGraph.class.getMethod("changeTo" + getLayoutName());
             m.invoke(getMyGraph());
         } catch (Exception ex) {
-        	ex.printStackTrace();
+            ex.printStackTrace();
             Logger.getLogger(ConfigPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     public String getLayoutName() {

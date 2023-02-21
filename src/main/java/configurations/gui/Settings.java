@@ -13,115 +13,96 @@ import gui.MainWindow;
 import gui.MyPopUp;
 
 public class Settings extends JDialog implements ActionListener {
-	private static final long serialVersionUID = -4497946706066898835L;
+    private static final long serialVersionUID = -4497946706066898835L;
+    private static final String INTERNET_LABEL = "Internet";
+    private static final String GRAPH_SETTINGS_LABEL = "Graph Settings";
+    private static final String VISUALIZATION_LABEL = "Visualization";
 
-	private JButton cancel = new JButton("cancel");
-	private JButton defaultButton = new JButton("default");
-	private JButton acceptButton = new JButton("accept");
-	private JButton[] buttons = { acceptButton, defaultButton, cancel };
+    private final JButton defaultButton = new JButton("default");
 
-	private JTabbedPane tabbedPane = new JTabbedPane();
-	private ConnectionTab database = new ConnectionTab();
-	private InternetConnectionDialog internet = new InternetConnectionDialog();
-	private GraphSettingsDialog gset = new GraphSettingsDialog();
-	private VisualizationDialog visDialog = new VisualizationDialog();
+    private final JTabbedPane tabbedPanel = new JTabbedPane();
+    private final InternetConnectionDialog internetSettings = new InternetConnectionDialog();
+    private final GraphSettingsDialog graphSettings = new GraphSettingsDialog();
+    private final VisualizationDialog visualizationSettings = new VisualizationDialog();
 
-	private String database_label = new String("Database Settings");
-	private String interner_label = new String("Internet");
-	private String gset_label = new String("Graph Settings");
-	private String visDialog_label = new String("Visualization");
+    public Settings(int type) {
+        JOptionPane optionPanel = new JOptionPane(tabbedPanel, JOptionPane.PLAIN_MESSAGE);
+        JButton cancel = new JButton("cancel");
+        JButton acceptButton = new JButton("accept");
+        JButton[] buttons = {acceptButton, defaultButton, cancel};
+        optionPanel.setOptions(buttons);
+        setTitle("Settings");
+        setModal(true);
+        setContentPane(optionPanel);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        cancel.addActionListener(e -> onCancelClicked());
+        defaultButton.addActionListener(e -> onDefaultClicked());
+        acceptButton.addActionListener(e -> onAcceptClicked());
+        tabbedPanel.addTab(INTERNET_LABEL, null, internetSettings, INTERNET_LABEL);
+        tabbedPanel.addTab(GRAPH_SETTINGS_LABEL, null, graphSettings.getPanel(), GRAPH_SETTINGS_LABEL);
+        tabbedPanel.addTab(VISUALIZATION_LABEL, null, visualizationSettings.getPanel(), VISUALIZATION_LABEL);
+        tabbedPanel.setSelectedIndex(type);
+        enableSettings(true);
+        setSize(300, 300);
+        setLocationRelativeTo(MainWindow.getInstance().getFrame());
+        pack();
+        setResizable(false);
+        setVisible(true);
+    }
 
-	private JOptionPane optionPane;
+    public void enableSettings(boolean enable) {
+        internetSettings.enableDisplay(enable);
+        defaultButton.setEnabled(enable);
+        graphSettings.getPanel().setEnabled(enable);
+    }
 
-	public Settings(int type) {
-		optionPane = new JOptionPane(tabbedPane, JOptionPane.PLAIN_MESSAGE);
-		optionPane.setOptions(buttons);
+    private void onDefaultClicked() {
+        String tab_name = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
+        switch (tab_name) {
+            case INTERNET_LABEL:
+                internetSettings.applyDefaults();
+                break;
+            case GRAPH_SETTINGS_LABEL:
+                graphSettings.applyDefaults();
+                break;
+            case VISUALIZATION_LABEL:
+                visualizationSettings.setDefaultYamlPath();
+                break;
+        }
+    }
 
-		this.setTitle("Settings");
-		this.setModal(true);
+    private void onAcceptClicked() {
+        String tab_name = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
+        switch (tab_name) {
+            case INTERNET_LABEL:
+                setVisible(!internetSettings.applyNewSettings());
+                break;
+            case GRAPH_SETTINGS_LABEL:
+                setVisible(!graphSettings.applyNewSettings());
+                break;
+            case VISUALIZATION_LABEL:
+                visualizationSettings.acceptConfig();
+                dispose();
+                break;
+        }
+    }
 
-		this.setContentPane(optionPane);
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    private void onCancelClicked() {
+        setVisible(false);
+    }
 
-		cancel.addActionListener(this);
-		cancel.setActionCommand("cancel");
-		defaultButton.addActionListener(this);
-		defaultButton.setActionCommand("default");
-		acceptButton.addActionListener(this);
-		acceptButton.setActionCommand("accept");
-
-		tabbedPane.addTab(database_label, null, database, database_label);
-		tabbedPane.addTab(interner_label, null, internet, interner_label);
-		tabbedPane.addTab(gset_label, null, gset.getPanel(), gset_label);
-		tabbedPane.addTab(visDialog_label, null, visDialog.getPanel(), visDialog_label);
-
-		tabbedPane.setSelectedIndex(type);
-		enableSettings(true);
-
-		this.setSize(300, 300);
-		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
-		this.pack();
-		this.setResizable(false);
-		this.setVisible(true);
-	}
-
-	public void enableSettings(boolean enable) {
-		database.enableDispaly(enable);
-		internet.enableDispaly(enable);
-		defaultButton.setEnabled(enable);
-		gset.getPanel().setEnabled(enable);
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		String event = e.getActionCommand();
-
-		if ("cancel".equals(event)) {
-			this.setVisible(false);
-
-		} else if ("default".equals(event)) {
-			String tab_name = tabbedPane.getTitleAt(tabbedPane
-					.getSelectedIndex());
-
-			if (tab_name.equals(database_label))
-				database.applyDefaults();
-			else if (tab_name.equals(interner_label))
-				internet.applyDefaults();
-			else if (tab_name.equals(gset_label))
-				gset.applyDefaults();
-			else if (tab_name.equals(visDialog_label)){
-				visDialog.setDefaultYamlPath();
-			}
-		} else if ("accept".equals(event)) {
-			String tab_name = tabbedPane.getTitleAt(tabbedPane
-					.getSelectedIndex());
-
-			if (tab_name.equals(database_label))
-				this.setVisible(!database.applyNewSettings());
-			else if (tab_name.equals(interner_label))
-				this.setVisible(!internet.applyNewSettings());
-			else if (tab_name.equals(gset_label))
-				this.setVisible(!gset.applyNewSettings());
-			else if (tab_name.equals(visDialog_label)){
-				visDialog.acceptConfig();
-				this.dispose();
-			}
-
-			//this.setVisible(false);
-		} else if ("ok".equals(event)) {
-			boolean apply_all = true;
-
-			if (!database.applyNewSettings())
-				apply_all = false;
-			else if (!internet.applyNewSettings())
-				apply_all = false;
-			else if (!gset.applyNewSettings())
-				apply_all = false;
-
-			if (apply_all) {
-				this.setVisible(false);
-			} else {
-				MyPopUp.getInstance().show("Error", "Error found - please change settings!");
-			}
-		}
-	}
+    public void actionPerformed(ActionEvent e) {
+        if ("ok".equals(e.getActionCommand())) {
+            boolean applyAll = true;
+            if (!internetSettings.applyNewSettings())
+                applyAll = false;
+            else if (!graphSettings.applyNewSettings())
+                applyAll = false;
+            if (applyAll) {
+                setVisible(false);
+            } else {
+                MyPopUp.getInstance().show("Error", "Error found - please change settings!");
+            }
+        }
+    }
 }

@@ -113,7 +113,7 @@ public class MirnaStatistics {
                 finalQueryString = finalQueryString.substring(0, finalQueryString.length() - 2);
                 finalQueryString += "AND Hairpins.SpeciesID=54;";
             }
-            ArrayList<DBColumn> resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
+            ArrayList<DBColumn> resultsDBSearch = new Wrapper().requestDbContent(Wrapper.DBTYPE_MI_RNA, finalQueryString);
             if (resultsDBSearch.size() > 0) {
                 data.put(bna, resultsDBSearch);
             }
@@ -167,7 +167,7 @@ public class MirnaStatistics {
                 finalQueryString = finalQueryString.substring(0, finalQueryString.length() - 2);
                 finalQueryString += "AND Hairpins.SpeciesID=54;";
             }
-            ArrayList<DBColumn> resultsDBSearch = new Wrapper().requestDbContent(Wrapper.dbtype_MiRNA, finalQueryString);
+            ArrayList<DBColumn> resultsDBSearch = new Wrapper().requestDbContent(Wrapper.DBTYPE_MI_RNA, finalQueryString);
             if (resultsDBSearch.size() > 0) {
                 data.put(bna, resultsDBSearch);
             }

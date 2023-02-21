@@ -29,7 +29,6 @@ public enum MenuActionCommands {
     hctLayout("hctLayout"),
     isomLayout("isomLayout"),
     gemLayout("gemLayout"),
-    databaseSettings("database settings"),
     visualizationSettings("visualizationSettings"),
     keggSettings("kegg settings"),
     brendaSettings("brenda settings"),

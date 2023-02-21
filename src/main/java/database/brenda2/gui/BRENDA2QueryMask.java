@@ -71,16 +71,6 @@ public class BRENDA2QueryMask extends QueryMask {
         return null;
     }
 
-    public String[] getKeyword() {
-        String[] input = new String[5];
-        input[0] = ecNumber.getText().trim();
-        input[1] = name.getText().trim();
-        input[2] = synonym.getText().trim();
-        input[3] = metabolite.getText().trim();
-        input[4] = organism.getText().trim();
-        return input;
-    }
-
     @Override
     protected boolean doSearchCriteriaExist() {
         return ecNumber.getText().trim().length() > 0 || name.getText().trim().length() > 0 ||

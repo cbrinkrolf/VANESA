@@ -3,17 +3,8 @@
 <properties>
 	<entry key="settings.file">/config/settings.xml</entry>
 
-	<entry key="settings.default.user">user</entry>
-	<entry key="settings.default.password">password</entry>
-	<entry key="settings.default.server">127.0.0.1</entry>
 	<entry key="settings.default.developer">true</entry>
 	
-	<entry key="settings.default.database.DAWIS">dawismd</entry>
-	<entry key="settings.default.database.PPI">ppi_db</entry>
-	<entry key="settings.default.database.mirna">db_mirna5</entry>
-	<entry key="settings.default.database.mirna_New">db_mirna6</entry>
-	
-	<entry key="settings.default.webservice.url">http://tunicata.techfak.uni-bielefeld.de/webservice/db</entry>
 	<entry key="settings.default.api.url">https://vanesa-api.kalis-amts.de</entry>
 	<entry key="settings.default.proxy.host"/>
 	<entry key="settings.default.proxy.port"/>

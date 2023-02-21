@@ -120,15 +120,15 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
         switch (this.search) {
             case enzymeSearch:
                 headers = 3;
-                results = new Wrapper().requestDbContent(Wrapper.dbtype_BRENDA2, getEnzymeQuery());
+                results = new Wrapper().requestDbContent(Wrapper.DBTYPE_BRENDA2, getEnzymeQuery());
                 break;
             case kmSearch:
                 headers = 4;
-                results = new Wrapper().requestDbContent(Wrapper.dbtype_BRENDA2, getKmQuery());
+                results = new Wrapper().requestDbContent(Wrapper.DBTYPE_BRENDA2, getKmQuery());
                 break;
             case turnoverSearch:
                 headers = 4;
-                results = new Wrapper().requestDbContent(Wrapper.dbtype_BRENDA2, getTurnoverQuery());
+                results = new Wrapper().requestDbContent(Wrapper.DBTYPE_BRENDA2, getTurnoverQuery());
         }
         String[][] container = new String[results.size()][headers];
         for (int i = 0; i < results.size(); i++) {
