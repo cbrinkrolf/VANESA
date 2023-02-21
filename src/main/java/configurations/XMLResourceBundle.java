@@ -3,60 +3,33 @@ package configurations;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Properties;
 
 public class XMLResourceBundle {
+    public static final XMLResourceBundle SETTINGS = new XMLResourceBundle("settings");
     private static final String SUFFIX = ".properties.xml";
-    private final Locale locale;
     private final Properties properties;
 
-    public XMLResourceBundle() {
-        locale = Locale.getDefault();
-        properties = new Properties();
-    }
-
     /**
-     * Resource bundle using the specified base name, the default locale, and the caller's class loader.
+     * Resource bundle using the specified base name and the caller's class loader.
      *
      * @param baseName - the base name of the resource bundle, a fully qualified class name
      */
     public XMLResourceBundle(String baseName) {
-        this(baseName, null, null);
-    }
-
-    /**
-     * Resource bundle using the specified base name and locale, and the caller's class loader.
-     *
-     * @param baseName - the base name of the resource bundle, a fully qualified class name
-     * @param locale   - the locale for which a resource bundle is desired
-     */
-    public XMLResourceBundle(String baseName, Locale locale) {
-        this(baseName, locale, null);
+        this(baseName, null);
     }
 
     /**
      * Resource bundle using the specified base name, locale, and class loader.
      *
      * @param baseName    - the base name of the resource bundle, a fully qualified class name
-     * @param locale      - the locale for which a resource bundle is desired
      * @param classloader - the class loader from which to load the resource bundle
      */
-    public XMLResourceBundle(String baseName, Locale locale, ClassLoader classloader) {
-        this.locale = locale != null ? locale : Locale.getDefault();
+    public XMLResourceBundle(String baseName, ClassLoader classloader) {
         ClassLoader loader = classloader != null ? classloader : this.getClass().getClassLoader();
         properties = new Properties();
-        try {
-            InputStream is = loader.getResourceAsStream(
-                    baseName + this.locale.getLanguage() + "_" + this.locale.getCountry() + SUFFIX);
-            if (is == null) {
-                is = loader.getResourceAsStream(baseName + "_" + this.locale.getLanguage() + SUFFIX);
-                if (is == null) {
-                    is = loader.getResourceAsStream(baseName + SUFFIX);
-                }
-            }
+        try (InputStream is = loader.getResourceAsStream(baseName + SUFFIX)) {
             properties.loadFromXML(is);
-            is.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,16 +54,6 @@ public class XMLResourceBundle {
      */
     public String getString(String key) {
         return properties.getProperty(key);
-    }
-
-    /**
-     * Returns the locale of this resource bundle. This method can be used after a call to getBundle() to determine
-     * whether the resource bundle returned really corresponds to the requested locale or is a fallback.
-     *
-     * @return the locale of this resource bundle
-     */
-    public Locale getLocale() {
-        return locale;
     }
 
     /**

@@ -176,6 +176,10 @@ public class BrendaSearchResultWindow implements ActionListener {
     }
 
     public Integer getSearchDepth() {
+        try {
+            searchDepth.commitEdit();
+        } catch (java.text.ParseException ignored) {
+        }
         return (Integer) searchDepth.getValue();
     }
 

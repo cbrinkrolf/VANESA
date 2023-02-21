@@ -878,21 +878,16 @@ public class MenuListener implements ActionListener {
 			thread.start();
 			System.out.println("nach thread");
 			new PNDoc(docDir + "doc.tex");
-
 			String bin = "pdflatex";
-
 			if (SystemUtils.IS_OS_WINDOWS) {
 				bin += ".exe";
 			}
-
 			ProcessBuilder pb;
 			Process p;
-
 			try {
 				pb = new ProcessBuilder(bin, docDir + "doc.tex");
 				pb.directory(new File(docDir));
 				p = pb.start();
-
 				Thread t = new Thread() {
 					public void run() {
 						try {

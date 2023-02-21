@@ -1,18 +1,13 @@
-/**
- * 
- */
 package configurations.gui;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 
 import configurations.NetworkSettings;
-import configurations.NetworkSettingsSingelton;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
@@ -21,13 +16,10 @@ import net.miginfocom.swing.MigLayout;
 
 /**
  * @author Sebastian
- * 
  */
 public class GraphSettingsDialog {
-
 	JPanel panel;
-	JOptionPane pane;
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	NetworkSettings settings = NetworkSettings.getInstance();
 
 	ButtonGroup group = new ButtonGroup();
 	JRadioButton only_name = new JRadioButton("", true);
@@ -55,9 +47,6 @@ public class GraphSettingsDialog {
 	GraphInstance graphInstance = new GraphInstance();
 	GraphContainer con = GraphContainer.getInstance();;
 
-	/**
-	 * 
-	 */
 	public GraphSettingsDialog() {
 
 		group.add(only_label);
@@ -109,8 +98,6 @@ public class GraphSettingsDialog {
 			no.setSelected(true);
 		
 		opacityslider.setValue(settings.getEdgeOpacity());
-		
-		
 
 		//Container contentPane = getContentPane();
 		MigLayout layout = new MigLayout("", "[left]");
@@ -189,8 +176,6 @@ public class GraphSettingsDialog {
 		
 		JPanel edgeopacitypanel = new JPanel();
 		
-		
-		
 		opacityslider.setMajorTickSpacing(50);
 //		opacityslider.setMinorTickSpacing();
 		opacityslider.setPaintTicks(true);
@@ -198,7 +183,6 @@ public class GraphSettingsDialog {
 		panel.add(opacityslider);		
 		
 		panel.add(edgeopacitypanel, "wrap,align left, gap 10, gaptop 2");
-		
 	}
 
 	public JPanel getPanel() {
@@ -206,7 +190,6 @@ public class GraphSettingsDialog {
 	}
 
 	public void enableDispaly(boolean enabled) {
-
 		only_label.setEnabled(enabled);
 		only_name.setEnabled(enabled);
 		name_label.setEnabled(enabled);
@@ -222,29 +205,18 @@ public class GraphSettingsDialog {
 		
 		yes.setEnabled(enabled);
 		no.setEnabled(enabled);
-
 	}
 
 	public boolean applyDefaults() {
-
-		if (con.containsPathway()) {
-			if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-				only_label.setSelected(true);
-				//settings.setNodeLabel(1);
-
-				only_label_e.setSelected(true);
-				//settings.setEdgeLabel(1);
-
-				white.setSelected(true);
-				graphInstance.getPathway().changeBackground("white");
-				settings.setBackgroundColor(false);
-				
-				yes.setSelected(true);
-
-			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
-				return false;
-			}
+		if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+			only_label.setSelected(true);
+			//settings.setNodeLabel(1);
+			only_label_e.setSelected(true);
+			//settings.setEdgeLabel(1);
+			white.setSelected(true);
+			graphInstance.getPathway().changeBackground("white");
+			settings.setBackgroundColor(false);
+			yes.setSelected(true);
 		} else {
 			MyPopUp.getInstance().show("Error", "Please create a network before.");
 			return false;
@@ -253,53 +225,41 @@ public class GraphSettingsDialog {
 	}
 
 	public boolean applyNewSettings() {
-
-		if (con.containsPathway()) {
-			if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-
-				if (only_label.isSelected()) {
-					settings.setNodeLabel(1);
-				} else if (only_name.isSelected()) {
-					settings.setNodeLabel(2);
-				} else if (name_label.isSelected()) {
-					settings.setNodeLabel(3);
-				} else if (nothing.isSelected()) {
-					settings.setNodeLabel(4);
-				}
-
-				if (only_label_e.isSelected()) {
-					settings.setEdgeLabel(1);
-				} else if (only_name_e.isSelected()) {
-					System.out.println("selected");
-					settings.setEdgeLabel(2);
-				} else if (name_label_e.isSelected()) {
-					settings.setEdgeLabel(3);
-				} else if (nothing_e.isSelected()) {
-					settings.setEdgeLabel(4);
-				}
-
-				if (black.isSelected()) {
-					settings.setBackgroundColor(true);
-					graphInstance.getPathway().changeBackground("black");
-				} else if (white.isSelected()) {
-					settings.setBackgroundColor(false);
-					graphInstance.getPathway().changeBackground("white");
-				}
-				
-				if(yes.isSelected()){
-					settings.setDrawEdges(true);
-				} else{
-					settings.setDrawEdges(false);
-					no.setSelected(true);
-				}
-				
-				settings.setEdgeOpacity(opacityslider.getValue());
-				con.getPathway(w.getCurrentPathway()).getGraph().getEdgeDrawPaintFunction().updateEdgeAlphaValue();
-				
-			} else {
-				MyPopUp.getInstance().show("Error", "Please create a network before.");
-				return false;
+		if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+			if (only_label.isSelected()) {
+				settings.setNodeLabel(1);
+			} else if (only_name.isSelected()) {
+				settings.setNodeLabel(2);
+			} else if (name_label.isSelected()) {
+				settings.setNodeLabel(3);
+			} else if (nothing.isSelected()) {
+				settings.setNodeLabel(4);
 			}
+			if (only_label_e.isSelected()) {
+				settings.setEdgeLabel(1);
+			} else if (only_name_e.isSelected()) {
+				System.out.println("selected");
+				settings.setEdgeLabel(2);
+			} else if (name_label_e.isSelected()) {
+				settings.setEdgeLabel(3);
+			} else if (nothing_e.isSelected()) {
+				settings.setEdgeLabel(4);
+			}
+			if (black.isSelected()) {
+				settings.setBackgroundColor(true);
+				graphInstance.getPathway().changeBackground("black");
+			} else if (white.isSelected()) {
+				settings.setBackgroundColor(false);
+				graphInstance.getPathway().changeBackground("white");
+			}
+			if(yes.isSelected()){
+				settings.setDrawEdges(true);
+			} else{
+				settings.setDrawEdges(false);
+				no.setSelected(true);
+			}
+			settings.setEdgeOpacity(opacityslider.getValue());
+			con.getPathway(w.getCurrentPathway()).getGraph().getEdgeDrawPaintFunction().updateEdgeAlphaValue();
 		} else {
 			MyPopUp.getInstance().show("Error", "Please create a network before.");
 			return false;

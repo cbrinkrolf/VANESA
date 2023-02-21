@@ -6,7 +6,7 @@ import database.gui.SearchResultWindow;
 import javax.swing.*;
 
 public class IntActSearchResultWindow extends SearchResultWindow<IntActEntry> {
-    private JSpinner searchDepth = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
+    private JSpinner searchDepth;
     private JCheckBox autoCoarse;
     private JCheckBox binaryInteractions;
     private JCheckBox complexInteractions;
@@ -69,6 +69,10 @@ public class IntActSearchResultWindow extends SearchResultWindow<IntActEntry> {
     }
 
     public Integer getSearchDepth() {
+        try {
+            searchDepth.commitEdit();
+        } catch (java.text.ParseException ignored) {
+        }
         return (Integer) searchDepth.getValue();
     }
 

@@ -12,7 +12,6 @@ import gui.MainWindow;
 import gui.MyPopUp;
 import io.graphML.GraphMLWriter;
 import io.sbml.JSBMLOutput;
-import moOutput.MOoutput;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.jfree.chart.ChartUtils;

@@ -44,7 +44,7 @@ import graph.gui.Parameter;
 import gui.MainWindow;
 import gui.MyPopUp;
 import gui.SimMenu;
-import moOutput.MOoutput;
+import io.MOoutput;
 import util.VanesaUtility;
 
 public class PetriNetSimulation implements ActionListener {

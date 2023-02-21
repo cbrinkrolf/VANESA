@@ -49,7 +49,7 @@ import gui.MyPopUp;
 import petriNet.PetriNetProperties;
 import petriNet.PetriNetSimulation;
 import transformation.TransformationInformation;
-import util.FormularSafety;
+import util.FormulaSafety;
 
 public class Pathway implements Cloneable {
 	private File file = null;
@@ -788,7 +788,7 @@ public class Pathway implements Cloneable {
 
 	public void setName(String name) {
 		// if PW is BNA
-		this.name = FormularSafety.replace(name.trim());
+		this.name = FormulaSafety.replace(name.trim());
 		if (tab != null) {
 			this.name = name.trim();
 			tab.setTitle(this.name);

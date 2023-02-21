@@ -11,7 +11,7 @@ import gui.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import util.FormularSafety;
+import util.FormulaSafety;
 import util.VanesaUtility;
 
 import javax.swing.*;
@@ -587,7 +587,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 			}
 			for (BiologicalNodeAbstract tmp : GraphInstance.getMyGraph().getJungGraph().getNeighbors(bna)) {
 				String lbl = tmp.getLabel();
-				if (FormularSafety.replace(lbl).equals(name)) {
+				if (FormulaSafety.replace(lbl).equals(name)) {
 					name = lbl;
 				}
 			}

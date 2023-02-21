@@ -123,7 +123,73 @@ public class PPISearch extends SwingWorker<Object, Object> {
     }
 
     private void requestMintPPI(MintEntry root, int depth, boolean binary, boolean complex, boolean autoCoarse) {
-        // TODO
+        MintRetrievePPIRequestPayload payload = new MintRetrievePPIRequestPayload();
+        payload.id = root.id;
+        payload.depth = depth;
+        payload.binary = binary;
+        payload.complex = complex;
+        Response<MintRetrievePPIResponsePayload> response = VanesaApi.postSync("/ppi/mint_entry/ppi", payload,
+                new TypeReference<>() {
+                });
+        if (response.hasError()) {
+            JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Failed to retrieve PPI network.\n" +
+                    response.error);
+            return;
+        }
+        if (response.payload.entries.length == 1) {
+            MyPopUp.getInstance().show("Mint search", "No interactions found!");
+        }
+        MainWindow.getInstance().showProgressBar("Drawing Network");
+        Pathway pw = new CreatePathway("Mint network for " + root.name + " (depth=" + depth + ")").getPathway();
+        Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
+        drawEdges(pw, response.payload, idProteinMap);
+        MyGraph graph = pw.getGraph();
+        graph.restartVisualizationModel();
+        graph.changeToGEMLayout();
+        graph.fitScaleOfViewer(graph.getSatelliteView());
+        graph.normalCentering();
+        pw.saveVertexLocations();
+        if (autoCoarse) {
+            autoCoarse(graph);
+        }
+        MainWindow.getInstance().closeProgressBar();
+        MainWindow window = MainWindow.getInstance();
+        window.updateOptionPanel();
+        window.getFrame().setVisible(true);
+    }
+
+    private Map<Integer, Protein> drawNodes(Pathway pw, int rootId, MintRetrievePPIResponsePayload payload) {
+        Map<Integer, Protein> idProteinMap = new HashMap<>();
+        for (MintEntry entry : payload.entries) {
+            Protein protein = new Protein(entry.shortLabel, entry.name);
+            idProteinMap.put(entry.id, protein);
+            if (entry.id.equals(rootId)) {
+                protein.setColor(Color.RED);
+            }
+            BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10, 10));
+            if (entry.id.equals(rootId)) {
+                pw.setRootNode(node);
+            }
+        }
+        return idProteinMap;
+    }
+
+    private void drawEdges(Pathway pw, MintRetrievePPIResponsePayload payload, Map<Integer, Protein> idProteinMap) {
+        var graph = pw.getGraph().getJungGraph();
+        for (int[] entry : payload.binaryInteractions) {
+            BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
+            BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
+            if (graph.findEdge(first, second) == null && first != second) {
+                buildEdge(pw, first, second);
+            }
+        }
+        for (int[] entry : payload.complexInteractions) {
+            BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
+            BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
+            if (graph.findEdge(first, second) == null && first != second) {
+                buildEdge(pw, first, second);
+            }
+        }
     }
 
     private void requestIntActEntries() {
@@ -214,6 +280,13 @@ public class PPISearch extends SwingWorker<Object, Object> {
     private void drawEdges(Pathway pw, IntActRetrievePPIResponsePayload payload, Map<Integer, Protein> idProteinMap) {
         var graph = pw.getGraph().getJungGraph();
         for (int[] entry : payload.binaryInteractions) {
+            BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
+            BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
+            if (graph.findEdge(first, second) == null && first != second) {
+                buildEdge(pw, first, second);
+            }
+        }
+        for (int[] entry : payload.complexInteractions) {
             BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
             BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
             if (graph.findEdge(first, second) == null && first != second) {

@@ -54,6 +54,10 @@ public class HPRDSearchResultWindow extends SearchResultWindow<HPRDEntry> {
     }
 
     public Integer getSearchDepth() {
+        try {
+            searchDepth.commitEdit();
+        } catch (java.text.ParseException ignored) {
+        }
         return (Integer) searchDepth.getValue();
     }
 

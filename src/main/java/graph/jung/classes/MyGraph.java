@@ -26,7 +26,6 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import configurations.NetworkSettings;
-import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.AggregateLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -119,7 +118,7 @@ public class MyGraph {
 
 	private boolean animatedPicking = false;
 
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	NetworkSettings settings = NetworkSettings.getInstance();
 
 	public AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> getClusteringLayout() {
 		return clusteringLayout;

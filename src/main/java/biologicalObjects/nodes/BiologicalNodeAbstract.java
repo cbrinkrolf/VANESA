@@ -21,7 +21,7 @@ import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
-import configurations.NetworkSettingsSingelton;
+import configurations.NetworkSettings;
 import graph.GraphInstance;
 import graph.groups.Group;
 import graph.gui.Parameter;
@@ -1190,7 +1190,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public String getNetworklabel() {
-		return getCorrectLabel(NetworkSettingsSingelton.getInstance().getNodeLabel());
+		return getCorrectLabel(NetworkSettings.getInstance().getNodeLabel());
 	}
 
 	public String getLabel() {

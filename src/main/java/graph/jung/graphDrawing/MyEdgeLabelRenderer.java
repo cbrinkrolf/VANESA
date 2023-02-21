@@ -12,7 +12,6 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import configurations.NetworkSettings;
-import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 
 /**
@@ -20,22 +19,15 @@ import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
  * and JTree jfc classes.
  * 
  * @author Tom Nelson - RABA Technologies
- * 
- * 
  */
-public class MyEdgeLabelRenderer extends JLabel implements EdgeLabelRenderer,
-		Serializable {
-
-	/**
-	 * 
-	 */
+public class MyEdgeLabelRenderer extends JLabel implements EdgeLabelRenderer, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	protected static Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
 
-	protected Color pickedEdgeLabelColor = Color.black;
+	protected Color pickedEdgeLabelColor;
 	protected boolean rotateEdgeLabels;
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	NetworkSettings settings = NetworkSettings.getInstance();
 
 	public MyEdgeLabelRenderer(Color pickedEdgeLabelColor) {
 		this(pickedEdgeLabelColor, true);
@@ -92,9 +84,6 @@ public class MyEdgeLabelRenderer extends JLabel implements EdgeLabelRenderer,
 	/**
 	 * Overrides <code>JComponent.setBackground</code> to assign the
 	 * unselected-background color to the specified color.
-	 * 
-	 * @param c
-	 *            set the background color to this value
 	 */
 	public Color getForeground() {
 

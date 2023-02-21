@@ -34,13 +34,11 @@ import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
 public class SmacofView extends JFrame implements ActionListener {
-
 	private static final long serialVersionUID = -1342672281173544345L;
-	private final int X = 600, Y = 800;
 
-	private MyGraph graph;
+	private final MyGraph graph;
 
-	private JPanel panelparam = new JPanel();
+	private final JPanel panelparam = new JPanel();
 	// Thread that executes the SMACOF algorithm
 	private DoSmacof dosmacof = null;
 
@@ -78,7 +76,9 @@ public class SmacofView extends JFrame implements ActionListener {
 
 	public SmacofView() {
 		super("SMACOF: " + MainWindow.getInstance().getCurrentPathway());
-		setPreferredSize(new Dimension(X, Y));
+		int x = 600;
+		int y = 800;
+		setPreferredSize(new Dimension(x, y));
 		this.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		graph = GraphInstance.getMyGraph();
 
@@ -456,28 +456,10 @@ public class SmacofView extends JFrame implements ActionListener {
 	}
 
 	/*
-	 * My DEBUG functions
-	 */
-	void printSmacofMap(HashMap<Integer, double[]> smacof_map) {
-		double[] tmp;
-		for (Integer key : smacof_map.keySet()) {
-			System.out.println("KEY: " + key);
-			tmp = smacof_map.get(key);
-			for (int i = 0; i < tmp.length; i++) {
-				System.out.println(tmp[i]);
-			}
-			System.out.println("------------------");
-		}
-	}
-
-	/*
 	 * Smacof thread returns and is done, reenable buttons
 	 */
 	public void returned() {
-
 		startcomputationbutton.setEnabled(true);
 		stopcomputationbutton.setEnabled(false);
-
 	}
-
 }

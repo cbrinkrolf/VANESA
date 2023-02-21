@@ -12,7 +12,6 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Transition;
 import configurations.NetworkSettings;
-import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyVertexDrawPaintFunction implements Function<BiologicalNodeAbstract, Paint> {
@@ -22,7 +21,7 @@ public class MyVertexDrawPaintFunction implements Function<BiologicalNodeAbstrac
 
 	private Pathway pw;
 	protected boolean graphTheory = false;
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	NetworkSettings settings = NetworkSettings.getInstance();
 
 	public MyVertexDrawPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE,
 			Pathway pw) {

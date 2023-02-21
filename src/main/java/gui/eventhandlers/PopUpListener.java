@@ -14,8 +14,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
-import Copy.CopySelection;
-import Copy.CopySelectionSingelton;
+import copy.CopySelection;
+import copy.CopySelectionSingleton;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -104,7 +104,7 @@ public class PopUpListener implements ActionListener, PropertyChangeListener {
 				while (itBea.hasNext()) {
 					edges.add(itBea.next());
 				}
-				CopySelectionSingelton.setInstance(new CopySelection(vertices, edges));
+				CopySelectionSingleton.setInstance(new CopySelection(vertices, edges));
 			}
 
 		} else if ("cut".equals(event)) {
@@ -126,7 +126,7 @@ public class PopUpListener implements ActionListener, PropertyChangeListener {
 				while (itBea.hasNext()) {
 					edges.add(itBea.next());
 				}
-				CopySelectionSingelton.setInstance(new CopySelection(vertices, edges));
+				CopySelectionSingleton.setInstance(new CopySelection(vertices, edges));
 				pw.removeSelection();
 				w.updateElementTree();
 				w.updatePathwayTree();
@@ -138,7 +138,7 @@ public class PopUpListener implements ActionListener, PropertyChangeListener {
 
 			if (con.containsPathway()) {
 				// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
-				CopySelectionSingelton.getInstance().paste();
+				CopySelectionSingleton.getInstance().paste();
 				pw.getGraph().restartVisualizationModel();
 				pw.getGraph().getVisualizationViewer().repaint();
 			}

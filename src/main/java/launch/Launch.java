@@ -1,26 +1,21 @@
 package launch;
 
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import org.apache.log4j.Logger;
-
-import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
-
 import biologicalElements.ElementNames;
 import biologicalElements.ElementNamesSingleton;
+import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
 import configurations.ConnectionSettings;
 import configurations.ProgramFileLock;
-import configurations.ResourceLibrary;
+import configurations.XMLResourceBundle;
 import database.brenda.MostWantedMolecules;
 import graph.GraphContainer;
 import gui.IntroScreen;
 import gui.MainWindow;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Launch {
     public static void main(String[] args) {
@@ -72,7 +67,7 @@ public class Launch {
         }
         Logger logger = Logger.getRootLogger();
         logger.info("Network editor started by " + System.getProperty("user.name"));
-        ConnectionSettings.getInstance().setApiUrl(ResourceLibrary.getSettingsResource("settings.default.api.url"));
+        ConnectionSettings.getInstance().setApiUrl(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
         ExecutorService executorService = Executors.newFixedThreadPool(4);
         executorService.execute(() -> SwingUtilities.invokeLater(() -> {
             intro.setLoadingText("Graphical User Interface");

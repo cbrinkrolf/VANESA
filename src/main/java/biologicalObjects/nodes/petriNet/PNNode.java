@@ -7,7 +7,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
 import gui.MyPopUp;
-import util.FormularSafety;
+import util.FormulaSafety;
 
 public class PNNode extends BiologicalNodeAbstract {
 	public PNNode(String label, String name) {
@@ -37,12 +37,12 @@ public class PNNode extends BiologicalNodeAbstract {
 			}
 			return;
 		}
-		super.setName(FormularSafety.replace(name));
+		super.setName(FormulaSafety.replace(name));
 	}
 
 	@Override
 	public void setLabel(String label) {
-		super.setLabel(FormularSafety.replace(label));
+		super.setLabel(FormulaSafety.replace(label));
 	}
 
 	// defines parameters which are available in during transformation

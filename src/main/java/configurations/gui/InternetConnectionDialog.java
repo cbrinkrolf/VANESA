@@ -1,16 +1,12 @@
 package configurations.gui;
 
-import java.awt.Color;
-import java.net.URL;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-
 import configurations.ConnectionSettings;
-import configurations.ResourceLibrary;
+import configurations.XMLResourceBundle;
 import net.miginfocom.swing.MigLayout;
+
+import javax.swing.*;
+import java.awt.*;
+import java.net.URL;
 
 public class InternetConnectionDialog extends JPanel {
     private static final long serialVersionUID = 1358638152136315177L;
@@ -57,9 +53,9 @@ public class InternetConnectionDialog extends JPanel {
     }
 
     public boolean applyDefaults() {
-        apiUrl.setText(ResourceLibrary.getSettingsResource("settings.default.api.url"));
-        port.setText(ResourceLibrary.getSettingsResource("settings.default.proxy.port"));
-        host.setText(ResourceLibrary.getSettingsResource("settings.default.proxy.host"));
+        apiUrl.setText(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
+        port.setText(XMLResourceBundle.SETTINGS.getString("settings.default.proxy.port"));
+        host.setText(XMLResourceBundle.SETTINGS.getString("settings.default.proxy.host"));
         return applyNewSettings();
     }
 

@@ -11,7 +11,7 @@ import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.NetworkSettingsSingelton;
+import configurations.NetworkSettings;
 import graph.gui.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -326,7 +326,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	public String getNetworklabel() {
-		return getCorrectLabel(NetworkSettingsSingelton.getInstance().getEdgeLabel());
+		return getCorrectLabel(NetworkSettings.getInstance().getEdgeLabel());
 	}
 
 	public String getName() {

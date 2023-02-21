@@ -9,7 +9,6 @@ import com.google.common.base.Function;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.NetworkSettings;
-import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyEdgeDrawPaintFunction implements Function<BiologicalEdgeAbstract, Paint> {
@@ -19,7 +18,7 @@ public class MyEdgeDrawPaintFunction implements Function<BiologicalEdgeAbstract,
 
 	Color dotted = Color.LIGHT_GRAY;
 	Color dotted_black = Color.BLACK.brighter();
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	NetworkSettings settings = NetworkSettings.getInstance();
 	Color alphaEdge = new Color(dotted.darker().getRed(), dotted.darker().getGreen(), dotted.darker().getBlue(), settings.getEdgeOpacity());
 
 	protected boolean graphTheory = false;
@@ -43,7 +42,7 @@ public class MyEdgeDrawPaintFunction implements Function<BiologicalEdgeAbstract,
 
 	public Paint getDrawPaintWithoutGraphTheory(BiologicalEdgeAbstract bea) {
 		// uncomment for edges
-		if (NetworkSettingsSingelton.getInstance().getDrawEdges()) {
+		if (settings.getDrawEdges()) {
 
 			if (psV.getPicked().isEmpty()) {
 				if (psE.getPicked().isEmpty()) {

@@ -65,6 +65,10 @@ public class MintSearchResultWindow extends SearchResultWindow<MintEntry> {
     }
 
     public Integer getSearchDepth() {
+        try {
+            searchDepth.commitEdit();
+        } catch (java.text.ParseException ignored) {
+        }
         return (Integer) searchDepth.getValue();
     }
 
