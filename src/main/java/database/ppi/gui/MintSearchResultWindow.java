@@ -6,10 +6,10 @@ import database.gui.SearchResultWindow;
 import javax.swing.*;
 
 public class MintSearchResultWindow extends SearchResultWindow<MintEntry> {
-    private final JSpinner searchDepth = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
-    private final JCheckBox autoCoarse = new JCheckBox();
-    private final JCheckBox binaryInteractions = new JCheckBox();
-    private final JCheckBox complexInteractions = new JCheckBox();
+    private JSpinner searchDepth;
+    private JCheckBox autoCoarse;
+    private JCheckBox binaryInteractions;
+    private JCheckBox complexInteractions;
 
     public MintSearchResultWindow(MintEntry[] tableValues) {
         super(MintEntry.class, new String[]{"Name", "Type", "Organism"}, tableValues);
@@ -36,13 +36,17 @@ public class MintSearchResultWindow extends SearchResultWindow<MintEntry> {
         mainPanel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
         mainPanel.add(new JLabel("What kind of settings do you wish to apply to the calculation?"), "span 2, wrap 15");
         mainPanel.add(new JLabel("Search Depth"), "span 1, gaptop 2");
+        searchDepth = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
         mainPanel.add(searchDepth, "span 1,wrap,gaptop 2");
+        binaryInteractions = new JCheckBox();
         binaryInteractions.setSelected(true);
         mainPanel.add(new JLabel("Include binary interactions"), "span 1, gaptop 2");
         mainPanel.add(binaryInteractions, "span 1,wrap,gaptop 2");
         mainPanel.add(new JLabel("Include complex interactions"), "span 1, gaptop 2");
+        complexInteractions = new JCheckBox();
         mainPanel.add(complexInteractions, "span 1,wrap,gaptop 2");
         mainPanel.add(new JLabel("Coarse all results of the same query"), "span 1, gaptop 2");
+        autoCoarse = new JCheckBox();
         mainPanel.add(autoCoarse, "span 1,wrap,gaptop 2");
         mainPanel.add(new JSeparator(), "span, growx, gaptop 7");
     }

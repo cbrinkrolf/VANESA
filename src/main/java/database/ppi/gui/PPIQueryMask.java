@@ -65,8 +65,18 @@ public class PPIQueryMask extends QueryMask {
     protected String search() {
         String selectedDatabase = (String) choosePPIDatabase.getSelectedItem();
         if (selectedDatabase != null) {
-            PPISearch search = new PPISearch(selectedDatabase, fullName.getText(), alias.getText(), acNumber.getText());
-            search.execute();
+            PPISearch search = new PPISearch();
+            switch (selectedDatabase) {
+                case "HPRD":
+                    search.requestHPRDEntries(fullName.getText(), alias.getText(), acNumber.getText());
+                    break;
+                case "MINT":
+                    search.requestMintEntries(fullName.getText(), alias.getText(), acNumber.getText());
+                    break;
+                case "IntAct":
+                    search.requestIntActEntries(fullName.getText(), alias.getText(), acNumber.getText());
+                    break;
+            }
         }
         return null;
     }
@@ -79,14 +89,9 @@ public class PPIQueryMask extends QueryMask {
     @Override
     protected void showInfoWindow() {
         String instructions =
-                "<html>" +
-                        "<h3>The PPI search window</h3>" +
-                        "<ul>" +
-                        "<li>Supports search in HPRD, Mint, IntAct.<p>" +
-                        "<li>Select a database and search for a name, alias or AC number.<p>" +
-                        "</ul>" +
-                        "</html>";
+                "<html>" + "<h3>The PPI search window</h3>" + "<ul>" + "<li>Supports search in HPRD, Mint, IntAct.<p>" +
+                "<li>Select a database and search for a name, alias or AC number.<p>" + "</ul>" + "</html>";
         JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), instructions, "PPI Information",
-                JOptionPane.INFORMATION_MESSAGE);
+                                      JOptionPane.INFORMATION_MESSAGE);
     }
 }

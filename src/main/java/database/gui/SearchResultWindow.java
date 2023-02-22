@@ -18,6 +18,7 @@ public abstract class SearchResultWindow<T> {
     private final JDialog dialog;
     protected final T[] tableValues;
     protected final MyTable table;
+    private boolean ok;
 
     protected SearchResultWindow(Class<T> entryType, String[] columnNames, T[] tableValues) {
         this.entryType = entryType;
@@ -85,18 +86,21 @@ public abstract class SearchResultWindow<T> {
     private void onCancelClickedInternal() {
         dialog.setVisible(false);
         onCancelClicked();
+        ok = false;
     }
 
     private void onOkClickedInternal() {
         if (onOkClicked()) {
             dialog.setVisible(false);
+            ok = true;
         }
     }
 
-    public void show() {
+    public boolean show() {
         dialog.pack();
         dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
         dialog.setVisible(true);
+        return ok;
     }
 
     protected abstract boolean onOkClicked();

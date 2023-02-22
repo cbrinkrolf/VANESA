@@ -1,8 +1,5 @@
 package database.ppi;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-
 import api.VanesaApi;
 import api.payloads.Response;
 import api.payloads.ppi.*;
@@ -25,54 +22,28 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PPISearch extends SwingWorker<Object, Object> {
-    private final String fullName;
-    private final String alias;
-    private final String accession;
-    private final String database;
-
-    public PPISearch(String database, String fullName, String alias, String accession) {
-        this.database = database;
-        this.fullName = fullName;
-        this.alias = alias;
-        this.accession = accession;
-    }
-
-    @Override
-    protected Object doInBackground() throws Exception {
-        switch (database) {
-            case "HPRD":
-                requestHPRDEntries();
-                break;
-            case "MINT":
-                requestMintEntries();
-                break;
-            case "IntAct":
-                requestIntActEntries();
-                break;
-        }
-        return null;
-    }
-
-    private void requestHPRDEntries() {
+public class PPISearch {
+    public void requestHPRDEntries(String fullName, String alias, String accession) {
         HPRDEntrySearchRequestPayload payload = new HPRDEntrySearchRequestPayload();
         payload.name = fullName;
         payload.accession = accession;
         payload.alias = alias;
         Response<HPRDEntrySearchResponsePayload> response = VanesaApi.postSync("/ppi/hprd_entry/search", payload,
-                new TypeReference<>() {
-                });
+                                                                               new TypeReference<>() {
+                                                                               });
+        MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Sorry, no entries have been found.\n" +
-                    response.error);
+            MyPopUp.getInstance().show("HPRD search", "Sorry, no entries have been found.\n" + response.error);
             return;
         }
-        MainWindow.getInstance().closeProgressBar();
-        if (response.payload.results.length == 0) {
-            JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Sorry, no entries have been found.");
+        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+            MyPopUp.getInstance().show("HPRD search", "Sorry, no entries have been found.");
+            return;
         }
         HPRDSearchResultWindow searchResultWindow = new HPRDSearchResultWindow(response.payload.results);
-        searchResultWindow.show();
+        if (!searchResultWindow.show()) {
+            return;
+        }
         HPRDEntry[] results = searchResultWindow.getSelectedValues();
         if (results.length > 0) {
             MainWindow.getInstance().showProgressBar("Retrieving PPI Network(s)");
@@ -86,28 +57,88 @@ public class PPISearch extends SwingWorker<Object, Object> {
     }
 
     private void requestHPRDPPI(HPRDEntry root, int depth, boolean autoCoarse) {
-        // TODO
+        HPRDRetrievePPIRequestPayload payload = new HPRDRetrievePPIRequestPayload();
+        payload.id = root.id;
+        payload.depth = depth;
+        Response<HPRDRetrievePPIResponsePayload> response = VanesaApi.postSync("/ppi/hprd_entry/ppi", payload,
+                                                                               new TypeReference<>() {
+                                                                               });
+        MainWindow.getInstance().closeProgressBar();
+        if (response.hasError()) {
+            MyPopUp.getInstance().show("HPRD search", "Failed to retrieve PPI network.\n" + response.error);
+            return;
+        }
+        if (response.payload == null || response.payload.entries == null || response.payload.entries.length <= 1) {
+            MyPopUp.getInstance().show("HPRD search", "No interactions found!");
+            return;
+        }
+        MainWindow.getInstance().showProgressBar("Drawing Network");
+        Pathway pw = new CreatePathway("HPRD network for " + root.name + " (depth=" + depth + ")").getPathway();
+        Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
+        drawEdges(pw, response.payload, idProteinMap);
+        MyGraph graph = pw.getGraph();
+        graph.restartVisualizationModel();
+        graph.changeToGEMLayout();
+        graph.fitScaleOfViewer(graph.getSatelliteView());
+        graph.normalCentering();
+        pw.saveVertexLocations();
+        if (autoCoarse) {
+            autoCoarse(graph);
+        }
+        MainWindow.getInstance().closeProgressBar();
+        MainWindow window = MainWindow.getInstance();
+        window.updateOptionPanel();
+        window.getFrame().setVisible(true);
     }
 
-    private void requestMintEntries() {
+    private Map<Integer, Protein> drawNodes(Pathway pw, int rootId, HPRDRetrievePPIResponsePayload payload) {
+        Map<Integer, Protein> idProteinMap = new HashMap<>();
+        for (HPRDEntry entry : payload.entries) {
+            Protein protein = new Protein(entry.geneSymbol, entry.name);
+            idProteinMap.put(entry.id, protein);
+            if (entry.id.equals(rootId)) {
+                protein.setColor(Color.RED);
+            }
+            BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10, 10));
+            if (entry.id.equals(rootId)) {
+                pw.setRootNode(node);
+            }
+        }
+        return idProteinMap;
+    }
+
+    private void drawEdges(Pathway pw, HPRDRetrievePPIResponsePayload payload, Map<Integer, Protein> idProteinMap) {
+        var graph = pw.getGraph().getJungGraph();
+        for (int[] entry : payload.binaryInteractions) {
+            BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
+            BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
+            if (graph.findEdge(first, second) == null && first != second) {
+                buildEdge(pw, first, second);
+            }
+        }
+    }
+
+    public void requestMintEntries(String fullName, String alias, String accession) {
         MintEntrySearchRequestPayload payload = new MintEntrySearchRequestPayload();
         payload.name = fullName;
         payload.accession = accession;
         payload.alias = alias;
         Response<MintEntrySearchResponsePayload> response = VanesaApi.postSync("/ppi/mint_entry/search", payload,
-                new TypeReference<>() {
-                });
+                                                                               new TypeReference<>() {
+                                                                               });
+        MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Sorry, no entries have been found.\n" +
-                    response.error);
+            MyPopUp.getInstance().show("Mint search", "Sorry, no entries have been found.\n" + response.error);
             return;
         }
-        MainWindow.getInstance().closeProgressBar();
-        if (response.payload.results.length == 0) {
-            JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Sorry, no entries have been found.");
+        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+            MyPopUp.getInstance().show("Mint search", "Sorry, no entries have been found.");
+            return;
         }
         MintSearchResultWindow searchResultWindow = new MintSearchResultWindow(response.payload.results);
-        searchResultWindow.show();
+        if (!searchResultWindow.show()) {
+            return;
+        }
         MintEntry[] results = searchResultWindow.getSelectedValues();
         if (results.length > 0) {
             MainWindow.getInstance().showProgressBar("Retrieving PPI Network(s)");
@@ -129,15 +160,16 @@ public class PPISearch extends SwingWorker<Object, Object> {
         payload.binary = binary;
         payload.complex = complex;
         Response<MintRetrievePPIResponsePayload> response = VanesaApi.postSync("/ppi/mint_entry/ppi", payload,
-                new TypeReference<>() {
-                });
+                                                                               new TypeReference<>() {
+                                                                               });
+        MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Failed to retrieve PPI network.\n" +
-                    response.error);
+            MyPopUp.getInstance().show("Mint search", "Failed to retrieve PPI network.\n" + response.error);
             return;
         }
-        if (response.payload.entries.length == 1) {
+        if (response.payload == null || response.payload.entries == null || response.payload.entries.length <= 1) {
             MyPopUp.getInstance().show("Mint search", "No interactions found!");
+            return;
         }
         MainWindow.getInstance().showProgressBar("Drawing Network");
         Pathway pw = new CreatePathway("Mint network for " + root.name + " (depth=" + depth + ")").getPathway();
@@ -192,25 +224,27 @@ public class PPISearch extends SwingWorker<Object, Object> {
         }
     }
 
-    private void requestIntActEntries() {
+    public void requestIntActEntries(String fullName, String alias, String accession) {
         IntActEntrySearchRequestPayload payload = new IntActEntrySearchRequestPayload();
         payload.name = fullName;
         payload.accession = accession;
         payload.alias = alias;
         Response<IntActEntrySearchResponsePayload> response = VanesaApi.postSync("/ppi/intact_entry/search", payload,
-                new TypeReference<>() {
-                });
+                                                                                 new TypeReference<>() {
+                                                                                 });
+        MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Sorry, no entries have been found.\n" +
-                    response.error);
+            MyPopUp.getInstance().show("IntAct search", "Sorry, no entries have been found.\n" + response.error);
             return;
         }
-        MainWindow.getInstance().closeProgressBar();
-        if (response.payload.results.length == 0) {
-            JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Sorry, no entries have been found.");
+        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+            MyPopUp.getInstance().show("IntAct search", "Sorry, no entries have been found.");
+            return;
         }
         IntActSearchResultWindow searchResultWindow = new IntActSearchResultWindow(response.payload.results);
-        searchResultWindow.show();
+        if (!searchResultWindow.show()) {
+            return;
+        }
         IntActEntry[] results = searchResultWindow.getSelectedValues();
         if (results.length > 0) {
             MainWindow.getInstance().showProgressBar("Retrieving PPI Network(s)");
@@ -232,15 +266,16 @@ public class PPISearch extends SwingWorker<Object, Object> {
         payload.binary = binary;
         payload.complex = complex;
         Response<IntActRetrievePPIResponsePayload> response = VanesaApi.postSync("/ppi/intact_entry/ppi", payload,
-                new TypeReference<>() {
-                });
+                                                                                 new TypeReference<>() {
+                                                                                 });
+        MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Failed to retrieve PPI network.\n" +
-                    response.error);
+            MyPopUp.getInstance().show("IntAct search", "Failed to retrieve PPI network.\n" + response.error);
             return;
         }
-        if (response.payload.entries.length == 1) {
+        if (response.payload == null || response.payload.entries == null || response.payload.entries.length <= 1) {
             MyPopUp.getInstance().show("IntAct search", "No interactions found!");
+            return;
         }
         MainWindow.getInstance().showProgressBar("Drawing Network");
         Pathway pw = new CreatePathway("IntAct network for " + root.name + " (depth=" + depth + ")").getPathway();

@@ -29,6 +29,7 @@ import database.ppi.PPISearch;
 import graph.GraphContainer;
 import graph.algorithms.NodeAttributeTypes;
 import graph.jung.classes.MyGraph;
+import gui.AsyncTaskExecutor;
 import gui.MainWindow;
 
 /**
@@ -47,7 +48,6 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
     private final Color identifiereColor = Color.BLUE;
     private final Color valueColor = Color.RED;
     private String searchString;
-    boolean searchReady;
 
     /**
      * adds the view (GUI) to this DataMappingGUIController
@@ -340,22 +340,22 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
      * process the PPISearch, and updates the View after a new pathway has been added to the MainWindow
      */
     public void doPPISearch(String database, String fullName, String alias, String acNumber) {
-        PPISearch search = new PPISearch(database, fullName, alias, acNumber);
-        search.execute();
-        SwingWorker<Void, Void> swingworker = new SwingWorker<>() {
-            @Override
-            protected Void doInBackground() {
-                dataMappingView.inToolSearch(true);
-                while (!dataMappingView.isPathwayCBupdated());
-                return null;
+        AsyncTaskExecutor.runUIBlocking("PPI search", () -> {
+            dataMappingView.inToolSearch(true);
+            PPISearch search = new PPISearch();
+            switch (database) {
+                case "HPRD":
+                    search.requestHPRDEntries(fullName, alias, acNumber);
+                    break;
+                case "MINT":
+                    search.requestMintEntries(fullName, alias, acNumber);
+                    break;
+                case "IntAct":
+                    search.requestIntActEntries(fullName, alias, acNumber);
+                    break;
             }
-
-            @Override
-            protected void done() {
-                dataMappingView.updatePathwayCB();
-            }
-        };
-        swingworker.execute();
+            dataMappingView.updatePathwayCB();
+        });
     }
 
     @Override

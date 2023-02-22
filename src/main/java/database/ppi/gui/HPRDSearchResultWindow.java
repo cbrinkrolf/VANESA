@@ -6,11 +6,11 @@ import database.gui.SearchResultWindow;
 import javax.swing.*;
 
 public class HPRDSearchResultWindow extends SearchResultWindow<HPRDEntry> {
-    private final JSpinner searchDepth = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
-    private final JCheckBox autoCoarse = new JCheckBox();
+    private JSpinner searchDepth;
+    private JCheckBox autoCoarse;
 
     public HPRDSearchResultWindow(HPRDEntry[] tableValues) {
-        super(HPRDEntry.class, new String[]{"Name", "Gene Symbol", "SwissProt ID"}, tableValues);
+        super(HPRDEntry.class, new String[]{"Name", "Gene Symbol", "RefSeq Protein ID"}, tableValues);
     }
 
     @Override
@@ -34,8 +34,10 @@ public class HPRDSearchResultWindow extends SearchResultWindow<HPRDEntry> {
         mainPanel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
         mainPanel.add(new JLabel("What kind of settings do you wish to apply to the calculation?"), "span 2, wrap 15");
         mainPanel.add(new JLabel("Search Depth"), "span 1, gaptop 2");
+        searchDepth = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
         mainPanel.add(searchDepth, "span 1,wrap,gaptop 2");
         mainPanel.add(new JLabel("Coarse all results of the same query"), "span 1, gaptop 2");
+        autoCoarse = new JCheckBox();
         mainPanel.add(autoCoarse, "span 1,wrap,gaptop 2");
         mainPanel.add(new JSeparator(), "span, growx, gaptop 7");
     }
