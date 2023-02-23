@@ -6,7 +6,7 @@ public class NodePropertyTableModel extends AbstractTableModel {
     private static final long serialVersionUID = -7174001672428120676L;
 
     private final String[] columnNames;
-    public Object[][] data;
+    protected final Object[][] data;
 
     public NodePropertyTableModel(Object[][] rows, String[] headers) {
         this.columnNames = headers;

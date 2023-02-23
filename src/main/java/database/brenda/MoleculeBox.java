@@ -7,7 +7,7 @@ import java.util.Vector;
 
 public class MoleculeBox {
     private static MoleculeBox instance = null;
-    private final Hashtable<String, MoleculesPair> molecules = new Hashtable<>();
+    private final Hashtable<String, MoleculeAmountPair> molecules = new Hashtable<>();
     private Vector<String> v = new Vector<>();
 
     private MoleculeBox() {
@@ -20,8 +20,8 @@ public class MoleculeBox {
         return MoleculeBox.instance;
     }
 
-    public void fillTable(Vector<MoleculesPair> v) {
-        for (MoleculesPair p : v) {
+    public void fillTable(Vector<MoleculeAmountPair> v) {
+        for (MoleculeAmountPair p : v) {
             molecules.put(p.getName().trim(), p);
         }
     }
@@ -31,9 +31,9 @@ public class MoleculeBox {
         v.clear();
     }
 
-    public Vector<MoleculesPair> getAllValues() {
-        Vector<MoleculesPair> v = new Vector<>();
-        Enumeration<MoleculesPair> e = molecules.elements();
+    public Vector<MoleculeAmountPair> getAllValues() {
+        Vector<MoleculeAmountPair> v = new Vector<>();
+        Enumeration<MoleculeAmountPair> e = molecules.elements();
         while (e.hasMoreElements()) {
             v.add(e.nextElement());
         }
@@ -43,7 +43,7 @@ public class MoleculeBox {
 
     public Vector<String> getDisregardedValues() {
         Vector<String> results = new Vector<>();
-        for (MoleculesPair p : molecules.values()) {
+        for (MoleculeAmountPair p : molecules.values()) {
             if (p.isDisregard())
                 results.add(p.getName());
         }

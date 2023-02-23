@@ -55,13 +55,13 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
         if (StringUtils.isNotEmpty(metabolite)) {
             String temp = dqv.replaceAndValidateString(metabolite);
             if (temp.length() > 0) {
-                join += " join brenda2_reaction on e.enzyme_id = brenda2_reaction.enzyme_id"
-                        + " join brenda2_product2reaction on brenda2_reaction.id = brenda2_product2reaction.reaction_id"
-                        + " join brenda2_subtrate2reaction on brenda2_reaction.id = brenda2_subtrate2reaction.reaction_id"
-                        + " join brenda2_reactand as prod on brenda2_product2reaction.reactand_id = prod.id"
-                        + " join brenda2_reactand as sub on brenda2_subtrate2reaction.reactand_id = sub.id"
-                        + " join brenda2_metabolite as subM on sub.metabolite_id = subM.id"
-                        + " join brenda2_metabolite as prodM on prod.metabolite_id = prodM.id";
+                join += " join brenda2_reaction on e.enzyme_id = brenda2_reaction.enzyme_id" +
+                        " join brenda2_product2reaction on brenda2_reaction.id = brenda2_product2reaction.reaction_id" +
+                        " join brenda2_subtrate2reaction on brenda2_reaction.id = brenda2_subtrate2reaction.reaction_id" +
+                        " join brenda2_reactand as prod on brenda2_product2reaction.reactand_id = prod.id" +
+                        " join brenda2_reactand as sub on brenda2_subtrate2reaction.reactand_id = sub.id" +
+                        " join brenda2_metabolite as subM on sub.metabolite_id = subM.id" +
+                        " join brenda2_metabolite as prodM on prod.metabolite_id = prodM.id";
                 if (firstCriteria) {
                     where += " AND ";
                 }
@@ -97,16 +97,17 @@ public class BRENDA2Search extends SwingWorker<Object, Object> {
     }
 
     private String getKmQuery() {
-        return "select e.ec, org.name, met.name, km.value from brenda2_km as km"
-                + " join brenda2_metabolite as met on km.metabolite_id = met.id" + " join brenda2_organism as org on km.organism_id = org.id"
-                + " join brenda2_enzyme as e on km.enzyme_id = e.enzyme_id" + " where e.ec = '" + ecNumber + "'";
+        return "select e.ec, org.name, met.name, km.value from brenda2_km as km" +
+               " join brenda2_metabolite as met on km.metabolite_id = met.id" +
+               " join brenda2_organism as org on km.organism_id = org.id" +
+               " join brenda2_enzyme as e on km.enzyme_id = e.enzyme_id" + " where e.ec = '" + ecNumber + "'";
     }
 
     private String getTurnoverQuery() {
-        return "SELECT e.ec, org.name, met.name, tn.min from brenda2_turnovernumber as tn"
-                + " JOIN brenda2_metabolite as met on tn.metabolite_id = met.id"
-                + " JOIN brenda2_organism as org on tn.organism_id = org.id"
-                + " JOIN brenda2_enzyme as e on tn.enzyme_id = e.enzyme_id" + " where e.ec = '" + ecNumber + "'";
+        return "SELECT e.ec, org.name, met.name, tn.min from brenda2_turnovernumber as tn" +
+               " JOIN brenda2_metabolite as met on tn.metabolite_id = met.id" +
+               " JOIN brenda2_organism as org on tn.organism_id = org.id" +
+               " JOIN brenda2_enzyme as e on tn.enzyme_id = e.enzyme_id" + " where e.ec = '" + ecNumber + "'";
     }
 
     public String[][] getResults() {

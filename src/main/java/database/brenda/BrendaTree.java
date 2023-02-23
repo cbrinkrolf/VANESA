@@ -21,7 +21,8 @@ public class BrendaTree {
         return root;
     }
 
-    public void addNode(DefaultMutableTreeNode parentNode, DefaultMutableTreeNode newChildNode, BiologicalNodeAbstract bna) {
+    public void addNode(DefaultMutableTreeNode parentNode, DefaultMutableTreeNode newChildNode,
+                        BiologicalNodeAbstract bna) {
         parentNode.add(newChildNode);
         model.nodeStructureChanged(root);
         model.reload();

@@ -98,25 +98,21 @@ import util.VanesaUtility;
 import io.sbml.JSBMLOutput;
 
 public class MenuListener implements ActionListener {
-	private MyTable tP;
-	private MyTable tT;
-	private MyTable tI;
 	private Object[][] rP;
 	private Object[][] rT;
 	private Object[][] rI;
-	private ArrayList<Double> start = new ArrayList<>();
+	private final ArrayList<Double> start = new ArrayList<>();
 
-	private JLabel invariant = new JLabel();
-	private JPanel pane = new JPanel();
-	private JDialog d = new JDialog();
+	private final JLabel invariant = new JLabel();
+	private final JPanel pane = new JPanel();
+	private final JDialog d = new JDialog();
 
-	private JLabel reachable = new JLabel();
+	private final JLabel reachable = new JLabel();
 
 	private DenseDoubleMatrix2D c;
 
 	private int places = 0;
 	private int transitions = 0;
-	private MainWindow w;
 
 	private Cov cov;
 	private static MenuListener instance;
@@ -133,7 +129,7 @@ public class MenuListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		w = MainWindow.getInstance();
+		MainWindow w = MainWindow.getInstance();
 		String event = e.getActionCommand();
 		final GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = GraphContainer.getInstance();
@@ -141,12 +137,11 @@ public class MenuListener implements ActionListener {
 		if (command == null) {
 			return;
 		}
-
 		switch (command) {
 		case newNetwork:
 			int option = JOptionPane.showOptionDialog(w.getFrame(), "Which type of modeling do you prefer?",
-					"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
+													  "Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+													  new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
 				new CreatePathway();
 				graphInstance.getPathway().setIsPetriNet(option == JOptionPane.NO_OPTION);
@@ -356,54 +351,30 @@ public class MenuListener implements ActionListener {
 			new Settings(2);
 			break;
 		case openTestP:
-			// System.out.println("testP");
 			Pathway pw = graphInstance.getPathway();
-			Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-			BiologicalNodeAbstract bna;
-
 			places = 0;
 			transitions = 0;
-			while (it.hasNext()) {
-				bna = it.next();
+			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 				if (bna instanceof Place) {
 					places++;
 				} else if (bna instanceof Transition) {
 					transitions++;
 				}
 			}
-
 			rP = new Object[places][2];
-
 			int i = 0;
-
-			Iterator<BiologicalNodeAbstract> it2 = pw.getAllGraphNodes().iterator();
-			while (it2.hasNext()) {
-				bna = it2.next();
+			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 				if (bna instanceof Place) {
 					rP[i][0] = bna.getName();
 					rP[i][1] = 0;
 					i++;
 				}
 			}
-			String[] cNames = new String[2];
-			cNames[0] = "Vertex";
-			cNames[1] = "Value";
-
-			tP = new MyTable(rP, cNames);
-
+			MyTable tP = new MyTable(rP, new String[]{"Vertex", "Value"});
 			JButton testP = new JButton("Test P-invariant");
 			testP.setActionCommand(MenuActionCommands.testP.value);
 			testP.addActionListener(this);
-
-			if (transitions == 0 || places == 0) {
-				testP.setEnabled(false);
-			} else {
-				testP.setEnabled(true);
-			}
-			// System.out.println("trans: " + transitions);
-
-			// d = new JDialog();
-			// pane = new JPanel();
+			testP.setEnabled(transitions != 0 && places != 0);
 			invariant.setText("");
 			d.setAlwaysOnTop(true);
 			d.setContentPane(pane);
@@ -414,54 +385,32 @@ public class MenuListener implements ActionListener {
 			d.pack();
 			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
-
 			break;
 		case openTestT:
-
 			pw = graphInstance.getPathway();
-			it = pw.getAllGraphNodes().iterator();
-
 			transitions = 0;
 			places = 0;
-
-			while (it.hasNext()) {
-				bna = it.next();
+			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 				if (bna instanceof Transition) {
 					transitions++;
 				} else if (bna instanceof Place) {
 					places++;
 				}
 			}
-
 			rT = new Object[transitions][2];
-
 			i = 0;
-
-			it2 = pw.getAllGraphNodes().iterator();
-			while (it2.hasNext()) {
-				bna = it2.next();
+			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 				if (bna instanceof Transition) {
 					rT[i][0] = bna.getName();
 					rT[i][1] = 0;
 					i++;
 				}
 			}
-			cNames = new String[2];
-			cNames[0] = "Transition";
-			cNames[1] = "Value";
-
-			tT = new MyTable(rT, cNames);
-
+			MyTable tT = new MyTable(rT, new String[]{"Transition", "Value"});
 			JButton testT = new JButton("Test T-invariant");
 			testT.setActionCommand(MenuActionCommands.testT.value);
 			testT.addActionListener(this);
-
-			if (transitions == 0 || places == 0) {
-				testT.setEnabled(false);
-			} else {
-				testT.setEnabled(true);
-			}
-
+			testT.setEnabled(transitions != 0 && places != 0);
 			invariant.setText("");
 			d.setAlwaysOnTop(true);
 			d.setContentPane(pane);
@@ -472,39 +421,24 @@ public class MenuListener implements ActionListener {
 			d.pack();
 			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
-
-			// System.out.println("testT");
 			break;
 		case testP:
-
 			if (c == null) {
-				this.createCMatrix();
+				createCMatrix();
 			}
-
-			double[] vd = new double[this.places];
-			HashMap<String, Double> values = new HashMap<String, Double>();
-
-			// System.out.println(names.size());
+			double[] vd = new double[places];
 			for (i = 0; i < places; i++) {
-
-				values.put(rP[i][0].toString(), Double.parseDouble(rP[i][1].toString()));
 				vd[i] = Double.parseDouble(rP[i][1].toString());
 			}
-
 			DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
 			DenseDoubleMatrix1D x = new DenseDoubleMatrix1D(c.columns());
-			// System.out.println(v.size());
 			c.zMult(v, x, 1, 0, true);
-			// System.out.println(x);
 			IntArrayList l = new IntArrayList();
 			x.getNonZeros(l, null);
-			// System.out.println(l.size());
 			if (l.size() == 0) {
-				// System.out.println("ist Invariante");
-				this.invariant.setText("This vector is a valid invariant");
+				invariant.setText("This vector is a valid invariant");
 			} else {
-				// System.out.println("ist keine Invariante");
-				this.invariant.setText("This vector is not a valid invariant");
+				invariant.setText("This vector is not a valid invariant");
 			}
 			d.pack();
 			d.setLocationRelativeTo(w.getFrame());
@@ -512,34 +446,21 @@ public class MenuListener implements ActionListener {
 			break;
 		case testT:
 			if (c == null) {
-				this.createCMatrix();
+				createCMatrix();
 			}
 			vd = new double[this.transitions];
-			values = new HashMap<String, Double>();
-
-			// System.out.println(names.size());
 			for (i = 0; i < transitions; i++) {
-
-				values.put(rT[i][0].toString(), Double.parseDouble(rT[i][1].toString()));
 				vd[i] = Double.parseDouble(rT[i][1].toString());
 			}
 			v = new DenseDoubleMatrix1D(vd);
 			x = new DenseDoubleMatrix1D(c.rows());
-			/*
-			 * System.out.println(v.size()); System.out.println(x.size());
-			 * System.out.println(c.size());
-			 */
 			c.zMult(v, x, 1, 0, false);
-			// System.out.println(x);
 			l = new IntArrayList();
 			x.getNonZeros(l, null);
-			// System.out.println(l.size());
 			if (l.size() == 0) {
-				// System.out.println("ist Invariante");
-				this.invariant.setText("This vector is a valid invariant");
+				invariant.setText("This vector is a valid invariant");
 			} else {
-				// System.out.println("ist keine Invariante");
-				this.invariant.setText("This vector is not a valid invariant");
+				invariant.setText("This vector is not a valid invariant");
 			}
 			d.pack();
 			d.setLocationRelativeTo(w.getFrame());
@@ -547,31 +468,23 @@ public class MenuListener implements ActionListener {
 			break;
 		case openCov:
 			pw = graphInstance.getPathway();
-			it = pw.getAllGraphNodes().iterator();
-
 			places = 0;
 			transitions = 0;
-			while (it.hasNext()) {
-				bna = it.next();
+			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 				if (bna instanceof Place) {
 					places++;
 				} else if (bna instanceof Transition) {
 					transitions++;
 				}
 			}
-
 			rP = new Object[places + 1][2];
 			rI = new Object[places + 1][2];
-
 			i = 0;
 			rP[0][0] = "Places";
 			rP[0][1] = "Marking";
 			rI[0][0] = "Places";
 			rI[0][1] = "P-Invariants";
-
-			it2 = pw.getAllGraphNodes().iterator();
-			while (it2.hasNext()) {
-				bna = it2.next();
+			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 				if (bna instanceof Place) {
 					rP[i + 1][0] = bna.getName();
 					rP[i + 1][1] = 0;
@@ -580,13 +493,8 @@ public class MenuListener implements ActionListener {
 					i++;
 				}
 			}
-			cNames = new String[2];
-			cNames[0] = "Node";
-			cNames[1] = "Value";
-
-			tP = new MyTable(rP, cNames);
-			tI = new MyTable(rI, cNames);
-
+			tP = new MyTable(rP, new String[]{"Node", "Value"});
+			MyTable tI = new MyTable(rI, new String[]{"Node", "Value"});
 			d.setAlwaysOnTop(true);
 			d.setContentPane(pane);
 			pane.removeAll();
@@ -600,72 +508,40 @@ public class MenuListener implements ActionListener {
 			d.pack();
 			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
-			// String name = graphInstance.getPathway().getPetriNet()
-			// .getCovGraph();
-			// System.out.println("name: "+name);
-
-			// Pathway pw = graphInstance.getContainer().getPathway(name);
-			// System.out.println(pw.getAllNodes().size());
 			break;
 		case cov:
 			// Teste ob Invariante:
 			if (c == null) {
-				this.createCMatrix();
+				createCMatrix();
 			}
-
-			vd = new double[this.places];
-			// HashMap<String, Double> values = new HashMap<String, Double>();
-
-			// System.out.println(names.size());
+			vd = new double[places];
 			for (i = 0; i < places; i++) {
-
-				// values.put(rI[i+1][0].toString(),
-				// Double.parseDouble(rI[i+1][1]
-				// .toString()));
 				vd[i] = Double.parseDouble(rI[i + 1][1].toString());
 			}
-			// System.out.println(vd);
 			v = new DenseDoubleMatrix1D(vd);
 			x = new DenseDoubleMatrix1D(c.columns());
-			// System.out.println(v.size());
-			// System.out.println("groesse: "+v);
-			// System.out.println("groesse: "+x);
-			// System.out.println("groesse: "+c);
 			c.zMult(v, x, 1, 0, true);
-			// System.out.println(x);
 			l = new IntArrayList();
 			x.getNonZeros(l, null);
-			// System.out.println(l.size());
 			boolean validInvariant = false;
-			boolean reachable = false;
 			if (l.size() == 0) {
-				// System.out.println("ist Invariante");
-				// this.reachable.setText("This vector is a valid Invariante");
+				// reachable.setText("This vector is a valid Invariante");
 				validInvariant = true;
 			} else {
-				// System.out.println("ist keine Invariante");
-				this.reachable.setText("no valid p-invariant");
+				reachable.setText("no valid p-invariant");
 			}
 			d.pack();
 			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
 			if (validInvariant) {
 				double[] s = new double[start.size()];
-				// System.out.println("Start:");
 				for (i = 0; i < start.size(); i++) {
-					s[i] = this.start.get(i);
-					// System.out.print(this.start.get(i));
+					s[i] = start.get(i);
 				}
-
-				double[] target = new double[this.places];
+				double[] target = new double[places];
 				for (i = 0; i < places; i++) {
-
-					// values.put(rP[i+1][0].toString(),
-					// Double.parseDouble(rP[i+1][1]
-					// .toString()));
 					target[i] = Double.parseDouble(rP[i + 1][1].toString());
 				}
-
 				// start-marking
 				DenseDoubleMatrix1D sv = new DenseDoubleMatrix1D(s);
 				// target marking
@@ -673,44 +549,27 @@ public class MenuListener implements ActionListener {
 				double erg1 = v.zDotProduct(sv, 0, v.size());
 				double erg2 = v.zDotProduct(tv, 0, v.size());
 				if (erg1 != erg2) {
-					// System.out.println("nicht erreichbar, Test durch
-					// Invariante");
-					this.reachable.setText("not reachable");
+					reachable.setText("not reachable");
 				} else {
-					if (this.cov == null) {
+					if (cov == null) {
 						cov = new Cov();
 					}
-					// CovNode root = cov.getRoot();
 					String pwName = cov.getNewName();
 					HashMap<String, Integer> name2id = cov.getName2id();
 					double[] markierung = new double[name2id.size()];
-					String name;
-					String value;
-					int index = 0;
 					for (i = 1; i <= places; i++) {
-						name = rP[i][0].toString();
-						value = rP[i][1].toString();
-						index = name2id.get(name);
+						String name = rP[i][0].toString();
+						String value = rP[i][1].toString();
+						int index = name2id.get(name);
 						markierung[index] = Double.parseDouble(value);
 					}
-					for (int j = 0; j < markierung.length; j++) {
-						// System.out.println(markierung[j]);
-					}
-					// System.out.println(name2id);
 					pw = graphInstance.getContainer().getPathway(pwName);
-					Iterator<BiologicalNodeAbstract> iter = pw.getAllGraphNodes().iterator();
-					CovNode n = null;
-					Object o;
-
-					while (iter.hasNext() && !reachable) {
-						o = iter.next();
-						if (o instanceof CovNode) {
-							n = (CovNode) o;
+					boolean reachable = false;
+					for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+						if (bna instanceof CovNode) {
+							CovNode n = (CovNode) bna;
 							if (n.getTokenList().isGreaterEqual(markierung)) {
 								if (n.getTokenList().isEqual(markierung)) {
-									// System.out.println("wird erreicht durch:
-									// "
-									// + n.getTokenList());
 									this.reachable.setText("it is reached by " + n.getTokenList());
 									reachable = true;
 									break;
@@ -718,71 +577,34 @@ public class MenuListener implements ActionListener {
 							}
 						}
 					}
-
-					Iterator<BiologicalNodeAbstract> iter2 = pw.getAllGraphNodes().iterator();
-					while (iter2.hasNext() && !reachable) {
-						o = iter2.next();
-						if (o instanceof CovNode) {
-							n = (CovNode) o;
-							if (n.getTokenList().isGreater(markierung)) {
-								// System.out.println("wird ueberdeckt von "
-								// + n.getTokenList());
-								this.reachable.setText("it is covered by " + n.getTokenList());
-								reachable = true;
-								break;
+					if (!reachable) {
+						for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+							if (bna instanceof CovNode) {
+								CovNode n = (CovNode) bna;
+								if (n.getTokenList().isGreater(markierung)) {
+									this.reachable.setText("it is covered by " + n.getTokenList());
+									reachable = true;
+									break;
+								}
 							}
 						}
 					}
-
 					if (!reachable) {
-						// System.out.println("nicht erreichbar");
 						this.reachable.setText("not reachable");
 					}
 				}
 			}
-
-			/*
-			 * if (nodeList.size() == 0) { this.reachable.setText(
-			 * "Diese Markierung ist weder erreichbar noch wird sie ueberdeckt!." ); } else
-			 * { this.reachable.setText( "wird ueberdeckt oder erreicht"); int minDist =
-			 * nodes.size(); Vector<Vertex> v = null; Vector<Vertex> vTemp = null;
-			 * ShortestPath sp; for (int i = 0; i < nodeList.size(); i++) { n =
-			 * nodeList.get(i); vTemp = new ShortestPath(root.getVertex().toString(), n
-			 * .getVertex().toString(), true) .calculateShortestPath();
-			 *
-			 * // = sp.calculateShortestPath(); if (vTemp.size() < minDist) { v =
-			 * (Vector<Vertex>) vTemp.clone(); minDist = v.size();
-			 * System.out.println("dist: " + minDist); } } System.out.println(v); Set edges;
-			 * HashSet allEdges = pw.getAllEdges(); HashMap<String, String> edgeLabel = new
-			 * HashMap<String, String>(); Iterator allIt = allEdges.iterator(); // Object o;
-			 * CovEdge ce; while (allIt.hasNext()) { o = allIt.next(); if (o instanceof
-			 * CovEdge) { ce = (CovEdge) o; edgeLabel.put(ce.getEdge().toString(),
-			 * ce.getLabel()); } }
-			 *
-			 * // BiologicalEdgeAbstract edge; // CovEdge ce; Vertex vertex; for (int i = 1;
-			 * i < v.size(); i++) { vertex = v.get(i); // System.out.println("v: "+vertex);
-			 * // System.out.println("v2: " +v.get(i-1)); edges = vertex.getOutEdges();
-			 * Iterator<Edge> it = edges.iterator(); while (it.hasNext()) { Edge edge =
-			 * it.next(); // System.out.println(edge.getEndpoints().getSecond().toString());
-			 * if (edge.getEndpoints().getSecond().toString().equals( v.get(i -
-			 * 1).toString())) { // System.out.println("Edge: " +edge.toString());
-			 * System.out.println(edgeLabel.get(edge.toString())); break; }
-			 *
-			 * } } }
-			 */
-
 			d.pack();
 			d.setLocationRelativeTo(w.getFrame());
 			d.setVisible(true);
 			// w.updateTheoryProperties();
 			break;
 		case createCov:
-			// System.out.println("cov erstellen");
 			// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			// Cov cov = new Cov();
 			if (JOptionPane.showConfirmDialog(w.getFrame(),
-					"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
-					"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+											  "The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
+											  "Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 				new ReachController();
 			GraphInstance.getMyGraph().changeToGEMLayout();
 			break;
@@ -822,32 +644,24 @@ public class MenuListener implements ActionListener {
 			MyPopUp.getInstance().show("Latex generation", "Generation in progress, it will take a short moment!");
 			String docDir = VanesaUtility.getWorkingDirectoryPath() + File.separator + "documentation" + File.separator;
 			File dir = new File(docDir);
-
 			if (!dir.isDirectory()) {
 				dir.mkdir();
 			}
-
 			try {
 				FileUtils.cleanDirectory(dir);
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
-
 			pw = graphInstance.getPathway();
 			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = pw.prepareGraphToPrint();
-
 			try {
-
 				Dimension size = wvv.getSize();
 				BufferedImage image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_BYTE_INDEXED);
 				Graphics2D grp = image.createGraphics();
 				wvv.paint(grp);
-
 				File outfile = new File(docDir + "export.png");
 				OutputStream fos = new FileOutputStream(outfile);
-
 				PNGEncodeParam param = PNGEncodeParam.getDefaultEncodeParam(image);
-
 				PNGImageEncoder encoder = new PNGImageEncoder(fos, param);
 				try {
 					encoder.encode(image);
@@ -856,27 +670,19 @@ public class MenuListener implements ActionListener {
 				} finally {
 					fos.close();
 				}
-
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-
-			Thread thread = new Thread() {
-				public void run() {
-					try {
-						while (!new File(docDir + "export.png").exists()) {
-							System.out.println("sleep");
-							sleep(100);
-						}
-						System.out.println("file found");
-						// stop();
-					} catch (Exception e) {
-						e.printStackTrace();
+			Thread thread = new Thread(() -> {
+				try {
+					while (!new File(docDir + "export.png").exists()) {
+						Thread.sleep(100);
 					}
+				} catch (Exception e12) {
+					e12.printStackTrace();
 				}
-			};
+			});
 			thread.start();
-			System.out.println("nach thread");
 			new PNDoc(docDir + "doc.tex");
 			String bin = "pdflatex";
 			if (SystemUtils.IS_OS_WINDOWS) {
@@ -888,32 +694,25 @@ public class MenuListener implements ActionListener {
 				pb = new ProcessBuilder(bin, docDir + "doc.tex");
 				pb.directory(new File(docDir));
 				p = pb.start();
-				Thread t = new Thread() {
-					public void run() {
-						try {
-							BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-							while (p.isAlive()) {
-								System.out.println(br.readLine());
-								sleep(100);
-								System.out.println("alive1");
-							}
-							// p.destroyForcibly();
-
-							Process p2 = pb.start();
-							BufferedReader br2 = new BufferedReader(new InputStreamReader(p2.getInputStream()));
-
-							while (p2.isAlive()) {
-								System.out.println(br2.readLine());
-								sleep(100);
-							}
-							System.out.println("pdf ended");
-							MyPopUp.getInstance().show("Latex compilation successful!", "PDF can be found at:\n" + docDir);
-							// stop();
-						} catch (Exception e) {
-							e.printStackTrace();
+				Thread t = new Thread(() -> {
+					try {
+						BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+						while (p.isAlive()) {
+							System.out.println(br.readLine());
+							Thread.sleep(100);
 						}
+						// p.destroyForcibly();
+						Process p2 = pb.start();
+						BufferedReader br2 = new BufferedReader(new InputStreamReader(p2.getInputStream()));
+						while (p2.isAlive()) {
+							System.out.println(br2.readLine());
+							Thread.sleep(100);
+						}
+						MyPopUp.getInstance().show("Latex compilation successful!", "PDF can be found at:\n" + docDir);
+					} catch (Exception e13) {
+						e13.printStackTrace();
 					}
-				};
+				});
 				t.start();
 			} catch (IOException e1) {
 				MyPopUp.getInstance().show("Compilation of latex failed!",
@@ -970,20 +769,13 @@ public class MenuListener implements ActionListener {
 			}
 			break;
 		case wuff:
-			// System.out.println("clicked");
 			if (con.containsPathway()) {
 				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
-
-					it = pw.getAllGraphNodes().iterator();
-					DynamicNode dn;
-					String maximalSpeed;
-					while (it.hasNext()) {
-						bna = it.next();
+					for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 						if (bna instanceof DynamicNode) {
-							dn = (DynamicNode) bna;
-							maximalSpeed = KineticBuilder.createConvenienceKinetic(bna);
-							System.out.println(maximalSpeed);
+							DynamicNode dn = (DynamicNode) bna;
+							String maximalSpeed = KineticBuilder.createConvenienceKinetic(bna);
 							dn.setMaximalSpeed(maximalSpeed);
 						}
 					}
@@ -999,7 +791,6 @@ public class MenuListener implements ActionListener {
 				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement() && !pw.isPetriNet()) {
 					List<Rule> rules = RuleManager.getInstance().getActiveRules();
-
 					if(rules.size() == 0){
 						MyPopUp.getInstance().show("Error", "No active transformation rules found!.");
 						return;
@@ -1126,29 +917,25 @@ public class MenuListener implements ActionListener {
 
 	private void createCMatrix() {
 		GraphInstance graphInstance = new GraphInstance();
-		Iterator<BiologicalNodeAbstract> hsit = graphInstance.getPathway().getAllGraphNodes().iterator();
-		BiologicalNodeAbstract bna;
-		Place p;
 		HashMap<BiologicalNodeAbstract, Integer> hmplaces = new HashMap<>();
 		HashMap<BiologicalNodeAbstract, Integer> hmtransitions = new HashMap<>();
 		int numberPlaces = 0;
 		int numberTransitions = 0;
 		ArrayList<String> names = new ArrayList<>();
-		while (hsit.hasNext()) {
-			bna = (BiologicalNodeAbstract) hsit.next();
+		for (BiologicalNodeAbstract bna : graphInstance.getPathway().getAllGraphNodes()) {
 			if (bna instanceof Transition) {
 				hmtransitions.put(bna, numberTransitions);
 				numberTransitions++;
 			} else if (bna instanceof Place) {
-				p = (Place) bna;
+				Place p = (Place) bna;
 				hmplaces.put(bna, numberPlaces);
 				names.add(p.getName());
 				this.start.add(p.getTokenStart());
 				numberPlaces++;
 			}
 		}
-		double[][] f = this.initArray(numberPlaces, numberTransitions);
-		double[][] b = this.initArray(numberPlaces, numberTransitions);
+		double[][] f = initArray(numberPlaces, numberTransitions);
+		double[][] b = initArray(numberPlaces, numberTransitions);
 		// einkommende Kanten (backward matrix)
 		Iterator<BiologicalEdgeAbstract> edgeit = graphInstance.getPathway().getAllEdges().iterator();
 		PNArc edge;
@@ -1174,10 +961,9 @@ public class MenuListener implements ActionListener {
 		}
 		SimpleMatrixDouble bMatrix = new SimpleMatrixDouble(b);
 		SimpleMatrixDouble fMatrix = new SimpleMatrixDouble(f);
-		SimpleMatrixDouble cMatrix = new SimpleMatrixDouble(this.initArray(numberPlaces, numberTransitions));
+		SimpleMatrixDouble cMatrix = new SimpleMatrixDouble(initArray(numberPlaces, numberTransitions));
 		cMatrix.add(bMatrix);
 		cMatrix.add(fMatrix);
-
 		c = new DenseDoubleMatrix2D(cMatrix.getData());
 	}
 }

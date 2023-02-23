@@ -197,7 +197,7 @@ public class MenuBarClass {
 		interaction.addActionListener(MenuListener.getInstance());
 		interaction.setActionCommand(MenuActionCommands.interaction.value);
 
-		JMenuItem allPopUps = new JMenuItem("Show all previous PupUp messages");
+		JMenuItem allPopUps = new JMenuItem("Show all previous PopUp messages");
 		allPopUps.addActionListener(MenuListener.getInstance());
 		allPopUps.setActionCommand(MenuActionCommands.allPopUps.value);
 

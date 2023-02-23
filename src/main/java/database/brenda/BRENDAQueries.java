@@ -5,8 +5,6 @@ public class BRENDAQueries {
             + "FROM brenda_enzyme e Left Outer Join brenda_enzyme2reaction er on e.ec_number=er.ec_number "
             + "Left Outer Join brenda_reaction r on er.reaction_id=r.reaction_id where e.ec_number=?;";
 
-    public static final String getAllBRENDAenzymeNames = "SELECT e.ec_number,e.recomment_name FROM brenda_enzyme e;";
-
     public static final String getAllBRENDAenzymeDetails = "SELECT e.ec_number,e.recomment_name,e.systematic_name,r.reaction "
             + "FROM brenda_enzyme e Left Outer Join brenda_enzyme2reaction er on e.ec_number=er.ec_number "
             + "Left Outer Join brenda_reaction r on er.reaction_id=r.reaction_id;";

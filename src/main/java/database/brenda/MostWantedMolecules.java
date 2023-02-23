@@ -16,7 +16,7 @@ public class MostWantedMolecules {
     private static final String FILENAME = "MoleculesSBML.xml";
     private final Hashtable<String, Integer> table = new Hashtable<>();
 
-    Vector<MoleculesPair> v = new Vector<>();
+    Vector<MoleculeAmountPair> v = new Vector<>();
 
     public MostWantedMolecules() {
         ClassLoader loader = getClass().getClassLoader();
@@ -56,7 +56,7 @@ public class MostWantedMolecules {
     private void sortElements() {
         for (String key : table.keySet()) {
             int amount = table.get(key);
-            v.add(new MoleculesPair(key, amount, amount > 29));
+            v.add(new MoleculeAmountPair(key, amount, amount > 29));
         }
         Collections.sort(v);
     }

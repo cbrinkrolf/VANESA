@@ -13,7 +13,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import database.brenda.MoleculeBox;
-import database.brenda.MoleculesPair;
+import database.brenda.MoleculeAmountPair;
 
 public class MoleculesInput {
     public MoleculesInput(InputStream is) throws IOException {
@@ -25,7 +25,7 @@ public class MoleculesInput {
     }
 
     private void getData(InputStream is) throws XMLStreamException {
-        Vector<MoleculesPair> v = new Vector<>();
+        Vector<MoleculeAmountPair> v = new Vector<>();
         XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.TRUE);
         factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
@@ -41,7 +41,7 @@ public class MoleculesInput {
                     String temp_name = se.getAttributeByName(name).getValue();
                     int temp_amount = Integer.parseInt(se.getAttributeByName(amount).getValue());
                     boolean temp_dis = Boolean.parseBoolean(se.getAttributeByName(disregarded).getValue());
-                    MoleculesPair p = new MoleculesPair(temp_name, temp_amount, temp_dis);
+                    MoleculeAmountPair p = new MoleculeAmountPair(temp_name, temp_amount, temp_dis);
                     v.add(p);
                 }
             }

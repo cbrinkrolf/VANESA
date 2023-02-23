@@ -1,13 +1,11 @@
 package launch;
 
-import biologicalElements.ElementNames;
-import biologicalElements.ElementNamesSingleton;
+import biologicalElements.EnzymeNames;
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
 import configurations.ConnectionSettings;
 import configurations.ProgramFileLock;
 import configurations.XMLResourceBundle;
 import database.brenda.MostWantedMolecules;
-import graph.GraphContainer;
 import gui.IntroScreen;
 import gui.MainWindow;
 import org.apache.log4j.Logger;
@@ -77,12 +75,9 @@ public class Launch {
             SwingUtilities.updateComponentTreeUI(w.getFrame());
         }));
         executorService.execute(() -> {
-            intro.setLoadingText("WebConnection");
-            GraphContainer.getInstance();
             intro.setLoadingText("Database Information");
             new MostWantedMolecules();
-            ElementNames names = ElementNamesSingleton.getInstance();
-            names.fillEnzymeSet();
+            EnzymeNames.getInstance().fillEnzymeSet();
         });
         executorService.shutdown();
     }

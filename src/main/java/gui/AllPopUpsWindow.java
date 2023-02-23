@@ -13,7 +13,7 @@ public class AllPopUpsWindow extends JFrame {
 	private JScrollPane scrollPane = new JScrollPane(textArea);
 
 	public AllPopUpsWindow() {
-		this.setTitle("Overview of all PupUp messages");
+		this.setTitle("Overview of all PopUp messages");
 
 		textArea.setText(MyPopUp.getInstance().getAll());
 		this.add(scrollPane, BorderLayout.CENTER);

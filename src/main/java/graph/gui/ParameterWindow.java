@@ -50,7 +50,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 	private JTextField unit = new JTextField("");
 	private JButton add;
 	private GraphElementAbstract gea;
-	private FormularPanel fp;
+	private FormulaPanel fp;
 	private JTextPane formular;
 
 	private JButton cancel = new JButton("cancel");
@@ -140,7 +140,7 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			} else if (gea instanceof ContinuousTransition) {
 				function = ((ContinuousTransition) gea).getMaximalSpeed();
 			}
-			fp = new FormularPanel(formular, function, pcListener);
+			fp = new FormulaPanel(formular, function, pcListener);
 			fp.setVisible(true);
 			panel.add(fp);
 		}
@@ -335,30 +335,28 @@ public class ParameterWindow implements ActionListener, DocumentListener {
 			}
 		} else if (e.getActionCommand().equals("okButton")) {
 			if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
-				// System.out.println("clicked ok");
-				String formular = fp.getFormular();
-				String formularClean = formular.replaceAll("\\s", "");
-				// System.out.println(":"+formularClean+":");
+				String formula = fp.getFormula();
+				String formulaClean = formula.replaceAll("\\s", "");
 				boolean changed = false;
 				if (gea instanceof DynamicNode) {
 					DynamicNode dn = (DynamicNode) gea;
 					String orgClean = dn.getMaximalSpeed().replaceAll("\\s", "");
-					if (!orgClean.equals(formularClean)) {
-						dn.setMaximalSpeed(formular);
+					if (!orgClean.equals(formulaClean)) {
+						dn.setMaximalSpeed(formula);
 						changed = true;
 					}
 				} else if (gea instanceof BiologicalEdgeAbstract) {
 					BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) gea;
 					String orgClean = bea.getFunction().replaceAll("\\s", "");
-					if (!orgClean.equals(formularClean)) {
-						bea.setFunction(formular);
+					if (!orgClean.equals(formulaClean)) {
+						bea.setFunction(formula);
 						changed = true;
 					}
 				} else if (gea instanceof ContinuousTransition) {
 					ContinuousTransition t = (ContinuousTransition) gea;
 					String orgClean = t.getMaximalSpeed().replaceAll("\\s", "");
-					if (!orgClean.equals(formularClean)) {
-						t.setMaximalSpeed(formular);
+					if (!orgClean.equals(formulaClean)) {
+						t.setMaximalSpeed(formula);
 						changed = true;
 					}
 				}
