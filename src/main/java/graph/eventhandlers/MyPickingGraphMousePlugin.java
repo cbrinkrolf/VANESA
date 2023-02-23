@@ -236,6 +236,10 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		// System.out.println("clicked");
 
 		if (inWindow) {
+				@SuppressWarnings("unchecked")
+				final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
+						.getSource();
+				vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
 			if (dragging) {// && SwingUtilities.isRightMouseButton(e)){
 				this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 				// System.out.println("dragging false");
@@ -277,6 +281,10 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (inWindow) {
+				@SuppressWarnings("unchecked")
+				final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
+						.getSource();
+				vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
 			if (this.currentAnnotation != null && SwingUtilities.isLeftMouseButton(e)) {
 				this.mouseDraggedAnnotation(e);
 			} else {

@@ -3,7 +3,9 @@ package graph.layouts.gemLayout;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import cern.colt.list.IntArrayList;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
@@ -31,6 +33,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
  * @author David Duke
  * @author Hacked by Eytan Adar for Guess
  * @author Hacked by taubertj for OVTK2
+ * @author extended by cbrinkro for static nodes
  */
 public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 
@@ -45,16 +48,24 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 
 	private GEMLayoutConfig<V> layoutConfig;
 
+	// static nodes which keep position
+	private Map<V, Point2D> sNodes = new HashMap<>();
+
 	/**
 	 * Required for compatibility to OVTK2lite
 	 * 
-	 * @param aog
-	 *            ONDEXGraph
-	 * @param jung
-	 *            ONDEXSparseGraph
+	 * @param aog  ONDEXGraph
+	 * @param jung ONDEXSparseGraph
 	 */
 	public GEMLayout(Graph<V, E> g) {
+		this(g, new HashMap<>());
+	}
+
+	public GEMLayout(Graph<V, E> g, Map<V, Point2D> staticNodes) {
 		super(g);
+		if (staticNodes != null) {
+			this.sNodes = staticNodes;
+		}
 	}
 
 	public void setGraph(Graph<V, E> g) {
@@ -86,8 +97,7 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 			for (int i = 0; i < layoutConfig.nodeCount; i++)
 				layoutConfig.map[i] = i;
 		}
-		n = (int) (layoutConfig.nodeCount - layoutConfig.iteration
-				% layoutConfig.nodeCount);
+		n = (int) (layoutConfig.nodeCount - layoutConfig.iteration % layoutConfig.nodeCount);
 		v = rand() % n; // was 1 + rand() % n due to numbering in GEM
 		if (v == layoutConfig.nodeCount)
 			v--;
@@ -103,8 +113,7 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 	/**
 	 * Performs a BFS on the graph
 	 * 
-	 * @param root
-	 *            int
+	 * @param root int
 	 * @return node id
 	 */
 	private int bfs(int root) {
@@ -127,8 +136,7 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 			return -1; // null
 		v = layoutConfig.q.dequeueInt();
 
-		nodeSet = IntIterators.asIntIterator(layoutConfig.adjacent.get(v)
-				.toList().iterator());
+		nodeSet = IntIterators.asIntIterator(layoutConfig.adjacent.get(v).toList().iterator());
 		while (nodeSet.hasNext()) {
 			ui = nodeSet.nextInt();
 			if (layoutConfig.gemProp[ui].in != 0) {
@@ -182,8 +190,7 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 	/**
 	 * Initialize properties of nodes.
 	 * 
-	 * @param starttemp
-	 *            given start temperature
+	 * @param starttemp given start temperature
 	 */
 	private void vertexdata_init(float starttemp) {
 
@@ -222,10 +229,8 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 		n = (int) (layoutConfig.i_shake * layoutConfig.ELEN);
 		iX = rand() % (2 * n + 1) - n;
 		iY = rand() % (2 * n + 1) - n;
-		iX += (layoutConfig.centerX / layoutConfig.nodeCount - pX) * p.mass
-				* layoutConfig.i_gravity;
-		iY += (layoutConfig.centerY / layoutConfig.nodeCount - pY) * p.mass
-				* layoutConfig.i_gravity;
+		iX += (layoutConfig.centerX / layoutConfig.nodeCount - pX) * p.mass * layoutConfig.i_gravity;
+		iY += (layoutConfig.centerY / layoutConfig.nodeCount - pY) * p.mass * layoutConfig.i_gravity;
 
 		for (int u = 0; u < layoutConfig.nodeCount; u++) {
 			q = layoutConfig.gemProp[u];
@@ -239,8 +244,7 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 				}
 			}
 		}
-		nodeSet = IntIterators.asIntIterator(layoutConfig.adjacent.get(v)
-				.toList().iterator());
+		nodeSet = IntIterators.asIntIterator(layoutConfig.adjacent.get(v).toList().iterator());
 		int u;
 		while (nodeSet.hasNext()) {
 			u = nodeSet.nextInt();
@@ -296,8 +300,7 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 			}
 			layoutConfig.gemProp[v].in = 1;
 
-			nodeSet2 = IntIterators.asIntIterator(layoutConfig.adjacent.get(v)
-					.toList().iterator());
+			nodeSet2 = IntIterators.asIntIterator(layoutConfig.adjacent.get(v).toList().iterator());
 			int u;
 			while (nodeSet2.hasNext()) {
 				u = nodeSet2.nextInt();
@@ -305,30 +308,34 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 					layoutConfig.gemProp[u].in--;
 			}
 			p = layoutConfig.gemProp[v];
-			p.x = p.y = 0;
+			if (!sNodes.containsKey(layoutConfig.invmap[v])) {
+				p.x = p.y = 0;
+			}
+			// p.x = getX(null).
 
 			if (startNode >= 0) {
 				d = 0;
 				p = layoutConfig.gemProp[v];
-				nodeSet2 = IntIterators.asIntIterator(layoutConfig.adjacent
-						.get(v).toList().iterator());
+				nodeSet2 = IntIterators.asIntIterator(layoutConfig.adjacent.get(v).toList().iterator());
 				while (nodeSet2.hasNext()) {
 					w = nodeSet2.nextInt();
 					q = layoutConfig.gemProp[w];
 					if (q.in > 0) {
-						p.x += q.x;
-						p.y += q.y;
-						d++;
+						if (!sNodes.containsKey(layoutConfig.invmap[v])) {
+							p.x += q.x;
+							p.y += q.y;
+							d++;
+						}
 					}
 				}
 				if (d > 1) {
-					p.x /= d;
-					p.y /= d;
+					if (!sNodes.containsKey(layoutConfig.invmap[v])) {
+						p.x /= d;
+						p.y /= d;
+					}
 				}
 				d = 0;
-				while ((d++ < layoutConfig.i_maxiter)
-						&& (p.heat > layoutConfig.i_finaltemp
-								* layoutConfig.ELEN)) {
+				while ((d++ < layoutConfig.i_maxiter) && (p.heat > layoutConfig.i_finaltemp * layoutConfig.ELEN)) {
 					int[] i_impulse = i_impulse(v);
 					displace(v, i_impulse[0], i_impulse[1]);
 				}
@@ -356,8 +363,10 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 			n = (int) Math.sqrt(iX * iX + iY * iY);
 			iX = iX * t / n;
 			iY = iY * t / n;
-			p.x += iX;
-			p.y += iY;
+			if (!sNodes.containsKey(layoutConfig.invmap[v])) {
+				p.x += iX;
+				p.y += iY;
+			}
 			layoutConfig.centerX += iX;
 			layoutConfig.centerY += iY;
 			// imp = &vi[v].imp;
@@ -397,10 +406,8 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 			n = (int) (layoutConfig.a_shake * layoutConfig.ELEN);
 			iX = rand() % (2 * n + 1) - n;
 			iY = rand() % (2 * n + 1) - n;
-			iX += (layoutConfig.centerX / layoutConfig.nodeCount - pX) * p.mass
-					* layoutConfig.a_gravity;
-			iY += (layoutConfig.centerY / layoutConfig.nodeCount - pY) * p.mass
-					* layoutConfig.a_gravity;
+			iX += (layoutConfig.centerX / layoutConfig.nodeCount - pX) * p.mass * layoutConfig.a_gravity;
+			iY += (layoutConfig.centerY / layoutConfig.nodeCount - pY) * p.mass * layoutConfig.a_gravity;
 
 			for (int u = 0; u < layoutConfig.nodeCount; u++) {
 				q = layoutConfig.gemProp[u];
@@ -412,8 +419,7 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 					iY += dY * layoutConfig.ELENSQR / n;
 				}
 			}
-			nodeSet = IntIterators.asIntIterator(layoutConfig.adjacent.get(v)
-					.toList().iterator());
+			nodeSet = IntIterators.asIntIterator(layoutConfig.adjacent.get(v).toList().iterator());
 			int u;
 			while (nodeSet.hasNext()) {
 				u = nodeSet.nextInt();
@@ -440,18 +446,16 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 		layoutConfig.oscillation = layoutConfig.a_oscillation;
 		layoutConfig.rotation = layoutConfig.a_rotation;
 		layoutConfig.maxtemp = (int) (layoutConfig.a_maxtemp * layoutConfig.ELEN);
-		stop_temperature = (int) (layoutConfig.a_finaltemp
-				* layoutConfig.a_finaltemp * layoutConfig.ELENSQR * layoutConfig.nodeCount);
-		stop_iteration = layoutConfig.a_maxiter * layoutConfig.nodeCount
-				* layoutConfig.nodeCount;
+		stop_temperature = (int) (layoutConfig.a_finaltemp * layoutConfig.a_finaltemp * layoutConfig.ELENSQR
+				* layoutConfig.nodeCount);
+		stop_iteration = layoutConfig.a_maxiter * layoutConfig.nodeCount * layoutConfig.nodeCount;
 		layoutConfig.iteration = 0;
 
 		// System.out.print( "arrange phase -- temp " );
 		// System.out.print( stop_temperature + " iter ");
 		// System.out.println ( stop_iteration );
 
-		while (layoutConfig.temperature > stop_temperature
-				&& layoutConfig.iteration < stop_iteration) {
+		while (layoutConfig.temperature > stop_temperature && layoutConfig.iteration < stop_iteration) {
 			// com.hp.hpl.guess.ui.StatusBar.setValue((int)stop_iteration,
 			// (int)iteration);
 			a_round();
@@ -513,19 +517,15 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 		n = (int) (layoutConfig.o_shake * layoutConfig.ELEN);
 		iX = rand() % (2 * n + 1) - n;
 		iY = rand() % (2 * n + 1) - n;
-		iX += (layoutConfig.centerX / layoutConfig.nodeCount - pX) * p.mass
-				* layoutConfig.o_gravity;
-		iY += (layoutConfig.centerY / layoutConfig.nodeCount - pY) * p.mass
-				* layoutConfig.o_gravity;
+		iX += (layoutConfig.centerX / layoutConfig.nodeCount - pX) * p.mass * layoutConfig.o_gravity;
+		iY += (layoutConfig.centerY / layoutConfig.nodeCount - pY) * p.mass * layoutConfig.o_gravity;
 
 		edgeSet = edges.iterator();
 		while (edgeSet.hasNext()) {
 			e = edgeSet.next();
 			// Pair ends = e.getEndpoints();
-			u = layoutConfig.nodeNumbers.getInt(graph.getEndpoints(e)
-					.getFirst());
-			w = layoutConfig.nodeNumbers.getInt(graph.getEndpoints(e)
-					.getSecond());
+			u = layoutConfig.nodeNumbers.getInt(graph.getEndpoints(e).getFirst());
+			w = layoutConfig.nodeNumbers.getInt(graph.getEndpoints(e).getSecond());
 			if (u != v && w != v) {
 				up = layoutConfig.gemProp[u];
 				wp = layoutConfig.gemProp[w];
@@ -579,17 +579,15 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 		layoutConfig.oscillation = layoutConfig.o_oscillation;
 		layoutConfig.rotation = layoutConfig.o_rotation;
 		layoutConfig.maxtemp = (int) (layoutConfig.o_maxtemp * layoutConfig.ELEN);
-		stop_temperature = (int) (layoutConfig.o_finaltemp
-				* layoutConfig.o_finaltemp * layoutConfig.ELENSQR * layoutConfig.nodeCount);
-		stop_iteration = layoutConfig.o_maxiter * layoutConfig.nodeCount
-				* layoutConfig.nodeCount;
+		stop_temperature = (int) (layoutConfig.o_finaltemp * layoutConfig.o_finaltemp * layoutConfig.ELENSQR
+				* layoutConfig.nodeCount);
+		stop_iteration = layoutConfig.o_maxiter * layoutConfig.nodeCount * layoutConfig.nodeCount;
 
 		// System.out.print( "optimise phase -- temp " );
 		// System.out.print( stop_temperature + " iter ");
 		// System.out.println ( stop_iteration );
 
-		while (layoutConfig.temperature > stop_temperature
-				&& layoutConfig.iteration < stop_iteration) {
+		while (layoutConfig.temperature > stop_temperature && layoutConfig.iteration < stop_iteration) {
 			o_round();
 			if ((layoutConfig.iteration % 20000) == 0) {
 				// System.out.println( iteration + "\t" + temperature );
@@ -619,8 +617,10 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 			GemP p = layoutConfig.gemProp[i];
 			V n = layoutConfig.invmap[i];
 
+			// if (vNodes.contains(n)) {
 			Point2D coord = apply(n);// getCoordinates(n);
 			coord.setLocation(p.x, p.y);
+			// }
 		}
 		// }
 		// endTime = System.currentTimeMillis();
@@ -649,16 +649,16 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 	private void runNormal() {
 
 		nodes = graph.getVertices();
+
 		edges = graph.getEdges();
-		
+
 		layoutConfig = GEMLayoutConfigSingleton.getInstance();
 
 		layoutConfig.nodeCount = nodes.size();
 
 		layoutConfig.gemProp = new GemP[layoutConfig.nodeCount];
 		layoutConfig.invmap = (V[]) new Object[layoutConfig.nodeCount];
-		layoutConfig.adjacent = new Int2ObjectOpenHashMap<IntArrayList>(
-				layoutConfig.nodeCount);
+		layoutConfig.adjacent = new Int2ObjectOpenHashMap<IntArrayList>(layoutConfig.nodeCount);
 		layoutConfig.nodeNumbers = new Object2IntOpenHashMap<V>();
 
 		// initialize node lists and gemProp
@@ -677,6 +677,17 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 
 			// graph.getOutEdges(n)
 			layoutConfig.gemProp[i] = new GemP(edges.size());
+			if (sNodes.containsKey(n)) {
+				layoutConfig.gemProp[i].x = (int) sNodes.get(n).getX();
+				layoutConfig.gemProp[i].y = (int) sNodes.get(n).getY();
+			} else {
+				layoutConfig.gemProp[i].x = 0;
+				layoutConfig.gemProp[i].y = 0;
+			}
+
+			// System.out.println(layoutConfig.gemProp[i].x + " " +
+			// layoutConfig.gemProp[i].y);
+
 			layoutConfig.invmap[i] = n;
 			layoutConfig.nodeNumbers.put(n, i);
 		}
@@ -687,8 +698,7 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 			neighbors = getNeighbours(layoutConfig.invmap[i]); // graph.getNeighbours(invmap[i]);
 			layoutConfig.adjacent.put(i, new IntArrayList(neighbors.size()));
 			for (V n : neighbors) {
-				layoutConfig.adjacent.get(i).add(
-						layoutConfig.nodeNumbers.getInt(n));
+				layoutConfig.adjacent.get(i).add(layoutConfig.nodeNumbers.getInt(n));
 			}
 		}
 
