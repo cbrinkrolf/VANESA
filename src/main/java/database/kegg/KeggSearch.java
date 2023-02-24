@@ -1,23 +1,8 @@
 package database.kegg;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Vector;
-
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Compound;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.Enzyme;
-import biologicalObjects.nodes.Gene;
-import biologicalObjects.nodes.PathwayMap;
-import biologicalObjects.nodes.Metabolite;
+import biologicalObjects.nodes.*;
 import configurations.Wrapper;
 import database.Connection.DatabaseQueryValidator;
 import database.kegg.gui.KEGGResultWindow;
@@ -27,6 +12,14 @@ import graph.algorithms.MergeGraphs;
 import gui.MainWindow;
 import org.apache.commons.lang3.StringUtils;
 import pojos.DBColumn;
+
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class KeggSearch extends SwingWorker<Object, Object> implements PropertyChangeListener {
     private final String pathway;
@@ -46,15 +39,15 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 
     private boolean continueProgress = false;
     private KEGGResultWindow dsrw = null;
-    private MainWindow w = MainWindow.getInstance();
+    private final MainWindow w = MainWindow.getInstance();
     private Pathway mergePW;
 
-    public KeggSearch(String[] input, Pathway mergePW) {
-        pathway = input[0];
-        organism = input[1];
-        enzyme = input[2];
-        gene = input[3];
-        compound = input[4];
+    public KeggSearch(String pathway, String organism, String enzyme, String gene, String compound, Pathway mergePW) {
+        this.pathway = pathway;
+        this.organism = organism;
+        this.enzyme = enzyme;
+        this.gene = gene;
+        this.compound = compound;
         this.mergePW = mergePW;
     }
 
@@ -104,7 +97,6 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
         }
         StringBuilder pathway_names = new StringBuilder("(");
         ArrayList<DBColumn> tempResults = new ArrayList<>();
-        System.out.println(queryStart);
         if (firstEntries) {
             tempResults = new Wrapper().requestDbContent(2, queryStart + queryEnd + " LIMIT 0,1000;");
             boolean firstPathwayName = true;
@@ -151,7 +143,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
             JOptionPane.showMessageDialog(w.getFrame(), "Sorry, no entries have been found.");
         }
         if (continueProgress) {
-            Vector<String[]> results = dsrw.getAnswer();
+            List<String[]> results = dsrw.getAnswer();
             if (results == null)
                 return;
             if (results.size() != 0) {
@@ -191,7 +183,8 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
                     newPW.getGraph().changeToGEMLayout();
                     newPW.getGraph().normalCentering();
                 } else {
-                    kc = new KEGGConnector(it.next(), !(mergePW == null));
+                    String[] details = it.next();
+                    kc = new KEGGConnector(details[0], details[2], !(mergePW == null));
                     kc.addPropertyChangeListener(this);
                     kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
                     kc.setAutoCoarse(dsrw.getAutoCoarse());
@@ -213,7 +206,8 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
                     mergePW = new MergeGraphs(mergePW, kc.getPw(), false).getPw_new();
                 }
             if (it != null && it.hasNext()) {
-                kc = new KEGGConnector(it.next(), !(answer == SEPARATE_TABS));
+                String[] details = it.next();
+                kc = new KEGGConnector(details[0], details[2], !(answer == SEPARATE_TABS));
                 kc.addPropertyChangeListener(this);
                 kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
                 kc.setAutoCoarse(dsrw.getAutoCoarse());

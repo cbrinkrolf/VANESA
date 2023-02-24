@@ -75,8 +75,8 @@ public class Launch {
             SwingUtilities.updateComponentTreeUI(w.getFrame());
         }));
         executorService.execute(() -> {
-            intro.setLoadingText("Database Information");
-            new MostWantedMolecules();
+            intro.setLoadingText("Load Cached Database Information");
+            MostWantedMolecules.getInstance().fillMoleculeSet();
             EnzymeNames.getInstance().fillEnzymeSet();
         });
         executorService.shutdown();

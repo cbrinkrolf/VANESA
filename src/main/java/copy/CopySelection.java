@@ -1,10 +1,7 @@
 package copy;
 
 import java.awt.geom.Point2D;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import javax.swing.JOptionPane;
 
@@ -16,12 +13,12 @@ import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 
 public class CopySelection {
-    private final HashSet<BiologicalNodeAbstract> bnas = new HashSet<>();
+    private final Set<BiologicalNodeAbstract> bnas = new HashSet<>();
     private final Vector<BiologicalEdgeAbstract> beas = new Vector<>();
     private final boolean petriNet;
     private final Map<BiologicalNodeAbstract, Point2D> locations = new HashMap<>();
 
-    public CopySelection(HashSet<BiologicalNodeAbstract> vertices, HashSet<BiologicalEdgeAbstract> edges) {
+    public CopySelection(Set<BiologicalNodeAbstract> vertices, Set<BiologicalEdgeAbstract> edges) {
         Pathway pw = new GraphInstance().getPathway();
         petriNet = pw.isPetriNet();
         for (BiologicalNodeAbstract v : vertices) {

@@ -1,7 +1,6 @@
 package database.brenda.gui;
 
-import database.brenda.MoleculeBox;
-import database.brenda.MoleculeAmountPair;
+import database.brenda.MostWantedMolecules;
 import gui.MainWindow;
 import gui.tables.MyTable;
 import gui.tables.NodePropertyTableModel;
@@ -11,21 +10,21 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Vector;
+import java.util.List;
 
 public class BrendaPatternListWindow {
     private final JDialog dialog;
     private MyTable table;
 
     public BrendaPatternListWindow() {
-        MoleculeBox box = MoleculeBox.getInstance();
-        Vector<MoleculeAmountPair> v = box.getAllValues();
+        MostWantedMolecules box = MostWantedMolecules.getInstance();
+        List<MostWantedMolecules.Entry> v = box.getAllValues();
         Object[][] rows = new Object[v.size()][3];
         int iteratorCount = 0;
-        for (MoleculeAmountPair p : v) {
-            rows[iteratorCount][0] = p.getAmount();
-            rows[iteratorCount][1] = p.getName();
-            rows[iteratorCount][2] = p.isDisregard();
+        for (MostWantedMolecules.Entry p : v) {
+            rows[iteratorCount][0] = p.amount;
+            rows[iteratorCount][1] = p.name;
+            rows[iteratorCount][2] = p.disregard;
             iteratorCount++;
         }
         initTable(rows);

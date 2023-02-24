@@ -5,10 +5,6 @@ public class BRENDAQueries {
             + "FROM brenda_enzyme e Left Outer Join brenda_enzyme2reaction er on e.ec_number=er.ec_number "
             + "Left Outer Join brenda_reaction r on er.reaction_id=r.reaction_id where e.ec_number=?;";
 
-    public static final String getAllBRENDAenzymeDetails = "SELECT e.ec_number,e.recomment_name,e.systematic_name,r.reaction "
-            + "FROM brenda_enzyme e Left Outer Join brenda_enzyme2reaction er on e.ec_number=er.ec_number "
-            + "Left Outer Join brenda_reaction r on er.reaction_id=r.reaction_id;";
-
     public static final String getPossibleEnzymeDetails = "SELECT e.ec_number,e.recomment_name,e.systematic_name,r.reaction "
             + "FROM brenda_enzyme e Left Outer Join brenda_enzyme2reaction er on e.ec_number=er.ec_number "
             + "Left Outer Join brenda_reaction r on er.reaction_id=r.reaction_id where r.reaction like ";
@@ -29,9 +25,7 @@ public class BRENDAQueries {
     public static final String getCoFactor = "SELECT c.enzyme,c.cofactor FROM brenda_cofactor c where c.enzyme In ";
 
     public static final String getSpecificCoFactor = "SELECT c.enzyme,c.cofactor " +
-            "FROM (brenda_cofactor c natural join brenda_cofactor2organism b) " +
+            "FROM brenda_cofactor c natural join brenda_cofactor2organism b " +
             "natural join brenda_organism o " +
             "where o.org_name=? and c.enzyme In ";
-
-    public static final String getInhibitor = "SELECT i.enzyme,i.inhibitor FROM brenda_inhibitor i where i.enzyme In ";
 }

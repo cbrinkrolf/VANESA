@@ -19,6 +19,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class BrendaConnector extends SwingWorker<Object, Object> {
     private MyGraph myGraph;
@@ -33,7 +34,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
     protected String enzyme_organism = "";
     private boolean organism_specific = false;
     private boolean disregarded = false;
-    private final MoleculeBox box = MoleculeBox.getInstance();
+    private final MostWantedMolecules box = MostWantedMolecules.getInstance();
     private final String[] enzymeToSearch;
     protected Hashtable<String, BiologicalNodeAbstract> enzymes = new Hashtable<>();
     private final Set<BiologicalEdgeAbstract> edges = new HashSet<>();
@@ -69,7 +70,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
         }
     }
 
-    private void searchPossibleEnzyms(BiologicalNodeAbstract node, DefaultMutableTreeNode parentNode) {
+    private void searchPossibleEnzymes(BiologicalNodeAbstract node, DefaultMutableTreeNode parentNode) {
         if (parentNode.getLevel() == 0 || (parentNode.getLevel() / 2) < searchDepth + 1) {
             if (!disregarded || !box.getElementValue(node.getLabel())) {
                 String queryString = node.getLabel().replaceAll("'", "''").replaceAll("\"", "''");
@@ -98,11 +99,9 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
                         }
                         Enzyme e = new Enzyme(clean, resultDetails[1]);
                         enzymes.put(clean, e);
-                        String tmp;
-                        String[] split;
                         for (String s : left) {
-                            tmp = cleanString(s.trim());
-                            split = tmp.split("\\s", 2);
+                            String tmp = cleanString(s.trim());
+                            String[] split = tmp.split("\\s", 2);
                             if (split[0].matches("\\d+")) {
                                 weight = split[0];
                                 tmp = split[1];
@@ -114,8 +113,8 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
                         }
                         weight = "1";
                         for (String s : right) {
-                            tmp = cleanString(s.trim());
-                            split = tmp.split("\\s", 2);
+                            String tmp = cleanString(s.trim());
+                            String[] split = tmp.split("\\s", 2);
                             if (split[0].matches("\\d+")) {
                                 weight = split[0];
                                 tmp = split[1];
@@ -182,7 +181,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
                 // !!!!!
                 newNode = new DefaultMutableTreeNode(substrate.getLabel());
                 tree.addNode(parentNode, newNode, substrate);
-                searchPossibleEnzyms(substrate, newNode);
+                searchPossibleEnzymes(substrate, newNode);
             } else {
                 substrate = addReactionNodes(temp);
                 buildEdge(substrate, enzymes.get(parentNode.toString()), true, weight);
@@ -206,7 +205,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
                     buildEdge(enzyme, product, true, weight);
                     newNode = new DefaultMutableTreeNode(product.getLabel());
                     tree.addNode(parentNode, newNode, product);
-                    searchPossibleEnzyms(product, newNode);
+                    searchPossibleEnzymes(product, newNode);
                 } else {
                     buildEdge(enzymes.get(parentNode.toString()), enzymes.get(parentNode.getParent().toString()), true, weight);
                 }
@@ -375,8 +374,8 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
         }
         for (DBColumn column : results) {
             String[] resultDetails = column.getColumn();
-            String result0 = this.cleanString(resultDetails[0]);
-            String result1 = this.cleanString(resultDetails[1]);
+            String result0 = cleanString(resultDetails[0]);
+            String result1 = cleanString(resultDetails[1]);
             if (enzymes.containsKey(result1)) {
                 BiologicalNodeAbstract bna = enzymes.get(result0);
                 BiologicalNodeAbstract bna2 = enzymes.get(result1);
@@ -391,28 +390,22 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
         }
     }
 
-    private void getInhibitors(String enzyme) {
-        ArrayList<DBColumn> results;
-        if (organism_specific) {
-            String QUESTION_MARK = "\\?";
-            String brendaQuery = BRENDAQueries.getInhibitor.replaceFirst(QUESTION_MARK, "\"" + enzyme_organism + "\"");
-            results = new Wrapper().requestDbContent(1, brendaQuery + enzyme);
-        } else {
-            results = new Wrapper().requestDbContent(1, BRENDAQueries.getInhibitor + enzyme);
-        }
+    private void getInhibitors(String enzymeQuery) {
+        String query = "SELECT i.enzyme, i.inhibitor FROM brenda_inhibitor i WHERE i.enzyme IN " + enzymeQuery;
+        List<DBColumn> results = new Wrapper().requestDbContent(1, query);
         for (DBColumn column : results) {
             String[] resultDetails = column.getColumn();
-            String result0 = this.cleanString(resultDetails[0]);
-            String result1 = this.cleanString(resultDetails[1]);
-            if (enzymes.containsKey(result1)) {
-                BiologicalNodeAbstract bna = enzymes.get(result0);
-                BiologicalNodeAbstract bna2 = enzymes.get(result1);
+            String enzyme = cleanString(resultDetails[0]);
+            String inhibitor = cleanString(resultDetails[1]);
+            if (enzymes.containsKey(inhibitor)) {
+                BiologicalNodeAbstract bna = enzymes.get(enzyme);
+                BiologicalNodeAbstract bna2 = enzymes.get(inhibitor);
                 bna2.setColor(Color.pink);
                 buildEdge(bna2, bna, true, "1");
             } else {
-                Inhibitor f = new Inhibitor(result1, result1);
-                enzymes.put(result1, f);
-                Enzyme e = ((Enzyme) enzymes.get(result0));
+                Inhibitor f = new Inhibitor(inhibitor, inhibitor);
+                enzymes.put(inhibitor, f);
+                Enzyme e = ((Enzyme) enzymes.get(enzyme));
                 buildEdge(f, e, true, "1");
             }
         }
@@ -441,16 +434,8 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
         return result.toString();
     }
 
-    public int getSearchDepth() {
-        return searchDepth;
-    }
-
     public void setSearchDepth(int searchDepth) {
         this.searchDepth = searchDepth;
-    }
-
-    public boolean isOrganism_specific() {
-        return organism_specific;
     }
 
     public void setOrganism_specific(boolean organism_specific) {
@@ -463,10 +448,6 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
     public void setDisregarded(boolean disregarded) {
         this.disregarded = disregarded;
-    }
-
-    public boolean isCoFactors() {
-        return CoFactors;
     }
 
     public void setCoFactors(boolean coFactors) {
