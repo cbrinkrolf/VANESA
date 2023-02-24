@@ -930,7 +930,7 @@ public class Pathway implements Cloneable {
 		this.groups = groups;
 	}
 
-		public TransformationInformation getTransformationInformation() {
+	public TransformationInformation getTransformationInformation() {
 		return transformationInformation;
 	}
 
@@ -1631,6 +1631,116 @@ public class Pathway implements Cloneable {
 				j++;
 				// System.out.println("j:"+j);
 			}
+		}
+	}
+
+	public void adjustDown(Collection<BiologicalNodeAbstract> nodes) {
+		double maxy = Double.MIN_VALUE;
+		Point2D point;
+		if (nodes.size() > 1) {
+			for (BiologicalNodeAbstract bna : nodes) {
+				point = getGraph().getVertexLocation(bna);
+				if (point.getY() > maxy) {
+					maxy = point.getY();
+				}
+			}
+			for (BiologicalNodeAbstract bna : nodes) {
+				point = getGraph().getVertexLocation(bna);
+				point.setLocation(point.getX(), maxy);
+				getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
+			}
+		}
+		saveVertexLocations();
+	}
+
+	public void adjustLeft(Collection<BiologicalNodeAbstract> nodes) {
+		double minx = Double.MAX_VALUE;
+		Point2D point;
+		if (nodes.size() > 1) {
+			for (BiologicalNodeAbstract bna : nodes) {
+				point = getGraph().getVertexLocation(bna);
+				if (point.getX() < minx) {
+					minx = point.getX();
+				}
+			}
+			for (BiologicalNodeAbstract bna : nodes) {
+				point = getGraph().getVertexLocation(bna);
+				point.setLocation(minx, point.getY());
+				getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
+			}
+		}
+		saveVertexLocations();
+	}
+
+	public void adjustHorizontalSpace(Collection<BiologicalNodeAbstract> nodes) {
+		double minx = Double.MAX_VALUE;
+		double maxx = Double.MIN_VALUE;
+		HashMap<BiologicalNodeAbstract, Double> map = new HashMap<>();
+		Point2D point;
+		if (nodes.size() > 2) {
+			for (BiologicalNodeAbstract bna : nodes) {
+				point = getGraph().getVertexLocation(bna);
+				if (point.getX() < minx) {
+					minx = point.getX();
+				}
+				if (point.getX() > maxx) {
+					maxx = point.getX();
+				}
+				map.put(bna, point.getX());
+			}
+			List<Double> c = new ArrayList<>(map.values());
+			Collections.sort(c);
+			for (BiologicalNodeAbstract bna : nodes) {
+				int d = c.indexOf(map.get(bna));
+				double newx;
+				if (d == 0) {
+					newx = minx;
+				} else if (d == nodes.size() - 1) {
+					newx = maxx;
+				} else {
+					newx = minx + d * ((Math.abs(maxx - minx)) / (nodes.size() - 1));
+				}
+				point = getGraph().getVertexLocation(bna);
+				point.setLocation(newx, point.getY());
+				getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
+			}
+			saveVertexLocations();
+		}
+	}
+
+	public void adjustVerticalSpace(Collection<BiologicalNodeAbstract> nodes) {
+		double miny = Double.MAX_VALUE;
+		double maxy = Double.MIN_VALUE;
+		HashMap<BiologicalNodeAbstract, Double> map = new HashMap<>();
+		Point2D point;
+		if (nodes.size() > 2) {
+			for(BiologicalNodeAbstract bna : nodes){
+				point = getGraph().getVertexLocation(bna);
+				if (point.getY() < miny) {
+					miny = point.getY();
+				}
+				if (point.getY() > maxy) {
+					maxy = point.getY();
+				}
+				map.put(bna, point.getY());
+			}
+			List<Double> c = new ArrayList<>(map.values());
+			Collections.sort(c);
+			for(BiologicalNodeAbstract bna : nodes){
+				int d = c.indexOf(map.get(bna));
+				double newy;
+				if (d == 0) {
+					newy = miny;
+				} else if (d == nodes.size() - 1) {
+					newy = maxy;
+				} else {
+					newy = miny + d * ((Math.abs(maxy - miny)) / (nodes.size() - 1));
+				}
+				point = getGraph().getVertexLocation(bna);
+				point.setLocation(point.getX(), newy);
+				getGraph().getVisualizationViewer().getModel().getGraphLayout().setLocation(bna, point);
+			}
+			saveVertexLocations();
 		}
 	}
 }

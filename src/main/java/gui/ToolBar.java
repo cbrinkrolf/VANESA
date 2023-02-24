@@ -226,11 +226,11 @@ public class ToolBar {
 		nodeAdjustment.add(adjustLeft);
 
 		JButton adjustHorizontalSpace = createToolBarButton("adjustHorizontalSpace.png",
-															"Adjust Horizontal Space Of Selected Nodes",
+															"Adjust Horizontal Space of Selected Nodes",
 															ToolbarActionCommands.adjustHorizontalSpace);
 		nodeAdjustment.add(adjustHorizontalSpace);
 		JButton adjustVerticalSpace = createToolBarButton("adjustVerticalSpace.png",
-														  "Adjust Vertical Space Of Selected Nodes",
+														  "Adjust Vertical Space of Selected Nodes",
 														  ToolbarActionCommands.adjustVerticalSpace);
 		nodeAdjustment.add(adjustVerticalSpace);
 
