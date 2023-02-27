@@ -36,16 +36,13 @@ public class BRENDASearch extends SwingWorker<Object, Object> {
             BrendaSearchResultWindow bsrw = new BrendaSearchResultWindow(results);
             DBBrendaEnzyme[] selectedResults = bsrw.getSelectedValues();
             if (selectedResults.length != 0) {
-                MainWindow.getInstance().showProgressBar("Fetching Network.");
+                MainWindow.getInstance().showProgressBar("Fetching Network");
                 for (DBBrendaEnzyme res : selectedResults) {
-                    BrendaConnector bc = new BrendaConnector(res, mergePW);
-                    bc.setDisregarded(bsrw.getDisregarded());
-                    bc.setOrganism_specific(bsrw.getOrganismSpecificDecision());
-                    bc.setSearchDepth(bsrw.getSearchDepth());
-                    bc.setCofactors(bsrw.getCoFactorsDecision());
-                    bc.setInhibitors(bsrw.getInhibitorsDecision());
-                    bc.setAutoCoarseDepth(bsrw.getAutoCoarseDepth());
-                    bc.setAutoCoarseEnzymeNomenclature(bsrw.getAutoCoarseEnzymeNomenclature());
+                    BrendaConnector bc = new BrendaConnector(res, mergePW, bsrw.getAutoCoarseDepth(),
+                                                             bsrw.getAutoCoarseEnzymeNomenclature(),
+                                                             bsrw.getCoFactorsDecision(), bsrw.getInhibitorsDecision(),
+                                                             bsrw.getSearchDepth(), bsrw.getDisregarded(),
+                                                             bsrw.getOrganismSpecificDecision());
                     bc.execute();
                 }
             }

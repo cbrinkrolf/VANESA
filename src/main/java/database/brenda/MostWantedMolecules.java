@@ -14,7 +14,6 @@ import java.util.*;
 public class MostWantedMolecules {
     private static MostWantedMolecules instance = null;
     private final Map<String, Entry> molecules = new HashMap<>();
-    private Vector<String> v = new Vector<>();
 
     private MostWantedMolecules() {
     }
@@ -28,7 +27,6 @@ public class MostWantedMolecules {
 
     public void fillMoleculeSet() {
         molecules.clear();
-        v.clear();
         try (InputStream in = getClass().getClassLoader().getResourceAsStream("MostWantedMolecules.csv")) {
             final CsvMapper mapper = new CsvMapper();
             CsvSchema schema = mapper.schemaFor(Entry.class).withColumnSeparator(',').withUseHeader(true);
@@ -49,18 +47,8 @@ public class MostWantedMolecules {
         return result;
     }
 
-    public Vector<String> getDisregardedValues() {
-        Vector<String> results = new Vector<>();
-        for (Entry p : molecules.values()) {
-            if (p.disregard)
-                results.add(p.name);
-        }
-        v = results;
-        return results;
-    }
-
-    public boolean getElementValue(String name) {
-        return v.contains(name);
+    public Entry getEntry(String name) {
+        return molecules.get(name);
     }
 
     @JsonPropertyOrder({"name", "amount", "disregarded"})
