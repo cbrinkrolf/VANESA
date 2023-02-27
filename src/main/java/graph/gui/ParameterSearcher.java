@@ -1,13 +1,17 @@
 package graph.gui;
 
+import api.payloads.dbBrenda.DBBrendaEnzyme;
+import api.payloads.dbBrenda.DBBrendaKMValue;
+import api.payloads.dbBrenda.DBBrendaTurnoverNumberValue;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import database.brenda2.BRENDA2Search;
+import database.brenda.BRENDA2Search;
 import graph.GraphInstance;
+import gui.AsyncTaskExecutor;
 import gui.MainWindow;
 import gui.MyPopUp;
-import gui.visualization.RangeSlider;
+import gui.tables.GenericTableModel;
 import gui.tables.MyTable;
-import gui.tables.NodePropertyTableModel;
+import gui.visualization.RangeSlider;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -17,15 +21,13 @@ import util.VanesaUtility;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author cbrinkro
- */
 public class ParameterSearcher extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private final JTextField ecNumber = new JTextField();
@@ -42,19 +44,18 @@ public class ParameterSearcher extends JFrame implements ActionListener {
     private final JPanel statisticPanel;
 
     private final JTextField enzymeFilter = new JTextField(30);
-    private TableRowSorter<NodePropertyTableModel> enzymeSorter;
+    private TableRowSorter<TableModel> enzymeSorter;
 
-    private TableRowSorter<NodePropertyTableModel> valueSorter;
+    private TableRowSorter<TableModel> valueSorter;
 
     private MyTable enzymeTable;
-    private final String[] enzymeColumnNames = {"ID", "Ec number", "Recommended name"};
     private final JScrollPane enzymeTableScrollPane;
 
     private MyTable valueTable = null;
-    private final String[] valueColumnNames = {"Ec number", "Organism", "Metabolite", "Value"};
+    private final String[] valueColumnNames = {"EC Number", "Organism", "Metabolite", "Value"};
     JScrollPane valueTableScrollPane;
 
-    private NodePropertyTableModel valueModel;
+    private TableModel valueModel;
     private final JLabel valueStatistics = new JLabel();
     private Parameter currentParameter = null;
     private final JLabel lblCurrentParameter = new JLabel();
@@ -75,8 +76,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
         super("Brenda 2 Parameter");
         this.bna = bna;
         JButton btnUpdateEnzyme = new JButton("Update enzymes");
-        btnUpdateEnzyme.setActionCommand("updateEnzymes");
-        btnUpdateEnzyme.addActionListener(this);
+        btnUpdateEnzyme.addActionListener(e -> onUpdateEnzymesClicked());
 
         btnUpdateValues = new JButton("Update Values");
         btnUpdateValues.setActionCommand("updateValues");
@@ -201,31 +201,28 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
         mainPanel.add(new JLabel("Filter enzymes:"), "gaptop 2");
         mainPanel.add(enzymeFilter, "wrap");
-
         mainPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
 
         JButton cancel = new JButton("cancel");
-        cancel.addActionListener(this);
-        cancel.setActionCommand("cancel");
+        cancel.addActionListener(e -> onCancelClicked());
 
-        JButton newButton = new JButton("ok");
-        newButton.addActionListener(this);
-        newButton.setActionCommand("new");
+        JButton okButton = new JButton("ok");
+        okButton.addActionListener(e -> onOkClicked());
 
         JOptionPane optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
-        JButton[] b = {newButton, cancel};
+        JButton[] b = {okButton, cancel};
         optionPane.setOptions(b);
 
-        this.setAlwaysOnTop(false);
-        this.setContentPane(optionPane);
-        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        this.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
-        this.pack();
-        this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
-        this.requestFocus();
-        this.setVisible(true);
+        setAlwaysOnTop(false);
+        setContentPane(optionPane);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setIconImages(MainWindow.getInstance().getFrame().getIconImages());
+        pack();
+        setLocationRelativeTo(MainWindow.getInstance().getFrame());
+        requestFocus();
+        setVisible(true);
         if (initialSearch) {
-            updateEnzymes();
+            onUpdateEnzymesClicked();
         }
     }
 
@@ -259,15 +256,22 @@ public class ParameterSearcher extends JFrame implements ActionListener {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (enzymeTable.getSelectedRowCount() > 0) {
-                    ecNumber.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 1));
-                    name.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 2));
+                    ecNumber.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 0));
+                    name.setText(enzymeTable.getStringAt(enzymeTable.getSelectedRows()[0], 1));
                 }
             }
         });
     }
 
-    public void updateEnzymeTable(Object[][] rows) {
-        NodePropertyTableModel enzymeModel = new NodePropertyTableModel(rows, enzymeColumnNames);
+    public void updateEnzymeTable(DBBrendaEnzyme[] rows) {
+        TableModel enzymeModel = new GenericTableModel<>(new String[]{"EC Number", "Recommended Name"}, rows) {
+            @Override
+            public Object getValueAt(DBBrendaEnzyme entry, int columnIndex) {
+                if (columnIndex == 0)
+                    return entry.ec;
+                return entry.name;
+            }
+        };
         enzymeSorter = new TableRowSorter<>(enzymeModel);
         enzymeTable.setModel(enzymeModel);
         enzymeSorter.setRowFilter(null);
@@ -275,9 +279,39 @@ public class ParameterSearcher extends JFrame implements ActionListener {
         enzymeTable.setRowSelectionInterval(0, 0);
     }
 
-    private void updateValueTable(Object[][] rows) {
+    private void updateValueTable(String ec, DBBrendaTurnoverNumberValue[] rows) {
+        updateValueTable(new GenericTableModel<>(valueColumnNames, rows) {
+            @Override
+            public Object getValueAt(DBBrendaTurnoverNumberValue entry, int columnIndex) {
+                if (columnIndex == 0)
+                    return ec;
+                if (columnIndex == 1)
+                    return entry.organismName;
+                if (columnIndex == 2)
+                    return entry.metaboliteName;
+                return entry.tn;
+            }
+        });
+    }
+
+    private void updateValueTable(String ec, DBBrendaKMValue[] rows) {
+        updateValueTable(new GenericTableModel<>(valueColumnNames, rows) {
+            @Override
+            public Object getValueAt(DBBrendaKMValue entry, int columnIndex) {
+                if (columnIndex == 0)
+                    return ec;
+                if (columnIndex == 1)
+                    return entry.organismName;
+                if (columnIndex == 2)
+                    return entry.metaboliteName;
+                return entry.km;
+            }
+        });
+    }
+
+    private void updateValueTable(TableModel valueModel) {
+        this.valueModel = valueModel;
         if (valueTable == null) {
-            valueModel = new NodePropertyTableModel(rows, valueColumnNames);
             valueSorter = new TableRowSorter<>(valueModel);
             valueTable = new MyTable();
             valueTable.setModel(valueModel);
@@ -357,7 +391,6 @@ public class ParameterSearcher extends JFrame implements ActionListener {
             updateValueStatistics();
             mainPanel.revalidate();
         } else {
-            valueModel = new NodePropertyTableModel(rows, valueColumnNames);
             valueSorter = new TableRowSorter<>(valueModel);
             valueTable.setModel(valueModel);
             valueSorter.setRowFilter(null);
@@ -366,66 +399,46 @@ public class ParameterSearcher extends JFrame implements ActionListener {
         }
     }
 
-    private void updateEnzymes() {
-        MainWindow.getInstance().showProgressBar("BRENDA 2 query");
-        BRENDA2Search brenda2Search = new BRENDA2Search(BRENDA2Search.enzymeSearch);
-        brenda2Search.setEcNumber(this.getEcNumber());
-        brenda2Search.setName(this.getEcName());
-        brenda2Search.setMetabolite(this.getMetabolite());
-        brenda2Search.setOrg(this.getOrganism());
-        brenda2Search.setSyn(this.getSynonym());
-        brenda2Search.addPropertyChangeListener(evt -> {
-            if (evt.getNewValue().toString().equals("DONE")) {
-                if (brenda2Search.getResults().length > 0) {
-                    updateEnzymeTable(brenda2Search.getResults());
-                }
+    private void onUpdateEnzymesClicked() {
+        enzymeTableScrollPane.setVisible(true);
+        AsyncTaskExecutor.runUIBlocking("BRENDA search", () -> {
+            DBBrendaEnzyme[] results = BRENDA2Search.requestEnzymes(getEcNumber(), getEcName(), getMetabolite(),
+                                                                    getOrganism(), getSynonym());
+            if (results != null && results.length > 0) {
+                updateEnzymeTable(results);
             }
         });
-        brenda2Search.execute();
     }
 
-    private void updateValues(String searchType) {
-        MainWindow.getInstance().showProgressBar("update values");
-        MainWindow.getInstance().showProgressBar("BRENDA 2 query");
-        BRENDA2Search brenda2Search = new BRENDA2Search(searchType);
-        brenda2Search.setEcNumber(this.getEcNumber());
-        brenda2Search.setName(this.getEcName());
-        brenda2Search.setMetabolite(this.getMetabolite());
-        brenda2Search.setOrg(this.getOrganism());
-        brenda2Search.setSyn(this.getSynonym());
-        brenda2Search.addPropertyChangeListener(evt -> {
-            if (evt.getNewValue().toString().equals("DONE")) {
-                updateValueTable(brenda2Search.getResults());
-            }
-        });
-        brenda2Search.execute();
+    private void onCancelClicked() {
+        setVisible(false);
+        MainWindow.getInstance().closeProgressBar();
+    }
+
+    private void onOkClicked() {
+        if (enzymeTable.getSelectedRows().length == 0) {
+            // JOptionPane.showMessageDialog(this, "Please choose an enzyme.", "Message", 1);
+        } else {
+            ok = true;
+            setVisible(false);
+        }
     }
 
     public void actionPerformed(ActionEvent e) {
         String event = e.getActionCommand();
-        if ("cancel".equals(event)) {
-            this.setVisible(false);
-            MainWindow.getInstance().closeProgressBar();
-        } else if ("new".equals(event)) {
-            if (enzymeTable.getSelectedRows().length == 0) {
-                // JOptionPane.showMessageDialog(this, "Please choose an enzyme.", "Message", 1);
-            } else {
-                ok = true;
-                this.setVisible(false);
-            }
-        } else if (event.equals("updateEnzymes")) {
-            enzymeTableScrollPane.setVisible(true);
-            updateEnzymes();
-        } else if (event.equals("updateValues")) {
+        if (event.equals("updateValues")) {
             if (enzymeTable.getSelectedRowCount() > 0) {
                 if (enzymeTable.getSelectedRowCount() > 1) {
                     MyPopUp.getInstance().show("Multiple enzymes", "Multiselect on enzymes is not supported!");
                 }
-                if (kmRadio.isSelected()) {
-                    updateValues(BRENDA2Search.kmSearch);
-                } else {
-                    updateValues(BRENDA2Search.turnoverSearch);
-                }
+                final String ec = getEcNumber();
+                AsyncTaskExecutor.runUIBlocking("BRENDA search", () -> {
+                    if (kmRadio.isSelected()) {
+                        updateValueTable(ec, BRENDA2Search.requestKMValues(ec));
+                    } else {
+                        updateValueTable(ec, BRENDA2Search.requestTurnoverNumberValues(ec));
+                    }
+                });
             } else {
                 MyPopUp.getInstance().show("Empty enzyme", "Please select an enzyme first!");
             }
@@ -449,15 +462,15 @@ public class ParameterSearcher extends JFrame implements ActionListener {
         } else if (event.equals("setValue")) {
             if (e.getSource() instanceof JButton) {
                 JButton button = (JButton) e.getSource();
-                if (this.currentParameter == null) {
+                if (currentParameter == null) {
                     MyPopUp.getInstance().show("Missing Parameter", "Select a Parameter first!");
                     return;
                 }
                 if (button.getText().trim().length() > 0) {
                     try {
                         double d = Double.parseDouble(button.getText().trim());
-                        this.currentParameter.setValue(d);
-                        this.updateValuesPanel();
+                        currentParameter.setValue(d);
+                        updateValuesPanel();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -482,10 +495,8 @@ public class ParameterSearcher extends JFrame implements ActionListener {
             number.setText(String.valueOf(list.size()));
             min.setText(String.valueOf(list.get(0)));
             max.setText(String.valueOf(list.get(list.size() - 1)));
-            double mean = VanesaUtility.getMean(list);
-            this.mean.setText(String.valueOf(Math.round(mean * 10000.0) / 10000.0));
-            double median = VanesaUtility.getMedian(list);
-            this.median.setText(String.valueOf(Math.round(median * 10000.0) / 10000.0));
+            mean.setText(String.valueOf(VanesaUtility.round(VanesaUtility.getMean(list), 4)));
+            median.setText(String.valueOf(VanesaUtility.round(VanesaUtility.getMedian(list), 4)));
             valueStatistics.setText("");
         } else {
             number.setText("");
@@ -498,23 +509,23 @@ public class ParameterSearcher extends JFrame implements ActionListener {
     }
 
     public String getEcNumber() {
-        return this.ecNumber.getText().trim();
+        return ecNumber.getText().trim();
     }
 
     public String getEcName() {
-        return this.name.getText().trim();
+        return name.getText().trim();
     }
 
     public String getSynonym() {
-        return this.syn.getText().trim();
+        return syn.getText().trim();
     }
 
     public String getMetabolite() {
-        return this.metabolite.getText().trim();
+        return metabolite.getText().trim();
     }
 
     public String getOrganism() {
-        return this.org.getText().trim();
+        return org.getText().trim();
     }
 
     private void setValueSorterListener() {
@@ -524,7 +535,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
         if (metabolite.getText().trim().length() < 1 && org.getText().trim().length() < 1) {
             valueSorter.setRowFilter(null);
         } else {
-            List<RowFilter<NodePropertyTableModel, Integer>> listOfFilters = new ArrayList<>();
+            List<RowFilter<TableModel, Integer>> listOfFilters = new ArrayList<>();
             if (metabolite.getText().trim().length() > 0) {
 
                 listOfFilters.add(RowFilter.regexFilter(metabolite.getText().trim(), 2));
@@ -564,7 +575,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
             valuesPanel.add(new JLabel(p.getValue() + ""));
         }
         valuesPanel.add(new JLabel(), "wrap");
-        valuesPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
+        valuesPanel.add(new JSeparator(), "span, growx, gaptop 7");
         valuesPanel.revalidate();
     }
 

@@ -65,16 +65,15 @@ public class PPIQueryMask extends QueryMask {
     protected String search() {
         String selectedDatabase = (String) choosePPIDatabase.getSelectedItem();
         if (selectedDatabase != null) {
-            PPISearch search = new PPISearch();
             switch (selectedDatabase) {
                 case "HPRD":
-                    search.requestHPRDEntries(fullName.getText(), alias.getText(), acNumber.getText());
+                    PPISearch.requestHPRDEntries(fullName.getText(), alias.getText(), acNumber.getText());
                     break;
                 case "MINT":
-                    search.requestMintEntries(fullName.getText(), alias.getText(), acNumber.getText());
+                    PPISearch.requestMintEntries(fullName.getText(), alias.getText(), acNumber.getText());
                     break;
                 case "IntAct":
-                    search.requestIntActEntries(fullName.getText(), alias.getText(), acNumber.getText());
+                    PPISearch.requestIntActEntries(fullName.getText(), alias.getText(), acNumber.getText());
                     break;
             }
         }

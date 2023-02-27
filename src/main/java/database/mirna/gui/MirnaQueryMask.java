@@ -160,11 +160,9 @@ public class MirnaQueryMask extends QueryMask {
                     pw.addEdge(e);
                 }
                 myGraph.restartVisualizationModel();
-                if (!isHeadless()) {
-                    myGraph.changeToGEMLayout();
-                    myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
-                    myGraph.normalCentering();
-                }
+                myGraph.changeToGEMLayout();
+                myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
+                myGraph.normalCentering();
                 MainWindow.getInstance().closeProgressBar();
                 MainWindow window = MainWindow.getInstance();
                 window.updateOptionPanel();
@@ -213,11 +211,9 @@ public class MirnaQueryMask extends QueryMask {
                     pw.addEdge(e);
                 }
                 myGraph.restartVisualizationModel();
-                if (!isHeadless()) {
-                    myGraph.changeToGEMLayout();
-                    myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
-                    myGraph.normalCentering();
-                }
+                myGraph.changeToGEMLayout();
+                myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
+                myGraph.normalCentering();
                 MainWindow.getInstance().closeProgressBar();
                 MainWindow window = MainWindow.getInstance();
                 window.updateOptionPanel();

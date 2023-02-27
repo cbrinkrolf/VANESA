@@ -6,25 +6,6 @@ public class DatabaseQueryValidator {
     private boolean notLike = false;
     private boolean orOperator = false;
 
-    private boolean iterationReplacement(String replacement) {
-        return !replacement.startsWith("&") && !replacement.startsWith("|") && !replacement.endsWith("&") &&
-                !replacement.endsWith("|");
-    }
-
-    public String replaceAndValidateString(String temp) {
-        String newString = temp.trim();
-        while (!iterationReplacement(newString)) {
-            if (newString.startsWith("&") || newString.startsWith("|")) {
-                newString = newString.substring(1);
-            }
-            if (newString.endsWith("&") || newString.endsWith("|")) {
-                newString = newString.substring(0, newString.length() - 1);
-            }
-            newString = newString.trim();
-        }
-        return newString;
-    }
-
     public String prepareString(String temp, String attribute, String attribute2) {
         StringTokenizer st = new StringTokenizer(temp, "&|", true);
         StringBuilder buffer = new StringBuilder();
@@ -89,16 +70,16 @@ public class DatabaseQueryValidator {
         }
         if (not) {
             if (notLike && orOperator) {
-                query = "AND " + attribute + " not like '%" + temp + "%' ";
+                query = "OR " + attribute + " not like '%" + temp + "%' ";
             } else if (orOperator) {
-                query = "Or " + attribute + " not like '%" + temp + "%' ";
+                query = "OR " + attribute + " not like '%" + temp + "%' ";
             } else {
                 query = attribute + " not like '%" + temp + "%' ";
             }
             notLike = true;
         } else {
             if (orOperator) {
-                query = "Or " + attribute + " like '%" + temp + "%' ";
+                query = "OR " + attribute + " like '%" + temp + "%' ";
             } else {
                 query = attribute + " like '%" + temp + "%' ";
             }

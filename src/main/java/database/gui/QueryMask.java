@@ -12,12 +12,10 @@ import java.awt.*;
 public abstract class QueryMask {
     protected final ImagePath imagePath = ImagePath.getInstance();
     protected final JPanel panel;
-    protected final JCheckBox headless;
 
     public QueryMask() {
         MigLayout layout = new MigLayout("", "[right]");
         panel = new JPanel(layout);
-        headless = new JCheckBox("headless");
     }
 
     protected void addControlButtons() {
@@ -26,16 +24,11 @@ public abstract class QueryMask {
         JButton reset = new JButton("reset");
         reset.addActionListener(e -> reset());
         JPanel buttonPanel = new JPanel();
-        buttonPanel.add(headless);
         buttonPanel.add(reset);
         buttonPanel.add(search);
         panel.add(new JSeparator(), "span, growx, wrap 10 ");
         panel.add(new JLabel(), "gap 20, span 5");
         panel.add(buttonPanel, "span");
-    }
-
-    protected boolean isHeadless() {
-        return headless.isSelected();
     }
 
     public abstract String getMaskName();

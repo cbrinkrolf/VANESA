@@ -125,8 +125,9 @@ public class PopUpListener implements ActionListener {
                     input[2] = bna.getLabel();
                     input[3] = bna.getLabel();
                 }
-                BRENDASearch brendaSearch = new BRENDASearch(input, pw, false);
+                BRENDASearch brendaSearch = new BRENDASearch(input[0], input[1], input[2], input[4], pw);
                 brendaSearch.execute();
+                MainWindow.getInstance().showProgressBar("BRENDA query");
             }
         } else if ("openPathway".equals(event)) {
             String pwName = w.getCurrentPathway();

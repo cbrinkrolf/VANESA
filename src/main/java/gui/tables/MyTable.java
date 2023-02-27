@@ -22,11 +22,13 @@ public class MyTable extends JXTable {
         Component comp = super.prepareRenderer(renderer, row, col);
         JComponent jcomp = (JComponent) comp;
         Object value = getValueAt(row, col);
-        if (value instanceof Integer) {
-        } else if (value instanceof Boolean) {
-        } else if (value instanceof Double) {
-        } else {
-            jcomp.setToolTipText(value.toString());
+        if (value != null) {
+            if (value instanceof Integer) {
+            } else if (value instanceof Boolean) {
+            } else if (value instanceof Double) {
+            } else {
+                jcomp.setToolTipText(value.toString());
+            }
         }
         return comp;
     }

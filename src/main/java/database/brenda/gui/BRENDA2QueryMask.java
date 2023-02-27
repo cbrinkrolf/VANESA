@@ -1,4 +1,4 @@
-package database.brenda2.gui;
+package database.brenda.gui;
 
 import database.gui.QueryMask;
 import gui.MainWindow;
@@ -53,7 +53,7 @@ public class BRENDA2QueryMask extends QueryMask {
 
     @Override
     public String getMaskName() {
-        return "B2";
+        return "BRENDA";
     }
 
     @Override
@@ -85,9 +85,12 @@ public class BRENDA2QueryMask extends QueryMask {
                         "<h3>The BRENDA search window</h3>" +
                         "<ul>" +
                         "<li>BRENDA is the comprehensive enzyme information database.<p>" +
-                        "It is maintained and developed at the Institute of Biochemistry <p>" +
-                        "at the University of Cologne. Data on enzyme functions are extracted <p>" +
-                        "directly from the primary literature and stored in this database.<p>" +
+                        "BRENDA is maintained and developed at the Institute of Biochemistry <p>" +
+                        "and Bioinformatics at the Technical University of Braunschweig, Germany.<p>" +
+                        "Data on enzyme function are extracted directly from the primary literature <p>" +
+                        "by scientists holding a degree in Biology or Chemistry. Formal and consistency<p>" +
+                        "checks are done by computer programs, each data set on a classified enzyme is<p>" +
+                        "checked manually by at least one biologist and one chemist.<p>" +
                         "<li>The search window is a query mask that gives the user the<p>" +
                         "possibility to consult the BRENDA database for information of interest. <p>" +
                         "<li>By searching the database for one of the following attributes EC-Number,<p>" +

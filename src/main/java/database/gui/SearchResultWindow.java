@@ -1,13 +1,13 @@
 package database.gui;
 
 import gui.MainWindow;
+import gui.tables.GenericTableModel;
 import gui.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -24,29 +24,10 @@ public abstract class SearchResultWindow<T> {
         this.entryType = entryType;
         this.tableValues = tableValues;
         table = new MyTable();
-        table.setModel(new AbstractTableModel() {
+        table.setModel(new GenericTableModel<>(columnNames, tableValues) {
             @Override
-            public String getColumnName(int col) {
-                return columnNames[col];
-            }
-
-            @Override
-            public int getRowCount() {
-                return tableValues.length;
-            }
-
-            @Override
-            public int getColumnCount() {
-                return columnNames.length;
-            }
-
-            @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-                if (rowIndex >= 0 && rowIndex < tableValues.length && columnIndex >= 0 &&
-                        columnIndex < columnNames.length) {
-                    return getTableValueColumnAt(tableValues[rowIndex], columnIndex);
-                }
-                return null;
+            public Object getValueAt(T entry, int columnIndex) {
+                return getTableValueColumnAt(entry, columnIndex);
             }
         });
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

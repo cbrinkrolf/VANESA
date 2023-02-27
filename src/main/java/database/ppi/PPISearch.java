@@ -22,8 +22,11 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PPISearch {
-    public void requestHPRDEntries(String fullName, String alias, String accession) {
+public final class PPISearch {
+    private PPISearch() {
+    }
+
+    public static void requestHPRDEntries(String fullName, String alias, String accession) {
         HPRDEntrySearchRequestPayload payload = new HPRDEntrySearchRequestPayload();
         payload.name = fullName;
         payload.accession = accession;
@@ -56,7 +59,7 @@ public class PPISearch {
         }
     }
 
-    private void requestHPRDPPI(HPRDEntry root, int depth, boolean autoCoarse) {
+    private static void requestHPRDPPI(HPRDEntry root, int depth, boolean autoCoarse) {
         HPRDRetrievePPIRequestPayload payload = new HPRDRetrievePPIRequestPayload();
         payload.id = root.id;
         payload.depth = depth;
@@ -91,7 +94,7 @@ public class PPISearch {
         window.getFrame().setVisible(true);
     }
 
-    private Map<Integer, Protein> drawNodes(Pathway pw, int rootId, HPRDRetrievePPIResponsePayload payload) {
+    private static Map<Integer, Protein> drawNodes(Pathway pw, int rootId, HPRDRetrievePPIResponsePayload payload) {
         Map<Integer, Protein> idProteinMap = new HashMap<>();
         for (HPRDEntry entry : payload.entries) {
             Protein protein = new Protein(entry.geneSymbol, entry.name);
@@ -107,7 +110,8 @@ public class PPISearch {
         return idProteinMap;
     }
 
-    private void drawEdges(Pathway pw, HPRDRetrievePPIResponsePayload payload, Map<Integer, Protein> idProteinMap) {
+    private static void drawEdges(Pathway pw, HPRDRetrievePPIResponsePayload payload,
+                                  Map<Integer, Protein> idProteinMap) {
         var graph = pw.getGraph().getJungGraph();
         for (int[] entry : payload.binaryInteractions) {
             BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
@@ -118,7 +122,7 @@ public class PPISearch {
         }
     }
 
-    public void requestMintEntries(String fullName, String alias, String accession) {
+    public static void requestMintEntries(String fullName, String alias, String accession) {
         MintEntrySearchRequestPayload payload = new MintEntrySearchRequestPayload();
         payload.name = fullName;
         payload.accession = accession;
@@ -153,7 +157,7 @@ public class PPISearch {
         }
     }
 
-    private void requestMintPPI(MintEntry root, int depth, boolean binary, boolean complex, boolean autoCoarse) {
+    private static void requestMintPPI(MintEntry root, int depth, boolean binary, boolean complex, boolean autoCoarse) {
         MintRetrievePPIRequestPayload payload = new MintRetrievePPIRequestPayload();
         payload.id = root.id;
         payload.depth = depth;
@@ -190,7 +194,7 @@ public class PPISearch {
         window.getFrame().setVisible(true);
     }
 
-    private Map<Integer, Protein> drawNodes(Pathway pw, int rootId, MintRetrievePPIResponsePayload payload) {
+    private static Map<Integer, Protein> drawNodes(Pathway pw, int rootId, MintRetrievePPIResponsePayload payload) {
         Map<Integer, Protein> idProteinMap = new HashMap<>();
         for (MintEntry entry : payload.entries) {
             Protein protein = new Protein(entry.shortLabel, entry.name);
@@ -206,7 +210,8 @@ public class PPISearch {
         return idProteinMap;
     }
 
-    private void drawEdges(Pathway pw, MintRetrievePPIResponsePayload payload, Map<Integer, Protein> idProteinMap) {
+    private static void drawEdges(Pathway pw, MintRetrievePPIResponsePayload payload,
+                                  Map<Integer, Protein> idProteinMap) {
         var graph = pw.getGraph().getJungGraph();
         for (int[] entry : payload.binaryInteractions) {
             BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
@@ -224,7 +229,7 @@ public class PPISearch {
         }
     }
 
-    public void requestIntActEntries(String fullName, String alias, String accession) {
+    public static void requestIntActEntries(String fullName, String alias, String accession) {
         IntActEntrySearchRequestPayload payload = new IntActEntrySearchRequestPayload();
         payload.name = fullName;
         payload.accession = accession;
@@ -259,7 +264,8 @@ public class PPISearch {
         }
     }
 
-    private void requestIntActPPI(IntActEntry root, int depth, boolean binary, boolean complex, boolean autoCoarse) {
+    private static void requestIntActPPI(IntActEntry root, int depth, boolean binary, boolean complex,
+                                         boolean autoCoarse) {
         IntActRetrievePPIRequestPayload payload = new IntActRetrievePPIRequestPayload();
         payload.id = root.id;
         payload.depth = depth;
@@ -296,7 +302,7 @@ public class PPISearch {
         window.getFrame().setVisible(true);
     }
 
-    private Map<Integer, Protein> drawNodes(Pathway pw, int rootId, IntActRetrievePPIResponsePayload payload) {
+    private static Map<Integer, Protein> drawNodes(Pathway pw, int rootId, IntActRetrievePPIResponsePayload payload) {
         Map<Integer, Protein> idProteinMap = new HashMap<>();
         for (IntActEntry entry : payload.entries) {
             Protein protein = new Protein(entry.shortLabel, entry.name);
@@ -312,7 +318,8 @@ public class PPISearch {
         return idProteinMap;
     }
 
-    private void drawEdges(Pathway pw, IntActRetrievePPIResponsePayload payload, Map<Integer, Protein> idProteinMap) {
+    private static void drawEdges(Pathway pw, IntActRetrievePPIResponsePayload payload,
+                                  Map<Integer, Protein> idProteinMap) {
         var graph = pw.getGraph().getJungGraph();
         for (int[] entry : payload.binaryInteractions) {
             BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
@@ -330,14 +337,14 @@ public class PPISearch {
         }
     }
 
-    private void buildEdge(Pathway pw, BiologicalNodeAbstract one, BiologicalNodeAbstract two) {
+    private static void buildEdge(Pathway pw, BiologicalNodeAbstract one, BiologicalNodeAbstract two) {
         PhysicalInteraction r = new PhysicalInteraction("", "", one, two);
         r.setDirected(false);
         r.setVisible(true);
         pw.addEdge(r);
     }
 
-    private void autoCoarse(MyGraph graph) {
+    private static void autoCoarse(MyGraph graph) {
         class HLC implements HierarchyListComparator<Integer> {
             public HLC() {
             }

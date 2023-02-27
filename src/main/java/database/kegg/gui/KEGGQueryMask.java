@@ -14,8 +14,6 @@ public class KEGGQueryMask extends QueryMask {
     private final JTextField compound;
 
     public KEGGQueryMask() {
-        headless.setEnabled(false);
-
         pathway = new JTextField(20);
         pathway.setText("Cell Cycle");
         pathway.addFocusListener(new TextfeldColorChanger());

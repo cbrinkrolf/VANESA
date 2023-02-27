@@ -342,16 +342,15 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
     public void doPPISearch(String database, String fullName, String alias, String acNumber) {
         AsyncTaskExecutor.runUIBlocking("PPI search", () -> {
             dataMappingView.inToolSearch(true);
-            PPISearch search = new PPISearch();
             switch (database) {
                 case "HPRD":
-                    search.requestHPRDEntries(fullName, alias, acNumber);
+                    PPISearch.requestHPRDEntries(fullName, alias, acNumber);
                     break;
                 case "MINT":
-                    search.requestMintEntries(fullName, alias, acNumber);
+                    PPISearch.requestMintEntries(fullName, alias, acNumber);
                     break;
                 case "IntAct":
-                    search.requestIntActEntries(fullName, alias, acNumber);
+                    PPISearch.requestIntActEntries(fullName, alias, acNumber);
                     break;
             }
             dataMappingView.updatePathwayCB();

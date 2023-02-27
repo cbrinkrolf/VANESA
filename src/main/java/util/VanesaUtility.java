@@ -21,6 +21,11 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 public class VanesaUtility {
+	public static double round(double value, int decimalPlaces) {
+		double factor = Math.pow(10, decimalPlaces);
+		return Math.round(value * factor) / factor;
+	}
+
 	public static Double getMean(List<Double> list) {
 		if (list.size() == 0) {
 			return 0.0;

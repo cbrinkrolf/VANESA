@@ -369,10 +369,6 @@ public class SmacofView extends JFrame implements ActionListener {
 	}
 
 	class SmacofTablePanel extends JPanel {
-
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = -2344221533928376628L;
 
 		public SmacofTablePanel() {
@@ -394,12 +390,11 @@ public class SmacofView extends JFrame implements ActionListener {
 		}
 	}
 
-	class SmacofTableModel extends AbstractTableModel {
-
+	static class SmacofTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = -1996177080571000673L;
 
-		private String[] columnNames;
-		private Object[][] data;
+		private final String[] columnNames;
+		private final Object[][] data;
 
 		public SmacofTableModel(String[] columnNames, Object[][] data) {
 			this.columnNames = columnNames;
@@ -440,10 +435,7 @@ public class SmacofView extends JFrame implements ActionListener {
 		 */
 		@Override
 		public boolean isCellEditable(int row, int col) {
-			if (col == 3)
-				return true;
-			else
-				return false;
+			return col == 3;
 		}
 
 		/*
@@ -451,7 +443,7 @@ public class SmacofView extends JFrame implements ActionListener {
 		 */
 		public void setValueAt(Object value, int row, int col) {
 			data[row][col] = value;
-			this.fireTableCellUpdated(row, col);
+			fireTableCellUpdated(row, col);
 		}
 	}
 

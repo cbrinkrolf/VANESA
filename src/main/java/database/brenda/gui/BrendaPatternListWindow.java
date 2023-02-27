@@ -2,32 +2,22 @@ package database.brenda.gui;
 
 import database.brenda.MostWantedMolecules;
 import gui.MainWindow;
+import gui.tables.GenericTableModel;
 import gui.tables.MyTable;
-import gui.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
 import java.awt.*;
-import java.util.List;
 
 public class BrendaPatternListWindow {
     private final JDialog dialog;
     private MyTable table;
 
     public BrendaPatternListWindow() {
-        MostWantedMolecules box = MostWantedMolecules.getInstance();
-        List<MostWantedMolecules.Entry> v = box.getAllValues();
-        Object[][] rows = new Object[v.size()][3];
-        int iteratorCount = 0;
-        for (MostWantedMolecules.Entry p : v) {
-            rows[iteratorCount][0] = p.amount;
-            rows[iteratorCount][1] = p.name;
-            rows[iteratorCount][2] = p.disregard;
-            iteratorCount++;
-        }
-        initTable(rows);
+        initTable();
         JScrollPane sp = new JScrollPane(table);
         sp.setPreferredSize(new Dimension(800, 400));
         MigLayout layout = new MigLayout();
@@ -61,10 +51,19 @@ public class BrendaPatternListWindow {
         dialog.setVisible(true);
     }
 
-    private void initTable(Object[][] rows) {
-        NodePropertyTableModel model = new NodePropertyTableModel(rows, new String[]{
-                "# found in reactions", "Name", "Disregarded"
-        });
+    private void initTable() {
+        MostWantedMolecules box = MostWantedMolecules.getInstance();
+        TableModel model = new GenericTableModel<>(new String[]{"# found in reactions", "Name", "Disregarded"},
+                                                   box.getAllValues().toArray(new MostWantedMolecules.Entry[0])) {
+            @Override
+            public Object getValueAt(MostWantedMolecules.Entry entry, int columnIndex) {
+                if (columnIndex == 0)
+                    return entry.amount;
+                if (columnIndex == 1)
+                    return entry.name;
+                return entry.disregard;
+            }
+        };
         table = new MyTable();
         table.setModel(model);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
