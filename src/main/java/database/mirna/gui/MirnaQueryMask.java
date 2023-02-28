@@ -274,13 +274,21 @@ public class MirnaQueryMask extends QueryMask {
     }
 
     private void enrichGenes() {
-        MirnaSearch.enrichGenes(new GraphInstance().getPathway(), isSourcesSelected(), isTargetsSelected(),
-                isHsaOnly());
+        Pathway pw = new GraphInstance().getPathway();
+        if (pw == null) {
+            MyPopUp.getInstance().show("Error", "Please create a network first!");
+            return;
+        }
+        MirnaSearch.enrichGenes(pw, isSourcesSelected(), isTargetsSelected(), isHsaOnly());
     }
 
     private void enrichMirnas() {
-        MirnaSearch.enrichMirnas(new GraphInstance().getPathway(), isSourcesSelected(), isTargetsSelected(),
-                isHsaOnly());
+        Pathway pw = new GraphInstance().getPathway();
+        if (pw == null) {
+            MyPopUp.getInstance().show("Error", "Please create a network first!");
+            return;
+        }
+        MirnaSearch.enrichMirnas(pw, isSourcesSelected(), isTargetsSelected(), isHsaOnly());
     }
 
     @Override
