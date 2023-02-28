@@ -2,8 +2,7 @@ package database.gui;
 
 import javax.swing.JTabbedPane;
 
-import database.brenda.gui.BRENDA2QueryMask;
-import database.kegg.gui.KEGGQueryMask;
+import database.brenda.gui.BRENDAQueryMask;
 import database.mirna.gui.MirnaQueryMask;
 import database.ppi.gui.PPIQueryMask;
 
@@ -14,7 +13,7 @@ public class DatabaseWindow {
         tabbedPanel = new JTabbedPane();
         // TODO: addQueryTab(new KEGGQueryMask());
         addQueryTab(new PPIQueryMask());
-        addQueryTab(new BRENDA2QueryMask());
+        addQueryTab(new BRENDAQueryMask());
         addQueryTab(new MirnaQueryMask());
     }
 

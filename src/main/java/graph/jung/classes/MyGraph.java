@@ -271,7 +271,7 @@ public class MyGraph {
 			vv.setBackground(Color.WHITE);
 		}
 		vv.setGraphMouse(graphMouse);
-		vv.setComponentPopupMenu(new GraphPopUp().returnPopUp());
+		vv.setComponentPopupMenu(new GraphPopUp().getPopUp());
 		// vv.setComponentPopupMenu(null);
 		// vv.setToolTipFunction(new ToolTips());
 

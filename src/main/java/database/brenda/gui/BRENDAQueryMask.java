@@ -6,14 +6,14 @@ import gui.eventhandlers.TextfeldColorChanger;
 
 import javax.swing.*;
 
-public class BRENDA2QueryMask extends QueryMask {
+public class BRENDAQueryMask extends QueryMask {
     private final JTextField ecNumber;
     private final JTextField name;
     private final JTextField synonym;
     private final JTextField metabolite;
     private final JTextField organism;
 
-    public BRENDA2QueryMask() {
+    public BRENDAQueryMask() {
         ecNumber = new JTextField(20);
         ecNumber.addFocusListener(new TextfeldColorChanger());
 
