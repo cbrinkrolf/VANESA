@@ -1,15 +1,14 @@
 package database.mirna.gui;
 
-import api.VanesaApi;
 import api.payloads.Response;
 import api.payloads.dbMirna.*;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.Expression;
+import biologicalObjects.edges.PhysicalInteraction;
 import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.MIRNA;
-import com.fasterxml.jackson.core.type.TypeReference;
 import database.gui.QueryMask;
-import database.mirna.MirnaStatistics;
+import database.mirna.MirnaSearch;
 import graph.CreatePathway;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
@@ -60,15 +59,17 @@ public class MirnaQueryMask extends QueryMask {
         enrichMirnas.addActionListener(e -> enrichMirnas());
         panel.add(new JLabel("miRNA Search Window"), "span 4");
         panel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
-        panel.add(new JLabel(new ImageIcon(imagePath.getPath("dataServer.png"))), "span 2 5");
+
+        panel.add(new JLabel(imagePath.getImageIcon("database-search-outline.png", 48, 48)), "span 2 5");
+
         panel.add(new JLabel("miRNA name"), "span 2, gap 5 ");
         panel.add(name, "span,wrap,growx ,gap 10");
         panel.add(new JLabel("Gene name"), "span 2, gap 5 ");
         panel.add(gene, "span,wrap,growx ,gap 10");
         panel.add(new JLabel("Accession"), "span 2, gap 5 ");
         panel.add(accession, "span, wrap, growx, gap 10");
-        //panel.add(new JLabel("Sequence"),"span 2, gap 5 ");
-        //panel.add(sequences,"span, wrap, growx, gap 10");
+        panel.add(new JLabel("Sequence"), "span 2, gap 5 ");
+        panel.add(sequences, "span, wrap, growx, gap 10");
         panel.add(hsaOnly, "span 2");
         panel.add(sources, "flowx, span, split 3");
         panel.add(targets);
@@ -96,25 +97,15 @@ public class MirnaQueryMask extends QueryMask {
     protected String search() {
         if (StringUtils.isNotEmpty(getNameInput()) || StringUtils.isNotEmpty(getAccessionInput()) ||
                 StringUtils.isNotEmpty(getSequenceInput())) {
-            MatureSearchRequestPayload payload = new MatureSearchRequestPayload();
-            payload.hsaOnly = isHsaOnly();
-            payload.name = getNameInput();
-            payload.accession = getAccessionInput();
-            payload.sequence = getSequenceInput();
-            Response<MatureSearchResponsePayload> response = VanesaApi.postSync("/db_mirna/mature/search", payload,
-                    new TypeReference<>() {
-                    });
+            Response<MatureSearchResponsePayload> response = MirnaSearch.searchMatures(isHsaOnly(), getNameInput(),
+                    getAccessionInput(), getSequenceInput());
             if (response.hasError()) {
                 return response.error;
             }
             handleMatureSearchResults(response.payload);
         } else {
-            TargetGeneSearchRequestPayload payload = new TargetGeneSearchRequestPayload();
-            payload.hsaOnly = isHsaOnly();
-            payload.accession = getGeneInput();
-            Response<TargetGeneSearchResponsePayload> response = VanesaApi.postSync("/db_mirna/target_gene/search",
-                    payload, new TypeReference<>() {
-                    });
+            Response<TargetGeneSearchResponsePayload> response = MirnaSearch.searchTargetGenes(isHsaOnly(),
+                    getGeneInput());
             if (response.hasError()) {
                 return response.error;
             }
@@ -128,47 +119,66 @@ public class MirnaQueryMask extends QueryMask {
             showNoEntriesPopUp();
             return;
         }
-        MirnaMatureSearchResultWindow resultWindow = new MirnaMatureSearchResultWindow(payload.results);
-        resultWindow.show();
-        DBMirnaMature[] results = resultWindow.getSelectedValues();
+        MirnaMatureSearchResultWindow searchResultWindow = new MirnaMatureSearchResultWindow(payload.results);
+        if (!searchResultWindow.show()) {
+            return;
+        }
+        DBMirnaMature[] results = searchResultWindow.getSelectedValues();
         if (results == null || results.length == 0) {
             return;
         }
         int count = 0;
         for (DBMirnaMature mature : results) {
-            GenesTargetedByMatureRequestPayload requestPayload = new GenesTargetedByMatureRequestPayload();
-            // TODO split search to search for sources and/or targets, depending on search criterion
-            requestPayload.hsaOnly = isHsaOnly();
-            requestPayload.name = mature.name;
-            Response<GenesTargetedByMatureResponsePayload> response = VanesaApi.postSync(
-                    "/db_mirna/target_gene/targeted_by_mature", requestPayload, new TypeReference<>() {
-                    });
-            if (response.payload != null && response.payload.results != null && response.payload.results.length > 0) {
-                count += response.payload.results.length;
-                Pathway pw = new CreatePathway("miRNA network for " + mature.name).getPathway();
-                MyGraph myGraph = pw.getGraph();
-                MIRNA root = new MIRNA(mature.name, mature.name);
-                if (mature.sequence != null) {
-                    root.setNtSequence(mature.sequence);
-                }
-                pw.addVertex(root, new Point2D.Double(0, 0));
-                for (DBMirnaTargetGene targetGene : response.payload.results) {
-                    DNA dna = new DNA(targetGene.accession, targetGene.accession);
-                    pw.addVertex(dna, new Point2D.Double(0, 0));
-                    Expression e = new Expression("", "", root, dna); // TODO: this isn't expression???
-                    e.setDirected(true);
-                    pw.addEdge(e);
-                }
-                myGraph.restartVisualizationModel();
-                myGraph.changeToGEMLayout();
-                myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
-                myGraph.normalCentering();
-                MainWindow.getInstance().closeProgressBar();
-                MainWindow window = MainWindow.getInstance();
-                window.updateOptionPanel();
-                window.getFrame().setVisible(true);
+            Pathway pw = new CreatePathway("miRNA network for " + mature.name).getPathway();
+            MIRNA root = new MIRNA(mature.name, mature.name);
+            if (mature.sequence != null) {
+                root.setNtSequence(mature.sequence);
             }
-            // TODO: show error
+            if (targets.isSelected() || sourcesAndTargets.isSelected()) {
+                Response<MatureTargetGenesResponsePayload> response =
+                        MirnaSearch.retrieveMatureTargetGenes(isHsaOnly(), mature.name);
+                if (response.payload != null && response.payload.results != null && response.payload.results.length > 0) {
+                    count += response.payload.results.length;
+                    pw.addVertex(root, new Point2D.Double(0, 0));
+                    for (DBMirnaTargetGene targetGene : response.payload.results) {
+                        String label = targetGene.getAccession();
+                        DNA dna = new DNA(label, targetGene.name != null ? targetGene.name : label);
+                        pw.addVertex(dna, new Point2D.Double(0, 0));
+                        PhysicalInteraction e = new PhysicalInteraction("", "", root, dna);
+                        e.setDirected(true);
+                        pw.addEdge(e);
+                    }
+                } else if (response.hasError()) {
+                    // TODO: show errors
+                }
+            }
+            if (sources.isSelected() || sourcesAndTargets.isSelected()) {
+                Response<MatureSourceGenesResponsePayload> response =
+                        MirnaSearch.retrieveMatureSourceGenes(isHsaOnly(), mature.name);
+                if (response.payload != null && response.payload.results != null && response.payload.results.length > 0) {
+                    count += response.payload.results.length;
+                    pw.addVertex(root, new Point2D.Double(0, 0));
+                    for (DBMirnaSourceGene sourceGene : response.payload.results) {
+                        String label = sourceGene.getAccession();
+                        DNA dna = new DNA(label, sourceGene.name != null ? sourceGene.name : label);
+                        pw.addVertex(dna, new Point2D.Double(0, 0));
+                        Expression e = new Expression("", "", dna, root);
+                        e.setDirected(true);
+                        pw.addEdge(e);
+                    }
+                } else if (response.hasError()) {
+                    // TODO: show errors
+                }
+            }
+            MyGraph myGraph = pw.getGraph();
+            myGraph.restartVisualizationModel();
+            myGraph.changeToGEMLayout();
+            myGraph.fitScaleOfViewer(myGraph.getSatelliteView());
+            myGraph.normalCentering();
+            MainWindow.getInstance().closeProgressBar();
+            MainWindow window = MainWindow.getInstance();
+            window.updateOptionPanel();
+            window.getFrame().setVisible(true);
         }
         if (count == 0) {
             showNoEntriesPopUp();
@@ -184,21 +194,24 @@ public class MirnaQueryMask extends QueryMask {
             showNoEntriesPopUp();
             return;
         }
-        MirnaTargetGeneSearchResultWindow resultWindow = new MirnaTargetGeneSearchResultWindow(payload.results);
-        resultWindow.show();
-        DBMirnaTargetGene[] results = resultWindow.getSelectedValues();
+        MirnaTargetGeneSearchResultWindow searchResultWindow = new MirnaTargetGeneSearchResultWindow(payload.results);
+        if (!searchResultWindow.show()) {
+            return;
+        }
+        DBMirnaTargetGene[] results = searchResultWindow.getSelectedValues();
         if (results == null || results.length == 0) {
             return;
         }
         int count = 0;
         for (DBMirnaTargetGene targetGene : results) {
-            Response<MaturesTargetingGeneResponsePayload> response = retrieveMaturesTargetingGene(isHsaOnly(),
-                    targetGene.accession);
+            Response<TargetGeneMaturesResponsePayload> response =
+                    MirnaSearch.retrieveTargetGeneMatures(isHsaOnly(), targetGene.name);
             if (response.payload != null && response.payload.results != null && response.payload.results.length > 0) {
                 count += response.payload.results.length;
-                Pathway pw = new CreatePathway("miRNA network for " + targetGene.accession).getPathway();
+                Pathway pw = new CreatePathway("miRNA network for " + targetGene.name).getPathway();
                 MyGraph myGraph = pw.getGraph();
-                DNA root = new DNA(targetGene.accession, targetGene.accession);
+                String label = targetGene.getAccession();
+                DNA root = new DNA(label, targetGene.name != null ? targetGene.name : label);
                 pw.addVertex(root, new Point2D.Double(0, 0));
                 for (DBMirnaMature mature : response.payload.results) {
                     MIRNA mirna = new MIRNA(mature.name, mature.name);
@@ -206,7 +219,7 @@ public class MirnaQueryMask extends QueryMask {
                         mirna.setNtSequence(mature.sequence);
                     }
                     pw.addVertex(mirna, new Point2D.Double(0, 0));
-                    Expression e = new Expression("", "", mirna, root); // TODO: this isn't expression???
+                    PhysicalInteraction e = new PhysicalInteraction("", "", mirna, root);
                     e.setDirected(true);
                     pw.addEdge(e);
                 }
@@ -224,25 +237,6 @@ public class MirnaQueryMask extends QueryMask {
         if (count == 0) {
             showNoEntriesPopUp();
         }
-    }
-
-    public static Response<MaturesTargetingGeneResponsePayload> retrieveMaturesTargetingGene(boolean hsaOnly,
-                                                                                             String geneAccession) {
-        MaturesTargetingGeneRequestPayload requestPayload = new MaturesTargetingGeneRequestPayload();
-        requestPayload.hsaOnly = hsaOnly;
-        requestPayload.accession = geneAccession;
-        return VanesaApi.postSync("/db_mirna/mature/targeting_gene", requestPayload, new TypeReference<>() {
-        });
-    }
-
-    public static Response<GenesTargetedByMatureResponsePayload> retrieveGenesTargetedByMature(boolean hsaOnly,
-                                                                                               String matureName) {
-        GenesTargetedByMatureRequestPayload requestPayload = new GenesTargetedByMatureRequestPayload();
-        requestPayload.hsaOnly = hsaOnly;
-        requestPayload.name = matureName;
-        return VanesaApi.postSync(
-                "/db_mirna/target_gene/targeted_by_mature", requestPayload, new TypeReference<>() {
-                });
     }
 
     @Override
@@ -280,13 +274,13 @@ public class MirnaQueryMask extends QueryMask {
     }
 
     private void enrichGenes() {
-        MirnaStatistics mirna = new MirnaStatistics(new GraphInstance().getPathway());
-        mirna.enrichGenes(isSourcesSelected(), isTargetsSelected(), isHsaOnly());
+        MirnaSearch.enrichGenes(new GraphInstance().getPathway(), isSourcesSelected(), isTargetsSelected(),
+                isHsaOnly());
     }
 
     private void enrichMirnas() {
-        MirnaStatistics mirna = new MirnaStatistics(new GraphInstance().getPathway());
-        mirna.enrichMirnas(isSourcesSelected(), isTargetsSelected(), isHsaOnly());
+        MirnaSearch.enrichMirnas(new GraphInstance().getPathway(), isSourcesSelected(), isTargetsSelected(),
+                isHsaOnly());
     }
 
     @Override
@@ -295,9 +289,9 @@ public class MirnaQueryMask extends QueryMask {
                 "<html>" +
                         "<h3>The miRNA search window</h3>" +
                         "<ul>" +
-                        "<li>Through the miRNA search window you can access microRNA information<br>" +
+                        "<li>Through the miRNA search window you can access micro-RNA information<br>" +
                         "available in miRBase, miRTarBase, and TarBase.<br>" +
-                        "MiRBase is a biological database that acts as an archive of microRNA sequences and<br>" +
+                        "miRBase is a biological database that acts as an archive of miRNA sequences and<br>" +
                         "annotations and TarBase is a comprehensive database of experimentally supported animal<br>" +
                         "microRNA targets.</li>" +
                         "<li>The search window is a query mask that gives the user the possibility to consult the miRNA<br>" +

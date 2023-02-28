@@ -2,9 +2,10 @@ package api.payloads.dbMirna;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class DBMirnaTargetGene {
+public class DBMirnaSourceGene {
     public String name;
-    public String db;
+    @JsonProperty("ensembl_transcript_id")
+    public String ensemblTranscriptId;
     @JsonProperty("hgnc_id")
     public String hgncId;
     @JsonProperty("ensembl_gene_id")
@@ -19,6 +20,9 @@ public class DBMirnaTargetGene {
         if (hgncId != null) {
             return hgncId;
         }
-        return ensemblGeneId;
+        if (ensemblGeneId != null) {
+            return ensemblGeneId;
+        }
+        return ensemblTranscriptId;
     }
 }

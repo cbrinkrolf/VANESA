@@ -1,6 +1,7 @@
 package gui.images;
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.URL;
 
 /**
@@ -24,6 +25,12 @@ public class ImagePath {
 
     public ImageIcon getImageIcon(String fileName) {
         return new ImageIcon(getPath(fileName));
+    }
+
+    public ImageIcon getImageIcon(String fileName, int width, int height) {
+        ImageIcon imageIcon = new ImageIcon(getPath(fileName));
+        Image image = imageIcon.getImage();
+        return new ImageIcon(image.getScaledInstance(width, height,  java.awt.Image.SCALE_SMOOTH));
     }
 
     public static ImagePath getInstance() {

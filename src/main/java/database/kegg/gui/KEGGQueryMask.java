@@ -38,7 +38,7 @@ public class KEGGQueryMask extends QueryMask {
         panel.add(new JLabel("KEGG Search Window"), "span 4");
         panel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
 
-        panel.add(new JLabel(new ImageIcon(imagePath.getPath("dataServer.png"))), "span 2 5");
+        panel.add(new JLabel(imagePath.getImageIcon("database-search-outline.png", 48, 48)), "span 2 5");
 
         panel.add(new JLabel("Pathway"), "span 2, gap 5 ");
         panel.add(pathway, "span,wrap,growx ,gap 10");

@@ -47,7 +47,7 @@ import configurations.ProgramFileLock;
 import configurations.gui.LayoutConfig;
 import configurations.gui.Settings;
 import dataMapping.DataMappingColorMVC;
-import database.mirna.MirnaStatistics;
+import database.mirna.MirnaSearch;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
@@ -737,16 +737,14 @@ public class MenuListener implements ActionListener {
 			break;
 		case enrichMirna:
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
-				MirnaStatistics mirna = new MirnaStatistics(graphInstance.getPathway());
-				mirna.enrichMirnas(true, true, false);
+				MirnaSearch.enrichMirnas(graphInstance.getPathway(), true, true, false);
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case enrichGene:
 			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
-				MirnaStatistics mirna = new MirnaStatistics(graphInstance.getPathway());
-				mirna.enrichGenes(true, true, false);
+				MirnaSearch.enrichGenes(graphInstance.getPathway(), true, true, false);
 			} else {
 				MyPopUp.getInstance().show("Error", "Please create a network first.");
 			}

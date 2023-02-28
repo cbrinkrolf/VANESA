@@ -7,16 +7,21 @@ import javax.swing.*;
 
 public class MirnaTargetGeneSearchResultWindow extends SearchResultWindow<DBMirnaTargetGene> {
     public MirnaTargetGeneSearchResultWindow(DBMirnaTargetGene[] results) {
-        super(DBMirnaTargetGene.class, new String[]{"Gene Name", "Database"}, results);
+        super(DBMirnaTargetGene.class,
+                new String[]{"Gene Name", "Database", "HGNC ID", "Ensembl Gene ID", "Entrez Gene ID"}, results);
     }
 
     @Override
     protected Object getTableValueColumnAt(DBMirnaTargetGene value, int columnIndex) {
         if (columnIndex == 0)
-            return value.accession;
+            return value.name;
         if (columnIndex == 1)
             return value.db;
-        return null;
+        if (columnIndex == 2)
+            return value.hgncId;
+        if (columnIndex == 3)
+            return value.ensemblGeneId;
+        return value.entrezGeneId;
     }
 
     @Override

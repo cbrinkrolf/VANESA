@@ -14,7 +14,7 @@ public abstract class QueryMask {
     protected final JPanel panel;
 
     public QueryMask() {
-        MigLayout layout = new MigLayout("", "[right]");
+        MigLayout layout = new MigLayout(null, "[grow, fill]");
         panel = new JPanel(layout);
     }
 
@@ -26,7 +26,7 @@ public abstract class QueryMask {
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(reset);
         buttonPanel.add(search);
-        panel.add(new JSeparator(), "span, growx, wrap 10 ");
+        panel.add(new JSeparator(), "span, growx, wrap 10");
         panel.add(new JLabel(), "gap 20, span 5");
         panel.add(buttonPanel, "span");
     }

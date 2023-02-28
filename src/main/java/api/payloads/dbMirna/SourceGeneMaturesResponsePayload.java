@@ -4,11 +4,11 @@ import api.payloads.Payload;
 
 import java.util.Arrays;
 
-public class MaturesTargetingGeneResponsePayload extends Payload {
+public class SourceGeneMaturesResponsePayload extends Payload {
     public DBMirnaMature[] results;
 
     @Override
     public String toString() {
-        return "MaturesTargetingGeneResponsePayload{results=" + Arrays.toString(results) + '}';
+        return "SourceGeneMaturesResponsePayload{results=" + Arrays.toString(results) + '}';
     }
 }

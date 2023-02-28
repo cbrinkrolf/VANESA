@@ -35,17 +35,17 @@ public class BRENDA2QueryMask extends QueryMask {
         panel.add(new JLabel("BRENDA Search Window"), "span 4");
         panel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
 
-        panel.add(new JLabel(new ImageIcon(imagePath.getPath("dataServer.png"))), "span 2 5");
+        panel.add(new JLabel(imagePath.getImageIcon("database-search-outline.png", 48, 48)), "span 2 5");
 
-        panel.add(new JLabel("EC-Number"), "span 2, gap 5 ");
+        panel.add(new JLabel("EC-Number"), "span 2, gap 5");
         panel.add(ecNumber, "span,wrap,growx ,gap 10");
-        panel.add(new JLabel("Name"), "span 2, gap 5 ");
+        panel.add(new JLabel("Name"), "span 2, gap 5");
         panel.add(name, "span, wrap, growx, gap 10");
-        panel.add(new JLabel("Synonym"), "span 2, gap 5 ");
+        panel.add(new JLabel("Synonym"), "span 2, gap 5");
         panel.add(synonym, "span, wrap, growx, gap 10");
-        panel.add(new JLabel("Metabolite"), "span 2, gap 5 ");
+        panel.add(new JLabel("Metabolite"), "span 2, gap 5");
         panel.add(metabolite, "span, wrap, growx, gap 10");
-        panel.add(new JLabel("Organism"), "span 2, gap 5 ");
+        panel.add(new JLabel("Organism"), "span 2, gap 5");
         panel.add(organism, "span, wrap 15, growx, gap 10");
 
         addControlButtons();

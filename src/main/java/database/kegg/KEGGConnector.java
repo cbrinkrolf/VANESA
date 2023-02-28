@@ -2,12 +2,12 @@ package database.kegg;
 
 import api.payloads.Response;
 import api.payloads.dbMirna.DBMirnaMature;
-import api.payloads.dbMirna.MaturesTargetingGeneResponsePayload;
+import api.payloads.dbMirna.TargetGeneMaturesResponsePayload;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.*;
 import biologicalObjects.nodes.*;
-import database.mirna.gui.MirnaQueryMask;
+import database.mirna.MirnaSearch;
 import graph.CreatePathway;
 import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
@@ -158,8 +158,8 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         if (isSearchMicroRNAs()) {
             for (BiologicalNodeAbstract bna : pw.getVertices().keySet()) {
                 if (bna instanceof DNA) {
-                    Response<MaturesTargetingGeneResponsePayload> response =
-                            MirnaQueryMask.retrieveMaturesTargetingGene(false, bna.getLabel());
+                    Response<TargetGeneMaturesResponsePayload> response =
+                            MirnaSearch.retrieveTargetGeneMatures(false, bna.getLabel());
                     if (response.payload != null && response.payload.results != null &&
                             response.payload.results.length > 0) {
                         allSpecificMicroRNAs.put(bna, response.payload.results);
