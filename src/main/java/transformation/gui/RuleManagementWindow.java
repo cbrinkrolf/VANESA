@@ -66,7 +66,7 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 	}
 
 	public void show() {
-		frame = new JFrame("Overview of transformation rules");
+		frame = new JFrame("Rule Management");
 		frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 		// System.out.println("constr.");
 		rm = RuleManager.getInstance();

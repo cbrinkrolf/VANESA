@@ -488,12 +488,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(lswitchPlace, "gap 5 ");
 				p.add(placeList, "wrap");
 
-				MyJFormattedTextField token;
+				JLabel token;
 				MyJFormattedTextField tokenStart;
 
 				JLabel lblTokenStart = new JLabel("Start tokens");
 				if (place.isDiscrete()) {
-					token = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+					token = new JLabel();
 					tokenStart = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 					tokenMin = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 					tokenMax = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
@@ -502,7 +502,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					tokenMin.setText((int) place.getTokenMin() + "");
 					tokenMax.setText((int) place.getTokenMax() + "");
 				} else {
-					token = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+					token = new JLabel();
 					tokenStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					tokenMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					tokenMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
@@ -515,8 +515,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				token.setName("token");
 				// token.addFocusListener(pwl);
-				token.setEditable(false);
-				token.setFocusLostBehavior(JFormattedTextField.COMMIT);
+				//token.setEditable(false);
+				//token.setFocusLostBehavior(JFormattedTextField.COMMIT);
 
 				tokenStart.setName("tokenStart");
 				tokenStart.setFocusLostBehavior(JFormattedTextField.COMMIT);

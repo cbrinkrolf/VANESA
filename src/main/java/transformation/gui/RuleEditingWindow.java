@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -49,7 +48,6 @@ import graph.GraphContainer;
 import gui.MainWindow;
 import gui.MyPopUp;
 import gui.ToolBarButton;
-import gui.eventhandlers.ToolbarActionCommands;
 import gui.images.ImagePath;
 import net.miginfocom.swing.MigLayout;
 import transformation.Rule;
@@ -67,7 +65,7 @@ public class RuleEditingWindow implements ActionListener {
 	private JPanel nodeMappingPanel = new JPanel();
 	private JPanel parametersPanel = new JPanel();
 
-	private JFrame frame = new JFrame("Edit or create a new Rule");;
+	private JFrame frame = new JFrame("Rule Editor");;
 
 	private JSplitPane splitPane;
 	private GraphZoomScrollPane biologicalGraphPane;

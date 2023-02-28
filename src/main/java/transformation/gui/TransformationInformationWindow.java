@@ -33,6 +33,7 @@ import miscalleanous.tables.MyTable;
 import miscalleanous.tables.NodePropertyTableModel;
 import net.miginfocom.swing.MigLayout;
 import transformation.Match;
+import transformation.RuleEdge;
 
 public class TransformationInformationWindow implements ActionListener {
 
@@ -52,9 +53,12 @@ public class TransformationInformationWindow implements ActionListener {
 	private Collection<BiologicalNodeAbstract> nodesNotMatched;
 	private Collection<BiologicalEdgeAbstract> edgesNotMatched;
 	private Collection<BiologicalNodeAbstract> nodesNotTransformed;
+	private Collection<BiologicalEdgeAbstract> edgesNotTransformed;
+	private Collection<BiologicalNodeAbstract> nodesTransformed;
+	private Collection<BiologicalEdgeAbstract> edgesTransformed;
 
-	Collection<BiologicalNodeAbstract> allNodes;;
-	Collection<BiologicalEdgeAbstract> allEdges;
+	private Collection<BiologicalNodeAbstract> allNodes;;
+	private Collection<BiologicalEdgeAbstract> allEdges;
 
 	public TransformationInformationWindow(Pathway pw) {
 		this.pw = pw;
@@ -75,6 +79,9 @@ public class TransformationInformationWindow implements ActionListener {
 		nodesNotMatched = new HashSet<>();
 		edgesNotMatched = new HashSet<>();
 		nodesNotTransformed = new HashSet<>();
+		edgesNotTransformed = new HashSet<>();
+		nodesTransformed = new HashSet<>();
+		edgesTransformed = new HashSet<>();
 
 		allNodes = pw.getAllGraphNodes();
 		allEdges = pw.getAllEdges();
@@ -82,6 +89,7 @@ public class TransformationInformationWindow implements ActionListener {
 		nodesNotMatched.addAll(allNodes);
 		nodesNotTransformed.addAll(allNodes);
 		edgesNotMatched.addAll(allEdges);
+		edgesNotTransformed.addAll(allEdges);
 
 		for (Match m : matches) {
 			for (BiologicalNodeAbstract bna : m.getMappedNodes()) {
@@ -92,13 +100,22 @@ public class TransformationInformationWindow implements ActionListener {
 				edgesMatched.add(bea);
 				edgesNotMatched.remove(bea);
 			}
+			for (RuleEdge re : m.getRule().getConsideredEdges()) {
+				edgesTransformed.add(m.getMapping(re));
+				edgesNotTransformed.remove(m.getMapping(re));
+			}
 		}
+		nodesTransformed.addAll(pw.getTransformationInformation().getBnToPnMapping().keySet());
+
 		for (BiologicalNodeAbstract bna : pw.getTransformationInformation().getBnToPnMapping().keySet()) {
 			nodesNotTransformed.remove(bna);
 		}
+
 	}
 
 	private void createButtons() {
+
+		JLabel totalMatches = new JLabel("Number of executed matches: " + matches.size());
 
 		JLabel nodesMatched = new JLabel();
 		nodesMatched.setText("Matched nodes: " + this.nodesMatched.size() + " out of " + allNodes.size());
@@ -116,11 +133,25 @@ public class TransformationInformationWindow implements ActionListener {
 		edgesNotMatched.setText("Not matched edges: " + this.edgesNotMatched.size() + " out of " + allEdges.size());
 		edgesNotMatched.setToolTipText("Edges, which are not matched by any rule");
 
+		JLabel nodesTransformed = new JLabel();
+		nodesTransformed.setText("Transformed nodes: " + this.nodesTransformed.size() + " out of " + allNodes.size());
+		nodesTransformed.setToolTipText("Nodes, which are transformed to a Petri net node");
+
+		JLabel edgesTransformed = new JLabel();
+		edgesTransformed.setText("Transformed edges: " + this.edgesTransformed.size() + " out of " + allEdges.size());
+		edgesTransformed.setToolTipText("Edges, which are transformed (considered)");
+
 		JLabel nodesNotTransformed = new JLabel();
 		nodesNotTransformed
 				.setText("Not transformed nodes: " + this.nodesNotTransformed.size() + " out of " + allNodes.size());
 		nodesNotTransformed.setToolTipText(
 				"Nodes, which are not transformed to a Petri net node (if matched, no mapping between biological node in the rule pattern and its corresponding Petri net node)");
+
+		JLabel edgesNotTransformed = new JLabel();
+		edgesNotTransformed
+				.setText("Not transformed edges: " + this.edgesNotTransformed.size() + " out of " + allEdges.size());
+		edgesNotTransformed.setToolTipText(
+				"Edges, which are not transformed (either not matched, or not be part in the set of considered nodes if matched)");
 
 		JButton highlightAllMatchedNodes = new JButton("highlight");
 		highlightAllMatchedNodes.setActionCommand("highlightAllMatchedNodes");
@@ -138,22 +169,41 @@ public class TransformationInformationWindow implements ActionListener {
 		highlightAllNotMatchedEdges.setActionCommand("highlightAllNotMatchedEdges");
 		highlightAllNotMatchedEdges.addActionListener(this);
 
+		JButton highlightAllTransformedNodes = new JButton("highlight");
+		highlightAllTransformedNodes.setActionCommand("highlightAllTransformedNodes");
+		highlightAllTransformedNodes.addActionListener(this);
+
+		JButton highlightAllTransformedEdges = new JButton("highlight");
+		highlightAllTransformedEdges.setActionCommand("highlightAllTransformedEdges");
+		highlightAllTransformedEdges.addActionListener(this);
+
 		JButton highlightAllNotTransformedNodes = new JButton("highlight");
 		highlightAllNotTransformedNodes.setActionCommand("highlightAllNotTransformedNodes");
 		highlightAllNotTransformedNodes.addActionListener(this);
 
+		JButton highlightAllNotTransformedEdges = new JButton("highlight");
+		highlightAllNotTransformedEdges.setActionCommand("highlightAllNotTransformedEdges");
+		highlightAllNotTransformedEdges.addActionListener(this);
+
+		buttonPanel.add(totalMatches, "wrap");
 		buttonPanel.add(nodesMatched, "");
-		buttonPanel.add(highlightAllMatchedNodes, "wrap");
+		buttonPanel.add(highlightAllMatchedNodes, "");
 		buttonPanel.add(edgesMatched, "");
 		buttonPanel.add(highlightAllMatchedEdges, "wrap");
 		buttonPanel.add(nodesNotMatched, "");
-		buttonPanel.add(highlightAllNotMatchedNodes, "wrap");
+		buttonPanel.add(highlightAllNotMatchedNodes, "");
 		buttonPanel.add(edgesNotMatched, "");
 		buttonPanel.add(highlightAllNotMatchedEdges, "wrap");
+		buttonPanel.add(nodesTransformed, "");
+		buttonPanel.add(highlightAllTransformedNodes, "");
+		buttonPanel.add(edgesTransformed, "");
+		buttonPanel.add(highlightAllTransformedEdges, "wrap");
 		buttonPanel.add(nodesNotTransformed, "");
-		buttonPanel.add(highlightAllNotTransformedNodes, "wrap");
+		buttonPanel.add(highlightAllNotTransformedNodes, "");
+		buttonPanel.add(edgesNotTransformed, "");
+		buttonPanel.add(highlightAllNotTransformedEdges, "wrap");
 		buttonPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
-		
+
 	}
 
 	private void initTable() {
@@ -202,8 +252,6 @@ public class TransformationInformationWindow implements ActionListener {
 			}
 		});
 
-		
-
 		mainPanel.add(new JLabel("List of all matches found and processed during transformation."), "wrap");
 
 		JScrollPane sp = new JScrollPane(matchTable);
@@ -222,9 +270,8 @@ public class TransformationInformationWindow implements ActionListener {
 		}
 		mainPanel.revalidate();
 		buttonPanel.revalidate();
-		
-		
-		frame = new JFrame("Overview of transformation rules");
+
+		frame = new JFrame("Detailed Transformation Result");
 		frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
 
 		frame.setAlwaysOnTop(false);
@@ -234,8 +281,8 @@ public class TransformationInformationWindow implements ActionListener {
 		frame.revalidate();
 		frame.setPreferredSize(new Dimension(400, 400));
 		frame.pack();
-frame.repaint();
-		
+		frame.repaint();
+
 		frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		frame.requestFocus();
 		frame.setVisible(true);
@@ -287,14 +334,29 @@ frame.repaint();
 				eState.pick(bea, true);
 			}
 			break;
+		case "highlightAllTransformedNodes":
+			for (BiologicalNodeAbstract bna : nodesTransformed) {
+				vState.pick(bna, true);
+			}
+			break;
+		case "highlightAllTransformedEdges":
+			for (BiologicalEdgeAbstract bea : edgesTransformed) {
+				eState.pick(bea, true);
+			}
+			break;
 		case "highlightAllNotTransformedNodes":
 			for (BiologicalNodeAbstract bna : nodesNotTransformed) {
 				vState.pick(bna, true);
 			}
 			break;
+		case "highlightAllNotTransformedEdges":
+			for (BiologicalEdgeAbstract bea : edgesNotTransformed) {
+				eState.pick(bea, true);
+			}
+			break;
 		}
 	}
-
+	
 	private void highlightSelectedMatch() {
 		if (matchTable.getRowCount() < 1) {
 			return;
