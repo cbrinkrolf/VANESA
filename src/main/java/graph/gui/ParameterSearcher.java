@@ -4,7 +4,7 @@ import api.payloads.dbBrenda.DBBrendaEnzyme;
 import api.payloads.dbBrenda.DBBrendaKMValue;
 import api.payloads.dbBrenda.DBBrendaTurnoverNumberValue;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import database.brenda.BRENDA2Search;
+import database.brenda.BRENDASearch;
 import graph.GraphInstance;
 import gui.AsyncTaskExecutor;
 import gui.MainWindow;
@@ -402,8 +402,8 @@ public class ParameterSearcher extends JFrame implements ActionListener {
     private void onUpdateEnzymesClicked() {
         enzymeTableScrollPane.setVisible(true);
         AsyncTaskExecutor.runUIBlocking("BRENDA search", () -> {
-            DBBrendaEnzyme[] results = BRENDA2Search.requestEnzymes(getEcNumber(), getEcName(), getMetabolite(),
-                                                                    getOrganism(), getSynonym());
+            DBBrendaEnzyme[] results = BRENDASearch.searchEnzymes(getEcNumber(), getEcName(), getMetabolite(),
+                    getOrganism(), getSynonym());
             if (results != null && results.length > 0) {
                 updateEnzymeTable(results);
             }
@@ -434,9 +434,9 @@ public class ParameterSearcher extends JFrame implements ActionListener {
                 final String ec = getEcNumber();
                 AsyncTaskExecutor.runUIBlocking("BRENDA search", () -> {
                     if (kmRadio.isSelected()) {
-                        updateValueTable(ec, BRENDA2Search.requestKMValues(ec));
+                        updateValueTable(ec, BRENDASearch.requestKMValues(ec));
                     } else {
-                        updateValueTable(ec, BRENDA2Search.requestTurnoverNumberValues(ec));
+                        updateValueTable(ec, BRENDASearch.requestTurnoverNumberValues(ec));
                     }
                 });
             } else {

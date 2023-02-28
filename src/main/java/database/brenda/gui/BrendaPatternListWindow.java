@@ -53,7 +53,7 @@ public class BrendaPatternListWindow {
 
     private void initTable() {
         MostWantedMolecules box = MostWantedMolecules.getInstance();
-        TableModel model = new GenericTableModel<>(new String[]{"# found in reactions", "Name", "Disregarded"},
+        TableModel model = new GenericTableModel<>(new String[]{"# Occurrences in Reactions", "Name", "Disregarded"},
                                                    box.getAllValues().toArray(new MostWantedMolecules.Entry[0])) {
             @Override
             public Object getValueAt(MostWantedMolecules.Entry entry, int columnIndex) {

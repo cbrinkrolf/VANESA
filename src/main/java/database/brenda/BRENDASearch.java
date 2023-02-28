@@ -1,53 +1,90 @@
 package database.brenda;
 
-import api.payloads.dbBrenda.DBBrendaEnzyme;
-import biologicalElements.Pathway;
-import database.brenda.gui.BrendaSearchResultWindow;
-import gui.MainWindow;
+import api.VanesaApi;
+import api.payloads.Response;
+import api.payloads.dbBrenda.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import gui.MyPopUp;
 
-import javax.swing.*;
-
-public class BRENDASearch extends SwingWorker<Object, Object> {
-    private final String ecNumber;
-    private final String name;
-    private final String metabolite;
-    private final String organism;
-    private final Pathway mergePW;
-    private DBBrendaEnzyme[] results = null;
-
-    public BRENDASearch(String ecNumber, String ecName, String metabolite, String organism, Pathway mergePW) {
-        this.ecNumber = ecNumber;
-        this.name = ecName;
-        this.metabolite = metabolite;
-        this.organism = organism;
-        this.mergePW = mergePW;
+public final class BRENDASearch {
+    private BRENDASearch() {
     }
 
-    @Override
-    protected Object doInBackground() {
-        results = BRENDA2Search.requestEnzymes(ecNumber, name, metabolite, organism, null);
-        return null;
-    }
-
-    @Override
-    public void done() {
-        MainWindow.getInstance().closeProgressBar();
-        if (results.length > 0) {
-            BrendaSearchResultWindow bsrw = new BrendaSearchResultWindow(results);
-            DBBrendaEnzyme[] selectedResults = bsrw.getSelectedValues();
-            if (selectedResults.length != 0) {
-                MainWindow.getInstance().showProgressBar("Fetching Network");
-                for (DBBrendaEnzyme res : selectedResults) {
-                    BrendaConnector bc = new BrendaConnector(res, mergePW, bsrw.getAutoCoarseDepth(),
-                                                             bsrw.getAutoCoarseEnzymeNomenclature(),
-                                                             bsrw.getCoFactorsDecision(), bsrw.getInhibitorsDecision(),
-                                                             bsrw.getSearchDepth(), bsrw.getDisregarded(),
-                                                             bsrw.getOrganismSpecificDecision());
-                    bc.execute();
-                }
-            }
-        } else {
-            JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Sorry, no entries have been found.");
+    public static DBBrendaEnzyme[] searchEnzymes(String ecNumber, String ecName, String metabolite, String organism,
+                                                 String synonym) {
+        EnzymeSearchRequestPayload payload = new EnzymeSearchRequestPayload();
+        payload.ec = ecNumber;
+        payload.name = ecName;
+        payload.metabolite = metabolite;
+        payload.organism = organism;
+        payload.synonym = synonym;
+        Response<EnzymeSearchResponsePayload> response = VanesaApi.postSync("/db_brenda/enzyme/search", payload,
+                new TypeReference<>() {
+                });
+        if (response.hasError()) {
+            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
+            return null;
         }
+        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
+            return null;
+        }
+        return response.payload.results;
+    }
+
+    public static DBBrendaTurnoverNumberValue[] requestTurnoverNumberValues(String ecNumber) {
+        EnzymeTurnoverNumberValuesRequestPayload payload = new EnzymeTurnoverNumberValuesRequestPayload();
+        payload.ec = ecNumber;
+        Response<EnzymeTurnoverNumberValuesResponsePayload> response = VanesaApi.postSync(
+                "/db_brenda/enzyme/turnover_number_values", payload, new TypeReference<>() {
+                });
+        if (response.hasError()) {
+            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
+            return null;
+        }
+        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
+            return null;
+        }
+        return response.payload.results;
+    }
+
+    public static DBBrendaKMValue[] requestKMValues(String ecNumber) {
+        EnzymeKMValuesRequestPayload payload = new EnzymeKMValuesRequestPayload();
+        payload.ec = ecNumber;
+        Response<EnzymeKMValuesResponsePayload> response = VanesaApi.postSync("/db_brenda/enzyme/km_values", payload,
+                new TypeReference<>() {
+                });
+        if (response.hasError()) {
+            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
+            return null;
+        }
+        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
+            return null;
+        }
+        return response.payload.results;
+    }
+
+    public static DBBrendaReaction[] searchReactions(String ecNumber, String ecName, String metabolite, String organism,
+                                                     String synonym) {
+        ReactionSearchRequestPayload payload = new ReactionSearchRequestPayload();
+        payload.ec = ecNumber;
+        payload.name = ecName;
+        payload.metabolite = metabolite;
+        payload.organism = organism;
+        payload.synonym = synonym;
+        Response<ReactionSearchResponsePayload> response = VanesaApi.postSync("/db_brenda/reaction/search", payload,
+                new TypeReference<>() {
+                });
+        if (response.hasError()) {
+            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
+            return null;
+        }
+        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
+            return null;
+        }
+        return response.payload.results;
     }
 }

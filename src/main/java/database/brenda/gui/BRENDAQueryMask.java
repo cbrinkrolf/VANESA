@@ -1,5 +1,8 @@
 package database.brenda.gui;
 
+import api.payloads.dbBrenda.DBBrendaReaction;
+import database.brenda.BRENDASearch;
+import database.brenda.BrendaConnector;
 import database.gui.QueryMask;
 import gui.MainWindow;
 import gui.eventhandlers.TextfeldColorChanger;
@@ -67,7 +70,29 @@ public class BRENDAQueryMask extends QueryMask {
 
     @Override
     protected String search() {
-        // TODO
+        DBBrendaReaction[] reactions = BRENDASearch.searchReactions(ecNumber.getText().trim(), name.getText().trim(),
+                metabolite.getText().trim(), organism.getText().trim(), synonym.getText().trim());
+        if (reactions == null || reactions.length == 0) {
+            return null;
+        }
+        MainWindow.getInstance().closeProgressBar();
+        BrendaSearchResultWindow searchResultWindow = new BrendaSearchResultWindow(reactions);
+        if (!searchResultWindow.show()) {
+            return null;
+        }
+        DBBrendaReaction[] results = searchResultWindow.getSelectedValues();
+        if (results != null && results.length > 0) {
+            MainWindow.getInstance().showProgressBar("Fetching Network");
+            for (DBBrendaReaction reaction : results) {
+                BrendaConnector bc = new BrendaConnector(reaction, null, searchResultWindow.getAutoCoarseDepth(),
+                        searchResultWindow.getAutoCoarseEnzymeNomenclature(),
+                        searchResultWindow.getCoFactorsDecision(),
+                        searchResultWindow.getInhibitorsDecision(),
+                        searchResultWindow.getSearchDepth(), searchResultWindow.getDisregarded(),
+                        searchResultWindow.getOrganismSpecificDecision());
+                bc.search();
+            }
+        }
         return null;
     }
 

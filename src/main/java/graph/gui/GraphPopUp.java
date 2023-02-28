@@ -1,5 +1,6 @@
 package graph.gui;
 
+import api.payloads.dbBrenda.DBBrendaReaction;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -8,6 +9,8 @@ import configurations.gui.LayoutConfig;
 import copy.CopySelection;
 import copy.CopySelectionSingleton;
 import database.brenda.BRENDASearch;
+import database.brenda.BrendaConnector;
+import database.brenda.gui.BrendaSearchResultWindow;
 import database.kegg.KEGGConnector;
 import database.kegg.KeggSearch;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
@@ -18,6 +21,7 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.gemLayout.GEMLayout;
+import gui.AsyncTaskExecutor;
 import gui.MainWindow;
 import gui.MyPopUp;
 import io.SaveDialog;
@@ -37,7 +41,6 @@ public class GraphPopUp {
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(200, 200, 250));
         titlePanel.add(title);
-
         JMenu openPathwayMenu = new JMenu("Open Pathway");
         addMenuItem(openPathwayMenu, "Open Pathway as Sub-Pathway", this::onOpenPathwayClicked);
         addMenuItem(openPathwayMenu, "Open Pathway in new Tab", this::onOpenPathwayTabClicked);
@@ -264,22 +267,21 @@ public class GraphPopUp {
                     return;
                 bna = pw.getNodeByLabel(answer);
             }
-            String[] input = {"", "", "", "", ""};
+            KeggSearch keggSearch;
             switch (bna.getBiologicalElement()) {
                 case biologicalElements.Elementdeclerations.enzyme:
-                    input[2] = bna.getLabel();
+                    keggSearch = new KeggSearch(null, null, bna.getLabel(), null, null, pw);
                     break;
                 case biologicalElements.Elementdeclerations.gene:
-                    input[3] = bna.getLabel();
+                    keggSearch = new KeggSearch(null, null, null, bna.getLabel(), null, pw);
                     break;
                 case biologicalElements.Elementdeclerations.pathwayMap:
-                    input[0] = bna.getLabel();
+                    keggSearch = new KeggSearch(bna.getLabel(), null, null, null, null, pw);
                     break;
                 default:
-                    input[4] = bna.getLabel();
+                    keggSearch = new KeggSearch(null, null, null, null, bna.getLabel(), pw);
                     break;
             }
-            KeggSearch keggSearch = new KeggSearch(input[0], input[1], input[2], input[3], input[4], pw);
             keggSearch.execute();
             MainWindow.getInstance().showProgressBar("KEGG query");
         }
@@ -309,16 +311,39 @@ public class GraphPopUp {
                     return;
                 bna = pw.getNodeByLabel(answer);
             }
-            String[] input = {"", "", "", "", ""};
-            if (bna.getBiologicalElement().equals(biologicalElements.Elementdeclerations.enzyme))
-                input[0] = bna.getLabel();
-            else {
-                input[2] = bna.getLabel();
-                input[3] = bna.getLabel();
-            }
-            BRENDASearch brendaSearch = new BRENDASearch(input[0], input[1], input[2], input[4], pw);
-            brendaSearch.execute();
-            MainWindow.getInstance().showProgressBar("BRENDA query");
+            final BiologicalNodeAbstract selectedBna = bna;
+            AsyncTaskExecutor.runUIBlocking("BRENDA Query", () -> {
+                String ecNumber = null;
+                String metabolite = null;
+                if (selectedBna.getBiologicalElement().equals(biologicalElements.Elementdeclerations.enzyme)) {
+                    ecNumber = selectedBna.getLabel();
+                } else {
+                    metabolite = selectedBna.getLabel();
+                }
+                MainWindow.getInstance().closeProgressBar();
+                DBBrendaReaction[] results = BRENDASearch.searchReactions(ecNumber, null, metabolite, null, null);
+                if (results != null && results.length > 0) {
+                    BrendaSearchResultWindow searchResultWindow = new BrendaSearchResultWindow(results);
+                    if (!searchResultWindow.show()) {
+                        return;
+                    }
+                    DBBrendaReaction[] selectedResults = searchResultWindow.getSelectedValues();
+                    if (selectedResults.length != 0) {
+                        MainWindow.getInstance().showProgressBar("Fetching Network");
+                        for (DBBrendaReaction res : selectedResults) {
+                            BrendaConnector bc = new BrendaConnector(res, pw, searchResultWindow.getAutoCoarseDepth(),
+                                    searchResultWindow.getAutoCoarseEnzymeNomenclature(),
+                                    searchResultWindow.getCoFactorsDecision(),
+                                    searchResultWindow.getInhibitorsDecision(),
+                                    searchResultWindow.getSearchDepth(), searchResultWindow.getDisregarded(),
+                                    searchResultWindow.getOrganismSpecificDecision());
+                            bc.search();
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Sorry, no entries have been found.");
+                }
+            });
         }
     }
 }

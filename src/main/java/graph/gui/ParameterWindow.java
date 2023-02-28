@@ -1,28 +1,5 @@
 package graph.gui;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
@@ -36,407 +13,369 @@ import gui.MyPopUp;
 import net.miginfocom.swing.MigLayout;
 import util.KineticBuilder;
 
-public class ParameterWindow implements ActionListener, DocumentListener {
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-	/**
-	 * 
-	 */
-	private JFrame frame;
-	private JPanel panel;
-	private JTextField name = new JTextField("");
-	private GraphInstance graphInstance = new GraphInstance();
-	private Pathway pw = graphInstance.getPathway();
-	private JTextField value = new JTextField("");
-	private JTextField unit = new JTextField("");
-	private JButton add;
-	private GraphElementAbstract gea;
-	private FormulaPanel fp;
-	private JTextPane formular;
+public class ParameterWindow implements DocumentListener {
+    private final JFrame frame;
+    private final JPanel panel;
+    private final JTextField name = new JTextField("");
+    private final GraphInstance graphInstance = new GraphInstance();
+    private final Pathway pw = graphInstance.getPathway();
+    private final JTextField value = new JTextField("");
+    private final JTextField unit = new JTextField("");
+    private final JButton add;
+    private final GraphElementAbstract gea;
+    private FormulaPanel fp;
+    private final JTextPane formula;
+    private boolean editMode = false;
+    // private JDialog dialog;
+    // private HashMap<JButton, Parameter> parameters = new HashMap<>();
 
-	private JButton cancel = new JButton("cancel");
-	private JButton okButton = new JButton("ok");
-	private JButton[] buttons = { okButton, cancel };
-	private JOptionPane optionPane;
+    public ParameterWindow(GraphElementAbstract gea) {
+        frame = new JFrame("Parameters");
+        this.gea = gea;
+        MigLayout layout = new MigLayout("", "[left]");
+        // DefaultComboBoxModel<String> dcbm = new
+        // DefaultComboBoxModel<String>(ElementNamesSingelton.getInstance().getEnzymes());
+        // elementNames.setEditable(true);
+        // elementNames.setModel(dcbm);
+        // elementNames.setMaximumSize(new Dimension(250,40));
+        // elementNames.setSelectedItem(" ");
+        // AutoCompleteDecorator.decorate(elementNames);
+        panel = new JPanel(layout);
+        formula = new JTextPane();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new AutoSuggester(formula, frame, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
+                    @Override
+                    boolean wordTyped(String typedWord) {
+                        // create list for dictionary this in your case might be done via calling a method which queries db and returns results as arraylist
+                        ArrayList<String> words = new ArrayList<>();
+                        // pw.getAllNodeLabels();
+                        // HashSet<String> set = new HashSet<String>();
+                        Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();// biologicalElements.values().iterator();
+                        BiologicalNodeAbstract bna;
+                        while (it.hasNext()) {
+                            bna = it.next();
+                            if (!bna.isLogical()) {
+                                // words.add(bna.getRef().getLink());
+                                if (!words.contains(bna.getName())) {
+                                    words.add(bna.getName());
+                                }
+                            }
+                        }
+                        for (int i = 0; i < gea.getParameters().size(); i++) {
+                            if (!words.contains(gea.getParameters().get(i).getName())) {
+                                words.add(gea.getParameters().get(i).getName());
+                            }
+                        }
+                        setDictionary(words);
+                        // addToDictionary("bye");//adds a single word
+                        return super.wordTyped(typedWord);// now call super to check for any matches against newest dictionary
+                    }
+                };
+            }
+        });
 
-	private boolean editMode = false;
+        if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
+            PropertyChangeListener pcListener = evt -> frame.pack();
+            String function = "";
+            if (gea instanceof DynamicNode) {
+                function = ((DynamicNode) gea).getMaximalSpeed();
+            } else if (gea instanceof BiologicalEdgeAbstract) {
+                function = ((BiologicalEdgeAbstract) gea).getFunction();
+            } else if (gea instanceof ContinuousTransition) {
+                function = ((ContinuousTransition) gea).getMaximalSpeed();
+            }
+            fp = new FormulaPanel(formula, function, pcListener);
+            fp.setVisible(true);
+            panel.add(fp);
+        }
+        name.getDocument().addDocumentListener(this);
+        add = new JButton("add");
+        add.addActionListener(e -> onAddClicked());
+        // pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
+        JButton cancel = new JButton("cancel");
+        cancel.addActionListener(e -> onCancelClicked());
 
-	// private JDialog dialog;
+        JButton okButton = new JButton("ok");
+        okButton.addActionListener(e -> onOkClicked());
 
-	// private HashMap<JButton, Parameter> parameters = new HashMap<JButton,
-	// Parameter>();
+        repaintPanel();
 
-	public ParameterWindow(GraphElementAbstract gea) {
-		frame = new JFrame("Parameters");
-		this.gea = gea;
-		// System.out.println("constr.");
+        JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
+        JButton[] buttons = {okButton, cancel};
+        optionPane.setOptions(buttons);
 
-		MigLayout layout = new MigLayout("", "[left]");
+        frame.setAlwaysOnTop(false);
+        frame.setContentPane(optionPane);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
+        frame.revalidate();
+        frame.pack();
+        frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
+        frame.requestFocus();
+        frame.setVisible(true);
 
-		// DefaultComboBoxModel<String> dcbm = new
-		// DefaultComboBoxModel<String>(ElementNamesSingelton.getInstance().getEnzymes());
-		// elementNames.setEditable(true);
-		// elementNames.setModel(dcbm);
+        frame.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+            }
 
-		// elementNames.setMaximumSize(new Dimension(250,40));
-		// elementNames.setSelectedItem(" ");
-		// AutoCompleteDecorator.decorate(elementNames);
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                // repaintPanel();
+                frame.pack();
+                // revalidate();
+                // pack();
+                // repaint();
+            }
+        });
+    }
 
-		panel = new JPanel(layout);
-		formular = new JTextPane();
+    private void onOkClicked() {
+        if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
+            String formula = fp.getFormula();
+            String formulaClean = formula.replaceAll("\\s", "");
+            boolean changed = false;
+            if (gea instanceof DynamicNode) {
+                DynamicNode dn = (DynamicNode) gea;
+                String orgClean = dn.getMaximalSpeed().replaceAll("\\s", "");
+                if (!orgClean.equals(formulaClean)) {
+                    dn.setMaximalSpeed(formula);
+                    changed = true;
+                }
+            } else if (gea instanceof BiologicalEdgeAbstract) {
+                BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) gea;
+                String orgClean = bea.getFunction().replaceAll("\\s", "");
+                if (!orgClean.equals(formulaClean)) {
+                    bea.setFunction(formula);
+                    changed = true;
+                }
+            } else if (gea instanceof ContinuousTransition) {
+                ContinuousTransition t = (ContinuousTransition) gea;
+                String orgClean = t.getMaximalSpeed().replaceAll("\\s", "");
+                if (!orgClean.equals(formulaClean)) {
+                    t.setMaximalSpeed(formula);
+                    changed = true;
+                }
+            }
+            if (changed) {
+                pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
+                MainWindow.getInstance().updateElementProperties();
+            }
+        }
+        frame.setVisible(false);
+    }
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				new AutoSuggester(formular, frame, null, Color.WHITE.brighter(),
-						Color.BLUE, Color.RED, 0.75f) {
-					@Override
-					boolean wordTyped(String typedWord) {
+    private void onCancelClicked() {
+        frame.setVisible(false);
+    }
 
-						// create list for dictionary this in your case might be done via calling a method which queries db and returns results as arraylist
-						ArrayList<String> words = new ArrayList<>();
+    private void onAddClicked() {
+        for (int i = 0; i < gea.getParameters().size(); i++) {
+            Parameter p = gea.getParameters().get(i);
+            if (p.getName().equals(name.getText())) {
+                if (editMode && name.getText().trim().length() > 0) {
+                    try {
+                        p.setValue(Double.parseDouble(value.getText()));
+                        p.setUnit(unit.getText());
+                        // TODO handling of rebuild
+                        pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
+                        editMode = false;
+                        add.setText("add");
+                        repaintPanel();
+                    } catch (NumberFormatException nfe) {
+                        MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+                    }
+                } else {
+                    MyPopUp.getInstance().show("Parameter", "Parameter with same name already exists! Use edit button to edit parameter");
+                }
+                return;
+            }
+        }
+        if (name.getText().trim().length() > 0) {
+            try {
+                Parameter p = new Parameter(name.getText(), Double.parseDouble(value.getText()), unit.getText());
+                gea.getParameters().add(p);
+                pw.getChangedParameters().put(p, gea);
+                pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
+                panel.add(new JLabel(name.getText()), "span 1, gaptop 2 ");
+                panel.add(new JLabel(value.getText()), "span 1, gapright 4");
+                panel.add(new JLabel(unit.getText()), "span 1, gapright 4, wrap");
+                repaintPanel();
+            } catch (NumberFormatException nfx) {
+                MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+            }
+        } else {
+            MyPopUp.getInstance().show("Parameter", "Name is empty!");
+        }
+    }
 
-						// pw.getAllNodeLabels();
-						// HashSet<String> set = new HashSet<String>();
-						Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();// biologicalElements.values().iterator();
-						BiologicalNodeAbstract bna;
-						while (it.hasNext()) {
-							bna = it.next();
-							if (!bna.isLogical()) {
-								// words.add(bna.getRef().getLink());
-								if (!words.contains(bna.getName())) {
-									words.add(bna.getName());
-								}
-							}
-						}
+    private void onGuessKineticClicked() {
+        guessKinetic();
+        repaintPanel();
+    }
 
-						for (int i = 0; i < gea.getParameters().size(); i++) {
-							if (!words.contains(gea.getParameters().get(i).getName())) {
-								words.add(gea.getParameters().get(i).getName());
-							}
-						}
+    private void onSetValuesClicked() {
+        if (gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract || gea instanceof ContinuousTransition) {
+            new ParameterSearcher((BiologicalNodeAbstract) gea, true);
+        }
+    }
 
-						setDictionary(words);
-						// addToDictionary("bye");//adds a single word
+    private void listParameters() {
+        panel.add(new JLabel("Name"), "span 1, gaptop 2");
+        panel.add(new JLabel("Value"), "span 1, gapright 4");
+        panel.add(new JLabel("Unit"), "span 1, gapright 4, wrap");
+        for (int i = 0; i < gea.getParameters().size(); i++) {
+            final int parameterIdx = i;
+            Parameter p = gea.getParameters().get(i);
+            panel.add(new JLabel(p.getName()), "span 1, gaptop 2");
 
-						return super.wordTyped(typedWord);// now call super to check for any matches against newest dictionary
-					}
-				};
-			}
-		});
+            panel.add(new JLabel(p.getValue() + ""), "span 1, gapright 4");
 
-		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
-			PropertyChangeListener pcListener = new PropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent evt) {
-					frame.pack();
-				}
-			};
+            panel.add(new JLabel(p.getUnit()), "span 1, gapright 4");
 
-			String function = "";
-			if (gea instanceof DynamicNode) {
-				function = ((DynamicNode) gea).getMaximalSpeed();
-			} else if (gea instanceof BiologicalEdgeAbstract) {
-				function = ((BiologicalEdgeAbstract) gea).getFunction();
-			} else if (gea instanceof ContinuousTransition) {
-				function = ((ContinuousTransition) gea).getMaximalSpeed();
-			}
-			fp = new FormulaPanel(formular, function, pcListener);
-			fp.setVisible(true);
-			panel.add(fp);
-		}
+            JButton edit = new JButton("✎");
+            edit.addActionListener(e -> onParameterEditClicked(parameterIdx));
+            edit.setToolTipText("edit entry");
+            edit.setMaximumSize(edit.getMinimumSize());
 
-		name.getDocument().addDocumentListener(this);
-		add = new JButton("add");
-		add.setActionCommand("add");
-		add.addActionListener(this);
+            JButton del = new JButton("✖");
+            del.setBackground(Color.RED);
+            edit.addActionListener(e -> onParameterDeleteClicked(parameterIdx));
+            del.setToolTipText("delete entry");
 
-		// pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
-		// JOptionPane.DEFAULT_OPTION);
+            JButton up = new JButton("↑");
+            up.addActionListener(e -> onParameterUpClicked(parameterIdx));
+            up.setToolTipText("move up");
 
-		cancel.addActionListener(this);
-		cancel.setActionCommand("cancel");
+            JButton down = new JButton("↓");
+            down.addActionListener(e -> onParameterDownClicked(parameterIdx));
+            down.setToolTipText("move down");
+            if (gea.getParameters().size() > 1) {
+                if (i == 0) {
+                    panel.add(down, "skip, span 1");
+                } else if (i == gea.getParameters().size() - 1) {
+                    panel.add(up, "span 1, gapright 4");
+                } else {
+                    panel.add(up, "span 1, gapright 4");
+                    panel.add(down, "span 1");
+                }
+            }
+            if (i == gea.getParameters().size() - 1) {
+                panel.add(edit, "skip, span 1");
+            } else {
+                panel.add(edit, "span 1");
+            }
+            if (gea.getParameters().size() == 1) {
+                panel.add(del, "wrap");
+            } else {
+                panel.add(del, "span 1, wrap");
+            }
+        }
+    }
 
-		okButton.addActionListener(this);
-		okButton.setActionCommand("okButton");
+    private void onParameterEditClicked(int idx) {
+        Parameter p = gea.getParameters().get(idx);
+        name.setText(p.getName());
+        value.setText(p.getValue() + "");
+        unit.setText(p.getUnit());
+        add.setText("Override");
+        editMode = true;
+        repaintPanel();
+    }
 
-		this.repaintPanel();
+    private void onParameterDeleteClicked(int idx) {
+        pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
+        pw.getChangedParameters().remove(gea.getParameters().get(idx));
+        gea.getParameters().remove(idx);
+        repaintPanel();
+    }
 
-		optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
-		optionPane.setOptions(buttons);
+    private void onParameterUpClicked(int idx) {
+        Parameter p = gea.getParameters().get(idx);
+        gea.getParameters().set(idx, gea.getParameters().get(idx - 1));
+        gea.getParameters().set(idx - 1, p);
+        repaintPanel();
+    }
 
-		frame.setAlwaysOnTop(false);
-		frame.setContentPane(optionPane);
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
-		frame.revalidate();
+    private void onParameterDownClicked(int idx) {
+        Parameter p = gea.getParameters().get(idx);
+        gea.getParameters().set(idx, gea.getParameters().get(idx + 1));
+        gea.getParameters().set(idx + 1, p);
+        repaintPanel();
+    }
 
-		frame.pack();
+    private void repaintPanel() {
+        panel.removeAll();
+        if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
+            panel.add(fp, "span 20, wrap");
+        }
+        if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {
+            JButton guessKinetic = new JButton("apply kinetic");
+            guessKinetic.setToolTipText("Applies convenience kinetic");
+            guessKinetic.addActionListener(e -> onGuessKineticClicked());
+            panel.add(guessKinetic, "");
+            JButton setValues = new JButton("BRENDA kinetic parameters");
+            setValues.setToolTipText("Browse BRENDA for kinetic parameters (km and kcat)");
+            setValues.addActionListener(e -> onSetValuesClicked());
+            panel.add(setValues, "span 2, wrap");
+        }
+        panel.add(new JSeparator(), "span, growx, gaptop 7 ");
 
-		frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
-		frame.requestFocus();
-		frame.setVisible(true);
+        panel.add(new JLabel("Name"), "span 1, gaptop 2 ");
+        panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
 
-		frame.addWindowFocusListener(new WindowFocusListener() {
+        panel.add(new JLabel("Value"), "span 1, gapright 4");
+        panel.add(value, "span,wrap,growx ,gap 10, gaptop 2");
 
-			@Override
-			public void windowLostFocus(WindowEvent e) {
-			}
+        panel.add(new JLabel("Unit"), "span 1, gapright 4");
+        panel.add(unit, "span,wrap,growx ,gap 10, gaptop 2");
 
-			@Override
-			public void windowGainedFocus(WindowEvent e) {
-				// repaintPanel();
-				frame.pack();
-				// revalidate();
-				// pack();
-				// repaint();
-			}
-		});
-	}
+        panel.add(add, "wrap");
+        panel.add(new JSeparator(), "span, growx, gaptop 7 ");
+        this.listParameters();
+        panel.repaint();
+        frame.pack();
+    }
 
-	private void listParameters() {
-		Parameter p;
-		panel.add(new JLabel("Name"), "span 1, gaptop 2");
-		panel.add(new JLabel("Value"), "span 1, gapright 4");
-		panel.add(new JLabel("Unit"), "span 1, gapright 4, wrap");
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        handleChangedName();
+    }
 
-		for (int i = 0; i < gea.getParameters().size(); i++) {
-			p = gea.getParameters().get(i);
-			panel.add(new JLabel(p.getName()), "span 1, gaptop 2");
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        handleChangedName();
+    }
 
-			panel.add(new JLabel(p.getValue() + ""), "span 1, gapright 4");
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+    }
 
-			panel.add(new JLabel(p.getUnit()), "span 1, gapright 4");
+    private void handleChangedName() {
+        if (editMode) {
+            this.editMode = false;
+            this.add.setText("add");
+        }
+    }
 
-			JButton edit = new JButton("✎");
-			edit.setActionCommand("edit" + i);
-			edit.addActionListener(this);
-			edit.setToolTipText("edit entry");
-			edit.setMaximumSize(edit.getMinimumSize());
-
-			JButton del = new JButton("✖");
-			del.setBackground(Color.RED);
-			del.setActionCommand("del" + i);
-			del.setToolTipText("delete entry");
-
-			del.addActionListener(this);
-
-			JButton up = new JButton("↑");
-			up.setActionCommand("up" + i);
-			up.addActionListener(this);
-			up.setToolTipText("move up");
-
-			JButton down = new JButton("↓");
-			down.setActionCommand("down" + i);
-			down.addActionListener(this);
-			down.setToolTipText("move down");
-
-			if (gea.getParameters().size() > 1) {
-				if (i == 0) {
-					panel.add(down, "skip, span 1");
-				} else if (i == gea.getParameters().size() - 1) {
-					panel.add(up, "span 1, gapright 4");
-				} else {
-					panel.add(up, "span 1, gapright 4");
-					panel.add(down, "span 1");
-				}
-			}
-			if (i == gea.getParameters().size() - 1) {
-				panel.add(edit, "skip, span 1");
-			} else {
-				panel.add(edit, "span 1");
-			}
-			if (gea.getParameters().size() == 1) {
-				panel.add(del, "wrap");
-			} else {
-				panel.add(del, "span 1, wrap");
-			}
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// System.out.println(e.getActionCommand());
-		if ("add".equals(e.getActionCommand())) {
-			Parameter p;
-			for (int i = 0; i < gea.getParameters().size(); i++) {
-				p = gea.getParameters().get(i);
-				if (p.getName().equals(name.getText())) {
-					if (this.editMode && name.getText().trim().length() > 0) {
-						try {
-							p.setValue(Double.valueOf(this.value.getText()));
-							p.setUnit(unit.getText());
-							// TODO handling of rebuild
-							pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
-							this.editMode = false;
-							this.add.setText("add");
-							this.repaintPanel();
-						} catch (NumberFormatException nfe) {
-							MyPopUp.getInstance().show("Parameter",
-									"Parameter not correct. Value not a number or empty?");
-						}
-					} else {
-						// System.out.println("schon vorhanden");
-						MyPopUp.getInstance().show("Parameter",
-								"Parameter with same name already exists! Use edit button to edit parameter");
-					}
-					return;
-				}
-			}
-			if (name.getText().trim().length() > 0) {
-				try {
-					p = new Parameter(name.getText(), Double.valueOf(value.getText()), unit.getText());
-					gea.getParameters().add(p);
-					pw.getChangedParameters().put(p, gea);
-					pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
-					panel.add(new JLabel(name.getText()), "span 1, gaptop 2 ");
-					panel.add(new JLabel(value.getText()), "span 1, gapright 4");
-					panel.add(new JLabel(unit.getText()), "span 1, gapright 4, wrap");
-					this.repaintPanel();
-				} catch (NumberFormatException nfx) {
-					MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
-				}
-			} else {
-				MyPopUp.getInstance().show("Parameter", "Name is empty!");
-			}
-
-		} else if (e.getActionCommand().startsWith("del")) {
-			pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
-			int idx = Integer.parseInt(e.getActionCommand().substring(3));
-			pw.getChangedParameters().remove(gea.getParameters().get(idx));
-			this.gea.getParameters().remove(idx);
-			this.repaintPanel();
-		} else if (e.getActionCommand().startsWith("down")) {
-			int idx = Integer.parseInt(e.getActionCommand().substring(4));
-			Parameter p = gea.getParameters().get(idx);
-			gea.getParameters().set(idx, gea.getParameters().get(idx + 1));
-			gea.getParameters().set(idx + 1, p);
-			this.repaintPanel();
-		} else if (e.getActionCommand().startsWith("up")) {
-			int idx = Integer.parseInt(e.getActionCommand().substring(2));
-			Parameter p = gea.getParameters().get(idx);
-			gea.getParameters().set(idx, gea.getParameters().get(idx - 1));
-			gea.getParameters().set(idx - 1, p);
-			this.repaintPanel();
-		} else if (e.getActionCommand().startsWith("edit")) {
-			int idx = Integer.parseInt(e.getActionCommand().substring(4));
-			Parameter p = gea.getParameters().get(idx);
-			this.name.setText(p.getName());
-			this.value.setText(p.getValue() + "");
-			this.unit.setText(p.getUnit());
-			this.add.setText("Override");
-			this.editMode = true;
-			this.repaintPanel();
-		} else if (e.getActionCommand().equals("guessKinetic")) {
-			this.guessKinetic();
-			this.repaintPanel();
-		} else if (e.getActionCommand().equals("setValues")) {
-			if (gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract || gea instanceof ContinuousTransition) {
-				new ParameterSearcher((BiologicalNodeAbstract) gea, true);
-			}
-		} else if (e.getActionCommand().equals("okButton")) {
-			if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
-				String formula = fp.getFormula();
-				String formulaClean = formula.replaceAll("\\s", "");
-				boolean changed = false;
-				if (gea instanceof DynamicNode) {
-					DynamicNode dn = (DynamicNode) gea;
-					String orgClean = dn.getMaximalSpeed().replaceAll("\\s", "");
-					if (!orgClean.equals(formulaClean)) {
-						dn.setMaximalSpeed(formula);
-						changed = true;
-					}
-				} else if (gea instanceof BiologicalEdgeAbstract) {
-					BiologicalEdgeAbstract bea = (BiologicalEdgeAbstract) gea;
-					String orgClean = bea.getFunction().replaceAll("\\s", "");
-					if (!orgClean.equals(formulaClean)) {
-						bea.setFunction(formula);
-						changed = true;
-					}
-				} else if (gea instanceof ContinuousTransition) {
-					ContinuousTransition t = (ContinuousTransition) gea;
-					String orgClean = t.getMaximalSpeed().replaceAll("\\s", "");
-					if (!orgClean.equals(formulaClean)) {
-						t.setMaximalSpeed(formula);
-						changed = true;
-					}
-				}
-				if (changed) {
-					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
-					MainWindow.getInstance().updateElementProperties();
-				}
-			}
-			frame.setVisible(false);
-		} else if (e.getActionCommand().equals("cancel")) {
-			frame.setVisible(false);
-		}
-	}
-
-	private void repaintPanel() {
-		panel.removeAll();
-		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
-			panel.add(fp, "span 20, wrap");
-		}
-
-		if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {
-			JButton guessKinetic = new JButton("apply kinetic");
-			guessKinetic.setToolTipText("Applies convenience kinetic");
-			guessKinetic.addActionListener(this);
-			guessKinetic.setActionCommand("guessKinetic");
-			panel.add(guessKinetic, "");
-
-			JButton setValues = new JButton("BRENDA kinetic parameters");
-			setValues.setToolTipText("Browse BRENDA for kinetic parameters (km and kcat)");
-			setValues.addActionListener(this);
-			setValues.setActionCommand("setValues");
-
-			panel.add(setValues, "span 2, wrap");
-		}
-		panel.add(new JSeparator(), "span, growx, gaptop 7 ");
-
-		panel.add(new JLabel("Name"), "span 1, gaptop 2 ");
-		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
-
-		panel.add(new JLabel("Value"), "span 1, gapright 4");
-		panel.add(value, "span,wrap,growx ,gap 10, gaptop 2");
-
-		panel.add(new JLabel("Unit"), "span 1, gapright 4");
-		panel.add(unit, "span,wrap,growx ,gap 10, gaptop 2");
-
-		panel.add(add, "wrap");
-		panel.add(new JSeparator(), "span, growx, gaptop 7 ");
-		this.listParameters();
-		panel.repaint();
-		frame.pack();
-		// dialog.pack();
-	}
-
-	@Override
-	public void insertUpdate(DocumentEvent e) {
-		handleChangedName();
-	}
-
-	@Override
-	public void removeUpdate(DocumentEvent e) {
-		handleChangedName();
-	}
-
-	@Override
-	public void changedUpdate(DocumentEvent e) {
-	}
-
-	private void handleChangedName() {
-		if (editMode) {
-			this.editMode = false;
-			this.add.setText("add");
-		}
-	}
-
-	private void guessKinetic() {
-		if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {
-			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
-			String kinetic = KineticBuilder.createConvenienceKinetic(bna);
-			formular.setText(kinetic);
-			formular.requestFocus();
-		}
-	}
+    private void guessKinetic() {
+        if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {
+            BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
+            String kinetic = KineticBuilder.createConvenienceKinetic(bna);
+            formula.setText(kinetic);
+            formula.requestFocus();
+        }
+    }
 }

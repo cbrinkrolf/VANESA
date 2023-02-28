@@ -8,7 +8,6 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.*;
 import com.fasterxml.jackson.core.type.TypeReference;
-import configurations.Wrapper;
 import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import graph.CreatePathway;
 import graph.algorithms.MergeGraphs;
@@ -17,16 +16,16 @@ import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import pojos.DBColumn;
+import gui.MyPopUp;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
-public class BrendaConnector extends SwingWorker<Object, Object> {
-    private final DBBrendaEnzyme enzyme;
+public class BrendaConnector {
+    private final DBBrendaReaction enzyme;
     private final Pathway mergePW;
     private final boolean autoCoarseDepth;
     private final boolean autoCoarseEnzymeNomenclature;
@@ -42,7 +41,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
     private final Hashtable<String, BiologicalNodeAbstract> enzymes = new Hashtable<>();
     private final Set<BiologicalEdgeAbstract> edges = new HashSet<>();
 
-    public BrendaConnector(DBBrendaEnzyme enzyme, Pathway mergePW, boolean autoCoarseDepth,
+    public BrendaConnector(DBBrendaReaction enzyme, Pathway mergePW, boolean autoCoarseDepth,
                            boolean autoCoarseEnzymeNomenclature, boolean cofactors, boolean inhibitors, int searchDepth,
                            boolean disregarded, boolean organismSpecific) {
         this.enzyme = enzyme;
@@ -57,7 +56,7 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
     }
 
     private BiologicalNodeAbstract addReactionNodes(String node) {
-        String clean = this.cleanString(node);
+        String clean = cleanString(node);
         if (!enzymes.containsKey(clean)) {
             Metabolite sm = new Metabolite(clean, clean);
             enzymes.put(clean, sm);
@@ -70,64 +69,46 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
     private void searchPossibleEnzymes(BiologicalNodeAbstract node, DefaultMutableTreeNode parentNode) {
         if (parentNode.getLevel() == 0 || (parentNode.getLevel() / 2) < searchDepth + 1) {
             if (!disregarded || !MostWantedMolecules.getInstance().getEntry(node.getLabel()).disregard) {
-                String queryString = node.getLabel().replaceAll("'", "''").replaceAll("\"", "''");
-                if (queryString.contains("?")) {
-                    queryString = queryString.replaceAll("\\?", "''");
+                DBBrendaReaction[] results = BRENDASearch.searchReactions(null, null, node.getLabel(),
+                        organismSpecific ? enzymeOrganism : null, null);
+                if (results == null || results.length == 0) {
+                    return;
                 }
-                ArrayList<DBColumn> results;
-                if (organismSpecific) {
-                    String[] param = {"%" + queryString + "%", "%" + enzymeOrganism + "%"};
-                    results = new Wrapper().requestDbContent(1, BRENDAQueries.getPossibleEnzymeDetailsWithOrganism,
-                                                             param);
-                } else {
-                    results = new Wrapper().requestDbContent(1, BRENDAQueries.getPossibleEnzymeDetails + "'%" +
-                                                                queryString + "%';");
-                }
-                String[] left = null;
-                String[] right = null;
-                String weight = "1";
-                for (DBColumn column : results) {
-                    String[] resultDetails = column.getColumn();
-                    String clean = this.cleanString(resultDetails[0]);
-                    if (!enzymes.containsKey(clean)) {
-                        resultDetails[3] = resultDetails[3].replace("\uFFFD", "'");
-                        String[] gesplittet = resultDetails[3].split("=");
-                        if (gesplittet.length == 2) {
-                            left = gesplittet[0].split("\\s\\+\\s");
-                            right = gesplittet[1].split("\\s\\+\\s");
-                        }
-                        Enzyme e = new Enzyme(clean, resultDetails[1]);
-                        enzymes.put(clean, e);
-                        for (String s : left) {
-                            String tmp = cleanString(s.trim());
-                            String[] split = tmp.split("\\s", 2);
-                            if (split[0].matches("\\d+")) {
-                                weight = split[0];
-                                tmp = split[1];
-                            }
-                            if (node.getLabel().equals(tmp)) {
-                                this.buildEdge(node, e, weight);
-                                break;
+                for (DBBrendaReaction reaction : results) {
+                    if (!enzymes.containsKey(reaction.ec)) {
+                        Enzyme e = new Enzyme(reaction.ec, reaction.enzymeName);
+                        enzymes.put(reaction.ec, e);
+                        if (reaction.educts != null) {
+                            for (String educt : reaction.educts) {
+                                String weight = "1";
+                                String[] eductParts = educt.split("\\s", 2);
+                                if (eductParts[0].matches("\\d+")) {
+                                    weight = eductParts[0];
+                                    educt = eductParts[1];
+                                }
+                                if (node.getLabel().equals(educt)) {
+                                    buildEdge(node, e, weight);
+                                    break;
+                                }
                             }
                         }
-                        weight = "1";
-                        for (String s : right) {
-                            String tmp = cleanString(s.trim());
-                            String[] split = tmp.split("\\s", 2);
-                            if (split[0].matches("\\d+")) {
-                                weight = split[0];
-                                tmp = split[1];
-                            }
-                            if (node.getLabel().equals(tmp)) {
-                                this.buildEdge(e, node, weight);
-                                break;
+                        if (reaction.products != null) {
+                            for (String product : reaction.products) {
+                                String weight = "1";
+                                String[] eductParts = product.split("\\s", 2);
+                                if (eductParts[0].matches("\\d+")) {
+                                    weight = eductParts[0];
+                                    product = eductParts[1];
+                                }
+                                if (node.getLabel().equals(product)) {
+                                    buildEdge(e, node, weight);
+                                    break;
+                                }
                             }
                         }
                         DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(e.getLabel());
                         tree.addNode(parentNode, newNode, e);
-                        if (resultDetails[3] != null) {
-                            separateReaction(resultDetails[3], e, newNode);
-                        }
+                        separateReaction(reaction.educts, reaction.products, e, newNode);
                     }
                 }
             }
@@ -152,60 +133,46 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
         }
     }
 
-    private void separateReaction(String reaction, BiologicalNodeAbstract enzyme, DefaultMutableTreeNode parentNode) {
-        int i = 0;
-        StringTokenizer tok = new StringTokenizer(reaction, "=");
-        int tokenCount = tok.countTokens();
-        String[] result = new String[tokenCount];
-        while (tok.hasMoreTokens()) {
-            result[i++] = tok.nextToken();
-        }
-        String[] gesplittet = result[0].split("\\s\\+\\s");
-        BiologicalNodeAbstract substrate;
-        DefaultMutableTreeNode newNode;
-        String[] split;
-        String weight = "1";
-        for (String s : gesplittet) {
-            String temp = s.trim();
-            // if string begins with number
-            split = temp.split("\\s", 2);
-            if (split[0].matches("\\d+")) {
-                weight = split[0];
-                temp = split[1];
-            }
-            if (!parentNode.getParent().toString().equals(temp)) {
-                substrate = addReactionNodes(temp);
-                buildEdge(substrate, enzyme, weight);
-                // buildEdge(substrate.getVertex(), enzyme.getVertex(), true);
-                // !!!!!
-                newNode = new DefaultMutableTreeNode(substrate.getLabel());
-                tree.addNode(parentNode, newNode, substrate);
-                searchPossibleEnzymes(substrate, newNode);
-            } else {
-                substrate = addReactionNodes(temp);
-                buildEdge(substrate, enzymes.get(parentNode.toString()), weight);
-            }
-        }
-        weight = "1";
-        if (tokenCount > 1) {
-            String[] gesplittet_b = result[1].split("\\s\\+\\s");
-            for (String s : gesplittet_b) {
-                String temp = s.trim();
-                split = temp.split("\\s", 2);
+    private void separateReaction(String[] educts, String[] products, BiologicalNodeAbstract enzyme,
+                                  DefaultMutableTreeNode parentNode) {
+        if (educts != null) {
+            for (String educt : educts) {
+                String weight = "1";
+                String[] split = educt.split("\\s", 2);
+                // if string begins with number
                 if (split[0].matches("\\d+")) {
                     weight = split[0];
-                    temp = split[1];
+                    educt = split[1];
                 }
-                if (!parentNode.getParent().toString().equals(temp)) {
-                    BiologicalNodeAbstract product = addReactionNodes(temp);
-                    // buildEdge(enzyme.getVertex(), product.getVertex(), true);
-                    buildEdge(enzyme, product, weight);
-                    newNode = new DefaultMutableTreeNode(product.getLabel());
-                    tree.addNode(parentNode, newNode, product);
-                    searchPossibleEnzymes(product, newNode);
+                if (!parentNode.getParent().toString().equals(educt)) {
+                    BiologicalNodeAbstract substrate = addReactionNodes(educt);
+                    buildEdge(substrate, enzyme, weight);
+                    DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(substrate.getLabel());
+                    tree.addNode(parentNode, newNode, substrate);
+                    searchPossibleEnzymes(substrate, newNode);
+                } else {
+                    BiologicalNodeAbstract substrate = addReactionNodes(educt);
+                    buildEdge(substrate, enzymes.get(parentNode.toString()), weight);
+                }
+            }
+        }
+        if (products != null) {
+            for (String product : products) {
+                String weight = "1";
+                String[] split = product.split("\\s", 2);
+                if (split[0].matches("\\d+")) {
+                    weight = split[0];
+                    product = split[1];
+                }
+                if (!parentNode.getParent().toString().equals(product)) {
+                    BiologicalNodeAbstract productNode = addReactionNodes(product);
+                    buildEdge(enzyme, productNode, weight);
+                    DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(productNode.getLabel());
+                    tree.addNode(parentNode, newNode, productNode);
+                    searchPossibleEnzymes(productNode, newNode);
                 } else {
                     buildEdge(enzymes.get(parentNode.toString()), enzymes.get(parentNode.getParent().toString()),
-                              weight);
+                            weight);
                 }
             }
         }
@@ -213,27 +180,18 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
 
     private void processBrendaElement(String enzyme, DefaultMutableTreeNode node) {
         if (node.getLevel() == 0 || (node.getLevel() / 2) < searchDepth) {
-            String[] param = {enzyme};
-            ArrayList<DBColumn> results = new Wrapper().requestDbContent(1, BRENDAQueries.getBRENDAenzymeDetails,
-                                                                         param);
-            Enzyme e;
-            DefaultMutableTreeNode newNode;
-            String[] resultDetails;
-            String clean;
-            for (DBColumn column : results) {
-                resultDetails = column.getColumn();
-                clean = this.cleanString(resultDetails[0]);
-                if (!enzymes.containsKey(clean)) {
-                    e = new Enzyme(clean, resultDetails[1]);
-                    e.setColor(Color.RED);
-                    pw.setRootNode(e);
-                    e.setHasBrendaNode(true);
-                    newNode = new DefaultMutableTreeNode(e.getLabel());
-                    tree.addNode(node, newNode, e);
-                    enzymes.put(clean, e);
-                    if (resultDetails[3] != null && resultDetails[3].length() > 0) {
-                        resultDetails[3] = resultDetails[3].replace("\uFFFD", "'");
-                        separateReaction(resultDetails[3], e, newNode);
+            DBBrendaReaction[] results = BRENDASearch.searchReactions(enzyme, null, null, null, null);
+            if (results != null) {
+                for (DBBrendaReaction reaction : results) {
+                    if (!enzymes.containsKey(reaction.ec)) {
+                        Enzyme e = new Enzyme(reaction.ec, reaction.enzymeName);
+                        e.setColor(Color.RED);
+                        pw.setRootNode(e);
+                        e.setHasBrendaNode(true);
+                        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(e.getLabel());
+                        tree.addNode(node, newNode, e);
+                        enzymes.put(reaction.ec, e);
+                        separateReaction(reaction.educts, reaction.products, e, newNode);
                     }
                 }
             }
@@ -276,11 +234,11 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
                 Set<BiologicalNodeAbstract> neighbors = new HashSet<>(myGraph.getJungGraph().getNeighbors(n));
                 BiologicalNodeAbstract bestNeighbor = n;
                 int bestDistance = rootDistanceMap.get(n) == null ? Integer.MAX_VALUE : rootDistanceMap.get(n)
-                                                                                                       .intValue();
+                        .intValue();
                 for (BiologicalNodeAbstract neighbor : neighbors) {
                     if (rootDistanceMap.get(neighbor) != null && (bestNeighbor == n || rootDistanceMap.get(neighbor)
-                                                                                                      .intValue() <=
-                                                                                       bestDistance)) {
+                            .intValue() <=
+                            bestDistance)) {
                         if (neighbor instanceof Factor || neighbor instanceof Inhibitor) {
                             continue;
                         }
@@ -372,10 +330,13 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
             payload.organism = enzymeOrganism;
         }
         Response<CofactorResponsePayload> response = VanesaApi.postSync("/db_brenda/enzyme/cofactors", payload,
-                                                                        new TypeReference<>() {
-                                                                        });
-        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
-            // TODO: error
+                new TypeReference<>() {
+                });
+        if (response.hasError()) {
+            MyPopUp.getInstance().show("BRENDA search", "Sorry, no cofactors have been found.\n" + response.error);
+            return;
+        }
+        if (response.payload == null || response.payload.results == null) {
             return;
         }
         for (DBBrendaCofactor cofactor : response.payload.results) {
@@ -397,10 +358,13 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
         InhibitorRequestPayload payload = new InhibitorRequestPayload();
         payload.ecs = enzymesInPathway();
         Response<InhibitorResponsePayload> response = VanesaApi.postSync("/db_brenda/enzyme/inhibitors", payload,
-                                                                         new TypeReference<>() {
-                                                                         });
-        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
-            // TODO: error
+                new TypeReference<>() {
+                });
+        if (response.hasError()) {
+            MyPopUp.getInstance().show("BRENDA search", "Sorry, no inhibitors have been found.\n" + response.error);
+            return;
+        }
+        if (response.payload == null || response.payload.results == null) {
             return;
         }
         for (DBBrendaInhibitor inhibitor : response.payload.results) {
@@ -429,22 +393,16 @@ public class BrendaConnector extends SwingWorker<Object, Object> {
         return result.toArray(new String[0]);
     }
 
-    @Override
-    protected Object doInBackground() {
-        return null;
-    }
-
-    @Override
-    public void done() {
+    public void search() {
         int answer = JOptionPane.YES_OPTION;
         if (mergePW != null) {
             answer = JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(),
-                                                  "A new tab will be created with the pathway you selected. Shall " +
-                                                  "this tab be a merge between the current pathway and the selected " +
-                                                  "or contain only the selected pathway?", "",
-                                                  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                                                  new String[]{"Selected Pathway Only", "Merge Pathways"},
-                                                  JOptionPane.CANCEL_OPTION);
+                    "A new tab will be created with the pathway you selected. Shall " +
+                            "this tab be a merge between the current pathway and the selected " +
+                            "or contain only the selected pathway?", "",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                    new String[]{"Selected Pathway Only", "Merge Pathways"},
+                    JOptionPane.CANCEL_OPTION);
         }
         if (answer == JOptionPane.YES_OPTION || answer == JOptionPane.NO_OPTION) {
             if (answer == JOptionPane.NO_OPTION) {
