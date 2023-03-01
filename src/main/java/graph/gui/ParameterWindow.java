@@ -252,7 +252,7 @@ public class ParameterWindow implements DocumentListener {
 
             JButton del = new JButton("✖");
             del.setBackground(Color.RED);
-            edit.addActionListener(e -> onParameterDeleteClicked(parameterIdx));
+            del.addActionListener(e -> onParameterDeleteClicked(parameterIdx));
             del.setToolTipText("delete entry");
 
             JButton up = new JButton("↑");

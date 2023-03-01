@@ -79,8 +79,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
         btnUpdateEnzyme.addActionListener(e -> onUpdateEnzymesClicked());
 
         btnUpdateValues = new JButton("Update Values");
-        btnUpdateValues.setActionCommand("updateValues");
-        btnUpdateValues.addActionListener(this);
+        btnUpdateValues.addActionListener(e -> onUpdateValuesClicked());
 
         ecNumber.setText(bna.getLabel());
         name.setText(bna.getName());
@@ -424,25 +423,27 @@ public class ParameterSearcher extends JFrame implements ActionListener {
         }
     }
 
+    private void onUpdateValuesClicked() {
+        if (enzymeTable.getSelectedRowCount() > 0) {
+            if (enzymeTable.getSelectedRowCount() > 1) {
+                PopUpDialog.getInstance().show("Multiple enzymes", "Multiselect on enzymes is not supported!");
+            }
+            final String ec = getEcNumber();
+            AsyncTaskExecutor.runUIBlocking("BRENDA search", () -> {
+                if (kmRadio.isSelected()) {
+                    updateValueTable(ec, BRENDASearch.requestKMValues(ec));
+                } else {
+                    updateValueTable(ec, BRENDASearch.requestTurnoverNumberValues(ec));
+                }
+            });
+        } else {
+            PopUpDialog.getInstance().show("Empty enzyme", "Please select an enzyme first!");
+        }
+    }
+
     public void actionPerformed(ActionEvent e) {
         String event = e.getActionCommand();
-        if (event.equals("updateValues")) {
-            if (enzymeTable.getSelectedRowCount() > 0) {
-                if (enzymeTable.getSelectedRowCount() > 1) {
-                    PopUpDialog.getInstance().show("Multiple enzymes", "Multiselect on enzymes is not supported!");
-                }
-                final String ec = getEcNumber();
-                AsyncTaskExecutor.runUIBlocking("BRENDA search", () -> {
-                    if (kmRadio.isSelected()) {
-                        updateValueTable(ec, BRENDASearch.requestKMValues(ec));
-                    } else {
-                        updateValueTable(ec, BRENDASearch.requestTurnoverNumberValues(ec));
-                    }
-                });
-            } else {
-                PopUpDialog.getInstance().show("Empty enzyme", "Please select an enzyme first!");
-            }
-        } else if (event.startsWith("btn_")) {
+        if (event.startsWith("btn_")) {
             JButton b = (JButton) e.getSource();
             currentParameter = bna.getParameter(event.substring(4));
             String parameter = b.getText().trim();
