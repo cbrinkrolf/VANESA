@@ -3,14 +3,7 @@ package biologicalObjects.nodes;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -476,9 +469,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public boolean addToCoarseNode(Set<BiologicalNodeAbstract> vertices,
-			HashMap<BiologicalNodeAbstract, Point2D> vertexLocations) {
-		Set<BiologicalNodeAbstract> ln = new HashSet<BiologicalNodeAbstract>();
-		ln.addAll(getLeafNodes());
+								   Map<BiologicalNodeAbstract, Point2D> vertexLocations) {
+		Set<BiologicalNodeAbstract> ln = new HashSet<>(getLeafNodes());
 		for (BiologicalNodeAbstract v : vertices) {
 			if (v.getParentNode() != this.getParentNode()) {
 				return false;
@@ -500,7 +492,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			return true;
 		}
 		return false;
-
 	}
 
 	/**

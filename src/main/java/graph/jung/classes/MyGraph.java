@@ -74,12 +74,11 @@ import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.MainWindow;
 import gui.MyAnnotationManager;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
 
 public class MyGraph {
-
 	private int VisualizationViewerWidth = 1000;
 	private int VisualizationViewerHeigth = 1000;
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<>();
@@ -984,8 +983,8 @@ public class MyGraph {
 					map.put(n, getVertexLocation(n));
 				}
 			}
-			changeToLayout(new GEMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g, map));
-			MyPopUp.getInstance().show("GEMLayout", "GEMLayout was applied on picked nodes only!");
+			changeToLayout(new GEMLayout<>(g, map));
+			PopUpDialog.getInstance().show("GEMLayout", "GEMLayout was applied on picked nodes only!");
 		} else {
 			changeToLayout(new GEMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 		}
