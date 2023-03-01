@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import util.StochasticDistribution;
 
 public class StochasticTransition extends Transition {
@@ -43,7 +43,7 @@ public class StochasticTransition extends Transition {
             this.distribution = distribution;
         } else {
             System.err.println("Given distribution: \"" + distribution + "\" is not supported!)");
-            MyPopUp.getInstance().show("Error setting distribution",
+            PopUpDialog.getInstance().show("Error setting distribution",
                                        "Setting distribution of transition: " + getName() + "\n " +
                                        "Given distribution: \"" + distribution + "\" is not supported!");
         }

@@ -18,14 +18,10 @@ import edu.uci.ics.jung.visualization.annotations.Annotation;
 import graph.GraphInstance;
 
 public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlugin<V, E> {
-
 	private int currentType = AnnotationPainter.RECTANGLE;
-	private String annotationString;
-
-	VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
+	private final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 
 	public MyAnnotatingGraphMousePlugin(RenderContext<V, E> rc) {
-
 		super(rc);
 		this.annotationManager = GraphInstance.getMyGraph().getAnnotationManager();
 		vv = GraphInstance.getMyGraph().getVisualizationViewer();
@@ -47,24 +43,15 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlug
 		MyAnnotation an = null;
 		RectangularShape arect = null;
 		if (currentType == AnnotationPainter.TEXT) {
-			annotationString = JOptionPane.showInputDialog(vv, "Annotation:");
+			String annotationString = JOptionPane.showInputDialog(vv, "Annotation:");
 			if (annotationString != null && annotationString.length() > 0) {
 				Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
-
-				Annotation<String> annotation = new Annotation<String>(annotationString, layer, annotationColor, false, p);
-
+				Annotation<String> annotation = new Annotation<>(annotationString, layer, annotationColor, false, p);
 				arect = (RectangularShape) rectangularShape.clone();
 				Point2D.Double p1 = new Point2D.Double(arect.getMinX(), arect.getMinY());
 				Point2D.Double p2 = new Point2D.Double(arect.getMaxX(), arect.getMaxY());
-
 				Point2D p1inv = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p1);
 				Point2D p2inv = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p2);
-				// System.out.println("inv:
-				// "+vv.getRenderContext().getMultiLayerTransformer()
-				// .inverseTransform(p1));
-				// System.out.println("t:
-				// "+vv.getRenderContext().getMultiLayerTransformer()
-				// .transform(p1));
 				arect.setFrameFromDiagonal(p1inv, p2inv);
 
 				an = new MyAnnotation(annotation, arect, annotationString);
@@ -72,39 +59,23 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlug
 		} else if (e.getModifiers() == modifiers) {
 			if (down != null) {
 				Point2D out = e.getPoint();
-				// System.out.println();
 				arect = (RectangularShape) rectangularShape.clone();
-				// Point2D p =
-				// vv.getRenderContext().getMultiLayerTransformer()
-				// .inverseTransform(down);
-				// System.out.println(down);
-				// System.out.println(super.getAnnotationColor());
+				// Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
 				// arect.setFrameFromDiagonal(down, out);
 				arect.setFrameFromDiagonal(down.getX(), down.getY(), out.getX(), out.getY());
 				Shape s = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(arect);
-				Annotation<Shape> annotation = new Annotation<Shape>(s, layer, annotationColor, fill, out);
-
+				Annotation<Shape> annotation = new Annotation<>(s, layer, annotationColor, fill, out);
 				Point2D.Double p1 = new Point2D.Double(arect.getMinX(), arect.getMinY());
 				Point2D.Double p2 = new Point2D.Double(arect.getMaxX(), arect.getMaxY());
-
 				Point2D p1inv = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p1);
 				Point2D p2inv = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p2);
-				// System.out.println("inv:
-				// "+vv.getRenderContext().getMultiLayerTransformer()
-				// .inverseTransform(p1));
-				// System.out.println("t:
-				// "+vv.getRenderContext().getMultiLayerTransformer()
-				// .transform(p1));
 				arect.setFrameFromDiagonal(p1inv, p2inv);
-
 				an = new MyAnnotation(annotation, arect, "");
 			}
 		}
 		down = null;
 		vv.removePostRenderPaintable(lensPaintable);
 		// vv.repaint();
-
-		//System.out.println("shape: ");
 		if (an != null) {
 			if (this.currentType == AnnotationPainter.TEXT || (arect.getWidth() > 5 && arect.getHeight() > 5)) {
 				// ((MyAnnotationManager)this.annotationManager).remove(an);
@@ -115,7 +86,6 @@ public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlug
 	}
 
 	public void mouseClicked(MouseEvent e) {
-
 	}
 
 	public void mouseEntered(MouseEvent e) {

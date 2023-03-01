@@ -1,8 +1,8 @@
 package database.gui;
 
 import gui.AsyncTaskExecutor;
-import gui.MyPopUp;
-import gui.images.ImagePath;
+import gui.PopUpDialog;
+import gui.ImagePath;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,10 +38,9 @@ public abstract class QueryMask {
     }
 
     public JPanel getTitleTab() {
-        ImagePath imagePath = ImagePath.getInstance();
         JPanel pan = new JPanel(new MigLayout("ins 0"));
         pan.add(new JLabel(getMaskName()));
-        JButton info = new JButton(new ImageIcon(imagePath.getPath("infoButton.png")));
+        JButton info = new JButton(ImagePath.getInstance().getImageIcon("infoButton.png"));
         info.setMaximumSize(new Dimension(20, 20));
         info.addActionListener(e -> showInfoWindow());
         info.setBorderPainted(false);
@@ -53,13 +52,13 @@ public abstract class QueryMask {
 
     private void searchGUI() {
         if (!doSearchCriteriaExist()) {
-            MyPopUp.getInstance().show("Error", "Please type something into the search form.");
+            PopUpDialog.getInstance().show("Error", "Please type something into the search form.");
             return;
         }
         AsyncTaskExecutor.runUIBlocking(getMaskName() + " Query", () -> {
             final String error = search();
             if (StringUtils.isNotEmpty(error)) {
-                MyPopUp.getInstance().show("Error", error);
+                PopUpDialog.getInstance().show("Error", error);
             }
         });
     }

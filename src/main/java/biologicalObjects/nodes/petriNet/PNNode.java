@@ -6,7 +6,7 @@ import java.util.List;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import util.FormulaSafety;
 
 public class PNNode extends BiologicalNodeAbstract {
@@ -19,7 +19,7 @@ public class PNNode extends BiologicalNodeAbstract {
 	@Override
 	public void setName(String name) {
 		/*if(name == null || name.trim().length() < 1){
-			MyPopUp.getInstance().show("Empty name!", "Name must not be empty!");
+			PopUpDialog.getInstance().show("Empty name!", "Name must not be empty!");
 			return;
 		}*/
 		Pathway pw = new GraphInstance().getPathway();
@@ -27,10 +27,10 @@ public class PNNode extends BiologicalNodeAbstract {
 			if (pw.getNodeByName(name).getClass().equals(this.getClass())) {
 				BiologicalNodeAbstract node = pw.getNodeByName(name);
 				this.setLogicalReference(node);
-				MyPopUp.getInstance().show("Name already exists!", "Created logical node instead!");
+				PopUpDialog.getInstance().show("Name already exists!", "Created logical node instead!");
 			} else {
 				System.out.println(pw.getName());
-				MyPopUp.getInstance().show("Type mismatch",
+				PopUpDialog.getInstance().show("Type mismatch",
 						"Node with same name already exists. Cannot create logical place because of type mismatch: "
 								+ pw.getNodeByName(name).getClass().getSimpleName() + " versus "
 								+ this.getClass().getSimpleName());

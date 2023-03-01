@@ -12,7 +12,7 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import io.SuffixAwareFilter;
 
 public class OpenModelicaResult extends SwingWorker<Object, Object> {
@@ -41,10 +41,10 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
                     petrinet.loadVanesaSimulationResult(file);
 
                 } else {
-                    MyPopUp.getInstance().show("Error", "Please create a Petri net first.");
+                    PopUpDialog.getInstance().show("Error", "Please create a Petri net first.");
                 }
             } else {
-                MyPopUp.getInstance().show("Error", "Please create a network before.");
+                PopUpDialog.getInstance().show("Error", "Please create a network before.");
             }
         }
     }

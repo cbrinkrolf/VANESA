@@ -26,7 +26,7 @@ import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import graph.GraphContainer;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import net.miginfocom.swing.MigLayout;
 import transformation.graphElements.ANYPlace;
 import transformation.graphElements.ANYTransition;
@@ -206,8 +206,8 @@ public class PetriNetVertexDialog {
 			if (value.intValue() == JOptionPane.OK_OPTION) {
 
 				if (name.getText().trim().length() < 1 || name.getText().trim().charAt(0) == '_') {
-					MyPopUp.getInstance().show("Adding Node",
-							"Cannot add node! Empty name or name starts with \"_\"");
+					PopUpDialog.getInstance().show("Adding Node",
+                                                   "Cannot add node! Empty name or name starts with \"_\"");
 					return null;
 				}
 
@@ -295,7 +295,7 @@ public class PetriNetVertexDialog {
 						bna = it.next();
 						if (bna.getName().equals(name.getText().trim())) {
 							if(!bna.getBiologicalElement().equals(petriElement)){
-								MyPopUp.getInstance().show("Adding Element",
+								PopUpDialog.getInstance().show("Adding Element",
 										"Name already exists. Cannot create reference node, because types do not match!\r\n"
 										+ "Given type: "+petriElement+"\r\n"
 												+ "Existing element: "+bna.getBiologicalElement());
@@ -309,8 +309,8 @@ public class PetriNetVertexDialog {
 
 					pw.addVertex(createdNode, point);
 					if (createdRef) {
-						MyPopUp.getInstance().show("Adding Node",
-								"Name already exists. Created reference node instead.");
+						PopUpDialog.getInstance().show("Adding Node",
+                                                       "Name already exists. Created reference node instead.");
 					}
 				}
 				GraphContainer con = GraphContainer.getInstance();

@@ -12,7 +12,7 @@ import biologicalObjects.edges.Inhibition;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
 import graph.gui.Parameter;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 
 public class KineticBuilder {
 
@@ -118,7 +118,7 @@ public class KineticBuilder {
 					weight = Integer.parseInt(bea.getLabel());
 				} catch (Exception e) {
 					e.printStackTrace();
-					MyPopUp.getInstance().show("Parsing Error", "This label cannot be parsed as an integer: "+bea.getLabel()+"\r\n");
+					PopUpDialog.getInstance().show("Parsing Error", "This label cannot be parsed as an integer: " + bea.getLabel() + "\r\n");
 				}
 			}
 			sb.append(" * ");

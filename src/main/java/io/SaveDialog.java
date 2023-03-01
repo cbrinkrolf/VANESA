@@ -9,7 +9,7 @@ import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import io.graphML.GraphMLWriter;
 import io.sbml.JSBMLOutput;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
@@ -87,7 +87,7 @@ public class SaveDialog {
                 } catch (IOException | HeadlessException | XMLStreamException | InvalidIDException |
                          VoidRepositoryException e) {
                     error += e.getMessage();
-                    MyPopUp.getInstance().show("Error!", "An error occurred:\r\n" + error);
+                    PopUpDialog.getInstance().show("Error!", "An error occurred:\r\n" + error);
                     e.printStackTrace();
                 }
             }
@@ -179,9 +179,9 @@ public class SaveDialog {
                 }
             }
             if (error.trim().length() == 0) {
-                MyPopUp.getInstance().show("Image export", "Exports of images was successful!");
+                PopUpDialog.getInstance().show("Image export", "Exports of images was successful!");
             } else {
-                MyPopUp.getInstance().show("Error during image export", error);
+                PopUpDialog.getInstance().show("Error during image export", error);
             }
         }
     }
@@ -282,9 +282,9 @@ public class SaveDialog {
     private <T> void write(BaseWriter<T> writer, T value) {
         writer.write(value);
         if (writer.hasErrors()) {
-            MyPopUp.getInstance().show("Error", fileFilter + "\nAn error occurred: " + writer.getErrors());
+            PopUpDialog.getInstance().show("Error", fileFilter + "\nAn error occurred: " + writer.getErrors());
         } else {
-            MyPopUp.getInstance().show("Information", fileFilter + "\nFile saved");
+            PopUpDialog.getInstance().show("Information", fileFilter + "\nFile saved");
         }
     }
 
@@ -317,7 +317,7 @@ public class SaveDialog {
             path_colored = path_colored.substring(0, path_colored.length() - 3);
         }
         new MOoutput(new FileOutputStream(path_colored + "_colored.mo"), new GraphInstance().getPathway(), true);
-        MyPopUp.getInstance().show("Modelica export", SuffixAwareFilter.MO + " File saved");
+        PopUpDialog.getInstance().show("Modelica export", SuffixAwareFilter.MO + " File saved");
         // JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(), moDescription + " File saved");
     }
 
@@ -335,13 +335,13 @@ public class SaveDialog {
         JSBMLOutput jsbmlOutput = new JSBMLOutput(new FileOutputStream(file), new GraphInstance().getPathway());
         String out = jsbmlOutput.generateSBMLDocument();
         if (out.length() > 0) {
-            MyPopUp.getInstance().show("Error", out);
+            PopUpDialog.getInstance().show("Error", out);
         } else {
             GraphContainer.getInstance().renamePathway(GraphInstance.getPathwayStatic(), file.getName());
             GraphInstance.getPathwayStatic().setName(file.getName());
             GraphInstance.getPathwayStatic().setTitle(file.getName());
             MainWindow.getInstance().renameSelectedTab(file.getName());
-            MyPopUp.getInstance().show("JSbml export", "Saving was successful!");
+            PopUpDialog.getInstance().show("JSbml export", "Saving was successful!");
         }
         // else
         // JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), sbmlDescription + " File not saved");
@@ -365,15 +365,15 @@ public class SaveDialog {
             }
             internYaml.close();
             exportYaml.close();
-            MyPopUp.getInstance().show("Information", SuffixAwareFilter.YAML + " File exported");
+            PopUpDialog.getInstance().show("Information", SuffixAwareFilter.YAML + " File exported");
             MainWindow.getInstance().setLoadedYaml(exportPath);
         } else if (dataType == DATA_TYPE_TRANSFORMATION_RULES) {
             List<Rule> rules = RuleManager.getInstance().getRules();
             String result = YamlRuleWriter.writeRules(new FileOutputStream(file), rules);
             if (result.length() > 0) {
-                MyPopUp.getInstance().show("Error", SuffixAwareFilter.YAML + "an error occurred: " + result);
+                PopUpDialog.getInstance().show("Error", SuffixAwareFilter.YAML + "an error occurred: " + result);
             } else {
-                MyPopUp.getInstance().show("YAML Rules", rules.size() + " rules were written to file!");
+                PopUpDialog.getInstance().show("YAML Rules", rules.size() + " rules were written to file!");
             }
         }
     }

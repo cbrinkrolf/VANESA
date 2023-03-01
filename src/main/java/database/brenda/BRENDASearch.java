@@ -4,7 +4,7 @@ import api.VanesaApi;
 import api.payloads.Response;
 import api.payloads.dbBrenda.*;
 import com.fasterxml.jackson.core.type.TypeReference;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 
 public final class BRENDASearch {
     private BRENDASearch() {
@@ -22,11 +22,11 @@ public final class BRENDASearch {
                 new TypeReference<>() {
                 });
         if (response.hasError()) {
-            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
+            PopUpDialog.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
             return null;
         }
         if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
-            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
+            PopUpDialog.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
             return null;
         }
         return response.payload.results;
@@ -39,11 +39,11 @@ public final class BRENDASearch {
                 "/db_brenda/enzyme/turnover_number_values", payload, new TypeReference<>() {
                 });
         if (response.hasError()) {
-            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
+            PopUpDialog.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
             return null;
         }
         if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
-            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
+            PopUpDialog.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
             return null;
         }
         return response.payload.results;
@@ -56,11 +56,11 @@ public final class BRENDASearch {
                 new TypeReference<>() {
                 });
         if (response.hasError()) {
-            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
+            PopUpDialog.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
             return null;
         }
         if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
-            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
+            PopUpDialog.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
             return null;
         }
         return response.payload.results;
@@ -78,11 +78,11 @@ public final class BRENDASearch {
                 new TypeReference<>() {
                 });
         if (response.hasError()) {
-            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
+            PopUpDialog.getInstance().show("BRENDA search", "Sorry, no entries have been found.\n" + response.error);
             return null;
         }
         if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
-            MyPopUp.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
+            PopUpDialog.getInstance().show("BRENDA search", "Sorry, no entries have been found.");
             return null;
         }
         return response.payload.results;

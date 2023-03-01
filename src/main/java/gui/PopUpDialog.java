@@ -8,20 +8,20 @@ import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MyPopUp {
-    private static MyPopUp instance;
+public class PopUpDialog {
+    private static PopUpDialog instance;
 
     private final MainWindow w = MainWindow.getInstance();
     private final int time = 5000;
     private final int[] list = new int[100];
     private final StringBuilder sb = new StringBuilder();
 
-    private MyPopUp() {
+    private PopUpDialog() {
     }
 
-    public static synchronized MyPopUp getInstance() {
+    public static synchronized PopUpDialog getInstance() {
         if (instance == null) {
-            instance = new MyPopUp();
+            instance = new PopUpDialog();
         }
         return instance;
     }

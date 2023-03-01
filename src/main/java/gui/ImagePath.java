@@ -1,4 +1,4 @@
-package gui.images;
+package gui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +15,7 @@ public class ImagePath {
         loader = getClass().getClassLoader();
     }
 
-    public URL getPath(String fileName) {
+    private URL getPath(String fileName) {
         URL url = loader.getResource("images/" + fileName);
         if (url == null) {
             System.err.println("Couldn't find file: " + fileName);

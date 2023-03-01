@@ -56,7 +56,7 @@ import graph.gui.ParameterWindow;
 import graph.gui.ReferenceDialog;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import gui.eventhandlers.PropertyWindowListener;
 import net.miginfocom.swing.MigLayout;
 import util.MyColorChooser;
@@ -1202,7 +1202,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			if (result.length() > 0) {
 				message = "Following conflicting places found: " + result;
 			}
-			MyPopUp.getInstance().show("Checking conflicts", message);
+			PopUpDialog.getInstance().show("Checking conflicts", message);
 		} else if ("inhibition_absolute".equals(event)) {
 			if (ab instanceof Inhibition) {
 				((Inhibition) ab).setAbsoluteInhibition(true);

@@ -23,7 +23,7 @@ import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.gemLayout.GEMLayout;
 import gui.AsyncTaskExecutor;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import io.SaveDialog;
 
 import javax.swing.*;
@@ -154,10 +154,10 @@ public class GraphPopUp {
                 new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, SaveDialog.DATA_TYPE_GRAPH_PICTURE, wvv,
                         MainWindow.getInstance().getFrame(), null);
             } else {
-                MyPopUp.getInstance().show("Error", "Please create a network first.");
+                PopUpDialog.getInstance().show("Error", "Please create a network first.");
             }
         } else {
-            MyPopUp.getInstance().show("Error", "Please create a network first.");
+            PopUpDialog.getInstance().show("Error", "Please create a network first.");
         }
     }
 
@@ -184,7 +184,7 @@ public class GraphPopUp {
                                 GraphContainer con = GraphContainer.getInstance();
                                 String newPathwayName = con.addPathway(pwName, newPW);
                                 newPW = con.getPathway(newPathwayName);
-                                w.addTab(newPW.getTab().getTitelTab());
+                                w.addTab(newPW.getTab().getTitleTab());
                                 w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                                 map.setPathwayLink(newPW);
                                 map.setColor(Color.BLUE);
@@ -199,7 +199,7 @@ public class GraphPopUp {
                         GraphContainer con = GraphContainer.getInstance();
                         String newPathwayName = con.addPathway(pwName, pwLink);
                         pwLink = con.getPathway(newPathwayName);
-                        w.addTab(pwLink.getTab().getTitelTab());
+                        w.addTab(pwLink.getTab().getTitleTab());
                         w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                     }
                     w.updateAllGuiElements();
@@ -237,7 +237,7 @@ public class GraphPopUp {
             GraphContainer con = GraphContainer.getInstance();
             String newPathwayName = con.addPathway(pwName, pw.getParent());
             Pathway newPW = con.getPathway(newPathwayName);
-            w.addTab(newPW.getTab().getTitelTab());
+            w.addTab(newPW.getTab().getTitleTab());
             w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             w.updateAllGuiElements();
         }

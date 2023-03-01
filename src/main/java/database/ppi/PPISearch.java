@@ -16,7 +16,7 @@ import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -36,11 +36,11 @@ public final class PPISearch {
                                                                                });
         MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            MyPopUp.getInstance().show("HPRD search", "Sorry, no entries have been found.\n" + response.error);
+            PopUpDialog.getInstance().show("HPRD search", "Sorry, no entries have been found.\n" + response.error);
             return;
         }
         if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
-            MyPopUp.getInstance().show("HPRD search", "Sorry, no entries have been found.");
+            PopUpDialog.getInstance().show("HPRD search", "Sorry, no entries have been found.");
             return;
         }
         HPRDSearchResultWindow searchResultWindow = new HPRDSearchResultWindow(response.payload.results);
@@ -68,11 +68,11 @@ public final class PPISearch {
                                                                                });
         MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            MyPopUp.getInstance().show("HPRD search", "Failed to retrieve PPI network.\n" + response.error);
+            PopUpDialog.getInstance().show("HPRD search", "Failed to retrieve PPI network.\n" + response.error);
             return;
         }
         if (response.payload == null || response.payload.entries == null || response.payload.entries.length <= 1) {
-            MyPopUp.getInstance().show("HPRD search", "No interactions found!");
+            PopUpDialog.getInstance().show("HPRD search", "No interactions found!");
             return;
         }
         MainWindow.getInstance().showProgressBar("Drawing Network");
@@ -132,11 +132,11 @@ public final class PPISearch {
                                                                                });
         MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            MyPopUp.getInstance().show("Mint search", "Sorry, no entries have been found.\n" + response.error);
+            PopUpDialog.getInstance().show("Mint search", "Sorry, no entries have been found.\n" + response.error);
             return;
         }
         if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
-            MyPopUp.getInstance().show("Mint search", "Sorry, no entries have been found.");
+            PopUpDialog.getInstance().show("Mint search", "Sorry, no entries have been found.");
             return;
         }
         MintSearchResultWindow searchResultWindow = new MintSearchResultWindow(response.payload.results);
@@ -168,11 +168,11 @@ public final class PPISearch {
                                                                                });
         MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            MyPopUp.getInstance().show("Mint search", "Failed to retrieve PPI network.\n" + response.error);
+            PopUpDialog.getInstance().show("Mint search", "Failed to retrieve PPI network.\n" + response.error);
             return;
         }
         if (response.payload == null || response.payload.entries == null || response.payload.entries.length <= 1) {
-            MyPopUp.getInstance().show("Mint search", "No interactions found!");
+            PopUpDialog.getInstance().show("Mint search", "No interactions found!");
             return;
         }
         MainWindow.getInstance().showProgressBar("Drawing Network");
@@ -239,11 +239,11 @@ public final class PPISearch {
                                                                                  });
         MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            MyPopUp.getInstance().show("IntAct search", "Sorry, no entries have been found.\n" + response.error);
+            PopUpDialog.getInstance().show("IntAct search", "Sorry, no entries have been found.\n" + response.error);
             return;
         }
         if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
-            MyPopUp.getInstance().show("IntAct search", "Sorry, no entries have been found.");
+            PopUpDialog.getInstance().show("IntAct search", "Sorry, no entries have been found.");
             return;
         }
         IntActSearchResultWindow searchResultWindow = new IntActSearchResultWindow(response.payload.results);
@@ -276,11 +276,11 @@ public final class PPISearch {
                                                                                  });
         MainWindow.getInstance().closeProgressBar();
         if (response.hasError()) {
-            MyPopUp.getInstance().show("IntAct search", "Failed to retrieve PPI network.\n" + response.error);
+            PopUpDialog.getInstance().show("IntAct search", "Failed to retrieve PPI network.\n" + response.error);
             return;
         }
         if (response.payload == null || response.payload.entries == null || response.payload.entries.length <= 1) {
-            MyPopUp.getInstance().show("IntAct search", "No interactions found!");
+            PopUpDialog.getInstance().show("IntAct search", "No interactions found!");
             return;
         }
         MainWindow.getInstance().showProgressBar("Drawing Network");

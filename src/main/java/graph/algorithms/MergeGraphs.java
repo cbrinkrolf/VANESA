@@ -7,7 +7,7 @@ import java.io.IOException;
 import biologicalElements.Pathway;
 import graph.CreatePathway;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import io.vaml.VAMLInput;
 import io.vaml.VAMLOutput;
 
@@ -48,7 +48,7 @@ public class MergeGraphs {
 		MainWindow.getInstance().updateOptionPanel();
 
 		if (showMessage){
-			MyPopUp.getInstance().show("Finished", "The graphs have been merged and are visualized in a new tab.");
+			PopUpDialog.getInstance().show("Finished", "The graphs have been merged and are visualized in a new tab.");
 		}
 		file1.delete();
 		file2.delete();

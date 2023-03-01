@@ -16,7 +16,7 @@ import graph.hierarchies.HierarchyList;
 import graph.hierarchies.HierarchyListComparator;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -333,7 +333,7 @@ public class BrendaConnector {
                 new TypeReference<>() {
                 });
         if (response.hasError()) {
-            MyPopUp.getInstance().show("BRENDA search", "Sorry, no cofactors have been found.\n" + response.error);
+            PopUpDialog.getInstance().show("BRENDA search", "Sorry, no cofactors have been found.\n" + response.error);
             return;
         }
         if (response.payload == null || response.payload.results == null) {
@@ -361,7 +361,7 @@ public class BrendaConnector {
                 new TypeReference<>() {
                 });
         if (response.hasError()) {
-            MyPopUp.getInstance().show("BRENDA search", "Sorry, no inhibitors have been found.\n" + response.error);
+            PopUpDialog.getInstance().show("BRENDA search", "Sorry, no inhibitors have been found.\n" + response.error);
             return;
         }
         if (response.payload == null || response.payload.results == null) {

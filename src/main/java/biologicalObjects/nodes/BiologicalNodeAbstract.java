@@ -518,7 +518,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
 			innerNodes.addAll(getChildrenNodes());
 			this.flat();
-			MainWindow.getInstance().removeTab(false, getTab().getTitelTab(), this);
+			MainWindow.getInstance().removeTab(false, getTab().getTitleTab(), this);
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
 			setGraph(bna.getGraph());
 			new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();

@@ -8,7 +8,7 @@ import database.brenda.BRENDASearch;
 import graph.GraphInstance;
 import gui.AsyncTaskExecutor;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import gui.tables.GenericTableModel;
 import gui.tables.MyTable;
 import gui.visualization.RangeSlider;
@@ -429,7 +429,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
         if (event.equals("updateValues")) {
             if (enzymeTable.getSelectedRowCount() > 0) {
                 if (enzymeTable.getSelectedRowCount() > 1) {
-                    MyPopUp.getInstance().show("Multiple enzymes", "Multiselect on enzymes is not supported!");
+                    PopUpDialog.getInstance().show("Multiple enzymes", "Multiselect on enzymes is not supported!");
                 }
                 final String ec = getEcNumber();
                 AsyncTaskExecutor.runUIBlocking("BRENDA search", () -> {
@@ -440,7 +440,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
                     }
                 });
             } else {
-                MyPopUp.getInstance().show("Empty enzyme", "Please select an enzyme first!");
+                PopUpDialog.getInstance().show("Empty enzyme", "Please select an enzyme first!");
             }
         } else if (event.startsWith("btn_")) {
             JButton b = (JButton) e.getSource();
@@ -463,7 +463,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
             if (e.getSource() instanceof JButton) {
                 JButton button = (JButton) e.getSource();
                 if (currentParameter == null) {
-                    MyPopUp.getInstance().show("Missing Parameter", "Select a Parameter first!");
+                    PopUpDialog.getInstance().show("Missing Parameter", "Select a Parameter first!");
                     return;
                 }
                 if (button.getText().trim().length() > 0) {

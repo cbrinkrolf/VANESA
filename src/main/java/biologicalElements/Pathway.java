@@ -45,7 +45,7 @@ import graph.layouts.Circle;
 import graph.layouts.GraphCenter;
 import gui.GraphTab;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import petriNet.PetriNetProperties;
 import petriNet.PetriNetSimulation;
 import transformation.TransformationInformation;
@@ -176,7 +176,7 @@ public class Pathway implements Cloneable {
 						bna.setLogicalReference(node);
 						createdRef = true;
 					} else {
-						MyPopUp.getInstance().show("Type mismatch",
+						PopUpDialog.getInstance().show("Type mismatch",
 								"Cannot create logical node with the name: " + bna.getName() + ". Type mismatch of "
 										+ bna.getClass() + " and " + node.getClass() + "!");
 						System.err.println("Cannot create logical node with the name: " + bna.getName()
@@ -1281,7 +1281,7 @@ public class Pathway implements Cloneable {
 				nextNode.addGroup(group);
 			}
 		} else {
-			MyPopUp.getInstance().show("Groupingerror", "This cannot be grouped.");
+			PopUpDialog.getInstance().show("Groupingerror", "This cannot be grouped.");
 		}
 	}
 
@@ -1318,7 +1318,7 @@ public class Pathway implements Cloneable {
 		for (BiologicalNodeAbstract bnaNode : vv.getPickedVertexState().getPicked()) {
 			if (!bnaNode.getGroups().contains(groupToDelete)) {
 				deletegroup = false;
-				MyPopUp.getInstance().show("Deletion error", "This cannot be deleted.");
+				PopUpDialog.getInstance().show("Deletion error", "This cannot be deleted.");
 			}
 		}
 		// if all selected are from same group, delete group

@@ -15,7 +15,7 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 import configurations.gui.VisualizationDialog;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import gui.visualization.VisualizationConfigBeans.Bean;
 
 public class YamlToObjectParser {
@@ -119,7 +119,7 @@ public class YamlToObjectParser {
 				bean.parseAndAdjust(mapForBeans, true);
 			}
 		} else {
-			MyPopUp.getInstance().show("Error", "YtOpACCEPT: No configuration file is loaded!");
+			PopUpDialog.getInstance().show("Error", "YtOpACCEPT: No configuration file is loaded!");
 			// JOptionPane.showMessageDialog(panelOrPane, "YtOpACCEPT: No
 			// configuration file is loaded!");
 		}

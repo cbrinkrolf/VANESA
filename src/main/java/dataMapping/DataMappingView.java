@@ -53,7 +53,7 @@ import dataMapping.dataImport.ExcelException;
 import dataMapping.dataImport.ImportExcelxData;
 import graph.GraphContainer;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -531,7 +531,7 @@ public class DataMappingView extends JDialog implements Observer{
 				public void run() {
 					done = true;
 					closeProgressBarImport();
-					MyPopUp.getInstance().show("Error", "This is an old Excel file. \n Please convert it to Excel 97+ !");
+					PopUpDialog.getInstance().show("Error", "This is an old Excel file. \n Please convert it to Excel 97+ !");
 				}
 			});	
 		} else {

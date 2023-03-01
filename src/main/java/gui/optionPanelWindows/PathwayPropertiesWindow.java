@@ -23,7 +23,7 @@ import graph.GraphInstance;
 import graph.Compartment.Compartment;
 import graph.jung.classes.MyVisualizationViewer;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import net.miginfocom.swing.MigLayout;
 import util.MyColorChooser;
 
@@ -139,14 +139,14 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 						pw.getCompartmentManager().add(new Compartment(cName, color.getBackground()));
 						this.revalidateView();
 					} else {
-						MyPopUp.getInstance().show("Error", "Name of new compartment is already in use!");
+						PopUpDialog.getInstance().show("Error", "Name of new compartment is already in use!");
 					}
 				} else {
-					MyPopUp.getInstance().show("Error",
-							"Name of new compartment may only contain the following characters:\r\n [a-z], [A-Z], [0-9], [-], and must start with a letter or the dash symbol!");
+					PopUpDialog.getInstance().show("Error",
+                                                   "Name of new compartment may only contain the following characters:\r\n [a-z], [A-Z], [0-9], [-], and must start with a letter or the dash symbol!");
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "Name of new compartment must not be empty!");
+				PopUpDialog.getInstance().show("Error", "Name of new compartment must not be empty!");
 			}
 
 		} else if (command.equals("color")) {

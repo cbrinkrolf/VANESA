@@ -20,15 +20,9 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 
 public class CloseButton extends JButton implements ActionListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private MainWindow w = MainWindow.getInstance();
+	private final MainWindow w = MainWindow.getInstance();
 
 	public CloseButton() {
-
 		int size = 17;
 		setPreferredSize(new Dimension(size, size));
 		setToolTipText("close this tab");
@@ -36,13 +30,12 @@ public class CloseButton extends JButton implements ActionListener {
 		setUI(new BasicButtonUI());
 		// Make it transparent
 		setContentAreaFilled(false);
-		// No need to be focusable
 		setFocusable(false);
 		setBorder(BorderFactory.createEtchedBorder());
 		setBorderPainted(false);
-		// Making nice rollover effect
 		// we use the same listener for all buttons
 		addMouseListener(buttonMouseListener);
+		// Making nice rollover effect
 		setRolloverEnabled(true);
 		// Close the proper tab by clicking the button
 		addActionListener(this);
@@ -53,7 +46,6 @@ public class CloseButton extends JButton implements ActionListener {
 	public void updateUI() {
 	}
 
-	// paint the cross
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -68,10 +60,8 @@ public class CloseButton extends JButton implements ActionListener {
 			g2.setColor(Color.YELLOW);
 		}
 		int delta = 6;
-		g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta
-				- 1);
-		g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta
-				- 1);
+		g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
+		g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
 		g2.dispose();
 	}
 
@@ -96,9 +86,7 @@ public class CloseButton extends JButton implements ActionListener {
 	};
 
 	public void actionPerformed(ActionEvent e) {
-
-		TitledTab tab = (TitledTab) this.getParent().getParent().getParent()
-				.getParent().getParent();
+		TitledTab tab = (TitledTab) this.getParent().getParent().getParent().getParent().getParent();
 		w.removeTab(tab.getIndex());
 	}
 }

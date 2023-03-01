@@ -9,7 +9,7 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import net.miginfocom.swing.MigLayout;
 import util.KineticBuilder;
 
@@ -195,10 +195,10 @@ public class ParameterWindow implements DocumentListener {
                         add.setText("add");
                         repaintPanel();
                     } catch (NumberFormatException nfe) {
-                        MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+                        PopUpDialog.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
                     }
                 } else {
-                    MyPopUp.getInstance().show("Parameter", "Parameter with same name already exists! Use edit button to edit parameter");
+                    PopUpDialog.getInstance().show("Parameter", "Parameter with same name already exists! Use edit button to edit parameter");
                 }
                 return;
             }
@@ -214,10 +214,10 @@ public class ParameterWindow implements DocumentListener {
                 panel.add(new JLabel(unit.getText()), "span 1, gapright 4, wrap");
                 repaintPanel();
             } catch (NumberFormatException nfx) {
-                MyPopUp.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+                PopUpDialog.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
             }
         } else {
-            MyPopUp.getInstance().show("Parameter", "Name is empty!");
+            PopUpDialog.getInstance().show("Parameter", "Name is empty!");
         }
     }
 

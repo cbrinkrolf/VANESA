@@ -11,7 +11,7 @@ import biologicalObjects.nodes.DNA;
 import biologicalObjects.nodes.MIRNA;
 import com.fasterxml.jackson.core.type.TypeReference;
 import graph.layouts.Circle;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;
@@ -136,7 +136,7 @@ public class MirnaSearch {
         }
         pw.getGraph().updateGraph();
         pw.getGraph().updateLayout();
-        MyPopUp.getInstance().show("Target Gene Enrichment",
+        PopUpDialog.getInstance().show("Target Gene Enrichment",
                 counterNodes + " nodes and " + counterEdges + " edges have been added!");
     }
 
@@ -188,7 +188,7 @@ public class MirnaSearch {
         }
         pw.getGraph().updateGraph();
         pw.getGraph().updateLayout();
-        MyPopUp.getInstance().show("Source Gene Enrichment",
+        PopUpDialog.getInstance().show("Source Gene Enrichment",
                 counterNodes + " nodes and " + counterEdges + " edges have been added!");
     }
 
@@ -235,7 +235,7 @@ public class MirnaSearch {
         }
         pw.getGraph().updateGraph();
         pw.getGraph().updateLayout();
-        MyPopUp.getInstance().show("miRNA Source Enrichment",
+        PopUpDialog.getInstance().show("miRNA Source Enrichment",
                 counterNodes + " nodes and " + counterEdges + " edges have been added!");
     }
 
@@ -282,7 +282,7 @@ public class MirnaSearch {
         }
         pw.getGraph().updateGraph();
         pw.getGraph().updateLayout();
-        MyPopUp.getInstance().show("miRNA Target Enrichment",
+        PopUpDialog.getInstance().show("miRNA Target Enrichment",
                 counterNodes + " nodes and " + counterEdges + " edges have been added!");
     }
 }

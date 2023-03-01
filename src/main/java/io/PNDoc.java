@@ -15,7 +15,7 @@ import prettyFormula.FormulaParser;
 import graph.GraphContainer;
 import graph.gui.Parameter;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 
 public class PNDoc {
     public PNDoc(String file) {
@@ -135,9 +135,9 @@ public class PNDoc {
     private void writeFile(StringBuilder sb, String file) {
         try (PrintWriter out = new PrintWriter(file)) {
             out.println(sb.toString());
-            //MyPopUp.getInstance().show("Latex export successful!", "Latex file was written to:\n"+file);
+            //PopUpDialog.getInstance().show("Latex export successful!", "Latex file was written to:\n"+file);
         } catch (FileNotFoundException e) {
-            MyPopUp.getInstance().show("Latex export error!", "Something went wrong!");
+            PopUpDialog.getInstance().show("Latex export error!", "Something went wrong!");
             e.printStackTrace();
         }
     }

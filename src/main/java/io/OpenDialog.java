@@ -16,7 +16,7 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import io.graphML.GraphMLReader;
 import io.sbml.JSBMLInput;
 import io.vaml.VAMLInput;
@@ -52,7 +52,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
                 try {
                     new VAMLInput(file);
                 } catch (IOException e) {
-                    MyPopUp.getInstance().show("VAML read error.", "Failed to load VAML file.");
+                    PopUpDialog.getInstance().show("VAML read error.", "Failed to load VAML file.");
                     e.printStackTrace();
                 }
             } else if (fileFilter == SuffixAwareFilter.SBML) {
@@ -61,34 +61,34 @@ public class OpenDialog extends SwingWorker<Object, Object> {
                 try {
                     result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
                     if (result.length() > 0) {
-                        MyPopUp.getInstance().show("Information", result);
+                        PopUpDialog.getInstance().show("Information", result);
                     }
                 } catch (FileNotFoundException e) {
                     try {
                         file = new File(file.getAbsolutePath() + ".sbml");
                         result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
                         if (result.length() > 0) {
-                            MyPopUp.getInstance().show("Information", result);
+                            PopUpDialog.getInstance().show("Information", result);
                         }
                     } catch (FileNotFoundException ex) {
                         ex.printStackTrace();
                     }
                 } catch (Exception e) {
-                    MyPopUp.getInstance().show("Error!", e.getMessage());
+                    PopUpDialog.getInstance().show("Error!", e.getMessage());
                     e.printStackTrace();
                 }
             } else if (fileFilter == SuffixAwareFilter.GRAPH_TEXT_FILE) {
                 try {
                     new TxtInput(new FileInputStream(file), file);
                 } catch (Exception e) {
-                    MyPopUp.getInstance().show("Error!", e.getMessage());
+                    PopUpDialog.getInstance().show("Error!", e.getMessage());
                     e.printStackTrace();
                 }
             } else if (fileFilter == SuffixAwareFilter.GRAPH_ML) {
                 final GraphMLReader reader = new GraphMLReader(file);
                 final Pathway pw = reader.read();
                 if (reader.hasErrors() || pw == null) {
-                    MyPopUp.getInstance().show("Error!", "Failed to load GraphML file.");
+                    PopUpDialog.getInstance().show("Error!", "Failed to load GraphML file.");
                 } else {
                     pw.setFile(file);
                 }

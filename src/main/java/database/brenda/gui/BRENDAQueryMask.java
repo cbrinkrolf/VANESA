@@ -5,7 +5,7 @@ import database.brenda.BRENDASearch;
 import database.brenda.BrendaConnector;
 import database.gui.QueryMask;
 import gui.MainWindow;
-import gui.eventhandlers.TextfeldColorChanger;
+import gui.eventhandlers.TextFieldColorChanger;
 
 import javax.swing.*;
 
@@ -18,22 +18,22 @@ public class BRENDAQueryMask extends QueryMask {
 
     public BRENDAQueryMask() {
         ecNumber = new JTextField(20);
-        ecNumber.addFocusListener(new TextfeldColorChanger());
+        ecNumber.addFocusListener(new TextFieldColorChanger());
 
         name = new JTextField(20);
         name.setText("mutase");
-        name.addFocusListener(new TextfeldColorChanger());
+        name.addFocusListener(new TextFieldColorChanger());
 
         synonym = new JTextField(20);
-        synonym.addFocusListener(new TextfeldColorChanger());
+        synonym.addFocusListener(new TextFieldColorChanger());
 
         metabolite = new JTextField(20);
         metabolite.setText("glycerat");
-        metabolite.addFocusListener(new TextfeldColorChanger());
+        metabolite.addFocusListener(new TextFieldColorChanger());
 
         organism = new JTextField(20);
         organism.setText("bacillus");
-        organism.addFocusListener(new TextfeldColorChanger());
+        organism.addFocusListener(new TextFieldColorChanger());
 
         panel.add(new JLabel("BRENDA Search Window"), "span 4");
         panel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");

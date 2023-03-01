@@ -3,7 +3,7 @@ package database.ppi.gui;
 import database.gui.QueryMask;
 import database.ppi.PPISearch;
 import gui.MainWindow;
-import gui.eventhandlers.TextfeldColorChanger;
+import gui.eventhandlers.TextFieldColorChanger;
 
 import javax.swing.*;
 
@@ -22,15 +22,15 @@ public class PPIQueryMask extends QueryMask {
         choosePPIDatabase.setSelectedItem(DB_NAMES[0]);
         fullName = new JTextField(20);
         fullName.setText("");
-        fullName.addFocusListener(new TextfeldColorChanger());
+        fullName.addFocusListener(new TextFieldColorChanger());
 
         alias = new JTextField(20);
         alias.setText("HMG");
-        alias.addFocusListener(new TextfeldColorChanger());
+        alias.addFocusListener(new TextFieldColorChanger());
 
         acNumber = new JTextField(20);
         acNumber.setText("");
-        acNumber.addFocusListener(new TextfeldColorChanger());
+        acNumber.addFocusListener(new TextFieldColorChanger());
 
         panel.add(new JLabel("PPI Search Window"), "span 4");
         panel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");

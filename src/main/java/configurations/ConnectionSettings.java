@@ -6,7 +6,7 @@ import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
 
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import util.VanesaUtility;
 
 public class ConnectionSettings {
@@ -144,7 +144,7 @@ public class ConnectionSettings {
             File f = new File(settingsFilePath);
             if (!f.exists()) {
                 System.out.println("There is probably no " + settingsFilePath + " yet.");
-                MyPopUp.getInstance().show("Error configuration file",
+                PopUpDialog.getInstance().show("Error configuration file",
                         "Configuration file " + settingsFilePath + " is not valid and got deleted.");
                 try {
                     xmlConfiguration = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
@@ -153,7 +153,7 @@ public class ConnectionSettings {
                 } catch (ConfigurationException e) {
                     f.delete();
                     System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
-                    MyPopUp.getInstance().show("Error configuration file",
+                    PopUpDialog.getInstance().show("Error configuration file",
                             "Configuration file " + settingsFilePath + " is not valid and got deleted.");
                     e.printStackTrace();
                 }
@@ -163,7 +163,7 @@ public class ConnectionSettings {
                 } catch (ConfigurationException e) {
                     f.delete();
                     System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
-                    MyPopUp.getInstance().show("Error configuration file",
+                    PopUpDialog.getInstance().show("Error configuration file",
                             "Configuration file " + settingsFilePath + " is not valid and got deleted.");
                     e.printStackTrace();
                 }

@@ -2,7 +2,8 @@ package database.kegg.gui;
 
 import database.gui.QueryMask;
 import gui.MainWindow;
-import gui.eventhandlers.TextfeldColorChanger;
+import gui.eventhandlers.TextFieldColorChanger;
+import gui.ImagePath;
 
 import javax.swing.*;
 
@@ -16,22 +17,22 @@ public class KEGGQueryMask extends QueryMask {
     public KEGGQueryMask() {
         pathway = new JTextField(20);
         pathway.setText("Cell Cycle");
-        pathway.addFocusListener(new TextfeldColorChanger());
+        pathway.addFocusListener(new TextFieldColorChanger());
 
         organism = new JTextField(20);
         organism.setText("homo sapiens");
-        organism.addFocusListener(new TextfeldColorChanger());
+        organism.addFocusListener(new TextFieldColorChanger());
 
         enzyme = new JTextField(20);
-        enzyme.addFocusListener(new TextfeldColorChanger());
+        enzyme.addFocusListener(new TextFieldColorChanger());
 
         gene = new JTextField(20);
-        gene.addFocusListener(new TextfeldColorChanger());
+        gene.addFocusListener(new TextFieldColorChanger());
 
         compound = new JTextField(20);
-        compound.addFocusListener(new TextfeldColorChanger());
+        compound.addFocusListener(new TextFieldColorChanger());
 
-        JButton info = new JButton(new ImageIcon(imagePath.getPath("infoButton.png")));
+        JButton info = new JButton(ImagePath.getInstance().getImageIcon("infoButton.png"));
         info.addActionListener(e -> showInfoWindow());
         info.setBorderPainted(false);
 

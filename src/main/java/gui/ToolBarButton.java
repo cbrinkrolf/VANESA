@@ -1,93 +1,53 @@
 package gui;
 
-import java.awt.Color;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
+public class ToolBarButton extends JButton implements MouseListener {
+    public ToolBarButton(Icon icon) {
+        super(icon);
+        setProperties();
+    }
 
-public class ToolBarButton extends JButton implements MouseListener{
+    public ToolBarButton(String txt) {
+        super(txt);
+        setProperties();
+    }
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private void setProperties() {
+        addMouseListener(this);
+        setBorder(new LineBorder(Color.black));
+        setBorderPainted(false);
+        setMaximumSize(this.getPreferredSize());
+        setBackground(Color.LIGHT_GRAY);
+        setContentAreaFilled(false);
+        revalidate();
+    }
 
-	//private Color hoverBackgroundColor = new Color(3, 59, 90).brighter();
-	//private Color pressedBackgroundColor = Color.PINK;
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
 
-	public ToolBarButton(Icon icon) {
-		super(icon);
-		setProperties();
-	}
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
 
-	public ToolBarButton(String txt) {
-		super(txt);
-		setProperties();
-	}
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
 
-	private void setProperties() {
-		this.addMouseListener(this);
-		Border thickBorder = new LineBorder(Color.black);
-		this.setBorder(thickBorder);
-		//this.setBorder(null);
-		this.setBorderPainted(false);
-		// this.setPreferredSize(this.getMinimumSize());
-		this.setMaximumSize(this.getPreferredSize());
-		// this.setSize(10, 10);
-		this.setBackground(Color.LIGHT_GRAY);
-		this.setContentAreaFilled(false);
-		
-		this.revalidate();
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        setContentAreaFilled(true);
+        setBorderPainted(true);
+    }
 
-		// this.setOpaque(true);
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		this.setContentAreaFilled(true);
-		this.setBorderPainted(true);
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		this.setContentAreaFilled(false);
-		this.setBorderPainted(false);
-	}
-
-	/*
-	 * @Override protected void paintComponent(Graphics g) { if
-	 * (getModel().isPressed()) { g.setColor(pressedBackgroundColor); } else if
-	 * (getModel().isRollover()) { g.setColor(hoverBackgroundColor); } else {
-	 * g.setColor(getBackground()); } g.fillRect(0, 0, getWidth(), getHeight());
-	 * super.paintComponent(g); }
-	 * 
-	 * @Override public void setContentAreaFilled(boolean b) { }
-	 * 
-	 * public Color getHoverBackgroundColor() { return hoverBackgroundColor; }
-	 * 
-	 * public void setHoverBackgroundColor(Color hoverBackgroundColor) {
-	 * this.hoverBackgroundColor = hoverBackgroundColor; }
-	 * 
-	 * public Color getPressedBackgroundColor() { return pressedBackgroundColor;
-	 * }
-	 * 
-	 * public void setPressedBackgroundColor(Color pressedBackgroundColor) {
-	 * this.pressedBackgroundColor = pressedBackgroundColor; }
-	 */
+    @Override
+    public void mouseExited(MouseEvent e) {
+        setContentAreaFilled(false);
+        setBorderPainted(false);
+    }
 }

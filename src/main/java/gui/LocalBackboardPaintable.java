@@ -18,8 +18,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphInstance;
 
 public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
-
-	private HashSet<BiologicalNodeAbstract> bnas;
+	private final HashSet<BiologicalNodeAbstract> bnas;
 	private Color bgcolor;
 	private int drawsize;
 	private String shape;
@@ -40,8 +39,8 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 	 *            - rect, oval, roundrect, fadeoval (oval with fade to
 	 *            transparent)
 	 */
-	public LocalBackboardPaintable(HashSet<BiologicalNodeAbstract> bnas,
-			Color bgcolor, int drawsize, String shape, String name) {
+	public LocalBackboardPaintable(HashSet<BiologicalNodeAbstract> bnas, Color bgcolor, int drawsize, String shape,
+								   String name) {
 		this.bnas = bnas;
 		this.bgcolor = bgcolor;
 		this.drawsize = drawsize;
@@ -52,10 +51,8 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 	@Override
 	public void paint(Graphics g) {
 		if (active) {
-
 			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance
 					.getMyGraph().getVisualizationViewer();
-						
 			Graphics2D g2d = (Graphics2D) g;
 			AffineTransform oldXform = g2d.getTransform();
 			AffineTransform lat = vv.getRenderContext()
@@ -69,51 +66,34 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 			at.concatenate(vat);
 			at.concatenate(lat);
 			g2d.setTransform(at);
-
 			g2d.setColor(bgcolor);
 			for (BiologicalNodeAbstract bna : bnas) {
 				vv.getModel().getGraphLayout().getSize();
 				Point2D p = GraphInstance.getMyGraph().getVertexLocation(bna);
-				double px, py;
-
-				px = p.getX();
-				py = p.getY();
-
+				double px = p.getX();
+				double py = p.getY();
+				int drawSizeHalf = drawsize / 2;
 				switch (shape) {
-				case "rect":
-					g2d.fill(new Rectangle2D.Double(px - (drawsize / 2), py
-							- (drawsize / 2), drawsize, drawsize));
-					break;
-				case "roundrect":
-					g2d.fill(new RoundRectangle2D.Double(px - (drawsize / 2),
-							py - (drawsize / 2), drawsize, drawsize, 10.0d,
-							10.0d));
-					break;
-				case "oval":
-					g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
-							- (drawsize / 2), drawsize, drawsize));
-					break;
-				case "fadeoval":
-					float[] fracs = { 0.0f, 1.0f };
-					Color[] colors = {
-							bgcolor,
-							new Color(bgcolor.getRed(), bgcolor.getGreen(),
-									bgcolor.getBlue(), 0) };
-					RadialGradientPaint gp = new RadialGradientPaint(p,
-							drawsize / 2, fracs, colors);
-					g2d.setPaint(gp);
-					g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
-							- (drawsize / 2), drawsize, drawsize));
-					break;
-				default:
-					System.out.println(this.getClass().toString()
-							+ ": shape not found, using OVAL.");
-					g2d.fill(new Ellipse2D.Double(px - (drawsize / 2), py
-							- (drawsize / 2), drawsize, drawsize));
-					break;
+					case "rect":
+						g2d.fill(new Rectangle2D.Double(px - drawSizeHalf, py - drawSizeHalf, drawsize, drawsize));
+						break;
+					case "roundrect":
+						g2d.fill(new RoundRectangle2D.Double(px - drawSizeHalf, py - drawSizeHalf, drawsize, drawsize,
+															 10.0d, 10.0d));
+						break;
+					case "fadeoval":
+						float[] fracs = { 0.0f, 1.0f };
+						Color[] colors = { bgcolor, new Color(bgcolor.getRed(), bgcolor.getGreen(), bgcolor.getBlue(), 0) };
+						RadialGradientPaint gp = new RadialGradientPaint(p, drawSizeHalf, fracs, colors);
+						g2d.setPaint(gp);
+						g2d.fill(new Ellipse2D.Double(px - drawSizeHalf, py - drawSizeHalf, drawsize, drawsize));
+						break;
+					case "oval":
+					default:
+						g2d.fill(new Ellipse2D.Double(px - drawSizeHalf, py - drawSizeHalf, drawsize, drawsize));
+						break;
 				}
 			}
-
 			g2d.setTransform(oldXform);
 		}
 	}
@@ -141,7 +121,6 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 	public void setShape(String shape) {
 		this.shape = shape;
 	}
-	
 
 	public boolean isActive() {
 		return active;
@@ -162,5 +141,4 @@ public class LocalBackboardPaintable implements VisualizationViewer.Paintable {
 	public void setName(String name){
 		this.name = name;
 	}
-
 }

@@ -67,7 +67,7 @@ public class CreatePathway {
 		}
 		String newPathwayName = con.addPathway(pathwayName, new Pathway(pathwayName));
 		pw = con.getPathway(newPathwayName);
-		w.addTab(pw.getTab().getTitelTab());
+		w.addTab(pw.getTab().getTitleTab());
 		w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
@@ -83,12 +83,12 @@ public class CreatePathway {
 		GraphContainer con = GraphContainer.getInstance();
 		MainWindow w = MainWindow.getInstance();
 		if(con.getAllPathways().contains(pw)){
-			w.setSelectedTab(pw.getTab().getTitelTab());
+			w.setSelectedTab(pw.getTab().getTitleTab());
 			return;
 		}
 		String newPathwayName = con.addPathway(pw.getName(), pw);
 		pw = con.getPathway(newPathwayName);
-		w.addTab(pw.getTab().getTitelTab());
+		w.addTab(pw.getTab().getTitleTab());
 		w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		//pw.updateMyGraph();
 	}

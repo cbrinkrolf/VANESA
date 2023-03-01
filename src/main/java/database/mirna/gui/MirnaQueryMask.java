@@ -13,8 +13,8 @@ import graph.CreatePathway;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MyPopUp;
-import gui.eventhandlers.TextfeldColorChanger;
+import gui.PopUpDialog;
+import gui.eventhandlers.TextFieldColorChanger;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -33,16 +33,16 @@ public class MirnaQueryMask extends QueryMask {
     public MirnaQueryMask() {
         name = new JTextField(20);
         name.setText("hsa-miR-15a");
-        name.addFocusListener(new TextfeldColorChanger());
+        name.addFocusListener(new TextFieldColorChanger());
         gene = new JTextField(20);
         gene.setText("");
-        gene.addFocusListener(new TextfeldColorChanger());
+        gene.addFocusListener(new TextFieldColorChanger());
         accession = new JTextField(20);
         accession.setText("");
-        accession.addFocusListener(new TextfeldColorChanger());
+        accession.addFocusListener(new TextFieldColorChanger());
         sequences = new JTextField(20);
         sequences.setText("");
-        sequences.addFocusListener(new TextfeldColorChanger());
+        sequences.addFocusListener(new TextFieldColorChanger());
         hsaOnly = new JCheckBox("human only");
         hsaOnly.setSelected(true);
         ButtonGroup typeGroup = new ButtonGroup();
@@ -186,7 +186,7 @@ public class MirnaQueryMask extends QueryMask {
     }
 
     private void showNoEntriesPopUp() {
-        MyPopUp.getInstance().show("miRNA Search", "No entries have been found!");
+        PopUpDialog.getInstance().show("miRNA Search", "No entries have been found!");
     }
 
     private void handleTargetGeneSearchResults(TargetGeneSearchResponsePayload payload) {
@@ -276,7 +276,7 @@ public class MirnaQueryMask extends QueryMask {
     private void enrichGenes() {
         Pathway pw = new GraphInstance().getPathway();
         if (pw == null) {
-            MyPopUp.getInstance().show("Error", "Please create a network first!");
+            PopUpDialog.getInstance().show("Error", "Please create a network first!");
             return;
         }
         MirnaSearch.enrichGenes(pw, isSourcesSelected(), isTargetsSelected(), isHsaOnly());
@@ -285,7 +285,7 @@ public class MirnaQueryMask extends QueryMask {
     private void enrichMirnas() {
         Pathway pw = new GraphInstance().getPathway();
         if (pw == null) {
-            MyPopUp.getInstance().show("Error", "Please create a network first!");
+            PopUpDialog.getInstance().show("Error", "Please create a network first!");
             return;
         }
         MirnaSearch.enrichMirnas(pw, isSourcesSelected(), isTargetsSelected(), isHsaOnly());

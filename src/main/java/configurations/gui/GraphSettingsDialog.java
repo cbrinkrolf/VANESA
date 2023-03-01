@@ -11,7 +11,7 @@ import configurations.NetworkSettings;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -218,7 +218,7 @@ public class GraphSettingsDialog {
 			settings.setBackgroundColor(false);
 			yes.setSelected(true);
 		} else {
-			MyPopUp.getInstance().show("Error", "Please create a network before.");
+			PopUpDialog.getInstance().show("Error", "Please create a network before.");
 			return false;
 		}
 		return true;
@@ -261,7 +261,7 @@ public class GraphSettingsDialog {
 			settings.setEdgeOpacity(opacityslider.getValue());
 			con.getPathway(w.getCurrentPathway()).getGraph().getEdgeDrawPaintFunction().updateEdgeAlphaValue();
 		} else {
-			MyPopUp.getInstance().show("Error", "Please create a network before.");
+			PopUpDialog.getInstance().show("Error", "Please create a network before.");
 			return false;
 		}
 		return true;

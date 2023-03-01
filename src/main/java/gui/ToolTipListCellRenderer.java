@@ -7,7 +7,6 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 public class ToolTipListCellRenderer extends DefaultListCellRenderer {
-    private static final long serialVersionUID = 1L;
     private final Map<String, String> map;
 
     public ToolTipListCellRenderer(Map<String, String> map) {
