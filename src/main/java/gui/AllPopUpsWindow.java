@@ -7,8 +7,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class AllPopUpsWindow extends JFrame {
-    private static final long serialVersionUID = 1L;
-
     public AllPopUpsWindow() {
         setTitle("Overview of all PopUp messages");
         JTextArea textArea = new JTextArea(20, 80);

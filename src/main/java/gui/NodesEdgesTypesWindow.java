@@ -28,28 +28,28 @@ public class NodesEdgesTypesWindow {
         instructions.append("<html>");
         instructions.append(
                 "<table rules=\"rows\" style=\"border-collapse:separate; border-spacing:0; width:100%; border-top:1px solid #eaeaea;\">");
-        instructions.append(writeLine("", "all = ", "true +", "logical")).append(
-                writeLine("Number of nodes:", nodes + "", nodes - logicalNodes + "", logicalNodes + "")
-                // + writeLine("Number of (true) nodes:", nodes - logicalNodes + "")
-                // + writeLine("Number of logical nodes:", logicalNodes + "")
-        ).append(writeLine("Number of edges:", edges + "")).append(writeLine("<hr>Nodes", ""));
+        writeLine(instructions, "", "all = ", "true +", "logical");
+        writeLine(instructions, "Number of nodes:", nodes + "", nodes - logicalNodes + "", logicalNodes + "");
+        // writeLine(instructions, "Number of (true) nodes:", nodes - logicalNodes + "");
+        // writeLine(instructions, "Number of logical nodes:", logicalNodes + "");
+        writeLine(instructions, "Number of edges:", edges + "");
+        writeLine(instructions, "<hr>Nodes", "");
 
         Map<String, Integer> nodesMap = getNodeTypes();
         Map<String, Integer> nodesMapLogical = getNodeTypesLogical();
 
         for (String type : nodesMap.keySet()) {
             if (nodesMapLogical.containsKey(type)) {
-                instructions.append(writeLine(type + ": ", nodesMap.get(type) + "",
-                                              nodesMap.get(type) - nodesMapLogical.get(type) + "",
-                                              nodesMapLogical.get(type) + ""));
+                writeLine(instructions, type + ": ", nodesMap.get(type) + "",
+                          nodesMap.get(type) - nodesMapLogical.get(type) + "", nodesMapLogical.get(type) + "");
             } else {
-                instructions.append(writeLine(type + ": ", nodesMap.get(type) + ""));
+                writeLine(instructions, type + ": ", nodesMap.get(type) + "");
             }
         }
         Map<String, Integer> edgesMap = getEdgeTypes();
-        instructions.append(writeLine("<hr>Edges", ""));
+        writeLine(instructions, "<hr>Edges", "");
         for (String type : edgesMap.keySet()) {
-            instructions.append(writeLine(type + ": ", edgesMap.get(type) + ""));
+            writeLine(instructions, type + ": ", edgesMap.get(type) + "");
         }
         instructions.append("</table>").append("</html>");
         JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), instructions.toString(),
@@ -97,15 +97,18 @@ public class NodesEdgesTypesWindow {
         return map;
     }
 
-    private String writeLine(String description, String attribute1, String attribute2, String attribute3) {
-
-        return "<tr>" + "<th style=\"text-align: left;color:#666;text-transform:uppercase;\" scope=\"col\">" +
-               description + "</th>" + "<td style=\"padding:5px;color:#888;\">" + attribute1 + "</td>" +
-               "<td style=\"padding:5px;color:#888;\">" + attribute2 + "</td>" +
-               "<td style=\"padding:5px;color:#888;\">" + attribute3 + "</td></tr>";
+    private void writeLine(StringBuilder sb, String description, String attribute1) {
+        writeLine(sb, description, attribute1, "", "");
     }
 
-    private String writeLine(String description, String attribute1) {
-        return this.writeLine(description, attribute1, "", "");
+    private void writeLine(StringBuilder sb, String description, String attribute1, String attribute2,
+                           String attribute3) {
+        sb.append("<tr>");
+        sb.append("<th style=\"text-align: left;color:#666;text-transform:uppercase;\" scope=\"col\">");
+        sb.append(description).append("</th>");
+        sb.append("<td style=\"padding:5px;color:#888;\">").append(attribute1).append("</td>");
+        sb.append("<td style=\"padding:5px;color:#888;\">").append(attribute2).append("</td>");
+        sb.append("<td style=\"padding:5px;color:#888;\">").append(attribute3).append("</td>");
+        sb.append("</tr>");
     }
 }

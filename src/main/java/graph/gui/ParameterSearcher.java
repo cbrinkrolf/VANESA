@@ -38,7 +38,6 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
     private final JButton btnUpdateValues;
 
-    private boolean ok = false;
     private final JPanel mainPanel;
     private final JPanel valuesPanel;
     private final JPanel statisticPanel;
@@ -60,6 +59,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
     private Parameter currentParameter = null;
     private final JLabel lblCurrentParameter = new JLabel();
     private final BiologicalNodeAbstract bna;
+    private final Runnable onApplyCallback;
 
     private final JButton number = new JButton();
     private final JButton min = new JButton();
@@ -72,9 +72,10 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
     private final RangeSlider slider = new RangeSlider();
 
-    public ParameterSearcher(BiologicalNodeAbstract bna, boolean initialSearch) {
+    public ParameterSearcher(BiologicalNodeAbstract bna, boolean initialSearch, Runnable onApplyCallback) {
         super("Brenda 2 Parameter");
         this.bna = bna;
+        this.onApplyCallback = onApplyCallback;
         JButton btnUpdateEnzyme = new JButton("Update enzymes");
         btnUpdateEnzyme.addActionListener(e -> onUpdateEnzymesClicked());
 
@@ -412,8 +413,8 @@ public class ParameterSearcher extends JFrame implements ActionListener {
         if (enzymeTable.getSelectedRows().length == 0) {
             // JOptionPane.showMessageDialog(this, "Please choose an enzyme.", "Message", 1);
         } else {
-            ok = true;
             setVisible(false);
+            onApplyCallback.run();
         }
     }
 

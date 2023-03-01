@@ -205,7 +205,7 @@ public class ParameterWindow implements DocumentListener {
     private void onSetValuesClicked() {
         if (gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract ||
             gea instanceof ContinuousTransition) {
-            new ParameterSearcher((BiologicalNodeAbstract) gea, true);
+            new ParameterSearcher((BiologicalNodeAbstract) gea, true, this::repaintPanel);
         }
     }
 

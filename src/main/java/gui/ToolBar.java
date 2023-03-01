@@ -45,8 +45,8 @@ public class ToolBar {
         bar.setFloatable(true);
         MigLayout bl = new MigLayout("insets 0, wrap 1");
         bar.setLayout(bl);
-        String modelingViewString = "<html>" + "<b>Change View</b> <br>" + "to Modeling" + "</html>";
-        // String PetriViewString = "<html>" + "<b>Change View</b><br>" + "to PetriNet" + "</html>";
+        String modelingViewString = "<html><b>Change View</b><br>to Modeling</html>";
+        // String PetriViewString = "<html><b>Change View</b><br>to PetriNet</html>";
 
         JButton newDoc = createToolBarButton("newDocumentSmall.png", "Create New Network", this::onNewNetworkClicked);
         JButton parallelView = createToolBarButton("parallelview.png", "Create ParallelView From Graphs",
@@ -584,7 +584,6 @@ public class ToolBar {
                     continue;
                 }
                 w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                // Pathway newPW = null;
                 for (BiologicalNodeAbstract n : node.getVertices().keySet()) {
                     node.getVertices().put(n, GraphInstance.getPathwayStatic().getVertices().get(n));
                 }

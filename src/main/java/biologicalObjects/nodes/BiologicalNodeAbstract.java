@@ -90,8 +90,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	public void delete() {
 		if (isCoarseNode()) {
-			Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
-			nodes.addAll(getVertices().keySet());
+			Set<BiologicalNodeAbstract> nodes = new HashSet<>(getVertices().keySet());
 			for (BiologicalNodeAbstract n : nodes) {
 				n.delete();
 			}
@@ -100,8 +99,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			for (BiologicalNodeAbstract parent : getAllParentNodes()) {
 				parent.getVertices().remove(this);
 			}
-			Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
-			conEdges.addAll(getConnectingEdges());
+			Set<BiologicalEdgeAbstract> conEdges = new HashSet<>(getConnectingEdges());
 			for (BiologicalEdgeAbstract e : conEdges) {
 				e.getFrom().removeConnectingEdge(e);
 				e.getTo().removeConnectingEdge(e);
@@ -349,11 +347,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private static boolean hasValidBorder(boolean isPetriNet, Set<BiologicalNodeAbstract> vertices) {
 		if (!isPetriNet)
 			return true;
-		Set<BiologicalNodeAbstract> leafVertices = new HashSet<BiologicalNodeAbstract>();
+		Set<BiologicalNodeAbstract> leafVertices = new HashSet<>();
 		for (BiologicalNodeAbstract v : vertices) {
 			leafVertices.addAll(v.getLeafNodes());
 		}
-		Set<BiologicalNodeAbstract> borderNodes = new HashSet<BiologicalNodeAbstract>();
+		Set<BiologicalNodeAbstract> borderNodes = new HashSet<>();
 		for (BiologicalNodeAbstract v : leafVertices) {
 			for (BiologicalEdgeAbstract e : v.getConnectingEdges()) {
 				if (!leafVertices.contains(e.getTo()) || !leafVertices.contains(e.getFrom())) {

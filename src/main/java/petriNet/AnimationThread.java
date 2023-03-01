@@ -1,8 +1,5 @@
 package petriNet;
 
-//import edu.uci.ics.jung.graph.Vertex;
-//import edu.uci.ics.jung.graph.decorators.ConstantVertexAspectRatioFunction;
-//import edu.uci.ics.jung.utils.UserData;
 import java.util.Vector;
 
 import javax.swing.JButton;
