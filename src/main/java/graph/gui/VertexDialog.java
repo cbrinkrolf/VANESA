@@ -3,7 +3,7 @@ package graph.gui;
 import biologicalElements.EnzymeNames;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
-import graph.Compartment.Compartment;
+import graph.compartment.Compartment;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;

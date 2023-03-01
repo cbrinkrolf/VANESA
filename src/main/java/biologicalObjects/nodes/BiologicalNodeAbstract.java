@@ -1505,9 +1505,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	public Group getbiggestGroup() {
 		Group bigG = null;
 		for (Group g : groups) {
-			if (bigG == null) {
-				bigG = g;
-			} else if (g.nodes.size() > bigG.nodes.size()) {
+			if (bigG == null || g.size() > bigG.size()) {
 				bigG = g;
 			}
 		}
@@ -1516,7 +1514,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	// defines parameters which are available in during transformation
 	public List<String> getTransformationParameters() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("name");
 		list.add("label");
 		list.add("concentrationStart");

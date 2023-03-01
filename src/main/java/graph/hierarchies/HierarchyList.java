@@ -27,12 +27,10 @@ import graph.GraphInstance;
  * operations.
  */
 public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
-	
-	private static final long serialVersionUID = 1392848302093883L;
 	/**
 	 * Next hierarchy level (children nodes of this HierarchyList).
 	 */
-	HashMap<E, HierarchyList<E>> hierarchyGroups = new HashMap<E, HierarchyList<E>>();
+	HashMap<E, HierarchyList<E>> hierarchyGroups = new HashMap<>();
 	
 	/**
 	 * Root node of this hierarchical level.
@@ -119,15 +117,13 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 
 	@Override
 	public boolean remove(Object arg0) {
-		boolean ret = false;
-		ret = super.remove(arg0) ? true : ret;
-		ret = hierarchyGroups.remove(arg0)!=null ? true : ret;
-		if(hierarchyGroups.values().contains(arg0)){
-			List<E> keySet = new ArrayList<E>();
-			keySet.addAll(hierarchyGroups.keySet());
+		boolean ret = super.remove(arg0);
+		ret = hierarchyGroups.remove(arg0) != null || ret;
+		if(hierarchyGroups.containsValue(arg0)){
+			List<E> keySet = new ArrayList<>(hierarchyGroups.keySet());
 			for(E val : keySet){
 				if(hierarchyGroups.get(val).contains(arg0)){
-					ret = hierarchyGroups.remove(val)!=null ? true : ret;
+					ret = hierarchyGroups.remove(val) != null || ret;
 				}
 			}
 		}
@@ -192,8 +188,7 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 		}
 		if(childNodes.size()>1 && !isInitialCall){
 			if(getNode()!=null){
-				BiologicalNodeAbstract coarseNode =  BiologicalNodeAbstract.coarse(childNodes, null, getNode().getLabel(), getNode(), false);
-				return coarseNode;
+				return BiologicalNodeAbstract.coarse(childNodes, null, getNode().getLabel(), getNode(), false);
 			}
 			return BiologicalNodeAbstract.coarse(childNodes, null, getValue().toString());
 		} else if(childNodes.size()==1){
@@ -220,18 +215,14 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 	
 	/**
 	 * Automatic sorting of all contained BNAs.
-	 * @param comp
 	 */
 	public void sort(HierarchyListComparator<? extends E> comp){
-		hierarchyGroups = new HashMap<E, HierarchyList<E>>();
-		HashMap<E, HierarchyList<E>> valueToList = new HashMap<E, HierarchyList<E>>();
-		List<HierarchyList<E>> assignedLists = new ArrayList<HierarchyList<E>>();
-		E value;
-		E subvalue;
-		
+		hierarchyGroups = new HashMap<>();
+		HashMap<E, HierarchyList<E>> valueToList = new HashMap<>();
+		List<HierarchyList<E>> assignedLists = new ArrayList<>();
 		for(BiologicalNodeAbstract n : this){
-			value = comp.getValue(n);
-			subvalue = comp.getSubValue(n);
+			E value = comp.getValue(n);
+			E subvalue = comp.getSubValue(n);
 			if(GraphInstance.getPathwayStatic().getRootNode() == n){
 				setNode(n);
 				this.value = subvalue;
@@ -239,23 +230,17 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 				continue;
 			}
 			if(!valueToList.containsKey(value)){
-				HierarchyList<E> l = new HierarchyList<E>(value);
+				HierarchyList<E> l = new HierarchyList<>(value);
 				valueToList.put(value, l);
 			}
 		}
-
-		value = null;
-		subvalue = null;
-		
-		List<BiologicalNodeAbstract> elements = new ArrayList<BiologicalNodeAbstract>();
-		elements.addAll(this);
-		
+		List<BiologicalNodeAbstract> elements = new ArrayList<>(this);
 		for(BiologicalNodeAbstract n : elements){
 			if(getNode()==n){
 				continue;
 			}
 			value = comp.getValue(n);
-			subvalue = comp.getSubValue(n);
+			E subvalue = comp.getSubValue(n);
 			if(valueToList.containsKey(subvalue)){
 				if(value!=null && !subvalue.equals(value)){
 					valueToList.get(subvalue).setNode(n);
@@ -270,33 +255,25 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 				valueToList.get(value).add(new HierarchyList<E>(n,subvalue));
 			}
 		}
-
 		for(HierarchyList<E> list : valueToList.values()){
 			if(!assignedLists.contains(list) && list != this)
 				add(list);
 		}
-		
 //		printSubLists(0);
 	}
 	
 	/**
-	 * Method to sort over multiple hierarchical levels without refering to 
-	 * other nodes.
-	 * IMPORTANT: For multilayer sort with other nodes as references
-	 * (e.g. in depth search), use default sort()-Method.
-	 * @param comp
+	 * Method to sort over multiple hierarchical levels without refering to other nodes.
+	 * IMPORTANT: For multilayer sort with other nodes as references (e.g. in depth search), use default sort()-Method.
 	 */
 	public void sort(HierarchyListComparator<? extends E> comp, HierarchyStructure<? extends E> struc){
-		hierarchyGroups = new HashMap<E, HierarchyList<E>>();
-		HashMap<E, HierarchyList<E>> valueToList = new HashMap<E, HierarchyList<E>>();
-		E value;
-		E subvalue;
-		HashSet<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
-		nodes.addAll(this);
+		hierarchyGroups = new HashMap<>();
+		HashMap<E, HierarchyList<E>> valueToList = new HashMap<>();
+		HashSet<BiologicalNodeAbstract> nodes = new HashSet<>(this);
 		for(BiologicalNodeAbstract n : nodes){
-			subvalue = comp.getSubValue(n);
-			value = comp.getValue(n);
-			HierarchyList<E> list = new HierarchyList<E>(n,subvalue);
+			E subvalue = comp.getSubValue(n);
+			E value = comp.getValue(n);
+			HierarchyList<E> list = new HierarchyList<>(n,subvalue);
 			valueToList.put(subvalue,list);
 			if(value == null){
 				add(list);
@@ -324,7 +301,6 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 	}
 	
 	public void printSubLists(int level){
-
 		if(getNode()!=null){
 			System.out.println(level + " " + value + " " + getNode().getLabel());
 		} else {
@@ -335,5 +311,4 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 				l.printSubLists(level+1);
 		}
 	}
-	
 }

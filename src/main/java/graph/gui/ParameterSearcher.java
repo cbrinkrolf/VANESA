@@ -200,7 +200,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
         mainPanel.add(new JLabel("Filter enzymes:"), "gaptop 2");
         mainPanel.add(enzymeFilter, "wrap");
-        mainPanel.add(new JSeparator(), "span, growx, gaptop 7 ");
+        mainPanel.add(new JSeparator(), "span, growx, gaptop 7");
 
         JButton cancel = new JButton("cancel");
         cancel.addActionListener(e -> onCancelClicked());
@@ -209,8 +209,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
         okButton.addActionListener(e -> onOkClicked());
 
         JOptionPane optionPane = new JOptionPane(mainPanel, JOptionPane.PLAIN_MESSAGE);
-        JButton[] b = {okButton, cancel};
-        optionPane.setOptions(b);
+        optionPane.setOptions(new JButton[] {okButton, cancel});
 
         setAlwaysOnTop(false);
         setContentPane(optionPane);
@@ -333,32 +332,27 @@ public class ParameterSearcher extends JFrame implements ActionListener {
             valueTable.setRowSelectionInterval(0, 0);
             number.setText("");
             number.setMinimumSize(new Dimension(60, number.getHeight()));
-            number.addActionListener(this);
-            number.setActionCommand("setValue");
+            number.addActionListener(e -> onSetValueClicked(number));
             number.setToolTipText("set");
 
             min.setText("");
             min.setMinimumSize(new Dimension(70, min.getHeight()));
-            min.addActionListener(this);
-            min.setActionCommand("setValue");
+            min.addActionListener(e -> onSetValueClicked(min));
             min.setToolTipText("set");
 
             max.setText("");
             max.setMinimumSize(new Dimension(70, max.getHeight()));
-            max.addActionListener(this);
-            max.setActionCommand("setValue");
+            max.addActionListener(e -> onSetValueClicked(max));
             max.setToolTipText("set");
 
             mean.setText("");
             mean.setMinimumSize(new Dimension(70, mean.getHeight()));
-            mean.addActionListener(this);
-            mean.setActionCommand("setValue");
+            mean.addActionListener(e -> onSetValueClicked(mean));
             mean.setToolTipText("set");
 
             median.setText("");
             median.setMinimumSize(new Dimension(70, median.getHeight()));
-            median.addActionListener(this);
-            median.setActionCommand("setValue");
+            median.addActionListener(e -> onSetValueClicked(median));
             median.setToolTipText("set");
 
             slider.setPreferredSize(new Dimension(500, slider.getPreferredSize().height));
@@ -443,44 +437,40 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         String event = e.getActionCommand();
-        if (event.startsWith("btn_")) {
-            JButton b = (JButton) e.getSource();
-            currentParameter = bna.getParameter(event.substring(4));
-            String parameter = b.getText().trim();
-            lblCurrentParameter.setText(parameter);
-            if (valueTable != null) {
-                valueTable.getSelectionModel().clearSelection();
+        if (!event.startsWith("btn_")) {
+            return;
+        }
+        JButton b = (JButton) e.getSource();
+        currentParameter = bna.getParameter(event.substring(4));
+        String parameter = b.getText().trim();
+        lblCurrentParameter.setText(parameter);
+        if (valueTable != null) {
+            valueTable.getSelectionModel().clearSelection();
+        }
+        if (parameter.equals("v_f") || parameter.equals("v_r")) {
+            turnoverRadio.setSelected(true);
+            metabolite.setText("");
+        } else {
+            if (!metabolite.getText().trim().equals(b.getText().trim())) {
+                metabolite.setText(b.getText());
             }
-            if (parameter.equals("v_f") || parameter.equals("v_r")) {
-                turnoverRadio.setSelected(true);
-                metabolite.setText("");
-            } else {
-                if (!metabolite.getText().trim().equals(b.getText().trim())) {
-                    metabolite.setText(b.getText());
-                }
-                kmRadio.setSelected(true);
+            kmRadio.setSelected(true);
+        }
+    }
+
+    private void onSetValueClicked(JButton button) {
+        if (currentParameter == null) {
+            PopUpDialog.getInstance().show("Missing Parameter", "Select a Parameter first!");
+            return;
+        }
+        String value = button.getText().trim();
+        if (value.length() > 0) {
+            try {
+                currentParameter.setValue(Double.parseDouble(value));
+                updateValuesPanel();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } else if (event.equals("setValue")) {
-            if (e.getSource() instanceof JButton) {
-                JButton button = (JButton) e.getSource();
-                if (currentParameter == null) {
-                    PopUpDialog.getInstance().show("Missing Parameter", "Select a Parameter first!");
-                    return;
-                }
-                if (button.getText().trim().length() > 0) {
-                    try {
-                        double d = Double.parseDouble(button.getText().trim());
-                        currentParameter.setValue(d);
-                        updateValuesPanel();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        } else if (event.equals("kmRadio")) {
-            btnUpdateValues.setText("Update km values");
-        } else if (event.equals("turnoverRadio")) {
-            btnUpdateValues.setText("Update kcat values");
         }
     }
 

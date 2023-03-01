@@ -1,19 +1,10 @@
 package configurations.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
-import javax.swing.WindowConstants;
-
 import gui.MainWindow;
-import gui.PopUpDialog;
 
-public class Settings extends JDialog implements ActionListener {
-    private static final long serialVersionUID = -4497946706066898835L;
+import javax.swing.*;
+
+public class Settings extends JDialog {
     private static final String INTERNET_LABEL = "Internet";
     private static final String GRAPH_SETTINGS_LABEL = "Graph Settings";
     private static final String VISUALIZATION_LABEL = "Visualization";
@@ -72,8 +63,8 @@ public class Settings extends JDialog implements ActionListener {
     }
 
     private void onAcceptClicked() {
-        String tab_name = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
-        switch (tab_name) {
+        String tabName = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
+        switch (tabName) {
             case INTERNET_LABEL:
                 setVisible(!internetSettings.applyNewSettings());
                 break;
@@ -89,20 +80,5 @@ public class Settings extends JDialog implements ActionListener {
 
     private void onCancelClicked() {
         setVisible(false);
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        if ("ok".equals(e.getActionCommand())) {
-            boolean applyAll = true;
-            if (!internetSettings.applyNewSettings())
-                applyAll = false;
-            else if (!graphSettings.applyNewSettings())
-                applyAll = false;
-            if (applyAll) {
-                setVisible(false);
-            } else {
-                PopUpDialog.getInstance().show("Error", "Error found - please change settings!");
-            }
-        }
     }
 }

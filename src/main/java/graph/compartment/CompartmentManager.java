@@ -1,27 +1,17 @@
-package graph.Compartment;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+package graph.compartment;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 
-public class CompartmentManager {
+import java.awt.*;
+import java.util.List;
+import java.util.*;
 
-	private Set<Compartment> compartments = new HashSet<>();
-	private Map<BiologicalNodeAbstract, Compartment> bnaToCompartment = new HashMap<>();
-	private Map<Compartment, HashSet<BiologicalNodeAbstract>> compartmentToBNA = new HashMap<Compartment, HashSet<BiologicalNodeAbstract>>();
+public class CompartmentManager {
+	private final Set<Compartment> compartments = new HashSet<>();
+	private final Map<BiologicalNodeAbstract, Compartment> bnaToCompartment = new HashMap<>();
+	private final Map<Compartment, HashSet<BiologicalNodeAbstract>> compartmentToBNA = new HashMap<>();
 	private boolean drawCompartments = false;
 
-	public CompartmentManager() {
-
-	}
-	
 	public Compartment getCompartment(String name){
 		for (Compartment comp : compartments) {
 			if (comp.getName().equals(name.trim()))
@@ -35,7 +25,6 @@ public class CompartmentManager {
 			if (comp.getName().equals(c.getName()))
 				return;
 		}
-
 		compartments.add(c);
 		compartmentToBNA.put(c, new HashSet<>());
 	}
@@ -57,9 +46,7 @@ public class CompartmentManager {
 			map.put(c.getName(), c);
 			names.add(c.getName());
 		}
-		
-		Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
-		
+		names.sort(String.CASE_INSENSITIVE_ORDER);
 		List<Compartment> list = new ArrayList<>();
 		for(String name : names){
 			list.add(map.get(name));
@@ -68,7 +55,6 @@ public class CompartmentManager {
 	}
 
 	public void setCompartment(BiologicalNodeAbstract bna, Compartment c) {
-
 		if (bnaToCompartment.containsKey(bna)) {
 			compartmentToBNA.get(bnaToCompartment.get(bna)).remove(bna);
 			bnaToCompartment.remove(bna);
@@ -82,9 +68,8 @@ public class CompartmentManager {
 	public String getCompartment(BiologicalNodeAbstract bna){
 		if(bnaToCompartment.containsKey(bna)){
 			return bnaToCompartment.get(bna).getName();
-		}else{
-			return "";
 		}
+		return "";
 	}
 
 	public Set<BiologicalNodeAbstract> getAllBNA(Compartment c) {
@@ -101,7 +86,7 @@ public class CompartmentManager {
 
 	public void addDefaultCompartments() {
 		this.add(new Compartment("Cytoplasma", new Color(0, 255, 0, 50)));
-		this.add(new Compartment("Nucleus", new Color(00, 0, 255, 50)));
+		this.add(new Compartment("Nucleus", new Color(0, 0, 255, 50)));
 		this.add(new Compartment("Membrane", new Color(255, 128, 0, 50)));
 		this.add(new Compartment("InsideTheCell", new Color(127, 0, 255, 50)));
 	}

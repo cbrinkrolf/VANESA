@@ -21,7 +21,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ParameterWindow implements DocumentListener {
     private final JFrame frame;
@@ -36,20 +35,11 @@ public class ParameterWindow implements DocumentListener {
     private FormulaPanel fp;
     private final JTextPane formula;
     private boolean editMode = false;
-    // private JDialog dialog;
-    // private HashMap<JButton, Parameter> parameters = new HashMap<>();
 
     public ParameterWindow(GraphElementAbstract gea) {
         frame = new JFrame("Parameters");
         this.gea = gea;
         MigLayout layout = new MigLayout("", "[left]");
-        // DefaultComboBoxModel<String> dcbm = new
-        // DefaultComboBoxModel<String>(ElementNamesSingelton.getInstance().getEnzymes());
-        // elementNames.setEditable(true);
-        // elementNames.setModel(dcbm);
-        // elementNames.setMaximumSize(new Dimension(250,40));
-        // elementNames.setSelectedItem(" ");
-        // AutoCompleteDecorator.decorate(elementNames);
         panel = new JPanel(layout);
         formula = new JTextPane();
         SwingUtilities.invokeLater(new Runnable() {
@@ -60,33 +50,27 @@ public class ParameterWindow implements DocumentListener {
                     boolean wordTyped(String typedWord) {
                         // create list for dictionary this in your case might be done via calling a method which queries db and returns results as arraylist
                         ArrayList<String> words = new ArrayList<>();
-                        // pw.getAllNodeLabels();
-                        // HashSet<String> set = new HashSet<String>();
-                        Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();// biologicalElements.values().iterator();
-                        BiologicalNodeAbstract bna;
-                        while (it.hasNext()) {
-                            bna = it.next();
+                        for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
                             if (!bna.isLogical()) {
-                                // words.add(bna.getRef().getLink());
                                 if (!words.contains(bna.getName())) {
                                     words.add(bna.getName());
                                 }
                             }
                         }
-                        for (int i = 0; i < gea.getParameters().size(); i++) {
-                            if (!words.contains(gea.getParameters().get(i).getName())) {
-                                words.add(gea.getParameters().get(i).getName());
+                        for (Parameter p : gea.getParameters()) {
+                            if (!words.contains(p.getName())) {
+                                words.add(p.getName());
                             }
                         }
                         setDictionary(words);
-                        // addToDictionary("bye");//adds a single word
-                        return super.wordTyped(typedWord);// now call super to check for any matches against newest dictionary
+                        return super.wordTyped(typedWord);
                     }
                 };
             }
         });
 
-        if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
+        if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract ||
+            gea instanceof ContinuousTransition) {
             PropertyChangeListener pcListener = evt -> frame.pack();
             String function = "";
             if (gea instanceof DynamicNode) {
@@ -103,19 +87,13 @@ public class ParameterWindow implements DocumentListener {
         name.getDocument().addDocumentListener(this);
         add = new JButton("add");
         add.addActionListener(e -> onAddClicked());
-        // pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION);
         JButton cancel = new JButton("cancel");
         cancel.addActionListener(e -> onCancelClicked());
-
         JButton okButton = new JButton("ok");
         okButton.addActionListener(e -> onOkClicked());
-
         repaintPanel();
-
         JOptionPane optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE);
-        JButton[] buttons = {okButton, cancel};
-        optionPane.setOptions(buttons);
-
+        optionPane.setOptions(new JButton[]{okButton, cancel});
         frame.setAlwaysOnTop(false);
         frame.setContentPane(optionPane);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -125,7 +103,6 @@ public class ParameterWindow implements DocumentListener {
         frame.setLocationRelativeTo(MainWindow.getInstance().getFrame());
         frame.requestFocus();
         frame.setVisible(true);
-
         frame.addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowLostFocus(WindowEvent e) {
@@ -133,17 +110,14 @@ public class ParameterWindow implements DocumentListener {
 
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                // repaintPanel();
                 frame.pack();
-                // revalidate();
-                // pack();
-                // repaint();
             }
         });
     }
 
     private void onOkClicked() {
-        if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
+        if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract ||
+            gea instanceof ContinuousTransition) {
             String formula = fp.getFormula();
             String formulaClean = formula.replaceAll("\\s", "");
             boolean changed = false;
@@ -195,10 +169,12 @@ public class ParameterWindow implements DocumentListener {
                         add.setText("add");
                         repaintPanel();
                     } catch (NumberFormatException nfe) {
-                        PopUpDialog.getInstance().show("Parameter", "Parameter not correct. Value not a number or empty?");
+                        PopUpDialog.getInstance().show("Parameter",
+                                                       "Parameter not correct. Value not a number or empty?");
                     }
                 } else {
-                    PopUpDialog.getInstance().show("Parameter", "Parameter with same name already exists! Use edit button to edit parameter");
+                    PopUpDialog.getInstance().show("Parameter",
+                                                   "Parameter with same name already exists! Use edit button to edit parameter");
                 }
                 return;
             }
@@ -227,7 +203,8 @@ public class ParameterWindow implements DocumentListener {
     }
 
     private void onSetValuesClicked() {
-        if (gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract || gea instanceof ContinuousTransition) {
+        if (gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract ||
+            gea instanceof ContinuousTransition) {
             new ParameterSearcher((BiologicalNodeAbstract) gea, true);
         }
     }
@@ -318,7 +295,8 @@ public class ParameterWindow implements DocumentListener {
 
     private void repaintPanel() {
         panel.removeAll();
-        if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
+        if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract ||
+            gea instanceof ContinuousTransition) {
             panel.add(fp, "span 20, wrap");
         }
         if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {

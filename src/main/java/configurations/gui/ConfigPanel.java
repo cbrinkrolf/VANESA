@@ -12,7 +12,6 @@ import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 
 public class ConfigPanel extends JPanel {
-    private static final long serialVersionUID = 1L;
     private final String layoutName;
 
     public ConfigPanel(Class<? extends Layout> layout) {

@@ -20,7 +20,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
-import graph.Compartment.Compartment;
+import graph.compartment.Compartment;
 import graph.jung.classes.MyVisualizationViewer;
 import gui.MainWindow;
 import gui.PopUpDialog;

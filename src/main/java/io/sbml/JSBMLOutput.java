@@ -135,7 +135,7 @@ public class JSBMLOutput {
 				}
 				// test to what compartment the node belongs
 				String compName = pathway.getCompartmentManager().getCompartment(oneNode);
-				graph.Compartment.Compartment c = pathway.getCompartmentManager().getCompartment(compName);
+				graph.compartment.Compartment c = pathway.getCompartmentManager().getCompartment(compName);
 				nodeCompartment = COMP + compName;
 				// System.out.println(nodeCompartment);
 				// test if compartment already exists
@@ -289,7 +289,7 @@ public class JSBMLOutput {
 			XMLNode groupSub;
 			for (Group group : pathway.getGroups()) {
 				groupSub = new XMLNode(new XMLNode(new XMLTriple("Group", "", ""), new XMLAttributes()));
-				for (BiologicalNodeAbstract node : group.nodes) {
+				for (BiologicalNodeAbstract node : group) {
 					groupSub.addChild(createElSub(Integer.toString(node.getID()), "Node"));
 				}
 				groups.addChild(groupSub);

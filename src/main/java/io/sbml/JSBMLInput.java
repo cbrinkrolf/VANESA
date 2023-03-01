@@ -10,7 +10,7 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
-import graph.Compartment.Compartment;
+import graph.compartment.Compartment;
 import graph.CreatePathway;
 import graph.groups.Group;
 import graph.gui.Parameter;

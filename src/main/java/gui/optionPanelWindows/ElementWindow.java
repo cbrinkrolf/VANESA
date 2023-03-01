@@ -49,7 +49,7 @@ import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.ChangedFlags;
 import graph.GraphInstance;
-import graph.Compartment.Compartment;
+import graph.compartment.Compartment;
 import graph.algorithms.NodeAttributeTypes;
 import graph.gui.LabelsWindow;
 import graph.gui.ParameterWindow;

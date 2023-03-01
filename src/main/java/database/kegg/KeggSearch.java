@@ -27,16 +27,12 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
     private final String gene;
     private final String compound;
     private final String organism;
-
     private final int SEPARATE_TABS = JOptionPane.YES_OPTION;
     private Iterator<String[]> it;
     private int answer = SEPARATE_TABS;
     private KEGGConnector kc;
-
     private final DatabaseQueryValidator dqv = new DatabaseQueryValidator();
-
     private ArrayList<DBColumn> results = new ArrayList<>();
-
     private boolean continueProgress = false;
     private KEGGResultWindow dsrw = null;
     private final MainWindow w = MainWindow.getInstance();
@@ -98,7 +94,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
         StringBuilder pathway_names = new StringBuilder("(");
         ArrayList<DBColumn> tempResults = new ArrayList<>();
         if (firstEntries) {
-            tempResults = new Wrapper().requestDbContent(2, queryStart + queryEnd + " LIMIT 0,1000;");
+            tempResults = new Wrapper().requestDbContent(queryStart + queryEnd + " LIMIT 0,1000;");
             boolean firstPathwayName = true;
             for (DBColumn column : tempResults) {
                 String[] d = column.getColumn();
@@ -124,11 +120,11 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
         } else {
             lastQuery = "Select p.pathway_name, p.title, t.name from kegg_pathway p " + "LEFT OUTER JOIN kegg_taxonomy as t on p.org=t.org where p.pathway_name In " + pathway_names + " AND " + dqv.prepareString(this.organism, "t.name", "t.latin_name");
         }
-        return new Wrapper().requestDbContent(2, lastQuery + " LIMIT 0,1000;");
+        return new Wrapper().requestDbContent(lastQuery + " LIMIT 0,1000;");
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
         results = KEGGQueries.requestDbContent(pathway, organism, gene, compound, enzyme);
         return null;
     }

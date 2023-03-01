@@ -24,7 +24,7 @@ public class KEGGQueries {
                 + "where k.pathway_name='" + pathwayID + "' "
                 + "AND (length(c.name)=(Select min(length(d.name)) from kegg_compound_name d where n.name=d.entry) OR c.name is NULL) "
                 + "group by k.entry_id;";
-        return new Wrapper().requestDbContent(2, query);
+        return new Wrapper().requestDbContent(query);
     }
 
     public static ArrayList<DBColumn> requestDbContent(String pathway, String organism, String gene, String compound, String enzyme) {
@@ -43,20 +43,20 @@ public class KEGGQueries {
         if (!compound.equals("")) query += "AND cn.name like '%" + compound + "%' ";
         if (!enzyme.equals("")) query += "AND en.entry like '%" + enzyme + "%' ";
         query += "limit 0,1000;";
-        return new Wrapper().requestDbContent(2, query);
+        return new Wrapper().requestDbContent(query);
     }
 
     public static ArrayList<DBColumn> getPathway(String pathwayID) {
         String query = "SELECT name,title,org,number,image,link FROM kegg_kgml_pathway p where name = '"
                 + pathwayID + "';";
-        return new Wrapper().requestDbContent(2, query);
+        return new Wrapper().requestDbContent(query);
     }
 
     public static ArrayList<DBColumn> getRelations(String pathwayID) {
         String query = "SELECT relation.pathway_name, subtype.name,subtype.subtype_value,relation.entry1,relation.entry2,relation.relation_type "
                 + "FROM kegg_kgml_subtype subtype natural join kegg_kgml_relation relation "
                 + " where pathway_name='" + pathwayID + "'order by relation_id;";
-        return new Wrapper().requestDbContent(2, query);
+        return new Wrapper().requestDbContent(query);
     }
 
     public static ArrayList<DBColumn> getAllReactions(String pathwayID) {
@@ -68,6 +68,6 @@ public class KEGGQueries {
                 "inner join kegg_kgml_entry e on er.entry_id=e.entry_id " +
                 "inner join kegg_kgml_entry_name en on e.entry_id=en.entry_id " +
                 "where r.pathway_name='" + pathwayID + "' and e.pathway_name='" + pathwayID + "'; ";
-        return new Wrapper().requestDbContent(2, query);
+        return new Wrapper().requestDbContent(query);
     }
 }

@@ -605,7 +605,7 @@ public class ToolBar {
 
     private void onAutoCoarseClicked() {
         if (GraphInstance.getMyGraph() != null) {
-            AutoCoarse.coarseSeperatedSubgraphs(GraphInstance.getPathwayStatic());
+            AutoCoarse.coarseSeparatedSubGraphs(GraphInstance.getPathwayStatic());
             new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
         } else {
             System.out.println("No Graph exists!");

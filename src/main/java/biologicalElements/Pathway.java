@@ -33,7 +33,7 @@ import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import graph.ChangedFlags;
-import graph.Compartment.CompartmentManager;
+import graph.compartment.CompartmentManager;
 import graph.groups.Group;
 import graph.gui.Boundary;
 import graph.gui.CoarseNodeDeleteDialog;
@@ -1273,7 +1273,7 @@ public class Pathway implements Cloneable {
 
 		Set<BiologicalNodeAbstract> nodes = vv.getPickedVertexState().getPicked();
 		if (nodes.size() > 1) {
-			Group group = new Group(new ArrayList<>(nodes));
+			Group group = new Group(nodes);
 			groups.add(group);
 
 			for (BiologicalNodeAbstract nextNode : vv.getPickedVertexState().getPicked()) {
@@ -1295,7 +1295,7 @@ public class Pathway implements Cloneable {
 			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState().getPicked().iterator();
 			BiologicalNodeAbstract nextNode = it.next();
 			if (nextNode.isInGroup()) {
-				for (BiologicalNodeAbstract node : nextNode.getbiggestGroup().nodes) {
+				for (BiologicalNodeAbstract node : nextNode.getbiggestGroup()) {
 					graph.getVisualizationViewer().getPickedVertexState().pick(node, true);
 				}
 			}

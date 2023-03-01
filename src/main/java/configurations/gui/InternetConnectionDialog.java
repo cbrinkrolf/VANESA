@@ -9,8 +9,6 @@ import java.awt.*;
 import java.net.URL;
 
 public class InternetConnectionDialog extends JPanel {
-    private static final long serialVersionUID = 1358638152136315177L;
-
     private final JTextField apiUrl;
     private final JTextField port;
     private final JTextField host;

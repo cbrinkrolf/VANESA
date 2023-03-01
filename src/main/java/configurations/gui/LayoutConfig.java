@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * MDLayoutConfig.java
- *
- * Created on 16.07.2008, 12:31:43
- */
 package configurations.gui;
 
 import java.awt.BorderLayout;
@@ -38,62 +28,17 @@ import graph.layouts.hebLayout.HEBLayoutConfig;
 import gui.MainWindow;
 import gui.RangeSelector;
 
-/**
- * 
- * @author dao
- */
 public class LayoutConfig extends JPanel implements ActionListener {
+	private static LayoutConfig instance;
+	private final JButton cancel = new JButton("cancel");
+	private final JButton resetButton = new JButton("reset");
+	private final JButton applyButton = new JButton("apply");
+	private final JButton[] buttons = {applyButton, resetButton, cancel };
+	private final JTabbedPane tabbedPane = new JTabbedPane();
+	private final Map<String, ConfigPanel> tabs = new HashMap<>();
+	private final JProgressBar progressBar;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	// Variables declaration
-	private JButton cancel = new JButton("cancel");
-	private JButton defaultButton = new JButton("reset");
-	private JButton applyButton = new JButton("apply");
-	private JButton[] buttons = { applyButton, defaultButton, cancel };
-	private JTabbedPane tabbedPane = new JTabbedPane();
-	private Map<String, ConfigPanel> tabs = new HashMap<String, ConfigPanel>();
-	private JProgressBar progressBar;
-	private static LayoutConfig INSTANCE;
-
-	// End of variables declaration
-	/** Creates new form MDLayoutConfig */
 	public LayoutConfig() {
-		initComponents();
-	}
-
-	public static LayoutConfig getInstance() {
-		if (INSTANCE == null) {
-			INSTANCE = new LayoutConfig();
-		}
-		return INSTANCE;
-	}
-
-	public static void changeToLayout(Class<? extends Layout> layout) {
-		if (RangeSelector.getInstance().hasRange()) {
-			int option = JOptionPane.showConfirmDialog(GraphInstance
-					.getMyGraph().getVisualizationViewer(),
-					"this graph contains selected clusters,\n"
-							+ "all selected clusters maybe out of date\n "
-							+ "after new layout!", "continue",
-					JOptionPane.YES_NO_OPTION);
-			if (option != JOptionPane.YES_OPTION) {
-				return;
-			}
-		}
-		getInstance().setSelection(layout.getSimpleName());
-	}
-
-	public void addTab(ConfigPanel panel) {
-		tabs.put(panel.getLayoutName(), panel);
-		tabbedPane.addTab(panel.getLayoutName(), null, panel, panel
-				.getLayoutName()
-				+ " settings");
-	}
-
-	private void initComponents() {
 		for (JButton b : this.buttons) {
 			b.addActionListener(this);
 		}
@@ -106,11 +51,35 @@ public class LayoutConfig extends JPanel implements ActionListener {
 		addTab(new ConfigPanel(KKLayout.class));
 		addTab(new ConfigPanel(SpringLayout.class));
 		addTab(new ConfigPanel(ISOMLayout.class));
-
 		progressBar = new JProgressBar();
-		this.setLayout(new BorderLayout());
-		this.add(tabbedPane, BorderLayout.CENTER);
-		this.add(this.progressBar, BorderLayout.SOUTH);
+		setLayout(new BorderLayout());
+		add(tabbedPane, BorderLayout.CENTER);
+		add(progressBar, BorderLayout.SOUTH);
+	}
+
+	public static LayoutConfig getInstance() {
+		if (instance == null) {
+			instance = new LayoutConfig();
+		}
+		return instance;
+	}
+
+	public static void changeToLayout(Class<? extends Layout> layout) {
+		if (RangeSelector.getInstance().hasRange()) {
+			int option = JOptionPane.showConfirmDialog(GraphInstance.getMyGraph().getVisualizationViewer(),
+													   "this graph contains selected clusters,\nall selected " +
+													   "clusters maybe out of date\nafter new layout!",
+													   "continue", JOptionPane.YES_NO_OPTION);
+			if (option != JOptionPane.YES_OPTION) {
+				return;
+			}
+		}
+		getInstance().setSelection(layout.getSimpleName());
+	}
+
+	public void addTab(ConfigPanel panel) {
+		tabs.put(panel.getLayoutName(), panel);
+		tabbedPane.addTab(panel.getLayoutName(), null, panel, panel.getLayoutName() + " settings");
 	}
 
 	public void setSelection(String layout) {
@@ -119,15 +88,13 @@ public class LayoutConfig extends JPanel implements ActionListener {
 	}
 
 	private void showSettings() {
-		int option = JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(), this,
-				"Layout settings", JOptionPane.DEFAULT_OPTION,
-				JOptionPane.PLAIN_MESSAGE, null, buttons, applyButton);
+		JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(), this, "Layout settings",
+									 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, buttons, applyButton);
 	}
 
 	public static JOptionPane getOptionPane(Container comp) {
 		try {
-			JOptionPane pane = (JOptionPane) comp;
-			return pane;
+			return (JOptionPane) comp;
 		} catch (ClassCastException e) {
 			return getOptionPane(comp.getParent());
 		}
@@ -136,27 +103,24 @@ public class LayoutConfig extends JPanel implements ActionListener {
 	public void actionPerformed(final ActionEvent e) {
 		final JOptionPane pane = getOptionPane(this);
 		String event = e.getActionCommand();
-		final ConfigPanel config = (ConfigPanel) tabbedPane
-				.getSelectedComponent();
+		final ConfigPanel config = (ConfigPanel) tabbedPane.getSelectedComponent();
 		if ("reset".equals(event)) {
 			config.resetValues();
 		} else if ("cancel".equals(event)) {
 			pane.setValue(e.getSource());
 		} else if ("apply".equals(event)) {
-			this.progressBar.setIndeterminate(true);
+			progressBar.setIndeterminate(true);
 			final Cursor old = LayoutConfig.this.getCursor();
-			LayoutConfig.this.setCursor(Cursor
-					.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			config.setValues();
 			new SwingWorker() {
-
 				@Override
-				protected Object doInBackground() throws Exception {
+				protected Object doInBackground() {
 					try {
 						config.applySettings();
 					} finally {
 						progressBar.setIndeterminate(false);
-						LayoutConfig.this.setCursor(old);
+						setCursor(old);
 						pane.setValue(e.getSource());
 					}
 					return null;
@@ -164,5 +128,4 @@ public class LayoutConfig extends JPanel implements ActionListener {
 			}.execute();
 		}
 	}
-
 }

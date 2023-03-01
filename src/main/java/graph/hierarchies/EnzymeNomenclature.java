@@ -155,12 +155,10 @@ public class EnzymeNomenclature extends HierarchyStructure<String>{
 	}
 	
 	public String ECtoClass(String ec){
-		
 		String[] ecSplit = ec.split("\\.");
 		if(ecSplit.length<2){
 			return null;
 		}
-		
 		if(ecSplit[0].equals("1")){
 			switch(ecSplit[1]){
 			case "1":
@@ -306,7 +304,7 @@ public class EnzymeNomenclature extends HierarchyStructure<String>{
 			default:
 				return ISOMERASES;
 			}
-			
+
 		} else if(ecSplit[0].equals("6")){
 			switch(ecSplit[1]){
 			case "1":
