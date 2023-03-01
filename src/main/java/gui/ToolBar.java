@@ -1,12 +1,5 @@
 package gui;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.util.*;
-import java.util.List;
-
-import javax.swing.*;
-
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -20,6 +13,11 @@ import net.miginfocom.swing.MigLayout;
 import petriNet.OpenModelicaResult;
 import petriNet.PNTableDialog;
 import petriNet.ReachController;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ToolBar {
     private JToolBar bar = null;
@@ -242,11 +240,11 @@ public class ToolBar {
         nodeAdjustment.add(adjustLeft);
 
         JButton adjustHorizontalSpace = createToolBarButton("adjustHorizontalSpace.png",
-                                                            "Adjust Horizontal Space Of Selected Nodes",
+                                                            "Adjust Horizontal Space of Selected Nodes",
                                                             this::onAdjustHorizontalSpaceClicked);
         nodeAdjustment.add(adjustHorizontalSpace);
         JButton adjustVerticalSpace = createToolBarButton("adjustVerticalSpace.png",
-                                                          "Adjust Vertical Space Of Selected Nodes",
+                                                          "Adjust Vertical Space of Selected Nodes",
                                                           this::onAdjustVerticalSpaceClicked);
         nodeAdjustment.add(adjustVerticalSpace);
 
@@ -649,34 +647,7 @@ public class ToolBar {
         if (GraphInstance.getMyGraph() != null) {
             GraphInstance graphInstance = new GraphInstance();
             Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway().getSelectedNodes();
-            double maxy = Double.MIN_VALUE;
-            Point2D point;
-            if (nodes.size() > 1) {
-                for (BiologicalNodeAbstract bna : nodes) {
-                    // r = bna.getShape().getBounds();
-                    /*
-                     * VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv =
-                     * graphInstance .getPathway().getGraph() .getVisualizationViewer(); double
-                     * scaleV = vv.getRenderContext() .getMultiLayerTransformer()
-                     * .getTransformer(Layer.VIEW).getScale(); double scaleL = vv.getRenderContext()
-                     * .getMultiLayerTransformer() .getTransformer(Layer.LAYOUT).getScale(); double
-                     * scale; if (scaleV < 1) { scale = scaleV; } else { scale = scaleL; }
-                     *
-                     * System.out.println((r.getMaxX()-r.getMinX())/scale);
-                     */
-                    point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
-                    if (point.getY() > maxy) {
-                        maxy = point.getY();
-                    }
-                }
-                for (BiologicalNodeAbstract bna : nodes) {
-                    point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
-                    point.setLocation(point.getX(), maxy);
-                    graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout()
-                                 .setLocation(bna, point);
-                }
-            }
-            graphInstance.getPathway().saveVertexLocations();
+            graphInstance.getPathway().adjustDown(nodes);
         } else {
             System.out.println("No Graph exists!");
         }
@@ -686,23 +657,7 @@ public class ToolBar {
         if (GraphInstance.getMyGraph() != null) {
             GraphInstance graphInstance = new GraphInstance();
             Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway().getSelectedNodes();
-            double minx = Double.MAX_VALUE;
-            Point2D point;
-            if (nodes.size() > 1) {
-                for (BiologicalNodeAbstract bna : nodes) {
-                    point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
-                    if (point.getX() < minx) {
-                        minx = point.getX();
-                    }
-                }
-                for (BiologicalNodeAbstract bna : nodes) {
-                    point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
-                    point.setLocation(minx, point.getY());
-                    graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout()
-                                 .setLocation(bna, point);
-                }
-            }
-            graphInstance.getPathway().saveVertexLocations();
+            graphInstance.getPathway().adjustLeft(nodes);
         } else {
             System.out.println("No Graph exists!");
         }
@@ -712,39 +667,7 @@ public class ToolBar {
         if (GraphInstance.getMyGraph() != null) {
             GraphInstance graphInstance = new GraphInstance();
             Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway().getSelectedNodes();
-            double minx = Double.MAX_VALUE;
-            double maxx = Double.MIN_VALUE;
-            HashMap<BiologicalNodeAbstract, Double> map = new HashMap<>();
-            if (nodes.size() > 2) {
-                for (BiologicalNodeAbstract bna : nodes) {
-                    Point2D point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
-                    if (point.getX() < minx) {
-                        minx = point.getX();
-                    }
-                    if (point.getX() > maxx) {
-                        maxx = point.getX();
-                    }
-                    map.put(bna, point.getX());
-                }
-                java.util.List<Double> c = new ArrayList<>(map.values());
-                Collections.sort(c);
-                for (BiologicalNodeAbstract bna : nodes) {
-                    int d = c.indexOf(map.get(bna));
-                    double newx;
-                    if (d == 0) {
-                        newx = minx;
-                    } else if (d == nodes.size() - 1) {
-                        newx = maxx;
-                    } else {
-                        newx = minx + d * ((Math.abs(maxx - minx)) / (nodes.size() - 1));
-                    }
-                    Point2D point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
-                    point.setLocation(newx, point.getY());
-                    graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout()
-                                 .setLocation(bna, point);
-                }
-                graphInstance.getPathway().saveVertexLocations();
-            }
+            graphInstance.getPathway().adjustHorizontalSpace(nodes);
         } else {
             System.out.println("No Graph exists!");
         }
@@ -754,40 +677,7 @@ public class ToolBar {
         if (GraphInstance.getMyGraph() != null) {
             GraphInstance graphInstance = new GraphInstance();
             Set<BiologicalNodeAbstract> nodes = graphInstance.getPathway().getSelectedNodes();
-            double miny = Double.MAX_VALUE;
-            double maxy = Double.MIN_VALUE;
-            HashMap<BiologicalNodeAbstract, Double> map = new HashMap<>();
-            Point2D point;
-            if (nodes.size() > 2) {
-                for (BiologicalNodeAbstract bna : nodes) {
-                    point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
-                    if (point.getY() < miny) {
-                        miny = point.getY();
-                    }
-                    if (point.getY() > maxy) {
-                        maxy = point.getY();
-                    }
-                    map.put(bna, point.getY());
-                }
-                List<Double> c = new ArrayList<>(map.values());
-                Collections.sort(c);
-                for (BiologicalNodeAbstract bna : nodes) {
-                    int d = c.indexOf(map.get(bna));
-                    double newy;
-                    if (d == 0) {
-                        newy = miny;
-                    } else if (d == nodes.size() - 1) {
-                        newy = maxy;
-                    } else {
-                        newy = miny + d * ((Math.abs(maxy - miny)) / (nodes.size() - 1));
-                    }
-                    point = graphInstance.getPathway().getGraph().getVertexLocation(bna);
-                    point.setLocation(point.getX(), newy);
-                    graphInstance.getPathway().getGraph().getVisualizationViewer().getModel().getGraphLayout()
-                                 .setLocation(bna, point);
-                }
-                graphInstance.getPathway().saveVertexLocations();
-            }
+            graphInstance.getPathway().adjustVerticalSpace(nodes);
         } else {
             System.out.println("No Graph exists!");
         }

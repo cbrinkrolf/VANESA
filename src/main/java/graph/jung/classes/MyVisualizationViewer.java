@@ -79,7 +79,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 	// protected List<Paintable> postRenderers = new ArrayList<Paintable>();
 
 	protected void renderGraph(Graphics2D g2d) {
-
 		if (drawCompartments) {
 			boolean scaleChanged = false;
 			if (this.getScale() != scaleLastCompartmentRendered) {
@@ -440,6 +439,6 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 		g2d.drawString("y: " + String.format("%.3f", mousePoint.getY()), this.getWidth() - 75, 35);
 
 		// System.out.println(this.getMousePosition());
-
+		
 	}
 }

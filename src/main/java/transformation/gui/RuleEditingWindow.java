@@ -64,7 +64,7 @@ public class RuleEditingWindow implements ActionListener {
 	private JPanel nodeMappingPanel = new JPanel();
 	private JPanel parametersPanel = new JPanel();
 
-	private JFrame frame = new JFrame("Edit or create a new Rule");;
+	private JFrame frame = new JFrame("Rule Editor");;
 
 	private JSplitPane splitPane;
 	private GraphZoomScrollPane biologicalGraphPane;
@@ -252,7 +252,9 @@ public class RuleEditingWindow implements ActionListener {
 		// firstGraphPane.add(bn.getGraph()
 		// .getVisualizationPaneCopy(new Dimension(splitWindowWith - 50,
 		// splitWindowHeight - 50)));
+
 		biologicalPanel.add(biologicalGraphPane, "wrap 5");
+
 		// firstGraphPane.setBackground(Color.WHITE);
 		// bn.getGraph().getVisualizationPaneCopy(getSize())
 		biologicalPanel.add(buttonPanelBN, "wrap 5");
@@ -562,7 +564,7 @@ public class RuleEditingWindow implements ActionListener {
 
 			JButton transition = new ToolBarButton(ImagePath.getInstance().getImageIcon("discreteTransition.png"));
 			transition.setToolTipText("transition");
-			transition.setToolTipText("Any transition");
+			transition.setToolTipText("Any Transition");
 			transition.setHorizontalTextPosition(JButton.CENTER);
 			transition.setVerticalTextPosition(JButton.CENTER);
 			f = transition.getFont();
@@ -573,6 +575,34 @@ public class RuleEditingWindow implements ActionListener {
 			transition.addActionListener(listener);
 			panel.add(transition);
 		}
+		// panel.add(new JSeparator(JSeparator.VERTICAL), "growy, gap 5");
+		panel.add(new JLabel(), "gap 10");
+
+		JButton adjustDown = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustDown.png")));
+		adjustDown.setToolTipText("Adjust Selected Nodes To Lowest Node");
+		adjustDown.setActionCommand("adjustDown");
+		adjustDown.addActionListener(listener);
+		panel.add(adjustDown);
+
+		JButton adjustLeft = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustLeft.png")));
+		adjustLeft.setToolTipText("Adjust Selected Nodes To Left");
+		adjustLeft.setActionCommand("adjustLeft");
+		adjustLeft.addActionListener(listener);
+		panel.add(adjustLeft);
+
+		JButton adjustHorizontalSpace = new ToolBarButton(
+				new ImageIcon(imagePath.getPath("adjustHorizontalSpace.png")));
+		adjustHorizontalSpace.setToolTipText("Adjust Horizontal Space of Selected Nodes");
+		adjustHorizontalSpace.setActionCommand("adjustHorizontalSpace");
+		adjustHorizontalSpace.addActionListener(listener);
+		panel.add(adjustHorizontalSpace);
+
+		JButton adjustVerticalSpace = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustVerticalSpace.png")));
+		adjustVerticalSpace.setToolTipText("Adjust Vertical Space of Selected Nodes");
+		adjustVerticalSpace.setActionCommand("adjustVerticalSpace");
+		adjustVerticalSpace.addActionListener(listener);
+		panel.add(adjustVerticalSpace);
+
 	}
 
 	private void addNodeMapping() {

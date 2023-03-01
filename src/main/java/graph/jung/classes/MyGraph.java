@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
@@ -73,6 +74,7 @@ import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.MainWindow;
 import gui.MyAnnotationManager;
+import gui.MyPopUp;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
 
@@ -973,8 +975,20 @@ public class MyGraph {
 	}
 
 	public void changeToGEMLayout() {
-		changeToLayout(new GEMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
-
+		Collection<BiologicalNodeAbstract> nodes = getVisualizationViewer().getPickedVertexState().getPicked();
+		if (nodes.size() > 0) {
+			Map<BiologicalNodeAbstract, Point2D> map = new HashMap<>();
+			// put unpicked nodes to static
+			for (BiologicalNodeAbstract n : getAllVertices()) {
+				if (!nodes.contains(n)) {
+					map.put(n, getVertexLocation(n));
+				}
+			}
+			changeToLayout(new GEMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g, map));
+			MyPopUp.getInstance().show("GEMLayout", "GEMLayout was applied on picked nodes only!");
+		} else {
+			changeToLayout(new GEMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
+		}
 	}
 
 	public void changeToHEBLayout() {
