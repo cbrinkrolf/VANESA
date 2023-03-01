@@ -10,38 +10,29 @@ import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import graph.GraphInstance;
 
 public class SatelliteWindow {
-	
-	private SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
-	private JPanel p = new JPanel();
-	boolean emptyPane = true;
-	
-	public SatelliteWindow() {
-	}
-	
-	
-	public void revalidateSatelliteView(){
-		vv = GraphInstance.getMyGraph().getSatelliteView();
-		if(emptyPane){	
-			p.add(vv,BorderLayout.CENTER);
-			emptyPane = false;
-		}else{
-			p.removeAll();
-			p.add(vv,BorderLayout.CENTER);
-		}
-		p.setVisible(true);
-		p.repaint();
-		
-	}	
-	
-	public void removeAllElements(){
-		emptyPane=true;
-		p.removeAll();
-		p.setVisible(false);
-	}
-	
-	
-	public JPanel getSatellitePane() {
-		p.setVisible(false);
-		return p;	
-	}
+    private final JPanel panel = new JPanel();
+    boolean emptyPane = true;
+
+    public void revalidateSatelliteView() {
+        SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance.getMyGraph()
+                                                                                                       .getSatelliteView();
+        if (!emptyPane) {
+            panel.removeAll();
+        }
+        panel.add(vv, BorderLayout.CENTER);
+        emptyPane = false;
+        panel.setVisible(true);
+        panel.repaint();
+    }
+
+    public void removeAllElements() {
+        emptyPane = true;
+        panel.removeAll();
+        panel.setVisible(false);
+    }
+
+    public JPanel getSatellitePane() {
+        panel.setVisible(false);
+        return panel;
+    }
 }

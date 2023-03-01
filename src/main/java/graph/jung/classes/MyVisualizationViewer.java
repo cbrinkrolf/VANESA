@@ -26,7 +26,7 @@ import edu.uci.ics.jung.visualization.transform.AffineTransformer;
 import edu.uci.ics.jung.visualization.transform.LensTransformer;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
 import graph.GraphContainer;
-import graph.Compartment.Compartment;
+import graph.compartment.Compartment;
 import graph.layouts.GraphCenter;
 
 public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {

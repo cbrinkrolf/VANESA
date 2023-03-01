@@ -10,7 +10,7 @@ import biologicalElements.Elementdeclerations;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import graph.GraphInstance;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 
 public abstract class Place extends PNNode {
 	public static final int CONFLICTHANDLING_NONE = 0;
@@ -140,8 +140,8 @@ public abstract class Place extends PNNode {
 		double sum = 0;
 		for (PNArc bea : edges) {
 			if (bea.getProbability() < 0) {
-				MyPopUp.getInstance().show("Probability error", "Negative probability detected: arc connecting "
-						+ bea.getFrom().getName() + " -> " + bea.getTo().getName());
+				PopUpDialog.getInstance().show("Probability error", "Negative probability detected: arc connecting "
+                                                                    + bea.getFrom().getName() + " -> " + bea.getTo().getName());
 				return true;
 			}
 			sum += bea.getProbability();

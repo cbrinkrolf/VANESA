@@ -9,8 +9,8 @@ import javax.xml.stream.XMLStreamException;
 
 import biologicalElements.Pathway;
 import gui.MainWindow;
-import xmlInput.sbml.JSBMLinput;
-import xmlOutput.sbml.JSBMLoutput;
+import io.sbml.JSBMLInput;
+import io.sbml.JSBMLOutput;
 
 public class CreatePathway {
 
@@ -45,13 +45,13 @@ public class CreatePathway {
 			new Thread(new Runnable() {
 				public void run() {
 					try {
-						new JSBMLoutput(out, pathway).generateSBMLDocument();
+						new JSBMLOutput(out, pathway).generateSBMLDocument();
 					} catch (XMLStreamException e) {
 						e.printStackTrace();
 					}
 				}
 			}).start();
-			new JSBMLinput(null).loadSBMLFile(in, pathway.getFile());
+			new JSBMLInput(null).loadSBMLFile(in, pathway.getFile());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -67,7 +67,7 @@ public class CreatePathway {
 		}
 		String newPathwayName = con.addPathway(pathwayName, new Pathway(pathwayName));
 		pw = con.getPathway(newPathwayName);
-		w.addTab(pw.getTab().getTitelTab());
+		w.addTab(pw.getTab().getTitleTab());
 		w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
@@ -83,12 +83,12 @@ public class CreatePathway {
 		GraphContainer con = GraphContainer.getInstance();
 		MainWindow w = MainWindow.getInstance();
 		if(con.getAllPathways().contains(pw)){
-			w.setSelectedTab(pw.getTab().getTitelTab());
+			w.setSelectedTab(pw.getTab().getTitleTab());
 			return;
 		}
 		String newPathwayName = con.addPathway(pw.getName(), pw);
 		pw = con.getPathway(newPathwayName);
-		w.addTab(pw.getTab().getTitelTab());
+		w.addTab(pw.getTab().getTitleTab());
 		w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		//pw.updateMyGraph();
 	}

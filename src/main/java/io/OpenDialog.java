@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.xml.stream.XMLStreamException;
+import javax.swing.filechooser.FileFilter;
 
 import biologicalElements.Pathway;
 import configurations.ConnectionSettings;
@@ -16,174 +16,115 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import io.graphML.GraphMLReader;
-import xmlInput.sbml.JSBMLinput;
-import xmlInput.sbml.VAMLInput;
+import io.sbml.JSBMLInput;
+import io.vaml.VAMLInput;
 
 public class OpenDialog extends SwingWorker<Object, Object> {
+    private FileFilter fileFilter;
+    private File file;
+    private final int option;
+    private final JFileChooser chooser;
+    private final GraphContainer con = GraphContainer.getInstance();
+    private final GraphInstance graphInstance = new GraphInstance();
 
-	private String fileFormat;
-	private File file;
+    public OpenDialog() {
+        chooser = new JFileChooser(ConnectionSettings.getInstance().getFileOpenDirectory());
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.addChoosableFileFilter(SuffixAwareFilter.SBML);
+        chooser.addChoosableFileFilter(SuffixAwareFilter.VAML);
+        // chooser.addChoosableFileFilter(SuffixAwareFilter.MO);
+        // chooser.addChoosableFileFilter(SuffixAwareFilter.MODELICA_RESULT_DESCRIPTION);
+        // chooser.addChoosableFileFilter(SuffixAwareFilter.NEW_MODELICA_RESULT_DESCRIPTION);
+        chooser.addChoosableFileFilter(SuffixAwareFilter.GRAPH_ML);
+        chooser.addChoosableFileFilter(SuffixAwareFilter.GRAPH_TEXT_FILE);
+        option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
+        if (option == JFileChooser.APPROVE_OPTION) {
+            ConnectionSettings.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+        }
+    }
 
-	private final String sbmlDescription = "System Biology Markup Language (*.sbml)";
-	private final String sbml = "sbml";
+    private void open() {
+        if (fileFilter != null) {
+            // ConnectionSettings.setFileSaveDirectory(file.getAbsolutePath());
+            if (fileFilter == SuffixAwareFilter.VAML) {
+                try {
+                    new VAMLInput(file);
+                } catch (IOException e) {
+                    PopUpDialog.getInstance().show("VAML read error.", "Failed to load VAML file.");
+                    e.printStackTrace();
+                }
+            } else if (fileFilter == SuffixAwareFilter.SBML) {
+                JSBMLInput jsbmlInput = new JSBMLInput(null);
+                String result;
+                try {
+                    result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
+                    if (result.length() > 0) {
+                        PopUpDialog.getInstance().show("Information", result);
+                    }
+                } catch (FileNotFoundException e) {
+                    try {
+                        file = new File(file.getAbsolutePath() + ".sbml");
+                        result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
+                        if (result.length() > 0) {
+                            PopUpDialog.getInstance().show("Information", result);
+                        }
+                    } catch (FileNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    PopUpDialog.getInstance().show("Error!", e.getMessage());
+                    e.printStackTrace();
+                }
+            } else if (fileFilter == SuffixAwareFilter.GRAPH_TEXT_FILE) {
+                try {
+                    new TxtInput(new FileInputStream(file), file);
+                } catch (Exception e) {
+                    PopUpDialog.getInstance().show("Error!", e.getMessage());
+                    e.printStackTrace();
+                }
+            } else if (fileFilter == SuffixAwareFilter.GRAPH_ML) {
+                final GraphMLReader reader = new GraphMLReader(file);
+                final Pathway pw = reader.read();
+                if (reader.hasErrors() || pw == null) {
+                    PopUpDialog.getInstance().show("Error!", "Failed to load GraphML file.");
+                } else {
+                    pw.setFile(file);
+                }
+            }
+        }
+    }
 
-	// private final String modellicaResultDescription = "Modellica Simulation Result File (*.plt)";
-	// private final String modellicaSimulation = "plt";
+    @Override
+    protected Void doInBackground() throws Exception {
+        if (option == JFileChooser.APPROVE_OPTION) {
+            fileFilter = chooser.getFileFilter();
+            file = chooser.getSelectedFile();
+            SwingUtilities.invokeLater(() -> {
+                MainWindow.getInstance().showProgressBar("Loading data from file. Please wait a second");
+                // bar.init(100, " Open ", true);
+                // bar.setProgressBarString("Loading data from file. Please wait a second");
+            });
+        }
+        return null;
+    }
 
-	// private final String modellicaResultDescriptionNew = "New Modelica Simulation Result File (*.csv)";
-	// private final String modellicaSimulationNew = "csv";
-
-	private final String vamlDescription = "VANESA Markup Language (*.vaml)";
-	private final String vaml = "vaml";
-
-	private final String graphMlDescription = "GraphML (*.graphml)";
-	private final String graphml = "graphml";
-
-	// private final String moDescription = "Modelica File (*.mo)";
-	// private final String mo = "mo";
-
-	private final String txtDescription = "Graph Text File (*.txt)";
-	private final String txt = "txt";
-
-	private final int option;
-	private final JFileChooser chooser;
-
-	private final GraphContainer con = GraphContainer.getInstance();
-	private final GraphInstance graphInstance = new GraphInstance();
-
-	private Pathway pathway = null;
-
-	public OpenDialog(Pathway pw) {
-		this();
-		pathway = pw;
-	}
-
-	public OpenDialog() {
-
-		chooser = new JFileChooser(ConnectionSettings.getInstance().getFileOpenDirectory());
-
-		chooser.setAcceptAllFileFilterUsed(false);
-		chooser.addChoosableFileFilter(new MyFileFilter(sbml, sbmlDescription));
-		chooser.addChoosableFileFilter(new MyFileFilter(vaml, vamlDescription));
-		// chooser.addChoosableFileFilter(new MyFileFilter(mo, moDescription));
-
-//		chooser.addChoosableFileFilter(new MyFileFilter(modellicaSimulation,
-//				modellicaResultDescription));
-//		chooser.addChoosableFileFilter(new MyFileFilter(modellicaSimulationNew,
-//				modellicaResultDescriptionNew));
-
-		chooser.addChoosableFileFilter(new MyFileFilter(graphml, graphMlDescription));
-		chooser.addChoosableFileFilter(new MyFileFilter(txt, txtDescription));
-
-		option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
-
-		if (option == JFileChooser.APPROVE_OPTION) {
-			ConnectionSettings.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
-		}
-	}
-
-	private void open() {
-		if (fileFormat != null) {
-			// System.out.println(fileFormat);
-			// ConnectionSettings.setFileSaveDirectory(file.getAbsolutePath());
-
-			if (fileFormat.equals(vamlDescription)) {
-				try {
-					try {
-						new VAMLInput(file);
-					} catch (XMLStreamException e) {
-						MyPopUp.getInstance().show("VAML read error.",
-								"An error occured during the loading. " + "The VAML file is not valid.");
-						e.printStackTrace();
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else if (fileFormat.equals(sbmlDescription)) {
-
-				JSBMLinput jsbmlInput;
-				jsbmlInput = pathway == null ? new JSBMLinput() : new JSBMLinput(pathway);
-				String result;
-				try {
-					result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
-					if (result.length() > 0) {
-						MyPopUp.getInstance().show("Information", result);
-					}
-
-				} catch (FileNotFoundException e) {
-					try {
-						file = new File(file.getAbsolutePath() + ".sbml");
-						result = jsbmlInput.loadSBMLFile(new FileInputStream(file), file);
-						if (result.length() > 0) {
-							MyPopUp.getInstance().show("Information", result);
-						}
-
-					} catch (FileNotFoundException ex) {
-						ex.printStackTrace();
-					}
-				} catch(Exception e){
-					MyPopUp.getInstance().show("Error!", e.getMessage());
-					e.printStackTrace();
-				}
-				
-			} else if (fileFormat.equals(txtDescription)) {
-				try {
-					new TxtInput(new FileInputStream(file), file);
-				} catch (Exception e) {
-					MyPopUp.getInstance().show("Error!", e.getMessage());
-					e.printStackTrace();
-				}
-			} else if (fileFormat.equals(graphMlDescription)) {
-				final GraphMLReader reader = new GraphMLReader(file);
-				final Pathway pw = reader.read();
-				if (reader.hasErrors() || pw == null) {
-					MyPopUp.getInstance().show("Error!", "Failed to load GraphML file.");
-				} else {
-					pw.setFile(file);
-				}
-			}
-		}
-	}
-
-	@Override
-	protected Void doInBackground() throws Exception {
-
-		if (option == JFileChooser.APPROVE_OPTION) {
-
-			fileFormat = chooser.getFileFilter().getDescription();
-			file = chooser.getSelectedFile();
-
-			Runnable run = new Runnable() {
-				@Override
-				public void run() {
-					MainWindow.getInstance().showProgressBar("Loading data from file. Please wait a second");
-					// bar.init(100, " Open ", true);
-					// bar.setProgressBarString("Loading data from file. Please wait a second");
-				}
-			};
-			SwingUtilities.invokeLater(run);
-		}
-		return null;
-	}
-
-	@Override
-	public void done() {
-		open();
-		if (fileFormat != null) {
-			// bar.closeWindow();
-			MainWindow.getInstance().closeProgressBar();
-
-			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					// GraphInstance.getMyGraph().getVisualizationViewer().restart();
-					MainWindow.getInstance().updateAllGuiElements();
-					MyGraph g = GraphInstance.getMyGraph();
-					g.normalCentering();
-				}
-			}
-			MainWindow.getInstance().getFrame().repaint();
-		}
-	}
+    @Override
+    public void done() {
+        open();
+        if (fileFilter != null) {
+            // bar.closeWindow();
+            MainWindow.getInstance().closeProgressBar();
+            if (con.containsPathway()) {
+                if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+                    // GraphInstance.getMyGraph().getVisualizationViewer().restart();
+                    MainWindow.getInstance().updateAllGuiElements();
+                    MyGraph g = GraphInstance.getMyGraph();
+                    g.normalCentering();
+                }
+            }
+            MainWindow.getInstance().getFrame().repaint();
+        }
+    }
 }

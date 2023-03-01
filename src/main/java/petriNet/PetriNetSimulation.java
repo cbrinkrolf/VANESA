@@ -42,9 +42,9 @@ import graph.ChangedFlags;
 import graph.gui.Boundary;
 import graph.gui.Parameter;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import gui.SimMenu;
-import moOutput.MOoutput;
+import io.MOoutput;
 import util.VanesaUtility;
 
 public class PetriNetSimulation implements ActionListener {
@@ -253,7 +253,7 @@ public class PetriNetSimulation implements ActionListener {
 								setReader(new InputStreamReader(simProcess.getInputStream()));
 							} catch (IOException e1) {
 								simProcess.destroy();
-								MyPopUp.getInstance().show("Simulation error:", e1.getMessage());
+								PopUpDialog.getInstance().show("Simulation error:", e1.getMessage());
 								e1.printStackTrace();
 							}
 							System.out.println("simulation thread finished");
@@ -293,7 +293,7 @@ public class PetriNetSimulation implements ActionListener {
 								try {
 									sleep(100);
 								} catch (InterruptedException e) {
-									MyPopUp.getInstance().show("Simulation error:", e.getMessage());
+									PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
 									e.printStackTrace();
 								}
 							}
@@ -325,14 +325,14 @@ public class PetriNetSimulation implements ActionListener {
 											System.out.println(line);
 										}
 									} catch (IOException e) {
-										MyPopUp.getInstance().show("Simulation error:", e.getMessage());
+										PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
 										e.printStackTrace();
 									}
 								}
 								try {
 									sleep(100);
 								} catch (InterruptedException e) {
-									MyPopUp.getInstance().show("Simulation error:", e.getMessage());
+									PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
 									e.printStackTrace();
 								}
 							}
@@ -372,7 +372,7 @@ public class PetriNetSimulation implements ActionListener {
 						simulationThread.start();
 					} else {
 						// System.out.println("something wet wrong");
-						MyPopUp.getInstance().show("Something went wrong!", "Simulation could not be built!");
+						PopUpDialog.getInstance().show("Something went wrong!", "Simulation could not be built!");
 						stopAction();
 					}
 
@@ -393,9 +393,9 @@ public class PetriNetSimulation implements ActionListener {
 
 					}
 				} catch (Exception e) {
-					MyPopUp.getInstance().show("Simulation error:", e.getMessage());
+					PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
 					e.printStackTrace();
-					MyPopUp.getInstance().show("Something went wrong", "The model couldn't be simulated!");
+					PopUpDialog.getInstance().show("Something went wrong", "The model couldn't be simulated!");
 					w.unBlurUI();
 					menu.stopped();
 					if (simProcess != null) {
@@ -667,7 +667,7 @@ public class PetriNetSimulation implements ActionListener {
 								message += split[i] + "\r\n";
 							}
 						}
-						MyPopUp.getInstance().show("Warning: " + number + " expression(s) are inconsistent:", message);
+						PopUpDialog.getInstance().show("Warning: " + number + " expression(s) are inconsistent:", message);
 					}
 
 					StringTokenizer tokenizer = new StringTokenizer(inputStreamString.toString(), ",");
@@ -756,7 +756,7 @@ public class PetriNetSimulation implements ActionListener {
 				String param = menu.getParameterName();
 				List<Double> list = menu.getParameterValues();
 				double value;
-				MyPopUp.getInstance().show("Parameterized simulation", "Parameters to be simulated:" + list.size());
+				PopUpDialog.getInstance().show("Parameterized simulation", "Parameters to be simulated:" + list.size());
 				if (list.size() < 1) {
 					return;
 				}
@@ -820,7 +820,7 @@ public class PetriNetSimulation implements ActionListener {
 							// pw.getChangedParameters().put(new Parameter(param, value, p.getUnit()), bna);
 							override += ",'_" + bna.getName() + "_" + param + "'=" + value;
 						} else {
-							MyPopUp.getInstance().show("Error",
+							PopUpDialog.getInstance().show("Error",
 									"The parameter for parameterized simulation could not be found: " + param);
 							i = list.size();
 							break;

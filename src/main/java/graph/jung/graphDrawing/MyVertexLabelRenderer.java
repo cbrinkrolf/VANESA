@@ -12,30 +12,21 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import configurations.NetworkSettings;
-import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.visualization.renderers.VertexLabelRenderer;
 
 /**
- * DefaultGraphLabelRenderer is similar to the cell renderers used by the JTable
- * and JTree jfc classes.
+ * DefaultGraphLabelRenderer is similar to the cell renderers used by the JTable and JTree jfc classes.
  * 
  * @author Tom Nelson - RABA Technologies
- * 
- * 
  */
-public class MyVertexLabelRenderer extends JLabel implements VertexLabelRenderer,
-		Serializable {
-
-	/**
-	 * 
-	 */
+public class MyVertexLabelRenderer extends JLabel implements VertexLabelRenderer, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	protected static Border noFocusBorder = new EmptyBorder(0, 0, 0, 0);
 
-	protected Color pickedVertexLabelColor = Color.black;
+	protected Color pickedVertexLabelColor;
 	protected boolean rotateEdgeLabels;
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	NetworkSettings settings = NetworkSettings.getInstance();
 
 	public MyVertexLabelRenderer(Color pickedVertexLabelColor) {
 		this(pickedVertexLabelColor, true);
@@ -94,9 +85,6 @@ public class MyVertexLabelRenderer extends JLabel implements VertexLabelRenderer
 	/**
 	 * Overrides <code>JComponent.setBackground</code> to assign the
 	 * unselected-background color to the specified color.
-	 * 
-	 * @param c
-	 *            set the background color to this value
 	 */
 	public Color getForeground() {
 
@@ -132,7 +120,7 @@ public class MyVertexLabelRenderer extends JLabel implements VertexLabelRenderer
 	 *            the <code>VisualizationViewer</code> to render on
 	 * @param value
 	 *            the value to assign to the label for <code>Vertex</code>
-	 * @param vertex
+	 * @param bna
 	 *            the <code>Vertex</code>
 	 * @return the default label renderer
 	 */

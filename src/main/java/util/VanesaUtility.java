@@ -1,90 +1,36 @@
 package util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.databinding.utils.BeanUtil;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
 import org.apache.commons.lang3.SystemUtils;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaderSAX2Factory;
+import org.xml.sax.InputSource;
 
-import configurations.asyncWebservice.WebServiceEvent;
-import pojos.DBColumn;
-
-/**
- *
- * @author mwesterm
- */
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 public class VanesaUtility {
-
-	private final static String QUESTION_MARK = "\\?";
-
-	/**
-	 * This utility method creates a vector with results, after an asynchrone web
-	 * service has been called. Because we need a Vector<DBColumn> to
-	 *
-	 * @param event WebServiceEvent, the event which has been given after a
-	 *              Web-Service call.
-	 * @return result ArrayList<DBColumn>, the vector has no elements if no content
-	 *         in the WebServiceEvent is given
-	 */
-	public static ArrayList<DBColumn> createResultList(WebServiceEvent event) {
-
-		// SOAP envelope -> create a readable OMElement
-		OMElement element = event.getServiceResult();
-
-		Iterator<OMElement> it = element.getChildrenWithLocalName("column");
-		// Object[] javaTypes = {DBColumn.class};
-		ArrayList<DBColumn> results = new ArrayList<DBColumn>();
-		ObjectSupplier objectSupplier = new AxisService().getObjectSupplier();
-
-		// get all DBColumn deserialized
-		OMElement oneDBColumn;
-		while (it.hasNext()) {
-			oneDBColumn = (it.next());
-
-			DBColumn workingColumn;
-			try {
-				workingColumn = (DBColumn) BeanUtil.deserialize(DBColumn.class, oneDBColumn, objectSupplier, "column");
-				results.add(workingColumn);
-			} catch (AxisFault ex) {
-				ex.printStackTrace();
-			}
-		}
-		return results;
-	}
-
-	public static String buildQueryWithAttributes(String workingQuery, String[] attributes) {
-		String finalQuery = workingQuery;
-
-		int lenght = attributes.length;
-		for (int run = 0; run < lenght; run++) {
-
-			try {
-				finalQuery = finalQuery.replaceFirst(QUESTION_MARK, "\"" + attributes[run] + "\"");
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-		return finalQuery + ";";
+	public static double round(double value, int decimalPlaces) {
+		double factor = Math.pow(10, decimalPlaces);
+		return Math.round(value * factor) / factor;
 	}
 
 	public static Double getMean(List<Double> list) {
-		double mean = 0;
-		for (int i = 0; i < list.size(); i++) {
-			mean += list.get(i);
+		if (list.size() == 0) {
+			return 0.0;
 		}
-		return mean / list.size();
+		return list.stream().reduce(Double::sum).get() / list.size();
 	}
 
 	public static Double getMedian(List<Double> list) {
@@ -107,9 +53,7 @@ public class VanesaUtility {
 			pathWorkingDirectory = System.getenv("HOME");
 		}
 		pathWorkingDirectory += File.separator + "vanesa";
-
 		File f = new File(pathWorkingDirectory);
-
 		if (f.exists() && f.isDirectory()) {
 			return pathWorkingDirectory;
 		} else if (!f.exists()) {
@@ -140,5 +84,36 @@ public class VanesaUtility {
 						params.fileBased().setFile(new File(filePath)));
 		builder.setAutoSave(true);
 		return builder.getConfiguration();
+	}
+
+	public static void openURLInBrowser(String url) {
+		URI uri = null;
+		try {
+			uri = new URI(url);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		if (Desktop.isDesktopSupported()) {
+			Desktop desktop = Desktop.getDesktop();
+			try {
+				desktop.browse(uri);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static Document loadXmlDocument(InputStream inputStream) {
+		// changed empty constructor SAXBuilder builder = new SAXBuilder();
+		// to following, because open JDK got an error with empty constructor
+		// see: https://stackoverflow.com/questions/11409025/exceptionininitializererror-while-creating-ant-custom-task
+		SAXBuilder builder = new SAXBuilder(new XMLReaderSAX2Factory(false, "org.apache.xerces.parsers.SAXParser"));
+		InputSource in = new InputSource(inputStream);
+		try {
+			return builder.build(in);
+		} catch (JDOMException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

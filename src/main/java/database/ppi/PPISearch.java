@@ -1,235 +1,371 @@
 package database.ppi;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Vector;
-
-import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-
-import configurations.Wrapper;
-import database.ppi.gui.PPISearchResultWindow;
+import api.VanesaApi;
+import api.payloads.Response;
+import api.payloads.ppi.*;
+import biologicalElements.Pathway;
+import biologicalObjects.edges.PhysicalInteraction;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.Protein;
+import com.fasterxml.jackson.core.type.TypeReference;
+import database.ppi.gui.HPRDSearchResultWindow;
+import database.ppi.gui.IntActSearchResultWindow;
+import database.ppi.gui.MintSearchResultWindow;
+import graph.CreatePathway;
+import graph.hierarchies.HierarchyList;
+import graph.hierarchies.HierarchyListComparator;
+import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import pojos.DBColumn;
+import gui.PopUpDialog;
 
-public class PPISearch extends SwingWorker<Object, Object>{
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
-	private String fullName, alias, acNumber, database;
+public final class PPISearch {
+    private PPISearch() {
+    }
 
-//	private DatabaseQueryValidator dqv = new DatabaseQueryValidator();
-	
-	private MainWindow w = MainWindow.getInstance();
-	private ArrayList<DBColumn> results;
-	private PPISearchResultWindow ppiSearchResultWindow;
-	private boolean headless;
-	
-	
-	public PPISearch(String[] input, boolean headless) {
+    public static void requestHPRDEntries(String fullName, String alias, String accession) {
+        HPRDEntrySearchRequestPayload payload = new HPRDEntrySearchRequestPayload();
+        payload.name = fullName;
+        payload.accession = accession;
+        payload.alias = alias;
+        Response<HPRDEntrySearchResponsePayload> response = VanesaApi.postSync("/ppi/hprd_entry/search", payload,
+                                                                               new TypeReference<>() {
+                                                                               });
+        MainWindow.getInstance().closeProgressBar();
+        if (response.hasError()) {
+            PopUpDialog.getInstance().show("HPRD search", "Sorry, no entries have been found.\n" + response.error);
+            return;
+        }
+        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+            PopUpDialog.getInstance().show("HPRD search", "Sorry, no entries have been found.");
+            return;
+        }
+        HPRDSearchResultWindow searchResultWindow = new HPRDSearchResultWindow(response.payload.results);
+        if (!searchResultWindow.show()) {
+            return;
+        }
+        HPRDEntry[] results = searchResultWindow.getSelectedValues();
+        if (results.length > 0) {
+            MainWindow.getInstance().showProgressBar("Retrieving PPI Network(s)");
+            int depth = searchResultWindow.getSearchDepth();
+            boolean autoCoarse = searchResultWindow.getAutoCoarse();
+            for (HPRDEntry entry : results) {
+                requestHPRDPPI(entry, depth, autoCoarse);
+            }
+            MainWindow.getInstance().closeProgressBar();
+        }
+    }
 
-		database = input[0];
-		fullName = input[1];
-		alias = input[2];
-		acNumber = input[3];
-		
-		this.headless = headless;
+    private static void requestHPRDPPI(HPRDEntry root, int depth, boolean autoCoarse) {
+        HPRDRetrievePPIRequestPayload payload = new HPRDRetrievePPIRequestPayload();
+        payload.id = root.id;
+        payload.depth = depth;
+        Response<HPRDRetrievePPIResponsePayload> response = VanesaApi.postSync("/ppi/hprd_entry/ppi", payload,
+                                                                               new TypeReference<>() {
+                                                                               });
+        MainWindow.getInstance().closeProgressBar();
+        if (response.hasError()) {
+            PopUpDialog.getInstance().show("HPRD search", "Failed to retrieve PPI network.\n" + response.error);
+            return;
+        }
+        if (response.payload == null || response.payload.entries == null || response.payload.entries.length <= 1) {
+            PopUpDialog.getInstance().show("HPRD search", "No interactions found!");
+            return;
+        }
+        MainWindow.getInstance().showProgressBar("Drawing Network");
+        Pathway pw = new CreatePathway("HPRD network for " + root.name + " (depth=" + depth + ")").getPathway();
+        Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
+        drawEdges(pw, response.payload, idProteinMap);
+        MyGraph graph = pw.getGraph();
+        graph.restartVisualizationModel();
+        graph.changeToGEMLayout();
+        graph.fitScaleOfViewer(graph.getSatelliteView());
+        graph.normalCentering();
+        pw.saveVertexLocations();
+        if (autoCoarse) {
+            autoCoarse(graph);
+        }
+        MainWindow.getInstance().closeProgressBar();
+        MainWindow window = MainWindow.getInstance();
+        window.updateOptionPanel();
+        window.getFrame().setVisible(true);
+    }
 
-	}
+    private static Map<Integer, Protein> drawNodes(Pathway pw, int rootId, HPRDRetrievePPIResponsePayload payload) {
+        Map<Integer, Protein> idProteinMap = new HashMap<>();
+        for (HPRDEntry entry : payload.entries) {
+            Protein protein = new Protein(entry.geneSymbol, entry.name);
+            idProteinMap.put(entry.id, protein);
+            if (entry.id.equals(rootId)) {
+                protein.setColor(Color.RED);
+            }
+            BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10, 10));
+            if (entry.id.equals(rootId)) {
+                pw.setRootNode(node);
+            }
+        }
+        return idProteinMap;
+    }
 
-	private ArrayList<DBColumn> requestDbContent()
-	{
+    private static void drawEdges(Pathway pw, HPRDRetrievePPIResponsePayload payload,
+                                  Map<Integer, Protein> idProteinMap) {
+        var graph = pw.getGraph().getJungGraph();
+        for (int[] entry : payload.binaryInteractions) {
+            BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
+            BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
+            if (graph.findEdge(first, second) == null && first != second) {
+                buildEdge(pw, first, second);
+            }
+        }
+    }
 
-		if (database.equals("HPRD")) {
+    public static void requestMintEntries(String fullName, String alias, String accession) {
+        MintEntrySearchRequestPayload payload = new MintEntrySearchRequestPayload();
+        payload.name = fullName;
+        payload.accession = accession;
+        payload.alias = alias;
+        Response<MintEntrySearchResponsePayload> response = VanesaApi.postSync("/ppi/mint_entry/search", payload,
+                                                                               new TypeReference<>() {
+                                                                               });
+        MainWindow.getInstance().closeProgressBar();
+        if (response.hasError()) {
+            PopUpDialog.getInstance().show("Mint search", "Sorry, no entries have been found.\n" + response.error);
+            return;
+        }
+        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+            PopUpDialog.getInstance().show("Mint search", "Sorry, no entries have been found.");
+            return;
+        }
+        MintSearchResultWindow searchResultWindow = new MintSearchResultWindow(response.payload.results);
+        if (!searchResultWindow.show()) {
+            return;
+        }
+        MintEntry[] results = searchResultWindow.getSelectedValues();
+        if (results.length > 0) {
+            MainWindow.getInstance().showProgressBar("Retrieving PPI Network(s)");
+            int depth = searchResultWindow.getSearchDepth();
+            boolean binary = searchResultWindow.getBinaryInteractions();
+            boolean complex = searchResultWindow.getComplexInteractions();
+            boolean autoCoarse = searchResultWindow.getAutoCoarse();
+            for (MintEntry entry : results) {
+                requestMintPPI(entry, depth, binary, complex, autoCoarse);
+            }
+            MainWindow.getInstance().closeProgressBar();
+        }
+    }
 
-			if (acNumber.length() > 0) {
+    private static void requestMintPPI(MintEntry root, int depth, boolean binary, boolean complex, boolean autoCoarse) {
+        MintRetrievePPIRequestPayload payload = new MintRetrievePPIRequestPayload();
+        payload.id = root.id;
+        payload.depth = depth;
+        payload.binary = binary;
+        payload.complex = complex;
+        Response<MintRetrievePPIResponsePayload> response = VanesaApi.postSync("/ppi/mint_entry/ppi", payload,
+                                                                               new TypeReference<>() {
+                                                                               });
+        MainWindow.getInstance().closeProgressBar();
+        if (response.hasError()) {
+            PopUpDialog.getInstance().show("Mint search", "Failed to retrieve PPI network.\n" + response.error);
+            return;
+        }
+        if (response.payload == null || response.payload.entries == null || response.payload.entries.length <= 1) {
+            PopUpDialog.getInstance().show("Mint search", "No interactions found!");
+            return;
+        }
+        MainWindow.getInstance().showProgressBar("Drawing Network");
+        Pathway pw = new CreatePathway("Mint network for " + root.name + " (depth=" + depth + ")").getPathway();
+        Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
+        drawEdges(pw, response.payload, idProteinMap);
+        MyGraph graph = pw.getGraph();
+        graph.restartVisualizationModel();
+        graph.changeToGEMLayout();
+        graph.fitScaleOfViewer(graph.getSatelliteView());
+        graph.normalCentering();
+        pw.saveVertexLocations();
+        if (autoCoarse) {
+            autoCoarse(graph);
+        }
+        MainWindow.getInstance().closeProgressBar();
+        MainWindow window = MainWindow.getInstance();
+        window.updateOptionPanel();
+        window.getFrame().setVisible(true);
+    }
 
-				String[] parameters = { acNumber };
-				return new Wrapper().requestDbContent(3,
-						PPIqueries.hprd_resultForACnumber, parameters);
-			} else if (alias.length() > 0) {
+    private static Map<Integer, Protein> drawNodes(Pathway pw, int rootId, MintRetrievePPIResponsePayload payload) {
+        Map<Integer, Protein> idProteinMap = new HashMap<>();
+        for (MintEntry entry : payload.entries) {
+            Protein protein = new Protein(entry.shortLabel, entry.name);
+            idProteinMap.put(entry.id, protein);
+            if (entry.id.equals(rootId)) {
+                protein.setColor(Color.RED);
+            }
+            BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10, 10));
+            if (entry.id.equals(rootId)) {
+                pw.setRootNode(node);
+            }
+        }
+        return idProteinMap;
+    }
 
-				String[] parameters = { "%" + alias + "%" };
-				return new Wrapper().requestDbContent(3,
-						PPIqueries.hprd_resultForAlias, parameters);
-			} else if (fullName.length() > 0) {
+    private static void drawEdges(Pathway pw, MintRetrievePPIResponsePayload payload,
+                                  Map<Integer, Protein> idProteinMap) {
+        var graph = pw.getGraph().getJungGraph();
+        for (int[] entry : payload.binaryInteractions) {
+            BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
+            BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
+            if (graph.findEdge(first, second) == null && first != second) {
+                buildEdge(pw, first, second);
+            }
+        }
+        for (int[] entry : payload.complexInteractions) {
+            BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
+            BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
+            if (graph.findEdge(first, second) == null && first != second) {
+                buildEdge(pw, first, second);
+            }
+        }
+    }
 
-				String[] parameters = { "%" + fullName + "%" };
-				return new Wrapper().requestDbContent(3,
-						PPIqueries.hprd_resultForName, parameters);
+    public static void requestIntActEntries(String fullName, String alias, String accession) {
+        IntActEntrySearchRequestPayload payload = new IntActEntrySearchRequestPayload();
+        payload.name = fullName;
+        payload.accession = accession;
+        payload.alias = alias;
+        Response<IntActEntrySearchResponsePayload> response = VanesaApi.postSync("/ppi/intact_entry/search", payload,
+                                                                                 new TypeReference<>() {
+                                                                                 });
+        MainWindow.getInstance().closeProgressBar();
+        if (response.hasError()) {
+            PopUpDialog.getInstance().show("IntAct search", "Sorry, no entries have been found.\n" + response.error);
+            return;
+        }
+        if (response.payload == null || response.payload.results == null || response.payload.results.length == 0) {
+            PopUpDialog.getInstance().show("IntAct search", "Sorry, no entries have been found.");
+            return;
+        }
+        IntActSearchResultWindow searchResultWindow = new IntActSearchResultWindow(response.payload.results);
+        if (!searchResultWindow.show()) {
+            return;
+        }
+        IntActEntry[] results = searchResultWindow.getSelectedValues();
+        if (results.length > 0) {
+            MainWindow.getInstance().showProgressBar("Retrieving PPI Network(s)");
+            int depth = searchResultWindow.getSearchDepth();
+            boolean binary = searchResultWindow.getBinaryInteractions();
+            boolean complex = searchResultWindow.getComplexInteractions();
+            boolean autoCoarse = searchResultWindow.getAutoCoarse();
+            for (IntActEntry entry : results) {
+                requestIntActPPI(entry, depth, binary, complex, autoCoarse);
+            }
+            MainWindow.getInstance().closeProgressBar();
+        }
+    }
 
-			}
+    private static void requestIntActPPI(IntActEntry root, int depth, boolean binary, boolean complex,
+                                         boolean autoCoarse) {
+        IntActRetrievePPIRequestPayload payload = new IntActRetrievePPIRequestPayload();
+        payload.id = root.id;
+        payload.depth = depth;
+        payload.binary = binary;
+        payload.complex = complex;
+        Response<IntActRetrievePPIResponsePayload> response = VanesaApi.postSync("/ppi/intact_entry/ppi", payload,
+                                                                                 new TypeReference<>() {
+                                                                                 });
+        MainWindow.getInstance().closeProgressBar();
+        if (response.hasError()) {
+            PopUpDialog.getInstance().show("IntAct search", "Failed to retrieve PPI network.\n" + response.error);
+            return;
+        }
+        if (response.payload == null || response.payload.entries == null || response.payload.entries.length <= 1) {
+            PopUpDialog.getInstance().show("IntAct search", "No interactions found!");
+            return;
+        }
+        MainWindow.getInstance().showProgressBar("Drawing Network");
+        Pathway pw = new CreatePathway("IntAct network for " + root.name + " (depth=" + depth + ")").getPathway();
+        Map<Integer, Protein> idProteinMap = drawNodes(pw, root.id, response.payload);
+        drawEdges(pw, response.payload, idProteinMap);
+        MyGraph graph = pw.getGraph();
+        graph.restartVisualizationModel();
+        graph.changeToGEMLayout();
+        graph.fitScaleOfViewer(graph.getSatelliteView());
+        graph.normalCentering();
+        pw.saveVertexLocations();
+        if (autoCoarse) {
+            autoCoarse(graph);
+        }
+        MainWindow.getInstance().closeProgressBar();
+        MainWindow window = MainWindow.getInstance();
+        window.updateOptionPanel();
+        window.getFrame().setVisible(true);
+    }
 
-		}
-		
-		else if (database.equals("MINT"))
-		{
-		
-		if (acNumber.length()>0)
-			{
+    private static Map<Integer, Protein> drawNodes(Pathway pw, int rootId, IntActRetrievePPIResponsePayload payload) {
+        Map<Integer, Protein> idProteinMap = new HashMap<>();
+        for (IntActEntry entry : payload.entries) {
+            Protein protein = new Protein(entry.shortLabel, entry.name);
+            idProteinMap.put(entry.id, protein);
+            if (entry.id.equals(rootId)) {
+                protein.setColor(Color.RED);
+            }
+            BiologicalNodeAbstract node = pw.addVertex(protein, new Point(10, 10));
+            if (entry.id.equals(rootId)) {
+                pw.setRootNode(node);
+            }
+        }
+        return idProteinMap;
+    }
 
-				String[] parameters={acNumber};
-				return new Wrapper().requestDbContent(4, PPIqueries.mint_resultForACnumber, parameters);
+    private static void drawEdges(Pathway pw, IntActRetrievePPIResponsePayload payload,
+                                  Map<Integer, Protein> idProteinMap) {
+        var graph = pw.getGraph().getJungGraph();
+        for (int[] entry : payload.binaryInteractions) {
+            BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
+            BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
+            if (graph.findEdge(first, second) == null && first != second) {
+                buildEdge(pw, first, second);
+            }
+        }
+        for (int[] entry : payload.complexInteractions) {
+            BiologicalNodeAbstract first = idProteinMap.get(entry[0]);
+            BiologicalNodeAbstract second = idProteinMap.get(entry[1]);
+            if (graph.findEdge(first, second) == null && first != second) {
+                buildEdge(pw, first, second);
+            }
+        }
+    }
 
-			}
-			else if (alias.length()>0)
-			{
+    private static void buildEdge(Pathway pw, BiologicalNodeAbstract one, BiologicalNodeAbstract two) {
+        PhysicalInteraction r = new PhysicalInteraction("", "", one, two);
+        r.setDirected(false);
+        r.setVisible(true);
+        pw.addEdge(r);
+    }
 
-				String[] parameters={"%"+alias+"%"};
-				return new Wrapper().requestDbContent(4, PPIqueries.mint_resultForAlias, parameters);
+    private static void autoCoarse(MyGraph graph) {
+        class HLC implements HierarchyListComparator<Integer> {
+            public HLC() {
+            }
 
-			}
-			else if (fullName.length()>0)
-			{
+            public Integer getValue(BiologicalNodeAbstract n) {
+                /* TODO
+                String parent = parentNodes.get(vertex2Name.get(n));
+                if (name2Vertex.get(parent) != null) {
+                    return name2Vertex.get(parent).getID();
+                }
+                */
+                return getSubValue(n);
+            }
 
-				String[] parameters={"%"+fullName+"%"};
-				return new Wrapper().requestDbContent(4, PPIqueries.mint_resultForName, parameters);
-
-			}
-
-		}
-		else if (database.equals("IntAct"))
-		{
-
-
-			if (acNumber.length()>0)
-			{
-
-				String[] parameters={acNumber};
-				return new Wrapper().requestDbContent(4, PPIqueries.intact_resultForACnumber, parameters);
-
-			}
-			else if (alias.length()>0)
-			{
-
-				String[] parameters={"%"+alias+"%"};
-				return new Wrapper().requestDbContent(4, PPIqueries.intact_resultForAlias, parameters);
-
-			}
-			else if (fullName.length()>0)
-			{
-
-				String[] parameters={"%"+fullName+"%"};
-				return new Wrapper().requestDbContent(4, PPIqueries.intact_resultForName, parameters);
-
-			}
-
-		}
-
-		return null;
-	}
-	 
-//	 private Vector requestDbContent() {
-//
-//		if (database.equals("HPRD")) {
-//			
-//			if (acNumber.length() > 0) {
-//				
-//				String[] parameters = {acNumber};
-//				return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForACnumber, parameters);
-//				
-//			} else if(alias.length() > 0){
-//				
-//				String[] parameters = {"%"+alias+"%"};
-//				return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForAlias, parameters);
-//				
-//			} else if(fullName.length() > 0){
-//				
-//				String[] parameters = {"%"+fullName+"%"};
-//				return new Wrapper().requestDbContent(3, PPIqueries.hprd_resultForName, parameters);
-//				
-//			}
-//			
-//		} else if (database.equals("MINT")) {
-//			
-//			if (acNumber.length() > 0) {
-//				
-//				String[] parameters = {acNumber};
-//				return new Wrapper().requestDbContent(4, PPIqueries.mint_resultForACnumber, parameters);
-//				
-//			} else if(alias.length() > 0){
-//				
-//				String[] parameters = {"%"+alias+"%"};
-//				return new Wrapper().requestDbContent(4, PPIqueries.mint_resultForAlias, parameters);
-//				
-//			}else if(fullName.length() > 0){
-//				
-//				String[] parameters = {"%"+fullName+"%"};
-//				return new Wrapper().requestDbContent(4, PPIqueries.mint_resultForName, parameters);
-//				
-//			}
-//			
-//		} else if (database.equals("IntAct")) {
-//			
-//			if (acNumber.length() > 0) {
-//				
-//				String[] parameters = {acNumber};
-//				return new Wrapper().requestDbContent(4, PPIqueries.intact_resultForACnumber, parameters);
-//				
-//			} else if(alias.length() > 0){
-//				
-//				String[] parameters = {"%"+alias+"%"};
-//				return new Wrapper().requestDbContent(4, PPIqueries.intact_resultForAlias, parameters);
-//				
-//			}else if(fullName.length() > 0){
-//				
-//				String[] parameters = {"%"+fullName+"%"};
-//				return new Wrapper().requestDbContent(4, PPIqueries.intact_resultForName, parameters);
-//				
-//			}
-//			
-//		}
-//
-//		return null;
-//	}
-	
-	
-	
-	@Override
-	protected Object doInBackground() throws Exception
-	{
-		results=requestDbContent();
-		return null;
-	}
-	
-   
-	@Override
-	public void done() {
-		
-    	Boolean continueProgress = false;
-    	MainWindow.getInstance().closeProgressBar();
-    	
-		
-		if (results.size() > 0) {
-			continueProgress = true;	
-			ppiSearchResultWindow = new PPISearchResultWindow(results, database);		
-		} else {
-			JOptionPane.showMessageDialog(w.getFrame(),
-					"Sorry, no entries have been found.");
-		}
-		
-		if (continueProgress) {
-			Vector<String[]> results = ppiSearchResultWindow.getAnswer();
-			if (results.size() > 0) {			
-				MainWindow.getInstance().showProgressBar("getting PPI Network");
-				final Iterator<String[]> it = results.iterator();
-				String[] details;
-				PPIConnector ppiCon;				
-				while (it.hasNext()) {
-					
-					details = it.next();
-//					System.out.println(details[0] + " " + details[3] + " ");
-//					System.out.println(ppiSearchResultWindow.getSerchDeapth());
-					
-					ppiCon = new PPIConnector(details, database, headless);
-					ppiCon.setSearchDepth(ppiSearchResultWindow.getSerchDeapth());
-					ppiCon.setFinaliseGraph(ppiSearchResultWindow.getFinaliseGraph());
-					ppiCon.setAutoCoarse(ppiSearchResultWindow.getAutoCoarse());
-					ppiCon.setIncludeBinaryInteractions(ppiSearchResultWindow.getBinaryInteractions());
-					ppiCon.setIncludeComplexInteractions(ppiSearchResultWindow.getComplexInteractions());
-					
-					ppiCon.execute();
-					
-				}
-			}
-		}
-	}
+            public Integer getSubValue(BiologicalNodeAbstract n) {
+                return n.getID();
+            }
+        }
+        HierarchyList<Integer> l = new HierarchyList<>();
+        l.addAll(graph.getAllVertices());
+        l.sort(new HLC());
+        l.coarse();
+    }
 }

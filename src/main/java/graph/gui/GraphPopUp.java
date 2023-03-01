@@ -1,149 +1,349 @@
 package graph.gui;
 
-import java.awt.Color;
+import api.payloads.dbBrenda.DBBrendaReaction;
+import biologicalElements.Pathway;
+import biologicalObjects.edges.BiologicalEdgeAbstract;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.PathwayMap;
+import configurations.gui.LayoutConfig;
+import copy.CopySelection;
+import copy.CopySelectionSingleton;
+import database.brenda.BRENDASearch;
+import database.brenda.BrendaConnector;
+import database.brenda.gui.BrendaSearchResultWindow;
+import database.kegg.KEGGConnector;
+import database.kegg.KeggSearch;
+import edu.uci.ics.jung.algorithms.layout.SpringLayout;
+import edu.uci.ics.jung.algorithms.layout.*;
+import edu.uci.ics.jung.visualization.VisualizationImageServer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import graph.GraphContainer;
+import graph.GraphInstance;
+import graph.jung.classes.MyVisualizationViewer;
+import graph.layouts.gemLayout.GEMLayout;
+import gui.AsyncTaskExecutor;
+import gui.MainWindow;
+import gui.PopUpDialog;
+import io.SaveDialog;
 
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-
-import gui.eventhandlers.PopUpListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GraphPopUp {
+    private final JPopupMenu popup = new JPopupMenu();
 
-	private JPopupMenu popup = new JPopupMenu();
+    public GraphPopUp() {
+        JLabel title = new JLabel("Graph Layouts");
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(new Color(200, 200, 250));
+        titlePanel.add(title);
+        JMenu openPathwayMenu = new JMenu("Open Pathway");
+        addMenuItem(openPathwayMenu, "Open Pathway as Sub-Pathway", this::onOpenPathwayClicked);
+        addMenuItem(openPathwayMenu, "Open Pathway in new Tab", this::onOpenPathwayTabClicked);
+        popup.add(openPathwayMenu);
+        addMenuItem(popup, "Return to Parent-Pathway", this::onReturnToParentClicked);
+        popup.add(new JSeparator());
+        addMenuItem(popup, "Save picture", this::onSavePictureClicked);
+        popup.add(new JSeparator());
+        addMenuItem(popup, "copy", this::onCopyClicked);
+        addMenuItem(popup, "cut", this::onCutClicked);
+        addMenuItem(popup, "paste", this::onPasteClicked);
+        addMenuItem(popup, "delete", this::onDeleteClicked);
+        // popup.add(new JSeparator());
+        // addLayoutMenu();
+        popup.add(new JSeparator());
+        addMenuItem(popup, "KEGG Search", this::onKEGGSearchClicked);
+        addMenuItem(popup, "BRENDA Search", this::onBRENDASearchClicked);
+        popup.add(new JSeparator());
+        popup.add(new JMenuItem("cancel"));
+    }
 
-	public GraphPopUp() {
+    private void addMenuItem(JPopupMenu parent, String label, Runnable listener) {
+        addMenuItem(parent, label, e -> listener.run());
+    }
 
-		JLabel title = new JLabel("Graph Layouts");
-		JPanel titlePanel = new JPanel();
-		titlePanel.setBackground(new Color(200, 200, 250));
-		titlePanel.add(title); // adds to center of panel's default
-								// BorderLayout.
+    private void addMenuItem(JPopupMenu parent, String label, ActionListener listener) {
+        JMenuItem item = new JMenuItem(label);
+        item.addActionListener(listener);
+        parent.add(item);
+    }
 
-		//JMenu graph = new JMenu("Graph");
-		//JMenu layout = new JMenu("Graph Layouts");
+    private void addMenuItem(JMenu parent, String label, Runnable listener) {
+        JMenuItem item = new JMenuItem(label);
+        item.addActionListener(e -> listener.run());
+        parent.add(item);
+    }
 
-		JMenuItem copySelection = new JMenuItem("copy");
-		JMenuItem cutSelection = new JMenuItem("cut");
-		JMenuItem pasteselection = new JMenuItem("paste");
-		JMenuItem deleteSelection = new JMenuItem("delete");
-		
-		JMenuItem openPathway = new JMenuItem("Open Pathway as Sub-Pathway");
-		JMenuItem openPathwayTab = new JMenuItem("Open Pathway in new Tab");
-		JMenu openPathwayMenu = new JMenu("Open Pathway");		
-		
-		JMenuItem returnToParent =new JMenuItem("Return to Parent-Pathway");
-		
-		JMenuItem graphPicture = new JMenuItem("Save picture");
-		
-		JMenuItem centerGraph = new JMenuItem("center graph");
-		JMenuItem springLayout = new JMenuItem("Spring Layout");
-		JMenuItem kkLayout = new JMenuItem("KK Layout");
-		JMenuItem frLayout = new JMenuItem("FR Layout");
-		JMenuItem circleLayout = new JMenuItem("Circle Layout");
-		JMenuItem gemLayout = new JMenuItem("GEM-Layout");
-		JMenuItem isomLayout = new JMenuItem("ISOM Layout");
-		JMenuItem mdLayout = new JMenuItem("MDLayout");
+    private void addLayoutMenu() {
+        JMenu layoutMenu = new JMenu("Graph Layouts");
+        addMenuItem(layoutMenu, "Center Graph", () -> GraphInstance.getPathwayStatic().getGraph().animatedCentering());
+        addMenuItem(layoutMenu, "Spring Layout", () -> LayoutConfig.changeToLayout(SpringLayout.class));
+        addMenuItem(layoutMenu, "KK Layout", () -> LayoutConfig.changeToLayout(KKLayout.class));
+        addMenuItem(layoutMenu, "FR Layout", () -> LayoutConfig.changeToLayout(FRLayout.class));
+        addMenuItem(layoutMenu, "Circle Layout", () -> LayoutConfig.changeToLayout(CircleLayout.class));
+        addMenuItem(layoutMenu, "GEM Layout", () -> LayoutConfig.changeToLayout(GEMLayout.class));
+        addMenuItem(layoutMenu, "ISOM Layout", () -> LayoutConfig.changeToLayout(ISOMLayout.class));
+        // addMenuItem(layoutMenu, "MD Layout", () -> LayoutConfig.changeToLayout(MDForceLayout.class));
+        popup.add(layoutMenu);
+    }
 
-		JMenuItem cancel = new JMenuItem("cancel");
+    public JPopupMenu getPopUp() {
+        return popup;
+    }
 
-		JMenuItem keggSearch = new JMenuItem("Kegg Search");
-		JMenuItem brendaSearch = new JMenuItem("Brenda Search");
+    private void onCopyClicked() {
+        if (GraphContainer.getInstance().containsPathway()) {
+            Pathway pw = GraphInstance.getPathwayStatic();
+            VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
+                    .getVisualizationViewer();
+            Set<BiologicalNodeAbstract> vertices = new HashSet<>(vv.getPickedVertexState().getPicked());
+            Set<BiologicalEdgeAbstract> edges = new HashSet<>(vv.getPickedEdgeState().getPicked());
+            CopySelectionSingleton.setInstance(new CopySelection(vertices, edges));
+        }
+    }
 
-		copySelection.setActionCommand("copy");
-		copySelection.addActionListener(new PopUpListener());
+    private void onCutClicked() {
+        if (GraphContainer.getInstance().containsPathway()) {
+            Pathway pw = GraphInstance.getPathwayStatic();
+            VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
+                    .getVisualizationViewer();
+            Set<BiologicalNodeAbstract> vertices = new HashSet<>(vv.getPickedVertexState().getPicked());
+            Set<BiologicalEdgeAbstract> edges = new HashSet<>(vv.getPickedEdgeState().getPicked());
+            CopySelectionSingleton.setInstance(new CopySelection(vertices, edges));
+            pw.removeSelection();
+            MainWindow w = MainWindow.getInstance();
+            w.updateElementTree();
+            w.updatePathwayTree();
+            w.updateTheoryProperties();
+        }
+    }
 
-		cutSelection.setActionCommand("cut");
-		cutSelection.addActionListener(new PopUpListener());
+    private void onPasteClicked() {
+        if (GraphContainer.getInstance().containsPathway()) {
+            Pathway pw = GraphInstance.getPathwayStatic();
+            CopySelectionSingleton.getInstance().paste();
+            pw.getGraph().restartVisualizationModel();
+            pw.getGraph().getVisualizationViewer().repaint();
+        }
+    }
 
-		pasteselection.setActionCommand("paste");
-		pasteselection.addActionListener(new PopUpListener());
+    private void onDeleteClicked() {
+        if (GraphContainer.getInstance().containsPathway()) {
+            GraphInstance.getPathwayStatic().removeSelection();
+            MainWindow w = MainWindow.getInstance();
+            w.updateElementTree();
+            w.updateTheoryProperties();
+        }
 
-		deleteSelection.setActionCommand("delete");
-		deleteSelection.addActionListener(new PopUpListener());
+    }
 
-		centerGraph.setActionCommand("center");
-		centerGraph.addActionListener(new PopUpListener());
+    private void onSavePictureClicked(ActionEvent e) {
+        JMenuItem item = (JMenuItem) e.getSource();
+        JPopupMenu popup = (JPopupMenu) item.getParent();
+        @SuppressWarnings("unchecked")
+        MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv =
+                (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) popup.getInvoker();
+        Pathway vvPw = vv.getPathway();// graphInstance.getPathway();
+        VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = vvPw.prepareGraphToPrint();
+        if (GraphContainer.getInstance().containsPathway()) {
+            if (vvPw.hasGotAtLeastOneElement()) {
+                new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, SaveDialog.DATA_TYPE_GRAPH_PICTURE, wvv,
+                        MainWindow.getInstance().getFrame(), null);
+            } else {
+                PopUpDialog.getInstance().show("Error", "Please create a network first.");
+            }
+        } else {
+            PopUpDialog.getInstance().show("Error", "Please create a network first.");
+        }
+    }
 
-		springLayout.setActionCommand("springLayout");
-		springLayout.addActionListener(new PopUpListener());
+    private void onOpenPathwayClicked() {
+        Pathway pw = GraphInstance.getPathwayStatic();
+        if (pw != null) {
+            MainWindow w = MainWindow.getInstance();
+            String pwName = w.getCurrentPathway();
+            for (BiologicalNodeAbstract bna : pw.getSelectedNodes()) {
+                if (bna instanceof PathwayMap) {
+                    PathwayMap map = (PathwayMap) bna;
+                    Pathway pwLink = map.getPathwayLink();
+                    if (pwLink == null) {
+                        KEGGConnector kc = new KEGGConnector(map.getName(), "", true);
+                        kc.setSearchMicroRNAs(JOptionPane.showConfirmDialog(w.getFrame(),
+                                "Search also after possibly connected microRNAs in mirBase/tarBase?",
+                                "Search parameters...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
+                        kc.addPropertyChangeListener((evt) -> {
+                            if (evt.getNewValue().equals("finished")) {
+                                Pathway newPW = kc.getPw();
+                                newPW.setParent(pw);
+                                w.removeTab(false);
+                                w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                                GraphContainer con = GraphContainer.getInstance();
+                                String newPathwayName = con.addPathway(pwName, newPW);
+                                newPW = con.getPathway(newPathwayName);
+                                w.addTab(newPW.getTab().getTitleTab());
+                                w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                                map.setPathwayLink(newPW);
+                                map.setColor(Color.BLUE);
+                                w.updateAllGuiElements();
+                            }
+                        });
+                        kc.execute();
+                        MainWindow.getInstance().showProgressBar("KEGG query");
+                    } else {
+                        w.removeTab(false);
+                        w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                        GraphContainer con = GraphContainer.getInstance();
+                        String newPathwayName = con.addPathway(pwName, pwLink);
+                        pwLink = con.getPathway(newPathwayName);
+                        w.addTab(pwLink.getTab().getTitleTab());
+                        w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    }
+                    w.updateAllGuiElements();
+                    return;
+                }
+            }
+        }
+    }
 
-		kkLayout.setActionCommand("kkLayout");
-		kkLayout.addActionListener(new PopUpListener());
+    private void onOpenPathwayTabClicked() {
+        Pathway pw = GraphInstance.getPathwayStatic();
+        if (pw != null) {
+            for (BiologicalNodeAbstract bna : pw.getSelectedNodes()) {
+                if (bna instanceof PathwayMap) {
+                    PathwayMap map = (PathwayMap) bna;
+                    // Pathway newPW = map.getPathwayLink();
+                    KEGGConnector kc = new KEGGConnector(map.getName(), "", false);
+                    kc.setSearchMicroRNAs(JOptionPane.showConfirmDialog(MainWindow.getInstance().getFrame(),
+                            "Search also after possibly connected microRNAs in mirBase/tarBase?",
+                            "Search paramaters...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
+                    kc.execute();
+                    MainWindow.getInstance().showProgressBar("KEGG query");
+                }
+            }
+        }
+    }
 
-		frLayout.setActionCommand("frLayout");
-		frLayout.addActionListener(new PopUpListener());
+    private void onReturnToParentClicked() {
+        Pathway pw = GraphInstance.getPathwayStatic();
+        if (pw != null && pw.getParent() != null) {
+            MainWindow w = MainWindow.getInstance();
+            String pwName = w.getCurrentPathway();
+            w.removeTab(false);
+            w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            GraphContainer con = GraphContainer.getInstance();
+            String newPathwayName = con.addPathway(pwName, pw.getParent());
+            Pathway newPW = con.getPathway(newPathwayName);
+            w.addTab(newPW.getTab().getTitleTab());
+            w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            w.updateAllGuiElements();
+        }
+    }
 
-		circleLayout.setActionCommand("circleLayout");
-		circleLayout.addActionListener(new PopUpListener());
+    private void onKEGGSearchClicked() {
+        Pathway pw = GraphInstance.getPathwayStatic();
+        if (pw != null) {
+            MainWindow w = MainWindow.getInstance();
+            Set<BiologicalNodeAbstract> vertices = pw.getSelectedNodes();
+            if (pw.getSelectedNodes().isEmpty()) {
+                JOptionPane.showMessageDialog(w.getFrame(), "Please select a node to search after it in a database!",
+                        "Operation not possible...", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            BiologicalNodeAbstract bna = vertices.iterator().next();
+            if (vertices.size() > 1) {
+                String[] possibilities = new String[vertices.size()];
+                int i = 0;
+                for (BiologicalNodeAbstract vertex : vertices) {
+                    possibilities[i++] = vertex.getLabel();
+                }
+                String answer = (String) JOptionPane.showInputDialog(w.getFrame(),
+                        "Choose one of the selected nodes, which shall be searched in a database", "Select a node...",
+                        JOptionPane.QUESTION_MESSAGE, null, possibilities, possibilities[0]);
+                if (answer == null)
+                    return;
+                bna = pw.getNodeByLabel(answer);
+            }
+            KeggSearch keggSearch;
+            switch (bna.getBiologicalElement()) {
+                case biologicalElements.Elementdeclerations.enzyme:
+                    keggSearch = new KeggSearch(null, null, bna.getLabel(), null, null, pw);
+                    break;
+                case biologicalElements.Elementdeclerations.gene:
+                    keggSearch = new KeggSearch(null, null, null, bna.getLabel(), null, pw);
+                    break;
+                case biologicalElements.Elementdeclerations.pathwayMap:
+                    keggSearch = new KeggSearch(bna.getLabel(), null, null, null, null, pw);
+                    break;
+                default:
+                    keggSearch = new KeggSearch(null, null, null, null, bna.getLabel(), pw);
+                    break;
+            }
+            keggSearch.execute();
+            MainWindow.getInstance().showProgressBar("KEGG query");
+        }
+    }
 
-		gemLayout.setActionCommand("gemLayout");
-		gemLayout.addActionListener(new PopUpListener());
-
-		isomLayout.setActionCommand("isomLayout");
-		isomLayout.addActionListener(new PopUpListener());
-
-		mdLayout.addActionListener(new PopUpListener());
-
-		keggSearch.setActionCommand("keggSearch");
-		keggSearch.addActionListener(new PopUpListener());
-
-		brendaSearch.setActionCommand("brendaSearch");
-		brendaSearch.addActionListener(new PopUpListener());
-
-		openPathway.setActionCommand("openPathway");
-		openPathway.addActionListener(new PopUpListener());
-		
-		openPathwayTab.setActionCommand("openPathwayTab");
-		openPathwayTab.addActionListener(new PopUpListener());
-		
-		returnToParent.setActionCommand("returnToParent");
-		returnToParent.addActionListener(new PopUpListener());
-		
-		graphPicture.setActionCommand("graphPicture");
-		graphPicture.addActionListener(new PopUpListener());
-		
-		openPathwayMenu.add(openPathway);
-		openPathwayMenu.add(openPathwayTab);
-		
-		// graph.add(centerGraph);
-
-//		popup.add(titlePanel);
-//		popup.add(new JSeparator());
-//		popup.add(circleLayout);
-//		popup.add(gemLayout);
-//		popup.add(frLayout);
-//		popup.add(isomLayout);
-//		popup.add(kkLayout);
-//		popup.add(springLayout);
-		// popup.add(mdLayout);
-
-
-		popup.add(openPathwayMenu);
-		popup.add(returnToParent);
-		popup.add(new JSeparator());
-		popup.add(graphPicture);
-		popup.add(new JSeparator());
-		popup.add(copySelection);
-		popup.add(cutSelection);
-		popup.add(pasteselection);
-		popup.add(deleteSelection);
-		
-		// popup.add(new JSeparator());
-		// popup.add(layout);
-		// popup.add(graph);
-		popup.add(new JSeparator());
-		popup.add(keggSearch);
-		popup.add(brendaSearch);
-		popup.add(new JSeparator());
-		popup.add(cancel);
-
-	}
-
-	public JPopupMenu returnPopUp() {
-		return popup;
-	}
+    private void onBRENDASearchClicked() {
+        Pathway pw = GraphInstance.getPathwayStatic();
+        if (pw != null) {
+            MainWindow w = MainWindow.getInstance();
+            Set<BiologicalNodeAbstract> vertices = pw.getSelectedNodes();
+            if (pw.getSelectedNodes().isEmpty()) {
+                JOptionPane.showMessageDialog(w.getFrame(), "Please select a node to search after it in a database!",
+                        "Operation not possible...", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            BiologicalNodeAbstract bna = vertices.iterator().next();
+            if (vertices.size() > 1) {
+                String[] possibilities = new String[vertices.size()];
+                int i = 0;
+                for (BiologicalNodeAbstract vertex : vertices) {
+                    possibilities[i++] = vertex.getLabel();
+                }
+                String answer = (String) JOptionPane.showInputDialog(w.getFrame(),
+                        "Choose one of the selected nodes, which shall be searched in a database", "Select a node...",
+                        JOptionPane.QUESTION_MESSAGE, null, possibilities, possibilities[0]);
+                if (answer == null)
+                    return;
+                bna = pw.getNodeByLabel(answer);
+            }
+            final BiologicalNodeAbstract selectedBna = bna;
+            AsyncTaskExecutor.runUIBlocking("BRENDA Query", () -> {
+                String ecNumber = null;
+                String metabolite = null;
+                if (selectedBna.getBiologicalElement().equals(biologicalElements.Elementdeclerations.enzyme)) {
+                    ecNumber = selectedBna.getLabel();
+                } else {
+                    metabolite = selectedBna.getLabel();
+                }
+                MainWindow.getInstance().closeProgressBar();
+                DBBrendaReaction[] results = BRENDASearch.searchReactions(ecNumber, null, metabolite, null, null);
+                if (results != null && results.length > 0) {
+                    BrendaSearchResultWindow searchResultWindow = new BrendaSearchResultWindow(results);
+                    if (!searchResultWindow.show()) {
+                        return;
+                    }
+                    DBBrendaReaction[] selectedResults = searchResultWindow.getSelectedValues();
+                    if (selectedResults.length != 0) {
+                        MainWindow.getInstance().showProgressBar("Fetching Network");
+                        for (DBBrendaReaction res : selectedResults) {
+                            BrendaConnector bc = new BrendaConnector(res, pw, searchResultWindow.getAutoCoarseDepth(),
+                                    searchResultWindow.getAutoCoarseEnzymeNomenclature(),
+                                    searchResultWindow.getCoFactorsDecision(),
+                                    searchResultWindow.getInhibitorsDecision(),
+                                    searchResultWindow.getSearchDepth(), searchResultWindow.getDisregarded(),
+                                    searchResultWindow.getOrganismSpecificDecision());
+                            bc.search();
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), "Sorry, no entries have been found.");
+                }
+            });
+        }
+    }
 }

@@ -41,7 +41,7 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
             writer.writeEndElement();
             writer.writeEndDocument();
         } catch (XMLStreamException e) {
-            setHasErrors();
+            addError(e.getMessage());
         }
     }
 
@@ -310,7 +310,6 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         Color color = Color.GRAY;
         Shape shape;
         boolean hasKEGGNode = false;
-        boolean hasDAWISNode = false;
         boolean hasBrendaNode = false;
         HashSet<String> labelSet = new HashSet<>();
         ArrayList<Parameter> parameters = new ArrayList<>();

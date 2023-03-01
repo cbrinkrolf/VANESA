@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -46,9 +45,9 @@ import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphContainer;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import gui.ToolBarButton;
-import gui.images.ImagePath;
+import gui.ImagePath;
 import net.miginfocom.swing.MigLayout;
 import transformation.Rule;
 import transformation.RuleEdge;
@@ -466,19 +465,19 @@ public class RuleEditingWindow implements ActionListener {
 	private void createButtonPanel(JPanel panel, boolean bn) {
 		ImagePath imagePath = ImagePath.getInstance();
 
-		JButton pick = new ToolBarButton(new ImageIcon(imagePath.getPath("newPick.png")));
+		JButton pick = new ToolBarButton(ImagePath.getInstance().getImageIcon("newPick.png"));
 		pick.setToolTipText("Pick element");
 		pick.setActionCommand("pick");
 		pick.addActionListener(listener);
 		panel.add(pick);
 
-		JButton move = new ToolBarButton(new ImageIcon(imagePath.getPath("move.png")));
+		JButton move = new ToolBarButton(ImagePath.getInstance().getImageIcon("move.png"));
 		move.setToolTipText("Move graph");
 		move.setActionCommand("move");
 		move.addActionListener(listener);
 		panel.add(move);
 
-		JButton trash = new ToolBarButton(new ImageIcon(imagePath.getPath("Trash.png")));
+		JButton trash = new ToolBarButton(ImagePath.getInstance().getImageIcon("Trash.png"));
 		trash.setToolTipText("Delete selected items");
 		this.bn.getGraph().getVisualizationViewer().addKeyListener(new KeyListener() {
 
@@ -504,34 +503,34 @@ public class RuleEditingWindow implements ActionListener {
 		trash.addActionListener(this);
 		panel.add(trash);
 
-		JButton center = new ToolBarButton(new ImageIcon(imagePath.getPath("centerGraph.png")));
+		JButton center = new ToolBarButton(ImagePath.getInstance().getImageIcon("centerGraph.png"));
 		center.setToolTipText("Center graph");
 		center.setActionCommand("center");
 		center.addActionListener(listener);
 		panel.add(center);
 
 		if (bn) {
-			JButton edit = new ToolBarButton(new ImageIcon(imagePath.getPath("TitleGraph.png")));
-			edit.setSelectedIcon(new ImageIcon(imagePath.getPath("editSelected.png")));
+			JButton edit = new ToolBarButton(ImagePath.getInstance().getImageIcon("TitleGraph.png"));
+			edit.setSelectedIcon(ImagePath.getInstance().getImageIcon("editSelected.png"));
 			edit.setToolTipText("Edit graph");
 			edit.setActionCommand("edit");
 			edit.addActionListener(listener);
 			panel.add(edit);
 		} else {
 
-			JButton discretePlace = new ToolBarButton(new ImageIcon(imagePath.getPath("discretePlace.png")));
+			JButton discretePlace = new ToolBarButton(ImagePath.getInstance().getImageIcon("discretePlace.png"));
 			discretePlace.setToolTipText("Discrete Place");
 			discretePlace.setActionCommand("discretePlace");
 			discretePlace.addActionListener(listener);
 			panel.add(discretePlace);
 
-			JButton continiousPlace = new ToolBarButton(new ImageIcon(imagePath.getPath("continiousPlace.png")));
+			JButton continiousPlace = new ToolBarButton(ImagePath.getInstance().getImageIcon("continiousPlace.png"));
 			continiousPlace.setToolTipText("Continuouse Place");
 			continiousPlace.setActionCommand("continuousPlace");
 			continiousPlace.addActionListener(listener);
 			panel.add(continiousPlace);
 
-			JButton place = new ToolBarButton(new ImageIcon(imagePath.getPath("discretePlace.png")));
+			JButton place = new ToolBarButton(ImagePath.getInstance().getImageIcon("discretePlace.png"));
 			place.setToolTipText("Any place");
 			place.setHorizontalTextPosition(JButton.CENTER);
 			place.setVerticalTextPosition(JButton.CENTER);
@@ -543,27 +542,27 @@ public class RuleEditingWindow implements ActionListener {
 			place.addActionListener(listener);
 			panel.add(place);
 
-			JButton discreteTransition = new ToolBarButton(new ImageIcon(imagePath.getPath("discreteTransition.png")));
+			JButton discreteTransition = new ToolBarButton(ImagePath.getInstance().getImageIcon("discreteTransition.png"));
 			discreteTransition.setToolTipText("Discrete Transition");
 			discreteTransition.setActionCommand("discreteTransition");
 			discreteTransition.addActionListener(listener);
 			panel.add(discreteTransition);
 
 			JButton continiousTransition = new ToolBarButton(
-					new ImageIcon(imagePath.getPath("continiousTransition2.png")));
+					ImagePath.getInstance().getImageIcon("continiousTransition2.png"));
 			continiousTransition.setToolTipText("Continuouse Transition");
 			continiousTransition.setActionCommand("continiousTransition");
 			continiousTransition.addActionListener(listener);
 			panel.add(continiousTransition);
 
 			JButton stochasticTransition = new ToolBarButton(
-					new ImageIcon(imagePath.getPath("stochasticTransition2.png")));
+					ImagePath.getInstance().getImageIcon("stochasticTransition2.png"));
 			stochasticTransition.setToolTipText("Stochastic Transition");
 			stochasticTransition.setActionCommand("stochasticTransition");
 			stochasticTransition.addActionListener(listener);
 			panel.add(stochasticTransition);
 
-			JButton transition = new ToolBarButton(new ImageIcon(imagePath.getPath("discreteTransition.png")));
+			JButton transition = new ToolBarButton(ImagePath.getInstance().getImageIcon("discreteTransition.png"));
 			transition.setToolTipText("transition");
 			transition.setToolTipText("Any Transition");
 			transition.setHorizontalTextPosition(JButton.CENTER);
@@ -579,26 +578,25 @@ public class RuleEditingWindow implements ActionListener {
 		// panel.add(new JSeparator(JSeparator.VERTICAL), "growy, gap 5");
 		panel.add(new JLabel(), "gap 10");
 
-		JButton adjustDown = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustDown.png")));
+		JButton adjustDown = new ToolBarButton(imagePath.getImageIcon("adjustDown.png"));
 		adjustDown.setToolTipText("Adjust Selected Nodes To Lowest Node");
 		adjustDown.setActionCommand("adjustDown");
 		adjustDown.addActionListener(listener);
 		panel.add(adjustDown);
 
-		JButton adjustLeft = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustLeft.png")));
+		JButton adjustLeft = new ToolBarButton(imagePath.getImageIcon("adjustLeft.png"));
 		adjustLeft.setToolTipText("Adjust Selected Nodes To Left");
 		adjustLeft.setActionCommand("adjustLeft");
 		adjustLeft.addActionListener(listener);
 		panel.add(adjustLeft);
 
-		JButton adjustHorizontalSpace = new ToolBarButton(
-				new ImageIcon(imagePath.getPath("adjustHorizontalSpace.png")));
+		JButton adjustHorizontalSpace = new ToolBarButton(imagePath.getImageIcon("adjustHorizontalSpace.png"));
 		adjustHorizontalSpace.setToolTipText("Adjust Horizontal Space of Selected Nodes");
 		adjustHorizontalSpace.setActionCommand("adjustHorizontalSpace");
 		adjustHorizontalSpace.addActionListener(listener);
 		panel.add(adjustHorizontalSpace);
 
-		JButton adjustVerticalSpace = new ToolBarButton(new ImageIcon(imagePath.getPath("adjustVerticalSpace.png")));
+		JButton adjustVerticalSpace = new ToolBarButton(imagePath.getImageIcon("adjustVerticalSpace.png"));
 		adjustVerticalSpace.setToolTipText("Adjust Vertical Space of Selected Nodes");
 		adjustVerticalSpace.setActionCommand("adjustVerticalSpace");
 		adjustVerticalSpace.addActionListener(listener);
@@ -616,16 +614,16 @@ public class RuleEditingWindow implements ActionListener {
 			BiologicalNodeAbstract bnBNA = bnPickedState.getPicked().iterator().next();
 			BiologicalNodeAbstract pnBNA = pnPickedState.getPicked().iterator().next();
 			if (bnToPn.containsKey(bnBNA)) {
-				MyPopUp.getInstance().show("Error", "Biological node " + bnBNA.getName() + "is mapped already!");
+				PopUpDialog.getInstance().show("Error", "Biological node " + bnBNA.getName() + "is mapped already!");
 				return;
 			} else if (bnToPn.containsValue(pnBNA)) {
-				MyPopUp.getInstance().show("Error", "Petri net node " + pnBNA.getName() + "is mapped already!");
+				PopUpDialog.getInstance().show("Error", "Petri net node " + pnBNA.getName() + "is mapped already!");
 				return;
 			} else if (bnBNA.getName().length() < 1) {
-				MyPopUp.getInstance().show("Error", "Biological node needs a valid name (not empty)!");
+				PopUpDialog.getInstance().show("Error", "Biological node needs a valid name (not empty)!");
 				return;
 			} else if (pnBNA.getName().length() < 1) {
-				MyPopUp.getInstance().show("Error", "Petri net node needs a valid name (not empty)!");
+				PopUpDialog.getInstance().show("Error", "Petri net node needs a valid name (not empty)!");
 				return;
 			}
 			bnToPn.put(bnBNA, pnBNA);
@@ -1298,7 +1296,7 @@ public class RuleEditingWindow implements ActionListener {
 		}
 		errorMessage = "All names of edges and nodes in the biological pattern and in the Petri net must be non-emptyh and unique!\r\n\r\n"
 				+ errorMessage;
-		MyPopUp.getInstance().show("Error saving rule!", errorMessage);
+		PopUpDialog.getInstance().show("Error saving rule!", errorMessage);
 		return false;
 	}
 

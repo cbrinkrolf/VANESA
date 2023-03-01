@@ -27,7 +27,6 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import configurations.NetworkSettings;
-import configurations.NetworkSettingsSingelton;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.AggregateLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -75,12 +74,11 @@ import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.MainWindow;
 import gui.MyAnnotationManager;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
 
 public class MyGraph {
-
 	private int VisualizationViewerWidth = 1000;
 	private int VisualizationViewerHeigth = 1000;
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<>();
@@ -121,7 +119,7 @@ public class MyGraph {
 
 	private boolean animatedPicking = false;
 
-	NetworkSettings settings = NetworkSettingsSingelton.getInstance();
+	NetworkSettings settings = NetworkSettings.getInstance();
 
 	public AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> getClusteringLayout() {
 		return clusteringLayout;
@@ -274,7 +272,7 @@ public class MyGraph {
 			vv.setBackground(Color.WHITE);
 		}
 		vv.setGraphMouse(graphMouse);
-		vv.setComponentPopupMenu(new GraphPopUp().returnPopUp());
+		vv.setComponentPopupMenu(new GraphPopUp().getPopUp());
 		// vv.setComponentPopupMenu(null);
 		// vv.setToolTipFunction(new ToolTips());
 
@@ -985,8 +983,8 @@ public class MyGraph {
 					map.put(n, getVertexLocation(n));
 				}
 			}
-			changeToLayout(new GEMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g, map));
-			MyPopUp.getInstance().show("GEMLayout", "GEMLayout was applied on picked nodes only!");
+			changeToLayout(new GEMLayout<>(g, map));
+			PopUpDialog.getInstance().show("GEMLayout", "GEMLayout was applied on picked nodes only!");
 		} else {
 			changeToLayout(new GEMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 		}

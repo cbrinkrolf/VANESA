@@ -33,7 +33,7 @@ import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import graph.ChangedFlags;
-import graph.Compartment.CompartmentManager;
+import graph.compartment.CompartmentManager;
 import graph.groups.Group;
 import graph.gui.Boundary;
 import graph.gui.CoarseNodeDeleteDialog;
@@ -45,11 +45,11 @@ import graph.layouts.Circle;
 import graph.layouts.GraphCenter;
 import gui.GraphTab;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import petriNet.PetriNetProperties;
 import petriNet.PetriNetSimulation;
 import transformation.TransformationInformation;
-import util.FormularSafety;
+import util.FormulaSafety;
 
 public class Pathway implements Cloneable {
 	private File file = null;
@@ -176,7 +176,7 @@ public class Pathway implements Cloneable {
 						bna.setLogicalReference(node);
 						createdRef = true;
 					} else {
-						MyPopUp.getInstance().show("Type mismatch",
+						PopUpDialog.getInstance().show("Type mismatch",
 								"Cannot create logical node with the name: " + bna.getName() + ". Type mismatch of "
 										+ bna.getClass() + " and " + node.getClass() + "!");
 						System.err.println("Cannot create logical node with the name: " + bna.getName()
@@ -788,7 +788,7 @@ public class Pathway implements Cloneable {
 
 	public void setName(String name) {
 		// if PW is BNA
-		this.name = FormularSafety.replace(name.trim());
+		this.name = FormulaSafety.replace(name.trim());
 		if (tab != null) {
 			this.name = name.trim();
 			tab.setTitle(this.name);
@@ -1273,7 +1273,7 @@ public class Pathway implements Cloneable {
 
 		Set<BiologicalNodeAbstract> nodes = vv.getPickedVertexState().getPicked();
 		if (nodes.size() > 1) {
-			Group group = new Group(new ArrayList<>(nodes));
+			Group group = new Group(nodes);
 			groups.add(group);
 
 			for (BiologicalNodeAbstract nextNode : vv.getPickedVertexState().getPicked()) {
@@ -1281,7 +1281,7 @@ public class Pathway implements Cloneable {
 				nextNode.addGroup(group);
 			}
 		} else {
-			MyPopUp.getInstance().show("Groupingerror", "This cannot be grouped.");
+			PopUpDialog.getInstance().show("Groupingerror", "This cannot be grouped.");
 		}
 	}
 
@@ -1295,7 +1295,7 @@ public class Pathway implements Cloneable {
 			Iterator<BiologicalNodeAbstract> it = vv.getPickedVertexState().getPicked().iterator();
 			BiologicalNodeAbstract nextNode = it.next();
 			if (nextNode.isInGroup()) {
-				for (BiologicalNodeAbstract node : nextNode.getbiggestGroup().nodes) {
+				for (BiologicalNodeAbstract node : nextNode.getbiggestGroup()) {
 					graph.getVisualizationViewer().getPickedVertexState().pick(node, true);
 				}
 			}
@@ -1318,7 +1318,7 @@ public class Pathway implements Cloneable {
 		for (BiologicalNodeAbstract bnaNode : vv.getPickedVertexState().getPicked()) {
 			if (!bnaNode.getGroups().contains(groupToDelete)) {
 				deletegroup = false;
-				MyPopUp.getInstance().show("Deletion error", "This cannot be deleted.");
+				PopUpDialog.getInstance().show("Deletion error", "This cannot be deleted.");
 			}
 		}
 		// if all selected are from same group, delete group

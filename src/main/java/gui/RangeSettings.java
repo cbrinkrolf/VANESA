@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import java.awt.event.ActionEvent;
@@ -22,14 +18,9 @@ import net.miginfocom.swing.MigLayout;
 import util.MyColorChooser;
 
 /**
- *
  * @author dao
  */
 public class RangeSettings extends JPanel implements ActionListener {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private RangeInfo rangeInfo;
 	private JTextField jTitle = new JTextField();
@@ -116,9 +107,6 @@ public class RangeSettings extends JPanel implements ActionListener {
 		} else if (e.getSource() == this.fillColor || e.getSource() == this.outlineColor
 				|| e.getSource() == this.textColor) {
 			JButton button = (JButton) e.getSource();
-			// Color color=
-			// JColorChooser.showDialog(GraphInstance.getMyGraph().getVisualizationViewer(),
-			// "select a new color.", button.getBackground());
 			MyColorChooser mc = new MyColorChooser(GraphInstance.getMyGraph().getVisualizationViewer(), "Choose color",
 					true, button.getBackground());
 			if (mc.isOkAction()) {
@@ -126,9 +114,5 @@ public class RangeSettings extends JPanel implements ActionListener {
 			}
 
 		}
-
-//        else if(e.getSource()==this.cancel){
-//            
-//        }
 	}
 }

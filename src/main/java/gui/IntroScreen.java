@@ -4,13 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JWindow;
 import javax.swing.SwingConstants;
 
 import gui.algorithms.CenterWindow;
-import gui.images.ImagePath;
 
 public class IntroScreen {
 
@@ -21,7 +19,7 @@ public class IntroScreen {
 		ImagePath imagePath = ImagePath.getInstance();
 		String markUp = "<html><font text-align = center>" + "Launching Program ...</font></html>";
 
-		label = new JLabel(new ImageIcon(imagePath.getPath("intro.png")), SwingConstants.CENTER);
+		label = new JLabel(ImagePath.getInstance().getImageIcon("intro.png"), SwingConstants.CENTER);
 		label.setBorder(BorderFactory.createRaisedBevelBorder());
 		label.setVerticalTextPosition(SwingConstants.BOTTOM);
 		label.setHorizontalTextPosition(SwingConstants.CENTER);

@@ -22,9 +22,9 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
-import graph.animations.RegulationTabelModel;
+import graph.animations.RegulationTableModel;
 import io.SaveDialog;
-import miscalleanous.tables.MyTable;
+import gui.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 import petriNet.PlotsPanel;
 import petriNet.SimulationResult;
@@ -103,7 +103,7 @@ public class DetailedSimRes implements ActionListener {
 		dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 	}
 
-	private RegulationTabelModel getTableModel(String simId) {
+	private RegulationTableModel getTableModel(String simId) {
 
 		BiologicalNodeAbstract bna;
 		SimulationResult simRes = pw.getPetriPropertiesNet().getSimResController().get(simId);
@@ -138,7 +138,7 @@ public class DetailedSimRes implements ActionListener {
 		for (i = 0; i < rowsDim; i++) {
 			columNames[i + 1] = "t=" + simRes.getTime().get(i);
 		}
-		return new RegulationTabelModel(rows, columNames);
+		return new RegulationTableModel(rows, columNames);
 	}
 
 	@Override

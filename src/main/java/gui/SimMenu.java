@@ -675,7 +675,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 						// System.out.println(num[i]);
 						parameterValues.add(Double.parseDouble(num[i]));
 					} catch (Exception e) {
-						MyPopUp.getInstance().show("Number error", "Given number is not valid: " + num[i]);
+						PopUpDialog.getInstance().show("Number error", "Given number is not valid: " + num[i]);
 					}
 				}
 			}

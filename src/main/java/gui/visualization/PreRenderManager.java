@@ -27,7 +27,7 @@ import graph.algorithms.gui.clusters.ClusterColorEditor;
 import gui.LocalBackboardPaintable;
 import gui.MainWindow;
 import gui.MyAnnotation;
-import miscalleanous.tables.MyTable;
+import gui.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -63,7 +63,7 @@ public class PreRenderManager implements ActionListener {
 
 	private MyTable table;
 
-	private PreRenderManagerTablemodel model;
+	private PreRenderManagerTableModel model;
 
 	private PreRenderManager(String pathwayname) {
 
@@ -214,7 +214,7 @@ public class PreRenderManager implements ActionListener {
 
 	private void initTable(Object[][] rows, String[] columNames) {
 
-		model = new PreRenderManagerTablemodel(rows, columNames, tablecontent);
+		model = new PreRenderManagerTableModel(rows, columNames, tablecontent);
 
 		table = new MyTable();
 		table.setModel(model);

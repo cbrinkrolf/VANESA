@@ -31,7 +31,7 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
 import graph.gui.Parameter;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.function.Function;
@@ -150,7 +150,7 @@ public class Transformator {
 		// MainWindow.getInstance().updateProjectProperties();
 		// MainWindow.getInstance().updateOptionPanel();
 		petriNet.updateMyGraph();
-		MyPopUp.getInstance().show("Transformation", "Biological network transformed without errors!");
+		PopUpDialog.getInstance().show("Transformation", "Biological network transformed without errors!");
 		return petriNet;
 	}
 

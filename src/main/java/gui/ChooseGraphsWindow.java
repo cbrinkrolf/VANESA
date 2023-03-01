@@ -85,7 +85,7 @@ public abstract class ChooseGraphsWindow implements ActionListener {
 			}
 
 			if (chosen_pathways.size() < 2) {
-				MyPopUp.getInstance().show("Error", "Please select at least 2 graphs!");
+				PopUpDialog.getInstance().show("Error", "Please select at least 2 graphs!");
 			} else {
 				dialog.setVisible(false);
 				dialog.dispose();

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package gui;
 
 import java.awt.Color;
@@ -32,13 +28,7 @@ import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import graph.jung.classes.MyVisualizationViewer;
 
-/**
- * 
- * @author star
- */
-public class RangeSelector extends MouseAdapter implements Paintable,
-		ActionListener {
-
+public class RangeSelector extends MouseAdapter implements Paintable, ActionListener {
 	public static final int RECTANGLE = 0, ELLIPSE = 1, POLYGON = 3;
 	//private int currentRangeType = RECTANGLE;
 	//private Point2D startDragging;
@@ -62,7 +52,6 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	private JMenuItem moveUpRange;
 	private JMenuItem moveDownRange;
 	private RangeSettings settings = new RangeSettings();
-	//private ImagePath imagePath = ImagePath.getInstance();
 	private MyAnnotationManager am;
 
 	public static RangeSelector getInstance() {
@@ -138,9 +127,8 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 	private List<RangeInfo> getShapes(MyGraph mg) {
 		// return this.ranges.get(mg);
-		//System.out.println(mg.getAnnotationManager().getAnnotations().size());
 		MyAnnotationManager am = mg.getAnnotationManager();
-		List<RangeInfo> list = new ArrayList<RangeInfo>();
+		List<RangeInfo> list = new ArrayList<>();
 		Iterator<MyAnnotation> it = am.getAnnotations().iterator();
 		MyAnnotation an;
 		Annotation<?> a;
@@ -152,32 +140,22 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 			// Annotation a = ((MyAnnotationManager)
 			// this.annotationManager).getCurrentAnnotation();
 			// a.setPaint(new Color(255, 255, 255));
-			// System.out.println(an.getShape());
-			//System.out.println("miiiin: "+an.getShape().getMinX());
 			r = new RangeInfo(an.getShape(), an.getText(),
 					(Color) a.getPaint(), (Color) a.getPaint(),
 					(Color) a.getPaint());
 			// RangeSelector.getInstance().addRangeInfo(r);
 			list.add(r);
 		}
-		//System.out.println("g: "+list.size());
 		return list;
 
 	}
 
 	public void addRangesInMyGraph(MyGraph graph, Map<String, String> attributes) {
 		try {
-	        
 			RangeInfo r = new RangeInfo(attributes, this);
 			this.getShapes(graph).add(r);
-			// System.out.println(r.shape.getWidth());
-			// System.out.println(r.shape.getHeight());
-			// System.out.println(r.fillColor);
-			// System.out.println(r.shape.getX());
-			// System.out.println(r.shape.getY());
 			am = graph.getAnnotationManager();
 			// am = GraphInstance.getMyGraph().getAnnotationManager();
-
 			if (r.shape instanceof Ellipse2D) {
 				// System.out.println("elli");
 			} else {
@@ -391,7 +369,6 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 
 	@Override
 	public void paint(Graphics g) {
-		
 	}
 
 	@Override
@@ -403,8 +380,8 @@ public class RangeSelector extends MouseAdapter implements Paintable,
 	public void mouseReleased(MouseEvent e){
 		super.mouseReleased(e);
 		@SuppressWarnings("unchecked")
-		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-				.getSource();
+		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv =
+				(MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
 		vv.requestFocus();
 	}
 }

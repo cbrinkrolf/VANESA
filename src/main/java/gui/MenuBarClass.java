@@ -16,66 +16,37 @@ import graph.GraphInstance;
 import gui.eventhandlers.MenuListener;
 
 public class MenuBarClass {
-
-	private JMenuItem saveNetworkAs;
-	private JMenuItem saveNetwork;
-	private JMenuItem closeAllNetworks;
-	private JMenuItem closeNetwork;
-	private JMenuItem savePicture;
-	private JMenuItem springLayout;
-	private JMenuItem kkLayout;
-	private JMenuItem frLayout;
-	private JMenuItem circleLayout;
-	private JMenuItem isomLayout;
-	private JMenuItem gemLayout;
-	private JMenuItem hebLayout;
-	private JMenuItem hctLayout;
+	private final JMenuItem saveNetworkAs;
+	private final JMenuItem saveNetwork;
+	private final JMenuItem closeAllNetworks;
+	private final JMenuItem closeNetwork;
+	private final JMenuItem savePicture;
+	private final JMenuItem springLayout;
+	private final JMenuItem kkLayout;
+	private final JMenuItem frLayout;
+	private final JMenuItem circleLayout;
+	private final JMenuItem isomLayout;
+	private final JMenuItem gemLayout;
+	private final JMenuItem hebLayout;
+	private final JMenuItem hctLayout;
 	// private JMenuItem centerGraph;
-	private JMenuItem databaseItem;
-
-	private JMenuItem visualizationSettings;
-	// JMenuItem keggItem;
-	// JMenuItem brendaItem;
-	// JMenuItem dawisItem;
-	// JMenuItem ppiItem;
-	private JMenuItem biGraph;
-	private JMenuItem connectedGraph;
-	private JMenuItem internet;
-	private JMenuItem graphSettings;
-	private JMenuItem openNetwork;
-	private JMenuItem interaction;
-	private JMenuItem mathLaw;
+	private final JMenuItem openNetwork;
 	// private JMenuItem phosphoImport;
-
-	// private JMenuItem kcore;
-	private JMenuItem hamiltonGraph;
-	// JMenuItem animations;
-	private JMenuItem about;
 	// private JMenuItem mdLayout;
 	// private JMenuItem dbInformation;
-	private JMenuItem export;
-
-	/*
-	 * JMenuItem exportGraphMl; JMenuItem exportMo; JMenuItem exportGon;
-	 */
-	private JMenuBar bar;
-	private JMenuItem regularGraph;
-
-	private JMenuItem transform;
-	private JMenuItem showTransformResult;
-	private JMenuItem showPN;
-
-	private JMenuItem testPInvariant;
-	private JMenuItem testTInvariant;
-	private JMenuItem cov;
-	private JMenuItem covreach;
-	private JMenuItem modelicaResult;
-	private JMenuItem editPNelements;
-	private JMenuItem simulate;
-	private JMenuItem createDoc;
-
-	private JMenuItem rendererSettings;
-	private JMenuItem dataLabelMapping;
+	private final JMenuItem export;
+	private final JMenuBar bar;
+	private final JMenuItem transform;
+	private final JMenuItem showTransformResult;
+	private final JMenuItem showPN;
+	private final JMenuItem testPInvariant;
+	private final JMenuItem testTInvariant;
+	private final JMenuItem cov;
+	private final JMenuItem covreach;
+	private final JMenuItem modelicaResult;
+	private final JMenuItem editPNelements;
+	private final JMenuItem simulate;
+	private final JMenuItem createDoc;
 
 	public MenuBarClass(Application application) {
 		int MENUSHORTCUT = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
@@ -113,7 +84,7 @@ public class MenuBarClass {
 		tools.add(datamining);
 
 		// items for label to data mapping
-		dataLabelMapping = new JMenuItem("Label->Data Mapping");
+		JMenuItem dataLabelMapping = new JMenuItem("Label->Data Mapping");
 		dataLabelMapping.addActionListener(MenuListener.getInstance());
 		dataLabelMapping.setActionCommand(MenuActionCommands.dataLabelMapping.value);
 		tools.add(new JSeparator());
@@ -122,10 +93,6 @@ public class MenuBarClass {
 		JMenuItem phosphoImport = new JMenuItem("PhosphoSite input");
 		phosphoImport.addActionListener(MenuListener.getInstance());
 		phosphoImport.setActionCommand(MenuActionCommands.phospho.value);
-
-		JMenuItem mirnaTest = new JMenuItem("MirnaTest");
-		mirnaTest.addActionListener(MenuListener.getInstance());
-		mirnaTest.setActionCommand(MenuActionCommands.mirnaTest.value);
 
 		JMenuItem enrichGene = new JMenuItem("Enrich genes with miRNA");
 		enrichGene.setToolTipText("enriches (selected) genes with miRNA information");
@@ -160,25 +127,6 @@ public class MenuBarClass {
 		export.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, MENUSHORTCUT));
 		export.addActionListener(MenuListener.getInstance());
 		export.setActionCommand(MenuActionCommands.exportNetwork.value);
-
-		/*
-		 * exportGraphMl = new JMenuItem("Export Network As GraphML",KeyEvent.VK_E);
-		 * exportGraphMl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
-		 * ActionEvent.CTRL_MASK)); exportGraphMl.addActionListener(new MenuListener());
-		 * exportGraphMl.setActionCommand(MenuActionCommands.exportNetworkGraphml.value)
-		 * ;
-		 * 
-		 * exportMo = new JMenuItem("Export Network for Modelica",KeyEvent.VK_M);
-		 * exportMo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,
-		 * ActionEvent.CTRL_MASK)); exportMo.addActionListener(new MenuListener());
-		 * exportMo.setActionCommand(MenuActionCommands.exportNetworkMo.value);
-		 * 
-		 * exportGon = new
-		 * JMenuItem("Export Network for CellIllustrator",KeyEvent.VK_I);
-		 * exportGon.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
-		 * ActionEvent.CTRL_MASK)); exportGon.addActionListener(new MenuListener());
-		 * exportGon.setActionCommand(MenuActionCommands.exportNetworkGon.value);
-		 */
 
 		// animations = new JMenuItem("Animation", KeyEvent.VK_O);
 		// animations.addActionListener(MenuListener.getInstance());
@@ -241,35 +189,15 @@ public class MenuBarClass {
 		gemLayout.addActionListener(MenuListener.getInstance());
 		gemLayout.setActionCommand(MenuActionCommands.gemLayout.value);
 
-		databaseItem = new JMenuItem("Database Connection");
-		databaseItem.addActionListener(MenuListener.getInstance());
-		databaseItem.setActionCommand(MenuActionCommands.databaseSettings.value);
-
-		visualizationSettings = new JMenuItem("Visualization Settings");
+		JMenuItem visualizationSettings = new JMenuItem("Visualization Settings");
 		visualizationSettings.addActionListener(MenuListener.getInstance());
 		visualizationSettings.setActionCommand(MenuActionCommands.visualizationSettings.value);
 
-		// keggItem = new JMenuItem("KEGG Connection");
-		// keggItem.addActionListener(MenuListener.getInstance());
-		// keggItem.setActionCommand(MenuActionCommands.keggSettings.value);
-
-		// brendaItem = new JMenuItem("BRENDA Connection");
-		// brendaItem.addActionListener(MenuListener.getInstance());
-		// brendaItem.setActionCommand(MenuActionCommands.brendaSettings.value);
-		//
-		// dawisItem = new JMenuItem("DAWIS Connection");
-		// dawisItem.addActionListener(MenuListener.getInstance());
-		// dawisItem.setActionCommand(MenuActionCommands.dawisSettings.value);
-		//
-		// ppiItem = new JMenuItem("PPI Connection");
-		// ppiItem.addActionListener(MenuListener.getInstance());
-		// ppiItem.setActionCommand(MenuActionCommands.ppiSettings.value);
-
-		interaction = new JMenuItem("Show network properties");
+		JMenuItem interaction = new JMenuItem("Show network properties");
 		interaction.addActionListener(MenuListener.getInstance());
 		interaction.setActionCommand(MenuActionCommands.interaction.value);
 
-		JMenuItem allPopUps = new JMenuItem("Show all previous PupUp messages");
+		JMenuItem allPopUps = new JMenuItem("Show all previous PopUp messages");
 		allPopUps.addActionListener(MenuListener.getInstance());
 		allPopUps.setActionCommand(MenuActionCommands.allPopUps.value);
 
@@ -277,35 +205,35 @@ public class MenuBarClass {
 		nodesEdgesTypes.addActionListener(MenuListener.getInstance());
 		nodesEdgesTypes.setActionCommand(MenuActionCommands.nodesEdgesTypes.value);
 
-		internet = new JMenuItem("Internet Connection");
-		internet.addActionListener(MenuListener.getInstance());
-		internet.setActionCommand(MenuActionCommands.internet.value);
+		JMenuItem internetSettings = new JMenuItem("Internet Connection");
+		internetSettings.addActionListener(MenuListener.getInstance());
+		internetSettings.setActionCommand(MenuActionCommands.internet.value);
 
-		rendererSettings = new JMenuItem("Renderer Settings");
+		JMenuItem rendererSettings = new JMenuItem("Renderer Settings");
 		rendererSettings.addActionListener(MenuListener.getInstance());
 		rendererSettings.setActionCommand(MenuActionCommands.rendererSettings.value);
 
-		mathLaw = new JMenuItem("Generate Random Graph");
+		JMenuItem mathLaw = new JMenuItem("Generate Random Graph");
 		mathLaw.addActionListener(MenuListener.getInstance());
 		mathLaw.setActionCommand(MenuActionCommands.mathGraph.value);
 
-		biGraph = new JMenuItem("Generate Bipartite Graph");
+		JMenuItem biGraph = new JMenuItem("Generate Bipartite Graph");
 		biGraph.addActionListener(MenuListener.getInstance());
 		biGraph.setActionCommand(MenuActionCommands.biGraph.value);
 
-		regularGraph = new JMenuItem("Generate Regular Graph");
+		JMenuItem regularGraph = new JMenuItem("Generate Regular Graph");
 		regularGraph.addActionListener(MenuListener.getInstance());
 		regularGraph.setActionCommand(MenuActionCommands.regularGraph.value);
 
-		connectedGraph = new JMenuItem("Generate Connected Graph");
+		JMenuItem connectedGraph = new JMenuItem("Generate Connected Graph");
 		connectedGraph.addActionListener(MenuListener.getInstance());
 		connectedGraph.setActionCommand(MenuActionCommands.connectedGraph.value);
 
-		hamiltonGraph = new JMenuItem("Generate Hamilton Graph");
+		JMenuItem hamiltonGraph = new JMenuItem("Generate Hamilton Graph");
 		hamiltonGraph.addActionListener(MenuListener.getInstance());
 		hamiltonGraph.setActionCommand(MenuActionCommands.hamiltonGraph.value);
 
-		graphSettings = new JMenuItem("Graph Settings");
+		JMenuItem graphSettings = new JMenuItem("Graph Settings");
 		graphSettings.addActionListener(MenuListener.getInstance());
 		graphSettings.setActionCommand(MenuActionCommands.graphSettings.value);
 
@@ -334,7 +262,8 @@ public class MenuBarClass {
 
 		// about item is already present on mac osx
 		if (!application.isMac()) {
-			about = new JMenuItem("About");
+			// JMenuItem animations;
+			JMenuItem about = new JMenuItem("About");
 			about.addActionListener(MenuListener.getInstance());
 			about.setActionCommand(MenuActionCommands.about.value);
 			help.add(about);
@@ -378,12 +307,7 @@ public class MenuBarClass {
 			file.add(exit);
 		}
 
-		// settings.add(keggItem);
-		// settings.add(brendaItem);
-		// settings.add(dawisItem);
-		// settings.add(ppiItem);
-		settings.add(databaseItem);
-		settings.add(internet);
+		settings.add(internetSettings);
 		settings.add(graphSettings);
 		settings.add(visualizationSettings);
 		settings.add(rendererSettings);
@@ -395,7 +319,6 @@ public class MenuBarClass {
 		graph.add(phosphoImport);
 
 		if (MainWindow.developer) {
-			graph.add(mirnaTest);
 			graph.add(enrichGene);
 			graph.add(enrichMirna);
 			graph.add(shake);
@@ -508,10 +431,6 @@ public class MenuBarClass {
 		hctLayout.setEnabled(true);
 		// animations.setEnabled(true);
 		export.setEnabled(true);
-		/*
-		 * exportGraphMl.setEnabled(true); exportMo.setEnabled(true);
-		 * exportGon.setEnabled(true);
-		 */
 		// mdLayout.setEnabled(true);
 		transform.setEnabled(true);
 		showTransformResult.setEnabled(true);
@@ -520,7 +439,6 @@ public class MenuBarClass {
 			transform.setEnabled(false);
 			showTransformResult.setEnabled(false);
 			showPN.setEnabled(false);
-
 			testPInvariant.setEnabled(true);
 			testTInvariant.setEnabled(true);
 			cov.setEnabled(true);
@@ -570,12 +488,7 @@ public class MenuBarClass {
 		// animations.setEnabled(false);
 		// openNetwork.setEnabled(false);
 		export.setEnabled(false);
-		/*
-		 * exportGraphMl.setEnabled(false); exportMo.setEnabled(false);
-		 * exportGon.setEnabled(false);
-		 */
 		// mdLayout.setEnabled(false);
-
 		testPInvariant.setEnabled(false);
 		testTInvariant.setEnabled(false);
 		cov.setEnabled(false);

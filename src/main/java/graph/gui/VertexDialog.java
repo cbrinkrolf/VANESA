@@ -1,61 +1,38 @@
-/**
- * 
- */
 package graph.gui;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import biologicalElements.EnzymeNames;
+import biologicalElements.Elementdeclerations;
+import biologicalElements.Pathway;
+import graph.compartment.Compartment;
+import gui.MainWindow;
+import net.miginfocom.swing.MigLayout;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
-
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
-
-import biologicalElements.ElementNamesSingleton;
-import biologicalElements.Elementdeclerations;
-import biologicalElements.Pathway;
-import graph.Compartment.Compartment;
-import gui.MainWindow;
-import net.miginfocom.swing.MigLayout;
-
 /**
  * @author Sebastian
- * 
  */
 public class VertexDialog {
-
-	private JPanel panel;
-	private JOptionPane pane;
-	private JTextField name;
-	private JComboBox<String> elementNames = new JComboBox<String>();
-	private JComboBox<String> compartment = new JComboBox<String>();
-	private JComboBox<String> elementType = new JComboBox<String>();
-	private Pathway pw;
+	private final JOptionPane pane;
+	private final JTextField name;
+	private final JComboBox<String> elementNames = new JComboBox<>();
+	private final JComboBox<String> compartment = new JComboBox<>();
+	private final JComboBox<String> elementType = new JComboBox<>();
+	private final Pathway pw;
 	private int lastTypeIdx = -1;
-	private DefaultComboBoxModel<String> dcbm;
-	private DefaultComboBoxModel<String> dcbmEmpty;
+	private final DefaultComboBoxModel<String> dcbm;
+	private final DefaultComboBoxModel<String> dcbmEmpty;
 
-	/**
-	 * 
-	 */
 	public VertexDialog(Pathway pw, int lastTypeidx) {
 		this.pw = pw;
 		MigLayout layout = new MigLayout("", "[left]");
-
-		dcbm = new DefaultComboBoxModel<String>(ElementNamesSingleton.getInstance().getEnzymes());
-		dcbmEmpty = new DefaultComboBoxModel<String>(new String[]{""});
+		dcbm = new DefaultComboBoxModel<>(EnzymeNames.getInstance().getEnzymes());
+		dcbmEmpty = new DefaultComboBoxModel<>(new String[]{""});
 		elementNames.setEditable(true);
 
 		elementNames.setModel(dcbm);
@@ -66,21 +43,17 @@ public class VertexDialog {
 		AutoCompleteDecorator.decorate(elementNames);
 
 		name = new JTextField(20);
-		panel = new JPanel(layout);
+		JPanel panel = new JPanel(layout);
 
 		panel.add(new JLabel("Element"), "span 4");
 
-		elementType.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (elementType.getSelectedItem().equals(Elementdeclerations.enzyme)) {
-					elementNames.setModel(dcbm);
-					AutoCompleteDecorator.decorate(elementNames);
-				} else {
-					elementNames.setModel(dcbmEmpty);
-					AutoCompleteDecorator.decorate(elementNames);
-				}
+		elementType.addItemListener(e -> {
+			if (Elementdeclerations.enzyme.equals(elementType.getSelectedItem())) {
+				elementNames.setModel(dcbm);
+				AutoCompleteDecorator.decorate(elementNames);
+			} else {
+				elementNames.setModel(dcbmEmpty);
+				AutoCompleteDecorator.decorate(elementNames);
 			}
 		});
 		addNodeItems();
@@ -91,7 +64,6 @@ public class VertexDialog {
 			} else {
 				elementType.setSelectedIndex(lastTypeidx);
 			}
-
 		} else {
 			if (lastTypeidx < 0) {
 				elementType.setSelectedItem(Elementdeclerations.enzyme);
@@ -101,16 +73,13 @@ public class VertexDialog {
 		}
 		elementType.setMaximumSize(new Dimension(250, 300));
 		panel.add(elementType, "span,wrap 5,growx ,gaptop 2");
-
 		if (!pw.isHeadless()) {
 			panel.add(new JLabel("Compartment"), "span 4, gapright 4");
-
 			AutoCompleteDecorator.decorate(compartment);
 			compartment.setMaximumSize(new Dimension(250, 300));
 			compartment.setSelectedItem("Cytoplasma");
 			panel.add(compartment, "span,wrap 5,growx ,gaptop 2");
 		}
-
 		if (pw.isHeadless()) {
 			panel.add(new JLabel("Name"), "span 2, gaptop 2 ");
 			name.setText("N" + (pw.countNodes() + 1));
@@ -119,44 +88,29 @@ public class VertexDialog {
 			panel.add(new JLabel("Label"), "span 2, gaptop 2 ");
 			panel.add(elementNames, "span,wrap,growx ,gap 10, gaptop 2");
 		}
-
 		panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
-
 		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-
 	}
 
 	private void addNodeItems() {
-
 		List<String> nodeItems = new Elementdeclerations().getNotPNNodeDeclarations();
-		Iterator<String> it = nodeItems.iterator();
-
 		if (pw.isHeadless()) {
 			elementType.addItem(Elementdeclerations.anyBNA);
 		}
-
-		String element;
-		while (it.hasNext()) {
-			element = it.next();
+		for (String element : nodeItems) {
 			elementType.addItem(element);
 		}
-
 		if (!pw.isHeadless()) {
 			List<Compartment> compartmentList = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
-			Iterator<Compartment> it2 = compartmentList.iterator();
-			//compartment.addItem("");
-			Compartment c;
-			while (it2.hasNext()) {
-				c = it2.next();
+			for (Compartment c : compartmentList) {
 				compartment.addItem(c.getName());
 			}
 		}
 	}
 
 	public Map<String, String> getAnswer(Component relativeTo) {
-		Map<String, String> details = new HashMap<String, String>();
+		Map<String, String> details = new HashMap<>();
 		JDialog dialog = pane.createDialog(null, "Create an element");
-		// dialog.show();
 		if (relativeTo == null) {
 			dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		} else {
@@ -170,7 +124,6 @@ public class VertexDialog {
 				if (pw.isHeadless()) {
 					details.put("name", name.getText().toString().trim());
 				} else {
-					//System.out.println(elementNames.getSelectedIndex());
 					details.put("name", elementNames.getSelectedItem().toString().trim());
 					details.put("compartment", compartment.getSelectedItem().toString().trim());
 				}

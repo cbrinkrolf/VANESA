@@ -3,14 +3,7 @@ package biologicalObjects.nodes;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -21,7 +14,7 @@ import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
-import configurations.NetworkSettingsSingelton;
+import configurations.NetworkSettings;
 import graph.GraphInstance;
 import graph.groups.Group;
 import graph.gui.Parameter;
@@ -97,8 +90,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	public void delete() {
 		if (isCoarseNode()) {
-			Set<BiologicalNodeAbstract> nodes = new HashSet<BiologicalNodeAbstract>();
-			nodes.addAll(getVertices().keySet());
+			Set<BiologicalNodeAbstract> nodes = new HashSet<>(getVertices().keySet());
 			for (BiologicalNodeAbstract n : nodes) {
 				n.delete();
 			}
@@ -107,8 +99,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			for (BiologicalNodeAbstract parent : getAllParentNodes()) {
 				parent.getVertices().remove(this);
 			}
-			Set<BiologicalEdgeAbstract> conEdges = new HashSet<BiologicalEdgeAbstract>();
-			conEdges.addAll(getConnectingEdges());
+			Set<BiologicalEdgeAbstract> conEdges = new HashSet<>(getConnectingEdges());
 			for (BiologicalEdgeAbstract e : conEdges) {
 				e.getFrom().removeConnectingEdge(e);
 				e.getTo().removeConnectingEdge(e);
@@ -356,11 +347,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private static boolean hasValidBorder(boolean isPetriNet, Set<BiologicalNodeAbstract> vertices) {
 		if (!isPetriNet)
 			return true;
-		Set<BiologicalNodeAbstract> leafVertices = new HashSet<BiologicalNodeAbstract>();
+		Set<BiologicalNodeAbstract> leafVertices = new HashSet<>();
 		for (BiologicalNodeAbstract v : vertices) {
 			leafVertices.addAll(v.getLeafNodes());
 		}
-		Set<BiologicalNodeAbstract> borderNodes = new HashSet<BiologicalNodeAbstract>();
+		Set<BiologicalNodeAbstract> borderNodes = new HashSet<>();
 		for (BiologicalNodeAbstract v : leafVertices) {
 			for (BiologicalEdgeAbstract e : v.getConnectingEdges()) {
 				if (!leafVertices.contains(e.getTo()) || !leafVertices.contains(e.getFrom())) {
@@ -476,9 +467,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public boolean addToCoarseNode(Set<BiologicalNodeAbstract> vertices,
-			HashMap<BiologicalNodeAbstract, Point2D> vertexLocations) {
-		Set<BiologicalNodeAbstract> ln = new HashSet<BiologicalNodeAbstract>();
-		ln.addAll(getLeafNodes());
+								   Map<BiologicalNodeAbstract, Point2D> vertexLocations) {
+		Set<BiologicalNodeAbstract> ln = new HashSet<>(getLeafNodes());
 		for (BiologicalNodeAbstract v : vertices) {
 			if (v.getParentNode() != this.getParentNode()) {
 				return false;
@@ -500,7 +490,6 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			return true;
 		}
 		return false;
-
 	}
 
 	/**
@@ -518,7 +507,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			Set<BiologicalNodeAbstract> innerNodes = new HashSet<BiologicalNodeAbstract>();
 			innerNodes.addAll(getChildrenNodes());
 			this.flat();
-			MainWindow.getInstance().removeTab(false, getTab().getTitelTab(), this);
+			MainWindow.getInstance().removeTab(false, getTab().getTitleTab(), this);
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
 			setGraph(bna.getGraph());
 			new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
@@ -1190,7 +1179,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public String getNetworklabel() {
-		return getCorrectLabel(NetworkSettingsSingelton.getInstance().getNodeLabel());
+		return getCorrectLabel(NetworkSettings.getInstance().getNodeLabel());
 	}
 
 	public String getLabel() {
@@ -1514,9 +1503,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	public Group getbiggestGroup() {
 		Group bigG = null;
 		for (Group g : groups) {
-			if (bigG == null) {
-				bigG = g;
-			} else if (g.nodes.size() > bigG.nodes.size()) {
+			if (bigG == null || g.size() > bigG.size()) {
 				bigG = g;
 			}
 		}
@@ -1525,7 +1512,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	// defines parameters which are available in during transformation
 	public List<String> getTransformationParameters() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add("name");
 		list.add("label");
 		list.add("concentrationStart");

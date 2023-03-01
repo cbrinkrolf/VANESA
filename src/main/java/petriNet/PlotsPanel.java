@@ -234,7 +234,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new SaveDialog(SaveDialog.FORMAT_PDF + SaveDialog.FORMAT_SVG +  SaveDialog.FORMAT_PNG, charts, true, this);
+		new SaveDialog(SaveDialog.FORMAT_PDF + SaveDialog.FORMAT_SVG +  SaveDialog.FORMAT_PNG, charts, this);
 	}
 
 	@Override

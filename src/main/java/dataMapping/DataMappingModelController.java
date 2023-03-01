@@ -27,7 +27,7 @@ import dataMapping.biomartRetrieval.IntActQueryRetrieval;
 import dataMapping.dataImport.ImportExcelxData;
 import graph.GraphInstance;
 import gui.MainWindow;
-import gui.ProgressBar;
+import gui.IndeterminateProgressBar;
 
 /**
  * This class manages the data flow between the GUI, the BioMart information
@@ -56,7 +56,7 @@ public class DataMappingModelController extends Observable {
 
 	private Map<String, String> resultMap;
 	private int headerIndex;
-	public static ProgressBar progressBarExport;
+	public static IndeterminateProgressBar progressBarExport;
 
 	/**
 	 * constructs the DataMappingModelController and instantiates a new

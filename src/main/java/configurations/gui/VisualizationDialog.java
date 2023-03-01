@@ -36,7 +36,7 @@ import org.yaml.snakeyaml.Yaml;
 import biologicalElements.Elementdeclerations;
 import configurations.ConnectionSettings;
 import gui.MainWindow;
-import gui.MyPopUp;
+import gui.PopUpDialog;
 import gui.visualization.YamlToObjectParser;
 import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
@@ -282,10 +282,10 @@ public class VisualizationDialog {
 					yaml.dumpAll(docs.iterator(), writer);
 				}
 			} else {
-				MyPopUp.getInstance().show("Error", "No configuration file is loaded!");
+				PopUpDialog.getInstance().show("Error", "No configuration file is loaded!");
 			}
 		} else {
-			MyPopUp.getInstance().show("Error", "No configuration file is loaded!");
+			PopUpDialog.getInstance().show("Error", "No configuration file is loaded!");
 		}
 	}
 
