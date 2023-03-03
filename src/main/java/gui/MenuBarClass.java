@@ -9,10 +9,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import gui.eventhandlers.MenuActionCommands;
 import org.simplericity.macify.eawt.Application;
 
 import graph.GraphInstance;
+import gui.eventhandlers.MenuActionCommands;
 import gui.eventhandlers.MenuListener;
 
 public class MenuBarClass {
@@ -47,6 +47,7 @@ public class MenuBarClass {
 	private final JMenuItem editPNelements;
 	private final JMenuItem simulate;
 	private final JMenuItem createDoc;
+	private final JMenuItem devMode;
 
 	public MenuBarClass(Application application) {
 		int MENUSHORTCUT = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
@@ -256,9 +257,22 @@ public class MenuBarClass {
 		ruleManager.addActionListener(MenuListener.getInstance());
 		ruleManager.setActionCommand(MenuActionCommands.ruleManager.value);
 
+		String label;
+		if(MainWindow.developer){
+			label = "Next launch: normal mode";
+		}else{
+			label = "Next launch: developer mode";
+		}
+		
+		devMode = new JMenuItem(label);
+		devMode.addActionListener(MenuListener.getInstance());
+		devMode.setActionCommand(MenuActionCommands.devMode.value);
+		
 		help.add(allPopUps);
 		help.add(nodesEdgesTypes);
 		help.add(interaction);
+		help.add(devMode);
+		
 
 		// about item is already present on mac osx
 		if (!application.isMac()) {
@@ -497,5 +511,9 @@ public class MenuBarClass {
 		modelicaResult.setEnabled(false);
 		editPNelements.setEnabled(false);
 		createDoc.setEnabled(false);
+	}
+	
+	public void setDeveloperLabel(String label){
+		devMode.setText(label);
 	}
 }

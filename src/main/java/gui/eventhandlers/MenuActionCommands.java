@@ -57,7 +57,8 @@ public enum MenuActionCommands {
     loadModResult("loadModResult"),
     simulate("simulate"),
     createDoc("createDoc"),
-    editElements("editElements");
+    editElements("editElements"),
+    devMode("devMode");
 
     public final String value;
 

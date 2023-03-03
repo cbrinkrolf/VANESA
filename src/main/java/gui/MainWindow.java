@@ -3,6 +3,8 @@ package gui;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import com.jhlabs.image.BlurFilter;
+
+import configurations.ConnectionSettings;
 import configurations.XMLResourceBundle;
 import configurations.gui.Settings;
 import configurations.gui.VisualizationDialog;
@@ -77,7 +79,9 @@ public class MainWindow implements ApplicationListener {
 
 	private MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		developer = Boolean.parseBoolean(XMLResourceBundle.SETTINGS.getString("settings.default.developer"));
+		//developer = !Boolean.parseBoolean(XMLResourceBundle.SETTINGS.getString("settings.default.developer"));
+		
+		developer = ConnectionSettings.getInstance().isDeveloperMode();
 		// try {
 		// SubstanceBusinessBlueSteelLookAndFeel lf = new SubstanceBusinessBlueSteelLookAndFeel();
 		// lf.setSkin("");
@@ -92,7 +96,12 @@ public class MainWindow implements ApplicationListener {
 		// });
 		// SwingUtilities.updateComponentTreeUI(this);
 
-		frame.setTitle("VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications");
+		String title = "VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications";
+		if(developer){
+			title = "VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications (developer mode)";
+		}
+		
+		frame.setTitle(title);
 		frame.setVisible(false);
 
 		// MacOSX-Look and Feel with http://simplericity.org/macify/

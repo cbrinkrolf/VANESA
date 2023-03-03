@@ -43,6 +43,7 @@ import biologicalObjects.nodes.petriNet.Transition;
 import cern.colt.list.IntArrayList;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
+import configurations.ConnectionSettings;
 import configurations.ProgramFileLock;
 import configurations.gui.LayoutConfig;
 import configurations.gui.Settings;
@@ -140,8 +141,8 @@ public class MenuListener implements ActionListener {
 		switch (command) {
 		case newNetwork:
 			int option = JOptionPane.showOptionDialog(w.getFrame(), "Which type of modeling do you prefer?",
-													  "Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-													  new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
+					"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
 				new CreatePathway();
 				graphInstance.getPathway().setIsPetriNet(option == JOptionPane.NO_OPTION);
@@ -181,8 +182,10 @@ public class MenuListener implements ActionListener {
 		case exportNetwork:
 			if (con.containsPathway()) {
 				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO + SaveDialog.FORMAT_CSML +
-							SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_TXT, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+					new SaveDialog(
+							SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO + SaveDialog.FORMAT_CSML
+									+ SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_TXT,
+							SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network first.");
 				}
@@ -341,6 +344,21 @@ public class MenuListener implements ActionListener {
 				new InfoWindow(false);
 			}
 			break;
+		case devMode:
+			String label;
+			String message;
+			if (ConnectionSettings.getInstance().isDeveloperMode()) {
+				label = "Next launch: developer mode";
+				message = "Next time, VANESA will be started in normal mode!";
+				ConnectionSettings.getInstance().setDeveloperMode(false);
+			} else {
+				label = "Next launch: normal mode";
+				message = "Next time, VANESA will be started in developer mode!";
+				ConnectionSettings.getInstance().setDeveloperMode(true);
+			}
+			MainWindow.getInstance().getMenu().setDeveloperLabel(label);
+			PopUpDialog.getInstance().show("Mode changed", message);
+			break;
 		case about:
 			new AboutWindow();
 			break;
@@ -370,7 +388,7 @@ public class MenuListener implements ActionListener {
 					i++;
 				}
 			}
-			MyTable tP = new MyTable(rP, new String[]{"Vertex", "Value"});
+			MyTable tP = new MyTable(rP, new String[] { "Vertex", "Value" });
 			JButton testP = new JButton("Test P-invariant");
 			testP.setActionCommand(MenuActionCommands.testP.value);
 			testP.addActionListener(this);
@@ -406,7 +424,7 @@ public class MenuListener implements ActionListener {
 					i++;
 				}
 			}
-			MyTable tT = new MyTable(rT, new String[]{"Transition", "Value"});
+			MyTable tT = new MyTable(rT, new String[] { "Transition", "Value" });
 			JButton testT = new JButton("Test T-invariant");
 			testT.setActionCommand(MenuActionCommands.testT.value);
 			testT.addActionListener(this);
@@ -493,8 +511,8 @@ public class MenuListener implements ActionListener {
 					i++;
 				}
 			}
-			tP = new MyTable(rP, new String[]{"Node", "Value"});
-			MyTable tI = new MyTable(rI, new String[]{"Node", "Value"});
+			tP = new MyTable(rP, new String[] { "Node", "Value" });
+			MyTable tI = new MyTable(rI, new String[] { "Node", "Value" });
 			d.setAlwaysOnTop(true);
 			d.setContentPane(pane);
 			pane.removeAll();
@@ -603,8 +621,8 @@ public class MenuListener implements ActionListener {
 			// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
 			// Cov cov = new Cov();
 			if (JOptionPane.showConfirmDialog(w.getFrame(),
-											  "The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
-											  "Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+					"The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
+					"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
 				new ReachController();
 			GraphInstance.getMyGraph().changeToGEMLayout();
 			break;
@@ -708,7 +726,8 @@ public class MenuListener implements ActionListener {
 							System.out.println(br2.readLine());
 							Thread.sleep(100);
 						}
-						PopUpDialog.getInstance().show("Latex compilation successful!", "PDF can be found at:\n" + docDir);
+						PopUpDialog.getInstance().show("Latex compilation successful!",
+								"PDF can be found at:\n" + docDir);
 					} catch (Exception e13) {
 						e13.printStackTrace();
 					}
@@ -729,7 +748,8 @@ public class MenuListener implements ActionListener {
 					ioe.printStackTrace();
 				} catch (InputFormatException ife) {
 					PopUpDialog.getInstance().show("Inputfile error", ife.getMessage());
-					// JOptionPane.showMessageDialog(w, ife.getMessage(), "Inputfile error", JOptionPane.ERROR_MESSAGE);
+					// JOptionPane.showMessageDialog(w, ife.getMessage(), "Inputfile error",
+					// JOptionPane.ERROR_MESSAGE);
 				}
 			} else {
 				PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -789,7 +809,7 @@ public class MenuListener implements ActionListener {
 				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement() && !pw.isPetriNet()) {
 					List<Rule> rules = RuleManager.getInstance().getActiveRules();
-					if(rules.size() == 0){
+					if (rules.size() == 0) {
 						PopUpDialog.getInstance().show("Error", "No active transformation rules found!.");
 						return;
 					}
@@ -812,7 +832,7 @@ public class MenuListener implements ActionListener {
 					// CreatePathway.showPathway(petriNet);
 				} else {
 					PopUpDialog.getInstance().show("Error",
-                                                   "Please create a biological network first. A Petri net cannot be transformed!.");
+							"Please create a biological network first. A Petri net cannot be transformed!.");
 				}
 			} else {
 				PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -829,7 +849,7 @@ public class MenuListener implements ActionListener {
 					CreatePathway.showPathway(pw.getTransformationInformation().getPetriNet());
 				} else {
 					PopUpDialog.getInstance().show("Error",
-                                                   "Please transform the biological network into a Petri net first!.");
+							"Please transform the biological network into a Petri net first!.");
 				}
 			} else {
 				PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -843,7 +863,7 @@ public class MenuListener implements ActionListener {
 					new TransformationInformationWindow(pw).show();
 				} else {
 					PopUpDialog.getInstance().show("Error",
-                                                   "Please transform the biological network into a Petri net first!.");
+							"Please transform the biological network into a Petri net first!.");
 				}
 			} else {
 				PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -869,17 +889,18 @@ public class MenuListener implements ActionListener {
 		}
 		CompletableFuture.runAsync(() -> {
 			GraphInstance graphInstance = new GraphInstance();
-            Pathway pw = graphInstance.getPathway();
-            MyGraph graph = pw.getGraph();
+			Pathway pw = graphInstance.getPathway();
+			MyGraph graph = pw.getGraph();
 			for (int i = 0; i < 10; i++) {
 				double offset = 5;
 				if (i % 2 == 0) {
 					offset *= -1;
 				}
-				VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv =
-                        pw.getGraph().getVisualizationViewer();
+				VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
+						.getVisualizationViewer();
 				double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
-				double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
+				double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)
+						.getScale();
 				double scale;
 				if (scaleV < 1) {
 					scale = scaleV;
@@ -890,9 +911,11 @@ public class MenuListener implements ActionListener {
 				for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 					if (bna instanceof Enzyme) {
 						Point2D p = graph.getVertexLocation(bna);
-						Point2D inv = graph.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().inverseTransform(p);
-                        graph.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().transform(inv);
-						vv.getModel().getGraphLayout().setLocation(bna, new Point2D.Double(p.getX() + offset, p.getY()));
+						Point2D inv = graph.getVisualizationViewer().getRenderContext().getMultiLayerTransformer()
+								.inverseTransform(p);
+						graph.getVisualizationViewer().getRenderContext().getMultiLayerTransformer().transform(inv);
+						vv.getModel().getGraphLayout().setLocation(bna,
+								new Point2D.Double(p.getX() + offset, p.getY()));
 					}
 				}
 				try {
