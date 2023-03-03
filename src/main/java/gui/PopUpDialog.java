@@ -35,10 +35,14 @@ public class PopUpDialog {
         dialog.setModal(false);
         dialog.setAlwaysOnTop(true);
         dialog.setOpacity(0.9f);
-        int x = w.getFrame().getBounds().x + w.getFrame().getBounds().width / 2;
-        int y = w.getFrame().getBounds().y + w.getFrame().getBounds().height / 2;
-        int pos = requestPosition();
-        dialog.setLocation(x - dialog.getWidth() / 2, y - dialog.getHeight() / 2 + pos * dialog.getHeight());
+        //int x = w.getFrame().getBounds().x + w.getFrame().getBounds().width / 2;
+        //int y = w.getFrame().getBounds().y + w.getFrame().getBounds().height / 2;
+        int x = w.getFrame().getBounds().x + w.getFrame().getBounds().width;
+		int y = w.getFrame().getBounds().y + w.getFrame().getBounds().height;
+		int pos = this.requestPosition();
+		dialog.setLocation(x - dialog.getWidth() - 10, y - ((pos + 1) * dialog.getHeight()) - 10);
+		dialog.setVisible(true);
+        //dialog.setLocation(x - dialog.getWidth() / 2, y - dialog.getHeight() / 2 + pos * dialog.getHeight());
         dialog.setVisible(true);
         dialog.setFocusableWindowState(false);
         dialog.addMouseListener(new MouseListener() {
