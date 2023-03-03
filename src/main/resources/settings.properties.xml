@@ -3,7 +3,7 @@
 <properties>
 	<entry key="settings.file">/config/settings.xml</entry>
 
-	<entry key="settings.default.developer">true</entry>
+	<entry key="settings.default.developer">false</entry>
 	
 	<entry key="settings.default.api.url">https://vanesa-api.kalis-amts.de</entry>
 	<entry key="settings.default.proxy.host"/>
