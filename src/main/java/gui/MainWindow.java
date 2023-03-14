@@ -1,11 +1,45 @@
 package gui;
 
-import biologicalElements.Pathway;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JSplitPane;
+import javax.swing.WindowConstants;
+
+import org.jdesktop.jxlayer.JXLayer;
+import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
+import org.jdesktop.jxlayer.plaf.ext.LockableUI;
+import org.simplericity.macify.eawt.Application;
+import org.simplericity.macify.eawt.ApplicationEvent;
+import org.simplericity.macify.eawt.ApplicationListener;
+import org.simplericity.macify.eawt.DefaultApplication;
+
 import com.jhlabs.image.BlurFilter;
 
+import biologicalElements.Pathway;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.ConnectionSettings;
-import configurations.XMLResourceBundle;
 import configurations.gui.Settings;
 import configurations.gui.VisualizationDialog;
 import graph.GraphContainer;
@@ -29,24 +63,6 @@ import net.infonode.tabbedpanel.TabDropDownListVisiblePolicy;
 import net.infonode.tabbedpanel.TabbedPanel;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 import net.infonode.util.Direction;
-import org.jdesktop.jxlayer.JXLayer;
-import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
-import org.jdesktop.jxlayer.plaf.ext.LockableUI;
-import org.simplericity.macify.eawt.Application;
-import org.simplericity.macify.eawt.ApplicationEvent;
-import org.simplericity.macify.eawt.ApplicationListener;
-import org.simplericity.macify.eawt.DefaultApplication;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.*;
-import java.util.List;
-import java.util.*;
 
 public class MainWindow implements ApplicationListener {
 	private final JFrame frame = new JFrame();
@@ -558,8 +574,8 @@ public class MainWindow implements ApplicationListener {
 		optionPanel.setUpdatePanels(enable);
 	}
 
-	public void redrawGraphs() {
-		optionPanel.redrawGraphs();
+	public void redrawGraphs(boolean fireSerieState) {
+		optionPanel.redrawGraphs(fireSerieState);
 	}
 
 	public void initSimResGraphs() {

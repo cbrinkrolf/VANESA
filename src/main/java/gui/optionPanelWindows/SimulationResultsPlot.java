@@ -10,8 +10,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -149,6 +151,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	public static int FIRE = SimulationResultController.SIM_FIRE;
 	public static int SUM_OF_TOKEN = SimulationResultController.SIM_SUM_OF_TOKEN;
 	public static int ACTUAL_TOKEN_FLOW = SimulationResultController.SIM_ACTUAL_TOKEN_FLOW;
+
+	private Set<XYSeries> dirtyVisibleSeries = new HashSet<>();
+	private Set<XYSeries> dirtyVisibleSeriesR1 = new HashSet<>();
 
 	public SimulationResultsPlot() {
 
@@ -541,13 +546,13 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		// System.out.println("done drawing");
 	}
 
-	public void updateDateCurrentSimulation() {
+	public void updateDateCurrentSimulation(boolean fireSerieState) {
 		if (simResController == null) {
 			return;
 		}
 		if (simResController.getLastActive() != null) {
 			try {
-				this.updateData(simResController.getLastActive().getId(), true);
+				this.updateData(simResController.getLastActive().getId(), fireSerieState);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -597,6 +602,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				itBna = pw.getAllGraphNodes().iterator();
 			}
 			List<Double> time = simRes.getTimeValues();// pw.getPetriNet().getTime();
+			int seriesId;
 			while (itBna.hasNext()) {
 				bna = itBna.next();
 				// System.out.println(series.getItemCount());
@@ -606,21 +612,23 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					if (simRes.contains(place, TOKEN) && simRes.get(place, TOKEN).size() > 0) {
 						// System.out.println(place + " " + TOKEN + " " + simRes.getId());
 						// System.out.println(series2idx.get(place, TOKEN, simRes.getId()));
-						series = this.seriesListR1.get(series2idx.get(place, TOKEN, simRes.getId()));
+						seriesId = series2idx.get(place, TOKEN, simRes.getId());
+						series = this.seriesListR1.get(seriesId);
 						stop = Math.min(simRes.get(place, TOKEN).size(), time.size());
-						steps = stop - Math.min(series.getItemCount(), series.getItemCount());
-						if (stop > 0) {
+						steps = stop - series.getItemCount();
+						if (steps > 0) {
 							for (int i = series.getItemCount(); i < stop; i++) {
-
-								if (simRes.get(place, TOKEN).size() > i) {
-									value = simRes.get(place, TOKEN).get(i);
-								} else {
-									value = 0.0;
-								}
+								// if (simRes.get(place, TOKEN).size() > i) {
+								value = simRes.get(place, TOKEN).get(i);
+								// } else {
+								// value = 0.0;
+								// }
 								series.add(simRes.getTime().get(i), value, false);
 							}
-							if (fireSerieState) {
-								series.fireSeriesChanged();
+							if (fireSerieState && renderer.isSeriesVisible(seriesId)) {
+								dirtyVisibleSeries.add(series);
+								// series.fireSeriesChanged();
+								// System.out.println(bna.getName());
 							}
 						}
 					}
@@ -629,16 +637,18 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					transition = (Transition) bna;
 					if (simRes.contains(transition, ACTUAL_FIRING_SPEED)
 							&& simRes.get(transition, ACTUAL_FIRING_SPEED).size() > 0) {
-						series = this.seriesListR1.get(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()));
+						seriesId = series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId());
+						series = this.seriesListR1.get(seriesId);
 						stop = Math.min(simRes.get(transition, ACTUAL_FIRING_SPEED).size(), time.size());
-						if (stop > 0) {
+						steps = stop - series.getItemCount();
+						if (steps > 0) {
 							for (int i = series.getItemCount(); i < stop; i++) {
-
 								value = simRes.get(transition, ACTUAL_FIRING_SPEED).get(i);
 								series.add(simRes.getTime().get(i), value, false);
 							}
-							if (fireSerieState) {
-								series.fireSeriesChanged();
+							if (fireSerieState && renderer.isSeriesVisible(seriesId)) {
+								// series.fireSeriesChanged();
+								dirtyVisibleSeries.add(series);
 							}
 						}
 					}
@@ -656,7 +666,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				if (bea instanceof PNArc) {
 					edge = (PNArc) bea;
 					if (simRes.contains(edge)) {
-						series = this.seriesListR1.get(series2idx.get(edge, ACTUAL_TOKEN_FLOW, simRes.getId()));
+						seriesId = series2idx.get(edge, ACTUAL_TOKEN_FLOW, simRes.getId());
+						series = this.seriesListR1.get(seriesId);
 						series2 = this.seriesListR2.get(series2idx.get(edge, SUM_OF_TOKEN, simRes.getId()));
 						// System.out.println(series.getItemCount() + " " + series2.getItemCount());
 						if (simRes.contains(edge, ACTUAL_TOKEN_FLOW)
@@ -672,14 +683,15 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 									}
 									series.add(simRes.getTime().get(i), value, false);
 								}
-								if (fireSerieState) {
-									series.fireSeriesChanged();
+								if (fireSerieState && renderer.isSeriesVisible(seriesId)) {
+									// series.fireSeriesChanged();
+									dirtyVisibleSeries.add(series);
 								}
 							}
 						}
 
 						if (simRes.contains(edge, SUM_OF_TOKEN) && simRes.get(edge, SUM_OF_TOKEN).size() > 0) {
-
+							seriesId = series2idx.get(edge, SUM_OF_TOKEN, simRes.getId());
 							stop = Math.min(simRes.get(edge, SUM_OF_TOKEN).size(), time.size());
 							steps = stop - series2.getItemCount();
 							if (steps > 0) {
@@ -691,17 +703,34 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 									}
 									series2.add(simRes.getTime().get(i), value, false);
 								}
-								if (fireSerieState) {
-									series2.fireSeriesChanged();
+								if (fireSerieState && renderer2.isSeriesVisible(seriesId)) {
+									// series2.fireSeriesChanged();
+									dirtyVisibleSeriesR1.add(series2);
 								}
 							}
 						}
 					}
 				}
 			}
+
+			if (fireSerieState) {
+				for (XYSeries s : dirtyVisibleSeries) {
+					if (renderer.isSeriesVisible(seriesListR1.indexOf(s))) {
+						s.fireSeriesChanged();
+					}
+				}
+				for (XYSeries s : dirtyVisibleSeriesR1) {
+					if (renderer.isSeriesVisible(seriesListR2.indexOf(s))) {
+						s.fireSeriesChanged();
+					}
+				}
+				dirtyVisibleSeries.clear();
+				dirtyVisibleSeriesR1.clear();
+			}
 			if (chart != null) {
 				// System.out.println("chart start firing");
 				chart.fireChartChanged();
+				// pane.repaint();
 				// System.out.println("chart done firing");
 				// System.out.println(seriesListR1.size()+"
 				// "+seriesListR2.size());

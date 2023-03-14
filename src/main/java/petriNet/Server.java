@@ -284,7 +284,7 @@ public class Server {
 					running = false;
 					System.out.println("server shut down");
 					MainWindow w = MainWindow.getInstance();
-					w.redrawGraphs();
+					//w.redrawGraphs(true);
 					break;
 				}
 			}

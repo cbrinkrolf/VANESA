@@ -241,13 +241,13 @@ public class OptionPanel {
 		this.updatePanels = updatePanels;
 	}
 
-	public void redrawGraphs() {
+	public void redrawGraphs(boolean fireSerieState) {
 		if (simResView.isCollapsed()) {
 			simResView.setAnimated(false);
 			simResView.setCollapsed(false);
 			simResView.setAnimated(true);
 		}
-		simResWindow.updateDateCurrentSimulation();
+		simResWindow.updateDateCurrentSimulation(fireSerieState);
 	}
 
 	public void initSimResGraphs() {

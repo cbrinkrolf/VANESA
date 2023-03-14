@@ -121,7 +121,7 @@ public class PetriNetSimulation implements ActionListener {
 		System.out.println("port: " + port);
 		MainWindow w = MainWindow.getInstance();
 		flags = pw.getChangedFlags("petriNetSim");
-		
+
 		String seed;
 
 		if (menu.isRandomGlobalSeed()) {
@@ -132,10 +132,10 @@ public class PetriNetSimulation implements ActionListener {
 			seed = menu.getGlobalSeed() + "";
 
 		}
-		
-		
+
 		logAndShow("Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
-				+ menu.getSolver() + ", tolerance=" + tolerance + ", seed="+seed+", forced rebuild=" + menu.isForceRebuild());
+				+ menu.getSolver() + ", tolerance=" + tolerance + ", seed=" + seed + ", forced rebuild="
+				+ menu.isForceRebuild());
 		if (!installationChecked) {
 			installationChecked = this.checkInstallation();
 			if (!installationChecked) {
@@ -233,11 +233,11 @@ public class PetriNetSimulation implements ActionListener {
 								// String program = "_omcQuot_556E7469746C6564";
 								logAndShow("override statement: " + override);
 								if (noEmmit) {
-									pb.command(simName, "-s=" + menu.getSolver(), override,
-											"-port=" + port, "-noEventEmit", "-lv=LOG_STATS");
+									pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
+											"-noEventEmit", "-lv=LOG_STATS");
 								} else {
-									pb.command(simName, "-s=" + menu.getSolver(), override,
-											"-port=" + port, "-lv=LOG_STATS");
+									pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
+											"-lv=LOG_STATS");
 								}
 								pb.redirectOutput();
 								pb.directory(new File(pathSim));
@@ -270,12 +270,20 @@ public class PetriNetSimulation implements ActionListener {
 							DecimalFormat df = new DecimalFormat("#.#####");
 							df.setRoundingMode(RoundingMode.HALF_UP);
 							boolean simAddedToMenu = false;
+							int counter = 0;
 							while (s.isRunning()) {
+								// System.out.println("while");
+
 								if (v == null && pw.getPetriPropertiesNet().getSimResController().get(simId) != null) {
 									v = pw.getPetriPropertiesNet().getSimResController().get(simId).getTime().getAll();
 								}
-								// System.out.println("im thread");
-								w.redrawGraphs();
+
+								if(counter%5 == 0){
+									w.redrawGraphs(true);
+								}
+								//System.out.println("before draw");
+								w.redrawGraphs(false);
+								//System.out.println("after draw");
 								// GraphInstance graphInstance = new
 								// GraphInstance();
 								// GraphContainer con =
@@ -291,16 +299,18 @@ public class PetriNetSimulation implements ActionListener {
 									menu.setTime("Time: " + df.format((v.get(v.size() - 1))));
 								}
 								try {
-									sleep(100);
+									sleep(1000);
 								} catch (InterruptedException e) {
 									PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
 									e.printStackTrace();
 								}
+								// System.out.println("end while");
+								counter++;
 							}
 							menu.stopped();
 							System.out.println("end of simulation");
 							w.updateSimulationResultView();
-							w.redrawGraphs();
+							w.redrawGraphs(true);
 							w.getFrame().revalidate();
 							// w.repaint();
 							if (v.size() > 0) {
@@ -667,7 +677,8 @@ public class PetriNetSimulation implements ActionListener {
 								message += split[i] + "\r\n";
 							}
 						}
-						PopUpDialog.getInstance().show("Warning: " + number + " expression(s) are inconsistent:", message);
+						PopUpDialog.getInstance().show("Warning: " + number + " expression(s) are inconsistent:",
+								message);
 					}
 
 					StringTokenizer tokenizer = new StringTokenizer(inputStreamString.toString(), ",");
