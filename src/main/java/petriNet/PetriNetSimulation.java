@@ -233,10 +233,10 @@ public class PetriNetSimulation implements ActionListener {
 								// String program = "_omcQuot_556E7469746C6564";
 								logAndShow("override statement: " + override);
 								if (noEmmit) {
-									pb.command(simName, "-s=" + menu.getSolver(), override, "-nls=newton",
+									pb.command(simName, "-s=" + menu.getSolver(), override,
 											"-port=" + port, "-noEventEmit", "-lv=LOG_STATS");
 								} else {
-									pb.command(simName, "-s=" + menu.getSolver(), override, "-nls=newton",
+									pb.command(simName, "-s=" + menu.getSolver(), override,
 											"-port=" + port, "-lv=LOG_STATS");
 								}
 								pb.redirectOutput();
