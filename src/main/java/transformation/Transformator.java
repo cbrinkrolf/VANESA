@@ -32,7 +32,6 @@ import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
 import graph.gui.Parameter;
 import gui.PopUpDialog;
-import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import net.objecthunter.exp4j.function.Function;
 import util.StringLengthComparator;
@@ -105,6 +104,7 @@ public class Transformator {
 	private Map<Match, Map<String, String>> match2ReplaceParameters = new HashMap<>();
 	private Map<Match, List<String>> match2SortedParameterList = new HashMap<>();
 	private Collection<Function> functions = null;
+	private Collection<Function> functionsBool = null;
 
 	private List<Match> matches;
 
@@ -299,6 +299,7 @@ public class Transformator {
 			l = new ArrayList<Integer>();
 
 			if (useBuckets) {
+				// System.out.println("buckets");
 				type = rn.getType();
 
 				// consider ANY node
@@ -314,9 +315,10 @@ public class Transformator {
 				}
 				it = nodeType2bna.get(type).iterator();
 
-				// System.out.println("T: "+type);
+				// System.out.println("T: "+type+ " count: "+nodeType2bna.get(type).size());
 				while (it.hasNext()) {
 					bna = it.next();
+					// System.out.println(bna.getName());
 					// System.out.println("bna id: "+bna.getID());
 					// if (availableNodes.contains(bna)) {
 					// System.out.println(bna.getName() + " in: " +
@@ -332,6 +334,8 @@ public class Transformator {
 					// System.out.println(rn.getName() + " undir.: " +
 					// r.getUndirectedEdgeCount(rn));
 					// check exact incdedences
+
+					// TODO does not take numbers of edges of logical nodes into account!!!
 					if (rn.isExactIncidence()) {
 						if (inCount == pw.getIncomingDirectedEdgeCount(bna)
 								&& outCount == pw.getOutgoingDirectedEdgeCount(bna)
@@ -340,11 +344,17 @@ public class Transformator {
 							// System.out.println("added: " + bna.getName());
 						}
 					} else {
-						if (inCount <= pw.getIncomingDirectedEdgeCount(bna)
-								&& outCount <= pw.getOutgoingDirectedEdgeCount(bna)
-								&& unDirCount <= pw.getUndirectedEdgeCount(bna)) {
-							l.add(bna.getID());
-						}
+						// System.out.println("edge count name: "+bna.getName());
+						//// System.out.println("in: "+ pw.getIncomingDirectedEdgeCount(bna));
+						// System.out.println("out: "+ pw.getOutgoingDirectedEdgeCount(bna));
+						// System.out.println("undir: "+ pw.getUndirectedEdgeCount(bna));
+
+						// TODO does not take numbers of edges of logical nodes into account!!!
+						// if (inCount <= pw.getIncomingDirectedEdgeCount(bna)
+						// && outCount <= pw.getOutgoingDirectedEdgeCount(bna)
+						// && unDirCount <= pw.getUndirectedEdgeCount(bna)) {
+						l.add(bna.getID());
+						// }
 					}
 					// System.out.println(bna.getID() + " added to perm");
 					// System.out.println(bna.getName() + " added to perm");
@@ -375,7 +385,9 @@ public class Transformator {
 				return;
 			}
 			list.add(l);
-			// System.out.println(list);
+		}
+		if (printLog) {
+			System.out.println(list);
 		}
 		permutations = Permutator.permutations(list, false);
 		totalGeneratedPerms += permutations.size();
@@ -1037,26 +1049,28 @@ public class Transformator {
 		Rule r = match.getRule();
 
 		// generation of possible parameters for current matching
-		Map<String, String> possibleParams = getPossibleParametersOfMatch(match);
+		setCurrentPossibleParametersOfMatch(match);
 
 		Place p;
+		Transition t;
+		String orgValue;
 		String value;
+
 		PNNode petriNode;
 		PNArc arc;
 		Double d;
 		String string;
 		BiologicalNodeAbstract node;
-		Expression e;
 		// for nodes
 		if (gea instanceof PNNode) {
 			petriNode = (PNNode) gea;
 			for (String key : pnNode.getParameterMap().keySet()) {
-				value = pnNode.getParameterMap().get(key);
-				if (value == null || value.trim().length() < 1) {
+				orgValue = pnNode.getParameterMap().get(key);
+				if (orgValue == null || orgValue.trim().length() < 1) {
 					continue;
 				}
 				// System.out.println("key: " + key + " value: " + value);
-				value = replaceParametersToValues(value, match);
+				value = replaceParametersToValues(orgValue, match);
 				switch (key) {
 				case "name":
 					String initialName = "";
@@ -1123,37 +1137,40 @@ public class Transformator {
 				case "tokenStart":
 					if (gea instanceof Place) {
 						p = (Place) gea;
-						e = getExpression(value);
-						d = e.evaluate();
+						d = evaluateDouble(value);
 						if (p instanceof DiscretePlace) {
 							d = Double.valueOf(Math.round(d));
 						}
 						p.setTokenStart(d);
 						if (r.getMappedBnode(pnNode) != null) {
-							p.setConstant(match.getMapping(r.getMappedBnode(pnNode)).isConstant());
+							//p.setConstant(match.getMapping(r.getMappedBnode(pnNode)).isConstant());
 						}
 					}
 					break;
 				case "tokenMin":
 					if (gea instanceof Place) {
-						// p = (Place) gea;
-						// d = this.evalParameter(possibleParams, value, Double.class, match);
-						// if (d != null) {
-						/// p.setTokenMin(d);
-						// }
+						p = (Place) gea;
+						d = evaluateDouble(value);
+						if (p instanceof DiscretePlace) {
+							d = Double.valueOf(Math.round(d));
+						}
+						p.setTokenMin(d);
 					}
 					break;
 				case "tokenMax":
 					if (gea instanceof Place) {
-						// p = (Place) gea;
-						// d = this.evalParameter(possibleParams, value, Double.class, match);
-						// if (d != null) {
-						// p.setTokenMax(d);
-						// }
+						p = (Place) gea;
+						d = evaluateDouble(value);
+						if (p instanceof DiscretePlace) {
+							d = Double.valueOf(Math.round(d));
+						}
+						p.setTokenMax(d);
 					}
 					break;
 				case "firingCondition":
 					if (gea instanceof Transition) {
+						t = (Transition) gea;
+						t.setFiringCondition(value);
 						// string = this.evalParameter(possibleParams, value, String.class, match);
 						// if (string != null) {
 						// ((Transition) gea).setFiringCondition(string);
@@ -1162,7 +1179,8 @@ public class Transformator {
 					break;
 				case "maximalSpeed":
 					if (gea instanceof ContinuousTransition) {
-						// ContinuousTransition ct = (ContinuousTransition) gea;
+						ContinuousTransition ct = (ContinuousTransition) gea;
+						ct.setMaximalSpeed(value);
 						// string = this.evalParameter(possibleParams, value, String.class, match);
 						// if (string != null) {
 						// // System.out.println(string);
@@ -1187,8 +1205,26 @@ public class Transformator {
 						// ((DiscreteTransition) gea).setDelay(d);
 						// }
 					}
+				case "isConstant":
+					petriNode.setConstant(evaluateBoolean(value));
+					break;
+
+				case "isKnockedOut":
+					if (gea instanceof Transition) {
+						t = (Transition) gea;
+
+						t.setKnockedOut(evaluateBoolean(value));
+					}
+
+					break;
+				}
+
+				// copy parameters of nodes that are matched in this value
+				for (BiologicalNodeAbstract bna : this.getNodesOfReplacedParameter(orgValue, "maximalSpeed", match)) {
+					this.copyParameters(bna, (PNNode) gea);
 				}
 			}
+
 		} else if (gea instanceof PNArc) {
 			// for edges
 			arc = (PNArc) gea;
@@ -1211,7 +1247,7 @@ public class Transformator {
 		}
 	}
 
-	private Expression getExpression(String value) {
+	private double evaluateDouble(String value) {
 		if (this.functions == null) {
 			this.createFunctions();
 		}
@@ -1219,17 +1255,28 @@ public class Transformator {
 		for (Function f : functions) {
 			eb.function(f);
 		}
-		return eb.build();
+		return eb.build().evaluate();
 	}
 
-	private Map<String, String> getPossibleParametersOfMatch(Match match) {
+	private boolean evaluateBoolean(String value) {
+		if (this.functionsBool == null) {
+			this.createFunctionsBool();
+		}
+		value = value.toLowerCase().replaceAll("true", "1").replaceAll("false", "0");
+		ExpressionBuilder eb = new ExpressionBuilder(value);
+		for (Function f : functionsBool) {
+			eb.function(f);
+		}
+		return eb.build().evaluate() > 0;
+	}
+
+	private void setCurrentPossibleParametersOfMatch(Match match) {
 
 		if (match2Parameters.containsKey(match)) {
-			return match2Parameters.get(match);
+			return;
 		}
 		Rule r = match.getRule();
 		Map<String, String> possibleParams = new HashMap<>();
-		Map<String, String> replace = new HashMap<>();
 
 		for (RuleNode rn : r.getBiologicalNodes()) {
 			for (String parameter : match.getMapping(rn).getTransformationParameters()) {
@@ -1239,6 +1286,8 @@ public class Transformator {
 				// System.out.println(rn.getName() + "." + parameter);
 			}
 		}
+
+		// TODO fill edge attributes
 		for (RuleEdge re : r.getBiologicalEdges()) {
 			// possibleParams.put(re.getName() + ".label");
 			// possibleParams.put(re.getName() + ".name");
@@ -1250,8 +1299,6 @@ public class Transformator {
 		match2SortedParameterList.put(match, names);
 		// match2ReplaceParameters.put(match, replace);
 		match2Parameters.put(match, possibleParams);
-		return possibleParams;
-
 	}
 
 	private String replaceParametersToValues(String s, Match match) {
@@ -1264,8 +1311,23 @@ public class Transformator {
 		return s;
 	}
 
+	private Set<BiologicalNodeAbstract> getNodesOfReplacedParameter(String s, String parameter, Match match) {
+		Set<BiologicalNodeAbstract> nodes = new HashSet<>();
+		Map<String, String> possibleParams = match2Parameters.get(match);
+		String testParam;
+		for (RuleNode rn : match.getRule().getBiologicalNodes()) {
+			testParam = rn.getName() + "." + parameter;
+			if (s.contains(testParam) && possibleParams.containsKey(testParam)) {
+				nodes.add(match.getMapping(rn));
+			}
+		}
+		return nodes;
+	}
+
 	private void copyParameters(BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
 		for (Parameter p : from.getParameters()) {
+			// TODO test if parameter with same name exists already, create
+			// ParameterController class
 			to.getParameters().add(new Parameter(p.getName(), p.getValue(), p.getUnit()));
 		}
 	}
@@ -1275,27 +1337,27 @@ public class Transformator {
 	}
 
 	private void createFunctions() {
-		// already built in: 
-	   // abs: absolute value
-	   // acos: arc cosine
-	   // asin: arc sine
-	   // atan: arc tangent
-	   // cbrt: cubic root
-	   // ceil: nearest upper integer
-	   // cos: cosine
-	   // cosh: hyperbolic cosine
-	   // exp: euler's number raised to the power (e^x)
-	   // floor: nearest lower integer
-	   // log: logarithmus naturalis (base e)
-	   // log10: logarithm (base 10)
-	   // log2: logarithm (base 2)
-	   // sin: sine
-	   // sinh: hyperbolic sine
-	   // sqrt: square root
-	   // tan: tangent
-	   // tanh: hyperbolic tangent
-	   // signum: signum function
-	    
+		// already built in:
+		// abs: absolute value
+		// acos: arc cosine
+		// asin: arc sine
+		// atan: arc tangent
+		// cbrt: cubic root
+		// ceil: nearest upper integer
+		// cos: cosine
+		// cosh: hyperbolic cosine
+		// exp: euler's number raised to the power (e^x)
+		// floor: nearest lower integer
+		// log: logarithmus naturalis (base e)
+		// log10: logarithm (base 10)
+		// log2: logarithm (base 2)
+		// sin: sine
+		// sinh: hyperbolic sine
+		// sqrt: square root
+		// tan: tangent
+		// tanh: hyperbolic tangent
+		// signum: signum function
+
 		functions = new HashSet<>();
 		Function min = new Function("min", 2) {
 			@Override
@@ -1304,7 +1366,7 @@ public class Transformator {
 			}
 		};
 		functions.add(min);
-		
+
 		Function max = new Function("max", 2) {
 			@Override
 			public double apply(double... args) {
@@ -1312,15 +1374,15 @@ public class Transformator {
 			}
 		};
 		functions.add(max);
-		
+
 		Function random = new Function("random", 2) {
 			@Override
 			public double apply(double... args) {
-				return Math.random() * (args[1]-args[0]) + args[0];
+				return Math.random() * (args[1] - args[0]) + args[0];
 			}
 		};
 		functions.add(random);
-		
+
 		Function round = new Function("round", 2) {
 			@Override
 			public double apply(double... args) {
@@ -1328,5 +1390,32 @@ public class Transformator {
 			}
 		};
 		functions.add(round);
+	}
+
+	private void createFunctionsBool() {
+		functionsBool = new HashSet<>();
+		Function and = new Function("and", 2) {
+			@Override
+			public double apply(double... args) {
+				return Math.min(args[0], args[1]);
+			}
+		};
+		functionsBool.add(and);
+
+		Function or = new Function("or", 2) {
+			@Override
+			public double apply(double... args) {
+				return Math.min(1, args[0] + args[1]);
+			}
+		};
+		functionsBool.add(or);
+
+		Function not = new Function("not", 1) {
+			@Override
+			public double apply(double... args) {
+				return (args[0] + 1) % 2;
+			}
+		};
+		functionsBool.add(not);
 	}
 }

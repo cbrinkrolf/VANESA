@@ -24,6 +24,7 @@ import graph.compartment.Compartment;
 import graph.jung.classes.MyVisualizationViewer;
 import gui.MainWindow;
 import gui.PopUpDialog;
+import gui.visualization.CompartmentRenderer;
 import net.miginfocom.swing.MigLayout;
 import util.MyColorChooser;
 
@@ -36,6 +37,7 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 	private JTextField name;
 	private JButton color;
 	private Pathway pw;
+	private CompartmentRenderer compRenderer = null; 
 
 	public PathwayPropertiesWindow() {
 
@@ -54,6 +56,9 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 	public void revalidateView() {
 		p.removeAll();
 		this.pw = new GraphInstance().getPathway();
+		if(compRenderer == null){
+			compRenderer = new CompartmentRenderer(pw);
+		}
 		MigLayout layout = new MigLayout("fillx", "[grow,fill]", "");
 		p.setLayout(layout);
 		drawCompartments = new JCheckBox("draw compartments");
@@ -195,17 +200,19 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 				.getVisualizationViewer();
 		if (e.getSource().equals(drawCompartments)) {
 			if (e.getStateChange() == 1) {
-				vv.setDrawCompartments(true);
+				vv.addPreRenderPaintable(compRenderer);
+				//vv.setDrawCompartments(true);
 				pw.getCompartmentManager().setDrawCompartments(true);
 			} else {
-				vv.setDrawCompartments(false);
+				vv.removePreRenderPaintable(compRenderer);
+				//vv.setDrawCompartments(false);
 				pw.getCompartmentManager().setDrawCompartments(false);
 			}
 		} else if (e.getSource().equals(drawCompartmentsExperimental)) {
 			if (e.getStateChange() == 1) {
-				vv.setEsperimentalCompartments(true);
+				//vv.setEsperimentalCompartments(true);
 			} else {
-				vv.setEsperimentalCompartments(false);
+				//vv.setEsperimentalCompartments(false);
 			}
 		}
 	}

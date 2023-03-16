@@ -844,8 +844,8 @@ public class MenuListener implements ActionListener {
 		case showPN:
 			if (con.containsPathway()) {
 				pw = graphInstance.getPathway();
-				if (pw.getTransformationInformation() != null && pw.getTransformationInformation().getPetriNet() != null
-						&& !pw.isPetriNet()) {
+				if (pw != null && pw.getTransformationInformation() != null
+						&& pw.getTransformationInformation().getPetriNet() != null && !pw.isPetriNet()) {
 					CreatePathway.showPathway(pw.getTransformationInformation().getPetriNet());
 				} else {
 					PopUpDialog.getInstance().show("Error",

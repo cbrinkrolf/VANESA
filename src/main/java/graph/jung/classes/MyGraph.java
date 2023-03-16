@@ -77,6 +77,7 @@ import gui.MyAnnotationManager;
 import gui.PopUpDialog;
 import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
+import gui.visualization.TokenRenderer;
 
 public class MyGraph {
 	private int VisualizationViewerWidth = 1000;
@@ -84,7 +85,7 @@ public class MyGraph {
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<>();
 	private final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 	private AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
-	final MyEditingModalGraphMouse graphMouse = new MyEditingModalGraphMouse();
+	final MyEditingModalGraphMouse graphMouse;
 	private final SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv2;
 	private final ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport;
 	private final ScalingControl scaler = new CrossoverScalingControl();
@@ -136,6 +137,7 @@ public class MyGraph {
 		VisualizationViewerHeigth = (int) screenSize.getheight() - 100;
 
 		this.pathway = pw;
+		graphMouse = new MyEditingModalGraphMouse();
 		Dimension preferredSize = new Dimension(VisualizationViewerWidth, VisualizationViewerHeigth);
 		Dimension preferredSize2 = new Dimension(300, 200);
 
@@ -363,108 +365,7 @@ public class MyGraph {
 
 		pr.setVertexIconTransformer(vit);
 
-		vv.addPostRenderPaintable(new Paintable() {
-
-			@Override
-			public boolean useTransform() {
-				return false;
-			}
-
-			@Override
-			public void paint(Graphics g) {
-				if (pathway == null) {
-					// System.out.println("pw null");
-					return;
-				}
-				// System.out.println(graphInstance.getPathway().getAllGraphNodes());
-				if (pathway.getAllGraphNodes().isEmpty()) {
-					// System.out.println("empty");
-					return;
-				}
-				Iterator<BiologicalNodeAbstract> it = pathway.getAllGraphNodes().iterator();
-
-				Place p;
-				BiologicalNodeAbstract bna;
-				while (it.hasNext()) {
-					bna = it.next();
-					if (bna instanceof Place) {
-						p = (Place) bna;
-						int x1 = (int) (p.getShape().getBounds2D().getMaxX() - p.getShape().getBounds2D().getMinX());
-						// int y1 = (int) (p.getShape().getBounds2D().getMaxY()
-						// - p.getShape()
-						// .getBounds2D().getMinY());
-
-						// double x1 =
-						// c.getBounds().getMaxX()-c.getBounds().getMinX();
-						// double y1 =
-						// c.getBounds().getMaxY()-c.getBounds().getMinY();
-
-						boolean discrete = false;
-						String tokens = p.getToken() + "";
-						if (p.isDiscrete()) {
-							tokens = (int) p.getToken() + "";
-							discrete = true;
-						}
-
-						if (p.isLogical() && p.getLogicalReference() instanceof Place) {
-							tokens = ((Place) p.getLogicalReference()).getToken() + "";
-							if (((Place) p.getLogicalReference()).isDiscrete()) {
-								tokens = (int) ((Place) p.getLogicalReference()).getToken() + "";
-								discrete = true;
-							}
-						}
-
-						if (getVisualizationViewer().getPathway().isHeadless()) {
-							tokens = "";
-						}
-
-						int xpos;
-
-						Point2D point = vv.getGraphLayout().apply(p);
-
-						// Point2D point = pw.getGraph().getVertexLocation(p);//
-						// pw.getGraph().getVisualizationViewer().getGraphLayout().transform(bna);
-
-						// g2d.drawString("b",(int)((p.getX())), (int)((p.getY())*scale));
-						Point2D p1inv = vv.getRenderContext().getMultiLayerTransformer().transform(point);
-
-						double scaleV = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW)
-								.getScale();
-
-						if (discrete) {
-							xpos = Double.valueOf(p1inv.getX() - x1 + (19 - 5 * (double) tokens.length() / 2))
-									.intValue();
-						} else {
-							xpos = Double.valueOf(p1inv.getX() - x1 + (21 - 5 * (double) tokens.length() / 2))
-									.intValue();
-						}
-
-						g.setColor(Color.BLACK);
-						int y = (int) p1inv.getY();
-						// g2.draw(AffineTransform.getScaleInstance(p.getNodesize(),
-						// p.getNodesize()).createTransformedShape(s));
-
-						// g.getFont()
-
-						double scaleL = vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT)
-								.getScale();
-						double scale;
-						if (scaleV < 1) {
-							scale = scaleV;
-						} else {
-							scale = scaleL;
-						}
-						scale = ((double) ((int) (scale * 100)) / 100);
-
-						int fontSize = (int) (14.0 * scaleV);
-						g.setFont(new Font("Arial", Font.PLAIN, fontSize));
-						// g.setFont(new Font);
-						// g2.draw(s);
-						g.drawString(tokens, xpos, (int) (y + 7 * scaleV));
-					}
-				}
-			}
-		});
+		vv.addPostRenderPaintable(new TokenRenderer(pathway));
 
 		satellitePr.setVertexStrokeTransformer(vsh);
 		satellitePr.setVertexLabelTransformer(vertexStringer);

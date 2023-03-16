@@ -134,7 +134,10 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 	}
 
 	class HierarchyMenu extends JPopupMenu {
-		private static final long serialVersionUID = 153465734562L;
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		JMenuItem openNode = new JMenuItem("Open subpathway");
 		JMenuItem closeNode = new JMenuItem("Close subpathway");
 		JMenuItem openAllNodes = new JMenuItem("Open next level");

@@ -35,7 +35,6 @@ import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractGraphMousePlugin;
 import edu.uci.ics.jung.visualization.util.ArrowFactory;
 import graph.GraphContainer;
@@ -69,7 +68,8 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 	private boolean edgeIsDirected;
 	private GraphContainer con = GraphContainer.getInstance();
 
-	private Pathway pw;
+	private Pathway pw = null;
+	private MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = null;
 
 	private int lastVertexTypeIdx = -1;
 	private int lastEdgeTypeIdx = -1;
@@ -119,13 +119,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 	 */
 	public void mousePressed(MouseEvent e) {
 		if (checkModifiers(e)) {
-			// pw = graphInstance.getPathway();
-			// System.out.println(e.getSource());
-
-			@SuppressWarnings("unchecked")
-			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-					.getSource();
-			pw = vv.getPathway();
+			setPathway(e);
 			// final Point2D p = vv.inverseViewTransform(e.getPoint());
 			// System.out.println("Points: "+e.getPoint().getX()+", "+e.getPoint().getY());
 			final Point2D p = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint());
@@ -275,12 +269,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 	 * mouse pointer. If shift was also pressed, create a directed edge instead.
 	 */
 	public void mouseReleased(MouseEvent e) {
-		// pw = graphInstance.getPathway();
-		// if (checkModifiers(e)) {
-		@SuppressWarnings("unchecked")
-		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-				.getSource();
-		pw = vv.getPathway();
+		setPathway(e);
 		// final Point2D p = vv.getRenderContext().getMultiLayerTransformer()
 		// .inverseTransform(e.getPoint());
 		// int v = vv.getPickedVertexState().getPicked().size();
@@ -372,8 +361,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 					transformArrowShape(down, e.getPoint());
 				}
 			}
-			VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
-					.getVisualizationViewer();
+			setPathway(e);
 			vv.repaint();
 		}
 	}
@@ -467,10 +455,18 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 
 	public void mouseMoved(MouseEvent e) {
 		if (inWindow) {
-			@SuppressWarnings("unchecked")
-			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-					.getSource();
+			setPathway(e);
 			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void setPathway(MouseEvent e){
+		// do not use GraphInstance.getPathway because graphs for transformation rules also need mouse control
+		if(this.pw == null){
+			vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
+					.getSource();
+			pw = vv.getPathway();
 		}
 	}
 }

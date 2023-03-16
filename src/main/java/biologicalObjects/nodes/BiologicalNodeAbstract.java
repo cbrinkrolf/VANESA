@@ -1538,7 +1538,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		case "ID":
 			return getID()+"";
 		case "isConstant":
-			return isConstant()+"";
+			return String.valueOf(isConstant());
 		}
 		return null;
 	}

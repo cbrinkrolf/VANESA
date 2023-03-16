@@ -34,17 +34,20 @@ public class Reaction extends BiologicalNodeAbstract implements DynamicNode {
 		this.knockedOut = knockedOut;
 	}
 
-	@Override
 	public List<String> getTransformationParameters() {
-		List<String> list = super.getTransformationParameters();
-		list.add("maximalSpeed");
-		return list;
-	}
+        List<String> list = super.getTransformationParameters();
+        list.add("maximalSpeed");
+        list.add("isKnockedOut");
+        return list;
+    }
 
-	public String getTransformationParameterValue(String parameter) {
-		if (parameter.equals("maximalSpeed")) {
-			return getMaximalSpeed();
-		}
-		return super.getTransformationParameterValue(parameter);
-	}
+    public String getTransformationParameterValue(String parameter) {
+        switch (parameter) {
+            case "maximalSpeed":
+                return getMaximalSpeed();
+            case "isKnockedOut":
+                return String.valueOf(isKnockedOut());
+        }
+        return super.getTransformationParameterValue(parameter);
+    }
 }

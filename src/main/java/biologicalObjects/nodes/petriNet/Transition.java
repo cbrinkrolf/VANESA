@@ -54,6 +54,7 @@ public class Transition extends PNNode {
 	public List<String> getTransformationParameters() {
 		List<String> list = super.getTransformationParameters();
 		list.add("firingCondition");
+		list.add("isKnockedOut");
 		return list;
 	}
 }

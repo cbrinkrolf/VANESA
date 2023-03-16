@@ -54,7 +54,6 @@ import transformation.RuleEdge;
 import transformation.RuleNode;
 import transformation.graphElements.ANYTransition;
 
-// TODO improve parameter matching (more than just 1 variable or literals)
 public class RuleEditingWindow implements ActionListener {
 
 	private JScrollPane scrollPane = new JScrollPane();
@@ -542,7 +541,8 @@ public class RuleEditingWindow implements ActionListener {
 			place.addActionListener(listener);
 			panel.add(place);
 
-			JButton discreteTransition = new ToolBarButton(ImagePath.getInstance().getImageIcon("discreteTransition.png"));
+			JButton discreteTransition = new ToolBarButton(
+					ImagePath.getInstance().getImageIcon("discreteTransition.png"));
 			discreteTransition.setToolTipText("Discrete Transition");
 			discreteTransition.setActionCommand("discreteTransition");
 			discreteTransition.addActionListener(listener);
@@ -639,6 +639,7 @@ public class RuleEditingWindow implements ActionListener {
 			parameterMapping.get(pnBNA).put("tokenStart", bnBNA.getName() + ".concentrationStart");
 			parameterMapping.get(pnBNA).put("tokenMin", bnBNA.getName() + ".concentrationMin");
 			parameterMapping.get(pnBNA).put("tokenMax", bnBNA.getName() + ".concentrationMax");
+			parameterMapping.get(pnBNA).put("isConstant", bnBNA.getName() + ".isConstant");
 		} else if (pnBNA instanceof Transition) {
 			if (pnBNA instanceof DiscreteTransition || pnBNA instanceof ANYTransition) {
 
@@ -646,6 +647,9 @@ public class RuleEditingWindow implements ActionListener {
 				if (bnBNA instanceof DynamicNode) {
 					parameterMapping.get(pnBNA).put("maximalSpeed", bnBNA.getName() + ".maximalSpeed");
 				}
+			}
+			if (bnBNA instanceof DynamicNode) {
+				parameterMapping.get(pnBNA).put("isKnockedOut", bnBNA.getName() + ".isKnockedOut");
 			}
 		}
 	}
@@ -988,6 +992,7 @@ public class RuleEditingWindow implements ActionListener {
 				createDefaultParameterMap(bna);
 			}
 			for (String param : params) {
+				// System.out.println(param);
 				JTextField field = new JTextField(20);
 				field.setText(parameterMapping.get(bna).get(param));
 				field.getDocument().addDocumentListener(new DocumentListener() {
@@ -997,14 +1002,12 @@ public class RuleEditingWindow implements ActionListener {
 							parameterMapping.get(bna).put(param, field.getText().trim());
 						}
 					}
-
 					@Override
 					public void insertUpdate(DocumentEvent e) {
 						if (bna != null) {
 							parameterMapping.get(bna).put(param, field.getText().trim());
 						}
 					}
-
 					@Override
 					public void changedUpdate(DocumentEvent e) {
 						if (bna != null) {
@@ -1162,8 +1165,8 @@ public class RuleEditingWindow implements ActionListener {
 		}
 
 		for (RuleNode rn1 : rule.getBiologicalNodes()) {
-			System.out.println(rn1.getName() + " In: " + rule.getIncomingDirectedEdgeCount(rn1) + " out: "
-					+ rule.getOutgoingDirectedEdgeCount(rn1));
+			//System.out.println(rn1.getName() + " In: " + rule.getIncomingDirectedEdgeCount(rn1) + " out: "
+			//		+ rule.getOutgoingDirectedEdgeCount(rn1));
 		}
 		frame.setVisible(false);
 	}
@@ -1218,8 +1221,14 @@ public class RuleEditingWindow implements ActionListener {
 					case "tokenMax":
 						parameterMapping.get(bna).put(key, ((Place) bna).getTokenMax() + "");
 						break;
+					case "isConstant":
+						parameterMapping.get(bna).put(key, ((Place) bna).isConstant() + "");
+						break;
 					case "firingCondition":
 						parameterMapping.get(bna).put(key, ((Transition) bna).getFiringCondition());
+						break;
+					case "isKnockedOut":
+						parameterMapping.get(bna).put(key, ((Transition) bna).isKnockedOut() + "");
 						break;
 					case "maximalSpeed":
 						if (bna instanceof ContinuousTransition) {

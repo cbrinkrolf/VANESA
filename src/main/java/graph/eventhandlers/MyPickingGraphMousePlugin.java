@@ -1,11 +1,27 @@
 package graph.eventhandlers;
 
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
+import java.awt.geom.RectangularShape;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
 import edu.uci.ics.jung.visualization.control.PickingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.transform.MutableTransformer;
@@ -17,20 +33,13 @@ import gui.MainWindow;
 import gui.MyAnnotation;
 import gui.MyAnnotationManager;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
-import java.awt.geom.RectangularShape;
-import java.util.*;
-
 public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 	private final Map<BiologicalNodeAbstract, Point2D> oldVertexPositions = new HashMap<>();
 	private final Set<BiologicalNodeAbstract> originalSelection = new HashSet<>();
 	private boolean inWindow = false;
 	private boolean dragging = false;
-	private Pathway pw;
-	private VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
+	private Pathway pw = null;
+	private MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = null;
 	// for annotations
 	private MyAnnotation currentAnnotation = null;
 	private MyAnnotation highlight = null;
@@ -44,7 +53,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		pw.pickGroup();
 		if (inWindow) {
 			this.mouseReleasedAnnotation(e);
-			// If mouse was released to change the selection, save vertex positions and return.
+			// If mouse was released to change the selection, save vertex positions and
+			// return.
 			if (!oldVertexPositions.keySet().containsAll(pw.getSelectedNodes())
 					|| oldVertexPositions.keySet().size() != pw.getSelectedNodes().size()) {
 				saveOldVertexPositions();
@@ -130,11 +140,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		@SuppressWarnings("unchecked")
-		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-				.getSource();
-		pw = vv.getPathway();
-		this.vv = vv;
+		this.setPathway(e);
 		// vv = pw.getGraph().getVisualizationViewer();
 		if (inWindow) {
 			super.mousePressed(e);
@@ -180,10 +186,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (inWindow) {
-				@SuppressWarnings("unchecked")
-				final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-						.getSource();
-				vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
+			this.setPathway(e);
+			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
 			if (dragging) {// && SwingUtilities.isRightMouseButton(e)){
 				this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 				dragging = false;
@@ -201,10 +205,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (inWindow) {
-				@SuppressWarnings("unchecked")
-				final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-						.getSource();
-				vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
+			this.setPathway(e);
+			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
 			if (this.currentAnnotation != null && SwingUtilities.isLeftMouseButton(e)) {
 				this.mouseDraggedAnnotation(e);
 			} else {
@@ -275,11 +277,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		@SuppressWarnings("unchecked")
-		final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-				.getSource();
-		pw = vv.getPathway();
-		this.vv = vv;
+		this.setPathway(e);
 		if (e.getComponent().toString().contains("MyVisualizationViewer")) {
 			inWindow = true;
 			// this.cursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
@@ -299,9 +297,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 
 	public void mouseMoved(MouseEvent e) {
 		if (inWindow) {
-			@SuppressWarnings("unchecked")
-			final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-					.getSource();
+			this.setPathway(e);
 			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
 		}
 	}
@@ -377,4 +373,13 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private void setPathway(MouseEvent e) {
+		// do not use GraphInstance.getPathway because graphs for transformation rules
+		// also need mouse control
+		if (this.pw == null) {
+			vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
+			pw = vv.getPathway();
+		}
+	}
 }
