@@ -20,7 +20,6 @@ import graph.GraphInstance;
 public class Cov {
 
 	private Pathway pw;
-	private GraphInstance graphInstance = new GraphInstance();
 	// private MyGraph g;
 	private HashMap<BiologicalNodeAbstract, Integer> hmplaces = new HashMap<BiologicalNodeAbstract, Integer>();
 	private HashMap<BiologicalNodeAbstract, Integer> hmtransitions = new HashMap<BiologicalNodeAbstract, Integer>();
@@ -145,7 +144,7 @@ public class Cov {
 				tmp.addTokens(this.cMatrix.getColumn(i));
 				// System.out.println("new: " + tmp);
 				boolean found = false;
-				Iterator<BiologicalNodeAbstract> it = graphInstance.getPathway().getAllGraphNodes().iterator();
+				Iterator<BiologicalNodeAbstract> it = GraphInstance.getPathway().getAllGraphNodes().iterator();
 				CovNode cn;
 
 				if (this.isBoundaryHold(tmp)) {
@@ -193,7 +192,7 @@ public class Cov {
 								}
 
 								// fuer alle Knoten
-								Iterator<BiologicalNodeAbstract> it2 = graphInstance.getPathway().getAllGraphNodes()
+								Iterator<BiologicalNodeAbstract> it2 = GraphInstance.getPathway().getAllGraphNodes()
 										.iterator();
 								boolean cond1;
 								boolean cond2;
@@ -293,9 +292,9 @@ public class Cov {
 
 		// DefaultSettableVertexLocationFunction locations = graphInstance
 		// .getPathway().getGraph().getVertexLocations();
-		this.oldName = this.graphInstance.getPathway().getName();
+		this.oldName = GraphInstance.getPathway().getName();
 		// Hashmaps fuer places und transitions
-		Iterator<BiologicalNodeAbstract> hsit = graphInstance.getPathway().getAllGraphNodes().iterator();
+		Iterator<BiologicalNodeAbstract> hsit = GraphInstance.getPathway().getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		// Place p;
 		// System.out.println("vertices:");
@@ -335,7 +334,7 @@ public class Cov {
 		// double[][] c = this.initArray(numberPlace, numberTransition);
 
 		// einkommende Kanten (backward matrix)
-		Iterator<BiologicalEdgeAbstract> edgeit = graphInstance.getPathway().getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> edgeit = GraphInstance.getPathway().getAllEdges().iterator();
 		PNArc edge;
 		// Pair pair;
 		while (edgeit.hasNext()) {
@@ -453,7 +452,7 @@ public class Cov {
 
 	private void paintCoveredNodes() {
 
-		Pathway pwold = this.graphInstance.getContainer().getPathway(this.oldName);
+		Pathway pwold = GraphInstance.getContainer().getPathway(this.oldName);
 		// System.out.println("oldname: " + pwold.getName());
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		// this.graphInstance.getContainer().

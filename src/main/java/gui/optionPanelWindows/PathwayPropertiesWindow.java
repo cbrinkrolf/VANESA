@@ -37,7 +37,7 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 	private JTextField name;
 	private JButton color;
 	private Pathway pw;
-	private CompartmentRenderer compRenderer = null; 
+	private CompartmentRenderer compRenderer = null;
 
 	public PathwayPropertiesWindow() {
 
@@ -55,8 +55,8 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 
 	public void revalidateView() {
 		p.removeAll();
-		this.pw = new GraphInstance().getPathway();
-		if(compRenderer == null){
+		this.pw = GraphInstance.getPathway();
+		if (compRenderer == null) {
 			compRenderer = new CompartmentRenderer(pw);
 		}
 		MigLayout layout = new MigLayout("fillx", "[grow,fill]", "");
@@ -148,7 +148,7 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 					}
 				} else {
 					PopUpDialog.getInstance().show("Error",
-                                                   "Name of new compartment may only contain the following characters:\r\n [a-z], [A-Z], [0-9], [-], and must start with a letter or the dash symbol!");
+							"Name of new compartment may only contain the following characters:\r\n [a-z], [A-Z], [0-9], [-], and must start with a letter or the dash symbol!");
 				}
 			} else {
 				PopUpDialog.getInstance().show("Error", "Name of new compartment must not be empty!");
@@ -201,18 +201,18 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 		if (e.getSource().equals(drawCompartments)) {
 			if (e.getStateChange() == 1) {
 				vv.addPreRenderPaintable(compRenderer);
-				//vv.setDrawCompartments(true);
+				// vv.setDrawCompartments(true);
 				pw.getCompartmentManager().setDrawCompartments(true);
 			} else {
 				vv.removePreRenderPaintable(compRenderer);
-				//vv.setDrawCompartments(false);
+				// vv.setDrawCompartments(false);
 				pw.getCompartmentManager().setDrawCompartments(false);
 			}
 		} else if (e.getSource().equals(drawCompartmentsExperimental)) {
 			if (e.getStateChange() == 1) {
-				//vv.setEsperimentalCompartments(true);
+				// vv.setEsperimentalCompartments(true);
 			} else {
-				//vv.setEsperimentalCompartments(false);
+				// vv.setEsperimentalCompartments(false);
 			}
 		}
 	}

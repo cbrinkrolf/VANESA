@@ -258,21 +258,20 @@ public class MenuBarClass {
 		ruleManager.setActionCommand(MenuActionCommands.ruleManager.value);
 
 		String label;
-		if(MainWindow.developer){
+		if (MainWindow.developer) {
 			label = "Next launch: normal mode";
-		}else{
+		} else {
 			label = "Next launch: developer mode";
 		}
-		
+
 		devMode = new JMenuItem(label);
 		devMode.addActionListener(MenuListener.getInstance());
 		devMode.setActionCommand(MenuActionCommands.devMode.value);
-		
+
 		help.add(allPopUps);
 		help.add(nodesEdgesTypes);
 		help.add(interaction);
 		help.add(devMode);
-		
 
 		// about item is already present on mac osx
 		if (!application.isMac()) {
@@ -449,7 +448,7 @@ public class MenuBarClass {
 		transform.setEnabled(true);
 		showTransformResult.setEnabled(true);
 		showPN.setEnabled(true);
-		if (new GraphInstance().getPathway().isPetriNet()) {
+		if (GraphInstance.getPathway().isPetriNet()) {
 			transform.setEnabled(false);
 			showTransformResult.setEnabled(false);
 			showPN.setEnabled(false);
@@ -465,7 +464,7 @@ public class MenuBarClass {
 	}
 
 	public void setPetriView(boolean isPetriNet) {
-		if (new GraphInstance().getPathway().isPetriNet()) {
+		if (GraphInstance.getPathway().isPetriNet()) {
 			transform.setEnabled(false);
 			showTransformResult.setEnabled(false);
 			showPN.setEnabled(false);
@@ -512,8 +511,8 @@ public class MenuBarClass {
 		editPNelements.setEnabled(false);
 		createDoc.setEnabled(false);
 	}
-	
-	public void setDeveloperLabel(String label){
+
+	public void setDeveloperLabel(String label) {
 		devMode.setText(label);
 	}
 }

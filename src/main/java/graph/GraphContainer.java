@@ -14,8 +14,6 @@ import graph.jung.classes.MyGraph;
 
 
 public class GraphContainer {
-	
-	
 	private HashMap<String, Pathway> map = new HashMap<String, Pathway>();
 	private GraphElementAbstract selectedObject;
 	private String mouseFunction = "edit";

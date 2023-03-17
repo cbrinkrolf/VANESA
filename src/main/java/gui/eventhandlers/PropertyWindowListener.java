@@ -24,13 +24,11 @@ import java.util.ArrayList;
 
 public class PropertyWindowListener implements FocusListener, ItemListener {
 	private final GraphElementAbstract geb;
-	private final GraphInstance graphInstance = new GraphInstance();
-
 	// Object element;
 
 	public PropertyWindowListener(GraphElementAbstract element) {
 		if (element instanceof BiologicalNodeAbstract && ((BiologicalNodeAbstract) element).isLogical()) {
-			geb = ((BiologicalNodeAbstract) graphInstance.getSelectedObject()).getLogicalReference();
+			geb = ((BiologicalNodeAbstract) GraphInstance.getSelectedObject()).getLogicalReference();
 		} else {
 			geb = element;// graphInstance.getPathwayElement(element);
 			// this.element = element;
@@ -46,7 +44,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 
 	@Override
 	public void focusLost(FocusEvent event) {
-		Pathway pw = new GraphInstance().getPathway();
+		Pathway pw = GraphInstance.getPathway();
 		String source = event.getComponent().getName();
 		String text;
 		if (source.equals("label")) {
@@ -272,7 +270,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 				newT = new StochasticTransition(t.getLabel(), t.getName());
 			if (newT != null) {
 				// newT.setCompartment(pw.getCompartmentManager().getCompartment(t));
-				graphInstance.getPathway().addVertex(newT, new Point());
+				GraphInstance.getPathway().addVertex(newT, new Point());
 			}
 		} else if (source.equals("placeList")) {
 			Place p = (Place) geb;
@@ -295,7 +293,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			} else {
 				newP = new ContinuousPlace(p.getLabel(), p.getName());
 			}
-			graphInstance.getPathway().addVertex(newP, new Point());
+			GraphInstance.getPathway().addVertex(newP, new Point());
 			newP.setToken(p.getToken());
 			newP.setTokenMax(p.getTokenMax());
 			newP.setTokenMin(p.getTokenMin());
@@ -491,7 +489,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		Pathway pw = new GraphInstance().getPathway();
+		Pathway pw = GraphInstance.getPathway();
 		if (e.getSource() instanceof JComboBox) {
 			JComboBox<?> box = (JComboBox<?>) e.getSource();
 			if (box.getName().equals("distributionList") && e.getStateChange() == ItemEvent.SELECTED) {

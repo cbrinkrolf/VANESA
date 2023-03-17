@@ -44,7 +44,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Pathway pw = new GraphInstance().getPathway();
+	private Pathway pw;
 	private int rows = 0; // pw.getPetriNet().getNumberOfPlaces();
 	private int cols = 0;// pw.getPetriNet().getResultDimension();
 	private ArrayList<String> labels = new ArrayList<String>();
@@ -59,14 +59,16 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 	// ArrayList<String> labels = new ArrayList<String>();
 	private static int TOKEN = SimulationResultController.SIM_TOKEN;
-	//private static int ACTUAL_FIRING_SPEED = SimulationResultController.SIM_ACTUAL_FIRING_SPEED;
+	// private static int ACTUAL_FIRING_SPEED =
+	// SimulationResultController.SIM_ACTUAL_FIRING_SPEED;
 	public static int FIRE = SimulationResultController.SIM_FIRE;
 	public static int SUM_OF_TOKEN = SimulationResultController.SIM_SUM_OF_TOKEN;
 	public static int ACTUAL_TOKEN_FLOW = SimulationResultController.SIM_ACTUAL_TOKEN_FLOW;
-	
+
 	private String simId;
 
 	public PlotsPanel(String simId) {
+		pw = GraphInstance.getPathway();
 		// System.out.println("cols: "+cols);
 		this.simId = simId;
 		BiologicalNodeAbstract bna;
@@ -74,8 +76,8 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 		Place place;
 
 		if (pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation()) {
-			
-			if(simId == null){
+
+			if (simId == null) {
 				simId = pw.getPetriPropertiesNet().getSimResController().getLastActive().getId();
 			}
 			// table = new Object[rows][cols + 1];
@@ -122,7 +124,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 			DecimalFormat df = new DecimalFormat("#.#####");
 			df.setRoundingMode(RoundingMode.HALF_UP);
 			df.setMinimumFractionDigits(1);
-			
+
 			DecimalFormat intf = new DecimalFormat("#");
 
 			String start = "Start=";
@@ -148,10 +150,12 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 					end = "end=";
 					if (place instanceof ContinuousPlace) {
 						start += df.format(simRes.get(place, TOKEN).get(0));
-						end+= df.format(simRes.get(place, TOKEN).get(simRes.size() - 1));;
+						end += df.format(simRes.get(place, TOKEN).get(simRes.size() - 1));
+						;
 					} else {
 						start += intf.format(simRes.get(place, TOKEN).get(0));
-						end+= intf.format(simRes.get(place, TOKEN).get(simRes.size() - 1));;
+						end += intf.format(simRes.get(place, TOKEN).get(simRes.size() - 1));
+						;
 					}
 					chart.addSubtitle(new TextTitle(start + " " + end));
 					// NumberAxis yAxis = new NumberAxis();
@@ -234,7 +238,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new SaveDialog(SaveDialog.FORMAT_PDF + SaveDialog.FORMAT_SVG +  SaveDialog.FORMAT_PNG, charts, this);
+		new SaveDialog(SaveDialog.FORMAT_PDF + SaveDialog.FORMAT_SVG + SaveDialog.FORMAT_PNG, charts, this);
 	}
 
 	@Override

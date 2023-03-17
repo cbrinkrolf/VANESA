@@ -17,47 +17,43 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.Protein;
-import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 
 public class NetworkProperties extends Object {
 
-	MainWindow w = MainWindow.getInstance();
-	GraphContainer con = GraphContainer.getInstance();
-	GraphInstance graphInstance = new GraphInstance();
-	Pathway pw;
-	public MyGraph mg;
+	private MainWindow w = MainWindow.getInstance();
+	private Pathway pw;
+	private  MyGraph mg;
 
-	BiologicalNodeAbstract from, to;
+	private BiologicalNodeAbstract from, to;
 
-	int nodes = 0;
-	int edges = 0;
+	private int nodes = 0;
+	private int edges = 0;
 
-	int nodei[];
-	int nodej[];
+	private int nodei[];
+	private int nodej[];
 
-	short adjacency[][];
-	short distances[][];
-	int nodedepths[];
-	int maxpath;
-	boolean nodemarked[];
-	int cutnodes[];
-	int cliques[][];
+	private short adjacency[][];
+	private short distances[][];
+	private int nodedepths[];
+	private int maxpath;
+	private boolean nodemarked[];
+	private int cutnodes[];
 
 	// lists
-	LinkedList<Integer> nodedegrees = new LinkedList<Integer>();
-	LinkedList<Integer> nodedegreessingle = new LinkedList<Integer>();
-	Hashtable<BiologicalNodeAbstract, Integer> nodeassings = new Hashtable<BiologicalNodeAbstract, Integer>();
-	Hashtable<Integer, BiologicalNodeAbstract> nodeassignsback = new Hashtable<Integer, BiologicalNodeAbstract>();
-	Hashtable<Integer, Integer> nodedegreetable = new Hashtable<Integer, Integer>();
-	Hashtable<Integer, Double> neighbordegreetable = new Hashtable<Integer, Double>();
+	private LinkedList<Integer> nodedegrees = new LinkedList<Integer>();
+	private LinkedList<Integer> nodedegreessingle = new LinkedList<Integer>();
+	private Hashtable<BiologicalNodeAbstract, Integer> nodeassings = new Hashtable<BiologicalNodeAbstract, Integer>();
+	private Hashtable<Integer, BiologicalNodeAbstract> nodeassignsback = new Hashtable<Integer, BiologicalNodeAbstract>();
+	private Hashtable<Integer, Integer> nodedegreetable = new Hashtable<Integer, Integer>();
+	private Hashtable<Integer, Double> neighbordegreetable = new Hashtable<Integer, Double>();
 
 	private int nodeincrement = 0;
 
 	public NetworkProperties() {
-		pw = con.getPathway(w.getCurrentPathway());
+		pw = GraphInstance.getPathway();
 		mg = pw.getGraph();
 
 		nodes = mg.getAllVertices().size();
@@ -82,7 +78,7 @@ public class NetworkProperties extends Object {
 	}
 
 	public NetworkProperties(String pathwayname) {
-		pw = con.getPathway(pathwayname);
+		pw = GraphInstance.getPathway();
 		mg = pw.getGraph();
 
 		nodes = mg.getAllVertices().size();
@@ -491,12 +487,10 @@ public class NetworkProperties extends Object {
 	}
 
 	public int getNodeCount() {
-
 		return nodes;
 	}
 
 	public int getEdgeCount() {
-
 		return edges;
 	}
 

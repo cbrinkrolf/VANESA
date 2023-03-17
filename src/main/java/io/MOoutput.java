@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -830,8 +829,7 @@ public class MOoutput {
 
 		// System.out.println("2: "+mFunction);
 		// replace places
-		GraphInstance graphInstance = new GraphInstance();
-		Pathway pw = graphInstance.getPathway();
+		Pathway pw = GraphInstance.getPathway();
 		if(!pw.isPetriNet() && pw.getTransformationInformation() != null && pw.getTransformationInformation().getPetriNet() != null){
 			pw = pw.getTransformationInformation().getPetriNet();
 		}

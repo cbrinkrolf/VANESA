@@ -3,8 +3,6 @@ package graph.jung.classes;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.event.ItemEvent;
@@ -25,7 +23,6 @@ import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.petriNet.Place;
 import configurations.NetworkSettings;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.AggregateLayout;
@@ -42,7 +39,6 @@ import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationModel;
-import edu.uci.ics.jung.visualization.VisualizationServer.Paintable;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.EditingPopupGraphMousePlugin;
@@ -110,7 +106,6 @@ public class MyGraph {
 
 	protected PickedState<BiologicalNodeAbstract> stateV;
 	protected PickedState<BiologicalEdgeAbstract> stateE;
-	private GraphInstance graphInstance = new GraphInstance();
 	private final VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> visualizationModel;
 	private final AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout;
 	private MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
@@ -299,7 +294,7 @@ public class MyGraph {
 			public void itemStateChanged(ItemEvent e) {
 				// System.out.println("changed");
 				if (stateV.getSelectedObjects().length == 1) {
-					graphInstance.setSelectedObject((BiologicalNodeAbstract) stateV.getSelectedObjects()[0]);
+					GraphInstance.setSelectedObject((BiologicalNodeAbstract) stateV.getSelectedObjects()[0]);
 
 					if (!pathway.isHeadless()) {
 						w.updateElementProperties();
@@ -322,7 +317,7 @@ public class MyGraph {
 			public void itemStateChanged(ItemEvent e) {
 				// System.out.println("changed");
 				if (stateE.getSelectedObjects().length == 1) {
-					graphInstance.setSelectedObject((BiologicalEdgeAbstract) stateE.getSelectedObjects()[0]);
+					GraphInstance.setSelectedObject((BiologicalEdgeAbstract) stateE.getSelectedObjects()[0]);
 					if (!pathway.isHeadless()) {
 						w.updateElementProperties();
 					}

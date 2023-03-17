@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import biologicalElements.GraphElementAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
@@ -25,10 +24,8 @@ import net.miginfocom.swing.MigLayout;
 
 public class GraphNodeRemovalGUI implements ActionListener {
 
-	JPanel p = new JPanel();
-	GraphElementAbstract ab;
-	GraphInstance graphInstance;
-	boolean emptyPane = true;
+	private JPanel p = new JPanel();
+	private boolean emptyPane = true;
 
 	private JComboBox<String> chooseAlgorithm;
 	private JButton removebutton, trimbutton;
@@ -112,8 +109,6 @@ public class GraphNodeRemovalGUI implements ActionListener {
 	}
 
 	public void revalidateView() {
-
-		graphInstance = new GraphInstance();
 
 		if (emptyPane) {
 			updateWindow();

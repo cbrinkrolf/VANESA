@@ -30,7 +30,7 @@ public class PathwayTree implements TreeSelectionListener {
 	private HashMap<DefaultMutableTreeNode, Pathway> map = new HashMap<DefaultMutableTreeNode, Pathway>();
 	private DefaultMutableTreeNode actualNode;
 	private JPanel p = new JPanel();
-			
+
 	public PathwayTree() {
 		tree.setEditable(false);
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -53,7 +53,7 @@ public class PathwayTree implements TreeSelectionListener {
 			DefaultMutableTreeNode node = new DefaultMutableTreeNode(pw.getTitle());
 			map.put(node, pw);
 			root.add(node);
-			if (new GraphInstance().getPathway().equals(pw))
+			if (GraphInstance.getPathway().equals(pw))
 				actualNode = node;
 			buildTree(pw, node);
 		}
@@ -63,7 +63,7 @@ public class PathwayTree implements TreeSelectionListener {
 		tree.removeAll();
 		actualNode = null;
 		model = (DefaultTreeModel) tree.getModel();
-		Pathway pw = new GraphInstance().getPathway();
+		Pathway pw = GraphInstance.getPathway();
 		if (pw == null)
 			return;
 		Pathway rootPW = pw.getRootPathway();

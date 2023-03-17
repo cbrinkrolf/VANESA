@@ -132,8 +132,8 @@ public class MenuListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		MainWindow w = MainWindow.getInstance();
 		String event = e.getActionCommand();
-		final GraphInstance graphInstance = new GraphInstance();
 		GraphContainer con = GraphContainer.getInstance();
+		Pathway pw = GraphInstance.getPathway();
 		MenuActionCommands command = MenuActionCommands.get(event);
 		if (command == null) {
 			return;
@@ -145,7 +145,7 @@ public class MenuListener implements ActionListener {
 					new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 			if (option != -1) {
 				new CreatePathway();
-				graphInstance.getPathway().setIsPetriNet(option == JOptionPane.NO_OPTION);
+				GraphInstance.getPathway().setIsPetriNet(option == JOptionPane.NO_OPTION);
 				w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
 				w.updateAllGuiElements();
 			}
@@ -181,7 +181,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case exportNetwork:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					new SaveDialog(
 							SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO + SaveDialog.FORMAT_CSML
 									+ SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_TXT,
@@ -195,7 +195,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case saveAs:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					new SaveDialog(SaveDialog.FORMAT_SBML, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -206,20 +206,19 @@ public class MenuListener implements ActionListener {
 			break;
 		case save:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					if (graphInstance.getPathway().getFile() != null) {
+				if (pw.hasGotAtLeastOneElement()) {
+					if (pw.getFile() != null) {
 						JSBMLOutput jsbmlOutput;
-						File file = graphInstance.getPathway().getFile();
+						File file = pw.getFile();
 						try {
-							jsbmlOutput = new JSBMLOutput(new FileOutputStream(file), new GraphInstance().getPathway());
+							jsbmlOutput = new JSBMLOutput(new FileOutputStream(file), pw);
 							String out = jsbmlOutput.generateSBMLDocument();
 							if (out.length() > 0) {
 								PopUpDialog.getInstance().show("Error", out);
 							} else {
-								GraphContainer.getInstance().renamePathway(GraphInstance.getPathwayStatic(),
-										file.getName());
-								GraphInstance.getPathwayStatic().setName(file.getName());
-								GraphInstance.getPathwayStatic().setTitle(file.getName());
+								GraphContainer.getInstance().renamePathway(pw, file.getName());
+								pw.setName(file.getName());
+								pw.setTitle(file.getName());
 								MainWindow.getInstance().renameSelectedTab(file.getName());
 								PopUpDialog.getInstance().show("JSbml export", "Saving was successful!");
 							}
@@ -242,7 +241,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case springLayout:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToSpringLayout();
 					LayoutConfig.changeToLayout(SpringLayout.class);
 				} else {
@@ -254,7 +253,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case kkLayout:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToKKLayout();
 					LayoutConfig.changeToLayout(KKLayout.class);
 				} else {
@@ -266,7 +265,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case frLayout:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToFRLayout();
 					LayoutConfig.changeToLayout(FRLayout.class);
 				} else {
@@ -278,7 +277,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case circleLayout:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToCircleLayout();
 					LayoutConfig.changeToLayout(CircleLayout.class);
 				} else {
@@ -290,7 +289,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case hebLayout:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					LayoutConfig.changeToLayout(HEBLayout.class);
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network before.");
@@ -301,7 +300,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case hctLayout:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					LayoutConfig.changeToLayout(HCTLayout.class);
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network before.");
@@ -312,7 +311,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case gemLayout:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToCircleLayout();
 					LayoutConfig.changeToLayout(GEMLayout.class);
 					// graphInstance.getMyGraph().changeGraphLayout(4);
@@ -326,7 +325,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case isomLayout:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					// graphInstance.getMyGraph().changeToISOMLayout();
 					LayoutConfig.changeToLayout(ISOMLayout.class);
 				} else {
@@ -340,7 +339,7 @@ public class MenuListener implements ActionListener {
 			new Settings(0);
 			break;
 		case interaction:
-			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+			if (con.containsPathway() && pw.hasGotAtLeastOneElement()) {
 				new InfoWindow(false);
 			}
 			break;
@@ -369,7 +368,6 @@ public class MenuListener implements ActionListener {
 			new Settings(2);
 			break;
 		case openTestP:
-			Pathway pw = graphInstance.getPathway();
 			places = 0;
 			transitions = 0;
 			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
@@ -405,7 +403,6 @@ public class MenuListener implements ActionListener {
 			d.setVisible(true);
 			break;
 		case openTestT:
-			pw = graphInstance.getPathway();
 			transitions = 0;
 			places = 0;
 			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
@@ -485,7 +482,6 @@ public class MenuListener implements ActionListener {
 			d.setVisible(true);
 			break;
 		case openCov:
-			pw = graphInstance.getPathway();
 			places = 0;
 			transitions = 0;
 			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
@@ -581,7 +577,7 @@ public class MenuListener implements ActionListener {
 						int index = name2id.get(name);
 						markierung[index] = Double.parseDouble(value);
 					}
-					pw = graphInstance.getContainer().getPathway(pwName);
+					pw = GraphInstance.getContainer().getPathway(pwName);
 					boolean reachable = false;
 					for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 						if (bna instanceof CovNode) {
@@ -634,8 +630,8 @@ public class MenuListener implements ActionListener {
 			break;
 		case simulate:
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
-					graphInstance.getPathway().getPetriNetSimulation().showMenu();
+				if (pw.hasGotAtLeastOneElement()) {
+					pw.getPetriNetSimulation().showMenu();
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network first.");
 				}
@@ -647,13 +643,13 @@ public class MenuListener implements ActionListener {
 			DataMappingColorMVC.createDataMapping();
 			break;
 		case datamining:
-			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+			if (con.containsPathway() && pw.hasGotAtLeastOneElement()) {
 				new SmacofView();
 			} else
 				PopUpDialog.getInstance().show("Error", "Please create a network first.");
 			break;
 		case rendererSettings:
-			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+			if (con.containsPathway() && pw.hasGotAtLeastOneElement()) {
 				PreRenderManager.getInstance();
 			} else
 				PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -670,7 +666,6 @@ public class MenuListener implements ActionListener {
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
-			pw = graphInstance.getPathway();
 			VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = pw.prepareGraphToPrint();
 			try {
 				Dimension size = wvv.getSize();
@@ -741,7 +736,7 @@ public class MenuListener implements ActionListener {
 			break;
 		case dataLabelMapping:
 			// Open new window for file input
-			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+			if (con.containsPathway() && pw.hasGotAtLeastOneElement()) {
 				try {
 					new LabelToDataMappingWindow();
 				} catch (IOException ioe) {
@@ -756,15 +751,15 @@ public class MenuListener implements ActionListener {
 			}
 			break;
 		case enrichMirna:
-			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
-				MirnaSearch.enrichMirnas(graphInstance.getPathway(), true, true, false);
+			if (con.containsPathway() && pw.hasGotAtLeastOneElement()) {
+				MirnaSearch.enrichMirnas(pw, true, true, false);
 			} else {
 				PopUpDialog.getInstance().show("Error", "Please create a network first.");
 			}
 			break;
 		case enrichGene:
-			if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
-				MirnaSearch.enrichGenes(graphInstance.getPathway(), true, true, false);
+			if (con.containsPathway() && pw.hasGotAtLeastOneElement()) {
+				MirnaSearch.enrichGenes(pw, true, true, false);
 			} else {
 				PopUpDialog.getInstance().show("Error", "Please create a network first.");
 			}
@@ -773,10 +768,9 @@ public class MenuListener implements ActionListener {
 			shakeEnzymes();
 			break;
 		case graphPicture:
-			pw = graphInstance.getPathway();
 			wvv = pw.prepareGraphToPrint();
 			if (con.containsPathway()) {
-				if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+				if (pw.hasGotAtLeastOneElement()) {
 					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, SaveDialog.DATA_TYPE_GRAPH_PICTURE,
 							wvv, MainWindow.getInstance().getFrame(), null);
 				} else {
@@ -788,7 +782,6 @@ public class MenuListener implements ActionListener {
 			break;
 		case wuff:
 			if (con.containsPathway()) {
-				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement()) {
 					for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 						if (bna instanceof DynamicNode) {
@@ -806,7 +799,6 @@ public class MenuListener implements ActionListener {
 			break;
 		case transform:
 			if (con.containsPathway()) {
-				pw = graphInstance.getPathway();
 				if (pw.hasGotAtLeastOneElement() && !pw.isPetriNet()) {
 					List<Rule> rules = RuleManager.getInstance().getActiveRules();
 					if (rules.size() == 0) {
@@ -843,7 +835,6 @@ public class MenuListener implements ActionListener {
 			break;
 		case showPN:
 			if (con.containsPathway()) {
-				pw = graphInstance.getPathway();
 				if (pw != null && pw.getTransformationInformation() != null
 						&& pw.getTransformationInformation().getPetriNet() != null && !pw.isPetriNet()) {
 					CreatePathway.showPathway(pw.getTransformationInformation().getPetriNet());
@@ -857,7 +848,6 @@ public class MenuListener implements ActionListener {
 			break;
 		case showTransformResult:
 			if (con.containsPathway()) {
-				pw = graphInstance.getPathway();
 				if (pw.getTransformationInformation() != null && pw.getTransformationInformation().getPetriNet() != null
 						&& !pw.isPetriNet()) {
 					new TransformationInformationWindow(pw).show();
@@ -874,7 +864,6 @@ public class MenuListener implements ActionListener {
 			break;
 		case nodesEdgesTypes:
 			if (con.containsPathway()) {
-				pw = graphInstance.getPathway();
 				new NodesEdgesTypesWindow(pw);
 			} else {
 				PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -888,8 +877,7 @@ public class MenuListener implements ActionListener {
 			return;
 		}
 		CompletableFuture.runAsync(() -> {
-			GraphInstance graphInstance = new GraphInstance();
-			Pathway pw = graphInstance.getPathway();
+			Pathway pw = GraphInstance.getPathway();
 			MyGraph graph = pw.getGraph();
 			for (int i = 0; i < 10; i++) {
 				double offset = 5;
@@ -937,13 +925,12 @@ public class MenuListener implements ActionListener {
 	}
 
 	private void createCMatrix() {
-		GraphInstance graphInstance = new GraphInstance();
 		HashMap<BiologicalNodeAbstract, Integer> hmplaces = new HashMap<>();
 		HashMap<BiologicalNodeAbstract, Integer> hmtransitions = new HashMap<>();
 		int numberPlaces = 0;
 		int numberTransitions = 0;
 		ArrayList<String> names = new ArrayList<>();
-		for (BiologicalNodeAbstract bna : graphInstance.getPathway().getAllGraphNodes()) {
+		for (BiologicalNodeAbstract bna : GraphInstance.getPathway().getAllGraphNodes()) {
 			if (bna instanceof Transition) {
 				hmtransitions.put(bna, numberTransitions);
 				numberTransitions++;
@@ -958,7 +945,7 @@ public class MenuListener implements ActionListener {
 		double[][] f = initArray(numberPlaces, numberTransitions);
 		double[][] b = initArray(numberPlaces, numberTransitions);
 		// einkommende Kanten (backward matrix)
-		Iterator<BiologicalEdgeAbstract> edgeit = graphInstance.getPathway().getAllEdges().iterator();
+		Iterator<BiologicalEdgeAbstract> edgeit = GraphInstance.getPathway().getAllEdges().iterator();
 		PNArc edge;
 		Object o;
 		while (edgeit.hasNext()) {

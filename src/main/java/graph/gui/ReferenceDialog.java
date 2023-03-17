@@ -28,8 +28,7 @@ public class ReferenceDialog {
 	private JPanel panel;
 	private JOptionPane pane;
 	private JComboBox<BiologicalNodeAbstract> elementNames = new javax.swing.JComboBox<BiologicalNodeAbstract>();
-	private GraphInstance graphInstance = new GraphInstance();
-	private Pathway pw = graphInstance.getPathway();
+	private Pathway pw;
 	private JComboBox<String> box = new JComboBox<String>();
 	private ArrayList<BiologicalNodeAbstract> list;
 	private BiologicalNodeAbstract self;
@@ -38,6 +37,7 @@ public class ReferenceDialog {
 	 * 
 	 */
 	public ReferenceDialog(BiologicalNodeAbstract bna) {
+		pw = GraphInstance.getPathway();
 		self = bna;
 		MigLayout layout = new MigLayout("", "[left]");
 
@@ -61,8 +61,7 @@ public class ReferenceDialog {
 		box.setMaximumSize(new Dimension(250, 300));
 		panel.add(box, "span,wrap 5,growx ,gaptop 2");
 
-		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE,
-				JOptionPane.OK_CANCEL_OPTION);
+		pane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 
 	}
 
@@ -90,7 +89,7 @@ public class ReferenceDialog {
 
 			}
 		}
-		
+
 		ArrayList<String> ids = new ArrayList<String>(map.keySet());
 		Collections.sort(ids, new Comparator<String>() {
 			public int compare(String f1, String f2) {
@@ -104,7 +103,6 @@ public class ReferenceDialog {
 		}
 
 		// String element;
-		
 
 	}
 

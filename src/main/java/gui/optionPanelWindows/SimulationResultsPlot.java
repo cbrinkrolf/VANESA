@@ -997,8 +997,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 	public void initGraphs() {
 		// System.out.println("start init");
-		GraphInstance graphInstance = new GraphInstance();
-		pw = graphInstance.getPathway();
+		pw = GraphInstance.getPathway();
 		if (!pw.isPetriNet() && pw.getTransformationInformation() == null) {
 			return;
 		}

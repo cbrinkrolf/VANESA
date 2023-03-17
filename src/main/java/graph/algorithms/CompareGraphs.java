@@ -6,8 +6,6 @@ import java.util.Vector;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.ReactionEdge;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-//import edu.uci.ics.jung.graph.Vertex;
-import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 
@@ -18,8 +16,6 @@ import gui.MainWindow;
  */
 
 public class CompareGraphs {
-
-	static GraphInstance graphInstance = new GraphInstance();
 
 	private static void createEdges(Pathway pw, BiologicalNodeAbstract one,
 			BiologicalNodeAbstract two) {

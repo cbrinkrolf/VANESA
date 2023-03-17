@@ -27,7 +27,6 @@ public class OpenDialog extends SwingWorker<Object, Object> {
     private final int option;
     private final JFileChooser chooser;
     private final GraphContainer con = GraphContainer.getInstance();
-    private final GraphInstance graphInstance = new GraphInstance();
 
     public OpenDialog() {
         chooser = new JFileChooser(ConnectionSettings.getInstance().getFileOpenDirectory());
@@ -117,7 +116,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
             // bar.closeWindow();
             MainWindow.getInstance().closeProgressBar();
             if (con.containsPathway()) {
-                if (graphInstance.getPathway().hasGotAtLeastOneElement()) {
+                if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
                     // GraphInstance.getMyGraph().getVisualizationViewer().restart();
                     MainWindow.getInstance().updateAllGuiElements();
                     MyGraph g = GraphInstance.getMyGraph();

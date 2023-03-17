@@ -73,7 +73,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private double concentrationStart = 1;
 
 	public BiologicalNodeAbstract(String label, String name) {
-		super(name, new GraphInstance().getPathway());
+		super(name, GraphInstance.getPathway());
 		super.setName(name);
 		this.setLabel(label);
 		this.labelSet.add(label);
@@ -81,8 +81,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		// setLabel(label.toLowerCase());
 		// setName(name.toLowerCase());
 		// setVertex(vertex);
-		if (new GraphInstance().getPathway() != null) {
-			setIsPetriNet(new GraphInstance().getPathway().isPetriNet());
+		if (GraphInstance.getPathway() != null) {
+			setIsPetriNet(GraphInstance.getPathway().isPetriNet());
 		}
 		// values.put(1, 0);
 		// setShape(shapes.getEllipse());
@@ -264,12 +264,12 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		// Set id
 		if (id == null) {
 			// if pw==null, replace with GraphInstance.getPathwayStatic();
-			coarseNode.setID(true, GraphInstance.getPathwayStatic());
+			coarseNode.setID(true, GraphInstance.getPathway());
 		} else {
 			try {
-				coarseNode.setID(id, GraphInstance.getPathwayStatic());
+				coarseNode.setID(id, GraphInstance.getPathway());
 			} catch (IDAlreadyExistException ex) {
-				coarseNode.setID(true, GraphInstance.getPathwayStatic());
+				coarseNode.setID(true, GraphInstance.getPathway());
 			}
 		}
 
@@ -303,7 +303,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 		coarseNode.makeCoarseShape();
 
-		GraphInstance.getPathwayStatic().getClosedSubPathways().add(coarseNode);
+		GraphInstance.getPathway().getClosedSubPathways().add(coarseNode);
 
 		return coarseNode;
 	}
@@ -328,8 +328,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			}
 			// fail if at least 1 selected node is environment node of the current shown
 			// graph
-			if (GraphInstance.getPathwayStatic().isBNA()
-					&& ((BiologicalNodeAbstract) GraphInstance.getPathwayStatic()).getEnvironment().contains(vertex)) {
+			if (GraphInstance.getPathway().isBNA()
+					&& ((BiologicalNodeAbstract) GraphInstance.getPathway()).getEnvironment().contains(vertex)) {
 				return false;
 			}
 		}
@@ -404,7 +404,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		if (vertices == null || vertices.size() == 0) {
 			return null;
 		}
-		MyGraph activeGraph = new GraphInstance().getPathway().getGraph();
+		MyGraph activeGraph = GraphInstance.getPathway().getGraph();
 
 		// return the first found border node.
 		for (BiologicalNodeAbstract node : vertices) {
@@ -510,7 +510,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			MainWindow.getInstance().removeTab(false, getTab().getTitleTab(), this);
 			BiologicalNodeAbstract bna = BiologicalNodeAbstract.coarse(innerNodes, getID(), getLabel());
 			setGraph(bna.getGraph());
-			new GraphInstance().getPathway().getGraph().getVisualizationViewer().repaint();
+			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 //			bna.printAllHierarchicalAttributes();
 		}
 	}
@@ -1094,7 +1094,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	private MyGraph getActiveGraph() {
-		return new GraphInstance().getPathway().getGraph();
+		return GraphInstance.getPathway().getGraph();
 	}
 
 	public boolean isLogical() {

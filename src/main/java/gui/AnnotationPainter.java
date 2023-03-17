@@ -89,7 +89,7 @@ public class AnnotationPainter {
 			}
 		};
 		initAction(a, "font.png", "select text color");
-        selectColorActions.add(a);
+		selectColorActions.add(a);
 	}
 
 	public List<Action> getSelectShapeActions() {
@@ -104,9 +104,8 @@ public class AnnotationPainter {
 		// this.currentRangeType = currentRangeType;
 		setEnabled(true);
 		// GraphInstance.getMyGraph().setMouseModeSelectRange();
-		GraphInstance graphInstance = new GraphInstance();
-		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = graphInstance.getPathway().getGraph()
-																							  .getVisualizationViewer();
+		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = GraphInstance.getPathway().getGraph()
+				.getVisualizationViewer();
 		RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> rc = vv.getRenderContext();
 		annotatingPlugin = new MyAnnotatingGraphMousePlugin<>(rc);
 		annotatingPlugin.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
@@ -137,8 +136,10 @@ public class AnnotationPainter {
 
 		/*
 		 * JPanel annotationControlPanel = new JPanel();
-		 * annotationControlPanel.setBorder(BorderFactory.createTitledBorder("Annotation Controls"));
-		 * AnnotationControls<BiologicalNodeAbstract,BiologicalEdgeAbstract> annotationControls = new AnnotationControls<>(annotatingPlugin);
+		 * annotationControlPanel.setBorder(BorderFactory.
+		 * createTitledBorder("Annotation Controls"));
+		 * AnnotationControls<BiologicalNodeAbstract,BiologicalEdgeAbstract>
+		 * annotationControls = new AnnotationControls<>(annotatingPlugin);
 		 * annotationControlPanel.add(annotationControls.getAnnotationsToolBar()) ;
 		 * controls.add(annotationControlPanel);
 		 */

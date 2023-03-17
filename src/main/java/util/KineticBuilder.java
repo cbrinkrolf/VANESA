@@ -17,7 +17,7 @@ public class KineticBuilder {
     // TODO consider only directed edges
     public static String createConvenienceKinetic(BiologicalNodeAbstract bna) {
         StringBuilder sb = new StringBuilder();
-        Pathway pw = GraphInstance.getPathwayStatic();
+        Pathway pw = GraphInstance.getPathway();
         Collection<BiologicalEdgeAbstract> inEdges = pw.getGraph().getJungGraph().getInEdges(bna);
         Collection<BiologicalEdgeAbstract> outEdges = pw.getGraph().getJungGraph().getOutEdges(bna);
 

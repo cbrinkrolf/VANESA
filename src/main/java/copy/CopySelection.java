@@ -19,10 +19,10 @@ public class CopySelection {
     private final Map<BiologicalNodeAbstract, Point2D> locations = new HashMap<>();
 
     public CopySelection(Set<BiologicalNodeAbstract> vertices, Set<BiologicalEdgeAbstract> edges) {
-        Pathway pw = new GraphInstance().getPathway();
+        Pathway pw = GraphInstance.getPathway();
         petriNet = pw.isPetriNet();
+        MyGraph myGraph = GraphInstance.getPathway().getGraph();
         for (BiologicalNodeAbstract v : vertices) {
-            MyGraph myGraph = new GraphInstance().getPathway().getGraph();
             locations.put(v, myGraph.getVertexLocation(v));
             bnas.add(v);
         }
@@ -34,7 +34,7 @@ public class CopySelection {
     }
 
     public void paste() {
-        Pathway pw = new GraphInstance().getPathway();
+        Pathway pw = GraphInstance.getPathway();
         if (petriNet ^ pw.isPetriNet()) {
             JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
                     "Copy-Paste is not possible from biological graph to petri net and vice versa!",
@@ -48,6 +48,9 @@ public class CopySelection {
         //GraphInstance.getMyGraph().lockVertices();
         //}
         //HashMap<Vertex, Vertex> map = new HashMap<Vertex, Vertex>();
+        BiologicalNodeAbstract bna1;
+        BiologicalNodeAbstract bna2;
+        BiologicalEdgeAbstract bea2;
         HashMap<BiologicalNodeAbstract, BiologicalNodeAbstract> map = new HashMap<>();
         for (BiologicalEdgeAbstract bea : beas) {
 			/*Edge edge = new UndirectedSparseEdge(map.get(bea.getEdge()
@@ -59,8 +62,7 @@ public class CopySelection {
 						.getEndpoints().getFirst()), map.get(bea.getEdge()
 						.getEndpoints().getSecond()));
 			bea.setEdge(edge);*/
-            BiologicalNodeAbstract bna1;
-            BiologicalNodeAbstract bna2;
+           
             if (!map.containsKey(bea.getFrom())) {
                 bna1 = bea.getFrom().clone();
                 bna1.removeAllConnectionEdges();
@@ -77,7 +79,7 @@ public class CopySelection {
             } else {
                 bna2 = map.get(bea.getTo());
             }
-            BiologicalEdgeAbstract bea2 = bea.clone();
+            bea2 = bea.clone();
             bea2.setFrom(bna1);
             bea2.setTo(bna2);
             pw.addEdge(bea2);
@@ -85,7 +87,7 @@ public class CopySelection {
         }
         for (BiologicalNodeAbstract bna : bnas) {
             if (!map.containsKey(bna)) {
-                BiologicalNodeAbstract bna1 = bna.clone();
+                bna1 = bna.clone();
                 bna1.removeAllConnectionEdges();
                 map.put(bna, bna1);
                 pw.addVertex(bna1, locations.get(bna));

@@ -48,7 +48,7 @@ public class BuildingBlocks implements TreeSelectionListener {
                 if (e.getClickCount() == 2) {
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
                     if (map.containsKey(node) && map.get(node).isFile()) {
-                        JSBMLInput input = new JSBMLInput(GraphInstance.getPathwayStatic());
+                        JSBMLInput input = new JSBMLInput(GraphInstance.getPathway());
                         try {
                             input.loadSBMLFile(new FileInputStream(map.get(node)), map.get(node));
                         } catch (FileNotFoundException e1) {

@@ -320,7 +320,7 @@ public class HCTLayout extends HierarchicalCircleLayout {
 			if (n.isCoarseNode()) {
 				continue;
 			}
-			if (n.getParentNode() != GraphInstance.getPathwayStatic() && n.getParentNode() != null) {
+			if (n.getParentNode() != GraphInstance.getPathway() && n.getParentNode() != null) {
 				continue;
 			}
 			if (graph.getNeighborCount(n) > maxNeighborNodes) {

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import biologicalElements.Elementdeclerations;
-import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import graph.GraphInstance;
@@ -77,7 +76,7 @@ public abstract class Place extends PNNode {
 			return;
 		}
 		this.tokenStart = tokenStart;
-		Pathway pw = new GraphInstance().getPathway();
+		//Pathway pw = GraphInstance.getPathway();
 		
 		//if (pw.getPetriPropertiesNet() != null
 		//		&& !pw.getPetriPropertiesNet().isPetriNetSimulation())

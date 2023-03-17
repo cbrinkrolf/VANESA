@@ -202,7 +202,7 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 	 */
 	public void coarse(){
 		coarse(true);
-		GraphInstance.getPathwayStatic().getRootPathway().updateMyGraph();
+		GraphInstance.getPathway().getRootPathway().updateMyGraph();
 	}
 	
 	public void setNode(BiologicalNodeAbstract n){
@@ -223,7 +223,7 @@ public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
 		for(BiologicalNodeAbstract n : this){
 			E value = comp.getValue(n);
 			E subvalue = comp.getSubValue(n);
-			if(GraphInstance.getPathwayStatic().getRootNode() == n){
+			if(GraphInstance.getPathway().getRootNode() == n){
 				setNode(n);
 				this.value = subvalue;
 				valueToList.put(subvalue, this);

@@ -18,34 +18,33 @@ import net.miginfocom.swing.MigLayout;
  * @author Sebastian
  */
 public class GraphSettingsDialog {
-	JPanel panel;
-	NetworkSettings settings = NetworkSettings.getInstance();
+	private JPanel panel;
+	private NetworkSettings settings = NetworkSettings.getInstance();
 
-	ButtonGroup group = new ButtonGroup();
-	JRadioButton only_name = new JRadioButton("", true);
-	JRadioButton only_label = new JRadioButton("", true);
-	JRadioButton nothing = new JRadioButton("", true);
-	JRadioButton name_label = new JRadioButton("", true);
+	private ButtonGroup group = new ButtonGroup();
+	private JRadioButton only_name = new JRadioButton("", true);
+	private JRadioButton only_label = new JRadioButton("", true);
+	private JRadioButton nothing = new JRadioButton("", true);
+	private JRadioButton name_label = new JRadioButton("", true);
 
-	ButtonGroup group2 = new ButtonGroup();
-	JRadioButton only_name_e = new JRadioButton("", true);
-	JRadioButton only_label_e = new JRadioButton("", true);
-	JRadioButton nothing_e = new JRadioButton("", true);
-	JRadioButton name_label_e = new JRadioButton("", true);
+	private ButtonGroup group2 = new ButtonGroup();
+	private JRadioButton only_name_e = new JRadioButton("", true);
+	private JRadioButton only_label_e = new JRadioButton("", true);
+	private JRadioButton nothing_e = new JRadioButton("", true);
+	private JRadioButton name_label_e = new JRadioButton("", true);
 
-	ButtonGroup group3 = new ButtonGroup();
-	JRadioButton black = new JRadioButton("", true);
-	JRadioButton white = new JRadioButton("", true);
-	
-	ButtonGroup group4 = new ButtonGroup();
-	JRadioButton yes = new JRadioButton("", true);
-	JRadioButton no = new JRadioButton("", true);
+	private ButtonGroup group3 = new ButtonGroup();
+	private JRadioButton black = new JRadioButton("", true);
+	private JRadioButton white = new JRadioButton("", true);
 
-	JSlider opacityslider = new JSlider(JSlider.HORIZONTAL, 0,255,255);
-	
-	MainWindow w = MainWindow.getInstance();
-	GraphInstance graphInstance = new GraphInstance();
-	GraphContainer con = GraphContainer.getInstance();;
+	private ButtonGroup group4 = new ButtonGroup();
+	private JRadioButton yes = new JRadioButton("", true);
+	private JRadioButton no = new JRadioButton("", true);
+
+	private JSlider opacityslider = new JSlider(JSlider.HORIZONTAL, 0, 255, 255);
+
+	private MainWindow w = MainWindow.getInstance();
+	private GraphContainer con = GraphContainer.getInstance();;
 
 	public GraphSettingsDialog() {
 
@@ -87,19 +86,18 @@ public class GraphSettingsDialog {
 		} else {
 			white.setSelected(false);
 		}
-		
+
 		group4.add(yes);
 		group4.add(no);
-		
-		
-		if(settings.getDrawEdges())
+
+		if (settings.getDrawEdges())
 			yes.setSelected(true);
 		else
 			no.setSelected(true);
-		
+
 		opacityslider.setValue(settings.getEdgeOpacity());
 
-		//Container contentPane = getContentPane();
+		// Container contentPane = getContentPane();
 		MigLayout layout = new MigLayout("", "[left]");
 
 		panel = new JPanel(layout);
@@ -142,8 +140,7 @@ public class GraphSettingsDialog {
 
 		panel.add(connectionPanel2, "span,wrap ,growx ,gap 10, gaptop 2");
 
-		panel.add(new JLabel("What kind of background do you prefer?"),
-				"span 4");
+		panel.add(new JLabel("What kind of background do you prefer?"), "span 4");
 		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
 
 		JPanel connectionPanel3 = new JPanel();
@@ -155,33 +152,32 @@ public class GraphSettingsDialog {
 		connectionPanel3.add(new JLabel("black"));
 
 		panel.add(connectionPanel3, "wrap,align left, gap 10, gaptop 2");
-		
-		
+
 		// Edge drawing
 		panel.add(new JLabel("Should the graph edges be displayed?"), "span 4");
 		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
-		
+
 		JPanel edgedrawpanel = new JPanel();
-		
+
 		edgedrawpanel.add(yes);
 		edgedrawpanel.add(new JLabel("yes   |"));
 		edgedrawpanel.add(no);
 		edgedrawpanel.add(new JLabel("no"));
-		
+
 		panel.add(edgedrawpanel, "wrap,align left, gap 10, gaptop 2");
-		
+
 		// Edge opacity
 		panel.add(new JLabel("opacity of the edges?"), "span 3");
 		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
-		
+
 		JPanel edgeopacitypanel = new JPanel();
-		
+
 		opacityslider.setMajorTickSpacing(50);
 //		opacityslider.setMinorTickSpacing();
 		opacityslider.setPaintTicks(true);
 		opacityslider.setPaintLabels(true);
-		panel.add(opacityslider);		
-		
+		panel.add(opacityslider);
+
 		panel.add(edgeopacitypanel, "wrap,align left, gap 10, gaptop 2");
 	}
 
@@ -202,19 +198,19 @@ public class GraphSettingsDialog {
 
 		white.setEnabled(enabled);
 		black.setEnabled(enabled);
-		
+
 		yes.setEnabled(enabled);
 		no.setEnabled(enabled);
 	}
 
 	public boolean applyDefaults() {
-		if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+		if (con.containsPathway() && GraphInstance.getPathway().hasGotAtLeastOneElement()) {
 			only_label.setSelected(true);
-			//settings.setNodeLabel(1);
+			// settings.setNodeLabel(1);
 			only_label_e.setSelected(true);
-			//settings.setEdgeLabel(1);
+			// settings.setEdgeLabel(1);
 			white.setSelected(true);
-			graphInstance.getPathway().changeBackground("white");
+			GraphInstance.getPathway().changeBackground("white");
 			settings.setBackgroundColor(false);
 			yes.setSelected(true);
 		} else {
@@ -225,7 +221,7 @@ public class GraphSettingsDialog {
 	}
 
 	public boolean applyNewSettings() {
-		if (con.containsPathway() && graphInstance.getPathway().hasGotAtLeastOneElement()) {
+		if (con.containsPathway() && GraphInstance.getPathway().hasGotAtLeastOneElement()) {
 			if (only_label.isSelected()) {
 				settings.setNodeLabel(1);
 			} else if (only_name.isSelected()) {
@@ -247,14 +243,14 @@ public class GraphSettingsDialog {
 			}
 			if (black.isSelected()) {
 				settings.setBackgroundColor(true);
-				graphInstance.getPathway().changeBackground("black");
+				GraphInstance.getPathway().changeBackground("black");
 			} else if (white.isSelected()) {
 				settings.setBackgroundColor(false);
-				graphInstance.getPathway().changeBackground("white");
+				GraphInstance.getPathway().changeBackground("white");
 			}
-			if(yes.isSelected()){
+			if (yes.isSelected()) {
 				settings.setDrawEdges(true);
-			} else{
+			} else {
 				settings.setDrawEdges(false);
 				no.setSelected(true);
 			}

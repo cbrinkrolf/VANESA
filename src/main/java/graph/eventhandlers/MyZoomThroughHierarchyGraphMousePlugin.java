@@ -40,7 +40,6 @@ import graph.jung.classes.MyVisualizationViewer;
 public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePlugin
 		implements MouseListener, MouseMotionListener {
 
-	private GraphInstance graphInstance = new GraphInstance();
 	private Pathway pw;
 	private HierarchyMenu menu;
 	private boolean inWindow = false;
@@ -85,7 +84,7 @@ public class MyZoomThroughHierarchyGraphMousePlugin extends AbstractGraphMousePl
 			menu = null;
 			return;
 		}
-		pw = graphInstance.getPathway();
+		pw = GraphInstance.getPathway();
 		if (checkModifiers(e)) {
 			final VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
 					.getVisualizationViewer();

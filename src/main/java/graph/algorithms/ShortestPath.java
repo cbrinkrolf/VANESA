@@ -13,19 +13,18 @@ import graph.GraphInstance;
 
 public class ShortestPath {
 
-	GraphInstance graphInstance = new GraphInstance();
-	HashMap<BiologicalNodeAbstract, Pair> vertices = new HashMap<BiologicalNodeAbstract, Pair>();
-	Vector<Pair> priorityQueue = new Vector<Pair>();
-	//HashMap vertexNames = new HashMap();
+	private HashMap<BiologicalNodeAbstract, Pair> vertices = new HashMap<BiologicalNodeAbstract, Pair>();
+	private Vector<Pair> priorityQueue = new Vector<Pair>();
+	// HashMap vertexNames = new HashMap();
 	private boolean mindMaps = true;
-	Pathway pw;
+	private Pathway pw;
 
-	BiologicalNodeAbstract startNode;
-	BiologicalNodeAbstract endNode;
+	private BiologicalNodeAbstract startNode;
+	private BiologicalNodeAbstract endNode;
 
 	public ShortestPath(BiologicalNodeAbstract start, BiologicalNodeAbstract end, Boolean mindMaps) {
 
-		pw = graphInstance.getPathway();
+		pw = GraphInstance.getPathway();
 		startNode = start;
 		endNode = end;
 		this.mindMaps = mindMaps;
@@ -37,12 +36,11 @@ public class ShortestPath {
 		BiologicalNodeAbstract backVertexString = endNode;
 
 		while (backVertexString != null) {
-			//System.out.println("back: "+backVertexString);
+			// System.out.println("back: "+backVertexString);
 			Pair p = vertices.get(backVertexString);
 			v.add(p.getName());
 			backVertexString = p.getPreviousVertex();
 		}
-
 		return v;
 	}
 
@@ -55,38 +53,35 @@ public class ShortestPath {
 			toVertexPair.setAmount(fromVertexPair.getAmount() + weigth);
 			toVertexPair.setPreviousVertex(fromVertexPair.getName());
 		}
-
 	}
 
-	/*private void printTableValues() {
-		Iterator it = vertices.values().iterator();
-		while (it.hasNext()) {
-			Pair p = (Pair) it.next();
-
-		}
-	}*/
+	/*
+	 * private void printTableValues() { Iterator it = vertices.values().iterator();
+	 * while (it.hasNext()) { Pair p = (Pair) it.next();
+	 * 
+	 * } }
+	 */
 
 	private void initStart() {
 
-		//Enumeration<String> e = graphRepresentation.getAllVertices();
+		// Enumeration<String> e = graphRepresentation.getAllVertices();
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 			bna = it.next();
-			//String vertexStr = e.nextElement().toString();
+			// String vertexStr = e.nextElement().toString();
 
 			Pair p = new Pair(bna, 99999);
 			vertices.put(p.getName(), p);
 			priorityQueue.add(p);
 		}
-
 		vertices.get(startNode).setAmount(0);
 	}
 
 	public Vector<BiologicalNodeAbstract> calculateShortestPath() {
 
 		initStart();
-		
+
 		while (!priorityQueue.isEmpty()) {
 
 			Collections.sort(priorityQueue);
@@ -97,18 +92,17 @@ public class ShortestPath {
 				return reconstructShortestPath();
 			} else {
 
-				Iterator<BiologicalNodeAbstract> it = pw.getGraph().getJungGraph().getNeighbors(p.getName()).iterator();//graphRepresentation.getVertexNeighbours(
-						//p.getName()).iterator();
+				Iterator<BiologicalNodeAbstract> it = pw.getGraph().getJungGraph().getNeighbors(p.getName()).iterator();// graphRepresentation.getVertexNeighbours(
+				// p.getName()).iterator();
 				BiologicalNodeAbstract node;
 				while (it.hasNext()) {
 					node = it.next();
 					// System.out.println("------" + p.getName());
 					if (mindMaps) {
-						//BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
-						//		.getPathwayElement(vertexNames.get(p.getName()));
+						// BiologicalNodeAbstract bna = (BiologicalNodeAbstract) graphInstance
+						// .getPathwayElement(vertexNames.get(p.getName()));
 						// System.out.println(bna.getLabel());
-						if (node.getBiologicalElement().equals(
-								Elementdeclerations.pathwayMap)) {
+						if (node.getBiologicalElement().equals(Elementdeclerations.pathwayMap)) {
 							relax(p.getName(), node, 10);
 						} else {
 							relax(p.getName(), node, 1);
@@ -119,7 +113,7 @@ public class ShortestPath {
 				}
 			}
 		}
-		//printTableValues();
+		// printTableValues();
 		return null;
 	}
 }

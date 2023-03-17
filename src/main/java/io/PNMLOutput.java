@@ -90,7 +90,6 @@ public class PNMLOutput extends BaseWriter<Pathway> {
         String placeLabel;
         //String placeLabel2;
         String transitionLabel;
-        GraphInstance g = new GraphInstance();
         Point2D location;
         for (Place place : this.nodeList) {
             // if ("Discrete Place".equals(place.getBiologicalElement()) || "Continuous Place".equals(place.getBiologicalElement())) {
@@ -102,7 +101,7 @@ public class PNMLOutput extends BaseWriter<Pathway> {
                 // Set the Marking of a place.
                 // PTMarkingHLAPI ptMarking = new PTMarkingHLAPI((int) this.bnaliste.get(i).getToken(), p1);
                 // Set the position of a place.
-                location = g.getPathway().getGraph().getVertexLocation(place);
+                location = GraphInstance.getPathway().getGraph().getVertexLocation(place);
                 NodeGraphicsHLAPI placeGraphics = new NodeGraphicsHLAPI(
                         new PositionHLAPI((int) location.getX(), (int) location.getY()), null, null, null);
                 p1.setNodegraphicsHLAPI(placeGraphics);
@@ -118,7 +117,7 @@ public class PNMLOutput extends BaseWriter<Pathway> {
                 t1.setNameHLAPI(new NameHLAPI(transition.getLabel()));
                 transitionPNML.put(transitionLabel, t1);
                 // Set the position of a place.
-                location = g.getPathway().getGraph().getVertexLocation(transition);
+                location = GraphInstance.getPathway().getGraph().getVertexLocation(transition);
                 NodeGraphicsHLAPI placeGraphics = new NodeGraphicsHLAPI(
                         new PositionHLAPI((int) location.getX(), (int) location.getY()), null, null, null);
                 t1.setNodegraphicsHLAPI(placeGraphics);
@@ -156,7 +155,7 @@ public class PNMLOutput extends BaseWriter<Pathway> {
             transitionFrom = false;
             //placeTo = false;
             // Position of arc
-            location = g.getPathway().getGraph().getVertexLocation(pnArc.getFrom());
+            location = GraphInstance.getPathway().getGraph().getVertexLocation(pnArc.getFrom());
             final ArcGraphicsHLAPI arcG = new ArcGraphicsHLAPI(arc);
             PositionHLAPI position = new PositionHLAPI((int) location.getX(), (int) location.getY());
             arcG.addPositionsHLAPI(position);

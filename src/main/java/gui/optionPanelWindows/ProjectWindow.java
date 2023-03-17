@@ -44,7 +44,7 @@ public class ProjectWindow implements FocusListener {
     }
 
     private void updateWindow() {
-        pw = GraphInstance.getPathwayStatic();
+        pw = GraphInstance.getPathway();
         MigLayout layout = new MigLayout("fillx", "[grow,fill]", "");
         panel.setLayout(layout);
 

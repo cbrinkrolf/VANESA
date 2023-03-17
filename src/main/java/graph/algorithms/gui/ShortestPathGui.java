@@ -27,7 +27,6 @@ import net.miginfocom.swing.MigLayout;
 public class ShortestPathGui implements ActionListener {
 
 	private JPanel p = new JPanel();
-	private GraphInstance graphInstance;
 	private boolean emptyPane = true;
 	private JComboBox<String> fromBox = new JComboBox<String>();
 	private JComboBox<String> ToBox = new JComboBox<String>();
@@ -42,21 +41,18 @@ public class ShortestPathGui implements ActionListener {
 
 	private void fillBox() {
 		mindMaps.setSelected(true);
-		graphInstance = new GraphInstance();
-		Pathway pw = graphInstance.getPathway();
+		Pathway pw = GraphInstance.getPathway();
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 
 		Vector<String> w = new Vector<String>();
-
 
 		BiologicalNodeAbstract bna;
 		while (it.hasNext()) {
 
 			bna = it.next();
 			w.add(bna.getLabel() + " (Node:" + bna.getID() + ")");
-			table.put(bna.getLabel() + " (Node:" + bna.getID()
-					+ ")", bna);
-			//i++;
+			table.put(bna.getLabel() + " (Node:" + bna.getID() + ")", bna);
+			// i++;
 		}
 
 		Collections.sort(w);
@@ -106,9 +102,6 @@ public class ShortestPathGui implements ActionListener {
 	}
 
 	public void revalidateView() {
-
-		graphInstance = new GraphInstance();
-
 		if (emptyPane) {
 			updateWindow();
 			p.repaint();
@@ -123,8 +116,8 @@ public class ShortestPathGui implements ActionListener {
 			// p.setVisible(true);
 
 		}
-		//tab.repaint();
-		//tab.revalidate();
+		// tab.repaint();
+		// tab.revalidate();
 	}
 
 	public void removeAllElements() {
@@ -134,7 +127,7 @@ public class ShortestPathGui implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		String event = e.getActionCommand();
-		Pathway pw = graphInstance.getPathway();
+		Pathway pw = GraphInstance.getPathway();
 		pw.getGraph().setMouseModeTransform();
 
 		BiologicalNodeAbstract bna1;
@@ -143,12 +136,10 @@ public class ShortestPathGui implements ActionListener {
 
 			pw.getGraph().enableGraphTheory();
 
-			bna1 = table
-					.get(fromBox.getSelectedItem().toString());
+			bna1 = table.get(fromBox.getSelectedItem().toString());
 			bna2 = table.get(ToBox.getSelectedItem().toString());
 
-			ShortestPath sp = new ShortestPath(bna1, bna2,
-					mindMaps.isSelected());
+			ShortestPath sp = new ShortestPath(bna1, bna2, mindMaps.isSelected());
 			Vector<BiologicalNodeAbstract> v = sp.calculateShortestPath();
 
 			Iterator<BiologicalNodeAbstract> i = v.iterator();

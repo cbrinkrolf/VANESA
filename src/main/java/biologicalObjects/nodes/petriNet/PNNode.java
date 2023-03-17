@@ -18,11 +18,12 @@ public class PNNode extends BiologicalNodeAbstract {
 
 	@Override
 	public void setName(String name) {
-		/*if(name == null || name.trim().length() < 1){
-			PopUpDialog.getInstance().show("Empty name!", "Name must not be empty!");
-			return;
-		}*/
-		Pathway pw = new GraphInstance().getPathway();
+		/*
+		 * if(name == null || name.trim().length() < 1){
+		 * PopUpDialog.getInstance().show("Empty name!", "Name must not be empty!");
+		 * return; }
+		 */
+		Pathway pw = GraphInstance.getPathway();
 		if (pw != null && pw.containsVertex(this) && pw.getAllNodeNames().contains(name)) {
 			if (pw.getNodeByName(name).getClass().equals(this.getClass())) {
 				BiologicalNodeAbstract node = pw.getNodeByName(name);

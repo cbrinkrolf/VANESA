@@ -33,7 +33,6 @@ public class EdgeDeleteDialog {
 	private JOptionPane pane;
 	private JRadioButton selectedEdge, allEdges;
 
-	private GraphInstance graphInstance = new GraphInstance();
 	private JComboBox<String> edges = new JComboBox<String>();
 	private HashMap<Integer, BiologicalEdgeAbstract> edgeMap = new HashMap<Integer, BiologicalEdgeAbstract>();
 
@@ -74,8 +73,8 @@ public class EdgeDeleteDialog {
 	private void addAllConnectingEdges(BiologicalEdgeAbstract edge, JComboBox<String> edgeBox,
 			HashMap<Integer, BiologicalEdgeAbstract> map) {
 		for (BiologicalEdgeAbstract childEdge : edge.getTo().getConnectingEdges()) {
-			if (childEdge.getFrom().getCurrentShownParentNode(graphInstance.getPathway().getGraph()) == edge.getFrom()
-					| childEdge.getTo().getCurrentShownParentNode(graphInstance.getPathway().getGraph()) == edge
+			if (childEdge.getFrom().getCurrentShownParentNode(GraphInstance.getPathway().getGraph()) == edge.getFrom()
+					| childEdge.getTo().getCurrentShownParentNode(GraphInstance.getPathway().getGraph()) == edge
 							.getFrom()) {
 				if (childEdge.isDirected()) {
 					edgeBox.addItem(childEdge.getFrom().getLabel() + " --> " + childEdge.getTo().getLabel());

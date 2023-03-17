@@ -80,7 +80,7 @@ public class GraphPopUp {
 
     private void addLayoutMenu() {
         JMenu layoutMenu = new JMenu("Graph Layouts");
-        addMenuItem(layoutMenu, "Center Graph", () -> GraphInstance.getPathwayStatic().getGraph().animatedCentering());
+        addMenuItem(layoutMenu, "Center Graph", () -> GraphInstance.getPathway().getGraph().animatedCentering());
         addMenuItem(layoutMenu, "Spring Layout", () -> LayoutConfig.changeToLayout(SpringLayout.class));
         addMenuItem(layoutMenu, "KK Layout", () -> LayoutConfig.changeToLayout(KKLayout.class));
         addMenuItem(layoutMenu, "FR Layout", () -> LayoutConfig.changeToLayout(FRLayout.class));
@@ -97,7 +97,7 @@ public class GraphPopUp {
 
     private void onCopyClicked() {
         if (GraphContainer.getInstance().containsPathway()) {
-            Pathway pw = GraphInstance.getPathwayStatic();
+            Pathway pw = GraphInstance.getPathway();
             VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
                     .getVisualizationViewer();
             Set<BiologicalNodeAbstract> vertices = new HashSet<>(vv.getPickedVertexState().getPicked());
@@ -108,7 +108,7 @@ public class GraphPopUp {
 
     private void onCutClicked() {
         if (GraphContainer.getInstance().containsPathway()) {
-            Pathway pw = GraphInstance.getPathwayStatic();
+            Pathway pw = GraphInstance.getPathway();
             VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = pw.getGraph()
                     .getVisualizationViewer();
             Set<BiologicalNodeAbstract> vertices = new HashSet<>(vv.getPickedVertexState().getPicked());
@@ -124,7 +124,7 @@ public class GraphPopUp {
 
     private void onPasteClicked() {
         if (GraphContainer.getInstance().containsPathway()) {
-            Pathway pw = GraphInstance.getPathwayStatic();
+            Pathway pw = GraphInstance.getPathway();
             CopySelectionSingleton.getInstance().paste();
             pw.getGraph().restartVisualizationModel();
             pw.getGraph().getVisualizationViewer().repaint();
@@ -133,7 +133,7 @@ public class GraphPopUp {
 
     private void onDeleteClicked() {
         if (GraphContainer.getInstance().containsPathway()) {
-            GraphInstance.getPathwayStatic().removeSelection();
+            GraphInstance.getPathway().removeSelection();
             MainWindow w = MainWindow.getInstance();
             w.updateElementTree();
             w.updateTheoryProperties();
@@ -163,7 +163,7 @@ public class GraphPopUp {
     }
 
     private void onOpenPathwayClicked() {
-        Pathway pw = GraphInstance.getPathwayStatic();
+        Pathway pw = GraphInstance.getPathway();
         if (pw != null) {
             MainWindow w = MainWindow.getInstance();
             String pwName = w.getCurrentPathway();
@@ -211,7 +211,7 @@ public class GraphPopUp {
     }
 
     private void onOpenPathwayTabClicked() {
-        Pathway pw = GraphInstance.getPathwayStatic();
+        Pathway pw = GraphInstance.getPathway();
         if (pw != null) {
             for (BiologicalNodeAbstract bna : pw.getSelectedNodes()) {
                 if (bna instanceof PathwayMap) {
@@ -229,7 +229,7 @@ public class GraphPopUp {
     }
 
     private void onReturnToParentClicked() {
-        Pathway pw = GraphInstance.getPathwayStatic();
+        Pathway pw = GraphInstance.getPathway();
         if (pw != null && pw.getParent() != null) {
             MainWindow w = MainWindow.getInstance();
             String pwName = w.getCurrentPathway();
@@ -245,7 +245,7 @@ public class GraphPopUp {
     }
 
     private void onKEGGSearchClicked() {
-        Pathway pw = GraphInstance.getPathwayStatic();
+        Pathway pw = GraphInstance.getPathway();
         if (pw != null) {
             MainWindow w = MainWindow.getInstance();
             Set<BiologicalNodeAbstract> vertices = pw.getSelectedNodes();
@@ -289,7 +289,7 @@ public class GraphPopUp {
     }
 
     private void onBRENDASearchClicked() {
-        Pathway pw = GraphInstance.getPathwayStatic();
+        Pathway pw = GraphInstance.getPathway();
         if (pw != null) {
             MainWindow w = MainWindow.getInstance();
             Set<BiologicalNodeAbstract> vertices = pw.getSelectedNodes();

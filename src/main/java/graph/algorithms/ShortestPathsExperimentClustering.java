@@ -20,7 +20,7 @@ public class ShortestPathsExperimentClustering {
 	/* cluster structure */
 	private ArrayList<ArrayList<Short>> clusters;
 	private ArrayList<ArrayList<Short>> newclusters;
-	
+
 	/* Graph structure container */
 	private NetworkProperties np;
 
@@ -31,30 +31,26 @@ public class ShortestPathsExperimentClustering {
 		this.experimentname = experimentname;
 		clusters = new ArrayList<>();
 
-		
-
 		setupPathsDistance();
 		setupExperimentArray();
 		initializeClusters();
-		
-		//DEBUG
+
+		// DEBUG
 //		System.out.println(clusters);
-		
 
 		iterations = 2;
-		for(i = 0; i<iterations; i++){
+		for (i = 0; i < iterations; i++) {
 			long starttime = System.currentTimeMillis();
 			nextIteration();
-			System.out.printf("iteration %d : %dms\n",i,System.currentTimeMillis()-starttime);
+			System.out.printf("iteration %d : %dms\n", i, System.currentTimeMillis() - starttime);
 		}
 
 	}
 
-
 	private void setupPathsDistance() {
 		np = new NetworkProperties();
 		spdistance = np.AllPairShortestPaths(false);
-		
+
 //		for (int i = 0; i < spdistance.length; i++) {
 //			for (int j = 0; j < spdistance.length; j++) {
 //				System.out.print(spdistance[i][j]);
@@ -65,7 +61,7 @@ public class ShortestPathsExperimentClustering {
 
 	private void setupExperimentArray() {
 
-		experimententries = new double[np.nodes];
+		experimententries = new double[np.getNodeCount()];
 		double currentvalue = 0.0d;
 
 		for (i = 0; i < experimententries.length; i++) {
@@ -73,14 +69,11 @@ public class ShortestPathsExperimentClustering {
 			// into the array
 			// MARTIN: behavior of non existent experimental data?
 			try {
-				currentvalue = np.getNodeAssignmentbackwards(i)
-						.getNodeAttributeByName(experimentname)
-						.getDoublevalue();
+				currentvalue = np.getNodeAssignmentbackwards(i).getNodeAttributeByName(experimentname).getDoublevalue();
 
 			} catch (NullPointerException e) {
-				System.out.printf("node %d has no entry \'%s\' (%s) \n", i,
-						experimentname, np.getNodeAssignmentbackwards(i)
-								.getLabel());
+				System.out.printf("node %d has no entry \'%s\' (%s) \n", i, experimentname,
+						np.getNodeAssignmentbackwards(i).getLabel());
 				currentvalue = 0.00001337d;
 			}
 
@@ -96,17 +89,16 @@ public class ShortestPathsExperimentClustering {
 	}
 
 	private void initializeClusters() {
-		//every node is a cluster
-		clusters = new ArrayList<ArrayList<Short>>(np.nodes);
+		// every node is a cluster
+		clusters = new ArrayList<ArrayList<Short>>(np.getNodeCount());
 		ArrayList<Short> tmplist;
-		
-		for(i = 0; i<np.nodes; i++){
+
+		for (i = 0; i < np.getNodeCount(); i++) {
 			tmplist = new ArrayList<>();
 			tmplist.add(i);
 			clusters.add(tmplist);
 		}
 	}
-	
 
 	private void nextIteration() {
 		int outer = 0;
@@ -115,58 +107,54 @@ public class ShortestPathsExperimentClustering {
 		ArrayList<Short> newcluster;
 		newclusters = new ArrayList<ArrayList<Short>>();
 		ArrayList<ArrayList<Short>> removelist = new ArrayList<>();
-		
-		//iterate over clusters
-		for(outer = 0; outer < clusters.size(); outer++){
-			cluster =  clusters.get(outer);
-			//iterate over cluster
-			for(inner = 0; inner <cluster.size(); inner++){
-				//determine neighbors
-				//iterate over neighbors of current node
-				for(short nb : getNeighborIndexes(cluster.get(inner))){
-					//create new cluster plus this neighbor
-					//add new cluster to 'newclusters'
-					if(cluster.contains(nb))
+
+		// iterate over clusters
+		for (outer = 0; outer < clusters.size(); outer++) {
+			cluster = clusters.get(outer);
+			// iterate over cluster
+			for (inner = 0; inner < cluster.size(); inner++) {
+				// determine neighbors
+				// iterate over neighbors of current node
+				for (short nb : getNeighborIndexes(cluster.get(inner))) {
+					// create new cluster plus this neighbor
+					// add new cluster to 'newclusters'
+					if (cluster.contains(nb))
 						continue;
 					newcluster = new ArrayList<Short>();
 					newcluster.add(nb);
 					newcluster.addAll(cluster);
 					newclusters.add(newcluster);
-				}					
-			}			
-		}
-		
-		//remove duplicates from newclusters
-		for(int i = 0; i<newclusters.size(); i++){
-			for(int j = i+1; j<newclusters.size(); j++){
-				if(newclusters.get(i).containsAll(newclusters.get(j)))
-					removelist.add(newclusters.get(j));				
+				}
 			}
 		}
-		
-		newclusters.removeAll(removelist);
-		
-		//overwrite clusters with new clusters
-		clusters = newclusters;
-		
-		//DEBUG
-//		System.out.println(newclusters);
-		
-		//ITERATION END!
-		
-		
-		
-		
-	}
 
+		// remove duplicates from newclusters
+		for (int i = 0; i < newclusters.size(); i++) {
+			for (int j = i + 1; j < newclusters.size(); j++) {
+				if (newclusters.get(i).containsAll(newclusters.get(j)))
+					removelist.add(newclusters.get(j));
+			}
+		}
+
+		newclusters.removeAll(removelist);
+
+		// overwrite clusters with new clusters
+		clusters = newclusters;
+
+		// DEBUG
+//		System.out.println(newclusters);
+
+		// ITERATION END!
+
+	}
 
 	private ArrayList<Short> getNeighborIndexes(short nodeindex) {
 		ArrayList<Short> returnlist = new ArrayList<>();
-	
+
 		for (short i = 0; i < spdistance.length; i++) {
-			if(spdistance[nodeindex][i] == 1)
+			if (spdistance[nodeindex][i] == 1)
 				returnlist.add(i);
-		}		
+		}
 		return returnlist;
 	}
 

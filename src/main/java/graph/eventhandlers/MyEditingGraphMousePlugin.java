@@ -196,7 +196,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 						if (pw instanceof BiologicalNodeAbstract) {
 							bna.setParentNode((BiologicalNodeAbstract) pw);
 						}
-						if (new GraphInstance().getPathway() != null) {
+						if (GraphInstance.getPathway() != null) {
 							MainWindow.getInstance().updateElementTree();
 							MainWindow.getInstance().updatePathwayTree();
 						}
@@ -241,7 +241,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 						// pw.getGraph().setVertexLocation(newVertex, p);
 						// layout.setLocation(newVertex, p);
 						// vv.getModel().restart();
-						if (new GraphInstance().getPathway() != null) {
+						if (GraphInstance.getPathway() != null) {
 							MainWindow.getInstance().updateElementTree();
 						}
 						// MainWindowSingelton.getInstance()
@@ -251,9 +251,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 								.hasNext();) {
 							layout.lock(iterator.next(), false);
 						}
-
 					}
-
 				}
 				if (pw instanceof BiologicalNodeAbstract) {
 
@@ -293,7 +291,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 			if (pw.isPetriNet() && !((start instanceof Place && end instanceof Transition)
 					|| (start instanceof Transition && end instanceof Place))) {
 				PopUpDialog.getInstance().show("Operation not allowed",
-                                               "In a Petri net only Transition->Place and Place->Transition arcs are allowed!");
+						"In a Petri net only Transition->Place and Place->Transition arcs are allowed!");
 			} else {
 				// Graph graph = vv.getGraphLayout().getGraph();
 				EdgeDialog dialog = new EdgeDialog(startVertex, vertex, pw, lastEdgeTypeIdx, lastDirected);
@@ -309,13 +307,13 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 									|| details.get("element").toLowerCase().contains("test"))
 							&& !(startVertex instanceof Place && vertex instanceof Transition)) {
 						PopUpDialog.getInstance().show("Operation not allowed",
-                                                       "Inhibitory / Test arcs are only possible from Place to Transition!");
+								"Inhibitory / Test arcs are only possible from Place to Transition!");
 					} else {
 						String name = details.get("name");
 						String label = details.get("name");
 						String element = details.get("element");
 						String function = details.get("function");
-						
+
 						boolean directed = false;
 						if (details.get("directed").equals("true")) {
 							directed = true;
@@ -326,7 +324,7 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 						parentBNAs.addAll(nodes[1].getAllParentNodes());
 						BiologicalEdgeAbstract bea = pw.addEdge(label, name, nodes[0], nodes[1], element, directed);
 						bea.setFunction(function);
-						
+
 						if (nodes[0] == startVertex && nodes[1] == vertex) {
 							pw.addEdgeToView(bea, false);
 						} else {
@@ -459,13 +457,13 @@ public class MyEditingGraphMousePlugin extends AbstractGraphMousePlugin implemen
 			vv.setMousePoint(vv.getRenderContext().getMultiLayerTransformer().inverseTransform(e.getPoint()));
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void setPathway(MouseEvent e){
-		// do not use GraphInstance.getPathway because graphs for transformation rules also need mouse control
-		if(this.pw == null){
-			vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e
-					.getSource();
+	private void setPathway(MouseEvent e) {
+		// do not use GraphInstance.getPathway because graphs for transformation rules
+		// also need mouse control
+		if (this.pw == null) {
+			vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
 			pw = vv.getPathway();
 		}
 	}

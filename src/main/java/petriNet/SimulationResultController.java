@@ -33,7 +33,7 @@ public class SimulationResultController {
 
 	public SimulationResult get(String simId) {
 		if (!simIds.contains(simId)) {
-			series.put(simId, new SimulationResult(simId, simIds.size()+"",filteredDefault));
+			series.put(simId, new SimulationResult(simId, simIds.size() + "", filteredDefault));
 			simIds.add(simId);
 		}
 		return series.get(simId);
@@ -76,8 +76,8 @@ public class SimulationResultController {
 		}
 		return list;
 	}
-	
-	public List<SimulationResult> getAllActiveWithData(GraphElementAbstract gea, int simulationAttribute){
+
+	public List<SimulationResult> getAllActiveWithData(GraphElementAbstract gea, int simulationAttribute) {
 		List<SimulationResult> list = new ArrayList<SimulationResult>();
 		List<SimulationResult> active = getAllActive();
 		for (int i = 0; i < active.size(); i++) {
@@ -96,19 +96,18 @@ public class SimulationResultController {
 			simRes.setActive(active);
 		}
 	}
-	
-	public void remove(int i){
+
+	public void remove(int i) {
 		this.series.remove(this.simIds.get(i));
 		this.simIds.remove(i);
-		if(simIds.size() < 1){
-			GraphInstance graphInstance = new GraphInstance();
-			graphInstance.getPathway().getPetriPropertiesNet().setPetriNetSimulation(false);
+		if (simIds.size() < 1) {
+			GraphInstance.getPathway().getPetriPropertiesNet().setPetriNetSimulation(false);
 			MainWindow w = MainWindow.getInstance();
 			w.updateAllGuiElements();
 		}
 	}
-	
-	public List<String> getSimIds(){
+
+	public List<String> getSimIds() {
 		return this.simIds;
 	}
 }
