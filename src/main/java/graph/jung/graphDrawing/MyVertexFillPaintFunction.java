@@ -13,8 +13,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.NetworkSettings;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
-public class MyVertexFillPaintFunction implements
-		Function<BiologicalNodeAbstract, Paint> {
+public class MyVertexFillPaintFunction implements Function<BiologicalNodeAbstract, Paint> {
 
 	protected PickedState<BiologicalNodeAbstract> psV;
 	protected PickedState<BiologicalEdgeAbstract> psE;
@@ -23,37 +22,36 @@ public class MyVertexFillPaintFunction implements
 	protected boolean graphTheory = false;
 	NetworkSettings settings = NetworkSettings.getInstance();
 
-	public MyVertexFillPaintFunction(PickedState<BiologicalNodeAbstract> psV,
-			PickedState<BiologicalEdgeAbstract> psE, Pathway pw) {
+	public MyVertexFillPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE,
+			Pathway pw) {
 		this.psV = psV;
 		this.psE = psE;
 		this.pw = pw;
 	}
 
 	private Paint getFillPaintWithoutGraphTheory(BiologicalNodeAbstract v) {
-		
-		if(pw.getRootNode()==v){
-			if(psV.getPicked().isEmpty() || psV.getPicked().contains(v)){
+
+		if (pw.getRootNode() == v) {
+			if (psV.getPicked().isEmpty() || psV.getPicked().contains(v)) {
 				return Color.RED;
 			}
 		}
-		
+
 		// mark Environment nodes in hierarchical Nodes.
-		if(pw instanceof BiologicalNodeAbstract){
+		if (pw instanceof BiologicalNodeAbstract) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) pw;
-			if(bna.getEnvironment().contains(v)){
+			if (bna.getEnvironment().contains(v)) {
 				return v.getColor().brighter();
 			}
 		}
-		
+
 		if (psV.getPicked().isEmpty()) {
 			if (psE.getPicked().isEmpty()) {
 				return v.getColor();
 			} else {
 				// Set set = ps.getPickedEdges();
 				BiologicalEdgeAbstract bea;
-				for (Iterator<BiologicalEdgeAbstract> it = psE.getPicked()
-						.iterator(); it.hasNext();) {
+				for (Iterator<BiologicalEdgeAbstract> it = psE.getPicked().iterator(); it.hasNext();) {
 
 					bea = it.next();
 
@@ -71,7 +69,7 @@ public class MyVertexFillPaintFunction implements
 			else {
 				BiologicalNodeAbstract w;
 				Iterator<BiologicalNodeAbstract> iter = pw.getGraph().getJungGraph().getNeighbors(v).iterator();
-				while(iter.hasNext()) {
+				while (iter.hasNext()) {
 					w = iter.next();
 					if (psV.isPicked(w))
 						return v.getColor().brighter().brighter();
@@ -79,8 +77,7 @@ public class MyVertexFillPaintFunction implements
 
 				Set<BiologicalEdgeAbstract> set = psE.getPicked();
 				BiologicalEdgeAbstract bea;
-				for (Iterator<BiologicalEdgeAbstract> it = set.iterator(); it
-						.hasNext();) {
+				for (Iterator<BiologicalEdgeAbstract> it = set.iterator(); it.hasNext();) {
 
 					bea = it.next();
 					if (v == bea.getFrom() || v == bea.getTo())
@@ -105,9 +102,9 @@ public class MyVertexFillPaintFunction implements
 		this.graphTheory = graphTheory;
 	}
 
-	/*public Paint getNewLoadedDrawPaint(Vertex v) {
-		return Color.red;
-	}*/
+	/*
+	 * public Paint getNewLoadedDrawPaint(Vertex v) { return Color.red; }
+	 */
 
 	@Override
 	public Paint apply(BiologicalNodeAbstract bna) {

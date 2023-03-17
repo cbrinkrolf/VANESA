@@ -1,7 +1,6 @@
 package biologicalElements;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.RenderingHints;
 import java.awt.RenderingHints.Key;
 import java.awt.geom.Point2D;
@@ -1426,56 +1425,15 @@ public class Pathway implements Cloneable {
 		VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = new VisualizationImageServer<>(
 				mg.getLayout(), mg.getLayout().getSize());
 		wvv.setBackground(Color.white);
-		for (int i = 0; i < v.getPreRenderers().size(); i++) {
-			wvv.addPreRenderPaintable(v.getPreRenderers().get(i));
+		
+		for(Paintable renderer : v.getPreRenderers()){
+			wvv.addPreRenderPaintable(renderer);
 		}
-
-		wvv.addPostRenderPaintable(new Paintable() {
-			@Override
-			public boolean useTransform() {
-				return false;
-			}
-
-			@Override
-			public void paint(Graphics g) {
-				for (BiologicalNodeAbstract bna : getAllGraphNodes()) {
-					if (bna instanceof Place) {
-						Place p = (Place) bna;
-						int x1 = (int) (p.getShape().getBounds2D().getMaxX() - p.getShape().getBounds2D().getMinX());
-
-						boolean discrete = false;
-						String tokens = p.getToken() + "";
-						if (p.isDiscrete()) {
-							tokens = (int) p.getToken() + "";
-							discrete = true;
-						}
-
-						if (p.isLogical() && p.getLogicalReference() instanceof Place) {
-							tokens = ((Place) p.getLogicalReference()).getToken() + "";
-							if (p.getLogicalReference().isDiscrete()) {
-								tokens = (int) ((Place) p.getLogicalReference()).getToken() + "";
-								discrete = true;
-							}
-						}
-
-						int xpos;
-						Point2D point = v.getGraphLayout().apply(p);
-						Point2D p1inv = v.getRenderContext().getMultiLayerTransformer().transform(point);
-						if (discrete) {
-							xpos = Double.valueOf(p1inv.getX() - x1 + 19 - 5 * ((double) tokens.length() / 2))
-									.intValue();
-						} else {
-							xpos = Double.valueOf(p1inv.getX() - x1 + 21 - 5 * ((double) tokens.length() / 2))
-									.intValue();
-						}
-						g.setColor(Color.BLACK);
-						int y = (int) p1inv.getY();
-						g.drawString(tokens, xpos, y + 7);
-					}
-				}
-			}
-		});
-
+		
+		for(Paintable renderer : v.getPostRenderers()){
+			wvv.addPostRenderPaintable(renderer);
+		}
+		
 		wvv.setBackground(Color.white);
 		wvv.setRenderContext(v.getRenderContext());
 

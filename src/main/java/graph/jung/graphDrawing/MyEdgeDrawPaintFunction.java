@@ -13,15 +13,15 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyEdgeDrawPaintFunction implements Function<BiologicalEdgeAbstract, Paint> {
 
-	protected PickedState<BiologicalNodeAbstract> psV;
-	protected PickedState<BiologicalEdgeAbstract> psE;
+	private  PickedState<BiologicalNodeAbstract> psV;
+	private   PickedState<BiologicalEdgeAbstract> psE;
 
-	Color dotted = Color.LIGHT_GRAY;
-	Color dotted_black = Color.BLACK.brighter();
-	NetworkSettings settings = NetworkSettings.getInstance();
-	Color alphaEdge = new Color(dotted.darker().getRed(), dotted.darker().getGreen(), dotted.darker().getBlue(), settings.getEdgeOpacity());
+	private  Color dotted = Color.LIGHT_GRAY;
+	private  Color dotted_black = Color.BLACK.brighter();
+	private  NetworkSettings settings = NetworkSettings.getInstance();
+	private  Color alphaEdge = new Color(dotted.darker().getRed(), dotted.darker().getGreen(), dotted.darker().getBlue(), settings.getEdgeOpacity());
 
-	protected boolean graphTheory = false;
+	private   boolean graphTheory = false;
 
 	public MyEdgeDrawPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE) {
 		this.psV = psV;

@@ -16,12 +16,12 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyVertexDrawPaintFunction implements Function<BiologicalNodeAbstract, Paint> {
 
-	protected PickedState<BiologicalNodeAbstract> psV;
-	protected PickedState<BiologicalEdgeAbstract> psE;
+	private PickedState<BiologicalNodeAbstract> psV;
+	private PickedState<BiologicalEdgeAbstract> psE;
 
 	private Pathway pw;
-	protected boolean graphTheory = false;
-	NetworkSettings settings = NetworkSettings.getInstance();
+	private boolean graphTheory = false;
+	private NetworkSettings settings = NetworkSettings.getInstance();
 
 	public MyVertexDrawPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE,
 			Pathway pw) {

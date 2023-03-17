@@ -142,7 +142,7 @@ public class GraphPopUp {
     }
 
     private void onSavePictureClicked(ActionEvent e) {
-    	System.out.println("popup");
+    	// System.out.println("popup");
         JMenuItem item = (JMenuItem) e.getSource();
         JPopupMenu popup = (JPopupMenu) item.getParent();
         @SuppressWarnings("unchecked")

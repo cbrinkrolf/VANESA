@@ -80,7 +80,7 @@ public class TokenRenderer implements VisualizationViewer.Paintable {
 				discrete = false;
 
 				tokens = p.getToken() + "";
-
+				//System.out.println(pathway.isHeadless());
 				if (pathway.isHeadless()) {
 					tokens = "";
 				} else {
