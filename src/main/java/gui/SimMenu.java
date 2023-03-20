@@ -243,6 +243,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		numbers = new JTextField();
 		numbers.setColumns(5);
+		numbers.setToolTipText("list of values, seperated by semicolon");
 
 		solversLbl.setToolTipText("numerical solver");
 		intervalsLbl.setToolTipText("number of returned time steps");
@@ -374,16 +375,16 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			return;
 		}
 		this.parameterBox.removeAllItems();
-		System.out.println(selectedNode.getName());
+		//System.out.println(selectedNode.getName());
 		if (selectedNode instanceof Place) {
 			parameterBox.addItem("token start");
 			parameterBox.addItem("token min");
 			parameterBox.addItem("token max");
 
 		} else if (selectedNode instanceof Transition) {
-			System.out.println(selectedNode.getParameters().size());
+			//System.out.println(selectedNode.getParameters().size());
 			if (selectedNode.getParameters().size() < 1) {
-				System.out.println("return");
+				// System.out.println("return");
 				return;
 			}
 			parameterBox.addItem("speed");
@@ -665,7 +666,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	}
 
 	public List<Double> getParameterValues() {
-		// TODO compute values
+		// compute values
 		this.parameterValues = new ArrayList<Double>();
 		if (numbers.getText().trim().length() > 0) {
 			String[] num = numbers.getText().split(";");

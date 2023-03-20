@@ -30,6 +30,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.poi.hssf.record.chart.SeriesIndexRecord;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
@@ -45,6 +46,7 @@ import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
+import org.jfree.data.general.SeriesException;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -154,6 +156,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 	private Set<XYSeries> dirtyVisibleSeries = new HashSet<>();
 	private Set<XYSeries> dirtyVisibleSeriesR1 = new HashSet<>();
+	private boolean isIterating = false;
 
 	public SimulationResultsPlot() {
 
@@ -351,7 +354,11 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		}
 
 		for (int i = 0; i < seriesListR1.size(); i++) {
-			renderer.setSeriesVisible(i, false);
+			try {
+				renderer.setSeriesVisible(i, false);
+			} catch (SeriesException e) {
+				e.printStackTrace();
+			}
 		}
 
 		for (int i = 0; i < seriesListR2.size(); i++) {
@@ -625,7 +632,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 								// }
 								series.add(simRes.getTime().get(i), value, false);
 							}
-							if (fireSerieState && renderer.isSeriesVisible(seriesId)) {
+							if (fireSerieState && renderer.isSeriesVisible(seriesId) && !isIterating) {
 								dirtyVisibleSeries.add(series);
 								// series.fireSeriesChanged();
 								// System.out.println(bna.getName());
@@ -646,7 +653,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 								value = simRes.get(transition, ACTUAL_FIRING_SPEED).get(i);
 								series.add(simRes.getTime().get(i), value, false);
 							}
-							if (fireSerieState && renderer.isSeriesVisible(seriesId)) {
+							if (fireSerieState && renderer.isSeriesVisible(seriesId) && !isIterating) {
 								// series.fireSeriesChanged();
 								dirtyVisibleSeries.add(series);
 							}
@@ -683,7 +690,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 									}
 									series.add(simRes.getTime().get(i), value, false);
 								}
-								if (fireSerieState && renderer.isSeriesVisible(seriesId)) {
+								if (fireSerieState && renderer.isSeriesVisible(seriesId) && !isIterating) {
 									// series.fireSeriesChanged();
 									dirtyVisibleSeries.add(series);
 								}
@@ -703,7 +710,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 									}
 									series2.add(simRes.getTime().get(i), value, false);
 								}
-								if (fireSerieState && renderer2.isSeriesVisible(seriesId)) {
+								if (fireSerieState && renderer2.isSeriesVisible(seriesId) && !isIterating) {
 									// series2.fireSeriesChanged();
 									dirtyVisibleSeriesR1.add(series2);
 								}
@@ -714,6 +721,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			}
 
 			if (fireSerieState) {
+				isIterating = true;
 				for (XYSeries s : dirtyVisibleSeries) {
 					if (renderer.isSeriesVisible(seriesListR1.indexOf(s))) {
 						s.fireSeriesChanged();
@@ -726,6 +734,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				}
 				dirtyVisibleSeries.clear();
 				dirtyVisibleSeriesR1.clear();
+				isIterating = false;
 			}
 			if (chart != null) {
 				// System.out.println("chart start firing");
