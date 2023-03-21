@@ -44,10 +44,10 @@ import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphContainer;
+import gui.ImagePath;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.ToolBarButton;
-import gui.ImagePath;
 import net.miginfocom.swing.MigLayout;
 import transformation.Rule;
 import transformation.RuleEdge;
@@ -628,28 +628,42 @@ public class RuleEditingWindow implements ActionListener {
 			}
 			bnToPn.put(bnBNA, pnBNA);
 			addNodeMappingDefaultParameters(bnBNA, pnBNA);
+
 			this.populateNodeMapping();
 			this.populateTransformationParameterPanel();
 		}
 	}
 
 	private void addNodeMappingDefaultParameters(BiologicalNodeAbstract bnBNA, BiologicalNodeAbstract pnBNA) {
-		parameterMapping.get(pnBNA).put("name", bnBNA.getName() + ".name");
+		getParameterMapping(pnBNA).put("name", bnBNA.getName() + ".name");
 		if (pnBNA instanceof Place) {
-			parameterMapping.get(pnBNA).put("tokenStart", bnBNA.getName() + ".concentrationStart");
-			parameterMapping.get(pnBNA).put("tokenMin", bnBNA.getName() + ".concentrationMin");
-			parameterMapping.get(pnBNA).put("tokenMax", bnBNA.getName() + ".concentrationMax");
-			parameterMapping.get(pnBNA).put("isConstant", bnBNA.getName() + ".isConstant");
+			getParameterMapping(pnBNA).put("tokenStart", bnBNA.getName() + ".concentrationStart");
+			getParameterMapping(pnBNA).put("tokenMin", bnBNA.getName() + ".concentrationMin");
+			getParameterMapping(pnBNA).put("tokenMax", bnBNA.getName() + ".concentrationMax");
+			getParameterMapping(pnBNA).put("isConstant", bnBNA.getName() + ".isConstant");
 		} else if (pnBNA instanceof Transition) {
 			if (pnBNA instanceof DiscreteTransition || pnBNA instanceof ANYTransition) {
 
 			} else if (pnBNA instanceof ContinuousTransition || pnBNA instanceof ANYTransition) {
 				if (bnBNA instanceof DynamicNode) {
-					parameterMapping.get(pnBNA).put("maximalSpeed", bnBNA.getName() + ".maximalSpeed");
+					getParameterMapping(pnBNA).put("maximalSpeed", bnBNA.getName() + ".maximalSpeed");
 				}
 			}
 			if (bnBNA instanceof DynamicNode) {
-				parameterMapping.get(pnBNA).put("isKnockedOut", bnBNA.getName() + ".isKnockedOut");
+				getParameterMapping(pnBNA).put("isKnockedOut", bnBNA.getName() + ".isKnockedOut");
+			}
+		}
+		// put edge mapping if there is an edge between both mapped nodes
+		BiologicalNodeAbstract oppositeBNode;
+		BiologicalNodeAbstract oppositePNode;
+		for (BiologicalEdgeAbstract bEdge : bn.getGraph().getJungGraph().getIncidentEdges(bnBNA)) {
+			for (BiologicalEdgeAbstract pEdge : pn.getGraph().getJungGraph().getIncidentEdges(pnBNA)) {
+				oppositeBNode = bn.getGraph().getJungGraph().getOpposite(bnBNA, bEdge);
+				oppositePNode = pn.getGraph().getJungGraph().getOpposite(pnBNA, pEdge);
+				if (bnToPn.get(oppositeBNode) == oppositePNode) {
+					// System.out.println("match");
+					getParameterMapping(pEdge).put("function", bEdge.getName() + ".function");
+				}
 			}
 		}
 	}
@@ -887,9 +901,9 @@ public class RuleEditingWindow implements ActionListener {
 			bna.setLabel(rn.getName());
 			nameToPN.put(bna.getName(), bna);
 			pn.addVertex(bna, new Point2D.Double(rn.getX(), rn.getY()));
-			parameterMapping.put(bna, new HashMap<String, String>());
+			// parameterMapping.put(bna, new HashMap<String, String>());
 			for (String key : rn.getParameterMap().keySet()) {
-				parameterMapping.get(bna).put(key, rn.getParameterMap().get(key));
+				getParameterMapping(bna).put(key, rn.getParameterMap().get(key));
 			}
 		}
 
@@ -903,9 +917,9 @@ public class RuleEditingWindow implements ActionListener {
 			bea.setName(re.getName());
 			bea.setDirected(true);
 			bn.addEdge(bea);
-			parameterMapping.put(bea, new HashMap<String, String>());
+			// parameterMapping.put(bea, new HashMap<String, String>());
 			for (String key : re.getParameterMap().keySet()) {
-				parameterMapping.get(bea).put(key, re.getParameterMap().get(key));
+				getParameterMapping(bea).put(key, re.getParameterMap().get(key));
 			}
 		}
 		pn.updateMyGraph();
@@ -988,30 +1002,29 @@ public class RuleEditingWindow implements ActionListener {
 			// Collections.sort(params);
 			// System.out.println("drin");
 			// set default values for newly added nodes
-			if (parameterMapping.get(bna) == null) {
-				createDefaultParameterMap(bna);
-			}
 			for (String param : params) {
 				// System.out.println(param);
 				JTextField field = new JTextField(20);
-				field.setText(parameterMapping.get(bna).get(param));
+				field.setText(getParameterMapping(bna).get(param));
 				field.getDocument().addDocumentListener(new DocumentListener() {
 					@Override
 					public void removeUpdate(DocumentEvent e) {
 						if (bna != null) {
-							parameterMapping.get(bna).put(param, field.getText().trim());
+							getParameterMapping(bna).put(param, field.getText().trim());
 						}
 					}
+
 					@Override
 					public void insertUpdate(DocumentEvent e) {
 						if (bna != null) {
-							parameterMapping.get(bna).put(param, field.getText().trim());
+							getParameterMapping(bna).put(param, field.getText().trim());
 						}
 					}
+
 					@Override
 					public void changedUpdate(DocumentEvent e) {
 						if (bna != null) {
-							parameterMapping.get(bna).put(param, field.getText().trim());
+							getParameterMapping(bna).put(param, field.getText().trim());
 						}
 					}
 				});
@@ -1020,9 +1033,10 @@ public class RuleEditingWindow implements ActionListener {
 			}
 
 		} else if (edgeStatePN.getPicked().size() == 1) {
-			parametersPanel.removeAll();
-			parametersPanel.add(new JLabel("Set parameters for Petri net elements:"), "");
-			parametersPanel.add(new JSeparator(), "span 2, growx, wrap");
+			// parametersPanel.removeAll();
+			// parametersPanel.add(new JLabel("Set parameters for Petri net elements:"),
+			// "");
+			// parametersPanel.add(new JSeparator(), "span 2, growx, wrap");
 
 			BiologicalEdgeAbstract bea = edgeStatePN.getPicked().iterator().next();
 
@@ -1030,32 +1044,28 @@ public class RuleEditingWindow implements ActionListener {
 			// Collections.sort(params);
 			// System.out.println("drin");
 			// set default values for newly added nodes
-			if (parameterMapping.get(bea) == null) {
-				createDefaultParameterMap(bea);
-			}
 			for (String param : params) {
-				JTextField field = new JTextField(10);
-				field.setText(parameterMapping.get(bea).get(param));
+				JTextField field = new JTextField(20);
+				field.setText(getParameterMapping(bea).get(param));
 				field.getDocument().addDocumentListener(new DocumentListener() {
 					@Override
 					public void removeUpdate(DocumentEvent e) {
 						if (bea != null) {
-							parameterMapping.get(bea).put(param, field.getText().trim());
+							getParameterMapping(bea).put(param, field.getText().trim());
 						}
 					}
 
 					@Override
 					public void insertUpdate(DocumentEvent e) {
 						if (bea != null) {
-							parameterMapping.get(bea).put(param, field.getText().trim());
-							// System.out.println(parameterMapping.get(bea).get(param));
+							getParameterMapping(bea).put(param, field.getText().trim());
 						}
 					}
 
 					@Override
 					public void changedUpdate(DocumentEvent e) {
 						if (bea != null) {
-							parameterMapping.get(bea).put(param, field.getText().trim());
+							getParameterMapping(bea).put(param, field.getText().trim());
 						}
 					}
 				});
@@ -1121,11 +1131,8 @@ public class RuleEditingWindow implements ActionListener {
 			rn.setY(pn.getGraph().getVertexLocation(bna).getY());
 			rule.addPetriNode(rn);
 			bnaToPNRuleNode.put(bna, rn);
-			if (parameterMapping.get(bna) == null) {
-				createDefaultParameterMap(bna);
-			}
-			for (String param : parameterMapping.get(bna).keySet()) {
-				rn.getParameterMap().put(param, parameterMapping.get(bna).get(param));
+			for (String param : getParameterMapping(bna).keySet()) {
+				rn.getParameterMap().put(param, getParameterMapping(bna).get(param));
 			}
 		}
 		for (int i = 0; i < pn.getAllEdgesSorted().size(); i++) {
@@ -1133,11 +1140,8 @@ public class RuleEditingWindow implements ActionListener {
 			re = new RuleEdge(bea.getName(), bea.getBiologicalElement(), bnaToPNRuleNode.get(bea.getFrom()),
 					bnaToPNRuleNode.get(bea.getTo()));
 			rule.addPetriEdge(re);
-			if (parameterMapping.get(bea) == null) {
-				createDefaultParameterMap(bea);
-			}
-			for (String param : parameterMapping.get(bea).keySet()) {
-				re.getParameterMap().put(param, parameterMapping.get(bea).get(param));
+			for (String param : getParameterMapping(bea).keySet()) {
+				re.getParameterMap().put(param, getParameterMapping(bea).get(param));
 				// System.out.println("set " + param + " to " +
 				// parameterMapping.get(bea).get(param));
 			}
@@ -1153,21 +1157,20 @@ public class RuleEditingWindow implements ActionListener {
 
 		// considered edges
 		if (chkAllEdgesSelected.isSelected()) {
-			Iterator<BiologicalEdgeAbstract> it2 = bn.getAllEdges().iterator();
-			while (it2.hasNext()) {
-				rule.getConsideredEdges().add(beaToRuleEdge.get(it2.next()));
+			for(BiologicalEdgeAbstract edge : bn.getAllEdges()){
+				rule.getConsideredEdges().add(beaToRuleEdge.get(edge));
 			}
 		} else {
-			Iterator<BiologicalEdgeAbstract> it2 = consideredEdges.iterator();
-			while (it2.hasNext()) {
-				rule.getConsideredEdges().add(beaToRuleEdge.get(it2.next()));
+			for(BiologicalEdgeAbstract edge : consideredEdges){
+				rule.getConsideredEdges().add(beaToRuleEdge.get(edge));
 			}
 		}
 
-		for (RuleNode rn1 : rule.getBiologicalNodes()) {
-			//System.out.println(rn1.getName() + " In: " + rule.getIncomingDirectedEdgeCount(rn1) + " out: "
-			//		+ rule.getOutgoingDirectedEdgeCount(rn1));
-		}
+		//for (RuleNode rn1 : rule.getBiologicalNodes()) {
+			// System.out.println(rn1.getName() + " In: " +
+			// rule.getIncomingDirectedEdgeCount(rn1) + " out: "
+			// + rule.getOutgoingDirectedEdgeCount(rn1));
+		//}
 		frame.setVisible(false);
 	}
 
@@ -1253,6 +1256,7 @@ public class RuleEditingWindow implements ActionListener {
 				for (String key : bea.getTransformationParameters()) {
 					switch (key) {
 					case "function":
+						// System.out.println("put 1");
 						parameterMapping.get(bea).put(key, ("1"));
 						break;
 					}
@@ -1311,5 +1315,12 @@ public class RuleEditingWindow implements ActionListener {
 
 	public Rule getRule() {
 		return this.rule;
+	}
+
+	private Map<String, String> getParameterMapping(GraphElementAbstract gea) {
+		if (parameterMapping.get(gea) == null) {
+			createDefaultParameterMap(gea);
+		}
+		return parameterMapping.get(gea);
 	}
 }

@@ -214,16 +214,12 @@ public class Pathway implements Cloneable {
 		bea.setDirected(directed);
 
 		if (element.equals(Elementdeclerations.pnArc)) {
-			boolean wasUndirected = false;
 			double ActivationProbability = 1.0;
 
-			((PNArc) bea).setWasUndirected(wasUndirected);
 			((PNArc) bea).setProbability(ActivationProbability);
 
 		} else if (element.equals(Elementdeclerations.pnInhibitorArc)) {
-			boolean wasUndirected = false;
 			double ActivationProbability = 1.0;
-			((PNArc) bea).setWasUndirected(wasUndirected);
 			((PNArc) bea).setProbability(ActivationProbability);
 		}
 		return addEdge(bea);

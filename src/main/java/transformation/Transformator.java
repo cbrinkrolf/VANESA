@@ -42,7 +42,6 @@ import util.StringLengthComparator;
 // if no type is given (discrete / continuous), it is inferred from mapped node, default fall back: continuous
 // will not generate logical places/transitions. if there is collision of the same name, name will get altered
 
-// TODO parameter mapping
 // TODO syso -> log file
 // TODO try hierarchical network (maybe first flatten?)
 // TODO interactive GUI while transforming (ability to abort)
@@ -638,38 +637,19 @@ public class Transformator {
 		RuleEdge pnEdge;
 		PNNode from;
 		PNNode to;
-		PNArc edge;
+		PNArc arc;
 		for (int i = 0; i < r.getPetriEdges().size(); i++) {
 			executed = true;
 			pnEdge = r.getPetriEdges().get(i);
 
 			from = rulePNodeToBNA.get(pnEdge.getFrom());
 			to = rulePNodeToBNA.get(pnEdge.getTo());
+			arc = createPNArc(r, pnEdge, from, to);
 
-			edge = null;
-			switch (pnEdge.getType()) {
-			case Elementdeclerations.pnArc:
-				// TODO set parameters
-				edge = new PNArc(from, to, "1", "1", Elementdeclerations.pnArc, "1");
-
-				break;
-			case Elementdeclerations.pnTestArc:
-				// TODO set parameters
-
-				break;
-			case Elementdeclerations.pnInhibitorArc:
-				// TODO set parameters
-				edge = new PNArc(from, to, "1", "1", Elementdeclerations.inhibitor, "1");
-				break;
-			}
-			if (edge != null) {
-				edge.setDirected(true);
-				petriNet.addEdge(edge);
-			} else {
-				System.out.println("Error: Petri net arc couldnt be created!");
-				executed = false;
+			if (arc == null) {
 				return;
 			}
+			setTransformationParameters(arc, pnEdge, match);
 		}
 
 		// remove BEA from set of available edges
@@ -743,7 +723,6 @@ public class Transformator {
 	}
 
 	private PNNode createPNNode(Rule r, RuleNode pnNode, BiologicalNodeAbstract bna) {
-		// TODO parameters
 		// TODO consider stochastic transitions
 		PNNode pn = null;
 		String type = pnNode.getType();
@@ -811,24 +790,38 @@ public class Transformator {
 				}
 				pn.setColor(bna.getColor());
 				pn.setPlotColor(bna.getPlotColor());
-				// System.out.println("Vertex: "+p.getName());
-				// System.out.println("x: "+locations.getLocation(bna.getVertex()).getX());
-				// TODO better location for unmapped nodes
 				x = pw.getGraph().getVertexLocation(bna).getX();// locations.getLocation(bna.getVertex()).getX();
 				y = pw.getGraph().getVertexLocation(bna).getY();// locations.getLocation(bna.getVertex()).getY();
-				// System.out.println("x: "+x+" y: "+y);
-				// pw.getGraph().moveVertex(p.getVertex(), scaleFactor*
-				// x,scaleFactor* y);
 				bn2pnMap.put(bna, pn);
 			}
 			petriNet.addVertex(pn, new Point2D.Double(x, y));
-
 		} else {
 			System.out.println("Error, Petri net node could not be created!");
 			return null;
 		}
-
 		return pn;
+	}
+
+	private PNArc createPNArc(Rule r, RuleEdge re, PNNode from, PNNode to) {
+		PNArc arc = null;
+		String type = re.getType();
+		switch (type) {
+		case pnArc:
+			arc = new PNArc(from, to, "1", "1", Elementdeclerations.pnArc, "1");
+			break;
+		case pnTestArc:
+			arc = new PNArc(from, to, "1", "1", Elementdeclerations.pnTestArc, "1");
+			break;
+		case pnInhibitorArc:
+			arc = new PNArc(from, to, "1", "1", Elementdeclerations.pnInhibitorArc, "1");
+			break;
+		}
+		if (arc == null) {
+			System.out.println("Error, Petri net node could not be created!");
+			return null;
+		}
+		petriNet.addEdge(arc);
+		return arc;
 	}
 
 	private void createBuckets(Collection<BiologicalNodeAbstract> bnas) {
@@ -1044,8 +1037,8 @@ public class Transformator {
 		return this.bn2pnMap;
 	}
 
-	// setting parameters to Petri net nodes and edges
-	private void setTransformationParameters(GraphElementAbstract gea, RuleNode pnNode, Match match) {
+	// set parameters to Petri net node
+	private void setTransformationParameters(PNNode petriNode, RuleNode rn, Match match) {
 		Rule r = match.getRule();
 
 		// generation of possible parameters for current matching
@@ -1056,193 +1049,186 @@ public class Transformator {
 		String orgValue;
 		String value;
 
-		PNNode petriNode;
-		PNArc arc;
 		Double d;
 		String string;
 		BiologicalNodeAbstract node;
-		// for nodes
-		if (gea instanceof PNNode) {
-			petriNode = (PNNode) gea;
-			for (String key : pnNode.getParameterMap().keySet()) {
-				orgValue = pnNode.getParameterMap().get(key);
-				if (orgValue == null || orgValue.trim().length() < 1) {
-					continue;
-				}
-				// System.out.println("key: " + key + " value: " + value);
-				value = replaceParametersToValues(orgValue, match);
-				switch (key) {
-				case "name":
-					String initialName = "";
-					String name = "";
-					// string = this.evalParameter(possibleParams, value, String.class, match);
-					string = value;
-					if (string == null || string.trim().length() == 0) {
-						// avoiding duplicate names
-						int i = 1;
-						if (petriNode instanceof Place) {
-							while (pw.getAllNodeNames().contains("p" + i)) {
-								i++;
-							}
-							name = "p" + i;
-						} else {
-							while (pw.getAllNodeNames().contains("t" + i)) {
-								i++;
-							}
-							name = "t" + i;
+		for (String key : rn.getParameterMap().keySet()) {
+			orgValue = rn.getParameterMap().get(key);
+			if (orgValue == null || orgValue.trim().length() < 1) {
+				continue;
+			}
+			// System.out.println("key: " + key + " value: " + value);
+			value = replaceParametersToValues(orgValue, match);
+			switch (key) {
+			case "name":
+				String initialName = "";
+				String name = "";
+				// string = this.evalParameter(possibleParams, value, String.class, match);
+				string = value;
+				if (string == null || string.trim().length() == 0) {
+					// avoiding duplicate names
+					int i = 1;
+					if (petriNode instanceof Place) {
+						while (pw.getAllNodeNames().contains("p" + i)) {
+							i++;
 						}
+						name = "p" + i;
 					} else {
-						initialName = string;
-						// name exists already in PN
-						if (petriNet.getAllNodeNames().contains(string)) {
-							// node is mapped to a BNA
-							if (bn2pnMap.values().contains(petriNode)) {
-								node = petriNet.getNodeByName(string);
-								if (bn2pnMap.values().contains(node)) {
-									int i = 1;
-									while (pw.getAllNodeNames().contains(string + i)) {
-										i++;
-									}
-									name = string + i;
-								} else {
-									// node with same name is not mapped
-									int i = 1;
-									String tmpName = initialPNNodeName.get(node) + i;
-									while (pw.getAllNodeNames().contains(tmpName) || tmpName.equals(string)) {
-										i++;
-										tmpName = initialPNNodeName.get(node) + i;
-									}
-									node.setName(tmpName);
-									node.setLabel(tmpName);
-									name = string;
-								}
-							} else {
-								// node is not mapped to a BNA
+						while (pw.getAllNodeNames().contains("t" + i)) {
+							i++;
+						}
+						name = "t" + i;
+					}
+				} else {
+					initialName = string;
+					// name exists already in PN
+					if (petriNet.getAllNodeNames().contains(string)) {
+						// node is mapped to a BNA
+						if (bn2pnMap.values().contains(petriNode)) {
+							node = petriNet.getNodeByName(string);
+							if (bn2pnMap.values().contains(node)) {
 								int i = 1;
 								while (pw.getAllNodeNames().contains(string + i)) {
 									i++;
 								}
 								name = string + i;
+							} else {
+								// node with same name is not mapped
+								int i = 1;
+								String tmpName = initialPNNodeName.get(node) + i;
+								while (pw.getAllNodeNames().contains(tmpName) || tmpName.equals(string)) {
+									i++;
+									tmpName = initialPNNodeName.get(node) + i;
+								}
+								node.setName(tmpName);
+								node.setLabel(tmpName);
+								name = string;
 							}
 						} else {
-							// name doesnt exist in PN, yet
-							name = string;
+							// node is not mapped to a BNA
+							int i = 1;
+							while (pw.getAllNodeNames().contains(string + i)) {
+								i++;
+							}
+							name = string + i;
 						}
+					} else {
+						// name doesnt exist in PN, yet
+						name = string;
 					}
-					gea.setName(name);
-					gea.setLabel(gea.getName());
-					initialPNNodeName.put(petriNode, initialName);
-
-					break;
-				case "tokenStart":
-					if (gea instanceof Place) {
-						p = (Place) gea;
-						d = evaluateDouble(value);
-						if (p instanceof DiscretePlace) {
-							d = Double.valueOf(Math.round(d));
-						}
-						p.setTokenStart(d);
-						if (r.getMappedBnode(pnNode) != null) {
-							//p.setConstant(match.getMapping(r.getMappedBnode(pnNode)).isConstant());
-						}
-					}
-					break;
-				case "tokenMin":
-					if (gea instanceof Place) {
-						p = (Place) gea;
-						d = evaluateDouble(value);
-						if (p instanceof DiscretePlace) {
-							d = Double.valueOf(Math.round(d));
-						}
-						p.setTokenMin(d);
-					}
-					break;
-				case "tokenMax":
-					if (gea instanceof Place) {
-						p = (Place) gea;
-						d = evaluateDouble(value);
-						if (p instanceof DiscretePlace) {
-							d = Double.valueOf(Math.round(d));
-						}
-						p.setTokenMax(d);
-					}
-					break;
-				case "firingCondition":
-					if (gea instanceof Transition) {
-						t = (Transition) gea;
-						t.setFiringCondition(value);
-						// string = this.evalParameter(possibleParams, value, String.class, match);
-						// if (string != null) {
-						// ((Transition) gea).setFiringCondition(string);
-						// }
-					}
-					break;
-				case "maximalSpeed":
-					if (gea instanceof ContinuousTransition) {
-						ContinuousTransition ct = (ContinuousTransition) gea;
-						ct.setMaximalSpeed(value);
-						// string = this.evalParameter(possibleParams, value, String.class, match);
-						// if (string != null) {
-						// // System.out.println(string);
-						// ct.setMaximalSpeed(string);
-						// BiologicalNodeAbstract bna = getRuleNodeOfParameter(possibleParams, value,
-						// match);
-
-						// if (bna != null) {
-						// if (bna.getTransformationParameters().contains("isKnockedOut")) {
-						// ct.setKnockedOut(
-						// Boolean.parseBoolean(bna.getTransformationParameterValue("isKnockedOut")));
-						// }
-						// this.copyParameters(bna, (ContinuousTransition) gea);
-						// }
-						// }
-					}
-					break;
-				case "delay":
-					if (gea instanceof DiscreteTransition) {
-						// d = this.evalParameter(possibleParams, value, Double.class, match);
-						// if (d != null) {
-						// ((DiscreteTransition) gea).setDelay(d);
-						// }
-					}
-				case "isConstant":
-					petriNode.setConstant(evaluateBoolean(value));
-					break;
-
-				case "isKnockedOut":
-					if (gea instanceof Transition) {
-						t = (Transition) gea;
-
-						t.setKnockedOut(evaluateBoolean(value));
-					}
-
-					break;
 				}
+				petriNode.setName(name);
+				petriNode.setLabel(petriNode.getName());
+				initialPNNodeName.put(petriNode, initialName);
 
-				// copy parameters of nodes that are matched in this value
-				for (BiologicalNodeAbstract bna : this.getNodesOfReplacedParameter(orgValue, "maximalSpeed", match)) {
-					this.copyParameters(bna, (PNNode) gea);
+				break;
+			case "tokenStart":
+				if (petriNode instanceof Place) {
+					p = (Place) petriNode;
+					d = evaluateDouble(value);
+					if (p instanceof DiscretePlace) {
+						d = Double.valueOf(Math.round(d));
+					}
+					p.setTokenStart(d);
+					if (r.getMappedBnode(rn) != null) {
+						// p.setConstant(match.getMapping(r.getMappedBnode(pnNode)).isConstant());
+					}
 				}
+				break;
+			case "tokenMin":
+				if (petriNode instanceof Place) {
+					p = (Place) petriNode;
+					d = evaluateDouble(value);
+					if (p instanceof DiscretePlace) {
+						d = Double.valueOf(Math.round(d));
+					}
+					p.setTokenMin(d);
+				}
+				break;
+			case "tokenMax":
+				if (petriNode instanceof Place) {
+					p = (Place) petriNode;
+					d = evaluateDouble(value);
+					if (p instanceof DiscretePlace) {
+						d = Double.valueOf(Math.round(d));
+					}
+					p.setTokenMax(d);
+				}
+				break;
+			case "firingCondition":
+				if (petriNode instanceof Transition) {
+					t = (Transition) petriNode;
+					t.setFiringCondition(value);
+				}
+				break;
+			case "maximalSpeed":
+				if (petriNode instanceof ContinuousTransition) {
+					ContinuousTransition ct = (ContinuousTransition) petriNode;
+					ct.setMaximalSpeed(value);
+				}
+				break;
+			case "delay":
+				if (petriNode instanceof DiscreteTransition) {
+					// d = this.evalParameter(possibleParams, value, Double.class, match);
+					// if (d != null) {
+					// ((DiscreteTransition) gea).setDelay(d);
+					// }
+				}
+			case "isConstant":
+				petriNode.setConstant(evaluateBoolean(value));
+				break;
+
+			case "isKnockedOut":
+				if (petriNode instanceof Transition) {
+					t = (Transition) petriNode;
+
+					t.setKnockedOut(evaluateBoolean(value));
+				}
+				break;
 			}
 
-		} else if (gea instanceof PNArc) {
-			// for edges
-			arc = (PNArc) gea;
-			for (String key : pnNode.getParameterMap().keySet()) {
-				value = pnNode.getParameterMap().get(key);
-				if (value == null || value.trim().length() < 1) {
-					continue;
-				}
-				// System.out.println("key: " + key + " value: " + value);
-				switch (key) {
-				case "name":
+			// copy parameters of nodes that are matched in this value
+			for (BiologicalNodeAbstract bna : this.getNodesOfReplacedParameter(orgValue, "maximalSpeed", match)) {
+				this.copyParameters(bna, petriNode);
+			}
+			// copy parameters of edges that are matched in this value
+			for (BiologicalEdgeAbstract bea : this.getEdgesOfReplacedParameter(orgValue, "function", match)) {
+				this.copyParameters(bea, petriNode);
+			}
+		}
+	}
 
-					break;
+	private void setTransformationParameters(PNArc arc, RuleEdge re, Match match) {
+		// generation of possible parameters for current matching
+		setCurrentPossibleParametersOfMatch(match);
 
-				case "function":
+		String orgValue;
+		String value;
 
-					break;
-				}
+		// System.out.println("map size: "+re.getParameterMap().size());
+
+		for (String key : re.getParameterMap().keySet()) {
+			orgValue = re.getParameterMap().get(key);
+			if (orgValue == null || orgValue.trim().length() < 1) {
+				continue;
+			}
+			value = replaceParametersToValues(orgValue, match);
+			//System.out.println("key: " + key + " value: " + value);
+			switch (key) {
+			// case "name":
+			// break;
+			case "function":
+				arc.setFunction(value);
+				break;
+			}
+
+			// copy parameters of nodes that are matched in this value
+			for (BiologicalNodeAbstract bna : this.getNodesOfReplacedParameter(orgValue, "maximalSpeed", match)) {
+				this.copyParameters(bna, arc);
+			}
+			// copy parameters of edges that are matched in this value
+			for (BiologicalEdgeAbstract bea : this.getEdgesOfReplacedParameter(orgValue, "function", match)) {
+				this.copyParameters(bea, arc);
 			}
 		}
 	}
@@ -1287,11 +1273,11 @@ public class Transformator {
 			}
 		}
 
-		// TODO fill edge attributes
 		for (RuleEdge re : r.getBiologicalEdges()) {
-			// possibleParams.put(re.getName() + ".label");
-			// possibleParams.put(re.getName() + ".name");
-			// possibleParams.put(re.getName() + ".function");
+			for (String parameter : match.getMapping(re).getTransformationParameters()) {
+				possibleParams.put(re.getName() + "." + parameter,
+						match.getMapping(re).getTransformationParameterValue(parameter));
+			}
 		}
 
 		List<String> names = new ArrayList<>(possibleParams.keySet());
@@ -1324,7 +1310,21 @@ public class Transformator {
 		return nodes;
 	}
 
-	private void copyParameters(BiologicalNodeAbstract from, BiologicalNodeAbstract to) {
+	private Set<BiologicalEdgeAbstract> getEdgesOfReplacedParameter(String s, String parameter, Match match) {
+		Set<BiologicalEdgeAbstract> edges = new HashSet<>();
+		Map<String, String> possibleParams = match2Parameters.get(match);
+		String testParam;
+		for (RuleEdge re : match.getRule().getBiologicalEdges()) {
+			testParam = re.getName() + "." + parameter;
+			if (s.contains(testParam) && possibleParams.containsKey(testParam)) {
+				edges.add(match.getMapping(re));
+				System.out.println("contains: " + re.getName() + "." + parameter);
+			}
+		}
+		return edges;
+	}
+
+	private void copyParameters(GraphElementAbstract from, GraphElementAbstract to) {
 		for (Parameter p : from.getParameters()) {
 			// TODO test if parameter with same name exists already, create
 			// ParameterController class

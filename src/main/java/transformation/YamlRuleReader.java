@@ -53,6 +53,7 @@ public class YamlRuleReader {
 			edge = rule.getPetriEdges().get(i);
 			e = new RuleEdge(edge.getName(), edge.getType(), r.getPetriNode(edge.getFrom()),
 					r.getPetriNode(edge.getTo()));
+			e.setParameterMap(edge.getParameterMap());
 			r.addPetriEdge(e);
 		}
 

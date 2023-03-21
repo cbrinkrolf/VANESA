@@ -13,8 +13,7 @@ public class PNArc extends BiologicalEdgeAbstract {
 	private int priority = 1;
 	// conflict solving: probability that edge is active
 	private double probability = 1.0;
-	private boolean wasUndirected = false;
-
+	
 	public PNArc(BiologicalNodeAbstract from, BiologicalNodeAbstract to, String label, String name, String type,
 			String edgeFunction) {
 		super(edgeFunction, name, from, to);
@@ -32,14 +31,6 @@ public class PNArc extends BiologicalEdgeAbstract {
 
 	public double getPassingTokens() {
 		return new FunctionParser().parse(getFunction());
-	}
-
-	public boolean isWasUndirected() {
-		return wasUndirected;
-	}
-
-	public void setWasUndirected(boolean wasUndirected) {
-		this.wasUndirected = wasUndirected;
 	}
 
 	public int getPriority() {

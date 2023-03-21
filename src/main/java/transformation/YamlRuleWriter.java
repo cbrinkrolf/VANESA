@@ -78,6 +78,7 @@ public class YamlRuleWriter {
 			e.setType(re.getType());
 			e.setFrom(re.getFrom().getName());
 			e.setTo(re.getTo().getName());
+			e.setParameterMap(re.getParameterMap());
 			edges.add(e);
 		}
 		rule.setPetriEdges(edges);

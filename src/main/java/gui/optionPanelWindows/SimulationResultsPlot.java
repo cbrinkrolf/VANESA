@@ -29,9 +29,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.poi.hssf.record.chart.SeriesIndexRecord;
 import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
