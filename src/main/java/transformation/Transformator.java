@@ -118,21 +118,15 @@ public class Transformator {
 		petriNet.setIsPetriNet(true);
 
 		matches = new ArrayList<>();
-		BiologicalNodeAbstract bna;
-		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-		while (it.hasNext()) {
-			bna = it.next();
+		for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 			if (!bna.isLogical()) {
 				id2bna.put(bna.getID(), bna);
 				tmpGraph.addVertex(bna.getID());
 			}
 		}
 
-		Iterator<BiologicalEdgeAbstract> it2 = pw.getAllEdges().iterator();
-		BiologicalEdgeAbstract bea;
 		// System.out.println("tmpgraph edges:");
-		while (it2.hasNext()) {
-			bea = it2.next();
+		for (BiologicalEdgeAbstract bea : pw.getAllEdges()) {
 			remainingEdges.add(bea);
 			tmpGraph.addEdge(bea.getID(), this.getBNARef(bea.getFrom()).getID(), this.getBNARef(bea.getTo()).getID());
 			id2Edge.put(bea.getID(), bea);
@@ -475,9 +469,9 @@ public class Transformator {
 						// e.printStackTrace();
 						// System.out.println("tmpGraph nodes:");
 
-						for (Integer iteg : tmpGraph.getVertices()) {
-							// System.out.println(id2bna.get(iteg).getName());
-						}
+						// for (Integer iteg : tmpGraph.getVertices()) {
+						// System.out.println(id2bna.get(iteg).getName());
+						// }
 					}
 					if (!tmpGraph.containsVertex(id1) || !tmpGraph.containsVertex(id2)) {
 						continue nextPerm;
@@ -618,7 +612,7 @@ public class Transformator {
 					if (bna.getName().equals("n2_7_1_69")) {
 						// System.out.println("create "+pnNode.getType() +" "+ bna.getName());
 					}
-					newPNNode = createPNNode(r, pnNode, bna);
+					newPNNode = createPNNode(pnNode, bna);
 					rulePNodeToBNA.put(pnNode, newPNNode);
 					setTransformationParameters(newPNNode, pnNode, match);
 					toDeleteBNA.add(bna);
@@ -626,7 +620,7 @@ public class Transformator {
 				}
 			} else {
 				// no mapping, PNNode needs to be created
-				newPNNode = createPNNode(r, pnNode, null);
+				newPNNode = createPNNode(pnNode, null);
 				rulePNodeToBNA.put(pnNode, newPNNode);
 				setTransformationParameters(newPNNode, pnNode, match);
 				executed = true;
@@ -644,7 +638,7 @@ public class Transformator {
 
 			from = rulePNodeToBNA.get(pnEdge.getFrom());
 			to = rulePNodeToBNA.get(pnEdge.getTo());
-			arc = createPNArc(r, pnEdge, from, to);
+			arc = createPNArc(pnEdge, from, to);
 
 			if (arc == null) {
 				return;
@@ -722,7 +716,7 @@ public class Transformator {
 
 	}
 
-	private PNNode createPNNode(Rule r, RuleNode pnNode, BiologicalNodeAbstract bna) {
+	private PNNode createPNNode(RuleNode pnNode, BiologicalNodeAbstract bna) {
 		// TODO consider stochastic transitions
 		PNNode pn = null;
 		String type = pnNode.getType();
@@ -802,7 +796,7 @@ public class Transformator {
 		return pn;
 	}
 
-	private PNArc createPNArc(Rule r, RuleEdge re, PNNode from, PNNode to) {
+	private PNArc createPNArc(RuleEdge re, PNNode from, PNNode to) {
 		PNArc arc = null;
 		String type = re.getType();
 		switch (type) {
@@ -829,9 +823,7 @@ public class Transformator {
 		nodeType2bna.clear();
 		edgeType2bea.clear();
 
-		BiologicalNodeAbstract bna;
 		BiologicalNodeAbstract bna1;
-		BiologicalEdgeAbstract bea;
 		BiologicalEdgeAbstract bea1;
 		String name;
 		Class<?> c;
@@ -839,9 +831,7 @@ public class Transformator {
 		edgeType2bea.put(Elementdeclerations.anyBEA, new ArrayList<BiologicalEdgeAbstract>());
 
 		// all nodes
-		Iterator<BiologicalNodeAbstract> it = bnas.iterator();
-		while (it.hasNext()) {
-			bna = it.next();
+		for (BiologicalNodeAbstract bna : bnas) {
 
 			c = bna.getClass();
 			name = bna.getClass().getSimpleName();
@@ -872,9 +862,7 @@ public class Transformator {
 			}
 		}
 		// all edges
-		Iterator<BiologicalEdgeAbstract> it2 = pw.getAllEdges().iterator();
-		while (it2.hasNext()) {
-			bea = it2.next();
+		for (BiologicalEdgeAbstract bea : pw.getAllEdges()) {
 			c = bea.getClass();
 			name = bea.getClass().getSimpleName();
 
@@ -932,19 +920,12 @@ public class Transformator {
 
 	private <V, E> int maxAllShortestPath(Graph<V, E> g) {
 		int max = 0;
-		Iterator<V> it = g.getVertices().iterator();
-		V n1;
-		V n2;
 		int d;
 		UnweightedShortestPath<V, E> sp = new UnweightedShortestPath<V, E>(g);
 		Number dist;
-		Iterator<V> it2;
-		while (it.hasNext()) {
-			n1 = it.next();
-			it2 = g.getVertices().iterator();
-			while (it2.hasNext()) {
-				n2 = it2.next();
-				dist = sp.getDistance(n1, n2);
+		for (V v1 : g.getVertices()) {
+			for (V v2 : g.getVertices()) {
+				dist = sp.getDistance(v1, v2);
 				if (dist != null) {
 					d = dist.intValue();
 					if (d > max) {
@@ -968,18 +949,12 @@ public class Transformator {
 
 			Map<Integer, Number> distances = sp.getDistanceMap(startNode.getID());
 
-			Iterator<Integer> it = distances.keySet().iterator();
-			int k;
-			while (it.hasNext()) {
-				k = it.next();
+			for (int k : distances.keySet()) {
 				if (distances.get(k) != null && distances.get(k).intValue() <= maxDist) {
 					subGraphNodes.add(id2bna.get(k));
 				}
 			}
-			Iterator<BiologicalEdgeAbstract> it2 = remainingEdges.iterator();
-			BiologicalEdgeAbstract bea;
-			while (it2.hasNext()) {
-				bea = it2.next();
+			for (BiologicalEdgeAbstract bea : remainingEdges) {
 				if (subGraphNodes.contains(getBNARef(bea.getFrom()))
 						&& subGraphNodes.contains(getBNARef(bea.getTo()))) {
 					subGraphEdges.add(bea);
@@ -992,10 +967,7 @@ public class Transformator {
 			for (Integer i : tmpGraph.getVertices()) {
 				subGraphNodes.add(id2bna.get(i));
 			}
-			Iterator<BiologicalEdgeAbstract> it2 = remainingEdges.iterator();
-			BiologicalEdgeAbstract bea;
-			while (it2.hasNext()) {
-				bea = it2.next();
+			for (BiologicalEdgeAbstract bea : remainingEdges) {
 				if (subGraphNodes.contains(getBNARef(bea.getFrom()))
 						&& subGraphNodes.contains(getBNARef(bea.getTo()))) {
 					subGraphEdges.add(bea);
@@ -1213,7 +1185,7 @@ public class Transformator {
 				continue;
 			}
 			value = replaceParametersToValues(orgValue, match);
-			//System.out.println("key: " + key + " value: " + value);
+			// System.out.println("key: " + key + " value: " + value);
 			switch (key) {
 			// case "name":
 			// break;
@@ -1318,7 +1290,7 @@ public class Transformator {
 			testParam = re.getName() + "." + parameter;
 			if (s.contains(testParam) && possibleParams.containsKey(testParam)) {
 				edges.add(match.getMapping(re));
-				System.out.println("contains: " + re.getName() + "." + parameter);
+				//System.out.println("contains: " + re.getName() + "." + parameter);
 			}
 		}
 		return edges;

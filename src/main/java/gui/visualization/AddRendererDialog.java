@@ -54,8 +54,8 @@ public class AddRendererDialog implements ActionListener {
 
 	private final String[] renderertypes = { "", "LocalBackboard" };
 	private final String[] attributetypes = { "", "Annotation", "Color", "Experiment", "Graph property" };
-	private final String[] nodeattributes_GO = { NodeAttributeNames.GO_BIOLOGICAL_PROCESS,
-			NodeAttributeNames.GO_CELLULAR_COMPONENT, NodeAttributeNames.GO_MOLECULAR_FUNCTION };
+	//private final String[] nodeattributes_GO = { NodeAttributeNames.GO_BIOLOGICAL_PROCESS,
+	//		NodeAttributeNames.GO_CELLULAR_COMPONENT, NodeAttributeNames.GO_MOLECULAR_FUNCTION };
 	private final String[] nodeattributes_COL = { "Nodecolor" };
 	private final String[] nodeattributes_EXP = { NodeAttributeNames.CHOLESTEATOMA };
 	private final String[] nodeattributes_GPROP = { NodeAttributeNames.NODE_DEGREE,

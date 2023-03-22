@@ -20,6 +20,7 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 
 public class CloseButton extends JButton implements ActionListener {
+	private static final long serialVersionUID = 1L;
 	private final MainWindow w = MainWindow.getInstance();
 
 	public CloseButton() {

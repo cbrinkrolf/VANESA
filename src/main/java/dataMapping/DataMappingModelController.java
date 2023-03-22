@@ -26,8 +26,8 @@ import dataMapping.biomartRetrieval.HPRDQueryRetrieval;
 import dataMapping.biomartRetrieval.IntActQueryRetrieval;
 import dataMapping.dataImport.ImportExcelxData;
 import graph.GraphInstance;
-import gui.MainWindow;
 import gui.IndeterminateProgressBar;
+import gui.MainWindow;
 
 /**
  * This class manages the data flow between the GUI, the BioMart information

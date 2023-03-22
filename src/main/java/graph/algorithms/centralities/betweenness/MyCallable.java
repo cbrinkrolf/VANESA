@@ -8,107 +8,103 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.Callable;
 
-
 public class MyCallable implements Callable<int[]> {
 
-  private Vertex[] vertices = null;
-  private String[] combinedEdges = null;
-  private int[] timesEdgesUsed = null;
-  private int i;
-  private long threadId;
+	private Vertex[] vertices = null;
+	// private String[] combinedEdges = null;
+	private int[] timesEdgesUsed = null;
+	private int i;
+	private long threadId;
 
-  private List<String> combinedEdgesList;
+	private List<String> combinedEdgesList;
 
-  public MyCallable(Vertex[] vertices, final String[] combinedEdges, final int i, final int threads){
-    this.vertices = vertices;
-    this.combinedEdges = combinedEdges;
-    this.timesEdgesUsed = new int[combinedEdges.length];
-    this.i = i;
+	public MyCallable(Vertex[] vertices, final String[] combinedEdges, final int i, final int threads) {
+		this.vertices = vertices;
+		// this.combinedEdges = combinedEdges;
+		this.timesEdgesUsed = new int[combinedEdges.length];
+		this.i = i;
 
-    combinedEdgesList = Arrays.asList(combinedEdges);
+		combinedEdgesList = Arrays.asList(combinedEdges);
 
-    Arrays.fill(timesEdgesUsed, 0);
-  }
+		Arrays.fill(timesEdgesUsed, 0);
+	}
 
+	@Override
+	public int[] call() throws Exception {
+		this.threadId = i;
+		// System.out.println("ThreadID: "+Thread.currentThread().getId()+" | VertexID:
+		// "+i);
 
-  @Override
-  public int[] call() throws Exception {
-    this.threadId = i;
-    //System.out.println("ThreadID: "+Thread.currentThread().getId()+" | VertexID: "+i);
+		computePaths(vertices[i]);
 
-    computePaths(vertices[i]);
+		List<String> usedEdges;
+		int index;
 
-    List<String> usedEdges;
-    int index;
+		for (Vertex v : vertices) {
+			usedEdges = getShortestPathTo(v);
 
-    for (Vertex v : vertices) {
-      usedEdges = getShortestPathTo(v);
+			for (String string : usedEdges) {
+				index = combinedEdgesList.indexOf(string);
+				timesEdgesUsed[index]++;
+			}
+		}
 
-      for (String string : usedEdges) {
-        index = combinedEdgesList.indexOf(string);
-        timesEdgesUsed[index]++;
-      }
-    }
+		for (Vertex v : vertices) {
+			v.setPrevious(threadId, null);
+			v.setMinDistance(threadId, Integer.MAX_VALUE);
+		}
 
-    for (Vertex v : vertices) {
-      v.setPrevious(threadId, null);
-      v.setMinDistance(threadId, Integer.MAX_VALUE);
-    }
+		return timesEdgesUsed;
+	}
 
-    return timesEdgesUsed;
-  }
+	private void computePaths(Vertex source) {
+		source.setMinDistance(threadId, 0);
 
+		Comparator<Vertex> comparator = new Comparator<Vertex>() {
+			@Override
+			public int compare(Vertex v, Vertex u) {
+				return Integer.compare(v.getMinDistance(threadId), u.getMinDistance(threadId));
+			}
+		};
 
-  private void computePaths(Vertex source) {
-    source.setMinDistance(threadId, 0);
+		PriorityQueue<Vertex> vertexQueue = new PriorityQueue<Vertex>(vertices.length, comparator);
+		vertexQueue.add(source);
 
-    Comparator<Vertex> comparator = new Comparator<Vertex>(){
-      @Override
-      public int compare(Vertex v, Vertex u) {
-        return Integer.compare(v.getMinDistance(threadId), u.getMinDistance(threadId));
-      }
-    };
+		while (!vertexQueue.isEmpty()) {
+			Vertex u = vertexQueue.poll();
 
+			// Jede Kante besuchen, die u verlaesst
+			for (Edge e : u.adjacencies) {
+				Vertex v = e.target;
 
-    PriorityQueue<Vertex> vertexQueue = new PriorityQueue<Vertex>(vertices.length, comparator);
-    vertexQueue.add(source);
+				int distanceThroughU = u.getMinDistance(threadId) + 1;
 
-    while (!vertexQueue.isEmpty()) {
-      Vertex u = vertexQueue.poll();
+				if (distanceThroughU < v.getMinDistance(threadId)) {
+					vertexQueue.remove(v);
 
-      // Jede Kante besuchen, die u verlaesst
-      for (Edge e : u.adjacencies) {
-        Vertex v = e.target;
+					v.setMinDistance(threadId, distanceThroughU);
+					v.setPrevious(threadId, u);
+					vertexQueue.add(v);
+				}
+			}
+		}
+	}
 
-        int distanceThroughU = u.getMinDistance(threadId)+1;
+	private List<String> getShortestPathTo(Vertex target) {
+		List<Vertex> path = new ArrayList<Vertex>();
+		List<String> usedEdges = new ArrayList<String>();
 
-        if (distanceThroughU < v.getMinDistance(threadId)) {
-          vertexQueue.remove(v);
+		for (Vertex vertex = target; vertex != null; vertex = vertex.getPrevious(threadId)) {
+			path.add(vertex);
 
-          v.setMinDistance(threadId, distanceThroughU);
-          v.setPrevious(threadId, u);
-          vertexQueue.add(v);
-        }
-      }
-    }
-  }
+			if (vertex.getPrevious(threadId) != null) {
+				vertex.timeswalkedover.addAndGet(1);
+				usedEdges.add(String.valueOf(vertex.getPrevious(threadId).id) + String.valueOf(vertex.id));
+			}
+		}
 
+		Collections.reverse(path);
 
-  private  List<String> getShortestPathTo(Vertex target) {
-    List<Vertex> path = new ArrayList<Vertex>();
-    List<String> usedEdges = new ArrayList<String>();
-
-    for (Vertex vertex = target; vertex != null; vertex = vertex.getPrevious(threadId)) {
-      path.add(vertex);
-
-      if(vertex.getPrevious(threadId) != null) {
-        vertex.timeswalkedover.addAndGet(1);
-        usedEdges.add(String.valueOf(vertex.getPrevious(threadId).id)+String.valueOf(vertex.id));
-      }
-    }
-
-    Collections.reverse(path);
-
-    return usedEdges;
-  }
+		return usedEdges;
+	}
 }

@@ -353,7 +353,7 @@ public class VAMLInput {
         String label = "";
         String name = "";
         String comment = "";
-        String reference = "";
+       // String reference = "";
         String location = "";
         Color color = null;
         double xCoord = 0.0;
@@ -380,7 +380,7 @@ public class VAMLInput {
             } else if (localName.equals("name")) {
                 name = elementText;
             } else if (localName.equals("reference")) {
-                reference = elementText;
+               //  reference = elementText;
             } else if (localName.equals("comment")) {
                 comment = elementText;
             } else if (localName.equals("location")) {

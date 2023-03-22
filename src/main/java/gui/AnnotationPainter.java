@@ -45,6 +45,8 @@ public class AnnotationPainter {
 
 	private void initShapeActions() {
 		Action a = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				setCurrentRangeType(RECTANGLE);
 			}
@@ -52,6 +54,8 @@ public class AnnotationPainter {
 		initAction(a, "rectangle.png", "rectangle");
 		selectShapeActions.add(a);
 		a = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				setCurrentRangeType(ELLIPSE);
 			}
@@ -60,6 +64,8 @@ public class AnnotationPainter {
 		selectShapeActions.add(a);
 
 		a = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				setCurrentRangeType(TEXT);
 			}
@@ -70,6 +76,8 @@ public class AnnotationPainter {
 
 	private void initColorActions() {
 		Action a = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				// AnnotationPainter.this.setFillColor(getColor(fillColor));
 				fillColor = getColor(fillColor);
@@ -81,6 +89,8 @@ public class AnnotationPainter {
 		initAction(a, "comparison.png", "select range color");
 		selectColorActions.add(a);
 		a = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				textColor = getColor(textColor);
 				if (annotatingPlugin != null) {

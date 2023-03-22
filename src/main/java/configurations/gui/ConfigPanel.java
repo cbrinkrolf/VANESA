@@ -12,33 +12,34 @@ import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 
 public class ConfigPanel extends JPanel {
-    private final String layoutName;
+	private static final long serialVersionUID = 1L;
+	private final String layoutName;
 
-    public ConfigPanel(Class<? extends Layout> layout) {
-        layoutName = layout.getSimpleName();
-    }
+	public ConfigPanel(Class<? extends Layout> layout) {
+		layoutName = layout.getSimpleName();
+	}
 
-    protected MyGraph getMyGraph() {
-        return GraphInstance.getMyGraph();
-    }
+	protected MyGraph getMyGraph() {
+		return GraphInstance.getMyGraph();
+	}
 
-    public void resetValues() {
-    }
+	public void resetValues() {
+	}
 
-    public void setValues() {
-    }
+	public void setValues() {
+	}
 
-    public void applySettings() {
-        try {
-            Method m = MyGraph.class.getMethod("changeTo" + getLayoutName());
-            m.invoke(getMyGraph());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Logger.getLogger(ConfigPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+	public void applySettings() {
+		try {
+			Method m = MyGraph.class.getMethod("changeTo" + getLayoutName());
+			m.invoke(getMyGraph());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			Logger.getLogger(ConfigPanel.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
-    public String getLayoutName() {
-        return layoutName;
-    }
+	public String getLayoutName() {
+		return layoutName;
+	}
 }

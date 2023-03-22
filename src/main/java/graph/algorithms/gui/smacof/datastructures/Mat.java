@@ -293,11 +293,11 @@ public class Mat {
         if (this.getFirstDimSize() != this.getSecondDimSize()) {
             throw new IllegalArgumentException("Watch moorePenroseInverse() function!");
         }
-        RealMatrix m = MatrixUtils.createRealMatrix(this.getLonleyMatrix());
-        RealMatrix pim = MatrixUtils.inverse(m); // TODO MF: correct? not returned anyway
+       // RealMatrix m = MatrixUtils.createRealMatrix(this.getLonleyMatrix());
+       // RealMatrix pim = MatrixUtils.inverse(m); // TODO MF: correct? not returned anyway
         //Jama.Matrix pim = PseudoInverse.pseudoInverse(m, this.getFirstDimSize() - 1);
         // inverse() returns the inverse of a matrix if possible, pseudo-inverse otherwise!
-        Mat mat = new Mat(pim.getData());
+        //Mat mat = new Mat(pim.getData());
 //        return mat;
         return null;
     }
