@@ -37,7 +37,6 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable{
 	public CompartmentRenderer(Pathway pw) {
 		this.pw = pw;
 		vv = pw.getGraph().getVisualizationViewer();
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override

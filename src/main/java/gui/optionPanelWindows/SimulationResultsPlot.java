@@ -400,7 +400,10 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					renderer2.setSeriesVisible(idxSum, true);
 				}
 			}
-		} else if (pickedV == 1 && pickedE == 0) {
+		} else if(pickedV == 0 && pickedE > 1){
+			// TODO implement if more than one edes is selected
+		}
+		else if (pickedV == 1 && pickedE == 0) {
 			// System.out.println("one picked");
 			SimulationResult result;
 			List<SimulationResult> listActive = null;

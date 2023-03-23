@@ -12,7 +12,7 @@ public class CompartmentManager {
 	private final Map<Compartment, HashSet<BiologicalNodeAbstract>> compartmentToBNA = new HashMap<>();
 	private boolean drawCompartments = false;
 
-	public Compartment getCompartment(String name){
+	public Compartment getCompartment(String name) {
 		for (Compartment comp : compartments) {
 			if (comp.getName().equals(name.trim()))
 				return comp;
@@ -30,25 +30,31 @@ public class CompartmentManager {
 	}
 
 	public void remove(Compartment c) {
+		// avoids concurrent modification exception
 		compartments.remove(c);
+		Set<BiologicalNodeAbstract> toRemove = new HashSet<>();
 		for (BiologicalNodeAbstract bna : bnaToCompartment.keySet()) {
 			if (bnaToCompartment.get(bna).equals(c)) {
-				bnaToCompartment.remove(bna);
+				toRemove.add(bna);
 			}
 		}
+		for (BiologicalNodeAbstract bna : toRemove) {
+			bnaToCompartment.remove(bna);
+		}
+
 		compartmentToBNA.remove(c);
 	}
 
 	public List<Compartment> getAllCompartmentsAlphabetically() {
 		Map<String, Compartment> map = new HashMap<>();
 		List<String> names = new ArrayList<>();
-		for(Compartment c : compartments){
+		for (Compartment c : compartments) {
 			map.put(c.getName(), c);
 			names.add(c.getName());
 		}
 		names.sort(String.CASE_INSENSITIVE_ORDER);
 		List<Compartment> list = new ArrayList<>();
-		for(String name : names){
+		for (String name : names) {
 			list.add(map.get(name));
 		}
 		return list;
@@ -64,9 +70,9 @@ public class CompartmentManager {
 			compartmentToBNA.get(c).add(bna);
 		}
 	}
-	
-	public String getCompartment(BiologicalNodeAbstract bna){
-		if(bnaToCompartment.containsKey(bna)){
+
+	public String getCompartment(BiologicalNodeAbstract bna) {
+		if (bnaToCompartment.containsKey(bna)) {
 			return bnaToCompartment.get(bna).getName();
 		}
 		return "";
