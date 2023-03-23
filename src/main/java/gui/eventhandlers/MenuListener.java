@@ -26,7 +26,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.xml.stream.XMLStreamException;
 
-import graph.jung.classes.MyGraph;
 import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
 import org.apache.commons.io.FileUtils;
@@ -66,6 +65,7 @@ import graph.algorithms.gui.RandomGraphGui;
 import graph.algorithms.gui.RandomHamiltonGraphGui;
 import graph.algorithms.gui.RandomRegularGraphGui;
 import graph.algorithms.gui.smacof.view.SmacofView;
+import graph.jung.classes.MyGraph;
 import graph.layouts.gemLayout.GEMLayout;
 import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
@@ -75,13 +75,14 @@ import gui.InfoWindow;
 import gui.LabelToDataMappingWindow;
 import gui.LabelToDataMappingWindow.InputFormatException;
 import gui.MainWindow;
-import gui.PopUpDialog;
 import gui.NodesEdgesTypesWindow;
+import gui.PopUpDialog;
+import gui.tables.MyTable;
 import gui.visualization.PreRenderManager;
 import io.OpenDialog;
 import io.PNDoc;
 import io.SaveDialog;
-import gui.tables.MyTable;
+import io.sbml.JSBMLOutput;
 import petriNet.Cov;
 import petriNet.CovNode;
 import petriNet.OpenModelicaResult;
@@ -96,7 +97,6 @@ import transformation.gui.RuleManagementWindow;
 import transformation.gui.TransformationInformationWindow;
 import util.KineticBuilder;
 import util.VanesaUtility;
-import io.sbml.JSBMLOutput;
 
 public class MenuListener implements ActionListener {
 	private Object[][] rP;
@@ -626,7 +626,20 @@ public class MenuListener implements ActionListener {
 			new PNTableDialog().setVisible(true);
 			break;
 		case loadModResult:
-			new OpenModelicaResult().execute();
+			if (con.containsPathway()) {
+				if (!pw.hasGotAtLeastOneElement()) {
+					PopUpDialog.getInstance().show("Error", "Network is empty.");
+					break;
+				}
+				if (pw.isPetriNet() || pw.getTransformationInformation() != null
+						&& pw.getTransformationInformation().getPetriNet() != null) {
+					new OpenModelicaResult().execute();
+				} else {
+					PopUpDialog.getInstance().show("Error", "Please create a Petri net first.");
+				}
+			} else {
+				PopUpDialog.getInstance().show("Error", "Please create a network before.");
+			}
 			break;
 		case simulate:
 			if (con.containsPathway()) {

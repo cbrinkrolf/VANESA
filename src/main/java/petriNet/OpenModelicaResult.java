@@ -12,7 +12,6 @@ import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import gui.PopUpDialog;
 import io.SuffixAwareFilter;
 
 public class OpenModelicaResult extends SwingWorker<Object, Object> {
@@ -32,18 +31,9 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 
 	private void open() {
 		if (fileFilter != null && fileFilter == SuffixAwareFilter.VANESA_SIM_RESULT) {
-			if (con.containsPathway()) {
-				if (GraphInstance.getPathway().hasGotAtLeastOneElement() && GraphInstance.getPathway().isPetriNet()) {
-					// graphInstance.getPathway().setPetriNet(true);
-					PetriNetProperties petrinet = GraphInstance.getPathway().getPetriPropertiesNet();
-					petrinet.loadVanesaSimulationResult(file);
-
-				} else {
-					PopUpDialog.getInstance().show("Error", "Please create a Petri net first.");
-				}
-			} else {
-				PopUpDialog.getInstance().show("Error", "Please create a network before.");
-			}
+			// graphInstance.getPathway().setPetriNet(true);
+			PetriNetProperties petrinet = GraphInstance.getPathway().getPetriPropertiesNet();
+			petrinet.loadVanesaSimulationResult(file);
 		}
 	}
 
@@ -65,7 +55,6 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 
 	@Override
 	public void done() {
-		// TODO if BN holds PN
 		open();
 		if (fileFilter != null) {
 			MainWindow.getInstance().closeProgressBar();

@@ -3,6 +3,8 @@ package io;
 import com.orsonpdf.PDFDocument;
 import com.orsonpdf.PDFGraphics2D;
 import com.orsonpdf.Page;
+
+import biologicalElements.Pathway;
 import configurations.ConnectionSettings;
 import fr.lip6.move.pnml.framework.utils.exception.InvalidIDException;
 import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
@@ -295,8 +297,18 @@ public class SaveDialog {
 
 	private void writeCSV(String simId) {
 		ensureExtension(SuffixAwareFilter.CSV_RESULT);
-		// TODO adjust if BN holds PN
-		write(new CSVWriter(file, simId), GraphInstance.getPathway());
+		Pathway pw = GraphInstance.getPathway();
+		// if BN holds PN
+		if(!pw.isPetriNet()){
+			if(pw.getTransformationInformation() == null){
+				return;
+			}
+			if(pw.getTransformationInformation().getPetriNet() == null){
+				return;
+			}
+			pw = pw.getTransformationInformation().getPetriNet();
+		}
+		write(new CSVWriter(file, simId), pw);
 	}
 
 	private void writeGraphTextFile() {

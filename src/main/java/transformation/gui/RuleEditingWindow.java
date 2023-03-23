@@ -1028,6 +1028,7 @@ public class RuleEditingWindow implements ActionListener {
 						}
 					}
 				});
+				this.addTooltip(field, param);
 				parametersPanel.add(new JLabel(param + ":"), "");
 				parametersPanel.add(field, "wrap");
 			}
@@ -1074,6 +1075,38 @@ public class RuleEditingWindow implements ActionListener {
 			}
 		}
 		parametersPanel.revalidate();
+	}
+
+	private void addTooltip(JTextField tf, String parameter) {
+		switch (parameter) {
+		case "name":
+			tf.setToolTipText("evaluated to string during transformation");
+			break;
+		case "tokenStart":
+			tf.setToolTipText("evaluated to number during transformation, e.g. 1 + random(2,5)");
+			break;
+		case "tokenMin":
+			tf.setToolTipText("evaluated to number during transformation");
+			break;
+		case "tokenMax":
+			tf.setToolTipText("evaluated to number during transformation");
+			break;
+		case "isConstant":
+			tf.setToolTipText("evaluated to boolean during transformation, e.g. and(true,or(true,not(false))");
+			break;
+		case "firingCondition":
+			tf.setToolTipText("evaluated during simulation");
+			break;
+		case "isKnockedOut":
+			tf.setToolTipText("evaluatedto boolean during transformation");
+			break;
+		case "maximalSpeed":
+			tf.setToolTipText("evaluated during simulation");
+			break;
+		case "function":
+			tf.setToolTipText("evaluated during simulation");
+			break;
+		}
 	}
 
 	private void convertGraphToRule(boolean copyRule) {
@@ -1157,20 +1190,20 @@ public class RuleEditingWindow implements ActionListener {
 
 		// considered edges
 		if (chkAllEdgesSelected.isSelected()) {
-			for(BiologicalEdgeAbstract edge : bn.getAllEdges()){
+			for (BiologicalEdgeAbstract edge : bn.getAllEdges()) {
 				rule.getConsideredEdges().add(beaToRuleEdge.get(edge));
 			}
 		} else {
-			for(BiologicalEdgeAbstract edge : consideredEdges){
+			for (BiologicalEdgeAbstract edge : consideredEdges) {
 				rule.getConsideredEdges().add(beaToRuleEdge.get(edge));
 			}
 		}
 
-		//for (RuleNode rn1 : rule.getBiologicalNodes()) {
-			// System.out.println(rn1.getName() + " In: " +
-			// rule.getIncomingDirectedEdgeCount(rn1) + " out: "
-			// + rule.getOutgoingDirectedEdgeCount(rn1));
-		//}
+		// for (RuleNode rn1 : rule.getBiologicalNodes()) {
+		// System.out.println(rn1.getName() + " In: " +
+		// rule.getIncomingDirectedEdgeCount(rn1) + " out: "
+		// + rule.getOutgoingDirectedEdgeCount(rn1));
+		// }
 		frame.setVisible(false);
 	}
 

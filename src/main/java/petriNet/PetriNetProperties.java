@@ -43,10 +43,12 @@ public class PetriNetProperties {
 	public void loadVanesaSimulationResult(File resFile) {
 
 		try {
-			// TODO adjust if BN holds PN
 			HashMap<String, List<Double>> result = pnrir.readResult(resFile);
 			pw = GraphInstance.getPathway();
-
+			// if BN holds PN
+			if (!pw.isPetriNet()) {
+				pw = pw.getTransformationInformation().getPetriNet();
+			}
 			BiologicalNodeAbstract bna;
 			Iterator<BiologicalNodeAbstract> it = this.pw.getAllGraphNodes().iterator();
 

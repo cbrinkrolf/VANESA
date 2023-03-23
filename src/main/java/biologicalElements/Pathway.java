@@ -438,9 +438,7 @@ public class Pathway implements Cloneable {
 		for (int i = 0; i < ids.size(); i++) {
 			sortedList.add(map.get(ids.get(i)));
 		}
-
 		return sortedList;
-
 	}
 
 	public Collection<BiologicalNodeAbstract> getAllGraphNodes() {
@@ -1421,15 +1419,15 @@ public class Pathway implements Cloneable {
 		VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = new VisualizationImageServer<>(
 				mg.getLayout(), mg.getLayout().getSize());
 		wvv.setBackground(Color.white);
-		
-		for(Paintable renderer : v.getPreRenderers()){
+
+		for (Paintable renderer : v.getPreRenderers()) {
 			wvv.addPreRenderPaintable(renderer);
 		}
-		
-		for(Paintable renderer : v.getPostRenderers()){
+
+		for (Paintable renderer : v.getPostRenderers()) {
 			wvv.addPostRenderPaintable(renderer);
 		}
-		
+
 		wvv.setBackground(Color.white);
 		wvv.setRenderContext(v.getRenderContext());
 
@@ -1668,7 +1666,7 @@ public class Pathway implements Cloneable {
 		HashMap<BiologicalNodeAbstract, Double> map = new HashMap<>();
 		Point2D point;
 		if (nodes.size() > 2) {
-			for(BiologicalNodeAbstract bna : nodes){
+			for (BiologicalNodeAbstract bna : nodes) {
 				point = getGraph().getVertexLocation(bna);
 				if (point.getY() < miny) {
 					miny = point.getY();
@@ -1680,7 +1678,7 @@ public class Pathway implements Cloneable {
 			}
 			List<Double> c = new ArrayList<>(map.values());
 			Collections.sort(c);
-			for(BiologicalNodeAbstract bna : nodes){
+			for (BiologicalNodeAbstract bna : nodes) {
 				int d = c.indexOf(map.get(bna));
 				double newy;
 				if (d == 0) {

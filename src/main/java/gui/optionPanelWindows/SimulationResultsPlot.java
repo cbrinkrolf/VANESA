@@ -966,7 +966,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 								}
 
 								if (slider.getValue() >= 2) {
-									// ggf TODO
+									// maybe reimplement
 									val = 1.0;
 									// get microarray value for reference time
 									// step
