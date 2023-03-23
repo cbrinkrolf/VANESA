@@ -58,6 +58,8 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 		this.pw = GraphInstance.getPathway();
 		if (compRenderer == null) {
 			compRenderer = new CompartmentRenderer(pw);
+		} else {
+			compRenderer.setPathway(pw);
 		}
 		MigLayout layout = new MigLayout("fillx", "[grow,fill]", "");
 		p.setLayout(layout);
@@ -201,13 +203,12 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 		if (e.getSource().equals(drawCompartments)) {
 			if (e.getStateChange() == 1) {
 				vv.addPreRenderPaintable(compRenderer);
-				// vv.setDrawCompartments(true);
 				pw.getCompartmentManager().setDrawCompartments(true);
 			} else {
 				vv.removePreRenderPaintable(compRenderer);
-				// vv.setDrawCompartments(false);
 				pw.getCompartmentManager().setDrawCompartments(false);
 			}
+			vv.repaint();
 		} else if (e.getSource().equals(drawCompartmentsExperimental)) {
 			if (e.getStateChange() == 1) {
 				// vv.setEsperimentalCompartments(true);

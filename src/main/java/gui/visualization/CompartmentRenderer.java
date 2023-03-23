@@ -24,30 +24,33 @@ import graph.compartment.Compartment;
 import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.GraphCenter;
 
-public class CompartmentRenderer implements VisualizationViewer.Paintable{
+public class CompartmentRenderer implements VisualizationViewer.Paintable {
 
 	private Pathway pw;
 	private MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 
 	private HashMap<String, Area> areas = new HashMap<String, Area>();
 
-	private boolean drawCompartments = false;
 	private boolean experimental = false;
-	
+
 	public CompartmentRenderer(Pathway pw) {
 		this.pw = pw;
 		vv = pw.getGraph().getVisualizationViewer();
 	}
-	
+
+	public void setPathway(Pathway pw) {
+		this.pw = pw;
+		vv = pw.getGraph().getVisualizationViewer();
+	}
+
 	@Override
 	public void paint(Graphics g) {
 		prepareCompartments();
 		drawCompartemnts((Graphics2D) g);
-		
+
 	}
 
 	private void prepareCompartments() {
-
 		areas = new HashMap<String, Area>();
 		HashMap<String, HashSet<BiologicalNodeAbstract>> compToNodes = new HashMap<String, HashSet<BiologicalNodeAbstract>>();
 		HashMap<String, HashSet<BiologicalEdgeAbstract>> compToEdges = new HashMap<String, HashSet<BiologicalEdgeAbstract>>();
@@ -56,6 +59,7 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable{
 		Compartment c;
 		while (comp.hasNext()) {
 			c = comp.next();
+			// System.out.println(c.getName());
 			this.areas.put(c.getName(), new Area());
 			compToNodes.put(c.getName(), new HashSet<BiologicalNodeAbstract>());
 			compToEdges.put(c.getName(), new HashSet<BiologicalEdgeAbstract>());
@@ -106,7 +110,7 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable{
 		// }
 
 	}
-	
+
 	private void addEdgeToArea(BiologicalEdgeAbstract bea, Area a) {
 		BiologicalNodeAbstract bna1;
 		BiologicalNodeAbstract bna2;
@@ -129,7 +133,7 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable{
 
 		// g2d.drawString("b",(int)((p.getX())), (int)((p.getY())*scale));
 		p1inv = vv.getRenderContext().getMultiLayerTransformer().transform(p1);
-		p2inv =vv.getRenderContext().getMultiLayerTransformer().transform(p2);
+		p2inv = vv.getRenderContext().getMultiLayerTransformer().transform(p2);
 
 		double width = 12;
 		if (pw.getGraph().getVisualizationViewer().getScale() < 1) {
@@ -184,7 +188,7 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable{
 				3 * h1, 15, 15);
 		a.add(new Area(r1));
 	}
-	
+
 	private void drawCompartemnts(Graphics2D g2d) {
 
 		long l1 = System.nanoTime();
@@ -201,12 +205,11 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable{
 		// System.out.println("painting " + (System.nanoTime() - l1) / 1000);
 	}
 
-	
 	@Override
 	public boolean useTransform() {
 		return false;
 	}
-	
+
 	// TODO WIP for an more efficient painting of compartments
 	private void drawCompartemntsExperimental(Graphics2D g2d) {
 
