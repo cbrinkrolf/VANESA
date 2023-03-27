@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -365,6 +366,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		}
 		SimulationResult simRes = simResController.getLastActive();
 		boolean secondAxis = false;
+		String legendY = "Tokens";
 		if (pickedV == 0 && pickedE == 1) {
 			BiologicalEdgeAbstract bea = eState.getPicked().iterator().next();
 			if (hiddenPN) {
@@ -416,6 +418,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					listActive = simResController.getAllActiveWithData(bna, TOKEN);
 				} else if (bna instanceof Transition) {
 					listActive = simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED);
+					legendY = "Speed";
 				}
 				Color c;
 				for (int i = 0; i < listActive.size(); i++) {
@@ -435,7 +438,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					// System.out.println("stroke set");
 					c = Color.getHSBColor(i * 1.0f / (listActive.size()), 1, 1);
 					if (listActive.size() == 1) {
-						renderer.setSeriesPaint(idx, pn.getPlotColor());
+						//renderer.setSeriesPaint(idx, pn.getPlotColor());
+						renderer.setSeriesPaint(idx, Color.red);
 					} else {
 						renderer.setSeriesPaint(idx, c);
 					}
@@ -487,6 +491,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						// System.out.println("does not contain");
 					}
 				} else if (bna instanceof Transition && onlyT) {
+					legendY = "Speed";
 					transition = (Transition) bna;
 					if (series2idx.contains(transition, ACTUAL_FIRING_SPEED)) {
 						renderer.setSeriesPaint(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
@@ -532,7 +537,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			plot.setRenderer(renderer);
 			NumberAxis domainAxis = new NumberAxis("Time");
 			plot.setDomainAxis(domainAxis);
-			NumberAxis na = new NumberAxis("Tokens");
+			NumberAxis na = new NumberAxis(legendY);
 
 			// na.setRange(min * 0.95, 1.05 * max);
 			na.setAutoRange(true);
@@ -723,6 +728,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			}
 
 			if (fireSerieState) {
+				try{
 				isIterating = true;
 				for (XYSeries s : dirtyVisibleSeries) {
 					if (renderer.isSeriesVisible(seriesListR1.indexOf(s))) {
@@ -737,6 +743,15 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				dirtyVisibleSeries.clear();
 				dirtyVisibleSeriesR1.clear();
 				isIterating = false;
+				}catch(ConcurrentModificationException e){
+					System.err.println("Simulation Result Plot during repaint: ConcurrentModificationException");
+				}catch(IllegalArgumentException e){
+					System.err.println("Simulation Result Plot during repaint: IllegalArgumentException");
+				}catch(NullPointerException e){
+					System.err.println("Simulation Result Plot during repaint: NullPointerException");
+				}catch(IndexOutOfBoundsException e){
+					System.err.println("Simulation Result Plot during repaint: IndexOutOfBoundsException");
+				}
 			}
 			if (chart != null) {
 				// System.out.println("chart start firing");
