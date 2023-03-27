@@ -1014,6 +1014,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
 				// Color newColor = JColorChooser.showDialog(w.getFrame(), "Choose plot colour",
 				// bna.getPlotColor());
+				//System.out.println(bna.getDefaultColor());
+				// TODO plot color = null if BN with loaded PN
 				MyColorChooser mc = new MyColorChooser(w.getFrame(), "Choose plot color", true, bna.getPlotColor());
 				if (mc.isOkAction()) {
 					Color newColor = mc.getColor();

@@ -156,15 +156,27 @@ public class ParameterWindow implements DocumentListener {
 	}
 
 	private void onAddClicked() {
+		// override old parameter
 		for (int i = 0; i < gea.getParameters().size(); i++) {
 			Parameter p = gea.getParameters().get(i);
 			if (p.getName().equals(name.getText())) {
 				if (editMode && name.getText().trim().length() > 0) {
 					try {
-						p.setValue(Double.parseDouble(value.getText()));
-						p.setUnit(unit.getText());
-						// TODO handling of rebuild
-						pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
+						// unit did not change
+						if (p.getUnit().equals(unit.getText().trim())) {
+							if (p.getValue() == Double.parseDouble(value.getText().trim())) {
+								return;
+							} else {
+								p.setValue(Double.parseDouble(value.getText().trim()));
+								pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
+								pw.getChangedParameters().put(p, gea);
+							}
+						} else {
+							// unit changed
+							p.setValue(Double.parseDouble(value.getText().trim()));
+							p.setUnit(unit.getText().trim());
+							pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
+						}
 						editMode = false;
 						add.setText("add");
 						repaintPanel();
@@ -179,12 +191,13 @@ public class ParameterWindow implements DocumentListener {
 				return;
 			}
 		}
+		// add new parameter
 		if (name.getText().trim().length() > 0) {
 			try {
-				Parameter p = new Parameter(name.getText(), Double.parseDouble(value.getText()), unit.getText());
+				Parameter p = new Parameter(name.getText().trim(), Double.parseDouble(value.getText().trim()),
+						unit.getText().trim());
 				gea.getParameters().add(p);
-				pw.getChangedParameters().put(p, gea);
-				pw.handleChangeFlags(ChangedFlags.PARAMETER_CHANGED);
+				pw.handleChangeFlags(ChangedFlags.NODE_CHANGED);
 				panel.add(new JLabel(name.getText()), "span 1, gaptop 2 ");
 				panel.add(new JLabel(value.getText()), "span 1, gapright 4");
 				panel.add(new JLabel(unit.getText()), "span 1, gapright 4, wrap");

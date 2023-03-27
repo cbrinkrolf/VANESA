@@ -47,9 +47,6 @@ import util.MyNumberFormat;
 
 public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JButton start = new JButton("Start");
 	private JButton stop = new JButton("Stop");

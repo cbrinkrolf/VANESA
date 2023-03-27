@@ -176,29 +176,23 @@ public class PetriNetSimulation implements ActionListener {
 								override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize="
 										+ stopTime / intervals + ",tolerance=" + tolerance + ",seed=" + seed;
 								if (flags.isParameterChanged()) {
-
-									Iterator<Parameter> it = pw.getChangedParameters().keySet().iterator();
 									GraphElementAbstract gea;
-									Parameter param;
-
-									while (it.hasNext()) {
-										param = it.next();
+									for (Parameter param : pw.getChangedParameters().keySet()) {
 										gea = pw.getChangedParameters().get(param);
 										BiologicalNodeAbstract bna;
 										if (gea instanceof BiologicalNodeAbstract) {
 											bna = (BiologicalNodeAbstract) gea;
 											override += ",'_" + bna.getName() + "_" + param.getName() + "'="
 													+ param.getValue();
+										} else {
+											// TODO override parameters of edges
 										}
 									}
 								}
 
 								if (flags.isInitialValueChanged()) {
-									Iterator<Place> it = pw.getChangedInitialValues().keySet().iterator();
-									Place p;
 									Double d;
-									while (it.hasNext()) {
-										p = it.next();
+									for (Place p : pw.getChangedInitialValues().keySet()) {
 										d = pw.getChangedInitialValues().get(p);
 										override += ",'" + p.getName() + "'.start" + getMarksOrTokens(p) + "=" + d;
 									}
@@ -206,11 +200,8 @@ public class PetriNetSimulation implements ActionListener {
 
 								if (flags.isBoundariesChanged()) {
 									// System.out.println("chaaaaanged");
-									Iterator<Place> it = pw.getChangedBoundaries().keySet().iterator();
-									Place p;
 									Boundary b;
-									while (it.hasNext()) {
-										p = it.next();
+									for (Place p : pw.getChangedBoundaries().keySet()) {
 										b = pw.getChangedBoundaries().get(p);
 										if (b.isLowerBoundarySet()) {
 											override += ",'" + p.getName() + "'.min" + getMarksOrTokens(p) + "="
@@ -278,12 +269,12 @@ public class PetriNetSimulation implements ActionListener {
 									v = pw.getPetriPropertiesNet().getSimResController().get(simId).getTime().getAll();
 								}
 
-								if(counter%5 == 0){
+								if (counter % 5 == 0) {
 									w.redrawGraphs(true);
 								}
-								//System.out.println("before draw");
+								// System.out.println("before draw");
 								w.redrawGraphs(false);
-								//System.out.println("after draw");
+								// System.out.println("after draw");
 								// GraphInstance graphInstance = new
 								// GraphInstance();
 								// GraphContainer con =
