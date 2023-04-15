@@ -30,7 +30,7 @@ public class GEMLayoutConfig<V> extends ConfigPanel implements ChangeListener{
 	//
 	// GEM Constants
 	//
-	public int ELEN = 128;
+	public int ELEN = 50; //128;
 
 	public int ELENSQR = ELEN * ELEN;
 
@@ -165,7 +165,7 @@ public class GEMLayoutConfig<V> extends ConfigPanel implements ChangeListener{
 			sliderElen = new JSlider();
 			sliderElen.setBorder(BorderFactory
 					.createTitledBorder("Preferred edge length"));
-			sliderElen.setMinimum(50);
+			sliderElen.setMinimum(10);
 			sliderElen.setMaximum(200);
 			sliderElen.setValue(ELEN);
 			sliderElen.setMajorTickSpacing(20);
