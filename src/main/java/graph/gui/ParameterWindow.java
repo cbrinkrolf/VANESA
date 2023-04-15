@@ -16,6 +16,9 @@ import util.KineticBuilder;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -34,6 +37,15 @@ public class ParameterWindow implements DocumentListener {
 	private FormulaPanel fp;
 	private final JTextPane formula;
 	private boolean editMode = false;
+
+	private JComboBox<String> kineticsComboBox;
+	private JRadioButton buttonRev;
+	private JRadioButton buttonIrrev;
+	private boolean recentRev = false;
+	private int recentComboBoxIndex = 0;
+
+	private static final String KINETIC_CONVENIENCE = "Convenience kinetic";
+	private static final String KINETIC_LAW_OF_MASS_ACTION = "Law of mass action";
 
 	public ParameterWindow(GraphElementAbstract gea) {
 		frame = new JFrame("Parameters");
@@ -210,8 +222,8 @@ public class ParameterWindow implements DocumentListener {
 		}
 	}
 
-	private void onGuessKineticClicked() {
-		guessKinetic();
+	private void onGenerateKineticClicked() {
+		generateKineticEquation();
 		repaintPanel();
 	}
 
@@ -313,24 +325,45 @@ public class ParameterWindow implements DocumentListener {
 			panel.add(fp, "span 20, wrap");
 		}
 		if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {
-			JButton guessKinetic = new JButton("apply kinetic");
-			guessKinetic.setToolTipText("Applies convenience kinetic");
-			guessKinetic.addActionListener(e -> onGuessKineticClicked());
-			panel.add(guessKinetic, "");
-			JButton setValues = new JButton("BRENDA kinetic parameters");
-			setValues.setToolTipText("Browse BRENDA for kinetic parameters (km and kcat)");
+			MigLayout layout = new MigLayout("", "[left]");
+			JPanel kineticsPanel = new JPanel(layout);
+			kineticsComboBox = new JComboBox<>();
+			kineticsComboBox.addItem(KINETIC_CONVENIENCE);
+			kineticsComboBox.addItem(KINETIC_LAW_OF_MASS_ACTION);
+
+			AutoCompleteDecorator.decorate(kineticsComboBox);
+			kineticsComboBox.setSelectedIndex(recentComboBoxIndex);
+			kineticsPanel.add(kineticsComboBox, "");
+
+			ButtonGroup group = new ButtonGroup();
+			buttonRev = new JRadioButton("reversible");
+			buttonRev.setSelected(recentRev);
+			buttonIrrev = new JRadioButton("irreversible");
+			buttonIrrev.setSelected(!recentRev);
+			group.add(buttonRev);
+			group.add(buttonIrrev);
+			kineticsPanel.add(buttonRev);
+			kineticsPanel.add(buttonIrrev);
+
+			JButton generateKinetic = new JButton("generate");
+			generateKinetic.setToolTipText("Generates equation for selected kinetic");
+			generateKinetic.addActionListener(e -> onGenerateKineticClicked());
+			kineticsPanel.add(generateKinetic, "wrap");
+			JButton setValues = new JButton("Open kinetic parameters browser");
+			setValues.setToolTipText("Browse kinetic parameters (km and kcat), currently based on BRENDA");
 			setValues.addActionListener(e -> onSetValuesClicked());
-			panel.add(setValues, "span 2, wrap");
+			kineticsPanel.add(setValues, "wrap");
+			panel.add(kineticsPanel, "span 7, wrap");
 		}
 		panel.add(new JSeparator(), "span, growx, gaptop 7 ");
 
-		panel.add(new JLabel("Name"), "span 1, gaptop 2 ");
+		panel.add(new JLabel("Name:"), "span 1, gaptop 2 ");
 		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
 
-		panel.add(new JLabel("Value"), "span 1, gapright 4");
+		panel.add(new JLabel("Value:"), "span 1, gapright 4");
 		panel.add(value, "span,wrap,growx ,gap 10, gaptop 2");
 
-		panel.add(new JLabel("Unit"), "span 1, gapright 4");
+		panel.add(new JLabel("Unit:"), "span 1, gapright 4");
 		panel.add(unit, "span,wrap,growx ,gap 10, gaptop 2");
 
 		panel.add(add, "wrap");
@@ -361,11 +394,30 @@ public class ParameterWindow implements DocumentListener {
 		}
 	}
 
-	private void guessKinetic() {
+	private void generateKineticEquation() {
 		if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {
+			String kinetic = kineticsComboBox.getSelectedItem().toString();
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) gea;
-			String kinetic = KineticBuilder.createConvenienceKinetic(bna);
-			formula.setText(kinetic);
+			String equation = "";
+			switch (kinetic) {
+			case KINETIC_CONVENIENCE:
+				if (buttonRev.isSelected()) {
+					equation = KineticBuilder.createConvenienceKineticReversible(bna, null);
+				} else if (buttonIrrev.isSelected()) {
+					equation = KineticBuilder.createConvenienceKineticIrreversible(bna, null);
+				}
+				break;
+			case KINETIC_LAW_OF_MASS_ACTION:
+				if (buttonRev.isSelected()) {
+					equation = KineticBuilder.createLawOfMassActionKineticReversible(bna, null);
+				} else if (buttonIrrev.isSelected()) {
+					equation = KineticBuilder.createLawOfMassActionKineticIrreversible(bna, null);
+				}
+				break;
+			}
+			recentRev = buttonRev.isSelected();
+			recentComboBoxIndex = kineticsComboBox.getSelectedIndex();
+			formula.setText(equation);
 			formula.requestFocus();
 		}
 	}

@@ -799,7 +799,7 @@ public class MenuListener implements ActionListener {
 					for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 						if (bna instanceof DynamicNode) {
 							DynamicNode dn = (DynamicNode) bna;
-							String maximalSpeed = KineticBuilder.createConvenienceKinetic(bna);
+							String maximalSpeed = KineticBuilder.createConvenienceKineticReversible(bna, pw);
 							dn.setMaximalSpeed(maximalSpeed);
 						}
 					}

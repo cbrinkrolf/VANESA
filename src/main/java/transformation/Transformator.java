@@ -747,12 +747,12 @@ public class Transformator {
 
 		// avoiding duplicate names
 		int i = 1;
-		while (pw.getAllNodeNames().contains("p" + i)) {
+		while (petriNet.getAllNodeNames().contains("p" + i)) {
 			i++;
 		}
 		String defaultPName = "p" + i;
 		i = 1;
-		while (pw.getAllNodeNames().contains("t" + i)) {
+		while (petriNet.getAllNodeNames().contains("t" + i)) {
 			i++;
 		}
 		String defaultTName = "t" + i;
@@ -1027,9 +1027,9 @@ public class Transformator {
 		for (String key : rn.getParameterMap().keySet()) {
 			orgValue = rn.getParameterMap().get(key);
 			if (orgValue == null || orgValue.trim().length() < 1) {
-				continue;
+				continue;//orgValue = "";
 			}
-			// System.out.println("key: " + key + " value: " + value);
+			// System.out.println("key: " + key + " value: " + orgValue);
 			value = replaceParametersToValues(orgValue, match);
 			switch (key) {
 			case "name":
@@ -1037,16 +1037,19 @@ public class Transformator {
 				String name = "";
 				// string = this.evalParameter(possibleParams, value, String.class, match);
 				string = value;
+				//System.out.println("string: " + value);
 				if (string == null || string.trim().length() == 0) {
 					// avoiding duplicate names
 					int i = 1;
 					if (petriNode instanceof Place) {
-						while (pw.getAllNodeNames().contains("p" + i)) {
+						//System.out.println(petriNet.getAllNodeNames());
+						while (petriNet.getAllNodeNames().contains("p" + i)) {
 							i++;
 						}
 						name = "p" + i;
+						//System.out.println("name = " + name);
 					} else {
-						while (pw.getAllNodeNames().contains("t" + i)) {
+						while (petriNet.getAllNodeNames().contains("t" + i)) {
 							i++;
 						}
 						name = "t" + i;
@@ -1060,7 +1063,7 @@ public class Transformator {
 							node = petriNet.getNodeByName(string);
 							if (bn2pnMap.values().contains(node)) {
 								int i = 1;
-								while (pw.getAllNodeNames().contains(string + i)) {
+								while (petriNet.getAllNodeNames().contains(string + i)) {
 									i++;
 								}
 								name = string + i;
@@ -1068,7 +1071,7 @@ public class Transformator {
 								// node with same name is not mapped
 								int i = 1;
 								String tmpName = initialPNNodeName.get(node) + i;
-								while (pw.getAllNodeNames().contains(tmpName) || tmpName.equals(string)) {
+								while (petriNet.getAllNodeNames().contains(tmpName) || tmpName.equals(string)) {
 									i++;
 									tmpName = initialPNNodeName.get(node) + i;
 								}
@@ -1079,7 +1082,7 @@ public class Transformator {
 						} else {
 							// node is not mapped to a BNA
 							int i = 1;
-							while (pw.getAllNodeNames().contains(string + i)) {
+							while (petriNet.getAllNodeNames().contains(string + i)) {
 								i++;
 							}
 							name = string + i;
@@ -1095,66 +1098,81 @@ public class Transformator {
 
 				break;
 			case "tokenStart":
-				if (petriNode instanceof Place) {
-					p = (Place) petriNode;
-					d = evaluateDouble(value);
-					if (p instanceof DiscretePlace) {
-						d = Double.valueOf(Math.round(d));
-					}
-					p.setTokenStart(d);
-					if (r.getMappedBnode(rn) != null) {
-						// p.setConstant(match.getMapping(r.getMappedBnode(pnNode)).isConstant());
+				if (orgValue.length() > 0) {
+					if (petriNode instanceof Place) {
+						p = (Place) petriNode;
+						d = evaluateDouble(value);
+						if (p instanceof DiscretePlace) {
+							d = Double.valueOf(Math.round(d));
+						}
+						p.setTokenStart(d);
+						if (r.getMappedBnode(rn) != null) {
+							// p.setConstant(match.getMapping(r.getMappedBnode(pnNode)).isConstant());
+						}
 					}
 				}
 				break;
 			case "tokenMin":
-				if (petriNode instanceof Place) {
-					p = (Place) petriNode;
-					d = evaluateDouble(value);
-					if (p instanceof DiscretePlace) {
-						d = Double.valueOf(Math.round(d));
+				if (orgValue.length() > 0) {
+					if (petriNode instanceof Place) {
+						p = (Place) petriNode;
+						d = evaluateDouble(value);
+						if (p instanceof DiscretePlace) {
+							d = Double.valueOf(Math.round(d));
+						}
+						p.setTokenMin(d);
 					}
-					p.setTokenMin(d);
 				}
 				break;
 			case "tokenMax":
-				if (petriNode instanceof Place) {
-					p = (Place) petriNode;
-					d = evaluateDouble(value);
-					if (p instanceof DiscretePlace) {
-						d = Double.valueOf(Math.round(d));
+				if (orgValue.length() > 0) {
+					if (petriNode instanceof Place) {
+						p = (Place) petriNode;
+						d = evaluateDouble(value);
+						if (p instanceof DiscretePlace) {
+							d = Double.valueOf(Math.round(d));
+						}
+						p.setTokenMax(d);
 					}
-					p.setTokenMax(d);
 				}
 				break;
 			case "firingCondition":
-				if (petriNode instanceof Transition) {
-					t = (Transition) petriNode;
-					t.setFiringCondition(value);
+				if (orgValue.length() > 0) {
+					if (petriNode instanceof Transition) {
+						t = (Transition) petriNode;
+						t.setFiringCondition(value);
+					}
 				}
 				break;
 			case "maximalSpeed":
-				if (petriNode instanceof ContinuousTransition) {
-					ContinuousTransition ct = (ContinuousTransition) petriNode;
-					ct.setMaximalSpeed(value);
+				if (orgValue.length() > 0) {
+					if (petriNode instanceof ContinuousTransition) {
+						ContinuousTransition ct = (ContinuousTransition) petriNode;
+						ct.setMaximalSpeed(value);
+					}
 				}
 				break;
 			case "delay":
-				if (petriNode instanceof DiscreteTransition) {
-					// d = this.evalParameter(possibleParams, value, Double.class, match);
-					// if (d != null) {
-					// ((DiscreteTransition) gea).setDelay(d);
-					// }
+				if (orgValue.length() > 0) {
+					if (petriNode instanceof DiscreteTransition) {
+						// d = this.evalParameter(possibleParams, value, Double.class, match);
+						// if (d != null) {
+						// ((DiscreteTransition) gea).setDelay(d);
+						// }
+					}
 				}
 			case "isConstant":
-				petriNode.setConstant(evaluateBoolean(value));
+				if (orgValue.length() > 0) {
+					petriNode.setConstant(evaluateBoolean(value));
+				}
 				break;
-
 			case "isKnockedOut":
-				if (petriNode instanceof Transition) {
-					t = (Transition) petriNode;
+				if (orgValue.length() > 0) {
+					if (petriNode instanceof Transition) {
+						t = (Transition) petriNode;
 
-					t.setKnockedOut(evaluateBoolean(value));
+						t.setKnockedOut(evaluateBoolean(value));
+					}
 				}
 				break;
 			}
@@ -1168,6 +1186,7 @@ public class Transformator {
 				this.copyParameters(bea, petriNode);
 			}
 		}
+
 	}
 
 	private void setTransformationParameters(PNArc arc, RuleEdge re, Match match) {
@@ -1185,7 +1204,7 @@ public class Transformator {
 				continue;
 			}
 			value = replaceParametersToValues(orgValue, match);
-			// System.out.println("key: " + key + " value: " + value);
+			//System.out.println("key: " + key + " value: " + value);
 			switch (key) {
 			// case "name":
 			// break;
@@ -1290,7 +1309,7 @@ public class Transformator {
 			testParam = re.getName() + "." + parameter;
 			if (s.contains(testParam) && possibleParams.containsKey(testParam)) {
 				edges.add(match.getMapping(re));
-				//System.out.println("contains: " + re.getName() + "." + parameter);
+				// System.out.println("contains: " + re.getName() + "." + parameter);
 			}
 		}
 		return edges;

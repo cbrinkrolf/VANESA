@@ -79,7 +79,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private MyJFormattedTextField tokenMax;
 	private MyJFormattedTextField concentrationMin;
 	private MyJFormattedTextField concentrationMax;
-
+	
 	private JCheckBox isDirected;
 
 	private void updateWindow(GraphElementAbstract element) {
