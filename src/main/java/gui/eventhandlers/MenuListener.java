@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import javax.swing.JButton;
@@ -850,7 +851,13 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (pw != null && pw.getTransformationInformation() != null
 						&& pw.getTransformationInformation().getPetriNet() != null && !pw.isPetriNet()) {
-					CreatePathway.showPathway(pw.getTransformationInformation().getPetriNet());
+					Pathway petriNet = pw.getTransformationInformation().getPetriNet();
+					Map<BiologicalNodeAbstract, Point2D> staticNodes = new HashMap<>();
+					for (BiologicalNodeAbstract bna : pw.getTransformationInformation().getBnToPnMapping().values()) {
+						staticNodes.put(bna, petriNet.getGraph().getVertexLocation(bna));
+					}
+					petriNet.getGraph().changeToGEMLayout(staticNodes);
+					CreatePathway.showPathway(petriNet);
 				} else {
 					PopUpDialog.getInstance().show("Error",
 							"Please transform the biological network into a Petri net first!.");

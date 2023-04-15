@@ -175,10 +175,14 @@ public class PetriNetSimulation implements ActionListener {
 
 								override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize="
 										+ stopTime / intervals + ",tolerance=" + tolerance + ",seed=" + seed;
+								System.out.println("parameter changed: "+flags.isParameterChanged());
 								if (flags.isParameterChanged()) {
 									GraphElementAbstract gea;
 									for (Parameter param : pw.getChangedParameters().keySet()) {
+										System.out.println(param.getName());
+										System.out.println(param.getValue());
 										gea = pw.getChangedParameters().get(param);
+										System.out.println(gea.getName());
 										BiologicalNodeAbstract bna;
 										if (gea instanceof BiologicalNodeAbstract) {
 											bna = (BiologicalNodeAbstract) gea;

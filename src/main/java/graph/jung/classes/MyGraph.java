@@ -885,6 +885,10 @@ public class MyGraph {
 			changeToLayout(new GEMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 		}
 	}
+	
+	public void changeToGEMLayout(Map<BiologicalNodeAbstract, Point2D> mapOfStaticNodes){
+		changeToLayout(new GEMLayout<>(g, mapOfStaticNodes));
+	}
 
 	public void changeToHEBLayout() {
 		if (layout instanceof HEBLayout && !((HEBLayout) layout).getConfig().resetLayout()) {

@@ -364,7 +364,12 @@ public class RuleEditingWindow implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if (e.getActionCommand().equals("okButtonRE")) {
-			convertGraphToRule(false);
+			if (bn.hasGotAtLeastOneElement()) {
+				convertGraphToRule(false);
+				frame.setVisible(false);
+			} else {
+				PopUpDialog.getInstance().show("Empty Graph", "The biological pattern of a rule must not be empty!");
+			}
 		} else if (e.getActionCommand().equals("saveCopy")) {
 			convertGraphToRule(true);
 		} else if (e.getActionCommand().equals("cancelRE")) {
@@ -1204,7 +1209,6 @@ public class RuleEditingWindow implements ActionListener {
 		// rule.getIncomingDirectedEdgeCount(rn1) + " out: "
 		// + rule.getOutgoingDirectedEdgeCount(rn1));
 		// }
-		frame.setVisible(false);
 	}
 
 	private void deleteBNSelection() {
