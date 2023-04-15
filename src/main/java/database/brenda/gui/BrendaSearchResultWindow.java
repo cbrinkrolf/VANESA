@@ -100,6 +100,7 @@ public class BrendaSearchResultWindow extends SearchResultWindow<DBBrendaReactio
         sorter.setRowFilter(null);
         table.setRowSorter(sorter);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        table.setRowSelectionInterval(0, 0);
         mainPanel.add(new JLabel("Following enzymes have been found. Please select the enzymes of interest"), "span 2");
     }
 
