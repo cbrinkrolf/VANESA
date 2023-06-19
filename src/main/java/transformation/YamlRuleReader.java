@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -18,7 +19,7 @@ public class YamlRuleReader {
 	private YamlRule testrule = null;
 
 	private Iterable<Object> readYamlRules(InputStream is) {
-		Yaml yaml = new Yaml(new Constructor(YamlRule.class));
+		Yaml yaml = new Yaml(new Constructor(YamlRule.class, new LoaderOptions()));
 		return yaml.loadAll(is);
 	}
 
