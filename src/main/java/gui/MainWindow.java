@@ -1,8 +1,6 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -153,9 +151,9 @@ public class MainWindow implements ApplicationListener {
 		// }
 
 		ScreenSize screenSize = new ScreenSize();
-		int windowWidth = (int) screenSize.getwidth() - 70;
-		int windowHeight = (int) screenSize.getheight() - 100;
-		if (screenSize.getwidth() > 1024) {
+		int windowWidth = screenSize.width - 70;
+		int windowHeight = screenSize.height - 100;
+		if (screenSize.width > 1024) {
 			windowWidth = 1024;
 			windowHeight = windowWidth * 2 / 3;
 		}
@@ -494,11 +492,15 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public JFrame getFrame() {
-		return this.frame;
+		return frame;
 	}
 
 	public MenuBarClass getMenu() {
 		return myMenu;
+	}
+
+	public void setCursor(int cursor) {
+		frame.setCursor(new Cursor(cursor));
 	}
 
 	public void setFullScreen() {

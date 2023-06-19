@@ -211,7 +211,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 				}
 			if (it != null && it.hasNext()) {
 				String[] details = it.next();
-				kc = new KEGGConnector(details[0], details[2], !(answer == SEPARATE_TABS));
+				kc = new KEGGConnector(details[0], details[2], answer != SEPARATE_TABS);
 				kc.addPropertyChangeListener(this);
 				kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
 				kc.setAutoCoarse(dsrw.getAutoCoarse());

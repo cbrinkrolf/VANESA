@@ -226,8 +226,6 @@ public class Pathway implements Cloneable {
 	}
 
 	public BiologicalEdgeAbstract addEdge(BiologicalEdgeAbstract bea) {
-
-		// System.out.println("edge hinzugefuegt");
 		if (bea != null) {
 			if (!bea.getFrom().isCoarseNode() && !bea.getTo().isCoarseNode()) {
 				BiologicalNodeAbstract.addConnectingEdge(bea);
@@ -1259,7 +1257,6 @@ public class Pathway implements Cloneable {
 
 	/**
 	 * Add all selected Nodes to one Group
-	 *
 	 */
 	public void groupSelectedNodes() {
 		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph().getVisualizationViewer();
@@ -1280,7 +1277,6 @@ public class Pathway implements Cloneable {
 
 	/**
 	 * If one node is selected, the group members will be picked too.
-	 *
 	 */
 	public void pickGroup() {
 		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph().getVisualizationViewer();
@@ -1297,7 +1293,6 @@ public class Pathway implements Cloneable {
 
 	/**
 	 * Delete selected group.
-	 *
 	 */
 	public void deleteGroup() {
 		MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph().getVisualizationViewer();
@@ -1343,7 +1338,6 @@ public class Pathway implements Cloneable {
 	}
 
 	private void removeSelectedVertices() {
-		// System.out.println("bla");
 		if (getGraph().getAllVertices().size() > 0) {
 			MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv = getGraph()
 					.getVisualizationViewer();
@@ -1431,7 +1425,7 @@ public class Pathway implements Cloneable {
 		wvv.setBackground(Color.white);
 		wvv.setRenderContext(v.getRenderContext());
 
-		double scaleV = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
+		/*double scaleV = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.VIEW).getScale();
 		double scaleL = wvv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).getScale();
 		double scale;
 		if (scaleV < 1) {
@@ -1447,7 +1441,7 @@ public class Pathway implements Cloneable {
 			width = width * scale;
 		} else {
 			height = height * scale;
-		}
+		}*/
 
 		// Point2D p1inv = v.getRenderContext().getMultiLayerTransformer().transform(new
 		// Point2D.Double(gc.getMinX() + gc.getWidth(), gc.getMinY() + gc.getHeight()));
@@ -1483,10 +1477,7 @@ public class Pathway implements Cloneable {
 
 	public int getPlaceCount() {
 		int count = 0;
-		Iterator<BiologicalNodeAbstract> it = getAllGraphNodes().iterator();
-		BiologicalNodeAbstract bna;
-		while (it.hasNext()) {
-			bna = it.next();
+		for (BiologicalNodeAbstract bna : getAllGraphNodes()) {
 			if (bna instanceof Place && !bna.isLogical()) {
 				count++;
 			}
@@ -1496,10 +1487,7 @@ public class Pathway implements Cloneable {
 
 	public int getTransitionCount() {
 		int count = 0;
-		Iterator<BiologicalNodeAbstract> it = getAllGraphNodes().iterator();
-		BiologicalNodeAbstract bna;
-		while (it.hasNext()) {
-			bna = it.next();
+		for (BiologicalNodeAbstract bna : getAllGraphNodes()) {
 			if (bna instanceof Transition && !bna.isLogical()) {
 				count++;
 			}
@@ -1541,47 +1529,27 @@ public class Pathway implements Cloneable {
 	}
 
 	public void setPlotColorPlacesTransitions(boolean override) {
-
-		Iterator<BiologicalNodeAbstract> it = getAllGraphNodesSortedAlphabetically().iterator();
-		BiologicalNodeAbstract bna;
-
 		int i = 0;
 		int j = 0;
-		Color c;
-		Place p;
-		Transition t;
-		while (it.hasNext()) {
-			bna = it.next();
-			// System.out.println(bna.getName());
+		for (final BiologicalNodeAbstract bna : getAllGraphNodesSortedAlphabetically()) {
 			if (bna instanceof Place && !bna.isLogical()) {
-				p = (Place) bna;
-				c = Color.getHSBColor(i * 1.0f / (getPlaceCount()), 1, 1);
-				// System.out.println(bna.getName());
-				// System.out.println(i * 1.0f / (getPlaceCount()));
-				// System.out.println(c);
+				Place p = (Place) bna;
+				Color c = Color.getHSBColor(i * 1f / getPlaceCount(), 1, 1);
 				if (override) {
 					p.setPlotColor(c);
-				} else {
-					if (p.getPlotColor() == null) {
-						p.setPlotColor(c);
-					}
+				} else if (p.getPlotColor() == null) {
+					p.setPlotColor(c);
 				}
 				i++;
-				// System.out.println("i: " + i);
 			} else if (bna instanceof Transition && !bna.isLogical()) {
-				t = (Transition) bna;
-				c = Color.getHSBColor(j * 1.0f / (getTransitionCount()), 1, 1);
-				// System.out.println(j * 1.0f / (getTransitionCount()));
-				// System.out.println(c);
+				Transition t = (Transition) bna;
+				Color c = Color.getHSBColor(j * 1f / getTransitionCount(), 1, 1);
 				if (override) {
 					t.setPlotColor(c);
-				} else {
-					if (t.getPlotColor() == null) {
-						t.setPlotColor(c);
-					}
+				} else if (t.getPlotColor() == null) {
+					t.setPlotColor(c);
 				}
 				j++;
-				// System.out.println("j:"+j);
 			}
 		}
 	}

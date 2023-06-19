@@ -95,18 +95,13 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
     }
 
     @Override
-    protected Void doInBackground() throws Exception {
+    protected Void doInBackground() {
         MainWindow.getInstance().showProgressBar("Loading Data");
-        //bar.setProgressBarString("Getting Pathway Information");
         getPathway(pathwayID);
-        //bar.setProgressBarString("Getting Pathway Elements");
-
         allOrgElements = KEGGQueries.getPathwayElements(pathwayOrg + pathwayNumber);
         allEcElements = KEGGQueries.getPathwayElements("ec" + pathwayNumber);
         allRnElements = KEGGQueries.getPathwayElements("rn" + pathwayNumber);
         allKoElements = KEGGQueries.getPathwayElements("ko" + pathwayNumber);
-
-        //bar.setProgressBarString("Getting Element Relations");
 
         allOrgRelations = KEGGQueries.getRelations(pathwayOrg + pathwayNumber);
         allEcRelations = KEGGQueries.getRelations("ec" + pathwayNumber);
@@ -389,9 +384,8 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                 // Vertex vertex1 = bna1.getVertex();
                 // Vertex vertex2 = bna2.getVertex();
                 if (subtype != null) {
-                    //System.out.println("subtype not null:"+subtypeValue+" bna:"+subtype.getName()+" "+subtype.getLabel());
                     // Vertex subVertex = subtype.getVertex();
-                    if (!pw.existEdge(bna1, subtype) && (!pw.existEdge(subtype, bna1))) {
+                    if (!pw.existEdge(bna1, subtype) && !pw.existEdge(subtype, bna1)) {
                         Compound c = new Compound("", "", bna1, subtype);
                         c.setDirected(true);
                         if (specific)
@@ -401,7 +395,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                         pw.updateMyGraph();
                     }
 
-                    if (!pw.existEdge(subtype, bna2) && (!pw.existEdge(bna2, subtype))) {
+                    if (!pw.existEdge(subtype, bna2) && !pw.existEdge(bna2, subtype)) {
                         Compound c2 = new Compound("", "", subtype, bna2);
                         c2.setDirected(true);
                         if (specific)
@@ -414,7 +408,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                 // if (bna1.getBiologicalElement().equals(Elementdeclerations.dna)
                 // && bna2.getBiologicalElement().equals(biologicalElements.Elementdeclerations.dna))
                 {
-                    if (!pw.existEdge(bna1, bna2) && (!pw.existEdge(bna2, bna1))) {
+                    if (!pw.existEdge(bna1, bna2) && !pw.existEdge(bna2, bna1)) {
                         BiologicalEdgeAbstract bea;
                         switch (edgeType) {
                             case Elementdeclerations.dephosphorylationEdge:

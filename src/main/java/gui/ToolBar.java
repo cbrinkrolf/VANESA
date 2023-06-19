@@ -579,14 +579,14 @@ public class ToolBar {
 				if (!node.isCoarseNode() && !node.isMarkedAsCoarseNode()) {
 					continue;
 				}
-				w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+				w.setCursor(Cursor.WAIT_CURSOR);
 				for (BiologicalNodeAbstract n : node.getVertices().keySet()) {
 					node.getVertices().put(n, GraphInstance.getPathway().getVertices().get(n));
 				}
 				String newPathwayName = con.addPathway(node.getLabel(), node);
 				Pathway pw = con.getPathway(newPathwayName);
 				w.addTab(pw.getTab().getTitleTab());
-				w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				w.setCursor(Cursor.DEFAULT_CURSOR);
 				GraphInstance.getPathway().setIsPetriNet(node.isPetriNet());
 				w.getBar().paintToolbar(node.isPetriNet());
 				w.updateAllGuiElements();
