@@ -23,7 +23,8 @@ public class DoubleHashMap<KEY1, KEY2, V> {
     }
 
     public V get(KEY1 k1, KEY2 k2) {
-        return map.get(k1).get(k2);
+        HashMap<KEY2, V> value = map.get(k1);
+        return value != null ? value.get(k2) : null;
     }
 
     public void clear() {

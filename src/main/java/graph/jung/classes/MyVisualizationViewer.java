@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import biologicalElements.Pathway;
@@ -98,15 +99,15 @@ public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
 
     public void setMousePoint(Point2D point) {
         this.mousePoint = point;
-        // drawMousePoint(g2d);
         this.repaint(getWidth() - 75, 0, 75, 40);
     }
 
     private void drawMousePoint(Graphics2D g2d) {
         g2d.setFont(new Font("default", Font.PLAIN, 12));
         g2d.setColor(Color.black);
-        g2d.drawString("x: " + String.format("%.3f", mousePoint.getX()), getWidth() - 75, 22);
-        g2d.drawString("y: " + String.format("%.3f", mousePoint.getY()), getWidth() - 75, 35);
+        String text = (int) mousePoint.getX() + ", " + (int) mousePoint.getY();
+        Rectangle2D bounds = g2d.getFont().getStringBounds(text, g2d.getFontRenderContext());
+        g2d.drawString(text, (int) (getWidth() - bounds.getWidth()) - 10, 22);
     }
 
     private void printFPS() {

@@ -42,7 +42,6 @@ import configurations.gui.Settings;
 import configurations.gui.VisualizationDialog;
 import graph.GraphContainer;
 import graph.eventhandlers.GraphTabListener;
-import graph.eventhandlers.GraphWindowListener;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.algorithms.CenterWindow;
 import gui.algorithms.ScreenSize;
@@ -325,7 +324,6 @@ public class MainWindow implements ApplicationListener {
 		int id = maxPanelID;
 		tabbedPanels.put(id, tp);
 		View view = new View("Network Modelling", null, tp);
-		view.addListener(new GraphWindowListener());
 		views.put(id, view);
 		setWindowProperties(id);
 		viewMap.addView(id, view);

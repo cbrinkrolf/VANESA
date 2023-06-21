@@ -15,52 +15,38 @@ import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
 class SuggestionLabel extends JLabel {
-
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private boolean focused = false;
+    private boolean focused = false;
     private final JWindow autoSuggestionsPopUpWindow;
     private final JTextPane textField;
-    private final AutoSuggester autoSuggestor;
-    private Color suggestionsTextColor, suggestionBorderColor;
+    private final AutoSuggester autoSuggester;
+    private final Color suggestionsTextColor;
+    private final Color suggestionBorderColor;
 
-    public SuggestionLabel(String string, final Color borderColor, Color suggestionsTextColor, AutoSuggester autoSuggestor) {
+    public SuggestionLabel(String string, final Color borderColor, Color suggestionsTextColor,
+                           AutoSuggester autoSuggester) {
         super(string);
-
         this.suggestionsTextColor = suggestionsTextColor;
-        this.autoSuggestor = autoSuggestor;
-        this.textField = autoSuggestor.getTextField();
+        this.autoSuggester = autoSuggester;
+        this.textField = autoSuggester.getTextField();
         this.suggestionBorderColor = borderColor;
-        this.autoSuggestionsPopUpWindow = autoSuggestor.getAutoSuggestionPopUpWindow();
-
+        this.autoSuggestionsPopUpWindow = autoSuggester.getAutoSuggestionPopUpWindow();
         initComponent();
     }
 
     private void initComponent() {
         setFocusable(true);
         setForeground(suggestionsTextColor);
-
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent me) {
                 super.mouseClicked(me);
-
                 replaceWithSuggestedText();
-
                 autoSuggestionsPopUpWindow.setVisible(false);
             }
         });
-
         getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, true), "Enter released");
         getActionMap().put("Enter released", new AbstractAction() {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
+            @Override
             public void actionPerformed(ActionEvent ae) {
                 replaceWithSuggestedText();
                 autoSuggestionsPopUpWindow.setVisible(false);
@@ -69,11 +55,7 @@ class SuggestionLabel extends JLabel {
     }
 
     public void setFocused(boolean focused) {
-        if (focused) {
-            setBorder(new LineBorder(suggestionBorderColor));
-        } else {
-            setBorder(null);
-        }
+        setBorder(focused ? new LineBorder(suggestionBorderColor) : null);
         repaint();
         this.focused = focused;
     }
@@ -85,10 +67,10 @@ class SuggestionLabel extends JLabel {
     private void replaceWithSuggestedText() {
         String suggestedWord = getText();
         String text = textField.getText();
-        String typedWord = autoSuggestor.getCurrentlyTypedWord();
+        String typedWord = autoSuggester.getCurrentlyTypedWord();
         String t = text.substring(0, text.lastIndexOf(typedWord));
         String tmp = t + text.substring(text.lastIndexOf(typedWord)).replace(typedWord, suggestedWord);
         textField.setText(tmp + " ");
-        textField.setCaretPosition(t.length()+suggestedWord.length()+1);
+        textField.setCaretPosition(t.length() + suggestedWord.length() + 1);
     }
 }

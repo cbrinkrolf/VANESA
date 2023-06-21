@@ -43,33 +43,22 @@ import net.miginfocom.swing.MigLayout;
 
 public class VisualizationDialog {
 	public static final String DEFAULTYAML = "defaultYaml";
-
-	private YamlToObjectParser yamlToObjectParser;
-
-	private JPanel panel;
-
-	private JLabel loadedYamlLabel;
-
-	private static List<String> biologicalElements = null;
-
 	private static final String[] shapes = { "ellipse", "triangle", "rectangle", "rounded rectangle", "pentagon",
-			"hexagon", "octagon", "5 star", "6 star", "7 star", "8 star", };
-
+											 "hexagon", "octagon", "5 star", "6 star", "7 star", "8 star", };
 	private static final String[] size = { "0.5", "1.0", "2.0" };
 
-	private JComboBox<String> biologicalElementsBox;
-	private JComboBox<String> shapeBox;
-	private JComboBox<String> sizeMultiplierBox;
-	private JColorChooser colorChooser;
-
+	private JPanel panel;
+	private JLabel loadedYamlLabel;
+	private final JComboBox<String> biologicalElementsBox;
+	private final JComboBox<String> shapeBox;
+	private final JComboBox<String> sizeMultiplierBox;
+	private final JColorChooser colorChooser;
 	private String loadedYaml = null;
 	private MainWindow mWindow;
 
-	private Elementdeclerations elementdeclerations = new Elementdeclerations();
-
 	public VisualizationDialog() {
-
-		biologicalElements = elementdeclerations.getNotPNNodeDeclarations();
+		Elementdeclerations elementdeclerations = new Elementdeclerations();
+		List<String> biologicalElements = elementdeclerations.getNotPNNodeDeclarations();
 
 		MigLayout layout = new MigLayout("", "[][grow]");
 
@@ -79,18 +68,18 @@ public class VisualizationDialog {
 		panel.add(new JSeparator(), "span, growx, wrap");
 
 		panel.add(new JLabel("Element"));
-		biologicalElementsBox = new JComboBox<String>();
+		biologicalElementsBox = new JComboBox<>();
 		biologicalElementsBox.setModel(
-				new DefaultComboBoxModel<String>(biologicalElements.toArray(new String[biologicalElements.size()])));
+				new DefaultComboBoxModel<>(biologicalElements.toArray(new String[biologicalElements.size()])));
 
 		panel.add(biologicalElementsBox, "span 2, right, growx, wrap");
 
 		panel.add(new JLabel("Shape"));
-		shapeBox = new JComboBox<String>(shapes);
+		shapeBox = new JComboBox<>(shapes);
 		panel.add(shapeBox, "span, wrap, growx");
 
 		panel.add(new JLabel("Size"));
-		sizeMultiplierBox = new JComboBox<String>(size);
+		sizeMultiplierBox = new JComboBox<>(size);
 		sizeMultiplierBox.setSelectedIndex(1);
 		panel.add(sizeMultiplierBox, "span, growx, wrap");
 
@@ -119,46 +108,42 @@ public class VisualizationDialog {
 			System.out.println("MainWindow YamlSource Null Error");
 		}
 		JButton loadYamlButton = new JButton("Load Yaml");
-		loadYamlButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == loadYamlButton) {
-					JFileChooser fileChooser = new JFileChooser("Choose file");
-					fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-					fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-					FileNameExtensionFilter yamlFilter = new FileNameExtensionFilter("Yaml Files", "yml", "yaml");
-					fileChooser.setFileFilter(yamlFilter);
+		loadYamlButton.addActionListener(e -> {
+			if (e.getSource() == loadYamlButton) {
+				JFileChooser fileChooser = new JFileChooser("Choose file");
+				fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				FileNameExtensionFilter yamlFilter = new FileNameExtensionFilter("Yaml Files", "yml", "yaml");
+				fileChooser.setFileFilter(yamlFilter);
 
-					int dataChosen = fileChooser.showOpenDialog(null);
+				int dataChosen = fileChooser.showOpenDialog(null);
 
-					if (dataChosen == JFileChooser.APPROVE_OPTION) {
-						loadedYaml = fileChooser.getSelectedFile().getPath();
-						loadedYamlLabel.setText(loadedYaml);
-						mWindow.setLoadedYaml(loadedYaml);
-						ConnectionSettings.getInstance().setYamlVisualizationFile(loadedYaml);
-						PrintWriter pWriter = null;
-						try {
-							pWriter = new PrintWriter(new BufferedWriter(
-									new FileWriter(new File("YamlSourceFile.txt").getAbsolutePath())));
-							pWriter.println(loadedYaml);
-							pWriter.println(
-									"If you want to use your own YAML configuration file, THIS file has to be at the same location as the VANESA jar!");
-						} catch (IOException e1) {
-							System.out.println("YamlSource Writer Error");
-							e1.printStackTrace();
-						} finally {
-							if (pWriter != null) {
-								pWriter.flush();
-								pWriter.close();
-							}
+				if (dataChosen == JFileChooser.APPROVE_OPTION) {
+					loadedYaml = fileChooser.getSelectedFile().getPath();
+					loadedYamlLabel.setText(loadedYaml);
+					mWindow.setLoadedYaml(loadedYaml);
+					ConnectionSettings.getInstance().setYamlVisualizationFile(loadedYaml);
+					PrintWriter pWriter = null;
+					try {
+						pWriter = new PrintWriter(new BufferedWriter(
+								new FileWriter(new File("YamlSourceFile.txt").getAbsolutePath())));
+						pWriter.println(loadedYaml);
+						pWriter.println(
+								"If you want to use your own YAML configuration file, THIS file has to be at the same location as the VANESA jar!");
+					} catch (IOException e1) {
+						System.out.println("YamlSource Writer Error");
+						e1.printStackTrace();
+					} finally {
+						if (pWriter != null) {
+							pWriter.flush();
+							pWriter.close();
 						}
-						shapeBox.setEnabled(true);
-						sizeMultiplierBox.setEnabled(true);
-						colorChooser.setEnabled(true);
 					}
-					fileChooser.setVisible(true);
+					shapeBox.setEnabled(true);
+					sizeMultiplierBox.setEnabled(true);
+					colorChooser.setEnabled(true);
 				}
-
+				fileChooser.setVisible(true);
 			}
 		});
 		panel.add(labelButton, "gaptop 50, bot");
@@ -168,27 +153,22 @@ public class VisualizationDialog {
 				"To customize press export. The resulting file will take over all future customizations.");
 		JLabel spacer = new JLabel("");
 		JButton exportButton = new JButton("Export");
-		exportButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == exportButton) {
-					new SaveDialog(SaveDialog.FORMAT_YAML, SaveDialog.DATA_TYPE_VISUALIZATION_SETTINGS);
-					loadedYaml = MainWindow.getInstance().getLoadedYaml();
-					loadedYamlLabel.setText(MainWindow.getInstance().getLoadedYaml());
-					shapeBox.setEnabled(true);
-					sizeMultiplierBox.setEnabled(true);
-					colorChooser.setEnabled(true);
-				}
-
+		exportButton.addActionListener(e -> {
+			if (e.getSource() == exportButton) {
+				new SaveDialog(SaveDialog.FORMAT_YAML, SaveDialog.DATA_TYPE_VISUALIZATION_SETTINGS);
+				loadedYaml = MainWindow.getInstance().getLoadedYaml();
+				loadedYamlLabel.setText(MainWindow.getInstance().getLoadedYaml());
+				shapeBox.setEnabled(true);
+				sizeMultiplierBox.setEnabled(true);
+				colorChooser.setEnabled(true);
 			}
+
 		});
 		panel.add(spacer, "gaptop 10, bot");
 		panel.add(exportLabel, "gaptop 10, bot");
 		panel.add(exportButton, "span, right, gapleft 10, gaptop 10, bot");
 
 		Yaml yaml = new Yaml();
-
 		if (mWindow.getLoadedYaml() != null) {
 			loadedYaml = mWindow.getLoadedYaml();
 		} else {
@@ -201,20 +181,15 @@ public class VisualizationDialog {
 			colorChooser.setEnabled(false);
 		}
 
-		biologicalElementsBox.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent event) {
-				if (event.getStateChange() == ItemEvent.DESELECTED) {
-					yamlWriter(yaml, event.getItem().toString(), false);
-				}
+		biologicalElementsBox.addItemListener(event -> {
+			if (event.getStateChange() == ItemEvent.DESELECTED) {
+				yamlWriter(yaml, event.getItem().toString(), false);
 			}
 		});
-		// System.out.println("Dialog Konstruktor: " + loadedYaml);
 	}
 
 	public void yamlWriter(Yaml yaml, String selectedItem, boolean acceptMethodCall) {
-		InputStream input = null;
+		InputStream input;
 		BufferedReader reader = null;
 		if (loadedYaml != null) {
 			if (loadedYaml.equals(VisualizationDialog.DEFAULTYAML)) {
@@ -234,16 +209,14 @@ public class VisualizationDialog {
 				}
 			}
 
-			List<Object> docs = new LinkedList<Object>();
-
+			List<Object> docs = new LinkedList<>();
 			for (Object data : yaml.loadAll(reader)) {
 				Map<String, Map<String, Object>> object = (Map<String, Map<String, Object>>) data;
 				String preKeyValue = object.keySet().toString();
 				String keyValue = preKeyValue.substring(1, preKeyValue.length() - 1);
-				String element = selectedItem;
-				if (acceptMethodCall == false) {
+				if (!acceptMethodCall) {
 					if (biologicalElementsBox.getSelectedItem().toString().equals(keyValue)) {
-						if (shapeBox.isEnabled() == false && sizeMultiplierBox.isEnabled() == false) {
+						if (!shapeBox.isEnabled() && !sizeMultiplierBox.isEnabled()) {
 							shapeBox.setEnabled(true);
 							sizeMultiplierBox.setEnabled(true);
 							colorChooser.setEnabled(true);
@@ -260,20 +233,20 @@ public class VisualizationDialog {
 					}
 				}
 
-				if (element.equals(keyValue)) {
-					object.get(element).put("shape", (String) shapeBox.getSelectedItem());
-					object.get(element).put("sizefactor",
-							Double.parseDouble((String) sizeMultiplierBox.getSelectedItem()));
-					object.get(element).put("red", (int) colorChooser.getColor().getRed());
-					object.get(element).put("green", (int) colorChooser.getColor().getGreen());
-					object.get(element).put("blue", (int) colorChooser.getColor().getBlue());
+				if (selectedItem.equals(keyValue)) {
+					object.get(selectedItem).put("shape", shapeBox.getSelectedItem());
+					object.get(selectedItem).put("sizefactor",
+												 Double.parseDouble((String) sizeMultiplierBox.getSelectedItem()));
+					object.get(selectedItem).put("red", colorChooser.getColor().getRed());
+					object.get(selectedItem).put("green", colorChooser.getColor().getGreen());
+					object.get(selectedItem).put("blue", colorChooser.getColor().getBlue());
 				}
 				docs.add(object);
 			}
 
 			Writer writer = null;
 			if (loadedYaml != null) {
-				if (loadedYaml.equals(VisualizationDialog.DEFAULTYAML) == false) {
+				if (!loadedYaml.equals(VisualizationDialog.DEFAULTYAML)) {
 					try {
 						writer = new FileWriter(loadedYaml);
 					} catch (IOException e1) {
@@ -292,7 +265,7 @@ public class VisualizationDialog {
 	public void acceptConfig() {
 		Yaml yaml = new Yaml();
 		yamlWriter(yaml, biologicalElementsBox.getSelectedItem().toString(), true);
-		yamlToObjectParser = new YamlToObjectParser(loadedYaml);
+		YamlToObjectParser yamlToObjectParser = new YamlToObjectParser(loadedYaml);
 		yamlToObjectParser.acceptConfig();
 	}
 
@@ -305,7 +278,6 @@ public class VisualizationDialog {
 		mWindow = MainWindow.getInstance();
 		mWindow.setLoadedYaml(VisualizationDialog.DEFAULTYAML);
 		loadedYaml = VisualizationDialog.DEFAULTYAML;
-		System.out.println(loadedYaml);
 		loadedYamlLabel.setText(loadedYaml);
 		shapeBox.setEnabled(false);
 		sizeMultiplierBox.setEnabled(false);

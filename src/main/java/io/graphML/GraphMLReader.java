@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class GraphMLReader extends BaseReader<Pathway> {
     private final Logger logger = Logger.getRootLogger();
     private boolean hasSeenPositions = false;
+    private int fallbackIdCounter = 0;
 
     public GraphMLReader(File file) {
         super(file);
@@ -43,6 +44,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
     @Override
     public Pathway internalRead(InputStream inputStream) {
         hasSeenPositions = false;
+        fallbackIdCounter = 0;
         final XMLEventReader reader;
         try {
             reader = XMLInputFactory.newInstance().createXMLEventReader(inputStream);
@@ -52,7 +54,9 @@ public class GraphMLReader extends BaseReader<Pathway> {
         }
         Pathway pw = new CreatePathway().getPathway();
         final Map<String, PropertyKey> nodePropertyTypes = new HashMap<>();
+        final Map<String, Integer> nodeIdMap = new HashMap<>();
         final Map<String, PropertyKey> edgePropertyTypes = new HashMap<>();
+        final Map<String, Integer> edgeIdMap = new HashMap<>();
         final Map<Integer, BiologicalNodeAbstract> vertexIdMap = new HashMap<>();
         while (reader.hasNext()) {
             final XMLEvent nextEvent = tryNextEvent(reader);
@@ -67,9 +71,9 @@ public class GraphMLReader extends BaseReader<Pathway> {
                         edgePropertyTypes.put(property.id, property);
                     }
                 } else if ("node".equals(key)) {
-                    readNode(reader, element, nodePropertyTypes, pw, vertexIdMap);
+                    readNode(reader, element, nodePropertyTypes, pw, vertexIdMap, nodeIdMap);
                 } else if ("edge".equals(key)) {
-                    readEdge(reader, element, edgePropertyTypes, pw, vertexIdMap);
+                    readEdge(reader, element, edgePropertyTypes, pw, vertexIdMap, edgeIdMap, nodeIdMap);
                 }
             }
         }
@@ -107,7 +111,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
 
     private void readNode(final XMLEventReader reader, final StartElement element,
                           final Map<String, PropertyKey> propertyTypes, final Pathway pw,
-                          final Map<Integer, BiologicalNodeAbstract> vertexIdMap) {
+                          final Map<Integer, BiologicalNodeAbstract> vertexIdMap, Map<String, Integer> nodeIdMap) {
         final Map<String, Object> properties = collectNodeOrEdgeProperties(reader, propertyTypes, "node");
         String label = getElementAttribute(element, "labels");
         if (label != null) {
@@ -128,7 +132,13 @@ public class GraphMLReader extends BaseReader<Pathway> {
             logger.warn("Ignored node without id");
             return;
         }
-        final int id = Integer.parseInt(idText);
+        int id;
+        try {
+            id = Integer.parseInt(idText);
+        } catch (NumberFormatException ignored) {
+            id = getNextFallbackId(pw);
+        }
+        nodeIdMap.put(idText, id);
         final String nodeX = getElementAttribute(element, "x");
         final String nodeY = getElementAttribute(element, "y");
         Point p = new Point(nodeX != null ? Integer.parseInt(nodeX) : 0, nodeY != null ? Integer.parseInt(nodeY) : 0);
@@ -219,6 +229,12 @@ public class GraphMLReader extends BaseReader<Pathway> {
 
     private String transformLabel(String label) {
         return StringUtils.replace(label, "_", " ");
+    }
+
+    private int getNextFallbackId(Pathway pw) {
+        while (pw.getIdSet().contains(fallbackIdCounter))
+            fallbackIdCounter++;
+        return fallbackIdCounter++;
     }
 
     private Map<String, Object> collectNodeOrEdgeProperties(final XMLEventReader reader,
@@ -337,7 +353,8 @@ public class GraphMLReader extends BaseReader<Pathway> {
 
     private void readEdge(final XMLEventReader reader, final StartElement element,
                           final Map<String, PropertyKey> propertyTypes, final Pathway pw,
-                          final Map<Integer, BiologicalNodeAbstract> vertexIdMap) {
+                          final Map<Integer, BiologicalNodeAbstract> vertexIdMap, Map<String, Integer> edgeIdMap,
+                          Map<String, Integer> nodeIdMap) {
         final Map<String, Object> properties = collectNodeOrEdgeProperties(reader, propertyTypes, "edge");
         String label = getElementAttribute(element, "label");
         if (label == null) {
@@ -349,19 +366,25 @@ public class GraphMLReader extends BaseReader<Pathway> {
             return;
         }
         final String idText = getElementAttribute(element, "id");
+        int id;
         if (idText == null) {
-            logger.warn("Ignored edge without id");
-            return;
+            id = getNextFallbackId(pw);
+        } else {
+            try {
+                id = Integer.parseInt(idText);
+            } catch (NumberFormatException ignored) {
+                id = getNextFallbackId(pw);
+            }
         }
-        final int id = Integer.parseInt(idText);
+        edgeIdMap.put(idText, id);
         final String sourceNodeIdText = getElementAttribute(element, "source");
         final String targetNodeIdText = getElementAttribute(element, "target");
         if (sourceNodeIdText == null || targetNodeIdText == null) {
             logger.warn("Ignored edge without source or target node id");
             return;
         }
-        BiologicalNodeAbstract source = vertexIdMap.get(Integer.parseInt(sourceNodeIdText));
-        BiologicalNodeAbstract target = vertexIdMap.get(Integer.parseInt(targetNodeIdText));
+        BiologicalNodeAbstract source = vertexIdMap.get(nodeIdMap.get(sourceNodeIdText));
+        BiologicalNodeAbstract target = vertexIdMap.get(nodeIdMap.get(targetNodeIdText));
         if (source == null || target == null) {
             logger.warn("Ignored edge without source or target node");
             return;
@@ -370,6 +393,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
         try {
             bea.setID(id, pw);
         } catch (IDAlreadyExistException e) {
+            System.out.println("Ignored edge with already existing id " + id);
             logger.warn("Ignored edge with already existing id " + id);
             return;
         }

@@ -1,6 +1,5 @@
 package petriNet;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -52,7 +51,6 @@ public class SimulationResult {
 	}
 
 	public void addValue(GraphElementAbstract gea, int type, double value) {
-
 		if (!result.contains(gea, type)) {
 			result.put(gea, type, new Series());
 		}
@@ -60,15 +58,15 @@ public class SimulationResult {
 	}
 
 	public Series get(GraphElementAbstract gea, int type) {
-		return this.result.get(gea, type);
+		return result.get(gea, type);
 	}
 
 	public List<Double> getValues(GraphElementAbstract gea, int type) {
-		return this.result.get(gea, type).getAll();
+		return result.get(gea, type).getAll();
 	}
 
 	public Double getValue(GraphElementAbstract gea, int type, int pos) {
-		return this.result.get(gea, type).get(pos);
+		return result.get(gea, type).get(pos);
 	}
 
 	public List<Double> getFiltered(GraphElementAbstract gea, int type) {
@@ -80,19 +78,19 @@ public class SimulationResult {
 	}
 
 	public List<Double> getTimeValues() {
-		return this.time.getAll();
+		return time.getAll();
 	}
 
 	public List<Double> getTime(GraphElementAbstract gea, int type, boolean filtered) {
 		if (filtered) {
 			return resultFiltered.get(gea, type).getTime().getAll();
 		} else {
-			return this.time.getAll();
+			return time.getAll();
 		}
 	}
 
 	public void refreshFilter() {
-		resultFiltered = new DoubleHashMap<GraphElementAbstract, Integer, TimeSeries>();
+		resultFiltered = new DoubleHashMap<>();
 	}
 
 	public boolean contains(GraphElementAbstract gea) {
@@ -118,18 +116,8 @@ public class SimulationResult {
 	public void refineEdgeFlow(Set<PNArc> edges) {
 		// so far only for edges connecting discrete transition (not yet stochastic)
 		// TODO proper calculation of delay (based on returned values of delay from simulation, esp. if delay is not a constant value, use .putDelay for stoch. Trans.
-		Iterator<PNArc> it = edges.iterator();
-
-		PNArc e;
-		double delay;
-		double midTime;
-		double lastToken = 0;
-		double currentToken = 0;
-		int revisedTime = 0;
-		Series sum;
-		//System.out.println("refining edge flow");
-		while (it.hasNext()) {
-			e = it.next();
+		for (PNArc e : edges) {
+			double delay;
 			if (e.getFrom() instanceof DiscreteTransition) {
 				delay = ((DiscreteTransition) e.getFrom()).getDelay();
 			} else if (e.getTo() instanceof DiscreteTransition) {
@@ -137,25 +125,22 @@ public class SimulationResult {
 			} else {
 				continue;
 			}
-			// System.out.println("refine: "+e.getFrom().getName()+" -> "+e.getTo().getName() );
-			if (result.contains(e, SimulationResultController.SIM_SUM_OF_TOKEN)
-					&& result.get(e, SimulationResultController.SIM_SUM_OF_TOKEN).size() > 0
-					&& !result.contains(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW)) {
-				// System.out.println("refine");
-				sum = result.get(e, SimulationResultController.SIM_SUM_OF_TOKEN);
-				midTime = delay * 0.5;
-				lastToken = 0;
-				currentToken = 0;
-				revisedTime = 0;
+			if (result.contains(e, SimulationResultController.SIM_SUM_OF_TOKEN) &&
+				result.get(e, SimulationResultController.SIM_SUM_OF_TOKEN).size() > 0 &&
+				!result.contains(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW)) {
+				Series sum = result.get(e, SimulationResultController.SIM_SUM_OF_TOKEN);
+				double midTime = delay * 0.5;
+				double lastToken = 0;
+				int revisedTime = 0;
+				double currentToken;
 				for (int i = 0; i < time.size(); i++) {
 					if (time.get(i) >= midTime) {
 						currentToken = sum.get(i);
 						if (midTime > delay) {
 							for (int j = revisedTime; j <= i; j++) {
 								if (time.get(j) <= time.get(revisedTime) + delay) {
-									// System.out.println(time.get(j) +" "+ (currentToken-lastToken));
 									addValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW,
-											currentToken - lastToken);
+											 currentToken - lastToken);
 								} else {
 									revisedTime = j;
 									lastToken = currentToken;
@@ -168,11 +153,8 @@ public class SimulationResult {
 				}
 				currentToken = sum.get(sum.size() - 1);
 				for (int i = revisedTime; i < time.size(); i++) {
-					// System.out.println(time.get(i) +" "+ (currentToken-lastToken));
 					addValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, currentToken - lastToken);
 				}
-				// System.out.println(time.size() + "
-				// "+result.get(e,SimulationResultController.SIM_ACTUAL_TOKEN_FLOW).size());
 			}
 		}
 	}
