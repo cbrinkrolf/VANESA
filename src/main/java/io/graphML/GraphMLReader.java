@@ -171,7 +171,9 @@ public class GraphMLReader extends BaseReader<Pathway> {
                 setPropertyIfExists(properties, "logFC", rna::setLogFC);
                 break;
             case Elementdeclerations.dna:
-                setPropertyIfExists(properties, "ntSequence", ((DNA) bna)::setNtSequence);
+                DNA dna = (DNA) bna;
+                setPropertyIfExists(properties, "ntSequence", dna::setNtSequence);
+                setPropertyIfExists(properties, "logFC", dna::setLogFC);
                 break;
             case Elementdeclerations.gene:
                 setPropertyIfExists(properties, "ntSequence", ((Gene) bna)::setNtSequence);

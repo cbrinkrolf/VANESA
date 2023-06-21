@@ -85,7 +85,7 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         properties.put("concentrationStart", new Property(FOR_TYPE_NODE, "concentrationStart", PropertyType.DOUBLE));
         properties.put("constant", new Property(FOR_TYPE_NODE, "constant", PropertyType.BOOLEAN));
         properties.put("discrete", new Property(FOR_TYPE_NODE, "discrete", PropertyType.BOOLEAN));
-        // RNA
+        // RNA/DNA
         properties.put("ntSequence", new Property(FOR_TYPE_NODE, "ntSequence", PropertyType.STRING));
         properties.put("logFC", new Property(FOR_TYPE_NODE, "logFC", PropertyType.DOUBLE));
         // PathwayMap
@@ -214,6 +214,7 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
                 break;
             case Elementdeclerations.dna:
                 writePropertyIfNotNull(writer, properties, "ntSequence", ((DNA) bna).getNtSequence());
+                writePropertyIfNotNull(writer, properties, "logFC", ((DNA) bna).getLogFC());
                 break;
             case Elementdeclerations.gene:
                 writePropertyIfNotNull(writer, properties, "ntSequence", ((Gene) bna).getNtSequence());

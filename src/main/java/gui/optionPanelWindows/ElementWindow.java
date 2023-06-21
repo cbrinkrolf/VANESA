@@ -413,6 +413,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 				ntSequence.addFocusListener(pwl);
 				p.add(new JLabel("NT-Sequence"), "gap 5 ");
 				p.add(ntSequence, "wrap, span 3");
+				MyJFormattedTextField logFc = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat(), true);
+				logFc.setName("logFC");
+				logFc.setText(String.valueOf(dna.getLogFC()));
+				logFc.addFocusListener(pwl);
+				p.add(new JLabel("logFC"), "gap 5 ");
+				p.add(logFc, "wrap, span 3");
 			} else if (ab instanceof Gene) {
 				Gene dna = (Gene) ab;
 				JTextField ntSequence = new JTextField(20);
@@ -433,7 +439,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(ntSequence, "wrap, span 3");
 				MyJFormattedTextField logFc = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat(), true);
 				logFc.setName("logFC");
-				logFc.setText(rna.getLogFC() + "");
+				logFc.setText(String.valueOf(rna.getLogFC()));
 				logFc.addFocusListener(pwl);
 				p.add(new JLabel("logFC"), "gap 5 ");
 				p.add(logFc, "wrap, span 3");
