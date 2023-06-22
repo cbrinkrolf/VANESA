@@ -99,7 +99,7 @@ public class ToolBar {
 		 */
 
 		JPanel infoPanel = new ToolBarPanel();
-		infoPanel.setLayout(new GridLayout(5, 2));
+		infoPanel.setLayout(new GridLayout(5, 2, 4, 4));
 		infoPanel.add(info);
 		infoPanel.add(infoExtended);
 		// if (MainWindow.developer) {
@@ -120,7 +120,7 @@ public class ToolBar {
 				this::onStretchEdgesClicked);
 		JButton compressEdges = createToolBarButton("compressEdges.png", "Compress Edge Length",
 				this::onCompressEdgesClicked);
-		JButton merge = createToolBarButton("maximize.png", "Compare / Align Graphs", this::onMergeClicked);
+		JButton merge = createToolBarButton("compare.png", "Compare / Align Graphs", this::onMergeClicked);
 
 		ButtonChooser chooser = new ButtonChooser(AnnotationPainter.getInstance().getSelectShapeActions());
 
@@ -159,7 +159,7 @@ public class ToolBar {
 		edit.addActionListener(e -> onEditClicked());
 
 		JPanel viewPortControls = new ToolBarPanel();
-		viewPortControls.setLayout(new GridLayout(3, 2));
+		viewPortControls.setLayout(new GridLayout(3, 2, 4, 4));
 
 		viewPortControls.add(fullScreen);
 		viewPortControls.add(center);
@@ -169,7 +169,7 @@ public class ToolBar {
 		viewPortControls.add(stretchEdges);
 
 		JPanel editControls = new ToolBarPanel();
-		editControls.setLayout(new GridLayout(0, 2));
+		editControls.setLayout(new GridLayout(0, 2, 4, 4));
 
 		if (!petriNetView) {
 			editControls.add(edit);
@@ -181,14 +181,14 @@ public class ToolBar {
 		editControls.add(hierarchy);
 
 		JPanel printControls = new ToolBarPanel();
-		printControls.setLayout(new GridLayout(1, 2));
+		printControls.setLayout(new GridLayout(1, 2, 4, 4));
 
 		printControls.add(newDoc);
 		printControls.add(newWindow);
 
 		// Add buttons to experiment with Grid Layout
 		JPanel petriNetControls = new ToolBarPanel();
-		petriNetControls.setLayout(new GridLayout(2, 3));
+		petriNetControls.setLayout(new GridLayout(2, 3, 4, 4));
 
 		petriNetControls.add(discretePlace);
 		petriNetControls.add(continuousPlace);
@@ -200,7 +200,7 @@ public class ToolBar {
 		JPanel featureControls = new ToolBarPanel();
 
 		if (!petriNetView) {
-			featureControls.setLayout(new GridLayout(2, 2));
+			featureControls.setLayout(new GridLayout(2, 2, 4, 4));
 			featureControls.add(merge);
 			if (MainWindow.developer) {
 				// featureControls.add(heatmap);
@@ -209,7 +209,7 @@ public class ToolBar {
 			featureControls.add(chooser);
 			featureControls.add(colorChooser);
 		} else {
-			featureControls.setLayout(new GridLayout(1, 2));
+			featureControls.setLayout(new GridLayout(1, 2, 4, 4));
 			featureControls.add(chooser);
 			featureControls.add(colorChooser);
 		}
@@ -220,7 +220,7 @@ public class ToolBar {
 		// featureControls.setAlignmentY(Component.TOP_ALIGNMENT);
 
 		JPanel toolBarControlControls = new ToolBarPanel();
-		toolBarControlControls.setLayout(new GridLayout(2, 1));
+		toolBarControlControls.setLayout(new GridLayout(2, 1, 4, 4));
 		// if (petriNetView) {
 		// toolBarControlControls.add(modelling);
 		// } else {
@@ -231,7 +231,7 @@ public class ToolBar {
 		// if (!petriNetView) toolBarControlControls.add(convertIntoPetriNet);
 
 		JPanel nodeAdjustment = new ToolBarPanel();
-		nodeAdjustment.setLayout(new GridLayout(2, 2));
+		nodeAdjustment.setLayout(new GridLayout(2, 2, 4, 4));
 
 		JButton adjustDown = createToolBarButton("adjustDown.png", "Adjust Selected Nodes To Lowest Node",
 				this::onAdjustDownClicked);

@@ -30,10 +30,26 @@ public class ImagePath {
     public ImageIcon getImageIcon(String fileName, int width, int height) {
         ImageIcon imageIcon = new ImageIcon(getPath(fileName));
         Image image = imageIcon.getImage();
-        return new ImageIcon(image.getScaledInstance(width, height,  java.awt.Image.SCALE_SMOOTH));
+        return new ImageIcon(image.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH));
     }
 
     public static ImagePath getInstance() {
         return instance;
+    }
+
+    public static ImageIcon scaleIcon(ImageIcon icon, int maxDimension) {
+        // if already the correct dimensions return the original
+        if ((icon.getIconWidth() == maxDimension && icon.getIconHeight() <= maxDimension) ||
+                (icon.getIconHeight() == maxDimension && icon.getIconWidth() <= maxDimension)) {
+            return icon;
+        }
+        if (icon.getIconWidth() >= icon.getIconHeight()) {
+            float scale = maxDimension / (float) icon.getIconWidth();
+            return new ImageIcon(icon.getImage().getScaledInstance(maxDimension, (int) (icon.getIconHeight() * scale),
+                    Image.SCALE_SMOOTH));
+        }
+        float scale = maxDimension / (float) icon.getIconHeight();
+        return new ImageIcon(icon.getImage().getScaledInstance((int) (icon.getIconWidth() * scale), maxDimension,
+                Image.SCALE_SMOOTH));
     }
 }

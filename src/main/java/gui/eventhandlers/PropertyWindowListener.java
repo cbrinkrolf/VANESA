@@ -80,29 +80,17 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (!text.equals("") && !text.equals(protein.getAaSequence())) {
 				protein.setAaSequence(text);
 			}
-		} else if (source.equals("dna")) {
-			text = ((JTextField) event.getSource()).getText().trim();
-			DNA dna = (DNA) geb;
-			if (!text.equals("") && !text.equals(dna.getNtSequence())) {
-				dna.setNtSequence(text);
-			}
-		} else if (source.equals("gene")) {
-			text = ((JTextField) event.getSource()).getText().trim();
-			Gene gene = (Gene) geb;
-			if (!text.equals("") && !text.equals(gene.getNtSequence())) {
-				gene.setNtSequence(text);
-			}
 		} else if (source.equals("ntSequence")) {
 			text = ((JTextField) event.getSource()).getText().trim();
-			RNA rna = (RNA) geb;
-			if (!text.equals("") && !text.equals(rna.getNtSequence())) {
-				rna.setNtSequence(text);
+			NodeWithNTSequence node = (NodeWithNTSequence) geb;
+			if (!text.equals("") && !text.equals(node.getNtSequence())) {
+				node.setNtSequence(text);
 			}
 		} else if (source.equals("logFC")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
-			RNA rna = (RNA) geb;
-			if (n != null && !n.equals(rna.getLogFC())) {
-				rna.setLogFC(n.doubleValue());
+			NodeWithLogFC node = (NodeWithLogFC) geb;
+			if (n != null && !n.equals(node.getLogFC())) {
+				node.setLogFC(n.doubleValue());
 			}
 		} else if (source.equals("concentration")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();

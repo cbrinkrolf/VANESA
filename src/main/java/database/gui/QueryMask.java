@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public abstract class QueryMask {
     protected final ImagePath imagePath = ImagePath.getInstance();
@@ -44,6 +46,30 @@ public abstract class QueryMask {
         info.setMaximumSize(new Dimension(20, 20));
         info.addActionListener(e -> showInfoWindow());
         info.setBorderPainted(false);
+        info.setContentAreaFilled(false);
+        info.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                info.setContentAreaFilled(true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                info.setContentAreaFilled(false);
+            }
+        });
         pan.add(info);
         return pan;
     }

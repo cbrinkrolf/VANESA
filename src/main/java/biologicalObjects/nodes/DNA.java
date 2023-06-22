@@ -2,7 +2,7 @@ package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
 
-public class DNA extends BiologicalNodeAbstract {
+public class DNA extends BiologicalNodeAbstract implements NodeWithNTSequence, NodeWithLogFC {
 	private String ntSequence = "";
 	private Double logFC = 0.0;
 
