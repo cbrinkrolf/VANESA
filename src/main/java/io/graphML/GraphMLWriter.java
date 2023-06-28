@@ -11,6 +11,7 @@ import biologicalObjects.nodes.petriNet.*;
 import io.BaseWriter;
 import io.IndentingXMLStreamWriter;
 import org.apache.commons.lang3.StringUtils;
+import util.VanesaUtility;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -78,6 +79,7 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         properties.put("labels", new Property(FOR_TYPE_NODE, "labels", PropertyType.STRING));
         properties.put("_label", new Property(FOR_TYPE_NODE, "label", PropertyType.STRING));
         properties.put("name", new Property(FOR_TYPE_NODE, "name", PropertyType.STRING));
+        properties.put("color", new Property(FOR_TYPE_NODE, "color", PropertyType.STRING));
         properties.put("description", new Property(FOR_TYPE_NODE, "description", PropertyType.STRING));
         properties.put("concentration", new Property(FOR_TYPE_NODE, "concentration", PropertyType.DOUBLE));
         properties.put("concentrationMin", new Property(FOR_TYPE_NODE, "concentrationMin", PropertyType.DOUBLE));
@@ -137,6 +139,7 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         final Map<String, Property> properties = new HashMap<>();
         properties.put("label", new Property(FOR_TYPE_EDGE, "label", PropertyType.STRING));
         properties.put("_label", new Property(FOR_TYPE_EDGE, "_label", PropertyType.STRING));
+        properties.put("color", new Property(FOR_TYPE_EDGE, "color", PropertyType.STRING));
         properties.put("description", new Property(FOR_TYPE_EDGE, "description", PropertyType.STRING));
         properties.put("function", new Property(FOR_TYPE_EDGE, "function", PropertyType.STRING));
         properties.put("directed", new Property(FOR_TYPE_EDGE, "directed", PropertyType.BOOLEAN));
@@ -163,6 +166,10 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         writer.writeAttribute("labels", label);
         writer.writeAttribute("x", String.valueOf((int) p.getX()));
         writer.writeAttribute("y", String.valueOf((int) p.getY()));
+        final String hexColor = VanesaUtility.colorToHex(bna.getColor());
+        final String hexDefaultColor = VanesaUtility.colorToHex(bna.getDefaultColor());
+        if (!hexColor.equals(hexDefaultColor))
+            writePropertyIfNotNull(writer, properties, "color", hexColor);
         writePropertyIfNotNull(writer, properties, "labels", label);
         writePropertyIfNotNull(writer, properties, "_label", bna.getLabel());
         writePropertyIfNotNull(writer, properties, "name", bna.getName());
@@ -185,8 +192,6 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         boolean isVisible = true;
         SortedSet<Integer> set;
         String comments = "";
-        Color color = Color.LIGHT_GRAY;
-        Color defaultColor = Color.LIGHT_GRAY;
         Shape shape = new VertexShapes().getEllipse();
         Shape defaultShape = new VertexShapes().getEllipse();
         boolean hasKEGGNode = false;
@@ -297,6 +302,10 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         writer.writeAttribute("source", String.valueOf(bea.getFrom().getID()));
         writer.writeAttribute("target", String.valueOf(bea.getTo().getID()));
         writer.writeAttribute("label", label);
+        final String hexColor = VanesaUtility.colorToHex(bea.getColor());
+        final String hexDefaultColor = VanesaUtility.colorToHex(bea.getDefaultColor());
+        if (!hexColor.equals(hexDefaultColor))
+            writePropertyIfNotNull(writer, properties, "color", hexColor);
         writePropertyIfNotNull(writer, properties, "label", label);
         writePropertyIfNotNull(writer, properties, "_label", bea.getLabel());
         writePropertyIfNotNull(writer, properties, "name", bea.getName());
@@ -307,8 +316,6 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         boolean visible = true;
         SortedSet<Integer> set;
         String comments = "";
-        Color defaultColor = Color.GRAY;
-        Color color = Color.GRAY;
         Shape shape;
         boolean hasKEGGNode = false;
         boolean hasBrendaNode = false;

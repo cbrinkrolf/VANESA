@@ -11,6 +11,7 @@ import gui.MainWindow;
 import io.BaseReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import util.VanesaUtility;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -154,6 +155,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
         }
         setPropertyIfExists(properties, "_label", bna::setLabel);
         setPropertyIfExists(properties, "name", bna::setName);
+        setPropertyIfExists(properties, "color", c -> bna.setColor(VanesaUtility.colorFromHex((String) c)));
         setPropertyIfExists(properties, "concentration", bna::setConcentration);
         setPropertyIfExists(properties, "concentrationMin", bna::setConcentrationMin);
         setPropertyIfExists(properties, "concentrationMax", bna::setConcentrationMax);
@@ -404,6 +406,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
         setPropertyIfExists(properties, "directed", bea::setDirected, true);
         setPropertyIfExists(properties, "_label", bea::setLabel);
         setPropertyIfExists(properties, "name", bea::setName);
+        setPropertyIfExists(properties, "color", c -> bea.setColor(VanesaUtility.colorFromHex((String) c)));
         setPropertyIfExists(properties, "function", bea::setFunction);
         setPropertyIfExists(properties, "description", bea::setDescription);
         // TODO: more
