@@ -49,6 +49,12 @@ public class ParameterWindow implements DocumentListener {
 
 	public ParameterWindow(GraphElementAbstract gea) {
 		frame = new JFrame("Parameters");
+		
+		if(gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
+			frame.setTitle("Function Builder");
+		}
+			
+			
 		this.gea = gea;
 		MigLayout layout = new MigLayout("", "[left]");
 		panel = new JPanel(layout);

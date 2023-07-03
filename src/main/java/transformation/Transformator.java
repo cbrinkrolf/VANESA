@@ -95,6 +95,8 @@ public class Transformator {
 	private boolean useSubgraph = true;
 	private boolean useBuckets = true;
 	private boolean useSmallestNodeDegree = true;
+	private boolean useIncidenceCount = true;
+	private boolean doExecute = true;
 
 	private boolean printLog = !true;
 
@@ -249,23 +251,23 @@ public class Transformator {
 			}
 			// if(permutations != null)
 			// System.out.println("size of permutation set: " + permutations.size());
-			if (!useSubgraph && !useBuckets) {
-				return;
+			
+			if (doExecute) {
+				do {
+					executed = false;
+					/*
+					 * if (nodesChanged) { this.nodesChanged = false;
+					 * this.ruleToNextPermIndex.remove(r); createAndSetPermutation(r);
+					 * System.out.println("size of permutation set: " + permutations.size()); }
+					 */
+					match = this.getNextMatchingPermutation(r, permutations);
+
+					if (match != null) {
+						this.executeRule(match);
+					}
+
+				} while (executed && !this.done());
 			}
-			do {
-				executed = false;
-				/*
-				 * if (nodesChanged) { this.nodesChanged = false;
-				 * this.ruleToNextPermIndex.remove(r); createAndSetPermutation(r);
-				 * System.out.println("size of permutation set: " + permutations.size()); }
-				 */
-				match = this.getNextMatchingPermutation(r, permutations);
-
-				if (match != null) {
-					this.executeRule(match);
-				}
-
-			} while (executed && !this.done());
 		}
 
 	}
@@ -304,6 +306,7 @@ public class Transformator {
 				// node type of rule does not exist in graph -> skip rule
 				if (nodeType2bna.get(type) == null) {
 					System.out.println("types do not exist");
+					permutations = null;
 					return;
 				}
 				it = nodeType2bna.get(type).iterator();
@@ -337,6 +340,17 @@ public class Transformator {
 							// System.out.println("added: " + bna.getName());
 						}
 					} else {
+						if (useIncidenceCount) {
+
+							if (inCount <= pw.getIncomingDirectedEdgeCount(bna)
+									&& outCount <= pw.getOutgoingDirectedEdgeCount(bna)
+									&& unDirCount <= pw.getUndirectedEdgeCount(bna)) {
+								l.add(bna.getID());
+							}
+						} else {
+							l.add(bna.getID());
+						}
+
 						// System.out.println("edge count name: "+bna.getName());
 						//// System.out.println("in: "+ pw.getIncomingDirectedEdgeCount(bna));
 						// System.out.println("out: "+ pw.getOutgoingDirectedEdgeCount(bna));
@@ -346,7 +360,7 @@ public class Transformator {
 						// if (inCount <= pw.getIncomingDirectedEdgeCount(bna)
 						// && outCount <= pw.getOutgoingDirectedEdgeCount(bna)
 						// && unDirCount <= pw.getUndirectedEdgeCount(bna)) {
-						l.add(bna.getID());
+						// l.add(bna.getID());
 						// }
 					}
 					// System.out.println(bna.getID() + " added to perm");
@@ -364,19 +378,24 @@ public class Transformator {
 							l.add(node.getID());
 						}
 					} else {
-						if (inCount <= pw.getIncomingDirectedEdgeCount(node)
-								&& outCount <= pw.getOutgoingDirectedEdgeCount(node)
-								&& unDirCount <= pw.getUndirectedEdgeCount(node)) {
+						if (useIncidenceCount) {
+
+							if (inCount <= pw.getIncomingDirectedEdgeCount(node)
+									&& outCount <= pw.getOutgoingDirectedEdgeCount(node)
+									&& unDirCount <= pw.getUndirectedEdgeCount(node)) {
+								l.add(node.getID());
+							}
+						} else {
 							l.add(node.getID());
 						}
 					}
-					// l.add(node.getID());
 				}
 			}
 			if (l.size() < 1) {
 				permutations = null;
 				return;
 			}
+			// System.out.println("List size: "+l.size());
 			list.add(l);
 		}
 		if (printLog) {
@@ -384,6 +403,7 @@ public class Transformator {
 		}
 		permutations = Permutator.permutations(list, false);
 		totalGeneratedPerms += permutations.size();
+		//System.out.println("perm size: " + permutations.size());
 	}
 
 	// tries to find one matching permutation
@@ -417,7 +437,7 @@ public class Transformator {
 		nextPerm: for (int i = start; i < permutations.size(); i++) {
 			match.clearEdgeMapping();
 			evaluatedPerms++;
-			// System.out.println("Permutation #" + i);
+			//System.out.println("Permutation #" + i + " total ev. perms: "+evaluatedPerms);
 
 			perm = permutations.get(i);
 			if (evaluatedPerms % 100000 == 0) {
@@ -1027,7 +1047,7 @@ public class Transformator {
 		for (String key : rn.getParameterMap().keySet()) {
 			orgValue = rn.getParameterMap().get(key);
 			if (orgValue == null || orgValue.trim().length() < 1) {
-				continue;//orgValue = "";
+				continue;// orgValue = "";
 			}
 			// System.out.println("key: " + key + " value: " + orgValue);
 			value = replaceParametersToValues(orgValue, match);
@@ -1037,17 +1057,17 @@ public class Transformator {
 				String name = "";
 				// string = this.evalParameter(possibleParams, value, String.class, match);
 				string = value;
-				//System.out.println("string: " + value);
+				// System.out.println("string: " + value);
 				if (string == null || string.trim().length() == 0) {
 					// avoiding duplicate names
 					int i = 1;
 					if (petriNode instanceof Place) {
-						//System.out.println(petriNet.getAllNodeNames());
+						// System.out.println(petriNet.getAllNodeNames());
 						while (petriNet.getAllNodeNames().contains("p" + i)) {
 							i++;
 						}
 						name = "p" + i;
-						//System.out.println("name = " + name);
+						// System.out.println("name = " + name);
 					} else {
 						while (petriNet.getAllNodeNames().contains("t" + i)) {
 							i++;
@@ -1204,7 +1224,7 @@ public class Transformator {
 				continue;
 			}
 			value = replaceParametersToValues(orgValue, match);
-			//System.out.println("key: " + key + " value: " + value);
+			// System.out.println("key: " + key + " value: " + value);
 			switch (key) {
 			// case "name":
 			// break;
