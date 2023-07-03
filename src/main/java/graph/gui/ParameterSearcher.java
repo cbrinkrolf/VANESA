@@ -73,7 +73,7 @@ public class ParameterSearcher extends JFrame implements ActionListener {
 	private final RangeSlider slider = new RangeSlider();
 
 	public ParameterSearcher(BiologicalNodeAbstract bna, boolean initialSearch, Runnable onApplyCallback) {
-		super("Brenda 2 Parameter");
+		super("Parameter Browser");
 		this.bna = bna;
 		this.onApplyCallback = onApplyCallback;
 		JButton btnUpdateEnzyme = new JButton("Update enzymes");

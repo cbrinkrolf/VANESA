@@ -20,6 +20,7 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
@@ -800,14 +801,28 @@ public class MOoutput {
 	private String getModelicaEdgeFunction(PNArc bea) {
 
 		if (bea.isRegularArc()) {
-			if (bea.getFrom().isConstant() || bea.getTo().isConstant()) {
+			
+			if(bea.getTo().isConstant() && bea.getTo() instanceof Place){
 				return "0";
 			}
-			if (bea.getFrom().isLogical() && bea.getFrom().getLogicalReference().isConstant()) {
+			if (bea.getTo().isLogical() && bea.getTo().getLogicalReference().isConstant() && bea.getTo().getLogicalReference() instanceof Place) {
 				return "0";
 			}
-			if (bea.getTo().isLogical() && bea.getTo().getLogicalReference().isConstant()) {
-				return "0";
+			
+			if(bea.getFrom().isConstant() && bea.getFrom() instanceof Place){
+				if(bea.getFrom() instanceof DiscretePlace){
+					return "max(0,"+replaceNames(bea.getFunction()+"-1)");
+				}else{
+					return "0";
+				}
+			}
+			
+			if (bea.getFrom().isLogical() && bea.getFrom().getLogicalReference().isConstant() && bea.getFrom().getLogicalReference() instanceof Place) {
+				if(bea.getFrom().getLogicalReference() instanceof DiscretePlace){
+					return "max(0,"+replaceNames(bea.getFunction()+"-1)");
+				}else{
+					return "0";
+				}
 			}
 		}
 		return replaceNames(bea.getFunction());

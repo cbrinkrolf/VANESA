@@ -139,6 +139,9 @@ public abstract class HierarchicalCircleLayout extends CircleLayout<BiologicalNo
         	if(v == rootNode){
         		continue;
         	}
+        	if(circleVertexDataMap.get(v) == null){
+        		continue;
+        	}
 
         	nodePoint = GraphInstance.getMyGraph().getVertexLocation(v);
         	nodeAngle = Circle.getAngle(getCenterPoint(),nodePoint);

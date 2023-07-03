@@ -98,6 +98,9 @@ public class HCTLayout extends HierarchicalCircleLayout {
 					continue;
 				}
 				for (BiologicalNodeAbstract v : bnaGroups.get(i)) {
+					if (circles.get(v) == null) {
+						continue;
+					}
 					if (v.getParentNode() != null && v.getParentNode().getRootNode() == v) {
 						rootNodes.add(v);
 						continue;
@@ -442,8 +445,7 @@ public class HCTLayout extends HierarchicalCircleLayout {
 					childNodePoints.add(myGraph.getVertexLocation(child));
 				}
 				angle = Circle.getAngle(getCenterPoint(), Circle.averagePoint(childNodePoints));
-				location = Circle.getPointOnCircle(getCenterPoint(), getRadius() * (circles.get(parentNode)),
-						angle);
+				location = Circle.getPointOnCircle(getCenterPoint(), getRadius() * (circles.get(parentNode)), angle);
 				location = Circle.computeControlPoint(location, getCenterPoint(), myGraph.getVertexLocation(first),
 						myGraph.getVertexLocation(second));
 				line = new Line2D.Double(lastPoint, location);
