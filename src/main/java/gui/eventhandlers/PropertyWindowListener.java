@@ -13,6 +13,7 @@ import graph.GraphInstance;
 import graph.gui.Boundary;
 import gui.MainWindow;
 import gui.PopUpDialog;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,7 +50,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 		String text;
 		if (source.equals("label")) {
 			text = ((JTextField) event.getSource()).getText().trim();
-			if (!text.equals("") && !text.equals(geb.getLabel())) {
+			if (!"".equals(text) && !text.equals(geb.getLabel())) {
 				geb.setLabel(text);
 				MainWindow.getInstance().updateElementTree();
 				if (geb instanceof BiologicalNodeAbstract) {
@@ -60,7 +61,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			}
 		} else if (source.equals("name")) {
 			text = ((JTextField) event.getSource()).getText().trim();
-			if (!text.equals("") && !text.equals(geb.getName())) {
+			if (!"".equals(text) && !text.equals(geb.getName())) {
 				geb.setName(text);
 				MainWindow.getInstance().updateElementTree();
 				if (geb instanceof BiologicalNodeAbstract) {
@@ -71,38 +72,26 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			}
 		} else if (source.equals("comment")) {
 			text = ((JTextField) event.getSource()).getText().trim();
-			if (!text.equals("") && !text.equals(geb.getComments())) {
+			if (!"".equals(text) && !text.equals(geb.getComments())) {
 				geb.setComments(text);
 			}
 		} else if (source.equals("protein")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			Protein protein = (Protein) geb;
-			if (!text.equals("") && !text.equals(protein.getAaSequence())) {
+			if (!"".equals(text) && !text.equals(protein.getAaSequence())) {
 				protein.setAaSequence(text);
-			}
-		} else if (source.equals("dna")) {
-			text = ((JTextField) event.getSource()).getText().trim();
-			DNA dna = (DNA) geb;
-			if (!text.equals("") && !text.equals(dna.getNtSequence())) {
-				dna.setNtSequence(text);
-			}
-		} else if (source.equals("gene")) {
-			text = ((JTextField) event.getSource()).getText().trim();
-			Gene gene = (Gene) geb;
-			if (!text.equals("") && !text.equals(gene.getNtSequence())) {
-				gene.setNtSequence(text);
 			}
 		} else if (source.equals("ntSequence")) {
 			text = ((JTextField) event.getSource()).getText().trim();
-			RNA rna = (RNA) geb;
-			if (!text.equals("") && !text.equals(rna.getNtSequence())) {
-				rna.setNtSequence(text);
+			NodeWithNTSequence node = (NodeWithNTSequence) geb;
+			if (!"".equals(text) && !text.equals(node.getNtSequence())) {
+				node.setNtSequence(text);
 			}
 		} else if (source.equals("logFC")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
-			RNA rna = (RNA) geb;
-			if (n != null && !n.equals(rna.getLogFC())) {
-				rna.setLogFC(n.doubleValue());
+			NodeWithLogFC node = (NodeWithLogFC) geb;
+			if (n != null && !n.equals(node.getLogFC())) {
+				node.setLogFC(n.doubleValue());
 			}
 		} else if (source.equals("concentration")) {
 			Number n = (Number) ((JFormattedTextField) event.getSource()).getValue();
@@ -214,7 +203,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof DiscreteTransition) {
 				DiscreteTransition p = (DiscreteTransition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!text.equals("") && !text.equals(p.getDelay() + "")) {
+				if (!"".equals(text) && !text.equals(String.valueOf(p.getDelay()))) {
 					double delay = Double.parseDouble(text);
 					p.setDelay(delay);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -224,7 +213,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof Transition) {
 				Transition t = (Transition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!text.equals("") && !text.equals(t.getFiringCondition())) {
+				if (!"".equals(text) && !text.equals(t.getFiringCondition())) {
 					((Transition) geb).setFiringCondition(text.trim());
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
@@ -233,14 +222,14 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof DynamicNode) {
 				DynamicNode dn = (DynamicNode) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!text.equals("") && !text.equals(dn.getMaximalSpeed())) {
+				if (!"".equals(text) && !text.equals(dn.getMaximalSpeed())) {
 					dn.setMaximalSpeed(text);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			} else if(geb instanceof ContinuousTransition){
 				ContinuousTransition ct = (ContinuousTransition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!text.equals("") && !text.equals(ct.getMaximalSpeed())) {
+				if (!"".equals(text) && !text.equals(ct.getMaximalSpeed())) {
 					ct.setMaximalSpeed(text);
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
@@ -270,7 +259,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 				newT = new StochasticTransition(t.getLabel(), t.getName());
 			if (newT != null) {
 				// newT.setCompartment(pw.getCompartmentManager().getCompartment(t));
-				GraphInstance.getPathway().addVertex(newT, new Point());
+				pw.addVertex(newT, new Point());
 			}
 		} else if (source.equals("placeList")) {
 			Place p = (Place) geb;
@@ -293,7 +282,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			} else {
 				newP = new ContinuousPlace(p.getLabel(), p.getName());
 			}
-			GraphInstance.getPathway().addVertex(newP, new Point());
+			pw.addVertex(newP, new Point());
 			newP.setToken(p.getToken());
 			newP.setTokenMax(p.getTokenMax());
 			newP.setTokenMin(p.getTokenMin());
@@ -380,8 +369,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 		} else if (source.equals("events")) {
 			JTextField tf = (JTextField) event.getSource();
 			StochasticTransition st = (StochasticTransition) geb;
-			String str = tf.getText();
-			str = str.replaceAll("\\[", "").replaceAll("\\]", "");
+			String str = StringUtils.replace(StringUtils.replace(tf.getText(), "[", ""), "]", "");
 			String[] tokens = str.split(",");
 			ArrayList<Integer> list = new ArrayList<>();
 			for (int i = 0; i < tokens.length; i++) {
@@ -397,7 +385,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 				st.setEvents(list);
 			} else {
 				for (int i = 0; i < list.size(); i++) {
-					if (st.getEvents().get(i) != list.get(i)) {
+					if (!st.getEvents().get(i).equals(list.get(i))) {
 						pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 						st.setEvents(list);
 						break;
@@ -412,8 +400,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 		} else if (source.equals("probabilities")) {
 			JTextField tf = (JTextField) event.getSource();
 			StochasticTransition st = (StochasticTransition) geb;
-			String str = tf.getText();
-			str = str.replaceAll("\\[", "").replaceAll("\\]", "");
+			String str = StringUtils.replace(StringUtils.replace(tf.getText(), "[", ""), "]", "");
 			String[] tokens = str.split(",");
 			ArrayList<Double> list = new ArrayList<>();
 			for (int i = 0; i < tokens.length; i++) {
@@ -429,7 +416,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 				st.setProbabilities(list);
 			} else {
 				for (int i = 0; i < list.size(); i++) {
-					if (st.getProbabilities().get(i) != list.get(i)) {
+					if (!st.getProbabilities().get(i).equals(list.get(i))) {
 						pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 						st.setProbabilities(list);
 						break;
@@ -456,7 +443,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 		else if (source.equals("activationProb")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNArc e = (PNArc) geb;
-			if (!text.equals("") && !text.equals(e.getProbability() + "")) {
+			if (!"".equals(text) && !text.equals(String.valueOf(e.getProbability()))) {
 				double prob = Double.parseDouble(text);
 				e.setProbability(prob);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -464,7 +451,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 		} else if (source.equals("activationPrio")) {
 			text = ((JTextField) event.getSource()).getText().trim();
 			PNArc e = (PNArc) geb;
-			if (!text.equals("") && !text.equals(e.getPriority() + "")) {
+			if (!"".equals(text) && !text.equals(String.valueOf(e.getPriority()))) {
 				int prob = Integer.parseInt(text);
 				e.setPriority(prob);
 				pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
@@ -473,7 +460,7 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			text = ((JTextField) event.getSource()).getText().trim();
 			if (geb instanceof BiologicalEdgeAbstract) {
 				BiologicalEdgeAbstract e = (BiologicalEdgeAbstract) geb;
-				if (!text.equals("") && !text.equals(e.getFunction())) {
+				if (!"".equals(text) && !text.equals(e.getFunction())) {
 					e.setFunction(text);
 					pw.handleChangeFlags(ChangedFlags.EDGEWEIGHT_CHANGED);
 				}

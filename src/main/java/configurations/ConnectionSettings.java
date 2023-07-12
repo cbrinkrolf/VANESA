@@ -162,8 +162,9 @@ public class ConnectionSettings {
 			File f = new File(settingsFilePath);
 			if (!f.exists()) {
 				System.out.println("There is probably no " + settingsFilePath + " yet.");
-				PopUpDialog.getInstance().show("Error configuration file",
-						"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+				// This causes an infinite recursion with the MainWindow init! Don't show popup dialogs here
+				//PopUpDialog.getInstance().show("Error configuration file",
+				//		"Configuration file " + settingsFilePath + " is not valid and got deleted.");
 				try {
 					xmlConfiguration = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
 					FileHandler handler = new FileHandler(xmlConfiguration);
@@ -171,8 +172,8 @@ public class ConnectionSettings {
 				} catch (ConfigurationException e) {
 					f.delete();
 					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
-					PopUpDialog.getInstance().show("Error configuration file",
-							"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					//PopUpDialog.getInstance().show("Error configuration file",
+					//		"Configuration file " + settingsFilePath + " is not valid and got deleted.");
 					e.printStackTrace();
 				}
 			} else {
@@ -181,8 +182,8 @@ public class ConnectionSettings {
 				} catch (ConfigurationException e) {
 					f.delete();
 					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
-					PopUpDialog.getInstance().show("Error configuration file",
-							"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					//PopUpDialog.getInstance().show("Error configuration file",
+					//		"Configuration file " + settingsFilePath + " is not valid and got deleted.");
 					e.printStackTrace();
 				}
 			}

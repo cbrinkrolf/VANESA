@@ -21,8 +21,7 @@ import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 
-public class NetworkProperties extends Object {
-
+public class NetworkProperties {
 	private MainWindow w = MainWindow.getInstance();
 	private Pathway pw;
 	private  MyGraph mg;

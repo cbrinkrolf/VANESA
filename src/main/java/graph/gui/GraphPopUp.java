@@ -181,12 +181,12 @@ public class GraphPopUp {
                                 Pathway newPW = kc.getPw();
                                 newPW.setParent(pw);
                                 w.removeTab(false);
-                                w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                                w.setCursor(Cursor.WAIT_CURSOR);
                                 GraphContainer con = GraphContainer.getInstance();
                                 String newPathwayName = con.addPathway(pwName, newPW);
                                 newPW = con.getPathway(newPathwayName);
                                 w.addTab(newPW.getTab().getTitleTab());
-                                w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                                w.setCursor(Cursor.DEFAULT_CURSOR);
                                 map.setPathwayLink(newPW);
                                 map.setColor(Color.BLUE);
                                 w.updateAllGuiElements();
@@ -196,12 +196,12 @@ public class GraphPopUp {
                         MainWindow.getInstance().showProgressBar("KEGG query");
                     } else {
                         w.removeTab(false);
-                        w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                        w.setCursor(Cursor.WAIT_CURSOR);
                         GraphContainer con = GraphContainer.getInstance();
                         String newPathwayName = con.addPathway(pwName, pwLink);
                         pwLink = con.getPathway(newPathwayName);
                         w.addTab(pwLink.getTab().getTitleTab());
-                        w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                        w.setCursor(Cursor.DEFAULT_CURSOR);
                     }
                     w.updateAllGuiElements();
                     return;
@@ -234,12 +234,12 @@ public class GraphPopUp {
             MainWindow w = MainWindow.getInstance();
             String pwName = w.getCurrentPathway();
             w.removeTab(false);
-            w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            w.setCursor(Cursor.WAIT_CURSOR);
             GraphContainer con = GraphContainer.getInstance();
             String newPathwayName = con.addPathway(pwName, pw.getParent());
             Pathway newPW = con.getPathway(newPathwayName);
             w.addTab(newPW.getTab().getTitleTab());
-            w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            w.setCursor(Cursor.DEFAULT_CURSOR);
             w.updateAllGuiElements();
         }
     }

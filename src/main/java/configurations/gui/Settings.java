@@ -38,6 +38,8 @@ public class Settings extends JDialog {
 		setSize(300, 300);
 		setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		pack();
+		// On linux the settings window sometimes moves behind the main window, so we force it to always be on top
+		setAlwaysOnTop(true);
 		setResizable(false);
 		setVisible(true);
 	}

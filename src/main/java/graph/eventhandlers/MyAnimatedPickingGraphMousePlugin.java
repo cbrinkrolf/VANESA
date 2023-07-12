@@ -19,7 +19,6 @@ public class MyAnimatedPickingGraphMousePlugin
 
 	public void mouseReleased(MouseEvent e) {
 		super.mouseReleased(e);
-		vv.getPickedVertexState().getPicked().size();
 		if (vv.getPickedVertexState().getPicked().size() == 1) {
 			Layout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout = vv.getGraphLayout();
 			Point2D q = layout.apply(vv.getPickedVertexState().getPicked().iterator().next());
@@ -31,7 +30,7 @@ public class MyAnimatedPickingGraphMousePlugin
 					vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy);
 					try {
 						Thread.sleep(100);
-					} catch (InterruptedException ex) {
+					} catch (InterruptedException ignored) {
 					}
 				}
 			};
@@ -59,7 +58,7 @@ public class MyAnimatedPickingGraphMousePlugin
 	private void setPathway(MouseEvent e) {
 		// do not use GraphInstance.getPathway because graphs for transformation rules
 		// also need mouse control
-		if (this.pw == null) {
+		if (pw == null) {
 			vv = (MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>) e.getSource();
 		}
 	}

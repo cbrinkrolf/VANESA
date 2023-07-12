@@ -60,7 +60,7 @@ public class KEGGQueries {
     }
 
     public static ArrayList<DBColumn> getAllReactions(String pathwayID) {
-        String query = "SELECT s.id,e.id,p.id,r.reaction_type, e.pathway_name " +
+        String query = "SELECT s.id, e.id, p.id, r.reaction_type, e.pathway_name " +
                 "FROM kegg_kgml_reaction r " +
                 "inner join kegg_kgml_substrate s on r.reaction_id=s.reaction_id " +
                 "inner join kegg_kgml_product p on r.reaction_id=p.reaction_id " +

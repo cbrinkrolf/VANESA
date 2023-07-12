@@ -28,12 +28,11 @@ import gui.algorithms.ScreenSize;
 import net.miginfocom.swing.MigLayout;
 
 public class CompareGraphsGUI implements ActionListener, ItemListener {
-
 	private JPanel panel = new JPanel();
 	private JPanel firstGraph = new JPanel();
 	private JPanel secondGraph = new JPanel();
-	private JComboBox<String> firstBox = new JComboBox<String>();
-	private JComboBox<String> secondBox = new JComboBox<String>();
+	private JComboBox<String> firstBox = new JComboBox<>();
+	private JComboBox<String> secondBox = new JComboBox<>();
 	private JOptionPane optionPane;
 	private JDialog dialog;
 	private JSplitPane splitPane;
@@ -95,17 +94,14 @@ public class CompareGraphsGUI implements ActionListener, ItemListener {
 		dialog.setContentPane(optionPane);
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-		ScreenSize screen = new ScreenSize();
-		int screenHeight = (int) screen.getheight();
-		int screenWidth = (int) screen.getwidth();
-
 		firstBox.setEditable(false);
 		secondBox.setEditable(false);
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, firstGraph, secondGraph);
 
-		splitWindowWith = screenWidth - 150;
-		splitWindowHeight = screenHeight - 200;
+		ScreenSize screen = new ScreenSize();
+		splitWindowWith = screen.width - 150;
+		splitWindowHeight = screen.height - 200;
 
 		splitPane.setPreferredSize(new Dimension(splitWindowWith, splitWindowHeight));
 

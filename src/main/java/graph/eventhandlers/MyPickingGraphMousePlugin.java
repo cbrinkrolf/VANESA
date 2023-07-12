@@ -98,7 +98,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 									.setLocation(Circle.addPoints(pw.getVertices().get(child), movement));
 						}
 					} else {
-						if (pw.getVertices().keySet().contains(selectedNode)) {
+						if (pw.getVertices().containsKey(selectedNode)) {
 							pw.getVertices().get(selectedNode).setLocation(graph.getVertexLocation(selectedNode));
 						}
 					}
@@ -146,18 +146,18 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			super.mousePressed(e);
 			originalSelection.clear();
 			originalSelection.addAll(pw.getSelectedNodes());
-			for (BiologicalNodeAbstract bna : originalSelection) {
-				if (bna.isLogical()) {
-					// g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
-					for (BiologicalNodeAbstract pick : bna.getLogicalReference().getRefs()) {
-						// g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
-					}
-				} else {
-					for (BiologicalNodeAbstract pick : bna.getRefs()) {
-						// g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
-					}
-				}
-			}
+			// for (BiologicalNodeAbstract bna : originalSelection) {
+			// 	if (bna.isLogical()) {
+			// 		// g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
+			// 		for (BiologicalNodeAbstract pick : bna.getLogicalReference().getRefs()) {
+			// 			// g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
+			// 		}
+			// 	} else {
+			// 		for (BiologicalNodeAbstract pick : bna.getRefs()) {
+			// 			// g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
+			// 		}
+			// 	}
+			// }
 			if (pw.getGraph().getLayout() instanceof HierarchicalCircleLayout) {
 				HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) pw.getGraph().getLayout();
 				if (hcLayout.getConfig().getMoveInGroups()) {
@@ -171,7 +171,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			saveOldVertexPositions();
 			if (pw.getSelectedNodes().size() == 0 && pw.getSelectedEdges().size() == 0
 					&& SwingUtilities.isLeftMouseButton(e)) {
-				this.mousePressedAnnotation(e);
+				mousePressedAnnotation(e);
 			}
 		}
 	}
@@ -263,7 +263,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 							down = p;
 						} else {
 							Point2D out = e.getPoint();
-							if (e.getModifiersEx() == this.addToSelectionModifiers || e.getModifiersEx() == modifiers) {
+							if (e.getModifiersEx() == addToSelectionModifiers || e.getModifiersEx() == modifiers) {
 								rect.setFrameFromDiagonal(down, out);
 							}
 						}

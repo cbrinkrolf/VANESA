@@ -11,6 +11,7 @@ import gui.MainWindow;
 import io.BaseReader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import util.VanesaUtility;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -30,8 +31,8 @@ import java.util.stream.Collectors;
 
 public class GraphMLReader extends BaseReader<Pathway> {
     private final Logger logger = Logger.getRootLogger();
-    private final Elementdeclerations declarations = new Elementdeclerations();
     private boolean hasSeenPositions = false;
+    private int fallbackIdCounter = 0;
 
     public GraphMLReader(File file) {
         super(file);
@@ -44,6 +45,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
     @Override
     public Pathway internalRead(InputStream inputStream) {
         hasSeenPositions = false;
+        fallbackIdCounter = 0;
         final XMLEventReader reader;
         try {
             reader = XMLInputFactory.newInstance().createXMLEventReader(inputStream);
@@ -52,10 +54,10 @@ public class GraphMLReader extends BaseReader<Pathway> {
             return null;
         }
         Pathway pw = new CreatePathway().getPathway();
-        final List<String> nodeDeclarations = declarations.getAllNodeDeclarations();
-        final List<String> edgeDeclarations = declarations.getAllEdgeDeclarations();
         final Map<String, PropertyKey> nodePropertyTypes = new HashMap<>();
+        final Map<String, Integer> nodeIdMap = new HashMap<>();
         final Map<String, PropertyKey> edgePropertyTypes = new HashMap<>();
+        final Map<String, Integer> edgeIdMap = new HashMap<>();
         final Map<Integer, BiologicalNodeAbstract> vertexIdMap = new HashMap<>();
         while (reader.hasNext()) {
             final XMLEvent nextEvent = tryNextEvent(reader);
@@ -70,9 +72,9 @@ public class GraphMLReader extends BaseReader<Pathway> {
                         edgePropertyTypes.put(property.id, property);
                     }
                 } else if ("node".equals(key)) {
-                    readNode(reader, element, nodeDeclarations, nodePropertyTypes, pw, vertexIdMap);
+                    readNode(reader, element, nodePropertyTypes, pw, vertexIdMap, nodeIdMap);
                 } else if ("edge".equals(key)) {
-                    readEdge(reader, element, edgeDeclarations, edgePropertyTypes, pw, vertexIdMap);
+                    readEdge(reader, element, edgePropertyTypes, pw, vertexIdMap, edgeIdMap, nodeIdMap);
                 }
             }
         }
@@ -108,13 +110,22 @@ public class GraphMLReader extends BaseReader<Pathway> {
         return attribute != null ? attribute.getValue() : null;
     }
 
-    private void readNode(final XMLEventReader reader, final StartElement element, final List<String> nodeDeclarations,
+    private void readNode(final XMLEventReader reader, final StartElement element,
                           final Map<String, PropertyKey> propertyTypes, final Pathway pw,
-                          final Map<Integer, BiologicalNodeAbstract> vertexIdMap) {
-        String label = StringUtils.stripStart(getElementAttribute(element, "labels"), ":");
+                          final Map<Integer, BiologicalNodeAbstract> vertexIdMap, Map<String, Integer> nodeIdMap) {
+        final Map<String, Object> properties = collectNodeOrEdgeProperties(reader, propertyTypes, "node");
+        String label = getElementAttribute(element, "labels");
+        if (label != null) {
+            label = StringUtils.stripStart(label, ":");
+        } else {
+            label = (String) properties.get("labels");
+            if (label != null) {
+                label = StringUtils.stripStart(label, ":");
+            }
+        }
         label = transformLabel(label);
-        if (label == null || !nodeDeclarations.contains(label)) {
-            logger.warn("Ignored node with label '" + label + "'");
+        if (label == null) {
+            logger.warn("Ignored node without label");
             return;
         }
         final String idText = getElementAttribute(element, "id");
@@ -122,14 +133,19 @@ public class GraphMLReader extends BaseReader<Pathway> {
             logger.warn("Ignored node without id");
             return;
         }
-        final int id = Integer.parseInt(idText);
+        int id;
+        try {
+            id = Integer.parseInt(idText);
+        } catch (NumberFormatException ignored) {
+            id = getNextFallbackId(pw);
+        }
+        nodeIdMap.put(idText, id);
         final String nodeX = getElementAttribute(element, "x");
         final String nodeY = getElementAttribute(element, "y");
         Point p = new Point(nodeX != null ? Integer.parseInt(nodeX) : 0, nodeY != null ? Integer.parseInt(nodeY) : 0);
         if (p.x != 0 || p.y != 0) {
             hasSeenPositions = true;
         }
-        final Map<String, Object> properties = collectNodeOrEdgeProperties(reader, propertyTypes, "node");
         BiologicalNodeAbstract bna = BiologicalNodeAbstractFactory.create(label, null);
         try {
             bna.setID(id, pw);
@@ -139,6 +155,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
         }
         setPropertyIfExists(properties, "_label", bna::setLabel);
         setPropertyIfExists(properties, "name", bna::setName);
+        setPropertyIfExists(properties, "color", c -> bna.setColor(VanesaUtility.colorFromHex((String) c)));
         setPropertyIfExists(properties, "concentration", bna::setConcentration);
         setPropertyIfExists(properties, "concentrationMin", bna::setConcentrationMin);
         setPropertyIfExists(properties, "concentrationMax", bna::setConcentrationMax);
@@ -156,7 +173,9 @@ public class GraphMLReader extends BaseReader<Pathway> {
                 setPropertyIfExists(properties, "logFC", rna::setLogFC);
                 break;
             case Elementdeclerations.dna:
-                setPropertyIfExists(properties, "ntSequence", ((DNA) bna)::setNtSequence);
+                DNA dna = (DNA) bna;
+                setPropertyIfExists(properties, "ntSequence", dna::setNtSequence);
+                setPropertyIfExists(properties, "logFC", dna::setLogFC);
                 break;
             case Elementdeclerations.gene:
                 setPropertyIfExists(properties, "ntSequence", ((Gene) bna)::setNtSequence);
@@ -216,6 +235,12 @@ public class GraphMLReader extends BaseReader<Pathway> {
         return StringUtils.replace(label, "_", " ");
     }
 
+    private int getNextFallbackId(Pathway pw) {
+        while (pw.getIdSet().contains(fallbackIdCounter))
+            fallbackIdCounter++;
+        return fallbackIdCounter++;
+    }
+
     private Map<String, Object> collectNodeOrEdgeProperties(final XMLEventReader reader,
                                                             final Map<String, PropertyKey> propertyTypes,
                                                             final String forType) {
@@ -233,8 +258,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
                 }
                 final PropertyKey property = propertyTypes.get(propertyKey);
                 final String propertyName = property.attributeName;
-                if (!propertyName.equals("labels") && !propertyName.equals("label"))
-                    properties.put(propertyName, parsePropertyValue(property, reader));
+                properties.put(propertyName, parsePropertyValue(property, reader));
             } else if (nextEvent != null && nextEvent.isEndElement()) {
                 final String tagName = nextEvent.asEndElement().getName().getLocalPart();
                 if (tagName.equalsIgnoreCase("node") || tagName.equalsIgnoreCase("edge"))
@@ -331,38 +355,49 @@ public class GraphMLReader extends BaseReader<Pathway> {
         }
     }
 
-    private void readEdge(final XMLEventReader reader, final StartElement element, List<String> edgeDeclarations,
+    private void readEdge(final XMLEventReader reader, final StartElement element,
                           final Map<String, PropertyKey> propertyTypes, final Pathway pw,
-                          final Map<Integer, BiologicalNodeAbstract> vertexIdMap) {
+                          final Map<Integer, BiologicalNodeAbstract> vertexIdMap, Map<String, Integer> edgeIdMap,
+                          Map<String, Integer> nodeIdMap) {
+        final Map<String, Object> properties = collectNodeOrEdgeProperties(reader, propertyTypes, "edge");
         String label = getElementAttribute(element, "label");
+        if (label == null) {
+            label = (String) properties.get("label");
+        }
         label = transformLabel(label);
-        if (label == null || !edgeDeclarations.contains(label)) {
-            logger.warn("Ignored edge with label '" + label + "'");
+        if (label == null) {
+            logger.warn("Ignored edge without label");
             return;
         }
         final String idText = getElementAttribute(element, "id");
+        int id;
         if (idText == null) {
-            logger.warn("Ignored edge without id");
-            return;
+            id = getNextFallbackId(pw);
+        } else {
+            try {
+                id = Integer.parseInt(idText);
+            } catch (NumberFormatException ignored) {
+                id = getNextFallbackId(pw);
+            }
         }
-        final int id = Integer.parseInt(idText);
+        edgeIdMap.put(idText, id);
         final String sourceNodeIdText = getElementAttribute(element, "source");
         final String targetNodeIdText = getElementAttribute(element, "target");
         if (sourceNodeIdText == null || targetNodeIdText == null) {
             logger.warn("Ignored edge without source or target node id");
             return;
         }
-        BiologicalNodeAbstract source = vertexIdMap.get(Integer.parseInt(sourceNodeIdText));
-        BiologicalNodeAbstract target = vertexIdMap.get(Integer.parseInt(targetNodeIdText));
+        BiologicalNodeAbstract source = vertexIdMap.get(nodeIdMap.get(sourceNodeIdText));
+        BiologicalNodeAbstract target = vertexIdMap.get(nodeIdMap.get(targetNodeIdText));
         if (source == null || target == null) {
             logger.warn("Ignored edge without source or target node");
             return;
         }
-        final Map<String, Object> properties = collectNodeOrEdgeProperties(reader, propertyTypes, "edge");
         BiologicalEdgeAbstract bea = BiologicalEdgeAbstractFactory.create(label, null);
         try {
             bea.setID(id, pw);
         } catch (IDAlreadyExistException e) {
+            System.out.println("Ignored edge with already existing id " + id);
             logger.warn("Ignored edge with already existing id " + id);
             return;
         }
@@ -371,6 +406,7 @@ public class GraphMLReader extends BaseReader<Pathway> {
         setPropertyIfExists(properties, "directed", bea::setDirected, true);
         setPropertyIfExists(properties, "_label", bea::setLabel);
         setPropertyIfExists(properties, "name", bea::setName);
+        setPropertyIfExists(properties, "color", c -> bea.setColor(VanesaUtility.colorFromHex((String) c)));
         setPropertyIfExists(properties, "function", bea::setFunction);
         setPropertyIfExists(properties, "description", bea::setDescription);
         // TODO: more

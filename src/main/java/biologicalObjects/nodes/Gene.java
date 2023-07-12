@@ -4,7 +4,7 @@ import java.util.Vector;
 
 import biologicalElements.Elementdeclerations;
 
-public class Gene extends BiologicalNodeAbstract {
+public class Gene extends BiologicalNodeAbstract implements NodeWithNTSequence {
 	private String ntSequence = "";
 	private final Vector<String[]> proteins = new Vector<>();
 	private final Vector<String[]> enzymes = new Vector<>();

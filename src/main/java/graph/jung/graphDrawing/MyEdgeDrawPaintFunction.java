@@ -12,92 +12,76 @@ import configurations.NetworkSettings;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyEdgeDrawPaintFunction implements Function<BiologicalEdgeAbstract, Paint> {
+    private final PickedState<BiologicalNodeAbstract> psV;
+    private final PickedState<BiologicalEdgeAbstract> psE;
+    private final Color dotted = Color.LIGHT_GRAY;
+    private final Color dotted_black = Color.BLACK.brighter();
+    private final NetworkSettings settings = NetworkSettings.getInstance();
+    private Color alphaEdge = new Color(dotted.darker().getRed(), dotted.darker().getGreen(), dotted.darker().getBlue(),
+                                        settings.getEdgeOpacity());
+    private boolean graphTheory = false;
 
-	private  PickedState<BiologicalNodeAbstract> psV;
-	private   PickedState<BiologicalEdgeAbstract> psE;
+    public MyEdgeDrawPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE) {
+        this.psV = psV;
+        this.psE = psE;
+    }
 
-	private  Color dotted = Color.LIGHT_GRAY;
-	private  Color dotted_black = Color.BLACK.brighter();
-	private  NetworkSettings settings = NetworkSettings.getInstance();
-	private  Color alphaEdge = new Color(dotted.darker().getRed(), dotted.darker().getGreen(), dotted.darker().getBlue(), settings.getEdgeOpacity());
+    public Paint getDrawPaintWithGraphTheory(BiologicalEdgeAbstract bea) {
+        if (psV.isPicked(bea.getFrom()) && psV.isPicked(bea.getTo())) {
+            return Color.BLUE;
+        }
+        if (settings.isBackgroundColor()) {
+            return dotted_black;
+        }
+        return dotted;
+    }
 
-	private   boolean graphTheory = false;
+    public Paint getDrawPaintWithoutGraphTheory(BiologicalEdgeAbstract bea) {
+        // uncomment for edges
+        if (settings.getDrawEdges()) {
+            if (psV.getPicked().isEmpty()) {
+                if (psE.getPicked().isEmpty()) {
+                    if (settings.isBackgroundColor()) {
+                        return dotted_black;
+                    }
+                    return bea.getColor();
+                }
+                if (psE.isPicked(bea)) {
+                    return bea.getColor();
+                }
+                if (settings.isBackgroundColor()) {
+                    return dotted_black;
+                }
+                return bea.getColor();
+            }
+            for (BiologicalNodeAbstract bna : psV.getPicked()) {
+                if (bna == bea.getFrom() || bna == bea.getTo())
+                    return bea.getColor();
+            }
+            if (psE.isPicked(bea)) {
+                return bea.getColor();
+            }
+            if (settings.isBackgroundColor()) {
+                return dotted_black;
+            }
+            return bea.getColor();
+        }
+        return null;
+    }
 
-	public MyEdgeDrawPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE) {
-		this.psV = psV;
-		this.psE = psE;
-	}
+    public void setGraphTheory(boolean graphTheory) {
+        this.graphTheory = graphTheory;
+    }
 
-	public Paint getDrawPaintWithGraphTheory(BiologicalEdgeAbstract bea) {
+    @Override
+    public Paint apply(BiologicalEdgeAbstract bea) {
+        if (graphTheory) {
+            return getDrawPaintWithGraphTheory(bea);
+        }
+        return getDrawPaintWithoutGraphTheory(bea);
+    }
 
-		if (psV.isPicked(bea.getFrom()) && psV.isPicked(bea.getTo())) {
-			return Color.BLUE;
-		} else {
-			if (settings.isBackgroundColor())
-				return dotted_black;
-			else
-				return dotted;
-		}
-	}
-
-	public Paint getDrawPaintWithoutGraphTheory(BiologicalEdgeAbstract bea) {
-		// uncomment for edges
-		if (settings.getDrawEdges()) {
-
-			if (psV.getPicked().isEmpty()) {
-				if (psE.getPicked().isEmpty()) {
-
-					if (settings.isBackgroundColor())
-						return dotted_black;
-					else
-						return bea.getColor();
-				} else {
-					if (psE.isPicked(bea))
-						return bea.getColor();
-					else if (settings.isBackgroundColor())
-						return dotted_black;
-					else {
-						return bea.getColor();
-					}
-				}
-			} else {
-
-				Iterator<BiologicalNodeAbstract> it = psV.getPicked().iterator();
-				BiologicalNodeAbstract bna;
-
-				while (it.hasNext()) {
-					bna = it.next();
-					if (bna == bea.getFrom() || bna == bea.getTo())
-						return bea.getColor();
-				}
-
-				if (psE.isPicked(bea)) {
-					return bea.getColor();
-				}
-
-				if (settings.isBackgroundColor()) {
-					return dotted_black;
-				} else {
-					return bea.getColor();
-				}
-			}
-		} else
-			return null;
-	}
-
-	public void setGraphTheory(boolean graphTheory) {
-		this.graphTheory = graphTheory;
-	}
-
-	@Override
-	public Paint apply(BiologicalEdgeAbstract bea) {
-		if (!graphTheory)
-			return getDrawPaintWithoutGraphTheory(bea);
-		else
-			return getDrawPaintWithGraphTheory(bea);
-	}
-
-	public void updateEdgeAlphaValue() {
-		alphaEdge = new Color(dotted.getRed(), dotted.getGreen(), dotted.getBlue(), settings.getEdgeOpacity());
-	}
+    public void updateEdgeAlphaValue() {
+        alphaEdge = new Color(dotted.getRed(), dotted.getGreen(), dotted.getBlue(), settings.getEdgeOpacity());
+    }
 }
