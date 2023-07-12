@@ -2,7 +2,7 @@ package biologicalObjects.nodes;
 
 import java.util.List;
 
-public class RNA extends BiologicalNodeAbstract {
+public class RNA extends BiologicalNodeAbstract implements NodeWithNTSequence, NodeWithLogFC {
 	private String ntSequence = "";
 	private Double logFC = 0.0;
 

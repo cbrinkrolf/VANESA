@@ -5,8 +5,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Shape;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
@@ -35,11 +33,7 @@ import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
-import edu.uci.ics.jung.visualization.Layer;
-import edu.uci.ics.jung.visualization.RenderContext;
-import edu.uci.ics.jung.visualization.VisualizationModel;
-import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.*;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.EditingPopupGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
@@ -76,8 +70,6 @@ import gui.algorithms.ScreenSize;
 import gui.visualization.TokenRenderer;
 
 public class MyGraph {
-	private int VisualizationViewerWidth = 1000;
-	private int VisualizationViewerHeigth = 1000;
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<>();
 	private final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 	private AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
@@ -122,18 +114,17 @@ public class MyGraph {
 	}
 
 	// private Paintable viewGrid;
-	private MyGraphZoomScrollPane pane = null;
+	private GraphZoomScrollPane pane = null;
 	private final Pathway pathway;
 
 	public MyGraph(Pathway pw) {
-
 		ScreenSize screenSize = new ScreenSize();
-		VisualizationViewerWidth = (int) screenSize.getwidth() - 70;
-		VisualizationViewerHeigth = (int) screenSize.getheight() - 100;
+		int visualizationViewerWidth = screenSize.width - 70;
+		int visualizationViewerHeight = screenSize.height - 100;
 
 		this.pathway = pw;
 		graphMouse = new MyEditingModalGraphMouse();
-		Dimension preferredSize = new Dimension(VisualizationViewerWidth, VisualizationViewerHeigth);
+		Dimension preferredSize = new Dimension(visualizationViewerWidth, visualizationViewerHeight);
 		Dimension preferredSize2 = new Dimension(300, 200);
 
 		// vertexLocations = new HashMap();
@@ -155,19 +146,16 @@ public class MyGraph {
 		 * } };
 		 */
 
-		layout = new StaticLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g);// ,
-																						// locationTransformer);
+		layout = new StaticLayout<>(g);// ,  locationTransformer);
 
 		layout.setSize(preferredSize);
 		// layout.initialize(preferredSize, nodePositions);
-		clusteringLayout = new AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(layout);
+		clusteringLayout = new AggregateLayout<>(layout);
 
-		visualizationModel = new DefaultVisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract>(
-				clusteringLayout, preferredSize);
+		visualizationModel = new DefaultVisualizationModel<>(clusteringLayout, preferredSize);
 		visualizationModel.getRelaxer().setSleepTime(10);
 		// visualizationModel.setRelaxerThreadSleepTime(10);
-		vv = new MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(visualizationModel,
-				preferredSize, pathway);
+		vv = new MyVisualizationViewer<>(visualizationModel, preferredSize, pathway);
 
 		vv.setSize(preferredSize);
 		vv.setMinimumSize(preferredSize);
@@ -176,7 +164,6 @@ public class MyGraph {
 
 		// vv.addKeyListener(new EventListener());
 		vv.addKeyListener(new KeyListener() {
-
 			@Override
 			public void keyTyped(KeyEvent e) {
 				// nothing to do
@@ -204,8 +191,8 @@ public class MyGraph {
 			}
 		});
 
-		vv.getRenderer().setVertexRenderer(new MultiVertexRenderer<BiologicalNodeAbstract, BiologicalEdgeAbstract>());
-		vv2 = new SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract>(vv, preferredSize2);
+		vv.getRenderer().setVertexRenderer(new MultiVertexRenderer<>());
+		vv2 = new SatelliteVisualizationViewer<>(vv, preferredSize2);
 		vv2.setSize(preferredSize2);
 		vv2.setMinimumSize(preferredSize2);
 
@@ -230,7 +217,7 @@ public class MyGraph {
 		// set the inner nodes to be painted after the actual graph
 		// vv.addPostRenderPaintable(new InnerNodeRenderer(vv));
 		// vv.addPostRenderPaintable(new TokenRenderer(vv));
-		pickSupport = new ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract>(vv);
+		pickSupport = new ShapePickSupport<>(vv);
 
 		stateV = vv.getPickedVertexState();
 		stateE = vv.getPickedEdgeState();
@@ -246,7 +233,7 @@ public class MyGraph {
 
 		vertexStringer = new MyVertexStringer();
 		vertexShapeTransformer = new MyVertexShapeTransformer();
-		edgeStringer = new MyEdgeStringer(pathway);
+		edgeStringer = new MyEdgeStringer();
 		esf = new MyEdgeShapeFunction(this.g);
 
 		eaf = new MyEdgeArrowFunction();
@@ -286,53 +273,38 @@ public class MyGraph {
 		// g.addListener(new GraphListener(), GraphEventType.ALL_SINGLE_EVENTS);
 		// stateV.addListener(new PickListener());
 		// vv.getPickedEdgeState().addItemListener(new EdgePickListener());
-		stateV.addItemListener(new ItemListener() {
-
-			MainWindow w = MainWindow.getInstance();
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				// System.out.println("changed");
-				if (stateV.getSelectedObjects().length == 1) {
-					GraphInstance.setSelectedObject((BiologicalNodeAbstract) stateV.getSelectedObjects()[0]);
-
-					if (!pathway.isHeadless()) {
-						w.updateElementProperties();
-					}
+		stateV.addItemListener(e -> {
+			final MainWindow w = MainWindow.getInstance();
+			if (stateV.getSelectedObjects().length == 1) {
+				GraphInstance.setSelectedObject((BiologicalNodeAbstract) stateV.getSelectedObjects()[0]);
+				if (!pathway.isHeadless()) {
+					w.updateElementProperties();
 				}
-				if (pathway.isPetriNet() || pathway.getTransformationInformation() != null
-						&& pathway.getTransformationInformation().getPetriNet() != null) {
-					if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
-						// System.out.println("sim");
-						w.updateSimulationResultView();
-					}
+			}
+			if (pathway.isPetriNet() || pathway.getTransformationInformation() != null
+					&& pathway.getTransformationInformation().getPetriNet() != null) {
+				if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
+					w.updateSimulationResultView();
 				}
 			}
 		});
 
-		stateE.addItemListener(new ItemListener() {
-			MainWindow w = MainWindow.getInstance();
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				// System.out.println("changed");
-				if (stateE.getSelectedObjects().length == 1) {
-					GraphInstance.setSelectedObject((BiologicalEdgeAbstract) stateE.getSelectedObjects()[0]);
-					if (!pathway.isHeadless()) {
-						w.updateElementProperties();
-					}
+		stateE.addItemListener(e -> {
+			final MainWindow w = MainWindow.getInstance();
+			if (stateE.getSelectedObjects().length == 1) {
+				GraphInstance.setSelectedObject((BiologicalEdgeAbstract) stateE.getSelectedObjects()[0]);
+				if (!pathway.isHeadless()) {
+					w.updateElementProperties();
 				}
-				if (pathway.isPetriNet() || pathway.getTransformationInformation() != null
-						&& pathway.getTransformationInformation().getPetriNet() != null) {
-					if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
-						// System.out.println("sim");
-						w.updateSimulationResultView();
-					}
+			}
+			if (pathway.isPetriNet() || pathway.getTransformationInformation() != null
+					&& pathway.getTransformationInformation().getPetriNet() != null) {
+				if (pathway.getPetriPropertiesNet().isPetriNetSimulation()) {
+					w.updateSimulationResultView();
 				}
 			}
 		});
 		setMouseModePick();
-
 	}
 
 	public void makeDefaultObjectVisualization() {
@@ -400,26 +372,14 @@ public class MyGraph {
 		layout.setLocation(vertex, p);
 	}
 
-	public MyGraphZoomScrollPane getGraphVisualization() {
+	public GraphZoomScrollPane getGraphVisualization() {
 		if (pane == null) {
-			pane = new MyGraphZoomScrollPane(vv) {
-
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-				// public void setVisible(boolean v){
-				// if(!v){
-				// vv.stop();
-				// }
-				// }
-			};
+			pane = new GraphZoomScrollPane(vv);
 		}
 		return pane;
 	}
 
 	public boolean addVertex(BiologicalNodeAbstract bna, Point2D p) {
-
 		/*
 		 * Point2D p = this.nodePositions.get(bna);
 		 * 
@@ -465,10 +425,6 @@ public class MyGraph {
 	 */
 
 	public Point2D getVertexLocation(BiologicalNodeAbstract vertex) {
-		// System.out.println("1: "+this.getVertexLocation(vertex));
-		// System.out.println("2:
-		// "+visualizationModel.getGraphLayout().transform(vertex));
-
 		// return visualizationModel.getGraphLayout().transform(vertex);
 		return layout.apply(vertex);
 		// return (Point2D) nodePositions.get(vertex);
@@ -610,39 +566,28 @@ public class MyGraph {
 	}
 
 	public void zoomIn() {
-		Runnable animator = new Runnable() {
-
-			@Override
-			public void run() {
-				for (int i = 0; i < 5; i++) {
-					scaler.scale(vv, 1.1f, vv.getCenter());
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException ex) {
-					}
+		Thread thread = new Thread(() -> {
+			for (int i = 0; i < 5; i++) {
+				scaler.scale(vv, 1.1f, vv.getCenter());
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException ignored) {
 				}
 			}
-		};
-		Thread thread = new Thread(animator);
+		});
 		thread.start();
 	}
 
 	public void zoomOut() {
-
-		Runnable animator = new Runnable() {
-
-			@Override
-			public void run() {
-				for (int i = 0; i < 5; i++) {
-					scaler.scale(vv, 1 / 1.1f, vv.getCenter());
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException ex) {
-					}
+		Thread thread = new Thread(() -> {
+			for (int i = 0; i < 5; i++) {
+				scaler.scale(vv, 1 / 1.1f, vv.getCenter());
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException ignored) {
 				}
 			}
-		};
-		Thread thread = new Thread(animator);
+		});
 		thread.start();
 	}
 
@@ -982,27 +927,17 @@ public class MyGraph {
 		// normalCentering();
 
 		visualizationModel.setGraphLayout(layout);
-
-		Runnable center = new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(500);
-
-					// fitScaleOfViewer(vv2);
-					// fitScaleOfViewer(vv);
-
-					normalCentering();
-					// fitScaleOfSatellitView();
-					// normalCentering();
-					// System.out.println("test");
-				} catch (InterruptedException ex) {
-				}
-
+		Thread thread = new Thread(() -> {
+			try {
+				Thread.sleep(500);
+				// fitScaleOfViewer(vv2);
+				// fitScaleOfViewer(vv);
+				normalCentering();
+				// fitScaleOfSatellitView();
+				// normalCentering();
+			} catch (InterruptedException ignored) {
 			}
-		};
-		Thread thread = new Thread(center);
+		});
 		thread.start();
 
 		// this.normalCentering(vv);
@@ -1116,13 +1051,9 @@ public class MyGraph {
 	}
 
 	public void normalCentering(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> viewer) {
-		// System.out.println("drin");
-		// System.out.println("drin");
-		// GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout()
-		// .getGraph(), viewer.getGraphLayout());
+		// GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout().getGraph(), viewer.getGraphLayout());
 		GraphCenter graphCenter = new GraphCenter(this);
 
-		// System.out.println("drin");
 		// Layout layout = viewer.getGraphLayout();
 		Point2D q = graphCenter.getCenter();
 		// Point2D q = viewer.getCenter();
@@ -1141,47 +1072,28 @@ public class MyGraph {
 	}
 
 	public void animatedCentering() {
-
 		// this.fitScaleOfViewer(vv);
-		// System.out.println("bla");
-		// System.out.println(vv.getSize());
-
-		// System.out.println("animated centring");
 		// vv.stop();
-
 		GraphCenter graphCenter = new GraphCenter(this);
-		Point2D q = graphCenter.getCenter(); // Point2D lvc =
-		// vv.inverseTransform(vv.getCenter());
+		Point2D q = graphCenter.getCenter();
+		// Point2D lvc = vv.inverseTransform(vv.getCenter());
 		Point2D lvc = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(vv.getCenter());
 
 		final double dx = (lvc.getX() - q.getX()) / 10;
-		final double dy = (lvc.getY() - q.getY()) / 10; // System.out.println(dx+"
-														// "+dy);
-
-		// System.out.println("nodes: "+g.getVertexCount()); //
-		// System.out.println(g.getEdgeCount()); //
-		// System.out.println(dx + " " + dy);
-		Runnable animator = new Runnable() {
-
-			@Override
-			public void run() {
-				for (int i = 0; i < 10; i++) { //
-					// vv.getLayoutTransformer().translate(dx, dy);
-					vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy);
-
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException ex) {
-					}
+		final double dy = (lvc.getY() - q.getY()) / 10;
+		Thread thread = new Thread(() -> {
+			for (int i = 0; i < 10; i++) {
+				// vv.getLayoutTransformer().translate(dx, dy);
+				vv.getRenderContext().getMultiLayerTransformer().getTransformer(Layer.LAYOUT).translate(dx, dy);
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException ignored) {
 				}
 			}
-		};
-		Thread thread = new Thread(animator);
+		});
 		thread.start();
-
 		// fitScaleOfViewer(this.vv2);
 		// normalCentering(this.vv2);
-
 	}
 
 	// public void updateElementLabel(Object element) {
@@ -1222,7 +1134,6 @@ public class MyGraph {
 	// }
 
 	public void enableGraphTheory() {
-
 		// stateV.clearPickedEdges();
 		// stateV.clearPickedVertices();
 		stateV.clear();
@@ -1236,7 +1147,6 @@ public class MyGraph {
 	}
 
 	public void disableGraphTheory() {
-
 		vdpf.setGraphTheory(false);
 		vfpf.setGraphTheory(false);
 		vsh.setGraphTheory(false);
@@ -1249,14 +1159,6 @@ public class MyGraph {
 	public Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> getJungGraph() {
 		return g;
 	}
-
-	// public void setJungGraph(Graph graph) {
-	// g = graph;
-	// // }
-	//
-	// public HashMap getVertexLocations() {
-	// return this.nodePositions;
-	// }
 
 	public void restartVis() {
 		vv.revalidate();

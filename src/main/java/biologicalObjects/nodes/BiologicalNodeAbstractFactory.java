@@ -42,6 +42,7 @@ public class BiologicalNodeAbstractFactory {
 			break;
 		case Elementdeclerations.dna:
 			newBNA = new DNA(label, name);
+			fillDNA(newBNA, bna);
 			break;
 		case Elementdeclerations.domain:
 			newBNA = new Domain(label, name);
@@ -180,6 +181,15 @@ public class BiologicalNodeAbstractFactory {
 			if (newBNA instanceof RNA && bna instanceof RNA) {
 				((RNA) newBNA).setNtSequence(((RNA) bna).getNtSequence());
 				((RNA) newBNA).setLogFC(((RNA) bna).getLogFC());
+			}
+		}
+	}
+
+	private static void fillDNA(BiologicalNodeAbstract newBNA, BiologicalNodeAbstract bna) {
+		if (bna != null) {
+			if (newBNA instanceof DNA && bna instanceof DNA) {
+				((DNA) newBNA).setNtSequence(((DNA) bna).getNtSequence());
+				((DNA) newBNA).setLogFC(((DNA) bna).getLogFC());
 			}
 		}
 	}

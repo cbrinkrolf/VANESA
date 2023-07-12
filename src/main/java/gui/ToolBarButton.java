@@ -9,8 +9,8 @@ import java.awt.event.MouseListener;
 public class ToolBarButton extends JButton implements MouseListener {
 	private static final long serialVersionUID = 1L;
 
-	public ToolBarButton(Icon icon) {
-		super(icon);
+	public ToolBarButton(ImageIcon icon) {
+		super(ImagePath.scaleIcon(icon, 32));
 		setProperties();
 	}
 
@@ -23,10 +23,14 @@ public class ToolBarButton extends JButton implements MouseListener {
 		addMouseListener(this);
 		setBorder(new LineBorder(Color.black));
 		setBorderPainted(false);
-		setMaximumSize(this.getPreferredSize());
 		setBackground(Color.LIGHT_GRAY);
 		setContentAreaFilled(false);
 		revalidate();
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(32, 32);
 	}
 
 	@Override

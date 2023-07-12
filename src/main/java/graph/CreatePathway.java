@@ -1,95 +1,49 @@
 package graph;
 
-import java.awt.Cursor;
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-
-import javax.xml.stream.XMLStreamException;
-
 import biologicalElements.Pathway;
 import gui.MainWindow;
-import io.sbml.JSBMLInput;
-import io.sbml.JSBMLOutput;
+
+import java.awt.*;
 
 public class CreatePathway {
+    private final String name;
+    private final Pathway pathway;
 
-	MainWindow w = MainWindow.getInstance();
-	GraphContainer con = GraphContainer.getInstance();
-	String pathwayName;
-	Pathway pw;
-	Pathway parent = null;
+    public CreatePathway() {
+        this("Untitled");
+    }
 
-	public CreatePathway(String title, Pathway parent) {
-		this.parent = parent;
-		pathwayName = title;
-		buildPathway();
-	}
+    public CreatePathway(final String title) {
+        name = title;
+        pathway = buildPathway();
+    }
 
-	public CreatePathway(String title) {
-		pathwayName = title;
-		buildPathway();
-	}
+    private Pathway buildPathway() {
+        final MainWindow window = MainWindow.getInstance();
+        final GraphContainer con = GraphContainer.getInstance();
+        window.setCursor(Cursor.WAIT_CURSOR);
+        final String newPathwayName = con.addPathway(name, new Pathway(name));
+        final Pathway pw = con.getPathway(newPathwayName);
+        window.addTab(pw.getTab().getTitleTab());
+        window.setCursor(Cursor.DEFAULT_CURSOR);
+        return pw;
+    }
 
-	public CreatePathway() {
-		pathwayName = "Untitled";
-		buildPathway();
-	}
+    public Pathway getPathway() {
+        return pathway;
+    }
 
-	public CreatePathway(Pathway pathway) {
-
-		PipedInputStream in = new PipedInputStream();
-		PipedOutputStream out;
-		try {
-			out = new PipedOutputStream(in);
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						new JSBMLOutput(out, pathway).generateSBMLDocument();
-					} catch (XMLStreamException e) {
-						e.printStackTrace();
-					}
-				}
-			}).start();
-			new JSBMLInput(null).loadSBMLFile(in, pathway.getFile());
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-	}
-
-	private void buildPathway() {
-		w.getFrame().setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		// Pathway newPW = null;
-		if (parent == null) {
-			new Pathway(pathwayName);
-		} else {
-			new Pathway(pathwayName, parent);
-		}
-		String newPathwayName = con.addPathway(pathwayName, new Pathway(pathwayName));
-		pw = con.getPathway(newPathwayName);
-		w.addTab(pw.getTab().getTitleTab());
-		w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-	}
-
-	/*
-	 * public void addVertex(Object node) { pw.getGraph().addVertexLabel(node); }
-	 */
-
-	public Pathway getPathway() {
-		return pw;
-	}
-	
-	public static void showPathway(Pathway pw){
-		GraphContainer con = GraphContainer.getInstance();
-		MainWindow w = MainWindow.getInstance();
-		if(con.getAllPathways().contains(pw)){
-			w.setSelectedTab(pw.getTab().getTitleTab());
-			return;
-		}
-		String newPathwayName = con.addPathway(pw.getName(), pw);
-		pw = con.getPathway(newPathwayName);
-		w.addTab(pw.getTab().getTitleTab());
-		w.getFrame().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-		//pw.updateMyGraph();
-	}
+    public static void showPathway(Pathway pw) {
+        final MainWindow window = MainWindow.getInstance();
+        final GraphContainer con = GraphContainer.getInstance();
+        if (con.getAllPathways().contains(pw)) {
+            window.setSelectedTab(pw.getTab().getTitleTab());
+            return;
+        }
+        final String newPathwayName = con.addPathway(pw.getName(), pw);
+        pw = con.getPathway(newPathwayName);
+        window.addTab(pw.getTab().getTitleTab());
+        window.setCursor(Cursor.DEFAULT_CURSOR);
+        //pw.updateMyGraph();
+    }
 }

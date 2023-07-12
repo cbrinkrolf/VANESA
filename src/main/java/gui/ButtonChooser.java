@@ -119,6 +119,7 @@ public class ButtonChooser extends JButton implements ActionListener, MouseListe
 				buttons.get(selectedIndex).getAction().actionPerformed(null);
 			} catch (NullPointerException ex) {
 				System.err.println("Create Pathway first!");
+				PopUpDialog.getInstance().show("Error", "Please create a network first!");
 			}
 		}
 	}

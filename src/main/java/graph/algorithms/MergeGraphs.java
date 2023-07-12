@@ -19,7 +19,7 @@ public class MergeGraphs {
 	public MergeGraphs(Pathway one, Pathway two, boolean showMessage) {
 		pw_one = one;
 		pw_two = two;
-		pw_new = new CreatePathway(pw_one.getTitle() + "" + pw_two.getTitle()).getPathway();
+		pw_new = new CreatePathway(pw_one.getTitle() + pw_two.getTitle()).getPathway();
 		pw_new.setOrganism("");
 		pw_new.setLink("");
 

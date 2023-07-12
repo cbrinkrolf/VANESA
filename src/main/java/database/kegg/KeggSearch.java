@@ -189,7 +189,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 					newPW.getGraph().normalCentering();
 				} else {
 					String[] details = it.next();
-					kc = new KEGGConnector(details[0], details[2], !(mergePW == null));
+					kc = new KEGGConnector(details[0], details[2], mergePW != null);
 					kc.addPropertyChangeListener(this);
 					kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
 					kc.setAutoCoarse(dsrw.getAutoCoarse());
@@ -202,8 +202,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getNewValue().equals("finished")) {
-			int MERGE = JOptionPane.CANCEL_OPTION;
-			if (answer == MERGE)
+			if (answer == JOptionPane.CANCEL_OPTION)
 				if (mergePW == null)
 					mergePW = kc.getPw();
 				else {
@@ -212,7 +211,7 @@ public class KeggSearch extends SwingWorker<Object, Object> implements PropertyC
 				}
 			if (it != null && it.hasNext()) {
 				String[] details = it.next();
-				kc = new KEGGConnector(details[0], details[2], !(answer == SEPARATE_TABS));
+				kc = new KEGGConnector(details[0], details[2], answer != SEPARATE_TABS);
 				kc.addPropertyChangeListener(this);
 				kc.setSearchMicroRNAs(dsrw.getCheckBox().isSelected());
 				kc.setAutoCoarse(dsrw.getAutoCoarse());

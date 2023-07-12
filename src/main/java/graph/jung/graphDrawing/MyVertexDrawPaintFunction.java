@@ -2,8 +2,6 @@ package graph.jung.graphDrawing;
 
 import java.awt.Color;
 import java.awt.Paint;
-import java.util.Iterator;
-import java.util.Set;
 
 import com.google.common.base.Function;
 
@@ -15,137 +13,96 @@ import configurations.NetworkSettings;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyVertexDrawPaintFunction implements Function<BiologicalNodeAbstract, Paint> {
+    private final PickedState<BiologicalNodeAbstract> psV;
+    private final PickedState<BiologicalEdgeAbstract> psE;
+    private final Pathway pw;
+    private boolean graphTheory = false;
+    private final NetworkSettings settings = NetworkSettings.getInstance();
 
-	private PickedState<BiologicalNodeAbstract> psV;
-	private PickedState<BiologicalEdgeAbstract> psE;
+    public MyVertexDrawPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE,
+                                     Pathway pw) {
+        this.psV = psV;
+        this.psE = psE;
+        this.pw = pw;
+    }
 
-	private Pathway pw;
-	private boolean graphTheory = false;
-	private NetworkSettings settings = NetworkSettings.getInstance();
+    private Paint withGraphTheory(BiologicalNodeAbstract v) {
+        if (psV.isPicked(v)) {
+            if (settings.isBackgroundColor()) {
+                return Color.WHITE;
+            }
+            return Color.DARK_GRAY;
+        }
+        return Color.LIGHT_GRAY;
+    }
 
-	public MyVertexDrawPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE,
-			Pathway pw) {
-		this.psV = psV;
-		this.psE = psE;
-		this.pw = pw;
-	}
+    private Paint withoutGraphTheory(BiologicalNodeAbstract v) {
+        boolean medium_check = false;
+        if (v instanceof Transition) {
+            if (((Transition) v).isSimulationActive()) {
+                return Color.red;
+            }
+        }
 
-	private Paint withGraphTheory(BiologicalNodeAbstract v) {
+        if (psV.getPicked().isEmpty()) {
+            if (psE.getPicked().isEmpty()) {
+                if (v.hasBrendaNode() || v.hasKEGGNode())
+                    return Color.RED;
+                if (settings.isBackgroundColor())
+                    return Color.DARK_GRAY.brighter();
+                return Color.DARK_GRAY;
+            } else {
+                for (BiologicalEdgeAbstract e : psE.getPicked()) {
+                    if (v == e.getFrom() || v == e.getTo()) {
+                        medium_check = true;
+                        break;
+                    }
+                }
+                if (medium_check) {
+                    if (settings.isBackgroundColor()) {
+                        return Color.WHITE;
+                    }
+                    return Color.DARK_GRAY;
+                }
+                return Color.LIGHT_GRAY;
+            }
+        } else {
+            if (psV.isPicked(v)) {
+                if (settings.isBackgroundColor()) {
+                    return Color.WHITE;
+                }
+                return Color.BLUE;
+            } else {
+                for (BiologicalNodeAbstract w : pw.getGraph().getJungGraph().getNeighbors(v)) {
+                    if (psV.isPicked(w))
+                        medium_check = true;
+                }
+                for (BiologicalEdgeAbstract bea : psE.getPicked()) {
+                    if (v == bea.getFrom() || v == bea.getTo()) {
+                        medium_check = true;
+                        break;
+                    }
+                }
+                if (medium_check) {
+                    if (settings.isBackgroundColor()) {
+                        return Color.WHITE;
+                    }
+                    return Color.DARK_GRAY;
+                }
+                return Color.LIGHT_GRAY;
+            }
+        }
+    }
 
-		if (psV.isPicked(v)) {
-			if (settings.isBackgroundColor())
-				return Color.WHITE;
-			else
-				// return Color.BLACK;
-				return Color.DARK_GRAY;
+    public void setGraphTheory(boolean graphTheory) {
+        this.graphTheory = graphTheory;
+    }
 
-		} else {
-			return Color.LIGHT_GRAY;
-		}
-	}
-
-	private Paint withoutGraphTheory(BiologicalNodeAbstract v) {
-		boolean medium_check = false;
-
-		if (v instanceof Transition) {
-			if (((Transition) v).isSimulationActive()) {
-				return Color.red;
-			}
-		}
-
-		if (psV.getPicked().isEmpty()) {
-			if (psE.getPicked().isEmpty()) {
-
-				if (v.hasBrendaNode() || v.hasKEGGNode())
-					return Color.RED;
-				else
-
-				if (settings.isBackgroundColor())
-					return Color.DARK_GRAY.brighter();
-				else
-					// return Color.BLACK;
-					return Color.DARK_GRAY;
-
-			} else {
-				Set<BiologicalEdgeAbstract> set = psE.getPicked();
-				BiologicalEdgeAbstract e;
-				for (Iterator<BiologicalEdgeAbstract> it = set.iterator(); it.hasNext();) {
-
-					e = it.next();
-					// Pair points = e.getEndpoints();
-					if (v == e.getFrom() || v == e.getTo())
-						medium_check = true;
-				}
-				if (medium_check) {
-					if (settings.isBackgroundColor()) {
-						return Color.WHITE;
-					} else {
-						// return Color.BLACK;
-						return Color.DARK_GRAY;
-					}
-				} else {
-					return Color.LIGHT_GRAY;
-				}
-			}
-
-		} else {
-			if (psV.isPicked(v))
-				if (settings.isBackgroundColor())
-					return Color.WHITE;
-				else
-					// return Color.BLACK;
-					// return Color.DARK_GRAY;
-					return Color.BLUE;
-
-			else {
-				BiologicalNodeAbstract w;
-				Iterator<BiologicalNodeAbstract> iter = pw.getGraph().getJungGraph().getNeighbors(v).iterator();
-				while (iter.hasNext()) {
-					w = iter.next();
-					if (psV.isPicked(w))
-						medium_check = true;
-				}
-
-				Set<BiologicalEdgeAbstract> set = psE.getPicked();
-				BiologicalEdgeAbstract bea;
-				for (Iterator<BiologicalEdgeAbstract> it = set.iterator(); it.hasNext();) {
-
-					bea = it.next();
-
-					if (v == bea.getFrom() || v == bea.getTo())
-						medium_check = true;
-				}
-
-				if (medium_check)
-					if (settings.isBackgroundColor())
-						return Color.WHITE;
-					else
-						// return Color.BLACK;
-						return Color.DARK_GRAY;
-
-				else
-					return Color.LIGHT_GRAY;
-			}
-		}
-	}
-
-	public void setGraphTheory(boolean graphTheory) {
-		this.graphTheory = graphTheory;
-	}
-
-	/*
-	 * public Paint getNewLoadedDrawPaint(Vertex v) { return Color.red;
-	 * 
-	 * }
-	 */
-
-	@Override
-	public Paint apply(BiologicalNodeAbstract v) {
-
-		if (!graphTheory) {
-			return withoutGraphTheory(v);
-		} else {
-			return withGraphTheory(v);
-		}
-	}
+    @Override
+    public Paint apply(BiologicalNodeAbstract v) {
+        if (graphTheory) {
+            return withGraphTheory(v);
+        }
+        return withoutGraphTheory(v);
+    }
 }

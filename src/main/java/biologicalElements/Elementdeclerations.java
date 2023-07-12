@@ -1,7 +1,6 @@
 package biologicalElements;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Elementdeclerations {
@@ -156,16 +155,9 @@ public class Elementdeclerations {
 	//special edges and nodes not in collections
 	public static final String anyBEA = "ANY Biological Edge";
 	public static final String anyBNA = "ANY Biological Node";
-			
-	
-
-	public Elementdeclerations() {
-
-	}
 
 	public List<String> getAllNodeDeclarations() {
-
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(others);
 		l.add(complex);
 		l.add(degraded);
@@ -205,14 +197,12 @@ public class Elementdeclerations {
 		l.add(discreteTransition);
 		l.add(continuousTransition);
 		l.add(inhibitor);
-		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
-
+		l.sort(String.CASE_INSENSITIVE_ORDER);
 		return l;
 	}
 
 	public List<String> getNotPNNodeDeclarations() {
-
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(others);
 		l.add(complex);
 		l.add(degraded);
@@ -247,23 +237,21 @@ public class Elementdeclerations {
 		l.add(fragment);
 		l.add(matrix);
 		l.add(inhibitor);
-		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
-
+		l.sort(String.CASE_INSENSITIVE_ORDER);
 		return l;
 	}
 
 	public List<String> getPNEdgeDeclarations() {
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(pnArc);
 		l.add(pnTestArc);
 		l.add(pnInhibitorArc);
-		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
+		l.sort(String.CASE_INSENSITIVE_ORDER);
 		return l;
 	}
 
 	public List<String> getNotPNEdgeDeclarations() {
-
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(compoundEdge);
 		l.add(hiddenCompoundEdge);
 		l.add(activationEdge);
@@ -281,14 +269,12 @@ public class Elementdeclerations {
 		l.add(methylationEdge);
 		l.add(reactionEdge);
 		l.add(reactionPair);
-		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
-
+		l.sort(String.CASE_INSENSITIVE_ORDER);
 		return l;
 	}
 
 	public List<String> getAllEdgeDeclarations() {
-
-		List<String> l = new ArrayList<String>();
+		List<String> l = new ArrayList<>();
 		l.add(compoundEdge);
 		l.add(hiddenCompoundEdge);
 		l.add(activationEdge);
@@ -309,8 +295,7 @@ public class Elementdeclerations {
 		l.add(pnArc);
 		l.add(pnTestArc);
 		l.add(pnInhibitorArc);
-		Collections.sort(l, String.CASE_INSENSITIVE_ORDER);
-
+		l.sort(String.CASE_INSENSITIVE_ORDER);
 		return l;
 	}
 }

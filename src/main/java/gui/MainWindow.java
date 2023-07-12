@@ -1,8 +1,6 @@
 package gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -44,7 +42,6 @@ import configurations.gui.Settings;
 import configurations.gui.VisualizationDialog;
 import graph.GraphContainer;
 import graph.eventhandlers.GraphTabListener;
-import graph.eventhandlers.GraphWindowListener;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.algorithms.CenterWindow;
 import gui.algorithms.ScreenSize;
@@ -153,9 +150,9 @@ public class MainWindow implements ApplicationListener {
 		// }
 
 		ScreenSize screenSize = new ScreenSize();
-		int windowWidth = (int) screenSize.getwidth() - 70;
-		int windowHeight = (int) screenSize.getheight() - 100;
-		if (screenSize.getwidth() > 1024) {
+		int windowWidth = screenSize.width - 70;
+		int windowHeight = screenSize.height - 100;
+		if (screenSize.width > 1024) {
 			windowWidth = 1024;
 			windowHeight = windowWidth * 2 / 3;
 		}
@@ -327,7 +324,6 @@ public class MainWindow implements ApplicationListener {
 		int id = maxPanelID;
 		tabbedPanels.put(id, tp);
 		View view = new View("Network Modelling", null, tp);
-		view.addListener(new GraphWindowListener());
 		views.put(id, view);
 		setWindowProperties(id);
 		viewMap.addView(id, view);
@@ -494,11 +490,15 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public JFrame getFrame() {
-		return this.frame;
+		return frame;
 	}
 
 	public MenuBarClass getMenu() {
 		return myMenu;
+	}
+
+	public void setCursor(int cursor) {
+		frame.setCursor(new Cursor(cursor));
 	}
 
 	public void setFullScreen() {

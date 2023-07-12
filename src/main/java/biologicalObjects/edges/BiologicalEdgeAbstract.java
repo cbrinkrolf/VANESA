@@ -18,8 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cloneable {
 	private boolean directed;
 	private boolean visible = true;
-	private String name = "not mentioned";
-	private String label = "???";
+	private String name;
+	private String label;
 	private int ID = 0;
 	private SortedSet<Integer> set;
 
@@ -213,35 +213,30 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	 */
 
 	private String getCorrectLabel(Integer type) {
-
 		if ((getLabel().length() == 0 || getLabel().equals(" "))
 				&& (getName().length() == 0 || getName().equals(" "))) {
 			return "";
 		} else {
-
 			if (type == 1) {
 				if (getLabel().equals("1") && this instanceof BiologicalEdgeAbstract) {
 					return "";
 				}
 				if (getLabel().length() == 0 || getLabel().equals(" ")) {
 					return getName();
-				} else {
-					return getLabel();
 				}
+				return getLabel();
 			} else if (type == 2) {
 				if (getName().length() == 0 || getName().equals(" ")) {
 					return getLabel();
-				} else {
-					return getName();
 				}
+				return getName();
 			} else if (type == 3) {
 				if (getName().length() == 0 || getName().equals(" ")) {
 					return getLabel();
 				} else if (getLabel().length() == 0 || getLabel().equals(" ")) {
 					return getName();
-				} else {
-					return getLabel() + "  -|-  " + getName();
 				}
+				return getLabel() + "  -|-  " + getName();
 			} else if (type == 4) {
 				return "";
 			}
@@ -264,56 +259,27 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 
 	// should only be used when loading a file with a network
 	public void setID(int id, Pathway pw) throws IDAlreadyExistException {
-		if (this.ID == id) {
-			return;
-		} else {
+		if (ID != id) {
 			set = pw.getIdSet();
-			// System.out.println("size: " + set.size());
 			if (set.contains(id)) {
-				// System.err.println("Error: Id " + id + " is already
-				// existing!");
-				throw new IDAlreadyExistException("ID " + id + " is already existing.");
-			} else {
-				// if (this.ID > 0) {
-				// set.remove(ID);
-				// // System.out.println("removed: " + ID);
-				// }
-				// System.out.println("id added: " + id);
-				set.add(id);
-				this.ID = id;
-				// System.out.println("added: " + id);
-				// System.out.println("id: "+id);
+				throw new IDAlreadyExistException("ID " + id + " already exists.");
 			}
-			// System.out.println("size: " + set.size());
+			set.add(id);
+			this.ID = id;
 		}
-
-		/*
-		 * System.out.println("id: "+id); // //System.out.println("size: " +
-		 * ids.size()); if (ids.contains(id)) { System.err.println("Error: Id " + id +
-		 * " is already existing!"); ID = counter++; } else { if (id < counter) { ID =
-		 * id; } else { counter = id; this.ID = counter++; }
-		 * 
-		 * } //System.out.println("added: " + ID); ids.add(ID);
-		 */
 	}
 
 	public void setID(Pathway pw) {
 		set = pw.getIdSet();
-		// System.out.println(new GraphInstance().getPathway().getName());
-		// set id to highest current id+1;
+		// set id to the highest current id plus one
 		if (ID <= 0) {
-			// System.out.println("neue ID");
 			if (set.size() > 0) {
-				// System.out.println("last: " + set.last());
 				try {
 					setID(set.last() + 1, pw);
 				} catch (IDAlreadyExistException ex) {
 					// cannot occur if program working fine.
 					ex.printStackTrace();
 				}
-				// System.out.println("size: " + set.size());
-				// System.out.println("groesster: " + set.last());
-				// System.out.println("kleinster: " + set.first());
 			} else {
 				try {
 					setID(100, pw);
@@ -352,7 +318,6 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 			name = label;
 		}
 		// this.networklabel = label;
-		// System.out.println("gestezt");
 	}
 
 	public boolean isEdge() {
@@ -379,11 +344,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	public boolean isValid(boolean allowFromEqualsTo) {
-		if (to == null || from == null)
-			return false;
-		if (from == to && !allowFromEqualsTo)
-			return false;
-		return true;
+		return to != null && from != null && (from != to || allowFromEqualsTo);
 	}
 
 	// defines parameters which are available in during transformation
@@ -405,7 +366,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 		case "function":
 			return getFunction();
 		case "ID":
-			return getID() + "";
+			return String.valueOf(getID());
 		}
 		return null;
 	}

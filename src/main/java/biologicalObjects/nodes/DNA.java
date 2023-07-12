@@ -2,8 +2,9 @@ package biologicalObjects.nodes;
 
 import biologicalElements.Elementdeclerations;
 
-public class DNA extends BiologicalNodeAbstract {
+public class DNA extends BiologicalNodeAbstract implements NodeWithNTSequence, NodeWithLogFC {
 	private String ntSequence = "";
+	private Double logFC = 0.0;
 
 	public DNA(String label, String name) {
 		super(label, name);
@@ -17,5 +18,13 @@ public class DNA extends BiologicalNodeAbstract {
 
 	public void setNtSequence(String ntSequence) {
 		this.ntSequence = ntSequence;
+	}
+
+	public Double getLogFC() {
+		return logFC;
+	}
+
+	public void setLogFC(Double logFC) {
+		this.logFC = logFC;
 	}
 }

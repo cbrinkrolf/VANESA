@@ -1,56 +1,15 @@
 package gui.optionPanelWindows;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
-
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.Inhibition;
 import biologicalObjects.edges.petriNet.PNArc;
-import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
-import biologicalObjects.nodes.DNA;
-import biologicalObjects.nodes.DynamicNode;
-import biologicalObjects.nodes.Gene;
-import biologicalObjects.nodes.PathwayMap;
-import biologicalObjects.nodes.Protein;
-import biologicalObjects.nodes.RNA;
-import biologicalObjects.nodes.petriNet.ContinuousTransition;
-import biologicalObjects.nodes.petriNet.DiscreteTransition;
-import biologicalObjects.nodes.petriNet.PNNode;
-import biologicalObjects.nodes.petriNet.Place;
-import biologicalObjects.nodes.petriNet.StochasticTransition;
-import biologicalObjects.nodes.petriNet.Transition;
+import biologicalObjects.nodes.*;
+import biologicalObjects.nodes.petriNet.*;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import graph.compartment.Compartment;
-import graph.algorithms.NodeAttributeTypes;
 import graph.gui.LabelsWindow;
 import graph.gui.ParameterWindow;
 import graph.gui.ReferenceDialog;
@@ -59,10 +18,19 @@ import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.eventhandlers.PropertyWindowListener;
 import net.miginfocom.swing.MigLayout;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 import util.MyColorChooser;
 import util.MyJFormattedTextField;
 import util.MyNumberFormat;
 import util.StochasticDistribution;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.List;
 
 public class ElementWindow implements ActionListener, ItemListener {
 	private final JPanel p = new JPanel();
@@ -149,9 +117,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 		}
 		if (MainWindow.developer) {
 			p.add(new JLabel("ID"), "gap 5 ");
-			JLabel id = new JLabel(ab.getID() + "");
+			JLabel id = new JLabel(String.valueOf(ab.getID()));
 			if (ref != null) {
-				id.setText(original.getID() + "");
+				id.setText(String.valueOf(original.getID()));
 			}
 			p.add(id, "wrap ,span 1");
 		}
@@ -166,6 +134,33 @@ public class ElementWindow implements ActionListener, ItemListener {
 		// JTextField transitionStatement = new JTextField("true");
 		if (ab.isVertex()) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
+			// final List<String> experimentEntries = new ArrayList<>();
+			// final List<String> databaseIdEntries = new ArrayList<>();
+			// final List<String> annotationEntries = new ArrayList<>();
+			// final List<String> graphPropertyEntries = new ArrayList<>();
+			// for (NodeAttribute att : bna.getNodeAttributes()) {
+			// 	switch (att.getType()) {
+			// 		case NodeAttributeTypes.EXPERIMENT:
+			// 			experimentEntries.add(att.getName() + ":\t" + att.getDoublevalue() + "\n");
+			// 			break;
+			// 		case NodeAttributeTypes.DATABASE_ID:
+			// 			databaseIdEntries.add(att.getName() + ":\t" + att.getStringvalue() + "\n");
+			// 			break;
+			// 		case NodeAttributeTypes.ANNOTATION:
+			// 			annotationEntries.add(att.getName() + ":\t" + att.getStringvalue() + "\n");
+			// 			break;
+			// 		case NodeAttributeTypes.GRAPH_PROPERTY:
+			// 			graphPropertyEntries.add(att.getName() + ":\t" + att.getDoublevalue() + "\n");
+			// 			break;
+			// 	}
+			// }
+//
+			// // Sort for more convenient display
+			// Collections.sort(experimentEntries);
+			// Collections.sort(databaseIdEntries);
+			// Collections.sort(annotationEntries);
+			// Collections.sort(graphPropertyEntries);
+
 			String lbl = "-";
 			if (bna.isLogical()) {
 				lbl = "ID: " + ref.getID() + ", label: " + ref.getLabel();
@@ -218,41 +213,37 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// ADDing Attributes (for all nodes)
 
 			// Show Database IDs
-			JTextArea dbids = new JTextArea();
-			String dbidstring = new String();
-			dbids.setEditable(false);
-			dbids.setFont(dbids.getFont().deriveFont(Font.BOLD));
-			dbids.setBackground(Color.WHITE);
-
+			// JTextArea dbids = new JTextArea();
+			// dbids.setEditable(false);
+			// dbids.setFont(dbids.getFont().deriveFont(Font.BOLD));
+			// dbids.setBackground(Color.WHITE);
+			// dbids.setText(String.join("", databaseIdEntries));
 			// p.add(new JLabel("IDs known:"), "gap 5");
 			// p.add(dbids, "wrap, span 3");
 
 			// Show Experiment names and values
-			JTextArea experiments = new JTextArea();
-			String experimentstring = new String();
-			experiments.setEditable(false);
-			experiments.setBackground(Color.WHITE);
-
+			// JTextArea experiments = new JTextArea();
+			// experiments.setEditable(false);
+			// experiments.setBackground(Color.WHITE);
+			// experiments.setText(String.join("", experimentEntries));
 			// p.add(new JLabel("Dataset:"), "gap 5");
 			// p.add(experiments, "wrap, span 3");
 
 			// Show GO annotations
-			JTextArea goannoations = new JTextArea();
-			String annotationstring = new String();
-			goannoations.setEditable(false);
-			goannoations.setForeground(Color.BLUE);
-			goannoations.setBackground(Color.WHITE);
-
+			// JTextArea goannoations = new JTextArea();
+			// goannoations.setEditable(false);
+			// goannoations.setForeground(Color.BLUE);
+			// goannoations.setBackground(Color.WHITE);
+			// goannoations.setText(String.join("", annotationEntries));
 			// p.add(new JLabel("Gene Ontology:"), "gap 5");
 			// p.add(goannoations, "wrap, span 3");
 
 			// Show graph properties (local property)
-			JTextArea graphproperties = new JTextArea();
-			String propertiesstring = new String();
-			graphproperties.setEditable(false);
-			graphproperties.setForeground(new Color(255, 55, 55));
-			graphproperties.setBackground(Color.WHITE);
-
+			// JTextArea graphproperties = new JTextArea();
+			// graphproperties.setEditable(false);
+			// graphproperties.setForeground(new Color(255, 55, 55));
+			// graphproperties.setBackground(Color.WHITE);
+			// graphproperties.setText(String.join("", graphPropertyEntries));
 			// p.add(new JLabel("Graph properties:"), "gap 5");
 			// p.add(graphproperties, "wrap, span 3");
 
@@ -261,74 +252,16 @@ public class ElementWindow implements ActionListener, ItemListener {
 			constCheck.addActionListener(this);
 			constCheck.setSelected(((BiologicalNodeAbstract) ab).isConstant());
 
-			// JTextField aaSequence = new JTextField(20);
-			// aaSequence.setText(protein.getAaSequence());
-			// aaSequence.setName("protein");
-			// aaSequence.addFocusListener(pwl);
-			// p.add(new JLabel("AA-Sequence"), "gap 5 ");
-			// p.add(aaSequence, "wrap, span 3");
-
-			String atname, atsvalue;
-			double atdvalue;
-
-			ArrayList<String> experimententries = new ArrayList<>(), databaseidentries = new ArrayList<>(),
-					annotationentries = new ArrayList<>(), graphpropertiesentries = new ArrayList<>();
-
-			for (NodeAttribute att : bna.getNodeAttributes()) {
-				atname = att.getName();
-				atsvalue = att.getStringvalue();
-				atdvalue = att.getDoublevalue();
-				switch (att.getType()) {
-				case NodeAttributeTypes.EXPERIMENT:
-					experimententries.add(atname + ":\t" + atdvalue + "\n");
-					break;
-				case NodeAttributeTypes.DATABASE_ID:
-					databaseidentries.add(atname + ":\t" + atsvalue + "\n");
-					break;
-				case NodeAttributeTypes.ANNOTATION:
-					annotationentries.add(atname + ":\t" + atsvalue + "\n");
-					break;
-				case NodeAttributeTypes.GRAPH_PROPERTY:
-					graphpropertiesentries.add(atname + ":\t" + atdvalue + "\n");
-					break;
-				}
-			}
-
-			// Sort for more convenient display
-			Collections.sort(experimententries);
-			for (String exp : experimententries)
-				experimentstring += exp;
-
-			Collections.sort(databaseidentries);
-			for (String dbid : databaseidentries)
-				dbidstring += dbid;
-
-			Collections.sort(annotationentries);
-			for (String ann : annotationentries)
-				annotationstring += ann;
-
-			Collections.sort(graphpropertiesentries);
-			for (String gprop : graphpropertiesentries)
-				propertiesstring += gprop;
-
-			experiments.setText(experimentstring);
-			dbids.setText(dbidstring);
-			goannoations.setText(annotationstring);
-			graphproperties.setText(propertiesstring);
-
 			if (!(ab instanceof PNNode)) {
-				MyJFormattedTextField concentration;
-				MyJFormattedTextField concentrationStart;
-
 				JLabel lblTokenStart = new JLabel("Start concentration");
-				concentration = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-				concentrationStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+				MyJFormattedTextField concentration = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+				MyJFormattedTextField concentrationStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				concentrationMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				concentrationMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-				concentration.setText(((BiologicalNodeAbstract) ab).getConcentration() + "");
-				concentrationStart.setText(((BiologicalNodeAbstract) ab).getConcentrationStart() + "");
-				concentrationMin.setText(((BiologicalNodeAbstract) ab).getConcentrationMin() + "");
-				concentrationMax.setText(((BiologicalNodeAbstract) ab).getConcentrationMax() + "");
+				concentration.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentration()));
+				concentrationStart.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentrationStart()));
+				concentrationMin.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentrationMin()));
+				concentrationMax.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentrationMax()));
 
 				JLabel lblConcentration = new JLabel("Concentration");
 
@@ -409,21 +342,25 @@ public class ElementWindow implements ActionListener, ItemListener {
 				DNA dna = (DNA) ab;
 				JTextField ntSequence = new JTextField(20);
 				ntSequence.setText(dna.getNtSequence());
-				ntSequence.setName("dna");
+				ntSequence.setName("ntSequence");
 				ntSequence.addFocusListener(pwl);
 				p.add(new JLabel("NT-Sequence"), "gap 5 ");
 				p.add(ntSequence, "wrap, span 3");
+				MyJFormattedTextField logFc = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat(), true);
+				logFc.setName("logFC");
+				logFc.setText(String.valueOf(dna.getLogFC()));
+				logFc.addFocusListener(pwl);
+				p.add(new JLabel("logFC"), "gap 5 ");
+				p.add(logFc, "wrap, span 3");
 			} else if (ab instanceof Gene) {
 				Gene dna = (Gene) ab;
 				JTextField ntSequence = new JTextField(20);
 				ntSequence.setText(dna.getNtSequence());
-				ntSequence.setName("gene");
+				ntSequence.setName("ntSequence");
 				ntSequence.addFocusListener(pwl);
 				p.add(new JLabel("NT-Sequence"), "gap 5 ");
 				p.add(ntSequence, "wrap, span 3");
-			}
-
-			else if (ab instanceof RNA) {
+			} else if (ab instanceof RNA) {
 				RNA rna = (RNA) ab;
 				JTextField ntSequence = new JTextField(20);
 				ntSequence.setText(rna.getNtSequence());
@@ -433,13 +370,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(ntSequence, "wrap, span 3");
 				MyJFormattedTextField logFc = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat(), true);
 				logFc.setName("logFC");
-				logFc.setText(rna.getLogFC() + "");
+				logFc.setText(String.valueOf(rna.getLogFC()));
 				logFc.addFocusListener(pwl);
 				p.add(new JLabel("logFC"), "gap 5 ");
 				p.add(logFc, "wrap, span 3");
 			} else if (ab instanceof Place) {
 				Place place = (Place) ab;
-
 				JLabel lswitchPlace = new JLabel("Place type");
 				JComboBox<String> placeList = new JComboBox<>(new String[] { "discrete", "continuous" });
 				if (place.isDiscrete()) {
@@ -461,19 +397,19 @@ public class ElementWindow implements ActionListener, ItemListener {
 					tokenStart = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 					tokenMin = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 					tokenMax = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
-					token.setText((int) place.getToken() + "");
-					tokenStart.setText((int) place.getTokenStart() + "");
-					tokenMin.setText((int) place.getTokenMin() + "");
-					tokenMax.setText((int) place.getTokenMax() + "");
+					token.setText(String.valueOf((int) place.getToken()));
+					tokenStart.setText(String.valueOf((int) place.getTokenStart()));
+					tokenMin.setText(String.valueOf((int) place.getTokenMin()));
+					tokenMax.setText(String.valueOf((int) place.getTokenMax()));
 				} else {
 					token = new JLabel();
 					tokenStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					tokenMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					tokenMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-					token.setText(place.getToken() + "");
-					tokenStart.setText(place.getTokenStart() + "");
-					tokenMin.setText(place.getTokenMin() + "");
-					tokenMax.setText(place.getTokenMax() + "");
+					token.setText(String.valueOf(place.getToken()));
+					tokenStart.setText(String.valueOf(place.getTokenStart()));
+					tokenMin.setText(String.valueOf(place.getTokenMin()));
+					tokenMax.setText(String.valueOf(place.getTokenMax()));
 				}
 				JLabel lblToken = new JLabel("Tokens");
 
@@ -556,7 +492,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			} else if (ab instanceof Transition) {
 				JLabel lswitchTrans = new JLabel("Transition type");
-				JComboBox<String> transList = new JComboBox<String>(new String[] {
+				JComboBox<String> transList = new JComboBox<>(new String[] {
 						DiscreteTransition.class.getSimpleName(), ContinuousTransition.class.getSimpleName(),
 						StochasticTransition.class.getSimpleName() });
 				transList.setSelectedItem(ab.getClass().getSimpleName());
@@ -578,7 +514,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					DiscreteTransition trans = (DiscreteTransition) ab;
 					JTextField delay = new JTextField(4);
 					JLabel lbldelay = new JLabel("Delay");
-					delay.setText(trans.getDelay() + "");
+					delay.setText(String.valueOf(trans.getDelay()));
 					delay.setName("delay");
 					delay.addFocusListener(pwl);
 					if (trans.isKnockedOut()) {
@@ -604,7 +540,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 					StochasticTransition trans = (StochasticTransition) ab;
 					// Create the combo box, select item at index 4.
 					// Indices start at 0, so 4 specifies the pig.
-					JComboBox<String> distributionList = new JComboBox<String>(
+					JComboBox<String> distributionList = new JComboBox<>(
 							StochasticDistribution.distributionList.toArray(new String[0]));
 					distributionList.setSelectedItem(trans.getDistribution());
 					distributionList.setName("distributionList");
@@ -618,61 +554,60 @@ public class ElementWindow implements ActionListener, ItemListener {
 					MyJFormattedTextField h = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					JLabel lblH = new JLabel("h: probability density");
 					// lblH.setToolTipText("probability density");
-					h.setText(trans.getH() + "");
+					h.setText(String.valueOf(trans.getH()));
 					h.addFocusListener(pwl);
 					h.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					h.setName("h");
 
 					MyJFormattedTextField a = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					JLabel lblA = new JLabel("a: minimum value");
-					a.setText(trans.getA() + "");
+					a.setText(String.valueOf(trans.getA()));
 					a.addFocusListener(pwl);
 					a.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					a.setName("a");
 
 					MyJFormattedTextField b = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					JLabel lblB = new JLabel("b: maximum value");
-					b.setText(trans.getB() + "");
+					b.setText(String.valueOf(trans.getB()));
 					b.addFocusListener(pwl);
 					b.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					b.setName("b");
 
 					MyJFormattedTextField c = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					JLabel lblC = new JLabel("c: most likely value");
-					c.setText(trans.getC() + "");
+					c.setText(String.valueOf(trans.getC()));
 					c.addFocusListener(pwl);
 					c.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					c.setName("c");
 
 					MyJFormattedTextField mu = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					JLabel lblMu = new JLabel("mu: expected value");
-					mu.setText(trans.getMu() + "");
+					mu.setText(String.valueOf(trans.getMu()));
 					mu.addFocusListener(pwl);
 					mu.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					mu.setName("mu");
 
 					MyJFormattedTextField sigma = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 					JLabel lblSigma = new JLabel("sigma: standard deviation");
-					sigma.setText(trans.getSigma() + "");
+					sigma.setText(String.valueOf(trans.getSigma()));
 					sigma.addFocusListener(pwl);
 					sigma.setFocusLostBehavior(JFormattedTextField.COMMIT);
 					sigma.setName("sigma");
 
 					JTextField events = new JTextField(4);
 					JLabel lblEvents = new JLabel("discrete events");
-					events.setText(trans.getEvents() + "");
+					events.setText(String.valueOf(trans.getEvents()));
 					events.setToolTipText("List of discrete events [1,2,...,n]");
 					events.addFocusListener(pwl);
 					events.setName("events");
 
 					JTextField probabilities = new JTextField(4);
 					JLabel lblProbabilities = new JLabel("probabilities");
-					probabilities.setText(trans.getProbabilities() + "");
+					probabilities.setText(String.valueOf(trans.getProbabilities()));
 					probabilities.setToolTipText("List of probabilities [1/n,1/n,...,1/n]");
 					probabilities.addFocusListener(pwl);
 					probabilities.setName("probabilities");
 
-					// System.out.println("distr: "+trans.getDistribution());
 					switch (trans.getDistribution()) {
 					case StochasticDistribution.distributionExponential:
 						p.add(lblH, "gap 5");
@@ -782,13 +717,13 @@ public class ElementWindow implements ActionListener, ItemListener {
 			if (ab instanceof PNArc) {
 				PNArc e = (PNArc) ab;
 				MyJFormattedTextField activationProb = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-				activationProb.setText(e.getProbability() + "");
+				activationProb.setText(String.valueOf(e.getProbability()));
 				activationProb.setName("activationProb");
 				activationProb.addFocusListener(pwl);
 				JLabel lblProb = new JLabel("Activation probability");
 
 				MyJFormattedTextField activationPrio = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
-				activationPrio.setText(e.getPriority() + "");
+				activationPrio.setText(String.valueOf(e.getPriority()));
 				activationPrio.setName("activationPrio");
 				activationPrio.addFocusListener(pwl);
 				JLabel lblPrio = new JLabel("Activation priority");
@@ -962,15 +897,10 @@ public class ElementWindow implements ActionListener, ItemListener {
 		if (pw == null) {
 			return;
 		}
-
 		List<Compartment> compartmentList = pw.getCompartmentManager().getAllCompartmentsAlphabetically();
-
 		compartment.addItem(" ");
-
-		Iterator<Compartment> it = compartmentList.iterator();
-		while (it.hasNext()) {
-			String element = it.next().getName();
-			compartment.addItem(element);
+		for (Compartment value : compartmentList) {
+			compartment.addItem(value.getName());
 		}
 	}
 
@@ -986,7 +916,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 		String event = e.getActionCommand();
 		Pathway pw = GraphInstance.getPathway();
 		if ("colour".equals(event)) {
-
 			// JColorChooser cc = new JColorChooser(ab.getColor());
 			// JDialog dialog = JColorChooser.createDialog(w.getFrame(), "Choose fill
 			// color", false, cc, null, null);
@@ -997,12 +926,9 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// JColorChooser cc = new JColorChooser(ab.getColor());
 			MyColorChooser mc = new MyColorChooser(w.getFrame(), "Choose fill color", true, ab.getColor());
 			if (mc.isOkAction()) {
-
 				Color newColor = mc.getColor();
-
 				JButton b = ((JButton) e.getSource());
 				b.setBackground(newColor);
-
 				ab.setColor(newColor);
 				ab.setVisible(true);
 				// reference.setSelected(false);
@@ -1040,42 +966,27 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// TODO visible wird noch nicht gehandelt in transformators
 			boolean hide = "hideNeighbours".equals(event);
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
-
-			Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getJungGraph().getIncidentEdges(bna).iterator();
-			BiologicalEdgeAbstract bea;
-
-			while (it.hasNext()) {
-				// System.out.println(!hide);
-				bea = it.next();
+			for (BiologicalEdgeAbstract bea : pw.getGraph().getJungGraph().getIncidentEdges(bna)) {
 				bea.setVisible(!hide);
 				// bea.setLabel(!hide+"");
 			}
-
-			Iterator<BiologicalNodeAbstract> it2 = pw.getGraph().getJungGraph().getNeighbors(bna).iterator();
-
-			BiologicalNodeAbstract node;
-			while (it2.hasNext()) {
-				// System.out.println("drin");
-				node = it2.next();
+			for (BiologicalNodeAbstract node : pw.getGraph().getJungGraph().getNeighbors(bna)) {
 				node.setVisible(!hide);
 			}
 
 		} else if ("changeEdgeDirection".equals(event) && ab.isEdge()) {
 			PNArc edge = (PNArc) ab;
-
 			PNArc newEdge = new PNArc(edge.getTo(), edge.getFrom(), edge.getLabel(), edge.getName(),
 					edge.getBiologicalElement(), edge.getFunction());
 			newEdge.setPriority(edge.getPriority());
 			newEdge.setProbability(edge.getProbability());
 			newEdge.setDirected(true);
-
 			pw.removeElement(edge);
 			pw.addEdge(newEdge);
 			pw.updateMyGraph();
 			pw.getGraph().getVisualizationViewer().getPickedEdgeState().clear();
 			pw.getGraph().getVisualizationViewer().getPickedEdgeState().pick(newEdge, true);
 			GraphInstance.setSelectedObject(newEdge);
-
 			ab = newEdge;
 		} else if ("chooseRef".equals(event)) {
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) original;
