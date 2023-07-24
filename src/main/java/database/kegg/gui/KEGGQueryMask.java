@@ -1,9 +1,11 @@
 package database.kegg.gui;
 
 import database.gui.QueryMask;
+import database.kegg.KeggSearch;
 import gui.MainWindow;
 import gui.eventhandlers.TextFieldColorChanger;
 import gui.ImagePath;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 
@@ -71,23 +73,16 @@ public class KEGGQueryMask extends QueryMask {
 
     @Override
     protected String search() {
-        // TODO
+        KeggSearch.searchPathways(pathway.getText().trim(), organism.getText().trim(), enzyme.getText().trim(),
+                gene.getText().trim(), compound.getText().trim());
         return null;
     }
 
-    public String[] getKeyword() {
-        String[] input = new String[5];
-        input[0] = pathway.getText();
-        input[1] = organism.getText();
-        input[2] = enzyme.getText();
-        input[3] = gene.getText();
-        input[4] = compound.getText();
-        return input;
-    }
-
+    @Override
     public boolean doSearchCriteriaExist() {
-        return pathway.getText().length() > 0 || organism.getText().length() > 0 || enzyme.getText().length() > 0 ||
-                gene.getText().length() > 0 || compound.getText().length() > 0;
+        return StringUtils.isNotBlank(pathway.getText()) || StringUtils.isNotBlank(organism.getText()) ||
+                StringUtils.isNotBlank(enzyme.getText()) || StringUtils.isNotBlank(gene.getText()) ||
+                StringUtils.isNotBlank(compound.getText());
     }
 
     @Override
@@ -121,7 +116,7 @@ public class KEGGQueryMask extends QueryMask {
                         "put an exclamation mark before that attribute. <p><font color=\"#000099\">Example: !homo </font><p>" +
                         "<ul>" +
                         "</html>";
-        JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), instructions, "PPI Information",
+        JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(), instructions, "KEGG Information",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 }

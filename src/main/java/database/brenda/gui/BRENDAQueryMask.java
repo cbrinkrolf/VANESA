@@ -6,6 +6,7 @@ import database.brenda.BrendaConnector;
 import database.gui.QueryMask;
 import gui.MainWindow;
 import gui.eventhandlers.TextFieldColorChanger;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 
@@ -98,9 +99,9 @@ public class BRENDAQueryMask extends QueryMask {
 
     @Override
     protected boolean doSearchCriteriaExist() {
-        return ecNumber.getText().trim().length() > 0 || name.getText().trim().length() > 0 ||
-                synonym.getText().trim().length() > 0 || metabolite.getText().trim().length() > 0 ||
-                organism.getText().trim().length() > 0;
+        return StringUtils.isNotBlank(ecNumber.getText()) || StringUtils.isNotBlank(name.getText()) ||
+                StringUtils.isNotBlank(synonym.getText()) || StringUtils.isNotBlank(metabolite.getText()) ||
+                StringUtils.isNotBlank(organism.getText());
     }
 
     @Override

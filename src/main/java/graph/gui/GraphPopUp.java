@@ -245,6 +245,7 @@ public class GraphPopUp {
     }
 
     private void onKEGGSearchClicked() {
+        /* TODO: KEGG
         Pathway pw = GraphInstance.getPathway();
         if (pw != null) {
             MainWindow w = MainWindow.getInstance();
@@ -286,6 +287,7 @@ public class GraphPopUp {
             keggSearch.execute();
             MainWindow.getInstance().showProgressBar("KEGG query");
         }
+         */
     }
 
     private void onBRENDASearchClicked() {
