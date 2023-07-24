@@ -15,7 +15,6 @@ import javax.swing.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
@@ -88,7 +87,10 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
     @Override
     protected Void doInBackground() {
         MainWindow.getInstance().showProgressBar("Loading Data");
-        getPathway();
+        KeggPathway pathway = KeggSearch.getPathway(pathwayId);
+        if (pathway != null) {
+            title = pathway.name;
+        }
         allOrgElements = getPathwayElements(pathwayId);
         allEcElements = getPathwayElements("ec" + pathwayNumber);
         allRnElements = getPathwayElements("rn" + pathwayNumber);
@@ -143,53 +145,52 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         firePropertyChange("finished", null, "finished");
     }
 
-    private void getPathway() {
-        KeggPathway pathway = KeggSearch.getPathway(pathwayId);
-        if (pathway != null) {
-            title = pathway.name;
-        }
-    }
-
     private void processKeggElements(String[] set) {
         KEGGNode node = new KEGGNode();
-        node.setKEGGPathway(set[14]);
+        //  0 - k.id
+        //  1 - k.entry_type
+        //  2 - n.name
+        //  3 - g.bgcolor
+        //  4 - g.fgcolor
+        //  5 - g.name
+        //  6 - g.graphics_type
+        //  7 - g.x
+        //  8 - g.y
+        //  9 - c.name
+        // 10 - p.name
+        // 11 - k.pathway_name
         node.setKEGGentryID(set[0]);
-        node.setKEGGentryName(set[3]);
-        node.setKEGGentryType(set[2]);
-        node.setKEGGentryLink(set[1]);
-        node.setNodeLabel(set[3]);
-        double xPos;
-        double yPos;
+        node.setKEGGentryLink("http://www.kegg.jp/dbget-bin/www_bget?" + set[2]);
+        node.setKEGGentryType(set[1]);
+        node.setKEGGentryName(set[2]);
+        node.setKEGGPathway(set[11]);
+        node.setNodeLabel(set[2]);
+        node.setBackgroundColour(set[3]);
+        node.setForegroundColour(set[4]);
+        node.setShape(set[6]);
         try {
-            xPos = Double.parseDouble(set[8]);
-            yPos = Double.parseDouble(set[9]);
-        } catch (NumberFormatException e) {
-            xPos = 0;
-            yPos = 0;
+            node.setXPos(Double.parseDouble(set[7]));
+            node.setYPos(Double.parseDouble(set[8]));
+        } catch (NumberFormatException ignored) {
         }
-        node.setXPos(xPos);
-        node.setYPos(yPos);
-        node.setShape(set[7]);
-        node.setForegroundColour(set[5]);
-        node.setBackgroundColour(set[4]);
         BiologicalNodeAbstract bna = null;
-        switch (set[2]) {
+        switch (set[1]) {
             case "gene":
-                String label = set[6].split(",")[0];
+                String label = set[5].split(",")[0];
                 if (label != null) {
                     node.setNodeLabel(label);
                 }
                 bna = new DNA(node.getNodeLabel(), node.getKEGGentryName());
                 break;
             case "compound":
-                node.setNodeLabel(set[10]);
+                node.setNodeLabel(set[9]);
                 bna = new Metabolite(node.getNodeLabel(), node.getKEGGentryName());
                 break;
             case "ortholog":
                 bna = new OrthologGroup(node.getNodeLabel(), node.getKEGGentryName());
                 break;
             case "map":
-                node.setNodeLabel(set[11]);
+                node.setNodeLabel(set[10]);
                 bna = new PathwayMap(node.getNodeLabel(), node.getKEGGentryName());
                 break;
             case "enzyme":
@@ -207,10 +208,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
             bna.setKEGGnode(node);
             bna.setHasKEGGNode(true);
             boolean addBNA = true;
-            Iterator<BiologicalNodeAbstract> it = pw.getVertices().keySet().iterator();
-            BiologicalNodeAbstract old_bna;
-            while (it.hasNext()) {
-                old_bna = it.next();
+            for (BiologicalNodeAbstract old_bna : pw.getVertices().keySet()) {
                 KEGGNode oldKeggNode = old_bna.getKEGGnode();
                 if (oldKeggNode.getXPos() == node.getXPos() && oldKeggNode.getYPos() == node.getYPos()) {
                     if (keggVisualizationPriority(bna) > keggVisualizationPriority(old_bna)) {
@@ -230,19 +228,15 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                     } else {
                         addBNA = false;
                         nodeLowToHighPriorityMap.put(new KeggNodeDescription(bna.getKEGGnode().getKEGGPathway(),
-                                                                             bna.getKEGGnode().getKEGGentryID()),
-                                                     old_bna);
+                                        bna.getKEGGnode().getKEGGentryID()),
+                                old_bna);
                     }
                     break;
                 }
             }
             if (addBNA) {
-                bna = pw.addVertex(bna, new Point2D.Double(bna.getKEGGnode().getXPos(), bna.getKEGGnode().getYPos()));
+                pw.addVertex(bna, new Point2D.Double(bna.getKEGGnode().getXPos(), bna.getKEGGnode().getYPos()));
             }
-            // myGraph.moveVertex(bna.getVertex(), bna.getKEGGnode().getXPos(),
-            // bna.getKEGGnode().getYPos());
-            // if (!addBNA)
-            // pw.removeElement(bna);
         }
     }
 
@@ -261,8 +255,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
             return -1;
         else if (bna instanceof Other)
             return -3;
-        else
-            return 0;
+        return 0;
     }
 
     private void drawNodes(List<DBColumn> allElements) {
@@ -273,12 +266,16 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
     private void drawRelations(List<DBColumn> allGeneralRelations) {
         for (DBColumn column : allGeneralRelations) {
+            // 0 - relation.pathway_name
+            // 1 - subtype.name
+            // 2 - subtype.subtype_value
+            // 3 - relation.entry1
+            // 4 - relation.entry2
+            String keggPathway = column.getColumn()[0];
+            String edgeType = column.getColumn()[1];
+            String subtypeValue = column.getColumn()[2];
             String entry1 = column.getColumn()[3];
             String entry2 = column.getColumn()[4];
-            String subtypeValue = column.getColumn()[2];
-            // String relationType = column.getColumn()[5];
-            String edgeType = column.getColumn()[1];
-            String keggPathway = column.getColumn()[0];
             BiologicalNodeAbstract bna1 = null;
             BiologicalNodeAbstract subtype = null;
             BiologicalNodeAbstract bna2 = null;
@@ -302,14 +299,11 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                 subtype = nodeLowToHighPriorityMap.get(new KeggNodeDescription(keggPathway, subtypeValue));
 
             if (bna1 != null && bna2 != null) {
-                // Vertex vertex1 = bna1.getVertex();
-                // Vertex vertex2 = bna2.getVertex();
                 if (subtype != null) {
                     // Vertex subVertex = subtype.getVertex();
                     if (!pw.existEdge(bna1, subtype) && !pw.existEdge(subtype, bna1)) {
                         Compound c = new Compound("", "", bna1, subtype);
                         c.setDirected(true);
-                        //pw.addEdgeToView(c, true);
                         pw.addEdge(c);
                         pw.updateMyGraph();
                     }
@@ -319,12 +313,8 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                         c2.setDirected(true);
                         pw.addEdge(c2);
                         pw.updateMyGraph();
-                        //pw.addEdgeToView(c2, true);
                     }
-                } else
-                // if (bna1.getBiologicalElement().equals(Elementdeclerations.dna)
-                // && bna2.getBiologicalElement().equals(biologicalElements.Elementdeclerations.dna))
-                {
+                } else {
                     if (!pw.existEdge(bna1, bna2) && !pw.existEdge(bna2, bna1)) {
                         BiologicalEdgeAbstract bea;
                         switch (edgeType) {
@@ -360,6 +350,11 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
     private void drawReactions(List<DBColumn> allReactions) {
         for (DBColumn column : allReactions) {
+            // 0 - s.id
+            // 1 - e.id
+            // 2 - p.id
+            // 3 - r.reaction_type
+            // 4 - e.pathway_name
             String substrateId = column.getColumn()[0];
             String enzymeId = column.getColumn()[1];
             String productId = column.getColumn()[2];
@@ -369,12 +364,16 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
             BiologicalNodeAbstract enzyme = null;
             BiologicalNodeAbstract product = null;
             for (BiologicalNodeAbstract bna : pw.getVertices().keySet()) {
-                if (bna.getKEGGnode().getKEGGPathway().equals(keggPathway)) {
-                    if (bna.getKEGGnode() != null && bna.getKEGGnode().getKEGGentryID().equals(substrateId))
+                if (bna.getKEGGnode() == null) {
+                    continue;
+                }
+                KEGGNode keggNode = bna.getKEGGnode();
+                if (keggNode.getKEGGPathway().equals(keggPathway)) {
+                    if (keggNode.getKEGGentryID().equals(substrateId))
                         substrate = bna;
-                    if (bna.getKEGGnode() != null && bna.getKEGGnode().getKEGGentryID().equals(productId))
+                    if (keggNode.getKEGGentryID().equals(productId))
                         product = bna;
-                    if (bna.getKEGGnode() != null && bna.getKEGGnode().getKEGGentryID().equals(enzymeId))
+                    if (keggNode.getKEGGentryID().equals(enzymeId))
                         enzyme = bna;
                 }
             }
@@ -386,9 +385,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                 enzyme = nodeLowToHighPriorityMap.get(new KeggNodeDescription(keggPathway, enzymeId));
 
             if (substrate != null && product != null && enzyme != null) {
-                // Vertex substrateVertex = substrate.getVertex();
-                // Vertex productVertex = product.getVertex();
-                // Vertex enzymeVertex = enzyme.getVertex();
                 if (!pw.existEdge(substrate, enzyme) && !pw.existEdge(enzyme, substrate)) {
                     Compound c;
                     if (reversible) {
@@ -412,7 +408,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
     public ArrayList<DBColumn> getPathwayElements(String pathwayID) {
         String query =
-                "SELECT k.id, k.link, k.entry_type, n.name, g.bgcolor, g.fgcolor, g.name, g.graphics_type, g.x, g.y, c.name, p.name, g.width, g.height, k.pathway_name " +
+                "SELECT k.id, k.entry_type, n.name, g.bgcolor, g.fgcolor, g.name, g.graphics_type, g.x, g.y, c.name, p.name, k.pathway_name " +
                 "FROM kegg_kgml_entry k LEFT OUTER JOIN kegg_kgml_entry_name n ON k.entry_id=n.entry_ID " +
                 "INNER JOIN kegg_kgml_graphics g ON k.entry_id=g.entry_ID " +
                 "LEFT OUTER JOIN kegg_compound_name c ON n.name=c.entry " +
@@ -424,20 +420,18 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
     public ArrayList<DBColumn> getRelations(String pathwayID) {
         String query =
-                "SELECT relation.pathway_name, subtype.name,subtype.subtype_value,relation.entry1,relation.entry2,relation.relation_type " +
-                "FROM kegg_kgml_subtype subtype NATURAL JOIN kegg_kgml_relation relation " + "WHERE pathway_name='" +
-                pathwayID + "'ORDER BY relation_id;";
+                "SELECT relation.pathway_name, subtype.name,subtype.subtype_value,relation.entry1,relation.entry2 " +
+                "FROM kegg_kgml_subtype subtype NATURAL JOIN kegg_kgml_relation relation WHERE pathway_name='" + pathwayID + "'ORDER BY relation_id;";
         return new Wrapper().requestDbContent(query);
     }
 
     public ArrayList<DBColumn> getAllReactions(String pathwayID) {
-        String query = "SELECT s.id, e.id, p.id, r.reaction_type, e.pathway_name " + "FROM kegg_kgml_reaction r " +
+        String query = "SELECT s.id, e.id, p.id, r.reaction_type, e.pathway_name FROM kegg_kgml_reaction r " +
                        "INNER JOIN kegg_kgml_substrate s ON r.reaction_id=s.reaction_id " +
                        "INNER JOIN kegg_kgml_product p ON r.reaction_id=p.reaction_id " +
                        "INNER JOIN kegg_kgml_entry_reaction er ON er.reaction=r.name " +
                        "INNER JOIN kegg_kgml_entry e ON er.entry_id=e.entry_id " +
-                       "INNER JOIN kegg_kgml_entry_name en ON e.entry_id=en.entry_id " + "WHERE r.pathway_name='" +
-                       pathwayID + "' AND e.pathway_name='" + pathwayID + "'; ";
+                       "INNER JOIN kegg_kgml_entry_name en ON e.entry_id=en.entry_id WHERE r.pathway_name='" + pathwayID + "' AND e.pathway_name='" + pathwayID + "'; ";
         return new Wrapper().requestDbContent(query);
     }
 }
