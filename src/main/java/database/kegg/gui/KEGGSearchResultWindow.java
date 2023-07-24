@@ -6,9 +6,6 @@ import database.gui.SearchResultWindow;
 import javax.swing.*;
 
 public class KEGGSearchResultWindow extends SearchResultWindow<KeggPathway> {
-    private JCheckBox searchMirnas;
-    private JCheckBox autoCoarse;
-
     public KEGGSearchResultWindow(KeggPathway[] tableValues) {
         super(KeggPathway.class, new String[]{"Id", "Name", "Organism"}, tableValues);
     }
@@ -20,7 +17,7 @@ public class KEGGSearchResultWindow extends SearchResultWindow<KeggPathway> {
         if (columnIndex == 1)
             return value.name;
         if (columnIndex == 2)
-            return value.taxonomy_name;
+            return value.taxonomyName;
         return null;
     }
 
@@ -31,21 +28,6 @@ public class KEGGSearchResultWindow extends SearchResultWindow<KeggPathway> {
 
     @Override
     protected void layoutMainPanelAfterTable(JPanel mainPanel) {
-        searchMirnas = new JCheckBox("Search MirBase/TarBase for possibly connected microRNAs", false);
-        autoCoarse = new JCheckBox("Coarse MirBase/TarBase results to their associated node", false);
-        autoCoarse.setEnabled(false);
-        searchMirnas.addActionListener(arg0 -> {
-            if (searchMirnas.isSelected()) {
-                autoCoarse.setEnabled(true);
-            } else {
-                autoCoarse.setSelected(false);
-                autoCoarse.setEnabled(false);
-            }
-        });
-        mainPanel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
-        mainPanel.add(searchMirnas);
-        mainPanel.add(new JSeparator(), "gap 10, wrap, growx");
-        mainPanel.add(autoCoarse);
     }
 
     @Override
@@ -59,13 +41,5 @@ public class KEGGSearchResultWindow extends SearchResultWindow<KeggPathway> {
 
     @Override
     protected void onCancelClicked() {
-    }
-
-    public boolean getSearchMirnas() {
-        return searchMirnas.isSelected();
-    }
-
-    public boolean getAutoCoarse() {
-        return autoCoarse.isSelected();
     }
 }

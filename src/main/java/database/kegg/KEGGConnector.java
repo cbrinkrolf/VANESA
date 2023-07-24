@@ -1,18 +1,13 @@
 package database.kegg;
 
-import api.payloads.Response;
-import api.payloads.dbMirna.DBMirnaMature;
-import api.payloads.dbMirna.TargetGeneMaturesResponsePayload;
+import api.payloads.kegg.KeggPathway;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.*;
 import biologicalObjects.nodes.*;
-import database.mirna.MirnaSearch;
+import configurations.Wrapper;
 import graph.CreatePathway;
-import graph.hierarchies.HierarchyList;
-import graph.hierarchies.HierarchyListComparator;
 import graph.jung.classes.MyGraph;
-import graph.layouts.Circle;
 import gui.MainWindow;
 import pojos.DBColumn;
 
@@ -23,19 +18,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class KEGGConnector extends SwingWorker<Object, Object> {
     private String title;
     private final String organism;
-    private final String pathwayID;
-    private String pathwayLink;
-    private String pathwayNumber;
-    private boolean searchMicroRNAs = true;
-    private final HashMap<Integer, Integer> srnaParents = new HashMap<>();
-
+    private final String pathwayId;
+    private final String pathwayNumber;
     private Pathway pw;
-
-    private MyGraph myGraph;
 
     private List<DBColumn> allOrgElements = new ArrayList<>();
     private List<DBColumn> allEcElements = new ArrayList<>();
@@ -52,10 +43,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
     private List<DBColumn> allRnReactions = new ArrayList<>();
     private List<DBColumn> allKoReactions = new ArrayList<>();
 
-    private final HashMap<BiologicalNodeAbstract, DBMirnaMature[]> allSpecificMicroRNAs = new HashMap<>();
-    private final HashMap<String, MIRNA> mirnas = new HashMap<>();
     private final boolean dontCreatePathway;
-    private String pathwayOrg;
 
     private static class KeggNodeDescription {
         public String keggPathwayName;
@@ -81,12 +69,16 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
 
     private final HashMap<KeggNodeDescription, BiologicalNodeAbstract> nodeLowToHighPriorityMap = new HashMap<>();
 
-    private boolean autoCoarse;
-
-    public KEGGConnector(String pathwayID, String organism, boolean dontCreatePathway) {
-        this.pathwayID = pathwayID;
+    public KEGGConnector(String pathwayId, String organism, boolean dontCreatePathway) {
+        this.pathwayId = pathwayId;
         this.organism = organism;
         this.dontCreatePathway = dontCreatePathway;
+        Pattern pathwayNumberPattern = Pattern.compile(".+([0-9]+)");
+        Matcher pathwayNumberMatcher = pathwayNumberPattern.matcher(pathwayId);
+        if (pathwayNumberMatcher.matches())
+            pathwayNumber = pathwayNumberMatcher.group(1);
+        else
+            pathwayNumber = pathwayId;
     }
 
     public Pathway getPw() {
@@ -96,24 +88,21 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
     @Override
     protected Void doInBackground() {
         MainWindow.getInstance().showProgressBar("Loading Data");
-        getPathway(pathwayID);
-        allOrgElements = KEGGQueries.getPathwayElements(pathwayOrg + pathwayNumber);
-        allEcElements = KEGGQueries.getPathwayElements("ec" + pathwayNumber);
-        allRnElements = KEGGQueries.getPathwayElements("rn" + pathwayNumber);
-        allKoElements = KEGGQueries.getPathwayElements("ko" + pathwayNumber);
+        getPathway();
+        allOrgElements = getPathwayElements(pathwayId);
+        allEcElements = getPathwayElements("ec" + pathwayNumber);
+        allRnElements = getPathwayElements("rn" + pathwayNumber);
+        allKoElements = getPathwayElements("ko" + pathwayNumber);
 
-        allOrgRelations = KEGGQueries.getRelations(pathwayOrg + pathwayNumber);
-        allEcRelations = KEGGQueries.getRelations("ec" + pathwayNumber);
-        allRnRelations = KEGGQueries.getRelations("rn" + pathwayNumber);
-        allKoRelations = KEGGQueries.getRelations("ko" + pathwayNumber);
+        allOrgRelations = getRelations(pathwayId);
+        allEcRelations = getRelations("ec" + pathwayNumber);
+        allRnRelations = getRelations("rn" + pathwayNumber);
+        allKoRelations = getRelations("ko" + pathwayNumber);
 
-        allOrgReactions = KEGGQueries.getAllReactions(pathwayOrg + pathwayNumber);
-        allEcReactions = KEGGQueries.getAllReactions("ec" + pathwayNumber);
-        allRnReactions = KEGGQueries.getAllReactions("rn" + pathwayNumber);
-        allKoReactions = KEGGQueries.getAllReactions("ko" + pathwayNumber);
-        if (isSearchMicroRNAs()) { // TODO: remove option in GUI if currently disabled?
-            // allSpecificMicroRNAs = miRNAqueries.getMiRNAsOfPathway(pathwayID);
-        }
+        allOrgReactions = getAllReactions(pathwayId);
+        allEcReactions = getAllReactions("ec" + pathwayNumber);
+        allRnReactions = getAllReactions("rn" + pathwayNumber);
+        allKoReactions = getAllReactions("ko" + pathwayNumber);
         return null;
     }
 
@@ -127,9 +116,9 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
             pw = new CreatePathway().getPathway();
 
         pw.setOrganism(organism);
-        pw.setLink(pathwayLink);
+        pw.setLink("https://www.genome.jp/pathway/" + pathwayId);
 
-        myGraph = pw.getGraph();
+        MyGraph myGraph = pw.getGraph();
 
         drawNodes(allOrgElements);
         drawNodes(allEcElements);
@@ -146,42 +135,18 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         drawRelations(allRnRelations);
         drawRelations(allKoRelations);
 
-        // if (colorMirnas) {
-        // colorMirnas(this.mirnas, this.mirnaName);
-        // }
-        if (isSearchMicroRNAs()) {
-            for (BiologicalNodeAbstract bna : pw.getVertices().keySet()) {
-                if (bna instanceof DNA) {
-                    Response<TargetGeneMaturesResponsePayload> response =
-                            MirnaSearch.retrieveTargetGeneMatures(false, bna.getLabel());
-                    if (response.payload != null && response.payload.results != null &&
-                            response.payload.results.length > 0) {
-                        allSpecificMicroRNAs.put(bna, response.payload.results);
-                    }
-                }
-            }
-            drawMicroRNAs();
-        }
         myGraph.restartVisualizationModel();
         myGraph.normalCentering();
         pw.saveVertexLocations();
-        if (isAutoCoarse()) {
-            autoCoarse();
-        }
         MainWindow window = MainWindow.getInstance();
         window.updateOptionPanel();
         firePropertyChange("finished", null, "finished");
     }
 
-    private void getPathway(String name) {
-        ArrayList<DBColumn> result = KEGGQueries.getPathway(pathwayID);
-        for (DBColumn column : result) {
-            String[] resultDetails = column.getColumn();
-            title = resultDetails[1];
-            pathwayLink = resultDetails[5];
-            //pathwayImage = resultDetails[4];
-            pathwayNumber = resultDetails[3];
-            pathwayOrg = resultDetails[2];
+    private void getPathway() {
+        KeggPathway pathway = KeggSearch.getPathway(pathwayId);
+        if (pathway != null) {
+            title = pathway.name;
         }
     }
 
@@ -247,16 +212,15 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
             while (it.hasNext()) {
                 old_bna = it.next();
                 KEGGNode oldKeggNode = old_bna.getKEGGnode();
-                if (oldKeggNode.getXPos() == node.getXPos()
-                        && oldKeggNode.getYPos() == node.getYPos()) {
+                if (oldKeggNode.getXPos() == node.getXPos() && oldKeggNode.getYPos() == node.getYPos()) {
                     if (keggVisualizationPriority(bna) > keggVisualizationPriority(old_bna)) {
                         pw.removeElement(old_bna);
                         nodeLowToHighPriorityMap.put(
-                                new KeggNodeDescription(oldKeggNode.getKEGGPathway(), oldKeggNode.getKEGGentryID()), bna);
+                                new KeggNodeDescription(oldKeggNode.getKEGGPathway(), oldKeggNode.getKEGGentryID()),
+                                bna);
                         if (nodeLowToHighPriorityMap.containsValue(old_bna)) {
                             KeggNodeDescription deleteKey = null;
-                            for (Entry<KeggNodeDescription, BiologicalNodeAbstract> entry : nodeLowToHighPriorityMap
-                                    .entrySet()) {
+                            for (Entry<KeggNodeDescription, BiologicalNodeAbstract> entry : nodeLowToHighPriorityMap.entrySet()) {
                                 if (entry.getValue().equals(old_bna))
                                     deleteKey = entry.getKey();
                             }
@@ -266,7 +230,8 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                     } else {
                         addBNA = false;
                         nodeLowToHighPriorityMap.put(new KeggNodeDescription(bna.getKEGGnode().getKEGGPathway(),
-                                bna.getKEGGnode().getKEGGentryID()), old_bna);
+                                                                             bna.getKEGGnode().getKEGGentryID()),
+                                                     old_bna);
                     }
                     break;
                 }
@@ -306,49 +271,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         }
     }
 
-    private void drawMicroRNAs() {
-        for (BiologicalNodeAbstract bna : allSpecificMicroRNAs.keySet()) {
-            for (DBMirnaMature mature : allSpecificMicroRNAs.get(bna)) {
-                MIRNA mirna;
-                if (mirnas.containsKey(mature.name)) {
-                    mirna = mirnas.get(mature.name);
-                } else {
-                    mirna = new MIRNA(mature.name, mature.name);
-                    Point2D p = Circle.getPointOnCircle(myGraph.getVertexLocation(bna), 20, 2.0 * ((Math.random() % Math.PI)));
-                    pw.addVertex(mirna, p);
-                    mirnas.put(mature.name, mirna);
-                    srnaParents.put(mirna.getID(), bna.getID());
-                }
-                Expression e = new Expression("", "", mirna, bna); // TODO: this is not an expression???
-                e.setDirected(true);
-                pw.addEdge(e);
-            }
-        }
-    }
-
-    private void autoCoarse() {
-        class HLC implements HierarchyListComparator<Integer> {
-            public Integer getValue(BiologicalNodeAbstract n) {
-                if (n instanceof SRNA) {
-                    if (srnaParents.containsKey(n.getID())) {
-                        return srnaParents.get(n.getID());
-                    } else {
-                        return getSubValue(n);
-                    }
-                }
-                return getSubValue(n);
-            }
-
-            public Integer getSubValue(BiologicalNodeAbstract n) {
-                return n.getID();
-            }
-        }
-        HierarchyList<Integer> l = new HierarchyList<>();
-        l.addAll(myGraph.getAllVertices());
-        l.sort(new HLC());
-        l.coarse();
-    }
-
     private void drawRelations(List<DBColumn> allGeneralRelations) {
         for (DBColumn column : allGeneralRelations) {
             String entry1 = column.getColumn()[3];
@@ -362,13 +284,13 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
             BiologicalNodeAbstract bna2 = null;
             for (BiologicalNodeAbstract bna : pw.getVertices().keySet()) {
                 if (bna.getKEGGnode() != null && bna.getKEGGnode().getKEGGentryID().equals(entry1) &&
-                        bna.getKEGGnode().getKEGGPathway().equals(keggPathway))
+                    bna.getKEGGnode().getKEGGPathway().equals(keggPathway))
                     bna1 = bna;
                 if (bna.getKEGGnode() != null && bna.getKEGGnode().getKEGGentryID().equals(entry2) &&
-                        bna.getKEGGnode().getKEGGPathway().equals(keggPathway))
+                    bna.getKEGGnode().getKEGGPathway().equals(keggPathway))
                     bna2 = bna;
                 if (bna.getKEGGnode() != null && bna.getKEGGnode().getKEGGentryID().equals(subtypeValue) &&
-                        bna.getKEGGnode().getKEGGPathway().equals(keggPathway))
+                    bna.getKEGGnode().getKEGGPathway().equals(keggPathway))
                     subtype = bna;
             }
 
@@ -488,19 +410,34 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         }
     }
 
-    public void setSearchMicroRNAs(boolean searchMicroRNAs) {
-        this.searchMicroRNAs = searchMicroRNAs;
+    public ArrayList<DBColumn> getPathwayElements(String pathwayID) {
+        String query =
+                "SELECT k.id, k.link, k.entry_type, n.name, g.bgcolor, g.fgcolor, g.name, g.graphics_type, g.x, g.y, c.name, p.name, g.width, g.height, k.pathway_name " +
+                "FROM kegg_kgml_entry k LEFT OUTER JOIN kegg_kgml_entry_name n ON k.entry_id=n.entry_ID " +
+                "INNER JOIN kegg_kgml_graphics g ON k.entry_id=g.entry_ID " +
+                "LEFT OUTER JOIN kegg_compound_name c ON n.name=c.entry " +
+                "LEFT OUTER JOIN kegg_pathway p ON n.name=p.entry " + "WHERE k.pathway_name='" + pathwayID + "' " +
+                "AND (length(c.name)=(Select min(length(d.name)) FROM kegg_compound_name d WHERE n.name=d.entry) OR c.name IS NULL) " +
+                "GROUP BY k.entry_id;";
+        return new Wrapper().requestDbContent(query);
     }
 
-    public void setAutoCoarse(boolean autoCoarse) {
-        this.autoCoarse = autoCoarse;
+    public ArrayList<DBColumn> getRelations(String pathwayID) {
+        String query =
+                "SELECT relation.pathway_name, subtype.name,subtype.subtype_value,relation.entry1,relation.entry2,relation.relation_type " +
+                "FROM kegg_kgml_subtype subtype NATURAL JOIN kegg_kgml_relation relation " + "WHERE pathway_name='" +
+                pathwayID + "'ORDER BY relation_id;";
+        return new Wrapper().requestDbContent(query);
     }
 
-    public boolean isAutoCoarse() {
-        return autoCoarse;
-    }
-
-    public boolean isSearchMicroRNAs() {
-        return searchMicroRNAs;
+    public ArrayList<DBColumn> getAllReactions(String pathwayID) {
+        String query = "SELECT s.id, e.id, p.id, r.reaction_type, e.pathway_name " + "FROM kegg_kgml_reaction r " +
+                       "INNER JOIN kegg_kgml_substrate s ON r.reaction_id=s.reaction_id " +
+                       "INNER JOIN kegg_kgml_product p ON r.reaction_id=p.reaction_id " +
+                       "INNER JOIN kegg_kgml_entry_reaction er ON er.reaction=r.name " +
+                       "INNER JOIN kegg_kgml_entry e ON er.entry_id=e.entry_id " +
+                       "INNER JOIN kegg_kgml_entry_name en ON e.entry_id=en.entry_id " + "WHERE r.pathway_name='" +
+                       pathwayID + "' AND e.pathway_name='" + pathwayID + "'; ";
+        return new Wrapper().requestDbContent(query);
     }
 }

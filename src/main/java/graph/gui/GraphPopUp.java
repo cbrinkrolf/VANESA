@@ -173,9 +173,9 @@ public class GraphPopUp {
                     Pathway pwLink = map.getPathwayLink();
                     if (pwLink == null) {
                         KEGGConnector kc = new KEGGConnector(map.getName(), "", true);
-                        kc.setSearchMicroRNAs(JOptionPane.showConfirmDialog(w.getFrame(),
-                                "Search also after possibly connected microRNAs in mirBase/tarBase?",
-                                "Search parameters...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
+                        //kc.setSearchMicroRNAs(JOptionPane.showConfirmDialog(w.getFrame(),
+                        //        "Search also after possibly connected microRNAs in mirBase/tarBase?",
+                        //        "Search parameters...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
                         kc.addPropertyChangeListener((evt) -> {
                             if (evt.getNewValue().equals("finished")) {
                                 Pathway newPW = kc.getPw();
@@ -218,9 +218,9 @@ public class GraphPopUp {
                     PathwayMap map = (PathwayMap) bna;
                     // Pathway newPW = map.getPathwayLink();
                     KEGGConnector kc = new KEGGConnector(map.getName(), "", false);
-                    kc.setSearchMicroRNAs(JOptionPane.showConfirmDialog(MainWindow.getInstance().getFrame(),
-                            "Search also after possibly connected microRNAs in mirBase/tarBase?",
-                            "Search paramaters...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
+                    //kc.setSearchMicroRNAs(JOptionPane.showConfirmDialog(MainWindow.getInstance().getFrame(),
+                    //        "Search also after possibly connected microRNAs in mirBase/tarBase?",
+                    //        "Search paramaters...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
                     kc.execute();
                     MainWindow.getInstance().showProgressBar("KEGG query");
                 }

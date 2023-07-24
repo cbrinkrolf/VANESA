@@ -1,8 +1,9 @@
 package api.payloads.kegg;
 
+import api.payloads.Payload;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class KeggPathway {
+public class GetPathwayResponsePayload extends Payload {
     public String id;
     public String name;
     @JsonProperty("taxonomy_id")
@@ -12,7 +13,7 @@ public class KeggPathway {
 
     @Override
     public String toString() {
-        return "KeggPathway{id='" + id + "', name='" + name + "', taxonomy_id='" + taxonomyId + "', taxonomy_name='" +
-               taxonomyName + "'}";
+        return "PathwaySearchResponsePayload{id='" + id + "', name='" + name + "', taxonomy_id='" + taxonomyId +
+               "', taxonomy_name='" + taxonomyName + "'}";
     }
 }
