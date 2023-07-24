@@ -6,7 +6,6 @@ import configurations.Wrapper;
 import pojos.DBColumn;
 
 public class KEGGQueries {
-    public static final String KEGGPathwayQuery = "SELECT p.pathway_name,p.title,p.org FROM kegg_pathway p where ";
     public static final String KEGGGeneQuery = "SELECT Distinct Concat(p.org,p.kegg_number) as pathway_name FROM kegg_genes_pathway as p Inner join kegg_genes_name as n on p.entry=n.entry where ";
     public static final String KEGGEnzymeQuery = "SELECT Distinct CONCAT('map',e.kegg_number) as pathway_name FROM kegg_enzyme_pathway e Inner Join kegg_enzyme_name n on e.entry=n.entry where ";
     public static final String KEGGCompoundQuery = "SELECT Distinct Concat(p.organismus,p.kegg_number) as pathway_name FROM kegg_compound_name c inner join kegg_pathway_compound as p on c.entry=p.entry where ";

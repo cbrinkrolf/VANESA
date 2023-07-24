@@ -17,7 +17,6 @@ import gui.MainWindow;
 import pojos.DBColumn;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,15 +136,15 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         drawNodes(allRnElements);
         drawNodes(allKoElements);
 
-        drawReactions(allOrgReactions, false);
-        drawReactions(allEcReactions, false);
-        drawReactions(allRnReactions, false);
-        drawReactions(allKoReactions, false);
+        drawReactions(allOrgReactions);
+        drawReactions(allEcReactions);
+        drawReactions(allRnReactions);
+        drawReactions(allKoReactions);
 
-        drawRelations(allOrgRelations, false);
-        drawRelations(allEcRelations, false);
-        drawRelations(allRnRelations, false);
-        drawRelations(allKoRelations, false);
+        drawRelations(allOrgRelations);
+        drawRelations(allEcRelations);
+        drawRelations(allRnRelations);
+        drawRelations(allKoRelations);
 
         // if (colorMirnas) {
         // colorMirnas(this.mirnas, this.mirnaName);
@@ -350,7 +349,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         l.coarse();
     }
 
-    private void drawRelations(List<DBColumn> allGeneralRelations, boolean specific) {
+    private void drawRelations(List<DBColumn> allGeneralRelations) {
         for (DBColumn column : allGeneralRelations) {
             String entry1 = column.getColumn()[3];
             String entry2 = column.getColumn()[4];
@@ -388,8 +387,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                     if (!pw.existEdge(bna1, subtype) && !pw.existEdge(subtype, bna1)) {
                         Compound c = new Compound("", "", bna1, subtype);
                         c.setDirected(true);
-                        if (specific)
-                            bna1.setColor(Color.GREEN);
                         //pw.addEdgeToView(c, true);
                         pw.addEdge(c);
                         pw.updateMyGraph();
@@ -398,8 +395,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                     if (!pw.existEdge(subtype, bna2) && !pw.existEdge(bna2, subtype)) {
                         Compound c2 = new Compound("", "", subtype, bna2);
                         c2.setDirected(true);
-                        if (specific)
-                            bna2.setColor(Color.GREEN);
                         pw.addEdge(c2);
                         pw.updateMyGraph();
                         //pw.addEdgeToView(c2, true);
@@ -433,9 +428,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                                 break;
                         }
                         bea.setDirected(true);
-                        if (specific) {
-                            bna1.setColor(Color.GREEN);
-                        }
                         pw.addEdge(bea);
                         pw.updateMyGraph();
                     }
@@ -444,7 +436,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         }
     }
 
-    private void drawReactions(List<DBColumn> allReactions, boolean specific) {
+    private void drawReactions(List<DBColumn> allReactions) {
         for (DBColumn column : allReactions) {
             String substrateId = column.getColumn()[0];
             String enzymeId = column.getColumn()[1];
@@ -485,9 +477,6 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                     pw.addEdge(c);
                     c.setDirected(true);
                     pw.updateMyGraph();
-                }
-                if (specific) {
-                    // enzyme.setColor(Color.GREEN);
                 }
                 if (!pw.existEdge(enzyme, product) && !pw.existEdge(product, enzyme)) {
                     Compound c2 = new Compound("", "", enzyme, product);

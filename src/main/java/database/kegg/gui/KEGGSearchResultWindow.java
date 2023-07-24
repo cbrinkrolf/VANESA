@@ -20,7 +20,7 @@ public class KEGGSearchResultWindow extends SearchResultWindow<KeggPathway> {
         if (columnIndex == 1)
             return value.name;
         if (columnIndex == 2)
-            return value.organism;
+            return value.taxonomy_name;
         return null;
     }
 
