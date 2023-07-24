@@ -364,6 +364,7 @@ public class RuleEditingWindow implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if (e.getActionCommand().equals("okButtonRE")) {
+			// TODO perform consistency check first
 			if (bn.hasGotAtLeastOneElement()) {
 				convertGraphToRule(false);
 				frame.setVisible(false);
@@ -921,7 +922,7 @@ public class RuleEditingWindow implements ActionListener {
 			bea.setLabel(re.getName());
 			bea.setName(re.getName());
 			bea.setDirected(true);
-			bn.addEdge(bea);
+			pn.addEdge(bea);
 			// parameterMapping.put(bea, new HashMap<String, String>());
 			for (String key : re.getParameterMap().keySet()) {
 				getParameterMapping(bea).put(key, re.getParameterMap().get(key));

@@ -6,6 +6,7 @@ package graph.gui;
 import java.awt.Component;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -49,7 +50,7 @@ public class PetriNetVertexDialog {
 	// JSpinner petriValue = new JSpinner();
 
 	// for places
-	//private JFormattedTextField token;
+	// private JFormattedTextField token;
 	private JFormattedTextField tokenStart;
 	private JFormattedTextField tokenMin;
 	private JFormattedTextField tokenMax;
@@ -73,10 +74,9 @@ public class PetriNetVertexDialog {
 	public PetriNetVertexDialog(String petriElement, Pathway pw) {
 		this.pw = pw;
 		this.petriElement = petriElement;
-		
+
 		distributionList = new JComboBox<String>(StochasticDistribution.distributionList.toArray(new String[0]));
-		
-		
+
 		MigLayout layout = new MigLayout("", "[left]");
 
 		panel = new JPanel(layout);
@@ -85,17 +85,18 @@ public class PetriNetVertexDialog {
 		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
 
 		// avoiding duplicate suggested names
+		Set<String> names = pw.getAllNodeNames();
 		int i = 1;
-		while(pw.getAllNodeNames().contains("p"+i)){
+		while (names.contains("p" + i)) {
 			i++;
 		}
-		String placeName = "p"+i;
+		String placeName = "p" + i;
 		i = 1;
-		while(pw.getAllNodeNames().contains("t"+i)){
+		while (names.contains("t" + i)) {
 			i++;
 		}
-		String transitionName = "t"+i;
-		
+		String transitionName = "t" + i;
+
 		if (pw.isHeadless()) {
 			if (petriElement.toLowerCase().contains("place")) {
 				name.setText(placeName);
@@ -108,10 +109,10 @@ public class PetriNetVertexDialog {
 			panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
 			if (this.petriElement.equals(Elementdeclerations.discretePlace)) {
 				name.setText(placeName);
-				//panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
-				//token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
-				//token.setText("0");
-				//panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
+				// panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
+				// token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
+				// token.setText("0");
+				// panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(new JLabel("Token Start"), "span 2, gaptop 2 ");
 				tokenStart = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
 				tokenStart.setText("0");
@@ -130,9 +131,9 @@ public class PetriNetVertexDialog {
 			} else if (this.petriElement.equals(Elementdeclerations.continuousPlace)) {
 				name.setText(placeName);
 				// panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
-				//token = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
-				//token.setText("0.0");
-				//panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
+				// token = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
+				// token.setText("0.0");
+				// panel.add(token, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(new JLabel("Token Start"), "span 2, gaptop 2 ");
 				tokenStart = new JFormattedTextField(MyNumberFormat.getDecimalFormat());
 				tokenStart.setText("0.0");
@@ -207,7 +208,7 @@ public class PetriNetVertexDialog {
 
 				if (name.getText().trim().length() < 1 || name.getText().trim().charAt(0) == '_') {
 					PopUpDialog.getInstance().show("Adding Node",
-                                                   "Cannot add node! Empty name or name starts with \"_\"");
+							"Cannot add node! Empty name or name starts with \"_\"");
 					return null;
 				}
 
@@ -215,10 +216,10 @@ public class PetriNetVertexDialog {
 				if (petriElement.equals(Elementdeclerations.discretePlace)) {
 					DiscretePlace p = new DiscretePlace(name.getText().trim(), name.getText().trim());
 					if (!pw.isHeadless()) {
-						//number = (Number) token.getValue();
-						//if (number != null) {
-						//	p.setToken(number.doubleValue());
-						//}
+						// number = (Number) token.getValue();
+						// if (number != null) {
+						// p.setToken(number.doubleValue());
+						// }
 						number = (Number) tokenStart.getValue();
 						if (number != null) {
 							p.setTokenStart(number.doubleValue());
@@ -237,10 +238,10 @@ public class PetriNetVertexDialog {
 				} else if (petriElement.equals(Elementdeclerations.continuousPlace)) {
 					ContinuousPlace p = new ContinuousPlace(name.getText().trim(), name.getText().trim());
 					if (!pw.isHeadless()) {
-						//number = (Number) token.getValue();
-						//if (number != null) {
-						//	p.setToken(number.doubleValue());
-						//}
+						// number = (Number) token.getValue();
+						// if (number != null) {
+						// p.setToken(number.doubleValue());
+						// }
 						number = (Number) tokenStart.getValue();
 						if (number != null) {
 							p.setTokenStart(number.doubleValue());
@@ -294,23 +295,29 @@ public class PetriNetVertexDialog {
 					while (it.hasNext()) {
 						bna = it.next();
 						if (bna.getName().equals(name.getText().trim())) {
-							if(!bna.getBiologicalElement().equals(petriElement)){
+							if (pw.isHeadless()) {
 								PopUpDialog.getInstance().show("Adding Element",
-										"Name already exists. Cannot create reference node, because types do not match!\r\n"
-										+ "Given type: "+petriElement+"\r\n"
-												+ "Existing element: "+bna.getBiologicalElement());
+										"Name already exists. Cannot create Petri net node!");
 								return null;
+							} else {
+								if (!bna.getBiologicalElement().equals(petriElement)) {
+									PopUpDialog.getInstance().show("Adding Element",
+											"Name already exists. Cannot create reference node, because types do not match!\r\n"
+													+ "Given type: " + petriElement + "\r\n" + "Existing element: "
+													+ bna.getBiologicalElement());
+									return null;
+								}
+
+								createdNode.setLogicalReference(bna);
+								createdRef = true;
 							}
-							
-							createdNode.setLogicalReference(bna);
-							createdRef = true;
 						}
 					}
 
 					pw.addVertex(createdNode, point);
 					if (createdRef) {
 						PopUpDialog.getInstance().show("Adding Node",
-                                                       "Name already exists. Created reference node instead.");
+								"Name already exists. Created reference node instead.");
 					}
 				}
 				GraphContainer con = GraphContainer.getInstance();
