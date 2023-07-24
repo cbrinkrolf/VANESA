@@ -128,7 +128,7 @@ public class ToolBar {
 
 		ButtonChooser colorChooser = new ButtonChooser(AnnotationPainter.getInstance().getSelectColorActions());
 
-		colorChooser.setToolTipText("Set compartment colours");
+		colorChooser.setToolTipText("Set compartment colors");
 
 		// JButton petriNet = new JButton(PetriViewString);
 		// petriNet.setToolTipText("Change to Petri Net View");

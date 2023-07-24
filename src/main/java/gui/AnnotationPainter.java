@@ -167,7 +167,6 @@ public class AnnotationPainter {
 	private void initAction(Action a, String image, String desc) {
 		a.putValue(Action.SMALL_ICON, imagePath.getImageIcon(image));
 		a.putValue(Action.SHORT_DESCRIPTION, desc);
-		selectColorActions.add(a);
 	}
 
 	public Color getFillColor() {
