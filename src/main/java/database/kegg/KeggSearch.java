@@ -51,87 +51,45 @@ public class KeggSearch {
 
 	/*
 	private int answer = JOptionPane.YES_OPTION;
-	private ArrayList<DBColumn> results = new ArrayList<>();
-	private boolean continueProgress = false;
 	private Pathway mergePW;
 
 	public ArrayList<DBColumn> requestDbContent() {
 		final DatabaseQueryValidator dqv = new DatabaseQueryValidator();
-
-		String queryStart = "Select pathway.pathway_name from ";
-		String queryEnd = "";
-		boolean firstEntries = false;
-		if (!pathway.equals("")) {
-			queryStart += "(SELECT p.pathway_name, p.title, p.org FROM kegg_pathway p WHERE " + dqv.prepareString(pathway, "p.pathway_name", "p.title")
-					+ ") as pathway";
-			firstEntries = true;
-		}
 		if (!enzyme.equals("")) {
 			if (firstEntries) {
-				queryStart += " Inner join (" + KEGGQueries.KEGGEnzymeQuery
-						+ dqv.prepareString(enzyme, "n.entry", "n.name") + ") as enzyme ";
+				queryStart += " Inner join (SELECT Distinct CONCAT('map',e.kegg_number) as pathway_name FROM kegg_enzyme_pathway e Inner Join kegg_enzyme_name n on e.entry=n.entry where " + dqv.prepareString(enzyme, "n.entry", "n.name") + ") as enzyme ";
 				queryEnd = " on pathway.pathway_name=enzyme.pathway_name";
 			} else {
 				firstEntries = true;
-				queryStart += "(" + KEGGQueries.KEGGEnzymeQuery + dqv.prepareString(enzyme, "n.entry", "n.name")
-						+ ") as pathway ";
+				queryStart += "(SELECT Distinct CONCAT('map',e.kegg_number) as pathway_name FROM kegg_enzyme_pathway e Inner Join kegg_enzyme_name n on e.entry=n.entry where " + dqv.prepareString(enzyme, "n.entry", "n.name") + ") as pathway ";
 			}
 		}
 		if (!gene.equals("")) {
 			if (firstEntries) {
-				queryStart += " Inner join (" + KEGGQueries.KEGGGeneQuery + dqv.prepareString(gene, "n.entry", "n.name")
-						+ ") as gene ";
+				queryStart += " Inner join (SELECT Distinct Concat(p.org,p.kegg_number) as pathway_name FROM kegg_genes_pathway as p Inner join kegg_genes_name as n on p.entry=n.entry where " + dqv.prepareString(gene, "n.entry", "n.name") + ") as gene ";
 				if (queryEnd.equals("")) {
 					queryEnd = " on pathway.pathway_name=gene.pathway_name";
 				} else {
 					queryEnd = queryEnd + "=gene.pathway_name";
 				}
 			} else {
-				queryStart += "(" + KEGGQueries.KEGGGeneQuery + dqv.prepareString(gene, "n.entry", "n.name")
-						+ ") as pathway ";
+				queryStart += "(SELECT Distinct Concat(p.org,p.kegg_number) as pathway_name FROM kegg_genes_pathway as p Inner join kegg_genes_name as n on p.entry=n.entry where " + dqv.prepareString(gene, "n.entry", "n.name") + ") as pathway ";
 				firstEntries = true;
 			}
 		}
 		if (!compound.equals("")) {
 			if (firstEntries) {
-				queryStart += " Inner join (" + KEGGQueries.KEGGCompoundQuery
-						+ dqv.prepareString(compound, "c.entry", "c.name") + ") as compound ";
+				queryStart += " Inner join (SELECT Distinct Concat(p.organismus,p.kegg_number) as pathway_name FROM kegg_compound_name c inner join kegg_pathway_compound as p on c.entry=p.entry where " + dqv.prepareString(compound, "c.entry", "c.name") + ") as compound ";
 				if (queryEnd.equals("")) {
 					queryEnd = " on pathway.pathway_name=compound.pathway_name";
 				} else {
 					queryEnd = queryEnd + "=compound.pathway_name";
 				}
 			} else {
-				queryStart += "(" + KEGGQueries.KEGGCompoundQuery + dqv.prepareString(compound, "c.entry", "c.name")
-						+ ") as pathway ";
+				queryStart += "(SELECT Distinct Concat(p.organismus,p.kegg_number) as pathway_name FROM kegg_compound_name c inner join kegg_pathway_compound as p on c.entry=p.entry where " + dqv.prepareString(compound, "c.entry", "c.name") + ") as pathway ";
 				firstEntries = true;
 			}
 		}
-		StringBuilder pathway_names = new StringBuilder("(");
-		ArrayList<DBColumn> tempResults = new ArrayList<>();
-		if (firstEntries) {
-			tempResults = new Wrapper().requestDbContent(queryStart + queryEnd + " LIMIT 0,1000;");
-			boolean firstPathwayName = true;
-			for (DBColumn column : tempResults) {
-				String[] d = column.getColumn();
-				if (!firstPathwayName) {
-					pathway_names.append(',');
-				}
-				pathway_names.append('\'').append(d[0]).append("'");
-				firstPathwayName = false;
-			}
-		}
-		pathway_names.append(")");
-		String lastQuery;
-		boolean organism = StringUtils.isNotEmpty(this.organism);
-		if (!organism && tempResults.size() > 0) {
-			lastQuery = "Select p.pathway_name, p.title, t.name FROM kegg_pathway p LEFT OUTER JOIN kegg_taxonomy as t on p.org=t.org where p.pathway_name In " + pathway_names;
-		} else if (organism && pathway_names.length() < 4) {
-			lastQuery = "Select p.pathway_name, p.title, t.name FROM kegg_pathway p LEFT OUTER JOIN kegg_taxonomy as t on p.org=t.org where " + dqv.prepareString(this.organism, "t.name", "t.latin_name");
-		} else {
-			lastQuery = "Select p.pathway_name, p.title, t.name FROM kegg_pathway p LEFT OUTER JOIN kegg_taxonomy as t on p.org=t.org where p.pathway_name In " + pathway_names + " AND " + dqv.prepareString(this.organism, "t.name", "t.latin_name");
-		}
-		return new Wrapper().requestDbContent(lastQuery + " LIMIT 0,1000;");
 	}
 
 	@Override
