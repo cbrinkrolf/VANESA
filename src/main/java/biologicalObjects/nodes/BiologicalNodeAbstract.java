@@ -143,7 +143,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	private String getCorrectLabel(Integer type) {
-		if ((getLabel().length() == 0 || getLabel().equals(" ")) && (getName().length() == 0 || getName().equals(" "))) {
+		if ((getLabel().length() == 0 || getLabel().equals(" "))
+				&& (getName().length() == 0 || getName().equals(" "))) {
 			return "";
 		} else {
 			if (type == 1) {
@@ -195,7 +196,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		for (BiologicalEdgeAbstract e : node.getConnectingEdges()) {
 			Pathway neighborParent = node.getRootPathway();
 			if (e.getFrom() != node) {
-				neighborParent = e.getFrom().getParentNode() == null ? node.getRootPathway() : e.getFrom().getParentNode();
+				neighborParent = e.getFrom().getParentNode() == null ? node.getRootPathway()
+						: e.getFrom().getParentNode();
 				node.addVertex(e.getFrom(), neighborParent.getGraph().getVertexLocation(e.getFrom()));
 				// node.getPredefinedEnvironment().add(e.getFrom());
 				e.getFrom().removeConnectingEdge(e);
@@ -227,13 +229,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	 * @author tloka
 	 */
 	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label,
-												BiologicalNodeAbstract rootNode) {
+			BiologicalNodeAbstract rootNode) {
 
 		return coarse(nodes, id, label, rootNode, true);
 	}
 
 	public static BiologicalNodeAbstract coarse(Set<BiologicalNodeAbstract> nodes, Integer id, String label,
-												BiologicalNodeAbstract rootNode, boolean updatePathway) {
+			BiologicalNodeAbstract rootNode, boolean updatePathway) {
 		// Stop, if less than two nodes are selected.
 		if (nodes == null || nodes.size() < 1) {
 			return null;
@@ -271,7 +273,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		String answer = label;
 		if (label == null) {
 			answer = JOptionPane.showInputDialog(MainWindow.getInstance().getFrame(), null, "Name of the coarse Node",
-												 JOptionPane.QUESTION_MESSAGE);
+					JOptionPane.QUESTION_MESSAGE);
 			if (answer == null) {
 				return null;
 			} else if (answer.isEmpty()) {
@@ -322,7 +324,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			}
 			// fail if at least 1 selected node is environment node of the current shown
 			// graph
-			if (GraphInstance.getPathway().isBNA() && ((BiologicalNodeAbstract) GraphInstance.getPathway()).getEnvironment().contains(vertex)) {
+			if (GraphInstance.getPathway().isBNA()
+					&& ((BiologicalNodeAbstract) GraphInstance.getPathway()).getEnvironment().contains(vertex)) {
 				return false;
 			}
 		}
@@ -450,10 +453,11 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	 */
 	private static void showCoarsingErrorMessage() {
 		JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
-									  "No coarsing possible with the given set of nodes.", "Coarsing Error!", JOptionPane.ERROR_MESSAGE);
+				"No coarsing possible with the given set of nodes.", "Coarsing Error!", JOptionPane.ERROR_MESSAGE);
 	}
 
-	public boolean addToCoarseNode(Set<BiologicalNodeAbstract> vertices, Map<BiologicalNodeAbstract, Point2D> vertexLocations) {
+	public boolean addToCoarseNode(Set<BiologicalNodeAbstract> vertices,
+			Map<BiologicalNodeAbstract, Point2D> vertexLocations) {
 		Set<BiologicalNodeAbstract> ln = new HashSet<>(getLeafNodes());
 		for (BiologicalNodeAbstract v : vertices) {
 			if (v.getParentNode() != this.getParentNode()) {
@@ -469,7 +473,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			for (BiologicalNodeAbstract n : vertices) {
 				n.setParentNode(this);
 				n.setParentNodeDistance(Circle.get2Ddistance(GraphInstance.getMyGraph().getVertexLocation(this),
-															 vertexLocations.get(n)));
+						vertexLocations.get(n)));
 				n.setNodeStateChanged(NodeStateChanged.ADDED);
 			}
 			updateNodeType();
@@ -510,7 +514,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private void addConEdge(BiologicalEdgeAbstract bea) {
 		boolean edgeAlreadyExist = false;
 		for (BiologicalEdgeAbstract conEdge : getConnectingEdges()) {
-			if (conEdge.getFrom() == bea.getFrom() && conEdge.getTo() == bea.getTo() && conEdge.isDirected() == bea.isDirected()) {
+			if (conEdge.getFrom() == bea.getFrom() && conEdge.getTo() == bea.getTo()
+					&& conEdge.isDirected() == bea.isDirected()) {
 				edgeAlreadyExist = true;
 				break;
 			}
@@ -578,7 +583,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	public void removeConnectingEdge(BiologicalEdgeAbstract edge) {
 		Set<BiologicalEdgeAbstract> conEdges = new HashSet<>(getConnectingEdges());
 		for (BiologicalEdgeAbstract conEdge : conEdges) {
-			if (conEdge.getTo() == edge.getTo() && conEdge.getFrom() == edge.getFrom() && conEdge.isDirected() == edge.isDirected()) {
+			if (conEdge.getTo() == edge.getTo() && conEdge.getFrom() == edge.getFrom()
+					&& conEdge.isDirected() == edge.isDirected()) {
 				getConnectingEdges().remove(conEdge);
 				getIdSet().remove(conEdge.getID());
 			}
@@ -859,6 +865,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public void setConcentration(double concentration) {
+		if (concentration < 0) {
+			return;
+		}
 		this.concentration = concentration;
 	}
 
@@ -867,6 +876,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public void setConcentrationMin(double concentrationMin) {
+		if (concentrationMin < 0) {
+			return;
+		}
 		this.concentrationMin = concentrationMin;
 	}
 
@@ -875,6 +887,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public void setConcentrationMax(double concentrationMax) {
+		if (concentrationMax < 0) {
+			return;
+		}
 		this.concentrationMax = concentrationMax;
 	}
 
@@ -883,6 +898,9 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public void setConcentrationStart(double concentrationStart) {
+		if (concentrationStart < 0) {
+			return;
+		}
 		this.concentrationStart = concentrationStart;
 	}
 
@@ -1259,8 +1277,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		if (isMarkedAsEnvironment()) {
 			return true;
 		}
-		return parentNodeOfInterest instanceof BiologicalNodeAbstract &&
-			   ((BiologicalNodeAbstract) parentNodeOfInterest).getEnvironment().contains(this);
+		return parentNodeOfInterest instanceof BiologicalNodeAbstract
+				&& ((BiologicalNodeAbstract) parentNodeOfInterest).getEnvironment().contains(this);
 	}
 
 	public void addAttribute(int nodeAttributeType, String name, double value) {
@@ -1433,20 +1451,20 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 
 	public String getTransformationParameterValue(String parameter) {
 		switch (parameter) {
-			case "name":
-				return getName();
-			case "label":
-				return getLabel();
-			case "concentrationStart":
-				return String.valueOf(getConcentrationStart());
-			case "concentrationMin":
-				return String.valueOf(getConcentrationMin());
-			case "concentrationMax":
-				return String.valueOf(getConcentrationMax());
-			case "ID":
-				return String.valueOf(getID());
-			case "isConstant":
-				return String.valueOf(isConstant());
+		case "name":
+			return getName();
+		case "label":
+			return getLabel();
+		case "concentrationStart":
+			return String.valueOf(getConcentrationStart());
+		case "concentrationMin":
+			return String.valueOf(getConcentrationMin());
+		case "concentrationMax":
+			return String.valueOf(getConcentrationMax());
+		case "ID":
+			return String.valueOf(getID());
+		case "isConstant":
+			return String.valueOf(isConstant());
 		}
 		return null;
 	}
