@@ -581,6 +581,10 @@ public class MainWindow implements ApplicationListener {
 	public void initSimResGraphs() {
 		optionPanel.initSimResGraphs();
 	}
+	
+	public void redrawTokens(){
+		optionPanel.redrawTokens();
+	}
 
 	// =============mac osx stuff========================
 	@Override
