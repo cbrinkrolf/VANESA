@@ -253,4 +253,8 @@ public class OptionPanel {
 	public void initSimResGraphs() {
 		simResWindow.initGraphs();
 	}
+	
+	public void redrawTokens(){
+		elementWindow.redrawTokens();
+	}
 }

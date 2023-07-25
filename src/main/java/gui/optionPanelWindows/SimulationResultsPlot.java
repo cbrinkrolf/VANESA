@@ -904,7 +904,12 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	 */
 	public void stateChanged(ChangeEvent e) {
 		// System.out.println("state changed");
-		if (pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation()) {
+		boolean isValidPN = pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation();
+		boolean isValidHiddenPN = !pw.isPetriNet() && pw.getTransformationInformation() != null
+				&& pw.getTransformationInformation().getPetriNet() != null
+				&& pw.getPetriPropertiesNet().isPetriNetSimulation();
+		if (isValidPN || isValidHiddenPN) {
+		//if (pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation()) {
 			if (e.getSource().equals(animationStart))
 				animationStartInit = (Integer) animationStart.getValue();
 			else if (e.getSource().equals(animationStop))
@@ -966,6 +971,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 							// value
 							// for current time step
 							bna = it.next();
+							bna = resolveHidden(bna);
 							// System.out.println(bna.getName());
 
 							ref = 1.0;
@@ -974,6 +980,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 								if (bna instanceof Place) {
 									ref = simRes.get(bna, TOKEN).get(slider.getValue());
 									((Place) bna).setToken(ref);
+									MainWindow.getInstance().redrawTokens();
 								} else if (bna instanceof Transition) {
 									ref = simRes.get(bna, FIRE).get(slider.getValue());
 									if (ref == 1) {

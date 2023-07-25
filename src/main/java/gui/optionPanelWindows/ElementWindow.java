@@ -43,11 +43,14 @@ public class ElementWindow implements ActionListener, ItemListener {
 	private GraphElementAbstract original;
 
 	private JCheckBox knockedOut;
+	private JLabel token;
 	private MyJFormattedTextField tokenMin;
 	private MyJFormattedTextField tokenMax;
 	private MyJFormattedTextField concentrationMin;
 	private MyJFormattedTextField concentrationMax;
-	
+
+	private JLabel concentration;
+
 	private JCheckBox isDirected;
 
 	private void updateWindow(GraphElementAbstract element) {
@@ -139,20 +142,21 @@ public class ElementWindow implements ActionListener, ItemListener {
 			// final List<String> annotationEntries = new ArrayList<>();
 			// final List<String> graphPropertyEntries = new ArrayList<>();
 			// for (NodeAttribute att : bna.getNodeAttributes()) {
-			// 	switch (att.getType()) {
-			// 		case NodeAttributeTypes.EXPERIMENT:
-			// 			experimentEntries.add(att.getName() + ":\t" + att.getDoublevalue() + "\n");
-			// 			break;
-			// 		case NodeAttributeTypes.DATABASE_ID:
-			// 			databaseIdEntries.add(att.getName() + ":\t" + att.getStringvalue() + "\n");
-			// 			break;
-			// 		case NodeAttributeTypes.ANNOTATION:
-			// 			annotationEntries.add(att.getName() + ":\t" + att.getStringvalue() + "\n");
-			// 			break;
-			// 		case NodeAttributeTypes.GRAPH_PROPERTY:
-			// 			graphPropertyEntries.add(att.getName() + ":\t" + att.getDoublevalue() + "\n");
-			// 			break;
-			// 	}
+			// switch (att.getType()) {
+			// case NodeAttributeTypes.EXPERIMENT:
+			// experimentEntries.add(att.getName() + ":\t" + att.getDoublevalue() + "\n");
+			// break;
+			// case NodeAttributeTypes.DATABASE_ID:
+			// databaseIdEntries.add(att.getName() + ":\t" + att.getStringvalue() + "\n");
+			// break;
+			// case NodeAttributeTypes.ANNOTATION:
+			// annotationEntries.add(att.getName() + ":\t" + att.getStringvalue() + "\n");
+			// break;
+			// case NodeAttributeTypes.GRAPH_PROPERTY:
+			// graphPropertyEntries.add(att.getName() + ":\t" + att.getDoublevalue() +
+			// "\n");
+			// break;
+			// }
 			// }
 //
 			// // Sort for more convenient display
@@ -254,11 +258,12 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			if (!(ab instanceof PNNode)) {
 				JLabel lblTokenStart = new JLabel("Start concentration");
-				MyJFormattedTextField concentration = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
+				concentration = new JLabel(String.valueOf(((BiologicalNodeAbstract) ab).getConcentration()));
 				MyJFormattedTextField concentrationStart = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				concentrationMin = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
 				concentrationMax = new MyJFormattedTextField(MyNumberFormat.getDecimalFormat());
-				concentration.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentration()));
+				// concentration.setText(String.valueOf(((BiologicalNodeAbstract)
+				// ab).getConcentration()));
 				concentrationStart.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentrationStart()));
 				concentrationMin.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentrationMin()));
 				concentrationMax.setText(String.valueOf(((BiologicalNodeAbstract) ab).getConcentrationMax()));
@@ -267,8 +272,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 				concentration.setName("concentration");
 				// token.addFocusListener(pwl);
-				concentration.setEditable(false);
-				concentration.setFocusLostBehavior(JFormattedTextField.COMMIT);
+				// concentration.setEditable(false);
+				// concentration.setFocusLostBehavior(JFormattedTextField.COMMIT);
 
 				concentrationStart.setName("concentrationStart");
 				concentrationStart.setFocusLostBehavior(JFormattedTextField.COMMIT);
@@ -388,7 +393,6 @@ public class ElementWindow implements ActionListener, ItemListener {
 				p.add(lswitchPlace, "gap 5 ");
 				p.add(placeList, "wrap");
 
-				JLabel token;
 				MyJFormattedTextField tokenStart;
 
 				JLabel lblTokenStart = new JLabel("Start tokens");
@@ -492,9 +496,8 @@ public class ElementWindow implements ActionListener, ItemListener {
 
 			} else if (ab instanceof Transition) {
 				JLabel lswitchTrans = new JLabel("Transition type");
-				JComboBox<String> transList = new JComboBox<>(new String[] {
-						DiscreteTransition.class.getSimpleName(), ContinuousTransition.class.getSimpleName(),
-						StochasticTransition.class.getSimpleName() });
+				JComboBox<String> transList = new JComboBox<>(new String[] { DiscreteTransition.class.getSimpleName(),
+						ContinuousTransition.class.getSimpleName(), StochasticTransition.class.getSimpleName() });
 				transList.setSelectedItem(ab.getClass().getSimpleName());
 				transList.setName("transList");
 				transList.addFocusListener(pwl);
@@ -940,7 +943,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
 				// Color newColor = JColorChooser.showDialog(w.getFrame(), "Choose plot colour",
 				// bna.getPlotColor());
-				//System.out.println(bna.getDefaultColor());
+				// System.out.println(bna.getDefaultColor());
 				// TODO plot color = null if BN with loaded PN
 				MyColorChooser mc = new MyColorChooser(w.getFrame(), "Choose plot color", true, bna.getPlotColor());
 				if (mc.isOkAction()) {
@@ -1137,6 +1140,32 @@ public class ElementWindow implements ActionListener, ItemListener {
 			pw.getCompartmentManager().setCompartment((BiologicalNodeAbstract) ab,
 					pw.getCompartmentManager().getCompartment(compartment.getSelectedItem().toString()));
 
+		}
+	}
+
+	public void redrawTokens() {
+		if (ab instanceof BiologicalNodeAbstract) {
+			if (ab instanceof Place) {
+				Place place = (Place) ab;
+				if (place.isDiscrete()) {
+					token.setText(String.valueOf((int) place.getToken()));
+				} else {
+					token.setText(String.valueOf(place.getToken()));
+				}
+				// token.repaint();
+			} else{
+				Pathway pw = GraphInstance.getPathway();
+				if(pw.getTransformationInformation() != null){
+					if(pw.getTransformationInformation().getBnToPnMapping().containsKey(ab)){
+						BiologicalNodeAbstract node =  pw.getTransformationInformation().getBnToPnMapping().get(ab);
+						if(node instanceof Place){
+							if(concentration != null){
+								concentration.setText(String.valueOf(((Place) node).getToken()));
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }
