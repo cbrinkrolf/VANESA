@@ -1206,7 +1206,6 @@ public class Transformator {
 				this.copyParameters(bea, petriNode);
 			}
 		}
-
 	}
 
 	private void setTransformationParameters(PNArc arc, RuleEdge re, Match match) {
@@ -1224,7 +1223,7 @@ public class Transformator {
 				continue;
 			}
 			value = replaceParametersToValues(orgValue, match);
-			// System.out.println("key: " + key + " value: " + value);
+			//System.out.println("key: " + key + " value: " + value);
 			switch (key) {
 			// case "name":
 			// break;
@@ -1276,6 +1275,8 @@ public class Transformator {
 		Map<String, String> possibleParams = new HashMap<>();
 
 		for (RuleNode rn : r.getBiologicalNodes()) {
+			possibleParams.put(rn.getName(),
+					match.getMapping(rn).getName());
 			for (String parameter : match.getMapping(rn).getTransformationParameters()) {
 				possibleParams.put(rn.getName() + "." + parameter,
 						match.getMapping(rn).getTransformationParameterValue(parameter));
@@ -1303,6 +1304,7 @@ public class Transformator {
 		List<String> names = match2SortedParameterList.get(match);
 		Map<String, String> possibleParams = match2Parameters.get(match);
 		for (String name : names) {
+			
 			s = s.replaceAll(name, possibleParams.get(name));
 		}
 		return s;
@@ -1394,7 +1396,7 @@ public class Transformator {
 		};
 		functions.add(random);
 
-		Function round = new Function("round", 2) {
+		Function round = new Function("round", 1) {
 			@Override
 			public double apply(double... args) {
 				return Math.rint(args[0]);
