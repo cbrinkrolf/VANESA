@@ -1,46 +1,40 @@
 package transformation;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import io.BaseWriter;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Tag;
 
-public class YamlRuleWriter {
+public class YamlRuleWriter extends BaseWriter<List<Rule>> {
+	public YamlRuleWriter(File file) {
+		super(file);
+	}
 
-	public static String writeRules(OutputStream os, List<Rule> rules) {
-		List<YamlRule> yamlRules = new ArrayList<YamlRule>();
-		for (int i = 0; i < rules.size(); i++) {
-			yamlRules.add(getYamlRuleFromRule(rules.get(i)));
+	@Override
+	protected void internalWrite(OutputStream outputStream, List<Rule> rules) throws Exception {
+		List<YamlRule> yamlRules = new ArrayList<>();
+		for (Rule rule : rules) {
+			yamlRules.add(getYamlRuleFromRule(rule));
 		}
-
-		String result = "";
-		try {
-			writeYamlRules(os, yamlRules);
-		} catch (IOException e) {
-			e.printStackTrace();
-			result = "Error during Yaml rule Export!";
-		}
-		return result;
+		writeYamlRules(outputStream, yamlRules);
 	}
 
 	private static void writeYamlRules(OutputStream os, List<YamlRule> rules) throws IOException {
-		// Yaml yaml = new Yaml(new Constructor(YmlRule.class));
 		Yaml yaml = new Yaml();
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < rules.size(); i++) {
 			sb.append(yaml.dumpAs(rules.get(i), Tag.MAP, null));
 			if (i < rules.size() - 1) {
-				sb.append("---" + System.lineSeparator());
+				sb.append("---").append(System.lineSeparator());
 			}
 		}
-		// System.out.println(sb);
-
 		os.write(sb.toString().getBytes());
 		os.close();
 	}
@@ -49,60 +43,47 @@ public class YamlRuleWriter {
 		YamlRule rule = new YamlRule();
 		rule.setName(r.getName());
 		rule.setActive(r.isActive());
-
 		// for BN
-		RuleEdge re;
 		rule.setBiologicalNodes(r.getBiologicalNodes());
-		List<YamlEdge> edges = new ArrayList<YamlEdge>();
-		YamlEdge e;
+		List<YamlEdge> biologicalEdges = new ArrayList<>();
 		for (int i = 0; i < r.getBiologicalEdges().size(); i++) {
-			re = r.getBiologicalEdges().get(i);
-			e = new YamlEdge();
+			RuleEdge re = r.getBiologicalEdges().get(i);
+			YamlEdge e = new YamlEdge();
 			e.setName(re.getName());
 			e.setType(re.getType());
 			e.setFrom(re.getFrom().getName());
 			e.setTo(re.getTo().getName());
 			e.setDirected(re.isDirected());
-			edges.add(e);
-
+			biologicalEdges.add(e);
 		}
-		rule.setBiologicalEdges(edges);
-
+		rule.setBiologicalEdges(biologicalEdges);
 		// for PN
-		edges = new ArrayList<YamlEdge>();
 		rule.setPetriNodes(r.getPetriNodes());
+		List<YamlEdge> petriEdges = new ArrayList<>();
 		for (int i = 0; i < r.getPetriEdges().size(); i++) {
-			re = r.getPetriEdges().get(i);
-			e = new YamlEdge();
+			RuleEdge re = r.getPetriEdges().get(i);
+			YamlEdge e = new YamlEdge();
 			e.setName(re.getName());
 			e.setType(re.getType());
 			e.setFrom(re.getFrom().getName());
 			e.setTo(re.getTo().getName());
 			e.setParameterMap(re.getParameterMap());
-			edges.add(e);
+			petriEdges.add(e);
 		}
-		rule.setPetriEdges(edges);
-
+		rule.setPetriEdges(petriEdges);
 		// mapping
 		Map<RuleNode, RuleNode> map = r.getBnToPnMapping();
-		RuleNode rn;
-		Iterator<RuleNode> it = map.keySet().iterator();
 		List<Map<String, String>> yamlMapping = new ArrayList<>();
-		HashMap<String, String> hm;
-		while (it.hasNext()) {
-			rn = it.next();
-			hm = new HashMap<String, String>();
+		for (RuleNode rn : map.keySet()) {
+			Map<String, String> hm = new HashMap<>();
 			hm.put("from", rn.getName());
 			hm.put("to", map.get(rn).getName());
 			yamlMapping.add(hm);
 		}
-
 		rule.setMappingBNToPN(yamlMapping);
-
 		for (int i = 0; i < r.getConsideredEdges().size(); i++) {
 			rule.getConsideredEdges().add(r.getConsideredEdges().get(i).getName());
 		}
-
 		return rule;
 	}
 }
