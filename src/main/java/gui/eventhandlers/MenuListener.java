@@ -152,8 +152,7 @@ public class MenuListener implements ActionListener {
 			}
 			break;
 		case openNetwork:
-			OpenDialog op = new OpenDialog();
-			op.execute();
+			new OpenDialog().show();
 			break;
 		case closeNetwork:
 			w.removeTab(true);
@@ -171,8 +170,7 @@ public class MenuListener implements ActionListener {
 			new RandomRegularGraphGui();
 			break;
 		case phospho:
-			op = new OpenDialog();
-			op.execute();
+			new OpenDialog().show();
 			break;
 		case connectedGraph:
 			new RandomConnectedGraphGui();

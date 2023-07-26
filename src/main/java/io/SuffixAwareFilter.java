@@ -13,7 +13,7 @@ public class SuffixAwareFilter extends FileFilter {
 
     public static final SuffixAwareFilter VAML = new SuffixAwareFilter("vaml", "VANESA Markup Language (*.vaml)");
     public static final SuffixAwareFilter SBML = new SuffixAwareFilter("sbml",
-                                                                       "System Biology Markup Language (*.sbml)");
+            "System Biology Markup Language (*.sbml)");
     public static final SuffixAwareFilter CSML = new SuffixAwareFilter("csml", "Cell Illustrator (*.csml)");
     public static final SuffixAwareFilter GML = new SuffixAwareFilter("gml", "Graph Markup Language (*.gml)");
     public static final SuffixAwareFilter MO = new SuffixAwareFilter("mo", "Modelica Model (*.mo)");
@@ -27,6 +27,8 @@ public class SuffixAwareFilter extends FileFilter {
             "VANESA Simulation Result File (*.csv)");
     public static final SuffixAwareFilter GRAPH_ML = new SuffixAwareFilter("graphml",
             "Graph Markup Language (*.graphml)");
+    public static final SuffixAwareFilter KGML = new SuffixAwareFilter("kgml",
+            "KEGG Markup Language (*.kgml)");
     public static final SuffixAwareFilter GRAPH_TEXT_FILE = new SuffixAwareFilter("txt", "Graph Text File (*.txt)");
     public static final SuffixAwareFilter PNML = new SuffixAwareFilter("pnml", "Petri Net Markup Language (*.pnml)");
     public static final SuffixAwareFilter CSV_RESULT = new SuffixAwareFilter("csv", "CSV Result Export (*.csv)");
