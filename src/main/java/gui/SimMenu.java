@@ -13,7 +13,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +31,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import io.SuffixAwareFilter;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 import biologicalElements.Pathway;
@@ -46,59 +46,48 @@ import util.MyJFormattedTextField;
 import util.MyNumberFormat;
 
 public class SimMenu extends JFrame implements ActionListener, ItemListener {
-
 	private static final long serialVersionUID = 1L;
-	private JButton start = new JButton("Start");
-	private JButton stop = new JButton("Stop");
-	private JLabel status = new JLabel("");
-	private JLabel time = new JLabel("Time: -");
-	private JTextArea textArea = new JTextArea(20, 80);
-	private JPanel north = new JPanel();
-	private JPanel controlsPanel = new JPanel();
-	private JPanel basicOptionsPanel = new JPanel();
-	private JPanel advancedOptionsPanel = new JPanel();
-	private JPanel parametrizedPanel = new JPanel();
-	private JScrollPane scrollPane = new JScrollPane(textArea);
-	private JLabel startLbl = new JLabel("Start:");
-	private JLabel stopLbl = new JLabel("Stop:");
-	private JLabel intervalsLbl = new JLabel("Intervals:");
-	private MyJFormattedTextField startTxt;
-	private MyJFormattedTextField stopTxt;
-	private MyJFormattedTextField intervalsTxt;
-	private JLabel solversLbl = new JLabel("Solver:");
-	private JComboBox<String> solvers;
-	private JLabel toleranceLbl = new JLabel("Tolerance:");
-	private MyJFormattedTextField tolerance;
-	private JLabel simLibLbl = new JLabel("Simlation library:");
-	private JComboBox<String> simLibs;
-	private JPanel west = new JPanel();
-	private JCheckBox forceRebuild = new JCheckBox("force rebuild");
+	private final JButton start = new JButton("Start");
+	private final JButton stop = new JButton("Stop");
+	private final JLabel time = new JLabel("Time: -");
+	private final JTextArea textArea = new JTextArea(20, 80);
+	private final JPanel north = new JPanel();
+	private final JPanel advancedOptionsPanel = new JPanel();
+	private final JPanel parametrizedPanel = new JPanel();
+	private final MyJFormattedTextField startTxt;
+	private final MyJFormattedTextField stopTxt;
+	private final MyJFormattedTextField intervalsTxt;
+	private final JLabel solversLbl = new JLabel("Solver:");
+	private final JComboBox<String> solvers;
+	private final JLabel toleranceLbl = new JLabel("Tolerance:");
+	private final MyJFormattedTextField tolerance;
+	private final JLabel simLibLbl = new JLabel("Simulation library:");
+	private final JComboBox<String> simLibs;
+	private final JPanel west = new JPanel();
+	private final JCheckBox forceRebuild = new JCheckBox("force rebuild");
 
-	private JLabel seedLbl = new JLabel("Seed:");
-	private MyJFormattedTextField seedTxt;
-	private JCheckBox seedChk = new JCheckBox("random");
+	private final JLabel seedLbl = new JLabel("Seed:");
+	private final MyJFormattedTextField seedTxt;
+	private final JCheckBox seedChk = new JCheckBox("random");
 
-	private JCheckBox advancedOptions = new JCheckBox("advanced options");
-	private JCheckBox parameterized = new JCheckBox("parameterized simulation");
+	private final JCheckBox advancedOptions = new JCheckBox("advanced options");
+	private final JCheckBox parameterized = new JCheckBox("parameterized simulation");
 
 	private BiologicalNodeAbstract selectedNode = null;
 
-	private JRadioButton radioPlace = new JRadioButton("Place");
-	private JRadioButton radioTransition = new JRadioButton("Transition");
+	private final JRadioButton radioPlace = new JRadioButton("Place");
+	private final JRadioButton radioTransition = new JRadioButton("Transition");
 
-	private ButtonGroup selectedNodeGroup = new ButtonGroup();
+	private final JComboBox<String> selectedNodeBox = new JComboBox<>();
+	private final JComboBox<String> parameterBox = new JComboBox<>();
 
-	private JComboBox<String> selectedNodeBox = new JComboBox<String>();
-	private JComboBox<String> parameterBox = new JComboBox<String>();
-
-	private MyJFormattedTextField from;
-	private MyJFormattedTextField to;
-	private MyJFormattedTextField intervalSize;
-	private JTextField numbers;
+	private final MyJFormattedTextField from;
+	private final MyJFormattedTextField to;
+	private final MyJFormattedTextField intervalSize;
+	private final JTextField numbers;
 
 	private String parameterName;
 	private String parameterNameShort;
-	private List<Double> parameterValues;
 
 	private HashMap<JTextField, SimulationResult> text2sim;
 
@@ -106,11 +95,11 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	private List<File> libs;
 
-	private Pathway pw;
+	private final Pathway pw;
 
 	public SimMenu(Pathway pw, ActionListener listener, List<File> libs) {
 		this.pw = pw;
-		this.setTitle("VANESA - simulation setup");
+		setTitle("VANESA - simulation setup");
 		this.libs = libs;
 		// this.listener = listener;
 		start.setActionCommand("start");
@@ -145,7 +134,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		// northUp.setLayout(new GridLayout(1,5));
 		// northDown.setLayout();
-		solvers = new JComboBox<String>();
+		solvers = new JComboBox<>();
 		Map<String, String> solverMap = getSolverToolTips();
 		ToolTipListCellRenderer toolTipsRenderer = new ToolTipListCellRenderer(solverMap);
 		solvers.setRenderer(toolTipsRenderer);
@@ -153,15 +142,11 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		solvers.addItem("dassl");
 		solvers.addItem("cvode");
-
 		List<String> listSolver = new ArrayList<>();
 		for (String k : solverMap.keySet()) {
-			if (k.equals("dassl")) {
-				continue;
-			} else if (k.equals("cvode")) {
-				continue;
+			if (!k.equals("dassl") && !k.equals("cvode")) {
+				listSolver.add(k);
 			}
-			listSolver.add(k);
 
 		}
 		Collections.sort(listSolver);
@@ -179,16 +164,15 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		tolerance.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
 		tolerance.setEnabled(true);
 
-		simLibs = new JComboBox<String>();
+		simLibs = new JComboBox<>();
 		simLibs.addItem("PNlib (default)");
-		Iterator<File> it = libs.iterator();
-		while (it.hasNext()) {
-			simLibs.addItem(it.next().getName());
+		for (File lib : libs) {
+			simLibs.addItem(lib.getName());
 		}
 		simLibs.setSelectedIndex(0);
 
-		this.setLayout(new BorderLayout());
-		this.stop.setEnabled(false);
+		setLayout(new BorderLayout());
+		stop.setEnabled(false);
 
 		advancedOptions.setActionCommand("advancedOptions");
 		advancedOptions.setToolTipText("Show advanced simulation options");
@@ -208,6 +192,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		seedChk.setToolTipText("Set random seed for stochastic processes");
 		seedChk.addActionListener(this);
 
+		ButtonGroup selectedNodeGroup = new ButtonGroup();
 		selectedNodeGroup.add(radioPlace);
 		selectedNodeGroup.add(radioTransition);
 
@@ -243,14 +228,20 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		numbers.setToolTipText("list of values, seperated by semicolon");
 
 		solversLbl.setToolTipText("numerical solver");
+		JLabel intervalsLbl = new JLabel("Intervals:");
 		intervalsLbl.setToolTipText("number of returned time steps");
 
+		JPanel controlsPanel = new JPanel();
 		controlsPanel.add(start);
 		controlsPanel.add(stop);
 		controlsPanel.add(time);
+		JLabel status = new JLabel("");
 		controlsPanel.add(status);
+		JPanel basicOptionsPanel = new JPanel();
+		JLabel startLbl = new JLabel("Start:");
 		basicOptionsPanel.add(startLbl);
 		basicOptionsPanel.add(startTxt);
+		JLabel stopLbl = new JLabel("Stop:");
 		basicOptionsPanel.add(stopLbl);
 		basicOptionsPanel.add(stopTxt);
 		basicOptionsPanel.add(intervalsLbl);
@@ -261,7 +252,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		// advancedOptionsPanel.add(parametrizedPanel);
 
-		this.add(north, BorderLayout.NORTH);
+		add(north, BorderLayout.NORTH);
 		// north.setLayout(new GridLayout(4, 1));
 		north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
 		north.add(controlsPanel);
@@ -270,33 +261,31 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		// north.add(parametrizedPanel);
 		west.setLayout(new MigLayout());
 
-		this.revalidateAdvancedPanel();
-
-		this.updateSimulationResults();
+		revalidateAdvancedPanel();
+		updateSimulationResults();
 
 		// textArea.setAutoscrolls(true);
-		this.add(scrollPane, BorderLayout.CENTER);
-		this.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		JScrollPane scrollPane = new JScrollPane(textArea);
+		add(scrollPane, BorderLayout.CENTER);
+		setIconImages(MainWindow.getInstance().getFrame().getIconImages());
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		// this.add(textArea, BorderLayout.SOUTH);
-		this.add(west, BorderLayout.WEST);
-		this.pack();
-		// this.setLocation(w.getLocation());
-		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
-		// this.setLocationRelativeTo(null);
-		this.setVisible(true);
-
+		add(west, BorderLayout.WEST);
+		pack();
+		// setLocation(w.getLocation());
+		setLocationRelativeTo(MainWindow.getInstance().getFrame());
+		// setLocationRelativeTo(null);
+		setVisible(true);
 	}
 
 	private void revalidateParametrizedPanel() {
 		parametrizedPanel.removeAll();
-
-		if (this.parameterized.isSelected()) {
+		if (parameterized.isSelected()) {
 			north.add(parametrizedPanel);
 			parametrizedPanel.add(new JLabel("Node:"));
 			parametrizedPanel.add(radioPlace);
 			parametrizedPanel.add(radioTransition);
-			this.fillNodeComboBox();
+			fillNodeComboBox();
 			parametrizedPanel.add(selectedNodeBox);
 			parametrizedPanel.add(parameterBox);
 			parametrizedPanel.add(new JLabel("from:"));
@@ -307,19 +296,17 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			parametrizedPanel.add(intervalSize);
 			parametrizedPanel.add(new JLabel("values:"));
 			parametrizedPanel.add(numbers);
-
 		} else {
 			parametrizedPanel.setSize(1, 1);
 			north.remove(parametrizedPanel);
 		}
 		north.revalidate();
-		this.pack();
+		pack();
 	}
 
 	private void revalidateAdvancedPanel() {
 		advancedOptionsPanel.removeAll();
-
-		if (this.advancedOptions.isSelected()) {
+		if (advancedOptions.isSelected()) {
 			north.add(advancedOptionsPanel);
 			advancedOptionsPanel.add(solversLbl);
 			advancedOptionsPanel.add(solvers);
@@ -332,32 +319,22 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			advancedOptionsPanel.add(seedChk);
 			advancedOptionsPanel.add(parameterized);
 			revalidateParametrizedPanel();
-
 		} else {
 			advancedOptionsPanel.setSize(1, 1);
 			north.remove(advancedOptionsPanel);
 			north.remove(parametrizedPanel);
 		}
 		north.revalidate();
-		this.pack();
+		pack();
 	}
 
 	private void revalidateSeed() {
-		if (this.seedChk.isSelected()) {
-			seedTxt.setEnabled(false);
-		} else {
-			seedTxt.setEnabled(true);
-		}
+		seedTxt.setEnabled(!seedChk.isSelected());
 	}
 
 	private void fillNodeComboBox() {
-
 		selectedNodeBox.removeAllItems();
-		List<BiologicalNodeAbstract> l = pw.getAllGraphNodesSortedAlphabetically();
-		BiologicalNodeAbstract bna;
-		for (int i = 0; i < l.size(); i++) {
-			bna = l.get(i);
-
+		for (BiologicalNodeAbstract bna : pw.getAllGraphNodesSortedAlphabetically()) {
 			if (bna instanceof Place && radioPlace.isSelected()) {
 				selectedNodeBox.addItem(bna.getName());
 			} else if (bna instanceof Transition && radioTransition.isSelected()) {
@@ -372,16 +349,13 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			return;
 		}
 		this.parameterBox.removeAllItems();
-		//System.out.println(selectedNode.getName());
 		if (selectedNode instanceof Place) {
 			parameterBox.addItem("token start");
 			parameterBox.addItem("token min");
 			parameterBox.addItem("token max");
 
 		} else if (selectedNode instanceof Transition) {
-			//System.out.println(selectedNode.getParameters().size());
 			if (selectedNode.getParameters().size() < 1) {
-				// System.out.println("return");
 				return;
 			}
 			parameterBox.addItem("speed");
@@ -404,26 +378,25 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		to.setEnabled(true);
 		intervalSize.setEnabled(true);
 		numbers.setEnabled(true);
-		String param = parameterBox.getSelectedItem() + "";
+		String param = String.valueOf(parameterBox.getSelectedItem());
 
 		if (selectedNode.getParameter(param) != null) {
 			Parameter p = selectedNode.getParameter(param);
-			from.setText(p.getValue() + "");
+			from.setText(String.valueOf(p.getValue()));
 		} else {
 			if (selectedNode instanceof Place) {
 				Place p = (Place) selectedNode;
 				switch (param) {
 				case "token start":
-					from.setText(p.getTokenStart() + "");
+					from.setText(String.valueOf(p.getTokenStart()));
 					break;
 				case "token min":
-					from.setText(p.getTokenMin() + "");
+					from.setText(String.valueOf(p.getTokenMin()));
 					break;
 				case "token max":
-					from.setText(p.getTokenMax() + "");
+					from.setText(String.valueOf(p.getTokenMax()));
 					break;
 				}
-
 			} else if (selectedNode instanceof Transition) {
 				// if (param.equals(speed))
 			}
@@ -433,11 +406,11 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	public void started() {
 		start.setEnabled(false);
 		stop.setEnabled(true);
-		this.setTime("-");
+		setTime("-");
 	}
 
 	public void stopped() {
-		this.updateSimulationResults();
+		updateSimulationResults();
 		start.setEnabled(true);
 		stop.setEnabled(false);
 	}
@@ -448,13 +421,13 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	}
 
 	public void addText(String text) {
-		this.textArea.setText(textArea.getText() + text);
-		this.pack();
+		textArea.setText(textArea.getText() + text);
+		pack();
 	}
 
 	public void clearText() {
-		this.textArea.setText("");
-		this.pack();
+		textArea.setText("");
+		pack();
 	}
 
 	public double getStartValue() {
@@ -501,12 +474,12 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		if (simLibs.getSelectedIndex() == 0) {
 			return null;
 		}
-		return this.libs.get(this.simLibs.getSelectedIndex());
+		return libs.get(simLibs.getSelectedIndex());
 	}
 
 	public void updateSimulationResults() {
 		west.removeAll();
-		text2sim = new HashMap<JTextField, SimulationResult>();
+		text2sim = new HashMap<>();
 		west.add(new JSeparator(), "growx, span, wrap");
 
 		JCheckBox all = new JCheckBox("active");
@@ -527,7 +500,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		for (int i = 0; i < results.size(); i++) {
 			JCheckBox box = new JCheckBox();
-			box.setActionCommand(i + "");
+			box.setActionCommand(String.valueOf(i));
 			box.addItemListener(this);
 			box.setSelected(results.get(i).isActive());
 			west.add(box);
@@ -550,7 +523,6 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			export.setToolTipText("export result");
 			export.addActionListener(this);
 			export.setActionCommand("export_" + i);
-			// System.out.println("name: "+results.get(i).getName());
 
 			JTextField simName = new JTextField(10);
 			simName.setText(results.get(i).getName());
@@ -573,10 +545,9 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			west.add(export);
 			west.add(del, "wrap");
 		}
-		this.pack();
+		pack();
 		west.repaint();
 		// this.setVisible(true);
-
 	}
 
 	@Override
@@ -584,41 +555,33 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		if (e.getItem() instanceof JCheckBox) {
 			JCheckBox box = (JCheckBox) e.getItem();
 			int i = Integer.parseInt(box.getActionCommand());
-			// System.out.println(i);
 			if (i >= 0) {
 				pw.getPetriPropertiesNet().getSimResController().getAll().get(i).setActive(box.isSelected());
 				MainWindow.getInstance().updateSimulationResultView();
 			} else {
 				Component[] components = west.getComponents();
-				for (int j = 0; j < components.length; j++) {
-					if (components[j] instanceof JCheckBox) {
-						((JCheckBox) components[j]).setSelected(box.isSelected());
+				for (Component component : components) {
+					if (component instanceof JCheckBox) {
+						((JCheckBox) component).setSelected(box.isSelected());
 					}
 				}
 				List<SimulationResult> resList = pw.getPetriPropertiesNet().getSimResController().getAll();
-				for (int j = 0; j < resList.size(); j++) {
-					resList.get(j).setActive(box.isSelected());
+				for (SimulationResult simulationResult : resList) {
+					simulationResult.setActive(box.isSelected());
 				}
 				// this.updateSimulationResults();
 			}
-
 		} else if (e.getSource() == this.selectedNodeBox) {
-			// System.out.println(e.getSource());
-			// System.out.println("select");
-			// System.out.println(this.selectedNodeBox.getSelectedItem());
-			this.selectedNode = pw.getNodeByName(this.selectedNodeBox.getSelectedItem() + "");
+			this.selectedNode = pw.getNodeByName(String.valueOf(this.selectedNodeBox.getSelectedItem()));
 			this.fillParameterComboBox();
 		} else if (e.getSource() == this.parameterBox) {
 			this.fillTextFields();
-			this.parameterName = parameterBox.getSelectedItem() + "";
+			this.parameterName = String.valueOf(parameterBox.getSelectedItem());
 		}
-		// System.out.println(((JCheckBox)e.getItem()).getActionCommand());
-
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// System.out.println(e);
 		if (e.getActionCommand().startsWith("del_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(4));
 			pw.getPetriPropertiesNet().getSimResController().remove(idx);
@@ -634,7 +597,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		} else if (e.getActionCommand().startsWith("export_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(7));
 			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
-			new SaveDialog(SaveDialog.FORMAT_CSV,SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simId);
+			new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.CSV_RESULT},
+					SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simId);
 		} else if ("advancedOptions".equals(e.getActionCommand())) {
 			revalidateAdvancedPanel();
 		} else if ("parameterized".equals(e.getActionCommand())) {
@@ -664,37 +628,31 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	public List<Double> getParameterValues() {
 		// compute values
-		this.parameterValues = new ArrayList<Double>();
+		List<Double> parameterValues = new ArrayList<>();
 		if (numbers.getText().trim().length() > 0) {
-			String[] num = numbers.getText().split(";");
-			if (num.length > 0) {
-				for (int i = 0; i < num.length; i++) {
-					try {
-						// System.out.println(num[i]);
-						parameterValues.add(Double.parseDouble(num[i]));
-					} catch (Exception e) {
-						PopUpDialog.getInstance().show("Number error", "Given number is not valid: " + num[i]);
-					}
+			for (String s : numbers.getText().split(";")) {
+				try {
+					parameterValues.add(Double.parseDouble(s));
+				} catch (Exception e) {
+					PopUpDialog.getInstance().show("Number error", "Given number is not valid: " + s);
 				}
 			}
 		} else {
 			double start = Double.parseDouble(from.getText().trim());
 			double stop = Double.parseDouble(to.getText().trim());
-			double stepsize = Double.parseDouble(intervalSize.getText().trim());
-
+			double stepSize = Double.parseDouble(intervalSize.getText().trim());
 			if (stop < start) {
 				return parameterValues;
 			}
 			parameterValues.add(start);
-
 			double sum = start;
-			while (sum + stepsize < stop) {
-				sum += stepsize;
+			while (sum + stepSize < stop) {
+				sum += stepSize;
 				parameterValues.add(sum);
 			}
 			parameterValues.add(stop);
 		}
-		return this.parameterValues;
+		return parameterValues;
 	}
 
 	public BiologicalNodeAbstract getSelectedNode() {

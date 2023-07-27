@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RuleManager {
 	private static RuleManager instance = null;
@@ -13,12 +14,11 @@ public class RuleManager {
 	public static synchronized RuleManager getInstance() {
 		if (RuleManager.instance == null) {
 			RuleManager.instance = new RuleManager();
-			instance.init();
 		}
 		return RuleManager.instance;
 	}
 
-	private void init() {
+	private RuleManager() {
 		try (InputStream is = getClass().getClassLoader().getResourceAsStream("rules/savedRules.yaml")) {
 			rules = new YamlRuleReader().getRules(is);
 		} catch (IOException e) {
@@ -39,13 +39,6 @@ public class RuleManager {
 	}
 
 	public List<Rule> getActiveRules() {
-		List<Rule> activeRules = new ArrayList<>();
-
-		for (int i = 0; i < this.rules.size(); i++) {
-			if (rules.get(i).isActive()) {
-				activeRules.add(this.rules.get(i));
-			}
-		}
-		return activeRules;
+		return rules.stream().filter(Rule::isActive).collect(Collectors.toList());
 	}
 }

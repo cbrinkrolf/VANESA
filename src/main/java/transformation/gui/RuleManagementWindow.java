@@ -22,6 +22,7 @@ import javax.swing.WindowConstants;
 
 import gui.MainWindow;
 import io.SaveDialog;
+import io.SuffixAwareFilter;
 import net.miginfocom.swing.MigLayout;
 import transformation.Rule;
 import transformation.RuleManager;
@@ -278,7 +279,7 @@ public class RuleManagementWindow implements ActionListener, ItemListener {
 		} else if (e.getActionCommand().equals("cancelRE")) {
 			newRule = null;
 		} else if (e.getActionCommand().equals("saveRules")) {
-			new SaveDialog(SaveDialog.FORMAT_YAML, SaveDialog.DATA_TYPE_TRANSFORMATION_RULES);
+			new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.YAML}, SaveDialog.DATA_TYPE_TRANSFORMATION_RULES);
 		}
 	}
 

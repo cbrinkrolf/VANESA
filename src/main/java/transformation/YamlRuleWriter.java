@@ -46,27 +46,15 @@ public class YamlRuleWriter extends BaseWriter<List<Rule>> {
 		// for BN
 		rule.setBiologicalNodes(r.getBiologicalNodes());
 		List<YamlEdge> biologicalEdges = new ArrayList<>();
-		for (int i = 0; i < r.getBiologicalEdges().size(); i++) {
-			RuleEdge re = r.getBiologicalEdges().get(i);
-			YamlEdge e = new YamlEdge();
-			e.setName(re.getName());
-			e.setType(re.getType());
-			e.setFrom(re.getFrom().getName());
-			e.setTo(re.getTo().getName());
-			e.setDirected(re.isDirected());
-			biologicalEdges.add(e);
+		for (RuleEdge re : r.getBiologicalEdges()) {
+			biologicalEdges.add(new YamlEdge(re));
 		}
 		rule.setBiologicalEdges(biologicalEdges);
 		// for PN
 		rule.setPetriNodes(r.getPetriNodes());
 		List<YamlEdge> petriEdges = new ArrayList<>();
-		for (int i = 0; i < r.getPetriEdges().size(); i++) {
-			RuleEdge re = r.getPetriEdges().get(i);
-			YamlEdge e = new YamlEdge();
-			e.setName(re.getName());
-			e.setType(re.getType());
-			e.setFrom(re.getFrom().getName());
-			e.setTo(re.getTo().getName());
+		for (RuleEdge re : r.getPetriEdges()) {
+			YamlEdge e = new YamlEdge(re);
 			e.setParameterMap(re.getParameterMap());
 			petriEdges.add(e);
 		}

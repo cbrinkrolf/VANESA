@@ -12,7 +12,6 @@ import database.brenda.BRENDASearch;
 import database.brenda.BrendaConnector;
 import database.brenda.gui.BrendaSearchResultWindow;
 import database.kegg.KEGGConnector;
-import database.kegg.KeggSearch;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.*;
 import edu.uci.ics.jung.visualization.VisualizationImageServer;
@@ -25,6 +24,7 @@ import gui.AsyncTaskExecutor;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import io.SaveDialog;
+import io.SuffixAwareFilter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -142,7 +142,6 @@ public class GraphPopUp {
     }
 
     private void onSavePictureClicked(ActionEvent e) {
-    	// System.out.println("popup");
         JMenuItem item = (JMenuItem) e.getSource();
         JPopupMenu popup = (JPopupMenu) item.getParent();
         @SuppressWarnings("unchecked")
@@ -152,8 +151,8 @@ public class GraphPopUp {
         VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = vvPw.prepareGraphToPrint();
         if (GraphContainer.getInstance().containsPathway()) {
             if (vvPw.hasGotAtLeastOneElement()) {
-                new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, SaveDialog.DATA_TYPE_GRAPH_PICTURE, wvv,
-                        MainWindow.getInstance().getFrame(), null);
+                new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.PNG, SuffixAwareFilter.SVG},
+                        SaveDialog.DATA_TYPE_GRAPH_PICTURE, wvv);
             } else {
                 PopUpDialog.getInstance().show("Error", "Please create a network first.");
             }

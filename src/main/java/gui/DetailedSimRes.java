@@ -16,6 +16,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 
+import io.SuffixAwareFilter;
 import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
@@ -131,7 +132,8 @@ public class DetailedSimRes implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String event = e.getActionCommand();
         if (event.equals("exportSimResult")) {
-            new SaveDialog(SaveDialog.FORMAT_CSV, SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, dialog, this.simId);
+            new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.CSV_RESULT},
+                    SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, dialog, simId);
         }
     }
 }

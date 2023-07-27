@@ -11,10 +11,12 @@ import database.kegg.gui.KEGGSearchResultWindow;
 import graph.CreatePathway;
 import gui.MainWindow;
 import gui.PopUpDialog;
+import io.kgml.KGMLReader;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +63,20 @@ public class KeggSearch {
                     }, JOptionPane.YES_OPTION);
         }
         MainWindow.getInstance().showProgressBar("Drawing network");
-        if (answer == JOptionPane.NO_OPTION) {
+        if (answer == JOptionPane.YES_OPTION) {
+            for (KeggPathway result : results) {
+                InputStream kgmlStream = VanesaApi.getPathwayFromKegg(result.kgmlLink);
+                if (kgmlStream != null) {
+                    KGMLReader reader = new KGMLReader(kgmlStream);
+                    reader.read();
+                    if (reader.hasErrors()) {
+                        // TODO: error
+                    }
+                } else {
+                    // TODO: error
+                }
+            }
+        } else if (answer == JOptionPane.NO_OPTION) {
             Pathway newPW = new CreatePathway("Overview Pathway").getPathway();
             List<BiologicalNodeAbstract> bnas = new ArrayList<>();
             if (StringUtils.isNotBlank(enzyme))
@@ -86,10 +101,11 @@ public class KeggSearch {
             newPW.getGraph().changeToGEMLayout();
             newPW.getGraph().normalCentering();
         } else {
+            // Merge pathways
+            /* TODO: KEGG
             KEGGConnector kc = new KEGGConnector(results[0].id, results[0].taxonomyId, mergePW != null);
             kc.addPropertyChangeListener((evt) -> {
                 if (evt.getNewValue().equals("finished")) {
-                    /* TODO: KEGG
                     if (answer == JOptionPane.CANCEL_OPTION)
                         if (mergePW == null)
                             mergePW = kc.getPw();
@@ -112,10 +128,10 @@ public class KeggSearch {
                         mergePW.getGraph().disableGraphTheory();
                         mergePW.getGraph().normalCentering();
                     }
-                    */
                 }
             });
             kc.execute();
+            */
         }
         MainWindow.getInstance().closeProgressBar();
     }
@@ -139,6 +155,7 @@ public class KeggSearch {
         KeggPathway result = new KeggPathway();
         result.id = response.payload.id;
         result.name = response.payload.name;
+        result.kgmlLink = response.payload.kgmlLink;
         result.taxonomyId = response.payload.taxonomyId;
         result.taxonomyName = response.payload.taxonomyName;
         return result;

@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.xml.stream.XMLStreamException;
 
+import io.SuffixAwareFilter;
 import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
 import org.apache.commons.io.FileUtils;
@@ -181,9 +182,8 @@ public class MenuListener implements ActionListener {
 		case exportNetwork:
 			if (con.containsPathway()) {
 				if (pw.hasGotAtLeastOneElement()) {
-					new SaveDialog(
-							SaveDialog.FORMAT_GRAPHML + SaveDialog.FORMAT_MO + SaveDialog.FORMAT_CSML
-									+ SaveDialog.FORMAT_PNML + SaveDialog.FORMAT_TXT,
+					new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.MO,
+							SuffixAwareFilter.CSML, SuffixAwareFilter.PNML, SuffixAwareFilter.GRAPH_TEXT_FILE},
 							SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -195,7 +195,7 @@ public class MenuListener implements ActionListener {
 		case saveAs:
 			if (con.containsPathway()) {
 				if (pw.hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_SBML, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+					new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.SBML}, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network first.");
 				}
@@ -225,7 +225,8 @@ public class MenuListener implements ActionListener {
 							e1.printStackTrace();
 						}
 					} else {
-						new SaveDialog(SaveDialog.FORMAT_SBML, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+						new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.SBML},
+								SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 					}
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -783,8 +784,8 @@ public class MenuListener implements ActionListener {
 			wvv = pw.prepareGraphToPrint();
 			if (con.containsPathway()) {
 				if (pw.hasGotAtLeastOneElement()) {
-					new SaveDialog(SaveDialog.FORMAT_PNG + SaveDialog.FORMAT_SVG, SaveDialog.DATA_TYPE_GRAPH_PICTURE,
-							wvv, MainWindow.getInstance().getFrame(), null);
+					new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.PNG, SuffixAwareFilter.SVG},
+							SaveDialog.DATA_TYPE_GRAPH_PICTURE, wvv);
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network first.");
 				}

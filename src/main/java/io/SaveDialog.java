@@ -23,21 +23,6 @@ import java.io.*;
 import java.util.List;
 
 public class SaveDialog {
-	// use power of 2
-	public static int FORMAT_SBML = 1;
-	public static int FORMAT_GRAPHML = 2;
-	public static int FORMAT_MO = 4;
-	public static int FORMAT_CSML = 8;
-	// removed: FORMAT_VAML = 16;
-	public static int FORMAT_TXT = 32;
-	// removed: FORMAT_ITXT = 64;
-	public static int FORMAT_PNML = 128;
-	public static int FORMAT_CSV = 256;
-	public static int FORMAT_PNG = 512;
-	public static int FORMAT_YAML = 1024;
-	public static int FORMAT_SVG = 2048;
-	public static int FORMAT_PDF = 4096;
-
 	public static final int DATA_TYPE_TRANSFORMATION_RULES = 1;
 	public static final int DATA_TYPE_VISUALIZATION_SETTINGS = 2;
 	public static final int DATA_TYPE_GRAPH_PICTURE = 3;
@@ -47,15 +32,19 @@ public class SaveDialog {
 	private SuffixAwareFilter fileFilter;
 	private int dataType;
 
-	public SaveDialog(int format, int dataType) {
-		this(format, dataType, null, MainWindow.getInstance().getFrame(), null);
+	public SaveDialog(SuffixAwareFilter[] formats, int dataType) {
+		this(formats, dataType, null, MainWindow.getInstance().getFrame(), null);
 	}
 
-	public SaveDialog(int format, int dataType, Component c, Component relativeTo, String simId) {
+	public SaveDialog(SuffixAwareFilter[] formats, int dataType, Component c) {
+		this(formats, dataType, c, MainWindow.getInstance().getFrame(), null);
+	}
+
+	public SaveDialog(SuffixAwareFilter[] formats, int dataType, Component c, Component relativeTo, String simId) {
 		if (relativeTo == null) {
 			relativeTo = MainWindow.getInstance().getFrame();
 		}
-		JFileChooser chooser = prepare(format);
+		JFileChooser chooser = prepare(formats);
 		this.dataType = dataType;
 		int option = chooser.showSaveDialog(relativeTo);
 		if (option == JFileChooser.APPROVE_OPTION) {
@@ -76,11 +65,11 @@ public class SaveDialog {
 		}
 	}
 
-	public SaveDialog(final int format, final List<JFreeChart> charts, Component relativeTo) {
+	public SaveDialog(SuffixAwareFilter[] formats, final List<JFreeChart> charts, Component relativeTo) {
 		if (relativeTo == null) {
 			relativeTo = MainWindow.getInstance().getFrame();
 		}
-		JFileChooser chooser = prepare(format);
+		JFileChooser chooser = prepare(formats);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int option = chooser.showSaveDialog(relativeTo);
 		if (option != JFileChooser.APPROVE_OPTION) {
@@ -124,41 +113,11 @@ public class SaveDialog {
 		});
 	}
 
-	private JFileChooser prepare(int format) {
+	private JFileChooser prepare(SuffixAwareFilter[] formats) {
 		JFileChooser chooser = new JFileChooser(ConnectionSettings.getInstance().getFileSaveDirectory());
 		chooser.setAcceptAllFileFilterUsed(false);
-		if ((format & FORMAT_SBML) == FORMAT_SBML) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.SBML);
-		}
-		if ((format & FORMAT_MO) == FORMAT_MO) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.MO);
-		}
-		if ((format & FORMAT_GRAPHML) == FORMAT_GRAPHML) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.GRAPH_ML);
-		}
-		if ((format & FORMAT_CSML) == FORMAT_CSML) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.CSML);
-		}
-		if ((format & FORMAT_PDF) == FORMAT_PDF) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.PDF);
-		}
-		if ((format & FORMAT_SVG) == FORMAT_SVG) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.SVG);
-		}
-		if ((format & FORMAT_PNML) == FORMAT_PNML) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.PNML);
-		}
-		if ((format & FORMAT_TXT) == FORMAT_TXT) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.GRAPH_TEXT_FILE);
-		}
-		if ((format & FORMAT_CSV) == FORMAT_CSV) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.CSV_RESULT);
-		}
-		if ((format & FORMAT_PNG) == FORMAT_PNG) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.PNG);
-		}
-		if ((format & FORMAT_YAML) == FORMAT_YAML) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.YAML);
+		for (final SuffixAwareFilter format : formats) {
+			chooser.addChoosableFileFilter(format);
 		}
 		return chooser;
 	}

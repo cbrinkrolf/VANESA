@@ -11,6 +11,17 @@ public class YamlEdge {
 	private boolean directed = true;
 	private Map<String, String> parameterMap = new HashMap<>();
 
+	public YamlEdge() {
+	}
+
+	public YamlEdge(RuleEdge re) {
+		name = re.getName();
+		type = re.getType();
+		from = re.getFrom().getName();
+		to = re.getTo().getName();
+		directed = re.isDirected();
+	}
+
 	public String getName() {
 		return name;
 	}

@@ -19,6 +19,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import io.SuffixAwareFilter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -192,7 +193,8 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new SaveDialog(SaveDialog.FORMAT_PDF + SaveDialog.FORMAT_SVG + SaveDialog.FORMAT_PNG, charts, this);
+		new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.PDF, SuffixAwareFilter.PNG, SuffixAwareFilter.SVG},
+				charts, this);
 	}
 
 	@Override
