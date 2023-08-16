@@ -45,6 +45,9 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	private MyAnnotation highlight = null;
 	private Point2D pressed = null;
 	private boolean moved = false;
+	
+	// pixel offset to select an edge
+	private int xyEdgeSelectionOffset = 5;
 
 	public void mouseReleased(MouseEvent e) {
 		moved = false;
@@ -144,19 +147,21 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 		// vv = pw.getGraph().getVisualizationViewer();
 		if (inWindow) {
 			super.mousePressed(e);
+
 			originalSelection.clear();
 			originalSelection.addAll(pw.getSelectedNodes());
 			// for (BiologicalNodeAbstract bna : originalSelection) {
-			// 	if (bna.isLogical()) {
-			// 		// g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(), true);
-			// 		for (BiologicalNodeAbstract pick : bna.getLogicalReference().getRefs()) {
-			// 			// g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
-			// 		}
-			// 	} else {
-			// 		for (BiologicalNodeAbstract pick : bna.getRefs()) {
-			// 			// g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
-			// 		}
-			// 	}
+			// if (bna.isLogical()) {
+			// // g.getVisualizationViewer().getPickedVertexState().pick(bna.getRef(),
+			// true);
+			// for (BiologicalNodeAbstract pick : bna.getLogicalReference().getRefs()) {
+			// // g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
+			// }
+			// } else {
+			// for (BiologicalNodeAbstract pick : bna.getRefs()) {
+			// // g.getVisualizationViewer().getPickedVertexState().pick(pick, true);
+			// }
+			// }
 			// }
 			if (pw.getGraph().getLayout() instanceof HierarchicalCircleLayout) {
 				HierarchicalCircleLayout hcLayout = (HierarchicalCircleLayout) pw.getGraph().getLayout();
@@ -169,11 +174,37 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				}
 			}
 			saveOldVertexPositions();
+
+			// selecting edges with offset of mouse position
+			if (pw.getSelectedNodes().size() == 0 && pw.getSelectedEdges().size() == 0) {
+				Point2D ip = e.getPoint();
+				// System.out.println(super.edge == null);
+				int counter = 1;
+				double dx = ip.getX();
+				double dy = ip.getY();
+				// System.out.println("start x: "+dx+" y:"+dy);
+				while (edge == null && counter <= xyEdgeSelectionOffset) {
+					for (int i = -xyEdgeSelectionOffset; i < xyEdgeSelectionOffset; i++) {
+						counter++;
+						for (int j = i; j < xyEdgeSelectionOffset; j++) {
+							dx = ip.getX() + i;
+							dy = ip.getY() + j;
+							// System.out.println("x: "+dx+" y:"+dy);
+							if ((super.edge = vv.getPickSupport().getEdge(vv.getGraphLayout(), dx, dy)) != null) {
+								vv.getPickedEdgeState().clear();
+								vv.getPickedEdgeState().pick(super.edge, true);
+							}
+						}
+					}
+				}
+			}
+
 			if (pw.getSelectedNodes().size() == 0 && pw.getSelectedEdges().size() == 0
 					&& SwingUtilities.isLeftMouseButton(e)) {
 				mousePressedAnnotation(e);
 			}
 		}
+
 	}
 
 	private void saveOldVertexPositions() {
