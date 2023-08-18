@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
-import configurations.NetworkSettings;
+import configurations.GraphSettings;
 import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
 
 /**
@@ -27,7 +27,7 @@ public class MyEdgeLabelRenderer extends JLabel implements EdgeLabelRenderer, Se
 
 	protected Color pickedEdgeLabelColor;
 	protected boolean rotateEdgeLabels;
-	NetworkSettings settings = NetworkSettings.getInstance();
+	GraphSettings settings = GraphSettings.getInstance();
 
 	public MyEdgeLabelRenderer(Color pickedEdgeLabelColor) {
 		this(pickedEdgeLabelColor, true);

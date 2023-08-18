@@ -11,7 +11,7 @@ import biologicalElements.GraphElementAbstract;
 import biologicalElements.IDAlreadyExistException;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.NetworkSettings;
+import configurations.GraphSettings;
 import graph.gui.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -292,7 +292,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 	}
 
 	public String getNetworklabel() {
-		return getCorrectLabel(NetworkSettings.getInstance().getEdgeLabel());
+		return getCorrectLabel(GraphSettings.getInstance().getEdgeLabel());
 	}
 
 	public String getName() {

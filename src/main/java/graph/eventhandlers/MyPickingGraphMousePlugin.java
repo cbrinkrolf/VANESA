@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import configurations.GraphSettings;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.visualization.Layer;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
@@ -45,10 +46,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 	private MyAnnotation highlight = null;
 	private Point2D pressed = null;
 	private boolean moved = false;
+	private GraphSettings settings = GraphSettings.getInstance();
 	
-	// pixel offset to select an edge
-	private int xyEdgeSelectionOffset = 5;
-
 	public void mouseReleased(MouseEvent e) {
 		moved = false;
 		// vv.setFocusable(true);
@@ -183,6 +182,9 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				double dx = ip.getX();
 				double dy = ip.getY();
 				// System.out.println("start x: "+dx+" y:"+dy);
+				
+				int xyEdgeSelectionOffset = settings.getPixelOffset();
+				
 				while (edge == null && counter <= xyEdgeSelectionOffset) {
 					for (int i = -xyEdgeSelectionOffset; i < xyEdgeSelectionOffset; i++) {
 						counter++;

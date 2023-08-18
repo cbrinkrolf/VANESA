@@ -9,7 +9,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Transition;
-import configurations.NetworkSettings;
+import configurations.GraphSettings;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyVertexDrawPaintFunction implements Function<BiologicalNodeAbstract, Paint> {
@@ -17,7 +17,7 @@ public class MyVertexDrawPaintFunction implements Function<BiologicalNodeAbstrac
     private final PickedState<BiologicalEdgeAbstract> psE;
     private final Pathway pw;
     private boolean graphTheory = false;
-    private final NetworkSettings settings = NetworkSettings.getInstance();
+    private final GraphSettings settings = GraphSettings.getInstance();
 
     public MyVertexDrawPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE,
                                      Pathway pw) {

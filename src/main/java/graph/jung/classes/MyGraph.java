@@ -21,7 +21,7 @@ import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.NetworkSettings;
+import configurations.GraphSettings;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.AggregateLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -107,7 +107,7 @@ public class MyGraph {
 
 	private boolean animatedPicking = false;
 
-	NetworkSettings settings = NetworkSettings.getInstance();
+	GraphSettings settings = GraphSettings.getInstance();
 
 	public AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> getClusteringLayout() {
 		return clusteringLayout;

@@ -368,6 +368,9 @@ public class MenuListener implements ActionListener {
 		case visualizationSettings:
 			new Settings(2);
 			break;
+		case simulationSettings:
+			new Settings(3);
+			break;
 		case openTestP:
 			places = 0;
 			transitions = 0;

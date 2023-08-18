@@ -14,7 +14,7 @@ import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
-import configurations.NetworkSettings;
+import configurations.GraphSettings;
 import graph.GraphInstance;
 import graph.groups.Group;
 import graph.gui.Parameter;
@@ -147,7 +147,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				&& (getName().length() == 0 || getName().equals(" "))) {
 			return "";
 		} else {
-			if (type == 1) {
+			if (type == GraphSettings.SHOW_LABEL) {
 				// if (getLabel().equals("1") && this instanceof BiologicalEdgeAbstract) {
 				// return "";
 				// }
@@ -156,13 +156,13 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				} else {
 					return getLabel();
 				}
-			} else if (type == 2) {
+			} else if (type == GraphSettings.SHOW_NAME) {
 				if (getName().length() == 0 || getName().equals(" ")) {
 					return getLabel();
 				} else {
 					return getName();
 				}
-			} else if (type == 3) {
+			} else if (type == GraphSettings.SHOW_LABEL_AND_NAME) {
 				if (getName().length() == 0 || getName().equals(" ")) {
 					return getLabel();
 				} else if (getLabel().length() == 0 || getLabel().equals(" ")) {
@@ -170,7 +170,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 				} else {
 					return getLabel() + "  -|-  " + getName();
 				}
-			} else if (type == 4) {
+			} else if (type == GraphSettings.SHOW_NONE) {
 				return "";
 			}
 		}
@@ -1148,7 +1148,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	}
 
 	public String getNetworklabel() {
-		return getCorrectLabel(NetworkSettings.getInstance().getNodeLabel());
+		return getCorrectLabel(GraphSettings.getInstance().getNodeLabel());
 	}
 
 	public String getLabel() {

@@ -30,6 +30,7 @@ public enum MenuActionCommands {
     isomLayout("isomLayout"),
     gemLayout("gemLayout"),
     visualizationSettings("visualizationSettings"),
+    simulationSettings("simulationSettings"),
     interaction("interaction"),
     allPopUps("allPopUps"),
     nodesEdgesTypes("nodesEdgesTypes"),
