@@ -193,7 +193,7 @@ public class MenuBarClass {
 		JMenuItem visualizationSettings = new JMenuItem("Visualization Settings");
 		visualizationSettings.addActionListener(MenuListener.getInstance());
 		visualizationSettings.setActionCommand(MenuActionCommands.visualizationSettings.value);
-		
+
 		JMenuItem simulationSettings = new JMenuItem("Simulation Settings");
 		simulationSettings.addActionListener(MenuListener.getInstance());
 		simulationSettings.setActionCommand(MenuActionCommands.simulationSettings.value);
@@ -403,13 +403,10 @@ public class MenuBarClass {
 		petriNets.add(covreach);
 		petriNets.add(createDoc);
 
-		// TODO transformation not only in dev mode
-		if (MainWindow.developer) {
-			transformation.add(transform);
-			transformation.add(showTransformResult);
-			transformation.add(showPN);
-			transformation.add(ruleManager);
-		}
+		transformation.add(transform);
+		transformation.add(showTransformResult);
+		transformation.add(showPN);
+		transformation.add(ruleManager);
 
 		bar.add(file);
 		// bar.add(graph);
