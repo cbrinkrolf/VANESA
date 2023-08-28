@@ -11,12 +11,12 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import net.miginfocom.swing.MigLayout;
 
 public class SimulationSettingsDialog {
 
-	private ConnectionSettings settings = ConnectionSettings.getInstance();
+	private SettingsManager settings = SettingsManager.getInstance();
 
 	private JPanel panel;
 

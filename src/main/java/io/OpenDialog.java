@@ -11,7 +11,7 @@ import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
 import biologicalElements.Pathway;
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
@@ -29,7 +29,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
     private final GraphContainer con = GraphContainer.getInstance();
 
     public OpenDialog() {
-        chooser = new JFileChooser(ConnectionSettings.getInstance().getFileOpenDirectory());
+        chooser = new JFileChooser(SettingsManager.getInstance().getFileOpenDirectory());
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.addChoosableFileFilter(SuffixAwareFilter.SBML);
         chooser.addChoosableFileFilter(SuffixAwareFilter.VAML);
@@ -40,7 +40,7 @@ public class OpenDialog extends SwingWorker<Object, Object> {
         chooser.addChoosableFileFilter(SuffixAwareFilter.GRAPH_TEXT_FILE);
         option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
         if (option == JFileChooser.APPROVE_OPTION) {
-            ConnectionSettings.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+            SettingsManager.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
         }
     }
 

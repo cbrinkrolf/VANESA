@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import gui.MainWindow;
 import io.SuffixAwareFilter;
 import transformation.Rule;
@@ -24,7 +24,7 @@ public class OpenTransformationRules extends SwingWorker<Object, Object> {
 
     public OpenTransformationRules(RuleManagementWindow rmw) {
         this.rmw = rmw;
-        chooser = new JFileChooser(ConnectionSettings.getInstance().getFileOpenDirectory());
+        chooser = new JFileChooser(SettingsManager.getInstance().getFileOpenDirectory());
 
         chooser.setAcceptAllFileFilterUsed(false);
         // chooser.addChoosableFileFilter(SuffixAwareFilter.NEW_MODELICA_RESULT_DESCRIPTION);
@@ -45,7 +45,7 @@ public class OpenTransformationRules extends SwingWorker<Object, Object> {
     protected Void doInBackground() throws Exception {
 
         if (option == JFileChooser.APPROVE_OPTION) {
-            ConnectionSettings.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+            SettingsManager.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
             fileFilter = chooser.getFileFilter();
             file = chooser.getSelectedFile();
             SwingUtilities.invokeLater(() -> {

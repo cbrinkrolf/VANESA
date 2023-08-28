@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import configurations.XMLResourceBundle;
 import net.miginfocom.swing.MigLayout;
 
@@ -45,9 +45,9 @@ public class InternetConnectionDialog {
 		panel.add(new JLabel(" "), "span,wrap,growx ,gap 10, gaptop 2");
 		panel.add(status, "span, growx, gap 10 ,gaptop 15,wrap 15");
 
-		apiUrl.setText(ConnectionSettings.getInstance().getApiUrl());
-		port.setText(ConnectionSettings.getInstance().getProxyPort());
-		host.setText(ConnectionSettings.getInstance().getProxyHost());
+		apiUrl.setText(SettingsManager.getInstance().getApiUrl());
+		port.setText(SettingsManager.getInstance().getProxyPort());
+		host.setText(SettingsManager.getInstance().getProxyHost());
 	}
 
 	public boolean applyDefaults() {
@@ -58,9 +58,9 @@ public class InternetConnectionDialog {
 	}
 
 	public boolean applyNewSettings() {
-		ConnectionSettings.getInstance().setApiUrl(apiUrl.getText());
-		ConnectionSettings.getInstance().setProxyHost(host.getText());
-		ConnectionSettings.getInstance().setProxyPort(port.getText());
+		SettingsManager.getInstance().setApiUrl(apiUrl.getText());
+		SettingsManager.getInstance().setProxyHost(host.getText());
+		SettingsManager.getInstance().setProxyPort(port.getText());
 		return checkSettings();
 	}
 

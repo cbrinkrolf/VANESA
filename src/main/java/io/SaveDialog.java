@@ -5,7 +5,7 @@ import com.orsonpdf.PDFGraphics2D;
 import com.orsonpdf.Page;
 
 import biologicalElements.Pathway;
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import fr.lip6.move.pnml.framework.utils.exception.InvalidIDException;
 import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
 import graph.GraphContainer;
@@ -72,7 +72,7 @@ public class SaveDialog {
 		int option = chooser.showSaveDialog(relativeTo);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			// Save path to settings.xml
-			ConnectionSettings.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+			SettingsManager.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 			fileFilter = chooser.getFileFilter();
 			file = chooser.getSelectedFile();
 			boolean overwrite = true;
@@ -106,7 +106,7 @@ public class SaveDialog {
 		int option = chooser.showSaveDialog(relativeTo);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			// Save path to settings.xml
-			ConnectionSettings.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+			SettingsManager.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 			fileFilter = chooser.getFileFilter();
 			file = chooser.getSelectedFile();
 			String pathSim;
@@ -193,7 +193,7 @@ public class SaveDialog {
 	}
 
 	private void prepare(int format) {
-		chooser = new JFileChooser(ConnectionSettings.getInstance().getFileSaveDirectory());
+		chooser = new JFileChooser(SettingsManager.getInstance().getFileSaveDirectory());
 		chooser.setAcceptAllFileFilterUsed(false);
 		if ((format & FORMAT_SBML) == FORMAT_SBML) {
 			chooser.addChoosableFileFilter(SuffixAwareFilter.SBML);

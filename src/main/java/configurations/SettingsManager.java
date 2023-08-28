@@ -9,8 +9,7 @@ import org.apache.commons.configuration2.io.FileHandler;
 import gui.PopUpDialog;
 import util.VanesaUtility;
 
-// TODO rename class
-public class ConnectionSettings {
+public class SettingsManager {
 	private static String apiUrl = "";
 	private static String proxyHost = "";
 	private static String proxyPort = "";
@@ -22,16 +21,16 @@ public class ConnectionSettings {
 	private static String fileOpenDirectory;
 	private static String developerMode;
 
-	private static ConnectionSettings instance = null;
+	private static SettingsManager instance = null;
 
-	public static synchronized ConnectionSettings getInstance() {
-		if (ConnectionSettings.instance == null) {
-			ConnectionSettings.instance = new ConnectionSettings();
+	public static synchronized SettingsManager getInstance() {
+		if (SettingsManager.instance == null) {
+			SettingsManager.instance = new SettingsManager();
 		}
-		return ConnectionSettings.instance;
+		return SettingsManager.instance;
 	}
 
-	private ConnectionSettings() {
+	private SettingsManager() {
 		getXMLConfiguration();
 	}
 
@@ -118,7 +117,7 @@ public class ConnectionSettings {
 	 */
 	public void setProxyHost(String proxy_host) {
 		System.setProperty("http.proxyHost", proxy_host);
-		ConnectionSettings.proxyHost = proxy_host;
+		SettingsManager.proxyHost = proxy_host;
 	}
 
 	/**
@@ -133,7 +132,7 @@ public class ConnectionSettings {
 	 */
 	public void setProxyPort(String proxy_port) {
 		System.setProperty("http.proxyPort", proxy_port);
-		ConnectionSettings.proxyPort = proxy_port;
+		SettingsManager.proxyPort = proxy_port;
 	}
 
 	public String getApiUrl() {
@@ -141,7 +140,7 @@ public class ConnectionSettings {
 	}
 
 	public void setApiUrl(String apiUrl) {
-		ConnectionSettings.apiUrl = apiUrl;
+		SettingsManager.apiUrl = apiUrl;
 	}
 
 	public boolean isDeveloperMode() {
@@ -158,7 +157,7 @@ public class ConnectionSettings {
 
 	public void setDeveloperMode(Boolean developerMode) {
 		setProperty("isDeveloperMode", developerMode.toString());
-		ConnectionSettings.developerMode = developerMode.toString();
+		SettingsManager.developerMode = developerMode.toString();
 	}
 
 	public void setOMPath(String path) {

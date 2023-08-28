@@ -37,7 +37,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import graph.gui.Parameter;
 import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
@@ -498,7 +498,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private void fillLibsComboBox() {
 		// simLibs.setPrototypeDisplayValue("PNlib (default)");
 		simLibs.removeAllItems();
-		if (!ConnectionSettings.getInstance().isOverridePNlibPath()) {
+		if (!SettingsManager.getInstance().isOverridePNlibPath()) {
 			simLibs.addItem("PNlib (default)");
 		}
 		String name;
@@ -514,14 +514,14 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	}
 
 	public File getSimLib() {
-		if (simLibs.getSelectedIndex() == 0 && !ConnectionSettings.getInstance().isOverridePNlibPath()) {
+		if (simLibs.getSelectedIndex() == 0 && !SettingsManager.getInstance().isOverridePNlibPath()) {
 			return null;
 		}
 		// System.out.println(libs.size());
 		// System.out.println(simLibs.);
 		// System.out.println("lib index: "+simLibs.getSelectedIndex());
 		lastLibsIdx = simLibs.getSelectedIndex();
-		if (ConnectionSettings.getInstance().isOverridePNlibPath()) {
+		if (SettingsManager.getInstance().isOverridePNlibPath()) {
 			return this.libs.get(this.simLibs.getSelectedIndex());
 		} else {
 			return this.libs.get(this.simLibs.getSelectedIndex() - 1);

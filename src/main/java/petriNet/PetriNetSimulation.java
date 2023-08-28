@@ -38,7 +38,7 @@ import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import graph.ChangedFlags;
 import graph.gui.Boundary;
 import graph.gui.Parameter;
@@ -93,13 +93,13 @@ public class PetriNetSimulation implements ActionListener {
 
 	public void showMenu() {
 		if (this.menu == null) {
-			if (ConnectionSettings.getInstance().getPNlibPath().length() > 0) {
-				this.simLibs = this.getLibs(new File(ConnectionSettings.getInstance().getPNlibPath()));
+			if (SettingsManager.getInstance().getPNlibPath().length() > 0) {
+				this.simLibs = this.getLibs(new File(SettingsManager.getInstance().getPNlibPath()));
 			}
 			menu = new SimMenu(pw, this, this.simLibs);
 		} else {
-			if (ConnectionSettings.getInstance().getPNlibPath().length() > 0) {
-				this.simLibs = this.getLibs(new File(ConnectionSettings.getInstance().getPNlibPath()));
+			if (SettingsManager.getInstance().getPNlibPath().length() > 0) {
+				this.simLibs = this.getLibs(new File(SettingsManager.getInstance().getPNlibPath()));
 			}
 			this.menu.setLibs(this.simLibs);
 			this.menu.updateSimulationResults();
@@ -470,7 +470,7 @@ public class PetriNetSimulation implements ActionListener {
 			return false;
 		}
 
-		if (ConnectionSettings.getInstance().isOverridePNlibPath()) {
+		if (SettingsManager.getInstance().isOverridePNlibPath()) {
 			return true;
 		}
 
@@ -526,13 +526,13 @@ public class PetriNetSimulation implements ActionListener {
 		}
 
 		Map<String, String> env = System.getenv();
-		if (ConnectionSettings.getInstance().isOverrideOMPath() || !env.containsKey("OPENMODELICAHOME")
+		if (SettingsManager.getInstance().isOverrideOMPath() || !env.containsKey("OPENMODELICAHOME")
 				|| !(new File(env.get("OPENMODELICAHOME")).isDirectory())
 				|| !(new File(env.get("OPENMODELICAHOME") + suffix).exists())
 				|| !(new File(env.get("OPENMODELICAHOME") + suffix).isFile())
 				|| !(new File(env.get("OPENMODELICAHOME") + suffix).canExecute())) {
 
-			String path = ConnectionSettings.getInstance().getOMPath();
+			String path = SettingsManager.getInstance().getOMPath();
 			if (path.trim().length() > 0 && new File(path).exists() && new File(path).isDirectory()
 					&& new File(path + suffix).exists() && new File(path + suffix).isFile()
 					&& new File(path + suffix).canExecute()) {

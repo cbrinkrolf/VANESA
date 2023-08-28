@@ -43,7 +43,7 @@ import biologicalObjects.nodes.petriNet.Transition;
 import cern.colt.list.IntArrayList;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import configurations.ProgramFileLock;
 import configurations.gui.LayoutConfig;
 import configurations.gui.Settings;
@@ -347,14 +347,14 @@ public class MenuListener implements ActionListener {
 		case devMode:
 			String label;
 			String message;
-			if (ConnectionSettings.getInstance().isDeveloperMode()) {
+			if (SettingsManager.getInstance().isDeveloperMode()) {
 				label = "Next launch: developer mode";
 				message = "Next time, VANESA will be started in normal mode!";
-				ConnectionSettings.getInstance().setDeveloperMode(false);
+				SettingsManager.getInstance().setDeveloperMode(false);
 			} else {
 				label = "Next launch: normal mode";
 				message = "Next time, VANESA will be started in developer mode!";
-				ConnectionSettings.getInstance().setDeveloperMode(true);
+				SettingsManager.getInstance().setDeveloperMode(true);
 			}
 			MainWindow.getInstance().getMenu().setDeveloperLabel(label);
 			PopUpDialog.getInstance().show("Mode changed", message);

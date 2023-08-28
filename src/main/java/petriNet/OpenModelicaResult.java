@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
@@ -22,7 +22,7 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 	private final GraphContainer con = GraphContainer.getInstance();
 
 	public OpenModelicaResult() {
-		chooser = new JFileChooser(ConnectionSettings.getInstance().getFileOpenDirectory());
+		chooser = new JFileChooser(SettingsManager.getInstance().getFileOpenDirectory());
 		chooser.setAcceptAllFileFilterUsed(false);
 		// chooser.addChoosableFileFilter(SuffixAwareFilter.NEW_MODELICA_RESULT_DESCRIPTION);
 		chooser.addChoosableFileFilter(SuffixAwareFilter.VANESA_SIM_RESULT);
@@ -41,7 +41,7 @@ public class OpenModelicaResult extends SwingWorker<Object, Object> {
 	protected Void doInBackground() throws Exception {
 
 		if (option == JFileChooser.APPROVE_OPTION) {
-			ConnectionSettings.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+			SettingsManager.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 			fileFilter = chooser.getFileFilter();
 			file = chooser.getSelectedFile();
 			SwingUtilities.invokeLater(() -> {
