@@ -426,6 +426,9 @@ public class PetriNetSimulation implements ActionListener {
 		} else if (this.simLib == null && menu.getSimLib() != null) {
 			System.out.println("lib changed");
 			simLibChanged = true;
+		} else if(this.simLib != null && menu.getSimLib() == null){
+			System.out.println("lib changed");
+			simLibChanged = true;
 		}
 
 		simLib = menu.getSimLib();
