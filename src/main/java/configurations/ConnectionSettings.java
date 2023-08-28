@@ -9,6 +9,7 @@ import org.apache.commons.configuration2.io.FileHandler;
 import gui.PopUpDialog;
 import util.VanesaUtility;
 
+// TODO rename class
 public class ConnectionSettings {
 	private static String apiUrl = "";
 	private static String proxyHost = "";
@@ -81,6 +82,10 @@ public class ConnectionSettings {
 	}
 
 	private String getProperty(String property) {
+		// TODO maker nicer
+		// todo workaround because file is not always read after changing one property
+		// and reading it again
+		xmlConfiguration = null;
 		return getXMLConfiguration().getString(property);
 	}
 
@@ -156,15 +161,75 @@ public class ConnectionSettings {
 		ConnectionSettings.developerMode = developerMode.toString();
 	}
 
+	public void setOMPath(String path) {
+		if (path != null && path.length() > 0 && new File(path).exists() && new File(path).isDirectory()) {
+			setProperty("OMPath", path);
+		} else {
+			PopUpDialog.getInstance().show("Wrong path", "Given path: " + path + " is not valid!");
+		}
+	}
+
+	public String getOMPath() {
+		String property = getProperty("OMPath");
+		if (property != null && property.length() > 0 && new File(property).exists()
+				&& new File(property).isDirectory()) {
+			return property;
+		}
+		return "";
+	}
+
+	public void setPNlibPath(String path) {
+		if (path != null && path.length() > 0 && new File(path).exists() && new File(path).isDirectory()) {
+			setProperty("PNlibPath", path);
+		} else {
+			PopUpDialog.getInstance().show("Wrong path", "Given path: " + path + " is not valid!");
+		}
+	}
+
+	public String getPNlibPath() {
+		String property = getProperty("PNlibPath");
+		// System.out.println("pnlibpath: "+property);
+		if (property != null && property.length() > 0 && new File(property).exists()
+				&& new File(property).isDirectory()) {
+			return property;
+		}
+		return "";
+	}
+
+	public boolean isOverrideOMPath() {
+		String property = getProperty("isOverrideOMPath");
+		if (property != null && property.length() > 0) {
+			return property.equals("true");
+		}
+		return false;
+	}
+
+	public void setOverrideOMPath(Boolean override) {
+		setProperty("isOverrideOMPath", override.toString());
+	}
+
+	public boolean isOverridePNlibPath() {
+		String property = getProperty("isOverridePNlibPath");
+		if (property != null && property.length() > 0) {
+			return property.equals("true");
+		}
+		return false;
+	}
+
+	public void setOverridePNlibPath(Boolean override) {
+		setProperty("isOverridePNlibPath", override.toString());
+	}
+
 	private XMLConfiguration getXMLConfiguration() {
 		if (xmlConfiguration == null) {
 			String settingsFilePath = VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml";
 			File f = new File(settingsFilePath);
 			if (!f.exists()) {
 				System.out.println("There is probably no " + settingsFilePath + " yet.");
-				// This causes an infinite recursion with the MainWindow init! Don't show popup dialogs here
-				//PopUpDialog.getInstance().show("Error configuration file",
-				//		"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+				// This causes an infinite recursion with the MainWindow init! Don't show popup
+				// dialogs here
+				// PopUpDialog.getInstance().show("Error configuration file",
+				// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
 				try {
 					xmlConfiguration = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
 					FileHandler handler = new FileHandler(xmlConfiguration);
@@ -172,8 +237,8 @@ public class ConnectionSettings {
 				} catch (ConfigurationException e) {
 					f.delete();
 					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
-					//PopUpDialog.getInstance().show("Error configuration file",
-					//		"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					// PopUpDialog.getInstance().show("Error configuration file",
+					// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
 					e.printStackTrace();
 				}
 			} else {
@@ -182,8 +247,8 @@ public class ConnectionSettings {
 				} catch (ConfigurationException e) {
 					f.delete();
 					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
-					//PopUpDialog.getInstance().show("Error configuration file",
-					//		"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					// PopUpDialog.getInstance().show("Error configuration file",
+					// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
 					e.printStackTrace();
 				}
 			}

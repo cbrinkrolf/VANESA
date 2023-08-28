@@ -1,10 +1,7 @@
 package configurations.gui;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -286,9 +283,5 @@ public class VisualizationDialog {
 
 	public JPanel getPanel() {
 		return panel;
-	}
-
-	public void setPanel(JPanel panel) {
-		this.panel = panel;
 	}
 }

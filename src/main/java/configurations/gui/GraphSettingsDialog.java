@@ -44,7 +44,7 @@ public class GraphSettingsDialog {
 	private JRadioButton no = new JRadioButton("", true);
 
 	private JSlider opacityslider = new JSlider(JSlider.HORIZONTAL, 0, 255, 255);
-	
+
 	private MyJFormattedTextField pixelOffset = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 
 	private MainWindow w = MainWindow.getInstance();
@@ -184,37 +184,20 @@ public class GraphSettingsDialog {
 		panel.add(opacityslider);
 
 		panel.add(edgeopacitypanel, "wrap,align left, gap 10, gaptop 2");
-		
+
 		// pixel offset for edge selecting
 		panel.add(new JLabel("Pixel offset for edge picking?"), "span 3");
 		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
-		
-		//panel.add(new JLabel("Pixel offset:"));
+
+		// panel.add(new JLabel("Pixel offset:"));
 		pixelOffset.setColumns(3);
 		pixelOffset.setText(String.valueOf(settings.getPixelOffset()));
+		pixelOffset.setValue(settings.getPixelOffset());
 		panel.add(pixelOffset, "wrap");
 	}
 
 	public JPanel getPanel() {
 		return panel;
-	}
-
-	public void enableDispaly(boolean enabled) {
-		only_label.setEnabled(enabled);
-		only_name.setEnabled(enabled);
-		name_label.setEnabled(enabled);
-		nothing.setEnabled(enabled);
-
-		only_label_e.setEnabled(enabled);
-		only_name_e.setEnabled(enabled);
-		name_label_e.setEnabled(enabled);
-		nothing_e.setEnabled(enabled);
-
-		white.setEnabled(enabled);
-		black.setEnabled(enabled);
-
-		yes.setEnabled(enabled);
-		no.setEnabled(enabled);
 	}
 
 	public boolean applyDefaults() {
@@ -227,9 +210,12 @@ public class GraphSettingsDialog {
 			GraphInstance.getPathway().changeBackground("white");
 			settings.setBackgroundColor(false);
 			yes.setSelected(true);
-			//pixelOffset.setText(String.valueOf(3));
+			// pixelOffset.setText(String.valueOf(3));
 			settings.setPixelOffset(3);
+			// System.out.println(pixelOffset.getText());
+			// System.out.println(pixelOffset.getValue());
 			pixelOffset.setText(String.valueOf(settings.getPixelOffset()));
+			pixelOffset.setValue(String.valueOf(settings.getPixelOffset()));
 		} else {
 			PopUpDialog.getInstance().show("Error", "Please create a network before.");
 			return false;
@@ -251,7 +237,7 @@ public class GraphSettingsDialog {
 			if (only_label_e.isSelected()) {
 				settings.setEdgeLabel(GraphSettings.SHOW_LABEL);
 			} else if (only_name_e.isSelected()) {
-				//System.out.println("selected");
+				// System.out.println("selected");
 				settings.setEdgeLabel(GraphSettings.SHOW_NAME);
 			} else if (name_label_e.isSelected()) {
 				settings.setEdgeLabel(GraphSettings.SHOW_LABEL_AND_NAME);

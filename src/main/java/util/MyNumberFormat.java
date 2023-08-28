@@ -21,7 +21,5 @@ public class MyNumberFormat {
 		df.setMaximumFractionDigits(20);
 		df.setDecimalFormatSymbols(dfs);
 		return df;
-
 	}
-
 }

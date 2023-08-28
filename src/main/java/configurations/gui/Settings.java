@@ -32,12 +32,11 @@ public class Settings extends JDialog {
 		cancel.addActionListener(e -> onCancelClicked());
 		defaultButton.addActionListener(e -> onDefaultClicked());
 		acceptButton.addActionListener(e -> onAcceptClicked());
-		tabbedPanel.addTab(INTERNET_LABEL, null, internetSettings, INTERNET_LABEL);
+		tabbedPanel.addTab(INTERNET_LABEL, null, internetSettings.getPanel(), INTERNET_LABEL);
 		tabbedPanel.addTab(GRAPH_SETTINGS_LABEL, null, graphSettings.getPanel(), GRAPH_SETTINGS_LABEL);
 		tabbedPanel.addTab(VISUALIZATION_LABEL, null, visualizationSettings.getPanel(), VISUALIZATION_LABEL);
 		tabbedPanel.addTab(SIMULATION_LABEL, null, simulationSettings.getPanel(), SIMULATION_LABEL);
 		tabbedPanel.setSelectedIndex(type);
-		enableSettings(true);
 		setSize(300, 300);
 		setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		pack();
@@ -46,12 +45,6 @@ public class Settings extends JDialog {
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setVisible(true);
-	}
-
-	public void enableSettings(boolean enable) {
-		internetSettings.enableDisplay(enable);
-		defaultButton.setEnabled(enable);
-		graphSettings.getPanel().setEnabled(enable);
 	}
 
 	private void onDefaultClicked() {

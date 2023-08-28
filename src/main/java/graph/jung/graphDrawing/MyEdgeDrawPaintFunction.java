@@ -2,7 +2,6 @@ package graph.jung.graphDrawing;
 
 import java.awt.Color;
 import java.awt.Paint;
-import java.util.Iterator;
 
 import com.google.common.base.Function;
 

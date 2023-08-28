@@ -13,7 +13,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +37,7 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
+import configurations.ConnectionSettings;
 import graph.gui.Parameter;
 import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
@@ -71,6 +71,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private MyJFormattedTextField tolerance;
 	private JLabel simLibLbl = new JLabel("Simlation library:");
 	private JComboBox<String> simLibs;
+	private int lastLibsIdx = 0;
 	private JPanel west = new JPanel();
 	private JCheckBox forceRebuild = new JCheckBox("force rebuild");
 
@@ -109,6 +110,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private Pathway pw;
 
 	public SimMenu(Pathway pw, ActionListener listener, List<File> libs) {
+
 		this.pw = pw;
 		this.setTitle("VANESA - simulation setup");
 		this.libs = libs;
@@ -180,12 +182,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		tolerance.setEnabled(true);
 
 		simLibs = new JComboBox<String>();
-		simLibs.addItem("PNlib (default)");
-		Iterator<File> it = libs.iterator();
-		while (it.hasNext()) {
-			simLibs.addItem(it.next().getName());
-		}
-		simLibs.setSelectedIndex(0);
+		fillLibsComboBox();
 
 		this.setLayout(new BorderLayout());
 		this.stop.setEnabled(false);
@@ -372,14 +369,14 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			return;
 		}
 		this.parameterBox.removeAllItems();
-		//System.out.println(selectedNode.getName());
+		// System.out.println(selectedNode.getName());
 		if (selectedNode instanceof Place) {
 			parameterBox.addItem("token start");
 			parameterBox.addItem("token min");
 			parameterBox.addItem("token max");
 
 		} else if (selectedNode instanceof Transition) {
-			//System.out.println(selectedNode.getParameters().size());
+			// System.out.println(selectedNode.getParameters().size());
 			if (selectedNode.getParameters().size() < 1) {
 				// System.out.println("return");
 				return;
@@ -495,13 +492,40 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	public void setLibs(List<File> libs) {
 		this.libs = libs;
+		fillLibsComboBox();
+	}
+
+	private void fillLibsComboBox() {
+		// simLibs.setPrototypeDisplayValue("PNlib (default)");
+		simLibs.removeAllItems();
+		if (!ConnectionSettings.getInstance().isOverridePNlibPath()) {
+			simLibs.addItem("PNlib (default)");
+		}
+		String name;
+		for (File f : libs) {
+			name = f.getName() + " - " + f.getParentFile().getName();
+			simLibs.addItem(name);
+		}
+		if (simLibs.getItemCount() > lastLibsIdx) {
+			simLibs.setSelectedIndex(lastLibsIdx);
+		} else {
+			simLibs.setSelectedIndex(0);
+		}
 	}
 
 	public File getSimLib() {
-		if (simLibs.getSelectedIndex() == 0) {
+		if (simLibs.getSelectedIndex() == 0 && !ConnectionSettings.getInstance().isOverridePNlibPath()) {
 			return null;
 		}
-		return this.libs.get(this.simLibs.getSelectedIndex());
+		// System.out.println(libs.size());
+		// System.out.println(simLibs.);
+		// System.out.println("lib index: "+simLibs.getSelectedIndex());
+		lastLibsIdx = simLibs.getSelectedIndex();
+		if (ConnectionSettings.getInstance().isOverridePNlibPath()) {
+			return this.libs.get(this.simLibs.getSelectedIndex());
+		} else {
+			return this.libs.get(this.simLibs.getSelectedIndex() - 1);
+		}
 	}
 
 	public void updateSimulationResults() {
@@ -634,7 +658,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		} else if (e.getActionCommand().startsWith("export_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(7));
 			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
-			new SaveDialog(SaveDialog.FORMAT_CSV,SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simId);
+			new SaveDialog(SaveDialog.FORMAT_CSV, SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simId);
 		} else if ("advancedOptions".equals(e.getActionCommand())) {
 			revalidateAdvancedPanel();
 		} else if ("parameterized".equals(e.getActionCommand())) {
