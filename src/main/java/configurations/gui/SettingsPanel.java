@@ -4,7 +4,7 @@ import gui.MainWindow;
 
 import javax.swing.*;
 
-public class Settings extends JDialog {
+public class SettingsPanel extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private static final String INTERNET_LABEL = "Internet";
 	private static final String GRAPH_SETTINGS_LABEL = "Graph Settings";
@@ -19,7 +19,7 @@ public class Settings extends JDialog {
 	private final VisualizationDialog visualizationSettings = new VisualizationDialog();
 	private final SimulationSettingsDialog simulationSettings = new SimulationSettingsDialog();
 
-	public Settings(int type) {
+	public SettingsPanel(int type) {
 		JOptionPane optionPanel = new JOptionPane(tabbedPanel, JOptionPane.PLAIN_MESSAGE);
 		JButton cancel = new JButton("cancel");
 		JButton acceptButton = new JButton("accept");

@@ -46,7 +46,7 @@ import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import configurations.SettingsManager;
 import configurations.ProgramFileLock;
 import configurations.gui.LayoutConfig;
-import configurations.gui.Settings;
+import configurations.gui.SettingsPanel;
 import dataMapping.DataMappingColorMVC;
 import database.mirna.MirnaSearch;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -337,7 +337,7 @@ public class MenuListener implements ActionListener {
 			}
 			break;
 		case internet:
-			new Settings(0);
+			new SettingsPanel(0);
 			break;
 		case interaction:
 			if (con.containsPathway() && pw.hasGotAtLeastOneElement()) {
@@ -363,13 +363,13 @@ public class MenuListener implements ActionListener {
 			new AboutWindow();
 			break;
 		case graphSettings:
-			new Settings(1);
+			new SettingsPanel(1);
 			break;
 		case visualizationSettings:
-			new Settings(2);
+			new SettingsPanel(2);
 			break;
 		case simulationSettings:
-			new Settings(3);
+			new SettingsPanel(3);
 			break;
 		case openTestP:
 			places = 0;
