@@ -1276,8 +1276,8 @@ public class Transformator {
 		Map<String, String> possibleParams = new HashMap<>();
 
 		for (RuleNode rn : r.getBiologicalNodes()) {
-			possibleParams.put(rn.getName(),
-					match.getMapping(rn).getName());
+			//possibleParams.put(rn.getName(),
+				//	match.getMapping(rn).getName());
 			for (String parameter : match.getMapping(rn).getTransformationParameters()) {
 				possibleParams.put(rn.getName() + "." + parameter,
 						match.getMapping(rn).getTransformationParameterValue(parameter));
