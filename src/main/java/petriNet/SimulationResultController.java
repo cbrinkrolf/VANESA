@@ -2,7 +2,6 @@ package petriNet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import biologicalElements.GraphElementAbstract;
@@ -17,6 +16,7 @@ public class SimulationResultController {
 	// for transitions
 	public static int SIM_ACTUAL_FIRING_SPEED = 0;
 	public static int SIM_FIRE = 2;
+	public static int SIM_PUT_DELAY = 5;
 
 	// for edges
 	public static int SIM_SUM_OF_TOKEN = 3;
@@ -89,10 +89,7 @@ public class SimulationResultController {
 	}
 
 	public void setAllActive(boolean active) {
-		Iterator<SimulationResult> it = series.values().iterator();
-		SimulationResult simRes;
-		while (it.hasNext()) {
-			simRes = it.next();
+		for (SimulationResult simRes : series.values()) {
 			simRes.setActive(active);
 		}
 	}

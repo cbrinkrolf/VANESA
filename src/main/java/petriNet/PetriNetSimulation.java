@@ -37,6 +37,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import configurations.SettingsManager;
 import graph.ChangedFlags;
@@ -604,6 +605,10 @@ public class PetriNetSimulation implements ActionListener {
 					} else {
 						filter += "'" + bna.getName() + "'.active|";
 						vars++;
+						if(bna instanceof StochasticTransition){
+							filter += "'" + bna.getName() + "'.putDelay|";
+							vars++;
+						}
 					}
 				}
 			}

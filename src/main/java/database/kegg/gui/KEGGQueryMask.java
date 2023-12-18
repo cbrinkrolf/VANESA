@@ -61,9 +61,9 @@ public class KEGGQueryMask extends QueryMask {
 		buttonPanel.add(reset);
 		buttonPanel.add(search);
 		panel.add(new JSeparator(), "span, growx, wrap 10");
-		panel.add(new JLabel("KEGG database currently under maintenance!"), "span 4");
-		panel.add(new JLabel(), "gap 20, span 4");
-		panel.add(buttonPanel, "");
+		panel.add(new JLabel("KEGG database is currently under maintenance!"), "span 6, wrap");
+		panel.add(new JLabel(), "gap 20, span 5");
+        panel.add(buttonPanel, "span");
 		// and add the following line again:
 		// addControlButtons();
 
