@@ -59,6 +59,7 @@ import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
@@ -68,6 +69,7 @@ import gui.MainWindow;
 import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
 import petriNet.AnimationThread;
+import petriNet.Series;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 import util.TripleHashMap;
@@ -401,13 +403,25 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 					renderer.setSeriesVisible(idxFlow, true);
 					renderer2.setSeriesVisible(idxSum, true);
+					
+				//// DEBUGGIMG test code
+					//System.out.println(result.getTime().size());
+					//System.out.println(result.get(edge, ));
+					
+					
+					
 				}
+				
+				
+				
+				
+				
 			}
 		} else if(pickedV == 0 && pickedE > 1){
-			// TODO implement if more than one edes is selected
+			// TODO implement if multiple edges are selected
 		}
 		else if (pickedV == 1 && pickedE == 0) {
-			// System.out.println("one picked");
+			System.out.println("one picked");
 			SimulationResult result;
 			List<SimulationResult> listActive = null;
 			bna = resolveReference(bna);
@@ -445,6 +459,24 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						renderer.setSeriesPaint(idx, c);
 					}
 				}
+				
+				///// DEBUG testing code
+				//System.out.println(result.size());
+				//System.out.println(result.getTime().size());
+				
+				if(bna instanceof StochasticTransition){
+					listActive = simResController.getAllActiveWithData(bna, SimulationResultController.SIM_PUT_DELAY);
+					Series s;
+					for(SimulationResult res : listActive){
+						s = res.get(bna, SimulationResultController.SIM_PUT_DELAY);
+						for(int index = 0; index<res.getTime().size(); index++){
+							System.out.println(res.getTime().get(index)+ ":\t "+ s.get(index)+" \t"+res.get(bna, SimulationResultController.SIM_FIRE).get(index));
+						}
+					}
+					
+					
+				}
+				
 			}
 		} else {
 			// System.out.println("else picked");

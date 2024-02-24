@@ -1177,7 +1177,8 @@ public class Transformator {
 					if (petriNode instanceof DiscreteTransition) {
 						// d = this.evalParameter(possibleParams, value, Double.class, match);
 						// if (d != null) {
-						// ((DiscreteTransition) gea).setDelay(d);
+						d = evaluateDouble(value);
+						((DiscreteTransition) petriNode).setDelay(d);
 						// }
 					}
 				}
@@ -1275,8 +1276,8 @@ public class Transformator {
 		Map<String, String> possibleParams = new HashMap<>();
 
 		for (RuleNode rn : r.getBiologicalNodes()) {
-			possibleParams.put(rn.getName(),
-					match.getMapping(rn).getName());
+			//possibleParams.put(rn.getName(),
+				//	match.getMapping(rn).getName());
 			for (String parameter : match.getMapping(rn).getTransformationParameters()) {
 				possibleParams.put(rn.getName() + "." + parameter,
 						match.getMapping(rn).getTransformationParameterValue(parameter));

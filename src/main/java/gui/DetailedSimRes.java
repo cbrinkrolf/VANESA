@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,8 +23,8 @@ import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import graph.animations.RegulationTableModel;
-import io.SaveDialog;
 import gui.tables.MyTable;
+import io.SaveDialog;
 import net.miginfocom.swing.MigLayout;
 import petriNet.PlotsPanel;
 import petriNet.Series;

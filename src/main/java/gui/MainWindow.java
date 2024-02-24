@@ -38,8 +38,8 @@ import com.jhlabs.image.BlurFilter;
 
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.ConnectionSettings;
-import configurations.gui.Settings;
+import configurations.SettingsManager;
+import configurations.gui.SettingsPanel;
 import configurations.gui.VisualizationDialog;
 import graph.GraphContainer;
 import graph.eventhandlers.GraphTabListener;
@@ -95,7 +95,7 @@ public class MainWindow implements ApplicationListener {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		//developer = !Boolean.parseBoolean(XMLResourceBundle.SETTINGS.getString("settings.default.developer"));
 		
-		developer = ConnectionSettings.getInstance().isDeveloperMode();
+		developer = SettingsManager.getInstance().isDeveloperMode();
 		// try {
 		// SubstanceBusinessBlueSteelLookAndFeel lf = new SubstanceBusinessBlueSteelLookAndFeel();
 		// lf.setSkin("");
@@ -604,7 +604,7 @@ public class MainWindow implements ApplicationListener {
 
 	@Override
 	public void handlePreferences(ApplicationEvent event) {
-		new Settings(0);
+		new SettingsPanel(0);
 		event.setHandled(true);
 	}
 

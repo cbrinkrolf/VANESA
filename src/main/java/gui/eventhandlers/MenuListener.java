@@ -44,10 +44,10 @@ import biologicalObjects.nodes.petriNet.Transition;
 import cern.colt.list.IntArrayList;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import configurations.ProgramFileLock;
 import configurations.gui.LayoutConfig;
-import configurations.gui.Settings;
+import configurations.gui.SettingsPanel;
 import dataMapping.DataMappingColorMVC;
 import database.mirna.MirnaSearch;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
@@ -336,7 +336,7 @@ public class MenuListener implements ActionListener {
 			}
 			break;
 		case internet:
-			new Settings(0);
+			new SettingsPanel(0);
 			break;
 		case interaction:
 			if (con.containsPathway() && pw.hasGotAtLeastOneElement()) {
@@ -346,14 +346,14 @@ public class MenuListener implements ActionListener {
 		case devMode:
 			String label;
 			String message;
-			if (ConnectionSettings.getInstance().isDeveloperMode()) {
+			if (SettingsManager.getInstance().isDeveloperMode()) {
 				label = "Next launch: developer mode";
 				message = "Next time, VANESA will be started in normal mode!";
-				ConnectionSettings.getInstance().setDeveloperMode(false);
+				SettingsManager.getInstance().setDeveloperMode(false);
 			} else {
 				label = "Next launch: normal mode";
 				message = "Next time, VANESA will be started in developer mode!";
-				ConnectionSettings.getInstance().setDeveloperMode(true);
+				SettingsManager.getInstance().setDeveloperMode(true);
 			}
 			MainWindow.getInstance().getMenu().setDeveloperLabel(label);
 			PopUpDialog.getInstance().show("Mode changed", message);
@@ -362,10 +362,13 @@ public class MenuListener implements ActionListener {
 			new AboutWindow();
 			break;
 		case graphSettings:
-			new Settings(1);
+			new SettingsPanel(1);
 			break;
 		case visualizationSettings:
-			new Settings(2);
+			new SettingsPanel(2);
+			break;
+		case simulationSettings:
+			new SettingsPanel(3);
 			break;
 		case openTestP:
 			places = 0;

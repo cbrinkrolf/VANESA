@@ -9,7 +9,7 @@ import org.apache.commons.configuration2.io.FileHandler;
 import gui.PopUpDialog;
 import util.VanesaUtility;
 
-public class ConnectionSettings {
+public class SettingsManager {
 	private static String apiUrl = "";
 	private static String proxyHost = "";
 	private static String proxyPort = "";
@@ -21,16 +21,16 @@ public class ConnectionSettings {
 	private static String fileOpenDirectory;
 	private static String developerMode;
 
-	private static ConnectionSettings instance = null;
+	private static SettingsManager instance = null;
 
-	public static synchronized ConnectionSettings getInstance() {
-		if (ConnectionSettings.instance == null) {
-			ConnectionSettings.instance = new ConnectionSettings();
+	public static synchronized SettingsManager getInstance() {
+		if (SettingsManager.instance == null) {
+			SettingsManager.instance = new SettingsManager();
 		}
-		return ConnectionSettings.instance;
+		return SettingsManager.instance;
 	}
 
-	private ConnectionSettings() {
+	private SettingsManager() {
 		getXMLConfiguration();
 	}
 
@@ -81,6 +81,10 @@ public class ConnectionSettings {
 	}
 
 	private String getProperty(String property) {
+		// TODO maker nicer
+		// todo workaround because file is not always read after changing one property
+		// and reading it again
+		xmlConfiguration = null;
 		return getXMLConfiguration().getString(property);
 	}
 
@@ -113,7 +117,7 @@ public class ConnectionSettings {
 	 */
 	public void setProxyHost(String proxy_host) {
 		System.setProperty("http.proxyHost", proxy_host);
-		ConnectionSettings.proxyHost = proxy_host;
+		SettingsManager.proxyHost = proxy_host;
 	}
 
 	/**
@@ -128,7 +132,7 @@ public class ConnectionSettings {
 	 */
 	public void setProxyPort(String proxy_port) {
 		System.setProperty("http.proxyPort", proxy_port);
-		ConnectionSettings.proxyPort = proxy_port;
+		SettingsManager.proxyPort = proxy_port;
 	}
 
 	public String getApiUrl() {
@@ -136,7 +140,7 @@ public class ConnectionSettings {
 	}
 
 	public void setApiUrl(String apiUrl) {
-		ConnectionSettings.apiUrl = apiUrl;
+		SettingsManager.apiUrl = apiUrl;
 	}
 
 	public boolean isDeveloperMode() {
@@ -153,7 +157,66 @@ public class ConnectionSettings {
 
 	public void setDeveloperMode(Boolean developerMode) {
 		setProperty("isDeveloperMode", developerMode.toString());
-		ConnectionSettings.developerMode = developerMode.toString();
+		SettingsManager.developerMode = developerMode.toString();
+	}
+
+	public void setOMPath(String path) {
+		if (path != null && path.length() > 0 && new File(path).exists() && new File(path).isDirectory()) {
+			setProperty("OMPath", path);
+		} else {
+			PopUpDialog.getInstance().show("Wrong path", "Given path: " + path + " is not valid!");
+		}
+	}
+
+	public String getOMPath() {
+		String property = getProperty("OMPath");
+		if (property != null && property.length() > 0 && new File(property).exists()
+				&& new File(property).isDirectory()) {
+			return property;
+		}
+		return "";
+	}
+
+	public void setPNlibPath(String path) {
+		if (path != null && path.length() > 0 && new File(path).exists() && new File(path).isDirectory()) {
+			setProperty("PNlibPath", path);
+		} else {
+			PopUpDialog.getInstance().show("Wrong path", "Given path: " + path + " is not valid!");
+		}
+	}
+
+	public String getPNlibPath() {
+		String property = getProperty("PNlibPath");
+		// System.out.println("pnlibpath: "+property);
+		if (property != null && property.length() > 0 && new File(property).exists()
+				&& new File(property).isDirectory()) {
+			return property;
+		}
+		return "";
+	}
+
+	public boolean isOverrideOMPath() {
+		String property = getProperty("isOverrideOMPath");
+		if (property != null && property.length() > 0) {
+			return property.equals("true");
+		}
+		return false;
+	}
+
+	public void setOverrideOMPath(Boolean override) {
+		setProperty("isOverrideOMPath", override.toString());
+	}
+
+	public boolean isOverridePNlibPath() {
+		String property = getProperty("isOverridePNlibPath");
+		if (property != null && property.length() > 0) {
+			return property.equals("true");
+		}
+		return false;
+	}
+
+	public void setOverridePNlibPath(Boolean override) {
+		setProperty("isOverridePNlibPath", override.toString());
 	}
 
 	private XMLConfiguration getXMLConfiguration() {
@@ -162,9 +225,10 @@ public class ConnectionSettings {
 			File f = new File(settingsFilePath);
 			if (!f.exists()) {
 				System.out.println("There is probably no " + settingsFilePath + " yet.");
-				// This causes an infinite recursion with the MainWindow init! Don't show popup dialogs here
-				//PopUpDialog.getInstance().show("Error configuration file",
-				//		"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+				// This causes an infinite recursion with the MainWindow init! Don't show popup
+				// dialogs here
+				// PopUpDialog.getInstance().show("Error configuration file",
+				// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
 				try {
 					xmlConfiguration = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
 					FileHandler handler = new FileHandler(xmlConfiguration);
@@ -172,8 +236,8 @@ public class ConnectionSettings {
 				} catch (ConfigurationException e) {
 					f.delete();
 					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
-					//PopUpDialog.getInstance().show("Error configuration file",
-					//		"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					// PopUpDialog.getInstance().show("Error configuration file",
+					// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
 					e.printStackTrace();
 				}
 			} else {
@@ -182,8 +246,8 @@ public class ConnectionSettings {
 				} catch (ConfigurationException e) {
 					f.delete();
 					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
-					//PopUpDialog.getInstance().show("Error configuration file",
-					//		"Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					// PopUpDialog.getInstance().show("Error configuration file",
+					// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
 					e.printStackTrace();
 				}
 			}

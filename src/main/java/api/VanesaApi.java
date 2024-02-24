@@ -6,7 +6,7 @@ import api.payloads.Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -46,7 +46,7 @@ public class VanesaApi {
             return;
         }
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(ConnectionSettings.getInstance().getApiUrl() + path))
+                .uri(URI.create(SettingsManager.getInstance().getApiUrl() + path))
                 .timeout(Duration.ofMinutes(2))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestJson, StandardCharsets.UTF_8))
@@ -82,7 +82,7 @@ public class VanesaApi {
             return createExceptionResponse(e);
         }
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(ConnectionSettings.getInstance().getApiUrl() + path))
+                .uri(URI.create(SettingsManager.getInstance().getApiUrl() + path))
                 .timeout(Duration.ofMinutes(2))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestJson, StandardCharsets.UTF_8))

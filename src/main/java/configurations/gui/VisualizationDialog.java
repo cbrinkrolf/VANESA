@@ -32,7 +32,7 @@ import io.SuffixAwareFilter;
 import org.yaml.snakeyaml.Yaml;
 
 import biologicalElements.Elementdeclerations;
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.visualization.YamlToObjectParser;
@@ -120,7 +120,7 @@ public class VisualizationDialog {
 					loadedYaml = fileChooser.getSelectedFile().getPath();
 					loadedYamlLabel.setText(loadedYaml);
 					mWindow.setLoadedYaml(loadedYaml);
-					ConnectionSettings.getInstance().setYamlVisualizationFile(loadedYaml);
+					SettingsManager.getInstance().setYamlVisualizationFile(loadedYaml);
 					PrintWriter pWriter = null;
 					try {
 						pWriter = new PrintWriter(new BufferedWriter(
@@ -285,9 +285,5 @@ public class VisualizationDialog {
 
 	public JPanel getPanel() {
 		return panel;
-	}
-
-	public void setPanel(JPanel panel) {
-		this.panel = panel;
 	}
 }

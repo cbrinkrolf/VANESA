@@ -7,79 +7,83 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 
-import configurations.NetworkSettings;
+import configurations.GraphSettings;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import net.miginfocom.swing.MigLayout;
+import util.MyJFormattedTextField;
+import util.MyNumberFormat;
 
 /**
  * @author Sebastian
  */
 public class GraphSettingsDialog {
 	private JPanel panel;
-	private NetworkSettings settings = NetworkSettings.getInstance();
+	private GraphSettings settings = GraphSettings.getInstance();
 
-	private ButtonGroup group = new ButtonGroup();
+	private ButtonGroup groupNodes = new ButtonGroup();
 	private JRadioButton only_name = new JRadioButton("", true);
 	private JRadioButton only_label = new JRadioButton("", true);
 	private JRadioButton nothing = new JRadioButton("", true);
 	private JRadioButton name_label = new JRadioButton("", true);
 
-	private ButtonGroup group2 = new ButtonGroup();
+	private ButtonGroup groupEdges = new ButtonGroup();
 	private JRadioButton only_name_e = new JRadioButton("", true);
 	private JRadioButton only_label_e = new JRadioButton("", true);
 	private JRadioButton nothing_e = new JRadioButton("", true);
 	private JRadioButton name_label_e = new JRadioButton("", true);
 
-	private ButtonGroup group3 = new ButtonGroup();
+	private ButtonGroup groupBackground = new ButtonGroup();
 	private JRadioButton black = new JRadioButton("", true);
 	private JRadioButton white = new JRadioButton("", true);
 
-	private ButtonGroup group4 = new ButtonGroup();
+	private ButtonGroup groupShowEdges = new ButtonGroup();
 	private JRadioButton yes = new JRadioButton("", true);
 	private JRadioButton no = new JRadioButton("", true);
 
 	private JSlider opacityslider = new JSlider(JSlider.HORIZONTAL, 0, 255, 255);
+
+	private MyJFormattedTextField pixelOffset = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 
 	private MainWindow w = MainWindow.getInstance();
 	private GraphContainer con = GraphContainer.getInstance();;
 
 	public GraphSettingsDialog() {
 
-		group.add(only_label);
-		group.add(only_name);
-		group.add(name_label);
-		group.add(nothing);
+		groupNodes.add(only_label);
+		groupNodes.add(only_name);
+		groupNodes.add(name_label);
+		groupNodes.add(nothing);
 
-		if (settings.getNodeLabel() == 1) {
+		if (settings.getNodeLabel() == GraphSettings.SHOW_LABEL) {
 			only_label.setSelected(true);
-		} else if (settings.getNodeLabel() == 2) {
+		} else if (settings.getNodeLabel() == GraphSettings.SHOW_NAME) {
 			only_name.setSelected(true);
-		} else if (settings.getNodeLabel() == 3) {
+		} else if (settings.getNodeLabel() == GraphSettings.SHOW_LABEL_AND_NAME) {
 			name_label.setSelected(true);
-		} else if (settings.getNodeLabel() == 4) {
+		} else if (settings.getNodeLabel() == GraphSettings.SHOW_NONE) {
 			nothing.setSelected(true);
 		}
 
-		group2.add(only_label_e);
-		group2.add(only_name_e);
-		group2.add(name_label_e);
-		group2.add(nothing_e);
+		groupEdges.add(only_label_e);
+		groupEdges.add(only_name_e);
+		groupEdges.add(name_label_e);
+		groupEdges.add(nothing_e);
 
-		if (settings.getEdgeLabel() == 1) {
+		if (settings.getEdgeLabel() == GraphSettings.SHOW_LABEL) {
 			only_label_e.setSelected(true);
-		} else if (settings.getEdgeLabel() == 2) {
+		} else if (settings.getEdgeLabel() == GraphSettings.SHOW_NAME) {
 			only_name_e.setSelected(true);
-		} else if (settings.getEdgeLabel() == 3) {
+		} else if (settings.getEdgeLabel() == GraphSettings.SHOW_LABEL_AND_NAME) {
 			name_label_e.setSelected(true);
-		} else if (settings.getEdgeLabel() == 4) {
+		} else if (settings.getEdgeLabel() == GraphSettings.SHOW_NONE) {
 			nothing_e.setSelected(true);
 		}
 
-		group3.add(white);
-		group3.add(black);
+		groupBackground.add(white);
+		groupBackground.add(black);
 
 		if (settings.isBackgroundColor()) {
 			black.setSelected(true);
@@ -87,8 +91,8 @@ public class GraphSettingsDialog {
 			white.setSelected(false);
 		}
 
-		group4.add(yes);
-		group4.add(no);
+		groupShowEdges.add(yes);
+		groupShowEdges.add(no);
 
 		if (settings.getDrawEdges())
 			yes.setSelected(true);
@@ -167,7 +171,7 @@ public class GraphSettingsDialog {
 		panel.add(edgedrawpanel, "wrap,align left, gap 10, gaptop 2");
 
 		// Edge opacity
-		panel.add(new JLabel("opacity of the edges?"), "span 3");
+		panel.add(new JLabel("Opacity of the edges?"), "span 3");
 		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
 
 		JPanel edgeopacitypanel = new JPanel();
@@ -176,31 +180,24 @@ public class GraphSettingsDialog {
 //		opacityslider.setMinorTickSpacing();
 		opacityslider.setPaintTicks(true);
 		opacityslider.setPaintLabels(true);
+		opacityslider.setEnabled(false);
 		panel.add(opacityslider);
 
 		panel.add(edgeopacitypanel, "wrap,align left, gap 10, gaptop 2");
+
+		// pixel offset for edge selecting
+		panel.add(new JLabel("Pixel offset for edge picking?"), "span 3");
+		panel.add(new JSeparator(), "span, growx, wrap 5, gaptop 10, gap 5");
+
+		// panel.add(new JLabel("Pixel offset:"));
+		pixelOffset.setColumns(3);
+		pixelOffset.setText(String.valueOf(settings.getPixelOffset()));
+		pixelOffset.setValue(settings.getPixelOffset());
+		panel.add(pixelOffset, "wrap");
 	}
 
 	public JPanel getPanel() {
 		return panel;
-	}
-
-	public void enableDispaly(boolean enabled) {
-		only_label.setEnabled(enabled);
-		only_name.setEnabled(enabled);
-		name_label.setEnabled(enabled);
-		nothing.setEnabled(enabled);
-
-		only_label_e.setEnabled(enabled);
-		only_name_e.setEnabled(enabled);
-		name_label_e.setEnabled(enabled);
-		nothing_e.setEnabled(enabled);
-
-		white.setEnabled(enabled);
-		black.setEnabled(enabled);
-
-		yes.setEnabled(enabled);
-		no.setEnabled(enabled);
 	}
 
 	public boolean applyDefaults() {
@@ -213,6 +210,12 @@ public class GraphSettingsDialog {
 			GraphInstance.getPathway().changeBackground("white");
 			settings.setBackgroundColor(false);
 			yes.setSelected(true);
+			// pixelOffset.setText(String.valueOf(3));
+			settings.setPixelOffset(3);
+			// System.out.println(pixelOffset.getText());
+			// System.out.println(pixelOffset.getValue());
+			pixelOffset.setText(String.valueOf(settings.getPixelOffset()));
+			pixelOffset.setValue(String.valueOf(settings.getPixelOffset()));
 		} else {
 			PopUpDialog.getInstance().show("Error", "Please create a network before.");
 			return false;
@@ -223,23 +226,23 @@ public class GraphSettingsDialog {
 	public boolean applyNewSettings() {
 		if (con.containsPathway() && GraphInstance.getPathway().hasGotAtLeastOneElement()) {
 			if (only_label.isSelected()) {
-				settings.setNodeLabel(1);
+				settings.setNodeLabel(GraphSettings.SHOW_LABEL);
 			} else if (only_name.isSelected()) {
-				settings.setNodeLabel(2);
+				settings.setNodeLabel(GraphSettings.SHOW_NAME);
 			} else if (name_label.isSelected()) {
-				settings.setNodeLabel(3);
+				settings.setNodeLabel(GraphSettings.SHOW_LABEL_AND_NAME);
 			} else if (nothing.isSelected()) {
-				settings.setNodeLabel(4);
+				settings.setNodeLabel(GraphSettings.SHOW_NONE);
 			}
 			if (only_label_e.isSelected()) {
-				settings.setEdgeLabel(1);
+				settings.setEdgeLabel(GraphSettings.SHOW_LABEL);
 			} else if (only_name_e.isSelected()) {
-				System.out.println("selected");
-				settings.setEdgeLabel(2);
+				// System.out.println("selected");
+				settings.setEdgeLabel(GraphSettings.SHOW_NAME);
 			} else if (name_label_e.isSelected()) {
-				settings.setEdgeLabel(3);
+				settings.setEdgeLabel(GraphSettings.SHOW_LABEL_AND_NAME);
 			} else if (nothing_e.isSelected()) {
-				settings.setEdgeLabel(4);
+				settings.setEdgeLabel(GraphSettings.SHOW_NONE);
 			}
 			if (black.isSelected()) {
 				settings.setBackgroundColor(true);
@@ -255,6 +258,7 @@ public class GraphSettingsDialog {
 				no.setSelected(true);
 			}
 			settings.setEdgeOpacity(opacityslider.getValue());
+			settings.setPixelOffset(Integer.parseInt(pixelOffset.getText()));
 			con.getPathway(w.getCurrentPathway()).getGraph().getEdgeDrawPaintFunction().updateEdgeAlphaValue();
 		} else {
 			PopUpDialog.getInstance().show("Error", "Please create a network before.");

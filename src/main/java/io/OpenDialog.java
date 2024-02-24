@@ -9,7 +9,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import biologicalElements.Pathway;
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.jung.classes.MyGraph;
@@ -25,7 +25,7 @@ public final class OpenDialog {
     private final JFileChooser chooser;
 
     public OpenDialog() {
-        chooser = new JFileChooser(ConnectionSettings.getInstance().getFileOpenDirectory());
+        chooser = new JFileChooser(SettingsManager.getInstance().getFileOpenDirectory());
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.addChoosableFileFilter(SuffixAwareFilter.SBML);
         chooser.addChoosableFileFilter(SuffixAwareFilter.VAML);
@@ -37,7 +37,7 @@ public final class OpenDialog {
     public void show() {
         int option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
         if (option == JFileChooser.APPROVE_OPTION) {
-            ConnectionSettings.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+            SettingsManager.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
             final FileFilter fileFilter = chooser.getFileFilter();
             final File file = chooser.getSelectedFile();
             AsyncTaskExecutor.runUIBlocking("Loading data from file. Please wait a second",

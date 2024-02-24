@@ -194,6 +194,10 @@ public class MenuBarClass {
 		visualizationSettings.addActionListener(MenuListener.getInstance());
 		visualizationSettings.setActionCommand(MenuActionCommands.visualizationSettings.value);
 
+		JMenuItem simulationSettings = new JMenuItem("Simulation Settings");
+		simulationSettings.addActionListener(MenuListener.getInstance());
+		simulationSettings.setActionCommand(MenuActionCommands.simulationSettings.value);
+
 		JMenuItem interaction = new JMenuItem("Show network properties");
 		interaction.addActionListener(MenuListener.getInstance());
 		interaction.setActionCommand(MenuActionCommands.interaction.value);
@@ -323,6 +327,7 @@ public class MenuBarClass {
 		settings.add(internetSettings);
 		settings.add(graphSettings);
 		settings.add(visualizationSettings);
+		settings.add(simulationSettings);
 		settings.add(rendererSettings);
 
 		// snapshot.add(savePicture);
@@ -398,12 +403,10 @@ public class MenuBarClass {
 		petriNets.add(covreach);
 		petriNets.add(createDoc);
 
-		if (MainWindow.developer) {
-			transformation.add(transform);
-			transformation.add(showTransformResult);
-			transformation.add(showPN);
-			transformation.add(ruleManager);
-		}
+		transformation.add(transform);
+		transformation.add(showTransformResult);
+		transformation.add(showPN);
+		transformation.add(ruleManager);
 
 		bar.add(file);
 		// bar.add(graph);

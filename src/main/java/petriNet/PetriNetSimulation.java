@@ -36,7 +36,9 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
+import configurations.SettingsManager;
 import graph.ChangedFlags;
 import graph.gui.Boundary;
 import graph.gui.Parameter;
@@ -91,10 +93,14 @@ public class PetriNetSimulation implements ActionListener {
 
 	public void showMenu() {
 		if (this.menu == null) {
-			this.simLibs = this.getLibs(new File(pathWorkingDirectory));
+			if (SettingsManager.getInstance().getPNlibPath().length() > 0) {
+				this.simLibs = this.getLibs(new File(SettingsManager.getInstance().getPNlibPath()));
+			}
 			menu = new SimMenu(pw, this, this.simLibs);
 		} else {
-			this.simLibs = this.getLibs(new File(pathWorkingDirectory));
+			if (SettingsManager.getInstance().getPNlibPath().length() > 0) {
+				this.simLibs = this.getLibs(new File(SettingsManager.getInstance().getPNlibPath()));
+			}
 			this.menu.setLibs(this.simLibs);
 			this.menu.updateSimulationResults();
 			this.menu.setState(Frame.NORMAL);
@@ -129,7 +135,6 @@ public class PetriNetSimulation implements ActionListener {
 
 		else {
 			seed = menu.getGlobalSeed() + "";
-
 		}
 
 		logAndShow("Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
@@ -174,7 +179,7 @@ public class PetriNetSimulation implements ActionListener {
 
 								override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize="
 										+ stopTime / intervals + ",tolerance=" + tolerance + ",seed=" + seed;
-								System.out.println("parameter changed: "+flags.isParameterChanged());
+								System.out.println("parameter changed: " + flags.isParameterChanged());
 								if (flags.isParameterChanged()) {
 									GraphElementAbstract gea;
 									for (Parameter param : pw.getChangedParameters().keySet()) {
@@ -414,10 +419,20 @@ public class PetriNetSimulation implements ActionListener {
 		};// --------end all thread
 
 		boolean simLibChanged = false;
-		if (this.simLib != null && !menu.getSimLib().getAbsolutePath().equals(this.simLib.getAbsolutePath())) {
+		if (this.simLib != null && menu.getSimLib() != null
+				&& !menu.getSimLib().getAbsolutePath().equals(this.simLib.getAbsolutePath())) {
+			System.out.println("lib changed");
+			simLibChanged = true;
+		} else if (this.simLib == null && menu.getSimLib() != null) {
+			System.out.println("lib changed");
+			simLibChanged = true;
+		} else if(this.simLib != null && menu.getSimLib() == null){
 			System.out.println("lib changed");
 			simLibChanged = true;
 		}
+
+		simLib = menu.getSimLib();
+		System.out.println("simulation lib: " + simLib);
 
 		simExePresent = false;
 
@@ -453,68 +468,117 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private boolean checkInstallation() {
-		Map<String, String> env = System.getenv();
-		if (env.containsKey("OPENMODELICAHOME") && new File(env.get("OPENMODELICAHOME")).isDirectory()) {
-			pathCompiler = env.get("OPENMODELICAHOME");
-			// OpenModelica installed
-			OMCCommunicator omcCommunicator = new OMCCommunicator(getOMCPath());
-			if (omcCommunicator.isPNLibInstalled()) {
-				// PNlib installed
-				if (omcCommunicator.isPNlibVersionInstalled(pnLibVersion)) {
-					return true;
-				} else {
-					// correct PNlib version not installed
-					if (omcCommunicator.isPackageManagerSupported()) {
-						logAndShow("Correct version of PNlib (version " + pnLibVersion
-								+ ") is not installed. Trying to install ...");
-						if (omcCommunicator.isInstallPNlibSuccessful(pnLibVersion)) {
-							logAndShow("Installation of PNlib (version " + pnLibVersion + ") was successful!");
-							return true;
-						} else {
-							logAndShow("Installation of PNlib (version " + pnLibVersion
-									+ ") was not successful! Please install required version of PNlib manually!");
-							return false;
-						}
-					} else {
-						logAndShow("Installation error. PNlib version " + pnLibVersion
-								+ " is not installed properly. Please select required version of PNlib during installation of OpenModelica!");
-						return false;
-					}
-				}
+
+		if (!checkInstallationOM()) {
+			return false;
+		}
+
+		if (SettingsManager.getInstance().isOverridePNlibPath()) {
+			return true;
+		}
+
+		OMCCommunicator omcCommunicator = new OMCCommunicator(getOMCPath());
+		if (omcCommunicator.isPNLibInstalled()) {
+			// PNlib installed
+			if (omcCommunicator.isPNlibVersionInstalled(pnLibVersion)) {
+				return true;
 			} else {
-				// PNlib not installed
+				// correct PNlib version not installed
 				if (omcCommunicator.isPackageManagerSupported()) {
-					logAndShow("PNlib is not installed. Trying to install ...");
+					logAndShow("Correct version of PNlib (version " + pnLibVersion
+							+ ") is not installed. Trying to install ...");
 					if (omcCommunicator.isInstallPNlibSuccessful(pnLibVersion)) {
 						logAndShow("Installation of PNlib (version " + pnLibVersion + ") was successful!");
 						return true;
 					} else {
 						logAndShow("Installation of PNlib (version " + pnLibVersion
-								+ ") was not successful! Please install required version of PNlib manually!");
-						return false;
+								+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!");
+						return menu.getSimLib() != null;
 					}
 				} else {
 					logAndShow("Installation error. PNlib version " + pnLibVersion
-							+ " is not installed properly. Please select required version of PNlib during installation of OpenModelica!");
-					return false;
+							+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!");
+					return menu.getSimLib() != null;
 				}
 			}
-			// OpenModelica not installed
 		} else {
-			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(MainWindow.getInstance().getFrame(),
-					"Cannot find OpenModelica installation.\n\n"
-							+ "Please install OpenModelica from \"https://openmodelica.org\".\n"
-							+ "If OpenModelica is already installed, please set\n"
-							+ "environment variable OPENMODELICAHOME to the installation directory.\n\n"
-							+ "Do you want to open the OpenModelica homepage in your default web browser?",
-					"Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
-				try {
-					if (Desktop.isDesktopSupported()) {
-						Desktop.getDesktop().browse(new URI("https://openmodelica.org"));
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+			// PNlib not installed
+			if (omcCommunicator.isPackageManagerSupported()) {
+				logAndShow("PNlib is not installed. Trying to install ...");
+				if (omcCommunicator.isInstallPNlibSuccessful(pnLibVersion)) {
+					logAndShow("Installation of PNlib (version " + pnLibVersion + ") was successful!");
+					return true;
+				} else {
+					logAndShow("Installation of PNlib (version " + pnLibVersion
+							+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!");
+					return menu.getSimLib() != null;
 				}
+			} else {
+				logAndShow("Installation error. PNlib version " + pnLibVersion
+						+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!");
+				return menu.getSimLib() != null;
+			}
+		}
+	}
+
+	private boolean checkInstallationOM() {
+
+		String suffix = "bin" + File.separator + "omc";
+		if (SystemUtils.IS_OS_WINDOWS) {
+			suffix += ".exe";
+		}
+
+		Map<String, String> env = System.getenv();
+		if (SettingsManager.getInstance().isOverrideOMPath() || !env.containsKey("OPENMODELICAHOME")
+				|| !(new File(env.get("OPENMODELICAHOME")).isDirectory())
+				|| !(new File(env.get("OPENMODELICAHOME") + suffix).exists())
+				|| !(new File(env.get("OPENMODELICAHOME") + suffix).isFile())
+				|| !(new File(env.get("OPENMODELICAHOME") + suffix).canExecute())) {
+
+			String path = SettingsManager.getInstance().getOMPath();
+			if (path.trim().length() > 0 && new File(path).exists() && new File(path).isDirectory()
+					&& new File(path + suffix).exists() && new File(path + suffix).isFile()
+					&& new File(path + suffix).canExecute()) {
+				pathCompiler = path;
+				return true;
+			} else {
+				logAndShow("Given path of OpenModelica (" + path + ") is not a correct path!");
+				logAndShow("Path exists: " + new File(path).exists());
+				logAndShow("Path is directory: " + new File(path).isDirectory());
+				logAndShow("Executable " + path + suffix + "exists: " + new File(path + suffix).exists());
+				logAndShow("Executable is file: " + new File(path + suffix).isFile());
+				logAndShow("Executable is can be executed: " + new File(path + suffix).canExecute());
+			}
+		}
+		if (env.containsKey("OPENMODELICAHOME") && new File(env.get("OPENMODELICAHOME")).isDirectory()
+				&& new File(env.get("OPENMODELICAHOME") + suffix).exists()
+				&& new File(env.get("OPENMODELICAHOME") + suffix).isFile()
+				&& new File(env.get("OPENMODELICAHOME") + suffix).canExecute()) {
+			pathCompiler = env.get("OPENMODELICAHOME");
+			return true;
+		} else {
+			logAndShow("Given path of OpenModelica (" + env.get("OPENMODELICAHOME") + ") is not a correct path!");
+			logAndShow("Path exists: " + new File(env.get("OPENMODELICAHOME")).exists());
+			logAndShow("Path is directory: " + new File(env.get("OPENMODELICAHOME")).isDirectory());
+			logAndShow("Executable " + env.get("OPENMODELICAHOME") + suffix + "exists: "
+					+ new File(env.get("OPENMODELICAHOME") + suffix).exists());
+			logAndShow("Executable is file: " + new File(env.get("OPENMODELICAHOME") + suffix).isFile());
+			logAndShow("Executable is can be executed: " + new File(env.get("OPENMODELICAHOME") + suffix).canExecute());
+		}
+
+		if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(MainWindow.getInstance().getFrame(),
+				"Cannot find OpenModelica installation.\n\n"
+						+ "Please install OpenModelica from \"https://openmodelica.org\".\n"
+						+ "If OpenModelica is already installed, please set\n"
+						+ "environment variable OPENMODELICAHOME to the installation directory.\n\n"
+						+ "Do you want to open the OpenModelica homepage in your default web browser?",
+				"Simulation aborted...", JOptionPane.YES_NO_OPTION)) {
+			try {
+				if (Desktop.isDesktopSupported()) {
+					Desktop.getDesktop().browse(new URI("https://openmodelica.org"));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return false;
@@ -540,6 +604,10 @@ public class PetriNetSimulation implements ActionListener {
 					} else {
 						filter += "'" + bna.getName() + "'.active|";
 						vars++;
+						if(bna instanceof StochasticTransition){
+							filter += "'" + bna.getName() + "'.putDelay|";
+							vars++;
+						}
 					}
 				}
 			}
@@ -611,8 +679,6 @@ public class PetriNetSimulation implements ActionListener {
 						new File(pathSim).mkdir();
 					}
 
-					simLib = menu.getSimLib();
-					System.out.println("simulation lib: " + simLib);
 					String packageInfo = "";
 					if (simLib == null || simLib.getName().equals("PNlib")) {
 						// packageInfo = "inner PNlib.Settings settings1;";
@@ -880,6 +946,7 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private List<File> getLibs(File directory) {
+		// System.out.println("get libs");
 		List<File> libs = new ArrayList<File>();
 		if (directory.isDirectory()) {
 			File[] files = directory.listFiles();
@@ -889,13 +956,15 @@ public class PetriNetSimulation implements ActionListener {
 					// System.out.println("folder: " + f.getName());
 					if (new File(f, "package.mo").exists()) {
 						libs.add(f);
-						// System.out.println("existiert: " + f.getName());
+						// System.out.println("existiert1: " + f.getName());
 					} else {
 						File[] files2 = f.listFiles();
 						for (int j = 0; j < files2.length; j++) {
 							File f2 = files2[j];
 							if (new File(f2, "package.mo").exists()) {
 								libs.add(f2);
+								// System.out.println("existiert2: " + f2.getName()+" -
+								// "+f2.getParentFile().getName());
 							}
 						}
 					}

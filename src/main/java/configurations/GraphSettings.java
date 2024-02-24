@@ -1,13 +1,20 @@
 package configurations;
 
-public class NetworkSettings {
-    private static NetworkSettings instance;
+public class GraphSettings {
+    private static GraphSettings instance;
 
     private Integer nodeLabel;
     private Integer edgeLabel;
     private boolean backgroundColor = false;
     private boolean drawEdges = true;
     private int edgeOpacity = 255;
+    private int pixelOffset = 3;
+    
+    public static final int SHOW_LABEL = 0;
+    public static final int SHOW_NAME = 1;
+    public static final int SHOW_LABEL_AND_NAME = 2;
+    public static final int SHOW_NONE = 3;
+    
 
     public boolean isBackgroundColor() {
         return backgroundColor;
@@ -51,14 +58,22 @@ public class NetworkSettings {
         //GraphInstance.getMyGraph().updateAllEdgeLabels();
     }
 
-    public NetworkSettings() {
-        nodeLabel = 1;
-        edgeLabel = 1;
+    public int getPixelOffset() {
+		return pixelOffset;
+	}
+
+	public void setPixelOffset(int pixelOffset) {
+		this.pixelOffset = pixelOffset;
+	}
+
+	public GraphSettings() {
+        nodeLabel = GraphSettings.SHOW_LABEL;
+        edgeLabel = GraphSettings.SHOW_LABEL;
     }
 
-    public static NetworkSettings getInstance() {
+    public static GraphSettings getInstance() {
         if (instance == null) {
-            instance = new NetworkSettings();
+            instance = new GraphSettings();
         }
         return instance;
     }

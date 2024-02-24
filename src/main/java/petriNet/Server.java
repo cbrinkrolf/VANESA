@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -25,6 +24,7 @@ import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.Place;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import gui.MainWindow;
 
@@ -47,6 +47,7 @@ public class Server {
 	private Set<Transition> transitionSpeed;
 	private Set<Transition> transitionFire;
 	private Set<Place> placeToken;
+	private Set<Transition> transitionPutDelay;
 
 	private long lastSyso = 0;
 
@@ -76,7 +77,7 @@ public class Server {
 				Socket client;
 				DataInputStream is;
 				while (running) {
-					//System.out.println("ruuuuuuuuuuuuuuuuuunning");
+					// System.out.println("ruuuuuuuuuuuuuuuuuunning");
 					try {
 						boolean boundCorrectly = false;
 						while (!boundCorrectly && running) {
@@ -106,14 +107,14 @@ public class Server {
 							// schreibeNachricht(client, nachricht);
 
 						}
-						//System.out.println("hieeeer bin ich");
+						// System.out.println("hieeeer bin ich");
 					} catch (IOException e) {
 						running = false;
 						// System.err.println("Unable to process client request");
 						e.printStackTrace();
 					}
 				}
-				//System.out.println("ruuuuuuuuuuuuuuuuuunning");
+				// System.out.println("ruuuuuuuuuuuuuuuuuunning");
 				simResult.refineEdgeFlow(toRefineEdges);
 			}
 		};
@@ -284,7 +285,7 @@ public class Server {
 					running = false;
 					System.out.println("server shut down");
 					MainWindow w = MainWindow.getInstance();
-					//w.redrawGraphs(true);
+					// w.redrawGraphs(true);
 					break;
 				}
 			}
@@ -315,13 +316,10 @@ public class Server {
 		transitionSpeed = new HashSet<>();
 		transitionFire = new HashSet<>();
 		placeToken = new HashSet<>();
+		transitionPutDelay = new HashSet<>();
 
-		Iterator<BiologicalEdgeAbstract> itBea = pw.getAllEdges().iterator();
-		BiologicalEdgeAbstract bea;
 		PNArc e;
-
-		while (itBea.hasNext()) {
-			bea = itBea.next();
+		for (BiologicalEdgeAbstract bea : pw.getAllEdges())
 			if (bea instanceof PNArc) {
 				e = (PNArc) bea;
 				if (name2index.get("der(" + bea2key.get(bea) + ")") != null) {
@@ -335,12 +333,8 @@ public class Server {
 					this.edgeSum.add(e);
 				}
 			}
-		}
 
-		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-		BiologicalNodeAbstract bna;
-		while (it.hasNext()) {
-			bna = it.next();
+		for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 			if (!bna.isLogical()) {
 				if (bna instanceof Place) {
 					if (name2index.get("'" + bna.getName() + "'.t") != null) {
@@ -359,6 +353,10 @@ public class Server {
 					} else {
 						if (name2index.get("'" + bna.getName() + "'.active") != null) {
 							this.transitionFire.add((Transition) bna);
+						}
+					} if(bna instanceof StochasticTransition){
+						if (name2index.get("'" + bna.getName() + "'.putDelay") != null) {
+							this.transitionPutDelay.add((Transition) bna);
 						}
 					}
 				}
@@ -395,6 +393,12 @@ public class Server {
 		for (Transition t : this.transitionSpeed) {
 			o = values.get(name2index.get("'" + t.getName() + "'.actualSpeed"));
 			this.checkAndAddValue(t, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, o);
+		}
+		
+		for (Transition t : this.transitionPutDelay) {
+			o = values.get(name2index.get("'" + t.getName() + "'.putDelay"));
+			this.checkAndAddValue(t, SimulationResultController.SIM_PUT_DELAY, o);
+			System.out.println("putDelay: "+o);
 		}
 
 		long now = System.currentTimeMillis();

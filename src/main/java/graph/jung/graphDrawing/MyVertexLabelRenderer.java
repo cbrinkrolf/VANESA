@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
-import configurations.NetworkSettings;
+import configurations.GraphSettings;
 import edu.uci.ics.jung.visualization.renderers.VertexLabelRenderer;
 
 /**
@@ -27,7 +27,7 @@ public class MyVertexLabelRenderer extends JLabel implements VertexLabelRenderer
 
 	protected Color pickedVertexLabelColor;
 	protected boolean rotateEdgeLabels;
-	NetworkSettings settings = NetworkSettings.getInstance();
+	GraphSettings settings = GraphSettings.getInstance();
 
 	public MyVertexLabelRenderer(Color pickedVertexLabelColor) {
 		this(pickedVertexLabelColor, true);

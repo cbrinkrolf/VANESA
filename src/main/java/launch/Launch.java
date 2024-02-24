@@ -2,7 +2,7 @@ package launch;
 
 import biologicalElements.EnzymeNames;
 import com.jtattoo.plaf.aluminium.AluminiumLookAndFeel;
-import configurations.ConnectionSettings;
+import configurations.SettingsManager;
 import configurations.ProgramFileLock;
 import configurations.XMLResourceBundle;
 import database.brenda.MostWantedMolecules;
@@ -65,7 +65,7 @@ public class Launch {
         }
         Logger logger = Logger.getRootLogger();
         logger.info("Network editor started by " + System.getProperty("user.name"));
-        ConnectionSettings.getInstance().setApiUrl(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
+        SettingsManager.getInstance().setApiUrl(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
         ExecutorService executorService = Executors.newFixedThreadPool(4);
         executorService.execute(() -> SwingUtilities.invokeLater(() -> {
             intro.setLoadingText("Graphical User Interface");

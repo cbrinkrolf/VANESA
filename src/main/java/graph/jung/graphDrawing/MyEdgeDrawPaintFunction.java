@@ -2,13 +2,12 @@ package graph.jung.graphDrawing;
 
 import java.awt.Color;
 import java.awt.Paint;
-import java.util.Iterator;
 
 import com.google.common.base.Function;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.NetworkSettings;
+import configurations.GraphSettings;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyEdgeDrawPaintFunction implements Function<BiologicalEdgeAbstract, Paint> {
@@ -16,7 +15,7 @@ public class MyEdgeDrawPaintFunction implements Function<BiologicalEdgeAbstract,
     private final PickedState<BiologicalEdgeAbstract> psE;
     private final Color dotted = Color.LIGHT_GRAY;
     private final Color dotted_black = Color.BLACK.brighter();
-    private final NetworkSettings settings = NetworkSettings.getInstance();
+    private final GraphSettings settings = GraphSettings.getInstance();
     private Color alphaEdge = new Color(dotted.darker().getRed(), dotted.darker().getGreen(), dotted.darker().getBlue(),
                                         settings.getEdgeOpacity());
     private boolean graphTheory = false;
