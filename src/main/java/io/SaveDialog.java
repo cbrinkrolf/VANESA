@@ -2,8 +2,6 @@ package io;
 
 import biologicalElements.Pathway;
 import configurations.SettingsManager;
-import fr.lip6.move.pnml.framework.utils.exception.InvalidIDException;
-import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import gui.AsyncTaskExecutor;
@@ -115,12 +113,8 @@ public class SaveDialog {
 		});
 	}
 
-	public SaveDialog(int format, int dataType) {
-		this(format, dataType, null, MainWindow.getInstance().getFrame(), null);
-	}
-
 	private JFileChooser prepare(SuffixAwareFilter[] formats) {
-		chooser = new JFileChooser(SettingsManager.getInstance().getFileSaveDirectory());
+		JFileChooser chooser = new JFileChooser(SettingsManager.getInstance().getFileSaveDirectory());
 		chooser.setAcceptAllFileFilterUsed(false);
 		for (final SuffixAwareFilter format : formats) {
 			chooser.addChoosableFileFilter(format);
