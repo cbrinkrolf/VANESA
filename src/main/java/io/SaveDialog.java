@@ -1,309 +1,184 @@
 package io;
 
-import com.orsonpdf.PDFDocument;
-import com.orsonpdf.PDFGraphics2D;
-import com.orsonpdf.Page;
-
 import biologicalElements.Pathway;
 import configurations.SettingsManager;
-import fr.lip6.move.pnml.framework.utils.exception.InvalidIDException;
-import fr.lip6.move.pnml.framework.utils.exception.VoidRepositoryException;
 import graph.GraphContainer;
 import graph.GraphInstance;
+import gui.AsyncTaskExecutor;
 import gui.MainWindow;
 import gui.PopUpDialog;
 import io.graphML.GraphMLWriter;
+import io.image.ChartImageWriter;
+import io.image.ComponentImageWriter;
 import io.sbml.JSBMLOutput;
-import org.apache.batik.anim.dom.SVGDOMImplementation;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.jfree.chart.ChartUtils;
+import org.apache.commons.io.IOUtils;
 import org.jfree.chart.JFreeChart;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import transformation.Rule;
 import transformation.RuleManager;
 import transformation.YamlRuleWriter;
-import util.ImageExport;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import javax.xml.stream.XMLStreamException;
 import java.awt.*;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class SaveDialog {
-	// use power of 2
-	public static int FORMAT_SBML = 1;
-	public static int FORMAT_GRAPHML = 2;
-	public static int FORMAT_MO = 4;
-	public static int FORMAT_CSML = 8;
-	// removed: FORMAT_VAML = 16;
-	public static int FORMAT_TXT = 32;
-	// removed: FORMAT_ITXT = 64;
-	public static int FORMAT_PNML = 128;
-	public static int FORMAT_CSV = 256;
-	public static int FORMAT_PNG = 512;
-	public static int FORMAT_YAML = 1024;
-	public static int FORMAT_SVG = 2048;
-	public static int FORMAT_PDF = 4096;
-
 	public static final int DATA_TYPE_TRANSFORMATION_RULES = 1;
 	public static final int DATA_TYPE_VISUALIZATION_SETTINGS = 2;
 	public static final int DATA_TYPE_GRAPH_PICTURE = 3;
 	public static final int DATA_TYPE_NETWORK_EXPORT = 4;
 	public static final int DATA_TYPE_SIMULATION_RESULTS = 5;
 
-	private FileFilter fileFilter;
+	private SuffixAwareFilter fileFilter;
 	private int dataType;
-	private File file;
-	private Component c = null;
-	private JFileChooser chooser;
 
-	public SaveDialog(int format, int dataType, Component c, Component relativeTo, String simId) {
+	public SaveDialog(SuffixAwareFilter[] formats, int dataType) {
+		this(formats, dataType, null, MainWindow.getInstance().getFrame(), null);
+	}
+
+	public SaveDialog(SuffixAwareFilter[] formats, int dataType, Component c) {
+		this(formats, dataType, c, MainWindow.getInstance().getFrame(), null);
+	}
+
+	public SaveDialog(SuffixAwareFilter[] formats, int dataType, Component c, Component relativeTo, String simId) {
 		if (relativeTo == null) {
 			relativeTo = MainWindow.getInstance().getFrame();
 		}
-		String error = "";
-		this.prepare(format);
-		this.c = c;
+		JFileChooser chooser = prepare(formats);
 		this.dataType = dataType;
 		int option = chooser.showSaveDialog(relativeTo);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			// Save path to settings.xml
 			SettingsManager.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
-			fileFilter = chooser.getFileFilter();
-			file = chooser.getSelectedFile();
-			boolean overwrite = true;
+			fileFilter = (SuffixAwareFilter) chooser.getFileFilter();
+			File file = chooser.getSelectedFile();
 			if (file.exists()) {
 				int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite existing file?",
 						"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-				if (response == JOptionPane.CANCEL_OPTION) {
-					overwrite = false;
+				if (response != JOptionPane.OK_OPTION) {
+					return;
 				}
 			}
-			if (overwrite) {
-				try {
-					write(simId);
-				} catch (IOException | HeadlessException | XMLStreamException | InvalidIDException
-						| VoidRepositoryException e) {
-					error += e.getMessage();
-					PopUpDialog.getInstance().show("Error!", "An error occurred:\r\n" + error);
-					e.printStackTrace();
-				}
-			}
+			AsyncTaskExecutor.runUIBlocking("Saving data to file. Please wait a second", () -> {
+				write(c, simId, file);
+			});
 		}
 	}
 
-	public SaveDialog(int format, List<JFreeChart> charts, Component relativeTo) {
+	public SaveDialog(SuffixAwareFilter[] formats, final List<JFreeChart> charts, Component relativeTo) {
 		if (relativeTo == null) {
 			relativeTo = MainWindow.getInstance().getFrame();
 		}
-		String error = "";
-		prepare(format);
+		JFileChooser chooser = prepare(formats);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int option = chooser.showSaveDialog(relativeTo);
-		if (option == JFileChooser.APPROVE_OPTION) {
-			// Save path to settings.xml
-			SettingsManager.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
-			fileFilter = chooser.getFileFilter();
-			file = chooser.getSelectedFile();
-			String pathSim;
-			pathSim = file.getAbsolutePath() + File.separator;
-			int width = 320;
-			int height = 200;
-			boolean overwrite = false;
-			boolean stop = false;
-			for (JFreeChart chart : charts) {
-				String name = chart.getTitle().getText();
+		if (option != JFileChooser.APPROVE_OPTION) {
+			return;
+		}
+		// Save path to settings.xml
+		SettingsManager.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
+		fileFilter = (SuffixAwareFilter) chooser.getFileFilter();
+		String pathSim = chooser.getSelectedFile().getAbsolutePath() + File.separator;
+		int width = 320;
+		int height = 200;
+		boolean anyFileAlreadyExists = false;
+		final File[] chartFiles = new File[charts.size()];
+		for (int i = 0; i < charts.size(); i++) {
+			String name = charts.get(i).getTitle().getText();
+			chartFiles[i] = new File(pathSim + name + "." + fileFilter.getExtension());
+			if (chartFiles[i].exists()) {
+				anyFileAlreadyExists = true;
+			}
+		}
+		if (anyFileAlreadyExists) {
+			int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite all existing files?",
+					"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (response != JOptionPane.OK_OPTION) {
+				return;
+			}
+		}
+		AsyncTaskExecutor.runUIBlocking("Saving data to file. Please wait a second", () -> {
+			for (int i = 0; i < charts.size(); i++) {
+				JFreeChart chart = charts.get(i);
+				File file = chartFiles[i];
 				if (fileFilter == SuffixAwareFilter.PDF) {
-					PDFDocument pdfDoc = new PDFDocument();
-					pdfDoc.setAuthor("VANESA");
-					Page page = pdfDoc.createPage(new Rectangle(width, height));
-					PDFGraphics2D g2 = page.getGraphics2D();
-					chart.draw(g2, new Rectangle(0, 0, width, height));
-					if (new File(pathSim + name + ".pdf").exists() && !overwrite && !stop) {
-						int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite all existing files?",
-								"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-						if (!(response == JOptionPane.OK_OPTION)) {
-							stop = true;
-						} else {
-							overwrite = true;
-						}
-					}
-					if (!stop) {
-						pdfDoc.writeToFile(new File(pathSim + name + ".pdf"));
-					}
+					write(new ChartImageWriter(file, ChartImageWriter.IMAGE_TYPE_PDF, width, height), chart, false);
 				} else if (fileFilter == SuffixAwareFilter.PNG) {
-					if (new File(pathSim + name + ".png").exists() && !overwrite) {
-						int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite all existing files?",
-								"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-						if (!(response == JOptionPane.OK_OPTION)) {
-							stop = true;
-						} else {
-							overwrite = true;
-						}
-					}
-					if (!stop) {
-						try {
-							ChartUtils.saveChartAsPNG(new File(pathSim + name + ".png"), chart, width * 2, height * 2);
-						} catch (IOException e) {
-							error += e.getMessage();
-							e.printStackTrace();
-						}
-					}
+					write(new ChartImageWriter(file, ChartImageWriter.IMAGE_TYPE_PNG, width, height), chart, false);
 				} else if (fileFilter == SuffixAwareFilter.SVG) {
-					if (new File(pathSim + name + ".svg").exists() && !overwrite) {
-						int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite all existing files?",
-								"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-						if (!(response == JOptionPane.OK_OPTION)) {
-							stop = true;
-						} else {
-							overwrite = true;
-						}
-					}
-					if (!stop) {
-						DOMImplementation domImpl = SVGDOMImplementation.getDOMImplementation();
-						Document document = domImpl.createDocument(null, "svg", null);
-						SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
-						svgGenerator.setSVGCanvasSize(new Dimension(width, height));
-						chart.draw(svgGenerator, new Rectangle(width, height));
-						boolean useCSS = true; // we want to use CSS style attribute
-						try (Writer out = new OutputStreamWriter(new FileOutputStream(pathSim + name + ".svg"),
-								StandardCharsets.UTF_8)) {
-							svgGenerator.stream(out, useCSS);
-						} catch (IOException e) {
-							error += e.getMessage();
-							e.printStackTrace();
-						}
-					}
+					write(new ChartImageWriter(file, ChartImageWriter.IMAGE_TYPE_SVG, width, height), chart, false);
 				}
 			}
-			if (error.trim().length() == 0) {
-				PopUpDialog.getInstance().show("Image export", "Exports of images was successful!");
-			} else {
-				PopUpDialog.getInstance().show("Error during image export", error);
-			}
-		}
+			PopUpDialog.getInstance().show("Information", fileFilter + "\nFile saved");
+		});
 	}
 
-	public SaveDialog(int format, int dataType) {
-		this(format, dataType, null, MainWindow.getInstance().getFrame(), null);
-	}
-
-	private void prepare(int format) {
-		chooser = new JFileChooser(SettingsManager.getInstance().getFileSaveDirectory());
+	private JFileChooser prepare(SuffixAwareFilter[] formats) {
+		JFileChooser chooser = new JFileChooser(SettingsManager.getInstance().getFileSaveDirectory());
 		chooser.setAcceptAllFileFilterUsed(false);
-		if ((format & FORMAT_SBML) == FORMAT_SBML) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.SBML);
+		for (final SuffixAwareFilter format : formats) {
+			chooser.addChoosableFileFilter(format);
 		}
-		if ((format & FORMAT_MO) == FORMAT_MO) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.MO);
-		}
-		if ((format & FORMAT_GRAPHML) == FORMAT_GRAPHML) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.GRAPH_ML);
-		}
-		if ((format & FORMAT_CSML) == FORMAT_CSML) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.CSML);
-		}
-		if ((format & FORMAT_PDF) == FORMAT_PDF) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.PDF);
-		}
-		if ((format & FORMAT_SVG) == FORMAT_SVG) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.SVG);
-		}
-		if ((format & FORMAT_PNML) == FORMAT_PNML) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.PNML);
-		}
-		if ((format & FORMAT_TXT) == FORMAT_TXT) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.GRAPH_TEXT_FILE);
-		}
-		if ((format & FORMAT_CSV) == FORMAT_CSV) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.CSV_RESULT);
-		}
-		if ((format & FORMAT_PNG) == FORMAT_PNG) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.PNG);
-		}
-		if ((format & FORMAT_YAML) == FORMAT_YAML) {
-			chooser.addChoosableFileFilter(SuffixAwareFilter.YAML);
-		}
+		return chooser;
 	}
 
-	private void ensureExtension(SuffixAwareFilter fileFilter) {
+	private static File ensureExtension(File file, SuffixAwareFilter fileFilter) {
 		String filePath = file.getPath();
 		if (!filePath.endsWith("." + fileFilter.getExtension())) {
 			file = new File(file.getAbsolutePath() + "." + fileFilter.getExtension());
 		}
+		return file;
 	}
 
-	private void write(String simId)
-			throws HeadlessException, XMLStreamException, IOException, InvalidIDException, VoidRepositoryException {
+	private void write(Component c, String simId, File file) {
+		file = ensureExtension(file, fileFilter);
 		if (fileFilter == SuffixAwareFilter.SBML) {
-			writeSBML();
+			writeSBML(file);
 		} else if (fileFilter == SuffixAwareFilter.GRAPH_ML) {
-			writeGraphML();
+			write(new GraphMLWriter(file), GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.MO) {
-			writeMO();
+			writeMO(file);
 		} else if (fileFilter == SuffixAwareFilter.GRAPH_TEXT_FILE) {
-			writeGraphTextFile();
+			write(new GraphTextWriter(file), GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.CSV_RESULT) {
-			writeCSV(simId);
+			writeCSV(simId, file);
 		} else if (fileFilter == SuffixAwareFilter.PNML) {
-			writePNML();
+			write(new PNMLOutput(file), GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.CSML) {
-			writeCSML();
+			write(new CSMLOutput(file), GraphInstance.getPathway());
 		} else if (fileFilter == SuffixAwareFilter.PNG) {
-			writePNG();
+			if (c != null) {
+				write(new ComponentImageWriter(file, ComponentImageWriter.IMAGE_TYPE_PNG), c);
+			}
 		} else if (fileFilter == SuffixAwareFilter.SVG) {
-			writeSVG();
+			if (c != null) {
+				write(new ComponentImageWriter(file, ComponentImageWriter.IMAGE_TYPE_SVG), c);
+			}
 		} else if (fileFilter == SuffixAwareFilter.YAML) {
-			writeYAML();
+			writeYAML(file);
 		}
 	}
 
-	private void writeSVG() throws IOException {
-		ensureExtension(SuffixAwareFilter.SVG);
-		if (c != null) {
-			ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file, ImageExport.IMAGE_TYPE_SVG);
-		}
+	private <T> boolean write(BaseWriter<T> writer, T value) {
+		return write(writer, value, true);
 	}
 
-	private void writePNG() throws IOException {
-		ensureExtension(SuffixAwareFilter.PNG);
-		if (c != null) {
-			ImageExport.exportPic(c, new Rectangle(c.getWidth(), c.getHeight()), file, ImageExport.IMAGE_TYPE_PNG);
-		}
-	}
-
-	private void writeCSML() {
-		ensureExtension(SuffixAwareFilter.CSML);
-		write(new CSMLOutput(file), GraphInstance.getPathway());
-	}
-
-	private <T> void write(BaseWriter<T> writer, T value) {
+	private <T> boolean write(BaseWriter<T> writer, T value, boolean printSuccess) {
 		writer.write(value);
 		if (writer.hasErrors()) {
 			PopUpDialog.getInstance().show("Error", fileFilter + "\nAn error occurred: " + writer.getErrors());
-		} else {
+			return false;
+		} else if (printSuccess) {
 			PopUpDialog.getInstance().show("Information", fileFilter + "\nFile saved");
 		}
+		return true;
 	}
 
-	private void writePNML() {
-		ensureExtension(SuffixAwareFilter.PNML);
-		write(new PNMLOutput(file), GraphInstance.getPathway());
-	}
-
-	private void writeCSV(String simId) {
-		ensureExtension(SuffixAwareFilter.CSV_RESULT);
+	private void writeCSV(String simId, File file) {
 		Pathway pw = GraphInstance.getPathway();
 		// if BN holds PN
-		if(!pw.isPetriNet()){
-			if(pw.getTransformationInformation() == null){
-				return;
-			}
-			if(pw.getTransformationInformation().getPetriNet() == null){
+		if (!pw.isPetriNet()) {
+			if (pw.getTransformationInformation() == null || pw.getTransformationInformation().getPetriNet() == null) {
 				return;
 			}
 			pw = pw.getTransformationInformation().getPetriNet();
@@ -311,87 +186,66 @@ public class SaveDialog {
 		write(new CSVWriter(file, simId), pw);
 	}
 
-	private void writeGraphTextFile() {
-		ensureExtension(SuffixAwareFilter.GRAPH_TEXT_FILE);
-		write(new GraphTextWriter(file), GraphInstance.getPathway());
-	}
-
-	private void writeGraphML() {
-		ensureExtension(SuffixAwareFilter.GRAPH_ML);
-		write(new GraphMLWriter(file), GraphInstance.getPathway());
-	}
-
-	private void writeMO() throws FileNotFoundException {
-		ensureExtension(SuffixAwareFilter.MO);
-		new MOoutput(new FileOutputStream(file), GraphInstance.getPathway(), false);
-		String path_colored = file.getAbsolutePath();
-		if (path_colored.endsWith(".mo")) {
-			path_colored = path_colored.substring(0, path_colored.length() - 3);
+	private void writeMO(File file) {
+		if (!write(new MOoutput(file, false), GraphInstance.getPathway(), false)) {
+			return;
 		}
-		new MOoutput(new FileOutputStream(path_colored + "_colored.mo"), GraphInstance.getPathway(), true);
-		PopUpDialog.getInstance().show("Modelica export", SuffixAwareFilter.MO + " File saved");
-		// JOptionPane.showMessageDialog(MainWindowSingleton.getInstance(),
-		// moDescription + " File saved");
+		String pathColored = file.getAbsolutePath();
+		if (pathColored.endsWith(".mo")) {
+			pathColored = pathColored.substring(0, pathColored.length() - 3);
+		}
+		if (write(new MOoutput(new File(pathColored + "_colored.mo"), true), GraphInstance.getPathway(), false)) {
+			PopUpDialog.getInstance().show("Modelica export", fileFilter + "\nFile saved");
+		}
 	}
 
-	private void writeSBML() throws FileNotFoundException, XMLStreamException {
-		ensureExtension(SuffixAwareFilter.SBML);
+	private void writeSBML(File file) {
 		// create a sbmlOutput object
-		// SBMLoutputNoWS sbmlOutput = new SBMLoutputNoWS(file, new
-		// GraphInstance().getPathway());
-		// //if (sbmlOutput.generateSBMLDocument())
-		// JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
-		// sbmlDescription + sbmlOutput.generateSBMLDocument());
+		// SBMLoutputNoWS sbmlOutput = new SBMLoutputNoWS(file, new GraphInstance().getPathway());
+		// if (sbmlOutput.generateSBMLDocument())
+		// JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), sbmlDescription + sbmlOutput.generateSBMLDocument());
 		if (GraphInstance.getPathway().getFile() == null) {
 			GraphInstance.getPathway().setFile(file);
 		}
 		// TODO creation of FileOutputStream overrides file already, even without call
 		// write() method. Document should be generated first, if no errors thrown, then
 		// create FOS and write to file.
-		JSBMLOutput jsbmlOutput = new JSBMLOutput(new FileOutputStream(file), GraphInstance.getPathway());
-		String out = jsbmlOutput.generateSBMLDocument();
+		String out = "";
+		try {
+			JSBMLOutput jsbmlOutput = new JSBMLOutput(new FileOutputStream(file), GraphInstance.getPathway());
+			out = jsbmlOutput.generateSBMLDocument();
+		} catch (XMLStreamException | FileNotFoundException ex) {
+			PopUpDialog.getInstance().show("Error", fileFilter + "\nAn error occurred: " + ex.getMessage());
+		}
 		if (out.length() > 0) {
-			PopUpDialog.getInstance().show("Error", out);
+			PopUpDialog.getInstance().show("Error", fileFilter + "\nAn error occurred: " + out);
 		} else {
 			GraphContainer.getInstance().renamePathway(GraphInstance.getPathway(), file.getName());
 			GraphInstance.getPathway().setName(file.getName());
 			GraphInstance.getPathway().setTitle(file.getName());
 			MainWindow.getInstance().renameSelectedTab(file.getName());
-			PopUpDialog.getInstance().show("JSbml export", "Saving was successful!");
+			PopUpDialog.getInstance().show("Information", fileFilter + "\nFile saved");
 		}
-		// else
-		// JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
-		// sbmlDescription + " File not saved");
 	}
 
-	private void writeYAML() throws IOException {
-		ensureExtension(SuffixAwareFilter.YAML);
-		String exportPath = chooser.getSelectedFile().getPath();
-		if (!exportPath.contains(".yaml")) {
-			exportPath = exportPath + ".yaml";
-		}
+	private void writeYAML(File file) {
 		if (dataType == DATA_TYPE_VISUALIZATION_SETTINGS) {
+			String exportPath = file.getPath();
+			if (!exportPath.contains(".yaml")) {
+				exportPath = exportPath + ".yaml";
+			}
 			InputStream internYaml = getClass().getClassLoader().getResourceAsStream("NodeProperties.yaml");
 			File exportFile = new File(exportPath);
-			FileOutputStream exportYaml = new FileOutputStream(exportFile);
-			byte[] buffer = new byte[4096];
-			int bytesRead = internYaml.read(buffer);
-			while (bytesRead != -1) {
-				exportYaml.write(buffer, 0, bytesRead);
-				bytesRead = internYaml.read(buffer);
+			try(FileOutputStream exportYaml = new FileOutputStream(exportFile)) {
+				IOUtils.copy(internYaml, exportYaml);
+				internYaml.close();
+			} catch (IOException ex) {
+				PopUpDialog.getInstance().show("Error", fileFilter + "\nAn error occurred: " + ex.getMessage());
 			}
-			internYaml.close();
-			exportYaml.close();
-			PopUpDialog.getInstance().show("Information", SuffixAwareFilter.YAML + " File exported");
+			PopUpDialog.getInstance().show("Information", fileFilter + "\nFile saved");
 			MainWindow.getInstance().setLoadedYaml(exportPath);
 		} else if (dataType == DATA_TYPE_TRANSFORMATION_RULES) {
-			List<Rule> rules = RuleManager.getInstance().getRules();
-			String result = YamlRuleWriter.writeRules(new FileOutputStream(file), rules);
-			if (result.length() > 0) {
-				PopUpDialog.getInstance().show("Error", SuffixAwareFilter.YAML + "an error occurred: " + result);
-			} else {
-				PopUpDialog.getInstance().show("YAML Rules", rules.size() + " rules were written to file!");
-			}
+			write(new YamlRuleWriter(file), RuleManager.getInstance().getRules());
 		}
 	}
 }

@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -686,10 +685,9 @@ public class PetriNetSimulation implements ActionListener {
 					} else {
 						packageInfo = "import PNlib = " + simLib.getName() + ";";
 					}
-					MOoutput mo = new MOoutput(new FileOutputStream(new File(pathSim + "simulation.mo")), pw,
-							packageInfo, false);
+					MOoutput mo = new MOoutput(new File(pathSim + "simulation.mo"), packageInfo, false);
+					mo.write(pw);
 					bea2key = mo.getBea2resultkey();
-					//
 
 					writeMosFile();
 

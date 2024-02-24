@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
+import io.SuffixAwareFilter;
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
 import org.jdesktop.jxlayer.plaf.ext.LockableUI;
@@ -424,7 +425,7 @@ public class MainWindow implements ApplicationListener {
 						e.printStackTrace();
 					}
 				} else {
-					new SaveDialog(SaveDialog.FORMAT_SBML, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+					new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.SBML}, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				}
 			}
 			if (n == -1 || n == 2) {

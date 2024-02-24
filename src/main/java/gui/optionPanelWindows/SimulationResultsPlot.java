@@ -30,6 +30,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import io.SuffixAwareFilter;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.jfree.chart.ChartFactory;
@@ -869,7 +870,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				}
 			}
 		} else if (event.equals("exportSimResult")) {
-			new SaveDialog(SaveDialog.FORMAT_CSV, SaveDialog.DATA_TYPE_SIMULATION_RESULTS);
+			new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.CSV_RESULT}, SaveDialog.DATA_TYPE_SIMULATION_RESULTS);
 
 			// System.out.println("click");
 		}

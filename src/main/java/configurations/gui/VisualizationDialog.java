@@ -28,6 +28,7 @@ import javax.swing.JSeparator;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import io.SuffixAwareFilter;
 import org.yaml.snakeyaml.Yaml;
 
 import biologicalElements.Elementdeclerations;
@@ -152,7 +153,8 @@ public class VisualizationDialog {
 		JButton exportButton = new JButton("Export");
 		exportButton.addActionListener(e -> {
 			if (e.getSource() == exportButton) {
-				new SaveDialog(SaveDialog.FORMAT_YAML, SaveDialog.DATA_TYPE_VISUALIZATION_SETTINGS);
+				new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.YAML},
+						SaveDialog.DATA_TYPE_VISUALIZATION_SETTINGS);
 				loadedYaml = MainWindow.getInstance().getLoadedYaml();
 				loadedYamlLabel.setText(MainWindow.getInstance().getLoadedYaml());
 				shapeBox.setEnabled(true);

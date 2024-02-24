@@ -7,8 +7,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import configurations.SettingsManager;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpHeaders;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -86,5 +93,18 @@ public class VanesaApi {
         } catch (IOException | InterruptedException e) {
             return createExceptionResponse(e);
         }
+    }
+
+    public static InputStream getPathwayFromKegg(String kgmlLink) {
+        final HttpGet request = new HttpGet(kgmlLink);
+        request.setHeader(HttpHeaders.CONTENT_TYPE, "text/xml");
+        request.setHeader(HttpHeaders.REFERER, "https://www.genome.jp/");
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            String response = client.execute(request, new BasicHttpClientResponseHandler());
+            return new ByteArrayInputStream(response.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 }
