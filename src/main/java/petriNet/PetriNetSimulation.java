@@ -78,7 +78,7 @@ public class PetriNetSimulation implements ActionListener {
 	private boolean simExePresent;
 	private StringBuilder logMessage = null;
 	private boolean installationChecked = false;
-	private final String pnLibVersion = "2.2.0";
+	private final String pnLibVersion = "3.0.0";
 
 	// TODO refactored version of threads for simulation needs to be tested and
 	// evaluated. maybe show more hints / error messages
@@ -143,7 +143,8 @@ public class PetriNetSimulation implements ActionListener {
 		if (!installationChecked) {
 			installationChecked = this.checkInstallation();
 			if (!installationChecked) {
-				logAndShow("Installation error. Simulation stopped");
+				logAndShow("Installation error. PNlib is not installed. Simulation stopped");
+				PopUpDialog.getInstance().show("Installation error!", "Installation error. PNlib is not installed. Simulation stopped");
 				return;
 			}
 		}
@@ -426,7 +427,7 @@ public class PetriNetSimulation implements ActionListener {
 		} else if (this.simLib == null && menu.getSimLib() != null) {
 			System.out.println("lib changed");
 			simLibChanged = true;
-		} else if(this.simLib != null && menu.getSimLib() == null){
+		} else if (this.simLib != null && menu.getSimLib() == null) {
 			System.out.println("lib changed");
 			simLibChanged = true;
 		}
@@ -477,6 +478,7 @@ public class PetriNetSimulation implements ActionListener {
 			return true;
 		}
 
+		String message;
 		OMCCommunicator omcCommunicator = new OMCCommunicator(getOMCPath());
 		if (omcCommunicator.isPNLibInstalled()) {
 			// PNlib installed
@@ -485,37 +487,51 @@ public class PetriNetSimulation implements ActionListener {
 			} else {
 				// correct PNlib version not installed
 				if (omcCommunicator.isPackageManagerSupported()) {
-					logAndShow("Correct version of PNlib (version " + pnLibVersion
-							+ ") is not installed. Trying to install ...");
+					message = "Correct version of PNlib (version " + pnLibVersion
+							+ ") is not installed. Trying to install ...";
+					logAndShow(message);
+					PopUpDialog.getInstance().show("PNlib not installed!", message);
 					if (omcCommunicator.isInstallPNlibSuccessful(pnLibVersion)) {
-						logAndShow("Installation of PNlib (version " + pnLibVersion + ") was successful!");
+						message = "Installation of PNlib (version " + pnLibVersion + ") was successful!";
+						logAndShow(message);
+						PopUpDialog.getInstance().show("PNlib installation successful!", message);
 						return true;
 					} else {
-						logAndShow("Installation of PNlib (version " + pnLibVersion
-								+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!");
+						message = "Installation of PNlib (version " + pnLibVersion
+								+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
+						logAndShow(message);
+						PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
 						return menu.getSimLib() != null;
 					}
 				} else {
-					logAndShow("Installation error. PNlib version " + pnLibVersion
-							+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!");
+					message = "Installation error. PNlib version " + pnLibVersion+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
+					logAndShow(message);
+					PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
 					return menu.getSimLib() != null;
 				}
 			}
 		} else {
 			// PNlib not installed
 			if (omcCommunicator.isPackageManagerSupported()) {
-				logAndShow("PNlib is not installed. Trying to install ...");
+				message = "PNlib is not installed. Trying to install ...";
+				logAndShow(message);
+				PopUpDialog.getInstance().show("PNlib installation!", message);
 				if (omcCommunicator.isInstallPNlibSuccessful(pnLibVersion)) {
-					logAndShow("Installation of PNlib (version " + pnLibVersion + ") was successful!");
+					message = "Installation of PNlib (version " + pnLibVersion + ") was successful!";
+					logAndShow(message);
+					PopUpDialog.getInstance().show("PNlib installation successful!", message);
 					return true;
 				} else {
-					logAndShow("Installation of PNlib (version " + pnLibVersion
-							+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!");
+					message = "Installation of PNlib (version " + pnLibVersion
+							+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
+					logAndShow(message);
+					PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
 					return menu.getSimLib() != null;
 				}
 			} else {
-				logAndShow("Installation error. PNlib version " + pnLibVersion
-						+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!");
+				message = "Installation error. PNlib version " + pnLibVersion+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
+				logAndShow(message);
+				PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
 				return menu.getSimLib() != null;
 			}
 		}
@@ -604,7 +620,7 @@ public class PetriNetSimulation implements ActionListener {
 					} else {
 						filter += "'" + bna.getName() + "'.active|";
 						vars++;
-						if(bna instanceof StochasticTransition){
+						if (bna instanceof StochasticTransition) {
 							filter += "'" + bna.getName() + "'.putDelay|";
 							vars++;
 						}
@@ -685,7 +701,8 @@ public class PetriNetSimulation implements ActionListener {
 					} else {
 						packageInfo = "import PNlib = " + simLib.getName() + ";";
 					}
-					MOoutput mo = new MOoutput(new File(pathSim + "simulation.mo"), packageInfo, false);
+					MOoutput mo = new MOoutput(new File(pathSim + "simulation.mo"), packageInfo, menu.getGlobalSeed(),
+							false);
 					mo.write(pw);
 					bea2key = mo.getBea2resultkey();
 

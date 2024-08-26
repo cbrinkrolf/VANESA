@@ -421,7 +421,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			// TODO implement if multiple edges are selected
 		}
 		else if (pickedV == 1 && pickedE == 0) {
-			System.out.println("one picked");
+			//System.out.println("one picked");
 			SimulationResult result;
 			List<SimulationResult> listActive = null;
 			bna = resolveReference(bna);
@@ -464,16 +464,16 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				//System.out.println(result.size());
 				//System.out.println(result.getTime().size());
 				
+				//TODO implement here tokenflow for Stoch Trans
 				if(bna instanceof StochasticTransition){
 					listActive = simResController.getAllActiveWithData(bna, SimulationResultController.SIM_PUT_DELAY);
 					Series s;
 					for(SimulationResult res : listActive){
 						s = res.get(bna, SimulationResultController.SIM_PUT_DELAY);
 						for(int index = 0; index<res.getTime().size(); index++){
-							System.out.println(res.getTime().get(index)+ ":\t "+ s.get(index)+" \t"+res.get(bna, SimulationResultController.SIM_FIRE).get(index));
+							//System.out.println(res.getTime().get(index)+ ":\t "+ s.get(index)+" \t"+res.get(bna, SimulationResultController.SIM_FIRE).get(index));
 						}
 					}
-					
 					
 				}
 				

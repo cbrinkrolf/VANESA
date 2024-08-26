@@ -61,6 +61,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private final String packageInfo;
 	private final boolean colored;
 	private final boolean noIdent = false;
+	private int seed;
 
 	double minX = Double.MAX_VALUE;
 	double minY = Double.MAX_VALUE;
@@ -83,11 +84,12 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private int testArcCount = 0;
 
 	public MOoutput(File file, boolean colored) {
-		this(file, null, colored);
+		this(file, null, 42, colored);
 	}
 
-	public MOoutput(File file, String packageInfo, boolean colored) {
+	public MOoutput(File file, String packageInfo, int seed, boolean colored) {
 		super(file);
+		this.seed = seed;
 		init();
 		this.packageInfo = packageInfo;
 		this.colored = colored;
@@ -159,7 +161,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		// sb.append(indentation + "inner PNlib.Settings settings1();" + ENDL);
 
 		// globalSeed influences stochastic transitions and conflict solving strategy: probability
-		sb.append("parameter Integer seed;");
+		sb.append("parameter Integer seed = "+seed+";").append(ENDL);
 		sb.append(INDENT).append("inner ").append(PNlibSettings)
 				.append(" settings(showTokenFlow = true, globalSeed=seed) annotation(Placement(visible=true, transformation(origin={")
 				.append(minX - 30).append(", ").append(maxY + 30)
