@@ -16,7 +16,7 @@
     </properties>
 
     <build>
-        <finalName>VANESA-v${project.version}</finalName>
+        <finalName>VANESA-v.${project.version}</finalName>
         <plugins>
             <!--<plugin>
                 <groupId>com.github.jinnovations</groupId>
