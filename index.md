@@ -7,22 +7,22 @@ Petri nets can be simulated with the help of an [OpenModelica](https://www.openm
 Both, biological networks and Petri nets can be analyzed by general graph algorithms. Models are saved as SBML files, simulation results can be exported as CSV files, and graph pictures and charts can be saved as SVG, PNG, and PDF files. 
 
 ## Releases
-The latest stable release is [v.0.4](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) which requires a [Java SE 11 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html) installation. It is compatible with OpenModelica 1.17.0 stable release, in case the Petri net simulation is desired.
-The latest pre-release is [v.0.5_pre](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5_pre)
+The latest stable release is [v.0.4](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) which requires a [Java SE 11 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html) installation. It is compatible with OpenModelica 1.17.0.
+
+The latest pre-release is [v.0.5_pre](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5_pre). It is compatible with OpenModelica 1.23.1.
 
 ## Requirements and Installation
-VANESA requires a [Java SE 11 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html) installation to execute the provided jare file. The simulation of Petri nets is based on OpenModelica and its Petri net library PNlib, and thus, an OpenModelica installation is required if the Petri net simulation is desired. A compatible OpenModelica version is given in the release notes, but in general the latest compatible stable release should be used instead of nightly builds. The installation path must **not** contain any whitespaces!. The installation process will also set some environment variables which are needed for VANESA to detect the OpenModelica installation. A compatible version of PNlib is automatically downloaded and installed once the first simulation is executed.
+VANESA requires a [Java SE 11 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html) installation to execute the provided jare file. The simulation of Petri nets is based on OpenModelica and its Petri net library PNlib, and thus, an OpenModelica installation is required if the Petri net simulation is desired. A compatible OpenModelica version is given in the release notes, but in general the latest compatible stable release should be used instead of nightly builds. 
+
+The installation path must **not** contain any whitespaces!. The installation process will also set some environment variables which are needed for VANESA to detect the OpenModelica installation. A compatible version of PNlib is automatically downloaded and installed once the first simulation is executed.
 
 ## Citation
 If you use VANESA as part of your scientific work, please cite the following article:
 
-C. Brinkrolf, C., S. J. Janowski, B. Kormeier, M. Lewinski, K. Hippe, D. Borck, R. Hofestädt
-VANESA - A Software Application for the Visualization and Analysis of Networks in Systems Biology Applications.
-Journal of Integrative Bioinformatics 11(2):239, 2014.
-[DOI: 10.2390/biecoll-jib-2014-239](http://dx.doi.org/10.2390/biecoll-jib-2014-239)
+C. Brinkrolf, C., S. J. Janowski, B. Kormeier, M. Lewinski, K. Hippe, D. Borck, R. Hofestädt *VANESA - A Software Application for the Visualization and Analysis of Networks in Systems Biology Applications*. Journal of Integrative Bioinformatics 11(2):239, 2014. DOI: [10.2390/biecoll-jib-2014-239](http://dx.doi.org/10.2390/biecoll-jib-2014-239)
 
 ## History
-VANESA is an academic software project of the [Bioinformatics / Medical Informatics Department](https://www.techfak.uni-bielefeld.de/ags/bi/) of [Faculty of Technology](https://www.uni-bielefeld.de/(en)/technische-fakultaet/) at [Bielefeld University](https://www.uni-bielefeld.de/%3C-de,en%3E/) in Germany. Its success is the result of the contribution of various people: members of the Bioinformatics / Medical Informatics Department, their supervised students, and further collaborators.  
+VANESA is an academic software project of the [Bioinformatics / Medical Informatics Department](https://www.techfak.uni-bielefeld.de/ags/bi/) of [Faculty of Technology](https://www.uni-bielefeld.de/(en)/fakultaeten/technische-fakultaet/index.xml) at [Bielefeld University](https://www.uni-bielefeld.de/%3C-de,en%3E/) in Germany. Its success is the result of the contribution of various people: members of the Bioinformatics / Medical Informatics Department, their supervised students, and further collaborators.  
 
 Its development started as a student's project, called *network editor*, before it was renamed to VANESA. In the following, a short project history with the key dates is given.
 
@@ -30,7 +30,7 @@ Its development started as a student's project, called *network editor*, before 
 
 - In 2010, the first version,[v.0.1](https://sourceforge.net/projects/vanesa/files/vanesa/0.1/VANESA-0.1.zip/download), was released.
 
-- In 2012, the source code on SourceForge is managed as an [SVN repository](https://sourceforge.net/p/vanesa/code/HEAD/tree/VANESA/).
+- In 2012, the source code at SourceForge is managed as an [SVN repository](https://sourceforge.net/p/vanesa/code/HEAD/tree/VANESA/).
 
 - In 2013, C. Brinkrolf took over the lead development from S. J. Janowski and shifted the focus towards transformation and Petri net simulation. This change of focus is also reflected by a new SVN repository, called [VANESA2](https://sourceforge.net/p/vanesa/code/HEAD/tree/VANESA2/). The last release of the old VANESA / VANESA 1 SVN repository is [v.0.1.9](https://sourceforge.net/projects/vanesa/files/vanesa/0.1/VANESA-0.1.9.jar/download) and requires Java 8. All following releases are based on the VANESA2 repository.
 
