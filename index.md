@@ -1,32 +1,63 @@
 ## Overview
-VANESA is an open-source software project which aims to support scientist in the workflow of systems biology application cases. It provides a graphical user interface (GUI) and the general modeling approach is based on graphs. For **Modeling**, either biological networks or Petri nets can be chosen. Beside start modeling from scratch, a biological network can be retrieved from an data warehouse via web service. 
 
-Petri nets can be simulated with the help of an [OpenModelica](https://www.openmodelica.org/) installation. Simulation results are made available for further investigation during process of **simulation**.
+VANESA is an open-source software project which aims to support scientist in the workflow of systems biology application cases. It provides a graphical user interface (GUI) and the general modeling approach is based on graphs. For **Modeling**, either biological networks or Petri nets can be chosen. Beside start modeling from scratch, a biological network can be retrieved from an data warehouse via web service. For the **simulation** of a biological network, it can be automatically **transformed** into a Petri net by a customizable set of transformation rules.  
 
-Both, biological networks as well as Petri nets, can be analyzed by general graph algorithms. Models are saved as SBML file, simulation results can be exported as CSV files, and graph pictures and charts can be saved as SVG, PNG and PDF files. 
+Petri nets can be simulated with the help of an [OpenModelica](https://www.openmodelica.org/) installation. Simulation results are made available for further investigation during the process of **simulation**.
+
+Both, biological networks and Petri nets can be analyzed by general graph algorithms. Models are saved as SBML files, simulation results can be exported as CSV files, and graph pictures and charts can be saved as SVG, PNG, and PDF files. 
 
 ## Releases
-The latest release is [pre-v.0.4](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) which requires a [Java SE 11 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html) installation. It is compatible with OpenModelica 1.17.0 stable release, in case Petri net simulation is desired.
+The latest stable release is [v.0.4](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) which requires a [Java SE 11 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html) installation. It is compatible with OpenModelica 1.17.0 stable release, in case the Petri net simulation is desired.
+The latest pre-release is [v.0.5_pre](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5_pre)
 
-The last relese of VANESA1 is [v.0.1.9](https://sourceforge.net/projects/vanesa/files/vanesa/0.1/VANESA-0.1.9.jar/download). It is based on the old VANESA branch of the former [SourceForge SVN repository](https://sourceforge.net/p/vanesa/code/HEAD/tree/VANESA/) and requires Java 1.8 runtime. 
-
-## Installation
-Unless simulation is desired, installation of Java SE 11+ and executing the provided jar file is sufficient. Simulation of Petri nets is based on OpenModelica. The latest compatible stable release should be used instead of nightly builds. The installation path must not contain any whitespaces! During installation process, make sure that you select PNlib as library to install. By default, all third party libraries will be installed. The installation process will also set some environment variables which are needed for VANESA to detect the OpenModelica installation.
-
-## Further project information
-TBA
-### Publications
-TBA
-### Links
-TBA
+## Requirements and Installation
+VANESA requires a [Java SE 11 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html) installation to execute the provided jare file. The simulation of Petri nets is based on OpenModelica and its Petri net library PNlib, and thus, an OpenModelica installation is required if the Petri net simulation is desired. A compatible OpenModelica version is given in the release notes, but in general the latest compatible stable release should be used instead of nightly builds. The installation path must **not** contain any whitespaces!. The installation process will also set some environment variables which are needed for VANESA to detect the OpenModelica installation. A compatible version of PNlib is automatically downloaded and installed once the first simulation is executed.
 
 ## Citation
-If you used VANESA as part of your scientific work, please cite the following article:
+If you use VANESA as part of your scientific work, please cite the following article:
 
 C. Brinkrolf, C., S. J. Janowski, B. Kormeier, M. Lewinski, K. Hippe, D. Borck, R. Hofestädt
 VANESA - A Software Application for the Visualization and Analysis of Networks in Systems Biology Applications.
 Journal of Integrative Bioinformatics 11(2):239, 2014.
 [DOI: 10.2390/biecoll-jib-2014-239](http://dx.doi.org/10.2390/biecoll-jib-2014-239)
 
-## About
-VANESA is an academic software project of the [Bioinformatics / Medical Informatics Department](https://www.techfak.uni-bielefeld.de/ags/bi/) of [Faculty of Technology](https://www.uni-bielefeld.de/(en)/technische-fakultaet/) at [Bielefeld University](https://www.uni-bielefeld.de/%3C-de,en%3E/) in Germany and its development started more than 10 years ago. 
+## History
+VANESA is an academic software project of the [Bioinformatics / Medical Informatics Department](https://www.techfak.uni-bielefeld.de/ags/bi/) of [Faculty of Technology](https://www.uni-bielefeld.de/(en)/technische-fakultaet/) at [Bielefeld University](https://www.uni-bielefeld.de/%3C-de,en%3E/) in Germany. Its success is the result of the contribution of various people: members of the Bioinformatics / Medical Informatics Department, their supervised students, and further collaborators.  
+
+Its development started as a student's project, called *network editor*, before it was renamed to VANESA. In the following, a short project history with the key dates is given.
+
+- In 2009, VANESA was registered at [SourceForge](https://sourceforge.net/projects/vanesa/) where the source code (as a CVS repository which is now deleted) and releases are managed.
+
+- In 2010, the first version,[v.0.1](https://sourceforge.net/projects/vanesa/files/vanesa/0.1/VANESA-0.1.zip/download), was released.
+
+- In 2012, the source code on SourceForge is managed as an [SVN repository](https://sourceforge.net/p/vanesa/code/HEAD/tree/VANESA/).
+
+- In 2013, C. Brinkrolf took over the lead development from S. J. Janowski and shifted the focus towards transformation and Petri net simulation. This change of focus is also reflected by a new SVN repository, called [VANESA2](https://sourceforge.net/p/vanesa/code/HEAD/tree/VANESA2/). The last release of the old VANESA / VANESA 1 SVN repository is [v.0.1.9](https://sourceforge.net/projects/vanesa/files/vanesa/0.1/VANESA-0.1.9.jar/download) and requires Java 8. All following releases are based on the VANESA2 repository.
+
+- In 2021, the development moved from SourceForge to [GitHub](https://github.com/cbrinkrolf/VANESA) and the VANESA2 SVN was converted into a GIT repository.
+
+## Theses
+Besides multiple Bachelor and Master theses, two dissertations shaped the direction of VANESA:
+
+- Janowski SJ. *VANESA - A bioinformatics software application for the modeling, visualization, analysis, and simulation of biological networks in systems biology applications*. Bielefeld: [Bielefeld University; 2013.](http://nbn-resolving.de/urn:nbn:de:hbz:361-25943227) 
+- Brinkrolf C. *On Quantitative Modeling and Simulation of Biological Systems: An Open-Source Approach Using Biological Networks and Rule-Based Transformation to Hybrid Functional Petri Nets*. Bielefeld: [Universität Bielefeld; 2023. ](https://doi.org/10.4119/unibi/2985333)
+
+## Publications
+VANESA was involved in the following publications:
+
+- S. Janowski, B. Kormeier, T. Töpel, K. Hippe, R. Hofestädt, N. Willassen, R. Friesen, S. Rubert, D. Borck, P. Haugen, M. Chen. *Modeling of cell-to-cell communication processes with Petri nets using the example of quorum sensing.* In Silico Biology 10:0003, 2010. Online Journal: [https://doi.org/10.3233/isb-2010-0418](https://doi.org/10.3233/isb-2010-0418)
+- C. Klenke, S. Janowski, D. Borck, D. Widera, L. A. Ebmeyer, J. Kalinowski, A. Leichtle, R. Hofestädt, T. Upile, C. Kaltschmidt, B. Kaltschmidt, and H. Sudhoff *Identification of Novel Cholesteatoma-related Gene Expression Signatures Using Full-genome Microarrays*. PloS One, 2012. Online Journal: [https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0052718](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0052718)
+- Janowski SJ. *VANESA - A bioinformatics software application for the modeling, visualization, analysis, and simulation of biological networks in systems biology applications*. Bielefeld: [Bielefeld University; 2013.](http://nbn-resolving.de/urn:nbn:de:hbz:361-25943227) 
+- C. Brinkrolf, C., S. J. Janowski, B. Kormeier, M. Lewinski, K. Hippe, D. Borck, R. Hofestädt *VANESA - A Software Application for the Visualization and Analysis of Networks in Systems Biology Applications*. Journal of Integrative Bioinformatics 11(2):239, 2014. DOI: [10.2390/biecoll-jib-2014-239](http://dx.doi.org/10.2390/biecoll-jib-2014-239) 
+- S. J. Janowski, B. Kaltschmidt, C. Kaltschmidt *Biological Netowrk Modeling and Analysis* in M. Chen, R. Hofestädt (eds): Approaches in Integrative Bioinformatics - Towards the Virtual Cell, ISBN:3642412807, Springer Verlag, 203-244, 2014. DOI: [10.1007/978-3-642-41281-3_8](http://dx.doi.org/10.1007/978-3-642-41281-3_8)
+- H. Hamzeiy, R. Suluyayla, C. Brinkrolf, S. Janowski, R. Hofestädt, J. Allmer *Visualization and Analysis of Micro RNAs within KEGG Pathways using VANESA*. Journal of Integrative Bioinformatics 14(1), 2017. DOI: [10.1515/jib-2016-0004](https://doi.org/10.1515/jib-2016-0004)
+- H. Hamzeiy, R. Suluyayla, C. Brinkrolf, S. J. Janowski, R. Hofestädt, J. Allmer *Visualization and Analysis of miRNAs Implicated in Amyotrophic Lateral Sclerosis Within Gene Regulatory Pathways* IOS Press in the Studies in Health Technologies and Informatics series 253:183-187, 2018. DOI: [10.3233/978-1-61499-896-9-183](http://dx.doi.org/10.3233/978-1-61499-896-9-183)
+- C. Brinkrolf, N. A. Henke, L. Ochel, B. Pucker, O. Kruse, P. Lutter *Modeling and Simulating the Aerobic Carbon Metabolism of a Green Microalga Using Petri Nets and New Concepts of VANESA* Journal of Integrative Bioinformatics 15(3), 2018. DOI: [10.1515/jib-2018-0018](http://dx.doi.org/10.1515/jib-2018-0018)
+- C. Brinkrolf, L. Ochel, R. Hofestädt *VANESA: An open-source hybrid functional Petri net modeling and simulation environment in systems biology* Biosystems, 2021;210:104531. DOI: [10.1016/j.biosystems.2021.104531](http://dx.doi.org/10.1016/j.biosystems.2021.104531)
+- C. Brinkrolf, L. Ochel *Comprehensive Open-Source Petri Net Toolchain for Modeling and Simulation in Systems Biology* in M. Chen, R. Hofestädt (eds): Integrative Bioinformatics - History and Future, Springer Singapore, 2022. [DOI: 10.1007/978-981-16-6795-4_13](http://dx.doi.org/10.1007/978-981-16-6795-4_13)
+- Brinkrolf C. *On Quantitative Modeling and Simulation of Biological Systems: An Open-Source Approach Using Biological Networks and Rule-Based Transformation to Hybrid Functional Petri Nets*. Bielefeld: [Universität Bielefeld; 2023. ](https://doi.org/10.4119/unibi/2985333)
+
+### Links
+- OpenModelica [website](https://openmodelica.org/) and [GitHub](https://github.com/OpenModelica/OpenModelica)
+- PNlib, an open-source Modelica Petri net library on [GitHub](https://github.com/AMIT-HSBI/PNlib)
+- VANESA on [SourceForge](https://sourceforge.net/projects/vanesa/)
