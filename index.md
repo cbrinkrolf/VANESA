@@ -28,7 +28,7 @@ Its development started as a student's project, called *network editor*, before 
 
 - In 2009, VANESA was registered at [SourceForge](https://sourceforge.net/projects/vanesa/) where the source code (as a CVS repository which is now deleted) and releases are managed.
 
-- In 2010, the first version,[v.0.1](https://sourceforge.net/projects/vanesa/files/vanesa/0.1/VANESA-0.1.zip/download), was released.
+- In 2010, the first version, [v.0.1](https://sourceforge.net/projects/vanesa/files/vanesa/0.1/VANESA-0.1.zip/download), was released.
 
 - In 2012, the source code at SourceForge is managed as an [SVN repository](https://sourceforge.net/p/vanesa/code/HEAD/tree/VANESA/).
 
