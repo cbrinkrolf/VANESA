@@ -39,8 +39,13 @@ public class MyVertexDrawPaintFunction implements Function<BiologicalNodeAbstrac
     private Paint withoutGraphTheory(BiologicalNodeAbstract v) {
         boolean medium_check = false;
         if (v instanceof Transition) {
-            if (((Transition) v).isSimulationActive()) {
-                return Color.red;
+        	Transition t = (Transition) v;
+        	if(t.isSimulationFire()){
+        		return Color.RED;
+        	}
+            if (t.isSimulationActive()) {
+            	// nice orange color
+                return new Color(255,100,0);
             }
         }
 

@@ -9,6 +9,7 @@ import graph.jung.graphDrawing.VertexShapes;
 
 public class Transition extends PNNode {
 	private boolean simulationActive;
+	private boolean simulationFire;
 	private String firingCondition = "true";// "time>9.8";
 	private boolean knockedOut = false;
 
@@ -32,6 +33,14 @@ public class Transition extends PNNode {
 
 	public void setSimulationActive(boolean simulationActive) {
 		this.simulationActive = simulationActive;
+	}
+	
+	public boolean isSimulationFire() {
+		return simulationFire;
+	}
+
+	public void setSimulationFire(boolean simulationFire) {
+		this.simulationFire = simulationFire;
 	}
 
 	public String getFiringCondition() {
