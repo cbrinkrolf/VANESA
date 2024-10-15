@@ -122,9 +122,9 @@ public class SimulationResult {
 		for (PNArc arc : arcs) {
 			double delay;
 			if (arc.getFrom() instanceof DiscreteTransition) {
-				delay = ((DiscreteTransition) arc.getFrom()).getDelay();
+				delay = 1;// ((DiscreteTransition) arc.getFrom()).getDelay();
 			} else if (arc.getTo() instanceof DiscreteTransition) {
-				delay = ((DiscreteTransition) arc.getTo()).getDelay();
+				delay = 1;// ((DiscreteTransition) arc.getTo()).getDelay();
 			} else {
 				continue;
 			}

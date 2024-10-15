@@ -263,7 +263,7 @@ public class PetriNetVertexDialog {
 				} else if (petriElement.equals(Elementdeclerations.discreteTransition)) {
 					DiscreteTransition t = new DiscreteTransition(name.getText().trim(), name.getText().trim());
 					if (!pw.isHeadless()) {
-						t.setDelay(Double.parseDouble(delay.getText().trim()));
+						t.setDelay(delay.getText().trim());
 						t.setFiringCondition(firingCondition.getText().trim());
 					}
 					createdNode = t;

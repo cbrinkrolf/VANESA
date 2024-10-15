@@ -411,7 +411,7 @@ public class JSBMLInput {
                         case Elementdeclerations.discreteTransition:
                             elSub = specAnnotation.getChild("delay", null);
                             attr = String.valueOf(elSub.getAttributeValue("delay"));
-                            ((biologicalObjects.nodes.petriNet.DiscreteTransition) bna).setDelay(Double.parseDouble(attr));
+                            ((biologicalObjects.nodes.petriNet.DiscreteTransition) bna).setDelay(attr);
                             break;
                         case Elementdeclerations.continuousTransition:
                             elSub = specAnnotation.getChild("maximalSpeed", null);

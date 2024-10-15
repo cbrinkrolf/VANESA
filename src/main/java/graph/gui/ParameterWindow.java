@@ -6,6 +6,7 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import graph.ChangedFlags;
 import graph.GraphInstance;
 import gui.MainWindow;
@@ -43,18 +44,20 @@ public class ParameterWindow implements DocumentListener {
 	private JRadioButton buttonIrrev;
 	private boolean recentRev = false;
 	private int recentComboBoxIndex = 0;
+	private boolean isFunctionBuilder = false;
 
 	private static final String KINETIC_CONVENIENCE = "Convenience kinetic";
 	private static final String KINETIC_LAW_OF_MASS_ACTION = "Law of mass action";
 
 	public ParameterWindow(GraphElementAbstract gea) {
 		frame = new JFrame("Parameters");
-		
-		if(gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition) {
+
+		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract || gea instanceof ContinuousTransition
+				|| gea instanceof DiscreteTransition) {
+			isFunctionBuilder = true;
 			frame.setTitle("Function Builder");
 		}
-			
-			
+
 		this.gea = gea;
 		MigLayout layout = new MigLayout("", "[left]");
 		panel = new JPanel(layout);
@@ -87,8 +90,7 @@ public class ParameterWindow implements DocumentListener {
 			}
 		});
 
-		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract
-				|| gea instanceof ContinuousTransition) {
+		if (isFunctionBuilder) {
 			PropertyChangeListener pcListener = evt -> frame.pack();
 			String function = "";
 			if (gea instanceof DynamicNode) {
@@ -97,6 +99,8 @@ public class ParameterWindow implements DocumentListener {
 				function = ((BiologicalEdgeAbstract) gea).getFunction();
 			} else if (gea instanceof ContinuousTransition) {
 				function = ((ContinuousTransition) gea).getMaximalSpeed();
+			} else if(gea instanceof DiscreteTransition){
+				function = ((DiscreteTransition) gea).getDelay();
 			}
 			fp = new FormulaPanel(formula, function, pcListener);
 			fp.setVisible(true);
@@ -134,8 +138,7 @@ public class ParameterWindow implements DocumentListener {
 	}
 
 	private void onOkClicked() {
-		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract
-				|| gea instanceof ContinuousTransition) {
+		if (isFunctionBuilder) {
 			String formula = fp.getFormula();
 			String formulaClean = formula.replaceAll("\\s", "");
 			boolean changed = false;
@@ -158,6 +161,13 @@ public class ParameterWindow implements DocumentListener {
 				String orgClean = t.getMaximalSpeed().replaceAll("\\s", "");
 				if (!orgClean.equals(formulaClean)) {
 					t.setMaximalSpeed(formula);
+					changed = true;
+				}
+			} else if(gea instanceof DiscreteTransition){
+				DiscreteTransition t = (DiscreteTransition) gea;
+				String orgClean = t.getDelay().replaceAll("\\s", "");
+				if (!orgClean.equals(formulaClean)) {
+					t.setDelay(formula);
 					changed = true;
 				}
 			}
@@ -234,8 +244,7 @@ public class ParameterWindow implements DocumentListener {
 	}
 
 	private void onSetValuesClicked() {
-		if (gea instanceof DynamicNode && gea instanceof BiologicalNodeAbstract
-				|| gea instanceof ContinuousTransition) {
+		if (isFunctionBuilder) {
 			new ParameterSearcher((BiologicalNodeAbstract) gea, true, this::repaintPanel);
 		}
 	}
@@ -326,8 +335,7 @@ public class ParameterWindow implements DocumentListener {
 
 	private void repaintPanel() {
 		panel.removeAll();
-		if (gea instanceof DynamicNode || gea instanceof BiologicalEdgeAbstract
-				|| gea instanceof ContinuousTransition) {
+		if (isFunctionBuilder) {
 			panel.add(fp, "span 20, wrap");
 		}
 		if (gea instanceof DynamicNode || gea instanceof ContinuousTransition) {

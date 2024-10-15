@@ -822,7 +822,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			p.add(hideNeighbours, "flowx, split 2");
 		}
 
-		if (ab instanceof DynamicNode || ab instanceof BiologicalEdgeAbstract || ab instanceof ContinuousTransition) {
+		if (ab instanceof DynamicNode || ab instanceof BiologicalEdgeAbstract || ab instanceof ContinuousTransition || ab instanceof DiscreteTransition) {
 			parametersButton.setText("Function Builder");
 			parametersButton.setToolTipText("Build function and edit parameters");
 		} else {

@@ -6,7 +6,7 @@ import java.util.List;
 import biologicalElements.Elementdeclerations;
 
 public class DiscreteTransition extends Transition {
-    private double delay = 1;
+    private String delay = "1";
 
     public DiscreteTransition(String label, String name) {
         super(label, name);
@@ -14,11 +14,11 @@ public class DiscreteTransition extends Transition {
         setColor(Color.WHITE);
     }
 
-    public double getDelay() {
+    public String getDelay() {
         return delay;
     }
 
-    public void setDelay(double delay) {
+    public void setDelay(String delay) {
         this.delay = delay;
     }
 

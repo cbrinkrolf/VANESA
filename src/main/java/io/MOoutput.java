@@ -255,6 +255,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		DiscreteTransition dt;
 		ContinuousTransition ct;
 		String speed;
+		String delay;
 		Transition t;
 		StringBuilder attr = new StringBuilder();
 		for (BiologicalNodeAbstract bna : nodes) {
@@ -360,7 +361,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 				} else if (biologicalElement.equals(Elementdeclerations.discreteTransition)) {
 
 					dt = (DiscreteTransition) bna;
-					attr.append("delay=" + dt.getDelay());
+					delay = this.replaceAll(dt.getDelay(), dt.getParameters(), dt);
+					attr.append("delay=" + delay);
 					// places = places.concat(getTransitionString(bna,
 					// getModelicaString(t), bna.getName(), atr, in, out));
 

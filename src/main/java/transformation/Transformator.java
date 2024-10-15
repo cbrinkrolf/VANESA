@@ -1177,8 +1177,8 @@ public class Transformator {
 					if (petriNode instanceof DiscreteTransition) {
 						// d = this.evalParameter(possibleParams, value, Double.class, match);
 						// if (d != null) {
-						d = evaluateDouble(value);
-						((DiscreteTransition) petriNode).setDelay(d);
+						//d = evaluateDouble(value);
+						((DiscreteTransition) petriNode).setDelay(value);
 						// }
 					}
 				}

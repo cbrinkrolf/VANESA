@@ -203,10 +203,8 @@ public class PropertyWindowListener implements FocusListener, ItemListener {
 			if (geb instanceof DiscreteTransition) {
 				DiscreteTransition p = (DiscreteTransition) geb;
 				text = ((JTextField) event.getSource()).getText().trim();
-				if (!"".equals(text) && !text.equals(String.valueOf(p.getDelay()))) {
-					// TODO delay should be a function!
-					double delay = Double.parseDouble(text);
-					p.setDelay(delay);
+				if (!"".equals(text) && !text.equals(p.getDelay())) {
+					p.setDelay(text.trim());
 					pw.handleChangeFlags(ChangedFlags.PNPROPERTIES_CHANGED);
 				}
 			}
