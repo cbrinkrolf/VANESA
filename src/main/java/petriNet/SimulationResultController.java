@@ -16,7 +16,10 @@ public class SimulationResultController {
 	// for transitions
 	public static int SIM_ACTUAL_FIRING_SPEED = 0;
 	public static int SIM_FIRE = 2;
-	public static int SIM_PUT_DELAY = 5;
+	public static int SIM_ACTIVE = 5;
+	public static int SIM_PUT_DELAY = 6;
+	public static int SIM_FIRE_TIME = 7;
+	public static int SIM_DELAY = 8;
 
 	// for edges
 	public static int SIM_SUM_OF_TOKEN = 3;

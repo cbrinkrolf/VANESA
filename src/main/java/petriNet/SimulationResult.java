@@ -6,6 +6,7 @@ import java.util.Set;
 import biologicalElements.GraphElementAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
+import biologicalObjects.nodes.petriNet.StochasticTransition;
 import util.DoubleHashMap;
 
 public class SimulationResult {
@@ -113,22 +114,24 @@ public class SimulationResult {
 		return this.time.size();
 	}
 
-	public void refineEdgeFlow(Set<PNArc> edges) {
+	public void refineEdgeFlow(Set<PNArc> arcs) {
 		// so far only for edges connecting discrete transition (not yet stochastic)
-		// TODO proper calculation of delay (based on returned values of delay from simulation, esp. if delay is not a constant value, use .putDelay for stoch. Trans.
-		for (PNArc e : edges) {
+		// TODO proper calculation of delay (based on returned values of delay from
+		// simulation, esp. if delay is not a constant value, use .putDelay for stoch.
+		// Trans.
+		for (PNArc arc : arcs) {
 			double delay;
-			if (e.getFrom() instanceof DiscreteTransition) {
-				delay = ((DiscreteTransition) e.getFrom()).getDelay();
-			} else if (e.getTo() instanceof DiscreteTransition) {
-				delay = ((DiscreteTransition) e.getTo()).getDelay();
+			if (arc.getFrom() instanceof DiscreteTransition) {
+				delay = ((DiscreteTransition) arc.getFrom()).getDelay();
+			} else if (arc.getTo() instanceof DiscreteTransition) {
+				delay = ((DiscreteTransition) arc.getTo()).getDelay();
 			} else {
 				continue;
 			}
-			if (result.contains(e, SimulationResultController.SIM_SUM_OF_TOKEN) &&
-				result.get(e, SimulationResultController.SIM_SUM_OF_TOKEN).size() > 0 &&
-				!result.contains(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW)) {
-				Series sum = result.get(e, SimulationResultController.SIM_SUM_OF_TOKEN);
+			if (result.contains(arc, SimulationResultController.SIM_SUM_OF_TOKEN)
+					&& result.get(arc, SimulationResultController.SIM_SUM_OF_TOKEN).size() > 0
+					&& !result.contains(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW)) {
+				Series sum = result.get(arc, SimulationResultController.SIM_SUM_OF_TOKEN);
 				double midTime = delay * 0.5;
 				double lastToken = 0;
 				int revisedTime = 0;
@@ -139,8 +142,8 @@ public class SimulationResult {
 						if (midTime > delay) {
 							for (int j = revisedTime; j <= i; j++) {
 								if (time.get(j) <= time.get(revisedTime) + delay) {
-									addValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW,
-											 currentToken - lastToken);
+									addValue(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW,
+											currentToken - lastToken);
 								} else {
 									revisedTime = j;
 									lastToken = currentToken;
@@ -153,8 +156,65 @@ public class SimulationResult {
 				}
 				currentToken = sum.get(sum.size() - 1);
 				for (int i = revisedTime; i < time.size(); i++) {
-					addValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, currentToken - lastToken);
+					addValue(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, currentToken - lastToken);
 				}
+			}
+		}
+	}
+
+	public void refineStochasticTransitionIsFiring(Set<StochasticTransition> transitions) {
+		Series putDelayS;
+		Series fireTimeS;
+		Series delayS;
+		Series fireS;
+		Double fireTime;
+		Double putDelay;
+		int lastIdx;
+		
+		for (StochasticTransition t : transitions) {
+
+			putDelayS = result.get(t, SimulationResultController.SIM_PUT_DELAY);
+
+			for (int i = 0; i < getTime().size(); i++) {
+				addValue(t, SimulationResultController.SIM_DELAY, 0.0);
+				addValue(t, SimulationResultController.SIM_FIRE, 0.0);
+			}
+
+			fireTimeS = get(t, SimulationResultController.SIM_FIRE_TIME);
+			delayS = get(t, SimulationResultController.SIM_DELAY);
+			fireS = get(t, SimulationResultController.SIM_FIRE);
+
+			fireTime = fireTimeS.get(0);
+			putDelay = putDelayS.get(0);
+
+			lastIdx = 0;
+			for (int index = 1; index < getTime().size(); index++) {
+				// System.out.println("t: " + res.getTime().get(index) + " delay: " +
+				// delayS.get(index));
+				// fire event occurred
+				// System.out.println(fireTime + " " + fireTimeS.get(index));
+				if (fireTimeS.get(index) - fireTime > 0.0) {
+					//System.out.println("fired at time: " + getTime().get(index));
+					for (int j = lastIdx; j < index; j++) {
+						//System.out.println("time: "+getTime().get(index)+ " putDelay: "+putDelay);
+						//System.out.println(getTime().get(j) + " >= " + (getTime().get(index) - putDelay));
+						if (getTime().get(j) >= getTime().get(index) - putDelay) {
+							delayS.setValue(j - 1, putDelay);
+							fireS.setValue(j - 1, 1.0);
+							// System.out.println(
+							// "t: " + res.getTime().get(j) + " put Delay of: " + delayS.get(j));
+						} else {
+							//System.out.println("t: " + getTime().get(j) + " kleiner: " +
+							// delayS.get(j));
+						}
+					}
+					delayS.setValue(index - 1, putDelay);
+					fireS.setValue(index - 1, 1.0);
+					lastIdx = index;
+				}
+
+				fireTime = get(t, SimulationResultController.SIM_FIRE_TIME).get(index);
+				putDelay = putDelayS.get(index);
 			}
 		}
 	}

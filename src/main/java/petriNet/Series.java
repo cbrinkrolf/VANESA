@@ -25,4 +25,8 @@ public class Series {
 	public int size(){
 		return values.size();
 	}
+	
+	public void setValue(int index, Double d){
+		values.set(index, d);
+	}
 }

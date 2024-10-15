@@ -30,7 +30,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import io.SuffixAwareFilter;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.jfree.chart.ChartFactory;
@@ -57,6 +56,8 @@ import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.PNNode;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
@@ -67,6 +68,7 @@ import graph.jung.graphDrawing.VertexShapes;
 import gui.DetailedSimRes;
 import gui.MainWindow;
 import io.SaveDialog;
+import io.SuffixAwareFilter;
 import net.miginfocom.swing.MigLayout;
 import petriNet.AnimationThread;
 import petriNet.Series;
@@ -127,20 +129,22 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	private int animationSpeedInit = 20;
 
 	// private ArrayList<Place> plotEntities = new ArrayList<Place>();
-
+	// TODO keep slider position while switching/selecting elements
+	
+	// TODO should contain places only??
 	private ArrayList<BiologicalNodeAbstract> places;
 
-	private ArrayList<XYSeries> seriesListR1 = new ArrayList<XYSeries>();
-	private ArrayList<XYSeries> seriesListR2 = new ArrayList<XYSeries>();
+	private ArrayList<XYSeries> seriesListR1 = new ArrayList<>();
+	private ArrayList<XYSeries> seriesListR2 = new ArrayList<>();
 	private int r1Count = 0;
 	private int r2Count = 0;
 
 	private XYSeriesCollection dataset = new XYSeriesCollection();
 	private XYSeriesCollection dataset2 = new XYSeriesCollection();
 
-	private TripleHashMap<GraphElementAbstract, Integer, String, Integer> series2idx = new TripleHashMap<GraphElementAbstract, Integer, String, Integer>();
-	private HashMap<Integer, SimulationResult> idx2simR1 = new HashMap<Integer, SimulationResult>();
-	private HashMap<Integer, SimulationResult> idx2simR2 = new HashMap<Integer, SimulationResult>();
+	private TripleHashMap<GraphElementAbstract, Integer, String, Integer> series2idx = new TripleHashMap<>();
+	private HashMap<Integer, SimulationResult> idx2simR1 = new HashMap<>();
+	private HashMap<Integer, SimulationResult> idx2simR2 = new HashMap<>();
 	// private HashMap<XYSeries, Integer> series2id = new HashMap<XYSeries,
 	// Integer>();
 
@@ -153,9 +157,11 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 	private static int TOKEN = SimulationResultController.SIM_TOKEN;
 	private static int ACTUAL_FIRING_SPEED = SimulationResultController.SIM_ACTUAL_FIRING_SPEED;
-	public static int FIRE = SimulationResultController.SIM_FIRE;
-	public static int SUM_OF_TOKEN = SimulationResultController.SIM_SUM_OF_TOKEN;
-	public static int ACTUAL_TOKEN_FLOW = SimulationResultController.SIM_ACTUAL_TOKEN_FLOW;
+	private static int ACTIVE = SimulationResultController.SIM_ACTIVE;
+	private static int FIRE = SimulationResultController.SIM_FIRE;
+	private static int DELAY = SimulationResultController.SIM_DELAY;
+	private static int SUM_OF_TOKEN = SimulationResultController.SIM_SUM_OF_TOKEN;
+	private static int ACTUAL_TOKEN_FLOW = SimulationResultController.SIM_ACTUAL_TOKEN_FLOW;
 
 	private Set<XYSeries> dirtyVisibleSeries = new HashSet<>();
 	private Set<XYSeries> dirtyVisibleSeriesR1 = new HashSet<>();
@@ -263,7 +269,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				slider.setMaximum(rowsDim - 1);
 				slider.setMajorTickSpacing(1);
 				slider.addChangeListener(this);
-				slider.setToolTipText("Time: 0");
+				
+				slider.setToolTipText("Step: 0, use arrow keys for single steps");
 				slider.setValue(0);
 
 				controlPanel = new JPanel(new MigLayout());
@@ -316,7 +323,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						if (node instanceof Transition) {
 							// System.out.println(node.getName());
 							if (simRes.contains(node)) {
-								ref = simRes.get(node, FIRE).get(slider.getValue());
+								ref = simRes.get(node, ACTIVE).get(slider.getValue());
 								if (ref == 1) {
 									((Transition) node).setSimulationActive(true);
 								} else {
@@ -403,25 +410,18 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 					renderer.setSeriesVisible(idxFlow, true);
 					renderer2.setSeriesVisible(idxSum, true);
-					
-				//// DEBUGGIMG test code
-					//System.out.println(result.getTime().size());
-					//System.out.println(result.get(edge, ));
-					
-					
-					
+
+					//// DEBUGGIMG test code
+					// System.out.println(result.getTime().size());
+					// System.out.println(result.get(edge, ));
+
 				}
-				
-				
-				
-				
-				
+
 			}
-		} else if(pickedV == 0 && pickedE > 1){
+		} else if (pickedV == 0 && pickedE > 1) {
 			// TODO implement if multiple edges are selected
-		}
-		else if (pickedV == 1 && pickedE == 0) {
-			//System.out.println("one picked");
+		} else if (pickedV == 1 && pickedE == 0) {
+			// System.out.println("one picked");
 			SimulationResult result;
 			List<SimulationResult> listActive = null;
 			bna = resolveReference(bna);
@@ -431,9 +431,12 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				PNNode pn = (PNNode) bna;
 				if (bna instanceof Place) {
 					listActive = simResController.getAllActiveWithData(bna, TOKEN);
-				} else if (bna instanceof Transition) {
+				} else if (bna instanceof ContinuousTransition) {
 					listActive = simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED);
 					legendY = "Speed";
+				} else {
+					listActive = simResController.getAllActiveWithData(bna, DELAY);
+					legendY = "Delay";
 				}
 				Color c;
 				for (int i = 0; i < listActive.size(); i++) {
@@ -441,8 +444,11 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					int idx = 0;
 					if (bna instanceof Place) {
 						idx = series2idx.get(bna, TOKEN, result.getId());
-					} else if (bna instanceof Transition) {
+					} else if (bna instanceof ContinuousTransition) {
 						idx = series2idx.get(bna, ACTUAL_FIRING_SPEED, result.getId());
+					} else {
+						idx = series2idx.get(bna, DELAY, result.getId());
+						// System.out.println(idx);
 					}
 
 					renderer.setSeriesVisible(idx, true);
@@ -453,30 +459,103 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					// System.out.println("stroke set");
 					c = Color.getHSBColor(i * 1.0f / (listActive.size()), 1, 1);
 					if (listActive.size() == 1) {
-						//renderer.setSeriesPaint(idx, pn.getPlotColor());
+						// renderer.setSeriesPaint(idx, pn.getPlotColor());
 						renderer.setSeriesPaint(idx, Color.red);
 					} else {
 						renderer.setSeriesPaint(idx, c);
 					}
 				}
-				
+
 				///// DEBUG testing code
-				//System.out.println(result.size());
-				//System.out.println(result.getTime().size());
-				
-				//TODO implement here tokenflow for Stoch Trans
-				if(bna instanceof StochasticTransition){
+				// System.out.println(result.size());
+				// System.out.println(result.getTime().size());
+
+				// TODO implement here tokenflow for Stoch Trans
+				if (bna instanceof StochasticTransition && false) {
 					listActive = simResController.getAllActiveWithData(bna, SimulationResultController.SIM_PUT_DELAY);
 					Series s;
-					for(SimulationResult res : listActive){
+					for (SimulationResult res : listActive) {
 						s = res.get(bna, SimulationResultController.SIM_PUT_DELAY);
-						for(int index = 0; index<res.getTime().size(); index++){
-							//System.out.println(res.getTime().get(index)+ ":\t "+ s.get(index)+" \t"+res.get(bna, SimulationResultController.SIM_FIRE).get(index));
+
+						int seriesId = series2idx.get(bna, ACTUAL_FIRING_SPEED, simRes.getId());
+						XYSeries series = this.seriesListR1.get(seriesId);
+
+						series.clear();
+
+						for (int i = 0; i < res.getTime().size(); i++) {
+							res.addValue(bna, SimulationResultController.SIM_DELAY, 0.0);
+							res.addValue(bna, SimulationResultController.SIM_FIRE, 0.0);
 						}
+						for (int i = 0; i < res.getTime().size(); i++) {
+							res.get(bna, SimulationResultController.SIM_DELAY).setValue(i, 0.0);
+							res.get(bna, SimulationResultController.SIM_FIRE).setValue(i, 0.0);
+						}
+
+						Series timeS = res.getTime();
+						Series fireTimeS = res.get(bna, SimulationResultController.SIM_FIRE_TIME);
+						Series delayS = res.get(bna, SimulationResultController.SIM_DELAY);
+						Series fireS = res.get(bna, SimulationResultController.SIM_FIRE);
+
+						Double fireTime = fireTimeS.get(0);
+						Double putDelay = s.get(0);
+
+						int lastIdx = 0;
+						for (int index = 1; index < res.getTime().size(); index++) {
+							// System.out.println("t: " + res.getTime().get(index) + " delay: " +
+							// delayS.get(index));
+							// fire event occurred
+							// System.out.println(fireTime + " " + fireTimeS.get(index));
+							if (fireTimeS.get(index) - fireTime > 0.0) {
+								// System.out.println("fired at time: " + res.getTime().get(index));
+								for (int j = lastIdx; j < index; j++) {
+									// System.out.println(timeS.get(j) + " >= " + (timeS.get(index) - putDelay));
+									if (timeS.get(j) >= timeS.get(index) - putDelay) {
+										delayS.setValue(j - 1, putDelay);
+										fireS.setValue(j - 1, 1.0);
+										// System.out.println(
+										// "t: " + res.getTime().get(j) + " put Delay of: " + delayS.get(j));
+									} else {
+										// System.out.println("t: " + res.getTime().get(j) + " kleiner: " +
+										// delayS.get(j));
+									}
+								}
+								delayS.setValue(index - 1, putDelay);
+								fireS.setValue(index - 1, 1.0);
+								lastIdx = index;
+							}
+
+							fireTime = res.get(bna, SimulationResultController.SIM_FIRE_TIME).get(index);
+							putDelay = s.get(index);
+
+							// s.add(simRes.getTime().get(index), index, false);
+							// Double value = index*1.0;
+							// series.add(simRes.getTime().get(index), value, false);
+							// System.out.println(s.get(index));
+							// System.out.println(res.get(bna,
+							// SimulationResultController.SIM_FIRE_TIME).get(index));
+							// System.out.println("t="+res.getTime().get(index)+ ":\tpD="+ s.get(index)+ "
+							// \tpF="+ res.get(bna, SimulationResultController.SIM_FIRE_TIME).get(index)+ "
+							// \tac="+res.get(bna, SimulationResultController.SIM_ACTIVE).get(index));
+						}
+
+						for (int index = 0; index < res.getTime().size(); index++) {
+							// s.add(simRes.getTime().get(index), index, false);
+							// Double value = index*1.0;
+							series.add(simRes.getTime().get(index),
+									res.get(bna, SimulationResultController.SIM_DELAY).get(index), false);
+							// System.out.println(s.get(index));
+							// System.out.println(res.get(bna,
+							// SimulationResultController.SIM_FIRE_TIME).get(index));
+							// System.out.println("t="+res.getTime().get(index)+ ":\tpD="+ s.get(index)+ "
+							// \tpF="+ res.get(bna, SimulationResultController.SIM_FIRE_TIME).get(index)+ "
+							// \tac="+res.get(bna, SimulationResultController.SIM_ACTIVE).get(index));
+						}
+
+						renderer.setSeriesVisible(seriesId, true);
 					}
-					
+
 				}
-				
+
 			}
 		} else {
 			// System.out.println("else picked");
@@ -608,21 +687,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 	private void updateData(String simId, boolean fireSerieState) throws Exception {
 		SimulationResult simRes = simResController.get(simId);
-
-		// Set<GraphElementAbstract> keys = series2idx.getKeys();
-		// Iterator<GraphElementAbstract> itKeys = keys.iterator();
-		// System.out.println("-------------------keys----------------------");
-		// while (itKeys.hasNext()) {
-		// GraphElementAbstract gea = itKeys.next();
-		// if (gea instanceof BiologicalNodeAbstract) {
-		// System.out.println(gea + ":"+ gea.getName());
-		// } else if (gea instanceof BiologicalEdgeAbstract) {
-		// System.out.println(gea+":"+((BiologicalEdgeAbstract)
-		// gea).getFrom().getName()+" -> "+((BiologicalEdgeAbstract)
-		// gea).getTo().getName());
-		// }
-		// }
-
+		// System.out.println("update Data method");
 		// System.out.println("-----------------------------");
 		boolean isValidPN = pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation() && simRes != null;
 		boolean isValidHiddenPN = !pw.isPetriNet() && pw.getTransformationInformation() != null
@@ -634,9 +699,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			PNArc edge;
 			XYSeries series;
 			XYSeries series2;
-			Place place;
 			Double value;
-			Transition transition;
 			int stop;
 			int steps = 0;
 
@@ -654,19 +717,18 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				bna = itBna.next();
 				// System.out.println(series.getItemCount());
 				if (bna instanceof Place && !bna.isLogical()) {
-					place = (Place) bna;
 					// System.out.println(simRes.contains(place, TOKEN));
-					if (simRes.contains(place, TOKEN) && simRes.get(place, TOKEN).size() > 0) {
+					if (simRes.contains(bna, TOKEN) && simRes.get(bna, TOKEN).size() > 0) {
 						// System.out.println(place + " " + TOKEN + " " + simRes.getId());
 						// System.out.println(series2idx.get(place, TOKEN, simRes.getId()));
-						seriesId = series2idx.get(place, TOKEN, simRes.getId());
+						seriesId = series2idx.get(bna, TOKEN, simRes.getId());
 						series = this.seriesListR1.get(seriesId);
-						stop = Math.min(simRes.get(place, TOKEN).size(), time.size());
+						stop = Math.min(simRes.get(bna, TOKEN).size(), time.size());
 						steps = stop - series.getItemCount();
 						if (steps > 0) {
 							for (int i = series.getItemCount(); i < stop; i++) {
 								// if (simRes.get(place, TOKEN).size() > i) {
-								value = simRes.get(place, TOKEN).get(i);
+								value = simRes.get(bna, TOKEN).get(i);
 								// } else {
 								// value = 0.0;
 								// }
@@ -679,22 +741,36 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 							}
 						}
 					}
-				} else if (bna instanceof Transition) {
-
-					transition = (Transition) bna;
-					if (simRes.contains(transition, ACTUAL_FIRING_SPEED)
-							&& simRes.get(transition, ACTUAL_FIRING_SPEED).size() > 0) {
-						seriesId = series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId());
+				} else if (bna instanceof ContinuousTransition && !bna.isLogical()) {
+					if (simRes.contains(bna, ACTUAL_FIRING_SPEED) && simRes.get(bna, ACTUAL_FIRING_SPEED).size() > 0) {
+						seriesId = series2idx.get(bna, ACTUAL_FIRING_SPEED, simRes.getId());
 						series = this.seriesListR1.get(seriesId);
-						stop = Math.min(simRes.get(transition, ACTUAL_FIRING_SPEED).size(), time.size());
+						stop = Math.min(simRes.get(bna, ACTUAL_FIRING_SPEED).size(), time.size());
 						steps = stop - series.getItemCount();
 						if (steps > 0) {
 							for (int i = series.getItemCount(); i < stop; i++) {
-								value = simRes.get(transition, ACTUAL_FIRING_SPEED).get(i);
+								value = simRes.get(bna, ACTUAL_FIRING_SPEED).get(i);
 								series.add(simRes.getTime().get(i), value, false);
 							}
 							if (fireSerieState && renderer.isSeriesVisible(seriesId) && !isIterating) {
 								// series.fireSeriesChanged();
+								dirtyVisibleSeries.add(series);
+							}
+						}
+					}
+				} else if ((bna instanceof DiscreteTransition || bna instanceof StochasticTransition)
+						&& !bna.isLogical()) {
+					if (simRes.contains(bna, DELAY) && simRes.get(bna, DELAY).size() > 0) {
+						seriesId = series2idx.get(bna, DELAY, simRes.getId());
+						series = this.seriesListR1.get(seriesId);
+						stop = Math.min(simRes.get(bna, DELAY).size(), time.size());
+						steps = stop - series.getItemCount();
+						if (steps > 0) {
+							for (int i = series.getItemCount(); i < stop; i++) {
+								value = simRes.get(bna, DELAY).get(i);
+								series.add(simRes.getTime().get(i), value, false);
+							}
+							if (fireSerieState && renderer.isSeriesVisible(seriesId) && !isIterating) {
 								dirtyVisibleSeries.add(series);
 							}
 						}
@@ -761,28 +837,28 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			}
 
 			if (fireSerieState) {
-				try{
-				isIterating = true;
-				for (XYSeries s : dirtyVisibleSeries) {
-					if (renderer.isSeriesVisible(seriesListR1.indexOf(s))) {
-						s.fireSeriesChanged();
+				try {
+					isIterating = true;
+					for (XYSeries s : dirtyVisibleSeries) {
+						if (renderer.isSeriesVisible(seriesListR1.indexOf(s))) {
+							s.fireSeriesChanged();
+						}
 					}
-				}
-				for (XYSeries s : dirtyVisibleSeriesR1) {
-					if (renderer.isSeriesVisible(seriesListR2.indexOf(s))) {
-						s.fireSeriesChanged();
+					for (XYSeries s : dirtyVisibleSeriesR1) {
+						if (renderer.isSeriesVisible(seriesListR2.indexOf(s))) {
+							s.fireSeriesChanged();
+						}
 					}
-				}
-				dirtyVisibleSeries.clear();
-				dirtyVisibleSeriesR1.clear();
-				isIterating = false;
-				}catch(ConcurrentModificationException e){
+					dirtyVisibleSeries.clear();
+					dirtyVisibleSeriesR1.clear();
+					isIterating = false;
+				} catch (ConcurrentModificationException e) {
 					System.err.println("Simulation Result Plot during repaint: ConcurrentModificationException");
-				}catch(IllegalArgumentException e){
+				} catch (IllegalArgumentException e) {
 					System.err.println("Simulation Result Plot during repaint: IllegalArgumentException");
-				}catch(NullPointerException e){
+				} catch (NullPointerException e) {
 					System.err.println("Simulation Result Plot during repaint: NullPointerException");
-				}catch(IndexOutOfBoundsException e){
+				} catch (IndexOutOfBoundsException e) {
 					System.err.println("Simulation Result Plot during repaint: IndexOutOfBoundsException");
 				}
 			}
@@ -870,7 +946,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				}
 			}
 		} else if (event.equals("exportSimResult")) {
-			new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.CSV_RESULT}, SaveDialog.DATA_TYPE_SIMULATION_RESULTS);
+			new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.CSV_RESULT },
+					SaveDialog.DATA_TYPE_SIMULATION_RESULTS);
 
 			// System.out.println("click");
 		}
@@ -942,7 +1019,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				&& pw.getTransformationInformation().getPetriNet() != null
 				&& pw.getPetriPropertiesNet().isPetriNetSimulation();
 		if (isValidPN || isValidHiddenPN) {
-		//if (pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation()) {
+			// if (pw.isPetriNet() && pw.getPetriPropertiesNet().isPetriNetSimulation()) {
 			if (e.getSource().equals(animationStart))
 				animationStartInit = (Integer) animationStart.getValue();
 			else if (e.getSource().equals(animationStop))
@@ -952,7 +1029,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			else {
 				SimulationResult simRes = simResController.getLastActive();
 				pw.getPetriPropertiesNet().setCurrentTimeStep(this.slider.getValue());
-				slider.setToolTipText("Time: " + this.slider.getValue());
+				slider.setToolTipText("Step: " + this.slider.getValue() + ", use arrow keys for single steps");
 				if (simRes == null) {
 					pw.getPetriPropertiesNet().setPetriNetSimulation(false);
 					MainWindow w = MainWindow.getInstance();
@@ -966,7 +1043,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					// System.out.println("slider: "+slider.getValue());
 					double step = simRes.getTime().get(this.slider.getValue());
 					// System.out.println(slider.getValue() +" "+step);
-					stepLabel.setText("Time: " + (double) Math.round((step * 100)) / 100);
+					stepLabel.setText("Time: " + (double) Math.round((step * 10000)) / 10000);
 
 					XYPlot plot = (XYPlot) chart.getPlot();
 					plot.removeDomainMarker(marker);
@@ -1015,11 +1092,22 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 									((Place) bna).setToken(ref);
 									MainWindow.getInstance().redrawTokens();
 								} else if (bna instanceof Transition) {
-									ref = simRes.get(bna, FIRE).get(slider.getValue());
-									if (ref == 1) {
-										((Transition) bna).setSimulationActive(true);
-									} else {
-										((Transition) bna).setSimulationActive(false);
+									Transition t = (Transition) bna;
+									if (simRes.get(t, ACTIVE) != null) {
+										ref = simRes.get(t, ACTIVE).get(slider.getValue());
+										if (ref == 1) {
+											t.setSimulationActive(true);
+										} else {
+											t.setSimulationActive(false);
+										}
+									}
+									if (simRes.get(t, FIRE) != null) {
+										ref = simRes.get(t, FIRE).get(slider.getValue());
+										if (ref == 1) {
+											t.setSimulationFire(true);
+										} else {
+											t.setSimulationFire(false);
+										}
 									}
 								}
 
@@ -1325,7 +1413,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		// System.out.println("resultssize: " +
 		// pw.getPetriNet().getSimResController().getSimNames().size());
 		if (simResController.get(simId) == null) {
-			System.out.println("PCPError, no such simulation name");
+			System.err.println("SimulationResultsPlotError, no such simulation name");
 			return;
 		}
 
@@ -1375,7 +1463,11 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					// if (transition.getPetriNetSimulationData().size() > 0) {
 					places.add(transition);
 					s = new XYSeries(r1Count);
-					series2idx.put(transition, ACTUAL_FIRING_SPEED, simId, r1Count);
+					if (transition instanceof ContinuousTransition) {
+						series2idx.put(transition, ACTUAL_FIRING_SPEED, simId, r1Count);
+					} else {
+						series2idx.put(transition, DELAY, simId, r1Count);
+					}
 					idx2simR1.put(r1Count, simResController.get(simId));
 					// System.out.println(r1Count+" "+transition.getName()+" ");
 					// seriesList.add(new XYSeries(j));

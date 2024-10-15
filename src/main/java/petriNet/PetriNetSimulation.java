@@ -79,6 +79,8 @@ public class PetriNetSimulation implements ActionListener {
 	private StringBuilder logMessage = null;
 	private boolean installationChecked = false;
 	private final String pnLibVersion = "3.0.0";
+	// for the simulation results export of protected variables, necessary to detect actual firing of stochastic transitions
+	private boolean exportPrtoectedVariables = false;
 
 	// TODO refactored version of threads for simulation needs to be tested and
 	// evaluated. maybe show more hints / error messages
@@ -234,10 +236,10 @@ public class PetriNetSimulation implements ActionListener {
 								logAndShow("override statement: " + override);
 								if (noEmmit) {
 									pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
-											"-noEventEmit", "-lv=LOG_STATS");
+											"-noEventEmit", "-lv=LOG_STATS", "-emit_protected");
 								} else {
 									pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
-											"-lv=LOG_STATS");
+											"-lv=LOG_STATS", "-emit_protected");
 								}
 								pb.redirectOutput();
 								pb.directory(new File(pathSim));
@@ -478,6 +480,7 @@ public class PetriNetSimulation implements ActionListener {
 			return true;
 		}
 
+		// TODO put those checks in threads for example, so the messages/pup ups will be shown while checking/installing PNlib
 		String message;
 		OMCCommunicator omcCommunicator = new OMCCommunicator(getOMCPath());
 		if (omcCommunicator.isPNLibInstalled()) {
@@ -622,7 +625,8 @@ public class PetriNetSimulation implements ActionListener {
 						vars++;
 						if (bna instanceof StochasticTransition) {
 							filter += "'" + bna.getName() + "'.putDelay|";
-							vars++;
+							filter += "'" + bna.getName() + "'.fireTime|";
+							vars +=2;
 						}
 					}
 				}
