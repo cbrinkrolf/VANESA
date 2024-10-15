@@ -35,6 +35,7 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscretePlace;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
@@ -622,11 +623,14 @@ public class PetriNetSimulation implements ActionListener {
 						vars += 2;
 					} else {
 						filter += "'" + bna.getName() + "'.active|";
-						vars++;
-						if (bna instanceof StochasticTransition) {
+						filter += "'" + bna.getName() + "'.fireTime|";
+						vars+=2;
+						if(bna instanceof DiscreteTransition){
+							filter += "'" + bna.getName() + "'.delay|";
+						}
+						else if (bna instanceof StochasticTransition) {
 							filter += "'" + bna.getName() + "'.putDelay|";
-							filter += "'" + bna.getName() + "'.fireTime|";
-							vars +=2;
+							vars ++;
 						}
 					}
 				}

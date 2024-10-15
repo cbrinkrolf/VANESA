@@ -128,9 +128,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	private int animationStopInit = 1;
 	private int animationSpeedInit = 20;
 
-	// private ArrayList<Place> plotEntities = new ArrayList<Place>();
-	// TODO keep slider position while switching/selecting elements
-	
 	private ArrayList<BiologicalNodeAbstract> places;
 
 	private ArrayList<XYSeries> seriesListR1 = new ArrayList<>();
@@ -575,6 +572,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 							onlyT = false;
 							onlyDiscreteT = false;
 						} else if(bna instanceof ContinuousTransition){
+							// prioritize continuous transitions over discrete/stochastic transitions
 							onlyDiscreteT = false;
 						}
 					}

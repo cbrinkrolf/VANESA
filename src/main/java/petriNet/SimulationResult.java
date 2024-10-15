@@ -162,6 +162,55 @@ public class SimulationResult {
 		}
 	}
 
+	public void refineDiscreteTransitionIsFiring(Set<DiscreteTransition> transitions) {
+		Series fireTimeS;
+		Series delayS;
+		Series fireS;
+		Double fireTime;
+		Double delay;
+		int lastIdx;
+
+		for (DiscreteTransition t : transitions) {
+
+			for (int i = 0; i < getTime().size(); i++) {
+				addValue(t, SimulationResultController.SIM_FIRE, 0.0);
+			}
+
+			fireTimeS = get(t, SimulationResultController.SIM_FIRE_TIME);
+			delayS = get(t, SimulationResultController.SIM_DELAY);
+			fireS = get(t, SimulationResultController.SIM_FIRE);
+
+			fireTime = fireTimeS.get(0);
+			delay = delayS.get(0);
+
+			lastIdx = 0;
+			for (int index = 0; index < getTime().size(); index++) {
+				if (fireTimeS.get(index) - fireTime > 0.0) {
+					for (int j = lastIdx; j < index; j++) {
+						if (getTime().get(j) >= getTime().get(index) - delay) {
+							fireS.setValue(Math.max(j - 1, 0), 1.0);
+						} else {
+							delayS.setValue(Math.max(j - 1, 0), 0.0);
+						}
+					}
+					fireS.setValue(index - 1, 1.0);
+					lastIdx = index;
+				}
+
+				fireTime = get(t, SimulationResultController.SIM_FIRE_TIME).get(index);
+				delay = delayS.get(index);
+			}
+			if (getTime().size() > 1) {
+				delayS.setValue(0, delayS.get(1));
+			}
+
+			for (int index = 0; index < getTime().size(); index++) {
+				if (fireS.get(index) == 0)
+					delayS.setValue(index, 0.0);
+			}
+		}
+	}
+
 	public void refineStochasticTransitionIsFiring(Set<StochasticTransition> transitions) {
 		Series putDelayS;
 		Series fireTimeS;
@@ -170,7 +219,7 @@ public class SimulationResult {
 		Double fireTime;
 		Double putDelay;
 		int lastIdx;
-		
+
 		for (StochasticTransition t : transitions) {
 
 			putDelayS = result.get(t, SimulationResultController.SIM_PUT_DELAY);
@@ -194,17 +243,18 @@ public class SimulationResult {
 				// fire event occurred
 				// System.out.println(fireTime + " " + fireTimeS.get(index));
 				if (fireTimeS.get(index) - fireTime > 0.0) {
-					//System.out.println("fired at time: " + getTime().get(index));
+					// System.out.println("fired at time: " + getTime().get(index));
 					for (int j = lastIdx; j < index; j++) {
-						//System.out.println("time: "+getTime().get(index)+ " putDelay: "+putDelay);
-						//System.out.println(getTime().get(j) + " >= " + (getTime().get(index) - putDelay));
+						// System.out.println("time: "+getTime().get(index)+ " putDelay: "+putDelay);
+						// System.out.println(getTime().get(j) + " >= " + (getTime().get(index) -
+						// putDelay));
 						if (getTime().get(j) >= getTime().get(index) - putDelay) {
 							delayS.setValue(j - 1, putDelay);
 							fireS.setValue(j - 1, 1.0);
 							// System.out.println(
 							// "t: " + res.getTime().get(j) + " put Delay of: " + delayS.get(j));
 						} else {
-							//System.out.println("t: " + getTime().get(j) + " kleiner: " +
+							// System.out.println("t: " + getTime().get(j) + " kleiner: " +
 							// delayS.get(j));
 						}
 					}

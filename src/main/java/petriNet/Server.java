@@ -23,6 +23,7 @@ import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.ContinuousTransition;
+import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
@@ -43,12 +44,14 @@ public class Server {
 
 	private Set<PNArc> toRefineEdges = new HashSet<>();
 	private Set<StochasticTransition> stochasticTransitions = new HashSet<>();
+	private Set<DiscreteTransition> discreteTransitions = new HashSet<>();
 	private Set<PNArc> edgesFlow;
 	private Set<PNArc> edgeSum;
 	private Set<Transition> transitionSpeed;
 	private Set<Transition> transitionActive;
 	private Set<Transition> transitionFire;
 	private Set<Place> placeToken;
+	private Set<Transition> transitionDelay;
 	private Set<Transition> transitionPutDelay;
 	private Set<Transition> transitionFireTime;
 
@@ -118,6 +121,7 @@ public class Server {
 					}
 				}
 				// System.out.println("ruuuuuuuuuuuuuuuuuunning");
+				simResult.refineDiscreteTransitionIsFiring(discreteTransitions);
 				simResult.refineStochasticTransitionIsFiring(stochasticTransitions);
 				simResult.refineEdgeFlow(toRefineEdges);
 			}
@@ -323,6 +327,7 @@ public class Server {
 		placeToken = new HashSet<>();
 		transitionPutDelay = new HashSet<>();
 		transitionFireTime = new HashSet<>();
+		transitionDelay = new HashSet<>();
 
 		PNArc e;
 		for (BiologicalEdgeAbstract bea : pw.getAllEdges())
@@ -360,14 +365,20 @@ public class Server {
 						if (name2index.get("'" + bna.getName() + "'.active") != null) {
 							this.transitionActive.add((Transition) bna);
 						}
+						if (name2index.get("'" + bna.getName() + "'.fireTime") != null) {
+							this.transitionFireTime.add((Transition) bna);
+						}
 					}
-					if (bna instanceof StochasticTransition) {
+					if(bna instanceof DiscreteTransition){
+						discreteTransitions.add((DiscreteTransition)bna);
+						if (name2index.get("'" + bna.getName() + "'.delay") != null) {
+							this.transitionDelay.add((Transition) bna);
+						}
+					}
+					else if (bna instanceof StochasticTransition) {
 						stochasticTransitions.add((StochasticTransition)bna);
 						if (name2index.get("'" + bna.getName() + "'.putDelay") != null) {
 							this.transitionPutDelay.add((Transition) bna);
-						}
-						if (name2index.get("'" + bna.getName() + "'.fireTime") != null) {
-							this.transitionFireTime.add((Transition) bna);
 						}
 					}
 				}
@@ -406,6 +417,11 @@ public class Server {
 		for (Transition t : this.transitionSpeed) {
 			o = values.get(name2index.get("'" + t.getName() + "'.actualSpeed"));
 			this.checkAndAddValue(t, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, o);
+		}
+		
+		for(Transition t: this.transitionDelay){
+			o = values.get(name2index.get("'" + t.getName() + "'.delay"));
+			this.checkAndAddValue(t, SimulationResultController.SIM_DELAY, o);
 		}
 
 		for (Transition t : this.transitionPutDelay) {
