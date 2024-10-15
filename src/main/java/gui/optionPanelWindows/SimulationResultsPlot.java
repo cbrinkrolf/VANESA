@@ -131,7 +131,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	// private ArrayList<Place> plotEntities = new ArrayList<Place>();
 	// TODO keep slider position while switching/selecting elements
 	
-	// TODO should contain places only??
 	private ArrayList<BiologicalNodeAbstract> places;
 
 	private ArrayList<XYSeries> seriesListR1 = new ArrayList<>();
@@ -166,6 +165,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	private Set<XYSeries> dirtyVisibleSeries = new HashSet<>();
 	private Set<XYSeries> dirtyVisibleSeriesR1 = new HashSet<>();
 	private boolean isIterating = false;
+	
+	private int sliderPosition = 0;
 
 	public SimulationResultsPlot() {
 
@@ -271,7 +272,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				slider.addChangeListener(this);
 				
 				slider.setToolTipText("Step: 0, use arrow keys for single steps");
-				slider.setValue(0);
+				slider.setValue(sliderPosition);
 
 				controlPanel = new JPanel(new MigLayout());
 
@@ -322,7 +323,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
 						if (node instanceof Transition) {
 							// System.out.println(node.getName());
-							if (simRes.contains(node)) {
+							if (simRes.contains(node) && simRes.get(node, ACTIVE) != null) {
 								ref = simRes.get(node, ACTIVE).get(slider.getValue());
 								if (ref == 1) {
 									((Transition) node).setSimulationActive(true);
@@ -560,6 +561,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		} else {
 			// System.out.println("else picked");
 			boolean onlyT = true;
+			boolean onlyDiscreteT = true;
 			if (vState.getPicked().size() > 0) {
 				Iterator<BiologicalNodeAbstract> it = vState.getPicked().iterator();
 				while (onlyT && it.hasNext()) {
@@ -571,6 +573,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						}
 						if (bna instanceof Place) {
 							onlyT = false;
+							onlyDiscreteT = false;
+						} else if(bna instanceof ContinuousTransition){
+							onlyDiscreteT = false;
 						}
 					}
 				}
@@ -602,7 +607,16 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					} else {
 						// System.out.println("does not contain");
 					}
-				} else if (bna instanceof Transition && onlyT) {
+				} else if (bna instanceof Transition && onlyT && onlyDiscreteT) {
+					legendY = "Delay";
+					transition = (Transition) bna;
+					if (series2idx.contains(transition, DELAY)) {
+						renderer.setSeriesPaint(series2idx.get(transition, DELAY, simRes.getId()),
+								transition.getPlotColor());
+						renderer.setSeriesVisible((int) series2idx.get(transition, DELAY, simRes.getId()),
+								true);
+					}
+				} else if(bna instanceof Transition && onlyT){
 					legendY = "Speed";
 					transition = (Transition) bna;
 					if (series2idx.contains(transition, ACTUAL_FIRING_SPEED)) {
@@ -1027,6 +1041,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			else if (e.getSource().equals(animationSpeed))
 				animationSpeedInit = (Integer) animationSpeed.getValue();
 			else {
+				sliderPosition = slider.getValue();
 				SimulationResult simRes = simResController.getLastActive();
 				pw.getPetriPropertiesNet().setCurrentTimeStep(this.slider.getValue());
 				slider.setToolTipText("Step: " + this.slider.getValue() + ", use arrow keys for single steps");
@@ -1461,7 +1476,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				} else if (bna instanceof Transition) {
 					transition = (Transition) bna;
 					// if (transition.getPetriNetSimulationData().size() > 0) {
-					places.add(transition);
+					// places.add(transition);
 					s = new XYSeries(r1Count);
 					if (transition instanceof ContinuousTransition) {
 						series2idx.put(transition, ACTUAL_FIRING_SPEED, simId, r1Count);
@@ -1509,7 +1524,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			bea = itEdges.next();
 			if (bea instanceof PNArc) {
 				PNArc edge = (PNArc) bea;
-				places.add(edge.getFrom());
+				// places.add(edge.getFrom());
 				s = new XYSeries(r1Count);
 				series2idx.put(edge, ACTUAL_TOKEN_FLOW, simId, r1Count);
 				idx2simR1.put(r1Count, simResController.get(simId));
