@@ -161,7 +161,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	private Set<XYSeries> dirtyVisibleSeries = new HashSet<>();
 	private Set<XYSeries> dirtyVisibleSeriesR1 = new HashSet<>();
 	private boolean isIterating = false;
-	
+
 	private int sliderPosition = 0;
 
 	public SimulationResultsPlot() {
@@ -266,7 +266,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				slider.setMaximum(rowsDim - 1);
 				slider.setMajorTickSpacing(1);
 				slider.addChangeListener(this);
-				
+
 				slider.setToolTipText("Step: 0, use arrow keys for single steps");
 				slider.setValue(sliderPosition);
 
@@ -412,9 +412,44 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 			}
 		} else if (pickedV == 0 && pickedE > 1) {
-			// TODO implement if multiple edges are selected
+			Set<PNArc> validSet = new HashSet<>();
+			BiologicalEdgeAbstract bea;
+			Iterator<BiologicalEdgeAbstract> it = eState.getPicked().iterator();
+			while (it.hasNext()) {
+				bea = it.next();
+				if (hiddenPN) {
+					bea = pw.getTransformationInformation().getPetriNet().getEdge(
+							pw.getTransformationInformation().getBnToPnMapping().get(bea.getFrom()),
+							pw.getTransformationInformation().getBnToPnMapping().get(bea.getTo()));
+				}
+				if (bea instanceof PNArc) {
+					validSet.add((PNArc) bea);
+				}
+			}
+			int i = 0;
+			for (PNArc arc : validSet) {
+				secondAxis = true;
+				SimulationResult result = simResController.getLastActive();
+
+				int idxFlow = series2idx.get(arc, ACTUAL_TOKEN_FLOW, result.getId());
+				int idxSum = series2idx.get(arc, SUM_OF_TOKEN, result.getId());
+
+				Stroke dash1 = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f,
+						new float[] { 2.0f, 6 }, 0.0f);
+				renderer.setSeriesStroke(idxFlow, dash1);
+				// System.out.println("stroke set");
+				Color c = Color.getHSBColor(i * 1.0f / (validSet.size()), 1, 1);
+				renderer.setSeriesPaint(idxFlow, c);
+				renderer2.setSeriesPaint(idxSum, c);
+
+				renderer.setSeriesVisible(idxFlow, true);
+				renderer2.setSeriesVisible(idxSum, true);
+
+				i++;
+			}
+
 		} else if (pickedV == 1) {
-			//System.out.println("one picked");
+			// System.out.println("one picked");
 			bna = vState.getPicked().iterator().next();
 			SimulationResult result;
 			List<SimulationResult> listActive = null;
@@ -475,7 +510,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						if (bna instanceof Place) {
 							onlyT = false;
 							onlyDiscreteT = false;
-						} else if(bna instanceof ContinuousTransition){
+						} else if (bna instanceof ContinuousTransition) {
 							// prioritize continuous transitions over discrete/stochastic transitions
 							onlyDiscreteT = false;
 						}
@@ -515,10 +550,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					if (series2idx.contains(transition, DELAY)) {
 						renderer.setSeriesPaint(series2idx.get(transition, DELAY, simRes.getId()),
 								transition.getPlotColor());
-						renderer.setSeriesVisible((int) series2idx.get(transition, DELAY, simRes.getId()),
-								true);
+						renderer.setSeriesVisible((int) series2idx.get(transition, DELAY, simRes.getId()), true);
 					}
-				} else if(bna instanceof Transition && onlyT){
+				} else if (bna instanceof Transition && onlyT) {
 					legendY = "Speed";
 					transition = (Transition) bna;
 					if (series2idx.contains(transition, ACTUAL_FIRING_SPEED)) {
@@ -1218,7 +1252,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					}
 					return idx2simR2.get(seriesIdx).getName() + "(Sum)";
 				}
-				return "";
+				return "Sum";
 			}
 		});
 
