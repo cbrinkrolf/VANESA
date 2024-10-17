@@ -12,6 +12,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.GraphInstance;
+import gui.SimMenu;
 
 public class PetriNetProperties {
 	private Pathway pw;
@@ -117,6 +118,10 @@ public class PetriNetProperties {
 			}
 			pw.setPlotColorPlacesTransitions(false);
 			this.setPetriNetSimulation(true);
+			SimMenu menu = pw.getPetriNetSimulation().getMenu();
+			if(menu != null){
+				menu.updateSimulationResults();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

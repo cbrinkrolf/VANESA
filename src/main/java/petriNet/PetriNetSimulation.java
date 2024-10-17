@@ -1019,4 +1019,8 @@ public class PetriNetSimulation implements ActionListener {
 			return "Marks";
 		}
 	}
+	
+	public SimMenu getMenu(){
+		return this.menu;
+	}
 }
