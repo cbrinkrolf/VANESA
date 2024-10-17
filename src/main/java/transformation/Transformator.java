@@ -45,6 +45,7 @@ import util.StringLengthComparator;
 // TODO syso -> log file
 // TODO try hierarchical network (maybe first flatten?)
 // TODO interactive GUI while transforming (ability to abort)
+// TODO check delay of disc. transitions works for transformation since it is now a function with possible parameters instead of a double constant
 public class Transformator {
 
 	public static final String place = "Place";
@@ -350,18 +351,6 @@ public class Transformator {
 						} else {
 							l.add(bna.getID());
 						}
-
-						// System.out.println("edge count name: "+bna.getName());
-						//// System.out.println("in: "+ pw.getIncomingDirectedEdgeCount(bna));
-						// System.out.println("out: "+ pw.getOutgoingDirectedEdgeCount(bna));
-						// System.out.println("undir: "+ pw.getUndirectedEdgeCount(bna));
-
-						// TODO does not take numbers of edges of logical nodes into account!!!
-						// if (inCount <= pw.getIncomingDirectedEdgeCount(bna)
-						// && outCount <= pw.getOutgoingDirectedEdgeCount(bna)
-						// && unDirCount <= pw.getUndirectedEdgeCount(bna)) {
-						// l.add(bna.getID());
-						// }
 					}
 					// System.out.println(bna.getID() + " added to perm");
 					// System.out.println(bna.getName() + " added to perm");
@@ -1202,6 +1191,9 @@ public class Transformator {
 			for (BiologicalNodeAbstract bna : this.getNodesOfReplacedParameter(orgValue, "maximalSpeed", match)) {
 				this.copyParameters(bna, petriNode);
 			}
+			for (BiologicalNodeAbstract bna : this.getNodesOfReplacedParameter(orgValue, "delay", match)) {
+				this.copyParameters(bna, petriNode);
+			}
 			// copy parameters of edges that are matched in this value
 			for (BiologicalEdgeAbstract bea : this.getEdgesOfReplacedParameter(orgValue, "function", match)) {
 				this.copyParameters(bea, petriNode);
@@ -1235,6 +1227,9 @@ public class Transformator {
 
 			// copy parameters of nodes that are matched in this value
 			for (BiologicalNodeAbstract bna : this.getNodesOfReplacedParameter(orgValue, "maximalSpeed", match)) {
+				this.copyParameters(bna, arc);
+			}
+			for (BiologicalNodeAbstract bna : this.getNodesOfReplacedParameter(orgValue, "delay", match)) {
 				this.copyParameters(bna, arc);
 			}
 			// copy parameters of edges that are matched in this value
