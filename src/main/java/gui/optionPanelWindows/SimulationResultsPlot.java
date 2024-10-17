@@ -71,7 +71,6 @@ import io.SaveDialog;
 import io.SuffixAwareFilter;
 import net.miginfocom.swing.MigLayout;
 import petriNet.AnimationThread;
-import petriNet.Series;
 import petriNet.SimulationResult;
 import petriNet.SimulationResultController;
 import util.TripleHashMap;
@@ -357,10 +356,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		int pickedV = vState.getPicked().size();
 		int pickedE = eState.getPicked().size();
 
-		if (pickedV == 1) {
-			bna = vState.getPicked().iterator().next();
-		}
-
 		for (int i = 0; i < seriesListR1.size(); i++) {
 			try {
 				renderer.setSeriesVisible(i, false);
@@ -418,15 +413,15 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			}
 		} else if (pickedV == 0 && pickedE > 1) {
 			// TODO implement if multiple edges are selected
-		} else if (pickedV == 1 && pickedE == 0) {
-			// System.out.println("one picked");
+		} else if (pickedV == 1) {
+			//System.out.println("one picked");
+			bna = vState.getPicked().iterator().next();
 			SimulationResult result;
 			List<SimulationResult> listActive = null;
 			bna = resolveReference(bna);
 			bna = resolveHidden(bna);
 
 			if (bna instanceof PNNode) {
-				PNNode pn = (PNNode) bna;
 				if (bna instanceof Place) {
 					listActive = simResController.getAllActiveWithData(bna, TOKEN);
 				} else if (bna instanceof ContinuousTransition) {
@@ -463,97 +458,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						renderer.setSeriesPaint(idx, c);
 					}
 				}
-
-				///// DEBUG testing code
-				// System.out.println(result.size());
-				// System.out.println(result.getTime().size());
-
-				// TODO implement here tokenflow for Stoch Trans
-				if (bna instanceof StochasticTransition && false) {
-					listActive = simResController.getAllActiveWithData(bna, SimulationResultController.SIM_PUT_DELAY);
-					Series s;
-					for (SimulationResult res : listActive) {
-						s = res.get(bna, SimulationResultController.SIM_PUT_DELAY);
-
-						int seriesId = series2idx.get(bna, ACTUAL_FIRING_SPEED, simRes.getId());
-						XYSeries series = this.seriesListR1.get(seriesId);
-
-						series.clear();
-
-						for (int i = 0; i < res.getTime().size(); i++) {
-							res.addValue(bna, SimulationResultController.SIM_DELAY, 0.0);
-							res.addValue(bna, SimulationResultController.SIM_FIRE, 0.0);
-						}
-						for (int i = 0; i < res.getTime().size(); i++) {
-							res.get(bna, SimulationResultController.SIM_DELAY).setValue(i, 0.0);
-							res.get(bna, SimulationResultController.SIM_FIRE).setValue(i, 0.0);
-						}
-
-						Series timeS = res.getTime();
-						Series fireTimeS = res.get(bna, SimulationResultController.SIM_FIRE_TIME);
-						Series delayS = res.get(bna, SimulationResultController.SIM_DELAY);
-						Series fireS = res.get(bna, SimulationResultController.SIM_FIRE);
-
-						Double fireTime = fireTimeS.get(0);
-						Double putDelay = s.get(0);
-
-						int lastIdx = 0;
-						for (int index = 1; index < res.getTime().size(); index++) {
-							// System.out.println("t: " + res.getTime().get(index) + " delay: " +
-							// delayS.get(index));
-							// fire event occurred
-							// System.out.println(fireTime + " " + fireTimeS.get(index));
-							if (fireTimeS.get(index) - fireTime > 0.0) {
-								// System.out.println("fired at time: " + res.getTime().get(index));
-								for (int j = lastIdx; j < index; j++) {
-									// System.out.println(timeS.get(j) + " >= " + (timeS.get(index) - putDelay));
-									if (timeS.get(j) >= timeS.get(index) - putDelay) {
-										delayS.setValue(j - 1, putDelay);
-										fireS.setValue(j - 1, 1.0);
-										// System.out.println(
-										// "t: " + res.getTime().get(j) + " put Delay of: " + delayS.get(j));
-									} else {
-										// System.out.println("t: " + res.getTime().get(j) + " kleiner: " +
-										// delayS.get(j));
-									}
-								}
-								delayS.setValue(index - 1, putDelay);
-								fireS.setValue(index - 1, 1.0);
-								lastIdx = index;
-							}
-
-							fireTime = res.get(bna, SimulationResultController.SIM_FIRE_TIME).get(index);
-							putDelay = s.get(index);
-
-							// s.add(simRes.getTime().get(index), index, false);
-							// Double value = index*1.0;
-							// series.add(simRes.getTime().get(index), value, false);
-							// System.out.println(s.get(index));
-							// System.out.println(res.get(bna,
-							// SimulationResultController.SIM_FIRE_TIME).get(index));
-							// System.out.println("t="+res.getTime().get(index)+ ":\tpD="+ s.get(index)+ "
-							// \tpF="+ res.get(bna, SimulationResultController.SIM_FIRE_TIME).get(index)+ "
-							// \tac="+res.get(bna, SimulationResultController.SIM_ACTIVE).get(index));
-						}
-
-						for (int index = 0; index < res.getTime().size(); index++) {
-							// s.add(simRes.getTime().get(index), index, false);
-							// Double value = index*1.0;
-							series.add(simRes.getTime().get(index),
-									res.get(bna, SimulationResultController.SIM_DELAY).get(index), false);
-							// System.out.println(s.get(index));
-							// System.out.println(res.get(bna,
-							// SimulationResultController.SIM_FIRE_TIME).get(index));
-							// System.out.println("t="+res.getTime().get(index)+ ":\tpD="+ s.get(index)+ "
-							// \tpF="+ res.get(bna, SimulationResultController.SIM_FIRE_TIME).get(index)+ "
-							// \tac="+res.get(bna, SimulationResultController.SIM_ACTIVE).get(index));
-						}
-
-						renderer.setSeriesVisible(seriesId, true);
-					}
-
-				}
-
 			}
 		} else {
 			// System.out.println("else picked");

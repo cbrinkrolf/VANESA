@@ -1,12 +1,10 @@
 package petriNet;
 
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Set;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalObjects.edges.petriNet.PNArc;
-import biologicalObjects.nodes.petriNet.ContinuousTransition;
 import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
