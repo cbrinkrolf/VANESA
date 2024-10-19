@@ -30,7 +30,7 @@ public class PNResultInputReader {
 		String head = text.get(0);
 
 		// "\" added, because names / labels may contain ","
-		String[] headNames = head.split(";");
+		String[] headNames = head.split("[,;]");
 
 		int lines = text.size();
 		int cols = headNames.length;

@@ -82,6 +82,12 @@ public class PetriNetProperties {
 						}
 					}
 				} else if (bna instanceof Transition) {
+					if (result.containsKey(bna.getName() + "-active")) {
+						for (int i = 0; i < result.get(bna.getName() + "-active").size(); i++) {
+							simRes.addValue(bna, SimulationResultController.SIM_ACTIVE,
+									result.get(bna.getName() + "-active").get(i));
+						}
+					}
 					if (result.containsKey(bna.getName() + "-fire")) {
 						for (int i = 0; i < result.get(bna.getName() + "-fire").size(); i++) {
 							simRes.addValue(bna, SimulationResultController.SIM_FIRE,
@@ -92,6 +98,12 @@ public class PetriNetProperties {
 						for (int i = 0; i < result.get(bna.getName() + "-speed").size(); i++) {
 							simRes.addValue(bna, SimulationResultController.SIM_ACTUAL_FIRING_SPEED,
 									result.get(bna.getName() + "-speed").get(i));
+						}
+					}
+					if (result.containsKey(bna.getName() + "-delay")) {
+						for (int i = 0; i < result.get(bna.getName() + "-fire").size(); i++) {
+							simRes.addValue(bna, SimulationResultController.SIM_DELAY,
+									result.get(bna.getName() + "-delay").get(i));
 						}
 					}
 				}
