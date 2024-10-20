@@ -14,6 +14,7 @@ import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 import io.SuffixAwareFilter;
 
+// TODO could be merged to OpenDialog?
 public class OpenModelicaResult extends SwingWorker<Object, Object> {
 	private final JFileChooser chooser;
 	private FileFilter fileFilter;

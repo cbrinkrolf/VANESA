@@ -13,10 +13,11 @@ import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
 import graph.GraphInstance;
 import gui.SimMenu;
+import io.pnResult.PNResultReader;
 
 public class PetriNetProperties {
 	private Pathway pw;
-	private PNResultInputReader pnrir = new PNResultInputReader();
+	private PNResultReader pnrir;
 	private int currentTimeStep = 0;
 	private String covGraph;
 	private boolean isPetriNetSimulation = false;
@@ -44,6 +45,7 @@ public class PetriNetProperties {
 	public void loadVanesaSimulationResult(File resFile) {
 
 		try {
+			pnrir = new PNResultReader();
 			HashMap<String, List<Double>> result = pnrir.readResult(resFile);
 			pw = GraphInstance.getPathway();
 			// if BN holds PN

@@ -10,7 +10,10 @@ import gui.PopUpDialog;
 import io.graphML.GraphMLWriter;
 import io.image.ChartImageWriter;
 import io.image.ComponentImageWriter;
+import io.pnResult.PNResultWriter;
 import io.sbml.JSBMLOutput;
+import petriNet.SimulationResult;
+
 import org.apache.commons.io.IOUtils;
 import org.jfree.chart.JFreeChart;
 import transformation.RuleManager;
@@ -164,6 +167,10 @@ public class SaveDialog {
 	}
 
 	private <T> boolean write(BaseWriter<T> writer, T value, boolean printSuccess) {
+		if (writer == null) {
+			PopUpDialog.getInstance().show("Error", fileFilter + "\nAn error occurred, writer is null!");
+			return false;
+		}
 		writer.write(value);
 		if (writer.hasErrors()) {
 			PopUpDialog.getInstance().show("Error", fileFilter + "\nAn error occurred: " + writer.getErrors());
@@ -183,7 +190,20 @@ public class SaveDialog {
 			}
 			pw = pw.getTransformationInformation().getPetriNet();
 		}
-		write(new CSVWriter(file, simId), pw);
+		SimulationResult simRes;
+		if (simId == null) {
+			simRes = pw.getPetriPropertiesNet().getSimResController().getLastActive();
+		} else {
+			simRes = pw.getPetriPropertiesNet().getSimResController().get(simId);
+		}
+		if (simRes != null) {
+
+			PNResultWriter pWriter = new PNResultWriter(file, simRes, pw);
+
+			write(pWriter.getCSVWriter(), pw);
+		} else {
+			PopUpDialog.getInstance().show("Error", fileFilter + "\nNo Simulation results available to save!");
+		}
 	}
 
 	private void writeMO(File file) {
@@ -201,9 +221,11 @@ public class SaveDialog {
 
 	private void writeSBML(File file) {
 		// create a sbmlOutput object
-		// SBMLoutputNoWS sbmlOutput = new SBMLoutputNoWS(file, new GraphInstance().getPathway());
+		// SBMLoutputNoWS sbmlOutput = new SBMLoutputNoWS(file, new
+		// GraphInstance().getPathway());
 		// if (sbmlOutput.generateSBMLDocument())
-		// JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(), sbmlDescription + sbmlOutput.generateSBMLDocument());
+		// JOptionPane.showMessageDialog(MainWindowSingelton.getInstance(),
+		// sbmlDescription + sbmlOutput.generateSBMLDocument());
 		if (GraphInstance.getPathway().getFile() == null) {
 			GraphInstance.getPathway().setFile(file);
 		}
@@ -236,7 +258,7 @@ public class SaveDialog {
 			}
 			InputStream internYaml = getClass().getClassLoader().getResourceAsStream("NodeProperties.yaml");
 			File exportFile = new File(exportPath);
-			try(FileOutputStream exportYaml = new FileOutputStream(exportFile)) {
+			try (FileOutputStream exportYaml = new FileOutputStream(exportFile)) {
 				IOUtils.copy(internYaml, exportYaml);
 				internYaml.close();
 			} catch (IOException ex) {
