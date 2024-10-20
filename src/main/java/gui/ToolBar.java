@@ -1,5 +1,18 @@
 package gui;
 
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -10,14 +23,8 @@ import graph.algorithms.gui.CompareGraphsGUI;
 import graph.hierarchies.AutoCoarse;
 import graph.jung.classes.MyGraph;
 import net.miginfocom.swing.MigLayout;
-import petriNet.OpenModelicaResult;
 import petriNet.PNTableDialog;
 import petriNet.ReachController;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ToolBar {
 	private JToolBar bar = null;
@@ -141,10 +148,6 @@ public class ToolBar {
 		JButton editNodes = new ToolBarButton("Edit PN-Elements");
 		editNodes.setToolTipText("Edit PN-Elements");
 		editNodes.addActionListener(e -> onEditElementsClicked());
-
-		JButton loadModResult = new ToolBarButton("Load Modellica Result");
-		loadModResult.setToolTipText("Load Modellica Result");
-		loadModResult.addActionListener(e -> onLoadModResultClicked());
 
 		JButton modelling = new ToolBarButton(modelingViewString);
 		modelling.addActionListener(e -> onModellingClicked());
@@ -522,10 +525,6 @@ public class ToolBar {
 
 	private void onEditElementsClicked() {
 		new PNTableDialog().setVisible(true);
-	}
-
-	private void onLoadModResultClicked() {
-		new OpenModelicaResult().execute();
 	}
 
 	private void onGroupClicked() {

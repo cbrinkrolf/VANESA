@@ -27,7 +27,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.xml.stream.XMLStreamException;
 
-import io.SuffixAwareFilter;
 import org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam;
 import org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder;
 import org.apache.commons.io.FileUtils;
@@ -44,8 +43,8 @@ import biologicalObjects.nodes.petriNet.Transition;
 import cern.colt.list.IntArrayList;
 import cern.colt.matrix.impl.DenseDoubleMatrix1D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
-import configurations.SettingsManager;
 import configurations.ProgramFileLock;
+import configurations.SettingsManager;
 import configurations.gui.LayoutConfig;
 import configurations.gui.SettingsPanel;
 import dataMapping.DataMappingColorMVC;
@@ -84,10 +83,10 @@ import gui.visualization.PreRenderManager;
 import io.OpenDialog;
 import io.PNDoc;
 import io.SaveDialog;
+import io.SuffixAwareFilter;
 import io.sbml.JSBMLOutput;
 import petriNet.Cov;
 import petriNet.CovNode;
-import petriNet.OpenModelicaResult;
 import petriNet.PNTableDialog;
 import petriNet.ReachController;
 import petriNet.SimpleMatrixDouble;
@@ -153,7 +152,13 @@ public class MenuListener implements ActionListener {
 			}
 			break;
 		case openNetwork:
-			new OpenDialog().show();
+			List<SuffixAwareFilter> filters = new ArrayList<>();
+			filters.add(SuffixAwareFilter.SBML);
+			filters.add(SuffixAwareFilter.VAML);
+			filters.add(SuffixAwareFilter.GRAPH_ML);
+			filters.add(SuffixAwareFilter.KGML);
+			filters.add(SuffixAwareFilter.GRAPH_TEXT_FILE);
+			new OpenDialog(filters).show();
 			break;
 		case closeNetwork:
 			w.removeTab(true);
@@ -170,9 +175,6 @@ public class MenuListener implements ActionListener {
 		case regularGraph:
 			new RandomRegularGraphGui();
 			break;
-		case phospho:
-			new OpenDialog().show();
-			break;
 		case connectedGraph:
 			new RandomConnectedGraphGui();
 			break;
@@ -182,8 +184,9 @@ public class MenuListener implements ActionListener {
 		case exportNetwork:
 			if (con.containsPathway()) {
 				if (pw.hasGotAtLeastOneElement()) {
-					new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.MO,
-							SuffixAwareFilter.CSML, SuffixAwareFilter.PNML, SuffixAwareFilter.GRAPH_TEXT_FILE},
+					new SaveDialog(
+							new SuffixAwareFilter[] { SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.MO,
+									SuffixAwareFilter.CSML, SuffixAwareFilter.PNML, SuffixAwareFilter.GRAPH_TEXT_FILE },
 							SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network first.");
@@ -195,7 +198,8 @@ public class MenuListener implements ActionListener {
 		case saveAs:
 			if (con.containsPathway()) {
 				if (pw.hasGotAtLeastOneElement()) {
-					new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.SBML}, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+					new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.SBML },
+							SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network first.");
 				}
@@ -225,7 +229,7 @@ public class MenuListener implements ActionListener {
 							e1.printStackTrace();
 						}
 					} else {
-						new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.SBML},
+						new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.SBML },
 								SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 					}
 				} else {
@@ -636,7 +640,9 @@ public class MenuListener implements ActionListener {
 				}
 				if (pw.isPetriNet() || pw.getTransformationInformation() != null
 						&& pw.getTransformationInformation().getPetriNet() != null) {
-					new OpenModelicaResult().execute();
+					filters = new ArrayList<>();
+					filters.add(SuffixAwareFilter.VANESA_SIM_RESULT);
+					new OpenDialog(filters).show();
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a Petri net first.");
 				}
@@ -787,7 +793,7 @@ public class MenuListener implements ActionListener {
 			wvv = pw.prepareGraphToPrint();
 			if (con.containsPathway()) {
 				if (pw.hasGotAtLeastOneElement()) {
-					new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.PNG, SuffixAwareFilter.SVG},
+					new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.PNG, SuffixAwareFilter.SVG },
 							SaveDialog.DATA_TYPE_GRAPH_PICTURE, wvv);
 				} else {
 					PopUpDialog.getInstance().show("Error", "Please create a network first.");

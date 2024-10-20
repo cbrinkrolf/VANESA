@@ -91,9 +91,9 @@ public class MenuBarClass {
 		tools.add(new JSeparator());
 		tools.add(dataLabelMapping);
 
-		JMenuItem phosphoImport = new JMenuItem("PhosphoSite input");
-		phosphoImport.addActionListener(MenuListener.getInstance());
-		phosphoImport.setActionCommand(MenuActionCommands.phospho.value);
+		//JMenuItem phosphoImport = new JMenuItem("PhosphoSite input");
+		//phosphoImport.addActionListener(MenuListener.getInstance());
+		//phosphoImport.setActionCommand(MenuActionCommands.phospho.value);
 
 		JMenuItem enrichGene = new JMenuItem("Enrich genes with miRNA");
 		enrichGene.setToolTipText("enriches (selected) genes with miRNA information");
@@ -334,7 +334,7 @@ public class MenuBarClass {
 		// snapshot.add(printPicture);
 
 		graph.add(generateGraph);
-		graph.add(phosphoImport);
+		//graph.add(phosphoImport);
 
 		if (MainWindow.developer) {
 			graph.add(enrichGene);

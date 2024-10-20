@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -20,18 +21,17 @@ import io.graphML.GraphMLReader;
 import io.kgml.KGMLReader;
 import io.sbml.JSBMLInput;
 import io.vaml.VAMLInput;
+import petriNet.PetriNetProperties;
 
 public final class OpenDialog {
 	private final JFileChooser chooser;
 
-	public OpenDialog() {
+	public OpenDialog(List<SuffixAwareFilter> filters) {
 		chooser = new JFileChooser(SettingsManager.getInstance().getFileOpenDirectory());
 		chooser.setAcceptAllFileFilterUsed(false);
-		chooser.addChoosableFileFilter(SuffixAwareFilter.SBML);
-		chooser.addChoosableFileFilter(SuffixAwareFilter.VAML);
-		chooser.addChoosableFileFilter(SuffixAwareFilter.GRAPH_ML);
-		chooser.addChoosableFileFilter(SuffixAwareFilter.KGML);
-		chooser.addChoosableFileFilter(SuffixAwareFilter.GRAPH_TEXT_FILE);
+		for (SuffixAwareFilter filter : filters) {
+			chooser.addChoosableFileFilter(filter);
+		}
 	}
 
 	public void show() {
@@ -59,6 +59,8 @@ public final class OpenDialog {
 			openGraphML(file);
 		} else if (fileFilter == SuffixAwareFilter.KGML) {
 			openKGML(file);
+		} else if (fileFilter == SuffixAwareFilter.VANESA_SIM_RESULT) {
+			openSimulationResult(file);
 		}
 		if (GraphContainer.getInstance().containsPathway()) {
 			if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
@@ -130,5 +132,22 @@ public final class OpenDialog {
 		} else {
 			pw.setFile(file);
 		}
+	}
+
+	private static void openSimulationResult(File file) {
+		try {
+			PetriNetProperties petrinet = GraphInstance.getPathway().getPetriPropertiesNet();
+			petrinet.loadVanesaSimulationResult(file);
+			GraphContainer con = GraphContainer.getInstance();
+			if (con.containsPathway()) {
+				if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
+					MainWindow.getInstance().updateAllGuiElements();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			PopUpDialog.getInstance().show("Error!", "Failed to load simulation results file.");
+		}
+
 	}
 }

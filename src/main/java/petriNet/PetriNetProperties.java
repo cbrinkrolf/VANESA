@@ -42,102 +42,97 @@ public class PetriNetProperties {
 	public PetriNetProperties() {
 	}
 
-	public void loadVanesaSimulationResult(File resFile) {
+	public void loadVanesaSimulationResult(File resFile) throws IOException {
 
-		try {
-			pnrir = new PNResultReader();
-			HashMap<String, List<Double>> result = pnrir.readResult(resFile);
-			pw = GraphInstance.getPathway();
-			// if BN holds PN
-			if (!pw.isPetriNet()) {
-				pw = pw.getTransformationInformation().getPetriNet();
-			}
-			BiologicalNodeAbstract bna;
-			Iterator<BiologicalNodeAbstract> it = this.pw.getAllGraphNodes().iterator();
+		pnrir = new PNResultReader();
+		HashMap<String, List<Double>> result = pnrir.readResult(resFile);
+		pw = GraphInstance.getPathway();
+		// if BN holds PN
+		if (!pw.isPetriNet()) {
+			pw = pw.getTransformationInformation().getPetriNet();
+		}
+		BiologicalNodeAbstract bna;
+		Iterator<BiologicalNodeAbstract> it = this.pw.getAllGraphNodes().iterator();
 
-			String fileName = resFile.getName();
-			// System.out.println(fileName);
-			// System.out.println(this.pw.getPetriPropertiesNet().getSimResController().getSimIds().size());
-			// System.out.println(this.getSimResController().getSimIds().size());
-			// System.out.println("n: "+this.getSimResController().getSimIds().get(0));
-			if (this.getSimResController().getSimIds().contains(fileName)) {
-				int i = 1;
-				while (this.getSimResController().getSimIds().contains(fileName + "(" + i + ")")) {
-					i++;
+		String fileName = resFile.getName();
+		// System.out.println(fileName);
+		// System.out.println(this.pw.getPetriPropertiesNet().getSimResController().getSimIds().size());
+		// System.out.println(this.getSimResController().getSimIds().size());
+		// System.out.println("n: "+this.getSimResController().getSimIds().get(0));
+		if (this.getSimResController().getSimIds().contains(fileName)) {
+			int i = 1;
+			while (this.getSimResController().getSimIds().contains(fileName + "(" + i + ")")) {
+				i++;
+			}
+			fileName += "(" + i + ")";
+			// System.out.println("contains");
+		}
+		SimulationResult simRes = this.getSimResController().get(fileName);
+		simRes.setName(fileName);
+		// System.out.println(fileName);
+		for (int i = 0; i < result.get("Time").size(); i++) {
+			simRes.addTime(result.get("Time").get(i));
+		}
+		while (it.hasNext()) {
+			bna = it.next();
+			if (bna instanceof Place) {
+				if (result.containsKey(bna.getName())) {
+					for (int i = 0; i < result.get(bna.getName()).size(); i++) {
+						simRes.addValue(bna, SimulationResultController.SIM_TOKEN, result.get(bna.getName()).get(i));
+					}
 				}
-				fileName += "(" + i + ")";
-				// System.out.println("contains");
-			}
-			SimulationResult simRes = this.getSimResController().get(fileName);
-			simRes.setName(fileName);
-			// System.out.println(fileName);
-			for (int i = 0; i < result.get("Time").size(); i++) {
-				simRes.addTime(result.get("Time").get(i));
-			}
-			while (it.hasNext()) {
-				bna = it.next();
-				if (bna instanceof Place) {
-					if (result.containsKey(bna.getName())) {
-						for (int i = 0; i < result.get(bna.getName()).size(); i++) {
-							simRes.addValue(bna, SimulationResultController.SIM_TOKEN,
-									result.get(bna.getName()).get(i));
-						}
+			} else if (bna instanceof Transition) {
+				if (result.containsKey(bna.getName() + "-active")) {
+					for (int i = 0; i < result.get(bna.getName() + "-active").size(); i++) {
+						simRes.addValue(bna, SimulationResultController.SIM_ACTIVE,
+								result.get(bna.getName() + "-active").get(i));
 					}
-				} else if (bna instanceof Transition) {
-					if (result.containsKey(bna.getName() + "-active")) {
-						for (int i = 0; i < result.get(bna.getName() + "-active").size(); i++) {
-							simRes.addValue(bna, SimulationResultController.SIM_ACTIVE,
-									result.get(bna.getName() + "-active").get(i));
-						}
+				}
+				if (result.containsKey(bna.getName() + "-fire")) {
+					for (int i = 0; i < result.get(bna.getName() + "-fire").size(); i++) {
+						simRes.addValue(bna, SimulationResultController.SIM_FIRE,
+								result.get(bna.getName() + "-fire").get(i));
 					}
-					if (result.containsKey(bna.getName() + "-fire")) {
-						for (int i = 0; i < result.get(bna.getName() + "-fire").size(); i++) {
-							simRes.addValue(bna, SimulationResultController.SIM_FIRE,
-									result.get(bna.getName() + "-fire").get(i));
-						}
+				}
+				if (result.containsKey(bna.getName() + "-speed")) {
+					for (int i = 0; i < result.get(bna.getName() + "-speed").size(); i++) {
+						simRes.addValue(bna, SimulationResultController.SIM_ACTUAL_FIRING_SPEED,
+								result.get(bna.getName() + "-speed").get(i));
 					}
-					if (result.containsKey(bna.getName() + "-speed")) {
-						for (int i = 0; i < result.get(bna.getName() + "-speed").size(); i++) {
-							simRes.addValue(bna, SimulationResultController.SIM_ACTUAL_FIRING_SPEED,
-									result.get(bna.getName() + "-speed").get(i));
-						}
-					}
-					if (result.containsKey(bna.getName() + "-delay")) {
-						for (int i = 0; i < result.get(bna.getName() + "-fire").size(); i++) {
-							simRes.addValue(bna, SimulationResultController.SIM_DELAY,
-									result.get(bna.getName() + "-delay").get(i));
-						}
+				}
+				if (result.containsKey(bna.getName() + "-delay")) {
+					for (int i = 0; i < result.get(bna.getName() + "-fire").size(); i++) {
+						simRes.addValue(bna, SimulationResultController.SIM_DELAY,
+								result.get(bna.getName() + "-delay").get(i));
 					}
 				}
 			}
-			Iterator<BiologicalEdgeAbstract> it2 = this.pw.getAllEdges().iterator();
-			BiologicalEdgeAbstract bea;
-			String name;
-			while (it2.hasNext()) {
-				bea = it2.next();
-				name = bea.getFrom().getName() + "-" + bea.getTo().getName();
-				// System.out.println(name);
-				if (result.containsKey(name + "-tokenSum")) {
-					for (int i = 0; i < result.get(name + "-tokenSum").size(); i++) {
-						simRes.addValue(bea, SimulationResultController.SIM_SUM_OF_TOKEN,
-								result.get(name + "-tokenSum").get(i));
-					}
-				}
-				if (result.containsKey(name + "-token")) {
-					for (int i = 0; i < result.get(name + "-token").size(); i++) {
-						simRes.addValue(bea, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW,
-								result.get(name + "-token").get(i));
-					}
+		}
+		Iterator<BiologicalEdgeAbstract> it2 = this.pw.getAllEdges().iterator();
+		BiologicalEdgeAbstract bea;
+		String name;
+		while (it2.hasNext()) {
+			bea = it2.next();
+			name = bea.getFrom().getName() + "-" + bea.getTo().getName();
+			// System.out.println(name);
+			if (result.containsKey(name + "-tokenSum")) {
+				for (int i = 0; i < result.get(name + "-tokenSum").size(); i++) {
+					simRes.addValue(bea, SimulationResultController.SIM_SUM_OF_TOKEN,
+							result.get(name + "-tokenSum").get(i));
 				}
 			}
-			pw.setPlotColorPlacesTransitions(false);
-			this.setPetriNetSimulation(true);
-			SimMenu menu = pw.getPetriNetSimulation().getMenu();
-			if(menu != null){
-				menu.updateSimulationResults();
+			if (result.containsKey(name + "-token")) {
+				for (int i = 0; i < result.get(name + "-token").size(); i++) {
+					simRes.addValue(bea, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW,
+							result.get(name + "-token").get(i));
+				}
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		}
+		pw.setPlotColorPlacesTransitions(false);
+		this.setPetriNetSimulation(true);
+		SimMenu menu = pw.getPetriNetSimulation().getMenu();
+		if (menu != null) {
+			menu.updateSimulationResults();
 		}
 	}
 
