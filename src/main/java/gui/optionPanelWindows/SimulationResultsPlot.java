@@ -901,7 +901,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 			// System.out.println("click");
 		}
-		// TODO actions fuer T-Inv. und P-Inv. Test
+		// CHRIS actions fuer T-Inv. und P-Inv. Test
 		/*
 		 * else if (event.equals("testP")) { System.out.println("TESTEN");
 		 * Set<BiologicalNodeAbstract> hsVertex = new HashSet<BiologicalNodeAbstract>();

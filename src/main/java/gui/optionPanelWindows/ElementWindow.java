@@ -944,7 +944,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 				// Color newColor = JColorChooser.showDialog(w.getFrame(), "Choose plot colour",
 				// bna.getPlotColor());
 				// System.out.println(bna.getDefaultColor());
-				// TODO plot color = null if BN with loaded PN
+				// CHRIS plot color = null if BN with loaded PN
 				MyColorChooser mc = new MyColorChooser(w.getFrame(), "Choose plot color", true, bna.getPlotColor());
 				if (mc.isOkAction()) {
 					Color newColor = mc.getColor();
@@ -966,7 +966,7 @@ public class ElementWindow implements ActionListener, ItemListener {
 			w.updateElementProperties();
 		} else if (("hideNeighbours".equals(event) || ("showNeighbours".equals(event)))
 				&& ab instanceof BiologicalNodeAbstract) {
-			// TODO visible wird noch nicht gehandelt in transformators
+			// CHRIS visible wird noch nicht gehandelt in transformators
 			boolean hide = "hideNeighbours".equals(event);
 			BiologicalNodeAbstract bna = (BiologicalNodeAbstract) ab;
 			for (BiologicalEdgeAbstract bea : pw.getGraph().getJungGraph().getIncidentEdges(bna)) {

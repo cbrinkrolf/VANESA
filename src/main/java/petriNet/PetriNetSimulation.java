@@ -83,9 +83,9 @@ public class PetriNetSimulation implements ActionListener {
 	// for the simulation results export of protected variables, necessary to detect actual firing of stochastic transitions
 	private boolean exportPrtoectedVariables = false;
 
-	// TODO refactored version of threads for simulation needs to be tested and
+	// CHRIS refactored version of threads for simulation needs to be tested and
 	// evaluated. maybe show more hints / error messages
-	// TODO log also simulation properties (start / number of intervals, duration
+	// CHRIS log also simulation properties (start / number of intervals, duration
 	// etc)
 	public PetriNetSimulation(Pathway pw) {
 		this.pw = pw;
@@ -197,7 +197,7 @@ public class PetriNetSimulation implements ActionListener {
 											override += ",'_" + bna.getName() + "_" + param.getName() + "'="
 													+ param.getValue();
 										} else {
-											// TODO override parameters of edges
+											// CHRIS override parameters of edges
 										}
 									}
 								}
@@ -481,7 +481,7 @@ public class PetriNetSimulation implements ActionListener {
 			return true;
 		}
 
-		// TODO put those checks in threads for example, so the messages/pup ups will be shown while checking/installing PNlib
+		// CHRIS put those checks in threads for example, so the messages/pup ups will be shown while checking/installing PNlib
 		String message;
 		OMCCommunicator omcCommunicator = new OMCCommunicator(getOMCPath());
 		if (omcCommunicator.isPNLibInstalled()) {
@@ -845,7 +845,7 @@ public class PetriNetSimulation implements ActionListener {
 				this.menu.started();
 				this.runOMCIA(port);
 			} else {
-				// TODO needs to be checked again
+				// CHRIS needs to be checked again
 				flags = pw.getChangedFlags("petriNetSim");
 				BiologicalNodeAbstract bna = menu.getSelectedNode();
 				String param = menu.getParameterName();

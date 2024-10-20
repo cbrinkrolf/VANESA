@@ -114,6 +114,7 @@ public class LayoutConfig extends JPanel implements ActionListener {
 			final Cursor old = LayoutConfig.this.getCursor();
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			config.setValues();
+			// CHRIS avoid SwingWorker
 			new SwingWorker() {
 				@Override
 				protected Object doInBackground() {

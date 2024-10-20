@@ -295,7 +295,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 						max = String.valueOf(place.getTokenMax());
 					}
 
-					// TODO units
+					// CHRIS units
 					attr.append("startMarks(final unit=\"mmol\")=" + start + " ,minMarks(final unit=\"mmol\")=" + min
 							+ " ,maxMarks(final unit=\"mmol\")=" + max + " ,t(final unit=\"mmol\")");
 					if (place.getConflictingOutEdges().size() > 1) {

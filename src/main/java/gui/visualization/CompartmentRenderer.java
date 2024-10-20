@@ -210,7 +210,7 @@ public class CompartmentRenderer implements VisualizationViewer.Paintable {
 		return false;
 	}
 
-	// TODO WIP for an more efficient painting of compartments
+	// CHRIS WIP for an more efficient painting of compartments
 	private void drawCompartemntsExperimental(Graphics2D g2d) {
 
 		long l1 = System.nanoTime();

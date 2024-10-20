@@ -72,7 +72,7 @@ public class TransformationInformationWindow implements ActionListener {
 
 	}
 
-	// TODO take also logical nodes into account
+	// CHRIS take also logical nodes into account
 	private void createSets() {
 		nodesMatched = new HashSet<>();
 		edgesMatched = new HashSet<>();

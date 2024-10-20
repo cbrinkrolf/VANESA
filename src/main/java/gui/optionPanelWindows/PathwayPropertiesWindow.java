@@ -134,7 +134,7 @@ public class PathwayPropertiesWindow implements ActionListener, ItemListener {
 			pw.getCompartmentManager().addDefaultCompartments();
 			this.revalidateView();
 		} else if (command.equals("add")) {
-			// TODO check regEx for identifier
+			// CHRIS check regEx for identifier
 			String cName = name.getText().trim();
 			if (cName.length() > 0) {
 				// compartment name must start with a letter or dash and may only contain

@@ -174,12 +174,12 @@ public class CSMLOutput extends BaseWriter<Pathway> {
         }
         return "  <csml:process id=\"" + bna.getID() + "\" name=\""
                 + (bna.getLabel().equals("") ? " " : bna.getLabel())
-                //TODO Transitiontype Discrete vs Continuous
+                //CHRIS Transitiontype Discrete vs Continuous
                 + "\" type=\"" + type + "\">\n";
     }
 
     private String getConnectionString(BiologicalNodeAbstract place, String type) {
-        //TODO no kinetic information
+        //CHRIS no kinetic information
         return "<csml:connector id=\"c"
                 + (++connector)
                 + "\" name=\"c"

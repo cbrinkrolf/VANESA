@@ -113,7 +113,7 @@ public class StochasticTransition extends Transition {
         this.probabilities = probabilities;
     }
 
-    // TODO add parameters for stochastic transition
+    // CHRIS add parameters for stochastic transition
     @Override
     public List<String> getTransformationParameters() {
         List<String> list = super.getTransformationParameters();

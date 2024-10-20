@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//CHRIS avoid SwingWorker
 public class KEGGConnector extends SwingWorker<Object, Object> {
     private String title;
     private final String organism;
@@ -197,7 +198,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                 bna = new Enzyme(node.getNodeLabel(), node.getKEGGentryName());
                 break;
             case "other":
-            case "undefiened": // TODO: typo for a reason?
+            case "undefined":
                 bna = new Other(node.getNodeLabel(), node.getKEGGentryName());
                 break;
             case "group":

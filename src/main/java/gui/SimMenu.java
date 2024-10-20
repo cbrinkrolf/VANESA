@@ -540,7 +540,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		all.addItemListener(this);
 
 		west.add(all);
-		// TODO implement delete all action
+		// CHRIS implement delete all action
 		west.add(new JLabel("simulation name"));
 		west.add(new JLabel(""));
 		west.add(new JLabel(""));

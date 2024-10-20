@@ -42,10 +42,10 @@ import util.StringLengthComparator;
 // if no type is given (discrete / continuous), it is inferred from mapped node, default fall back: continuous
 // will not generate logical places/transitions. if there is collision of the same name, name will get altered
 
-// TODO syso -> log file
-// TODO try hierarchical network (maybe first flatten?)
-// TODO interactive GUI while transforming (ability to abort)
-// TODO check delay of disc. transitions works for transformation since it is now a function with possible parameters instead of a double constant
+// CHRIS syso -> log file
+// CHRIS try hierarchical network (maybe first flatten?)
+// CHRIS interactive GUI while transforming (ability to abort)
+// CHRIS check delay of disc. transitions works for transformation since it is now a function with possible parameters instead of a double constant
 public class Transformator {
 
 	public static final String place = "Place";
@@ -332,7 +332,7 @@ public class Transformator {
 					// r.getUndirectedEdgeCount(rn));
 					// check exact incdedences
 
-					// TODO does not take numbers of edges of logical nodes into account!!!
+					// CHRIS does not take numbers of edges of logical nodes into account!!!
 					if (rn.isExactIncidence()) {
 						if (inCount == pw.getIncomingDirectedEdgeCount(bna)
 								&& outCount == pw.getOutgoingDirectedEdgeCount(bna)
@@ -434,7 +434,7 @@ public class Transformator {
 				// System.out.println("new perm");
 			}
 
-			// TODO check all nodes if !useBuckets
+			// CHRIS check all nodes if !useBuckets
 			boolean test = true;
 			if (!useBuckets) {
 				for (int j = 0; j < r.getBiologicalNodes().size(); j++) {
@@ -726,7 +726,7 @@ public class Transformator {
 	}
 
 	private PNNode createPNNode(RuleNode pnNode, BiologicalNodeAbstract bna) {
-		// TODO consider stochastic transitions
+		// CHRIS consider stochastic transitions
 		PNNode pn = null;
 		String type = pnNode.getType();
 		// no type given
@@ -1335,7 +1335,7 @@ public class Transformator {
 
 	private void copyParameters(GraphElementAbstract from, GraphElementAbstract to) {
 		for (Parameter p : from.getParameters()) {
-			// TODO test if parameter with same name exists already, create
+			// CHRIS test if parameter with same name exists already, create
 			// ParameterController class
 			to.getParameters().add(new Parameter(p.getName(), p.getValue(), p.getUnit()));
 		}

@@ -15,6 +15,7 @@ import transformation.Rule;
 import transformation.RuleManager;
 import transformation.YamlRuleReader;
 
+//CHRIS avoid SwingWorker
 public class OpenTransformationRules extends SwingWorker<Object, Object> {
     private final JFileChooser chooser;
     private FileFilter fileFilter;

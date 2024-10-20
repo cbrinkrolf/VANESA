@@ -364,7 +364,7 @@ public class RuleEditingWindow implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if (e.getActionCommand().equals("okButtonRE")) {
-			// TODO perform consistency check first
+			// CHRIS perform consistency check first
 			if (bn.hasGotAtLeastOneElement()) {
 				convertGraphToRule(false);
 				frame.setVisible(false);

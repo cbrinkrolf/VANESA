@@ -81,7 +81,7 @@ public class SettingsManager {
 	}
 
 	private String getProperty(String property) {
-		// TODO maker nicer
+		// CHRIS maker nicer
 		// todo workaround because file is not always read after changing one property
 		// and reading it again
 		xmlConfiguration = null;

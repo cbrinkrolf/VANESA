@@ -36,6 +36,7 @@ import java.util.*;
  * @author Annika and Sandra
  */
 public class JSBMLInput {
+	// CHRIS avoid jdom, use jsbml lib directly to read xml
     private Pathway pathway;
     private final Hashtable<Integer, BiologicalNodeAbstract> nodes = new Hashtable<>();
     private final HashMap<String, Integer> string2id = new HashMap<>();

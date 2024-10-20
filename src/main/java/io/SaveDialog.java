@@ -229,7 +229,7 @@ public class SaveDialog {
 		if (GraphInstance.getPathway().getFile() == null) {
 			GraphInstance.getPathway().setFile(file);
 		}
-		// TODO creation of FileOutputStream overrides file already, even without call
+		// CHRIS creation of FileOutputStream overrides file already, even without call
 		// write() method. Document should be generated first, if no errors thrown, then
 		// create FOS and write to file.
 		String out = "";

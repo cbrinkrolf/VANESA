@@ -140,6 +140,7 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
     private void doMapping() {
         dataMappingView.setProgressBarBiomart();
         dataMappingModelController.setPathway(dataMappingView.getSelectedPathway());
+     // CHRIS avoid SwingWorker
         SwingWorker<Void, Void> swingworker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() {
