@@ -7,7 +7,7 @@ public class ContinuousPlace extends Place {
 	public ContinuousPlace(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.continuousPlace);
-		setDefaultShape(new VertexShapes().getDoubleEllipse());
+		setDefaultShape(VertexShapes.getDoubleEllipse());
 		setDiscrete(false);
 	}
 }

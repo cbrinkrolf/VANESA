@@ -9,7 +9,7 @@ import graph.GraphInstance;
 import gui.PopUpDialog;
 import util.FormulaSafety;
 
-public class PNNode extends BiologicalNodeAbstract {
+public abstract class PNNode extends BiologicalNodeAbstract {
 	public PNNode(String label, String name) {
 		super(label, name);
 		this.setLabel(label);

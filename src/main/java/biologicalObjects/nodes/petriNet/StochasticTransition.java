@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
+import graph.jung.graphDrawing.VertexShapes;
 import gui.PopUpDialog;
 import util.StochasticDistribution;
 
@@ -21,6 +22,7 @@ public class StochasticTransition extends Transition {
 
     public StochasticTransition(String label, String name) {
         super(label, name);
+        setDefaultShape(VertexShapes.getDiscreteTransitionShape());
         setBiologicalElement(Elementdeclerations.stochasticTransition);
         this.setDefaultColor(Color.DARK_GRAY);
         events.add(1);

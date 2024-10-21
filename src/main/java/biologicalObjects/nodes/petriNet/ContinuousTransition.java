@@ -28,7 +28,7 @@ public class ContinuousTransition extends Transition {
 
 //		/transform2.translate(1, 1);
 		transform2.scale(1, 2);
-		setDefaultShape(transform2.createTransformedShape(new VertexShapes().getDoubleRectangle()));
+		setDefaultShape(transform2.createTransformedShape(VertexShapes.getDoubleRectangle()));
 	}
 
 	public String getMaximalSpeed() {

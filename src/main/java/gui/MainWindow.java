@@ -72,7 +72,6 @@ public class MainWindow implements ApplicationListener {
 	private int selectedView = 0;
 	private List<Bean> beansList = new ArrayList<>();
 	private String loadedYaml = null;
-	private final VertexShapes vs = new VertexShapes();
 
 	// global constants
 	public static boolean developer;
@@ -226,41 +225,41 @@ public class MainWindow implements ApplicationListener {
 			if (bean.getName().equals(bna.getBiologicalElement())) {
 				switch (shapeBean) {
 				case "ellipse":
-					bna.setDefaultShape(vs.getEllipse());
+					bna.setDefaultShape(VertexShapes.getEllipse());
 					break;
 				case "rectangle":
-					bna.setDefaultShape(vs.getRectangle());
+					bna.setDefaultShape(VertexShapes.getRectangle());
 					break;
 				case "rounded rectangle":
-					bna.setDefaultShape(vs.getRoundRectangle());
+					bna.setDefaultShape(VertexShapes.getRoundRectangle());
 					break;
 				case "triangle":
-					bna.setDefaultShape(vs.getRegularPolygon(3));
+					bna.setDefaultShape(VertexShapes.getRegularPolygon(3));
 					break;
 				case "pentagon":
-					bna.setDefaultShape(vs.getRegularPolygon(5));
+					bna.setDefaultShape(VertexShapes.getRegularPolygon(5));
 					break;
 				case "hexagon":
-					bna.setDefaultShape(vs.getRegularPolygon(6));
+					bna.setDefaultShape(VertexShapes.getRegularPolygon(6));
 					break;
 				case "octagon":
-					bna.setDefaultShape(vs.getRegularPolygon(8));
+					bna.setDefaultShape(VertexShapes.getRegularPolygon(8));
 					break;
 				case "5 star":
-					bna.setDefaultShape(vs.getRegularStar(5));
+					bna.setDefaultShape(VertexShapes.getRegularStar(5));
 					break;
 				case "6 star":
-					bna.setDefaultShape(vs.getRegularStar(6));
+					bna.setDefaultShape(VertexShapes.getRegularStar(6));
 					break;
 				case "7 star":
-					bna.setDefaultShape(vs.getRegularStar(7));
+					bna.setDefaultShape(VertexShapes.getRegularStar(7));
 					break;
 				case "8 star":
-					bna.setDefaultShape(vs.getRegularStar(8));
+					bna.setDefaultShape(VertexShapes.getRegularStar(8));
 					break;
 				default:
 					System.out.println(bna.getName() + ": No shape defined! Default shape used!");
-					bna.setDefaultShape(vs.getEllipse());
+					bna.setDefaultShape(VertexShapes.getEllipse());
 				}
 				Color colorBean = new Color(bean.getColorRed(), bean.getColorGreen(), bean.getColorBlue());
 				bna.setDefaultColor(colorBean);

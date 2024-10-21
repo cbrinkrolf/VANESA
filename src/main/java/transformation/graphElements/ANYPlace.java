@@ -11,8 +11,7 @@ public class ANYPlace extends Place {
 	public ANYPlace(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.place);
-		VertexShapes shapes = new VertexShapes();
-		setDefaultShape(shapes.makeCoarse(shapes.getEllipse()));
+		setDefaultShape(VertexShapes.makeCoarse(VertexShapes.getEllipse()));
 		setDiscrete(true);
 		attributeSetter(this.getClass().getSimpleName(), this);
 		

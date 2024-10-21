@@ -1085,7 +1085,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 									if (ref2 > 3.0)
 										ref2 = 3.0f;
-									VertexShapes vs = new VertexShapes(ref2, 1.0f);
+									//VertexShapes vs = new VertexShapes(ref2, 1.0f);
 									if (animationColour.isSelected()) {
 										bna.setColor(new Color(colors.get(take)));
 									}

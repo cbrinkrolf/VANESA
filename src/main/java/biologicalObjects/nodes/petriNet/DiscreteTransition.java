@@ -4,12 +4,14 @@ import java.awt.Color;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
+import graph.jung.graphDrawing.VertexShapes;
 
 public class DiscreteTransition extends Transition {
     private String delay = "1";
 
     public DiscreteTransition(String label, String name) {
         super(label, name);
+		setDefaultShape(VertexShapes.getDiscreteTransitionShape());
         setBiologicalElement(Elementdeclerations.discreteTransition);
         setColor(Color.WHITE);
     }

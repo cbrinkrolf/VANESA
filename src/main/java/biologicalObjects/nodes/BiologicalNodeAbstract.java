@@ -40,8 +40,8 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 	private Color color = Color.LIGHT_GRAY;
 	private Color defaultColor = Color.LIGHT_GRAY;
 	private String BiologicalElement = "";
-	private Shape shape = new VertexShapes().getEllipse();
-	private Shape defaultShape = new VertexShapes().getEllipse();
+	private Shape shape = VertexShapes.getEllipse();
+	private Shape defaultShape = VertexShapes.getEllipse();
 	private boolean hasKEGGNode = false;
 	private boolean hasBrendaNode = false;
 	private HashSet<String> labelSet = new HashSet<>();
@@ -440,7 +440,7 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 			coarseShape = shape;
 		else
 			coarseShape = getRootNode().getShape();
-		coarseShape = new VertexShapes().makeCoarse(coarseShape);
+		coarseShape = VertexShapes.makeCoarse(coarseShape);
 		setDefaultShape(coarseShape);
 		setShape(coarseShape);
 	}

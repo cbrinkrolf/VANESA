@@ -16,11 +16,15 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphContainer;
 
 public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
-    private final Pathway pw;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private final Pathway pw;
     private Point2D mousePoint = new Point2D.Double(0, 0);
     private int fpsCounter = 0;
     private long start = 0;
-    private boolean printFPS = false;
+    private boolean printFPS = !true;
 
     public MyVisualizationViewer(VisualizationModel<V, E> arg0, Dimension arg2, Pathway pw) {
         super(arg0, arg2);

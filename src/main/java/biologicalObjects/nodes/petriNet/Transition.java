@@ -1,13 +1,8 @@
 package biologicalObjects.nodes.petriNet;
 
-import java.awt.Color;
-import java.awt.geom.AffineTransform;
 import java.util.List;
 
-import biologicalElements.Elementdeclerations;
-import graph.jung.graphDrawing.VertexShapes;
-
-public class Transition extends PNNode {
+public abstract class Transition extends PNNode {
 	private boolean simulationActive;
 	private boolean simulationFire;
 	private String firingCondition = "true";// "time>9.8";
@@ -19,12 +14,6 @@ public class Transition extends PNNode {
 			setLabel(name);
 		if (name.equals(""))
 			setName(label);
-		AffineTransform transform2 = new AffineTransform();
-		transform2.translate(1, 1);
-		transform2.scale(1, 2);
-		setDefaultShape(transform2.createTransformedShape(new VertexShapes().getRectangle()));
-		setDefaultColor(Color.white);
-		setBiologicalElement(Elementdeclerations.transition);
 	}
 
 	public boolean isSimulationActive() {

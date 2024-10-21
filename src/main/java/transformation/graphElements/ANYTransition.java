@@ -13,14 +13,13 @@ public class ANYTransition extends Transition {
 	public ANYTransition(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.transition);
-		VertexShapes shapes = new VertexShapes();
 		attributeSetter(this.getClass().getSimpleName(), this);
 
 		AffineTransform transform2 = new AffineTransform();
 
 		transform2.translate(1, 1);
 		transform2.scale(1, 2);
-		setDefaultShape(shapes.makeCoarse(transform2.createTransformedShape(shapes.getRectangle())));
+		setDefaultShape(VertexShapes.makeCoarse(transform2.createTransformedShape(VertexShapes.getRectangle())));
 		setDefaultColor(Color.white);
 	}
 	

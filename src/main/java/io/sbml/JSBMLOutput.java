@@ -56,6 +56,11 @@ import gui.RangeSelector;
  *
  */
 public class JSBMLOutput {
+	
+	// TODO rewrite JSBML import / export using standard to SBML structure
+	// TODO update JSBML lib
+	
+	
 	/*
 	 * the sbml document which has to be filled
 	 */
