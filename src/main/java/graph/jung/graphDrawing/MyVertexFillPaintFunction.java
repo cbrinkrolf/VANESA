@@ -2,15 +2,12 @@ package graph.jung.graphDrawing;
 
 import java.awt.Color;
 import java.awt.Paint;
-import java.util.Iterator;
-import java.util.Set;
 
 import com.google.common.base.Function;
 
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import configurations.GraphSettings;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 
 public class MyVertexFillPaintFunction implements Function<BiologicalNodeAbstract, Paint> {

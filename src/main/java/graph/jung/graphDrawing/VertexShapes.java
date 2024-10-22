@@ -33,6 +33,8 @@ public class VertexShapes {
 	private static Map<Integer, Shape> stars = new HashMap<>();
 	private static Shape discreteTransition = null;
 	private static Shape continuousTransition = null;
+	private static Shape inhibitorArrowHead = null;
+	private static Shape pnInhibitorArrowHead = null;
 
 	/**
 	 * Creates a <code>VertexShapeFactory</code> with the specified vertex size and
@@ -309,5 +311,30 @@ public class VertexShapes {
 			continuousTransition = transform2.createTransformedShape(VertexShapes.getDoubleRectangle());
 		}
 		return continuousTransition;
+	}
+
+	public static Shape getInhibitorArrowHead() {
+		if (inhibitorArrowHead == null) {
+			float width = 10;
+			float length = 8;
+			float offset = 4;
+			GeneralPath arrow = new GeneralPath();
+			arrow.moveTo(offset, 0);
+			arrow.lineTo(offset, length * 0.5f);
+			arrow.lineTo(offset - width, length * 0.5f);
+			arrow.lineTo(offset - width, -length * 0.5f);
+			arrow.lineTo(offset, -length * 0.5f);
+			arrow.lineTo(offset, 0);
+			inhibitorArrowHead = arrow;
+		}
+		return inhibitorArrowHead;
+
+	}
+	
+	public static Shape getPNInhibitorArrowHead() {
+		if(pnInhibitorArrowHead == null){
+			pnInhibitorArrowHead = new Ellipse2D.Double(-10, -5, 10, 10);
+		}
+		return pnInhibitorArrowHead;
 	}
 }

@@ -8,17 +8,17 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 import java.awt.*;
 
 public class MyEdgeFillPaintFunction implements Function<BiologicalEdgeAbstract, Paint> {
-    private final PickedState<BiologicalNodeAbstract> psV;
-    private final PickedState<BiologicalEdgeAbstract> psE;
-    private boolean graphTheory = false;
+   // private final PickedState<BiologicalNodeAbstract> psV;
+   // private final PickedState<BiologicalEdgeAbstract> psE;
+   // private boolean graphTheory = false;
 
     public MyEdgeFillPaintFunction(PickedState<BiologicalNodeAbstract> psV, PickedState<BiologicalEdgeAbstract> psE) {
-        this.psV = psV;
-        this.psE = psE;
+       // this.psV = psV;
+        //this.psE = psE;
     }
 
     public void setGraphTheory(boolean graphTheory) {
-        this.graphTheory = graphTheory;
+       // this.graphTheory = graphTheory;
     }
 
     @Override

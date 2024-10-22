@@ -230,7 +230,7 @@ public class MyGraph {
 		esh = new MyEdgeStrokeHighlighting(stateV, stateE, pathway);
 		edpf = new MyEdgeDrawPaintFunction(stateV, stateE);
 		efpf = new MyEdgeFillPaintFunction(stateV, stateE);
-
+		
 		vertexStringer = new MyVertexStringer();
 		vertexShapeTransformer = new MyVertexShapeTransformer();
 		edgeStringer = new MyEdgeStringer();
