@@ -21,7 +21,7 @@ import graph.algorithms.gui.smacof.view.SmacofView;
  */
 public class Smacof {
 
-    private final Mat TEST_Z = getTestZ();
+    //private final Mat TEST_Z = getTestZ();
     private final int STANDARD_METRIC = 2;
     private boolean interrupted = false;
 
@@ -265,7 +265,7 @@ public class Smacof {
      *
      * @return a matrix
      */
-    private Mat getTestZ() {
+    /*private Mat getTestZ() {
         Mat m = new Mat(4, 2);
         double[][] mt = m.getLonleyMatrix();
         double[] a = {-0.266, -0.539};
@@ -277,7 +277,7 @@ public class Smacof {
         mt[2] = c;
         mt[3] = d;
         return m;
-    }
+    }*/
     
     /**
      * interrupt computation on stop button

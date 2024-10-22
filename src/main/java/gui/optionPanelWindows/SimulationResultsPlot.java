@@ -64,7 +64,6 @@ import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphInstance;
-import graph.jung.graphDrawing.VertexShapes;
 import gui.DetailedSimRes;
 import gui.MainWindow;
 import io.SaveDialog;

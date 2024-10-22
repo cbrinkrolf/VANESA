@@ -27,6 +27,8 @@ import graph.GraphInstance;
  * operations.
  */
 public class HierarchyList<E> extends ArrayList<BiologicalNodeAbstract>{
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Next hierarchy level (children nodes of this HierarchyList).
 	 */
