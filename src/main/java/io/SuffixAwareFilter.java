@@ -43,6 +43,10 @@ public class SuffixAwareFilter extends FileFilter {
 
     @Override
     public boolean accept(File f) {
+    	if(f.getPath().contains("::")){
+    		// System.out.println("problem: "+f.getPath());
+    		return f.isDirectory();
+    	}
         final String suffix = FilenameUtils.getExtension(f.getPath());
         return f.isDirectory() || suffix.equals(extension);
     }
