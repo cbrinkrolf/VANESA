@@ -84,6 +84,7 @@ public class Pathway implements Cloneable {
 	private TransformationInformation transformationInformation = null;
 	private final CompartmentManager compartmentManager = new CompartmentManager();
 
+	// pw is true pathway
 	public Pathway(String name, boolean headless) {
 		this.headless = headless;
 		this.name = name.trim();
@@ -92,8 +93,8 @@ public class Pathway implements Cloneable {
 			this.title = this.name;
 			graph = new MyGraph(this);
 		}
-	}
-
+	} 
+	// pw is true pathway
 	public Pathway(String name) {
 		this.headless = false;
 		this.name = name.trim();
@@ -102,6 +103,7 @@ public class Pathway implements Cloneable {
 		tab = new GraphTab(this.name, graph.getGraphVisualization());
 	}
 
+	// pw is bna node
 	public Pathway(String name, Pathway parent) {
 		this.headless = false;
 		this.name = name.trim();

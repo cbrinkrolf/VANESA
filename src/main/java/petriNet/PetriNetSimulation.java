@@ -80,8 +80,9 @@ public class PetriNetSimulation implements ActionListener {
 	private StringBuilder logMessage = null;
 	private boolean installationChecked = false;
 	private final String pnLibVersion = "3.0.0";
-	// for the simulation results export of protected variables, necessary to detect actual firing of stochastic transitions
-	private boolean exportPrtoectedVariables = false;
+	// for the simulation results export of protected variables, necessary to detect
+	// actual firing of stochastic transitions
+	private boolean exportPrtoectedVariables = true;
 
 	// CHRIS refactored version of threads for simulation needs to be tested and
 	// evaluated. maybe show more hints / error messages
@@ -147,7 +148,8 @@ public class PetriNetSimulation implements ActionListener {
 			installationChecked = this.checkInstallation();
 			if (!installationChecked) {
 				logAndShow("Installation error. PNlib is not installed. Simulation stopped");
-				PopUpDialog.getInstance().show("Installation error!", "Installation error. PNlib is not installed. Simulation stopped");
+				PopUpDialog.getInstance().show("Installation error!",
+						"Installation error. PNlib is not installed. Simulation stopped");
 				return;
 			}
 		}
@@ -236,11 +238,21 @@ public class PetriNetSimulation implements ActionListener {
 								// String program = "_omcQuot_556E7469746C6564";
 								logAndShow("override statement: " + override);
 								if (noEmmit) {
-									pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
-											"-noEventEmit", "-lv=LOG_STATS", "-emit_protected");
+									if (exportPrtoectedVariables) {
+										pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
+												"-noEventEmit", "-lv=LOG_STATS", "-emit_protected");
+									} else {
+										pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
+												"-noEventEmit", "-lv=LOG_STATS");
+									}
 								} else {
-									pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
-											"-lv=LOG_STATS", "-emit_protected");
+									if (exportPrtoectedVariables) {
+										pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
+												"-lv=LOG_STATS", "-emit_protected");
+									} else {
+										pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
+												"-lv=LOG_STATS");
+									}
 								}
 								pb.redirectOutput();
 								pb.directory(new File(pathSim));
@@ -481,7 +493,8 @@ public class PetriNetSimulation implements ActionListener {
 			return true;
 		}
 
-		// CHRIS put those checks in threads for example, so the messages/pup ups will be shown while checking/installing PNlib
+		// CHRIS put those checks in threads for example, so the messages/pup ups will
+		// be shown while checking/installing PNlib
 		String message;
 		OMCCommunicator omcCommunicator = new OMCCommunicator(getOMCPath());
 		if (omcCommunicator.isPNLibInstalled()) {
@@ -508,7 +521,8 @@ public class PetriNetSimulation implements ActionListener {
 						return menu.getSimLib() != null;
 					}
 				} else {
-					message = "Installation error. PNlib version " + pnLibVersion+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
+					message = "Installation error. PNlib version " + pnLibVersion
+							+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
 					logAndShow(message);
 					PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
 					return menu.getSimLib() != null;
@@ -533,7 +547,8 @@ public class PetriNetSimulation implements ActionListener {
 					return menu.getSimLib() != null;
 				}
 			} else {
-				message = "Installation error. PNlib version " + pnLibVersion+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
+				message = "Installation error. PNlib version " + pnLibVersion
+						+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
 				logAndShow(message);
 				PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
 				return menu.getSimLib() != null;
@@ -624,13 +639,12 @@ public class PetriNetSimulation implements ActionListener {
 					} else {
 						filter += "'" + bna.getName() + "'.active|";
 						filter += "'" + bna.getName() + "'.fireTime|";
-						vars+=2;
-						if(bna instanceof DiscreteTransition){
+						vars += 2;
+						if (bna instanceof DiscreteTransition) {
 							filter += "'" + bna.getName() + "'.delay|";
-						}
-						else if (bna instanceof StochasticTransition) {
+						} else if (bna instanceof StochasticTransition) {
 							filter += "'" + bna.getName() + "'.putDelay|";
-							vars ++;
+							vars++;
 						}
 					}
 				}
@@ -1019,8 +1033,8 @@ public class PetriNetSimulation implements ActionListener {
 			return "Marks";
 		}
 	}
-	
-	public SimMenu getMenu(){
+
+	public SimMenu getMenu() {
 		return this.menu;
 	}
 }

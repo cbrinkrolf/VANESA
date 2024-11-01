@@ -1,8 +1,9 @@
 package petriNet;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import biologicalElements.GraphElementAbstract;
 import graph.GraphInstance;
@@ -25,13 +26,16 @@ public class SimulationResultController {
 	public static int SIM_SUM_OF_TOKEN = 3;
 	public static int SIM_ACTUAL_TOKEN_FLOW = 4;
 
-	private HashMap<String, SimulationResult> series;
+	private Map<String, SimulationResult> series;
 	private List<String> simIds = new ArrayList<String>();
 
 	private boolean filteredDefault = false;
 
 	public SimulationResultController() {
-		series = new HashMap<String, SimulationResult>();
+		// should be concurrent, otherwise it might lead to problems if a simulation is
+		// performed and simulation runs are deleted in the sim menu. Then Ids get
+		// messed up
+		series = new ConcurrentHashMap<String, SimulationResult>();
 	}
 
 	public SimulationResult get(String simId) {
