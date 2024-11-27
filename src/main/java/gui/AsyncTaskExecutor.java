@@ -7,12 +7,13 @@ public final class AsyncTaskExecutor {
 		MainWindow.getInstance().showProgressBar(label);
 		CompletableFuture.runAsync(() -> {
 			body.run();
+			MainWindow.getInstance().closeProgressBar();
 		}).exceptionally(t -> {
 			t.printStackTrace();
+			MainWindow.getInstance().closeProgressBar();
 			PopUpDialog.getInstance().show("Task Executor error.",
 					"Failed to run task: " + label + "\r\n" + t.getMessage());
 			return null;
 		});
-		MainWindow.getInstance().closeProgressBar();
 	}
 }
