@@ -125,4 +125,14 @@ public class VanesaUtility {
 	public static Color colorFromHex(String hex) {
 		return Color.decode(hex);
 	}
+
+	public static double[][] createMatrix(int m, int n) {
+		double[][] array = new double[m][n];
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				array[i][j] = 0;
+			}
+		}
+		return array;
+	}
 }

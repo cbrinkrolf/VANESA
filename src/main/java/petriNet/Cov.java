@@ -16,6 +16,7 @@ import biologicalObjects.nodes.petriNet.Transition;
 //import edu.uci.ics.jung.utils.Pair;
 import graph.CreatePathway;
 import graph.GraphInstance;
+import util.VanesaUtility;
 
 public class Cov {
 
@@ -327,10 +328,8 @@ public class Cov {
 			}
 		}
 
-		// System.out.println("places: " + this.numberPlaces + " trans: "
-		// + this.numberTransitions);
-		double[][] f = this.initArray(this.numberPlaces, this.numberTransitions);
-		double[][] b = this.initArray(this.numberPlaces, this.numberTransitions);
+		double[][] f = VanesaUtility.createMatrix(this.numberPlaces, this.numberTransitions);
+		double[][] b = VanesaUtility.createMatrix(this.numberPlaces, this.numberTransitions);
 		// double[][] c = this.initArray(numberPlace, numberTransition);
 
 		// einkommende Kanten (backward matrix)
@@ -371,7 +370,7 @@ public class Cov {
 		}
 		this.bMatrix = new SimpleMatrixDouble(b);
 		this.fMatrix = new SimpleMatrixDouble(f);
-		this.cMatrix = new SimpleMatrixDouble(this.initArray(this.numberPlaces, this.numberTransitions));
+		this.cMatrix = new SimpleMatrixDouble(VanesaUtility.createMatrix(this.numberPlaces, this.numberTransitions));
 		this.cMatrix.add(this.bMatrix);
 		this.cMatrix.add(this.fMatrix);
 
@@ -391,16 +390,6 @@ public class Cov {
 
 	public HashMap<String, Integer> getName2id() {
 		return name2id;
-	}
-
-	private double[][] initArray(int m, int n) {
-		double[][] array = new double[m][n];
-		for (int i = 0; i < m; i++) {
-			for (int j = 0; j < n; j++) {
-				array[i][j] = 0;
-			}
-		}
-		return array;
 	}
 
 	private void getParents(CovNode node) {
