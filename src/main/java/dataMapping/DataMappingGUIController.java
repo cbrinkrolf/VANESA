@@ -27,7 +27,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import dataMapping.dataImport.ExcelException;
 import database.ppi.PPISearch;
 import graph.GraphContainer;
-import graph.algorithms.NodeAttributeTypes;
+import graph.algorithms.NodeAttributeType;
 import graph.jung.classes.MyGraph;
 import gui.AsyncTaskExecutor;
 import gui.MainWindow;
@@ -127,7 +127,7 @@ public class DataMappingGUIController implements ActionListener, MouseListener, 
                 for (BiologicalNodeAbstract bna : mg.getAllVertices()) {
                     String label = bna.getLabel();
                     if (labelsAndValues.containsKey(label)) {
-                        bna.addAttribute(NodeAttributeTypes.EXPERIMENT, input, labelsAndValues.get(label));
+                        bna.addAttribute(NodeAttributeType.EXPERIMENT, input, labelsAndValues.get(label));
                     }
                 }
             }

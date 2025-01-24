@@ -17,7 +17,6 @@ import graph.layouts.ColorSlider;
 import graph.layouts.HierarchicalCircleLayoutConfig;
 
 public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements ChangeListener {
-
 	private static final long serialVersionUID = 852123;
 
 	private static HEBLayoutConfig instance;
@@ -84,7 +83,7 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		groupSeperationSlider.setMajorTickSpacing(20);
 		groupSeperationSlider.setMinorTickSpacing(5);
 		groupSeperationSlider.setPaintTicks(true);
-		Hashtable<Integer, JLabel> sepLabels = new Hashtable<Integer, JLabel>();
+		Hashtable<Integer, JLabel> sepLabels = new Hashtable<>();
 		sepLabels.put(1, new JLabel("min"));
 		sepLabels.put(100, new JLabel("max"));
 		groupSeperationSlider.setLabelTable(sepLabels);
@@ -111,7 +110,7 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		groupDepthSlider.setValue(ROUGHEST_LEVEL);
 		groupDepthSlider.setMajorTickSpacing(1);
 		groupDepthSlider.setPaintTicks(true);
-		Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+		Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
 		labelTable.put(FINEST_LEVEL, new JLabel("Finest Level"));
 		labelTable.put(ROUGHEST_LEVEL, new JLabel("Roughest Level"));
 		groupDepthSlider.setLabelTable(labelTable);
@@ -127,7 +126,7 @@ public class HEBLayoutConfig extends HierarchicalCircleLayoutConfig implements C
 		edgeOpacitySlider.setMajorTickSpacing(20);
 		edgeOpacitySlider.setMinorTickSpacing(10);
 		edgeOpacitySlider.setPaintTicks(true);
-		Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
+		Hashtable<Integer, JLabel> labels = new Hashtable<>();
 		labels.put(0, new JLabel("0%"));
 		labels.put(20, new JLabel("20%"));
 		labels.put(40, new JLabel("40%"));

@@ -104,7 +104,7 @@ public class SimulationResultController {
 	public void remove(int i) {
 		this.series.remove(this.simIds.get(i));
 		this.simIds.remove(i);
-		if (simIds.size() < 1) {
+		if (simIds.isEmpty()) {
 			GraphInstance.getPathway().getPetriPropertiesNet().setPetriNetSimulation(false);
 			MainWindow w = MainWindow.getInstance();
 			w.updateAllGuiElements();

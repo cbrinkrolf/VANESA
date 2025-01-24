@@ -132,7 +132,7 @@ public class GEMLayout<V, E> extends AbstractLayout<V, E> {
 			layoutConfig.q.enqueue(root);
 			layoutConfig.gemProp[root].in = 1;
 		}
-		if (layoutConfig.q.size() == 0)
+		if (layoutConfig.q.isEmpty())
 			return -1; // null
 		v = layoutConfig.q.dequeueInt();
 

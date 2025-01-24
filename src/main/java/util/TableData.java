@@ -38,10 +38,7 @@ public class TableData<T> {
 	}
 
 	public boolean hasHeaders() {
-		if (headers == null || headers.size() == 0) {
-			return true;
-		}
-		return false;
+		return headers == null || headers.isEmpty();
 	}
 
 	public int getRowNumber() {

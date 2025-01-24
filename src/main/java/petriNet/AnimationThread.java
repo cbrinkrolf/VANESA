@@ -9,8 +9,7 @@ public class AnimationThread extends Thread {
 	// This method is called when the thread runs
 
 	private JSlider slider = null;
-	private Vector<Integer> colors = new Vector<Integer>();
-
+	private final Vector<Integer> colors = new Vector<>();
 	private int animationStartPosition = 2;
 	private int animationEndPosition = 0;
 	private int animationSpeed = 1;
@@ -20,10 +19,8 @@ public class AnimationThread extends Thread {
 	private int threadStep = 0;
 	private JButton stopButton;
 
-	public AnimationThread(JSlider slider, int animationStart,
-			int animationEnd, boolean color, int animationSpeed,
+	public AnimationThread(JSlider slider, int animationStart, int animationEnd, boolean color, int animationSpeed,
 			JButton animationButton, JButton stopButton) {
-
 		this.slider = slider;
 		this.color = color;
 		this.animationSpeed = animationSpeed;
@@ -36,7 +33,6 @@ public class AnimationThread extends Thread {
 		colors.add(0, 0x0000ff);
 		colors.add(1, 0xff0000);
 		colors.add(2, 0xdedede);
-
 	}
 
 	public boolean stopThread() {

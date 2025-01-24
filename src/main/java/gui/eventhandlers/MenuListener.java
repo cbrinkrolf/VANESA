@@ -457,7 +457,7 @@ public class MenuListener implements ActionListener {
 			c.zMult(v, x, 1, 0, true);
 			IntArrayList l = new IntArrayList();
 			x.getNonZeros(l, null);
-			if (l.size() == 0) {
+			if (l.isEmpty()) {
 				invariant.setText("This vector is a valid invariant");
 			} else {
 				invariant.setText("This vector is not a valid invariant");
@@ -479,7 +479,7 @@ public class MenuListener implements ActionListener {
 			c.zMult(v, x, 1, 0, false);
 			l = new IntArrayList();
 			x.getNonZeros(l, null);
-			if (l.size() == 0) {
+			if (l.isEmpty()) {
 				invariant.setText("This vector is a valid invariant");
 			} else {
 				invariant.setText("This vector is not a valid invariant");
@@ -545,7 +545,7 @@ public class MenuListener implements ActionListener {
 			l = new IntArrayList();
 			x.getNonZeros(l, null);
 			boolean validInvariant = false;
-			if (l.size() == 0) {
+			if (l.isEmpty()) {
 				// reachable.setText("This vector is a valid Invariante");
 				validInvariant = true;
 			} else {
@@ -823,7 +823,7 @@ public class MenuListener implements ActionListener {
 			if (con.containsPathway()) {
 				if (pw.hasGotAtLeastOneElement() && !pw.isPetriNet()) {
 					List<Rule> rules = RuleManager.getInstance().getActiveRules();
-					if (rules.size() == 0) {
+					if (rules.isEmpty()) {
 						PopUpDialog.getInstance().show("Error", "No active transformation rules found!.");
 						return;
 					}

@@ -9,7 +9,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import graph.GraphContainer;
 import graph.algorithms.NodeAttributeNames;
-import graph.algorithms.NodeAttributeTypes;
+import graph.algorithms.NodeAttributeType;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
 
@@ -131,7 +131,7 @@ public class Weighting {
 		for (int i = 0; i < X.length; i++) {
 			bna = mapped_nodes_backwards.get(i);
 			for (NodeAttribute na : bna
-					.getNodeAttributesByType(NodeAttributeTypes.ANNOTATION)) {
+					.getNodeAttributesByType(NodeAttributeType.ANNOTATION)) {
 				if (na.getName().equals(
 						NodeAttributeNames.GO_CELLULAR_COMPONENT)) {
 					subindex = locales.get(na.getStringvalue());

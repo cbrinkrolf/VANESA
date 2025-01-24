@@ -36,7 +36,7 @@ import util.StringLengthComparator;
  */
 public class MOoutput extends BaseWriter<Pathway> {
 	private static final String INDENT = "  ";
-	private static final String ENDL = System.getProperty("line.separator");
+	private static final String ENDL = System.lineSeparator();
 	private static final Set<Character> CHARS = Set.of('*', '+', '/', '-', '^', '(', ')', ',', ' ');
 
 	// Stringbuilder for test arcs, inhibitory arcs, places, and transitions
@@ -446,8 +446,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 				} else {
 					if (colored) {
 						Set<BiologicalNodeAbstract> markedOut = getMarkedNeighborsIn(e.getFrom());
-						String tmp = "g";
-						if (markedOut.size() == 0) {
+						final String tmp;
+						if (markedOut.isEmpty()) {
 							tmp = "{0, " + getModelicaEdgeFunction(e) + "}/*" + toString + "*/";
 						} else {
 							String nodes = "";

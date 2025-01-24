@@ -866,7 +866,7 @@ public class PetriNetSimulation implements ActionListener {
 				List<Double> list = menu.getParameterValues();
 				double value;
 				PopUpDialog.getInstance().show("Parameterized simulation", "Parameters to be simulated:" + list.size());
-				if (list.size() < 1) {
+				if (list.isEmpty()) {
 					return;
 				}
 				// HashMap<Place, Boundary> boundaries = (HashMap<Place, Boundary>)

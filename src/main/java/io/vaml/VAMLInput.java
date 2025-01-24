@@ -579,6 +579,6 @@ public class VAMLInput {
 
     private Element getFirstChildWithName(Element element, String name) {
         List<Element> children = element.getChildren(name);
-        return children.size() == 0 ? null : children.get(0);
+        return children.isEmpty() ? null : children.get(0);
     }
 }

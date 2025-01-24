@@ -378,7 +378,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		} else if (selectedNode instanceof Transition) {
 			// System.out.println(selectedNode.getParameters().size());
-			if (selectedNode.getParameters().size() < 1) {
+			if (selectedNode.getParameters().isEmpty()) {
 				// System.out.println("return");
 				return;
 			}

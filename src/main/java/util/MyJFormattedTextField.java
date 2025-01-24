@@ -6,7 +6,7 @@ import java.text.ParseException;
 import javax.swing.JFormattedTextField;
 
 public class MyJFormattedTextField extends JFormattedTextField {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -6435884038796106377L;
 	private final boolean allowSigned;
 
 	public MyJFormattedTextField(Format format) {

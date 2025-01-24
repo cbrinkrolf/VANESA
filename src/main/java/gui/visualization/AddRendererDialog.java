@@ -23,7 +23,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import graph.GraphInstance;
 import graph.algorithms.NodeAttributeNames;
-import graph.algorithms.NodeAttributeTypes;
+import graph.algorithms.NodeAttributeType;
 import gui.LocalBackboardPaintable;
 import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
@@ -154,21 +154,16 @@ public class AddRendererDialog implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		String event = e.getActionCommand();
-
-		switch (event) {
+		switch (e.getActionCommand()) {
 		case "cancel":
-
 			dialog.dispose();
 			break;
-
 		case "ok":
 			// check for valid input
 			// get renderer details
-			String shape = null, name = null;
-			int drawsize = -1;
-			shape = shapebox.getSelectedItem().toString();
-			drawsize = ((Double) sizespinner.getValue()).intValue();
+			String name = null;
+			String shape = shapebox.getSelectedItem().toString();
+			int drawsize = ((Double) sizespinner.getValue()).intValue();
 			HashSet<BiologicalNodeAbstract> bnas = new HashSet<>();
 
 			// STRING variant
@@ -207,13 +202,9 @@ public class AddRendererDialog implements ActionListener {
 			}
 
 			LocalBackboardPaintable lp = new LocalBackboardPaintable(bnas, Color.red, drawsize, shape, name);
-
 			GraphInstance.getMyGraph().getVisualizationViewer().addPreRenderPaintable(lp);
-
 			manager.addRow(lp);
-
 			GraphInstance.getMyGraph().getVisualizationViewer().repaint();
-
 			dialog.dispose();
 			break;
 
@@ -250,7 +241,7 @@ public class AddRendererDialog implements ActionListener {
 				nodeattributesbox.addItem("");
 				TreeSet<String> annstrings = new TreeSet<>();
 				for (BiologicalNodeAbstract bna : GraphInstance.getMyGraph().getAllVertices()) {
-					for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.ANNOTATION))
+					for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeType.ANNOTATION))
 						annstrings.add(na.getName());
 				}
 				for (String ann : annstrings)
@@ -343,7 +334,6 @@ public class AddRendererDialog implements ActionListener {
 						}
 
 						if (!novalues) {
-
 							frommodel.setMinimum(min);
 							frommodel.setMaximum(max);
 							frommodel.setValue(min);
@@ -358,23 +348,16 @@ public class AddRendererDialog implements ActionListener {
 							valuetospinner.setEnabled(true);
 						}
 					}
-
 					break;
 				}
 			}
-
 			break;
-
 		case "values":
 			// set free
 			// maybe not needed yet
 			break;
-
 		default:
-
 			break;
 		}
-
 	}
-
 }

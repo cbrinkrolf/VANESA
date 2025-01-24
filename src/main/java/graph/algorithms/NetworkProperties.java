@@ -319,7 +319,7 @@ public class NetworkProperties {
 
 			ht.put(nodeassignsback.get(i), oneavgdegree);
 			// save neighbordegree
-			nodeassignsback.get(i).addAttribute(NodeAttributeTypes.GRAPH_PROPERTY, NodeAttributeNames.NEIGHBOR_DEGREE, oneavgdegree);
+			nodeassignsback.get(i).addAttribute(NodeAttributeType.GRAPH_PROPERTY, NodeAttributeNames.NEIGHBOR_DEGREE, oneavgdegree);
 			oneavgdegree = 0f;
 		}
 

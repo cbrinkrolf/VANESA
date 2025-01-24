@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphContainer;
 import graph.GraphInstance;
-import graph.algorithms.NodeAttributeTypes;
+import graph.algorithms.NodeAttributeType;
 
 /**
  * Window for mapping custom datasets to a loaded vanesa network. The data will
@@ -120,8 +120,8 @@ public class LabelToDataMappingWindow {
 					.getAllVertices()) {
 				bnalabel = bna.getLabel();
 				if (datamapping.containsKey(bnalabel)) {
-					bna.addAttribute(NodeAttributeTypes.ANNOTATION,
-							attributename, datamapping.get(bnalabel));
+					bna.addAttribute(NodeAttributeType.ANNOTATION,
+									 attributename, datamapping.get(bnalabel));
 					successfulmappings++;
 				}
 			}
