@@ -59,7 +59,7 @@ public class VisualizationDialog {
 		List<String> biologicalElements = elementdeclerations.getNotPNNodeDeclarations();
 
 		MigLayout layout = new MigLayout("", "[][grow]");
-
+		System.out.println();
 		panel = new JPanel();
 		panel.setLayout(layout);
 		panel.add(new JLabel("Set new defaults:"));
@@ -70,16 +70,16 @@ public class VisualizationDialog {
 		biologicalElementsBox.setModel(
 				new DefaultComboBoxModel<>(biologicalElements.toArray(new String[biologicalElements.size()])));
 
-		panel.add(biologicalElementsBox, "span 2, right, growx, wrap");
+		panel.add(biologicalElementsBox, "span 2, wrap, growx");
 
 		panel.add(new JLabel("Shape"));
 		shapeBox = new JComboBox<>(shapes);
-		panel.add(shapeBox, "span, wrap, growx");
+		panel.add(shapeBox, "span 2, wrap, growx");
 
 		panel.add(new JLabel("Size"));
 		sizeMultiplierBox = new JComboBox<>(size);
 		sizeMultiplierBox.setSelectedIndex(1);
-		panel.add(sizeMultiplierBox, "span, growx, wrap");
+		panel.add(sizeMultiplierBox, "span 2, growx, wrap");
 
 		panel.add(new JLabel("Color"), "top");
 		colorChooser = new JColorChooser();
@@ -91,8 +91,8 @@ public class VisualizationDialog {
 		}
 		AbstractColorChooserPanel[] singleChooserPanel = colorChooser.getChooserPanels();
 		AbstractColorChooserPanel finalChooserPanel = singleChooserPanel[0];
-		panel.add(finalChooserPanel, "grow, center, wrap");
-		panel.add(colorChooser.getPreviewPanel(), "span, right, gapright 20, wrap");
+		panel.add(finalChooserPanel, "span 2, grow, center, wrap");
+		panel.add(colorChooser.getPreviewPanel(), "span, right, gapright 5, wrap");
 
 		mWindow = MainWindow.getInstance();
 
@@ -144,9 +144,9 @@ public class VisualizationDialog {
 				fileChooser.setVisible(true);
 			}
 		});
-		panel.add(labelButton, "gaptop 50, bot");
-		panel.add(loadedYamlLabel, "left, gaptop 50, bot");
-		panel.add(loadYamlButton, "span, right, gapleft 10, gaptop 50, bot");
+		panel.add(labelButton, "gaptop 30, bot");
+		panel.add(loadedYamlLabel, "left, gaptop 30, bot");
+		panel.add(loadYamlButton, " span, right, gapleft 10, gaptop 30, wrap");
 		JLabel exportLabel = new JLabel(
 				"To customize press export. The resulting file will take over all future customizations.");
 		JLabel spacer = new JLabel("");
