@@ -62,9 +62,13 @@ public class SaveDialog {
 					return;
 				}
 			}
-			AsyncTaskExecutor.runUIBlocking("Saving data to file. Please wait a second", () -> {
+			if (c != null) {
 				write(c, simId, file);
-			});
+			} else {
+				AsyncTaskExecutor.runUIBlocking("Saving data to file. Please wait a second", () -> {
+					write(c, simId, file);
+				});
+			}
 		}
 	}
 
