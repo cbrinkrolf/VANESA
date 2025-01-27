@@ -175,7 +175,7 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 			saveOldVertexPositions();
 
 			// selecting edges with offset of mouse position
-			if (pw.getSelectedNodes().size() == 0 && pw.getSelectedEdges().size() == 0) {
+			if (pw.getSelectedNodes().isEmpty() && pw.getSelectedEdges().isEmpty()) {
 				Point2D ip = e.getPoint();
 				// System.out.println(super.edge == null);
 				int counter = 1;
@@ -201,8 +201,8 @@ public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<Biologica
 				}
 			}
 
-			if (pw.getSelectedNodes().size() == 0 && pw.getSelectedEdges().size() == 0
-					&& SwingUtilities.isLeftMouseButton(e)) {
+			if (pw.getSelectedNodes().isEmpty() && pw.getSelectedEdges().isEmpty()
+				&& SwingUtilities.isLeftMouseButton(e)) {
 				mousePressedAnnotation(e);
 			}
 		}

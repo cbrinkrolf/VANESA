@@ -763,17 +763,15 @@ public class MyGraph {
 
 	public void changeToCircleLayout() {
 
-		if (stateV.getPicked().isEmpty() || stateV.getPicked().size() == 0) {
+		if (stateV.getPicked().isEmpty() || stateV.getPicked().isEmpty()) {
 			changeToLayout(new CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
-			// System.out.println("v: "+g.getVertexCount());
 		} else {
-			// this.clusteringLayout.addSubLayout(new CircularSubLayout(stateV
-			// .getPicked(), clusteringLayout));
+			// this.clusteringLayout.addSubLayout(new CircularSubLayout(stateV.getPicked(), clusteringLayout));
 		}
 	}
 
 	public void changeToStaticLayout() {
-		HashMap<BiologicalNodeAbstract, Point2D> map = new HashMap<BiologicalNodeAbstract, Point2D>();
+		HashMap<BiologicalNodeAbstract, Point2D> map = new HashMap<>();
 		Iterator<BiologicalNodeAbstract> it = this.getAllVertices().iterator();
 		BiologicalNodeAbstract bna;
 
@@ -899,7 +897,7 @@ public class MyGraph {
 		makeDefaultObjectVisualization();
 		// System.out.println(getAnnotationManager().getAnnotations().size());
 		// System.out.println(vv.getRenderContext());
-		if (this.getAllVertices().size() == 0) {
+		if (this.getAllVertices().isEmpty()) {
 			return;
 		}
 

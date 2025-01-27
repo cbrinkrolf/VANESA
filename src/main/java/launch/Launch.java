@@ -16,6 +16,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Launch {
+    private static final Logger logger = Logger.getRootLogger();
+
     public static void main(String[] args) {
         // avoid strange awt/swing exceptions: Exception in thread "AWT-EventQueue-0"
         // java.lang.IllegalArgumentException: Comparison method violates its general contract!
@@ -34,9 +36,9 @@ public class Launch {
         }
 
         try {
-            Properties props = new Properties();
+            final Properties props = new Properties();
             props.put("logoString", "VANESA");
-            // workaround to get the menu into the main upper menu pane on mac osx
+            // workaround to get the menu into the main upper menu pane on macOS
             // @see http://www.pushing-pixels.org/?p=366
             if (System.getProperty("os.name").startsWith("Mac")) {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -60,22 +62,20 @@ public class Launch {
             }
             AluminiumLookAndFeel.setCurrentTheme(props);
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("fail");
+            logger.error("Failed to setup UI", e);
         }
-        Logger logger = Logger.getRootLogger();
         logger.info("Network editor started by " + System.getProperty("user.name"));
         SettingsManager.getInstance().setApiUrl(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
+        final ExecutorService executorService = Executors.newFixedThreadPool(4);
         executorService.execute(() -> SwingUtilities.invokeLater(() -> {
             intro.setLoadingText("Graphical User Interface");
-            MainWindow w = MainWindow.getInstance();
+            final MainWindow w = MainWindow.getInstance();
             intro.closeWindow();
             w.getFrame().setEnabled(true);
             SwingUtilities.updateComponentTreeUI(w.getFrame());
         }));
         executorService.execute(() -> {
-            intro.setLoadingText("Load Cached Database Information");
+            intro.setLoadingText("Cached Database Information");
             MostWantedMolecules.getInstance().fillMoleculeSet();
             EnzymeNames.getInstance().fillEnzymeSet();
         });

@@ -850,7 +850,7 @@ public class RuleEditingWindow implements ActionListener {
 		if (consideredEdges.size() == bn.getAllEdges().size()) {
 			lblSetEdges.setText("[all edges]");
 			chkAllEdgesSelected.setEnabled(false);
-		} else if (consideredEdges.size() == 0) {
+		} else if (consideredEdges.isEmpty()) {
 			lblSetEdges.setText("[none]");
 			chkAllEdgesSelected.setEnabled(true);
 		} else {

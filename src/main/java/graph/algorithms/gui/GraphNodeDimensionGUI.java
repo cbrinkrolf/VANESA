@@ -17,9 +17,7 @@ import javax.swing.SpinnerNumberModel;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
-import graph.algorithms.centralities.betweenness.Betweennesscentralitiy;
-import graph.algorithms.centralities.betweenness.Betweennesscentralitiy.GraphCentrality;
-import graph.algorithms.centralities.betweenness.Vertex;
+import graph.algorithms.centralities.BetweennessCentrality;
 import net.miginfocom.swing.MigLayout;
 
 public class GraphNodeDimensionGUI implements ActionListener {
@@ -175,17 +173,17 @@ public class GraphNodeDimensionGUI implements ActionListener {
 //		System.out.println(Arrays.toString(nodej));
 		
 		//invoke betweenness-centrality
-		Betweennesscentralitiy b = new Betweennesscentralitiy(nodei, nodej);
+		BetweennessCentrality b = new BetweennessCentrality(nodei, nodej);
 		try {
-			GraphCentrality g = b.calcCentrality();
-			for(Vertex v : g.vertices){
+			BetweennessCentrality.GraphCentrality g = b.calcCentrality();
+			for(BetweennessCentrality.Vertex v : g.vertices){
 //				System.out.println(v.id+"  ");
-				if(v.timeswalkedover.doubleValue()<minvalue)
-					minvalue=v.timeswalkedover.doubleValue();
-				if(v.timeswalkedover.doubleValue()>maxvalue)
-					maxvalue=v.timeswalkedover.doubleValue();
+				if(v.timesWalkedOver.doubleValue() < minvalue)
+					minvalue=v.timesWalkedOver.doubleValue();
+				if(v.timesWalkedOver.doubleValue() > maxvalue)
+					maxvalue=v.timesWalkedOver.doubleValue();
 				
-				ratings.put(c.getNodeAssignmentbackwards(v.id), v.timeswalkedover.doubleValue());
+				ratings.put(c.getNodeAssignmentbackwards(v.id), v.timesWalkedOver.doubleValue());
 			}
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();

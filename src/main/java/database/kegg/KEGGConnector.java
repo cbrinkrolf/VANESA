@@ -59,10 +59,10 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         }
 
         public boolean equals(Object o) {
-            if (o == null) {
+            if (!(o instanceof KeggNodeDescription)) {
                 return false;
             }
-            KeggNodeDescription knd = (KeggNodeDescription) o;
+            final KeggNodeDescription knd = (KeggNodeDescription) o;
             return knd.keggEntryId.equals(keggEntryId) && knd.keggPathwayName.equals(keggPathwayName);
         }
     }

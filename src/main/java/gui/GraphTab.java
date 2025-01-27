@@ -4,7 +4,7 @@ import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 
 public class GraphTab {
-    TitledTab tab;
+    private final TitledTab tab;
 
     public GraphTab(String name, GraphZoomScrollPane viewer) {
         tab = new TitledTab(name, null, viewer, new CloseButton());

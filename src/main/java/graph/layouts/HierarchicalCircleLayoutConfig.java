@@ -2,8 +2,7 @@ package graph.layouts;
 
 import configurations.gui.ConfigPanel;
 
-public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
-
+public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel {
 	private static final long serialVersionUID = 83123L;
 
 	public static int GROUP_DISTANCE_FACTOR = 5;
@@ -20,8 +19,8 @@ public abstract class HierarchicalCircleLayoutConfig extends ConfigPanel{
 		super(class1);
 	}
 	
-	public static double nodeDistance(int groups, int nodes){
-		return 2*Math.PI / ((GROUP_DISTANCE_FACTOR - 1)*groups+nodes);
+	public static double nodeDistance(int groups, int nodes) {
+		return 2 * Math.PI / ((GROUP_DISTANCE_FACTOR - 1) * groups + nodes);
 	}
 	
 	public static double groupDistance(double nodeDistance){

@@ -237,7 +237,7 @@ public class Transformator {
 						+ subGraphEdges.size());
 			}
 
-			if (subGraphNodes.size() < 1) {
+			if (subGraphNodes.isEmpty()) {
 				// skip
 				continue;
 			}
@@ -246,7 +246,7 @@ public class Transformator {
 			this.createAndSetPermutation(r);
 
 			// System.out.println(permutations.isEmpty());
-			if (permutations == null || permutations.size() < 1) {
+			if (permutations == null || permutations.isEmpty()) {
 				// skip
 				continue;
 			}
@@ -352,11 +352,8 @@ public class Transformator {
 							l.add(bna.getID());
 						}
 					}
-					// System.out.println(bna.getID() + " added to perm");
-					// System.out.println(bna.getName() + " added to perm");
 					// }
 				}
-				// System.out.println(l.size());
 			} else {
 				for (BiologicalNodeAbstract node : subGraphNodes) {
 					// check exact incidences
@@ -380,11 +377,10 @@ public class Transformator {
 					}
 				}
 			}
-			if (l.size() < 1) {
+			if (l.isEmpty()) {
 				permutations = null;
 				return;
 			}
-			// System.out.println("List size: "+l.size());
 			list.add(l);
 		}
 		if (printLog) {
@@ -392,7 +388,6 @@ public class Transformator {
 		}
 		permutations = Permutator.permutations(list, false);
 		totalGeneratedPerms += permutations.size();
-		//System.out.println("perm size: " + permutations.size());
 	}
 
 	// tries to find one matching permutation

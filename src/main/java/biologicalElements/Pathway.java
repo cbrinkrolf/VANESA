@@ -463,7 +463,7 @@ public class Pathway implements Cloneable {
 	}
 
 	public void mergeNodes(Set<BiologicalNodeAbstract> nodes) {
-		if (nodes.size() == 0) {
+		if (nodes.isEmpty()) {
 			return;
 		}
 		HashMap<BiologicalNodeAbstract, Set<BiologicalNodeAbstract>> node2Refs = new HashMap<>();
@@ -487,7 +487,7 @@ public class Pathway implements Cloneable {
 		}
 		Set<BiologicalNodeAbstract> n = new HashSet<>();
 		for (BiologicalNodeAbstract bna : newNodes) {
-			if (bna.getRefs().size() == 0) {
+			if (bna.getRefs().isEmpty()) {
 				n.add(bna);
 			} else {
 				System.err.print("Node with id: " + bna.getID() + " and name: " + bna.getName()
@@ -947,7 +947,7 @@ public class Pathway implements Cloneable {
 	 * @author tloka
 	 */
 	public boolean openSubPathway(BiologicalNodeAbstract subPathway) {
-		if (!subPathway.isCoarseNode() || subPathway.getChildrenNodes().size() == 0) {
+		if (!subPathway.isCoarseNode() || subPathway.getChildrenNodes().isEmpty()) {
 			return false;
 		}
 		if ((this instanceof BiologicalNodeAbstract

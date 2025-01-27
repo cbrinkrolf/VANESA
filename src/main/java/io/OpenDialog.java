@@ -26,6 +26,14 @@ import petriNet.PetriNetProperties;
 public final class OpenDialog {
 	private final JFileChooser chooser;
 
+	public OpenDialog(SuffixAwareFilter... filters) {
+		chooser = new JFileChooser(SettingsManager.getInstance().getFileOpenDirectory());
+		chooser.setAcceptAllFileFilterUsed(false);
+		for (SuffixAwareFilter filter : filters) {
+			chooser.addChoosableFileFilter(filter);
+		}
+	}
+
 	public OpenDialog(List<SuffixAwareFilter> filters) {
 		chooser = new JFileChooser(SettingsManager.getInstance().getFileOpenDirectory());
 		chooser.setAcceptAllFileFilterUsed(false);

@@ -20,7 +20,7 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.GraphInstance;
 import graph.algorithms.NetworkProperties;
 import graph.algorithms.NodeAttributeNames;
-import graph.algorithms.NodeAttributeTypes;
+import graph.algorithms.NodeAttributeType;
 import gui.ImagePath;
 import net.miginfocom.swing.MigLayout;
 
@@ -96,7 +96,7 @@ public class GraphColoringGUI implements ActionListener {
                 BiologicalNodeAbstract bna = itn.next();
                 coloring.put(bna, (double) np.getNodeDegree(np.getNodeAssignment(bna)));
                 // saving
-                bna.addAttribute(NodeAttributeTypes.GRAPH_PROPERTY, NodeAttributeNames.NODE_DEGREE,
+                bna.addAttribute(NodeAttributeType.GRAPH_PROPERTY, NodeAttributeNames.NODE_DEGREE,
                                  np.getNodeDegree(np.getNodeAssignment(bna)));
             }
         }

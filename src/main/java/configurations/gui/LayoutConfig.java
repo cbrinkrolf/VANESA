@@ -29,7 +29,7 @@ import gui.MainWindow;
 import gui.RangeSelector;
 
 public class LayoutConfig extends JPanel implements ActionListener {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -25474744959063431L;
 	private static LayoutConfig instance;
 	private final JButton cancel = new JButton("cancel");
 	private final JButton resetButton = new JButton("reset");
@@ -115,7 +115,7 @@ public class LayoutConfig extends JPanel implements ActionListener {
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			config.setValues();
 			// CHRIS avoid SwingWorker
-			new SwingWorker() {
+			new SwingWorker<>() {
 				@Override
 				protected Object doInBackground() {
 					try {

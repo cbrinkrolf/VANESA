@@ -20,8 +20,7 @@ import javax.swing.plaf.basic.BasicButtonUI;
 import net.infonode.tabbedpanel.titledtab.TitledTab;
 
 public class CloseButton extends JButton implements ActionListener {
-	private static final long serialVersionUID = 1L;
-	private final MainWindow w = MainWindow.getInstance();
+	private static final long serialVersionUID = 7696441214267807002L;
 
 	public CloseButton() {
 		int size = 17;
@@ -87,7 +86,7 @@ public class CloseButton extends JButton implements ActionListener {
 	};
 
 	public void actionPerformed(ActionEvent e) {
-		TitledTab tab = (TitledTab) this.getParent().getParent().getParent().getParent().getParent();
-		w.removeTab(tab.getIndex());
+		final TitledTab tab = (TitledTab) getParent().getParent().getParent().getParent().getParent();
+		MainWindow.getInstance().removeTab(tab.getIndex());
 	}
 }

@@ -11,34 +11,23 @@ import javax.swing.SwingConstants;
 import gui.algorithms.CenterWindow;
 
 public class IntroScreen {
-
-	private JWindow window = new JWindow();
-	private JLabel label;
+	private final JWindow window = new JWindow();
+	private final JLabel label;
 
 	public IntroScreen() {
-		ImagePath imagePath = ImagePath.getInstance();
-		String markUp = "<html><font text-align = center>" + "Launching Program ...</font></html>";
-
 		label = new JLabel(ImagePath.getInstance().getImageIcon("intro.png"), SwingConstants.CENTER);
 		label.setBorder(BorderFactory.createRaisedBevelBorder());
 		label.setVerticalTextPosition(SwingConstants.BOTTOM);
 		label.setHorizontalTextPosition(SwingConstants.CENTER);
 		label.setBackground(Color.BLACK);
 		label.setText("<html><p align=\"left\">Loading Module: Main Application</p></html>");
-
 	}
 
 	public void openWindow() {
-
 		window.getContentPane().add(label);
-		Dimension labelSize = label.getPreferredSize();
-
-		int labelWidth = labelSize.width;
-		int labelHeight = labelSize.height;
-
-		CenterWindow center = new CenterWindow(window);
-		center.centerWindow(labelWidth, labelHeight);
-
+		final Dimension labelSize = label.getPreferredSize();
+		final CenterWindow center = new CenterWindow(window);
+		center.centerWindow(labelSize.width, labelSize.height);
 		window.setVisible(true);
 	}
 
@@ -46,11 +35,10 @@ public class IntroScreen {
 		window.setVisible(false);
 	}
 
-	public void setLoadingText(String text) {
+	public void setLoadingText(final String text) {
 		try {
 			Thread.sleep(0);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		} catch (InterruptedException ignored) {
 		}
 		label.setText("<html><p align=\"left\">Loading Module: " + text + "</p></html>");
 	}

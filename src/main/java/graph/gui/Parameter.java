@@ -35,7 +35,8 @@ public class Parameter {
         this.unit = unit;
     }
 
-    @Override
+	@Override
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     public Parameter clone() {
         return new Parameter(name, value, unit);
     }

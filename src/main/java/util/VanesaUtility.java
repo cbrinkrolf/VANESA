@@ -10,7 +10,6 @@ import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
-import org.sbml.jsbml.SBMLReader;
 import org.xml.sax.InputSource;
 
 import java.awt.*;
@@ -28,7 +27,7 @@ public class VanesaUtility {
 	}
 
 	public static Double getMean(List<Double> list) {
-		if (list.size() == 0) {
+		if (list.isEmpty()) {
 			return 0.0;
 		}
 		return list.stream().reduce(Double::sum).get() / list.size();
@@ -36,7 +35,7 @@ public class VanesaUtility {
 
 	public static Double getMedian(List<Double> list) {
 		double median = 0;
-		if (list.size() > 0) {
+		if (!list.isEmpty()) {
 			if (list.size() % 2 == 0) {
 				return (list.get(list.size() / 2) + list.get(list.size() / 2 - 1)) / 2;
 			} else {
@@ -125,5 +124,15 @@ public class VanesaUtility {
 
 	public static Color colorFromHex(String hex) {
 		return Color.decode(hex);
+	}
+
+	public static double[][] createMatrix(int m, int n) {
+		double[][] array = new double[m][n];
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				array[i][j] = 0;
+			}
+		}
+		return array;
 	}
 }

@@ -19,39 +19,40 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 class AutoSuggester {
-
     private final JTextPane textField;
     private final Window container;
-    private JPanel suggestionsPanel;
-    private JWindow autoSuggestionPopUpWindow;
+    private final JPanel suggestionsPanel;
+    private final JWindow autoSuggestionPopUpWindow;
     private String typedWord;
     private final ArrayList<String> dictionary = new ArrayList<>();
-    private int currentIndexOfSpace, tW, tH;
-    private DocumentListener documentListener = new DocumentListener() {
-        @Override
-        public void insertUpdate(DocumentEvent de) {
-            checkForAndShowSuggestions();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent de) {
-            checkForAndShowSuggestions();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent de) {
-            checkForAndShowSuggestions();
-        }
-    };
+    private int currentIndexOfSpace;
+	private int tW;
+	private int tH;
     private final Color suggestionsTextColor;
     private final Color suggestionFocusedColor;
 
-    public AutoSuggester(JTextPane textField, Window mainWindow, ArrayList<String> words, Color popUpBackground, Color textColor, Color suggestionFocusedColor, float opacity) {
+    public AutoSuggester(JTextPane textField, Window mainWindow, ArrayList<String> words, Color popUpBackground,
+                         Color textColor, Color suggestionFocusedColor, float opacity) {
         this.textField = textField;
         this.suggestionsTextColor = textColor;
         this.container = mainWindow;
         this.suggestionFocusedColor = suggestionFocusedColor;
-        this.textField.getDocument().addDocumentListener(documentListener);
+        this.textField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+                checkForAndShowSuggestions();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+                checkForAndShowSuggestions();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent de) {
+                checkForAndShowSuggestions();
+            }
+        });
 
         setDictionary(words);
 
@@ -73,9 +74,6 @@ class AutoSuggester {
     private void addKeyBindingToRequestFocusInPopUpWindow() {
         textField.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), "Down released");
         textField.getActionMap().put("Down released", new AbstractAction() {
-            /**
-			 * 
-			 */
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -94,9 +92,6 @@ class AutoSuggester {
         });
         suggestionsPanel.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, true), "Down released");
         suggestionsPanel.getActionMap().put("Down released", new AbstractAction() {
-            /**
-			 * 
-			 */
 			private static final long serialVersionUID = 1L;
 			int lastFocusableIndex = 0;
 
@@ -182,29 +177,23 @@ class AutoSuggester {
 
     protected void addWordToSuggestions(String word) {
         SuggestionLabel suggestionLabel = new SuggestionLabel(word, suggestionFocusedColor, suggestionsTextColor, this);
-
         calculatePopUpWindowSize(suggestionLabel);
-
         suggestionsPanel.add(suggestionLabel);
     }
 
-    public String getCurrentlyTypedWord() {//get newest word after last white spaceif any or the first word if no white spaces
+    public String getCurrentlyTypedWord() {//get newest word after last white space if any or the first word if no white spaces
         String text = textField.getText();
         int pos = textField.getCaretPosition();
         String wordBeingTyped = "";
         if (text.contains(" ")) {
-        	//System.out.println("pos: "+pos);
             int tmp = text.substring(0, Math.min(pos, text.length())).lastIndexOf(" ");
-           // System.out.println(tmp);
             if (tmp >= currentIndexOfSpace) {
                 //currentIndexOfSpace = tmp;
-            	//System.out.println("min: "+Math.min(pos+1, text.length()));
                 wordBeingTyped = text.substring(tmp+1, Math.min(pos+1, text.length()));
             }
         } else {
             wordBeingTyped = text;
         }
-        //System.out.println("returned:"+wordBeingTyped+":");
         return wordBeingTyped.trim();
     }
 
@@ -222,11 +211,9 @@ class AutoSuggester {
         autoSuggestionPopUpWindow.setSize(tW, tH);
         autoSuggestionPopUpWindow.setVisible(true);
 
-        int windowX = 0;
-        int windowY = 0;
-
-        windowX = container.getX() + textField.getX() + 30;
-        if (suggestionsPanel.getHeight() > autoSuggestionPopUpWindow.getMinimumSize().height) {
+		final int windowX = container.getX() + textField.getX() + 30;
+		final int windowY;
+		if (suggestionsPanel.getHeight() > autoSuggestionPopUpWindow.getMinimumSize().height) {
             windowY = 30 + container.getY() + textField.getY() + textField.getHeight() + autoSuggestionPopUpWindow.getMinimumSize().height;
         } else {
             windowY = 30 + container.getY() + textField.getY() + textField.getHeight() + autoSuggestionPopUpWindow.getHeight();
@@ -236,7 +223,6 @@ class AutoSuggester {
         autoSuggestionPopUpWindow.setMinimumSize(new Dimension(textField.getWidth(), 30));
         autoSuggestionPopUpWindow.revalidate();
         autoSuggestionPopUpWindow.repaint();
-
     }
 
     public void setDictionary(ArrayList<String> words) {
@@ -244,9 +230,7 @@ class AutoSuggester {
         if (words == null) {
             return;//so we can call constructor with null value for dictionary without exception thrown
         }
-        for (String word : words) {
-            dictionary.add(word);
-        }
+		dictionary.addAll(words);
     }
 
     public JWindow getAutoSuggestionPopUpWindow() {
@@ -266,17 +250,12 @@ class AutoSuggester {
     }
 
     boolean wordTyped(String typedWord) {
-
         if (typedWord.isEmpty()) {
             return false;
         }
-        //System.out.println("Typed word: " + typedWord);
-
         boolean suggestionAdded = false;
-
         for (String word : dictionary) {//get words in the dictionary which we added
             boolean fullymatches = true;
-            
             for (int i = 0; i < typedWord.length(); i++) {//each string in the word
             	if(typedWord.length() > word.length()){
             		fullymatches = false;

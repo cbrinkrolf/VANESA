@@ -27,7 +27,7 @@ import org.jdesktop.swingx.JXTable;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
 import graph.GraphInstance;
-import graph.algorithms.NodeAttributeTypes;
+import graph.algorithms.NodeAttributeType;
 import graph.algorithms.gui.smacof.DoSmacof;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
@@ -87,7 +87,7 @@ public class SmacofView extends JFrame implements ActionListener {
 
 				// Hier werden die Daten aus dem Graphen gelesen
 				for (BiologicalNodeAbstract bna : graph.getAllVertices()) {
-					for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.EXPERIMENT)) {
+					for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeType.EXPERIMENT)) {
 						// count mapped nodes with given attribute
 						if (!attributes.containsKey(na.getName())) {
 							attributes.put(na.getName(), 1);
@@ -96,7 +96,7 @@ public class SmacofView extends JFrame implements ActionListener {
 						}
 					}
 					// Martin
-					for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeTypes.GRAPH_PROPERTY)) {
+					for (NodeAttribute na : bna.getNodeAttributesByType(NodeAttributeType.GRAPH_PROPERTY)) {
 						// count mapped nodes with given attribute
 						if (!attributes.containsKey(na.getName())) {
 							attributes.put(na.getName(), 1);

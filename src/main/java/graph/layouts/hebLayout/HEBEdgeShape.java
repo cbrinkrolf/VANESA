@@ -29,9 +29,7 @@ import graph.layouts.Circle;
  * PluggableRenderer.
  * 
  * @author tloka
- * @param <Edge>
  */
-
 public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 	public HEBEdgeShape(Graph<V, E> g) {
 		super(g);
@@ -50,10 +48,10 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 
 		private static Point2D centerPoint;
 
-		private HashMap<BiologicalNodeAbstract, Integer> layer;
+		private final HashMap<BiologicalNodeAbstract, Integer> layer;
 		private Integer maxLayer;
 
-		private Graph<V, E> graph;
+		private final Graph<V, E> graph;
 
 		public Point2D getCenterPoint() {
 			return centerPoint;
@@ -196,14 +194,14 @@ public class HEBEdgeShape<V, E> extends EdgeShape<V, E> {
 
 			// if no control points exist, draw quadratic bezier with center as control
 			// point
-			if (controlPoints.size() == 0) {
+			if (controlPoints.isEmpty()) {
 				Point2D centerTransform = new Point2D.Double(center.getX(), center.getY());
 				centerTransform = Circle.computeControlPoint(centerTransform, center, startPoint, endPoint);
 				return new QuadCurve2D.Double(0.0, 0.0, centerTransform.getX(), centerTransform.getY(), 1.0, 0.0);
 			}
 
 			// build piecewise quadratic bezier curve
-			List<QuadCurve2D> lines = new ArrayList<QuadCurve2D>();
+			List<QuadCurve2D> lines = new ArrayList<>();
 			// startPoint of the next bezier curve
 			Point2D lastPoint = new Point2D.Double(0.0f, 0.0f);
 			Point2D nP2;

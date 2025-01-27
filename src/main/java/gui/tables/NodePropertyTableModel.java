@@ -32,7 +32,7 @@ public class NodePropertyTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int c) {
-        if ((c >= 0) && (c < getColumnCount())) {
+        if (c >= 0 && c < getColumnCount()) {
             return getValueAt(0, c).getClass();
         }
         return Object.class;
@@ -42,10 +42,5 @@ public class NodePropertyTableModel extends AbstractTableModel {
     public void setValueAt(Object value, int row, int col) {
         data[row][col] = value;
         fireTableCellUpdated(row, col);
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int col) {
-        return false;
     }
 }
