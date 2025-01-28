@@ -6,6 +6,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import configurations.GraphSettings;
 import graph.GraphContainer;
@@ -48,7 +50,9 @@ public class GraphSettingsDialog {
 	private MyJFormattedTextField pixelOffset = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
 
 	private MainWindow w = MainWindow.getInstance();
-	private GraphContainer con = GraphContainer.getInstance();;
+	private GraphContainer con = GraphContainer.getInstance();
+	
+	private int edgeOpacityOld = settings.getEdgeOpacity();
 
 	public GraphSettingsDialog() {
 
@@ -177,10 +181,19 @@ public class GraphSettingsDialog {
 		JPanel edgeopacitypanel = new JPanel();
 
 		opacityslider.setMajorTickSpacing(50);
+		opacityslider.setToolTipText("Opacity of edges, value between 0 and 255. A value of 0 draws the edges fully transparent.");
 //		opacityslider.setMinorTickSpacing();
 		opacityslider.setPaintTicks(true);
 		opacityslider.setPaintLabels(true);
-		opacityslider.setEnabled(false);
+		opacityslider.setEnabled(true);
+		opacityslider.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				settings.setEdgeOpacity(opacityslider.getValue());
+				
+			}
+		});
 		panel.add(opacityslider);
 
 		panel.add(edgeopacitypanel, "wrap,align left, gap 10, gaptop 2");
@@ -210,6 +223,7 @@ public class GraphSettingsDialog {
 			GraphInstance.getPathway().changeBackground("white");
 			settings.setBackgroundColor(false);
 			yes.setSelected(true);
+			opacityslider.setValue(255);
 			// pixelOffset.setText(String.valueOf(3));
 			settings.setPixelOffset(3);
 			// System.out.println(pixelOffset.getText());
@@ -265,5 +279,9 @@ public class GraphSettingsDialog {
 			return false;
 		}
 		return true;
+	}
+	
+	public void onCancelClick(){
+		settings.setEdgeOpacity(edgeOpacityOld);
 	}
 }

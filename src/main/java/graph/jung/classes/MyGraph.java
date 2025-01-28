@@ -33,7 +33,12 @@ import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
-import edu.uci.ics.jung.visualization.*;
+import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
+import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
+import edu.uci.ics.jung.visualization.Layer;
+import edu.uci.ics.jung.visualization.RenderContext;
+import edu.uci.ics.jung.visualization.VisualizationModel;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.EditingPopupGraphMousePlugin;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
@@ -44,6 +49,8 @@ import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import graph.GraphInstance;
 import graph.eventhandlers.MyEditingModalGraphMouse;
 import graph.gui.GraphPopUp;
+import graph.jung.graphDrawing.MyArrowDrawPaintTransformer;
+import graph.jung.graphDrawing.MyArrowFillPaintTransformer;
 import graph.jung.graphDrawing.MyEdgeArrowFunction;
 import graph.jung.graphDrawing.MyEdgeDrawPaintFunction;
 import graph.jung.graphDrawing.MyEdgeFillPaintFunction;
@@ -53,6 +60,7 @@ import graph.jung.graphDrawing.MyEdgeStringer;
 import graph.jung.graphDrawing.MyEdgeStrokeHighlighting;
 import graph.jung.graphDrawing.MyVertexDrawPaintFunction;
 import graph.jung.graphDrawing.MyVertexFillPaintFunction;
+import graph.jung.graphDrawing.MyVertexFontTransformer;
 import graph.jung.graphDrawing.MyVertexIconTransformer;
 import graph.jung.graphDrawing.MyVertexLabelRenderer;
 import graph.jung.graphDrawing.MyVertexShapeTransformer;
@@ -86,18 +94,20 @@ public class MyGraph {
 	private final MyEdgeStringer edgeStringer;
 	private final MyVertexShapeTransformer vertexShapeTransformer;
 	// private VertexShapeSize vssa;
-	protected MyVertexStrokeHighlighting vsh;
-	protected MyVertexDrawPaintFunction vdpf;
-	protected MyVertexFillPaintFunction vfpf;
-	protected MyVertexIconTransformer vit;
-	protected MyEdgeStrokeHighlighting esh;
-	protected MyEdgeDrawPaintFunction edpf;
-	protected MyEdgeFillPaintFunction efpf;
-	protected MyEdgeShapeFunction esf;
-	protected MyEdgeArrowFunction eaf;
+	private final MyVertexStrokeHighlighting vsh;
+	private final MyVertexDrawPaintFunction vdpf;
+	private final MyVertexFillPaintFunction vfpf;
+	private final MyVertexIconTransformer vit;
+	private final MyEdgeStrokeHighlighting esh;
+	private final MyEdgeDrawPaintFunction edpf;
+	private final MyEdgeFillPaintFunction efpf;
+	private final MyEdgeShapeFunction esf;
+	private final MyEdgeArrowFunction eaf;
+	private final MyArrowDrawPaintTransformer adpt;
+	private final MyArrowFillPaintTransformer afpt;
 
-	protected PickedState<BiologicalNodeAbstract> stateV;
-	protected PickedState<BiologicalEdgeAbstract> stateE;
+	private PickedState<BiologicalNodeAbstract> stateV;
+	private PickedState<BiologicalEdgeAbstract> stateE;
 	private final VisualizationModel<BiologicalNodeAbstract, BiologicalEdgeAbstract> visualizationModel;
 	private final AggregateLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> clusteringLayout;
 	private MyVertexLabelRenderer vlr = new MyVertexLabelRenderer(Color.blue);
@@ -237,6 +247,8 @@ public class MyGraph {
 		esf = new MyEdgeShapeFunction(this.g);
 
 		eaf = new MyEdgeArrowFunction();
+		adpt = new MyArrowDrawPaintTransformer();
+		afpt = new MyArrowFillPaintTransformer();
 
 		// graphMouse.setVertexLocations(nodePositions);
 		// 1. vertexFactor, 2. edgeFactory
@@ -309,17 +321,20 @@ public class MyGraph {
 
 	public void makeDefaultObjectVisualization() {
 		pr.setEdgeStrokeTransformer(esh);
-
+		
 		pr.setEdgeDrawPaintTransformer(edpf);
 		pr.setEdgeFillPaintTransformer(efpf);
-
+		
 		pr.setEdgeShapeTransformer(esf);
 
 		pr.setVertexLabelRenderer(vlr);
 		pr.setEdgeLabelRenderer(elr);
 
 		pr.setEdgeArrowTransformer(eaf);
+		
+		pr.setArrowDrawPaintTransformer(adpt);
 
+		pr.setArrowFillPaintTransformer(afpt);
 		pr.setVertexStrokeTransformer(vsh);
 		pr.setVertexLabelTransformer(vertexStringer);
 
@@ -331,7 +346,8 @@ public class MyGraph {
 		pr.setVertexFillPaintTransformer(vfpf);
 
 		pr.setVertexIconTransformer(vit);
-
+		
+		//pr.setVertexFontTransformer(new MyVertexFontTransformer());
 		vv.addPostRenderPaintable(new TokenRenderer(pathway));
 
 		satellitePr.setVertexStrokeTransformer(vsh);
@@ -349,6 +365,8 @@ public class MyGraph {
 		satellitePr.setVertexLabelRenderer(vlr);
 		satellitePr.setEdgeLabelRenderer(elr);
 		satellitePr.setEdgeArrowTransformer(eaf);
+		satellitePr.setArrowDrawPaintTransformer(adpt);
+		satellitePr.setArrowFillPaintTransformer(afpt);
 	}
 
 	public void restartVisualizationModel() {
@@ -753,6 +771,8 @@ public class MyGraph {
 		pr_compare.setVertexLabelRenderer(vlr);
 		pr_compare.setEdgeLabelRenderer(elr);
 		pr_compare.setEdgeArrowTransformer(eaf);
+		pr_compare.setArrowDrawPaintTransformer(adpt);
+		pr_compare.setArrowFillPaintTransformer(afpt);
 		copyVV.setGraphMouse(graphMouse);
 		// PickSupport copyPick = new ShapePickSupport();
 

@@ -1,64 +1,65 @@
 package configurations;
 
 public class GraphSettings {
-    private static GraphSettings instance;
+	private static GraphSettings instance;
 
-    private Integer nodeLabel;
-    private Integer edgeLabel;
-    private boolean backgroundColor = false;
-    private boolean drawEdges = true;
-    private int edgeOpacity = 255;
-    private int pixelOffset = 3;
-    
-    public static final int SHOW_LABEL = 0;
-    public static final int SHOW_NAME = 1;
-    public static final int SHOW_LABEL_AND_NAME = 2;
-    public static final int SHOW_NONE = 3;
-    
+	private Integer nodeLabel;
+	private Integer edgeLabel;
+	private boolean backgroundColor = false;
+	private boolean drawEdges = true;
+	private int edgeOpacity = 255;
+	private int pixelOffset = 3;
 
-    public boolean isBackgroundColor() {
-        return backgroundColor;
-    }
+	public static final int SHOW_LABEL = 0;
+	public static final int SHOW_NAME = 1;
+	public static final int SHOW_LABEL_AND_NAME = 2;
+	public static final int SHOW_NONE = 3;
 
-    public void setBackgroundColor(boolean backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
+	public boolean isBackgroundColor() {
+		return backgroundColor;
+	}
 
-    public Integer getNodeLabel() {
-        return nodeLabel;
-    }
+	public void setBackgroundColor(boolean backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
 
-    public void setNodeLabel(Integer nodeLabel) {
-        this.nodeLabel = nodeLabel;
-        //GraphInstance.getMyGraph().updateAllNodeLabels();
-    }
+	public Integer getNodeLabel() {
+		return nodeLabel;
+	}
 
-    public Integer getEdgeLabel() {
-        return edgeLabel;
-    }
+	public void setNodeLabel(Integer nodeLabel) {
+		this.nodeLabel = nodeLabel;
+		// GraphInstance.getMyGraph().updateAllNodeLabels();
+	}
 
-    public void setDrawEdges(boolean draw) {
-        this.drawEdges = draw;
-    }
+	public Integer getEdgeLabel() {
+		return edgeLabel;
+	}
 
-    public boolean getDrawEdges() {
-        return drawEdges;
-    }
+	public void setDrawEdges(boolean draw) {
+		this.drawEdges = draw;
+	}
 
-    public int getEdgeOpacity() {
-        return edgeOpacity;
-    }
+	public boolean getDrawEdges() {
+		return drawEdges;
+	}
 
-    public void setEdgeOpacity(int newopacity) {
-        this.edgeOpacity = newopacity;
-    }
+	public int getEdgeOpacity() {
+		return edgeOpacity;
+	}
 
-    public void setEdgeLabel(Integer edgeLabel) {
-        this.edgeLabel = edgeLabel;
-        //GraphInstance.getMyGraph().updateAllEdgeLabels();
-    }
+	public void setEdgeOpacity(int newopacity) {
+		if (newopacity >= 0 && newopacity <= 255) {
+			this.edgeOpacity = newopacity;
+		}
+	}
 
-    public int getPixelOffset() {
+	public void setEdgeLabel(Integer edgeLabel) {
+		this.edgeLabel = edgeLabel;
+		// GraphInstance.getMyGraph().updateAllEdgeLabels();
+	}
+
+	public int getPixelOffset() {
 		return pixelOffset;
 	}
 
@@ -67,14 +68,14 @@ public class GraphSettings {
 	}
 
 	public GraphSettings() {
-        nodeLabel = GraphSettings.SHOW_LABEL;
-        edgeLabel = GraphSettings.SHOW_LABEL;
-    }
+		nodeLabel = GraphSettings.SHOW_LABEL;
+		edgeLabel = GraphSettings.SHOW_LABEL;
+	}
 
-    public static GraphSettings getInstance() {
-        if (instance == null) {
-            instance = new GraphSettings();
-        }
-        return instance;
-    }
+	public static GraphSettings getInstance() {
+		if (instance == null) {
+			instance = new GraphSettings();
+		}
+		return instance;
+	}
 }

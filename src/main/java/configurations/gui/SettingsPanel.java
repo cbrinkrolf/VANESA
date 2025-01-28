@@ -85,6 +85,12 @@ public class SettingsPanel extends JDialog {
 	}
 
 	private void onCancelClicked() {
+		String tabName = tabbedPanel.getTitleAt(tabbedPanel.getSelectedIndex());
+		switch (tabName) {
+		case GRAPH_SETTINGS_LABEL:
+			setVisible(!graphSettings.applyNewSettings());
+			break;
+		}
 		setVisible(false);
 	}
 }
