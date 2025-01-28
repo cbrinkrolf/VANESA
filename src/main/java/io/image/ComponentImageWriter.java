@@ -54,7 +54,8 @@ public class ComponentImageWriter extends BaseWriter<Component> {
         Element defs = root.getElementById("defs1");
         NodeList childs = defs.getChildNodes();
         for (int i = childs.getLength() - 1; i >= 0; i--) {
-            defs.removeChild(childs.item(i));
+        	// TODO reimplement SVG removing clipse (also the ids in further elements, otherwise automatic transformation of SVG to PNG/PDF fails)
+           // defs.removeChild(childs.item(i));
         }
         try (Writer out = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
             // dump root instead of svgGraphics2D because of XML manipulation
