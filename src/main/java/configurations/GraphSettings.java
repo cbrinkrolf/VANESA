@@ -1,5 +1,7 @@
 package configurations;
 
+import java.awt.Font;
+
 public class GraphSettings {
 	private static GraphSettings instance;
 
@@ -9,11 +11,26 @@ public class GraphSettings {
 	private boolean drawEdges = true;
 	private int edgeOpacity = 255;
 	private int pixelOffset = 3;
+	private Font vertexFont = null;
+	private Font edgeFont = null;
+	
 
 	public static final int SHOW_LABEL = 0;
 	public static final int SHOW_NAME = 1;
 	public static final int SHOW_LABEL_AND_NAME = 2;
 	public static final int SHOW_NONE = 3;
+	
+	public GraphSettings() {
+		nodeLabel = GraphSettings.SHOW_LABEL;
+		edgeLabel = GraphSettings.SHOW_LABEL;
+	}
+
+	public static GraphSettings getInstance() {
+		if (instance == null) {
+			instance = new GraphSettings();
+		}
+		return instance;
+	}
 
 	public boolean isBackgroundColor() {
 		return backgroundColor;
@@ -67,15 +84,19 @@ public class GraphSettings {
 		this.pixelOffset = pixelOffset;
 	}
 
-	public GraphSettings() {
-		nodeLabel = GraphSettings.SHOW_LABEL;
-		edgeLabel = GraphSettings.SHOW_LABEL;
+	public Font getVertexFont() {
+		return vertexFont;
 	}
 
-	public static GraphSettings getInstance() {
-		if (instance == null) {
-			instance = new GraphSettings();
-		}
-		return instance;
+	public void setVertexFont(Font vertexFont) {
+		this.vertexFont = vertexFont;
+	}
+
+	public Font getEdgeFont() {
+		return edgeFont;
+	}
+
+	public void setEdgeFont(Font edgeFont) {
+		this.edgeFont = edgeFont;
 	}
 }

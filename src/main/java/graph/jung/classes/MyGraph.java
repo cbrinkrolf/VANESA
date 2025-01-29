@@ -54,6 +54,7 @@ import graph.jung.graphDrawing.MyArrowFillPaintTransformer;
 import graph.jung.graphDrawing.MyEdgeArrowFunction;
 import graph.jung.graphDrawing.MyEdgeDrawPaintFunction;
 import graph.jung.graphDrawing.MyEdgeFillPaintFunction;
+import graph.jung.graphDrawing.MyEdgeFontTransformer;
 import graph.jung.graphDrawing.MyEdgeLabelRenderer;
 import graph.jung.graphDrawing.MyEdgeShapeFunction;
 import graph.jung.graphDrawing.MyEdgeStringer;
@@ -105,6 +106,8 @@ public class MyGraph {
 	private final MyEdgeArrowFunction eaf;
 	private final MyArrowDrawPaintTransformer adpt;
 	private final MyArrowFillPaintTransformer afpt;
+	private final MyVertexFontTransformer vft;
+	private final MyEdgeFontTransformer eft;
 
 	private PickedState<BiologicalNodeAbstract> stateV;
 	private PickedState<BiologicalEdgeAbstract> stateE;
@@ -249,6 +252,9 @@ public class MyGraph {
 		eaf = new MyEdgeArrowFunction();
 		adpt = new MyArrowDrawPaintTransformer();
 		afpt = new MyArrowFillPaintTransformer();
+		
+		vft = new MyVertexFontTransformer();
+		eft = new MyEdgeFontTransformer();
 
 		// graphMouse.setVertexLocations(nodePositions);
 		// 1. vertexFactor, 2. edgeFactory
@@ -347,7 +353,9 @@ public class MyGraph {
 
 		pr.setVertexIconTransformer(vit);
 		
-		//pr.setVertexFontTransformer(new MyVertexFontTransformer());
+		pr.setVertexFontTransformer(vft);
+		pr.setEdgeFontTransformer(eft);
+		
 		vv.addPostRenderPaintable(new TokenRenderer(pathway));
 
 		satellitePr.setVertexStrokeTransformer(vsh);
@@ -367,6 +375,8 @@ public class MyGraph {
 		satellitePr.setEdgeArrowTransformer(eaf);
 		satellitePr.setArrowDrawPaintTransformer(adpt);
 		satellitePr.setArrowFillPaintTransformer(afpt);
+		satellitePr.setVertexFontTransformer(vft);
+		satellitePr.setEdgeFontTransformer(eft);
 	}
 
 	public void restartVisualizationModel() {
@@ -773,6 +783,8 @@ public class MyGraph {
 		pr_compare.setEdgeArrowTransformer(eaf);
 		pr_compare.setArrowDrawPaintTransformer(adpt);
 		pr_compare.setArrowFillPaintTransformer(afpt);
+		pr_compare.setVertexFontTransformer(vft);
+		pr_compare.setEdgeFontTransformer(eft);
 		copyVV.setGraphMouse(graphMouse);
 		// PickSupport copyPick = new ShapePickSupport();
 
