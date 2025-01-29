@@ -96,7 +96,9 @@ public class Transformator {
 	private boolean useSubgraph = true;
 	private boolean useBuckets = true;
 	private boolean useSmallestNodeDegree = true;
-	private boolean useIncidenceCount = true;
+	
+	// disabled, because logical nodes are not yet taken into account, todo is further down in the code!!!
+	private boolean useIncidenceCount = !true;
 	private boolean doExecute = true;
 
 	private boolean printLog = !true;
@@ -306,7 +308,7 @@ public class Transformator {
 
 				// node type of rule does not exist in graph -> skip rule
 				if (nodeType2bna.get(type) == null) {
-					System.out.println("types do not exist");
+					// System.out.println("types do not exist");
 					permutations = null;
 					return;
 				}
@@ -1211,7 +1213,7 @@ public class Transformator {
 				continue;
 			}
 			value = replaceParametersToValues(orgValue, match);
-			//System.out.println("key: " + key + " value: " + value);
+			// System.out.println("key: " + key + ", value: " + value + ", orgValue: " + orgValue);
 			switch (key) {
 			// case "name":
 			// break;
@@ -1293,6 +1295,7 @@ public class Transformator {
 	private String replaceParametersToValues(String s, Match match) {
 
 		List<String> names = match2SortedParameterList.get(match);
+		// System.out.println(names);
 		Map<String, String> possibleParams = match2Parameters.get(match);
 		for (String name : names) {
 			
