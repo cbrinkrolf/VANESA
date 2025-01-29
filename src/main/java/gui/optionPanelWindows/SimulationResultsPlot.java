@@ -1208,8 +1208,12 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					if (bna instanceof Place && simResController.getAllActiveWithData(bna, TOKEN).size() <= 1) {
 						return graphElement.getName();
 					}
-					if (bna instanceof Transition
+					if (bna instanceof ContinuousTransition
 							&& simResController.getAllActiveWithData(bna, ACTUAL_FIRING_SPEED).size() <= 1) {
+						return graphElement.getName();
+					}
+					if ((bna instanceof DiscreteTransition || bna instanceof StochasticTransition)
+							&& simResController.getAllActiveWithData(bna, DELAY).size() <= 1) {
 						return graphElement.getName();
 					}
 					return idx2simR1.get(seriesIdx).getName();
