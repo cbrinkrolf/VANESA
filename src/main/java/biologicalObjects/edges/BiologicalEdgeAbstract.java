@@ -217,7 +217,7 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 				&& (getName().length() == 0 || getName().equals(" "))) {
 			return "";
 		} else {
-			if (type == 1) {
+			if (type == GraphSettings.SHOW_LABEL) {
 				if (getLabel().equals("1") && this instanceof BiologicalEdgeAbstract) {
 					return "";
 				}
@@ -225,19 +225,19 @@ public abstract class BiologicalEdgeAbstract implements GraphElementAbstract, Cl
 					return getName();
 				}
 				return getLabel();
-			} else if (type == 2) {
+			} else if (type == GraphSettings.SHOW_NAME) {
 				if (getName().length() == 0 || getName().equals(" ")) {
 					return getLabel();
 				}
 				return getName();
-			} else if (type == 3) {
+			} else if (type == GraphSettings.SHOW_LABEL_AND_NAME) {
 				if (getName().length() == 0 || getName().equals(" ")) {
 					return getLabel();
 				} else if (getLabel().length() == 0 || getLabel().equals(" ")) {
 					return getName();
 				}
 				return getLabel() + "  -|-  " + getName();
-			} else if (type == 4) {
+			} else if (type == GraphSettings.SHOW_NONE) {
 				return "";
 			}
 		}
