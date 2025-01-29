@@ -110,8 +110,8 @@ public class MainWindow implements ApplicationListener {
 		// SwingUtilities.updateComponentTreeUI(this);
 
 		String title = "VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications";
-		if(developer){
-			title = "VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications (developer mode)";
+		if (developer) {
+			title += " (developer mode)";
 		}
 		
 		frame.setTitle(title);
@@ -187,15 +187,19 @@ public class MainWindow implements ApplicationListener {
 		addView();
 		splitPanel.setOneTouchExpandable(false);
 		splitPanel.addPropertyChangeListener(new PropertyChangeListener() {
-			private final int SP_DIVIDER_MAX_LOCATION = splitPanel.getLeftComponent().getMaximumSize().width;
+			private int dividerMaxLocation = 0;
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				final String prop_name = evt.getPropertyName();
-				if (prop_name.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY)
-						|| prop_name.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
-					if (splitPanel.getDividerLocation() > SP_DIVIDER_MAX_LOCATION)
-						splitPanel.setDividerLocation(SP_DIVIDER_MAX_LOCATION);
+				if (prop_name.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY) ||
+					prop_name.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
+					if (dividerMaxLocation == 0) {
+						dividerMaxLocation = optionPanel.getPanel().getWidth();
+					}
+					if (splitPanel.getDividerLocation() > dividerMaxLocation) {
+						splitPanel.setDividerLocation(dividerMaxLocation);
+					}
 				}
 			}
 		});

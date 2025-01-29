@@ -23,6 +23,7 @@ public class ToolBarButton extends JButton implements MouseListener {
 		addMouseListener(this);
 		setBorder(new LineBorder(Color.black));
 		setBorderPainted(false);
+		setFocusPainted(false);
 		setBackground(Color.LIGHT_GRAY);
 		setContentAreaFilled(false);
 		revalidate();
