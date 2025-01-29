@@ -7,16 +7,11 @@ import java.awt.GridLayout;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
+import javax.swing.*;
 
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import graph.CreatePathway;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.gui.CompareGraphsGUI;
@@ -55,7 +50,7 @@ public class ToolBar {
 		String modelingViewString = "<html><b>Change View</b><br>to Modeling</html>";
 		// String PetriViewString = "<html><b>Change View</b><br>to PetriNet</html>";
 
-		JButton newDoc = createToolBarButton("newDocumentSmall.png", "Create New Network", this::onNewNetworkClicked);
+		final JButton newDoc = new NewDocumentToolBarButton();
 		JButton parallelView = createToolBarButton("parallelview.png", "Create ParallelView From Graphs",
 				this::onParallelViewClicked);
 		JButton pick = createToolBarButton("newPick.png", "Pick Element", this::onPickClicked);
@@ -299,20 +294,6 @@ public class ToolBar {
 		button.setToolTipText(toolTipText);
 		button.addActionListener(e -> action.run());
 		return button;
-	}
-
-	private void onNewNetworkClicked() {
-		MainWindow w = MainWindow.getInstance();
-		int option = JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(),
-				"Which type of modeling do you prefer?", "Choose Network Type...", JOptionPane.YES_NO_OPTION,
-				JOptionPane.QUESTION_MESSAGE, null, new String[] { "Biological Graph", "Petri Net" },
-				JOptionPane.CANCEL_OPTION);
-		if (option != -1) {
-			new CreatePathway();
-			GraphInstance.getPathway().setIsPetriNet(option == JOptionPane.NO_OPTION);
-			w.getBar().paintToolbar(option == JOptionPane.NO_OPTION);
-			w.updateAllGuiElements();
-		}
 	}
 
 	private void onParallelViewClicked() {

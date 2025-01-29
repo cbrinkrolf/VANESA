@@ -21,35 +21,34 @@ import gui.optionPanelWindows.SimulationResultsPlot;
 import net.miginfocom.swing.MigLayout;
 
 public class OptionPanel {
+	private final JPanel p = new JPanel(new MigLayout("insets 0"));
 
-	private JPanel p = new JPanel(new MigLayout("insets 0"));
+	private final JScrollPane scrollPane;
+	private final DatabaseWindow dw;
+	private final ElementTree tree;
+	private final SimulationResultsPlot simResWindow;
+	private final BuildingBlocks bb;
+	private final SatelliteWindow satelliteWindow;
+	private final ElementWindow elementWindow;
+	private final ProjectWindow projectWindow;
+	private final PathwayTree pathwayTree;
+	private final GraphAlgorithmsWindow graphAlgorithms;
+	private final PathwayPropertiesWindow pathwayPropertiesWindow;
 
-	private JScrollPane scrollPane;
-	private DatabaseWindow dw;
-	private ElementTree tree;
-	private SimulationResultsPlot simResWindow;
-	private BuildingBlocks bb;
-	private SatelliteWindow satelliteWindow;
-	private ElementWindow elementWindow;
-	private ProjectWindow projectWindow;
-	private PathwayTree pathwayTree;
-	private GraphAlgorithmsWindow graphAlgorithms;
-	private PathwayPropertiesWindow pathwayPropertiesWindow;
-
-	private JXTaskPane elements;
-	private JXTaskPane satellite;
-	private JXTaskPane simResView;
-	private JXTaskPane generalProperties;
-	private JXTaskPane databaseSearch;
-	private JXTaskPane project;
-	private JXTaskPane theory;
-	private JXTaskPane pathways;
-	private JXTaskPane bbProperties;
-	private JXTaskPane pathwayProperties;
+	private final JXTaskPane elements;
+	private final JXTaskPane satellite;
+	private final JXTaskPane simResView;
+	private final JXTaskPane generalProperties;
+	private final JXTaskPane databaseSearch;
+	private final JXTaskPane project;
+	private final JXTaskPane theory;
+	private final JXTaskPane pathways;
+	private final JXTaskPane bbProperties;
+	private final JXTaskPane pathwayProperties;
 
 	private boolean updatePanels = true;
 
-	private JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
+	private final JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
 
 	// private GraphAlignmentOptionTab alignmentOptions;
 	// private JXTaskPane alignment;
@@ -63,7 +62,6 @@ public class OptionPanel {
 	}
 
 	public OptionPanel() {
-
 		taskPaneContainer.setLayout(new MigLayout("insets 0, wrap 1"));
 
 		databaseSearch = new JXTaskPane();
@@ -179,11 +177,11 @@ public class OptionPanel {
 		p.add(taskPaneContainer, BorderLayout.CENTER);
 		taskPaneContainer.setDoubleBuffered(true);
 
+		scrollPane = new JScrollPane(p);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 	}
 
 	public JScrollPane getPanel() {
-		scrollPane = new JScrollPane(p);
-		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		return scrollPane;
 	}
 
