@@ -311,6 +311,7 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public void addView() {
+		final int previousDividerLocation = splitPanel.getDividerLocation();
 		// remove rootWindow if exists
 		if (rootWindow != null) {
 			splitPanel.remove(rootWindow);
@@ -336,6 +337,7 @@ public class MainWindow implements ApplicationListener {
 		splitPanel.add(rootWindow);
 		view.makeVisible();
 		setSelectedView(view);
+		splitPanel.setDividerLocation(previousDividerLocation);
 	}
 
 	public void removeView(DockingWindow dw) {
