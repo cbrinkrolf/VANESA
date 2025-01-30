@@ -572,13 +572,16 @@ public class MenuListener implements ActionListener {
 
 	private static void createCov() {
 		final MainWindow w = MainWindow.getInstance();
-		// MyGraph g = con.getPathway(w.getCurrentPathway()).getGraph();
-		// Cov cov = new Cov();
 		if (JOptionPane.showConfirmDialog(w.getFrame(),
-										  "The calculation of the reach graph could take long time, especially if you have many places in your network. Do you want to perform the calculation anyway?",
-										  "Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-			new ReachController();
-		GraphInstance.getMyGraph().changeToGEMLayout();
+										  "Calculating the reachability graph may take a long time, especially for large networks. Calculate anyway?",
+										  "Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+			new ReachController(GraphInstance.getPathway());
+		}
+		if (GraphInstance.getMyGraph() != null) {
+			GraphInstance.getMyGraph().changeToGEMLayout();
+		} else {
+			System.out.println("No Graph exists!");
+		}
 	}
 
 	private void cov() {
@@ -915,7 +918,7 @@ public class MenuListener implements ActionListener {
 		if (answer != -1) {
 			new CreatePathway();
 			GraphInstance.getPathway().setIsPetriNet(answer == JOptionPane.NO_OPTION);
-			w.getBar().paintToolbar(answer == JOptionPane.NO_OPTION);
+			w.getBar().updateVisibility();
 			w.updateAllGuiElements();
 		}
 	}

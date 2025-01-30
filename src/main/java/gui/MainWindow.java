@@ -161,7 +161,7 @@ public class MainWindow implements ApplicationListener {
 				System.exit(0);
 			}
 		});
-		bar = new ToolBar(false);
+		bar = new ToolBar();
 		// create menu
 		frame.setJMenuBar(myMenu.returnMenu());
 		// toolbar with the buttons on the right
@@ -411,7 +411,9 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public void removeTab(boolean ask, TitledTab remove, Pathway pw) {
-		if (tabbedPanels.get(getSelectedView()).getTabCount() == 1 && con.getAllPathways().contains(pw)) {
+		boolean isLastTabOfView = tabbedPanels.get(getSelectedView()).getTabCount() == 1 &&
+								  con.getAllPathways().contains(pw);
+		if (isLastTabOfView) {
 			addedTabs = 0;
 			myMenu.disableCloseAndSaveFunctions();
 			optionPanel.removeAllElements();
@@ -442,6 +444,9 @@ public class MainWindow implements ApplicationListener {
 			if (subPathway.getRootPathway() == pw) {
 				removeTab(false, subPathway.getTab().getTitleTab(), subPathway);
 			}
+		}
+		if (isLastTabOfView) {
+			bar.updateVisibility();
 		}
 	}
 
@@ -643,6 +648,7 @@ public class MainWindow implements ApplicationListener {
 				selectedView = key;
 			}
 		}
+		bar.updateVisibility();
 	}
 
 	public void setSelectedView(TabbedPanel t) {
@@ -651,6 +657,7 @@ public class MainWindow implements ApplicationListener {
 				selectedView = key;
 			}
 		}
+		bar.updateVisibility();
 	}
 
 	public int getSelectedView() {
