@@ -1,11 +1,11 @@
 package gui;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,12 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JSplitPane;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 import io.SuffixAwareFilter;
 import org.jdesktop.jxlayer.JXLayer;
@@ -166,7 +161,7 @@ public class MainWindow implements ApplicationListener {
 				System.exit(0);
 			}
 		});
-		bar = new ToolBar(false);
+		bar = new ToolBar();
 		// create menu
 		frame.setJMenuBar(myMenu.returnMenu());
 		// toolbar with the buttons on the right
@@ -180,26 +175,29 @@ public class MainWindow implements ApplicationListener {
 
 		// option panels on the left
 		optionPanel = new OptionPanel();
-		// getContentPane().add(optionPanel.getPanel(), BorderLayout.WEST);
-		// root.add(optionPanel.getPanel(), BorderLayout.WEST);
-
-		splitPanel.add(optionPanel.getPanel());
-		addView();
-		splitPanel.setOneTouchExpandable(false);
-		splitPanel.addPropertyChangeListener(new PropertyChangeListener() {
-			private int dividerMaxLocation = 0;
-
+		optionPanel.getPanel().getVerticalScrollBar().addComponentListener(new ComponentAdapter() {
 			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				final String prop_name = evt.getPropertyName();
-				if (prop_name.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY) ||
-					prop_name.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
-					if (dividerMaxLocation == 0) {
-						dividerMaxLocation = optionPanel.getPanel().getWidth();
-					}
+			public void componentHidden(ComponentEvent e) {
+				if (!optionPanel.getPanel().getVerticalScrollBar().isShowing()) {
+					int dividerMaxLocation = (int) optionPanel.getPanel().getPreferredSize().getWidth();
 					if (splitPanel.getDividerLocation() > dividerMaxLocation) {
 						splitPanel.setDividerLocation(dividerMaxLocation);
 					}
+				}
+			}
+		});
+		splitPanel.add(optionPanel.getPanel());
+		addView();
+		splitPanel.setOneTouchExpandable(false);
+		splitPanel.addPropertyChangeListener(evt -> {
+			final String prop_name = evt.getPropertyName();
+			if (prop_name.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY) ||
+				prop_name.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
+				boolean isScrollBarVisible = optionPanel.getPanel().getVerticalScrollBar().isShowing();
+				int dividerMaxLocation = (int) optionPanel.getPanel().getPreferredSize().getWidth() +
+										 (isScrollBarVisible ? UIManager.getInt("ScrollBar.width") : 0);
+				if (splitPanel.getDividerLocation() > dividerMaxLocation) {
+					splitPanel.setDividerLocation(dividerMaxLocation);
 				}
 			}
 		});
@@ -311,6 +309,7 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public void addView() {
+		final int previousDividerLocation = splitPanel.getDividerLocation();
 		// remove rootWindow if exists
 		if (rootWindow != null) {
 			splitPanel.remove(rootWindow);
@@ -336,6 +335,7 @@ public class MainWindow implements ApplicationListener {
 		splitPanel.add(rootWindow);
 		view.makeVisible();
 		setSelectedView(view);
+		splitPanel.setDividerLocation(previousDividerLocation);
 	}
 
 	public void removeView(DockingWindow dw) {
@@ -411,7 +411,9 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public void removeTab(boolean ask, TitledTab remove, Pathway pw) {
-		if (tabbedPanels.get(getSelectedView()).getTabCount() == 1 && con.getAllPathways().contains(pw)) {
+		boolean isLastTabOfView = tabbedPanels.get(getSelectedView()).getTabCount() == 1 &&
+								  con.getAllPathways().contains(pw);
+		if (isLastTabOfView) {
 			addedTabs = 0;
 			myMenu.disableCloseAndSaveFunctions();
 			optionPanel.removeAllElements();
@@ -442,6 +444,9 @@ public class MainWindow implements ApplicationListener {
 			if (subPathway.getRootPathway() == pw) {
 				removeTab(false, subPathway.getTab().getTitleTab(), subPathway);
 			}
+		}
+		if (isLastTabOfView) {
+			bar.updateVisibility();
 		}
 	}
 
@@ -643,6 +648,7 @@ public class MainWindow implements ApplicationListener {
 				selectedView = key;
 			}
 		}
+		bar.updateVisibility();
 	}
 
 	public void setSelectedView(TabbedPanel t) {
@@ -651,6 +657,7 @@ public class MainWindow implements ApplicationListener {
 				selectedView = key;
 			}
 		}
+		bar.updateVisibility();
 	}
 
 	public int getSelectedView() {

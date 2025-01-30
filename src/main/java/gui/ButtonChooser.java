@@ -113,7 +113,7 @@ public class ButtonChooser extends JButton implements ActionListener, MouseListe
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		if (e.getSource() == this) {
+		if (isEnabled() && e.getSource() == this) {
 			// GraphInstance g = new GraphInstance();
 			try {
 				buttons.get(selectedIndex).getAction().actionPerformed(null);
@@ -142,7 +142,7 @@ public class ButtonChooser extends JButton implements ActionListener, MouseListe
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (e.getSource() == this) {
+		if (isEnabled() && e.getSource() == this) {
 			if (chooserPopupWindow != null && chooserPopupWindow.isVisible()) {
 				hidePopup();
 			} else {

@@ -150,7 +150,7 @@ public class GraphColoringGUI implements ActionListener {
                 // TreeMap<Integer, Integer> sorted_map = new TreeMap<>(bvc);
                 // sorted_map.putAll(degreemap);
                 // sort by key value
-                new NodeAttributeBarChart("Statistics", "Node degree distibution", "Degree", "Count", sorted_map);
+                new NodeAttributeBarChart("Statistics", "Node degree distribution", "Degree", "Count", sorted_map);
             } else if ("colorpalette".equals(command)) {
                 currentImageId = chooseColorPalette.getSelectedIndex();
             }

@@ -255,7 +255,7 @@ public class NetworkProperties {
 				if (adjacency[i][j] == 1)
 					degree++;
 			}
-			// ogranize lists and tables
+			// organize lists and tables
 			if (!nodedegreessingle.contains(degree) && degree > 0)
 				nodedegreessingle.add(degree);
 			nodedegrees.add(degree);

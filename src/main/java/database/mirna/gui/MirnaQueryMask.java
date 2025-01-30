@@ -57,10 +57,6 @@ public class MirnaQueryMask extends QueryMask {
 		enrichGenes.addActionListener(e -> enrichGenes());
 		JButton enrichMirnas = new JButton("enrich miRNAs");
 		enrichMirnas.addActionListener(e -> enrichMirnas());
-		panel.add(new JLabel("miRNA Search Window"), "span 4");
-		panel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
-
-		panel.add(new JLabel(imagePath.getImageIcon("database-search-outline.png", 48, 48)), "span 2 5");
 
 		panel.add(new JLabel("miRNA name"), "span 2, gap 5 ");
 		panel.add(name, "span,wrap,growx ,gap 10");

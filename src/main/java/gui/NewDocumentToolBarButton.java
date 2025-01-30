@@ -39,7 +39,7 @@ public class NewDocumentToolBarButton extends ToolBarButton {
     private void createNetwork(final boolean isPetriNet) {
         new CreatePathway();
         GraphInstance.getPathway().setIsPetriNet(isPetriNet);
-        MainWindow.getInstance().getBar().paintToolbar(isPetriNet);
+        MainWindow.getInstance().getBar().updateVisibility();
         MainWindow.getInstance().updateAllGuiElements();
     }
 }

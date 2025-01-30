@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public abstract class QueryMask {
-    protected final ImagePath imagePath = ImagePath.getInstance();
     protected final JPanel panel;
 
     public QueryMask() {
@@ -25,11 +24,10 @@ public abstract class QueryMask {
         search.addActionListener(e -> searchGUI());
         JButton reset = new JButton("reset");
         reset.addActionListener(e -> reset());
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(reset);
         buttonPanel.add(search);
-        panel.add(new JSeparator(), "span, growx, wrap 10");
-        panel.add(new JLabel(), "gap 20, span 5");
+        panel.add(new JSeparator(), "span, growx, wrap");
         panel.add(buttonPanel, "span");
     }
 

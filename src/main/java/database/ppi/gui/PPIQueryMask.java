@@ -32,11 +32,6 @@ public class PPIQueryMask extends QueryMask {
         acNumber.setText("");
         acNumber.addFocusListener(new TextFieldColorChanger());
 
-        panel.add(new JLabel("PPI Search Window"), "span 4");
-        panel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10, gap 5");
-
-        panel.add(new JLabel(imagePath.getImageIcon("database-search-outline.png", 48, 48)), "span 2 5");
-
         panel.add(new JLabel("Database"), "span 2, gap 5");
         panel.add(choosePPIDatabase, "span,wrap,growx ,gap 10");
         panel.add(new JLabel("Name"), "span 2, gap 5");
@@ -45,7 +40,6 @@ public class PPIQueryMask extends QueryMask {
         panel.add(alias, "span,wrap,growx ,gap 10");
         panel.add(new JLabel("AC number"), "span 2, gap 5");
         panel.add(acNumber, "span, wrap, growx, gap 10");
-
         addControlButtons();
     }
 

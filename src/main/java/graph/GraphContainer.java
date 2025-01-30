@@ -2,8 +2,6 @@ package graph;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -12,9 +10,8 @@ import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
 import graph.jung.classes.MyGraph;
 
-
 public class GraphContainer {
-	private HashMap<String, Pathway> map = new HashMap<String, Pathway>();
+	private final HashMap<String, Pathway> map = new HashMap<>();
 	private GraphElementAbstract selectedObject;
 	private String mouseFunction = "edit";
 	private boolean isPetriView = false; 
@@ -62,12 +59,12 @@ public class GraphContainer {
 	}
 	
 	private String checkNameDuplicates(String name, int i){
-		
+
 		int count = i;
 		String newName = name;
-		
+
 		if (i>1) newName = newName+"("+(count)+")";
-		
+
 		if(map.containsKey(newName)){
 			count++;
 		  newName= checkNameDuplicates(name,count);
@@ -81,11 +78,7 @@ public class GraphContainer {
 	}
 	
 	public boolean containsPathway(){
-		if (map.isEmpty()){
-			return false;
-		}else{
-			return true;
-		}
+        return !map.isEmpty();
 	}
 	
 	public int getPathwayNumbers(){
@@ -97,7 +90,7 @@ public class GraphContainer {
 	}
 	
 	public Pathway getPathway(String name){
-		return (Pathway)map.get(name);
+		return map.get(name);
 	}
 	
 	public void removePathway(String name){
@@ -117,26 +110,21 @@ public class GraphContainer {
 	}
 	
 	public void changeMouseFunction(String function){
-		
 		mouseFunction = function;
-		Iterator<Map.Entry<String, Pathway>> it = map.entrySet().iterator();
-		Map.Entry<String, Pathway> entry;
-		while(it.hasNext()){
-
-			entry = it.next();
-			Pathway p = (Pathway)entry.getValue();
-			MyGraph g = p.getGraph();
-			if (function.equals("move")){
-				g.setMouseModeTransform();
-			}else if (function.equals("pick")){
-				g.setMouseModePick();
-			}else if (function.equals("edit")){
-				g.setMouseModeEditing();
-			}else if (function.equals("add")){
-
-			}else if(function.equals("hierarchy")){
-				g.setMouseModeHierarchy();
-			}
-		}
+        for (Entry<String, Pathway> entry : map.entrySet()) {
+            Pathway p = entry.getValue();
+            MyGraph g = p.getGraph();
+            if (function.equals("move")) {
+                g.setMouseModeTransform();
+            } else if (function.equals("pick")) {
+                g.setMouseModePick();
+            } else if (function.equals("edit")) {
+                g.setMouseModeEditing();
+            } else if (function.equals("add")) {
+				// ignored
+            } else if (function.equals("hierarchy")) {
+                g.setMouseModeHierarchy();
+            }
+        }
 	}
 }

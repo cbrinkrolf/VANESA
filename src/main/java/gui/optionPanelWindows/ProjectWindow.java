@@ -101,7 +101,7 @@ public class ProjectWindow implements FocusListener {
         Component[] c = MainWindow.getInstance().getFrame().getContentPane().getComponents();
         for (Component component : c) {
             if (component.getClass().getName().equals("javax.swing.JPanel")) {
-                MainWindow.getInstance().getBar().paintToolbar(pw.isPetriNet());
+                MainWindow.getInstance().getBar().updateVisibility();
                 MainWindow.getInstance().getMenu().setPetriView(pw.isPetriNet() ||
                                                                 pw.getTransformationInformation() != null &&
                                                                 pw.getTransformationInformation().getPetriNet() !=
