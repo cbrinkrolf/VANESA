@@ -732,7 +732,16 @@ public class PetriNetSimulation implements ActionListener {
 
 					String bin = getOMCPath();
 
+					// TODO faster compilation
+					// maybe additional flags for faster compilation or switch to Compile.bat that
+					// is also used by OMEdit
+					// e.g. "C:/Program Files/OpenModelica1.23.1-64bit/share/omc/scripts/Compile.bat
+					// _omcQuot_0c504e5f736d616c6c5f746573742e73626d6c27 gcc ucrt64 parallel dynamic
+					// 8 0"
+					// compileProcess = new ProcessBuilder(bin, pathSim + "simulation.mos",
+					// "--target=gcc", "--linkType=dynamic").start();
 					compileProcess = new ProcessBuilder(bin, pathSim + "simulation.mos").start();
+
 					InputStream os = compileProcess.getInputStream();
 					InputStream errs = compileProcess.getErrorStream();
 
