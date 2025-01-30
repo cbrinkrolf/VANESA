@@ -1084,7 +1084,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 									if (ref2 > 3.0)
 										ref2 = 3.0f;
-									//VertexShapes vs = new VertexShapes(ref2, 1.0f);
+									// VertexShapes vs = new VertexShapes(ref2, 1.0f);
 									if (animationColour.isSelected()) {
 										bna.setColor(new Color(colors.get(take)));
 									}
@@ -1100,16 +1100,31 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	}
 
 	public void initGraphs() {
-		// System.out.println("start init");
+		//System.out.println("start init");
 		pw = GraphInstance.getPathway();
+		//System.out.println("PN: " + pw.isPetriNet());
+		if (!pw.isPetriNet()) {
+			//System.out.println(pw.getTransformationInformation());
+			//System.out.println(pw.getTransformationInformation().getPetriNet());
+			//System.out.println(pw.getTransformationInformation().getPetriNet().getPetriNetSimulation());
+			//System.out.println(
+			//		pw.getTransformationInformation().getPetriNet().getPetriPropertiesNet().getSimResController());
+			//System.out.println(pw.getTransformationInformation().getPetriNet().getPetriPropertiesNet()
+			//		.getSimResController().getAll().size());
+			//System.out.println(pw.getTransformationInformation().getPetriNet().getPetriPropertiesNet()
+			//		.getSimResController().getAllActive().size());
+		}
 		if (!pw.isPetriNet() && pw.getTransformationInformation() == null) {
+			//System.out.println("ret1");
 			return;
 		}
 		if (!pw.isPetriNet() && pw.getTransformationInformation().getPetriNet() == null) {
+			//System.out.println("ret2");
 			return;
 		}
 		if (!pw.isPetriNet() && pw.getTransformationInformation().getPetriNet() != null
 				&& !pw.hasGotAtLeastOneElement()) {
+			//System.out.println("ret3");
 			return;
 		}
 
@@ -1118,7 +1133,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		} else {
 			hiddenPN = false;
 		}
-
+		//System.out.println("durch");
 		vState = pw.getGraph().getVisualizationViewer().getPickedVertexState();
 		eState = pw.getGraph().getVisualizationViewer().getPickedEdgeState();
 		simResController = pw.getPetriPropertiesNet().getSimResController();
@@ -1166,6 +1181,11 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			public String generateToolTip(XYDataset arg0, int seriesIdx, int arg2) {
 				int pickedV = vState.getPicked().size();
 				int pickedE = eState.getPicked().size();
+				if(seriesIdx > labelsR1.size()){
+					// if a PN element of a transformed graph is deleted and corresponding BN node is picked
+					return "";
+				}
+				
 				if (pickedV == 1 && pickedE == 0) {
 					BiologicalNodeAbstract graphElement = vState.getPicked().iterator().next();
 					graphElement = resolveReference(graphElement);
