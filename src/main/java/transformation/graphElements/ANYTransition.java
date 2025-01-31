@@ -1,7 +1,6 @@
 package transformation.graphElements;
 
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
 import java.util.List;
 
 import biologicalElements.Elementdeclerations;
@@ -9,17 +8,12 @@ import biologicalObjects.nodes.petriNet.Transition;
 import graph.jung.graphDrawing.VertexShapes;
 
 public class ANYTransition extends Transition {
-
 	public ANYTransition(String label, String name) {
 		super(label, name);
 		setBiologicalElement(Elementdeclerations.transition);
 		attributeSetter(this.getClass().getSimpleName(), this);
-
-		AffineTransform transform2 = new AffineTransform();
-
-		transform2.translate(1, 1);
-		transform2.scale(1, 2);
-		setDefaultShape(VertexShapes.makeCoarse(transform2.createTransformedShape(VertexShapes.getRectangle())));
+		setDefaultShape(VertexShapes.makeCoarse(
+				VertexShapes.TRANSITION_TRANSFORM.createTransformedShape(VertexShapes.getRectangle())));
 		setDefaultColor(Color.white);
 	}
 	

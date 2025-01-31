@@ -20,30 +20,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VertexShapes {
-	private static float vertexSize = 20;
-	private static float varf = 1;
+	public static final AffineTransform TRANSITION_TRANSFORM = AffineTransform.getScaleInstance(1, 2);
+	private static final float vertexSize = 20;
+	private static final float varf = 1;
 
 	private static Ellipse2D ellipse = null;
 	private static Rectangle2D rectangle = null;
 	private static Shape doubleRectangle = null;
 	private static Shape doubleEllipse = null;
 	private static RoundRectangle2D roundRectangle = null;
-	private static Map<Shape, Shape> coarsedShapes = new HashMap<>();
-	private static Map<Integer, Shape> polygons = new HashMap<>();
-	private static Map<Integer, Shape> stars = new HashMap<>();
+	private static final Map<Shape, Shape> coarsedShapes = new HashMap<>();
+	private static final Map<Integer, Shape> polygons = new HashMap<>();
+	private static final Map<Integer, Shape> stars = new HashMap<>();
 	private static Shape discreteTransition = null;
 	private static Shape continuousTransition = null;
 	private static Shape inhibitorArrowHead = null;
 	private static Shape pnInhibitorArrowHead = null;
-
-	/**
-	 * Creates a <code>VertexShapeFactory</code> with the specified vertex size and
-	 * aspect ratio functions.
-	 */
-	// public VertexShapes(float vertexSize, float varf) {
-	// VertexShapes.vertexSize = vertexSize;
-	// VertexShapes.varf = varf;
-	// }
 
 	/**
 	 * Returns a <code>Rectangle2D</code> whose width and height are defined by this
@@ -52,12 +44,10 @@ public class VertexShapes {
 	public static Rectangle2D getRectangle() {
 		if (rectangle == null) {
 			Rectangle2D rectangle = new Rectangle2D.Float();
-			float width = (float) vertexSize;
-			float height = width * (float) varf;
+			float width = vertexSize;
+			float height = width * varf;
 			float h_offset = -(width / 2);
 			float v_offset = -(height / 2);
-//        theRectangle.setFrame(h_offset, v_offset, width, height);
-//        return theRectangle;
 			rectangle.setFrame(h_offset, v_offset, width, height);
 			VertexShapes.rectangle = rectangle;
 		}
@@ -71,12 +61,10 @@ public class VertexShapes {
 			float height = width * varf;
 			float h_offset = -(width / 2);
 			float v_offset = -(height / 2);
-//        theRectangle.setFrame(h_offset, v_offset, width, height);
-//        return theRectangle;
 			rectangle.setFrame(h_offset, v_offset, width, height);
 
-			width = (float) (vertexSize * 0.5);
-			height = (float) (width * varf * 1.6);
+			width = vertexSize * 0.5f;
+			height = width * varf * 1.6f;
 			h_offset = -(width / 2);
 			v_offset = -(height / 2);
 			Rectangle2D rectangle2 = new Rectangle2D.Float();
@@ -86,7 +74,6 @@ public class VertexShapes {
 			gp.append(rectangle, false);
 			doubleRectangle = gp;
 		}
-
 		return doubleRectangle;
 	}
 
@@ -116,13 +103,11 @@ public class VertexShapes {
 			gp.lineTo(width / 2, 0);
 			coarsedShapes.put(shape, gp);
 			return gp;
-		} else {
-			return coarsedShapes.get(shape);
 		}
+		return coarsedShapes.get(shape);
 	}
 
 	public static Shape getDoubleEllipse() {
-
 		if (doubleEllipse == null) {
 			Ellipse2D ellipse = new Ellipse2D.Float();
 			Ellipse2D ellipse2 = new Ellipse2D.Float();
@@ -134,8 +119,6 @@ public class VertexShapes {
 			float height = width * varf;
 			float h_offset = -(width / 2);
 			float v_offset = -(height / 2);
-//        theRectangle.setFrame(h_offset, v_offset, width, height);
-//        return theRectangle;
 			rectangle.setFrame(h_offset, v_offset, width, height);
 
 			ellipse2.setFrame(rectangle);
@@ -155,15 +138,11 @@ public class VertexShapes {
 	 */
 	public static RoundRectangle2D getRoundRectangle() {
 		if (roundRectangle == null) {
-			RoundRectangle2D roundRectangle = new RoundRectangle2D.Float();
+			roundRectangle = new RoundRectangle2D.Float();
 			Rectangle2D frame = getRectangle();
 			float arc_size = (float) Math.min(frame.getHeight(), frame.getWidth()) / 2;
-//        theRoundRectangle.setRoundRect(frame.getX(), frame.getY(),
-//                frame.getWidth(), frame.getHeight(), arc_size, arc_size);
-//        return theRoundRectangle;
 			roundRectangle.setRoundRect(frame.getX(), frame.getY(), frame.getWidth(), frame.getHeight(), arc_size,
 					arc_size);
-			VertexShapes.roundRectangle = roundRectangle;
 		}
 		return roundRectangle;
 	}
@@ -177,7 +156,6 @@ public class VertexShapes {
 	 */
 	public static Shape getRegularPolygon(int num_sides) {
 		if (!polygons.containsKey(num_sides)) {
-
 			GeneralPath polygon = new GeneralPath();
 			if (num_sides < 3)
 				throw new IllegalArgumentException("Number of sides must be >= 3");
@@ -187,9 +165,6 @@ public class VertexShapes {
 
 			// generate coordinates
 			double angle = 0;
-//        thePolygon.reset();
-//        thePolygon.moveTo(0,0);
-//        thePolygon.lineTo(width, 0);
 			polygon.reset();
 			polygon.moveTo(0, 0);
 			polygon.lineTo(width, 0);
@@ -198,16 +173,12 @@ public class VertexShapes {
 				angle -= theta;
 				float delta_x = (float) (width * Math.cos(angle));
 				float delta_y = (float) (width * Math.sin(angle));
-//            Point2D prev = thePolygon.getCurrentPoint();
-//            thePolygon.lineTo((float)prev.getX() + delta_x, (float)prev.getY() + delta_y);
 				Point2D prev = polygon.getCurrentPoint();
 				polygon.lineTo((float) prev.getX() + delta_x, (float) prev.getY() + delta_y);
 			}
-//        thePolygon.closePath();
 			polygon.closePath();
 
 			// scale polygon to be right size, translate to center at (0,0)
-//        Rectangle2D r = thePolygon.getBounds2D();
 			Rectangle2D r = polygon.getBounds2D();
 			double scale_x = width / r.getWidth();
 			double scale_y = height / r.getHeight();
@@ -216,7 +187,6 @@ public class VertexShapes {
 
 			AffineTransform at = AffineTransform.getScaleInstance(scale_x, scale_y);
 			at.translate(-translationX, -translationY);
-//        Shape shape = at.createTransformedShape(thePolygon);
 			Shape shape = at.createTransformedShape(polygon);
 			polygons.put(num_sides, shape);
 			return shape;
@@ -243,14 +213,10 @@ public class VertexShapes {
 			// generate coordinates
 			double theta = (2 * Math.PI) / num_points;
 			double angle = -theta / 2;
-//        thePolygon.reset();
-//        thePolygon.moveTo(0,0);
 			polygon.reset();
 			polygon.moveTo(0, 0);
 			float delta_x = width * (float) Math.cos(angle);
 			float delta_y = width * (float) Math.sin(angle);
-//        Point2D prev = thePolygon.getCurrentPoint();
-//        thePolygon.lineTo((float)prev.getX() + delta_x, (float)prev.getY() + delta_y);
 			Point2D prev = polygon.getCurrentPoint();
 			polygon.lineTo((float) prev.getX() + delta_x, (float) prev.getY() + delta_y);
 
@@ -258,24 +224,18 @@ public class VertexShapes {
 				angle += theta;
 				delta_x = width * (float) Math.cos(angle);
 				delta_y = width * (float) Math.sin(angle);
-//            prev = thePolygon.getCurrentPoint();
-//            thePolygon.lineTo((float)prev.getX() + delta_x, (float)prev.getY() + delta_y);
 				prev = polygon.getCurrentPoint();
 				polygon.lineTo((float) prev.getX() + delta_x, (float) prev.getY() + delta_y);
 
 				angle -= theta * 2;
 				delta_x = width * (float) Math.cos(angle);
 				delta_y = width * (float) Math.sin(angle);
-//            prev = thePolygon.getCurrentPoint();
-//            thePolygon.lineTo((float)prev.getX() + delta_x, (float)prev.getY() + delta_y);
 				prev = polygon.getCurrentPoint();
 				polygon.lineTo((float) prev.getX() + delta_x, (float) prev.getY() + delta_y);
 			}
-//        thePolygon.closePath();
 			polygon.closePath();
 
 			// scale polygon to be right size, translate to center at (0,0)
-//        Rectangle2D r = thePolygon.getBounds2D();
 			Rectangle2D r = polygon.getBounds2D();
 			double scale_x = width / r.getWidth();
 			double scale_y = height / r.getHeight();
@@ -285,8 +245,6 @@ public class VertexShapes {
 
 			AffineTransform at = AffineTransform.getScaleInstance(scale_x, scale_y);
 			at.translate(-translationX, -translationY);
-
-//        Shape shape = at.createTransformedShape(thePolygon);
 			Shape shape = at.createTransformedShape(polygon);
 			stars.put(num_points, shape);
 			return shape;
@@ -295,20 +253,15 @@ public class VertexShapes {
 	}
 
 	public static Shape getDiscreteTransitionShape() {
-		if (VertexShapes.discreteTransition == null) {
-			AffineTransform transform2 = new AffineTransform();
-			transform2.translate(1, 1);
-			transform2.scale(1, 2);
-			discreteTransition = transform2.createTransformedShape(VertexShapes.getRectangle());
+		if (discreteTransition == null) {
+			discreteTransition = TRANSITION_TRANSFORM.createTransformedShape(getRectangle());
 		}
 		return discreteTransition;
 	}
 
 	public static Shape getContinuousTransitionShape() {
-		if (VertexShapes.continuousTransition == null) {
-			AffineTransform transform2 = new AffineTransform();
-			transform2.scale(1, 2);
-			continuousTransition = transform2.createTransformedShape(VertexShapes.getDoubleRectangle());
+		if (continuousTransition == null) {
+			continuousTransition = TRANSITION_TRANSFORM.createTransformedShape(getDoubleRectangle());
 		}
 		return continuousTransition;
 	}
@@ -332,7 +285,7 @@ public class VertexShapes {
 	}
 	
 	public static Shape getPNInhibitorArrowHead() {
-		if(pnInhibitorArrowHead == null){
+		if (pnInhibitorArrowHead == null) {
 			pnInhibitorArrowHead = new Ellipse2D.Double(-10, -5, 10, 10);
 		}
 		return pnInhibitorArrowHead;
