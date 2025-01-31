@@ -16,7 +16,7 @@ petriNodes:
 - {name: P1, type: Continuous Place}
 - {name: P2, type: Continuous Place}
 - {name: T1, type: Continuous Transition}
-name: Continious inhibit rule
+name: Continuous inhibit rule
 ---
 biologicalEdges:
 - {from: M1, name: E1, to: E, type: ANY Biological Edge}

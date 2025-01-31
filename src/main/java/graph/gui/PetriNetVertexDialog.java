@@ -1,11 +1,7 @@
-/**
- * 
- */
 package graph.gui;
 
 import java.awt.Component;
 import java.awt.geom.Point2D;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.JComboBox;
@@ -20,11 +16,7 @@ import javax.swing.JTextField;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
-import biologicalObjects.nodes.petriNet.ContinuousPlace;
-import biologicalObjects.nodes.petriNet.ContinuousTransition;
-import biologicalObjects.nodes.petriNet.DiscretePlace;
-import biologicalObjects.nodes.petriNet.DiscreteTransition;
-import biologicalObjects.nodes.petriNet.StochasticTransition;
+import biologicalObjects.nodes.petriNet.*;
 import graph.GraphContainer;
 import gui.MainWindow;
 import gui.PopUpDialog;
@@ -34,18 +26,12 @@ import transformation.graphElements.ANYTransition;
 import util.MyNumberFormat;
 import util.StochasticDistribution;
 
-/**
- * @author Sebastian
- * 
- */
 public class PetriNetVertexDialog {
+    private final JOptionPane pane;
 
-	private JPanel panel;
-	private JOptionPane pane;
+	private final JTextField name = new JTextField(20);
 
-	private JTextField name = new JTextField(20);
-
-	private Pathway pw;
+	private final Pathway pw;
 	// JComboBox box = new JComboBox();
 	// JSpinner petriValue = new JSpinner();
 
@@ -56,31 +42,21 @@ public class PetriNetVertexDialog {
 	private JFormattedTextField tokenMax;
 
 	// for Transitions
-	private JTextField delay = new JTextField("1");
-	private JComboBox<String> distributionList;
-	// JCheckBox transitionfire = new JCheckBox("Should transition fire:",
-	// true);
-	private JTextField firingCondition = new JTextField("true");
-	private JLabel lblFiringCondition = new JLabel("Firing Condition");
+	private final JTextField delay = new JTextField("1");
+	private final JComboBox<String> distributionList;
+	// JCheckBox transitionfire = new JCheckBox("Should transition fire:", true);
+	private final JTextField firingCondition = new JTextField("true");
 
-	private JLabel lblMaxSpeed = new JLabel("Maximal Speed");
-	private JTextField maxSpeed = new JTextField("1");
+    private final JTextField maxSpeed = new JTextField("1");
 
-	private String petriElement;
+	private final String petriElement;
 
-	/**
-	 * 
-	 */
 	public PetriNetVertexDialog(String petriElement, Pathway pw) {
 		this.pw = pw;
 		this.petriElement = petriElement;
+		distributionList = new JComboBox<>(StochasticDistribution.distributionList.toArray(new String[0]));
 
-		distributionList = new JComboBox<String>(StochasticDistribution.distributionList.toArray(new String[0]));
-
-		MigLayout layout = new MigLayout("", "[left]");
-
-		panel = new JPanel(layout);
-
+        final JPanel panel = new JPanel(new MigLayout("", "[left]"));
 		panel.add(new JLabel("Name"), "span 2, gaptop 2 ");
 		panel.add(name, "span,wrap,growx ,gap 10, gaptop 2");
 
@@ -107,7 +83,8 @@ public class PetriNetVertexDialog {
 
 		if (!pw.isHeadless()) {
 			panel.add(new JSeparator(), "span, growx, wrap 10, gaptop 7 ");
-			if (this.petriElement.equals(Elementdeclerations.discretePlace)) {
+            final JLabel lblFiringCondition = new JLabel("Firing Condition");
+            if (this.petriElement.equals(Elementdeclerations.discretePlace)) {
 				name.setText(placeName);
 				// panel.add(new JLabel("Token"), "span 2, gaptop 2 ");
 				// token = new JFormattedTextField(MyNumberFormat.getIntegerFormat());
@@ -156,7 +133,7 @@ public class PetriNetVertexDialog {
 				panel.add(delay, "span,wrap,growx ,gap 10, gaptop 2");
 			} else if (this.petriElement.equals(Elementdeclerations.continuousTransition)) {
 				name.setText(transitionName);
-				panel.add(lblMaxSpeed, "span 2, gaptop 2 ");
+				panel.add(new JLabel("Maximal Speed"), "span 2, gaptop 2 ");
 				panel.add(maxSpeed, "span,wrap,growx ,gap 10, gaptop 2");
 				panel.add(lblFiringCondition, "span 2, gaptop 2 ");
 				panel.add(firingCondition, "span,wrap,growx ,gap 10, gaptop 2");
@@ -174,164 +151,143 @@ public class PetriNetVertexDialog {
 	}
 
 	public BiologicalNodeAbstract getAnswer(Point2D point, Component relativeTo) {
-
-		String title = "";
-		if (petriElement.equals(Elementdeclerations.discretePlace)) {
-			title = "Create a discrete Place";
-		} else if (petriElement.equals(Elementdeclerations.continuousPlace)) {
-			title = "Create a continuous Place";
-		} else if (petriElement.equals(Elementdeclerations.discreteTransition)) {
-			title = "Create a discrete Transition";
-		} else if (petriElement.equals(Elementdeclerations.continuousTransition)) {
-			title = "Create a continuous Transition";
-		} else if (petriElement.equals(Elementdeclerations.stochasticTransition)) {
-			title = "Create a stochastic Transition";
-		} else if (petriElement.equals(Elementdeclerations.place)) {
-			title = "Create a generic Place";
-		} else if (petriElement.equals(Elementdeclerations.transition)) {
-			title = "Create a generic Transition";
-		}
-
-		JDialog dialog = pane.createDialog(null, title);
-
-		// dialog.show();
-		if (relativeTo == null) {
-			dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
-		} else {
-			dialog.setLocationRelativeTo(relativeTo);
-		}
+		final JDialog dialog = pane.createDialog(null, getDialogTitle());
+        dialog.setLocationRelativeTo(relativeTo == null ? MainWindow.getInstance().getFrame() : relativeTo);
 		dialog.setVisible(true);
-		Number number;
 		Integer value = (Integer) pane.getValue();
-		if (value != null) {
-			if (value.intValue() == JOptionPane.OK_OPTION) {
-
-				if (name.getText().trim().length() < 1 || name.getText().trim().charAt(0) == '_') {
-					PopUpDialog.getInstance().show("Adding Node",
-							"Cannot add node! Empty name or name starts with \"_\"");
-					return null;
-				}
-
-				BiologicalNodeAbstract createdNode = null;
-				if (petriElement.equals(Elementdeclerations.discretePlace)) {
-					DiscretePlace p = new DiscretePlace(name.getText().trim(), name.getText().trim());
-					if (!pw.isHeadless()) {
-						// number = (Number) token.getValue();
-						// if (number != null) {
-						// p.setToken(number.doubleValue());
-						// }
-						number = (Number) tokenStart.getValue();
-						if (number != null) {
-							p.setTokenStart(number.doubleValue());
-							p.setToken(number.doubleValue());
-						}
-						number = (Number) tokenMin.getValue();
-						if (number != null) {
-							p.setTokenMin(number.doubleValue());
-						}
-						number = (Number) tokenMax.getValue();
-						if (number != null) {
-							p.setTokenMax(number.doubleValue());
-						}
-					}
-					createdNode = p;
-				} else if (petriElement.equals(Elementdeclerations.continuousPlace)) {
-					ContinuousPlace p = new ContinuousPlace(name.getText().trim(), name.getText().trim());
-					if (!pw.isHeadless()) {
-						// number = (Number) token.getValue();
-						// if (number != null) {
-						// p.setToken(number.doubleValue());
-						// }
-						number = (Number) tokenStart.getValue();
-						if (number != null) {
-							p.setTokenStart(number.doubleValue());
-							p.setToken(number.doubleValue());
-						}
-						number = (Number) tokenMin.getValue();
-						if (number != null) {
-							p.setTokenMin(number.doubleValue());
-						}
-						number = (Number) tokenMax.getValue();
-						if (number != null) {
-							p.setTokenMax(number.doubleValue());
-						}
-					}
-					createdNode = p;
-				} else if (petriElement.equals(Elementdeclerations.place)) {
-					ANYPlace p = new ANYPlace(name.getText().trim(), name.getText().trim());
-					createdNode = p;
-				} else if (petriElement.equals(Elementdeclerations.discreteTransition)) {
-					DiscreteTransition t = new DiscreteTransition(name.getText().trim(), name.getText().trim());
-					if (!pw.isHeadless()) {
-						t.setDelay(delay.getText().trim());
-						t.setFiringCondition(firingCondition.getText().trim());
-					}
-					createdNode = t;
-				} else if (petriElement.equals(Elementdeclerations.continuousTransition)) {
-					ContinuousTransition t = new ContinuousTransition(name.getText().trim(), name.getText().trim());
-					if (!pw.isHeadless()) {
-						t.setFiringCondition(firingCondition.getText().trim());
-						t.setMaximalSpeed(maxSpeed.getText().trim());
-					}
-					createdNode = t;
-				} else if (petriElement.equals(Elementdeclerations.stochasticTransition)) {
-					StochasticTransition t = new StochasticTransition(name.getText().trim(), name.getText().trim());
-					if (!pw.isHeadless()) {
-						t.setDistribution(distributionList.getSelectedItem().toString());
-						t.setFiringCondition(firingCondition.getText().trim());
-					}
-					createdNode = t;
-				} else if (petriElement.equals(Elementdeclerations.transition)) {
-					ANYTransition t = new ANYTransition(name.getText().trim(), name.getText().trim());
-					createdNode = t;
-				}
-
-				if (createdNode != null) {
-					Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
-					BiologicalNodeAbstract bna;
-
-					boolean createdRef = false;
-
-					while (it.hasNext()) {
-						bna = it.next();
-						if (bna.getName().equals(name.getText().trim())) {
-							if (pw.isHeadless()) {
-								PopUpDialog.getInstance().show("Adding Element",
-										"Name already exists. Cannot create Petri net node!");
-								return null;
-							} else {
-								if (!bna.getBiologicalElement().equals(petriElement)) {
-									PopUpDialog.getInstance().show("Adding Element",
-											"Name already exists. Cannot create reference node, because types do not match!\r\n"
-													+ "Given type: " + petriElement + "\r\n" + "Existing element: "
-													+ bna.getBiologicalElement());
-									return null;
-								}
-
-								createdNode.setLogicalReference(bna);
-								createdRef = true;
-							}
-						}
-					}
-
-					pw.addVertex(createdNode, point);
-					if (createdRef) {
-						PopUpDialog.getInstance().show("Adding Node",
-								"Name already exists. Created reference node instead.");
-					}
-				}
-				GraphContainer con = GraphContainer.getInstance();
-				MainWindow w = MainWindow.getInstance();
-				con.getPathway(w.getCurrentPathway());
-
-				// Graph graph = vv.getGraphLayout().getGraph();
-
-				return createdNode;
-			} else {
-				return null;
-			}
-		} else {
+		if (value == null || value != JOptionPane.OK_OPTION) {
 			return null;
+		}
+		if (name.getText().trim().isEmpty() || name.getText().trim().charAt(0) == '_') {
+			PopUpDialog.getInstance().show("Adding Node", "Cannot add node! Empty name or name starts with \"_\"");
+			return null;
+		}
+
+		BiologicalNodeAbstract createdNode = null;
+		if (petriElement.equals(Elementdeclerations.discretePlace)) {
+			final Place p = new DiscretePlace(name.getText().trim(), name.getText().trim());
+			if (!pw.isHeadless()) {
+				// number = (Number) token.getValue();
+				// if (number != null) {
+				// p.setToken(number.doubleValue());
+				// }
+				Number number = (Number) tokenStart.getValue();
+				if (number != null) {
+					p.setTokenStart(number.doubleValue());
+					p.setToken(number.doubleValue());
+				}
+				number = (Number) tokenMin.getValue();
+				if (number != null) {
+					p.setTokenMin(number.doubleValue());
+				}
+				number = (Number) tokenMax.getValue();
+				if (number != null) {
+					p.setTokenMax(number.doubleValue());
+				}
+			}
+			createdNode = p;
+		} else if (petriElement.equals(Elementdeclerations.continuousPlace)) {
+			final Place p = new ContinuousPlace(name.getText().trim(), name.getText().trim());
+			if (!pw.isHeadless()) {
+				// number = (Number) token.getValue();
+				// if (number != null) {
+				// p.setToken(number.doubleValue());
+				// }
+				Number number = (Number) tokenStart.getValue();
+				if (number != null) {
+					p.setTokenStart(number.doubleValue());
+					p.setToken(number.doubleValue());
+				}
+				number = (Number) tokenMin.getValue();
+				if (number != null) {
+					p.setTokenMin(number.doubleValue());
+				}
+				number = (Number) tokenMax.getValue();
+				if (number != null) {
+					p.setTokenMax(number.doubleValue());
+				}
+			}
+			createdNode = p;
+		} else if (petriElement.equals(Elementdeclerations.place)) {
+			createdNode = new ANYPlace(name.getText().trim(), name.getText().trim());
+		} else if (petriElement.equals(Elementdeclerations.discreteTransition)) {
+			DiscreteTransition t = new DiscreteTransition(name.getText().trim(), name.getText().trim());
+			if (!pw.isHeadless()) {
+				t.setDelay(delay.getText().trim());
+				t.setFiringCondition(firingCondition.getText().trim());
+			}
+			createdNode = t;
+		} else if (petriElement.equals(Elementdeclerations.continuousTransition)) {
+			ContinuousTransition t = new ContinuousTransition(name.getText().trim(), name.getText().trim());
+			if (!pw.isHeadless()) {
+				t.setFiringCondition(firingCondition.getText().trim());
+				t.setMaximalSpeed(maxSpeed.getText().trim());
+			}
+			createdNode = t;
+		} else if (petriElement.equals(Elementdeclerations.stochasticTransition)) {
+			StochasticTransition t = new StochasticTransition(name.getText().trim(), name.getText().trim());
+			if (!pw.isHeadless()) {
+				t.setDistribution(distributionList.getSelectedItem().toString());
+				t.setFiringCondition(firingCondition.getText().trim());
+			}
+			createdNode = t;
+		} else if (petriElement.equals(Elementdeclerations.transition)) {
+			createdNode = new ANYTransition(name.getText().trim(), name.getText().trim());
+		}
+
+		if (createdNode != null) {
+			boolean createdRef = false;
+			for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+				if (bna.getName().equals(name.getText().trim())) {
+					if (pw.isHeadless()) {
+						PopUpDialog.getInstance().show("Adding Element",
+													   "Name already exists. Cannot create Petri net node!");
+						return null;
+					}
+					if (!bna.getBiologicalElement().equals(petriElement)) {
+						PopUpDialog.getInstance().show("Adding Element",
+													   "Name already exists. Cannot create reference node, because types do not match!\r\n" +
+													   "Given type: " + petriElement + "\r\nExisting element: " +
+													   bna.getBiologicalElement());
+						return null;
+					}
+					createdNode.setLogicalReference(bna);
+					createdRef = true;
+				}
+			}
+
+			pw.addVertex(createdNode, point);
+			if (createdRef) {
+				PopUpDialog.getInstance().show("Adding Node", "Name already exists. Created reference node instead.");
+			}
+		}
+		GraphContainer con = GraphContainer.getInstance();
+		MainWindow w = MainWindow.getInstance();
+		con.getPathway(w.getCurrentPathway());
+
+		// Graph graph = vv.getGraphLayout().getGraph();
+
+		return createdNode;
+	}
+
+	private String getDialogTitle() {
+		switch (petriElement) {
+			case Elementdeclerations.discretePlace:
+				return "Create a discrete Place";
+			case Elementdeclerations.continuousPlace:
+				return "Create a continuous Place";
+			case Elementdeclerations.discreteTransition:
+				return "Create a discrete Transition";
+			case Elementdeclerations.continuousTransition:
+				return "Create a continuous Transition";
+			case Elementdeclerations.stochasticTransition:
+				return "Create a stochastic Transition";
+			case Elementdeclerations.place:
+				return "Create a generic Place";
+			case Elementdeclerations.transition:
+				return "Create a generic Transition";
+			default:
+				return "";
 		}
 	}
 }

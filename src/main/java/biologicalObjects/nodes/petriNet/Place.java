@@ -18,17 +18,18 @@ public abstract class Place extends PNNode {
 	public static final int CONFLICTHANDLING_PROB = 2;
 
 	private double token = 0;
-	private double tokenMin = 0.0;
+	private double tokenMin = 0;
 	private double tokenMax = Double.MAX_VALUE;
 	private double tokenStart = 0;
 	private int conflictStrategy = 0;
 
-	public Place(String label, String name) {
+	protected Place(final String label, final String name, final String biologicalElement, final boolean isDiscrete) {
 		super(label, name);
-		setBiologicalElement(Elementdeclerations.place);
-		if (label.equals(""))
+		setBiologicalElement(biologicalElement);
+		setDiscrete(isDiscrete);
+		if (label.isEmpty())
 			setLabel(name);
-		if (name.equals(""))
+		if (name.isEmpty())
 			setName(label);
 		setDefaultNodesize(2);
 		setDefaultColor(Color.WHITE);

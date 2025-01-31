@@ -409,7 +409,7 @@ public class PNTableDialog extends JDialog implements ActionListener {
 			setVisible(false);
 			if (!changedAllStates)
 				JOptionPane.showMessageDialog(MainWindow.getInstance().getFrame(),
-						"You tried to change the type of your transitions or places in a way, such that there were a relation between a continious transition and a discrete place! The objects which type was not changed are marked red.",
+						"You tried to change the type of your transitions or places in a way, such that there were a relation between a continuous transition and a discrete place! The objects which type was not changed are marked red.",
 						"Action could not be fully performed...", JOptionPane.ERROR_MESSAGE);
 		}
 

@@ -4,10 +4,8 @@ import biologicalElements.Elementdeclerations;
 import graph.jung.graphDrawing.VertexShapes;
 
 public class ContinuousPlace extends Place {
-	public ContinuousPlace(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.continuousPlace);
+	public ContinuousPlace(final String label, final String name) {
+		super(label, name, Elementdeclerations.continuousPlace, false);
 		setDefaultShape(VertexShapes.getDoubleEllipse());
-		setDiscrete(false);
 	}
 }

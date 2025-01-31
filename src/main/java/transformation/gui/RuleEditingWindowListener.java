@@ -80,7 +80,7 @@ public class RuleEditingWindowListener implements ActionListener {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
 			con.setPetriNetEditingMode(Elementdeclerations.discreteTransition);
-		} else if ("continiousTransition".equals(event)) {
+		} else if ("continuousTransition".equals(event)) {
 			con.changeMouseFunction("edit");
 			con.setPetriView(true);
 			con.setPetriNetEditingMode(Elementdeclerations.continuousTransition);

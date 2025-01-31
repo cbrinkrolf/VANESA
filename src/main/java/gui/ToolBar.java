@@ -44,13 +44,13 @@ public class ToolBar {
 													  this::onHierarchyClicked);
 		final JButton discretePlace = createToolBarButton("discretePlace.png", "Discrete Place",
 														  this::onDiscretePlaceClicked);
-		final JButton continuousPlace = createToolBarButton("continiousPlace.png", "Continuous Place",
+		final JButton continuousPlace = createToolBarButton("continuousPlace.png", "Continuous Place",
 															this::onContinuousPlaceClicked);
 		final JButton discreteTransition = createToolBarButton("discreteTransition.png", "Discrete Transition",
 															   this::onDiscreteTransitionClicked);
-		final JButton continuousTransition = createToolBarButton("continiousTransition2.png", "Continuous Transition",
+		final JButton continuousTransition = createToolBarButton("continuousTransition.png", "Continuous Transition",
 																 this::onContinuousTransitionClicked);
-		final JButton stochasticTransition = createToolBarButton("stochasticTransition2.png", "Stochastic Transition",
+		final JButton stochasticTransition = createToolBarButton("stochasticTransition.png", "Stochastic Transition",
 																 this::onStochasticTransitionClicked);
 		final JButton center = createToolBarButton("centerGraph.png", "Center Graph", this::onCenterClicked);
 		final JButton move = createToolBarButton("move.png", "Move Graph", this::onMoveClicked);

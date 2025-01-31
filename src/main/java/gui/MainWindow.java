@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.swing.*;
 
 import io.SuffixAwareFilter;
+import net.infonode.docking.properties.DockingWindowProperties;
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
 import org.jdesktop.jxlayer.plaf.ext.LockableUI;
@@ -87,8 +88,6 @@ public class MainWindow implements ApplicationListener {
 
 	private MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		//developer = !Boolean.parseBoolean(XMLResourceBundle.SETTINGS.getString("settings.default.developer"));
-		
 		developer = SettingsManager.getInstance().isDeveloperMode();
 		// try {
 		// SubstanceBusinessBlueSteelLookAndFeel lf = new SubstanceBusinessBlueSteelLookAndFeel();
@@ -113,7 +112,7 @@ public class MainWindow implements ApplicationListener {
 		frame.setVisible(false);
 
 		// MacOSX-Look and Feel with http://simplericity.org/macify/
-		Application application = new DefaultApplication();
+		final Application application = new DefaultApplication();
 		application.addPreferencesMenuItem();
 		application.setEnabledPreferencesMenu(true);
 
@@ -144,7 +143,7 @@ public class MainWindow implements ApplicationListener {
 		// e1.printStackTrace();
 		// }
 
-		ScreenSize screenSize = new ScreenSize();
+		final ScreenSize screenSize = new ScreenSize();
 		int windowWidth = screenSize.width - 70;
 		int windowHeight = screenSize.height - 100;
 		if (screenSize.width > 1024) {
@@ -299,11 +298,12 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	private void setWindowProperties(int viewID) {
-		views.get(viewID).getWindowProperties().setCloseEnabled(true);
-		views.get(viewID).getWindowProperties().setUndockEnabled(false);
-		views.get(viewID).getWindowProperties().setDragEnabled(true);
-		views.get(viewID).getWindowProperties().setMaximizeEnabled(false);
-		views.get(viewID).getWindowProperties().setMinimizeEnabled(false);
+		final DockingWindowProperties properties = views.get(viewID).getWindowProperties();
+		properties.setCloseEnabled(true);
+		properties.setUndockEnabled(false);
+		properties.setDragEnabled(true);
+		properties.setMaximizeEnabled(false);
+		properties.setMinimizeEnabled(false);
 		PanelListener lis = new PanelListener();
 		views.get(viewID).addListener(lis);
 	}
@@ -315,7 +315,7 @@ public class MainWindow implements ApplicationListener {
 			splitPanel.remove(rootWindow);
 		}
 		// create new tabbedPanel
-		TabbedPanel tp = new TabbedPanel();
+		final TabbedPanel tp = new TabbedPanel();
 		tp.getProperties().setTabAreaOrientation(Direction.DOWN);
 		tp.getProperties().setEnsureSelectedTabVisible(true);
 		tp.getProperties().setHighlightPressedTab(true);

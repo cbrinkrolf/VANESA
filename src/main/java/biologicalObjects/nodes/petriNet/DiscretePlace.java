@@ -4,10 +4,8 @@ import biologicalElements.Elementdeclerations;
 import graph.jung.graphDrawing.VertexShapes;
 
 public class DiscretePlace extends Place {
-	public DiscretePlace(String label, String name) {
-		super(label, name);
-		setBiologicalElement(Elementdeclerations.discretePlace);
+	public DiscretePlace(final String label, final String name) {
+		super(label, name, Elementdeclerations.discretePlace, true);
 		setDefaultShape(VertexShapes.getEllipse());
-		setDiscrete(true);
 	}
 }

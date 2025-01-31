@@ -16,7 +16,7 @@ public class CenterWindow {
     }
 
     public void centerWindow(int width, int height) {
-        ScreenSize screen = new ScreenSize();
+        final ScreenSize screen = new ScreenSize();
         if (frame != null) {
             frame.setLocation((screen.width / 2) - width / 2, (screen.height / 2) - height / 2);
         } else if (window != null) {

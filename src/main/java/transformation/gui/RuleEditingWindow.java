@@ -529,11 +529,11 @@ public class RuleEditingWindow implements ActionListener {
 			discretePlace.addActionListener(listener);
 			panel.add(discretePlace);
 
-			JButton continiousPlace = new ToolBarButton(ImagePath.getInstance().getImageIcon("continiousPlace.png"));
-			continiousPlace.setToolTipText("Continuouse Place");
-			continiousPlace.setActionCommand("continuousPlace");
-			continiousPlace.addActionListener(listener);
-			panel.add(continiousPlace);
+			JButton continuousPlace = new ToolBarButton(ImagePath.getInstance().getImageIcon("continuousPlace.png"));
+			continuousPlace.setToolTipText("Continuous Place");
+			continuousPlace.setActionCommand("continuousPlace");
+			continuousPlace.addActionListener(listener);
+			panel.add(continuousPlace);
 
 			JButton place = new ToolBarButton(ImagePath.getInstance().getImageIcon("discretePlace.png"));
 			place.setToolTipText("Any place");
@@ -554,15 +554,15 @@ public class RuleEditingWindow implements ActionListener {
 			discreteTransition.addActionListener(listener);
 			panel.add(discreteTransition);
 
-			JButton continiousTransition = new ToolBarButton(
-					ImagePath.getInstance().getImageIcon("continiousTransition2.png"));
-			continiousTransition.setToolTipText("Continuouse Transition");
-			continiousTransition.setActionCommand("continiousTransition");
-			continiousTransition.addActionListener(listener);
-			panel.add(continiousTransition);
+			JButton continuousTransition = new ToolBarButton(
+					ImagePath.getInstance().getImageIcon("continuousTransition.png"));
+			continuousTransition.setToolTipText("Continuous Transition");
+			continuousTransition.setActionCommand("continuousTransition");
+			continuousTransition.addActionListener(listener);
+			panel.add(continuousTransition);
 
 			JButton stochasticTransition = new ToolBarButton(
-					ImagePath.getInstance().getImageIcon("stochasticTransition2.png"));
+					ImagePath.getInstance().getImageIcon("stochasticTransition.png"));
 			stochasticTransition.setToolTipText("Stochastic Transition");
 			stochasticTransition.setActionCommand("stochasticTransition");
 			stochasticTransition.addActionListener(listener);
