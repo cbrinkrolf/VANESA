@@ -1,7 +1,6 @@
 package transformation.gui;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -55,15 +54,14 @@ import transformation.RuleNode;
 import transformation.graphElements.ANYTransition;
 
 public class RuleEditingWindow implements ActionListener {
+	private final JScrollPane scrollPane = new JScrollPane();
+	private final JPanel panel = new JPanel();
+	private final JPanel biologicalPanel = new JPanel();
+	private final JPanel petriPanel = new JPanel();
+	private final JPanel nodeMappingPanel = new JPanel();
+	private final JPanel parametersPanel = new JPanel();
 
-	private JScrollPane scrollPane = new JScrollPane();
-	private JPanel panel = new JPanel();
-	private JPanel biologicalPanel = new JPanel();
-	private JPanel petriPanel = new JPanel();
-	private JPanel nodeMappingPanel = new JPanel();
-	private JPanel parametersPanel = new JPanel();
-
-	private JFrame frame = new JFrame("Rule Editor");;
+	private final JFrame frame = new JFrame("Rule Editor");
 
 	private JSplitPane splitPane;
 	private GraphZoomScrollPane biologicalGraphPane;
@@ -535,14 +533,8 @@ public class RuleEditingWindow implements ActionListener {
 			continuousPlace.addActionListener(listener);
 			panel.add(continuousPlace);
 
-			JButton place = new ToolBarButton(ImagePath.getInstance().getImageIcon("discretePlace.png"));
+			JButton place = new ToolBarButton(ImagePath.getInstance().getImageIcon("anyPlace.png"));
 			place.setToolTipText("Any place");
-			place.setHorizontalTextPosition(JButton.CENTER);
-			place.setVerticalTextPosition(JButton.CENTER);
-			Font f = place.getFont();
-			Font f2 = new Font(f.getName(), Font.PLAIN, 50);
-			place.setFont(f2);
-			place.setText("+");
 			place.setActionCommand("place");
 			place.addActionListener(listener);
 			panel.add(place);
@@ -568,15 +560,9 @@ public class RuleEditingWindow implements ActionListener {
 			stochasticTransition.addActionListener(listener);
 			panel.add(stochasticTransition);
 
-			JButton transition = new ToolBarButton(ImagePath.getInstance().getImageIcon("discreteTransition.png"));
+			JButton transition = new ToolBarButton(ImagePath.getInstance().getImageIcon("anyTransition.png"));
 			transition.setToolTipText("transition");
 			transition.setToolTipText("Any Transition");
-			transition.setHorizontalTextPosition(JButton.CENTER);
-			transition.setVerticalTextPosition(JButton.CENTER);
-			f = transition.getFont();
-			f2 = new Font(f.getName(), Font.PLAIN, 50);
-			transition.setFont(f2);
-			transition.setText("+");
 			transition.setActionCommand("transition");
 			transition.addActionListener(listener);
 			panel.add(transition);
