@@ -128,8 +128,10 @@ public class ButtonChooser extends JButton implements ActionListener, MouseListe
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		setContentAreaFilled(true);
-		setBorderPainted(true);
+		if (isEnabled()) {
+			setContentAreaFilled(true);
+			setBorderPainted(true);
+		}
 	}
 
 	public void mouseExited(MouseEvent e) {
