@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +31,21 @@ public class ToolBar {
 	private final JPanel infoPanel;
 	private final JPanel featureControls;
 	private final JPanel nodeAdjustmentControls;
+	private final JButton adjustDown;
+	private final JButton adjustLeft;
+	private final JButton adjustHorizontalSpace;
+	private final JButton adjustVerticalSpace;
+	private final JButton trash;
+	private final JButton mergeSelectedNodes;
+	private final JButton splitNode;
+	private final JButton coarseSelectedNodes;
+	private final JButton flatSelectedNodes;
+	private final JButton groupSelectedNodes;
+	private final JButton deleteGroup;
+	private final JButton enterSelectedNode;
+
+	private Pathway lastPathway;
+	private ItemListener lastPathwayItemListener;
 
 	public ToolBar() {
 		bar.setOrientation(1);
@@ -56,26 +73,23 @@ public class ToolBar {
 		final JButton move = createToolBarButton("move.png", "Move Graph", this::onMoveClicked);
 		final JButton zoomIn = createToolBarButton("zoomPlus.png", "Zoom In", this::onZoomInClicked);
 		final JButton zoomOut = createToolBarButton("zoomMinus.png", "Zoom Out", this::onZoomOutClicked);
-		final JButton trash = createToolBarButton("Trash.png", "Delete Selected Items", this::onDelClicked);
+		trash = createToolBarButton("Trash.png", "Delete Selected Items", this::onDelClicked);
 		// trash.setMnemonic(KeyEvent.VK_DELETE);
 		final JButton info = createToolBarButton("InfoToolBarButton.png", "Info", this::onInfoClicked);
 		final JButton infoExtended = createToolBarButton("InfoToolBarButtonextended.png", "More Info",
 														 this::onInfoExtendedClicked);
-		final JButton mergeSelectedNodes = createToolBarButton("MergeNodesButton.png", "Merge Selected Nodes",
-															   this::onMergeSelectedNodesClicked);
-		final JButton splitNode = createToolBarButton("SplitNodesButton.png",
-													  "Split Node (inverse operation of \"merge nodes\")",
-													  this::onSplitNodeClicked);
-		final JButton coarseSelectedNodes = createToolBarButton("CoarseNodesButton.png", "Coarse Selected Nodes",
-																this::onCoarseSelectedNodesClicked);
-		final JButton flatSelectedNodes = createToolBarButton("FlatNodesButton.png", "Flat Selected Coarse Node(s)",
-															  this::onFlatSelectedNodesClicked);
-		final JButton groupSelectedNodes = createToolBarButton("GroupButton.png", "Group Selected Nodes",
-															   this::onGroupClicked);
-		final JButton deleteGroup = createToolBarButton("UngroupButton.png", "Delete Selected Group",
-														this::onDeleteGroupClicked);
-		final JButton enterSelectedNode = createToolBarButton("enterNode.png", "Enter Selected Coarse Node(s)",
-															  this::onEnterNodeClicked);
+		mergeSelectedNodes = createToolBarButton("MergeNodesButton.png", "Merge Selected Nodes",
+												 this::onMergeSelectedNodesClicked);
+		splitNode = createToolBarButton("SplitNodesButton.png", "Split Node (inverse operation of \"merge nodes\")",
+										this::onSplitNodeClicked);
+		coarseSelectedNodes = createToolBarButton("CoarseNodesButton.png", "Coarse Selected Nodes",
+												  this::onCoarseSelectedNodesClicked);
+		flatSelectedNodes = createToolBarButton("FlatNodesButton.png", "Flat Selected Coarse Node(s)",
+												this::onFlatSelectedNodesClicked);
+		groupSelectedNodes = createToolBarButton("GroupButton.png", "Group Selected Nodes", this::onGroupClicked);
+		deleteGroup = createToolBarButton("UngroupButton.png", "Delete Selected Group", this::onDeleteGroupClicked);
+		enterSelectedNode = createToolBarButton("enterNode.png", "Enter Selected Coarse Node(s)",
+												this::onEnterNodeClicked);
 		final JButton autoCoarse = createToolBarButton("autocoarse.png", "Autocoarse Current Pathway",
 													   this::onAutoCoarseClicked);
 		final JButton newWindow = createToolBarButton("newWindow.png", "Open New Window", this::onNewWindowClicked);
@@ -183,16 +197,14 @@ public class ToolBar {
 		// toolBarControlControls.add(convertIntoPetriNet);
 		// }
 
-		JButton adjustDown = createToolBarButton("adjustDown.png", "Adjust Selected Nodes To Lowest Node",
-												 this::onAdjustDownClicked);
-		JButton adjustLeft = createToolBarButton("adjustLeft.png", "Adjust Selected Nodes To Left",
-												 this::onAdjustLeftClicked);
-		JButton adjustHorizontalSpace = createToolBarButton("adjustHorizontalSpace.png",
-															"Adjust Horizontal Space of Selected Nodes",
-															this::onAdjustHorizontalSpaceClicked);
-		JButton adjustVerticalSpace = createToolBarButton("adjustVerticalSpace.png",
-														  "Adjust Vertical Space of Selected Nodes",
-														  this::onAdjustVerticalSpaceClicked);
+		adjustDown = createToolBarButton("adjustDown.png", "Adjust Selected Nodes To Lowest Node",
+										 this::onAdjustDownClicked);
+		adjustLeft = createToolBarButton("adjustLeft.png", "Adjust Selected Nodes To Left", this::onAdjustLeftClicked);
+		adjustHorizontalSpace = createToolBarButton("adjustHorizontalSpace.png",
+													"Adjust Horizontal Space of Selected Nodes",
+													this::onAdjustHorizontalSpaceClicked);
+		adjustVerticalSpace = createToolBarButton("adjustVerticalSpace.png", "Adjust Vertical Space of Selected Nodes",
+												  this::onAdjustVerticalSpaceClicked);
 		nodeAdjustmentControls = new ToolBarPanel();
 		nodeAdjustmentControls.setLayout(new GridLayout(2, 2, 4, 4));
 		nodeAdjustmentControls.add(compressEdges);
@@ -237,10 +249,26 @@ public class ToolBar {
 
 	public void updateVisibility() {
 		final GraphContainer con = GraphContainer.getInstance();
-		final boolean petriNetView =
-				con.containsPathway() && GraphInstance.getPathway() != null && GraphInstance.getPathway().isPetriNet();
+		final Pathway pathway = con.containsPathway() ? GraphInstance.getPathway() : null;
+		if (lastPathway != null && lastPathway != pathway) {
+			final MyGraph graph = lastPathway.getGraph(false);
+			if (graph != null) {
+				graph.getVisualizationViewer().getPickedVertexState().removeItemListener(lastPathwayItemListener);
+			}
+			lastPathwayItemListener = null;
+			lastPathway = null;
+		}
+		if (lastPathway == null && pathway != null) {
+			final MyGraph graph = pathway.getGraph(false);
+			if (graph != null) {
+				lastPathway = pathway;
+				lastPathwayItemListener = this::onPathwaySelectedNodesChanged;
+				graph.getVisualizationViewer().getPickedVertexState().addItemListener(lastPathwayItemListener);
+			}
+		}
+		final boolean petriNetView = pathway != null && pathway.isPetriNet();
 		// Enable/disable editing buttons
-		final boolean editButtonsEnabled = con.containsPathway() && GraphInstance.getPathway() != null;
+		final boolean editButtonsEnabled = pathway != null;
 		for (final Component child : editControls.getComponents())
 			child.setEnabled(editButtonsEnabled);
 		for (final Component child : petriNetControls.getComponents())
@@ -263,7 +291,39 @@ public class ToolBar {
 			merge.setEnabled(!petriNetView);
 			// heatmap.setEnabled(!petriNetView);
 			parallelView.setEnabled(!petriNetView);
+
+			final MyGraph graph = pathway.getGraph(false);
+			if (graph != null) {
+				final int selectedNodeCount = graph.getVisualizationViewer().getPickedVertexState().getPicked().size();
+				updateEnabledStateForSelectionDependentButtons(selectedNodeCount);
+			}
 		}
+	}
+
+	private void onPathwaySelectedNodesChanged(ItemEvent e) {
+		if (lastPathway == null) {
+			return;
+		}
+		final MyGraph graph = lastPathway.getGraph(false);
+		if (graph != null) {
+			final int selectedNodeCount = graph.getVisualizationViewer().getPickedVertexState().getPicked().size();
+			updateEnabledStateForSelectionDependentButtons(selectedNodeCount);
+		}
+	}
+
+	private void updateEnabledStateForSelectionDependentButtons(final int selectedNodeCount) {
+		adjustDown.setEnabled(selectedNodeCount > 1);
+		adjustLeft.setEnabled(selectedNodeCount > 1);
+		adjustHorizontalSpace.setEnabled(selectedNodeCount > 2);
+		adjustVerticalSpace.setEnabled(selectedNodeCount > 2);
+		trash.setEnabled(selectedNodeCount > 0);
+		mergeSelectedNodes.setEnabled(selectedNodeCount > 1);
+		splitNode.setEnabled(selectedNodeCount > 0);
+		coarseSelectedNodes.setEnabled(selectedNodeCount > 1);
+		flatSelectedNodes.setEnabled(selectedNodeCount > 0);
+		groupSelectedNodes.setEnabled(selectedNodeCount > 1);
+		deleteGroup.setEnabled(selectedNodeCount > 0);
+		enterSelectedNode.setEnabled(selectedNodeCount > 0);
 	}
 
 	private static JButton createToolBarButton(String imageFileName, String toolTipText, Runnable action) {

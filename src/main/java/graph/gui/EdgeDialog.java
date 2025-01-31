@@ -30,9 +30,6 @@ import gui.MainWindow;
 import net.miginfocom.swing.MigLayout;
 
 public class EdgeDialog extends JFrame {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private final JOptionPane pane;
 	private final JTextField name;

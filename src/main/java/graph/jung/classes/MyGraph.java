@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
@@ -14,8 +13,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.common.base.Function;
 
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
@@ -175,11 +172,9 @@ public class MyGraph {
 
 		// vv.setFocusable(false);
 
-		// vv.addKeyListener(new EventListener());
 		vv.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				// nothing to do
 			}
 
 			@Override
@@ -758,19 +753,10 @@ public class MyGraph {
 		VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> copyVV = new VisualizationViewer<>(
 				copyModel, size);
 		pr_compare = copyVV.getRenderContext();
-		Function<BiologicalNodeAbstract, Shape> vertexPaint = new Function<>() {
-			@Override
-			public Shape apply(BiologicalNodeAbstract bna) {
-				// System.out.println(bna.getClass().getName());
-				// System.out.println(bna.getShape());
-				return bna.getShape();
-			}
-		};
-
 		pr_compare.setVertexStrokeTransformer(vsh);
 		pr_compare.setVertexLabelTransformer(vertexStringer);
-		pr_compare.setVertexShapeTransformer(vertexPaint);
-		pr_compare.setEdgeLabelTransformer(this.edgeStringer);
+		pr_compare.setVertexShapeTransformer(BiologicalNodeAbstract::getShape);
+		pr_compare.setEdgeLabelTransformer(edgeStringer);
 		pr_compare.setVertexDrawPaintTransformer(vdpf);
 		pr_compare.setVertexFillPaintTransformer(vfpf);
 		pr_compare.setVertexIconTransformer(vit);

@@ -16,9 +16,6 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import graph.GraphContainer;
 
 public class MyVisualizationViewer<V, E> extends VisualizationViewer<V, E> {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private final Pathway pw;
 	private Point2D mousePoint = new Point2D.Double(0, 0);

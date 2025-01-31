@@ -12,23 +12,17 @@ import javax.swing.JSlider;
  * returned by RangeSlider is simply the lower value plus the extent.</p>
  */
 public class RangeSlider extends JSlider {
-
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-     * Constructs a RangeSlider with default minimum and maximum values of 0
-     * and 100.
+     * Constructs a RangeSlider with default minimum and maximum values of 0 and 100.
      */
     public RangeSlider() {
         initSlider();
     }
 
     /**
-     * Constructs a RangeSlider with the specified default minimum and maximum 
-     * values.
+     * Constructs a RangeSlider with the specified default minimum and maximum values.
      */
     public RangeSlider(int min, int max) {
         super(min, max);
@@ -43,8 +37,7 @@ public class RangeSlider extends JSlider {
     }
 
     /**
-     * Overrides the superclass method to install the UI delegate to draw two
-     * thumbs.
+     * Overrides the superclass method to install the UI delegate to draw two thumbs.
      */
     @Override
     public void updateUI() {
