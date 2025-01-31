@@ -1279,7 +1279,7 @@ public class RuleEditingWindow implements ActionListener {
 						}
 						break;
 					case "delay":
-						if (bna instanceof ContinuousTransition) {
+						if (bna instanceof DiscreteTransition) {
 							parameterMapping.get(bna).put(key, ((DiscreteTransition) bna).getDelay() + "");
 						} else if (bna instanceof ANYTransition) {
 							parameterMapping.get(bna).put(key, "1");
