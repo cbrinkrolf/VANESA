@@ -11,6 +11,7 @@ import javax.swing.*;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphContainer;
 import graph.GraphInstance;
 import graph.algorithms.gui.CompareGraphsGUI;
@@ -294,8 +295,8 @@ public class ToolBar {
 
 			final MyGraph graph = pathway.getGraph(false);
 			if (graph != null) {
-				final int selectedNodeCount = graph.getVisualizationViewer().getPickedVertexState().getPicked().size();
-				updateEnabledStateForSelectionDependentButtons(selectedNodeCount);
+				final Set<BiologicalNodeAbstract> selection = lastPathway.getSelectedNodes();
+				updateEnabledStateForSelectionDependentButtons(selection);
 			}
 		}
 	}
@@ -306,12 +307,13 @@ public class ToolBar {
 		}
 		final MyGraph graph = lastPathway.getGraph(false);
 		if (graph != null) {
-			final int selectedNodeCount = graph.getVisualizationViewer().getPickedVertexState().getPicked().size();
-			updateEnabledStateForSelectionDependentButtons(selectedNodeCount);
+			final Set<BiologicalNodeAbstract> selection = lastPathway.getSelectedNodes();
+			updateEnabledStateForSelectionDependentButtons(selection);
 		}
 	}
 
-	private void updateEnabledStateForSelectionDependentButtons(final int selectedNodeCount) {
+	private void updateEnabledStateForSelectionDependentButtons(final Set<BiologicalNodeAbstract> selection) {
+		final int selectedNodeCount = selection.size();
 		adjustDown.setEnabled(selectedNodeCount > 1);
 		adjustLeft.setEnabled(selectedNodeCount > 1);
 		adjustHorizontalSpace.setEnabled(selectedNodeCount > 2);
@@ -320,10 +322,12 @@ public class ToolBar {
 		mergeSelectedNodes.setEnabled(selectedNodeCount > 1);
 		splitNode.setEnabled(selectedNodeCount > 0);
 		coarseSelectedNodes.setEnabled(selectedNodeCount > 1);
-		flatSelectedNodes.setEnabled(selectedNodeCount > 0);
+		final boolean allCoarseNodes = selection.stream().allMatch(BiologicalNodeAbstract::isCoarseNode);
+		flatSelectedNodes.setEnabled(selectedNodeCount > 0 && allCoarseNodes);
+		// Restrict entering a coarse node to a single node as it crashes otherwise.
+		enterSelectedNode.setEnabled(selectedNodeCount == 1 && allCoarseNodes);
 		groupSelectedNodes.setEnabled(selectedNodeCount > 1);
-		deleteGroup.setEnabled(selectedNodeCount > 0);
-		enterSelectedNode.setEnabled(selectedNodeCount > 0);
+		deleteGroup.setEnabled(selectedNodeCount > 0 && selection.stream().allMatch(BiologicalNodeAbstract::isInGroup));
 	}
 
 	private static JButton createToolBarButton(String imageFileName, String toolTipText, Runnable action) {
@@ -515,6 +519,8 @@ public class ToolBar {
 		if (con.containsPathway()) {
 			GraphInstance.getPathway().groupSelectedNodes();
 			GraphInstance.getPathway().updateMyGraph();
+			final Set<BiologicalNodeAbstract> selection = GraphInstance.getPathway().getSelectedNodes();
+			updateEnabledStateForSelectionDependentButtons(selection);
 		}
 	}
 
@@ -528,23 +534,31 @@ public class ToolBar {
 
 	private void onCoarseSelectedNodesClicked() {
 		if (GraphInstance.getMyGraph() != null) {
-			Set<BiologicalNodeAbstract> selectedNodes = new HashSet<>(GraphInstance.getPathway().getSelectedNodes());
+			final Pathway pathway = GraphInstance.getPathway();
+			final PickedState<BiologicalNodeAbstract> pickedState = pathway.getGraph().getVisualizationViewer()
+																		   .getPickedVertexState();
+			Set<BiologicalNodeAbstract> selectedNodes = new HashSet<>(pickedState.getPicked());
 			BiologicalNodeAbstract.coarse(selectedNodes);
 			GraphInstance.getPathway().updateMyGraph();
 			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
+			pickedState.clear();
+			updateEnabledStateForSelectionDependentButtons(new HashSet<>());
 		}
-
 	}
 
 	private void onFlatSelectedNodesClicked() {
 		if (GraphInstance.getMyGraph() != null) {
-			for (BiologicalNodeAbstract node : GraphInstance.getPathway().getGraph().getVisualizationViewer()
-					.getPickedVertexState().getPicked()) {
+			final Pathway pathway = GraphInstance.getPathway();
+			final PickedState<BiologicalNodeAbstract> pickedState = pathway.getGraph().getVisualizationViewer()
+																		   .getPickedVertexState();
+			for (BiologicalNodeAbstract node : pickedState.getPicked()) {
 				node.flat();
-				GraphInstance.getPathway().updateMyGraph();
+				pathway.updateMyGraph();
 				MainWindow.getInstance().removeTab(false, node.getTab().getTitleTab(), node);
 			}
-			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
+			pathway.getGraph().getVisualizationViewer().repaint();
+			pickedState.clear();
+			updateEnabledStateForSelectionDependentButtons(new HashSet<>());
 		}
 	}
 
