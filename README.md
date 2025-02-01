@@ -1,9 +1,18 @@
-![Java CI](https://github.com/cbrinkrolf/VANESA/workflows/Java%20CI/badge.svg?branch=master) ![Release](https://img.shields.io/github/v/release/cbrinkrolf/VANESA) ![Downloads](https://img.shields.io/github/downloads/cbrinkrolf/VANESA/total) ![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue)
+![Java CI](https://github.com/cbrinkrolf/VANESA/actions/workflows/maven.yml/badge.svg?branch=master)
+![Release](https://img.shields.io/github/v/release/cbrinkrolf/VANESA)
+![Downloads](https://img.shields.io/github/downloads/cbrinkrolf/VANESA/total)
+![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue)
 
 # VANESA2
 ## Current Releases
 - [latest pre release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.5_pre) (v.0.5-pre Release from 2024-08-27)
 - [latest stable release](https://github.com/cbrinkrolf/VANESA/releases/tag/v.0.4) (v.0.4 from 2023-03-01)
+
+## Instructions for simulation
+In order to run simulations in VANESA, [OpenModelica](https://openmodelica.org) needs to be installed.
+
+For newer  OpenModelica versions with package manager the [PNlib](https://github.com/AMIT-HSBI/PNlib) is automatically
+installed. Otherwise, the PNlib needs to be installed as well.
 
 ## Running from source
 To build VANESA2 run:
@@ -27,7 +36,9 @@ $ mvn package
 ```
 
 ## Config YAML
-If you want to use your own YAML configuration file, please just add a file `YamlSourceFile.txt` at the same location as the `VANESA.jar` and put the path to the configuration file in first line. The following can be used as example `YamlSourceFile.txt` file:
+If you want to use your own YAML configuration file, please just add a file `YamlSourceFile.txt` at the same location as
+the `VANESA.jar` and put the path to the configuration file in first line. The following can be used as example
+`YamlSourceFile.txt` file:
 
 ```
 D:\Desktop\test\test.yaml
