@@ -1,52 +1,44 @@
 package petriNet;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Path;
 
 import util.VanesaUtility;
 
 public class OMCCommunicator {
+	private final Path bin;
+	private final Path pathToMos;
 
-	private String bin;
-	private String pathToMos;
-
-	public OMCCommunicator(String bin) {
+	public OMCCommunicator(Path bin) {
 		this.bin = bin;
-		pathToMos = VanesaUtility.getWorkingDirectoryPath() + File.separator + "scripting.mos";
-
+		pathToMos = VanesaUtility.getWorkingDirectoryPath().resolve("scripting.mos");
 	}
 
 	public boolean isPNLibInstalled() {
 		try {
 			writeMosFile(getTestPNlibScripting());
 			String output = runMosFile(pathToMos);
-			// PNlib not installed
-			if (output.contains("false")) {
-				// PNlib not installed
-				return false;
-			} else {
-				// PNlib installed
-				return true;
-			}
-
+			tryDeleteMos();
+			return !output.contains("false");
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
 
+	private void tryDeleteMos() {
+		final File file = pathToMos.toFile();
+		if (file.exists()) {
+			file.delete();
+		}
+	}
+
 	public boolean isInstallPNlibSuccessful(String version) {
 		try {
 			writeMosFile(installPNlib(version));
 			String output = runMosFile(pathToMos);
-			if (output.contains("false")) {
-				return false;
-			} else {
-				return true;
-			}
+			tryDeleteMos();
+			return !output.contains("false");
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 			return false;
@@ -57,72 +49,50 @@ public class OMCCommunicator {
 		try {
 			writeMosFile(getOMCVersionScripting());
 			String output = runMosFile(pathToMos);
-			// System.out.println(output);
+			tryDeleteMos();
 			// expected: "OpenModelica v1.19.0 (64-bit)"
 			String[] temp = output.split("OpenModelica v");
 			String[] tmp = temp[1].split("\\.");
 			if (tmp.length > 1) {
-
-				// System.out.println(tmp[0]);
-				// System.out.println(tmp[1]);
 				int major = Integer.parseInt(tmp[0]);
 				int minor = Integer.parseInt(tmp[1]);
-
-				if (major > 1) {
-					return true;
-				}
-
-				if (major == 1 && minor >= 19) {
-					return true;
-				}
-			} else {
-				return false;
+				return major > 1 || (major == 1 && minor >= 19);
 			}
+			return false;
 		} catch (IOException | InterruptedException | NumberFormatException e) {
 			e.printStackTrace();
 			return false;
 		}
-		return false;
 	}
 
 	public boolean isPNlibVersionInstalled(String version) {
 		try {
 			writeMosFile(getInstalledPNVersions());
 			String output = runMosFile(pathToMos);
-			//System.out.println("output: "+output);
-			if (output.contains("PNlib " + version+"\"")) {
-				return true;
-			} else {
-				return false;
-			}
+			tryDeleteMos();
+			return output.contains("PNlib " + version + "\"");
 		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
 
-	public String runMosFile(String pathToMos) throws IOException, InterruptedException {
-		Process process = new ProcessBuilder(bin, pathToMos).start();
-		InputStream os = process.getInputStream();
-
-		// System.out.println(s);
-		// boolean buildSuccess = true;
-		//System.out.println("running mos file:  " + process.isAlive());
-		process.waitFor();
-		// byte[] bytes = new byte[os.available()];
-		// os.read(bytes);
-		byte[] bytes = os.readAllBytes();
-		os.close();
+	public String runMosFile(Path pathToMos) throws IOException, InterruptedException {
+		final Process process = new ProcessBuilder(bin.toString(), pathToMos.toString()).start();
+		final byte[] bytes;
+		try (InputStream os = process.getInputStream()) {
+			// boolean buildSuccess = true;
+			process.waitFor();
+			bytes = os.readAllBytes();
+		}
 		process.destroy();
 		return new String(bytes);
 	}
 
 	private void writeMosFile(String content) throws IOException {
-
-		FileWriter fstream = new FileWriter(pathToMos);
-		BufferedWriter out = new BufferedWriter(fstream);
-		out.write(content);
-		out.close();
+		try (FileWriter stream = new FileWriter(pathToMos.toFile()); BufferedWriter out = new BufferedWriter(stream)) {
+			out.write(content);
+		}
 	}
 
 	private String getOMCVersionScripting() {
@@ -150,7 +120,7 @@ public class OMCCommunicator {
 	private String installPNlib(String version) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("updatePackageIndex();\r\n");
-		sb.append("installPackage(PNlib, \"" + version + "\");\r\n");
+		sb.append("installPackage(PNlib, \"").append(version).append("\");\r\n");
 		sb.append("getErrorString();\r\n");
 		return sb.toString();
 	}

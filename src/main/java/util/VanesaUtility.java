@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class VanesaUtility {
@@ -45,34 +47,29 @@ public class VanesaUtility {
 		return median;
 	}
 
-	public static String getWorkingDirectoryPath() {
-		String pathWorkingDirectory;
-		if (SystemUtils.IS_OS_WINDOWS) {
-			pathWorkingDirectory = System.getenv("APPDATA");
-		} else {
-			pathWorkingDirectory = System.getenv("HOME");
-		}
-		pathWorkingDirectory += File.separator + "vanesa";
-		File f = new File(pathWorkingDirectory);
+	public static Path getWorkingDirectoryPath() {
+		final Path basePath = Paths.get(System.getenv(SystemUtils.IS_OS_WINDOWS ? "APPDATA" : "HOME"));
+		Path workingDirectory = basePath.resolve("vanesa");
+		File f = workingDirectory.toFile();
 		if (f.exists() && f.isDirectory()) {
-			return pathWorkingDirectory;
-		} else if (!f.exists()) {
-			f.mkdir();
-			return pathWorkingDirectory;
-		} else {
-			int i = 0;
-			while (f.exists() && !f.isDirectory()) {
-				pathWorkingDirectory += i;
-				f = new File(pathWorkingDirectory);
-				i++;
-			}
-			f.mkdir();
+			return workingDirectory;
 		}
-		return pathWorkingDirectory;
+		if (!f.exists()) {
+			f.mkdir();
+			return workingDirectory;
+		}
+		int i = 0;
+		while (f.exists() && !f.isDirectory()) {
+			workingDirectory = basePath.resolve("vanesa" + i);
+			f = workingDirectory.toFile();
+			i++;
+		}
+		f.mkdir();
+		return workingDirectory;
 	}
 
-	public static XMLConfiguration getFileBasedXMLConfiguration(final String filePath) throws ConfigurationException {
-		File file = new File(filePath);
+	public static XMLConfiguration getFileBasedXMLConfiguration(final Path filePath) throws ConfigurationException {
+		File file = filePath.toFile();
 		if (!file.exists()) {
 			XMLConfiguration configuration = new XMLConfiguration();
 			FileHandler handler = new FileHandler(configuration);
@@ -80,8 +77,7 @@ public class VanesaUtility {
 		}
 		Parameters params = new Parameters();
 		FileBasedConfigurationBuilder<XMLConfiguration> builder =
-				new FileBasedConfigurationBuilder<>(XMLConfiguration.class).configure(
-						params.fileBased().setFile(new File(filePath)));
+				new FileBasedConfigurationBuilder<>(XMLConfiguration.class).configure(params.fileBased().setFile(file));
 		builder.setAutoSave(true);
 		return builder.getConfiguration();
 	}

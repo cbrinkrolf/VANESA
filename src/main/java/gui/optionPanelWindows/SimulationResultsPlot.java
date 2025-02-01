@@ -7,6 +7,7 @@ import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -30,8 +31,10 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import configurations.SettingsManager;
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.lang3.StringUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -1297,18 +1300,16 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 		pane = new ChartPanel(chart);
 
-		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
-
-		String path = "";
+		Path settingsFilePath = SettingsManager.getSettingsFilePath();
+		String path = null;
 		try {
-			XMLConfiguration xmlSettings = VanesaUtility
-					.getFileBasedXMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+			XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
 			path = xmlSettings.getString("SaveDialog-Path");
 		} catch (ConfigurationException e) {
-			System.out.println("There is probably no " + pathWorkingDirectory + File.separator + "settings.xml yet.");
+			System.out.println("There is probably no \"" + settingsFilePath + "\" yet.");
 			e.printStackTrace();
 		}
-		if (path != null && path.length() > 0) {
+		if (StringUtils.isNotEmpty(path)) {
 			File dir = new File(path);
 			if (dir.exists() && dir.isDirectory()) {
 				pane.setDefaultDirectoryForSaveAs(dir);

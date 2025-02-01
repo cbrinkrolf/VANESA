@@ -1,15 +1,19 @@
 package configurations;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.apache.commons.configuration2.XMLConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
 
 import gui.PopUpDialog;
+import org.apache.commons.lang3.StringUtils;
 import util.VanesaUtility;
 
 public class SettingsManager {
+	private static final String FILE_NAME = "settings.xml";
+
 	private static String apiUrl = "";
 	private static String proxyHost = "";
 	private static String proxyPort = "";
@@ -89,15 +93,14 @@ public class SettingsManager {
 	}
 
 	private void setProperty(String property, String value) {
-		String pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
-		File f = new File(pathWorkingDirectory + File.separator + "settings.xml");
+		final Path settingsFilePath = getSettingsFilePath();
 		try {
-			XMLConfiguration xmlSettings = VanesaUtility
-					.getFileBasedXMLConfiguration(pathWorkingDirectory + File.separator + "settings.xml");
+			XMLConfiguration xmlSettings = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
 			xmlSettings.setProperty(property, value);
 			// FileHandler handler = new FileHandler(xmlSettings);
 			// handler.save(f);
 		} catch (ConfigurationException e) {
+			File f = settingsFilePath.toFile();
 			if (f.exists()) {
 				f.delete();
 			}
@@ -160,36 +163,33 @@ public class SettingsManager {
 		SettingsManager.developerMode = developerMode.toString();
 	}
 
-	public void setOMPath(String path) {
-		if (path != null && path.length() > 0 && new File(path).exists() && new File(path).isDirectory()) {
+	public void setOMPath(String path, boolean warn) {
+		if (StringUtils.isNotEmpty(path) && new File(path).exists() && new File(path).isDirectory()) {
 			setProperty("OMPath", path);
-		} else {
+		} else if (warn) {
 			PopUpDialog.getInstance().show("Wrong path", "Given path: " + path + " is not valid!");
 		}
 	}
 
 	public String getOMPath() {
 		String property = getProperty("OMPath");
-		if (property != null && property.length() > 0 && new File(property).exists()
-				&& new File(property).isDirectory()) {
+		if (StringUtils.isNotEmpty(property) && new File(property).exists() && new File(property).isDirectory()) {
 			return property;
 		}
 		return "";
 	}
 
-	public void setPNlibPath(String path) {
-		if (path != null && path.length() > 0 && new File(path).exists() && new File(path).isDirectory()) {
+	public void setPNlibPath(String path, boolean warn) {
+		if (StringUtils.isNotEmpty(path) && new File(path).exists() && new File(path).isDirectory()) {
 			setProperty("PNlibPath", path);
-		} else {
+		} else if (warn) {
 			PopUpDialog.getInstance().show("Wrong path", "Given path: " + path + " is not valid!");
 		}
 	}
 
 	public String getPNlibPath() {
 		String property = getProperty("PNlibPath");
-		// System.out.println("pnlibpath: "+property);
-		if (property != null && property.length() > 0 && new File(property).exists()
-				&& new File(property).isDirectory()) {
+		if (StringUtils.isNotEmpty(property) && new File(property).exists() && new File(property).isDirectory()) {
 			return property;
 		}
 		return "";
@@ -197,10 +197,7 @@ public class SettingsManager {
 
 	public boolean isOverrideOMPath() {
 		String property = getProperty("isOverrideOMPath");
-		if (property != null && property.length() > 0) {
-			return property.equals("true");
-		}
-		return false;
+		return StringUtils.isNotEmpty(property) && property.equals("true");
 	}
 
 	public void setOverrideOMPath(Boolean override) {
@@ -209,10 +206,7 @@ public class SettingsManager {
 
 	public boolean isOverridePNlibPath() {
 		String property = getProperty("isOverridePNlibPath");
-		if (property != null && property.length() > 0) {
-			return property.equals("true");
-		}
-		return false;
+		return StringUtils.isNotEmpty(property) && property.equals("true");
 	}
 
 	public void setOverridePNlibPath(Boolean override) {
@@ -221,8 +215,8 @@ public class SettingsManager {
 
 	private XMLConfiguration getXMLConfiguration() {
 		if (xmlConfiguration == null) {
-			String settingsFilePath = VanesaUtility.getWorkingDirectoryPath() + File.separator + "settings.xml";
-			File f = new File(settingsFilePath);
+			Path settingsFilePath = getSettingsFilePath();
+			File f = settingsFilePath.toFile();
 			if (!f.exists()) {
 				System.out.println("There is probably no " + settingsFilePath + " yet.");
 				// This causes an infinite recursion with the MainWindow init! Don't show popup
@@ -253,5 +247,9 @@ public class SettingsManager {
 			}
 		}
 		return xmlConfiguration;
+	}
+
+	public static Path getSettingsFilePath() {
+		return VanesaUtility.getWorkingDirectoryPath().resolve(FILE_NAME);
 	}
 }

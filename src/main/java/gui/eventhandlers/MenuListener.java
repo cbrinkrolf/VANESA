@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -463,8 +464,8 @@ public class MenuListener implements ActionListener {
 	private static void createDoc() {
 		Pathway pw = GraphInstance.getPathway();
 		PopUpDialog.getInstance().show("Latex generation", "Generation in progress, it will take a short moment!");
-		String docDir = VanesaUtility.getWorkingDirectoryPath() + File.separator + "documentation" + File.separator;
-		File dir = new File(docDir);
+		Path docDir = VanesaUtility.getWorkingDirectoryPath().resolve("documentation");
+		final File dir = docDir.toFile();
 		if (!dir.isDirectory()) {
 			dir.mkdir();
 		}
@@ -511,8 +512,8 @@ public class MenuListener implements ActionListener {
 		ProcessBuilder pb;
 		Process p;
 		try {
-			pb = new ProcessBuilder(bin, docDir + "doc.tex");
-			pb.directory(new File(docDir));
+			pb = new ProcessBuilder(bin, docDir.resolve("doc.tex").toString());
+			pb.directory(docDir.toFile());
 			p = pb.start();
 			Thread t = new Thread(() -> {
 				try {

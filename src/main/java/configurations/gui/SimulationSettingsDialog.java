@@ -1,7 +1,6 @@
 package configurations.gui;
 
 import java.io.File;
-import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -13,21 +12,19 @@ import javax.swing.SwingConstants;
 
 import configurations.SettingsManager;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.lang3.StringUtils;
 
 public class SimulationSettingsDialog {
+	private final SettingsManager settings = SettingsManager.getInstance();
 
-	private SettingsManager settings = SettingsManager.getInstance();
-
-	private JPanel panel;
-
-	private JLabel lblPathOM;
-	private JLabel lblPathPNlib;
+	private final JPanel panel;
+	private final JLabel lblPathOM;
+	private final JLabel lblPathPNlib;
+	private final JCheckBox overrideOMPath;
+	private final JCheckBox overridePNlibPath;
 
 	private String pathOM;
 	private String pathPNlib;
-
-	private JCheckBox overrideOMPath;
-	private JCheckBox overridePNlibPath;
 
 	public SimulationSettingsDialog() {
 		pathOM = settings.getOMPath();
@@ -74,7 +71,6 @@ public class SimulationSettingsDialog {
 		overridePNlibPath.setText("override system defaults:");
 		overridePNlibPath.setHorizontalTextPosition(SwingConstants.LEFT);
 		panel.add(overridePNlibPath, "wrap");
-
 	}
 
 	public JPanel getPanel() {
@@ -83,55 +79,58 @@ public class SimulationSettingsDialog {
 
 	public boolean applyDefaults() {
 		pathOM = "";
-		lblPathOM.setText(pathOM); ;
+		lblPathOM.setText(pathOM);
 		pathPNlib = "";
 		lblPathPNlib.setText(pathPNlib);
 		overrideOMPath.setSelected(false);
 		overridePNlibPath.setSelected(false);
-		
 		return true;
 	}
 
 	public boolean applyNewSettings() {
-		settings.setOMPath(pathOM);
-		settings.setPNlibPath(pathPNlib);
+		settings.setOMPath(pathOM, overrideOMPath.isSelected());
+		settings.setPNlibPath(pathPNlib, overridePNlibPath.isSelected());
 		settings.setOverrideOMPath(overrideOMPath.isSelected());
 		settings.setOverridePNlibPath(overridePNlibPath.isSelected());
 		return true;
 	}
 
 	private void onChooseOMPathClicked() {
-		JFileChooser chooser = new JFileChooser();
+		final JFileChooser chooser = new JFileChooser();
 		String path = ".";
-		
-		Map<String, String> env = System.getenv();
-		if (env.containsKey("OPENMODELICAHOME") && new File(env.get("OPENMODELICAHOME")).isDirectory()) {
-			path = env.get("OPENMODELICAHOME");
-		}
-		
-		if (pathOM.length() > 0) {
+		if (isValidDirectoryPath(pathOM)) {
 			path = pathOM;
+		} else {
+			final String envPath = System.getenv("OPENMODELICAHOME");
+			if (isValidDirectoryPath(envPath)) {
+				path = envPath;
+			}
 		}
+
 		chooser.setCurrentDirectory(new File(path));
 		chooser.setDialogTitle("Choose path to OpenModelica installation");
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int option = chooser.showSaveDialog(panel);
+		final int option = chooser.showSaveDialog(panel);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			pathOM = chooser.getSelectedFile().getAbsolutePath();
 			lblPathOM.setText(pathOM);
 		}
 	}
 
+	private boolean isValidDirectoryPath(final String path) {
+		return StringUtils.isNotEmpty(path) && new File(path).exists() && new File(path).isDirectory();
+	}
+
 	private void onChoosePNlibPathClicked() {
-		JFileChooser chooser = new JFileChooser();
+		final JFileChooser chooser = new JFileChooser();
 		String path = ".";
-		if (pathPNlib.length() > 0) {
+		if (StringUtils.isNotEmpty(pathPNlib)) {
 			path = pathPNlib;
 		}
 		chooser.setCurrentDirectory(new File(path));
 		chooser.setDialogTitle("Choose path to PNlib");
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		int option = chooser.showSaveDialog(panel);
+		final int option = chooser.showSaveDialog(panel);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			pathPNlib = chooser.getSelectedFile().getAbsolutePath();
 			lblPathPNlib.setText(pathPNlib);
