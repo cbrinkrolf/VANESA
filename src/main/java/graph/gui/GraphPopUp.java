@@ -151,7 +151,7 @@ public class GraphPopUp {
         VisualizationImageServer<BiologicalNodeAbstract, BiologicalEdgeAbstract> wvv = vvPw.prepareGraphToPrint();
         if (GraphContainer.getInstance().containsPathway()) {
             if (vvPw.hasGotAtLeastOneElement()) {
-                new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.PNG, SuffixAwareFilter.SVG},
+                new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.PNG, SuffixAwareFilter.SVG, SuffixAwareFilter.PDF},
                         SaveDialog.DATA_TYPE_GRAPH_PICTURE, wvv);
             } else {
                 PopUpDialog.getInstance().show("Error", "Please create a network first.");

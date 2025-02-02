@@ -456,7 +456,7 @@ public class MenuListener implements ActionListener {
 	private static void graphPicture() {
 		if (ensurePathwayWithAtLeastOneElement()) {
 			Pathway pw = GraphInstance.getPathway();
-			new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.PNG, SuffixAwareFilter.SVG},
+			new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.PNG, SuffixAwareFilter.SVG, SuffixAwareFilter.PDF},
 						   SaveDialog.DATA_TYPE_GRAPH_PICTURE, pw.prepareGraphToPrint());
 		}
 	}

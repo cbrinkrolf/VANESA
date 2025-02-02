@@ -161,6 +161,10 @@ public class SaveDialog {
 			if (c != null) {
 				write(new ComponentImageWriter(file, ComponentImageWriter.IMAGE_TYPE_SVG), c);
 			}
+		} else if (fileFilter == SuffixAwareFilter.PDF) {
+			if (c != null) {
+				write(new ComponentImageWriter(file, ComponentImageWriter.IMAGE_TYPE_PDF), c);
+			}
 		} else if (fileFilter == SuffixAwareFilter.YAML) {
 			writeYAML(file);
 		}
