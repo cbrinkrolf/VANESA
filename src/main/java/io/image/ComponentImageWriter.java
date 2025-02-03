@@ -1,6 +1,30 @@
 package io.image;
 
-import io.BaseWriter;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.metadata.IIOInvalidTreeException;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageOutputStream;
+
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
@@ -12,29 +36,23 @@ import org.apache.fop.svg.PDFTranscoder;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGSVGElement;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.metadata.IIOInvalidTreeException;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.stream.ImageOutputStream;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
+import io.BaseWriter;
 
 public class ComponentImageWriter extends BaseWriter<Component> {
+	// TODO unify as enum e.g., ImageFormat, and merge with those constants of ChartImageWriter
 	public static final String IMAGE_TYPE_SVG = "svg";
 	public static final String IMAGE_TYPE_PNG = "png";
 	public static final String IMAGE_TYPE_PDF = "pdf";
 
 	private final String imageType;
+	
+	private static boolean svgClipPaths = !true;
+	private static boolean pdfClipPaths = !true;
 
 	public ComponentImageWriter(File file, String imageType) {
 		super(file);
@@ -55,19 +73,26 @@ public class ComponentImageWriter extends BaseWriter<Component> {
 	private static void exportSVG(OutputStream outputStream, Component component) throws IOException {
 
 		SVGGraphics2D svgGraphics2D = generateSVGGraphics(component);
-		// removing clip paths
 		SVGSVGElement root = (SVGSVGElement) svgGraphics2D.getRoot();
-		Element defs = root.getElementById("defs1");
-		NodeList childs = defs.getChildNodes();
-		for (int i = childs.getLength() - 1; i >= 0; i--) {
-			// TODO reimplement SVG removing clips (also the ids in further elements,
-			// otherwise automatic transformation of SVG to PNG/PDF fails)
-			// defs.removeChild(childs.item(i));
+		if(svgClipPaths){
+			removeClipPaths(root);
 		}
+		
 		try (Writer out = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
-			// dump root instead of svgGraphics2D because of XML manipulation
+			// dump root instead of svgGraphics2D because of possible XML manipulation
 			svgGraphics2D.stream(root, out, true, false);
 		}
+
+		// output of svg and transformation of svg to pdf to test if clip path worked as intended.
+		/* Transcoder transcoder = new PDFTranscoder();
+		TranscoderInput transcoderInput = new TranscoderInput(new FileInputStream(new File("filepath\\test.svg")));
+		TranscoderOutput transcoderOutput = new TranscoderOutput(new FileOutputStream(new File("filepath\\test.pdf")));
+		try {
+			transcoder.transcode(transcoderInput, transcoderOutput);
+		} catch (TranscoderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 	}
 
 	private static void exportPNG(OutputStream outputStream, Component component) {
@@ -114,20 +139,22 @@ public class ComponentImageWriter extends BaseWriter<Component> {
 	private static void exportPDF(OutputStream outputStream, Component component) {
 
 		SVGGraphics2D svgGraphics2D = generateSVGGraphics(component);
+		SVGSVGElement root = (SVGSVGElement) svgGraphics2D.getRoot();
+		
+		if(pdfClipPaths){
+			removeClipPaths(root);
+		}
+		
 		ByteArrayOutputStream svgOutputStream = new ByteArrayOutputStream();
 		Writer out;
 		try {
 			out = new OutputStreamWriter(svgOutputStream, "UTF-8");
-			svgGraphics2D.stream(out, true);
+			// dump root instead of svgGraphics2D because of possible XML manipulation
+			svgGraphics2D.stream(root, out, true, false);
 			String svg = new String(svgOutputStream.toByteArray(), "UTF-8");
 			TranscoderInput input = new TranscoderInput(new StringReader(svg));
 			TranscoderOutput transOutput = new TranscoderOutput(outputStream);
 			SVGAbstractTranscoder transcoder = new PDFTranscoder();
-
-			// transcoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH,
-			// svgGraphics2D.getSVGCanvasSize().getWidth());
-			// transcoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT,
-			// svgGraphics2D.getSVGCanvasSize().getHeight());
 
 			transcoder.transcode(input, transOutput);
 		} catch (UnsupportedEncodingException e) {
@@ -146,5 +173,23 @@ public class ComponentImageWriter extends BaseWriter<Component> {
 		svgGraphics2D.setSVGCanvasSize(new Dimension(component.getWidth(), component.getHeight()));
 		component.paintAll(svgGraphics2D);
 		return svgGraphics2D;
+	}
+	
+	private static void removeClipPaths(SVGSVGElement root){
+		Element defs = root.getElementById("defs1");
+		NodeList childs = defs.getChildNodes();
+		for (int i = childs.getLength() - 1; i >= 0; i--) {
+			defs.removeChild(childs.item(i));
+		}
+		NodeList nodeList = root.getElementsByTagName("*");
+		for (int i = 0; i < nodeList.getLength(); i++) {
+	        Node node = nodeList.item(i);
+	        if (node.getNodeType() == Node.ELEMENT_NODE) {
+	            NamedNodeMap map = node.getAttributes();
+	            if(map.getNamedItem("clip-path") != null){
+	            	map.removeNamedItem("clip-path");
+	            }
+	        }
+	    }
 	}
 }
