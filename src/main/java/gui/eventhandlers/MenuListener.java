@@ -81,6 +81,7 @@ import io.OpenDialog;
 import io.PNDoc;
 import io.SaveDialog;
 import io.SuffixAwareFilter;
+import io.image.ComponentImageWriter;
 import io.sbml.JSBMLOutput;
 import petriNet.Cov;
 import petriNet.CovNode;
@@ -218,6 +219,9 @@ public class MenuListener implements ActionListener {
 		case simulationSettings:
 			new SettingsPanel(3);
 			break;
+		case exportSettings:
+			new SettingsPanel(4);
+			break;
 		case openTestP:
 			openTestP();
 			break;
@@ -340,7 +344,8 @@ public class MenuListener implements ActionListener {
 				ioe.printStackTrace();
 			} catch (InputFormatException ife) {
 				PopUpDialog.getInstance().show("Inputfile error", ife.getMessage());
-				// JOptionPane.showMessageDialog(w, ife.getMessage(), "Inputfile error", JOptionPane.ERROR_MESSAGE);
+				// JOptionPane.showMessageDialog(w, ife.getMessage(), "Inputfile error",
+				// JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -378,7 +383,7 @@ public class MenuListener implements ActionListener {
 		Pathway pw = GraphInstance.getPathway();
 		if (con.containsPathway()) {
 			if (pw.getTransformationInformation() != null && pw.getTransformationInformation().getPetriNet() != null
-				&& !pw.isPetriNet()) {
+					&& !pw.isPetriNet()) {
 				new TransformationInformationWindow(pw).show();
 			} else {
 				PopUpDialog.getInstance().show("Error",
@@ -393,7 +398,7 @@ public class MenuListener implements ActionListener {
 		if (ensurePathway()) {
 			Pathway pw = GraphInstance.getPathway();
 			if (pw != null && pw.getTransformationInformation() != null
-				&& pw.getTransformationInformation().getPetriNet() != null && !pw.isPetriNet()) {
+					&& pw.getTransformationInformation().getPetriNet() != null && !pw.isPetriNet()) {
 				Pathway petriNet = pw.getTransformationInformation().getPetriNet();
 				Map<BiologicalNodeAbstract, Point2D> staticNodes = new HashMap<>();
 				for (BiologicalNodeAbstract bna : pw.getTransformationInformation().getBnToPnMapping().values()) {
@@ -456,8 +461,20 @@ public class MenuListener implements ActionListener {
 	private static void graphPicture() {
 		if (ensurePathwayWithAtLeastOneElement()) {
 			Pathway pw = GraphInstance.getPathway();
-			new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.PNG, SuffixAwareFilter.SVG, SuffixAwareFilter.PDF},
-						   SaveDialog.DATA_TYPE_GRAPH_PICTURE, pw.prepareGraphToPrint());
+			SuffixAwareFilter[] filters;
+			if (SettingsManager.getInstance().getDefaultImageExportFormat()
+					.equals(ComponentImageWriter.IMAGE_TYPE_SVG)) {
+				filters = new SuffixAwareFilter[] { SuffixAwareFilter.SVG, SuffixAwareFilter.PNG,
+						SuffixAwareFilter.PDF };
+			} else if (SettingsManager.getInstance().getDefaultImageExportFormat()
+					.equals(ComponentImageWriter.IMAGE_TYPE_PDF)) {
+				filters = new SuffixAwareFilter[] { SuffixAwareFilter.PDF, SuffixAwareFilter.PNG,
+						SuffixAwareFilter.SVG };
+			} else {
+				filters = new SuffixAwareFilter[] { SuffixAwareFilter.PNG, SuffixAwareFilter.SVG,
+						SuffixAwareFilter.PDF };
+			}
+			new SaveDialog(filters, SaveDialog.DATA_TYPE_GRAPH_PICTURE, pw.prepareGraphToPrint());
 		}
 	}
 
@@ -529,8 +546,7 @@ public class MenuListener implements ActionListener {
 						System.out.println(br2.readLine());
 						Thread.sleep(100);
 					}
-					PopUpDialog.getInstance().show("Latex compilation successful!",
-							"PDF can be found at:\n" + docDir);
+					PopUpDialog.getInstance().show("Latex compilation successful!", "PDF can be found at:\n" + docDir);
 				} catch (Exception e13) {
 					e13.printStackTrace();
 				}
@@ -558,7 +574,7 @@ public class MenuListener implements ActionListener {
 				return;
 			}
 			if (pw.isPetriNet() || pw.getTransformationInformation() != null
-								   && pw.getTransformationInformation().getPetriNet() != null) {
+					&& pw.getTransformationInformation().getPetriNet() != null) {
 				List<SuffixAwareFilter> filters;
 				filters = new ArrayList<>();
 				filters.add(SuffixAwareFilter.VANESA_SIM_RESULT);
@@ -574,8 +590,8 @@ public class MenuListener implements ActionListener {
 	private static void createCov() {
 		final MainWindow w = MainWindow.getInstance();
 		if (JOptionPane.showConfirmDialog(w.getFrame(),
-										  "Calculating the reachability graph may take a long time, especially for large networks. Calculate anyway?",
-										  "Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+				"Calculating the reachability graph may take a long time, especially for large networks. Calculate anyway?",
+				"Please Conform your action...", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 			new ReachController(GraphInstance.getPathway());
 		}
 		if (GraphInstance.getMyGraph() != null) {
@@ -889,33 +905,31 @@ public class MenuListener implements ActionListener {
 					e1.printStackTrace();
 				}
 			} else {
-				new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.SBML}, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+				new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.SBML }, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 			}
 		}
 	}
 
 	private static void saveAs() {
 		if (ensurePathwayWithAtLeastOneElement()) {
-			new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.SBML}, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+			new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.SBML }, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 		}
 	}
 
 	private static void exportNetwork() {
 		if (ensurePathwayWithAtLeastOneElement()) {
-				new SaveDialog(new SuffixAwareFilter[]{
-						SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.MO, SuffixAwareFilter.CSML,
-						SuffixAwareFilter.PNML, SuffixAwareFilter.GRAPH_TEXT_FILE
-				}, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+			new SaveDialog(
+					new SuffixAwareFilter[] { SuffixAwareFilter.GRAPH_ML, SuffixAwareFilter.MO, SuffixAwareFilter.CSML,
+							SuffixAwareFilter.PNML, SuffixAwareFilter.GRAPH_TEXT_FILE },
+					SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 		}
 	}
 
 	private static void newNetwork() {
 		final MainWindow w = MainWindow.getInstance();
 		final int answer = JOptionPane.showOptionDialog(w.getFrame(), "Which type of modeling do you prefer?",
-														"Choose Network Type...", JOptionPane.YES_NO_OPTION,
-														JOptionPane.QUESTION_MESSAGE, null,
-														new String[]{"Biological Graph", "Petri Net"},
-														JOptionPane.CANCEL_OPTION);
+				"Choose Network Type...", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+				new String[] { "Biological Graph", "Petri Net" }, JOptionPane.CANCEL_OPTION);
 		if (answer != -1) {
 			new CreatePathway();
 			GraphInstance.getPathway().setIsPetriNet(answer == JOptionPane.NO_OPTION);
@@ -926,7 +940,7 @@ public class MenuListener implements ActionListener {
 
 	private static void openNetwork() {
 		new OpenDialog(SuffixAwareFilter.SBML, SuffixAwareFilter.VAML, SuffixAwareFilter.GRAPH_ML,
-					   SuffixAwareFilter.KGML, SuffixAwareFilter.GRAPH_TEXT_FILE).show();
+				SuffixAwareFilter.KGML, SuffixAwareFilter.GRAPH_TEXT_FILE).show();
 	}
 
 	private void shakeEnzymes() {

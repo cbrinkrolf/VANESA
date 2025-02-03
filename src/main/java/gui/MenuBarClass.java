@@ -197,6 +197,10 @@ public class MenuBarClass {
 		JMenuItem simulationSettings = new JMenuItem("Simulation Settings");
 		simulationSettings.addActionListener(MenuListener.getInstance());
 		simulationSettings.setActionCommand(MenuActionCommands.simulationSettings.value);
+		
+		JMenuItem exportSettings = new JMenuItem("Export Settings");
+		exportSettings.addActionListener(MenuListener.getInstance());
+		exportSettings.setActionCommand(MenuActionCommands.exportSettings.value);
 
 		JMenuItem interaction = new JMenuItem("Show network properties");
 		interaction.addActionListener(MenuListener.getInstance());
@@ -328,6 +332,7 @@ public class MenuBarClass {
 		settings.add(graphSettings);
 		settings.add(visualizationSettings);
 		settings.add(simulationSettings);
+		settings.add(exportSettings);
 		settings.add(rendererSettings);
 
 		// snapshot.add(savePicture);

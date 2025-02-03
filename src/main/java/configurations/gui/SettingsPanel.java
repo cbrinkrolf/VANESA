@@ -10,6 +10,7 @@ public class SettingsPanel extends JDialog {
 	private static final String GRAPH_SETTINGS_LABEL = "Graph Settings";
 	private static final String VISUALIZATION_LABEL = "Node Visualization";
 	private static final String SIMULATION_LABEL = "Simulation";
+	private static final String EXPORT_LABEL = "Export";
 
 	private final JButton defaultButton = new JButton("default");
 
@@ -18,6 +19,7 @@ public class SettingsPanel extends JDialog {
 	private final GraphSettingsDialog graphSettings = new GraphSettingsDialog();
 	private final VisualizationDialog visualizationSettings = new VisualizationDialog();
 	private final SimulationSettingsDialog simulationSettings = new SimulationSettingsDialog();
+	private final ExportSettingsDialog exportSettings = new ExportSettingsDialog();
 
 	public SettingsPanel(int type) {
 		JOptionPane optionPanel = new JOptionPane(tabbedPanel, JOptionPane.PLAIN_MESSAGE);
@@ -36,6 +38,7 @@ public class SettingsPanel extends JDialog {
 		tabbedPanel.addTab(GRAPH_SETTINGS_LABEL, null, graphSettings.getPanel(), GRAPH_SETTINGS_LABEL);
 		tabbedPanel.addTab(VISUALIZATION_LABEL, null, visualizationSettings.getPanel(), VISUALIZATION_LABEL);
 		tabbedPanel.addTab(SIMULATION_LABEL, null, simulationSettings.getPanel(), SIMULATION_LABEL);
+		tabbedPanel.addTab(EXPORT_LABEL, null, exportSettings.getPanel(), EXPORT_LABEL);
 		tabbedPanel.setSelectedIndex(type);
 		setSize(300, 300);
 		setLocationRelativeTo(MainWindow.getInstance().getFrame());
@@ -62,6 +65,8 @@ public class SettingsPanel extends JDialog {
 		case SIMULATION_LABEL:
 			simulationSettings.applyDefaults();
 			break;
+		case EXPORT_LABEL:
+			exportSettings.applyDefaults();
 		}
 	}
 
@@ -81,6 +86,8 @@ public class SettingsPanel extends JDialog {
 		case SIMULATION_LABEL:
 			setVisible(!simulationSettings.applyNewSettings());
 			break;
+		case EXPORT_LABEL:
+			setVisible(!exportSettings.applyNewSettings());
 		}
 	}
 

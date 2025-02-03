@@ -31,6 +31,7 @@ public enum MenuActionCommands {
     gemLayout("gemLayout"),
     visualizationSettings("visualizationSettings"),
     simulationSettings("simulationSettings"),
+    exportSettings("exportSettings"),
     interaction("interaction"),
     allPopUps("allPopUps"),
     nodesEdgesTypes("nodesEdgesTypes"),

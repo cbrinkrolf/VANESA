@@ -8,6 +8,8 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
 
 import gui.PopUpDialog;
+import io.image.ComponentImageWriter;
+
 import org.apache.commons.lang3.StringUtils;
 import util.VanesaUtility;
 
@@ -106,6 +108,46 @@ public class SettingsManager {
 			}
 			e.printStackTrace();
 		}
+	}
+	
+	private XMLConfiguration getXMLConfiguration() {
+		if (xmlConfiguration == null) {
+			Path settingsFilePath = getSettingsFilePath();
+			File f = settingsFilePath.toFile();
+			if (!f.exists()) {
+				System.out.println("There is probably no " + settingsFilePath + " yet.");
+				// This causes an infinite recursion with the MainWindow init! Don't show popup
+				// dialogs here
+				// PopUpDialog.getInstance().show("Error configuration file",
+				// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
+				try {
+					xmlConfiguration = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
+					FileHandler handler = new FileHandler(xmlConfiguration);
+					handler.save(f);
+				} catch (ConfigurationException e) {
+					f.delete();
+					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					// PopUpDialog.getInstance().show("Error configuration file",
+					// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					xmlConfiguration = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
+				} catch (ConfigurationException e) {
+					f.delete();
+					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					// PopUpDialog.getInstance().show("Error configuration file",
+					// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
+					e.printStackTrace();
+				}
+			}
+		}
+		return xmlConfiguration;
+	}
+
+	public static Path getSettingsFilePath() {
+		return VanesaUtility.getWorkingDirectoryPath().resolve(FILE_NAME);
 	}
 
 	/**
@@ -212,44 +254,42 @@ public class SettingsManager {
 	public void setOverridePNlibPath(Boolean override) {
 		setProperty("isOverridePNlibPath", override.toString());
 	}
-
-	private XMLConfiguration getXMLConfiguration() {
-		if (xmlConfiguration == null) {
-			Path settingsFilePath = getSettingsFilePath();
-			File f = settingsFilePath.toFile();
-			if (!f.exists()) {
-				System.out.println("There is probably no " + settingsFilePath + " yet.");
-				// This causes an infinite recursion with the MainWindow init! Don't show popup
-				// dialogs here
-				// PopUpDialog.getInstance().show("Error configuration file",
-				// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
-				try {
-					xmlConfiguration = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
-					FileHandler handler = new FileHandler(xmlConfiguration);
-					handler.save(f);
-				} catch (ConfigurationException e) {
-					f.delete();
-					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
-					// PopUpDialog.getInstance().show("Error configuration file",
-					// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
-					e.printStackTrace();
-				}
-			} else {
-				try {
-					xmlConfiguration = VanesaUtility.getFileBasedXMLConfiguration(settingsFilePath);
-				} catch (ConfigurationException e) {
-					f.delete();
-					System.out.println("Configuration file " + settingsFilePath + " is not valid and got deleted.");
-					// PopUpDialog.getInstance().show("Error configuration file",
-					// "Configuration file " + settingsFilePath + " is not valid and got deleted.");
-					e.printStackTrace();
-				}
+	
+	public boolean isSVGClipPaths(){
+		String property = getProperty("isSVGClipPaths");
+		return StringUtils.isNotEmpty(property) && property.equals("true");
+	}
+	
+	public void setSVGClipPaths(Boolean svgClipPaths){
+		setProperty("isSVGClipPaths", svgClipPaths.toString());
+	}
+	
+	public boolean isPDFClipPaths(){
+		String property = getProperty("isPDFClipPaths");
+		return StringUtils.isNotEmpty(property) && property.equals("true");
+	}
+	
+	public void setPDFClipPaths(Boolean pdfClipPaths){
+		setProperty("isPDFClipPaths", pdfClipPaths.toString());
+	}
+	
+	public String getDefaultImageExportFormat(){
+		String property = getProperty("defaultImageExportFormat");
+		if(StringUtils.isNotEmpty(property)){
+			if(property.equals(ComponentImageWriter.IMAGE_TYPE_PDF)){
+				return ComponentImageWriter.IMAGE_TYPE_PDF;
+			} else if(property.equals(ComponentImageWriter.IMAGE_TYPE_SVG)){
+				return ComponentImageWriter.IMAGE_TYPE_SVG;
+			}else if(property.equals(ComponentImageWriter.IMAGE_TYPE_PNG)){
+				return ComponentImageWriter.IMAGE_TYPE_PNG;
 			}
 		}
-		return xmlConfiguration;
+		return ComponentImageWriter.IMAGE_TYPE_PNG;
+	}
+	
+	public void setDefaultImageExportFormat(String format){
+		setProperty("defaultImageExportFormat", format);
 	}
 
-	public static Path getSettingsFilePath() {
-		return VanesaUtility.getWorkingDirectoryPath().resolve(FILE_NAME);
-	}
+
 }

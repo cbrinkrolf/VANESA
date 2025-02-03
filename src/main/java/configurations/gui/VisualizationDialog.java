@@ -59,7 +59,6 @@ public class VisualizationDialog {
 		List<String> biologicalElements = elementdeclerations.getNotPNNodeDeclarations();
 
 		MigLayout layout = new MigLayout("", "[][grow]");
-		System.out.println();
 		panel = new JPanel();
 		panel.setLayout(layout);
 		panel.add(new JLabel("Set new defaults:"));
