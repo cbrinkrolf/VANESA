@@ -41,6 +41,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGSVGElement;
 
+import configurations.SettingsManager;
 import io.BaseWriter;
 
 public class ComponentImageWriter extends BaseWriter<Component> {
@@ -51,9 +52,6 @@ public class ComponentImageWriter extends BaseWriter<Component> {
 
 	private final String imageType;
 	
-	private static boolean svgClipPaths = !true;
-	private static boolean pdfClipPaths = !true;
-
 	public ComponentImageWriter(File file, String imageType) {
 		super(file);
 		this.imageType = imageType;
@@ -74,7 +72,7 @@ public class ComponentImageWriter extends BaseWriter<Component> {
 
 		SVGGraphics2D svgGraphics2D = generateSVGGraphics(component);
 		SVGSVGElement root = (SVGSVGElement) svgGraphics2D.getRoot();
-		if(svgClipPaths){
+		if(SettingsManager.getInstance().isSVGClipPaths()){
 			removeClipPaths(root);
 		}
 		
@@ -90,7 +88,6 @@ public class ComponentImageWriter extends BaseWriter<Component> {
 		try {
 			transcoder.transcode(transcoderInput, transcoderOutput);
 		} catch (TranscoderException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
 	}
@@ -141,7 +138,7 @@ public class ComponentImageWriter extends BaseWriter<Component> {
 		SVGGraphics2D svgGraphics2D = generateSVGGraphics(component);
 		SVGSVGElement root = (SVGSVGElement) svgGraphics2D.getRoot();
 		
-		if(pdfClipPaths){
+		if(SettingsManager.getInstance().isPDFClipPaths()){
 			removeClipPaths(root);
 		}
 		
