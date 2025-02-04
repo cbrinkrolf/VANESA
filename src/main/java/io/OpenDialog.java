@@ -13,7 +13,6 @@ import biologicalElements.Pathway;
 import configurations.SettingsManager;
 import graph.GraphContainer;
 import graph.GraphInstance;
-import graph.jung.classes.MyGraph;
 import gui.AsyncTaskExecutor;
 import gui.MainWindow;
 import gui.PopUpDialog;
@@ -49,7 +48,15 @@ public final class OpenDialog {
 			final FileFilter fileFilter = chooser.getFileFilter();
 			final File file = chooser.getSelectedFile();
 			AsyncTaskExecutor.runUIBlocking("Loading data from file. Please wait a second",
-					() -> open(fileFilter, file));
+					() -> open(fileFilter, file), () -> {
+						if (GraphContainer.getInstance().containsPathway()) {
+							if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
+								MainWindow.getInstance().updateAllGuiElements();
+								 GraphInstance.getMyGraph().normalCentering();;
+							}
+						}
+						MainWindow.getInstance().getFrame().repaint();
+					});
 		}
 	}
 
@@ -70,14 +77,6 @@ public final class OpenDialog {
 		} else if (fileFilter == SuffixAwareFilter.VANESA_SIM_RESULT) {
 			openSimulationResult(file);
 		}
-		if (GraphContainer.getInstance().containsPathway()) {
-			if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
-				MainWindow.getInstance().updateAllGuiElements();
-				MyGraph g = GraphInstance.getMyGraph();
-				g.normalCentering();
-			}
-		}
-		MainWindow.getInstance().getFrame().repaint();
 	}
 
 	private static void openVAML(File file) {
