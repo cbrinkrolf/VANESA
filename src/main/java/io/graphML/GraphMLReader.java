@@ -61,7 +61,11 @@ public class GraphMLReader extends BaseReader<Pathway> {
 		final Map<Integer, BiologicalNodeAbstract> vertexIdMap = new HashMap<>();
 		while (reader.hasNext()) {
 			final XMLEvent nextEvent = tryNextEvent(reader);
-			if (nextEvent != null && nextEvent.isStartElement()) {
+			if (nextEvent == null) {
+				setHasErrors();
+				return null;
+			}
+			if (nextEvent.isStartElement()) {
 				final StartElement element = nextEvent.asStartElement();
 				final String key = element.getName().getLocalPart();
 				if ("key".equals(key)) {
