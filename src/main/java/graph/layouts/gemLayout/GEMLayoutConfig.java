@@ -1,6 +1,7 @@
 package graph.layouts.gemLayout;
 
 import java.awt.GridLayout;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.BorderFactory;
@@ -10,15 +11,15 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import cern.colt.list.IntArrayList;
+import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.gui.ConfigPanel;
-//import edu.uci.ics.jung.graph.Vertex;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayPriorityQueue;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
-public class GEMLayoutConfig<V> extends ConfigPanel implements ChangeListener {
+public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 	private static final long serialVersionUID = 1L;
+	private static GEMLayoutConfig config;
 
 	// number of nodes in the graph
 	public int nodeCount;
@@ -73,13 +74,13 @@ public class GEMLayoutConfig<V> extends ConfigPanel implements ChangeListener {
 	public GemP[] gemProp;
 
 	// inverse map from int id to Vertex
-	public V[] invmap;
+	public BiologicalNodeAbstract[] invmap;
 
 	// adjacent int ids for a given Vertex int id
-	public Int2ObjectOpenHashMap<IntArrayList> adjacent;
+	public Int2ObjectOpenHashMap<List<Integer>> adjacent;
 
 	// map from Vertex to int id
-	public Object2IntOpenHashMap<V> nodeNumbers;
+	public Object2IntOpenHashMap<BiologicalNodeAbstract> nodeNumbers;
 
 	// randomizer used for node selection
 	public Random rand = new Random();
@@ -249,6 +250,13 @@ public class GEMLayoutConfig<V> extends ConfigPanel implements ChangeListener {
 		add(insert);
 		add(arrange);
 		add(optimize);
+	}
+
+	public static GEMLayoutConfig getInstance() {
+		if (config == null) {
+			config = new GEMLayoutConfig();
+		}
+		return config;
 	}
 
 	public void stateChanged(ChangeEvent arg0) {

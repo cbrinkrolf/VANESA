@@ -12,52 +12,44 @@ import biologicalObjects.edges.petriNet.PNArc;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-//import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
-//import edu.uci.ics.jung.utils.Pair;
 import graph.CreatePathway;
 import graph.GraphInstance;
 import util.VanesaUtility;
 
 public class Cov {
-
-	private Pathway pw;
-	// private MyGraph g;
-	private HashMap<BiologicalNodeAbstract, Integer> hmplaces = new HashMap<BiologicalNodeAbstract, Integer>();
-	private HashMap<BiologicalNodeAbstract, Integer> hmtransitions = new HashMap<BiologicalNodeAbstract, Integer>();
+	private final Pathway pw;
+	private final HashMap<BiologicalNodeAbstract, Integer> hmPlaces = new HashMap<>();
+	private final HashMap<BiologicalNodeAbstract, Integer> hmTransitions = new HashMap<>();
 	private SimpleMatrixDouble bMatrix;
 	private SimpleMatrixDouble fMatrix;
 	private SimpleMatrixDouble cMatrix;
 	private int numberPlaces = 0;
 	private int numberTransitions = 0;
-	private ArrayList<Double> start = new ArrayList<Double>();
-	private ArrayList<CovNode> parents;
+	private final ArrayList<Double> start = new ArrayList<>();
+
+	// pw.getGraph().moveVertex(root.getVertex(), 10, 30);
+	// this.covnodes.put(root.getVertex().toString(), root);
+	// System.out.println(this.covnodes);
+	private final ArrayList<CovNode> parents = new ArrayList<>();
 	private String oldName;
-	private CovNode root;
+	private final CovNode root;
 
 	public String getOldName() {
 		return oldName;
 	}
 
-	private String newName;
+	private final String newName;
 
 	// private boolean found = false;
-	private HashMap<Integer, String> idToName = new HashMap<Integer, String>();
-	private HashMap<Integer, String> idToNameTransition = new HashMap<Integer, String>();
-	private HashMap<Integer, Double> idToMax = new HashMap<Integer, Double>();
-
-	// private HashMap<String, CovNode> covnodes = new HashMap<String, CovNode>();
-
-	private HashMap<String, Integer> name2id = new HashMap<String, Integer>();
+	private final HashMap<Integer, String> idToName = new HashMap<>();
+	private final HashMap<Integer, String> idToNameTransition = new HashMap<>();
+	private final HashMap<Integer, Double> idToMax = new HashMap<>();
+	// private final HashMap<String, CovNode> covnodes = new HashMap<>();
+	private final HashMap<String, Integer> name2id = new HashMap<>();
 
 	public Cov() {
-
-		// Iterator it6 =
-		// this.graphInstance.getContainer().getAllPathways().iterator();
-
-		// this.createMatrices();
-		// this.createMatrices();
-		this.createMatrices();
-
+		// Iterator it6 = this.graphInstance.getContainer().getAllPathways().iterator();
+		createMatrices();
 		pw = new CreatePathway().getPathway();
 		this.newName = pw.getName();
 		root = new CovNode("label", "name", this.numberPlaces);
@@ -74,16 +66,12 @@ public class Cov {
 		pw.addVertex(root, new Point(10, 30));
 		root.setColor(new Color(255, 0, 0));
 
-		// pw.getGraph().moveVertex(root.getVertex(), 10, 30);
-		// this.covnodes.put(root.getVertex().toString(), root);
-		// System.out.println(this.covnodes);
-		parents = new ArrayList<CovNode>();
 		this.computeNode(root);
 
 		/*
 		 * Set<CovNode> nodes; nodes = graphInstance.getPathway().getAllNodes(); //
 		 * System.out.println("covlist alt: " + cl);
-		 * 
+		 *
 		 * //tmp.addTokens(this.cMatrix.getColumn(i)); //boolean found = false; Iterator
 		 * it = nodes.iterator(); CovNode cn; while (it.hasNext()) { cn = (CovNode)
 		 * it.next(); System.out.println(cn.getTokenList()); }
@@ -114,12 +102,9 @@ public class Cov {
 		// Pathway p = this.graphInstance.getContainer().getPathway(this.oldName);
 
 		// System.out.println(p.getAllNodeLabels());
-		this.paintCoveredNodes();
-
+		paintCoveredNodes();
 		pw.getGraph().restartVisualizationModel();
-
 		pw.getPetriPropertiesNet().setCovGraph(pw.getName());
-
 	}
 
 	public CovNode getRoot() {
@@ -128,8 +113,6 @@ public class Cov {
 
 	private void computeNode(CovNode parent) {
 		CovList cl = parent.getTokenList();
-		CovList tmp;
-		ArrayList<Integer> indexe;
 		// boolean found;
 		// System.out.println("Root: " + cl);
 		// fuer alle Transitionen
@@ -141,29 +124,22 @@ public class Cov {
 
 			// Wenn Markierung groesser gleich Transition ist
 			if (cl.isGreaterEqualCol(col)) {
-				tmp = parent.getTokenList().clone();
+				CovList tmp = parent.getTokenList().clone();
 				tmp.addTokens(this.cMatrix.getColumn(i));
 				// System.out.println("new: " + tmp);
 				boolean found = false;
-				Iterator<BiologicalNodeAbstract> it = GraphInstance.getPathway().getAllGraphNodes().iterator();
-				CovNode cn;
-
 				if (this.isBoundaryHold(tmp)) {
-					// fuer alle Knoten: Wenn neue Markierung schon vorhanden
-					// ist
-					while (it.hasNext()) {
-						cn = (CovNode) it.next();
-						if (cn.getTokenList().isEqual(tmp.getElements())
-								&& !cn.getTokenList().equals(parent.getTokenList())) {
-
+					// fuer alle Knoten: Wenn neue Markierung schon vorhanden ist
+					for (BiologicalNodeAbstract bna : GraphInstance.getPathway().getAllGraphNodes()) {
+						CovNode cn = (CovNode) bna;
+						if (cn.getTokenList().isEqual(tmp.getElements()) && !cn.getTokenList().equals(
+								parent.getTokenList())) {
 							CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i),
-									parent, cn);
+													parent, cn);
 							e.setDirected(true);
 							pw.addEdge(e);
 							// e.setVisible(false);
-							// System.out.println("Kante1 von: "
-							// + parent.getTokenList() + "->"
-							// + cn.getTokenList());
+							// System.out.println("Kante1 von: " + parent.getTokenList() + "->" + cn.getTokenList());
 							found = true;
 							break;
 						}
@@ -172,53 +148,42 @@ public class Cov {
 					// Knoten nicht direkt gefunden
 					if (!found) {
 						this.parents.clear();
-						// System.out.println("size parents vorher: "
-						// + this.parents.size());
+						// System.out.println("size parents vorher: " + this.parents.size());
 						this.getParents(parent);
-						// System.out.println("size parents nachher: "
-						// + this.parents.size());
+						// System.out.println("size parents nachher: " + this.parents.size());
 						for (int j = 0; j < this.parents.size(); j++) {
-							cn = this.parents.get(j);
-
-							// falls neue Markierung eine schon vorhandene
-							// Markierung ueberdeckt
+							CovNode cn = this.parents.get(j);
+							// falls neue Markierung eine schon vorhandene Markierung ueberdeckt
 							if (tmp.isGreater(cn.getTokenList().getElements())) {
-								// System.out.println(tmp + " is greater as "
-								// + cn.getTokenList());
-								indexe = tmp.getGreaterIndexs(cn.getTokenList());
-								for (int k = 0; k < indexe.size(); k++) {
-									if (this.idToMax.get(indexe.get(k)) <= 0) {
-										tmp.setElementAt(indexe.get(k), -1.0);
+								// System.out.println(tmp + " is greater as " + cn.getTokenList());
+								ArrayList<Integer> indices = tmp.getGreaterIndices(cn.getTokenList());
+								for (Integer index : indices) {
+									if (idToMax.get(index) <= 0) {
+										tmp.setElementAt(index, -1.0);
 									}
 								}
 
 								// fuer alle Knoten
 								Iterator<BiologicalNodeAbstract> it2 = GraphInstance.getPathway().getAllGraphNodes()
-										.iterator();
-								boolean cond1;
-								boolean cond2;
+																					.iterator();
 								while (it2.hasNext()) {
 									cn = (CovNode) it2.next();
-									cond1 = cn.getTokenList().isEqual(tmp.getElements());
-									cond2 = cn.getTokenList().toString().equals(parent.getTokenList().toString());
+									boolean cond1 = cn.getTokenList().isEqual(tmp.getElements());
+									boolean cond2 = cn.getTokenList().toString().equals(
+											parent.getTokenList().toString());
 									// System.out.println(cond1 + " " + cond2);
-									// System.out.println("cn: " +
-									// cn.getTokenList());
-									// System.out.println("tmp: " +
-									// tmp.getElements());
-									// System.out.println("!cn: "
-									// + cn.getTokenList().toString());
+									// System.out.println("cn: " + cn.getTokenList());
+									// System.out.println("tmp: " + tmp.getElements());
+									// System.out.println("!cn: " + cn.getTokenList().toString());
 									// System.out.println();
 									// Wenn neue Markierung schon vorhanden ist
 									if (cond1 && !cond2) {
 										CovEdge e = new CovEdge(this.idToNameTransition.get(i),
-												this.idToNameTransition.get(i), parent, cn);
+																this.idToNameTransition.get(i), parent, cn);
 										e.setDirected(true);
 										pw.addEdge(e);
 										// e.setVisible(false);
-										// System.out.println("Kante2 von: "
-										// + parent.getTokenList() + "->"
-										// + cn.getTokenList());
+										// System.out.println("Kante2 von: " + parent.getTokenList() + "->" + cn.getTokenList());
 										found = true;
 										break;
 									}
@@ -234,20 +199,16 @@ public class Cov {
 
 									pw.addVertex(n, new Point(i * 10, i * i * 30));
 									// n.setVisible(false);
-									CovEdge e = new CovEdge(this.idToNameTransition.get(i),
-											this.idToNameTransition.get(i), parent, n);
+									CovEdge e = new CovEdge(idToNameTransition.get(i), idToNameTransition.get(i),
+															parent, n);
 									e.setDirected(true);
 
-									// pw.getGraph().moveVertex(n.getVertex(),
-									// i * 10, i * i * 30);
-									// this.covnodes.put(n.getVertex().toString(),
-									// n);
+									// pw.getGraph().moveVertex(n.getVertex(), i * 10, i * i * 30);
+									// this.covnodes.put(n.getVertex().toString(), n);
 									pw.addEdge(e);
 									// e.setVisible(false);
 
-//									System.out
-//											.println("neuer ueberdeckter node: "
-//													+ n.getTokenList());
+									//									System.out.println("neuer ueberdeckter node: " + n.getTokenList());
 									this.computeNode(n);
 									found = true;
 									break;
@@ -259,26 +220,20 @@ public class Cov {
 						if (!found) {
 							CovNode n = new CovNode("label2", "name2", this.numberPlaces);
 							n.setTokenList(tmp);
-
-							// System.out.println("1: " +
-							// parent.getTokenList());
+							// System.out.println("1: " + parent.getTokenList());
 							// System.out.println("2: " + tmp.toString());
 							if (!parent.getTokenList().toString().equals(tmp.toString())) {
 								pw.addVertex(n, new Point(i * 10, i * i * 30));
 								// n.setVisible(false);
-								CovEdge e = new CovEdge(this.idToNameTransition.get(i), this.idToNameTransition.get(i),
-										parent, n);
+								CovEdge e = new CovEdge(idToNameTransition.get(i), idToNameTransition.get(i), parent,
+														n);
 								e.setDirected(true);
 								// this.covnodes.put(n.getVertex().toString(), n);
 								pw.addEdge(e);
 								// e.setVisible(false);
-								// System.out.println("Kante3 von: "
-								// + parent.getTokenList() + "->"
-								// + n.getTokenList());
-								// pw.getGraph().moveVertex(n.getVertex(), i * 10,
-								// i * i * 30);
-								// System.out.println("neuer node, nicht gef. "
-								// + n.getTokenList());
+								// System.out.println("Kante3 von: " + parent.getTokenList() + "->" + n.getTokenList());
+								// pw.getGraph().moveVertex(n.getVertex(), i * 10, i * i * 30);
+								// System.out.println("neuer node, nicht gef. " + n.getTokenList());
 								found = false;
 								this.computeNode(n);
 							}
@@ -296,40 +251,34 @@ public class Cov {
 		this.oldName = GraphInstance.getPathway().getName();
 		// Hashmaps fuer places und transitions
 		Iterator<BiologicalNodeAbstract> hsit = GraphInstance.getPathway().getAllGraphNodes().iterator();
-		BiologicalNodeAbstract bna;
-		// Place p;
 		// System.out.println("vertices:");
 		// numberTransitions = 0;
 		// numberPlaces = 0;
-		Place p;
-		Transition t;
 		while (hsit.hasNext()) {
-			bna = hsit.next();
+			BiologicalNodeAbstract bna = hsit.next();
 			// System.out.println(bna.getVertex());
 			// System.out.println(bna.getClass());
 			if (bna instanceof Transition) {
-				t = (Transition) bna;
-				this.hmtransitions.put(bna, this.numberTransitions);
-				this.idToNameTransition.put(this.numberTransitions, t.getName());
+				Transition t = (Transition) bna;
+				hmTransitions.put(bna, numberTransitions);
+				idToNameTransition.put(numberTransitions, t.getName());
 				// System.out.println("name: "+t.getName());
-				this.numberTransitions++;
+				numberTransitions++;
 			} else {
-				p = (Place) bna;
-				this.idToName.put(this.numberPlaces, p.getName());
-				this.name2id.put(p.getName(), this.numberPlaces);
-				this.idToMax.put(this.numberPlaces, p.getTokenMax());
-				// System.out.println("id: " + this.numberPlaces + " tokenMax: "
-				// + p.getTokenMax());
-				// System.out.println("id: " + this.numberPlaces + " name: "
-				// + p.getName());
-				this.hmplaces.put(bna, this.numberPlaces);
-				this.start.add(p.getTokenStart());
-				this.numberPlaces++;
+				Place p = (Place) bna;
+				idToName.put(numberPlaces, p.getName());
+				name2id.put(p.getName(), numberPlaces);
+				idToMax.put(numberPlaces, p.getTokenMax());
+				// System.out.println("id: " + numberPlaces + " tokenMax: " + p.getTokenMax());
+				// System.out.println("id: " + numberPlaces + " name: " + p.getName());
+				hmPlaces.put(bna, numberPlaces);
+				start.add(p.getTokenStart());
+				numberPlaces++;
 			}
 		}
 
-		double[][] f = VanesaUtility.createMatrix(this.numberPlaces, this.numberTransitions);
-		double[][] b = VanesaUtility.createMatrix(this.numberPlaces, this.numberTransitions);
+		double[][] f = VanesaUtility.createMatrix(numberPlaces, numberTransitions);
+		double[][] b = VanesaUtility.createMatrix(numberPlaces, numberTransitions);
 		// double[][] c = this.initArray(numberPlace, numberTransition);
 
 		// einkommende Kanten (backward matrix)
@@ -346,9 +295,9 @@ public class Cov {
 			// System.out.println(pair.toString());
 
 			// T->P
-			if (this.hmplaces.containsKey(edge.getTo())) {
-				int i = hmplaces.get(edge.getTo());
-				int j = hmtransitions.get(edge.getFrom());
+			if (this.hmPlaces.containsKey(edge.getTo())) {
+				int i = hmPlaces.get(edge.getTo());
+				int j = hmTransitions.get(edge.getFrom());
 				// double eintrag = b[i][j];
 				// eintrag+=
 				// System.out.println(edge.getPassingTokens());
@@ -357,8 +306,8 @@ public class Cov {
 			// P->T
 			else {
 				// System.out.println(pair.getFirst().toString());
-				int i = hmplaces.get(edge.getFrom());
-				int j = hmtransitions.get(edge.getTo());
+				int i = hmPlaces.get(edge.getFrom());
+				int j = hmTransitions.get(edge.getTo());
 				// double eintrag = f[i][j];
 				// eintrag
 				f[i][j] -= edge.getPassingTokens();
@@ -393,101 +342,75 @@ public class Cov {
 	}
 
 	private void getParents(CovNode node) {
-
 		if (!this.containsParent(node)) {
 			this.parents.add(node);
 		}
 		// System.out.println("Vertex: " + node.getVertex().toString());
-
 		Iterator<BiologicalEdgeAbstract> it = pw.getGraph().getJungGraph().getInEdges(node).iterator();
-		CovEdge e;
-		CovNode n;
 		// System.out.println("setsize: " + set.size());
 		while (it.hasNext()) {
-			e = (CovEdge) it.next();
-
-//			n = this.covnodes.get(e.getEndpoints().getFirst().toString());
-			n = (CovNode) e.getFrom();
-			// System.out.println("parent: "
-			// + e.getEndpoints().getFirst().toString() + " "
-			// + n.getLabel());
-
+			CovEdge e = (CovEdge) it.next();
+			//			n = this.covnodes.get(e.getEndpoints().getFirst().toString());
+			CovNode n = (CovNode) e.getFrom();
+			// System.out.println("parent: " + e.getEndpoints().getFirst().toString() + " " + n.getLabel());
 			if (!this.containsParent(n)) {
-				// System.out.println("enthaelt nicht: "
-				// + n.getTokenList().toString());
+				// System.out.println("enthaelt nicht: " + n.getTokenList().toString());
 			} else {
-				// System.out.println("enthaelt schon: "
-				// + n.getTokenList().toString());
+				// System.out.println("enthaelt schon: " + n.getTokenList().toString());
 			}
 			if (!this.containsParent(n)) {
 				this.parents.add(n);
 				this.getParents(n);
 			}
 			// System.out.println(this.parents);
-
 		}
 	}
 
 	private boolean containsParent(CovNode n) {
-		CovNode tmp;
-		for (int i = 0; i < this.parents.size(); i++) {
-			tmp = this.parents.get(i);
-			if (tmp.equals(n))
+		for (CovNode tmp : this.parents) {
+			if (tmp.equals(n)) {
 				return true;
+			}
 		}
-
 		return false;
 	}
 
 	private void paintCoveredNodes() {
-
 		Pathway pwold = GraphInstance.getContainer().getPathway(this.oldName);
 		// System.out.println("oldname: " + pwold.getName());
 		Iterator<BiologicalNodeAbstract> it = pw.getAllGraphNodes().iterator();
 		// this.graphInstance.getContainer().
-		double[] tokens = null;
-		BiologicalNodeAbstract bna = null;
-
 		// Iterator it2 = oldNodes.iterator();
 		/*
 		 * while(it2.hasNext()){ bna = (BiologicalNodeAbstract) it2.next();
 		 * bna.setColor(new Color(255,0,0));
 		 * System.out.println("old label: "+bna.getLabel()); }
 		 */
-		Iterator<BiologicalNodeAbstract> it2;
 		while (it.hasNext()) {
 			CovNode n = (CovNode) it.next();
 			// n.setColor(new Color(255,0,0));
 			CovList l = n.getTokenList();
-			tokens = l.getElements();
-
+			double[] tokens = l.getElements();
 			for (int i = 0; i < tokens.length; i++) {
 				if (tokens[i] == -1.0) {
-					it2 = pwold.getAllGraphNodes().iterator();
-					while (it2.hasNext()) {
-						bna = it2.next();
+					for (final BiologicalNodeAbstract bna : pwold.getAllGraphNodes()) {
 						if (bna.getName().equals(this.idToName.get(i))) {
 							bna.setColor(new Color(255, 0, 0));
-
 							// System.out.println("name: "+bna.getLabel());
 						}
 					}
-
 				}
 			}
-
 		}
 		pwold.getGraph().restartVisualizationModel();
 	}
 
 	private boolean isBoundaryHold(CovList list) {
-
 		// System.out.println("listsize: "+list.getSize());
 		for (int i = 0; i < list.getSize(); i++) {
 			if (list.getElementAt(i) > this.idToMax.get(i) && this.idToMax.get(i) > 0) {
 				// System.out.println("id: "+i);
-				// System.out.println("neu: "+list.getElementAt(i)+" alt:
-				// "+this.idToMax.get(i));
+				// System.out.println("neu: "+list.getElementAt(i)+" alt: "+this.idToMax.get(i));
 				return false;
 			}
 		}
@@ -497,5 +420,4 @@ public class Cov {
 	public String getNewName() {
 		return newName;
 	}
-
 }

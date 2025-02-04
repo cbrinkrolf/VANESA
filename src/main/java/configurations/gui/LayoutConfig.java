@@ -22,7 +22,7 @@ import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import graph.GraphInstance;
-import graph.layouts.gemLayout.GEMLayoutConfigSingleton;
+import graph.layouts.gemLayout.GEMLayoutConfig;
 import graph.layouts.hctLayout.HCTLayoutConfig;
 import graph.layouts.hebLayout.HEBLayoutConfig;
 import gui.MainWindow;
@@ -47,7 +47,7 @@ public class LayoutConfig extends JPanel implements ActionListener {
 		addTab(new ConfigPanel(CircleLayout.class));
 		addTab(HEBLayoutConfig.getInstance());
 		addTab(HCTLayoutConfig.getInstance());
-		addTab(GEMLayoutConfigSingleton.getInstance());
+		addTab(GEMLayoutConfig.getInstance());
 		addTab(new ConfigPanel(FRLayout.class));
 		addTab(new ConfigPanel(KKLayout.class));
 		addTab(new ConfigPanel(SpringLayout.class));

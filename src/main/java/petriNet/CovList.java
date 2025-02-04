@@ -3,55 +3,43 @@ package petriNet;
 import java.util.ArrayList;
 
 public class CovList implements Cloneable {
+	private final double[] tokens;
 
-	private double[] tokens;
-
-	public CovList(int number) {
-		this.tokens = new double[number];
+	public CovList(int count) {
+		tokens = new double[count];
 	}
 
 	public void addTokens(double[] newTokens) {
-		if (this.tokens.length == newTokens.length) {
-			for (int i = 0; i < this.tokens.length; i++) {
-				if (this.tokens[i] != -1) {
-					this.tokens[i] = this.tokens[i] + newTokens[i];
+		if (tokens.length == newTokens.length) {
+			for (int i = 0; i < tokens.length; i++) {
+				if (tokens[i] != -1) {
+					tokens[i] = tokens[i] + newTokens[i];
 				}
 			}
 		}
 	}
 
-	/*
-	 * public boolean isGreater(CovList cl) { int[] clTokens = cl.getElements();
-	 * 
-	 * if (this.tokens.length == clTokens.length) {
-	 * 
-	 * } return false; }
-	 */
-
-	public ArrayList<Integer> getGreaterIndexs(CovList cl) {
-		ArrayList<Integer> list = new ArrayList<Integer>();
-		double[] clTokens = cl.getElements();
-
-		if (this.tokens.length == clTokens.length) {
-			for (int i = 0; i < this.tokens.length; i++) {
-				if ((this.tokens[i] == -1.0 && clTokens[i] != -1.0) || (this.tokens[i] > clTokens[i])) {
+	public ArrayList<Integer> getGreaterIndices(CovList cl) {
+		final ArrayList<Integer> list = new ArrayList<>();
+		final double[] clTokens = cl.getElements();
+		if (tokens.length == clTokens.length) {
+			for (int i = 0; i < tokens.length; i++) {
+				if ((tokens[i] == -1.0 && clTokens[i] != -1.0) || (tokens[i] > clTokens[i])) {
 					list.add(i);
-				} else if ((clTokens[i] == -1.0 && this.tokens[i] != -1.0) || (this.tokens[i] < clTokens[i])) {
-					return new ArrayList<Integer>();
+				} else if ((clTokens[i] == -1.0 && tokens[i] != -1.0) || (tokens[i] < clTokens[i])) {
+					return new ArrayList<>();
 				}
 			}
 		}
-		// System.out.println("groessere Indexe:");
-		// System.out.println(list);
 		return list;
 	}
 
 	public boolean isGreaterEqualCol(double[] values) {
 		boolean greater = false;
-		for (int i = 0; i < this.tokens.length; i++) {
-			if ((this.tokens[i] + values[i] >= 0 || this.tokens[i] == -1)) {
+		for (int i = 0; i < tokens.length; i++) {
+			if ((tokens[i] + values[i] >= 0 || tokens[i] == -1)) {
 				greater = true;
-			} else if (this.tokens[i] + values[i] < 0) {
+			} else if (tokens[i] + values[i] < 0) {
 				return false;
 			}
 		}
@@ -60,26 +48,22 @@ public class CovList implements Cloneable {
 
 	public boolean isGreaterEqual(double[] values) {
 		boolean ge = false;
-		for (int i = 0; i < this.tokens.length; i++) {
-			if ((this.tokens[i] >= values[i] || this.tokens[i] == -1)) {
+		for (int i = 0; i < tokens.length; i++) {
+			if ((tokens[i] >= values[i] || tokens[i] == -1)) {
 				ge = true;
-			} else if (this.tokens[i] < values[i]) {
+			} else if (tokens[i] < values[i]) {
 				return false;
 			}
 		}
 		return ge;
-
 	}
 
 	public boolean isGreater(double[] values) {
 		boolean greater = false;
-		for (int i = 0; i < this.tokens.length; i++) {
-			// System.out.println(this.tokens[i]+ ", " +values[i]);
-			if ((this.tokens[i] == -1.0 && values[i] != -1.0) || (this.tokens[i] > values[i] && values[i] != -1.0)) {
+		for (int i = 0; i < tokens.length; i++) {
+			if ((tokens[i] == -1.0 && values[i] != -1.0) || (tokens[i] > values[i] && values[i] != -1.0)) {
 				greater = true;
-				// System.out.println("groesser");
-			} else if ((values[i] == -1.0 && this.tokens[i] != -1.0) || this.tokens[i] < values[i]) {
-				// System.out.println("kleiner");
+			} else if ((values[i] == -1.0 && tokens[i] != -1.0) || tokens[i] < values[i]) {
 				return false;
 			}
 		}
@@ -87,48 +71,44 @@ public class CovList implements Cloneable {
 	}
 
 	public boolean isEqual(double[] values) {
-		// boolean equal = false;
-		if (values.length == this.tokens.length) {
-			for (int i = 0; i < this.tokens.length; i++) {
-				if (this.tokens[i] != values[i]) {
-					// System.out.println(this.tokens[i] +"!=" + values[i]);
-					return false;
-				}
-			}
-		} else {
-			// System.out.println("laenge unterschiedlich");
+		if (values.length != tokens.length) {
 			return false;
+		}
+		for (int i = 0; i < tokens.length; i++) {
+			if (tokens[i] != values[i]) {
+				return false;
+			}
 		}
 		return true;
 	}
 
 	public double getElementAt(int index) {
-		return this.tokens[index];
+		return tokens[index];
 	}
 
 	public void setElementAt(int index, double value) {
-		this.tokens[index] = value;
+		tokens[index] = value;
 	}
 
 	public double[] getElements() {
-		return this.tokens;
+		return tokens;
 	}
 
 	public void setElements(double[] newElements) {
-		if (this.tokens.length == newElements.length) {
-			this.tokens = newElements;
+		if (tokens.length == newElements.length) {
+			System.arraycopy(newElements, 0, tokens, 0, tokens.length);
 		}
 	}
 
 	public int getSize() {
-		return this.tokens.length;
+		return tokens.length;
 	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[" + this.tokens[0]);
-		for (int i = 1; i < this.tokens.length; i++) {
-			sb.append(", " + this.tokens[i]);
+		sb.append("[").append(tokens[0]);
+		for (int i = 1; i < tokens.length; i++) {
+			sb.append(", ").append(tokens[i]);
 		}
 		sb.append("]");
 		return sb.toString();
@@ -136,8 +116,8 @@ public class CovList implements Cloneable {
 
 	public CovList clone() {
 		try {
-			CovList cl = (CovList) super.clone();
-			cl.setElements(this.tokens.clone());
+			final CovList cl = (CovList) super.clone();
+			cl.setElements(tokens.clone());
 			return cl;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();

@@ -7,7 +7,6 @@ import biologicalObjects.nodes.BiologicalNodeAbstract;
 import graph.jung.graphDrawing.VertexShapes;
 
 public class CovNode extends BiologicalNodeAbstract {
-
 	private CovList tokenList;
 	
 	public CovNode(String label, String name,int numberPlaces) {

@@ -840,15 +840,15 @@ public class MyGraph {
 					map.put(n, getVertexLocation(n));
 				}
 			}
-			changeToLayout(new GEMLayout<>(g, map));
+			changeToLayout(new GEMLayout(g, map));
 			PopUpDialog.getInstance().show("GEMLayout", "GEMLayout was applied on picked nodes only!");
 		} else {
-			changeToLayout(new GEMLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
+			changeToLayout(new GEMLayout(g));
 		}
 	}
 	
 	public void changeToGEMLayout(Map<BiologicalNodeAbstract, Point2D> mapOfStaticNodes){
-		changeToLayout(new GEMLayout<>(g, mapOfStaticNodes));
+		changeToLayout(new GEMLayout(g, mapOfStaticNodes));
 	}
 
 	public void changeToHEBLayout() {
