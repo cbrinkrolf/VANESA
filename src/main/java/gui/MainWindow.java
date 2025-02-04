@@ -1,6 +1,11 @@
 package gui;
 
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
@@ -12,16 +17,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.*;
 
+import io.OpenDialog;
 import io.SuffixAwareFilter;
 import net.infonode.docking.properties.DockingWindowProperties;
+import org.apache.commons.io.FilenameUtils;
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
 import org.jdesktop.jxlayer.plaf.ext.LockableUI;
@@ -205,12 +209,51 @@ public class MainWindow implements ApplicationListener {
 		layer.setUI(blurUI);
 		frame.setContentPane(layer);
 		frame.setVisible(true);
+		initializeDragDrop();
 		try {
 			askForYaml();
 		} catch (FileNotFoundException e1) {
 			System.out.println("askForYaml Method Error");
 			e1.printStackTrace();
 		}
+	}
+
+	private void initializeDragDrop() {
+		new DropTarget(frame, new DropTargetAdapter() {
+			@SuppressWarnings("unchecked")
+			public void drop(final DropTargetDropEvent event) {
+				try {
+					event.acceptDrop(DnDConstants.ACTION_COPY);
+					final List<File> droppedFiles = (List<File>) event.getTransferable().getTransferData(
+							DataFlavor.javaFileListFlavor);
+					for (final File file : droppedFiles) {
+						final String extension = FilenameUtils.getExtension(file.getAbsolutePath()).toLowerCase(
+								Locale.ROOT);
+						switch (extension) {
+							case "graphml":
+								OpenDialog.open(SuffixAwareFilter.GRAPH_ML, file);
+								break;
+							case "vaml":
+								OpenDialog.open(SuffixAwareFilter.VAML, file);
+								break;
+							case "sbml":
+								OpenDialog.open(SuffixAwareFilter.SBML, file);
+								break;
+							case "txt":
+								OpenDialog.open(SuffixAwareFilter.GRAPH_TEXT_FILE, file);
+								break;
+							case "kgml":
+								OpenDialog.open(SuffixAwareFilter.KGML, file);
+								break;
+							case "csv":
+								OpenDialog.open(SuffixAwareFilter.VANESA_SIM_RESULT, file);
+								break;
+						}
+					}
+				} catch (Exception ignored) {
+				}
+			}
+		});
 	}
 
 	public static synchronized MainWindow getInstance() {

@@ -53,7 +53,7 @@ public final class OpenDialog {
 		}
 	}
 
-	private void open(final FileFilter fileFilter, final File file) {
+	public static void open(final FileFilter fileFilter, final File file) {
 		if (fileFilter == null) {
 			return;
 		}
