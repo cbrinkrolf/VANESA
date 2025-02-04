@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
@@ -222,13 +223,17 @@ public class MainWindow implements ApplicationListener {
 		new DropTarget(frame, new DropTargetAdapter() {
 			@SuppressWarnings("unchecked")
 			public void drop(final DropTargetDropEvent event) {
+				event.acceptDrop(DnDConstants.ACTION_COPY);
+				final List<File> droppedFiles;
 				try {
-					event.acceptDrop(DnDConstants.ACTION_COPY);
-					final List<File> droppedFiles = (List<File>) event.getTransferable().getTransferData(
-							DataFlavor.javaFileListFlavor);
-					for (final File file : droppedFiles) {
-						final String extension = FilenameUtils.getExtension(file.getAbsolutePath()).toLowerCase(
-								Locale.ROOT);
+					droppedFiles = (List<File>) event.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+				} catch (UnsupportedFlavorException | IOException ignored) {
+					return;
+				}
+				for (final File file : droppedFiles) {
+					final String extension = FilenameUtils.getExtension(file.getAbsolutePath()).toLowerCase(
+							Locale.ROOT);
+					AsyncTaskExecutor.runUIBlocking("Loading data from file. Please wait a second", () -> {
 						switch (extension) {
 							case "graphml":
 								OpenDialog.open(SuffixAwareFilter.GRAPH_ML, file);
@@ -249,8 +254,7 @@ public class MainWindow implements ApplicationListener {
 								OpenDialog.open(SuffixAwareFilter.VANESA_SIM_RESULT, file);
 								break;
 						}
-					}
-				} catch (Exception ignored) {
+					});
 				}
 			}
 		});
