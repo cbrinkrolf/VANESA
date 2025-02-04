@@ -348,8 +348,14 @@ public class GraphMLReader extends BaseReader<Pathway> {
 			T fallback) {
 		Object value = properties.get(key);
 		if (value != null) {
-			// noinspection unchecked
-			setter.accept((T) value);
+			try {
+				// noinspection unchecked
+				setter.accept((T) value);
+			} catch (Exception ignored) {
+				// Fallback trying to at least store as string
+				// noinspection unchecked
+				setter.accept((T) value.toString());
+			}
 		} else if (fallback != null) {
 			setter.accept(fallback);
 		}
