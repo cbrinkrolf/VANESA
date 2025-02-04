@@ -248,12 +248,6 @@
             <artifactId>jsbml</artifactId>
             <version>1.6.1</version>
         </dependency>
-        <!-- used for GEM Layout calculation -->
-        <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>fastutil-core</artifactId>
-            <version>8.5.15</version>
-        </dependency>
         <dependency>
             <groupId>com.jhlabs</groupId>
             <artifactId>filters</artifactId>

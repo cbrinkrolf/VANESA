@@ -1,19 +1,12 @@
 package graph.layouts.gemLayout;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.graph.Graph;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntArrayPriorityQueue;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 /**
  * Java implementation of the gem 2D layout.
@@ -92,22 +85,22 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 	 */
 	private int bfs(int root) {
 		if (root >= 0) {
-			layoutConfig.q = new IntArrayPriorityQueue();
+			layoutConfig.q = new PriorityQueue<>();
 			if (!layoutConfig.gemProp[root].mark) { // root > 0
 				for (int vi = 0; vi < layoutConfig.nodeCount; vi++) {
 					layoutConfig.gemProp[vi].in = 0;
 				}
 			} else
 				layoutConfig.gemProp[root].mark = true; // root = -root;
-			layoutConfig.q.enqueue(root);
+			layoutConfig.q.add(root);
 			layoutConfig.gemProp[root].in = 1;
 		}
 		if (layoutConfig.q.isEmpty())
 			return -1; // null
-		int v = layoutConfig.q.dequeueInt();
+		int v = layoutConfig.q.poll();
 		for (int ui : layoutConfig.adjacent.get(v)) {
 			if (layoutConfig.gemProp[ui].in != 0) {
-				layoutConfig.q.enqueue(ui);
+				layoutConfig.q.add(ui);
 				layoutConfig.gemProp[ui].in = layoutConfig.gemProp[v].in + 1;
 			}
 		}
@@ -406,8 +399,8 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 
 		for (BiologicalEdgeAbstract e : edges) {
 			// Pair ends = e.getEndpoints();
-			int u = layoutConfig.nodeNumbers.getInt(graph.getEndpoints(e).getFirst());
-			int w = layoutConfig.nodeNumbers.getInt(graph.getEndpoints(e).getSecond());
+			int u = layoutConfig.nodeNumbers.get(graph.getEndpoints(e).getFirst());
+			int w = layoutConfig.nodeNumbers.get(graph.getEndpoints(e).getSecond());
 			if (u != v && w != v) {
 				GemP up = layoutConfig.gemProp[u];
 				GemP wp = layoutConfig.gemProp[w];
@@ -523,7 +516,6 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 	 * Normal bubble like GEM layout.
 	 */
 	private void runNormal() {
-
 		nodes = graph.getVertices();
 
 		edges = graph.getEdges();
@@ -534,8 +526,8 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 
 		layoutConfig.gemProp = new GemP[layoutConfig.nodeCount];
 		layoutConfig.invmap = new BiologicalNodeAbstract[layoutConfig.nodeCount];
-		layoutConfig.adjacent = new Int2ObjectOpenHashMap<>(layoutConfig.nodeCount);
-		layoutConfig.nodeNumbers = new Object2IntOpenHashMap<>();
+		layoutConfig.adjacent = new HashMap<>(layoutConfig.nodeCount);
+		layoutConfig.nodeNumbers = new HashMap<>();
 
 		// initialize node lists and gemProp
 		Iterator<BiologicalNodeAbstract> nodeSet = nodes.iterator();
@@ -571,7 +563,7 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 			Collection<BiologicalNodeAbstract> neighbors = getNeighbours(layoutConfig.invmap[i]);
 			layoutConfig.adjacent.put(i, new ArrayList<>(neighbors.size()));
 			for (BiologicalNodeAbstract n : neighbors) {
-				layoutConfig.adjacent.get(i).add(layoutConfig.nodeNumbers.getInt(n));
+				layoutConfig.adjacent.get(i).add(layoutConfig.nodeNumbers.get(n));
 			}
 		}
 

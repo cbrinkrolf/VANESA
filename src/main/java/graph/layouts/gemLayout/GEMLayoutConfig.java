@@ -2,6 +2,8 @@ package graph.layouts.gemLayout;
 
 import java.awt.GridLayout;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 import javax.swing.BorderFactory;
@@ -13,9 +15,6 @@ import javax.swing.event.ChangeListener;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.gui.ConfigPanel;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.ints.IntArrayPriorityQueue;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 	private static final long serialVersionUID = 1L;
@@ -77,10 +76,10 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 	public BiologicalNodeAbstract[] invmap;
 
 	// adjacent int ids for a given Vertex int id
-	public Int2ObjectOpenHashMap<List<Integer>> adjacent;
+	public Map<Integer, List<Integer>> adjacent;
 
 	// map from Vertex to int id
-	public Object2IntOpenHashMap<BiologicalNodeAbstract> nodeNumbers;
+	public Map<BiologicalNodeAbstract, Integer> nodeNumbers;
 
 	// randomizer used for node selection
 	public Random rand = new Random();
@@ -89,7 +88,7 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 	public int[] map;
 
 	// priority queue for BFS
-	public IntArrayPriorityQueue q;
+	public PriorityQueue<Integer> q;
 
 	public JSlider sliderEdgeLength;
 	public JSlider sliderIMaxIter = null;

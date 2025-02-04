@@ -851,6 +851,10 @@ public abstract class BiologicalNodeAbstract extends Pathway implements GraphEle
 		this.discrete = discrete;
 	}
 
+	/**
+	 * Whether this node is constant in terms of tokens for Places or concentrations in a biological network.
+	 * TODO: used for tokenMin and tokenMax but not for token and concentrations. Evaluate status!
+	 */
 	public boolean isConstant() {
 		return constant;
 	}
