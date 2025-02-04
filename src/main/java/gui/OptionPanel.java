@@ -7,6 +7,7 @@ import javax.swing.*;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
+import configurations.SettingsManager;
 import database.gui.DatabaseWindow;
 import gui.optionPanelWindows.BuildingBlocks;
 import gui.optionPanelWindows.ElementTree;
@@ -138,7 +139,7 @@ public class OptionPanel {
 		taskPaneContainer.add(bbProperties, "growx");
 		taskPaneContainer.add(pathways, "growx");
 		// taskPaneContainer.add(dbProperties);
-		if (MainWindow.developer) {
+		if (SettingsManager.getInstance().isDeveloperMode()) {
 //			taskPaneContainer.add(heatgraphProperties, "growx");
 			taskPaneContainer.add(project, "growx");
 			// taskPaneContainer.add(alignment);

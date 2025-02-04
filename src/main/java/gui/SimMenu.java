@@ -192,7 +192,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		advancedOptions.setToolTipText("Show advanced simulation options");
 		advancedOptions.addActionListener(this);
 
-		if (MainWindow.developer) {
+		if (SettingsManager.getInstance().isDeveloperMode()) {
 			advancedOptions.setSelected(true);
 		}
 

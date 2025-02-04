@@ -74,9 +74,6 @@ public class MainWindow implements ApplicationListener {
 	private List<Bean> beansList = new ArrayList<>();
 	private String loadedYaml = null;
 
-	// global constants
-	public static boolean developer;
-
 	private final LockableUI blurUI = new LockableUI(new BufferedImageOpEffect(new BlurFilter()));
 	private final JSplitPane splitPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
@@ -93,7 +90,6 @@ public class MainWindow implements ApplicationListener {
 
 	private MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
-		developer = SettingsManager.getInstance().isDeveloperMode();
 		// try {
 		// SubstanceBusinessBlueSteelLookAndFeel lf = new SubstanceBusinessBlueSteelLookAndFeel();
 		// lf.setSkin("");
@@ -109,7 +105,7 @@ public class MainWindow implements ApplicationListener {
 		// SwingUtilities.updateComponentTreeUI(this);
 
 		String title = "VANESA 2.0 - Visualization and Analysis of Networks in Systems Biology Applications";
-		if (developer) {
+		if (SettingsManager.getInstance().isDeveloperMode()) {
 			title += " (developer mode)";
 		}
 		

@@ -26,6 +26,7 @@ import org.jdesktop.swingx.JXTable;
 
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract.NodeAttribute;
+import configurations.SettingsManager;
 import graph.GraphInstance;
 import graph.algorithms.NodeAttributeType;
 import graph.algorithms.gui.smacof.DoSmacof;
@@ -227,7 +228,7 @@ public class SmacofView extends JFrame implements ActionListener {
 		panelparam.add(sliderresultdim, "wrap");
 
 		// enable remote computation only on dev mode
-		if (MainWindow.developer) {
+		if (SettingsManager.getInstance().isDeveloperMode()) {
 			panelparam.add(startcomputationbutton, "");
 			panelparam.add(stopcomputationbutton, "");
 		} else {

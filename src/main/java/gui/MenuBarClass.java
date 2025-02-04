@@ -11,6 +11,7 @@ import javax.swing.KeyStroke;
 
 import org.simplericity.macify.eawt.Application;
 
+import configurations.SettingsManager;
 import graph.GraphInstance;
 import gui.eventhandlers.MenuActionCommands;
 import gui.eventhandlers.MenuListener;
@@ -266,7 +267,7 @@ public class MenuBarClass {
 		ruleManager.setActionCommand(MenuActionCommands.ruleManager.value);
 
 		String label;
-		if (MainWindow.developer) {
+		if (SettingsManager.getInstance().isDeveloperMode()) {
 			label = "Next launch: normal mode";
 		} else {
 			label = "Next launch: developer mode";
@@ -299,16 +300,11 @@ public class MenuBarClass {
 
 		file.add(newNetwork);
 		file.add(openNetwork);
-		// file.add(sessionID);
-		if (MainWindow.developer) {
-			// file.add(openEdal);
-		}
+		
 		file.add(new JSeparator());
 		file.add(saveNetwork);
 		file.add(saveNetworkAs);
-		if (MainWindow.developer) {
-			// file.add(saveEdal);
-		}
+		
 		file.add(savePicture);
 		file.add(export);
 		/*
@@ -341,7 +337,7 @@ public class MenuBarClass {
 		graph.add(generateGraph);
 		//graph.add(phosphoImport);
 
-		if (MainWindow.developer) {
+		if (SettingsManager.getInstance().isDeveloperMode()) {
 			graph.add(enrichGene);
 			graph.add(enrichMirna);
 			graph.add(shake);

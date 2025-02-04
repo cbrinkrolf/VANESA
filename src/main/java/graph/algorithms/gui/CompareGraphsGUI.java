@@ -18,6 +18,7 @@ import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 
 import biologicalElements.Pathway;
+import configurations.SettingsManager;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import graph.GraphContainer;
 import graph.algorithms.CompareGraphs;
@@ -59,7 +60,7 @@ public class CompareGraphsGUI implements ActionListener, ItemListener {
 		// JButton heatmap = new JButton("heatmap");
 		// JButton compare3d = new JButton("compare 3D");
 
-		if (MainWindow.developer) {
+		if (SettingsManager.getInstance().isDeveloperMode()) {
 			buttons = new JButton[] { exit, compare, merge, reset };
 		} else {
 			buttons = new JButton[] { exit, compare, merge, reset };

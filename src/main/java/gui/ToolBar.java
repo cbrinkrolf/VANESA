@@ -11,6 +11,7 @@ import javax.swing.*;
 import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
+import configurations.SettingsManager;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import graph.GraphContainer;
 import graph.GraphInstance;
@@ -24,7 +25,6 @@ import petriNet.ReachController;
 public class ToolBar {
 	private final JToolBar bar = new JToolBar();
     private final JButton merge;
-    private final JButton parallelView;
 	private final JButton edit;
 	private final JPanel petriNetControls;
 	private final JPanel editControls;
@@ -55,7 +55,7 @@ public class ToolBar {
 		bar.setLayout(bl);
 
 		final JButton newDoc = new NewDocumentToolBarButton();
-		parallelView = createToolBarButton("parallelview.png", "Create ParallelView From Graphs",
+		final JButton parallelView = createToolBarButton("parallelview.png", "Create ParallelView From Graphs",
 										   this::onParallelViewClicked);
 		final JButton pick = createToolBarButton("newPick.png", "Pick Element", this::onPickClicked);
 		final JButton hierarchy = createToolBarButton("hierarchy_button.png", "Hierarchy Mode",
@@ -117,7 +117,7 @@ public class ToolBar {
 		infoPanel.add(coarseSelectedNodes);
 		infoPanel.add(flatSelectedNodes);
 		infoPanel.add(enterSelectedNode);
-		if (MainWindow.developer) {
+		if (SettingsManager.getInstance().isDeveloperMode()) {
 			infoPanel.add(autoCoarse);
 		}
 		infoPanel.add(groupSelectedNodes);
@@ -180,7 +180,7 @@ public class ToolBar {
 		featureControls = new ToolBarPanel();
 		featureControls.setLayout(new GridLayout(1, 3, 4, 4));
 		featureControls.add(merge);
-		if (MainWindow.developer) {
+		if (SettingsManager.getInstance().isDeveloperMode()) {
 			// featureControls.add(heatmap);
 			featureControls.add(parallelView);
 		}
@@ -291,7 +291,7 @@ public class ToolBar {
 			edit.setEnabled(!petriNetView);
 			merge.setEnabled(!petriNetView);
 			// heatmap.setEnabled(!petriNetView);
-			parallelView.setEnabled(!petriNetView);
+			//parallelView.setEnabled(!petriNetView);
 
 			final MyGraph graph = pathway.getGraph(false);
 			if (graph != null) {
