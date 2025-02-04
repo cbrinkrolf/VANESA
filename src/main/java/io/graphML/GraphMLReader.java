@@ -75,7 +75,18 @@ public class GraphMLReader extends BaseReader<Pathway> {
 					readNode(reader, element, nodePropertyTypes, pw, vertexIdMap, nodeIdMap);
 				} else if ("edge".equals(key)) {
 					readEdge(reader, element, edgePropertyTypes, pw, vertexIdMap, edgeIdMap, nodeIdMap);
+				} else if ("graph".equals(key)) {
+					final String typeAttribute = getElementAttribute(element, "type");
+					if ("petrinet".equalsIgnoreCase(typeAttribute)) {
+						pw.setIsPetriNet(true);
+					}
 				}
+			}
+		}
+		for (final BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
+			if (node instanceof PNNode) {
+				pw.setIsPetriNet(true);
+				break;
 			}
 		}
 		pw.getGraph().restartVisualizationModel();

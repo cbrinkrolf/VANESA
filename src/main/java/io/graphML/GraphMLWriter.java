@@ -67,6 +67,9 @@ public class GraphMLWriter extends BaseWriter<Pathway> {
         writer.writeStartElement("graph");
         writer.writeAttribute("id", "G");
         writer.writeAttribute("edgedefault", "directed");
+        if (graph.isPetriNet()) {
+            writer.writeAttribute("type", "petrinet");
+        }
         for (final Map.Entry<BiologicalNodeAbstract, Point2D> bna : graph.getVertices().entrySet())
             writeNode(writer, bna.getKey(), bna.getValue(), nodeProperties);
         for (final BiologicalEdgeAbstract bea : graph.getEdges())
