@@ -1,6 +1,7 @@
 package gui;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
@@ -8,6 +9,7 @@ import org.mediavirus.parvis.gui.MainFrame;
 
 import biologicalElements.Pathway;
 import graph.algorithms.NetworkProperties;
+import util.VanesaUtility;
 
 public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 
@@ -46,10 +48,11 @@ public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 		}
 
 		// WRITE TO LOCAL FILE
-
+		String filename = "paralleldata.stf";
+		File file = VanesaUtility.getWorkingDirectoryPath().resolve(filename).toFile();
 		try {
 			// Create file
-			FileWriter fstream = new FileWriter("paralleldata.stf");
+			FileWriter fstream = new FileWriter(file);
 			BufferedWriter out = new BufferedWriter(fstream);
 			out.write(data);
 			// Close the output stream
@@ -63,10 +66,6 @@ public class ParallelChooseGraphsWindow extends ChooseGraphsWindow {
 		MainFrame m = new MainFrame();
 		m.setVisible(true);
 
-		String filename = "paralleldata.stf";
-
-		String curDir = System.getProperty("user.dir");
-		m.loadNewFile("file:" + curDir + "/" + filename);
-
+		m.loadNewFile("file:"+file.getAbsolutePath());
 	}
 }
