@@ -1,4 +1,4 @@
-package gui;
+package gui.annotation;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -8,6 +8,8 @@ import edu.uci.ics.jung.visualization.annotations.AnnotatingModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import graph.GraphInstance;
 import graph.eventhandlers.MyAnnotatingGraphMousePlugin;
+import gui.ImagePath;
+import gui.MainWindow;
 import util.MyColorChooser;
 
 import javax.swing.*;

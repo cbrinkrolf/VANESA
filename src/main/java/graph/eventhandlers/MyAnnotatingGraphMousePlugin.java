@@ -16,7 +16,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.annotations.AnnotatingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
 import graph.GraphInstance;
-import gui.AnnotationPainter;
+import gui.annotation.AnnotationPainter;
 import gui.annotation.MyAnnotation;
 import gui.annotation.MyAnnotationManager;
 

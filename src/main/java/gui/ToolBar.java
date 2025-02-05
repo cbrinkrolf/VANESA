@@ -18,6 +18,7 @@ import graph.GraphInstance;
 import graph.algorithms.gui.CompareGraphsGUI;
 import graph.hierarchies.AutoCoarse;
 import graph.jung.classes.MyGraph;
+import gui.annotation.AnnotationPainter;
 import net.miginfocom.swing.MigLayout;
 import petriNet.PNTableDialog;
 import petriNet.ReachController;

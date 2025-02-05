@@ -2,9 +2,10 @@ package gui.annotation;
 
 import java.awt.geom.RectangularShape;
 
+import biologicalElements.GraphicalElement;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
 
-public class MyAnnotation {
+public class MyAnnotation extends GraphicalElement {
     private final RectangularShape shape;
     private Annotation<?> a;
     private final String text;
