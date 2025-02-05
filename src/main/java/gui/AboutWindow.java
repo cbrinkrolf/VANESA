@@ -2,18 +2,20 @@ package gui;
 
 import javax.swing.JOptionPane;
 
+import util.VanesaUtility;
+
 public class AboutWindow {
 	public AboutWindow(){
 		// Get current size of heap in bytes.
-		long heapSize = (Runtime.getRuntime().totalMemory())/1024/1024;
+		long heapSize = Runtime.getRuntime().totalMemory();
 
 		// Get maximum size of heap in bytes. The heap cannot grow beyond this size.
 		// Any attempt will result in an OutOfMemoryException.
-		long heapMaxSize = (Runtime.getRuntime().maxMemory())/1024/1024;
+		long heapMaxSize = Runtime.getRuntime().maxMemory();
 
 		// Get amount of free memory within the heap in bytes. This size will 
 		// increase after garbage collection and decrease as new objects are created.
-		long heapFreeSize = (Runtime.getRuntime().freeMemory())/1024/1024;
+		long heapFreeSize = Runtime.getRuntime().freeMemory();
 				
 		String instructions =
 	        "<html>"+
@@ -23,9 +25,9 @@ public class AboutWindow {
 	        +"For further details, please visit the VANESA GitHub website: https://github.com/cbrinkrolf/VANESA/<p>"+
 	        "or get in touch with the Bioinformatics Department.<p><p>"
 	        +"Memory overview<br>"
-	        +"Size of current memory usage: "+heapSize+"MB<br>"
-	        +"Size of maximum memory: " + heapMaxSize+"MB<br>"
-	        +"Size of free memory: "+heapFreeSize+"MB<br>"
+	        +"Size of current memory usage: "+VanesaUtility.formatSize(heapSize)+"<br>"
+	        +"Size of maximum memory: " + VanesaUtility.formatSize(heapMaxSize)+"<br>"
+	        +"Size of free memory: "+VanesaUtility.formatSize(heapFreeSize)+"<br>"
 	        +"<p><p>Contact Details<p><p>"
 
 	        +"Christoph Brinkrolf mailto:cbrinkro@gmail.com<p>"
