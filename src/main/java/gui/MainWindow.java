@@ -175,14 +175,26 @@ public class MainWindow implements ApplicationListener {
 
 		// option panels on the left
 		optionPanel = new OptionPanel();
+		final ComponentAdapter optionPanelResizeListener = new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				final int lastFullWidth = optionPanel.getLastFullWidth();
+				final int fullWidth = optionPanel.getFullWidth();
+				if (lastFullWidth != -1) {
+					if (lastFullWidth == splitPanel.getDividerLocation()) {
+						splitPanel.setDividerLocation(fullWidth);
+					}
+				}
+				limitSplitDivider();
+			}
+		};
+		optionPanel.getContentPanel().addComponentListener(optionPanelResizeListener);
+		optionPanel.getPanel().addComponentListener(optionPanelResizeListener);
 		optionPanel.getPanel().getVerticalScrollBar().addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentHidden(ComponentEvent e) {
 				if (!optionPanel.getPanel().getVerticalScrollBar().isShowing()) {
-					int dividerMaxLocation = (int) optionPanel.getPanel().getPreferredSize().getWidth();
-					if (splitPanel.getDividerLocation() > dividerMaxLocation) {
-						splitPanel.setDividerLocation(dividerMaxLocation);
-					}
+					limitSplitDivider();
 				}
 			}
 		});
@@ -190,15 +202,9 @@ public class MainWindow implements ApplicationListener {
 		addView();
 		splitPanel.setOneTouchExpandable(false);
 		splitPanel.addPropertyChangeListener(evt -> {
-			final String prop_name = evt.getPropertyName();
-			if (prop_name.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY) ||
-				prop_name.equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
-				boolean isScrollBarVisible = optionPanel.getPanel().getVerticalScrollBar().isShowing();
-				int dividerMaxLocation = (int) optionPanel.getPanel().getPreferredSize().getWidth() +
-										 (isScrollBarVisible ? UIManager.getInt("ScrollBar.width") : 0);
-				if (splitPanel.getDividerLocation() > dividerMaxLocation) {
-					splitPanel.setDividerLocation(dividerMaxLocation);
-				}
+			if (evt.getPropertyName().equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY) ||
+				evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
+				limitSplitDivider();
 			}
 		});
 		root.add(splitPanel, BorderLayout.CENTER);
@@ -212,6 +218,13 @@ public class MainWindow implements ApplicationListener {
 		} catch (FileNotFoundException e1) {
 			System.out.println("askForYaml Method Error");
 			e1.printStackTrace();
+		}
+	}
+
+	private void limitSplitDivider() {
+		final int dividerMaxLocation = optionPanel.getFullWidth();
+		if (splitPanel.getDividerLocation() > dividerMaxLocation) {
+			splitPanel.setDividerLocation(dividerMaxLocation);
 		}
 	}
 
@@ -400,6 +413,8 @@ public class MainWindow implements ApplicationListener {
 				setSelectedView(views.get(views.keySet().iterator().next()));
 			}
 		}
+
+		limitSplitDivider();
 	}
 
 	public void addTab(TitledTab tab) {
@@ -489,6 +504,7 @@ public class MainWindow implements ApplicationListener {
 		if (isLastTabOfView) {
 			bar.updateVisibility();
 		}
+		limitSplitDivider();
 	}
 
 	public void setSelectedTab(TitledTab tab) {

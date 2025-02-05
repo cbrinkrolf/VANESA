@@ -22,6 +22,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class OptionPanel {
     private final JScrollPane scrollPane;
+    private final JPanel panel;
 	private final DatabaseWindow databaseWindow;
 	private final ElementTree tree;
 	private final SimulationResultsPlot simResWindow;
@@ -45,6 +46,7 @@ public class OptionPanel {
 	private final JXTaskPane pathwayProperties;
 
 	private boolean updatePanels = true;
+	private int lastFullWidth = -1;
 
 	private final JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
 
@@ -149,16 +151,20 @@ public class OptionPanel {
 		}
 
 		taskPaneContainer.setScrollableTracksViewportHeight(true);
-        final JPanel p = new JPanel(new MigLayout("insets 0"));
-        p.add(taskPaneContainer, BorderLayout.CENTER);
+		panel = new JPanel(new MigLayout("insets 0"));
+		panel.add(taskPaneContainer, BorderLayout.CENTER);
 		taskPaneContainer.setDoubleBuffered(true);
 
-		scrollPane = new JScrollPane(p);
+		scrollPane = new JScrollPane(panel);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 	}
 
 	public JScrollPane getPanel() {
 		return scrollPane;
+	}
+
+	public JPanel getContentPanel() {
+		return panel;
 	}
 
 	public void removeAllElements() {
@@ -238,5 +244,18 @@ public class OptionPanel {
 	
 	public void redrawTokens(){
 		elementWindow.redrawTokens();
+	}
+
+	public int getFullWidth() {
+		if (scrollPane.getVerticalScrollBar().isShowing()) {
+			lastFullWidth = (int) scrollPane.getPreferredSize().getWidth() + UIManager.getInt("ScrollBar.width");
+		} else {
+			lastFullWidth = (int) scrollPane.getPreferredSize().getWidth();
+		}
+		return lastFullWidth;
+	}
+
+	public int getLastFullWidth() {
+		return lastFullWidth;
 	}
 }
