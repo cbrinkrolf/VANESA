@@ -4,6 +4,17 @@ import javax.swing.JOptionPane;
 
 public class AboutWindow {
 	public AboutWindow(){
+		// Get current size of heap in bytes.
+		long heapSize = (Runtime.getRuntime().totalMemory())/1024/1024;
+
+		// Get maximum size of heap in bytes. The heap cannot grow beyond this size.
+		// Any attempt will result in an OutOfMemoryException.
+		long heapMaxSize = (Runtime.getRuntime().maxMemory())/1024/1024;
+
+		// Get amount of free memory within the heap in bytes. This size will 
+		// increase after garbage collection and decrease as new objects are created.
+		long heapFreeSize = (Runtime.getRuntime().freeMemory())/1024/1024;
+				
 		String instructions =
 	        "<html>"+
 	        "<h3>About</h3>"+
@@ -11,9 +22,13 @@ public class AboutWindow {
 	        +"It is developed at Bielefeld University (Germany).<p>"
 	        +"For further details, please visit the VANESA GitHub website: https://github.com/cbrinkrolf/VANESA/<p>"+
 	        "or get in touch with the Bioinformatics Department.<p><p>"
-	        +"Contact Details<p><p>"
+	        +"Memory overview<br>"
+	        +"Size of current memory usage: "+heapSize+"MB<br>"
+	        +"Size of maximum memory: " + heapMaxSize+"MB<br>"
+	        +"Size of free memory: "+heapFreeSize+"MB<br>"
+	        +"<p><p>Contact Details<p><p>"
 
-	        +"Christoph Brinkrolf mailto:christoph.brinkrolf@uni-bielefeld.de<p>"
+	        +"Christoph Brinkrolf mailto:cbrinkro@gmail.com<p>"
 	        +"Benjamin Kormeier mailto:bkormeie@techfak.uni-bielefeld.de<p><p>"
 
 	        +"Bielefeld University<p>"
