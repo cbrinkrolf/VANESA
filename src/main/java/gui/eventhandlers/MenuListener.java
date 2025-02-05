@@ -42,9 +42,6 @@ import biologicalObjects.nodes.DynamicNode;
 import biologicalObjects.nodes.Enzyme;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.Transition;
-import cern.colt.list.IntArrayList;
-import cern.colt.matrix.impl.DenseDoubleMatrix1D;
-import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import configurations.ProgramFileLock;
 import configurations.SettingsManager;
 import configurations.gui.LayoutConfig;
@@ -109,7 +106,7 @@ public class MenuListener implements ActionListener {
 
 	private final JLabel reachable = new JLabel();
 
-	private DenseDoubleMatrix2D c;
+	private DoubleMatrix c;
 
 	private int places = 0;
 	private int transitions = 0;
@@ -611,15 +608,12 @@ public class MenuListener implements ActionListener {
 		for (int i = 0; i < places; i++) {
 			vd[i] = Double.parseDouble(rI[i + 1][1].toString());
 		}
-		DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
-		DenseDoubleMatrix1D x = new DenseDoubleMatrix1D(c.columns());
-		c.zMult(v, x, 1, 0, true);
-		IntArrayList l = new IntArrayList();
-		x.getNonZeros(l, null);
-		boolean validInvariant = false;
-		if (l.isEmpty()) {
+		DoubleVector v = new DoubleVector(vd);
+		DoubleVector x = new DoubleVector(c.columns);
+		c.viewDice().multiply(v, x);
+		boolean validInvariant = !x.hasNonZeroValue();
+		if (validInvariant) {
 			// reachable.setText("This vector is a valid Invariante");
-			validInvariant = true;
 		} else {
 			reachable.setText("no valid p-invariant");
 		}
@@ -636,11 +630,11 @@ public class MenuListener implements ActionListener {
 				target[i] = Double.parseDouble(rP[i + 1][1].toString());
 			}
 			// start-marking
-			DenseDoubleMatrix1D sv = new DenseDoubleMatrix1D(s);
+			DoubleVector sv = new DoubleVector(s);
 			// target marking
-			DenseDoubleMatrix1D tv = new DenseDoubleMatrix1D(target);
-			double erg1 = v.zDotProduct(sv, 0, v.size());
-			double erg2 = v.zDotProduct(tv, 0, v.size());
+			DoubleVector tv = new DoubleVector(target);
+			double erg1 = v.dotProduct(sv);
+			double erg2 = v.dotProduct(tv);
 			if (erg1 != erg2) {
 				reachable.setText("not reachable");
 			} else {
@@ -744,12 +738,11 @@ public class MenuListener implements ActionListener {
 		for (int i = 0; i < transitions; i++) {
 			vd[i] = Double.parseDouble(rT[i][1].toString());
 		}
-		DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
-		DenseDoubleMatrix1D x = new DenseDoubleMatrix1D(c.rows());
-		c.zMult(v, x, 1, 0, false);
-		IntArrayList l = new IntArrayList();
-		x.getNonZeros(l, null);
-		if (l.isEmpty()) {
+		DoubleVector v = new DoubleVector(vd);
+		DoubleVector x = new DoubleVector(c.rows);
+		c.multiply(v, x);
+		boolean validInvariant = !x.hasNonZeroValue();
+		if (validInvariant) {
 			invariant.setText("This vector is a valid invariant");
 		} else {
 			invariant.setText("This vector is not a valid invariant");
@@ -767,12 +760,11 @@ public class MenuListener implements ActionListener {
 		for (int i = 0; i < places; i++) {
 			vd[i] = Double.parseDouble(rP[i][1].toString());
 		}
-		DenseDoubleMatrix1D v = new DenseDoubleMatrix1D(vd);
-		DenseDoubleMatrix1D x = new DenseDoubleMatrix1D(c.columns());
-		c.zMult(v, x, 1, 0, true);
-		IntArrayList l = new IntArrayList();
-		x.getNonZeros(l, null);
-		if (l.isEmpty()) {
+		DoubleVector v = new DoubleVector(vd);
+		DoubleVector x = new DoubleVector(c.columns);
+		c.viewDice().multiply(v, x);
+		boolean validInvariant = !x.hasNonZeroValue();
+		if (validInvariant) {
 			invariant.setText("This vector is a valid invariant");
 		} else {
 			invariant.setText("This vector is not a valid invariant");
@@ -1028,6 +1020,78 @@ public class MenuListener implements ActionListener {
 				VanesaUtility.createMatrix(numberPlaces, numberTransitions));
 		cMatrix.add(bMatrix);
 		cMatrix.add(fMatrix);
-		c = new DenseDoubleMatrix2D(cMatrix.getData());
+		c = new DoubleMatrix(cMatrix.getData());
+	}
+
+	static class DoubleVector {
+		private final double[] elements;
+
+		public DoubleVector(int size) {
+			elements = new double[size];
+		}
+
+		public DoubleVector(double[] elements) {
+			this.elements = new double[elements.length];
+			System.arraycopy(elements, 0, this.elements, 0, elements.length);
+		}
+
+		public boolean hasNonZeroValue() {
+			for (int i = 0; i < elements.length; i++) {
+				if (elements[i] != 0d) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public double dotProduct(DoubleVector other) {
+			double sum = 0;
+			for (int i = 0; i < elements.length; i++) {
+				sum += elements[i] * other.elements[i];
+			}
+			return sum;
+		}
+	}
+
+	static class DoubleMatrix {
+		private final double[] elements;
+		public final int rows;
+		public final int columns;
+
+		public DoubleMatrix(double[] elements, int rows, int columns) {
+			this.elements = elements;
+			this.rows = rows;
+			this.columns = columns;
+		}
+
+		public DoubleMatrix(double[][] elements) {
+			rows = elements.length;
+			columns = elements.length == 0 ? 0 : elements[0].length;
+			this.elements = new double[rows * columns];
+			for (int i = 0; i < rows; i++) {
+				System.arraycopy(elements[i], 0, this.elements, i * columns, columns);
+			}
+		}
+
+		public void multiply(DoubleVector other, DoubleVector output) {
+			int indexA = 0;
+			int indexY = 0;
+			int outputIndex = 0;
+			for (int row = rows; --row >= 0;) {
+				double sum = 0;
+				for (int i = indexA, j = indexY, column = columns; --column >= 0;) {
+					sum += elements[i] * other.elements[j];
+					i++;
+					j++;
+				}
+				output.elements[outputIndex] = sum;
+				indexA += columns;
+				outputIndex++;
+			}
+		}
+
+		public DoubleMatrix viewDice() {
+			return new DoubleMatrix(elements, columns, rows);
+		}
 	}
 }
