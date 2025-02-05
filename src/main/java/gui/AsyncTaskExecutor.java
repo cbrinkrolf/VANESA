@@ -9,10 +9,7 @@ public final class AsyncTaskExecutor {
 
 	public static void runUIBlocking(String label, Runnable body, Runnable complete) {
 		MainWindow.getInstance().showProgressBar(label);
-		CompletableFuture.runAsync(() -> {
-			body.run();
-			MainWindow.getInstance().closeProgressBar();
-		}).exceptionally(t -> {
+		CompletableFuture.runAsync(body).exceptionally(t -> {
 			t.printStackTrace();
 			MainWindow.getInstance().closeProgressBar();
 			PopUpDialog.getInstance().show("Task Executor error.",

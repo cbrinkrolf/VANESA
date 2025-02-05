@@ -229,28 +229,26 @@ public class MainWindow implements ApplicationListener {
 				for (final File file : droppedFiles) {
 					final String extension = FilenameUtils.getExtension(file.getAbsolutePath()).toLowerCase(
 							Locale.ROOT);
-					AsyncTaskExecutor.runUIBlocking("Loading data from file. Please wait a second", () -> {
-						switch (extension) {
-							case "graphml":
-								OpenDialog.open(SuffixAwareFilter.GRAPH_ML, file);
-								break;
-							case "vaml":
-								OpenDialog.open(SuffixAwareFilter.VAML, file);
-								break;
-							case "sbml":
-								OpenDialog.open(SuffixAwareFilter.SBML, file);
-								break;
-							case "txt":
-								OpenDialog.open(SuffixAwareFilter.GRAPH_TEXT_FILE, file);
-								break;
-							case "kgml":
-								OpenDialog.open(SuffixAwareFilter.KGML, file);
-								break;
-							case "csv":
-								OpenDialog.open(SuffixAwareFilter.VANESA_SIM_RESULT, file);
-								break;
-						}
-					});
+					switch (extension) {
+						case "graphml":
+							OpenDialog.openUIBlocking(SuffixAwareFilter.GRAPH_ML, file);
+							break;
+						case "vaml":
+							OpenDialog.openUIBlocking(SuffixAwareFilter.VAML, file);
+							break;
+						case "sbml":
+							OpenDialog.openUIBlocking(SuffixAwareFilter.SBML, file);
+							break;
+						case "txt":
+							OpenDialog.openUIBlocking(SuffixAwareFilter.GRAPH_TEXT_FILE, file);
+							break;
+						case "kgml":
+							OpenDialog.openUIBlocking(SuffixAwareFilter.KGML, file);
+							break;
+						case "csv":
+							OpenDialog.openUIBlocking(SuffixAwareFilter.VANESA_SIM_RESULT, file);
+							break;
+					}
 				}
 			}
 		});

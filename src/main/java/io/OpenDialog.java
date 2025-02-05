@@ -45,22 +45,24 @@ public final class OpenDialog {
 		int option = chooser.showOpenDialog(MainWindow.getInstance().getFrame());
 		if (option == JFileChooser.APPROVE_OPTION) {
 			SettingsManager.getInstance().setFileOpenDirectory(chooser.getCurrentDirectory().getAbsolutePath());
-			final FileFilter fileFilter = chooser.getFileFilter();
-			final File file = chooser.getSelectedFile();
-			AsyncTaskExecutor.runUIBlocking("Loading data from file. Please wait a second",
-					() -> open(fileFilter, file), () -> {
-						if (GraphContainer.getInstance().containsPathway()) {
-							if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
-								MainWindow.getInstance().updateAllGuiElements();
-								 GraphInstance.getMyGraph().normalCentering();;
-							}
-						}
-						MainWindow.getInstance().getFrame().repaint();
-					});
+			openUIBlocking(chooser.getFileFilter(), chooser.getSelectedFile());
 		}
 	}
 
-	public static void open(final FileFilter fileFilter, final File file) {
+	public static void openUIBlocking(final FileFilter fileFilter, final File file) {
+		AsyncTaskExecutor.runUIBlocking("Loading data from file. Please wait a second", () -> open(fileFilter, file),
+										() -> {
+											if (GraphContainer.getInstance().containsPathway()) {
+												if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
+													MainWindow.getInstance().updateAllGuiElements();
+													GraphInstance.getMyGraph().normalCentering();
+												}
+											}
+											MainWindow.getInstance().getFrame().repaint();
+										});
+	}
+
+	private static void open(final FileFilter fileFilter, final File file) {
 		if (fileFilter == null) {
 			return;
 		}
