@@ -2,7 +2,7 @@ package gui;
 
 import javax.swing.JOptionPane;
 
-import util.VanesaUtility;
+import org.apache.commons.io.FileUtils;
 
 public class AboutWindow {
 	public AboutWindow(){
@@ -25,9 +25,9 @@ public class AboutWindow {
 	        +"For further details, please visit the VANESA GitHub website: https://github.com/cbrinkrolf/VANESA/<p>"+
 	        "or get in touch with the Bioinformatics Department.<p><p>"
 	        +"Memory overview<br>"
-	        +"Size of current memory usage: "+VanesaUtility.formatSize(heapSize)+"<br>"
-	        +"Size of maximum memory: " + VanesaUtility.formatSize(heapMaxSize)+"<br>"
-	        +"Size of free memory: "+VanesaUtility.formatSize(heapFreeSize)+"<br>"
+	        +"Size of current memory usage: "+FileUtils.byteCountToDisplaySize(heapSize)+"<br>"
+	        +"Size of maximum memory: " + FileUtils.byteCountToDisplaySize(heapMaxSize)+"<br>"
+	        +"Size of free memory: "+FileUtils.byteCountToDisplaySize(heapFreeSize)+"<br>"
 	        +"<p><p>Contact Details<p><p>"
 
 	        +"Christoph Brinkrolf mailto:cbrinkro@gmail.com<p>"
