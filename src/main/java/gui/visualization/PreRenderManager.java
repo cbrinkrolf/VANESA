@@ -26,7 +26,7 @@ import graph.GraphInstance;
 import graph.algorithms.gui.clusters.ClusterColorEditor;
 import gui.LocalBackboardPaintable;
 import gui.MainWindow;
-import gui.MyAnnotation;
+import gui.annotation.MyAnnotation;
 import gui.tables.MyTable;
 import net.miginfocom.swing.MigLayout;
 

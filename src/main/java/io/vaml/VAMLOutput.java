@@ -30,7 +30,7 @@ import biologicalObjects.nodes.petriNet.DiscreteTransition;
 import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
-import gui.RangeSelector;
+import gui.annotation.RangeSelector;
 
 /**
  * @author sebastian and olga

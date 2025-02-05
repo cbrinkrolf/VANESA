@@ -1,4 +1,4 @@
-package gui;
+package gui.annotation;
 
 import java.awt.geom.RectangularShape;
 

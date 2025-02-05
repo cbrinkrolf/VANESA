@@ -31,8 +31,8 @@ import graph.jung.classes.MyVisualizationViewer;
 import graph.layouts.Circle;
 import graph.layouts.HierarchicalCircleLayout;
 import gui.MainWindow;
-import gui.MyAnnotation;
-import gui.MyAnnotationManager;
+import gui.annotation.MyAnnotation;
+import gui.annotation.MyAnnotationManager;
 
 public class MyPickingGraphMousePlugin extends PickingGraphMousePlugin<BiologicalNodeAbstract, BiologicalEdgeAbstract> {
 	private final Map<BiologicalNodeAbstract, Point2D> oldVertexPositions = new HashMap<>();

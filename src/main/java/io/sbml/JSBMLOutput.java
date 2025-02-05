@@ -46,7 +46,7 @@ import biologicalObjects.nodes.petriNet.Transition;
 import graph.groups.Group;
 import graph.gui.Parameter;
 import gui.MainWindow;
-import gui.RangeSelector;
+import gui.annotation.RangeSelector;
 
 /**
  * This class represents a writer from graph data to a SBML file. The actual

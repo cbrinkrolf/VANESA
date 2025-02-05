@@ -69,10 +69,10 @@ import graph.layouts.gemLayout.GEMLayout;
 import graph.layouts.hctLayout.HCTLayout;
 import graph.layouts.hebLayout.HEBLayout;
 import gui.MainWindow;
-import gui.MyAnnotationManager;
 import gui.PopUpDialog;
-import gui.RangeSelector;
 import gui.algorithms.ScreenSize;
+import gui.annotation.MyAnnotationManager;
+import gui.annotation.RangeSelector;
 import gui.visualization.TokenRenderer;
 
 public class MyGraph {

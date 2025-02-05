@@ -15,7 +15,8 @@ import graph.CreatePathway;
 import graph.groups.Group;
 import graph.gui.Parameter;
 import gui.MainWindow;
-import gui.RangeSelector;
+import gui.annotation.RangeSelector;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jdom2.Document;

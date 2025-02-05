@@ -26,7 +26,7 @@ import graph.layouts.gemLayout.GEMLayoutConfig;
 import graph.layouts.hctLayout.HCTLayoutConfig;
 import graph.layouts.hebLayout.HEBLayoutConfig;
 import gui.MainWindow;
-import gui.RangeSelector;
+import gui.annotation.RangeSelector;
 
 public class LayoutConfig extends JPanel implements ActionListener {
 	private static final long serialVersionUID = -25474744959063431L;

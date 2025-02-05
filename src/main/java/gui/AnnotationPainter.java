@@ -7,6 +7,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.annotations.AnnotatingModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import graph.GraphInstance;
+import graph.eventhandlers.MyAnnotatingGraphMousePlugin;
 import util.MyColorChooser;
 
 import javax.swing.*;

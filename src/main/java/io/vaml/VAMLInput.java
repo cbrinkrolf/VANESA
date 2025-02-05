@@ -9,7 +9,8 @@ import biologicalObjects.nodes.*;
 import biologicalObjects.nodes.petriNet.*;
 import graph.CreatePathway;
 import gui.MainWindow;
-import gui.RangeSelector;
+import gui.annotation.RangeSelector;
+
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;

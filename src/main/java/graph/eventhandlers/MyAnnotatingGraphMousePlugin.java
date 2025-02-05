@@ -1,4 +1,4 @@
-package gui;
+package graph.eventhandlers;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -16,6 +16,9 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.annotations.AnnotatingGraphMousePlugin;
 import edu.uci.ics.jung.visualization.annotations.Annotation;
 import graph.GraphInstance;
+import gui.AnnotationPainter;
+import gui.annotation.MyAnnotation;
+import gui.annotation.MyAnnotationManager;
 
 public class MyAnnotatingGraphMousePlugin<V, E> extends AnnotatingGraphMousePlugin<V, E> {
 	private int currentType = AnnotationPainter.RECTANGLE;

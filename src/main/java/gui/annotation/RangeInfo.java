@@ -1,4 +1,4 @@
-package gui;
+package gui.annotation;
 
 import java.awt.Color;
 import java.awt.geom.Ellipse2D;

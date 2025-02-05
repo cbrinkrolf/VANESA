@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableModel;
 
 import graph.GraphInstance;
 import gui.LocalBackboardPaintable;
-import gui.MyAnnotation;
+import gui.annotation.MyAnnotation;
 
 public class PreRenderManagerTableModel extends DefaultTableModel {
     private static final long serialVersionUID = -7174001672428120676L;
