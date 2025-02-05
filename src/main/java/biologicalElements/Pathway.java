@@ -48,7 +48,7 @@ import petriNet.PetriNetSimulation;
 import transformation.TransformationInformation;
 import util.FormulaSafety;
 
-public class Pathway implements Cloneable {
+public class Pathway extends GraphicalElement implements Cloneable {
 	private File file = null;
 	private String name;
 	private String version = "";
