@@ -49,6 +49,7 @@ import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.SimMenu;
 import io.MOoutput;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import util.VanesaUtility;
 
 public class PetriNetSimulation implements ActionListener {
@@ -796,22 +797,20 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		};
 
-		Thread compileGUI = new Thread() {
-			public void run() {
-				long start = System.currentTimeMillis();
-				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-				String time = sdf.format(new Date());
-				while (compiling) {
-					long seconds = (System.currentTimeMillis() - start) / 1000;
-					menu.setTime("Compiling since " + time + " for: " + seconds + " seconds.");
-					try {
-						sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+		Thread compileGUI = new Thread(() -> {
+			long start = System.currentTimeMillis();
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+			String time = sdf.format(new Date());
+			while (compiling) {
+				menu.setTime("Compiling since " + time + " for: " +
+							 DurationFormatUtils.formatDuration(System.currentTimeMillis() - start, "HH:mm:ss") + ".");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
-		};
+		});
 
 		compileGUI.start();
 		compilingThread.start();
