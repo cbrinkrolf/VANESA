@@ -1,9 +1,10 @@
 package petriNet;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CovList implements Cloneable {
-	private final double[] tokens;
+	private double[] tokens;
 
 	public CovList(int count) {
 		tokens = new double[count];
@@ -19,8 +20,8 @@ public class CovList implements Cloneable {
 		}
 	}
 
-	public ArrayList<Integer> getGreaterIndices(CovList cl) {
-		final ArrayList<Integer> list = new ArrayList<>();
+	public List<Integer> getGreaterIndices(CovList cl) {
+		final List<Integer> list = new ArrayList<>();
 		final double[] clTokens = cl.getElements();
 		if (tokens.length == clTokens.length) {
 			for (int i = 0; i < tokens.length; i++) {
@@ -96,7 +97,7 @@ public class CovList implements Cloneable {
 
 	public void setElements(double[] newElements) {
 		if (tokens.length == newElements.length) {
-			System.arraycopy(newElements, 0, tokens, 0, tokens.length);
+			tokens = newElements;
 		}
 	}
 

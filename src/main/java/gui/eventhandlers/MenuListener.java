@@ -647,8 +647,8 @@ public class MenuListener implements ActionListener {
 				if (cov == null) {
 					cov = new Cov();
 				}
-				String pwName = cov.getNewName();
-				HashMap<String, Integer> name2id = cov.getName2id();
+				final Pathway pw = cov.getPathway();
+				Map<String, Integer> name2id = cov.getName2id();
 				double[] marking = new double[name2id.size()];
 				for (int i = 1; i <= places; i++) {
 					String name = rP[i][0].toString();
@@ -656,7 +656,6 @@ public class MenuListener implements ActionListener {
 					int index = name2id.get(name);
 					marking[index] = Double.parseDouble(value);
 				}
-				final Pathway pw = GraphInstance.getContainer().getPathway(pwName);
 				boolean reachable = false;
 				for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 					if (bna instanceof CovNode) {
