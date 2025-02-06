@@ -34,16 +34,16 @@ public class LayoutConfig extends JPanel implements ActionListener {
 	private final JButton cancel = new JButton("cancel");
 	private final JButton resetButton = new JButton("reset");
 	private final JButton applyButton = new JButton("apply");
-	private final JButton[] buttons = {applyButton, resetButton, cancel };
+	private final JButton[] buttons = { applyButton, resetButton, cancel };
 	private final JTabbedPane tabbedPane = new JTabbedPane();
 	private final Map<String, ConfigPanel> tabs = new HashMap<>();
 	private final JProgressBar progressBar;
 
-	public LayoutConfig() {
+	private LayoutConfig() {
 		for (JButton b : this.buttons) {
 			b.addActionListener(this);
 		}
-		//addTab(new MDForceLayoutConfig());
+		// addTab(new MDForceLayoutConfig());
 		addTab(new ConfigPanel(CircleLayout.class));
 		addTab(HEBLayoutConfig.getInstance());
 		addTab(HCTLayoutConfig.getInstance());
@@ -67,10 +67,11 @@ public class LayoutConfig extends JPanel implements ActionListener {
 
 	public static void changeToLayout(Class<? extends Layout> layout) {
 		if (RangeSelector.getInstance().hasRange()) {
-			int option = JOptionPane.showConfirmDialog(GraphInstance.getMyGraph().getVisualizationViewer(),
-													   "this graph contains selected clusters,\nall selected " +
-													   "clusters maybe out of date\nafter new layout!",
-													   "continue", JOptionPane.YES_NO_OPTION);
+			int option = JOptionPane
+					.showConfirmDialog(GraphInstance.getMyGraph().getVisualizationViewer(),
+							"this graph contains selected clusters,\nall selected "
+									+ "clusters maybe out of date\nafter new layout!",
+							"continue", JOptionPane.YES_NO_OPTION);
 			if (option != JOptionPane.YES_OPTION) {
 				return;
 			}
@@ -90,7 +91,7 @@ public class LayoutConfig extends JPanel implements ActionListener {
 
 	private void showSettings() {
 		JOptionPane.showOptionDialog(MainWindow.getInstance().getFrame(), this, "Layout settings",
-									 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, buttons, applyButton);
+				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, buttons, applyButton);
 	}
 
 	public static JOptionPane getOptionPane(Container comp) {

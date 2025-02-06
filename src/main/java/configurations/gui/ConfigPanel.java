@@ -24,6 +24,7 @@ public class ConfigPanel extends JPanel {
 	}
 
 	public void resetValues() {
+		// TODO reset to default values not implemented, yet
 	}
 
 	public void setValues() {

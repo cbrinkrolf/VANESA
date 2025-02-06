@@ -1,7 +1,12 @@
 package graph.layouts.gemLayout;
 
 import java.awt.geom.Point2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
@@ -11,9 +16,11 @@ import edu.uci.ics.jung.graph.Graph;
 /**
  * Java implementation of the gem 2D layout.
  * <p/>
- * The algorithm needs to get various sub-graphs and traversals. The recursive nature of the algorithm is totally
- * captured within those sub-graphs and traversals. The main loop of the algorithm is then expressed using the
- * iterator feature, which makes it look like a simple flat iteration over nodes.
+ * The algorithm needs to get various sub-graphs and traversals. The recursive
+ * nature of the algorithm is totally captured within those sub-graphs and
+ * traversals. The main loop of the algorithm is then expressed using the
+ * iterator feature, which makes it look like a simple flat iteration over
+ * nodes.
  * 
  * @author David Duke
  * @author Hacked by Eytan Adar for Guess
@@ -37,7 +44,8 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 		this(g, new HashMap<>());
 	}
 
-	public GEMLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g, Map<BiologicalNodeAbstract, Point2D> staticNodes) {
+	public GEMLayout(Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g,
+			Map<BiologicalNodeAbstract, Point2D> staticNodes) {
 		super(g);
 		if (staticNodes != null) {
 			this.sNodes = staticNodes;
@@ -300,6 +308,7 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 
 		for (int i = 0; i < layoutConfig.nodeCount; i++) {
 			int v = select();
+
 			GemP p = layoutConfig.gemProp[v];
 
 			int pX = p.x;
@@ -340,12 +349,41 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 		layoutConfig.oscillation = layoutConfig.a_oscillation;
 		layoutConfig.rotation = layoutConfig.a_rotation;
 		layoutConfig.maxtemp = (int) (layoutConfig.a_maxtemp * layoutConfig.ELEN);
-		long stop_temperature = (int) (layoutConfig.a_finaltemp * layoutConfig.a_finaltemp * layoutConfig.ELENSQR *
-									   layoutConfig.nodeCount);
+		long stop_temperature = (int) (layoutConfig.a_finaltemp * layoutConfig.a_finaltemp * layoutConfig.ELENSQR
+				* layoutConfig.nodeCount);
 		long stop_iteration = layoutConfig.a_maxiter * layoutConfig.nodeCount * layoutConfig.nodeCount;
 		layoutConfig.iteration = 0;
+		long temp1 = 0;
+		long temp2 = -1;
 
+		// cut-off only performed if node size is greater equal given min node size and
+		// factor > 0
+		boolean doCheck = layoutConfig.minNodesCutOff > 0 && layoutConfig.minNodesCutOff <= layoutConfig.nodeCount
+				&& layoutConfig.factorCutOffCheck > 0;
+
+		// System.out.println("min Nodes: " + layoutConfig.minNodesCutOff);
+		// System.out.println("factor: " + layoutConfig.factorCutOffCheck);
+		// System.out.println("do check: " + doCheck);
+		int mod = (layoutConfig.nodeCount * layoutConfig.factorCutOffCheck);
 		while (layoutConfig.temperature > stop_temperature && layoutConfig.iteration < stop_iteration) {
+
+			if (doCheck) {
+				if (layoutConfig.iteration % (mod * 3) == 0) {
+					temp1 = layoutConfig.temperature;
+				}
+				if ((layoutConfig.iteration + 2 * mod) % (mod * 3) == 0) {
+					temp2 = layoutConfig.temperature;
+				}
+				if ((layoutConfig.iteration + mod) % (mod * 3) == 0) {
+					if ((temp1 == temp2) && (temp1 == layoutConfig.temperature)) {
+						double d = (double) layoutConfig.iteration / (double) stop_iteration;
+						double round = Math.round(d * 10000) / 100.0;
+						System.out.println("GEM Layout converged after " + round + "%, " + layoutConfig.iteration
+								+ " out of " + stop_iteration + " iterations!");
+						break;
+					}
+				}
+			}
 			// com.hp.hpl.guess.ui.StatusBar.setValue((int)stop_iteration, (int)iteration);
 			a_round();
 		}
@@ -448,8 +486,8 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 		layoutConfig.oscillation = layoutConfig.o_oscillation;
 		layoutConfig.rotation = layoutConfig.o_rotation;
 		layoutConfig.maxtemp = (int) (layoutConfig.o_maxtemp * layoutConfig.ELEN);
-		long stop_temperature = (int) (layoutConfig.o_finaltemp * layoutConfig.o_finaltemp * layoutConfig.ELENSQR *
-									   layoutConfig.nodeCount);
+		long stop_temperature = (int) (layoutConfig.o_finaltemp * layoutConfig.o_finaltemp * layoutConfig.ELENSQR
+				* layoutConfig.nodeCount);
 		long stop_iteration = layoutConfig.o_maxiter * layoutConfig.nodeCount * layoutConfig.nodeCount;
 
 		// System.out.print( "optimise phase -- temp " );
@@ -516,6 +554,7 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 	 * Normal bubble like GEM layout.
 	 */
 	private void runNormal() {
+		// System.out.println("run normal");
 		nodes = graph.getVertices();
 
 		edges = graph.getEdges();
@@ -567,13 +606,18 @@ public class GEMLayout extends AbstractLayout<BiologicalNodeAbstract, Biological
 			}
 		}
 
+		// System.out.println("run normal end");
+
 		// actual layout
 		if (layoutConfig.i_finaltemp < layoutConfig.i_starttemp)
 			insert();
+		// System.out.println("insert end");
 		if (layoutConfig.a_finaltemp < layoutConfig.a_starttemp)
 			arrange();
+		// System.out.println("arrange end");
 		if (layoutConfig.o_finaltemp < layoutConfig.o_starttemp)
 			optimize();
+		// System.out.println("optimize end");
 	}
 
 	/**

@@ -10,6 +10,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -26,7 +27,7 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 	//
 	// GEM Constants
 	//
-	public int ELEN = 50; //128;
+	public int ELEN = 50; // 128;
 	public int ELENSQR = ELEN * ELEN;
 	public int MAXATTRACT = 1048576;
 
@@ -69,6 +70,12 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 	public float o_rotation = 0.9f;
 	public float o_shake = 0.3f;
 
+	// cut-off values, 0 = no cut-off will be applied
+	public int minNodesCutOff = 300;
+
+	// each factorCutOffCheck * |nodes|, the cut-off check is performed
+	public int factorCutOffCheck = 3;
+
 	// list of properties for each node
 	public GemP[] gemProp;
 
@@ -101,9 +108,12 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 	public JSlider sliderOGravity = null;
 	public JSlider sliderOShake = null;
 
-	public GEMLayoutConfig() {
+	public JSlider sliderMinNodesCutOff = null;
+	public JSlider sliderFactorCutOffCheck = null;
+
+	private GEMLayoutConfig() {
 		super(GEMLayout.class);
-		//BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
+		// BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
 		GridLayout layout = new GridLayout(0, 2);
 		setLayout(layout);
 
@@ -118,6 +128,32 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 		sliderEdgeLength.setPaintTicks(true);
 		sliderEdgeLength.setPaintLabels(true);
 		sliderEdgeLength.addChangeListener(this);
+
+		sliderMinNodesCutOff = new JSlider();
+		sliderMinNodesCutOff.setBorder(BorderFactory.createTitledBorder("Number nodes for cut-off: " + minNodesCutOff));
+		sliderMinNodesCutOff.setMinimum(0);
+		sliderMinNodesCutOff.setMaximum(1000);
+		sliderMinNodesCutOff.setValue(minNodesCutOff);
+		sliderMinNodesCutOff.setMajorTickSpacing(200);
+		// sliderMinNodesCutOff.setMinorTickSpacing(100);
+		sliderMinNodesCutOff.setPaintTicks(true);
+		sliderMinNodesCutOff.setPaintLabels(true);
+		sliderMinNodesCutOff.addChangeListener(this);
+		sliderMinNodesCutOff.setToolTipText("Number nodes for cut-off (0 = no cut-off is applied)");
+
+		sliderFactorCutOffCheck = new JSlider();
+		sliderFactorCutOffCheck
+				.setBorder(BorderFactory.createTitledBorder("Factor to evaluate cut-off: " + factorCutOffCheck));
+		sliderFactorCutOffCheck.setMinimum(0);
+		sliderFactorCutOffCheck.setMaximum(25);
+		sliderFactorCutOffCheck.setValue(factorCutOffCheck);
+		sliderFactorCutOffCheck.setMajorTickSpacing(5);
+		// sliderFactorCutOffCheck.setMinorTickSpacing(5);
+		sliderFactorCutOffCheck.setPaintTicks(true);
+		sliderFactorCutOffCheck.setPaintLabels(true);
+		sliderFactorCutOffCheck.addChangeListener(this);
+		sliderFactorCutOffCheck
+				.setToolTipText("Factor how frequent cut-off criteria is checked (0 = no cut-off is applied)");
 
 		// insertion phase options
 		JPanel insert = new JPanel();
@@ -245,7 +281,16 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 		sliderOShake.addChangeListener(this);
 		optimize.add(sliderOShake);
 
-		add(sliderEdgeLength);
+		JPanel main = new JPanel();
+		BoxLayout mainLayout = new BoxLayout(main, BoxLayout.PAGE_AXIS);
+		main.setLayout(mainLayout);
+		main.setBorder(BorderFactory.createTitledBorder("General properties"));
+
+		main.add(sliderEdgeLength);
+		main.add(sliderMinNodesCutOff);
+		main.add(sliderFactorCutOffCheck);
+
+		add(main);
 		add(insert);
 		add(arrange);
 		add(optimize);
@@ -280,6 +325,14 @@ public class GEMLayoutConfig extends ConfigPanel implements ChangeListener {
 			a_shake = sliderAShake.getValue() * 0.01f;
 		} else if (arg0.getSource().equals(sliderOShake)) {
 			o_shake = sliderOShake.getValue() * 0.01f;
+		} else if (arg0.getSource().equals(sliderMinNodesCutOff)) {
+			minNodesCutOff = sliderMinNodesCutOff.getValue();
+			((TitledBorder) sliderMinNodesCutOff.getBorder())
+					.setTitle("Number nodes for cut-off: " + sliderMinNodesCutOff.getValue());
+		} else if (arg0.getSource().equals(sliderFactorCutOffCheck)) {
+			factorCutOffCheck = sliderFactorCutOffCheck.getValue();
+			((TitledBorder) sliderFactorCutOffCheck.getBorder())
+					.setTitle("Factor to evaluate cut-off: " + sliderFactorCutOffCheck.getValue());
 		}
 	}
 }
