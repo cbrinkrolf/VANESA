@@ -55,6 +55,7 @@ public class Transformator {
 	public static final String transition = "Transition";
 	public static final String discreteTransition = Elementdeclerations.discreteTransition;
 	public static final String continuousTransition = Elementdeclerations.continuousTransition;
+	public static final String stochasticTransition = Elementdeclerations.stochasticTransition;
 
 	public static final String pnArc = Elementdeclerations.pnArc;
 	public static final String pnTestArc = Elementdeclerations.pnTestArc;
@@ -62,7 +63,7 @@ public class Transformator {
 
 	public static final Set<String> places = new HashSet<>(Arrays.asList(place, discretePlace, continuousPlace));
 	public static final Set<String> transitions = new HashSet<>(
-			Arrays.asList(transition, discreteTransition, continuousTransition));
+			Arrays.asList(transition, discreteTransition, continuousTransition, stochasticTransition));
 	public static final Set<String> pnArcs = new HashSet<>(Arrays.asList(pnArc, pnTestArc, pnInhibitorArc));
 
 	private Pathway pw;
