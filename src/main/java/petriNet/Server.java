@@ -37,6 +37,7 @@ public class Server {
 	private ArrayList<String> names;
 	private HashMap<String, Integer> name2index;
 	private boolean running = true;
+	private boolean readyToConnect = false;
 	private Pathway pw;
 	private String simId;
 	private int port;
@@ -101,15 +102,19 @@ public class Server {
 						simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
 						System.out.println(simId);
 						MainWindow.getInstance().initSimResGraphs();
+						System.out.println("waiting to accept");
+						readyToConnect = true;
 						while (!serverSocket.isClosed()) {
 							client = waitForClient(serverSocket);
 							// leseNachricht(client);
-
+							System.out.println("connected to server!");
 							// InputStream is = new
 							// BufferedInputStream(client.getInputStream());
 							is = new DataInputStream(client.getInputStream());
+							System.out.println("stream created");
+							System.out.println(is.available());
 							readData(is);
-							// System.out.println("server: " + nachricht);
+							 System.out.println("server: ");
 							// schreibeNachricht(client, nachricht);
 
 						}
@@ -137,9 +142,11 @@ public class Server {
 	}
 
 	private void readData(DataInputStream socket) throws IOException {
-		int lengthMax = 2048;
+		System.out.println("read data from stream");
+		int lengthMax = 204800;
 		// char[] buffer = new char[200];
 		byte[] buffer = new byte[lengthMax];
+		System.out.println("av: "+ socket.available());
 		socket.readFully(buffer, 0, 1); // blockiert
 		// bis
 		// Nachricht
@@ -211,13 +218,13 @@ public class Server {
 
 			// to avoid calls of names.indexOf(identifier)
 			for (int i = 0; i < names.size(); i++) {
-				System.out.print(names.get(i) + "\t");
+				//System.out.print(names.get(i) + "\t");
 				counter += names.get(i).length();
 				name2index.put(names.get(i), i);
 			}
 			this.createSets();
 			System.out.println();
-			System.out.println("sum: " + counter);
+			System.out.println("sum headers: " + counter +"chars");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -485,5 +492,9 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public boolean isReadyToConnect() {
+		return readyToConnect;
 	}
 }
