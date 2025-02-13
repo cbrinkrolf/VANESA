@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
@@ -14,22 +16,29 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+
 import biologicalElements.NodeStateChanged;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.BiologicalEdgeAbstract;
 import biologicalObjects.nodes.BiologicalNodeAbstract;
 import configurations.GraphSettings;
+import configurations.SettingsManager;
 import edu.uci.ics.jung.algorithms.layout.AbstractLayout;
 import edu.uci.ics.jung.algorithms.layout.AggregateLayout;
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.SpringLayout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseMultigraph;
+import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.visualization.DefaultVisualizationModel;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
 import edu.uci.ics.jung.visualization.Layer;
@@ -43,6 +52,8 @@ import edu.uci.ics.jung.visualization.control.SatelliteVisualizationViewer;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
+import edu.uci.ics.jung.visualization.renderers.BasicEdgeRenderer;
+import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
 import graph.GraphInstance;
 import graph.eventhandlers.MyEditingModalGraphMouse;
 import graph.gui.GraphPopUp;
@@ -79,7 +90,7 @@ public class MyGraph {
 	private Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract> g = new SparseMultigraph<>();
 	private final MyVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv;
 	private AbstractLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract> layout;
-	final MyEditingModalGraphMouse graphMouse;
+	private final MyEditingModalGraphMouse graphMouse;
 	private final SatelliteVisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> vv2;
 	private final ShapePickSupport<BiologicalNodeAbstract, BiologicalEdgeAbstract> pickSupport;
 	private final ScalingControl scaler = new CrossoverScalingControl();
@@ -156,7 +167,7 @@ public class MyGraph {
 		 * } };
 		 */
 
-		layout = new StaticLayout<>(g);// ,  locationTransformer);
+		layout = new StaticLayout<>(g);// , locationTransformer);
 
 		layout.setSize(preferredSize);
 		// layout.initialize(preferredSize, nodePositions);
@@ -238,7 +249,7 @@ public class MyGraph {
 		esh = new MyEdgeStrokeHighlighting(stateV, stateE, pathway);
 		edpf = new MyEdgeDrawPaintFunction(stateV, stateE);
 		efpf = new MyEdgeFillPaintFunction(stateV, stateE);
-		
+
 		vertexStringer = new MyVertexStringer();
 		vertexShapeTransformer = new MyVertexShapeTransformer();
 		edgeStringer = new MyEdgeStringer();
@@ -247,7 +258,7 @@ public class MyGraph {
 		eaf = new MyEdgeArrowFunction();
 		adpt = new MyArrowDrawPaintTransformer();
 		afpt = new MyArrowFillPaintTransformer();
-		
+
 		vft = new MyVertexFontTransformer();
 		eft = new MyEdgeFontTransformer();
 
@@ -318,21 +329,24 @@ public class MyGraph {
 			}
 		});
 		setMouseModePick();
+
+		improvePerformance(vv);
+		improvePerformance(vv2);
 	}
 
 	public void makeDefaultObjectVisualization() {
 		pr.setEdgeStrokeTransformer(esh);
-		
+
 		pr.setEdgeDrawPaintTransformer(edpf);
 		pr.setEdgeFillPaintTransformer(efpf);
-		
+
 		pr.setEdgeShapeTransformer(esf);
 
 		pr.setVertexLabelRenderer(vlr);
 		pr.setEdgeLabelRenderer(elr);
 
 		pr.setEdgeArrowTransformer(eaf);
-		
+
 		pr.setArrowDrawPaintTransformer(adpt);
 
 		pr.setArrowFillPaintTransformer(afpt);
@@ -347,10 +361,10 @@ public class MyGraph {
 		pr.setVertexFillPaintTransformer(vfpf);
 
 		pr.setVertexIconTransformer(vit);
-		
+
 		pr.setVertexFontTransformer(vft);
 		pr.setEdgeFontTransformer(eft);
-		
+
 		vv.addPostRenderPaintable(new TokenRenderer(pathway));
 
 		satellitePr.setVertexStrokeTransformer(vsh);
@@ -784,7 +798,8 @@ public class MyGraph {
 		if (stateV.getPicked().isEmpty() || stateV.getPicked().isEmpty()) {
 			changeToLayout(new CircleLayout<BiologicalNodeAbstract, BiologicalEdgeAbstract>(g));
 		} else {
-			// this.clusteringLayout.addSubLayout(new CircularSubLayout(stateV.getPicked(), clusteringLayout));
+			// this.clusteringLayout.addSubLayout(new CircularSubLayout(stateV.getPicked(),
+			// clusteringLayout));
 		}
 	}
 
@@ -846,8 +861,8 @@ public class MyGraph {
 			changeToLayout(new GEMLayout(g));
 		}
 	}
-	
-	public void changeToGEMLayout(Map<BiologicalNodeAbstract, Point2D> mapOfStaticNodes){
+
+	public void changeToGEMLayout(Map<BiologicalNodeAbstract, Point2D> mapOfStaticNodes) {
 		changeToLayout(new GEMLayout(g, mapOfStaticNodes));
 	}
 
@@ -1067,7 +1082,8 @@ public class MyGraph {
 	}
 
 	public void normalCentering(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> viewer) {
-		// GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout().getGraph(), viewer.getGraphLayout());
+		// GraphCenter graphCenter = new GraphCenter(viewer.getGraphLayout().getGraph(),
+		// viewer.getGraphLayout());
 		GraphCenter graphCenter = new GraphCenter(this);
 
 		// Layout layout = viewer.getGraphLayout();
@@ -1232,5 +1248,105 @@ public class MyGraph {
 
 	public MyEdgeDrawPaintFunction getEdgeDrawPaintFunction() {
 		return edpf;
+	}
+
+	// TODO following methods can probably outsourced
+
+	// This method summarizes several options for improving the painting
+	// performance. Enable or disable them depending on which visual features
+	// you want to sacrifice for the higher performance.
+	private static <V, E> void improvePerformance(VisualizationViewer<V, E> vv) {
+		// Probably the most important step for the pure rendering performance:
+		// Disable anti-aliasing
+
+		if (SettingsManager.getInstance().isDeactivateAntiAliasing()) {
+			vv.getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
+		}
+
+		// Skip vertices that are not inside the visible area.
+		if (SettingsManager.getInstance().isOmitPaintInvisibleNodes()) {
+			doNotPaintInvisibleVertices(vv);
+		}
+
+		// May be helpful for performance in general, but not appropriate
+		// when there are multiple edges between a pair of nodes: Draw
+		// the edges not as curves, but as straight lines:
+		// vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<V,E>());
+
+		// May be helpful for painting performance: Omit the arrow heads
+		// of directed edges
+		// Predicate<Context<Graph<V, E>, E>> edgeArrowPredicate =
+		// new Predicate<Context<Graph<V,E>,E>>()
+		// {
+		// @Override
+		// public boolean evaluate(Context<Graph<V, E>, E> arg0)
+		// {
+		// return false;
+		/// }
+		// };
+		// vv.getRenderContext().setEdgeArrowPredicate(edgeArrowPredicate);
+
+	}
+
+	// Skip all vertices that are not in the visible area.
+	// NOTE: See notes at the end of this method!
+	private static <V, E> void doNotPaintInvisibleVertices(VisualizationViewer<V, E> vv) {
+		Predicate<Context<Graph<V, E>, V>> vertexIncludePredicate = new Predicate<>() {
+			Dimension size = new Dimension();
+
+			@Override
+			public boolean apply(Context<Graph<V, E>, V> c) {
+				vv.getSize(size);
+				Point2D point = ((Function<V, Point2D>) vv.getGraphLayout()).apply(c.element);
+				Point2D transformed = vv.getRenderContext().getMultiLayerTransformer().transform(point);
+				if (transformed.getX() < 0 || transformed.getX() > size.width) {
+					return false;
+				}
+				if (transformed.getY() < 0 || transformed.getY() > size.height) {
+					return false;
+				}
+				return true;
+			}
+		};
+		vv.getRenderContext().setVertexIncludePredicate(vertexIncludePredicate);
+
+		// NOTE: By default, edges will NOT be included in the visualization
+		// when ONE of their vertices is NOT included in the visualization.
+		// This may look a bit odd when zooming and panning over the graph.
+		// Calling the following method will cause the edges to be skipped
+		// ONLY when BOTH their vertices are NOT included in the visualization,
+		// which may look nicer and more intuitive
+		doPaintEdgesAtLeastOneVertexIsVisible(vv);
+	}
+
+	// See note at end of "doNotPaintInvisibleVertices"
+	private static <V, E> void doPaintEdgesAtLeastOneVertexIsVisible(VisualizationViewer<V, E> vv) {
+		vv.getRenderer().setEdgeRenderer(new BasicEdgeRenderer<V, E>() {
+			@Override
+			public void paintEdge(RenderContext<V, E> rc, Layout<V, E> layout, E e) {
+				GraphicsDecorator g2d = rc.getGraphicsContext();
+				Graph<V, E> graph = layout.getGraph();
+				if (!rc.getEdgeIncludePredicate().apply(Context.<Graph<V, E>, E>getInstance(graph, e)))
+					return;
+
+				Pair<V> endpoints = graph.getEndpoints(e);
+				V v1 = endpoints.getFirst();
+				V v2 = endpoints.getSecond();
+				if (!rc.getVertexIncludePredicate().apply(Context.<Graph<V, E>, V>getInstance(graph, v1))
+						&& !rc.getVertexIncludePredicate().apply(Context.<Graph<V, E>, V>getInstance(graph, v2)))
+					return;
+
+				Stroke new_stroke = rc.getEdgeStrokeTransformer().apply(e);
+				Stroke old_stroke = g2d.getStroke();
+				if (new_stroke != null)
+					g2d.setStroke(new_stroke);
+
+				drawSimpleEdge(rc, layout, e);
+
+				// restore paint and stroke
+				if (new_stroke != null)
+					g2d.setStroke(old_stroke);
+			}
+		});
 	}
 }

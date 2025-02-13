@@ -290,6 +290,25 @@ public class SettingsManager {
 	public void setDefaultImageExportFormat(String format){
 		setProperty("defaultImageExportFormat", format);
 	}
+	
+	public boolean isDeactivateAntiAliasing(){
+		String property = getProperty("isDeactivateAntiAliasing");
+		return StringUtils.isNotEmpty(property) && property.equals("true");
+	}
+	
+	public void setDeactivateAntiAliasing(Boolean deactivateAntiAliasing){
+		setProperty("isDeactivateAntiAliasing", deactivateAntiAliasing.toString());
+	}
+	
+	// should be on by default
+	public boolean isOmitPaintInvisibleNodes(){
+		String property = getProperty("isOmitPaintInvisibleNodes");
+		return StringUtils.isEmpty(property) || property.equals("true");
+	}
+	
+	public void setOmitPaintInvisibleNodes(Boolean omitPaintInvisibleNodes){
+		setProperty("isOmitPaintInvisibleNodes", omitPaintInvisibleNodes.toString());
+	}
 
 
 }
