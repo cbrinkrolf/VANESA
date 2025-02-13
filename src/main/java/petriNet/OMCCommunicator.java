@@ -1,19 +1,31 @@
 package petriNet;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import util.VanesaUtility;
 
 public class OMCCommunicator {
 	private final Path bin;
 	private final Path pathToMos;
+	private Set<String> pnLibVersions;
 
 	public OMCCommunicator(Path bin) {
 		this.bin = bin;
 		pathToMos = VanesaUtility.getWorkingDirectoryPath().resolve("scripting.mos");
 	}
 
+	/**
+	 * 
+	 * @return empty string if a PNlib is installed, otherwise returns "false";
+	 */
 	public boolean isPNLibInstalled() {
 		try {
 			writeMosFile(getTestPNlibScripting());
@@ -66,15 +78,30 @@ public class OMCCommunicator {
 	}
 
 	public boolean isPNlibVersionInstalled(String version) {
-		try {
-			writeMosFile(getInstalledPNVersions());
-			String output = runMosFile(pathToMos);
-			tryDeleteMos();
-			return output.contains("PNlib " + version + "\"");
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-			return false;
+
+		if (pnLibVersions == null) {
+			try {
+				writeMosFile(getInstalledPNVersions());
+				String output = runMosFile(pathToMos);
+				tryDeleteMos();
+				output = output.replace("\"", "");
+				output = output.replace("{", "");
+				output = output.replace("}", "");
+				output = output.strip();
+
+				if (output.isEmpty() || output.isBlank()) {
+					return false;
+				}
+
+				String[] tokens = output.split(",");
+
+				pnLibVersions = new HashSet<>(Arrays.asList(tokens));
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
+				return false;
+			}
 		}
+		return pnLibVersions.contains(version);
 	}
 
 	public String runMosFile(Path pathToMos) throws IOException, InterruptedException {
@@ -111,8 +138,7 @@ public class OMCCommunicator {
 
 	private String getInstalledPNVersions() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("loadModel(PNlib);\r\n");
-		sb.append("getLoadedLibraries();\r\n");
+		sb.append("getAvailableLibraryVersions(PNlib);\r\n");
 		sb.append("getErrorString();\r\n");
 		return sb.toString();
 	}

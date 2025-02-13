@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
@@ -49,7 +50,6 @@ import gui.MainWindow;
 import gui.PopUpDialog;
 import gui.SimMenu;
 import io.MOoutput;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import util.VanesaUtility;
 
 public class PetriNetSimulation implements ActionListener {
@@ -85,7 +85,15 @@ public class PetriNetSimulation implements ActionListener {
 	private boolean simExePresent;
 	private StringBuilder logMessage = null;
 	private boolean installationChecked = false;
-	private final String pnLibVersion = "3.0.0";
+	// private final String pnLibVersion = "3.0.0";
+	// supported PNlib versions
+	private final ArrayList<String> pnLibVersions = new ArrayList<>() {
+		private static final long serialVersionUID = 176815129085958L;
+		{
+			add("2.2.0");
+			add("3.0.0");
+		}
+	};
 	// for the simulation results export of protected variables, necessary to detect
 	// actual firing of stochastic transitions
 	private boolean exportPrtoectedVariables = true;
@@ -177,7 +185,8 @@ public class PetriNetSimulation implements ActionListener {
 
 					System.out.println("stop: " + stopTime);
 					System.out.println("tolerance: " + tolerance);
-					Thread simulationThread = getSimulationThread(stopTime, intervals, tolerance, seed, overrideParameterized, port);
+					Thread simulationThread = getSimulationThread(stopTime, intervals, tolerance, seed,
+							overrideParameterized, port);
 
 					Thread redrawGraphThread = getRedrawGraphThread();
 
@@ -318,8 +327,9 @@ public class PetriNetSimulation implements ActionListener {
 		}
 		w.unBlurUI();
 	}
-	
-	private Thread getSimulationThread(double stopTime, int intervals, double tolerance, int seed, String overrideParameterized, int port){
+
+	private Thread getSimulationThread(double stopTime, int intervals, double tolerance, int seed,
+			String overrideParameterized, int port) {
 		return new Thread() {
 
 			public void run() {
@@ -332,8 +342,8 @@ public class PetriNetSimulation implements ActionListener {
 						override += "\"";
 					}
 
-					override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize="
-							+ stopTime / intervals + ",tolerance=" + tolerance + ",seed=" + seed;
+					override += "-override=outputFormat=ia,stopTime=" + stopTime + ",stepSize=" + stopTime / intervals
+							+ ",tolerance=" + tolerance + ",seed=" + seed;
 					System.out.println("parameter changed: " + flags.isParameterChanged());
 					if (flags.isParameterChanged()) {
 						GraphElementAbstract gea;
@@ -345,8 +355,7 @@ public class PetriNetSimulation implements ActionListener {
 							BiologicalNodeAbstract bna;
 							if (gea instanceof BiologicalNodeAbstract) {
 								bna = (BiologicalNodeAbstract) gea;
-								override += ",'_" + bna.getName() + "_" + param.getName() + "'="
-										+ param.getValue();
+								override += ",'_" + bna.getName() + "_" + param.getName() + "'=" + param.getValue();
 							} else {
 								// CHRIS override parameters of edges
 							}
@@ -388,19 +397,18 @@ public class PetriNetSimulation implements ActionListener {
 					logAndShow("override statement: " + override);
 					if (noEmmit) {
 						if (exportPrtoectedVariables) {
-							pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
-									"-noEventEmit", "-lv=LOG_STATS", "-emit_protected");
+							pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port, "-noEventEmit",
+									"-lv=LOG_STATS", "-emit_protected");
 						} else {
-							pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
-									"-noEventEmit", "-lv=LOG_STATS");
+							pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port, "-noEventEmit",
+									"-lv=LOG_STATS");
 						}
 					} else {
 						if (exportPrtoectedVariables) {
-							pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
-									"-lv=LOG_STATS", "-emit_protected");
+							pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port, "-lv=LOG_STATS",
+									"-emit_protected");
 						} else {
-							pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port,
-									"-lv=LOG_STATS");
+							pb.command(simName, "-s=" + menu.getSolver(), override, "-port=" + port, "-lv=LOG_STATS");
 						}
 					}
 					pb.redirectOutput();
@@ -425,7 +433,7 @@ public class PetriNetSimulation implements ActionListener {
 		};
 	}
 
-	private Thread getRedrawGraphThread(){
+	private Thread getRedrawGraphThread() {
 		return new Thread() {
 			public void run() {
 				pw.getGraph().getVisualizationViewer().requestFocus();
@@ -486,8 +494,8 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		};
 	}
-	
-	private Thread getSimulationOutputThread(){
+
+	private Thread getSimulationOutputThread() {
 		return new Thread() {
 			public void run() {
 				// System.out.println("running");
@@ -535,7 +543,7 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		};
 	}
-	
+
 	private boolean checkInstallation() {
 		if (!checkInstallationOM()) {
 			return false;
@@ -546,10 +554,13 @@ public class PetriNetSimulation implements ActionListener {
 		// CHRIS put those checks in threads for example, so the messages will be shown
 		// while checking/installing PNlib
 		final OMCCommunicator omcCommunicator = new OMCCommunicator(pathCompiler.resolve(OMC_FILE_PATH));
-		if (omcCommunicator.isPNLibInstalled()) {
-			// PNlib installed
+
+		boolean allInstalledSuccess = true;
+		for (String pnLibVersion : pnLibVersions) {
+			System.out.println("test: " + pnLibVersion);
 			if (omcCommunicator.isPNlibVersionInstalled(pnLibVersion)) {
-				return true;
+				System.out.println(pnLibVersion + " is already installed");
+				continue;
 			} else {
 				// correct PNlib version not installed
 				if (omcCommunicator.isPackageManagerSupported()) {
@@ -561,48 +572,23 @@ public class PetriNetSimulation implements ActionListener {
 						message = "Installation of PNlib (version " + pnLibVersion + ") was successful!";
 						logAndShow(message);
 						PopUpDialog.getInstance().show("PNlib installation successful!", message);
-						return true;
 					} else {
 						message = "Installation of PNlib (version " + pnLibVersion
 								+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
 						logAndShow(message);
 						PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
-						return menu.getSimLib() != null;
+						allInstalledSuccess = allInstalledSuccess && menu.getSimLib() != null;
 					}
 				} else {
 					String message = "Installation error. PNlib version " + pnLibVersion
 							+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
 					logAndShow(message);
 					PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
-					return menu.getSimLib() != null;
+					allInstalledSuccess = allInstalledSuccess && menu.getSimLib() != null;
 				}
-			}
-		} else {
-			// PNlib not installed
-			if (omcCommunicator.isPackageManagerSupported()) {
-				String message = "PNlib is not installed. Trying to install ...";
-				logAndShow(message);
-				PopUpDialog.getInstance().show("PNlib installation!", message);
-				if (omcCommunicator.isInstallPNlibSuccessful(pnLibVersion)) {
-					message = "Installation of PNlib (version " + pnLibVersion + ") was successful!";
-					logAndShow(message);
-					PopUpDialog.getInstance().show("PNlib installation successful!", message);
-					return true;
-				} else {
-					message = "Installation of PNlib (version " + pnLibVersion
-							+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
-					logAndShow(message);
-					PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
-					return menu.getSimLib() != null;
-				}
-			} else {
-				String message = "Installation error. PNlib version " + pnLibVersion
-						+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
-				logAndShow(message);
-				PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
-				return menu.getSimLib() != null;
 			}
 		}
+		return allInstalledSuccess;
 	}
 
 	private boolean checkInstallationOM() {
@@ -670,6 +656,7 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void writeMosFile() throws IOException {
+		// TODO write variableFilter as Regex, instead of listing _ALL_ variable!
 		final StringBuilder filter = new StringBuilder("variableFilter=\"");
 		int vars = 0;
 		for (final BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
@@ -769,8 +756,8 @@ public class PetriNetSimulation implements ActionListener {
 		// stopped = true;
 		// System.out.println("av: " +os.available());
 	}
-	
-	public Thread getCompilingThread(){
+
+	public Thread getCompilingThread() {
 		return new Thread() {
 			public void run() {
 				// menu.setTime("Compiling ...");
@@ -891,7 +878,7 @@ public class PetriNetSimulation implements ActionListener {
 				waitForServerConnection.start();
 			}
 		};
-		
+
 	}
 
 	@Override
