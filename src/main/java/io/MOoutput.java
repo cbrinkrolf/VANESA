@@ -163,7 +163,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 		// globalSeed influences stochastic transitions and conflict solving strategy:
 		// probability
 
-		String omitOpenModelicaAnnimations = "animateHazardFunc = false, animateMarking = false, animatePlace = false, animatePutFireTime = false, animateSpeed = false, animateTransition = false, animateWeightTIarc = false,";
+		String omitOpenModelicaAnnimations = "animateHazardFunc = false, animateMarking = false, animatePlace = false, animatePutFireTime = false, animateSpeed = false, animateTIarc = false, animateTransition = false, animateWeightTIarc = false,";
 
 		sb.append("parameter Integer seed = " + seed + ";").append(ENDL);
 		sb.append(INDENT).append("inner ").append(PNlibSettings).append(" settings(")

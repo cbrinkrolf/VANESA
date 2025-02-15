@@ -262,15 +262,16 @@ public class PetriNetSimulation implements ActionListener {
 				try {
 					s = new Server(pw, bea2key, simId, port);
 					s.start();
-
+					System.out.print("wait until servers is ready to connect ");
 					while (s.isRunning() && !s.isReadyToConnect()) {
-						System.out.println("wait until servers is ready to connect ...");
+						System.out.print(".");
 						try {
 							sleep(100);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 					}
+					System.out.println();
 					if (s.isRunning() && s.isReadyToConnect()) {
 						// System.out.println("all threads start");
 						allThread.start();
@@ -849,7 +850,7 @@ public class PetriNetSimulation implements ActionListener {
 						line = inputReader.readLine();
 					}
 					inputReader.close();
-					System.out.println(inputStreamString);
+					System.out.println("compile output: "+inputStreamString);
 
 					if (inputStreamString.toString().contains(
 							"Warning: The following equation is INCONSISTENT due to specified unit information:")) {
@@ -872,12 +873,12 @@ public class PetriNetSimulation implements ActionListener {
 						String tmp = tokenizer.nextToken();
 						// tmp.indexOf("{");
 						simName = tmp.substring(tmp.indexOf("{") + 2, tmp.length() - 1);
-						System.out.println("simName: " + simName);
+						
 
 						if (SystemUtils.IS_OS_WINDOWS) {
 							simName += ".exe";
 						}
-
+						System.out.println("simName: " + simName);
 						if (new File(simName).exists()) {
 							buildSuccess = true;
 						}
