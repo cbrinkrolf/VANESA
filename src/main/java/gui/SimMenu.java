@@ -106,15 +106,17 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	// private ActionListener listener;
 
-	private List<File> libs;
+	private List<String> pnLibVersions;
+	private List<File> customLibs;
 
 	private Pathway pw;
 
-	public SimMenu(Pathway pw, ActionListener listener, List<File> libs) {
+	public SimMenu(Pathway pw, ActionListener listener, List<String> pnLibVersions, List<File> customLibs) {
 
 		this.pw = pw;
 		this.setTitle("VANESA - simulation setup");
-		this.libs = libs;
+		this.pnLibVersions = pnLibVersions;
+		this.customLibs = customLibs;
 		// this.listener = listener;
 		start.setActionCommand("start");
 		start.addActionListener(listener);
@@ -491,19 +493,26 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		return 0.00000001;
 	}
 
-	public void setLibs(List<File> libs) {
-		this.libs = libs;
+	public void setCustomLibs(List<File> libs) {
+		this.customLibs = libs;
 		fillLibsComboBox();
 	}
 
 	private void fillLibsComboBox() {
-		// simLibs.setPrototypeDisplayValue("PNlib (default)");
 		simLibs.removeAllItems();
 		if (!SettingsManager.getInstance().isOverridePNlibPath()) {
-			simLibs.addItem("PNlib (default)");
+			String item;
+			for (int i = 0; i < pnLibVersions.size(); i++) {
+				if (i == 0) {
+					item = "PNlib " + pnLibVersions.get(i)+" (default, built-in)";
+				}else{
+					item = "PNlib " + pnLibVersions.get(i)+" (built-in)";
+				}
+				simLibs.addItem(item);
+			}
 		}
 		String name;
-		for (File f : libs) {
+		for (File f : customLibs) {
 			name = f.getName() + " - " + f.getParentFile().getName();
 			simLibs.addItem(name);
 		}
@@ -514,8 +523,20 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		}
 	}
 
-	public File getSimLib() {
-		if (simLibs.getSelectedIndex() == 0 && !SettingsManager.getInstance().isOverridePNlibPath()) {
+	public boolean isBuiltInPNlibSelected() {
+		return simLibs.getSelectedIndex() < pnLibVersions.size()
+				&& !SettingsManager.getInstance().isOverridePNlibPath();
+	}
+	
+	public String getSelectedBuiltInPNLibVersion(){
+		if(simLibs.getSelectedIndex() < pnLibVersions.size() && !SettingsManager.getInstance().isOverridePNlibPath()){
+			return pnLibVersions.get(simLibs.getSelectedIndex());
+		}
+		return null;
+	}
+
+	public File getCustomPNLib() {
+		if (simLibs.getSelectedIndex() < pnLibVersions.size() && !SettingsManager.getInstance().isOverridePNlibPath()) {
 			return null;
 		}
 		// System.out.println(libs.size());
@@ -523,9 +544,9 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		// System.out.println("lib index: "+simLibs.getSelectedIndex());
 		lastLibsIdx = simLibs.getSelectedIndex();
 		if (SettingsManager.getInstance().isOverridePNlibPath()) {
-			return this.libs.get(this.simLibs.getSelectedIndex());
+			return this.customLibs.get(this.simLibs.getSelectedIndex());
 		} else {
-			return this.libs.get(this.simLibs.getSelectedIndex() - 1);
+			return this.customLibs.get(this.simLibs.getSelectedIndex() - pnLibVersions.size());
 		}
 	}
 
@@ -659,7 +680,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		} else if (e.getActionCommand().startsWith("export_")) {
 			int idx = Integer.parseInt(e.getActionCommand().substring(7));
 			String simId = pw.getPetriPropertiesNet().getSimResController().getAll().get(idx).getId();
-			new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.CSV_RESULT},
+			new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.CSV_RESULT },
 					SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simId);
 		} else if ("advancedOptions".equals(e.getActionCommand())) {
 			revalidateAdvancedPanel();

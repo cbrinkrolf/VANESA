@@ -76,7 +76,9 @@ public class PetriNetSimulation implements ActionListener {
 
 	private String simName;
 
-	private File simLib;
+	private File selectedSimLib;
+	private String selectedPNlibVersion;
+
 	private List<File> customSimLibs;
 	private Pathway pw;
 	private final MainWindow w;
@@ -272,20 +274,23 @@ public class PetriNetSimulation implements ActionListener {
 		};
 
 		boolean simLibChanged = false;
-		if (this.simLib != null && menu.getSimLib() != null
-				&& !menu.getSimLib().getAbsolutePath().equals(this.simLib.getAbsolutePath())) {
-			System.out.println("lib changed");
-			simLibChanged = true;
-		} else if (this.simLib == null && menu.getSimLib() != null) {
-			System.out.println("lib changed");
-			simLibChanged = true;
-		} else if (this.simLib != null && menu.getSimLib() == null) {
-			System.out.println("lib changed");
-			simLibChanged = true;
+		if (menu.isBuiltInPNlibSelected()) {
+			selectedSimLib = null;
+			if (selectedPNlibVersion == null || !pnLibVersions.contains(selectedPNlibVersion)
+					|| !selectedPNlibVersion.equals(menu.getSelectedBuiltInPNLibVersion())) {
+				simLibChanged = true;
+				selectedPNlibVersion = menu.getSelectedBuiltInPNLibVersion();
+			}
+			logAndShow("simulation lib: built-in PNlib version " + selectedPNlibVersion);
+		} else {
+			selectedPNlibVersion = null;
+			if (selectedSimLib == null
+					|| !selectedSimLib.getAbsolutePath().equals(menu.getCustomPNLib().getAbsolutePath())) {
+				simLibChanged = true;
+				selectedSimLib = menu.getCustomPNLib();
+			}
+			logAndShow("simulation lib: custom PNlib: " + menu.getCustomPNLib().getAbsolutePath());
 		}
-
-		simLib = menu.getSimLib();
-		System.out.println("simulation lib: " + simLib);
 
 		simExePresent = false;
 
@@ -555,7 +560,6 @@ public class PetriNetSimulation implements ActionListener {
 		// while checking/installing PNlib
 		final OMCCommunicator omcCommunicator = new OMCCommunicator(pathCompiler.resolve(OMC_FILE_PATH));
 
-		
 		boolean allInstalledSuccess = true;
 		for (String pnLibVersion : pnLibVersions) {
 			System.out.println("test: " + pnLibVersion);
@@ -702,11 +706,10 @@ public class PetriNetSimulation implements ActionListener {
 				final BufferedWriter out = new BufferedWriter(fstream)) {
 			out.write("cd(\"" + pathSim.toString().replace('\\', '/') + "\"); ");
 			out.write("getErrorString();\r\n");
-			if (simLib != null) {
-				out.write("loadFile(\"" + simLib.getPath().replace("\\", "/") + "/package.mo\"); ");
+			if (menu.isBuiltInPNlibSelected()) {
+				out.write("loadModel(PNlib,{\"" + selectedPNlibVersion + "\"}); ");
 			} else {
-				// TODO write version of PNlib
-				out.write("loadModel(PNlib); ");
+				out.write("loadFile(\"" + selectedSimLib.getPath().replace("\\", "/") + "/package.mo\"); ");
 			}
 			out.write("getErrorString();\r\n");
 			out.write("loadFile(\"simulation.mo\"); ");
@@ -777,10 +780,10 @@ public class PetriNetSimulation implements ActionListener {
 					}
 
 					String packageInfo = "";
-					if (simLib == null || simLib.getName().equals("PNlib")) {
+					if (selectedSimLib == null || selectedSimLib.getName().equals("PNlib")) {
 						// packageInfo = "inner PNlib.Settings settings1;";
 					} else {
-						packageInfo = "import PNlib = " + simLib.getName() + ";";
+						packageInfo = "import PNlib = " + selectedSimLib.getName() + ";";
 					}
 					MOoutput mo = new MOoutput(pathSim.resolve("simulation.mo").toFile(), packageInfo,
 							menu.getGlobalSeed(), false);
