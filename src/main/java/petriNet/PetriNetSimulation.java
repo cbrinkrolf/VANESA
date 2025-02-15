@@ -77,7 +77,7 @@ public class PetriNetSimulation implements ActionListener {
 	private String simName;
 
 	private File simLib;
-	private List<File> simLibs;
+	private List<File> customSimLibs;
 	private Pathway pw;
 	private final MainWindow w;
 
@@ -90,8 +90,8 @@ public class PetriNetSimulation implements ActionListener {
 	private final ArrayList<String> pnLibVersions = new ArrayList<>() {
 		private static final long serialVersionUID = 176815129085958L;
 		{
-			add("2.2.0");
 			add("3.0.0");
+			add("2.2.0");
 		}
 	};
 	// for the simulation results export of protected variables, necessary to detect
@@ -109,21 +109,21 @@ public class PetriNetSimulation implements ActionListener {
 		this.pw = pw;
 		pathWorkingDirectory = VanesaUtility.getWorkingDirectoryPath();
 		pathSim = pathWorkingDirectory.resolve("simulation");
-		simLibs = getLibs(pathWorkingDirectory.toFile());
+		customSimLibs = getLibs(pathWorkingDirectory.toFile());
 		w = MainWindow.getInstance();
 	}
 
 	public void showMenu() {
 		if (menu == null) {
 			if (SettingsManager.getInstance().getPNlibPath().length() > 0) {
-				simLibs = getLibs(new File(SettingsManager.getInstance().getPNlibPath()));
+				customSimLibs = getLibs(new File(SettingsManager.getInstance().getPNlibPath()));
 			}
-			menu = new SimMenu(pw, this, simLibs);
+			menu = new SimMenu(pw, this, pnLibVersions, customSimLibs);
 		} else {
 			if (SettingsManager.getInstance().getPNlibPath().length() > 0) {
-				simLibs = getLibs(new File(SettingsManager.getInstance().getPNlibPath()));
+				customSimLibs = getLibs(new File(SettingsManager.getInstance().getPNlibPath()));
 			}
-			menu.setLibs(simLibs);
+			menu.setCustomLibs(customSimLibs);
 			menu.updateSimulationResults();
 			menu.setState(Frame.NORMAL);
 			menu.requestFocus();
@@ -555,6 +555,7 @@ public class PetriNetSimulation implements ActionListener {
 		// while checking/installing PNlib
 		final OMCCommunicator omcCommunicator = new OMCCommunicator(pathCompiler.resolve(OMC_FILE_PATH));
 
+		
 		boolean allInstalledSuccess = true;
 		for (String pnLibVersion : pnLibVersions) {
 			System.out.println("test: " + pnLibVersion);
@@ -577,14 +578,14 @@ public class PetriNetSimulation implements ActionListener {
 								+ ") was not successful! Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
 						logAndShow(message);
 						PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
-						allInstalledSuccess = allInstalledSuccess && menu.getSimLib() != null;
+						allInstalledSuccess = false;
 					}
 				} else {
 					String message = "Installation error. PNlib version " + pnLibVersion
 							+ " is not installed properly. Please install required version of PNlib manually via OpenModelica Connection Editor (OMEdit)!";
 					logAndShow(message);
 					PopUpDialog.getInstance().show("PNlib installation was not successful!", message);
-					allInstalledSuccess = allInstalledSuccess && menu.getSimLib() != null;
+					allInstalledSuccess = false;
 				}
 			}
 		}
@@ -704,6 +705,7 @@ public class PetriNetSimulation implements ActionListener {
 			if (simLib != null) {
 				out.write("loadFile(\"" + simLib.getPath().replace("\\", "/") + "/package.mo\"); ");
 			} else {
+				// TODO write version of PNlib
 				out.write("loadModel(PNlib); ");
 			}
 			out.write("getErrorString();\r\n");

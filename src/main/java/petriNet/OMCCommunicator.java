@@ -16,6 +16,8 @@ public class OMCCommunicator {
 	private final Path bin;
 	private final Path pathToMos;
 	private Set<String> pnLibVersions;
+	private boolean supportedPackageManagerChecked = false;
+	private boolean supportPackageManager = false;
 
 	public OMCCommunicator(Path bin) {
 		this.bin = bin;
@@ -58,23 +60,29 @@ public class OMCCommunicator {
 	}
 
 	public boolean isPackageManagerSupported() {
-		try {
-			writeMosFile(getOMCVersionScripting());
-			String output = runMosFile(pathToMos);
-			tryDeleteMos();
-			// expected: "OpenModelica v1.19.0 (64-bit)"
-			String[] temp = output.split("OpenModelica v");
-			String[] tmp = temp[1].split("\\.");
-			if (tmp.length > 1) {
-				int major = Integer.parseInt(tmp[0]);
-				int minor = Integer.parseInt(tmp[1]);
-				return major > 1 || (major == 1 && minor >= 19);
+		if (!supportedPackageManagerChecked) {
+			try {
+				writeMosFile(getOMCVersionScripting());
+				String output = runMosFile(pathToMos);
+				tryDeleteMos();
+				// expected: "OpenModelica v1.19.0 (64-bit)"
+				String[] temp = output.split("OpenModelica v");
+				String[] tmp = temp[1].split("\\.");
+				if (tmp.length > 1) {
+					int major = Integer.parseInt(tmp[0]);
+					int minor = Integer.parseInt(tmp[1]);
+					supportPackageManager = major > 1 || (major == 1 && minor >= 19);
+				} else {
+					supportPackageManager = false;
+				}
+				supportedPackageManagerChecked = true;
+			} catch (IOException | InterruptedException | NumberFormatException e) {
+				e.printStackTrace();
+				supportPackageManager = false;
+				supportedPackageManagerChecked = true;
 			}
-			return false;
-		} catch (IOException | InterruptedException | NumberFormatException e) {
-			e.printStackTrace();
-			return false;
 		}
+		return supportPackageManager;
 	}
 
 	public boolean isPNlibVersionInstalled(String version) {
