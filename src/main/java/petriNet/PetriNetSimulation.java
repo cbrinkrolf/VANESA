@@ -87,6 +87,10 @@ public class PetriNetSimulation implements ActionListener {
 	private boolean simExePresent;
 	private StringBuilder logMessage = null;
 	private boolean installationChecked = false;
+
+	private boolean shortModelName = false;
+	private String modelicaModelName = "m";
+
 	// private final String pnLibVersion = "3.0.0";
 	// supported PNlib versions
 	private final ArrayList<String> pnLibVersions = new ArrayList<>() {
@@ -100,8 +104,7 @@ public class PetriNetSimulation implements ActionListener {
 	// actual firing of stochastic transitions
 	private boolean exportPrtoectedVariables = true;
 
-	// TODO for debug only
-	private String reuseOld = "";// "_omcQ_27D15_5FCPM_5FPN_2Esbml_27.exe";
+	private String customeExecutable = "";// "_omcQ_27D15_5FCPM_5FPN_2Esbml_27.exe";
 
 	// CHRIS refactored version of threads for simulation needs to be tested and
 	// evaluated. maybe show more hints / error messages
@@ -153,10 +156,16 @@ public class PetriNetSimulation implements ActionListener {
 		final int intervals = menu.getIntervals();
 		final double tolerance = menu.getTolerance();
 
-		if (!reuseOld.isEmpty()) {
-			File file = pathSim.resolve(reuseOld).toFile();
+		if (menu.isUseCustomExecutableSelected()) {
+			customeExecutable = menu.getCustomExecutableName();
+			simName = pathSim.resolve(customeExecutable).toFile().getAbsolutePath();
+		}
 
-			simName = file.getAbsolutePath();
+		shortModelName = menu.isUseShortNamesSelected();
+		if (shortModelName) {
+			modelicaModelName = "m";
+		} else {
+			modelicaModelName = "'" + pw.getName() + "'";
 		}
 
 		System.out.println("simNameOld: " + simName);
@@ -301,7 +310,7 @@ public class PetriNetSimulation implements ActionListener {
 			logAndShow("executable needs to be compiled");
 		}
 
-		if (!reuseOld.isEmpty()) {
+		if (menu.isUseCustomExecutableSelected()) {
 			flags.reset();
 			pw.getChangedInitialValues().clear();
 			pw.getChangedParameters().clear();
@@ -429,9 +438,16 @@ public class PetriNetSimulation implements ActionListener {
 
 					setReader(new InputStreamReader(simProcess.getInputStream()));
 				} catch (IOException e1) {
-					simProcess.destroy();
+
 					PopUpDialog.getInstance().show("Simulation error:", e1.getMessage());
 					e1.printStackTrace();
+					if (simProcess != null) {
+						simProcess.destroy();
+					}
+					stopAction();
+				}
+				if(menu.isUseCustomExecutableSelected()){
+					simName = null;
 				}
 				System.out.println("simulation thread finished");
 			}
@@ -529,17 +545,20 @@ public class PetriNetSimulation implements ActionListener {
 				}
 				try {
 					System.out.println("outputReader server stopped");
-					line = outputReader.readLine();
-					while (line != null && line.length() > 0) {
-						// menue.addText(line + "\r\n");
-						// pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage()
-						// .append(line + "\r\n");
-						logAndShow(line);
-						System.out.println(line);
+
+					if (outputReader != null) {
 						line = outputReader.readLine();
+						while (line != null && line.length() > 0) {
+							// menue.addText(line + "\r\n");
+							// pw.getPetriPropertiesNet().getSimResController().get(simId).getLogMessage()
+							// .append(line + "\r\n");
+							logAndShow(line);
+							System.out.println(line);
+							line = outputReader.readLine();
+						}
+						outputReader.close();
+						outputReader = null;
 					}
-					outputReader.close();
-					outputReader = null;
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -727,10 +746,11 @@ public class PetriNetSimulation implements ActionListener {
 			if (finalFilter.length() > 100000) {
 				System.out.println("variableFilter might geht too long, filter not set. Lengths: "
 						+ finalFilter.length() + " chars.");
-				out.write("buildModel('" + pw.getName() + "'); ");
+
+				out.write("buildModel(" + this.modelicaModelName + "); ");
 			} else {
 				System.out.println("variableFilter set. Lengths: " + finalFilter.length() + " chars.");
-				out.write("buildModel('" + pw.getName() + "', " + finalFilter + "); ");
+				out.write("buildModel(" + this.modelicaModelName + ", " + finalFilter + "); ");
 			}
 			out.write("getErrorString();\r\n");
 		}
@@ -783,8 +803,8 @@ public class PetriNetSimulation implements ActionListener {
 					if (!menu.isBuiltInPNlibSelected()) {
 						packageInfo = "import PNlib = " + selectedSimLib.getName() + ";";
 					}
-					MOoutput mo = new MOoutput(pathSim.resolve("simulation.mo").toFile(), packageInfo,
-							menu.getGlobalSeed(), false);
+					MOoutput mo = new MOoutput(pathSim.resolve("simulation.mo").toFile(), modelicaModelName,
+							packageInfo, menu.getGlobalSeed(), false);
 					mo.write(pw);
 					bea2key = mo.getBea2resultkey();
 

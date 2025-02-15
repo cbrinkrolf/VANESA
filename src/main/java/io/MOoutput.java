@@ -84,13 +84,14 @@ public class MOoutput extends BaseWriter<Pathway> {
 	private int testArcCount = 0;
 
 	public MOoutput(File file, boolean colored) {
-		this(file, null, 42, colored);
+		this(file, "m", null, 42, colored);
 	}
 
-	public MOoutput(File file, String packageInfo, int seed, boolean colored) {
+	public MOoutput(File file, String modelName, String packageInfo, int seed, boolean colored) {
 		super(file);
 		this.seed = seed;
 		init();
+		this.modelName = modelName;
 		this.packageInfo = packageInfo;
 		this.colored = colored;
 	}
@@ -141,15 +142,14 @@ public class MOoutput extends BaseWriter<Pathway> {
 		if (SettingsManager.getInstance().isDeveloperMode()) {
 			System.out.println("MOoutput(File " + pathway.getName() + " Pathway " + pathway + ")");
 		}
-		modelName = pathway.getName();
 		if (SettingsManager.getInstance().isDeveloperMode())
-			System.out.println("Model Name = '" + modelName + "'");
+			System.out.println("Model Name = " + modelName);
 		prepare(pathway);
 		buildConnections(pathway);
 		buildParameters(pathway);
 		buildAllNodes(pathway);
 		StringBuilder sb = new StringBuilder();
-		sb.append("model '").append(modelName).append("'").append(ENDL);
+		sb.append("model ").append(modelName).append(ENDL);
 		if (colored) {
 			sb.append(this.getgFunctions());
 		}
@@ -179,7 +179,7 @@ public class MOoutput extends BaseWriter<Pathway> {
 				.append(minY - 50).append("},{").append(maxX + 50).append(",").append(maxY + 50)
 				.append("}})), Diagram(coordinateSystem(extent={{").append(minX - 50).append(",").append(minY - 50)
 				.append("},{").append(maxX + 50).append(",").append(maxY + 50).append("}})));").append(ENDL);
-		sb.append("end '").append(modelName).append("';").append(ENDL);
+		sb.append("end ").append(modelName).append(";").append(ENDL);
 		String data = sb.toString();
 		if (noIdent) {
 			// remove "'"

@@ -59,6 +59,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	private JPanel basicOptionsPanel = new JPanel();
 	private JPanel advancedOptionsPanel = new JPanel();
 	private JPanel parametrizedPanel = new JPanel();
+	private JPanel devOptionsPanel = new JPanel();
+
 	private JScrollPane scrollPane = new JScrollPane(textArea);
 	private JLabel startLbl = new JLabel("Start:");
 	private JLabel stopLbl = new JLabel("Stop:");
@@ -82,6 +84,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	private JCheckBox advancedOptions = new JCheckBox("advanced options");
 	private JCheckBox parameterized = new JCheckBox("parameterized simulation");
+	private JCheckBox devOptions = new JCheckBox("developer options");
 
 	private BiologicalNodeAbstract selectedNode = null;
 
@@ -104,7 +107,11 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	private HashMap<JTextField, SimulationResult> text2sim;
 
-	// private ActionListener listener;
+	private JCheckBox useShortModelName = new JCheckBox("use short model name");
+	private JCheckBox useCustomExecutable = new JCheckBox("use executable:");
+	private JTextField executableTxt = new JTextField();
+	private JCheckBox useCustomEqPerFile = new JCheckBox("Eq. per file:");
+	private MyJFormattedTextField eqTxt;
 
 	private List<String> pnLibVersions;
 	private List<File> customLibs;
@@ -117,7 +124,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		this.setTitle("VANESA - simulation setup");
 		this.pnLibVersions = pnLibVersions;
 		this.customLibs = customLibs;
-		// this.listener = listener;
+
 		start.setActionCommand("start");
 		start.addActionListener(listener);
 		stop.setActionCommand("stop");
@@ -190,31 +197,30 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		this.setLayout(new BorderLayout());
 		this.stop.setEnabled(false);
 
-		advancedOptions.setActionCommand("advancedOptions");
 		advancedOptions.setToolTipText("Show advanced simulation options");
-		advancedOptions.addActionListener(this);
+		advancedOptions.addActionListener(e -> revalidateAdvancedPanel());
 
 		if (SettingsManager.getInstance().isDeveloperMode()) {
 			advancedOptions.setSelected(true);
 		}
 
-		parameterized.setActionCommand("parameterized");
+		devOptions.setToolTipText("Show further experimental developer simulation options");
+		devOptions.addActionListener(e -> revalidateDevOptionsPanel());
+		devOptions.setEnabled(advancedOptions.isSelected());
+
 		parameterized.setToolTipText("Experimental parameterized simulation. Runs in single thread so far!");
-		parameterized.addActionListener(this);
+		parameterized.addActionListener(e -> revalidateParametrizedPanel());
 
 		seedLbl.setToolTipText("Seed for stochastic processes");
 
-		seedChk.setActionCommand("seed");
 		seedChk.setToolTipText("Set random seed for stochastic processes");
-		seedChk.addActionListener(this);
+		seedChk.addActionListener(e -> revalidateSeed());
 
 		selectedNodeGroup.add(radioPlace);
 		selectedNodeGroup.add(radioTransition);
 
-		radioPlace.addActionListener(this);
-		radioPlace.setActionCommand("nodeSelected");
-		radioTransition.addActionListener(this);
-		radioTransition.setActionCommand("nodeSelected");
+		radioPlace.addActionListener(e -> this.fillNodeComboBox());
+		radioTransition.addActionListener(e -> this.fillNodeComboBox());
 		radioPlace.setSelected(true);
 
 		selectedNodeBox.addItemListener(this);
@@ -245,6 +251,22 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		solversLbl.setToolTipText("numerical solver");
 		intervalsLbl.setToolTipText("number of returned time steps");
 
+		useShortModelName
+				.setToolTipText("short model names lead to shorter generated file names for linking to executable");
+		useCustomExecutable.setToolTipText(
+				"use an existing simulation executable, all other compilation flags will be taken into account");
+		useCustomExecutable.addActionListener(e -> revalidateDevOptionsPanel());
+		executableTxt.setColumns(10);
+		executableTxt.setToolTipText("name of the executable, including file ending");
+		executableTxt.setText("_omcABC.exe");
+		useCustomEqPerFile.setToolTipText(
+				"override number of equations per generated file, larger number will result in less files generated");
+		useCustomEqPerFile.addActionListener(e -> revalidateDevOptionsPanel());
+		eqTxt = new MyJFormattedTextField(MyNumberFormat.getIntegerFormat());
+		eqTxt.setText("500");
+		eqTxt.setColumns(5);
+		eqTxt.setFocusLostBehavior(JFormattedTextField.COMMIT_OR_REVERT);
+
 		controlsPanel.add(start);
 		controlsPanel.add(stop);
 		controlsPanel.add(time);
@@ -258,6 +280,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 		basicOptionsPanel.add(forceRebuild);
 		basicOptionsPanel.add(advancedOptions);
+		basicOptionsPanel.add(devOptions);
 
 		// advancedOptionsPanel.add(parametrizedPanel);
 
@@ -317,8 +340,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	}
 
 	private void revalidateAdvancedPanel() {
+		devOptions.setEnabled(advancedOptions.isSelected());
 		advancedOptionsPanel.removeAll();
-
 		if (this.advancedOptions.isSelected()) {
 			north.add(advancedOptionsPanel);
 			advancedOptionsPanel.add(solversLbl);
@@ -332,13 +355,39 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			advancedOptionsPanel.add(seedChk);
 			advancedOptionsPanel.add(parameterized);
 			revalidateParametrizedPanel();
-
+			revalidateDevOptionsPanel();
 		} else {
 			advancedOptionsPanel.setSize(1, 1);
 			north.remove(advancedOptionsPanel);
 			north.remove(parametrizedPanel);
+			north.remove(devOptionsPanel);
 		}
 		north.revalidate();
+		this.pack();
+	}
+
+	private void revalidateDevOptionsPanel() {
+		devOptionsPanel.removeAll();
+
+		if (advancedOptions.isSelected() && devOptions.isSelected()) {
+			north.add(devOptionsPanel);
+			if (parameterized.isSelected()) {
+				north.remove(parametrizedPanel);
+				north.add(parametrizedPanel);
+			}
+			devOptionsPanel.add(useShortModelName);
+			devOptionsPanel.add(useCustomExecutable);
+			executableTxt.setEnabled(useCustomExecutable.isSelected());
+			devOptionsPanel.add(executableTxt);
+			devOptionsPanel.add(useCustomEqPerFile);
+			eqTxt.setEnabled(useCustomEqPerFile.isSelected());
+			devOptionsPanel.add(eqTxt);
+		} else {
+			devOptionsPanel.setSize(1, 1);
+			north.remove(devOptionsPanel);
+		}
+		north.revalidate();
+		north.repaint();
 		this.pack();
 	}
 
@@ -504,9 +553,9 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			String item;
 			for (int i = 0; i < pnLibVersions.size(); i++) {
 				if (i == 0) {
-					item = "PNlib " + pnLibVersions.get(i)+" (default, built-in)";
-				}else{
-					item = "PNlib " + pnLibVersions.get(i)+" (built-in)";
+					item = "PNlib " + pnLibVersions.get(i) + " (default, built-in)";
+				} else {
+					item = "PNlib " + pnLibVersions.get(i) + " (built-in)";
 				}
 				simLibs.addItem(item);
 			}
@@ -527,9 +576,9 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		return simLibs.getSelectedIndex() < pnLibVersions.size()
 				&& !SettingsManager.getInstance().isOverridePNlibPath();
 	}
-	
-	public String getSelectedBuiltInPNLibVersion(){
-		if(simLibs.getSelectedIndex() < pnLibVersions.size() && !SettingsManager.getInstance().isOverridePNlibPath()){
+
+	public String getSelectedBuiltInPNLibVersion() {
+		if (simLibs.getSelectedIndex() < pnLibVersions.size() && !SettingsManager.getInstance().isOverridePNlibPath()) {
 			return pnLibVersions.get(simLibs.getSelectedIndex());
 		}
 		return null;
@@ -683,13 +732,13 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 			new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.CSV_RESULT },
 					SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, this, simId);
 		} else if ("advancedOptions".equals(e.getActionCommand())) {
-			revalidateAdvancedPanel();
+			;
 		} else if ("parameterized".equals(e.getActionCommand())) {
-			revalidateParametrizedPanel();
+
 		} else if ("seed".equals(e.getActionCommand())) {
-			revalidateSeed();
+
 		} else if ("nodeSelected".equals(e.getActionCommand())) {
-			this.fillNodeComboBox();
+
 		}
 	}
 
@@ -782,5 +831,29 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		map.put("qss", "qss - A QSS solver [experimental]");
 		map.put("optimization", "optimization - Special solver for dynamic optimization");
 		return map;
+	}
+	
+	public boolean isUseShortNamesSelected(){
+		return advancedOptions.isSelected() && devOptions.isSelected() && useShortModelName.isSelected();
+	}
+	
+	public boolean isUseCustomExecutableSelected(){
+		return advancedOptions.isSelected() && devOptions.isSelected() && useCustomExecutable.isSelected();
+	}
+	
+	public String getCustomExecutableName(){
+		return executableTxt.getText().strip();
+	}
+	
+	public boolean isEquationsPerFileSelected(){
+		return advancedOptions.isSelected() && devOptions.isSelected() && useCustomEqPerFile.isSelected();
+	}
+	
+	public int getCustomEqutionsPerFile(){
+		Number number = (Number) eqTxt.getValue();
+		if (number != null) {
+			return number.intValue();
+		}
+		return 500;
 	}
 }
