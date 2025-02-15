@@ -28,7 +28,6 @@ import biologicalObjects.nodes.petriNet.Transition;
 import configurations.SettingsManager;
 import graph.GraphInstance;
 import graph.gui.Parameter;
-import gui.MainWindow;
 import util.StochasticDistribution;
 import util.StringLengthComparator;
 
@@ -154,19 +153,23 @@ public class MOoutput extends BaseWriter<Pathway> {
 		if (colored) {
 			sb.append(this.getgFunctions());
 		}
-		if (packageInfo != null) {
+		if (packageInfo != null && !packageInfo.isEmpty() && !packageInfo.isBlank()) {
 			sb.append(INDENT).append(this.packageInfo).append(ENDL);
 		}
 
 		// if (this.packageInfo == null) {
 		// sb.append(indentation + "inner PNlib.Settings settings1();" + ENDL);
 
-		// globalSeed influences stochastic transitions and conflict solving strategy: probability
-		sb.append("parameter Integer seed = "+seed+";").append(ENDL);
-		sb.append(INDENT).append("inner ").append(PNlibSettings)
-				.append(" settings(showTokenFlow = true, globalSeed=seed) annotation(Placement(visible=true, transformation(origin={")
-				.append(minX - 30).append(", ").append(maxY + 30)
-				.append("}, extent={{-20, -20}, {20, 20}}, rotation=0)));").append(ENDL);
+		// globalSeed influences stochastic transitions and conflict solving strategy:
+		// probability
+
+		String omitOpenModelicaAnnimations = "animateHazardFunc = false, animateMarking = false, animatePlace = false, animatePutFireTime = false, animateSpeed = false, animateTransition = false, animateWeightTIarc = false,";
+
+		sb.append("parameter Integer seed = " + seed + ";").append(ENDL);
+		sb.append(INDENT).append("inner ").append(PNlibSettings).append(" settings(")
+				.append(omitOpenModelicaAnnimations).append("showTokenFlow = true, globalSeed=seed)").append(ENDL)
+				.append("annotation(Placement(visible=true, transformation(origin={").append(minX - 30).append(", ")
+				.append(maxY + 30).append("}, extent={{-20, -20}, {20, 20}}, rotation=0)));").append(ENDL);
 		// }
 		sb.append(parametersSB);
 		sb.append(componentsSB);
@@ -217,7 +220,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 					parametersSB.append(INDENT).append("parameter Real '_").append(bna.getName()).append("_")
 							.append(bna.getParameters().get(i).getName()).append("'");
 					if (bna.getParameters().get(i).getUnit().length() > 0) {
-						parametersSB.append("(final unit=\"").append(bna.getParameters().get(i).getUnit()).append("\")");
+						parametersSB.append("(final unit=\"").append(bna.getParameters().get(i).getUnit())
+								.append("\")");
 					}
 					parametersSB.append(" = ").append(bna.getParameters().get(i).getValue()).append(";").append(ENDL);
 				}
@@ -283,7 +287,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 					place = (Place) bna;
 					attr.append("startTokens=" + (int) place.getTokenStart() + ", minTokens="
 							+ (int) place.getTokenMin() + ", maxTokens=" + (int) place.getTokenMax());
-					// places = places.concat(getPlaceString(getModelicaString(place), bna, atr, in, out));
+					// places = places.concat(getPlaceString(getModelicaString(place), bna, atr, in,
+					// out));
 				} else if (biologicalElement.equals(Elementdeclerations.continuousPlace)) {
 					place = (Place) bna;
 					if (colored) {
@@ -369,9 +374,9 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 				} else if (biologicalElement.equals(Elementdeclerations.continuousTransition)) {
 					ct = (ContinuousTransition) bna;
-					//System.out.println(ct.getMaximalSpeed());
+					// System.out.println(ct.getMaximalSpeed());
 					speed = this.replaceAll(ct.getMaximalSpeed(), ct.getParameters(), ct);
-					//System.out.println(speed);
+					// System.out.println(speed);
 					// if (ct.isKnockedOut()) {
 					// attr.append("maximumSpeed(final unit=\"mmol/min\")=0/*" + speed + "*/");
 					// } else {
@@ -536,13 +541,13 @@ public class MOoutput extends BaseWriter<Pathway> {
 		return result;
 	}
 
-	private String getTransitionString(Pathway pw, BiologicalNodeAbstract bna, String element, String name, StringBuilder attr,
-			int inEdges, int outEdges) {
-		//for (int i = 0; i < bna.getParameters().size(); i++) {
-			// params += this.indentation + "parameter Real
-			// "+bna.getParameters().get(i).getName()+" =
-			// "+bna.getParameters().get(i).getValue()+";" + this.endl;
-		//}
+	private String getTransitionString(Pathway pw, BiologicalNodeAbstract bna, String element, String name,
+			StringBuilder attr, int inEdges, int outEdges) {
+		// for (int i = 0; i < bna.getParameters().size(); i++) {
+		// params += this.indentation + "parameter Real
+		// "+bna.getParameters().get(i).getName()+" =
+		// "+bna.getParameters().get(i).getValue()+";" + this.endl;
+		// }
 		String inNumbers = "";
 		if (this.inWeights.containsKey(name)) {
 			inNumbers = this.inWeights.get(name);
@@ -682,25 +687,27 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 	private String getModelicaEdgeFunction(PNArc bea) {
 		if (bea.isRegularArc()) {
-			if(bea.getTo().isConstant() && bea.getTo() instanceof Place){
+			if (bea.getTo().isConstant() && bea.getTo() instanceof Place) {
 				return "0";
 			}
-			if (bea.getTo().isLogical() && bea.getTo().getLogicalReference().isConstant() && bea.getTo().getLogicalReference() instanceof Place) {
+			if (bea.getTo().isLogical() && bea.getTo().getLogicalReference().isConstant()
+					&& bea.getTo().getLogicalReference() instanceof Place) {
 				return "0";
 			}
-			
-			if(bea.getFrom().isConstant() && bea.getFrom() instanceof Place){
-				if(bea.getFrom() instanceof DiscretePlace){
-					return "max(0,"+replaceNames(bea.getFunction()+"-1)");
-				}else{
+
+			if (bea.getFrom().isConstant() && bea.getFrom() instanceof Place) {
+				if (bea.getFrom() instanceof DiscretePlace) {
+					return "max(0," + replaceNames(bea.getFunction() + "-1)");
+				} else {
 					return "0";
 				}
 			}
-			
-			if (bea.getFrom().isLogical() && bea.getFrom().getLogicalReference().isConstant() && bea.getFrom().getLogicalReference() instanceof Place) {
-				if(bea.getFrom().getLogicalReference() instanceof DiscretePlace){
-					return "max(0,"+replaceNames(bea.getFunction()+"-1)");
-				}else{
+
+			if (bea.getFrom().isLogical() && bea.getFrom().getLogicalReference().isConstant()
+					&& bea.getFrom().getLogicalReference() instanceof Place) {
+				if (bea.getFrom().getLogicalReference() instanceof DiscretePlace) {
+					return "max(0," + replaceNames(bea.getFunction() + "-1)");
+				} else {
 					return "0";
 				}
 			}
@@ -722,7 +729,8 @@ public class MOoutput extends BaseWriter<Pathway> {
 
 		// replace places
 		Pathway pw = GraphInstance.getPathway();
-		if(!pw.isPetriNet() && pw.getTransformationInformation() != null && pw.getTransformationInformation().getPetriNet() != null){
+		if (!pw.isPetriNet() && pw.getTransformationInformation() != null
+				&& pw.getTransformationInformation().getPetriNet() != null) {
 			pw = pw.getTransformationInformation().getPetriNet();
 		}
 		ArrayList<String> names = new ArrayList<>();

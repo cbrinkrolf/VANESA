@@ -780,9 +780,7 @@ public class PetriNetSimulation implements ActionListener {
 					}
 
 					String packageInfo = "";
-					if (selectedSimLib == null || selectedSimLib.getName().equals("PNlib")) {
-						// packageInfo = "inner PNlib.Settings settings1;";
-					} else {
+					if (!menu.isBuiltInPNlibSelected()) {
 						packageInfo = "import PNlib = " + selectedSimLib.getName() + ";";
 					}
 					MOoutput mo = new MOoutput(pathSim.resolve("simulation.mo").toFile(), packageInfo,
