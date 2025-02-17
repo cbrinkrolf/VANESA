@@ -406,14 +406,16 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		BiologicalNodeAbstract bna;
 		for (int i = 0; i < l.size(); i++) {
 			bna = l.get(i);
-
 			if (bna instanceof Place && radioPlace.isSelected()) {
 				selectedNodeBox.addItem(bna.getName());
 			} else if (bna instanceof Transition && radioTransition.isSelected()) {
 				selectedNodeBox.addItem(bna.getName());
 			}
 		}
-		selectedNodeBox.setSelectedIndex(0);
+		// otherwise crash, if PN only contains transitions, because radio place is preselected
+		if (selectedNodeBox.getItemCount() > 0) {
+			selectedNodeBox.setSelectedIndex(0);
+		}
 	}
 
 	private void fillParameterComboBox() {
@@ -832,24 +834,24 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		map.put("optimization", "optimization - Special solver for dynamic optimization");
 		return map;
 	}
-	
-	public boolean isUseShortNamesSelected(){
+
+	public boolean isUseShortNamesSelected() {
 		return advancedOptions.isSelected() && devOptions.isSelected() && useShortModelName.isSelected();
 	}
-	
-	public boolean isUseCustomExecutableSelected(){
+
+	public boolean isUseCustomExecutableSelected() {
 		return advancedOptions.isSelected() && devOptions.isSelected() && useCustomExecutable.isSelected();
 	}
-	
-	public String getCustomExecutableName(){
+
+	public String getCustomExecutableName() {
 		return executableTxt.getText().strip();
 	}
-	
-	public boolean isEquationsPerFileSelected(){
+
+	public boolean isEquationsPerFileSelected() {
 		return advancedOptions.isSelected() && devOptions.isSelected() && useCustomEqPerFile.isSelected();
 	}
-	
-	public int getCustomEqutionsPerFile(){
+
+	public int getCustomEqutionsPerFile() {
 		Number number = (Number) eqTxt.getValue();
 		if (number != null) {
 			return number.intValue();
