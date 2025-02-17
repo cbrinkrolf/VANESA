@@ -6,27 +6,31 @@ import java.util.List;
 public class Series {
 
 	private List<Double> values;
-	public Series(){
+
+	public Series() {
 		values = new ArrayList<Double>();
 	}
-	
-	public List<Double> getAll(){
+
+	public List<Double> getAll() {
 		return this.values;
 	}
-	
-	public Double get(int pos){
-		return values.get(pos);
+
+	public Double get(int pos) {
+		if (pos < values.size()) {
+			return values.get(pos);
+		}
+		return null;
 	}
-	
-	public void add(Double d){
+
+	public void add(Double d) {
 		values.add(d);
 	}
-	
-	public int size(){
+
+	public int size() {
 		return values.size();
 	}
-	
-	public void setValue(int index, Double d){
+
+	public void setValue(int index, Double d) {
 		values.set(index, d);
 	}
 }

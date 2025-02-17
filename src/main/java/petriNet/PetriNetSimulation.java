@@ -746,7 +746,8 @@ public class PetriNetSimulation implements ActionListener {
 			long zstNachher = System.currentTimeMillis();
 			// System.out.println("Zeit benoetigt: " + ((zstNachher -
 			// zstVorher) / 1000) + " sec");
-			System.out.println("Time for compiling: " + ((zstNachher - zstVorher)) + " millisec");
+			logAndShow("Time for compiling: " + DurationFormatUtils.formatDurationHMS(zstNachher - zstVorher));
+			
 		});
 
 		compileGUI.start();
@@ -799,7 +800,7 @@ public class PetriNetSimulation implements ActionListener {
 					InputStream errs = compileProcess.getErrorStream();
 
 					BufferedReader inputReader = new BufferedReader(new InputStreamReader(os));
-					System.out.println("intput stream");
+					// System.out.println("input stream");
 					// System.out.println(s);
 					// boolean buildSuccess = true;
 					System.out.println(stopped + " " + compileProcess.isAlive());

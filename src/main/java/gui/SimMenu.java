@@ -412,7 +412,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 				selectedNodeBox.addItem(bna.getName());
 			}
 		}
-		// otherwise crash, if PN only contains transitions, because radio place is preselected
+		// otherwise crash, if PN only contains transitions, because radio place is
+		// preselected
 		if (selectedNodeBox.getItemCount() > 0) {
 			selectedNodeBox.setSelectedIndex(0);
 		}

@@ -316,14 +316,14 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				main.setVisible(true);
 
 				drawPlot();
-				double ref;
+				Double ref;
 				if (simRes.getTime().size() > 0) {
 					for (BiologicalNodeAbstract node : pw.getAllGraphNodes()) {
 						if (node instanceof Transition) {
 							// System.out.println(node.getName());
 							if (simRes.contains(node) && simRes.get(node, ACTIVE) != null) {
 								ref = simRes.get(node, ACTIVE).get(slider.getValue());
-								if (ref == 1) {
+								if (ref != null && ref == 1) {
 									((Transition) node).setSimulationActive(true);
 								} else {
 									((Transition) node).setSimulationActive(false);
