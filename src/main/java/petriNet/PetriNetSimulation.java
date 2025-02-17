@@ -31,6 +31,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.eclipse.emf.ecore.xml.type.internal.RegEx;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
@@ -447,7 +448,7 @@ public class PetriNetSimulation implements ActionListener {
 					}
 					stopAction();
 				}
-				if(menu.isUseCustomExecutableSelected()){
+				if (menu.isUseCustomExecutableSelected()) {
 					simName = null;
 				}
 				System.out.println("simulation thread finished");
@@ -681,47 +682,76 @@ public class PetriNetSimulation implements ActionListener {
 	}
 
 	private void writeMosFile() throws IOException {
-		// TODO write variableFilter as Regex, instead of listing _ALL_ variable!
-		final StringBuilder filter = new StringBuilder("variableFilter=\"");
-		int vars = 0;
+		String filterRegEx = "";
+
+		boolean containsPlace = false;
+		boolean containsContinuousTransition = false;
+		boolean containsDiscreteTransition = false;
+		boolean containsStochasticTransition = false;
+		int countPlaces = 0;
+		int countContinuousTransitions = 0;
+		int countDiscreteTransitions = 0;
+		int countStochasticTransitions = 0;
+
 		for (final BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 			if (!bna.isLogical()) {
 				if (bna instanceof Place) {
-					filter.append("'").append(bna.getName()).append("'.t|");
-					vars++;
-				} else if (bna instanceof Transition) {
-					if (bna instanceof ContinuousTransition) {
-						filter.append("'").append(bna.getName()).append("'.fire|");
-						filter.append("'").append(bna.getName()).append("'.actualSpeed|");
-						vars += 2;
-					} else {
-						filter.append("'").append(bna.getName()).append("'.active|");
-						filter.append("'").append(bna.getName()).append("'.fireTime|");
-						vars += 2;
-						if (bna instanceof DiscreteTransition) {
-							filter.append("'").append(bna.getName()).append("'.delay|");
-						} else if (bna instanceof StochasticTransition) {
-							filter.append("'").append(bna.getName()).append("'.putDelay|");
-							vars++;
-						}
-					}
+					containsPlace = true;
+					countPlaces++;
+				} else if (bna instanceof ContinuousTransition) {
+					containsContinuousTransition = true;
+					countContinuousTransitions++;
+				} else if (bna instanceof DiscreteTransition) {
+					containsDiscreteTransition = true;
+					countDiscreteTransitions++;
+				} else if (bna instanceof StochasticTransition) {
+					containsStochasticTransition = true;
+					countStochasticTransitions++;
 				}
 			}
 		}
-
-		for (final String s : bea2key.values()) {
-			filter.append(s).append("|");
-			filter.append("der\\\\(").append(s).append("\\\\)|");
-			vars += 2;
+		if (containsPlace) {
+			filterRegEx += "'.+\\\\.t";
 		}
-		String finalFilter = filter.toString().replace("[", "\\\\[");
-		finalFilter = finalFilter.replace("]", "\\\\]");
-		finalFilter = finalFilter.replace(".", "\\\\.");
-		finalFilter = finalFilter.substring(0, finalFilter.length() - 1);
-		finalFilter += "\"";
-		// finalFilter = "variableFilter=\".*\"";
-		// System.out.println("Filter: " + finalFilter);
+		if (containsContinuousTransition) {
+			if (filterRegEx.length() > 0) {
+				filterRegEx += "|";
+			}
+			filterRegEx += ".+\\\\.fire|";
+			filterRegEx += ".+\\\\.actualSpeed";
+		}
+		if (containsDiscreteTransition || containsStochasticTransition) {
+			if (filterRegEx.length() > 0) {
+				filterRegEx += "|";
+			}
+			filterRegEx += ".+\\\\.active|";
+			filterRegEx += ".+\\\\.fireTime";
+		}
+		if (containsDiscreteTransition) {
+			if (filterRegEx.length() > 0) {
+				filterRegEx += "|";
+			}
+			filterRegEx += ".+\\\\.delay";
+		}
+		if (containsStochasticTransition) {
+			if (filterRegEx.length() > 0) {
+				filterRegEx += "|";
+			}
+			filterRegEx += ".+\\\\.putDelay";
+		}
+		if (!pw.getAllEdges().isEmpty()) {
+			filterRegEx += "|.+\\\\.tokenFlow\\\\.inflow\\\\[\\\\d\\\\]|";
+			filterRegEx += ".+der\\\\(.+\\\\.tokenflow\\\\.inflow\\\\[\\\\d\\\\]\\\\)";
+			filterRegEx += "|.+\\\\.tokenFlow\\\\.outflow\\\\[\\\\d\\\\]|";
+			filterRegEx += ".+der\\\\(.+\\\\.tokenflow\\\\.outflow\\\\[\\\\d\\\\]\\\\)";
+		}
+		filterRegEx = "variableFilter=\"" + filterRegEx + "\"";
+
+		int vars = countPlaces + 2 * countContinuousTransitions + 3 * countDiscreteTransitions
+				+ 3 * countStochasticTransitions + 2 * bea2key.values().size();
+
 		System.out.println("expected number of output vars: " + vars);
+		System.out.println("variableFilter: " + filterRegEx);
 		try (final FileWriter fstream = new FileWriter(pathSim.resolve("simulation.mos").toFile());
 				final BufferedWriter out = new BufferedWriter(fstream)) {
 			out.write("cd(\"" + pathSim.toString().replace('\\', '/') + "\"); ");
@@ -743,16 +773,7 @@ public class PetriNetSimulation implements ActionListener {
 			// +unitChecking\");");
 			out.write("getErrorString();\r\n");
 
-			// CHRIS improve / correct filter
-			if (finalFilter.length() > 100000) {
-				System.out.println("variableFilter might geht too long, filter not set. Lengths: "
-						+ finalFilter.length() + " chars.");
-
-				out.write("buildModel(" + this.modelicaModelName + "); ");
-			} else {
-				System.out.println("variableFilter set. Lengths: " + finalFilter.length() + " chars.");
-				out.write("buildModel(" + this.modelicaModelName + ", " + finalFilter + "); ");
-			}
+			out.write("buildModel(" + this.modelicaModelName + ", " + filterRegEx + "); ");
 			out.write("getErrorString();\r\n");
 		}
 	}
@@ -850,7 +871,7 @@ public class PetriNetSimulation implements ActionListener {
 						line = inputReader.readLine();
 					}
 					inputReader.close();
-					System.out.println("compile output: "+inputStreamString);
+					System.out.println("compile output: " + inputStreamString);
 
 					if (inputStreamString.toString().contains(
 							"Warning: The following equation is INCONSISTENT due to specified unit information:")) {
@@ -873,7 +894,6 @@ public class PetriNetSimulation implements ActionListener {
 						String tmp = tokenizer.nextToken();
 						// tmp.indexOf("{");
 						simName = tmp.substring(tmp.indexOf("{") + 2, tmp.length() - 1);
-						
 
 						if (SystemUtils.IS_OS_WINDOWS) {
 							simName += ".exe";

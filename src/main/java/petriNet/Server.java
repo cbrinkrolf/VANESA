@@ -111,10 +111,7 @@ public class Server {
 							// InputStream is = new
 							// BufferedInputStream(client.getInputStream());
 							is = new DataInputStream(client.getInputStream());
-							System.out.println("stream created");
-							System.out.println(is.available());
 							readData(is);
-							 System.out.println("server: ");
 							// schreibeNachricht(client, nachricht);
 
 						}
@@ -223,7 +220,6 @@ public class Server {
 				name2index.put(names.get(i), i);
 			}
 			this.createSets();
-			System.out.println();
 			System.out.println("sum headers: " + counter +"chars");
 		} catch (Exception e) {
 			e.printStackTrace();
