@@ -31,7 +31,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.eclipse.emf.ecore.xml.type.internal.RegEx;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
@@ -152,7 +151,6 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		}
 		stopped = false;
-		long zstNachher;
 		final double stopTime = menu.getStopValue();
 		final int intervals = menu.getIntervals();
 		final double tolerance = menu.getTolerance();
@@ -161,6 +159,8 @@ public class PetriNetSimulation implements ActionListener {
 			customeExecutable = menu.getCustomExecutableName();
 			simName = pathSim.resolve(customeExecutable).toFile().getAbsolutePath();
 		}
+
+		boolean shortModelNameChanged = !(shortModelName == menu.isUseShortNamesSelected());
 
 		shortModelName = menu.isUseShortNamesSelected();
 		if (shortModelName) {
@@ -185,104 +185,19 @@ public class PetriNetSimulation implements ActionListener {
 				+ menu.isForceRebuild());
 
 		w.blurUI();
-		long zstVorher = System.currentTimeMillis();
 
-		allThread = new Thread() {
+		System.out.println("stop: " + stopTime);
+		System.out.println("tolerance: " + tolerance);
+		Thread simulationThread = getSimulationThread(stopTime, intervals, tolerance, seed, overrideParameterized,
+				port);
 
-			public void run() {
-				// while (!stopped) {
-				try {
-					System.out.println("building ended");
-					pw.getPetriPropertiesNet().setPetriNetSimulation(true);
+		Thread redrawGraphThread = getRedrawGraphThread();
 
-					System.out.println("stop: " + stopTime);
-					System.out.println("tolerance: " + tolerance);
-					Thread simulationThread = getSimulationThread(stopTime, intervals, tolerance, seed,
-							overrideParameterized, port);
+		Thread outputThread = getSimulationOutputThread();
 
-					Thread redrawGraphThread = getRedrawGraphThread();
+		allThread = getCombinedThread(simulationThread, redrawGraphThread, outputThread);
 
-					Thread outputThread = getSimulationOutputThread();
-
-					simExePresent = false;
-
-					System.out.println(simName);
-					if (simName != null && new File(simName).exists()) {
-						System.out.println("sim exists");
-						simExePresent = true;
-					}
-
-					if (simExePresent) {
-						redrawGraphThread.start();
-						outputThread.start();
-
-						simulationThread.start();
-					} else {
-						// System.out.println("something wet wrong");
-						PopUpDialog.getInstance().show("Something went wrong!", "Simulation could not be built!");
-						stopAction();
-					}
-
-					long zstNachher = System.currentTimeMillis();
-					// System.out.println("Zeit benoetigt: " + ((zstNachher -
-					// zstVorher) / 1000) + " sec");
-					System.out.println("Time for compiling: " + ((zstNachher - zstVorher)) + " millisec");
-
-					if (pw.hasGotAtLeastOneElement() && !stopped) {
-						// graphInstance.getPathway().setPetriNet(true);
-						// PetriNet petrinet = graphInstance.getPathway()
-						// .getPetriNet();
-						// petrinet.setPetriNetSimulationFile(pathSim
-						// + "simulation_res.csv", true);
-						// petrinet.initializePetriNet(bea2key);
-					} else {
-						// throw new Exception();
-
-					}
-				} catch (Exception e) {
-					PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
-					e.printStackTrace();
-					PopUpDialog.getInstance().show("Something went wrong", "The model couldn't be simulated!");
-					w.unBlurUI();
-					menu.stopped();
-					if (simProcess != null) {
-						simProcess.destroy();
-					}
-					return;
-				}
-				// }
-				System.out.println("all thread finished");
-				// s = null;
-			}
-		};// --------end all thread
-
-		waitForServerConnection = new Thread() {
-
-			public void run() {
-
-				try {
-					s = new Server(pw, bea2key, simId, port);
-					s.start();
-					System.out.print("wait until servers is ready to connect ");
-					while (s.isRunning() && !s.isReadyToConnect()) {
-						System.out.print(".");
-						try {
-							sleep(100);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-					System.out.println();
-					if (s.isRunning() && s.isReadyToConnect()) {
-						// System.out.println("all threads start");
-						allThread.start();
-					}
-
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			}
-		};
+		waitForServerConnection = this.getWaitForServerConnectionThread(port);
 
 		boolean simLibChanged = false;
 		if (menu.isBuiltInPNlibSelected()) {
@@ -329,7 +244,8 @@ public class PetriNetSimulation implements ActionListener {
 		// System.out.println(menu.isForceRebuild());
 
 		if (flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged()
-				|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menu.isForceRebuild()) {
+				|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menu.isForceRebuild()
+				|| shortModelNameChanged) {
 			try {
 				logAndShow("(re) compilation due to changed properties");
 				this.compile();
@@ -570,6 +486,36 @@ public class PetriNetSimulation implements ActionListener {
 		};
 	}
 
+	private Thread getWaitForServerConnectionThread(int port) {
+		return new Thread() {
+
+			public void run() {
+
+				try {
+					s = new Server(pw, bea2key, simId, port);
+					s.start();
+					System.out.print("wait until servers is ready to connect ");
+					while (s.isRunning() && !s.isReadyToConnect()) {
+						System.out.print(".");
+						try {
+							sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					System.out.println();
+					if (s.isRunning() && s.isReadyToConnect()) {
+						// System.out.println("all threads start");
+						allThread.start();
+					}
+
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		};
+	}
+
 	private boolean checkInstallation() {
 		if (!checkInstallationOM()) {
 			return false;
@@ -786,6 +732,8 @@ public class PetriNetSimulation implements ActionListener {
 			long start = System.currentTimeMillis();
 			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 			String time = sdf.format(new Date());
+			long zstVorher = System.currentTimeMillis();
+
 			while (compiling) {
 				menu.setTime("Compiling since " + time + " for: "
 						+ DurationFormatUtils.formatDuration(System.currentTimeMillis() - start, "HH:mm:ss") + ".");
@@ -795,6 +743,10 @@ public class PetriNetSimulation implements ActionListener {
 					e.printStackTrace();
 				}
 			}
+			long zstNachher = System.currentTimeMillis();
+			// System.out.println("Zeit benoetigt: " + ((zstNachher -
+			// zstVorher) / 1000) + " sec");
+			System.out.println("Time for compiling: " + ((zstNachher - zstVorher)) + " millisec");
 		});
 
 		compileGUI.start();
@@ -804,7 +756,7 @@ public class PetriNetSimulation implements ActionListener {
 		// System.out.println("av: " +os.available());
 	}
 
-	public Thread getCompilingThread() {
+	private Thread getCompilingThread() {
 		return new Thread() {
 			public void run() {
 				// menu.setTime("Compiling ...");
@@ -923,6 +875,63 @@ public class PetriNetSimulation implements ActionListener {
 			}
 		};
 
+	}
+
+	private Thread getCombinedThread(Thread simulationThread, Thread redrawGraphThread, Thread outputThread) {
+		return new Thread() {
+
+			public void run() {
+				// while (!stopped) {
+				try {
+					System.out.println("building ended");
+					pw.getPetriPropertiesNet().setPetriNetSimulation(true);
+
+					simExePresent = false;
+
+					System.out.println(simName);
+					if (simName != null && new File(simName).exists()) {
+						System.out.println("sim exists");
+						simExePresent = true;
+					}
+
+					if (simExePresent) {
+						redrawGraphThread.start();
+						outputThread.start();
+
+						simulationThread.start();
+					} else {
+						// System.out.println("something wet wrong");
+						PopUpDialog.getInstance().show("Something went wrong!", "Simulation could not be built!");
+						stopAction();
+					}
+
+					if (pw.hasGotAtLeastOneElement() && !stopped) {
+						// graphInstance.getPathway().setPetriNet(true);
+						// PetriNet petrinet = graphInstance.getPathway()
+						// .getPetriNet();
+						// petrinet.setPetriNetSimulationFile(pathSim
+						// + "simulation_res.csv", true);
+						// petrinet.initializePetriNet(bea2key);
+					} else {
+						// throw new Exception();
+
+					}
+				} catch (Exception e) {
+					PopUpDialog.getInstance().show("Simulation error:", e.getMessage());
+					e.printStackTrace();
+					PopUpDialog.getInstance().show("Something went wrong", "The model couldn't be simulated!");
+					w.unBlurUI();
+					menu.stopped();
+					if (simProcess != null) {
+						simProcess.destroy();
+					}
+					return;
+				}
+				// }
+				System.out.println("all thread finished");
+				// s = null;
+			}
+		};// --------end all thread
 	}
 
 	@Override
