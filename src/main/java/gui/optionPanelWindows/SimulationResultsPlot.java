@@ -542,7 +542,9 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 							&& series2idx.get(place, TOKEN, simRes.getId()) != null) {
 						renderer.setSeriesStroke(series2idx.get(place, TOKEN, simRes.getId()), new BasicStroke(1));
 						renderer.setSeriesPaint(series2idx.get(place, TOKEN, simRes.getId()), place.getPlotColor());
+						// TODO maybe without notify=true?
 						renderer.setSeriesVisible((int) series2idx.get(place, TOKEN, simRes.getId()), true);
+						
 					} else {
 						// System.out.println("does not contain");
 					}

@@ -848,15 +848,17 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		return executableTxt.getText().strip();
 	}
 
+	// TODO not in use, yet
 	public boolean isEquationsPerFileSelected() {
 		return advancedOptions.isSelected() && devOptions.isSelected() && useCustomEqPerFile.isSelected();
 	}
 
+	// TODO not in use, yet
 	public int getCustomEqutionsPerFile() {
 		Number number = (Number) eqTxt.getValue();
 		if (number != null) {
-			return number.intValue();
+			return Math.max(0, number.intValue());
 		}
-		return 500;
+		return 0;
 	}
 }

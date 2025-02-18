@@ -91,6 +91,9 @@ public class PetriNetSimulation implements ActionListener {
 	private boolean shortModelName = false;
 	private String modelicaModelName = "m";
 
+	private boolean overrideEqPerFile = false;
+	private int eqPerFile = -1;
+
 	// private final String pnLibVersion = "3.0.0";
 	// supported PNlib versions
 	private final ArrayList<String> pnLibVersions = new ArrayList<>() {
@@ -169,6 +172,17 @@ public class PetriNetSimulation implements ActionListener {
 			modelicaModelName = "'" + pw.getName() + "'";
 		}
 
+		boolean eqPerFileChanged = !(overrideEqPerFile == menu.isEquationsPerFileSelected());
+
+		System.out.println("selected: " + menu.isEquationsPerFileSelected());
+		overrideEqPerFile = menu.isEquationsPerFileSelected();
+		if (overrideEqPerFile) {
+			if (eqPerFile != menu.getCustomEqutionsPerFile()) {
+				eqPerFile = menu.getCustomEqutionsPerFile();
+				eqPerFileChanged = true;
+			}
+		}
+
 		System.out.println("simNameOld: " + simName);
 		System.out.println("port: " + port);
 		flags = pw.getChangedFlags("petriNetSim");
@@ -180,9 +194,14 @@ public class PetriNetSimulation implements ActionListener {
 			seed = menu.getGlobalSeed();
 		}
 
-		logAndShow("Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
+		String message = "Simulation properties: stop=" + stopTime + ", intervals=" + intervals + ", integrator="
 				+ menu.getSolver() + ", tolerance=" + tolerance + ", seed=" + seed + ", forced rebuild="
-				+ menu.isForceRebuild());
+				+ menu.isForceRebuild() + ", use short model name=" + String.valueOf(shortModelName)
+				+ ", override equations per file=" + String.valueOf(overrideEqPerFile);
+		if (overrideEqPerFile) {
+			message += ", equations per file=" + String.valueOf(eqPerFile);
+		}
+		logAndShow(message);
 
 		w.blurUI();
 
@@ -245,7 +264,7 @@ public class PetriNetSimulation implements ActionListener {
 
 		if (flags.isEdgeChanged() || flags.isNodeChanged() || flags.isEdgeWeightChanged()
 				|| flags.isPnPropertiesChanged() || !simExePresent || simLibChanged || menu.isForceRebuild()
-				|| shortModelNameChanged) {
+				|| shortModelNameChanged || eqPerFileChanged) {
 			try {
 				logAndShow("(re) compilation due to changed properties");
 				this.compile();
@@ -279,12 +298,12 @@ public class PetriNetSimulation implements ActionListener {
 					System.out.println("parameter changed: " + flags.isParameterChanged());
 					if (flags.isParameterChanged()) {
 						GraphElementAbstract gea;
+						BiologicalNodeAbstract bna;
 						for (Parameter param : pw.getChangedParameters().keySet()) {
-							System.out.println(param.getName());
-							System.out.println(param.getValue());
+							// System.out.println(param.getName());
+							// System.out.println(param.getValue());
 							gea = pw.getChangedParameters().get(param);
-							System.out.println(gea.getName());
-							BiologicalNodeAbstract bna;
+							// System.out.println(gea.getName());
 							if (gea instanceof BiologicalNodeAbstract) {
 								bna = (BiologicalNodeAbstract) gea;
 								override += ",'_" + bna.getName() + "_" + param.getName() + "'=" + param.getValue();
@@ -495,16 +514,21 @@ public class PetriNetSimulation implements ActionListener {
 					s = new Server(pw, bea2key, simId, port);
 					s.start();
 					System.out.print("wait until servers is ready to connect ");
-					while (s.isRunning() && !s.isReadyToConnect()) {
+					int i = 0;
+					while (s.isRunning() && !s.isReadyToConnect() && !stopped) {
+						if (i % 50 == 0) {
+							System.out.println(".");
+						}
 						System.out.print(".");
 						try {
-							sleep(100);
+							sleep(500);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
+						i++;
 					}
 					System.out.println();
-					if (s.isRunning() && s.isReadyToConnect()) {
+					if (s.isRunning() && s.isReadyToConnect() && !stopped) {
 						// System.out.println("all threads start");
 						allThread.start();
 					}
@@ -712,7 +736,12 @@ public class PetriNetSimulation implements ActionListener {
 			out.write("getErrorString();\r\n");
 			// out.write("setDebugFlags(\"disableComSubExp\"); ");
 			// out.write("getErrorString();\r\n");
-			out.write("setCommandLineOptions(\"--unitChecking\"); ");
+			String commandLineOptions = "--unitChecking";
+			if (overrideEqPerFile && eqPerFile > 0) {
+				commandLineOptions += " --equationsPerFile=" + String.valueOf(eqPerFile);
+			}
+
+			out.write("setCommandLineOptions(\"" + commandLineOptions + "\"); ");
 			// out.write("setCommandLineOptions(\"--unitChecking --newBackend
 			// -d=mergeComponents\"); ");
 			// out.write("setCommandLineOptions(\"+d=disableComSubExp
@@ -746,8 +775,9 @@ public class PetriNetSimulation implements ActionListener {
 			long zstNachher = System.currentTimeMillis();
 			// System.out.println("Zeit benoetigt: " + ((zstNachher -
 			// zstVorher) / 1000) + " sec");
-			logAndShow("Time for compiling: " + DurationFormatUtils.formatDurationHMS(zstNachher - zstVorher));
-			
+			logAndShow("Time for compiling: " + DurationFormatUtils.formatDuration(zstNachher - zstVorher, "HH:mm:ss")
+					+ " (HH:mm:ss)");
+
 		});
 
 		compileGUI.start();
@@ -854,6 +884,8 @@ public class PetriNetSimulation implements ActionListener {
 						System.out.println("simName: " + simName);
 						if (new File(simName).exists()) {
 							buildSuccess = true;
+						} else {
+							PopUpDialog.getInstance().show("Something went wrong!", "Simulation could not be built!");
 						}
 					}
 					if (buildSuccess) {
@@ -864,18 +896,20 @@ public class PetriNetSimulation implements ActionListener {
 						pw.getChangedParameters().clear();
 						pw.getChangedBoundaries().clear();
 						compiling = false;
+						waitForServerConnection.start();
+					} else {
+						logAndShow("Compilen was not successful. No executable was generated!");
+						stopAction();
 					}
-
 				} catch (Exception e) {
 					e.printStackTrace();
 					logAndShow(e.getMessage());
 					compiling = false;
+					stopAction();
 				}
 				compiling = false;
-				waitForServerConnection.start();
 			}
 		};
-
 	}
 
 	private Thread getCombinedThread(Thread simulationThread, Thread redrawGraphThread, Thread outputThread) {
@@ -1090,17 +1124,20 @@ public class PetriNetSimulation implements ActionListener {
 		List<File> libs = new ArrayList<>();
 		if (directory.isDirectory()) {
 			File[] files = directory.listFiles();
+			File f;
+			File[] files2;
+			File f2;
 			for (int i = 0; i < files.length; i++) {
-				File f = files[i];
+				f = files[i];
 				if (f.isDirectory()) {
 					// System.out.println("folder: " + f.getName());
 					if (new File(f, "package.mo").exists()) {
 						libs.add(f);
 						// System.out.println("existiert1: " + f.getName());
 					} else {
-						File[] files2 = f.listFiles();
+						files2 = f.listFiles();
 						for (int j = 0; j < files2.length; j++) {
-							File f2 = files2[j];
+							f2 = files2[j];
 							if (new File(f2, "package.mo").exists()) {
 								libs.add(f2);
 								// System.out.println("existiert2: " + f2.getName()+" -
@@ -1117,6 +1154,7 @@ public class PetriNetSimulation implements ActionListener {
 	private void logAndShow(String text) {
 		this.logMessage.append(text + "\r\n");
 		this.menu.addText(text + "\r\n");
+		System.out.println(text);
 	}
 
 	private String getMarksOrTokens(Place p) {
