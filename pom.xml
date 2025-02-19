@@ -200,7 +200,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-configuration2</artifactId>
-            <version>2.9.0</version>
+            <version>2.11.0</version>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -228,21 +228,14 @@
             <version>3.8.8</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>fontbox</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+        <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
             <version>1.5.5</version>
-        </dependency>
-        <!--  for svg export of jfree chart, new artifactID org.jfree.svg is not automatically recognized by jfree chart -->
-        <dependency>
-    		<groupId>org.jfree</groupId>
-    		<artifactId>jfreesvg</artifactId>
-    		<version>3.4.3</version>
-		</dependency>
-        <!--  for pdf export of jfree charts-->
-        <dependency>
-            <groupId>com.orsonpdf</groupId>
-            <artifactId>orsonpdf</artifactId>
-            <version>1.9.1</version>
         </dependency>
         <dependency>
             <groupId>com.jtattoo</groupId>

@@ -123,7 +123,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	// size of Vector in each Place
 	private int rowsDim;
 
-	private ArrayList<String> labelsR1 = new ArrayList<String>();
+	private ArrayList<String> labelsR1 = new ArrayList<>();
 
 	private int animationStartInit = 0;
 	private int animationStopInit = 1;
@@ -537,14 +537,11 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				bna = resolveHidden(bna);
 				if (bna instanceof Place) {
 					place = (Place) bna;
-					// System.out.println(place.getPetriNetSimulationData().size());
-					if (this.series2idx.contains(place, TOKEN)
-							&& series2idx.get(place, TOKEN, simRes.getId()) != null) {
+					if (series2idx.contains(place, TOKEN) && series2idx.get(place, TOKEN, simRes.getId()) != null) {
 						renderer.setSeriesStroke(series2idx.get(place, TOKEN, simRes.getId()), new BasicStroke(1));
 						renderer.setSeriesPaint(series2idx.get(place, TOKEN, simRes.getId()), place.getPlotColor());
 						// TODO maybe without notify=true?
-						renderer.setSeriesVisible((int) series2idx.get(place, TOKEN, simRes.getId()), true);
-						
+						renderer.setSeriesVisible(series2idx.get(place, TOKEN, simRes.getId()), true);
 					} else {
 						// System.out.println("does not contain");
 					}
@@ -554,7 +551,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					if (series2idx.contains(transition, DELAY)) {
 						renderer.setSeriesPaint(series2idx.get(transition, DELAY, simRes.getId()),
 								transition.getPlotColor());
-						renderer.setSeriesVisible((int) series2idx.get(transition, DELAY, simRes.getId()), true);
+						renderer.setSeriesVisible(series2idx.get(transition, DELAY, simRes.getId()), true);
 					}
 				} else if (bna instanceof Transition && onlyT) {
 					legendY = "Speed";
@@ -562,8 +559,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					if (series2idx.contains(transition, ACTUAL_FIRING_SPEED)) {
 						renderer.setSeriesPaint(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
 								transition.getPlotColor());
-						renderer.setSeriesVisible((int) series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
-								true);
+						renderer.setSeriesVisible(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
+												  true);
 					}
 				}
 			}

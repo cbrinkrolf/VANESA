@@ -12,10 +12,10 @@ import io.image.ChartImageWriter;
 import io.image.ComponentImageWriter;
 import io.pnResult.PNResultWriter;
 import io.sbml.JSBMLOutput;
+import org.knowm.xchart.internal.chartpart.Chart;
 import petriNet.SimulationResult;
 
 import org.apache.commons.io.IOUtils;
-import org.jfree.chart.JFreeChart;
 import transformation.RuleManager;
 import transformation.YamlRuleWriter;
 
@@ -23,6 +23,7 @@ import javax.swing.*;
 import javax.xml.stream.XMLStreamException;
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Path;
 import java.util.List;
 
 public class SaveDialog {
@@ -72,11 +73,11 @@ public class SaveDialog {
 		}
 	}
 
-	public SaveDialog(SuffixAwareFilter[] formats, final List<JFreeChart> charts, Component relativeTo) {
+	public SaveDialog(final SuffixAwareFilter[] formats, final List<Chart<?, ?>> charts, Component relativeTo) {
 		if (relativeTo == null) {
 			relativeTo = MainWindow.getInstance().getFrame();
 		}
-		JFileChooser chooser = prepare(formats);
+		final JFileChooser chooser = prepare(formats);
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int option = chooser.showSaveDialog(relativeTo);
 		if (option != JFileChooser.APPROVE_OPTION) {
@@ -85,20 +86,21 @@ public class SaveDialog {
 		// Save path to settings.xml
 		SettingsManager.getInstance().setFileSaveDirectory(chooser.getCurrentDirectory().getAbsolutePath());
 		fileFilter = (SuffixAwareFilter) chooser.getFileFilter();
-		String pathSim = chooser.getSelectedFile().getAbsolutePath() + File.separator;
-		int width = 320;
-		int height = 200;
+		final File pathSim = chooser.getSelectedFile().getAbsoluteFile();
+		if (!pathSim.exists()) {
+			pathSim.mkdir();
+		}
 		boolean anyFileAlreadyExists = false;
 		final File[] chartFiles = new File[charts.size()];
 		for (int i = 0; i < charts.size(); i++) {
-			String name = charts.get(i).getTitle().getText();
-			chartFiles[i] = new File(pathSim + name + "." + fileFilter.getExtension());
+			final String name = charts.get(i).getTitle();
+			chartFiles[i] = pathSim.toPath().resolve(name + "." + fileFilter.getExtension()).toFile();
 			if (chartFiles[i].exists()) {
 				anyFileAlreadyExists = true;
 			}
 		}
 		if (anyFileAlreadyExists) {
-			int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite all existing files?",
+			final int response = JOptionPane.showConfirmDialog(relativeTo, "Overwrite all existing files?",
 					"Confirm Overwrite", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (response != JOptionPane.OK_OPTION) {
 				return;
@@ -106,14 +108,14 @@ public class SaveDialog {
 		}
 		AsyncTaskExecutor.runUIBlocking("Saving data to file. Please wait a second", () -> {
 			for (int i = 0; i < charts.size(); i++) {
-				JFreeChart chart = charts.get(i);
-				File file = chartFiles[i];
+				final Chart<?, ?> chart = charts.get(i);
+				final File file = chartFiles[i];
 				if (fileFilter == SuffixAwareFilter.PDF) {
-					write(new ChartImageWriter(file, ChartImageWriter.IMAGE_TYPE_PDF, width, height), chart, false);
+					write(new ChartImageWriter(file, ChartImageWriter.IMAGE_TYPE_PDF), chart, false);
 				} else if (fileFilter == SuffixAwareFilter.PNG) {
-					write(new ChartImageWriter(file, ChartImageWriter.IMAGE_TYPE_PNG, width, height), chart, false);
+					write(new ChartImageWriter(file, ChartImageWriter.IMAGE_TYPE_PNG), chart, false);
 				} else if (fileFilter == SuffixAwareFilter.SVG) {
-					write(new ChartImageWriter(file, ChartImageWriter.IMAGE_TYPE_SVG, width, height), chart, false);
+					write(new ChartImageWriter(file, ChartImageWriter.IMAGE_TYPE_SVG), chart, false);
 				}
 			}
 			PopUpDialog.getInstance().show("Information", fileFilter + "\nFile saved");

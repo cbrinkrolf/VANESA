@@ -42,7 +42,7 @@ public class DetailedSimRes implements ActionListener {
             simId = pw.getPetriPropertiesNet().getSimResController().getLastActive().getId();
         }
         this.simId = simId;
-        MyTable table = new MyTable();
+        final MyTable table = new MyTable();
         table.setModel(this.getTableModel(simId));
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.setColumnControlVisible(false);
@@ -55,16 +55,15 @@ public class DetailedSimRes implements ActionListener {
         table.getColumn("Label").setPreferredWidth(100);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-        JScrollPane sp = new JScrollPane(table);
+        final JScrollPane sp = new JScrollPane(table);
         sp.setPreferredSize(new Dimension(600, 200));
 
-        MigLayout layout2 = new MigLayout();
-        JPanel dialogPanel = new JPanel(layout2);
+        final JPanel dialogPanel = new JPanel(new MigLayout("fill", "", "[][][][][grow][]"));
         dialogPanel.add(new JLabel("Results for each Timestep t and for all Places:"), "span 2");
         dialogPanel.add(new JSeparator(), "gap 10, wrap 15, growx");
         dialogPanel.add(sp, "span 4, growx, wrap");
 
-        JButton exportSimResult = new JButton("Export Simulation Result");
+        final JButton exportSimResult = new JButton("Export Simulation Result");
         exportSimResult.setActionCommand("exportSimResult");
         exportSimResult.addActionListener(this);
 
@@ -73,8 +72,8 @@ public class DetailedSimRes implements ActionListener {
         dialogPanel.add(new JSeparator(), "span, growx, wrap 15, gaptop 10");
 
         // draw a new plot according to the current time step selection
-        PlotsPanel pp = new PlotsPanel(simId);
-        dialogPanel.add(pp, "wrap");
+        final PlotsPanel pp = new PlotsPanel(simId);
+        dialogPanel.add(pp, "span 4, grow, wrap");
         JButton button = new JButton("Save results to folder");
         button.addActionListener(pp);
 
@@ -87,20 +86,17 @@ public class DetailedSimRes implements ActionListener {
         dialog.setContentPane(dialogPanel);
         dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         dialog.setIconImages(MainWindow.getInstance().getFrame().getIconImages());
-        // dialog.setAlwaysOnTop(false);
         dialog.pack();
-        // ScreenSize screen = new ScreenSize();
-        // dialog.setLocation((screen.width / 2) - dialog.getSize().width / 2, (screen.height / 2) - dialog.getSize().height / 2);
         dialog.setVisible(true);
         dialog.setLocationRelativeTo(MainWindow.getInstance().getFrame());
     }
 
     private RegulationTableModel getTableModel(String simId) {
-        SimulationResult simRes = pw.getPetriPropertiesNet().getSimResController().get(simId);
+        final SimulationResult simRes = pw.getPetriPropertiesNet().getSimResController().get(simId);
         int rowsSize = pw.getPlaceCount();
         int rowsDim = simRes.getTime().size();
         // get Data from all Places
-        Object[][] rows = new Object[rowsSize][rowsDim + 1];
+        final Object[][] rows = new Object[rowsSize][rowsDim + 1];
         int i = 0;
         for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
             if (!(bna instanceof Place) || bna.isLogical()) {
@@ -118,7 +114,7 @@ public class DetailedSimRes implements ActionListener {
             i++;
         }
         // create column labels for table view
-        String[] columnNames = new String[rowsDim + 1];
+        final String[] columnNames = new String[rowsDim + 1];
         // String selectorValues[] = new String[rowsSize];
         columnNames[0] = "Label";
         for (i = 0; i < rowsDim; i++) {
@@ -129,7 +125,7 @@ public class DetailedSimRes implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String event = e.getActionCommand();
+        final String event = e.getActionCommand();
         if (event.equals("exportSimResult")) {
             new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.CSV_RESULT},
                     SaveDialog.DATA_TYPE_SIMULATION_RESULTS, null, dialog, simId);
