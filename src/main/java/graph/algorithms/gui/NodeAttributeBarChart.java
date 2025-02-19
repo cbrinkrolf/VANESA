@@ -19,26 +19,21 @@ public class NodeAttributeBarChart extends JFrame {
 	private static final long serialVersionUID = -4206605543774794331L;
 
 	/**
-	 * Initiates
-	 * 
-	 * @param title
-	 *            - Title of the JFrame
-	 * @param charttitle
-	 *            - Title of the chart
-	 * @param xaxistext
-	 *            - X-Axis description
-	 * @param yaxistext
-	 *            - Y-Axis desciption
-	 * @param dataset
-	 *            - Map which contains Keys and Values (e.g. count)
+	 * @param title      - Title of the JFrame
+	 * @param charttitle - Title of the chart
+	 * @param xaxistext  - X-Axis description
+	 * @param yaxistext  - Y-Axis desciption
+	 * @param dataset    - Map which contains Keys and Values (e.g. count)
 	 */
 	public NodeAttributeBarChart(final String title, final String charttitle, final String xaxistext,
 								 final String yaxistext, final Map<String, Integer> dataset) {
 		super(title);
-		final CategoryChart chart = new CategoryChartBuilder().xAxisTitle(xaxistext).yAxisTitle(yaxistext).build();
+		final CategoryChart chart = new CategoryChartBuilder().xAxisTitle(xaxistext).yAxisTitle(yaxistext).title(
+				charttitle).build();
+		chart.getStyler().setLegendVisible(false);
 		final List<String> keys = dataset.keySet().stream().sorted().collect(Collectors.toList());
-		final List<Integer> values = keys.stream().map(dataset::get).collect(Collectors.toList());;
-		chart.addSeries(charttitle, keys, values);
+		final List<Integer> values = keys.stream().map(dataset::get).collect(Collectors.toList());
+		chart.addSeries("series", keys, values);
 		final XChartPanel<CategoryChart> chartPanel = new XChartPanel<>(chart);
 		chartPanel.setPreferredSize(new Dimension(800, 600));
 		setContentPane(chartPanel);
