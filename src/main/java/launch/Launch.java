@@ -11,6 +11,7 @@ import gui.MainWindow;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +29,11 @@ public class Launch {
 
 		Thread.currentThread().setUncaughtExceptionHandler(
 				(t, e) -> logger.error("Critical error in thread '" + t.getName() + "'", e));
+		try {
+			SwingUtilities.invokeAndWait(() -> Thread.currentThread().setUncaughtExceptionHandler(
+					(t, e) -> logger.error("Error in AWT thread '" + t.getName() + "'", e)));
+		} catch (InterruptedException | InvocationTargetException ignored) {
+		}
 
 		final IntroScreen intro = new IntroScreen();
 		intro.openWindow();

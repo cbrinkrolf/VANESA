@@ -2,6 +2,7 @@
 <Configuration status="warn" name="vanesa" packages="">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="%d{ISO8601} %-5p [%t] %c: %m%n"/>
         </Console>
         <RollingFile name="network_editor_logfile" fileName="logfiles/network_editor.log"
@@ -36,7 +37,7 @@
             <AppenderRef ref="http_logfile"/>
         </logger>
         <Root level="info">
-            <!-- <AppenderRef ref="console"/> -->
+            <AppenderRef ref="console"/>
             <AppenderRef ref="network_editor_logfile"/>
         </Root>
     </Loggers>
