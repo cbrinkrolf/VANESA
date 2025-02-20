@@ -27,6 +27,7 @@ import net.miginfocom.swing.MigLayout;
 import org.knowm.xchart.*;
 import org.knowm.xchart.internal.chartpart.Chart;
 import org.knowm.xchart.style.Styler;
+import org.knowm.xchart.style.markers.SeriesMarkers;
 
 import static petriNet.SimulationResultController.SIM_TOKEN;
 
@@ -102,7 +103,9 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 					xValues[i] = simRes.getTime().get(i);
 					yValues[i] = simRes.get(place, SIM_TOKEN).get(i);
 				}
-				chart.addSeries("series", xValues, yValues);
+				final XYSeries series = chart.addSeries("series", xValues, yValues);
+				series.setLineWidth(1);
+				series.setMarker(SeriesMarkers.NONE);
 				chart.addAnnotation(new AnnotationTextPanel("Start=" + start + " End=" + end, 0, 0, true));
 				if (checkbox.isSelected()) {
 					chart.getStyler().setYAxisMin(min);
