@@ -77,9 +77,8 @@ public class PNResultWriter {
 		}
 		data.setHeaders(headers);
 
-		List<String> row;
 		for (int t = 0; t < simRes.getTime().size(); t++) {
-			row = new ArrayList<>();
+			final List<String> row = new ArrayList<>();
 
 			row.add("\"" + simRes.getTime().get(t) + "\"");
 			for (Place place : places) {

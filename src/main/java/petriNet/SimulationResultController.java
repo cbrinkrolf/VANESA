@@ -10,7 +10,6 @@ import graph.GraphInstance;
 import gui.MainWindow;
 
 public class SimulationResultController {
-
 	// for places
 	public static int SIM_TOKEN = 1;
 
@@ -26,19 +25,16 @@ public class SimulationResultController {
 	public static int SIM_SUM_OF_TOKEN = 3;
 	public static int SIM_ACTUAL_TOKEN_FLOW = 4;
 
-	private Map<String, SimulationResult> series;
-	private List<String> simIds = new ArrayList<String>();
+	/**
+	 * should be concurrent, otherwise it might lead to problems if a simulation is performed and simulation runs are
+	 * deleted in the sim menu. Then Ids get messed up.
+	 */
+	private final Map<String, SimulationResult> series = new ConcurrentHashMap<>();
+	private final List<String> simIds = new ArrayList<>();
 
 	private boolean filteredDefault = false;
 
-	public SimulationResultController() {
-		// should be concurrent, otherwise it might lead to problems if a simulation is
-		// performed and simulation runs are deleted in the sim menu. Then Ids get
-		// messed up
-		series = new ConcurrentHashMap<String, SimulationResult>();
-	}
-
-	public SimulationResult get(String simId) {
+	public SimulationResult get(final String simId) {
 		if (!simIds.contains(simId)) {
 			series.put(simId, new SimulationResult(simId, simIds.size() + "", filteredDefault));
 			simIds.add(simId);
@@ -46,7 +42,7 @@ public class SimulationResultController {
 		return series.get(simId);
 	}
 
-	public void removeSimulationResult(String simId) {
+	public void removeSimulationResult(final String simId) {
 		if (series.containsKey(simId)) {
 			series.remove(simId);
 			simIds.remove(simId);
@@ -67,26 +63,27 @@ public class SimulationResultController {
 	}
 
 	public List<SimulationResult> getAll() {
-		List<SimulationResult> list = new ArrayList<SimulationResult>();
-		for (int i = 0; i < this.simIds.size(); i++) {
-			list.add(this.series.get(this.simIds.get(i)));
+		final List<SimulationResult> list = new ArrayList<>();
+		for (int i = 0; i < simIds.size(); i++) {
+			list.add(series.get(simIds.get(i)));
 		}
 		return list;
 	}
 
 	public List<SimulationResult> getAllActive() {
-		List<SimulationResult> list = new ArrayList<SimulationResult>();
-		for (int i = 0; i < this.simIds.size(); i++) {
-			if (this.series.get(this.simIds.get(i)).isActive()) {
-				list.add(this.series.get(this.simIds.get(i)));
+		final List<SimulationResult> list = new ArrayList<>();
+		for (int i = 0; i < simIds.size(); i++) {
+			final SimulationResult s = series.get(simIds.get(i));
+			if (s.isActive()) {
+				list.add(s);
 			}
 		}
 		return list;
 	}
 
-	public List<SimulationResult> getAllActiveWithData(GraphElementAbstract gea, int simulationAttribute) {
-		List<SimulationResult> list = new ArrayList<SimulationResult>();
-		List<SimulationResult> active = getAllActive();
+	public List<SimulationResult> getAllActiveWithData(final GraphElementAbstract gea, final int simulationAttribute) {
+		final List<SimulationResult> list = new ArrayList<>();
+		final List<SimulationResult> active = getAllActive();
 		for (int i = 0; i < active.size(); i++) {
 			if (active.get(i).contains(gea, simulationAttribute)) {
 				list.add(active.get(i));
@@ -95,23 +92,22 @@ public class SimulationResultController {
 		return list;
 	}
 
-	public void setAllActive(boolean active) {
-		for (SimulationResult simRes : series.values()) {
+	public void setAllActive(final boolean active) {
+		for (final SimulationResult simRes : series.values()) {
 			simRes.setActive(active);
 		}
 	}
 
-	public void remove(int i) {
-		this.series.remove(this.simIds.get(i));
-		this.simIds.remove(i);
+	public void remove(final int i) {
+		series.remove(simIds.get(i));
+		simIds.remove(i);
 		if (simIds.isEmpty()) {
 			GraphInstance.getPathway().getPetriPropertiesNet().setPetriNetSimulation(false);
-			MainWindow w = MainWindow.getInstance();
-			w.updateAllGuiElements();
+			MainWindow.getInstance().updateAllGuiElements();
 		}
 	}
 
 	public List<String> getSimIds() {
-		return this.simIds;
+		return simIds;
 	}
 }

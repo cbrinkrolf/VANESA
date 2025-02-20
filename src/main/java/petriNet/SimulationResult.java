@@ -19,7 +19,7 @@ public class SimulationResult {
 	private final String id;
 	private final StringBuilder logMessage = new StringBuilder();
 
-	public SimulationResult(String id, String name, boolean filtered) {
+	public SimulationResult(final String id, final String name, final boolean filtered) {
 		this.id = id;
 		this.name = name;
 		time = new Series();
@@ -32,7 +32,7 @@ public class SimulationResult {
 		return active;
 	}
 
-	public void setActive(boolean active) {
+	public void setActive(final boolean active) {
 		this.active = active;
 	}
 
@@ -48,34 +48,34 @@ public class SimulationResult {
 		return time;
 	}
 
-	public void addTime(double time) {
+	public void addTime(final double time) {
 		this.time.add(time);
 	}
 
-	public void addValue(GraphElementAbstract gea, int type, double value) {
-		if (!result.contains(gea, type)) {
+	public void addValue(final GraphElementAbstract gea, final int type, final double value) {
+		if (!result.containsKey(gea, type)) {
 			result.put(gea, type, new Series());
 		}
 		result.get(gea, type).add(value);
 	}
 
-	public Series get(GraphElementAbstract gea, int type) {
+	public Series get(final GraphElementAbstract gea, final int type) {
 		return result.get(gea, type);
 	}
 
-	public List<Double> getValues(GraphElementAbstract gea, int type) {
+	public List<Double> getValues(final GraphElementAbstract gea, final int type) {
 		return result.get(gea, type).getAll();
 	}
 
-	public Double getValue(GraphElementAbstract gea, int type, int pos) {
+	public Double getValue(final GraphElementAbstract gea, final int type, final int pos) {
 		return result.get(gea, type).get(pos);
 	}
 
-	public List<Double> getFiltered(GraphElementAbstract gea, int type) {
+	public List<Double> getFiltered(final GraphElementAbstract gea, final int type) {
 		return resultFiltered.get(gea, type).getValues().getAll();
 	}
 
-	public Double getFiltered(GraphElementAbstract gea, int type, int pos) {
+	public Double getFiltered(final GraphElementAbstract gea, final int type, final int pos) {
 		return resultFiltered.get(gea, type).getValues().get(pos);
 	}
 
@@ -83,7 +83,7 @@ public class SimulationResult {
 		return time.getAll();
 	}
 
-	public List<Double> getTime(GraphElementAbstract gea, int type, boolean filtered) {
+	public List<Double> getTime(final GraphElementAbstract gea, final int type, final boolean filtered) {
 		if (filtered) {
 			return resultFiltered.get(gea, type).getTime().getAll();
 		} else {
@@ -95,19 +95,19 @@ public class SimulationResult {
 		resultFiltered = new DoubleHashMap<>();
 	}
 
-	public boolean contains(GraphElementAbstract gea) {
-		return result.contains(gea);
+	public boolean contains(final GraphElementAbstract gea) {
+		return result.containsKey(gea);
 	}
 
-	public boolean contains(GraphElementAbstract gea, int type) {
-		return result.contains(gea, type);
+	public boolean contains(final GraphElementAbstract gea, final int type) {
+		return result.containsKey(gea, type);
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name.trim();
 	}
 
@@ -115,14 +115,9 @@ public class SimulationResult {
 		return this.time.size();
 	}
 
-	public void refineEdgeFlow(Set<PNArc> arcs) {
-		Series delayS;
-
-		double lastToken;
-		int revisedTime;
-		double currentToken;
-		for (PNArc arc : arcs) {
-			double delay;
+	public void refineEdgeFlow(final Set<PNArc> arcs) {
+		for (final PNArc arc : arcs) {
+			final Series delayS;
 			if (arc.getFrom() instanceof DiscreteTransition || arc.getFrom() instanceof StochasticTransition) {
 				delayS = get(arc.getFrom(), SimulationResultController.SIM_DELAY);
 			} else if (arc.getTo() instanceof Transition || arc.getTo() instanceof StochasticTransition) {
@@ -130,26 +125,19 @@ public class SimulationResult {
 			} else {
 				continue;
 			}
-
-			if (result.contains(arc, SimulationResultController.SIM_SUM_OF_TOKEN)
+			if (result.containsKey(arc, SimulationResultController.SIM_SUM_OF_TOKEN)
 					&& result.get(arc, SimulationResultController.SIM_SUM_OF_TOKEN).size() > 0
-					&& !result.contains(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW) && delayS != null
+					&& !result.containsKey(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW) && delayS != null
 					&& delayS.size() > 0) {
 
 				Series sumS = result.get(arc, SimulationResultController.SIM_SUM_OF_TOKEN);
-
-				lastToken = sumS.get(0);
-				revisedTime = 0;
+				double lastToken = sumS.get(0);
+				int revisedTime = 0;
 				for (int i = 0; i < time.size(); i++) {
-					currentToken = sumS.get(i);
-
+					double currentToken = sumS.get(i);
 					// fired
 					if (currentToken > lastToken) {
-						// System.out.println("fired");
-						delay = delayS.get(i - 2);
-						// System.out.println(arc.getFrom().getName() + " -> " + arc.getTo().getName() +
-						// " t: "
-						// + time.get(i) + " d: " + delay);
+						double delay = delayS.get(i - 2);
 						for (int j = revisedTime; j <= i; j++) {
 							if (time.get(j) + delay >= time.get(i)) {
 								addValue(arc, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW,
@@ -170,31 +158,20 @@ public class SimulationResult {
 		}
 	}
 
-	public void refineDiscreteTransitionIsFiring(Set<DiscreteTransition> transitions) {
-		Series fireTimeS;
-		Series delayS;
-		Series fireS;
-		Double fireTime;
-		Double delay;
-		int lastIdx;
-
-		for (DiscreteTransition t : transitions) {
-
+	public void refineDiscreteTransitionIsFiring(final Set<DiscreteTransition> transitions) {
+		for (final DiscreteTransition t : transitions) {
 			for (int i = 0; i < getTime().size(); i++) {
 				addValue(t, SimulationResultController.SIM_FIRE, 0.0);
 			}
-
-			fireTimeS = get(t, SimulationResultController.SIM_FIRE_TIME);
-			delayS = get(t, SimulationResultController.SIM_DELAY);
-			fireS = get(t, SimulationResultController.SIM_FIRE);
-
+			final Series fireTimeS = get(t, SimulationResultController.SIM_FIRE_TIME);
+			final Series delayS = get(t, SimulationResultController.SIM_DELAY);
+			final Series fireS = get(t, SimulationResultController.SIM_FIRE);
 			if (fireTimeS != null && delayS != null && fireS != null) {
-
-				fireTime = fireTimeS.get(0);
-				delay = delayS.get(0);
-
-				lastIdx = 0;
+				Double fireTime = fireTimeS.get(0);
+				Double delay = delayS.get(0);
+				int lastIdx = 0;
 				for (int index = 0; index < getTime().size(); index++) {
+					// fire event occurred
 					if (fireTimeS.get(index) - fireTime > 0.0) {
 						for (int j = lastIdx; j <= index; j++) {
 							if (getTime().get(j) >= getTime().get(index) - delay) {
@@ -206,76 +183,48 @@ public class SimulationResult {
 						fireS.setValue(index - 1, 1.0);
 						lastIdx = index + 1;
 					}
-
 					fireTime = get(t, SimulationResultController.SIM_FIRE_TIME).get(index);
 					delay = delayS.get(index);
 				}
 				if (getTime().size() > 1) {
 					delayS.setValue(0, delayS.get(1));
 				}
-
 				for (int index = 0; index < getTime().size(); index++) {
-					if (fireS.get(index) == 0)
+					if (fireS.get(index) == 0) {
 						delayS.setValue(index, 0.0);
+					}
 				}
 			}
 		}
 	}
 
-	public void refineStochasticTransitionIsFiring(Set<StochasticTransition> transitions) {
-		Series putDelayS;
-		Series fireTimeS;
-		Series delayS;
-		Series fireS;
-		Double fireTime;
-		Double putDelay;
-		int lastIdx;
-
-		for (StochasticTransition t : transitions) {
-
-			putDelayS = result.get(t, SimulationResultController.SIM_PUT_DELAY);
-
+	public void refineStochasticTransitionIsFiring(final Set<StochasticTransition> transitions) {
+		for (final StochasticTransition t : transitions) {
 			for (int i = 0; i < getTime().size(); i++) {
 				addValue(t, SimulationResultController.SIM_DELAY, 0.0);
 				addValue(t, SimulationResultController.SIM_FIRE, 0.0);
 			}
-
-			fireTimeS = get(t, SimulationResultController.SIM_FIRE_TIME);
-			delayS = get(t, SimulationResultController.SIM_DELAY);
-			fireS = get(t, SimulationResultController.SIM_FIRE);
-
+			final Series putDelayS = result.get(t, SimulationResultController.SIM_PUT_DELAY);
+			final Series fireTimeS = get(t, SimulationResultController.SIM_FIRE_TIME);
+			final Series delayS = get(t, SimulationResultController.SIM_DELAY);
+			final Series fireS = get(t, SimulationResultController.SIM_FIRE);
 			if (putDelayS != null && fireTimeS != null && delayS != null && fireS != null) {
-
-				fireTime = fireTimeS.get(0);
-				putDelay = putDelayS.get(0);
-
-				lastIdx = 0;
+				Double fireTime = fireTimeS.get(0);
+				Double putDelay = putDelayS.get(0);
+				int lastIdx = 0;
 				for (int index = 1; index < getTime().size(); index++) {
-					// System.out.println("t: " + res.getTime().get(index) + " delay: " +
-					// delayS.get(index));
 					// fire event occurred
-					// System.out.println(fireTime + " " + fireTimeS.get(index));
 					if (fireTimeS.get(index) - fireTime > 0.0) {
-						// System.out.println("fired at time: " + getTime().get(index));
 						for (int j = lastIdx; j < index; j++) {
-							// System.out.println("time: "+getTime().get(index)+ " putDelay: "+putDelay);
-							// System.out.println(getTime().get(j) + " >= " + (getTime().get(index) -
-							// putDelay));
 							if (getTime().get(j) >= getTime().get(index) - putDelay) {
 								delayS.setValue(j - 1, putDelay);
 								fireS.setValue(j - 1, 1.0);
-								// System.out.println(
-								// "t: " + res.getTime().get(j) + " put Delay of: " + delayS.get(j));
-							} else {
-								// System.out.println("t: " + getTime().get(j) + " kleiner: " +
-								// delayS.get(j));
 							}
 						}
 						delayS.setValue(index - 1, putDelay);
 						fireS.setValue(index - 1, 1.0);
 						lastIdx = index;
 					}
-
 					fireTime = get(t, SimulationResultController.SIM_FIRE_TIME).get(index);
 					putDelay = putDelayS.get(index);
 				}

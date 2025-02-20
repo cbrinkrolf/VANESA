@@ -537,7 +537,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				bna = resolveHidden(bna);
 				if (bna instanceof Place) {
 					place = (Place) bna;
-					if (series2idx.contains(place, TOKEN) && series2idx.get(place, TOKEN, simRes.getId()) != null) {
+					if (series2idx.containsKey(place, TOKEN) && series2idx.get(place, TOKEN, simRes.getId()) != null) {
 						renderer.setSeriesStroke(series2idx.get(place, TOKEN, simRes.getId()), new BasicStroke(1));
 						renderer.setSeriesPaint(series2idx.get(place, TOKEN, simRes.getId()), place.getPlotColor());
 						// TODO maybe without notify=true?
@@ -548,7 +548,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				} else if (bna instanceof Transition && onlyT && onlyDiscreteT) {
 					legendY = "Delay";
 					transition = (Transition) bna;
-					if (series2idx.contains(transition, DELAY)) {
+					if (series2idx.containsKey(transition, DELAY)) {
 						renderer.setSeriesPaint(series2idx.get(transition, DELAY, simRes.getId()),
 								transition.getPlotColor());
 						renderer.setSeriesVisible(series2idx.get(transition, DELAY, simRes.getId()), true);
@@ -556,7 +556,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 				} else if (bna instanceof Transition && onlyT) {
 					legendY = "Speed";
 					transition = (Transition) bna;
-					if (series2idx.contains(transition, ACTUAL_FIRING_SPEED)) {
+					if (series2idx.containsKey(transition, ACTUAL_FIRING_SPEED)) {
 						renderer.setSeriesPaint(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
 								transition.getPlotColor());
 						renderer.setSeriesVisible(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),

@@ -1,72 +1,92 @@
 package util;
 
 import java.util.HashMap;
-import java.util.Set;
-
-import biologicalObjects.edges.petriNet.PNArc;
+import java.util.Map;
 
 public class TripleHashMap<KEY1, KEY2, KEY3, V> {
-    private final HashMap<KEY1, DoubleHashMap<KEY2, KEY3, V>> map;
+	private final Map<KEY1, DoubleHashMap<KEY2, KEY3, V>> map = new HashMap<>();
 
-    public TripleHashMap() {
-        map = new HashMap<>();
-    }
+	/**
+	 * Associates the specified value with the specified keys in this map. If the map previously contained a mapping for
+	 * the keys, the old value is replaced by the specified value.
+	 *
+	 * @param key1  first key with which the specified value is to be associated
+	 * @param key2  second key with which the specified value is to be associated
+	 * @param key3  third key with which the specified value is to be associated
+	 * @param value value to be associated with the specified keys
+	 * @return the previous value associated with {@code key1}, {@code key2}, and {@code key3}, or {@code null} if there
+	 * was no mapping for {@code key1}, {@code key2}, and {@code key3}. (A {@code null} return can also indicate that
+	 * the map previously associated {@code null} with {@code key1}, {@code key2}, and {@code key3}.)
+	 */
+	public V put(KEY1 key1, KEY2 key2, KEY3 key3, V value) {
+		final DoubleHashMap<KEY2, KEY3, V> k1Map = map.computeIfAbsent(key1, k -> new DoubleHashMap<>());
+		return k1Map.put(key2, key3, value);
+	}
 
-    public void put(KEY1 k1, KEY2 k2, KEY3 k3, V v) {
-        if (!map.containsKey(k1)) {
-            map.put(k1, new DoubleHashMap<>());
-        }
-        map.get(k1).put(k2, k3, v);
-    }
+	public DoubleHashMap<KEY2, KEY3, V> get(KEY1 key1) {
+		return map.get(key1);
+	}
 
-    public DoubleHashMap<KEY2, KEY3, V> get(KEY1 k) {
-        return map.get(k);
-    }
+	public V get(KEY1 key1, KEY2 key2, KEY3 key3) {
+		final DoubleHashMap<KEY2, KEY3, V> k1Map = map.get(key1);
+		return k1Map != null ? k1Map.get(key2, key3) : null;
+	}
 
-    public V get(KEY1 k1, KEY2 k2, KEY3 k3) {
-        try {
-            return map.get(k1).get(k2).get(k3);
-        } catch (Exception e) {
-            if (k1 instanceof PNArc) {
-                System.out.println(((PNArc) k1).getFrom().getName());
-                System.out.println(((PNArc) k1).getTo().getName());
-            }
-            System.err.println("k1: " + k1);
-            System.err.println("k2: " + k2);
-            System.err.println("k3: " + k3);
-        }
-        return null;
-    }
+	public void clear() {
+		map.clear();
+	}
 
-    public void clear() {
-        map.clear();
-    }
+	/**
+	 * Removes the mapping for a key from this map if it is present (optional operation). More formally, if this map
+	 * contains a mapping from first key {@code key1} to {@code key2}, {@code key3}, and value {@code v} such that
+	 * {@code Objects.equals(key, k)}, that mapping is removed. (The map can contain at most one such mapping.)
+	 *
+	 * @return the map to which this map previously associated the key, or {@code null} if the map contained no mapping
+	 * for the key.
+	 */
+	public DoubleHashMap<KEY2, KEY3, V> remove(KEY1 key1) {
+		return map.remove(key1);
+	}
 
-    public DoubleHashMap<KEY2, KEY3, V> remove(KEY1 k) {
-        return map.remove(k);
-    }
+	/**
+	 * Removes the mapping for a first and second key from this map if it is present (optional operation). More
+	 * formally, if this map contains a mapping from first key {@code key1} and second key {@code key2} to third key
+	 * {@code key3} and value {@code v}, that mapping is removed. (The map can contain at most one such mapping.)
+	 *
+	 * @return the value to which this map previously associated the keys, or {@code null} if the map contained no
+	 * mapping for the keys.
+	 */
+	public Map<KEY3, V> remove(KEY1 key1, KEY2 key2) {
+		return map.get(key1).remove(key2);
+	}
 
-    public V remove(KEY1 k1, KEY2 k2, KEY3 k3) {
-        return map.get(k1).get(k2).remove(k3);
-    }
+	/**
+	 * Removes the mapping for a first and second key from this map if it is present (optional operation). More
+	 * formally, if this map contains a mapping from first key {@code key1}, second key {@code key2}, and third key
+	 * {@code key3} to value {@code v}, that mapping is removed. (The map can contain at most one such mapping.)
+	 *
+	 * @return the value to which this map previously associated the keys, or {@code null} if the map contained no
+	 * mapping for the keys.
+	 */
+	public V remove(KEY1 key1, KEY2 key2, KEY3 key3) {
+		return map.get(key1).get(key2).remove(key3);
+	}
 
-    public boolean contains(KEY1 k) {
-        return map.containsKey(k);
-    }
+	public boolean containsKey(KEY1 key1) {
+		return map.containsKey(key1);
+	}
 
-    public boolean contains(KEY1 k1, KEY2 k2) {
-        return map.containsKey(k1) && map.get(k1).contains(k2);
-    }
+	public boolean containsKey(KEY1 key1, KEY2 key2) {
+		final DoubleHashMap<KEY2, KEY3, V> k1Map = map.get(key1);
+		return k1Map != null && k1Map.containsKey(key2);
+	}
 
-    public boolean contains(KEY1 k1, KEY2 k2, KEY3 k3) {
-        return map.containsKey(k1) && map.get(k1).contains(k2, k3);
-    }
+	public boolean containsKey(KEY1 key1, KEY2 key2, KEY3 key3) {
+		final DoubleHashMap<KEY2, KEY3, V> k1Map = map.get(key1);
+		return k1Map != null && k1Map.containsKey(key2, key3);
+	}
 
-    public int size() {
-        return map.size();
-    }
-
-    public Set<KEY1> getKeys() {
-        return map.keySet();
-    }
+	public int size() {
+		return map.size();
+	}
 }

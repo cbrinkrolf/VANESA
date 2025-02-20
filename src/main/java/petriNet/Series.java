@@ -4,12 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Series {
-
-	private List<Double> values;
-
-	public Series() {
-		values = new ArrayList<Double>();
-	}
+	private final List<Double> values = new ArrayList<>();
 
 	public List<Double> getAll() {
 		return this.values;
