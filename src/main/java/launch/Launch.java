@@ -16,69 +16,72 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Launch {
-    private static final Logger logger = Logger.getRootLogger();
+	private static final Logger logger = Logger.getRootLogger();
 
-    public static void main(String[] args) {
-        // avoid strange awt/swing exceptions: Exception in thread "AWT-EventQueue-0"
-        // java.lang.IllegalArgumentException: Comparison method violates its general contract!
-        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-        // set app name for mac osx
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "VANESA");
+	public static void main(String[] args) {
+		// avoid strange awt/swing exceptions: Exception in thread "AWT-EventQueue-0"
+		// java.lang.IllegalArgumentException: Comparison method violates its general contract!
+		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+		// set app name for mac osx
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "VANESA");
 
-        final IntroScreen intro = new IntroScreen();
-        intro.openWindow();
+		Thread.currentThread().setUncaughtExceptionHandler(
+				(t, e) -> logger.error("Critical error in thread '" + t.getName() + "'", e));
 
-        if (!ProgramFileLock.writeLock()) {
-            JOptionPane.showMessageDialog(null, "Another instance of the program is already running!\nExit program.",
-                    "Exit", JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
-        }
+		final IntroScreen intro = new IntroScreen();
+		intro.openWindow();
 
-        try {
-            final Properties props = new Properties();
-            props.put("logoString", "VANESA");
-            // workaround to get the menu into the main upper menu pane on macOS
-            // @see http://www.pushing-pixels.org/?p=366
-            if (System.getProperty("os.name").startsWith("Mac")) {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                Object MenuBarUI = UIManager.get("MenuBarUI");
-                Object MenuUI = UIManager.get("MenuUI");
-                Object MenuItemUI = UIManager.get("MenuItemUI");
-                Object CheckBoxMenuItemUI = UIManager.get("CheckBoxMenuItemUI");
-                Object RadioButtonMenuItemUI = UIManager.get("RadioButtonMenuItemUI");
-                Object PopupMenuUI = UIManager.get("PopupMenuUI");
-                UIManager.setLookAndFeel(new AluminiumLookAndFeel());
-                UIManager.put("MenuBarUI", MenuBarUI);
-                UIManager.put("MenuUI", MenuUI);
-                UIManager.put("MenuItemUI", MenuItemUI);
-                UIManager.put("CheckBoxMenuItemUI", CheckBoxMenuItemUI);
-                UIManager.put("RadioButtonMenuItemUI", RadioButtonMenuItemUI);
-                UIManager.put("PopupMenuUI", PopupMenuUI);
-                props.put("macStyleWindowDecoration", "on");
-                props.put("macStyleScrollBar", "on");
-            } else {
-                UIManager.setLookAndFeel(new AluminiumLookAndFeel());
-            }
-            AluminiumLookAndFeel.setCurrentTheme(props);
-        } catch (Exception e) {
-            logger.error("Failed to setup UI", e);
-        }
-        logger.info("Network editor started by " + System.getProperty("user.name"));
-        SettingsManager.getInstance().setApiUrl(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
-        final ExecutorService executorService = Executors.newFixedThreadPool(4);
-        executorService.execute(() -> SwingUtilities.invokeLater(() -> {
-            intro.setLoadingText("Graphical User Interface");
-            final MainWindow w = MainWindow.getInstance();
-            intro.closeWindow();
-            w.getFrame().setEnabled(true);
-            SwingUtilities.updateComponentTreeUI(w.getFrame());
-        }));
-        executorService.execute(() -> {
-            intro.setLoadingText("Cached Database Information");
-            MostWantedMolecules.getInstance().fillMoleculeSet();
-            EnzymeNames.getInstance().fillEnzymeSet();
-        });
-        executorService.shutdown();
-    }
+		if (!ProgramFileLock.writeLock()) {
+			JOptionPane.showMessageDialog(null, "Another instance of the program is already running!\nExit program.",
+					"Exit", JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+
+		try {
+			final Properties props = new Properties();
+			props.put("logoString", "VANESA");
+			// workaround to get the menu into the main upper menu pane on macOS
+			// @see http://www.pushing-pixels.org/?p=366
+			if (System.getProperty("os.name").startsWith("Mac")) {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				Object MenuBarUI = UIManager.get("MenuBarUI");
+				Object MenuUI = UIManager.get("MenuUI");
+				Object MenuItemUI = UIManager.get("MenuItemUI");
+				Object CheckBoxMenuItemUI = UIManager.get("CheckBoxMenuItemUI");
+				Object RadioButtonMenuItemUI = UIManager.get("RadioButtonMenuItemUI");
+				Object PopupMenuUI = UIManager.get("PopupMenuUI");
+				UIManager.setLookAndFeel(new AluminiumLookAndFeel());
+				UIManager.put("MenuBarUI", MenuBarUI);
+				UIManager.put("MenuUI", MenuUI);
+				UIManager.put("MenuItemUI", MenuItemUI);
+				UIManager.put("CheckBoxMenuItemUI", CheckBoxMenuItemUI);
+				UIManager.put("RadioButtonMenuItemUI", RadioButtonMenuItemUI);
+				UIManager.put("PopupMenuUI", PopupMenuUI);
+				props.put("macStyleWindowDecoration", "on");
+				props.put("macStyleScrollBar", "on");
+			} else {
+				UIManager.setLookAndFeel(new AluminiumLookAndFeel());
+			}
+			AluminiumLookAndFeel.setCurrentTheme(props);
+		} catch (Exception e) {
+			logger.error("Failed to setup UI", e);
+		}
+		logger.info("Network editor started by " + System.getProperty("user.name"));
+		SettingsManager.getInstance().setApiUrl(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
+		final ExecutorService executorService = Executors.newFixedThreadPool(4);
+		executorService.execute(() -> SwingUtilities.invokeLater(() -> {
+			intro.setLoadingText("Graphical User Interface");
+			final MainWindow w = MainWindow.getInstance();
+			intro.closeWindow();
+			w.getFrame().setEnabled(true);
+			SwingUtilities.updateComponentTreeUI(w.getFrame());
+		}));
+		executorService.execute(() -> {
+			intro.setLoadingText("Cached Database Information");
+			MostWantedMolecules.getInstance().fillMoleculeSet();
+			EnzymeNames.getInstance().fillEnzymeSet();
+		});
+		executorService.shutdown();
+	}
 }

@@ -65,7 +65,6 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 		seriesMin = new double[rows];
 		seriesMax = new double[rows];
 		final SimulationResult simRes = pw.getPetriPropertiesNet().getSimResController().get(simId);
-		// pw.getPetriNet().getResultDimension();
 		int cols = simRes.getTime().size();
 		for (int j = 0; j < rows; j++) {
 			final Place place = places.get(labels.get(j));
@@ -91,8 +90,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 				final String start = format.format(simRes.get(place, SIM_TOKEN).get(0));
 				final String end = format.format(simRes.get(place, SIM_TOKEN).get(simRes.size() - 1));
 				final XYChart chart = new XYChartBuilder().theme(Styler.ChartTheme.Matlab).width(320).height(200)
-														  .xAxisTitle("Time step").yAxisTitle("Token").title(
-								labels.get(j)).build();
+						.xAxisTitle("Time step").yAxisTitle("Token").title(labels.get(j)).build();
 				chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
 				chart.getStyler().setLegendVisible(false);
 				chart.getStyler().setToolTipsEnabled(true);
@@ -104,6 +102,7 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 					yValues[i] = simRes.get(place, SIM_TOKEN).get(i);
 				}
 				final XYSeries series = chart.addSeries("series", xValues, yValues);
+				series.setLineColor(Color.RED);
 				series.setLineWidth(1);
 				series.setMarker(SeriesMarkers.NONE);
 				chart.addAnnotation(new AnnotationTextPanel("Start=" + start + " End=" + end, 0, 0, true));
@@ -141,8 +140,8 @@ public class PlotsPanel extends JPanel implements ActionListener, ItemListener {
 		for (final XChartPanel<XYChart> chartPanel : this.charts) {
 			charts.add(chartPanel.getChart());
 		}
-		new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.PDF, SuffixAwareFilter.PNG, SuffixAwareFilter.SVG},
-					   charts, this);
+		new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.PDF, SuffixAwareFilter.PNG, SuffixAwareFilter.SVG },
+				charts, this);
 	}
 
 	@Override
