@@ -2,6 +2,7 @@
 /.project
 /.settings/
 /logfiles/*
+*.log
 
 .classpath
 grammars/*.jar

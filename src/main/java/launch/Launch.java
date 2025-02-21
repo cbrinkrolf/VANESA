@@ -9,26 +9,28 @@ import database.brenda.MostWantedMolecules;
 import gui.IntroScreen;
 import gui.MainWindow;
 import org.apache.log4j.Logger;
+import util.LogConfig;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Launch {
-	private static final Logger logger = Logger.getRootLogger();
-
 	public static void main(String[] args) {
+		LogConfig.configure(Paths.get("."));
+
 		// set app name for mac osx
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "VANESA");
 
 		Thread.currentThread().setUncaughtExceptionHandler(
-				(t, e) -> logger.error("Critical error in thread '" + t.getName() + "'", e));
+				(t, e) -> Logger.getRootLogger().error("Critical error in thread '" + t.getName() + "'", e));
 		try {
 			SwingUtilities.invokeAndWait(() -> Thread.currentThread().setUncaughtExceptionHandler(
-					(t, e) -> logger.error("Error in AWT thread '" + t.getName() + "'", e)));
+					(t, e) -> Logger.getRootLogger().error("Error in AWT thread '" + t.getName() + "'", e)));
 		} catch (InterruptedException | InvocationTargetException ignored) {
 		}
 
@@ -68,10 +70,10 @@ public class Launch {
 			}
 			AluminiumLookAndFeel.setCurrentTheme(props);
 		} catch (Exception e) {
-			logger.error("Failed to setup UI", e);
+			Logger.getRootLogger().error("Failed to setup UI", e);
 		}
-		logger.info("Network editor started by " + System.getProperty("user.name"));
 		SettingsManager.getInstance().setApiUrl(XMLResourceBundle.SETTINGS.getString("settings.default.api.url"));
+		Logger.getRootLogger().info("VANESA started by " + System.getProperty("user.name"));
 		final ExecutorService executorService = Executors.newFixedThreadPool(4);
 		executorService.execute(() -> SwingUtilities.invokeLater(() -> {
 			intro.setLoadingText("Graphical User Interface");
