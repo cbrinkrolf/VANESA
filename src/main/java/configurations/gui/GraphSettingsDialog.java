@@ -330,7 +330,7 @@ public class GraphSettingsDialog {
 		panelRight.add(useDefaultTransformators, "wrap");
 
 		useDefaultTransformatorsSatellite = new JCheckBox();
-		useDefaultTransformatorsSatellite.setText("default transformators");
+		useDefaultTransformatorsSatellite.setText("default transformators (satellite view)");
 		useDefaultTransformatorsSatellite
 				.setToolTipText("use default transformators to visualize the satellite view of the graph (faster)");
 		useDefaultTransformatorsSatellite.setSelected(settings.isDefaultTransformatorsSatellite());
