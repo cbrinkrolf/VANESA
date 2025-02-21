@@ -166,6 +166,8 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 
 	private int sliderPosition = 0;
 
+	private Set<String> simIds = new HashSet<>();
+
 	public SimulationResultsPlot() {
 
 		main = new JPanel(new MigLayout());
@@ -349,7 +351,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	 * This method redraws the time series plot in the left sidebar.
 	 */
 	private void drawPlot() {
-
+		chart.setNotify(false);
 		// System.out.println("draw plot");
 		Place place;
 		Transition transition;
@@ -540,7 +542,6 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 					if (series2idx.containsKey(place, TOKEN) && series2idx.get(place, TOKEN, simRes.getId()) != null) {
 						renderer.setSeriesStroke(series2idx.get(place, TOKEN, simRes.getId()), new BasicStroke(1));
 						renderer.setSeriesPaint(series2idx.get(place, TOKEN, simRes.getId()), place.getPlotColor());
-						// TODO maybe without notify=true?
 						renderer.setSeriesVisible(series2idx.get(place, TOKEN, simRes.getId()), true);
 					} else {
 						// System.out.println("does not contain");
@@ -560,7 +561,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 						renderer.setSeriesPaint(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
 								transition.getPlotColor());
 						renderer.setSeriesVisible(series2idx.get(transition, ACTUAL_FIRING_SPEED, simRes.getId()),
-												  true);
+								true);
 					}
 				}
 			}
@@ -614,6 +615,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			}
 			legend.setBackgroundPaint(plot.getBackgroundPaint());
 		}
+		chart.setNotify(true);
 		// updateData();
 		// System.out.println("almost done drawing");
 		// CHRIS maybe enable requestFocus again, but deleting via KeyEvent of graph
@@ -1102,31 +1104,31 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 	}
 
 	public void initGraphs() {
-		//System.out.println("start init");
+		// System.out.println("init graphs");
 		pw = GraphInstance.getPathway();
-		//System.out.println("PN: " + pw.isPetriNet());
+		// System.out.println("PN: " + pw.isPetriNet());
 		if (!pw.isPetriNet()) {
-			//System.out.println(pw.getTransformationInformation());
-			//System.out.println(pw.getTransformationInformation().getPetriNet());
-			//System.out.println(pw.getTransformationInformation().getPetriNet().getPetriNetSimulation());
-			//System.out.println(
-			//		pw.getTransformationInformation().getPetriNet().getPetriPropertiesNet().getSimResController());
-			//System.out.println(pw.getTransformationInformation().getPetriNet().getPetriPropertiesNet()
-			//		.getSimResController().getAll().size());
-			//System.out.println(pw.getTransformationInformation().getPetriNet().getPetriPropertiesNet()
-			//		.getSimResController().getAllActive().size());
+			// System.out.println(pw.getTransformationInformation());
+			// System.out.println(pw.getTransformationInformation().getPetriNet());
+			// System.out.println(pw.getTransformationInformation().getPetriNet().getPetriNetSimulation());
+			// System.out.println(
+			// pw.getTransformationInformation().getPetriNet().getPetriPropertiesNet().getSimResController());
+			// System.out.println(pw.getTransformationInformation().getPetriNet().getPetriPropertiesNet()
+			// .getSimResController().getAll().size());
+			// System.out.println(pw.getTransformationInformation().getPetriNet().getPetriPropertiesNet()
+			// .getSimResController().getAllActive().size());
 		}
 		if (!pw.isPetriNet() && pw.getTransformationInformation() == null) {
-			//System.out.println("ret1");
+			// System.out.println("ret1");
 			return;
 		}
 		if (!pw.isPetriNet() && pw.getTransformationInformation().getPetriNet() == null) {
-			//System.out.println("ret2");
+			// System.out.println("ret2");
 			return;
 		}
 		if (!pw.isPetriNet() && pw.getTransformationInformation().getPetriNet() != null
 				&& !pw.hasGotAtLeastOneElement()) {
-			//System.out.println("ret3");
+			// System.out.println("ret3");
 			return;
 		}
 
@@ -1135,7 +1137,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		} else {
 			hiddenPN = false;
 		}
-		//System.out.println("durch");
+		// System.out.println("durch");
 		vState = pw.getGraph().getVisualizationViewer().getPickedVertexState();
 		eState = pw.getGraph().getVisualizationViewer().getPickedEdgeState();
 		simResController = pw.getPetriPropertiesNet().getSimResController();
@@ -1160,6 +1162,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		idx2simR1.clear();
 		idx2simR2.clear();
 		places = new ArrayList<BiologicalNodeAbstract>();
+		simIds = new HashSet<>();
 		// get Selected Places and their index+label
 
 		// System.out.println("process");
@@ -1167,7 +1170,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		String simId;
 		while (it.hasNext()) {
 			simId = it.next();
-			// System.out.println("adding");
+			System.out.println("adding");
 			addSimulationToChart(simId);
 			// System.out.println("update");
 			try {
@@ -1183,11 +1186,12 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 			public String generateToolTip(XYDataset arg0, int seriesIdx, int arg2) {
 				int pickedV = vState.getPicked().size();
 				int pickedE = eState.getPicked().size();
-				if(seriesIdx > labelsR1.size()){
-					// if a PN element of a transformed graph is deleted and corresponding BN node is picked
+				if (seriesIdx > labelsR1.size()) {
+					// if a PN element of a transformed graph is deleted and corresponding BN node
+					// is picked
 					return "";
 				}
-				
+
 				if (pickedV == 1 && pickedE == 0) {
 					BiologicalNodeAbstract graphElement = vState.getPicked().iterator().next();
 					graphElement = resolveReference(graphElement);
@@ -1364,8 +1368,31 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		// System.out.println("done init");
 	}
 
+	public void addSimulationResults() {
+		if (simIds.isEmpty()) {
+			initGraphs();
+		}
+		for (String simId : simResController.getSimIds()) {
+			if (simIds.contains(simId)) {
+				continue;
+			}
+			System.out.println("adding");
+			addSimulationToChart(simId);
+			// System.out.println("update");
+			try {
+				updateData(simId, false);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	private void addSimulationToChart(String simId) {
 		// System.out.println("start adding");
+		if (simIds.contains(simId)) {
+			return;
+		}
+
 		dataset.setNotify(false);
 		dataset2.setNotify(false);
 		Place place;
@@ -1516,6 +1543,7 @@ public class SimulationResultsPlot implements ActionListener, ChangeListener {
 		}
 		dataset.setNotify(true);
 		dataset2.setNotify(true);
+		simIds.add(simId);
 		// System.out.println("finished adding");
 	}
 

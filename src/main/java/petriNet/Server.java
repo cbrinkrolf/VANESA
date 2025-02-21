@@ -100,8 +100,7 @@ public class Server {
 						}
 
 						simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
-						System.out.println(simId);
-						MainWindow.getInstance().initSimResGraphs();
+						MainWindow.getInstance().addSimulationResults();
 						System.out.println("waiting to accept");
 						readyToConnect = true;
 						while (!serverSocket.isClosed()) {
@@ -143,7 +142,7 @@ public class Server {
 		int lengthMax = 204800;
 		// char[] buffer = new char[200];
 		byte[] buffer = new byte[lengthMax];
-		System.out.println("av: "+ socket.available());
+		System.out.println("av: " + socket.available());
 		socket.readFully(buffer, 0, 1); // blockiert
 		// bis
 		// Nachricht
@@ -215,12 +214,12 @@ public class Server {
 
 			// to avoid calls of names.indexOf(identifier)
 			for (int i = 0; i < names.size(); i++) {
-				//System.out.print(names.get(i) + "\t");
+				// System.out.print(names.get(i) + "\t");
 				counter += names.get(i).length();
 				name2index.put(names.get(i), i);
 			}
 			this.createSets();
-			System.out.println("sum headers: " + counter +"chars");
+			System.out.println("sum headers: " + counter + "chars");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -372,14 +371,13 @@ public class Server {
 							this.transitionFireTime.add((Transition) bna);
 						}
 					}
-					if(bna instanceof DiscreteTransition){
-						discreteTransitions.add((DiscreteTransition)bna);
+					if (bna instanceof DiscreteTransition) {
+						discreteTransitions.add((DiscreteTransition) bna);
 						if (name2index.get("'" + bna.getName() + "'.delay") != null) {
 							this.transitionDelay.add((Transition) bna);
 						}
-					}
-					else if (bna instanceof StochasticTransition) {
-						stochasticTransitions.add((StochasticTransition)bna);
+					} else if (bna instanceof StochasticTransition) {
+						stochasticTransitions.add((StochasticTransition) bna);
 						if (name2index.get("'" + bna.getName() + "'.putDelay") != null) {
 							this.transitionPutDelay.add((Transition) bna);
 						}
@@ -409,7 +407,7 @@ public class Server {
 		for (Transition t : this.transitionActive) {
 			o = values.get(name2index.get("'" + t.getName() + "'.active"));
 			this.checkAndAddValue(t, SimulationResultController.SIM_ACTIVE, o);
-			//this.checkAndAddValue(t, SimulationResultController.SIM_FIRE, o);
+			// this.checkAndAddValue(t, SimulationResultController.SIM_FIRE, o);
 		}
 
 		for (Transition t : this.transitionFire) {
@@ -421,8 +419,8 @@ public class Server {
 			o = values.get(name2index.get("'" + t.getName() + "'.actualSpeed"));
 			this.checkAndAddValue(t, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, o);
 		}
-		
-		for(Transition t: this.transitionDelay){
+
+		for (Transition t : this.transitionDelay) {
 			o = values.get(name2index.get("'" + t.getName() + "'.delay"));
 			this.checkAndAddValue(t, SimulationResultController.SIM_DELAY, o);
 		}

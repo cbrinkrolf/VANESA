@@ -10,6 +10,7 @@ import graph.GraphInstance;
 import gui.MainWindow;
 
 public class SimulationResultController {
+
 	// for places
 	public static int SIM_TOKEN = 1;
 
@@ -26,8 +27,9 @@ public class SimulationResultController {
 	public static int SIM_ACTUAL_TOKEN_FLOW = 4;
 
 	/**
-	 * should be concurrent, otherwise it might lead to problems if a simulation is performed and simulation runs are
-	 * deleted in the sim menu. Then Ids get messed up.
+	 * should be concurrent, otherwise it might lead to problems if a simulation is
+	 * performed and simulation runs are deleted in the sim menu. Then Ids get
+	 * messed up.
 	 */
 	private final Map<String, SimulationResult> series = new ConcurrentHashMap<>();
 	private final List<String> simIds = new ArrayList<>();
@@ -40,6 +42,12 @@ public class SimulationResultController {
 			simIds.add(simId);
 		}
 		return series.get(simId);
+	}
+
+	public SimulationResult add(String simId) {
+		series.put(simId, new SimulationResult(simId, simIds.size() + "", filteredDefault));
+		simIds.add(simId);
+		return get(simId);
 	}
 
 	public void removeSimulationResult(final String simId) {

@@ -51,15 +51,17 @@ public final class OpenDialog {
 
 	public static void openUIBlocking(final FileFilter fileFilter, final File file) {
 		AsyncTaskExecutor.runUIBlocking("Loading data from file. Please wait a second", () -> open(fileFilter, file),
-										() -> {
-											if (GraphContainer.getInstance().containsPathway()) {
-												if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
-													MainWindow.getInstance().updateAllGuiElements();
-													GraphInstance.getMyGraph().normalCentering();
-												}
-											}
-											MainWindow.getInstance().getFrame().repaint();
-										});
+				() -> {
+					if (!fileFilter.getDescription().equals(SuffixAwareFilter.VANESA_SIM_RESULT.getDescription())) {
+						if (GraphContainer.getInstance().containsPathway()) {
+							if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
+								MainWindow.getInstance().updateAllGuiElements();
+								GraphInstance.getMyGraph().normalCentering();
+							}
+						}
+						MainWindow.getInstance().getFrame().repaint();
+					}
+				});
 	}
 
 	private static void open(final FileFilter fileFilter, final File file) {
@@ -150,9 +152,15 @@ public final class OpenDialog {
 			GraphContainer con = GraphContainer.getInstance();
 			if (con.containsPathway()) {
 				if (GraphInstance.getPathway().hasGotAtLeastOneElement()) {
-					MainWindow.getInstance().updateAllGuiElements();
+					// if (petrinet.getSimResController().getAll().size() < 2) {
+					// MainWindow.getInstance().initSimResGraphs();
+					// } else {
+					//
+					MainWindow.getInstance().addSimulationResults();
+					// }
 				}
 			}
+			System.out.println("finished loading");
 		} catch (IOException e) {
 			e.printStackTrace();
 			PopUpDialog.getInstance().show("Error!", "Failed to load simulation results file.");

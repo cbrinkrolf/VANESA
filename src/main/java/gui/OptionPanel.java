@@ -21,8 +21,8 @@ import gui.optionPanelWindows.SimulationResultsPlot;
 import net.miginfocom.swing.MigLayout;
 
 public class OptionPanel {
-    private final JScrollPane scrollPane;
-    private final JPanel panel;
+	private final JScrollPane scrollPane;
+	private final JPanel panel;
 	private final DatabaseWindow databaseWindow;
 	private final ElementTree tree;
 	private final SimulationResultsPlot simResWindow;
@@ -64,7 +64,7 @@ public class OptionPanel {
 		taskPaneContainer.setBorder(BorderFactory.createEmptyBorder(6, 0, 6, 0));
 
 		databaseSearch = new JXTaskPane("Database Search",
-										ImagePath.getInstance().getImageIcon("database-search-outline.png", 16, 16));
+				ImagePath.getInstance().getImageIcon("database-search-outline.png", 16, 16));
 		databaseSearch.setSpecial(true);
 		databaseSearch.setCollapsed(false);
 		databaseSearch.setScrollOnExpand(true);
@@ -94,7 +94,7 @@ public class OptionPanel {
 		// // init task pane and viz-component
 		simResView = new JXTaskPane("Petri Net Simulation");
 		simResView.setCollapsed(true);
-		//simResView.setAnimated(false);
+		// simResView.setAnimated(false);
 		simResWindow = new SimulationResultsPlot();
 		simResView.add(simResWindow.getPanel());
 
@@ -102,7 +102,7 @@ public class OptionPanel {
 		elementWindow = new ElementWindow();
 		generalProperties.add(elementWindow.getPanel());
 		generalProperties.setCollapsed(true);
-		
+
 		pathwayProperties = new JXTaskPane("Pathway Properties");
 		pathwayPropertiesWindow = new PathwayPropertiesWindow();
 		pathwayProperties.add(pathwayPropertiesWindow.getPanel());
@@ -124,10 +124,8 @@ public class OptionPanel {
 
 		/*
 		 * petriNet = new JXTaskPane("Petri Net Properties");
-		 * petriNet.setCollapsed(false);
-		 * petriNet.setVisible(true);
-		 * petriNetProperties = new PetriNetProperties();
-		 * petriNet.add(petriNetProperties.getPanel());
+		 * petriNet.setCollapsed(false); petriNet.setVisible(true); petriNetProperties =
+		 * new PetriNetProperties(); petriNet.add(petriNetProperties.getPanel());
 		 * taskPaneContainer.add(petriNet);
 		 */
 
@@ -184,42 +182,43 @@ public class OptionPanel {
 	}
 
 	public void updatePanel(String element) {
-        if (!updatePanels)
-            return;
-        switch (element) {
-            case "GraphTree":
-                tree.revalidateTree();
-                break;
-            case "Satellite":
-                satelliteWindow.revalidateSatelliteView();
-                break;
-            case "simulation":
-                // PCPWindow.initGraphs();
-                simResWindow.revalidateView();
-                break;
-            case "element":
-                elementWindow.revalidateView();
-                break;
-            case "project":
-                projectWindow.revalidateView();
-                break;
-            case "theory":
-                graphAlgorithms.revalidateView();
-                break;
-            case "pathwayTree":
-                pathwayTree.revalidateView();
-                break;
-            case "initSimulation":
-                simResWindow.initGraphs();
-                break;
-            case "bb":
-                // bb.revalidateView();
-                break;
-            case "pathwayProperties":
-                pathwayPropertiesWindow.revalidateView();
-                break;
-        }
-    }
+		// System.out.println("element: " + element);
+		if (!updatePanels)
+			return;
+		switch (element) {
+		case "GraphTree":
+			tree.revalidateTree();
+			break;
+		case "Satellite":
+			satelliteWindow.revalidateSatelliteView();
+			break;
+		case "simulation":
+			// PCPWindow.initGraphs();
+			simResWindow.revalidateView();
+			break;
+		case "element":
+			elementWindow.revalidateView();
+			break;
+		case "project":
+			projectWindow.revalidateView();
+			break;
+		case "theory":
+			graphAlgorithms.revalidateView();
+			break;
+		case "pathwayTree":
+			pathwayTree.revalidateView();
+			break;
+		case "initSimulation":
+			simResWindow.initGraphs();
+			break;
+		case "bb":
+			// bb.revalidateView();
+			break;
+		case "pathwayProperties":
+			pathwayPropertiesWindow.revalidateView();
+			break;
+		}
+	}
 
 	public boolean isUpdatePanels() {
 		return updatePanels;
@@ -241,9 +240,13 @@ public class OptionPanel {
 	public void initSimResGraphs() {
 		simResWindow.initGraphs();
 	}
-	
-	public void redrawTokens(){
+
+	public void redrawTokens() {
 		elementWindow.redrawTokens();
+	}
+
+	public void addSimulationResults() {
+		simResWindow.addSimulationResults();
 	}
 
 	public int getFullWidth() {

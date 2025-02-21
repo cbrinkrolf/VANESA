@@ -91,7 +91,8 @@ public class MainWindow implements ApplicationListener {
 	private MainWindow() {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		// try {
-		// SubstanceBusinessBlueSteelLookAndFeel lf = new SubstanceBusinessBlueSteelLookAndFeel();
+		// SubstanceBusinessBlueSteelLookAndFeel lf = new
+		// SubstanceBusinessBlueSteelLookAndFeel();
 		// lf.setSkin("");
 		// UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
 		// } catch (Exception e) {
@@ -108,7 +109,7 @@ public class MainWindow implements ApplicationListener {
 		if (SettingsManager.getInstance().isDeveloperMode()) {
 			title += " (developer mode)";
 		}
-		
+
 		frame.setTitle(title);
 		frame.setVisible(false);
 
@@ -138,7 +139,8 @@ public class MainWindow implements ApplicationListener {
 		frame.setIconImages(iconList);
 
 		// try {
-		// InfoNodeLookAndFeelTheme theme = InfoNodeLookAndFeelThemes.getSoftGrayTheme();
+		// InfoNodeLookAndFeelTheme theme =
+		// InfoNodeLookAndFeelThemes.getSoftGrayTheme();
 		// UIManager.setLookAndFeel(new InfoNodeLookAndFeel(theme));
 		// } catch (UnsupportedLookAndFeelException e1) {
 		// e1.printStackTrace();
@@ -202,8 +204,8 @@ public class MainWindow implements ApplicationListener {
 		addView();
 		splitPanel.setOneTouchExpandable(false);
 		splitPanel.addPropertyChangeListener(evt -> {
-			if (evt.getPropertyName().equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY) ||
-				evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
+			if (evt.getPropertyName().equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY)
+					|| evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
 				limitSplitDivider();
 			}
 		});
@@ -240,27 +242,27 @@ public class MainWindow implements ApplicationListener {
 					return;
 				}
 				for (final File file : droppedFiles) {
-					final String extension = FilenameUtils.getExtension(file.getAbsolutePath()).toLowerCase(
-							Locale.ROOT);
+					final String extension = FilenameUtils.getExtension(file.getAbsolutePath())
+							.toLowerCase(Locale.ROOT);
 					switch (extension) {
-						case "graphml":
-							OpenDialog.openUIBlocking(SuffixAwareFilter.GRAPH_ML, file);
-							break;
-						case "vaml":
-							OpenDialog.openUIBlocking(SuffixAwareFilter.VAML, file);
-							break;
-						case "sbml":
-							OpenDialog.openUIBlocking(SuffixAwareFilter.SBML, file);
-							break;
-						case "txt":
-							OpenDialog.openUIBlocking(SuffixAwareFilter.GRAPH_TEXT_FILE, file);
-							break;
-						case "kgml":
-							OpenDialog.openUIBlocking(SuffixAwareFilter.KGML, file);
-							break;
-						case "csv":
-							OpenDialog.openUIBlocking(SuffixAwareFilter.VANESA_SIM_RESULT, file);
-							break;
+					case "graphml":
+						OpenDialog.openUIBlocking(SuffixAwareFilter.GRAPH_ML, file);
+						break;
+					case "vaml":
+						OpenDialog.openUIBlocking(SuffixAwareFilter.VAML, file);
+						break;
+					case "sbml":
+						OpenDialog.openUIBlocking(SuffixAwareFilter.SBML, file);
+						break;
+					case "txt":
+						OpenDialog.openUIBlocking(SuffixAwareFilter.GRAPH_TEXT_FILE, file);
+						break;
+					case "kgml":
+						OpenDialog.openUIBlocking(SuffixAwareFilter.KGML, file);
+						break;
+					case "csv":
+						OpenDialog.openUIBlocking(SuffixAwareFilter.VANESA_SIM_RESULT, file);
+						break;
 					}
 				}
 			}
@@ -467,8 +469,8 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public void removeTab(boolean ask, TitledTab remove, Pathway pw) {
-		boolean isLastTabOfView = tabbedPanels.get(getSelectedView()).getTabCount() == 1 &&
-								  con.getAllPathways().contains(pw);
+		boolean isLastTabOfView = tabbedPanels.get(getSelectedView()).getTabCount() == 1
+				&& con.getAllPathways().contains(pw);
 		if (isLastTabOfView) {
 			addedTabs = 0;
 			myMenu.disableCloseAndSaveFunctions();
@@ -486,7 +488,8 @@ public class MainWindow implements ApplicationListener {
 						e.printStackTrace();
 					}
 				} else {
-					new SaveDialog(new SuffixAwareFilter[]{SuffixAwareFilter.SBML}, SaveDialog.DATA_TYPE_NETWORK_EXPORT);
+					new SaveDialog(new SuffixAwareFilter[] { SuffixAwareFilter.SBML },
+							SaveDialog.DATA_TYPE_NETWORK_EXPORT);
 				}
 			}
 			if (n == -1 || n == 2) {
@@ -647,9 +650,13 @@ public class MainWindow implements ApplicationListener {
 	public void initSimResGraphs() {
 		optionPanel.initSimResGraphs();
 	}
-	
-	public void redrawTokens(){
+
+	public void redrawTokens() {
 		optionPanel.redrawTokens();
+	}
+
+	public void addSimulationResults() {
+		optionPanel.addSimulationResults();
 	}
 
 	// =============mac osx stuff========================

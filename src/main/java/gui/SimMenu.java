@@ -118,6 +118,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 
 	private Pathway pw;
 
+	private boolean silentMode = true;
+
 	public SimMenu(Pathway pw, ActionListener listener, List<String> pnLibVersions, List<File> customLibs) {
 
 		this.pw = pw;
@@ -308,6 +310,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		this.setLocationRelativeTo(MainWindow.getInstance().getFrame());
 		// this.setLocationRelativeTo(null);
 		this.setVisible(true);
+		silentMode = false;
 
 	}
 
@@ -603,6 +606,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 	}
 
 	public void updateSimulationResults() {
+		silentMode = true;
 		west.removeAll();
 		text2sim = new HashMap<JTextField, SimulationResult>();
 		west.add(new JSeparator(), "growx, span, wrap");
@@ -674,7 +678,7 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		this.pack();
 		west.repaint();
 		// this.setVisible(true);
-
+		silentMode = false;
 	}
 
 	@Override
@@ -682,11 +686,14 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 		if (e.getItem() instanceof JCheckBox) {
 			JCheckBox box = (JCheckBox) e.getItem();
 			int i = Integer.parseInt(box.getActionCommand());
-			// System.out.println(i);
 			if (i >= 0) {
 				pw.getPetriPropertiesNet().getSimResController().getAll().get(i).setActive(box.isSelected());
-				MainWindow.getInstance().updateSimulationResultView();
+				if (!silentMode) {
+					MainWindow.getInstance().updateSimulationResultView();
+				}
 			} else {
+				// select all CheckBox
+				silentMode = true;
 				Component[] components = west.getComponents();
 				for (int j = 0; j < components.length; j++) {
 					if (components[j] instanceof JCheckBox) {
@@ -697,6 +704,8 @@ public class SimMenu extends JFrame implements ActionListener, ItemListener {
 				for (int j = 0; j < resList.size(); j++) {
 					resList.get(j).setActive(box.isSelected());
 				}
+				silentMode = false;
+				MainWindow.getInstance().updateSimulationResultView();
 				// this.updateSimulationResults();
 			}
 

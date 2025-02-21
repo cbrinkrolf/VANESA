@@ -854,7 +854,7 @@ public class PetriNetSimulation implements ActionListener {
 						line = inputReader.readLine();
 					}
 					inputReader.close();
-					System.out.println("compile output: " + inputStreamString);
+					System.out.println("compile output: " + inputStreamString.toString().stripTrailing());
 
 					if (inputStreamString.toString().contains(
 							"Warning: The following equation is INCONSISTENT due to specified unit information:")) {
