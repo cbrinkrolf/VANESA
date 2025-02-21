@@ -376,8 +376,7 @@ public class MyGraph {
 	}
 
 	private void fetchDefaultTransformers(RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> rc) {
-
-		// for vertices
+		// vertices
 		vertexLabelRendererDefault = rc.getVertexLabelRenderer();
 		vertexStrokeTransformerDefault = rc.getVertexStrokeTransformer();
 		vertexLabelTransformerDefault = rc.getVertexLabelTransformer();
@@ -386,8 +385,7 @@ public class MyGraph {
 		vertexFillPaintTransformerDefault = rc.getVertexFillPaintTransformer();
 		vertexIconTransformerDefault = rc.getVertexIconTransformer();
 		vertexFontTransformerDefault = rc.getVertexFontTransformer();
-
-		// for edges
+		// edges
 		edgeStrokeTransformerDefault = rc.getEdgeStrokeTransformer();
 		edgeDrawPaintTransformerDefault = rc.getEdgeDrawPaintTransformer();
 		edgeFillPaintTransformerDefault = rc.getEdgeFillPaintTransformer();
@@ -395,43 +393,34 @@ public class MyGraph {
 		edgeShapeTransformerDefault = rc.getEdgeShapeTransformer();
 		edgeLabelRendererDefault = rc.getEdgeLabelRenderer();
 		edgeLabelTransformerDefault = rc.getEdgeLabelTransformer();
-
-		// for arrows
+		// arrows
 		edgeArrowTransformerDefault = rc.getEdgeArrowTransformer();
 		arrowDrawPaintTransformerDefault = rc.getArrowDrawPaintTransformer();
 		arrowFillPaintTransformerDefault = rc.getArrowFillPaintTransformer();
 	}
 
 	public void addTransformatorsToVV(boolean repaint) {
-		pr.setEdgeStrokeTransformer(esh);
-
-		pr.setEdgeDrawPaintTransformer(edpf);
-		pr.setEdgeFillPaintTransformer(efpf);
-
-		pr.setEdgeShapeTransformer(esf);
-
-		pr.setVertexLabelRenderer(vlr);
-		pr.setEdgeLabelRenderer(elr);
-
-		pr.setEdgeArrowTransformer(eaf);
-
-		pr.setArrowDrawPaintTransformer(adpt);
-
-		pr.setArrowFillPaintTransformer(afpt);
-		pr.setVertexStrokeTransformer(vsh);
-		pr.setVertexLabelTransformer(vertexStringer);
-
-		pr.setVertexShapeTransformer(vertexShapeTransformer);
-
-		pr.setEdgeLabelTransformer(edgeStringer);
-
+		// vertices
 		pr.setVertexDrawPaintTransformer(vdpf);
 		pr.setVertexFillPaintTransformer(vfpf);
-
 		pr.setVertexIconTransformer(vit);
-
 		pr.setVertexFontTransformer(vft);
+		pr.setVertexLabelRenderer(vlr);
+		pr.setVertexStrokeTransformer(vsh);
+		pr.setVertexLabelTransformer(vertexStringer);
+		pr.setVertexShapeTransformer(vertexShapeTransformer);
+		// edges
+		pr.setEdgeLabelTransformer(edgeStringer);
 		pr.setEdgeFontTransformer(eft);
+		pr.setEdgeStrokeTransformer(esh);
+		pr.setEdgeDrawPaintTransformer(edpf);
+		pr.setEdgeFillPaintTransformer(efpf);
+		pr.setEdgeShapeTransformer(esf);
+		pr.setEdgeLabelRenderer(elr);
+		// arrows
+		pr.setEdgeArrowTransformer(eaf);
+		pr.setArrowDrawPaintTransformer(adpt);
+		pr.setArrowFillPaintTransformer(afpt);
 
 		vv.addPostRenderPaintable(new TokenRenderer(pathway));
 		if (repaint) {
@@ -440,24 +429,28 @@ public class MyGraph {
 	}
 
 	public void addTransformatorsToSatellite(boolean repaint) {
+		// vertices
 		satellitePr.setVertexStrokeTransformer(vsh);
 		satellitePr.setVertexLabelTransformer(vertexStringer);
 		satellitePr.setVertexShapeTransformer(vertexShapeTransformer);
-		satellitePr.setEdgeLabelTransformer(edgeStringer);
 		satellitePr.setVertexDrawPaintTransformer(vdpf);
 		satellitePr.setVertexFillPaintTransformer(vfpf);
 		satellitePr.setVertexIconTransformer(vit);
+		satellitePr.setVertexLabelRenderer(vlr);
+		satellitePr.setVertexFontTransformer(vft);
+		// edges
+		satellitePr.setEdgeFontTransformer(eft);
+		satellitePr.setEdgeLabelTransformer(edgeStringer);
 		satellitePr.setEdgeStrokeTransformer(esh);
 		satellitePr.setEdgeDrawPaintTransformer(edpf);
 		satellitePr.setEdgeFillPaintTransformer(efpf);
 		satellitePr.setEdgeShapeTransformer(esf);
-		satellitePr.setVertexLabelRenderer(vlr);
 		satellitePr.setEdgeLabelRenderer(elr);
+		// arrows
 		satellitePr.setEdgeArrowTransformer(eaf);
 		satellitePr.setArrowDrawPaintTransformer(adpt);
 		satellitePr.setArrowFillPaintTransformer(afpt);
-		satellitePr.setVertexFontTransformer(vft);
-		satellitePr.setEdgeFontTransformer(eft);
+
 		if (repaint) {
 			vv2.repaint();
 		}
@@ -489,7 +482,6 @@ public class MyGraph {
 		if (repaint) {
 			vv.repaint();
 		}
-
 	}
 
 	public void dropTransformatorsOfSatellite(boolean repaint) {
@@ -524,13 +516,6 @@ public class MyGraph {
 		pathway.updateMyGraph();
 		// vv.getModel().restart();
 	}
-
-	/*
-	 * public void markNewVertices() { HashSet<BiologicalNodeAbstract> set =
-	 * pathway.getNewLoadedNodes(); for (Iterator<BiologicalNodeAbstract> it =
-	 * set.iterator(); it.hasNext();) { Vertex v = it.next().getVertex();
-	 * vpf.getNewLoadedDrawPaint(v); } }
-	 */
 
 	public void moveVertex(BiologicalNodeAbstract vertex, double xPos, double yPos) {
 		Point2D p = new Point.Double(xPos, yPos);
@@ -586,42 +571,11 @@ public class MyGraph {
 		return vv2;
 	}
 
-	// TEST ******************
-	/*
-	 * public boolean isVertexPicked(Vertex v) { return stateV.isPicked(v); }
-	 * 
-	 * public boolean isEdgePicked(Edge e) { return stateV.isPicked(e); }
-	 */
-
 	public Point2D getVertexLocation(BiologicalNodeAbstract vertex) {
 		// return visualizationModel.getGraphLayout().transform(vertex);
 		return layout.apply(vertex);
 		// return (Point2D) nodePositions.get(vertex);
 	}
-
-	// TEST ENDE *************
-
-	// public void pickVertex(Vertex v) {
-	// stateV.pick(v, true);
-	// }
-	//
-	// public void pickEdge(Edge e) {
-	// stateV.pick(e, true);
-	// }
-
-	// public Edge createEdge(Vertex vertex1, Vertex vertex2, boolean directed)
-	// {
-	// if (vertex1 != null && vertex2 != null) {
-	// Edge newEdge = null;
-	// if (directed) {
-	// newEdge = new DirectedSparseEdge(vertex1, vertex2);
-	// } else {
-	// newEdge = new UndirectedSparseEdge(vertex1, vertex2);
-	// }
-	// return newEdge;
-	// }
-	// return null;
-	// }
 
 	public boolean addEdge(BiologicalEdgeAbstract bea) {
 		// Graph gs=vv.getGraphLayout().getGraph();
@@ -1132,7 +1086,6 @@ public class MyGraph {
 			}
 			radius += radiusIncrease;
 		}
-
 	}
 
 	public void fitScaleOfViewer(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> viewer) {
@@ -1203,14 +1156,7 @@ public class MyGraph {
 			fitScaleOfViewer(this.vv2);
 			normalCentering(this.vv);
 			normalCentering(this.vv2);
-
-			// vv.repaint();
-			// vv.restart();
-
-			// vv2.repaint();
-			// vv2.restart();
 		}
-
 	}
 
 	public void normalCentering(VisualizationViewer<BiologicalNodeAbstract, BiologicalEdgeAbstract> viewer) {
@@ -1256,46 +1202,7 @@ public class MyGraph {
 			}
 		});
 		thread.start();
-		// fitScaleOfViewer(this.vv2);
-		// normalCentering(this.vv2);
 	}
-
-	// public void updateElementLabel(Object element) {
-	//
-	// GraphElementAbstract geb = (GraphElementAbstract) graphInstance
-	// .getPathwayElement(element);
-	// if (geb.isVertex()) {
-	// vertexStringer.renameVertex(graphInstance
-	// .getPathwayElement(element));
-	// } else if (geb.isEdge()) {
-	// // getEdgeStringer().renameEdge(
-	// // graphInstance.getPathwayElement(element));
-	// }
-	// MainWindowSingelton.getInstance().updateElementTree();
-	// }
-
-	/*
-	 * public void updateAllNodeLabels() {
-	 * 
-	 * vertexStringer.renameAllVertexNodes();
-	 * 
-	 * }
-	 */
-
-	/*
-	 * public void updateAllEdgeLabels() {
-	 * 
-	 * getEdgeStringer().renameAllEdgeNodes();
-	 * 
-	 * }
-	 */
-
-	// public boolean areGraphElementsSelected() {
-	// if (vv.getPickedState().getSelectedObjects() != null) {
-	// return true;
-	// }
-	// return false;
-	// }
 
 	public void enableGraphTheory() {
 		// stateV.clearPickedEdges();
@@ -1329,28 +1236,6 @@ public class MyGraph {
 		vv.repaint();
 	}
 
-	// public void setVertexShapeSize(VertexShapeSize vss) {
-	//
-	// this.vssa = vss;
-	//
-	// }
-	//
-	// /** sucht eine Verbindungskante zwischen zwei Elementen */
-	// public Object getEdgeBetween(Vertex start, Vertex end) {
-	// for (Object obj : g.getEdges()) {
-	// Edge e = (Edge) obj;
-	//
-	// if (((e.getEndpoints().getFirst().equals(start)) && (e
-	// .getEndpoints().getSecond().equals(end))) || // oder
-	// // andersrum
-	// ((e.getEndpoints().getFirst().equals(end)) && (e
-	// .getEndpoints().getSecond().equals(start)))) {
-	// return e;
-	// }
-	// }
-	// return null;
-	// }
-
 	public MyEdgeStringer getEdgeStringer() {
 		return edgeStringer;
 	}
@@ -1370,12 +1255,9 @@ public class MyGraph {
 
 	public void setMouseModeHierarchy() {
 		stateV.clear();
-		// stateV.clearPickedEdges();
-		// stateV.clearPickedVertices();
 		vv.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 		graphMouse.setMode(ModalGraphMouse.Mode.ANNOTATING);
 		vv.setGraphMouse(graphMouse);
-
 	}
 
 	public MyEdgeDrawPaintFunction getEdgeDrawPaintFunction() {
@@ -1392,7 +1274,7 @@ public class MyGraph {
 		}
 	}
 
-	// TODO following methods can probably outsourced
+	// following methods can probably outsourced
 
 	// This method summarizes several options for improving the painting
 	// performance. Enable or disable them depending on which visual features
