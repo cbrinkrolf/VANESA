@@ -76,6 +76,9 @@ public class GraphSettingsDialog {
 	private JCheckBox omitInvisibleNodes;
 	private JCheckBox disabledAntiAliasing;
 
+	private JCheckBox useDefaultTransformators;
+	private JCheckBox useDefaultTransformatorsSatellite;
+
 	private MainWindow w = MainWindow.getInstance();
 	private GraphContainer con = GraphContainer.getInstance();
 
@@ -318,6 +321,23 @@ public class GraphSettingsDialog {
 
 		panelRight.add(disabledAntiAliasing, "wrap");
 
+		useDefaultTransformators = new JCheckBox();
+		useDefaultTransformators.setText("default transformators");
+		useDefaultTransformators.setToolTipText("use default transformators to visualize the graph (faster)");
+		useDefaultTransformators.setSelected(settings.isDefaultTransformators());
+		useDefaultTransformators.addChangeListener(e -> onUseDefaultTransformatorsClicked());
+
+		panelRight.add(useDefaultTransformators, "wrap");
+
+		useDefaultTransformatorsSatellite = new JCheckBox();
+		useDefaultTransformatorsSatellite.setText("default transformators");
+		useDefaultTransformatorsSatellite
+				.setToolTipText("use default transformators to visualize the satellite view of the graph (faster)");
+		useDefaultTransformatorsSatellite.setSelected(settings.isDefaultTransformatorsSatellite());
+		useDefaultTransformatorsSatellite.addChangeListener(e -> onUseDefaultTransformatorsSatelliteClicked());
+
+		panelRight.add(useDefaultTransformatorsSatellite, "wrap");
+
 		panel = new JPanel(new GridLayout(0, 2));
 		panel.add(panelLeft);
 		panel.add(panelRight);
@@ -352,6 +372,8 @@ public class GraphSettingsDialog {
 		defaultEdgeFont.setSelected(true);
 		omitInvisibleNodes.setSelected(true);
 		disabledAntiAliasing.setSelected(false);
+		useDefaultTransformators.setSelected(false);
+		useDefaultTransformatorsSatellite.setSelected(false);
 		// } else {
 		// PopUpDialog.getInstance().show("Error", "Please create a network before.");
 		// return false;
@@ -406,6 +428,8 @@ public class GraphSettingsDialog {
 		SettingsManager.getInstance().setOmitPaintInvisibleNodes(omitInvisibleNodes.isSelected());
 		SettingsManager.getInstance().setDisabledAntiAliasing(disabledAntiAliasing.isSelected());
 		con.getPathway(w.getCurrentPathway()).getGraph().disableAntliasing(disabledAntiAliasing.isSelected());
+		settings.setDefaultTransformators(useDefaultTransformators.isSelected());
+		settings.setDefaultTransformatorsSatellite(useDefaultTransformatorsSatellite.isSelected());
 
 		return true;
 	}
@@ -414,6 +438,8 @@ public class GraphSettingsDialog {
 		settings.setEdgeOpacity(edgeOpacityOld);
 		settings.setVertexFont(vertexFontOld);
 		settings.setEdgeFont(edgeFontOld);
+		useDefaultTransformators.setSelected(settings.isDefaultTransformators());
+		useDefaultTransformatorsSatellite.setSelected(settings.isDefaultTransformatorsSatellite());
 		con.getPathway(w.getCurrentPathway()).getGraph().disableAntliasing(settings.isDisabledAntiAliasing());
 		return true;
 	}
@@ -466,6 +492,26 @@ public class GraphSettingsDialog {
 		if (con.containsPathway()) {
 			GraphInstance.getPathway().getGraph().disableAntliasing(disabledAntiAliasing.isSelected());
 			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
+		}
+	}
+
+	private void onUseDefaultTransformatorsClicked() {
+		if (con.containsPathway()) {
+			if (useDefaultTransformators.isSelected()) {
+				GraphInstance.getPathway().getGraph().dropTransformatorsOfVV(true);
+			} else {
+				GraphInstance.getPathway().getGraph().addTransformatorsToVV(true);
+			}
+		}
+	}
+
+	private void onUseDefaultTransformatorsSatelliteClicked() {
+		if (con.containsPathway()) {
+			if (useDefaultTransformatorsSatellite.isSelected()) {
+				GraphInstance.getPathway().getGraph().dropTransformatorsOfSatellite(true);
+			} else {
+				GraphInstance.getPathway().getGraph().addTransformatorsToSatellite(true);
+			}
 		}
 	}
 

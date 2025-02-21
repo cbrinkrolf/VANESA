@@ -14,6 +14,8 @@ public class GraphSettings {
 	private Font vertexFont = null;
 	private Font edgeFont = null;
 	private boolean disabledAntiAliasing;
+	private boolean defaultTransformators = false;
+	private boolean defaultTransformatorsSatellite = false;
 
 	public static final int SHOW_LABEL = 0;
 	public static final int SHOW_NAME = 1;
@@ -106,5 +108,21 @@ public class GraphSettings {
 
 	public void setDisabledAntiAliasing(boolean disabledAntiAliasing) {
 		this.disabledAntiAliasing = disabledAntiAliasing;
+	}
+
+	public boolean isDefaultTransformators() {
+		return defaultTransformators;
+	}
+
+	public void setDefaultTransformators(boolean defaultTransformators) {
+		this.defaultTransformators = defaultTransformators;
+	}
+
+	public boolean isDefaultTransformatorsSatellite() {
+		return defaultTransformatorsSatellite;
+	}
+
+	public void setDefaultTransformatorsSatellite(boolean defaultTransformatorsSatellite) {
+		this.defaultTransformatorsSatellite = defaultTransformatorsSatellite;
 	}
 }

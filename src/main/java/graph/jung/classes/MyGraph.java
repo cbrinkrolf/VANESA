@@ -3,8 +3,11 @@ package graph.jung.classes;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Paint;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -15,6 +18,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.Icon;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -53,6 +58,8 @@ import edu.uci.ics.jung.visualization.control.ScalingControl;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.picking.ShapePickSupport;
 import edu.uci.ics.jung.visualization.renderers.BasicEdgeRenderer;
+import edu.uci.ics.jung.visualization.renderers.EdgeLabelRenderer;
+import edu.uci.ics.jung.visualization.renderers.VertexLabelRenderer;
 import edu.uci.ics.jung.visualization.transform.shape.GraphicsDecorator;
 import graph.GraphInstance;
 import graph.eventhandlers.MyEditingModalGraphMouse;
@@ -116,6 +123,30 @@ public class MyGraph {
 	private final MyArrowFillPaintTransformer afpt;
 	private final MyVertexFontTransformer vft;
 	private final MyEdgeFontTransformer eft;
+
+	// defaults for vertices
+	private VertexLabelRenderer vertexLabelRendererDefault;
+	private Function<? super BiologicalNodeAbstract, Stroke> vertexStrokeTransformerDefault;
+	private Function<? super BiologicalNodeAbstract, String> vertexLabelTransformerDefault;
+	private Function<? super BiologicalNodeAbstract, Shape> vertexShapeTransformerDefault;
+	private Function<? super BiologicalNodeAbstract, Paint> vertexDrawPaintTransformerDefault;
+	private Function<? super BiologicalNodeAbstract, Paint> vertexFillPaintTransformerDefault;
+	private Function<? super BiologicalNodeAbstract, Icon> vertexIconTransformerDefault;
+	private Function<? super BiologicalNodeAbstract, Font> vertexFontTransformerDefault;
+
+	// defaults for edges
+	private Function<? super BiologicalEdgeAbstract, Stroke> edgeStrokeTransformerDefault;
+	private Function<? super BiologicalEdgeAbstract, Paint> edgeDrawPaintTransformerDefault;
+	private Function<? super BiologicalEdgeAbstract, Paint> edgeFillPaintTransformerDefault;
+	private Function<? super BiologicalEdgeAbstract, Font> edgeFontTransformerDefault;
+	private Function<? super BiologicalEdgeAbstract, Shape> edgeShapeTransformerDefault;
+	private EdgeLabelRenderer edgeLabelRendererDefault;
+	private Function<? super BiologicalEdgeAbstract, String> edgeLabelTransformerDefault;
+
+	// defaults for arrows
+	private Function<? super Context<Graph<BiologicalNodeAbstract, BiologicalEdgeAbstract>, BiologicalEdgeAbstract>, Shape> edgeArrowTransformerDefault;
+	private Function<? super BiologicalEdgeAbstract, Paint> arrowDrawPaintTransformerDefault;
+	private Function<? super BiologicalEdgeAbstract, Paint> arrowFillPaintTransformerDefault;
 
 	private PickedState<BiologicalNodeAbstract> stateV;
 	private PickedState<BiologicalEdgeAbstract> stateE;
@@ -211,6 +242,7 @@ public class MyGraph {
 		});
 
 		vv.getRenderer().setVertexRenderer(new MultiVertexRenderer<>());
+		fetchDefaultTransformers(vv.getRenderContext());
 		vv2 = new SatelliteVisualizationViewer<>(vv, preferredSize2);
 		vv2.setSize(preferredSize2);
 		vv2.setMinimumSize(preferredSize2);
@@ -335,6 +367,42 @@ public class MyGraph {
 	}
 
 	public void makeDefaultObjectVisualization() {
+		if (!GraphSettings.getInstance().isDefaultTransformators()) {
+			addTransformatorsToVV(false);
+		}
+		if (!GraphSettings.getInstance().isDefaultTransformatorsSatellite()) {
+			addTransformatorsToSatellite(false);
+		}
+	}
+
+	private void fetchDefaultTransformers(RenderContext<BiologicalNodeAbstract, BiologicalEdgeAbstract> rc) {
+
+		// for vertices
+		vertexLabelRendererDefault = rc.getVertexLabelRenderer();
+		vertexStrokeTransformerDefault = rc.getVertexStrokeTransformer();
+		vertexLabelTransformerDefault = rc.getVertexLabelTransformer();
+		vertexShapeTransformerDefault = rc.getVertexShapeTransformer();
+		vertexDrawPaintTransformerDefault = rc.getVertexDrawPaintTransformer();
+		vertexFillPaintTransformerDefault = rc.getVertexFillPaintTransformer();
+		vertexIconTransformerDefault = rc.getVertexIconTransformer();
+		vertexFontTransformerDefault = rc.getVertexFontTransformer();
+
+		// for edges
+		edgeStrokeTransformerDefault = rc.getEdgeStrokeTransformer();
+		edgeDrawPaintTransformerDefault = rc.getEdgeDrawPaintTransformer();
+		edgeFillPaintTransformerDefault = rc.getEdgeFillPaintTransformer();
+		edgeFontTransformerDefault = rc.getEdgeFontTransformer();
+		edgeShapeTransformerDefault = rc.getEdgeShapeTransformer();
+		edgeLabelRendererDefault = rc.getEdgeLabelRenderer();
+		edgeLabelTransformerDefault = rc.getEdgeLabelTransformer();
+
+		// for arrows
+		edgeArrowTransformerDefault = rc.getEdgeArrowTransformer();
+		arrowDrawPaintTransformerDefault = rc.getArrowDrawPaintTransformer();
+		arrowFillPaintTransformerDefault = rc.getArrowFillPaintTransformer();
+	}
+
+	public void addTransformatorsToVV(boolean repaint) {
 		pr.setEdgeStrokeTransformer(esh);
 
 		pr.setEdgeDrawPaintTransformer(edpf);
@@ -355,7 +423,7 @@ public class MyGraph {
 
 		pr.setVertexShapeTransformer(vertexShapeTransformer);
 
-		pr.setEdgeLabelTransformer(this.edgeStringer);
+		pr.setEdgeLabelTransformer(edgeStringer);
 
 		pr.setVertexDrawPaintTransformer(vdpf);
 		pr.setVertexFillPaintTransformer(vfpf);
@@ -366,12 +434,16 @@ public class MyGraph {
 		pr.setEdgeFontTransformer(eft);
 
 		vv.addPostRenderPaintable(new TokenRenderer(pathway));
+		if (repaint) {
+			vv.repaint();
+		}
+	}
 
+	public void addTransformatorsToSatellite(boolean repaint) {
 		satellitePr.setVertexStrokeTransformer(vsh);
 		satellitePr.setVertexLabelTransformer(vertexStringer);
-
 		satellitePr.setVertexShapeTransformer(vertexShapeTransformer);
-		satellitePr.setEdgeLabelTransformer(this.edgeStringer);
+		satellitePr.setEdgeLabelTransformer(edgeStringer);
 		satellitePr.setVertexDrawPaintTransformer(vdpf);
 		satellitePr.setVertexFillPaintTransformer(vfpf);
 		satellitePr.setVertexIconTransformer(vit);
@@ -386,6 +458,66 @@ public class MyGraph {
 		satellitePr.setArrowFillPaintTransformer(afpt);
 		satellitePr.setVertexFontTransformer(vft);
 		satellitePr.setEdgeFontTransformer(eft);
+		if (repaint) {
+			vv2.repaint();
+		}
+	}
+
+	public void dropTransformatorsOfVV(boolean repaint) {
+		// vertices
+		pr.setVertexLabelRenderer(vertexLabelRendererDefault);
+		pr.setVertexStrokeTransformer(vertexStrokeTransformerDefault);
+		pr.setVertexLabelTransformer(vertexLabelTransformerDefault);
+		pr.setVertexShapeTransformer(vertexShapeTransformerDefault);
+		pr.setVertexDrawPaintTransformer(vertexDrawPaintTransformerDefault);
+		pr.setVertexFillPaintTransformer(vertexFillPaintTransformerDefault);
+		pr.setVertexIconTransformer(vertexIconTransformerDefault);
+		pr.setVertexFontTransformer(vertexFontTransformerDefault);
+		// edges
+		pr.setEdgeStrokeTransformer(edgeStrokeTransformerDefault);
+		pr.setEdgeDrawPaintTransformer(edgeDrawPaintTransformerDefault);
+		pr.setEdgeFillPaintTransformer(edgeFillPaintTransformerDefault);
+		pr.setEdgeShapeTransformer(edgeShapeTransformerDefault);
+		pr.setEdgeLabelRenderer(edgeLabelRendererDefault);
+		pr.setEdgeLabelTransformer(edgeLabelTransformerDefault);
+		pr.setEdgeFontTransformer(edgeFontTransformerDefault);
+		// arrows
+		pr.setEdgeArrowTransformer(edgeArrowTransformerDefault);
+		pr.setArrowDrawPaintTransformer(arrowDrawPaintTransformerDefault);
+		pr.setArrowFillPaintTransformer(arrowFillPaintTransformerDefault);
+
+		if (repaint) {
+			vv.repaint();
+		}
+
+	}
+
+	public void dropTransformatorsOfSatellite(boolean repaint) {
+		// vertices
+		satellitePr.setVertexStrokeTransformer(vertexStrokeTransformerDefault);
+		satellitePr.setVertexLabelTransformer(vertexLabelTransformerDefault);
+		satellitePr.setVertexShapeTransformer(vertexShapeTransformerDefault);
+		satellitePr.setVertexFontTransformer(vertexFontTransformerDefault);
+		satellitePr.setVertexDrawPaintTransformer(vertexDrawPaintTransformerDefault);
+		satellitePr.setVertexFillPaintTransformer(vertexFillPaintTransformerDefault);
+		satellitePr.setVertexIconTransformer(vertexIconTransformerDefault);
+		satellitePr.setVertexLabelRenderer(vertexLabelRendererDefault);
+		// edges
+		satellitePr.setEdgeStrokeTransformer(edgeStrokeTransformerDefault);
+		satellitePr.setEdgeDrawPaintTransformer(edgeDrawPaintTransformerDefault);
+		satellitePr.setEdgeFillPaintTransformer(edgeFillPaintTransformerDefault);
+		satellitePr.setEdgeShapeTransformer(edgeShapeTransformerDefault);
+		satellitePr.setEdgeLabelRenderer(edgeLabelRendererDefault);
+		satellitePr.setEdgeFontTransformer(edgeFontTransformerDefault);
+		satellitePr.setEdgeLabelTransformer(edgeLabelTransformerDefault);
+		// arrows
+		satellitePr.setEdgeArrowTransformer(edgeArrowTransformerDefault);
+		satellitePr.setArrowDrawPaintTransformer(arrowDrawPaintTransformerDefault);
+		satellitePr.setArrowFillPaintTransformer(arrowFillPaintTransformerDefault);
+
+		if (repaint) {
+			vv2.repaint();
+		}
 	}
 
 	public void restartVisualizationModel() {
