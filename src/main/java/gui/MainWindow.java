@@ -25,7 +25,6 @@ import javax.swing.*;
 
 import io.OpenDialog;
 import io.SuffixAwareFilter;
-import net.infonode.docking.properties.DockingWindowProperties;
 import org.apache.commons.io.FilenameUtils;
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.effect.BufferedImageOpEffect;
@@ -47,16 +46,10 @@ import graph.eventhandlers.GraphTabListener;
 import graph.jung.graphDrawing.VertexShapes;
 import gui.algorithms.CenterWindow;
 import gui.algorithms.ScreenSize;
-import gui.eventhandlers.PanelListener;
 import gui.visualization.VisualizationConfigBeans.Bean;
 import gui.visualization.YamlToObjectParser;
 import io.SaveDialog;
 import io.sbml.JSBMLOutput;
-import net.infonode.docking.DockingWindow;
-import net.infonode.docking.RootWindow;
-import net.infonode.docking.View;
-import net.infonode.docking.util.DockingUtil;
-import net.infonode.docking.util.ViewMap;
 import net.infonode.tabbedpanel.Tab;
 import net.infonode.tabbedpanel.TabDropDownListVisiblePolicy;
 import net.infonode.tabbedpanel.TabbedPanel;
@@ -65,19 +58,14 @@ import net.infonode.util.Direction;
 
 public class MainWindow implements ApplicationListener {
 	private final JFrame frame = new JFrame();
-	private final HashMap<Integer, View> views = new HashMap<>();
-	private final ViewMap viewMap = new ViewMap();
-	private RootWindow rootWindow;
+	private final TabbedPanel rootWindow;
 	private final ToolBar bar;
-	private int maxPanelID = -1;
-	private int selectedView = 0;
 	private List<Bean> beansList = new ArrayList<>();
 	private String loadedYaml = null;
 
 	private final LockableUI blurUI = new LockableUI(new BufferedImageOpEffect(new BlurFilter()));
 	private final JSplitPane splitPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-	private final HashMap<Integer, TabbedPanel> tabbedPanels = new HashMap<>();
 	private final GraphContainer con = GraphContainer.getInstance();
 	private int addedTabs = 0;
 	private final MenuBarClass myMenu;
@@ -138,14 +126,6 @@ public class MainWindow implements ApplicationListener {
 		iconList.add(imagePath.getImageIcon("logo128.png").getImage());
 		frame.setIconImages(iconList);
 
-		// try {
-		// InfoNodeLookAndFeelTheme theme =
-		// InfoNodeLookAndFeelThemes.getSoftGrayTheme();
-		// UIManager.setLookAndFeel(new InfoNodeLookAndFeel(theme));
-		// } catch (UnsupportedLookAndFeelException e1) {
-		// e1.printStackTrace();
-		// }
-
 		final ScreenSize screenSize = new ScreenSize();
 		int windowWidth = screenSize.width - 70;
 		int windowHeight = screenSize.height - 100;
@@ -201,7 +181,17 @@ public class MainWindow implements ApplicationListener {
 			}
 		});
 		splitPanel.add(optionPanel.getPanel());
-		addView();
+
+		rootWindow = new TabbedPanel();
+		rootWindow.getProperties().setTabAreaOrientation(Direction.DOWN);
+		rootWindow.getProperties().setEnsureSelectedTabVisible(true);
+		rootWindow.getProperties().setHighlightPressedTab(true);
+		rootWindow.addTabListener(new GraphTabListener(this));
+		rootWindow.getProperties().setTabReorderEnabled(true);
+		rootWindow.getProperties().setTabDropDownListVisiblePolicy(TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
+		rootWindow.setBackground(Color.BLACK);
+		splitPanel.add(rootWindow);
+
 		splitPanel.setOneTouchExpandable(false);
 		splitPanel.addPropertyChangeListener(evt -> {
 			if (evt.getPropertyName().equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY)
@@ -353,78 +343,9 @@ public class MainWindow implements ApplicationListener {
 		beansList = yamlToObject.startConfig();
 	}
 
-	private void setWindowProperties(int viewID) {
-		final DockingWindowProperties properties = views.get(viewID).getWindowProperties();
-		properties.setCloseEnabled(true);
-		properties.setUndockEnabled(false);
-		properties.setDragEnabled(true);
-		properties.setMaximizeEnabled(false);
-		properties.setMinimizeEnabled(false);
-		PanelListener lis = new PanelListener();
-		views.get(viewID).addListener(lis);
-	}
-
-	public void addView() {
-		final int previousDividerLocation = splitPanel.getDividerLocation();
-		// remove rootWindow if exists
-		if (rootWindow != null) {
-			splitPanel.remove(rootWindow);
-		}
-		// create new tabbedPanel
-		final TabbedPanel tp = new TabbedPanel();
-		tp.getProperties().setTabAreaOrientation(Direction.DOWN);
-		tp.getProperties().setEnsureSelectedTabVisible(true);
-		tp.getProperties().setHighlightPressedTab(true);
-		tp.addTabListener(new GraphTabListener(this));
-		tp.getProperties().setTabReorderEnabled(true);
-		tp.getProperties().setTabDropDownListVisiblePolicy(TabDropDownListVisiblePolicy.MORE_THAN_ONE_TAB);
-		tp.setBackground(Color.BLACK);
-		maxPanelID += 1;
-		int id = maxPanelID;
-		tabbedPanels.put(id, tp);
-		View view = new View("Network Modelling", null, tp);
-		views.put(id, view);
-		setWindowProperties(id);
-		viewMap.addView(id, view);
-		rootWindow = DockingUtil.createRootWindow(viewMap, true);
-		rootWindow.getWindowBar(Direction.DOWN).setEnabled(true);
-		splitPanel.add(rootWindow);
-		view.makeVisible();
-		setSelectedView(view);
-		splitPanel.setDividerLocation(previousDividerLocation);
-	}
-
-	public void removeView(DockingWindow dw) {
-		// remove rootWindow if exists
-		// if(rootWindow!=null){
-		// split_pane.remove(rootWindow);
-		// }
-		if (dw instanceof View) {
-			View view = (View) dw;
-			int id = -1;
-			for (int key : views.keySet()) {
-				if (views.get(key).equals(view)) {
-					id = key;
-					break;
-				}
-			}
-			views.remove(id);
-			tabbedPanels.remove(id);
-			viewMap.removeView(id);
-			if (views.keySet().iterator().hasNext()) {
-				setSelectedView(views.get(views.keySet().iterator().next()));
-			}
-		}
-
-		limitSplitDivider();
-	}
-
-	public void addTab(TitledTab tab) {
+	public void addTab(final TitledTab tab) {
 		addedTabs++;
-		if (tabbedPanels.isEmpty()) {
-			addView();
-		}
-		tabbedPanels.get(getSelectedView()).addTab(tab);
+		rootWindow.addTab(tab);
 		setSelectedTab(tab);
 		myMenu.enableCloseAndSaveFunctions();
 	}
@@ -435,7 +356,7 @@ public class MainWindow implements ApplicationListener {
 
 	public void removeTab(boolean ask) {
 		boolean reallyAsk = ask;
-		TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();
+		TitledTab removed = (TitledTab) rootWindow.getSelectedTab();
 		Pathway pw = con.getPathway(removed.getText());
 		if (pw.isBNA()) {
 			if (((BiologicalNodeAbstract) pw).isCoarseNode()) {
@@ -447,7 +368,7 @@ public class MainWindow implements ApplicationListener {
 
 	public void removeTab(int index) {
 		boolean ask = true;
-		TitledTab removed = (TitledTab) tabbedPanels.get(getSelectedView()).getTabAt(index);
+		TitledTab removed = (TitledTab) rootWindow.getTabAt(index);
 		Pathway pw = con.getPathway(removed.getText());
 		if (pw.isBNA()) {
 			if (((BiologicalNodeAbstract) pw).isCoarseNode()) {
@@ -458,7 +379,7 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public void removeAllTabs() {
-		int tabCount = tabbedPanels.get(getSelectedView()).getTabCount();
+		int tabCount = rootWindow.getTabCount();
 		addedTabs = 0;
 		for (int i = 0; i < tabCount; i++) {
 			removeTab(0);
@@ -469,7 +390,7 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public void removeTab(boolean ask, TitledTab remove, Pathway pw) {
-		boolean isLastTabOfView = tabbedPanels.get(getSelectedView()).getTabCount() == 1
+		boolean isLastTabOfView = rootWindow.getTabCount() == 1
 				&& con.getAllPathways().contains(pw);
 		if (isLastTabOfView) {
 			addedTabs = 0;
@@ -497,7 +418,7 @@ public class MainWindow implements ApplicationListener {
 			}
 		}
 		con.removePathway(remove.getText());
-		tabbedPanels.get(getSelectedView()).removeTab(remove);
+		rootWindow.removeTab(remove);
 		Set<Pathway> subPathways = new HashSet<>(con.getAllPathways());
 		for (Pathway subPathway : subPathways) {
 			if (subPathway.getRootPathway() == pw) {
@@ -510,16 +431,16 @@ public class MainWindow implements ApplicationListener {
 		limitSplitDivider();
 	}
 
-	public void setSelectedTab(TitledTab tab) {
-		tabbedPanels.get(getSelectedView()).setSelectedTab(tab);
+	public void setSelectedTab(final TitledTab tab) {
+		rootWindow.setSelectedTab(tab);
 	}
 
 	public Tab getSelectedTab() {
-		return tabbedPanels.get(getSelectedView()).getSelectedTab();
+		return rootWindow.getSelectedTab();
 	}
 
 	public void renameSelectedTab(String name) {
-		tabbedPanels.get(getSelectedView()).getSelectedTab().setName(name);
+		rootWindow.getSelectedTab().setName(name);
 	}
 
 	public synchronized void showProgressBar(String text) {
@@ -551,11 +472,8 @@ public class MainWindow implements ApplicationListener {
 	}
 
 	public String getCurrentPathway() {
-		TitledTab t = (TitledTab) tabbedPanels.get(getSelectedView()).getSelectedTab();
-		if (t != null) {
-			return t.getText();
-		}
-		return null;
+		final TitledTab t = (TitledTab) rootWindow.getSelectedTab();
+		return t != null ? t.getText() : null;
 	}
 
 	public JFrame getFrame() {
@@ -704,28 +622,6 @@ public class MainWindow implements ApplicationListener {
 
 	public void setLoadedYaml(String loadedYaml) {
 		this.loadedYaml = loadedYaml;
-	}
-
-	public void setSelectedView(View v) {
-		for (int key : views.keySet()) {
-			if (views.get(key).equals(v)) {
-				selectedView = key;
-			}
-		}
-		bar.updateVisibility();
-	}
-
-	public void setSelectedView(TabbedPanel t) {
-		for (int key : tabbedPanels.keySet()) {
-			if (tabbedPanels.get(key).equals(t)) {
-				selectedView = key;
-			}
-		}
-		bar.updateVisibility();
-	}
-
-	public int getSelectedView() {
-		return selectedView;
 	}
 
 	public ToolBar getBar() {

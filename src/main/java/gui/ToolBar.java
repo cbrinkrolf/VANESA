@@ -51,7 +51,7 @@ public class ToolBar {
 
 	public ToolBar() {
 		bar.setOrientation(1);
-		bar.setFloatable(true);
+		bar.setFloatable(false);
 		MigLayout bl = new MigLayout("insets 0, wrap 1");
 		bar.setLayout(bl);
 
@@ -94,7 +94,6 @@ public class ToolBar {
 												this::onEnterNodeClicked);
 		final JButton autoCoarse = createToolBarButton("autocoarse.png", "Autocoarse Current Pathway",
 													   this::onAutoCoarseClicked);
-		final JButton newWindow = createToolBarButton("newWindow.png", "Open New Window", this::onNewWindowClicked);
 
 		/*
 		 * JButton convertIntoPetriNet = new ToolBarButton("convertIntoPetriNet");
@@ -165,7 +164,6 @@ public class ToolBar {
 		JPanel printControls = new ToolBarPanel();
 		printControls.setLayout(new GridLayout(1, 2, 4, 4));
 		printControls.add(newDoc);
-		printControls.add(newWindow);
 
 		// Add buttons to experiment with Grid Layout
 		petriNetControls = new ToolBarPanel();
@@ -594,10 +592,6 @@ public class ToolBar {
 			AutoCoarse.coarseSeparatedSubGraphs(GraphInstance.getPathway());
 			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 		}
-	}
-
-	private void onNewWindowClicked() {
-		MainWindow.getInstance().addView();
 	}
 
 	private void onHierarchyClicked() {

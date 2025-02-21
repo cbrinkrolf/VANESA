@@ -5,11 +5,11 @@ import java.awt.Cursor;
 import gui.MainWindow;
 import net.infonode.tabbedpanel.TabDragEvent;
 import net.infonode.tabbedpanel.TabEvent;
-import net.infonode.tabbedpanel.TabListener;
+import net.infonode.tabbedpanel.TabAdapter;
 import net.infonode.tabbedpanel.TabRemovedEvent;
 import net.infonode.tabbedpanel.TabStateChangedEvent;
 
-public class GraphTabListener implements TabListener {
+public class GraphTabListener extends TabAdapter {
 	boolean startMoving = false;
 	int tabs = 0;
 	private final MainWindow window;
@@ -21,15 +21,18 @@ public class GraphTabListener implements TabListener {
 		window = w;
 	}
 
+	@Override
 	public void tabAdded(TabEvent event) {
 		tabAdded = true;
 		tabs++;
 	}
 
+	@Override
 	public void tabRemoved(TabRemovedEvent event) {
 		tabs--;
 	}
 
+	@Override
 	public void tabDragged(TabDragEvent event) {
 		if (!startMoving) {
 			Cursor changedCursor = new Cursor(Cursor.HAND_CURSOR);
@@ -38,15 +41,14 @@ public class GraphTabListener implements TabListener {
 		startMoving = true;
 	}
 
+	@Override
 	public void tabDropped(TabDragEvent event) {
 		Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR);
 		event.getTab().setCursor(normalCursor);
 		startMoving = false;
 	}
 
-	public void tabDragAborted(TabEvent event) {
-	}
-
+	@Override
 	public void tabSelected(TabStateChangedEvent event) {
 		if (!tabAdded && window.getTabCount() > 0) {
 			window.updateAllGuiElements();
@@ -57,17 +59,5 @@ public class GraphTabListener implements TabListener {
 			 */
 		}
 		tabAdded = false;
-	}
-
-	public void tabDeselected(TabStateChangedEvent event) {
-	}
-
-	public void tabHighlighted(TabStateChangedEvent event) {
-	}
-
-	public void tabDehighlighted(TabStateChangedEvent event) {
-	}
-
-	public void tabMoved(TabEvent event) {
 	}
 }
