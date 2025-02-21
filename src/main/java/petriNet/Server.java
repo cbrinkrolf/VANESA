@@ -8,14 +8,7 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.apache.commons.lang3.SystemUtils;
+import java.util.*;
 
 import biologicalElements.GraphElementAbstract;
 import biologicalElements.Pathway;
@@ -28,24 +21,25 @@ import biologicalObjects.nodes.petriNet.Place;
 import biologicalObjects.nodes.petriNet.StochasticTransition;
 import biologicalObjects.nodes.petriNet.Transition;
 import gui.MainWindow;
+import org.apache.log4j.Logger;
 
 public class Server {
+	private static final Logger logger = Logger.getRootLogger();
+	private static final String NAME_SEPARATOR = "\u0000";
 
 	private Thread serverThread;
 	private java.net.ServerSocket serverSocket;
-	private HashMap<BiologicalEdgeAbstract, String> bea2key;
-	private ArrayList<String> names;
-	private HashMap<String, Integer> name2index;
+	private final HashMap<BiologicalEdgeAbstract, String> bea2key;
 	private boolean running = true;
 	private boolean readyToConnect = false;
-	private Pathway pw;
-	private String simId;
-	private int port;
+	private final Pathway pw;
+	private final String simId;
+	private final int port;
 	private SimulationResult simResult;
 
-	private Set<PNArc> toRefineEdges = new HashSet<>();
-	private Set<StochasticTransition> stochasticTransitions = new HashSet<>();
-	private Set<DiscreteTransition> discreteTransitions = new HashSet<>();
+	private final Set<PNArc> toRefineEdges = new HashSet<>();
+	private final Set<StochasticTransition> stochasticTransitions = new HashSet<>();
+	private final Set<DiscreteTransition> discreteTransitions = new HashSet<>();
 	private Set<PNArc> edgesFlow;
 	private Set<PNArc> edgeSum;
 	private Set<Transition> transitionSpeed;
@@ -58,17 +52,8 @@ public class Server {
 
 	private long lastSyso = 0;
 
-	// size of modelica int;
-	private final int sizeOfInt;
-
-	public Server(Pathway pw, HashMap<BiologicalEdgeAbstract, String> bea2key, String simId, int port) {
-
-		if (SystemUtils.IS_OS_WINDOWS) {
-			sizeOfInt = 8;
-		} else {
-			sizeOfInt = 8;
-		}
-
+	public Server(final Pathway pw, final HashMap<BiologicalEdgeAbstract, String> bea2key, final String simId,
+			final int port) {
 		this.pw = pw;
 		this.bea2key = bea2key;
 		this.simId = simId;
@@ -77,225 +62,111 @@ public class Server {
 	}
 
 	public void start() throws IOException {
-
-		Runnable serverTask = new Runnable() {
-			@Override
-			public void run() {
-				Socket client;
-				DataInputStream is;
-				while (running) {
-					// System.out.println("ruuuuuuuuuuuuuuuuuunning");
-					try {
-						boolean boundCorrectly = false;
-						while (!boundCorrectly && running) {
-							try {
-								serverSocket = new java.net.ServerSocket(port);
-								boundCorrectly = true;
-							} catch (Exception e) {
-								boundCorrectly = false;
-								e.printStackTrace();
-								running = false;
-								// port++;
-							}
-						}
-
-						simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
-						MainWindow.getInstance().addSimulationResults();
-						System.out.println("waiting to accept");
-						readyToConnect = true;
-						while (!serverSocket.isClosed()) {
-							client = waitForClient(serverSocket);
-							// leseNachricht(client);
-							System.out.println("connected to server!");
-							// InputStream is = new
-							// BufferedInputStream(client.getInputStream());
-							is = new DataInputStream(client.getInputStream());
-							readData(is);
-							// schreibeNachricht(client, nachricht);
-
-						}
-						// System.out.println("hieeeer bin ich");
-					} catch (IOException e) {
-						running = false;
-						// System.err.println("Unable to process client request");
-						e.printStackTrace();
-					}
-				}
-				// System.out.println("ruuuuuuuuuuuuuuuuuunning");
-				simResult.refineDiscreteTransitionIsFiring(discreteTransitions);
-				simResult.refineStochasticTransitionIsFiring(stochasticTransitions);
-				simResult.refineEdgeFlow(toRefineEdges);
-			}
-		};
-		serverThread = new Thread(serverTask);
+		serverThread = new Thread(this::runLoop, "OMServerThread-" + simId);
 		serverThread.start();
 	}
 
-	private Socket waitForClient(ServerSocket serverSocket) throws IOException {
-		System.out.println("waiting for accept ...");
-		Socket socket = serverSocket.accept();
-		return socket;
+	private void runLoop() {
+		while (running) {
+			try {
+				boolean boundCorrectly = false;
+				while (!boundCorrectly && running) {
+					try {
+						serverSocket = new ServerSocket(port);
+						boundCorrectly = true;
+					} catch (Exception e) {
+						boundCorrectly = false;
+						e.printStackTrace();
+						running = false;
+						// port++;
+					}
+				}
+				simResult = pw.getPetriPropertiesNet().getSimResController().get(simId);
+				MainWindow.getInstance().addSimulationResults();
+				System.out.println("waiting to accept");
+				readyToConnect = true;
+				while (!serverSocket.isClosed()) {
+					final Socket client = waitForClient(serverSocket);
+					System.out.println("connected to server!");
+					final DataInputStream is = new DataInputStream(client.getInputStream());
+					readData(is);
+				}
+			} catch (IOException e) {
+				running = false;
+				e.printStackTrace();
+			}
+		}
+		simResult.refineDiscreteTransitionIsFiring(discreteTransitions);
+		simResult.refineStochasticTransitionIsFiring(stochasticTransitions);
+		simResult.refineEdgeFlow(toRefineEdges);
 	}
 
-	private void readData(DataInputStream socket) throws IOException {
-		System.out.println("read data from stream");
-		int lengthMax = 204800;
-		// char[] buffer = new char[200];
-		byte[] buffer = new byte[lengthMax];
-		System.out.println("av: " + socket.available());
-		socket.readFully(buffer, 0, 1); // blockiert
-		// bis
-		// Nachricht
-		// empfangen
-		int id = (int) buffer[0];
-		System.out.println("Server: id: " + id);
-		socket.readFully(buffer, 0, 4);
-		// System.out.println("length: "+buffer[0]+
-		// " "+buffer[1]+" "+buffer[2]+" "+buffer[3] );
+	private Socket waitForClient(final ServerSocket serverSocket) throws IOException {
+		System.out.println("waiting for accept ...");
+		return serverSocket.accept();
+	}
 
-		ByteBuffer bb = ByteBuffer.wrap(buffer);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
+	private void readData(final DataInputStream socket) throws IOException {
+		final byte[] idLengthBuffer = new byte[5];
+		socket.readFully(idLengthBuffer, 0, 5);
+		ByteBuffer bb = ByteBuffer.wrap(idLengthBuffer, 0, 5).order(ByteOrder.LITTLE_ENDIAN);
+		int id = bb.get();
 		int length = bb.getInt();
-		System.out.println("length: " + length);
-		if (lengthMax < length) {
-			lengthMax = length;
-			buffer = new byte[length];
-		}
-		System.out.println("av: " + socket.available());
-
+		final byte[] buffer = new byte[length];
 		socket.readFully(buffer, 0, length);
-		bb = ByteBuffer.wrap(buffer, 0, 4);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-
-		int reals = bb.getInt();
-		System.out.println("real: " + reals);
-		bb = ByteBuffer.wrap(buffer, 4, 4);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		int ints = bb.getInt();
-		System.out.println("int: " + ints);
-
-		bb = ByteBuffer.wrap(buffer, 8, 4);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		int bools = bb.getInt();
-		System.out.println("bool: " + bools);
-
-		bb = ByteBuffer.wrap(buffer, 12, 4);
-		bb.order(ByteOrder.LITTLE_ENDIAN);
-		int strings = bb.getInt();
-		System.out.println("string: " + strings);
-
-		System.out.println("bufferlenght: " + buffer.length);
-		String n = new String(buffer, 16, buffer.length - 17);
-		System.out.println("stringsize: " + n.length());
-		// System.out.println(n);
-		System.out.println("av: " + socket.available());
-
-		String[] test = n.split("\u0000");
-		System.out.println("testsize: " + test.length);
-		// System.out.println("av: "+socket.available());
-		// System.out.println("av: "+socket.available());
-		int counter = 0;
-		for (int i = 22300; i < 23500; i++) {
-			// System.out.println(i+": "+n.charAt(i));
+		bb = ByteBuffer.wrap(buffer, 0, 16).order(ByteOrder.LITTLE_ENDIAN);
+		final int reals = bb.getInt();
+		final int ints = bb.getInt();
+		final int bools = bb.getInt();
+		final int strings = bb.getInt();
+		final String[] names = (new String(buffer, 16, buffer.length - 17)).split(NAME_SEPARATOR);
+		final int expectedPayloadSize = reals * 8 + ints * 8 + bools;
+		// to avoid calls of names.indexOf(identifier)
+		final Map<String, Integer> name2index = new HashMap<>();
+		for (int i = 0; i < names.length; i++) {
+			name2index.put(names[i], i);
 		}
-		System.out.println("testcounter: " + counter);
-		// System.out.println("av: "+socket.available());
-		names = new ArrayList<String>(Arrays.asList(n.split("\u0000")));
-
-		name2index = new HashMap<String, Integer>();
-
-		// running = true;
-		int expected = reals * 8 + ints * sizeOfInt + bools;
-
+		System.out.printf(
+				"OM Server: id=%d, reals=%d, ints=%d, bools=%d, strings=%d, headers=%d, expected payload size=%d%n", id,
+				reals, ints, bools, strings, names.length, expectedPayloadSize);
 		try {
-			System.out.println("expected: " + expected);
-			System.out.println("Headers: " + names.size());
-			counter = 0;
-
-			// to avoid calls of names.indexOf(identifier)
-			for (int i = 0; i < names.size(); i++) {
-				// System.out.print(names.get(i) + "\t");
-				counter += names.get(i).length();
-				name2index.put(names.get(i), i);
-			}
-			this.createSets();
-			System.out.println("sum headers: " + counter + "chars");
+			createSets(name2index);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("ende");
-		byte btmp;
-		ArrayList<Object> values;
-		String[] sValues;
 
 		try {
 			long startDigest = System.currentTimeMillis();
 			while (running) {
-				/*
-				 * try { Thread.sleep(1); } catch (InterruptedException e) {
-				 * e.printStackTrace(); }
-				 */
-				values = new ArrayList<Object>();
-
-				// System.out.println("av: "+socket.available());
+				final List<Object> values = new ArrayList<>();
 				socket.readFully(buffer, 0, 5);
-				id = (int) buffer[0];
-				// System.out.println("id: " + (int) buffer[0]);
-				// socket.getInputStream().read(buffer, 0, 4);
-				// System.out.println("length: "+buffer[0]+
-				// " "+buffer[1]+" "+buffer[2]+" "+buffer[3] );
-
-				bb = ByteBuffer.wrap(Arrays.copyOfRange(buffer, 1, buffer.length - 2));
-				bb.order(ByteOrder.LITTLE_ENDIAN);
+				bb = ByteBuffer.wrap(buffer).order(ByteOrder.LITTLE_ENDIAN);
+				id = bb.get();
 				length = bb.getInt();
-				// System.out.println("length in loop: " + length);
-
 				switch (id) {
 				case 4:
 					if (length > 0) {
 						socket.readFully(buffer, 0, length);
-
+						bb = ByteBuffer.wrap(buffer, 0, expectedPayloadSize).order(ByteOrder.LITTLE_ENDIAN);
 						for (int r = 0; r < reals; r++) {
-							bb = ByteBuffer.wrap(buffer, r * 8, 8);
-							bb.order(ByteOrder.LITTLE_ENDIAN);
 							values.add(bb.getDouble());
-							// System.out.print(bb.getDouble() + "\t");
 						}
 						for (int i = 0; i < ints; i++) {
-							bb = ByteBuffer.wrap(buffer, reals * 8 + i * sizeOfInt, sizeOfInt);
-							bb.order(ByteOrder.LITTLE_ENDIAN);
-							values.add(bb.getInt());
-							// System.out.print(integ + "\t");
+							values.add(bb.getLong());
 						}
 						for (int b = 0; b < bools; b++) {
-							// bb = ByteBuffer.wrap(buffer, b, 1);
-							// bb.order(ByteOrder.LITTLE_ENDIAN);
-							btmp = buffer[reals * 8 + ints * sizeOfInt + b];
-							values.add(btmp);
-							// values.add(buffer[reals * 8 + ints * 4 + b]);
-							// System.out.print(buffer[reals * 8 + ints * 4 + b]
-							// + "\t");
+							values.add(bb.get());
 						}
-						// System.out.println("left: "+(length-expected));
-						bb = ByteBuffer.wrap(buffer, expected, length - expected);
-						bb.order(ByteOrder.LITTLE_ENDIAN);
-
-						sValues = (new String(buffer, expected, length - expected)).split("\u0000");
-
-						for (int i = 0; i < sValues.length; i++) {
-							values.add(sValues[i]);
-							// System.out.print(sValues[i] + "\t");
-						}
-						this.setData(values);
-						// System.out.println("nach dem set");
+						final String[] sValues = (new String(buffer, expectedPayloadSize,
+								length - expectedPayloadSize)).split(NAME_SEPARATOR);
+						Collections.addAll(values, sValues);
+						setData(name2index, values);
 					}
 					break;
 				case 6:
 					System.out.println("data handling: " + (System.currentTimeMillis() - startDigest) + "ms");
 					running = false;
 					System.out.println("server shut down");
-					// MainWindow w = MainWindow.getInstance();
-					// w.redrawGraphs(true);
 					break;
 				}
 			}
@@ -303,24 +174,12 @@ public class Server {
 			System.out.println("server destroyed");
 			serverSocket.close();
 			running = false;
-			// serverThread.stop();
-			// serverThread.destroy();
 		}
-		// System.out.println(n[1]);
-		// System.out.println(n[2]);
-		// StringTokenizer st = new StringTokenizer(names., "");
-		// st.
-		// System.out.println(new String(buffer, 16, buffer.length - 17));
-		this.serverSocket.close();
-		try {
-			running = false;
-			// serverThread.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		serverSocket.close();
+		running = false;
 	}
 
-	private void createSets() {
+	private void createSets(final Map<String, Integer> name2index) {
 		edgesFlow = new HashSet<>();
 		edgeSum = new HashSet<>();
 		transitionSpeed = new HashSet<>();
@@ -331,23 +190,20 @@ public class Server {
 		transitionFireTime = new HashSet<>();
 		transitionDelay = new HashSet<>();
 
-		PNArc e;
-		for (BiologicalEdgeAbstract bea : pw.getAllEdges())
+		for (final BiologicalEdgeAbstract bea : pw.getAllEdges()) {
 			if (bea instanceof PNArc) {
-				e = (PNArc) bea;
+				final PNArc e = (PNArc) bea;
 				if (name2index.get("der(" + bea2key.get(bea) + ")") != null) {
-					this.edgesFlow.add(e);
+					edgesFlow.add(e);
 				} else {
-					if (!toRefineEdges.contains(e)) {
-						toRefineEdges.add(e);
-					}
+					toRefineEdges.add(e);
 				}
 				if (name2index.get(bea2key.get(bea)) != null) {
-					this.edgeSum.add(e);
+					edgeSum.add(e);
 				}
 			}
-
-		for (BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
+		}
+		for (final BiologicalNodeAbstract bna : pw.getAllGraphNodes()) {
 			if (!bna.isLogical()) {
 				if (bna instanceof Place) {
 					if (name2index.get("'" + bna.getName() + "'.t") != null) {
@@ -358,28 +214,28 @@ public class Server {
 				} else if (bna instanceof Transition) {
 					if (bna instanceof ContinuousTransition) {
 						if (name2index.get("'" + bna.getName() + "'.fire") != null) {
-							this.transitionFire.add((Transition) bna);
+							transitionFire.add((Transition) bna);
 						}
 						if (name2index.get("'" + bna.getName() + "'.actualSpeed") != null) {
-							this.transitionSpeed.add((Transition) bna);
+							transitionSpeed.add((Transition) bna);
 						}
 					} else {
 						if (name2index.get("'" + bna.getName() + "'.active") != null) {
-							this.transitionActive.add((Transition) bna);
+							transitionActive.add((Transition) bna);
 						}
 						if (name2index.get("'" + bna.getName() + "'.fireTime") != null) {
-							this.transitionFireTime.add((Transition) bna);
+							transitionFireTime.add((Transition) bna);
 						}
 					}
 					if (bna instanceof DiscreteTransition) {
 						discreteTransitions.add((DiscreteTransition) bna);
 						if (name2index.get("'" + bna.getName() + "'.delay") != null) {
-							this.transitionDelay.add((Transition) bna);
+							transitionDelay.add((Transition) bna);
 						}
 					} else if (bna instanceof StochasticTransition) {
 						stochasticTransitions.add((StochasticTransition) bna);
 						if (name2index.get("'" + bna.getName() + "'.putDelay") != null) {
-							this.transitionPutDelay.add((Transition) bna);
+							transitionPutDelay.add((Transition) bna);
 						}
 					}
 				}
@@ -387,53 +243,42 @@ public class Server {
 		}
 	}
 
-	private void setData(ArrayList<Object> values) {
-		Object o;
-		for (PNArc e : this.edgesFlow) {
-			o = values.get(name2index.get("der(" + bea2key.get(e) + ")"));
-			this.checkAndAddValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, o);
+	private void setData(final Map<String, Integer> name2index, final List<Object> values) {
+		for (PNArc e : edgesFlow) {
+			final Object o = values.get(name2index.get("der(" + bea2key.get(e) + ")"));
+			checkAndAddValue(e, SimulationResultController.SIM_ACTUAL_TOKEN_FLOW, o);
 		}
-
-		for (PNArc e : this.edgeSum) {
-			o = values.get(name2index.get(bea2key.get(e)));
-			this.checkAndAddValue(e, SimulationResultController.SIM_SUM_OF_TOKEN, o);
+		for (final PNArc e : edgeSum) {
+			final Object o = values.get(name2index.get(bea2key.get(e)));
+			checkAndAddValue(e, SimulationResultController.SIM_SUM_OF_TOKEN, o);
 		}
-
-		for (Place p : this.placeToken) {
-			o = values.get(name2index.get("'" + p.getName() + "'.t"));
-			this.checkAndAddValue(p, SimulationResultController.SIM_TOKEN, o);
+		for (final Place p : placeToken) {
+			final Object o = values.get(name2index.get("'" + p.getName() + "'.t"));
+			checkAndAddValue(p, SimulationResultController.SIM_TOKEN, o);
 		}
-
-		for (Transition t : this.transitionActive) {
-			o = values.get(name2index.get("'" + t.getName() + "'.active"));
-			this.checkAndAddValue(t, SimulationResultController.SIM_ACTIVE, o);
-			// this.checkAndAddValue(t, SimulationResultController.SIM_FIRE, o);
+		for (final Transition t : transitionActive) {
+			final Object o = values.get(name2index.get("'" + t.getName() + "'.active"));
+			checkAndAddValue(t, SimulationResultController.SIM_ACTIVE, o);
 		}
-
-		for (Transition t : this.transitionFire) {
-			o = values.get(name2index.get("'" + t.getName() + "'.fire"));
-			this.checkAndAddValue(t, SimulationResultController.SIM_FIRE, o);
+		for (final Transition t : transitionFire) {
+			final Object o = values.get(name2index.get("'" + t.getName() + "'.fire"));
+			checkAndAddValue(t, SimulationResultController.SIM_FIRE, o);
 		}
-
-		for (Transition t : this.transitionSpeed) {
-			o = values.get(name2index.get("'" + t.getName() + "'.actualSpeed"));
-			this.checkAndAddValue(t, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, o);
+		for (final Transition t : transitionSpeed) {
+			final Object o = values.get(name2index.get("'" + t.getName() + "'.actualSpeed"));
+			checkAndAddValue(t, SimulationResultController.SIM_ACTUAL_FIRING_SPEED, o);
 		}
-
-		for (Transition t : this.transitionDelay) {
-			o = values.get(name2index.get("'" + t.getName() + "'.delay"));
-			this.checkAndAddValue(t, SimulationResultController.SIM_DELAY, o);
+		for (final Transition t : transitionDelay) {
+			final Object o = values.get(name2index.get("'" + t.getName() + "'.delay"));
+			checkAndAddValue(t, SimulationResultController.SIM_DELAY, o);
 		}
-
-		for (Transition t : this.transitionPutDelay) {
-			o = values.get(name2index.get("'" + t.getName() + "'.putDelay"));
-			this.checkAndAddValue(t, SimulationResultController.SIM_PUT_DELAY, o);
-			// System.out.println("putDelay: "+o);
+		for (final Transition t : transitionPutDelay) {
+			final Object o = values.get(name2index.get("'" + t.getName() + "'.putDelay"));
+			checkAndAddValue(t, SimulationResultController.SIM_PUT_DELAY, o);
 		}
-		for (Transition t : this.transitionFireTime) {
-			o = values.get(name2index.get("'" + t.getName() + "'.fireTime"));
-			this.checkAndAddValue(t, SimulationResultController.SIM_FIRE_TIME, o);
-			// System.out.println("putFireTime: "+o);
+		for (final Transition t : transitionFireTime) {
+			final Object o = values.get(name2index.get("'" + t.getName() + "'.fireTime"));
+			checkAndAddValue(t, SimulationResultController.SIM_FIRE_TIME, o);
 		}
 
 		long now = System.currentTimeMillis();
@@ -444,36 +289,35 @@ public class Server {
 			lastSyso = now;
 		}
 
-		this.simResult.addTime((Double) values.get(name2index.get("time")));
-		// System.out.println("Time size: " + simResult.getTime().size());
-		// System.out.println("old size: " + pw.getPetriNet().getTime().size());
-		// this.time = pnResult.get("time");
-		// pw.setPetriNetSimulation(true);
+		simResult.addTime((Double) values.get(name2index.get("time")));
 	}
 
-	private void checkAndAddValue(GraphElementAbstract gea, int type, Object o) {
-		double value;
-		// System.out.println(o.getClass());
-		// System.out.println(gea.getName() + " type: " + type + " object: " + o);
+	private void checkAndAddValue(final GraphElementAbstract gea, final int type, final Object o) {
+		// TODO: values should be stored in their original datatype. Especially long to double may cause issues for large values.
+		final double value;
 		if (o instanceof Integer) {
-			// System.out.println("integer value");
-			value = (double) ((int) o);
+			value = (double) (int) o;
+		} else if (o instanceof Long) {
+			value = (double) (long) o;
+		} else if (o instanceof Float) {
+			value = (double) (float) o;
 		} else if (o instanceof Double) {
-			value = (Double) o;
+			value = (double) o;
 		} else if (o instanceof Byte) {
-			value = (Byte) o;
+			value = (byte) o;
 		} else {
 			value = 0;
-			System.out.println("unsupported data type!!!");
+			if (o != null) {
+				logger.warn("Unsupported data type '" + o.getClass() + "' to add to simulation result.");
+			} else {
+				logger.warn("Trying to add null value to simulation result.");
+			}
 		}
-		if (gea instanceof PNArc) {
-			// System.out.println(gea.getName() + " :" + value + " org:" + o);
-		}
-		this.simResult.addValue(gea, type, value);
+		simResult.addValue(gea, type, value);
 	}
 
 	public boolean isRunning() {
-		return this.running;
+		return running;
 	}
 
 	public void stop() {
@@ -481,10 +325,8 @@ public class Server {
 		try {
 			running = false;
 			serverSocket.close();
-			// serverThread.stop();
-			// serverThread.destroy();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn("Failed to stop server", e);
 		}
 	}
 
