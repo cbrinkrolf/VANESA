@@ -177,14 +177,14 @@ public class ToolBar {
 		petriNetControls.add(stochasticTransition);
 
 		featureControls = new ToolBarPanel();
-		featureControls.setLayout(new GridLayout(1, 3, 4, 4));
+		featureControls.setLayout(new GridLayout(0, 3, 4, 4));
 		featureControls.add(merge);
+		featureControls.add(chooser);
+		featureControls.add(colorChooser);
 		if (SettingsManager.getInstance().isDeveloperMode()) {
 			// featureControls.add(heatmap);
 			featureControls.add(parallelView);
 		}
-		featureControls.add(chooser);
-		featureControls.add(colorChooser);
 
 		// featureControls.setMaximumSize(featureControls.getPreferredSize());
 		// featureControls.setAlignmentX(Component.LEFT_ALIGNMENT);

@@ -17,7 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-import net.infonode.tabbedpanel.titledtab.TitledTab;
+import net.infonode.tabbedpanel.TitledTab;
 
 public class CloseButton extends JButton implements ActionListener {
 	private static final long serialVersionUID = 7696441214267807002L;
