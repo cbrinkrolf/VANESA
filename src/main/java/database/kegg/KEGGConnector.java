@@ -5,11 +5,9 @@ import biologicalElements.Elementdeclerations;
 import biologicalElements.Pathway;
 import biologicalObjects.edges.*;
 import biologicalObjects.nodes.*;
-import configurations.Wrapper;
 import graph.CreatePathway;
 import graph.jung.classes.MyGraph;
 import gui.MainWindow;
-import pojos.DBColumn;
 
 import javax.swing.*;
 import java.awt.geom.Point2D;
@@ -28,20 +26,20 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
     private final String pathwayNumber;
     private Pathway pw;
 
-    private List<DBColumn> allOrgElements = new ArrayList<>();
-    private List<DBColumn> allEcElements = new ArrayList<>();
-    private List<DBColumn> allRnElements = new ArrayList<>();
-    private List<DBColumn> allKoElements = new ArrayList<>();
+    private final List<String[]> allOrgElements = new ArrayList<>();
+    private final List<String[]> allEcElements = new ArrayList<>();
+    private final List<String[]> allRnElements = new ArrayList<>();
+    private final List<String[]> allKoElements = new ArrayList<>();
 
-    private List<DBColumn> allOrgRelations = new ArrayList<>();
-    private List<DBColumn> allEcRelations = new ArrayList<>();
-    private List<DBColumn> allRnRelations = new ArrayList<>();
-    private List<DBColumn> allKoRelations = new ArrayList<>();
+    private final List<String[]> allOrgRelations = new ArrayList<>();
+    private final List<String[]> allEcRelations = new ArrayList<>();
+    private final List<String[]> allRnRelations = new ArrayList<>();
+    private final List<String[]> allKoRelations = new ArrayList<>();
 
-    private List<DBColumn> allOrgReactions = new ArrayList<>();
-    private List<DBColumn> allEcReactions = new ArrayList<>();
-    private List<DBColumn> allRnReactions = new ArrayList<>();
-    private List<DBColumn> allKoReactions = new ArrayList<>();
+    private final List<String[]> allOrgReactions = new ArrayList<>();
+    private final List<String[]> allEcReactions = new ArrayList<>();
+    private final List<String[]> allRnReactions = new ArrayList<>();
+    private final List<String[]> allKoReactions = new ArrayList<>();
 
     private final boolean dontCreatePathway;
 
@@ -92,6 +90,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         if (pathway != null) {
             title = pathway.name;
         }
+        /* TODO
         allOrgElements = getPathwayElements(pathwayId);
         allEcElements = getPathwayElements("ec" + pathwayNumber);
         allRnElements = getPathwayElements("rn" + pathwayNumber);
@@ -106,6 +105,7 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         allEcReactions = getAllReactions("ec" + pathwayNumber);
         allRnReactions = getAllReactions("rn" + pathwayNumber);
         allKoReactions = getAllReactions("ko" + pathwayNumber);
+        */
         return null;
     }
 
@@ -259,24 +259,24 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         return 0;
     }
 
-    private void drawNodes(List<DBColumn> allElements) {
-        for (DBColumn column : allElements) {
-            processKeggElements(column.getColumn());
+    private void drawNodes(List<String[]> allElements) {
+        for (String[] column : allElements) {
+            processKeggElements(column);
         }
     }
 
-    private void drawRelations(List<DBColumn> allGeneralRelations) {
-        for (DBColumn column : allGeneralRelations) {
+    private void drawRelations(List<String[]> allGeneralRelations) {
+        for (String[] column : allGeneralRelations) {
             // 0 - relation.pathway_name
             // 1 - subtype.name
             // 2 - subtype.subtype_value
             // 3 - relation.entry1
             // 4 - relation.entry2
-            String keggPathway = column.getColumn()[0];
-            String edgeType = column.getColumn()[1];
-            String subtypeValue = column.getColumn()[2];
-            String entry1 = column.getColumn()[3];
-            String entry2 = column.getColumn()[4];
+            String keggPathway = column[0];
+            String edgeType = column[1];
+            String subtypeValue = column[2];
+            String entry1 = column[3];
+            String entry2 = column[4];
             BiologicalNodeAbstract bna1 = null;
             BiologicalNodeAbstract subtype = null;
             BiologicalNodeAbstract bna2 = null;
@@ -349,18 +349,18 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
         }
     }
 
-    private void drawReactions(List<DBColumn> allReactions) {
-        for (DBColumn column : allReactions) {
+    private void drawReactions(List<String[]> allReactions) {
+        for (String[] column : allReactions) {
             // 0 - s.id
             // 1 - e.id
             // 2 - p.id
             // 3 - r.reaction_type
             // 4 - e.pathway_name
-            String substrateId = column.getColumn()[0];
-            String enzymeId = column.getColumn()[1];
-            String productId = column.getColumn()[2];
-            boolean reversible = column.getColumn()[3].equals("reversible");
-            String keggPathway = column.getColumn()[4];
+            String substrateId = column[0];
+            String enzymeId = column[1];
+            String productId = column[2];
+            boolean reversible = column[3].equals("reversible");
+            String keggPathway = column[4];
             BiologicalNodeAbstract substrate = null;
             BiologicalNodeAbstract enzyme = null;
             BiologicalNodeAbstract product = null;
@@ -405,34 +405,5 @@ public class KEGGConnector extends SwingWorker<Object, Object> {
                 }
             }
         }
-    }
-
-    public ArrayList<DBColumn> getPathwayElements(String pathwayID) {
-        String query =
-                "SELECT k.id, k.entry_type, n.name, g.bgcolor, g.fgcolor, g.name, g.graphics_type, g.x, g.y, c.name, p.name, k.pathway_name " +
-                "FROM kegg_kgml_entry k LEFT OUTER JOIN kegg_kgml_entry_name n ON k.entry_id=n.entry_ID " +
-                "INNER JOIN kegg_kgml_graphics g ON k.entry_id=g.entry_ID " +
-                "LEFT OUTER JOIN kegg_compound_name c ON n.name=c.entry " +
-                "LEFT OUTER JOIN kegg_pathway p ON n.name=p.entry " + "WHERE k.pathway_name='" + pathwayID + "' " +
-                "AND (length(c.name)=(Select min(length(d.name)) FROM kegg_compound_name d WHERE n.name=d.entry) OR c.name IS NULL) " +
-                "GROUP BY k.entry_id;";
-        return new Wrapper().requestDbContent(query);
-    }
-
-    public ArrayList<DBColumn> getRelations(String pathwayID) {
-        String query =
-                "SELECT relation.pathway_name, subtype.name,subtype.subtype_value,relation.entry1,relation.entry2 " +
-                "FROM kegg_kgml_subtype subtype NATURAL JOIN kegg_kgml_relation relation WHERE pathway_name='" + pathwayID + "'ORDER BY relation_id;";
-        return new Wrapper().requestDbContent(query);
-    }
-
-    public ArrayList<DBColumn> getAllReactions(String pathwayID) {
-        String query = "SELECT s.id, e.id, p.id, r.reaction_type, e.pathway_name FROM kegg_kgml_reaction r " +
-                       "INNER JOIN kegg_kgml_substrate s ON r.reaction_id=s.reaction_id " +
-                       "INNER JOIN kegg_kgml_product p ON r.reaction_id=p.reaction_id " +
-                       "INNER JOIN kegg_kgml_entry_reaction er ON er.reaction=r.name " +
-                       "INNER JOIN kegg_kgml_entry e ON er.entry_id=e.entry_id " +
-                       "INNER JOIN kegg_kgml_entry_name en ON e.entry_id=en.entry_id WHERE r.pathway_name='" + pathwayID + "' AND e.pathway_name='" + pathwayID + "'; ";
-        return new Wrapper().requestDbContent(query);
     }
 }
