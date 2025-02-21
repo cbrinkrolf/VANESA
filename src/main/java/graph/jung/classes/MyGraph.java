@@ -329,7 +329,7 @@ public class MyGraph {
 			}
 		});
 		setMouseModePick();
-
+		disableAntliasing(SettingsManager.getInstance().isDisabledAntiAliasing());
 		improvePerformance(vv);
 		improvePerformance(vv2);
 	}
@@ -1250,18 +1250,22 @@ public class MyGraph {
 		return edpf;
 	}
 
+	// Probably the most important step for the pure rendering performance:
+	// Disable anti-aliasing
+	public void disableAntliasing(boolean deactivate) {
+		if (deactivate) {
+			vv.getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
+		} else {
+			vv.getRenderingHints().put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		}
+	}
+
 	// TODO following methods can probably outsourced
 
 	// This method summarizes several options for improving the painting
 	// performance. Enable or disable them depending on which visual features
 	// you want to sacrifice for the higher performance.
 	private static <V, E> void improvePerformance(VisualizationViewer<V, E> vv) {
-		// Probably the most important step for the pure rendering performance:
-		// Disable anti-aliasing
-
-		if (SettingsManager.getInstance().isDeactivateAntiAliasing()) {
-			vv.getRenderingHints().remove(RenderingHints.KEY_ANTIALIASING);
-		}
 
 		// Skip vertices that are not inside the visible area.
 		if (SettingsManager.getInstance().isOmitPaintInvisibleNodes()) {

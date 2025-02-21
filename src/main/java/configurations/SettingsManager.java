@@ -109,7 +109,7 @@ public class SettingsManager {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private XMLConfiguration getXMLConfiguration() {
 		if (xmlConfiguration == null) {
 			Path settingsFilePath = getSettingsFilePath();
@@ -254,61 +254,60 @@ public class SettingsManager {
 	public void setOverridePNlibPath(Boolean override) {
 		setProperty("isOverridePNlibPath", override.toString());
 	}
-	
-	public boolean isSVGClipPaths(){
+
+	public boolean isSVGClipPaths() {
 		String property = getProperty("isSVGClipPaths");
 		return StringUtils.isNotEmpty(property) && property.equals("true");
 	}
-	
-	public void setSVGClipPaths(Boolean svgClipPaths){
+
+	public void setSVGClipPaths(Boolean svgClipPaths) {
 		setProperty("isSVGClipPaths", svgClipPaths.toString());
 	}
-	
-	public boolean isPDFClipPaths(){
+
+	public boolean isPDFClipPaths() {
 		String property = getProperty("isPDFClipPaths");
 		return StringUtils.isNotEmpty(property) && property.equals("true");
 	}
-	
-	public void setPDFClipPaths(Boolean pdfClipPaths){
+
+	public void setPDFClipPaths(Boolean pdfClipPaths) {
 		setProperty("isPDFClipPaths", pdfClipPaths.toString());
 	}
-	
-	public String getDefaultImageExportFormat(){
+
+	public String getDefaultImageExportFormat() {
 		String property = getProperty("defaultImageExportFormat");
-		if(StringUtils.isNotEmpty(property)){
-			if(property.equals(ComponentImageWriter.IMAGE_TYPE_PDF)){
+		if (StringUtils.isNotEmpty(property)) {
+			if (property.equals(ComponentImageWriter.IMAGE_TYPE_PDF)) {
 				return ComponentImageWriter.IMAGE_TYPE_PDF;
-			} else if(property.equals(ComponentImageWriter.IMAGE_TYPE_SVG)){
+			} else if (property.equals(ComponentImageWriter.IMAGE_TYPE_SVG)) {
 				return ComponentImageWriter.IMAGE_TYPE_SVG;
-			}else if(property.equals(ComponentImageWriter.IMAGE_TYPE_PNG)){
+			} else if (property.equals(ComponentImageWriter.IMAGE_TYPE_PNG)) {
 				return ComponentImageWriter.IMAGE_TYPE_PNG;
 			}
 		}
 		return ComponentImageWriter.IMAGE_TYPE_PNG;
 	}
-	
-	public void setDefaultImageExportFormat(String format){
+
+	public void setDefaultImageExportFormat(String format) {
 		setProperty("defaultImageExportFormat", format);
 	}
-	
-	public boolean isDeactivateAntiAliasing(){
-		String property = getProperty("isDeactivateAntiAliasing");
+
+	public boolean isDisabledAntiAliasing() {
+		String property = getProperty("isDisabledAntiAliasing");
 		return StringUtils.isNotEmpty(property) && property.equals("true");
 	}
-	
-	public void setDeactivateAntiAliasing(Boolean deactivateAntiAliasing){
-		setProperty("isDeactivateAntiAliasing", deactivateAntiAliasing.toString());
+
+	public void setDisabledAntiAliasing(Boolean deactivateAntiAliasing) {
+		setProperty("isDisabledAntiAliasing", deactivateAntiAliasing.toString());
 	}
-	
+
 	// should be on by default
-	public boolean isOmitPaintInvisibleNodes(){
+	public boolean isOmitPaintInvisibleNodes() {
 		String property = getProperty("isOmitPaintInvisibleNodes");
 		return StringUtils.isEmpty(property) || property.equals("true");
 	}
-	
-	public void setOmitPaintInvisibleNodes(Boolean omitPaintInvisibleNodes){
+
+	public void setOmitPaintInvisibleNodes(Boolean omitPaintInvisibleNodes) {
 		setProperty("isOmitPaintInvisibleNodes", omitPaintInvisibleNodes.toString());
 	}
-
 
 }

@@ -74,7 +74,7 @@ public class GraphSettingsDialog {
 	private Font edgeFontOld = settings.getEdgeFont();
 
 	private JCheckBox omitInvisibleNodes;
-	private JCheckBox deactiveAntiAliasing;
+	private JCheckBox disabledAntiAliasing;
 
 	private MainWindow w = MainWindow.getInstance();
 	private GraphContainer con = GraphContainer.getInstance();
@@ -309,13 +309,14 @@ public class GraphSettingsDialog {
 
 		panelRight.add(omitInvisibleNodes, "wrap");
 
-		deactiveAntiAliasing = new JCheckBox();
-		deactiveAntiAliasing.setText("deactivate anti-aliasing");
-		deactiveAntiAliasing.setToolTipText(
-				"Increases graph drawing performance. Exported graph images are not affected. Pathway needs to be re-opened to be effective!");
-		deactiveAntiAliasing.setSelected(SettingsManager.getInstance().isDeactivateAntiAliasing());
+		disabledAntiAliasing = new JCheckBox();
+		disabledAntiAliasing.setText("disable anti-aliasing");
+		disabledAntiAliasing
+				.setToolTipText("Increases graph drawing performance. Exported graph images are not affected!");
+		disabledAntiAliasing.setSelected(SettingsManager.getInstance().isDisabledAntiAliasing());
+		disabledAntiAliasing.addChangeListener(e -> onDeactiveAntiAliasingClicked());
 
-		panelRight.add(deactiveAntiAliasing, "wrap");
+		panelRight.add(disabledAntiAliasing, "wrap");
 
 		panel = new JPanel(new GridLayout(0, 2));
 		panel.add(panelLeft);
@@ -350,7 +351,7 @@ public class GraphSettingsDialog {
 		defaultVertexFont.setSelected(true);
 		defaultEdgeFont.setSelected(true);
 		omitInvisibleNodes.setSelected(true);
-		deactiveAntiAliasing.setSelected(false);
+		disabledAntiAliasing.setSelected(false);
 		// } else {
 		// PopUpDialog.getInstance().show("Error", "Please create a network before.");
 		// return false;
@@ -403,7 +404,8 @@ public class GraphSettingsDialog {
 		}
 
 		SettingsManager.getInstance().setOmitPaintInvisibleNodes(omitInvisibleNodes.isSelected());
-		SettingsManager.getInstance().setDeactivateAntiAliasing(deactiveAntiAliasing.isSelected());
+		SettingsManager.getInstance().setDisabledAntiAliasing(disabledAntiAliasing.isSelected());
+		con.getPathway(w.getCurrentPathway()).getGraph().disableAntliasing(disabledAntiAliasing.isSelected());
 
 		return true;
 	}
@@ -412,6 +414,7 @@ public class GraphSettingsDialog {
 		settings.setEdgeOpacity(edgeOpacityOld);
 		settings.setVertexFont(vertexFontOld);
 		settings.setEdgeFont(edgeFontOld);
+		con.getPathway(w.getCurrentPathway()).getGraph().disableAntliasing(settings.isDisabledAntiAliasing());
 		return true;
 	}
 
@@ -456,6 +459,13 @@ public class GraphSettingsDialog {
 			if (con.containsPathway()) {
 				GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 			}
+		}
+	}
+
+	private void onDeactiveAntiAliasingClicked() {
+		if (con.containsPathway()) {
+			GraphInstance.getPathway().getGraph().disableAntliasing(disabledAntiAliasing.isSelected());
+			GraphInstance.getPathway().getGraph().getVisualizationViewer().repaint();
 		}
 	}
 

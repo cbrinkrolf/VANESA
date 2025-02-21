@@ -13,13 +13,13 @@ public class GraphSettings {
 	private int pixelOffset = 3;
 	private Font vertexFont = null;
 	private Font edgeFont = null;
-	
+	private boolean disabledAntiAliasing;
 
 	public static final int SHOW_LABEL = 0;
 	public static final int SHOW_NAME = 1;
 	public static final int SHOW_LABEL_AND_NAME = 2;
 	public static final int SHOW_NONE = 3;
-	
+
 	public GraphSettings() {
 		nodeLabel = GraphSettings.SHOW_LABEL;
 		edgeLabel = GraphSettings.SHOW_LABEL;
@@ -98,5 +98,13 @@ public class GraphSettings {
 
 	public void setEdgeFont(Font edgeFont) {
 		this.edgeFont = edgeFont;
+	}
+
+	public boolean isDisabledAntiAliasing() {
+		return disabledAntiAliasing;
+	}
+
+	public void setDisabledAntiAliasing(boolean disabledAntiAliasing) {
+		this.disabledAntiAliasing = disabledAntiAliasing;
 	}
 }
